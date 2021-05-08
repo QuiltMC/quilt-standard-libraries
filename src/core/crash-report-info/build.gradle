@@ -1,0 +1,5 @@
+plugins {
+    id("org.quiltmc.gradle-conventions.qsl.module")
+}
+
+coreDependencies(project, ["qsl-base"])

@@ -1,0 +1,138 @@
+/*:
+ * Used constants and examples:
+ * minecraft_version: 1.16.5
+ * yarn_build: 1
+ * loader_version: 0.14.0
+ * qsl_library: core
+ * qsl_module: qsl-base
+ * qsl_module_version: 1.0.0
+ */
+plugins {
+    id "org.quiltmc.loom"
+    id "org.quiltmc.gradle-conventions.java.style"
+    id "org.quiltmc.gradle-conventions.java.version"
+    id "maven-publish"
+	id "org.quiltmc.gradle-conventions.qsl.common"
+}
+group = "org.quiltmc.qsl-prototype.$project.qsl_library"
+archivesBaseName = project.qsl_module
+version = qsl_module_version
+def getHash() {
+    if (grgit == null) {
+        return "nogit"
+    } else {
+        def latestCommits = grgit.log(paths: [project.path.substring(1).replace(':', '/')], maxCommits: 1)
+
+        if (latestCommits.isEmpty()) {
+            return "uncommitted"
+        } else {
+            return latestCommits.get(0)
+        }
+    }
+}
+sourceSets {
+	testmod {
+		compileClasspath += sourceSets.main.compileClasspath
+		runtimeClasspath += sourceSets.main.runtimeClasspath
+	}
+}
+
+dependencies {
+	testmodImplementation sourceSets.main.output
+}
+
+configurations {
+    dev
+}
+
+task runTestmodClient(type: org.quiltmc.loom.task.RunClientTask) {
+	classpath sourceSets.testmod.runtimeClasspath
+}
+task runTestmodServer(type: org.quiltmc.loom.task.RunServerTask) {
+	classpath sourceSets.testmod.runtimeClasspath
+}
+
+jar {
+    archiveClassifier.set("dev")
+}
+
+afterEvaluate {
+    remapJar {
+        input = file("${project.buildDir}/libs/$archivesBaseName-${version}-dev.jar")
+        archiveName = "${archivesBaseName}-${version}.jar"
+    }
+
+    artifacts {
+        dev file: file("${project.buildDir}/libs/$archivesBaseName-${version}-dev.jar"), type: "jar", builtBy: jar
+    }
+
+    processResources {
+        inputs.property "version", project.version
+
+        from(sourceSets.main.resources.srcDirs) {
+            include "fabric.mod.json"
+            expand "version": project.version
+        }
+
+        from(sourceSets.main.resources.srcDirs) {
+            exclude "fabric.mod.json"
+        }
+    }
+}
+java {
+    withSourcesJar()
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+task checkModuleVersion {
+    doFirst {
+        try {
+            def xml =  new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/$project.qsl_library/$project.qsl_module/$project.version/" +
+                    "$project.qsl_module-$project.qsl_module_version" + ".pom").text
+            def metadata = new groovy.xml.XmlSlurper().parseText(xml)
+            if (metadata.properties.hash != getHash()) {
+                throw new RuntimeException("A module is already published with a different hash!")
+            }
+        } catch (FileNotFoundException ignored) {
+            //
+        }
+    }
+}
+publishing {
+    publications {
+        boolean publish = true
+        try {
+            def xml =  new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/$project.qsl_library/$project.qsl_module/$project.version/" +
+                    "$project.qsl_module-$project.qsl_module_version" + ".pom").text
+            def metadata = new groovy.xml.XmlSlurper().parseText(xml)
+            if (metadata.properties.hash == getHash()) {
+                publish = false
+            }
+        } catch (FileNotFoundException ignored) {
+            //
+        }
+
+        if (publish) {
+            mavenJava(MavenPublication) {
+                pom.withXml {
+                    asNode().appendNode("properties").appendNode("hash", getHash())
+                }
+                artifact(remapJar) {
+                    builtBy remapJar
+                }
+                artifact(sourcesJar) {
+                    builtBy remapSourcesJar
+                }
+            }
+        }
+
+    }
+}
+
+publish.dependsOn checkModuleVersion

@@ -1,0 +1,111 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+plugins {
+	id 'maven-publish'
+	id "org.quiltmc.gradle-conventions.qsl.common"
+}
+group = "org.quiltmc.qsl-prototype"
+version = project.qsl_version
+
+def coreDependencies(Project project, List<String> depNames) {
+    _moduleDependencies(project, depNames.iterator().collect {"core:$it"})
+}
+def libraryDependencies(Project project, List<String> depNames) {
+    _moduleDependencies(project, depNames.iterator().collect {"$project.qsl_library:$it"})
+}
+private def _moduleDependencies(Project project, List<String> depNames) {
+    def deps = depNames.iterator().collect { project.dependencies.project(path: ":$it", configuration: 'dev') }
+    project.dependencies {
+        deps.each {
+            implementation it
+        }
+    }
+    project.publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                pom.withXml {
+                    def depsNode = asNode().appendNode("dependencies")
+                    deps.each {
+                        def depNode = depsNode.appendNode("dependency")
+                        depNode.appendNode("groupId", it.group)
+                        depNode.appendNode("artifactId", it.name)
+                        depNode.appendNode("version", it.version)
+                        depNode.appendNode("scope", "compile")
+                    }
+                }
+            }
+        }
+    }
+}
+jar {
+	enabled = false
+}
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			pom.withXml {
+				def depsNode = asNode().appendNode("dependencies")
+				rootProject.subprojects.stream().filter {
+					it.path.count(':') == 1
+				}.forEach {
+					def depNode = depsNode.appendNode("dependency")
+					depNode.appendNode("groupId", it.group)
+					depNode.appendNode("artifactId", it.name)
+					depNode.appendNode("version", it.version)
+					depNode.appendNode("scope", "compile")
+				}
+			}
+		}
+	}
+}
+afterEvaluate {
+	task runTestmodClient(type: org.quiltmc.loom.task.RunClientTask) {
+		subprojects.stream().filter {
+			it.path.count(":") == 2
+		}.forEach {
+			classpath += it.sourceSets.testmod.runtimeClasspath
+		}
+	}
+	task runTestmodServer(type: org.quiltmc.loom.task.RunServerTask) {
+		subprojects.stream().filter {
+			it.path.count(":") == 2
+		}.forEach {
+			classpath += it.sourceSets.testmod.runtimeClasspath
+		}
+	}
+	task runAutoTestServer(type: org.quiltmc.loom.task.RunServerTask) {
+		subprojects.stream().filter {
+			it.path.count(":") == 2
+		}.forEach {
+			classpath += it.sourceSets.testmod.runtimeClasspath
+		}
+		jvmArgs "-Dquilt.autoTest"
+		args "--nogui"
+	}
+}
+
+task checkVersion {
+	doFirst {
+		try {
+			def xml = new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/maven-metadata.xml").text
+			def metadata = new groovy.xml.XmlSlurper().parseText(xml)
+			def versions = metadata.versioning.versions.version*.text();
+			if (versions.contains(version)) {
+				throw new RuntimeException("${version} has already been released!")
+			}
+		} catch (FileNotFoundException ex) {
+			// Ignored
+		}
+
+	}
+}
+
+project.getTasksByName("checkLibVersion", true).each {
+	checkVersion.dependsOn it
+}
+
+publish.dependsOn checkVersion

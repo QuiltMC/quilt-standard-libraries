@@ -1,0 +1,29 @@
+plugins {
+	id "maven-publish"
+	id "org.quiltmc.loom"
+	id "org.ajoberstar.grgit"
+}
+def ENV = System.getenv()
+publishing {
+	repositories {
+		if (ENV.MAVEN_URL) {
+			maven {
+				credentials ENV.MAVEN_USERNAME
+				credentials ENV.MAVEN_PASSWORD
+			}
+		} else {
+			mavenLocal()
+		}
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:$project.minecraft_version"
+	mappings "org.quiltmc:yarn:$project.minecraft_version+build.$project.yarn_build:v2"
+
+	modImplementation "org.quiltmc:quilt-loader:$project.loader_version"
+}
+loom {
+	// Upstream Loom breaks this so we can't have nice things until the quilt-gradle replacement
+	//shareCaches = true
+}
