@@ -43,6 +43,10 @@ afterEvaluate {
 jar {
 	enabled = false
 }
+remapJar {
+	enabled = false
+}
+
 task checkLibVersion {
 	doFirst {
 		try {
