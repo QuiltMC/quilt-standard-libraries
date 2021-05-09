@@ -12,9 +12,12 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
-
 }
+
 rootProject.name = 'qsl'
+
+includeBuild("build-logic")
+
 def includeLib(String string) {
 	include string
 	project(":$string").projectDir = file("src/$string")

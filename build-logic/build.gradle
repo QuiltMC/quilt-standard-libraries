@@ -4,21 +4,24 @@ plugins {
 }
 
 repositories {
+	gradlePluginPortal()
 	mavenCentral()
+
 	maven {
-		url "https://maven.quiltmc.org/repository/release"
+		url = "https://maven.quiltmc.org/repository/release"
 	}
 	maven {
 		name = 'ajoberstar-backup'
 		url = 'https://ajoberstar.org/bintray-backup/'
 	}
-
 }
+
 dependencies {
 	implementation "org.quiltmc:loom:0.7.+"
 	implementation "org.ajoberstar.grgit:grgit-gradle:4.1.0"
 	implementation "org.quiltmc.gradle-conventions:gradle-convention-plugins:0.+"
 }
+
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"
 
@@ -26,6 +29,7 @@ tasks.withType(JavaCompile).configureEach {
 		it.options.release.set(8)
 	}
 }
+
 java {
 	sourceCompatibility = JavaVersion.VERSION_1_8
 	targetCompatibility = JavaVersion.VERSION_1_8
