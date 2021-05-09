@@ -1,12 +1,12 @@
 plugins {
-	id "maven-publish"
-	id "org.ajoberstar.grgit"
-	id "org.quiltmc.gradle-conventions.qsl.common"
-
+	id("maven-publish")
+	id("org.ajoberstar.grgit")
+	id("org.quiltmc.gradle-conventions.qsl.common")
 }
 
 group = "org.quiltmc.qsl-prototype"
 version = project.qsl_library_version
+
 def getHash() {
 	if (grgit == null) {
 		return "nogit"
@@ -20,17 +20,20 @@ def getHash() {
 		}
 	}
 }
+
 afterEvaluate {
 	task runTestmodClient(type: org.quiltmc.loom.task.RunClientTask) {
 		subprojects.each {
 			classpath += it.sourceSets.testmod.runtimeClasspath
 		}
 	}
+
 	task runTestmodServer(type: org.quiltmc.loom.task.RunServerTask) {
 		subprojects.each {
 			classpath += it.sourceSets.testmod.runtimeClasspath
 		}
 	}
+
 	task runAutoTestServer(type: org.quiltmc.loom.task.RunServerTask) {
 		subprojects.each {
 			classpath += it.sourceSets.testmod.runtimeClasspath
@@ -43,6 +46,7 @@ afterEvaluate {
 jar {
 	enabled = false
 }
+
 remapJar {
 	enabled = false
 }
@@ -61,9 +65,11 @@ task checkLibVersion {
 		}
 	}
 }
+
 project.getTasksByName("checkModuleVersion", true).each {
 	checkLibVersion.mustRunAfter it
 }
+
 publishing {
 	repositories {
 		mavenLocal()

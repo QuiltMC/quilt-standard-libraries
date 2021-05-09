@@ -1,28 +1,30 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-}
 plugins {
-	id 'maven-publish'
-	id "org.quiltmc.gradle-conventions.qsl.common"
+	id("maven-publish")
+	id("org.quiltmc.gradle-conventions.qsl.common")
 }
+
 group = "org.quiltmc.qsl-prototype"
 version = project.qsl_version
 
 def coreDependencies(Project project, List<String> depNames) {
     _moduleDependencies(project, depNames.iterator().collect {"core:$it"})
 }
+
 def libraryDependencies(Project project, List<String> depNames) {
     _moduleDependencies(project, depNames.iterator().collect {"$project.qsl_library:$it"})
 }
+
 private def _moduleDependencies(Project project, List<String> depNames) {
-    def deps = depNames.iterator().collect { project.dependencies.project(path: ":$it", configuration: 'dev') }
+    def deps = depNames.iterator().collect {
+		project.dependencies.project(path: ":$it", configuration: "dev")
+	}
+
     project.dependencies {
         deps.each {
             implementation it
         }
     }
+
     project.publishing {
         publications {
             mavenJava(MavenPublication) {
@@ -40,12 +42,15 @@ private def _moduleDependencies(Project project, List<String> depNames) {
         }
     }
 }
+
 jar {
 	enabled = false
 }
+
 remapJar {
 	enabled = false
 }
+
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
@@ -64,6 +69,7 @@ publishing {
 		}
 	}
 }
+
 afterEvaluate {
 	task runTestmodClient(type: org.quiltmc.loom.task.RunClientTask) {
 		subprojects.stream().filter {
@@ -72,6 +78,7 @@ afterEvaluate {
 			classpath += it.sourceSets.testmod.runtimeClasspath
 		}
 	}
+
 	task runTestmodServer(type: org.quiltmc.loom.task.RunServerTask) {
 		subprojects.stream().filter {
 			it.path.count(":") == 2
@@ -79,6 +86,7 @@ afterEvaluate {
 			classpath += it.sourceSets.testmod.runtimeClasspath
 		}
 	}
+
 	task runAutoTestServer(type: org.quiltmc.loom.task.RunServerTask) {
 		subprojects.stream().filter {
 			it.path.count(":") == 2
@@ -102,7 +110,6 @@ task checkVersion {
 		} catch (FileNotFoundException ex) {
 			// Ignored
 		}
-
 	}
 }
 

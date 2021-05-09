@@ -8,15 +8,17 @@
  * qsl_module_version: 1.0.0
  */
 plugins {
-    id "org.quiltmc.loom"
-    id "org.quiltmc.gradle-conventions.java.style"
-    id "org.quiltmc.gradle-conventions.java.version"
-    id "maven-publish"
-	id "org.quiltmc.gradle-conventions.qsl.common"
+    id("org.quiltmc.loom")
+    id("org.quiltmc.gradle-conventions.java.style")
+    id("org.quiltmc.gradle-conventions.java.version")
+    id("maven-publish")
+	id("org.quiltmc.gradle-conventions.qsl.common")
 }
+
 group = "org.quiltmc.qsl-prototype.$project.qsl_library"
 archivesBaseName = project.qsl_module
 version = qsl_module_version
+
 def getHash() {
     if (grgit == null) {
         return "nogit"
@@ -30,6 +32,7 @@ def getHash() {
         }
     }
 }
+
 sourceSets {
 	testmod {
 		compileClasspath += sourceSets.main.compileClasspath
@@ -79,6 +82,7 @@ afterEvaluate {
         }
     }
 }
+
 java {
     withSourcesJar()
 }
@@ -90,6 +94,7 @@ processResources {
         expand "version": project.version
     }
 }
+
 task checkModuleVersion {
     doFirst {
         try {
@@ -104,6 +109,7 @@ task checkModuleVersion {
         }
     }
 }
+
 publishing {
     publications {
         boolean publish = true
