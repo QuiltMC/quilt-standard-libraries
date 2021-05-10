@@ -1,6 +1,7 @@
 plugins {
-	id("groovy-gradle-plugin")
 	id("java")
+	id("java-gradle-plugin")
+	id("groovy-gradle-plugin")
 }
 
 repositories {
@@ -16,6 +17,7 @@ repositories {
 dependencies {
 	implementation "org.quiltmc:loom:0.7.+"
 	implementation "net.kyori:indra-git:2.0.2"
+	implementation "org.quiltmc:quilt-json5:1.0.0-rc.3"
 	implementation "org.quiltmc.gradle-conventions:gradle-convention-plugins:0.+"
 }
 

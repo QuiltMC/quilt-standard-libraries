@@ -30,6 +30,7 @@ private def _moduleDependencies(Project project, List<String> depNames) {
 			mavenJava(MavenPublication) {
 				pom.withXml {
 					def depsNode = asNode().appendNode("dependencies")
+
 					deps.each {
 						def depNode = depsNode.appendNode("dependency")
 						depNode.appendNode("groupId", it.group)

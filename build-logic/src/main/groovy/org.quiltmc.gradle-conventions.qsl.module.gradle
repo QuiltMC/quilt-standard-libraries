@@ -1,4 +1,5 @@
-import org.eclipse.jgit.lib.ObjectId
+import qsl.internal.Git
+import qsl.internal.QSLModuleExtension
 
 /*:
  * Used constants and examples:
@@ -10,36 +11,25 @@ import org.eclipse.jgit.lib.ObjectId
  * qsl_module_version: 1.0.0
  */
 plugins {
+	id("java-library")
+	id("maven-publish")
+	id("net.kyori.indra.git")
     id("org.quiltmc.loom")
     id("org.quiltmc.gradle-conventions.java.style")
     id("org.quiltmc.gradle-conventions.java.version")
-    id("maven-publish")
 	id("org.quiltmc.gradle-conventions.qsl.common")
+}
+
+def extension = project.extensions.create("qslModule", QSLModuleExtension, project)
+
+// We seem to have to use afterEvaluate to verify this stuff
+afterEvaluate {
+	println(extension.moduleName.getOrNull())
 }
 
 group = "org.quiltmc.qsl-prototype.$project.qsl_library"
 archivesBaseName = project.qsl_module
 version = qsl_module_version
-
-def getHash() {
-    if (!indraGit.isPresent()) {
-        return "nogit"
-    } else {
-		def git = indraGit.git()
-        def latestCommits = git.log()
-				.add(indraGit.commit()) // Start from current commit
-				.addPath("library" + project.path.replace(':', '/')) // At root
-				.setMaxCount(1) // We want one commit
-				.call()
-				.collect()
-
-        if (latestCommits.isEmpty()) {
-            return "uncommitted"
-        } else {
-            return ObjectId.toString(latestCommits.get(0))
-        }
-    }
-}
 
 sourceSets {
 	testmod {
@@ -106,10 +96,11 @@ processResources {
 task checkModuleVersion {
     doFirst {
         try {
-            def xml =  new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/$project.qsl_library/$project.qsl_module/$project.version/" +
+            def xml = new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/$project.qsl_library/$project.qsl_module/$project.version/" +
                     "$project.qsl_module-$project.qsl_module_version" + ".pom").text
             def metadata = new groovy.xml.XmlSlurper().parseText(xml)
-            if (metadata.properties.hash != getHash()) {
+
+            if (metadata.properties.hash != Git.getLatestCommitHash(project)) {
                 throw new RuntimeException("A module is already published with a different hash!")
             }
         } catch (FileNotFoundException ignored) {
@@ -121,11 +112,13 @@ task checkModuleVersion {
 publishing {
     publications {
         boolean publish = true
+
         try {
             def xml =  new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/$project.qsl_library/$project.qsl_module/$project.version/" +
                     "$project.qsl_module-$project.qsl_module_version" + ".pom").text
             def metadata = new groovy.xml.XmlSlurper().parseText(xml)
-            if (metadata.properties.hash == getHash()) {
+
+            if (metadata.properties.hash == Git.getLatestCommitHash(project)) {
                 publish = false
             }
         } catch (FileNotFoundException ignored) {
@@ -135,11 +128,13 @@ publishing {
         if (publish) {
             mavenJava(MavenPublication) {
                 pom.withXml {
-                    asNode().appendNode("properties").appendNode("hash", getHash())
+                    asNode().appendNode("properties").appendNode("hash", Git.getLatestCommitHash(project))
                 }
+
                 artifact(remapJar) {
                     builtBy remapJar
                 }
+
                 artifact(sourcesJar) {
                     builtBy remapSourcesJar
                 }
