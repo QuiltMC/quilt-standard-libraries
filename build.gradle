@@ -1,6 +1,6 @@
 plugins {
 	id("maven-publish")
-	id("org.quiltmc.gradle-conventions.qsl.common")
+	id("qsl.common")
 }
 
 group = "org.quiltmc.qsl-prototype"
@@ -32,7 +32,7 @@ private def _moduleDependencies(Project project, List<String> depNames) {
 					def depsNode = asNode().appendNode("dependencies")
 
 					deps.each {
-						def depNode = depsNode.appendNode("dependency")
+						def depNode = depsNode.appendNode("dependencies")
 						depNode.appendNode("groupId", it.group)
 						depNode.appendNode("artifactId", it.name)
 						depNode.appendNode("version", it.version)
@@ -60,7 +60,7 @@ publishing {
 				rootProject.subprojects.stream().filter {
 					it.path.count(':') == 1
 				}.forEach {
-					def depNode = depsNode.appendNode("dependency")
+					def depNode = depsNode.appendNode("dependencies")
 					depNode.appendNode("groupId", it.group)
 					depNode.appendNode("artifactId", it.name)
 					depNode.appendNode("version", it.version)

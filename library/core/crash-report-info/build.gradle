@@ -1,9 +1,11 @@
 plugins {
-	id("org.quiltmc.gradle-conventions.qsl.module")
+	id("qsl.module")
 }
 
 qslModule {
 	moduleName = "crash-report-info"
 	version = "1.0.0"
-	coreDependency("qsl-base")
+	coreDependencies([
+			"qsl-base"
+	])
 }

@@ -1,6 +1,8 @@
 package qsl.internal.extension;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -8,6 +10,7 @@ import javax.inject.Inject;
 
 import groovy.util.Node;
 import org.gradle.api.Action;
+import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.model.ObjectFactory;
@@ -17,11 +20,14 @@ import org.gradle.api.publish.PublicationContainer;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.SourceSetContainer;
 import qsl.internal.json.ModJsonObject;
 
 public class QSLModuleExtension {
 	private final Project project;
 	private final Property<String> moduleName;
+	private final List<Dependency> moduleDependencies;
 	private Action<ModJsonObject> jsonPostProcessor;
 
 	@Inject
@@ -29,6 +35,7 @@ public class QSLModuleExtension {
 		this.project = project;
 		this.moduleName = factory.property(String.class);
 		this.moduleName.finalizeValueOnRead();
+		this.moduleDependencies = new ArrayList<>();
 	}
 
 	@Input
@@ -44,38 +51,49 @@ public class QSLModuleExtension {
 		this.project.setVersion(version);
 	}
 
-	public void coreDependency(String dependency) {
-		this.moduleDependency("core:" + dependency);
+	public void coreDependencies(Iterable<String> dependencies) {
+		for (String dependency : dependencies) {
+			Map<String, String> map = new LinkedHashMap<>(2);
+			map.put("path", ":core:" + dependency);
+			map.put("configuration", "dev");
+
+			Dependency project = this.project.getDependencies().project(map);
+			this.moduleDependencies.add(project);
+			this.project.getDependencies().add(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME, project);
+		}
 	}
 
-	public void interLibraryDependency(String dependency) {
-		// TODO:
+	// FIXME: Has to be a list
+	public void interLibraryDependencies(Iterable<String> dependencies) {
+		// TODO: Get owning library name
+		String library = "";
+
+		for (String dependency : dependencies) {
+			Map<String, String> map = new LinkedHashMap<>(2);
+			map.put("path", ":" + library + ":" + dependency);
+			map.put("configuration", "dev");
+
+			Dependency project = this.project.getDependencies().project(map);
+			this.moduleDependencies.add(project);
+			this.project.getDependencies().add(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME, project);
+		}
 	}
 
-	public void testingDependency(String dependency) {
-		// TODO:
-	}
-
-	private void moduleDependency(String dependency) {
-		Map<String, String> map = new LinkedHashMap<>(2);
-		map.put("path", ":" + dependency);
-		map.put("configuration", "dev");
-
-		// Add the module as a dependency
-		Dependency project = this.project.getDependencies().project(map);
-		this.project.getDependencies().add(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME, project);
-
+	// FIXME: Has to be a list
+	public void setupModuleDependencies() {
 		PublicationContainer publications = this.project.getExtensions().getByType(PublishingExtension.class).getPublications();
 
 		publications.named("mavenJava", MavenPublication.class, publication -> {
 			publication.pom(pom -> pom.withXml(xml -> {
-				Node dependencies = xml.asNode().appendNode("dependencies");
+				Node pomDeps = xml.asNode().appendNode("dependencies");
 
-				Node pomDep = dependencies.appendNode("dependency");
-				pomDep.appendNode("groupId", project.getGroup());
-				pomDep.appendNode("artifactId", project.getName());
-				pomDep.appendNode("version", project.getVersion());
-				pomDep.appendNode("scope", "compile");
+				for (Dependency dependency : this.moduleDependencies) {
+					Node pomDep = pomDeps.appendNode("dependencies");
+					pomDep.appendNode("groupId", dependency.getGroup());
+					pomDep.appendNode("artifactId", dependency.getName());
+					pomDep.appendNode("version", dependency.getVersion());
+					pomDep.appendNode("scope", "compile");
+				}
 			}));
 		});
 	}
@@ -85,7 +103,7 @@ public class QSLModuleExtension {
 	 *
 	 * @param postProcessor the post processor
 	 */
-	public void qmj(Action<ModJsonObject> postProcessor) {
+	public void modJson(Action<ModJsonObject> postProcessor) {
 		this.jsonPostProcessor = Objects.requireNonNull(postProcessor);
 	}
 }

@@ -1,5 +1,5 @@
 plugins {
-	id("org.quiltmc.gradle-conventions.qsl.module")
+	id("qsl.module")
 }
 
 qslModule {

@@ -17,19 +17,28 @@ plugins {
     id("org.quiltmc.loom")
     id("org.quiltmc.gradle-conventions.java.style")
     id("org.quiltmc.gradle-conventions.java.version")
-	id("org.quiltmc.gradle-conventions.qsl.common")
+	id("qsl.common")
 }
 
 def extension = project.extensions.create("qslModule", QSLModuleExtension, project)
 
-// We seem to have to use afterEvaluate to verify this stuff
+// Wait till extension has been evaluated before apply any inner parts
 afterEvaluate {
-	// TODO: Validate the extension parts
+	// TODO: Validate all extension parts
+	archivesBaseName = extension.moduleName
+
+	// Version is set automatically in extension, we just verify it is set.
+	// Fail on unset version.
+	if (project.version == "unspecified") {
+		throw new GradleException("Module $extension.moduleName needs a version to be set in the qslModule extension")
+	}
+
+	// Apply module dependencies for maven.
+	extension.setupModuleDependencies()
 }
 
+// TODO: Set qsl-library thing
 group = "org.quiltmc.qsl-prototype.$project.qsl_library"
-archivesBaseName = project.qsl_module
-version = qsl_module_version
 
 sourceSets {
 	testmod {
@@ -43,12 +52,14 @@ dependencies {
 }
 
 configurations {
+	// The reason for this configuration has been lost to time.
     dev
 }
 
 task runTestmodClient(type: org.quiltmc.loom.task.RunClientTask) {
 	classpath sourceSets.testmod.runtimeClasspath
 }
+
 task runTestmodServer(type: org.quiltmc.loom.task.RunServerTask) {
 	classpath sourceSets.testmod.runtimeClasspath
 }
@@ -96,7 +107,7 @@ processResources {
 task checkModuleVersion {
     doFirst {
         try {
-            def xml = new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/$project.qsl_library/$project.qsl_module/$project.version/" +
+            def xml = new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/$project.qsl_library/$extension.moduleName/$project.version/" +
                     "$project.qsl_module-$project.qsl_module_version" + ".pom").text
             def metadata = new groovy.xml.XmlSlurper().parseText(xml)
 

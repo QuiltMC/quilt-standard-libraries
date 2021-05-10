@@ -4,7 +4,7 @@ import qsl.internal.extension.QSLLibraryExtension
 plugins {
 	id("maven-publish")
 	id("net.kyori.indra.git")
-	id("org.quiltmc.gradle-conventions.qsl.common")
+	id("qsl.common")
 }
 
 def extension = project.extensions.create("qslLibrary", QSLLibraryExtension, project)
@@ -80,7 +80,7 @@ publishing {
 				rootProject.subprojects.stream().filter {
 					it.path.startsWith(":$qsl_library:")
 				}.forEach {
-					def depNode = depsNode.appendNode("dependency")
+					def depNode = depsNode.appendNode("dependencies")
 					depNode.appendNode("groupId", it.group)
 					depNode.appendNode("artifactId", it.name)
 					depNode.appendNode("version", it.version)
