@@ -7,6 +7,3 @@ qslModule {
 	version = "1.0.0"
 	coreDependency("qsl-base")
 }
-
-// TODO: Implement above
-coreDependencies(project, ["qsl-base"])

@@ -1,10 +1,13 @@
-import qsl.internal.Git;
+import qsl.internal.Git
+import qsl.internal.library.QSLLibraryExtension
 
 plugins {
 	id("maven-publish")
 	id("net.kyori.indra.git")
 	id("org.quiltmc.gradle-conventions.qsl.common")
 }
+
+def extension = project.extensions.create("qslLibrary", QSLLibraryExtension, project)
 
 group = "org.quiltmc.qsl-prototype"
 version = project.qsl_library_version

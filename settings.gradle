@@ -14,9 +14,12 @@ pluginManagement {
 
 rootProject.name = "qsl"
 
+// Build logic is an included build for holding the convention plugins
 includeBuild("build-logic")
 
-def includeLib(String library) {
+library("core")
+
+def library(String library) {
 	include(library)
 	project(":$library").projectDir = file("library/$library")
 
@@ -31,5 +34,3 @@ def includeLib(String library) {
 		}
 	}
 }
-
-includeLib("core")

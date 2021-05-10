@@ -1,13 +1,21 @@
 package qsl.internal;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.inject.Inject;
 
+import groovy.util.Node;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
+import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.model.ObjectFactory;
+import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.provider.Property;
+import org.gradle.api.publish.PublicationContainer;
+import org.gradle.api.publish.PublishingExtension;
+import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.tasks.Input;
 import qsl.internal.json.ModJsonObject;
 
@@ -37,7 +45,7 @@ public class QSLModuleExtension {
 	}
 
 	public void coreDependency(String dependency) {
-		// TODO:
+		this.moduleDependency("core:" + dependency);
 	}
 
 	public void interLibraryDependency(String dependency) {
@@ -46,6 +54,29 @@ public class QSLModuleExtension {
 
 	public void testingDependency(String dependency) {
 		// TODO:
+	}
+
+	private void moduleDependency(String dependency) {
+		Map<String, String> map = new LinkedHashMap<>(2);
+		map.put("path", ":" + dependency);
+		map.put("configuration", "dev");
+
+		// Add the module as a dependency
+		Dependency project = this.project.getDependencies().project(map);
+		this.project.getDependencies().add(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME, project);
+
+		PublicationContainer publications = this.project.getExtensions().getByType(PublishingExtension.class).getPublications();
+
+		publications.named("mavenJava", MavenPublication.class, publication -> {
+			publication.pom(pom -> pom.withXml(xml -> {
+				Node dependencies = xml.asNode().appendNode("dependencies");
+
+				dependencies.appendNode("groupId", project.getGroup());
+				dependencies.appendNode("artifactId", project.getName());
+				dependencies.appendNode("version", project.getVersion());
+				dependencies.appendNode("scope", "compile");
+			}));
+		});
 	}
 
 	/**
