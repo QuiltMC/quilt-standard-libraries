@@ -1,6 +1,8 @@
+import org.eclipse.jgit.lib.ObjectId
+
 plugins {
 	id("maven-publish")
-	id("org.ajoberstar.grgit")
+	id("net.kyori.indra.git")
 	id("org.quiltmc.gradle-conventions.qsl.common")
 }
 
@@ -8,15 +10,22 @@ group = "org.quiltmc.qsl-prototype"
 version = project.qsl_library_version
 
 def getHash() {
-	if (grgit == null) {
+	if (!indraGit.isPresent()) {
 		return "nogit"
 	} else {
-		def latestCommits = grgit.log(paths: [project.path.substring(1).replace(':', '/')], maxCommits: 1)
+		def git = indraGit.git()
+		def latestCommits = git.log()
+				.add(indraGit.commit()) // Start from current commit
+		// TODO: DO we need to specify the path?
+		// .addPath(rootProject.path.substring(1).replace(':', '/')) // At root
+				.setMaxCount(1) // We want one commit
+				.call()
+				.collect()
 
 		if (latestCommits.isEmpty()) {
 			return "uncommitted"
 		} else {
-			return latestCommits.get(0)
+			return ObjectId.toString(latestCommits.get(0))
 		}
 	}
 }

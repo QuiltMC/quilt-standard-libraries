@@ -1,7 +1,6 @@
 plugins {
 	id("maven-publish")
 	id("org.quiltmc.loom")
-	id("org.ajoberstar.grgit")
 }
 
 def ENV = System.getenv()

@@ -9,11 +9,6 @@ pluginManagement {
 			name = "Quilt"
             url = "https://maven.quiltmc.org/repository/release"
         }
-
-        maven {
-            name = "ajoberstar-backup"
-            url = "https://ajoberstar.org/bintray-backup/"
-        }
     }
 }
 
