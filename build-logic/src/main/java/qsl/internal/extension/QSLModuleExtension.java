@@ -71,10 +71,11 @@ public class QSLModuleExtension {
 			publication.pom(pom -> pom.withXml(xml -> {
 				Node dependencies = xml.asNode().appendNode("dependencies");
 
-				dependencies.appendNode("groupId", project.getGroup());
-				dependencies.appendNode("artifactId", project.getName());
-				dependencies.appendNode("version", project.getVersion());
-				dependencies.appendNode("scope", "compile");
+				Node pomDep = dependencies.appendNode("dependency");
+				pomDep.appendNode("groupId", project.getGroup());
+				pomDep.appendNode("artifactId", project.getName());
+				pomDep.appendNode("version", project.getVersion());
+				pomDep.appendNode("scope", "compile");
 			}));
 		});
 	}
