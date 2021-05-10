@@ -7,40 +7,40 @@ group = "org.quiltmc.qsl-prototype"
 version = project.qsl_version
 
 def coreDependencies(Project project, List<String> depNames) {
-    _moduleDependencies(project, depNames.iterator().collect {"core:$it"})
+	_moduleDependencies(project, depNames.iterator().collect { "core:$it" })
 }
 
 def libraryDependencies(Project project, List<String> depNames) {
-    _moduleDependencies(project, depNames.iterator().collect {"$project.qsl_library:$it"})
+	_moduleDependencies(project, depNames.iterator().collect { "$project.qsl_library:$it" })
 }
 
 private def _moduleDependencies(Project project, List<String> depNames) {
-    def deps = depNames.iterator().collect {
+	def deps = depNames.iterator().collect {
 		project.dependencies.project(path: ":$it", configuration: "dev")
 	}
 
-    project.dependencies {
-        deps.each {
-            implementation it
-        }
-    }
+	project.dependencies {
+		deps.each {
+			implementation it
+		}
+	}
 
-    project.publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                pom.withXml {
-                    def depsNode = asNode().appendNode("dependencies")
-                    deps.each {
-                        def depNode = depsNode.appendNode("dependency")
-                        depNode.appendNode("groupId", it.group)
-                        depNode.appendNode("artifactId", it.name)
-                        depNode.appendNode("version", it.version)
-                        depNode.appendNode("scope", "compile")
-                    }
-                }
-            }
-        }
-    }
+	project.publishing {
+		publications {
+			mavenJava(MavenPublication) {
+				pom.withXml {
+					def depsNode = asNode().appendNode("dependencies")
+					deps.each {
+						def depNode = depsNode.appendNode("dependency")
+						depNode.appendNode("groupId", it.group)
+						depNode.appendNode("artifactId", it.name)
+						depNode.appendNode("version", it.version)
+						depNode.appendNode("scope", "compile")
+					}
+				}
+			}
+		}
+	}
 }
 
 jar {

@@ -29,8 +29,6 @@ def getHash() {
 	}
 }
 
-println(getHash())
-
 afterEvaluate {
 	task runTestmodClient(type: org.quiltmc.loom.task.RunClientTask) {
 		subprojects.each {

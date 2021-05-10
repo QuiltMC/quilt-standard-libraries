@@ -1,15 +1,15 @@
 import java.nio.file.Files
 
 pluginManagement {
-    repositories {
+	repositories {
 		gradlePluginPortal()
 		mavenCentral()
 
 		maven {
 			name = "Quilt"
-            url = "https://maven.quiltmc.org/repository/release"
-        }
-    }
+			url = "https://maven.quiltmc.org/repository/release"
+		}
+	}
 }
 
 rootProject.name = "qsl"
