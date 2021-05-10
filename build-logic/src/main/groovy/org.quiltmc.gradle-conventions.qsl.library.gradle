@@ -1,5 +1,5 @@
 import qsl.internal.Git
-import qsl.internal.library.QSLLibraryExtension
+import qsl.internal.extension.QSLLibraryExtension
 
 plugins {
 	id("maven-publish")
@@ -8,6 +8,11 @@ plugins {
 }
 
 def extension = project.extensions.create("qslLibrary", QSLLibraryExtension, project)
+
+// We seem to have to use afterEvaluate to verify this stuff
+afterEvaluate {
+	// TODO: Validate the extension parts
+}
 
 group = "org.quiltmc.qsl-prototype"
 version = project.qsl_library_version

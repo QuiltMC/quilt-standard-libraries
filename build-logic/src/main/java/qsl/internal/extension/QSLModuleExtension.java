@@ -1,4 +1,4 @@
-package qsl.internal;
+package qsl.internal.extension;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

@@ -1,5 +1,5 @@
 import qsl.internal.Git
-import qsl.internal.QSLModuleExtension
+import qsl.internal.extension.QSLModuleExtension
 
 /*:
  * Used constants and examples:
@@ -24,7 +24,7 @@ def extension = project.extensions.create("qslModule", QSLModuleExtension, proje
 
 // We seem to have to use afterEvaluate to verify this stuff
 afterEvaluate {
-	println(extension.moduleName.getOrNull())
+	// TODO: Validate the extension parts
 }
 
 group = "org.quiltmc.qsl-prototype.$project.qsl_library"

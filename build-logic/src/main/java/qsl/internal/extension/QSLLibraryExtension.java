@@ -1,4 +1,4 @@
-package qsl.internal.library;
+package qsl.internal.extension;
 
 import javax.inject.Inject;
 
