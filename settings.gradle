@@ -18,9 +18,9 @@ includeBuild("build-logic")
 
 def includeLib(String library) {
 	include(library)
-	project(":$library").projectDir = file("src/$library")
+	project(":$library").projectDir = file("library/$library")
 
-	rootProject.projectDir.toPath().resolve("src/$library/").toFile().listFiles().each {
+	rootProject.projectDir.toPath().resolve("library/$library/").toFile().listFiles().each {
 		if (it.isDirectory() && it.name != "src" && it.name != "build" && !it.name.startsWith(".")) {
 			def properties = new Properties()
 			properties.load(Files.newBufferedReader(it.toPath().resolve("gradle.properties")))

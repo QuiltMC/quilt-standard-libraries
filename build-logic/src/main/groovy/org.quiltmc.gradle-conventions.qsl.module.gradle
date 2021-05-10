@@ -28,8 +28,7 @@ def getHash() {
 		def git = indraGit.git()
         def latestCommits = git.log()
 				.add(indraGit.commit()) // Start from current commit
-				// TODO: DO we need to specify the path?
-				.addPath(project.path.substring(1).replace(':', '/')) // At root
+				.addPath("library" + project.path.replace(':', '/')) // At root
 				.setMaxCount(1) // We want one commit
 				.call()
 				.collect()
@@ -41,8 +40,6 @@ def getHash() {
         }
     }
 }
-
-println(getHash())
 
 sourceSets {
 	testmod {
