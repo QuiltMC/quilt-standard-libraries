@@ -1,3 +1,0 @@
-plugins {
-	id "org.quiltmc.gradle-conventions.qsl.library"
-}

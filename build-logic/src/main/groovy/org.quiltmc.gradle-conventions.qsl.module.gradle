@@ -1,3 +1,5 @@
+import org.eclipse.jgit.lib.ObjectId
+
 /*:
  * Used constants and examples:
  * minecraft_version: 1.16.5
@@ -8,28 +10,37 @@
  * qsl_module_version: 1.0.0
  */
 plugins {
-    id "org.quiltmc.loom"
-    id "org.quiltmc.gradle-conventions.java.style"
-    id "org.quiltmc.gradle-conventions.java.version"
-    id "maven-publish"
-	id "org.quiltmc.gradle-conventions.qsl.common"
+    id("org.quiltmc.loom")
+    id("org.quiltmc.gradle-conventions.java.style")
+    id("org.quiltmc.gradle-conventions.java.version")
+    id("maven-publish")
+	id("org.quiltmc.gradle-conventions.qsl.common")
 }
+
 group = "org.quiltmc.qsl-prototype.$project.qsl_library"
 archivesBaseName = project.qsl_module
 version = qsl_module_version
+
 def getHash() {
-    if (grgit == null) {
+    if (!indraGit.isPresent()) {
         return "nogit"
     } else {
-        def latestCommits = grgit.log(paths: [project.path.substring(1).replace(':', '/')], maxCommits: 1)
+		def git = indraGit.git()
+        def latestCommits = git.log()
+				.add(indraGit.commit()) // Start from current commit
+				.addPath("library" + project.path.replace(':', '/')) // At root
+				.setMaxCount(1) // We want one commit
+				.call()
+				.collect()
 
         if (latestCommits.isEmpty()) {
             return "uncommitted"
         } else {
-            return latestCommits.get(0)
+            return ObjectId.toString(latestCommits.get(0))
         }
     }
 }
+
 sourceSets {
 	testmod {
 		compileClasspath += sourceSets.main.compileClasspath
@@ -79,6 +90,7 @@ afterEvaluate {
         }
     }
 }
+
 java {
     withSourcesJar()
 }
@@ -90,6 +102,7 @@ processResources {
         expand "version": project.version
     }
 }
+
 task checkModuleVersion {
     doFirst {
         try {
@@ -104,6 +117,7 @@ task checkModuleVersion {
         }
     }
 }
+
 publishing {
     publications {
         boolean publish = true

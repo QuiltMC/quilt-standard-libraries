@@ -2,28 +2,31 @@ import java.nio.file.Files
 
 pluginManagement {
     repositories {
-        maven {
+		gradlePluginPortal()
+		mavenCentral()
+
+		maven {
+			name = "Quilt"
             url = "https://maven.quiltmc.org/repository/release"
         }
-        maven {
-            name = 'ajoberstar-backup'
-            url = 'https://ajoberstar.org/bintray-backup/'
-        }
-        mavenCentral()
-        gradlePluginPortal()
     }
-
 }
-rootProject.name = 'qsl'
-def includeLib(String string) {
-	include string
-	project(":$string").projectDir = file("src/$string")
-	rootProject.projectDir.toPath().resolve("src/$string/").toFile().listFiles().each {
+
+rootProject.name = "qsl"
+
+includeBuild("build-logic")
+
+def includeLib(String library) {
+	include(library)
+	project(":$library").projectDir = file("library/$library")
+
+	rootProject.projectDir.toPath().resolve("library/$library/").toFile().listFiles().each {
 		if (it.isDirectory() && it.name != "src" && it.name != "build" && !it.name.startsWith(".")) {
 			def properties = new Properties()
 			properties.load(Files.newBufferedReader(it.toPath().resolve("gradle.properties")))
+
 			if (!properties.qsl_disabled) {
-				include "$string:$it.name"
+				include "$library:$it.name"
 			}
 		}
 	}
