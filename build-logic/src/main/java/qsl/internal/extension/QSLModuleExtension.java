@@ -10,7 +10,6 @@ import javax.inject.Inject;
 
 import groovy.util.Node;
 import org.gradle.api.Action;
-import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.model.ObjectFactory;
@@ -20,8 +19,6 @@ import org.gradle.api.publish.PublicationContainer;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.SourceSet;
-import org.gradle.api.tasks.SourceSetContainer;
 import qsl.internal.json.ModJsonObject;
 
 public class QSLModuleExtension {
@@ -63,7 +60,6 @@ public class QSLModuleExtension {
 		}
 	}
 
-	// FIXME: Has to be a list
 	public void interLibraryDependencies(Iterable<String> dependencies) {
 		// TODO: Get owning library name
 		String library = "";
@@ -79,7 +75,6 @@ public class QSLModuleExtension {
 		}
 	}
 
-	// FIXME: Has to be a list
 	public void setupModuleDependencies() {
 		PublicationContainer publications = this.project.getExtensions().getByType(PublishingExtension.class).getPublications();
 
