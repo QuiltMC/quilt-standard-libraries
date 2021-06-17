@@ -73,8 +73,7 @@ public class QSLModuleExtension {
 	}
 
 	public void interLibraryDependencies(Iterable<String> dependencies) {
-		// TODO: Get owning library name
-		String library = "";
+		String library = this.getLibrary().get();
 
 		for (String dependency : dependencies) {
 			Map<String, String> map = new LinkedHashMap<>(2);
