@@ -19,9 +19,9 @@ plugins {
 	id("java-library")
 	id("maven-publish")
 	id("net.kyori.indra.git")
-    id("org.quiltmc.loom")
-    id("org.quiltmc.gradle-conventions.java.style")
-    id("org.quiltmc.gradle-conventions.java.version")
+	id("org.quiltmc.loom")
+	id("org.quiltmc.gradle-conventions.java.style")
+	id("org.quiltmc.gradle-conventions.java.version")
 	id("qsl.common")
 }
 
@@ -64,7 +64,7 @@ dependencies {
 configurations {
 	// The reason for this `dev` configuration has been lost to time.
 	// If you happen to figure out why extension is needed, or a way to eliminate it, please tell us.
-    dev
+	dev
 }
 
 loom {
@@ -82,91 +82,91 @@ loom {
 }
 
 jar {
-    archiveClassifier.set("dev")
+	archiveClassifier.set("dev")
 }
 
 afterEvaluate {
-    remapJar {
-        input = file("${project.buildDir}/libs/$archivesBaseName-${version}-dev.jar")
+	remapJar {
+		input = file("${project.buildDir}/libs/$archivesBaseName-${version}-dev.jar")
 		archiveFileName = "${archivesBaseName}-${version}.jar"
-    }
+	}
 
-    artifacts {
-        dev file: file("${project.buildDir}/libs/$archivesBaseName-${version}-dev.jar"), type: "jar", builtBy: jar
-    }
+	artifacts {
+		dev file: file("${project.buildDir}/libs/$archivesBaseName-${version}-dev.jar"), type: "jar", builtBy: jar
+	}
 
 	// This is inside the afterEvaluate block because the version is set by the qslModule extension, which is not
 	// complete until project evaluation has finished.
-    processResources {
-        inputs.property "version", project.version
+	processResources {
+		inputs.property "version", project.version
 
 		filesMatching("fabric.mod.json") {
 			expand "version": project.version
 		}
-    }
+	}
 }
 
 java {
 	withJavadocJar()
-    withSourcesJar()
+	withSourcesJar()
 }
 
 // TODO: Configure javadoc options
 
 task checkModuleVersion {
-    doFirst {
+	doFirst {
 		def moduleName = extension.moduleName
 		def library = extension.library
 
-        try {
-            def xml = new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/$library/$moduleName/$project.version/" +
-                    "$moduleName-$project.version" + ".pom").text
-            def metadata = new groovy.xml.XmlSlurper().parseText(xml)
+		try {
+			def xml = new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/$library/$moduleName/$project.version/" +
+					"$moduleName-$project.version" + ".pom").text
+			def metadata = new groovy.xml.XmlSlurper().parseText(xml)
 
-            if (metadata.properties.hash != Git.getLatestCommitHash(project)) {
-                throw new RuntimeException("A module is already published with a different hash!")
-            }
-        } catch (FileNotFoundException ignored) {
-            // No existing version of the module was found.
-        }
-    }
+			if (metadata.properties.hash != Git.getLatestCommitHash(project)) {
+				throw new RuntimeException("A module is already published with a different hash!")
+			}
+		} catch (FileNotFoundException ignored) {
+			// No existing version of the module was found.
+		}
+	}
 }
 
 publishing {
-    publications {
+	publications {
 		def moduleName = extension.moduleName
 		def library = extension.library
-        boolean publish = true
+		boolean publish = true
 
-        try {
-            def xml = new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/$library/$moduleName/$project.version/" +
-                    "$moduleName-$project.version" + ".pom").text
-            def metadata = new groovy.xml.XmlSlurper().parseText(xml)
+		try {
+			def xml = new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/$library/$moduleName/$project.version/" +
+					"$moduleName-$project.version" + ".pom").text
+			def metadata = new groovy.xml.XmlSlurper().parseText(xml)
 
-            if (metadata.properties.hash == Git.getLatestCommitHash(project)) {
-                publish = false
-            }
-        } catch (FileNotFoundException ignored) {
-            // No existing version was published.
-        }
+			if (metadata.properties.hash == Git.getLatestCommitHash(project)) {
+				publish = false
+			}
+		} catch (FileNotFoundException ignored) {
+			// No existing version was published.
+		}
 
-        if (publish) {
-            mavenJava(MavenPublication) {
-                pom.withXml {
-                    asNode().appendNode("properties").appendNode("hash", Git.getLatestCommitHash(project))
-                }
+		if (publish) {
+			mavenJava(MavenPublication) {
+				pom.withXml {
+					asNode().appendNode("properties").appendNode("hash", Git.getLatestCommitHash(project))
+				}
 
-                artifact(remapJar) {
-                    builtBy remapJar
-                }
+				artifact(remapJar) {
+					builtBy remapJar
+				}
 
-                artifact(sourcesJar) {
-                    builtBy remapSourcesJar
-                }
-            }
-        }
+				artifact(sourcesJar) {
+					builtBy remapSourcesJar
+				}
+			}
+		}
 
-    }
+	}
 }
 
 publish.dependsOn checkModuleVersion
