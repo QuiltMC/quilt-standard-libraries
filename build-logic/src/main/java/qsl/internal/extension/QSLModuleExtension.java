@@ -23,6 +23,7 @@ import qsl.internal.json.ModJsonObject;
 
 public class QSLModuleExtension {
 	private final Project project;
+	private final Property<String> library;
 	private final Property<String> moduleName;
 	private final List<Dependency> moduleDependencies;
 	private Action<ModJsonObject> jsonPostProcessor;
@@ -30,6 +31,8 @@ public class QSLModuleExtension {
 	@Inject
 	public QSLModuleExtension(ObjectFactory factory, Project project) {
 		this.project = project;
+		this.library = factory.property(String.class);
+		this.library.finalizeValueOnRead();
 		this.moduleName = factory.property(String.class);
 		this.moduleName.finalizeValueOnRead();
 		this.moduleDependencies = new ArrayList<>();
@@ -42,6 +45,15 @@ public class QSLModuleExtension {
 
 	public void setModuleName(String name) {
 		this.moduleName.set(name);
+	}
+
+	@Input
+	public Property<String> getLibrary() {
+		return this.library;
+	}
+
+	public void setLibrary(String name) {
+		this.library.set(name);
 	}
 
 	public void setVersion(String version) {

@@ -1,3 +1,7 @@
+/*
+ * Common buildscript for QSL in projects which depend on Minecraft, whether for the API or for running the game.
+ */
+
 import qsl.internal.Versions;
 
 plugins {

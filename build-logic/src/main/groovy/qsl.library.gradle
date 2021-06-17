@@ -1,3 +1,16 @@
+/*
+ * Buildscript for defining a QSL library.
+ *
+ * This is a convention plugin, and is applied by adding the following to your `plugins` block: `id("qsl.library")`.
+ * A library is not exactly a mod, but rather a maven artifact that depends on a set of modules. For example, the `core`
+ * library may depend on a module to provide the event code, code to add Quilt mods to the crash report, etc.
+ *
+ * This buildscript declares an extension available under the `qslLibrary` name. This extension is used to configure
+ * attributes of the library, namely the name of the library and the library's version. The buildscript also declares
+ * some additional tasks that can be used to run the game and runTestmodClient, runTestmodServer. These testmod tasks
+ * can be run using `gradle LIBRARY_NAME:TASK_NAME`.
+ */
+
 import qsl.internal.Git
 import qsl.internal.extension.QSLLibraryExtension
 
@@ -14,31 +27,57 @@ afterEvaluate {
 	// TODO: Validate the extension parts
 }
 
-group = "org.quiltmc.qsl-prototype"
-version = project.qsl_library_version
-
-afterEvaluate {
-	task runTestmodClient(type: org.quiltmc.loom.task.RunClientTask) {
-		subprojects.each {
-			classpath += it.sourceSets.testmod.runtimeClasspath
-		}
-	}
-
-	task runTestmodServer(type: org.quiltmc.loom.task.RunServerTask) {
-		subprojects.each {
-			classpath += it.sourceSets.testmod.runtimeClasspath
-		}
-	}
-
-	task runAutoTestServer(type: org.quiltmc.loom.task.RunServerTask) {
-		subprojects.each {
-			classpath += it.sourceSets.testmod.runtimeClasspath
-		}
-		jvmArgs "-Dquilt.autoTest"
-		args "--nogui"
+sourceSets {
+	testmod {
+		compileClasspath += main.compileClasspath
+		runtimeClasspath += main.runtimeClasspath
 	}
 }
 
+group = "org.quiltmc.qsl-prototype"
+
+// Because we rely on the results of our submodules, we use afterEvaluate to setup the sourcesets and testmod tasks.
+afterEvaluate {
+	// Make this project include the compileClasspath and runtimeClasspath of the sub-modules.
+	subprojects.each {
+		project.sourceSets.main.compileClasspath += it.sourceSets.main.compileClasspath
+		project.sourceSets.main.runtimeClasspath += it.sourceSets.main.runtimeClasspath
+		project.sourceSets.testmod.compileClasspath += it.sourceSets.testmod.compileClasspath
+		project.sourceSets.testmod.runtimeClasspath += it.sourceSets.testmod.runtimeClasspath
+	}
+
+	loom {
+		// Define testmod tasks.
+		// These tasks allow you to run with testmods on the runtime classpath and will generate IDE run tasks.
+		runs {
+			testmodClient {
+				client()
+				name = "Testmod Client"
+				source(project.sourceSets.testmod)
+			}
+
+			testmodServer {
+				server()
+				name = "Testmod Server"
+				source(project.sourceSets.testmod)
+			}
+
+			// Auto test server, a server is ran for a few seconds and testmods run to verify things such as mixin
+			// application function properly.
+			// This task is typically ran by the CI server.
+			autoTestServer {
+				server()
+				name = "Auto test server"
+				source(project.sourceSets.testmod)
+				property("quilt.autoTest")
+				programArg("--nogui")
+			}
+		}
+	}
+}
+
+// A library isn't truly a distributed artifact, rather it is just maven metadata to depend on the modules of a library.
+// For that reason, we have no ruse for the jar or remapJar tasks.
 jar {
 	enabled = false
 }
@@ -49,9 +88,11 @@ remapJar {
 
 task checkLibVersion {
 	doFirst {
+		def libraryName = extension.libraryName
+
 		try {
-			def xml = new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/$project.qsl_library/$project.version/" +
-					"$project.qsl_library-$project.qsl_library_version" + ".pom").text
+			def xml = new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/$libraryName/$project.version/" +
+					"$libraryName-$project.version" + ".pom").text
 			def metadata = new groovy.xml.XmlSlurper().parseText(xml)
 
 			if (metadata.properties.hash != Git.getLatestCommitHash(project)) {
@@ -78,7 +119,7 @@ publishing {
 				asNode().appendNode("properties").appendNode("hash", Git.getLatestCommitHash(project))
 				def depsNode = asNode().appendNode("dependencies")
 				rootProject.subprojects.stream().filter {
-					it.path.startsWith(":$qsl_library:")
+					it.path.startsWith(":$extension.libraryName:")
 				}.forEach {
 					def depNode = depsNode.appendNode("dependencies")
 					depNode.appendNode("groupId", it.group)
