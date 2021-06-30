@@ -33,7 +33,7 @@ def library(String library) {
 				&& it.name != "build" // Ignore build artifacts
 				&& !it.name.startsWith(".") // Ignore anything hidden on unix-like OSes
 		) {
-			// If this file does not exist, include the project in the build.
+			// Libraries can be disabled by adding a file named DISABLE at the root of its directory
 			if (Files.notExists(it.toPath().resolve("DISABLE"))) {
 				include "$library:$it.name"
 			}

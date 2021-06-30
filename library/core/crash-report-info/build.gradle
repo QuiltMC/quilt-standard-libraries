@@ -7,6 +7,6 @@ qslModule {
 	version = "1.0.0"
 	library = "core"
 	coreDependencies([
-			"qsl-base"
+		"qsl-base"
 	])
 }

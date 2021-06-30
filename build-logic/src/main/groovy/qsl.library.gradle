@@ -77,7 +77,7 @@ afterEvaluate {
 }
 
 // A library isn't truly a distributed artifact, rather it is just maven metadata to depend on the modules of a library.
-// For that reason, we have no ruse for the jar or remapJar tasks.
+// For that reason, we have no use for the jar or remapJar tasks.
 jar {
 	enabled = false
 }
