@@ -21,6 +21,10 @@ remapJar {
 	enabled = false
 }
 
+jar {
+	enabled = false
+}
+
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
