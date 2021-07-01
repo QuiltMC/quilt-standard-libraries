@@ -30,6 +30,7 @@ publishing {
 		mavenJava(MavenPublication) {
 			pom.withXml {
 				def depsNode = asNode().appendNode("dependencies")
+
 				rootProject.subprojects.stream().filter {
 					it.path.count(':') == 1
 				}.forEach {

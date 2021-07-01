@@ -29,8 +29,10 @@ def extension = project.extensions.create("qslModule", QSLModuleExtension, proje
 
 // We need to wait until project evaluation has finished to peek into a complete QSL module extension.
 afterEvaluate {
+	// Make sure to call get on any properties
+
 	// Module name should also be the name of artifacts.
-	archivesBaseName = extension.moduleName
+	archivesBaseName = extension.moduleName.get()
 
 	if (extension.library.get() == null) {
 		throw new GradleException("Module $extension.moduleName needs the `library` field set in the qslModule extension")
@@ -86,12 +88,12 @@ jar {
 
 afterEvaluate {
 	remapJar {
-		input = file("${project.buildDir}/libs/$archivesBaseName-${version}-dev.jar")
-		archiveFileName = "${archivesBaseName}-${version}.jar"
+		input = file("$buildDir/libs/$archivesBaseName-$version-dev.jar")
+		archiveFileName = "$archivesBaseName-$version.jar"
 	}
 
 	artifacts {
-		dev file: file("${project.buildDir}/libs/$archivesBaseName-${version}-dev.jar"), type: "jar", builtBy: jar
+		dev file: file("$buildDir/libs/$archivesBaseName-$version-dev.jar"), type: "jar", builtBy: jar
 	}
 
 	// This is inside the afterEvaluate block because the version is set by the qslModule extension, which is not
@@ -109,6 +111,17 @@ java {
 	withJavadocJar()
 	withSourcesJar()
 }
+
+//tasks.sourcesJar {
+//	dependsOn(tasks.classes)
+//	archiveClassifier = "sources"
+//	from(sourceSets.main.allSource)
+//}
+
+//task sourcesJar(type: Jar, dependsOn: classes) {
+//	archiveClassifier = "sources"
+//	from sourceSets.main.allSource
+//}
 
 // TODO: Configure javadoc options
 
