@@ -9,6 +9,7 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 import groovy.util.Node;
+import groovy.xml.QName;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Dependency;
@@ -19,6 +20,7 @@ import org.gradle.api.publish.PublicationContainer;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.tasks.Input;
+import qsl.internal.GroovyXml;
 import qsl.internal.json.ModJsonObject;
 
 public class QSLModuleExtension {
@@ -91,10 +93,10 @@ public class QSLModuleExtension {
 
 		publications.named("mavenJava", MavenPublication.class, publication -> {
 			publication.pom(pom -> pom.withXml(xml -> {
-				Node pomDeps = xml.asNode().appendNode("dependencies");
+				Node pomDeps = GroovyXml.getOrCreateNode(xml.asNode(), "dependencies");
 
 				for (Dependency dependency : this.moduleDependencies) {
-					Node pomDep = pomDeps.appendNode("dependencies");
+					Node pomDep = pomDeps.appendNode("dependency");
 					pomDep.appendNode("groupId", dependency.getGroup());
 					pomDep.appendNode("artifactId", dependency.getName());
 					pomDep.appendNode("version", dependency.getVersion());

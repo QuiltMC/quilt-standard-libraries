@@ -34,7 +34,7 @@ publishing {
 				rootProject.subprojects.stream().filter {
 					it.path.count(':') == 1
 				}.forEach {
-					def depNode = depsNode.appendNode("dependencies")
+					def depNode = depsNode.appendNode("dependency")
 					depNode.appendNode("groupId", it.group)
 					depNode.appendNode("artifactId", it.name)
 					depNode.appendNode("version", it.version)
