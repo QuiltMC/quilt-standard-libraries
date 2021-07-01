@@ -89,7 +89,8 @@ jar {
 afterEvaluate {
 	remapJar {
 		input = file("$buildDir/libs/$archivesBaseName-$version-dev.jar")
-		archiveFileName = "$archivesBaseName-$version.jar"
+		// Clarifying {} required since groovy thinks I am referring to a property called `jar` on version
+		archiveFileName = "$archivesBaseName-${version}.jar"
 	}
 
 	artifacts {
@@ -111,17 +112,6 @@ java {
 	withJavadocJar()
 	withSourcesJar()
 }
-
-//tasks.sourcesJar {
-//	dependsOn(tasks.classes)
-//	archiveClassifier = "sources"
-//	from(sourceSets.main.allSource)
-//}
-
-//task sourcesJar(type: Jar, dependsOn: classes) {
-//	archiveClassifier = "sources"
-//	from sourceSets.main.allSource
-//}
 
 // TODO: Configure javadoc options
 
