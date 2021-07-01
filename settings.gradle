@@ -14,22 +14,29 @@ pluginManagement {
 
 rootProject.name = "qsl"
 
+// Build logic is an included build for holding the convention plugins for generating libraries and modules.
 includeBuild("build-logic")
 
-def includeLib(String library) {
+// Libraries
+library("core")
+
+def library(String library) {
 	include(library)
-	project(":$library").projectDir = file("library/$library")
+
+	def libraryProject = project(":$library")
+	libraryProject.projectDir = file("library/$library")
 
 	rootProject.projectDir.toPath().resolve("library/$library/").toFile().listFiles().each {
-		if (it.isDirectory() && it.name != "src" && it.name != "build" && !it.name.startsWith(".")) {
-			def properties = new Properties()
-			properties.load(Files.newBufferedReader(it.toPath().resolve("gradle.properties")))
-
-			if (!properties.qsl_disabled) {
+		// Is the module disabled?
+		if (it.isDirectory()
+				&& it.name != "src" // Ignore sources
+				&& it.name != "build" // Ignore build artifacts
+				&& !it.name.startsWith(".") // Ignore anything hidden on unix-like OSes
+		) {
+			// Libraries can be disabled by adding a file named DISABLE at the root of its directory
+			if (Files.notExists(it.toPath().resolve("DISABLE"))) {
 				include "$library:$it.name"
 			}
 		}
 	}
 }
-
-includeLib("core")

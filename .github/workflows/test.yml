@@ -5,7 +5,8 @@ jobs:
   build:
     strategy:
       matrix:
-        java: [8-jdk, 11-jdk, 16-jdk]
+        # We still target jdk8, however it is broken due to eclipse now requiring J11 to use jdt, which mercury relies on.
+        java: [11-jdk, 16-jdk]
     runs-on: ubuntu-20.04
     container:
       image: openjdk:${{ matrix.java }}

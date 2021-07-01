@@ -1,53 +1,27 @@
+import qsl.internal.Versions
+
 plugins {
 	id("maven-publish")
-	id("org.quiltmc.gradle-conventions.qsl.common")
+	id("qsl.common")
 }
 
-group = "org.quiltmc.qsl-prototype"
-version = project.qsl_version
+group = "org.quiltmc.qsl"
+version = Versions.QSL_VERSION
 
-def coreDependencies(Project project, List<String> depNames) {
-	_moduleDependencies(project, depNames.iterator().collect { "core:$it" })
-}
-
-def libraryDependencies(Project project, List<String> depNames) {
-	_moduleDependencies(project, depNames.iterator().collect { "$project.qsl_library:$it" })
-}
-
-private def _moduleDependencies(Project project, List<String> depNames) {
-	def deps = depNames.iterator().collect {
-		project.dependencies.project(path: ":$it", configuration: "dev")
-	}
-
-	project.dependencies {
-		deps.each {
-			implementation it
-		}
-	}
-
-	project.publishing {
-		publications {
-			mavenJava(MavenPublication) {
-				pom.withXml {
-					def depsNode = asNode().appendNode("dependencies")
-					deps.each {
-						def depNode = depsNode.appendNode("dependency")
-						depNode.appendNode("groupId", it.group)
-						depNode.appendNode("artifactId", it.name)
-						depNode.appendNode("version", it.version)
-						depNode.appendNode("scope", "compile")
-					}
-				}
-			}
-		}
+sourceSets {
+	testmod {
+		compileClasspath += main.compileClasspath
+		runtimeClasspath += main.runtimeClasspath
 	}
 }
 
-jar {
+// The root project simply just publishes all artifacts.
+// For that reason, do not generate a remapped jar.
+remapJar {
 	enabled = false
 }
 
-remapJar {
+jar {
 	enabled = false
 }
 
@@ -56,6 +30,7 @@ publishing {
 		mavenJava(MavenPublication) {
 			pom.withXml {
 				def depsNode = asNode().appendNode("dependencies")
+
 				rootProject.subprojects.stream().filter {
 					it.path.count(':') == 1
 				}.forEach {
@@ -70,31 +45,42 @@ publishing {
 	}
 }
 
+// Because we rely on the results of our libraries, we use afterEvaluate to setup the sourcesets and testmod tasks.
 afterEvaluate {
-	task runTestmodClient(type: org.quiltmc.loom.task.RunClientTask) {
-		subprojects.stream().filter {
-			it.path.count(":") == 2
-		}.forEach {
-			classpath += it.sourceSets.testmod.runtimeClasspath
-		}
+	// Add sourceSet dependencies on all libraries
+	// Make this project include the compileClasspath and runtimeClasspath of the libraries.
+	subprojects.stream().filter {it.path.count(":") == 1 }.each {
+		project.sourceSets.main.compileClasspath += it.sourceSets.main.compileClasspath
+		project.sourceSets.main.runtimeClasspath += it.sourceSets.main.runtimeClasspath
+		project.sourceSets.testmod.compileClasspath += it.sourceSets.testmod.compileClasspath
+		project.sourceSets.testmod.runtimeClasspath += it.sourceSets.testmod.runtimeClasspath
 	}
+}
 
-	task runTestmodServer(type: org.quiltmc.loom.task.RunServerTask) {
-		subprojects.stream().filter {
-			it.path.count(":") == 2
-		}.forEach {
-			classpath += it.sourceSets.testmod.runtimeClasspath
+loom {
+	runs {
+		testmodClient {
+			client()
+			configName = "Testmod Client"
+			source(project.sourceSets.testmod)
 		}
-	}
 
-	task runAutoTestServer(type: org.quiltmc.loom.task.RunServerTask) {
-		subprojects.stream().filter {
-			it.path.count(":") == 2
-		}.forEach {
-			classpath += it.sourceSets.testmod.runtimeClasspath
+		testmodServer {
+			server()
+			configName = "Testmod Server"
+			source(project.sourceSets.testmod)
 		}
-		jvmArgs "-Dquilt.autoTest"
-		args "--nogui"
+
+		// Auto test server, a server is ran for a few seconds and testmods run to verify things such as mixin
+		// application function properly.
+		// This task is typically ran by the CI server.
+		autoTestServer {
+			server()
+			configName = "Auto test server"
+			source(project.sourceSets.testmod)
+			property("quilt.autoTest")
+			programArg("--nogui")
+		}
 	}
 }
 
@@ -103,12 +89,13 @@ task checkVersion {
 		try {
 			def xml = new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/maven-metadata.xml").text
 			def metadata = new groovy.xml.XmlSlurper().parseText(xml)
-			def versions = metadata.versioning.versions.version*.text();
+			def versions = metadata.versioning.versions.version*.text()
+
 			if (versions.contains(version)) {
 				throw new RuntimeException("${version} has already been released!")
 			}
-		} catch (FileNotFoundException ex) {
-			// Ignored
+		} catch (FileNotFoundException ignored) {
+			// No existing version of library found
 		}
 	}
 }

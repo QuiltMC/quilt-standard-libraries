@@ -1,3 +1,9 @@
 plugins {
-	id("org.quiltmc.gradle-conventions.qsl.module")
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "qsl-base"
+	version = "1.0.0"
+	library = "core"
 }

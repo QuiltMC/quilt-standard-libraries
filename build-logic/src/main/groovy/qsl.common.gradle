@@ -1,3 +1,9 @@
+/*
+ * Common buildscript for QSL in projects which depend on Minecraft, whether for the API or for running the game.
+ */
+
+import qsl.internal.Versions;
+
 plugins {
 	id("maven-publish")
 	id("org.quiltmc.loom")
@@ -19,10 +25,10 @@ publishing {
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:$project.minecraft_version"
-	mappings "org.quiltmc:yarn:$project.minecraft_version+build.$project.yarn_build:v2"
+	minecraft "com.mojang:minecraft:${Versions.MINECRAFT_VERSION}"
+	mappings "org.quiltmc:yarn:${Versions.MINECRAFT_VERSION}+build.${Versions.YARN_BUILD}:v2"
 
-	modImplementation "org.quiltmc:quilt-loader:$project.loader_version"
+	modImplementation "org.quiltmc:quilt-loader:${Versions.LOADER_VERSION}"
 }
 
 loom {
