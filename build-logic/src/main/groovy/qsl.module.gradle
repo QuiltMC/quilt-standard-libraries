@@ -47,7 +47,7 @@ afterEvaluate {
 	extension.setupModuleDependencies()
 	// TODO: Anything else to validate.
 
-	group = "org.quiltmc.qsl-prototype.${extension.library.get()}"
+	group = "org.quiltmc.qsl.${extension.library.get()}"
 }
 
 sourceSets {

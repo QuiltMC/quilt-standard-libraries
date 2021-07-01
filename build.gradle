@@ -5,7 +5,7 @@ plugins {
 	id("qsl.common")
 }
 
-group = "org.quiltmc.qsl-prototype"
+group = "org.quiltmc.qsl"
 version = Versions.QSL_VERSION
 
 sourceSets {

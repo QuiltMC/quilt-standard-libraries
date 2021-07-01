@@ -34,7 +34,7 @@ sourceSets {
 	}
 }
 
-group = "org.quiltmc.qsl-prototype"
+group = "org.quiltmc.qsl"
 
 // Because we rely on the results of our submodules, we use afterEvaluate to setup the sourcesets and testmod tasks.
 afterEvaluate {
