@@ -84,9 +84,8 @@ public abstract class Event<T> {
 	 *
 	 * <p>Event implementors: use {@link #setInvoker(Object)} instead.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	@ApiStatus.Internal // not considered public api anymore
-	@ApiStatus.ScheduledForRemoval // will be made private soon
 	protected volatile T invoker;
 
 	/**

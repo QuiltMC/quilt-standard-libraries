@@ -23,10 +23,7 @@ dependencies {
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"
-
-	if (JavaVersion.current().isJava9Compatible()) {
-		it.options.release.set(8)
-	}
+	it.options.release.set(16) // Minecraft is Java 16
 }
 
 java {

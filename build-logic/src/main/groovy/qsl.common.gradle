@@ -31,6 +31,11 @@ dependencies {
 	modImplementation "org.quiltmc:quilt-loader:${Versions.LOADER_VERSION}"
 }
 
+tasks.withType(JavaCompile).configureEach {
+	it.options.encoding = "UTF-8"
+	it.options.release.set(16) // Minecraft is Java 16
+}
+
 loom {
 	// Upstream Loom breaks this so we can't have nice things until the quilt-gradle replacement
 	//shareCaches = true

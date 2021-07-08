@@ -60,7 +60,8 @@ final class ArrayEvent<T> extends Event<T> {
 	}
 
 	private void update() {
-		// FIXME: Is this going to allow someone to change the backing callbacks field in the factory?
-		this.setInvoker(this.invokerFactory.apply(this.callbacks));
+		// Make a copy of the array we give to the invoker factory so entries cannot be removed from this event's
+		// backing array
+		this.setInvoker(this.invokerFactory.apply(Arrays.copyOf(this.callbacks, this.callbacks.length)));
 	}
 }
