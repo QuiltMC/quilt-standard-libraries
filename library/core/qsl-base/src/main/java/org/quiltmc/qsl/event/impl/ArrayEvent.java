@@ -20,9 +20,9 @@ import org.quiltmc.qsl.event.api.Event;
  */
 final class ArrayEvent<T> extends Event<T> {
 	/**
-	 * The function used to generate the invoker. This is user specified.
+	 * The function used to generate the implementation of the invoker. This is user specified.
 	 */
-	private final Function<T[], T> invokerFactory;
+	private final Function<T[], T> implementation;
 	/**
 	 * A lock is used to enforce thread safety. A lock was chosen to avoid avoid associating a monitor with the object
 	 * in order not to influence a lock-free event implementation.
@@ -34,11 +34,11 @@ final class ArrayEvent<T> extends Event<T> {
 	private T[] callbacks;
 
 	@SuppressWarnings("unchecked")
-	ArrayEvent(Class<? super T> type, Function<T[], T> invokerFactory) {
+	ArrayEvent(Class<? super T> type, Function<T[], T> implementation) {
 		Objects.requireNonNull(type, "Class specifying the type of T in the event cannot be null");
-		Objects.requireNonNull(invokerFactory, "Invoker factory cannot be null");
+		Objects.requireNonNull(implementation, "Invoker factory cannot be null");
 
-		this.invokerFactory = invokerFactory;
+		this.implementation = implementation;
 		this.callbacks = (T[]) Array.newInstance(type, 0);
 		this.update();
 	}
@@ -62,6 +62,6 @@ final class ArrayEvent<T> extends Event<T> {
 	private void update() {
 		// Make a copy of the array we give to the invoker factory so entries cannot be removed from this event's
 		// backing array
-		this.setInvoker(this.invokerFactory.apply(Arrays.copyOf(this.callbacks, this.callbacks.length)));
+		this.setInvoker(this.implementation.apply(Arrays.copyOf(this.callbacks, this.callbacks.length)));
 	}
 }

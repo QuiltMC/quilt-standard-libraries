@@ -9,19 +9,19 @@ import org.quiltmc.qsl.event.impl.EventFactoryImpl;
  */
 public final class EventFactory {
 	// TODO: Document
-	public static <T> Event<T> createArrayEvent(Class<? super T> type, Function<T[], T> invokerFactory) {
-		return EventFactoryImpl.createArrayEvent(type, invokerFactory);
+	public static <T> Event<T> createArrayEvent(Class<? super T> type, Function<T[], T> implementation) {
+		return EventFactoryImpl.createArrayEvent(type, implementation);
 	}
 
 	// TODO: Document
-	public static <T> Event<T> createArrayEvent(Class<? super T> type, T emptyInvoker, Function<T[], T> invokerFactory) {
+	public static <T> Event<T> createArrayEvent(Class<? super T> type, T emptyInvoker, Function<T[], T> implementation) {
 		return EventFactoryImpl.createArrayEvent(type, callbacks -> {
 			if (callbacks.length == 0) {
 				return emptyInvoker;
 			} else if (callbacks.length == 1) {
 				return callbacks[0];
 			} else {
-				return invokerFactory.apply(callbacks);
+				return implementation.apply(callbacks);
 			}
 		});
 	}
