@@ -54,7 +54,12 @@ import org.jetbrains.annotations.ApiStatus;
  *
  * <h2>Example: Executing an event</h2>
  *
- * TODO: How the fuck do I explain this
+ * Executing an event is done by calling a method on the event invoker. Where {@code T} is Runnable, executing an event
+ * is done through the following:
+ *
+ * <pre><code>
+ * EXAMPLE.invoker().run();
+ * </code></pre>
  *
  * <h2>Best practices for implementations of {@link Event}</h2>
  *
@@ -109,7 +114,6 @@ public abstract class Event<T> {
 	 *
 	 * @param invoker the invoker
 	 */
-	// TODO: Do I need to synchronize this?
 	protected final void setInvoker(T invoker) {
 		this.invoker = invoker;
 	}
