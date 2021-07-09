@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 
 /**
  * A marker interface that indicates an event stored in a field or returned by a method may invoke the event callback on
- * one or more context objects passed via the method parameters.
+ * one or more context objects passed in some method parameters.
  *
  * <p>The primary use of this annotation is for static analysis and documentation. Where a field or method return value
  * is annotated as a parameter invoking, you are encouraged to note in the documentation which context parameters may be
