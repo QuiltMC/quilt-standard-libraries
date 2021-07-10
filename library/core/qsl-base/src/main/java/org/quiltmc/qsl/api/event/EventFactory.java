@@ -1,8 +1,8 @@
-package org.quiltmc.qsl.event.api;
+package org.quiltmc.qsl.api.event;
 
 import java.util.function.Function;
 
-import org.quiltmc.qsl.event.impl.EventFactoryImpl;
+import org.quiltmc.qsl.impl.event.EventFactoryImpl;
 
 /**
  * Factory methods to create event instances.

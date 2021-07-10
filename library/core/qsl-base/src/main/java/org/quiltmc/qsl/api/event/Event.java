@@ -1,6 +1,4 @@
-package org.quiltmc.qsl.event.api;
-
-import org.jetbrains.annotations.ApiStatus;
+package org.quiltmc.qsl.api.event;
 
 /**
  * Base class for event implementations.
@@ -83,15 +81,8 @@ public abstract class Event<T> {
 	 *
 	 * <p>This field is volatile to allow implementations of this class to use a suitable thread safety mechanism if
 	 * desired.
-	 *
-	 * @deprecated this is only protected for the purpose of being compatible with existing fabric mods.
-	 * This will most likely be made private in 1.18.
-	 *
-	 * <p>Event implementors: use {@link #setInvoker(Object)} instead.
 	 */
-	@Deprecated(forRemoval = true)
-	@ApiStatus.Internal // not considered public api anymore
-	protected volatile T invoker;
+	private volatile T invoker;
 
 	/**
 	 * Returns the invoker instance.

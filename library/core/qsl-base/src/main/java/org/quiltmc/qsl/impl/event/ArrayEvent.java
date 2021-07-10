@@ -1,4 +1,4 @@
-package org.quiltmc.qsl.event.impl;
+package org.quiltmc.qsl.impl.event;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -7,7 +7,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
-import org.quiltmc.qsl.event.api.Event;
+import org.quiltmc.qsl.api.event.Event;
 
 /**
  * An event that uses an array to hold all callbacks and uses a user specified function to generate the invoker that the
