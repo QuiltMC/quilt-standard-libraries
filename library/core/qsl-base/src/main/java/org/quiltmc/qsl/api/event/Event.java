@@ -103,7 +103,7 @@ public abstract class Event<T> {
 	 *
 	 * <p>Since the invoker field is volatile, the invoker field should be available immediately for use.
 	 *
-	 * @param invoker the invoker
+	 * @param invoker the invoker instance
 	 */
 	protected final void setInvoker(T invoker) {
 		this.invoker = invoker;
@@ -112,7 +112,7 @@ public abstract class Event<T> {
 	/**
 	 * Register a callback to the event.
 	 *
-	 * @param callback the callback.
+	 * @param callback the callback
 	 */
 	public abstract void register(T callback);
 }
