@@ -22,10 +22,17 @@ package org.quiltmc.qsl.api.event;
  * pass an instance of {@code T} into {@link #register}.
  *
  * <pre><code>
- * public static final Event&lt;Runnable&gt; EXAMPLE = ...; // implementation
+ * // Events should use a dedicated functional interface for T rather than overloading multiple events to the same type
+ * // to allow those who implement using a class to implement multiple events.
+ * &#64;FunctionalInterface
+ * public interface Example {
+ *     void doSomething();
+ * }
+ *
+ * public static final Event&lt;Example&gt; EXAMPLE = ...; // implementation
  *
  * public void registerEvents() {
- *     // Since runnable is a functional interface, we can use the lambda form.
+ *     // Since T is a functional interface, we can use the lambda form.
  *     EXAMPLE.register(() -> {
  *         // Do something
  *     });
@@ -33,7 +40,7 @@ package org.quiltmc.qsl.api.event;
  *     // Or we can use a method reference.
  *     EXAMPLE.register(this::runSomething);
  *
- *     // Or implement the callback onto a class.
+ *     // Or implement T using a class.
  *     // You can also use an anonymous class here; for brevity that is not included.
  *     EXAMPLE.register(new ImplementedOntoClass());
  * }
@@ -43,8 +50,8 @@ package org.quiltmc.qsl.api.event;
  * }
  *
  * // When implementing onto a class, the class must implement the same type as the event invoker.
- * class ImplementedOntoClass implements Runnable {
- *     public void run() {
+ * class ImplementedOntoClass implements Example {
+ *     public void doSomething() {
  *         // Do something else again
  *     }
  * }
@@ -56,7 +63,7 @@ package org.quiltmc.qsl.api.event;
  * is done through the following:
  *
  * <pre><code>
- * EXAMPLE.invoker().run();
+ * EXAMPLE.invoker().doSomething();
  * </code></pre>
  *
  * <h2>Best practices for implementations of {@link Event}</h2>
