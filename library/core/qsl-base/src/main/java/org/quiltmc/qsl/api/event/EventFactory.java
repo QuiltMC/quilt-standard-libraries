@@ -45,15 +45,14 @@ public final class EventFactory {
 	 * in 99% of cases with little to no performance overhead.
 	 *
 	 * @param type the class representing the type of the invoker that is executed by the event
-	 * @param fallbackImplementation the fallback implementation of T to use when the array event has no callback
-	 * registrations
+	 * @param emptyImplementation the implementation of T to use when the array event has no callback registrations
 	 * @param implementation a function which generates an invoker implementation using an array of callbacks
 	 * @param <T> the type of the invoker executed by the event
 	 * @return a new event instance
 	 */
-	public static <T> Event<T> createArrayEvent(Class<? super T> type, T fallbackImplementation, Function<T[], T> implementation) {
+	public static <T> Event<T> createArrayEvent(Class<? super T> type, T emptyImplementation, Function<T[], T> implementation) {
 		return EventFactoryImpl.createArrayEvent(type, callbacks -> switch (callbacks.length) {
-			case 0 -> fallbackImplementation;
+			case 0 -> emptyImplementation;
 			case 1 -> callbacks[0];
 			// We can ensure the implementation may not remove elements from the backing array since the array given to
 			// this method is a copy of the backing array.
