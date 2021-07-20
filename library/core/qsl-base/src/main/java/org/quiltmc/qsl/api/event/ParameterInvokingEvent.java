@@ -57,7 +57,7 @@ import java.lang.annotation.Target;
  *
  * <pre><code>
  * &#64;ParameterInvokingEvent
- * public static final Event&lt;ScaryEvents.Spooked&gt; SPOOKED = EventFactory.createArrayEvent(ScaryEvents.Spooked.class, callbacks -> (ghost, spookedEntity) -> {
+ * public static final ArrayEvent&lt;ScaryEvents.Spooked&gt; SPOOKED = ArrayEvent.create(ScaryEvents.Spooked.class, callbacks -> (ghost, spookedEntity) -> {
  *     // Since this event is parameter invoking, does the entity being spooked implement `Spooked`?
  *     if (spookedEntity instanceof ScaryEvents.Spooked callback) {
  *         // Since the entity implements the callback, invoke the callback on the entity.
