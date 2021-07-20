@@ -120,9 +120,9 @@ public final class ArrayEvent<T> {
 	 * ArrayEvent is a thread-safe event implementation which uses a lock and copies the backing array during
 	 * registration of callbacks.
 	 *
-	 * Copy-on-write is used so that the invoker is currently executing callbacks will not have it's current state
-	 * modified during registration. The new callback registered will only be available on invoker instances returned
-	 * after the registration completes.
+	 * Copy-on-write is used so that if the invoker is currently executing callbacks, it will not have it's current
+	 * state modified during registration of other callbacks. The new callback registered will only be available on
+	 * invoker instances returned after the registration completes.
 	 *
 	 * Notes for future maintainers:
 	 *
