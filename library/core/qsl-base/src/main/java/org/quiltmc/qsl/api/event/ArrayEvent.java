@@ -10,7 +10,7 @@ import java.util.function.Function;
 /**
  * An object which stores event callbacks in an array.
  *
- * <p>The factory methods for ArrayEvent allow the user to provide an implementation of {@code T} which is used to
+ * <p>The factory methods for ArrayEvent allows the user to provide an implementation of {@code T} which is used to
  * execute the callbacks stored in this event instance. This allows a user to control how iteration works, whether an
  * event is cancelled after a specific callback is executed or to make an event
  * {@link ParameterInvokingEvent parameter invoking}.

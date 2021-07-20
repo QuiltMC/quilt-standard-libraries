@@ -10,11 +10,11 @@ import java.lang.annotation.Target;
  * A marker interface that indicates an event stored in a field or returned by a method may invoke the event callback on
  * one or more context objects passed in some method parameters.
  *
- * <p>The primary use of this annotation is for static analysis and documentation. Where a field or method return value
+ * <p>The primary use of this annotation is for static analysis and documentation. When a field or method return value
  * is annotated as a parameter invoking, you are encouraged to note in the documentation which context parameters may be
  * invoked.
  *
- * <p>Event implementations may have an undefined order in which the parameter may be invoked, see the documentation of
+ * <p>Event implementations may have an undefined order in which the parameters may be invoked, see the documentation of
  * the event for specific invocation order.
  *
  * <p>For the examples below, we will be using an event where the callback type is the interface
