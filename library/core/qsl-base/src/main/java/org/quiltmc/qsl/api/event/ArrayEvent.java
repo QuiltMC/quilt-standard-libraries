@@ -28,15 +28,17 @@ import java.util.function.Function;
  * The most common use of an event will be registering a callback which is executed by the event. To register a callback,
  * pass an instance of {@code T} into {@link #register}.
  *
- * <pre><code>
+ * <pre>{@code
  * // Events should use a dedicated functional interface for T rather than overloading multiple events to the same type
  * // to allow those who implement using a class to implement multiple events.
- * &#64;FunctionalInterface
+ * @FunctionalInterface
  * public interface Example {
  *     void doSomething();
  * }
  *
- * public static final ArrayEvent&lt;Example&gt; EXAMPLE = ArrayEvent.create(...); // implementation
+ * // You can also return this instance of ArrayEvent from a method, may be useful where a parameter is needed to get
+ * // the right instance of Event.
+ * public static final ArrayEvent<Example> EXAMPLE = ArrayEvent.create(...); // implementation
  *
  * public void registerEvents() {
  *     // Since T is a functional interface, we can use the lambda form.
@@ -62,16 +64,16 @@ import java.util.function.Function;
  *         // Do something else again
  *     }
  * }
- * </code></pre>
+ * }</pre>
  *
  * <h2>Example: Executing an event</h2>
  *
  * Executing an event is done by calling a method on the event invoker. Where {@code T} is Example, executing an event
  * is done through the following:
  *
- * <pre><code>
+ * <pre>{@code
  * EXAMPLE.invoker().doSomething();
- * </code></pre>
+ * }</pre>
  *
  * @param <T> the type of the invoker used to execute an event and the type of the callback
  */

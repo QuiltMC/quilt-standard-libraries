@@ -35,11 +35,11 @@ import java.lang.annotation.Target;
  * you may implement {@code ScaryEvents.Spooked} directly on to your Entity to be notified that when your entity is
  * spooked.
  *
- * <pre><code>
+ * <pre>{@code
  * class MyEntity extends MobEntity implements ScaryEvents.Spooked {
  *     ...
  *
- *     &#64;Override
+ *     @Override
  *     public void spooked(Ghost ghost, Entity ignored) {
  *         // This method will be invoked when the event, `ScaryEvents.SPOOKED` is executed and the invokable parameter
  *         // is instanceof MyEntity
@@ -48,16 +48,16 @@ import java.lang.annotation.Target;
  *         this.setHealth(0);
  *     }
  * }
- * </code></pre>
+ * }</pre>
  *
  * <h2>How to use this annotation</h2>
  *
  * An event which may invoke a parameter should first place the annotation on the field of the event instance or the
  * method which returns an event instance.
  *
- * <pre><code>
- * &#64;ParameterInvokingEvent
- * public static final ArrayEvent&lt;ScaryEvents.Spooked&gt; SPOOKED = ArrayEvent.create(ScaryEvents.Spooked.class, callbacks -> (ghost, spookedEntity) -> {
+ * <pre>{@code
+ * @ParameterInvokingEvent
+ * public static final ArrayEvent<ScaryEvents.Spooked> SPOOKED = ArrayEvent.create(ScaryEvents.Spooked.class, callbacks -> (ghost, spookedEntity) -> {
  *     // Since this event is parameter invoking, does the entity being spooked implement `Spooked`?
  *     if (spookedEntity instanceof ScaryEvents.Spooked callback) {
  *         // Since the entity implements the callback, invoke the callback on the entity.
@@ -66,11 +66,11 @@ import java.lang.annotation.Target;
  *     }
  *
  *     for (var callback : callbacks) {
- *     	   // Invoke the callbacks implemented by this event
+ *         // Invoke the callbacks implemented by this event
  *         callback.spooked(ghost, spookedEntity);
  *     }
  * });
- * </code></pre>
+ * }</pre>
  */
 @Documented // Documentation
 @Retention(RetentionPolicy.CLASS) // For static analysis
