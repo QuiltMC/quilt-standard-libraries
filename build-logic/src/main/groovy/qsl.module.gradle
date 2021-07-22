@@ -13,7 +13,7 @@
  */
 
 import qsl.internal.Git
-import qsl.internal.extension.QSLModuleExtension
+import qsl.internal.extension.QslModuleExtension
 
 plugins {
 	id("java-library")
@@ -35,7 +35,7 @@ spotless {
 	}
 }
 
-def extension = project.extensions.create("qslModule", QSLModuleExtension, project)
+def extension = project.extensions.create("qslModule", QslModuleExtension, project)
 
 // We need to wait until project evaluation has finished to peek into a complete QSL module extension.
 afterEvaluate {

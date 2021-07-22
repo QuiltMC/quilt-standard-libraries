@@ -12,7 +12,7 @@
  */
 
 import qsl.internal.Git
-import qsl.internal.extension.QSLLibraryExtension
+import qsl.internal.extension.QslLibraryExtension
 
 plugins {
 	id("maven-publish")
@@ -20,7 +20,7 @@ plugins {
 	id("qsl.common")
 }
 
-def extension = project.extensions.create("qslLibrary", QSLLibraryExtension, project)
+def extension = project.extensions.create("qslLibrary", QslLibraryExtension, project)
 
 // We seem to have to use afterEvaluate to verify this stuff
 afterEvaluate {

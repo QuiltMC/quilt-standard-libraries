@@ -6,12 +6,12 @@ import org.gradle.api.Project;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 
-public class QSLLibraryExtension {
+public class QslLibraryExtension {
 	private final Property<String> libraryName;
 	private final Project project;
 
 	@Inject
-	public QSLLibraryExtension(ObjectFactory factory, Project project) {
+	public QslLibraryExtension(ObjectFactory factory, Project project) {
 		this.libraryName = factory.property(String.class);
 		this.libraryName.finalizeValueOnRead();
 		this.project = project;

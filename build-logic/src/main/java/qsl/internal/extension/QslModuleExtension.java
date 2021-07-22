@@ -23,7 +23,7 @@ import org.gradle.api.tasks.Input;
 import qsl.internal.GroovyXml;
 import qsl.internal.json.ModJsonObject;
 
-public class QSLModuleExtension {
+public class QslModuleExtension {
 	private final Project project;
 	private final Property<String> library;
 	private final Property<String> moduleName;
@@ -31,7 +31,7 @@ public class QSLModuleExtension {
 	private Action<ModJsonObject> jsonPostProcessor;
 
 	@Inject
-	public QSLModuleExtension(ObjectFactory factory, Project project) {
+	public QslModuleExtension(ObjectFactory factory, Project project) {
 		this.project = project;
 		this.library = factory.property(String.class);
 		this.library.finalizeValueOnRead();
