@@ -7,7 +7,8 @@ jobs:
       image: openjdk:16-jdk
       options: --user root
     steps:
-      - uses: actions/checkout@v1 # Required for indra-git
+      - run: sudo apt-get install git # We need git so that git metadata is preserved
+      - uses: actions/checkout@v2 # Required for indra-git
       - uses: gradle/wrapper-validation-action@v1
       - run: ./gradlew checkVersion build publish -stacktrace
         env:
