@@ -20,9 +20,19 @@ plugins {
 	id("maven-publish")
 	id("net.kyori.indra.git")
 	id("org.quiltmc.loom")
-	id("org.quiltmc.gradle-conventions.java.style")
+	// FIXME: This convention plugin is just broken
+	// id("org.quiltmc.gradle-conventions.java.style")
+	id("com.diffplug.spotless")
 	id("org.quiltmc.gradle-conventions.java.version")
 	id("qsl.common")
+}
+
+spotless {
+	java {
+		// UPDATING: This needs to be changed when a new branch is created.
+		ratchetFrom("origin/1.17")
+		licenseHeaderFile(rootProject.file("codeformat/HEADER")).yearSeparator(", ")
+	}
 }
 
 def extension = project.extensions.create("qslModule", QSLModuleExtension, project)

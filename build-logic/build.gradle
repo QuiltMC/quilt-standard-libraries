@@ -19,6 +19,7 @@ dependencies {
 	implementation "net.kyori:indra-git:2.0.2"
 	implementation "org.quiltmc:quilt-json5:1.0.0"
 	implementation "org.quiltmc.gradle-conventions:gradle-convention-plugins:0.+"
+	implementation "com.diffplug.spotless:spotless-plugin-gradle:5.12.4"
 }
 
 tasks.withType(JavaCompile).configureEach {
