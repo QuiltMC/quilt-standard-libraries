@@ -16,14 +16,20 @@ publishing {
 		if (ENV.MAVEN_URL) {
 			maven {
 				url ENV.MAVEN_URL
-				username ENV.MAVEN_USERNAME
-				password ENV.MAVEN_PASSWORD
+
+				credentials {
+					username ENV.MAVEN_USERNAME
+					password ENV.MAVEN_PASSWORD
+				}
 			}
 		} else if (ENV.SNAPSHOTS_URL) {
 			maven {
 				url ENV.SNAPSHOTS_URL
-				username ENV.SNAPSHOTS_USERNAME
-				password ENV.SNAPSHOTS_PASSWORD
+
+				credentials {
+					username ENV.SNAPSHOTS_USERNAME
+					password ENV.SNAPSHOTS_PASSWORD
+				}
 			}
 		} else {
 			mavenLocal()
