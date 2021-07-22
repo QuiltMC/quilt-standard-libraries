@@ -4,7 +4,6 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     steps:
-      - run: sudo apt install git # We need git so that git metadata is preserved
       - uses: actions/setup-java@v2
         with:
           distribution: "adopt"
