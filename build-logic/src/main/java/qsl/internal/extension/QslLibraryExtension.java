@@ -26,6 +26,6 @@ public class QslLibraryExtension {
 	}
 
 	public void setVersion(String version) {
-		this.project.setVersion(version);
+		this.project.setVersion(version + (System.getenv("SNAPSHOTS_URL") != null ? "-SNAPSHOT" : ""));
 	}
 }

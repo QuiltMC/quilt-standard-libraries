@@ -59,7 +59,7 @@ public class QslModuleExtension {
 	}
 
 	public void setVersion(String version) {
-		this.project.setVersion(version);
+		this.project.setVersion(version + (System.getenv("SNAPSHOTS_URL") != null ? "-SNAPSHOT" : ""));
 	}
 
 	public void coreDependencies(Iterable<String> dependencies) {
