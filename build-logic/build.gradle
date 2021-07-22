@@ -26,8 +26,3 @@ tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"
 	it.options.release.set(16) // Minecraft is Java 16
 }
-
-java {
-	sourceCompatibility = JavaVersion.VERSION_1_8
-	targetCompatibility = JavaVersion.VERSION_1_8
-}
