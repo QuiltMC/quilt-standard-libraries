@@ -1,4 +1,4 @@
-package org.quiltmc.qsl.api.event;
+package org.quiltmc.qsl.base.api.event;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
