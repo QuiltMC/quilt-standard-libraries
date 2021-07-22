@@ -12,7 +12,7 @@ jobs:
       image: openjdk:${{ matrix.java }}
       options: --user root
     steps:
-      - run: sudo apt-get install git # We need git so that git metadata is preserved
+      - run: apt-get install git # We need git so that git metadata is preserved
       - uses: actions/checkout@v2
       - uses: gradle/wrapper-validation-action@v1
       - run: ./gradlew check build publishToMavenLocal --stacktrace
