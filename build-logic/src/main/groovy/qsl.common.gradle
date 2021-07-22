@@ -15,13 +15,13 @@ publishing {
 	repositories {
 		if (ENV.MAVEN_URL) {
 			maven {
-				url = ENV.MAVEN_URL
+				url ENV.MAVEN_URL
 				credentials ENV.MAVEN_USERNAME
 				credentials ENV.MAVEN_PASSWORD
 			}
 		} else if (ENV.SNAPSHOTS_URL) {
 			maven {
-				url = ENV.SNAPSHOTS_URL
+				url ENV.SNAPSHOTS_URL
 				credentials ENV.SNAPSHOTS_USERNAME
 				credentials ENV.SNAPSHOTS_PASSWORD
 			}
