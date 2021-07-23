@@ -16,7 +16,7 @@ publishing {
 		if (ENV.MAVEN_URL) {
 			maven {
 				url ENV.MAVEN_URL
-
+				println("Publishing to release repository")
 				credentials {
 					username ENV.MAVEN_USERNAME
 					password ENV.MAVEN_PASSWORD
@@ -25,13 +25,14 @@ publishing {
 		} else if (ENV.SNAPSHOTS_URL) {
 			maven {
 				url ENV.SNAPSHOTS_URL
-
+				println("Publishing to snapshot repository")
 				credentials {
 					username ENV.SNAPSHOTS_USERNAME
 					password ENV.SNAPSHOTS_PASSWORD
 				}
 			}
 		} else {
+			println("Publishing to mavenLocal")
 			mavenLocal()
 		}
 	}
