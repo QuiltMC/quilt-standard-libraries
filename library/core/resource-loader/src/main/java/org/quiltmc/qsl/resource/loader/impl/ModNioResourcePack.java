@@ -95,7 +95,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements ModR
 		}
 
 		// ReloadableResourceManagerImpl gets away with FileNotFoundException.
-		throw new FileNotFoundException("\"" + filename + "\" in Fabric mod \"" + modInfo.getId() + "\"");
+		throw new FileNotFoundException("\"" + filename + "\" in Quilt mod \"" + modInfo.getId() + "\"");
 	}
 
 	@Override
@@ -145,7 +145,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements ModR
 	}
 
 	protected void warnInvalidNamespace(String s) {
-		LOGGER.warn("Fabric NioResourcePack: ignored invalid namespace: {} in mod ID {}", s, modInfo.getId());
+		LOGGER.warn("Quilt NioResourcePack: ignored invalid namespace: {} in mod ID {}", s, modInfo.getId());
 	}
 
 	@Override
