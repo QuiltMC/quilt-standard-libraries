@@ -17,9 +17,9 @@ jobs:
       - uses: gradle/wrapper-validation-action@v1
       - run: ./gradlew check build publish --stacktrace
         env:
-          SNAPSHOTS_URL: ${{ secrets.MAVEN_URL }}
-          SNAPSHOTS_USERNAME: ${{ secrets.MAVEN_USERNAME }}
-          SNAPSHOTS_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+          SNAPSHOTS_URL: ${{ secrets.SNAPSHOTS_URL }}
+          SNAPSHOTS_USERNAME: ${{ secrets.SNAPSHOTS_USERNAME }}
+          SNAPSHOTS_PASSWORD: ${{ secrets.SNAPSHOTS_PASSWORD }}
       #- run: mkdir run && echo "eula=true" >> run/eula.txt
       #- run: ./gradlew :runAutoTestServer --stacktrace
       - uses: actions/upload-artifact@v2
