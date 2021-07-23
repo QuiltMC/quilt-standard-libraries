@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.resource.loader.mixin;
+package org.quiltmc.qsl.resource.loader.mixin.client;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -23,21 +23,25 @@ import java.util.Locale;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
-import net.minecraft.loot.LootManager;
-import net.minecraft.recipe.RecipeManager;
-import net.minecraft.server.ServerAdvancementLoader;
-import net.minecraft.server.function.FunctionLoader;
-import net.minecraft.tag.TagManagerLoader;
+import net.minecraft.client.render.WorldRenderer;
+import net.minecraft.client.render.block.BlockRenderManager;
+import net.minecraft.client.render.item.ItemRenderer;
+import net.minecraft.client.render.model.BakedModelManager;
+import net.minecraft.client.resource.language.LanguageManager;
+import net.minecraft.client.sound.SoundManager;
+import net.minecraft.client.texture.TextureManager;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;
 import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 
 @Mixin({
-		RecipeManager.class, ServerAdvancementLoader.class, FunctionLoader.class,
-		LootManager.class, TagManagerLoader.class
+		/* public */
+		SoundManager.class, BakedModelManager.class, LanguageManager.class, TextureManager.class,
+		/* private */
+		WorldRenderer.class, BlockRenderManager.class, ItemRenderer.class
 })
-public abstract class KeyedResourceReloaderMixin implements IdentifiableResourceReloader {
+public abstract class KeyedClientResourceReloaderMixin implements IdentifiableResourceReloader {
 	@Unique
 	private Identifier id;
 	@Unique
@@ -49,16 +53,14 @@ public abstract class KeyedResourceReloaderMixin implements IdentifiableResource
 		if (this.id == null) {
 			Object self = this;
 
-			if (self instanceof RecipeManager) {
-				this.id = ResourceReloaderKeys.Server.RECIPES;
-			} else if (self instanceof ServerAdvancementLoader) {
-				this.id = ResourceReloaderKeys.Server.ADVANCEMENTS;
-			} else if (self instanceof FunctionLoader) {
-				this.id = ResourceReloaderKeys.Server.FUNCTIONS;
-			} else if (self instanceof LootManager) {
-				this.id = ResourceReloaderKeys.Server.LOOT_TABLES;
-			} else if (self instanceof TagManagerLoader) {
-				this.id = ResourceReloaderKeys.Server.TAGS;
+			if (self instanceof SoundManager) {
+				this.id = ResourceReloaderKeys.Client.SOUNDS;
+			} else if (self instanceof BakedModelManager) {
+				this.id = ResourceReloaderKeys.Client.MODELS;
+			} else if (self instanceof LanguageManager) {
+				this.id = ResourceReloaderKeys.Client.LANGUAGES;
+			} else if (self instanceof TextureManager) {
+				this.id = ResourceReloaderKeys.Client.TEXTURES;
 			} else {
 				this.id = new Identifier("private/" + self.getClass().getSimpleName().toLowerCase(Locale.ROOT));
 			}
@@ -73,10 +75,12 @@ public abstract class KeyedResourceReloaderMixin implements IdentifiableResource
 		if (this.dependencies == null) {
 			Object self = this;
 
-			if (self instanceof TagManagerLoader) {
-				this.dependencies = Collections.emptyList();
+			if (self instanceof BakedModelManager || self instanceof WorldRenderer) {
+				this.dependencies = Collections.singletonList(ResourceReloaderKeys.Client.TEXTURES);
+			} else if (self instanceof ItemRenderer || self instanceof BlockRenderManager) {
+				this.dependencies = Collections.singletonList(ResourceReloaderKeys.Client.MODELS);
 			} else {
-				this.dependencies = Collections.singletonList(ResourceReloaderKeys.Server.TAGS);
+				this.dependencies = Collections.emptyList();
 			}
 		}
 

@@ -30,7 +30,7 @@ public interface NamespaceResourceManagerAccessor {
 	ResourceType getType();
 
 	@Invoker("getMetadataPath")
-	static Identifier quilt$accessor_getMetadataPath(Identifier id) {
+	static Identifier accessor_getMetadataPath(Identifier id) {
 		throw new UnsupportedOperationException("Invoker injection failed.");
 	}
 }

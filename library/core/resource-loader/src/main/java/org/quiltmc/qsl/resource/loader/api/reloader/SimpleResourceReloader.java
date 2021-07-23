@@ -44,7 +44,7 @@ import net.minecraft.util.profiler.Profiler;
  * {@link SynchronousResourceReloader} in conjunction with
  * {@link IdentifiableResourceReloader}.
  *
- * @param <T> The data object.
+ * @param <T> the type for the intermediate reloading state
  */
 public interface SimpleResourceReloader<T> extends IdentifiableResourceReloader {
 	@Override

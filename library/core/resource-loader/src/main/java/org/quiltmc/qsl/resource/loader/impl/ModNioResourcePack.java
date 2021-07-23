@@ -57,7 +57,8 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements ModR
 	private final ResourcePackActivationType activationType;
 	private Set<String> namespaceCache;
 
-	public ModNioResourcePack(ModMetadata modInfo, Path path, ResourceType type, AutoCloseable closer, ResourcePackActivationType activationType) {
+	public ModNioResourcePack(ModMetadata modInfo, Path path, ResourceType type, AutoCloseable closer,
+							  ResourcePackActivationType activationType) {
 		super(null);
 		this.modInfo = modInfo;
 		this.basePath = path.toAbsolutePath().normalize();
@@ -82,7 +83,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements ModR
 	protected InputStream openFile(String filename) throws IOException {
 		InputStream stream;
 
-		Path path = getPath(filename);
+		Path path = this.getPath(filename);
 
 		if (path != null && Files.isRegularFile(path)) {
 			return Files.newInputStream(path);

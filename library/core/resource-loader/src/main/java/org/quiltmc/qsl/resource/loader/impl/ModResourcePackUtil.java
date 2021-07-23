@@ -31,7 +31,6 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.resource.loader.api.GroupResourcePack;
-import org.quiltmc.qsl.resource.loader.api.ModResourcePack;
 import org.quiltmc.qsl.resource.loader.mixin.NamespaceResourceManagerAccessor;
 
 public class ModResourcePackUtil {
@@ -68,14 +67,14 @@ public class ModResourcePackUtil {
 
 	public void appendResources(NamespaceResourceManagerAccessor manager, GroupResourcePack groupResourcePack,
 								Identifier id, List<Resource> resources) throws IOException {
-		List<ModResourcePack> packs = groupResourcePack.getPacks(id.getNamespace());
+		var packs = groupResourcePack.getPacks(id.getNamespace());
 
 		if (packs == null) {
 			return;
 		}
 
 		ResourceType type = manager.getType();
-		Identifier metadataId = NamespaceResourceManagerAccessor.quilt$accessor_getMetadataPath(id);
+		Identifier metadataId = NamespaceResourceManagerAccessor.accessor_getMetadataPath(id);
 
 		for (var pack : packs) {
 			if (pack.contains(manager.getType(), id)) {

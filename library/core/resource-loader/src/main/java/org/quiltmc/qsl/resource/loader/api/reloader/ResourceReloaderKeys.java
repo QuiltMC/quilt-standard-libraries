@@ -24,19 +24,35 @@ import net.minecraft.util.Identifier;
  * @see IdentifiableResourceReloader
  */
 public final class ResourceReloaderKeys {
-	/* Client */
-	public static final Identifier SOUNDS = new Identifier("minecraft:sounds");
-	public static final Identifier FONTS = new Identifier("minecraft:fonts");
-	public static final Identifier MODELS = new Identifier("minecraft:models");
-	public static final Identifier LANGUAGES = new Identifier("minecraft:languages");
-	public static final Identifier TEXTURES = new Identifier("minecraft:textures");
+	/**
+	 * Keys for various client resource reloaders.
+	 */
+	public static final class Client {
+		public static final Identifier SOUNDS = new Identifier("minecraft:sounds");
+		public static final Identifier FONTS = new Identifier("minecraft:fonts");
+		public static final Identifier MODELS = new Identifier("minecraft:models");
+		public static final Identifier LANGUAGES = new Identifier("minecraft:languages");
+		public static final Identifier TEXTURES = new Identifier("minecraft:textures");
 
-	/* Server */
-	public static final Identifier TAGS = new Identifier("minecraft:tags");
-	public static final Identifier RECIPES = new Identifier("minecraft:recipes");
-	public static final Identifier ADVANCEMENTS = new Identifier("minecraft:advancements");
-	public static final Identifier FUNCTIONS = new Identifier("minecraft:functions");
-	public static final Identifier LOOT_TABLES = new Identifier("minecraft:loot_tables");
+		private Client() {
+			throw new UnsupportedOperationException("Someone tried to instantiate a static-only class. How?");
+		}
+	}
+
+	/**
+	 * Keys for various server resource reloaders.
+	 */
+	public static final class Server {
+		public static final Identifier TAGS = new Identifier("minecraft:tags");
+		public static final Identifier RECIPES = new Identifier("minecraft:recipes");
+		public static final Identifier ADVANCEMENTS = new Identifier("minecraft:advancements");
+		public static final Identifier FUNCTIONS = new Identifier("minecraft:functions");
+		public static final Identifier LOOT_TABLES = new Identifier("minecraft:loot_tables");
+
+		private Server() {
+			throw new UnsupportedOperationException("Someone tried to instantiate a static-only class. How?");
+		}
+	}
 
 	private ResourceReloaderKeys() {
 		throw new UnsupportedOperationException("Someone tried to instantiate a static-only class. How?");

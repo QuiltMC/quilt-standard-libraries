@@ -40,10 +40,10 @@ import net.minecraft.util.Identifier;
  */
 public abstract class GroupResourcePack implements ModResourcePack {
 	protected final ResourceType type;
-	protected final List<ModResourcePack> packs;
+	protected final List<? extends ModResourcePack> packs;
 	protected final Map<String, List<ModResourcePack>> namespacedPacks = new Object2ObjectOpenHashMap<>();
 
-	public GroupResourcePack(ResourceType type, List<ModResourcePack> packs) {
+	public GroupResourcePack(ResourceType type, List<? extends ModResourcePack> packs) {
 		this.type = type;
 		this.packs = packs;
 		this.packs.forEach(pack -> pack.getNamespaces(this.type)
@@ -51,15 +51,16 @@ public abstract class GroupResourcePack implements ModResourcePack {
 						.add(pack)));
 	}
 
-	public List<ModResourcePack> getPacks(String namespace) {
+	public List<? extends ModResourcePack> getPacks(String namespace) {
 		return this.namespacedPacks.get(namespace);
 	}
 
 	@Override
 	public InputStream open(ResourceType type, Identifier id) throws IOException {
-		List<ModResourcePack> packs = this.namespacedPacks.get(id.getNamespace());
+		var packs = this.namespacedPacks.get(id.getNamespace());
 
 		if (packs != null) {
+			// Iterating backwards as higher-priority packs are placed at the beginning.
 			for (int i = packs.size() - 1; i >= 0; i--) {
 				ResourcePack pack = packs.get(i);
 
@@ -75,14 +76,15 @@ public abstract class GroupResourcePack implements ModResourcePack {
 
 	@Override
 	public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, int maxDepth, Predicate<String> pathFilter) {
-		List<ModResourcePack> packs = this.namespacedPacks.get(namespace);
+		var packs = this.namespacedPacks.get(namespace);
 
 		if (packs == null) {
 			return Collections.emptyList();
 		}
 
-		Set<Identifier> resources = new HashSet<>();
+		var resources = new HashSet<Identifier>();
 
+		// Iterating backwards as higher-priority packs are placed at the beginning.
 		for (int i = packs.size() - 1; i >= 0; i--) {
 			ResourcePack pack = packs.get(i);
 			Collection<Identifier> modResources = pack.findResources(type, namespace, prefix, maxDepth, pathFilter);
@@ -95,12 +97,13 @@ public abstract class GroupResourcePack implements ModResourcePack {
 
 	@Override
 	public boolean contains(ResourceType type, Identifier id) {
-		List<ModResourcePack> packs = this.namespacedPacks.get(id.getNamespace());
+		var packs = this.namespacedPacks.get(id.getNamespace());
 
 		if (packs == null) {
 			return false;
 		}
 
+		// Iterating backwards as higher-priority packs are placed at the beginning.
 		for (int i = packs.size() - 1; i >= 0; i--) {
 			ResourcePack pack = packs.get(i);
 

@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.resource.loader.api;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.resource.ResourceType;
 
 import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;
@@ -24,6 +26,7 @@ import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 /**
  * Represents the resource loader. Contains different register methods.
  */
+@ApiStatus.NonExtendable
 public interface ResourceLoader {
 	/**
 	 * Get the resource loader instance for a given resource type.

@@ -7,6 +7,9 @@
     "NamespaceResourceManagerAccessor",
     "ReloadableResourceManagerImplMixin"
   ],
+  "client": [
+    "client.KeyedClientResourceReloaderMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }
