@@ -70,7 +70,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements ModR
 	}
 
 	private Path getPath(String filename) {
-		Path childPath = basePath.resolve(filename.replace("/", separator)).toAbsolutePath().normalize();
+		Path childPath = this.basePath.resolve(filename.replace("/", separator)).toAbsolutePath().normalize();
 
 		if (childPath.startsWith(basePath) && Files.exists(childPath)) {
 			return childPath;
@@ -137,7 +137,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements ModR
 								}
 							});
 				} catch (IOException e) {
-					LOGGER.warn("findResources at " + path + " in namespace " + namespace + ", mod " + modInfo.getId() + " failed!", e);
+					LOGGER.warn("findResources at " + path + " in namespace " + namespace + ", mod " + this.modInfo.getId() + " failed!", e);
 				}
 			}
 		}
@@ -146,13 +146,13 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements ModR
 	}
 
 	protected void warnInvalidNamespace(String s) {
-		LOGGER.warn("Quilt NioResourcePack: ignored invalid namespace: {} in mod ID {}", s, modInfo.getId());
+		LOGGER.warn("Quilt NioResourcePack: ignored invalid namespace: {} in mod ID {}", s, this.modInfo.getId());
 	}
 
 	@Override
 	public Set<String> getNamespaces(ResourceType type) {
-		if (namespaceCache != null) {
-			return namespaceCache;
+		if (this.namespaceCache != null) {
+			return this.namespaceCache;
 		}
 
 		try {
@@ -179,7 +179,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements ModR
 			}
 
 			if (cacheable) {
-				namespaceCache = namespaces;
+				this.namespaceCache = namespaces;
 			}
 
 			return namespaces;
@@ -191,9 +191,9 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements ModR
 
 	@Override
 	public void close() {
-		if (closer != null) {
+		if (this.closer != null) {
 			try {
-				closer.close();
+				this.closer.close();
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
@@ -202,7 +202,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements ModR
 
 	@Override
 	public ModMetadata getQuiltModMetadata() {
-		return modInfo;
+		return this.modInfo;
 	}
 
 	public ResourcePackActivationType getActivationType() {
@@ -211,6 +211,6 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements ModR
 
 	@Override
 	public String getName() {
-		return ModResourcePackUtil.getName(modInfo);
+		return ModResourcePackUtil.getName(this.modInfo);
 	}
 }
