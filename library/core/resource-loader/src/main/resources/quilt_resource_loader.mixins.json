@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.resource.loader.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "mixins": [
+    "KeyedResourceReloaderMixin",
+    "NamespaceResourceManagerAccessor",
+    "ReloadableResourceManagerImplMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

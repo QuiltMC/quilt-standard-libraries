@@ -1,0 +1,9 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "resource-loader"
+	version = "1.0.0"
+	library = "core"
+}
