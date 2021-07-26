@@ -5,6 +5,7 @@
   "mixins": [
     "AxeItemMixin",
     "HoeItemMixin",
+    "ItemMixin",
     "PickaxeItemMixin",
     "ShovelItemMixin",
     "SwordItemMixin"
