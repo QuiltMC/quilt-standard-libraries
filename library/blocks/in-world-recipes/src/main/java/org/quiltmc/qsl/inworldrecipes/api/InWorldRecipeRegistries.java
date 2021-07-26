@@ -33,7 +33,7 @@ public final class InWorldRecipeRegistries {
 
 	private static @NotNull Registry<InWorldRecipe> create(@NotNull String toolName) {
 		RegistryKey<Registry<InWorldRecipe>> key =
-				RegistryKey.ofRegistry(new Identifier("quilt", "in_world/" + toolName));
+				RegistryKey.ofRegistry(new Identifier("qsl-blocks-in-world-recipes", "in_world/" + toolName));
 		Registry<InWorldRecipe> registry = new SimpleRegistry<>(key, Lifecycle.stable());
 		// FIXME add to root registry - not working for some reason???
 		//Registry.register(Registry.REGISTRIES, key.getValue(), registry);
