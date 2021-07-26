@@ -13,7 +13,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class ItemMixin {
 	@Inject(method = "useOnBlock", at = @At("HEAD"), cancellable = true)
 	public void qsl$useOnBlockOverride(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
-		cir.setReturnValue(qsl$useOnBlock(context));
+		ActionResult result = qsl$useOnBlock(context);
+		if (result != ActionResult.PASS)
+			cir.setReturnValue(result);
 	}
 
 	public @NotNull ActionResult qsl$useOnBlock(@NotNull ItemUsageContext context) {
