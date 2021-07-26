@@ -5,7 +5,7 @@ import net.minecraft.item.ItemUsageContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents an <em>in-world recipe</em> - An recipe that can be performed on a specific block type in the world.
+ * Represents an <em>in-world recipe</em> - a recipe that can be performed on a specific block type in the world.
  */
 public interface InWorldRecipe {
 	/**
