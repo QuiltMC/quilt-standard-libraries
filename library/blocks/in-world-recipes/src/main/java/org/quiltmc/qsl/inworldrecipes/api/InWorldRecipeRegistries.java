@@ -9,7 +9,7 @@ import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
+import java.util.Map;
 
 /**
  * <b>NOTE:</b> You need to handle action sound playback yourself.<br>
@@ -25,10 +25,16 @@ public final class InWorldRecipeRegistries {
 	public static final Registry<InWorldRecipe> HOE = create("hoe");
 
 	// TODO rewrite this method to allow for data-driven recipes
-	public static @NotNull Optional<InWorldRecipe> findMatchingRecipe(@NotNull Registry<InWorldRecipe> registry, @NotNull Block targetBlock) {
-		return registry.stream()
-				.filter(recipe -> recipe.targetBlock() == targetBlock)
-				.findFirst();
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
+	public static boolean tryPerform(@NotNull Registry<InWorldRecipe> registry, @NotNull ItemUsageContext context, @NotNull Block targetBlock) {
+		for (Map.Entry<RegistryKey<InWorldRecipe>, InWorldRecipe> entry : registry.getEntries()) {
+			InWorldRecipe recipe = entry.getValue();
+			if (recipe.targetBlock() != targetBlock)
+				continue;
+			if (recipe.tryPerform(context))
+				return true;
+		}
+		return false;
 	}
 
 	private static @NotNull Registry<InWorldRecipe> create(@NotNull String toolName) {
