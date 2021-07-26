@@ -1,6 +1,7 @@
 package org.quiltmc.qsl.inworldrecipes.api;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemUsageContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,9 +18,18 @@ public interface InWorldRecipe {
 	@NotNull Set<Block> targetBlocks();
 
 	/**
-	 * Tries to perform the recipe.
+	 * Tries to perform the recipe.<p>
+	 * If the recipe was successfully performed, call this method (via {@code super.tryPerform(context)} to damage the
+	 * item by one.
 	 * @param context item usage context
 	 * @return {@code true} if recipe was successfully performed, {@code false} otherwise
 	 */
-	boolean tryPerform(@NotNull ItemUsageContext context);
+	default boolean tryPerform(@NotNull ItemUsageContext context) {
+		if (!context.getWorld().isClient) {
+			PlayerEntity player = context.getPlayer();
+			if (player != null)
+				context.getStack().damage(1, player, (p) -> p.sendToolBreakStatus(context.getHand()));
+		}
+		return true;
+	}
 }

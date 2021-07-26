@@ -1,6 +1,5 @@
 package org.quiltmc.qsl.inworldrecipes.mixin;
 
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.HoeItem;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.util.ActionResult;
@@ -22,12 +21,6 @@ public abstract class HoeItemMixin {
 									World world, BlockPos blockPos) {
 		if (!InWorldRecipeMaps.tryPerform(InWorldRecipeMaps.hoe, world.getBlockState(blockPos).getBlock(), context))
 			return;
-		if (!world.isClient) {
-			PlayerEntity playerEntity = context.getPlayer();
-			if (playerEntity != null) {
-				context.getStack().damage(1, playerEntity, (p) -> p.sendToolBreakStatus(context.getHand()));
-			}
-		}
 		cir.setReturnValue(ActionResult.success(world.isClient));
 	}
 }

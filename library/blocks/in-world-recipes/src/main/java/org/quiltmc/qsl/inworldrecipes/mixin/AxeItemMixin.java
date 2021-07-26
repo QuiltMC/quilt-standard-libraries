@@ -23,11 +23,6 @@ public abstract class AxeItemMixin {
 									World world, BlockPos blockPos, PlayerEntity playerEntity, BlockState blockState) {
 		if (!InWorldRecipeMaps.tryPerform(InWorldRecipeMaps.axe, blockState.getBlock(), context))
 			return;
-		if (!world.isClient) {
-			if (playerEntity != null) {
-				context.getStack().damage(1, playerEntity, (p) -> p.sendToolBreakStatus(context.getHand()));
-			}
-		}
 		cir.setReturnValue(ActionResult.success(world.isClient));
 	}
 }
