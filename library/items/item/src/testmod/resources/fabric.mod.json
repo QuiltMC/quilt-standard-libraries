@@ -5,6 +5,9 @@
   "version": "1.0.0",
   "environment": "*",
   "license": "Apache-2.0",
+  "depends": {
+    "qsl-items-item": "*"
+  },
   "entrypoints": {
     "main": [
       "org.quiltmc.qsl.item.test.QuiltItemSettingsTests",
