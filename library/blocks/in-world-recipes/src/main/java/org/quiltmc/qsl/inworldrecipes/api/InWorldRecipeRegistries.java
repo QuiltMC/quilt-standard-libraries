@@ -24,6 +24,7 @@ public final class InWorldRecipeRegistries {
 	public static final Registry<InWorldRecipe> SHOVEL = create("shovel");
 	public static final Registry<InWorldRecipe> HOE = create("hoe");
 
+	// TODO rewrite this method to allow for data-driven recipes
 	public static @NotNull Optional<InWorldRecipe> findMatchingRecipe(@NotNull Registry<InWorldRecipe> registry,
 			@NotNull ItemUsageContext context, @NotNull Block targetBlock) {
 		return registry.stream()
