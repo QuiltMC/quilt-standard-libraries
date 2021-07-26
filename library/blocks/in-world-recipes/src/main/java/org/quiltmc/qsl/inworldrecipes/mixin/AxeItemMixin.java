@@ -23,14 +23,14 @@ public abstract class AxeItemMixin {
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/item/AxeItem;getStrippedState(Lnet/minecraft/block/BlockState;)Ljava/util/Optional;"),
 			cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
 	public void doCustomRecipes(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir, World world, BlockPos blockPos, PlayerEntity playerEntity, BlockState blockState) {
-		Optional<InWorldRecipe> matching = InWorldRecipeRegistries.findMatchingRecipe(InWorldRecipeRegistries.AXE,
-				context, blockState.getBlock());
+		Optional<InWorldRecipe> matching = InWorldRecipeRegistries.findMatchingRecipe(InWorldRecipeRegistries.AXE, blockState.getBlock());
 		if (matching.isEmpty())
 			return;
 		if (!world.isClient) {
-			matching.get().action().accept(context);
-			if (playerEntity != null) {
-				context.getStack().damage(1, playerEntity, (p) -> p.sendToolBreakStatus(context.getHand()));
+			if (matching.get().tryPerform(context)) {
+				if (playerEntity != null) {
+					context.getStack().damage(1, playerEntity, (p) -> p.sendToolBreakStatus(context.getHand()));
+				}
 			}
 		}
 		cir.setReturnValue(ActionResult.success(world.isClient));

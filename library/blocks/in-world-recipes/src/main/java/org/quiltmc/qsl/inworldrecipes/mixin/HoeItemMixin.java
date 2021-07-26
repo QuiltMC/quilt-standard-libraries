@@ -1,7 +1,6 @@
 package org.quiltmc.qsl.inworldrecipes.mixin;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.HoeItem;
 import net.minecraft.item.ItemUsageContext;
@@ -25,15 +24,15 @@ public abstract class HoeItemMixin {
 			cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
 	public void doCustomRecipes(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir, World world, BlockPos blockPos) {
 		Block block = world.getBlockState(blockPos).getBlock();
-		Optional<InWorldRecipe> matching = InWorldRecipeRegistries.findMatchingRecipe(InWorldRecipeRegistries.HOE,
-				context, block);
+		Optional<InWorldRecipe> matching = InWorldRecipeRegistries.findMatchingRecipe(InWorldRecipeRegistries.HOE, block);
 		if (matching.isEmpty())
 			return;
 		if (!world.isClient) {
-			matching.get().action().accept(context);
-			PlayerEntity playerEntity = context.getPlayer();
-			if (playerEntity != null) {
-				context.getStack().damage(1, playerEntity, (p) -> p.sendToolBreakStatus(context.getHand()));
+			if (matching.get().tryPerform(context)) {
+				PlayerEntity playerEntity = context.getPlayer();
+				if (playerEntity != null) {
+					context.getStack().damage(1, playerEntity, (p) -> p.sendToolBreakStatus(context.getHand()));
+				}
 			}
 		}
 		cir.setReturnValue(ActionResult.success(world.isClient));

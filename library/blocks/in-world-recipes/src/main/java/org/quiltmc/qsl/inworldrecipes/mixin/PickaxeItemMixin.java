@@ -24,15 +24,15 @@ public abstract class PickaxeItemMixin extends Item {
 	public ActionResult useOnBlock(ItemUsageContext context) {
 		World world = context.getWorld();
 		Block block = world.getBlockState(context.getBlockPos()).getBlock();
-		Optional<InWorldRecipe> matching = InWorldRecipeRegistries.findMatchingRecipe(InWorldRecipeRegistries.PICKAXE,
-				context, block);
+		Optional<InWorldRecipe> matching = InWorldRecipeRegistries.findMatchingRecipe(InWorldRecipeRegistries.PICKAXE, block);
 		if (matching.isEmpty())
 			return ActionResult.FAIL;
 		if (!world.isClient) {
-			matching.get().action().accept(context);
-			PlayerEntity playerEntity = context.getPlayer();
-			if (playerEntity != null) {
-				context.getStack().damage(1, playerEntity, (p) -> p.sendToolBreakStatus(context.getHand()));
+			if (matching.get().tryPerform(context)) {
+				PlayerEntity playerEntity = context.getPlayer();
+				if (playerEntity != null) {
+					context.getStack().damage(1, playerEntity, (p) -> p.sendToolBreakStatus(context.getHand()));
+				}
 			}
 		}
 		return ActionResult.success(world.isClient);

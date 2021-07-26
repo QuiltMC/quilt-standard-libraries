@@ -25,10 +25,9 @@ public final class InWorldRecipeRegistries {
 	public static final Registry<InWorldRecipe> HOE = create("hoe");
 
 	// TODO rewrite this method to allow for data-driven recipes
-	public static @NotNull Optional<InWorldRecipe> findMatchingRecipe(@NotNull Registry<InWorldRecipe> registry,
-			@NotNull ItemUsageContext context, @NotNull Block targetBlock) {
+	public static @NotNull Optional<InWorldRecipe> findMatchingRecipe(@NotNull Registry<InWorldRecipe> registry, @NotNull Block targetBlock) {
 		return registry.stream()
-				.filter(recipe -> recipe.targetBlock() == targetBlock && recipe.predicate().test(context))
+				.filter(recipe -> recipe.targetBlock() == targetBlock)
 				.findFirst();
 	}
 

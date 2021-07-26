@@ -2,7 +2,6 @@ package org.quiltmc.qsl.inworldrecipes.mixin;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.AxeItem;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.ShovelItem;
 import net.minecraft.util.ActionResult;
@@ -25,13 +24,14 @@ public abstract class ShovelItemMixin {
 			cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
 	public void doCustomRecipes(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir, World world, BlockPos blockPos, BlockState blockState, PlayerEntity playerEntity) {
 		Optional<InWorldRecipe> matching = InWorldRecipeRegistries.findMatchingRecipe(InWorldRecipeRegistries.SHOVEL,
-				context, blockState.getBlock());
+				blockState.getBlock());
 		if (matching.isEmpty())
 			return;
 		if (!world.isClient) {
-			matching.get().action().accept(context);
-			if (playerEntity != null) {
-				context.getStack().damage(1, playerEntity, (p) -> p.sendToolBreakStatus(context.getHand()));
+			if (matching.get().tryPerform(context)) {
+				if (playerEntity != null) {
+					context.getStack().damage(1, playerEntity, (p) -> p.sendToolBreakStatus(context.getHand()));
+				}
 			}
 		}
 		cir.setReturnValue(ActionResult.success(world.isClient));
