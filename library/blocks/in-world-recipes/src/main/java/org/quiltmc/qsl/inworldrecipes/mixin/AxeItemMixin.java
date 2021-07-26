@@ -19,7 +19,8 @@ public abstract class AxeItemMixin {
 	@Inject(method = "useOnBlock",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/item/AxeItem;getStrippedState(Lnet/minecraft/block/BlockState;)Ljava/util/Optional;"),
 			cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
-	public void doCustomRecipes(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir, World world, BlockPos blockPos, PlayerEntity playerEntity, BlockState blockState) {
+	public void qsl$doCustomRecipes(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir,
+									World world, BlockPos blockPos, PlayerEntity playerEntity, BlockState blockState) {
 		if (!InWorldRecipeRegistries.tryPerform(InWorldRecipeRegistries.AXE, context, blockState.getBlock()))
 			return;
 		if (!world.isClient) {

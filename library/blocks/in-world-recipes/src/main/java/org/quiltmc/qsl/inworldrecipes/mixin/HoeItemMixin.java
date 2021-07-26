@@ -18,7 +18,8 @@ public abstract class HoeItemMixin {
 	@Inject(method = "useOnBlock",
 			at = @At(value = "INVOKE", target = "Ljava/util/Map;get(Ljava/lang/Object;)Ljava/lang/Object;", ordinal = 0),
 			cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
-	public void doCustomRecipes(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir, World world, BlockPos blockPos) {
+	public void qsl$doCustomRecipes(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir,
+									World world, BlockPos blockPos) {
 		if (!InWorldRecipeRegistries.tryPerform(InWorldRecipeRegistries.AXE, context, world.getBlockState(blockPos).getBlock()))
 			return;
 		if (!world.isClient) {
