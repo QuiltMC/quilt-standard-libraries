@@ -12,6 +12,8 @@ import org.quiltmc.qsl.inworldrecipes.api.InWorldRecipeRegistries;
 import java.util.Map;
 
 public final class InWorldRecipeMaps {
+	private InWorldRecipeMaps() { throw new AssertionError(); }
+
 	public static Multimap<Block, InWorldRecipe> sword, pickaxe, axe, shovel, hoe;
 
 	// TODO update this to run on datapack reload

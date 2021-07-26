@@ -1,15 +1,11 @@
 package org.quiltmc.qsl.inworldrecipes.api;
 
 import com.mojang.serialization.Lifecycle;
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemUsageContext;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
 
 /**
  * <b>NOTE:</b> You need to handle action sound playback yourself.<br>
