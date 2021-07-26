@@ -24,19 +24,6 @@ public final class InWorldRecipeRegistries {
 	public static final Registry<InWorldRecipe> SHOVEL = create("shovel");
 	public static final Registry<InWorldRecipe> HOE = create("hoe");
 
-	// TODO rewrite this method to allow for data-driven recipes
-	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
-	public static boolean tryPerform(@NotNull Registry<InWorldRecipe> registry, @NotNull ItemUsageContext context, @NotNull Block targetBlock) {
-		for (Map.Entry<RegistryKey<InWorldRecipe>, InWorldRecipe> entry : registry.getEntries()) {
-			InWorldRecipe recipe = entry.getValue();
-			if (recipe.targetBlock() != targetBlock)
-				continue;
-			if (recipe.tryPerform(context))
-				return true;
-		}
-		return false;
-	}
-
 	private static @NotNull Registry<InWorldRecipe> create(@NotNull String toolName) {
 		RegistryKey<Registry<InWorldRecipe>> key =
 				RegistryKey.ofRegistry(new Identifier("qsl-blocks-in-world-recipes", "in_world/" + toolName));

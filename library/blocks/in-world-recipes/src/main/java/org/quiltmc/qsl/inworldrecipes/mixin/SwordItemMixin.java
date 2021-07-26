@@ -6,7 +6,7 @@ import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.SwordItem;
 import net.minecraft.util.ActionResult;
 import net.minecraft.world.World;
-import org.quiltmc.qsl.inworldrecipes.api.InWorldRecipeRegistries;
+import org.quiltmc.qsl.inworldrecipes.impl.InWorldRecipeMaps;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(SwordItem.class)
@@ -19,7 +19,7 @@ public abstract class SwordItemMixin extends Item {
 	@Override
 	public ActionResult useOnBlock(ItemUsageContext context) {
 		World world = context.getWorld();
-		if (!InWorldRecipeRegistries.tryPerform(InWorldRecipeRegistries.SWORD, context, world.getBlockState(context.getBlockPos()).getBlock()))
+		if (!InWorldRecipeMaps.tryPerform(InWorldRecipeMaps.sword, world.getBlockState(context.getBlockPos()).getBlock(), context))
 			return ActionResult.FAIL;
 		if (!world.isClient) {
 			PlayerEntity playerEntity = context.getPlayer();

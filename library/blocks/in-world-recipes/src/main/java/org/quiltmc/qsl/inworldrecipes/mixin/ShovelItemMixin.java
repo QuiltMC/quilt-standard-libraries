@@ -7,7 +7,7 @@ import net.minecraft.item.ShovelItem;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.quiltmc.qsl.inworldrecipes.api.InWorldRecipeRegistries;
+import org.quiltmc.qsl.inworldrecipes.impl.InWorldRecipeMaps;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,7 +21,7 @@ public abstract class ShovelItemMixin {
 			cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
 	public void qsl$doCustomRecipes(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir,
 									World world, BlockPos blockPos, BlockState blockState, PlayerEntity playerEntity) {
-		if (!InWorldRecipeRegistries.tryPerform(InWorldRecipeRegistries.AXE, context, blockState.getBlock()))
+		if (!InWorldRecipeMaps.tryPerform(InWorldRecipeMaps.shovel, blockState.getBlock(), context))
 			return;
 		if (!world.isClient) {
 			if (playerEntity != null) {
