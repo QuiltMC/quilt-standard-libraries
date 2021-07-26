@@ -1,0 +1,13 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "in-world-recipes"
+	version = "1.0.0"
+	library = "blocks"
+	coreDependencies([
+			"qsl-base",
+			//"resource-loader"
+	])
+}

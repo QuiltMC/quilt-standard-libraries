@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "qsl-blocks-in-world-recipes",
+  "name": "Quilt In-World Recipes API",
+  "version": "1.0.0",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "mixins": [
+    "qsl-blocks-in-world-recipes.mixin.json"
+  ]
+}

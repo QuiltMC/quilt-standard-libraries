@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.inworldrecipes.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "mixins": [
+    "AxeItemMixin",
+    "HoeItemMixin",
+    "PickaxeItemMixin",
+    "ShovelItemMixin",
+    "SwordItemMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
