@@ -22,9 +22,4 @@ public interface InWorldRecipe {
 	 * @return {@code true} if recipe was successfully performed, {@code false} otherwise
 	 */
 	boolean tryPerform(@NotNull ItemUsageContext context);
-
-	/**
-	 * Invoked on data pack reload. Use this to update your {@linkplain #targetBlocks() target block set}.
-	 */
-	default void onReload() { }
 }

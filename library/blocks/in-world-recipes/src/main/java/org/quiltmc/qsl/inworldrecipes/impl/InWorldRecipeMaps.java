@@ -40,7 +40,6 @@ public final class InWorldRecipeMaps {
 		Multimap<Block, InWorldRecipe> map = MultimapBuilder.hashKeys().hashSetValues().build();
 		for (Map.Entry<RegistryKey<InWorldRecipe>, InWorldRecipe> entry : registry.getEntries()) {
 			InWorldRecipe recipe = entry.getValue();
-			recipe.onReload();
 			for (Block block : recipe.targetBlocks())
 				map.put(block, recipe);
 		}
