@@ -20,6 +20,7 @@ public abstract class ItemStackMixin {
 			cancellable = true, locals = LocalCapture.PRINT)
 	public void qsl$tryPerformToolInteractionRecipe(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir,
 													PlayerEntity playerEntity, Item item) {
+		// TODO replace with an event listener once Quilt has an item use event (though this will require cross-module dep)
 		// TODO figure this out
 	}
 }

@@ -10,7 +10,7 @@ import java.util.Map;
 
 public final class ToolInteractionRecipeCollections {
 	public static void update() {
-		
+
 	}
 
 	private static @NotNull ToolInteractionRecipeCollection fromRegistry(@NotNull Registry<ToolInteractionRecipe> registry) {
