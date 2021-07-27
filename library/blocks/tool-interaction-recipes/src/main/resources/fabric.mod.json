@@ -5,14 +5,6 @@
   "version": "1.0.0",
   "environment": "*",
   "license": "Apache-2.0",
-  "entrypoints": {
-    "client": [
-      "org.quiltmc.qsl.toolinteractionrecipes.impl.LateInitializer"
-    ],
-    "server": [
-      "org.quiltmc.qsl.toolinteractionrecipes.impl.LateInitializer"
-    ]
-  },
   "mixins": [
     "qsl-blocks-tool-interaction-recipes.mixin.json"
   ]

@@ -4,6 +4,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemUsageContext;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -53,6 +54,18 @@ public final class ToolInteractionRecipeCollection {
 			if (recipe.tryPerform(context)) return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Attempts to perform one of the recipes stored in this collection.
+     *
+	 * @param context item usage context
+	 * @return {@code true} if a recipe was performed, {@code false} otherwise.
+	 */
+	public boolean tryPerform(@NotNull ItemUsageContext context) {
+		World world = context.getWorld();
+		Block targetBlock = world.getBlockState(context.getBlockPos()).getBlock();
+		return tryPerform(targetBlock, context);
 	}
 
 	/**
