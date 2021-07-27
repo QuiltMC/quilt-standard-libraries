@@ -35,7 +35,7 @@ import org.quiltmc.qsl.itemgroup.impl.QuiltCreativeGuiComponents;
 
 @Mixin(CreativeInventoryScreen.class)
 public abstract class CreativePlayerInventoryGuiMixin extends AbstractInventoryScreen<CreativeInventoryScreen.CreativeScreenHandler> implements CreativeGuiExtensions {
-	public CreativePlayerInventoryGuiMixin(CreativeInventoryScreen.CreativeScreenHandler screenHandler_1, PlayerInventory playerInventory_1, Text textComponent_1) {
+	public CreativePlayerInventoryGuiMixin(CreativeInventoryScreen.CreativeScreenHandler screenHandler, PlayerInventory playerInventory, Text title) {
 		super(screenHandler_1, playerInventory_1, textComponent_1);
 	}
 
