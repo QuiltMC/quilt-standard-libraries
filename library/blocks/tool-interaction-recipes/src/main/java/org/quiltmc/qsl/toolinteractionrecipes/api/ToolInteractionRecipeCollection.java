@@ -34,11 +34,8 @@ public final class ToolInteractionRecipeCollection {
 	 */
 	public void add(@NotNull ToolInteractionRecipe recipe) {
 		Set<Block> blocks = recipe.targetBlocks();
-		if (blocks.isEmpty())
-			targetAllList.add(recipe);
-		else {
-			for (Block block : blocks) multimap.put(block, recipe);
-		}
+		if (blocks.isEmpty()) targetAllList.add(recipe);
+		else for (Block block : blocks) multimap.put(block, recipe);
 	}
 
 	/**
@@ -50,12 +47,10 @@ public final class ToolInteractionRecipeCollection {
 	 */
 	public boolean tryPerform(@NotNull Block targetBlock, @NotNull ItemUsageContext context) {
 		for (ToolInteractionRecipe recipe : multimap.get(targetBlock)) {
-			if (recipe.tryPerform(context))
-				return true;
+			if (recipe.tryPerform(context)) return true;
 		}
 		for (ToolInteractionRecipe recipe : targetAllList) {
-			if (recipe.tryPerform(context))
-				return true;
+			if (recipe.tryPerform(context)) return true;
 		}
 		return false;
 	}
