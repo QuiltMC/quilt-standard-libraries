@@ -22,9 +22,9 @@ public final class ToolInteractionRecipeRegistries {
 
 	private static @NotNull Registry<ToolInteractionRecipe> create(@NotNull String toolName) {
 		RegistryKey<Registry<ToolInteractionRecipe>> key =
-				RegistryKey.ofRegistry(new Identifier("qsl-blocks-in-world-recipes", "in_world/" + toolName));
+				RegistryKey.ofRegistry(new Identifier("qsl-blocks-tool-interaction-recipes", "tool_interaction/" + toolName));
 		Registry<ToolInteractionRecipe> registry = new SimpleRegistry<>(key, Lifecycle.stable());
-		// FIXME add to root registry - not working for some reason???
+		// FIXME add to root registry (when Quilt has a registry library)
 		//Registry.register(Registry.REGISTRIES, key.getValue(), registry);
 		return registry;
 	}

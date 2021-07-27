@@ -8,11 +8,11 @@ import net.fabricmc.api.DedicatedServerModInitializer;
 public class LateInitializer implements ClientModInitializer, DedicatedServerModInitializer {
 	@Override
 	public void onInitializeClient() {
-		ToolInteractionRecipeMaps.update();
+		ToolInteractionRecipeCollections.update();
 	}
 
 	@Override
 	public void onInitializeServer() {
-		ToolInteractionRecipeMaps.update();
+		ToolInteractionRecipeCollections.update();
 	}
 }

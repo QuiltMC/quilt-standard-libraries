@@ -8,12 +8,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 /**
- * Represents an <em>in-world recipe</em> - a recipe that can be performed on a specific set of block types
- * directly in the world.
+ * Represents a <em>tool interaction recipe</em> - a recipe that can be performed on a specific set of block types
+ * directly in the world via using a tool on said block types.
  */
 public interface ToolInteractionRecipe {
 	/**
-	 * {@return the specific set of block types required for this recipe}
+	 * Returns the specific set of block types required for this recipe.<p>
+	 * Can be empty, which will be interpreted as this recipe being applicable to <em>every</em> block type.
+	 *
+	 * @return the specific set of block types required for this recipe
 	 */
 	@NotNull Set<Block> targetBlocks();
 

@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * Represents an in-world recipe with a constant, unchanging set of target block types.
+ * Represents a tool interaction recipe with a constant, unchanging set of target block types.
  */
 public abstract class SimpleToolInteractionRecipe implements ToolInteractionRecipe {
 	private final @NotNull Set<Block> targetBlocks;
