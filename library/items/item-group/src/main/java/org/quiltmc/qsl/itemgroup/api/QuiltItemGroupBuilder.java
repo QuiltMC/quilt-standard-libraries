@@ -138,7 +138,6 @@ public final class QuiltItemGroupBuilder {
 			public void appendStacks(DefaultedList<ItemStack> stacks) {
 				if (stacksForDisplay != null) {
 					stacksForDisplay.accept(stacks);
-					return;
 				}
 
 				super.appendStacks(stacks);
