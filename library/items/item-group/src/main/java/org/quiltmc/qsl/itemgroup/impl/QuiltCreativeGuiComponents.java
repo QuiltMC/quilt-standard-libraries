@@ -54,7 +54,7 @@ public class QuiltCreativeGuiComponents {
 		}
 
 		@Override
-		public void render(MatrixStack matrixStack, int mouseX, int mouseY, float float_1) {
+		public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
 			this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 			this.visible = extensions.isButtonVisible(type);
 			this.active = extensions.isButtonEnabled(type);
