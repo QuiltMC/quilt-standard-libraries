@@ -27,6 +27,9 @@ import net.minecraft.text.Text;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+/**
+ * A callback for modifying the lines of text for the rendered tooltip displayed when the mouse hovers over an item stack.
+ */
 @Environment(EnvType.CLIENT)
 public interface ItemTooltipCallback {
 	/**

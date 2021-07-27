@@ -25,7 +25,7 @@ import net.minecraft.util.Rarity;
 import org.quiltmc.qsl.item.impl.QuiltItemInternals;
 
 /**
- * Quilts's version of {@link Item.Settings}. Adds additional methods and hooks
+ * Quilt's version of {@link Item.Settings}. Adds additional methods and hooks
  * not found in the original class.
  *
  * <p>To use it, simply replace {@code new Item.Settings()} with

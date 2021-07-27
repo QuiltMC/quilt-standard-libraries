@@ -37,7 +37,7 @@ public abstract class ItemGroupMixin {
 	@Inject(method = "isTopRow", cancellable = true, at = @At("HEAD"))
 	private void isTopRow(CallbackInfoReturnable<Boolean> info) {
 		if (getIndex() > 11) {
-			info.setReturnValue((getIndex() - 12) % (12 - QuiltCreativeGuiComponents.COMMON_GROUPS.size()) < 4);
+			info.setReturnValue((getIndex() - 12) % (12 - QuiltCreativeGuiComponents.ALWAYS_SHOWN_GROUPS.size()) < 4);
 		}
 	}
 
@@ -45,9 +45,9 @@ public abstract class ItemGroupMixin {
 	private void getColumn(CallbackInfoReturnable<Integer> info) {
 		if (getIndex() > 11) {
 			if (isTopRow()) {
-				info.setReturnValue((getIndex() - 12) % (12 - QuiltCreativeGuiComponents.COMMON_GROUPS.size()));
+				info.setReturnValue((getIndex() - 12) % (12 - QuiltCreativeGuiComponents.ALWAYS_SHOWN_GROUPS.size()));
 			} else {
-				info.setReturnValue((getIndex() - 12) % (12 - QuiltCreativeGuiComponents.COMMON_GROUPS.size()) - 4);
+				info.setReturnValue((getIndex() - 12) % (12 - QuiltCreativeGuiComponents.ALWAYS_SHOWN_GROUPS.size()) - 4);
 			}
 		}
 	}

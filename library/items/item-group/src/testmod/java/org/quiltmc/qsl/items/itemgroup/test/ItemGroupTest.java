@@ -16,6 +16,9 @@
 
 package org.quiltmc.qsl.items.itemgroup.test;
 
+import org.quiltmc.qsl.itemgroup.api.QuiltItemGroup;
+import org.quiltmc.qsl.itemgroup.api.QuiltItemGroupBuilder;
+
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -23,19 +26,26 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import net.fabricmc.api.ModInitializer;
-import org.quiltmc.qsl.itemgroup.api.QuiltItemGroupBuilder;
 
 public class ItemGroupTest implements ModInitializer {
-	//Adds an item group with all items in it
-	private static final ItemGroup ITEM_GROUP = QuiltItemGroupBuilder.create(new Identifier("qsl-items-item-group-testmod", "test_group"))
-				.icon(() -> new ItemStack(Items.DIAMOND))
-				.appendItems(stacks ->
-						Registry.ITEM.stream()
-						.map(ItemStack::new)
-						.forEach(stacks::add)
-				).build();
+	// Adds an item group with all items in it
+	private static final ItemGroup SUPPLIER_ITEM_GROUP = new QuiltItemGroupBuilder(new Identifier("qsl_items_item_group_testmod", "test_supplied_group"))
+			.icon(() -> new ItemStack(Items.DIAMOND))
+			.appendItems(stacks ->
+					Registry.ITEM.stream()
+							.map(ItemStack::new)
+							.forEach(stacks::add)
+			).build();
+
+	private static final QuiltItemGroup DELAYED_ITEM_GROUP = new QuiltItemGroupBuilder(new Identifier("qsl_items_item_group_testmod", "test_delayed_group"))
+			.appendItems(stacks ->
+					Registry.ITEM.stream()
+							.map(ItemStack::new)
+							.forEach(stacks::add)
+			).build();
 
 	@Override
 	public void onInitialize() {
+		DELAYED_ITEM_GROUP.setIcon(Items.EMERALD);
 	}
 }

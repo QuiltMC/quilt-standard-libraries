@@ -43,22 +43,22 @@ abstract class ItemMixin implements AppliedItemSettingHooks {
 	}
 
 	@Override
-	public EquipmentSlotProvider getEquipmentSlotProvider() {
+	public EquipmentSlotProvider qsl$getEquipmentSlotProvider() {
 		return equipmentSlotProvider;
 	}
 
 	@Override
-	public void setEquipmentSlotProvider(EquipmentSlotProvider equipmentSlotProvider) {
+	public void qsl$setEquipmentSlotProvider(EquipmentSlotProvider equipmentSlotProvider) {
 		this.equipmentSlotProvider = equipmentSlotProvider;
 	}
 
 	@Override
-	public CustomDamageHandler getCustomDamageHandler() {
+	public CustomDamageHandler qsl$getCustomDamageHandler() {
 		return customDamageHandler;
 	}
 
 	@Override
-	public void setCustomDamageHandler(CustomDamageHandler handler) {
+	public void qsl$setCustomDamageHandler(CustomDamageHandler handler) {
 		this.customDamageHandler = handler;
 	}
 }

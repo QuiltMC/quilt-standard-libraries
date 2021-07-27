@@ -30,6 +30,6 @@ public class QuiltItemSettingsTests implements ModInitializer {
 	public void onInitialize() {
 		// Registers an item with a custom equipment slot.
 		Item testItem = new Item(new QuiltItemSettings().group(ItemGroup.MISC).equipmentSlot(stack -> EquipmentSlot.CHEST));
-		Registry.register(Registry.ITEM, new Identifier("qsl-items-item", "test_item"), testItem);
+		Registry.register(Registry.ITEM, new Identifier("qsl_items_item", "test_item"), testItem);
 	}
 }

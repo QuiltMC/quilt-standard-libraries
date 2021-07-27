@@ -16,12 +16,13 @@
 
 package org.quiltmc.qsl.item.impl;
 
+import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.item.api.item.v1.CustomDamageHandler;
 import org.quiltmc.qsl.item.api.item.v1.EquipmentSlotProvider;
 
 public interface AppliedItemSettingHooks {
-	/* @Nullable */ EquipmentSlotProvider getEquipmentSlotProvider();
-	void setEquipmentSlotProvider(EquipmentSlotProvider equipmentSlotProvider);
-	/* @Nullable */ CustomDamageHandler getCustomDamageHandler();
-	void setCustomDamageHandler(CustomDamageHandler handler);
+	@Nullable EquipmentSlotProvider qsl$getEquipmentSlotProvider();
+	void qsl$setEquipmentSlotProvider(EquipmentSlotProvider equipmentSlotProvider);
+	@Nullable CustomDamageHandler qsl$getCustomDamageHandler();
+	void qsl$setCustomDamageHandler(CustomDamageHandler handler);
 }

@@ -17,13 +17,13 @@
 package org.quiltmc.qsl.itemgroup.impl;
 
 public interface CreativeGuiExtensions {
-	void nextPage();
+	void qsl$nextPage();
 
-	void previousPage();
+	void qsl$previousPage();
 
-	int currentPage();
+	int qsl$currentPage();
 
-	boolean isButtonVisible(QuiltCreativeGuiComponents.Type type);
+	boolean qsl$isButtonVisible(QuiltCreativeGuiComponents.Type type);
 
-	boolean isButtonEnabled(QuiltCreativeGuiComponents.Type type);
+	boolean qsl$isButtonEnabled(QuiltCreativeGuiComponents.Type type);
 }

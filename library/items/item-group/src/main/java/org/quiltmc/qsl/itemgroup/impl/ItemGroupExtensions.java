@@ -17,5 +17,5 @@
 package org.quiltmc.qsl.itemgroup.impl;
 
 public interface ItemGroupExtensions {
-	void expandArray();
+	void qsl$expandArray();
 }

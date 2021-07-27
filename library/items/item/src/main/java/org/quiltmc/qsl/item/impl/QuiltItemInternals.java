@@ -20,6 +20,7 @@ import java.util.WeakHashMap;
 
 import net.minecraft.item.Item;
 
+import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.item.api.item.v1.CustomDamageHandler;
 import org.quiltmc.qsl.item.api.item.v1.EquipmentSlotProvider;
 
@@ -37,14 +38,14 @@ public final class QuiltItemInternals {
 		ExtraData data = extraData.get(settings);
 
 		if (data != null) {
-			((AppliedItemSettingHooks) item).setEquipmentSlotProvider(data.equipmentSlotProvider);
-			((AppliedItemSettingHooks) item).setCustomDamageHandler(data.customDamageHandler);
+			((AppliedItemSettingHooks) item).qsl$setEquipmentSlotProvider(data.equipmentSlotProvider);
+			((AppliedItemSettingHooks) item).qsl$setCustomDamageHandler(data.customDamageHandler);
 		}
 	}
 
 	public static final class ExtraData {
-		private /* @Nullable */ EquipmentSlotProvider equipmentSlotProvider;
-		private /* @Nullable */ CustomDamageHandler customDamageHandler;
+		private @Nullable EquipmentSlotProvider equipmentSlotProvider;
+		private @Nullable CustomDamageHandler customDamageHandler;
 
 		public void equipmentSlot(EquipmentSlotProvider equipmentSlotProvider) {
 			this.equipmentSlotProvider = equipmentSlotProvider;

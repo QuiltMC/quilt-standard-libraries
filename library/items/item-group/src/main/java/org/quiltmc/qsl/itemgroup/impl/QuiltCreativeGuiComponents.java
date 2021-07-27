@@ -32,13 +32,13 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 public class QuiltCreativeGuiComponents {
-	private static final Identifier BUTTON_TEX = new Identifier("qsl-items-item-group", "textures/gui/creative_buttons.png");
-	public static final Set<ItemGroup> COMMON_GROUPS = new HashSet<>();
+	private static final Identifier BUTTON_TEXTURE = new Identifier("qsl_items_item_group", "textures/gui/creative_buttons.png");
+	public static final Set<ItemGroup> ALWAYS_SHOWN_GROUPS = new HashSet<>();
 
 	static {
-		COMMON_GROUPS.add(ItemGroup.SEARCH);
-		COMMON_GROUPS.add(ItemGroup.INVENTORY);
-		COMMON_GROUPS.add(ItemGroup.HOTBAR);
+		ALWAYS_SHOWN_GROUPS.add(ItemGroup.SEARCH);
+		ALWAYS_SHOWN_GROUPS.add(ItemGroup.INVENTORY);
+		ALWAYS_SHOWN_GROUPS.add(ItemGroup.HOTBAR);
 	}
 
 	public static class ItemGroupButtonWidget extends ButtonWidget {
@@ -56,27 +56,27 @@ public class QuiltCreativeGuiComponents {
 		@Override
 		public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
 			this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
-			this.visible = extensions.isButtonVisible(type);
-			this.active = extensions.isButtonEnabled(type);
+			this.visible = extensions.qsl$isButtonVisible(type);
+			this.active = extensions.qsl$isButtonEnabled(type);
 
 			if (this.visible) {
 				int u = active && this.isHovered() ? 22 : 0;
 				int v = active ? 0 : 10;
 
-				RenderSystem.setShaderTexture(0, BUTTON_TEX);
+				RenderSystem.setShaderTexture(0, BUTTON_TEXTURE);
 				RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-				this.drawTexture(matrixStack, this.x, this.y, u + (type == Type.NEXT ? 11 : 0), v, 11, 10);
+				this.drawTexture(matrices, this.x, this.y, u + (type == Type.NEXT ? 11 : 0), v, 11, 10);
 
 				if (this.hovered) {
-					gui.renderTooltip(matrixStack, new TranslatableText("qsl-items-item-group.gui.creativeTabPage", extensions.currentPage() + 1, ((ItemGroup.GROUPS.length - 12) / 9) + 2), mouseX, mouseY);
+					gui.renderTooltip(matrices, new TranslatableText("qsl_items_item_group.gui.creativeTabPage", extensions.qsl$currentPage() + 1, ((ItemGroup.GROUPS.length - 12) / 9) + 2), mouseX, mouseY);
 				}
 			}
 		}
 	}
 
 	public enum Type {
-		NEXT(new LiteralText(">"), CreativeGuiExtensions::nextPage),
-		PREVIOUS(new LiteralText("<"), CreativeGuiExtensions::previousPage);
+		NEXT(new LiteralText(">"), CreativeGuiExtensions::qsl$nextPage),
+		PREVIOUS(new LiteralText("<"), CreativeGuiExtensions::qsl$previousPage);
 
 		Text text;
 		Consumer<CreativeGuiExtensions> clickConsumer;

@@ -39,8 +39,8 @@ public class CustomDamageTest implements ModInitializer {
 		if (entity.isSneaking()) {
 			return amount;
 		} else {
-			NbtCompound tag = stack.getOrCreateNbt();
-			tag.putInt("weird", tag.getInt("weird") + 1);
+			NbtCompound nbt = stack.getOrCreateNbt();
+			nbt.putInt("weird", nbt.getInt("weird") + 1);
 			return 0;
 		}
 	};
