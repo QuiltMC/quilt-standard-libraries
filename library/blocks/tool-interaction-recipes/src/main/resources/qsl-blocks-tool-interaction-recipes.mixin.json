@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "org.quiltmc.qsl.inworldrecipes.mixin",
+  "package": "org.quiltmc.qsl.toolinteractionrecipes.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
     "AxeItemMixin",

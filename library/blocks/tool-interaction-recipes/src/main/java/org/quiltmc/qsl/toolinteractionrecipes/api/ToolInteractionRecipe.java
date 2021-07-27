@@ -1,4 +1,4 @@
-package org.quiltmc.qsl.inworldrecipes.api;
+package org.quiltmc.qsl.toolinteractionrecipes.api;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
@@ -11,7 +11,7 @@ import java.util.Set;
  * Represents an <em>in-world recipe</em> - a recipe that can be performed on a specific set of block types
  * directly in the world.
  */
-public interface InWorldRecipe {
+public interface ToolInteractionRecipe {
 	/**
 	 * {@return the specific set of block types required for this recipe}
 	 */

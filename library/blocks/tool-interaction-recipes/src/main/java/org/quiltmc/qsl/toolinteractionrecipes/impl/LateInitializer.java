@@ -1,4 +1,4 @@
-package org.quiltmc.qsl.inworldrecipes.impl;
+package org.quiltmc.qsl.toolinteractionrecipes.impl;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.DedicatedServerModInitializer;
@@ -8,11 +8,11 @@ import net.fabricmc.api.DedicatedServerModInitializer;
 public class LateInitializer implements ClientModInitializer, DedicatedServerModInitializer {
 	@Override
 	public void onInitializeClient() {
-		InWorldRecipeMaps.update();
+		ToolInteractionRecipeMaps.update();
 	}
 
 	@Override
 	public void onInitializeServer() {
-		InWorldRecipeMaps.update();
+		ToolInteractionRecipeMaps.update();
 	}
 }

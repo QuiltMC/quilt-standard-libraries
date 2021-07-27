@@ -1,4 +1,4 @@
-package org.quiltmc.qsl.inworldrecipes.mixin;
+package org.quiltmc.qsl.toolinteractionrecipes.mixin;
 
 import net.minecraft.block.Block;
 import net.minecraft.predicate.BlockPredicate;

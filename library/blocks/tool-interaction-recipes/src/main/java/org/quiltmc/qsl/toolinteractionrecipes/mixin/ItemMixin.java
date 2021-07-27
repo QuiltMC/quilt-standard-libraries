@@ -1,4 +1,4 @@
-package org.quiltmc.qsl.inworldrecipes.mixin;
+package org.quiltmc.qsl.toolinteractionrecipes.mixin;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemUsageContext;

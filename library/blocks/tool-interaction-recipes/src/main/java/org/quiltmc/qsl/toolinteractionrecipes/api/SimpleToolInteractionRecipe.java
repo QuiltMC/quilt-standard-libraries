@@ -1,4 +1,4 @@
-package org.quiltmc.qsl.inworldrecipes.api;
+package org.quiltmc.qsl.toolinteractionrecipes.api;
 
 import net.minecraft.block.Block;
 import org.jetbrains.annotations.NotNull;
@@ -9,14 +9,14 @@ import java.util.Set;
 /**
  * Represents an in-world recipe with a constant, unchanging set of target block types.
  */
-public abstract class SimpleInWorldRecipe implements InWorldRecipe {
+public abstract class SimpleToolInteractionRecipe implements ToolInteractionRecipe {
 	private final @NotNull Set<Block> targetBlocks;
 
-	public SimpleInWorldRecipe(@NotNull Set<Block> targetBlocks) {
+	public SimpleToolInteractionRecipe(@NotNull Set<Block> targetBlocks) {
 		this.targetBlocks = targetBlocks;
 	}
 
-	public SimpleInWorldRecipe(@NotNull Block targetBlock) {
+	public SimpleToolInteractionRecipe(@NotNull Block targetBlock) {
 		this(Collections.singleton(targetBlock));
 	}
 
