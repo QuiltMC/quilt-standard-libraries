@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.blockrenderlayer.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "mixins": [
+    "RenderLayersMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
