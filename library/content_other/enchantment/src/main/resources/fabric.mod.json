@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "qsl_content_other_enchantment",
+  "name": "Quilt Enchatment API",
+  "version": "1.0.0",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "mixins": [
+    "qsl_content_other_enchantment.mixin.json"
+  ]
+}
