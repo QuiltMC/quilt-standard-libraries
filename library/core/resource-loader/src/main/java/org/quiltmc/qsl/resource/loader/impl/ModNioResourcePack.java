@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
+import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.metadata.ModMetadata;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,13 +40,12 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
 
-import org.quiltmc.qsl.resource.loader.api.ModResourcePack;
 import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
 
 /**
  * A NIO implementation of a mod resource pack.
  */
-public class ModNioResourcePack extends AbstractFileResourcePack implements ModResourcePack {
+public class ModNioResourcePack extends AbstractFileResourcePack {
 	private static final Logger LOGGER = LogManager.getLogger();
 	private static final Pattern RESOURCE_PACK_PATH = Pattern.compile("[a-z0-9-_]+");
 	private final ModMetadata modInfo;
@@ -63,7 +63,8 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements ModR
 		this.modInfo = modInfo;
 		this.basePath = path.toAbsolutePath().normalize();
 		this.type = type;
-		this.cacheable = modInfo.getId().equals("minecraft");
+		// Cache ModNioResourcePacks if not in dev environment because it's not supposed to be mutable in production.
+		this.cacheable = modInfo.getId().equals("minecraft") || !FabricLoader.getInstance().isDevelopmentEnvironment();
 		this.closer = closer;
 		this.separator = basePath.getFileSystem().getSeparator();
 		this.activationType = activationType;
@@ -110,7 +111,8 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements ModR
 	}
 
 	@Override
-	public Collection<Identifier> findResources(ResourceType type, String namespace, String path, int depth, Predicate<String> predicate) {
+	public Collection<Identifier> findResources(ResourceType type, String namespace, String path, int depth,
+												Predicate<String> pathFilter) {
 		var ids = new ArrayList<Identifier>();
 		String nioPath = path.replace("/", separator);
 
@@ -125,7 +127,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements ModR
 							.filter(Files::isRegularFile)
 							.filter((p) -> {
 								String filename = p.getFileName().toString();
-								return !filename.endsWith(".mcmeta") && predicate.test(filename);
+								return !filename.endsWith(".mcmeta") && pathFilter.test(filename);
 							})
 							.map(namespacePath::relativize)
 							.map((p) -> p.toString().replace(separator, "/"))
@@ -137,7 +139,8 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements ModR
 								}
 							});
 				} catch (IOException e) {
-					LOGGER.warn("findResources at " + path + " in namespace " + namespace + ", mod " + this.modInfo.getId() + " failed!", e);
+					LOGGER.warn("findResources at " + path + " in namespace " + namespace
+							+ ", mod " + this.modInfo.getId() + " failed!", e);
 				}
 			}
 		}
@@ -146,7 +149,8 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements ModR
 	}
 
 	protected void warnInvalidNamespace(String s) {
-		LOGGER.warn("Quilt NioResourcePack: ignored invalid namespace: {} in mod ID {}", s, this.modInfo.getId());
+		LOGGER.warn("Quilt NioResourcePack: ignored invalid namespace: {} in mod ID {}",
+				s, this.modInfo.getId());
 	}
 
 	@Override
@@ -198,11 +202,6 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements ModR
 				throw new RuntimeException(e);
 			}
 		}
-	}
-
-	@Override
-	public ModMetadata getQuiltModMetadata() {
-		return this.modInfo;
 	}
 
 	public ResourcePackActivationType getActivationType() {

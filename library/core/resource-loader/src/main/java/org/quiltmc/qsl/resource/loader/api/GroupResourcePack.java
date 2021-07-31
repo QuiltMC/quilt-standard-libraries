@@ -38,12 +38,12 @@ import net.minecraft.util.Identifier;
 /**
  * Represents a group resource pack, which holds multiple resource packs as one.
  */
-public abstract class GroupResourcePack implements ModResourcePack {
+public abstract class GroupResourcePack implements ResourcePack {
 	protected final ResourceType type;
-	protected final List<? extends ModResourcePack> packs;
-	protected final Map<String, List<ModResourcePack>> namespacedPacks = new Object2ObjectOpenHashMap<>();
+	protected final List<? extends ResourcePack> packs;
+	protected final Map<String, List<ResourcePack>> namespacedPacks = new Object2ObjectOpenHashMap<>();
 
-	public GroupResourcePack(ResourceType type, List<? extends ModResourcePack> packs) {
+	public GroupResourcePack(ResourceType type, List<? extends ResourcePack> packs) {
 		this.type = type;
 		this.packs = packs;
 		this.packs.forEach(pack -> pack.getNamespaces(this.type)
@@ -51,7 +51,7 @@ public abstract class GroupResourcePack implements ModResourcePack {
 						.add(pack)));
 	}
 
-	public List<? extends ModResourcePack> getPacks(String namespace) {
+	public List<? extends ResourcePack> getPacks(String namespace) {
 		return this.namespacedPacks.get(namespace);
 	}
 

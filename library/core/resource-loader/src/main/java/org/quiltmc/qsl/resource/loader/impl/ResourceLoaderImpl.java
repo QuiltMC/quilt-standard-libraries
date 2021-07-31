@@ -16,6 +16,9 @@
 
 package org.quiltmc.qsl.resource.loader.impl;
 
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,15 +28,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.minecraft.resource.DefaultResourcePack;
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 
-import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
+import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
+import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;
 
 /**
  * Represents the implementation of the resource loader.
@@ -109,5 +116,27 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		for (var reloader : reloadersToAdd) {
 			LOGGER.warn("Could not resolve dependencies for resource reloader: " + reloader.getQuiltId() + "!");
 		}
+	}
+
+	private static Path locateDefaultResourcePack(ResourceType type) {
+		try {
+			// Locate MC jar by finding the URL that contains the assets root.
+			URL assetsRootUrl = DefaultResourcePack.class.getResource("/" + type.getDirectory() + "/.mcassetsroot");
+
+			return Paths.get(assetsRootUrl.toURI()).resolve("../..").toAbsolutePath().normalize();
+		} catch (Exception exception) {
+			throw new RuntimeException("Quilt: Failed to locate Minecraft assets root!", exception);
+		}
+	}
+
+	public static ModNioResourcePack locateAndLoadDefaultResourcePack(ResourceType type) {
+		return new ModNioResourcePack(
+				FabricLoader.getInstance().getModContainer("minecraft").map(ModContainer::getMetadata).orElseThrow(),
+				locateDefaultResourcePack(type),
+				type,
+				() -> {
+				},
+				ResourcePackActivationType.ALWAYS_ENABLED
+		);
 	}
 }

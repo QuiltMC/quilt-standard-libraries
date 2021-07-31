@@ -3,11 +3,14 @@
   "package": "org.quiltmc.qsl.resource.loader.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "DefaultResourcePackMixin",
     "KeyedResourceReloaderMixin",
     "NamespaceResourceManagerAccessor",
-    "ReloadableResourceManagerImplMixin"
+    "ReloadableResourceManagerImplMixin",
+    "VanillaDataPackProviderMixin"
   ],
   "client": [
+    "client.ClientBuiltinResourcePackProviderMixin",
     "client.KeyedClientResourceReloaderMixin"
   ],
   "injectors": {
