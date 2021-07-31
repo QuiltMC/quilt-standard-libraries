@@ -16,49 +16,18 @@
 
 package org.quiltmc.qsl.item.mixin;
 
-import org.quiltmc.qsl.item.impl.AppliedItemSettingHooks;
-import org.quiltmc.qsl.item.impl.QuiltItemInternals;
+import org.quiltmc.qsl.item.impl.CustomItemSettingImpl;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.item.Item;
 
-import org.quiltmc.qsl.item.api.item.v1.CustomDamageHandler;
-import org.quiltmc.qsl.item.api.item.v1.EquipmentSlotProvider;
-
 @Mixin(Item.class)
-abstract class ItemMixin implements AppliedItemSettingHooks {
-	@Unique
-	private EquipmentSlotProvider equipmentSlotProvider;
-
-	@Unique
-	private CustomDamageHandler customDamageHandler;
-
+abstract class ItemMixin {
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onConstruct(Item.Settings settings, CallbackInfo info) {
-		QuiltItemInternals.onBuild(settings, (Item) (Object) this);
-	}
-
-	@Override
-	public EquipmentSlotProvider qsl$getEquipmentSlotProvider() {
-		return equipmentSlotProvider;
-	}
-
-	@Override
-	public void qsl$setEquipmentSlotProvider(EquipmentSlotProvider equipmentSlotProvider) {
-		this.equipmentSlotProvider = equipmentSlotProvider;
-	}
-
-	@Override
-	public CustomDamageHandler qsl$getCustomDamageHandler() {
-		return customDamageHandler;
-	}
-
-	@Override
-	public void qsl$setCustomDamageHandler(CustomDamageHandler handler) {
-		this.customDamageHandler = handler;
+		CustomItemSettingImpl.onBuild(settings, (Item) (Object) this);
 	}
 }

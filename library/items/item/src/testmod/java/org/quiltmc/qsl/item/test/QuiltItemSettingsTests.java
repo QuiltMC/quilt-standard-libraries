@@ -19,17 +19,49 @@ package org.quiltmc.qsl.item.test;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.world.World;
+import org.quiltmc.qsl.item.api.item.v1.CustomItemSetting;
 import org.quiltmc.qsl.item.api.item.v1.QuiltItemSettings;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public class QuiltItemSettingsTests implements ModInitializer {
+	public static final CustomItemSetting<String> CUSTOM_DATA_TEST = CustomItemSetting.create(() -> null);
+
 	@Override
 	public void onInitialize() {
 		// Registers an item with a custom equipment slot.
 		Item testItem = new Item(new QuiltItemSettings().group(ItemGroup.MISC).equipmentSlot(stack -> EquipmentSlot.CHEST));
-		Registry.register(Registry.ITEM, new Identifier("qsl_items_item", "test_item"), testItem);
+		Registry.register(Registry.ITEM, new Identifier("qsl_items_item_testmod", "test_item"), testItem);
+
+		// Registers an item with a custom item setting that adds some tooltip.
+		Item testItem2 = new Item(new QuiltItemSettings().group(ItemGroup.MISC).custom(CUSTOM_DATA_TEST, "Look at me! I have a custom setting!"));
+		Registry.register(Registry.ITEM, new Identifier("qsl_items_item_testmod", "test_item2"), testItem2);
+
+		// Custom recipe remainders
+
+		Item hammerItem = new Item(new QuiltItemSettings().group(ItemGroup.TOOLS).maxDamage(16).damageIfUsedInCrafting());
+		Registry.register(Registry.ITEM, new Identifier("qsl_items_item_testmod", "hammer"), hammerItem);
+
+		Item endHammerItem = new Item(new QuiltItemSettings().group(ItemGroup.TOOLS).maxDamage(32).recipeRemainder(((original, inventory, type, world, pos) -> {
+			if (world == null || !world.getRegistryKey().equals(World.END)) {
+				return ItemStack.EMPTY;
+			}
+
+			ItemStack copy = original.copy();
+			copy.damage(1, ThreadLocalRandom.current(), null);
+
+			if (copy.getDamage() < copy.getMaxDamage()) {
+				return ItemStack.EMPTY;
+			}
+
+			return copy;
+		})));
+		Registry.register(Registry.ITEM, new Identifier("qsl_items_item_testmod", "end_hammer"), endHammerItem);
 	}
 }

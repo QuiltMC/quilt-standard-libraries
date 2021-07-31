@@ -18,7 +18,7 @@ package org.quiltmc.qsl.item.mixin;
 
 import java.util.function.Consumer;
 
-import org.quiltmc.qsl.item.impl.AppliedItemSettingHooks;
+import org.quiltmc.qsl.item.impl.CustomItemSettingImpl;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -51,7 +51,7 @@ public abstract class ItemStackMixin {
 
 	@ModifyArg(method = "damage(ILnet/minecraft/entity/LivingEntity;Ljava/util/function/Consumer;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;damage(ILjava/util/Random;Lnet/minecraft/server/network/ServerPlayerEntity;)Z"), index = 0)
 	private int hookDamage(int amount) {
-		CustomDamageHandler handler = ((AppliedItemSettingHooks) getItem()).qsl$getCustomDamageHandler();
+		CustomDamageHandler handler = CustomItemSettingImpl.CUSTOM_DAMAGE_HANDLER.get(this.getItem());
 
 		if (handler != null) {
 			return handler.damage((ItemStack) (Object) this, amount, damagingEntity, breakCallback);

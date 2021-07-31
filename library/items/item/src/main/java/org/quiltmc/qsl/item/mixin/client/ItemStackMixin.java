@@ -30,7 +30,6 @@ import net.minecraft.text.Text;
 
 import org.quiltmc.qsl.item.api.client.item.v1.ItemTooltipCallback;
 
-
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
 	@Inject(method = "getTooltip", at = @At("RETURN"))

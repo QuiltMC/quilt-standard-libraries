@@ -21,8 +21,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Rarity;
-
-import org.quiltmc.qsl.item.impl.QuiltItemInternals;
+import org.quiltmc.qsl.item.impl.CustomItemSettingImpl;
 
 /**
  * Quilt's version of {@link Item.Settings}. Adds additional methods and hooks
@@ -39,8 +38,7 @@ public class QuiltItemSettings extends Item.Settings {
 	 * @return this
 	 */
 	public QuiltItemSettings equipmentSlot(EquipmentSlotProvider equipmentSlotProvider) {
-		QuiltItemInternals.computeExtraData(this).equipmentSlot(equipmentSlotProvider);
-		return this;
+		return this.custom(CustomItemSettingImpl.EQUIPMENT_SLOT_PROVIDER, equipmentSlotProvider);
 	}
 
 	/**
@@ -51,7 +49,67 @@ public class QuiltItemSettings extends Item.Settings {
 	 * @return this
 	 */
 	public QuiltItemSettings customDamage(CustomDamageHandler handler) {
-		QuiltItemInternals.computeExtraData(this).customDamage(handler);
+		return this.custom(CustomItemSettingImpl.CUSTOM_DAMAGE_HANDLER, handler);
+	}
+
+	/**
+	 * Sets the stack-aware recipe remainder provider of the item.
+	 */
+	public QuiltItemSettings recipeRemainder(RecipeRemainderProvider provider) {
+		return this.custom(CustomItemSettingImpl.RECIPE_REMAINDER_PROVIDER, provider);
+	}
+
+	/**
+	 * Sets the stack-aware recipe remainder to damage the item by 1 every time it is used in crafting.
+	 */
+	public QuiltItemSettings damageIfUsedInCrafting() {
+		return this.damageIfUsedInCrafting(1);
+	}
+
+	/**
+	 * Sets the stack-aware recipe remainder to return the item itself.
+	 */
+	public QuiltItemSettings returnSelfInCrafting() {
+		return this.damageIfUsedInCrafting(0);
+	}
+
+	/**
+	 * Sets the stack-aware recipe remainder to damage the item by a certain amount every time it is used in crafting.
+	 *
+	 * @param by the amount
+	 */
+	public QuiltItemSettings damageIfUsedInCrafting(int by) {
+		if (by == 0) {
+			return this.recipeRemainder((original, inventory, type, world, pos) -> original);
+		}
+
+		return this.recipeRemainder((original, inventory, type, world, pos) -> {
+			if (!original.isDamageable()) {
+				return ItemStack.EMPTY;
+			}
+
+			ItemStack copy = original.copy();
+
+			if (copy.damage(by, world.random, null)) {
+				return ItemStack.EMPTY;
+			}
+
+			return copy;
+		});
+	}
+
+	/**
+	 * Sets a custom setting of the item.
+	 * @param setting the unique type for this setting
+	 * @param value the object containing the setting itself
+	 * @return this builder
+	 */
+	public <T> QuiltItemSettings custom(CustomItemSetting<T> setting, T value) {
+		if (!(setting instanceof CustomItemSettingImpl)) {
+			throw new UnsupportedOperationException("CustomItemSetting should not be ");
+		}
+
+		((CustomItemSettingImpl<T>) setting).set(this, value);
 		return this;
 	}
 

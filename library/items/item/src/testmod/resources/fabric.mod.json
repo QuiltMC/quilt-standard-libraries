@@ -6,7 +6,7 @@
   "environment": "*",
   "license": "Apache-2.0",
   "depends": {
-    "qsl-items-item": "*"
+    "qsl_items_item": "*"
   },
   "entrypoints": {
     "main": [

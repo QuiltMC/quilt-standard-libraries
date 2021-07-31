@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:cobblestone"
+    },
+    {
+      "tag": "qsl_items_item_testmod:hammers"
+    }
+  ],
+  "result": {
+    "item": "minecraft:gravel"
+  }
+}

@@ -16,28 +16,25 @@
 
 package org.quiltmc.qsl.item.mixin;
 
+import org.quiltmc.qsl.item.api.item.v1.RecipeRemainderProvider;
 import org.quiltmc.qsl.item.impl.CustomItemSettingImpl;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.Item;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeManager;
+import net.minecraft.recipe.RecipeType;
+import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.world.World;
 
-import org.quiltmc.qsl.item.api.item.v1.EquipmentSlotProvider;
-
-@Mixin(LivingEntity.class)
-abstract class LivingEntityMixin {
-	@Inject(method = "getPreferredEquipmentSlot", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
-	private static void onGetPreferredEquipmentSlot(ItemStack stack, CallbackInfoReturnable<EquipmentSlot> info, Item item) {
-		EquipmentSlotProvider equipmentSlotProvider = CustomItemSettingImpl.EQUIPMENT_SLOT_PROVIDER.get(item);
-
-		if (equipmentSlotProvider != null) {
-			info.setReturnValue(equipmentSlotProvider.getPreferredEquipmentSlot(stack));
-		}
+@Mixin(RecipeManager.class)
+public class RecipeManagerMixin {
+	@Inject(method = "getRemainingStacks", at = @At(value = "RETURN", ordinal = 0), cancellable = true)
+	public <C extends Inventory, T extends Recipe<C>> void interceptGetRemainingStacks(RecipeType<T> recipeType, C inventory, World world, CallbackInfoReturnable<DefaultedList<ItemStack>> cir) {
+		cir.setReturnValue(RecipeRemainderProvider.getRemainingStacks(inventory, recipeType, world, null));
 	}
 }

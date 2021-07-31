@@ -23,12 +23,21 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.quiltmc.qsl.item.api.client.item.v1.ItemTooltipCallback;
+import org.quiltmc.qsl.item.test.QuiltItemSettingsTests;
 
 @Environment(EnvType.CLIENT)
 public class TooltipTests implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		// Adds a tooltip to all items so testing can be verified easily.
-		ItemTooltipCallback.EVENT.register((stack, context, lines) -> lines.add(new LiteralText("Fancy Tooltips").formatted(Formatting.LIGHT_PURPLE)));
+		ItemTooltipCallback.EVENT.register((stack, context, lines) -> {
+			lines.add(new LiteralText("Fancy Tooltips").formatted(Formatting.LIGHT_PURPLE));
+
+			String string = QuiltItemSettingsTests.CUSTOM_DATA_TEST.get(stack.getItem());
+
+			if (string != null) {
+				lines.add(new LiteralText(string));
+			}
+		});
 	}
 }
