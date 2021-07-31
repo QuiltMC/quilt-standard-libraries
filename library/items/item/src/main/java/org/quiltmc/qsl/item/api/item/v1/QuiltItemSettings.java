@@ -38,7 +38,7 @@ public class QuiltItemSettings extends Item.Settings {
 	 * @return this
 	 */
 	public QuiltItemSettings equipmentSlot(EquipmentSlotProvider equipmentSlotProvider) {
-		return this.custom(CustomItemSettingImpl.EQUIPMENT_SLOT_PROVIDER, equipmentSlotProvider);
+		return this.customSetting(CustomItemSettingImpl.EQUIPMENT_SLOT_PROVIDER, equipmentSlotProvider);
 	}
 
 	/**
@@ -49,14 +49,14 @@ public class QuiltItemSettings extends Item.Settings {
 	 * @return this
 	 */
 	public QuiltItemSettings customDamage(CustomDamageHandler handler) {
-		return this.custom(CustomItemSettingImpl.CUSTOM_DAMAGE_HANDLER, handler);
+		return this.customSetting(CustomItemSettingImpl.CUSTOM_DAMAGE_HANDLER, handler);
 	}
 
 	/**
 	 * Sets the stack-aware recipe remainder provider of the item.
 	 */
 	public QuiltItemSettings recipeRemainder(RecipeRemainderProvider provider) {
-		return this.custom(CustomItemSettingImpl.RECIPE_REMAINDER_PROVIDER, provider);
+		return this.customSetting(CustomItemSettingImpl.RECIPE_REMAINDER_PROVIDER, provider);
 	}
 
 	/**
@@ -104,7 +104,7 @@ public class QuiltItemSettings extends Item.Settings {
 	 * @param value the object containing the setting itself
 	 * @return this builder
 	 */
-	public <T> QuiltItemSettings custom(CustomItemSetting<T> setting, T value) {
+	public <T> QuiltItemSettings customSetting(CustomItemSetting<T> setting, T value) {
 		if (!(setting instanceof CustomItemSettingImpl)) {
 			throw new UnsupportedOperationException("CustomItemSetting should not be ");
 		}

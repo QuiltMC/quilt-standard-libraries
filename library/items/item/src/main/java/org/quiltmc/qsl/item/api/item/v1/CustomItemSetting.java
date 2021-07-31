@@ -32,7 +32,7 @@ import org.quiltmc.qsl.item.impl.CustomItemSettingImpl;
  * and users that wish to expose a custom setting for use in other mods should do so by exposing
  * the CustomItemSetting instance.
  *
- * <h3>Usage Example</h3>
+ * <h2>Usage Example</h2>
  * <pre>{@code
  * // Create the setting instance. You can think of this as the "setting key".
  * public static final CustomItemSetting<String> CUSTOM_TOOLTIP = CustomItemSetting.create(() -> null);
@@ -81,6 +81,6 @@ public interface CustomItemSetting<T> {
 	 * @return a new CustomItemSetting
 	 */
 	static <T> CustomItemSetting<T> create(T defaultValue) {
-		return new CustomItemSettingImpl<>(() -> defaultValue);
+		return create(() -> defaultValue);
 	}
 }

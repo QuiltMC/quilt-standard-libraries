@@ -40,7 +40,7 @@ public class QuiltItemSettingsTests implements ModInitializer {
 		Registry.register(Registry.ITEM, new Identifier("qsl_items_item_testmod", "test_item"), testItem);
 
 		// Registers an item with a custom item setting that adds some tooltip.
-		Item testItem2 = new Item(new QuiltItemSettings().group(ItemGroup.MISC).custom(CUSTOM_DATA_TEST, "Look at me! I have a custom setting!"));
+		Item testItem2 = new Item(new QuiltItemSettings().group(ItemGroup.MISC).customSetting(CUSTOM_DATA_TEST, "Look at me! I have a custom setting!"));
 		Registry.register(Registry.ITEM, new Identifier("qsl_items_item_testmod", "test_item2"), testItem2);
 
 		// Custom recipe remainders
