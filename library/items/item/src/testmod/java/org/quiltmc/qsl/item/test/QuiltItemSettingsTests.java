@@ -32,21 +32,22 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class QuiltItemSettingsTests implements ModInitializer {
 	public static final CustomItemSetting<String> CUSTOM_DATA_TEST = CustomItemSetting.create(() -> null);
+	public static final String MOD_ID = "qsl_items_item_testmod";
 
 	@Override
 	public void onInitialize() {
 		// Registers an item with a custom equipment slot.
 		Item testItem = new Item(new QuiltItemSettings().group(ItemGroup.MISC).equipmentSlot(stack -> EquipmentSlot.CHEST));
-		Registry.register(Registry.ITEM, new Identifier("qsl_items_item_testmod", "test_item"), testItem);
+		Registry.register(Registry.ITEM, new Identifier(MOD_ID, "test_item"), testItem);
 
 		// Registers an item with a custom item setting that adds some tooltip.
 		Item testItem2 = new Item(new QuiltItemSettings().group(ItemGroup.MISC).customSetting(CUSTOM_DATA_TEST, "Look at me! I have a custom setting!"));
-		Registry.register(Registry.ITEM, new Identifier("qsl_items_item_testmod", "test_item2"), testItem2);
+		Registry.register(Registry.ITEM, new Identifier(MOD_ID, "test_item2"), testItem2);
 
 		// Custom recipe remainders
 
 		Item hammerItem = new Item(new QuiltItemSettings().group(ItemGroup.TOOLS).maxDamage(16).damageIfUsedInCrafting());
-		Registry.register(Registry.ITEM, new Identifier("qsl_items_item_testmod", "hammer"), hammerItem);
+		Registry.register(Registry.ITEM, new Identifier(MOD_ID, "hammer"), hammerItem);
 
 		Item endHammerItem = new Item(new QuiltItemSettings().group(ItemGroup.TOOLS).maxDamage(32).recipeRemainder(((original, inventory, type, world, pos) -> {
 			if (world == null || !world.getRegistryKey().equals(World.END)) {
@@ -62,6 +63,6 @@ public class QuiltItemSettingsTests implements ModInitializer {
 
 			return copy;
 		})));
-		Registry.register(Registry.ITEM, new Identifier("qsl_items_item_testmod", "end_hammer"), endHammerItem);
+		Registry.register(Registry.ITEM, new Identifier(MOD_ID, "end_hammer"), endHammerItem);
 	}
 }

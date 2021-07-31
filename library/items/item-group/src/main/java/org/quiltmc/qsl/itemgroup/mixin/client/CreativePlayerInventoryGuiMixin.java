@@ -46,8 +46,10 @@ public abstract class CreativePlayerInventoryGuiMixin extends AbstractInventoryS
 	public abstract int getSelectedTab(); /* XXX getSelectedTab XXX */
 
 	// "static" matches selectedTab
+	@Unique
 	private static int qsl$currentPage = 0;
 
+	@Unique
 	private int getPageOffset(int page) {
 		return switch (page) {
 			case 0 -> 0;
@@ -56,6 +58,7 @@ public abstract class CreativePlayerInventoryGuiMixin extends AbstractInventoryS
 		};
 	}
 
+	@Unique
 	private int getOffsetPage(int offset) {
 		if (offset < 12) {
 			return 0;
@@ -102,6 +105,7 @@ public abstract class CreativePlayerInventoryGuiMixin extends AbstractInventoryS
 		return false;
 	}
 
+	@Unique
 	private void qsl$updateSelection() {
 		int minPos = getPageOffset(qsl$currentPage);
 		int maxPos = getPageOffset(qsl$currentPage + 1) - 1;
@@ -151,6 +155,7 @@ public abstract class CreativePlayerInventoryGuiMixin extends AbstractInventoryS
 		}
 	}
 
+	@Unique
 	private boolean qsl$isGroupNotVisible(ItemGroup itemGroup) {
 		if (QuiltCreativeGuiComponents.ALWAYS_SHOWN_GROUPS.contains(itemGroup)) {
 			return false;

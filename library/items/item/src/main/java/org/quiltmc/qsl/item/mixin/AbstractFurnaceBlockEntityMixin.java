@@ -56,14 +56,15 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;getRecipeRemainder()Lnet/minecraft/item/Item;"), locals = LocalCapture.CAPTURE_FAILHARD)
 	private static void setRemainder(World world, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity, CallbackInfo ci, boolean bl, boolean bl2, ItemStack itemStack, Recipe<?> recipe, int i, Item item) {
+		AbstractFurnaceBlockEntityMixin furnaceBlockEntity = (AbstractFurnaceBlockEntityMixin) (Object) blockEntity;
 		ItemStack stack = CustomItemSettingImpl.RECIPE_REMAINDER_PROVIDER.get(item).getRecipeRemainder(
 				itemStack,
 				blockEntity,
-				((AbstractFurnaceBlockEntityMixin) (Object) blockEntity).recipeType,
-				((AbstractFurnaceBlockEntityMixin) (Object) blockEntity).world,
-				((AbstractFurnaceBlockEntityMixin) (Object) blockEntity).pos
+				furnaceBlockEntity.recipeType,
+				furnaceBlockEntity.world,
+				furnaceBlockEntity.pos
 		);
-		((AbstractFurnaceBlockEntityMixin) (Object) blockEntity).inventory.set(1, stack);
+		furnaceBlockEntity.inventory.set(1, stack);
 	}
 
 	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/collection/DefaultedList;set(ILjava/lang/Object;)Ljava/lang/Object;"))

@@ -44,7 +44,7 @@ public class QuiltItemGroup extends ItemGroup {
 	 * Sets the {@link Item} to use as the icon for the {@link ItemGroup}
 	 * @param icon The {@link Item} for the icon
 	 */
-	public void setIcon(@NotNull ItemConvertible icon) {
+	public void setIcon(ItemConvertible icon) {
 		this.icon = new ItemStack(icon);
 	}
 
@@ -52,7 +52,7 @@ public class QuiltItemGroup extends ItemGroup {
 	 * Sets the {@link ItemStack} to use as the icon for the {@link ItemGroup}, allowing for NBT to be used
 	 * @param icon The {@link ItemStack} for the icon
 	 */
-	public void setIcon(@NotNull ItemStack icon) {
+	public void setIcon(ItemStack icon) {
 		this.icon = icon;
 	}
 
