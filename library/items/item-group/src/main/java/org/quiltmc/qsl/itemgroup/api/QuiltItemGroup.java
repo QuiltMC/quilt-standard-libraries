@@ -23,15 +23,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 
 /**
- * Extensions for the {@link ItemGroup} class. Currently, the only extension is setting the icon with an {@link Item} after the item has been created ({@link QuiltItemGroup#setIcon(Item)}).
+ * Extensions for the {@link ItemGroup} class. Currently, the only extension is setting the icon with either an {@link ItemConvertible} or {@link ItemStack} after the item has been created ({@link QuiltItemGroup#setIcon(ItemConvertible)}, {@link QuiltItemGroup#setIcon(ItemStack)}).
  */
 public class QuiltItemGroup extends ItemGroup {
 	private final @Nullable Supplier<ItemStack> iconSupplier;
-	private @Nullable Item icon;
+	private @Nullable ItemStack icon;
 
 	@ApiStatus.Internal
 	protected QuiltItemGroup(int index, String id, @Nullable Supplier<ItemStack> iconSupplier) {
@@ -43,19 +44,27 @@ public class QuiltItemGroup extends ItemGroup {
 	 * Sets the {@link Item} to use as the icon for the {@link ItemGroup}
 	 * @param icon The {@link Item} for the icon
 	 */
-	public void setIcon(@NotNull Item icon) {
+	public void setIcon(@NotNull ItemConvertible icon) {
+		this.icon = new ItemStack(icon);
+	}
+
+	/**
+	 * Sets the {@link ItemStack} to use as the icon for the {@link ItemGroup}, allowing for NBT to be used
+	 * @param icon The {@link ItemStack} for the icon
+	 */
+	public void setIcon(@NotNull ItemStack icon) {
 		this.icon = icon;
 	}
 
 	@Override
 	public ItemStack createIcon() {
-		if (!iconSupplier.get().isEmpty()) {
+		if (iconSupplier != null && !iconSupplier.get().isEmpty()) {
 			return iconSupplier.get();
 		} else {
 			if (icon == null) {
 				return ItemStack.EMPTY;
 			}
-			return new ItemStack(icon);
+			return icon;
 		}
 	}
 }
