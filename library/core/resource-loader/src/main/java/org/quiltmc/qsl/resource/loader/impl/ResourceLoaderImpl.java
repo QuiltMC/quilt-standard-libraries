@@ -63,12 +63,16 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	@Override
 	public void registerReloader(IdentifiableResourceReloader resourceReloader) {
 		if (!this.addedListenerIds.add(resourceReloader.getQuiltId())) {
-			throw new RuntimeException("Tried to register resource reloader " + resourceReloader.getQuiltId() + " twice!");
+			throw new IllegalStateException(
+					"Tried to register resource reloader " + resourceReloader.getQuiltId() + " twice!"
+			);
 		}
 
 		if (!this.addedReloaders.add(resourceReloader)) {
-			throw new RuntimeException("Resource reloader with previously unknown ID " + resourceReloader.getQuiltId()
-					+ " already in resource reloader set!");
+			throw new IllegalStateException(
+					"Resource reloader with previously unknown ID " + resourceReloader.getQuiltId()
+					+ " already in resource reloader set!"
+			);
 		}
 	}
 

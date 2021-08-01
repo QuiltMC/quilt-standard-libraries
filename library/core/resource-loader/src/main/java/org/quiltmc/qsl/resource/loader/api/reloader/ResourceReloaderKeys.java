@@ -35,7 +35,6 @@ public final class ResourceReloaderKeys {
 		public static final Identifier TEXTURES = new Identifier("minecraft:textures");
 
 		private Client() {
-			throw new UnsupportedOperationException("Someone tried to instantiate a static-only class. How?");
 		}
 	}
 
@@ -50,11 +49,9 @@ public final class ResourceReloaderKeys {
 		public static final Identifier LOOT_TABLES = new Identifier("minecraft:loot_tables");
 
 		private Server() {
-			throw new UnsupportedOperationException("Someone tried to instantiate a static-only class. How?");
 		}
 	}
 
 	private ResourceReloaderKeys() {
-		throw new UnsupportedOperationException("Someone tried to instantiate a static-only class. How?");
 	}
 }

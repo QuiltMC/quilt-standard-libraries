@@ -36,6 +36,11 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.resource.loader.impl.ModNioResourcePack;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
+/**
+ * This mixin has the goal to fix resource leaking of mod resources into the default resource pack.
+ * <p>
+ * This well-known bug caused many issues of Vanilla tags being overwritten by mods' tags.
+ */
 @Mixin(DefaultResourcePack.class)
 public abstract class DefaultResourcePackMixin {
 	// Redirects all resource access to the MC resource pack.
@@ -52,7 +57,7 @@ public abstract class DefaultResourcePackMixin {
 	}
 
 	/**
-	 * @author QuiltMC
+	 * @author QuiltMC, LambdAurora
 	 * @reason Rewrite default resource access to avoid resource leaking.
 	 */
 	@Overwrite
@@ -61,7 +66,7 @@ public abstract class DefaultResourcePackMixin {
 	}
 
 	/**
-	 * @author QuiltMC
+	 * @author QuiltMC, LambdAurora
 	 * @reason Rewrite default resource access to avoid resource leaking.
 	 */
 	@Overwrite
@@ -74,7 +79,7 @@ public abstract class DefaultResourcePackMixin {
 	}
 
 	/**
-	 * @author QuiltMC
+	 * @author QuiltMC, LambdAurora
 	 * @reason Rewrite default resource access to avoid resource leaking.
 	 */
 	@Overwrite
@@ -87,7 +92,7 @@ public abstract class DefaultResourcePackMixin {
 	}
 
 	/**
-	 * @author QuiltMC
+	 * @author QuiltMC, LambdAurora
 	 * @reason Rewrite default resource access to avoid resource leaking.
 	 */
 	@Overwrite

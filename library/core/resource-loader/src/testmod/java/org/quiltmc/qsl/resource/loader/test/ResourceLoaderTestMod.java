@@ -19,13 +19,12 @@ package org.quiltmc.qsl.resource.loader.test;
 import net.minecraft.util.Identifier;
 
 public final class ResourceLoaderTestMod {
-	public static final String NAMESPACE = "quilt-resource-loader-testmod";
+	public static final String NAMESPACE = "quilt_resource_loader_testmod";
 
 	public static Identifier id(String path) {
 		return new Identifier(NAMESPACE, path);
 	}
 
 	private ResourceLoaderTestMod() {
-		throw new UnsupportedOperationException("Someone tried to instantiate a static-only class. How?");
 	}
 }
