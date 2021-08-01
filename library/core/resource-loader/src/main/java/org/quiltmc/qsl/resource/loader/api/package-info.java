@@ -12,7 +12,7 @@
  * <p><h3>Modded Resource Pack Handling</h3></p>
  * <p>The Resource Loader will create a resource pack for each mod that provides resources in {@code assets} or {@code data}
  * sub-directories.
- * Those mod resource packs are grouped into the default resource pack, they can override the default resource pack but unrecommended.</p>
+ * Those mod resource packs are grouped into the default resource pack. They can override the default resource pack, but it is not recommended.</p>
  *
  * <p><h4>Built-in Mod Resource Pack</h4></p>
  * <p>The Resource Loader adds manually registered mod resource packs. Those resource packs are registered with
