@@ -1,0 +1,12 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "block-extensions"
+	version = "1.0.0"
+	library = "blocks"
+	coreDependencies([
+			"qsl-base"
+	])
+}
