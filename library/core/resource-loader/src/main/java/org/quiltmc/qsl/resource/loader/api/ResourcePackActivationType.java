@@ -26,8 +26,6 @@ public enum ResourcePackActivationType {
 	NORMAL,
 	/**
 	 * Enabled by default. The user still has full control over the activation of the resource pack.
-	 *
-	 * <p>Note: this setting can only be satisfied on data packs, client resource packs cannot be enabled by default.
 	 */
 	DEFAULT_ENABLED,
 	/**

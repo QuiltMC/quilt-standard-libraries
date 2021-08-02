@@ -18,6 +18,7 @@
     "quilt_loader": ">=0.13.1-rc.10"
   },
   "description": "Asset and data resource loading.",
+  "accessWidener": "quilt_resource_loader.accesswidener",
   "mixins": [
     "quilt_resource_loader.mixins.json"
   ]

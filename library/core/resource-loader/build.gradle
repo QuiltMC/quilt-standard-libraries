@@ -7,3 +7,7 @@ qslModule {
 	version = "1.0.0"
 	library = "core"
 }
+
+minecraft {
+	accessWidener "src/main/resources/quilt_resource_loader.accesswidener"
+}

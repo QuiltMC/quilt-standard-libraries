@@ -5,6 +5,7 @@
   "mixins": [
     "DefaultResourcePackMixin",
     "KeyedResourceReloaderMixin",
+    "MinecraftServerMixin",
     "NamespaceResourceManagerAccessor",
     "NamespaceResourceManagerMixin",
     "ReloadableResourceManagerImplMixin",
@@ -12,7 +13,9 @@
   ],
   "client": [
     "client.ClientBuiltinResourcePackProviderMixin",
+    "client.CreateWorldScreenMixin",
     "client.FontManagerResourceReloadListenerMixin",
+    "client.GameOptionsMixin",
     "client.KeyedClientResourceReloaderMixin"
   ],
   "injectors": {

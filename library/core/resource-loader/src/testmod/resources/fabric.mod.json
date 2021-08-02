@@ -10,6 +10,7 @@
   },
   "entrypoints": {
     "main": [
+      "org.quiltmc.qsl.resource.loader.test.BuiltinResourcePackTestMod",
       "org.quiltmc.qsl.resource.loader.test.ResourceReloaderTestMod"
     ]
   }

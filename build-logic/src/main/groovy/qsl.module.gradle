@@ -30,7 +30,7 @@ plugins {
 spotless {
 	java {
 		// UPDATING: This needs to be changed when a new branch is created.
-		ratchetFrom("origin/1.17.1")
+		//ratchetFrom("origin/1.17.1")
 		licenseHeaderFile(rootProject.file("codeformat/HEADER")).yearSeparator(", ")
 	}
 }

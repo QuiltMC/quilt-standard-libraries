@@ -56,7 +56,8 @@ public interface ResourceLoader {
 	 * A built-in resource pack is an extra resource pack provided by your mod which is not always active, it's similar to the "Programmer Art" resource pack.
 	 *
 	 * <p>
-	 * Why and when to use it? A built-in resource pack should be used to provide extra assets/data that should be optional with your mod but still directly provided by it.
+	 * Why and when to use it?
+	 * A built-in resource pack should be used to provide extra assets/data that should be optional with your mod but still directly provided by it.
 	 * For example it could provide textures of your mod in another resolution, or could allow to provide different styles of your assets.
 	 *
 	 * <p>
@@ -69,7 +70,6 @@ public interface ResourceLoader {
 	 * @param id             the identifier of the resource pack, its namespace must be the same as the mod id
 	 * @param activationType the activation type of the resource pack
 	 * @return {@code true} if successfully registered the resource pack, else {@code false}
-	 *
 	 * @see #registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType)
 	 */
 	static boolean registerBuiltinResourcePack(Identifier id, ResourcePackActivationType activationType) {
@@ -85,7 +85,8 @@ public interface ResourceLoader {
 	 * A built-in resource pack is an extra resource pack provided by your mod which is not always active, it's similar to the "Programmer Art" resource pack.
 	 *
 	 * <p>
-	 * Why and when to use it? A built-in resource pack should be used to provide extra assets/data that should be optional with your mod but still directly provided by it.
+	 * Why and when to use it?
+	 * A built-in resource pack should be used to provide extra assets/data that should be optional with your mod but still directly provided by it.
 	 * For example it could provide textures of your mod in another resolution, or could allow to provide different styles of your assets.
 	 *
 	 * <p>
@@ -96,10 +97,11 @@ public interface ResourceLoader {
 	 * @param container      the mod container
 	 * @param activationType the activation type of the resource pack
 	 * @return {@code true} if successfully registered the resource pack, else {@code false}
-	 *
 	 * @see #registerBuiltinResourcePack(Identifier, ResourcePackActivationType)
 	 */
-	static boolean registerBuiltinResourcePack(Identifier id, ModContainer container, ResourcePackActivationType activationType) {
-		return false;
+	static boolean registerBuiltinResourcePack(Identifier id, ModContainer container,
+											   ResourcePackActivationType activationType) {
+		return ResourceLoaderImpl.registerBuiltinResourcePack(id, "resourcepacks/" + id.getPath(), container,
+				activationType);
 	}
 }

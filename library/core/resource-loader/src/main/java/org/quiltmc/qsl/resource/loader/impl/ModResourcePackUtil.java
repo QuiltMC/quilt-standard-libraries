@@ -16,9 +16,7 @@
 
 package org.quiltmc.qsl.resource.loader.impl;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 import com.google.common.base.Charsets;
 import net.fabricmc.loader.api.metadata.ModMetadata;
@@ -26,16 +24,10 @@ import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.SharedConstants;
-import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourceImpl;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.util.Identifier;
-
-import org.quiltmc.qsl.resource.loader.api.GroupResourcePack;
-import org.quiltmc.qsl.resource.loader.mixin.NamespaceResourceManagerAccessor;
 
 @ApiStatus.Internal
-public class ModResourcePackUtil {
+public final class ModResourcePackUtil {
 	public static boolean containsDefault(ModMetadata info, String filename) {
 		return "pack.mcmeta".equals(filename);
 	}
@@ -64,25 +56,6 @@ public class ModResourcePackUtil {
 			return info.getName();
 		} else {
 			return "Quilt Mod \"" + info.getId() + "\"";
-		}
-	}
-
-	public void appendResources(NamespaceResourceManagerAccessor manager, GroupResourcePack groupResourcePack,
-								Identifier id, List<Resource> resources) throws IOException {
-		var packs = groupResourcePack.getPacks(id.getNamespace());
-
-		if (packs == null) {
-			return;
-		}
-
-		ResourceType type = manager.getType();
-		Identifier metadataId = NamespaceResourceManagerAccessor.accessor_getMetadataPath(id);
-
-		for (var pack : packs) {
-			if (pack.contains(manager.getType(), id)) {
-				InputStream metadataInputStream = pack.contains(type, metadataId) ? pack.open(type, metadataId) : null;
-				resources.add(new ResourceImpl(pack.getName(), id, pack.open(type, id), metadataInputStream));
-			}
 		}
 	}
 }

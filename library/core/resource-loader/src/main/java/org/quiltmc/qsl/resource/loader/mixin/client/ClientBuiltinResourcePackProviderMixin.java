@@ -17,21 +17,32 @@
 package org.quiltmc.qsl.resource.loader.mixin.client;
 
 import java.io.File;
+import java.util.function.Consumer;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.client.resource.ClientBuiltinResourcePackProvider;
 import net.minecraft.resource.AbstractFileResourcePack;
 import net.minecraft.resource.DefaultResourcePack;
 import net.minecraft.resource.ResourcePack;
+import net.minecraft.resource.ResourcePackProfile;
 
+import org.quiltmc.qsl.resource.loader.impl.ModResourcePackProvider;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
 @Mixin(ClientBuiltinResourcePackProvider.class)
 public class ClientBuiltinResourcePackProviderMixin {
+	@Inject(method = "register", at = @At("RETURN"))
+	private void addBuiltinResourcePacks(Consumer<ResourcePackProfile> profileAdder, ResourcePackProfile.Factory factory,
+										 CallbackInfo ci) {
+		// Register built-in resource packs after vanilla built-in resource packs are registered.
+		ModResourcePackProvider.CLIENT_RESOURCE_PACK_PROVIDER.register(profileAdder, factory);
+	}
+
 	// Synthetic method register(Consumer;ResourcePackProfile$Factory;)V
 	@Inject(method = "method_4635", at = @At("RETURN"), cancellable = true, remap = false)
 	private void onPackGet(CallbackInfoReturnable<ResourcePack> cir) {

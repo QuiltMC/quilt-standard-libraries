@@ -39,6 +39,14 @@ import net.minecraft.util.Identifier;
 
 /**
  * Represents a group resource pack, which holds multiple resource packs as one.
+ *
+ * <p>
+ * The possible use cases are:
+ * <ul>
+ *  <li>bundling multiple resource packs as one to pollute less the user's UI</li>
+ *  <li>replace the default resource pack with a combination of the default one and mod resource packs</li>
+ *  <li>etc.</li>
+ * </ul>
  */
 public abstract class GroupResourcePack implements ResourcePack {
 	protected final ResourceType type;

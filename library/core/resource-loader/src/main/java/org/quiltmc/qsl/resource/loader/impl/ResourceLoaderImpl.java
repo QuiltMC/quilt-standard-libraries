@@ -23,14 +23,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import org.apache.logging.log4j.LogManager;
@@ -43,6 +46,7 @@ import net.minecraft.resource.DefaultResourcePack;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceImpl;
 import net.minecraft.resource.ResourcePack;
+import net.minecraft.resource.ResourcePackProfile;
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
@@ -58,7 +62,9 @@ import org.quiltmc.qsl.resource.loader.mixin.NamespaceResourceManagerAccessor;
  */
 @ApiStatus.Internal
 public final class ResourceLoaderImpl implements ResourceLoader {
-	private static final Map<ResourceType, ResourceLoaderImpl> IMPL_MAP = new HashMap<>();
+	private static final Map<ResourceType, ResourceLoaderImpl> IMPL_MAP = new EnumMap<>(ResourceType.class);
+	private static final Map<String, ModNioResourcePack> CLIENT_BUILTIN_RESOURCE_PACKS = new Object2ObjectOpenHashMap<>();
+	private static final Map<String, ModNioResourcePack> SERVER_BUILTIN_RESOURCE_PACKS = new Object2ObjectOpenHashMap<>();
 	private static final Logger LOGGER = LogManager.getLogger();
 
 	private final Set<Identifier> addedListenerIds = new HashSet<>();
@@ -230,6 +236,89 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 				InputStream metadataInputStream = pack.contains(manager.getType(), metadataId)
 						? manager.accessor_open(metadataId, pack) : null;
 				resources.add(new ResourceImpl(pack.getName(), id, manager.accessor_open(id, pack), metadataInputStream));
+			}
+		}
+	}
+
+	/* Built-in resource packs */
+
+	/**
+	 * Registers a built-in resource pack. Internal implementation.
+	 *
+	 * @param id             the identifier of the resource pack
+	 * @param subPath        the sub path in the mod resources
+	 * @param container      the mod container
+	 * @param activationType the activation type of the resource pack
+	 * @return {@code true} if successfully registered the resource pack, else {@code false}
+	 * @see ResourceLoader#registerBuiltinResourcePack(Identifier, ResourcePackActivationType)
+	 * @see ResourceLoader#registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType)
+	 */
+	public static boolean registerBuiltinResourcePack(Identifier id, String subPath, ModContainer container,
+													  ResourcePackActivationType activationType) {
+		String separator = container.getRootPath().getFileSystem().getSeparator();
+		subPath = subPath.replace("/", separator);
+
+		Path resourcePackPath = container.getRootPath().resolve(subPath).toAbsolutePath().normalize();
+
+		if (!Files.exists(resourcePackPath)) {
+			return false;
+		}
+
+		var name = id.getNamespace() + "/" + id.getPath();
+
+		boolean result = false;
+		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+			result = registerBuiltinResourcePack(ResourceType.CLIENT_RESOURCES,
+					newBuiltinResourcePack(container, name, resourcePackPath, ResourceType.CLIENT_RESOURCES, activationType)
+			);
+		}
+
+		result |= registerBuiltinResourcePack(ResourceType.SERVER_DATA,
+				newBuiltinResourcePack(container, name, resourcePackPath, ResourceType.SERVER_DATA, activationType)
+		);
+
+		return result;
+	}
+
+	private static boolean registerBuiltinResourcePack(ResourceType type, ModNioResourcePack pack) {
+		if (FabricLoader.getInstance().isDevelopmentEnvironment() || !pack.getNamespaces(type).isEmpty()) {
+			var builtinResourcePacks = type == ResourceType.CLIENT_RESOURCES
+					? CLIENT_BUILTIN_RESOURCE_PACKS : SERVER_BUILTIN_RESOURCE_PACKS;
+			builtinResourcePacks.put(pack.getName(), pack);
+			return true;
+		}
+		return false;
+	}
+
+	private static ModNioResourcePack newBuiltinResourcePack(ModContainer container, String name, Path resourcePackPath,
+															 ResourceType type, ResourcePackActivationType activationType) {
+		return new ModNioResourcePack(container.getMetadata(), resourcePackPath, type, null, activationType) {
+			@Override
+			public String getName() {
+				return name; // Built-in resource pack provided by a mod, the name is overriden.
+			}
+		};
+	}
+
+	public static void registerBuiltinResourcePacks(ResourceType type, Consumer<ResourcePackProfile> profileAdder,
+													ResourcePackProfile.Factory factory) {
+		var builtinPacks = type == ResourceType.CLIENT_RESOURCES
+				? CLIENT_BUILTIN_RESOURCE_PACKS : SERVER_BUILTIN_RESOURCE_PACKS;
+
+		// Loop through each registered built-in resource packs and add them if valid.
+		for (var entry : builtinPacks.entrySet()) {
+			ModNioResourcePack pack = entry.getValue();
+
+			// Add the built-in pack only if namespaces for the specified resource type are present.
+			if (!pack.getNamespaces(type).isEmpty()) {
+				// Make the resource pack profile for built-in pack, should never be always enabled.
+				var profile = ResourcePackProfile.of(entry.getKey(),
+						pack.getActivationType() == ResourcePackActivationType.ALWAYS_ENABLED,
+						entry::getValue, factory, ResourcePackProfile.InsertionPosition.TOP,
+						ModResourcePackProvider.PACK_SOURCE_MOD_BUILTIN);
+				if (profile != null) {
+					profileAdder.accept(profile);
+				}
 			}
 		}
 	}
