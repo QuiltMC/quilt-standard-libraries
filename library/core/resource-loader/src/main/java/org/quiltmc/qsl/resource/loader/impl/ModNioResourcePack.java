@@ -98,7 +98,8 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 			return stream;
 		}
 
-		// ReloadableResourceManagerImpl gets away with FileNotFoundException.
+		// FileNotFoundException is an IOException, which is properly handled by the Vanilla resource loader and
+		// prints to logs.
 		throw new FileNotFoundException("\"" + filename + "\" in Quilt mod \"" + modInfo.getId() + "\"");
 	}
 
