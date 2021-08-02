@@ -19,6 +19,7 @@ package org.quiltmc.qsl.resource.loader.mixin;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.stream.Collectors;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -34,6 +35,7 @@ import net.minecraft.resource.ResourceReloader;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Unit;
 
+import org.quiltmc.qsl.resource.loader.api.GroupResourcePack;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
 @Mixin(ReloadableResourceManagerImpl.class)
@@ -54,5 +56,18 @@ public class ReloadableResourceManagerImplMixin {
 						List<ResourcePack> packs,
 						CallbackInfoReturnable<ResourceReload> info) {
 		ResourceLoaderImpl.sort(this.type, this.reloaders);
+	}
+
+	// private static synthetic method_29491(Ljava/util/List;)Ljava/lang/Object;
+	// Supplier lambda in beginMonitoredReload method.
+	@Inject(method = "method_29491", at = @At("HEAD"), cancellable = true)
+	private static void getResourcePackNames(List<ResourcePack> packs, CallbackInfoReturnable<String> cir) {
+		cir.setReturnValue(packs.stream().map(pack -> {
+			if (pack instanceof GroupResourcePack groupResourcePack) {
+				return groupResourcePack.getFullName();
+			} else {
+				return pack.getName();
+			}
+		}).collect(Collectors.joining(", ")));
 	}
 }

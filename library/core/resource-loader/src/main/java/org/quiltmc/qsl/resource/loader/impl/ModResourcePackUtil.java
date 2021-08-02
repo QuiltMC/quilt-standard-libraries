@@ -23,6 +23,7 @@ import java.util.List;
 import com.google.common.base.Charsets;
 import net.fabricmc.loader.api.metadata.ModMetadata;
 import org.apache.commons.io.IOUtils;
+import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.resource.Resource;
@@ -33,6 +34,7 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.resource.loader.api.GroupResourcePack;
 import org.quiltmc.qsl.resource.loader.mixin.NamespaceResourceManagerAccessor;
 
+@ApiStatus.Internal
 public class ModResourcePackUtil {
 	public static boolean containsDefault(ModMetadata info, String filename) {
 		return "pack.mcmeta".equals(filename);

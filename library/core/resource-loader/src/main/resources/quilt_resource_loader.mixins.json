@@ -6,11 +6,13 @@
     "DefaultResourcePackMixin",
     "KeyedResourceReloaderMixin",
     "NamespaceResourceManagerAccessor",
+    "NamespaceResourceManagerMixin",
     "ReloadableResourceManagerImplMixin",
     "VanillaDataPackProviderMixin"
   ],
   "client": [
     "client.ClientBuiltinResourcePackProviderMixin",
+    "client.FontManagerResourceReloadListenerMixin",
     "client.KeyedClientResourceReloaderMixin"
   ],
   "injectors": {

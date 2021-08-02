@@ -29,10 +29,12 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.resource.ResourceNotFoundException;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.util.Identifier;
 
 /**
@@ -60,7 +62,7 @@ public abstract class GroupResourcePack implements ResourcePack {
 		var packs = this.namespacedPacks.get(id.getNamespace());
 
 		if (packs != null) {
-			// Iterating backwards as higher-priority packs are placed at the beginning.
+			// Iterating backwards as higher-priority packs are placed at the end.
 			for (int i = packs.size() - 1; i >= 0; i--) {
 				ResourcePack pack = packs.get(i);
 
@@ -127,5 +129,60 @@ public abstract class GroupResourcePack implements ResourcePack {
 	@Override
 	public void close() {
 		this.packs.forEach(ResourcePack::close);
+	}
+
+	/**
+	 * Represents a group resource pack which wraps a "base" resource pack.
+	 */
+	public static class Wrapped extends GroupResourcePack {
+		private final ResourcePack basePack;
+
+		/**
+		 * Constructs a new instance of a group resource pack wrapping a base resource pack.
+		 *
+		 * @param type         the resource type of this resource pack
+		 * @param basePack     the base resource pack
+		 * @param packs        the additional packs
+		 * @param basePriority {@code true} if the base resource pack has priority over the additional packs, else {@code false}.
+		 *                     Ignored if the base resource pack is already present in the list.
+		 */
+		public Wrapped(ResourceType type, ResourcePack basePack, List<ResourcePack> packs, boolean basePriority) {
+			super(type, addToPacksIfNeeded(basePack, packs, basePriority));
+			this.basePack = basePack;
+		}
+
+		private static List<ResourcePack> addToPacksIfNeeded(ResourcePack basePack, List<ResourcePack> packs,
+															 boolean basePriority) {
+			if (!packs.contains(basePack)) {
+				if (basePriority) {
+					packs.add(basePack);
+				} else {
+					packs.add(0, basePack);
+				}
+			}
+
+			return packs;
+		}
+
+		@Override
+		public @Nullable InputStream openRoot(String fileName) throws IOException {
+			return this.basePack.openRoot(fileName);
+		}
+
+		@Override
+		public <T> @Nullable T parseMetadata(ResourceMetadataReader<T> metaReader) throws IOException {
+			return this.basePack.parseMetadata(metaReader);
+		}
+
+		@Override
+		public String getName() {
+			return this.basePack.getName();
+		}
+
+		@Override
+		public String getFullName() {
+			return this.getName() + " (" + this.packs.stream().filter(pack -> pack != this.basePack)
+					.map(ResourcePack::getName).collect(Collectors.joining(", ")) + ")";
+		}
 	}
 }

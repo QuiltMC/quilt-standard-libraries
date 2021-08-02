@@ -21,14 +21,17 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import net.minecraft.resource.DefaultResourcePack;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.VanillaDataPackProvider;
+
+import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
 @Mixin(VanillaDataPackProvider.class)
 public class VanillaDataPackProviderMixin {
 	// Synthetic method register(Consumer;ResourcePackProfile$Factory;)V -> lambda in ResourcePackProfile.of
 	@Inject(method = "method_14454", at = @At("RETURN"), cancellable = true)
 	private void onPackGet(CallbackInfoReturnable<ResourcePack> cir) {
-		// @TODO replace default resource pack with a group resource pack
+		cir.setReturnValue(ResourceLoaderImpl.buildMinecraftResourcePack((DefaultResourcePack) cir.getReturnValue()));
 	}
 }
