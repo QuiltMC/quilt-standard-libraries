@@ -10,3 +10,7 @@ qslModule {
 			"qsl-base"
 	])
 }
+
+minecraft {
+	accessWidener = file("src/main/resources/qsl_block_extensions.accesswidener")
+}

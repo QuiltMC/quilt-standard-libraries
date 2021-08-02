@@ -7,5 +7,12 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "mixins": [
+    "AbstractBlockAccessor",
+    "AbstractBlockSettingsAccessor",
+    "AbstractBlockSettingsMixin",
+    "BlockMixin",
+    "MaterialBuilderAccessor"
+  ]
 }
