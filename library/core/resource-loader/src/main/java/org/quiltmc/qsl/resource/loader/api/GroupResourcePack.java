@@ -43,9 +43,9 @@ import net.minecraft.util.Identifier;
  * <p>
  * The possible use cases are:
  * <ul>
- *  <li>bundling multiple resource packs as one to pollute less the user's UI</li>
- *  <li>replace the default resource pack with a combination of the default one and mod resource packs</li>
- *  <li>etc.</li>
+ *   <li>bundling multiple resource packs as one to reduce pollution of the user's UI</li>
+ *   <li>replacing the default resource pack with a combination of the default one and all mods' resource packs</li>
+ *   <li>etc.</li>
  * </ul>
  */
 public abstract class GroupResourcePack implements ResourcePack {
