@@ -30,7 +30,7 @@ import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 @Mixin(VanillaDataPackProvider.class)
 public class VanillaDataPackProviderMixin {
 	// Synthetic method register(Consumer;ResourcePackProfile$Factory;)V -> lambda in ResourcePackProfile.of
-	@Inject(method = "method_14454", at = @At("RETURN"), cancellable = true)
+	@Inject(method = "method_14454", at = @At("RETURN"), cancellable = true, remap = false)
 	private void onPackGet(CallbackInfoReturnable<ResourcePack> cir) {
 		cir.setReturnValue(ResourceLoaderImpl.buildMinecraftResourcePack((DefaultResourcePack) cir.getReturnValue()));
 	}

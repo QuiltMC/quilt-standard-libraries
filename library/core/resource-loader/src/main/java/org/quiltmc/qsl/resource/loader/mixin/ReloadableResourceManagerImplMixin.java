@@ -60,7 +60,7 @@ public class ReloadableResourceManagerImplMixin {
 
 	// private static synthetic method_29491(Ljava/util/List;)Ljava/lang/Object;
 	// Supplier lambda in beginMonitoredReload method.
-	@Inject(method = "method_29491", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "method_29491", at = @At("HEAD"), cancellable = true, remap = false)
 	private static void getResourcePackNames(List<ResourcePack> packs, CallbackInfoReturnable<String> cir) {
 		cir.setReturnValue(packs.stream().map(pack -> {
 			if (pack instanceof GroupResourcePack groupResourcePack) {

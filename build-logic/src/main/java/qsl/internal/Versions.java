@@ -27,7 +27,7 @@ public final class Versions {
 	/**
 	 * The target Yarn build.
 	 */
-	public static final String YARN_BUILD = "1";
+	public static final String YARN_BUILD = "2";
 
 	/**
 	 * The version of Quilt Loader to use.

@@ -123,7 +123,29 @@ java {
 	withSourcesJar()
 }
 
-// TODO: Configure javadoc options
+javadoc {
+	options {
+		source = "16"
+		encoding = "UTF-8"
+		charSet = "UTF-8"
+		memberLevel = JavadocMemberLevel.PACKAGE
+		links(
+				"https://guava.dev/releases/21.0/api/docs/",
+				"https://asm.ow2.io/javadoc/",
+				"https://docs.oracle.com/javase/8/docs/api/",
+				"https://jenkins.liteloader.com/job/Mixin/javadoc/",
+				"https://logging.apache.org/log4j/2.x/log4j-api/apidocs/"
+		)
+		// Disable the crazy super-strict doclint tool in Java 8
+		addStringOption("Xdoclint:none", "-quiet")
+		tags(
+				"author:a",
+				'reason:m:"Reason:"'
+		)
+	}
+
+	failOnError false
+}
 
 task checkModuleVersion {
 	doFirst {

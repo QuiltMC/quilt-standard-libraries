@@ -101,7 +101,7 @@ public abstract class DefaultResourcePackMixin {
 		return this.internalPack.findResources(type, namespace, prefix, maxDepth, pathFilter);
 	}
 
-	@Inject(method = "close", at = @At("HEAD"))
+	@Inject(method = "close", at = @At("HEAD"), remap = false)
 	private void onClose(CallbackInfo ci) {
 		this.internalPack.close();
 	}
