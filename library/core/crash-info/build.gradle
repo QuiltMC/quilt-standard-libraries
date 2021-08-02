@@ -3,7 +3,7 @@ plugins {
 }
 
 qslModule {
-	moduleName = "crash-report-info"
+	moduleName = "crash-info"
 	version = "1.0.0"
 	library = "core"
 	coreDependencies([
