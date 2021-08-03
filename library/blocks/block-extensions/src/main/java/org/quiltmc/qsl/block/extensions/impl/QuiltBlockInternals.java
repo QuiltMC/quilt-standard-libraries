@@ -17,12 +17,14 @@
 package org.quiltmc.qsl.block.extensions.impl;
 
 import org.quiltmc.qsl.block.extensions.api.data.ExtraBlockData;
+import org.quiltmc.qsl.block.extensions.mixin.AbstractBlockAccessor;
 import net.minecraft.block.Block;
 
 public final class QuiltBlockInternals {
 	private QuiltBlockInternals() { }
 
-	public static ExtraBlockData computeExtraData(Block block, Block.Settings settings) {
+	public static ExtraBlockData computeExtraData(Block block) {
+		Block.Settings settings = ((AbstractBlockAccessor) block).getSettings();
 		BlockSettingsInternals internals = (BlockSettingsInternals) settings;
 
 		ExtraBlockData extraData = internals.qsl$getExtraData();

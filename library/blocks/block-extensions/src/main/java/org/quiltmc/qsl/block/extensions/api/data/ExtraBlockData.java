@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.block.extensions.api.data;
 
 import org.quiltmc.qsl.base.api.event.ArrayEvent;
+import org.quiltmc.qsl.block.extensions.impl.QuiltBlockInternals;
 import net.minecraft.block.Block;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +32,16 @@ public final class ExtraBlockData {
 
 	private ExtraBlockData(Map<BlockDataKey<?>, Object> values) {
 		this.values = values;
+	}
+
+	/**
+	 * Gets or creates the {@code ExtraBlockData} collection that is tied to the specified block.
+	 * 
+	 * @param block block
+	 * @return extra data collection
+	 */
+	public static ExtraBlockData getOrCreate(Block block) {
+		return QuiltBlockInternals.computeExtraData(block);
 	}
 
 	/**
