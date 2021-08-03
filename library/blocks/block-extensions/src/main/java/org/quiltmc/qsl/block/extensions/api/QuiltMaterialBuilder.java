@@ -21,6 +21,9 @@ import net.minecraft.block.Material;
 import net.minecraft.block.piston.PistonBehavior;
 import org.quiltmc.qsl.block.extensions.mixin.MaterialBuilderAccessor;
 
+/**
+ * An extended variant of the {@link Material.Builder} class, which provides extra methods for customization.
+ */
 public class QuiltMaterialBuilder extends Material.Builder {
 	public QuiltMaterialBuilder(MapColor color) {
 		super(color);
@@ -44,6 +47,11 @@ public class QuiltMaterialBuilder extends Material.Builder {
 		return this;
 	}
 
+	/**
+	 * Makes light pass through blocks of this material.
+	 *
+	 * @return this builder
+	 */
 	public QuiltMaterialBuilder lightPassesThrough() {
 		((MaterialBuilderAccessor) this).invokeLightPassesThrough();
 		return this;
@@ -73,6 +81,12 @@ public class QuiltMaterialBuilder extends Material.Builder {
 		return this;
 	}
 
+	/**
+	 * Sets the behavior of pistons when interacting with blocks of this material.
+	 *
+	 * @param behavior new piston behavior
+	 * @return this builder
+	 */
 	public QuiltMaterialBuilder pistonBehavior(PistonBehavior behavior) {
 		((MaterialBuilderAccessor) this).setPistonBehavior(behavior);
 		return this;

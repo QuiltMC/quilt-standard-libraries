@@ -27,6 +27,9 @@ import org.quiltmc.qsl.block.extensions.mixin.AbstractBlockSettingsAccessor;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
+/**
+ * An extended variant of the {@link AbstractBlock.Settings} class, which provides extra methods for customization.
+ */
 public class QuiltBlockSettings extends AbstractBlock.Settings {
 	protected QuiltBlockSettings(Material material, Function<BlockState, MapColor> mapColorProvider) {
 		super(material, mapColorProvider);
@@ -229,13 +232,25 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		return this;
 	}
 
-	/* QUILT ADDTIIONS */
+	/* QUILT ADDITIONS */
 
+	/**
+	 * Sets the luminance of the block. The block will have this luminance regardless of its current state.
+	 *
+	 * @param luminance new luminance
+	 * @return this builder
+	 */
 	public QuiltBlockSettings luminance(int luminance) {
 		this.luminance(ignored -> luminance);
 		return this;
 	}
 
+	/**
+	 * Sets the loot table ID that this block will use when broken.
+	 *
+	 * @param dropTableId new loot table ID
+	 * @return this builder
+	 */
 	public QuiltBlockSettings drops(Identifier dropTableId) {
 		((AbstractBlockSettingsAccessor) this).setLootTableId(dropTableId);
 		return this;
@@ -247,6 +262,12 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		return this.mapColor(color.getMapColor());
 	}
 
+	/**
+	 * Sets if this block can be collided with or not.
+	 *
+	 * @param collidable {@code true} if collidable, {@code false} otherwise
+	 * @return this builder
+	 */
 	public QuiltBlockSettings collidable(boolean collidable) {
 		((AbstractBlockSettingsAccessor) this).setCollidable(collidable);
 		return this;
