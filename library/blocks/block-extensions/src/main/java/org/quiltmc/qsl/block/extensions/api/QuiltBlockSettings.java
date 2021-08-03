@@ -239,6 +239,7 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	 *
 	 * @param luminance new luminance
 	 * @return this builder
+	 * @see #luminance(ToIntFunction)
 	 */
 	public QuiltBlockSettings luminance(int luminance) {
 		this.luminance(ignored -> luminance);
