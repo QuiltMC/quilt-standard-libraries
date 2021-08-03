@@ -14,12 +14,39 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.block.extensions.impl;
+package org.quiltmc.qsl.block.extensions.api.data;
 
-import org.quiltmc.qsl.block.extensions.api.data.ExtraBlockData;
+/**
+ * Represents a key that can be used to get a value from an {@link ExtraBlockData} instance.
+ *
+ * @param <T> value type
+ */
+public record BlockDataKey<T>(Class<T> type, String name) {
+	/**
+	 * Creates a new key.
+	 *
+	 * @param type value type
+	 * @param name name
+	 */
+	public BlockDataKey { }
 
-public interface BlockSettingsInternals {
-	ExtraBlockData qsl$getExtraData();
+	/**
+	 * Gets the value type of this key.
+	 *
+	 * @return value type
+	 */
+	@Override
+	public Class<T> type() {
+		return type;
+	}
 
-	void qsl$setExtraData(ExtraBlockData extraData);
+	/**
+	 * Gets the name of this key.
+	 *
+	 * @return name
+	 */
+	@Override
+	public String name() {
+		return name;
+	}
 }

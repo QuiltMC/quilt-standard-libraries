@@ -16,32 +16,22 @@
 
 package org.quiltmc.qsl.block.extensions.impl;
 
-import org.quiltmc.qsl.base.api.event.ArrayEvent;
+import org.quiltmc.qsl.block.extensions.api.data.ExtraBlockData;
 import net.minecraft.block.Block;
 
 public final class QuiltBlockInternals {
 	private QuiltBlockInternals() { }
 
-	public static ExtraData computeExtraData(Block.Settings settings) {
+	public static ExtraBlockData computeExtraData(Block block, Block.Settings settings) {
 		BlockSettingsInternals internals = (BlockSettingsInternals) settings;
 
-		ExtraData extraData = internals.qsl$getExtraData();
-		if (extraData == null)
-			internals.qsl$setExtraData(extraData = new ExtraData(settings));
+		ExtraBlockData extraData = internals.qsl$getExtraData();
+		if (extraData == null) {
+			ExtraBlockData.Builder builder = new ExtraBlockData.Builder();
+			ExtraBlockData.OnBuild.EVENT.invoker().append(block, settings, builder);
+			internals.qsl$setExtraData(extraData = builder.build());
+		}
 
 		return extraData;
-	}
-
-	public interface OnBuild {
-		ArrayEvent<OnBuild> EVENT = ArrayEvent.create(OnBuild.class, onBuilds -> (settings, block) -> {
-			for (OnBuild callback : onBuilds)
-				callback.onBuild(settings, block);
-		});
-
-		void onBuild(Block.Settings settings, Block block);
-	}
-
-	public static final class ExtraData {
-		public ExtraData(Block.Settings settings) { }
 	}
 }

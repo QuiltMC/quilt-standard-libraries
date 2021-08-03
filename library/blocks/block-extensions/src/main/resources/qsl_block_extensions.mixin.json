@@ -2,17 +2,16 @@
   "required": true,
   "package": "org.quiltmc.qsl.block.extensions.mixin",
   "compatibilityLevel": "JAVA_16",
+  "mixins": [
+    "AbstractBlockAccessor",
+    "AbstractBlockSettingsAccessor",
+    "AbstractBlockSettingsMixin",
+    "MaterialBuilderAccessor"
+  ],
   "client": [
     "client.RenderLayersMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "mixins": [
-    "AbstractBlockAccessor",
-    "AbstractBlockSettingsAccessor",
-    "AbstractBlockSettingsMixin",
-    "BlockMixin",
-    "MaterialBuilderAccessor"
-  ]
+  }
 }

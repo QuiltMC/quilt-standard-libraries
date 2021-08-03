@@ -16,23 +16,24 @@
 
 package org.quiltmc.qsl.block.extensions.mixin;
 
-import net.minecraft.block.AbstractBlock;
-import org.quiltmc.qsl.block.extensions.impl.BlockSettingsInternals;
-import org.quiltmc.qsl.block.extensions.impl.QuiltBlockInternals;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
+import org.quiltmc.qsl.block.extensions.api.data.ExtraBlockData;
+import org.quiltmc.qsl.block.extensions.impl.BlockSettingsInternals;
+import net.minecraft.block.AbstractBlock;
+
 @Mixin(AbstractBlock.Settings.class)
 public abstract class AbstractBlockSettingsMixin implements BlockSettingsInternals {
-	@Unique private QuiltBlockInternals.ExtraData qsl$extraData;
+	@Unique private ExtraBlockData qsl$extraData;
 
 	@Override
-	public QuiltBlockInternals.ExtraData qsl$getExtraData() {
+	public ExtraBlockData qsl$getExtraData() {
 		return this.qsl$extraData;
 	}
 
 	@Override
-	public void qsl$setExtraData(QuiltBlockInternals.ExtraData extraData) {
+	public void qsl$setExtraData(ExtraBlockData extraData) {
 		this.qsl$extraData = extraData;
 	}
 }
