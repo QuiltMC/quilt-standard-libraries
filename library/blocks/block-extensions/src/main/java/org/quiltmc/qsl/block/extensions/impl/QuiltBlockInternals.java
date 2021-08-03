@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.block.extensions.impl;
 
+import org.quiltmc.qsl.base.api.event.ArrayEvent;
 import net.minecraft.block.Block;
 
 public final class QuiltBlockInternals {
@@ -31,8 +32,13 @@ public final class QuiltBlockInternals {
 		return extraData;
 	}
 
-	public static void onBuild(Block.Settings settings, Block block) {
+	public interface OnBuild {
+		ArrayEvent<OnBuild> EVENT = ArrayEvent.create(OnBuild.class, onBuilds -> (settings, block) -> {
+			for (OnBuild callback : onBuilds)
+				callback.onBuild(settings, block);
+		});
 
+		void onBuild(Block.Settings settings, Block block);
 	}
 
 	public static final class ExtraData {

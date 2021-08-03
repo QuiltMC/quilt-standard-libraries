@@ -28,6 +28,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class BlockMixin {
 	@Inject(method = "<init>", at = @At("RETURN"))
 	public void qsl$init(AbstractBlock.Settings settings, CallbackInfo ci) {
-		QuiltBlockInternals.onBuild(settings, (Block) (Object) this);
+		QuiltBlockInternals.OnBuild.EVENT.invoker().onBuild(settings, (Block) (Object) this);
 	}
 }
