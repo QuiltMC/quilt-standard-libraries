@@ -40,8 +40,8 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		super(((AbstractBlockSettingsAccessor) settings).getMaterial(), ((AbstractBlockSettingsAccessor) settings).getMapColorProvider());
 
 		// [VanillaCopy] AbstractBlock.Settings#copy(AbstractBlock.Settings)
-		AbstractBlockSettingsAccessor thisAccessor = (AbstractBlockSettingsAccessor) this;
-		AbstractBlockSettingsAccessor otherAccessor = (AbstractBlockSettingsAccessor) settings;
+		var thisAccessor = (AbstractBlockSettingsAccessor) this;
+		var otherAccessor = (AbstractBlockSettingsAccessor) settings;
 
 		thisAccessor.setMaterial(otherAccessor.getMaterial());
 		this.hardness(otherAccessor.getHardness());
