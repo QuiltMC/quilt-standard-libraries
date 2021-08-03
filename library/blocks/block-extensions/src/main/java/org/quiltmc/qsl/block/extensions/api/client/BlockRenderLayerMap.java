@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.block.extensions.api;
+package org.quiltmc.qsl.block.extensions.api.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -22,6 +22,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.fluid.Fluid;
 import org.jetbrains.annotations.ApiStatus;
+import org.quiltmc.qsl.block.extensions.impl.client.BlockRenderLayerMapImpl;
 
 import java.util.Map;
 
@@ -30,9 +31,6 @@ import java.util.Map;
  */
 @Environment(EnvType.CLIENT)
 public final class BlockRenderLayerMap {
-	private static Map<Block, RenderLayer> blocks;
-	private static Map<Fluid, RenderLayer> fluids;
-
 	private BlockRenderLayerMap() { }
 
 	/**
@@ -42,7 +40,7 @@ public final class BlockRenderLayerMap {
 	 * @param layer new render layer
 	 */
 	public static void put(Block block, RenderLayer layer) {
-		blocks.put(block, layer);
+		BlockRenderLayerMapImpl.put(block, layer);
 	}
 
 	/**
@@ -63,7 +61,7 @@ public final class BlockRenderLayerMap {
 	 * @param layer new render layer
 	 */
 	public static void put(Fluid fluid, RenderLayer layer) {
-		fluids.put(fluid, layer);
+		BlockRenderLayerMapImpl.put(fluid, layer);
 	}
 
 	/**
@@ -75,11 +73,5 @@ public final class BlockRenderLayerMap {
 	public static void put(RenderLayer layer, Fluid... fluids) {
 		for (Fluid fluid : fluids)
 			put(fluid, layer);
-	}
-
-	@ApiStatus.Internal
-	public static void initialize(Map<Block, RenderLayer> blocksIn, Map<Fluid, RenderLayer> fluidsIn) {
-		blocks = blocksIn;
-		fluids = fluidsIn;
 	}
 }

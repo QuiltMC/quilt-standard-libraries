@@ -20,7 +20,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderLayers;
 import net.minecraft.fluid.Fluid;
-import org.quiltmc.qsl.block.extensions.api.BlockRenderLayerMap;
+import org.quiltmc.qsl.block.extensions.impl.client.BlockRenderLayerMapImpl;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -33,6 +33,6 @@ public abstract class RenderLayersMixin {
 	@Shadow @Final private static Map<Fluid, RenderLayer> FLUIDS;
 
 	static {
-		BlockRenderLayerMap.initialize(BLOCKS, FLUIDS);
+		BlockRenderLayerMapImpl.initialize(BLOCKS, FLUIDS);
 	}
 }
