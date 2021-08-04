@@ -24,9 +24,6 @@ import net.minecraft.resource.ResourcePackProfile;
 import net.minecraft.resource.ResourcePackProvider;
 import net.minecraft.resource.ResourcePackSource;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Formatting;
 
 /**
  * Represents a resource pack provider for built-in mods resource packs and low-priority virtual resource packs.
@@ -36,7 +33,7 @@ public final class ModResourcePackProvider implements ResourcePackProvider {
 	/**
 	 * Equivalent to {@link ResourcePackSource#PACK_SOURCE_BUILTIN} but allows a different reference equality.
 	 */
-	public static final ResourcePackSource PACK_SOURCE_MOD_BUILTIN = nameAndSource("pack.source.builtin");
+	public static final ResourcePackSource PACK_SOURCE_MOD_BUILTIN = ResourcePackSource.nameAndSource("pack.source.builtin");
 	public static final ModResourcePackProvider CLIENT_RESOURCE_PACK_PROVIDER = new ModResourcePackProvider(ResourceType.CLIENT_RESOURCES);
 	public static final ModResourcePackProvider SERVER_RESOURCE_PACK_PROVIDER = new ModResourcePackProvider(ResourceType.SERVER_DATA);
 
@@ -72,10 +69,5 @@ public final class ModResourcePackProvider implements ResourcePackProvider {
 		 */
 
 		ResourceLoaderImpl.registerBuiltinResourcePacks(this.type, profileAdder, factory);
-	}
-
-	private static ResourcePackSource nameAndSource(String source) {
-		Text text = new TranslatableText(source);
-		return name -> (new TranslatableText("pack.nameAndSource", name, text)).formatted(Formatting.GRAY);
 	}
 }

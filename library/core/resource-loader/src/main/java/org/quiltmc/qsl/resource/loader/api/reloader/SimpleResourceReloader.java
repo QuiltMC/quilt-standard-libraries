@@ -40,9 +40,7 @@ import net.minecraft.util.profiler.Profiler;
  * <p>The load stage should be self-contained as it can run on any thread! However,
  * the apply stage is guaranteed to run on the game thread.
  *
- * <p>For a fully synchronous alternative, consider using
- * {@link SynchronousResourceReloader} in conjunction with
- * {@link IdentifiableResourceReloader}.
+ * <p>For a fully synchronous alternative, consider using {@link SimpleSynchronousResourceReloader}.
  *
  * @param <T> the type for the intermediate reloading state
  */
