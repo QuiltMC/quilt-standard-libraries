@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Represents a key to value collection used to store extra data for {@link Block}s.
+ * Represents a {@linkplain BlockDataKey key} to value collection used to store extra data for {@link Block}s.
  */
 @SuppressWarnings("ClassCanBeRecord")
 public final class ExtraBlockData {
@@ -35,8 +35,17 @@ public final class ExtraBlockData {
 	}
 
 	/**
+	 * Constructs a new builder.
+	 *
+	 * @return new builder
+	 */
+	public static Builder builder() {
+		return new Builder();
+	}
+
+	/**
 	 * Gets or creates the {@code ExtraBlockData} collection that is tied to the specified block.
-	 * 
+	 *
 	 * @param block block
 	 * @return extra data collection
 	 */
@@ -76,10 +85,7 @@ public final class ExtraBlockData {
 	public static final class Builder {
 		private final Map<BlockDataKey<?>, Object> values;
 
-		/**
-		 * Creates a new builder.
-		 */
-		public Builder() {
+		private Builder() {
 			values = new HashMap<>();
 		}
 

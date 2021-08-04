@@ -29,7 +29,7 @@ public final class QuiltBlockInternals {
 
 		ExtraBlockData extraData = internals.qsl$getExtraData();
 		if (extraData == null) {
-			ExtraBlockData.Builder builder = new ExtraBlockData.Builder();
+			ExtraBlockData.Builder builder = ExtraBlockData.builder();
 			ExtraBlockData.OnBuild.EVENT.invoker().append(block, settings, builder);
 			internals.qsl$setExtraData(extraData = builder.build());
 		}

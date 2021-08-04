@@ -18,13 +18,11 @@ package org.quiltmc.qsl.block.extensions.api.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
+import org.quiltmc.qsl.block.extensions.impl.client.BlockRenderLayerMapImpl;
 import net.minecraft.block.Block;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.fluid.Fluid;
-import org.jetbrains.annotations.ApiStatus;
-import org.quiltmc.qsl.block.extensions.impl.client.BlockRenderLayerMapImpl;
-
-import java.util.Map;
 
 /**
  * Provides methods to set the {@link RenderLayer} of blocks and fluids.
@@ -50,8 +48,9 @@ public final class BlockRenderLayerMap {
 	 * @param blocks target blocks
 	 */
 	public static void put(RenderLayer layer, Block... blocks) {
-		for (Block block : blocks)
+		for (Block block : blocks) {
 			put(block, layer);
+		}
 	}
 
 	/**
@@ -71,7 +70,8 @@ public final class BlockRenderLayerMap {
 	 * @param fluids target fluids
 	 */
 	public static void put(RenderLayer layer, Fluid... fluids) {
-		for (Fluid fluid : fluids)
+		for (Fluid fluid : fluids) {
 			put(fluid, layer);
+		}
 	}
 }
