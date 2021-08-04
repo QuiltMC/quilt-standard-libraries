@@ -35,9 +35,7 @@ public class MinecraftServerMixin {
 	@Redirect(method = "loadDataPacks", at = @At(value = "INVOKE", target = "Ljava/util/List;contains(Ljava/lang/Object;)Z"))
 	private static boolean onCheckDisabled(List<String> list, Object o, ResourcePackManager resourcePackManager) {
 		var profileName = (String) o;
-		boolean contains = list.contains(profileName);
-
-		if (contains) {
+		if (list.contains(profileName)) {
 			return true;
 		}
 
