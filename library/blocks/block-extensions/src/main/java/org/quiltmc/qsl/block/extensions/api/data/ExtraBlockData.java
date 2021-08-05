@@ -117,6 +117,7 @@ public final class ExtraBlockData {
 	 * Invoked to compute an {@code ExtraBlockData} collection for a specific block.
 	 */
 	public interface OnBuild {
+		@ParameterInvokingEvent
 		ArrayEvent<OnBuild> EVENT = ArrayEvent.create(OnBuild.class, callbacks -> (block, settings, builder) -> {
 			if (block instanceof OnBuild callback)
 				callback.append(block, settings, builder);
@@ -131,7 +132,6 @@ public final class ExtraBlockData {
 		 * @param settings block settings
 		 * @param builder collection builder
 		 */
-		@ParameterInvokingEvent
 		void append(Block block, Block.Settings settings, ExtraBlockData.Builder builder);
 	}
 }
