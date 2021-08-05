@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.block.extensions.api.data;
 
 import org.quiltmc.qsl.base.api.event.ArrayEvent;
+import org.quiltmc.qsl.base.api.event.ParameterInvokingEvent;
 import org.quiltmc.qsl.block.extensions.impl.QuiltBlockInternals;
 import net.minecraft.block.Block;
 import java.util.HashMap;
@@ -117,6 +118,8 @@ public final class ExtraBlockData {
 	 */
 	public interface OnBuild {
 		ArrayEvent<OnBuild> EVENT = ArrayEvent.create(OnBuild.class, callbacks -> (block, settings, builder) -> {
+			if (block instanceof OnBuild callback)
+				callback.append(block, settings, builder);
 			for (OnBuild callback : callbacks)
 				callback.append(block, settings, builder);
 		});
@@ -128,6 +131,7 @@ public final class ExtraBlockData {
 		 * @param settings block settings
 		 * @param builder collection builder
 		 */
+		@ParameterInvokingEvent
 		void append(Block block, Block.Settings settings, ExtraBlockData.Builder builder);
 	}
 }

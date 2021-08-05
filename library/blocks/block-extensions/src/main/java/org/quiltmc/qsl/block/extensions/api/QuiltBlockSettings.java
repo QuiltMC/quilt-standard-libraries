@@ -66,6 +66,10 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		return of(material, material.getColor());
 	}
 
+	public static QuiltBlockSettings of(Material material, Function<BlockState, MapColor> mapColorProvider) {
+		return new QuiltBlockSettings(material, mapColorProvider);
+	}
+
 	public static QuiltBlockSettings of(Material material, MapColor color) {
 		return new QuiltBlockSettings(material, color);
 	}
@@ -242,8 +246,7 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	 * @see #luminance(ToIntFunction)
 	 */
 	public QuiltBlockSettings luminance(int luminance) {
-		this.luminance(ignored -> luminance);
-		return this;
+		return this.luminance(ignored -> luminance);
 	}
 
 	/**

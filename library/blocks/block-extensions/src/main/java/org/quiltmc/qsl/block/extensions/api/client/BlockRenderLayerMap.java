@@ -32,16 +32,6 @@ public final class BlockRenderLayerMap {
 	private BlockRenderLayerMap() { }
 
 	/**
-	 * Sets the render layer of the specified block.
-	 *
-	 * @param block target block
-	 * @param layer new render layer
-	 */
-	public static void put(Block block, RenderLayer layer) {
-		BlockRenderLayerMapImpl.put(block, layer);
-	}
-
-	/**
 	 * Sets the render layer of the specified blocks.
 	 *
 	 * @param layer new render layer
@@ -49,18 +39,8 @@ public final class BlockRenderLayerMap {
 	 */
 	public static void put(RenderLayer layer, Block... blocks) {
 		for (Block block : blocks) {
-			put(block, layer);
+			BlockRenderLayerMapImpl.put(block, layer);
 		}
-	}
-
-	/**
-	 * Sets the render layer of the specified fluid.
-	 *
-	 * @param fluid target fluid
-	 * @param layer new render layer
-	 */
-	public static void put(Fluid fluid, RenderLayer layer) {
-		BlockRenderLayerMapImpl.put(fluid, layer);
 	}
 
 	/**
@@ -71,7 +51,7 @@ public final class BlockRenderLayerMap {
 	 */
 	public static void put(RenderLayer layer, Fluid... fluids) {
 		for (Fluid fluid : fluids) {
-			put(fluid, layer);
+			BlockRenderLayerMapImpl.put(fluid, layer);
 		}
 	}
 }

@@ -91,9 +91,4 @@ public class QuiltMaterialBuilder extends Material.Builder {
 		((MaterialBuilderAccessor) this).setPistonBehavior(behavior);
 		return this;
 	}
-
-	@Override
-	public Material build() {
-		return super.build();
-	}
 }
