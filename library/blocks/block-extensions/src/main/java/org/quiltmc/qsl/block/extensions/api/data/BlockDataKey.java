@@ -16,26 +16,33 @@
 
 package org.quiltmc.qsl.block.extensions.api.data;
 
+import java.util.Objects;
+
 /**
  * Represents a key that can be used to get a value from an {@link ExtraBlockData} instance.
  *
- * @param <T> value type
  */
-public record BlockDataKey<T>(Class<T> type, String name) {
+@SuppressWarnings("ClassCanBeRecord") // records and generics don't work well together, apparently
+public final class BlockDataKey<T> {
+	private final Class<T> type;
+	private final String name;
+
 	/**
 	 * Creates a new key.
 	 *
 	 * @param type value type
 	 * @param name name
 	 */
-	public BlockDataKey { }
+	public BlockDataKey(Class<T> type, String name) {
+		this.type = type;
+		this.name = name;
+	}
 
 	/**
 	 * Gets the value type of this key.
 	 *
 	 * @return value type
 	 */
-	@Override
 	public Class<T> type() {
 		return type;
 	}
@@ -45,8 +52,29 @@ public record BlockDataKey<T>(Class<T> type, String name) {
 	 *
 	 * @return name
 	 */
-	@Override
 	public String name() {
 		return name;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) return true;
+		if (obj == null || obj.getClass() != this.getClass()) return false;
+		var that = (BlockDataKey<?>) obj;
+		return Objects.equals(this.type, that.type) &&
+				Objects.equals(this.name, that.name);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(type, name);
+	}
+
+	@Override
+	public String toString() {
+		return "BlockDataKey[" +
+				"type=" + type + ", " +
+				"name=" + name + ']';
+	}
+
 }
