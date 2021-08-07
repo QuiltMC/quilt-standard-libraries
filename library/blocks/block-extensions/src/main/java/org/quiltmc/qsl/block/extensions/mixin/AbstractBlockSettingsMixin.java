@@ -19,13 +19,26 @@ package org.quiltmc.qsl.block.extensions.mixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
+import org.quiltmc.qsl.block.extensions.api.data.BlockDataKey;
 import org.quiltmc.qsl.block.extensions.api.data.ExtraBlockData;
 import org.quiltmc.qsl.block.extensions.impl.BlockSettingsInternals;
 import net.minecraft.block.AbstractBlock;
+import java.util.Map;
 
 @Mixin(AbstractBlock.Settings.class)
 public abstract class AbstractBlockSettingsMixin implements BlockSettingsInternals {
+	@Unique private Map<BlockDataKey<?>, Object> qsl$settingsMap;
 	@Unique private ExtraBlockData qsl$extraData;
+
+	@Override
+	public Map<BlockDataKey<?>, Object> qsl$getSettingsMap() {
+		return qsl$settingsMap;
+	}
+
+	@Override
+	public void qsl$setSettingsMap(Map<BlockDataKey<?>, Object> map) {
+		this.qsl$settingsMap = map;
+	}
 
 	@Override
 	public ExtraBlockData qsl$getExtraData() {

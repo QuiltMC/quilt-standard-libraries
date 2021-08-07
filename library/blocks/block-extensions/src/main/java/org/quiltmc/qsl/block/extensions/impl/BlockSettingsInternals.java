@@ -16,9 +16,15 @@
 
 package org.quiltmc.qsl.block.extensions.impl;
 
+import org.quiltmc.qsl.block.extensions.api.data.BlockDataKey;
 import org.quiltmc.qsl.block.extensions.api.data.ExtraBlockData;
+import java.util.Map;
 
 public interface BlockSettingsInternals {
+	Map<BlockDataKey<?>, Object> qsl$getSettingsMap();
+
+	void qsl$setSettingsMap(Map<BlockDataKey<?>, Object> map);
+
 	ExtraBlockData qsl$getExtraData();
 
 	void qsl$setExtraData(ExtraBlockData extraData);

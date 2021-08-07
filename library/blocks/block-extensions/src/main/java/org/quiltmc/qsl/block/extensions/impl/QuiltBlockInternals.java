@@ -16,9 +16,11 @@
 
 package org.quiltmc.qsl.block.extensions.impl;
 
+import org.quiltmc.qsl.block.extensions.api.data.BlockDataKey;
 import org.quiltmc.qsl.block.extensions.api.data.ExtraBlockData;
 import org.quiltmc.qsl.block.extensions.mixin.AbstractBlockAccessor;
 import net.minecraft.block.Block;
+import java.util.Map;
 
 public final class QuiltBlockInternals {
 	private QuiltBlockInternals() { }
@@ -30,10 +32,21 @@ public final class QuiltBlockInternals {
 		ExtraBlockData extraData = internals.qsl$getExtraData();
 		if (extraData == null) {
 			ExtraBlockData.Builder builder = ExtraBlockData.builder();
+			Map<BlockDataKey<?>, Object> map = internals.qsl$getSettingsMap();
+			if (map != null) {
+				copyFromMap(builder, map);
+			}
 			ExtraBlockData.OnBuild.EVENT.invoker().append(block, settings, builder);
 			internals.qsl$setExtraData(extraData = builder.build());
 		}
 
 		return extraData;
+	}
+
+	@SuppressWarnings("unchecked")
+	private static void copyFromMap(ExtraBlockData.Builder builder, Map<BlockDataKey<?>, Object> map) {
+		for (Map.Entry<BlockDataKey<?>, Object> entry : map.entrySet()) {
+			builder.put((BlockDataKey<Object>) entry.getKey(), entry.getValue());
+		}
 	}
 }

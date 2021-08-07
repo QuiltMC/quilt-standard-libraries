@@ -21,9 +21,13 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
+import org.quiltmc.qsl.block.extensions.api.data.BlockDataKey;
+import org.quiltmc.qsl.block.extensions.impl.BlockSettingsInternals;
 import org.quiltmc.qsl.block.extensions.mixin.AbstractBlockAccessor;
 import org.quiltmc.qsl.block.extensions.mixin.AbstractBlockSettingsAccessor;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
@@ -257,6 +261,23 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	 */
 	public QuiltBlockSettings drops(Identifier dropTableId) {
 		((AbstractBlockSettingsAccessor) this).setLootTableId(dropTableId);
+		return this;
+	}
+
+	/**
+	 * Adds a key to value pair to the block's {@link org.quiltmc.qsl.block.extensions.api.data.ExtraBlockData ExtraBlockData} instance.
+	 *
+	 * @param key key
+	 * @param value value
+	 * @param <T> type of value
+	 * @return this builder
+	 */
+	public <T> QuiltBlockSettings extraData(BlockDataKey<T> key, T value) {
+		var internals = ((BlockSettingsInternals) this);
+		Map<BlockDataKey<?>, Object> map = internals.qsl$getSettingsMap();
+		if (map == null)
+			internals.qsl$setSettingsMap(map = new HashMap<>());
+		map.put(key, value);
 		return this;
 	}
 
