@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.block.extensions.api.data;
 
+import net.minecraft.util.Identifier;
 import java.util.Objects;
 
 /**
@@ -25,7 +26,7 @@ import java.util.Objects;
 @SuppressWarnings("ClassCanBeRecord") // records and generics don't work well together, apparently
 public final class BlockDataKey<T> {
 	private final Class<T> type;
-	private final String name;
+	private final Identifier name;
 
 	/**
 	 * Creates a new key.
@@ -33,7 +34,7 @@ public final class BlockDataKey<T> {
 	 * @param type value type
 	 * @param name name
 	 */
-	public BlockDataKey(Class<T> type, String name) {
+	public BlockDataKey(Class<T> type, Identifier name) {
 		this.type = type;
 		this.name = name;
 	}
@@ -52,7 +53,7 @@ public final class BlockDataKey<T> {
 	 *
 	 * @return name
 	 */
-	public String name() {
+	public Identifier name() {
 		return name;
 	}
 
