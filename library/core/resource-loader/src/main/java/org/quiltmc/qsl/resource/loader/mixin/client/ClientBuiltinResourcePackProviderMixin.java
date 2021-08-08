@@ -19,6 +19,7 @@ package org.quiltmc.qsl.resource.loader.mixin.client;
 import java.io.File;
 import java.util.function.Consumer;
 
+import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -44,12 +45,14 @@ public class ClientBuiltinResourcePackProviderMixin {
 	}
 
 	// Synthetic method register(Consumer;ResourcePackProfile$Factory;)V
+	@Dynamic
 	@Inject(method = "method_4635", at = @At("RETURN"), cancellable = true, remap = false)
 	private void onPackGet(CallbackInfoReturnable<ResourcePack> cir) {
 		cir.setReturnValue(ResourceLoaderImpl.buildMinecraftResourcePack((DefaultResourcePack) cir.getReturnValue()));
 	}
 
 	// ClientBuiltinResourcePackProvider#method_25454 first lambda.
+	@Dynamic
 	@Inject(method = "method_25457", at = @At("RETURN"), cancellable = true, remap = false)
 	private static void onSupplyZipProgrammerArtPack(File file, CallbackInfoReturnable<ResourcePack> cir) {
 		var originalPack = (AbstractFileResourcePack) cir.getReturnValue();
@@ -57,6 +60,7 @@ public class ClientBuiltinResourcePackProviderMixin {
 	}
 
 	// ClientBuiltinResourcePackProvider#method_25454 second lambda.
+	@Dynamic
 	@Inject(method = "method_25456", at = @At("RETURN"), cancellable = true, remap = false)
 	private static void onSupplyDirProgrammerArtPack(File file, CallbackInfoReturnable<ResourcePack> cir) {
 		var originalPack = (AbstractFileResourcePack) cir.getReturnValue();

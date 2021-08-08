@@ -19,19 +19,15 @@ package org.quiltmc.qsl.resource.loader.test;
 import static org.quiltmc.qsl.resource.loader.test.ResourceLoaderTestMod.id;
 
 import net.fabricmc.api.ModInitializer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
 
 public class BuiltinResourcePackTestMod implements ModInitializer {
-	private static final Logger LOGGER = LogManager.getLogger();
-
 	@Override
 	public void onInitialize() {
 		if (!ResourceLoader.registerBuiltinResourcePack(id("test"), ResourcePackActivationType.DEFAULT_ENABLED)) {
-			LOGGER.warn("Could not register built-in resource pack.");
+			throw new RuntimeException("Could not register built-in resource pack.");
 		}
 	}
 }

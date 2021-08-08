@@ -21,8 +21,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
+import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -58,16 +60,21 @@ public class ReloadableResourceManagerImplMixin {
 		ResourceLoaderImpl.sort(this.type, this.reloaders);
 	}
 
-	// private static synthetic method_29491(Ljava/util/List;)Ljava/lang/Object;
-	// Supplier lambda in beginMonitoredReload method.
-	@Inject(method = "method_29491", at = @At("HEAD"), cancellable = true, remap = false)
-	private static void getResourcePackNames(List<ResourcePack> packs, CallbackInfoReturnable<String> cir) {
-		cir.setReturnValue(packs.stream().map(pack -> {
+	/**
+	 * private static synthetic method_29491(Ljava/util/List;)Ljava/lang/Object;
+	 * Supplier lambda in beginMonitoredReload method.
+	 * @author QuiltMC, LambdAurora
+	 * @reason To allow the printing of the full name of group resource packs.
+	 */
+	@Dynamic
+	@Overwrite(remap = false)
+	private static Object method_29491(List<ResourcePack> packs) {
+		return packs.stream().map(pack -> {
 			if (pack instanceof GroupResourcePack groupResourcePack) {
 				return groupResourcePack.getFullName();
 			} else {
 				return pack.getName();
 			}
-		}).collect(Collectors.joining(", ")));
+		}).collect(Collectors.joining(", "));
 	}
 }
