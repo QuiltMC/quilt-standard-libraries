@@ -18,6 +18,7 @@ package org.quiltmc.qsl.resource.loader.mixin;
 
 import java.util.function.Consumer;
 
+import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -42,6 +43,8 @@ public class VanillaDataPackProviderMixin {
 	}
 
 	// Synthetic method register(Consumer;ResourcePackProfile$Factory;)V -> lambda in ResourcePackProfile.of
+	// Using an injector to wrap the previous return value.
+	@Dynamic
 	@Inject(method = "method_14454", at = @At("RETURN"), cancellable = true, remap = false)
 	private void onPackGet(CallbackInfoReturnable<ResourcePack> cir) {
 		cir.setReturnValue(ResourceLoaderImpl.buildMinecraftResourcePack((DefaultResourcePack) cir.getReturnValue()));

@@ -45,6 +45,7 @@ public class ClientBuiltinResourcePackProviderMixin {
 	}
 
 	// Synthetic method register(Consumer;ResourcePackProfile$Factory;)V
+	// Using an injector to wrap the previous return value.
 	@Dynamic
 	@Inject(method = "method_4635", at = @At("RETURN"), cancellable = true, remap = false)
 	private void onPackGet(CallbackInfoReturnable<ResourcePack> cir) {
@@ -52,6 +53,7 @@ public class ClientBuiltinResourcePackProviderMixin {
 	}
 
 	// ClientBuiltinResourcePackProvider#method_25454 first lambda.
+	// Using an injector to wrap the previous return value.
 	@Dynamic
 	@Inject(method = "method_25457", at = @At("RETURN"), cancellable = true, remap = false)
 	private static void onSupplyZipProgrammerArtPack(File file, CallbackInfoReturnable<ResourcePack> cir) {
@@ -60,6 +62,7 @@ public class ClientBuiltinResourcePackProviderMixin {
 	}
 
 	// ClientBuiltinResourcePackProvider#method_25454 second lambda.
+	// Using an injector to wrap the previous return value.
 	@Dynamic
 	@Inject(method = "method_25456", at = @At("RETURN"), cancellable = true, remap = false)
 	private static void onSupplyDirProgrammerArtPack(File file, CallbackInfoReturnable<ResourcePack> cir) {
