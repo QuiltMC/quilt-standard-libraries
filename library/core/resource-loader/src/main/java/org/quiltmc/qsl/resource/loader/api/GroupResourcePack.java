@@ -94,7 +94,7 @@ public abstract class GroupResourcePack implements ResourcePack {
 
 		var resources = new HashSet<Identifier>();
 
-		// Iterating backwards as higher-priority packs are placed at the beginning.
+		// Iterating backwards as higher-priority packs are placed at the end.
 		for (int i = packs.size() - 1; i >= 0; i--) {
 			ResourcePack pack = packs.get(i);
 			Collection<Identifier> modResources = pack.findResources(type, namespace, prefix, maxDepth, pathFilter);
@@ -113,7 +113,7 @@ public abstract class GroupResourcePack implements ResourcePack {
 			return false;
 		}
 
-		// Iterating backwards as higher-priority packs are placed at the beginning.
+		// Iterating backwards as higher-priority packs are placed at the end.
 		for (int i = packs.size() - 1; i >= 0; i--) {
 			ResourcePack pack = packs.get(i);
 
