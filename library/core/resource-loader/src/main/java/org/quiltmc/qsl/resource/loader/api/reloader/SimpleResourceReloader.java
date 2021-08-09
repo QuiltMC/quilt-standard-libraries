@@ -21,7 +21,6 @@ import java.util.concurrent.Executor;
 
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceReloader;
-import net.minecraft.resource.SynchronousResourceReloader;
 import net.minecraft.util.profiler.Profiler;
 
 /**
