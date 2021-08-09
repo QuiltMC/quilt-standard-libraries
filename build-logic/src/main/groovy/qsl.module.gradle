@@ -30,7 +30,8 @@ plugins {
 spotless {
 	java {
 		// UPDATING: This needs to be changed when a new branch is created.
-		//ratchetFrom("origin/1.17.1")
+		// This has been disabled for now due to spotless failing builds always because of something something no remote found in new folders.
+		// ratchetFrom("origin/1.17.1")
 		licenseHeaderFile(rootProject.file("codeformat/HEADER")).yearSeparator(", ")
 	}
 }
@@ -132,11 +133,14 @@ javadoc {
 		links(
 				"https://guava.dev/releases/21.0/api/docs/",
 				"https://asm.ow2.io/javadoc/",
-				"https://docs.oracle.com/javase/8/docs/api/",
+				"https://docs.oracle.com/en/java/javase/16/docs/api/",
 				"https://jenkins.liteloader.com/job/Mixin/javadoc/",
 				"https://logging.apache.org/log4j/2.x/log4j-api/apidocs/"
+				// TODO: Javadoc for mappings
 		)
-		// Disable the crazy super-strict doclint tool in Java 8
+
+		// TODO: Restrict this to api packages only.
+		// Disable the overzealous doclint tool in Java 8
 		addStringOption("Xdoclint:none", "-quiet")
 		tags(
 				"author:a",
