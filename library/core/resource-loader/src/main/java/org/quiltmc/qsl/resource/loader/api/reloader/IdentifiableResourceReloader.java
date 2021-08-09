@@ -43,6 +43,7 @@ public interface IdentifiableResourceReloader extends ResourceReloader {
 	 * Please keep in mind that this only takes effect during the application stage!
 	 *
 	 * @return the identifiers this resource reloader depends on
+	 * @see ResourceReloaderKeys
 	 */
 	default Collection<Identifier> getQuiltDependencies() {
 		return Collections.emptyList();

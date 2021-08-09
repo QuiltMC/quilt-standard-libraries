@@ -38,6 +38,6 @@ public interface NamespaceResourceManagerAccessor {
 
 	@Invoker("getMetadataPath")
 	static Identifier accessor_getMetadataPath(Identifier id) {
-		throw new UnsupportedOperationException("Invoker injection failed.");
+		throw new IllegalStateException("Invoker injection failed.");
 	}
 }

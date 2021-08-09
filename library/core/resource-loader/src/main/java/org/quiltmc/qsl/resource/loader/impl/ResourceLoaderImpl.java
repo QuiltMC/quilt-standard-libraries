@@ -102,6 +102,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	 * @param reloaders the resource reloaders to sort
 	 */
 	private void sort(List<ResourceReloader> reloaders) {
+		// Remove any modded reloaders to sort properly.
 		reloaders.removeAll(this.addedReloaders);
 
 		// General rules:
@@ -113,6 +114,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		var reloadersToAdd = new ArrayList<>(this.addedReloaders);
 		var resolvedIds = new HashSet<Identifier>();
 
+		// Build a list of resolve identifiers from the reloaders that are already registered.
 		for (var reloader : reloaders) {
 			if (reloader instanceof IdentifiableResourceReloader identifiableResourceReloader) {
 				resolvedIds.add(identifiableResourceReloader.getQuiltId());
@@ -121,14 +123,20 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 
 		int lastSize = -1;
 
+		// Loop as long as the reloader list is changed in the loop.
 		while (reloaders.size() != lastSize) {
 			lastSize = reloaders.size();
 
 			Iterator<IdentifiableResourceReloader> it = reloadersToAdd.iterator();
 
+			// Loop through all remaining reloaders to add.
 			while (it.hasNext()) {
 				IdentifiableResourceReloader listener = it.next();
 
+				// If all the dependencies of the reloader are satisfied then
+				//  - add the reloader id to the resolved ids.
+				//  - add the reloader to the reloader list.
+				//  - remove the reloader from the "to add" list.
 				if (resolvedIds.containsAll(listener.getQuiltDependencies())) {
 					resolvedIds.add(listener.getQuiltId());
 					reloaders.add(listener);
@@ -137,6 +145,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 			}
 		}
 
+		// Warn about all unsatisfied reloaders.
 		for (var reloader : reloadersToAdd) {
 			LOGGER.warn("Could not resolve dependencies for resource reloader: " + reloader.getQuiltId() + "!");
 		}

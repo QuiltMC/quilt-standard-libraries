@@ -42,8 +42,8 @@ public final class ModResourcePackProvider implements ResourcePackProvider {
 
 	public ModResourcePackProvider(ResourceType type) {
 		this.type = type;
-		this.factory = (name, text, bl, supplier, metadata, initialPosition, source) ->
-				new ResourcePackProfile(name, text, bl, supplier, metadata, type, initialPosition, source);
+		this.factory = (name, displayName, alwaysEnabled, packFactory, metadata, initialPosition, source) ->
+				new ResourcePackProfile(name, displayName, alwaysEnabled, packFactory, metadata, type, initialPosition, source);
 	}
 
 	/**

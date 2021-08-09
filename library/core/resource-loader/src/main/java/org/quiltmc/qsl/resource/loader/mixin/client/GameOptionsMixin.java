@@ -41,7 +41,7 @@ public abstract class GameOptionsMixin {
 
 	@Shadow
 	private static List<String> parseList(String content) {
-		throw new UnsupportedOperationException("Injection failed.");
+		throw new IllegalStateException("Injection failed.");
 	}
 
 	@Shadow
