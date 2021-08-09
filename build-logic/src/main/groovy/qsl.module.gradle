@@ -30,7 +30,8 @@ plugins {
 spotless {
 	java {
 		// UPDATING: This needs to be changed when a new branch is created.
-		ratchetFrom("origin/1.17.1")
+		// This has been disabled for now due to spotless failing builds always because of something something no remote found in new folders.
+		// ratchetFrom("origin/1.17.1")
 		licenseHeaderFile(rootProject.file("codeformat/HEADER")).yearSeparator(", ")
 	}
 }
