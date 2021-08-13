@@ -18,7 +18,6 @@ package org.quiltmc.qsl.block.extensions.impl;
 
 import org.quiltmc.qsl.block.extensions.api.data.BlockDataKey;
 import org.quiltmc.qsl.block.extensions.api.data.ExtraBlockData;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -46,7 +45,7 @@ public record ExtraBlockDataImpl(Map<BlockDataKey<?>, Object> values) implements
 		}
 
 		public ExtraBlockData build() {
-			return new ExtraBlockDataImpl(new HashMap<>(values));
+			return new ExtraBlockDataImpl(values);
 		}
 	}
 }
