@@ -18,25 +18,14 @@ package org.quiltmc.qsl.block.extensions.api.data;
 
 import org.quiltmc.qsl.base.api.event.ArrayEvent;
 import org.quiltmc.qsl.base.api.event.ParameterInvokingEvent;
-import org.quiltmc.qsl.block.extensions.impl.ExtraBlockDataImpl;
 import org.quiltmc.qsl.block.extensions.impl.QuiltBlockInternals;
 import net.minecraft.block.Block;
-import java.util.HashMap;
 import java.util.Optional;
 
 /**
  * Represents a {@linkplain BlockDataKey key} to value collection used to store extra data for {@link Block}s.
  */
 public interface ExtraBlockData {
-	/**
-	 * Constructs a new builder.
-	 *
-	 * @return new builder
-	 */
-	static Builder builder() {
-		return new ExtraBlockDataImpl.BuilderImpl(new HashMap<>());
-	}
-
 	/**
 	 * Gets the {@code ExtraBlockData} collection that is tied to the specified block.
 	 *
@@ -77,13 +66,6 @@ public interface ExtraBlockData {
 		 * @return this builder
 		 */
 		<T> Builder put(BlockDataKey<T> key, T value);
-
-		/**
-		 * Builds the collection.
-		 *
-		 * @return new collection
-		 */
-		ExtraBlockData build();
 	}
 
 	/**

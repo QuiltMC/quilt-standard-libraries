@@ -45,7 +45,6 @@ public record ExtraBlockDataImpl(Map<BlockDataKey<?>, Object> values) implements
 			return this;
 		}
 
-		@Override
 		public ExtraBlockData build() {
 			return new ExtraBlockDataImpl(new HashMap<>(values));
 		}

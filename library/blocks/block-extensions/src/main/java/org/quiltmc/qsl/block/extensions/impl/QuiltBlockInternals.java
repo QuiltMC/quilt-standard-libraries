@@ -20,6 +20,7 @@ import org.quiltmc.qsl.block.extensions.api.data.BlockDataKey;
 import org.quiltmc.qsl.block.extensions.api.data.ExtraBlockData;
 import org.quiltmc.qsl.block.extensions.mixin.AbstractBlockAccessor;
 import net.minecraft.block.Block;
+import java.util.HashMap;
 import java.util.Map;
 
 public final class QuiltBlockInternals {
@@ -32,18 +33,13 @@ public final class QuiltBlockInternals {
 		ExtraBlockData extraData = internals.qsl$getExtraData();
 		if (extraData == null) {
 			Map<BlockDataKey<?>, Object> map = internals.qsl$getSettingsMap();
-			ExtraBlockData.Builder builder = new ExtraBlockDataImpl.BuilderImpl(map);
+			if (map == null)
+				map = new HashMap<>();
+			var builder = new ExtraBlockDataImpl.BuilderImpl(map);
 			ExtraBlockData.OnBuild.EVENT.invoker().append(block, settings, builder);
 			internals.qsl$setExtraData(extraData = builder.build());
 		}
 
 		return extraData;
-	}
-
-	@SuppressWarnings("unchecked")
-	private static void copyFromMap(ExtraBlockData.Builder builder, Map<BlockDataKey<?>, Object> map) {
-		for (Map.Entry<BlockDataKey<?>, Object> entry : map.entrySet()) {
-			builder.put((BlockDataKey<Object>) entry.getKey(), entry.getValue());
-		}
 	}
 }
