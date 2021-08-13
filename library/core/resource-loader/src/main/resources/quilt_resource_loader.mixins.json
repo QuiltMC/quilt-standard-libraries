@@ -1,0 +1,24 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.resource.loader.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "mixins": [
+    "DefaultResourcePackMixin",
+    "KeyedResourceReloaderMixin",
+    "MinecraftServerMixin",
+    "NamespaceResourceManagerAccessor",
+    "NamespaceResourceManagerMixin",
+    "ReloadableResourceManagerImplMixin",
+    "VanillaDataPackProviderMixin"
+  ],
+  "client": [
+    "client.ClientBuiltinResourcePackProviderMixin",
+    "client.CreateWorldScreenMixin",
+    "client.FontManagerResourceReloadListenerMixin",
+    "client.GameOptionsMixin",
+    "client.KeyedClientResourceReloaderMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "quilt_resource_loader",
+  "name": "Quilt Resource Loader",
+  "version": "${version}",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "icon": "assets/quilt_resource_loader/icon.png",
+  "contact": {
+    "homepage": "https://quiltmc.org",
+    "issues": "https://github.com/QuiltMC/quilt-standard-libraries/issues",
+    "sources": "https://github.com/QuiltMC/quilt-standard-libraries"
+  },
+  "authors": [
+    "QuiltMC"
+  ],
+  "depends": {
+    "quilt_loader": ">=0.13.1-rc.10"
+  },
+  "description": "Asset and data resource loading.",
+  "accessWidener": "quilt_resource_loader.accesswidener",
+  "mixins": [
+    "quilt_resource_loader.mixins.json"
+  ]
+}
