@@ -69,6 +69,9 @@ public interface AbstractBlockSettingsAccessor {
 	boolean getIsAir();
 
 	@Accessor
+	Identifier getLootTableId();
+
+	@Accessor
 	boolean isToolRequired();
 
 	/* SETTERS */

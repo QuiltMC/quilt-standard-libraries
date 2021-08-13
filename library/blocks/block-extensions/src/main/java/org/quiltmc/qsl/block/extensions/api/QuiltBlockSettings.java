@@ -65,7 +65,10 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		thisAccessor.setIsAir(otherAccessor.getIsAir());
 		thisAccessor.setToolRequired(otherAccessor.isToolRequired());
 
-		// also copy extra data
+		// also copy other stuff Vanilla doesn't bother with
+		thisAccessor.setLootTableId(otherAccessor.getLootTableId());
+
+		// also copy extra data we added
 		var thisInternals = (BlockSettingsInternals) this;
 		var otherInternals = (BlockSettingsInternals) this;
 
