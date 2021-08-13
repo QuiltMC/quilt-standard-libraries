@@ -1,56 +1,30 @@
-/*
- * Copyright 2021 QuiltMC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.quiltmc.qsl.block.extensions.api.data;
 
 import org.quiltmc.qsl.base.api.event.ArrayEvent;
 import org.quiltmc.qsl.base.api.event.ParameterInvokingEvent;
+import org.quiltmc.qsl.block.extensions.impl.ExtraBlockDataImpl;
 import org.quiltmc.qsl.block.extensions.impl.QuiltBlockInternals;
 import net.minecraft.block.Block;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
-/**
- * Represents a {@linkplain BlockDataKey key} to value collection used to store extra data for {@link Block}s.
- */
-@SuppressWarnings("ClassCanBeRecord")
-public final class ExtraBlockData {
-	private final Map<BlockDataKey<?>, Object> values;
-
-	private ExtraBlockData(Map<BlockDataKey<?>, Object> values) {
-		this.values = values;
-	}
-
+public interface ExtraBlockData {
 	/**
 	 * Constructs a new builder.
 	 *
 	 * @return new builder
 	 */
-	public static Builder builder() {
-		return new Builder();
+	static Builder builder() {
+		return new ExtraBlockDataImpl.BuilderImpl(new HashMap<>());
 	}
 
 	/**
-	 * Gets or creates the {@code ExtraBlockData} collection that is tied to the specified block.
+	 * Gets the {@code ExtraBlockData} collection that is tied to the specified block.
 	 *
 	 * @param block block
 	 * @return extra data collection
 	 */
-	public static ExtraBlockData getOrCreate(Block block) {
+	static ExtraBlockData get(Block block) {
 		return QuiltBlockInternals.computeExtraData(block);
 	}
 
@@ -60,9 +34,7 @@ public final class ExtraBlockData {
 	 * @param key key to check
 	 * @return {@code true} if key has a value in this collection, {@code false} otherwise.
 	 */
-	public boolean contains(BlockDataKey<?> key) {
-		return values.containsKey(key);
-	}
+	boolean contains(BlockDataKey<?> key);
 
 	/**
 	 * Gets a key's value.
@@ -71,25 +43,12 @@ public final class ExtraBlockData {
 	 * @param <T> value type
 	 * @return value of key, or empty if value is missing.
 	 */
-	public <T> Optional<T> get(BlockDataKey<T> key) {
-		Object raw = values.get(key);
-		if (raw == null)
-			return Optional.empty();
-		if (!key.type().isInstance(raw))
-			throw new IllegalStateException("Value exists in collection, but type is incompatible with key type! Possible key collision?");
-		return Optional.of(key.type().cast(raw));
-	}
+	<T> Optional<T> get(BlockDataKey<T> key);
 
 	/**
 	 * A builder to construct a {@code ExtraBlockData} collection.
 	 */
-	public static final class Builder {
-		private final Map<BlockDataKey<?>, Object> values;
-
-		private Builder() {
-			values = new HashMap<>();
-		}
-
+	interface Builder {
 		/**
 		 * Adds a key to value pair to the collection.
 		 *
@@ -98,25 +57,20 @@ public final class ExtraBlockData {
 		 * @param <T> value type
 		 * @return this builder
 		 */
-		public <T> Builder put(BlockDataKey<T> key, T value) {
-			values.put(key, value);
-			return this;
-		}
+		<T> Builder put(BlockDataKey<T> key, T value);
 
 		/**
 		 * Builds the collection.
 		 *
 		 * @return new collection
 		 */
-		public ExtraBlockData build() {
-			return new ExtraBlockData(new HashMap<>(values));
-		}
+		ExtraBlockData build();
 	}
 
 	/**
 	 * Invoked to compute an {@code ExtraBlockData} collection for a specific block.
 	 */
-	public interface OnBuild {
+	interface OnBuild {
 		@ParameterInvokingEvent
 		ArrayEvent<OnBuild> EVENT = ArrayEvent.create(OnBuild.class, callbacks -> (block, settings, builder) -> {
 			if (block instanceof OnBuild callback)
@@ -132,6 +86,6 @@ public final class ExtraBlockData {
 		 * @param settings block settings
 		 * @param builder collection builder
 		 */
-		void append(Block block, Block.Settings settings, ExtraBlockData.Builder builder);
+		void append(Block block, Block.Settings settings, Builder builder);
 	}
 }

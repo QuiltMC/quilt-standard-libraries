@@ -31,11 +31,8 @@ public final class QuiltBlockInternals {
 
 		ExtraBlockData extraData = internals.qsl$getExtraData();
 		if (extraData == null) {
-			ExtraBlockData.Builder builder = ExtraBlockData.builder();
 			Map<BlockDataKey<?>, Object> map = internals.qsl$getSettingsMap();
-			if (map != null) {
-				copyFromMap(builder, map);
-			}
+			ExtraBlockData.Builder builder = new ExtraBlockDataImpl.BuilderImpl(map);
 			ExtraBlockData.OnBuild.EVENT.invoker().append(block, settings, builder);
 			internals.qsl$setExtraData(extraData = builder.build());
 		}
