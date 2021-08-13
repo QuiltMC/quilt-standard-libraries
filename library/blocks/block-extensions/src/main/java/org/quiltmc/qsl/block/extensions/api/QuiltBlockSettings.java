@@ -64,6 +64,14 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		thisAccessor.setOpaque(otherAccessor.getOpaque());
 		thisAccessor.setIsAir(otherAccessor.getIsAir());
 		thisAccessor.setToolRequired(otherAccessor.isToolRequired());
+
+		// also copy extra data
+		var thisInternals = (BlockSettingsInternals) this;
+		var otherInternals = (BlockSettingsInternals) this;
+
+		Map<BlockDataKey<?>, Object> settingsMap = otherInternals.qsl$getSettingsMap();
+		if (settingsMap != null)
+			thisInternals.qsl$setSettingsMap(new HashMap<>(settingsMap));
 	}
 
 	public static QuiltBlockSettings of(Material material) {
