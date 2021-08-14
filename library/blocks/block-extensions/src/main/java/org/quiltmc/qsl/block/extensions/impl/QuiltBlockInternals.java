@@ -36,7 +36,7 @@ public final class QuiltBlockInternals {
 			if (map == null)
 				map = new HashMap<>();
 			var builder = new ExtraBlockDataImpl.BuilderImpl(map);
-			ExtraBlockData.OnBuild.EVENT.invoker().append(block, settings, builder);
+			ExtraBlockData.OnBuild.EVENT.invoker().appendExtraData(block, settings, builder);
 			internals.qsl$setExtraData(extraData = builder.build());
 		}
 

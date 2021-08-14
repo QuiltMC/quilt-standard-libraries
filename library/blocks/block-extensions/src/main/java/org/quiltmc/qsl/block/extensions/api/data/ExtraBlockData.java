@@ -94,13 +94,14 @@ public interface ExtraBlockData {
 	/**
 	 * Invoked to compute an {@code ExtraBlockData} collection for a specific block.
 	 */
+	@FunctionalInterface
 	interface OnBuild {
 		@ParameterInvokingEvent
 		ArrayEvent<OnBuild> EVENT = ArrayEvent.create(OnBuild.class, callbacks -> (block, settings, builder) -> {
 			if (block instanceof OnBuild callback)
-				callback.append(block, settings, builder);
+				callback.appendExtraData(block, settings, builder);
 			for (OnBuild callback : callbacks)
-				callback.append(block, settings, builder);
+				callback.appendExtraData(block, settings, builder);
 		});
 
 		/**
@@ -110,6 +111,6 @@ public interface ExtraBlockData {
 		 * @param settings block settings
 		 * @param builder collection builder
 		 */
-		void append(Block block, Block.Settings settings, Builder builder);
+		void appendExtraData(Block block, Block.Settings settings, Builder builder);
 	}
 }
