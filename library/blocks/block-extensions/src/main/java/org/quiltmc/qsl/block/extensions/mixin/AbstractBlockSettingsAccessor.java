@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.block.extensions.mixin;
 
 import net.minecraft.block.*;
+import net.minecraft.entity.EntityType;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
@@ -60,7 +61,10 @@ public interface AbstractBlockSettingsAccessor {
 	float getVelocityMultiplier();
 
 	@Accessor
-	boolean getDynamicBounds();
+	float getJumpVelocityMultiplier();
+
+	@Accessor
+	Identifier getLootTableId();
 
 	@Accessor
 	boolean getOpaque();
@@ -69,10 +73,28 @@ public interface AbstractBlockSettingsAccessor {
 	boolean getIsAir();
 
 	@Accessor
-	Identifier getLootTableId();
+	boolean isToolRequired();
 
 	@Accessor
-	boolean isToolRequired();
+	AbstractBlock.TypedContextPredicate<EntityType<?>> getAllowsSpawningPredicate();
+
+	@Accessor
+	AbstractBlock.ContextPredicate getSolidBlockPredicate();
+
+	@Accessor
+	AbstractBlock.ContextPredicate getSuffocationPredicate();
+
+	@Accessor
+	AbstractBlock.ContextPredicate getBlockVisionPredicate();
+
+	@Accessor
+	AbstractBlock.ContextPredicate getPostProcessPredicate();
+
+	@Accessor
+	AbstractBlock.ContextPredicate getEmissiveLightingPredicate();
+
+	@Accessor
+	boolean getDynamicBounds();
 
 	/* SETTERS */
 	@Accessor
@@ -88,7 +110,7 @@ public interface AbstractBlockSettingsAccessor {
 	void setMapColorProvider(Function<BlockState, MapColor> mapColorProvider);
 
 	@Accessor
-	void setDynamicBounds(boolean dynamicBounds);
+	void setLootTableId(Identifier lootTableId);
 
 	@Accessor
 	void setOpaque(boolean opaque);
@@ -97,8 +119,8 @@ public interface AbstractBlockSettingsAccessor {
 	void setIsAir(boolean isAir);
 
 	@Accessor
-	void setLootTableId(Identifier lootTableId);
+	void setToolRequired(boolean toolRequired);
 
 	@Accessor
-	void setToolRequired(boolean toolRequired);
+	void setDynamicBounds(boolean dynamicBounds);
 }

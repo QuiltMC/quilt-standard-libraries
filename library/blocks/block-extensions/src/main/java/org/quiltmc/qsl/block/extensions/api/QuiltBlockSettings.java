@@ -46,14 +46,14 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	protected QuiltBlockSettings(AbstractBlock.Settings settings) {
 		super(((AbstractBlockSettingsAccessor) settings).getMaterial(), ((AbstractBlockSettingsAccessor) settings).getMapColorProvider());
 
-		// [VanillaCopy] AbstractBlock.Settings#copy(AbstractBlock.Settings)
 		var thisAccessor = (AbstractBlockSettingsAccessor) this;
 		var otherAccessor = (AbstractBlockSettingsAccessor) settings;
 
+		// region [VanillaCopy] AbstractBlock.Settings#copy(AbstractBlock.Settings)
 		thisAccessor.setMaterial(otherAccessor.getMaterial());
 		this.hardness(otherAccessor.getHardness());
 		this.resistance(otherAccessor.getResistance());
-		this.collidable(otherAccessor.getCollidable());
+		thisAccessor.setCollidable(otherAccessor.getCollidable());
 		thisAccessor.setRandomTicks(otherAccessor.getRandomTicks());
 		this.luminance(otherAccessor.getLuminance());
 		thisAccessor.setMapColorProvider(otherAccessor.getMapColorProvider());
@@ -64,9 +64,17 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		thisAccessor.setOpaque(otherAccessor.getOpaque());
 		thisAccessor.setIsAir(otherAccessor.getIsAir());
 		thisAccessor.setToolRequired(otherAccessor.isToolRequired());
+		// endregion
 
 		// also copy other stuff Vanilla doesn't bother with
+		this.jumpVelocityMultiplier(otherAccessor.getJumpVelocityMultiplier());
 		thisAccessor.setLootTableId(otherAccessor.getLootTableId());
+		this.allowsSpawning(otherAccessor.getAllowsSpawningPredicate());
+		this.solidBlock(otherAccessor.getSolidBlockPredicate());
+		this.suffocates(otherAccessor.getSuffocationPredicate());
+		this.blockVision(otherAccessor.getBlockVisionPredicate());
+		this.postProcess(otherAccessor.getPostProcessPredicate());
+		this.emissiveLighting(otherAccessor.getEmissiveLightingPredicate());
 
 		// also copy extra data we added
 		var thisInternals = (BlockSettingsInternals) this;
@@ -284,7 +292,7 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	 * @return this builder
 	 */
 	public <T> QuiltBlockSettings extraData(BlockDataKey<T> key, T value) {
-		var internals = ((BlockSettingsInternals) this);
+		var internals = (BlockSettingsInternals) this;
 		Map<BlockDataKey<?>, Object> map = internals.qsl$getSettingsMap();
 		if (map == null)
 			internals.qsl$setSettingsMap(map = new HashMap<>());
@@ -296,16 +304,5 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 
 	public QuiltBlockSettings mapColor(DyeColor color) {
 		return this.mapColor(color.getMapColor());
-	}
-
-	/**
-	 * Sets if this block can be collided with or not.
-	 *
-	 * @param collidable {@code true} if collidable, {@code false} otherwise
-	 * @return this builder
-	 */
-	public QuiltBlockSettings collidable(boolean collidable) {
-		((AbstractBlockSettingsAccessor) this).setCollidable(collidable);
-		return this;
 	}
 }
