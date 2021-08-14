@@ -79,9 +79,9 @@ public interface ExtraBlockData {
 		<T> Builder putIfAbsent(BlockDataKey<T> key, T value);
 
 		/**
-		 * Adds a key to value pair to the collection, if a pair containing the specified key does not exist yet.<p>
-		 *
-		 * The supplier will only be invoked if the specified key does not have a value associated with it yet.
+		 * Adds a key to value pair to the collection, if a pair containing the specified key does not exist yet.<br>
+		 * The value will be obtained from the supplier, <em>only</em> if the specified key does not yet have a value
+		 * associated with it.
 		 *
 		 * @param key key
 		 * @param supplier value supplier
