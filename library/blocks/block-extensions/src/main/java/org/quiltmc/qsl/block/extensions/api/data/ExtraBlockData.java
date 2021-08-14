@@ -21,6 +21,7 @@ import org.quiltmc.qsl.base.api.event.ParameterInvokingEvent;
 import org.quiltmc.qsl.block.extensions.impl.QuiltBlockInternals;
 import net.minecraft.block.Block;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * Represents a {@linkplain BlockDataKey key} to value collection used to store extra data for {@link Block}s.
@@ -66,6 +67,28 @@ public interface ExtraBlockData {
 		 * @return this builder
 		 */
 		<T> Builder put(BlockDataKey<T> key, T value);
+
+		/**
+		 * Adds a key to value pair to the collection, if a pair containing the specified key does not exist yet.
+		 *
+		 * @param key key
+		 * @param value value of key
+		 * @param <T> value type
+		 * @return this builder
+		 */
+		<T> Builder putIfAbsent(BlockDataKey<T> key, T value);
+
+		/**
+		 * Adds a key to value pair to the collection, if a pair containing the specified key does not exist yet.<p>
+		 *
+		 * The supplier will only be invoked if the specified key does not have a value associated with it yet.
+		 *
+		 * @param key key
+		 * @param supplier value supplier
+		 * @param <T> value type
+		 * @return this builder
+		 */
+		<T> Builder computeIfAbsent(BlockDataKey<T> key, Supplier<T> supplier);
 	}
 
 	/**

@@ -20,6 +20,7 @@ import org.quiltmc.qsl.block.extensions.api.data.BlockDataKey;
 import org.quiltmc.qsl.block.extensions.api.data.ExtraBlockData;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public record ExtraBlockDataImpl(Map<BlockDataKey<?>, Object> values) implements ExtraBlockData {
 	@Override
@@ -41,6 +42,20 @@ public record ExtraBlockDataImpl(Map<BlockDataKey<?>, Object> values) implements
 		@Override
 		public <T> Builder put(BlockDataKey<T> key, T value) {
 			values.put(key, value);
+			return this;
+		}
+
+		@Override
+		public <T> Builder putIfAbsent(BlockDataKey<T> key, T value) {
+			if (!values.containsKey(key))
+				values.put(key, value);
+			return this;
+		}
+
+		@Override
+		public <T> Builder computeIfAbsent(BlockDataKey<T> key, Supplier<T> supplier) {
+			if (!values.containsKey(key))
+				values.put(key, supplier.get());
 			return this;
 		}
 
