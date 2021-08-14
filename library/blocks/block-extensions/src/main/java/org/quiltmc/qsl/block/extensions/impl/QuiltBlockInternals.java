@@ -16,11 +16,12 @@
 
 package org.quiltmc.qsl.block.extensions.impl;
 
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
+
 import org.quiltmc.qsl.block.extensions.api.data.BlockDataKey;
 import org.quiltmc.qsl.block.extensions.api.data.ExtraBlockData;
 import org.quiltmc.qsl.block.extensions.mixin.AbstractBlockAccessor;
 import net.minecraft.block.Block;
-import java.util.HashMap;
 import java.util.Map;
 
 public final class QuiltBlockInternals {
@@ -34,7 +35,7 @@ public final class QuiltBlockInternals {
 		if (extraData == null) {
 			Map<BlockDataKey<?>, Object> map = internals.qsl$getSettingsMap();
 			if (map == null)
-				map = new HashMap<>();
+				map = new Reference2ObjectOpenHashMap<>();
 			var builder = new ExtraBlockDataImpl.BuilderImpl(map);
 			ExtraBlockData.OnBuild.EVENT.invoker().appendExtraData(block, settings, builder);
 			internals.qsl$setExtraData(extraData = builder.build());

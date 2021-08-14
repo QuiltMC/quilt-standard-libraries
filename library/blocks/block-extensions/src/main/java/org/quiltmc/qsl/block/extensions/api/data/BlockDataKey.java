@@ -16,27 +16,25 @@
 
 package org.quiltmc.qsl.block.extensions.api.data;
 
-import net.minecraft.util.Identifier;
-import java.util.Objects;
-
 /**
  * Represents a key that can be used to get a value from an {@link ExtraBlockData} instance.
  *
  */
-@SuppressWarnings("ClassCanBeRecord") // records and generics don't work well together, apparently
+@SuppressWarnings("ClassCanBeRecord") // this key is identity-based, so it can't be a record!
 public final class BlockDataKey<T> {
-	private final Class<T> type;
-	private final Identifier name;
-
 	/**
 	 * Creates a new key.
 	 *
 	 * @param type value type
-	 * @param name name
 	 */
-	public BlockDataKey(Class<T> type, Identifier name) {
+	public static <T> BlockDataKey<T> of(Class<T> type) {
+		return new BlockDataKey<>(type);
+	}
+
+	private final Class<T> type;
+
+	private BlockDataKey(Class<T> type) {
 		this.type = type;
-		this.name = name;
 	}
 
 	/**
@@ -47,35 +45,4 @@ public final class BlockDataKey<T> {
 	public Class<T> type() {
 		return type;
 	}
-
-	/**
-	 * Gets the name of this key.
-	 *
-	 * @return name
-	 */
-	public Identifier name() {
-		return name;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == this) return true;
-		if (obj == null || obj.getClass() != this.getClass()) return false;
-		var that = (BlockDataKey<?>) obj;
-		return Objects.equals(this.type, that.type) &&
-				Objects.equals(this.name, that.name);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(type, name);
-	}
-
-	@Override
-	public String toString() {
-		return "BlockDataKey[" +
-				"type=" + type + ", " +
-				"name=" + name + ']';
-	}
-
 }
