@@ -67,28 +67,6 @@ public interface ExtraBlockData {
 		 * @return this builder
 		 */
 		<T> Builder put(BlockDataKey<T> key, T value);
-
-		/**
-		 * Adds a key to value pair to the collection, if a pair containing the specified key does not exist yet.
-		 *
-		 * @param key key
-		 * @param value value of key
-		 * @param <T> value type
-		 * @return this builder
-		 */
-		<T> Builder putIfAbsent(BlockDataKey<T> key, T value);
-
-		/**
-		 * Adds a key to value pair to the collection, if a pair containing the specified key does not exist yet.<br>
-		 * The value will be obtained from the supplier, <em>only</em> if the specified key does not yet have a value
-		 * associated with it.
-		 *
-		 * @param key key
-		 * @param supplier value supplier
-		 * @param <T> value type
-		 * @return this builder
-		 */
-		<T> Builder computeIfAbsent(BlockDataKey<T> key, Supplier<T> supplier);
 	}
 
 	/**

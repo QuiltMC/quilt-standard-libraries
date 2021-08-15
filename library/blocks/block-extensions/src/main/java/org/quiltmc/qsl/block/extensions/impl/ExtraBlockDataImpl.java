@@ -20,7 +20,6 @@ import org.quiltmc.qsl.block.extensions.api.data.BlockDataKey;
 import org.quiltmc.qsl.block.extensions.api.data.ExtraBlockData;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public record ExtraBlockDataImpl(Map<BlockDataKey<?>, Object> values) implements ExtraBlockData {
 	@Override
@@ -32,7 +31,7 @@ public record ExtraBlockDataImpl(Map<BlockDataKey<?>, Object> values) implements
 	public <T> Optional<T> get(BlockDataKey<T> key) {
 		Object raw = values.get(key);
 		if (raw == null)
-			return Optional.empty();
+			return Optional.ofNullable(key.defaultValue());
 		if (!key.type().isInstance(raw))
 			throw new IllegalStateException("Value exists in collection, but type is incompatible with key type! Possible key collision?");
 		return Optional.of(key.type().cast(raw));
@@ -42,20 +41,6 @@ public record ExtraBlockDataImpl(Map<BlockDataKey<?>, Object> values) implements
 		@Override
 		public <T> Builder put(BlockDataKey<T> key, T value) {
 			values.put(key, value);
-			return this;
-		}
-
-		@Override
-		public <T> Builder putIfAbsent(BlockDataKey<T> key, T value) {
-			if (!values.containsKey(key))
-				values.put(key, value);
-			return this;
-		}
-
-		@Override
-		public <T> Builder computeIfAbsent(BlockDataKey<T> key, Supplier<T> supplier) {
-			if (!values.containsKey(key))
-				values.put(key, supplier.get());
 			return this;
 		}
 

@@ -26,15 +26,31 @@ public final class BlockDataKey<T> {
 	 * Creates a new key.
 	 *
 	 * @param type value type
+	 * @param <T> value type
+	 * @return a new unique key
 	 */
 	public static <T> BlockDataKey<T> of(Class<T> type) {
-		return new BlockDataKey<>(type);
+		return new BlockDataKey<>(type, null);
+	}
+
+	/**
+	 * Creates a new key with a default value.
+	 *
+	 * @param type value type
+	 * @param defaultValue default value
+	 * @param <T> value type
+	 * @return a new unique key
+	 */
+	public static <T> BlockDataKey<T> withDefault(Class<T> type, T defaultValue) {
+		return new BlockDataKey<>(type, defaultValue);
 	}
 
 	private final Class<T> type;
+	private final T defaultValue;
 
-	private BlockDataKey(Class<T> type) {
+	private BlockDataKey(Class<T> type, T defaultValue) {
 		this.type = type;
+		this.defaultValue = defaultValue;
 	}
 
 	/**
@@ -44,5 +60,14 @@ public final class BlockDataKey<T> {
 	 */
 	public Class<T> type() {
 		return type;
+	}
+
+	/**
+	 * Gets the default value of this key.
+	 *
+	 * @return default value
+	 */
+	public T defaultValue() {
+		return defaultValue;
 	}
 }
