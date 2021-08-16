@@ -38,6 +38,10 @@ import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
 @Mixin(NamespaceResourceManager.class)
 public class NamespaceResourceManagerMixin {
+	/**
+	 * Acts as a pseudo-local variable in {@link NamespaceResourceManager#getAllResources(Identifier)}.
+	 * Not thread-safe so a ThreadLocal is required.
+	 */
 	@Unique
 	private final ThreadLocal<List<Resource>> quilt$getAllResources$resources = new ThreadLocal<>();
 
