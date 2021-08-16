@@ -39,47 +39,47 @@ import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 })
 public abstract class KeyedResourceReloaderMixin implements IdentifiableResourceReloader {
 	@Unique
-	private Identifier id;
+	private Identifier quilt$id;
 	@Unique
-	private Collection<Identifier> dependencies;
+	private Collection<Identifier> quilt$dependencies;
 
 	@Override
 	@SuppressWarnings({"ConstantConditions", "RedundantCast"})
 	public Identifier getQuiltId() {
-		if (this.id == null) {
+		if (this.quilt$id == null) {
 			Object self = this;
 
 			if (self instanceof RecipeManager) {
-				this.id = ResourceReloaderKeys.Server.RECIPES;
+				this.quilt$id = ResourceReloaderKeys.Server.RECIPES;
 			} else if (self instanceof ServerAdvancementLoader) {
-				this.id = ResourceReloaderKeys.Server.ADVANCEMENTS;
+				this.quilt$id = ResourceReloaderKeys.Server.ADVANCEMENTS;
 			} else if (self instanceof FunctionLoader) {
-				this.id = ResourceReloaderKeys.Server.FUNCTIONS;
+				this.quilt$id = ResourceReloaderKeys.Server.FUNCTIONS;
 			} else if (self instanceof LootManager) {
-				this.id = ResourceReloaderKeys.Server.LOOT_TABLES;
+				this.quilt$id = ResourceReloaderKeys.Server.LOOT_TABLES;
 			} else if (self instanceof TagManagerLoader) {
-				this.id = ResourceReloaderKeys.Server.TAGS;
+				this.quilt$id = ResourceReloaderKeys.Server.TAGS;
 			} else {
-				this.id = new Identifier("private/" + self.getClass().getSimpleName().toLowerCase(Locale.ROOT));
+				this.quilt$id = new Identifier("private/" + self.getClass().getSimpleName().toLowerCase(Locale.ROOT));
 			}
 		}
 
-		return this.id;
+		return this.quilt$id;
 	}
 
 	@Override
 	@SuppressWarnings({"ConstantConditions", "RedundantCast"})
 	public Collection<Identifier> getQuiltDependencies() {
-		if (this.dependencies == null) {
+		if (this.quilt$dependencies == null) {
 			Object self = this;
 
 			if (self instanceof TagManagerLoader) {
-				this.dependencies = Collections.emptyList();
+				this.quilt$dependencies = Collections.emptyList();
 			} else {
-				this.dependencies = Collections.singletonList(ResourceReloaderKeys.Server.TAGS);
+				this.quilt$dependencies = Collections.singletonList(ResourceReloaderKeys.Server.TAGS);
 			}
 		}
 
-		return this.dependencies;
+		return this.quilt$dependencies;
 	}
 }
