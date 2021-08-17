@@ -1,0 +1,166 @@
+/*
+ * Copyright 2021 QuiltMC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.quiltmc.qsl.lifecycle.api.event;
+
+import org.quiltmc.qsl.base.api.event.ArrayEvent;
+
+import net.minecraft.server.MinecraftServer;
+
+/**
+ * Events indicating the lifecycle of a Minecraft server.
+ *
+ * <p>The lifecycle of a Minecraft server is simple, the server starts, ticks each world in a loop until the server
+ * exits. This lifecycle is consistent across a dedicated server and the integrated server a Minecraft client will run
+ * in single player mode.
+ *
+ * <p>This class only contains methods regarding the starting and exit processes of a Minecraft server, see {@link ServerTickEvents}
+ * for events that are called during the tick loop.
+ *
+ * @see ServerTickEvents
+ */
+public final class ServerLifecycleEvents {
+	// For maintainers: indicate events in this class in order of server starting and then exiting.
+	// Ticking events belong in ServerTickEvents.
+
+	// Server initialization
+
+	/**
+	 * An event indicating that a Minecraft server is starting.
+	 *
+	 * <p>This is the first event fired in the lifecycle of a Minecraft server. It should be noted at this point that
+	 * the server has no registered player manager, or worlds.
+	 */
+	public static final ArrayEvent<Starting> SERVER_STARTING = ArrayEvent.create(Starting.class, callbacks -> server -> {
+		for (var callback : callbacks) {
+			callback.serverStarting(server);
+		}
+	});
+
+	/**
+	 * An event indicating that a Minecraft server is ready to tick.
+	 *
+	 * <p>This event indicates that a Minecraft server is fully initialized and is ready to accept players. Generally
+	 * all worlds would have been loaded by the Minecraft server already.
+	 *
+	 * <p>After this event finishes, the server will tick for the first time.
+	 */
+	public static final ArrayEvent<Ready> SERVER_READY = ArrayEvent.create(Ready.class, callbacks -> server -> {
+		for (var callback : callbacks) {
+			callback.serverReady(server);
+		}
+	});
+
+	// Server exit
+
+	/**
+	 * An event indicating that a Minecraft server has finished its last tick and will shut down.
+	 *
+	 * <p>When this event is executed, the server is in a state similar to the end of a tick, where all worlds are loaded,
+	 * and players are still connected to the server.
+	 *
+	 * <h2>What should mods do when this event is executed</h2>
+	 *
+	 * Mods may do clean up work when this event is executed, such as shutting down any asynchronous executors,
+	 * databases and saving auxiliary mod data.
+	 */
+	public static final ArrayEvent<Stopping> SERVER_STOPPING = ArrayEvent.create(Stopping.class, callbacks -> server -> {
+		for (var callback : callbacks) {
+			callback.serverStopping(server);
+		}
+	});
+
+	/**
+	 * An event indicating that a Minecraft server has finished shutting down and will exit.
+	 *
+	 * <p>The meaning of "exit" will vary depending on whether the Minecraft server is a dedicated server or the integrated
+	 * server of a Minecraft client:
+	 *
+	 * <ul>
+	 * <li><b>integrated server:</b> the client will continue to tick after this event is executed. If the client is being
+	 * shut down, then this event is called after events indicating the client is being shut down are called.
+	 * <li><b>dedicated server:</b> this will be the last event called before the Java Virtual Machine terminates.
+	 * </ul>
+	 *
+	 * <h2>What should mods do when this event is executed?</h2>
+	 *
+	 * Mods should stop referencing this Minecraft server or else the dead server will continue to be tracked on the
+	 * heap and will leak memory. Though this doesn't matter when the server is a dedicated server, it is good principle
+	 * to clean up references you no longer need regardless.
+	 */
+	public static final ArrayEvent<Exit> SERVER_EXIT = ArrayEvent.create(Exit.class, callbacks -> server -> {
+		for (var callback : callbacks) {
+			callback.serverExit(server);
+		}
+	});
+
+	private ServerLifecycleEvents() {}
+
+	/**
+	 * Functional interface to be implemented on callbacks for {@link #SERVER_STARTING}.
+	 * @see #SERVER_STARTING
+	 */
+	@FunctionalInterface
+	public interface Starting {
+		/**
+		 * Called when a Minecraft server is starting.
+		 *
+		 * @param server the server which is starting
+		 */
+		void serverStarting(MinecraftServer server);
+	}
+
+	/**
+	 * Functional interface to be implemented on callbacks for {@link #SERVER_READY}.
+	 * @see #SERVER_READY
+	 */
+	@FunctionalInterface
+	public interface Ready {
+		/**
+		 * Called when a Minecraft server is ready to tick and accept players.
+		 *
+		 * @param server the server which is ready
+		 */
+		void serverReady(MinecraftServer server);
+	}
+
+	/**
+	 * Functional interface to be implemented on callbacks for {@link #SERVER_STOPPING}.
+	 * @see #SERVER_STOPPING
+	 */
+	@FunctionalInterface
+	public interface Stopping {
+		/**
+		 * Called when a Minecraft server has finished it's last tick and is shutting down.
+		 *
+		 * @param server the server which is shutting down
+		 */
+		void serverStopping(MinecraftServer server);
+	}
+
+	/**
+	 * Functional interface to be implemented on callbacks for {@link #SERVER_EXIT}.
+	 * @see #SERVER_EXIT
+	 */
+	public interface Exit {
+		/**
+		 * Called when a Minecraft server has finished shutdown and the server will be exited.
+		 *
+		 * @param server the minecraft server which is exiting
+		 */
+		void serverExit(MinecraftServer server);
+	}
+}
