@@ -45,11 +45,11 @@ import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 public abstract class DefaultResourcePackMixin {
 	// Redirects all resource access to the MC resource pack.
 	@Unique
-	final ModNioResourcePack quilt$internalPack = this.quilt$locateAndLoad();
+	final ModNioResourcePack quilt$internalPack = this.locateAndLoad();
 
 	@SuppressWarnings({"ConstantConditions", "EqualsBetweenInconvertibleTypes"})
 	@Unique
-	private ModNioResourcePack quilt$locateAndLoad() {
+	private ModNioResourcePack locateAndLoad() {
 		return ResourceLoaderImpl.locateAndLoadDefaultResourcePack(
 				this.getClass().equals(DefaultResourcePack.class) ?
 						ResourceType.SERVER_DATA : ResourceType.CLIENT_RESOURCES
