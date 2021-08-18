@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.registry.attribute.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "mixins": [
+    "RegistryMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

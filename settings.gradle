@@ -28,6 +28,7 @@ includeBuild("build-logic")
 
 // Libraries
 library("core")
+library("data")
 
 library("block")
 library("command")
