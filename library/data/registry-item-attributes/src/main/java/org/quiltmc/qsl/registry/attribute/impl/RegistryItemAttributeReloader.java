@@ -39,23 +39,31 @@ public final class RegistryItemAttributeReloader implements SimpleResourceReload
 			Map<RegistryItemAttribute<?, ?>, AttributeMap> attributeMaps = new HashMap<>();
 			for (Map.Entry<? extends RegistryKey<? extends Registry<?>>, ? extends Registry<?>> entry : Registry.REGISTRIES.getEntries()) {
 				Identifier registryId = entry.getKey().getValue();
+				// calculate the root path of this registry's attribute maps
+				// this is attributes/<registry_path> for Minecraft registries
+				// and attributes/<registry_namespace>/<registry_path> for modded ones
 				StringBuilder pathSB = new StringBuilder();
 				if (!"minecraft".equals(registryId.getNamespace()))
 					pathSB.append(registryId.getNamespace()).append('/');
 				pathSB.append(registryId.getPath());
+				// find all JSON files that match this registry's attribute map path
 				profiler.push(ID + "/finding_resources/" + pathSB);
 				Collection<Identifier> jsonIds = manager.findResources("attributes/" + pathSB, s -> s.endsWith(".json"));
 				if (jsonIds.isEmpty())
 					continue;
 				profiler.pop();
+				// grab the built-in holder so we can see what attributes are registered for this registry
 				BuiltinRegistryItemAttributeHolder<?> holder = RegistryItemAttributeHolderImpl.getBuiltin(entry.getValue());
 				for (Identifier jsonId : jsonIds) {
+					// get the attribute ID from the resource ID
 					Identifier attribId = getAttributeId(jsonId);
+					// get the matching attribute (fail if it doesn't exist)
 					RegistryItemAttribute<?, ?> attrib = holder.getAttribute(attribId);
 					if (attrib == null) {
 						LOGGER.warn("Unknown attribute {} (from {})", attribId, jsonId);
 						continue;
 					}
+					// get all the resources that match this resource ID
 					profiler.push(ID + "/getting_resources{" + jsonId + "}");
 					List<Resource> resources;
 					try {
@@ -65,8 +73,10 @@ public final class RegistryItemAttributeReloader implements SimpleResourceReload
 						LOGGER.catching(Level.ERROR, e);
 						continue;
 					}
+					// grab an AttributeMap (utility structure that stores deserialized data), creating one if needed
 					AttributeMap attribMap = attributeMaps.computeIfAbsent(attrib,
 							id -> new AttributeMap(entry.getValue(), attrib));
+					// finally, tell AttributeMap "hey, process these resources for me please"
 					profiler.swap(ID + "/processing_resources{" + jsonId + "," + attribId + "}");
 					for (Resource resource : resources) {
 						attribMap.processResource(resource);
@@ -83,6 +93,7 @@ public final class RegistryItemAttributeReloader implements SimpleResourceReload
 		return CompletableFuture.runAsync(() -> data.apply(profiler), executor);
 	}
 
+	// <namespace>:attributes/<path>/<file_name>.json becomes <namespace>:<file_name>
 	private Identifier getAttributeId(Identifier jsonId) {
 		String path = jsonId.getPath();
 		int lastSlash = path.lastIndexOf('/');
@@ -94,10 +105,12 @@ public final class RegistryItemAttributeReloader implements SimpleResourceReload
 
 	protected record LoadedData(Map<RegistryItemAttribute<?, ?>, AttributeMap> attributeMaps) {
 		public void apply(Profiler profiler) {
+			// clear all attribute values from all registries, since we're reloading them now
 			profiler.push(ID + "/clear_attributes");
 			for (Map.Entry<? extends RegistryKey<? extends Registry<?>>, ? extends Registry<?>> entry : Registry.REGISTRIES.getEntries()) {
 				RegistryItemAttributeHolderImpl.getData(entry.getValue()).clear();
 			}
+			// apply all our AttributeMap values!
 			for (Map.Entry<RegistryItemAttribute<?, ?>, AttributeMap> entry : attributeMaps.entrySet()) {
 				profiler.swap(ID + "/apply_attribute{" + entry.getKey().getId() + "}");
 				applyOne(entry.getKey(), entry.getValue());
@@ -129,16 +142,23 @@ public final class RegistryItemAttributeReloader implements SimpleResourceReload
 		}
 
 		public void processResource(Resource resource) {
+			// deserialize the resource
 			JsonObject obj = JsonHelper.deserialize(new InputStreamReader(resource.getInputStream()));
+			// yoink some values
 			boolean replace = JsonHelper.getBoolean(obj, "replace", false);
 			JsonObject values = JsonHelper.getObject(obj, "values");
 			if (values == null) {
 				LOGGER.error("Missing 'values' element in {}, ignoring file", resource.getId());
 				return;
 			}
+			// if "replace" is true, the data file wants us to clear _all_ entries from other files before it.
+			// so, do that!
 			if (replace)
 				map.clear();
+			// start inspecting the "values" object
 			for (Map.Entry<String, JsonElement> entry : values.entrySet()) {
+				// keys are IDs for items in the registry
+				// therefore, we check that keys are A) valid identifiers, and B) contained in the registry
 				Identifier id;
 				try {
 					id = new Identifier(entry.getKey());
@@ -152,6 +172,8 @@ public final class RegistryItemAttributeReloader implements SimpleResourceReload
 					LOGGER.error("Unregistered identifier in values of {}: '{}', ignoring", resource.getId(), id);
 					continue;
 				}
+				// values are... well, values
+				// we use Mojang's weird optical hacks to parse them from JSON
 				DataResult<?> parsedValue = attribute.getCodec().parse(JsonOps.INSTANCE, entry.getValue());
 				if (parsedValue.result().isEmpty()) {
 					if (parsedValue.error().isPresent()) {
@@ -163,6 +185,7 @@ public final class RegistryItemAttributeReloader implements SimpleResourceReload
 					}
 					LOGGER.error("Ignoring attribute value for '{}' in {} since it's invalid", id, resource.getId());
 				}
+				// we got both a key and a value? great, throw them on the map!
 				map.put(id, parsedValue.result().get());
 			}
 		}
