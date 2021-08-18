@@ -29,6 +29,14 @@
  *
  * These "attribute maps" use a tag-like format, with a {@code replace} property that allows replacing all (non-built-in) values.<p>
  *
- * The {@code values} object functions as a map, mapping registry entry IDs to attribute values.
+ * The {@code values} object functions as a map, mapping registry entry IDs to attribute values.<p>
+ *
+ * Example file, for an {@code Integer} attribute for the {@code Item} registry:<pre><code>
+ * {
+ *   "replace": false,
+ *   "values": {
+ *     "minecraft:netherite_pickaxe": 20
+ *   }
+ * }</code></pre>
  */
 package org.quiltmc.qsl.registry.attribute.api;

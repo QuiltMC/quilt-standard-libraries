@@ -8,7 +8,6 @@ public final class BuiltinRegistryEntryAttributeHolder<R> extends RegistryEntryA
 	private final HashMap<Identifier, RegistryEntryAttribute<R, ?>> attributes;
 
 	public BuiltinRegistryEntryAttributeHolder() {
-		super();
 		attributes = new HashMap<>();
 	}
 
