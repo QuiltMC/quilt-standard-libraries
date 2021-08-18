@@ -23,7 +23,7 @@ import org.quiltmc.qsl.registry.attribute.impl.RegistryEntryAttributeImpl;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
-import java.util.Map;
+import java.util.function.Function;
 
 public interface RegistryEntryAttribute<R, T> {
 	static <R, T> RegistryEntryAttribute<R, T> create(RegistryKey<Registry<R>> registryKey, Identifier id, Codec<T> codec,
@@ -36,13 +36,14 @@ public interface RegistryEntryAttribute<R, T> {
 	}
 
 	static <R, T extends DispatchedType> RegistryEntryAttribute<R, T> createDispatched(RegistryKey<Registry<R>> registryKey, Identifier id,
-																					   Map<Identifier, Codec<? extends T>> codecs, @Nullable T defaultValue) {
-		return create(registryKey, id, Identifier.CODEC.dispatch(T::getType, codecs::get), defaultValue);
+																					   Function<Identifier, Codec<? extends T>> codecGetter,
+																					   @Nullable T defaultValue) {
+		return create(registryKey, id, Identifier.CODEC.dispatch(T::getType, codecGetter), defaultValue);
 	}
 
 	static <R, T extends DispatchedType> RegistryEntryAttribute<R, T> createDispatched(RegistryKey<Registry<R>> registryKey, Identifier id,
-																					   Map<Identifier, Codec<? extends T>> codecs) {
-		return createDispatched(registryKey, id, codecs, null);
+																					   Function<Identifier, Codec<? extends T>> codecGetter) {
+		return createDispatched(registryKey, id, codecGetter, null);
 	}
 
 	static <R> RegistryEntryAttribute<R, Boolean> createBool(RegistryKey<Registry<R>> registryKey, Identifier id, boolean defaultValue) {
