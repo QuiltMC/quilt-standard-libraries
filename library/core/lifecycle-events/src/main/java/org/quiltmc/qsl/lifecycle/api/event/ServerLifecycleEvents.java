@@ -20,6 +20,9 @@ import org.quiltmc.qsl.base.api.event.ArrayEvent;
 
 import net.minecraft.server.MinecraftServer;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 /**
  * Events indicating the lifecycle of a Minecraft server.
  *
@@ -44,9 +47,9 @@ public final class ServerLifecycleEvents {
 	 * <p>This is the first event fired in the lifecycle of a Minecraft server. It should be noted at this point that
 	 * the server has no registered player manager, or worlds.
 	 */
-	public static final ArrayEvent<Starting> SERVER_STARTING = ArrayEvent.create(Starting.class, callbacks -> server -> {
+	public static final ArrayEvent<Starting> STARTING = ArrayEvent.create(Starting.class, callbacks -> server -> {
 		for (var callback : callbacks) {
-			callback.serverStarting(server);
+			callback.startingServer(server);
 		}
 	});
 
@@ -58,9 +61,9 @@ public final class ServerLifecycleEvents {
 	 *
 	 * <p>After this event finishes, the server will tick for the first time.
 	 */
-	public static final ArrayEvent<Ready> SERVER_READY = ArrayEvent.create(Ready.class, callbacks -> server -> {
+	public static final ArrayEvent<Ready> READY = ArrayEvent.create(Ready.class, callbacks -> server -> {
 		for (var callback : callbacks) {
-			callback.serverReady(server);
+			callback.readyServer(server);
 		}
 	});
 
@@ -77,17 +80,17 @@ public final class ServerLifecycleEvents {
 	 * Mods may do clean up work when this event is executed, such as shutting down any asynchronous executors,
 	 * databases and saving auxiliary mod data.
 	 */
-	public static final ArrayEvent<Stopping> SERVER_STOPPING = ArrayEvent.create(Stopping.class, callbacks -> server -> {
+	public static final ArrayEvent<Stopping> STOPPING = ArrayEvent.create(Stopping.class, callbacks -> server -> {
 		for (var callback : callbacks) {
-			callback.serverStopping(server);
+			callback.stoppingServer(server);
 		}
 	});
 
 	/**
-	 * An event indicating that a Minecraft server has finished shutting down and will exit.
+	 * An event indicating that a Minecraft server has finished shutting down.
 	 *
-	 * <p>The meaning of "exit" will vary depending on whether the Minecraft server is a dedicated server or the integrated
-	 * server of a Minecraft client:
+	 * <p>What occurs after this event will vary depending on whether the Minecraft server is a dedicated server or the
+	 * integrated server of a Minecraft client:
 	 *
 	 * <ul>
 	 * <li><b>integrated server:</b> the client will continue to tick after this event is executed. If the client is being
@@ -101,17 +104,17 @@ public final class ServerLifecycleEvents {
 	 * heap and will leak memory. Though this doesn't matter when the server is a dedicated server, it is good principle
 	 * to clean up references you no longer need regardless.
 	 */
-	public static final ArrayEvent<Exit> SERVER_EXIT = ArrayEvent.create(Exit.class, callbacks -> server -> {
+	public static final ArrayEvent<Stopped> STOPPED = ArrayEvent.create(Stopped.class, callbacks -> server -> {
 		for (var callback : callbacks) {
-			callback.serverExit(server);
+			callback.exitServer(server);
 		}
 	});
 
 	private ServerLifecycleEvents() {}
 
 	/**
-	 * Functional interface to be implemented on callbacks for {@link #SERVER_STARTING}.
-	 * @see #SERVER_STARTING
+	 * Functional interface to be implemented on callbacks for {@link #STARTING}.
+	 * @see #STARTING
 	 */
 	@FunctionalInterface
 	public interface Starting {
@@ -120,12 +123,12 @@ public final class ServerLifecycleEvents {
 		 *
 		 * @param server the server which is starting
 		 */
-		void serverStarting(MinecraftServer server);
+		void startingServer(MinecraftServer server);
 	}
 
 	/**
-	 * Functional interface to be implemented on callbacks for {@link #SERVER_READY}.
-	 * @see #SERVER_READY
+	 * Functional interface to be implemented on callbacks for {@link #READY}.
+	 * @see #READY
 	 */
 	@FunctionalInterface
 	public interface Ready {
@@ -134,12 +137,12 @@ public final class ServerLifecycleEvents {
 		 *
 		 * @param server the server which is ready
 		 */
-		void serverReady(MinecraftServer server);
+		void readyServer(MinecraftServer server);
 	}
 
 	/**
-	 * Functional interface to be implemented on callbacks for {@link #SERVER_STOPPING}.
-	 * @see #SERVER_STOPPING
+	 * Functional interface to be implemented on callbacks for {@link #STOPPING}.
+	 * @see #STOPPING
 	 */
 	@FunctionalInterface
 	public interface Stopping {
@@ -148,19 +151,20 @@ public final class ServerLifecycleEvents {
 		 *
 		 * @param server the server which is shutting down
 		 */
-		void serverStopping(MinecraftServer server);
+		void stoppingServer(MinecraftServer server);
 	}
 
 	/**
-	 * Functional interface to be implemented on callbacks for {@link #SERVER_EXIT}.
-	 * @see #SERVER_EXIT
+	 * Functional interface to be implemented on callbacks for {@link #STOPPED}.
+	 * @see #STOPPED
 	 */
-	public interface Exit {
+	@Environment(EnvType.CLIENT)
+	public interface Stopped {
 		/**
 		 * Called when a Minecraft server has finished shutdown and the server will be exited.
 		 *
 		 * @param server the minecraft server which is exiting
 		 */
-		void serverExit(MinecraftServer server);
+		void exitServer(MinecraftServer server);
 	}
 }

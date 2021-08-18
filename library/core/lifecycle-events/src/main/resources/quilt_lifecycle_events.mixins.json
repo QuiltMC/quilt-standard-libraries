@@ -6,7 +6,10 @@
     "MinecraftServerMixin",
     "ServerWorldMixin"
   ],
-  "client": [],
+  "client": [
+    "client.ClientWorldMixin",
+    "client.MinecraftClientMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

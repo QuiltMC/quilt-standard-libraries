@@ -37,24 +37,24 @@ abstract class MinecraftServerMixin {
 	@Inject(method = "runServer",
 		at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;setupServer()Z"))
 	private void serverStarting(CallbackInfo info) {
-		ServerLifecycleEvents.SERVER_STARTING.invoker().serverStarting((MinecraftServer) (Object) this);
+		ServerLifecycleEvents.STARTING.invoker().startingServer((MinecraftServer) (Object) this);
 	}
 
 	@Inject(method = "runServer",
 		at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;setFavicon(Lnet/minecraft/server/ServerMetadata;)V",
 			shift = At.Shift.AFTER))
 	private void serverReady(CallbackInfo info) {
-		ServerLifecycleEvents.SERVER_READY.invoker().serverReady((MinecraftServer) (Object) this);
+		ServerLifecycleEvents.READY.invoker().readyServer((MinecraftServer) (Object) this);
 	}
 
 	@Inject(method = "shutdown", at = @At("HEAD"))
 	private void serverStopping(CallbackInfo info) {
-		ServerLifecycleEvents.SERVER_STOPPING.invoker().serverStopping((MinecraftServer) (Object) this);
+		ServerLifecycleEvents.STOPPING.invoker().stoppingServer((MinecraftServer) (Object) this);
 	}
 
 	@Inject(method = "shutdown", at = @At("TAIL"))
 	private void serverExit(CallbackInfo info) {
-		ServerLifecycleEvents.SERVER_EXIT.invoker().serverExit((MinecraftServer) (Object) this);
+		ServerLifecycleEvents.STOPPED.invoker().exitServer((MinecraftServer) (Object) this);
 	}
 
 	// Ticking
@@ -62,12 +62,12 @@ abstract class MinecraftServerMixin {
 	@Inject(method = "tick",
 		at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;tickWorlds(Ljava/util/function/BooleanSupplier;)V"))
 	private void startServerTick(CallbackInfo info) {
-		ServerTickEvents.START_SERVER_TICK.invoker().startServerTick((MinecraftServer) (Object) this);
+		ServerTickEvents.START.invoker().startServerTick((MinecraftServer) (Object) this);
 	}
 
 	@Inject(method = "tick", at = @At("TAIL"))
 	private void endServerTick(CallbackInfo info) {
-		ServerTickEvents.END_SERVER_TICK.invoker().endServerTick((MinecraftServer) (Object) this);
+		ServerTickEvents.END.invoker().endServerTick((MinecraftServer) (Object) this);
 	}
 
 	// Loading/unloading worlds
@@ -79,7 +79,7 @@ abstract class MinecraftServerMixin {
 	@Redirect(method = "createWorlds", at = @At(value = "INVOKE", target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"))
 	private <K, V> V loadWorld(Map<K, V> worlds, K key, V world) {
 		final V result = worlds.put(key, world);
-		ServerWorldLoadEvents.LOAD_WORLD.invoker().loadWorld((MinecraftServer) (Object) this, (ServerWorld) world);
+		ServerWorldLoadEvents.LOAD.invoker().loadWorld((MinecraftServer) (Object) this, (ServerWorld) world);
 
 		return result;
 	}
@@ -87,6 +87,6 @@ abstract class MinecraftServerMixin {
 	@Inject(method = "shutdown",
 		at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;close()V"), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void unloadWorld(CallbackInfo info, Iterator<ServerWorld> iterator, ServerWorld world) {
-		ServerWorldLoadEvents.UNLOAD_WORLD.invoker().unloadWorld((MinecraftServer) (Object) this, world);
+		ServerWorldLoadEvents.UNLOAD.invoker().unloadWorld((MinecraftServer) (Object) this, world);
 	}
 }

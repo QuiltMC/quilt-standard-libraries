@@ -19,7 +19,6 @@ package org.quiltmc.qsl.lifecycle.api.event;
 import org.quiltmc.qsl.base.api.event.ArrayEvent;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.world.ServerWorld;
 
 /**
  * Events indicating progress through the tick loop of a Minecraft server.
@@ -36,27 +35,9 @@ public final class ServerTickEvents {
 	/**
 	 * An event indicating an iteration of the server's tick loop will start.
 	 */
-	public static final ArrayEvent<StartTick> START_SERVER_TICK = ArrayEvent.create(StartTick.class, callbacks -> server -> {
+	public static final ArrayEvent<Start> START = ArrayEvent.create(Start.class, callbacks -> server -> {
 		for (var callback : callbacks) {
 			callback.startServerTick(server);
-		}
-	});
-
-	/**
-	 * An event indicating that a world will be ticked.
-	 */
-	public static final ArrayEvent<StartWorldTick> START_WORLD_TICK = ArrayEvent.create(StartWorldTick.class, callbacks -> (server, world) -> {
-		for (var callback : callbacks) {
-			callback.startWorldTick(server, world);
-		}
-	});
-
-	/**
-	 * An event indicating that a world has finished being ticked.
-	 */
-	public static final ArrayEvent<EndWorldTick> END_WORLD_TICK = ArrayEvent.create(EndWorldTick.class, callbacks -> (server, world) -> {
-		for (var callback : callbacks) {
-			callback.endWorldTick(server, world);
 		}
 	});
 
@@ -66,7 +47,7 @@ public final class ServerTickEvents {
 	 * <p>Since there will be a time gap before the next tick, this is a great spot to run any asynchronous operations
 	 * for the next tick.
 	 */
-	public static final ArrayEvent<EndTick> END_SERVER_TICK = ArrayEvent.create(EndTick.class, callbacks -> server -> {
+	public static final ArrayEvent<End> END = ArrayEvent.create(End.class, callbacks -> server -> {
 		for (var callback : callbacks) {
 			callback.endServerTick(server);
 		}
@@ -75,11 +56,11 @@ public final class ServerTickEvents {
 	private ServerTickEvents() {}
 
 	/**
-	 * Functional interface to be implemented on callbacks for {@link #START_SERVER_TICK}.
-	 * @see #START_SERVER_TICK
+	 * Functional interface to be implemented on callbacks for {@link #START}.
+	 * @see #START
 	 */
 	@FunctionalInterface
-	public interface StartTick {
+	public interface Start {
 		/**
 		 * Called before the server has started an iteration of the tick loop.
 		 *
@@ -89,41 +70,11 @@ public final class ServerTickEvents {
 	}
 
 	/**
-	 * Functional interface to be implemented on callbacks for {@link #START_WORLD_TICK}.
-	 * @see #START_WORLD_TICK
+	 * Functional interface to be implemented on callbacks for {@link #END}.
+	 * @see #END
 	 */
 	@FunctionalInterface
-	public interface StartWorldTick {
-		/**
-		 * Called before a world is ticked.
-		 *
-		 * @param server the server
-		 * @param world the world being ticked
-		 */
-		void startWorldTick(MinecraftServer server, ServerWorld world);
-	}
-
-	/**
-	 * Functional interface to be implemented on callbacks for {@link #END_WORLD_TICK}.
-	 * @see #END_WORLD_TICK
-	 */
-	@FunctionalInterface
-	public interface EndWorldTick {
-		/**
-		 * Called after a world is ticked.
-		 *
-		 * @param server the server
-		 * @param world the world that was ticked
-		 */
-		void endWorldTick(MinecraftServer server, ServerWorld world);
-	}
-
-	/**
-	 * Functional interface to be implemented on callbacks for {@link #END_SERVER_TICK}.
-	 * @see #END_SERVER_TICK
-	 */
-	@FunctionalInterface
-	public interface EndTick {
+	public interface End {
 		/**
 		 * Called at the end of an iteration of the server's tick loop.
 		 *

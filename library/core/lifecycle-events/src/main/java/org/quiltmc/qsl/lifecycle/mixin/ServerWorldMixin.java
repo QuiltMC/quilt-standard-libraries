@@ -16,7 +16,7 @@
 
 package org.quiltmc.qsl.lifecycle.mixin;
 
-import org.quiltmc.qsl.lifecycle.api.event.ServerTickEvents;
+import org.quiltmc.qsl.lifecycle.api.event.ServerWorldTickEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,11 +33,11 @@ abstract class ServerWorldMixin {
 
 	@Inject(method = "tick", at = @At("HEAD"))
 	private void startTick(CallbackInfo info) {
-		ServerTickEvents.START_WORLD_TICK.invoker().startWorldTick(this.getServer(), (ServerWorld) (Object) this);
+		ServerWorldTickEvents.START.invoker().startWorldTick(this.getServer(), (ServerWorld) (Object) this);
 	}
 
 	@Inject(method = "tick", at = @At("TAIL"))
 	private void endServerTick(CallbackInfo info) {
-		ServerTickEvents.END_WORLD_TICK.invoker().endWorldTick(this.getServer(), (ServerWorld) (Object) this);
+		ServerWorldTickEvents.END.invoker().endWorldTick(this.getServer(), (ServerWorld) (Object) this);
 	}
 }

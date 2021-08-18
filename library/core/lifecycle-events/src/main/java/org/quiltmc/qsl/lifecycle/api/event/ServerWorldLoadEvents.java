@@ -34,7 +34,7 @@ public final class ServerWorldLoadEvents {
 	 * <p>This event is typically executed at server initialization, but may be called at any time if any mods dynamically
 	 * load worlds.
 	 */
-	public static final ArrayEvent<Load> LOAD_WORLD = ArrayEvent.create(Load.class, callbacks -> (server, world) -> {
+	public static final ArrayEvent<Load> LOAD = ArrayEvent.create(Load.class, callbacks -> (server, world) -> {
 		for (var callback : callbacks) {
 			callback.loadWorld(server, world);
 		}
@@ -46,7 +46,7 @@ public final class ServerWorldLoadEvents {
 	 * <p>This event is typically executed at server shutdown, but may be called at any time if any mods dynamically
 	 * unload worlds.
 	 */
-	public static final ArrayEvent<Unload> UNLOAD_WORLD = ArrayEvent.create(Unload.class, callbacks -> ((server, world) -> {
+	public static final ArrayEvent<Unload> UNLOAD = ArrayEvent.create(Unload.class, callbacks -> ((server, world) -> {
 		for (var callback : callbacks) {
 			callback.unloadWorld(server, world);
 		}
@@ -55,8 +55,8 @@ public final class ServerWorldLoadEvents {
 	private ServerWorldLoadEvents() {}
 
 	/**
-	 * Functional interface to be implemented on callbacks for {@link #LOAD_WORLD}.
-	 * @see #LOAD_WORLD
+	 * Functional interface to be implemented on callbacks for {@link #LOAD}.
+	 * @see #LOAD
 	 */
 	@FunctionalInterface
 	public interface Load {
@@ -64,8 +64,8 @@ public final class ServerWorldLoadEvents {
 	}
 
 	/**
-	 * Functional interface to be implemented on callbacks for {@link #UNLOAD_WORLD}.
-	 * @see #UNLOAD_WORLD
+	 * Functional interface to be implemented on callbacks for {@link #UNLOAD}.
+	 * @see #UNLOAD
 	 */
 	@FunctionalInterface
 	public interface Unload {
