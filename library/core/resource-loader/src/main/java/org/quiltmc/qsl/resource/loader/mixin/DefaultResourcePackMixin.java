@@ -45,7 +45,7 @@ import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 public abstract class DefaultResourcePackMixin {
 	// Redirects all resource access to the MC resource pack.
 	@Unique
-	final ModNioResourcePack internalPack = this.locateAndLoad();
+	final ModNioResourcePack quilt$internalPack = this.locateAndLoad();
 
 	@SuppressWarnings({"ConstantConditions", "EqualsBetweenInconvertibleTypes"})
 	@Unique
@@ -62,7 +62,7 @@ public abstract class DefaultResourcePackMixin {
 	 */
 	@Overwrite
 	public boolean contains(ResourceType type, Identifier id) {
-		return this.internalPack.contains(type, id);
+		return this.quilt$internalPack.contains(type, id);
 	}
 
 	/**
@@ -72,7 +72,7 @@ public abstract class DefaultResourcePackMixin {
 	@Overwrite
 	public @Nullable InputStream findInputStream(ResourceType type, Identifier id) {
 		try {
-			return this.internalPack.open(type, id);
+			return this.quilt$internalPack.open(type, id);
 		} catch (IOException e) {
 			return null;
 		}
@@ -85,7 +85,7 @@ public abstract class DefaultResourcePackMixin {
 	@Overwrite
 	public @Nullable InputStream getInputStream(String path) {
 		try {
-			return this.internalPack.openRoot(path);
+			return this.quilt$internalPack.openRoot(path);
 		} catch (IOException e) {
 			return null;
 		}
@@ -98,11 +98,11 @@ public abstract class DefaultResourcePackMixin {
 	@Overwrite
 	public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, int maxDepth,
 												Predicate<String> pathFilter) {
-		return this.internalPack.findResources(type, namespace, prefix, maxDepth, pathFilter);
+		return this.quilt$internalPack.findResources(type, namespace, prefix, maxDepth, pathFilter);
 	}
 
 	@Inject(method = "close", at = @At("HEAD"), remap = false)
 	private void onClose(CallbackInfo ci) {
-		this.internalPack.close();
+		this.quilt$internalPack.close();
 	}
 }

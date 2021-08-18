@@ -43,47 +43,47 @@ import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 })
 public abstract class KeyedClientResourceReloaderMixin implements IdentifiableResourceReloader {
 	@Unique
-	private Identifier id;
+	private Identifier quilt$id;
 	@Unique
-	private Collection<Identifier> dependencies;
+	private Collection<Identifier> quilt$dependencies;
 
 	@Override
 	@SuppressWarnings({"ConstantConditions", "RedundantCast"})
 	public Identifier getQuiltId() {
-		if (this.id == null) {
+		if (this.quilt$id == null) {
 			Object self = this;
 
 			if (self instanceof SoundManager) {
-				this.id = ResourceReloaderKeys.Client.SOUNDS;
+				this.quilt$id = ResourceReloaderKeys.Client.SOUNDS;
 			} else if (self instanceof BakedModelManager) {
-				this.id = ResourceReloaderKeys.Client.MODELS;
+				this.quilt$id = ResourceReloaderKeys.Client.MODELS;
 			} else if (self instanceof LanguageManager) {
-				this.id = ResourceReloaderKeys.Client.LANGUAGES;
+				this.quilt$id = ResourceReloaderKeys.Client.LANGUAGES;
 			} else if (self instanceof TextureManager) {
-				this.id = ResourceReloaderKeys.Client.TEXTURES;
+				this.quilt$id = ResourceReloaderKeys.Client.TEXTURES;
 			} else {
-				this.id = new Identifier("private/" + self.getClass().getSimpleName().toLowerCase(Locale.ROOT));
+				this.quilt$id = new Identifier("private/" + self.getClass().getSimpleName().toLowerCase(Locale.ROOT));
 			}
 		}
 
-		return this.id;
+		return this.quilt$id;
 	}
 
 	@Override
 	@SuppressWarnings({"ConstantConditions", "RedundantCast"})
 	public Collection<Identifier> getQuiltDependencies() {
-		if (this.dependencies == null) {
+		if (this.quilt$dependencies == null) {
 			Object self = this;
 
 			if (self instanceof BakedModelManager || self instanceof WorldRenderer) {
-				this.dependencies = Collections.singletonList(ResourceReloaderKeys.Client.TEXTURES);
+				this.quilt$dependencies = Collections.singletonList(ResourceReloaderKeys.Client.TEXTURES);
 			} else if (self instanceof ItemRenderer || self instanceof BlockRenderManager) {
-				this.dependencies = Collections.singletonList(ResourceReloaderKeys.Client.MODELS);
+				this.quilt$dependencies = Collections.singletonList(ResourceReloaderKeys.Client.MODELS);
 			} else {
-				this.dependencies = Collections.emptyList();
+				this.quilt$dependencies = Collections.emptyList();
 			}
 		}
 
-		return this.dependencies;
+		return this.quilt$dependencies;
 	}
 }

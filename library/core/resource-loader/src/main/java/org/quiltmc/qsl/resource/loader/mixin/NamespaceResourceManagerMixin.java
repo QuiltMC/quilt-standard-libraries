@@ -38,8 +38,12 @@ import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
 @Mixin(NamespaceResourceManager.class)
 public class NamespaceResourceManagerMixin {
+	/**
+	 * Acts as a pseudo-local variable in {@link NamespaceResourceManager#getAllResources(Identifier)}.
+	 * Not thread-safe so a ThreadLocal is required.
+	 */
 	@Unique
-	private final ThreadLocal<List<Resource>> getAllResources$resources = new ThreadLocal<>();
+	private final ThreadLocal<List<Resource>> quilt$getAllResources$resources = new ThreadLocal<>();
 
 	@Inject(
 			method = "getAllResources",
@@ -50,7 +54,7 @@ public class NamespaceResourceManagerMixin {
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private void onGetAllResources(Identifier id, CallbackInfoReturnable<List<Resource>> cir, List<Resource> resources) {
-		this.getAllResources$resources.set(resources);
+		this.quilt$getAllResources$resources.set(resources);
 	}
 
 	@Redirect(
@@ -63,7 +67,7 @@ public class NamespaceResourceManagerMixin {
 	private boolean onResourceAdd(ResourcePack pack, ResourceType type, Identifier id) throws IOException {
 		if (pack instanceof GroupResourcePack groupResourcePack) {
 			ResourceLoaderImpl.appendResourcesFromGroup((NamespaceResourceManagerAccessor) this, id, groupResourcePack,
-					this.getAllResources$resources.get());
+					this.quilt$getAllResources$resources.get());
 			return false;
 		}
 

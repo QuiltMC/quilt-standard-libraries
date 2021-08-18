@@ -53,12 +53,12 @@ public abstract class GameOptionsMixin {
 	 * This allow to keep track of resource packs that are present but forcefully disabled for built-in resource packs.
 	 */
 	@Unique
-	private List<String> availableResourcePacks = new ArrayList<>();
+	private List<String> quilt$availableResourcePacks = new ArrayList<>();
 
 	@Inject(method = "accept(Lnet/minecraft/client/option/GameOptions$Visitor;)V", at = @At("HEAD"))
 	private void onAccept(GameOptions.Visitor visitor, CallbackInfo ci) {
-		this.availableResourcePacks = visitor.visitObject("quilt_available_resource_packs", this.availableResourcePacks,
-				GameOptionsMixin::parseList, GSON::toJson);
+		this.quilt$availableResourcePacks = visitor.visitObject("quilt_available_resource_packs",
+				this.quilt$availableResourcePacks, GameOptionsMixin::parseList, GSON::toJson);
 	}
 
 	@Inject(method = "addResourcePackProfilesToManager", at = @At("HEAD"))
@@ -66,11 +66,11 @@ public abstract class GameOptionsMixin {
 		var toEnable = new ArrayList<String>();
 
 		// Remove all resource packs that cannot be found from the available resource packs list.
-		this.availableResourcePacks.removeIf(availableResourcePack -> manager.getProfile(availableResourcePack) == null);
+		this.quilt$availableResourcePacks.removeIf(availableResourcePack -> manager.getProfile(availableResourcePack) == null);
 
 		// Update available resource packs.
 		for (var profile : manager.getProfiles()) {
-			if (!this.availableResourcePacks.contains(profile.getName())) {
+			if (!this.quilt$availableResourcePacks.contains(profile.getName())) {
 				if (profile.getSource() == ModResourcePackProvider.PACK_SOURCE_MOD_BUILTIN) {
 					// A built-in resource pack provided by a mod.
 
@@ -82,7 +82,7 @@ public abstract class GameOptionsMixin {
 					}
 				}
 
-				this.availableResourcePacks.add(profile.getName());
+				this.quilt$availableResourcePacks.add(profile.getName());
 			}
 		}
 
