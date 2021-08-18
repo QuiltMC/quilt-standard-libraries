@@ -3,11 +3,11 @@
  *
  * A simple API for adding arbitrary values to any object instances managed by a {@link net.minecraft.util.registry.Registry Registry}.<p>
  *
- * {@link org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute RegistryItemAttribute} contains a number of methods for creating
+ * {@link org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute RegistryEntryAttribute} contains a number of methods for creating
  * a new attribute.<p>
  *
  * To retrieve an attribute value, fist get the attribute holder using
- * {@link org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttributeHolder#get(net.minecraft.util.registry.Registry) RegistryItemAttributeHolder.get(Registry)},
+ * {@link org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttributeHolder#get(net.minecraft.util.registry.Registry) RegistryEntryAttributeHolder.get(Registry)},
  * then use {@link org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttributeHolder#getValue(java.lang.Object, RegistryEntryAttribute)}
  * to get the value assigned to the specified registry entry.<p>
  *
