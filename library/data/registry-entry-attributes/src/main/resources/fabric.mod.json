@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "id": "quilt_registry_item_attributes",
-  "name": "Quilt Registry Item Attributes",
+  "id": "quilt_registry_entry_attributes",
+  "name": "Quilt Registry Entry Attributes",
   "version": "${version}",
   "environment": "*",
   "license": "Apache-2.0",
-  "icon": "assets/quilt_registry_item_attributes/icon.png",
+  "icon": "assets/quilt_registry_entry_attributes/icon.png",
   "contact": {
     "homepage": "https://quiltmc.org",
     "issues": "https://github.com/QuiltMC/quilt-standard-libraries/issues",
@@ -18,13 +18,13 @@
     "quilt_loader": ">=0.13.1-rc.10",
     "quilt_resource_loader": "*"
   },
-  "description": "Extensible attribute system for registry items.",
+  "description": "Extensible attribute system for registry entries.",
   "entrypoints": {
     "main": [
       "org.quiltmc.qsl.registry.attribute.impl.Initializer"
     ]
   },
   "mixins": [
-    "quilt_registry_item_attributes.mixins.json"
+    "quilt_registry_entry_attributes.mixins.json"
   ]
 }
