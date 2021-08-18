@@ -58,4 +58,8 @@ public final class RegistryItemAttributeHolderImpl<R> implements RegistryItemAtt
 	public Set<Map.Entry<Identifier, RegistryItemAttribute<R, ?>>> getAttributes() {
 		return attributes.entrySet();
 	}
+
+	public RegistryItemAttribute<R, ?> getAttribute(Identifier id) {
+		return attributes.get(id);
+	}
 }
