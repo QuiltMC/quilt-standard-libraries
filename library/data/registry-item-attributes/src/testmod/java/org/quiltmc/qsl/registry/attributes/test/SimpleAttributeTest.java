@@ -18,13 +18,11 @@ import net.minecraft.world.World;
 
 public class SimpleAttributeTest implements ModInitializer {
 	public static final RegistryItemAttribute<Item, Integer> TEST_ATTRIBUTE =
-			RegistryItemAttribute.create(Registry.ITEM_KEY,
-					new Identifier("quilt", "test_attribute"),
-					Codec.INT);
+			RegistryItemAttribute.createInt(Registry.ITEM_KEY,
+					new Identifier("quilt", "test_attribute"));
 	public static final RegistryItemAttribute<Item, Float> TEST_ATTRIBUTE_2 =
-			RegistryItemAttribute.create(Registry.ITEM_KEY,
-					new Identifier("quilt", "test_attribute_2"),
-					Codec.FLOAT);
+			RegistryItemAttribute.createFloat(Registry.ITEM_KEY,
+					new Identifier("quilt", "test_attribute_2"));
 
 	@Override
 	public void onInitialize() {
