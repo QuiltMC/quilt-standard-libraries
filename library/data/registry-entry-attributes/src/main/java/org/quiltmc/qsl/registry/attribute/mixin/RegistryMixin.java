@@ -76,7 +76,7 @@ public abstract class RegistryMixin implements QuiltRegistryInternals {
 	@SuppressWarnings("unchecked")
 	@Unique private void qsl$updateCombinedAttributeHolder() {
 		qsl$combinedAttributeHolder = new CombinedRegistryEntryAttributeHolder<>(
-				(RegistryEntryAttributeHolder<Object>) qsl$dataAttributeHolder,
-				(RegistryEntryAttributeHolder<Object>) qsl$builtinAttributeHolder);
+				(RegistryEntryAttributeHolderImpl<Object>) qsl$dataAttributeHolder,
+				(RegistryEntryAttributeHolderImpl<Object>) qsl$builtinAttributeHolder);
 	}
 }

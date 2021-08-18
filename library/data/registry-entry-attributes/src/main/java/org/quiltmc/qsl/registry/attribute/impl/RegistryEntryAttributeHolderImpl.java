@@ -70,15 +70,19 @@ public class RegistryEntryAttributeHolderImpl<R> implements RegistryEntryAttribu
 		valueTable = Tables.newCustomTable(new Reference2ObjectOpenHashMap<>(), Object2ObjectOpenHashMap::new);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T> Optional<T> getValue(R item, RegistryEntryAttribute<R, T> attribute) {
-		var rawValue = valueTable.get(item, attribute);
-		if (rawValue == null) {
+		var value = getValueNoDefault(item, attribute);
+		if (value == null) {
 			return Optional.ofNullable(attribute.getDefaultValue());
 		} else {
-			return Optional.of((T) rawValue);
+			return Optional.of(value);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T getValueNoDefault(R item, RegistryEntryAttribute<R, T> attribute) {
+		return (T) valueTable.get(item, attribute);
 	}
 
 	public <T> void putValue(R item, RegistryEntryAttribute<R, T> attribute, T value) {

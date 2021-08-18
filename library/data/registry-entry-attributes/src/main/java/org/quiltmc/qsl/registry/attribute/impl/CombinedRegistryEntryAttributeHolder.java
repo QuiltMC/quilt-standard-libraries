@@ -22,24 +22,27 @@ import java.util.Optional;
 
 @SuppressWarnings("ClassCanBeRecord")
 public final class CombinedRegistryEntryAttributeHolder<R> implements RegistryEntryAttributeHolder<R> {
-	private final RegistryEntryAttributeHolder<R> delegate, fallback;
+	private final RegistryEntryAttributeHolderImpl<R> delegate, fallback;
 
-	public CombinedRegistryEntryAttributeHolder(RegistryEntryAttributeHolder<R> delegate, RegistryEntryAttributeHolder<R> fallback) {
+	public CombinedRegistryEntryAttributeHolder(RegistryEntryAttributeHolderImpl<R> delegate, RegistryEntryAttributeHolderImpl<R> fallback) {
 		this.delegate = delegate;
 		this.fallback = fallback;
 	}
 
 	@Override
 	public <T> Optional<T> getValue(R item, RegistryEntryAttribute<R, T> attribute) {
+		T value;
 		if (delegate != null) {
-			var opt = delegate.getValue(item, attribute);
-			if (opt.isPresent())
-				return opt;
+			value = delegate.getValueNoDefault(item, attribute);
+			if (value != null) {
+				return Optional.of(value);
+			}
 		}
 		if (fallback != null) {
-			var opt = fallback.getValue(item, attribute);
-			if (opt.isPresent())
-				return opt;
+			value = fallback.getValueNoDefault(item, attribute);
+			if (value != null) {
+				return Optional.of(value);
+			}
 		}
 		return Optional.ofNullable(attribute.getDefaultValue());
 	}
