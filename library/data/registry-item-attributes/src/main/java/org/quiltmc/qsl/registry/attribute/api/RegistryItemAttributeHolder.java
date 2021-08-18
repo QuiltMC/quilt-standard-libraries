@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface RegistryItemAttributeHolder<R> {
 	static <R> RegistryItemAttributeHolder<R> get(Registry<R> registry) {
-		return RegistryItemAttributeHolderImpl.get(registry);
+		return RegistryItemAttributeHolderImpl.getCombined(registry);
 	}
 
 	@SuppressWarnings("unchecked")

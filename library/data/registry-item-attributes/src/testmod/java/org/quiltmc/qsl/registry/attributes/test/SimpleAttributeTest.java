@@ -3,13 +3,13 @@ package org.quiltmc.qsl.registry.attributes.test;
 import com.mojang.serialization.Codec;
 import net.fabricmc.api.ModInitializer;
 
+import org.quiltmc.qsl.registry.attribute.api.RegistryExtensions;
 import org.quiltmc.qsl.registry.attribute.api.RegistryItemAttribute;
 import org.quiltmc.qsl.registry.attribute.api.RegistryItemAttributeHolder;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
@@ -21,11 +21,19 @@ public class SimpleAttributeTest implements ModInitializer {
 			RegistryItemAttribute.create(Registry.ITEM_KEY,
 					new Identifier("quilt", "test_attribute"),
 					Codec.INT);
+	public static final RegistryItemAttribute<Item, Float> TEST_ATTRIBUTE_2 =
+			RegistryItemAttribute.create(Registry.ITEM_KEY,
+					new Identifier("quilt", "test_attribute_2"),
+					Codec.FLOAT);
 
 	@Override
 	public void onInitialize() {
-		Registry.register(Registry.ITEM, new Identifier("quilt", "simple_attribute_test_item"),
-				new MyItem(new Item.Settings()));
+		RegistryExtensions.registerWithAttributes(Registry.ITEM,
+				new Identifier("quilt", "simple_attribute_test_item"),
+				new MyItem(new Item.Settings()),
+				setter -> setter
+						.put(TEST_ATTRIBUTE, 5)		// this value will be overriden by the value specified in the datapack
+						.put(TEST_ATTRIBUTE_2, 2.0f));
 	}
 
 	public static final class MyItem extends Item {
@@ -36,13 +44,12 @@ public class SimpleAttributeTest implements ModInitializer {
 		@Override
 		public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
 			if (!world.isClient) {
-				RegistryItemAttributeHolder.get(Registry.ITEM_KEY)
-						.getValue(this, TEST_ATTRIBUTE)
-						.ifPresentOrElse(i -> {
-							user.sendMessage(new LiteralText("Item attribute = " + i), true);
-						}, () -> {
-							throw new RuntimeException("agh, test attribute wasn't applied after all...");
-						});
+				var holder = RegistryItemAttributeHolder.get(Registry.ITEM_KEY);
+				int one = holder.getValue(this, TEST_ATTRIBUTE)
+						.orElseThrow(() -> new RuntimeException(TEST_ATTRIBUTE + " not set via datapack!"));
+				float two = holder.getValue(this, TEST_ATTRIBUTE_2)
+						.orElseThrow(() -> new RuntimeException(TEST_ATTRIBUTE_2 + " not set via built-in!"));
+				user.sendMessage(Text.of("Test1 = " + one + ", Test2 = " + two), true);
 			}
 			return TypedActionResult.pass(user.getStackInHand(hand));
 		}

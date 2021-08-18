@@ -20,14 +20,11 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-public final class AttributeReloader implements SimpleResourceReloader<Map<RegistryItemAttribute<?, ?>, AttributeReloader.AttributeMap>> {
+public final class RegistryItemAttributeReloader implements SimpleResourceReloader<RegistryItemAttributeReloader.LoadedData> {
 	private static final Logger LOGGER = LogManager.getLogger("AttributeReloader");
 	private static final Identifier ID = new Identifier("quilt", "attributes");
 
@@ -37,9 +34,9 @@ public final class AttributeReloader implements SimpleResourceReloader<Map<Regis
 	}
 
 	@Override
-	public CompletableFuture<Map<RegistryItemAttribute<?, ?>, AttributeMap>> load(ResourceManager manager, Profiler profiler, Executor executor) {
+	public CompletableFuture<LoadedData> load(ResourceManager manager, Profiler profiler, Executor executor) {
 		return CompletableFuture.supplyAsync(() -> {
-			final Map<RegistryItemAttribute<?, ?>, AttributeMap> attributeMaps = new HashMap<>();
+			Map<RegistryItemAttribute<?, ?>, AttributeMap> attributeMaps = new HashMap<>();
 			for (Map.Entry<? extends RegistryKey<? extends Registry<?>>, ? extends Registry<?>> entry : Registry.REGISTRIES.getEntries()) {
 				Identifier registryId = entry.getKey().getValue();
 				StringBuilder pathSB = new StringBuilder();
@@ -51,7 +48,7 @@ public final class AttributeReloader implements SimpleResourceReloader<Map<Regis
 				if (jsonIds.isEmpty())
 					continue;
 				profiler.pop();
-				RegistryItemAttributeHolderImpl<?> holder = RegistryItemAttributeHolderImpl.get(entry.getValue());
+				BuiltinRegistryItemAttributeHolder<?> holder = RegistryItemAttributeHolderImpl.getBuiltin(entry.getValue());
 				for (Identifier jsonId : jsonIds) {
 					Identifier attribId = getAttributeId(jsonId);
 					RegistryItemAttribute<?, ?> attrib = holder.getAttribute(attribId);
@@ -77,30 +74,13 @@ public final class AttributeReloader implements SimpleResourceReloader<Map<Regis
 					profiler.pop();
 				}
 			}
-			return attributeMaps;
+			return new LoadedData(attributeMaps);
 		}, executor);
 	}
 
 	@Override
-	public CompletableFuture<Void> apply(Map<RegistryItemAttribute<?, ?>, AttributeMap> data, ResourceManager manager, Profiler profiler, Executor executor) {
-		return CompletableFuture.runAsync(() -> {
-			for (Map.Entry<RegistryItemAttribute<?, ?>, AttributeMap> entry : data.entrySet()) {
-				profiler.push(ID + "/apply_attribute{" + entry.getKey().getId() + "}");
-				applyOne(entry.getKey(), entry.getValue());
-				profiler.pop();
-			}
-		}, executor);
-	}
-
-	@SuppressWarnings("unchecked")
-	private <R, T> void applyOne(RegistryItemAttribute<R, T> attrib, AttributeMap attribMap) {
-		Registry<R> registry = (Registry<R>) Registry.REGISTRIES.get(attrib.getRegistryKey().getValue());
-		assert registry != null : "huh";
-		RegistryItemAttributeHolderImpl<R> holder = RegistryItemAttributeHolderImpl.get(registry);
-		for (Map.Entry<Identifier, Object> attribEntry : attribMap.map.entrySet()) {
-			R item = registry.get(attribEntry.getKey());
-			holder.putValue(item, attrib, (T) attribEntry.getValue());
-		}
+	public CompletableFuture<Void> apply(LoadedData data, ResourceManager manager, Profiler profiler, Executor executor) {
+		return CompletableFuture.runAsync(() -> data.apply(profiler), executor);
 	}
 
 	private Identifier getAttributeId(Identifier jsonId) {
@@ -110,6 +90,31 @@ public final class AttributeReloader implements SimpleResourceReloader<Map<Regis
 		int lastDot = path.lastIndexOf('.');
 		path = path.substring(0, lastDot);
 		return new Identifier(jsonId.getNamespace(), path);
+	}
+
+	protected record LoadedData(Map<RegistryItemAttribute<?, ?>, AttributeMap> attributeMaps) {
+		public void apply(Profiler profiler) {
+			profiler.push(ID + "/clear_attributes");
+			for (Map.Entry<? extends RegistryKey<? extends Registry<?>>, ? extends Registry<?>> entry : Registry.REGISTRIES.getEntries()) {
+				RegistryItemAttributeHolderImpl.getData(entry.getValue()).clear();
+			}
+			for (Map.Entry<RegistryItemAttribute<?, ?>, AttributeMap> entry : attributeMaps.entrySet()) {
+				profiler.swap(ID + "/apply_attribute{" + entry.getKey().getId() + "}");
+				applyOne(entry.getKey(), entry.getValue());
+			}
+			profiler.pop();
+		}
+
+		@SuppressWarnings("unchecked")
+		private <R, T> void applyOne(RegistryItemAttribute<R, T> attrib, AttributeMap attribMap) {
+			Registry<R> registry = (Registry<R>) Registry.REGISTRIES.get(attrib.getRegistryKey().getValue());
+			assert registry != null : "huh";
+			BuiltinRegistryItemAttributeHolder<R> holder = RegistryItemAttributeHolderImpl.getData(registry);
+			for (Map.Entry<Identifier, Object> attribEntry : attribMap.map.entrySet()) {
+				R item = registry.get(attribEntry.getKey());
+				holder.putValue(item, attrib, (T) attribEntry.getValue());
+			}
+		}
 	}
 
 	protected static final class AttributeMap {
