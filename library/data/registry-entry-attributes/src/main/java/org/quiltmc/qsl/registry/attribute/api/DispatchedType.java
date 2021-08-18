@@ -27,9 +27,9 @@ import java.util.Map;
  */
 public interface DispatchedType {
 	/**
-	 * Gets this instance's type as a string.
+	 * Gets this object's type.
 	 *
-	 * @return type string
+	 * @return type
 	 */
-	String getType();
+	Identifier getType();
 }

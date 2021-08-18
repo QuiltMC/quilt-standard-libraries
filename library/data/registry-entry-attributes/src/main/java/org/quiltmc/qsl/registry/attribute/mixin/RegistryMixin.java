@@ -16,26 +16,43 @@
 
 package org.quiltmc.qsl.registry.attribute.mixin;
 
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
+import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
 import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttributeHolder;
-import org.quiltmc.qsl.registry.attribute.impl.*;
+import org.quiltmc.qsl.registry.attribute.impl.CombinedRegistryEntryAttributeHolder;
+import org.quiltmc.qsl.registry.attribute.impl.QuiltRegistryInternals;
+import org.quiltmc.qsl.registry.attribute.impl.RegistryEntryAttributeHolderImpl;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import java.util.HashMap;
 
 @Mixin(Registry.class)
 public abstract class RegistryMixin implements QuiltRegistryInternals {
-	@Unique private BuiltinRegistryEntryAttributeHolder<?> qsl$builtinAttributeHolder;
+	@Unique private final HashMap<Identifier, RegistryEntryAttribute<?, ?>> attributes = new HashMap<>();
+	@Unique private RegistryEntryAttributeHolderImpl<?> qsl$builtinAttributeHolder;
 	@Unique private RegistryEntryAttributeHolderImpl<?> qsl$dataAttributeHolder;
 	@Unique private RegistryEntryAttributeHolder<?> qsl$combinedAttributeHolder;
 
 	@Override
-	public BuiltinRegistryEntryAttributeHolder<?> qsl$getBuiltinAttributeHolder() {
+	public void qsl$registerAttribute(RegistryEntryAttribute<?, ?> attribute) {
+		attributes.put(attribute.getId(), attribute);
+	}
+
+	@Override
+	public @Nullable RegistryEntryAttribute<?, ?> qsl$getAttribute(Identifier id) {
+		return attributes.get(id);
+	}
+
+	@Override
+	public RegistryEntryAttributeHolderImpl<?> qsl$getBuiltinAttributeHolder() {
 		return qsl$builtinAttributeHolder;
 	}
 
 	@Override
-	public void qsl$setBuiltinAttributeHolder(BuiltinRegistryEntryAttributeHolder<?> holder) {
+	public void qsl$setBuiltinAttributeHolder(RegistryEntryAttributeHolderImpl<?> holder) {
 		this.qsl$builtinAttributeHolder = holder;
 		qsl$updateCombinedAttributeHolder();
 	}
@@ -58,12 +75,8 @@ public abstract class RegistryMixin implements QuiltRegistryInternals {
 
 	@SuppressWarnings("unchecked")
 	@Unique private void qsl$updateCombinedAttributeHolder() {
-		if (qsl$builtinAttributeHolder == null && qsl$dataAttributeHolder == null) {
-			qsl$combinedAttributeHolder = EmptyRegistryEntryAttributeHolder.get();
-		} else {
-			qsl$combinedAttributeHolder = new CombinedRegistryEntryAttributeHolder<>(
-					(RegistryEntryAttributeHolder<Object>) qsl$dataAttributeHolder,
-					(RegistryEntryAttributeHolder<Object>) qsl$builtinAttributeHolder);
-		}
+		qsl$combinedAttributeHolder = new CombinedRegistryEntryAttributeHolder<>(
+				(RegistryEntryAttributeHolder<Object>) qsl$dataAttributeHolder,
+				(RegistryEntryAttributeHolder<Object>) qsl$builtinAttributeHolder);
 	}
 }

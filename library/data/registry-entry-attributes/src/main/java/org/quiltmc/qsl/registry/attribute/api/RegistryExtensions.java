@@ -22,10 +22,11 @@ import net.minecraft.util.registry.Registry;
 import java.util.function.Consumer;
 
 public final class RegistryExtensions {
-	public static <R> void registerWithAttributes(Registry<R> registry, Identifier id, R item,
+	public static <R, T extends R> T registerWithAttributes(Registry<R> registry, Identifier id, T entry,
 												  Consumer<AttributeSetter<R>> setterConsumer) {
-		Registry.register(registry, id, item);
-		setterConsumer.accept(new BuiltinRegistryEntryAttributeSetterImpl<>(registry, item));
+		Registry.register(registry, id, entry);
+		setterConsumer.accept(new BuiltinRegistryEntryAttributeSetterImpl<>(registry, entry));
+		return entry;
 	}
 
 	public interface AttributeSetter<R> {

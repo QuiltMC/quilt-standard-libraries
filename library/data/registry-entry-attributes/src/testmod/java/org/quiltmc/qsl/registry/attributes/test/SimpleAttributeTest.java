@@ -39,15 +39,15 @@ public class SimpleAttributeTest implements ModInitializer {
 			RegistryEntryAttribute.createFloat(Registry.ITEM_KEY,
 					new Identifier("quilt", "test_attribute_2"));
 
+	public static final MyItem MY_ITEM = RegistryExtensions.registerWithAttributes(Registry.ITEM,
+			new Identifier("quilt", "simple_attribute_test_item"),
+			new MyItem(new Item.Settings()),
+			setter -> setter
+					.put(TEST_ATTRIBUTE, 5)		// this value will be overriden by the value specified in the datapack
+					.put(TEST_ATTRIBUTE_2, 2.0f));
+
 	@Override
-	public void onInitialize() {
-		RegistryExtensions.registerWithAttributes(Registry.ITEM,
-				new Identifier("quilt", "simple_attribute_test_item"),
-				new MyItem(new Item.Settings()),
-				setter -> setter
-						.put(TEST_ATTRIBUTE, 5)		// this value will be overriden by the value specified in the datapack
-						.put(TEST_ATTRIBUTE_2, 2.0f));
-	}
+	public void onInitialize() { }
 
 	public static final class MyItem extends Item {
 		public MyItem(Settings settings) {

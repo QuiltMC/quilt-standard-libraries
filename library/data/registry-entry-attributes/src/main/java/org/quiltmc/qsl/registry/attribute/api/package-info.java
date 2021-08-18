@@ -31,7 +31,8 @@
  *
  * The {@code values} object functions as a map, mapping registry entry IDs to attribute values.<p>
  *
- * Example file, for an {@code Integer} attribute for the {@code Item} registry:<pre><code>
+ * For example, say we have an {@code Integer} attribute for the {@code Item} registry with an ID of {@code example_mod:coolness}.<br>
+ * To set Netherite Pickaxe's coolness to 20, we create this file at {@code data/example_mod/attributes/minecraft/item/coolness.json}:<pre><code>
  * {
  *   "replace": false,
  *   "values": {

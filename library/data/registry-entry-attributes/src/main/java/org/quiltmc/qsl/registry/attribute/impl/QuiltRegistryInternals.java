@@ -16,11 +16,18 @@
 
 package org.quiltmc.qsl.registry.attribute.impl;
 
+import org.jetbrains.annotations.Nullable;
+
+import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
 import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttributeHolder;
+import net.minecraft.util.Identifier;
 
 public interface QuiltRegistryInternals {
-	BuiltinRegistryEntryAttributeHolder<?> qsl$getBuiltinAttributeHolder();
-	void qsl$setBuiltinAttributeHolder(BuiltinRegistryEntryAttributeHolder<?> holder);
+	void qsl$registerAttribute(RegistryEntryAttribute<?, ?> attribute);
+	@Nullable RegistryEntryAttribute<?, ?> qsl$getAttribute(Identifier id);
+
+	RegistryEntryAttributeHolderImpl<?> qsl$getBuiltinAttributeHolder();
+	void qsl$setBuiltinAttributeHolder(RegistryEntryAttributeHolderImpl<?> holder);
 
 	RegistryEntryAttributeHolderImpl<?> qsl$getDataAttributeHolder();
 	void qsl$setDataAttributeHolder(RegistryEntryAttributeHolderImpl<?> holder);

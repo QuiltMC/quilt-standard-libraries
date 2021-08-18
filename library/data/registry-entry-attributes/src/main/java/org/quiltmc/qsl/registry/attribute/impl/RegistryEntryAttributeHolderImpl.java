@@ -20,36 +20,47 @@ import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
+import org.jetbrains.annotations.Nullable;
 
 import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
 import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttributeHolder;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import java.util.Optional;
 
 public class RegistryEntryAttributeHolderImpl<R> implements RegistryEntryAttributeHolder<R> {
+	public static <R, T> void registerAttribute(Registry<R> registry, RegistryEntryAttribute<R, T> attribute) {
+		((QuiltRegistryInternals) registry).qsl$registerAttribute(attribute);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <R> @Nullable RegistryEntryAttribute<R, ?> getAttribute(Registry<R> registry, Identifier id) {
+		return (RegistryEntryAttribute<R, ?>) ((QuiltRegistryInternals) registry).qsl$getAttribute(id);
+	}
+
 	@SuppressWarnings("unchecked")
 	public static <R> RegistryEntryAttributeHolder<R> getCombined(Registry<R> registry) {
 		return (RegistryEntryAttributeHolder<R>) ((QuiltRegistryInternals) registry).qsl$getCombinedAttributeHolder();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <R> BuiltinRegistryEntryAttributeHolder<R> getBuiltin(Registry<R> registry) {
+	public static <R> RegistryEntryAttributeHolderImpl<R> getBuiltin(Registry<R> registry) {
 		var internals = (QuiltRegistryInternals) registry;
 		var holder = internals.qsl$getBuiltinAttributeHolder();
 		if (holder == null) {
-			internals.qsl$setBuiltinAttributeHolder(holder = new BuiltinRegistryEntryAttributeHolder<>());
+			internals.qsl$setBuiltinAttributeHolder(holder = new RegistryEntryAttributeHolderImpl<>());
 		}
-		return (BuiltinRegistryEntryAttributeHolder<R>) holder;
+		return (RegistryEntryAttributeHolderImpl<R>) holder;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <R> BuiltinRegistryEntryAttributeHolder<R> getData(Registry<R> registry) {
+	public static <R> RegistryEntryAttributeHolderImpl<R> getData(Registry<R> registry) {
 		var internals = (QuiltRegistryInternals) registry;
 		var holder = internals.qsl$getDataAttributeHolder();
 		if (holder == null) {
-			internals.qsl$setDataAttributeHolder(holder = new BuiltinRegistryEntryAttributeHolder<>());
+			internals.qsl$setDataAttributeHolder(holder = new RegistryEntryAttributeHolderImpl<>());
 		}
-		return (BuiltinRegistryEntryAttributeHolder<R>) holder;
+		return (RegistryEntryAttributeHolderImpl<R>) holder;
 	}
 
 	protected final Table<R, RegistryEntryAttribute<R, ?>, Object> valueTable;
@@ -62,11 +73,7 @@ public class RegistryEntryAttributeHolderImpl<R> implements RegistryEntryAttribu
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> Optional<T> getValue(R item, RegistryEntryAttribute<R, T> attribute) {
-		var itemRow = valueTable.row(item);
-		if (itemRow == null) {
-			return Optional.ofNullable(attribute.getDefaultValue());
-		}
-		var rawValue = itemRow.get(attribute);
+		var rawValue = valueTable.get(item, attribute);
 		if (rawValue == null) {
 			return Optional.ofNullable(attribute.getDefaultValue());
 		} else {

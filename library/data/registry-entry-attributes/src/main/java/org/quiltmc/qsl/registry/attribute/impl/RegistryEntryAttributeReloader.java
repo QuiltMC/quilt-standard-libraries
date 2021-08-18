@@ -18,6 +18,7 @@ package org.quiltmc.qsl.registry.attribute.impl;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import org.apache.logging.log4j.Level;
@@ -58,7 +59,7 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 
 			for (var entry : Registry.REGISTRIES.getEntries()) {
 				Identifier registryId = entry.getKey().getValue();
-				String path = getAttributeMapPath(registryId);
+				String path = registryId.getNamespace() + "/" + registryId.getPath();
 				profiler.push(ID + "/finding_resources/" + path);
 
 				Collection<Identifier> jsonIds = manager.findResources("attributes/" + path, s -> s.endsWith(".json"));
@@ -67,8 +68,7 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 				}
 
 				Registry<?> registry = entry.getValue();
-				BuiltinRegistryEntryAttributeHolder<?> holder = RegistryEntryAttributeHolderImpl.getBuiltin(registry);
-				processResources(manager, profiler, attributeMaps, jsonIds, registry, holder);
+				processResources(manager, profiler, attributeMaps, jsonIds, registry);
 
 				profiler.pop();
 			}
@@ -79,11 +79,10 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 
 	private void processResources(ResourceManager manager, Profiler profiler,
 								  Map<RegistryEntryAttribute<?, ?>, AttributeMap> attributeMaps,
-								  Collection<Identifier> jsonIds, Registry<?> registry,
-								  BuiltinRegistryEntryAttributeHolder<?> holder) {
+								  Collection<Identifier> jsonIds, Registry<?> registry) {
 		for (var jsonId : jsonIds) {
 			Identifier attribId = getAttributeId(jsonId);
-			RegistryEntryAttribute<?, ?> attrib = holder.getAttribute(attribId);
+			RegistryEntryAttribute<?, ?> attrib = RegistryEntryAttributeHolderImpl.getAttribute(registry, attribId);
 			if (attrib == null) {
 				LOGGER.warn("Unknown attribute {} (from {})", attribId, jsonId);
 				continue;
@@ -113,15 +112,6 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 	@Override
 	public CompletableFuture<Void> apply(LoadedData data, ResourceManager manager, Profiler profiler, Executor executor) {
 		return CompletableFuture.runAsync(() -> data.apply(profiler), executor);
-	}
-
-	// "attributes/<registry_path>" for Minecraft registries,
-	// "attributes/<registry_namespace>/<registry_path>" for modded ones
-	private String getAttributeMapPath(Identifier registryId) {
-		String path = registryId.getPath();
-		if (!"minecraft".equals(registryId.getNamespace()))
-			path = registryId.getNamespace() + "/" + path;
-		return path;
 	}
 
 	// "<namespace>:attributes/<path>/<file_name>.json" becomes "<namespace>:<file_name>"
@@ -156,7 +146,7 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 			Registry<R> registry = (Registry<R>) Registry.REGISTRIES.get(attrib.getRegistryKey().getValue());
 			assert registry != null : "huh";
 
-			BuiltinRegistryEntryAttributeHolder<R> holder = RegistryEntryAttributeHolderImpl.getData(registry);
+			RegistryEntryAttributeHolderImpl<R> holder = RegistryEntryAttributeHolderImpl.getData(registry);
 			for (Map.Entry<Identifier, Object> attribEntry : attribMap.map.entrySet()) {
 				R item = registry.get(attribEntry.getKey());
 				holder.putValue(item, attrib, (T) attribEntry.getValue());
@@ -176,50 +166,63 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 		}
 
 		public void processResource(Resource resource) {
-			JsonObject obj = JsonHelper.deserialize(new InputStreamReader(resource.getInputStream()));
-			boolean replace = JsonHelper.getBoolean(obj, "replace", false);
-			JsonObject values = JsonHelper.getObject(obj, "values");
-			if (values == null) {
-				LOGGER.error("Missing 'values' element in {}, ignoring file", resource.getId());
-				return;
-			}
+			try {
+				boolean replace;
+				JsonObject values;
 
-			// if "replace" is true, the data file wants us to clear all entries from other files before it
-			if (replace) {
-				map.clear();
-			}
-
-			for (Map.Entry<String, JsonElement> entry : values.entrySet()) {
-				// keys are IDs for items in the registry
-				// therefore, we check that keys are A) valid identifiers, and B) contained in the registry
-				Identifier id;
 				try {
-					id = new Identifier(entry.getKey());
-				} catch (InvalidIdentifierException e) {
-					LOGGER.error("Invalid identifier in values of {}: '{}', ignoring",
-							resource.getId(), entry.getKey());
-					LOGGER.catching(Level.ERROR, e);
-					continue;
-				}
-				if (!registry.containsId(id)) {
-					LOGGER.error("Unregistered identifier in values of {}: '{}', ignoring", resource.getId(), id);
-					continue;
+					JsonObject obj = JsonHelper.deserialize(new InputStreamReader(resource.getInputStream()));
+					replace = JsonHelper.getBoolean(obj, "replace", false);
+					values = JsonHelper.getObject(obj, "values");
+				} catch (JsonSyntaxException e) {
+					LOGGER.error("Invalid JSON file " + resource.getId() + ", ignoring", e);
+					return;
 				}
 
-				// values are deserialized via the attribute's associated Codec instance
-				DataResult<?> parsedValue = attribute.getCodec().parse(JsonOps.INSTANCE, entry.getValue());
-				if (parsedValue.result().isEmpty()) {
-					if (parsedValue.error().isPresent()) {
-						LOGGER.error("Failed to parse value for attribute {} of registry item {}: {}",
-								attribute.getId(), id, parsedValue.error().get().message());
-					} else {
-						LOGGER.error("Failed to parse value for attribute {} of registry item {}: unknown error",
-								attribute.getId(), id);
+				if (values == null) {
+					LOGGER.error("Missing 'values' element in {}, ignoring file", resource.getId());
+					return;
+				}
+
+				// if "replace" is true, the data file wants us to clear all entries from other files before it
+				if (replace) {
+					map.clear();
+				}
+
+				for (Map.Entry<String, JsonElement> entry : values.entrySet()) {
+					// keys are IDs for items in the registry
+					// therefore, we check that keys are A) valid identifiers, and B) contained in the registry
+					Identifier id;
+					try {
+						id = new Identifier(entry.getKey());
+					} catch (InvalidIdentifierException e) {
+						LOGGER.error("Invalid identifier in values of {}: '{}', ignoring",
+								resource.getId(), entry.getKey());
+						LOGGER.catching(Level.ERROR, e);
+						continue;
 					}
-					LOGGER.error("Ignoring attribute value for '{}' in {} since it's invalid", id, resource.getId());
-				}
+					if (!registry.containsId(id)) {
+						LOGGER.error("Unregistered identifier in values of {}: '{}', ignoring", resource.getId(), id);
+						continue;
+					}
 
-				map.put(id, parsedValue.result().get());
+					// values are deserialized via the attribute's associated Codec instance
+					DataResult<?> parsedValue = attribute.getCodec().parse(JsonOps.INSTANCE, entry.getValue());
+					if (parsedValue.result().isEmpty()) {
+						if (parsedValue.error().isPresent()) {
+							LOGGER.error("Failed to parse value for attribute {} of registry item {}: {}",
+									attribute.getId(), id, parsedValue.error().get().message());
+						} else {
+							LOGGER.error("Failed to parse value for attribute {} of registry item {}: unknown error",
+									attribute.getId(), id);
+						}
+						LOGGER.error("Ignoring attribute value for '{}' in {} since it's invalid", id, resource.getId());
+					}
+
+					map.put(id, parsedValue.result().get());
+				}
+			} catch (Exception e) {
+				LOGGER.error("Exception occurred while parsing " + resource.getId() + "!", e);
 			}
 		}
 	}

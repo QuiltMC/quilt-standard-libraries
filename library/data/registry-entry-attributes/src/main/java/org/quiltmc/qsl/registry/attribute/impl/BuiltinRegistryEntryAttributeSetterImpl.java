@@ -22,7 +22,7 @@ import net.minecraft.util.registry.Registry;
 
 public final class BuiltinRegistryEntryAttributeSetterImpl<R> implements RegistryExtensions.AttributeSetter<R> {
 	private final R item;
-	private final BuiltinRegistryEntryAttributeHolder<R> holder;
+	private final RegistryEntryAttributeHolderImpl<R> holder;
 
 	public BuiltinRegistryEntryAttributeSetterImpl(Registry<R> registry, R item) {
 		this.item = item;

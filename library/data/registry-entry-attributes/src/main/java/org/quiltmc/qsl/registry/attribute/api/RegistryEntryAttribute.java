@@ -36,12 +36,12 @@ public interface RegistryEntryAttribute<R, T> {
 	}
 
 	static <R, T extends DispatchedType> RegistryEntryAttribute<R, T> createDispatched(RegistryKey<Registry<R>> registryKey, Identifier id,
-																					   Map<String, Codec<? extends T>> codecs, @Nullable T defaultValue) {
-		return create(registryKey, id, Codec.STRING.dispatch(T::getType, codecs::get), defaultValue);
+																					   Map<Identifier, Codec<? extends T>> codecs, @Nullable T defaultValue) {
+		return create(registryKey, id, Identifier.CODEC.dispatch(T::getType, codecs::get), defaultValue);
 	}
 
 	static <R, T extends DispatchedType> RegistryEntryAttribute<R, T> createDispatched(RegistryKey<Registry<R>> registryKey, Identifier id,
-																					   Map<String, Codec<? extends T>> codecs) {
+																					   Map<Identifier, Codec<? extends T>> codecs) {
 		return createDispatched(registryKey, id, codecs, null);
 	}
 

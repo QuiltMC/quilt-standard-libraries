@@ -43,7 +43,7 @@ public final class RegistryEntryAttributeImpl<R, T> implements RegistryEntryAttr
 															 @Nullable T defaultValue) {
 		var attrib = new RegistryEntryAttributeImpl<>(registryKey, id, codec, defaultValue);
 		@SuppressWarnings("unchecked") var registry = (Registry<R>) Registry.REGISTRIES.get(registryKey.getValue());
-		RegistryEntryAttributeHolderImpl.getBuiltin(registry).registerAttribute(attrib);
+		RegistryEntryAttributeHolderImpl.registerAttribute(registry, attrib);
 		return attrib;
 	}
 
