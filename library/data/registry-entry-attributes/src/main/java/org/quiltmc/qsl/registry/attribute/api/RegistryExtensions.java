@@ -21,7 +21,21 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import java.util.function.Consumer;
 
+/**
+ * Extensions for working with {@link Registry}s.
+ */
 public final class RegistryExtensions {
+	/**
+	 * Registers an entry into a registry, also setting built-in attribute values for it.
+	 *
+	 * @param registry target registry
+	 * @param id entry identifier
+	 * @param entry entry
+	 * @param setterConsumer setter consumer
+	 * @param <R> registry entry type
+	 * @param <T> current entry type
+	 * @return the newly registered entry
+	 */
 	public static <R, T extends R> T registerWithAttributes(Registry<R> registry, Identifier id, T entry,
 												  Consumer<AttributeSetter<R>> setterConsumer) {
 		Registry.register(registry, id, entry);
@@ -29,7 +43,21 @@ public final class RegistryExtensions {
 		return entry;
 	}
 
+	/**
+	 * Used to set built-in attribute values in a builder-like fashion.
+	 *
+	 * @param <R> registry entry type
+	 */
+	@FunctionalInterface
 	public interface AttributeSetter<R> {
+		/**
+		 * Puts a built-in attribute value.
+		 *
+		 * @param attrib attribute
+		 * @param value value
+		 * @param <T> value type
+		 * @return this setter
+		 */
 		<T> AttributeSetter<R> put(RegistryEntryAttribute<R, T> attrib, T value);
 	}
 }

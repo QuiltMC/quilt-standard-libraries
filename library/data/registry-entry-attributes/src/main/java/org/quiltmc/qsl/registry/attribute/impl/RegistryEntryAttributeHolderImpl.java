@@ -71,8 +71,8 @@ public class RegistryEntryAttributeHolderImpl<R> implements RegistryEntryAttribu
 	}
 
 	@Override
-	public <T> Optional<T> getValue(R item, RegistryEntryAttribute<R, T> attribute) {
-		var value = getValueNoDefault(item, attribute);
+	public <T> Optional<T> getValue(R entry, RegistryEntryAttribute<R, T> attribute) {
+		var value = getValueNoDefault(entry, attribute);
 		if (value == null) {
 			return Optional.ofNullable(attribute.getDefaultValue());
 		} else {
@@ -81,12 +81,12 @@ public class RegistryEntryAttributeHolderImpl<R> implements RegistryEntryAttribu
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T getValueNoDefault(R item, RegistryEntryAttribute<R, T> attribute) {
-		return (T) valueTable.get(item, attribute);
+	public <T> T getValueNoDefault(R entry, RegistryEntryAttribute<R, T> attribute) {
+		return (T) valueTable.get(entry, attribute);
 	}
 
-	public <T> void putValue(R item, RegistryEntryAttribute<R, T> attribute, T value) {
-		valueTable.put(item, attribute, value);
+	public <T> void putValue(R entry, RegistryEntryAttribute<R, T> attribute, T value) {
+		valueTable.put(entry, attribute, value);
 	}
 
 	public void clear() {

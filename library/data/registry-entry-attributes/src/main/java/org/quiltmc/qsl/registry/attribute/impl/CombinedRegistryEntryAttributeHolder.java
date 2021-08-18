@@ -30,16 +30,16 @@ public final class CombinedRegistryEntryAttributeHolder<R> implements RegistryEn
 	}
 
 	@Override
-	public <T> Optional<T> getValue(R item, RegistryEntryAttribute<R, T> attribute) {
+	public <T> Optional<T> getValue(R entry, RegistryEntryAttribute<R, T> attribute) {
 		T value;
 		if (delegate != null) {
-			value = delegate.getValueNoDefault(item, attribute);
+			value = delegate.getValueNoDefault(entry, attribute);
 			if (value != null) {
 				return Optional.of(value);
 			}
 		}
 		if (fallback != null) {
-			value = fallback.getValueNoDefault(item, attribute);
+			value = fallback.getValueNoDefault(entry, attribute);
 			if (value != null) {
 				return Optional.of(value);
 			}

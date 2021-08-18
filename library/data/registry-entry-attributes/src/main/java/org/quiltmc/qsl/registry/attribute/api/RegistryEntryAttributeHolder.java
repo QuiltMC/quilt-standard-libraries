@@ -21,16 +21,47 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import java.util.Optional;
 
+/**
+ * Maps {@link RegistryEntryAttribute}s to their values.
+ *
+ * @param <R> registry entry type
+ */
 public interface RegistryEntryAttributeHolder<R> {
+	/**
+	 * Gets the {@code RegistryEntryAttributeHolder} instance tied to a specific registry.
+	 *
+	 * @param registry registry
+     * @param <R> registry entry type
+	 * @return attribute holder
+	 */
 	static <R> RegistryEntryAttributeHolder<R> get(Registry<R> registry) {
 		return RegistryEntryAttributeHolderImpl.getCombined(registry);
 	}
 
+	/**
+	 * Gets the {@code RegistryEntryAttributeHolder} instance tied to a specific registry.
+	 *
+	 * @param registryKey registry key
+	 * @param <R> registry entry type
+	 * @return attribute holder
+	 */
 	@SuppressWarnings("unchecked")
 	static <R> RegistryEntryAttributeHolder<R> get(RegistryKey<Registry<R>> registryKey) {
 		Registry<R> registry = (Registry<R>) Registry.REGISTRIES.get(registryKey.getValue());
 		return get(registry);
 	}
 
-	<T> Optional<T> getValue(R item, RegistryEntryAttribute<R, T> attribute);
+	/**
+	 * Gets the value associated with the specified attribute for the specified entry.<p>
+	 *
+	 * If the item has no value for this attribute, the attribute's
+	 * {@linkplain RegistryEntryAttribute#getDefaultValue() default value} will be returned instead, unless it is {@code null},
+	 * in which case an empty optional will be returned.
+	 *
+	 * @param entry registry entry
+	 * @param attribute attribute
+	 * @param <T> attribute value type
+	 * @return attribute value, or empty if no value is assigned
+	 */
+	<T> Optional<T> getValue(R entry, RegistryEntryAttribute<R, T> attribute);
 }
