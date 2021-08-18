@@ -7,6 +7,7 @@ import org.quiltmc.qsl.registry.attribute.impl.RegistryItemAttributeImpl;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
+import java.util.Map;
 
 public interface RegistryItemAttribute<R, T> {
 	static <R, T> RegistryItemAttribute<R, T> create(RegistryKey<Registry<R>> registryKey, Identifier id, Codec<T> codec,
@@ -16,6 +17,16 @@ public interface RegistryItemAttribute<R, T> {
 
 	static <R, T> RegistryItemAttribute<R, T> create(RegistryKey<Registry<R>> registryKey, Identifier id, Codec<T> codec) {
 		return create(registryKey, id, codec, null);
+	}
+
+	static <R, T extends DispatchedType> RegistryItemAttribute<R, T> createDispatched(RegistryKey<Registry<R>> registryKey, Identifier id,
+																					  Map<String, Codec<? extends T>> codecs, @Nullable T defaultValue) {
+		return create(registryKey, id, Codec.STRING.dispatch(T::getType, codecs::get), defaultValue);
+	}
+
+	static <R, T extends DispatchedType> RegistryItemAttribute<R, T> createDispatched(RegistryKey<Registry<R>> registryKey, Identifier id,
+																					  Map<String, Codec<? extends T>> codecs) {
+		return createDispatched(registryKey, id, codecs, null);
 	}
 
 	static <R> RegistryItemAttribute<R, Boolean> createBool(RegistryKey<Registry<R>> registryKey, Identifier id, boolean defaultValue) {

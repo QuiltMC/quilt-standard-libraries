@@ -56,6 +56,7 @@ public final class RegistryItemAttributeReloader implements SimpleResourceReload
 
 				profiler.pop();
 			}
+
 			return new LoadedData(attributeMaps);
 		}, executor);
 	}
