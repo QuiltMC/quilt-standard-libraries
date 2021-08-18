@@ -1,6 +1,5 @@
 package org.quiltmc.qsl.registry.attribute.impl;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -12,11 +11,9 @@ import net.minecraft.util.registry.Registry;
 import java.util.Optional;
 
 public class RegistryEntryAttributeHolderImpl<R> implements RegistryEntryAttributeHolder<R> {
+	@SuppressWarnings("unchecked")
 	public static <R> RegistryEntryAttributeHolder<R> getCombined(Registry<R> registry) {
-		var builtin = getBuiltin(registry);
-		var data = getData(registry);
-		// data values override built-in values
-		return new CombinedRegistryEntryAttributeHolderImpl<>(ImmutableList.of(data, builtin));
+		return (RegistryEntryAttributeHolder<R>) ((QuiltRegistryInternals) registry).qsl$getCombinedAttributeHolder();
 	}
 
 	@SuppressWarnings("unchecked")
