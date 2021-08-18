@@ -64,6 +64,9 @@ public interface RegistryEntryAttribute<R, T> {
 	static <R> RegistryEntryAttribute<R, Double> createDouble(RegistryKey<Registry<R>> registryKey, Identifier id, double defaultValue) {
 		return create(registryKey, id, Codec.DOUBLE, defaultValue);
 	}
+	static <R> RegistryEntryAttribute<R, String> createString(RegistryKey<Registry<R>> registryKey, Identifier id, String defaultValue) {
+		return create(registryKey, id, Codec.STRING, defaultValue);
+	}
 
 	static <R> RegistryEntryAttribute<R, Boolean> createBool(RegistryKey<Registry<R>> registryKey, Identifier id) {
 		return create(registryKey, id, Codec.BOOL, null);
@@ -83,6 +86,10 @@ public interface RegistryEntryAttribute<R, T> {
 
 	static <R> RegistryEntryAttribute<R, Double> createDouble(RegistryKey<Registry<R>> registryKey, Identifier id) {
 		return create(registryKey, id, Codec.DOUBLE, null);
+	}
+
+	static <R> RegistryEntryAttribute<R, String> createString(RegistryKey<Registry<R>> registryKey, Identifier id) {
+		return create(registryKey, id, Codec.STRING, null);
 	}
 
 	RegistryKey<Registry<R>> getRegistryKey();
