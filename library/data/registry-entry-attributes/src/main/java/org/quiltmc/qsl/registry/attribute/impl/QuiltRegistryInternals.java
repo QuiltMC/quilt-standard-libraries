@@ -4,6 +4,6 @@ public interface QuiltRegistryInternals {
 	BuiltinRegistryEntryAttributeHolder<?> qsl$getBuiltinAttributeHolder();
 	void qsl$setBuiltinAttributeHolder(BuiltinRegistryEntryAttributeHolder<?> holder);
 
-	BuiltinRegistryEntryAttributeHolder<?> qsl$getAttributeHolder();
-	void qsl$setAttributeHolder(BuiltinRegistryEntryAttributeHolder<?> holder);
+	RegistryEntryAttributeHolderImpl<?> qsl$getDataAttributeHolder();
+	void qsl$setDataAttributeHolder(RegistryEntryAttributeHolderImpl<?> holder);
 }

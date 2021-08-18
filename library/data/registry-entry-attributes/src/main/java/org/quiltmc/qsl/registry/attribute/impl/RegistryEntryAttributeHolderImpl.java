@@ -32,9 +32,9 @@ public class RegistryEntryAttributeHolderImpl<R> implements RegistryEntryAttribu
 	@SuppressWarnings("unchecked")
 	public static <R> BuiltinRegistryEntryAttributeHolder<R> getData(Registry<R> registry) {
 		var internals = (QuiltRegistryInternals) registry;
-		var holder = internals.qsl$getAttributeHolder();
+		var holder = internals.qsl$getDataAttributeHolder();
 		if (holder == null) {
-			internals.qsl$setAttributeHolder(holder = new BuiltinRegistryEntryAttributeHolder<>());
+			internals.qsl$setDataAttributeHolder(holder = new BuiltinRegistryEntryAttributeHolder<>());
 		}
 		return (BuiltinRegistryEntryAttributeHolder<R>) holder;
 	}

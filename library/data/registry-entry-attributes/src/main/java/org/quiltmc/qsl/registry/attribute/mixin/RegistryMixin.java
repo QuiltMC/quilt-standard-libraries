@@ -5,12 +5,13 @@ import org.spongepowered.asm.mixin.Unique;
 
 import org.quiltmc.qsl.registry.attribute.impl.QuiltRegistryInternals;
 import org.quiltmc.qsl.registry.attribute.impl.BuiltinRegistryEntryAttributeHolder;
+import org.quiltmc.qsl.registry.attribute.impl.RegistryEntryAttributeHolderImpl;
 import net.minecraft.util.registry.Registry;
 
 @Mixin(Registry.class)
 public abstract class RegistryMixin implements QuiltRegistryInternals {
 	@Unique private BuiltinRegistryEntryAttributeHolder<?> qsl$builtinAttributeHolder;
-	@Unique private BuiltinRegistryEntryAttributeHolder<?> qsl$attributeHolder;
+	@Unique private RegistryEntryAttributeHolderImpl<?> qsl$dataAttributeHolder;
 
 	@Override
 	public BuiltinRegistryEntryAttributeHolder<?> qsl$getBuiltinAttributeHolder() {
@@ -23,12 +24,12 @@ public abstract class RegistryMixin implements QuiltRegistryInternals {
 	}
 
 	@Override
-	public BuiltinRegistryEntryAttributeHolder<?> qsl$getAttributeHolder() {
-		return qsl$attributeHolder;
+	public RegistryEntryAttributeHolderImpl<?> qsl$getDataAttributeHolder() {
+		return qsl$dataAttributeHolder;
 	}
 
 	@Override
-	public void qsl$setAttributeHolder(BuiltinRegistryEntryAttributeHolder<?> holder) {
-		this.qsl$attributeHolder = holder;
+	public void qsl$setDataAttributeHolder(RegistryEntryAttributeHolderImpl<?> holder) {
+		this.qsl$dataAttributeHolder = holder;
 	}
 }
