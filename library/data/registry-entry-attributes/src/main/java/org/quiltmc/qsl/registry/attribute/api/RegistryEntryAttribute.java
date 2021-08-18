@@ -63,7 +63,7 @@ public interface RegistryEntryAttribute<R, T> {
 	}
 
 	/**
-	 * Creates a new polymorphic attribute via dispatched codes.
+	 * Creates a new polymorphic attribute via dispatched codecs.
 	 *
 	 * @param registryKey key of registry this attribute is tied to
 	 * @param id identifier
@@ -80,7 +80,7 @@ public interface RegistryEntryAttribute<R, T> {
 	}
 
 	/**
-	 * Creates a new polymorphic attribute via dispatched codes.
+	 * Creates a new polymorphic attribute via dispatched codecs.
 	 *
 	 * @param registryKey key of registry this attribute is tied to
 	 * @param id identifier
