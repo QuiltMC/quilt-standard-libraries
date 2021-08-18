@@ -8,6 +8,6 @@ import net.minecraft.resource.ResourceType;
 public final class Initializer implements ModInitializer {
 	@Override
 	public void onInitialize() {
-		ResourceLoader.get(ResourceType.SERVER_DATA).registerReloader(new RegistryItemAttributeReloader());
+		ResourceLoader.get(ResourceType.SERVER_DATA).registerReloader(new RegistryEntryAttributeReloader());
 	}
 }

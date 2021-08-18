@@ -1,9 +1,9 @@
 package org.quiltmc.qsl.registry.attribute.impl;
 
 public interface QuiltRegistryInternals {
-	BuiltinRegistryItemAttributeHolder<?> qsl$getBuiltinItemAttributeHolder();
-	void qsl$setBuiltinItemAttributeHolder(BuiltinRegistryItemAttributeHolder<?> holder);
+	BuiltinRegistryEntryAttributeHolder<?> qsl$getBuiltinAttributeHolder();
+	void qsl$setBuiltinAttributeHolder(BuiltinRegistryEntryAttributeHolder<?> holder);
 
-	BuiltinRegistryItemAttributeHolder<?> qsl$getItemAttributeHolder();
-	void qsl$setItemAttributeHolder(BuiltinRegistryItemAttributeHolder<?> holder);
+	BuiltinRegistryEntryAttributeHolder<?> qsl$getAttributeHolder();
+	void qsl$setAttributeHolder(BuiltinRegistryEntryAttributeHolder<?> holder);
 }

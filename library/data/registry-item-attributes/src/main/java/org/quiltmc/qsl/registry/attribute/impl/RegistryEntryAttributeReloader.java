@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import org.quiltmc.qsl.registry.attribute.api.RegistryItemAttribute;
+import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
 import org.quiltmc.qsl.resource.loader.api.reloader.SimpleResourceReloader;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-public final class RegistryItemAttributeReloader implements SimpleResourceReloader<RegistryItemAttributeReloader.LoadedData> {
+public final class RegistryEntryAttributeReloader implements SimpleResourceReloader<RegistryEntryAttributeReloader.LoadedData> {
 	private static final Logger LOGGER = LogManager.getLogger("AttributeReloader");
 	private static final Identifier ID = new Identifier("quilt", "attributes");
 
@@ -38,7 +38,7 @@ public final class RegistryItemAttributeReloader implements SimpleResourceReload
 	@Override
 	public CompletableFuture<LoadedData> load(ResourceManager manager, Profiler profiler, Executor executor) {
 		return CompletableFuture.supplyAsync(() -> {
-			Map<RegistryItemAttribute<?, ?>, AttributeMap> attributeMaps = new HashMap<>();
+			Map<RegistryEntryAttribute<?, ?>, AttributeMap> attributeMaps = new HashMap<>();
 
 			for (var entry : Registry.REGISTRIES.getEntries()) {
 				Identifier registryId = entry.getKey().getValue();
@@ -51,7 +51,7 @@ public final class RegistryItemAttributeReloader implements SimpleResourceReload
 				}
 
 				Registry<?> registry = entry.getValue();
-				BuiltinRegistryItemAttributeHolder<?> holder = RegistryItemAttributeHolderImpl.getBuiltin(registry);
+				BuiltinRegistryEntryAttributeHolder<?> holder = RegistryEntryAttributeHolderImpl.getBuiltin(registry);
 				processResources(manager, profiler, attributeMaps, jsonIds, registry, holder);
 
 				profiler.pop();
@@ -62,12 +62,12 @@ public final class RegistryItemAttributeReloader implements SimpleResourceReload
 	}
 
 	private void processResources(ResourceManager manager, Profiler profiler,
-								  Map<RegistryItemAttribute<?, ?>, AttributeMap> attributeMaps,
+								  Map<RegistryEntryAttribute<?, ?>, AttributeMap> attributeMaps,
 								  Collection<Identifier> jsonIds, Registry<?> registry,
-								  BuiltinRegistryItemAttributeHolder<?> holder) {
+								  BuiltinRegistryEntryAttributeHolder<?> holder) {
 		for (var jsonId : jsonIds) {
 			Identifier attribId = getAttributeId(jsonId);
-			RegistryItemAttribute<?, ?> attrib = holder.getAttribute(attribId);
+			RegistryEntryAttribute<?, ?> attrib = holder.getAttribute(attribId);
 			if (attrib == null) {
 				LOGGER.warn("Unknown attribute {} (from {})", attribId, jsonId);
 				continue;
@@ -119,15 +119,15 @@ public final class RegistryItemAttributeReloader implements SimpleResourceReload
 		return new Identifier(jsonId.getNamespace(), path);
 	}
 
-	protected record LoadedData(Map<RegistryItemAttribute<?, ?>, AttributeMap> attributeMaps) {
+	protected record LoadedData(Map<RegistryEntryAttribute<?, ?>, AttributeMap> attributeMaps) {
 		public void apply(Profiler profiler) {
 			profiler.push(ID + "/clear_attributes");
 
 			for (var entry : Registry.REGISTRIES.getEntries()) {
-				RegistryItemAttributeHolderImpl.getData(entry.getValue()).clear();
+				RegistryEntryAttributeHolderImpl.getData(entry.getValue()).clear();
 			}
 
-			for (Map.Entry<RegistryItemAttribute<?, ?>, AttributeMap> entry : attributeMaps.entrySet()) {
+			for (Map.Entry<RegistryEntryAttribute<?, ?>, AttributeMap> entry : attributeMaps.entrySet()) {
 				profiler.swap(ID + "/apply_attribute{" + entry.getKey().getId() + "}");
 				applyOne(entry.getKey(), entry.getValue());
 			}
@@ -136,11 +136,11 @@ public final class RegistryItemAttributeReloader implements SimpleResourceReload
 		}
 
 		@SuppressWarnings("unchecked")
-		private <R, T> void applyOne(RegistryItemAttribute<R, T> attrib, AttributeMap attribMap) {
+		private <R, T> void applyOne(RegistryEntryAttribute<R, T> attrib, AttributeMap attribMap) {
 			Registry<R> registry = (Registry<R>) Registry.REGISTRIES.get(attrib.getRegistryKey().getValue());
 			assert registry != null : "huh";
 
-			BuiltinRegistryItemAttributeHolder<R> holder = RegistryItemAttributeHolderImpl.getData(registry);
+			BuiltinRegistryEntryAttributeHolder<R> holder = RegistryEntryAttributeHolderImpl.getData(registry);
 			for (Map.Entry<Identifier, Object> attribEntry : attribMap.map.entrySet()) {
 				R item = registry.get(attribEntry.getKey());
 				holder.putValue(item, attrib, (T) attribEntry.getValue());
@@ -150,10 +150,10 @@ public final class RegistryItemAttributeReloader implements SimpleResourceReload
 
 	protected static final class AttributeMap {
 		private final Registry<?> registry;
-		private final RegistryItemAttribute<?, ?> attribute;
+		private final RegistryEntryAttribute<?, ?> attribute;
 		public final Map<Identifier, Object> map;
 
-		public AttributeMap(Registry<?> registry, RegistryItemAttribute<?, ?> attribute) {
+		public AttributeMap(Registry<?> registry, RegistryEntryAttribute<?, ?> attribute) {
 			this.registry = registry;
 			this.attribute = attribute;
 			map = new HashMap<>();

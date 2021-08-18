@@ -1,11 +1,10 @@
 package org.quiltmc.qsl.registry.attributes.test;
 
-import com.mojang.serialization.Codec;
 import net.fabricmc.api.ModInitializer;
 
 import org.quiltmc.qsl.registry.attribute.api.RegistryExtensions;
-import org.quiltmc.qsl.registry.attribute.api.RegistryItemAttribute;
-import org.quiltmc.qsl.registry.attribute.api.RegistryItemAttributeHolder;
+import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
+import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttributeHolder;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -17,11 +16,11 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 public class SimpleAttributeTest implements ModInitializer {
-	public static final RegistryItemAttribute<Item, Integer> TEST_ATTRIBUTE =
-			RegistryItemAttribute.createInt(Registry.ITEM_KEY,
+	public static final RegistryEntryAttribute<Item, Integer> TEST_ATTRIBUTE =
+			RegistryEntryAttribute.createInt(Registry.ITEM_KEY,
 					new Identifier("quilt", "test_attribute"));
-	public static final RegistryItemAttribute<Item, Float> TEST_ATTRIBUTE_2 =
-			RegistryItemAttribute.createFloat(Registry.ITEM_KEY,
+	public static final RegistryEntryAttribute<Item, Float> TEST_ATTRIBUTE_2 =
+			RegistryEntryAttribute.createFloat(Registry.ITEM_KEY,
 					new Identifier("quilt", "test_attribute_2"));
 
 	@Override
@@ -42,7 +41,7 @@ public class SimpleAttributeTest implements ModInitializer {
 		@Override
 		public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
 			if (!world.isClient) {
-				var holder = RegistryItemAttributeHolder.get(Registry.ITEM_KEY);
+				var holder = RegistryEntryAttributeHolder.get(Registry.ITEM_KEY);
 				int one = holder.getValue(this, TEST_ATTRIBUTE)
 						.orElseThrow(() -> new RuntimeException(TEST_ATTRIBUTE + " not set via datapack!"));
 				float two = holder.getValue(this, TEST_ATTRIBUTE_2)

@@ -6,49 +6,49 @@ import com.google.common.collect.Tables;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 
-import org.quiltmc.qsl.registry.attribute.api.RegistryItemAttribute;
-import org.quiltmc.qsl.registry.attribute.api.RegistryItemAttributeHolder;
+import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
+import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttributeHolder;
 import net.minecraft.util.registry.Registry;
 import java.util.Optional;
 
-public class RegistryItemAttributeHolderImpl<R> implements RegistryItemAttributeHolder<R> {
-	public static <R> RegistryItemAttributeHolder<R> getCombined(Registry<R> registry) {
+public class RegistryEntryAttributeHolderImpl<R> implements RegistryEntryAttributeHolder<R> {
+	public static <R> RegistryEntryAttributeHolder<R> getCombined(Registry<R> registry) {
 		var builtin = getBuiltin(registry);
 		var data = getData(registry);
 		// data values override built-in values
-		return new CombinedRegistryItemAttributeHolderImpl<>(ImmutableList.of(data, builtin));
+		return new CombinedRegistryEntryAttributeHolderImpl<>(ImmutableList.of(data, builtin));
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <R> BuiltinRegistryItemAttributeHolder<R> getBuiltin(Registry<R> registry) {
+	public static <R> BuiltinRegistryEntryAttributeHolder<R> getBuiltin(Registry<R> registry) {
 		var internals = (QuiltRegistryInternals) registry;
-		var holder = internals.qsl$getBuiltinItemAttributeHolder();
+		var holder = internals.qsl$getBuiltinAttributeHolder();
 		if (holder == null) {
-			internals.qsl$setBuiltinItemAttributeHolder(holder = new BuiltinRegistryItemAttributeHolder<>());
+			internals.qsl$setBuiltinAttributeHolder(holder = new BuiltinRegistryEntryAttributeHolder<>());
 		}
-		return (BuiltinRegistryItemAttributeHolder<R>) holder;
+		return (BuiltinRegistryEntryAttributeHolder<R>) holder;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <R> BuiltinRegistryItemAttributeHolder<R> getData(Registry<R> registry) {
+	public static <R> BuiltinRegistryEntryAttributeHolder<R> getData(Registry<R> registry) {
 		var internals = (QuiltRegistryInternals) registry;
-		var holder = internals.qsl$getItemAttributeHolder();
+		var holder = internals.qsl$getAttributeHolder();
 		if (holder == null) {
-			internals.qsl$setItemAttributeHolder(holder = new BuiltinRegistryItemAttributeHolder<>());
+			internals.qsl$setAttributeHolder(holder = new BuiltinRegistryEntryAttributeHolder<>());
 		}
-		return (BuiltinRegistryItemAttributeHolder<R>) holder;
+		return (BuiltinRegistryEntryAttributeHolder<R>) holder;
 	}
 
-	protected final Table<R, RegistryItemAttribute<R, ?>, Object> valueTable;
+	protected final Table<R, RegistryEntryAttribute<R, ?>, Object> valueTable;
 
 	@SuppressWarnings("UnstableApiUsage")
-	protected RegistryItemAttributeHolderImpl() {
+	protected RegistryEntryAttributeHolderImpl() {
 		valueTable = Tables.newCustomTable(new Reference2ObjectOpenHashMap<>(), Object2ObjectOpenHashMap::new);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> Optional<T> getValue(R item, RegistryItemAttribute<R, T> attribute) {
+	public <T> Optional<T> getValue(R item, RegistryEntryAttribute<R, T> attribute) {
 		var itemRow = valueTable.row(item);
 		if (itemRow == null) {
 			return Optional.ofNullable(attribute.getDefaultValue());
@@ -61,7 +61,7 @@ public class RegistryItemAttributeHolderImpl<R> implements RegistryItemAttribute
 		}
 	}
 
-	public <T> void putValue(R item, RegistryItemAttribute<R, T> attribute, T value) {
+	public <T> void putValue(R item, RegistryEntryAttribute<R, T> attribute, T value) {
 		valueTable.put(item, attribute, value);
 	}
 
