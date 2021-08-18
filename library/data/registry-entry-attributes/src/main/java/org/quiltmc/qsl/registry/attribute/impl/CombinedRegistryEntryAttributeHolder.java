@@ -31,17 +31,16 @@ public final class CombinedRegistryEntryAttributeHolder<R> implements RegistryEn
 
 	@Override
 	public <T> Optional<T> getValue(R item, RegistryEntryAttribute<R, T> attribute) {
-		Optional<T> opt = Optional.empty();
 		if (delegate != null) {
-			opt = delegate.getValue(item, attribute);
+			var opt = delegate.getValue(item, attribute);
 			if (opt.isPresent())
 				return opt;
 		}
 		if (fallback != null) {
-			opt = fallback.getValue(item, attribute);
+			var opt = fallback.getValue(item, attribute);
 			if (opt.isPresent())
 				return opt;
 		}
-		return opt;
+		return Optional.ofNullable(attribute.getDefaultValue());
 	}
 }
