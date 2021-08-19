@@ -179,11 +179,6 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 					return;
 				}
 
-				if (values == null) {
-					LOGGER.error("Missing 'values' element in {}, ignoring file", resource.getId());
-					return;
-				}
-
 				// if "replace" is true, the data file wants us to clear all entries from other files before it
 				if (replace) {
 					map.clear();
