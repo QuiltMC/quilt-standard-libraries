@@ -11,21 +11,19 @@
  * then use {@link org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttributeHolder#getValue(java.lang.Object, RegistryEntryAttribute)}
  * to get the value assigned to the specified registry entry.<p>
  *
- * <p>
- *
  * <h3>Vocabulary</h3>
  *
  * <ul>
  *     <li>Attribute values set in-code (using
- *     {@linkplain org.quiltmc.qsl.registry.attribute.api.RegistryExtensions#registerWithAttributes(net.minecraft.util.registry.Registry, net.minecraft.util.Identifier, java.lang.Object, java.util.function.Consumer) this extension method})
+ *     {@link org.quiltmc.qsl.registry.attribute.api.RegistryExtensions#registerWithAttributes(net.minecraft.util.registry.Registry, net.minecraft.util.Identifier, java.lang.Object, java.util.function.Consumer)})
  *     are referred to as "built-in" values.</li>
  * </ul>
  *
  *
- * <h3>Data Driven Capabilities</h3>
+ * <h3>Data-Driven Capabilities</h3>
  *
  * All attributes declared using this API can be set using a data pack! Simply create the following file:<br>
- * {@code data/<attribute namespace>/attributes/<registry key path>}<p>
+ * {@code data/<attribute_namespace>/attributes/<registry_key_path>/<attribute_name>.json}<p>
  *
  * These "attribute maps" use a tag-like format, with a {@code replace} property that allows replacing all (non-built-in) values.<p>
  *
