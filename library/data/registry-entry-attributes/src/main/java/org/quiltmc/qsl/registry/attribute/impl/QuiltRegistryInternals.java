@@ -22,15 +22,15 @@ import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
 import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttributeHolder;
 import net.minecraft.util.Identifier;
 
-public interface QuiltRegistryInternals {
-	void qsl$registerAttribute(RegistryEntryAttribute<?, ?> attribute);
-	@Nullable RegistryEntryAttribute<?, ?> qsl$getAttribute(Identifier id);
+public interface QuiltRegistryInternals<R> {
+	void qsl$registerAttribute(RegistryEntryAttribute<R, ?> attribute);
+	@Nullable RegistryEntryAttribute<R, ?> qsl$getAttribute(Identifier id);
 
-	RegistryEntryAttributeHolderImpl<?> qsl$getBuiltinAttributeHolder();
-	void qsl$setBuiltinAttributeHolder(RegistryEntryAttributeHolderImpl<?> holder);
+	RegistryEntryAttributeHolderImpl<R> qsl$getBuiltinAttributeHolder();
+	void qsl$setBuiltinAttributeHolder(RegistryEntryAttributeHolderImpl<R> holder);
 
-	RegistryEntryAttributeHolderImpl<?> qsl$getDataAttributeHolder();
-	void qsl$setDataAttributeHolder(RegistryEntryAttributeHolderImpl<?> holder);
+	RegistryEntryAttributeHolderImpl<R> qsl$getDataAttributeHolder();
+	void qsl$setDataAttributeHolder(RegistryEntryAttributeHolderImpl<R> holder);
 
-	RegistryEntryAttributeHolder<?> qsl$getCombinedAttributeHolder();
+	RegistryEntryAttributeHolder<R> qsl$getCombinedAttributeHolder();
 }

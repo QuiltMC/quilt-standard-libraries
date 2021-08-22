@@ -29,38 +29,39 @@ import net.minecraft.util.registry.Registry;
 import java.util.Optional;
 
 public class RegistryEntryAttributeHolderImpl<R> implements RegistryEntryAttributeHolder<R> {
+	@SuppressWarnings("unchecked")
+	public static <R> QuiltRegistryInternals<R> getInternals(Registry<R> registry) {
+		return (QuiltRegistryInternals<R>) registry;
+	}
+
 	public static <R, T> void registerAttribute(Registry<R> registry, RegistryEntryAttribute<R, T> attribute) {
-		((QuiltRegistryInternals) registry).qsl$registerAttribute(attribute);
+		getInternals(registry).qsl$registerAttribute(attribute);
 	}
 
-	@SuppressWarnings("unchecked")
 	public static <R> @Nullable RegistryEntryAttribute<R, ?> getAttribute(Registry<R> registry, Identifier id) {
-		return (RegistryEntryAttribute<R, ?>) ((QuiltRegistryInternals) registry).qsl$getAttribute(id);
+		return getInternals(registry).qsl$getAttribute(id);
 	}
 
-	@SuppressWarnings("unchecked")
 	public static <R> RegistryEntryAttributeHolder<R> getCombined(Registry<R> registry) {
-		return (RegistryEntryAttributeHolder<R>) ((QuiltRegistryInternals) registry).qsl$getCombinedAttributeHolder();
+		return getInternals(registry).qsl$getCombinedAttributeHolder();
 	}
 
-	@SuppressWarnings("unchecked")
 	public static <R> RegistryEntryAttributeHolderImpl<R> getBuiltin(Registry<R> registry) {
-		var internals = (QuiltRegistryInternals) registry;
+		var internals = getInternals(registry);
 		var holder = internals.qsl$getBuiltinAttributeHolder();
 		if (holder == null) {
 			internals.qsl$setBuiltinAttributeHolder(holder = new RegistryEntryAttributeHolderImpl<>());
 		}
-		return (RegistryEntryAttributeHolderImpl<R>) holder;
+		return holder;
 	}
 
-	@SuppressWarnings("unchecked")
 	public static <R> RegistryEntryAttributeHolderImpl<R> getData(Registry<R> registry) {
-		var internals = (QuiltRegistryInternals) registry;
+		var internals = getInternals(registry);
 		var holder = internals.qsl$getDataAttributeHolder();
 		if (holder == null) {
 			internals.qsl$setDataAttributeHolder(holder = new RegistryEntryAttributeHolderImpl<>());
 		}
-		return (RegistryEntryAttributeHolderImpl<R>) holder;
+		return holder;
 	}
 
 	protected final Table<RegistryEntryAttribute<R, ?>, R, Object> valueTable;
