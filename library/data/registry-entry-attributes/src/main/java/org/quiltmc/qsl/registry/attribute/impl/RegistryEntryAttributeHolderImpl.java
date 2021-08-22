@@ -63,11 +63,11 @@ public class RegistryEntryAttributeHolderImpl<R> implements RegistryEntryAttribu
 		return (RegistryEntryAttributeHolderImpl<R>) holder;
 	}
 
-	protected final Table<R, RegistryEntryAttribute<R, ?>, Object> valueTable;
+	protected final Table<RegistryEntryAttribute<R, ?>, R, Object> valueTable;
 
 	@SuppressWarnings("UnstableApiUsage")
 	protected RegistryEntryAttributeHolderImpl() {
-		valueTable = Tables.newCustomTable(new Reference2ObjectOpenHashMap<>(), Object2ObjectOpenHashMap::new);
+		valueTable = Tables.newCustomTable(new Object2ObjectOpenHashMap<>(), Reference2ObjectOpenHashMap::new);
 	}
 
 	@Override
@@ -82,11 +82,11 @@ public class RegistryEntryAttributeHolderImpl<R> implements RegistryEntryAttribu
 
 	@SuppressWarnings("unchecked")
 	public <T> T getValueNoDefault(R entry, RegistryEntryAttribute<R, T> attribute) {
-		return (T) valueTable.get(entry, attribute);
+		return (T) valueTable.get(attribute, entry);
 	}
 
 	public <T> void putValue(R entry, RegistryEntryAttribute<R, T> attribute, T value) {
-		valueTable.put(entry, attribute, value);
+		valueTable.put(attribute, entry, value);
 	}
 
 	public void clear() {
