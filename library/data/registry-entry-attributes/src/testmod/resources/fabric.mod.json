@@ -10,7 +10,8 @@
   },
   "entrypoints": {
     "main": [
-      "org.quiltmc.qsl.registry.attributes.test.SimpleAttributeTest"
+      "org.quiltmc.qsl.registry.attributes.test.SimpleAttributeTest",
+      "org.quiltmc.qsl.registry.attributes.test.DispatchedAttributeTest"
     ]
   }
 }
