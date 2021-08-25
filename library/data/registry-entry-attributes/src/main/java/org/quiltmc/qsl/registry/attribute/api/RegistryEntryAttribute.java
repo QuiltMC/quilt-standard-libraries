@@ -246,9 +246,9 @@ public interface RegistryEntryAttribute<R, V> {
 	}
 
 	/**
-	 * Gets the key of the registry this attribute is tied to.
+	 * Gets the registry this attribute is tied to.
 	 *
-	 * @return tied registry key
+	 * @return tied registry
 	 */
 	Registry<R> getRegistry();
 
