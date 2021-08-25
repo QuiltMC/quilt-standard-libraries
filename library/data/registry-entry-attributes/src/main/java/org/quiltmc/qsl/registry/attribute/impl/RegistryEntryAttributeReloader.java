@@ -212,6 +212,7 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 									attribute.getId(), id);
 						}
 						LOGGER.error("Ignoring attribute value for '{}' in {} since it's invalid", id, resource.getId());
+						continue;
 					}
 
 					map.put(id, parsedValue.result().get());
