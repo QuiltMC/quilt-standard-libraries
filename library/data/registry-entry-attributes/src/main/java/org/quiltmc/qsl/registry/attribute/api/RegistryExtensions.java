@@ -55,9 +55,9 @@ public final class RegistryExtensions {
 		 *
 		 * @param attrib attribute
 		 * @param value value
-		 * @param <T> value type
+		 * @param <V> value type
 		 * @return this setter
 		 */
-		<T> AttributeSetter<R> put(RegistryEntryAttribute<R, T> attrib, T value);
+		<V> AttributeSetter<R> put(RegistryEntryAttribute<R, V> attrib, V value);
 	}
 }

@@ -27,29 +27,28 @@ import java.util.Objects;
 
 @SuppressWarnings("ClassCanBeRecord")
 public final class RegistryEntryAttributeImpl<R, V> implements RegistryEntryAttribute<R, V> {
-	private final RegistryKey<Registry<R>> registryKey;
+	private final Registry<R> registry;
 	private final Identifier id;
 	private final Codec<V> codec;
 	private final @Nullable V defaultValue;
 
-	private RegistryEntryAttributeImpl(RegistryKey<Registry<R>> registryKey, Identifier id, Codec<V> codec, @Nullable V defaultValue) {
-		this.registryKey = registryKey;
+	private RegistryEntryAttributeImpl(Registry<R> registry, Identifier id, Codec<V> codec, @Nullable V defaultValue) {
+		this.registry = registry;
 		this.id = id;
 		this.codec = codec;
 		this.defaultValue = defaultValue;
 	}
 
-	public static <R, T> RegistryEntryAttribute<R, T> create(RegistryKey<Registry<R>> registryKey, Identifier id, Codec<T> codec,
+	public static <R, T> RegistryEntryAttribute<R, T> create(Registry<R> registry, Identifier id, Codec<T> codec,
 															 @Nullable T defaultValue) {
-		var attrib = new RegistryEntryAttributeImpl<>(registryKey, id, codec, defaultValue);
-		@SuppressWarnings("unchecked") var registry = (Registry<R>) Registry.REGISTRIES.get(registryKey.getValue());
+		var attrib = new RegistryEntryAttributeImpl<>(registry, id, codec, defaultValue);
 		RegistryEntryAttributeHolderImpl.registerAttribute(registry, attrib);
 		return attrib;
 	}
 
 	@Override
-	public RegistryKey<Registry<R>> getRegistryKey() {
-		return registryKey;
+	public Registry<R> getRegistry() {
+		return registry;
 	}
 
 	@Override
@@ -71,11 +70,11 @@ public final class RegistryEntryAttributeImpl<R, V> implements RegistryEntryAttr
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof RegistryEntryAttributeImpl<?, ?> that)) return false;
-		return Objects.equals(registryKey, that.registryKey) && Objects.equals(id, that.id);
+		return Objects.equals(registry.getKey(), that.registry.getKey()) && Objects.equals(id, that.id);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(registryKey, id);
+		return Objects.hash(registry.getKey(), id);
 	}
 }

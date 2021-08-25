@@ -30,8 +30,8 @@ public final class CombinedRegistryEntryAttributeHolder<R> implements RegistryEn
 	}
 
 	@Override
-	public <T> Optional<T> getValue(R entry, RegistryEntryAttribute<R, T> attribute) {
-		T value;
+	public <V> Optional<V> getValue(R entry, RegistryEntryAttribute<R, V> attribute) {
+		V value;
 		if (delegate != null) {
 			value = delegate.getValueNoDefault(entry, attribute);
 			if (value != null) {

@@ -30,7 +30,7 @@ public final class BuiltinRegistryEntryAttributeSetterImpl<R> implements Registr
 	}
 
 	@Override
-	public <T> RegistryExtensions.AttributeSetter<R> put(RegistryEntryAttribute<R, T> attrib, T value) {
+	public <V> RegistryExtensions.AttributeSetter<R> put(RegistryEntryAttribute<R, V> attrib, V value) {
 		holder.putValue(item, attrib, value);
 		return this;
 	}

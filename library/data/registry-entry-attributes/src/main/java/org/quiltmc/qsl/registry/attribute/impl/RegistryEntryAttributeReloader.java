@@ -142,14 +142,14 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 		}
 
 		@SuppressWarnings("unchecked")
-		private <R, T> void applyOne(RegistryEntryAttribute<R, T> attrib, AttributeMap attribMap) {
-			Registry<R> registry = (Registry<R>) Registry.REGISTRIES.get(attrib.getRegistryKey().getValue());
-			assert registry != null : "huh";
+		private <R, V> void applyOne(RegistryEntryAttribute<R, V> attrib, AttributeMap attribMap) {
+			var registry = attrib.getRegistry();
+			assert registry != null : "bruh momento";
 
 			RegistryEntryAttributeHolderImpl<R> holder = RegistryEntryAttributeHolderImpl.getData(registry);
 			for (Map.Entry<Identifier, Object> attribEntry : attribMap.map.entrySet()) {
 				R item = registry.get(attribEntry.getKey());
-				holder.putValue(item, attrib, (T) attribEntry.getValue());
+				holder.putValue(item, attrib, (V) attribEntry.getValue());
 			}
 		}
 	}

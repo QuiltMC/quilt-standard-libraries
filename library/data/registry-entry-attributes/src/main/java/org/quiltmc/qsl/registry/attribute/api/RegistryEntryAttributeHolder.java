@@ -39,19 +39,6 @@ public interface RegistryEntryAttributeHolder<R> {
 	}
 
 	/**
-	 * Gets the {@code RegistryEntryAttributeHolder} instance tied to a specific registry.
-	 *
-	 * @param registryKey registry key
-	 * @param <R> registry entry type
-	 * @return attribute holder
-	 */
-	@SuppressWarnings("unchecked")
-	static <R> RegistryEntryAttributeHolder<R> get(RegistryKey<Registry<R>> registryKey) {
-		Registry<R> registry = (Registry<R>) Registry.REGISTRIES.get(registryKey.getValue());
-		return get(registry);
-	}
-
-	/**
 	 * Gets the value associated with the specified attribute for the specified entry.<p>
 	 *
 	 * If the item has no value for this attribute, the attribute's
