@@ -23,15 +23,16 @@ import org.quiltmc.qsl.registry.attribute.impl.RegistryEntryAttributeImpl;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
  * Represents an attribute that is attached to a registry entry. Maps to a value in a {@link RegistryEntryAttributeHolder}.
  *
  * @param <R> registry entry type
- * @param <T> value type
+ * @param <V> value type
  */
-public interface RegistryEntryAttribute<R, T> {
+public interface RegistryEntryAttribute<R, V> {
 	/**
 	 * Creates a new attribute.
 	 *
@@ -40,11 +41,11 @@ public interface RegistryEntryAttribute<R, T> {
 	 * @param codec value codec
 	 * @param defaultValue default value
 	 * @param <R> registry entry type
-	 * @param <T> value type
+	 * @param <V> value type
 	 * @return a new attribute
 	 */
-	static <R, T> RegistryEntryAttribute<R, T> create(RegistryKey<Registry<R>> registryKey, Identifier id, Codec<T> codec,
-													  @Nullable T defaultValue) {
+	static <R, V> RegistryEntryAttribute<R, V> create(RegistryKey<Registry<R>> registryKey, Identifier id, Codec<V> codec,
+													  @Nullable V defaultValue) {
 		return RegistryEntryAttributeImpl.create(registryKey, id, codec, defaultValue);
 	}
 
@@ -55,10 +56,10 @@ public interface RegistryEntryAttribute<R, T> {
 	 * @param id identifier
 	 * @param codec value codec
 	 * @param <R> registry entry type
-	 * @param <T> value type
+	 * @param <V> value type
 	 * @return a new attribute
 	 */
-	static <R, T> RegistryEntryAttribute<R, T> create(RegistryKey<Registry<R>> registryKey, Identifier id, Codec<T> codec) {
+	static <R, V> RegistryEntryAttribute<R, V> create(RegistryKey<Registry<R>> registryKey, Identifier id, Codec<V> codec) {
 		return create(registryKey, id, codec, null);
 	}
 
@@ -70,13 +71,13 @@ public interface RegistryEntryAttribute<R, T> {
 	 * @param codecGetter getter for a certain value type's codec
 	 * @param defaultValue default value
 	 * @param <R> registry entry type
-	 * @param <T> value type
+	 * @param <V> value type
 	 * @return a new attribute
 	 */
-	static <R, T extends DispatchedType> RegistryEntryAttribute<R, T> createDispatched(RegistryKey<Registry<R>> registryKey, Identifier id,
-																					   Function<Identifier, Codec<? extends T>> codecGetter,
-																					   @Nullable T defaultValue) {
-		return create(registryKey, id, Identifier.CODEC.dispatch(T::getType, codecGetter), defaultValue);
+	static <R, V extends DispatchedType> RegistryEntryAttribute<R, V> createDispatched(RegistryKey<Registry<R>> registryKey, Identifier id,
+																					   Function<Identifier, Codec<? extends V>> codecGetter,
+																					   @Nullable V defaultValue) {
+		return create(registryKey, id, Identifier.CODEC.dispatch(V::getType, codecGetter), defaultValue);
 	}
 
 	/**
@@ -86,11 +87,11 @@ public interface RegistryEntryAttribute<R, T> {
 	 * @param id identifier
 	 * @param codecGetter getter for a certain value type's codec
 	 * @param <R> registry entry type
-	 * @param <T> value type
+	 * @param <V> value type
 	 * @return a new attribute
 	 */
-	static <R, T extends DispatchedType> RegistryEntryAttribute<R, T> createDispatched(RegistryKey<Registry<R>> registryKey, Identifier id,
-																					   Function<Identifier, Codec<? extends T>> codecGetter) {
+	static <R, V extends DispatchedType> RegistryEntryAttribute<R, V> createDispatched(RegistryKey<Registry<R>> registryKey, Identifier id,
+																					   Function<Identifier, Codec<? extends V>> codecGetter) {
 		return createDispatched(registryKey, id, codecGetter, null);
 	}
 
@@ -264,12 +265,26 @@ public interface RegistryEntryAttribute<R, T> {
 	 *
 	 * @return value codec
 	 */
-	Codec<T> getCodec();
+	Codec<V> getCodec();
 
 	/**
 	 * Gets the default value of this attribute. Can be {@code null}.
 	 *
 	 * @return default value
 	 */
-	@Nullable T getDefaultValue();
+	@Nullable V getDefaultValue();
+
+	/**
+	 * Gets the value associated with this attribute for the specified entry.<p>
+	 *
+	 * If the item has no value for this attribute, the attribute's
+	 * {@linkplain #getDefaultValue() default value} will be returned instead, unless it is {@code null},
+	 * in which case an empty optional will be returned.
+	 *
+	 * @param entry registry entry
+	 * @return attribute value, or empty if no value is assigned
+	 */
+	default Optional<V> getValue(R entry) {
+		return RegistryEntryAttributeHolder.get(getRegistryKey()).getValue(entry, this);
+	}
 }

@@ -57,10 +57,9 @@ public class SimpleAttributeTest implements ModInitializer {
 		@Override
 		public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
 			if (!world.isClient) {
-				var holder = RegistryEntryAttributeHolder.get(Registry.ITEM_KEY);
-				int one = holder.getValue(this, TEST_ATTRIBUTE)
+				int one = TEST_ATTRIBUTE.getValue(this)
 						.orElseThrow(() -> new RuntimeException(TEST_ATTRIBUTE + " not set via datapack!"));
-				float two = holder.getValue(this, TEST_ATTRIBUTE_2)
+				float two = TEST_ATTRIBUTE_2.getValue(this)
 						.orElseThrow(() -> new RuntimeException(TEST_ATTRIBUTE_2 + " not set via built-in!"));
 				user.sendMessage(Text.of("Test1 = " + one + ", Test2 = " + two), true);
 			}

@@ -26,13 +26,13 @@ import net.minecraft.util.registry.RegistryKey;
 import java.util.Objects;
 
 @SuppressWarnings("ClassCanBeRecord")
-public final class RegistryEntryAttributeImpl<R, T> implements RegistryEntryAttribute<R, T> {
+public final class RegistryEntryAttributeImpl<R, V> implements RegistryEntryAttribute<R, V> {
 	private final RegistryKey<Registry<R>> registryKey;
 	private final Identifier id;
-	private final Codec<T> codec;
-	private final @Nullable T defaultValue;
+	private final Codec<V> codec;
+	private final @Nullable V defaultValue;
 
-	private RegistryEntryAttributeImpl(RegistryKey<Registry<R>> registryKey, Identifier id, Codec<T> codec, @Nullable T defaultValue) {
+	private RegistryEntryAttributeImpl(RegistryKey<Registry<R>> registryKey, Identifier id, Codec<V> codec, @Nullable V defaultValue) {
 		this.registryKey = registryKey;
 		this.id = id;
 		this.codec = codec;
@@ -58,12 +58,12 @@ public final class RegistryEntryAttributeImpl<R, T> implements RegistryEntryAttr
 	}
 
 	@Override
-	public Codec<T> getCodec() {
+	public Codec<V> getCodec() {
 		return codec;
 	}
 
 	@Override
-	public @Nullable T getDefaultValue() {
+	public @Nullable V getDefaultValue() {
 		return defaultValue;
 	}
 

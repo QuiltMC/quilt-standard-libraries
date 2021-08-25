@@ -60,8 +60,8 @@ public interface RegistryEntryAttributeHolder<R> {
 	 *
 	 * @param entry registry entry
 	 * @param attribute attribute
-	 * @param <T> attribute value type
+	 * @param <V> attribute value type
 	 * @return attribute value, or empty if no value is assigned
 	 */
-	<T> Optional<T> getValue(R entry, RegistryEntryAttribute<R, T> attribute);
+	<V> Optional<V> getValue(R entry, RegistryEntryAttribute<R, V> attribute);
 }
