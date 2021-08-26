@@ -17,11 +17,11 @@
 package org.quiltmc.qsl.registry.attribute.api;
 
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.RegistryKey;
-import java.util.Map;
+import net.minecraft.util.registry.Registry;
+import java.util.function.Function;
 
 /**
- * Utility interface used for {@link RegistryEntryAttribute#createDispatched(RegistryKey, Identifier, Map, DispatchedType)}.<p>
+ * Utility interface used for {@link RegistryEntryAttribute#createDispatched(Registry, Identifier, Function, DispatchedType)}.<p>
  *
  * This allows for polymorphic attribute types!
  */
