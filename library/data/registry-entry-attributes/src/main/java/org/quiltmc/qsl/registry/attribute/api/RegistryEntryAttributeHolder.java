@@ -31,7 +31,7 @@ public interface RegistryEntryAttributeHolder<R> {
 	 * Gets the {@code RegistryEntryAttributeHolder} instance tied to a specific registry.
 	 *
 	 * @param registry registry
-     * @param <R> registry entry type
+	 * @param <R> registry entry type
 	 * @return attribute holder
 	 */
 	static <R> RegistryEntryAttributeHolder<R> get(Registry<R> registry) {
