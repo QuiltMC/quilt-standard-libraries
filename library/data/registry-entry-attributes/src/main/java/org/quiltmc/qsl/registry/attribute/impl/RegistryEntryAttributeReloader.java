@@ -205,10 +205,10 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 					DataResult<?> parsedValue = attribute.getCodec().parse(JsonOps.INSTANCE, entry.getValue());
 					if (parsedValue.result().isEmpty()) {
 						if (parsedValue.error().isPresent()) {
-							LOGGER.error("Failed to parse value for attribute {} of registry item {}: {}",
+							LOGGER.error("Failed to parse value for attribute {} of registry entry {}: {}",
 									attribute.getId(), id, parsedValue.error().get().message());
 						} else {
-							LOGGER.error("Failed to parse value for attribute {} of registry item {}: unknown error",
+							LOGGER.error("Failed to parse value for attribute {} of registry entry {}: unknown error",
 									attribute.getId(), id);
 						}
 						LOGGER.error("Ignoring attribute value for '{}' in {} since it's invalid", id, resource.getId());
