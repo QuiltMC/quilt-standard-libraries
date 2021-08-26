@@ -3,6 +3,7 @@
   "package": "org.quiltmc.qsl.registry.attribute.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "CommandManagerMixin",
     "RegistryMixin"
   ],
   "injectors": {
