@@ -28,8 +28,8 @@ import java.util.function.Function;
 /**
  * Represents an attribute that is attached to a registry entry. Maps to a value in a {@link RegistryEntryAttributeHolder}.
  *
- * @param <R> registry entry type
- * @param <V> value type
+ * @param <R> type of the entries in the registry
+ * @param <V> attached value type
  */
 @SuppressWarnings("ClassCanBeRecord")
 public final class RegistryEntryAttribute<R, V> {

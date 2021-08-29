@@ -31,8 +31,8 @@ public interface RegistryEntryAttributeHolder<R> {
 	 * Gets the {@code RegistryEntryAttributeHolder} instance tied to a specific registry.
 	 *
 	 * @param registry registry
-	 * @param <R> registry entry type
-	 * @return attribute holder
+	 * @param <R> type of the entries in the registry
+	 * @return the attribute holder tied to that registry
 	 */
 	static <R> RegistryEntryAttributeHolder<R> get(Registry<R> registry) {
 		return RegistryEntryAttributeHolderImpl.getCombined(registry);
@@ -47,7 +47,7 @@ public interface RegistryEntryAttributeHolder<R> {
 	 *
 	 * @param entry registry entry
 	 * @param attribute attribute
-	 * @param <V> attribute value type
+	 * @param <V> attribute's attached value type
 	 * @return attribute value, or empty if no value is assigned
 	 */
 	<V> Optional<V> getValue(R entry, RegistryEntryAttribute<R, V> attribute);

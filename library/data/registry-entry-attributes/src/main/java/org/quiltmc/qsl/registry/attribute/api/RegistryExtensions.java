@@ -32,8 +32,8 @@ public final class RegistryExtensions {
 	 * @param id entry identifier
 	 * @param entry entry
 	 * @param builderConsumer builder consumer
-	 * @param <R> registry entry type
-	 * @param <T> current entry type
+	 * @param <R> type of the entries in the registry
+	 * @param <T> type of the entry we're currently registry (maybe a subclass of {@code R})
 	 * @return the newly registered entry
 	 */
 	public static <R, T extends R> T registerWithAttributes(Registry<R> registry, Identifier id, T entry,
@@ -46,7 +46,7 @@ public final class RegistryExtensions {
 	/**
 	 * Used to set default built-in attribute values in a builder-like fashion.
 	 *
-	 * @param <R> registry entry type
+	 * @param <R> type of the entries in the registry
 	 */
 	@FunctionalInterface
 	public interface DefaultAttributesBuilder<R> {
@@ -54,8 +54,8 @@ public final class RegistryExtensions {
 		 * Puts a built-in attribute value.
 		 *
 		 * @param attrib attribute
-		 * @param value value
-		 * @param <V> value type
+		 * @param value value to attach
+		 * @param <V> attributes' attached value type
 		 * @return this setter
 		 */
 		<V> DefaultAttributesBuilder<R> put(RegistryEntryAttribute<R, V> attrib, V value);
