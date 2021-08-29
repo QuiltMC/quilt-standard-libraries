@@ -120,11 +120,11 @@ public class DispatchedAttributeTest implements ModInitializer {
 	// built-in of one type
 	public static final ModularFunctionItem ITEM_1 = RegistryExtensions.registerWithAttributes(Registry.ITEM,
 			new Identifier("quilt", "modular_item_1"), new ModularFunctionItem(new Item.Settings()),
-			setter -> setter.put(MODULAR_FUNCTION, new SendMessageFuncValue("Built-in value!")));
+			builder -> builder.put(MODULAR_FUNCTION, new SendMessageFuncValue("Built-in value!")));
 	// built-in of one type, overriden by data-driven of another type
 	public static final ModularFunctionItem ITEM_2 = RegistryExtensions.registerWithAttributes(Registry.ITEM,
 			new Identifier("quilt", "modular_item_2"), new ModularFunctionItem(new Item.Settings()),
-			setter -> setter.put(MODULAR_FUNCTION, new SendMessageFuncValue("Built-in value!")));
+			builder -> builder.put(MODULAR_FUNCTION, new SendMessageFuncValue("Built-in value!")));
 	// data-driven of some type
 	public static final ModularFunctionItem ITEM_3 = Registry.register(Registry.ITEM,
 			new Identifier("quilt", "modular_item_3"), new ModularFunctionItem(new Item.Settings()));

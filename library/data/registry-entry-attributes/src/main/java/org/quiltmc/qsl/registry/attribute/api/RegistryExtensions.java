@@ -16,7 +16,7 @@
 
 package org.quiltmc.qsl.registry.attribute.api;
 
-import org.quiltmc.qsl.registry.attribute.impl.BuiltinRegistryEntryAttributeSetterImpl;
+import org.quiltmc.qsl.registry.attribute.impl.DefaultAttributesBuilderImpl;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import java.util.function.Consumer;
@@ -31,25 +31,25 @@ public final class RegistryExtensions {
 	 * @param registry target registry
 	 * @param id entry identifier
 	 * @param entry entry
-	 * @param setterConsumer setter consumer
+	 * @param builderConsumer builder consumer
 	 * @param <R> registry entry type
 	 * @param <T> current entry type
 	 * @return the newly registered entry
 	 */
 	public static <R, T extends R> T registerWithAttributes(Registry<R> registry, Identifier id, T entry,
-												  Consumer<AttributeSetter<R>> setterConsumer) {
+												  Consumer<DefaultAttributesBuilder<R>> builderConsumer) {
 		Registry.register(registry, id, entry);
-		setterConsumer.accept(new BuiltinRegistryEntryAttributeSetterImpl<>(registry, entry));
+		builderConsumer.accept(new DefaultAttributesBuilderImpl<>(registry, entry));
 		return entry;
 	}
 
 	/**
-	 * Used to set built-in attribute values in a builder-like fashion.
+	 * Used to set default built-in attribute values in a builder-like fashion.
 	 *
 	 * @param <R> registry entry type
 	 */
 	@FunctionalInterface
-	public interface AttributeSetter<R> {
+	public interface DefaultAttributesBuilder<R> {
 		/**
 		 * Puts a built-in attribute value.
 		 *
@@ -58,6 +58,6 @@ public final class RegistryExtensions {
 		 * @param <V> value type
 		 * @return this setter
 		 */
-		<V> AttributeSetter<R> put(RegistryEntryAttribute<R, V> attrib, V value);
+		<V> DefaultAttributesBuilder<R> put(RegistryEntryAttribute<R, V> attrib, V value);
 	}
 }
