@@ -19,9 +19,9 @@ package org.quiltmc.qsl.registry.attribute.api;
 import com.mojang.serialization.Codec;
 import org.jetbrains.annotations.Nullable;
 
-import org.quiltmc.qsl.registry.attribute.impl.RegistryEntryAttributeImpl;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -31,7 +31,8 @@ import java.util.function.Function;
  * @param <R> registry entry type
  * @param <V> value type
  */
-public interface RegistryEntryAttribute<R, V> {
+@SuppressWarnings("ClassCanBeRecord")
+public final class RegistryEntryAttribute<R, V> {
 	/**
 	 * Creates a new attribute.
 	 *
@@ -43,9 +44,9 @@ public interface RegistryEntryAttribute<R, V> {
 	 * @param <V> value type
 	 * @return a new attribute
 	 */
-	static <R, V> RegistryEntryAttribute<R, V> create(Registry<R> registry, Identifier id, Codec<V> codec,
+	public static <R, V> RegistryEntryAttribute<R, V> create(Registry<R> registry, Identifier id, Codec<V> codec,
 													  @Nullable V defaultValue) {
-		return RegistryEntryAttributeImpl.create(registry, id, codec, defaultValue);
+		return new RegistryEntryAttribute<>(registry, id, codec, defaultValue);
 	}
 
 	/**
@@ -58,7 +59,7 @@ public interface RegistryEntryAttribute<R, V> {
 	 * @param <V> value type
 	 * @return a new attribute
 	 */
-	static <R, V> RegistryEntryAttribute<R, V> create(Registry<R> registry, Identifier id, Codec<V> codec) {
+	public static <R, V> RegistryEntryAttribute<R, V> create(Registry<R> registry, Identifier id, Codec<V> codec) {
 		return create(registry, id, codec, null);
 	}
 
@@ -73,7 +74,7 @@ public interface RegistryEntryAttribute<R, V> {
 	 * @param <V> value type
 	 * @return a new attribute
 	 */
-	static <R, V extends DispatchedType> RegistryEntryAttribute<R, V> createDispatched(Registry<R> registry, Identifier id,
+	public static <R, V extends DispatchedType> RegistryEntryAttribute<R, V> createDispatched(Registry<R> registry, Identifier id,
 																					   Function<Identifier, Codec<? extends V>> codecGetter,
 																					   @Nullable V defaultValue) {
 		return create(registry, id, Identifier.CODEC.dispatch(V::getType, codecGetter), defaultValue);
@@ -89,7 +90,7 @@ public interface RegistryEntryAttribute<R, V> {
 	 * @param <V> value type
 	 * @return a new attribute
 	 */
-	static <R, V extends DispatchedType> RegistryEntryAttribute<R, V> createDispatched(Registry<R> registry, Identifier id,
+	public static <R, V extends DispatchedType> RegistryEntryAttribute<R, V> createDispatched(Registry<R> registry, Identifier id,
 																					   Function<Identifier, Codec<? extends V>> codecGetter) {
 		return createDispatched(registry, id, codecGetter, null);
 	}
@@ -103,7 +104,7 @@ public interface RegistryEntryAttribute<R, V> {
 	 * @param <R> registry entry type
 	 * @return a new attribute
 	 */
-	static <R> RegistryEntryAttribute<R, Boolean> createBool(Registry<R> registry, Identifier id, boolean defaultValue) {
+	public static <R> RegistryEntryAttribute<R, Boolean> createBool(Registry<R> registry, Identifier id, boolean defaultValue) {
 		return create(registry, id, Codec.BOOL, defaultValue);
 	}
 
@@ -116,7 +117,7 @@ public interface RegistryEntryAttribute<R, V> {
 	 * @param <R> registry entry type
 	 * @return a new attribute
 	 */
-	static <R> RegistryEntryAttribute<R, Integer> createInt(Registry<R> registry, Identifier id, int defaultValue) {
+	public static <R> RegistryEntryAttribute<R, Integer> createInt(Registry<R> registry, Identifier id, int defaultValue) {
 		return create(registry, id, Codec.INT, defaultValue);
 	}
 
@@ -129,7 +130,7 @@ public interface RegistryEntryAttribute<R, V> {
 	 * @param <R> registry entry type
 	 * @return a new attribute
 	 */
-	static <R> RegistryEntryAttribute<R, Long> createLong(Registry<R> registry, Identifier id, long defaultValue) {
+	public static <R> RegistryEntryAttribute<R, Long> createLong(Registry<R> registry, Identifier id, long defaultValue) {
 		return create(registry, id, Codec.LONG, defaultValue);
 	}
 
@@ -142,7 +143,7 @@ public interface RegistryEntryAttribute<R, V> {
 	 * @param <R> registry entry type
 	 * @return a new attribute
 	 */
-	static <R> RegistryEntryAttribute<R, Float> createFloat(Registry<R> registry, Identifier id, float defaultValue) {
+	public static <R> RegistryEntryAttribute<R, Float> createFloat(Registry<R> registry, Identifier id, float defaultValue) {
 		return create(registry, id, Codec.FLOAT, defaultValue);
 	}
 
@@ -155,7 +156,7 @@ public interface RegistryEntryAttribute<R, V> {
 	 * @param <R> registry entry type
 	 * @return a new attribute
 	 */
-	static <R> RegistryEntryAttribute<R, Double> createDouble(Registry<R> registry, Identifier id, double defaultValue) {
+	public static <R> RegistryEntryAttribute<R, Double> createDouble(Registry<R> registry, Identifier id, double defaultValue) {
 		return create(registry, id, Codec.DOUBLE, defaultValue);
 	}
 
@@ -168,7 +169,7 @@ public interface RegistryEntryAttribute<R, V> {
 	 * @param <R> registry entry type
 	 * @return a new attribute
 	 */
-	static <R> RegistryEntryAttribute<R, String> createString(Registry<R> registry, Identifier id, String defaultValue) {
+	public static <R> RegistryEntryAttribute<R, String> createString(Registry<R> registry, Identifier id, String defaultValue) {
 		return create(registry, id, Codec.STRING, defaultValue);
 	}
 
@@ -180,7 +181,7 @@ public interface RegistryEntryAttribute<R, V> {
 	 * @param <R> registry entry type
 	 * @return a new attribute
 	 */
-	static <R> RegistryEntryAttribute<R, Boolean> createBool(Registry<R> registry, Identifier id) {
+	public static <R> RegistryEntryAttribute<R, Boolean> createBool(Registry<R> registry, Identifier id) {
 		return create(registry, id, Codec.BOOL, null);
 	}
 
@@ -192,7 +193,7 @@ public interface RegistryEntryAttribute<R, V> {
 	 * @param <R> registry entry type
 	 * @return a new attribute
 	 */
-	static <R> RegistryEntryAttribute<R, Integer> createInt(Registry<R> registry, Identifier id) {
+	public static <R> RegistryEntryAttribute<R, Integer> createInt(Registry<R> registry, Identifier id) {
 		return create(registry, id, Codec.INT, null);
 	}
 
@@ -205,7 +206,7 @@ public interface RegistryEntryAttribute<R, V> {
 	 * @param <R> registry entry type
 	 * @return a new attribute
 	 */
-	static <R> RegistryEntryAttribute<R, Long> createLong(Registry<R> registry, Identifier id) {
+	public static <R> RegistryEntryAttribute<R, Long> createLong(Registry<R> registry, Identifier id) {
 		return create(registry, id, Codec.LONG, null);
 	}
 
@@ -217,7 +218,7 @@ public interface RegistryEntryAttribute<R, V> {
 	 * @param <R> registry entry type
 	 * @return a new attribute
 	 */
-	static <R> RegistryEntryAttribute<R, Float> createFloat(Registry<R> registry, Identifier id) {
+	public static <R> RegistryEntryAttribute<R, Float> createFloat(Registry<R> registry, Identifier id) {
 		return create(registry, id, Codec.FLOAT, null);
 	}
 
@@ -229,7 +230,7 @@ public interface RegistryEntryAttribute<R, V> {
 	 * @param <R> registry entry type
 	 * @return a new attribute
 	 */
-	static <R> RegistryEntryAttribute<R, Double> createDouble(Registry<R> registry, Identifier id) {
+	public static <R> RegistryEntryAttribute<R, Double> createDouble(Registry<R> registry, Identifier id) {
 		return create(registry, id, Codec.DOUBLE, null);
 	}
 
@@ -241,8 +242,20 @@ public interface RegistryEntryAttribute<R, V> {
 	 * @param <R> registry entry type
 	 * @return a new attribute
 	 */
-	static <R> RegistryEntryAttribute<R, String> createString(Registry<R> registry, Identifier id) {
+	public static <R> RegistryEntryAttribute<R, String> createString(Registry<R> registry, Identifier id) {
 		return create(registry, id, Codec.STRING, null);
+	}
+
+	private final Registry<R> registry;
+	private final Identifier id;
+	private final Codec<V> codec;
+	private final V defaultValue;
+
+	private RegistryEntryAttribute(Registry<R> registry, Identifier id, Codec<V> codec, @Nullable V defaultValue) {
+		this.registry = registry;
+		this.id = id;
+		this.codec = codec;
+		this.defaultValue = defaultValue;
 	}
 
 	/**
@@ -250,28 +263,36 @@ public interface RegistryEntryAttribute<R, V> {
 	 *
 	 * @return tied registry
 	 */
-	Registry<R> getRegistry();
+	public Registry<R> getRegistry() {
+		return registry;
+	}
 
 	/**
 	 * Gets the ID of this attribute.
 	 *
 	 * @return attribute ID
 	 */
-	Identifier getId();
+	public Identifier getId() {
+		return id;
+	}
 
 	/**
 	 * Gets the {@code Codec} used to (de)serialize this attribute's value.
 	 *
 	 * @return value codec
 	 */
-	Codec<V> getCodec();
+	public Codec<V> getCodec() {
+		return codec;
+	}
 
 	/**
 	 * Gets the default value of this attribute. Can be {@code null}.
 	 *
 	 * @return default value
 	 */
-	@Nullable V getDefaultValue();
+	public V getDefaultValue() {
+		return defaultValue;
+	}
 
 	/**
 	 * Gets the value associated with this attribute for the specified entry.<p>
@@ -283,7 +304,19 @@ public interface RegistryEntryAttribute<R, V> {
 	 * @param entry registry entry
 	 * @return attribute value, or empty if no value is assigned
 	 */
-	default Optional<V> getValue(R entry) {
+	public Optional<V> getValue(R entry) {
 		return RegistryEntryAttributeHolder.get(getRegistry()).getValue(entry, this);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof RegistryEntryAttribute<?, ?> that)) return false;
+		return Objects.equals(registry.getKey(), that.registry.getKey()) && Objects.equals(id, that.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(registry.getKey(), id);
 	}
 }
