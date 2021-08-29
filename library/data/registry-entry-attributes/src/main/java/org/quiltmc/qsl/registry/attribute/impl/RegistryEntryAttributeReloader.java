@@ -144,7 +144,7 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 		@SuppressWarnings("unchecked")
 		private <R, V> void applyOne(RegistryEntryAttribute<R, V> attrib, AttributeMap attribMap) {
 			var registry = attrib.getRegistry();
-			assert registry != null : "bruh momento";
+			Objects.requireNonNull(registry, "registry");
 
 			RegistryEntryAttributeHolderImpl<R> holder = RegistryEntryAttributeHolderImpl.getData(registry);
 			for (Map.Entry<Identifier, Object> attribEntry : attribMap.map.entrySet()) {

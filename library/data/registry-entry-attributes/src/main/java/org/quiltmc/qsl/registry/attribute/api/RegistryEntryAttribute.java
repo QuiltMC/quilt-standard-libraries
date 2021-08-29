@@ -173,7 +173,7 @@ public interface RegistryEntryAttribute<R, V> {
 	}
 
 	/**
-	 * Creates a new {@code boolean} property.
+	 * Creates a new {@code boolean} property with no default value.
 	 *
 	 * @param registry registry this attribute is tied to
 	 * @param id identifier
