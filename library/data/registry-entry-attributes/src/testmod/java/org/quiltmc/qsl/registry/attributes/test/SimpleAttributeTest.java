@@ -18,9 +18,8 @@ package org.quiltmc.qsl.registry.attributes.test;
 
 import net.fabricmc.api.ModInitializer;
 
-import org.quiltmc.qsl.registry.attribute.api.RegistryExtensions;
 import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
-import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttributeHolder;
+import org.quiltmc.qsl.registry.attribute.api.RegistryExtensions;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -43,7 +42,6 @@ public class SimpleAttributeTest implements ModInitializer {
 			new Identifier("quilt", "simple_attribute_test_item"),
 			new MyItem(new Item.Settings()),
 			setter -> setter
-					.put(TEST_ATTRIBUTE, 5)		// this value will be overriden by the value specified in the datapack
 					.put(TEST_ATTRIBUTE_2, 2.0f));
 
 	@Override
