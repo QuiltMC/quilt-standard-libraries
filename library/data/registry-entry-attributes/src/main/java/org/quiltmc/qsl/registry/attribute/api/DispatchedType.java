@@ -21,7 +21,7 @@ import net.minecraft.util.registry.Registry;
 import java.util.function.Function;
 
 /**
- * Utility interface used for {@link RegistryEntryAttribute#createDispatched(Registry, Identifier, Function, DispatchedType)}.<p>
+ * Utility interface used for {@link RegistryEntryAttribute#createDispatchedWithDefault(Registry, Identifier, Function, DispatchedType)}.<p>
  *
  * This allows for polymorphic attribute types!
  */

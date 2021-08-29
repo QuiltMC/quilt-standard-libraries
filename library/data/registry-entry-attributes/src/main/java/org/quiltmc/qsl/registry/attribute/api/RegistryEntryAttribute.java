@@ -34,7 +34,7 @@ import java.util.function.Function;
 @SuppressWarnings("ClassCanBeRecord")
 public final class RegistryEntryAttribute<R, V> {
 	/**
-	 * Creates a new attribute.
+	 * Creates a new attribute with a default value.
 	 *
 	 * @param registry registry this attribute is tied to
 	 * @param id identifier
@@ -44,13 +44,13 @@ public final class RegistryEntryAttribute<R, V> {
 	 * @param <V> value type
 	 * @return a new attribute
 	 */
-	public static <R, V> RegistryEntryAttribute<R, V> create(Registry<R> registry, Identifier id, Codec<V> codec,
-													  @Nullable V defaultValue) {
+	public static <R, V> RegistryEntryAttribute<R, V> createWithDefault(Registry<R> registry, Identifier id, Codec<V> codec,
+																		@Nullable V defaultValue) {
 		return new RegistryEntryAttribute<>(registry, id, codec, defaultValue);
 	}
 
 	/**
-	 * Creates a new attribute.
+	 * Creates a new attribute with no default value.
 	 *
 	 * @param registry registry this attribute is tied to
 	 * @param id identifier
@@ -60,11 +60,11 @@ public final class RegistryEntryAttribute<R, V> {
 	 * @return a new attribute
 	 */
 	public static <R, V> RegistryEntryAttribute<R, V> create(Registry<R> registry, Identifier id, Codec<V> codec) {
-		return create(registry, id, codec, null);
+		return createWithDefault(registry, id, codec, null);
 	}
 
 	/**
-	 * Creates a new polymorphic attribute via dispatched codecs.
+	 * Creates a new polymorphic attribute via dispatched codecs with a default value.
 	 *
 	 * @param registry registry this attribute is tied to
 	 * @param id identifier
@@ -74,14 +74,14 @@ public final class RegistryEntryAttribute<R, V> {
 	 * @param <V> value type
 	 * @return a new attribute
 	 */
-	public static <R, V extends DispatchedType> RegistryEntryAttribute<R, V> createDispatched(Registry<R> registry, Identifier id,
-																					   Function<Identifier, Codec<? extends V>> codecGetter,
-																					   @Nullable V defaultValue) {
-		return create(registry, id, Identifier.CODEC.dispatch(V::getType, codecGetter), defaultValue);
+	public static <R, V extends DispatchedType> RegistryEntryAttribute<R, V> createDispatchedWithDefault(Registry<R> registry, Identifier id,
+																										 Function<Identifier, Codec<? extends V>> codecGetter,
+																										 @Nullable V defaultValue) {
+		return createWithDefault(registry, id, Identifier.CODEC.dispatch(V::getType, codecGetter), defaultValue);
 	}
 
 	/**
-	 * Creates a new polymorphic attribute via dispatched codecs.
+	 * Creates a new polymorphic attribute via dispatched codecs with no default value.
 	 *
 	 * @param registry registry this attribute is tied to
 	 * @param id identifier
@@ -91,12 +91,12 @@ public final class RegistryEntryAttribute<R, V> {
 	 * @return a new attribute
 	 */
 	public static <R, V extends DispatchedType> RegistryEntryAttribute<R, V> createDispatched(Registry<R> registry, Identifier id,
-																					   Function<Identifier, Codec<? extends V>> codecGetter) {
-		return createDispatched(registry, id, codecGetter, null);
+																							  Function<Identifier, Codec<? extends V>> codecGetter) {
+		return createDispatchedWithDefault(registry, id, codecGetter, null);
 	}
 
 	/**
-	 * Creates a new {@code boolean} property.
+	 * Creates a new {@code boolean} attribute with a default value.
 	 *
 	 * @param registry registry this attribute is tied to
 	 * @param id identifier
@@ -104,12 +104,12 @@ public final class RegistryEntryAttribute<R, V> {
 	 * @param <R> registry entry type
 	 * @return a new attribute
 	 */
-	public static <R> RegistryEntryAttribute<R, Boolean> createBool(Registry<R> registry, Identifier id, boolean defaultValue) {
-		return create(registry, id, Codec.BOOL, defaultValue);
+	public static <R> RegistryEntryAttribute<R, Boolean> createBoolWithDefault(Registry<R> registry, Identifier id, boolean defaultValue) {
+		return createWithDefault(registry, id, Codec.BOOL, defaultValue);
 	}
 
 	/**
-	 * Creates a new {@code int} property.
+	 * Creates a new {@code int} attribute with a default value.
 	 *
 	 * @param registry registry this attribute is tied to
 	 * @param id identifier
@@ -117,12 +117,12 @@ public final class RegistryEntryAttribute<R, V> {
 	 * @param <R> registry entry type
 	 * @return a new attribute
 	 */
-	public static <R> RegistryEntryAttribute<R, Integer> createInt(Registry<R> registry, Identifier id, int defaultValue) {
-		return create(registry, id, Codec.INT, defaultValue);
+	public static <R> RegistryEntryAttribute<R, Integer> createIntWithDefault(Registry<R> registry, Identifier id, int defaultValue) {
+		return createWithDefault(registry, id, Codec.INT, defaultValue);
 	}
 
 	/**
-	 * Creates a new {@code long} property.
+	 * Creates a new {@code long} attribute with a default value.
 	 *
 	 * @param registry registry this attribute is tied to
 	 * @param id identifier
@@ -130,12 +130,12 @@ public final class RegistryEntryAttribute<R, V> {
 	 * @param <R> registry entry type
 	 * @return a new attribute
 	 */
-	public static <R> RegistryEntryAttribute<R, Long> createLong(Registry<R> registry, Identifier id, long defaultValue) {
-		return create(registry, id, Codec.LONG, defaultValue);
+	public static <R> RegistryEntryAttribute<R, Long> createLongWithDefault(Registry<R> registry, Identifier id, long defaultValue) {
+		return createWithDefault(registry, id, Codec.LONG, defaultValue);
 	}
 
 	/**
-	 * Creates a new {@code float} property.
+	 * Creates a new {@code float} attribute with a default value.
 	 *
 	 * @param registry registry this attribute is tied to
 	 * @param id identifier
@@ -143,12 +143,12 @@ public final class RegistryEntryAttribute<R, V> {
 	 * @param <R> registry entry type
 	 * @return a new attribute
 	 */
-	public static <R> RegistryEntryAttribute<R, Float> createFloat(Registry<R> registry, Identifier id, float defaultValue) {
-		return create(registry, id, Codec.FLOAT, defaultValue);
+	public static <R> RegistryEntryAttribute<R, Float> createFloatWithDefault(Registry<R> registry, Identifier id, float defaultValue) {
+		return createWithDefault(registry, id, Codec.FLOAT, defaultValue);
 	}
 
 	/**
-	 * Creates a new {@code double} property.
+	 * Creates a new {@code double} attribute with a default value.
 	 *
 	 * @param registry registry this attribute is tied to
 	 * @param id identifier
@@ -156,12 +156,12 @@ public final class RegistryEntryAttribute<R, V> {
 	 * @param <R> registry entry type
 	 * @return a new attribute
 	 */
-	public static <R> RegistryEntryAttribute<R, Double> createDouble(Registry<R> registry, Identifier id, double defaultValue) {
-		return create(registry, id, Codec.DOUBLE, defaultValue);
+	public static <R> RegistryEntryAttribute<R, Double> createDoubleWithDefault(Registry<R> registry, Identifier id, double defaultValue) {
+		return createWithDefault(registry, id, Codec.DOUBLE, defaultValue);
 	}
 
 	/**
-	 * Creates a new {@code String} property.
+	 * Creates a new {@code String} attribute with a default value.
 	 *
 	 * @param registry registry this attribute is tied to
 	 * @param id identifier
@@ -169,12 +169,12 @@ public final class RegistryEntryAttribute<R, V> {
 	 * @param <R> registry entry type
 	 * @return a new attribute
 	 */
-	public static <R> RegistryEntryAttribute<R, String> createString(Registry<R> registry, Identifier id, String defaultValue) {
-		return create(registry, id, Codec.STRING, defaultValue);
+	public static <R> RegistryEntryAttribute<R, String> createStringWithDefault(Registry<R> registry, Identifier id, String defaultValue) {
+		return createWithDefault(registry, id, Codec.STRING, defaultValue);
 	}
 
 	/**
-	 * Creates a new {@code boolean} property with no default value.
+	 * Creates a new {@code boolean} attribute with no default value.
 	 *
 	 * @param registry registry this attribute is tied to
 	 * @param id identifier
@@ -182,11 +182,11 @@ public final class RegistryEntryAttribute<R, V> {
 	 * @return a new attribute
 	 */
 	public static <R> RegistryEntryAttribute<R, Boolean> createBool(Registry<R> registry, Identifier id) {
-		return create(registry, id, Codec.BOOL, null);
+		return create(registry, id, Codec.BOOL);
 	}
 
 	/**
-	 * Creates a new {@code int} property.
+	 * Creates a new {@code int} attribute with no default value.
 	 *
 	 * @param registry registry this attribute is tied to
 	 * @param id identifier
@@ -194,12 +194,12 @@ public final class RegistryEntryAttribute<R, V> {
 	 * @return a new attribute
 	 */
 	public static <R> RegistryEntryAttribute<R, Integer> createInt(Registry<R> registry, Identifier id) {
-		return create(registry, id, Codec.INT, null);
+		return create(registry, id, Codec.INT);
 	}
 
 
 	/**
-	 * Creates a new {@code long} property.
+	 * Creates a new {@code long} attribute with no default value.
 	 *
 	 * @param registry registry this attribute is tied to
 	 * @param id identifier
@@ -207,11 +207,11 @@ public final class RegistryEntryAttribute<R, V> {
 	 * @return a new attribute
 	 */
 	public static <R> RegistryEntryAttribute<R, Long> createLong(Registry<R> registry, Identifier id) {
-		return create(registry, id, Codec.LONG, null);
+		return create(registry, id, Codec.LONG);
 	}
 
 	/**
-	 * Creates a new {@code float} property.
+	 * Creates a new {@code float} attribute with no default value.
 	 *
 	 * @param registry registry this attribute is tied to
 	 * @param id identifier
@@ -219,11 +219,11 @@ public final class RegistryEntryAttribute<R, V> {
 	 * @return a new attribute
 	 */
 	public static <R> RegistryEntryAttribute<R, Float> createFloat(Registry<R> registry, Identifier id) {
-		return create(registry, id, Codec.FLOAT, null);
+		return create(registry, id, Codec.FLOAT);
 	}
 
 	/**
-	 * Creates a new {@code double} property.
+	 * Creates a new {@code double} attribute with no default value.
 	 *
 	 * @param registry registry this attribute is tied to
 	 * @param id identifier
@@ -231,11 +231,11 @@ public final class RegistryEntryAttribute<R, V> {
 	 * @return a new attribute
 	 */
 	public static <R> RegistryEntryAttribute<R, Double> createDouble(Registry<R> registry, Identifier id) {
-		return create(registry, id, Codec.DOUBLE, null);
+		return create(registry, id, Codec.DOUBLE);
 	}
 
 	/**
-	 * Creates a new {@code String} property.
+	 * Creates a new {@code String} attribute with no default value.
 	 *
 	 * @param registry registry this attribute is tied to
 	 * @param id identifier
@@ -243,7 +243,7 @@ public final class RegistryEntryAttribute<R, V> {
 	 * @return a new attribute
 	 */
 	public static <R> RegistryEntryAttribute<R, String> createString(Registry<R> registry, Identifier id) {
-		return create(registry, id, Codec.STRING, null);
+		return create(registry, id, Codec.STRING);
 	}
 
 	private final Registry<R> registry;
