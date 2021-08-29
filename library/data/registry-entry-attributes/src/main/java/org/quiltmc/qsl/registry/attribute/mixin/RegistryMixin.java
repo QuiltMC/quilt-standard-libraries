@@ -70,6 +70,9 @@ public abstract class RegistryMixin<R> implements QuiltRegistryInternals<R> {
 
 	@Override
 	public RegistryEntryAttributeHolder<R> qsl$getCombinedAttributeHolder() {
+		if (qsl$combinedAttributeHolder == null) {
+			qsl$updateCombinedAttributeHolder();
+		}
 		return qsl$combinedAttributeHolder;
 	}
 
