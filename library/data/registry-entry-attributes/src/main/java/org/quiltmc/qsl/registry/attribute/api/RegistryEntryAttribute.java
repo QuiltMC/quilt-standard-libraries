@@ -19,6 +19,7 @@ package org.quiltmc.qsl.registry.attribute.api;
 import com.mojang.serialization.Codec;
 import org.jetbrains.annotations.Nullable;
 
+import org.quiltmc.qsl.registry.attribute.impl.RegistryEntryAttributeHolderImpl;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import java.util.Objects;
@@ -46,7 +47,9 @@ public final class RegistryEntryAttribute<R, V> {
 	 */
 	public static <R, V> RegistryEntryAttribute<R, V> createWithDefault(Registry<R> registry, Identifier id, Codec<V> codec,
 																		@Nullable V defaultValue) {
-		return new RegistryEntryAttribute<>(registry, id, codec, defaultValue);
+		var attr = new RegistryEntryAttribute<>(registry, id, codec, defaultValue);
+		RegistryEntryAttributeHolderImpl.registerAttribute(registry, attr);
+		return attr;
 	}
 
 	/**
