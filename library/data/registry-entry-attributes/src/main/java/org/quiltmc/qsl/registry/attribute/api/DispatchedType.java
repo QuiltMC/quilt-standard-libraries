@@ -30,7 +30,7 @@ import java.util.function.Function;
  * }</code></pre>
  *
  * Using the {@code createDispatched} method, you can create an attribute for a composable behavior:<pre><code>
- * public static final SimpleRegistry&lt;Behavior&gt; REGISTRY = new SimpleRegistry();
+ * public static final SimpleRegistry&lt;Codec&lt;? extends Behavior&gt;&gt; REGISTRY = new SimpleRegistry();
  * public static final RegistryEntryAttribute&lt;Item, FuncValue&gt; ATTRIBUTE =
  *     RegistryEntryAttribute.createDispatched(Registry.ITEM, id("behavior"), REGISTRY::get);
  *
