@@ -125,7 +125,7 @@ public final class DumpBuiltinAttributesCommand {
 
 		int attrCount = 0, valueCount = 0;
 
-		var holder = RegistryEntryAttributeHolderImpl.getBuiltin(registry);
+		var holder = RegistryEntryAttributeHolder.getBuiltin(registry);
 		for (Map.Entry<? extends RegistryEntryAttribute<R, ?>, ? extends Map<R, Object>> entry : holder.valueTable.rowMap().entrySet()) {
 			RegistryEntryAttribute<R, Object> attr = (RegistryEntryAttribute<R, Object>) entry.getKey();
 			var attrId = attr.getId();

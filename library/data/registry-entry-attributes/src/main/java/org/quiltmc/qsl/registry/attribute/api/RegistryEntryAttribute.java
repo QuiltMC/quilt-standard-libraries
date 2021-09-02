@@ -19,7 +19,7 @@ package org.quiltmc.qsl.registry.attribute.api;
 import com.mojang.serialization.Codec;
 import org.jetbrains.annotations.Nullable;
 
-import org.quiltmc.qsl.registry.attribute.impl.RegistryEntryAttributeHolderImpl;
+import org.quiltmc.qsl.registry.attribute.impl.RegistryEntryAttributeHolder;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import java.util.Objects;
@@ -48,7 +48,7 @@ public final class RegistryEntryAttribute<R, V> {
 	public static <R, V> RegistryEntryAttribute<R, V> createWithDefault(Registry<R> registry, Identifier id, Codec<V> codec,
 																		@Nullable V defaultValue) {
 		var attr = new RegistryEntryAttribute<>(registry, id, codec, defaultValue);
-		RegistryEntryAttributeHolderImpl.registerAttribute(registry, attr);
+		RegistryEntryAttributeHolder.registerAttribute(registry, attr);
 		return attr;
 	}
 
@@ -308,7 +308,7 @@ public final class RegistryEntryAttribute<R, V> {
 	 * @return attribute value, or empty if no value is assigned
 	 */
 	public Optional<V> getValue(R entry) {
-		return RegistryEntryAttributeHolder.get(getRegistry()).getValue(entry, this);
+		return RegistryEntryAttributeHolder.getCombined(getRegistry()).getValue(entry, this);
 	}
 
 	@Override

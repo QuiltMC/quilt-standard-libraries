@@ -19,7 +19,6 @@ package org.quiltmc.qsl.registry.attribute.impl;
 import org.jetbrains.annotations.Nullable;
 
 import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
-import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttributeHolder;
 import net.minecraft.util.Identifier;
 
 public interface QuiltRegistryInternals<R> {

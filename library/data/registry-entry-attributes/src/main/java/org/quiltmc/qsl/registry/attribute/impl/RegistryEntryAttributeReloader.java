@@ -83,7 +83,7 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 								  Collection<Identifier> jsonIds, Registry<?> registry) {
 		for (var jsonId : jsonIds) {
 			Identifier attribId = getAttributeId(jsonId);
-			RegistryEntryAttribute<?, ?> attrib = RegistryEntryAttributeHolderImpl.getAttribute(registry, attribId);
+			RegistryEntryAttribute<?, ?> attrib = RegistryEntryAttributeHolder.getAttribute(registry, attribId);
 			if (attrib == null) {
 				LOGGER.warn("Unknown attribute {} (from {})", attribId, jsonId);
 				continue;
@@ -131,7 +131,7 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 			profiler.push(ID + "/clear_attributes");
 
 			for (var entry : Registry.REGISTRIES.getEntries()) {
-				RegistryEntryAttributeHolderImpl.getData(entry.getValue()).clear();
+				RegistryEntryAttributeHolder.getData(entry.getValue()).clear();
 			}
 
 			for (Map.Entry<RegistryEntryAttribute<?, ?>, AttributeMap> entry : attributeMaps.entrySet()) {
@@ -147,7 +147,7 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 			var registry = attrib.getRegistry();
 			Objects.requireNonNull(registry, "registry");
 
-			RegistryEntryAttributeHolderImpl<R> holder = RegistryEntryAttributeHolderImpl.getData(registry);
+			RegistryEntryAttributeHolderImpl<R> holder = RegistryEntryAttributeHolder.getData(registry);
 			for (Map.Entry<Identifier, Object> attribEntry : attribMap.map.entrySet()) {
 				R item = registry.get(attribEntry.getKey());
 				holder.putValue(item, attrib, (V) attribEntry.getValue());

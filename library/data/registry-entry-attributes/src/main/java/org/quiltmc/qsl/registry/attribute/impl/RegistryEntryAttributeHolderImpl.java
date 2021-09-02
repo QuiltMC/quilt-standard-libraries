@@ -20,50 +20,11 @@ import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
-import org.jetbrains.annotations.Nullable;
 
 import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
-import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttributeHolder;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import java.util.Optional;
 
 public class RegistryEntryAttributeHolderImpl<R> implements RegistryEntryAttributeHolder<R> {
-	@SuppressWarnings("unchecked")
-	public static <R> QuiltRegistryInternals<R> getInternals(Registry<R> registry) {
-		return (QuiltRegistryInternals<R>) registry;
-	}
-
-	public static <R, T> void registerAttribute(Registry<R> registry, RegistryEntryAttribute<R, T> attribute) {
-		getInternals(registry).qsl$registerAttribute(attribute);
-	}
-
-	public static <R> @Nullable RegistryEntryAttribute<R, ?> getAttribute(Registry<R> registry, Identifier id) {
-		return getInternals(registry).qsl$getAttribute(id);
-	}
-
-	public static <R> RegistryEntryAttributeHolder<R> getCombined(Registry<R> registry) {
-		return getInternals(registry).qsl$getCombinedAttributeHolder();
-	}
-
-	public static <R> RegistryEntryAttributeHolderImpl<R> getBuiltin(Registry<R> registry) {
-		var internals = getInternals(registry);
-		var holder = internals.qsl$getBuiltinAttributeHolder();
-		if (holder == null) {
-			internals.qsl$setBuiltinAttributeHolder(holder = new RegistryEntryAttributeHolderImpl<>());
-		}
-		return holder;
-	}
-
-	public static <R> RegistryEntryAttributeHolderImpl<R> getData(Registry<R> registry) {
-		var internals = getInternals(registry);
-		var holder = internals.qsl$getDataAttributeHolder();
-		if (holder == null) {
-			internals.qsl$setDataAttributeHolder(holder = new RegistryEntryAttributeHolderImpl<>());
-		}
-		return holder;
-	}
-
 	protected final Table<RegistryEntryAttribute<R, ?>, R, Object> valueTable;
 
 	@SuppressWarnings("UnstableApiUsage")

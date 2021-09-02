@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
-import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttributeHolder;
+import org.quiltmc.qsl.registry.attribute.impl.RegistryEntryAttributeHolder;
 import org.quiltmc.qsl.registry.attribute.impl.CombinedRegistryEntryAttributeHolder;
 import org.quiltmc.qsl.registry.attribute.impl.QuiltRegistryInternals;
 import org.quiltmc.qsl.registry.attribute.impl.RegistryEntryAttributeHolderImpl;

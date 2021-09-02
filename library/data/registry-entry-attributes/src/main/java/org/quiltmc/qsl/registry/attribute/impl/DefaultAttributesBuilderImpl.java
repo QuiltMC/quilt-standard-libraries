@@ -26,7 +26,7 @@ public final class DefaultAttributesBuilderImpl<R> implements RegistryExtensions
 
 	public DefaultAttributesBuilderImpl(Registry<R> registry, R item) {
 		this.item = item;
-		this.holder = RegistryEntryAttributeHolderImpl.getBuiltin(registry);
+		this.holder = RegistryEntryAttributeHolder.getBuiltin(registry);
 	}
 
 	@Override

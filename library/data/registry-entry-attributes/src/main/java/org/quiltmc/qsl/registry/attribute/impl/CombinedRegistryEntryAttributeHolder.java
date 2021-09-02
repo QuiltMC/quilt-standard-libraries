@@ -17,7 +17,6 @@
 package org.quiltmc.qsl.registry.attribute.impl;
 
 import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
-import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttributeHolder;
 import java.util.Optional;
 
 @SuppressWarnings("ClassCanBeRecord")
