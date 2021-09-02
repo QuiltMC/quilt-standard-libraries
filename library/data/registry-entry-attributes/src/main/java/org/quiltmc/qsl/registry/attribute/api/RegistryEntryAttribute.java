@@ -252,7 +252,7 @@ public final class RegistryEntryAttribute<R, V> {
 	private final Registry<R> registry;
 	private final Identifier id;
 	private final Codec<V> codec;
-	private final V defaultValue;
+	private final @Nullable V defaultValue;
 
 	private RegistryEntryAttribute(Registry<R> registry, Identifier id, Codec<V> codec, @Nullable V defaultValue) {
 		this.registry = registry;
@@ -293,7 +293,7 @@ public final class RegistryEntryAttribute<R, V> {
 	 *
 	 * @return default value
 	 */
-	public V getDefaultValue() {
+	public @Nullable V getDefaultValue() {
 		return defaultValue;
 	}
 

@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.registry.attribute.impl;
 
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
