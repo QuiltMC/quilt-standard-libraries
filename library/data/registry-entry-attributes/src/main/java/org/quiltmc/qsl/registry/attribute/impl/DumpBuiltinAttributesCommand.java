@@ -37,6 +37,8 @@ import org.apache.logging.log4j.Logger;
 
 import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
 import net.minecraft.command.CommandSource;
+import net.minecraft.command.argument.ArgumentTypes;
+import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
@@ -87,6 +89,8 @@ public final class DumpBuiltinAttributesCommand {
 	}
 
 	public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
+		ArgumentTypes.register("quilt:registry", RegistryArgumentType.class, new ConstantArgumentSerializer<>(RegistryArgumentType::registry));
+
 		dispatcher.register(literal("dumpbuiltinregattrs")
 				.then(argument("registry", RegistryArgumentType.registry())
 						.requires(src -> src.hasPermissionLevel(4))
