@@ -21,15 +21,31 @@ import net.minecraft.util.registry.Registry;
 import java.util.function.Function;
 
 /**
- * Utility interface used for {@link RegistryEntryAttribute#createDispatchedWithDefault(Registry, Identifier, Function, DispatchedType)}.<p>
+ * Utility interface used for {@link RegistryEntryAttribute#createDispatched(Registry, Identifier, Function)}.<p>
  *
- * This allows for polymorphic attribute types!
+ * This allows for polymorphic attribute types!<br>
+ * For example, say you have this interface:<pre><code>
+ * public interface Behavior extends DispatchedType {
+ *     void execute(ServerPlayerEntity player);
+ * }</code></pre>
+ *
+ * Using the {@code createDispatched} method, you can create an attribute for a composable behavior:<pre><code>
+ * public static final SimpleRegistry&lt;Behavior&gt; REGISTRY = new SimpleRegistry();
+ * public static final RegistryEntryAttribute&lt;Item, FuncValue&gt; ATTRIBUTE =
+ *     RegistryEntryAttribute.createDispatched(Registry.ITEM, id("behavior"), REGISTRY::get);
+ *
+ * public static void onItemUsed(ServerPlayerEntity player, ItemStack stack) {
+ *     ATTRIBUTE.getValue(stack.getItem()).ifPresent(behavior -> behavior.execute(player));
+ * }</code></pre>
  */
 public interface DispatchedType {
 	/**
-	 * Gets this object's type.
+	 * Gets this instance's type.<p>
 	 *
-	 * @return type
+	 * This is used by the {@linkplain com.mojang.serialization.Codec#dispatch(Function, Function) dispatched codec}
+	 * to get the {@code Codec} instance used to (de)serialize instances of this type.
+	 *
+	 * @return type ID
 	 */
 	Identifier getType();
 }
