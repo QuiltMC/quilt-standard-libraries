@@ -16,9 +16,10 @@
 
 package org.quiltmc.qsl.registry.attribute.api;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import org.quiltmc.qsl.registry.attribute.impl.RegistryEntryAttributeHolderImpl;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 import java.util.Optional;
 
 /**
@@ -26,6 +27,7 @@ import java.util.Optional;
  *
  * @param <R> registry entry type
  */
+@ApiStatus.NonExtendable
 public interface RegistryEntryAttributeHolder<R> {
 	/**
 	 * Gets the {@code RegistryEntryAttributeHolder} instance tied to a specific registry.
