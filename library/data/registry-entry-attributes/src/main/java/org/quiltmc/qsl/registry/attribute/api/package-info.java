@@ -1,7 +1,7 @@
 /**
- * <h2>Registry Item Attributes</h2>
+ * <h2>Registry Entry Attributes</h2>
  *
- * A simple API for adding arbitrary values to any object instances managed by a {@link net.minecraft.util.registry.Registry Registry}.<p>
+ * A simple API for adding arbitrary values to any instances managed by a {@link net.minecraft.util.registry.Registry Registry}.<p>
  *
  * {@link org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute RegistryEntryAttribute} contains a number of methods for creating
  * new attributes.<p>
