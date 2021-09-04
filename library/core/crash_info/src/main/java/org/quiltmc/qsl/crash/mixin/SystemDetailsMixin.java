@@ -16,18 +16,17 @@
 
 package org.quiltmc.qsl.crash.mixin;
 
-import java.util.function.Supplier;
-
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
+import net.minecraft.util.SystemDetails;
+import org.quiltmc.qsl.crash.api.CrashReportEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.util.SystemDetails;
-
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
+import java.util.function.Supplier;
 
 @Mixin(SystemDetails.class)
 abstract class SystemDetailsMixin {
@@ -55,6 +54,6 @@ abstract class SystemDetailsMixin {
 			return builder.toString();
 		});
 
-		// If we wish to add any additional sections, this is a great place to do so.
+		CrashReportEvents.SYSTEM_DETAILS.invoker().addDetails((SystemDetails) (Object) this);
 	}
 }
