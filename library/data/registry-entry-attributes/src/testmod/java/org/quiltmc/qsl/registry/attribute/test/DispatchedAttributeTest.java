@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.registry.attributes.test;
+package org.quiltmc.qsl.registry.attribute.test;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Codec;

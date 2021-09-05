@@ -10,8 +10,14 @@
   },
   "entrypoints": {
     "main": [
-      "org.quiltmc.qsl.registry.attributes.test.SimpleAttributeTest",
-      "org.quiltmc.qsl.registry.attributes.test.DispatchedAttributeTest"
+      "org.quiltmc.qsl.registry.attribute.test.SimpleAttributeTest",
+      "org.quiltmc.qsl.registry.attribute.test.DispatchedAttributeTest"
+    ],
+    "client": [
+      "org.quiltmc.qsl.registry.attribute.test.client.ClientAttributeTest"
     ]
-  }
+  },
+  "mixins": [
+    "quilt_registry_entry_attributes_testmod.mixins.json"
+  ]
 }
