@@ -11,8 +11,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(World.class)
-public class WorldMixin {
-	@Inject(method = "addDetailsToCrashReport", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILSOFT)
+public abstract class WorldMixin {
+	@Inject(method = "addDetailsToCrashReport", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
 	void quilt$addCrashReportDetails(CrashReport report, CallbackInfoReturnable<CrashReportSection> cir, CrashReportSection crashReportSection) {
 		CrashReportEvents.WORLD_DETAILS.invoker().addDetails((World) (Object) this, crashReportSection);
 	}
