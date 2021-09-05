@@ -34,6 +34,18 @@ public class CrashReportApiTestMod implements ModInitializer {
 			section.add("Biome at 0,0,0", world.getRegistryManager().get(Registry.BIOME_KEY).getId(world.getBiome(BlockPos.ORIGIN)));
 		});
 
+		CrashReportEvents.BLOCK_DETAILS.register((world, pos, state, section) -> {
+			section.add("World height", world.getHeight());
+		});
+
+		CrashReportEvents.BLOCKENTITY_DETAILS.register((entity, section) -> {
+			section.add("Is removed", entity.isRemoved());
+		});
+
+		CrashReportEvents.ENTITY_DETAILS.register((entity, section) -> {
+			section.add("Entity age", entity.age);
+		});
+
 		CrashReportEvents.CRASH_REPORT_CREATED.register(report -> {
 			report.addElement("Test Section")
 					.add("A thing?", "A thing.")

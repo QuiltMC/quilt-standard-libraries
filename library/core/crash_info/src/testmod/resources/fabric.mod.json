@@ -12,5 +12,8 @@
     "main": [
       "org.quiltmc.qsl.crash.test.CrashReportApiTestMod"
     ]
-  }
+  },
+  "mixins": [
+    "quilt_crash_info_testmod.mixins.json"
+  ]
 }
