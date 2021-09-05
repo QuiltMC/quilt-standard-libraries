@@ -59,8 +59,7 @@ public final class RegistryEntryAttribute<R, V> {
 		public boolean shouldLoad(boolean isClient) {
 			return switch (this) {
 				case CLIENT -> isClient;
-				case SERVER -> !isClient;
-				case BOTH -> true;
+				case SERVER, BOTH -> !isClient;
 			};
 		}
 	}
