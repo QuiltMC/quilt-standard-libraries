@@ -48,10 +48,10 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 	private static final Logger LOGGER = LogManager.getLogger("AttributeReloader");
 	private static final Identifier ID = new Identifier("quilt", "attributes");
 
-	private final boolean isClient;
+	private final boolean fromAssets;
 
-	public RegistryEntryAttributeReloader(boolean isClient) {
-		this.isClient = isClient;
+	public RegistryEntryAttributeReloader(boolean fromAssets) {
+		this.fromAssets = fromAssets;
 	}
 
 	@Override
@@ -95,9 +95,9 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 				continue;
 			}
 
-			if (!attrib.getSide().shouldLoad(isClient)) {
-				LOGGER.warn("Ignoring attribute {} (from {}) since it shouldn't be loaded on this side ({}, we're {})",
-						attribId, jsonId, attrib.getSide(), isClient ? "client" : "server");
+			if (!attrib.getSide().shouldLoad(fromAssets)) {
+				LOGGER.warn("Ignoring attribute {} (from {}) since it shouldn't be loaded from this source ({}, we're loading from {})",
+						attribId, jsonId, attrib.getSide(), fromAssets ? "assets" : "data");
 			}
 
 			profiler.swap(ID + "/getting_resources{" + jsonId + "}");
@@ -138,7 +138,7 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 	}
 
 	private <R> RegistryEntryAttributeHolder<R> getHolder(Registry<R> registry) {
-		return isClient ? RegistryEntryAttributeHolder.getAssets(registry) : RegistryEntryAttributeHolder.getData(registry);
+		return fromAssets ? RegistryEntryAttributeHolder.getAssets(registry) : RegistryEntryAttributeHolder.getData(registry);
 	}
 
 	protected final class LoadedData {

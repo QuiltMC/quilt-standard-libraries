@@ -36,7 +36,7 @@ import java.util.function.Function;
 @SuppressWarnings("ClassCanBeRecord")
 public final class RegistryEntryAttribute<R, V> {
 	/**
-	 * Specifies on what side(s) this attribute should exist.
+	 * Specifies on what side this attribute should exist.
 	 */
 	public enum Side {
 		/**
@@ -53,14 +53,14 @@ public final class RegistryEntryAttribute<R, V> {
 		BOTH;
 
 		/**
-		 * Checks if attributes of this side should load in this environment.
-		 * @param isClient {@code true} if client environment, {@code false} otherwise
+		 * Checks if attributes of this side should load from this source.
+		 * @param fromAssets {@code true} if loading from {@code assets}, {@code false} if loading from {@code data}
 		 * @return if the attribute value should be loaded or not
 		 */
-		public boolean shouldLoad(boolean isClient) {
+		public boolean shouldLoad(boolean fromAssets) {
 			return switch (this) {
-				case CLIENT -> isClient;
-				case SERVER, BOTH -> !isClient;
+				case CLIENT -> fromAssets;
+				case SERVER, BOTH -> !fromAssets;
 			};
 		}
 	}
@@ -120,35 +120,103 @@ public final class RegistryEntryAttribute<R, V> {
 		}
 	}
 
+	/**
+	 * Creates a builder for an attribute.
+	 *
+	 * @param registry registry to attach to
+	 * @param id attribute identifier
+	 * @param codec attached value codec
+	 * @param <R> type of the entries in the registry
+	 * @param <V> attached value type
+	 * @return a builder
+	 */
 	public static <R, V> Builder<R, V> builder(Registry<R> registry, Identifier id, Codec<V> codec) {
 		return new Builder<>(registry, id, codec);
 	}
 
+	/**
+	 * Creates a builder for an attribute using dispatched codecs for polymorphic types.
+	 *
+	 * @param registry registry to attach to
+	 * @param id attribute identifier
+	 * @param codecGetter codec getter
+	 * @param <R> type of the entries in the registry
+	 * @param <V> attached value type
+	 * @return a builder
+	 */
 	public static <R, V extends DispatchedType> Builder<R, V> dispatchedBuilder(Registry<R> registry, Identifier id,
 																				Function<Identifier, Codec<? extends V>> codecGetter) {
 		return builder(registry, id, Identifier.CODEC.dispatch(V::getType, codecGetter));
 	}
 
+	/**
+	 * Creates a builder for a boolean attribute.
+	 *
+	 * @param registry registry to attach to
+	 * @param id attribute identifier
+	 * @param <R> type of the entries in the registry
+	 * @return a builder
+	 */
 	public static <R> Builder<R, Boolean> boolBuilder(Registry<R> registry, Identifier id) {
 		return builder(registry, id, Codec.BOOL);
 	}
 
+	/**
+	 * Creates a builder for an integer attribute.
+	 *
+	 * @param registry registry to attach to
+	 * @param id attribute identifier
+	 * @param <R> type of the entries in the registry
+	 * @return a builder
+	 */
 	public static <R> Builder<R, Integer> intBuilder(Registry<R> registry, Identifier id) {
 		return builder(registry, id, Codec.INT);
 	}
 
+	/**
+	 * Creates a builder for a long attribute.
+	 *
+	 * @param registry registry to attach to
+	 * @param id attribute identifier
+	 * @param <R> type of the entries in the registry
+	 * @return a builder
+	 */
 	public static <R> Builder<R, Long> longBuilder(Registry<R> registry, Identifier id) {
 		return builder(registry, id, Codec.LONG);
 	}
 
+	/**
+	 * Creates a builder for a float attribute.
+	 *
+	 * @param registry registry to attach to
+	 * @param id attribute identifier
+	 * @param <R> type of the entries in the registry
+	 * @return a builder
+	 */
 	public static <R> Builder<R, Float> floatBuilder(Registry<R> registry, Identifier id) {
 		return builder(registry, id, Codec.FLOAT);
 	}
 
+	/**
+	 * Creates a builder for a double attribute.
+	 *
+	 * @param registry registry to attach to
+	 * @param id attribute identifier
+	 * @param <R> type of the entries in the registry
+	 * @return a builder
+	 */
 	public static <R> Builder<R, Double> doubleBuilder(Registry<R> registry, Identifier id) {
 		return builder(registry, id, Codec.DOUBLE);
 	}
 
+	/**
+	 * Creates a builder for a string attribute.
+	 *
+	 * @param registry registry to attach to
+	 * @param id attribute identifier
+	 * @param <R> type of the entries in the registry
+	 * @return a builder
+	 */
 	public static <R> Builder<R, String> stringBuilder(Registry<R> registry, Identifier id) {
 		return builder(registry, id, Codec.STRING);
 	}
@@ -185,6 +253,11 @@ public final class RegistryEntryAttribute<R, V> {
 		return id;
 	}
 
+	/**
+	 * Gets the side this attribute should exist on.
+	 *
+	 * @return attribute side
+	 */
 	public Side getSide() {
 		return side;
 	}
