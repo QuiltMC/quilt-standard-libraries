@@ -32,11 +32,11 @@ import net.minecraft.world.World;
 
 public class SimpleAttributeTest implements ModInitializer {
 	public static final RegistryEntryAttribute<Item, Integer> TEST_ATTRIBUTE =
-			RegistryEntryAttribute.createInt(Registry.ITEM,
-					new Identifier("quilt", "test_attribute"));
+			RegistryEntryAttribute.intBuilder(Registry.ITEM,
+					new Identifier("quilt", "test_attribute")).build();
 	public static final RegistryEntryAttribute<Item, Float> TEST_ATTRIBUTE_2 =
-			RegistryEntryAttribute.createFloat(Registry.ITEM,
-					new Identifier("quilt", "test_attribute_2"));
+			RegistryEntryAttribute.floatBuilder(Registry.ITEM,
+					new Identifier("quilt", "test_attribute_2")).build();
 
 	public static final MyItem MY_ITEM = RegistryExtensions.registerWithAttributes(Registry.ITEM,
 			new Identifier("quilt", "simple_attribute_test_item"),

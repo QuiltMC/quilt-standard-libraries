@@ -35,228 +35,132 @@ import java.util.function.Function;
 @SuppressWarnings("ClassCanBeRecord")
 public final class RegistryEntryAttribute<R, V> {
 	/**
-	 * Creates a new attribute with a default value.
-	 *
-	 * @param registry registry this attribute is tied to
-	 * @param id identifier
-	 * @param codec value codec
-	 * @param defaultValue default value
-	 * @param <R> registry entry type
-	 * @param <V> value type
-	 * @return a new attribute
+	 * Specifies on what side(s) this attribute should exist.
 	 */
-	public static <R, V> RegistryEntryAttribute<R, V> createWithDefault(Registry<R> registry, Identifier id, Codec<V> codec,
-																		@Nullable V defaultValue) {
-		var attr = new RegistryEntryAttribute<>(registry, id, codec, defaultValue);
-		RegistryEntryAttributeHolder.registerAttribute(registry, attr);
-		return attr;
+	public enum Side {
+		/**
+		 * This attribute is client-side only.
+		 */
+		CLIENT,
+		/**
+		 * This attribute is server-side only.
+		 */
+		SERVER,
+		/**
+		 * This attribute exists on both sides. Its value will be sent from server to client.
+		 */
+		BOTH;
+
+		/**
+		 * Checks if attributes of this side should load in this environment.
+		 * @param isClient {@code true} if client environment, {@code false} otherwise
+		 * @return if the attribute value should be loaded or not
+		 */
+		public boolean shouldLoad(boolean isClient) {
+			return switch (this) {
+				case CLIENT -> isClient;
+				case SERVER -> !isClient;
+				case BOTH -> true;
+			};
+		}
 	}
 
 	/**
-	 * Creates a new attribute with no default value.
+	 * Builder for attributes.
 	 *
-	 * @param registry registry this attribute is tied to
-	 * @param id identifier
-	 * @param codec value codec
-	 * @param <R> registry entry type
-	 * @param <V> value type
-	 * @return a new attribute
+	 * @param <R> type of the entries in the registry
+	 * @param <V> attached value type
 	 */
-	public static <R, V> RegistryEntryAttribute<R, V> create(Registry<R> registry, Identifier id, Codec<V> codec) {
-		return createWithDefault(registry, id, codec, null);
+	public static final class Builder<R, V> {
+		private final Registry<R> registry;
+		private final Identifier id;
+		private final Codec<V> codec;
+
+		private Side side;
+		private @Nullable V defaultValue;
+
+		private Builder(Registry<R> registry, Identifier id, Codec<V> codec) {
+			this.registry = registry;
+			this.id = id;
+			this.codec = codec;
+			side = Side.BOTH;
+		}
+
+		/**
+		 * Sets what side this attribute should exist on.
+		 *
+		 * @param side attribute side
+		 * @return this builder
+		 */
+		public Builder<R, V> side(Side side) {
+			this.side = side;
+			return this;
+		}
+
+		/**
+		 * Sets the default value of this attribute.
+		 *
+		 * @param defaultValue default value
+		 * @return this builder
+		 */
+		public Builder<R, V> defaultValue(@Nullable V defaultValue) {
+			this.defaultValue = defaultValue;
+			return this;
+		}
+
+		/**
+		 * Builds a new attribute.
+		 * 
+		 * @return new attribute
+		 */
+		public RegistryEntryAttribute<R, V> build() {
+			return new RegistryEntryAttribute<>(registry, id, side, codec, defaultValue);
+		}
 	}
 
-	/**
-	 * Creates a new polymorphic attribute via dispatched codecs with a default value.
-	 *
-	 * @param registry registry this attribute is tied to
-	 * @param id identifier
-	 * @param codecGetter getter for a certain value type's codec
-	 * @param defaultValue default value
-	 * @param <R> registry entry type
-	 * @param <V> value type
-	 * @return a new attribute
-	 */
-	public static <R, V extends DispatchedType> RegistryEntryAttribute<R, V> createDispatchedWithDefault(Registry<R> registry, Identifier id,
-																										 Function<Identifier, Codec<? extends V>> codecGetter,
-																										 @Nullable V defaultValue) {
-		return createWithDefault(registry, id, Identifier.CODEC.dispatch(V::getType, codecGetter), defaultValue);
+	public static <R, V> Builder<R, V> builder(Registry<R> registry, Identifier id, Codec<V> codec) {
+		return new Builder<>(registry, id, codec);
 	}
 
-	/**
-	 * Creates a new polymorphic attribute via dispatched codecs with no default value.
-	 *
-	 * @param registry registry this attribute is tied to
-	 * @param id identifier
-	 * @param codecGetter getter for a certain value type's codec
-	 * @param <R> registry entry type
-	 * @param <V> value type
-	 * @return a new attribute
-	 */
-	public static <R, V extends DispatchedType> RegistryEntryAttribute<R, V> createDispatched(Registry<R> registry, Identifier id,
-																							  Function<Identifier, Codec<? extends V>> codecGetter) {
-		return createDispatchedWithDefault(registry, id, codecGetter, null);
+	public static <R, V extends DispatchedType> Builder<R, V> dispatchedBuilder(Registry<R> registry, Identifier id,
+																				Function<Identifier, Codec<? extends V>> codecGetter) {
+		return builder(registry, id, Identifier.CODEC.dispatch(V::getType, codecGetter));
 	}
 
-	/**
-	 * Creates a new {@code boolean} attribute with a default value.
-	 *
-	 * @param registry registry this attribute is tied to
-	 * @param id identifier
-	 * @param defaultValue default value
-	 * @param <R> registry entry type
-	 * @return a new attribute
-	 */
-	public static <R> RegistryEntryAttribute<R, Boolean> createBoolWithDefault(Registry<R> registry, Identifier id, boolean defaultValue) {
-		return createWithDefault(registry, id, Codec.BOOL, defaultValue);
+	public static <R> Builder<R, Boolean> boolBuilder(Registry<R> registry, Identifier id) {
+		return builder(registry, id, Codec.BOOL);
 	}
 
-	/**
-	 * Creates a new {@code int} attribute with a default value.
-	 *
-	 * @param registry registry this attribute is tied to
-	 * @param id identifier
-	 * @param defaultValue default value
-	 * @param <R> registry entry type
-	 * @return a new attribute
-	 */
-	public static <R> RegistryEntryAttribute<R, Integer> createIntWithDefault(Registry<R> registry, Identifier id, int defaultValue) {
-		return createWithDefault(registry, id, Codec.INT, defaultValue);
+	public static <R> Builder<R, Integer> intBuilder(Registry<R> registry, Identifier id) {
+		return builder(registry, id, Codec.INT);
 	}
 
-	/**
-	 * Creates a new {@code long} attribute with a default value.
-	 *
-	 * @param registry registry this attribute is tied to
-	 * @param id identifier
-	 * @param defaultValue default value
-	 * @param <R> registry entry type
-	 * @return a new attribute
-	 */
-	public static <R> RegistryEntryAttribute<R, Long> createLongWithDefault(Registry<R> registry, Identifier id, long defaultValue) {
-		return createWithDefault(registry, id, Codec.LONG, defaultValue);
+	public static <R> Builder<R, Long> longBuilder(Registry<R> registry, Identifier id) {
+		return builder(registry, id, Codec.LONG);
 	}
 
-	/**
-	 * Creates a new {@code float} attribute with a default value.
-	 *
-	 * @param registry registry this attribute is tied to
-	 * @param id identifier
-	 * @param defaultValue default value
-	 * @param <R> registry entry type
-	 * @return a new attribute
-	 */
-	public static <R> RegistryEntryAttribute<R, Float> createFloatWithDefault(Registry<R> registry, Identifier id, float defaultValue) {
-		return createWithDefault(registry, id, Codec.FLOAT, defaultValue);
+	public static <R> Builder<R, Float> floatBuilder(Registry<R> registry, Identifier id) {
+		return builder(registry, id, Codec.FLOAT);
 	}
 
-	/**
-	 * Creates a new {@code double} attribute with a default value.
-	 *
-	 * @param registry registry this attribute is tied to
-	 * @param id identifier
-	 * @param defaultValue default value
-	 * @param <R> registry entry type
-	 * @return a new attribute
-	 */
-	public static <R> RegistryEntryAttribute<R, Double> createDoubleWithDefault(Registry<R> registry, Identifier id, double defaultValue) {
-		return createWithDefault(registry, id, Codec.DOUBLE, defaultValue);
+	public static <R> Builder<R, Double> doubleBuilder(Registry<R> registry, Identifier id) {
+		return builder(registry, id, Codec.DOUBLE);
 	}
 
-	/**
-	 * Creates a new {@code String} attribute with a default value.
-	 *
-	 * @param registry registry this attribute is tied to
-	 * @param id identifier
-	 * @param defaultValue default value
-	 * @param <R> registry entry type
-	 * @return a new attribute
-	 */
-	public static <R> RegistryEntryAttribute<R, String> createStringWithDefault(Registry<R> registry, Identifier id, String defaultValue) {
-		return createWithDefault(registry, id, Codec.STRING, defaultValue);
-	}
-
-	/**
-	 * Creates a new {@code boolean} attribute with no default value.
-	 *
-	 * @param registry registry this attribute is tied to
-	 * @param id identifier
-	 * @param <R> registry entry type
-	 * @return a new attribute
-	 */
-	public static <R> RegistryEntryAttribute<R, Boolean> createBool(Registry<R> registry, Identifier id) {
-		return create(registry, id, Codec.BOOL);
-	}
-
-	/**
-	 * Creates a new {@code int} attribute with no default value.
-	 *
-	 * @param registry registry this attribute is tied to
-	 * @param id identifier
-	 * @param <R> registry entry type
-	 * @return a new attribute
-	 */
-	public static <R> RegistryEntryAttribute<R, Integer> createInt(Registry<R> registry, Identifier id) {
-		return create(registry, id, Codec.INT);
-	}
-
-
-	/**
-	 * Creates a new {@code long} attribute with no default value.
-	 *
-	 * @param registry registry this attribute is tied to
-	 * @param id identifier
-	 * @param <R> registry entry type
-	 * @return a new attribute
-	 */
-	public static <R> RegistryEntryAttribute<R, Long> createLong(Registry<R> registry, Identifier id) {
-		return create(registry, id, Codec.LONG);
-	}
-
-	/**
-	 * Creates a new {@code float} attribute with no default value.
-	 *
-	 * @param registry registry this attribute is tied to
-	 * @param id identifier
-	 * @param <R> registry entry type
-	 * @return a new attribute
-	 */
-	public static <R> RegistryEntryAttribute<R, Float> createFloat(Registry<R> registry, Identifier id) {
-		return create(registry, id, Codec.FLOAT);
-	}
-
-	/**
-	 * Creates a new {@code double} attribute with no default value.
-	 *
-	 * @param registry registry this attribute is tied to
-	 * @param id identifier
-	 * @param <R> registry entry type
-	 * @return a new attribute
-	 */
-	public static <R> RegistryEntryAttribute<R, Double> createDouble(Registry<R> registry, Identifier id) {
-		return create(registry, id, Codec.DOUBLE);
-	}
-
-	/**
-	 * Creates a new {@code String} attribute with no default value.
-	 *
-	 * @param registry registry this attribute is tied to
-	 * @param id identifier
-	 * @param <R> registry entry type
-	 * @return a new attribute
-	 */
-	public static <R> RegistryEntryAttribute<R, String> createString(Registry<R> registry, Identifier id) {
-		return create(registry, id, Codec.STRING);
+	public static <R> Builder<R, String> stringBuilder(Registry<R> registry, Identifier id) {
+		return builder(registry, id, Codec.STRING);
 	}
 
 	private final Registry<R> registry;
 	private final Identifier id;
+	private final Side side;
 	private final Codec<V> codec;
 	private final @Nullable V defaultValue;
 
-	private RegistryEntryAttribute(Registry<R> registry, Identifier id, Codec<V> codec, @Nullable V defaultValue) {
+	private RegistryEntryAttribute(Registry<R> registry, Identifier id, Side side, Codec<V> codec, @Nullable V defaultValue) {
 		this.registry = registry;
 		this.id = id;
+		this.side = side;
 		this.codec = codec;
 		this.defaultValue = defaultValue;
 	}
@@ -277,6 +181,10 @@ public final class RegistryEntryAttribute<R, V> {
 	 */
 	public Identifier getId() {
 		return id;
+	}
+
+	public Side getSide() {
+		return side;
 	}
 
 	/**
@@ -308,7 +216,7 @@ public final class RegistryEntryAttribute<R, V> {
 	 * @return attribute value, or empty if no value is assigned
 	 */
 	public Optional<V> getValue(R entry) {
-		return RegistryEntryAttributeHolder.getCombined(getRegistry()).getValue(entry, this);
+		return RegistryEntryAttributeHolder.getCombined(registry).getValue(entry, this);
 	}
 
 	@Override

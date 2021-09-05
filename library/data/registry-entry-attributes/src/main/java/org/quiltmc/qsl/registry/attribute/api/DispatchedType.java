@@ -21,7 +21,7 @@ import net.minecraft.util.registry.Registry;
 import java.util.function.Function;
 
 /**
- * Utility interface used for {@link RegistryEntryAttribute#createDispatched(Registry, Identifier, Function)}.<p>
+ * Utility interface used for {@link RegistryEntryAttribute#dispatchedBuilder(Registry, Identifier, Function)}.<p>
  *
  * This allows for polymorphic attribute types!<br>
  * For example, say you have this interface:<pre><code>
@@ -31,8 +31,8 @@ import java.util.function.Function;
  *
  * Using the {@code createDispatched} method, you can create an attribute for a composable behavior:<pre><code>
  * public static final SimpleRegistry&lt;Codec&lt;? extends Behavior&gt;&gt; REGISTRY = new SimpleRegistry();
- * public static final RegistryEntryAttribute&lt;Item, FuncValue&gt; ATTRIBUTE =
- *     RegistryEntryAttribute.createDispatched(Registry.ITEM, id("behavior"), REGISTRY::get);
+ * public static final RegistryEntryAttribute&lt;Item, Behavior&gt; ATTRIBUTE =
+ *     RegistryEntryAttribute.&lt;Item, Behavior&gt;dispatchedBuilder(Registry.ITEM, id("behavior"), REGISTRY::get);
  *
  * public static void onItemUsed(ServerPlayerEntity player, ItemStack stack) {
  *     ATTRIBUTE.getValue(stack.getItem()).ifPresent(behavior -> behavior.execute(player));

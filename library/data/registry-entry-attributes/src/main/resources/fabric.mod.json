@@ -22,6 +22,9 @@
   "entrypoints": {
     "main": [
       "org.quiltmc.qsl.registry.attribute.impl.Initializer"
+    ],
+    "client": [
+      "org.quiltmc.qsl.registry.attribute.impl.ClientInitializer"
     ]
   },
   "mixins": [

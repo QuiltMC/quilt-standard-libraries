@@ -47,10 +47,17 @@ import java.util.concurrent.Executor;
 public final class RegistryEntryAttributeReloader implements SimpleResourceReloader<RegistryEntryAttributeReloader.LoadedData> {
 	private static final Logger LOGGER = LogManager.getLogger("AttributeReloader");
 	private static final Identifier ID = new Identifier("quilt", "attributes");
+	private static final Identifier ID_CLIENT = new Identifier("quilt", "client_attributes");
+
+	private final boolean isClient;
+
+	public RegistryEntryAttributeReloader(boolean isClient) {
+		this.isClient = isClient;
+	}
 
 	@Override
 	public Identifier getQuiltId() {
-		return ID;
+		return isClient ? ID_CLIENT : ID;
 	}
 
 	@Override
@@ -87,6 +94,11 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 			if (attrib == null) {
 				LOGGER.warn("Unknown attribute {} (from {})", attribId, jsonId);
 				continue;
+			}
+
+			if (!attrib.getSide().shouldLoad(isClient)) {
+				LOGGER.warn("Ignoring attribute {} (from {}) since it shouldn't be loaded on this side ({}, we're {})",
+						attribId, jsonId, attrib.getSide(), isClient ? "client" : "server");
 			}
 
 			profiler.swap(ID + "/getting_resources{" + jsonId + "}");

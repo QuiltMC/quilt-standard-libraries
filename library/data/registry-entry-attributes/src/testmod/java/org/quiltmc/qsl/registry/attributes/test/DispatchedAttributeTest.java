@@ -97,8 +97,8 @@ public class DispatchedAttributeTest implements ModInitializer {
 	}
 
 	public static final RegistryEntryAttribute<Item, FuncValue> MODULAR_FUNCTION =
-			RegistryEntryAttribute.createDispatched(Registry.ITEM, new Identifier("quilt", "modular_function"),
-					FuncValue.CODECS::get);
+			RegistryEntryAttribute.<Item, FuncValue>dispatchedBuilder(Registry.ITEM, new Identifier("quilt", "modular_function"),
+					FuncValue.CODECS::get).build();
 
 	public static final class ModularFunctionItem extends Item {
 		public ModularFunctionItem(Settings settings) {
