@@ -21,6 +21,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import org.quiltmc.qsl.crash.api.CrashReportEvents;
 
+import java.util.Random;
+
 public class CrashReportApiTestMod implements ModInitializer {
 	@Override
 	public void onInitialize() {
@@ -30,6 +32,12 @@ public class CrashReportApiTestMod implements ModInitializer {
 
 		CrashReportEvents.WORLD_DETAILS.register((world, section) -> {
 			section.add("Biome at 0,0,0", world.getRegistryManager().get(Registry.BIOME_KEY).getId(world.getBiome(BlockPos.ORIGIN)));
+		});
+
+		CrashReportEvents.CRASH_REPORT_CREATED.register(report -> {
+			report.addElement("Test Section")
+					.add("A thing?", "A thing.")
+					.add("A random number", new Random().nextInt());
 		});
 	}
 }

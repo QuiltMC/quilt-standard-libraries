@@ -1,5 +1,6 @@
 package org.quiltmc.qsl.crash.api;
 
+import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.crash.CrashReportSection;
 import net.minecraft.world.World;
 import org.quiltmc.qsl.base.api.event.ArrayEvent;
@@ -17,6 +18,12 @@ public final class CrashReportEvents {
 		}
 	});
 
+	public static final ArrayEvent<CrashReportCreation> CRASH_REPORT_CREATED = ArrayEvent.create(CrashReportCreation.class, callbacks -> report -> {
+		for (var callback : callbacks) {
+			callback.onCreate(report);
+		}
+	});
+
 
 	@FunctionalInterface
 	public interface SystemDetails {
@@ -26,5 +33,10 @@ public final class CrashReportEvents {
 	@FunctionalInterface
 	public interface WorldDetails {
 		void addDetails(World world, CrashReportSection section);
+	}
+
+	@FunctionalInterface
+	public interface CrashReportCreation {
+		void onCreate(CrashReport report);
 	}
 }

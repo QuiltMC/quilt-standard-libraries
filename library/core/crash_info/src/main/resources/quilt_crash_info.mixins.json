@@ -3,6 +3,7 @@
   "package": "org.quiltmc.qsl.crash.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "CrashReportMixin",
     "SystemDetailsMixin",
     "WorldMixin"
   ],
