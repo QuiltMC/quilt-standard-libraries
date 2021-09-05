@@ -27,7 +27,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 /**
- * Represents an attribute that is attached to a registry entry. Maps to a value in a {@link RegistryEntryAttributeHolder}.
+ * Represents an attribute that is attached to a registry entry.
  *
  * @param <R> type of the entries in the registry
  * @param <V> attached value type
@@ -110,11 +110,13 @@ public final class RegistryEntryAttribute<R, V> {
 
 		/**
 		 * Builds a new attribute.
-		 * 
+		 *
 		 * @return new attribute
 		 */
 		public RegistryEntryAttribute<R, V> build() {
-			return new RegistryEntryAttribute<>(registry, id, side, codec, defaultValue);
+			var attr = new RegistryEntryAttribute<>(registry, id, side, codec, defaultValue);
+			RegistryEntryAttributeHolder.registerAttribute(registry, attr);
+			return attr;
 		}
 	}
 
