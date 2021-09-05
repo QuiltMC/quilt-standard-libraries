@@ -3,7 +3,12 @@
   "package": "org.quiltmc.qsl.commands.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
-    "CommandManagerMixin"
+    "CommandManagerMixin",
+    "HelpCommandAccessor",
+    "client.ClientCommandSourceMixin",
+    "client.ClientPlayerEntityMixin",
+    "client.ClientPlayNetworkHandlerMixin",
+    "client.MinecraftClientMixin"
   ],
   "client": [],
   "injectors": {
