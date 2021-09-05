@@ -67,7 +67,7 @@ public final class RegistryEntryAttributeHolder<R> {
 		return holder;
 	}
 
-	private final Table<RegistryEntryAttribute<R, ?>, R, Object> valueTable;
+	public final Table<RegistryEntryAttribute<R, ?>, R, Object> valueTable;
 
 	@SuppressWarnings("UnstableApiUsage")
 	private RegistryEntryAttributeHolder() {
