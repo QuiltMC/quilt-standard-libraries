@@ -24,6 +24,14 @@ import net.minecraft.client.world.ClientWorld;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+/**
+ * Events related to a ticking Minecraft client's world.
+ *
+ * <h2>A note of warning</h2>
+ *
+ * Callbacks registered to any of these events should ensure as little time as possible is spent executing, since the tick
+ * loop is a very hot code path.
+ */
 @Environment(EnvType.CLIENT)
 public final class ClientWorldTickEvents {
 	/**
@@ -53,6 +61,12 @@ public final class ClientWorldTickEvents {
 	@FunctionalInterface
 	@Environment(EnvType.CLIENT)
 	public interface Start {
+		/**
+		 * Called before a world is ticked.
+		 *
+		 * @param client the client
+		 * @param world the world being ticked
+		 */
 		void startWorldTick(MinecraftClient client, ClientWorld world);
 	}
 
@@ -63,6 +77,12 @@ public final class ClientWorldTickEvents {
 	@FunctionalInterface
 	@Environment(EnvType.CLIENT)
 	public interface End {
+		/**
+		 * Called after a world is ticked.
+		 *
+		 * @param client the client
+		 * @param world the world being ticked
+		 */
 		void endWorldTick(MinecraftClient client, ClientWorld world);
 	}
 }

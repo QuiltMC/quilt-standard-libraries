@@ -63,6 +63,11 @@ public final class ClientTickEvents {
 	@FunctionalInterface
 	@Environment(EnvType.CLIENT)
 	public interface Start {
+		/**
+		 * Called before the client has started an iteration of the tick loop.
+		 *
+		 * @param client the client
+		 */
 		void startClientTick(MinecraftClient client);
 	}
 
@@ -73,6 +78,11 @@ public final class ClientTickEvents {
 	@FunctionalInterface
 	@Environment(EnvType.CLIENT)
 	public interface End {
+		/**
+		 * Called at the end of an iteration of the client's tick loop.
+		 *
+		 * @param client the client that finished ticking
+		 */
 		void endClientTick(MinecraftClient client);
 	}
 }

@@ -21,6 +21,14 @@ import org.quiltmc.qsl.base.api.event.ArrayEvent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 
+/**
+ * Events related to a ticking Minecraft server's worlds.
+ *
+ * <h2>A note of warning</h2>
+ *
+ * Callbacks registered to any of these events should ensure as little time as possible is spent executing, since the tick
+ * loop is a very hot code path.
+ */
 public final class ServerWorldTickEvents {
 	/**
 	 * An event indicating that a world will be ticked.

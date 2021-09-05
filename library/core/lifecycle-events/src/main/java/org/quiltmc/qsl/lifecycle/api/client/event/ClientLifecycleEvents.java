@@ -28,13 +28,11 @@ import net.fabricmc.api.Environment;
  *
  * <p>The lifecycle of a Minecraft client, starts when the client is ready. The client will tick the client and then the
  * integrated server if in single player.
- *
- * @see ClientTickEvents
  */
 @Environment(EnvType.CLIENT)
 public final class ClientLifecycleEvents {
-	// There is no CLIENT_STARTING event because there is no way to allow mods to register callbacks that early without
-	// possibly initializing the game's registries improperly in preLaunch.
+	// There is no STARTING event because there is no way to allow mods to register callbacks that early without possibly
+	// initializing the game's registries improperly in preLaunch.
 
 	/**
 	 * An event indicating that a Minecraft client is ready to tick and render.
