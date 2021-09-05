@@ -5,10 +5,6 @@ import org.quiltmc.qsl.base.api.event.ArrayEvent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
-@Environment(EnvType.CLIENT)
 public final class ServerWorldTickEvents {
 	/**
 	 * An event indicating that a world will be ticked.
@@ -35,7 +31,6 @@ public final class ServerWorldTickEvents {
 	 * @see #START
 	 */
 	@FunctionalInterface
-	@Environment(EnvType.CLIENT)
 	public interface Start {
 		/**
 		 * Called before a world is ticked.
@@ -51,7 +46,6 @@ public final class ServerWorldTickEvents {
 	 * @see #END
 	 */
 	@FunctionalInterface
-	@Environment(EnvType.CLIENT)
 	public interface End {
 		/**
 		 * Called after a world is ticked.

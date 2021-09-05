@@ -43,7 +43,7 @@ public final class ClientLifecycleEvents {
 	 * have access to the connected server.
 	 *
 	 * <p>If your mod has any data on the integrated server, avoid doing that here, use
-	 * {@link org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents#STOPPING ServerLifecycleEvents.SERVER_STOPPING}
+	 * {@link org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents#STOPPING ServerLifecycleEvents.STOPPING}
 	 * instead to clean up any data on the integrated server.
 	 */
 	public static final ArrayEvent<Stopping> STOPPING = ArrayEvent.create(Stopping.class, callbacks -> client -> {

@@ -24,7 +24,7 @@ import net.minecraft.server.world.ServerWorld;
 /**
  * Events indicating whether a world has been loaded or unloaded from a server.
  *
- * <p>Mods which implement dynamically loading and unloading worlds from a server may call execute these events to allow
+ * <p>Mods which implement dynamically loading and unloading worlds from a server may execute these events to allow
  * mods to initialize state on new worlds or clean up references to a world.
  */
 public final class ServerWorldLoadEvents {
