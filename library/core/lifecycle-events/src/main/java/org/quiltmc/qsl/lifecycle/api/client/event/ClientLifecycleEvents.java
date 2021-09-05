@@ -86,6 +86,13 @@ public final class ClientLifecycleEvents {
 	@FunctionalInterface
 	@Environment(EnvType.CLIENT)
 	public interface Ready {
+		/**
+		 * Called when a majority of client facilities have been initialized.
+		 *
+		 * <p>It should be noted this is executed while the splash screen is visible, not when the main menu is reached.
+		 *
+		 * @param client the client which is read.
+		 */
 		void readyClient(MinecraftClient client);
 	}
 
@@ -96,6 +103,11 @@ public final class ClientLifecycleEvents {
 	@FunctionalInterface
 	@Environment(EnvType.CLIENT)
 	public interface Stopping {
+		/**
+		 * Called when a Minecraft client has finished it's last tick and is shutting down.
+		 *
+		 * @param client the client which is shutting down
+		 */
 		void stoppingClient(MinecraftClient client);
 	}
 
@@ -106,6 +118,13 @@ public final class ClientLifecycleEvents {
 	@FunctionalInterface
 	@Environment(EnvType.CLIENT)
 	public interface Stopped {
+		/**
+		 * Called when a Minecraft client has finished shutdown and the client will be exited.
+		 *
+		 * <p>This is typically executed just before the Java virtual machine is shut down.
+		 *
+		 * @param client the minecraft client which is exiting
+		 */
 		void stoppedClient(MinecraftClient client);
 	}
 }
