@@ -21,10 +21,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
-import org.quiltmc.qsl.registry.attribute.impl.RegistryEntryAttributeHolder;
-import org.quiltmc.qsl.registry.attribute.impl.CombinedRegistryEntryAttributeHolder;
 import org.quiltmc.qsl.registry.attribute.impl.QuiltRegistryInternals;
-import org.quiltmc.qsl.registry.attribute.impl.RegistryEntryAttributeHolderImpl;
+import org.quiltmc.qsl.registry.attribute.impl.RegistryEntryAttributeHolder;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import java.util.HashMap;
@@ -32,9 +30,9 @@ import java.util.HashMap;
 @Mixin(Registry.class)
 public abstract class RegistryMixin<R> implements QuiltRegistryInternals<R> {
 	@Unique private final HashMap<Identifier, RegistryEntryAttribute<R, ?>> attributes = new HashMap<>();
-	@Unique private RegistryEntryAttributeHolderImpl<R> qsl$builtinAttributeHolder;
-	@Unique private RegistryEntryAttributeHolderImpl<R> qsl$dataAttributeHolder;
-	@Unique private RegistryEntryAttributeHolder<R> qsl$combinedAttributeHolder;
+	@Unique private RegistryEntryAttributeHolder<R> qsl$builtinAttributeHolder;
+	@Unique private RegistryEntryAttributeHolder<R> qsl$dataAttributeHolder;
+	@Unique private RegistryEntryAttributeHolder<R> qsl$assetsAttributeHolder;
 
 	@Override
 	public void qsl$registerAttribute(RegistryEntryAttribute<R, ?> attribute) {
@@ -47,37 +45,32 @@ public abstract class RegistryMixin<R> implements QuiltRegistryInternals<R> {
 	}
 
 	@Override
-	public RegistryEntryAttributeHolderImpl<R> qsl$getBuiltinAttributeHolder() {
+	public RegistryEntryAttributeHolder<R> qsl$getBuiltinAttributeHolder() {
 		return qsl$builtinAttributeHolder;
 	}
 
 	@Override
-	public void qsl$setBuiltinAttributeHolder(RegistryEntryAttributeHolderImpl<R> holder) {
+	public void qsl$setBuiltinAttributeHolder(RegistryEntryAttributeHolder<R> holder) {
 		this.qsl$builtinAttributeHolder = holder;
-		qsl$updateCombinedAttributeHolder();
 	}
 
 	@Override
-	public RegistryEntryAttributeHolderImpl<R> qsl$getDataAttributeHolder() {
+	public RegistryEntryAttributeHolder<R> qsl$getDataAttributeHolder() {
 		return qsl$dataAttributeHolder;
 	}
 
 	@Override
-	public void qsl$setDataAttributeHolder(RegistryEntryAttributeHolderImpl<R> holder) {
+	public void qsl$setDataAttributeHolder(RegistryEntryAttributeHolder<R> holder) {
 		this.qsl$dataAttributeHolder = holder;
-		qsl$updateCombinedAttributeHolder();
 	}
 
 	@Override
-	public RegistryEntryAttributeHolder<R> qsl$getCombinedAttributeHolder() {
-		if (qsl$combinedAttributeHolder == null) {
-			qsl$updateCombinedAttributeHolder();
-		}
-		return qsl$combinedAttributeHolder;
+	public RegistryEntryAttributeHolder<R> qsl$getAssetsAttributeHolder() {
+		return qsl$assetsAttributeHolder;
 	}
 
-	@Unique private void qsl$updateCombinedAttributeHolder() {
-		qsl$combinedAttributeHolder = new CombinedRegistryEntryAttributeHolder<>(
-				qsl$dataAttributeHolder, qsl$builtinAttributeHolder);
+	@Override
+	public void qsl$setAssetsAttributeHolder(RegistryEntryAttributeHolder<R> holder) {
+		this.qsl$assetsAttributeHolder = holder;
 	}
 }

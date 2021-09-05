@@ -47,7 +47,6 @@ import java.util.concurrent.Executor;
 public final class RegistryEntryAttributeReloader implements SimpleResourceReloader<RegistryEntryAttributeReloader.LoadedData> {
 	private static final Logger LOGGER = LogManager.getLogger("AttributeReloader");
 	private static final Identifier ID = new Identifier("quilt", "attributes");
-	private static final Identifier ID_CLIENT = new Identifier("quilt", "client_attributes");
 
 	private final boolean isClient;
 
@@ -57,7 +56,7 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 
 	@Override
 	public Identifier getQuiltId() {
-		return isClient ? ID_CLIENT : ID;
+		return ID;
 	}
 
 	@Override
@@ -138,12 +137,22 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 		return new Identifier(jsonId.getNamespace(), path);
 	}
 
-	protected record LoadedData(Map<RegistryEntryAttribute<?, ?>, AttributeMap> attributeMaps) {
+	private <R> RegistryEntryAttributeHolder<R> getHolder(Registry<R> registry) {
+		return isClient ? RegistryEntryAttributeHolder.getAssets(registry) : RegistryEntryAttributeHolder.getData(registry);
+	}
+
+	protected final class LoadedData {
+		private final Map<RegistryEntryAttribute<?, ?>, AttributeMap> attributeMaps;
+
+		private LoadedData(Map<RegistryEntryAttribute<?, ?>, AttributeMap> attributeMaps) {
+			this.attributeMaps = attributeMaps;
+		}
+
 		public void apply(Profiler profiler) {
 			profiler.push(ID + "/clear_attributes");
 
 			for (var entry : Registry.REGISTRIES.getEntries()) {
-				RegistryEntryAttributeHolder.getData(entry.getValue()).clear();
+				getHolder(entry.getValue()).clear();
 			}
 
 			for (Map.Entry<RegistryEntryAttribute<?, ?>, AttributeMap> entry : attributeMaps.entrySet()) {
@@ -159,10 +168,10 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 			var registry = attrib.getRegistry();
 			Objects.requireNonNull(registry, "registry");
 
-			RegistryEntryAttributeHolderImpl<R> holder = RegistryEntryAttributeHolder.getData(registry);
+			RegistryEntryAttributeHolder<R> holder = getHolder(registry);
 			for (Map.Entry<Identifier, Object> attribEntry : attribMap.map.entrySet()) {
 				R item = registry.get(attribEntry.getKey());
-				holder.putValue(item, attrib, (V) attribEntry.getValue());
+				holder.putValue(attrib, item, (V) attribEntry.getValue());
 			}
 		}
 	}

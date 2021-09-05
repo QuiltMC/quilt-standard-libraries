@@ -2,7 +2,8 @@
   "required": true,
   "package": "org.quiltmc.qsl.registry.attribute.test.mixin",
   "compatibilityLevel": "JAVA_16",
-  "mixins": [
+  "client": [
+    "client.DebugHudMixin"
   ],
   "injectors": {
     "defaultRequire": 1

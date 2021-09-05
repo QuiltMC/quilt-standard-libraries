@@ -22,7 +22,7 @@ import net.minecraft.util.registry.Registry;
 
 public final class DefaultAttributesBuilderImpl<R> implements RegistryExtensions.DefaultAttributesBuilder<R> {
 	private final R item;
-	private final RegistryEntryAttributeHolderImpl<R> holder;
+	private final RegistryEntryAttributeHolder<R> holder;
 
 	public DefaultAttributesBuilderImpl(Registry<R> registry, R item) {
 		this.item = item;
@@ -31,7 +31,7 @@ public final class DefaultAttributesBuilderImpl<R> implements RegistryExtensions
 
 	@Override
 	public <V> RegistryExtensions.DefaultAttributesBuilder<R> put(RegistryEntryAttribute<R, V> attrib, V value) {
-		holder.putValue(item, attrib, value);
+		holder.putValue(attrib, item, value);
 		return this;
 	}
 }

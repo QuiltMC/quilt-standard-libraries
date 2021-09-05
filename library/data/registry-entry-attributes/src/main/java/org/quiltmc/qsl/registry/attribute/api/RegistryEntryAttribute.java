@@ -19,9 +19,10 @@ package org.quiltmc.qsl.registry.attribute.api;
 import com.mojang.serialization.Codec;
 import org.jetbrains.annotations.Nullable;
 
-import org.quiltmc.qsl.registry.attribute.impl.RegistryEntryAttributeHolder;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import org.quiltmc.qsl.registry.attribute.impl.RegistryEntryAttributeHolder;
+
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -217,7 +218,22 @@ public final class RegistryEntryAttribute<R, V> {
 	 * @return attribute value, or empty if no value is assigned
 	 */
 	public Optional<V> getValue(R entry) {
-		return RegistryEntryAttributeHolder.getCombined(registry).getValue(entry, this);
+		V value;
+		if (side == Side.CLIENT) {
+			value = RegistryEntryAttributeHolder.getAssets(registry).getValue(this, entry);
+			if (value != null) {
+				return Optional.of(value);
+			}
+		}
+		value = RegistryEntryAttributeHolder.getData(registry).getValue(this, entry);
+		if (value != null) {
+			return Optional.of(value);
+		}
+		value = RegistryEntryAttributeHolder.getBuiltin(registry).getValue(this, entry);
+		if (value != null) {
+			return Optional.of(value);
+		}
+		return Optional.ofNullable(defaultValue);
 	}
 
 	@Override

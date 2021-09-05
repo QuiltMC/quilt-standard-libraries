@@ -25,11 +25,12 @@ public interface QuiltRegistryInternals<R> {
 	void qsl$registerAttribute(RegistryEntryAttribute<R, ?> attribute);
 	@Nullable RegistryEntryAttribute<R, ?> qsl$getAttribute(Identifier id);
 
-	RegistryEntryAttributeHolderImpl<R> qsl$getBuiltinAttributeHolder();
-	void qsl$setBuiltinAttributeHolder(RegistryEntryAttributeHolderImpl<R> holder);
+	RegistryEntryAttributeHolder<R> qsl$getBuiltinAttributeHolder();
+	void qsl$setBuiltinAttributeHolder(RegistryEntryAttributeHolder<R> holder);
 
-	RegistryEntryAttributeHolderImpl<R> qsl$getDataAttributeHolder();
-	void qsl$setDataAttributeHolder(RegistryEntryAttributeHolderImpl<R> holder);
+	RegistryEntryAttributeHolder<R> qsl$getDataAttributeHolder();
+	void qsl$setDataAttributeHolder(RegistryEntryAttributeHolder<R> holder);
 
-	RegistryEntryAttributeHolder<R> qsl$getCombinedAttributeHolder();
+	RegistryEntryAttributeHolder<R> qsl$getAssetsAttributeHolder();
+	void qsl$setAssetsAttributeHolder(RegistryEntryAttributeHolder<R> holder);
 }
