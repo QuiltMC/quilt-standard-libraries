@@ -8,7 +8,7 @@ import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
 
 public class ClientAttributeTest implements ClientModInitializer {
 	public static final RegistryEntryAttribute<Block, Boolean> ATTRIBUTE =
-			RegistryEntryAttribute.boolBuilder(Registry.BLOCK, new Identifier("quilt", "test_attribute_client"))
+			RegistryEntryAttribute.boolBuilder(Registry.BLOCK, new Identifier("quilt", "based"))
 					.side(RegistryEntryAttribute.Side.CLIENT).build();
 
 	@Override

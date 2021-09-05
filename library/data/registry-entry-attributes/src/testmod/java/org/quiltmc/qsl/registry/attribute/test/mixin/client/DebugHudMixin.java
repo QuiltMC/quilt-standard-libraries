@@ -15,14 +15,13 @@ import java.util.List;
 
 @Mixin(DebugHud.class)
 public abstract class DebugHudMixin {
-	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Inject(method = "getRightText", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 2,
 			shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
-	public void qsl$addTestAttribute(CallbackInfoReturnable<List<String>> cir, long l, long m, long n, long o, List list,
-									 BlockPos blockPos, BlockState blockState) {
-		var dList = (List<String>) list;
-		dList.add("Based: " + ClientAttributeTest.ATTRIBUTE.getValue(blockState.getBlock())
-				.map(b -> b ? Formatting.GREEN + "true" : Formatting.RED + "false")
+	public void qsl$addTestAttribute(CallbackInfoReturnable<List<String>> cir, long l, long m, long n, long o,
+									 List<String> list, BlockPos blockPos, BlockState blockState) {
+		list.add("based: " + ClientAttributeTest.ATTRIBUTE.getValue(blockState.getBlock())
+				.map(b -> b ? Formatting.GREEN + "yes" : Formatting.RED + "no")
 				.orElse(Formatting.BLUE + "unset"));
+		list.add(Formatting.UNDERLINE + "Properties:");
 	}
 }
