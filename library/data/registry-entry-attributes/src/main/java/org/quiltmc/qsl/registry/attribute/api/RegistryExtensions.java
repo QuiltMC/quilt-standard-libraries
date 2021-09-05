@@ -33,7 +33,7 @@ public final class RegistryExtensions {
 	 * @param entry entry
 	 * @param builderConsumer builder consumer
 	 * @param <R> type of the entries in the registry
-	 * @param <T> type of the entry we're currently registry (maybe a subclass of {@code R})
+	 * @param <T> type of the entry we're currently registering (may be a subclass of {@code R})
 	 * @return the newly registered entry
 	 */
 	public static <R, T extends R> T registerWithAttributes(Registry<R> registry, Identifier id, T entry,
