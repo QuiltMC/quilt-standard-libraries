@@ -23,6 +23,13 @@ import org.quiltmc.qsl.crash.api.CrashReportEvents;
 
 import java.util.Random;
 
+/**
+ * Test mod for Crash Report Events.
+ *
+ * <p>To cause an entity crash, summon an end crystal atop a block of diamond.
+ *
+ * <p>To cause a BE crash, place a furnace atop a block of diamond.
+ */
 public class CrashReportApiTestMod implements ModInitializer {
 	@Override
 	public void onInitialize() {
