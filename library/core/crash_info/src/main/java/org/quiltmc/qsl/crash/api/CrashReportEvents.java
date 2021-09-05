@@ -42,7 +42,7 @@ public final class CrashReportEvents {
 		}
 	});
 
-	public static final ArrayEvent<CrashReportCreation> CRASH_REPORT_CREATED = ArrayEvent.create(CrashReportCreation.class, callbacks -> report -> {
+	public static final ArrayEvent<CrashReportCreation> CRASH_REPORT_CREATION = ArrayEvent.create(CrashReportCreation.class, callbacks -> report -> {
 		for (var callback : callbacks) {
 			callback.onCreate(report);
 		}

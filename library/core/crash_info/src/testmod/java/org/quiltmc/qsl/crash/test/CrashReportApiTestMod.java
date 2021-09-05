@@ -46,7 +46,7 @@ public class CrashReportApiTestMod implements ModInitializer {
 			section.add("Entity age", entity.age);
 		});
 
-		CrashReportEvents.CRASH_REPORT_CREATED.register(report -> {
+		CrashReportEvents.CRASH_REPORT_CREATION.register(report -> {
 			report.addElement("Test Section")
 					.add("A thing?", "A thing.")
 					.add("A random number", new Random().nextInt());
