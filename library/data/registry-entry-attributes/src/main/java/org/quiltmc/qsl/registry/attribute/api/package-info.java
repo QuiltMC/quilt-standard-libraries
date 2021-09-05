@@ -3,10 +3,10 @@
  *
  * A simple API for adding arbitrary values to any instances managed by a {@link net.minecraft.util.registry.Registry Registry}.<p>
  *
- * {@link org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute RegistryEntryAttribute} contains a number of methods for creating
+ * {@link org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute RegistryEntryAttribute} contains a number of methods for building
  * new attributes.<p>
  *
- * To retrieve an attribute value, use {@link org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute#getValue(java.lang.Object)}
+ * To retrieve an attribute's value, use {@link org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute#getValue(java.lang.Object)}
  * to get the value assigned to the specified registry entry.<p>
  *
  * <h3>Vocabulary</h3>
@@ -20,8 +20,9 @@
  *
  * <h3>Data-Driven Capabilities</h3>
  *
- * All attributes declared using this API can be set using a data pack! Simply create the following file:<br>
- * {@code data/<attribute_namespace>/attributes/<registry_key_path>/<attribute_name>.json}<p>
+ * All attributes declared using this API can be set using a data pack (or a resource pack, if the attribute is client-side)!
+ * Simply create the following file:<br>
+ * {@code <data|assets>/<attribute_namespace>/attributes/<registry_key_path>/<attribute_name>.json}<p>
  *
  * These "attribute maps" use a tag-like format, with a {@code replace} property that allows replacing all (non-built-in) values.<p>
  *
