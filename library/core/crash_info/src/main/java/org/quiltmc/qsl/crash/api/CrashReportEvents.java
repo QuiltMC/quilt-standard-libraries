@@ -114,9 +114,9 @@ public final class CrashReportEvents {
 	}
 
 	/**
-	 * Functional interface to be implemented on callbacks for {@link #SYSTEM_DETAILS}.
+	 * Functional interface to be implemented on callbacks for {@link #WORLD_DETAILS}.
 	 *
-	 * @see #SYSTEM_DETAILS
+	 * @see #WORLD_DETAILS
 	 */
 	@FunctionalInterface
 	public interface WorldDetails {
