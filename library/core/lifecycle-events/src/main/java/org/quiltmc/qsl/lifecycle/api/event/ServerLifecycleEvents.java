@@ -20,9 +20,6 @@ import org.quiltmc.qsl.base.api.event.ArrayEvent;
 
 import net.minecraft.server.MinecraftServer;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 /**
  * Events indicating the lifecycle of a Minecraft server.
  *
@@ -147,7 +144,7 @@ public final class ServerLifecycleEvents {
 	@FunctionalInterface
 	public interface Stopping {
 		/**
-		 * Called when a Minecraft server has finished it's last tick and is shutting down.
+		 * Called when a Minecraft server has finished its last tick and is shutting down.
 		 *
 		 * @param server the server which is shutting down
 		 */
@@ -158,7 +155,7 @@ public final class ServerLifecycleEvents {
 	 * Functional interface to be implemented on callbacks for {@link #STOPPED}.
 	 * @see #STOPPED
 	 */
-	@Environment(EnvType.CLIENT)
+	@FunctionalInterface
 	public interface Stopped {
 		/**
 		 * Called when a Minecraft server has finished shutdown and the server will be exited.

@@ -46,14 +46,14 @@ public final class ClientLifecycleEvents {
 	});
 
 	/**
-	 * An event indicating that a Minecraft client has finished it's last tick and will shut down.
+	 * An event indicating that a Minecraft client has finished its last tick and will shut down.
 	 *
-	 * <p>If the client is connected to a server, the client will disconnect from the server. Then if the client has a
-	 * running an integrated server, the integrated server will be shutdown. Finally all client facilities are torn down.
+	 * <p>After this event is fired, the client will disconnect from the server if it is connected to one. Then, if the client
+	 * was running an integrated server, the integrated server will be shut down. Finally, all client facilities are torn down.
 	 *
-	 * <h2>What should mods do when this event is executed</h2>
+	 * <h2>What should mods do when this event is executed?</h2>
 	 *
-	 * Mods which maintain session data when connected to a server should should save that data here as those mods still
+	 * Mods which maintain session data when connected to a server should save that data here, as the client will still
 	 * have access to the connected server.
 	 *
 	 * <p>If your mod has any data on the integrated server, avoid doing that here, use
@@ -104,7 +104,7 @@ public final class ClientLifecycleEvents {
 	@Environment(EnvType.CLIENT)
 	public interface Stopping {
 		/**
-		 * Called when a Minecraft client has finished it's last tick and is shutting down.
+		 * Called when a Minecraft client has finished its last tick and is shutting down.
 		 *
 		 * @param client the client which is shutting down
 		 */
