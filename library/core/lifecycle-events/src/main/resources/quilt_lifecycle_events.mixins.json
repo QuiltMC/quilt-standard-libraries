@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.lifecycle.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "mixins": [
+    "MinecraftServerMixin",
+    "ServerWorldMixin"
+  ],
+  "client": [
+    "client.ClientWorldMixin",
+    "client.MinecraftClientMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
