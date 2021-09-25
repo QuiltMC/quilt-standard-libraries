@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "quilt_networking",
+  "name": "Quilt Networking",
+  "version": "${version}",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "icon": "assets/quilt_networking/icon.png",
+  "contact": {
+    "homepage": "https://quiltmc.org",
+    "issues": "https://github.com/QuiltMC/quilt-standard-libraries/issues",
+    "sources": "https://github.com/QuiltMC/quilt-standard-libraries"
+  },
+  "authors": [
+    "QuiltMC"
+  ],
+  "entrypoints": {
+    "main": [
+      "org.quiltmc.qsl.networking.impl.NetworkingImpl::init"
+    ],
+    "client": [
+      "org.quiltmc.qsl.networking.impl.client.ClientNetworkingImpl::clientInit"
+    ]
+  },
+  "depends": {
+    "quilt_loader": ">=0.13.1-rc.10",
+    "quilt_base": ">=1.0.0"
+  },
+  "description": "Utilities to assist with sending custom packets over the Minecraft protocol.",
+  "mixins": [
+    "quilt_networking.mixins.json"
+  ]
+}
