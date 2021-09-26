@@ -131,7 +131,7 @@ public final class DumpBuiltinAttributesCommand {
 			var attrId = attr.getId();
 
 			var path = FabricLoader.getInstance().getGameDir().resolve("quilt/builtin-registry-entry-attributes")
-					.resolve(attr.getSide() == RegistryEntryAttribute.Side.CLIENT ? "assets" : "data")
+					.resolve(attr.getSide().getSource().getDirectory())
 					.resolve(attrId.getNamespace())
 					.resolve("attributes")
 					.resolve(registryId.getNamespace())
