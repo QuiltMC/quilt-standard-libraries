@@ -32,7 +32,7 @@ import java.util.function.Function;
  * Using the {@code createDispatched} method, you can create an attribute for a composable behavior:<pre><code>
  * public static final SimpleRegistry&lt;Codec&lt;? extends Behavior&gt;&gt; REGISTRY = new SimpleRegistry();
  * public static final RegistryEntryAttribute&lt;Item, Behavior&gt; ATTRIBUTE =
- *     RegistryEntryAttribute.&lt;Item, Behavior&gt;dispatchedBuilder(Registry.ITEM, id("behavior"), REGISTRY::get);
+ *     RegistryEntryAttribute.&lt;Item, Behavior&gt;dispatchedBuilder(Registry.ITEM, id("behavior"), REGISTRY::get).build();
  *
  * public static void onItemUsed(ServerPlayerEntity player, ItemStack stack) {
  *     ATTRIBUTE.getValue(stack.getItem()).ifPresent(behavior -> behavior.execute(player));
