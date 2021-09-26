@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.registry.attribute.api;
 
 import com.mojang.serialization.Codec;
+import net.minecraft.resource.ResourceType;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.util.Identifier;
@@ -42,26 +43,38 @@ public final class RegistryEntryAttribute<R, V> {
 		/**
 		 * This attribute is client-side only.
 		 */
-		CLIENT,
+		CLIENT(ResourceType.CLIENT_RESOURCES),
 		/**
 		 * This attribute is server-side only.
 		 */
-		SERVER,
+		SERVER(ResourceType.SERVER_DATA),
 		/**
 		 * This attribute exists on both sides. Its value will be sent from server to client.
 		 */
-		BOTH;
+		BOTH(ResourceType.SERVER_DATA);
+
+		private final ResourceType source;
+
+		Side(ResourceType source) {
+			this.source = source;
+		}
+
+		/**
+		 * Gets the source attributes of this side should be loaded from.
+		 *
+		 * @return source to use for attributes of this side
+		 */
+		public ResourceType getSource() {
+			return source;
+		}
 
 		/**
 		 * Checks if attributes of this side should load from this source.
-		 * @param fromAssets {@code true} if loading from {@code assets}, {@code false} if loading from {@code data}
+		 * @param source the source to check
 		 * @return if the attribute value should be loaded or not
 		 */
-		public boolean shouldLoad(boolean fromAssets) {
-			return switch (this) {
-				case CLIENT -> fromAssets;
-				case SERVER, BOTH -> !fromAssets;
-			};
+		public boolean shouldLoad(ResourceType source) {
+			return this.source == source;
 		}
 	}
 

@@ -21,11 +21,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
+import net.minecraft.resource.ResourceType;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
+import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.quiltmc.qsl.resource.loader.api.reloader.SimpleResourceReloader;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
@@ -45,13 +47,17 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 public final class RegistryEntryAttributeReloader implements SimpleResourceReloader<RegistryEntryAttributeReloader.LoadedData> {
+	public static void register(ResourceType source) {
+		ResourceLoader.get(source).registerReloader(new RegistryEntryAttributeReloader(source));
+	}
+
 	private static final Logger LOGGER = LogManager.getLogger("AttributeReloader");
 	private static final Identifier ID = new Identifier("quilt", "attributes");
 
-	private final boolean fromAssets;
+	private final ResourceType source;
 
-	public RegistryEntryAttributeReloader(boolean fromAssets) {
-		this.fromAssets = fromAssets;
+	private RegistryEntryAttributeReloader(ResourceType source) {
+		this.source = source;
 	}
 
 	@Override
@@ -95,9 +101,9 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 				continue;
 			}
 
-			if (!attrib.getSide().shouldLoad(fromAssets)) {
+			if (!attrib.getSide().shouldLoad(source)) {
 				LOGGER.warn("Ignoring attribute {} (from {}) since it shouldn't be loaded from this source ({}, we're loading from {})",
-						attribId, jsonId, attrib.getSide(), fromAssets ? "assets" : "data");
+						attribId, jsonId, attrib.getSide().getSource(), source);
 			}
 
 			profiler.swap(ID + "/getting_resources{" + jsonId + "}");
@@ -138,7 +144,10 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 	}
 
 	private <R> RegistryEntryAttributeHolder<R> getHolder(Registry<R> registry) {
-		return fromAssets ? RegistryEntryAttributeHolder.getAssets(registry) : RegistryEntryAttributeHolder.getData(registry);
+		return switch (source) {
+			case CLIENT_RESOURCES -> RegistryEntryAttributeHolder.getAssets(registry);
+			case SERVER_DATA -> RegistryEntryAttributeHolder.getData(registry);
+		};
 	}
 
 	protected final class LoadedData {
