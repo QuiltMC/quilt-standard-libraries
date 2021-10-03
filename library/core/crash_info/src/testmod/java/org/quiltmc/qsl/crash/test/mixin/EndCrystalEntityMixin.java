@@ -35,7 +35,7 @@ public abstract class EndCrystalEntityMixin extends Entity {
 	@Inject(method = "tick", at=@At("HEAD"))
 	void crashOnTick(CallbackInfo ci) {
 		if (world.getBlockState(getBlockPos().down()).getBlock() == Blocks.DIAMOND_BLOCK) {
-			kill();
+			this.kill();
 			throw new RuntimeException("Crash Test!");
 		}
 	}
