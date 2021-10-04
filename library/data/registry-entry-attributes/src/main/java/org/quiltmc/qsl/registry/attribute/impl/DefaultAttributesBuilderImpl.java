@@ -16,10 +16,12 @@
 
 package org.quiltmc.qsl.registry.attribute.impl;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.qsl.registry.attribute.api.RegistryExtensions;
 import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
 import net.minecraft.util.registry.Registry;
 
+@ApiStatus.Internal
 public final class DefaultAttributesBuilderImpl<R> implements RegistryExtensions.DefaultAttributesBuilder<R> {
 	private final R item;
 	private final RegistryEntryAttributeHolder<R> holder;

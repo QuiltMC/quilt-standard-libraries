@@ -18,7 +18,9 @@ package org.quiltmc.qsl.registry.attribute.impl;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.resource.ResourceType;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 public final class ClientInitializer implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {

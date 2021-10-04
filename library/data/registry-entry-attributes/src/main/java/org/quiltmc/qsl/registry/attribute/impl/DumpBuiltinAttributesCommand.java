@@ -35,6 +35,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.ArgumentTypes;
@@ -55,6 +56,7 @@ import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
+@ApiStatus.Internal
 public final class DumpBuiltinAttributesCommand {
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 

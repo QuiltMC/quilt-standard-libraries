@@ -16,11 +16,13 @@
 
 package org.quiltmc.qsl.registry.attribute.impl;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
 import net.minecraft.util.Identifier;
 
+@ApiStatus.Internal
 public interface QuiltRegistryInternals<R> {
 	void qsl$registerAttribute(RegistryEntryAttribute<R, ?> attribute);
 	@Nullable RegistryEntryAttribute<R, ?> qsl$getAttribute(Identifier id);
