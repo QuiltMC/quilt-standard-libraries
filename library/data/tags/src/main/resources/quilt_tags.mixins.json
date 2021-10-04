@@ -1,0 +1,25 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.tag.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "mixins": [
+    "DynamicRegistryManagerAccessor",
+    "MinecraftServerMixin",
+    "RegistryOpsMixin",
+    "RequiredTagListMixin",
+    "RequiredTagListMixin$TagWrapperMixin",
+    "RequiredTagListRegistryAccessor",
+    "RequiredTagListRegistryMixin",
+    "TagBuilderMixin",
+    "TagImplMixin",
+    "TagManagerLoaderMixin",
+    "TagManagerMixin",
+    "TagMixin"
+  ],
+  "client": [
+    "client.ClientPlayNetworkHandlerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

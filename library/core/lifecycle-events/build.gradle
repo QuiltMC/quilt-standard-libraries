@@ -6,7 +6,7 @@ qslModule {
 	moduleName = "lifecycle-events"
 	version = "1.0.0"
 	library = "core"
-	coreDependencies([
+	coreApiDependencies([
 			"qsl-base"
 	])
 }

@@ -62,15 +62,35 @@ public class QslModuleExtension {
 		this.project.setVersion(version + (System.getenv("SNAPSHOTS_URL") != null ? "-SNAPSHOT" : ""));
 	}
 
+	private Dependency getCoreModule(String module) {
+		Map<String, String> map = new LinkedHashMap<>(2);
+		map.put("path", ":core:" + module);
+		map.put("configuration", "dev");
+
+		return this.project.getDependencies().project(map);
+	}
+
+	public void coreApiDependencies(Iterable<String> dependencies) {
+		for (String dependency : dependencies) {
+			Dependency project = this.getCoreModule(dependency);
+			this.moduleDependencies.add(project);
+			this.project.getDependencies().add(JavaPlugin.API_CONFIGURATION_NAME, project);
+		}
+	}
+
 	public void coreDependencies(Iterable<String> dependencies) {
 		for (String dependency : dependencies) {
-			Map<String, String> map = new LinkedHashMap<>(2);
-			map.put("path", ":core:" + dependency);
-			map.put("configuration", "dev");
-
-			Dependency project = this.project.getDependencies().project(map);
+			Dependency project = this.getCoreModule(dependency);
 			this.moduleDependencies.add(project);
 			this.project.getDependencies().add(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME, project);
+		}
+	}
+
+	public void coreTestmodDependencies(Iterable<String> dependencies) {
+		for (String dependency : dependencies) {
+			Dependency project = this.getCoreModule(dependency);
+			this.moduleDependencies.add(project);
+			this.project.getDependencies().add("testmodImplementation", project);
 		}
 	}
 

@@ -19,6 +19,7 @@ includeBuild("build-logic")
 
 // Libraries
 library("core")
+library("data")
 
 def library(String library) {
 	include(library)
