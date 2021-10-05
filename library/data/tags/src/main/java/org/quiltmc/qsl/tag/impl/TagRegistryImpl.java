@@ -163,6 +163,10 @@ public final class TagRegistryImpl<T> implements TagRegistry<T> {
 		return DynamicRegistryManagerAccessor.getInfos().containsKey(registryKey);
 	}
 
+	public static void forceInit() {
+		// noop. this only forces to run the static initializer.
+	}
+
 	@Environment(EnvType.CLIENT)
 	public static void startClientMissingTagsFetching() {
 		MISSING_TAGS_CLIENT_FETCH.set(true);

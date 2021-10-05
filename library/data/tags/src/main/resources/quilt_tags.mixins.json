@@ -17,7 +17,8 @@
     "TagMixin"
   ],
   "client": [
-    "client.ClientPlayNetworkHandlerMixin"
+    "client.ClientPlayNetworkHandlerMixin",
+    "client.TagGroupLoaderAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

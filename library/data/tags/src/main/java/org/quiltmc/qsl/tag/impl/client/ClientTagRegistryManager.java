@@ -16,13 +16,19 @@
 
 package org.quiltmc.qsl.tag.impl.client;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.resource.ResourceManager;
@@ -36,7 +42,9 @@ import net.minecraft.util.registry.RegistryKey;
 
 import org.quiltmc.qsl.tag.api.TagType;
 import org.quiltmc.qsl.tag.impl.TagDelegate;
+import org.quiltmc.qsl.tag.impl.TagRegistryImpl;
 import org.quiltmc.qsl.tag.mixin.RequiredTagListRegistryAccessor;
+import org.quiltmc.qsl.tag.mixin.client.TagGroupLoaderAccessor;
 
 @ApiStatus.Internal
 public final class ClientTagRegistryManager<T> {
@@ -44,6 +52,7 @@ public final class ClientTagRegistryManager<T> {
 			new Object2ObjectOpenHashMap<>();
 
 	private final RegistryKey<? extends Registry<T>> registryKey;
+	private final ClientRegistryFetcher registryFetcher;
 	private final TagGroupLoader<T> loader;
 	private DynamicRegistryManager registryManager = DynamicRegistryManager.create();
 	private Map<Identifier, Tag.Builder> serializedTags = Map.of();
@@ -53,7 +62,8 @@ public final class ClientTagRegistryManager<T> {
 
 	private ClientTagRegistryManager(RegistryKey<? extends Registry<T>> registryKey, String dataType) {
 		this.registryKey = registryKey;
-		this.loader = new TagGroupLoader<>(new ClientRegistryFetcher(), dataType);
+		this.registryFetcher = new ClientRegistryFetcher();
+		this.loader = new TagGroupLoader<>(this.registryFetcher, dataType);
 	}
 
 	public static <T> Tag.Identified<T> create(Identifier id, TagType type,
@@ -67,25 +77,66 @@ public final class ClientTagRegistryManager<T> {
 		};
 	}
 
+	@Environment(EnvType.CLIENT)
 	public void setSerializedTags(Map<Identifier, Tag.Builder> serializedTags) {
 		this.serializedTags = serializedTags;
-		this.group = this.loader.buildGroup(this.serializedTags);
+		this.group = this.buildDynamicGroup(this.serializedTags);
 	}
 
+	@Environment(EnvType.CLIENT)
 	public void setDefaultSerializedTags(Map<Identifier, Tag.Builder> serializedTags) {
 		this.defaultSerializedTags = serializedTags;
-		this.defaultGroup = this.loader.buildGroup(this.defaultSerializedTags);
+		this.defaultGroup = this.buildDynamicGroup(this.defaultSerializedTags);
 	}
 
+	@Environment(EnvType.CLIENT)
 	public Map<Identifier, Tag.Builder> load(ResourceManager resourceManager) {
 		return this.loader.loadTags(resourceManager);
 	}
 
+	@Environment(EnvType.CLIENT)
 	public void apply(DynamicRegistryManager registryManager) {
 		this.registryManager = registryManager;
-		// @TODO force all the tags to be optional if it's a dynamic registry. (Client can't know in advance)
-		this.group = this.loader.buildGroup(this.serializedTags);
-		this.defaultGroup = this.loader.buildGroup(this.defaultSerializedTags);
+
+		this.group = this.buildDynamicGroup(this.serializedTags);
+		this.defaultGroup = this.buildDynamicGroup(this.defaultSerializedTags);
+	}
+
+	@Environment(EnvType.CLIENT)
+	private TagGroup<T> buildDynamicGroup(Map<Identifier, Tag.Builder> tagBuilders) {
+		if (!TagRegistryImpl.isRegistryDynamic(this.registryKey)) {
+			return this.loader.buildGroup(tagBuilders);
+		}
+
+		var tags = new Object2ObjectOpenHashMap<Identifier, Tag<T>>();
+		Function<Identifier, Tag<T>> tagGetter = tags::get;
+		Function<Identifier, T> registryGetter = identifier -> this.registryFetcher.apply(identifier).orElse(null);
+		Multimap<Identifier, Identifier> tagEntries = HashMultimap.create();
+
+		tagBuilders.forEach((tagId, builder) -> builder.forEachTagId(
+				tagEntryId -> TagGroupLoaderAccessor.qsl$addDependencyIfNotCyclic(tagEntries, tagId, tagEntryId)
+		));
+		tagBuilders.forEach((tagId, builder) -> builder.forEachGroupId(
+				entryId -> TagGroupLoaderAccessor.qsl$addDependencyIfNotCyclic(tagEntries, tagId, entryId)
+		));
+
+		var set = new HashSet<Identifier>();
+		tagBuilders.keySet().forEach(tagId ->
+				TagGroupLoaderAccessor.qsl$visitDependenciesAndElement(tagBuilders, tagEntries, set, tagId,
+						(currentTagId, builder) -> tags.put(tagId, this.buildLenientTag(builder, tagGetter, registryGetter))
+				)
+		);
+		return TagGroup.create(tags);
+	}
+
+	@Environment(EnvType.CLIENT)
+	private Tag<T> buildLenientTag(Tag.Builder tagBuilder,
+	                               Function<Identifier, Tag<T>> tagGetter, Function<Identifier, T> objectGetter) {
+		ImmutableSet.Builder<T> builder = ImmutableSet.builder();
+
+		tagBuilder.streamEntries().forEach(trackedEntry -> trackedEntry.getEntry().resolve(tagGetter, objectGetter, builder::add));
+
+		return Tag.of(builder.build());
 	}
 
 	public TagGroup<T> getGroup() {
@@ -128,6 +179,7 @@ public final class ClientTagRegistryManager<T> {
 		TAG_GROUP_MANAGERS.values().forEach(consumer);
 	}
 
+	@Environment(EnvType.CLIENT)
 	public static void applyAll(DynamicRegistryManager registryManager) {
 		TAG_GROUP_MANAGERS.forEach((registryKey, manager) -> manager.apply(registryManager));
 	}

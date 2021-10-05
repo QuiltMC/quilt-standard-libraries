@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.tag.mixin;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 import org.spongepowered.asm.mixin.Dynamic;
@@ -24,15 +25,26 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.ResourceReloader;
 import net.minecraft.tag.RequiredTagList;
 import net.minecraft.tag.TagManagerLoader;
+import net.minecraft.util.profiler.Profiler;
 
 import org.quiltmc.qsl.tag.impl.TagRegistryImpl;
 
 @Mixin(TagManagerLoader.class)
 public abstract class TagManagerLoaderMixin {
+	@Inject(method = "reload", at = @At("HEAD"))
+	private void onReload(ResourceReloader.Synchronizer synchronizer, ResourceManager manager,
+	                      Profiler prepareProfiler, Profiler applyProfiler,
+	                      Executor prepareExecutor, Executor applyExecutor,
+	                      CallbackInfoReturnable<CompletableFuture<Void>> cir) {
+		TagRegistryImpl.forceInit();
+	}
+
 	@Dynamic("private static synthetic method_33179; " +
 			"Consumer lambda in reload method, corresponds to the RequiredTagList.forEach.")
 	@Inject(method = "method_33179", at = @At("HEAD"), cancellable = true)
