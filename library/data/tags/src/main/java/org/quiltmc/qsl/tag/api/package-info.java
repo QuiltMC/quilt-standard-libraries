@@ -13,13 +13,13 @@
  *
  * <p>
  * <h3>Tag Types</h3>
- * {@link org.quiltmc.qsl.tag.api.TagType} allows to categorize tags and define extra-behavior.
- * Those types allows to define if a tag is required for a server to start, for a client to connect,
+ * {@link org.quiltmc.qsl.tag.api.TagType} allows categorizing tags and defining extra behavior.
+ * Those types allow defining if a tag is required for a server to start, for a client to connect,
  * if a tag is only loaded on the client, etc.
  *
  * <p>
  * <h3>Get and register a tag</h3>
- * To get and/or register a tag, use {@link org.quiltmc.qsl.tag.api.TagRegistry} create methods.
+ * To get and/or register a tag, use {@link org.quiltmc.qsl.tag.api.TagRegistry}'s create methods.
  * All registered tags through this interface will auto-update their content through data/resource pack reloads.
  * You can find built-in tag registries for some of the most relevant registries, you can also create a new tag registry
  * using {@link org.quiltmc.qsl.tag.api.TagRegistry#of(net.minecraft.util.registry.RegistryKey, java.lang.String)}
