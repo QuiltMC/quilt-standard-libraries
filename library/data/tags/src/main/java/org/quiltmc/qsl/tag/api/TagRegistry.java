@@ -72,7 +72,7 @@ public interface TagRegistry<T> {
 	 * @see #create(Identifier, TagType) create a tag with a specific type
 	 */
 	default Tag.Identified<T> create(Identifier id) {
-		return this.create(id, TagType.CLIENT_SERVER_REQUIRED);
+		return this.create(id, TagType.NEUTRAL);
 	}
 
 	/**
