@@ -7,6 +7,7 @@ import org.quiltmc.qsl.commands.api.CommandRegistrationCallback;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -19,6 +20,11 @@ public abstract class CommandManagerMixin {
 
 	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lcom/mojang/brigadier/CommandDispatcher;findAmbiguities(Lcom/mojang/brigadier/AmbiguityConsumer;)V"))
 	void addQuiltCommands(CommandManager.RegistrationEnvironment environment, CallbackInfo ci) {
-		CommandRegistrationCallback.EVENT.invoker().registerCommands(this.dispatcher, environment == CommandManager.RegistrationEnvironment.DEDICATED);
+		CommandRegistrationCallback.EVENT.invoker().registerCommands(this.dispatcher, environmentMatches(environment, CommandManager.RegistrationEnvironment.INTEGRATED), environmentMatches(environment, CommandManager.RegistrationEnvironment.DEDICATED));
+	}
+
+	@Unique
+	private static boolean environmentMatches(CommandManager.RegistrationEnvironment a, CommandManager.RegistrationEnvironment b) {
+		return a == b || b == CommandManager.RegistrationEnvironment.ALL;
 	}
 }
