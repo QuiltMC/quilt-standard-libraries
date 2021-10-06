@@ -27,5 +27,5 @@ import net.minecraft.util.registry.RegistryKey;
  */
 @ApiStatus.Internal
 public interface QuiltTagManagerHooks {
-	void qsl$putTagGroup(RegistryKey<? extends Registry<?>> registryKey, TagGroup<?> tagGroup);
+	void quilt$putTagGroup(RegistryKey<? extends Registry<?>> registryKey, TagGroup<?> tagGroup);
 }

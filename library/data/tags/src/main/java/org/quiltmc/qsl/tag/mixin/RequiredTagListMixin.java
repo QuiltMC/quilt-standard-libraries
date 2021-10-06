@@ -42,10 +42,10 @@ public class RequiredTagListMixin<T> implements QuiltRequiredTagListHooks<T> {
 	private List<RequiredTagList.TagWrapper<T>> tags;
 
 	@Override
-	public Tag.Identified<T> qsl$addTag(Identifier id, TagType type) {
+	public Tag.Identified<T> quilt$addTag(Identifier id, TagType type) {
 		var wrapper = new RequiredTagList.TagWrapper<T>(id);
 		//noinspection ConstantConditions
-		((QuiltRequiredTagWrapperHooks) wrapper).qsl$setTagType(type);
+		((QuiltRequiredTagWrapperHooks) wrapper).quilt$setTagType(type);
 		this.tags.add(wrapper);
 		return wrapper;
 	}
@@ -69,7 +69,7 @@ public class RequiredTagListMixin<T> implements QuiltRequiredTagListHooks<T> {
 		}
 
 		@Override
-		public void qsl$setTagType(TagType tagType) {
+		public void quilt$setTagType(TagType tagType) {
 			this.tagType = tagType;
 		}
 	}

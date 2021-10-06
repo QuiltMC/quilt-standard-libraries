@@ -25,5 +25,5 @@ import org.quiltmc.qsl.tag.api.TagType;
 
 @ApiStatus.Internal
 public interface QuiltRequiredTagListHooks<T> {
-	Tag.Identified<T> qsl$addTag(Identifier id, TagType type);
+	Tag.Identified<T> quilt$addTag(Identifier id, TagType type);
 }
