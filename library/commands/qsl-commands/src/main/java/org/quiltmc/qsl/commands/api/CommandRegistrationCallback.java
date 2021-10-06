@@ -9,11 +9,11 @@ import org.quiltmc.qsl.base.api.event.ArrayEvent;
  */
 @FunctionalInterface
 public interface CommandRegistrationCallback {
-	ArrayEvent<CommandRegistrationCallback> EVENT = ArrayEvent.create(CommandRegistrationCallback.class, callbacks -> (dispatcher, integrated, dedicated) -> {
+	ArrayEvent<CommandRegistrationCallback> EVENT = ArrayEvent.create(CommandRegistrationCallback.class, callbacks -> (dispatcher, dedicated) -> {
 		for (var callback : callbacks) {
-			callback.registerCommands(dispatcher, integrated, dedicated);
+			callback.registerCommands(dispatcher, dedicated);
 		}
 	});
 
-	void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, boolean registerForIntegrated, boolean registerForDedicated);
+	void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, boolean dedicated);
 }

@@ -11,17 +11,15 @@ import org.quiltmc.qsl.commands.api.client.ClientCommandRegistrationCallback;
 public class CommandsApiTest implements ModInitializer {
 	@Override
 	public void onInitialize() {
-		CommandRegistrationCallback.EVENT.register((dispatcher, registerForIntegrated, registerForDedicated) -> {
-			if (registerForDedicated) {
+		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
+			if (dedicated) {
 				dispatcher.register(CommandManager.literal("ping")
 						.executes(ctx -> {
 							ctx.getSource().sendFeedback(new LiteralText("pong!"), false);
 							return 0;
 						})
 				);
-			}
-
-			if (registerForIntegrated) {
+			} else {
 				dispatcher.register(CommandManager.literal("singleplayer_only")
 						.executes(ctx -> {
 							ctx.getSource().sendFeedback(new LiteralText("This command should only exist in singleplayer"), false);
