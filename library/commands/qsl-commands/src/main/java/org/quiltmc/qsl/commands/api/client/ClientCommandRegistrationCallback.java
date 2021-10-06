@@ -6,6 +6,9 @@ import net.fabricmc.api.Environment;
 import net.minecraft.server.command.ServerCommandSource;
 import org.quiltmc.qsl.base.api.event.ArrayEvent;
 
+/**
+ * Invoked when client commands are registered.
+ */
 @FunctionalInterface
 @Environment(EnvType.CLIENT)
 public interface ClientCommandRegistrationCallback {
