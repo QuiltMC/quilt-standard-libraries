@@ -26,10 +26,11 @@ import org.quiltmc.qsl.registry.attribute.impl.RegistryEntryAttributeHolder;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import java.util.HashMap;
+import java.util.Map;
 
 @Mixin(Registry.class)
 public abstract class RegistryMixin<R> implements QuiltRegistryInternals<R> {
-	@Unique private final HashMap<Identifier, RegistryEntryAttribute<R, ?>> attributes = new HashMap<>();
+	@Unique private final Map<Identifier, RegistryEntryAttribute<R, ?>> attributes = new HashMap<>();
 	@Unique private RegistryEntryAttributeHolder<R> qsl$builtinAttributeHolder;
 	@Unique private RegistryEntryAttributeHolder<R> qsl$dataAttributeHolder;
 	@Unique private RegistryEntryAttributeHolder<R> qsl$assetsAttributeHolder;
