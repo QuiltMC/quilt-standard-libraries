@@ -8,19 +8,21 @@ import org.quiltmc.qsl.commands.api.CommandRegistrationCallback;
 import org.quiltmc.qsl.commands.api.client.ClientCommandManager;
 import org.quiltmc.qsl.commands.api.client.ClientCommandRegistrationCallback;
 
+import static net.minecraft.server.command.CommandManager.literal;
+
 public class CommandsApiTest implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
 			if (dedicated) {
-				dispatcher.register(CommandManager.literal("ping")
+				dispatcher.register(literal("ping")
 						.executes(ctx -> {
 							ctx.getSource().sendFeedback(new LiteralText("pong!"), false);
 							return 0;
 						})
 				);
 			} else {
-				dispatcher.register(CommandManager.literal("singleplayer_only")
+				dispatcher.register(literal("singleplayer_only")
 						.executes(ctx -> {
 							ctx.getSource().sendFeedback(new LiteralText("This command should only exist in singleplayer"), false);
 							return 0;
@@ -28,7 +30,7 @@ public class CommandsApiTest implements ModInitializer {
 				);
 			}
 
-			dispatcher.register(CommandManager.literal("quilt")
+			dispatcher.register(literal("quilt")
 					.executes(ctx -> {
 						//noinspection OptionalGetWithoutIsPresent
 						ctx.getSource().sendFeedback(new LiteralText("Quilt Version: "+FabricLoader.getInstance().getModContainer("quilt_base").get().getMetadata().getVersion().getFriendlyString()), false);
