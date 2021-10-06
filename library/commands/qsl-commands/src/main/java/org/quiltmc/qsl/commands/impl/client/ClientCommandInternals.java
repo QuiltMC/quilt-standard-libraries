@@ -18,6 +18,7 @@ package org.quiltmc.qsl.commands.impl.client;
 
 import com.google.common.collect.Iterables;
 import com.mojang.brigadier.AmbiguityConsumer;
+import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -33,6 +34,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.CommandException;
+import net.minecraft.command.CommandSource;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.Texts;
@@ -81,11 +83,16 @@ public final class ClientCommandInternals {
 		client.getProfiler().push(message);
 
 		try {
-			// TODO: Check for server commands before executing.
-			//   This requires parsing the command, checking if they match a server command
-			//   and then executing the command with the parse results.
-			DISPATCHER.execute(message.substring(1), commandSource);
-			return true;
+			// Only run client commands if there are no matching server-side commands.
+			String command = message.substring(1);
+			CommandDispatcher<CommandSource> serverDispatcher = client.getNetworkHandler().getCommandDispatcher();
+			ParseResults<CommandSource> serverResults = serverDispatcher.parse(command, client.getNetworkHandler().getCommandSource());
+			if (serverResults.getReader().canRead() || isCommandInvalidOrDummy(serverResults)) {
+				DISPATCHER.execute(command, commandSource);
+				return true;
+			} else {
+				return false;
+			}
 		} catch (CommandSyntaxException e) {
 			boolean ignored = isIgnoredException(e.getType());
 			LOGGER.log(ignored ? Level.DEBUG : Level.WARN, "Syntax exception for client-sided command '{}'", message, e);
@@ -107,6 +114,26 @@ public final class ClientCommandInternals {
 		} finally {
 			client.getProfiler().pop();
 		}
+	}
+
+	/**
+	 * Tests whether a parse result is invalid or the command it resolves to is a dummy command.
+	 *
+	 * Used to work out whether a command in the main dispatcher is a dummy command added by {@link ClientCommandInternals#addCommands(CommandDispatcher, QuiltClientCommandSource)}.
+	 *
+	 * @param parse the parse results to test.
+	 * @param <S> the command source type.
+	 * @return true if the parse result is invalid or the command is a dummy, false otherwise.
+	 */
+	public static <S extends CommandSource> boolean isCommandInvalidOrDummy(final ParseResults<S> parse) {
+		if (parse.getReader().canRead()) {
+			return true;
+		}
+
+		final String command = parse.getReader().getString();
+		final CommandContext<S> context = parse.getContext().build(command);
+
+		return context.getCommand() == null || context.getCommand() == DUMMY_COMMAND;
 	}
 
 	/**
@@ -142,13 +169,13 @@ public final class ClientCommandInternals {
 		ClientCommandRegistrationCallback.EVENT.invoker().registerCommands(DISPATCHER);
 
 		if (!DISPATCHER.getRoot().getChildren().isEmpty()) {
-			// Register an API command if there are other commands;
-			// these helpers are not needed if there are no client commands
-			LiteralArgumentBuilder<QuiltClientCommandSource> help = literal("help");
-			help.executes(ClientCommandInternals::executeRootHelp);
-			help.then(argument("command", StringArgumentType.greedyString()).executes(ClientCommandInternals::executeSpecificHelp));
-
-			CommandNode<QuiltClientCommandSource> mainNode = DISPATCHER.register(literal(API_COMMAND_NAME).then(help));
+			// Register the qcc command only if there are other commands;
+			// it is not needed if there are no client commands.
+			CommandNode<QuiltClientCommandSource> mainNode = DISPATCHER.register(
+					literal(API_COMMAND_NAME)
+							.then(createHelpCommand())
+							.then(createRunCommand(DISPATCHER))
+			);
 			DISPATCHER.register(literal(SHORT_API_COMMAND_NAME).redirect(mainNode));
 		}
 
@@ -156,6 +183,15 @@ public final class ClientCommandInternals {
 		DISPATCHER.findAmbiguities((parent, child, sibling, inputs) -> {
 			LOGGER.warn("Ambiguity between arguments {} and {} with inputs: {}", DISPATCHER.getPath(child), DISPATCHER.getPath(sibling), inputs);
 		});
+	}
+
+	private static LiteralArgumentBuilder<QuiltClientCommandSource> createHelpCommand() {
+		return literal("help")
+				.then(
+						argument("command", StringArgumentType.greedyString())
+								.executes(ClientCommandInternals::executeSpecificHelp)
+				)
+				.executes(ClientCommandInternals::executeRootHelp);
 	}
 
 	private static int executeRootHelp(CommandContext<QuiltClientCommandSource> context) {
@@ -183,6 +219,14 @@ public final class ClientCommandInternals {
 		return commands.size();
 	}
 
+	private static LiteralArgumentBuilder<QuiltClientCommandSource> createRunCommand(CommandDispatcher<QuiltClientCommandSource> dispatcher) {
+		LiteralArgumentBuilder<QuiltClientCommandSource> runCommand = literal("run");
+		for (CommandNode<QuiltClientCommandSource> node : dispatcher.getRoot().getChildren()) {
+			runCommand.then(node);
+		}
+		return runCommand;
+	}
+
 	public static void addCommands(CommandDispatcher<QuiltClientCommandSource> target, QuiltClientCommandSource source) {
 		Map<CommandNode<QuiltClientCommandSource>, CommandNode<QuiltClientCommandSource>> originalToCopy = new HashMap<>();
 		originalToCopy.put(DISPATCHER.getRoot(), target.getRoot());
@@ -208,13 +252,17 @@ public final class ClientCommandInternals {
 		for (CommandNode<QuiltClientCommandSource> child : origin.getChildren()) {
 			if (!child.canUse(source)) continue;
 
+			if (target.getChild(child.getName()) != null) {
+				continue;
+			}
+
 			ArgumentBuilder<QuiltClientCommandSource, ?> builder = child.createBuilder();
 
 			// Reset the unnecessary non-completion stuff from the builder
 			builder.requires(s -> true); // This is checked with the if check above.
 
 			if (builder.getCommand() != null) {
-				builder.executes(context -> 0);
+				builder.executes(DUMMY_COMMAND);
 			}
 
 			// Set up redirects
@@ -231,4 +279,6 @@ public final class ClientCommandInternals {
 			}
 		}
 	}
+
+	private static final Command<QuiltClientCommandSource> DUMMY_COMMAND = ctx -> 0;
 }
