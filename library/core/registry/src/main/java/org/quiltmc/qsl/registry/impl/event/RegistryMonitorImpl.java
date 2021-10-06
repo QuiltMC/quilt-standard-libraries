@@ -27,18 +27,18 @@ public class RegistryMonitorImpl<V> implements RegistryMonitor<V> {
 			var id = registry.getId(entry);
 			var raw = registry.getRawId(entry);
 
-			if (testFilter(entry, id, raw)) {
+			if (this.testFilter(entry, id, raw)) {
 				callback.onAdded(registry, entry, id, raw);
 			}
 		});
 
-		forUpcoming(callback);
+		this.forUpcoming(callback);
 	}
 
 	@Override
 	public void forUpcoming(RegistryEvents.EntryAdded<V> callback) {
 		RegistryEvents.getEntryAddEvent(registry).register((reg, entry, id, raw) -> {
-			if (testFilter(entry, id, raw)) {
+			if (this.testFilter(entry, id, raw)) {
 				callback.onAdded(reg, entry, id, raw);
 			}
 		});
