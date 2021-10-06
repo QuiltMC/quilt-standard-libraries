@@ -20,15 +20,13 @@ public class CommandsApiTest implements ModInitializer {
 							return 0;
 						})
 				);
-			} else {
-				if (integrated) {
-					dispatcher.register(literal("singleplayer_only")
-							.executes(ctx -> {
-								ctx.getSource().sendFeedback(new LiteralText("This command should only exist in singleplayer"), false);
-								return 0;
-							})
-					);
-				}
+			} else if (integrated) {
+				dispatcher.register(literal("singleplayer_only")
+						.executes(ctx -> {
+							ctx.getSource().sendFeedback(new LiteralText("This command should only exist in singleplayer"), false);
+							return 0;
+						})
+				);
 			}
 
 			dispatcher.register(literal("quilt")
