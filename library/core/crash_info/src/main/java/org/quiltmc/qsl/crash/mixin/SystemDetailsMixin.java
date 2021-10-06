@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.crash.mixin;
 
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.util.SystemDetails;
 import org.quiltmc.qsl.crash.api.CrashReportEvents;
 import org.spongepowered.asm.mixin.Mixin;
@@ -38,22 +36,6 @@ abstract class SystemDetailsMixin {
 	 */
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void addQuiltMods(CallbackInfo info) {
-		this.addSection("Quilt Mods", () -> {
-			StringBuilder builder = new StringBuilder();
-
-			for (ModContainer mod : FabricLoader.getInstance().getAllMods()) {
-				var metadata = mod.getMetadata();
-
-				builder.append("\n\t\t%s: %s %s".formatted(
-						metadata.getId(),
-						metadata.getName(),
-						metadata.getVersion().getFriendlyString())
-				);
-			}
-
-			return builder.toString();
-		});
-
 		CrashReportEvents.SYSTEM_DETAILS.invoker().addDetails((SystemDetails) (Object) this);
 	}
 }
