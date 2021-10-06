@@ -30,6 +30,7 @@ public class CommandsApiTest implements ModInitializer {
 
 			dispatcher.register(CommandManager.literal("quilt")
 					.executes(ctx -> {
+						//noinspection OptionalGetWithoutIsPresent
 						ctx.getSource().sendFeedback(new LiteralText("Quilt Version: "+FabricLoader.getInstance().getModContainer("quilt_base").get().getMetadata().getVersion().getFriendlyString()), false);
 						return 0;
 					})
