@@ -18,6 +18,7 @@ package org.quiltmc.qsl.registry.attribute.api;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+
 import java.util.function.Function;
 
 /**

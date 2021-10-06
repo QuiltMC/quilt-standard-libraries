@@ -130,10 +130,10 @@ public final class DumpBuiltinAttributesCommand {
 		var holder = RegistryEntryAttributeHolder.getBuiltin(registry);
 		for (Map.Entry<? extends RegistryEntryAttribute<R, ?>, ? extends Map<R, Object>> entry : holder.valueTable.rowMap().entrySet()) {
 			RegistryEntryAttribute<R, Object> attr = (RegistryEntryAttribute<R, Object>) entry.getKey();
-			var attrId = attr.getId();
+			var attrId = attr.id();
 
 			var path = FabricLoader.getInstance().getGameDir().resolve("quilt/builtin-registry-entry-attributes")
-					.resolve(attr.getSide().getSource().getDirectory())
+					.resolve(attr.side().getSource().getDirectory())
 					.resolve(attrId.getNamespace())
 					.resolve("attributes")
 					.resolve(registryId.getNamespace())
@@ -164,14 +164,14 @@ public final class DumpBuiltinAttributesCommand {
 					throw ILLEGAL_STATE.create();
 				}
 				DataResult<JsonElement> encodedValue =
-						attr.getCodec().encodeStart(JsonOps.INSTANCE, attrEntry.getValue());
+						attr.codec().encodeStart(JsonOps.INSTANCE, attrEntry.getValue());
 				if (encodedValue.result().isEmpty()) {
 					if (encodedValue.error().isPresent()) {
 						LOGGER.error("Failed to encode value for attribute {} of registry entry {}: {}",
-								attr.getId(), entryId, encodedValue.error().get().message());
+								attr.id(), entryId, encodedValue.error().get().message());
 					} else {
 						LOGGER.error("Failed to encode value for attribute {} of registry entry {}: unknown error",
-								attr.getId(), entryId);
+								attr.id(), entryId);
 					}
 					throw ENCODE_FAILURE.create();
 				}

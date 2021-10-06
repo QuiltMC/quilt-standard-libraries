@@ -21,11 +21,12 @@ import net.minecraft.block.Block;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
+import org.quiltmc.qsl.registry.attribute.impl.RegistryEntryAttributeImpl;
 
 public class ClientAttributeTest implements ClientModInitializer {
 	public static final RegistryEntryAttribute<Block, Boolean> ATTRIBUTE =
 			RegistryEntryAttribute.boolBuilder(Registry.BLOCK, new Identifier("quilt", "based"))
-					.side(RegistryEntryAttribute.Side.CLIENT).build();
+					.side(RegistryEntryAttributeImpl.Side.CLIENT).build();
 
 	@Override
 	public void onInitializeClient() { }

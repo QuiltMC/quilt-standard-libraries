@@ -104,9 +104,9 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 				continue;
 			}
 
-			if (!attrib.getSide().shouldLoad(source)) {
+			if (!attrib.side().shouldLoad(source)) {
 				LOGGER.warn("Ignoring attribute {} (from {}) since it shouldn't be loaded from this source ({}, we're loading from {})",
-						attribId, jsonId, attrib.getSide().getSource(), source);
+						attribId, jsonId, attrib.side().getSource(), source);
 			}
 
 			profiler.swap(ID + "/getting_resources{" + jsonId + "}");
@@ -168,7 +168,7 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 			}
 
 			for (Map.Entry<RegistryEntryAttribute<?, ?>, AttributeMap> entry : attributeMaps.entrySet()) {
-				profiler.swap(ID + "/apply_attribute{" + entry.getKey().getId() + "}");
+				profiler.swap(ID + "/apply_attribute{" + entry.getKey().id() + "}");
 				applyOne(entry.getKey(), entry.getValue());
 			}
 
@@ -177,7 +177,7 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 
 		@SuppressWarnings("unchecked")
 		private <R, V> void applyOne(RegistryEntryAttribute<R, V> attrib, AttributeMap attribMap) {
-			var registry = attrib.getRegistry();
+			var registry = attrib.registry();
 			Objects.requireNonNull(registry, "registry");
 
 			RegistryEntryAttributeHolder<R> holder = getHolder(registry);
@@ -236,14 +236,14 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 					}
 
 					// values are deserialized via the attribute's associated Codec instance
-					DataResult<?> parsedValue = attribute.getCodec().parse(JsonOps.INSTANCE, entry.getValue());
+					DataResult<?> parsedValue = attribute.codec().parse(JsonOps.INSTANCE, entry.getValue());
 					if (parsedValue.result().isEmpty()) {
 						if (parsedValue.error().isPresent()) {
 							LOGGER.error("Failed to parse value for attribute {} of registry entry {}: {}",
-									attribute.getId(), id, parsedValue.error().get().message());
+									attribute.id(), id, parsedValue.error().get().message());
 						} else {
 							LOGGER.error("Failed to parse value for attribute {} of registry entry {}: unknown error",
-									attribute.getId(), id);
+									attribute.id(), id);
 						}
 						LOGGER.error("Ignoring attribute value for '{}' in {} since it's invalid", id, resource.getId());
 						continue;

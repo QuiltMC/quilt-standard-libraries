@@ -36,7 +36,7 @@ public abstract class RegistryMixin<R> implements QuiltRegistryInternals<R> {
 
 	@Override
 	public void qsl$registerAttribute(RegistryEntryAttribute<R, ?> attribute) {
-		attributes.put(attribute.getId(), attribute);
+		attributes.put(attribute.id(), attribute);
 	}
 
 	@Override
