@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.registry.attribute.impl;
 
 import com.mojang.serialization.Codec;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.util.Identifier;
@@ -26,6 +27,7 @@ import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
 import java.util.Objects;
 import java.util.Optional;
 
+@ApiStatus.Internal
 public record RegistryEntryAttributeImpl<R, V>(Registry<R> registry,
 											   Identifier id,
 											   Side side,
