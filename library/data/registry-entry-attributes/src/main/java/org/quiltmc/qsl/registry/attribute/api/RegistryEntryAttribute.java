@@ -35,6 +35,19 @@ import java.util.function.Function;
  */
 public interface RegistryEntryAttribute<R, V> {
 	/**
+	 * Retrieves an already-registered attribute.
+	 *
+	 * @param registry registry attribute is attached to
+	 * @param id       attribute identifier
+	 * @param <R>      type of the entries in the registry
+	 * @param <V>      attached value type
+	 * @return the attribute, or empty if the attribute was not found
+	 */
+	static <R, V> Optional<RegistryEntryAttribute<R, V>> get(Registry<R> registry, Identifier id) {
+		return Optional.ofNullable(RegistryEntryAttributeHolder.getAttribute(registry, id));
+	}
+
+	/**
 	 * Creates a builder for an attribute.
 	 *
 	 * @param registry registry to attach to
@@ -136,9 +149,9 @@ public interface RegistryEntryAttribute<R, V> {
 	}
 
 	/**
-	 * Gets the registry this attribute is tied to.
+	 * Gets the registry this attribute is attached to.
 	 *
-	 * @return tied registry
+	 * @return attached registry
 	 */
 	Registry<R> registry();
 
@@ -244,6 +257,11 @@ public interface RegistryEntryAttribute<R, V> {
 			this.id = id;
 			this.codec = codec;
 			side = Side.BOTH;
+
+			if (get(registry, id).isPresent()) {
+				throw new IllegalStateException("Attribute with ID '" + id +
+						"' is already registered for registry " + registry.getKey().getValue() + "!");
+			}
 		}
 
 		/**
