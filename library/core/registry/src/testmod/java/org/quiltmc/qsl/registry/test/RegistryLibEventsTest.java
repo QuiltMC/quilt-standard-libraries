@@ -4,16 +4,21 @@ import net.fabricmc.api.ModInitializer;
 import net.minecraft.block.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quiltmc.qsl.registry.event.api.RegistryEvents;
 
-public class RegistryLibTestMod implements ModInitializer {
-	private static final Identifier TEST_BLOCK_ID = new Identifier("quilt_registry", "test_block");
+public class RegistryLibEventsTest implements ModInitializer {
+	private static final Logger LOG = LogManager.getLogger("Quilt Registry Lib Events Test");
+
+	private static final Identifier TEST_BLOCK_ID = new Identifier("quilt_registry_test_events", "event_test_block");
+
 	private static boolean entryAddEventFoundBlock = false;
 
 	@Override
 	public void onInitialize() {
 		RegistryEvents.getEntryAddEvent(Registry.BLOCK).register((registry, entry, id, rawId) -> {
-			System.out.printf("Registered block %s id=%s raw=%s in registry %s\n", entry, id, rawId, registry);
+			LOG.info("Block {} id={} raw={} was registered in registry {}\n", entry, id, rawId, registry);
 
 			if (TEST_BLOCK_ID.equals(id)) {
 				entryAddEventFoundBlock = true;

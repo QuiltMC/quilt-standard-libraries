@@ -10,7 +10,8 @@
   },
   "entrypoints": {
     "main": [
-      "org.quiltmc.qsl.registry.test.RegistryLibTestMod"
+      "org.quiltmc.qsl.registry.test.RegistryLibEventsTest",
+      "org.quiltmc.qsl.registry.test.RegistryLibMonitorTest"
     ]
   }
 }
