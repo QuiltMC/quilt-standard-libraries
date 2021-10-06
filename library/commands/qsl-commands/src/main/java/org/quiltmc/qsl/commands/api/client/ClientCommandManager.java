@@ -24,17 +24,16 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 /**
- * Manages client-sided commands and provides some related helper methods.
+ * Manages client-sided commands and provides some related helper methods, analagous to {@link net.minecraft.server.command.CommandManager}.
  *
- * <p>Client-sided commands are fully executed on the client,
+ * <p>Client-sided commands are executed wholly on the client,
  * so players can use them in both singleplayer and multiplayer.
  *
- * <p>Registrations can be done in the {@link #DISPATCHER} during a {@link net.fabricmc.api.ClientModInitializer}'s
- * initialization. (See example below.)
+ * <p>Command registrations should be done with {@link ClientCommandRegistrationCallback}.
  *
  * <p>The commands are run on the client game thread by default.
  * Avoid doing any heavy calculations here as that can freeze the game's rendering.
- * For example, you can move heavy code to another thread.
+ * To mitigate this, you can move heavy code to another thread.
  *
  * <p>This class also has alternatives to the server-side helper methods in
  * {@link net.minecraft.server.command.CommandManager}:
@@ -48,11 +47,13 @@ import net.fabricmc.api.Environment;
  * <h2>Example command</h2>
  * <pre>
  * {@code
- * ClientCommandManager.DISPATCHER.register(
- * 	ClientCommandManager.literal("hello").executes(context -> {
- * 		context.getSource().sendFeedback(new LiteralText("Hello, world!"));
- * 		return 0;
- * 	})
+ * ClientCommandRegistrationCallback.EVENT.register(dispatcher ->
+ *   dispatcher.register(
+ *     ClientCommandManager.literal("hello").executes(context -> {
+ *       context.getSource().sendFeedback(new LiteralText("Hello, world!"));
+ *       return 0;
+ *     })
+ *   )
  * );
  * }
  * </pre>
