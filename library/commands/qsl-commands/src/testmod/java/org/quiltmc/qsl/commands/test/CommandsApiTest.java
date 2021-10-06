@@ -2,7 +2,6 @@ package org.quiltmc.qsl.commands.test;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.LiteralText;
 import org.quiltmc.qsl.commands.api.CommandRegistrationCallback;
 import org.quiltmc.qsl.commands.api.client.ClientCommandManager;

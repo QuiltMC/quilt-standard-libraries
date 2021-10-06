@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.commands.api.client;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
@@ -24,9 +26,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 
 /**
  * Extensions to {@link CommandSource} for client-sided commands.

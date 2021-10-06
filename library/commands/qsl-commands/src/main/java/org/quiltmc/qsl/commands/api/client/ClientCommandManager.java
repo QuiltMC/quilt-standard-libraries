@@ -20,7 +20,6 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
