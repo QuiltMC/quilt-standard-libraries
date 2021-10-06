@@ -12,8 +12,8 @@ import static net.minecraft.server.command.CommandManager.literal;
 public class CommandsApiTest implements ModInitializer {
 	@Override
 	public void onInitialize() {
-			CommandRegistrationCallback.EVENT.register((dispatcher, registerForIntegrated, registerForDedicated) -> {
-			if (registerForDedicated) {
+			CommandRegistrationCallback.EVENT.register((dispatcher, integrated, dedicated) -> {
+			if (dedicated) {
 				dispatcher.register(literal("ping")
 						.executes(ctx -> {
 							ctx.getSource().sendFeedback(new LiteralText("pong!"), false);
@@ -21,7 +21,7 @@ public class CommandsApiTest implements ModInitializer {
 						})
 				);
 			} else {
-				if (registerForIntegrated) {
+				if (integrated) {
 					dispatcher.register(literal("singleplayer_only")
 							.executes(ctx -> {
 								ctx.getSource().sendFeedback(new LiteralText("This command should only exist in singleplayer"), false);
