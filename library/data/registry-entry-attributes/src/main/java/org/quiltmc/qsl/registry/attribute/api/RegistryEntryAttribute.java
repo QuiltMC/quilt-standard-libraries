@@ -43,8 +43,9 @@ public interface RegistryEntryAttribute<R, V> {
 	 * @param <V>      attached value type
 	 * @return the attribute, or empty if the attribute was not found
 	 */
+	@SuppressWarnings({"unchecked", "RedundantCast"})
 	static <R, V> Optional<RegistryEntryAttribute<R, V>> get(Registry<R> registry, Identifier id) {
-		return Optional.ofNullable(RegistryEntryAttributeHolder.getAttribute(registry, id));
+		return Optional.ofNullable((RegistryEntryAttribute<R, V>) RegistryEntryAttributeHolder.getAttribute(registry, id));
 	}
 
 	/**
@@ -185,7 +186,7 @@ public interface RegistryEntryAttribute<R, V> {
 
 	/**
 	 * Gets the value associated with this attribute for the specified entry.<p>
-	 * <p>
+	 *
 	 * If the entry has no value for this attribute, the attribute's
 	 * {@linkplain #defaultValue() default value} will be returned instead, unless it is {@code null},
 	 * in which case an empty optional will be returned.
