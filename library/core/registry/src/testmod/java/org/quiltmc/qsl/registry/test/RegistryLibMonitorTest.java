@@ -9,7 +9,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.quiltmc.qsl.registry.event.api.RegistryMonitor;
+import org.quiltmc.qsl.registry.api.event.RegistryMonitor;
 
 import java.util.ArrayList;
 
@@ -24,7 +24,7 @@ public class RegistryLibMonitorTest implements ModInitializer {
 		Registry.register(Registry.BLOCK, TEST_BLOCK_A_ID, new Block(AbstractBlock.Settings.of(Material.STONE, MapColor.BLACK)));
 
 		var monitor = RegistryMonitor.create(Registry.BLOCK)
-				.withFilter((entry, id, rawId) -> id.getNamespace().equals("quilt_registry_test_monitors"));
+				.filter((entry, id, rawId) -> id.getNamespace().equals("quilt_registry_test_monitors"));
 
 		var allList = new ArrayList<Block>();
 		var upcomingList = new ArrayList<Block>();

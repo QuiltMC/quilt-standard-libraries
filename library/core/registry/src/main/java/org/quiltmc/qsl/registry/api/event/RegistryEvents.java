@@ -1,9 +1,9 @@
-package org.quiltmc.qsl.registry.event.api;
+package org.quiltmc.qsl.registry.api.event;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.quiltmc.qsl.base.api.event.ArrayEvent;
-import org.quiltmc.qsl.registry.event.impl.RegistryEventStorage;
+import org.quiltmc.qsl.registry.impl.event.RegistryEventStorage;
 
 public final class RegistryEvents {
 	private RegistryEvents() {}

@@ -1,21 +1,23 @@
-package org.quiltmc.qsl.registry.event.impl;
+package org.quiltmc.qsl.registry.impl.event;
 
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import org.quiltmc.qsl.registry.event.api.RegistryEntryPredicate;
-import org.quiltmc.qsl.registry.event.api.RegistryEvents;
-import org.quiltmc.qsl.registry.event.api.RegistryMonitor;
+import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.registry.api.event.RegistryEntryPredicate;
+import org.quiltmc.qsl.registry.api.event.RegistryEvents;
+import org.quiltmc.qsl.registry.api.event.RegistryMonitor;
 
 public class RegistryMonitorImpl<V> implements RegistryMonitor<V> {
 	private final Registry<V> registry;
-	private RegistryEntryPredicate<V> filter = (entry, id, rawId) -> true;
+	private @Nullable RegistryEntryPredicate<V> filter = null;
 
 	public RegistryMonitorImpl(Registry<V> registry) {
 		this.registry = registry;
 	}
 
 	@Override
-	public RegistryMonitor<V> withFilter(RegistryEntryPredicate<V> filter) {
-		this.filter = filter;
+	public RegistryMonitor<V> filter(RegistryEntryPredicate<V> filter) {
+		this.filter = this.filter == null ? filter : this.filter.and(filter);
 		return this;
 	}
 
@@ -25,7 +27,7 @@ public class RegistryMonitorImpl<V> implements RegistryMonitor<V> {
 			var id = registry.getId(entry);
 			var raw = registry.getRawId(entry);
 
-			if (filter.test(entry, id, raw)) {
+			if (testFilter(entry, id, raw)) {
 				callback.onAdded(registry, entry, id, raw);
 			}
 		});
@@ -36,9 +38,16 @@ public class RegistryMonitorImpl<V> implements RegistryMonitor<V> {
 	@Override
 	public void forUpcoming(RegistryEvents.EntryAdded<V> callback) {
 		RegistryEvents.getEntryAddEvent(registry).register((reg, entry, id, raw) -> {
-			if (filter.test(entry, id, raw)) {
+			if (testFilter(entry, id, raw)) {
 				callback.onAdded(reg, entry, id, raw);
 			}
 		});
+	}
+
+	private boolean testFilter(V entry, Identifier id, int rawId) {
+		if (filter == null) {
+			return true;
+		}
+		return filter.test(entry, id, rawId);
 	}
 }

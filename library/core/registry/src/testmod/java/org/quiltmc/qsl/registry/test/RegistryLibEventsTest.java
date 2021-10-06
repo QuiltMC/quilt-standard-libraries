@@ -6,7 +6,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.quiltmc.qsl.registry.event.api.RegistryEvents;
+import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 
 public class RegistryLibEventsTest implements ModInitializer {
 	private static final Logger LOG = LogManager.getLogger("Quilt Registry Lib Events Test");

@@ -1,10 +1,10 @@
-package org.quiltmc.qsl.registry.event.api;
+package org.quiltmc.qsl.registry.api.event;
 
 import net.minecraft.util.registry.Registry;
-import org.quiltmc.qsl.registry.event.impl.RegistryMonitorImpl;
+import org.quiltmc.qsl.registry.impl.event.RegistryMonitorImpl;
 
 public interface RegistryMonitor<V> {
-	RegistryMonitor<V> withFilter(RegistryEntryPredicate<V> filter);
+	RegistryMonitor<V> filter(RegistryEntryPredicate<V> filter);
 
 	void forAll(RegistryEvents.EntryAdded<V> callback);
 
