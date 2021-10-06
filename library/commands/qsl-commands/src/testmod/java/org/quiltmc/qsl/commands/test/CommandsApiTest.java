@@ -12,7 +12,7 @@ import static net.minecraft.server.command.CommandManager.literal;
 public class CommandsApiTest implements ModInitializer {
 	@Override
 	public void onInitialize() {
-			CommandRegistrationCallback.EVENT.register((dispatcher, integrated, dedicated) -> {
+		CommandRegistrationCallback.EVENT.register((dispatcher, integrated, dedicated) -> {
 			if (dedicated) {
 				dispatcher.register(literal("ping")
 						.executes(ctx -> {
