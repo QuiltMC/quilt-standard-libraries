@@ -1,6 +1,39 @@
 # Contributing
 
 This document outlines best-practices and contributing guidelines to the Quilt Standard Libraries.
+## Pull Request Process
+To get a pull request merged into PROJECT, it must get a certain number of approvals from TEAM members, and then enter a Final Comment Period to ensure everyone has had a chance to look at the PR. Once these criteria have been met, the PR will be merged. 
+
+
+The exact number of reviews needed, and the length of the Final Comment Period, varies depending on the scope and complexity of the pull request. The numbers for each category are listed below.
+### `T: new API`
+#### Description
+For pull requests that add new APIs to QSL, defined as anything in a `$modulename.api` package or subfolders.
+
+**Required Approvals**: 2
+- At least 1 approval must come directly from each library team whos code the pull request modifies.
+
+**Final Comment Period**: 7 days
+
+### `T: refactor`
+#### Description
+For pull requests that make internal refactors and do not change any API, such as bugfixes.
+
+**Required Approvals**: 1
+- At least 1 approval must come directly from each library team whos code the pull request modifies.
+
+**Final Comment Period**: 3 days
+
+### `T: urgent`
+#### Description
+For pull requests that must be merged quickly, like ports of critical core modules or game-breaking bug fixes.
+
+**Required Approvals**: 2
+- Only members of the QSL team (not subteams!) and superiors count for approvals in urgent PRs to prevent abuse. 
+
+**Final Comment Period**: N/A
+
+*This is only a summary of the process. The exact rules are defined in [RFC 39](https://github.com/QuiltMC/rfcs/blob/master/structure/0039-pr-policy.md)*
 
 ## Naming conventions
 
