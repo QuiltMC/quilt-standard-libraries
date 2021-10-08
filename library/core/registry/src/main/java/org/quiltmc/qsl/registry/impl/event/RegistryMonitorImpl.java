@@ -5,7 +5,11 @@ import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.registry.api.event.RegistryEntryPredicate;
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
+import org.quiltmc.qsl.registry.api.event.RegistryIterationContext;
 import org.quiltmc.qsl.registry.api.event.RegistryMonitor;
+import org.quiltmc.qsl.registry.mixin.SimpleRegistryAccessor;
+
+import java.util.Map;
 
 public class RegistryMonitorImpl<V> implements RegistryMonitor<V> {
 	private final Registry<V> registry;
@@ -22,32 +26,38 @@ public class RegistryMonitorImpl<V> implements RegistryMonitor<V> {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void forAll(RegistryEvents.EntryAdded<V> callback) {
-		registry.forEach(entry -> {
-			var id = registry.getId(entry);
-			var raw = registry.getRawId(entry);
+		var context = new MutableRegistryIterationContextImpl<>(registry);
 
-			if (this.testFilter(entry, id, raw)) {
-				callback.onAdded(registry, entry, id, raw);
+		if (!(registry instanceof SimpleRegistryAccessor)) {
+			throw new UnsupportedOperationException("Registry " + registry + " is not supported!");
+		}
+
+		for (Map.Entry<Identifier, V> entry : ((SimpleRegistryAccessor<V>) registry).getIdToEntryMap().entrySet()) {
+			context.set(entry.getKey(), entry.getValue());
+
+			if (this.testFilter(context)) {
+				callback.onAdded(context);
 			}
-		});
+		}
 
 		this.forUpcoming(callback);
 	}
 
 	@Override
 	public void forUpcoming(RegistryEvents.EntryAdded<V> callback) {
-		RegistryEvents.getEntryAddEvent(registry).register((reg, entry, id, raw) -> {
-			if (this.testFilter(entry, id, raw)) {
-				callback.onAdded(reg, entry, id, raw);
+		RegistryEvents.getEntryAddEvent(registry).register(context -> {
+			if (this.testFilter(context)) {
+				callback.onAdded(context);
 			}
 		});
 	}
 
-	private boolean testFilter(V entry, Identifier id, int rawId) {
+	private boolean testFilter(RegistryIterationContext<V> context) {
 		if (filter == null) {
 			return true;
 		}
-		return filter.test(entry, id, rawId);
+		return filter.test(context);
 	}
 }

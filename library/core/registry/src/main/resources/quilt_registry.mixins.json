@@ -3,9 +3,8 @@
   "package": "org.quiltmc.qsl.registry.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "SimpleRegistryAccessor",
     "SimpleRegistryMixin"
-  ],
-  "client": [
   ],
   "injectors": {
     "defaultRequire": 1

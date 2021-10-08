@@ -1,6 +1,5 @@
 package org.quiltmc.qsl.registry.api.event;
 
-import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.quiltmc.qsl.base.api.event.ArrayEvent;
 import org.quiltmc.qsl.registry.impl.event.RegistryEventStorage;
@@ -14,6 +13,6 @@ public final class RegistryEvents {
 
 	@FunctionalInterface
 	public interface EntryAdded<V> {
-		void onAdded(Registry<V> registry, V entry, Identifier id, int rawId);
+		void onAdded(RegistryIterationContext<V> context);
 	}
 }

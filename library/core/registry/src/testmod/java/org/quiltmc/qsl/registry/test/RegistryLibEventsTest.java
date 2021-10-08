@@ -17,10 +17,11 @@ public class RegistryLibEventsTest implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		RegistryEvents.getEntryAddEvent(Registry.BLOCK).register((registry, entry, id, rawId) -> {
-			LOG.info("Block {} id={} raw={} was registered in registry {}\n", entry, id, rawId, registry);
+		RegistryEvents.getEntryAddEvent(Registry.BLOCK).register(context -> {
+			LOG.info("Block {} id={} raw={} was registered in registry {}\n",
+					context.entry(), context.id(), context.rawId(), context.registry());
 
-			if (TEST_BLOCK_ID.equals(id)) {
+			if (TEST_BLOCK_ID.equals(context.id())) {
 				entryAddEventFoundBlock = true;
 			}
 		});

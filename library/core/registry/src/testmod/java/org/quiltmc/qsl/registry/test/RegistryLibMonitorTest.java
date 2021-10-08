@@ -24,18 +24,20 @@ public class RegistryLibMonitorTest implements ModInitializer {
 		Registry.register(Registry.BLOCK, TEST_BLOCK_A_ID, new Block(AbstractBlock.Settings.of(Material.STONE, MapColor.BLACK)));
 
 		var monitor = RegistryMonitor.create(Registry.BLOCK)
-				.filter((entry, id, rawId) -> id.getNamespace().equals("quilt_registry_test_monitors"));
+				.filter(context -> context.id().getNamespace().equals("quilt_registry_test_monitors"));
 
 		var allList = new ArrayList<Block>();
 		var upcomingList = new ArrayList<Block>();
 
-		monitor.forAll((registry, entry, id, rawId) -> {
-			LOG.info("[forAll event]: Block {} id={} raw={} had its registration monitored in registry {}\n", entry, id, rawId, registry);
-			allList.add(entry);
+		monitor.forAll(context -> {
+			LOG.info("[forAll event]: Block {} id={} raw={} had its registration monitored in registry {}\n",
+					context.entry(), context.id(), context.rawId(), context.registry());
+			allList.add(context.entry());
 		});
-		monitor.forUpcoming((registry, entry, id, rawId) -> {
-			LOG.info("[forUpcoming event]: Block {} id={} raw={} had its registration monitored in registry {}\n", entry, id, rawId, registry);
-			upcomingList.add(entry);
+		monitor.forUpcoming(context -> {
+			LOG.info("[forUpcoming event]: Block {} id={} raw={} had its registration monitored in registry {}\n",
+					context.entry(), context.id(), context.rawId(), context.registry());
+			upcomingList.add(context.entry());
 		});
 
 		Registry.register(Registry.BLOCK, TEST_BLOCK_B_ID, new Block(AbstractBlock.Settings.of(Material.STONE, MapColor.BLACK)));
