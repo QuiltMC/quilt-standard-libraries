@@ -39,7 +39,7 @@ import org.quiltmc.qsl.networking.mixin.accessor.EntityTrackerAccessor;
 import org.quiltmc.qsl.networking.mixin.accessor.ThreadedAnvilChunkStorageAccessor;
 
 /**
- * For example, a block entity may use the methods in this class to send a packet to all clients which can see the block entity in order notify clients about a change.
+ * For example, a block entity may use the methods in this class to send a packet to all clients which can see the block entity in order to notify clients about a change.
  *
  * <p>The word "tracking" means that an entity/chunk on the server is known to a player's client (within in view distance) and the (block) entity should notify tracking clients of changes.
  *
