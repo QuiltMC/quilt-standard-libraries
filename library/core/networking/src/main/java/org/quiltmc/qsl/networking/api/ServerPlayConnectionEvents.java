@@ -62,16 +62,25 @@ public final class ServerPlayConnectionEvents {
 	private ServerPlayConnectionEvents() {
 	}
 
+	/**
+	 * @see #INIT
+	 */
 	@FunctionalInterface
 	public interface Init {
 		void onPlayInit(ServerPlayNetworkHandler handler, MinecraftServer server);
 	}
 
+	/**
+	 * @see #JOIN
+	 */
 	@FunctionalInterface
 	public interface Join {
 		void onPlayReady(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server);
 	}
 
+	/**
+	 * @see #DISCONNECT
+	 */
 	@FunctionalInterface
 	public interface Disconnect {
 		void onPlayDisconnect(ServerPlayNetworkHandler handler, MinecraftServer server);

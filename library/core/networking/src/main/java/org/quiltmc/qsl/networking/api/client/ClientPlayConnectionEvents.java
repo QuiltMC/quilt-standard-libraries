@@ -68,18 +68,27 @@ public final class ClientPlayConnectionEvents {
 	private ClientPlayConnectionEvents() {
 	}
 
+	/**
+	 * @see #INIT
+	 */
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
 	public interface Init {
 		void onPlayInit(ClientPlayNetworkHandler handler, MinecraftClient client);
 	}
 
+	/**
+	 * @see #JOIN
+	 */
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
 	public interface Join {
 		void onPlayReady(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client);
 	}
 
+	/**
+	 * @see #DISCONNECT
+	 */
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
 	public interface Disconnect {
