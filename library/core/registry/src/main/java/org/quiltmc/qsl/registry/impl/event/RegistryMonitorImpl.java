@@ -3,24 +3,29 @@ package org.quiltmc.qsl.registry.impl.event;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.registry.api.event.RegistryEntryPredicate;
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
-import org.quiltmc.qsl.registry.api.event.RegistryIterationContext;
+import org.quiltmc.qsl.registry.api.event.RegistryEntryContext;
 import org.quiltmc.qsl.registry.api.event.RegistryMonitor;
 import org.quiltmc.qsl.registry.mixin.SimpleRegistryAccessor;
 
 import java.util.Map;
+import java.util.function.Predicate;
 
+/**
+ * The default implementation of {@link RegistryMonitor}.
+ *
+ * @param <V> The entry type of the monitored {@link Registry}.
+ */
 public class RegistryMonitorImpl<V> implements RegistryMonitor<V> {
 	private final Registry<V> registry;
-	private @Nullable RegistryEntryPredicate<V> filter = null;
+	private @Nullable Predicate<RegistryEntryContext<V>> filter = null;
 
 	public RegistryMonitorImpl(Registry<V> registry) {
 		this.registry = registry;
 	}
 
 	@Override
-	public RegistryMonitor<V> filter(RegistryEntryPredicate<V> filter) {
+	public RegistryMonitor<V> filter(Predicate<RegistryEntryContext<V>> filter) {
 		this.filter = this.filter == null ? filter : this.filter.and(filter);
 		return this;
 	}
@@ -28,7 +33,7 @@ public class RegistryMonitorImpl<V> implements RegistryMonitor<V> {
 	@Override
 	@SuppressWarnings("unchecked")
 	public void forAll(RegistryEvents.EntryAdded<V> callback) {
-		var context = new MutableRegistryIterationContextImpl<>(registry);
+		var context = new MutableRegistryEntryContextImpl<>(registry);
 
 		if (!(registry instanceof SimpleRegistryAccessor)) {
 			throw new UnsupportedOperationException("Registry " + registry + " is not supported!");
@@ -54,7 +59,12 @@ public class RegistryMonitorImpl<V> implements RegistryMonitor<V> {
 		});
 	}
 
-	private boolean testFilter(RegistryIterationContext<V> context) {
+	/**
+	 * Tests the current filter on the specified entry context.
+	 *
+	 * <p>Accounts for the filter being null by treating it as always true.
+	 */
+	private boolean testFilter(RegistryEntryContext<V> context) {
 		if (filter == null) {
 			return true;
 		}
