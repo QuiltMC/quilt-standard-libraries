@@ -16,7 +16,7 @@ For pull requests that add new APIs to QSL, defined as anything in a `$modulenam
 
 ### `T: refactor`
 #### Description
-For pull requests that make internal refactors and do not change any API, such as bugfixes.
+For pull requests that make internal refactors and do not change any API, such as bugfixes or buildscript changes.
 
 **Required Approvals**: 1
 - At least 1 approval must come directly from each library team whos code the pull request modifies.
@@ -25,7 +25,7 @@ For pull requests that make internal refactors and do not change any API, such a
 
 ### `T: urgent`
 #### Description
-For pull requests that must be merged quickly, like ports of critical core modules or game-breaking bug fixes.
+For pull requests that must be merged quickly, like ports of critical core modules and game- or build-breaking bugs.
 
 **Required Approvals**: 2
 - Only members of the QSL team (not subteams!) and superiors count for approvals in urgent PRs to prevent abuse. 
@@ -33,6 +33,9 @@ For pull requests that must be merged quickly, like ports of critical core modul
 **Final Comment Period**: N/A
 
 *This is only a summary of the process. The exact rules are defined in [RFC 39](https://github.com/QuiltMC/rfcs/blob/master/structure/0039-pr-policy.md)*
+
+### Other
+Trivial fixes that do not require review (e.g. typos) are exempt from this policy. QSL team members should double check with other members of the team on Discord before pushing a commit without going through this process.
 
 ## Naming conventions
 
