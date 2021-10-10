@@ -21,9 +21,9 @@ public final class RegistryEvents {
 	 *
 	 * <p>The event is invoked upon the addition or assignment of an entry in the specified registry.
 	 *
-	 * @param registry The {@link Registry} for this event to listen for.
-	 * @param <V>      The entry type of the {@link Registry} to listen for.
-	 * @return         The entry added event for the specified registry, which can have callbacks registered to it.
+	 * @param registry the {@link Registry} for this event to listen for
+	 * @param <V>      the entry type of the {@link Registry} to listen for
+	 * @return         the entry added event for the specified registry, which can have callbacks registered to it
 	 */
 	public static <V> ArrayEvent<EntryAdded<V>> getEntryAddEvent(Registry<V> registry) {
 		return RegistryEventStorage.as(registry).quilt$getEntryAddedEvent();
@@ -33,15 +33,15 @@ public final class RegistryEvents {
 	 * Functional interface to be implemented on callbacks for {@link #getEntryAddEvent(Registry)}.
 	 * @see #getEntryAddEvent(Registry)
 	 *
-	 * @param <V> The entry type of the {@link Registry} being listened for.
+	 * @param <V> the entry type of the {@link Registry} being listened for
 	 */
 	@FunctionalInterface
 	public interface EntryAdded<V> {
 		/**
 		 * Called when an entry in this callback's event's {@link Registry} has an entry added or assigned.
 		 *
-		 * @param context An object containing information regarding the registry, entry object, and ID of the entry
-		 *                being registered.
+		 * @param context an object containing information regarding the registry, entry object, and ID of the entry
+		 *                being registered
 		 */
 		void onAdded(RegistryEntryContext<V> context);
 	}

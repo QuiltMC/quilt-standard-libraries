@@ -14,7 +14,7 @@ import java.util.function.Predicate;
 /**
  * The default implementation of {@link RegistryMonitor}.
  *
- * @param <V> The entry type of the monitored {@link Registry}.
+ * @param <V> the entry type of the monitored {@link Registry}
  */
 public class RegistryMonitorImpl<V> implements RegistryMonitor<V> {
 	private final Registry<V> registry;
