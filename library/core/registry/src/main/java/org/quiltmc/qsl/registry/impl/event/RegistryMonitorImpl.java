@@ -2,6 +2,7 @@ package org.quiltmc.qsl.registry.impl.event;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.quiltmc.qsl.registry.api.event.RegistryEntryContext;
@@ -16,6 +17,7 @@ import java.util.function.Predicate;
  *
  * @param <V> the entry type of the monitored {@link Registry}
  */
+@ApiStatus.Internal
 public class RegistryMonitorImpl<V> implements RegistryMonitor<V> {
 	private final Registry<V> registry;
 	private @Nullable Predicate<RegistryEntryContext<V>> filter = null;
@@ -62,7 +64,7 @@ public class RegistryMonitorImpl<V> implements RegistryMonitor<V> {
 	/**
 	 * Tests the current filter on the specified entry context.
 	 *
-	 * <p>Accounts for the filter being null by treating it as always true.
+	 * <p>Accounts for the filter being {@code null} by treating it as always {@code true}.
 	 */
 	private boolean testFilter(RegistryEntryContext<V> context) {
 		if (filter == null) {

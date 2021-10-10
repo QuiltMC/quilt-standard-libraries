@@ -12,28 +12,28 @@ public interface RegistryEntryContext<V> {
 	/**
 	 * Getter for the relevant registry.
 	 *
-	 * @return the relevant registry for this entry
+	 * {@return the relevant registry for this entry}
 	 */
 	Registry<V> registry();
 
 	/**
 	 * Getter for the entry object.
 	 *
-	 * @return the entry's object
+	 * {@return the entry's object}
 	 */
 	V entry();
 
 	/**
 	 * Getter for the namespaced identifier associated with the entry.
 	 *
-	 * @return the entry's namespaced identifier
+	 * {@return the entry's namespaced identifier}
 	 */
 	Identifier id();
 
 	/**
 	 * Getter for the raw int ID associated with the entry.
 	 *
-	 * @return the entry's raw int ID
+	 * {@return the entry's raw int ID}
 	 */
 	int rawId();
 }

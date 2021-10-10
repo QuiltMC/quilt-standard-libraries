@@ -2,6 +2,7 @@ package org.quiltmc.qsl.registry.impl.event;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.qsl.registry.api.event.RegistryEntryContext;
 
 /**
@@ -13,6 +14,7 @@ import org.quiltmc.qsl.registry.api.event.RegistryEntryContext;
  *
  * @param <V> the type of the relevant {@link Registry}'s entries
  */
+@ApiStatus.Internal
 public class MutableRegistryEntryContextImpl<V> implements RegistryEntryContext<V> {
 	private final Registry<V> registry;
 	private V entry;
