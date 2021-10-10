@@ -8,7 +8,7 @@ import org.quiltmc.qsl.registry.impl.event.RegistryEventStorage;
  * Events for listening to the manipulation of Minecraft's content registries.
  *
  * <p>The events are to be used for very low-level purposes, and callbacks are only called on registry manipulations
- * occurring after the event registration. This means that mod load order can affect what is picked up be these events.
+ * occurring after the event registration. This means that mod load order can affect what is picked up by these events.
  *
  * <p>For more high-level monitoring of registries, including methods to ease the inconvenience of mod load order,
  * use {@link RegistryMonitor}.

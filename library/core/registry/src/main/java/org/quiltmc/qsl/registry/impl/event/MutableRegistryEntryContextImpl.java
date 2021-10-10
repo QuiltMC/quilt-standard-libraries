@@ -26,8 +26,7 @@ public class MutableRegistryEntryContextImpl<V> implements RegistryEntryContext<
 	/**
 	 * Changes the current entry information.
 	 *
-	 * <p>Raw ID is set to -1 to signify that it should be lazily assigned only when called for, to minimize
-	 * lookups.
+	 * <p>Raw ID is set to -1 to signify that it should be lazily looked up.
 	 *
 	 * @param id    The namespaced ID of the new entry
 	 * @param entry The new entry's object

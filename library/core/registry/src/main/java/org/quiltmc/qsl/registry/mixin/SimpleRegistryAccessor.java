@@ -13,5 +13,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(SimpleRegistry.class)
 public interface SimpleRegistryAccessor<V> {
 	@Accessor("idToEntry")
-	BiMap<Identifier, V> getIdToEntryMap();
+	BiMap<Identifier, V> quilt$getIdToEntryMap();
 }

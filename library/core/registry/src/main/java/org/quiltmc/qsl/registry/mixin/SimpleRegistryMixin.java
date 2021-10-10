@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
- * Invokes events for {@link Registry} manipulation.
+ * Stores and invokes registry events.
  */
 @Mixin(SimpleRegistry.class)
 public abstract class SimpleRegistryMixin<V> extends Registry<V> implements RegistryEventStorage<V> {
@@ -32,6 +32,9 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Regi
 		super(key, lifecycle);
 	}
 
+	/**
+	 * Invokes the entry add event.
+	 */
 	@Inject(
 			method = "set(ILnet/minecraft/util/registry/RegistryKey;Ljava/lang/Object;Lcom/mojang/serialization/Lifecycle;Z)Ljava/lang/Object;",
 			at = @At("HEAD")
