@@ -22,5 +22,5 @@ import org.quiltmc.qsl.tag.api.TagType;
 
 @ApiStatus.Internal
 public interface QuiltRequiredTagWrapperHooks {
-	void qsl$setTagType(TagType tagType);
+	void quilt$setTagType(TagType tagType);
 }

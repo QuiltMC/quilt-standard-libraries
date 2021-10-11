@@ -111,7 +111,7 @@ public final class TagRegistryImpl<T> implements TagRegistry<T> {
 				for (var requiredTagList : RequiredTagListRegistryAccessor.getAll()) {
 					if (requiredTagList.getRegistryKey() == this.registryKey) {
 						//noinspection unchecked
-						yield ((QuiltRequiredTagListHooks<T>) requiredTagList).qsl$addTag(id, type);
+						yield ((QuiltRequiredTagListHooks<T>) requiredTagList).quilt$addTag(id, type);
 					}
 				}
 
@@ -142,7 +142,7 @@ public final class TagRegistryImpl<T> implements TagRegistry<T> {
 
 				var tagGroupLoader = new TagGroupLoader<>(registry::getOrEmpty, tagList.getDataType());
 				TagGroup<?> tagGroup = tagGroupLoader.load(resourceManager);
-				((QuiltTagManagerHooks) ServerTagManagerHolder.getTagManager()).qsl$putTagGroup(registryKey, tagGroup);
+				((QuiltTagManagerHooks) ServerTagManagerHolder.getTagManager()).quilt$putTagGroup(registryKey, tagGroup);
 				tagList.updateTagManager(ServerTagManagerHolder.getTagManager());
 				loadedTags += tagGroup.getTags().size();
 			}

@@ -93,7 +93,7 @@ public class TagDelegate<T> implements Tag.Identified<T>, QuiltTag<T>, QuiltTagH
 	}
 
 	@Override
-	public void qsl$setClearCount(int clearCount) {
+	public void quilt$setClearCount(int clearCount) {
 		this.clearCount = clearCount;
 	}
 

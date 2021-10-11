@@ -48,7 +48,7 @@ public class TagManagerMixin implements QuiltTagManagerHooks {
 	}
 
 	@Override
-	public void qsl$putTagGroup(RegistryKey<? extends Registry<?>> registryKey, TagGroup<?> tagGroup) {
+	public void quilt$putTagGroup(RegistryKey<? extends Registry<?>> registryKey, TagGroup<?> tagGroup) {
 		this.tagGroups.put(registryKey, tagGroup);
 	}
 }

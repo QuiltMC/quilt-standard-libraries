@@ -31,14 +31,14 @@ import net.minecraft.util.Identifier;
 @Mixin(TagGroupLoader.class)
 public interface TagGroupLoaderAccessor {
 	@Invoker("method_32839")
-	static void qsl$visitDependenciesAndElement(Map<Identifier, Tag.Builder> map,
+	static void quilt$visitDependenciesAndElement(Map<Identifier, Tag.Builder> map,
 	                                            Multimap<Identifier, Identifier> tagEntries, Set<Identifier> set,
 	                                            Identifier identifier, BiConsumer<Identifier, Tag.Builder> consumer) {
 		throw new IllegalStateException("Invoker injection failed.");
 	}
 
 	@Invoker("method_32844")
-	static void qsl$addDependencyIfNotCyclic(Multimap<Identifier, Identifier> tagEntries, Identifier tagId, Identifier entryId) {
+	static void quilt$addDependencyIfNotCyclic(Multimap<Identifier, Identifier> tagEntries, Identifier tagId, Identifier entryId) {
 		throw new IllegalStateException("Invoker injection failed.");
 	}
 }
