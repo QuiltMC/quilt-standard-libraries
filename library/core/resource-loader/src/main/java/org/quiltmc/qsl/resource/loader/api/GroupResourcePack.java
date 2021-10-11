@@ -151,8 +151,8 @@ public abstract class GroupResourcePack implements ResourcePack {
 		 * @param type         the resource type of this resource pack
 		 * @param basePack     the base resource pack
 		 * @param packs        the additional packs
-		 * @param basePriority {@code true} if the base resource pack has priority over the additional packs, else {@code false}.
-		 *                     Ignored if the base resource pack is already present in the list.
+		 * @param basePriority {@code true} if the base resource pack has priority over the additional packs, otherwise {@code false}.
+		 *                     Ignored if the base resource pack is already present in the list
 		 */
 		public Wrapped(ResourceType type, ResourcePack basePack, List<ResourcePack> packs, boolean basePriority) {
 			super(type, addToPacksIfNeeded(basePack, packs, basePriority));
