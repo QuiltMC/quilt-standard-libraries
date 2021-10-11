@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "qsl_items_item_group",
+  "name": "Quilt Item Group API",
+  "version": "1.0.0",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "mixins": [
+    "qsl_items_item_group.mixin.json"
+  ]
+}
