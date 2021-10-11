@@ -3,7 +3,7 @@ plugins {
 }
 
 qslModule {
-	moduleName = "registry-entry-attributes"
+	moduleName = "registry_entry_attributes"
 	version = "1.0.0"
 	library = "data"
 	coreDependencies([
