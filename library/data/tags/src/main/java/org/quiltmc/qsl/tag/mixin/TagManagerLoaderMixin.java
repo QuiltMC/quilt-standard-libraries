@@ -47,7 +47,7 @@ public abstract class TagManagerLoaderMixin {
 
 	@Dynamic("private static synthetic method_33179; " +
 			"Consumer lambda in reload method, corresponds to the RequiredTagList.forEach.")
-	@Inject(method = "method_33179", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "method_33179", at = @At("HEAD"), cancellable = true, remap = false)
 	private void onRequiredGroupBuild(ResourceManager resourceManager, Executor executor, List<?> list,
 	                                  RequiredTagList<?> requiredTagList, CallbackInfo ci) {
 		// Don't load dynamic registry tags now, we need to load them after the dynamic registry.

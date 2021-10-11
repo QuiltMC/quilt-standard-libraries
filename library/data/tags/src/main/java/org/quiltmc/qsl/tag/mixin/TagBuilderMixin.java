@@ -48,7 +48,8 @@ public class TagBuilderMixin implements QuiltTagBuilder {
 			method = "build",
 			at = @At(
 					value = "INVOKE",
-					target = "Lcom/mojang/datafixers/util/Either;right(Ljava/lang/Object;)Lcom/mojang/datafixers/util/Either;"
+					target = "Lcom/mojang/datafixers/util/Either;right(Ljava/lang/Object;)Lcom/mojang/datafixers/util/Either;",
+					remap = false
 			)
 	)
 	private Either<Collection<Tag.TrackedEntry>, Object> build(Object tag) {

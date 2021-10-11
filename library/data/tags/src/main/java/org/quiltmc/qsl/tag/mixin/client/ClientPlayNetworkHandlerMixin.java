@@ -68,7 +68,8 @@ public abstract class ClientPlayNetworkHandlerMixin {
 			method = "onSynchronizeTags",
 			at = @At(
 					value = "INVOKE",
-					target = "Lcom/google/common/collect/Multimap;isEmpty()Z"
+					target = "Lcom/google/common/collect/Multimap;isEmpty()Z",
+					remap = false
 			)
 	)
 	private void onGetMissingTagsEnd(SynchronizeTagsS2CPacket packet, CallbackInfo ci) {

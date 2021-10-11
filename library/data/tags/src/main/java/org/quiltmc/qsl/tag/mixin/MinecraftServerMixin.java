@@ -45,7 +45,8 @@ public class MinecraftServerMixin {
 					value = "INVOKE",
 					target = "Lnet/minecraft/resource/ServerResourceManager;loadRegistryTags()V",
 					shift = At.Shift.AFTER
-			)
+			),
+			remap = false
 	)
 	private void method_29440(Collection<?> collection, ServerResourceManager serverResourceManager, CallbackInfo ci) {
 		// Load dynamic registry tags on data pack reload.
