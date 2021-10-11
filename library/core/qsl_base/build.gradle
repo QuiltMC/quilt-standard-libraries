@@ -3,7 +3,7 @@ plugins {
 }
 
 qslModule {
-	moduleName = "qsl-base"
+	moduleName = "qsl_base"
 	version = "1.0.0"
 	library = "core"
 }

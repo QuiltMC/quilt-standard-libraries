@@ -7,11 +7,11 @@ qslModule {
 	version = "1.0.0"
 	library = "data"
 	coreDependencies([
-			"resource-loader"
+			"resource_loader"
 	])
 	coreTestmodDependencies([
-			"qsl-base",
-			"lifecycle-events"
+			"qsl_base",
+			"lifecycle_events"
 	])
 }
 

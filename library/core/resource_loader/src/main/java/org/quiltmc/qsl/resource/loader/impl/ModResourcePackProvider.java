@@ -49,7 +49,7 @@ public final class ModResourcePackProvider implements ResourcePackProvider {
 	/**
 	 * Registers the resource packs.
 	 *
-	 * @param consumer The resource pack profile consumer.
+	 * @param consumer the resource pack profile consumer
 	 */
 	public void register(Consumer<ResourcePackProfile> consumer) {
 		this.register(consumer, this.factory);

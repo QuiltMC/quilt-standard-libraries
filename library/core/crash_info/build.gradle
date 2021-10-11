@@ -3,10 +3,10 @@ plugins {
 }
 
 qslModule {
-	moduleName = "lifecycle-events"
+	moduleName = "crash_info"
 	version = "1.0.0"
 	library = "core"
-	coreApiDependencies([
-			"qsl-base"
+	coreDependencies([
+		"qsl_base"
 	])
 }
