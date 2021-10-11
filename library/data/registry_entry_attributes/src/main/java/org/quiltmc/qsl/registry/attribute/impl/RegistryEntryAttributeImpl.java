@@ -26,21 +26,16 @@ import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 
 @ApiStatus.Internal
 public record RegistryEntryAttributeImpl<R, V>(Registry<R> registry,
 											   Identifier id,
 											   Side side,
 											   Codec<V> codec,
-											   @Nullable V defaultValue) implements RegistryEntryAttribute<R, V> {
-	public RegistryEntryAttributeImpl(Registry<R> registry, Identifier id, Side side, Codec<V> codec, @Nullable V defaultValue) {
-		this.registry = registry;
-		this.id = id;
-		this.side = side;
-		this.codec = codec;
-		this.defaultValue = defaultValue;
-	}
-
+											   @Nullable V defaultValue,
+											   @Nullable Function<R, V> missingValueFunction)
+		implements RegistryEntryAttribute<R, V> {
 	@Override
 	public Optional<V> getValue(R entry) {
 		V value;
@@ -57,6 +52,13 @@ public record RegistryEntryAttributeImpl<R, V>(Registry<R> registry,
 		value = RegistryEntryAttributeHolder.getBuiltin(registry).getValue(this, entry);
 		if (value != null) {
 			return Optional.of(value);
+		}
+		if (missingValueFunction != null) {
+			value = missingValueFunction.apply(entry);
+			if (value != null) {
+				RegistryEntryAttributeHolder.getBuiltin(registry).putValue(this, entry, value);
+				return Optional.of(value);
+			}
 		}
 		return Optional.ofNullable(defaultValue);
 	}

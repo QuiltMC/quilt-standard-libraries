@@ -178,18 +178,7 @@ public interface RegistryEntryAttribute<R, V> {
 	Codec<V> codec();
 
 	/**
-	 * Gets the default value of this attribute. Can be {@code null}.
-	 *
-	 * @return default value
-	 */
-	V defaultValue();
-
-	/**
-	 * Gets the value associated with this attribute for the specified entry.<p>
-	 *
-	 * If the entry has no value for this attribute, the attribute's
-	 * {@linkplain #defaultValue() default value} will be returned instead, unless it is {@code null},
-	 * in which case an empty optional will be returned.
+	 * Gets the value associated with this attribute for the specified entry.
 	 *
 	 * @param entry registry entry
 	 * @return attribute value, or empty if no value is assigned
@@ -252,6 +241,7 @@ public interface RegistryEntryAttribute<R, V> {
 
 		private Side side;
 		private @Nullable V defaultValue;
+		private @Nullable Function<R, V> missingValueFunction;
 
 		private Builder(Registry<R> registry, Identifier id, Codec<V> codec) {
 			this.registry = registry;
@@ -288,12 +278,27 @@ public interface RegistryEntryAttribute<R, V> {
 		}
 
 		/**
+		 * Sets the <em>missing value function</em> of this attribute, which will be used to compute a value for a
+		 * specific entry, should it be missing.<p>
+		 *
+		 * Note that this will be computed on both sides and the computation result will <em>not</em> be synchronized.
+		 *
+		 * @param missingValueFunction function to compute otherwise-missing value
+		 * @return this builder
+		 */
+		public Builder<R, V> missingValueFunction(@Nullable Function<R, V> missingValueFunction) {
+			this.missingValueFunction = missingValueFunction;
+			this.defaultValue = null;
+			return this;
+		}
+
+		/**
 		 * Builds a new attribute.
 		 *
 		 * @return new attribute
 		 */
 		public RegistryEntryAttribute<R, V> build() {
-			var attr = new RegistryEntryAttributeImpl<>(registry, id, side, codec, defaultValue);
+			var attr = new RegistryEntryAttributeImpl<>(registry, id, side, codec, defaultValue, missingValueFunction);
 			RegistryEntryAttributeHolder.registerAttribute(registry, attr);
 			return attr;
 		}
