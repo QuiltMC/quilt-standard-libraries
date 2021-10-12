@@ -29,6 +29,23 @@ public class QuiltMaterialBuilder extends Material.Builder {
 		super(color);
 	}
 
+	public static QuiltMaterialBuilder copyOf(Material material, MapColor color) {
+		var builder = new QuiltMaterialBuilder(color);
+		@SuppressWarnings("ConstantConditions") var accessor = (MaterialBuilderAccessor) builder;
+		accessor.setPistonBehavior(material.getPistonBehavior());
+		accessor.setBlocksMovement(material.blocksMovement());
+		accessor.setBurnable(material.isBurnable());
+		accessor.setLiquid(material.isLiquid());
+		accessor.setReplaceable(material.isReplaceable());
+		accessor.setSolid(material.isSolid());
+		accessor.setBlocksLight(material.blocksLight());
+		return builder;
+	}
+
+	public static QuiltMaterialBuilder copyOf(Material material) {
+		return copyOf(material, material.getColor());
+	}
+
 	@Override
 	public QuiltMaterialBuilder liquid() {
 		super.liquid();

@@ -27,6 +27,24 @@ public interface MaterialBuilderAccessor {
 	@Accessor
 	void setPistonBehavior(PistonBehavior behavior);
 
+	@Accessor
+	void setBlocksMovement(boolean blocksMovement);
+
+	@Accessor
+	void setBurnable(boolean burnable);
+
+	@Accessor
+	void setLiquid(boolean liquid);
+
+	@Accessor
+	void setReplaceable(boolean replaceable);
+
+	@Accessor
+	void setSolid(boolean solid);
+
+	@Accessor
+	void setBlocksLight(boolean blocksLight);
+
 	@Invoker
 	Material.Builder invokeLightPassesThrough();
 }

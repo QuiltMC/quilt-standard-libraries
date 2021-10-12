@@ -15,6 +15,8 @@
  * <h3>{@linkplain org.quiltmc.qsl.block.extensions.api.QuiltMaterialBuilder Extended material builder}</h3>
  * <ul>
  *     <li>Provides additional methods to make creating materials a bit easier.</li>
+ *     <li>Also allows copying settings from existing materials, via
+ *     {@link org.quiltmc.qsl.block.extensions.api.QuiltMaterialBuilder#copyOf(net.minecraft.block.Material, net.minecraft.block.MapColor)}.</li>
  *     <li>Allows specifying that light passes through materials of this block via
  *     {@link org.quiltmc.qsl.block.extensions.api.QuiltMaterialBuilder#lightPassesThrough()}.</li>
  *     <li>Allows setting default piston behavior via

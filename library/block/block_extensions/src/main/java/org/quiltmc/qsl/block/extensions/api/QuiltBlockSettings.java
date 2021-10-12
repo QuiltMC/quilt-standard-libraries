@@ -23,7 +23,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
