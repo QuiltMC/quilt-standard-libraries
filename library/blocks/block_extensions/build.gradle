@@ -1,0 +1,16 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "block_extensions"
+	version = "1.0.0"
+	library = "blocks"
+	coreDependencies([
+			"qsl_base"
+	])
+}
+
+minecraft {
+	accessWidener = file("src/main/resources/qsl_block_extensions.accesswidener")
+}

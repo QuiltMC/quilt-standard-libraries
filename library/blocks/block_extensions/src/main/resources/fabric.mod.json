@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "qsl_block_extensions",
+  "name": "Quilt Block Extensions API",
+  "version": "1.0.0",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "mixins": [
+    "qsl_block_extensions.mixins.json"
+  ],
+  "accessWidener": "qsl_block_extensions.accesswidener"
+}
