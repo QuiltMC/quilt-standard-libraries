@@ -5,7 +5,7 @@ plugins {
 qslModule {
 	moduleName = "block_extensions"
 	version = "1.0.0"
-	library = "blocks"
+	library = "block"
 	coreDependencies([
 			"qsl_base"
 	])
