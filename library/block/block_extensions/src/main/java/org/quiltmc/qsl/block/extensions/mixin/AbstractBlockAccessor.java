@@ -22,6 +22,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(AbstractBlock.class)
 public interface AbstractBlockAccessor {
-	@Accessor
-	AbstractBlock.Settings getSettings();
+	@Accessor("settings")
+	AbstractBlock.Settings qsl$getSettings();
 }
