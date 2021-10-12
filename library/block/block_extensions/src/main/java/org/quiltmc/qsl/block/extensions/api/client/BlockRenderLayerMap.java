@@ -38,7 +38,7 @@ public final class BlockRenderLayerMap {
 	 * @param blocks target blocks
 	 */
 	public static void put(RenderLayer layer, Block... blocks) {
-		for (Block block : blocks) {
+		for (var block : blocks) {
 			BlockRenderLayerMapImpl.put(block, layer);
 		}
 	}
@@ -50,7 +50,7 @@ public final class BlockRenderLayerMap {
 	 * @param fluids target fluids
 	 */
 	public static void put(RenderLayer layer, Fluid... fluids) {
-		for (Fluid fluid : fluids) {
+		for (var fluid : fluids) {
 			BlockRenderLayerMapImpl.put(fluid, layer);
 		}
 	}
