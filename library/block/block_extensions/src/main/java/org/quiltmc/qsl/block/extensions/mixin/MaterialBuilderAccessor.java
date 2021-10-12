@@ -24,27 +24,27 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(Material.Builder.class)
 public interface MaterialBuilderAccessor {
-	@Accessor("pistonBehavior")
-	void qsl$setPistonBehavior(PistonBehavior behavior);
+	@Accessor
+	void setPistonBehavior(PistonBehavior behavior);
 
-	@Accessor("blocksMovement")
-	void qsl$setBlocksMovement(boolean blocksMovement);
+	@Accessor
+	void setBlocksMovement(boolean blocksMovement);
 
-	@Accessor("burnable")
-	void qsl$setBurnable(boolean burnable);
+	@Accessor
+	void setBurnable(boolean burnable);
 
-	@Accessor("liquid")
-	void qsl$setLiquid(boolean liquid);
+	@Accessor
+	void setLiquid(boolean liquid);
 
-	@Accessor("replaceable")
-	void qsl$setReplaceable(boolean replaceable);
+	@Accessor
+	void setReplaceable(boolean replaceable);
 
-	@Accessor("solid")
-	void qsl$setSolid(boolean solid);
+	@Accessor
+	void setSolid(boolean solid);
 
-	@Accessor("blocksLight")
-	void qsl$setBlocksLight(boolean blocksLight);
+	@Accessor
+	void setBlocksLight(boolean blocksLight);
 
-	@Invoker("lightPassesThrough")
-	Material.Builder qsl$callLightPassesThrough();
+	@Invoker
+	Material.Builder invokeLightPassesThrough();
 }

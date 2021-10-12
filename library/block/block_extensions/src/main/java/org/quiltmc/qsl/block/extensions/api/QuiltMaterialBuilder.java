@@ -32,13 +32,13 @@ public class QuiltMaterialBuilder extends Material.Builder {
 	public static QuiltMaterialBuilder copyOf(Material material, MapColor color) {
 		var builder = new QuiltMaterialBuilder(color);
 		@SuppressWarnings("ConstantConditions") var accessor = (MaterialBuilderAccessor) builder;
-		accessor.qsl$setPistonBehavior(material.getPistonBehavior());
-		accessor.qsl$setBlocksMovement(material.blocksMovement());
-		accessor.qsl$setBurnable(material.isBurnable());
-		accessor.qsl$setLiquid(material.isLiquid());
-		accessor.qsl$setReplaceable(material.isReplaceable());
-		accessor.qsl$setSolid(material.isSolid());
-		accessor.qsl$setBlocksLight(material.blocksLight());
+		accessor.setPistonBehavior(material.getPistonBehavior());
+		accessor.setBlocksMovement(material.blocksMovement());
+		accessor.setBurnable(material.isBurnable());
+		accessor.setLiquid(material.isLiquid());
+		accessor.setReplaceable(material.isReplaceable());
+		accessor.setSolid(material.isSolid());
+		accessor.setBlocksLight(material.blocksLight());
 		return builder;
 	}
 
@@ -70,7 +70,7 @@ public class QuiltMaterialBuilder extends Material.Builder {
 	 * @return this builder
 	 */
 	public QuiltMaterialBuilder lightPassesThrough() {
-		((MaterialBuilderAccessor) this).qsl$callLightPassesThrough();
+		((MaterialBuilderAccessor) this).invokeLightPassesThrough();
 		return this;
 	}
 
@@ -105,7 +105,7 @@ public class QuiltMaterialBuilder extends Material.Builder {
 	 * @return this builder
 	 */
 	public QuiltMaterialBuilder pistonBehavior(PistonBehavior behavior) {
-		((MaterialBuilderAccessor) this).qsl$setPistonBehavior(behavior);
+		((MaterialBuilderAccessor) this).setPistonBehavior(behavior);
 		return this;
 	}
 }

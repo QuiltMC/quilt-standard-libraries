@@ -39,37 +39,37 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	}
 
 	protected QuiltBlockSettings(AbstractBlock.Settings settings) {
-		super(((AbstractBlockSettingsAccessor) settings).qsl$getMaterial(), ((AbstractBlockSettingsAccessor) settings).qsl$getMapColorProvider());
+		super(((AbstractBlockSettingsAccessor) settings).getMaterial(), ((AbstractBlockSettingsAccessor) settings).getMapColorProvider());
 
 		var thisAccessor = (AbstractBlockSettingsAccessor) this;
 		var otherAccessor = (AbstractBlockSettingsAccessor) settings;
 
 		// region [VanillaCopy] AbstractBlock.Settings#copy(AbstractBlock.Settings)
-		thisAccessor.qsl$setMaterial(otherAccessor.qsl$getMaterial());
-		this.hardness(otherAccessor.qsl$getHardness());
-		this.resistance(otherAccessor.qsl$getResistance());
-		thisAccessor.qsl$setCollidable(otherAccessor.qsl$getCollidable());
-		thisAccessor.qsl$setRandomTicks(otherAccessor.qsl$getRandomTicks());
-		this.luminance(otherAccessor.qsl$getLuminance());
-		thisAccessor.qsl$setMapColorProvider(otherAccessor.qsl$getMapColorProvider());
-		this.sounds(otherAccessor.qsl$getSoundGroup());
-		this.slipperiness(otherAccessor.qsl$getSlipperiness());
-		this.velocityMultiplier(otherAccessor.qsl$getVelocityMultiplier());
-		thisAccessor.qsl$setDynamicBounds(otherAccessor.qsl$getDynamicBounds());
-		thisAccessor.qsl$setOpaque(otherAccessor.qsl$getOpaque());
-		thisAccessor.qsl$setIsAir(otherAccessor.qsl$getIsAir());
-		thisAccessor.qsl$setToolRequired(otherAccessor.qsl$isToolRequired());
+		thisAccessor.setMaterial(otherAccessor.getMaterial());
+		this.hardness(otherAccessor.getHardness());
+		this.resistance(otherAccessor.getResistance());
+		thisAccessor.setCollidable(otherAccessor.getCollidable());
+		thisAccessor.setRandomTicks(otherAccessor.getRandomTicks());
+		this.luminance(otherAccessor.getLuminance());
+		thisAccessor.setMapColorProvider(otherAccessor.getMapColorProvider());
+		this.sounds(otherAccessor.getSoundGroup());
+		this.slipperiness(otherAccessor.getSlipperiness());
+		this.velocityMultiplier(otherAccessor.getVelocityMultiplier());
+		thisAccessor.setDynamicBounds(otherAccessor.getDynamicBounds());
+		thisAccessor.setOpaque(otherAccessor.getOpaque());
+		thisAccessor.setIsAir(otherAccessor.getIsAir());
+		thisAccessor.setToolRequired(otherAccessor.isToolRequired());
 		// endregion
 
 		// also copy other stuff Vanilla doesn't bother with
-		this.jumpVelocityMultiplier(otherAccessor.qsl$getJumpVelocityMultiplier());
-		thisAccessor.qsl$setLootTableId(otherAccessor.qsl$getLootTableId());
-		this.allowsSpawning(otherAccessor.qsl$getAllowsSpawningPredicate());
-		this.solidBlock(otherAccessor.qsl$getSolidBlockPredicate());
-		this.suffocates(otherAccessor.qsl$getSuffocationPredicate());
-		this.blockVision(otherAccessor.qsl$getBlockVisionPredicate());
-		this.postProcess(otherAccessor.qsl$getPostProcessPredicate());
-		this.emissiveLighting(otherAccessor.qsl$getEmissiveLightingPredicate());
+		this.jumpVelocityMultiplier(otherAccessor.getJumpVelocityMultiplier());
+		thisAccessor.setLootTableId(otherAccessor.getLootTableId());
+		this.allowsSpawning(otherAccessor.getAllowsSpawningPredicate());
+		this.solidBlock(otherAccessor.getSolidBlockPredicate());
+		this.suffocates(otherAccessor.getSuffocationPredicate());
+		this.blockVision(otherAccessor.getBlockVisionPredicate());
+		this.postProcess(otherAccessor.getPostProcessPredicate());
+		this.emissiveLighting(otherAccessor.getEmissiveLightingPredicate());
 	}
 
 	public static QuiltBlockSettings of(Material material) {
@@ -89,7 +89,7 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	}
 
 	public static QuiltBlockSettings copyOf(AbstractBlock block) {
-		return new QuiltBlockSettings(((AbstractBlockAccessor) block).qsl$getSettings());
+		return new QuiltBlockSettings(((AbstractBlockAccessor) block).getSettings());
 	}
 
 	public static QuiltBlockSettings copyOf(AbstractBlock.Settings settings) {
@@ -266,7 +266,7 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	 * @return this builder
 	 */
 	public QuiltBlockSettings drops(Identifier dropTableId) {
-		((AbstractBlockSettingsAccessor) this).qsl$setLootTableId(dropTableId);
+		((AbstractBlockSettingsAccessor) this).setLootTableId(dropTableId);
 		return this;
 	}
 

@@ -30,99 +30,99 @@ import java.util.function.ToIntFunction;
 @Mixin(AbstractBlock.Settings.class)
 public interface AbstractBlockSettingsAccessor {
 	// region Getters
-	@Accessor("material")
-	Material qsl$getMaterial();
+	@Accessor
+	Material getMaterial();
 
-	@Accessor("hardness")
-	float qsl$getHardness();
+	@Accessor
+	float getHardness();
 
-	@Accessor("resistance")
-	float qsl$getResistance();
+	@Accessor
+	float getResistance();
 
-	@Accessor("collidable")
-	boolean qsl$getCollidable();
+	@Accessor
+	boolean getCollidable();
 
-	@Accessor("randomTicks")
-	boolean qsl$getRandomTicks();
+	@Accessor
+	boolean getRandomTicks();
 
 	@Accessor("luminance")
-	ToIntFunction<BlockState> qsl$getLuminance();
+	ToIntFunction<BlockState> getLuminance();
 
-	@Accessor("mapColorProvider")
-	Function<BlockState, MapColor> qsl$getMapColorProvider();
+	@Accessor
+	Function<BlockState, MapColor> getMapColorProvider();
 
-	@Accessor("soundGroup")
-	BlockSoundGroup qsl$getSoundGroup();
+	@Accessor
+	BlockSoundGroup getSoundGroup();
 
-	@Accessor("slipperiness")
-	float qsl$getSlipperiness();
+	@Accessor
+	float getSlipperiness();
 
-	@Accessor("velocityMultiplier")
-	float qsl$getVelocityMultiplier();
+	@Accessor
+	float getVelocityMultiplier();
 
-	@Accessor("jumpVelocityMultiplier")
-	float qsl$getJumpVelocityMultiplier();
+	@Accessor
+	float getJumpVelocityMultiplier();
 
-	@Accessor("lootTableId")
-	Identifier qsl$getLootTableId();
+	@Accessor
+	Identifier getLootTableId();
 
-	@Accessor("opaque")
-	boolean qsl$getOpaque();
+	@Accessor
+	boolean getOpaque();
 
-	@Accessor("isAir")
-	boolean qsl$getIsAir();
+	@Accessor
+	boolean getIsAir();
 
-	@Accessor("toolRequired")
-	boolean qsl$isToolRequired();
+	@Accessor
+	boolean isToolRequired();
 
-	@Accessor("allowsSpawningPredicate")
-	AbstractBlock.TypedContextPredicate<EntityType<?>> qsl$getAllowsSpawningPredicate();
+	@Accessor
+	AbstractBlock.TypedContextPredicate<EntityType<?>> getAllowsSpawningPredicate();
 
-	@Accessor("solidBlockPredicate")
-	AbstractBlock.ContextPredicate qsl$getSolidBlockPredicate();
+	@Accessor
+	AbstractBlock.ContextPredicate getSolidBlockPredicate();
 
-	@Accessor("suffocationPredicate")
-	AbstractBlock.ContextPredicate qsl$getSuffocationPredicate();
+	@Accessor
+	AbstractBlock.ContextPredicate getSuffocationPredicate();
 
-	@Accessor("blockVisionPredicate")
-	AbstractBlock.ContextPredicate qsl$getBlockVisionPredicate();
+	@Accessor
+	AbstractBlock.ContextPredicate getBlockVisionPredicate();
 
-	@Accessor("postProcessPredicate")
-	AbstractBlock.ContextPredicate qsl$getPostProcessPredicate();
+	@Accessor
+	AbstractBlock.ContextPredicate getPostProcessPredicate();
 
-	@Accessor("emissiveLightingPredicate")
-	AbstractBlock.ContextPredicate qsl$getEmissiveLightingPredicate();
+	@Accessor
+	AbstractBlock.ContextPredicate getEmissiveLightingPredicate();
 
-	@Accessor("dynamicBounds")
-	boolean qsl$getDynamicBounds();
+	@Accessor
+	boolean getDynamicBounds();
 	// endregion
 
 	// region Setters
-	@Accessor("material")
-	void qsl$setMaterial(Material material);
+	@Accessor
+	void setMaterial(Material material);
 
-	@Accessor("collidable")
-	void qsl$setCollidable(boolean collidable);
+	@Accessor
+	void setCollidable(boolean collidable);
 
-	@Accessor("randomTicks")
-	void qsl$setRandomTicks(boolean ticksRandomly);
+	@Accessor
+	void setRandomTicks(boolean ticksRandomly);
 
-	@Accessor("mapColorProvider")
-	void qsl$setMapColorProvider(Function<BlockState, MapColor> mapColorProvider);
+	@Accessor
+	void setMapColorProvider(Function<BlockState, MapColor> mapColorProvider);
 
-	@Accessor("lootTableId")
-	void qsl$setLootTableId(Identifier lootTableId);
+	@Accessor
+	void setLootTableId(Identifier lootTableId);
 
-	@Accessor("opaque")
-	void qsl$setOpaque(boolean opaque);
+	@Accessor
+	void setOpaque(boolean opaque);
 
-	@Accessor("isAir")
-	void qsl$setIsAir(boolean isAir);
+	@Accessor
+	void setIsAir(boolean isAir);
 
-	@Accessor("toolRequired")
-	void qsl$setToolRequired(boolean toolRequired);
+	@Accessor
+	void setToolRequired(boolean toolRequired);
 
-	@Accessor("dynamicBounds")
-	void qsl$setDynamicBounds(boolean dynamicBounds);
+	@Accessor
+	void setDynamicBounds(boolean dynamicBounds);
 	// endregion
 }
