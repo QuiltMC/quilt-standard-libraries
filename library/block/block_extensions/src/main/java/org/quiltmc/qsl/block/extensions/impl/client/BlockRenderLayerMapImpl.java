@@ -21,9 +21,11 @@ import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.fluid.Fluid;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Map;
 
+@ApiStatus.Internal
 @Environment(EnvType.CLIENT)
 public final class BlockRenderLayerMapImpl {
 	private BlockRenderLayerMapImpl() { }
