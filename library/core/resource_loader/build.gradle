@@ -3,7 +3,7 @@ plugins {
 }
 
 qslModule {
-	moduleName = "resource-loader"
+	moduleName = "resource_loader"
 	version = "1.0.0"
 	library = "core"
 }

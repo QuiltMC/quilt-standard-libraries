@@ -3,10 +3,7 @@ plugins {
 }
 
 qslModule {
-	moduleName = "lifecycle-events"
+	moduleName = "qsl_base"
 	version = "1.0.0"
 	library = "core"
-	coreDependencies([
-			"qsl-base"
-	])
 }

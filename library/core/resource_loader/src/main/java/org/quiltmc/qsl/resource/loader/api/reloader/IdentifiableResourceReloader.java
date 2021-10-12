@@ -25,7 +25,7 @@ import net.minecraft.util.Identifier;
 /**
  * Interface for "identifiable" resource reloaders.
  *
- * <p>"Identifiable" resource reloaders have an unique identifier, which can be depended on,
+ * <p>"Identifiable" resource reloaders have a unique identifier, which can be depended on,
  * and can provide dependencies that they would like to see executed before themselves.
  *
  * @see ResourceReloaderKeys
