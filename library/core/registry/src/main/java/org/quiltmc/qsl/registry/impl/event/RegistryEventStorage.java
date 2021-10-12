@@ -11,7 +11,7 @@ import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 @ApiStatus.Internal
 public interface RegistryEventStorage<V> {
 	/**
-	 * Gets the entry added event.
+	 * {@return the entry added event}
 	 */
 	ArrayEvent<RegistryEvents.EntryAdded<V>> quilt$getEntryAddedEvent();
 
