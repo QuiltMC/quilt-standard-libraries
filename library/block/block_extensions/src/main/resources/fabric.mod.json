@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "qsl_block_extensions",
+  "id": "quilt_block_extensions",
   "name": "Quilt Block Extensions API",
   "version": "1.0.0",
   "environment": "*",
@@ -15,8 +15,8 @@
     "QuiltMC"
   ],
   "mixins": [
-    "qsl_block_extensions.mixins.json"
+    "quilt_block_extensions.mixins.json"
   ],
   "description": "Extensions for creating and working with blocks.",
-  "accessWidener": "qsl_block_extensions.accesswidener"
+  "accessWidener": "quilt_block_extensions.accesswidener"
 }

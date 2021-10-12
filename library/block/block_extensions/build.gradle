@@ -12,5 +12,5 @@ qslModule {
 }
 
 minecraft {
-	accessWidener = file("src/main/resources/qsl_block_extensions.accesswidener")
+	accessWidener = file("src/main/resources/quilt_block_extensions.accesswidener")
 }
