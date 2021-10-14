@@ -58,6 +58,8 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 @ApiStatus.Internal
 public final class DumpBuiltinAttributesCommand {
+	public static final String ENABLE_PROPERTY = "quilt.data.registry_entry_attributes.dumpbuiltin_command";
+
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
 	public static final class RegistryArgumentType implements ArgumentType<Registry<?>> {
@@ -91,13 +93,16 @@ public final class DumpBuiltinAttributesCommand {
 	}
 
 	public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-		ArgumentTypes.register("quilt:registry", RegistryArgumentType.class, new ConstantArgumentSerializer<>(RegistryArgumentType::registry));
+		if (Boolean.parseBoolean(System.getProperty(ENABLE_PROPERTY, "false"))) {
+			ArgumentTypes.register("quilt:rea_dumpbuiltin_registry",
+					RegistryArgumentType.class, new ConstantArgumentSerializer<>(RegistryArgumentType::registry));
 
-		dispatcher.register(literal("dumpbuiltinregattrs")
-				.then(argument("registry", RegistryArgumentType.registry())
-						.requires(src -> src.hasPermissionLevel(4))
-						.executes(DumpBuiltinAttributesCommand::execute))
-		);
+			dispatcher.register(literal("dumpbuiltinregattrs")
+					.then(argument("registry", RegistryArgumentType.registry())
+							.requires(src -> src.hasPermissionLevel(4))
+							.executes(DumpBuiltinAttributesCommand::execute))
+			);
+		}
 	}
 
 	private static final Logger LOGGER = LogManager.getLogger("DumpBuiltinAttributesCommand");
