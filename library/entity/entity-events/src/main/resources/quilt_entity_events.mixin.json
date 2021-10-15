@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_16",
   "mixins": [
     "LivingEntityMixin",
+    "ServerPlayerEntityMixin",
     "ServerWorldMixin"
   ],
   "client": [

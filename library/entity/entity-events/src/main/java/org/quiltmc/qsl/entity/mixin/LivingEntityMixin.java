@@ -1,15 +1,24 @@
 package org.quiltmc.qsl.entity.mixin;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.server.world.ServerWorld;
+import org.quiltmc.qsl.entity.api.event.AfterKilledOtherEntityCallback;
 import org.quiltmc.qsl.entity.api.event.TryReviveCallback;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {
+	@Inject(method = "onKilledBy", at = @At(value = "HEAD"))
+	private void onEntityKilledOther(LivingEntity adversary, CallbackInfo ci, Entity attacker) {
+		AfterKilledOtherEntityCallback.EVENT.invoker().afterKilledOtherEntity(((LivingEntity) (Object) this).world, attacker, (LivingEntity) (Object) this);
+	}
+
 	@Inject(method = "tryUseTotem", at = @At("HEAD"), cancellable = true)
 	void invokeTryReviveBeforeTotemEvent(DamageSource source, CallbackInfoReturnable<Boolean> cir) {
 		if (TryReviveCallback.BEFORE_TOTEM.invoker().tryRevive((LivingEntity) (Object) this, source)) {
