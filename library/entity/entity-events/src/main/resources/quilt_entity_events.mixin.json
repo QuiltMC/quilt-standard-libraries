@@ -3,9 +3,12 @@
   "package": "org.quiltmc.qsl.entity.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
-    "LivingEntityMixin"
+    "LivingEntityMixin",
+    "ServerWorldMixin"
   ],
-  "client": [],
+  "client": [
+    "ClientWorldMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }
