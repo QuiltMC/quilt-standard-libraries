@@ -13,11 +13,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ClientWorldMixin {
 	@Inject(method = "tickEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;tick()V"))
 	void invokeEntityTickEvent(Entity entity, CallbackInfo ci) {
-		EntityTickCallback.ENTITY_TICK.invoker().onTick(entity, false, false);
+		EntityTickCallback.ENTITY_TICK.invoker().onTick(entity, true, false);
 	}
 
 	@Inject(method = "tickPassenger", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;tickRiding()V"))
 	void invokePassengerEntityTickEvent(Entity vehicle, Entity passenger, CallbackInfo ci) {
-		EntityTickCallback.ENTITY_TICK.invoker().onTick(passenger, false, true);
+		EntityTickCallback.ENTITY_TICK.invoker().onTick(passenger, true, true);
 	}
 }
