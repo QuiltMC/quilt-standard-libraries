@@ -7,6 +7,6 @@ qslModule {
 	version = "1.0.0"
 	library = "entity"
 	coreDependencies([
-		"qsl-base"
+		"qsl_base"
 	])
 }
