@@ -3,10 +3,10 @@ plugins {
 }
 
 qslModule {
-	moduleName = "qsl-commands"
+	moduleName = "qsl_commands"
 	version = "1.0.0"
 	library = "commands"
 	coreDependencies([
-			"qsl-base"
+			"qsl_base"
 	])
 }
