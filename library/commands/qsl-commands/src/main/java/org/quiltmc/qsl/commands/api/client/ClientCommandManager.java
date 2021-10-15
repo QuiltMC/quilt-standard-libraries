@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2017, 2018, 2019 FabricMC, modifications 2021 QuiltMC
+ * Copyright 2021 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 /**
- * Manages client-sided commands and provides some related helper methods, analagous to {@link net.minecraft.server.command.CommandManager}.
+ * Manages client-sided commands and provides some related helper methods, analogous to {@link net.minecraft.server.command.CommandManager}.
  *
  * <p>Client-sided commands are executed wholly on the client,
  * so players can use them in both singleplayer and multiplayer.

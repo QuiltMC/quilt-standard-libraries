@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2017, 2018, 2019 FabricMC
+ * Copyright 2021 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ import net.minecraft.text.TranslatableText;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.quiltmc.qsl.commands.api.client.ClientCommandManager;
 import org.quiltmc.qsl.commands.api.client.ClientCommandRegistrationCallback;
 import org.quiltmc.qsl.commands.api.client.QuiltClientCommandSource;
 import org.quiltmc.qsl.commands.mixin.HelpCommandAccessor;
@@ -174,7 +175,7 @@ public final class ClientCommandInternals {
 			CommandNode<QuiltClientCommandSource> mainNode = DISPATCHER.register(
 					literal(API_COMMAND_NAME)
 							.then(createHelpCommand())
-							.then(createRunCommand(DISPATCHER))
+							.then(createRunCommand())
 			);
 			DISPATCHER.register(literal(SHORT_API_COMMAND_NAME).redirect(mainNode));
 		}
@@ -219,9 +220,9 @@ public final class ClientCommandInternals {
 		return commands.size();
 	}
 
-	private static LiteralArgumentBuilder<QuiltClientCommandSource> createRunCommand(CommandDispatcher<QuiltClientCommandSource> dispatcher) {
+	private static LiteralArgumentBuilder<QuiltClientCommandSource> createRunCommand() {
 		LiteralArgumentBuilder<QuiltClientCommandSource> runCommand = literal("run");
-		for (CommandNode<QuiltClientCommandSource> node : dispatcher.getRoot().getChildren()) {
+		for (CommandNode<QuiltClientCommandSource> node : ClientCommandManager.DISPATCHER.getRoot().getChildren()) {
 			runCommand.then(node);
 		}
 		return runCommand;
