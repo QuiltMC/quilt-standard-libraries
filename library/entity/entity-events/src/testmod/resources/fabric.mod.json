@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "quilt_entity_events_testmod",
+  "name": "Quilt Entity Events Test Mod",
+  "version": "${version}",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "icon": "assets/quilt_crash_info/icon.png",
+  "contact": {
+    "homepage": "https://quiltmc.org",
+    "issues": "https://github.com/QuiltMC/quilt-standard-libraries/issues",
+    "sources": "https://github.com/QuiltMC/quilt-standard-libraries"
+  },
+  "authors": [
+    "QuiltMC"
+  ],
+  "entrypoints": {
+    "main": [
+      "org.quiltmc.qsl.entity.test.EntityEventsTestMod"
+    ]
+  },
+  "depends": {
+    "quilt_loader": ">=0.13.1-rc.10"
+  },
+  "description": "Test mod for Quilt Entity Events"
+}
