@@ -114,15 +114,15 @@ public final class ClientTagRegistryManager<T> {
 		Multimap<Identifier, Identifier> tagEntries = HashMultimap.create();
 
 		tagBuilders.forEach((tagId, builder) -> builder.forEachTagId(
-				tagEntryId -> TagGroupLoaderAccessor.quilt$addDependencyIfNotCyclic(tagEntries, tagId, tagEntryId)
+				tagEntryId -> TagGroupLoaderAccessor.invokeAddDependencyIfNotCyclic(tagEntries, tagId, tagEntryId)
 		));
 		tagBuilders.forEach((tagId, builder) -> builder.forEachGroupId(
-				entryId -> TagGroupLoaderAccessor.quilt$addDependencyIfNotCyclic(tagEntries, tagId, entryId)
+				entryId -> TagGroupLoaderAccessor.invokeAddDependencyIfNotCyclic(tagEntries, tagId, entryId)
 		));
 
 		var set = new HashSet<Identifier>();
 		tagBuilders.keySet().forEach(tagId ->
-				TagGroupLoaderAccessor.quilt$visitDependenciesAndElement(tagBuilders, tagEntries, set, tagId,
+				TagGroupLoaderAccessor.invokeVisitDependenciesAndElement(tagBuilders, tagEntries, set, tagId,
 						(currentTagId, builder) -> tags.put(tagId, this.buildLenientTag(builder, tagGetter, registryGetter))
 				)
 		);
