@@ -9,12 +9,12 @@ import net.minecraft.item.Items;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.LiteralText;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.dimension.DimensionType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.quiltmc.qsl.entity.api.event.EntityKilledCallback;
-import org.quiltmc.qsl.entity.api.event.EntityLoadEvents;
-import org.quiltmc.qsl.entity.api.event.EntityTickCallback;
-import org.quiltmc.qsl.entity.api.event.TryReviveCallback;
+import org.quiltmc.qsl.entity.api.event.*;
 
 public class EntityEventsTestMod implements ModInitializer {
 	private static final Logger LOGGER = LogManager.getLogger();
@@ -81,6 +81,20 @@ public class EntityEventsTestMod implements ModInitializer {
 		EntityLoadEvents.AFTER_ENTITY_UNLOAD.register((entity, world) -> {
 			if (entity instanceof SkeletonEntity) {
 				LOGGER.info("Skeleton unloaded, {}", world.isClient ? "client" : "server");
+			}
+		});
+
+		// Players going to the nether are notified
+		ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register((player, origin, destination) -> {
+			if (destination.getDimension() == destination.getServer().getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).get(DimensionType.THE_NETHER_REGISTRY_KEY)) {
+				player.sendMessage(new LiteralText("Nether Entered"), false);
+			}
+		});
+
+		// Entities going to the end are named 'end traveller'
+		ServerEntityWorldChangeEvents.AFTER_ENTITY_CHANGE_WORLD.register((originalEntity, newEntity, origin, destination) -> {
+			if (destination.getDimension() == destination.getServer().getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).get(DimensionType.THE_END_REGISTRY_KEY)) {
+				newEntity.setCustomName(new LiteralText("End Traveller"));
 			}
 		});
 	}
