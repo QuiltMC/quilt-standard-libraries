@@ -4,9 +4,11 @@
   "compatibilityLevel": "JAVA_16",
   "mixins": [
     "LivingEntityMixin",
+    "ServerEntityHandlerMixin",
     "ServerWorldMixin"
   ],
   "client": [
+    "ClientEntityHandlerMixin",
     "ClientWorldMixin"
   ],
   "injectors": {
