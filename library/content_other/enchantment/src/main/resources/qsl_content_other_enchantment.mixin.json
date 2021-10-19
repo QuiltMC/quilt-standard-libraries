@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.enchantment.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "mixins": [
+    "EnchantedBookItemMixin",
+    "EnchantmentHelperMixin",
+    "EnchantmentScreenHandlerMixin",
+    "WeightedAbsentMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

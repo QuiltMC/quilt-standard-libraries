@@ -1,0 +1,10 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "enchantment"
+	version = "1.0.0"
+	library = "content_other"
+}
+
