@@ -32,11 +32,11 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.text.Text;
 
 import org.quiltmc.qsl.itemgroup.impl.CreativeGuiExtensions;
-import org.quiltmc.qsl.itemgroup.impl.QuiltCreativeGuiComponents;
+import org.quiltmc.qsl.itemgroup.impl.QuiltCreativePlayerInventoryScreenWidgets;
 
 @Mixin(CreativeInventoryScreen.class)
-public abstract class CreativePlayerInventoryGuiMixin extends AbstractInventoryScreen<CreativeInventoryScreen.CreativeScreenHandler> implements CreativeGuiExtensions {
-	public CreativePlayerInventoryGuiMixin(CreativeInventoryScreen.CreativeScreenHandler screenHandler, PlayerInventory playerInventory, Text title) {
+public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScreen<CreativeInventoryScreen.CreativeScreenHandler> implements CreativeGuiExtensions {
+	private CreativeInventoryScreenMixin(CreativeInventoryScreen.CreativeScreenHandler screenHandler, PlayerInventory playerInventory, Text title) {
 		super(screenHandler, playerInventory, title);
 	}
 
@@ -57,7 +57,7 @@ public abstract class CreativePlayerInventoryGuiMixin extends AbstractInventoryS
 		return switch (page) {
 			case 0 -> 0;
 			case 1 -> 12;
-			default -> 12 + ((12 - QuiltCreativeGuiComponents.qsl$ALWAYS_SHOWN_GROUPS.size()) * (page - 1));
+			default -> 12 + ((12 - QuiltCreativePlayerInventoryScreenWidgets.ALWAYS_SHOWN_GROUPS.size()) * (page - 1));
 		};
 	}
 
@@ -66,7 +66,7 @@ public abstract class CreativePlayerInventoryGuiMixin extends AbstractInventoryS
 		if (offset < 12) {
 			return 0;
 		} else {
-			return 1 + ((offset - 12) / (12 - QuiltCreativeGuiComponents.qsl$ALWAYS_SHOWN_GROUPS.size()));
+			return 1 + ((offset - 12) / (12 - QuiltCreativePlayerInventoryScreenWidgets.ALWAYS_SHOWN_GROUPS.size()));
 		}
 	}
 
@@ -91,17 +91,17 @@ public abstract class CreativePlayerInventoryGuiMixin extends AbstractInventoryS
 	}
 
 	@Override
-	public boolean qsl$isButtonVisible(QuiltCreativeGuiComponents.Type type) {
+	public boolean qsl$isButtonVisible(QuiltCreativePlayerInventoryScreenWidgets.Type type) {
 		return ItemGroup.GROUPS.length > 12;
 	}
 
 	@Override
-	public boolean qsl$isButtonEnabled(QuiltCreativeGuiComponents.Type type) {
-		if (type == QuiltCreativeGuiComponents.Type.NEXT) {
+	public boolean qsl$isButtonEnabled(QuiltCreativePlayerInventoryScreenWidgets.Type type) {
+		if (type == QuiltCreativePlayerInventoryScreenWidgets.Type.NEXT) {
 			return !(getPageOffset(qsl$currentPage + 1) >= ItemGroup.GROUPS.length);
 		}
 
-		if (type == QuiltCreativeGuiComponents.Type.PREVIOUS) {
+		if (type == QuiltCreativePlayerInventoryScreenWidgets.Type.PREVIOUS) {
 			return qsl$currentPage != 0;
 		}
 
@@ -126,8 +126,8 @@ public abstract class CreativePlayerInventoryGuiMixin extends AbstractInventoryS
 		int xpos = x + 116;
 		int ypos = y - 10;
 
-		addDrawableChild(new QuiltCreativeGuiComponents.ItemGroupButtonWidget(xpos + 11, ypos, QuiltCreativeGuiComponents.Type.NEXT, this));
-		addDrawableChild(new QuiltCreativeGuiComponents.ItemGroupButtonWidget(xpos, ypos, QuiltCreativeGuiComponents.Type.PREVIOUS, this));
+		addDrawableChild(new QuiltCreativePlayerInventoryScreenWidgets.ItemGroupButtonWidget(xpos + 11, ypos, QuiltCreativePlayerInventoryScreenWidgets.Type.NEXT, this));
+		addDrawableChild(new QuiltCreativePlayerInventoryScreenWidgets.ItemGroupButtonWidget(xpos, ypos, QuiltCreativePlayerInventoryScreenWidgets.Type.PREVIOUS, this));
 	}
 
 	@Inject(method = "setSelectedTab", at = @At("HEAD"), cancellable = true)
@@ -160,7 +160,7 @@ public abstract class CreativePlayerInventoryGuiMixin extends AbstractInventoryS
 
 	@Unique
 	private boolean qsl$isGroupNotVisible(ItemGroup itemGroup) {
-		if (QuiltCreativeGuiComponents.qsl$ALWAYS_SHOWN_GROUPS.contains(itemGroup)) {
+		if (QuiltCreativePlayerInventoryScreenWidgets.ALWAYS_SHOWN_GROUPS.contains(itemGroup)) {
 			return false;
 		}
 

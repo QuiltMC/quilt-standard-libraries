@@ -29,7 +29,7 @@ import net.fabricmc.api.ModInitializer;
 public class ItemGroupTest implements ModInitializer {
 	public static final String MOD_ID = "qsl_items_item_group_testmod";
 	// Adds an item group with all items in it
-	private static final ItemGroup SUPPLIER_ITEM_GROUP = new QuiltItemGroup.Builder(new Identifier(MOD_ID, "test_supplied_group"))
+	private static final ItemGroup SUPPLIER_ITEM_GROUP = QuiltItemGroup.builder(new Identifier(MOD_ID, "test_supplied_group"))
 			.icon(() -> new ItemStack(Items.STONE))
 			.appendItems(stacks ->
 					Registry.ITEM.stream()
@@ -38,7 +38,7 @@ public class ItemGroupTest implements ModInitializer {
 							.forEach(stacks::add)
 			).build();
 
-	private static final QuiltItemGroup DELAYED_ITEM_GROUP = new QuiltItemGroup.Builder(new Identifier(MOD_ID, "test_delayed_group"))
+	private static final QuiltItemGroup DELAYED_ITEM_GROUP = QuiltItemGroup.builder(new Identifier(MOD_ID, "test_delayed_group"))
 			.appendItems(stacks ->
 					Registry.ITEM.stream()
 							.filter(item -> item != Items.AIR)

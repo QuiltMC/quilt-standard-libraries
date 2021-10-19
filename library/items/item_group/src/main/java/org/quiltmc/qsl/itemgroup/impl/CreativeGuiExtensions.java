@@ -23,7 +23,7 @@ public interface CreativeGuiExtensions {
 
 	int qsl$currentPage();
 
-	boolean qsl$isButtonVisible(QuiltCreativeGuiComponents.Type type);
+	boolean qsl$isButtonVisible(QuiltCreativePlayerInventoryScreenWidgets.Type type);
 
-	boolean qsl$isButtonEnabled(QuiltCreativeGuiComponents.Type type);
+	boolean qsl$isButtonEnabled(QuiltCreativePlayerInventoryScreenWidgets.Type type);
 }

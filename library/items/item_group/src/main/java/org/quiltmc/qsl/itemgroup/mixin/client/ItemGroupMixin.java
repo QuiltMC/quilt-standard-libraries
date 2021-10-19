@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.item.ItemGroup;
 
-import org.quiltmc.qsl.itemgroup.impl.QuiltCreativeGuiComponents;
+import org.quiltmc.qsl.itemgroup.impl.QuiltCreativePlayerInventoryScreenWidgets;
 
 @Mixin(ItemGroup.class)
 public abstract class ItemGroupMixin {
@@ -37,7 +37,7 @@ public abstract class ItemGroupMixin {
 	@Inject(method = "isTopRow", cancellable = true, at = @At("HEAD"))
 	private void isTopRow(CallbackInfoReturnable<Boolean> info) {
 		if (getIndex() > 11) {
-			info.setReturnValue((getIndex() - 12) % (12 - QuiltCreativeGuiComponents.qsl$ALWAYS_SHOWN_GROUPS.size()) < 4);
+			info.setReturnValue((getIndex() - 12) % (12 - QuiltCreativePlayerInventoryScreenWidgets.ALWAYS_SHOWN_GROUPS.size()) < 4);
 		}
 	}
 
@@ -45,9 +45,9 @@ public abstract class ItemGroupMixin {
 	private void getColumn(CallbackInfoReturnable<Integer> info) {
 		if (getIndex() > 11) {
 			if (isTopRow()) {
-				info.setReturnValue((getIndex() - 12) % (12 - QuiltCreativeGuiComponents.qsl$ALWAYS_SHOWN_GROUPS.size()));
+				info.setReturnValue((getIndex() - 12) % (12 - QuiltCreativePlayerInventoryScreenWidgets.ALWAYS_SHOWN_GROUPS.size()));
 			} else {
-				info.setReturnValue((getIndex() - 12) % (12 - QuiltCreativeGuiComponents.qsl$ALWAYS_SHOWN_GROUPS.size()) - 4);
+				info.setReturnValue((getIndex() - 12) % (12 - QuiltCreativePlayerInventoryScreenWidgets.ALWAYS_SHOWN_GROUPS.size()) - 4);
 			}
 		}
 	}

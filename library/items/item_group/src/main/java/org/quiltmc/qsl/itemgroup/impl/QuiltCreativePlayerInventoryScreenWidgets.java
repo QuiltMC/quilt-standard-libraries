@@ -31,44 +31,44 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
-public class QuiltCreativeGuiComponents {
-	private static final Identifier qsl$BUTTON_TEXTURE = new Identifier("qsl_items_item_group", "textures/gui/creative_buttons.png");
-	public static final Set<ItemGroup> qsl$ALWAYS_SHOWN_GROUPS = new HashSet<>();
+public final class QuiltCreativePlayerInventoryScreenWidgets {
+	private static final Identifier BUTTON_TEXTURE = new Identifier("qsl_items_item_group", "textures/gui/creative_buttons.png");
+	public static final Set<ItemGroup> ALWAYS_SHOWN_GROUPS = new HashSet<>();
 
 	static {
-		qsl$ALWAYS_SHOWN_GROUPS.add(ItemGroup.SEARCH);
-		qsl$ALWAYS_SHOWN_GROUPS.add(ItemGroup.INVENTORY);
-		qsl$ALWAYS_SHOWN_GROUPS.add(ItemGroup.HOTBAR);
+		ALWAYS_SHOWN_GROUPS.add(ItemGroup.SEARCH);
+		ALWAYS_SHOWN_GROUPS.add(ItemGroup.INVENTORY);
+		ALWAYS_SHOWN_GROUPS.add(ItemGroup.HOTBAR);
 	}
 
 	public static class ItemGroupButtonWidget extends ButtonWidget {
-		private final CreativeGuiExtensions qsl$extensions;
-		private final CreativeInventoryScreen qsl$gui;
-		private final Type qsl$type;
+		private final CreativeGuiExtensions extensions;
+		private final CreativeInventoryScreen gui;
+		private final Type type;
 
 		public ItemGroupButtonWidget(int x, int y, Type type, CreativeGuiExtensions extensions) {
 			super(x, y, 11, 10, type.text, (bw) -> type.clickConsumer.accept(extensions));
-			this.qsl$extensions = extensions;
-			this.qsl$type = type;
-			this.qsl$gui = (CreativeInventoryScreen) extensions;
+			this.extensions = extensions;
+			this.type = type;
+			this.gui = (CreativeInventoryScreen) extensions;
 		}
 
 		@Override
 		public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
 			this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
-			this.visible = qsl$extensions.qsl$isButtonVisible(qsl$type);
-			this.active = qsl$extensions.qsl$isButtonEnabled(qsl$type);
+			this.visible = extensions.qsl$isButtonVisible(type);
+			this.active = extensions.qsl$isButtonEnabled(type);
 
 			if (this.visible) {
 				int u = active && this.isHovered() ? 22 : 0;
 				int v = active ? 0 : 10;
 
-				RenderSystem.setShaderTexture(0, qsl$BUTTON_TEXTURE);
+				RenderSystem.setShaderTexture(0, BUTTON_TEXTURE);
 				RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-				this.drawTexture(matrices, this.x, this.y, u + (qsl$type == Type.NEXT ? 11 : 0), v, 11, 10);
+				this.drawTexture(matrices, this.x, this.y, u + (type == Type.NEXT ? 11 : 0), v, 11, 10);
 
 				if (this.hovered) {
-					qsl$gui.renderTooltip(matrices, new TranslatableText("qsl_items_item_group.gui.creativeTabPage", qsl$extensions.qsl$currentPage() + 1, ((ItemGroup.GROUPS.length - 12) / 9) + 2), mouseX, mouseY);
+					gui.renderTooltip(matrices, new TranslatableText("qsl_items_item_group.gui.creativeTabPage", extensions.qsl$currentPage() + 1, ((ItemGroup.GROUPS.length - 12) / 9) + 2), mouseX, mouseY);
 				}
 			}
 		}
