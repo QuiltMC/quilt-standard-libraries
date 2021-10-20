@@ -27,6 +27,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
@@ -56,13 +57,10 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;getRecipeRemainder()Lnet/minecraft/item/Item;"), locals = LocalCapture.CAPTURE_FAILHARD)
 	private static void setRemainder(World world, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity, CallbackInfo ci, boolean bl, boolean bl2, ItemStack itemStack, Recipe<?> recipe, int i, Item item) {
-		AbstractFurnaceBlockEntityMixin furnaceBlockEntity = (AbstractFurnaceBlockEntityMixin) (Object) blockEntity;
+		AbstractFurnaceBlockEntityMixin furnaceBlockEntity = (AbstractFurnaceBlockEntityMixin) (BlockEntity) blockEntity;
 		ItemStack stack = CustomItemSettingImpl.RECIPE_REMAINDER_PROVIDER.get(item).getRecipeRemainder(
 				itemStack,
-				blockEntity,
-				furnaceBlockEntity.recipeType,
-				furnaceBlockEntity.world,
-				furnaceBlockEntity.pos
+				furnaceBlockEntity.recipeType
 		);
 		furnaceBlockEntity.inventory.set(1, stack);
 	}
@@ -70,5 +68,17 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/collection/DefaultedList;set(ILjava/lang/Object;)Ljava/lang/Object;"))
 	private static <E> E setRemainder(DefaultedList<E> defaultedList, int index, E element) {
 		return element;
+	}
+
+	@Inject(method = "craftRecipe", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
+	private static void setInputRemainder(Recipe<?> recipe, DefaultedList<ItemStack> slots, int count, CallbackInfoReturnable<Boolean> cir, ItemStack inputStack) {
+		if (inputStack.getCount() == 1) {
+			ItemStack stack = CustomItemSettingImpl.RECIPE_REMAINDER_PROVIDER.get(inputStack.getItem()).getRecipeRemainder(
+					inputStack,
+					recipe.getType()
+			);
+			slots.set(0, stack);
+			cir.setReturnValue(true);
+		}
 	}
 }

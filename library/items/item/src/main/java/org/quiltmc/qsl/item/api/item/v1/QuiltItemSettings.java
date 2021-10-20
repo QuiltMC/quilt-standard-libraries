@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.item.api.item.v1;
 
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -39,6 +40,16 @@ public class QuiltItemSettings extends Item.Settings {
 	 */
 	public QuiltItemSettings equipmentSlot(EquipmentSlotProvider equipmentSlotProvider) {
 		return this.customSetting(CustomItemSettingImpl.EQUIPMENT_SLOT_PROVIDER, equipmentSlotProvider);
+	}
+
+	/**
+	 * Sets the {@link EquipmentSlotProvider} of the item to always use {@code equipmentSlot}.
+	 *
+	 * @param equipmentSlot The {@link EquipmentSlot}
+	 * @return this
+	 */
+	public QuiltItemSettings equipmentSlot(EquipmentSlot equipmentSlot) {
+		return this.customSetting(CustomItemSettingImpl.EQUIPMENT_SLOT_PROVIDER, itemStack -> equipmentSlot);
 	}
 
 	/**
@@ -80,17 +91,20 @@ public class QuiltItemSettings extends Item.Settings {
 	 */
 	public QuiltItemSettings damageIfUsedInCrafting(int by) {
 		if (by == 0) {
-			return this.recipeRemainder((original, inventory, type, world, pos) -> original);
+			return this.recipeRemainder((original, type) -> original);
 		}
 
-		return this.recipeRemainder((original, inventory, type, world, pos) -> {
+		return this.recipeRemainder((original, type) -> {
 			if (!original.isDamageable()) {
 				return ItemStack.EMPTY;
 			}
 
 			ItemStack copy = original.copy();
 
-			if (copy.damage(by, world.random, null)) {
+			copy.setDamage(copy.getDamage() + by);
+
+			if(copy.getDamage() >= copy.getMaxDamage()) {
+				copy.setCount(0);
 				return ItemStack.EMPTY;
 			}
 

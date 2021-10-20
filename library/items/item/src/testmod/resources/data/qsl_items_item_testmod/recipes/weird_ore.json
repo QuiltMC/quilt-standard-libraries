@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "qsl_items_item_testmod:weird_ore"
+  },
+  "result": "minecraft:cobblestone",
+  "experience": 0.1,
+  "cookingtime": 10
+}

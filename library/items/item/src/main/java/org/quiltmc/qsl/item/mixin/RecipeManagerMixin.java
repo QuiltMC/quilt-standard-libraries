@@ -35,6 +35,6 @@ import net.minecraft.world.World;
 public class RecipeManagerMixin {
 	@Inject(method = "getRemainingStacks", at = @At(value = "RETURN", ordinal = 0), cancellable = true)
 	public <C extends Inventory, T extends Recipe<C>> void interceptGetRemainingStacks(RecipeType<T> recipeType, C inventory, World world, CallbackInfoReturnable<DefaultedList<ItemStack>> cir) {
-		cir.setReturnValue(RecipeRemainderProvider.getRemainingStacks(inventory, recipeType, world, null));
+		cir.setReturnValue(RecipeRemainderProvider.getRemainingStacks(inventory, recipeType));
 	}
 }

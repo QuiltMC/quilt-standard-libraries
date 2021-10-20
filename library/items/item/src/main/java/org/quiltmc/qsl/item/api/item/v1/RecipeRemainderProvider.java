@@ -40,20 +40,17 @@ public interface RecipeRemainderProvider {
 	 * An {@link ItemStack} aware version of {@link Item#getRecipeRemainder()}.
 	 *
 	 * @param original the input item stack
-	 * @param inventory the inventory that the stack is in
 	 * @param type the recipe type being used
-	 * @param world the world in which the inventory is in
-	 * @param pos the position at which the inventory is
 	 * @return the recipe remainder
 	 */
-	ItemStack getRecipeRemainder(ItemStack original, Inventory inventory, @Nullable RecipeType<?> type, World world, @Nullable BlockPos pos);
+	ItemStack getRecipeRemainder(ItemStack original, @Nullable RecipeType<?> type);
 
-	static DefaultedList<ItemStack> getRemainingStacks(Inventory inventory, @Nullable RecipeType<?> type, World world, @Nullable BlockPos pos) {
+	static DefaultedList<ItemStack> getRemainingStacks(Inventory inventory, @Nullable RecipeType<?> type) {
 		DefaultedList<ItemStack> defaultedList = DefaultedList.ofSize(inventory.size(), ItemStack.EMPTY);
 
 		for (int i = 0; i < defaultedList.size(); ++i) {
 			ItemStack stack = inventory.getStack(i);
-			ItemStack remainder = CustomItemSettingImpl.RECIPE_REMAINDER_PROVIDER.get(stack.getItem()).getRecipeRemainder(stack, inventory, type, world, pos);
+			ItemStack remainder = CustomItemSettingImpl.RECIPE_REMAINDER_PROVIDER.get(stack.getItem()).getRecipeRemainder(stack, type);
 
 			if (!remainder.isEmpty()) {
 				defaultedList.set(i, remainder);

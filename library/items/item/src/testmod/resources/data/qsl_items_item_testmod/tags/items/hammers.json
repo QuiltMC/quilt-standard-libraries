@@ -1,7 +1,6 @@
 {
   "replace": false,
   "values": [
-    "qsl_items_item_testmod:hammer",
-    "qsl_items_item_testmod:end_hammer"
+    "qsl_items_item_testmod:hammer"
   ]
 }

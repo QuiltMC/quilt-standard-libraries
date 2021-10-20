@@ -36,7 +36,7 @@ public class CustomItemSettingImpl<T> implements CustomItemSetting<T> {
 	public static final CustomItemSetting<EquipmentSlotProvider> EQUIPMENT_SLOT_PROVIDER = CustomItemSetting.create(() -> null);
 	public static final CustomItemSetting<CustomDamageHandler> CUSTOM_DAMAGE_HANDLER = CustomItemSetting.create(() -> null);
 	@SuppressWarnings("ConstantConditions")
-	public static final CustomItemSetting<RecipeRemainderProvider> RECIPE_REMAINDER_PROVIDER = CustomItemSetting.create((original, inventory, type, world, pos) -> original.getItem().hasRecipeRemainder() ? original.getItem().getRecipeRemainder().getDefaultStack() : ItemStack.EMPTY);
+	public static final CustomItemSetting<RecipeRemainderProvider> RECIPE_REMAINDER_PROVIDER = CustomItemSetting.create((original, type) -> original.getItem().hasRecipeRemainder() ? original.getItem().getRecipeRemainder().getDefaultStack() : ItemStack.EMPTY);
 
 	private static final Map<Item.Settings, Collection<CustomItemSettingImpl<?>>> CUSTOM_SETTINGS = new WeakHashMap<>();
 
