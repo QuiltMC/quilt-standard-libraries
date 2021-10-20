@@ -35,13 +35,15 @@ import net.minecraft.util.collection.DefaultedList;
 /**
  * Extensions for the {@link ItemGroup} class. Currently, the only extension is setting the icon with either an {@link ItemConvertible} or {@link ItemStack} after the item has been created ({@link QuiltItemGroup#setIcon(ItemConvertible)}, {@link QuiltItemGroup#setIcon(ItemStack)}).
  */
-public class QuiltItemGroup extends ItemGroup {
+public final class QuiltItemGroup extends ItemGroup {
 	private final @NotNull Supplier<ItemStack> iconSupplier;
 	private @Nullable ItemStack icon;
+	private final @Nullable Consumer<List<ItemStack>> stacksForDisplay;
 
-	private QuiltItemGroup(int index, String id, @NotNull Supplier<ItemStack> iconSupplier) {
+	private QuiltItemGroup(int index, String id, @NotNull Supplier<ItemStack> iconSupplier, @Nullable Consumer<List<ItemStack>> stacksForDisplay) {
 		super(index, id);
 		this.iconSupplier = iconSupplier;
+		this.stacksForDisplay = stacksForDisplay;
 	}
 
 	/**
@@ -72,6 +74,15 @@ public class QuiltItemGroup extends ItemGroup {
 		}
 
 		return icon;
+	}
+
+	@Override
+	public void appendStacks(DefaultedList<ItemStack> stacks) {
+		super.appendStacks(stacks);
+
+		if (stacksForDisplay != null) {
+			stacksForDisplay.accept(stacks);
+		}
 	}
 
 	/**
@@ -182,16 +193,7 @@ public class QuiltItemGroup extends ItemGroup {
 		 */
 		public QuiltItemGroup build() {
 			((ItemGroupExtensions) GROUPS[0]).qsl$expandArray();
-			return new QuiltItemGroup(GROUPS.length - 1, String.format("%s.%s", identifier.getNamespace(), identifier.getPath()), iconSupplier) {
-				@Override
-				public void appendStacks(DefaultedList<ItemStack> stacks) {
-					super.appendStacks(stacks);
-
-					if (stacksForDisplay != null) {
-						stacksForDisplay.accept(stacks);
-					}
-				}
-			};
+			return new QuiltItemGroup(GROUPS.length - 1, String.format("%s.%s", identifier.getNamespace(), identifier.getPath()), iconSupplier, stacksForDisplay);
 		}
 	}
 }
