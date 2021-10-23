@@ -18,6 +18,8 @@ package org.quiltmc.qsl.tag.api;
 
 /**
  * Represents tag types. Tag types define how tags are loaded and synced.
+ *
+ * @see org.quiltmc.qsl.tag.api
  */
 public enum TagType {
 	/**

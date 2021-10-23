@@ -41,6 +41,7 @@ import org.quiltmc.qsl.tag.impl.TagRegistryImpl;
  * Represents a tag registry.
  *
  * @param <T> the type of the registered tags
+ * @see org.quiltmc.qsl.tag.api
  */
 public interface TagRegistry<T> {
 	TagRegistry<Block> BLOCK = of(BlockTags::getTagGroup);

@@ -22,6 +22,7 @@ import net.minecraft.tag.Tag;
  * Interface implemented by {@link net.minecraft.tag.Tag} instances when QSL is present.
  *
  * @param <T> the type of the values held by the tag
+ * @see org.quiltmc.qsl.tag.api
  */
 public interface QuiltTag<T> {
 	/**

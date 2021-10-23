@@ -20,6 +20,8 @@ import net.minecraft.tag.Tag;
 
 /**
  * Interface implemented by {@link net.minecraft.tag.Tag.Builder} instances when QSL is present.
+ *
+ * @see org.quiltmc.qsl.tag.api
  */
 public interface QuiltTagBuilder {
 	/**
