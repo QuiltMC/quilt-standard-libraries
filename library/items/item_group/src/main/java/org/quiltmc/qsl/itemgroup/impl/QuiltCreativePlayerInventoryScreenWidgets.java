@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -31,6 +32,7 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
+@ApiStatus.Internal
 public final class QuiltCreativePlayerInventoryScreenWidgets {
 	private static final Identifier BUTTON_TEXTURE = new Identifier("qsl_items_item_group", "textures/gui/creative_buttons.png");
 	public static final Set<ItemGroup> ALWAYS_SHOWN_GROUPS = new HashSet<>();

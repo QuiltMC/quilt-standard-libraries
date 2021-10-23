@@ -40,7 +40,7 @@ public final class QuiltItemGroup extends ItemGroup {
 	private @Nullable ItemStack icon;
 	private final @Nullable Consumer<List<ItemStack>> stacksForDisplay;
 
-	private QuiltItemGroup(int index, String id, @NotNull Supplier<ItemStack> iconSupplier, @Nullable Consumer<List<ItemStack>> stacksForDisplay) {
+	private QuiltItemGroup(int index, String id, Supplier<ItemStack> iconSupplier, @Nullable Consumer<List<ItemStack>> stacksForDisplay) {
 		super(index, id);
 		this.iconSupplier = iconSupplier;
 		this.stacksForDisplay = stacksForDisplay;
@@ -66,7 +66,7 @@ public final class QuiltItemGroup extends ItemGroup {
 
 	@Override
 	public ItemStack createIcon() {
-		ItemStack supplierIcon = iconSupplier.get();
+		ItemStack supplierIcon = this.iconSupplier.get();
 		if (!supplierIcon.isEmpty()) {
 			return supplierIcon;
 		} else if (icon == null) {

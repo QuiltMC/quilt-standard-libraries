@@ -16,6 +16,9 @@
 
 package org.quiltmc.qsl.itemgroup.impl;
 
+import org.jetbrains.annotations.ApiStatus;
+
+@ApiStatus.Internal
 public interface CreativeGuiExtensions {
 	void qsl$nextPage();
 
