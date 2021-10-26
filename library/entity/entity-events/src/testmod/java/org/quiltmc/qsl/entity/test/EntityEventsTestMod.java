@@ -22,7 +22,7 @@ public class EntityEventsTestMod implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		// When an entity is holding an allium in its main hand at death and nothing else revives it, it will be revived with 10 health.
-		TryReviveCallback.AFTER_TOTEM.register((entity, damagesource) -> {
+		EntityReviveEvents.AFTER_TOTEM.register((entity, damagesource) -> {
 			if (entity.getEquippedStack(EquipmentSlot.MAINHAND).isOf(Items.ALLIUM)) {
 				entity.setHealth(10f);
 				return true;
@@ -32,7 +32,7 @@ public class EntityEventsTestMod implements ModInitializer {
 
 		// When an entity is holding an azure bluet in its main hand at death, before the totems of undying kick in, it
 		// will be revived with 10 health.
-		TryReviveCallback.BEFORE_TOTEM.register((entity, damagesource) -> {
+		EntityReviveEvents.BEFORE_TOTEM.register((entity, damagesource) -> {
 			if (entity.getEquippedStack(EquipmentSlot.MAINHAND).isOf(Items.AZURE_BLUET)) {
 				entity.setHealth(10f);
 				return true;
