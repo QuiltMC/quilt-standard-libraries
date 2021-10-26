@@ -9,7 +9,9 @@ import org.quiltmc.qsl.base.api.event.ArrayEvent;
  * A callback that is invoked when an Entity is ticked (nominally every 1/20 of a second).
  *
  * <p>There are two types of entity tick - standalone ({@link Entity#tick()}) and riding ({@link Entity#tickRiding()}).
- * This callback takes a parameter which
+ * This callback takes a parameter which specifies which type of tick it is.
+ *
+ * <p>This callback also takes a parameter which specifies whether the entity is being ticked on the client or server.
  */
 @FunctionalInterface
 public interface EntityTickCallback {
