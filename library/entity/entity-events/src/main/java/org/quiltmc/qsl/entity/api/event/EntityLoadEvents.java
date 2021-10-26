@@ -34,7 +34,7 @@ public final class EntityLoadEvents {
 	});
 
 	/**
-	 * An event which is called after a player has been unloaded from a world.
+	 * An event which is called after an entity has been unloaded from a world.
 	 */
 	public static final ArrayEvent<AfterEntityUnload> AFTER_ENTITY_UNLOAD = ArrayEvent.create(AfterEntityUnload.class, callbacks -> (entity, world) -> {
 		for (AfterEntityUnload callback : callbacks) {

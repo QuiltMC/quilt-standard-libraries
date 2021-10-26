@@ -7,7 +7,8 @@ import org.quiltmc.qsl.base.api.event.ArrayEvent;
 /**
  * A callback that is invoked when a LivingEntity takes fatal damage.
  *
- * <p>Mods can return true from the callback to keep the entity alive, like totems of undying do.
+ * <p>Mods can return true from the callback to keep the entity alive, like totems of undying do. This will also prevent
+ * {@link EntityKilledCallback} listeners from being called.
  *
  * <p>Vanilla checks for entity health {@code <= 0} each tick (with
  * {@link net.minecraft.entity.LivingEntity#isDead()}), and kills the entity if this is true - so the entity will
