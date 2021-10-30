@@ -15,6 +15,6 @@ qslModule {
 	])
 }
 
-minecraft {
+loom {
 	accessWidener "src/main/resources/quilt_tags.accesswidener"
 }

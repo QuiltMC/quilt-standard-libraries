@@ -52,9 +52,9 @@ public final class ClientTagsTestMod implements ClientModInitializer {
 	public static final Tag.Identified<Biome> TEST_CLIENT_BIOME_TAG = TagRegistry.BIOME.create(
 			TagsTestMod.id("client_biome_tag"), TagType.CLIENT_ONLY
 	);
-	public static final Tag.Identified<Item> TEST_DEFAULTED_ITEM_TAG = TagRegistry.ITEM.create(
+	public static final Tag.Identified<Item> TEST_DEFAULT_ITEM_TAG = TagRegistry.ITEM.create(
 			TagsTestMod.id("default_item_tag"), TagType.CLIENT_SERVER_SYNC
-	) ;
+	);
 
 	private World lastWorld;
 
@@ -67,7 +67,7 @@ public final class ClientTagsTestMod implements ClientModInitializer {
 			if (this.lastWorld != world) {
 				displayTag(client, TEST_CLIENT_BLOCK_TAG, Registry.BLOCK);
 				displayTag(client, TEST_CLIENT_BIOME_TAG, client.world.getRegistryManager().get(Registry.BIOME_KEY));
-				displayTag(client, TEST_DEFAULTED_ITEM_TAG, Registry.ITEM);
+				displayTag(client, TEST_DEFAULT_ITEM_TAG, Registry.ITEM);
 
 				this.lastWorld = world;
 			}

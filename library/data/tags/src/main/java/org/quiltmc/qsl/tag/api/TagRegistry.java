@@ -18,6 +18,8 @@ package org.quiltmc.qsl.tag.api;
 
 import java.util.function.Supplier;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.fluid.Fluid;
@@ -43,6 +45,7 @@ import org.quiltmc.qsl.tag.impl.TagRegistryImpl;
  * @param <T> the type of the registered tags
  * @see org.quiltmc.qsl.tag.api
  */
+@ApiStatus.NonExtendable
 public interface TagRegistry<T> {
 	TagRegistry<Block> BLOCK = of(BlockTags::getTagGroup);
 	TagRegistry<Item> ITEM = of(ItemTags::getTagGroup);

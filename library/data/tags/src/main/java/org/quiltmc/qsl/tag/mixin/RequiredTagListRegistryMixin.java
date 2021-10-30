@@ -19,7 +19,7 @@ package org.quiltmc.qsl.tag.mixin;
 import java.util.List;
 import java.util.Set;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import com.google.common.collect.ImmutableSet;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -39,8 +39,9 @@ public class RequiredTagListRegistryMixin {
 	@Inject(method = "getBuiltinTags", at = @At("TAIL"), cancellable = true)
 	private static void onGetBuiltinTags(CallbackInfoReturnable<Set<RequiredTagList<?>>> cir) {
 		// Add tag lists registered in QSL to the map.
-		var set = new ObjectOpenHashSet<>(cir.getReturnValue());
+		var set = ImmutableSet.<RequiredTagList<?>>builder();
+		set.addAll(cir.getReturnValue());
 		set.addAll(ALL);
-		cir.setReturnValue(set);
+		cir.setReturnValue(set.build());
 	}
 }

@@ -111,7 +111,7 @@ public final class TagRegistryImpl<T> implements TagRegistry<T> {
 				for (var requiredTagList : RequiredTagListRegistryAccessor.getAll()) {
 					if (requiredTagList.getRegistryKey() == this.registryKey) {
 						//noinspection unchecked
-						yield ((QuiltRequiredTagListHooks<T>) requiredTagList).quilt$addTag(id, type);
+						yield ((QuiltRequiredTagListHooks<T>) requiredTagList).quilt$addTypedTag(id, type);
 					}
 				}
 

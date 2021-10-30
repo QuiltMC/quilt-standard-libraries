@@ -69,6 +69,9 @@ public enum TagType {
 		return this == CLIENT_SERVER_REQUIRED;
 	}
 
+	/**
+	 * {@return whether this tag type is synchronized to the client}
+	 */
 	public boolean hasSync() {
 		return this != CLIENT_ONLY;
 	}
