@@ -70,19 +70,11 @@ public class QslModuleExtension {
 		return this.project.getDependencies().project(map);
 	}
 
-	public void coreApiDependencies(Iterable<String> dependencies) {
-		for (String dependency : dependencies) {
-			Dependency project = this.getCoreModule(dependency);
-			this.moduleDependencies.add(project);
-			this.project.getDependencies().add(JavaPlugin.API_CONFIGURATION_NAME, project);
-		}
-	}
-
 	public void coreDependencies(Iterable<String> dependencies) {
 		for (String dependency : dependencies) {
 			Dependency project = this.getCoreModule(dependency);
 			this.moduleDependencies.add(project);
-			this.project.getDependencies().add(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME, project);
+			this.project.getDependencies().add(JavaPlugin.API_CONFIGURATION_NAME, project);
 		}
 	}
 
