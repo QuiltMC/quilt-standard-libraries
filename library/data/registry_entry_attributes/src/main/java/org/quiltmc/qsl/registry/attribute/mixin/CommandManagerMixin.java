@@ -36,7 +36,7 @@ public abstract class CommandManagerMixin {
 	private CommandDispatcher<ServerCommandSource> dispatcher;
 
 	@Inject(method = "<init>", at = @At("RETURN"))
-	public void qsl$registerDumpCommand(CommandManager.RegistrationEnvironment environment, CallbackInfo ci) {
+	public void quilt$registerDumpCommand(CommandManager.RegistrationEnvironment environment, CallbackInfo ci) {
 		DumpBuiltinAttributesCommand.register(dispatcher);
 	}
 }

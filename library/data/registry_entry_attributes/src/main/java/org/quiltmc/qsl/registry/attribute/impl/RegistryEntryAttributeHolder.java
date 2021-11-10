@@ -35,36 +35,36 @@ public final class RegistryEntryAttributeHolder<R> {
 	}
 
 	public static <R, T> void registerAttribute(Registry<R> registry, RegistryEntryAttribute<R, T> attribute) {
-		getInternals(registry).qsl$registerAttribute(attribute);
+		getInternals(registry).quilt$registerAttribute(attribute);
 	}
 
 	public static <R> @Nullable RegistryEntryAttribute<R, ?> getAttribute(Registry<R> registry, Identifier id) {
-		return getInternals(registry).qsl$getAttribute(id);
+		return getInternals(registry).quilt$getAttribute(id);
 	}
 
 	public static <R> RegistryEntryAttributeHolder<R> getBuiltin(Registry<R> registry) {
 		var internals = getInternals(registry);
-		var holder = internals.qsl$getBuiltinAttributeHolder();
+		var holder = internals.quilt$getBuiltinAttributeHolder();
 		if (holder == null) {
-			internals.qsl$setBuiltinAttributeHolder(holder = new RegistryEntryAttributeHolder<>());
+			internals.quilt$setBuiltinAttributeHolder(holder = new RegistryEntryAttributeHolder<>());
 		}
 		return holder;
 	}
 
 	public static <R> RegistryEntryAttributeHolder<R> getData(Registry<R> registry) {
 		var internals = getInternals(registry);
-		var holder = internals.qsl$getDataAttributeHolder();
+		var holder = internals.quilt$getDataAttributeHolder();
 		if (holder == null) {
-			internals.qsl$setDataAttributeHolder(holder = new RegistryEntryAttributeHolder<>());
+			internals.quilt$setDataAttributeHolder(holder = new RegistryEntryAttributeHolder<>());
 		}
 		return holder;
 	}
 
 	public static <R> RegistryEntryAttributeHolder<R> getAssets(Registry<R> registry) {
 		var internals = getInternals(registry);
-		var holder = internals.qsl$getAssetsAttributeHolder();
+		var holder = internals.quilt$getAssetsAttributeHolder();
 		if (holder == null) {
-			internals.qsl$setAssetsAttributeHolder(holder = new RegistryEntryAttributeHolder<>());
+			internals.quilt$setAssetsAttributeHolder(holder = new RegistryEntryAttributeHolder<>());
 		}
 		return holder;
 	}

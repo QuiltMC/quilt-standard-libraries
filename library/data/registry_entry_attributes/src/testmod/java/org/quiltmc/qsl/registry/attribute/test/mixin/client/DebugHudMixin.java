@@ -33,7 +33,7 @@ import java.util.List;
 public abstract class DebugHudMixin {
 	@Inject(method = "getRightText", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 2,
 			shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
-	public void qsl$addTestAttribute(CallbackInfoReturnable<List<String>> cir, long l, long m, long n, long o,
+	public void quilt$addTestAttribute(CallbackInfoReturnable<List<String>> cir, long l, long m, long n, long o,
 									 List<String> list, BlockPos blockPos, BlockState blockState) {
 		list.add("based: " + ClientAttributeTest.ATTRIBUTE.getValue(blockState.getBlock())
 				.map(b -> b ? Formatting.GREEN + "yes" : Formatting.RED + "no")

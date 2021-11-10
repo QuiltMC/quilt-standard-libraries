@@ -24,15 +24,15 @@ import net.minecraft.util.Identifier;
 
 @ApiStatus.Internal
 public interface QuiltRegistryInternals<R> {
-	void qsl$registerAttribute(RegistryEntryAttribute<R, ?> attribute);
-	@Nullable RegistryEntryAttribute<R, ?> qsl$getAttribute(Identifier id);
+	void quilt$registerAttribute(RegistryEntryAttribute<R, ?> attribute);
+	@Nullable RegistryEntryAttribute<R, ?> quilt$getAttribute(Identifier id);
 
-	RegistryEntryAttributeHolder<R> qsl$getBuiltinAttributeHolder();
-	void qsl$setBuiltinAttributeHolder(RegistryEntryAttributeHolder<R> holder);
+	RegistryEntryAttributeHolder<R> quilt$getBuiltinAttributeHolder();
+	void quilt$setBuiltinAttributeHolder(RegistryEntryAttributeHolder<R> holder);
 
-	RegistryEntryAttributeHolder<R> qsl$getDataAttributeHolder();
-	void qsl$setDataAttributeHolder(RegistryEntryAttributeHolder<R> holder);
+	RegistryEntryAttributeHolder<R> quilt$getDataAttributeHolder();
+	void quilt$setDataAttributeHolder(RegistryEntryAttributeHolder<R> holder);
 
-	RegistryEntryAttributeHolder<R> qsl$getAssetsAttributeHolder();
-	void qsl$setAssetsAttributeHolder(RegistryEntryAttributeHolder<R> holder);
+	RegistryEntryAttributeHolder<R> quilt$getAssetsAttributeHolder();
+	void quilt$setAssetsAttributeHolder(RegistryEntryAttributeHolder<R> holder);
 }

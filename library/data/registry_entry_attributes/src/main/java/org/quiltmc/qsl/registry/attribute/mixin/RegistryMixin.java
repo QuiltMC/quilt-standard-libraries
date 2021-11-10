@@ -31,47 +31,47 @@ import java.util.Map;
 @Mixin(Registry.class)
 public abstract class RegistryMixin<R> implements QuiltRegistryInternals<R> {
 	@Unique private final Map<Identifier, RegistryEntryAttribute<R, ?>> attributes = new HashMap<>();
-	@Unique private RegistryEntryAttributeHolder<R> qsl$builtinAttributeHolder;
-	@Unique private RegistryEntryAttributeHolder<R> qsl$dataAttributeHolder;
-	@Unique private RegistryEntryAttributeHolder<R> qsl$assetsAttributeHolder;
+	@Unique private RegistryEntryAttributeHolder<R> quilt$builtinAttributeHolder;
+	@Unique private RegistryEntryAttributeHolder<R> quilt$dataAttributeHolder;
+	@Unique private RegistryEntryAttributeHolder<R> quilt$assetsAttributeHolder;
 
 	@Override
-	public void qsl$registerAttribute(RegistryEntryAttribute<R, ?> attribute) {
+	public void quilt$registerAttribute(RegistryEntryAttribute<R, ?> attribute) {
 		attributes.put(attribute.id(), attribute);
 	}
 
 	@Override
-	public @Nullable RegistryEntryAttribute<R, ?> qsl$getAttribute(Identifier id) {
+	public @Nullable RegistryEntryAttribute<R, ?> quilt$getAttribute(Identifier id) {
 		return attributes.get(id);
 	}
 
 	@Override
-	public RegistryEntryAttributeHolder<R> qsl$getBuiltinAttributeHolder() {
-		return qsl$builtinAttributeHolder;
+	public RegistryEntryAttributeHolder<R> quilt$getBuiltinAttributeHolder() {
+		return quilt$builtinAttributeHolder;
 	}
 
 	@Override
-	public void qsl$setBuiltinAttributeHolder(RegistryEntryAttributeHolder<R> holder) {
-		this.qsl$builtinAttributeHolder = holder;
+	public void quilt$setBuiltinAttributeHolder(RegistryEntryAttributeHolder<R> holder) {
+		this.quilt$builtinAttributeHolder = holder;
 	}
 
 	@Override
-	public RegistryEntryAttributeHolder<R> qsl$getDataAttributeHolder() {
-		return qsl$dataAttributeHolder;
+	public RegistryEntryAttributeHolder<R> quilt$getDataAttributeHolder() {
+		return quilt$dataAttributeHolder;
 	}
 
 	@Override
-	public void qsl$setDataAttributeHolder(RegistryEntryAttributeHolder<R> holder) {
-		this.qsl$dataAttributeHolder = holder;
+	public void quilt$setDataAttributeHolder(RegistryEntryAttributeHolder<R> holder) {
+		this.quilt$dataAttributeHolder = holder;
 	}
 
 	@Override
-	public RegistryEntryAttributeHolder<R> qsl$getAssetsAttributeHolder() {
-		return qsl$assetsAttributeHolder;
+	public RegistryEntryAttributeHolder<R> quilt$getAssetsAttributeHolder() {
+		return quilt$assetsAttributeHolder;
 	}
 
 	@Override
-	public void qsl$setAssetsAttributeHolder(RegistryEntryAttributeHolder<R> holder) {
-		this.qsl$assetsAttributeHolder = holder;
+	public void quilt$setAssetsAttributeHolder(RegistryEntryAttributeHolder<R> holder) {
+		this.quilt$assetsAttributeHolder = holder;
 	}
 }
