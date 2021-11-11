@@ -44,6 +44,7 @@ public final class QuiltCreativePlayerInventoryScreenWidgets {
 	}
 
 	public static class ItemGroupButtonWidget extends ButtonWidget {
+		public static final String TRANSLATION_KEY = "qsl_items_item_group.gui.creative_tab_page";
 		private final CreativeGuiExtensions extensions;
 		private final CreativeInventoryScreen gui;
 		private final Type type;
@@ -58,8 +59,8 @@ public final class QuiltCreativePlayerInventoryScreenWidgets {
 		@Override
 		public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
 			this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
-			this.visible = extensions.qsl$isButtonVisible(type);
-			this.active = extensions.qsl$isButtonEnabled(type);
+			this.visible = extensions.quilt$isButtonVisible(type);
+			this.active = extensions.quilt$isButtonEnabled(type);
 
 			if (this.visible) {
 				int u = active && this.isHovered() ? 22 : 0;
@@ -70,18 +71,18 @@ public final class QuiltCreativePlayerInventoryScreenWidgets {
 				this.drawTexture(matrices, this.x, this.y, u + (type == Type.NEXT ? 11 : 0), v, 11, 10);
 
 				if (this.hovered) {
-					gui.renderTooltip(matrices, new TranslatableText("qsl_items_item_group.gui.creativeTabPage", extensions.qsl$currentPage() + 1, ((ItemGroup.GROUPS.length - 12) / 9) + 2), mouseX, mouseY);
+					gui.renderTooltip(matrices, new TranslatableText(TRANSLATION_KEY, extensions.quilt$currentPage() + 1, ((ItemGroup.GROUPS.length - 12) / 9) + 2), mouseX, mouseY);
 				}
 			}
 		}
 	}
 
 	public enum Type {
-		NEXT(new LiteralText(">"), CreativeGuiExtensions::qsl$nextPage),
-		PREVIOUS(new LiteralText("<"), CreativeGuiExtensions::qsl$previousPage);
+		NEXT(new LiteralText(">"), CreativeGuiExtensions::quilt$nextPage),
+		PREVIOUS(new LiteralText("<"), CreativeGuiExtensions::quilt$previousPage);
 
-		Text text;
-		Consumer<CreativeGuiExtensions> clickConsumer;
+		final Text text;
+		final Consumer<CreativeGuiExtensions> clickConsumer;
 
 		Type(Text text, Consumer<CreativeGuiExtensions> clickConsumer) {
 			this.text = text;

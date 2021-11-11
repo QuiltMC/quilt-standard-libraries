@@ -20,13 +20,13 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 public interface CreativeGuiExtensions {
-	void qsl$nextPage();
+	void quilt$nextPage();
 
-	void qsl$previousPage();
+	void quilt$previousPage();
 
-	int qsl$currentPage();
+	int quilt$currentPage();
 
-	boolean qsl$isButtonVisible(QuiltCreativePlayerInventoryScreenWidgets.Type type);
+	boolean quilt$isButtonVisible(QuiltCreativePlayerInventoryScreenWidgets.Type type);
 
-	boolean qsl$isButtonEnabled(QuiltCreativePlayerInventoryScreenWidgets.Type type);
+	boolean quilt$isButtonEnabled(QuiltCreativePlayerInventoryScreenWidgets.Type type);
 }

@@ -33,7 +33,7 @@ public abstract class ItemGroupMixin implements ItemGroupExtensions {
 	public static ItemGroup[] GROUPS;
 
 	@Override
-	public void qsl$expandArray() {
+	public void quilt$expandArray() {
 		ItemGroup[] tempGroups = GROUPS;
 		GROUPS = new ItemGroup[GROUPS.length + 1];
 

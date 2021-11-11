@@ -20,5 +20,5 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 public interface ItemGroupExtensions {
-	void qsl$expandArray();
+	void quilt$expandArray();
 }

@@ -36,7 +36,7 @@ import net.minecraft.util.collection.DefaultedList;
  * Extensions for the {@link ItemGroup} class. Currently, the only extension is setting the icon with either an {@link ItemConvertible} or {@link ItemStack} after the item has been created ({@link QuiltItemGroup#setIcon(ItemConvertible)}, {@link QuiltItemGroup#setIcon(ItemStack)}).
  */
 public final class QuiltItemGroup extends ItemGroup {
-	private final @NotNull Supplier<ItemStack> iconSupplier;
+	private final Supplier<ItemStack> iconSupplier;
 	private @Nullable ItemStack icon;
 	private final @Nullable Consumer<List<ItemStack>> stacksForDisplay;
 
@@ -80,8 +80,8 @@ public final class QuiltItemGroup extends ItemGroup {
 	public void appendStacks(DefaultedList<ItemStack> stacks) {
 		super.appendStacks(stacks);
 
-		if (stacksForDisplay != null) {
-			stacksForDisplay.accept(stacks);
+		if (this.stacksForDisplay != null) {
+			this.stacksForDisplay.accept(stacks);
 		}
 	}
 
@@ -192,7 +192,7 @@ public final class QuiltItemGroup extends ItemGroup {
 		 * @return A new {@link QuiltItemGroup}
 		 */
 		public QuiltItemGroup build() {
-			((ItemGroupExtensions) GROUPS[0]).qsl$expandArray();
+			((ItemGroupExtensions) GROUPS[0]).quilt$expandArray();
 			return new QuiltItemGroup(GROUPS.length - 1, String.format("%s.%s", identifier.getNamespace(), identifier.getPath()), iconSupplier, stacksForDisplay);
 		}
 	}

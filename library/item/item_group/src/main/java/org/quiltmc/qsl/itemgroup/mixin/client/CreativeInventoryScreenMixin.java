@@ -50,7 +50,7 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 	 * In order to match the behavior of Vanilla where closing and opening the creative inventory brings you to the previously open item group, we also replicate this behavior with the current page
 	 */
 	@Unique
-	private static int qsl$currentPage = 0;
+	private static int quilt$currentPage = 0;
 
 	@Unique
 	private int getPageOffset(int page) {
@@ -71,57 +71,57 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 	}
 
 	@Override
-	public void qsl$nextPage() {
-		if (getPageOffset(qsl$currentPage + 1) >= ItemGroup.GROUPS.length) {
+	public void quilt$nextPage() {
+		if (getPageOffset(quilt$currentPage + 1) >= ItemGroup.GROUPS.length) {
 			return;
 		}
 
-		qsl$currentPage++;
-		qsl$updateSelection();
+		quilt$currentPage++;
+		quilt$updateSelection();
 	}
 
 	@Override
-	public void qsl$previousPage() {
-		if (qsl$currentPage == 0) {
+	public void quilt$previousPage() {
+		if (quilt$currentPage == 0) {
 			return;
 		}
 
-		qsl$currentPage--;
-		qsl$updateSelection();
+		quilt$currentPage--;
+		quilt$updateSelection();
 	}
 
 	@Override
-	public boolean qsl$isButtonVisible(QuiltCreativePlayerInventoryScreenWidgets.Type type) {
+	public boolean quilt$isButtonVisible(QuiltCreativePlayerInventoryScreenWidgets.Type type) {
 		return ItemGroup.GROUPS.length > 12;
 	}
 
 	@Override
-	public boolean qsl$isButtonEnabled(QuiltCreativePlayerInventoryScreenWidgets.Type type) {
+	public boolean quilt$isButtonEnabled(QuiltCreativePlayerInventoryScreenWidgets.Type type) {
 		if (type == QuiltCreativePlayerInventoryScreenWidgets.Type.NEXT) {
-			return !(getPageOffset(qsl$currentPage + 1) >= ItemGroup.GROUPS.length);
+			return !(getPageOffset(quilt$currentPage + 1) >= ItemGroup.GROUPS.length);
 		}
 
 		if (type == QuiltCreativePlayerInventoryScreenWidgets.Type.PREVIOUS) {
-			return qsl$currentPage != 0;
+			return quilt$currentPage != 0;
 		}
 
 		return false;
 	}
 
 	@Unique
-	private void qsl$updateSelection() {
-		int minPos = getPageOffset(qsl$currentPage);
-		int maxPos = getPageOffset(qsl$currentPage + 1) - 1;
+	private void quilt$updateSelection() {
+		int minPos = getPageOffset(quilt$currentPage);
+		int maxPos = getPageOffset(quilt$currentPage + 1) - 1;
 		int curPos = getSelectedTab();
 
 		if (curPos < minPos || curPos > maxPos) {
-			setSelectedTab(ItemGroup.GROUPS[getPageOffset(qsl$currentPage)]);
+			setSelectedTab(ItemGroup.GROUPS[getPageOffset(quilt$currentPage)]);
 		}
 	}
 
 	@Inject(method = "init", at = @At("RETURN"))
 	private void init(CallbackInfo info) {
-		qsl$updateSelection();
+		quilt$updateSelection();
 
 		int xpos = x + 116;
 		int ypos = y - 10;
@@ -132,43 +132,43 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 
 	@Inject(method = "setSelectedTab", at = @At("HEAD"), cancellable = true)
 	private void setSelectedTab(ItemGroup itemGroup, CallbackInfo info) {
-		if (qsl$isGroupNotVisible(itemGroup)) {
+		if (quilt$isGroupNotVisible(itemGroup)) {
 			info.cancel();
 		}
 	}
 
 	@Inject(method = "renderTabTooltipIfHovered", at = @At("HEAD"), cancellable = true)
 	private void renderTabTooltipIfHovered(MatrixStack matrixStack, ItemGroup itemGroup, int mx, int my, CallbackInfoReturnable<Boolean> info) {
-		if (qsl$isGroupNotVisible(itemGroup)) {
+		if (quilt$isGroupNotVisible(itemGroup)) {
 			info.setReturnValue(false);
 		}
 	}
 
 	@Inject(method = "isClickInTab", at = @At("HEAD"), cancellable = true)
 	private void isClickInTab(ItemGroup itemGroup, double mx, double my, CallbackInfoReturnable<Boolean> info) {
-		if (qsl$isGroupNotVisible(itemGroup)) {
+		if (quilt$isGroupNotVisible(itemGroup)) {
 			info.setReturnValue(false);
 		}
 	}
 
 	@Inject(method = "renderTabIcon", at = @At("HEAD"), cancellable = true)
 	private void renderTabIcon(MatrixStack matrixStack, ItemGroup itemGroup, CallbackInfo info) {
-		if (qsl$isGroupNotVisible(itemGroup)) {
+		if (quilt$isGroupNotVisible(itemGroup)) {
 			info.cancel();
 		}
 	}
 
 	@Unique
-	private boolean qsl$isGroupNotVisible(ItemGroup itemGroup) {
+	private boolean quilt$isGroupNotVisible(ItemGroup itemGroup) {
 		if (QuiltCreativePlayerInventoryScreenWidgets.ALWAYS_SHOWN_GROUPS.contains(itemGroup)) {
 			return false;
 		}
 
-		return qsl$currentPage != getOffsetPage(itemGroup.getIndex());
+		return quilt$currentPage != getOffsetPage(itemGroup.getIndex());
 	}
 
 	@Override
-	public int qsl$currentPage() {
-		return qsl$currentPage;
+	public int quilt$currentPage() {
+		return quilt$currentPage;
 	}
 }
