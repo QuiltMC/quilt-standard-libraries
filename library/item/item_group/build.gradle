@@ -5,7 +5,7 @@ plugins {
 qslModule {
 	moduleName = "item_group"
 	version = "1.0.0"
-	library = "items"
+	library = "item"
 	coreDependencies([
 			"qsl_base",
 			"resource_loader"
