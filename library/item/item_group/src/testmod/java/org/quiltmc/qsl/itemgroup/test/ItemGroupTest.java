@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.items.itemgroup.test;
+package org.quiltmc.qsl.itemgroup.test;
 
 import org.quiltmc.qsl.itemgroup.api.QuiltItemGroup;
 

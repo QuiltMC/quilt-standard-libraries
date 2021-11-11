@@ -3,6 +3,6 @@ plugins {
 }
 
 qslLibrary {
-	libraryName = "items"
+	libraryName = "item"
 	version = "1.0.0"
 }
