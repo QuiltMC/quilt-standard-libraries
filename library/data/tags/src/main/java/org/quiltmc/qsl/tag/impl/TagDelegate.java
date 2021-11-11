@@ -28,6 +28,19 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.tag.api.QuiltTag;
 import org.quiltmc.qsl.tag.api.TagType;
 
+/**
+ * Represents a delegated tag. A delegated tag is a wrapper around a tag which is retrieved at runtime,
+ * and is kept update throughout the lifecycle of the game.
+ * <p>
+ * Thread safety is being ensured by using an immutable holder object for consistently retrieving both result
+ * and condition, volatile for safe publishing and assuming {@link TagGroup#getTagOrEmpty(Identifier)}
+ * is safe to call concurrently.
+ * <p>
+ * It should be possible to exploit a benign data race on {@link #target} by removing volatile, but this option
+ * hasn't been chosen yet since a performance problem in the area is yet to be proven.
+ * <p>
+ * This class is for internal use only, this should not directly be used outside this module.
+ */
 @ApiStatus.Internal
 public class TagDelegate<T> implements Tag.Identified<T>, QuiltTag<T>, QuiltTagHooks {
 	private final Identifier id;
