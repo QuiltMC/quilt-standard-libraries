@@ -107,6 +107,7 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 			if (!attrib.side().shouldLoad(source)) {
 				LOGGER.warn("Ignoring attribute {} (from {}) since it shouldn't be loaded from this source ({}, we're loading from {})",
 						attribId, jsonId, attrib.side().getSource(), source);
+				continue;
 			}
 
 			profiler.swap(ID + "/getting_resources{" + jsonId + "}");
@@ -123,7 +124,7 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 			profiler.swap(ID + "/processing_resources{" + jsonId + "," + attribId + "}");
 
 			AttributeMap attribMap = attributeMaps.computeIfAbsent(attrib,
-					id -> new AttributeMap(registry, attrib));
+					key -> new AttributeMap(registry, key));
 			for (var resource : resources) {
 				attribMap.processResource(resource);
 			}
