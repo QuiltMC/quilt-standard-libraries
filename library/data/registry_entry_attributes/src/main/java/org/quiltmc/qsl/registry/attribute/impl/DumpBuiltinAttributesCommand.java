@@ -93,7 +93,7 @@ public final class DumpBuiltinAttributesCommand {
 	}
 
 	public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-		if (Boolean.parseBoolean(System.getProperty(ENABLE_PROPERTY, "false"))) {
+		if (Boolean.getBoolean(ENABLE_PROPERTY)) {
 			ArgumentTypes.register("quilt:rea_dumpbuiltin_registry",
 					RegistryArgumentType.class, new ConstantArgumentSerializer<>(RegistryArgumentType::registry));
 
