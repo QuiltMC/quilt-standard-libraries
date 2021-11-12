@@ -270,6 +270,11 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		return this;
 	}
 
+	public QuiltBlockSettings material(Material material) {
+		((AbstractBlockSettingsAccessor) this).setMaterial(material);
+		return this;
+	}
+
 	public QuiltBlockSettings mapColor(DyeColor color) {
 		return this.mapColor(color.getMapColor());
 	}
