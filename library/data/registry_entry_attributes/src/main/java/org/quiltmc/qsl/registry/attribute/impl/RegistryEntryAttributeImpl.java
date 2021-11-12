@@ -55,7 +55,9 @@ public record RegistryEntryAttributeImpl<R, V>(Registry<R> registry,
 		}
 		if (missingValueFunction != null) {
 			value = missingValueFunction.apply(entry);
-			if (value != null) {
+			if (value == null) {
+				return Optional.empty();
+			} else {
 				RegistryEntryAttributeHolder.getBuiltin(registry).putValue(this, entry, value);
 				return Optional.of(value);
 			}
