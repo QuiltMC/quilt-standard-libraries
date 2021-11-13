@@ -187,8 +187,7 @@ public final class ClientTagRegistryManager<T> {
 	/**
 	 * Represents a registry content fetcher.
 	 * <p>
-	 * But this fetcher will fetch the dynamic registry manager and auto-updates its references to the under-laying registry
-	 * used for content fetching.
+	 * This fetcher will auto-update the reference to the underlying registry whenever the dynamic registry manager changes.
 	 */
 	private class ClientRegistryFetcher implements Function<Identifier, Optional<T>> {
 		private boolean firstCall = true;
