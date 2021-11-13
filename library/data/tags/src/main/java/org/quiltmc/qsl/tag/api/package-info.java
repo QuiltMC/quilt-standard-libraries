@@ -6,7 +6,7 @@
  * Tags are a way to have un-hardcoded list of registry entries since the content of tags are controlled by data packs.
  * For example, Minecraft use those to identify all stairs blocks in the game, which is used for the connection mechanic.
  * <p>
- * By default tags are available for most of the static registries and are one of the earliest resource to be loaded on
+ * By default tags are available for most of the static registries and are one of the earliest resources to be loaded on
  * server start.
  * <p>
  * The goal of the API is to give to modders the ability to get (and register) tags of any registries, dynamic ones included.
