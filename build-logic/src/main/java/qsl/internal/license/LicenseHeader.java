@@ -13,8 +13,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -91,19 +89,22 @@ public class LicenseHeader {
 
 	private static @Nullable Pattern getMatcher(String headerFormat) {
 		String[] lines = headerFormat.split("\n");
-		String match = null;
+		var match = new StringBuilder();
 
 		for (var line : lines) {
 			if (line.startsWith(MATCH_FROM_KEY)) {
-				match = line.substring(MATCH_FROM_KEY.length());
+				if (!match.isEmpty()) {
+					match.append('|');
+				}
+				match.append('(').append(line.substring(MATCH_FROM_KEY.length())).append(')');
 			}
 		}
 
-		if (match == null) {
+		if (match.isEmpty()) {
 			return null;
 		}
 
-		return Pattern.compile("^/\\*\n \\* " + match);
+		return Pattern.compile("^" + match);
 	}
 
 	private static String[] getHeaderLines(String[] lines) {
@@ -265,7 +266,7 @@ public class LicenseHeader {
 		}
 
 		private String getYearString(Project project, String source) {
-			int lastYear = getYearStrict(project);
+			int lastModifiedYear = getYearStrict(project);
 
 			var matcher = this.validator.matcher(source);
 
@@ -286,15 +287,13 @@ public class LicenseHeader {
 				}
 
 				if (min == -1) {
-					return String.valueOf(lastYear);
+					return String.valueOf(lastModifiedYear);
 				} else {
-					return IntStream.range(min, lastYear + 1)
-							.mapToObj(String::valueOf)
-							.collect(Collectors.joining(", "));
+					return min + "-" + lastModifiedYear;
 				}
 			}
 
-			return String.valueOf(lastYear);
+			return String.valueOf(lastModifiedYear);
 		}
 	}
 
