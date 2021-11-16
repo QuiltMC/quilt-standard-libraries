@@ -2,6 +2,8 @@
 
 This document outlines best-practices and contributing guidelines to the Quilt Standard Libraries.
 
+By contributing to the Quilt Standard Libraries you agree with the [Developer Certificate of Origin (DCO)][DCO].
+
 ## Naming conventions
 
 ### Use of the `$` character
@@ -14,9 +16,11 @@ in other words it allows to separate the actual name of the variable and the nam
 In the case of a pseudo-local variable (a field used briefly to pass around a local variable of a method between 2 injections of said method),
 the field should be named with the namespace first, then the name of the injected method, and finally the name of the local (`quilt$injectedMethod$localName`).
 
-## Licensing
+## Licensing & DCO
 
-QSL is licensed under [Apache 2.0][LICENSE], which means contributions should not introduce incompatibly licensed code.
+QSL is licensed under [Apache 2.0][LICENSE], and have a [Developer Certificate of Origin (DCO)][DCO]
+which you need to agree with to contribute.
+Commit author may be sufficient, but [a sign-off can be added too](https://git-scm.com/docs/git-commit#Documentation/git-commit.txt--s).
 
 ### License Headers
 
@@ -31,20 +35,15 @@ So, before committing, remember to run `:applyLicenses`!
 
 #### Derivative Work
 
-If your work isn't entirely original, then the default license header should not apply. Here's what to do in different cases:
+Please refer to the [DCO].
 
 ##### My work comes from Fabric API
 
 If your work comes from Fabric API, then you should put `/// FABRIC` at the beginning of your file,
 or in the case you're copying an entire file in it, you can just keep the same header without modification.
 
-Make sure to execute the `:applyLicenses` task as it will apply a special license header to Fabric API-derived files mentioning Fabric's copyright notice. **Files derived from Fabric must use this license header!**
-
-##### My work comes from somewhere else
-
-If the original work is entirely your own, then nothing needs to be done as long as you don't mind it being licensed under [Apache 2][LICENSE].
-
-Otherwise, you should make sure that this work is compatible with the [Apache 2][LICENSE] license
-and discuss with a QSL Team member whether the work can be included and how.
+Make sure to execute the `:applyLicenses` task as it will apply a special license header to Fabric API-derived files mentioning Fabric's copyright notice.
+**Files derived from Fabric must use this license header!**
 
 [LICENSE]: ./LICENSE "Quilt Standard Libraries license file"
+[DCO]: ./DEVELOPER_CERTIFICATE_OF_ORIGIN.md "Developer Certificate of Origin file"
