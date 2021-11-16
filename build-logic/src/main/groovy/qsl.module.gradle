@@ -22,18 +22,8 @@ plugins {
 	id("org.quiltmc.loom")
 	// FIXME: This convention plugin is just broken
 	// id("org.quiltmc.gradle-conventions.java.style")
-	id("com.diffplug.spotless")
 	id("org.quiltmc.gradle-conventions.java.version")
 	id("qsl.common")
-}
-
-spotless {
-	java {
-		// UPDATING: This needs to be changed when a new branch is created.
-		// This has been disabled for now due to spotless failing builds always because of something something no remote found in new folders.
-		// ratchetFrom("origin/1.17.1")
-		licenseHeaderFile(rootProject.file("codeformat/HEADER")).yearSeparator(", ")
-	}
 }
 
 def extension = project.extensions.create("qslModule", QslModuleExtension, project)

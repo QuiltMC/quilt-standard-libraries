@@ -9,7 +9,6 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 import groovy.util.Node;
-import groovy.xml.QName;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Dependency;
@@ -22,12 +21,16 @@ import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.tasks.Input;
 import qsl.internal.GroovyXml;
 import qsl.internal.json.ModJsonObject;
+import qsl.internal.license.LicenseHeader;
+import qsl.internal.task.ApplyLicenseTask;
+import qsl.internal.task.CheckLicenseTask;
 
 public class QslModuleExtension {
 	private final Project project;
 	private final Property<String> library;
 	private final Property<String> moduleName;
 	private final List<Dependency> moduleDependencies;
+	private final LicenseHeader licenseHeader;
 	private Action<ModJsonObject> jsonPostProcessor;
 
 	@Inject
@@ -38,6 +41,14 @@ public class QslModuleExtension {
 		this.moduleName = factory.property(String.class);
 		this.moduleName.finalizeValueOnRead();
 		this.moduleDependencies = new ArrayList<>();
+		this.licenseHeader = new LicenseHeader(
+				LicenseHeader.Rule.fromFile(project.getRootProject().file("codeformat/FABRIC_MODIFIED_HEADER").toPath()),
+				LicenseHeader.Rule.fromFile(project.getRootProject().file("codeformat/HEADER").toPath())
+		);
+
+		project.getTasks().register("checkLicenses", CheckLicenseTask.class, this.licenseHeader);
+		project.getTasks().register("applyLicenses", ApplyLicenseTask.class, this.licenseHeader);
+		project.getTasks().findByName("check").dependsOn("checkLicenses");
 	}
 
 	@Input
