@@ -20,7 +20,8 @@ the field should be named with the namespace first, then the name of the injecte
 
 QSL is licensed under [Apache 2.0][LICENSE], and have a [Developer Certificate of Origin (DCO)][DCO]
 which you need to agree with to contribute.
-Commit author may be sufficient, but [a sign-off can be added too](https://git-scm.com/docs/git-commit#Documentation/git-commit.txt--s).
+Commit author may be sufficient, but [a sign-off can be added too](https://git-scm.com/docs/git-commit#Documentation/git-commit.txt--s),
+and legal names are not required for privacy reasons.
 
 ### License Headers
 
