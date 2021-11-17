@@ -6,7 +6,7 @@ jobs:
     strategy:
       matrix:
         # Keep the matrix for when jdk 17 rc come out
-        java: [16]
+        java: [17]
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/setup-java@v2

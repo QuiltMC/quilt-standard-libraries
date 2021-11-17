@@ -6,8 +6,12 @@ qslModule {
 	moduleName = "resource_loader"
 	version = "1.0.0"
 	library = "core"
+	coreTestmodDependencies([
+			"qsl_base",
+			"lifecycle_events"
+	])
 }
 
-minecraft {
-	accessWidener "src/main/resources/quilt_resource_loader.accesswidener"
+loom {
+	accessWidenerPath = file("src/main/resources/quilt_resource_loader.accesswidener")
 }

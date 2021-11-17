@@ -19,21 +19,10 @@ plugins {
 	id("java-library")
 	id("maven-publish")
 	id("net.kyori.indra.git")
-	id("org.quiltmc.loom")
 	// FIXME: This convention plugin is just broken
 	// id("org.quiltmc.gradle-conventions.java.style")
-	id("com.diffplug.spotless")
 	id("org.quiltmc.gradle-conventions.java.version")
 	id("qsl.common")
-}
-
-spotless {
-	java {
-		// UPDATING: This needs to be changed when a new branch is created.
-		// This has been disabled for now due to spotless failing builds always because of something something no remote found in new folders.
-		// ratchetFrom("origin/1.17.1")
-		licenseHeaderFile(rootProject.file("codeformat/HEADER")).yearSeparator(", ")
-	}
 }
 
 def extension = project.extensions.create("qslModule", QslModuleExtension, project)
@@ -126,7 +115,7 @@ java {
 
 javadoc {
 	options {
-		source = "16"
+		source = "17"
 		encoding = "UTF-8"
 		charSet = "UTF-8"
 		memberLevel = JavadocMemberLevel.PACKAGE
@@ -190,16 +179,10 @@ publishing {
 
 		if (publish) {
 			mavenJava(MavenPublication) {
+				from components.java
+
 				pom.withXml {
 					asNode().appendNode("properties").appendNode("hash", Git.getLatestCommitHash(project))
-				}
-
-				artifact(remapJar) {
-					builtBy remapJar
-				}
-
-				artifact(sourcesJar) {
-					builtBy remapSourcesJar
 				}
 			}
 		}
