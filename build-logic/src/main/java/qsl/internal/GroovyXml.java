@@ -14,6 +14,7 @@ public final class GroovyXml {
 		return parent.appendNode(name);
 	}
 
+	@SuppressWarnings("deprecation")
 	private static boolean isSameName(Object nodeName, String givenName) {
 		if (nodeName instanceof String) {
 			return nodeName.equals(givenName);

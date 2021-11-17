@@ -38,14 +38,14 @@ abstract class MinecraftClientMixin {
 	}
 
 	@Inject(method = "stop",
-		at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;info(Ljava/lang/String;)V", shift = At.Shift.AFTER))
+		at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;info(Ljava/lang/String;)V", shift = At.Shift.AFTER, remap = false))
 	private void clientStopping(CallbackInfo info) {
 		ClientLifecycleEvents.STOPPING.invoker().stoppingClient((MinecraftClient) (Object) this);
 	}
 
 	@Inject(method = "stop",
 		at = {
-			@At(value = "INVOKE", target = "Ljava/lang/System;exit(I)V"), // Graceful JVM Exit
+			@At(value = "INVOKE", target = "Ljava/lang/System;exit(I)V", remap = false), // Graceful JVM Exit
 			@At(value = "TAIL") // Final instruction
 		})
 	private void clientExit(CallbackInfo info) {

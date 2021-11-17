@@ -12,17 +12,32 @@ repositories {
 		name = "Quilt"
 		url = "https://maven.quiltmc.org/repository/release"
 	}
+	// Note: temporary mavens until Quilt buildtools and loader are ready.
+	maven {
+		name = "Quilt"
+		url = "https://maven.quiltmc.org/repository/snapshot"
+	}
+	maven {
+		name = "Fabric"
+		url = "https://maven.fabricmc.net/"
+	}
+	maven {
+		name = "Cotton"
+		url = "https://server.bbkr.space/artifactory/libs-release/"
+	}
 }
 
 dependencies {
-	implementation "org.quiltmc:loom:0.7.+"
+	implementation "fabric-loom:fabric-loom.gradle.plugin:0.10.46"
 	implementation "net.kyori:indra-git:2.0.2"
 	implementation "org.quiltmc:quilt-json5:1.0.0"
 	implementation "org.quiltmc.gradle-conventions:gradle-convention-plugins:0.+"
+	implementation "org.quiltmc:quilt-mappings-on-loom:3.1.0"
 	implementation "com.diffplug.spotless:spotless-plugin-gradle:5.12.4"
+	implementation "io.github.juuxel:loom-quiltflower-mini:1.1.0"
 }
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"
-	it.options.release.set(16) // Minecraft is Java 16
+	it.options.release.set(17) // Minecraft is Java 17
 }
