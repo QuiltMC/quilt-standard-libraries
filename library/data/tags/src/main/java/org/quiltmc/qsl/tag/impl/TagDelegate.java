@@ -47,7 +47,7 @@ public class TagDelegate<T> implements Tag.Identified<T>, QuiltTag<T>, QuiltTagH
 	private final TagType type;
 	protected final Supplier<TagGroup<T>> tagGroupSupplier;
 	protected volatile Target<T> target;
-	private int clearCount = 0;
+	private int replacementCount = 0;
 
 	public TagDelegate(Identifier id, TagType type, Supplier<TagGroup<T>> tagGroupSupplier) {
 		this.id = id;
@@ -77,7 +77,7 @@ public class TagDelegate<T> implements Tag.Identified<T>, QuiltTag<T>, QuiltTagH
 
 	@Override
 	public boolean hasBeenReplaced() {
-		return this.clearCount > 0;
+		return this.replacementCount > 0;
 	}
 
 	/**
@@ -106,8 +106,8 @@ public class TagDelegate<T> implements Tag.Identified<T>, QuiltTag<T>, QuiltTagH
 	}
 
 	@Override
-	public void quilt$setClearCount(int clearCount) {
-		this.clearCount = clearCount;
+	public void quilt$setReplacementCount(int replacementCount) {
+		this.replacementCount = replacementCount;
 	}
 
 	@Override
@@ -115,7 +115,7 @@ public class TagDelegate<T> implements Tag.Identified<T>, QuiltTag<T>, QuiltTagH
 		return "TagDelegate{id=\"" + this.id
 				+ "\", type=" + this.type
 				+ ", target=" + this.target
-				+ ", clearCount=" + this.clearCount
+				+ ", replacementCount=" + this.replacementCount
 				+ ", values=" + this.values()
 				+ "}";
 	}

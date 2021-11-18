@@ -20,5 +20,5 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 public interface QuiltTagHooks {
-	void quilt$setClearCount(int clearCount);
+	void quilt$setReplacementCount(int replacementCount);
 }

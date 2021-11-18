@@ -29,15 +29,15 @@ import org.quiltmc.qsl.tag.impl.QuiltTagHooks;
 @Mixin(value = {RequiredTagList.TagWrapper.class, SetTag.class})
 public abstract class TagImplMixin<T> implements QuiltTag<T>, QuiltTagHooks, Tag<T> {
 	@Unique
-	private int quilt$clearCount;
+	private int quilt$replaced;
 
 	@Override
 	public boolean hasBeenReplaced() {
-		return this.quilt$clearCount > 0;
+		return this.quilt$replaced > 0;
 	}
 
 	@Override
-	public void quilt$setClearCount(int clearCount) {
-		this.quilt$clearCount = clearCount;
+	public void quilt$setReplacementCount(int replacementCount) {
+		this.quilt$replaced = replacementCount;
 	}
 }

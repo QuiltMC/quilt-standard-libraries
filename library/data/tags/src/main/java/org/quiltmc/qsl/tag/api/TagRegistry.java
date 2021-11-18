@@ -43,7 +43,6 @@ import org.quiltmc.qsl.tag.impl.TagRegistryImpl;
  * Represents a tag registry.
  *
  * @param <T> the type of the registered tags
- * @see org.quiltmc.qsl.tag.api
  */
 @ApiStatus.NonExtendable
 public interface TagRegistry<T> {

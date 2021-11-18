@@ -40,7 +40,7 @@ public class TagBuilderMixin implements QuiltTagBuilder {
 	private List<Tag.TrackedEntry> entries;
 
 	@Unique
-	private int quilt$clearCount;
+	private int quilt$replacementCount;
 
 	@ModifyArg(
 			method = "build",
@@ -51,18 +51,19 @@ public class TagBuilderMixin implements QuiltTagBuilder {
 			)
 	)
 	private Object build(Object tag) {
-		((QuiltTagHooks) tag).quilt$setClearCount(this.quilt$clearCount);
+		((QuiltTagHooks) tag).quilt$setReplacementCount(this.quilt$replacementCount);
 		return tag;
 	}
 
 	@Inject(method = "read", at = @At(value = "INVOKE", target = "Ljava/util/List;clear()V"))
 	public void onFromJsonClear(JsonObject json, String packName, CallbackInfoReturnable<Tag.Builder> info) {
-		this.quilt$clearCount++;
+		this.quilt$replacementCount++;
 	}
 
 	@Override
-	public void clearEntries() {
+	public QuiltTagBuilder clearEntries() {
 		this.entries.clear();
-		this.quilt$clearCount++;
+		this.quilt$replacementCount++;
+		return this;
 	}
 }

@@ -22,7 +22,6 @@ import net.minecraft.tag.Tag;
  * Interface implemented by {@link net.minecraft.tag.Tag} instances when QSL is present.
  *
  * @param <T> the type of the values held by the tag
- * @see org.quiltmc.qsl.tag.api
  */
 public interface QuiltTag<T> {
 	/**
@@ -34,6 +33,9 @@ public interface QuiltTag<T> {
 
 	/**
 	 * {@return {@code true} if the given tag has been "replaced" by a data pack at least once}
+	 * <p>
+	 * The use case for such method is to be able to provide vanilla behaviour compatibility in a hook,
+	 * but also allow overriding it for "total conversion" data-packs.
 	 */
 	boolean hasBeenReplaced();
 

@@ -29,4 +29,10 @@ public interface TagMixin<T> extends QuiltTag<T> {
 	default TagType getType() {
 		return TagType.NEUTRAL;
 	}
+
+	@Override
+	default boolean hasBeenReplaced() {
+		return false; // The goal is to prevent hard-fails with custom Tag implementations.
+		// Please look at the javadoc of the method for more insight.
+	}
 }
