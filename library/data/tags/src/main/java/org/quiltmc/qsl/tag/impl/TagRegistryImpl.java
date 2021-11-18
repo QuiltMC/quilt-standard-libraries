@@ -20,7 +20,6 @@ import java.util.function.Supplier;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
-import com.mojang.serialization.DynamicOps;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.apache.logging.log4j.LogManager;
@@ -54,31 +53,31 @@ public final class TagRegistryImpl<T> implements TagRegistry<T> {
 	private static final Logger LOGGER = LogManager.getLogger();
 	private static final ThreadLocal<Boolean> MISSING_TAGS_CLIENT_FETCH = new ThreadLocal<>();
 
-	private final RegistryKey<? extends Registry<T>> registryKey;
+	private final RequiredTagList<T> tagList;
 	private final Supplier<TagGroup<T>> tagGroupSupplier;
 
-	private TagRegistryImpl(RegistryKey<? extends Registry<T>> registryKey, Supplier<TagGroup<T>> tagGroupSupplier) {
-		this.registryKey = registryKey;
+	private TagRegistryImpl(RequiredTagList<T> tagList, Supplier<TagGroup<T>> tagGroupSupplier) {
+		this.tagList = tagList;
 		this.tagGroupSupplier = tagGroupSupplier;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static <T> TagRegistry<T> of(Supplier<TagGroup<T>> tagGroupSupplier) {
 		var tagGroup = tagGroupSupplier.get();
-		RegistryKey<? extends Registry<T>> registryKey = null;
+		RequiredTagList<T> tagList = null;
 
 		for (var requiredTagList : RequiredTagListRegistryAccessor.getAll()) {
 			if (requiredTagList.getGroup() == tagGroup) {
-				//noinspection unchecked
-				registryKey = (RegistryKey<? extends Registry<T>>) requiredTagList.getRegistryKey();
+				tagList = (RequiredTagList<T>) requiredTagList;
 				break;
 			}
 		}
 
-		if (registryKey == null) {
+		if (tagList == null) {
 			throw new IllegalStateException("Could not find the associated RequiredTagList for " + tagGroup + ".");
 		}
 
-		return new TagRegistryImpl<>(registryKey, tagGroupSupplier);
+		return new TagRegistryImpl<>(tagList, tagGroupSupplier);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -102,23 +101,19 @@ public final class TagRegistryImpl<T> implements TagRegistry<T> {
 			tagList = RequiredTagListRegistry.register(registryKey, dataType);
 		}
 
-		return new TagRegistryImpl<>(registryKey, tagList::getGroup);
+		return new TagRegistryImpl<>(tagList, tagList::getGroup);
+	}
+
+	private RegistryKey<? extends Registry<T>> getRegistryKey() {
+		return this.tagList.getRegistryKey();
 	}
 
 	@Override
 	public Tag.Identified<T> create(Identifier id, TagType type) {
 		return switch (type) {
-			case SERVER_REQUIRED, CLIENT_SERVER_REQUIRED -> {
-				for (var requiredTagList : RequiredTagListRegistryAccessor.getAll()) {
-					if (requiredTagList.getRegistryKey() == this.registryKey) {
-						//noinspection unchecked
-						yield ((QuiltRequiredTagListHooks<T>) requiredTagList).quilt$addTypedTag(id, type);
-					}
-				}
-
-				throw new IllegalStateException("Could not find the associated RequiredTagList for " + this.registryKey + ".");
-			}
-			case CLIENT_SERVER_SYNC, CLIENT_ONLY -> ClientTagRegistryManager.create(id, type, this.registryKey, this.tagGroupSupplier);
+			case SERVER_REQUIRED, CLIENT_SERVER_REQUIRED -> //noinspection unchecked
+					((QuiltRequiredTagListHooks<T>) this.tagList).quilt$addTypedTag(id, type);
+			case CLIENT_SERVER_SYNC, CLIENT_ONLY -> ClientTagRegistryManager.create(id, type, this.getRegistryKey(), this.tagGroupSupplier);
 			default -> new TagDelegate<>(id, type, this.tagGroupSupplier);
 		};
 	}
