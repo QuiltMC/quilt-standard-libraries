@@ -16,18 +16,16 @@
 
 package org.quiltmc.qsl.tag.mixin;
 
-import java.util.Collection;
 import java.util.List;
 
 import com.google.gson.JsonObject;
-import com.mojang.datafixers.util.Either;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.tag.Tag;
@@ -44,7 +42,7 @@ public class TagBuilderMixin implements QuiltTagBuilder {
 	@Unique
 	private int quilt$clearCount;
 
-	@Redirect(
+	@ModifyArg(
 			method = "build",
 			at = @At(
 					value = "INVOKE",
@@ -52,9 +50,9 @@ public class TagBuilderMixin implements QuiltTagBuilder {
 					remap = false
 			)
 	)
-	private Either<Collection<Tag.TrackedEntry>, Object> build(Object tag) {
+	private Object build(Object tag) {
 		((QuiltTagHooks) tag).quilt$setClearCount(this.quilt$clearCount);
-		return Either.right(tag);
+		return tag;
 	}
 
 	@Inject(method = "read", at = @At(value = "INVOKE", target = "Ljava/util/List;clear()V"))

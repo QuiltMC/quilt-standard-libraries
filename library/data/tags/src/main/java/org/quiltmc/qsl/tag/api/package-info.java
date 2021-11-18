@@ -4,7 +4,7 @@
  * <p>
  * <h3>What are tags?</h3>
  * Tags are a way to have un-hardcoded list of registry entries since the content of tags are controlled by data packs.
- * For example, Minecraft use those to identify all stairs blocks in the game, which is used for the connection mechanic.
+ * For example, Minecraft use those to identify all fence blocks in the game, which is used for the connection mechanic.
  * <p>
  * By default tags are available for most of the static registries and are one of the earliest resources to be loaded on
  * server start.

@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
@@ -61,6 +62,7 @@ public class RequiredTagListMixin<T> implements QuiltRequiredTagListHooks<T> {
 
 	@Mixin(RequiredTagList.TagWrapper.class)
 	public abstract static class TagWrapperMixin<T> implements QuiltTag<T>, QuiltRequiredTagWrapperHooks {
+		@Unique
 		private TagType tagType = TagType.CLIENT_SERVER_REQUIRED;
 
 		@Override

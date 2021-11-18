@@ -43,7 +43,7 @@ public final class ClientTagsTestMod implements ClientModInitializer {
 	 * data-pack so the testing can be exactly sure.
 	 * - can connect to servers that don't have the tag (since it's not TagType.CLIENT_SERVER_REQUIRED)
 	 */
-	public static final Tag<Block> TEST_REQUIRED_BLOCK_TAG = TagRegistry.BLOCK.create(
+	public static final Tag.Identified<Block> TEST_REQUIRED_BLOCK_TAG = TagRegistry.BLOCK.create(
 			TagsTestMod.id("required_block_tag"), TagType.SERVER_REQUIRED
 	);
 	public static final Tag.Identified<Block> TEST_CLIENT_BLOCK_TAG = TagRegistry.BLOCK.create(
