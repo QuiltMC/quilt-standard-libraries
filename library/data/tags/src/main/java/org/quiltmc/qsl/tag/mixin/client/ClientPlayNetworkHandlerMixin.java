@@ -39,12 +39,12 @@ public abstract class ClientPlayNetworkHandlerMixin {
 			method = "onGameJoin",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/network/packet/s2c/play/GameJoinS2CPacket;getRegistryManager()Lnet/minecraft/util/registry/DynamicRegistryManager;",
+					target = "Lnet/minecraft/network/packet/s2c/play/GameJoinS2CPacket;registryManager()Lnet/minecraft/util/registry/DynamicRegistryManager$Impl;",
 					shift = At.Shift.AFTER
 			)
 	)
 	private void onGameJoin(GameJoinS2CPacket packet, CallbackInfo ci) {
-		ClientTagRegistryManager.applyAll(packet.getRegistryManager());
+		ClientTagRegistryManager.applyAll(packet.registryManager());
 	}
 
 	@Inject(method = "onDisconnected", at = @At("TAIL"))

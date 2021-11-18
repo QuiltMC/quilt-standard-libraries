@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2016, 2017, 2018, 2019 FabricMC, 2021 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.function.Supplier;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
+import com.mojang.serialization.DynamicOps;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.apache.logging.log4j.LogManager;
@@ -129,7 +130,7 @@ public final class TagRegistryImpl<T> implements TagRegistry<T> {
 	 * if it mentions data pack entries. The solution is to manually load tags after the registry is loaded.
 	 * <p>
 	 * Look at server's {@link Main#main} function calls for {@link ServerResourceManager#reload} and
-	 * {@link RegistryOps#method_36574} for the relevant code.
+	 * {@link RegistryOps#ofLoaded} for the relevant code.
 	 */
 	public static void loadDynamicRegistryTags(DynamicRegistryManager registryManager, ResourceManager resourceManager) {
 		var stopwatch = Stopwatch.createStarted();

@@ -16,5 +16,5 @@ qslModule {
 }
 
 loom {
-	accessWidener "src/main/resources/quilt_tags.accesswidener"
+	accessWidenerPath = file("src/main/resources/quilt_tags.accesswidener")
 }

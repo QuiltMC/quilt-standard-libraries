@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2016, 2017, 2018, 2019 FabricMC, 2021 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import org.quiltmc.qsl.tag.impl.TagRegistryImpl;
  */
 @Mixin(value = RegistryOps.class, priority = 900)
 public class RegistryOpsMixin {
-	@Inject(method = "method_36574", at = @At("RETURN"))
+	@Inject(method = "ofLoaded", at = @At("RETURN"))
 	private static <T> void afterDynamicRegistryLoaded(DynamicOps<T> dynamicOps, ResourceManager resourceManager,
 	                                                   DynamicRegistryManager registryManager, CallbackInfoReturnable<RegistryOps<T>> cir) {
 		TagRegistryImpl.loadDynamicRegistryTags(registryManager, resourceManager);
