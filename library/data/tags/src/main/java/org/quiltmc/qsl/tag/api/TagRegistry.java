@@ -42,7 +42,7 @@ import org.quiltmc.qsl.tag.impl.TagRegistryImpl;
 /**
  * Represents a tag registry.
  *
- * @param <T> the type of the registered tags
+ * @param <T> the type of the content in the registered tags
  */
 @ApiStatus.NonExtendable
 public interface TagRegistry<T> {
