@@ -14,28 +14,25 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.crash.mixin;
+package org.quiltmc.qsl.crash.test.mixin;
 
-import net.minecraft.util.SystemDetails;
-import org.quiltmc.qsl.crash.api.CrashReportEvents;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.function.Supplier;
-
-@Mixin(SystemDetails.class)
-abstract class SystemDetailsMixin {
-	@Shadow
-	public abstract void addSection(String name, Supplier<String> valueSupplier);
-
-	/**
-	 * Adds a section to the system details listing all Quilt mods which are present.
-	 */
-	@Inject(method = "<init>", at = @At("TAIL"))
-	private void addQuiltMods(CallbackInfo info) {
-		CrashReportEvents.SYSTEM_DETAILS.invoker().addDetails((SystemDetails) (Object) this);
+@Mixin(AbstractFurnaceBlockEntity.class)
+public abstract class AbstractFurnaceBlockEntityMixin {
+	@Inject(method = "tick", at=@At("HEAD"))
+	private static void crashOnTick(World world, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity, CallbackInfo ci) {
+		if (world.getBlockState(pos.down()).getBlock() == Blocks.DIAMOND_BLOCK) {
+			world.removeBlock(pos, false);
+			throw new RuntimeException("Crash Test!");
+		}
 	}
 }
