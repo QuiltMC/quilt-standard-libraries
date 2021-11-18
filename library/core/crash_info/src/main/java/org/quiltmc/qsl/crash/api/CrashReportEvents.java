@@ -16,6 +16,10 @@
 
 package org.quiltmc.qsl.crash.api;
 
+import java.nio.file.Path;
+
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
@@ -24,10 +28,8 @@ import net.minecraft.util.crash.CrashReportSection;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.HeightLimitView;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.base.api.event.ArrayEvent;
 
-import java.nio.file.Path;
+import org.quiltmc.qsl.base.api.event.ArrayEvent;
 
 /**
  * Events which allow the manipulation of crash reports.
@@ -86,9 +88,9 @@ public final class CrashReportEvents {
 	 *
 	 * <p>This section is added to crashes caused by ticking or rendering a block entity.
 	 */
-	public static final ArrayEvent<BlockEntityDetails> BLOCKENTITY_DETAILS = ArrayEvent.create(BlockEntityDetails.class, callbacks -> (blockentity, section) -> {
+	public static final ArrayEvent<BlockEntityDetails> BLOCKENTITY_DETAILS = ArrayEvent.create(BlockEntityDetails.class, callbacks -> (blockEntity, section) -> {
 		for (var callback : callbacks) {
-			callback.addDetails(blockentity, section);
+			callback.addDetails(blockEntity, section);
 		}
 	});
 
