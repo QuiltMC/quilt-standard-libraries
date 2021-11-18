@@ -30,7 +30,7 @@ import org.quiltmc.qsl.tag.api.TagType;
 
 /**
  * Represents a delegated tag. A delegated tag is a wrapper around a tag which is retrieved at runtime,
- * and is kept update throughout the lifecycle of the game.
+ * and is kept up to date throughout the lifecycle of the game.
  * <p>
  * Thread safety is being ensured by using an immutable holder object for consistently retrieving both result
  * and condition, volatile for safe publishing and assuming {@link TagGroup#getTagOrEmpty(Identifier)}
