@@ -3,7 +3,12 @@
   "package": "org.quiltmc.qsl.crash.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
-    "SystemDetailsMixin"
+    "BlockEntityMixin",
+    "CrashReportMixin",
+    "CrashReportSectionMixin",
+    "EntityMixin",
+    "SystemDetailsMixin",
+    "WorldMixin"
   ],
   "client": [],
   "injectors": {
