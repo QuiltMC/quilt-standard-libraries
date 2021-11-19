@@ -16,11 +16,11 @@ public abstract class ServerEntityHandlerMixin {
 
 	@Inject(method = "startTracking(Lnet/minecraft/entity/Entity;)V", at = @At("TAIL"))
 	void invokeEntityLoadEvent(Entity entity, CallbackInfo ci) {
-		EntityLoadEvents.AFTER_ENTITY_LOAD.invoker().onLoad(entity, this.field_26936);
+		EntityLoadEvents.AFTER_ENTITY_LOAD_SERVER.invoker().onLoad(entity, this.field_26936);
 	}
 
 	@Inject(method = "stopTracking(Lnet/minecraft/entity/Entity;)V", at = @At("TAIL"))
 	void invokeEntityUnloadEvent(Entity entity, CallbackInfo ci) {
-		EntityLoadEvents.AFTER_ENTITY_UNLOAD.invoker().onUnload(entity, this.field_26936);
+		EntityLoadEvents.AFTER_ENTITY_UNLOAD_SERVER.invoker().onUnload(entity, this.field_26936);
 	}
 }
