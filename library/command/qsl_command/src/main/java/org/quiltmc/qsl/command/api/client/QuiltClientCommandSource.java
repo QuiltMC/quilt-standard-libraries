@@ -28,7 +28,10 @@ import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 
 /**
- * Extensions to {@link CommandSource} for client-sided commands.
+ * Extensions to {@link CommandSource}, implemented on {@link net.minecraft.client.network.ClientCommandSource
+ * ClientCommandSource} for
+ * client commands - most of these methods are equivalents to methods on
+ * {@link net.minecraft.server.command.ServerCommandSource ServerCommandSource}, to provide a more familiar API.
  */
 @Environment(EnvType.CLIENT)
 public interface QuiltClientCommandSource extends CommandSource {

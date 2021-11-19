@@ -42,6 +42,7 @@ import net.minecraft.text.TranslatableText;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.qsl.command.api.client.ClientCommandManager;
 import org.quiltmc.qsl.command.api.client.ClientCommandRegistrationCallback;
 import org.quiltmc.qsl.command.api.client.QuiltClientCommandSource;
@@ -54,6 +55,7 @@ import java.util.Map;
 import static org.quiltmc.qsl.command.api.client.ClientCommandManager.*;
 
 @Environment(EnvType.CLIENT)
+@ApiStatus.Internal
 public final class ClientCommandInternals {
 	private static final Logger LOGGER = LogManager.getLogger();
 	private static final char PREFIX = '/';
@@ -63,8 +65,10 @@ public final class ClientCommandInternals {
 	/**
 	 * Executes a client-sided command from a message.
 	 *
-	 * @param message the command message
-	 * @return true if the message should not be sent to the server, false otherwise
+	 * @param 	message	the command message
+	 *
+	 * @return 	true if the message was executed as a command client-side (and therefore should not be sent to the
+	 * 			server), false otherwise
 	 */
 	public static boolean executeCommand(String message) {
 		if (message.isEmpty()) {
@@ -123,7 +127,8 @@ public final class ClientCommandInternals {
 	 * Used to work out whether a command in the main dispatcher is a dummy command added by {@link ClientCommandInternals#addCommands(CommandDispatcher, QuiltClientCommandSource)}.
 	 *
 	 * @param parse the parse results to test.
-	 * @param <S> the command source type.
+	 * @param <S> 	the command source type.
+	 *
 	 * @return true if the parse result is invalid or the command is a dummy, false otherwise.
 	 */
 	public static <S extends CommandSource> boolean isCommandInvalidOrDummy(final ParseResults<S> parse) {
@@ -180,10 +185,9 @@ public final class ClientCommandInternals {
 			DISPATCHER.register(literal(SHORT_API_COMMAND_NAME).redirect(mainNode));
 		}
 
-		// noinspection CodeBlock2Expr
-		DISPATCHER.findAmbiguities((parent, child, sibling, inputs) -> {
-			LOGGER.warn("Ambiguity between arguments {} and {} with inputs: {}", DISPATCHER.getPath(child), DISPATCHER.getPath(sibling), inputs);
-		});
+		DISPATCHER.findAmbiguities((parent, child, sibling, inputs) ->
+				LOGGER.warn("Ambiguity between arguments {} and {} with inputs: {}", DISPATCHER.getPath(child), DISPATCHER.getPath(sibling), inputs)
+		);
 	}
 
 	private static LiteralArgumentBuilder<QuiltClientCommandSource> createHelpCommand() {
