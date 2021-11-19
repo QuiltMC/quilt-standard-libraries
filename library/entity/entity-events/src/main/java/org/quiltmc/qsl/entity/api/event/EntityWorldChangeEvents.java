@@ -22,20 +22,20 @@ import net.minecraft.server.world.ServerWorld;
 import org.quiltmc.qsl.base.api.event.ArrayEvent;
 
 /**
- * Events related to an entity being moved to another world.
+ * Events related to an entity being moved to another world, run on the server.
  *
- * @apiNote For a {@link ServerPlayerEntity}, please use {@link ServerEntityWorldChangeEvents#AFTER_PLAYER_CHANGE_WORLD}.
+ * @apiNote For a {@link ServerPlayerEntity}, please use {@link EntityWorldChangeEvents#AFTER_PLAYER_CHANGE_WORLD}.
  */
-public final class ServerEntityWorldChangeEvents {
+public final class EntityWorldChangeEvents {
 	/**
-	 * An event which is called after an entity has been moved to a different world.
+	 * An event which is invoked server-side after an entity has been moved to a different world.
 	 *
 	 * <p>All entities are copied to the destination and the old entity removed.
 	 * This event does not apply to the {@link ServerPlayerEntity} since players are physically moved to the new world instead of being copied over.
 	 *
 	 * <p>A mod may use this event for reference cleanup if it is tracking an entity's current world.
 	 *
-	 * @see ServerEntityWorldChangeEvents#AFTER_PLAYER_CHANGE_WORLD
+	 * @see EntityWorldChangeEvents#AFTER_PLAYER_CHANGE_WORLD
 	 */
 	public static final ArrayEvent<AfterEntityChange> AFTER_ENTITY_CHANGE_WORLD = ArrayEvent.create(AfterEntityChange.class, callbacks -> (originalEntity, newEntity, origin, destination) -> {
 		for (AfterEntityChange callback : callbacks) {
@@ -44,12 +44,12 @@ public final class ServerEntityWorldChangeEvents {
 	});
 
 	/**
-	 * An event which is called after a player has been moved to a different world.
+	 * An event which is invoked server-side after a player has been moved to a different world.
 	 *
-	 * <p>This is similar to {@link ServerEntityWorldChangeEvents#AFTER_ENTITY_CHANGE_WORLD} but is only called for players.
+	 * <p>This is similar to {@link EntityWorldChangeEvents#AFTER_ENTITY_CHANGE_WORLD} but is only called for players.
 	 * This is because the player is physically moved to the new world instead of being recreated at the destination.
 	 *
-	 * @see ServerEntityWorldChangeEvents#AFTER_ENTITY_CHANGE_WORLD
+	 * @see EntityWorldChangeEvents#AFTER_ENTITY_CHANGE_WORLD
 	 */
 	public static final ArrayEvent<AfterPlayerChange> AFTER_PLAYER_CHANGE_WORLD = ArrayEvent.create(AfterPlayerChange.class, callbacks -> (player, origin, destination) -> {
 		for (AfterPlayerChange callback : callbacks) {
@@ -85,6 +85,5 @@ public final class ServerEntityWorldChangeEvents {
 		void afterChangeWorld(ServerPlayerEntity player, ServerWorld origin, ServerWorld destination);
 	}
 
-	private ServerEntityWorldChangeEvents() {
-	}
+	private EntityWorldChangeEvents() {}
 }

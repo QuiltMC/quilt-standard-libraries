@@ -6,7 +6,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.command.TeleportCommand;
 import net.minecraft.server.world.ServerWorld;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.entity.api.event.ServerEntityWorldChangeEvents;
+import org.quiltmc.qsl.entity.api.event.EntityWorldChangeEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
@@ -24,6 +24,6 @@ public abstract class TeleportCommandMixin {
 	@SuppressWarnings("InvalidInjectorMethodSignature")
 	@Inject(method = "teleport", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setRemoved(Lnet/minecraft/entity/Entity$RemovalReason;)V"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
 	private static void invokeAfterEntityChangeWorldEvent(ServerCommandSource source, Entity originalEntity, ServerWorld destination, double x, double y, double z, Set<PlayerPositionLookS2CPacket.Flag> movementFlags, float yaw, float pitch, @Coerce /* TeleportCommand.LookTarget */ @Nullable Object facingLocation, CallbackInfo ci, float clampedYaw, float clampedPitch, float h, Entity newEntity) {
-		ServerEntityWorldChangeEvents.AFTER_ENTITY_CHANGE_WORLD.invoker().afterChangeWorld(originalEntity, newEntity, ((ServerWorld) originalEntity.world), destination);
+		EntityWorldChangeEvents.AFTER_ENTITY_CHANGE_WORLD.invoker().afterChangeWorld(originalEntity, newEntity, ((ServerWorld) originalEntity.world), destination);
 	}
 }
