@@ -3,7 +3,7 @@ package org.quiltmc.qsl.entity.mixin;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
-import org.quiltmc.qsl.entity.api.event.ServerEntityWorldChangeEvents;
+import org.quiltmc.qsl.entity.api.event.EntityWorldChangeEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,7 +21,7 @@ public abstract class EntityMixin {
 		Entity ret = cir.getReturnValue();
 
 		if (ret != null) {
-			ServerEntityWorldChangeEvents.AFTER_ENTITY_CHANGE_WORLD.invoker().afterChangeWorld((Entity) (Object) this, ret, (ServerWorld) this.world, (ServerWorld) ret.world);
+			EntityWorldChangeEvents.AFTER_ENTITY_CHANGE_WORLD.invoker().afterChangeWorld((Entity) (Object) this, ret, (ServerWorld) this.world, (ServerWorld) ret.world);
 		}
 	}
 }
