@@ -3,10 +3,8 @@ package org.quiltmc.qsl.entity.test;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.SkeletonEntity;
-import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.item.Items;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.LiteralText;
@@ -14,7 +12,10 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.dimension.DimensionType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.quiltmc.qsl.entity.api.event.*;
+import org.quiltmc.qsl.entity.api.event.EntityKilledCallback;
+import org.quiltmc.qsl.entity.api.event.EntityLoadEvents;
+import org.quiltmc.qsl.entity.api.event.EntityReviveEvents;
+import org.quiltmc.qsl.entity.api.event.ServerEntityWorldChangeEvents;
 
 public class EntityEventsTestMod implements ModInitializer {
 	private static final Logger LOGGER = LogManager.getLogger();
@@ -38,23 +39,6 @@ public class EntityEventsTestMod implements ModInitializer {
 				return true;
 			}
 			return false;
-		});
-
-		// Zombies with custom names fly (common side test) and have a trail of barrier particles (client side test).
-		// Entities which are passengers are given acacia signs in their main hand slot.
-		EntityTickCallback.ENTITY_TICK.register((entity, isWorldClient, isPassengerTick) -> {
-			if (entity instanceof ZombieEntity && entity.hasCustomName()) {
-				entity.addVelocity(0, 0.08, 0);
-				if (isWorldClient) {
-					for (int i = 0; i < 20; i++) {
-						entity.world.addParticle(ParticleTypes.EXPLOSION, entity.getX(), entity.getY(), entity.getZ(), 0, -0.1, 0);
-					}
-				}
-			}
-
-			if (isPassengerTick) {
-				entity.equipStack(EquipmentSlot.MAINHAND, Items.ACACIA_SIGN.getDefaultStack());
-			}
 		});
 
 		// All invocations of this event are logged.
