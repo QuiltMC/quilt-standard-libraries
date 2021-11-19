@@ -5,6 +5,8 @@ This document outlines best-practices and contributing guidelines to the Quilt S
 To get a pull request merged into QSL, it must get a certain number of approvals from the teams of each library the pull request targets (determined by a CODEOWNERS file), and then it will enter a Final Comment Period. If the pull request passes the final comment period without opposition, the PR will be merged. Otherwise, the PR will return to being in review. 
 
 The exact number of reviews needed, and the length of the Final Comment Period, varies depending on the scope and complexity of the pull request. The numbers for each category are listed below.
+
+Note: members of the @quiltmc/quilt-standard-libraries team, technical leads, and admins all contribute towards Required Approvals. Only QSL Core Library team members have push access to the QSL repository.
 ### `T: new API`
 #### Description
 For pull requests that add new APIs to QSL, defined as anything in a `$modulename.api` package or subfolders.
@@ -28,7 +30,7 @@ For pull requests that make internal refactors and do not change any API, such a
 For pull requests that must be merged quickly, like ports of critical core modules and game- or build-breaking bugs.
 
 **Required Approvals**: 2
-- Only members of the QSL team (not subteams!) and superiors count for approvals in urgent PRs to prevent abuse. 
+- Only members of the QSL Core Team, technical leads, and admins count for approvals in urgent PRs to prevent abuse. 
 
 **Final Comment Period**: N/A
 
