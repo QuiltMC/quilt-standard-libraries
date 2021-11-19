@@ -15,7 +15,7 @@
     "QuiltMC"
   ],
   "depends": {
-    "quilt_loader": ">=0.13.1-rc.10"
+    "fabricloader": ">=0.12"
   },
   "description": "Quilt APIs relating to commands.",
   "mixins": [
