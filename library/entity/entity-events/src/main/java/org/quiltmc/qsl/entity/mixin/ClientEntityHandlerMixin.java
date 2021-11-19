@@ -3,6 +3,7 @@ package org.quiltmc.qsl.entity.mixin;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import org.quiltmc.qsl.entity.api.event.EntityLoadEvents;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -11,15 +12,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(targets = "net/minecraft/client/world/ClientWorld$ClientEntityHandler")
 public abstract class ClientEntityHandlerMixin {
-	@SuppressWarnings("ShadowTarget")
-	private @Shadow ClientWorld field_27735; // ClientWorld.this
+	@Final @Shadow ClientWorld field_27735; // ClientWorld.this
 
-	@Inject(method = "startTracking", at = @At("TAIL"))
+	@Inject(method = "startTracking(Lnet/minecraft/entity/Entity;)V", at = @At("TAIL"))
 	void invokeEntityLoadEvent(Entity entity, CallbackInfo ci) {
 		EntityLoadEvents.AFTER_ENTITY_LOAD.invoker().onLoad(entity, this.field_27735);
 	}
 
-	@Inject(method = "stopTracking", at = @At("TAIL"))
+	@Inject(method = "stopTracking(Lnet/minecraft/entity/Entity;)V", at = @At("TAIL"))
 	void invokeEntityUnloadEvent(Entity entity, CallbackInfo ci) {
 		EntityLoadEvents.AFTER_ENTITY_UNLOAD.invoker().onUnload(entity, this.field_27735);
 	}

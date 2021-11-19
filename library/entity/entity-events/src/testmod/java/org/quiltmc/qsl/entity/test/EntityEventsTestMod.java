@@ -47,7 +47,7 @@ public class EntityEventsTestMod implements ModInitializer {
 				entity.addVelocity(0, 0.08, 0);
 				if (isWorldClient) {
 					for (int i = 0; i < 20; i++) {
-						entity.world.addParticle(ParticleTypes.BARRIER, entity.getX(), entity.getY(), entity.getZ(), 0, -0.1, 0);
+						entity.world.addParticle(ParticleTypes.EXPLOSION, entity.getX(), entity.getY(), entity.getZ(), 0, -0.1, 0);
 					}
 				}
 			}
