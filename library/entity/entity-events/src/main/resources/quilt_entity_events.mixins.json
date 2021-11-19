@@ -7,12 +7,10 @@
     "LivingEntityMixin",
     "ServerEntityHandlerMixin",
     "ServerPlayerEntityMixin",
-    "ServerWorldMixin",
     "TeleportCommandMixin"
   ],
   "client": [
-    "ClientEntityHandlerMixin",
-    "ClientWorldMixin"
+    "ClientEntityHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
