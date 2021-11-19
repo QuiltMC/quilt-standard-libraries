@@ -31,7 +31,7 @@ library("core")
 library("block")
 library("data")
 library("item")
-library("commands")
+library("command")
 
 def library(String library) {
 	include(library)
