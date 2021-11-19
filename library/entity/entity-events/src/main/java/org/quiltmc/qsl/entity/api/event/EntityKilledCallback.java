@@ -8,11 +8,14 @@ import org.quiltmc.qsl.base.api.event.ArrayEvent;
 
 /**
  * A callback which is invoked on the logical server when an entity is killed by another entity.
+ *
+ * <p>The killed entity's {@link LivingEntity#getRecentDamageSource()} method can be used to retrieve the damage source
+ * which may have killed it.
  */
 @FunctionalInterface
 public interface EntityKilledCallback {
 	/**
-	 * Called when an entity is killed by another entity.
+	 * Invoked when an entity is killed by another entity.
 	 */
 	ArrayEvent<EntityKilledCallback> EVENT = ArrayEvent.create(EntityKilledCallback.class, callbacks -> (world, killer, killed) -> {
 		for (EntityKilledCallback callback : callbacks) {
