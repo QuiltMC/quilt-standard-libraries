@@ -5,8 +5,6 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.SkeletonEntity;
 import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.item.Items;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.dimension.DimensionType;
@@ -50,21 +48,31 @@ public class EntityEventsTestMod implements ModInitializer {
 			}
 		});
 
-		// Chickens, on load, create a beacon activate sound (client side test) and are set on fire for 2s (server side test).
-		EntityLoadEvents.AFTER_ENTITY_LOAD.register((entity, world) -> {
+		// Chicken Loading is logged.
+		EntityLoadEvents.AFTER_ENTITY_LOAD_CLIENT.register((entity, world) -> {
 			if (entity instanceof ChickenEntity) {
-				if (world.isClient) {
-					world.playSound(entity.getX(), entity.getY(), entity.getZ(), SoundEvents.BLOCK_BEACON_ACTIVATE, SoundCategory.NEUTRAL, 1f, 1f, false);
-				} else {
-					entity.setOnFireFor(2);
+				LOGGER.info("Chicken loaded, client");
 				}
+		});
+
+		// Chicken Loading is logged.
+		EntityLoadEvents.AFTER_ENTITY_LOAD_SERVER.register((entity, world) -> {
+			if (entity instanceof ChickenEntity) {
+				LOGGER.info("Chicken loaded, server");
 			}
 		});
 
 		// Skeleton Unloading is logged.
-		EntityLoadEvents.AFTER_ENTITY_UNLOAD.register((entity, world) -> {
+		EntityLoadEvents.AFTER_ENTITY_UNLOAD_SERVER.register((entity, world) -> {
 			if (entity instanceof SkeletonEntity) {
-				LOGGER.info("Skeleton unloaded, {}", world.isClient ? "client" : "server");
+				LOGGER.info("Skeleton unloaded, server");
+			}
+		});
+
+		// Skeleton Unloading is logged.
+		EntityLoadEvents.AFTER_ENTITY_UNLOAD_CLIENT.register((entity, world) -> {
+			if (entity instanceof SkeletonEntity) {
+				LOGGER.info("Skeleton unloaded, client");
 			}
 		});
 

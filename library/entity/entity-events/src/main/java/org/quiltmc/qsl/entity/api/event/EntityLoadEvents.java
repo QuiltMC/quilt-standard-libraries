@@ -25,27 +25,46 @@ import org.quiltmc.qsl.base.api.event.ArrayEvent;
  */
 public final class EntityLoadEvents {
 	/**
-	 * An event which is called after an entity has been loaded into a world.
+	 * An event which is called after an entity has been loaded into a server world.
 	 */
-	public static final ArrayEvent<AfterEntityLoad> AFTER_ENTITY_LOAD = ArrayEvent.create(AfterEntityLoad.class, callbacks -> (entity, world) -> {
-		for (AfterEntityLoad callback : callbacks) {
+	public static final ArrayEvent<AfterEntityLoadServer> AFTER_ENTITY_LOAD_SERVER = ArrayEvent.create(AfterEntityLoadServer.class, callbacks -> (entity, world) -> {
+		for (AfterEntityLoadServer callback : callbacks) {
 			callback.onLoad(entity, world);
 		}
 	});
 
 	/**
-	 * An event which is called after an entity has been unloaded from a world.
+	 * An event which is called after an entity has been loaded into a client world.
 	 */
-	public static final ArrayEvent<AfterEntityUnload> AFTER_ENTITY_UNLOAD = ArrayEvent.create(AfterEntityUnload.class, callbacks -> (entity, world) -> {
-		for (AfterEntityUnload callback : callbacks) {
+	public static final ArrayEvent<AfterEntityLoadClient> AFTER_ENTITY_LOAD_CLIENT = ArrayEvent.create(AfterEntityLoadClient.class, callbacks -> (entity, world) -> {
+		for (AfterEntityLoadClient callback : callbacks) {
+			callback.onLoad(entity, world);
+		}
+	});
+
+	/**
+	 * An event which is called after an entity has been unloaded from a server world.
+	 */
+	public static final ArrayEvent<AfterEntityUnloadServer> AFTER_ENTITY_UNLOAD_SERVER = ArrayEvent.create(AfterEntityUnloadServer.class, callbacks -> (entity, world) -> {
+		for (AfterEntityUnloadServer callback : callbacks) {
+			callback.onUnload(entity, world);
+		}
+	});
+
+
+	/**
+	 * An event which is called after an entity has been unloaded from a client world.
+	 */
+	public static final ArrayEvent<AfterEntityUnloadClient> AFTER_ENTITY_UNLOAD_CLIENT = ArrayEvent.create(AfterEntityUnloadClient.class, callbacks -> (entity, world) -> {
+		for (AfterEntityUnloadClient callback : callbacks) {
 			callback.onUnload(entity, world);
 		}
 	});
 
 	@FunctionalInterface
-	public interface AfterEntityLoad {
+	public interface AfterEntityLoadServer {
 		/**
-		 * Called after an entity has loaded into a world.
+		 * Called after an entity has loaded into a server world.
 		 *
 		 * @param entity the entity which has been loaded
 		 * @param world the world the entity has been loaded into
@@ -54,9 +73,32 @@ public final class EntityLoadEvents {
 	}
 
 	@FunctionalInterface
-	public interface AfterEntityUnload {
+	public interface AfterEntityUnloadServer {
 		/**
-		 * Called after an entity has been unloaded from a world.
+		 * Called after an entity has been unloaded from a server world.
+		 *
+		 * @param entity the entity which has been unloaded
+		 * @param world the world the entity has been unloaded from
+		 */
+		void onUnload(Entity entity, World world);
+	}
+
+
+	@FunctionalInterface
+	public interface AfterEntityLoadClient {
+		/**
+		 * Called after an entity has loaded into a client world.
+		 *
+		 * @param entity the entity which has been loaded
+		 * @param world the world the entity has been loaded into
+		 */
+		void onLoad(Entity entity, World world);
+	}
+
+	@FunctionalInterface
+	public interface AfterEntityUnloadClient {
+		/**
+		 * Called after an entity has been unloaded from a client world.
 		 *
 		 * @param entity the entity which has been unloaded
 		 * @param world the world the entity has been unloaded from
