@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "quilt_command_api_testmod",
+  "id": "quilt_command_testmod",
   "name": "Quilt Command API Test Mod",
   "version": "${version}",
   "environment": "*",
