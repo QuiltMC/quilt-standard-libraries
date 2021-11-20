@@ -54,7 +54,7 @@ public class RequiredTagListMixin<T> implements QuiltRequiredTagListHooks<T> {
 	@Redirect(method = "getMissingTags", at = @At(value = "INVOKE", target = "Ljava/util/List;stream()Ljava/util/stream/Stream;"))
 	private Stream<RequiredTagList.TagWrapper<T>> onTagsStream(List<RequiredTagList.TagWrapper<T>> list) {
 		if (TagRegistryImpl.isClientFetchingMissingTags()) {
-			return list.stream().filter(wrapper -> QuiltTag.cast(wrapper).getType().isRequiredToConnect());
+			return list.stream().filter(wrapper -> QuiltTag.getExtensions(wrapper).getType().isRequiredToConnect());
 		} else {
 			return list.stream();
 		}
@@ -63,7 +63,7 @@ public class RequiredTagListMixin<T> implements QuiltRequiredTagListHooks<T> {
 	@Mixin(RequiredTagList.TagWrapper.class)
 	public abstract static class TagWrapperMixin<T> implements QuiltTag<T>, QuiltRequiredTagWrapperHooks {
 		@Unique
-		private TagType tagType = TagType.CLIENT_SERVER_REQUIRED;
+		private TagType tagType = TagType.REQUIRED;
 
 		@Override
 		public TagType getType() {

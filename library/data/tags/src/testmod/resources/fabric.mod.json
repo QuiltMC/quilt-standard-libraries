@@ -10,9 +10,13 @@
   },
   "entrypoints": {
     "main": [
+      "org.quiltmc.qsl.tag.test.TagsTestMod"
     ],
     "client": [
       "org.quiltmc.qsl.tag.test.client.ClientTagsTestMod"
+    ],
+    "server": [
+      "org.quiltmc.qsl.tag.test.server.ServerTagsTestMod"
     ]
   }
 }

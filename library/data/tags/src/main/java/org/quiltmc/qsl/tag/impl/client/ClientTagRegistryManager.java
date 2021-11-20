@@ -70,7 +70,7 @@ public final class ClientTagRegistryManager<T> {
 	                                           RegistryKey<? extends Registry<T>> registryKey,
 	                                           Supplier<TagGroup<T>> serverTagGroupSupplier) {
 		return switch (type) {
-			case CLIENT_SERVER_SYNC -> new ClientTagDelegate<>(id, type, serverTagGroupSupplier,
+			case CLIENT_FALLBACK -> new ClientTagDelegate<>(id, type, serverTagGroupSupplier,
 					getClientTagRegistryManager(registryKey)::getDefaultGroup);
 			case CLIENT_ONLY -> new TagDelegate<>(id, type, getClientTagRegistryManager(registryKey)::getGroup);
 			default -> throw new IllegalStateException("The client tag registry manager can only create client-sided tags");

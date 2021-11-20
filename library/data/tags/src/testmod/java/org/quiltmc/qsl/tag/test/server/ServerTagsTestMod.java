@@ -14,25 +14,18 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.tag.mixin;
+package org.quiltmc.qsl.tag.test.server;
 
-import org.spongepowered.asm.mixin.Mixin;
+import net.fabricmc.api.DedicatedServerModInitializer;
 
-import net.minecraft.tag.Tag;
+import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
+import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
+import org.quiltmc.qsl.tag.test.TagsTestMod;
 
-import org.quiltmc.qsl.tag.api.QuiltTag;
-import org.quiltmc.qsl.tag.api.TagType;
-
-@Mixin(Tag.class)
-public interface TagMixin<T> extends QuiltTag<T> {
+public class ServerTagsTestMod implements DedicatedServerModInitializer {
 	@Override
-	default TagType getType() {
-		return TagType.OPTIONAL;
-	}
-
-	@Override
-	default boolean hasBeenReplaced() {
-		return false; // The goal is to prevent hard-fails with custom Tag implementations.
-		// Please look at the javadoc of the method for more insight.
+	public void onInitializeServer() {
+		// We enable this one by default, else the automatic server testing will fail.
+		ResourceLoader.registerBuiltinResourcePack(TagsTestMod.id("required_test_pack"), ResourcePackActivationType.DEFAULT_ENABLED);
 	}
 }

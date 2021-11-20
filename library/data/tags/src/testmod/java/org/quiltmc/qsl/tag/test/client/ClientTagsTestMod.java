@@ -37,15 +37,6 @@ import org.quiltmc.qsl.tag.api.TagType;
 import org.quiltmc.qsl.tag.test.TagsTestMod;
 
 public final class ClientTagsTestMod implements ClientModInitializer {
-	/**
-	 * This tag is only registered on the client:
-	 * - worlds opened by the client must have this tag to work, only included in the quilt_tags_testmod:required_test_pack
-	 * data-pack so the testing can be exactly sure.
-	 * - can connect to servers that don't have the tag (since it's not TagType.CLIENT_SERVER_REQUIRED)
-	 */
-	public static final Tag.Identified<Block> TEST_REQUIRED_BLOCK_TAG = TagRegistry.BLOCK.create(
-			TagsTestMod.id("required_block_tag"), TagType.SERVER_REQUIRED
-	);
 	public static final Tag.Identified<Block> TEST_CLIENT_BLOCK_TAG = TagRegistry.BLOCK.create(
 			TagsTestMod.id("client_block_tag"), TagType.CLIENT_ONLY
 	);
@@ -53,7 +44,7 @@ public final class ClientTagsTestMod implements ClientModInitializer {
 			TagsTestMod.id("client_biome_tag"), TagType.CLIENT_ONLY
 	);
 	public static final Tag.Identified<Item> TEST_DEFAULT_ITEM_TAG = TagRegistry.ITEM.create(
-			TagsTestMod.id("default_item_tag"), TagType.CLIENT_SERVER_SYNC
+			TagsTestMod.id("default_item_tag"), TagType.CLIENT_FALLBACK
 	);
 
 	private World lastWorld;

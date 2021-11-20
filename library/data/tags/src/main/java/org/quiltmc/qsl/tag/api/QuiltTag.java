@@ -20,6 +20,11 @@ import net.minecraft.tag.Tag;
 
 /**
  * Interface implemented by {@link net.minecraft.tag.Tag} instances when QSL is present.
+ * <p>
+ * The usage of normal Java cast is discouraged, please use {@link #getExtensions(Tag)} instead as it will ensure the correct
+ * generic types.
+ * Implementations of {@link net.minecraft.tag.Tag} may implement this interface to retain full functionality,
+ * a default implementation is provided to ensure compatibility.
  *
  * @param <T> the type of the values held by the tag
  */
@@ -39,7 +44,13 @@ public interface QuiltTag<T> {
 	 */
 	boolean hasBeenReplaced();
 
-	static <T> QuiltTag<T> cast(Tag<T> tag) {
+	/**
+	 * {@return the corresponding Quilt tag}
+	 *
+	 * @param tag the tag to cast
+	 * @param <T> the type of the values held by the tag
+	 */
+	static <T> QuiltTag<T> getExtensions(Tag<T> tag) {
 		//noinspection unchecked
 		return (QuiltTag<T>) tag;
 	}

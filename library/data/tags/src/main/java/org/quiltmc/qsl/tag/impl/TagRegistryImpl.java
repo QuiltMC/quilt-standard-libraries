@@ -1,5 +1,6 @@
 /*
- * Copyright 2016, 2017, 2018, 2019 FabricMC, 2021 QuiltMC
+ * Copyright 2016, 2017, 2018, 2019 FabricMC
+ * Copyright 2021 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,10 +112,10 @@ public final class TagRegistryImpl<T> implements TagRegistry<T> {
 	@Override
 	public Tag.Identified<T> create(Identifier id, TagType type) {
 		return switch (type) {
-			case SERVER_REQUIRED, CLIENT_SERVER_REQUIRED -> //noinspection unchecked
+			case SERVER_REQUIRED, REQUIRED -> //noinspection unchecked
 					((QuiltRequiredTagListHooks<T>) this.tagList).quilt$addTypedTag(id, type);
-			case CLIENT_SERVER_SYNC, CLIENT_ONLY -> ClientTagRegistryManager.create(id, type, this.getRegistryKey(), this.tagGroupSupplier);
-			default -> new TagDelegate<>(id, type, this.tagGroupSupplier);
+			case CLIENT_FALLBACK, CLIENT_ONLY -> ClientTagRegistryManager.create(id, type, this.getRegistryKey(), this.tagGroupSupplier);
+			case OPTIONAL -> new TagDelegate<>(id, type, this.tagGroupSupplier);
 		};
 	}
 
