@@ -17,22 +17,26 @@
 package org.quiltmc.qsl.crash.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.util.SystemDetails;
+import net.minecraft.util.crash.CrashReport;
 
 import org.quiltmc.qsl.crash.api.CrashReportEvents;
 
-@Mixin(SystemDetails.class)
-abstract class SystemDetailsMixin {
-	/**
-	 * Adds a section to the system details listing all Quilt mods which are present.
-	 */
+@Mixin(CrashReport.class)
+public abstract class CrashReportMixin {
+	@Unique
+	private boolean quilt$firedEvent = false;
+
 	@SuppressWarnings("ConstantConditions")
-	@Inject(method = "<init>", at = @At("TAIL"))
-	private void addQuiltMods(CallbackInfo info) {
-		CrashReportEvents.SYSTEM_DETAILS.invoker().addDetails((SystemDetails) (Object) this);
+	@Inject(method = "addStackTrace", at = @At(value = "HEAD"))
+	void onCrashReportCreated(StringBuilder crashReportBuilder, CallbackInfo ci) {
+		if (!this.quilt$firedEvent) {
+			CrashReportEvents.CRASH_REPORT_CREATION.invoker().onCreate((CrashReport) (Object) this);
+			this.quilt$firedEvent = true;
+		}
 	}
 }

@@ -19,20 +19,19 @@ package org.quiltmc.qsl.crash.mixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.util.SystemDetails;
+import net.minecraft.util.crash.CrashReport;
+import net.minecraft.util.crash.CrashReportSection;
+import net.minecraft.world.World;
 
 import org.quiltmc.qsl.crash.api.CrashReportEvents;
 
-@Mixin(SystemDetails.class)
-abstract class SystemDetailsMixin {
-	/**
-	 * Adds a section to the system details listing all Quilt mods which are present.
-	 */
+@Mixin(World.class)
+public abstract class WorldMixin {
 	@SuppressWarnings("ConstantConditions")
-	@Inject(method = "<init>", at = @At("TAIL"))
-	private void addQuiltMods(CallbackInfo info) {
-		CrashReportEvents.SYSTEM_DETAILS.invoker().addDetails((SystemDetails) (Object) this);
+	@Inject(method = "addDetailsToCrashReport", at = @At("TAIL"))
+	void addCrashReportDetails(CrashReport report, CallbackInfoReturnable<CrashReportSection> cir) {
+		CrashReportEvents.WORLD_DETAILS.invoker().addDetails((World) (Object) this, cir.getReturnValue());
 	}
 }

@@ -21,18 +21,15 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.util.SystemDetails;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.crash.CrashReportSection;
 
 import org.quiltmc.qsl.crash.api.CrashReportEvents;
 
-@Mixin(SystemDetails.class)
-abstract class SystemDetailsMixin {
-	/**
-	 * Adds a section to the system details listing all Quilt mods which are present.
-	 */
-	@SuppressWarnings("ConstantConditions")
-	@Inject(method = "<init>", at = @At("TAIL"))
-	private void addQuiltMods(CallbackInfo info) {
-		CrashReportEvents.SYSTEM_DETAILS.invoker().addDetails((SystemDetails) (Object) this);
+@Mixin(Entity.class)
+public abstract class EntityMixin {
+	@Inject(method = "populateCrashReport", at = @At("TAIL"))
+	void addCrashReportDetails(CrashReportSection section, CallbackInfo ci) {
+		CrashReportEvents.ENTITY_DETAILS.invoker().addDetails((Entity) (Object) this, section);
 	}
 }

@@ -14,25 +14,30 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.crash.mixin;
+package org.quiltmc.qsl.crash.test.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.util.SystemDetails;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.decoration.EndCrystalEntity;
+import net.minecraft.world.World;
 
-import org.quiltmc.qsl.crash.api.CrashReportEvents;
+@Mixin(EndCrystalEntity.class)
+public abstract class EndCrystalEntityMixin extends Entity {
+	public EndCrystalEntityMixin(EntityType<?> type, World world) {
+		super(type, world);
+	}
 
-@Mixin(SystemDetails.class)
-abstract class SystemDetailsMixin {
-	/**
-	 * Adds a section to the system details listing all Quilt mods which are present.
-	 */
-	@SuppressWarnings("ConstantConditions")
-	@Inject(method = "<init>", at = @At("TAIL"))
-	private void addQuiltMods(CallbackInfo info) {
-		CrashReportEvents.SYSTEM_DETAILS.invoker().addDetails((SystemDetails) (Object) this);
+	@Inject(method = "tick", at = @At("HEAD"))
+	void crashOnTick(CallbackInfo ci) {
+		if (world.getBlockState(getBlockPos().down()).getBlock() == Blocks.DIAMOND_BLOCK) {
+			this.kill();
+			throw new RuntimeException("Crash Test!");
+		}
 	}
 }
