@@ -22,12 +22,12 @@ public final class Versions {
 	/**
 	 * The target Minecraft version.
 	 */
-	public static final String MINECRAFT_VERSION = "1.18-pre4";
+	public static final String MINECRAFT_VERSION = "1.18-pre5";
 
 	/**
 	 * The target Yarn build.
 	 */
-	public static final String MAPPINGS_BUILD = "2";
+	public static final String MAPPINGS_BUILD = "5";
 
 	/**
 	 * The version of Quilt Loader to use.

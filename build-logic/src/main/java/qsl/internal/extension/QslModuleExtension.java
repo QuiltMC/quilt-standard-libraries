@@ -71,8 +71,8 @@ public class QslModuleExtension {
 	}
 
 	public void setVersion(String version) {
-		this.project.setVersion(version + (System.getenv("SNAPSHOTS_URL") != null ? "-SNAPSHOT" : "")
-				+ '+' + Versions.getMinecraftVersionFancyString());
+		this.project.setVersion(version + '+' + Versions.getMinecraftVersionFancyString()
+				+ (System.getenv("SNAPSHOTS_URL") != null ? "-SNAPSHOT" : ""));
 	}
 
 	private Dependency getCoreModule(String module) {
