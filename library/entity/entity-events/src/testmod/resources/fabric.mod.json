@@ -17,6 +17,9 @@
   "entrypoints": {
     "main": [
       "org.quiltmc.qsl.entity.test.EntityEventsTestMod"
+    ],
+    "client": [
+      "org.quiltmc.qsl.entity.test.client.EntityEventsTestModClient"
     ]
   },
   "depends": {
