@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.gradle.api.Project;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
+import qsl.internal.Versions;
 
 public class QslLibraryExtension {
 	private final Property<String> libraryName;
@@ -26,6 +27,7 @@ public class QslLibraryExtension {
 	}
 
 	public void setVersion(String version) {
-		this.project.setVersion(version + (System.getenv("SNAPSHOTS_URL") != null ? "-SNAPSHOT" : ""));
+		this.project.setVersion(version + (System.getenv("SNAPSHOTS_URL") != null ? "-SNAPSHOT" : "")
+				+ '+' + Versions.getMinecraftVersionFancyString());
 	}
 }
