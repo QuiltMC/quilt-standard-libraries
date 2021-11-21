@@ -32,7 +32,7 @@ import org.quiltmc.qsl.entity.api.event.EntityReviveEvents;
 import org.quiltmc.qsl.entity.api.event.EntityWorldChangeEvents;
 
 public class EntityEventsTestMod implements ModInitializer {
-	private static final Logger LOGGER = LogManager.getLogger();
+	public static final Logger LOGGER = LogManager.getLogger();
 
 	@Override
 	public void onInitialize() {
@@ -55,20 +55,13 @@ public class EntityEventsTestMod implements ModInitializer {
 			return false;
 		});
 
-		// All invocations of this event are logged.
+		// All invocations of the entity killed event are logged.
 		EntityKilledCallback.EVENT.register((world, killer, killed) -> {
 			if (killer != null) {
 				LOGGER.info(killer.getName().getString() + " killed " + killed.getName().getString() + " (" + (world.isClient ? "client" : "server") + ")");
 			} else {
 				LOGGER.info("Something killed " + killed.getName().getString() + " (" + (world.isClient ? "client" : "server") + ")");
 			}
-		});
-
-		// Chicken Loading is logged.
-		EntityLoadEvents.AFTER_ENTITY_LOAD_CLIENT.register((entity, world) -> {
-			if (entity instanceof ChickenEntity) {
-				LOGGER.info("Chicken loaded, client");
-				}
 		});
 
 		// Chicken Loading is logged.
@@ -82,13 +75,6 @@ public class EntityEventsTestMod implements ModInitializer {
 		EntityLoadEvents.AFTER_ENTITY_UNLOAD_SERVER.register((entity, world) -> {
 			if (entity instanceof SkeletonEntity) {
 				LOGGER.info("Skeleton unloaded, server");
-			}
-		});
-
-		// Skeleton Unloading is logged.
-		EntityLoadEvents.AFTER_ENTITY_UNLOAD_CLIENT.register((entity, world) -> {
-			if (entity instanceof SkeletonEntity) {
-				LOGGER.info("Skeleton unloaded, client");
 			}
 		});
 
