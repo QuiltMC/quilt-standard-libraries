@@ -32,11 +32,11 @@ public abstract class ClientEntityHandlerMixin {
 
 	@Inject(method = "startTracking(Lnet/minecraft/entity/Entity;)V", at = @At("TAIL"))
 	void invokeEntityLoadEvent(Entity entity, CallbackInfo ci) {
-		ClientEntityLoadEvents.AFTER_ENTITY_LOAD_CLIENT.invoker().onLoad(entity, this.field_27735);
+		ClientEntityLoadEvents.AFTER_ENTITY_LOAD_CLIENT.invoker().onLoadClient(entity, this.field_27735);
 	}
 
 	@Inject(method = "stopTracking(Lnet/minecraft/entity/Entity;)V", at = @At("TAIL"))
 	void invokeEntityUnloadEvent(Entity entity, CallbackInfo ci) {
-		ClientEntityLoadEvents.AFTER_ENTITY_UNLOAD_CLIENT.invoker().onUnload(entity, this.field_27735);
+		ClientEntityLoadEvents.AFTER_ENTITY_UNLOAD_CLIENT.invoker().onUnloadClient(entity, this.field_27735);
 	}
 }

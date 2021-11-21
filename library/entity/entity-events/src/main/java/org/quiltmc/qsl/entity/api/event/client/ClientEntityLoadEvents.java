@@ -32,7 +32,7 @@ public final class ClientEntityLoadEvents {
 	 */
 	public static final ArrayEvent<AfterEntityLoadClient> AFTER_ENTITY_LOAD_CLIENT = ArrayEvent.create(AfterEntityLoadClient.class, callbacks -> (entity, world) -> {
 		for (AfterEntityLoadClient callback : callbacks) {
-			callback.onLoad(entity, world);
+			callback.onLoadClient(entity, world);
 		}
 	});
 	/**
@@ -40,7 +40,7 @@ public final class ClientEntityLoadEvents {
 	 */
 	public static final ArrayEvent<AfterEntityUnloadClient> AFTER_ENTITY_UNLOAD_CLIENT = ArrayEvent.create(AfterEntityUnloadClient.class, callbacks -> (entity, world) -> {
 		for (AfterEntityUnloadClient callback : callbacks) {
-			callback.onUnload(entity, world);
+			callback.onUnloadClient(entity, world);
 		}
 	});
 
@@ -52,7 +52,7 @@ public final class ClientEntityLoadEvents {
 		 * @param entity the entity which has been loaded
 		 * @param world the world the entity has been loaded into
 		 */
-		void onLoad(Entity entity, ClientWorld world);
+		void onLoadClient(Entity entity, ClientWorld world);
 	}
 
 	@FunctionalInterface
@@ -63,7 +63,7 @@ public final class ClientEntityLoadEvents {
 		 * @param entity the entity which has been unloaded
 		 * @param world the world the entity has been unloaded from
 		 */
-		void onUnload(Entity entity, ClientWorld world);
+		void onUnloadClient(Entity entity, ClientWorld world);
 	}
 
 	private ClientEntityLoadEvents() {}
