@@ -18,6 +18,7 @@ package org.quiltmc.qsl.entity.test;
 
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.SkeletonEntity;
 import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.item.Items;
@@ -26,10 +27,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.dimension.DimensionType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.quiltmc.qsl.entity.api.event.EntityKilledCallback;
-import org.quiltmc.qsl.entity.api.event.EntityLoadEvents;
-import org.quiltmc.qsl.entity.api.event.EntityReviveEvents;
-import org.quiltmc.qsl.entity.api.event.EntityWorldChangeEvents;
+import org.quiltmc.qsl.entity.api.event.*;
 
 public class EntityEventsTestMod implements ModInitializer {
 	public static final Logger LOGGER = LogManager.getLogger();
@@ -89,6 +87,19 @@ public class EntityEventsTestMod implements ModInitializer {
 		EntityWorldChangeEvents.AFTER_ENTITY_CHANGE_WORLD.register((originalEntity, newEntity, origin, destination) -> {
 			if (destination.getDimension() == destination.getServer().getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).get(DimensionType.THE_END_REGISTRY_KEY)) {
 				newEntity.setCustomName(new LiteralText("End Traveller"));
+			}
+		});
+
+		// Players keep the glowing enchantment after respawn
+		// Players receive an apple after coming back from the end
+		ServerPlayerEntityCopyCallback.EVENT.register((newPlayer, original, wasDeath) -> {
+			if (wasDeath) {
+				var glowingEffect = original.getStatusEffect(StatusEffects.GLOWING);
+				if (glowingEffect != null) {
+					newPlayer.addStatusEffect(glowingEffect);
+				}
+			} else {
+				newPlayer.giveItemStack(Items.APPLE.getDefaultStack());
 			}
 		});
 	}

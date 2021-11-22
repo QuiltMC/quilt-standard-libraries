@@ -23,6 +23,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.quiltmc.qsl.entity.api.event.EntityWorldChangeEvents;
+import org.quiltmc.qsl.entity.api.event.ServerPlayerEntityCopyCallback;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -41,5 +42,10 @@ abstract class ServerPlayerEntityMixin extends PlayerEntity {
 	@Inject(method = "worldChanged(Lnet/minecraft/server/world/ServerWorld;)V", at = @At("TAIL"))
 	private void afterWorldChanged(ServerWorld origin, CallbackInfo ci) {
 		EntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.invoker().afterChangeWorld((ServerPlayerEntity) (Object) this, origin, (ServerWorld) this.world);
+	}
+
+	@Inject(method = "copyFrom", at = @At("TAIL"))
+	private void onCopyFrom(ServerPlayerEntity oldPlayer, boolean alive, CallbackInfo ci) {
+		ServerPlayerEntityCopyCallback.EVENT.invoker().onPlayerCopy((ServerPlayerEntity) (Object) this, oldPlayer, !alive);
 	}
 }
