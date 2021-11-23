@@ -72,10 +72,10 @@ public abstract class TagBuilderMixin {
 	public abstract Stream<Tag.TrackedEntry> streamEntries();
 
 	@Shadow
-	public abstract void forEachTagId(Consumer<Identifier> consumer);
+	public abstract void visitRequiredDependencies(Consumer<Identifier> consumer);
 
 	@Shadow
-	public abstract void forEachGroupId(Consumer<Identifier> consumer);
+	public abstract void visitOptionalDependencies(Consumer<Identifier> consumer);
 
 	@Shadow
 	public abstract Tag.Builder read(JsonObject json, String source);
@@ -159,12 +159,12 @@ public abstract class TagBuilderMixin {
 
 	@Intrinsic
 	public void qtb$visitRequiredDependencies(Consumer<Identifier> consumer) {
-		this.forEachTagId(consumer);
+		this.visitRequiredDependencies(consumer);
 	}
 
 	@Intrinsic
 	public void qtb$visitOptionalDependencies(Consumer<Identifier> consumer) {
-		this.forEachGroupId(consumer);
+		this.visitOptionalDependencies(consumer);
 	}
 
 	@Intrinsic

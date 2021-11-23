@@ -114,7 +114,7 @@ public interface QuiltTagBuilder {
 	 * Visits the required dependencies.
 	 *
 	 * @param consumer the visit action
-	 * @see Tag.Builder#forEachTagId(Consumer)
+	 * @see Tag.Builder#visitRequiredDependencies(Consumer)
 	 */
 	void visitRequiredDependencies(Consumer<Identifier> consumer);
 
@@ -122,7 +122,7 @@ public interface QuiltTagBuilder {
 	 * Visits the optional dependencies.
 	 *
 	 * @param consumer the visit action
-	 * @see Tag.Builder#forEachGroupId(Consumer)
+	 * @see Tag.Builder#visitOptionalDependencies(Consumer)
 	 */
 	void visitOptionalDependencies(Consumer<Identifier> consumer);
 

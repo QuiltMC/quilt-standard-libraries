@@ -113,10 +113,10 @@ public final class ClientTagRegistryManager<T> {
 		Function<Identifier, T> registryGetter = identifier -> this.registryFetcher.apply(identifier).orElse(null);
 		Multimap<Identifier, Identifier> tagEntries = HashMultimap.create();
 
-		tagBuilders.forEach((tagId, builder) -> builder.forEachTagId(
+		tagBuilders.forEach((tagId, builder) -> builder.visitRequiredDependencies(
 				tagEntryId -> TagGroupLoaderAccessor.invokeAddDependencyIfNotCyclic(tagEntries, tagId, tagEntryId)
 		));
-		tagBuilders.forEach((tagId, builder) -> builder.forEachGroupId(
+		tagBuilders.forEach((tagId, builder) -> builder.visitOptionalDependencies(
 				entryId -> TagGroupLoaderAccessor.invokeAddDependencyIfNotCyclic(tagEntries, tagId, entryId)
 		));
 
