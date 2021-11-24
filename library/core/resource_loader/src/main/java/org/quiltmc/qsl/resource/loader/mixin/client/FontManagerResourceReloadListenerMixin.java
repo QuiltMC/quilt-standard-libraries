@@ -24,7 +24,7 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;
 import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 
-@Mixin(targets = "net/minecraft/client/font/FontManager$1")
+@Mixin(targets = "net/minecraft/client/font/FontManager$C_ldvuvijd")
 public abstract class FontManagerResourceReloadListenerMixin implements IdentifiableResourceReloader {
 	@Override
 	public Identifier getQuiltId() {
