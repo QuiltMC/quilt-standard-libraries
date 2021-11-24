@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.registry.attribute.impl;
+package org.quiltmc.qsl.registry.attribute.impl.reloader;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.JsonOps;
 import net.minecraft.resource.ResourceType;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -29,17 +23,17 @@ import org.apache.logging.log4j.Logger;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
+import org.quiltmc.qsl.registry.attribute.impl.AssetsHolderGuard;
+import org.quiltmc.qsl.registry.attribute.impl.Initializer;
+import org.quiltmc.qsl.registry.attribute.impl.RegistryEntryAttributeHolder;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.quiltmc.qsl.resource.loader.api.reloader.SimpleResourceReloader;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.InvalidIdentifierException;
-import net.minecraft.util.JsonHelper;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.registry.Registry;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -50,7 +44,7 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 		ResourceLoader.get(source).registerReloader(new RegistryEntryAttributeReloader(source));
 	}
 
-	private static final Logger LOGGER = LogManager.getLogger("AttributeReloader");
+	static final Logger LOGGER = LogManager.getLogger("AttributeReloader");
 	private static final Identifier ID_DATA = new Identifier(Initializer.NAMESPACE, "data");
 	private static final Identifier ID_ASSETS = new Identifier(Initializer.NAMESPACE, "assets");
 
@@ -129,7 +123,13 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 			profiler.swap(id + "/processing_resources{" + jsonId + "," + attribId + "}");
 
 			AttributeMap attribMap = attributeMaps.computeIfAbsent(attrib,
-					key -> new AttributeMap(registry, key));
+					key -> new AttributeMap(new AttributeMap.TagTargetFactory() {
+						// FIXME implement this properly!
+						@Override
+						public <T> AttributeTarget.Tag<T> create(Registry<T> registry, Identifier tagId) {
+							return null;
+						}
+					}, registry, key));
 			for (var resource : resources) {
 				attribMap.processResource(resource);
 			}
@@ -187,158 +187,12 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 			Objects.requireNonNull(registry, "registry");
 
 			RegistryEntryAttributeHolder<R> holder = getHolder(registry);
-			for (Map.Entry<Identifier, Object> attribEntry : attribMap.map.entrySet()) {
-				R item = registry.get(attribEntry.getKey());
-				holder.putValue(attrib, item, (V) attribEntry.getValue());
-			}
-		}
-	}
-
-	protected static final class AttributeMap {
-		private final Registry<?> registry;
-		private final RegistryEntryAttribute<?, ?> attribute;
-		public final Map<Identifier, Object> map;
-
-		public AttributeMap(Registry<?> registry, RegistryEntryAttribute<?, ?> attribute) {
-			this.registry = registry;
-			this.attribute = attribute;
-			map = new HashMap<>();
-		}
-
-		private Object parseValue(Resource resource, Identifier id, JsonElement value) {
-			DataResult<?> parsedValue = attribute.codec().parse(JsonOps.INSTANCE, value);
-			if (parsedValue.result().isEmpty()) {
-				if (parsedValue.error().isPresent()) {
-					LOGGER.error("Failed to parse value for attribute {} of registry entry {}: {}",
-							attribute.id(), id, parsedValue.error().get().message());
-				} else {
-					LOGGER.error("Failed to parse value for attribute {} of registry entry {}: unknown error",
-							attribute.id(), id);
+			for (Map.Entry<AttributeTarget, Object> attribEntry : attribMap.getMap().entrySet()) {
+				V value = (V) attribEntry.getValue();
+				for (Identifier id : attribEntry.getKey().ids()) {
+					R item = registry.get(id);
+					holder.putValue(attrib, item, value);
 				}
-				LOGGER.error("Ignoring attribute value for '{}' in {} since it's invalid", id, resource.getId());
-				return null;
-			}
-			return parsedValue.result().get();
-		}
-
-		public void processResource(Resource resource) {
-			try {
-				boolean replace;
-				JsonElement values;
-
-				try {
-					JsonObject obj = JsonHelper.deserialize(new InputStreamReader(resource.getInputStream()));
-					replace = JsonHelper.getBoolean(obj, "replace", false);
-					values = obj.get("values");
-					if (values == null) {
-						throw new JsonSyntaxException("Missing values, expected to find a JsonArray or JsonObject");
-					} else if (!values.isJsonArray() && !values.isJsonObject()) {
-						throw new JsonSyntaxException("Expected values to be a JsonArray or JsonObject," +
-								"was " + JsonHelper.getType(values));
-					}
-				} catch (JsonSyntaxException e) {
-					LOGGER.error("Invalid JSON file " + resource.getId() + ", ignoring", e);
-					return;
-				}
-
-				// if "replace" is true, the data file wants us to clear all entries from other files before it
-				if (replace) {
-					map.clear();
-				}
-
-				if (values.isJsonArray()) {
-					JsonArray valuesA = values.getAsJsonArray();
-
-					int index = 0;
-					for (JsonElement entry : valuesA) {
-						if (!entry.isJsonObject()) {
-							LOGGER.error("Invalid element at index {} in values of {}: expected a JsonObject, was {}",
-									index, resource.getId(), JsonHelper.getType(entry));
-							index++;
-							continue;
-						}
-						JsonObject entryO = entry.getAsJsonObject();
-						Identifier id;
-						JsonElement value;
-						boolean required;
-
-						try {
-							String idStr = JsonHelper.getString(entryO, "id");
-							id = new Identifier(idStr);
-						} catch (JsonSyntaxException e) {
-							LOGGER.error("Invalid element at index {} in values of {}: syntax error",
-									index, resource.getId());
-							LOGGER.catching(Level.ERROR, e);
-							index++;
-							continue;
-						} catch (InvalidIdentifierException e) {
-							LOGGER.error("Invalid element at index {} in values of {}: invalid identifier",
-									index, resource.getId());
-							LOGGER.catching(Level.ERROR, e);
-							index++;
-							continue;
-						}
-
-						try {
-							value = entryO.get("value");
-							if (value == null) {
-								throw new JsonSyntaxException("Missing value");
-							}
-						} catch (JsonSyntaxException e) {
-							LOGGER.error("Failed to parse value for registry entry {} in values of {}: syntax error",
-									id, resource.getId());
-							LOGGER.catching(Level.ERROR, e);
-							index++;
-							continue;
-						}
-
-						required = JsonHelper.getBoolean(entryO, "required", true);
-
-						if (required && !registry.containsId(id)) {
-							LOGGER.error("Unregistered identifier in values of {}: '{}', ignoring", resource.getId(), id);
-							index++;
-							continue;
-						}
-
-						Object parsedValue = parseValue(resource, id, value);
-						if (parsedValue == null) {
-							index++;
-							continue;
-						}
-
-						map.put(id, parsedValue);
-
-						index++;
-					}
-				} else if (values.isJsonObject()) {
-					JsonObject valuesO = values.getAsJsonObject();
-
-					for (Map.Entry<String, JsonElement> entry : valuesO.entrySet()) {
-						Identifier id;
-						try {
-							id = new Identifier(entry.getKey());
-						} catch (InvalidIdentifierException e) {
-							LOGGER.error("Invalid identifier in values of {}: '{}', ignoring",
-									resource.getId(), entry.getKey());
-							LOGGER.catching(Level.ERROR, e);
-							continue;
-						}
-
-						if (!registry.containsId(id)) {
-							LOGGER.error("Unregistered identifier in values of {}: '{}', ignoring", resource.getId(), id);
-							continue;
-						}
-
-						Object parsedValue = parseValue(resource, id, entry.getValue());
-						if (parsedValue == null) {
-							continue;
-						}
-
-						map.put(id, parsedValue);
-					}
-				}
-			} catch (Exception e) {
-				LOGGER.error("Exception occurred while parsing " + resource.getId() + "!", e);
 			}
 		}
 	}

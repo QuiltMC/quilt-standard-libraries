@@ -9,4 +9,7 @@ qslModule {
 	coreDependencies([
 		"resource_loader"
 	])
+	interLibraryDependencies([
+	    "tags"
+	])
 }
