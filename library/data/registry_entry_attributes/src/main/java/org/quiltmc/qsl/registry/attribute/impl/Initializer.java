@@ -22,6 +22,8 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 public final class Initializer implements ModInitializer {
+	public static final String NAMESPACE = "quilt_registry_entry_attributes";
+
 	@Override
 	public void onInitialize() {
 		RegistryEntryAttributeReloader.register(ResourceType.SERVER_DATA);

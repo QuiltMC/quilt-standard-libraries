@@ -40,15 +40,10 @@ import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.registry.Registry;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-@SuppressWarnings("ClassCanBeRecord")
 @ApiStatus.Internal
 public final class RegistryEntryAttributeReloader implements SimpleResourceReloader<RegistryEntryAttributeReloader.LoadedData> {
 	public static void register(ResourceType source) {
@@ -56,20 +51,26 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 	}
 
 	private static final Logger LOGGER = LogManager.getLogger("AttributeReloader");
-	private static final Identifier ID = new Identifier("quilt", "attributes");
+	private static final Identifier ID_DATA = new Identifier(Initializer.NAMESPACE, "data");
+	private static final Identifier ID_ASSETS = new Identifier(Initializer.NAMESPACE, "assets");
 
 	private final ResourceType source;
+	private final Identifier id;
 
 	private RegistryEntryAttributeReloader(ResourceType source) {
 		if (source == ResourceType.CLIENT_RESOURCES) {
 			AssetsHolderGuard.assertAccessAllowed();
 		}
 		this.source = source;
+		id = switch (source) {
+			case SERVER_DATA -> ID_DATA;
+			case CLIENT_RESOURCES -> ID_ASSETS;
+		};
 	}
 
 	@Override
 	public Identifier getQuiltId() {
-		return ID;
+		return id;
 	}
 
 	@Override
@@ -80,7 +81,7 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 			for (var entry : Registry.REGISTRIES.getEntries()) {
 				Identifier registryId = entry.getKey().getValue();
 				String path = registryId.getNamespace() + "/" + registryId.getPath();
-				profiler.push(ID + "/finding_resources/" + path);
+				profiler.push(id + "/finding_resources/" + path);
 
 				Collection<Identifier> jsonIds = manager.findResources("attributes/" + path, s -> s.endsWith(".json"));
 				if (jsonIds.isEmpty()) {
@@ -114,7 +115,7 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 				continue;
 			}
 
-			profiler.swap(ID + "/getting_resources{" + jsonId + "}");
+			profiler.swap(id + "/getting_resources{" + jsonId + "}");
 
 			List<Resource> resources;
 			try {
@@ -125,7 +126,7 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 				continue;
 			}
 
-			profiler.swap(ID + "/processing_resources{" + jsonId + "," + attribId + "}");
+			profiler.swap(id + "/processing_resources{" + jsonId + "," + attribId + "}");
 
 			AttributeMap attribMap = attributeMaps.computeIfAbsent(attrib,
 					key -> new AttributeMap(registry, key));
@@ -166,14 +167,14 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 		}
 
 		public void apply(Profiler profiler) {
-			profiler.push(ID + "/clear_attributes");
+			profiler.push(id + "/clear_attributes");
 
 			for (var entry : Registry.REGISTRIES.getEntries()) {
 				getHolder(entry.getValue()).clear();
 			}
 
 			for (Map.Entry<RegistryEntryAttribute<?, ?>, AttributeMap> entry : attributeMaps.entrySet()) {
-				profiler.swap(ID + "/apply_attribute{" + entry.getKey().id() + "}");
+				profiler.swap(id + "/apply_attribute{" + entry.getKey().id() + "}");
 				applyOne(entry.getKey(), entry.getValue());
 			}
 
