@@ -41,6 +41,7 @@ public record RegistryEntryAttributeImpl<R, V>(Registry<R> registry,
 	public Optional<V> getValue(R entry) {
 		V value;
 		if (side == Side.CLIENT) {
+			AssetsHolderGuard.assertAccessAllowed();
 			value = RegistryEntryAttributeHolder.getAssets(registry).getValue(this, entry);
 			if (value != null) {
 				return Optional.of(value);

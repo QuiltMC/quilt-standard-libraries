@@ -24,6 +24,7 @@ import org.jetbrains.annotations.ApiStatus;
 public final class ClientInitializer implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
+		AssetsHolderGuard.setAccessAllowed();
 		RegistryEntryAttributeReloader.register(ResourceType.CLIENT_RESOURCES);
 	}
 }

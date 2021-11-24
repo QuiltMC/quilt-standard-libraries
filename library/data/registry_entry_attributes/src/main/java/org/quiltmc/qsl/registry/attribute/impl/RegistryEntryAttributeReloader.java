@@ -61,6 +61,9 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 	private final ResourceType source;
 
 	private RegistryEntryAttributeReloader(ResourceType source) {
+		if (source == ResourceType.SERVER_DATA) {
+			AssetsHolderGuard.assertAccessAllowed();
+		}
 		this.source = source;
 	}
 
