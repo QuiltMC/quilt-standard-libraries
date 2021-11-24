@@ -36,6 +36,7 @@ public record RegistryEntryAttributeImpl<R, V>(Registry<R> registry,
 											   @Nullable V defaultValue,
 											   @Nullable Function<R, V> missingValueFunction)
 		implements RegistryEntryAttribute<R, V> {
+
 	@Override
 	public Optional<V> getValue(R entry) {
 		V value;
