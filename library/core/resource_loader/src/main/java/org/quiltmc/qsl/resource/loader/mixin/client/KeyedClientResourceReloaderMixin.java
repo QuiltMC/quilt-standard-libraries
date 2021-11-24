@@ -21,6 +21,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -36,6 +38,7 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;
 import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 
+@Environment(EnvType.CLIENT)
 @Mixin({
 		/* public */
 		SoundManager.class, BakedModelManager.class, LanguageManager.class, TextureManager.class,

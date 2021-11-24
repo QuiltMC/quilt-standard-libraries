@@ -17,6 +17,8 @@
 
 package org.quiltmc.qsl.resource.loader.mixin.client;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Mixin;
 
 import net.minecraft.util.Identifier;
@@ -24,6 +26,7 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;
 import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 
+@Environment(EnvType.CLIENT)
 @Mixin(targets = "net/minecraft/client/font/FontManager$C_ldvuvijd")
 public abstract class FontManagerResourceReloadListenerMixin implements IdentifiableResourceReloader {
 	@Override

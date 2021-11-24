@@ -21,6 +21,8 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 
 import com.google.common.collect.Multimap;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
@@ -28,6 +30,7 @@ import net.minecraft.tag.Tag;
 import net.minecraft.tag.TagGroupLoader;
 import net.minecraft.util.Identifier;
 
+@Environment(EnvType.CLIENT)
 @Mixin(TagGroupLoader.class)
 public interface TagGroupLoaderAccessor {
 	@Invoker("method_32839")
