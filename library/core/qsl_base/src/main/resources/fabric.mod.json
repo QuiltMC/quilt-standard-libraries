@@ -18,5 +18,7 @@
     "fabricloader": ">=0.12"
   },
   "description": "Base level API for Quilt mods.",
-  "mixins": []
+  "mixins": [
+    "quilt_base.mixins.json"
+  ]
 }
