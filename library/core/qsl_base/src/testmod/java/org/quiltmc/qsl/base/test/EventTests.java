@@ -83,8 +83,8 @@ final class EventTests {
 	}
 
 	private static void testMultipleDefaultPhases() {
-		var first = new Identifier("fabric", "first");
-		var second = new Identifier("fabric", "second");
+		var first = new Identifier("quilt", "first");
+		var second = new Identifier("quilt", "second");
 		var event = Event.createWithPhases(Test.class, INVOKER_FACTORY, first, second, Event.DEFAULT_PHASE);
 
 		event.register(second, ensureOrder(1));
@@ -101,10 +101,10 @@ final class EventTests {
 	private static void testAddedPhases() {
 		var event = createEvent();
 
-		var veryEarly = new Identifier("fabric", "very_early");
-		var early = new Identifier("fabric", "early");
-		var late = new Identifier("fabric", "late");
-		var veryLate = new Identifier("fabric", "very_late");
+		var veryEarly = new Identifier("quilt", "very_early");
+		var early = new Identifier("quilt", "early");
+		var late = new Identifier("quilt", "late");
+		var veryLate = new Identifier("quilt", "very_late");
 
 		event.addPhaseOrdering(veryEarly, early);
 		event.addPhaseOrdering(early, Event.DEFAULT_PHASE);
@@ -132,10 +132,10 @@ final class EventTests {
 	private static void testCycle() {
 		var event = createEvent();
 
-		var a = new Identifier("fabric", "a");
-		var b1 = new Identifier("fabric", "b1");
-		var b2 = new Identifier("fabric", "b2");
-		var b3 = new Identifier("fabric", "b3");
+		var a = new Identifier("quilt", "a");
+		var b1 = new Identifier("quilt", "b1");
+		var b2 = new Identifier("quilt", "b2");
+		var b3 = new Identifier("quilt", "b3");
 		var c = Event.DEFAULT_PHASE;
 
 		// A always first and C always last.
@@ -185,13 +185,13 @@ final class EventTests {
 	 * We get for the final order: [a, d, e, cycle [b, y, z], f].
 	 */
 	private static void testDeterministicOrdering() {
-		var a = new Identifier("fabric", "a");
-		var b = new Identifier("fabric", "b");
-		var d = new Identifier("fabric", "d");
-		var e = new Identifier("fabric", "e");
-		var f = new Identifier("fabric", "f");
-		var y = new Identifier("fabric", "y");
-		var z = new Identifier("fabric", "z");
+		var a = new Identifier("quilt", "a");
+		var b = new Identifier("quilt", "b");
+		var d = new Identifier("quilt", "d");
+		var e = new Identifier("quilt", "e");
+		var f = new Identifier("quilt", "f");
+		var y = new Identifier("quilt", "y");
+		var z = new Identifier("quilt", "z");
 
 		List<Consumer<Event<Test>>> dependencies = List.of(
 				ev -> ev.addPhaseOrdering(a, z),
@@ -230,11 +230,11 @@ final class EventTests {
 	 * </pre>
 	 */
 	private static void testTwoCycles() {
-		Identifier a = new Identifier("fabric", "a");
-		Identifier b = new Identifier("fabric", "b");
-		Identifier c = new Identifier("fabric", "c");
-		Identifier d = new Identifier("fabric", "d");
-		Identifier e = new Identifier("fabric", "e");
+		Identifier a = new Identifier("quilt", "a");
+		Identifier b = new Identifier("quilt", "b");
+		Identifier c = new Identifier("quilt", "c");
+		Identifier d = new Identifier("quilt", "d");
+		Identifier e = new Identifier("quilt", "e");
 
 		List<Consumer<Event<Test>>> dependencies = List.of(
 				ev -> ev.addPhaseOrdering(e, a),
