@@ -35,7 +35,7 @@ public final class EventPhaseData<T> {
 	T[] listeners;
 	final List<EventPhaseData<T>> subsequentPhases = new ArrayList<>();
 	final List<EventPhaseData<T>> previousPhases = new ArrayList<>();
-	int visitStatus = 0; // 0: not visited, 1: visiting, 2: visited
+	VisitStatus visitStatus = VisitStatus.NOT_VISITED;
 
 	@SuppressWarnings("unchecked")
 	public EventPhaseData(Identifier id, Class<?> listenerClass) {
@@ -60,5 +60,11 @@ public final class EventPhaseData<T> {
 	public static <T> void link(EventPhaseData<T> first, EventPhaseData<T> second) {
 		first.subsequentPhases.add(second);
 		second.previousPhases.add(first);
+	}
+
+	enum VisitStatus {
+		NOT_VISITED,
+		VISITING,
+		VISITED
 	}
 }

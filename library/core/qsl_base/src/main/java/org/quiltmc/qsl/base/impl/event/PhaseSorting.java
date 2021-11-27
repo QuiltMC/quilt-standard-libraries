@@ -62,7 +62,7 @@ public final class PhaseSorting {
 		var phaseToScc = new IdentityHashMap<EventPhaseData<T>, PhaseScc<T>>();
 
 		for (var phase : topoSort) {
-			if (phase.visitStatus == 0) {
+			if (phase.visitStatus == EventPhaseData.VisitStatus.NOT_VISITED) {
 				var sccPhases = new ArrayList<EventPhaseData<T>>();
 				// Collect phases in SCC.
 				backwardVisit(phase, sccPhases);
@@ -121,17 +121,17 @@ public final class PhaseSorting {
 	}
 
 	private static <T> void forwardVisit(EventPhaseData<T> phase, EventPhaseData<T> parent, List<EventPhaseData<T>> toposort) {
-		if (phase.visitStatus == 0) {
+		if (phase.visitStatus == EventPhaseData.VisitStatus.NOT_VISITED) {
 			// Not yet visited.
-			phase.visitStatus = 1;
+			phase.visitStatus = EventPhaseData.VisitStatus.VISITING;
 
 			for (var data : phase.subsequentPhases) {
 				forwardVisit(data, phase, toposort);
 			}
 
 			toposort.add(phase);
-			phase.visitStatus = 2;
-		} else if (phase.visitStatus == 1 && ENABLE_CYCLE_WARNING) {
+			phase.visitStatus = EventPhaseData.VisitStatus.VISITED;
+		} else if (phase.visitStatus == EventPhaseData.VisitStatus.VISITING && ENABLE_CYCLE_WARNING) {
 			// Already visiting, so we have found a cycle.
 			QuiltBaseImpl.LOGGER.warn(String.format(
 					"Event phase ordering conflict detected.%nEvent phase %s is ordered both before and after event phase %s.",
@@ -143,13 +143,13 @@ public final class PhaseSorting {
 
 	private static <T> void clearStatus(List<EventPhaseData<T>> phases) {
 		for (var phase : phases) {
-			phase.visitStatus = 0;
+			phase.visitStatus = EventPhaseData.VisitStatus.NOT_VISITED;
 		}
 	}
 
 	private static <T> void backwardVisit(EventPhaseData<T> phase, List<EventPhaseData<T>> sccPhases) {
-		if (phase.visitStatus == 0) {
-			phase.visitStatus = 1;
+		if (phase.visitStatus == EventPhaseData.VisitStatus.NOT_VISITED) {
+			phase.visitStatus = EventPhaseData.VisitStatus.VISITING;
 			sccPhases.add(phase);
 
 			for (var data : phase.previousPhases) {
