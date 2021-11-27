@@ -22,7 +22,7 @@ public final class Versions {
 	/**
 	 * The target Minecraft version.
 	 */
-	public static final String MINECRAFT_VERSION = "1.18-rc1";
+	public static final String MINECRAFT_VERSION = "1.18-rc3";
 
 	/**
 	 * The target Yarn build.
