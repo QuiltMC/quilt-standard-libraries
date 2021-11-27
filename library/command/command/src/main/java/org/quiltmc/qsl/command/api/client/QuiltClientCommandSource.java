@@ -99,13 +99,20 @@ public interface QuiltClientCommandSource extends CommandSource {
 
 	/**
 	 * Gets the meta property under {@code key} that was assigned to this source.
-	 *
-	 * <p>This method should return the same result for every call with the same {@code key}.
+	 * <p>
+	 * This method should return the same result for every call with the same {@code key}.
 	 *
 	 * @param key the meta key
+	 *
 	 * @return the meta
 	 */
-	default Object getMeta(String key) {
-		return null;
-	}
+	Object getMeta(String key);
+
+	/**
+	 * Sets the meta property under key {@code key} with the value {@code value}.
+	 *
+	 * @param key the meta key
+	 * @param value the meta value
+	 */
+	void setMeta(String key, Object value);
 }

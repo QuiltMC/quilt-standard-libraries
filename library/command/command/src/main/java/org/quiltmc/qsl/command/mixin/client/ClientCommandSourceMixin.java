@@ -29,6 +29,10 @@ import org.quiltmc.qsl.command.api.client.QuiltClientCommandSource;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Mixin(ClientCommandSource.class)
 abstract class ClientCommandSourceMixin implements QuiltClientCommandSource {
@@ -36,28 +40,40 @@ abstract class ClientCommandSourceMixin implements QuiltClientCommandSource {
 	@Final
 	private MinecraftClient client;
 
+	@Unique private final Map<String, Object> meta = new HashMap<>();
+
 	@Override
 	public void sendFeedback(Text message) {
-		client.inGameHud.addChatMessage(MessageType.SYSTEM, message, Util.NIL_UUID);
+		this.client.inGameHud.addChatMessage(MessageType.SYSTEM, message, Util.NIL_UUID);
 	}
 
 	@Override
 	public void sendError(Text message) {
-		client.inGameHud.addChatMessage(MessageType.SYSTEM, new LiteralText("").append(message).formatted(Formatting.RED), Util.NIL_UUID);
+		this.client.inGameHud.addChatMessage(MessageType.SYSTEM, new LiteralText("").append(message).formatted(Formatting.RED), Util.NIL_UUID);
 	}
 
 	@Override
 	public MinecraftClient getClient() {
-		return client;
+		return this.client;
 	}
 
 	@Override
 	public ClientPlayerEntity getPlayer() {
-		return client.player;
+		return this.client.player;
 	}
 
 	@Override
 	public ClientWorld getWorld() {
-		return client.world;
+		return this.client.world;
+	}
+
+	@Override
+	public Object getMeta(String key) {
+		return this.meta.get(key);
+	}
+
+	@Override
+	public void setMeta(String key, Object value) {
+		this.meta.put(key, value);
 	}
 }
