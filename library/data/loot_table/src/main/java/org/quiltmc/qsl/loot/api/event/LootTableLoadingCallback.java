@@ -36,16 +36,18 @@ public interface LootTableLoadingCallback {
 		public final LootManager manager;
 		public final Identifier id;
 		public final QuiltLootTableBuilder table;
+		public final LootTableSetter setter;
 
-		private Context(ResourceManager resourceManager, LootManager manager, Identifier id, QuiltLootTableBuilder table) {
+		private Context(ResourceManager resourceManager, LootManager manager, Identifier id, QuiltLootTableBuilder table, LootTableSetter setter) {
 			this.resourceManager = resourceManager;
 			this.manager = manager;
 			this.id = id;
 			this.table = table;
+			this.setter = setter;
 		}
 
-		public static Context create(ResourceManager resourceManager, LootManager manager, Identifier id, QuiltLootTableBuilder table) {
-			return new Context(resourceManager, manager, id, table);
+		public static Context create(ResourceManager resourceManager, LootManager manager, Identifier id, QuiltLootTableBuilder table, LootTableSetter setter) {
+			return new Context(resourceManager, manager, id, table, setter);
 		}
 	}
 
@@ -56,9 +58,9 @@ public interface LootTableLoadingCallback {
 
 	ArrayEvent<LootTableLoadingCallback> EVENT = ArrayEvent.create(
 			LootTableLoadingCallback.class,
-			(listeners) -> (context, setter) -> {
+			(listeners) -> (context) -> {
 				for (LootTableLoadingCallback callback : listeners) {
-					callback.onLootTableLoading(context, setter);
+					callback.onLootTableLoading(context);
 				}
 			}
 	);
@@ -67,7 +69,6 @@ public interface LootTableLoadingCallback {
 	 * Called when a loot table is loaded.
 	 *
 	 * @param context the context for the event
-	 * @param setter a function that can be used to set the loot table
 	 */
-	void onLootTableLoading(Context context, LootTableSetter setter);
+	void onLootTableLoading(Context context);
 }

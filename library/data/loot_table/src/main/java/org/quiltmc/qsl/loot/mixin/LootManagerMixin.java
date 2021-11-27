@@ -50,8 +50,8 @@ public class LootManagerMixin {
 			QuiltLootTableBuilder builder = QuiltLootTableBuilder.of(table);
 
 			LootTableLoadingCallback.EVENT.invoker().onLootTableLoading(
-					LootTableLoadingCallback.Context.create(manager, (LootManager) (Object) this, id, builder),
-					t -> newTables.put(id, t)
+					LootTableLoadingCallback.Context.create(manager, (LootManager) (Object) this, id, builder,
+							t -> newTables.put(id, t))
 			);
 
 			newTables.computeIfAbsent(id, i -> builder.build());
