@@ -21,12 +21,12 @@ import net.minecraft.server.command.ServerCommandSource;
 import org.quiltmc.qsl.base.api.event.ArrayEvent;
 
 /**
- * Event for registering server-side commands.
+ * Callback for registering server-side commands.
  */
 @FunctionalInterface
 public interface CommandRegistrationCallback {
 	/**
-	 * Invoked when server-side commands are registered.
+	 * Event invoked when server-side commands are registered.
 	 */
 	ArrayEvent<CommandRegistrationCallback> EVENT = ArrayEvent.create(CommandRegistrationCallback.class, callbacks -> (dispatcher, integrated, dedicated) -> {
 		for (var callback : callbacks) {

@@ -25,22 +25,22 @@ import net.fabricmc.api.Environment;
 
 /**
  * Manages client-sided commands and provides some related helper methods, analogous to
- * {@link net.minecraft.server.command.CommandManager CommandManage}.
- *
- * <p>Client-sided commands are executed wholly on the client,
+ * {@link net.minecraft.server.command.CommandManager CommandManager}.
+ * <p>
+ * Client-sided commands are executed wholly on the client,
  * so players can use them in both singleplayer and multiplayer.
- *
- * <p>Command registrations should be done with {@link ClientCommandRegistrationCallback}.
- *
- * <p>The commands are run on the client game thread by default.
+ * <p>
+ * Command registrations should be done with {@link ClientCommandRegistrationCallback}.
+ * <p>
+ * The commands are run on the client game thread by default.
  * Avoid doing any heavy calculations here as that can freeze the game's rendering.
  * To mitigate this, you can move heavy code to another thread.
- *
- * <p>This class also has alternatives to the server-side helper methods in
+ * <p>
+ * This class also has alternatives to the server-side helper methods in
  * {@link net.minecraft.server.command.CommandManager CommandManager}: {@link #literal(String)} and
  * {@link #argument(String, ArgumentType)}.
- *
- * <p>Server-sided commands have precedence over client-sided commands. Client-sided commands which are overridden by
+ * <p>
+ * Server-sided commands have precedence over client-sided commands. Client-sided commands which are overridden by
  * server-sided ones can be run anyway with {@code /qcc run}.
  *
  * <h2>Example command</h2>

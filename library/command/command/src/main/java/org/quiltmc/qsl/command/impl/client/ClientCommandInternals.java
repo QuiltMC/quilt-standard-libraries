@@ -33,6 +33,7 @@ import com.mojang.brigadier.tree.CommandNode;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.LiteralText;
@@ -61,6 +62,7 @@ public final class ClientCommandInternals {
 	private static final char PREFIX = '/';
 	private static final String API_COMMAND_NAME = "quilt_commands:client_commands";
 	private static final String SHORT_API_COMMAND_NAME = "qcc";
+	private static final Command<QuiltClientCommandSource> DUMMY_COMMAND = ctx -> 0;
 
 	/**
 	 * Executes a client-sided command from a message.
@@ -92,6 +94,7 @@ public final class ClientCommandInternals {
 			String command = message.substring(1);
 			CommandDispatcher<CommandSource> serverDispatcher = client.getNetworkHandler().getCommandDispatcher();
 			ParseResults<CommandSource> serverResults = serverDispatcher.parse(command, client.getNetworkHandler().getCommandSource());
+
 			if (serverResults.getReader().canRead() || isCommandInvalidOrDummy(serverResults)) {
 				DISPATCHER.execute(command, commandSource);
 				return true;
@@ -99,8 +102,8 @@ public final class ClientCommandInternals {
 				return false;
 			}
 		} catch (CommandSyntaxException e) {
-			boolean ignored = isIgnoredException(e.getType());
-			LOGGER.log(ignored ? Level.DEBUG : Level.WARN, "Syntax exception for client-sided command '{}'", message, e);
+			boolean ignored = shouldIgnore(e.getType());
+			LOGGER.log(ignored ? Level.DEBUG : Level.WARN, "Syntax exception for client-side command '{}'", message, e);
 
 			if (ignored) {
 				return false;
@@ -109,11 +112,11 @@ public final class ClientCommandInternals {
 			commandSource.sendError(getErrorMessage(e));
 			return true;
 		} catch (CommandException e) {
-			LOGGER.warn("Error while executing client-sided command '{}'", message, e);
+			LOGGER.warn("Error while executing client-side command '{}'", message, e);
 			commandSource.sendError(e.getTextMessage());
 			return true;
 		} catch (RuntimeException e) {
-			LOGGER.warn("Error while executing client-sided command '{}'", message, e);
+			LOGGER.warn("Error while executing client-side command '{}'", message, e);
 			commandSource.sendError(Text.of(e.getMessage()));
 			return true;
 		} finally {
@@ -124,7 +127,7 @@ public final class ClientCommandInternals {
 	/**
 	 * Tests whether a parse result is invalid or the command it resolves to is a dummy command.
 	 *
-	 * Used to work out whether a command in the main dispatcher is a dummy command added by {@link ClientCommandInternals#addCommands(CommandDispatcher, QuiltClientCommandSource)}.
+	 * Used to work out whether a command in the main dispatcher is a dummy command added by {@link ClientCommandInternals#addDummyCommands(CommandDispatcher, QuiltClientCommandSource)}.
 	 *
 	 * @param parse the parse results to test.
 	 * @param <S> 	the command source type.
@@ -149,7 +152,7 @@ public final class ClientCommandInternals {
 	 * @param type the exception type
 	 * @return true if ignored, false otherwise
 	 */
-	private static boolean isIgnoredException(CommandExceptionType type) {
+	private static boolean shouldIgnore(CommandExceptionType type) {
 		BuiltInExceptionProvider builtins = CommandSyntaxException.BUILT_IN_EXCEPTIONS;
 
 		// Only ignore unknown commands and node parse exceptions.
@@ -158,7 +161,14 @@ public final class ClientCommandInternals {
 		return type == builtins.dispatcherUnknownCommand() || type == builtins.dispatcherParseException();
 	}
 
-	// See CommandSuggestor.method_30505. That cannot be used directly as it returns an OrderedText instead of a Text.
+	/**
+	 * Analogous to {@code CommandSuggestor#formatException}, but returns a {@link Text} rather than an
+	 * {@link net.minecraft.text.OrderedText OrderedText}.
+	 *
+	 * @param e the exception to get the error message from
+	 *
+	 * @return the error message as a {@link Text}
+	 */
 	private static Text getErrorMessage(CommandSyntaxException e) {
 		Text message = Texts.toText(e.getRawMessage());
 		String context = e.getContext();
@@ -167,7 +177,7 @@ public final class ClientCommandInternals {
 	}
 
 	/**
-	 * Registers commands, then runs final initialization tasks such as
+	 * Registers client-sided commands, then runs final initialization tasks such as
 	 * {@link CommandDispatcher#findAmbiguities(AmbiguityConsumer)} on the command dispatcher. Also registers
 	 * a {@code /qcc help} command if there are other commands present.
 	 */
@@ -190,19 +200,48 @@ public final class ClientCommandInternals {
 		);
 	}
 
+	/**
+	 * @return the {@code run} subcommand for {@code /qcc}
+	 */
+	private static LiteralArgumentBuilder<QuiltClientCommandSource> createRunCommand() {
+		LiteralArgumentBuilder<QuiltClientCommandSource> runCommand = literal("run");
+		for (CommandNode<QuiltClientCommandSource> node : ClientCommandManager.DISPATCHER.getRoot().getChildren()) {
+			runCommand.then(node);
+		}
+		return runCommand;
+	}
+
+	/**
+	 * @return the {@code help} subcommand for {@code /qcc}
+	 */
 	private static LiteralArgumentBuilder<QuiltClientCommandSource> createHelpCommand() {
-		return literal("help")
-				.then(
+		return literal("help").then(
 						argument("command", StringArgumentType.greedyString())
-								.executes(ClientCommandInternals::executeSpecificHelp)
-				)
+								.executes(ClientCommandInternals::executeSpecificHelp))
 				.executes(ClientCommandInternals::executeRootHelp);
 	}
 
+	/**
+	 * Runs {@link #executeHelp(CommandNode, CommandContext)} on the root node of the client-side command dispatcher.
+	 *
+	 * @param context the command context
+	 *
+	 * @return the number of commands
+	 */
 	private static int executeRootHelp(CommandContext<QuiltClientCommandSource> context) {
 		return executeHelp(DISPATCHER.getRoot(), context);
 	}
 
+	/**
+	 * Runs {@link #executeHelp(CommandNode, CommandContext)} on a specific client-side command specified as a command
+	 * argument.
+	 *
+	 * @param context the command context
+	 *
+	 * @return the number of subcommands of the command specified in the command argument
+	 *
+	 * @throws CommandSyntaxException if no such command as given in the command argument is given
+	 */
 	private static int executeSpecificHelp(CommandContext<QuiltClientCommandSource> context) throws CommandSyntaxException {
 		ParseResults<QuiltClientCommandSource> parseResults = DISPATCHER.parse(StringArgumentType.getString(context, "command"), context.getSource());
 		List<ParsedCommandNode<QuiltClientCommandSource>> nodes = parseResults.getContext().getNodes();
@@ -214,6 +253,14 @@ public final class ClientCommandInternals {
 		return executeHelp(Iterables.getLast(nodes).getNode(), context);
 	}
 
+	/**
+	 * Shows usage hints for a command node.
+	 *
+	 * @param startNode the node to get the usages of
+	 * @param context the command context
+	 *
+	 * @return the amount of usage hints (i.e. the number of subcommands of startNode)
+	 */
 	private static int executeHelp(CommandNode<QuiltClientCommandSource> startNode, CommandContext<QuiltClientCommandSource> context) {
 		Map<CommandNode<QuiltClientCommandSource>, String> commands = DISPATCHER.getSmartUsage(startNode, context.getSource());
 
@@ -224,15 +271,14 @@ public final class ClientCommandInternals {
 		return commands.size();
 	}
 
-	private static LiteralArgumentBuilder<QuiltClientCommandSource> createRunCommand() {
-		LiteralArgumentBuilder<QuiltClientCommandSource> runCommand = literal("run");
-		for (CommandNode<QuiltClientCommandSource> node : ClientCommandManager.DISPATCHER.getRoot().getChildren()) {
-			runCommand.then(node);
-		}
-		return runCommand;
-	}
-
-	public static void addCommands(CommandDispatcher<QuiltClientCommandSource> target, QuiltClientCommandSource source) {
+	/**
+	 * Adds dummy versions of the client commands to a given command dispatcher. Used to add the commands to
+	 * {@link ClientPlayNetworkHandler}'s command dispatcher for autocompletion.
+	 *
+	 * @param target the target command dispatcher
+	 * @param source the command source - commands which the source cannot use are filtered out
+	 */
+	public static void addDummyCommands(CommandDispatcher<QuiltClientCommandSource> target, QuiltClientCommandSource source) {
 		Map<CommandNode<QuiltClientCommandSource>, CommandNode<QuiltClientCommandSource>> originalToCopy = new HashMap<>();
 		originalToCopy.put(DISPATCHER.getRoot(), target.getRoot());
 		copyChildren(DISPATCHER.getRoot(), target.getRoot(), source, originalToCopy);
@@ -240,7 +286,7 @@ public final class ClientCommandInternals {
 
 	/**
 	 * Copies the child commands from origin to target, filtered by {@code child.canUse(source)}.
-	 * Mimics vanilla's CommandManager.makeTreeForSource.
+	 * Mimics vanilla's {@code CommandManager#makeTreeForSource}. Runs recursively.
 	 *
 	 * @param origin         the source command node
 	 * @param target         the target command node
@@ -284,6 +330,4 @@ public final class ClientCommandInternals {
 			}
 		}
 	}
-
-	private static final Command<QuiltClientCommandSource> DUMMY_COMMAND = ctx -> 0;
 }

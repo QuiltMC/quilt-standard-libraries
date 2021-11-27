@@ -45,6 +45,6 @@ abstract class ClientPlayNetworkHandlerMixin {
 		// Add the commands to the vanilla dispatcher for completion.
 		// It's done here because both the server and the client commands have
 		// to be in the same dispatcher and completion results.
-		ClientCommandInternals.addCommands((CommandDispatcher) commandDispatcher, (QuiltClientCommandSource) commandSource);
+		ClientCommandInternals.addDummyCommands((CommandDispatcher) commandDispatcher, (QuiltClientCommandSource) commandSource);
 	}
 }
