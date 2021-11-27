@@ -40,6 +40,7 @@ public abstract class MinecraftServerMixin {
 
 	@Inject(method = "tick", at = @At("TAIL"))
 	private void onEndTick(BooleanSupplier shouldKeepTicking, CallbackInfo ci) {
+		// Check whether we are in auto test mode, after the designated tick times we do an audit of Mixins then shutdown.
 		if (QuiltBaseImpl.AUTO_TEST_SERVER_TICK_TIME != null) {
 			this.quilt$autoTestTicks++;
 

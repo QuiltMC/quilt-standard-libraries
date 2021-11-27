@@ -23,6 +23,11 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.Internal
 public final class QuiltBaseImpl {
 	public static final Logger LOGGER = LogManager.getLogger("quilt_base");
+	/**
+	 * Represents the number of ticks before an auto test server audits mixins and shutdowns.
+	 * <p>
+	 * Set with {@code -Dquilt.auto_test}.
+	 */
 	public static final Integer AUTO_TEST_SERVER_TICK_TIME;
 
 	private QuiltBaseImpl() {
