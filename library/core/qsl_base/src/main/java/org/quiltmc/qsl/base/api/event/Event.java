@@ -50,6 +50,11 @@ import org.quiltmc.qsl.base.impl.event.PhaseSorting;
  * annotation on the type. You can let T not be a functional interface, however it heavily complicates the process
  * of implementing an invoker and only allows callback implementations to be done by implementing an interface onto a
  * class or extending a class.
+ * <p>
+ * An Event can have phases, each callback is attributed to a phase ({@link Event#DEFAULT_PHASE} if unspecified),
+ * and each phase can have a defined ordering. Each event phase is identified by a {@link Identifier}, ordering is done
+ * by explicitly stating that event phase A will run before event phase B, for example.
+ * See {@link Event#addPhaseOrdering(Identifier, Identifier)} for more information.
  *
  * <h2>Example: Registering callbacks</h2>
  * <p>
@@ -152,8 +157,8 @@ public final class Event<T> {
 	 * Create a new instance of {@link Event} with a list of default phases that get invoked in order.
 	 * Exposing the identifiers of the default phases as {@code public static final} constants is encouraged.
 	 * <p>
-	 * An event phase is a named group of listeners, which may be ordered before or after other groups of listeners.
-	 * This allows some listeners to take priority over other listeners.
+	 * An event phase is a named group of callbacks, which may be ordered before or after other groups of callbacks.
+	 * This allows some callbacks to take priority over other callbacks.
 	 * Adding separate events should be considered before making use of multiple event phases.
 	 * <p>
 	 * Phases may be freely added to events created with any of the factory functions,
@@ -229,7 +234,7 @@ public final class Event<T> {
 	 * @param callback        the callback
 	 */
 	public void register(Identifier phaseIdentifier, T callback) {
-		Objects.requireNonNull(phaseIdentifier, "Tried to register a listener for a null phase!");
+		Objects.requireNonNull(phaseIdentifier, "Tried to register a callback for a null phase!");
 		Objects.requireNonNull(callback, "Tried to register a null callback!");
 
 		this.lock.lock();
@@ -254,7 +259,7 @@ public final class Event<T> {
 	}
 
 	/**
-	 * Request that listeners registered for one phase be executed before listeners registered for another phase.
+	 * Request that callbacks registered for one phase be executed before callbacks registered for another phase.
 	 * Relying on the default phases supplied to {@link Event#createWithPhases} should be preferred over manually
 	 * registering phase ordering dependencies.
 	 * <p>
