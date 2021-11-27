@@ -16,7 +16,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.12",
-    "quilt_base": ">=1.0.0"
+    "quilt_base": "*"
   },
   "description": "Events to track the lifecycle of Minecraft",
   "mixins": [
