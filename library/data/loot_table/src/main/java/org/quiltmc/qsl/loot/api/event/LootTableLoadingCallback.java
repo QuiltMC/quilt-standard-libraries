@@ -36,7 +36,7 @@ public interface LootTableLoadingCallback {
 		public final LootManager manager;
 		public final Identifier id;
 		public final QuiltLootTableBuilder table;
-		public final LootTableSetter setter;
+		private final LootTableSetter setter;
 
 		private Context(ResourceManager resourceManager, LootManager manager, Identifier id, QuiltLootTableBuilder table, LootTableSetter setter) {
 			this.resourceManager = resourceManager;
@@ -48,6 +48,15 @@ public interface LootTableLoadingCallback {
 
 		public static Context create(ResourceManager resourceManager, LootManager manager, Identifier id, QuiltLootTableBuilder table, LootTableSetter setter) {
 			return new Context(resourceManager, manager, id, table, setter);
+		}
+
+		/**
+		 * Replace the loot table this context is for, using the same id.
+		 *
+		 * @param table the new loot table
+		 */
+		public void setLootTable(LootTable table) {
+			setter.set(table);
 		}
 	}
 
