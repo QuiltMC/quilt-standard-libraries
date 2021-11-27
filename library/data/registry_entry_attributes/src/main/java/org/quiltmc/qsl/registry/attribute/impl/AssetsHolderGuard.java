@@ -32,6 +32,10 @@ public final class AssetsHolderGuard {
 		allowed = true;
 	}
 
+	public static boolean isAccessAllowed() {
+		return allowed;
+	}
+
 	public static void assertAccessAllowed() {
 		if (!allowed) {
 			throw new IllegalStateException("Access to assets-based registry entry attributes is not allowed here!");

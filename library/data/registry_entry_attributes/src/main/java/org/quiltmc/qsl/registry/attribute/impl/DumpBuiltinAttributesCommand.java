@@ -94,7 +94,7 @@ public final class DumpBuiltinAttributesCommand {
 
 	public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
 		if (Boolean.getBoolean(ENABLE_PROPERTY)) {
-			ArgumentTypes.register("quilt:rea_dumpbuiltin_registry",
+			ArgumentTypes.register(Initializer.NAMESPACE + ":internal_dumpbuiltin_registry",
 					RegistryArgumentType.class, new ConstantArgumentSerializer<>(RegistryArgumentType::registry));
 
 			dispatcher.register(literal("dumpbuiltinregattrs")
@@ -136,6 +136,10 @@ public final class DumpBuiltinAttributesCommand {
 		for (Map.Entry<? extends RegistryEntryAttribute<R, ?>, ? extends Map<R, Object>> entry : holder.valueTable.rowMap().entrySet()) {
 			RegistryEntryAttribute<R, Object> attr = (RegistryEntryAttribute<R, Object>) entry.getKey();
 			var attrId = attr.id();
+
+			if (!AssetsHolderGuard.isAccessAllowed() && attr.side() == RegistryEntryAttribute.Side.CLIENT) {
+				continue;
+			}
 
 			var path = FabricLoader.getInstance().getGameDir().resolve("quilt/builtin-registry-entry-attributes")
 					.resolve(attr.side().getSource().getDirectory())
