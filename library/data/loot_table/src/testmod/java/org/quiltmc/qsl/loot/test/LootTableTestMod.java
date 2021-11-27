@@ -54,7 +54,7 @@ public class LootTableTestMod implements ModInitializer {
 		LootEntryTypeRegistry.INSTANCE.register(new Identifier("quilt", "extended_tag"), new TestSerializer());
 
 		// Test loot table load event
-		LootTableLoadingCallback.EVENT.register((context, setter) -> {
+		LootTableLoadingCallback.EVENT.register((context) -> {
 			Identifier id = context.id;
 			QuiltLootTableBuilder table = context.table;
 
