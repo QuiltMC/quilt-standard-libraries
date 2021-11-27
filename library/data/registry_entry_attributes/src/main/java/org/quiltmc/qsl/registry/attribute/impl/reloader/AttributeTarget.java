@@ -19,7 +19,6 @@ package org.quiltmc.qsl.registry.attribute.impl.reloader;
 import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 
 import java.util.*;
 
@@ -52,21 +51,24 @@ sealed interface AttributeTarget {
 		}
 	}
 
-	// FIXME seal this up when you figure out what tf to do here
-	non-sealed abstract class Tagged<T> implements AttributeTarget {
+	@SuppressWarnings("ClassCanBeRecord")
+	final class Tagged<T> implements AttributeTarget {
+		private final TagGetter tagGetter;
 		private final Registry<T> registry;
 		private final Identifier tagId;
 
-		public Tagged(Registry<T> registry, Identifier tagId) {
+		public Tagged(TagGetter tagGetter, Registry<T> registry, Identifier tagId) {
+			this.tagGetter = tagGetter;
 			this.registry = registry;
 			this.tagId = tagId;
 		}
 
-		protected abstract Tag.Identified<T> getTag(RegistryKey<? extends Registry<T>> registryKey, Identifier tagId);
-
 		@Override
 		public Collection<Identifier> ids() {
-			Tag.Identified<T> tag = getTag(registry.getKey(), tagId);
+			Tag<T> tag = tagGetter.getTag(registry.getKey(), tagId);
+			if (tag == null) {
+				throw new IllegalStateException("Tag " + tagId + " does not exist?! (TagGetter returned null)");
+			}
 			Set<Identifier> ids = new HashSet<>();
 			for (T value : tag.values()) {
 				ids.add(registry.getId(value));
@@ -75,8 +77,16 @@ sealed interface AttributeTarget {
 		}
 
 		@Override
-		public abstract boolean equals(Object o);
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+			Tagged<?> tagged = (Tagged<?>) o;
+			return registry.getKey().equals(tagged.registry.getKey()) && tagId.equals(tagged.tagId);
+		}
+
 		@Override
-		public abstract int hashCode();
+		public int hashCode() {
+			return Objects.hash(registry.getKey(), tagId);
+		}
 	}
 }

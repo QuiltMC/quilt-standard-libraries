@@ -37,20 +37,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 final class AttributeMap {
-	@FunctionalInterface
-	public interface TaggedTargetFactory {
-		<T> AttributeTarget.Tagged<T> createTaggedTarget(Registry<T> registry, Identifier tagId);
-	}
-
-	private final TaggedTargetFactory taggedTargetFactory;
 	private final Registry<?> registry;
 	private final RegistryEntryAttribute<?, ?> attribute;
-	private Map<AttributeTarget, Object> map;
+	private final TagGetter tagGetter;
+	private final Map<AttributeTarget, Object> map;
 
-	public AttributeMap(TaggedTargetFactory taggedTargetFactory, Registry<?> registry, RegistryEntryAttribute<?, ?> attribute) {
-		this.taggedTargetFactory = taggedTargetFactory;
+	public AttributeMap(Registry<?> registry, RegistryEntryAttribute<?, ?> attribute, TagGetter tagGetter) {
 		this.registry = registry;
 		this.attribute = attribute;
+		this.tagGetter = tagGetter;
 		map = new HashMap<>();
 	}
 
@@ -59,7 +54,7 @@ final class AttributeMap {
 	}
 
 	public void putTag(Identifier tagId, Object value) {
-		map.put(taggedTargetFactory.createTaggedTarget(registry, tagId), value);
+		map.put(new AttributeTarget.Tagged<>(tagGetter, registry, tagId), value);
 	}
 
 	public Registry<?> getRegistry() {

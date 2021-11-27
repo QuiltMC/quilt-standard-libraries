@@ -17,6 +17,8 @@
 package org.quiltmc.qsl.registry.attribute.impl.reloader;
 
 import net.minecraft.resource.ResourceType;
+import net.minecraft.tag.Tag;
+import net.minecraft.util.registry.RegistryKey;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,7 +42,7 @@ import java.util.concurrent.Executor;
 
 @ApiStatus.Internal
 public final class RegistryEntryAttributeReloader implements SimpleResourceReloader<RegistryEntryAttributeReloader.LoadedData>,
-		AttributeMap.TaggedTargetFactory {
+		TagGetter {
 	public static void register(ResourceType source) {
 		ResourceLoader.get(source).registerReloader(new RegistryEntryAttributeReloader(source));
 	}
@@ -69,7 +71,7 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 	}
 
 	@Override
-	public <T> AttributeTarget.Tagged<T> createTaggedTarget(Registry<T> registry, Identifier tagId) {
+	public <T> Tag<T> getTag(RegistryKey<? extends Registry<T>> registryKey, Identifier id) {
 		// FIXME implement this properly!
 		return null;
 	}
@@ -130,7 +132,7 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 			profiler.swap(id + "/processing_resources{" + jsonId + "," + attribId + "}");
 
 			AttributeMap attribMap = attributeMaps.computeIfAbsent(attrib,
-					key -> new AttributeMap(this, registry, key));
+					key -> new AttributeMap(registry, key, this));
 			for (var resource : resources) {
 				attribMap.processResource(resource);
 			}
