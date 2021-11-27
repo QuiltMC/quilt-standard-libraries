@@ -51,7 +51,7 @@ public interface LootTableLoadingCallback {
 		}
 
 		/**
-		 * Replace the loot table this context is for, using the same id.
+		 * Replace the loot table this context is for, using the same identifier.
 		 *
 		 * @param table the new loot table
 		 */
