@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "quilt_game_rule",
+  "name": "Quilt Game Rule API",
+  "version": "${version}",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "icon": "assets/quilt_game_rule/icon.png",
+  "contact": {
+    "homepage": "https://quiltmc.org",
+    "issues": "https://github.com/QuiltMC/quilt-standard-libraries/issues",
+    "sources": "https://github.com/QuiltMC/quilt-standard-libraries"
+  },
+  "authors": [
+    "QuiltMC"
+  ],
+  "depends": {
+    "fabricloader": ">=0.12"
+  },
+  "description": "Allows registration of custom game rules.",
+  "accessWidener": "quilt_game_rule.accesswidener",
+  "mixins": [
+    "quilt_game_rule.mixins.json"
+  ]
+}
