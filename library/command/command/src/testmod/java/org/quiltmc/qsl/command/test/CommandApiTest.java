@@ -20,8 +20,6 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.text.LiteralText;
 import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
-import org.quiltmc.qsl.command.api.client.ClientCommandManager;
-import org.quiltmc.qsl.command.api.client.ClientCommandRegistrationCallback;
 
 import static net.minecraft.server.command.CommandManager.literal;
 
@@ -58,24 +56,6 @@ public class CommandApiTest implements ModInitializer {
 						ctx.getSource().sendFeedback(new LiteralText("Server!"), false);
 						return 0;
 					})
-			);
-		});
-
-		ClientCommandRegistrationCallback.EVENT.register(dispatcher -> {
-			dispatcher.register(
-					ClientCommandManager.literal("test_client_command")
-							.executes(ctx -> {
-								ctx.getSource().sendFeedback(new LiteralText("It works!"));
-								return 0;
-							})
-			);
-
-			dispatcher.register(
-					ClientCommandManager.literal("overrideme")
-							.executes(ctx -> {
-								ctx.getSource().sendFeedback(new LiteralText("Client!"));
-								return 0;
-							})
 			);
 		});
 	}
