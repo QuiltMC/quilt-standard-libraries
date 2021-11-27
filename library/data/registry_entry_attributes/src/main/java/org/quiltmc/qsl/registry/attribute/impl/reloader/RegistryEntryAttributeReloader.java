@@ -39,7 +39,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 @ApiStatus.Internal
-public final class RegistryEntryAttributeReloader implements SimpleResourceReloader<RegistryEntryAttributeReloader.LoadedData> {
+public final class RegistryEntryAttributeReloader implements SimpleResourceReloader<RegistryEntryAttributeReloader.LoadedData>,
+		AttributeMap.TaggedTargetFactory {
 	public static void register(ResourceType source) {
 		ResourceLoader.get(source).registerReloader(new RegistryEntryAttributeReloader(source));
 	}
@@ -65,6 +66,12 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 	@Override
 	public Identifier getQuiltId() {
 		return id;
+	}
+
+	@Override
+	public <T> AttributeTarget.Tagged<T> createTaggedTarget(Registry<T> registry, Identifier tagId) {
+		// FIXME implement this properly!
+		return null;
 	}
 
 	@Override
@@ -123,13 +130,7 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 			profiler.swap(id + "/processing_resources{" + jsonId + "," + attribId + "}");
 
 			AttributeMap attribMap = attributeMaps.computeIfAbsent(attrib,
-					key -> new AttributeMap(new AttributeMap.TagTargetFactory() {
-						// FIXME implement this properly!
-						@Override
-						public <T> AttributeTarget.Tag<T> create(Registry<T> registry, Identifier tagId) {
-							return null;
-						}
-					}, registry, key));
+					key -> new AttributeMap(this, registry, key));
 			for (var resource : resources) {
 				attribMap.processResource(resource);
 			}

@@ -1,12 +1,29 @@
+/*
+ * Copyright 2021 QuiltMC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.quiltmc.qsl.registry.attribute.impl.reloader;
 
+import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 
 import java.util.*;
 
-sealed interface AttributeTarget permits AttributeTarget.Single, AttributeTarget.Tag {
+sealed interface AttributeTarget {
 	Collection<Identifier> ids();
 
 	final class Single implements AttributeTarget {
@@ -36,20 +53,20 @@ sealed interface AttributeTarget permits AttributeTarget.Single, AttributeTarget
 	}
 
 	// FIXME seal this up when you figure out what tf to do here
-	non-sealed abstract class Tag<T> implements AttributeTarget {
+	non-sealed abstract class Tagged<T> implements AttributeTarget {
 		private final Registry<T> registry;
 		private final Identifier tagId;
 
-		public Tag(Registry<T> registry, Identifier tagId) {
+		public Tagged(Registry<T> registry, Identifier tagId) {
 			this.registry = registry;
 			this.tagId = tagId;
 		}
 
-		protected abstract net.minecraft.tag.Tag.Identified<T> getTag(RegistryKey<? extends Registry<T>> registryKey, Identifier tagId);
+		protected abstract Tag.Identified<T> getTag(RegistryKey<? extends Registry<T>> registryKey, Identifier tagId);
 
 		@Override
 		public Collection<Identifier> ids() {
-			net.minecraft.tag.Tag.Identified<T> tag = getTag(registry.getKey(), tagId);
+			Tag.Identified<T> tag = getTag(registry.getKey(), tagId);
 			Set<Identifier> ids = new HashSet<>();
 			for (T value : tag.values()) {
 				ids.add(registry.getId(value));
