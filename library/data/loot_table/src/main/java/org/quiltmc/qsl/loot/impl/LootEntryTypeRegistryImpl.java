@@ -20,6 +20,7 @@ package org.quiltmc.qsl.loot.impl;
 import net.minecraft.loot.entry.LootPoolEntry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonSerializer;
+
 import org.quiltmc.qsl.loot.api.LootEntryTypeRegistry;
 import org.quiltmc.qsl.loot.mixin.LootPoolEntryTypesAccessor;
 

@@ -17,17 +17,17 @@
 
 package org.quiltmc.qsl.loot.api;
 
+import java.util.List;
+
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContextType;
 import net.minecraft.loot.function.LootFunction;
 
-import java.util.List;
-
 /**
  * Interface implemented by all {@link net.minecraft.loot.LootTable} instances when QSL is present.
- * <p>
- * Contains accessors for various fields.
+ *
+ * <p>Contains accessors for various fields.
  *
  * @see	QuiltLootPoolBuilder
  * @see #cast(LootTable)

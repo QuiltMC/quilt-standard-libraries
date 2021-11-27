@@ -17,13 +17,14 @@
 
 package org.quiltmc.qsl.loot.mixin;
 
-import net.minecraft.loot.LootPool;
-import net.minecraft.loot.LootTable;
-import net.minecraft.loot.function.LootFunction;
+import java.util.List;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import java.util.List;
+import net.minecraft.loot.LootPool;
+import net.minecraft.loot.LootTable;
+import net.minecraft.loot.function.LootFunction;
 
 @Mixin(LootTable.Builder.class)
 public interface LootTableBuilderHooks {

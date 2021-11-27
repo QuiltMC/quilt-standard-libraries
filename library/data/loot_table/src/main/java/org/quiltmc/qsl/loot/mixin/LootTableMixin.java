@@ -17,18 +17,20 @@
 
 package org.quiltmc.qsl.loot.mixin;
 
-import net.minecraft.loot.LootPool;
-import net.minecraft.loot.LootTable;
-import net.minecraft.loot.context.LootContextType;
-import net.minecraft.loot.function.LootFunction;
-import org.quiltmc.qsl.loot.api.QuiltLootTable;
+import java.util.Arrays;
+import java.util.List;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import java.util.Arrays;
-import java.util.List;
+import net.minecraft.loot.LootPool;
+import net.minecraft.loot.LootTable;
+import net.minecraft.loot.context.LootContextType;
+import net.minecraft.loot.function.LootFunction;
+
+import org.quiltmc.qsl.loot.api.QuiltLootTable;
 
 @Mixin(LootTable.class)
 public abstract class LootTableMixin implements QuiltLootTable {

@@ -22,8 +22,18 @@ import net.minecraft.loot.condition.LootCondition;
 import net.minecraft.loot.entry.LootPoolEntry;
 import net.minecraft.loot.function.LootFunction;
 import net.minecraft.loot.provider.number.LootNumberProvider;
+
 import org.quiltmc.qsl.loot.mixin.LootPoolBuilderHooks;
 
+/**
+ * Quilt's version of {@link net.minecraft.loot.LootPool.Builder}. Adds additional methods and
+ * hooks not found in the original class.
+ *
+ * <p>To create a new instance of this class, use {@link #builder()}.
+ *
+ * @see #copyFrom(LootPool)
+ * @see #copyFrom(LootPool, boolean)
+ */
 public class QuiltLootPoolBuilder extends LootPool.Builder {
 	private final LootPoolBuilderHooks extended = (LootPoolBuilderHooks) this;
 

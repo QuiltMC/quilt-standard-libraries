@@ -17,19 +17,21 @@
 
 package org.quiltmc.qsl.loot.mixin;
 
-import net.minecraft.loot.LootPool;
-import net.minecraft.loot.condition.LootCondition;
-import net.minecraft.loot.entry.LootPoolEntry;
-import net.minecraft.loot.function.LootFunction;
-import net.minecraft.loot.provider.number.LootNumberProvider;
-import org.quiltmc.qsl.loot.api.QuiltLootPool;
+import java.util.Arrays;
+import java.util.List;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import java.util.Arrays;
-import java.util.List;
+import net.minecraft.loot.LootPool;
+import net.minecraft.loot.condition.LootCondition;
+import net.minecraft.loot.entry.LootPoolEntry;
+import net.minecraft.loot.function.LootFunction;
+import net.minecraft.loot.provider.number.LootNumberProvider;
+
+import org.quiltmc.qsl.loot.api.QuiltLootPool;
 
 @Mixin(LootPool.class)
 public abstract class LootPoolMixin implements QuiltLootPool {

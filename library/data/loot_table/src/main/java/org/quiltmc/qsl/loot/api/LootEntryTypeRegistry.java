@@ -20,6 +20,7 @@ package org.quiltmc.qsl.loot.api;
 import net.minecraft.loot.entry.LootPoolEntry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonSerializer;
+
 import org.quiltmc.qsl.loot.impl.LootEntryTypeRegistryImpl;
 
 /**
@@ -32,9 +33,9 @@ public interface LootEntryTypeRegistry {
 	LootEntryTypeRegistry INSTANCE = new LootEntryTypeRegistryImpl();
 
 	/**
-	 * Registers a loot entry type serializer by its ID.
+	 * Registers a loot entry type serializer by its identifier.
 	 *
-	 * @param id the loot entry's ID
+	 * @param id the loot entry's identifier
 	 * @param serializer the loot entry serializer
 	 */
 	void register(Identifier id, JsonSerializer<? extends LootPoolEntry> serializer);

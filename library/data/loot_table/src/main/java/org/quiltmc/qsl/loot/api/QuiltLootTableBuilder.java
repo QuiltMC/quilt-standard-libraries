@@ -17,14 +17,24 @@
 
 package org.quiltmc.qsl.loot.api;
 
+import java.util.Collection;
+
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContextType;
 import net.minecraft.loot.function.LootFunction;
+
 import org.quiltmc.qsl.loot.mixin.LootTableBuilderHooks;
 
-import java.util.Collection;
-
+/**
+ * Quilt's version of {@link net.minecraft.loot.LootTable.Builder}. Adds additional methods and
+ * hooks not found in the original class.
+ *
+ * <p>To create a new instance of this class, use {@link #builder()}.
+ *
+ * @see #copyFrom(LootTable)
+ * @see #copyFrom(LootTable, boolean)
+ */
 public class QuiltLootTableBuilder extends LootTable.Builder {
 	private final LootTableBuilderHooks extended = (LootTableBuilderHooks) this;
 

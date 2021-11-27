@@ -22,6 +22,9 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.fabricmc.api.ModInitializer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.LootPool;
@@ -33,10 +36,10 @@ import net.minecraft.loot.entry.TagEntry;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 import org.quiltmc.qsl.loot.api.LootEntryTypeRegistry;
 import org.quiltmc.qsl.loot.api.QuiltLootPoolBuilder;
+import org.quiltmc.qsl.loot.api.QuiltLootTableBuilder;
 import org.quiltmc.qsl.loot.api.event.LootTableLoadingCallback;
 
 public class LootTableTestMod implements ModInitializer {
@@ -51,7 +54,10 @@ public class LootTableTestMod implements ModInitializer {
 		LootEntryTypeRegistry.INSTANCE.register(new Identifier("quilt", "extended_tag"), new TestSerializer());
 
 		// Test loot table load event
-		LootTableLoadingCallback.EVENT.register((resourceManager, manager, id, table, setter) -> {
+		LootTableLoadingCallback.EVENT.register((context, setter) -> {
+			Identifier id = context.id;
+			QuiltLootTableBuilder table = context.table;
+
 			if ("minecraft:blocks/dirt".equals(id.toString())) {
 				LootPoolEntry entryFromString = LOOT_GSON.fromJson(LOOT_ENTRY_JSON, LootPoolEntry.class);
 

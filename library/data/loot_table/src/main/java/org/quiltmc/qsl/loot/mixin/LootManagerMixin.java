@@ -17,23 +17,25 @@
 
 package org.quiltmc.qsl.loot.mixin;
 
+import java.util.Map;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
-import net.minecraft.loot.LootManager;
-import net.minecraft.loot.LootTable;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.profiler.Profiler;
-import org.quiltmc.qsl.loot.api.QuiltLootTableBuilder;
-import org.quiltmc.qsl.loot.api.event.LootTableLoadingCallback;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.HashMap;
-import java.util.Map;
+import net.minecraft.loot.LootManager;
+import net.minecraft.loot.LootTable;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.profiler.Profiler;
+
+import org.quiltmc.qsl.loot.api.QuiltLootTableBuilder;
+import org.quiltmc.qsl.loot.api.event.LootTableLoadingCallback;
 
 @Mixin(LootManager.class)
 public class LootManagerMixin {
@@ -42,13 +44,14 @@ public class LootManagerMixin {
 
 	@Inject(method = "apply(Ljava/util/Map;Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/util/profiler/Profiler;)V", at = @At("RETURN"))
 	private void apply(Map<Identifier, JsonElement> map, ResourceManager manager, Profiler profiler, CallbackInfo ci) {
-		Map<Identifier, LootTable> newTables = new HashMap<>();
+		Map<Identifier, LootTable> newTables = new Object2ObjectOpenHashMap<>();
 
 		tables.forEach((id, table) -> {
 			QuiltLootTableBuilder builder = QuiltLootTableBuilder.of(table);
 
 			LootTableLoadingCallback.EVENT.invoker().onLootTableLoading(
-					manager, (LootManager) (Object) this, id, builder, t -> newTables.put(id, t)
+					LootTableLoadingCallback.Context.create(manager, (LootManager) (Object) this, id, builder),
+					t -> newTables.put(id, t)
 			);
 
 			newTables.computeIfAbsent(id, i -> builder.build());

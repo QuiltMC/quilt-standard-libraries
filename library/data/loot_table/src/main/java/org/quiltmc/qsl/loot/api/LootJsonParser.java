@@ -17,14 +17,15 @@
 
 package org.quiltmc.qsl.loot.api;
 
-import com.google.gson.Gson;
-import net.minecraft.loot.LootManager;
-import net.minecraft.util.JsonHelper;
-import net.minecraft.util.Lazy;
-
 import java.io.Reader;
 import java.lang.reflect.Field;
 import java.util.stream.Stream;
+
+import com.google.gson.Gson;
+
+import net.minecraft.loot.LootManager;
+import net.minecraft.util.JsonHelper;
+import net.minecraft.util.Lazy;
 
 public final class LootJsonParser {
 	/* Reading this from LootManager to access all serializers from vanilla. */
