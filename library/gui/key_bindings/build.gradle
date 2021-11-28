@@ -1,0 +1,9 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "key_bindings"
+	version = "1.0.0"
+	library = "gui"
+}
