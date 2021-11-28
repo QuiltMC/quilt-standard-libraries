@@ -30,11 +30,16 @@ import org.quiltmc.qsl.game_rule.mixin.IntRuleAccessor;
 public final class BoundedIntRule extends GameRules.IntRule {
 	private static final Logger LOGGER = LogManager.getLogger(GameRuleRegistry.class);
 
-	private final int minimumValue;
-	private final int maximumValue;
+	private int minimumValue;
+	private int maximumValue;
 
 	public BoundedIntRule(GameRules.Type<GameRules.IntRule> type, int initialValue, int minimumValue, int maximumValue) {
 		super(type, initialValue);
+
+		if (areBoundsInvalid(minimumValue, maximumValue)) {
+			throw new IllegalArgumentException(String.format("Invalid bounds %s - %s, minimum must be less than maximum", minimumValue, maximumValue));
+		}
+
 		this.minimumValue = minimumValue;
 		this.maximumValue = maximumValue;
 	}
@@ -73,6 +78,38 @@ public final class BoundedIntRule extends GameRules.IntRule {
 		return new BoundedIntRule(this.type, ((IntRuleAccessor) (Object) this).getValue(), this.minimumValue, this.maximumValue);
 	}
 
+	public int getMinimumValue() {
+		return this.minimumValue;
+	}
+
+	public int getMaximumValue() {
+		return this.maximumValue;
+	}
+
+	public void setMinimumValue(int minimumValue) {
+		if (areBoundsInvalid(minimumValue, this.maximumValue)) {
+			throw new IllegalArgumentException(String.format("Invalid bounds %s - %s, minimum must be less than maximum", minimumValue, this.maximumValue));
+		}
+
+		if (this.get() < minimumValue) {
+			throw new IllegalArgumentException(String.format("Could not set minimum value to %s. Current value is less than minimum", minimumValue));
+		}
+
+		this.minimumValue = minimumValue;
+	}
+
+	public void setMaximumValue(int maximumValue) {
+		if (areBoundsInvalid(this.minimumValue, maximumValue)) {
+			throw new IllegalArgumentException(String.format("Invalid bounds %s - %s, minimum must be less than maximum", this.minimumValue, maximumValue));
+		}
+
+		if (this.get() > maximumValue) {
+			throw new IllegalStateException(String.format("Cannot set maximum value to %s. Current value is less than minimum", maximumValue));
+		}
+
+		this.maximumValue = maximumValue;
+	}
+
 	private static int parseInt(String input) {
 		if (!input.isEmpty()) {
 			try {
@@ -83,5 +120,9 @@ public final class BoundedIntRule extends GameRules.IntRule {
 		}
 
 		return 0;
+	}
+
+	private static boolean areBoundsInvalid(int minimumValue, int maximumValue) {
+		return minimumValue >= maximumValue;
 	}
 }

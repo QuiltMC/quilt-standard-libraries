@@ -3,6 +3,6 @@ plugins {
 }
 
 qslLibrary {
-	libraryName = "other_content"
+	libraryName = "content_other"
 	version = "1.0.0"
 }

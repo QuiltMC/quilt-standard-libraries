@@ -31,14 +31,19 @@ import org.quiltmc.qsl.game_rule.api.GameRuleRegistry;
 public final class DoubleRule extends GameRules.Rule<DoubleRule> implements ValidateableRule {
 	private static final Logger LOGGER = LogManager.getLogger(GameRuleRegistry.class);
 
-	private final double minimumValue;
-	private final double maximumValue;
+	private double minimumValue;
+	private double maximumValue;
 	private double value;
 
 	@ApiStatus.Internal
 	public DoubleRule(GameRules.Type<DoubleRule> type, double value, double minimumValue, double maximumValue) {
 		super(type);
 		this.value = value;
+
+		if (areBoundsInvalid(minimumValue, maximumValue)) {
+			throw new IllegalArgumentException(String.format("Invalid bounds %s - %s, minimum must be less than maximum", minimumValue, maximumValue));
+		}
+
 		this.minimumValue = minimumValue;
 		this.maximumValue = maximumValue;
 
@@ -122,7 +127,43 @@ public final class DoubleRule extends GameRules.Rule<DoubleRule> implements Vali
 		return this.value;
 	}
 
+	public double getMinimumValue() {
+		return this.minimumValue;
+	}
+
+	public double getMaximumValue() {
+		return this.maximumValue;
+	}
+
+	public void setMinimumValue(double minimumValue) {
+		if (areBoundsInvalid(minimumValue, this.maximumValue)) {
+			throw new IllegalArgumentException(String.format("Invalid bounds %s - %s, minimum must be less than maximum", minimumValue, this.maximumValue));
+		}
+
+		if (this.value < minimumValue) {
+			throw new IllegalArgumentException(String.format("Could not set minimum value to %s. Current value is less than minimum", minimumValue));
+		}
+
+		this.minimumValue = minimumValue;
+	}
+
+	public void setMaximumValue(double maximumValue) {
+		if (areBoundsInvalid(this.minimumValue, maximumValue)) {
+			throw new IllegalArgumentException(String.format("Invalid bounds %s - %s, minimum must be less than maximum", this.minimumValue, maximumValue));
+		}
+
+		if (this.value > maximumValue) {
+			throw new IllegalStateException(String.format("Cannot set maximum value to %s. Current value is less than minimum", maximumValue));
+		}
+
+		this.maximumValue = maximumValue;
+	}
+
 	private boolean inBounds(double value) {
 		return value >= this.minimumValue && value <= this.maximumValue;
+	}
+
+	private static boolean areBoundsInvalid(double minimumValue, double maximumValue) {
+		return minimumValue >= maximumValue;
 	}
 }

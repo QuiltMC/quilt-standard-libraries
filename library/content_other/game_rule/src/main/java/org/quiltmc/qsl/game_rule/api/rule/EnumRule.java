@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import com.mojang.brigadier.context.CommandContext;
@@ -122,6 +123,15 @@ public final class EnumRule<E extends Enum<E>> extends GameRules.Rule<EnumRule<E
 
 	public E get() {
 		return this.value;
+	}
+
+	public List<E> getSupportedValues() {
+		return Collections.unmodifiableList(this.supportedValues);
+	}
+
+	public void setSupportedValues(List<E> supportedValues) {
+		this.supportedValues.clear();
+		this.supportedValues.addAll(supportedValues);
 	}
 
 	/**
