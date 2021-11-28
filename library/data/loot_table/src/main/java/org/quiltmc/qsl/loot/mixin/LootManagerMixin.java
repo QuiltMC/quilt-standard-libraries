@@ -47,7 +47,7 @@ public class LootManagerMixin {
 		Map<Identifier, LootTable> newTables = new Object2ObjectOpenHashMap<>();
 
 		tables.forEach((id, table) -> {
-			QuiltLootTableBuilder builder = QuiltLootTableBuilder.of(table);
+			QuiltLootTableBuilder builder = QuiltLootTableBuilder.copyOf(table);
 
 			LootTableLoadingCallback.EVENT.invoker().onLootTableLoading(
 					LootTableLoadingCallback.Context.create(manager, (LootManager) (Object) this, id, builder,

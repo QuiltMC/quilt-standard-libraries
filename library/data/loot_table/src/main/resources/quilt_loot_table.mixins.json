@@ -4,11 +4,10 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "LootManagerMixin",
-    "LootPoolBuilderHooks",
-    "LootPoolEntryTypesAccessor",
-    "LootPoolMixin",
-    "LootTableBuilderHooks",
-    "LootTableMixin"
+    "LootPoolAccessor",
+    "LootPoolBuilderAccessor",
+    "LootTableAccessor",
+    "LootTableBuilderAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

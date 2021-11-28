@@ -26,9 +26,10 @@ import net.minecraft.loot.LootPool;
 import net.minecraft.loot.condition.LootCondition;
 import net.minecraft.loot.entry.LootPoolEntry;
 import net.minecraft.loot.function.LootFunction;
+import net.minecraft.loot.provider.number.LootNumberProvider;
 
 @Mixin(LootPool.Builder.class)
-public interface LootPoolBuilderHooks {
+public interface LootPoolBuilderAccessor {
 	@Accessor
 	List<LootPoolEntry> getEntries();
 
@@ -37,4 +38,7 @@ public interface LootPoolBuilderHooks {
 
 	@Accessor
 	List<LootFunction> getFunctions();
+
+	@Accessor
+	void setBonusRollsRange(LootNumberProvider bonusRollsRange);
 }

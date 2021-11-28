@@ -32,12 +32,13 @@ import net.minecraft.loot.condition.LootCondition;
 import net.minecraft.loot.condition.SurvivesExplosionLootCondition;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.entry.LootPoolEntry;
+import net.minecraft.loot.entry.LootPoolEntryType;
 import net.minecraft.loot.entry.TagEntry;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
+import net.minecraft.util.registry.Registry;
 
-import org.quiltmc.qsl.loot.api.LootEntryTypeRegistry;
 import org.quiltmc.qsl.loot.api.QuiltLootPoolBuilder;
 import org.quiltmc.qsl.loot.api.QuiltLootTableBuilder;
 import org.quiltmc.qsl.loot.api.event.LootTableLoadingCallback;
@@ -51,7 +52,7 @@ public class LootTableTestMod implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		// Test loot entry
-		LootEntryTypeRegistry.INSTANCE.register(new Identifier("quilt", "extended_tag"), new TestSerializer());
+		Registry.register(Registry.LOOT_POOL_ENTRY_TYPE, new Identifier("quilt", "extended_tag"), new LootPoolEntryType(new TestSerializer()));
 
 		// Test loot table load event
 		LootTableLoadingCallback.EVENT.register((context) -> {
@@ -62,13 +63,13 @@ public class LootTableTestMod implements ModInitializer {
 				LootPoolEntry entryFromString = LOOT_GSON.fromJson(LOOT_ENTRY_JSON, LootPoolEntry.class);
 
 				LootPool pool = QuiltLootPoolBuilder.builder()
-						.withEntry(ItemEntry.builder(Items.FEATHER).build())
-						.withEntry(entryFromString)
+						.with(ItemEntry.builder(Items.FEATHER).build())
+						.with(entryFromString)
 						.rolls(ConstantLootNumberProvider.create(1))
-						.withCondition(SurvivesExplosionLootCondition.builder().build())
+						.conditionally(SurvivesExplosionLootCondition.builder().build())
 						.build();
 
-				table.withPool(pool);
+				table.pool(pool);
 			}
 		});
 	}

@@ -24,7 +24,7 @@ import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContextType;
 import net.minecraft.loot.function.LootFunction;
 
-import org.quiltmc.qsl.loot.mixin.LootTableBuilderHooks;
+import org.quiltmc.qsl.loot.mixin.LootTableBuilderAccessor;
 
 /**
  * Quilt's version of {@link net.minecraft.loot.LootTable.Builder}. Adds additional methods and
@@ -32,18 +32,15 @@ import org.quiltmc.qsl.loot.mixin.LootTableBuilderHooks;
  *
  * <p>To create a new instance of this class, use {@link #builder()}.
  *
- * @see #copyFrom(LootTable)
- * @see #copyFrom(LootTable, boolean)
+ * @see #copyOf(LootTable)
  */
 public class QuiltLootTableBuilder extends LootTable.Builder {
-	private final LootTableBuilderHooks extended = (LootTableBuilderHooks) this;
+	private final LootTableBuilderAccessor access = (LootTableBuilderAccessor) this;
 
 	private QuiltLootTableBuilder() {
 	}
 
-	private QuiltLootTableBuilder(LootTable table) {
-		copyFrom(table, true);
-	}
+	// Vanilla overrides
 
 	@Override
 	public QuiltLootTableBuilder pool(LootPool.Builder pool) {
@@ -63,55 +60,74 @@ public class QuiltLootTableBuilder extends LootTable.Builder {
 		return this;
 	}
 
-	public QuiltLootTableBuilder withPool(LootPool pool) {
-		extended.getPools().add(pool);
-		return this;
-	}
+	// Additional methods
 
-	public QuiltLootTableBuilder withFunction(LootFunction function) {
-		extended.getFunctions().add(function);
-		return this;
-	}
-
-	public QuiltLootTableBuilder withPools(Collection<LootPool> pools) {
-		pools.forEach(this::withPool);
-		return this;
-	}
-
-	public QuiltLootTableBuilder withFunctions(Collection<LootFunction> functions) {
-		functions.forEach(this::withFunction);
+	/**
+	 * Adds a pool to this builder.
+	 *
+	 * @param pool the pool to add
+	 * @return this builder
+	 */
+	public QuiltLootTableBuilder pool(LootPool pool) {
+		access.getPools().add(pool);
 		return this;
 	}
 
 	/**
-	 * Copies the pools and functions of the {@code table} to this builder.
-	 * This is equal to {@code copyFrom(table, false)}.
+	 * Adds pools to this builder.
+	 *
+	 * @param pools the pools to add
+	 * @return this builder
 	 */
-	public QuiltLootTableBuilder copyFrom(LootTable table) {
-		return copyFrom(table, false);
-	}
-
-	/**
-	 * Copies the pools and functions of the {@code table} to this builder.
-	 * If {@code copyType} is true, the {@link QuiltLootTable#getType type} of the table is also copied.
-	 */
-	public QuiltLootTableBuilder copyFrom(LootTable table, boolean copyType) {
-		QuiltLootTable extendedTable = (QuiltLootTable) table;
-		extended.getPools().addAll(extendedTable.getPools());
-		extended.getFunctions().addAll(extendedTable.getFunctions());
-
-		if (copyType) {
-			type(extendedTable.getType());
-		}
-
+	public QuiltLootTableBuilder pools(Collection<? extends LootPool> pools) {
+		access.getPools().addAll(pools);
 		return this;
 	}
 
+	/**
+	 * Applies a function to this builder.
+	 *
+	 * @param function the function to apply
+	 * @return this builder
+	 */
+	public QuiltLootTableBuilder apply(LootFunction function) {
+		access.getFunctions().add(function);
+		return this;
+	}
+
+	/**
+	 * Applies functions to this builder.
+	 *
+	 * @param functions the functions to apply
+	 * @return this builder
+	 */
+	public QuiltLootTableBuilder apply(Collection<? extends LootFunction> functions) {
+		access.getFunctions().addAll(functions);
+		return this;
+	}
+
+	/**
+	 * Creates an empty loot table builder.
+	 *
+	 * @return the created builder
+	 */
 	public static QuiltLootTableBuilder builder() {
 		return new QuiltLootTableBuilder();
 	}
 
-	public static QuiltLootTableBuilder of(LootTable table) {
-		return new QuiltLootTableBuilder(table);
+	/**
+	 * Creates a builder copy of the given loot table.
+	 *
+	 * @param table the table to copy
+	 * @return the copied builder
+	 */
+	public static QuiltLootTableBuilder copyOf(LootTable table) {
+		QuiltLootTableBuilder builder = new QuiltLootTableBuilder();
+
+		builder.type(table.getType());
+		builder.pools(QuiltLootTables.getPools(table));
+		builder.apply(QuiltLootTables.getFunctions(table));
+
+		return builder;
 	}
 }

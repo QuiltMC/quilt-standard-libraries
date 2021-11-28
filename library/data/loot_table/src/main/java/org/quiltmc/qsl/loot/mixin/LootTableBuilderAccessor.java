@@ -15,31 +15,22 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.loot.api;
+package org.quiltmc.qsl.loot.mixin;
 
 import java.util.List;
 
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
+
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
-import net.minecraft.loot.context.LootContextType;
 import net.minecraft.loot.function.LootFunction;
 
-/**
- * Interface implemented by all {@link net.minecraft.loot.LootTable} instances when QSL is present.
- *
- * <p>Contains accessors for various fields.
- *
- * @see	QuiltLootPoolBuilder
- * @see #cast(LootTable)
- */
-public interface QuiltLootTable {
+@Mixin(LootTable.Builder.class)
+public interface LootTableBuilderAccessor {
+	@Accessor
 	List<LootPool> getPools();
 
+	@Accessor
 	List<LootFunction> getFunctions();
-
-	LootContextType getType();
-
-	static QuiltLootTable cast(LootTable table) {
-		return (QuiltLootTable) table;
-	}
 }

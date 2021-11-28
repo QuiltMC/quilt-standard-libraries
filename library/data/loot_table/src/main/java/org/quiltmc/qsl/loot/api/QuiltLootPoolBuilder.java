@@ -17,13 +17,15 @@
 
 package org.quiltmc.qsl.loot.api;
 
+import java.util.Collection;
+
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.condition.LootCondition;
 import net.minecraft.loot.entry.LootPoolEntry;
 import net.minecraft.loot.function.LootFunction;
 import net.minecraft.loot.provider.number.LootNumberProvider;
 
-import org.quiltmc.qsl.loot.mixin.LootPoolBuilderHooks;
+import org.quiltmc.qsl.loot.mixin.LootPoolBuilderAccessor;
 
 /**
  * Quilt's version of {@link net.minecraft.loot.LootPool.Builder}. Adds additional methods and
@@ -31,18 +33,15 @@ import org.quiltmc.qsl.loot.mixin.LootPoolBuilderHooks;
  *
  * <p>To create a new instance of this class, use {@link #builder()}.
  *
- * @see #copyFrom(LootPool)
- * @see #copyFrom(LootPool, boolean)
+ * @see #copyOf(LootPool)
  */
 public class QuiltLootPoolBuilder extends LootPool.Builder {
-	private final LootPoolBuilderHooks extended = (LootPoolBuilderHooks) this;
+	private final LootPoolBuilderAccessor access = (LootPoolBuilderAccessor) this;
 
 	private QuiltLootPoolBuilder() {
 	}
 
-	private QuiltLootPoolBuilder(LootPool pool) {
-		copyFrom(pool, true);
-	}
+	// Vanilla overrides
 
 	@Override
 	public QuiltLootPoolBuilder rolls(LootNumberProvider rolls) {
@@ -68,55 +67,110 @@ public class QuiltLootPoolBuilder extends LootPool.Builder {
 		return this;
 	}
 
-	public QuiltLootPoolBuilder withEntry(LootPoolEntry entry) {
-		extended.getEntries().add(entry);
-		return this;
-	}
+	// Additional methods
 
-	public QuiltLootPoolBuilder withCondition(LootCondition condition) {
-		extended.getConditions().add(condition);
-		return this;
-	}
-
-	public QuiltLootPoolBuilder withFunction(LootFunction function) {
-		extended.getFunctions().add(function);
+	/**
+	 * Adds an entry to this builder.
+	 *
+	 * @param entry the entry to add
+	 * @return this builder
+	 */
+	public QuiltLootPoolBuilder with(LootPoolEntry entry) {
+		access.getEntries().add(entry);
 		return this;
 	}
 
 	/**
-	 * Copies the entries, conditions and functions of the {@code pool} to this
-	 * builder.
+	 * Adds entries to this builder.
 	 *
-	 * <p>This is equal to {@code copyFrom(pool, false)}.
+	 * @param entries the entries to add
+	 * @return this builder
 	 */
-	public QuiltLootPoolBuilder copyFrom(LootPool pool) {
-		return copyFrom(pool, false);
-	}
-
-	/**
-	 * Copies the entries, conditions and functions of the {@code pool} to this
-	 * builder.
-	 *
-	 * <p>If {@code copyRolls} is true, the {@link QuiltLootPool#getRolls rolls} of the pool are also copied.
-	 */
-	public QuiltLootPoolBuilder copyFrom(LootPool pool, boolean copyRolls) {
-		QuiltLootPool extendedPool = (QuiltLootPool) pool;
-		extended.getConditions().addAll(extendedPool.getConditions());
-		extended.getFunctions().addAll(extendedPool.getFunctions());
-		extended.getEntries().addAll(extendedPool.getEntries());
-
-		if (copyRolls) {
-			rolls(extendedPool.getRolls());
-		}
-
+	public QuiltLootPoolBuilder with(Collection<? extends LootPoolEntry> entries) {
+		access.getEntries().addAll(entries);
 		return this;
 	}
 
+	/**
+	 * Adds a condition to this builder.
+	 *
+	 * @param condition the condition to add
+	 * @return this builder
+	 */
+	public QuiltLootPoolBuilder conditionally(LootCondition condition) {
+		access.getConditions().add(condition);
+		return this;
+	}
+
+	/**
+	 * Adds conditions to this builder.
+	 *
+	 * @param conditions the conditions to add
+	 * @return this builder
+	 */
+	public QuiltLootPoolBuilder conditionally(Collection<? extends LootCondition> conditions) {
+		access.getConditions().addAll(conditions);
+		return this;
+	}
+
+	/**
+	 * Applies a function to this builder.
+	 *
+	 * @param function the function to apply
+	 * @return this builder
+	 */
+	public QuiltLootPoolBuilder apply(LootFunction function) {
+		access.getFunctions().add(function);
+		return this;
+	}
+
+	/**
+	 * Applies functions to this builder.
+	 *
+	 * @param functions the functions to apply
+	 * @return this builder
+	 */
+	public QuiltLootPoolBuilder apply(Collection<? extends LootFunction> functions) {
+		access.getFunctions().addAll(functions);
+		return this;
+	}
+
+	/**
+	 * Sets the bonus rolls of this builder.
+	 *
+	 * @param bonusRolls the bonus rolls range
+	 * @return this builder
+	 * @see QuiltLootPools#getBonusRolls(LootPool)
+	 */
+	public QuiltLootPoolBuilder bonusRolls(LootNumberProvider bonusRolls) {
+		access.setBonusRollsRange(bonusRolls);
+		return this;
+	}
+
+	/**
+	 * Creates an empty loot pool builder.
+	 *
+	 * @return the created builder
+	 */
 	public static QuiltLootPoolBuilder builder() {
 		return new QuiltLootPoolBuilder();
 	}
 
-	public static QuiltLootPoolBuilder of(LootPool pool) {
-		return new QuiltLootPoolBuilder(pool);
+	/**
+	 * Creates a builder copy of the given loot pool.
+	 *
+	 * @param pool the pool to copy
+	 * @return the copied builder
+	 */
+	public static QuiltLootPoolBuilder copyOf(LootPool pool) {
+		QuiltLootPoolBuilder builder = new QuiltLootPoolBuilder();
+
+		builder.rolls(QuiltLootPools.getRolls(pool));
+		builder.bonusRolls(QuiltLootPools.getBonusRolls(pool));
+		builder.with(QuiltLootPools.getEntries(pool));
+		builder.conditionally(QuiltLootPools.getConditions(pool));
+		builder.apply(QuiltLootPools.getFunctions(pool));
+
+		return builder;
 	}
 }
