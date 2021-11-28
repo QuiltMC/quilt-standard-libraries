@@ -20,6 +20,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.util.Identifier;
+
+import org.quiltmc.qsl.base.api.event.Event;
+
 @ApiStatus.Internal
 public final class QuiltBaseImpl {
 	public static final Logger LOGGER = LogManager.getLogger("quilt_base");
@@ -32,6 +36,16 @@ public final class QuiltBaseImpl {
 
 	private QuiltBaseImpl() {
 		throw new UnsupportedOperationException("QuiltBaseImpl only contains static definitions.");
+	}
+
+	public static void ensureContainsDefaultPhase(Identifier[] defaultPhases) {
+		for (var id : defaultPhases) {
+			if (id.equals(Event.DEFAULT_PHASE)) {
+				return;
+			}
+		}
+
+		throw new IllegalArgumentException("The event phases must contain Event.DEFAULT_PHASE.");
 	}
 
 	static {
