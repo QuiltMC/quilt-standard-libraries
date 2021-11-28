@@ -30,7 +30,7 @@ import java.util.function.Function;
 
 import net.minecraft.util.Identifier;
 
-import org.quiltmc.qsl.base.api.util.QuiltUtil;
+import org.quiltmc.qsl.base.api.util.QuiltAssertions;
 import org.quiltmc.qsl.base.impl.QuiltBaseImpl;
 import org.quiltmc.qsl.base.impl.event.EventPhaseData;
 import org.quiltmc.qsl.base.impl.event.PhaseSorting;
@@ -175,7 +175,7 @@ public final class Event<T> {
 	 */
 	public static <T> Event<T> createWithPhases(Class<? super T> type, Function<T[], T> implementation, Identifier... defaultPhases) {
 		QuiltBaseImpl.ensureContainsDefaultPhase(defaultPhases);
-		QuiltUtil.ensureNoDuplicates(defaultPhases, id -> new IllegalArgumentException("Duplicate event phase: " + id));
+		QuiltAssertions.ensureNoDuplicates(defaultPhases, id -> new IllegalArgumentException("Duplicate event phase: " + id));
 
 		var event = create(type, implementation);
 

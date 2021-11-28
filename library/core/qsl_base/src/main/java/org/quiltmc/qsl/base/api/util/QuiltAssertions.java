@@ -19,11 +19,11 @@ package org.quiltmc.qsl.base.api.util;
 import java.util.function.Function;
 
 /**
- * A set of various utilities.
+ * A set of various assertion utilities.
  */
-public final class QuiltUtil {
-	private QuiltUtil() {
-		throw new UnsupportedOperationException("QslUtil only contains static-definitions.");
+public final class QuiltAssertions {
+	private QuiltAssertions() {
+		throw new UnsupportedOperationException("QuiltAssertions only contains static-definitions.");
 	}
 
 	/**
