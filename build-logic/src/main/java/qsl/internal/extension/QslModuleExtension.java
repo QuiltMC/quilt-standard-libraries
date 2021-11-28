@@ -20,6 +20,7 @@ import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.tasks.Input;
 import qsl.internal.GroovyXml;
+import qsl.internal.Versions;
 import qsl.internal.json.ModJsonObject;
 import qsl.internal.license.LicenseHeader;
 import qsl.internal.task.ApplyLicenseTask;
@@ -70,7 +71,8 @@ public class QslModuleExtension {
 	}
 
 	public void setVersion(String version) {
-		this.project.setVersion(version + (System.getenv("SNAPSHOTS_URL") != null ? "-SNAPSHOT" : ""));
+		this.project.setVersion(version + '+' + Versions.getMinecraftVersionFancyString()
+				+ (System.getenv("SNAPSHOTS_URL") != null ? "-SNAPSHOT" : ""));
 	}
 
 	private Dependency getCoreModule(String module) {

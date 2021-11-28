@@ -19,6 +19,8 @@ package org.quiltmc.qsl.resource.loader.mixin.client;
 import java.io.File;
 import java.util.function.Consumer;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -35,6 +37,7 @@ import net.minecraft.resource.ResourcePackProfile;
 import org.quiltmc.qsl.resource.loader.impl.ModResourcePackProvider;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
+@Environment(EnvType.CLIENT)
 @Mixin(ClientBuiltinResourcePackProvider.class)
 public class ClientBuiltinResourcePackProviderMixin {
 	@Inject(method = "register", at = @At("RETURN"))

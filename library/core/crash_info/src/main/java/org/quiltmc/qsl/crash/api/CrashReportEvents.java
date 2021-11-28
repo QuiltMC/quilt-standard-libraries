@@ -29,7 +29,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.HeightLimitView;
 import net.minecraft.world.World;
 
-import org.quiltmc.qsl.base.api.event.ArrayEvent;
+import org.quiltmc.qsl.base.api.event.Event;
 
 /**
  * Events which allow the manipulation of crash reports.
@@ -43,7 +43,7 @@ public final class CrashReportEvents {
 	 *
 	 * <p>This section is added to all crashes.
 	 */
-	public static final ArrayEvent<SystemDetails> SYSTEM_DETAILS = ArrayEvent.create(SystemDetails.class, callbacks -> details -> {
+	public static final Event<SystemDetails> SYSTEM_DETAILS = Event.create(SystemDetails.class, callbacks -> details -> {
 		for (var callback : callbacks) {
 			callback.addDetails(details);
 		}
@@ -54,7 +54,7 @@ public final class CrashReportEvents {
 	 *
 	 * <p>This section is added to all crashes caused by something in-world.
 	 */
-	public static final ArrayEvent<WorldDetails> WORLD_DETAILS = ArrayEvent.create(WorldDetails.class, callbacks -> (world, section) -> {
+	public static final Event<WorldDetails> WORLD_DETAILS = Event.create(WorldDetails.class, callbacks -> (world, section) -> {
 		for (var callback : callbacks) {
 			callback.addDetails(world, section);
 		}
@@ -66,7 +66,7 @@ public final class CrashReportEvents {
 	 * <p>This is used as its own section if a block tick causes the crash, or is appended to a block entity section if
 	 * a block entity causes a crash.
 	 */
-	public static final ArrayEvent<BlockDetails> BLOCK_DETAILS = ArrayEvent.create(BlockDetails.class, callbacks -> (world, pos, state, section) -> {
+	public static final Event<BlockDetails> BLOCK_DETAILS = Event.create(BlockDetails.class, callbacks -> (world, pos, state, section) -> {
 		for (var callback : callbacks) {
 			callback.addDetails(world, pos, state, section);
 		}
@@ -77,7 +77,7 @@ public final class CrashReportEvents {
 	 *
 	 * <p>This section is added to crashes caused by ticking or rendering an entity.
 	 */
-	public static final ArrayEvent<EntityDetails> ENTITY_DETAILS = ArrayEvent.create(EntityDetails.class, callbacks -> (entity, section) -> {
+	public static final Event<EntityDetails> ENTITY_DETAILS = Event.create(EntityDetails.class, callbacks -> (entity, section) -> {
 		for (var callback : callbacks) {
 			callback.addDetails(entity, section);
 		}
@@ -88,7 +88,7 @@ public final class CrashReportEvents {
 	 *
 	 * <p>This section is added to crashes caused by ticking or rendering a block entity.
 	 */
-	public static final ArrayEvent<BlockEntityDetails> BLOCKENTITY_DETAILS = ArrayEvent.create(BlockEntityDetails.class, callbacks -> (blockEntity, section) -> {
+	public static final Event<BlockEntityDetails> BLOCKENTITY_DETAILS = Event.create(BlockEntityDetails.class, callbacks -> (blockEntity, section) -> {
 		for (var callback : callbacks) {
 			callback.addDetails(blockEntity, section);
 		}
@@ -99,7 +99,7 @@ public final class CrashReportEvents {
 	 *
 	 * <p>This can be used for adding new sections, with {@link CrashReport#addElement(String)}.
 	 */
-	public static final ArrayEvent<CrashReportCreation> CRASH_REPORT_CREATION = ArrayEvent.create(CrashReportCreation.class, callbacks -> report -> {
+	public static final Event<CrashReportCreation> CRASH_REPORT_CREATION = Event.create(CrashReportCreation.class, callbacks -> report -> {
 		for (var callback : callbacks) {
 			callback.onCreate(report);
 		}

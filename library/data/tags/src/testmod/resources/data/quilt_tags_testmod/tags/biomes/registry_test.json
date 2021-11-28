@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:plains",
+    "minecraft:desert",
+    "quilt_tags_testmod:test"
+  ]
+}

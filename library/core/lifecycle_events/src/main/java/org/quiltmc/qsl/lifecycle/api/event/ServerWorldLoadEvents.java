@@ -16,10 +16,10 @@
 
 package org.quiltmc.qsl.lifecycle.api.event;
 
-import org.quiltmc.qsl.base.api.event.ArrayEvent;
-
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
+
+import org.quiltmc.qsl.base.api.event.Event;
 
 /**
  * Events indicating whether a world has been loaded or unloaded from a server.
@@ -34,7 +34,7 @@ public final class ServerWorldLoadEvents {
 	 * <p>This event is typically executed at server initialization, but may be called at any time if any mods dynamically
 	 * load worlds. Mods which wish to add worlds while the server are running are expected to execute this event.
 	 */
-	public static final ArrayEvent<Load> LOAD = ArrayEvent.create(Load.class, callbacks -> (server, world) -> {
+	public static final Event<Load> LOAD = Event.create(Load.class, callbacks -> (server, world) -> {
 		for (var callback : callbacks) {
 			callback.loadWorld(server, world);
 		}
@@ -46,16 +46,18 @@ public final class ServerWorldLoadEvents {
 	 * <p>This event is typically executed at server shutdown, but may be called at any time if any mods dynamically
 	 * unload worlds. Mods which wish to remove worlds while the server are running are expected to execute this event.
 	 */
-	public static final ArrayEvent<Unload> UNLOAD = ArrayEvent.create(Unload.class, callbacks -> ((server, world) -> {
+	public static final Event<Unload> UNLOAD = Event.create(Unload.class, callbacks -> ((server, world) -> {
 		for (var callback : callbacks) {
 			callback.unloadWorld(server, world);
 		}
 	}));
 
-	private ServerWorldLoadEvents() {}
+	private ServerWorldLoadEvents() {
+	}
 
 	/**
 	 * Functional interface to be implemented on callbacks for {@link #LOAD}.
+	 *
 	 * @see #LOAD
 	 */
 	@FunctionalInterface
@@ -66,13 +68,14 @@ public final class ServerWorldLoadEvents {
 		 * <p>Mods which maintain per world state may use this event to initialize any required state for this world.
 		 *
 		 * @param server the server the world belongs to
-		 * @param world the world that was loaded
+		 * @param world  the world that was loaded
 		 */
 		void loadWorld(MinecraftServer server, ServerWorld world);
 	}
 
 	/**
 	 * Functional interface to be implemented on callbacks for {@link #UNLOAD}.
+	 *
 	 * @see #UNLOAD
 	 */
 	@FunctionalInterface
@@ -83,7 +86,7 @@ public final class ServerWorldLoadEvents {
 		 * <p>Mods which maintain per world state should save and clean up any state they have attached to the world.
 		 *
 		 * @param server the server the world was unloaded from
-		 * @param world the world which was unloaded
+		 * @param world  the world which was unloaded
 		 */
 		void unloadWorld(MinecraftServer server, ServerWorld world);
 	}

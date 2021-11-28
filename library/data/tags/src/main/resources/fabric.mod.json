@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "quilt_tags",
+  "name": "Quilt Tags API",
+  "version": "${version}",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "icon": "assets/quilt_tags/icon.png",
+  "contact": {
+    "homepage": "https://quiltmc.org",
+    "issues": "https://github.com/QuiltMC/quilt-standard-libraries/issues",
+    "sources": "https://github.com/QuiltMC/quilt-standard-libraries"
+  },
+  "authors": [
+    "QuiltMC"
+  ],
+  "depends": {
+    "fabricloader": ">=0.12",
+    "quilt_resource_loader": "*"
+  },
+  "description": "Tags loading and management.",
+  "entrypoints": {
+    "client": [
+      "org.quiltmc.qsl.tag.impl.client.ClientQuiltTagsMod"
+    ]
+  },
+  "accessWidener": "quilt_tags.accesswidener",
+  "mixins": [
+    "quilt_tags.mixins.json"
+  ]
+}

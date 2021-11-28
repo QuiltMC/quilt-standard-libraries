@@ -18,6 +18,8 @@ package org.quiltmc.qsl.resource.loader.mixin.client;
 
 import java.util.ArrayList;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
@@ -30,6 +32,7 @@ import net.minecraft.resource.ResourcePackProfile;
 import org.quiltmc.qsl.resource.loader.impl.ModNioResourcePack;
 import org.quiltmc.qsl.resource.loader.impl.ModResourcePackProvider;
 
+@Environment(EnvType.CLIENT)
 @Mixin(CreateWorldScreen.class)
 public class CreateWorldScreenMixin {
 	@ModifyArg(
