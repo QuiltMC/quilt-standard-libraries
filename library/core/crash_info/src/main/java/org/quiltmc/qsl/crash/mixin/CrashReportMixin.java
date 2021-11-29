@@ -16,26 +16,17 @@
 
 package org.quiltmc.qsl.crash.mixin;
 
-import net.minecraft.util.SystemDetails;
+import net.minecraft.util.crash.CrashReport;
 import org.quiltmc.qsl.crash.api.CrashReportEvents;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.function.Supplier;
-
-@Mixin(SystemDetails.class)
-abstract class SystemDetailsMixin {
-	@Shadow
-	public abstract void addSection(String name, Supplier<String> valueSupplier);
-
-	/**
-	 * Adds a section to the system details listing all Quilt mods which are present.
-	 */
-	@Inject(method = "<init>", at = @At("TAIL"))
-	private void addQuiltMods(CallbackInfo info) {
-		CrashReportEvents.SYSTEM_DETAILS.invoker().addDetails((SystemDetails) (Object) this);
+@Mixin(CrashReport.class)
+public abstract class CrashReportMixin {
+	@Inject(method = "addStackTrace", at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
+	void onCrashReportCreated(StringBuilder crashReportBuilder, CallbackInfo ci) {
+		CrashReportEvents.CRASH_REPORT_CREATION.invoker().onCreate((CrashReport) (Object) this);
 	}
 }

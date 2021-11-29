@@ -16,26 +16,18 @@
 
 package org.quiltmc.qsl.crash.mixin;
 
-import net.minecraft.util.SystemDetails;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.crash.CrashReportSection;
 import org.quiltmc.qsl.crash.api.CrashReportEvents;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.function.Supplier;
-
-@Mixin(SystemDetails.class)
-abstract class SystemDetailsMixin {
-	@Shadow
-	public abstract void addSection(String name, Supplier<String> valueSupplier);
-
-	/**
-	 * Adds a section to the system details listing all Quilt mods which are present.
-	 */
-	@Inject(method = "<init>", at = @At("TAIL"))
-	private void addQuiltMods(CallbackInfo info) {
-		CrashReportEvents.SYSTEM_DETAILS.invoker().addDetails((SystemDetails) (Object) this);
+@Mixin(BlockEntity.class)
+public abstract class BlockEntityMixin {
+	@Inject(method = "populateCrashReport", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/util/crash/CrashReportSection;add(Ljava/lang/String;Lnet/minecraft/util/crash/CrashCallable;)Lnet/minecraft/util/crash/CrashReportSection;"))
+	void addCrashReportDetails(CrashReportSection section, CallbackInfo ci) {
+		CrashReportEvents.BLOCKENTITY_DETAILS.invoker().addDetails((BlockEntity) (Object) this, section);
 	}
 }
