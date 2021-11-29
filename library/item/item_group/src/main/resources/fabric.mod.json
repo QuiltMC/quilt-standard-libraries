@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "id": "qsl_item_item_group",
+  "id": "qsl_items_item_group",
   "name": "Quilt Item Group API",
   "version": "${version}",
   "environment": "*",
   "license": "Apache-2.0",
-  "icon": "assets/quilt_resource_loader/icon.png",
+  "icon": "assets/qsl_item_group/icon.png",
   "contact": {
     "homepage": "https://quiltmc.org",
     "issues": "https://github.com/QuiltMC/quilt-standard-libraries/issues",

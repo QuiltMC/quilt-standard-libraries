@@ -27,7 +27,7 @@ import net.minecraft.util.registry.Registry;
 import net.fabricmc.api.ModInitializer;
 
 public class ItemGroupTest implements ModInitializer {
-	public static final String NAMESPACE = "qsl_items_item_group_testmod";
+	public static final String NAMESPACE = "qsl_item_group_testmod";
 	// Adds an item group with all items in it
 	private static final ItemGroup SUPPLIER_ITEM_GROUP = QuiltItemGroup.builder(new Identifier(NAMESPACE, "test_supplied_group"))
 			.icon(() -> new ItemStack(Items.STONE))
