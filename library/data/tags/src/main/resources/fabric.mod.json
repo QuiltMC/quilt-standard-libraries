@@ -36,7 +36,7 @@
       "parent": {
         "id": "qsl",
         "name": "Quilt Standard Libraries",
-        "description": "A set of libraries to assist in making Quilt mods. ",
+        "description": "A set of libraries to assist in making Quilt mods.",
         "icon": "assets/quilt_tags/icon.png",
         "badges": [
           "library"
