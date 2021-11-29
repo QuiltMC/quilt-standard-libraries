@@ -1,4 +1,5 @@
 /*
+ * Copyright 2016, 2017, 2018, 2019 FabricMC
  * Copyright 2021 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -63,7 +64,7 @@ public final class QuiltCreativePlayerInventoryScreenWidgets {
 			this.active = extensions.quilt$isButtonEnabled(type);
 
 			if (this.visible) {
-				int u = active && this.isHovered() ? 22 : 0;
+				int u = active && this.hovered ? 22 : 0;
 				int v = active ? 0 : 10;
 
 				RenderSystem.setShaderTexture(0, BUTTON_TEXTURE);
