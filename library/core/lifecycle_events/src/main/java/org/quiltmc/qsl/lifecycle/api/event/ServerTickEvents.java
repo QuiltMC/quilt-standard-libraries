@@ -16,9 +16,9 @@
 
 package org.quiltmc.qsl.lifecycle.api.event;
 
-import org.quiltmc.qsl.base.api.event.ArrayEvent;
-
 import net.minecraft.server.MinecraftServer;
+
+import org.quiltmc.qsl.base.api.event.Event;
 
 /**
  * Events indicating progress through the tick loop of a Minecraft server.
@@ -27,7 +27,7 @@ import net.minecraft.server.MinecraftServer;
  * server.
  *
  * <h2>A note of warning</h2>
- *
+ * <p>
  * Callbacks registered to any of these events should ensure as little time as possible is spent executing, since the tick
  * loop is a very hot code path.
  */
@@ -35,7 +35,7 @@ public final class ServerTickEvents {
 	/**
 	 * An event indicating an iteration of the server's tick loop will start.
 	 */
-	public static final ArrayEvent<Start> START = ArrayEvent.create(Start.class, callbacks -> server -> {
+	public static final Event<Start> START = Event.create(Start.class, callbacks -> server -> {
 		for (var callback : callbacks) {
 			callback.startServerTick(server);
 		}
@@ -47,16 +47,18 @@ public final class ServerTickEvents {
 	 * <p>Since there will be a time gap before the next tick, this is a great spot to run any asynchronous operations
 	 * for the next tick.
 	 */
-	public static final ArrayEvent<End> END = ArrayEvent.create(End.class, callbacks -> server -> {
+	public static final Event<End> END = Event.create(End.class, callbacks -> server -> {
 		for (var callback : callbacks) {
 			callback.endServerTick(server);
 		}
 	});
 
-	private ServerTickEvents() {}
+	private ServerTickEvents() {
+	}
 
 	/**
 	 * Functional interface to be implemented on callbacks for {@link #START}.
+	 *
 	 * @see #START
 	 */
 	@FunctionalInterface
@@ -71,6 +73,7 @@ public final class ServerTickEvents {
 
 	/**
 	 * Functional interface to be implemented on callbacks for {@link #END}.
+	 *
 	 * @see #END
 	 */
 	@FunctionalInterface
