@@ -16,18 +16,20 @@
 
 package org.quiltmc.qsl.crash.mixin;
 
-import net.minecraft.util.crash.CrashReport;
-import net.minecraft.util.crash.CrashReportSection;
-import net.minecraft.world.World;
-import org.quiltmc.qsl.crash.api.CrashReportEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import net.minecraft.util.crash.CrashReport;
+import net.minecraft.util.crash.CrashReportSection;
+import net.minecraft.world.World;
+
+import org.quiltmc.qsl.crash.api.CrashReportEvents;
 
 @Mixin(World.class)
 public abstract class WorldMixin {
+	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "addDetailsToCrashReport", at = @At("TAIL"))
 	void addCrashReportDetails(CrashReport report, CallbackInfoReturnable<CrashReportSection> cir) {
 		CrashReportEvents.WORLD_DETAILS.invoker().addDetails((World) (Object) this, cir.getReturnValue());

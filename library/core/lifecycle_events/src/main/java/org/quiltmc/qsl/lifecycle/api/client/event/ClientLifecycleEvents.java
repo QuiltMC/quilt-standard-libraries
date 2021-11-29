@@ -16,12 +16,12 @@
 
 package org.quiltmc.qsl.lifecycle.api.client.event;
 
-import org.quiltmc.qsl.base.api.event.ArrayEvent;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import net.minecraft.client.MinecraftClient;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import org.quiltmc.qsl.base.api.event.Event;
 
 /**
  * Events indicating the lifecycle of a Minecraft client.
@@ -39,7 +39,7 @@ public final class ClientLifecycleEvents {
 	 *
 	 * <p>It should be noted this event is executed while the splash screen is visible, not the main menu.
 	 */
-	public static final ArrayEvent<Ready> READY = ArrayEvent.create(Ready.class, callbacks -> client -> {
+	public static final Event<Ready> READY = Event.create(Ready.class, callbacks -> client -> {
 		for (var callback : callbacks) {
 			callback.readyClient(client);
 		}
@@ -52,7 +52,7 @@ public final class ClientLifecycleEvents {
 	 * was running an integrated server, the integrated server will be shut down. Finally, all client facilities are torn down.
 	 *
 	 * <h2>What should mods do when this event is executed?</h2>
-	 *
+	 * <p>
 	 * Mods which maintain session data when connected to a server should save that data here, as the client will still
 	 * have access to the connected server.
 	 *
@@ -60,7 +60,7 @@ public final class ClientLifecycleEvents {
 	 * {@link org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents#STOPPING ServerLifecycleEvents.STOPPING}
 	 * instead to clean up any data on the integrated server.
 	 */
-	public static final ArrayEvent<Stopping> STOPPING = ArrayEvent.create(Stopping.class, callbacks -> client -> {
+	public static final Event<Stopping> STOPPING = Event.create(Stopping.class, callbacks -> client -> {
 		for (var callback : callbacks) {
 			callback.stoppingClient(client);
 		}
@@ -71,16 +71,18 @@ public final class ClientLifecycleEvents {
 	 *
 	 * <p>The Java Virtual Machine will terminate after this event is executed.
 	 */
-	public static final ArrayEvent<Stopped> STOPPED = ArrayEvent.create(Stopped.class, callbacks -> client -> {
+	public static final Event<Stopped> STOPPED = Event.create(Stopped.class, callbacks -> client -> {
 		for (var callback : callbacks) {
 			callback.stoppedClient(client);
 		}
 	});
 
-	private ClientLifecycleEvents() {}
+	private ClientLifecycleEvents() {
+	}
 
 	/**
 	 * Functional interface to be implemented on callbacks for {@link #READY}.
+	 *
 	 * @see #READY
 	 */
 	@FunctionalInterface
@@ -98,6 +100,7 @@ public final class ClientLifecycleEvents {
 
 	/**
 	 * Functional interface to be implemented on callbacks for {@link #STOPPING}.
+	 *
 	 * @see #STOPPING
 	 */
 	@FunctionalInterface
@@ -113,6 +116,7 @@ public final class ClientLifecycleEvents {
 
 	/**
 	 * Functional interface to be implemented on callbacks for {@link #STOPPED}.
+	 *
 	 * @see #STOPPED
 	 */
 	@FunctionalInterface

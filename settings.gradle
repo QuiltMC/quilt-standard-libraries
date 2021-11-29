@@ -9,6 +9,15 @@ pluginManagement {
 			name = "Quilt"
 			url = "https://maven.quiltmc.org/repository/release"
 		}
+		// Note: temporary mavens until Quilt buildtools and loader are ready.
+		maven {
+			name = "Fabric"
+			url = "https://maven.fabricmc.net"
+		}
+		maven {
+			name = 'Cotton'
+			url = 'https://server.bbkr.space/artifactory/libs-release/'
+		}
 	}
 }
 

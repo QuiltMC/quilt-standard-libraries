@@ -16,9 +16,9 @@
 
 package org.quiltmc.qsl.lifecycle.api.event;
 
-import org.quiltmc.qsl.base.api.event.ArrayEvent;
-
 import net.minecraft.server.MinecraftServer;
+
+import org.quiltmc.qsl.base.api.event.Event;
 
 /**
  * Events indicating the lifecycle of a Minecraft server.
@@ -44,7 +44,7 @@ public final class ServerLifecycleEvents {
 	 * <p>This is the first event fired in the lifecycle of a Minecraft server. It should be noted at this point that
 	 * the server has no registered player manager, or worlds.
 	 */
-	public static final ArrayEvent<Starting> STARTING = ArrayEvent.create(Starting.class, callbacks -> server -> {
+	public static final Event<Starting> STARTING = Event.create(Starting.class, callbacks -> server -> {
 		for (var callback : callbacks) {
 			callback.startingServer(server);
 		}
@@ -58,7 +58,7 @@ public final class ServerLifecycleEvents {
 	 *
 	 * <p>After this event finishes, the server will tick for the first time.
 	 */
-	public static final ArrayEvent<Ready> READY = ArrayEvent.create(Ready.class, callbacks -> server -> {
+	public static final Event<Ready> READY = Event.create(Ready.class, callbacks -> server -> {
 		for (var callback : callbacks) {
 			callback.readyServer(server);
 		}
@@ -73,11 +73,11 @@ public final class ServerLifecycleEvents {
 	 * and players are still connected to the server.
 	 *
 	 * <h2>What should mods do when this event is executed</h2>
-	 *
+	 * <p>
 	 * Mods may do clean up work when this event is executed, such as shutting down any asynchronous executors,
 	 * databases and saving auxiliary mod data.
 	 */
-	public static final ArrayEvent<Stopping> STOPPING = ArrayEvent.create(Stopping.class, callbacks -> server -> {
+	public static final Event<Stopping> STOPPING = Event.create(Stopping.class, callbacks -> server -> {
 		for (var callback : callbacks) {
 			callback.stoppingServer(server);
 		}
@@ -96,21 +96,23 @@ public final class ServerLifecycleEvents {
 	 * </ul>
 	 *
 	 * <h2>What should mods do when this event is executed?</h2>
-	 *
+	 * <p>
 	 * Mods should stop referencing this Minecraft server or else the dead server will continue to be tracked on the
 	 * heap and will leak memory. Though this doesn't matter when the server is a dedicated server, it is good principle
 	 * to clean up references you no longer need regardless.
 	 */
-	public static final ArrayEvent<Stopped> STOPPED = ArrayEvent.create(Stopped.class, callbacks -> server -> {
+	public static final Event<Stopped> STOPPED = Event.create(Stopped.class, callbacks -> server -> {
 		for (var callback : callbacks) {
 			callback.exitServer(server);
 		}
 	});
 
-	private ServerLifecycleEvents() {}
+	private ServerLifecycleEvents() {
+	}
 
 	/**
 	 * Functional interface to be implemented on callbacks for {@link #STARTING}.
+	 *
 	 * @see #STARTING
 	 */
 	@FunctionalInterface
@@ -125,6 +127,7 @@ public final class ServerLifecycleEvents {
 
 	/**
 	 * Functional interface to be implemented on callbacks for {@link #READY}.
+	 *
 	 * @see #READY
 	 */
 	@FunctionalInterface
@@ -139,6 +142,7 @@ public final class ServerLifecycleEvents {
 
 	/**
 	 * Functional interface to be implemented on callbacks for {@link #STOPPING}.
+	 *
 	 * @see #STOPPING
 	 */
 	@FunctionalInterface
@@ -153,6 +157,7 @@ public final class ServerLifecycleEvents {
 
 	/**
 	 * Functional interface to be implemented on callbacks for {@link #STOPPED}.
+	 *
 	 * @see #STOPPED
 	 */
 	@FunctionalInterface

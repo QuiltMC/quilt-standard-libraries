@@ -6,7 +6,9 @@ import qsl.internal.Versions;
 
 plugins {
 	id("maven-publish")
-	id("org.quiltmc.loom")
+	id("fabric-loom")
+	id("org.quiltmc.quilt-mappings-on-loom")
+	id("io.github.juuxel.loom-quiltflower-mini")
 }
 
 def ENV = System.getenv()
@@ -39,17 +41,19 @@ publishing {
 
 dependencies {
 	minecraft "com.mojang:minecraft:${Versions.MINECRAFT_VERSION}"
-	mappings "org.quiltmc:yarn:${Versions.MINECRAFT_VERSION}+build.${Versions.YARN_BUILD}:v2"
+	mappings(loom.layered {
+		addLayer(quiltMappings.mappings("org.quiltmc:quilt-mappings:${Versions.MINECRAFT_VERSION}+build.${Versions.MAPPINGS_BUILD}:v2"))
+	})
 
-	modImplementation "org.quiltmc:quilt-loader:${Versions.LOADER_VERSION}"
+	modImplementation "net.fabricmc:fabric-loader:${Versions.LOADER_VERSION}"
 }
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"
-	it.options.release.set(16) // Minecraft is Java 16
+	it.options.release.set(17) // Minecraft is Java 17
 }
 
 loom {
 	// Upstream Loom breaks this so we can't have nice things until the quilt-gradle replacement
-	//shareCaches = true
+	//shareRemapCaches = true
 }

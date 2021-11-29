@@ -16,13 +16,15 @@
 
 package org.quiltmc.qsl.crash.mixin;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.util.crash.CrashReportSection;
-import org.quiltmc.qsl.crash.api.CrashReportEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.util.crash.CrashReportSection;
+
+import org.quiltmc.qsl.crash.api.CrashReportEvents;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin {

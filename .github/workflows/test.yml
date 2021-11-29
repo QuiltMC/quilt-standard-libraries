@@ -6,7 +6,7 @@ jobs:
     strategy:
       matrix:
         # Keep the matrix for when jdk 17 rc come out
-        java: [16]
+        java: [17]
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/setup-java@v2
@@ -15,11 +15,13 @@ jobs:
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v2
       - uses: gradle/wrapper-validation-action@v1
-      - run: ./gradlew check build publish --stacktrace
+      - run: ./gradlew check build publish --stacktrace --parallel
         env:
           SNAPSHOTS_URL: ${{ secrets.SNAPSHOTS_URL }}
           SNAPSHOTS_USERNAME: ${{ secrets.SNAPSHOTS_USERNAME }}
           SNAPSHOTS_PASSWORD: ${{ secrets.SNAPSHOTS_PASSWORD }}
+      - run: mkdir run && echo "eula=true" >> run/eula.txt
+      - run: ./gradlew :runAutoTestServer --stacktrace
       #- run: mkdir run && echo "eula=true" >> run/eula.txt
       #- run: ./gradlew :runAutoTestServer --stacktrace
       - uses: actions/upload-artifact@v2
