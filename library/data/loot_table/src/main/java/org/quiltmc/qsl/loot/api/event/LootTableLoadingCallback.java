@@ -35,19 +35,19 @@ public interface LootTableLoadingCallback {
 		public final ResourceManager resourceManager;
 		public final LootManager manager;
 		public final Identifier id;
-		public final QuiltLootTableBuilder table;
+		public final QuiltLootTableBuilder tableBuilder;
 		private final LootTableSetter setter;
 
-		private Context(ResourceManager resourceManager, LootManager manager, Identifier id, QuiltLootTableBuilder table, LootTableSetter setter) {
+		private Context(ResourceManager resourceManager, LootManager manager, Identifier id, QuiltLootTableBuilder tableBuilder, LootTableSetter setter) {
 			this.resourceManager = resourceManager;
 			this.manager = manager;
 			this.id = id;
-			this.table = table;
+			this.tableBuilder = tableBuilder;
 			this.setter = setter;
 		}
 
-		public static Context create(ResourceManager resourceManager, LootManager manager, Identifier id, QuiltLootTableBuilder table, LootTableSetter setter) {
-			return new Context(resourceManager, manager, id, table, setter);
+		public static Context create(ResourceManager resourceManager, LootManager manager, Identifier id, QuiltLootTableBuilder tableBuilder, LootTableSetter setter) {
+			return new Context(resourceManager, manager, id, tableBuilder, setter);
 		}
 
 		/**

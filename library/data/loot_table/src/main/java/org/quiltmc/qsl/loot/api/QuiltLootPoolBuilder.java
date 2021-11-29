@@ -50,6 +50,12 @@ public class QuiltLootPoolBuilder extends LootPool.Builder {
 	}
 
 	@Override
+	public LootPool.Builder bonusRolls(LootNumberProvider bonusRolls) {
+		super.bonusRolls(bonusRolls);
+		return this;
+	}
+
+	@Override
 	public QuiltLootPoolBuilder with(LootPoolEntry.Builder<?> entry) {
 		super.with(entry);
 		return this;
@@ -132,18 +138,6 @@ public class QuiltLootPoolBuilder extends LootPool.Builder {
 	 */
 	public QuiltLootPoolBuilder apply(Collection<? extends LootFunction> functions) {
 		access.getFunctions().addAll(functions);
-		return this;
-	}
-
-	/**
-	 * Sets the bonus rolls of this builder.
-	 *
-	 * @param bonusRolls the bonus rolls range
-	 * @return this builder
-	 * @see QuiltLootPools#getBonusRolls(LootPool)
-	 */
-	public QuiltLootPoolBuilder bonusRolls(LootNumberProvider bonusRolls) {
-		access.setBonusRollsRange(bonusRolls);
 		return this;
 	}
 

@@ -17,76 +17,59 @@
 
 package org.quiltmc.qsl.loot.test;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
 import net.fabricmc.api.ModInitializer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.Items;
-import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.LootPool;
-import net.minecraft.loot.condition.LootCondition;
 import net.minecraft.loot.condition.SurvivesExplosionLootCondition;
 import net.minecraft.loot.entry.ItemEntry;
-import net.minecraft.loot.entry.LootPoolEntry;
-import net.minecraft.loot.entry.LootPoolEntryType;
-import net.minecraft.loot.entry.TagEntry;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.loot.api.QuiltLootPoolBuilder;
 import org.quiltmc.qsl.loot.api.QuiltLootTableBuilder;
 import org.quiltmc.qsl.loot.api.event.LootTableLoadingCallback;
 
 public class LootTableTestMod implements ModInitializer {
-	private static final Logger LOGGER = LogManager.getLogger();
-
-	private static final Gson LOOT_GSON = LootGsons.getTableGsonBuilder().create();
-	private static final String LOOT_ENTRY_JSON = "{\"type\":\"minecraft:item\",\"name\":\"minecraft:apple\"}";
-
 	@Override
 	public void onInitialize() {
-		// Test loot entry
-		Registry.register(Registry.LOOT_POOL_ENTRY_TYPE, new Identifier("quilt", "extended_tag"), new LootPoolEntryType(new TestSerializer()));
-
 		// Test loot table load event
 		LootTableLoadingCallback.EVENT.register((context) -> {
 			Identifier id = context.id;
-			QuiltLootTableBuilder table = context.table;
+			QuiltLootTableBuilder tableBuilder = context.tableBuilder;
 
-			if ("minecraft:blocks/dirt".equals(id.toString())) {
-				LootPoolEntry entryFromString = LOOT_GSON.fromJson(LOOT_ENTRY_JSON, LootPoolEntry.class);
-
+			if (Blocks.WHITE_WOOL.getLootTableId().equals(id)) {
+				// Add gold ingot to white wool drops
 				LootPool pool = QuiltLootPoolBuilder.builder()
-						.with(ItemEntry.builder(Items.FEATHER).build())
-						.with(entryFromString)
-						.rolls(ConstantLootNumberProvider.create(1))
+						.with(ItemEntry.builder(Items.GOLD_INGOT).build())
 						.conditionally(SurvivesExplosionLootCondition.builder().build())
 						.build();
 
-				table.pool(pool);
+				tableBuilder.pool(pool);
+			} else if (Blocks.BLACK_WOOL.getLootTableId().equals(id)) {
+				// Replace black wool drops with an iron ingot
+				QuiltLootPoolBuilder pool = QuiltLootPoolBuilder.builder()
+						.with(ItemEntry.builder(Items.IRON_INGOT));
+
+				context.setLootTable(QuiltLootTableBuilder.builder().pool(pool).build());
+			} else if (EntityType.PIG.getLootTableId().equals(id)) {
+				// Add diamonds with bonus rolls to the pig loot table (bonus rolls don't work for blocks)
+				LootPool pool = QuiltLootPoolBuilder.builder()
+						.bonusRolls(ConstantLootNumberProvider.create(5f))
+						.with(ItemEntry.builder(Items.DIAMOND))
+						.build();
+
+				tableBuilder.pool(pool);
 			}
 		});
-	}
 
-	private static class TestSerializer extends LootPoolEntry.Serializer<TagEntry> {
-		private static final TagEntry.Serializer SERIALIZER = new TagEntry.Serializer();
-
-		@Override
-		public void addEntryFields(JsonObject json, TagEntry entry, JsonSerializationContext context) {
-			SERIALIZER.addEntryFields(json, entry, context);
-			json.addProperty("quilt", true);
-		}
-
-		@Override
-		public TagEntry fromJson(JsonObject var1, JsonDeserializationContext var2, LootCondition[] var3) {
-			LOGGER.info("Is this a Quilt loot entry? " + JsonHelper.getBoolean(var1, "quilt", true));
-			return SERIALIZER.fromJson(var1, var2, var3);
-		}
+		// Test that the event is stopped when the loot table is replaced
+		LootTableLoadingCallback.EVENT.register((context) -> {
+			if (Blocks.BLACK_WOOL.getLootTableId().equals(context.id)) {
+				throw new AssertionError("Event should have been stopped from replaced loot table");
+			}
+		});
 	}
 }
