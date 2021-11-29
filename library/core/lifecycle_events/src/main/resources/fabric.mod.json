@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "quilt_lifecycle_events",
-  "name": "Quilt Lifecycle events",
+  "name": "Quilt Lifecycle Events",
   "version": "${version}",
   "environment": "*",
   "license": "Apache-2.0",
