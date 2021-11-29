@@ -50,7 +50,7 @@ public final class QuiltItemGroup extends ItemGroup {
 	/**
 	 * Sets the {@link Item} to use as the icon for the {@link ItemGroup}
 	 *
-	 * @param icon The {@link Item} for the icon
+	 * @param icon the {@link Item} for the icon
 	 */
 	public void setIcon(ItemConvertible icon) {
 		this.icon = new ItemStack(icon);
@@ -59,7 +59,7 @@ public final class QuiltItemGroup extends ItemGroup {
 	/**
 	 * Sets the {@link ItemStack} to use as the icon for the {@link ItemGroup}, allowing for NBT to be used
 	 *
-	 * @param icon The {@link ItemStack} for the icon
+	 * @param icon the {@link ItemStack} for the icon
 	 */
 	public void setIcon(ItemStack icon) {
 		this.icon = icon;
@@ -99,8 +99,8 @@ public final class QuiltItemGroup extends ItemGroup {
 	/**
 	 * This is a single method that creates an {@link ItemGroup} one call. This method should only be used when setting the icon with {@link QuiltItemGroup#setIcon(ItemConvertible)}.
 	 *
-	 * @param identifier the id will become the name of the {@link ItemGroup} and will be used for the translation key
-	 * @return An instance of the created {@link ItemGroup}
+	 * @param identifier the identifier will become the name of the {@link ItemGroup} and will be used for the translation key
+	 * @return an instance of the created {@link ItemGroup}
 	 */
 	public static QuiltItemGroup create(Identifier identifier) {
 		return new Builder(identifier).build();
@@ -109,9 +109,9 @@ public final class QuiltItemGroup extends ItemGroup {
 	/**
 	 * This is a single method that makes creating an {@link ItemGroup} with an icon one call.
 	 *
-	 * @param identifier    the id will become the name of the {@link ItemGroup} and will be used for the translation key
+	 * @param identifier    the identifier will become the name of the {@link ItemGroup} and will be used for the translation key
 	 * @param iconSupplier the supplier should return the {@link ItemStack} that you wish to show on the tab
-	 * @return An instance of the created {@link QuiltItemGroup}
+	 * @return an instance of the created {@link QuiltItemGroup}
 	 */
 	public static QuiltItemGroup createWithIcon(Identifier identifier, @NotNull Supplier<ItemStack> iconSupplier) {
 		return new Builder(identifier).icon(iconSupplier).build();
@@ -181,7 +181,7 @@ public final class QuiltItemGroup extends ItemGroup {
 		/**
 		 * Adds a custom list of items to be displayed in a tab, such as items with enchantments, potions, or other NBT values.
 		 *
-		 * @param stacksForDisplay Add {@link ItemStack}s to this list to show in the {@link ItemGroup}
+		 * @param stacksForDisplay add {@link ItemStack}s to this list to show in the {@link ItemGroup}
 		 * @return {@code this}
 		 */
 		public Builder appendItems(@Nullable Consumer<List<ItemStack>> stacksForDisplay) {
@@ -190,7 +190,7 @@ public final class QuiltItemGroup extends ItemGroup {
 		}
 
 		/**
-		 * @return A new {@link QuiltItemGroup}
+		 * @return a new {@link QuiltItemGroup}
 		 */
 		public QuiltItemGroup build() {
 			((ItemGroupExtensions) GROUPS[0]).quilt$expandArray();
