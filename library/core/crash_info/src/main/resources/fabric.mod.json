@@ -20,7 +20,8 @@
     ]
   },
   "depends": {
-    "fabricloader": ">=0.12"
+    "fabricloader": ">=0.12",
+    "minecraft": ">=1.18-rc.4"
   },
   "description": "Adds information about the Quilt environment in crash reports, and provides an API for other mods to add their own information.",
   "mixins": [
