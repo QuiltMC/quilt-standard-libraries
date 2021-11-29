@@ -22,7 +22,7 @@ import net.minecraft.loot.LootTable;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 
-import org.quiltmc.qsl.base.api.event.ArrayEvent;
+import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.loot.api.QuiltLootTableBuilder;
 
 /**
@@ -65,7 +65,7 @@ public interface LootTableLoadingCallback {
 		void set(LootTable table);
 	}
 
-	ArrayEvent<LootTableLoadingCallback> EVENT = ArrayEvent.create(
+	Event<LootTableLoadingCallback> EVENT = Event.create(
 			LootTableLoadingCallback.class,
 			(listeners) -> (context) -> {
 				for (LootTableLoadingCallback callback : listeners) {
