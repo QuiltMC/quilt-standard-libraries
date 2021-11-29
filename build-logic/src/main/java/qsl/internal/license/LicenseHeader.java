@@ -68,27 +68,38 @@ public class LicenseHeader {
 				.replace("/", "\\/");
 	}
 
+	private static String getLineSeparator(String text) {
+		if (text.contains("\r\n")) {
+			return "\r\n"; // CR-LF
+		} else if (text.contains("\n")) {
+			return "\n"; // LF
+		} else {
+			return System.lineSeparator(); // We don't know the line separator, rely on system's default.
+		}
+	}
+
 	private static Pattern getValidator(String headerFormat) {
 		String pattern = escapeRegexControl(headerFormat)
 				.replace(YEAR_KEY, "(\\d{4}(, \\d{4})*)");
-		String[] lines = getHeaderLines(pattern.split("\n"));
-		var patternBuilder = new StringBuilder("\\/\\*\n");
+		var lineSeparator = getLineSeparator(headerFormat);
+		String[] lines = getHeaderLines(pattern.split(lineSeparator));
+		var patternBuilder = new StringBuilder("\\/\\*" + lineSeparator);
 
 		for (var line : lines) {
-			if (line.isEmpty()) {
-				patternBuilder.append(" \\*\n");
+			if (line.isBlank()) {
+				patternBuilder.append(" \\*").append(lineSeparator);
 			} else {
-				patternBuilder.append(" \\* ").append(line).append('\n');
+				patternBuilder.append(" \\* ").append(line).append(lineSeparator);
 			}
 		}
 
-		patternBuilder.append(" \\*\\/\n\n");
+		patternBuilder.append(" \\*\\/").append(lineSeparator).append(lineSeparator);
 
 		return Pattern.compile("^" + patternBuilder);
 	}
 
 	private static @Nullable Pattern getMatcher(String headerFormat) {
-		String[] lines = headerFormat.split("\n");
+		String[] lines = headerFormat.split(getLineSeparator(headerFormat));
 		var match = new StringBuilder();
 
 		for (var line : lines) {
@@ -155,11 +166,13 @@ public class LicenseHeader {
 	 */
 	public static class Rule {
 		private final String headerFormat;
+		private final String lineSeparator;
 		private final Pattern validator;
 		private final @Nullable Pattern matcher;
 
 		public Rule(String headerFormat) {
 			this.headerFormat = headerFormat;
+			this.lineSeparator = getLineSeparator(headerFormat);
 			this.validator = getValidator(headerFormat);
 			this.matcher = getMatcher(headerFormat);
 		}
@@ -249,18 +262,18 @@ public class LicenseHeader {
 
 		private String getLicenseString(String year) {
 			var builder = new StringBuilder();
-			var lines = getHeaderLines(this.headerFormat.replace(YEAR_KEY, year).split("\n"));
+			var lines = getHeaderLines(this.headerFormat.replace(YEAR_KEY, year).split(this.lineSeparator));
 
-			builder.append("/*\n");
+			builder.append("/*").append(this.lineSeparator);
 			for (var line : lines) {
 				if (line.isEmpty()) {
-					builder.append(" *\n");
+					builder.append(" *").append(this.lineSeparator);
 				} else {
-					builder.append(" * ").append(line).append('\n');
+					builder.append(" * ").append(line).append(this.lineSeparator);
 				}
 			}
 
-			builder.append(" */\n\n");
+			builder.append(" */").append(this.lineSeparator).append(this.lineSeparator);
 
 			return builder.toString();
 		}
