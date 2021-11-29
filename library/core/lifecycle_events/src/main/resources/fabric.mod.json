@@ -21,5 +21,21 @@
   "description": "Events to track the lifecycle of Minecraft",
   "mixins": [
     "quilt_lifecycle_events.mixins.json"
-  ]
+  ],
+  "custom": {
+    "modmenu": {
+      "badges": [
+        "library"
+      ],
+      "parent": {
+        "id": "qsl",
+        "name": "Quilt Standard Libraries",
+        "description": "A set of libraries to assist in making Quilt mods. ",
+        "icon": "assets/quilt_lifecycle_events/icon.png",
+        "badges": [
+          "library"
+        ]
+      }
+    }
+  }
 }

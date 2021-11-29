@@ -18,7 +18,7 @@
     "fabricloader": ">=0.12",
     "quilt_resource_loader": "*"
   },
-  "description": "Tags loading and management.",
+  "description": "Tag loading and management.",
   "entrypoints": {
     "client": [
       "org.quiltmc.qsl.tag.impl.client.ClientQuiltTagsMod"
@@ -27,5 +27,21 @@
   "accessWidener": "quilt_tags.accesswidener",
   "mixins": [
     "quilt_tags.mixins.json"
-  ]
+  ],
+  "custom": {
+    "modmenu": {
+      "badges": [
+        "library"
+      ],
+      "parent": {
+        "id": "qsl",
+        "name": "Quilt Standard Libraries",
+        "description": "A set of libraries to assist in making Quilt mods. ",
+        "icon": "assets/quilt_tags/icon.png",
+        "badges": [
+          "library"
+        ]
+      }
+    }
+  }
 }

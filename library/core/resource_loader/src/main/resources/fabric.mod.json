@@ -21,5 +21,21 @@
   "accessWidener": "quilt_resource_loader.accesswidener",
   "mixins": [
     "quilt_resource_loader.mixins.json"
-  ]
+  ],
+  "custom": {
+    "modmenu": {
+      "badges": [
+        "library"
+      ],
+      "parent": {
+        "id": "qsl",
+        "name": "Quilt Standard Libraries",
+        "description": "A set of libraries to assist in making Quilt mods. ",
+        "icon": "assets/quilt_resource_loader/icon.png",
+        "badges": [
+          "library"
+        ]
+      }
+    }
+  }
 }
