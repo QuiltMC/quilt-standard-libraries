@@ -17,7 +17,7 @@
 package org.quiltmc.qsl.key.bindings.test.client;
 
 import org.lwjgl.glfw.GLFW;
-import org.quiltmc.qsl.key.bindings.impl.KeyBindingRegistryImpl;
+import org.quiltmc.qsl.key.bindings.api.KeyBindingRegistry;
 import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
 
 import net.fabricmc.api.ClientModInitializer;
@@ -25,12 +25,17 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.text.LiteralText;
 
 public class KeyBindingsTestMod implements ClientModInitializer {
-	public static final KeyBinding DISABLE_KEY_BIND = KeyBindingRegistryImpl.registerKeyBinding(
-		new KeyBinding("key.qsl.disable_key_bind", GLFW.GLFW_KEY_H, "key.categories.misc"), true
+	public static final KeyBinding DISABLE_KEY_BIND = KeyBindingRegistry.registerKeyBinding(
+		new KeyBinding("key.qsl.disable_key_bind", GLFW.GLFW_KEY_H, "key.qsl.category"), true
 	);
 
-	public static final KeyBinding ENABLE_KEY_BIND = KeyBindingRegistryImpl.registerKeyBinding(
-		new KeyBinding("key.qsl.enable_key_bind", GLFW.GLFW_KEY_I, "key.categories.misc"), true
+	public static final KeyBinding ENABLE_KEY_BIND = KeyBindingRegistry.registerKeyBinding(
+		new KeyBinding("key.qsl.enable_key_bind", GLFW.GLFW_KEY_I, "key.qsl.category"), true
+	);
+
+	// A conflicting key test
+	public static final KeyBinding CONFLICT_TEST_KEY_BIND = KeyBindingRegistry.registerKeyBinding(
+		new KeyBinding("key.qsl.conflict_test", GLFW.GLFW_KEY_H, "key.qsl.category"), true
 	);
 	
 	@Override
@@ -40,14 +45,20 @@ public class KeyBindingsTestMod implements ClientModInitializer {
 				if (client.player != null) {
 					client.player.sendMessage(new LiteralText("The key has disappeared! Bye bye, key!"), true);
 				}
-				KeyBindingRegistryImpl.setActive(DISABLE_KEY_BIND, false);
+				KeyBindingRegistry.setEnabled(DISABLE_KEY_BIND, false);
 			}
 
 			if (ENABLE_KEY_BIND.isPressed()) {
 				if (client.player != null) {
 					client.player.sendMessage(new LiteralText("The key is back!"), true);
 				}
-				KeyBindingRegistryImpl.setActive(DISABLE_KEY_BIND, true);
+				KeyBindingRegistry.setEnabled(DISABLE_KEY_BIND, true);
+			}
+
+			if (TEST_KEY_BIND.isPressed()) {
+				if (client.player != null) {
+					client.player.sendMessage(new LiteralText("Conflicts!"), false);
+				}
 			}
 		});
 	}

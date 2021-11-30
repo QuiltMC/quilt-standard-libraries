@@ -6,47 +6,76 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.quiltmc.qsl.key.bindings.mixin.client.GameOptionsAccessor;
+import org.quiltmc.qsl.key.bindings.mixin.client.KeyBindingAccessor;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 
 public class KeyBindingRegistryImpl {
 	private static Map<KeyBinding, Boolean> quiltKeys = new HashMap<>();
-	private static KeyBinding[] allVanillaKeys = new KeyBinding[] {};
+	private static List<KeyBindingManager> keyBindingManagers = new ArrayList<>();
+	private static KeyBinding[] enabledQuiltKeysArray = new KeyBinding[] {};
+	private static KeyBinding[] totalQuiltKeysArray = new KeyBinding[] {};
 
 	public static KeyBinding registerKeyBinding(KeyBinding key, boolean enabled) {
 		quiltKeys.put(key, enabled);
-		applyChanges();
+		applyChanges(true);
+		if (!enabled) {
+			KeyBindingAccessor.getKeysById().remove(key.getTranslationKey());
+		}
 		return key;
 	}
 
-	public static void setActive(KeyBinding key, boolean newEnabled) {
-		quiltKeys.replace(key, newEnabled);
-		applyChanges();
+	public static void setEnabled(KeyBinding key, boolean newEnabled) {
+		if (quiltKeys.containsKey(key)) {
+			quiltKeys.replace(key, newEnabled);
+			applyChanges(false);
+			if (newEnabled) {
+				KeyBindingAccessor.getKeysById().put(key.getTranslationKey(), key);
+			} else {
+				KeyBindingAccessor.getKeysById().remove(key.getTranslationKey(), key);
+			}
+			((KeyBindingAccessor)key).callReset();
+			KeyBinding.updateKeysByCode();
+		}
 	}
 
-	public static void setVanillaKeys(KeyBinding[] allKeys) {
-		allVanillaKeys = allKeys;
+	protected static void registerKeyBindingManager(KeyBindingManager manager) {
+		keyBindingManagers.add(manager);
 	}
 
-	public static KeyBinding[] updateKeysArray() {
+	public static void updateKeysArray(boolean updateTotal) {
 		List<KeyBinding> enabledQuiltKeys = new ArrayList<>();
+		List<KeyBinding> totalQuiltKeys = new ArrayList<>();
 		for (var entry : quiltKeys.entrySet()) {
 			if (entry.getValue()) {
 				enabledQuiltKeys.add(entry.getKey());
+			}
+
+			if (updateTotal) {
+				totalQuiltKeys.add(entry.getKey());
 			}
 		}
 
 		KeyBinding[] quiltKeysArray = enabledQuiltKeys.toArray(new KeyBinding[enabledQuiltKeys.size()]);
 		
-		return ArrayUtils.addAll(allVanillaKeys, quiltKeysArray);
+		enabledQuiltKeysArray = quiltKeysArray;
+		if (updateTotal) {
+			totalQuiltKeysArray = totalQuiltKeys.toArray(new KeyBinding[totalQuiltKeys.size()]);
+		}
 	}
 
-	public static void applyChanges() {
-		MinecraftClient client = MinecraftClient.getInstance();
-		if (client.options != null) {
-			((GameOptionsAccessor)(Object)client.options).setKeysAll(updateKeysArray());
+	public static KeyBinding[] getKeyBindings(KeyBinding[] allVanillaKeys) {
+		return ArrayUtils.addAll(allVanillaKeys, enabledQuiltKeysArray);
+	}
+
+	public static KeyBinding[] getAllKeyBindings(KeyBinding[] allVanillaKeys) {
+		return ArrayUtils.addAll(allVanillaKeys, totalQuiltKeysArray);
+	}
+
+	public static void applyChanges(boolean updateTotal) {
+		updateKeysArray(updateTotal);
+		for (KeyBindingManager manager : keyBindingManagers) {
+			manager.addModdedKeyBinds();
 		}
 	}
 }
