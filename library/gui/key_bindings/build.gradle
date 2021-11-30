@@ -6,4 +6,8 @@ qslModule {
 	moduleName = "key_bindings"
 	version = "1.0.0"
 	library = "gui"
+	coreTestmodDependencies([
+			"qsl_base",
+			"lifecycle_events"
+	])
 }
