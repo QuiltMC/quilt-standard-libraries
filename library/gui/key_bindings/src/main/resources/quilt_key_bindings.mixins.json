@@ -4,7 +4,9 @@
   "compatibilityLevel": "JAVA_17",
   "client": [
     "client.GameOptionsAccessor",
-    "client.GameOptionsMixin"
+    "client.GameOptionsMixin",
+    "client.KeyBindingAccessor",
+    "client.KeyBindingMixin"
   ],
   "injectors": {
     "defaultRequire": 1
