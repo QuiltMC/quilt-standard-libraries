@@ -16,11 +16,39 @@
 
 package org.quiltmc.qsl.key.bindings.test.client;
 
+import org.lwjgl.glfw.GLFW;
+import org.quiltmc.qsl.key.bindings.impl.KeyBindingRegistryImpl;
+import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
+
 import net.fabricmc.api.ClientModInitializer;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.text.LiteralText;
 
 public class KeyBindingsTestMod implements ClientModInitializer {
+	public static final KeyBinding DISABLE_KEY_BIND = KeyBindingRegistryImpl.registerKeyBinding(
+		new KeyBinding("key.qsl.disable_key_bind", GLFW.GLFW_KEY_H, "key.categories.misc"), true
+	);
+
+	public static final KeyBinding ENABLE_KEY_BIND = KeyBindingRegistryImpl.registerKeyBinding(
+		new KeyBinding("key.qsl.enable_key_bind", GLFW.GLFW_KEY_I, "key.categories.misc"), true
+	);
+	
 	@Override
 	public void onInitializeClient() {
-		System.out.println("It's working! I can't believe it!");
+		ClientTickEvents.START.register(client -> {
+			if (DISABLE_KEY_BIND.isPressed()) {
+				if (client.player != null) {
+					client.player.sendMessage(new LiteralText("The key has disappeared! Bye bye, key!"), true);
+				}
+				KeyBindingRegistryImpl.setActive(DISABLE_KEY_BIND, false);
+			}
+
+			if (ENABLE_KEY_BIND.isPressed()) {
+				if (client.player != null) {
+					client.player.sendMessage(new LiteralText("The key is back!"), true);
+				}
+				KeyBindingRegistryImpl.setActive(DISABLE_KEY_BIND, true);
+			}
+		});
 	}
 }

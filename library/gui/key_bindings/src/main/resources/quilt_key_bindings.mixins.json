@@ -3,6 +3,7 @@
   "package": "org.quiltmc.qsl.key.bindings.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "client.GameOptionsAccessor",
     "client.GameOptionsMixin"
   ],
   "injectors": {
