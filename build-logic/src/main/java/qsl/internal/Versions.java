@@ -22,7 +22,7 @@ public final class Versions {
 	/**
 	 * The target Minecraft version.
 	 */
-	public static final String MINECRAFT_VERSION = "1.18-rc4";
+	public static final String MINECRAFT_VERSION = "1.18";
 
 	/**
 	 * The target Yarn build.
@@ -32,7 +32,7 @@ public final class Versions {
 	/**
 	 * The version of Quilt Loader to use.
 	 */
-	public static final String LOADER_VERSION = "0.12.5";
+	public static final String LOADER_VERSION = "0.12.6";
 
 	public static boolean isMinecraftVersionNonRelease() {
 		return MINECRAFT_VERSION.matches("^\\d\\dw\\d\\d[a-z]$");

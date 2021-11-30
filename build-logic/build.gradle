@@ -14,10 +14,6 @@ repositories {
 	}
 	// Note: temporary mavens until Quilt buildtools and loader are ready.
 	maven {
-		name = "Quilt"
-		url = "https://maven.quiltmc.org/repository/snapshot"
-	}
-	maven {
 		name = "Fabric"
 		url = "https://maven.fabricmc.net/"
 	}
