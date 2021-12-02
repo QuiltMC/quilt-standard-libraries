@@ -11,3 +11,7 @@ qslModule {
 			"lifecycle_events"
 	])
 }
+
+loom {
+	accessWidenerPath = file("src/main/resources/quilt_key_bindings.accesswidener")
+}

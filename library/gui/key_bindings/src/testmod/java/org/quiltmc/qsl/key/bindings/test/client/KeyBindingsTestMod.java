@@ -25,17 +25,17 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.text.LiteralText;
 
 public class KeyBindingsTestMod implements ClientModInitializer {
+	// A conflicting key test
+	public static final KeyBinding CONFLICT_TEST_KEY_BIND = KeyBindingRegistry.registerKeyBinding(
+		new KeyBinding("key.qsl.conflict_test", GLFW.GLFW_KEY_H, "key.qsl.category"), true
+	);
+	
 	public static final KeyBinding DISABLE_KEY_BIND = KeyBindingRegistry.registerKeyBinding(
 		new KeyBinding("key.qsl.disable_key_bind", GLFW.GLFW_KEY_H, "key.qsl.category"), true
 	);
 
 	public static final KeyBinding ENABLE_KEY_BIND = KeyBindingRegistry.registerKeyBinding(
 		new KeyBinding("key.qsl.enable_key_bind", GLFW.GLFW_KEY_I, "key.qsl.category"), true
-	);
-
-	// A conflicting key test
-	public static final KeyBinding CONFLICT_TEST_KEY_BIND = KeyBindingRegistry.registerKeyBinding(
-		new KeyBinding("key.qsl.conflict_test", GLFW.GLFW_KEY_H, "key.qsl.category"), true
 	);
 	
 	@Override
@@ -55,7 +55,7 @@ public class KeyBindingsTestMod implements ClientModInitializer {
 				KeyBindingRegistry.setEnabled(DISABLE_KEY_BIND, true);
 			}
 
-			if (TEST_KEY_BIND.isPressed()) {
+			if (CONFLICT_TEST_KEY_BIND.isPressed()) {
 				if (client.player != null) {
 					client.player.sendMessage(new LiteralText("Conflicts!"), false);
 				}
