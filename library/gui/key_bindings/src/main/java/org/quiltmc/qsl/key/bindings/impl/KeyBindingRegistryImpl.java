@@ -48,8 +48,13 @@ public class KeyBindingRegistryImpl {
 		}
 
 		for (KeyBinding otherKey : quiltKeys.keySet()) {
-			if (key == otherKey || key.getTranslationKey() == otherKey.getTranslationKey()) {
-				LOGGER.error("Attempted to register %s, but a conflicting key has already been registered!", key.getTranslationKey());
+			if (key == otherKey) {
+				LOGGER.error("%s has already been registered!", key.getTranslationKey());
+				return null;
+			}
+
+			if (key.getTranslationKey() == otherKey.getTranslationKey()) {
+				LOGGER.error("Attempted to register %s, but a key bind with the same translation key has already been registered!", key.getTranslationKey());
 				return null;
 			}
 		}
