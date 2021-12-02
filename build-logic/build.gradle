@@ -33,6 +33,10 @@ dependencies {
 	implementation "io.github.juuxel:loom-quiltflower-mini:1.1.0"
 }
 
+// Visual Studio Code needs these
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"
 	it.options.release.set(17) // Minecraft is Java 17
