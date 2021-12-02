@@ -22,20 +22,39 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
 
 import org.quiltmc.qsl.key.bindings.mixin.client.KeyBindingAccessor;
 
+@Environment(EnvType.CLIENT)
 public class KeyBindingRegistryImpl {
+	public static final Logger LOGGER = LogManager.getLogger();
+
 	private static Map<KeyBinding, Boolean> quiltKeys = new HashMap<>();
 	private static List<KeyBindingManager> keyBindingManagers = new ArrayList<>(1);
 	private static KeyBinding[] enabledQuiltKeysArray = new KeyBinding[] {};
-	private static List<KeyBinding> disabledQuiltKeys = new ArrayList<>();
+	private static List<KeyBinding> disabledQuiltKeys = new ArrayList<>(0);
 
-	// TODO - Currently, two different key binds with the same key can be registered. This is not good
 	public static KeyBinding registerKeyBinding(KeyBinding key, boolean enabled) {
+		if (key == null) {
+			LOGGER.error("Attempted to register a null key bind!");
+			return null;
+		}
+
+		for (KeyBinding otherKey : quiltKeys.keySet()) {
+			if (key == otherKey || key.getTranslationKey() == otherKey.getTranslationKey()) {
+				// FIXME - This message is not great
+				LOGGER.error("Attempted to register %s, but a conflicting key has already been registered!", key.getTranslationKey());
+				return null;
+			}
+		}
+
 		quiltKeys.put(key, enabled);
 		applyChanges(true);
 		if (!enabled) {
@@ -45,7 +64,17 @@ public class KeyBindingRegistryImpl {
 		return key;
 	}
 
-	public static boolean getEnabled(KeyBinding key) {
+	public static KeyBinding getKeyBinding(String translationKey) {
+		for (KeyBinding key : quiltKeys.keySet()) {
+			if (key.getTranslationKey() == translationKey) {
+				return key;
+			}
+		}
+
+		return null;
+	}
+
+	public static boolean isEnabled(KeyBinding key) {
 		if (quiltKeys.containsKey(key)) {
 			return quiltKeys.get(key);
 		}
@@ -53,11 +82,11 @@ public class KeyBindingRegistryImpl {
 		return false;
 	}
 
-	public static void setEnabled(KeyBinding key, boolean newEnabled) {
+	public static void setEnabled(KeyBinding key, boolean enabled) {
 		if (quiltKeys.containsKey(key)) {
-			quiltKeys.replace(key, newEnabled);
+			quiltKeys.replace(key, enabled);
 			applyChanges(false);
-			if (newEnabled) {
+			if (enabled) {
 				KeyBindingAccessor.getKeysById().put(key.getTranslationKey(), key);
 			} else {
 				KeyBindingAccessor.getKeysById().remove(key.getTranslationKey(), key);

@@ -16,26 +16,63 @@
 
 package org.quiltmc.qsl.key.bindings.api;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import net.minecraft.client.option.KeyBinding;
 
 import org.quiltmc.qsl.key.bindings.impl.KeyBindingRegistryImpl;
 
+@Environment(EnvType.CLIENT)
 public class KeyBindingRegistry {
+	/**
+	 * Registers a key binding with it being initially enabled.
+	 *
+	 * @param key the key binding to be registered
+	 * @return the key binding if successfully registered, else null
+	 */
 	public static KeyBinding registerKeyBinding(KeyBinding key) {
 		return registerKeyBinding(key, true);
 	}
 
+	/**
+	 * Registers a key binding with the specified initial state.
+	 *
+	 * @param key the key binding to be registered
+	 * @param enabled the key binding's initial state
+	 * @return the key binding if successfully registered, {@code null} otherwise
+	 */
 	public static KeyBinding registerKeyBinding(KeyBinding key, boolean enabled) {
 		return KeyBindingRegistryImpl.registerKeyBinding(key, enabled);
 	}
 
-	// TODO - Add get method for easier intercompat
-
-	public static boolean getEnabled(KeyBinding key) {
-		return KeyBindingRegistryImpl.getEnabled(key);
+	/**
+	 * Searches for a key binding with the specified translation key in the registry.
+	 *
+	 * @param translationKey the translation key of the key binding
+	 * @return the key binding if it was found, {@code null} otherwise
+	 */
+	public static KeyBinding getKeyBinding(String translationKey) {
+		return KeyBindingRegistryImpl.getKeyBinding(translationKey);
 	}
 
-	public static void setEnabled(KeyBinding key, boolean newEnabled) {
-		KeyBindingRegistryImpl.setEnabled(key, newEnabled);
+	/**
+	 * Gets the state of the key binding.
+	 *
+	 * @param key the key binding
+	 * @return {@code true} if the key binding is enabled, {@code false} otherwise
+	 */
+	public static boolean isEnabled(KeyBinding key) {
+		return KeyBindingRegistryImpl.isEnabled(key);
+	}
+
+	/**
+	 * Sets the state of the key binding.
+	 *
+	 * @param key the key binding
+	 * @param enabled the new state
+	 */
+	public static void setEnabled(KeyBinding key, boolean enabled) {
+		KeyBindingRegistryImpl.setEnabled(key, enabled);
 	}
 }

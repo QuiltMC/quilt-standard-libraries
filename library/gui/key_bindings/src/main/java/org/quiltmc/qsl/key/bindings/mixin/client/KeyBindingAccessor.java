@@ -21,10 +21,13 @@ import java.util.Map;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 
+@Environment(EnvType.CLIENT)
 @Mixin(KeyBinding.class)
 public interface KeyBindingAccessor {
 	@Accessor(value = "KEYS_BY_ID")

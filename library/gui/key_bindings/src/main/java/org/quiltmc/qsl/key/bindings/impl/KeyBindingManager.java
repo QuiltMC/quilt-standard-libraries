@@ -16,11 +16,15 @@
 
 package org.quiltmc.qsl.key.bindings.impl;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
 
 import org.quiltmc.qsl.key.bindings.mixin.client.GameOptionsAccessor;
 
+@Environment(EnvType.CLIENT)
 public class KeyBindingManager {
 	private final GameOptions options;
 	private final KeyBinding[] allKeys;

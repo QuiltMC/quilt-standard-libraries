@@ -17,18 +17,16 @@
 package org.quiltmc.qsl.key.bindings.mixin.client;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.widget.EntryListWidget;
 
 @Environment(EnvType.CLIENT)
-@Mixin(GameOptions.class)
-public interface GameOptionsAccessor {
-	@Mutable
+@Mixin(EntryListWidget.class)
+public interface EntryListWidgetAccessor {
 	@Accessor
-	void setKeysAll(KeyBinding[] keysAll);
+	MinecraftClient getClient();
 }
