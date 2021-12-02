@@ -16,7 +16,11 @@
     "client.CreateWorldScreenMixin",
     "client.FontManagerResourceReloadListenerMixin",
     "client.GameOptionsMixin",
-    "client.KeyedClientResourceReloaderMixin"
+    "client.KeyedClientResourceReloaderMixin",
+    "client.MinecraftClientMixin"
+  ],
+  "server": [
+    "server.MainMixin"
   ],
   "injectors": {
     "defaultRequire": 1
