@@ -23,6 +23,12 @@ import net.minecraft.client.option.KeyBinding;
 
 import org.quiltmc.qsl.key.bindings.impl.KeyBindingRegistryImpl;
 
+/**
+ * Handles the registration of modded key binds and allows for changing their properties,
+ * such as their state.
+ *
+ * <p>This class also allows for getting key binds registered by other mods.
+ */
 @Environment(EnvType.CLIENT)
 public class KeyBindingRegistry {
 	/**
@@ -47,7 +53,7 @@ public class KeyBindingRegistry {
 	}
 
 	/**
-	 * Searches for a key binding with the specified translation key in the registry.
+	 * Searches for a modded key binding with the specified translation key in the registry.
 	 *
 	 * @param translationKey the translation key of the key binding
 	 * @return the key binding if it was found, {@code null} otherwise
@@ -59,6 +65,12 @@ public class KeyBindingRegistry {
 	/**
 	 * Gets the state of the key binding.
 	 *
+	 * <p>The state of a key binding determines whenever it's disabled or not.
+	 *
+	 * <p>When a keybind is disabled, it is effectively hidden from the game,
+	 * being non-existent to it. options.txt is the only expection, who still
+	 * stores the disabled key binds.
+	 *
 	 * @param key the key binding
 	 * @return {@code true} if the key binding is enabled, {@code false} otherwise
 	 */
@@ -68,6 +80,10 @@ public class KeyBindingRegistry {
 
 	/**
 	 * Sets the state of the key binding.
+	 *
+	 * <p>This method allows for disabling the key binding, making it invisible
+	 * to the game. options.txt is the only expection, who still stores the disabled
+	 * key binds.
 	 *
 	 * @param key the key binding
 	 * @param enabled the new state
