@@ -72,7 +72,7 @@ public class MinecraftClientMixin {
 	@Inject(method = "m_aaltpyph(Ljava/util/Optional;)V", at = @At("HEAD"))
 	private void onFirstEndReloadResources(Optional<Throwable> error, CallbackInfo ci) {
 		ClientResourceLoaderEvents.END_RESOURCE_PACK_RELOAD.invoker().onEndResourcePackReload(
-				(MinecraftClient) (Object) this, this.resourceManager, error
+				(MinecraftClient) (Object) this, this.resourceManager, error.orElse(null)
 		);
 	}
 
@@ -94,7 +94,7 @@ public class MinecraftClientMixin {
 	@Inject(method = "m_pxfxqhcl(Ljava/util/concurrent/CompletableFuture;Ljava/util/Optional;)V", at = @At(value = "HEAD"))
 	private void onEndReloadResources(CompletableFuture<Void> completableFuture, Optional<Throwable> error, CallbackInfo ci) {
 		ClientResourceLoaderEvents.END_RESOURCE_PACK_RELOAD.invoker().onEndResourcePackReload(
-				(MinecraftClient) (Object) this, this.resourceManager, error
+				(MinecraftClient) (Object) this, this.resourceManager, error.orElse(null)
 		);
 	}
 

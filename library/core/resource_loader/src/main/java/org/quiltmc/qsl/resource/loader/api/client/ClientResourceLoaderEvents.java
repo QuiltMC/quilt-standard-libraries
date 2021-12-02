@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.ResourceManager;
@@ -91,8 +92,8 @@ public final class ClientResourceLoaderEvents {
 		 *
 		 * @param client          the client
 		 * @param resourceManager the resource manager
-		 * @param error           present if the resource pack reload failed
+		 * @param error           present if the resource pack reload failed, otherwise {@code null}
 		 */
-		void onEndResourcePackReload(MinecraftClient client, ResourceManager resourceManager, Optional<Throwable> error);
+		void onEndResourcePackReload(MinecraftClient client, ResourceManager resourceManager, @Nullable Throwable error);
 	}
 }
