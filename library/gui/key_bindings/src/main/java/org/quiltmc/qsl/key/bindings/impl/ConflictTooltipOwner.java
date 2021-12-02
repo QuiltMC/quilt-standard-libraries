@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.key.bindings.mixin.client;
+package org.quiltmc.qsl.key.bindings.impl;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Mutable;
-import org.spongepowered.asm.mixin.gen.Accessor;
+import java.util.List;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.option.KeyBinding;
+import net.minecraft.text.Text;
 
 @Environment(EnvType.CLIENT)
-@Mixin(GameOptions.class)
-public interface GameOptionsAccessor {
-	@Mutable
-	@Accessor
-	void setKeysAll(KeyBinding[] keysAll);
+public interface ConflictTooltipOwner {
+	List<Text> getConflictTooltips();
 }

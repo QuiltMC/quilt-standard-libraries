@@ -24,6 +24,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.GameOptions;
@@ -32,6 +34,7 @@ import net.minecraft.client.util.InputUtil;
 
 import org.quiltmc.qsl.key.bindings.impl.KeyBindingRegistryImpl;
 
+@Environment(EnvType.CLIENT)
 @Mixin(GameOptions.class)
 public abstract class GameOptionsMixin {
 	@Shadow
@@ -56,7 +59,7 @@ public abstract class GameOptionsMixin {
 			),
 			method = "accept(Lnet/minecraft/client/option/GameOptions$Visitor;)V"
 	)
-	private void addDisabledEntries(GameOptions.Visitor visitor, CallbackInfo ci) {
+	private void includeDisabledEntries(GameOptions.Visitor visitor, CallbackInfo ci) {
 		for (KeyBinding keyBinding : KeyBindingRegistryImpl.getDisabledKeyBindings()) {
 			String keyKey = keyBinding.getBoundKeyTranslationKey();
 			String keyBindKey = visitor.visitString("key_" + keyBinding.getTranslationKey(), keyKey);

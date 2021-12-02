@@ -17,19 +17,20 @@
 package org.quiltmc.qsl.key.bindings.test.client;
 
 import org.lwjgl.glfw.GLFW;
-import org.quiltmc.qsl.key.bindings.api.KeyBindingRegistry;
-import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
-
 import net.fabricmc.api.ClientModInitializer;
+
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.text.LiteralText;
+
+import org.quiltmc.qsl.key.bindings.api.KeyBindingRegistry;
+import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
 
 public class KeyBindingsTestMod implements ClientModInitializer {
 	// A conflicting key test
 	public static final KeyBinding CONFLICT_TEST_KEY_BIND = KeyBindingRegistry.registerKeyBinding(
 		new KeyBinding("key.qsl.conflict_test", GLFW.GLFW_KEY_H, "key.qsl.category"), true
 	);
-	
+
 	public static final KeyBinding DISABLE_KEY_BIND = KeyBindingRegistry.registerKeyBinding(
 		new KeyBinding("key.qsl.disable_key_bind", GLFW.GLFW_KEY_H, "key.qsl.category"), true
 	);
@@ -37,7 +38,7 @@ public class KeyBindingsTestMod implements ClientModInitializer {
 	public static final KeyBinding ENABLE_KEY_BIND = KeyBindingRegistry.registerKeyBinding(
 		new KeyBinding("key.qsl.enable_key_bind", GLFW.GLFW_KEY_I, "key.qsl.category"), true
 	);
-	
+
 	@Override
 	public void onInitializeClient() {
 		ClientTickEvents.START.register(client -> {
@@ -45,6 +46,7 @@ public class KeyBindingsTestMod implements ClientModInitializer {
 				if (client.player != null) {
 					client.player.sendMessage(new LiteralText("The key has disappeared! Bye bye, key!"), true);
 				}
+
 				KeyBindingRegistry.setEnabled(DISABLE_KEY_BIND, false);
 			}
 
@@ -52,12 +54,13 @@ public class KeyBindingsTestMod implements ClientModInitializer {
 				if (client.player != null) {
 					client.player.sendMessage(new LiteralText("The key is back!"), true);
 				}
+
 				KeyBindingRegistry.setEnabled(DISABLE_KEY_BIND, true);
 			}
 
 			if (CONFLICT_TEST_KEY_BIND.isPressed()) {
 				if (client.player != null) {
-					client.player.sendMessage(new LiteralText("Conflicts!"), false);
+					client.player.sendMessage(new LiteralText("This is the conflict key being pressed"), false);
 				}
 			}
 		});
