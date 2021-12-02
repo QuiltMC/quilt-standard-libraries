@@ -30,7 +30,7 @@ public class ClientResourceLoaderEventsTestMod implements ClientModInitializer {
 		ClientResourceLoaderEvents.START_RESOURCE_PACK_RELOAD.register((client, resourceManager) ->
 				LOGGER.info("Preparing for resource pack reload, resource manager: {}", resourceManager));
 		ClientResourceLoaderEvents.END_RESOURCE_PACK_RELOAD.register((server, resourceManager, error) -> {
-			if (error != null) {
+			if (error == null) {
 				LOGGER.info("Finished resource pack reloading successfully on {}.", Thread.currentThread());
 			} else {
 				LOGGER.error("Failed to reload resource packs on {} because {}.", Thread.currentThread(), error);
