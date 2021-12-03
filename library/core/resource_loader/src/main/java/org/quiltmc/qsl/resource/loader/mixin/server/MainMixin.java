@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.resource.loader.mixin.server;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -30,7 +28,6 @@ import net.minecraft.server.Main;
 
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 
-@Environment(EnvType.SERVER)
 @Mixin(Main.class)
 public class MainMixin {
 	@Inject(

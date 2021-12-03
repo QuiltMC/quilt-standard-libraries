@@ -9,7 +9,8 @@
     "NamespaceResourceManagerAccessor",
     "NamespaceResourceManagerMixin",
     "ReloadableResourceManagerImplMixin",
-    "VanillaDataPackProviderMixin"
+    "VanillaDataPackProviderMixin",
+    "server.MainMixin"
   ],
   "client": [
     "client.ClientBuiltinResourcePackProviderMixin",
@@ -18,9 +19,6 @@
     "client.GameOptionsMixin",
     "client.KeyedClientResourceReloaderMixin",
     "client.MinecraftClientMixin"
-  ],
-  "server": [
-    "server.MainMixin"
   ],
   "injectors": {
     "defaultRequire": 1
