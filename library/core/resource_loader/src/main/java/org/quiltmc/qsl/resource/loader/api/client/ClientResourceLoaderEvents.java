@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.resource.loader.api.client;
 
-import java.util.Optional;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.Nullable;
@@ -44,9 +42,9 @@ public final class ClientResourceLoaderEvents {
 	 * This event should not be used to load resources, use {@link ResourceLoader#registerReloader(IdentifiableResourceReloader)} instead.
 	 */
 	public static final Event<StartResourcePackReload> START_RESOURCE_PACK_RELOAD = Event.create(StartResourcePackReload.class,
-			callbacks -> (client, resourceManager) -> {
+			callbacks -> (client, resourceManager, first) -> {
 				for (var callback : callbacks) {
-					callback.onStartResourcePackReload(client, resourceManager);
+					callback.onStartResourcePackReload(client, resourceManager, first);
 				}
 			});
 
@@ -56,9 +54,9 @@ public final class ClientResourceLoaderEvents {
 	 * This event should not be used to load resources, use {@link ResourceLoader#registerReloader(IdentifiableResourceReloader)} instead.
 	 */
 	public static final Event<EndResourcePackReload> END_RESOURCE_PACK_RELOAD = Event.create(EndResourcePackReload.class,
-			callbacks -> (client, resourceManager, error) -> {
+			callbacks -> (client, resourceManager, first, error) -> {
 				for (var callback : callbacks) {
-					callback.onEndResourcePackReload(client, resourceManager, error);
+					callback.onEndResourcePackReload(client, resourceManager, first, error);
 				}
 			});
 
@@ -74,8 +72,9 @@ public final class ClientResourceLoaderEvents {
 		 *
 		 * @param client          the server
 		 * @param resourceManager the resource manager
+		 * @param first           {@code true} if it's the first resource reload, otherwise {@code false}
 		 */
-		void onStartResourcePackReload(MinecraftClient client, ResourceManager resourceManager);
+		void onStartResourcePackReload(MinecraftClient client, ResourceManager resourceManager, boolean first);
 	}
 
 	/**
@@ -92,8 +91,10 @@ public final class ClientResourceLoaderEvents {
 		 *
 		 * @param client          the client
 		 * @param resourceManager the resource manager
+		 * @param first           {@code true} if it's the first resource reload, otherwise {@code false}
 		 * @param error           present if the resource pack reload failed, otherwise {@code null}
 		 */
-		void onEndResourcePackReload(MinecraftClient client, ResourceManager resourceManager, @Nullable Throwable error);
+		void onEndResourcePackReload(MinecraftClient client, ResourceManager resourceManager, boolean first,
+		                             @Nullable Throwable error);
 	}
 }

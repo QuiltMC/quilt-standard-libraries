@@ -27,11 +27,14 @@ public class ClientResourceLoaderEventsTestMod implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		ClientResourceLoaderEvents.START_RESOURCE_PACK_RELOAD.register((client, resourceManager) ->
-				LOGGER.info("Preparing for resource pack reload, resource manager: {}", resourceManager));
-		ClientResourceLoaderEvents.END_RESOURCE_PACK_RELOAD.register((server, resourceManager, error) -> {
+		ClientResourceLoaderEvents.START_RESOURCE_PACK_RELOAD.register((client, resourceManager, first) ->
+				LOGGER.info("Preparing for resource pack reload, resource manager: {}. Is it the first time?: {}",
+						resourceManager, first)
+		);
+		ClientResourceLoaderEvents.END_RESOURCE_PACK_RELOAD.register((server, resourceManager, first, error) -> {
 			if (error == null) {
-				LOGGER.info("Finished resource pack reloading successfully on {}.", Thread.currentThread());
+				LOGGER.info("Finished {}resource pack reloading successfully on {}.",
+						(first ? "first " : ""), Thread.currentThread());
 			} else {
 				LOGGER.error("Failed to reload resource packs on {} because {}.", Thread.currentThread(), error);
 			}
