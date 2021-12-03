@@ -20,8 +20,10 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 
 import org.quiltmc.qsl.key.bindings.impl.KeyBindingRegistryImpl;
+import org.quiltmc.qsl.key.bindings.mixin.client.KeyBindingAccessor;
 
 /**
  * Handles the registration of modded key binds and allows for changing their properties,
@@ -33,6 +35,14 @@ import org.quiltmc.qsl.key.bindings.impl.KeyBindingRegistryImpl;
 public class KeyBindingRegistry {
 	/**
 	 * Registers a key binding with it being initially enabled.
+	 * 
+	 * <pre>
+	 * {@code
+	 * public static final KeyBinding EXAMPLE_KEY_BIND = KeyBinding.registerKeyBinding(
+	 * 	new KeyBinding("key.modid.example", GLFW.GLFW_KEY_M, "key.modid.category")
+	 * )
+	 * }
+	 * </pre>
 	 *
 	 * @param key the key binding to be registered
 	 * @return the key binding if successfully registered, else null
@@ -60,6 +70,19 @@ public class KeyBindingRegistry {
 	 */
 	public static KeyBinding getKeyBinding(String translationKey) {
 		return KeyBindingRegistryImpl.getKeyBinding(translationKey);
+	}
+
+	/**
+	 * Gets the bound key of the key binding.
+	 * 
+	 * <p>The bound key is only directly used by the key bind system's internal logic.
+	 * If possible, use the method provided by the KeyBinding class.
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public static InputUtil.Key getBoundKey(KeyBinding key) {
+		return ((KeyBindingAccessor) key).getBoundKey();
 	}
 
 	/**

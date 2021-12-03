@@ -35,11 +35,6 @@ public interface KeyBindingAccessor {
 		return null;
 	}
 
-	@Accessor(value = "KEY_TO_BINDINGS")
-	static Map<InputUtil.Key, KeyBinding> getKeyToBindings() {
-		return null;
-	}
-
 	@Accessor
 	InputUtil.Key getBoundKey();
 
