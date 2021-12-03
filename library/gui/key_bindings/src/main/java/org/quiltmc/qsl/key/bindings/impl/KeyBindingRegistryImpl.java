@@ -49,18 +49,16 @@ public class KeyBindingRegistryImpl {
 
 		for (KeyBinding otherKey : quiltKeys.keySet()) {
 			if (key == otherKey) {
-				LOGGER.error("%s has already been registered!", key.getTranslationKey());
+				LOGGER.error("{} has already been registered!", key.getTranslationKey());
 				return null;
-			}
-
-			if (key.getTranslationKey() == otherKey.getTranslationKey()) {
-				LOGGER.error("Attempted to register %s, but a key bind with the same translation key has already been registered!", key.getTranslationKey());
+			} else if (key.getTranslationKey() == otherKey.getTranslationKey()) {
+				LOGGER.error("Attempted to register {}, but a key bind with the same translation key has already been registered!", key.getTranslationKey());
 				return null;
 			}
 		}
 
 		quiltKeys.put(key, enabled);
-		applyChanges(true);
+		applyChanges();
 		if (!enabled) {
 			KeyBindingAccessor.getKeysById().remove(key.getTranslationKey());
 		}
@@ -89,7 +87,7 @@ public class KeyBindingRegistryImpl {
 	public static void setEnabled(KeyBinding key, boolean enabled) {
 		if (quiltKeys.containsKey(key)) {
 			quiltKeys.replace(key, enabled);
-			applyChanges(false);
+			applyChanges();
 			if (enabled) {
 				KeyBindingAccessor.getKeysById().put(key.getTranslationKey(), key);
 			} else {
@@ -116,9 +114,7 @@ public class KeyBindingRegistryImpl {
 			}
 		}
 
-		KeyBinding[] quiltKeysArray = enabledQuiltKeys.toArray(new KeyBinding[enabledQuiltKeys.size()]);
-
-		enabledQuiltKeysArray = quiltKeysArray;
+		enabledQuiltKeysArray = enabledQuiltKeys.toArray(new KeyBinding[enabledQuiltKeys.size()]);
 	}
 
 	public static KeyBinding[] getKeyBindings(KeyBinding[] allVanillaKeys) {
@@ -129,7 +125,7 @@ public class KeyBindingRegistryImpl {
 		return disabledQuiltKeys;
 	}
 
-	public static void applyChanges(boolean updateTotal) {
+	public static void applyChanges() {
 		updateKeysArray();
 		for (KeyBindingManager manager : keyBindingManagers) {
 			manager.addModdedKeyBinds();
