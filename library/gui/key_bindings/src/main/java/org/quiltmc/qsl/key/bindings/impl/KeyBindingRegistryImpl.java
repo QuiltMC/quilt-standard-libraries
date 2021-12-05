@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
@@ -42,18 +43,13 @@ public class KeyBindingRegistryImpl {
 	private static List<KeyBinding> disabledQuiltKeys = new ArrayList<>(0);
 
 	public static KeyBinding registerKeyBinding(KeyBinding key, boolean enabled) {
-		if (key == null) {
-			LOGGER.error("Attempted to register a null key bind!");
-			return null;
-		}
+		Objects.requireNonNull(key, "Attempted to register a null key bind!");
 
 		for (KeyBinding otherKey : quiltKeys.keySet()) {
 			if (key == otherKey) {
-				LOGGER.error("{} has already been registered!", key.getTranslationKey());
-				return null;
+				throw new IllegalArgumentException(String.format("%s has already been registered!", key.getTranslationKey()));
 			} else if (key.getTranslationKey() == otherKey.getTranslationKey()) {
-				LOGGER.error("Attempted to register {}, but a key bind with the same translation key has already been registered!", key.getTranslationKey());
-				return null;
+				throw new IllegalArgumentException(String.format("Attempted to register {}, but a key bind with the same translation key has already been registered!", key.getTranslationKey()));
 			}
 		}
 
@@ -81,7 +77,8 @@ public class KeyBindingRegistryImpl {
 			return quiltKeys.get(key);
 		}
 
-		return false;
+		// TODO - Split those two
+		throw new IllegalArgumentException(String.format("%s has either not been registered or it is a vanilla key!", key.getTranslationKey()));
 	}
 
 	public static void setEnabled(KeyBinding key, boolean enabled) {

@@ -19,6 +19,7 @@
     "minecraft": ">=1.18"
   },
   "description": "Key bindings registration and utilities.",
+  "accessWidener": "quilt_key_bindings.accesswidener",
   "mixins": [
     "quilt_key_bindings.mixins.json"
   ]
