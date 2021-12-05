@@ -76,7 +76,11 @@ public abstract class KeyBindingEntryMixin extends KeyBindingListWidget.Entry im
 		MinecraftClient client = ((EntryListWidgetAccessor) (Object) field_2742).getClient();
 		for (KeyBinding keyBinding : client.options.keysAll) {
 			if (keyBinding != this.binding && this.binding.equals(keyBinding)) {
-				quilt$conflictTooltips.add(new TranslatableText("key.qsl.key_conflict.tooltip", new TranslatableText(keyBinding.getTranslationKey())).formatted(Formatting.RED));
+				if (quilt$conflictTooltips.isEmpty()) {
+					quilt$conflictTooltips.add(new TranslatableText("key.qsl.key_conflict.tooltip").formatted(Formatting.RED));
+				}
+
+				quilt$conflictTooltips.add(new TranslatableText(keyBinding.getTranslationKey()).formatted(Formatting.RED));
 			}
 		}
 	}
