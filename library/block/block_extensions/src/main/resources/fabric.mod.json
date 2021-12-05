@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "quilt_block_extensions",
+  "name": "Quilt Block Extensions API",
+  "version": "1.0.0",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "icon": "assets/quilt_block_extensions/icon.png",
+  "contact": {
+    "homepage": "https://quiltmc.org",
+    "issues": "https://github.com/QuiltMC/quilt-standard-libraries/issues",
+    "sources": "https://github.com/QuiltMC/quilt-standard-libraries"
+  },
+  "authors": [
+    "QuiltMC"
+  ],
+  "mixins": [
+    "quilt_block_extensions.mixins.json"
+  ],
+  "description": "Extensions for creating and working with blocks.",
+  "accessWidener": "quilt_block_extensions.accesswidener"
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "quilt_block_extensions_testmod",
+  "name": "Quilt Block Extensions Test Mod",
+  "version": "1.0.0",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "depends": {
+    "quilt_resource_loader": "*"
+  },
+  "entrypoints": {
+    "main": [
+      "org.quiltmc.qsl.block.extensions.test.Initializer"
+    ],
+    "client": [
+      "org.quiltmc.qsl.block.extensions.test.ClientInitializer"
+    ],
+  }
+}
