@@ -35,7 +35,7 @@ import org.quiltmc.qsl.key.bindings.mixin.client.KeyBindingAccessor;
 public class KeyBindingRegistry {
 	/**
 	 * Registers a key binding with it being initially enabled.
-	 * 
+	 *
 	 * <pre>
 	 * {@code
 	 * public static final KeyBinding EXAMPLE_KEY_BIND = KeyBinding.registerKeyBinding(
@@ -74,10 +74,10 @@ public class KeyBindingRegistry {
 
 	/**
 	 * Gets the bound key of the key binding.
-	 * 
+	 *
 	 * <p>The bound key is only directly used by the key bind system's internal logic.
 	 * If possible, use the method provided by the KeyBinding class.
-	 * 
+	 *
 	 * @param key
 	 * @return
 	 */
@@ -91,7 +91,7 @@ public class KeyBindingRegistry {
 	 * <p>The state of a key binding determines whenever it's disabled or not.
 	 *
 	 * <p>When a keybind is disabled, it is effectively hidden from the game,
-	 * being non-existent to it. options.txt is the only expection, who still
+	 * being non-existent to it. options.txt is the only exception, who still
 	 * stores the disabled key binds.
 	 *
 	 * @param key the key binding
@@ -105,7 +105,7 @@ public class KeyBindingRegistry {
 	 * Sets the state of the key binding.
 	 *
 	 * <p>This method allows for disabling the key binding, making it invisible
-	 * to the game. options.txt is the only expection, who still stores the disabled
+	 * to the game. options.txt is the only exception, who still stores the disabled
 	 * key binds.
 	 *
 	 * @param key the key binding
