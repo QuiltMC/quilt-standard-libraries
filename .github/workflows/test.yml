@@ -14,7 +14,6 @@ jobs:
           distribution: "adopt"
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v2
-      - uses: gradle/wrapper-validation-action@v1
       - run: ./gradlew check build publish --stacktrace --parallel
         env:
           SNAPSHOTS_URL: ${{ secrets.SNAPSHOTS_URL }}
