@@ -17,10 +17,16 @@
 package org.quiltmc.qsl.block.extensions.test;
 
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.block.*;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.GlassBlock;
+import net.minecraft.block.MapColor;
+import net.minecraft.block.Material;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+
 import org.quiltmc.qsl.block.extensions.api.QuiltBlockSettings;
 import org.quiltmc.qsl.block.extensions.api.QuiltMaterialBuilder;
 

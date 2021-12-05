@@ -9,4 +9,5 @@
  *     and {@linkplain org.quiltmc.qsl.block.extensions.api.client.BlockRenderLayerMap#put(net.minecraft.client.render.RenderLayer, net.minecraft.fluid.Fluid...) fluids}.</li>
  * </ul>
  */
+
 package org.quiltmc.qsl.block.extensions.api.client;

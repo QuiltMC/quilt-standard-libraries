@@ -16,15 +16,21 @@
 
 package org.quiltmc.qsl.block.extensions.api;
 
-import org.quiltmc.qsl.block.extensions.mixin.AbstractBlockAccessor;
-import org.quiltmc.qsl.block.extensions.mixin.AbstractBlockSettingsAccessor;
-import net.minecraft.block.*;
+import java.util.function.Function;
+import java.util.function.ToIntFunction;
+
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.MapColor;
+import net.minecraft.block.Material;
 import net.minecraft.entity.EntityType;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
-import java.util.function.Function;
-import java.util.function.ToIntFunction;
+
+import org.quiltmc.qsl.block.extensions.mixin.AbstractBlockAccessor;
+import org.quiltmc.qsl.block.extensions.mixin.AbstractBlockSettingsAccessor;
 
 /**
  * An extended variant of the {@link AbstractBlock.Settings} class, which provides extra methods for customization.
@@ -260,9 +266,9 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	}
 
 	/**
-	 * Sets the loot table ID that this block will use when broken.
+	 * Sets the loot table identifier that this block will use when broken.
 	 *
-	 * @param dropTableId new loot table ID
+	 * @param dropTableId the new loot table identifier
 	 * @return this builder
 	 */
 	public QuiltBlockSettings drops(Identifier dropTableId) {

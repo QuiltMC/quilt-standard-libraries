@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "quilt_block_extensions",
   "name": "Quilt Block Extensions API",
-  "version": "1.0.0",
+  "version": "${version}",
   "environment": "*",
   "license": "Apache-2.0",
   "icon": "assets/quilt_block_extensions/icon.png",
@@ -14,9 +14,30 @@
   "authors": [
     "QuiltMC"
   ],
+  "depends": {
+    "fabricloader": ">=0.12",
+    "minecraft": ">=1.18",
+    "quilt_base": "*"
+  },
+  "description": "Extensions for creating and working with blocks.",
   "mixins": [
     "quilt_block_extensions.mixins.json"
   ],
-  "description": "Extensions for creating and working with blocks.",
-  "accessWidener": "quilt_block_extensions.accesswidener"
+  "accessWidener": "quilt_block_extensions.accesswidener",
+  "custom": {
+    "modmenu": {
+      "badges": [
+        "library"
+      ],
+      "parent": {
+        "id": "qsl",
+        "name": "Quilt Standard Libraries",
+        "description": "A set of libraries to assist in making Quilt mods.",
+        "icon": "assets/quilt_block_extensions/icon.png",
+        "badges": [
+          "library"
+        ]
+      }
+    }
+  }
 }

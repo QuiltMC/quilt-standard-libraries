@@ -25,6 +25,7 @@
  *     with {@code new QuiltMaterialBuilder}.</li>
  * </ul>
  */
+
 package org.quiltmc.qsl.block.extensions.api;
 
 // FIXME JD thinks QuiltMaterialBuilder#lightPassesThrough() is inaccessible because it's confusing it with

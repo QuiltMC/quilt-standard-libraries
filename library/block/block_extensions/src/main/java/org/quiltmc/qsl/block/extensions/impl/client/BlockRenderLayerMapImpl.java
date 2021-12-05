@@ -16,19 +16,21 @@
 
 package org.quiltmc.qsl.block.extensions.impl.client;
 
+import java.util.Map;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.fluid.Fluid;
-import org.jetbrains.annotations.ApiStatus;
-
-import java.util.Map;
 
 @ApiStatus.Internal
 @Environment(EnvType.CLIENT)
 public final class BlockRenderLayerMapImpl {
-	private BlockRenderLayerMapImpl() { }
+	private BlockRenderLayerMapImpl() {
+	}
 
 	private static Map<Block, RenderLayer> blocks;
 	private static Map<Fluid, RenderLayer> fluids;

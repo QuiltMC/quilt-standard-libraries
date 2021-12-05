@@ -16,21 +16,27 @@
 
 package org.quiltmc.qsl.block.extensions.mixin.client;
 
-import net.minecraft.block.Block;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.RenderLayers;
-import net.minecraft.fluid.Fluid;
-import org.quiltmc.qsl.block.extensions.impl.client.BlockRenderLayerMapImpl;
+import java.util.Map;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.Map;
+import net.minecraft.block.Block;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.RenderLayers;
+import net.minecraft.fluid.Fluid;
+
+import org.quiltmc.qsl.block.extensions.impl.client.BlockRenderLayerMapImpl;
 
 @Mixin(RenderLayers.class)
 public abstract class RenderLayersMixin {
-	@Shadow @Final private static Map<Block, RenderLayer> BLOCKS;
-	@Shadow @Final private static Map<Fluid, RenderLayer> FLUIDS;
+	@Shadow
+	@Final
+	private static Map<Block, RenderLayer> BLOCKS;
+	@Shadow
+	@Final
+	private static Map<Fluid, RenderLayer> FLUIDS;
 
 	static {
 		BlockRenderLayerMapImpl.initialize(BLOCKS, FLUIDS);

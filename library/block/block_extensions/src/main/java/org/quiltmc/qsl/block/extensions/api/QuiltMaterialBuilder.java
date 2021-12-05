@@ -19,6 +19,7 @@ package org.quiltmc.qsl.block.extensions.api;
 import net.minecraft.block.MapColor;
 import net.minecraft.block.Material;
 import net.minecraft.block.piston.PistonBehavior;
+
 import org.quiltmc.qsl.block.extensions.mixin.MaterialBuilderAccessor;
 
 /**

@@ -10,10 +10,10 @@ qslModule {
 			"qsl_base"
 	])
 	coreTestmodDependencies([
-	        "resource_loader"
+			"resource_loader"
 	])
 }
 
-minecraft {
-	accessWidener = file("src/main/resources/quilt_block_extensions.accesswidener")
+loom {
+	accessWidenerPath = file("src/main/resources/quilt_block_extensions.accesswidener")
 }
