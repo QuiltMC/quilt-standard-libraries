@@ -69,7 +69,7 @@ afterEvaluate {
 				server()
 				name = "Auto test server"
 				source(project.sourceSets.testmod)
-				property("quilt.autoTest")
+				property("quilt.auto_test")
 				programArg("--nogui")
 			}
 		}

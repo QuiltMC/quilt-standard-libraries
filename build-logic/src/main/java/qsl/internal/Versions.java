@@ -22,17 +22,22 @@ public final class Versions {
 	/**
 	 * The target Minecraft version.
 	 */
-	public static final String MINECRAFT_VERSION = "1.18";
+	public static final String MINECRAFT_VERSION = "1.18.1-pre1";
 
 	/**
-	 * The target Yarn build.
+	 * The target Quilt Mappings build.
 	 */
-	public static final String MAPPINGS_BUILD = "1";
+	public static final int MAPPINGS_BUILD = 2;
 
 	/**
 	 * The version of Quilt Loader to use.
 	 */
 	public static final String LOADER_VERSION = "0.12.6";
+
+	/**
+	 * The target Java version.
+	 */
+	public static final int JAVA_VERSION = 17; // Minecraft is Java 17
 
 	public static boolean isMinecraftVersionNonRelease() {
 		return MINECRAFT_VERSION.matches("^\\d\\dw\\d\\d[a-z]$");

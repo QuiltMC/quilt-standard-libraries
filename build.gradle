@@ -78,7 +78,7 @@ loom {
 			server()
 			configName = "Auto test server"
 			source(project.sourceSets.testmod)
-			property("quilt.auto_test", "50")
+			property("quilt.auto_test")
 			programArg("--nogui")
 		}
 	}
