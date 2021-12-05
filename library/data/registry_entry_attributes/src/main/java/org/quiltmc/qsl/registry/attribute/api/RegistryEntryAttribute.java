@@ -281,9 +281,9 @@ public interface RegistryEntryAttribute<R, V> {
 
 		/**
 		 * Sets the <em>missing value function</em> of this attribute, which will be used to compute a value for a
-		 * specific entry, should it be missing.<p>
-		 * <p>
-		 * Note that this will be computed on both sides and the computation result will <em>not</em> be synchronized.
+		 * specific entry, should it be missing.
+		 *
+		 * <p>Note that this will be computed on both sides and the computation result will <em>not</em> be synchronized.
 		 *
 		 * @param missingValueFunction function to compute otherwise-missing value
 		 * @return this builder
