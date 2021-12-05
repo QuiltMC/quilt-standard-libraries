@@ -64,7 +64,7 @@ public class KeyBindingRegistryImpl {
 
 	public static KeyBinding getKeyBinding(String translationKey) {
 		for (KeyBinding key : quiltKeys.keySet()) {
-			if (key.getTranslationKey() == translationKey) {
+			if (key.getTranslationKey().equals(translationKey)) {
 				return key;
 			}
 		}
