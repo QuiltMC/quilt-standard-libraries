@@ -16,24 +16,30 @@
 
 package org.quiltmc.qsl.registry.attribute.mixin;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
+
 import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
 import org.quiltmc.qsl.registry.attribute.impl.QuiltRegistryInternals;
 import org.quiltmc.qsl.registry.attribute.impl.RegistryEntryAttributeHolder;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import java.util.HashMap;
-import java.util.Map;
 
 @Mixin(Registry.class)
 public abstract class RegistryMixin<R> implements QuiltRegistryInternals<R> {
-	@Unique private final Map<Identifier, RegistryEntryAttribute<R, ?>> attributes = new HashMap<>();
-	@Unique private RegistryEntryAttributeHolder<R> quilt$builtinAttributeHolder;
-	@Unique private RegistryEntryAttributeHolder<R> quilt$dataAttributeHolder;
-	@Unique private RegistryEntryAttributeHolder<R> quilt$assetsAttributeHolder;
+	@Unique
+	private final Map<Identifier, RegistryEntryAttribute<R, ?>> attributes = new HashMap<>();
+	@Unique
+	private RegistryEntryAttributeHolder<R> quilt$builtinAttributeHolder;
+	@Unique
+	private RegistryEntryAttributeHolder<R> quilt$dataAttributeHolder;
+	@Unique
+	private RegistryEntryAttributeHolder<R> quilt$assetsAttributeHolder;
 
 	@Override
 	public void quilt$registerAttribute(RegistryEntryAttribute<R, ?> attribute) {

@@ -16,6 +16,18 @@
 
 package org.quiltmc.qsl.registry.attribute.impl;
 
+import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
+import static net.minecraft.server.command.CommandManager.argument;
+import static net.minecraft.server.command.CommandManager.literal;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -34,9 +46,8 @@ import com.mojang.serialization.JsonOps;
 import net.fabricmc.loader.api.FabricLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.jetbrains.annotations.ApiStatus;
-import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
+
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.ArgumentTypes;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
@@ -44,17 +55,8 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
-import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
-import static net.minecraft.server.command.CommandManager.argument;
-import static net.minecraft.server.command.CommandManager.literal;
+import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
 
 @ApiStatus.Internal
 public final class DumpBuiltinAttributesCommand {

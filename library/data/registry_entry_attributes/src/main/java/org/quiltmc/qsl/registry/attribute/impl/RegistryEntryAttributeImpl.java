@@ -16,17 +16,18 @@
 
 package org.quiltmc.qsl.registry.attribute.impl;
 
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
+
 import com.mojang.serialization.Codec;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
 
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Function;
+import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
 
 @ApiStatus.Internal
 public record RegistryEntryAttributeImpl<R, V>(Registry<R> registry,

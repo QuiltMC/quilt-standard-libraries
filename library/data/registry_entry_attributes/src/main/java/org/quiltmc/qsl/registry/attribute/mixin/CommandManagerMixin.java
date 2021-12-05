@@ -24,9 +24,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import org.quiltmc.qsl.registry.attribute.impl.DumpBuiltinAttributesCommand;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
+
+import org.quiltmc.qsl.registry.attribute.impl.DumpBuiltinAttributesCommand;
 
 // FIXME replace with command registration event once that's implemented
 @Mixin(CommandManager.class)

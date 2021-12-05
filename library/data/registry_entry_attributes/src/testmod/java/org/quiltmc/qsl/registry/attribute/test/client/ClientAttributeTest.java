@@ -17,9 +17,11 @@
 package org.quiltmc.qsl.registry.attribute.test.client;
 
 import net.fabricmc.api.ClientModInitializer;
+
 import net.minecraft.block.Block;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+
 import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
 import org.quiltmc.qsl.registry.attribute.impl.RegistryEntryAttributeImpl;
 
@@ -29,5 +31,6 @@ public class ClientAttributeTest implements ClientModInitializer {
 					.side(RegistryEntryAttributeImpl.Side.CLIENT).build();
 
 	@Override
-	public void onInitializeClient() { }
+	public void onInitializeClient() {
+	}
 }

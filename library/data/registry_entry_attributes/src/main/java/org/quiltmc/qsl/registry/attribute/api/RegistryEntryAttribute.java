@@ -16,16 +16,18 @@
 
 package org.quiltmc.qsl.registry.attribute.api;
 
+import java.util.Optional;
+import java.util.function.Function;
+
 import com.mojang.serialization.Codec;
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import org.jetbrains.annotations.Nullable;
+
 import org.quiltmc.qsl.registry.attribute.impl.RegistryEntryAttributeHolder;
 import org.quiltmc.qsl.registry.attribute.impl.RegistryEntryAttributeImpl;
-
-import java.util.Optional;
-import java.util.function.Function;
 
 /**
  * Represents an attribute that is attached to a registry entry.
@@ -280,7 +282,7 @@ public interface RegistryEntryAttribute<R, V> {
 		/**
 		 * Sets the <em>missing value function</em> of this attribute, which will be used to compute a value for a
 		 * specific entry, should it be missing.<p>
-		 *
+		 * <p>
 		 * Note that this will be computed on both sides and the computation result will <em>not</em> be synchronized.
 		 *
 		 * @param missingValueFunction function to compute otherwise-missing value

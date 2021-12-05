@@ -18,23 +18,25 @@ package org.quiltmc.qsl.registry.attribute.impl.reloader;
 
 import static org.quiltmc.qsl.registry.attribute.impl.reloader.RegistryEntryAttributeReloader.LOGGER;
 
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
+import org.apache.logging.log4j.Level;
+
 import net.minecraft.resource.Resource;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.registry.Registry;
-import org.apache.logging.log4j.Level;
-import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
 
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
+import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
 
 final class AttributeMap {
 	private final Registry<?> registry;

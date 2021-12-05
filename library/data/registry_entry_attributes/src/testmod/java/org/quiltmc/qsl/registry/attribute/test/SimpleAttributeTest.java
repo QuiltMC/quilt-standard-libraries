@@ -18,8 +18,6 @@ package org.quiltmc.qsl.registry.attribute.test;
 
 import net.fabricmc.api.ModInitializer;
 
-import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
-import org.quiltmc.qsl.registry.attribute.api.RegistryExtensions;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -29,6 +27,9 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
+
+import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
+import org.quiltmc.qsl.registry.attribute.api.RegistryExtensions;
 
 public class SimpleAttributeTest implements ModInitializer {
 	public static final RegistryEntryAttribute<Item, Integer> TEST_ATTRIBUTE =
@@ -45,7 +46,8 @@ public class SimpleAttributeTest implements ModInitializer {
 					.put(TEST_ATTRIBUTE_2, 2.0f));
 
 	@Override
-	public void onInitialize() { }
+	public void onInitialize() {
+	}
 
 	public static final class MyItem extends Item {
 		public MyItem(Settings settings) {

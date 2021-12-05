@@ -16,11 +16,16 @@
 
 package org.quiltmc.qsl.registry.attribute.impl.reloader;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
 import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-
-import java.util.*;
 
 sealed interface AttributeTarget {
 	Collection<Identifier> ids();

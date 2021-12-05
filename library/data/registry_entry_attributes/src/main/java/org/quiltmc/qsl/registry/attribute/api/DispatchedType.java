@@ -16,10 +16,10 @@
 
 package org.quiltmc.qsl.registry.attribute.api;
 
+import java.util.function.Function;
+
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-
-import java.util.function.Function;
 
 /**
  * Utility interface used for {@link RegistryEntryAttribute#dispatchedBuilder(Registry, Identifier, Function)}.
@@ -32,7 +32,7 @@ import java.util.function.Function;
  *     void execute(ServerPlayerEntity player);
  * }
  * </code></pre>
- *
+ * <p>
  * Using the {@code createDispatched} method, you can create an attribute for a composable behavior:
  * <pre><code>
  * public static final SimpleRegistry&lt;Codec&lt;? extends Behavior&gt;&gt; REGISTRY = new SimpleRegistry&lt;&gt;();
@@ -46,8 +46,8 @@ import java.util.function.Function;
  */
 public interface DispatchedType {
 	/**
-	 * Gets this instance's type.<p>
-	 *
+	 * Gets this instance's type.
+	 * <p>
 	 * This is used by the {@linkplain com.mojang.serialization.Codec#dispatch(Function, Function) dispatched codec}
 	 * to get the {@code Codec} instance used to (de)serialize instances of this type.
 	 *

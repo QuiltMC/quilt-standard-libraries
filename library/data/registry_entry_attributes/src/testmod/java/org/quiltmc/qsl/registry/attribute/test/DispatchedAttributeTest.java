@@ -16,24 +16,30 @@
 
 package org.quiltmc.qsl.registry.attribute.test;
 
+import java.util.Map;
+
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.api.ModInitializer;
 
-import org.quiltmc.qsl.registry.attribute.api.DispatchedType;
-import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
-import org.quiltmc.qsl.registry.attribute.api.RegistryExtensions;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.util.*;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.Util;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import java.util.Map;
+
+import org.quiltmc.qsl.registry.attribute.api.DispatchedType;
+import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
+import org.quiltmc.qsl.registry.attribute.api.RegistryExtensions;
 
 public class DispatchedAttributeTest implements ModInitializer {
 	public static abstract class FuncValue implements DispatchedType {
@@ -141,5 +147,6 @@ public class DispatchedAttributeTest implements ModInitializer {
 			new Identifier("quilt", "modular_item_4"), new ModularFunctionItem(new Item.Settings()));
 
 	@Override
-	public void onInitialize() { }
+	public void onInitialize() {
+	}
 }

@@ -1,8 +1,8 @@
 /**
  * <h2>Registry Entry Attributes</h2>
- *
+ * <p>
  * A simple API for adding arbitrary values to any instances managed by a {@link net.minecraft.util.registry.Registry Registry}.
- * 
+ *
  * <p>
  * {@link org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute RegistryEntryAttribute} contains a number of methods for building
  * new attributes.
@@ -21,11 +21,11 @@
  *
  *
  * <h3>Data-Driven Capabilities</h3>
- *
+ * <p>
  * All attributes declared using this API can be set using a data pack (or a resource pack, if the attribute is client-side)!
  * Simply create the following file:<br>
  * {@code <data|assets>/<attribute_namespace>/attributes/<registry_key_path>/<attribute_name>.json}<p>
- *
+ * <p>
  * These "attribute maps" use a tag-like format, with a {@code replace} property that allows replacing all (non-built-in) values.
  *
  * <p>
@@ -43,4 +43,5 @@
  * }
  * </code></pre>
  */
+
 package org.quiltmc.qsl.registry.attribute.api;

@@ -7,9 +7,9 @@ qslModule {
 	version = "1.0.0"
 	library = "data"
 	coreDependencies([
-		"resource_loader"
+			"resource_loader"
 	])
 	interLibraryDependencies([
-	    "tags"
+			"tags"
 	])
 }

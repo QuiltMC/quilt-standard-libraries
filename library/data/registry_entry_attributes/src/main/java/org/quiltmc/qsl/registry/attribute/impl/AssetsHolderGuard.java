@@ -16,8 +16,9 @@
 
 package org.quiltmc.qsl.registry.attribute.impl;
 
-import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
+
+import net.minecraft.util.registry.Registry;
 
 /**
  * Simple guard class that prevents access to the

@@ -19,20 +19,25 @@ package org.quiltmc.qsl.registry.attribute.impl;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
 import net.minecraft.util.Identifier;
+
+import org.quiltmc.qsl.registry.attribute.api.RegistryEntryAttribute;
 
 @ApiStatus.Internal
 public interface QuiltRegistryInternals<R> {
 	void quilt$registerAttribute(RegistryEntryAttribute<R, ?> attribute);
+
 	@Nullable RegistryEntryAttribute<R, ?> quilt$getAttribute(Identifier id);
 
 	RegistryEntryAttributeHolder<R> quilt$getBuiltinAttributeHolder();
+
 	void quilt$setBuiltinAttributeHolder(RegistryEntryAttributeHolder<R> holder);
 
 	RegistryEntryAttributeHolder<R> quilt$getDataAttributeHolder();
+
 	void quilt$setDataAttributeHolder(RegistryEntryAttributeHolder<R> holder);
 
 	RegistryEntryAttributeHolder<R> quilt$getAssetsAttributeHolder();
+
 	void quilt$setAssetsAttributeHolder(RegistryEntryAttributeHolder<R> holder);
 }
