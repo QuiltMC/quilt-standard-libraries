@@ -16,7 +16,9 @@
 
 package org.quiltmc.qsl.block.extensions.impl.client;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -32,19 +34,31 @@ public final class BlockRenderLayerMapImpl {
 	private BlockRenderLayerMapImpl() {
 	}
 
-	private static Map<Block, RenderLayer> blocks;
-	private static Map<Fluid, RenderLayer> fluids;
+	private static Map<Block, RenderLayer> blockMap = new HashMap<>();
+	private static Map<Fluid, RenderLayer> fluidMap = new HashMap<>();
 
-	public static void initialize(Map<Block, RenderLayer> blocksIn, Map<Fluid, RenderLayer> fluidsIn) {
-		blocks = blocksIn;
-		fluids = fluidsIn;
+	private static BiConsumer<Block, RenderLayer> blockHandler = blockMap::put;
+	private static BiConsumer<Fluid, RenderLayer> fluidHandler = fluidMap::put;
+
+	public static void initialize(BiConsumer<Block, RenderLayer> blockHandlerIn, BiConsumer<Fluid, RenderLayer> fluidHandlerIn) {
+		// add pre-existing render layer assignments
+		blockMap.forEach(blockHandlerIn);
+		fluidMap.forEach(fluidHandlerIn);
+
+		// set handlers to directly accept later additions
+		blockHandler = blockHandlerIn;
+		fluidHandler = fluidHandlerIn;
+
+		// lose the maps, let the GC take care of them
+		blockMap = null;
+		fluidMap = null;
 	}
 
 	public static void put(Block block, RenderLayer layer) {
-		blocks.put(block, layer);
+		blockHandler.accept(block, layer);
 	}
 
 	public static void put(Fluid fluid, RenderLayer layer) {
-		fluids.put(fluid, layer);
+		fluidHandler.accept(fluid, layer);
 	}
 }

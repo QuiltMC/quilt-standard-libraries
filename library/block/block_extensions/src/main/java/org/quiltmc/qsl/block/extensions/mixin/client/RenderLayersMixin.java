@@ -39,6 +39,6 @@ public abstract class RenderLayersMixin {
 	private static Map<Fluid, RenderLayer> FLUIDS;
 
 	static {
-		BlockRenderLayerMapImpl.initialize(BLOCKS, FLUIDS);
+		BlockRenderLayerMapImpl.initialize(BLOCKS::put, FLUIDS::put);
 	}
 }
