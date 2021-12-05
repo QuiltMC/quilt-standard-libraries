@@ -6,7 +6,7 @@ jobs:
     steps:
       - uses: actions/setup-java@v2
         with:
-          distribution: "adopt"
+          distribution: "temurin"
           java-version: "17"
       - uses: actions/checkout@v2 # Required for indra-git
       - run: ./gradlew checkVersion build publish -stacktrace

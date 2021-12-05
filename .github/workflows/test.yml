@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/setup-java@v2
         with:
-          distribution: "adopt"
+          distribution: "temurin"
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v2
       - run: ./gradlew check build publish --stacktrace --parallel
