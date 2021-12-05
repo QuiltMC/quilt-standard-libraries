@@ -108,12 +108,12 @@ final class AttributeMap {
 	}
 
 	private void handleArray(Resource resource, JsonArray values) {
-		int index = 0;
-		for (JsonElement entry : values) {
+		for (int i = 0; i < values.size(); i++) {
+			JsonElement entry = values.get(i);
+
 			if (!entry.isJsonObject()) {
 				LOGGER.error("Invalid element at index {} in values of {}: expected a JsonObject, was {}",
-						index, resource.getId(), JsonHelper.getType(entry));
-				index++;
+						i, resource.getId(), JsonHelper.getType(entry));
 				continue;
 			}
 			JsonObject entryO = entry.getAsJsonObject();
@@ -126,15 +126,13 @@ final class AttributeMap {
 				id = new Identifier(idStr);
 			} catch (JsonSyntaxException e) {
 				LOGGER.error("Invalid element at index {} in values of {}: syntax error",
-						index, resource.getId());
+						i, resource.getId());
 				LOGGER.catching(Level.ERROR, e);
-				index++;
 				continue;
 			} catch (InvalidIdentifierException e) {
 				LOGGER.error("Invalid element at index {} in values of {}: invalid identifier",
-						index, resource.getId());
+						i, resource.getId());
 				LOGGER.catching(Level.ERROR, e);
-				index++;
 				continue;
 			}
 
@@ -147,7 +145,6 @@ final class AttributeMap {
 				LOGGER.error("Failed to parse value for registry entry {} in values of {}: syntax error",
 						id, resource.getId());
 				LOGGER.catching(Level.ERROR, e);
-				index++;
 				continue;
 			}
 
@@ -155,19 +152,15 @@ final class AttributeMap {
 
 			if (required && !registry.containsId(id)) {
 				LOGGER.error("Unregistered identifier in values of {}: '{}', ignoring", resource.getId(), id);
-				index++;
 				continue;
 			}
 
 			Object parsedValue = parseValue(resource, id, value);
 			if (parsedValue == null) {
-				index++;
 				continue;
 			}
 
 			put(id, parsedValue);
-
-			index++;
 		}
 	}
 
