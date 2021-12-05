@@ -39,18 +39,9 @@ public class KeyBindingsTestMod implements ClientModInitializer {
 		new KeyBinding("key.qsl.enable_key_bind", GLFW.GLFW_KEY_I, "key.qsl.category"), true
 	);
 
-	// These key binds will give an error
-	public static final KeyBinding DUPLICATE_KEY_BIND = KeyBindingRegistry.registerKeyBinding(
-		new KeyBinding("key.qsl.enable_key_bind", GLFW.GLFW_KEY_J, "key.qsl.category"), true
-	);
-
 	public static final KeyBinding DISABLED_CONFLICT_TEST_KEY_BIND = KeyBindingRegistry.registerKeyBinding(
 		new KeyBinding("key.qsl.disabled_conflict_test", GLFW.GLFW_KEY_H, "key.qsl.category"), false
 	);
-
-	public static final KeyBinding EXACT_SAME_KEY_BIND = KeyBindingRegistry.registerKeyBinding(ENABLE_KEY_BIND);
-
-	public static final KeyBinding NULL_KEY_BIND = KeyBindingRegistry.registerKeyBinding(null);
 
 	@Override
 	public void onInitializeClient() {
@@ -74,6 +65,12 @@ public class KeyBindingsTestMod implements ClientModInitializer {
 			if (CONFLICT_TEST_KEY_BIND.isPressed()) {
 				if (client.player != null) {
 					client.player.sendMessage(new LiteralText("This is the conflict key being pressed"), false);
+				}
+			}
+
+			if (DISABLED_CONFLICT_TEST_KEY_BIND.isPressed()) {
+				if (client.player != null) {
+					client.player.sendMessage(new LiteralText("I'm not supposed to do things! Why am I enabled?"), false);
 				}
 			}
 		});
