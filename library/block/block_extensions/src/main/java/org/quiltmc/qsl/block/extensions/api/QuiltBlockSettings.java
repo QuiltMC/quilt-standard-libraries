@@ -51,10 +51,10 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		var otherAccessor = (AbstractBlockSettingsAccessor) settings;
 
 		// region [VanillaCopy] AbstractBlock.Settings#copy(AbstractBlock.Settings)
-		thisAccessor.setMaterial(otherAccessor.getMaterial());
+		this.material(otherAccessor.getMaterial());
 		this.hardness(otherAccessor.getHardness());
 		this.resistance(otherAccessor.getResistance());
-		thisAccessor.setCollidable(otherAccessor.getCollidable());
+		this.collidable(otherAccessor.getCollidable());
 		thisAccessor.setRandomTicks(otherAccessor.getRandomTicks());
 		this.luminance(otherAccessor.getLuminance());
 		thisAccessor.setMapColorProvider(otherAccessor.getMapColorProvider());
@@ -254,6 +254,16 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 
 	// region Added by Quilt
 
+	public QuiltBlockSettings material(Material material) {
+		((AbstractBlockSettingsAccessor) this).setMaterial(material);
+		return this;
+	}
+
+	public QuiltBlockSettings collidable(boolean collidable) {
+		((AbstractBlockSettingsAccessor) this).setCollidable(collidable);
+		return this;
+	}
+
 	/**
 	 * Sets the luminance of the block. The block will have this luminance regardless of its current state.
 	 *
@@ -273,11 +283,6 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	 */
 	public QuiltBlockSettings drops(Identifier dropTableId) {
 		((AbstractBlockSettingsAccessor) this).setLootTableId(dropTableId);
-		return this;
-	}
-
-	public QuiltBlockSettings material(Material material) {
-		((AbstractBlockSettingsAccessor) this).setMaterial(material);
 		return this;
 	}
 
