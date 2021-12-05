@@ -45,7 +45,9 @@ public class KeyBindingRegistry {
 	 * </pre>
 	 *
 	 * @param key the key binding to be registered
-	 * @return the key binding if successfully registered, else null
+	 * @return the successfully-registered key binding
+	 * @throws NullPointerException if {@code key} is null
+	 * @throws IllegalArgumentException if either {@code key} or it's translation key is already registered
 	 */
 	public static KeyBinding registerKeyBinding(KeyBinding key) {
 		return registerKeyBinding(key, true);
@@ -57,6 +59,8 @@ public class KeyBindingRegistry {
 	 * @param key the key binding to be registered
 	 * @param enabled the key binding's initial state
 	 * @return the key binding if successfully registered, {@code null} otherwise
+	 * @throws NullPointerException if {@code key} is null
+	 * @throws IllegalArgumentException if either {@code key} or it's translation key is already registered
 	 */
 	public static KeyBinding registerKeyBinding(KeyBinding key, boolean enabled) {
 		return KeyBindingRegistryImpl.registerKeyBinding(key, enabled);
@@ -78,8 +82,8 @@ public class KeyBindingRegistry {
 	 * <p>The bound key is only directly used by the key bind system's internal logic.
 	 * If possible, use the method provided by the KeyBinding class.
 	 *
-	 * @param key
-	 * @return
+	 * @param key the key binding
+	 * @return the key binding's bound key
 	 */
 	public static InputUtil.Key getBoundKey(KeyBinding key) {
 		return ((KeyBindingAccessor) key).getBoundKey();
@@ -96,6 +100,7 @@ public class KeyBindingRegistry {
 	 *
 	 * @param key the key binding
 	 * @return {@code true} if the key binding is enabled, {@code false} otherwise
+	 * @throws IllegalArgumentException if {@code key} is either unregistered or a Vanilla key bind
 	 */
 	public static boolean isEnabled(KeyBinding key) {
 		return KeyBindingRegistryImpl.isEnabled(key);

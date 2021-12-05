@@ -48,7 +48,7 @@ public class KeyBindingRegistryImpl {
 		for (KeyBinding otherKey : quiltKeys.keySet()) {
 			if (key == otherKey) {
 				throw new IllegalArgumentException(String.format("%s has already been registered!", key.getTranslationKey()));
-			} else if (key.getTranslationKey() == otherKey.getTranslationKey()) {
+			} else if (key.getTranslationKey().equals(otherKey.getTranslationKey())) {
 				throw new IllegalArgumentException(String.format("Attempted to register {}, but a key bind with the same translation key has already been registered!", key.getTranslationKey()));
 			}
 		}
