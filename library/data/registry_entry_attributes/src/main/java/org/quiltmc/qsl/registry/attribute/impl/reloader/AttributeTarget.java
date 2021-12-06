@@ -28,7 +28,13 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 sealed interface AttributeTarget {
-	Collection<Identifier> ids();
+	Collection<Identifier> ids() throws ResolveException;
+
+	final class ResolveException extends Exception {
+		public ResolveException(String message) {
+			super(message);
+		}
+	}
 
 	final class Single implements AttributeTarget {
 		private final List<Identifier> ids;
@@ -69,10 +75,10 @@ sealed interface AttributeTarget {
 		}
 
 		@Override
-		public Collection<Identifier> ids() {
+		public Collection<Identifier> ids() throws ResolveException {
 			Tag<T> tag = tagGetter.getTag(registry.getKey(), tagId);
 			if (tag == null) {
-				throw new IllegalStateException("Tag " + tagId + " does not exist?! (TagGetter returned null)");
+				throw new ResolveException("Tag " + tagId + " does not exist!");
 			}
 			Set<Identifier> ids = new HashSet<>();
 			for (T value : tag.values()) {

@@ -118,11 +118,20 @@ final class AttributeMap {
 			}
 			JsonObject entryO = entry.getAsJsonObject();
 			Identifier id;
+			boolean tagId = false;
 			JsonElement value;
 			boolean required;
 
 			try {
-				String idStr = JsonHelper.getString(entryO, "id");
+				String idStr;
+				if (entryO.has("id")) {
+					idStr = JsonHelper.getString(entryO, "id");
+				} else if (entryO.has("tag")) {
+					tagId = true;
+					idStr = JsonHelper.getString(entryO, "tag");
+				} else {
+					throw new JsonSyntaxException("Expected id or tag, got neither");
+				}
 				id = new Identifier(idStr);
 			} catch (JsonSyntaxException e) {
 				LOGGER.error("Invalid element at index {} in values of {}: syntax error",
@@ -150,7 +159,7 @@ final class AttributeMap {
 
 			required = JsonHelper.getBoolean(entryO, "required", true);
 
-			if (required && !registry.containsId(id)) {
+			if (!tagId && required && !registry.containsId(id)) {
 				LOGGER.error("Unregistered identifier in values of {}: '{}', ignoring", resource.getId(), id);
 				continue;
 			}
@@ -160,15 +169,25 @@ final class AttributeMap {
 				continue;
 			}
 
-			put(id, parsedValue);
+			if (tagId) {
+				putTag(id, parsedValue);
+			} else {
+				put(id, parsedValue);
+			}
 		}
 	}
 
 	private void handleObject(Resource resource, JsonObject values) {
 		for (Map.Entry<String, JsonElement> entry : values.entrySet()) {
 			Identifier id;
+			boolean tagId = false;
 			try {
-				id = new Identifier(entry.getKey());
+				String idStr = entry.getKey();
+				if (idStr.startsWith("#")) {
+					tagId = true;
+					idStr = idStr.substring(1);
+				}
+				id = new Identifier(idStr);
 			} catch (InvalidIdentifierException e) {
 				LOGGER.error("Invalid identifier in values of {}: '{}', ignoring",
 						resource.getId(), entry.getKey());
@@ -176,7 +195,7 @@ final class AttributeMap {
 				continue;
 			}
 
-			if (!registry.containsId(id)) {
+			if (!tagId && !registry.containsId(id)) {
 				LOGGER.error("Unregistered identifier in values of {}: '{}', ignoring", resource.getId(), id);
 				continue;
 			}
@@ -186,7 +205,11 @@ final class AttributeMap {
 				continue;
 			}
 
-			put(id, parsedValue);
+			if (tagId) {
+				putTag(id, parsedValue);
+			} else {
+				put(id, parsedValue);
+			}
 		}
 	}
 

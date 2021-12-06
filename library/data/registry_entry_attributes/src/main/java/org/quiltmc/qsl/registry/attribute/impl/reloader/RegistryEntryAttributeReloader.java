@@ -17,11 +17,7 @@
 package org.quiltmc.qsl.registry.attribute.impl.reloader;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -34,6 +30,7 @@ import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.tag.Tag;
+import net.minecraft.tag.TagGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.registry.Registry;
@@ -45,6 +42,9 @@ import org.quiltmc.qsl.registry.attribute.impl.Initializer;
 import org.quiltmc.qsl.registry.attribute.impl.RegistryEntryAttributeHolder;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.quiltmc.qsl.resource.loader.api.reloader.SimpleResourceReloader;
+import org.quiltmc.qsl.tag.api.QuiltTag;
+import org.quiltmc.qsl.tag.api.TagType;
+import org.quiltmc.qsl.tag.mixin.RequiredTagListRegistryAccessor;
 
 @ApiStatus.Internal
 public final class RegistryEntryAttributeReloader implements SimpleResourceReloader<RegistryEntryAttributeReloader.LoadedData>,
@@ -59,6 +59,8 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 
 	private final ResourceType source;
 	private final Identifier id;
+	private final Map<RegistryKey<?>, TagGroup<?>> registryTagGroupCache;
+	private final Set<RegistryKey<?>> erroredNoTagList;
 
 	private RegistryEntryAttributeReloader(ResourceType source) {
 		if (source == ResourceType.CLIENT_RESOURCES) {
@@ -69,6 +71,8 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 			case SERVER_DATA -> ID_DATA;
 			case CLIENT_RESOURCES -> ID_ASSETS;
 		};
+		registryTagGroupCache = new HashMap<>();
+		erroredNoTagList = new HashSet<>();
 	}
 
 	@Override
@@ -76,10 +80,41 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 		return id;
 	}
 
+	@SuppressWarnings({"unchecked", "ConstantConditions"})
 	@Override
 	public <T> Tag<T> getTag(RegistryKey<? extends Registry<T>> registryKey, Identifier id) {
-		// FIXME implement this properly!
-		return null;
+		if (erroredNoTagList.contains(registryKey)) {
+			return null;
+		}
+
+		var group = (TagGroup<T>) registryTagGroupCache.get(registryKey);
+		if (group == null) {
+			for (var entry : RequiredTagListRegistryAccessor.getAll()) {
+				if (entry.getRegistryKey() == registryKey) {
+					group = (TagGroup<T>) entry.getGroup();
+					break;
+				}
+			}
+		}
+
+		if (group == null) { // suppressed because IDEA is too optimistic and thinks the loop above can't fail
+			if (!erroredNoTagList.add(registryKey)) {
+				LOGGER.error("Tried to use tag in attribute, but {} isn't configured to have tags!",
+						registryKey.getValue());
+			}
+			return null;
+		} else {
+			registryTagGroupCache.put(registryKey, group);
+			var tag = group.getTag(id);
+			if (source == ResourceType.SERVER_DATA) {
+				var qTag = QuiltTag.getExtensions(tag);
+				if (qTag.getType() == TagType.CLIENT_ONLY) {
+					LOGGER.error("Tried to use client-only tag {} in non-client-only attribute!", id);
+					return null;
+				}
+			}
+			return tag;
+		}
 	}
 
 	@Override
@@ -198,9 +233,16 @@ public final class RegistryEntryAttributeReloader implements SimpleResourceReloa
 			RegistryEntryAttributeHolder<R> holder = getHolder(registry);
 			for (Map.Entry<AttributeTarget, Object> attribEntry : attribMap.getMap().entrySet()) {
 				V value = (V) attribEntry.getValue();
-				for (Identifier id : attribEntry.getKey().ids()) {
-					R item = registry.get(id);
-					holder.putValue(attrib, item, value);
+				try {
+					for (Identifier id : attribEntry.getKey().ids()) {
+						R item = registry.get(id);
+						holder.putValue(attrib, item, value);
+					}
+				} catch (AttributeTarget.ResolveException e) {
+					// TODO handle this better, somehow??
+					LOGGER.error("Failed to apply values for attribute {}!", attrib.id());
+					LOGGER.catching(Level.ERROR, e);
+					break;
 				}
 			}
 		}
