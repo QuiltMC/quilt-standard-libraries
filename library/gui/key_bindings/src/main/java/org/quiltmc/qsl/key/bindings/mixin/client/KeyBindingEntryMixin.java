@@ -36,11 +36,13 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.option.KeyBindingListWidget;
 import net.minecraft.client.gui.widget.option.KeyBindingListWidget.KeyBindingEntry;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 
+import org.quiltmc.qsl.key.bindings.api.KeyBindingRegistry;
 import org.quiltmc.qsl.key.bindings.impl.ConflictTooltipOwner;
 
 @Environment(EnvType.CLIENT)
@@ -55,13 +57,20 @@ public abstract class KeyBindingEntryMixin extends KeyBindingListWidget.Entry im
 	private ButtonWidget bindButton;
 
 	@Unique
-	private List<Text> quilt$conflictTooltips = new ArrayList<>(1);
+	private List<Text> quilt$conflictTooltips = new ArrayList<>(2);
+
+	@Unique
+	private InputUtil.Key quilt$previousBoundKey;
 
 	@Shadow(aliases = "field_2742")
 	@Final
 	KeyBindingListWidget field_2742;
 
-	// FIXME - Find a way to get all conflicting keys that reuses the iteration done by Vanilla
+	@Inject(method = "<init>", at = @At("TAIL"))
+	private void initPreviousBoundKey(KeyBindingListWidget list, KeyBinding keyBinding, Text text, CallbackInfo ci) {
+		this.quilt$previousBoundKey = InputUtil.UNKNOWN_KEY;
+	}
+
 	@Inject(
 			method = "render",
 			at = @At(
@@ -72,13 +81,24 @@ public abstract class KeyBindingEntryMixin extends KeyBindingListWidget.Entry im
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private void collectConflictTooltips(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci, boolean bl, boolean bl2) {
-		quilt$conflictTooltips.clear();
-		MinecraftClient client = ((EntryListWidgetAccessor) (Object) field_2742).getClient();
-		for (KeyBinding keyBinding : client.options.keysAll) {
-			if (keyBinding != this.binding && this.binding.equals(keyBinding)) {
-				quilt$conflictTooltips.add(new TranslatableText("key.qsl.key_conflict.tooltip.entry", new TranslatableText(keyBinding.getTranslationKey())).formatted(Formatting.RED));
+		InputUtil.Key boundKey = KeyBindingRegistry.getBoundKey(this.binding);
+
+		if (!boundKey.equals(this.quilt$previousBoundKey)) {
+			this.quilt$conflictTooltips.clear();
+
+			MinecraftClient client = ((EntryListWidgetAccessor) (Object) field_2742).getClient();
+			for (KeyBinding keyBinding : client.options.keysAll) {
+				if (keyBinding != this.binding && this.binding.equals(keyBinding)) {
+					if (this.quilt$conflictTooltips.isEmpty()) {
+						this.quilt$conflictTooltips.add(new TranslatableText("key.qsl.key_conflict.tooltip").formatted(Formatting.RED));
+					}
+
+					this.quilt$conflictTooltips.add(new TranslatableText("key.qsl.key_conflict.tooltip.entry", new TranslatableText(keyBinding.getTranslationKey())).formatted(Formatting.RED));
+				}
 			}
 		}
+
+		this.quilt$previousBoundKey = boundKey;
 	}
 
 	@ModifyArg(
@@ -95,8 +115,6 @@ public abstract class KeyBindingEntryMixin extends KeyBindingListWidget.Entry im
 
 	@Override
 	public List<Text> getConflictTooltips() {
-		List<Text> returnedText = this.quilt$conflictTooltips;
-		returnedText.add(0, new TranslatableText("key.qsl.key_conflict.tooltip").formatted(Formatting.RED));
-		return returnedText;
+		return this.quilt$conflictTooltips;
 	}
 }

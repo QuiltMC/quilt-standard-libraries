@@ -19,6 +19,7 @@ package org.quiltmc.qsl.key.bindings.impl;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
 
@@ -29,10 +30,15 @@ public class KeyBindingManager {
 	private final GameOptions options;
 	private final KeyBinding[] allKeys;
 
-	public KeyBindingManager(GameOptions options, KeyBinding[] allKeys) {
+	public KeyBindingManager(GameOptions options) {
 		this.options = options;
-		this.allKeys = allKeys;
+		this.allKeys = ((GameOptionsAccessor) (Object) options).getKeysAll();
 		this.addModdedKeyBinds();
+	}
+
+	public static KeyBindingManager createFromClientOptions() {
+		MinecraftClient client = MinecraftClient.getInstance();
+		return new KeyBindingManager(client.options);
 	}
 
 	public void addModdedKeyBinds() {
