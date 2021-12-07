@@ -41,6 +41,9 @@ public abstract class GameOptionsMixin {
 	@Final
 	public KeyBinding[] keysAll;
 
+	@Shadow
+	protected MinecraftClient client;
+
 	@Inject(
 			at = @At(
 				value = "INVOKE",
@@ -49,7 +52,9 @@ public abstract class GameOptionsMixin {
 			method = "<init>"
 	)
 	private void modifyAllKeys(MinecraftClient client, File file, CallbackInfo ci) {
-		KeyBindingRegistryImpl.registerKeyBindingManager((GameOptions) (Object) this, keysAll);
+		if (client.options == ((GameOptionsAccessor) (Object) this)) {
+			KeyBindingRegistryImpl.setupKeyBindingManager();
+		}
 	}
 
 	@Inject(
@@ -61,10 +66,10 @@ public abstract class GameOptionsMixin {
 	)
 	private void includeDisabledEntries(GameOptions.Visitor visitor, CallbackInfo ci) {
 		for (KeyBinding keyBinding : KeyBindingRegistryImpl.getDisabledKeyBindings()) {
-			String keyKey = keyBinding.getBoundKeyTranslationKey();
-			String keyBindKey = visitor.visitString("key_" + keyBinding.getTranslationKey(), keyKey);
-			if (!keyKey.equals(keyBindKey)) {
-				keyBinding.setBoundKey(InputUtil.fromTranslationKey(keyKey));
+			String keyTranslationKey = keyBinding.getBoundKeyTranslationKey();
+			String keyBindTranslationKey = visitor.visitString("key_" + keyBinding.getTranslationKey(), keyTranslationKey);
+			if (!keyTranslationKey.equals(keyBindTranslationKey)) {
+				keyBinding.setBoundKey(InputUtil.fromTranslationKey(keyTranslationKey));
 			}
 		};
 	}

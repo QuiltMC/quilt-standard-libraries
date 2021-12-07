@@ -28,7 +28,6 @@ import org.apache.logging.log4j.Logger;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
 
 import org.quiltmc.qsl.key.bindings.mixin.client.KeyBindingAccessor;
@@ -38,9 +37,9 @@ public class KeyBindingRegistryImpl {
 	public static final Logger LOGGER = LogManager.getLogger();
 
 	private static Map<KeyBinding, Boolean> quiltKeys = new HashMap<>();
-	private static List<KeyBindingManager> keyBindingManagers = new ArrayList<>(1);
 	private static KeyBinding[] enabledQuiltKeysArray = new KeyBinding[] {};
 	private static List<KeyBinding> disabledQuiltKeys = new ArrayList<>(0);
+	private static KeyBindingManager keyBindingManager = null;
 
 	public static KeyBinding registerKeyBinding(KeyBinding key, boolean enabled) {
 		Objects.requireNonNull(key, "Attempted to register a null key bind!");
@@ -96,10 +95,6 @@ public class KeyBindingRegistryImpl {
 		}
 	}
 
-	public static void registerKeyBindingManager(GameOptions options, KeyBinding[] allKeys) {
-		keyBindingManagers.add(new KeyBindingManager(options, allKeys));
-	}
-
 	public static void updateKeysArray() {
 		List<KeyBinding> enabledQuiltKeys = new ArrayList<>();
 		disabledQuiltKeys.clear();
@@ -122,10 +117,14 @@ public class KeyBindingRegistryImpl {
 		return disabledQuiltKeys;
 	}
 
+	public static void setupKeyBindingManager() {
+		keyBindingManager = KeyBindingManager.createFromClientOptions();
+	}
+
 	public static void applyChanges() {
 		updateKeysArray();
-		for (KeyBindingManager manager : keyBindingManagers) {
-			manager.addModdedKeyBinds();
+		if (keyBindingManager != null) {
+			keyBindingManager.addModdedKeyBinds();
 		}
 	}
 }
