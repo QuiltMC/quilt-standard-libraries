@@ -32,6 +32,7 @@ import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 
+import org.quiltmc.qsl.key.bindings.impl.KeyBindingManager;
 import org.quiltmc.qsl.key.bindings.impl.KeyBindingRegistryImpl;
 
 @Environment(EnvType.CLIENT)
@@ -42,7 +43,8 @@ public abstract class GameOptionsMixin {
 	public KeyBinding[] keysAll;
 
 	@Shadow
-	protected MinecraftClient client;
+	@Final
+	private File optionsFile;
 
 	@Inject(
 			at = @At(
@@ -52,8 +54,8 @@ public abstract class GameOptionsMixin {
 			method = "<init>"
 	)
 	private void modifyAllKeys(MinecraftClient client, File file, CallbackInfo ci) {
-		if (client.options == ((GameOptionsAccessor) (Object) this)) {
-			KeyBindingRegistryImpl.setupKeyBindingManager();
+		if (this.optionsFile.equals(new File(file, "options.txt"))) {
+			KeyBindingRegistryImpl.setKeyBindingManager(new KeyBindingManager((GameOptions) (Object) this, this.keysAll));
 		}
 	}
 

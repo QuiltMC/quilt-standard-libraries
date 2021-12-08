@@ -115,8 +115,13 @@ public class KeyBindingRegistry {
 	 *
 	 * @param key the key binding
 	 * @param enabled the new state
+	 * @return {@code true} if the state change was successful, else {@code false}
 	 */
-	public static void setEnabled(KeyBinding key, boolean enabled) {
-		KeyBindingRegistryImpl.setEnabled(key, enabled);
+	public static boolean setEnabled(KeyBinding key, boolean enabled) {
+		return KeyBindingRegistryImpl.setEnabled(key, enabled);
+	}
+
+	public static void getAllKeyBindings(boolean includeVanilla) {
+		// TODO - Make me into a real method
 	}
 }
