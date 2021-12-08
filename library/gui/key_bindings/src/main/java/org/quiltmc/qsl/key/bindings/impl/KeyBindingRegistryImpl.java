@@ -80,7 +80,7 @@ public class KeyBindingRegistryImpl {
 		throw new IllegalArgumentException(String.format("%s has either not been registered or it is a vanilla key!", key.getTranslationKey()));
 	}
 
-	public static void setEnabled(KeyBinding key, boolean enabled) {
+	public static boolean setEnabled(KeyBinding key, boolean enabled) {
 		if (quiltKeys.containsKey(key)) {
 			quiltKeys.replace(key, enabled);
 			applyChanges();
@@ -92,7 +92,11 @@ public class KeyBindingRegistryImpl {
 
 			((KeyBindingAccessor) key).callReset();
 			KeyBinding.updateKeysByCode();
+
+			return true;
 		}
+
+		return false;
 	}
 
 	public static void updateKeysArray() {
@@ -117,8 +121,8 @@ public class KeyBindingRegistryImpl {
 		return disabledQuiltKeys;
 	}
 
-	public static void setupKeyBindingManager() {
-		keyBindingManager = KeyBindingManager.createFromClientOptions();
+	public static void setKeyBindingManager(KeyBindingManager manager) {
+		keyBindingManager = manager;
 	}
 
 	public static void applyChanges() {
