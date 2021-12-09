@@ -41,6 +41,7 @@ import org.quiltmc.qsl.registry.dict.impl.AssetsHolderGuard;
 import org.quiltmc.qsl.registry.dict.impl.Initializer;
 import org.quiltmc.qsl.registry.dict.impl.RegistryDictHolder;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
+import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 import org.quiltmc.qsl.resource.loader.api.reloader.SimpleResourceReloader;
 import org.quiltmc.qsl.tag.api.QuiltTag;
 import org.quiltmc.qsl.tag.api.TagType;
@@ -59,6 +60,7 @@ public final class RegistryDictReloader implements SimpleResourceReloader<Regist
 
 	private final ResourceType source;
 	private final Identifier id;
+	private final Collection<Identifier> deps;
 	private final Map<RegistryKey<?>, TagGroup<?>> registryTagGroupCache;
 	private final Set<RegistryKey<?>> erroredNoTagList;
 
@@ -71,6 +73,11 @@ public final class RegistryDictReloader implements SimpleResourceReloader<Regist
 			case SERVER_DATA -> ID_DATA;
 			case CLIENT_RESOURCES -> ID_ASSETS;
 		};
+		deps = switch (source) {
+			case SERVER_DATA -> Set.of(ResourceReloaderKeys.Server.TAGS);
+			case CLIENT_RESOURCES -> Set.of(ResourceReloaderKeys.Server.TAGS,
+					new Identifier("quilt_tags", "client_only_tags"));
+		};
 		registryTagGroupCache = new HashMap<>();
 		erroredNoTagList = new HashSet<>();
 	}
@@ -78,6 +85,11 @@ public final class RegistryDictReloader implements SimpleResourceReloader<Regist
 	@Override
 	public Identifier getQuiltId() {
 		return id;
+	}
+
+	@Override
+	public Collection<Identifier> getQuiltDependencies() {
+		return deps;
 	}
 
 	@SuppressWarnings({"unchecked", "ConstantConditions"})
