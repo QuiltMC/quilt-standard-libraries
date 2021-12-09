@@ -243,7 +243,7 @@ public interface RegistryDict<R, V> {
 
 		private Side side;
 		private @Nullable V defaultValue;
-		private @Nullable Function<R, V> missingValueFunction;
+		private @Nullable ComputeFunction<R, V> computeFunction;
 
 		private Builder(Registry<R> registry, Identifier id, Codec<V> codec) {
 			this.registry = registry;
@@ -280,16 +280,16 @@ public interface RegistryDict<R, V> {
 		}
 
 		/**
-		 * Sets the <em>missing value function</em> of this attribute, which will be used to compute a value for a
+		 * Sets the <em>compute function</em> of this attribute, which will be used to compute a value for a
 		 * specific entry, should it be missing.
 		 *
 		 * <p>Note that this will be computed on both sides and the computation result will <em>not</em> be synchronized.
 		 *
-		 * @param missingValueFunction function to compute otherwise-missing value
+		 * @param computeFunction function to compute otherwise-missing value
 		 * @return this builder
 		 */
-		public Builder<R, V> missingValueFunction(@Nullable Function<R, V> missingValueFunction) {
-			this.missingValueFunction = missingValueFunction;
+		public Builder<R, V> computeFunction(@Nullable ComputeFunction<R, V> computeFunction) {
+			this.computeFunction = computeFunction;
 			this.defaultValue = null;
 			return this;
 		}
@@ -300,7 +300,7 @@ public interface RegistryDict<R, V> {
 		 * @return new attribute
 		 */
 		public RegistryDict<R, V> build() {
-			var attr = new RegistryDictImpl<>(registry, id, side, codec, defaultValue, missingValueFunction);
+			var attr = new RegistryDictImpl<>(registry, id, side, codec, defaultValue, computeFunction);
 			RegistryDictHolder.registerDict(registry, attr);
 			return attr;
 		}

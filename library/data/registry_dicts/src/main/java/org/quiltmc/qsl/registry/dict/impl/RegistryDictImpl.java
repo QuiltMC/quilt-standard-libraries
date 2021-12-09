@@ -18,15 +18,18 @@ package org.quiltmc.qsl.registry.dict.impl;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 
 import com.mojang.serialization.Codec;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.qsl.registry.dict.api.ComputeFunction;
 import org.quiltmc.qsl.registry.dict.api.RegistryDict;
 
 @ApiStatus.Internal
@@ -35,8 +38,10 @@ public record RegistryDictImpl<R, V>(Registry<R> registry,
 									 Side side,
 									 Codec<V> codec,
 									 @Nullable V defaultValue,
-									 @Nullable Function<R, V> missingValueFunction)
+									 @Nullable ComputeFunction<R, V> computeFunction)
 		implements RegistryDict<R, V> {
+
+	private static final Logger COMPUTE_LOGGER = LogManager.getLogger("RegistryDict|Compute");
 
 	@Override
 	public Optional<V> getValue(R entry) {
@@ -56,14 +61,16 @@ public record RegistryDictImpl<R, V>(Registry<R> registry,
 		if (value != null) {
 			return Optional.of(value);
 		}
-		if (missingValueFunction != null) {
-			value = missingValueFunction.apply(entry);
-			if (value == null) {
+		if (computeFunction != null) {
+			try {
+				value = computeFunction.computeFor(entry);
+			} catch (ComputeFunction.ComputeFailedException e) {
+				COMPUTE_LOGGER.error("Failed to compute value for entry {}", registry.getId(entry));
+				COMPUTE_LOGGER.catching(Level.ERROR, e);
 				return Optional.empty();
-			} else {
-				RegistryDictHolder.getBuiltin(registry).putValue(this, entry, value);
-				return Optional.of(value);
 			}
+			RegistryDictHolder.getBuiltin(registry).putValue(this, entry, value);
+			return Optional.of(value);
 		}
 		return Optional.ofNullable(defaultValue);
 	}
