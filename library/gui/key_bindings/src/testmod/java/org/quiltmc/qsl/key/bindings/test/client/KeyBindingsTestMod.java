@@ -18,6 +18,8 @@ package org.quiltmc.qsl.key.bindings.test.client;
 
 import org.lwjgl.glfw.GLFW;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.text.LiteralText;
@@ -25,6 +27,7 @@ import net.minecraft.text.LiteralText;
 import org.quiltmc.qsl.key.bindings.api.KeyBindingRegistry;
 import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
 
+@Environment(EnvType.CLIENT)
 public class KeyBindingsTestMod implements ClientModInitializer {
 	// A conflicting key test
 	public static final KeyBinding CONFLICT_TEST_KEY_BIND = KeyBindingRegistry.registerKeyBinding(

@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.key.bindings.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,8 +77,11 @@ public class KeyBindingRegistryImpl {
 			return quiltKeys.get(key);
 		}
 
-		// TODO - Split those two
-		throw new IllegalArgumentException(String.format("%s has either not been registered or it is a vanilla key!", key.getTranslationKey()));
+		if (keyBindingManager != null && Arrays.asList(keyBindingManager.getAllKeys()).contains(key)) {
+			throw new IllegalArgumentException(String.format("%s is a vanilla key and therefore doesn't have an active state!", key.getTranslationKey()));
+		}
+
+		throw new IllegalArgumentException(String.format("%s hasn't been registered!", key.getTranslationKey()));
 	}
 
 	public static boolean setEnabled(KeyBinding key, boolean enabled) {
