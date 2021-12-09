@@ -19,6 +19,7 @@ package org.quiltmc.qsl.key.bindings.mixin.client;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -27,6 +28,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -62,7 +64,7 @@ public abstract class KeyBindingEntryMixin extends KeyBindingListWidget.Entry im
 	@Unique
 	private InputUtil.Key quilt$previousBoundKey;
 
-	@Shadow(aliases = "field_2742")
+	@Shadow(remap = false)
 	@Final
 	KeyBindingListWidget field_2742;
 
@@ -116,5 +118,22 @@ public abstract class KeyBindingEntryMixin extends KeyBindingListWidget.Entry im
 	@Override
 	public List<Text> getConflictTooltips() {
 		return this.quilt$conflictTooltips;
+	}
+
+	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
+	private void addMiddleButtonBehavior(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
+		if (button == GLFW.GLFW_MOUSE_BUTTON_MIDDLE) {
+			if (this.bindButton.active && this.bindButton.visible) {
+				if (((ClickableWidgetAccessor) this.bindButton).callClicked(mouseX, mouseY)) {
+					this.bindButton.playDownSound(MinecraftClient.getInstance().getSoundManager());
+					this.binding.setBoundKey(InputUtil.UNKNOWN_KEY);
+					KeyBinding.updateKeysByCode();
+
+					cir.setReturnValue(true);
+				}
+			}
+		}
+
+		System.out.println(String.format("Hmmmm, is %s = %s?", button, GLFW.GLFW_MOUSE_BUTTON_MIDDLE));
 	}
 }
