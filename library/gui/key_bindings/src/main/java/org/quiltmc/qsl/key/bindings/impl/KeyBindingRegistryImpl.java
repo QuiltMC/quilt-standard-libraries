@@ -113,8 +113,8 @@ public class KeyBindingRegistryImpl {
 		enabledQuiltKeysArray = enabledQuiltKeys.toArray(new KeyBinding[enabledQuiltKeys.size()]);
 	}
 
-	public static KeyBinding[] getKeyBindings(KeyBinding[] allVanillaKeys) {
-		return ArrayUtils.addAll(allVanillaKeys, enabledQuiltKeysArray);
+	public static KeyBinding[] getKeyBindings() {
+		return ArrayUtils.addAll(keyBindingManager.getAllKeys(), enabledQuiltKeysArray);
 	}
 
 	public static List<KeyBinding> getDisabledKeyBindings() {

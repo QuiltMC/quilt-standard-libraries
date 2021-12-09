@@ -46,6 +46,7 @@ import net.minecraft.util.Formatting;
 
 import org.quiltmc.qsl.key.bindings.api.KeyBindingRegistry;
 import org.quiltmc.qsl.key.bindings.impl.ConflictTooltipOwner;
+import org.quiltmc.qsl.key.bindings.impl.KeyBindingRegistryImpl;
 
 @Environment(EnvType.CLIENT)
 @Mixin(KeyBindingEntry.class)
@@ -64,38 +65,48 @@ public abstract class KeyBindingEntryMixin extends KeyBindingListWidget.Entry im
 	@Unique
 	private InputUtil.Key quilt$previousBoundKey;
 
+	@Unique
+	private static InputUtil.Key quilt$changedBoundKey;
+
 	@Shadow(remap = false)
 	@Final
 	KeyBindingListWidget field_2742;
 
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void initPreviousBoundKey(KeyBindingListWidget list, KeyBinding keyBinding, Text text, CallbackInfo ci) {
-		this.quilt$previousBoundKey = InputUtil.UNKNOWN_KEY;
+		this.quilt$previousBoundKey = null;
+		quilt$changedBoundKey = null;
 	}
 
 	@Inject(
 			method = "render",
 			at = @At(
-				value = "INVOKE_ASSIGN",
-				target = "Lnet/minecraft/client/option/KeyBinding;isUnbound()Z",
-				shift = At.Shift.AFTER
+				value = "INVOKE",
+				target = "Lnet/minecraft/client/option/KeyBinding;isUnbound()Z"
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private void collectConflictTooltips(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci, boolean bl, boolean bl2) {
 		InputUtil.Key boundKey = KeyBindingRegistry.getBoundKey(this.binding);
 
-		if (!boundKey.equals(this.quilt$previousBoundKey)) {
+		if (!boundKey.equals(this.quilt$previousBoundKey) || quilt$changedBoundKey != null) {
 			this.quilt$conflictTooltips.clear();
 
-			MinecraftClient client = ((EntryListWidgetAccessor) (Object) field_2742).getClient();
-			for (KeyBinding keyBinding : client.options.keysAll) {
-				if (keyBinding != this.binding && this.binding.equals(keyBinding)) {
-					if (this.quilt$conflictTooltips.isEmpty()) {
-						this.quilt$conflictTooltips.add(new TranslatableText("key.qsl.key_conflict.tooltip").formatted(Formatting.RED));
-					}
+			if (quilt$changedBoundKey == null) {
+				quilt$changedBoundKey = boundKey;
+			} else if (quilt$changedBoundKey.equals(boundKey)) {
+				quilt$changedBoundKey = null;
+			}
 
-					this.quilt$conflictTooltips.add(new TranslatableText("key.qsl.key_conflict.tooltip.entry", new TranslatableText(keyBinding.getTranslationKey())).formatted(Formatting.RED));
+			if (!this.binding.isUnbound()) {
+				for (KeyBinding keyBinding : KeyBindingRegistryImpl.getKeyBindings()) {
+					if (keyBinding != this.binding && this.binding.equals(keyBinding)) {
+						if (this.quilt$conflictTooltips.isEmpty()) {
+							this.quilt$conflictTooltips.add(new TranslatableText("key.qsl.key_conflict.tooltip").formatted(Formatting.RED));
+						}
+
+						this.quilt$conflictTooltips.add(new TranslatableText("key.qsl.key_conflict.tooltip.entry", new TranslatableText(keyBinding.getTranslationKey())).formatted(Formatting.RED));
+					}
 				}
 			}
 		}
@@ -125,7 +136,8 @@ public abstract class KeyBindingEntryMixin extends KeyBindingListWidget.Entry im
 		if (button == GLFW.GLFW_MOUSE_BUTTON_MIDDLE) {
 			if (this.bindButton.active && this.bindButton.visible) {
 				if (((ClickableWidgetAccessor) this.bindButton).callClicked(mouseX, mouseY)) {
-					this.bindButton.playDownSound(MinecraftClient.getInstance().getSoundManager());
+					MinecraftClient client = ((EntryListWidgetAccessor) (Object) field_2742).getClient();
+					this.bindButton.playDownSound(client.getSoundManager());
 					this.binding.setBoundKey(InputUtil.UNKNOWN_KEY);
 					KeyBinding.updateKeysByCode();
 
@@ -133,7 +145,5 @@ public abstract class KeyBindingEntryMixin extends KeyBindingListWidget.Entry im
 				}
 			}
 		}
-
-		System.out.println(String.format("Hmmmm, is %s = %s?", button, GLFW.GLFW_MOUSE_BUTTON_MIDDLE));
 	}
 }
