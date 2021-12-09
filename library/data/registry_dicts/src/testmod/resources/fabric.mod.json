@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "quilt_registry_dicts_testmod",
+  "name": "Quilt Registry Dictionaries Test Mod",
+  "version": "1.0.0",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "depends": {
+    "quilt_registry_dicts": "*"
+  },
+  "entrypoints": {
+    "main": [
+      "org.quiltmc.qsl.registry.dict.test.SimpleDictTest",
+      "org.quiltmc.qsl.registry.dict.test.DispatchedDictTest"
+    ],
+    "client": [
+      "org.quiltmc.qsl.registry.dict.test.client.ClientDictTest"
+    ]
+  },
+  "mixins": [
+    "quilt_registry_dicts_testmod.mixins.json"
+  ]
+}

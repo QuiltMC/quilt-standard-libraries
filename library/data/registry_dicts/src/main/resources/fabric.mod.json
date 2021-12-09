@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "id": "quilt_registry_dicts",
+  "name": "Quilt Registry Dictionaries",
+  "version": "${version}",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "icon": "assets/quilt_registry_dicts/icon.png",
+  "contact": {
+    "homepage": "https://quiltmc.org",
+    "issues": "https://github.com/QuiltMC/quilt-standard-libraries/issues",
+    "sources": "https://github.com/QuiltMC/quilt-standard-libraries"
+  },
+  "authors": [
+    "QuiltMC"
+  ],
+  "depends": {
+    "fabricloader": ">=0.12",
+    "minecraft": ">=1.18",
+    "quilt_resource_loader": "*"
+  },
+  "description": "Extensible dictionary system for registry entries.",
+  "entrypoints": {
+    "main": [
+      "org.quiltmc.qsl.registry.dict.impl.Initializer"
+    ],
+    "client": [
+      "org.quiltmc.qsl.registry.dict.impl.ClientInitializer"
+    ]
+  },
+  "mixins": [
+    "quilt_registry_dicts.mixins.json"
+  ],
+  "custom": {
+    "modmenu": {
+      "badges": [
+        "library"
+      ],
+      "parent": {
+        "id": "qsl",
+        "name": "Quilt Standard Libraries",
+        "description": "A set of libraries to assist in making Quilt mods.",
+        "icon": "assets/quilt_registry_dicts/icon.png",
+        "badges": [
+          "library"
+        ]
+      }
+    }
+  }
+}

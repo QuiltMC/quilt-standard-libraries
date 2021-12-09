@@ -1,0 +1,15 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "registry_dicts"
+	version = "1.0.0"
+	library = "data"
+	coreDependencies([
+			"resource_loader"
+	])
+	interLibraryDependencies([
+			"tags"
+	])
+}
