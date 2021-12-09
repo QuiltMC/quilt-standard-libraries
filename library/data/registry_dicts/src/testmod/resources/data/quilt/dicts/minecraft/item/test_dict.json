@@ -1,6 +1,6 @@
 {
   "replace": false,
   "values": {
-    "quilt:simple_attribute_test_item": 1
+    "quilt:simple_dict_test_item": 1
   }
 }

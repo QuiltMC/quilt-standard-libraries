@@ -75,8 +75,7 @@ public final class RegistryDictReloader implements SimpleResourceReloader<Regist
 		};
 		deps = switch (source) {
 			case SERVER_DATA -> Set.of(ResourceReloaderKeys.Server.TAGS);
-			case CLIENT_RESOURCES -> Set.of(ResourceReloaderKeys.Server.TAGS,
-					new Identifier("quilt_tags", "client_only_tags"));
+			case CLIENT_RESOURCES -> Set.of(new Identifier("quilt_tags", "client_only_tags"));
 		};
 		registryTagGroupCache = new HashMap<>();
 		erroredNoTagList = new HashSet<>();
