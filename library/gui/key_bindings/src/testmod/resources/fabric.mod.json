@@ -10,6 +10,7 @@
   },
   "entrypoints": {
     "client": [
+      "org.quiltmc.qsl.key.bindings.test.client.KeyBindingRegistryTestMod",
       "org.quiltmc.qsl.key.bindings.test.client.KeyBindingsTestMod"
     ]
   }
