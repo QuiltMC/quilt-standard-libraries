@@ -20,6 +20,7 @@ import java.io.File;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -39,6 +40,7 @@ import org.quiltmc.qsl.key.bindings.impl.KeyBindingRegistryImpl;
 @Mixin(GameOptions.class)
 public abstract class GameOptionsMixin {
 	@Shadow
+	@Mutable
 	@Final
 	public KeyBinding[] keysAll;
 
@@ -56,6 +58,7 @@ public abstract class GameOptionsMixin {
 	private void modifyAllKeys(MinecraftClient client, File file, CallbackInfo ci) {
 		if (this.optionsFile.equals(new File(file, "options.txt"))) {
 			KeyBindingRegistryImpl.setKeyBindingManager(new KeyBindingManager((GameOptions) (Object) this, this.keysAll));
+			this.keysAll = KeyBindingRegistryImpl.getKeyBindings();
 		}
 	}
 
