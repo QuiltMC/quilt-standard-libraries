@@ -1,5 +1,7 @@
 package qsl.internal;
 
+import javax.naming.spi.ObjectFactory;
+
 /**
  * Version constants used across the convention build scripts.
  * <p>
@@ -22,7 +24,7 @@ public final class Versions {
 	/**
 	 * The target Minecraft version.
 	 */
-	public static final String MINECRAFT_VERSION = "1.18.1-pre1";
+	public static final String MINECRAFT_VERSION = "1.18.1-rc3";
 
 	/**
 	 * The target Quilt Mappings build.
@@ -32,7 +34,7 @@ public final class Versions {
 	/**
 	 * The version of Quilt Loader to use.
 	 */
-	public static final String LOADER_VERSION = "0.12.6";
+	public static final String LOADER_VERSION = "0.12.9";
 
 	/**
 	 * The target Java version.
