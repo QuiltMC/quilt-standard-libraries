@@ -23,7 +23,7 @@
  *
  * <p>All dictionaries declared using this API can be set using a data pack (or a resource pack, if the dict is client-side)!
  * Simply create the following file:<br>
- * {@code <data|assets>/<attribute_namespace>/dicts/<registry_key_path>/<attribute_name>.json}
+ * {@code <data|assets>/<dictionary_namespace>/dicts/<registry_key_path>/<dictionary_name>.json}
  *
  * <p>These "dictionary maps" use a tag-like format, with a {@code replace} property that allows replacing all (non-built-in) values.
  *

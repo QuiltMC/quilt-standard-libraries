@@ -28,7 +28,7 @@ import org.quiltmc.qsl.registry.dict.impl.DefaultDictBuilderImpl;
  */
 public final class RegistryExtensions {
 	/**
-	 * Registers an entry into a registry, also setting built-in attribute values for it.
+	 * Registers an entry into a registry, also setting built-in dictionary values for it.
 	 *
 	 * @param registry        target registry
 	 * @param id              entry identifier
@@ -46,18 +46,18 @@ public final class RegistryExtensions {
 	}
 
 	/**
-	 * Used to set default built-in attribute values in a builder-like fashion.
+	 * Used to set default built-in dictionary values in a builder-like fashion.
 	 *
 	 * @param <R> type of the entries in the registry
 	 */
 	@FunctionalInterface
 	public interface DefaultDictBuilder<R> {
 		/**
-		 * Puts a built-in attribute value.
+		 * Puts a built-in dictionary value.
 		 *
-		 * @param dict attribute
+		 * @param dict dictionary
 		 * @param value  value to attach
-		 * @param <V>    attributes' attached value type
+		 * @param <V>    dictionaries' attached value type
 		 * @return this setter
 		 */
 		<V> DefaultDictBuilder<R> put(RegistryDict<R, V> dict, V value);

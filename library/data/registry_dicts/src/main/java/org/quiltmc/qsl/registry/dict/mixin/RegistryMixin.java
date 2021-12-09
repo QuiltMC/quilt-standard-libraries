@@ -42,8 +42,8 @@ public abstract class RegistryMixin<R> implements QuiltRegistryInternals<R> {
 	private RegistryDictHolder<R> quilt$assetsDictHolder;
 
 	@Override
-	public void quilt$registerDict(RegistryDict<R, ?> attribute) {
-		quilt$dicts.put(attribute.id(), attribute);
+	public void quilt$registerDict(RegistryDict<R, ?> dictionary) {
+		quilt$dicts.put(dictionary.id(), dictionary);
 	}
 
 	@Override

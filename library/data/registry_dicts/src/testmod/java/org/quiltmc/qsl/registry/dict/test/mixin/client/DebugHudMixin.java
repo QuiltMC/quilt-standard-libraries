@@ -35,7 +35,7 @@ import org.quiltmc.qsl.registry.dict.test.client.ClientDictTest;
 public abstract class DebugHudMixin {
 	@Inject(method = "getRightText", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 2,
 			shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
-	public void quilt$addTestAttribute(CallbackInfoReturnable<List<String>> cir, long l, long m, long n, long o,
+	public void quilt$addTestDictionary(CallbackInfoReturnable<List<String>> cir, long l, long m, long n, long o,
 									   List<String> list, BlockPos blockPos, BlockState blockState) {
 		list.add("based: " + ClientDictTest.ATTRIBUTE.getValue(blockState.getBlock())
 				.map(b -> b ? Formatting.GREEN + "yes" : Formatting.RED + "no")

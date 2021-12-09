@@ -40,13 +40,13 @@ import org.quiltmc.qsl.registry.dict.api.RegistryDict;
 
 final class DictMap {
 	private final Registry<?> registry;
-	private final RegistryDict<?, ?> attribute;
+	private final RegistryDict<?, ?> dictionary;
 	private final TagGetter tagGetter;
 	private final Map<DictTarget, Object> map;
 
-	public DictMap(Registry<?> registry, RegistryDict<?, ?> attribute, TagGetter tagGetter) {
+	public DictMap(Registry<?> registry, RegistryDict<?, ?> dictionary, TagGetter tagGetter) {
 		this.registry = registry;
-		this.attribute = attribute;
+		this.dictionary = dictionary;
 		this.tagGetter = tagGetter;
 		map = new HashMap<>();
 	}
@@ -63,8 +63,8 @@ final class DictMap {
 		return registry;
 	}
 
-	public RegistryDict<?, ?> getAttribute() {
-		return attribute;
+	public RegistryDict<?, ?> getDictionary() {
+		return dictionary;
 	}
 
 	public Map<DictTarget, Object> getMap() {
@@ -214,16 +214,16 @@ final class DictMap {
 	}
 
 	private Object parseValue(Resource resource, Identifier id, JsonElement value) {
-		DataResult<?> parsedValue = attribute.codec().parse(JsonOps.INSTANCE, value);
+		DataResult<?> parsedValue = dictionary.codec().parse(JsonOps.INSTANCE, value);
 		if (parsedValue.result().isEmpty()) {
 			if (parsedValue.error().isPresent()) {
-				LOGGER.error("Failed to parse value for attribute {} of registry entry {}: {}",
-						attribute.id(), id, parsedValue.error().get().message());
+				LOGGER.error("Failed to parse value for dictionary {} of registry entry {}: {}",
+						dictionary.id(), id, parsedValue.error().get().message());
 			} else {
-				LOGGER.error("Failed to parse value for attribute {} of registry entry {}: unknown error",
-						attribute.id(), id);
+				LOGGER.error("Failed to parse value for dictionary {} of registry entry {}: unknown error",
+						dictionary.id(), id);
 			}
-			LOGGER.error("Ignoring attribute value for '{}' in {} since it's invalid", id, resource.getId());
+			LOGGER.error("Ignoring dictionary value for '{}' in {} since it's invalid", id, resource.getId());
 			return null;
 		}
 		return parsedValue.result().get();

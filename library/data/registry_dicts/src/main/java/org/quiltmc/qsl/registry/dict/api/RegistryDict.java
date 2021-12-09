@@ -30,20 +30,20 @@ import org.quiltmc.qsl.registry.dict.impl.RegistryDictHolder;
 import org.quiltmc.qsl.registry.dict.impl.RegistryDictImpl;
 
 /**
- * Represents an attribute that is attached to a registry entry.
+ * Represents a dictionary that is attached to a registry entry.
  *
  * @param <R> type of the entries in the registry
  * @param <V> attached value type
  */
 public interface RegistryDict<R, V> {
 	/**
-	 * Retrieves an already-registered attribute.
+	 * Retrieves an already-registered dictionary.
 	 *
-	 * @param registry registry attribute is attached to
-	 * @param id       attribute identifier
+	 * @param registry registry dictionary is attached to
+	 * @param id       dictionary identifier
 	 * @param <R>      type of the entries in the registry
 	 * @param <V>      attached value type
-	 * @return the attribute, or empty if the attribute was not found
+	 * @return the dictionary, or empty if the dictionary was not found
 	 */
 	@SuppressWarnings({"unchecked", "RedundantCast"})
 	static <R, V> Optional<RegistryDict<R, V>> get(Registry<R> registry, Identifier id) {
@@ -51,10 +51,10 @@ public interface RegistryDict<R, V> {
 	}
 
 	/**
-	 * Creates a builder for an attribute.
+	 * Creates a builder for a dictionary.
 	 *
 	 * @param registry registry to attach to
-	 * @param id       attribute identifier
+	 * @param id       dictionary identifier
 	 * @param codec    attached value codec
 	 * @param <R>      type of the entries in the registry
 	 * @param <V>      attached value type
@@ -65,10 +65,10 @@ public interface RegistryDict<R, V> {
 	}
 
 	/**
-	 * Creates a builder for an attribute using dispatched codecs for polymorphic types.
+	 * Creates a builder for a dictionary using dispatched codecs for polymorphic types.
 	 *
 	 * @param registry    registry to attach to
-	 * @param id          attribute identifier
+	 * @param id          dictionary identifier
 	 * @param codecGetter codec getter
 	 * @param <R>         type of the entries in the registry
 	 * @param <V>         attached value type
@@ -80,10 +80,10 @@ public interface RegistryDict<R, V> {
 	}
 
 	/**
-	 * Creates a builder for a boolean attribute.
+	 * Creates a builder for a boolean dictionary.
 	 *
 	 * @param registry registry to attach to
-	 * @param id       attribute identifier
+	 * @param id       dictionary identifier
 	 * @param <R>      type of the entries in the registry
 	 * @return a builder
 	 */
@@ -92,10 +92,10 @@ public interface RegistryDict<R, V> {
 	}
 
 	/**
-	 * Creates a builder for an integer attribute.
+	 * Creates a builder for an integer dictionary.
 	 *
 	 * @param registry registry to attach to
-	 * @param id       attribute identifier
+	 * @param id       dictionary identifier
 	 * @param <R>      type of the entries in the registry
 	 * @return a builder
 	 */
@@ -104,10 +104,10 @@ public interface RegistryDict<R, V> {
 	}
 
 	/**
-	 * Creates a builder for a long attribute.
+	 * Creates a builder for a long dictionary.
 	 *
 	 * @param registry registry to attach to
-	 * @param id       attribute identifier
+	 * @param id       dictionary identifier
 	 * @param <R>      type of the entries in the registry
 	 * @return a builder
 	 */
@@ -116,10 +116,10 @@ public interface RegistryDict<R, V> {
 	}
 
 	/**
-	 * Creates a builder for a float attribute.
+	 * Creates a builder for a float dictionary.
 	 *
 	 * @param registry registry to attach to
-	 * @param id       attribute identifier
+	 * @param id       dictionary identifier
 	 * @param <R>      type of the entries in the registry
 	 * @return a builder
 	 */
@@ -128,10 +128,10 @@ public interface RegistryDict<R, V> {
 	}
 
 	/**
-	 * Creates a builder for a double attribute.
+	 * Creates a builder for a double dictionary.
 	 *
 	 * @param registry registry to attach to
-	 * @param id       attribute identifier
+	 * @param id       dictionary identifier
 	 * @param <R>      type of the entries in the registry
 	 * @return a builder
 	 */
@@ -140,10 +140,10 @@ public interface RegistryDict<R, V> {
 	}
 
 	/**
-	 * Creates a builder for a string attribute.
+	 * Creates a builder for a string dictionary.
 	 *
 	 * @param registry registry to attach to
-	 * @param id       attribute identifier
+	 * @param id       dictionary identifier
 	 * @param <R>      type of the entries in the registry
 	 * @return a builder
 	 */
@@ -152,55 +152,55 @@ public interface RegistryDict<R, V> {
 	}
 
 	/**
-	 * Gets the registry this attribute is attached to.
+	 * Gets the registry this dictionary is attached to.
 	 *
 	 * @return attached registry
 	 */
 	Registry<R> registry();
 
 	/**
-	 * Gets the ID of this attribute.
+	 * Gets the ID of this dictionary.
 	 *
-	 * @return attribute ID
+	 * @return dictionary ID
 	 */
 	Identifier id();
 
 	/**
-	 * Gets the side this attribute should exist on.
+	 * Gets the side this dictionary should exist on.
 	 *
-	 * @return attribute side
+	 * @return dictionary side
 	 */
 	Side side();
 
 	/**
-	 * Gets the {@code Codec} used to (de)serialize this attribute's value.
+	 * Gets the {@code Codec} used to (de)serialize this dictionary's values.
 	 *
 	 * @return value codec
 	 */
 	Codec<V> codec();
 
 	/**
-	 * Gets the value associated with this attribute for the specified entry.
+	 * Gets the value associated with this dictionary for the specified entry.
 	 *
 	 * @param entry registry entry
-	 * @return attribute value, or empty if no value is assigned
+	 * @return dictionary value, or empty if no value is assigned
 	 */
 	Optional<V> getValue(R entry);
 
 	/**
-	 * Specifies on what side this attribute should exist.
+	 * Specifies on what side this dictionary should exist.
 	 */
 	enum Side {
 		/**
-		 * This attribute is client-side only.
+		 * This dictionary is client-side only.
 		 */
 		CLIENT(ResourceType.CLIENT_RESOURCES),
 		/**
-		 * This attribute is server-side only.
+		 * This dictionary is server-side only.
 		 */
 		SERVER(ResourceType.SERVER_DATA),
 		/**
-		 * This attribute exists on both sides. Its value will be sent from server to client.
+		 * This dictionary exists on both sides. Its value will be synchronized from server to client.
 		 */
 		BOTH(ResourceType.SERVER_DATA);
 
@@ -211,19 +211,19 @@ public interface RegistryDict<R, V> {
 		}
 
 		/**
-		 * Gets the source attributes of this side should be loaded from.
+		 * Gets the source dictionaries of this side should be loaded from.
 		 *
-		 * @return source to use for attributes of this side
+		 * @return source to use for dictionaries of this side
 		 */
 		public ResourceType getSource() {
 			return source;
 		}
 
 		/**
-		 * Checks if attributes of this side should load from this source.
+		 * Checks if dictionaries of this side should load from this source.
 		 *
 		 * @param source the source to check
-		 * @return if the attribute value should be loaded or not
+		 * @return if the dictionary value should be loaded or not
 		 */
 		public boolean shouldLoad(ResourceType source) {
 			return this.source == source;
@@ -231,7 +231,7 @@ public interface RegistryDict<R, V> {
 	}
 
 	/**
-	 * Builder for attributes.
+	 * Builder for dictionaries.
 	 *
 	 * @param <R> type of the entries in the registry
 	 * @param <V> attached value type
@@ -252,15 +252,15 @@ public interface RegistryDict<R, V> {
 			side = Side.BOTH;
 
 			if (get(registry, id).isPresent()) {
-				throw new IllegalStateException("Attribute with ID '" + id +
+				throw new IllegalStateException("Dictionary with ID '" + id +
 						"' is already registered for registry " + registry.getKey().getValue() + "!");
 			}
 		}
 
 		/**
-		 * Sets what side this attribute should exist on.
+		 * Sets what side this dictionary should exist on.
 		 *
-		 * @param side attribute side
+		 * @param side dictionary side
 		 * @return this builder
 		 */
 		public Builder<R, V> side(Side side) {
@@ -269,7 +269,7 @@ public interface RegistryDict<R, V> {
 		}
 
 		/**
-		 * Sets the default value of this attribute.
+		 * Sets the default value of this dictionary.
 		 *
 		 * @param defaultValue default value
 		 * @return this builder
@@ -280,7 +280,7 @@ public interface RegistryDict<R, V> {
 		}
 
 		/**
-		 * Sets the <em>compute function</em> of this attribute, which will be used to compute a value for a
+		 * Sets the <em>compute function</em> of this dictionary, which will be used to compute a value for a
 		 * specific entry, should it be missing.
 		 *
 		 * <p>Note that this will be computed on both sides and the computation result will <em>not</em> be synchronized.
@@ -295,14 +295,14 @@ public interface RegistryDict<R, V> {
 		}
 
 		/**
-		 * Builds a new attribute.
+		 * Builds a new dictionary.
 		 *
-		 * @return new attribute
+		 * @return new dictionary
 		 */
 		public RegistryDict<R, V> build() {
-			var attr = new RegistryDictImpl<>(registry, id, side, codec, defaultValue, computeFunction);
-			RegistryDictHolder.registerDict(registry, attr);
-			return attr;
+			var dict = new RegistryDictImpl<>(registry, id, side, codec, defaultValue, computeFunction);
+			RegistryDictHolder.registerDict(registry, dict);
+			return dict;
 		}
 	}
 }

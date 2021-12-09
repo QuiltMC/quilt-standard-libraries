@@ -35,8 +35,8 @@ public final class RegistryDictHolder<R> {
 		return (QuiltRegistryInternals<R>) registry;
 	}
 
-	public static <R, T> void registerDict(Registry<R> registry, RegistryDict<R, T> attribute) {
-		getInternals(registry).quilt$registerDict(attribute);
+	public static <R, T> void registerDict(Registry<R> registry, RegistryDict<R, T> dictionary) {
+		getInternals(registry).quilt$registerDict(dictionary);
 	}
 
 	public static <R> @Nullable RegistryDict<R, ?> getDict(Registry<R> registry, Identifier id) {
@@ -78,12 +78,12 @@ public final class RegistryDictHolder<R> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <V> V getValue(RegistryDict<R, V> attribute, R entry) {
-		return (V) valueTable.get(attribute, entry);
+	public <V> V getValue(RegistryDict<R, V> dictionary, R entry) {
+		return (V) valueTable.get(dictionary, entry);
 	}
 
-	public <T> void putValue(RegistryDict<R, T> attribute, R entry, T value) {
-		valueTable.put(attribute, entry, value);
+	public <T> void putValue(RegistryDict<R, T> dictionary, R entry, T value) {
+		valueTable.put(dictionary, entry, value);
 	}
 
 	public void clear() {

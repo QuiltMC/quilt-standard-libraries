@@ -53,7 +53,7 @@ public final class RegistryDictReloader implements SimpleResourceReloader<Regist
 		ResourceLoader.get(source).registerReloader(new RegistryDictReloader(source));
 	}
 
-	static final Logger LOGGER = LogManager.getLogger("AttributeReloader");
+	static final Logger LOGGER = LogManager.getLogger("RegistryDictReloader");
 	private static final Identifier ID_DATA = new Identifier(Initializer.NAMESPACE, "data");
 	private static final Identifier ID_ASSETS = new Identifier(Initializer.NAMESPACE, "assets");
 
@@ -99,7 +99,7 @@ public final class RegistryDictReloader implements SimpleResourceReloader<Regist
 
 		if (group == null) { // suppressed because IDEA is too optimistic and thinks the loop above can't fail
 			if (!erroredNoTagList.add(registryKey)) {
-				LOGGER.error("Tried to use tag in attribute, but {} isn't configured to have tags!",
+				LOGGER.error("Tried to use tag in dictionary, but {} isn't configured to have tags!",
 						registryKey.getValue());
 			}
 			return null;
@@ -109,7 +109,7 @@ public final class RegistryDictReloader implements SimpleResourceReloader<Regist
 			if (source == ResourceType.SERVER_DATA) {
 				var qTag = QuiltTag.getExtensions(tag);
 				if (qTag.getType() == TagType.CLIENT_ONLY) {
-					LOGGER.error("Tried to use client-only tag {} in non-client-only attribute!", id);
+					LOGGER.error("Tried to use client-only tag {} in non-client-only dictionary!", id);
 					return null;
 				}
 			}
@@ -120,42 +120,42 @@ public final class RegistryDictReloader implements SimpleResourceReloader<Regist
 	@Override
 	public CompletableFuture<LoadedData> load(ResourceManager manager, Profiler profiler, Executor executor) {
 		return CompletableFuture.supplyAsync(() -> {
-			Map<RegistryDict<?, ?>, DictMap> attributeMaps = new HashMap<>();
+			Map<RegistryDict<?, ?>, DictMap> dictionaryMaps = new HashMap<>();
 
 			for (var entry : Registry.REGISTRIES.getEntries()) {
 				Identifier registryId = entry.getKey().getValue();
 				String path = registryId.getNamespace() + "/" + registryId.getPath();
 				profiler.push(id + "/finding_resources/" + path);
 
-				Collection<Identifier> jsonIds = manager.findResources("attributes/" + path, s -> s.endsWith(".json"));
+				Collection<Identifier> jsonIds = manager.findResources("dicts/" + path, s -> s.endsWith(".json"));
 				if (jsonIds.isEmpty()) {
 					continue;
 				}
 
 				Registry<?> registry = entry.getValue();
-				processResources(manager, profiler, attributeMaps, jsonIds, registry);
+				processResources(manager, profiler, dictionaryMaps, jsonIds, registry);
 
 				profiler.pop();
 			}
 
-			return new LoadedData(attributeMaps);
+			return new LoadedData(dictionaryMaps);
 		}, executor);
 	}
 
 	private void processResources(ResourceManager manager, Profiler profiler,
-								  Map<RegistryDict<?, ?>, DictMap> attributeMaps,
+								  Map<RegistryDict<?, ?>, DictMap> dictionaryMaps,
 								  Collection<Identifier> jsonIds, Registry<?> registry) {
 		for (var jsonId : jsonIds) {
-			Identifier attribId = getAttributeId(jsonId);
-			RegistryDict<?, ?> attrib = RegistryDictHolder.getDict(registry, attribId);
-			if (attrib == null) {
-				LOGGER.warn("Unknown attribute {} (from {})", attribId, jsonId);
+			Identifier dictId = getDictionaryId(jsonId);
+			RegistryDict<?, ?> dict = RegistryDictHolder.getDict(registry, dictId);
+			if (dict == null) {
+				LOGGER.warn("Unknown dictionary {} (from {})", dictId, jsonId);
 				continue;
 			}
 
-			if (!attrib.side().shouldLoad(source)) {
-				LOGGER.warn("Ignoring attribute {} (from {}) since it shouldn't be loaded from this source ({}, we're loading from {})",
-						attribId, jsonId, attrib.side().getSource(), source);
+			if (!dict.side().shouldLoad(source)) {
+				LOGGER.warn("Ignoring dictionary {} (from {}) since it shouldn't be loaded from this source ({}, we're loading from {})",
+						dictId, jsonId, dict.side().getSource(), source);
 				continue;
 			}
 
@@ -170,12 +170,12 @@ public final class RegistryDictReloader implements SimpleResourceReloader<Regist
 				continue;
 			}
 
-			profiler.swap(id + "/processing_resources{" + jsonId + "," + attribId + "}");
+			profiler.swap(id + "/processing_resources{" + jsonId + "," + dictId + "}");
 
-			DictMap attribMap = attributeMaps.computeIfAbsent(attrib,
+			DictMap dictMap = dictionaryMaps.computeIfAbsent(dict,
 					key -> new DictMap(registry, key, this));
 			for (var resource : resources) {
-				attribMap.processResource(resource);
+				dictMap.processResource(resource);
 			}
 		}
 	}
@@ -185,8 +185,8 @@ public final class RegistryDictReloader implements SimpleResourceReloader<Regist
 		return CompletableFuture.runAsync(() -> data.apply(profiler), executor);
 	}
 
-	// "<namespace>:attributes/<path>/<file_name>.json" becomes "<namespace>:<file_name>"
-	private Identifier getAttributeId(Identifier jsonId) {
+	// "<namespace>:dicts/<path>/<file_name>.json" becomes "<namespace>:<file_name>"
+	private Identifier getDictionaryId(Identifier jsonId) {
 		String path = jsonId.getPath();
 		int lastSlash = path.lastIndexOf('/');
 		path = path.substring(lastSlash + 1);
@@ -204,21 +204,21 @@ public final class RegistryDictReloader implements SimpleResourceReloader<Regist
 	}
 
 	protected final class LoadedData {
-		private final Map<RegistryDict<?, ?>, DictMap> attributeMaps;
+		private final Map<RegistryDict<?, ?>, DictMap> dictionaryMaps;
 
-		private LoadedData(Map<RegistryDict<?, ?>, DictMap> attributeMaps) {
-			this.attributeMaps = attributeMaps;
+		private LoadedData(Map<RegistryDict<?, ?>, DictMap> dictionaryMaps) {
+			this.dictionaryMaps = dictionaryMaps;
 		}
 
 		public void apply(Profiler profiler) {
-			profiler.push(id + "/clear_attributes");
+			profiler.push(id + "/clear_dicts");
 
 			for (var entry : Registry.REGISTRIES.getEntries()) {
 				getHolder(entry.getValue()).clear();
 			}
 
-			for (Map.Entry<RegistryDict<?, ?>, DictMap> entry : attributeMaps.entrySet()) {
-				profiler.swap(id + "/apply_attribute{" + entry.getKey().id() + "}");
+			for (Map.Entry<RegistryDict<?, ?>, DictMap> entry : dictionaryMaps.entrySet()) {
+				profiler.swap(id + "/apply_dict{" + entry.getKey().id() + "}");
 				applyOne(entry.getKey(), entry.getValue());
 			}
 
@@ -226,21 +226,21 @@ public final class RegistryDictReloader implements SimpleResourceReloader<Regist
 		}
 
 		@SuppressWarnings("unchecked")
-		private <R, V> void applyOne(RegistryDict<R, V> attrib, DictMap attribMap) {
-			var registry = attrib.registry();
+		private <R, V> void applyOne(RegistryDict<R, V> dict, DictMap dictMap) {
+			var registry = dict.registry();
 			Objects.requireNonNull(registry, "registry");
 
 			RegistryDictHolder<R> holder = getHolder(registry);
-			for (Map.Entry<DictTarget, Object> attribEntry : attribMap.getMap().entrySet()) {
-				V value = (V) attribEntry.getValue();
+			for (Map.Entry<DictTarget, Object> dictEntry : dictMap.getMap().entrySet()) {
+				V value = (V) dictEntry.getValue();
 				try {
-					for (Identifier id : attribEntry.getKey().ids()) {
+					for (Identifier id : dictEntry.getKey().ids()) {
 						R item = registry.get(id);
-						holder.putValue(attrib, item, value);
+						holder.putValue(dict, item, value);
 					}
 				} catch (DictTarget.ResolveException e) {
 					// TODO handle this better, somehow??
-					LOGGER.error("Failed to apply values for attribute {}!", attrib.id());
+					LOGGER.error("Failed to apply values for dictionary {}!", dict.id());
 					LOGGER.catching(Level.ERROR, e);
 					break;
 				}

@@ -132,21 +132,21 @@ public final class DumpBuiltinDictsCommand {
 	private static <R> void execute0(CommandContext<ServerCommandSource> ctx, Registry<R> registry) throws CommandSyntaxException {
 		var registryId = registry.getKey().getValue();
 
-		int attrCount = 0, valueCount = 0;
+		int dictCount = 0, valueCount = 0;
 
 		var holder = RegistryDictHolder.getBuiltin(registry);
 		for (Map.Entry<? extends RegistryDict<R, ?>, ? extends Map<R, Object>> entry : holder.valueTable.rowMap().entrySet()) {
-			RegistryDict<R, Object> attr = (RegistryDict<R, Object>) entry.getKey();
-			var attrId = attr.id();
+			RegistryDict<R, Object> dict = (RegistryDict<R, Object>) entry.getKey();
+			var dictId = dict.id();
 
-			if (!AssetsHolderGuard.isAccessAllowed() && attr.side() == RegistryDict.Side.CLIENT) {
+			if (!AssetsHolderGuard.isAccessAllowed() && dict.side() == RegistryDict.Side.CLIENT) {
 				continue;
 			}
 
-			var path = FabricLoader.getInstance().getGameDir().resolve("quilt/builtin-registry-entry-attributes")
-					.resolve(attr.side().getSource().getDirectory())
-					.resolve(attrId.getNamespace())
-					.resolve("attributes")
+			var path = FabricLoader.getInstance().getGameDir().resolve("quilt/builtin-registry-dictionaries")
+					.resolve(dict.side().getSource().getDirectory())
+					.resolve(dictId.getNamespace())
+					.resolve("dicts")
 					.resolve(registryId.getNamespace())
 					.resolve(registryId.getPath())
 					.normalize();
@@ -159,7 +159,7 @@ public final class DumpBuiltinDictsCommand {
 				}
 			}
 
-			path = path.resolve(attrId.getPath() + ".json");
+			path = path.resolve(dictId.getPath() + ".json");
 			try {
 				Files.deleteIfExists(path);
 			} catch (IOException e) {
@@ -169,20 +169,20 @@ public final class DumpBuiltinDictsCommand {
 
 			var valuesObj = new JsonObject();
 
-			for (Map.Entry<R, Object> attrEntry : entry.getValue().entrySet()) {
-				var entryId = registry.getId(attrEntry.getKey());
+			for (Map.Entry<R, Object> dictEntry : entry.getValue().entrySet()) {
+				var entryId = registry.getId(dictEntry.getKey());
 				if (entryId == null) {
 					throw ILLEGAL_STATE.create();
 				}
 				DataResult<JsonElement> encodedValue =
-						attr.codec().encodeStart(JsonOps.INSTANCE, attrEntry.getValue());
+						dict.codec().encodeStart(JsonOps.INSTANCE, dictEntry.getValue());
 				if (encodedValue.result().isEmpty()) {
 					if (encodedValue.error().isPresent()) {
-						LOGGER.error("Failed to encode value for attribute {} of registry entry {}: {}",
-								attr.id(), entryId, encodedValue.error().get().message());
+						LOGGER.error("Failed to encode value for dictionary {} of registry entry {}: {}",
+								dict.id(), entryId, encodedValue.error().get().message());
 					} else {
-						LOGGER.error("Failed to encode value for attribute {} of registry entry {}: unknown error",
-								attr.id(), entryId);
+						LOGGER.error("Failed to encode value for dictionary {} of registry entry {}: unknown error",
+								dict.id(), entryId);
 					}
 					throw ENCODE_FAILURE.create();
 				}
@@ -201,10 +201,10 @@ public final class DumpBuiltinDictsCommand {
 				throw IO_EXCEPTION.create();
 			}
 
-			attrCount++;
+			dictCount++;
 		}
 
-		ctx.getSource().sendFeedback(new LiteralText("Done. Dumped " + attrCount + " attributes, " + valueCount + " values."),
+		ctx.getSource().sendFeedback(new LiteralText("Done. Dumped " + dictCount + " dictionaries, " + valueCount + " values."),
 				false);
 	}
 }

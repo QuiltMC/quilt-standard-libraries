@@ -25,7 +25,7 @@ import org.quiltmc.qsl.registry.dict.api.RegistryDict;
 
 @ApiStatus.Internal
 public interface QuiltRegistryInternals<R> {
-	void quilt$registerDict(RegistryDict<R, ?> attribute);
+	void quilt$registerDict(RegistryDict<R, ?> dictionary);
 
 	@Nullable RegistryDict<R, ?> quilt$getDict(Identifier id);
 

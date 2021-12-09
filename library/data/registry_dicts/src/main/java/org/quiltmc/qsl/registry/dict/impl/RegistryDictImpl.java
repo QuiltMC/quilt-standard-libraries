@@ -89,7 +89,7 @@ public record RegistryDictImpl<R, V>(Registry<R> registry,
 
 	@Override
 	public String toString() {
-		return "RegistryEntryAttributeImpl{" +
+		return "RegistryDictImpl{" +
 				"registry=" + registry +
 				", id=" + id +
 				'}';
