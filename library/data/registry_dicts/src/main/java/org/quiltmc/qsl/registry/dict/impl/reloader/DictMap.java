@@ -55,8 +55,8 @@ final class DictMap {
 		map.put(new DictTarget.Single(id), value);
 	}
 
-	public void putTag(Identifier tagId, Object value) {
-		map.put(new DictTarget.Tagged<>(tagGetter, registry, tagId), value);
+	public void putTag(Identifier tagId, Object value, boolean required) {
+		map.put(new DictTarget.Tagged<>(tagGetter, registry, tagId, required), value);
 	}
 
 	public Registry<?> getRegistry() {
@@ -170,7 +170,7 @@ final class DictMap {
 			}
 
 			if (tagId) {
-				putTag(id, parsedValue);
+				putTag(id, parsedValue, required);
 			} else {
 				put(id, parsedValue);
 			}
@@ -206,7 +206,7 @@ final class DictMap {
 			}
 
 			if (tagId) {
-				putTag(id, parsedValue);
+				putTag(id, parsedValue, false);
 			} else {
 				put(id, parsedValue);
 			}

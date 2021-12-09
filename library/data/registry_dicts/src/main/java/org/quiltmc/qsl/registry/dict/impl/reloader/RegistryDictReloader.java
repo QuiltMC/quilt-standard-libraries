@@ -93,7 +93,7 @@ public final class RegistryDictReloader implements SimpleResourceReloader<Regist
 
 	@SuppressWarnings({"unchecked", "ConstantConditions"})
 	@Override
-	public <T> Tag<T> getTag(RegistryKey<? extends Registry<T>> registryKey, Identifier id) {
+	public <T> Tag<T> getTag(RegistryKey<? extends Registry<T>> registryKey, Identifier id, boolean required) {
 		if (erroredNoTagList.contains(registryKey)) {
 			return null;
 		}
@@ -117,10 +117,16 @@ public final class RegistryDictReloader implements SimpleResourceReloader<Regist
 		} else {
 			registryTagGroupCache.put(registryKey, group);
 			var tag = group.getTag(id);
+			var qTag = QuiltTag.getExtensions(tag);
 			if (source == ResourceType.SERVER_DATA) {
-				var qTag = QuiltTag.getExtensions(tag);
-				if (qTag.getType() == TagType.CLIENT_ONLY) {
-					LOGGER.error("Tried to use client-only tag {} in non-client-only dictionary!", id);
+				if (qTag.getType() == TagType.CLIENT_FALLBACK || qTag.getType() == TagType.CLIENT_ONLY) {
+					LOGGER.error("Tried to use client tag {} in non-client dictionary!", id);
+					return null;
+				}
+			}
+			if (required) {
+				if (!qTag.getType().isRequiredToStart() && !qTag.getType().isRequiredToConnect()) {
+					LOGGER.error("Tried to use non-required tag {} in required entry of dictionary!", id);
 					return null;
 				}
 			}

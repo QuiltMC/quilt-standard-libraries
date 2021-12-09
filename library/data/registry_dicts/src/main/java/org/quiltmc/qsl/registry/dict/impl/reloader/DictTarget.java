@@ -67,18 +67,24 @@ sealed interface DictTarget {
 		private final TagGetter tagGetter;
 		private final Registry<T> registry;
 		private final Identifier tagId;
+		private final boolean required;
 
-		public Tagged(TagGetter tagGetter, Registry<T> registry, Identifier tagId) {
+		public Tagged(TagGetter tagGetter, Registry<T> registry, Identifier tagId, boolean required) {
 			this.tagGetter = tagGetter;
 			this.registry = registry;
 			this.tagId = tagId;
+			this.required = required;
 		}
 
 		@Override
 		public Collection<Identifier> ids() throws ResolveException {
-			Tag<T> tag = tagGetter.getTag(registry.getKey(), tagId);
+			Tag<T> tag = tagGetter.getTag(registry.getKey(), tagId, required);
 			if (tag == null) {
-				throw new ResolveException("Tag " + tagId + " does not exist!");
+				if (required) {
+					throw new ResolveException("Tag " + tagId + " does not exist!");
+				} else {
+					return Set.of();
+				}
 			}
 			Set<Identifier> ids = new HashSet<>();
 			for (T value : tag.values()) {

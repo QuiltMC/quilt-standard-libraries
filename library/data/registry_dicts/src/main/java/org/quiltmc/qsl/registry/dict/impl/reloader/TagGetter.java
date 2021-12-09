@@ -23,5 +23,5 @@ import net.minecraft.util.registry.RegistryKey;
 
 @FunctionalInterface
 interface TagGetter {
-	<T> Tag<T> getTag(RegistryKey<? extends Registry<T>> registryKey, Identifier id);
+	<T> Tag<T> getTag(RegistryKey<? extends Registry<T>> registryKey, Identifier id, boolean required);
 }
