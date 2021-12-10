@@ -29,9 +29,9 @@ import net.minecraft.client.option.KeyBinding;
 @Mixin(GameOptions.class)
 public interface GameOptionsAccessor {
 	@Accessor
-	KeyBinding[] getKeysAll();
+	KeyBinding[] getAllKeys();
 
 	@Mutable
 	@Accessor
-	void setKeysAll(KeyBinding[] keysAll);
+	void setAllKeys(KeyBinding[] allKeys);
 }

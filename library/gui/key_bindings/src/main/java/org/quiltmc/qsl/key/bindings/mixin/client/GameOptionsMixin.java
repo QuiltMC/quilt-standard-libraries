@@ -42,7 +42,7 @@ public abstract class GameOptionsMixin {
 	@Shadow
 	@Mutable
 	@Final
-	public KeyBinding[] keysAll;
+	public KeyBinding[] allKeys;
 
 	@Shadow
 	@Final
@@ -57,15 +57,15 @@ public abstract class GameOptionsMixin {
 	)
 	private void modifyAllKeys(MinecraftClient client, File file, CallbackInfo ci) {
 		if (this.optionsFile.equals(new File(file, "options.txt"))) {
-			KeyBindingRegistryImpl.setKeyBindingManager(new KeyBindingManager((GameOptions) (Object) this, this.keysAll));
-			this.keysAll = KeyBindingRegistryImpl.getKeyBindings();
+			KeyBindingRegistryImpl.setKeyBindingManager(new KeyBindingManager((GameOptions) (Object) this, this.allKeys));
+			this.allKeys = KeyBindingRegistryImpl.getKeyBindings();
 		}
 	}
 
 	@Inject(
 			at = @At(
 				value = "FIELD",
-				target = "Lnet/minecraft/client/option/GameOptions;keysAll:[Lnet/minecraft/client/option/KeyBinding;"
+				target = "Lnet/minecraft/client/option/GameOptions;allKeys:[Lnet/minecraft/client/option/KeyBinding;"
 			),
 			method = "accept(Lnet/minecraft/client/option/GameOptions$Visitor;)V"
 	)
