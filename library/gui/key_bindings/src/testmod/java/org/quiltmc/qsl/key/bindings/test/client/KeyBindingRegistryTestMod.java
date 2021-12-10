@@ -14,7 +14,7 @@ import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
 
 @Environment(EnvType.CLIENT)
 public class KeyBindingRegistryTestMod implements ClientModInitializer {
-	public static final Logger LOGGER = LogManager.getLogger("KeyBindingRegistryTest");
+	public static final Logger LOGGER = LogManager.getFormatterLogger("KeyBindingRegistryTest");
 
 	@Override
 	public void onInitializeClient() {
@@ -30,6 +30,11 @@ public class KeyBindingRegistryTestMod implements ClientModInitializer {
 					}
 				});
 			}
+
+			LOGGER.info("The registry has the following keys registered:");
+			KeyBindingRegistry.getAllKeyBindings(true).forEach((key, value) -> {
+				LOGGER.info("%s: %s", key.getTranslationKey(), value);
+			});
 		});
 	}
 }

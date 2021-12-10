@@ -72,21 +72,26 @@ public class KeyBindingRegistryImpl {
 		return null;
 	}
 
+	public static boolean throwUnregisteredKeyException(KeyBinding key) {
+		if (keyBindingManager != null && Arrays.asList(keyBindingManager.getAllKeys()).contains(key)) {
+			throw new IllegalArgumentException(String.format("%s is a vanilla key and therefore doesn't have an active state!", key.getTranslationKey()));
+		}
+
+		throw new IllegalArgumentException(String.format("%s isn't a registered key!", key.getTranslationKey()));
+	}
+
 	public static boolean isEnabled(KeyBinding key) {
 		if (quiltKeys.containsKey(key)) {
 			return quiltKeys.get(key);
 		}
 
-		if (keyBindingManager != null && Arrays.asList(keyBindingManager.getAllKeys()).contains(key)) {
-			throw new IllegalArgumentException(String.format("%s is a vanilla key and therefore doesn't have an active state!", key.getTranslationKey()));
-		}
-
-		throw new IllegalArgumentException(String.format("%s hasn't been registered!", key.getTranslationKey()));
+		return throwUnregisteredKeyException(key);
 	}
 
-	public static boolean setEnabled(KeyBinding key, boolean enabled) {
+	public static void setEnabled(KeyBinding key, boolean enabled) {
 		if (quiltKeys.containsKey(key)) {
 			quiltKeys.replace(key, enabled);
+
 			applyChanges();
 			if (enabled) {
 				KeyBindingAccessor.getKeysById().put(key.getTranslationKey(), key);
@@ -96,14 +101,26 @@ public class KeyBindingRegistryImpl {
 
 			((KeyBindingAccessor) key).callReset();
 			KeyBinding.updateKeysByCode();
-
-			return true;
 		}
 
-		return false;
+		throwUnregisteredKeyException(key);
 	}
 
-	public static void updateKeysArray() {
+	public static Map<KeyBinding, Boolean> getAllKeyBindings(boolean includeVanilla) {
+		Map<KeyBinding, Boolean> allKeys = new HashMap<>();
+
+		if (includeVanilla) {
+			for (int i = 0; i < keyBindingManager.getAllKeys().length; i++) {
+				allKeys.put(keyBindingManager.getAllKeys()[i], false);
+			}
+		}
+
+		allKeys.putAll(quiltKeys);
+
+		return allKeys;
+	}
+
+	public static void applyChanges() {
 		List<KeyBinding> enabledQuiltKeys = new ArrayList<>();
 		disabledQuiltKeys.clear();
 		for (var entry : quiltKeys.entrySet()) {
@@ -115,6 +132,10 @@ public class KeyBindingRegistryImpl {
 		}
 
 		enabledQuiltKeysArray = enabledQuiltKeys.toArray(new KeyBinding[enabledQuiltKeys.size()]);
+
+		if (keyBindingManager != null) {
+			keyBindingManager.addModdedKeyBinds();
+		}
 	}
 
 	public static KeyBinding[] getKeyBindings() {
@@ -127,12 +148,5 @@ public class KeyBindingRegistryImpl {
 
 	public static void setKeyBindingManager(KeyBindingManager manager) {
 		keyBindingManager = manager;
-	}
-
-	public static void applyChanges() {
-		updateKeysArray();
-		if (keyBindingManager != null) {
-			keyBindingManager.addModdedKeyBinds();
-		}
 	}
 }
