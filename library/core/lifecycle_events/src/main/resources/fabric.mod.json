@@ -16,7 +16,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.12",
-    "minecraft": ">=1.18-rc.4",
+    "minecraft": ">=1.18.1",
     "quilt_base": "*"
   },
   "description": "Events to track the lifecycle of Minecraft.",
