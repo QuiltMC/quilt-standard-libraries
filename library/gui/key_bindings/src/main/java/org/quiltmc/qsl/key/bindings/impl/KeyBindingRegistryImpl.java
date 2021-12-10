@@ -83,9 +83,9 @@ public class KeyBindingRegistryImpl {
 	public static boolean isEnabled(KeyBinding key) {
 		if (quiltKeys.containsKey(key)) {
 			return quiltKeys.get(key);
+		} else {
+			return throwUnregisteredKeyException(key);
 		}
-
-		return throwUnregisteredKeyException(key);
 	}
 
 	public static void setEnabled(KeyBinding key, boolean enabled) {
@@ -101,9 +101,9 @@ public class KeyBindingRegistryImpl {
 
 			((KeyBindingAccessor) key).callReset();
 			KeyBinding.updateKeysByCode();
+		} else {
+			throwUnregisteredKeyException(key);
 		}
-
-		throwUnregisteredKeyException(key);
 	}
 
 	public static Map<KeyBinding, Boolean> getAllKeyBindings(boolean includeVanilla) {

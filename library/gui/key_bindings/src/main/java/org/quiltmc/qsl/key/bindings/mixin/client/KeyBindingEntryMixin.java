@@ -68,7 +68,7 @@ public abstract class KeyBindingEntryMixin extends KeyBindingListWidget.Entry im
 	@Unique
 	private static InputUtil.Key quilt$changedBoundKey;
 
-	@Shadow(remap = false)
+	@Shadow(aliases = "field_2742", remap = false)
 	@Final
 	KeyBindingListWidget field_2742;
 
@@ -92,10 +92,10 @@ public abstract class KeyBindingEntryMixin extends KeyBindingListWidget.Entry im
 		if (!boundKey.equals(this.quilt$previousBoundKey) || quilt$changedBoundKey != null) {
 			this.quilt$conflictTooltips.clear();
 
-			if (quilt$changedBoundKey == null) {
-				quilt$changedBoundKey = boundKey;
-			} else if (quilt$changedBoundKey.equals(boundKey)) {
+			if (quilt$changedBoundKey != null && quilt$changedBoundKey.equals(boundKey)) {
 				quilt$changedBoundKey = null;
+			} else {
+				quilt$changedBoundKey = boundKey;
 			}
 
 			if (!this.binding.isUnbound()) {
