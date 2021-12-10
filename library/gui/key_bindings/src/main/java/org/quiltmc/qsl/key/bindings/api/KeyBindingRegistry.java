@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.key.bindings.api;
 
+import java.util.Map;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
@@ -115,13 +117,19 @@ public class KeyBindingRegistry {
 	 *
 	 * @param key the key binding
 	 * @param enabled the new state
-	 * @return {@code true} if the state change was successful, else {@code false}
+	 * @throws IllegalArgumentException if {@code key} is either unregistered or a Vanilla key bind
 	 */
-	public static boolean setEnabled(KeyBinding key, boolean enabled) {
-		return KeyBindingRegistryImpl.setEnabled(key, enabled);
+	public static void setEnabled(KeyBinding key, boolean enabled) {
+		KeyBindingRegistryImpl.setEnabled(key, enabled);
 	}
 
-	public static void getAllKeyBindings(boolean includeVanilla) {
-		// TODO - Make me into a real method
+	/**
+	 * Returns a map containing all modded key bindings (and vanilla ones if specified).
+	 *
+	 * @param includeVanilla {@code true} if vanilla entries should be included, else {@code false}
+	 * @return a map containing all modded (and optionally vanilla) key bindings
+	 */
+	public static Map<KeyBinding, Boolean> getAllKeyBindings(boolean includeVanilla) {
+		return KeyBindingRegistryImpl.getAllKeyBindings(includeVanilla);
 	}
 }
