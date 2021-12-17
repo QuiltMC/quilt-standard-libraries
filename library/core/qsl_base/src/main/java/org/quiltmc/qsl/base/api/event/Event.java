@@ -33,6 +33,7 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.base.api.util.QuiltAssertions;
 import org.quiltmc.qsl.base.impl.QuiltBaseImpl;
 import org.quiltmc.qsl.base.impl.event.EventPhaseData;
+import org.quiltmc.qsl.base.impl.event.EventRegistry;
 import org.quiltmc.qsl.base.impl.event.PhaseSorting;
 
 /**
@@ -216,6 +217,8 @@ public final class Event<T> {
 		this.implementation = implementation;
 		this.callbacks = (T[]) Array.newInstance(type, 0);
 		this.update();
+
+		EventRegistry.register(this, type);
 	}
 
 	/**
