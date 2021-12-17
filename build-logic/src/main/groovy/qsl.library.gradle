@@ -132,4 +132,6 @@ publishing {
 	}
 }
 
+loom.disableDeprecatedPomGeneration(publishing.publications.mavenJava)
+
 publish.dependsOn checkLibVersion

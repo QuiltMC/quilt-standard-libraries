@@ -45,6 +45,8 @@ publishing {
 	}
 }
 
+loom.disableDeprecatedPomGeneration(publishing.publications.mavenJava)
+
 // Because we rely on the results of our libraries, we use afterEvaluate to setup the sourcesets and testmod tasks.
 afterEvaluate {
 	// Add sourceSet dependencies on all libraries
