@@ -16,18 +16,16 @@
 
 package org.quiltmc.qsl.base.api.event;
 
-import org.quiltmc.qsl.base.api.event.client.ClientEventAwareEntrypoint;
-import org.quiltmc.qsl.base.api.event.server.DedicatedServerEventAwareEntrypoint;
+import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
+import org.quiltmc.qsl.base.api.event.server.DedicatedServerEventAwareListener;
 
 /**
- * An entrypoint representing a listener to events.
+ * Represents an event callback aware of its uniquely associated event, may be used as an entrypoint.
  * <p>
  * In {@code fabric.mod.json}, the entrypoint is defined with {@code events} key.
- * <p>
- * Any event callback interface extending this interface can be listened using this entrypoint.
  *
- * @see ClientEventAwareEntrypoint
- * @see DedicatedServerEventAwareEntrypoint
+ * @see ClientEventAwareListener
+ * @see DedicatedServerEventAwareListener
  */
-public interface EventAwareEntrypoint {
+public interface EventAwareListener {
 }

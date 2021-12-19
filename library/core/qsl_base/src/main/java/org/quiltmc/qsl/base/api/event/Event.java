@@ -188,8 +188,26 @@ public final class Event<T> {
 	}
 
 	/**
+	 * Registers the given listener of the listed events.
+	 *
+	 * @param listener the listener of events
+	 * @param events   the events to listen
+	 * @throws IllegalArgumentException if the listener doesn't listen one of the events to listen
+	 * @see #register(Object)
+	 * @see #register(Identifier, Object)
+	 */
+	public static void listenAll(Object listener, Event<?>... events) {
+		if (events.length == 0) {
+			throw new IllegalArgumentException("Tried to register a listener of an empty event list.");
+		}
+
+		EventRegistry.listenAll(listener, events);
+	}
+
+	/**
 	 * The function used to generate the implementation of the invoker to execute events.
 	 */
+	private final Class<? super T> type;
 	private final Function<T[], T> implementation;
 	private final Lock lock = new ReentrantLock();
 	/**
@@ -214,6 +232,7 @@ public final class Event<T> {
 		Objects.requireNonNull(type, "Class specifying the type of T in the event cannot be null");
 		Objects.requireNonNull(implementation, "Function to generate invoker implementation for T cannot be null");
 
+		this.type = type;
 		this.implementation = implementation;
 		this.callbacks = (T[]) Array.newInstance(type, 0);
 		this.update();
@@ -222,9 +241,17 @@ public final class Event<T> {
 	}
 
 	/**
+	 * {@return the class of the type of the invoker used to execute an event and the class of the type of the callback}
+	 */
+	public Class<? super T> getType() {
+		return this.type;
+	}
+
+	/**
 	 * Register a callback to the event.
 	 *
 	 * @param callback the callback
+	 * @see #register(Identifier, Object)
 	 */
 	public void register(T callback) {
 		this.register(DEFAULT_PHASE, callback);
@@ -333,5 +360,15 @@ public final class Event<T> {
 		// Make a copy of the array we give to the invoker factory so entries cannot be removed from this event's
 		// backing array
 		this.invoker = this.implementation.apply(Arrays.copyOf(this.callbacks, this.callbacks.length));
+	}
+
+	@Override
+	public String toString() {
+		return "Event{" +
+				"type=" + this.type +
+				", implementation=" + this.implementation +
+				", phases=" + this.phases +
+				", sortedPhases=" + this.sortedPhases +
+				'}';
 	}
 }

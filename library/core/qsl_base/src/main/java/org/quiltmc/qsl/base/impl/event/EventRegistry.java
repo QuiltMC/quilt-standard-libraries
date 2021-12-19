@@ -17,36 +17,68 @@
 package org.quiltmc.qsl.base.impl.event;
 
 import java.util.List;
+import java.util.Map;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.util.Identifier;
+
 import org.quiltmc.qsl.base.api.event.Event;
-import org.quiltmc.qsl.base.api.event.EventAwareEntrypoint;
-import org.quiltmc.qsl.base.api.event.client.ClientEventAwareEntrypoint;
-import org.quiltmc.qsl.base.api.event.server.DedicatedServerEventAwareEntrypoint;
+import org.quiltmc.qsl.base.api.event.EventAwareListener;
+import org.quiltmc.qsl.base.api.event.ListenerPhase;
+import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
+import org.quiltmc.qsl.base.api.event.server.DedicatedServerEventAwareListener;
 
 @ApiStatus.Internal
 public final class EventRegistry {
-	private static final EventSideTarget[] TARGETS = EventSideTarget.values();
-
 	private EventRegistry() {
 		throw new UnsupportedOperationException("EventRegistry only contains static definitions.");
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	public static void listenAll(Object listener, Event<?>... events) {
+		var listenedPhases = getListenedPhases(listener.getClass());
+
+		for (var event : events) {
+			if (!event.getType().isAssignableFrom(listener.getClass())) {
+				throw new IllegalArgumentException("Given object " + listener + " is not a listener of event " + event);
+			}
+
+			var phase = listenedPhases.getOrDefault(event.getType(), Event.DEFAULT_PHASE);
+			((Event) event).register(phase, listener);
+		}
+	}
+
+	private static Map<Class<?>, Identifier> getListenedPhases(Class<?> listenerClass) {
+		var map = new Object2ObjectOpenHashMap<Class<?>, Identifier>();
+
+		for (var annotation : listenerClass.getAnnotations()) {
+			if (annotation instanceof ListenerPhase phase) {
+				map.put(phase.callbackTarget(), new Identifier(phase.namespace(), phase.path()));
+			}
+		}
+
+		return map;
+	}
+
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public static <T> void register(Event<T> event, Class<? super T> type) {
-		for (var target : TARGETS) {
-			// Search if the event callback qualifies to be converted into an entrypoint.
-			if (target.entrypointClass().isAssignableFrom(type)) {
-				List<?> entrypoints = FabricLoader.getInstance().getEntrypoints(target.entrypointKey(), target.entrypointClass());
+		for (var target : EventSideTarget.VALUES) {
+			// Search if the callback qualifies is unique to this event.
+			if (target.listenerClass().isAssignableFrom(type)) {
+				List<?> entrypoints = FabricLoader.getInstance().getEntrypoints(target.entrypointKey(), target.listenerClass());
 
 				// Search for matching entrypoint.
 				for (Object entrypoint : entrypoints) {
+					var listenedPhases = getListenedPhases(entrypoint.getClass());
+
 					// Searching if the given entrypoint is a listener of the event being registered.
 					if (type.isAssignableFrom(entrypoint.getClass())) {
 						// It is, then register the listener.
-						((Event) event).register(entrypoint);
+						var phase = listenedPhases.getOrDefault(event.getType(), Event.DEFAULT_PHASE);
+						((Event) event).register(phase, entrypoint);
 					}
 				}
 
@@ -55,25 +87,27 @@ public final class EventRegistry {
 		}
 	}
 
-	private enum EventSideTarget {
-		CLIENT("client_events", ClientEventAwareEntrypoint.class),
-		COMMON("events", EventAwareEntrypoint.class),
-		DEDICATED_SERVER("server_events", DedicatedServerEventAwareEntrypoint.class);
+	enum EventSideTarget {
+		CLIENT("client_events", ClientEventAwareListener.class),
+		COMMON("events", EventAwareListener.class),
+		DEDICATED_SERVER("server_events", DedicatedServerEventAwareListener.class);
+
+		public static final List<EventSideTarget> VALUES = List.of(values());
 
 		private final String entrypointKey;
-		private final Class<?> entrypoint;
+		private final Class<?> listenerClass;
 
-		EventSideTarget(String entrypointKey, Class<?> entrypoint) {
+		EventSideTarget(String entrypointKey, Class<?> listenerClass) {
 			this.entrypointKey = entrypointKey;
-			this.entrypoint = entrypoint;
+			this.listenerClass = listenerClass;
 		}
 
 		public String entrypointKey() {
 			return this.entrypointKey;
 		}
 
-		public Class<?> entrypointClass() {
-			return this.entrypoint;
+		public Class<?> listenerClass() {
+			return this.listenerClass;
 		}
 	}
 }

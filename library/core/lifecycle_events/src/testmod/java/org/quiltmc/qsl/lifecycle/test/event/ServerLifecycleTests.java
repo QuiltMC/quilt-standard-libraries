@@ -22,7 +22,6 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraft.server.MinecraftServer;
 
-import org.quiltmc.qsl.base.api.event.EventAwareEntrypoint;
 import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 import org.quiltmc.qsl.lifecycle.api.event.ServerWorldLoadEvents;
 

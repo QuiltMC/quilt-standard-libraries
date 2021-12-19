@@ -19,7 +19,7 @@ package org.quiltmc.qsl.lifecycle.api.event;
 import net.minecraft.server.MinecraftServer;
 
 import org.quiltmc.qsl.base.api.event.Event;
-import org.quiltmc.qsl.base.api.event.EventAwareEntrypoint;
+import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
 /**
  * Events indicating the lifecycle of a Minecraft server.
@@ -117,7 +117,7 @@ public final class ServerLifecycleEvents {
 	 * @see #STARTING
 	 */
 	@FunctionalInterface
-	public interface Starting extends EventAwareEntrypoint {
+	public interface Starting extends EventAwareListener {
 		/**
 		 * Called when a Minecraft server is starting.
 		 *
@@ -132,7 +132,7 @@ public final class ServerLifecycleEvents {
 	 * @see #READY
 	 */
 	@FunctionalInterface
-	public interface Ready extends EventAwareEntrypoint {
+	public interface Ready extends EventAwareListener {
 		/**
 		 * Called when a Minecraft server is ready to tick and accept players.
 		 *
@@ -147,7 +147,7 @@ public final class ServerLifecycleEvents {
 	 * @see #STOPPING
 	 */
 	@FunctionalInterface
-	public interface Stopping extends EventAwareEntrypoint {
+	public interface Stopping extends EventAwareListener {
 		/**
 		 * Called when a Minecraft server has finished its last tick and is shutting down.
 		 *
@@ -162,7 +162,7 @@ public final class ServerLifecycleEvents {
 	 * @see #STOPPED
 	 */
 	@FunctionalInterface
-	public interface Stopped extends EventAwareEntrypoint {
+	public interface Stopped extends EventAwareListener {
 		/**
 		 * Called when a Minecraft server has finished shutdown and the server will be exited.
 		 *
