@@ -47,9 +47,8 @@ public interface RegistryDict<R, V> {
 	 * @param <V>      attached value type
 	 * @return the dictionary, or empty if the dictionary was not found
 	 */
-	@SuppressWarnings({"unchecked", "RedundantCast"})
 	static <R, V> Optional<RegistryDict<R, V>> get(Registry<R> registry, Identifier id) {
-		return Optional.ofNullable((RegistryDict<R, V>) RegistryDictHolder.getDict(registry, id));
+		return Optional.ofNullable(RegistryDictHolder.getDict(registry, id));
 	}
 
 	/**
@@ -273,11 +272,15 @@ public interface RegistryDict<R, V> {
 		/**
 		 * Sets the default value of this dictionary.
 		 *
+		 * <p>Setting this will <b>remove</b> the currently set
+		 * {@linkplain #computeFunction(ComputeFunction) compute function}!
+		 *
 		 * @param defaultValue default value
 		 * @return this builder
 		 */
 		public Builder<R, V> defaultValue(@Nullable V defaultValue) {
 			this.defaultValue = defaultValue;
+			this.computeFunction = null;
 			return this;
 		}
 
@@ -286,6 +289,9 @@ public interface RegistryDict<R, V> {
 		 * specific entry, should it be missing.
 		 *
 		 * <p>Note that this will be computed on both sides and the computation result will <em>not</em> be synchronized.
+		 *
+		 * <p>Setting this will <b>remove</b> the currently set
+		 * {@linkplain #defaultValue(Object) default value}!
 		 *
 		 * @param computeFunction function to compute otherwise-missing value
 		 * @return this builder
