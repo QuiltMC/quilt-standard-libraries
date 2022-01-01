@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import com.mojang.serialization.Codec;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.resource.ResourceType;
@@ -35,6 +36,7 @@ import org.quiltmc.qsl.registry.dict.impl.RegistryDictImpl;
  * @param <R> type of the entries in the registry
  * @param <V> attached value type
  */
+@ApiStatus.NonExtendable
 public interface RegistryDict<R, V> {
 	/**
 	 * Retrieves an already-registered dictionary.
