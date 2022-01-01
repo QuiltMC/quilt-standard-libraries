@@ -47,8 +47,9 @@ public interface RegistryDict<R, V> {
 	 * @param <V>      attached value type
 	 * @return the dictionary, or empty if the dictionary was not found
 	 */
+	@SuppressWarnings({"unchecked", "RedundantCast"})
 	static <R, V> Optional<RegistryDict<R, V>> get(Registry<R> registry, Identifier id) {
-		return Optional.ofNullable(RegistryDictHolder.getDict(registry, id));
+		return Optional.ofNullable((RegistryDict<R, V>) RegistryDictHolder.getDict(registry, id));
 	}
 
 	/**
