@@ -27,6 +27,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.registry.dict.api.RegistryDict;
+import org.quiltmc.qsl.registry.dict.api.WrongValueClassException;
 
 @ApiStatus.Internal
 public final class RegistryDictHolder<R> {
@@ -41,6 +42,20 @@ public final class RegistryDictHolder<R> {
 
 	public static <R> @Nullable RegistryDict<R, ?> getDict(Registry<R> registry, Identifier id) {
 		return getInternals(registry).quilt$getDict(id);
+	}
+
+	/// impl for RegistryDict.get
+	@SuppressWarnings("unchecked")
+	public static <R, V> @Nullable RegistryDict<R, V> getDict(Registry<R> registry, Identifier id, Class<V> valueClass)
+			throws WrongValueClassException {
+		var dict = getDict(registry, id);
+		if (dict == null) {
+			return null;
+		}
+		if (dict.valueClass() != valueClass) {
+			throw new WrongValueClassException(registry, id, valueClass, dict.valueClass());
+		}
+		return (RegistryDict<R, V>) dict;
 	}
 
 	public static <R> RegistryDictHolder<R> getBuiltin(Registry<R> registry) {

@@ -22,7 +22,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 /**
- * Utility interface used for {@link RegistryDict#dispatchedBuilder(Registry, Identifier, Function)}.
+ * Utility interface used for {@link RegistryDict#dispatchedBuilder(Registry, Identifier, Class, Function)}.
  *
  * <p>This allows for polymorphic dict types!<br>
  * For example, say you have this interface:
@@ -35,8 +35,8 @@ import net.minecraft.util.registry.Registry;
  * <p>Using the {@code createDispatched} method, you can create a dict for a composable behavior:
  * <pre><code>
  * public static final SimpleRegistry&lt;Codec&lt;? extends Behavior&gt;&gt; REGISTRY = new SimpleRegistry&lt;&gt;();
- * public static final RegistryDict&lt;Item, Behavior&gt; DICT =
- *     RegistryDict.&lt;Item, Behavior&gt;dispatchedBuilder(Registry.ITEM, id("behavior"), REGISTRY::get).build();
+ * public static final RegistryDict DICT = RegistryDict.&lt;Item, Behavior&gt;dispatchedBuilder(Registry.ITEM, id("behavior"),
+ *     Behavior.class, REGISTRY::get).build();
  *
  * public static void onItemUsed(ServerPlayerEntity player, ItemStack stack) {
  *     DICT.getValue(stack.getItem()).ifPresent(behavior -> behavior.execute(player));

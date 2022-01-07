@@ -41,44 +41,50 @@ public interface RegistryDict<R, V> {
 	/**
 	 * Retrieves an already-registered dictionary.
 	 *
-	 * @param registry registry dictionary is attached to
-	 * @param id       dictionary identifier
-	 * @param <R>      type of the entries in the registry
-	 * @param <V>      attached value type
+	 * @param registry   registry dictionary is attached to
+	 * @param id         dictionary identifier
+	 * @param valueClass attached value class
+	 * @param <R>        type of the entries in the registry
+	 * @param <V>        attached value type
 	 * @return the dictionary, or empty if the dictionary was not found
+	 * @throws WrongValueClassException if the dictionary was found, but has a different value class than expected
 	 */
-	@SuppressWarnings({"unchecked", "RedundantCast"})
-	static <R, V> Optional<RegistryDict<R, V>> get(Registry<R> registry, Identifier id) {
-		return Optional.ofNullable((RegistryDict<R, V>) RegistryDictHolder.getDict(registry, id));
+	static <R, V> Optional<RegistryDict<R, V>> get(Registry<R> registry, Identifier id, Class<V> valueClass)
+			throws WrongValueClassException {
+		return Optional.ofNullable(RegistryDictHolder.getDict(registry, id, valueClass));
 	}
 
 	/**
 	 * Creates a builder for a dictionary.
 	 *
-	 * @param registry registry to attach to
-	 * @param id       dictionary identifier
-	 * @param codec    attached value codec
-	 * @param <R>      type of the entries in the registry
-	 * @param <V>      attached value type
+	 * @param <R>        type of the entries in the registry
+	 * @param <V>        attached value type
+	 * @param registry   registry to attach to
+	 * @param id         dictionary identifier
+	 * @param valueClass attached value class
+	 * @param codec      attached value codec
 	 * @return a builder
 	 */
-	static <R, V> Builder<R, V> builder(Registry<R> registry, Identifier id, Codec<V> codec) {
-		return new Builder<>(registry, id, codec);
+	static <R, V> Builder<R, V> builder(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec) {
+		return new Builder<>(registry, id, valueClass, codec);
 	}
 
 	/**
-	 * Creates a builder for a dictionary using dispatched codecs for polymorphic types.
+	 * Creates a builder for a dictionary using {@linkplain Codec#dispatch(Function, Function) dispatched codecs}
+	 * for polymorphic types.
 	 *
 	 * @param registry    registry to attach to
 	 * @param id          dictionary identifier
-	 * @param codecGetter codec getter
+	 * @param valueClass  attached value class
+	 * @param codec       type to codec mapper
 	 * @param <R>         type of the entries in the registry
 	 * @param <V>         attached value type
 	 * @return a builder
 	 */
 	static <R, V extends DispatchedType> Builder<R, V> dispatchedBuilder(Registry<R> registry, Identifier id,
-																		 Function<Identifier, Codec<? extends V>> codecGetter) {
-		return builder(registry, id, Identifier.CODEC.dispatch(V::getType, codecGetter));
+																		 Class<V> valueClass,
+																		 Function<Identifier, Codec<? extends V>> codec) {
+		return builder(registry, id, valueClass, Identifier.CODEC.dispatch(V::getType, codec));
 	}
 
 	/**
@@ -90,7 +96,7 @@ public interface RegistryDict<R, V> {
 	 * @return a builder
 	 */
 	static <R> Builder<R, Boolean> boolBuilder(Registry<R> registry, Identifier id) {
-		return builder(registry, id, Codec.BOOL);
+		return builder(registry, id, Boolean.class, Codec.BOOL);
 	}
 
 	/**
@@ -102,7 +108,7 @@ public interface RegistryDict<R, V> {
 	 * @return a builder
 	 */
 	static <R> Builder<R, Integer> intBuilder(Registry<R> registry, Identifier id) {
-		return builder(registry, id, Codec.INT);
+		return builder(registry, id, Integer.class, Codec.INT);
 	}
 
 	/**
@@ -114,7 +120,7 @@ public interface RegistryDict<R, V> {
 	 * @return a builder
 	 */
 	static <R> Builder<R, Long> longBuilder(Registry<R> registry, Identifier id) {
-		return builder(registry, id, Codec.LONG);
+		return builder(registry, id, Long.class, Codec.LONG);
 	}
 
 	/**
@@ -126,7 +132,7 @@ public interface RegistryDict<R, V> {
 	 * @return a builder
 	 */
 	static <R> Builder<R, Float> floatBuilder(Registry<R> registry, Identifier id) {
-		return builder(registry, id, Codec.FLOAT);
+		return builder(registry, id, Float.class, Codec.FLOAT);
 	}
 
 	/**
@@ -138,7 +144,7 @@ public interface RegistryDict<R, V> {
 	 * @return a builder
 	 */
 	static <R> Builder<R, Double> doubleBuilder(Registry<R> registry, Identifier id) {
-		return builder(registry, id, Codec.DOUBLE);
+		return builder(registry, id, Double.class, Codec.DOUBLE);
 	}
 
 	/**
@@ -150,7 +156,7 @@ public interface RegistryDict<R, V> {
 	 * @return a builder
 	 */
 	static <R> Builder<R, String> stringBuilder(Registry<R> registry, Identifier id) {
-		return builder(registry, id, Codec.STRING);
+		return builder(registry, id, String.class, Codec.STRING);
 	}
 
 	/**
@@ -168,11 +174,11 @@ public interface RegistryDict<R, V> {
 	Identifier id();
 
 	/**
-	 * Gets the side this dictionary should exist on.
+	 * Gets the base class of this dictionary's values.
 	 *
-	 * @return dictionary side
+	 * @return value class
 	 */
-	Side side();
+	Class<V> valueClass();
 
 	/**
 	 * Gets the {@code Codec} used to (de)serialize this dictionary's values.
@@ -180,6 +186,13 @@ public interface RegistryDict<R, V> {
 	 * @return value codec
 	 */
 	Codec<V> codec();
+
+	/**
+	 * Gets the side this dictionary should exist on.
+	 *
+	 * @return dictionary side
+	 */
+	Side side();
 
 	/**
 	 * Gets the value associated with this dictionary for the specified entry.
@@ -202,7 +215,7 @@ public interface RegistryDict<R, V> {
 		 */
 		SERVER(ResourceType.SERVER_DATA),
 		/**
-		 * This dictionary exists on both sides. Its value will be synchronized from server to client.
+		 * This dictionary exists on both sides. Its values will be synchronized from server to client.
 		 */
 		BOTH(ResourceType.SERVER_DATA);
 
@@ -241,21 +254,29 @@ public interface RegistryDict<R, V> {
 	final class Builder<R, V> {
 		private final Registry<R> registry;
 		private final Identifier id;
+		private final Class<V> valueClass;
 		private final Codec<V> codec;
 
 		private Side side;
 		private @Nullable V defaultValue;
 		private @Nullable ComputeFunction<R, V> computeFunction;
 
-		private Builder(Registry<R> registry, Identifier id, Codec<V> codec) {
+		private Builder(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec) {
 			this.registry = registry;
 			this.id = id;
+			this.valueClass = valueClass;
 			this.codec = codec;
 			side = Side.BOTH;
 
-			if (get(registry, id).isPresent()) {
-				throw new IllegalStateException("Dictionary with ID '" + id +
-						"' is already registered for registry " + registry.getKey().getValue() + "!");
+			try {
+				if (get(registry, id, valueClass).isPresent()) {
+					throw new IllegalStateException("Dictionary with ID '%s' is already registered for registry %s!"
+							.formatted(id, registry.getKey().getValue()));
+				}
+			} catch (WrongValueClassException e) {
+				throw new IllegalStateException(("Dictionary with ID '%s' is already registered for registry %s, " +
+						"but with a different value class (expected %s, got %s)!")
+						.formatted(id, registry.getKey().getValue(), e.getExpectedClass(), e.getActualClass()));
 			}
 		}
 
@@ -309,7 +330,7 @@ public interface RegistryDict<R, V> {
 		 * @return new dictionary
 		 */
 		public RegistryDict<R, V> build() {
-			var dict = new RegistryDictImpl<>(registry, id, side, codec, defaultValue, computeFunction);
+			var dict = new RegistryDictImpl<>(registry, id, valueClass, codec, side, defaultValue, computeFunction);
 			RegistryDictHolder.registerDict(registry, dict);
 			return dict;
 		}

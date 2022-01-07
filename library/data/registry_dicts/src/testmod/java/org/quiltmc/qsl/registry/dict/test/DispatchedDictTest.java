@@ -103,8 +103,8 @@ public class DispatchedDictTest implements ModInitializer {
 	}
 
 	public static final RegistryDict<Item, FuncValue> MODULAR_FUNCTION =
-			RegistryDict.<Item, FuncValue>dispatchedBuilder(Registry.ITEM, new Identifier("quilt", "modular_function"),
-					FuncValue.CODECS::get).build();
+			RegistryDict.dispatchedBuilder(Registry.ITEM, new Identifier("quilt", "modular_function"),
+					FuncValue.class, FuncValue.CODECS::get).build();
 
 	public static final class ModularFunctionItem extends Item {
 		public ModularFunctionItem(Settings settings) {

@@ -35,8 +35,9 @@ import org.quiltmc.qsl.registry.dict.api.RegistryDict;
 @ApiStatus.Internal
 public record RegistryDictImpl<R, V>(Registry<R> registry,
 									 Identifier id,
-									 Side side,
+									 Class<V> valueClass,
 									 Codec<V> codec,
+									 Side side,
 									 @Nullable V defaultValue,
 									 @Nullable ComputeFunction<R, V> computeFunction)
 		implements RegistryDict<R, V> {
@@ -89,9 +90,10 @@ public record RegistryDictImpl<R, V>(Registry<R> registry,
 
 	@Override
 	public String toString() {
-		return "RegistryDictImpl{" +
+		return "RegistryDict{" +
 				"registry=" + registry +
 				", id=" + id +
+				", valueClass=" + valueClass +
 				'}';
 	}
 }
