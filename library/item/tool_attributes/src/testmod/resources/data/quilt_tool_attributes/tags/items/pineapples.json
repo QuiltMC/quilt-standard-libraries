@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "quilt_tool_attributes_testmod:test_stone_level_pineapple",
+    "quilt_tool_attributes_testmod:test_stone_dynamic_level_pineapple",
+    "quilt_tool_attributes_testmod:test_diamond_level_pineapple",
+    "quilt_tool_attributes_testmod:test_diamond_dynamic_level_pineapple"
+  ]
+}

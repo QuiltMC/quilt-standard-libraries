@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "id": "quilt_mining_levels",
+  "name": "Quilt Mining Levels API",
+  "version": "${version}",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "icon": "assets/quilt_mining_levels/icon.png",
+  "contact": {
+    "homepage": "https://quiltmc.org",
+    "issues": "https://github.com/QuiltMC/quilt-standard-libraries/issues",
+    "sources": "https://github.com/QuiltMC/quilt-standard-libraries"
+  },
+  "authors": [
+    "QuiltMC"
+  ],
+  "depends": {
+    "fabricloader": ">=0.12",
+    "minecraft": ">=1.18.1",
+    "quilt_base": "*",
+    "quilt_resource_loader": "*",
+    "quilt_tags": "*",
+    "quilt_tool_attributes": "*"
+  },
+  "description": "Adds support for custom mining levels.",
+  "mixins": [
+    "quilt_mining_levels.mixins.json"
+  ],
+  "custom": {
+    "modmenu": {
+      "badges": [
+        "library"
+      ],
+      "parent": {
+        "id": "qsl",
+        "name": "Quilt Standard Libraries",
+        "description": "A set of libraries to assist in making Quilt mods.",
+        "icon": "assets/quilt_mining_levels/icon.png",
+        "badges": [
+          "library"
+        ]
+      }
+    }
+  }
+}

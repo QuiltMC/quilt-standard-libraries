@@ -1,0 +1,22 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "tool_attributes"
+	version = "1.0.0"
+	library = "item"
+	coreDependencies([
+			"qsl_base",
+			"resource_loader"
+	])
+	coreTestmodDependencies([
+			"qsl_base",
+			"lifecycle_events"
+	])
+}
+
+dependencies {
+	api project(path: ":data:tags")
+	api project(path: ":item:tool_attributes")
+}

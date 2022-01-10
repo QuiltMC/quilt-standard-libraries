@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.tool_attributes.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "LivingEntityMixin",
+    "BambooBlockMixin",
+    "MixinItemStack",
+    "MixinToolItem"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

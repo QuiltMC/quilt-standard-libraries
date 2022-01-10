@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "quilt_tool_attributes_testmod:fake_shovel",
+    "quilt_tool_attributes_testmod:test_shovel"
+  ]
+}

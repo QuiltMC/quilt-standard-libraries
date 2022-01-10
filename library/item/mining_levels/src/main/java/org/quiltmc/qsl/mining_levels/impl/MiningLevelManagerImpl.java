@@ -1,0 +1,88 @@
+/*
+ * Copyright 2016, 2017, 2018, 2019 FabricMC
+ * Copyright 2022 QuiltMC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.quiltmc.qsl.mining_levels.impl;
+
+import it.unimi.dsi.fastutil.objects.Reference2IntMap;
+import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.tag.BlockTags;
+import net.minecraft.tag.TagGroup;
+import net.minecraft.util.Identifier;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+//import org.quiltmc.quiltmappings.constants.MiningLevels;
+@ApiStatus.Internal
+public class MiningLevelManagerImpl {
+	private static final Logger LOGGER = LogManager.getLogger("quilt-mining-levels");
+	private static final String TOOL_TAG_NAMESPACE = "quilt";
+	private static final Pattern TOOL_TAG_PATTERN = Pattern.compile("^needs_tool_level_([0-9]+)$");
+
+	// A cache of block state mining levels. Cleared by
+	// - MiningLevelCacheInvalidator when tags are reloaded
+	// - ClientPlayNetworkHandlerMixin when tags are synced
+	private static final ThreadLocal<Reference2IntMap<BlockState>> CACHE = ThreadLocal.withInitial(Reference2IntOpenHashMap::new);
+
+	public static int getRequiredMiningLevel(BlockState state) {
+		return CACHE.get().computeIntIfAbsent(state, s -> {
+			TagGroup<Block> blockTags = BlockTags.getTagGroup();
+			// TODO this needs replacing with `MiningLevels.HAND` once unpick is fixed
+			int miningLevel = -1;
+
+			// Handle #quilt:needs_tool_level_N
+			for (Identifier tagId : blockTags.getTagsFor(state.getBlock())) {
+				if (!tagId.getNamespace().equals(TOOL_TAG_NAMESPACE)) {
+					continue;
+				}
+
+				Matcher matcher = TOOL_TAG_PATTERN.matcher(tagId.getPath());
+
+				if (matcher.matches()) {
+					try {
+						int tagMiningLevel = Integer.parseInt(matcher.group(1));
+						miningLevel = Math.max(miningLevel, tagMiningLevel);
+					} catch (NumberFormatException e) {
+						LOGGER.error("Could not read mining level from tag #{}", tagId, e);
+					}
+				}
+			}
+
+			// Handle vanilla tags
+			// TODO Replace 3, 2, 1 with respective `MiningLevels`
+			// TODO Replace with a switch-case statement because it's cleaner
+			if (state.isIn(BlockTags.NEEDS_DIAMOND_TOOL)) {
+				miningLevel = Math.max(miningLevel, 3);
+			} else if (state.isIn(BlockTags.NEEDS_IRON_TOOL)) {
+				miningLevel = Math.max(miningLevel, 2);
+			} else if (state.isIn(BlockTags.NEEDS_STONE_TOOL)) {
+				miningLevel = Math.max(miningLevel, 1);
+			}
+
+			return miningLevel;
+		});
+	}
+
+	public static void clearCache() {
+		CACHE.get().clear();
+	}
+}

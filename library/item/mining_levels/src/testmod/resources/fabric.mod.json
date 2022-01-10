@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "quilt_mining_levels_testmod",
+  "name": "Quilt Mining Level API Test Mod",
+  "version": "1.0.0",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "depends": {
+    "quilt_mining_levels": "*",
+    "fabric-lifecycle-events-v1": "*"
+  },
+  "entrypoints": {
+    "main": [
+      "org.quiltmc.qsl.mining_levels.test.QuiltMiningLevelsTestMod"
+    ]
+  }
+}
