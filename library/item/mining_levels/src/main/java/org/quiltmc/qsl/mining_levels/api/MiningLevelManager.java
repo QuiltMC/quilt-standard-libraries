@@ -31,9 +31,9 @@ import org.quiltmc.qsl.mining_levels.impl.MiningLevelManagerImpl;
  * In addition to them, you can use dynamic mining level tags for any mining level (such as wood, netherite
  * or a custom one). The dynamic tags are checked automatically.
  *
- * <p>Dynamic mining level tags are in the format {@code #fabric:needs_tool_level_N}, where {@code N}
+ * <p>Dynamic mining level tags are in the format {@code #quilt:needs_tool_level_N}, where {@code N}
  * is the wanted tool level as an integer. For example, a mining level tag for netherite (mining level 4) would be
- * {@code #fabric:needs_tool_level_4}.
+ * {@code #quilt:needs_tool_level_4}.
  */
 public class MiningLevelManager {
 	private MiningLevelManager() {}
