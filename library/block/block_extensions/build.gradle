@@ -1,0 +1,19 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "block_extensions"
+	version = "1.0.0"
+	library = "block"
+	coreDependencies([
+			"qsl_base"
+	])
+	coreTestmodDependencies([
+			"resource_loader"
+	])
+}
+
+loom {
+	accessWidenerPath = file("src/main/resources/quilt_block_extensions.accesswidener")
+}

@@ -6,10 +6,9 @@ jobs:
     steps:
       - uses: actions/setup-java@v2
         with:
-          distribution: "adopt"
+          distribution: "temurin"
           java-version: "17"
       - uses: actions/checkout@v2 # Required for indra-git
-      - uses: gradle/wrapper-validation-action@v1
       - run: ./gradlew checkVersion build publish -stacktrace
         env:
           MAVEN_URL: ${{ secrets.MAVEN_URL }}
