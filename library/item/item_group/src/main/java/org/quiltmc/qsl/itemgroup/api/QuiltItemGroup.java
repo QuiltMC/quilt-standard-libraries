@@ -34,7 +34,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 
 /**
- * Extensions for the {@link ItemGroup} class. Currently, the only extension is setting the icon with either an {@link ItemConvertible} or {@link ItemStack} after the item has been created ({@link QuiltItemGroup#setIcon(ItemConvertible)}, {@link QuiltItemGroup#setIcon(ItemStack)}).
+ * Extensions for the {@link ItemGroup} class. Currently, the only extension is setting the icon with either an {@link ItemConvertible} or {@link ItemStack} after the item has been created ({@link QuiltItemGroup#setIcon(ItemConvertible)}, {@link QuiltItemGroup#setIcon(ItemStack)}).<br>
+ *
+ * A {@link QuiltItemGroup} can be directly created with {@link QuiltItemGroup#create(Identifier)} or {@link QuiltItemGroup#createWithIcon(Identifier, Supplier)}.<br>
+ * A {@link Builder}, which is used to add specific {@link ItemStack}s, especially with {@link net.minecraft.nbt}, can be obtained with {@link QuiltItemGroup#builder(Identifier)}.
  */
 public final class QuiltItemGroup extends ItemGroup {
 	private final Supplier<ItemStack> iconSupplier;
@@ -154,6 +157,28 @@ public final class QuiltItemGroup extends ItemGroup {
 	 *   @Override
 	 *   public void onInitialize() {
 	 *     MY_ITEM = new Item(new QuiltItemSettings().group(MY_ITEM_GROUP));
+	 *   }
+	 * }
+	 * }</pre>
+	 * <p>
+	 * Creating an {@link ItemGroup} with the icon as a supplier and custom {@link ItemStack}s:
+	 * <pre>{@code
+	 * public class MyMod implements ModInitializer {
+	 *   public static final QuiltItemGroup MY_ITEM_GROUP =
+	 *   	QuiltItemGroup.builder(
+	 *   		new Identifier("my_mod:item_group"))
+	 *   	.icon(() -> new ItemStack(MyMod.MY_ITEM))
+	 *   	.appendItems(stacks -> {
+	 *   	    stacks.add(new ItemStack(MyMod.MY_ITEM));
+	 *   	    stacks.add(new ItemStack(Items.STONE));
+	 *   	})
+	 *   	.build();
+	 *
+	 *   public static Item MY_ITEM;
+	 *
+	 *   @Override
+	 *   public void onInitialize() {
+	 *     MY_ITEM = new Item(new QuiltItemSettings());
 	 *   }
 	 * }
 	 * }</pre>

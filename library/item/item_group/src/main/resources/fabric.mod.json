@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "qsl_items_item_group",
+  "id": "qsl_item_group",
   "name": "Quilt Item Group API",
   "version": "${version}",
   "environment": "*",
@@ -19,6 +19,6 @@
   },
   "description": "An API for adding Item Groups to Minecraft, allowing for custom icon display stacks, delayed icon registration, and adding custom stacks to the groups contents. This API also adds the GUI elements that allow for the multiple pages of item groups that can occur",
   "mixins": [
-    "qsl_item_item_group.mixin.json"
+    "qsl_item_group.mixin.json"
   ]
 }
