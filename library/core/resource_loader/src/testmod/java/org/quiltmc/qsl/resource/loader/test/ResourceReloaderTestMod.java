@@ -1,4 +1,5 @@
 /*
+ * Copyright 2016, 2017, 2018, 2019 FabricMC
  * Copyright 2021 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +20,9 @@ package org.quiltmc.qsl.resource.loader.test;
 import java.util.Collection;
 import java.util.Collections;
 
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,6 +30,7 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.qsl.lifecycle.api.event.ServerTickEvents;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.quiltmc.qsl.resource.loader.api.reloader.SimpleSynchronousResourceReloader;
 
@@ -42,7 +46,7 @@ public class ResourceReloaderTestMod implements ModInitializer {
 		this.setupServerReloadListeners();
 
 		// No lifecycle events yet
-		/*ServerTickEvents.SERVER_STARTED.register(world -> {
+		ServerTickEvents.START.register(server -> {
 			if (!clientResources && FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
 				throw new AssertionError("Client reload listener was not called.");
 			}
@@ -50,7 +54,7 @@ public class ResourceReloaderTestMod implements ModInitializer {
 			if (!serverResources) {
 				throw new AssertionError("Server reload listener was not called.");
 			}
-		});*/
+		});
 	}
 
 	private void setupClientReloadListeners() {

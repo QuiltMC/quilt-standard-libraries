@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:planks",
+    "minecraft:diamond",
+    "minecraft:moss_block",
+    "minecraft:azalea",
+    "minecraft:flowering_azalea"
+  ]
+}

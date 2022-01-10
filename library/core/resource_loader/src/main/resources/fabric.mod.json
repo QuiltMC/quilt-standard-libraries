@@ -15,11 +15,28 @@
     "QuiltMC"
   ],
   "depends": {
-    "quilt_loader": ">=0.13.1-rc.10"
+    "fabricloader": ">=0.12",
+    "minecraft": ">=1.18.1"
   },
   "description": "Asset and data resource loading.",
   "accessWidener": "quilt_resource_loader.accesswidener",
   "mixins": [
     "quilt_resource_loader.mixins.json"
-  ]
+  ],
+  "custom": {
+    "modmenu": {
+      "badges": [
+        "library"
+      ],
+      "parent": {
+        "id": "qsl",
+        "name": "Quilt Standard Libraries",
+        "description": "A set of libraries to assist in making Quilt mods.",
+        "icon": "assets/quilt_resource_loader/icon.png",
+        "badges": [
+          "library"
+        ]
+      }
+    }
+  }
 }

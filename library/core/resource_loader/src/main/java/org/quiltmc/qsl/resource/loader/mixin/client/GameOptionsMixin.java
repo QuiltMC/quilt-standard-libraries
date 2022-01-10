@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.Gson;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -34,6 +36,7 @@ import net.minecraft.resource.ResourcePackManager;
 import org.quiltmc.qsl.resource.loader.impl.ModNioResourcePack;
 import org.quiltmc.qsl.resource.loader.impl.ModResourcePackProvider;
 
+@Environment(EnvType.CLIENT)
 @Mixin(GameOptions.class)
 public abstract class GameOptionsMixin {
 	@Shadow

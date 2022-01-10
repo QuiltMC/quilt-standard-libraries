@@ -15,8 +15,26 @@
     "QuiltMC"
   ],
   "depends": {
-    "quilt_loader": ">=0.13.1-rc.10"
+    "fabricloader": ">=0.12"
   },
   "description": "Base level API for Quilt mods.",
-  "mixins": []
+  "mixins": [
+    "quilt_base.mixins.json"
+  ],
+  "custom": {
+    "modmenu": {
+      "badges": [
+        "library"
+      ],
+      "parent": {
+        "id": "qsl",
+        "name": "Quilt Standard Libraries",
+        "description": "A set of libraries to assist in making Quilt mods.",
+        "icon": "assets/quilt_base/icon.png",
+        "badges": [
+          "library"
+        ]
+      }
+    }
+  }
 }

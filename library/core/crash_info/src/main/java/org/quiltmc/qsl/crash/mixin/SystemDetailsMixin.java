@@ -16,45 +16,23 @@
 
 package org.quiltmc.qsl.crash.mixin;
 
-import java.util.function.Supplier;
-
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.util.SystemDetails;
 
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
+import org.quiltmc.qsl.crash.api.CrashReportEvents;
 
 @Mixin(SystemDetails.class)
 abstract class SystemDetailsMixin {
-	@Shadow
-	public abstract void addSection(String name, Supplier<String> valueSupplier);
-
 	/**
 	 * Adds a section to the system details listing all Quilt mods which are present.
 	 */
+	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void addQuiltMods(CallbackInfo info) {
-		this.addSection("Quilt Mods", () -> {
-			StringBuilder builder = new StringBuilder();
-
-			for (ModContainer mod : FabricLoader.getInstance().getAllMods()) {
-				var metadata = mod.getMetadata();
-
-				builder.append("\n\t\t%s: %s %s".formatted(
-						metadata.getId(),
-						metadata.getName(),
-						metadata.getVersion().getFriendlyString())
-				);
-			}
-
-			return builder.toString();
-		});
-
-		// If we wish to add any additional sections, this is a great place to do so.
+		CrashReportEvents.SYSTEM_DETAILS.invoker().addDetails((SystemDetails) (Object) this);
 	}
 }
