@@ -35,7 +35,7 @@ import net.minecraft.util.Identifier;
 
 @ApiStatus.Internal
 public final class QuiltCreativePlayerInventoryScreenWidgets {
-	private static final Identifier BUTTON_TEXTURE = new Identifier("qsl_item_group", "textures/gui/creative_buttons.png");
+	private static final Identifier BUTTON_TEXTURE = new Identifier("quilt_item_group", "textures/gui/creative_buttons.png");
 	public static final Set<ItemGroup> ALWAYS_SHOWN_GROUPS = new HashSet<>();
 
 	static {
@@ -45,7 +45,7 @@ public final class QuiltCreativePlayerInventoryScreenWidgets {
 	}
 
 	public static class ItemGroupButtonWidget extends ButtonWidget {
-		public static final String TRANSLATION_KEY = "qsl_item_group.gui.creative_tab_page";
+		public static final String TRANSLATION_KEY = "quilt_item_group.gui.creative_tab_page";
 		private final CreativeGuiExtensions extensions;
 		private final CreativeInventoryScreen gui;
 		private final Type type;
