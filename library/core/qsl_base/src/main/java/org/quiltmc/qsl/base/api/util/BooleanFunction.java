@@ -17,13 +17,14 @@
 
 package org.quiltmc.qsl.base.api.util;
 
+import java.util.function.Function;
+
 /**
- * Represents a function that accepts an boolean-valued argument and produces a result.
+ * Represents a function that accepts a boolean-valued argument and produces a result.
  *
  * <p>This is the {@code boolean}-consuming primitive specialization for {@link java.util.function.Function}.
  */
-@FunctionalInterface
-public interface BooleanFunction<R> {
+public interface BooleanFunction<R> extends Function<Boolean, R> {
 	/**
 	 * Applies this function to the given argument.
 	 *

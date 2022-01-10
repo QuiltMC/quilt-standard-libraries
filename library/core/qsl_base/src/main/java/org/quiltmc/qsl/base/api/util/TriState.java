@@ -112,7 +112,7 @@ public enum TriState {
 	 * @param <T> the type of object being supplier by the mapper
 	 * @return an optional containing the mapped value; {@link Optional#empty()} if the tri-state is {@link TriState#DEFAULT} or the value provided by the mapper is {@code null}.
 	 */
-	public <T> Optional<T> map(BooleanFunction<@Nullable ? extends T> mapper) {
+	public <T> Optional<T> map(BooleanFunction<? extends T> mapper) {
 		Objects.requireNonNull(mapper, "Mapper function cannot be null");
 
 		if (this == DEFAULT) {

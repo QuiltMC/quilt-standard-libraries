@@ -22,6 +22,9 @@ import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.tag.api.TagRegistry;
 
+/**
+ * This class contains the QuiltToolTags. These tags can be assigned to modded tools, to allow them to fulfill their desired function.
+ */
 public class QuiltToolTags {
 
 	public static final Tag<Item> AXES = register("axes");
