@@ -18,7 +18,7 @@ package org.quiltmc.qsl.entity.api.event;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.server.world.ServerWorld;
-import org.quiltmc.qsl.base.api.event.ArrayEvent;
+import org.quiltmc.qsl.base.api.event.Event;
 
 /**
  * Events related to an entity being loaded into or unloaded from a server world.
@@ -27,7 +27,7 @@ public final class EntityLoadEvents {
 	/**
 	 * An event which is called after an entity has been loaded into a server world.
 	 */
-	public static final ArrayEvent<AfterEntityLoadServer> AFTER_ENTITY_LOAD_SERVER = ArrayEvent.create(AfterEntityLoadServer.class, callbacks -> (entity, world) -> {
+	public static final Event<AfterEntityLoadServer> AFTER_ENTITY_LOAD_SERVER = Event.create(AfterEntityLoadServer.class, callbacks -> (entity, world) -> {
 		for (AfterEntityLoadServer callback : callbacks) {
 			callback.onLoad(entity, world);
 		}
@@ -36,7 +36,7 @@ public final class EntityLoadEvents {
 	/**
 	 * An event which is called after an entity has been unloaded from a server world.
 	 */
-	public static final ArrayEvent<AfterEntityUnloadServer> AFTER_ENTITY_UNLOAD_SERVER = ArrayEvent.create(AfterEntityUnloadServer.class, callbacks -> (entity, world) -> {
+	public static final Event<AfterEntityUnloadServer> AFTER_ENTITY_UNLOAD_SERVER = Event.create(AfterEntityUnloadServer.class, callbacks -> (entity, world) -> {
 		for (AfterEntityUnloadServer callback : callbacks) {
 			callback.onUnload(entity, world);
 		}

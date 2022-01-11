@@ -20,7 +20,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
-import org.quiltmc.qsl.base.api.event.ArrayEvent;
+import org.quiltmc.qsl.base.api.event.Event;
 
 /**
  * Events related to an entity being loaded into or unloaded from a client world.
@@ -30,7 +30,7 @@ public final class ClientEntityLoadEvents {
 	/**
 	 * An event which is called after an entity has been loaded into a client world.
 	 */
-	public static final ArrayEvent<AfterEntityLoadClient> AFTER_ENTITY_LOAD_CLIENT = ArrayEvent.create(AfterEntityLoadClient.class, callbacks -> (entity, world) -> {
+	public static final Event<AfterEntityLoadClient> AFTER_ENTITY_LOAD_CLIENT = Event.create(AfterEntityLoadClient.class, callbacks -> (entity, world) -> {
 		for (AfterEntityLoadClient callback : callbacks) {
 			callback.onLoadClient(entity, world);
 		}
@@ -38,7 +38,7 @@ public final class ClientEntityLoadEvents {
 	/**
 	 * An event which is called after an entity has been unloaded from a client world.
 	 */
-	public static final ArrayEvent<AfterEntityUnloadClient> AFTER_ENTITY_UNLOAD_CLIENT = ArrayEvent.create(AfterEntityUnloadClient.class, callbacks -> (entity, world) -> {
+	public static final Event<AfterEntityUnloadClient> AFTER_ENTITY_UNLOAD_CLIENT = Event.create(AfterEntityUnloadClient.class, callbacks -> (entity, world) -> {
 		for (AfterEntityUnloadClient callback : callbacks) {
 			callback.onUnloadClient(entity, world);
 		}
