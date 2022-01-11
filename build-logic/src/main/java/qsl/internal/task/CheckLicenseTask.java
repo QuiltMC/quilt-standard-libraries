@@ -19,6 +19,7 @@ public class CheckLicenseTask extends JavaSourceBasedTask {
 	public CheckLicenseTask(LicenseHeader licenseHeader) {
 		this.licenseHeader = licenseHeader;
 		this.setDescription("Check whether source files contain a valid license header.");
+		this.setGroup("verification");
 	}
 
 	@TaskAction

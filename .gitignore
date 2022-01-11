@@ -9,6 +9,9 @@
 .project
 *.launch
 
+# Visual Studio Code
+.vscode
+
 # Intellij/Idea
 .factorypath
 .idea

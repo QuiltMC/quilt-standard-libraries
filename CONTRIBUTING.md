@@ -64,7 +64,7 @@ Abbreviations you shouldn't use are:
 
 - "loc" for "location"
 
-Please void the use of abbreviations in javadocs, except if those describe the name of a format, a library, etc.
+Please avoid the use of abbreviations in javadocs, except if those describe the name of a format, a library, etc.
 
 ### Packages
 

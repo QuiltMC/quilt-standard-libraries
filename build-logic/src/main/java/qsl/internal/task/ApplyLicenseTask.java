@@ -18,6 +18,7 @@ public class ApplyLicenseTask extends JavaSourceBasedTask {
 	public ApplyLicenseTask(LicenseHeader licenseHeader) {
 		this.licenseHeader = licenseHeader;
 		this.setDescription("Apply the correct license headers to source files.");
+		this.setGroup("generation");
 	}
 
 	@TaskAction
