@@ -17,7 +17,7 @@
 package org.quiltmc.qsl.entity.api.event;
 
 import net.minecraft.server.network.ServerPlayerEntity;
-import org.quiltmc.qsl.base.api.event.ArrayEvent;
+import org.quiltmc.qsl.base.api.event.Event;
 
 /**
  * A callback which is called on the logical server when a player is copied.
@@ -34,7 +34,7 @@ public interface ServerPlayerEntityCopyCallback {
 	/**
 	 * Invoked when a player is copied on the logical server.
 	 */
-	ArrayEvent<ServerPlayerEntityCopyCallback> EVENT = ArrayEvent.create(ServerPlayerEntityCopyCallback.class, callbacks -> (newPlayer, original, wasDeath) -> {
+	Event<ServerPlayerEntityCopyCallback> EVENT = Event.create(ServerPlayerEntityCopyCallback.class, callbacks -> (newPlayer, original, wasDeath) -> {
 		for (var callback : callbacks) {
 			callback.onPlayerCopy(newPlayer, original, wasDeath);
 		}

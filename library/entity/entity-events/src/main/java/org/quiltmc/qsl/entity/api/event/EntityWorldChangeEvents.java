@@ -19,7 +19,7 @@ package org.quiltmc.qsl.entity.api.event;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import org.quiltmc.qsl.base.api.event.ArrayEvent;
+import org.quiltmc.qsl.base.api.event.Event;
 
 /**
  * Events related to an entity being moved to another world, run on the server.
@@ -37,7 +37,7 @@ public final class EntityWorldChangeEvents {
 	 *
 	 * @see EntityWorldChangeEvents#AFTER_PLAYER_CHANGE_WORLD
 	 */
-	public static final ArrayEvent<AfterEntityChange> AFTER_ENTITY_CHANGE_WORLD = ArrayEvent.create(AfterEntityChange.class, callbacks -> (originalEntity, newEntity, origin, destination) -> {
+	public static final Event<AfterEntityChange> AFTER_ENTITY_CHANGE_WORLD = Event.create(AfterEntityChange.class, callbacks -> (originalEntity, newEntity, origin, destination) -> {
 		for (AfterEntityChange callback : callbacks) {
 			callback.afterChangeWorld(originalEntity, newEntity, origin, destination);
 		}
@@ -51,7 +51,7 @@ public final class EntityWorldChangeEvents {
 	 *
 	 * @see EntityWorldChangeEvents#AFTER_ENTITY_CHANGE_WORLD
 	 */
-	public static final ArrayEvent<AfterPlayerChange> AFTER_PLAYER_CHANGE_WORLD = ArrayEvent.create(AfterPlayerChange.class, callbacks -> (player, origin, destination) -> {
+	public static final Event<AfterPlayerChange> AFTER_PLAYER_CHANGE_WORLD = Event.create(AfterPlayerChange.class, callbacks -> (player, origin, destination) -> {
 		for (AfterPlayerChange callback : callbacks) {
 			callback.afterChangeWorld(player, origin, destination);
 		}

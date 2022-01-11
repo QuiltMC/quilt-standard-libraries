@@ -18,7 +18,7 @@ package org.quiltmc.qsl.entity.api.event;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import org.quiltmc.qsl.base.api.event.ArrayEvent;
+import org.quiltmc.qsl.base.api.event.Event;
 
 /**
  * A pair of callbacks which are invoked when a LivingEntity takes fatal damage.
@@ -45,7 +45,7 @@ public final class EntityReviveEvents {
 	/**
 	 * Called before totems try to revive the player.
 	 */
-	public static ArrayEvent<TryReviveBeforeTotem> BEFORE_TOTEM = ArrayEvent.create(TryReviveBeforeTotem.class, callbacks -> (entity, damageSource) -> {
+	public static Event<TryReviveBeforeTotem> BEFORE_TOTEM = Event.create(TryReviveBeforeTotem.class, callbacks -> (entity, damageSource) -> {
 		for (TryReviveBeforeTotem callback : callbacks) {
 			if (callback.tryReviveBeforeTotem(entity, damageSource)) {
 				return true;
@@ -58,7 +58,7 @@ public final class EntityReviveEvents {
 	/**
 	 * Called after there has been an attempt to revive with totems, but it has not been successful.
 	 */
-	public static ArrayEvent<TryReviveAfterTotem> AFTER_TOTEM = ArrayEvent.create(TryReviveAfterTotem.class, callbacks -> (entity, damageSource) -> {
+	public static Event<TryReviveAfterTotem> AFTER_TOTEM = Event.create(TryReviveAfterTotem.class, callbacks -> (entity, damageSource) -> {
 		for (TryReviveAfterTotem callback : callbacks) {
 			if (callback.tryReviveAfterTotem(entity, damageSource)) {
 				return true;

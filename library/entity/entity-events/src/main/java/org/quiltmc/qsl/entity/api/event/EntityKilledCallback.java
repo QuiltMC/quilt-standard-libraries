@@ -20,7 +20,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.base.api.event.ArrayEvent;
+import org.quiltmc.qsl.base.api.event.Event;
 
 /**
  * A callback which is invoked on the logical server when an entity is killed by another entity.
@@ -33,7 +33,7 @@ public interface EntityKilledCallback {
 	/**
 	 * Invoked when an entity is killed by another entity.
 	 */
-	ArrayEvent<EntityKilledCallback> EVENT = ArrayEvent.create(EntityKilledCallback.class, callbacks -> (world, killer, killed) -> {
+	Event<EntityKilledCallback> EVENT = Event.create(EntityKilledCallback.class, callbacks -> (world, killer, killed) -> {
 		for (EntityKilledCallback callback : callbacks) {
 			callback.onKilled(world, killer, killed);
 		}
