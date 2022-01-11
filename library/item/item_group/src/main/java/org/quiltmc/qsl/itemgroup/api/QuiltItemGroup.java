@@ -59,7 +59,7 @@ public final class QuiltItemGroup extends ItemGroup {
 	 * @param icon the {@link Item} for the icon
 	 */
 	public void setIcon(ItemConvertible icon) {
-		this.icon = new ItemStack(icon);
+		this.icon = icon.asItem().getDefaultStack();
 	}
 
 	/**
