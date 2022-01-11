@@ -20,10 +20,27 @@
     ]
   },
   "depends": {
-    "quilt_loader": ">=0.13.1-rc.10"
+    "fabricloader": ">=0.12",
+    "minecraft": ">=1.18-rc.4"
   },
   "description": "Adds information about the Quilt environment in crash reports, and provides an API for other mods to add their own information.",
   "mixins": [
     "quilt_crash_info.mixins.json"
-  ]
+  ],
+  "custom": {
+    "modmenu": {
+      "badges": [
+        "library"
+      ],
+      "parent": {
+        "id": "qsl",
+        "name": "Quilt Standard Libraries",
+        "description": "A set of libraries to assist in making Quilt mods.",
+        "icon": "assets/quilt_crash_info/icon.png",
+        "badges": [
+          "library"
+        ]
+      }
+    }
+  }
 }

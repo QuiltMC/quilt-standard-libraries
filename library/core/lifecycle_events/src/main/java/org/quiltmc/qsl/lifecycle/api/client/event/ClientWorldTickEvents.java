@@ -16,7 +16,7 @@
 
 package org.quiltmc.qsl.lifecycle.api.client.event;
 
-import org.quiltmc.qsl.base.api.event.ArrayEvent;
+import org.quiltmc.qsl.base.api.event.Event;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
@@ -37,7 +37,7 @@ public final class ClientWorldTickEvents {
 	/**
 	 * An event indicating that a world will be ticked.
 	 */
-	public static final ArrayEvent<Start> START = ArrayEvent.create(Start.class, callbacks -> (client, world) -> {
+	public static final Event<Start> START = Event.create(Start.class, callbacks -> (client, world) -> {
 		for (var callback : callbacks) {
 			callback.startWorldTick(client, world);
 		}
@@ -46,7 +46,7 @@ public final class ClientWorldTickEvents {
 	/**
 	 * An event indicating that a world has finished being ticked.
 	 */
-	public static final ArrayEvent<End> END = ArrayEvent.create(End.class, callbacks -> (client, world) -> {
+	public static final Event<End> END = Event.create(End.class, callbacks -> (client, world) -> {
 		for (var callback : callbacks) {
 			callback.endWorldTick(client, world);
 		}

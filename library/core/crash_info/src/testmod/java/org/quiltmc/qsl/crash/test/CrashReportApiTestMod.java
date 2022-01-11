@@ -16,12 +16,14 @@
 
 package org.quiltmc.qsl.crash.test;
 
+import java.util.Random;
+
 import net.fabricmc.api.ModInitializer;
+
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
-import org.quiltmc.qsl.crash.api.CrashReportEvents;
 
-import java.util.Random;
+import org.quiltmc.qsl.crash.api.CrashReportEvents;
 
 /**
  * Test mod for Crash Report Events.
@@ -54,7 +56,7 @@ public class CrashReportApiTestMod implements ModInitializer {
 		});
 
 		CrashReportEvents.CRASH_REPORT_CREATION.register(report -> {
-			report.addElement("Test Section")
+			report.addElement("Test Section", 2)
 					.add("A thing?", "A thing.")
 					.add("A random number", new Random().nextInt());
 		});

@@ -19,9 +19,6 @@ package org.quiltmc.qsl.lifecycle.mixin;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
-import org.quiltmc.qsl.lifecycle.api.event.ServerTickEvents;
-import org.quiltmc.qsl.lifecycle.api.event.ServerWorldLoadEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -32,17 +29,28 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 
+import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
+import org.quiltmc.qsl.lifecycle.api.event.ServerTickEvents;
+import org.quiltmc.qsl.lifecycle.api.event.ServerWorldLoadEvents;
+
 @Mixin(MinecraftServer.class)
 abstract class MinecraftServerMixin {
-	@Inject(method = "runServer",
-		at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;setupServer()Z"))
+	@Inject(
+			method = "runServer",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;setupServer()Z")
+	)
 	private void serverStarting(CallbackInfo info) {
 		ServerLifecycleEvents.STARTING.invoker().startingServer((MinecraftServer) (Object) this);
 	}
 
-	@Inject(method = "runServer",
-		at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;setFavicon(Lnet/minecraft/server/ServerMetadata;)V",
-			shift = At.Shift.AFTER))
+	@Inject(
+			method = "runServer",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/server/MinecraftServer;setFavicon(Lnet/minecraft/server/ServerMetadata;)V",
+					ordinal = 0
+			)
+	)
 	private void serverReady(CallbackInfo info) {
 		ServerLifecycleEvents.READY.invoker().readyServer((MinecraftServer) (Object) this);
 	}
@@ -59,8 +67,10 @@ abstract class MinecraftServerMixin {
 
 	// Ticking
 
-	@Inject(method = "tick",
-		at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;tickWorlds(Ljava/util/function/BooleanSupplier;)V"))
+	@Inject(
+			method = "tick",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;tickWorlds(Ljava/util/function/BooleanSupplier;)V")
+	)
 	private void startServerTick(CallbackInfo info) {
 		ServerTickEvents.START.invoker().startServerTick((MinecraftServer) (Object) this);
 	}
@@ -84,8 +94,11 @@ abstract class MinecraftServerMixin {
 		return result;
 	}
 
-	@Inject(method = "shutdown",
-		at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;close()V"), locals = LocalCapture.CAPTURE_FAILHARD)
+	@Inject(
+			method = "shutdown",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;close()V"),
+			locals = LocalCapture.CAPTURE_FAILHARD
+	)
 	private void unloadWorld(CallbackInfo info, Iterator<ServerWorld> iterator, ServerWorld world) {
 		ServerWorldLoadEvents.UNLOAD.invoker().unloadWorld((MinecraftServer) (Object) this, world);
 	}

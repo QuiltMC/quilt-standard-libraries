@@ -11,7 +11,11 @@
   "entrypoints": {
     "main": [
       "org.quiltmc.qsl.resource.loader.test.BuiltinResourcePackTestMod",
+      "org.quiltmc.qsl.resource.loader.test.ResourceLoaderEventsTestMod",
       "org.quiltmc.qsl.resource.loader.test.ResourceReloaderTestMod"
+    ],
+    "client": [
+      "org.quiltmc.qsl.resource.loader.test.client.ClientResourceLoaderEventsTestMod"
     ]
   }
 }
