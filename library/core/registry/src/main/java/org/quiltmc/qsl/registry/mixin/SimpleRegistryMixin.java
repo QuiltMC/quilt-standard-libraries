@@ -4,7 +4,7 @@ import com.mojang.serialization.Lifecycle;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
-import org.quiltmc.qsl.base.api.event.ArrayEvent;
+import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.quiltmc.qsl.registry.impl.event.MutableRegistryEntryContextImpl;
 import org.quiltmc.qsl.registry.impl.event.RegistryEventStorage;
@@ -22,7 +22,7 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Regi
 	@Unique private final MutableRegistryEntryContextImpl<V> quilt$entryContext = new MutableRegistryEntryContextImpl<>(this);
 
 	@Unique
-	private final ArrayEvent<RegistryEvents.EntryAdded<V>> quilt$entryAddedEvent = ArrayEvent.create(RegistryEvents.EntryAdded.class, callbacks -> context -> {
+	private final Event<RegistryEvents.EntryAdded<V>> quilt$entryAddedEvent = Event.create(RegistryEvents.EntryAdded.class, callbacks -> context -> {
 		for (var callback : callbacks) {
 			callback.onAdded(context);
 		}
@@ -45,7 +45,7 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Regi
 	}
 
 	@Override
-	public ArrayEvent<RegistryEvents.EntryAdded<V>> quilt$getEntryAddedEvent() {
+	public Event<RegistryEvents.EntryAdded<V>> quilt$getEntryAddedEvent() {
 		return quilt$entryAddedEvent;
 	}
 }

@@ -1,7 +1,7 @@
 package org.quiltmc.qsl.registry.api.event;
 
 import net.minecraft.util.registry.Registry;
-import org.quiltmc.qsl.base.api.event.ArrayEvent;
+import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.registry.impl.event.RegistryEventStorage;
 
 /**
@@ -25,7 +25,7 @@ public final class RegistryEvents {
 	 * @param <V>      the entry type of the {@link Registry} to listen for
 	 * @return         the entry added event for the specified registry, which can have callbacks registered to it
 	 */
-	public static <V> ArrayEvent<EntryAdded<V>> getEntryAddEvent(Registry<V> registry) {
+	public static <V> Event<EntryAdded<V>> getEntryAddEvent(Registry<V> registry) {
 		return RegistryEventStorage.as(registry).quilt$getEntryAddedEvent();
 	}
 

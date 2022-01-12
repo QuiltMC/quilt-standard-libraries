@@ -2,7 +2,7 @@ package org.quiltmc.qsl.registry.impl.event;
 
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
-import org.quiltmc.qsl.base.api.event.ArrayEvent;
+import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 
 /**
@@ -13,7 +13,7 @@ public interface RegistryEventStorage<V> {
 	/**
 	 * {@return the entry added event}
 	 */
-	ArrayEvent<RegistryEvents.EntryAdded<V>> quilt$getEntryAddedEvent();
+	Event<RegistryEvents.EntryAdded<V>> quilt$getEntryAddedEvent();
 
 	/**
 	 * Casts a {@link Registry} to the duck interface.
