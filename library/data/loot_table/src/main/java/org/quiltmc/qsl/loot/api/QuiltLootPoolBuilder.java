@@ -50,7 +50,7 @@ public class QuiltLootPoolBuilder extends LootPool.Builder {
 	}
 
 	@Override
-	public LootPool.Builder bonusRolls(LootNumberProvider bonusRolls) {
+	public QuiltLootPoolBuilder bonusRolls(LootNumberProvider bonusRolls) {
 		super.bonusRolls(bonusRolls);
 		return this;
 	}
