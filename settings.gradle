@@ -31,6 +31,7 @@ library("core")
 library("block")
 library("data")
 library("item")
+library("entity")
 
 def library(String library) {
 	include(library)

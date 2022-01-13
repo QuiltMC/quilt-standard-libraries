@@ -1,0 +1,10 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.interaction_events.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
