@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,13 +41,22 @@ public final class EventRegistry {
 	public static void listenAll(Object listener, Event<?>... events) {
 		var listenedPhases = getListenedPhases(listener.getClass());
 
+		// Check whether we actually can register stuff. We only commit the registration if all events can.
 		for (var event : events) {
 			if (!event.getType().isAssignableFrom(listener.getClass())) {
 				throw new IllegalArgumentException("Given object " + listener + " is not a listener of event " + event);
 			}
 
-			var phase = listenedPhases.getOrDefault(event.getType(), Event.DEFAULT_PHASE);
-			((Event) event).register(phase, listener);
+			if (event.getType().getTypeParameters().length > 0) {
+				throw new IllegalArgumentException("Cannot register a listener for the event " + event + " which is using generic parameters with listenAll.");
+			}
+
+			listenedPhases.putIfAbsent(event.getType(), Event.DEFAULT_PHASE);
+		}
+
+		// We can register, so we do!
+		for (var event : events) {
+			((Event) event).register(listenedPhases.get(event.getType()), listener);
 		}
 	}
 
@@ -64,10 +73,10 @@ public final class EventRegistry {
 	}
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
-	public static <T> void register(Event<T> event, Class<? super T> type) {
+	public static <T> void register(Event<T> event) {
 		for (var target : EventSideTarget.VALUES) {
 			// Search if the callback qualifies is unique to this event.
-			if (target.listenerClass().isAssignableFrom(type)) {
+			if (target.listenerClass().isAssignableFrom(event.getType())) {
 				List<?> entrypoints = FabricLoader.getInstance().getEntrypoints(target.entrypointKey(), target.listenerClass());
 
 				// Search for matching entrypoint.
@@ -75,7 +84,7 @@ public final class EventRegistry {
 					var listenedPhases = getListenedPhases(entrypoint.getClass());
 
 					// Searching if the given entrypoint is a listener of the event being registered.
-					if (type.isAssignableFrom(entrypoint.getClass())) {
+					if (event.getType().isAssignableFrom(entrypoint.getClass())) {
 						// It is, then register the listener.
 						var phase = listenedPhases.getOrDefault(event.getType(), Event.DEFAULT_PHASE);
 						((Event) event).register(phase, entrypoint);

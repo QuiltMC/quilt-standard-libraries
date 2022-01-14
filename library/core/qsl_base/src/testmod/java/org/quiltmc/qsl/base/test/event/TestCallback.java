@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,9 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.base.api.event;
+package org.quiltmc.qsl.base.test.event;
 
-import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
-import org.quiltmc.qsl.base.api.event.server.DedicatedServerEventAwareListener;
-
-/**
- * Represents an event callback aware of its uniquely associated event, may be used as an entrypoint.
- * <p>
- * In {@code fabric.mod.json}, the entrypoint is defined with {@code events} key.
- *
- * @see ClientEventAwareListener
- * @see DedicatedServerEventAwareListener
- */
-public interface EventAwareListener {
+@FunctionalInterface
+public interface TestCallback {
+	void onTest();
 }

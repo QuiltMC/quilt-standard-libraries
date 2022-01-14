@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -189,6 +189,10 @@ public final class Event<T> {
 
 	/**
 	 * Registers the given listener of the listed events.
+	 * <p>
+	 * The registration of the listener will be refused if one of the listed event involves generics in its callback type,
+	 * as checking for valid registration is just too expensive, please use the regular {@link #register(Object)} method
+	 * for those as the Java compiler will be able to do the checks itself.
 	 *
 	 * @param listener the listener of events
 	 * @param events   the events to listen
@@ -198,7 +202,7 @@ public final class Event<T> {
 	 */
 	public static void listenAll(Object listener, Event<?>... events) {
 		if (events.length == 0) {
-			throw new IllegalArgumentException("Tried to register a listener of an empty event list.");
+			throw new IllegalArgumentException("Tried to register a listener for an empty event list.");
 		}
 
 		EventRegistry.listenAll(listener, events);
@@ -237,7 +241,7 @@ public final class Event<T> {
 		this.callbacks = (T[]) Array.newInstance(type, 0);
 		this.update();
 
-		EventRegistry.register(this, type);
+		EventRegistry.register(this);
 	}
 
 	/**

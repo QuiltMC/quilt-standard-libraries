@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.base.test;
+package org.quiltmc.qsl.base.test.event;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,6 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.util.Identifier;
@@ -32,10 +31,11 @@ import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.impl.QuiltBaseImpl;
 import org.quiltmc.qsl.base.impl.event.PhaseSorting;
 
-final class EventTests {
+public final class EventTests implements Runnable {
 	private static final Logger LOGGER = QuiltBaseImpl.LOGGER;
 
-	public static void run() {
+	@Override
+	public void run() {
 		long time1 = System.currentTimeMillis();
 
 		testDefaultPhaseOnly();
@@ -51,19 +51,19 @@ final class EventTests {
 		LOGGER.info("Event unit tests succeeded in {} milliseconds.", time2 - time1);
 	}
 
-	private static final Function<Test[], Test> INVOKER_FACTORY = listeners -> () -> {
-		for (Test test : listeners) {
+	private static final Function<TestCallback[], TestCallback> INVOKER_FACTORY = listeners -> () -> {
+		for (var test : listeners) {
 			test.onTest();
 		}
 	};
 
 	private static int currentListener = 0;
 
-	private static Event<Test> createEvent() {
-		return Event.create(Test.class, INVOKER_FACTORY);
+	private static Event<TestCallback> createEvent() {
+		return Event.create(TestCallback.class, INVOKER_FACTORY);
 	}
 
-	private static Test ensureOrder(int order) {
+	private static TestCallback ensureOrder(int order) {
 		return () -> {
 			assertEquals(order, currentListener);
 			++currentListener;
@@ -85,7 +85,7 @@ final class EventTests {
 	private static void testMultipleDefaultPhases() {
 		var first = new Identifier("quilt", "first");
 		var second = new Identifier("quilt", "second");
-		var event = Event.createWithPhases(Test.class, INVOKER_FACTORY, first, second, Event.DEFAULT_PHASE);
+		var event = Event.createWithPhases(TestCallback.class, INVOKER_FACTORY, first, second, Event.DEFAULT_PHASE);
 
 		event.register(second, ensureOrder(1));
 		event.register(ensureOrder(2));
@@ -193,7 +193,7 @@ final class EventTests {
 		var y = new Identifier("quilt", "y");
 		var z = new Identifier("quilt", "z");
 
-		List<Consumer<Event<Test>>> dependencies = List.of(
+		List<Consumer<Event<TestCallback>>> dependencies = List.of(
 				ev -> ev.addPhaseOrdering(a, z),
 				ev -> ev.addPhaseOrdering(d, e),
 				ev -> ev.addPhaseOrdering(e, z),
@@ -236,7 +236,7 @@ final class EventTests {
 		Identifier d = new Identifier("quilt", "d");
 		Identifier e = new Identifier("quilt", "e");
 
-		List<Consumer<Event<Test>>> dependencies = List.of(
+		List<Consumer<Event<TestCallback>>> dependencies = List.of(
 				ev -> ev.addPhaseOrdering(e, a),
 				ev -> ev.addPhaseOrdering(a, b),
 				ev -> ev.addPhaseOrdering(b, a),
@@ -277,11 +277,6 @@ final class EventTests {
 				selected.remove(selected.size() - 1);
 			}
 		}
-	}
-
-	@FunctionalInterface
-	interface Test {
-		void onTest();
 	}
 
 	private static void assertEquals(Object expected, Object actual) {
