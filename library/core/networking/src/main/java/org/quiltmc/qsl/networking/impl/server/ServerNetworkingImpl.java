@@ -30,7 +30,7 @@ import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
 
 public final class ServerNetworkingImpl {
 	public static final GlobalReceiverRegistry<ServerLoginNetworking.LoginQueryResponseHandler> LOGIN = new GlobalReceiverRegistry<>();
-	public static final GlobalReceiverRegistry<ServerPlayNetworking.PlayChannelHandler> PLAY = new GlobalReceiverRegistry<>();
+	public static final GlobalReceiverRegistry<ServerPlayNetworking.PlayChannelReceiver> PLAY = new GlobalReceiverRegistry<>();
 
 	public static ServerPlayNetworkAddon getAddon(ServerPlayNetworkHandler handler) {
 		return (ServerPlayNetworkAddon) ((NetworkHandlerExtensions) handler).getAddon();

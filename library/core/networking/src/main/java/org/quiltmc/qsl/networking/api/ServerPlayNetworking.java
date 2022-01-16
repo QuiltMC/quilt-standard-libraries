@@ -53,9 +53,9 @@ public final class ServerPlayNetworking {
 	 * @param channelHandler the handler
 	 * @return false if a handler is already registered to the channel
 	 * @see ServerPlayNetworking#unregisterGlobalReceiver(Identifier)
-	 * @see ServerPlayNetworking#registerReceiver(ServerPlayNetworkHandler, Identifier, PlayChannelHandler)
+	 * @see ServerPlayNetworking#registerReceiver(ServerPlayNetworkHandler, Identifier, PlayChannelReceiver)
 	 */
-	public static boolean registerGlobalReceiver(Identifier channelName, PlayChannelHandler channelHandler) {
+	public static boolean registerGlobalReceiver(Identifier channelName, PlayChannelReceiver channelHandler) {
 		return ServerNetworkingImpl.PLAY.registerGlobalReceiver(channelName, channelHandler);
 	}
 
@@ -67,11 +67,11 @@ public final class ServerPlayNetworking {
 	 *
 	 * @param channelName the id of the channel
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel
-	 * @see ServerPlayNetworking#registerGlobalReceiver(Identifier, PlayChannelHandler)
+	 * @see ServerPlayNetworking#registerGlobalReceiver(Identifier, PlayChannelReceiver)
 	 * @see ServerPlayNetworking#unregisterReceiver(ServerPlayNetworkHandler, Identifier)
 	 */
 	@Nullable
-	public static PlayChannelHandler unregisterGlobalReceiver(Identifier channelName) {
+	public static ServerPlayNetworking.PlayChannelReceiver unregisterGlobalReceiver(Identifier channelName) {
 		return ServerNetworkingImpl.PLAY.unregisterGlobalReceiver(channelName);
 	}
 
@@ -87,7 +87,7 @@ public final class ServerPlayNetworking {
 
 	/**
 	 * Registers a handler to a channel.
-	 * This method differs from {@link ServerPlayNetworking#registerGlobalReceiver(Identifier, PlayChannelHandler)} since
+	 * This method differs from {@link ServerPlayNetworking#registerGlobalReceiver(Identifier, PlayChannelReceiver)} since
 	 * the channel handler will only be applied to the player represented by the {@link ServerPlayNetworkHandler}.
 	 *
 	 * <p>For example, if you only register a receiver using this method when a {@linkplain ServerLoginNetworking#registerGlobalReceiver(Identifier, ServerLoginNetworking.LoginQueryResponseHandler)}
@@ -102,7 +102,7 @@ public final class ServerPlayNetworking {
 	 * @return false if a handler is already registered to the channel name
 	 * @see ServerPlayConnectionEvents#INIT
 	 */
-	public static boolean registerReceiver(ServerPlayNetworkHandler networkHandler, Identifier channelName, PlayChannelHandler channelHandler) {
+	public static boolean registerReceiver(ServerPlayNetworkHandler networkHandler, Identifier channelName, PlayChannelReceiver channelHandler) {
 		Objects.requireNonNull(networkHandler, "Network handler cannot be null");
 
 		return ServerNetworkingImpl.getAddon(networkHandler).registerChannel(channelName, channelHandler);
@@ -117,7 +117,7 @@ public final class ServerPlayNetworking {
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel name
 	 */
 	@Nullable
-	public static PlayChannelHandler unregisterReceiver(ServerPlayNetworkHandler networkHandler, Identifier channelName) {
+	public static ServerPlayNetworking.PlayChannelReceiver unregisterReceiver(ServerPlayNetworkHandler networkHandler, Identifier channelName) {
 		Objects.requireNonNull(networkHandler, "Network handler cannot be null");
 
 		return ServerNetworkingImpl.getAddon(networkHandler).unregisterChannel(channelName);
@@ -269,9 +269,9 @@ public final class ServerPlayNetworking {
 	}
 
 	@FunctionalInterface
-	public interface PlayChannelHandler {
+	public interface PlayChannelReceiver {
 		/**
-		 * Handles an incoming packet.
+		 * Receives an incoming packet.
 		 *
 		 * <p>This method is executed on {@linkplain io.netty.channel.EventLoop netty's event loops}.
 		 * Modification to the game should be {@linkplain net.minecraft.util.thread.ThreadExecutor#submit(Runnable) scheduled} using the provided Minecraft server instance.

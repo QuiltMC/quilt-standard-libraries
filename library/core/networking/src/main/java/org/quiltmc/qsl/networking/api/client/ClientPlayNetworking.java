@@ -58,9 +58,9 @@ public final class ClientPlayNetworking {
 	 * @param channelHandler the handler
 	 * @return false if a handler is already registered to the channel
 	 * @see ClientPlayNetworking#unregisterGlobalReceiver(Identifier)
-	 * @see ClientPlayNetworking#registerReceiver(Identifier, PlayChannelHandler)
+	 * @see ClientPlayNetworking#registerReceiver(Identifier, PlayChannelReceiver)
 	 */
-	public static boolean registerGlobalReceiver(Identifier channelName, PlayChannelHandler channelHandler) {
+	public static boolean registerGlobalReceiver(Identifier channelName, PlayChannelReceiver channelHandler) {
 		return ClientNetworkingImpl.PLAY.registerGlobalReceiver(channelName, channelHandler);
 	}
 
@@ -72,11 +72,11 @@ public final class ClientPlayNetworking {
 	 *
 	 * @param channelName the id of the channel
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel
-	 * @see ClientPlayNetworking#registerGlobalReceiver(Identifier, PlayChannelHandler)
+	 * @see ClientPlayNetworking#registerGlobalReceiver(Identifier, PlayChannelReceiver)
 	 * @see ClientPlayNetworking#unregisterReceiver(Identifier)
 	 */
 	@Nullable
-	public static PlayChannelHandler unregisterGlobalReceiver(Identifier channelName) {
+	public static ClientPlayNetworking.PlayChannelReceiver unregisterGlobalReceiver(Identifier channelName) {
 		return ClientNetworkingImpl.PLAY.unregisterGlobalReceiver(channelName);
 	}
 
@@ -104,7 +104,7 @@ public final class ClientPlayNetworking {
 	 * @throws IllegalStateException if the client is not connected to a server
 	 * @see ClientPlayConnectionEvents#INIT
 	 */
-	public static boolean registerReceiver(Identifier channelName, PlayChannelHandler channelHandler) {
+	public static boolean registerReceiver(Identifier channelName, PlayChannelReceiver channelHandler) {
 		final ClientPlayNetworkAddon addon = ClientNetworkingImpl.getClientPlayAddon();
 
 		if (addon != null) {
@@ -124,7 +124,7 @@ public final class ClientPlayNetworking {
 	 * @throws IllegalStateException if the client is not connected to a server
 	 */
 	@Nullable
-	public static PlayChannelHandler unregisterReceiver(Identifier channelName) throws IllegalStateException {
+	public static ClientPlayNetworking.PlayChannelReceiver unregisterReceiver(Identifier channelName) throws IllegalStateException {
 		final ClientPlayNetworkAddon addon = ClientNetworkingImpl.getClientPlayAddon();
 
 		if (addon != null) {
@@ -233,9 +233,9 @@ public final class ClientPlayNetworking {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface PlayChannelHandler {
+	public interface PlayChannelReceiver {
 		/**
-		 * Handles an incoming packet.
+		 * Receives an incoming packet.
 		 *
 		 * <p>This method is executed on {@linkplain io.netty.channel.EventLoop netty's event loops}.
 		 * Modification to the game should be {@linkplain net.minecraft.util.thread.ThreadExecutor#submit(Runnable) scheduled} using the provided Minecraft client instance.

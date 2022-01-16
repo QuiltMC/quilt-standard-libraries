@@ -74,7 +74,7 @@ public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLo
 			this.sendCompressionPacket();
 
 			// Register global receivers.
-			for (Map.Entry<Identifier, ServerLoginNetworking.LoginQueryResponseHandler> entry : ServerNetworkingImpl.LOGIN.getHandlers().entrySet()) {
+			for (Map.Entry<Identifier, ServerLoginNetworking.LoginQueryResponseHandler> entry : ServerNetworkingImpl.LOGIN.getReceivers().entrySet()) {
 				ServerLoginNetworking.registerReceiver(this.handler, entry.getKey(), entry.getValue());
 			}
 
@@ -140,7 +140,7 @@ public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLo
 		}
 
 		boolean understood = originalBuf != null;
-		@Nullable ServerLoginNetworking.LoginQueryResponseHandler handler = ServerNetworkingImpl.LOGIN.getHandler(channel);
+		@Nullable ServerLoginNetworking.LoginQueryResponseHandler handler = ServerNetworkingImpl.LOGIN.getReceiver(channel);
 
 		if (handler == null) {
 			return false;

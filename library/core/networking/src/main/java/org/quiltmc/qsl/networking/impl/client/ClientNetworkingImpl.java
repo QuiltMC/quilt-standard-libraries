@@ -49,7 +49,7 @@ import org.quiltmc.qsl.networking.mixin.accessor.MinecraftClientAccessor;
 @Environment(EnvType.CLIENT)
 public final class ClientNetworkingImpl {
 	public static final GlobalReceiverRegistry<ClientLoginNetworking.LoginQueryRequestHandler> LOGIN = new GlobalReceiverRegistry<>();
-	public static final GlobalReceiverRegistry<ClientPlayNetworking.PlayChannelHandler> PLAY = new GlobalReceiverRegistry<>();
+	public static final GlobalReceiverRegistry<ClientPlayNetworking.PlayChannelReceiver> PLAY = new GlobalReceiverRegistry<>();
 	private static ClientPlayNetworkAddon currentPlayAddon;
 
 	public static ClientPlayNetworkAddon getAddon(ClientPlayNetworkHandler handler) {

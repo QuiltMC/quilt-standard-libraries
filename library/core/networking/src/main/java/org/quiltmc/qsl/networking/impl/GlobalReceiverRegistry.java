@@ -31,7 +31,7 @@ import net.minecraft.util.Identifier;
 
 public final class GlobalReceiverRegistry<H> {
 	private final ReadWriteLock lock = new ReentrantReadWriteLock();
-	private final Map<Identifier, H> handlers;
+	private final Map<Identifier, H> receivers;
 	private final Set<AbstractNetworkAddon<H>> trackedAddons = new HashSet<>();
 
 	public GlobalReceiverRegistry() {
@@ -39,16 +39,16 @@ public final class GlobalReceiverRegistry<H> {
 	}
 
 	public GlobalReceiverRegistry(Map<Identifier, H> map) {
-		this.handlers = map;
+		this.receivers = map;
 	}
 
 	@Nullable
-	public H getHandler(Identifier channelName) {
+	public H getReceiver(Identifier channelName) {
 		Lock lock = this.lock.readLock();
 		lock.lock();
 
 		try {
-			return this.handlers.get(channelName);
+			return this.receivers.get(channelName);
 		} finally {
 			lock.unlock();
 		}
@@ -66,7 +66,7 @@ public final class GlobalReceiverRegistry<H> {
 		lock.lock();
 
 		try {
-			final boolean replaced = this.handlers.putIfAbsent(channelName, handler) == null;
+			final boolean replaced = this.receivers.putIfAbsent(channelName, handler) == null;
 
 			if (!replaced) {
 				this.handleRegistration(channelName, handler);
@@ -89,7 +89,7 @@ public final class GlobalReceiverRegistry<H> {
 		lock.lock();
 
 		try {
-			final H removed = this.handlers.remove(channelName);
+			final H removed = this.receivers.remove(channelName);
 
 			if (removed != null) {
 				this.handleUnregistration(channelName);
@@ -101,12 +101,12 @@ public final class GlobalReceiverRegistry<H> {
 		}
 	}
 
-	public Map<Identifier, H> getHandlers() {
+	public Map<Identifier, H> getReceivers() {
 		Lock lock = this.lock.writeLock();
 		lock.lock();
 
 		try {
-			return new HashMap<>(this.handlers);
+			return new HashMap<>(this.receivers);
 		} finally {
 			lock.unlock();
 		}
@@ -117,7 +117,7 @@ public final class GlobalReceiverRegistry<H> {
 		lock.lock();
 
 		try {
-			return new HashSet<>(this.handlers.keySet());
+			return new HashSet<>(this.receivers.keySet());
 		} finally {
 			lock.unlock();
 		}
