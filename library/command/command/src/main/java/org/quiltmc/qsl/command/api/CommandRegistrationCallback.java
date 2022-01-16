@@ -18,7 +18,7 @@ package org.quiltmc.qsl.command.api;
 
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.server.command.ServerCommandSource;
-import org.quiltmc.qsl.base.api.event.ArrayEvent;
+import org.quiltmc.qsl.base.api.event.Event;
 
 /**
  * Callback for registering server-side commands.
@@ -28,7 +28,7 @@ public interface CommandRegistrationCallback {
 	/**
 	 * Event invoked when server-side commands are registered.
 	 */
-	ArrayEvent<CommandRegistrationCallback> EVENT = ArrayEvent.create(CommandRegistrationCallback.class, callbacks -> (dispatcher, integrated, dedicated) -> {
+	Event<CommandRegistrationCallback> EVENT = Event.create(CommandRegistrationCallback.class, callbacks -> (dispatcher, integrated, dedicated) -> {
 		for (var callback : callbacks) {
 			callback.registerCommands(dispatcher, integrated, dedicated);
 		}

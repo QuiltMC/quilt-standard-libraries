@@ -19,7 +19,7 @@ package org.quiltmc.qsl.command.api.client;
 import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import org.quiltmc.qsl.base.api.event.ArrayEvent;
+import org.quiltmc.qsl.base.api.event.Event;
 
 /**
  * Callback for registering client-side commands.
@@ -32,7 +32,7 @@ public interface ClientCommandRegistrationCallback {
 	/**
 	 * Event invoked when client-sided commands are registered.
 	 */
-	ArrayEvent<ClientCommandRegistrationCallback> EVENT = ArrayEvent.create(ClientCommandRegistrationCallback.class, callbacks -> dispatcher -> {
+	Event<ClientCommandRegistrationCallback> EVENT = Event.create(ClientCommandRegistrationCallback.class, callbacks -> dispatcher -> {
 		for (var callback : callbacks) {
 			callback.registerCommands(dispatcher);
 		}
