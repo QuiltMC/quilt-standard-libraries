@@ -50,13 +50,6 @@ public class CommandApiTest implements ModInitializer {
 						return 0;
 					})
 			);
-
-			dispatcher.register(literal("overrideme")
-					.executes(ctx -> {
-						ctx.getSource().sendFeedback(new LiteralText("Server!"), false);
-						return 0;
-					})
-			);
 		});
 	}
 }

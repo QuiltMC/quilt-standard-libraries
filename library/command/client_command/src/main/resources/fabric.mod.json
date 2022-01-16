@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "quilt_command",
+  "id": "quilt_client_command",
   "name": "Quilt Client Command API",
   "version": "${version}",
   "environment": "*",
@@ -17,8 +17,8 @@
   "depends": {
     "fabricloader": ">=0.12"
   },
-  "description": "Quilt APIs relating to commands.",
+  "description": "Quilt APIs relating to client commands.",
   "mixins": [
-    "quilt_command.mixins.json"
+    "quilt_client_command.mixins.json"
   ]
 }

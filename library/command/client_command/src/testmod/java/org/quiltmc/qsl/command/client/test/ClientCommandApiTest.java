@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.command.test.client;
+package org.quiltmc.qsl.command.client.test;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.text.LiteralText;
 import org.quiltmc.qsl.command.api.client.ClientCommandManager;
 import org.quiltmc.qsl.command.api.client.ClientCommandRegistrationCallback;
 
-public class CommandApiTestClient implements ClientModInitializer {
+public class ClientCommandApiTest implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		ClientCommandRegistrationCallback.EVENT.register(dispatcher -> {
@@ -34,9 +34,9 @@ public class CommandApiTestClient implements ClientModInitializer {
 			);
 
 			dispatcher.register(
-					ClientCommandManager.literal("overrideme")
+					ClientCommandManager.literal("seed")
 							.executes(ctx -> {
-								ctx.getSource().sendFeedback(new LiteralText("Client!"));
+								ctx.getSource().sendFeedback(new LiteralText("This is a client-only command which conflicts with a server command!"));
 								return 0;
 							})
 			);

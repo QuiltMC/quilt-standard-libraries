@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "id": "quilt_command",
-  "name": "Quilt Client Command API",
+  "id": "quilt_client_command_testmod",
+  "name": "Quilt Client Command API Test Mod",
   "version": "${version}",
   "environment": "*",
   "license": "Apache-2.0",
@@ -17,8 +17,11 @@
   "depends": {
     "fabricloader": ">=0.12"
   },
-  "description": "Quilt APIs relating to commands.",
-  "mixins": [
-    "quilt_command.mixins.json"
-  ]
+  "entrypoints": {
+    "client": [
+      "org.quiltmc.qsl.command.client.test.ClientCommandApiTest"
+    ]
+  },
+  "description": "Testmod for Quilt APIs relating to client commands.",
+  "mixins": []
 }
