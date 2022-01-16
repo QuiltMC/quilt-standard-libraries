@@ -5,7 +5,7 @@ plugins {
 qslModule {
 	moduleName = "client_command"
 	version = "1.0.0"
-	library = "commands"
+	library = "command"
 	coreDependencies([
 			"qsl_base"
 	])
