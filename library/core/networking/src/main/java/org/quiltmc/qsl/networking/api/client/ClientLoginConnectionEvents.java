@@ -16,7 +16,7 @@
 
 package org.quiltmc.qsl.networking.api.client;
 
-import org.quiltmc.qsl.base.api.event.ArrayEvent;
+import org.quiltmc.qsl.base.api.event.Event;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientLoginNetworkHandler;
@@ -37,7 +37,7 @@ public final class ClientLoginConnectionEvents {
 	 *
 	 * @see ClientLoginNetworking#registerReceiver(Identifier, ClientLoginNetworking.LoginQueryRequestHandler)
 	 */
-	public static final ArrayEvent<Init> INIT = ArrayEvent.create(Init.class, callbacks -> (handler, client) -> {
+	public static final Event<Init> INIT = Event.create(Init.class, callbacks -> (handler, client) -> {
 		for (Init callback : callbacks) {
 			callback.onLoginStart(handler, client);
 		}
@@ -57,7 +57,7 @@ public final class ClientLoginConnectionEvents {
 	 *
 	 * <p>No packets should be sent when this event is invoked.
 	 */
-	public static final ArrayEvent<QueryStart> QUERY_START = ArrayEvent.create(QueryStart.class, callbacks -> (handler, client) -> {
+	public static final Event<QueryStart> QUERY_START = Event.create(QueryStart.class, callbacks -> (handler, client) -> {
 		for (QueryStart callback : callbacks) {
 			callback.onLoginQueryStart(handler, client);
 		}
@@ -68,7 +68,7 @@ public final class ClientLoginConnectionEvents {
 	 *
 	 * <p>No packets should be sent when this event is invoked.
 	 */
-	public static final ArrayEvent<Disconnect> DISCONNECT = ArrayEvent.create(Disconnect.class, callbacks -> (handler, client) -> {
+	public static final Event<Disconnect> DISCONNECT = Event.create(Disconnect.class, callbacks -> (handler, client) -> {
 		for (Disconnect callback : callbacks) {
 			callback.onLoginDisconnect(handler, client);
 		}

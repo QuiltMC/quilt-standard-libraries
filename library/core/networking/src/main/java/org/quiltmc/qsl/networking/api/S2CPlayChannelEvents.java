@@ -18,7 +18,7 @@ package org.quiltmc.qsl.networking.api;
 
 import java.util.List;
 
-import org.quiltmc.qsl.base.api.event.ArrayEvent;
+import org.quiltmc.qsl.base.api.event.Event;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -32,7 +32,7 @@ public final class S2CPlayChannelEvents {
 	 * An event for the server play network handler receiving an update indicating the connected client's ability to receive packets in certain channels.
 	 * This event may be invoked at any time after login and up to disconnection.
 	 */
-	public static final ArrayEvent<Register> REGISTER = ArrayEvent.create(Register.class, callbacks -> (handler, sender, server, channels) -> {
+	public static final Event<Register> REGISTER = Event.create(Register.class, callbacks -> (handler, sender, server, channels) -> {
 		for (Register callback : callbacks) {
 			callback.onChannelRegister(handler, sender, server, channels);
 		}
@@ -42,7 +42,7 @@ public final class S2CPlayChannelEvents {
 	 * An event for the server play network handler receiving an update indicating the connected client's lack of ability to receive packets in certain channels.
 	 * This event may be invoked at any time after login and up to disconnection.
 	 */
-	public static final ArrayEvent<Unregister> UNREGISTER = ArrayEvent.create(Unregister.class, callbacks -> (handler, sender, server, channels) -> {
+	public static final Event<Unregister> UNREGISTER = Event.create(Unregister.class, callbacks -> (handler, sender, server, channels) -> {
 		for (Unregister callback : callbacks) {
 			callback.onChannelUnregister(handler, sender, server, channels);
 		}

@@ -16,7 +16,7 @@
 
 package org.quiltmc.qsl.networking.api;
 
-import org.quiltmc.qsl.base.api.event.ArrayEvent;
+import org.quiltmc.qsl.base.api.event.Event;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -31,7 +31,7 @@ public final class ServerPlayConnectionEvents {
 	 *
 	 * @see ServerPlayNetworking#registerReceiver(ServerPlayNetworkHandler, Identifier, ServerPlayNetworking.PlayChannelHandler)
 	 */
-	public static final ArrayEvent<Init> INIT = ArrayEvent.create(Init.class, callbacks -> (handler, server) -> {
+	public static final Event<Init> INIT = Event.create(Init.class, callbacks -> (handler, server) -> {
 		for (Init callback : callbacks) {
 			callback.onPlayInit(handler, server);
 		}
@@ -42,7 +42,7 @@ public final class ServerPlayConnectionEvents {
 	 *
 	 * <p>At this stage, the network handler is ready to send packets to the client.
 	 */
-	public static final ArrayEvent<Join> JOIN = ArrayEvent.create(Join.class, callbacks -> (handler, sender, server) -> {
+	public static final Event<Join> JOIN = Event.create(Join.class, callbacks -> (handler, sender, server) -> {
 		for (Join callback : callbacks) {
 			callback.onPlayReady(handler, sender, server);
 		}
@@ -53,7 +53,7 @@ public final class ServerPlayConnectionEvents {
 	 *
 	 * <p>No packets should be sent when this event is invoked.
 	 */
-	public static final ArrayEvent<Disconnect> DISCONNECT = ArrayEvent.create(Disconnect.class, callbacks -> (handler, server) -> {
+	public static final Event<Disconnect> DISCONNECT = Event.create(Disconnect.class, callbacks -> (handler, server) -> {
 		for (Disconnect callback : callbacks) {
 			callback.onPlayDisconnect(handler, server);
 		}

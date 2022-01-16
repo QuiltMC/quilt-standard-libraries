@@ -16,11 +16,12 @@
 
 package org.quiltmc.qsl.networking.api;
 
-import org.quiltmc.qsl.base.api.event.ArrayEvent;
+import org.quiltmc.qsl.base.api.event.Event;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.util.Identifier;
+import org.quiltmc.qsl.base.api.event.Event;
 
 /**
  * Offers access to events related to the connection to a client on a logical server while a client is logging in.
@@ -31,7 +32,7 @@ public final class ServerLoginConnectionEvents {
 	 *
 	 * @see ServerLoginNetworking#registerReceiver(ServerLoginNetworkHandler, Identifier, ServerLoginNetworking.LoginQueryResponseHandler)
 	 */
-	public static final ArrayEvent<Init> INIT = ArrayEvent.create(Init.class, callbacks -> (handler, server) -> {
+	public static final Event<Init> INIT = Event.create(Init.class, callbacks -> (handler, server) -> {
 		for (Init callback : callbacks) {
 			callback.onLoginInit(handler, server);
 		}
@@ -45,7 +46,7 @@ public final class ServerLoginConnectionEvents {
 	 *
 	 * <p>You may send login queries to the connected client using the provided {@link PacketSender}.
 	 */
-	public static final ArrayEvent<QueryStart> QUERY_START = ArrayEvent.create(QueryStart.class, callbacks -> (handler, server, sender, synchronizer) -> {
+	public static final Event<QueryStart> QUERY_START = Event.create(QueryStart.class, callbacks -> (handler, server, sender, synchronizer) -> {
 		for (QueryStart callback : callbacks) {
 			callback.onLoginStart(handler, server, sender, synchronizer);
 		}
@@ -56,7 +57,7 @@ public final class ServerLoginConnectionEvents {
 	 *
 	 * <p>No packets should be sent when this event is invoked.
 	 */
-	public static final ArrayEvent<Disconnect> DISCONNECT = ArrayEvent.create(Disconnect.class, callbacks -> (handler, server) -> {
+	public static final Event<Disconnect> DISCONNECT = Event.create(Disconnect.class, callbacks -> (handler, server) -> {
 		for (Disconnect callback : callbacks) {
 			callback.onLoginDisconnect(handler, server);
 		}

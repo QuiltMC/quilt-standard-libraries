@@ -16,7 +16,7 @@
 
 package org.quiltmc.qsl.networking.api;
 
-import org.quiltmc.qsl.base.api.event.ArrayEvent;
+import org.quiltmc.qsl.base.api.event.Event;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -30,7 +30,7 @@ public final class EntityTrackingEvents {
 	 * Typically this occurs when an entity enters a client's view distance.
 	 * This event is called before the player's client is sent the entity's {@link Entity#createSpawnPacket() spawn packet}.
 	 */
-	public static final ArrayEvent<StartTracking> START_TRACKING = ArrayEvent.create(StartTracking.class, callbacks -> (trackedEntity, player) -> {
+	public static final Event<StartTracking> START_TRACKING = Event.create(StartTracking.class, callbacks -> (trackedEntity, player) -> {
 		for (StartTracking callback : callbacks) {
 			callback.onStartTracking(trackedEntity, player);
 		}
@@ -41,7 +41,7 @@ public final class EntityTrackingEvents {
 	 * The client at this point was sent a packet to {@link net.minecraft.network.packet.s2c.play.EntitiesDestroyS2CPacket destroy} the entity on the client.
 	 * The entity still exists on the server.
 	 */
-	public static final ArrayEvent<StopTracking> STOP_TRACKING = ArrayEvent.create(StopTracking.class, callbacks -> (trackedEntity, player) -> {
+	public static final Event<StopTracking> STOP_TRACKING = Event.create(StopTracking.class, callbacks -> (trackedEntity, player) -> {
 		for (StopTracking callback : callbacks) {
 			callback.onStopTracking(trackedEntity, player);
 		}
