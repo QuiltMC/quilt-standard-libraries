@@ -13,6 +13,7 @@
  */
 
 import qsl.internal.Git
+import qsl.internal.Versions
 import qsl.internal.extension.QslModuleExtension
 
 plugins {
@@ -109,13 +110,16 @@ afterEvaluate {
 }
 
 java {
+	sourceCompatibility = JavaVersion.toVersion(Versions.JAVA_VERSION)
+	targetCompatibility = JavaVersion.toVersion(Versions.JAVA_VERSION)
+
 	withJavadocJar()
 	withSourcesJar()
 }
 
 javadoc {
 	options {
-		source = "17"
+		source = String.valueOf(Versions.JAVA_VERSION)
 		encoding = "UTF-8"
 		charSet = "UTF-8"
 		memberLevel = JavadocMemberLevel.PACKAGE

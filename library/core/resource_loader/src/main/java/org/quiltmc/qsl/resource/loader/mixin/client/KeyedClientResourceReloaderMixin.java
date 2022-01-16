@@ -1,5 +1,6 @@
 /*
- * Copyright 2016, 2017, 2018, 2019 FabricMC, 2021 QuiltMC
+ * Copyright 2016, 2017, 2018, 2019 FabricMC
+ * Copyright 2021 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +21,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -35,6 +38,7 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;
 import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 
+@Environment(EnvType.CLIENT)
 @Mixin({
 		/* public */
 		SoundManager.class, BakedModelManager.class, LanguageManager.class, TextureManager.class,

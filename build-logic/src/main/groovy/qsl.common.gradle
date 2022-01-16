@@ -50,7 +50,7 @@ dependencies {
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"
-	it.options.release.set(16) // Minecraft is Java 16
+	it.options.release.set(Versions.JAVA_VERSION)
 }
 
 loom {

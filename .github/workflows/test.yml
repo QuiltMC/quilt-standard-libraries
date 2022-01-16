@@ -11,15 +11,16 @@ jobs:
     steps:
       - uses: actions/setup-java@v2
         with:
-          distribution: "adopt"
+          distribution: "temurin"
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v2
-      - uses: gradle/wrapper-validation-action@v1
-      - run: ./gradlew check build publish --stacktrace
+      - run: ./gradlew check build publish --stacktrace --parallel
         env:
           SNAPSHOTS_URL: ${{ secrets.SNAPSHOTS_URL }}
           SNAPSHOTS_USERNAME: ${{ secrets.SNAPSHOTS_USERNAME }}
           SNAPSHOTS_PASSWORD: ${{ secrets.SNAPSHOTS_PASSWORD }}
+      - run: mkdir run && echo "eula=true" >> run/eula.txt
+      - run: ./gradlew :runAutoTestServer --stacktrace
       #- run: mkdir run && echo "eula=true" >> run/eula.txt
       #- run: ./gradlew :runAutoTestServer --stacktrace
       - uses: actions/upload-artifact@v2

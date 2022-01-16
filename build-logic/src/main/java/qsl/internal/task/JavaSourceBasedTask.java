@@ -16,7 +16,7 @@ public abstract class JavaSourceBasedTask extends DefaultTask {
 			for (var javaDir : sourceSet.getAllJava()) {
 				Path sourcePath = javaDir.toPath();
 
-				if (sourcePath.endsWith("package-info.java")) {
+				if (sourcePath.endsWith("package-info.java") || sourcePath.endsWith("module-info.java")) {
 					continue;
 				}
 

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "quilt_lifecycle_events",
-  "name": "Quilt Lifecycle events",
+  "name": "Quilt Lifecycle Events",
   "version": "${version}",
   "environment": "*",
   "license": "Apache-2.0",
@@ -15,10 +15,28 @@
     "QuiltMC"
   ],
   "depends": {
-    "fabricloader": ">=0.12"
+    "fabricloader": ">=0.12",
+    "minecraft": ">=1.18.1",
+    "quilt_base": "*"
   },
-  "description": "Events to track the lifecycle of Minecraft",
+  "description": "Events to track the lifecycle of Minecraft.",
   "mixins": [
     "quilt_lifecycle_events.mixins.json"
-  ]
+  ],
+  "custom": {
+    "modmenu": {
+      "badges": [
+        "library"
+      ],
+      "parent": {
+        "id": "qsl",
+        "name": "Quilt Standard Libraries",
+        "description": "A set of libraries to assist in making Quilt mods.",
+        "icon": "assets/quilt_lifecycle_events/icon.png",
+        "badges": [
+          "library"
+        ]
+      }
+    }
+  }
 }

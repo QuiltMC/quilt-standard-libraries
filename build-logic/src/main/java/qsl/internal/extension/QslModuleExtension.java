@@ -25,8 +25,7 @@ import qsl.internal.license.LicenseHeader;
 import qsl.internal.task.ApplyLicenseTask;
 import qsl.internal.task.CheckLicenseTask;
 
-public class QslModuleExtension {
-	private final Project project;
+public class QslModuleExtension extends QslExtension {
 	private final Property<String> library;
 	private final Property<String> moduleName;
 	private final List<Dependency> moduleDependencies;
@@ -35,7 +34,7 @@ public class QslModuleExtension {
 
 	@Inject
 	public QslModuleExtension(ObjectFactory factory, Project project) {
-		this.project = project;
+		super(project);
 		this.library = factory.property(String.class);
 		this.library.finalizeValueOnRead();
 		this.moduleName = factory.property(String.class);
@@ -67,10 +66,6 @@ public class QslModuleExtension {
 
 	public void setLibrary(String name) {
 		this.library.set(name);
-	}
-
-	public void setVersion(String version) {
-		this.project.setVersion(version + (System.getenv("SNAPSHOTS_URL") != null ? "-SNAPSHOT" : ""));
 	}
 
 	private Dependency getCoreModule(String module) {
