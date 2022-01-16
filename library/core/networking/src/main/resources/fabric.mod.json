@@ -23,9 +23,12 @@
     ]
   },
   "depends": {
-    "quilt_loader": ">=0.13.1-rc.10",
-    "quilt_base": ">=1.0.0"
+    "fabricloader": ">=0.12",
+    "minecraft": ">=1.18.1",
+    "quilt_base": ">=1.0.0",
+    "quilt_lifecycle_events": ">=1.0.0"
   },
+
   "description": "Utilities to assist with sending custom packets over the Minecraft protocol.",
   "mixins": [
     "quilt_networking.mixins.json"
