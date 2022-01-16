@@ -53,6 +53,7 @@ import org.quiltmc.qsl.command.mixin.HelpCommandAccessor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.quiltmc.qsl.command.api.client.ClientCommandManager.*;
 
@@ -251,7 +252,8 @@ public final class ClientCommandInternals {
 			throw HelpCommandAccessor.getFailedException().create();
 		}
 
-		return executeHelp(Iterables.getLast(nodes).getNode(), context);
+		// we know the call to Iterables#getLast won't be null as nodes is guaranteed to be nonempty
+		return executeHelp(Objects.requireNonNull(Iterables.getLast(nodes)).getNode(), context);
 	}
 
 	/**
