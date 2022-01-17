@@ -17,6 +17,9 @@
 
 package org.quiltmc.qsl.itemgroup.mixin.client;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -37,6 +40,8 @@ import org.quiltmc.qsl.itemgroup.impl.QuiltCreativePlayerInventoryScreenWidgets;
 
 @Mixin(CreativeInventoryScreen.class)
 public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScreen<CreativeInventoryScreen.CreativeScreenHandler> implements CreativeGuiExtensions {
+	private final Map<Integer, Integer> PAGE_TO_SELECTED_INDEX = new HashMap<>();
+
 	private CreativeInventoryScreenMixin(CreativeInventoryScreen.CreativeScreenHandler screenHandler, PlayerInventory playerInventory, Text title) {
 		super(screenHandler, playerInventory, title);
 	}
@@ -55,11 +60,10 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 
 	@Unique
 	private int getPageOffset(int page) {
-		return switch (page) {
-			case 0 -> 0;
-			case 1 -> 12;
-			default -> 12 + ((12 - QuiltCreativePlayerInventoryScreenWidgets.ALWAYS_SHOWN_GROUPS.size()) * (page - 1));
-		};
+		if (page == 0) {
+			return 0;
+		}
+		return 12 + ((12 - QuiltCreativePlayerInventoryScreenWidgets.ALWAYS_SHOWN_GROUPS.size()) * (page - 1));
 	}
 
 	@Unique
@@ -77,6 +81,8 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 			return;
 		}
 
+		PAGE_TO_SELECTED_INDEX.compute(quilt$currentPage, (page, pos) -> getSelectedTab());
+
 		quilt$currentPage++;
 		quilt$updateSelection();
 	}
@@ -86,6 +92,8 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 		if (quilt$currentPage == 0) {
 			return;
 		}
+
+		PAGE_TO_SELECTED_INDEX.compute(quilt$currentPage, (page, pos) -> getSelectedTab());
 
 		quilt$currentPage--;
 		quilt$updateSelection();
@@ -111,12 +119,12 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 
 	@Unique
 	private void quilt$updateSelection() {
-		int minPos = getPageOffset(quilt$currentPage);
-		int maxPos = getPageOffset(quilt$currentPage + 1) - 1;
-		int curPos = getSelectedTab();
+		int pageMaxIndex = getPageOffset(quilt$currentPage);
+		int pageMinIndex = getPageOffset(quilt$currentPage + 1) - 1;
+		int selectedTab = getSelectedTab();
 
-		if (curPos < minPos || curPos > maxPos) {
-			setSelectedTab(ItemGroup.GROUPS[getPageOffset(quilt$currentPage)]);
+		if (selectedTab < pageMaxIndex || selectedTab > pageMinIndex) {
+			setSelectedTab(ItemGroup.GROUPS[PAGE_TO_SELECTED_INDEX.getOrDefault(quilt$currentPage, getPageOffset(quilt$currentPage))]);
 		}
 	}
 

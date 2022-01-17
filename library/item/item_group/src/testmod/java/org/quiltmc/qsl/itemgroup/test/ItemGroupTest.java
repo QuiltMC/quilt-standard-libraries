@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.itemgroup.test;
 
+import java.util.stream.IntStream;
+
 import org.quiltmc.qsl.itemgroup.api.QuiltItemGroup;
 
 import net.minecraft.item.ItemGroup;
@@ -45,6 +47,8 @@ public class ItemGroupTest implements ModInitializer {
 							.map(ItemStack::new)
 							.forEach(stacks::add)
 			).build();
+
+	private static final QuiltItemGroup[] MANY_GROUPS = IntStream.range(0, 20).mapToObj(i -> QuiltItemGroup.builder(new Identifier(NAMESPACE, "many_group_" + i)).build()).toArray(QuiltItemGroup[]::new);
 
 	@Override
 	public void onInitialize() {
