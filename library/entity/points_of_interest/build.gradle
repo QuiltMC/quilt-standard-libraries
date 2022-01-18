@@ -1,0 +1,15 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "points_of_interest"
+	version = "1.0.0"
+	library = "entity"
+	coreDependencies([
+			"resource_loader"
+	])
+	coreTestmodDependencies([
+			"qsl_base"
+	])
+}
