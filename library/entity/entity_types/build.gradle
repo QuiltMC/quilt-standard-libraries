@@ -1,0 +1,18 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "entity_types"
+	version = "1.0.0"
+	library = "entity"
+	coreDependencies([
+			"resource_loader"
+	])
+	coreTestmodDependencies([
+			"qsl_base"
+	])
+	interLibraryDependencies([
+	        "entity_attributes"
+	])
+}
