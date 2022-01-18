@@ -1,0 +1,15 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "villagers"
+	version = "1.0.0"
+	library = "entity"
+	coreDependencies([
+			"resource_loader"
+	])
+	coreTestmodDependencies([
+			"qsl_base"
+	])
+}

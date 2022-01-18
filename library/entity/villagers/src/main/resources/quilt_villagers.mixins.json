@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.villagers.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "TypeAwareTradeMixin",
+    "VillagerProfessionAccessor",
+    "VillagerTypeAccessor"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
