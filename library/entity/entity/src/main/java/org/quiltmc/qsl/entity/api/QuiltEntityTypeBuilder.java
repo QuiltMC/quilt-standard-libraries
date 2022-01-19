@@ -34,7 +34,7 @@ import java.util.function.Supplier;
  * Extended version of {@link EntityType.Builder} with added registration for
  * server-&gt;client entity tracking values.
  *
- * @param <T> Entity class.
+ * @param <T> Entity class
  */
 public class QuiltEntityTypeBuilder<T extends Entity> {
 	private SpawnGroup spawnGroup;
@@ -43,7 +43,7 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	private boolean summonable = true;
 	private int trackRange = 5;
 	private int trackedUpdateRate = 3;
-	private Boolean forceTrackedVelocityUpdates;
+	private Boolean forceTrackedVelocityUpdates = null;
 	private boolean fireImmune = false;
 	private boolean spawnableFarFromPlayer;
 	private EntityDimensions dimensions = EntityDimensions.changing(-1.0f, -1.0f);
@@ -58,7 +58,7 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	/**
 	 * Creates an entity type builder.
 	 *
-	 * <p>This entity's spawn group will automatically be set to {@link SpawnGroup#MISC}.
+	 * <p>This entity's spawn group will automatically be set to {@link SpawnGroup#MISC}.</p>
 	 *
 	 * @param <T> the type of entity
 	 *
@@ -96,7 +96,7 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	/**
 	 * Creates an entity type builder for a living entity.
 	 *
-	 * <p>This entity's spawn group will automatically be set to {@link SpawnGroup#MISC}.
+	 * <p>This entity's spawn group will automatically be set to {@link SpawnGroup#MISC}.</p>
 	 *
 	 * @param <T> the type of entity
 	 *
@@ -196,6 +196,8 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	/**
 	 * Sets the maximum block range at which players can see this entity type.
 	 *
+	 * <p>This gets rounded up to the next integer radius in chunks</p>
+	 *
 	 * @param range the tracking range in blocks
 	 *
 	 * @return this builder for chaining
@@ -226,7 +228,7 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	}
 
 	/**
-	 * Creates the entity type.
+	 * Creates the entity type
 	 *
 	 * @return a new {@link EntityType}
 	 */
@@ -239,9 +241,9 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	}
 
 	/**
-	 * An extended version of {@link QuiltEntityTypeBuilder} with support for features on present on {@link LivingEntity living entities}, such as default attributes.
+	 * An extended version of {@link QuiltEntityTypeBuilder} with support for features present on {@link LivingEntity living entities}, such as default attributes.
 	 *
-	 * @param <T> Entity class.
+	 * @param <T> Entity class
 	 */
 	public static class Living<T extends LivingEntity> extends QuiltEntityTypeBuilder<T> {
 		private Supplier<DefaultAttributeContainer.Builder> defaultAttributeBuilder;
@@ -325,7 +327,7 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 		/**
 		 * Sets the default attributes for a type of living entity.
 		 *
-		 * <p>This can be used in a fashion similar to this:
+		 * <p>This can be used in a fashion similar to this:</p>
 		 * <blockquote><pre>
 		 * QuiltEntityTypeBuilder.createLiving()
 		 * 	.spawnGroup(SpawnGroup.CREATURE)
@@ -357,9 +359,9 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	}
 
 	/**
-	 * An extended version of {@link QuiltEntityTypeBuilder} with support for features on present on {@link MobEntity mob entities}, such as spawn restrictions.
+	 * An extended version of {@link QuiltEntityTypeBuilder} with support for features present on {@link MobEntity mob entities}, such as spawn restrictions.
 	 *
-	 * @param <T> Entity class.
+	 * @param <T> Entity class
 	 */
 	public static class Mob<T extends MobEntity> extends QuiltEntityTypeBuilder.Living<T> {
 		private SpawnRestriction.Location restrictionLocation;
@@ -451,9 +453,9 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 		/**
 		 * Registers a spawn restriction for this entity.
 		 *
-		 * <p>This is used by mobs to determine whether Minecraft should spawn an entity within a certain context.
+		 * <p>This is used by mobs to determine whether Minecraft should spawn an entity within a certain context.</p>
 		 *
-		 * @return this builder for chaining.
+		 * @return this builder for chaining
 		 */
 		public QuiltEntityTypeBuilder.Mob<T> spawnRestriction(SpawnRestriction.Location location, Heightmap.Type heightmap, SpawnRestriction.SpawnPredicate<T> spawnPredicate) {
 			this.restrictionLocation = Objects.requireNonNull(location, "Location cannot be null.");
