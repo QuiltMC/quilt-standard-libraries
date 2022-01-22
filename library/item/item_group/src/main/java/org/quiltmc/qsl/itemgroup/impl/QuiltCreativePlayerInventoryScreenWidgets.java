@@ -60,16 +60,16 @@ public final class QuiltCreativePlayerInventoryScreenWidgets {
 		@Override
 		public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
 			this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
-			this.visible = extensions.quilt$isButtonVisible(type);
-			this.active = extensions.quilt$isButtonEnabled(type);
+			this.visible = this.extensions.quilt$isButtonVisible(this.type);
+			this.active = this.extensions.quilt$isButtonEnabled(this.type);
 
 			if (this.visible) {
-				int u = active && this.hovered ? 22 : 0;
-				int v = active ? 0 : 10;
+				int u = this.active && this.hovered ? 22 : 0;
+				int v = this.active ? 0 : 10;
 
 				RenderSystem.setShaderTexture(0, BUTTON_TEXTURE);
 				RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-				this.drawTexture(matrices, this.x, this.y, u + (type == Type.NEXT ? 11 : 0), v, 11, 10);
+				this.drawTexture(matrices, this.x, this.y, u + (this.type == Type.NEXT ? 11 : 0), v, 11, 10);
 
 				if (this.hovered) {
 					gui.renderTooltip(matrices, new TranslatableText(TRANSLATION_KEY, extensions.quilt$currentPage() + 1, ((ItemGroup.GROUPS.length - 12) / 9) + 2), mouseX, mouseY);

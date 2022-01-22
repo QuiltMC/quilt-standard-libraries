@@ -17,9 +17,9 @@
 
 package org.quiltmc.qsl.itemgroup.mixin.client;
 
-import java.util.HashMap;
 import java.util.Map;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -40,7 +40,7 @@ import org.quiltmc.qsl.itemgroup.impl.QuiltCreativePlayerInventoryScreenWidgets;
 
 @Mixin(CreativeInventoryScreen.class)
 public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScreen<CreativeInventoryScreen.CreativeScreenHandler> implements CreativeGuiExtensions {
-	private final Map<Integer, Integer> PAGE_TO_SELECTED_INDEX = new HashMap<>();
+	private final Map<Integer, Integer> PAGE_TO_SELECTED_INDEX = new Object2ObjectOpenHashMap<>();
 
 	private CreativeInventoryScreenMixin(CreativeInventoryScreen.CreativeScreenHandler screenHandler, PlayerInventory playerInventory, Text title) {
 		super(screenHandler, playerInventory, title);
@@ -77,14 +77,14 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 
 	@Override
 	public void quilt$nextPage() {
-		if (getPageOffset(quilt$currentPage + 1) >= ItemGroup.GROUPS.length) {
+		if (this.getPageOffset(quilt$currentPage + 1) >= ItemGroup.GROUPS.length) {
 			return;
 		}
 
 		PAGE_TO_SELECTED_INDEX.compute(quilt$currentPage, (page, pos) -> getSelectedTab());
 
 		quilt$currentPage++;
-		quilt$updateSelection();
+		this.quilt$updateSelection();
 	}
 
 	@Override
@@ -93,10 +93,10 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 			return;
 		}
 
-		PAGE_TO_SELECTED_INDEX.compute(quilt$currentPage, (page, pos) -> getSelectedTab());
+		PAGE_TO_SELECTED_INDEX.compute(quilt$currentPage, (page, pos) -> this.getSelectedTab());
 
 		quilt$currentPage--;
-		quilt$updateSelection();
+		this.quilt$updateSelection();
 	}
 
 	@Override
@@ -107,7 +107,7 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 	@Override
 	public boolean quilt$isButtonEnabled(QuiltCreativePlayerInventoryScreenWidgets.Type type) {
 		if (type == QuiltCreativePlayerInventoryScreenWidgets.Type.NEXT) {
-			return !(getPageOffset(quilt$currentPage + 1) >= ItemGroup.GROUPS.length);
+			return !(this.getPageOffset(quilt$currentPage + 1) >= ItemGroup.GROUPS.length);
 		}
 
 		if (type == QuiltCreativePlayerInventoryScreenWidgets.Type.PREVIOUS) {
@@ -119,50 +119,50 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 
 	@Unique
 	private void quilt$updateSelection() {
-		int pageMaxIndex = getPageOffset(quilt$currentPage);
-		int pageMinIndex = getPageOffset(quilt$currentPage + 1) - 1;
-		int selectedTab = getSelectedTab();
+		int pageMaxIndex = this.getPageOffset(quilt$currentPage);
+		int pageMinIndex = this.getPageOffset(quilt$currentPage + 1) - 1;
+		int selectedTab = this.getSelectedTab();
 
 		if (selectedTab < pageMaxIndex || selectedTab > pageMinIndex) {
-			setSelectedTab(ItemGroup.GROUPS[PAGE_TO_SELECTED_INDEX.getOrDefault(quilt$currentPage, getPageOffset(quilt$currentPage))]);
+			this.setSelectedTab(ItemGroup.GROUPS[PAGE_TO_SELECTED_INDEX.getOrDefault(quilt$currentPage, this.getPageOffset(quilt$currentPage))]);
 		}
 	}
 
 	@Inject(method = "init", at = @At("RETURN"))
 	private void init(CallbackInfo info) {
-		quilt$updateSelection();
+		this.quilt$updateSelection();
 
 		int xpos = x + 116;
 		int ypos = y - 10;
 
-		addDrawableChild(new QuiltCreativePlayerInventoryScreenWidgets.ItemGroupButtonWidget(xpos + 11, ypos, QuiltCreativePlayerInventoryScreenWidgets.Type.NEXT, this));
-		addDrawableChild(new QuiltCreativePlayerInventoryScreenWidgets.ItemGroupButtonWidget(xpos, ypos, QuiltCreativePlayerInventoryScreenWidgets.Type.PREVIOUS, this));
+		this.addDrawableChild(new QuiltCreativePlayerInventoryScreenWidgets.ItemGroupButtonWidget(xpos + 11, ypos, QuiltCreativePlayerInventoryScreenWidgets.Type.NEXT, this));
+		this.addDrawableChild(new QuiltCreativePlayerInventoryScreenWidgets.ItemGroupButtonWidget(xpos, ypos, QuiltCreativePlayerInventoryScreenWidgets.Type.PREVIOUS, this));
 	}
 
 	@Inject(method = "setSelectedTab", at = @At("HEAD"), cancellable = true)
 	private void setSelectedTab(ItemGroup itemGroup, CallbackInfo info) {
-		if (quilt$isGroupNotVisible(itemGroup)) {
+		if (this.quilt$isGroupNotVisible(itemGroup)) {
 			info.cancel();
 		}
 	}
 
 	@Inject(method = "renderTabTooltipIfHovered", at = @At("HEAD"), cancellable = true)
 	private void renderTabTooltipIfHovered(MatrixStack matrixStack, ItemGroup itemGroup, int mx, int my, CallbackInfoReturnable<Boolean> info) {
-		if (quilt$isGroupNotVisible(itemGroup)) {
+		if (this.quilt$isGroupNotVisible(itemGroup)) {
 			info.setReturnValue(false);
 		}
 	}
 
 	@Inject(method = "isClickInTab", at = @At("HEAD"), cancellable = true)
 	private void isClickInTab(ItemGroup itemGroup, double mx, double my, CallbackInfoReturnable<Boolean> info) {
-		if (quilt$isGroupNotVisible(itemGroup)) {
+		if (this.quilt$isGroupNotVisible(itemGroup)) {
 			info.setReturnValue(false);
 		}
 	}
 
 	@Inject(method = "renderTabIcon", at = @At("HEAD"), cancellable = true)
 	private void renderTabIcon(MatrixStack matrixStack, ItemGroup itemGroup, CallbackInfo info) {
-		if (quilt$isGroupNotVisible(itemGroup)) {
+		if (this.quilt$isGroupNotVisible(itemGroup)) {
 			info.cancel();
 		}
 	}
@@ -173,7 +173,7 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 			return false;
 		}
 
-		return quilt$currentPage != getOffsetPage(itemGroup.getIndex());
+		return quilt$currentPage != this.getOffsetPage(itemGroup.getIndex());
 	}
 
 	@Override

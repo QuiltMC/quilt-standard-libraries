@@ -94,7 +94,7 @@ public final class QuiltItemGroup extends ItemGroup {
 
 	@Override
 	public Text getTranslationKey() {
-		return displayText == null ? super.getTranslationKey() : displayText;
+		return this.displayText == null ? super.getTranslationKey() : this.displayText;
 	}
 
 	/**
@@ -240,7 +240,11 @@ public final class QuiltItemGroup extends ItemGroup {
 		 */
 		public QuiltItemGroup build() {
 			((ItemGroupExtensions) GROUPS[0]).quilt$expandArray();
-			return new QuiltItemGroup(GROUPS.length - 1, String.format("%s.%s", identifier.getNamespace(), identifier.getPath()), iconSupplier, stacksForDisplay, text);
+			return new QuiltItemGroup(
+					GROUPS.length - 1,
+					String.format("%s.%s", this.identifier.getNamespace(), this.identifier.getPath()),
+					this.iconSupplier, this.stacksForDisplay, this.text
+			);
 		}
 	}
 }

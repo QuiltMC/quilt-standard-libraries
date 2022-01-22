@@ -15,6 +15,7 @@
     "QuiltMC"
   ],
   "depends": {
+    "minecraft": ">=1.18.2-alpha.22.3.a",
     "quilt_base": "*",
     "quilt_resource_loader": "*",
     "fabricloader": ">=0.12"
