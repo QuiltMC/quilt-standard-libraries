@@ -167,6 +167,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 
 	public static ModNioResourcePack locateAndLoadDefaultResourcePack(ResourceType type) {
 		return new ModNioResourcePack(
+				"Default",
 				FabricLoader.getInstance().getModContainer("minecraft").map(ModContainer::getMetadata).orElseThrow(),
 				locateDefaultResourcePack(type),
 				type,
@@ -203,7 +204,8 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 				path = childPath;
 			}
 
-			var pack = new ModNioResourcePack(container.getMetadata(), path, type, null, ResourcePackActivationType.ALWAYS_ENABLED);
+			var pack = new ModNioResourcePack(null, container.getMetadata(), path, type, null,
+					ResourcePackActivationType.ALWAYS_ENABLED);
 
 			if (!pack.getNamespaces(type).isEmpty()) {
 				packs.add(pack);
@@ -231,7 +233,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	}
 
 	public static void appendResourcesFromGroup(NamespaceResourceManagerAccessor manager, Identifier id,
-												GroupResourcePack groupResourcePack, List<Resource> resources)
+	                                            GroupResourcePack groupResourcePack, List<Resource> resources)
 			throws IOException {
 		var packs = groupResourcePack.getPacks(id.getNamespace());
 
@@ -264,7 +266,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	 * @see ResourceLoader#registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType)
 	 */
 	public static boolean registerBuiltinResourcePack(Identifier id, String subPath, ModContainer container,
-													  ResourcePackActivationType activationType) {
+	                                                  ResourcePackActivationType activationType) {
 		String separator = container.getRootPath().getFileSystem().getSeparator();
 		subPath = subPath.replace("/", separator);
 
@@ -301,17 +303,12 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	}
 
 	private static ModNioResourcePack newBuiltinResourcePack(ModContainer container, String name, Path resourcePackPath,
-															 ResourceType type, ResourcePackActivationType activationType) {
-		return new ModNioResourcePack(container.getMetadata(), resourcePackPath, type, null, activationType) {
-			@Override
-			public String getName() {
-				return name; // Built-in resource pack provided by a mod, the name is overriden.
-			}
-		};
+	                                                         ResourceType type, ResourcePackActivationType activationType) {
+		return new ModNioResourcePack(name, container.getMetadata(), resourcePackPath, type, null, activationType);
 	}
 
 	public static void registerBuiltinResourcePacks(ResourceType type, Consumer<ResourcePackProfile> profileAdder,
-													ResourcePackProfile.Factory factory) {
+	                                                ResourcePackProfile.Factory factory) {
 		var builtinPacks = type == ResourceType.CLIENT_RESOURCES
 				? CLIENT_BUILTIN_RESOURCE_PACKS : SERVER_BUILTIN_RESOURCE_PACKS;
 
