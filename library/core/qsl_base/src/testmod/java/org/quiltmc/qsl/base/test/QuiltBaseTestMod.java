@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,24 @@
 
 package org.quiltmc.qsl.base.test;
 
+import java.util.List;
+
 import net.fabricmc.api.ModInitializer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import org.quiltmc.qsl.base.test.event.EventListenAllTests;
+import org.quiltmc.qsl.base.test.event.EventTests;
 
 public final class QuiltBaseTestMod implements ModInitializer {
+	private static final Logger LOGGER = LogManager.getLogger();
+
 	@Override
 	public void onInitialize() {
-		EventTests.run();
+		List.of(new EventTests(), new EventListenAllTests())
+				.forEach(test -> {
+					LOGGER.info("Testing " + test.getClass().getSimpleName() + "...");
+					test.run();
+				});
 	}
 }
