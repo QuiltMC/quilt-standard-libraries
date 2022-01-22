@@ -101,7 +101,7 @@ public class CreateWorldScreenMixin {
 			method = "m_paskjwcu(Ljava/lang/Void;Ljava/lang/Throwable;)Ljava/lang/Object;",
 			at = @At(
 					value = "INVOKE",
-					target = "Lorg/apache/logging/log4j/Logger;warn(Ljava/lang/String;Ljava/lang/Throwable;)V"
+					target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Throwable;)V"
 			)
 	)
 	private void onFailDataPackLoading(Void unused, Throwable throwable, CallbackInfoReturnable<Object> cir) {

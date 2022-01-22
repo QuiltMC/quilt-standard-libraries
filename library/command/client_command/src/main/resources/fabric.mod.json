@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "quilt_client_command",
+  "name": "Quilt Client Command API",
+  "version": "${version}",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "icon": "assets/quilt_client_command/icon.png",
+  "contact": {
+    "homepage": "https://quiltmc.org",
+    "issues": "https://github.com/QuiltMC/quilt-standard-libraries/issues",
+    "sources": "https://github.com/QuiltMC/quilt-standard-libraries"
+  },
+  "authors": [
+    "QuiltMC"
+  ],
+  "depends": {
+    "fabricloader": ">=0.12",
+    "minecraft": ">=1.18.2-alpha.22.3.a",
+    "quilt_base": "*"
+  },
+  "description": "Quilt APIs relating to client commands.",
+  "mixins": [
+    "quilt_client_command.mixins.json"
+  ],
+  "custom": {
+    "modmenu": {
+      "badges": [
+        "library"
+      ],
+      "parent": {
+        "id": "qsl",
+        "name": "Quilt Standard Libraries",
+        "description": "A set of libraries to assist in making Quilt mods.",
+        "icon": "assets/quilt_client_command/icon.png",
+        "badges": [
+          "library"
+        ]
+      }
+    }
+  }
+}

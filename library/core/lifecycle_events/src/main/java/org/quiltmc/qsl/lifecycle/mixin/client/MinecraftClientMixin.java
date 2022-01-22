@@ -46,7 +46,7 @@ abstract class MinecraftClientMixin {
 
 	@Inject(
 			method = "stop",
-			at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;info(Ljava/lang/String;)V", shift = At.Shift.AFTER, remap = false)
+			at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;info(Ljava/lang/String;)V", shift = At.Shift.AFTER, remap = false)
 	)
 	private void clientStopping(CallbackInfo info) {
 		ClientLifecycleEvents.STOPPING.invoker().stoppingClient((MinecraftClient) (Object) this);

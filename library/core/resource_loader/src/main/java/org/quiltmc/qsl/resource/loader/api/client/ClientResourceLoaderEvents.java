@@ -24,6 +24,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.ResourceManager;
 
 import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;
 
@@ -66,7 +67,7 @@ public final class ClientResourceLoaderEvents {
 	 * @see #START_RESOURCE_PACK_RELOAD
 	 */
 	@FunctionalInterface
-	public interface StartResourcePackReload {
+	public interface StartResourcePackReload extends ClientEventAwareListener {
 		/**
 		 * Called before resource packs on the Minecraft client have been reloaded.
 		 *
@@ -83,7 +84,7 @@ public final class ClientResourceLoaderEvents {
 	 * @see #END_RESOURCE_PACK_RELOAD
 	 */
 	@FunctionalInterface
-	public interface EndResourcePackReload {
+	public interface EndResourcePackReload extends ClientEventAwareListener {
 		/**
 		 * Called after resource packs on the Minecraft client have been reloaded.
 		 * <p>

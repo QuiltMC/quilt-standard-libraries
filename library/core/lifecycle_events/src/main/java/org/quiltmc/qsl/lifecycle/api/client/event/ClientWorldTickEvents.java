@@ -16,19 +16,20 @@
 
 package org.quiltmc.qsl.lifecycle.api.client.event;
 
-import org.quiltmc.qsl.base.api.event.Event;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 
 /**
  * Events related to a ticking Minecraft client's world.
  *
  * <h2>A note of warning</h2>
- *
+ * <p>
  * Callbacks registered to any of these events should ensure as little time as possible is spent executing, since the tick
  * loop is a very hot code path.
  */
@@ -52,36 +53,39 @@ public final class ClientWorldTickEvents {
 		}
 	});
 
-	private ClientWorldTickEvents() {}
+	private ClientWorldTickEvents() {
+	}
 
 	/**
 	 * Functional interface to be implemented on callbacks for {@link #START}.
+	 *
 	 * @see #START
 	 */
 	@FunctionalInterface
 	@Environment(EnvType.CLIENT)
-	public interface Start {
+	public interface Start extends ClientEventAwareListener {
 		/**
 		 * Called before a world is ticked.
 		 *
 		 * @param client the client
-		 * @param world the world being ticked
+		 * @param world  the world being ticked
 		 */
 		void startWorldTick(MinecraftClient client, ClientWorld world);
 	}
 
 	/**
 	 * Functional interface to be implemented on callbacks for {@link #END}.
+	 *
 	 * @see #END
 	 */
 	@FunctionalInterface
 	@Environment(EnvType.CLIENT)
-	public interface End {
+	public interface End extends ClientEventAwareListener {
 		/**
 		 * Called after a world is ticked.
 		 *
 		 * @param client the client
-		 * @param world the world being ticked
+		 * @param world  the world being ticked
 		 */
 		void endWorldTick(MinecraftClient client, ClientWorld world);
 	}

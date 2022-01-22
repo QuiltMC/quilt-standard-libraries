@@ -19,6 +19,7 @@ package org.quiltmc.qsl.lifecycle.api.event;
 import net.minecraft.server.MinecraftServer;
 
 import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
 /**
  * Events indicating progress through the tick loop of a Minecraft server.
@@ -62,7 +63,7 @@ public final class ServerTickEvents {
 	 * @see #START
 	 */
 	@FunctionalInterface
-	public interface Start {
+	public interface Start extends EventAwareListener {
 		/**
 		 * Called before the server has started an iteration of the tick loop.
 		 *
@@ -77,7 +78,7 @@ public final class ServerTickEvents {
 	 * @see #END
 	 */
 	@FunctionalInterface
-	public interface End {
+	public interface End extends EventAwareListener {
 		/**
 		 * Called at the end of an iteration of the server's tick loop.
 		 *

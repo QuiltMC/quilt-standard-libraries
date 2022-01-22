@@ -290,5 +290,16 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		return this.mapColor(color.getMapColor());
 	}
 
+	/**
+	 * Sets the map color provider of this block.
+	 *
+	 * @param mapColorProvider new map color provider
+	 * @return this builder
+	 */
+	public QuiltBlockSettings mapColorProvider(Function<BlockState, MapColor> mapColorProvider) {
+		((AbstractBlockSettingsAccessor) this).setMapColorProvider(mapColorProvider);
+		return this;
+	}
+
 	// endregion
 }
