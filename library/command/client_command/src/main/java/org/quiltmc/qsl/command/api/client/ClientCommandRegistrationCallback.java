@@ -20,6 +20,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 
 /**
  * Callback for registering client-side commands.
@@ -28,7 +29,7 @@ import org.quiltmc.qsl.base.api.event.Event;
  */
 @FunctionalInterface
 @Environment(EnvType.CLIENT)
-public interface ClientCommandRegistrationCallback {
+public interface ClientCommandRegistrationCallback extends ClientEventAwareListener {
 	/**
 	 * Event invoked when client-sided commands are registered.
 	 */
@@ -41,7 +42,7 @@ public interface ClientCommandRegistrationCallback {
 	/**
 	 * Called when client-side commands are registered.
 	 *
-	 * @param dispatcher the command dispatcher.
+	 * @param dispatcher the command dispatcher
 	 */
 	void registerCommands(CommandDispatcher<QuiltClientCommandSource> dispatcher);
 }

@@ -17,6 +17,14 @@
 
 package org.quiltmc.qsl.command.mixin.client;
 
+import java.util.Map;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientCommandSource;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -26,14 +34,8 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
-import org.quiltmc.qsl.command.api.client.QuiltClientCommandSource;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.quiltmc.qsl.command.api.client.QuiltClientCommandSource;
 
 @Mixin(ClientCommandSource.class)
 abstract class ClientCommandSourceMixin implements QuiltClientCommandSource {
@@ -41,7 +43,7 @@ abstract class ClientCommandSourceMixin implements QuiltClientCommandSource {
 	@Final
 	private MinecraftClient client;
 
-	@Unique private final Map<String, Object> meta = new HashMap<>();
+	@Unique private final Map<String, Object> meta = new Object2ObjectOpenHashMap<>();
 
 	@Override
 	public void sendFeedback(Text message) {

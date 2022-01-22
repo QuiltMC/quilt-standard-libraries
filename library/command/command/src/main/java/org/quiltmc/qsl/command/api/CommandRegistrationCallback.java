@@ -20,12 +20,13 @@ package org.quiltmc.qsl.command.api;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.server.command.ServerCommandSource;
 import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
 /**
  * Callback for registering server-side commands.
  */
 @FunctionalInterface
-public interface CommandRegistrationCallback {
+public interface CommandRegistrationCallback extends EventAwareListener {
 	/**
 	 * Event invoked when server-side commands are registered.
 	 */
@@ -38,9 +39,9 @@ public interface CommandRegistrationCallback {
 	/**
 	 * Called when server-side commands are registered.
 	 *
-	 * @param dispatcher the command dispatcher.
-	 * @param integrated whether commands intended for only the integrated server (i.e. singleplayer) should be registered.
-	 * @param dedicated whether commands intended for only the dedicated server should be registered.
+	 * @param dispatcher the command dispatcher
+	 * @param integrated whether commands intended for only the integrated server (i.e. singleplayer) should be registered
+	 * @param dedicated whether commands intended for only the dedicated server should be registered
 	 */
 	void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, boolean integrated, boolean dedicated);
 }

@@ -26,6 +26,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface HelpCommandAccessor {
 	@Accessor("FAILED_EXCEPTION")
 	static SimpleCommandExceptionType getFailedException() {
-		throw new AssertionError("mixin");
+		throw new AssertionError("Accessor injection failed.");
 	}
 }

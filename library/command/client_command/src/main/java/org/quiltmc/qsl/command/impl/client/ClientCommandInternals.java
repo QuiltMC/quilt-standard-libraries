@@ -17,6 +17,14 @@
 
 package org.quiltmc.qsl.command.impl.client;
 
+import static org.quiltmc.qsl.command.api.client.ClientCommandManager.DISPATCHER;
+import static org.quiltmc.qsl.command.api.client.ClientCommandManager.argument;
+import static org.quiltmc.qsl.command.api.client.ClientCommandManager.literal;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import com.google.common.collect.Iterables;
 import com.mojang.brigadier.AmbiguityConsumer;
 import com.mojang.brigadier.Command;
@@ -31,8 +39,14 @@ import com.mojang.brigadier.exceptions.BuiltInExceptionProvider;
 import com.mojang.brigadier.exceptions.CommandExceptionType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.command.CommandException;
@@ -41,21 +55,11 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.Texts;
 import net.minecraft.text.TranslatableText;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.ApiStatus;
+
 import org.quiltmc.qsl.command.api.client.ClientCommandManager;
 import org.quiltmc.qsl.command.api.client.ClientCommandRegistrationCallback;
 import org.quiltmc.qsl.command.api.client.QuiltClientCommandSource;
 import org.quiltmc.qsl.command.mixin.HelpCommandAccessor;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import static org.quiltmc.qsl.command.api.client.ClientCommandManager.*;
 
 @Environment(EnvType.CLIENT)
 @ApiStatus.Internal
@@ -69,10 +73,10 @@ public final class ClientCommandInternals {
 	/**
 	 * Executes a client-sided command from a message.
 	 *
-	 * @param 	message	the command message
+	 * @param  message the command message
 	 *
-	 * @return 	true if the message was executed as a command client-side (and therefore should not be sent to the
-	 * 			server), false otherwise
+	 * @return {@code true} if the message was executed as a command client-side (and therefore should not be sent to the
+	 *         server), {@code false} otherwise
 	 */
 	public static boolean executeCommand(String message) {
 		if (message.isEmpty()) {
@@ -131,10 +135,10 @@ public final class ClientCommandInternals {
 	 *
 	 * Used to work out whether a command in the main dispatcher is a dummy command added by {@link ClientCommandInternals#addDummyCommands(CommandDispatcher, QuiltClientCommandSource)}.
 	 *
-	 * @param parse the parse results to test.
-	 * @param <S> 	the command source type.
+	 * @param parse the parse results to test
+	 * @param <S>   the command source type
 	 *
-	 * @return true if the parse result is invalid or the command is a dummy, false otherwise.
+	 * @return {@code true} if the parse result is invalid or the command is a dummy, {@code false} otherwise
 	 */
 	public static <S extends CommandSource> boolean isCommandInvalidOrDummy(final ParseResults<S> parse) {
 		if (parse.getReader().canRead()) {
@@ -152,7 +156,7 @@ public final class ClientCommandInternals {
 	 * should be ignored and the message sent to the server.
 	 *
 	 * @param type the exception type
-	 * @return true if ignored, false otherwise
+	 * @return {@code true} if ignored, {@code false} otherwise
 	 */
 	private static boolean shouldIgnore(CommandExceptionType type) {
 		BuiltInExceptionProvider builtins = CommandSyntaxException.BUILT_IN_EXCEPTIONS;
@@ -267,7 +271,7 @@ public final class ClientCommandInternals {
 	private static int executeHelp(CommandNode<QuiltClientCommandSource> startNode, CommandContext<QuiltClientCommandSource> context) {
 		Map<CommandNode<QuiltClientCommandSource>, String> commands = DISPATCHER.getSmartUsage(startNode, context.getSource());
 
-		for (String command : commands.values()) {
+		for (var command : commands.values()) {
 			context.getSource().sendFeedback(new LiteralText(PREFIX + command));
 		}
 
@@ -282,7 +286,7 @@ public final class ClientCommandInternals {
 	 * @param source the command source - commands which the source cannot use are filtered out
 	 */
 	public static void addDummyCommands(CommandDispatcher<QuiltClientCommandSource> target, QuiltClientCommandSource source) {
-		Map<CommandNode<QuiltClientCommandSource>, CommandNode<QuiltClientCommandSource>> originalToCopy = new HashMap<>();
+		var originalToCopy = new Object2ObjectOpenHashMap<CommandNode<QuiltClientCommandSource>, CommandNode<QuiltClientCommandSource>>();
 		originalToCopy.put(DISPATCHER.getRoot(), target.getRoot());
 		copyChildren(DISPATCHER.getRoot(), target.getRoot(), source, originalToCopy);
 	}
