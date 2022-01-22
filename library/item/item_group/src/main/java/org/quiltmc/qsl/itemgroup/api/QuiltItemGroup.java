@@ -98,7 +98,8 @@ public final class QuiltItemGroup extends ItemGroup {
 	}
 
 	/**
-	 * Create a new {@link Builder}. Using the constructor allows for the use of the {@link Builder#icon(Supplier)} and {@link Builder#appendItems(Consumer)} methods.
+	 * Create a new {@link Builder}.
+	 * Using the constructor allows for the use of the {@link Builder#icon(Supplier)} and {@link Builder#appendItems(Consumer)} methods.
 	 * Manually setting the icon with {@link QuiltItemGroup#setIcon(ItemConvertible)} is possible after calling {@link Builder#build()}
 	 *
 	 * @param identifier the {@link Identifier} will become the name of the {@link ItemGroup} and will be used for the translation key
@@ -108,7 +109,8 @@ public final class QuiltItemGroup extends ItemGroup {
 	}
 
 	/**
-	 * This is a single method that creates an {@link ItemGroup} one call. This method should only be used when setting the icon with {@link QuiltItemGroup#setIcon(ItemConvertible)}.
+	 * This is a single method that creates an {@link ItemGroup} one call.
+	 * This method should only be used when setting the icon with {@link QuiltItemGroup#setIcon(ItemConvertible)}.
 	 *
 	 * @param identifier the identifier will become the name of the {@link ItemGroup} and will be used for the translation key
 	 * @return an instance of the created {@link ItemGroup}
@@ -120,7 +122,7 @@ public final class QuiltItemGroup extends ItemGroup {
 	/**
 	 * This is a single method that makes creating an {@link ItemGroup} with an icon one call.
 	 *
-	 * @param identifier    the identifier will become the name of the {@link ItemGroup} and will be used for the translation key
+	 * @param identifier   the identifier will become the name of the {@link ItemGroup} and will be used for the translation key
 	 * @param iconSupplier the supplier should return the {@link ItemStack} that you wish to show on the tab
 	 * @return an instance of the created {@link QuiltItemGroup}
 	 */
