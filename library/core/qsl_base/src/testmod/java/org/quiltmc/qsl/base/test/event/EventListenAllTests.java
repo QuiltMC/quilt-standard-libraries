@@ -16,8 +16,8 @@
 
 package org.quiltmc.qsl.base.test.event;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -27,7 +27,7 @@ import net.minecraft.item.Items;
 import org.quiltmc.qsl.base.api.event.Event;
 
 public final class EventListenAllTests implements Runnable, TestCallback, GenericTestCallback<Item> {
-	private static final Logger LOGGER = LogManager.getLogger();
+	private static final Logger LOGGER = LoggerFactory.getLogger(EventListenAllTests.class);
 
 	@Override
 	public void run() {

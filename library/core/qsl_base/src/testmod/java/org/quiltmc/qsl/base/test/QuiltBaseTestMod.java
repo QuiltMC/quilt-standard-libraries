@@ -19,14 +19,14 @@ package org.quiltmc.qsl.base.test;
 import java.util.List;
 
 import net.fabricmc.api.ModInitializer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.quiltmc.qsl.base.test.event.EventListenAllTests;
 import org.quiltmc.qsl.base.test.event.EventTests;
 
 public final class QuiltBaseTestMod implements ModInitializer {
-	private static final Logger LOGGER = LogManager.getLogger();
+	private static final Logger LOGGER = LoggerFactory.getLogger(QuiltBaseTestMod.class);
 
 	@Override
 	public void onInitialize() {

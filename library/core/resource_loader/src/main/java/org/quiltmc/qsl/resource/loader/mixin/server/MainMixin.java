@@ -53,7 +53,7 @@ public class MainMixin {
 			method = "main",
 			at = @At(
 					value = "INVOKE",
-					target = "Lorg/apache/logging/log4j/Logger;warn(Ljava/lang/String;Ljava/lang/Throwable;)V"
+					target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Throwable;)V"
 			),
 			index = 1,
 			remap = false

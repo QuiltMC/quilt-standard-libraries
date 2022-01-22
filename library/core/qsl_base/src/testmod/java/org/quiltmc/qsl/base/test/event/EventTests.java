@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 import net.minecraft.util.Identifier;
 

@@ -17,8 +17,8 @@
 package org.quiltmc.qsl.lifecycle.test.event;
 
 import net.fabricmc.api.ModInitializer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.minecraft.server.MinecraftServer;
 
@@ -32,7 +32,7 @@ public final class ServerLifecycleTests implements ModInitializer,
 		ServerLifecycleEvents.Starting, ServerLifecycleEvents.Ready,
 		ServerLifecycleEvents.Stopped, ServerLifecycleEvents.Stopping {
 	public static final ServerLifecycleTests TESTS = new ServerLifecycleTests();
-	public static final Logger LOGGER = LogManager.getLogger("LifecycleEventsTest");
+	public static final Logger LOGGER = LoggerFactory.getLogger("LifecycleEventsTest");
 
 	@Override
 	public void onInitialize() {

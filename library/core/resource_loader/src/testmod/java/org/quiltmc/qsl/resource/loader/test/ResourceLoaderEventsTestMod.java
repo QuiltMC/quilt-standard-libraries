@@ -16,9 +16,9 @@
 
 package org.quiltmc.qsl.resource.loader.test;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.minecraft.resource.ServerResourceManager;
 import net.minecraft.server.MinecraftServer;
@@ -27,7 +27,7 @@ import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 
 public class ResourceLoaderEventsTestMod implements ResourceLoaderEvents.StartDataPackReload,
 		ResourceLoaderEvents.EndDataPackReload {
-	private static final Logger LOGGER = LogManager.getLogger();
+	private static final Logger LOGGER = LoggerFactory.getLogger(ResourceLoaderEventsTestMod.class);
 
 	@Override
 	public void onStartDataPackReload(@Nullable MinecraftServer server, @Nullable ServerResourceManager oldResourceManager) {

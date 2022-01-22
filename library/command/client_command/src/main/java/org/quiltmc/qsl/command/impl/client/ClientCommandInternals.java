@@ -42,10 +42,9 @@ import com.mojang.brigadier.tree.CommandNode;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -64,7 +63,7 @@ import org.quiltmc.qsl.command.mixin.HelpCommandAccessor;
 @Environment(EnvType.CLIENT)
 @ApiStatus.Internal
 public final class ClientCommandInternals {
-	private static final Logger LOGGER = LogManager.getLogger();
+	private static final Logger LOGGER = LoggerFactory.getLogger(ClientCommandInternals.class);
 	private static final char PREFIX = '/';
 	private static final String API_COMMAND_NAME = "quilt_commands:client_commands";
 	private static final String SHORT_API_COMMAND_NAME = "qcc";
@@ -109,7 +108,12 @@ public final class ClientCommandInternals {
 			}
 		} catch (CommandSyntaxException e) {
 			boolean ignored = shouldIgnore(e.getType());
-			LOGGER.log(ignored ? Level.DEBUG : Level.WARN, "Syntax exception for client-side command '{}'", message, e);
+
+			if (ignored) {
+				LOGGER.debug("Syntax exception for client-side command '{}'", message, e);
+			} else {
+				LOGGER.warn("Syntax exception for client-side command '{}'", message, e);
+			}
 
 			if (ignored) {
 				return false;
