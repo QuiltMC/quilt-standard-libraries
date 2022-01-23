@@ -41,6 +41,7 @@ public class QslModuleExtension extends QslExtension {
 		this.moduleName.finalizeValueOnRead();
 		this.moduleDependencies = new ArrayList<>();
 		this.licenseHeader = new LicenseHeader(
+				LicenseHeader.Rule.fromFile(project.getRootProject().file("codeformat/COLONEL_MODIFIED_HEADER").toPath()),
 				LicenseHeader.Rule.fromFile(project.getRootProject().file("codeformat/FABRIC_MODIFIED_HEADER").toPath()),
 				LicenseHeader.Rule.fromFile(project.getRootProject().file("codeformat/HEADER").toPath())
 		);
