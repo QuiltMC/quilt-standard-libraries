@@ -16,18 +16,22 @@
 
 package org.quiltmc.qsl.command.api;
 
-import java.util.Map;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import it.unimi.dsi.fastutil.objects.Reference2ReferenceLinkedOpenHashMap;
 
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.serialize.ArgumentSerializer;
@@ -35,85 +39,100 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.TranslatableText;
 
-public final class EnumArgumentType<E extends Enum<E>> implements ArgumentType<E> {
-	public static final DynamicCommandExceptionType UNKNOWN_CONSTANT_NAME_EXCEPTION =
+public final class EnumArgumentType implements ArgumentType<String> {
+	public static final DynamicCommandExceptionType UNKNOWN_VALUE_EXCEPTION =
 			new DynamicCommandExceptionType(o -> new TranslatableText("quilt.argument.enum.unknownConstantName", o));
 
-	private static final Map<Class<? extends Enum<?>>, EnumArgumentType<?>> CACHE = new Reference2ReferenceLinkedOpenHashMap<>();
+	private final Set<String> values;
 
-	private final Class<? extends E> clazz;
-	private final E[] constants;
-	private final String[] constantNames;
-
-	private EnumArgumentType(Class<? extends E> clazz) {
-		this.clazz = clazz;
-
-		constants = clazz.getEnumConstants();
-		if (constants == null) {
-			throw new RuntimeException(clazz + " is not an enum (getEnumConstants() returned null)!");
-		}
-
-		constantNames = new String[constants.length];
-		for (int i = 0; i < constants.length; i++) {
-			constantNames[i] = constants[i].name();
+	public EnumArgumentType(String... values) {
+		this.values = new LinkedHashSet<>(values.length);
+		for (String value : values) {
+			this.values.add(value.toLowerCase(Locale.ROOT));
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <E extends Enum<E>> EnumArgumentType<E> enumConstant(Class<? extends E> enumClazz) {
-		return (EnumArgumentType<E>) CACHE.computeIfAbsent(enumClazz, EnumArgumentType::new);
+	// doesn't copy set, assumes all strings are already lowercase
+	private EnumArgumentType(Set<String> values, boolean dummy) {
+		this.values = values;
+	}
+
+	public static <E extends Enum<E>> EnumArgumentType enumConstant(Class<? extends E> enumClass) {
+		E[] constants = enumClass.getEnumConstants();
+		if (constants == null) {
+			throw new IllegalArgumentException(enumClass + " is not an enum class (getEnumConstants() returned null)");
+		}
+		Set<String> values = new LinkedHashSet<>(constants.length);
+		for (E constant : constants) {
+			values.add(constant.name().toLowerCase(Locale.ROOT));
+		}
+		return new EnumArgumentType(values, false);
 	}
 
 	public static <E extends Enum<E>> E getEnumConstant(CommandContext<ServerCommandSource> context,
-														String argumentName, Class<? extends E> enumClazz)
+														String argumentName, Class<? extends E> enumClass)
 			throws CommandSyntaxException {
-		return context.getArgument(argumentName, enumClazz);
-	}
-
-	@Override
-	public E parse(StringReader reader) throws CommandSyntaxException {
-		int cursor = reader.getCursor();
-		String name = reader.getString();
+		String value = context.getArgument(argumentName, String.class);
+		E[] constants = enumClass.getEnumConstants();
+		if (constants == null) {
+			throw new IllegalArgumentException(enumClass + " is not an enum class (getEnumConstants() returned null)");
+		}
 		for (var constant : constants) {
-			if (constant.name().equalsIgnoreCase(name)) {
+			if (constant.name().equalsIgnoreCase(value)) {
 				return constant;
 			}
 		}
+		throw UNKNOWN_VALUE_EXCEPTION.create(argumentName);
+	}
+
+	@Override
+	public String parse(StringReader reader) throws CommandSyntaxException {
+		int cursor = reader.getCursor();
+		String value = reader.getString().toLowerCase(Locale.ROOT);
+		if (values.contains(value)) {
+			return value;
+		}
 		reader.setCursor(cursor);
-		throw UNKNOWN_CONSTANT_NAME_EXCEPTION.createWithContext(reader, name);
+		throw UNKNOWN_VALUE_EXCEPTION.createWithContext(reader, value);
 	}
 
 	@Override
 	public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-		return CommandSource.suggestMatching(constantNames, builder);
+		return CommandSource.suggestMatching(values, builder);
 	}
 
-	// FIXME this is a horrible, horrible idea...
-	public static final class Serializer implements ArgumentSerializer<EnumArgumentType<?>> {
-		@Override
-		public void toPacket(EnumArgumentType<?> type, PacketByteBuf buf) {
-			buf.writeString(type.clazz.getName());
-		}
+	@Override
+	public Collection<String> getExamples() {
+		return StringArgumentType.StringType.SINGLE_WORD.getExamples();
+	}
 
-		@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static final class Serializer implements ArgumentSerializer<EnumArgumentType> {
 		@Override
-		public EnumArgumentType<?> fromPacket(PacketByteBuf buf) {
-			String className = buf.readString();
-			Class<?> clazz;
-			try {
-				clazz = Class.forName(className);
-			} catch (ClassNotFoundException e) {
-				throw new RuntimeException("Failed to find enum class", e);
+		public void toPacket(EnumArgumentType type, PacketByteBuf buf) {
+			buf.writeVarInt(type.values.size());
+			for (var value : type.values) {
+				buf.writeString(value);
 			}
-			if (!clazz.isEnum()) {
-				throw new RuntimeException("Class \"" + clazz + "\" is not an enum class");
-			}
-			return enumConstant((Class) clazz);
 		}
 
 		@Override
-		public void toJson(EnumArgumentType<?> type, JsonObject json) {
-			json.addProperty("className", type.clazz.getName());
+		public EnumArgumentType fromPacket(PacketByteBuf buf) {
+			int size = buf.readVarInt();
+			Set<String> values = new LinkedHashSet<>(size);
+			for (int i = 0; i < size; i++) {
+				// note: no lowercase conversion here, since values are already written in lowercase
+				values.add(buf.readString());
+			}
+			return new EnumArgumentType(values, false);
+		}
+
+		@Override
+		public void toJson(EnumArgumentType type, JsonObject json) {
+			var valuesArr = new JsonArray();
+			for (var value : type.values) {
+				valuesArr.add(value);
+			}
+			json.add("values", valuesArr);
 		}
 	}
 }
