@@ -35,7 +35,7 @@ public interface PacketSender {
 	/**
 	 * Makes a packet for a channel.
 	 *
-	 * @param channelName the id of the channel
+	 * @param channelName the identifier of the channel
 	 * @param buf     the content of the packet
 	 */
 	Packet<?> createPacket(Identifier channelName, PacketByteBuf buf);
@@ -58,7 +58,7 @@ public interface PacketSender {
 	/**
 	 * Sends a packet to a channel.
 	 *
-	 * @param channel the id of the channel
+	 * @param channel the identifier of the channel
 	 * @param buf the content of the packet
 	 */
 	default void sendPacket(Identifier channel, PacketByteBuf buf) {
@@ -71,7 +71,7 @@ public interface PacketSender {
 	/**
 	 * Sends a packet to a channel.
 	 *
-	 * @param channel  the id of the channel
+	 * @param channel  the identifier of the channel
 	 * @param buf the content of the packet
 	 * @param callback an optional callback to execute after the packet is sent, may be {@code null}
 	 */

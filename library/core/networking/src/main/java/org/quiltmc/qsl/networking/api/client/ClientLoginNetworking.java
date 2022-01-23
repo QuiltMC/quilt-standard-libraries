@@ -53,9 +53,9 @@ public final class ClientLoginNetworking {
 	 * <p>If a handler is already registered to the {@code channel}, this method will return {@code false}, and no change will be made.
 	 * Use {@link #unregisterGlobalReceiver(Identifier)} to unregister the existing handler.
 	 *
-	 * @param channelName the id of the channel
+	 * @param channelName the identifier of the channel
 	 * @param queryHandler the handler
-	 * @return false if a handler is already registered to the channel
+	 * @return {@code false} if a handler is already registered to the channel, otherwise {@code true}
 	 * @see ClientLoginNetworking#unregisterGlobalReceiver(Identifier)
 	 * @see ClientLoginNetworking#registerReceiver(Identifier, LoginQueryRequestHandler)
 	 */
@@ -69,7 +69,7 @@ public final class ClientLoginNetworking {
 	 *
 	 * <p>The {@code channel} is guaranteed not to have a handler after this call.
 	 *
-	 * @param channelName the id of the channel
+	 * @param channelName the identifier of the channel
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel
 	 * @see ClientLoginNetworking#registerGlobalReceiver(Identifier, LoginQueryRequestHandler)
 	 * @see ClientLoginNetworking#unregisterReceiver(Identifier)
@@ -83,7 +83,7 @@ public final class ClientLoginNetworking {
 	 * Gets all query request channel names which global receivers are registered for.
 	 * A global receiver is registered to all connections, in the present and future.
 	 *
-	 * @return all channel names which global receivers are registered for.
+	 * @return all channel names which global receivers are registered for
 	 */
 	public static Set<Identifier> getGlobalReceivers() {
 		return ClientNetworkingImpl.LOGIN.getChannels();
@@ -95,9 +95,9 @@ public final class ClientLoginNetworking {
 	 * <p>If a handler is already registered to the {@code channelName}, this method will return {@code false}, and no change will be made.
 	 * Use {@link #unregisterReceiver(Identifier)} to unregister the existing handler.
 	 *
-	 * @param channelName the id of the channel
+	 * @param channelName the identifier of the channel
 	 * @param queryHandler the handler
-	 * @return false if a handler is already registered to the channel name
+	 * @return {@code false} if a handler is already registered to the channel name, otherwise {@code true}
 	 * @throws IllegalStateException if the client is not logging in
 	 */
 	public static boolean registerReceiver(Identifier channelName, LoginQueryRequestHandler queryHandler) throws IllegalStateException {
@@ -119,7 +119,7 @@ public final class ClientLoginNetworking {
 	 *
 	 * <p>The {@code channelName} is guaranteed not to have a handler after this call.
 	 *
-	 * @param channelName the id of the channel
+	 * @param channelName the identifier of the channel
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel name
 	 * @throws IllegalStateException if the client is not logging in
 	 */
