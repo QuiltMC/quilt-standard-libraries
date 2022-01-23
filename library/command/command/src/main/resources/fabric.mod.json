@@ -20,6 +20,11 @@
     "quilt_base": "*"
   },
   "description": "Quilt APIs relating to commands.",
+  "entrypoints": {
+    "preLaunch": [
+      "org.quiltmc.qsl.command.impl.PreLaunchInitializer"
+    ]
+  },
   "mixins": [
     "quilt_command.mixins.json"
   ],
