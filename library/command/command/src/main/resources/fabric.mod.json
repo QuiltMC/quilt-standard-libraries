@@ -23,6 +23,9 @@
   "entrypoints": {
     "preLaunch": [
       "org.quiltmc.qsl.command.impl.PreLaunchInitializer"
+    ],
+    "main": [
+      "org.quiltmc.qsl.command.impl.Initializer"
     ]
   },
   "mixins": [
