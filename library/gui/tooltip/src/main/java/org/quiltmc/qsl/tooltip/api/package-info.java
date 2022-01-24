@@ -10,8 +10,8 @@
  *     <li>{@link net.minecraft.client.item.TooltipData} which will hold information about the tooltip, exist on both sides;</li>
  *     <li>{@link net.minecraft.client.gui.tooltip.TooltipComponent} which will do the rendering of the tooltip, only exist on the client.</li>
  * </ul>
- * An item can return a custom tooltip data with its method {@link net.minecraft.item.Item#getTooltipData(net.minecraft.item.ItemStack)}.
- * The issue is the conversion from the tooltip data to the tooltip component, the tooltip data is not aware of a conversion mechanism.
+ * An item can return a custom tooltip data by overriding the method {@link net.minecraft.item.Item#getTooltipData(net.minecraft.item.ItemStack)}.
+ * However, there is no method in Vanilla to convert custom tooltip data into a component.
  * <p>
  * Thus this API introduces:
  * <ul>

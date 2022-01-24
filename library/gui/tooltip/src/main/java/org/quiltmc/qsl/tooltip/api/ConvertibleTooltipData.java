@@ -30,13 +30,13 @@ import org.quiltmc.qsl.tooltip.impl.client.QuiltClientTooltipMod;
  * it will use the {@link org.quiltmc.qsl.tooltip.api.client.TooltipComponentCallback} event with the phase {@link #EVENT_PHASE}.
  * <p>
  * <b>WARNING:</b> when implementing this interface,
- * make sure to annotate the implement {@link #toComponent()} with {@code @Environment(EnvType.CLIENT)}.
+ * make sure to annotate the implemented method {@link #toComponent()} with {@code @Environment(EnvType.CLIENT)}.
  */
 public interface ConvertibleTooltipData extends TooltipData {
 	/**
 	 * Represents the event phase {@code quilt_tooltip:convertible_tooltip_data}
-	 * which is used when converting this tooltip data to a {@link TooltipComponent},
-	 * it runs after the {@link org.quiltmc.qsl.base.api.event.Event#DEFAULT_PHASE}
+	 * which is used when converting this tooltip data to a {@link TooltipComponent}.
+	 * It runs after the {@link org.quiltmc.qsl.base.api.event.Event#DEFAULT_PHASE}
 	 * in {@link org.quiltmc.qsl.tooltip.api.client.TooltipComponentCallback}, allowing listeners of the default phase of the event to
 	 * override behavior from this interface if needed.
 	 */
