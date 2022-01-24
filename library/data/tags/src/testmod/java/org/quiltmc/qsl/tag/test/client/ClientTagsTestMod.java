@@ -17,24 +17,22 @@
 package org.quiltmc.qsl.tag.test.client;
 
 import net.fabricmc.api.ClientModInitializer;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.Item;
 import net.minecraft.tag.Tag;
-import net.minecraft.text.LiteralText;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
+import net.minecraft.text.Text;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-
 import org.quiltmc.qsl.lifecycle.api.client.event.ClientWorldTickEvents;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
 import org.quiltmc.qsl.tag.api.TagRegistry;
 import org.quiltmc.qsl.tag.api.TagType;
 import org.quiltmc.qsl.tag.test.TagsTestMod;
+
+import java.util.function.Consumer;
 
 public final class ClientTagsTestMod implements ClientModInitializer {
 	public static final Tag.Identified<Block> TEST_CLIENT_BLOCK_TAG = TagRegistry.BLOCK.create(
@@ -47,6 +45,7 @@ public final class ClientTagsTestMod implements ClientModInitializer {
 			TagsTestMod.id("default_item_tag"), TagType.CLIENT_FALLBACK
 	);
 
+	private static final Consumer<Text> FEEDBACK_CONSUMER = msg -> MinecraftClient.getInstance().player.sendMessage(msg, false);
 	private World lastWorld;
 
 	@Override
@@ -56,23 +55,13 @@ public final class ClientTagsTestMod implements ClientModInitializer {
 
 		ClientWorldTickEvents.START.register((client, world) -> {
 			if (this.lastWorld != world) {
-				displayTag(client, TEST_CLIENT_BLOCK_TAG, Registry.BLOCK);
-				displayTag(client, TEST_CLIENT_BIOME_TAG, client.world.getRegistryManager().get(Registry.BIOME_KEY));
-				displayTag(client, TEST_DEFAULT_ITEM_TAG, Registry.ITEM);
+				TagsTestMod.displayTag(TEST_CLIENT_BLOCK_TAG, Registry.BLOCK, FEEDBACK_CONSUMER);
+				TagsTestMod.displayTag(TEST_CLIENT_BIOME_TAG, client.world.getRegistryManager().get(Registry.BIOME_KEY),
+						FEEDBACK_CONSUMER);
+				TagsTestMod.displayTag(TEST_DEFAULT_ITEM_TAG, Registry.ITEM, FEEDBACK_CONSUMER);
 
 				this.lastWorld = world;
 			}
 		});
-	}
-
-	private static <T> void displayTag(MinecraftClient client, Tag.Identified<T> tag, Registry<T> registry) {
-		client.player.sendMessage(new LiteralText(tag.getId() + ":").formatted(Formatting.GREEN),
-				false);
-		for (var value : tag.values()) {
-			Identifier id = registry.getId(value);
-			client.player.sendMessage(new LiteralText(" - ")
-							.append(new LiteralText(id.toString()).formatted(Formatting.GOLD)),
-					false);
-		}
 	}
 }
