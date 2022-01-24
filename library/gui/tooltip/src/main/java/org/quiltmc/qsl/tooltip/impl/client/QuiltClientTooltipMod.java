@@ -47,7 +47,8 @@ public final class QuiltClientTooltipMod implements TooltipComponentCallback {
 	}
 
 	static {
-		// We make the convertible tooltip data run before the usual tooltip data conversion listeners to allow overriding through events.
-		TooltipComponentCallback.EVENT.addPhaseOrdering(ConvertibleTooltipData.EVENT_PHASE, Event.DEFAULT_PHASE);
+		// We make the convertible tooltip data runs after the usual tooltip data conversion listeners to allow overriding through events.
+		// (Whoever returns first a tooltip component wins.)
+		TooltipComponentCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, ConvertibleTooltipData.EVENT_PHASE);
 	}
 }
