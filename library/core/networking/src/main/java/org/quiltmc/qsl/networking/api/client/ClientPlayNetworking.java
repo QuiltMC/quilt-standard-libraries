@@ -54,9 +54,9 @@ public final class ClientPlayNetworking {
 	 * <p>If a handler is already registered to the {@code channel}, this method will return {@code false}, and no change will be made.
 	 * Use {@link #unregisterGlobalReceiver(Identifier)} to unregister the existing handler.
 	 *
-	 * @param channelName the id of the channel
+	 * @param channelName the identifier of the channel
 	 * @param channelHandler the handler
-	 * @return false if a handler is already registered to the channel
+	 * @return {@code false} if a handler is already registered to the channel, otherwise {@code true}
 	 * @see ClientPlayNetworking#unregisterGlobalReceiver(Identifier)
 	 * @see ClientPlayNetworking#registerReceiver(Identifier, PlayChannelReceiver)
 	 */
@@ -70,7 +70,7 @@ public final class ClientPlayNetworking {
 	 *
 	 * <p>The {@code channel} is guaranteed not to have a handler after this call.
 	 *
-	 * @param channelName the id of the channel
+	 * @param channelName the identifier of the channel
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel
 	 * @see ClientPlayNetworking#registerGlobalReceiver(Identifier, PlayChannelReceiver)
 	 * @see ClientPlayNetworking#unregisterReceiver(Identifier)
@@ -84,7 +84,7 @@ public final class ClientPlayNetworking {
 	 * Gets all channel names which global receivers are registered for.
 	 * A global receiver is registered to all connections, in the present and future.
 	 *
-	 * @return all channel names which global receivers are registered for.
+	 * @return all channel names which global receivers are registered for
 	 */
 	public static Set<Identifier> getGlobalReceivers() {
 		return ClientNetworkingImpl.PLAY.getChannels();
@@ -99,8 +99,8 @@ public final class ClientPlayNetworking {
 	 * <p>For example, if you only register a receiver using this method when a {@linkplain ClientLoginNetworking#registerGlobalReceiver(Identifier, ClientLoginNetworking.LoginQueryRequestHandler)}
 	 * login query has been received, you should use {@link ClientPlayConnectionEvents#INIT} to register the channel handler.
 	 *
-	 * @param channelName the id of the channel
-	 * @return false if a handler is already registered to the channel
+	 * @param channelName the identifier of the channel
+	 * @return {@code false} if a handler is already registered to the channel, otherwise {@code true}
 	 * @throws IllegalStateException if the client is not connected to a server
 	 * @see ClientPlayConnectionEvents#INIT
 	 */
@@ -119,7 +119,7 @@ public final class ClientPlayNetworking {
 	 *
 	 * <p>The {@code channelName} is guaranteed not to have a handler after this call.
 	 *
-	 * @param channelName the id of the channel
+	 * @param channelName the identifier of the channel
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel
 	 * @throws IllegalStateException if the client is not connected to a server
 	 */
@@ -137,7 +137,7 @@ public final class ClientPlayNetworking {
 	/**
 	 * Gets all the channel names that the client can receive packets on.
 	 *
-	 * @return All the channel names that the client can receive packets on
+	 * @return all the channel names that the client can receive packets on
 	 * @throws IllegalStateException if the client is not connected to a server
 	 */
 	public static Set<Identifier> getReceived() throws IllegalStateException {
@@ -153,7 +153,7 @@ public final class ClientPlayNetworking {
 	/**
 	 * Gets all channel names that the connected server declared the ability to receive a packets on.
 	 *
-	 * @return All the channel names the connected server declared the ability to receive a packets on
+	 * @return all the channel names the connected server declared the ability to receive a packets on
 	 * @throws IllegalStateException if the client is not connected to a server
 	 */
 	public static Set<Identifier> getSendable() throws IllegalStateException {
@@ -170,8 +170,7 @@ public final class ClientPlayNetworking {
 	 * Checks if the connected server declared the ability to receive a packet on a specified channel name.
 	 *
 	 * @param channelName the channel name
-	 * @return True if the connected server has declared the ability to receive a packet on the specified channel.
-	 * False if the client is not in game.
+	 * @return {@code true} if the connected server has declared the ability to receive a packet on the specified channel, otherwise {@code false}
 	 */
 	public static boolean canSend(Identifier channelName) throws IllegalArgumentException {
 		// You cant send without a client player, so this is fine

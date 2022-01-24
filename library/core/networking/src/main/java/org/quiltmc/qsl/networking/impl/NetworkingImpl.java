@@ -38,20 +38,20 @@ public final class NetworkingImpl {
 	public static final String MOD_ID = "quilt_networking";
 	public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 	/**
-	 * Id of packet used to register supported channels.
+	 * Identifier of packet used to register supported channels.
 	 */
 	public static final Identifier REGISTER_CHANNEL = new Identifier("minecraft", "register");
 	/**
-	 * Id of packet used to unregister supported channels.
+	 * Identifier of packet used to unregister supported channels.
 	 */
 	public static final Identifier UNREGISTER_CHANNEL = new Identifier("minecraft", "unregister");
 	/**
-	 * Id of the packet used to declare all currently supported channels.
+	 * Identifier of the packet used to declare all currently supported channels.
 	 * Dynamic registration of supported channels is still allowed using {@link NetworkingImpl#REGISTER_CHANNEL} and {@link NetworkingImpl#UNREGISTER_CHANNEL}.
 	 */
 	public static final Identifier EARLY_REGISTRATION_CHANNEL = new Identifier(MOD_ID, "early_registration");
 	/**
-	 * Id of the packet used to declare all currently supported channels.
+	 * Identifier of the packet used to declare all currently supported channels.
 	 * Dynamic registration of supported channels is still allowed using {@link NetworkingImpl#REGISTER_CHANNEL} and {@link NetworkingImpl#UNREGISTER_CHANNEL}.
 	 *
 	 * <p>Since our early registration packet does not differ from fabric's, we can support both.
