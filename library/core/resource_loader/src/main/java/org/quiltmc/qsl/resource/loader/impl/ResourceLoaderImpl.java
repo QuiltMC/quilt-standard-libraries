@@ -37,10 +37,10 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.minecraft.resource.AbstractFileResourcePack;
 import net.minecraft.resource.DefaultResourcePack;
@@ -66,7 +66,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	private static final Map<ResourceType, ResourceLoaderImpl> IMPL_MAP = new EnumMap<>(ResourceType.class);
 	private static final Map<String, ModNioResourcePack> CLIENT_BUILTIN_RESOURCE_PACKS = new Object2ObjectOpenHashMap<>();
 	private static final Map<String, ModNioResourcePack> SERVER_BUILTIN_RESOURCE_PACKS = new Object2ObjectOpenHashMap<>();
-	private static final Logger LOGGER = LogManager.getLogger();
+	private static final Logger LOGGER = LoggerFactory.getLogger("ResourceLoader");
 
 	private final Set<Identifier> addedListenerIds = new HashSet<>();
 	private final Set<IdentifiableResourceReloader> addedReloaders = new LinkedHashSet<>();
@@ -167,6 +167,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 
 	public static ModNioResourcePack locateAndLoadDefaultResourcePack(ResourceType type) {
 		return new ModNioResourcePack(
+				"Default",
 				FabricLoader.getInstance().getModContainer("minecraft").map(ModContainer::getMetadata).orElseThrow(),
 				locateDefaultResourcePack(type),
 				type,
@@ -203,7 +204,8 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 				path = childPath;
 			}
 
-			var pack = new ModNioResourcePack(container.getMetadata(), path, type, null, ResourcePackActivationType.ALWAYS_ENABLED);
+			var pack = new ModNioResourcePack(null, container.getMetadata(), path, type, null,
+					ResourcePackActivationType.ALWAYS_ENABLED);
 
 			if (!pack.getNamespaces(type).isEmpty()) {
 				packs.add(pack);
@@ -231,7 +233,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	}
 
 	public static void appendResourcesFromGroup(NamespaceResourceManagerAccessor manager, Identifier id,
-												GroupResourcePack groupResourcePack, List<Resource> resources)
+	                                            GroupResourcePack groupResourcePack, List<Resource> resources)
 			throws IOException {
 		var packs = groupResourcePack.getPacks(id.getNamespace());
 
@@ -264,7 +266,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	 * @see ResourceLoader#registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType)
 	 */
 	public static boolean registerBuiltinResourcePack(Identifier id, String subPath, ModContainer container,
-													  ResourcePackActivationType activationType) {
+	                                                  ResourcePackActivationType activationType) {
 		String separator = container.getRootPath().getFileSystem().getSeparator();
 		subPath = subPath.replace("/", separator);
 
@@ -301,17 +303,12 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	}
 
 	private static ModNioResourcePack newBuiltinResourcePack(ModContainer container, String name, Path resourcePackPath,
-															 ResourceType type, ResourcePackActivationType activationType) {
-		return new ModNioResourcePack(container.getMetadata(), resourcePackPath, type, null, activationType) {
-			@Override
-			public String getName() {
-				return name; // Built-in resource pack provided by a mod, the name is overriden.
-			}
-		};
+	                                                         ResourceType type, ResourcePackActivationType activationType) {
+		return new ModNioResourcePack(name, container.getMetadata(), resourcePackPath, type, null, activationType);
 	}
 
 	public static void registerBuiltinResourcePacks(ResourceType type, Consumer<ResourcePackProfile> profileAdder,
-													ResourcePackProfile.Factory factory) {
+	                                                ResourcePackProfile.Factory factory) {
 		var builtinPacks = type == ResourceType.CLIENT_RESOURCES
 				? CLIENT_BUILTIN_RESOURCE_PACKS : SERVER_BUILTIN_RESOURCE_PACKS;
 

@@ -23,8 +23,6 @@
     ]
   },
   "depends": {
-    "fabricloader": ">=0.12",
-    "minecraft": ">=1.18.1",
     "quilt_base": ">=1.0.0",
     "quilt_lifecycle_events": ">=1.0.0"
   },

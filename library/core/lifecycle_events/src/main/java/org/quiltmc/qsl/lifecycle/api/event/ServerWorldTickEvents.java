@@ -20,6 +20,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 
 import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
 /**
  * Events related to a ticking Minecraft server's worlds.
@@ -57,7 +58,7 @@ public final class ServerWorldTickEvents {
 	 * @see #START
 	 */
 	@FunctionalInterface
-	public interface Start {
+	public interface Start extends EventAwareListener {
 		/**
 		 * Called before a world is ticked.
 		 *
@@ -73,7 +74,7 @@ public final class ServerWorldTickEvents {
 	 * @see #END
 	 */
 	@FunctionalInterface
-	public interface End {
+	public interface End extends EventAwareListener {
 		/**
 		 * Called after a world is ticked.
 		 *

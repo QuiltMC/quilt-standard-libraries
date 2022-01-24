@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 
 package org.quiltmc.qsl.base.impl;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.minecraft.util.Identifier;
 
@@ -26,7 +26,7 @@ import org.quiltmc.qsl.base.api.event.Event;
 
 @ApiStatus.Internal
 public final class QuiltBaseImpl {
-	public static final Logger LOGGER = LogManager.getLogger("quilt_base");
+	public static final Logger LOGGER = LoggerFactory.getLogger("quilt_base");
 	/**
 	 * Represents the number of ticks before an auto test server audits mixins and shutdowns.
 	 * <p>

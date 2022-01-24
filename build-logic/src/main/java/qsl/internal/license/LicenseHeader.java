@@ -80,7 +80,7 @@ public class LicenseHeader {
 
 	private static Pattern getValidator(String headerFormat) {
 		String pattern = escapeRegexControl(headerFormat)
-				.replace(YEAR_KEY, "(\\d{4}(, \\d{4})*)");
+				.replace(YEAR_KEY, "(\\d{4}(-\\d{4})?)");
 		var lineSeparator = getLineSeparator(headerFormat);
 		String[] lines = getHeaderLines(pattern.split(lineSeparator));
 		var patternBuilder = new StringBuilder("\\/\\*" + lineSeparator);
@@ -283,8 +283,8 @@ public class LicenseHeader {
 
 			var matcher = this.validator.matcher(source);
 
-			if (matcher.matches()) {
-				String[] serializedYears = matcher.group(1).split("\n");
+			if (matcher.find()) {
+				String[] serializedYears = matcher.group(1).split("-");
 
 				int min = -1;
 				for (var serializedYear : serializedYears) {
@@ -301,7 +301,7 @@ public class LicenseHeader {
 
 				if (min == -1) {
 					return String.valueOf(lastModifiedYear);
-				} else {
+				} else if (min != lastModifiedYear) {
 					return min + "-" + lastModifiedYear;
 				}
 			}
