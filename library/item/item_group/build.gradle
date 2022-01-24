@@ -1,0 +1,13 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "item_group"
+	version = "1.0.0"
+	library = "item"
+	coreDependencies([
+			"qsl_base",
+			"resource_loader"
+	])
+}

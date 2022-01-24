@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "id": "quilt_client_command",
-  "name": "Quilt Client Command API",
+  "id": "quilt_item_group",
+  "name": "Quilt Item Group API",
   "version": "${version}",
-  "environment": "client",
+  "environment": "*",
   "license": "Apache-2.0",
-  "icon": "assets/quilt_client_command/icon.png",
+  "icon": "assets/quilt_item_group/icon.png",
   "contact": {
     "homepage": "https://quiltmc.org",
     "issues": "https://github.com/QuiltMC/quilt-standard-libraries/issues",
@@ -15,13 +15,14 @@
     "QuiltMC"
   ],
   "depends": {
-    "fabricloader": ">=0.12",
     "minecraft": ">=1.18.2-alpha.22.3.a",
-    "quilt_base": "*"
+    "quilt_base": "*",
+    "quilt_resource_loader": "*",
+    "fabricloader": ">=0.12"
   },
-  "description": "Quilt APIs relating to client commands.",
+  "description": "An API for adding Item Groups to Minecraft, allowing for custom icon display stacks, delayed icon registration, and adding custom stacks to the groups contents. This API also adds the GUI elements that allow for the multiple pages of item groups that can occur",
   "mixins": [
-    "quilt_client_command.mixins.json"
+    "quilt_item_group.mixins.json"
   ],
   "custom": {
     "modmenu": {
@@ -32,7 +33,7 @@
         "id": "qsl",
         "name": "Quilt Standard Libraries",
         "description": "A set of libraries to assist in making Quilt mods.",
-        "icon": "assets/quilt_client_command/icon.png",
+        "icon": "assets/quilt_item_group/icon.png",
         "badges": [
           "library"
         ]

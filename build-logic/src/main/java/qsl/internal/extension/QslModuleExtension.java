@@ -1,13 +1,5 @@
 package qsl.internal.extension;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import javax.inject.Inject;
-
 import groovy.util.Node;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
@@ -24,6 +16,9 @@ import qsl.internal.json.ModJsonObject;
 import qsl.internal.license.LicenseHeader;
 import qsl.internal.task.ApplyLicenseTask;
 import qsl.internal.task.CheckLicenseTask;
+
+import javax.inject.Inject;
+import java.util.*;
 
 public class QslModuleExtension extends QslExtension {
 	private final Property<String> library;
@@ -92,17 +87,31 @@ public class QslModuleExtension extends QslExtension {
 		}
 	}
 
-	public void interLibraryDependencies(Iterable<String> dependencies) {
-		String library = this.getLibrary().get();
+	public void intraLibraryDependencies(Iterable<String> dependencies) {
+		this.addIntraLibraryDependencies(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME, dependencies);
+	}
 
+	public void intraLibraryTestmodDependencies(Iterable<String> dependencies) {
+		this.addIntraLibraryDependencies("testmodImplementation", dependencies);
+	}
+
+	private void addIntraLibraryDependencies(String configuration, Iterable<String> dependencies) {
+		String library = this.getLibrary().get();
+	}
+
+	public void interLibraryTestmodDependencies(String library, Iterable<String> dependencies) {
+		this.addInterLibraryDependencies("testmodImplementation", library, dependencies);
+	}
+
+	private void addInterLibraryDependencies(String configuration, String library, Iterable<String> dependencies) {
 		for (String dependency : dependencies) {
-			Map<String, String> map = new LinkedHashMap<>(2);
+			var map = new LinkedHashMap<String, String>(2);
 			map.put("path", ":" + library + ":" + dependency);
 			map.put("configuration", "dev");
 
 			Dependency project = this.project.getDependencies().project(map);
 			this.moduleDependencies.add(project);
-			this.project.getDependencies().add(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME, project);
+			this.project.getDependencies().add(configuration, project);
 		}
 	}
 
