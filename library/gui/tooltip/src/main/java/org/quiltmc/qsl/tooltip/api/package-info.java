@@ -5,10 +5,10 @@
  * <h3>What are the tooltip APIs?</h3>
  * With Minecraft 1.17, a new system has been introduced through the {@link net.minecraft.item.BundleItem}: custom tooltip components.
  * <p>
- * Those tooltip components are done using mainly two classes:
+ * Those tooltip components are created using mainly two classes:
  * <ul>
- *     <li>{@link net.minecraft.client.item.TooltipData} which will hold information about the tooltip, exist on both sides;</li>
- *     <li>{@link net.minecraft.client.gui.tooltip.TooltipComponent} which will do the rendering of the tooltip, only exist on the client.</li>
+ *     <li>{@link net.minecraft.client.item.TooltipData} which will hold information about the tooltip, exists on both sides;</li>
+ *     <li>{@link net.minecraft.client.gui.tooltip.TooltipComponent} which will do the rendering of the tooltip, only exists on the client.</li>
  * </ul>
  * An item can return a custom tooltip data by overriding the method {@link net.minecraft.item.Item#getTooltipData(net.minecraft.item.ItemStack)}.
  * However, there is no method in Vanilla to convert custom tooltip data into a component.
