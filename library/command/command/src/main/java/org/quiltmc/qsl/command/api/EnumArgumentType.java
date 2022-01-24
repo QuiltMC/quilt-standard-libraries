@@ -48,7 +48,10 @@ public final class EnumArgumentType implements ArgumentType<String> {
 	public EnumArgumentType(String... values) {
 		this.values = new LinkedHashSet<>(values.length);
 		for (String value : values) {
-			this.values.add(value.toLowerCase(Locale.ROOT));
+			var valueLC = value.toLowerCase(Locale.ROOT);
+			if (!this.values.add(valueLC)) {
+				throw new IllegalArgumentException("Duplicate value \"%s\" (after converting to lowercase)".formatted(valueLC));
+			}
 		}
 	}
 
@@ -60,11 +63,15 @@ public final class EnumArgumentType implements ArgumentType<String> {
 	public static <E extends Enum<E>> EnumArgumentType enumConstant(Class<? extends E> enumClass) {
 		E[] constants = enumClass.getEnumConstants();
 		if (constants == null) {
-			throw new IllegalArgumentException(enumClass + " is not an enum class (getEnumConstants() returned null)");
+			throw new IllegalArgumentException("%s is not an enum class (getEnumConstants() returned null)".formatted(enumClass));
 		}
 		Set<String> values = new LinkedHashSet<>(constants.length);
 		for (E constant : constants) {
-			values.add(constant.name().toLowerCase(Locale.ROOT));
+			var constNameLC = constant.name().toLowerCase(Locale.ROOT);
+			if (!values.add(constNameLC)) {
+				throw new IllegalArgumentException(("%s contains 2 constants with the same name after converting to lowercase " +
+						"(\"%s\")").formatted(enumClass, constNameLC));
+			}
 		}
 		return new EnumArgumentType(values, false);
 	}
@@ -109,20 +116,12 @@ public final class EnumArgumentType implements ArgumentType<String> {
 	public static final class Serializer implements ArgumentSerializer<EnumArgumentType> {
 		@Override
 		public void toPacket(EnumArgumentType type, PacketByteBuf buf) {
-			buf.writeVarInt(type.values.size());
-			for (var value : type.values) {
-				buf.writeString(value);
-			}
+			buf.writeCollection(type.values, PacketByteBuf::writeString);
 		}
 
 		@Override
 		public EnumArgumentType fromPacket(PacketByteBuf buf) {
-			int size = buf.readVarInt();
-			Set<String> values = new LinkedHashSet<>(size);
-			for (int i = 0; i < size; i++) {
-				// note: no lowercase conversion here, since values are already written in lowercase
-				values.add(buf.readString());
-			}
+			Set<String> values = buf.readCollection(LinkedHashSet::new, PacketByteBuf::readString);
 			return new EnumArgumentType(values, false);
 		}
 
