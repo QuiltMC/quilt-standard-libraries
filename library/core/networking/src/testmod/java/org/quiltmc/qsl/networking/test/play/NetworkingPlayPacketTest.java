@@ -31,7 +31,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 
 import net.fabricmc.api.ModInitializer;
-//import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.networking.test.NetworkingTestmods;
@@ -61,8 +61,8 @@ public final class NetworkingPlayPacketTest implements ModInitializer {
 		NetworkingTestmods.LOGGER.info("Hello from networking user!");
 		// TODO: Test pending other APIs
 
-//		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
-//			NetworkingPlayPacketTest.registerCommand(dispatcher);
-//		});
+		CommandRegistrationCallback.EVENT.register((dispatcher, integrated, dedicated) -> {
+			NetworkingPlayPacketTest.registerCommand(dispatcher);
+		});
 	}
 }

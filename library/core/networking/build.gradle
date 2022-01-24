@@ -10,4 +10,7 @@ qslModule {
 			"qsl_base",
 			"lifecycle_events"
 	])
+	interLibraryTestmodDependencies("command", [
+			"command"
+	])
 }
