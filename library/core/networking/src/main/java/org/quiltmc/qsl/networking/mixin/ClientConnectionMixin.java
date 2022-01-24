@@ -66,11 +66,11 @@ abstract class ClientConnectionMixin implements ChannelInfoHolder {
 	// Must be fully qualified due to mixin not working in production without it
 	@SuppressWarnings("UnnecessaryQualifiedMemberReference")
 	@Redirect(method = "Lnet/minecraft/network/ClientConnection;exceptionCaught(Lio/netty/channel/ChannelHandlerContext;Ljava/lang/Throwable;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/ClientConnection;send(Lnet/minecraft/network/Packet;Lio/netty/util/concurrent/GenericFutureListener;)V"))
-	private void resendOnExceptionCaught(ClientConnection self, Packet<?> packet, GenericFutureListener<? extends Future<? super Void>> listener) {
-		PacketListener handler = this.packetListener;
+	private void resendOnExceptionCaught(ClientConnection self, Packet<?> packet, GenericFutureListener<? extends Future<? super Void>> futureListener) {
+		PacketListener packetListener = this.packetListener;
 
-		if (handler instanceof DisconnectPacketSource) {
-			this.send(((DisconnectPacketSource) handler).createDisconnectPacket(new TranslatableText("disconnect.genericReason")), listener);
+		if (packetListener instanceof DisconnectPacketSource dcSource) {
+			this.send(dcSource.createDisconnectPacket(new TranslatableText("disconnect.genericReason")), futureListener);
 		} else {
 			this.disconnect(new TranslatableText("disconnect.genericReason")); // Don't send packet if we cannot send proper packets
 		}
@@ -78,15 +78,15 @@ abstract class ClientConnectionMixin implements ChannelInfoHolder {
 
 	@Inject(method = "sendImmediately", at = @At(value = "FIELD", target = "Lnet/minecraft/network/ClientConnection;packetsSentCounter:I"))
 	private void checkPacket(Packet<?> packet, GenericFutureListener<? extends Future<? super Void>> callback, CallbackInfo ci) {
-		if (this.packetListener instanceof PacketCallbackListener) {
-			((PacketCallbackListener) this.packetListener).sent(packet);
+		if (this.packetListener instanceof PacketCallbackListener callbackListener) {
+			callbackListener.sent(packet);
 		}
 	}
 
 	@Inject(method = "channelInactive", at = @At("HEAD"))
 	private void handleDisconnect(ChannelHandlerContext channelHandlerContext, CallbackInfo ci) throws Exception {
-		if (packetListener instanceof NetworkHandlerExtensions) { // not the case for client/server query
-			((NetworkHandlerExtensions) packetListener).getAddon().handleDisconnect();
+		if (packetListener instanceof NetworkHandlerExtensions ext) { // not the case for client/server query
+			ext.getAddon().handleDisconnect();
 		}
 	}
 

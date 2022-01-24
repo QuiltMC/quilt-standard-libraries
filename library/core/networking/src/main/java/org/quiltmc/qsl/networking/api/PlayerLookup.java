@@ -111,8 +111,8 @@ public final class PlayerLookup {
 		Objects.requireNonNull(entity, "Entity cannot be null");
 		ChunkManager manager = entity.world.getChunkManager();
 
-		if (manager instanceof ServerChunkManager) {
-			ThreadedAnvilChunkStorage storage = ((ServerChunkManager) manager).threadedAnvilChunkStorage;
+		if (manager instanceof ServerChunkManager serverManager) {
+			ThreadedAnvilChunkStorage storage = serverManager.threadedAnvilChunkStorage;
 			EntityTrackerAccessor tracker = ((ThreadedAnvilChunkStorageAccessor) storage).getEntityTrackers().get(entity.getId());
 
 			// return an immutable collection to guard against accidental removals.

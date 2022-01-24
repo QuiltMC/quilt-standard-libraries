@@ -89,8 +89,8 @@ abstract class ServerLoginNetworkHandlerMixin implements NetworkHandlerExtension
 
 	@Override
 	public void sent(Packet<?> packet) {
-		if (packet instanceof LoginQueryRequestS2CPacket) {
-			this.addon.registerOutgoingPacket((LoginQueryRequestS2CPacket) packet);
+		if (packet instanceof LoginQueryRequestS2CPacket requestPacket) {
+			this.addon.registerOutgoingPacket(requestPacket);
 		}
 	}
 

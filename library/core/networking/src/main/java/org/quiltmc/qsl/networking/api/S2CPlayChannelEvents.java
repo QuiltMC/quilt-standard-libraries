@@ -23,6 +23,7 @@ import org.quiltmc.qsl.base.api.event.Event;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.util.Identifier;
+import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
 /**
  * Offers access to events related to the indication of a connected client's ability to receive packets in certain channels.
@@ -55,7 +56,7 @@ public final class S2CPlayChannelEvents {
 	 * @see S2CPlayChannelEvents#REGISTER
 	 */
 	@FunctionalInterface
-	public interface Register {
+	public interface Register extends EventAwareListener {
 		void onChannelRegister(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server, List<Identifier> channels);
 	}
 
@@ -63,7 +64,7 @@ public final class S2CPlayChannelEvents {
 	 * @see S2CPlayChannelEvents#UNREGISTER
 	 */
 	@FunctionalInterface
-	public interface Unregister {
+	public interface Unregister extends EventAwareListener {
 		void onChannelUnregister(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server, List<Identifier> channels);
 	}
 }

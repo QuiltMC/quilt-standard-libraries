@@ -22,6 +22,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
 /**
  * Offers access to events related to the connection to a client on a logical server while a client is logging in.
@@ -70,7 +71,7 @@ public final class ServerLoginConnectionEvents {
 	 * @see ServerLoginConnectionEvents#INIT
 	 */
 	@FunctionalInterface
-	public interface Init {
+	public interface Init extends EventAwareListener {
 		void onLoginInit(ServerLoginNetworkHandler handler, MinecraftServer server);
 	}
 
@@ -78,7 +79,7 @@ public final class ServerLoginConnectionEvents {
 	 * @see ServerLoginConnectionEvents#QUERY_START
 	 */
 	@FunctionalInterface
-	public interface QueryStart {
+	public interface QueryStart extends EventAwareListener {
 		void onLoginStart(ServerLoginNetworkHandler handler, MinecraftServer server, PacketSender sender, ServerLoginNetworking.LoginSynchronizer synchronizer);
 	}
 
@@ -86,7 +87,7 @@ public final class ServerLoginConnectionEvents {
 	 * @see ServerLoginConnectionEvents#DISCONNECT
 	 */
 	@FunctionalInterface
-	public interface Disconnect {
+	public interface Disconnect extends EventAwareListener {
 		void onLoginDisconnect(ServerLoginNetworkHandler handler, MinecraftServer server);
 	}
 }

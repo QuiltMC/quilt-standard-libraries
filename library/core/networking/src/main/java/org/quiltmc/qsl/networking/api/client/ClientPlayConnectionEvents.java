@@ -24,6 +24,7 @@ import net.minecraft.util.Identifier;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 import org.quiltmc.qsl.networking.api.PacketSender;
 
 /**
@@ -73,7 +74,7 @@ public final class ClientPlayConnectionEvents {
 	 */
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface Init {
+	public interface Init extends ClientEventAwareListener {
 		void onPlayInit(ClientPlayNetworkHandler handler, MinecraftClient client);
 	}
 
@@ -82,7 +83,7 @@ public final class ClientPlayConnectionEvents {
 	 */
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface Join {
+	public interface Join extends ClientEventAwareListener {
 		void onPlayReady(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client);
 	}
 
@@ -91,7 +92,7 @@ public final class ClientPlayConnectionEvents {
 	 */
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface Disconnect {
+	public interface Disconnect extends ClientEventAwareListener {
 		void onPlayDisconnect(ClientPlayNetworkHandler handler, MinecraftClient client);
 	}
 }

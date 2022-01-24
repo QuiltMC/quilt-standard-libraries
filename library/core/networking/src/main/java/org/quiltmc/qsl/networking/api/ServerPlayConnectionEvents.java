@@ -21,6 +21,7 @@ import org.quiltmc.qsl.base.api.event.Event;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.util.Identifier;
+import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
 /**
  * Offers access to events related to the connection to a client on a logical server while a client is in game.
@@ -66,7 +67,7 @@ public final class ServerPlayConnectionEvents {
 	 * @see #INIT
 	 */
 	@FunctionalInterface
-	public interface Init {
+	public interface Init extends EventAwareListener  {
 		void onPlayInit(ServerPlayNetworkHandler handler, MinecraftServer server);
 	}
 
@@ -74,7 +75,7 @@ public final class ServerPlayConnectionEvents {
 	 * @see #JOIN
 	 */
 	@FunctionalInterface
-	public interface Join {
+	public interface Join extends EventAwareListener {
 		void onPlayReady(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server);
 	}
 
@@ -82,7 +83,7 @@ public final class ServerPlayConnectionEvents {
 	 * @see #DISCONNECT
 	 */
 	@FunctionalInterface
-	public interface Disconnect {
+	public interface Disconnect extends EventAwareListener {
 		void onPlayDisconnect(ServerPlayNetworkHandler handler, MinecraftServer server);
 	}
 }

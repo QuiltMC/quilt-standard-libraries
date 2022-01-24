@@ -20,6 +20,7 @@ import org.quiltmc.qsl.base.api.event.Event;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
 /**
  * Events related to a tracking entities within a player's view distance.
@@ -27,7 +28,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 public final class EntityTrackingEvents {
 	/**
 	 * An event that is called before player starts tracking an entity.
-	 * Typically this occurs when an entity enters a client's view distance.
+	 * Typically, this occurs when an entity enters a client's view distance.
 	 * This event is called before the player's client is sent the entity's {@link Entity#createSpawnPacket() spawn packet}.
 	 */
 	public static final Event<StartTracking> START_TRACKING = Event.create(StartTracking.class, callbacks -> (trackedEntity, player) -> {
@@ -48,7 +49,7 @@ public final class EntityTrackingEvents {
 	});
 
 	@FunctionalInterface
-	public interface StartTracking {
+	public interface StartTracking extends EventAwareListener {
 		/**
 		 * Called before an entity starts getting tracked by a player.
 		 *
@@ -59,7 +60,7 @@ public final class EntityTrackingEvents {
 	}
 
 	@FunctionalInterface
-	public interface StopTracking {
+	public interface StopTracking extends EventAwareListener {
 		/**
 		 * Called after an entity stops getting tracked by a player.
 		 *

@@ -24,6 +24,7 @@ import net.minecraft.util.Identifier;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 
 /**
  * Offers access to events related to the connection to a server on the client while the server is processing the client's login request.
@@ -82,7 +83,7 @@ public final class ClientLoginConnectionEvents {
 	 */
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface Init {
+	public interface Init extends ClientEventAwareListener {
 		void onLoginStart(ClientLoginNetworkHandler handler, MinecraftClient client);
 	}
 
@@ -91,7 +92,7 @@ public final class ClientLoginConnectionEvents {
 	 */
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface QueryStart {
+	public interface QueryStart extends ClientEventAwareListener {
 		void onLoginQueryStart(ClientLoginNetworkHandler handler, MinecraftClient client);
 	}
 
@@ -100,7 +101,7 @@ public final class ClientLoginConnectionEvents {
 	 */
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface Disconnect {
+	public interface Disconnect extends ClientEventAwareListener {
 		void onLoginDisconnect(ClientLoginNetworkHandler handler, MinecraftClient client);
 	}
 }

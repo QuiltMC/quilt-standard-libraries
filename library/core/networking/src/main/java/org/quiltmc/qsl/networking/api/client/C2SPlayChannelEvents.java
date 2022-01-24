@@ -26,6 +26,7 @@ import net.minecraft.util.Identifier;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 import org.quiltmc.qsl.networking.api.PacketSender;
 
 /**
@@ -61,7 +62,7 @@ public final class C2SPlayChannelEvents {
 	 */
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface Register {
+	public interface Register extends ClientEventAwareListener {
 		void onChannelRegister(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client, List<Identifier> channels);
 	}
 
@@ -70,7 +71,7 @@ public final class C2SPlayChannelEvents {
 	 */
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface Unregister {
+	public interface Unregister extends ClientEventAwareListener {
 		void onChannelUnregister(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client, List<Identifier> channels);
 	}
 }

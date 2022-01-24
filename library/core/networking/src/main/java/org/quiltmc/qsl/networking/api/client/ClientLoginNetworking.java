@@ -106,8 +106,8 @@ public final class ClientLoginNetworking {
 		if (connection != null) {
 			final PacketListener packetListener = connection.getPacketListener();
 
-			if (packetListener instanceof ClientLoginNetworkHandler) {
-				return ClientNetworkingImpl.getAddon(((ClientLoginNetworkHandler) packetListener)).registerChannel(channelName, queryHandler);
+			if (packetListener instanceof ClientLoginNetworkHandler clientHandler) {
+				return ClientNetworkingImpl.getAddon(clientHandler).registerChannel(channelName, queryHandler);
 			}
 		}
 
@@ -130,8 +130,8 @@ public final class ClientLoginNetworking {
 		if (connection != null) {
 			final PacketListener packetListener = connection.getPacketListener();
 
-			if (packetListener instanceof ClientLoginNetworkHandler) {
-				return ClientNetworkingImpl.getAddon(((ClientLoginNetworkHandler) packetListener)).unregisterChannel(channelName);
+			if (packetListener instanceof ClientLoginNetworkHandler clientHandler) {
+				return ClientNetworkingImpl.getAddon(clientHandler).unregisterChannel(channelName);
 			}
 		}
 

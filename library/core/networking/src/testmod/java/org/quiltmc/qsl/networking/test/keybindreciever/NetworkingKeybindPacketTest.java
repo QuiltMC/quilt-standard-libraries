@@ -39,7 +39,7 @@ public final class NetworkingKeybindPacketTest implements ModInitializer {
 	private static void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
 		// TODO: Can we send chat off the server thread?
 		server.execute(() -> {
-			player.sendMessage(new LiteralText("So you pressed ").append(new KeybindText("fabric-networking-api-v1-testmod-keybind").styled(style -> style.withFormatting(Formatting.BLUE))), false);
+			player.sendMessage(new LiteralText("You pressed ").append(new KeybindText("quilt_networking_keybind_testmod").styled(style -> style.withFormatting(Formatting.BLUE))), false);
 		});
 	}
 
