@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "quilt_tool_attributes_testmod:needs_pickaxe_tagged"
+    "quilt_tool_attributes_testmod:needs_pickaxe",
+    "quilt_tool_attributes_testmod:hardened_stone_block"
   ]
 }

@@ -7,7 +7,7 @@
   "license": "Apache-2.0",
   "depends": {
     "quilt_mining_levels": "*",
-    "fabric-lifecycle-events-v1": "*"
+    "quilt_lifecycle_events": "*"
   },
   "entrypoints": {
     "main": [

@@ -29,6 +29,8 @@ import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import org.quiltmc.qsl.block.extensions.api.QuiltBlockSettings;
+import org.quiltmc.qsl.block.extensions.api.QuiltMaterialBuilder;
 import org.quiltmc.qsl.lifecycle.api.event.ServerTickEvents;
 import org.quiltmc.qsl.tag.api.TagRegistry;
 import org.quiltmc.qsl.tool_attributes.api.DynamicAttributeTool;
@@ -71,14 +73,6 @@ public class ToolAttributesTest implements ModInitializer {
 	Block needsHoe;
 	Block needsShovel;
 
-	// Simple blocks that only need a tool without a specific mining level (mineable tags)
-	Block needsShearsTagged;
-	Block needsSwordTagged;
-	Block needsPickaxeTagged;
-	Block needsAxeTagged;
-	Block needsHoeTagged;
-	Block needsShovelTagged;
-
 	// These items are only tagged, but are not actual ToolItems or DynamicAttributeTools.
 	Item fakeShears;
 	Item fakeSword;
@@ -100,22 +94,19 @@ public class ToolAttributesTest implements ModInitializer {
 		//Register a custom sword that has a mining level of 2 (iron) dynamically.
 		testSword = Registry.register(Registry.ITEM, new Identifier("quilt_tool_attributes_testmod", "test_sword"), new TestTool(new Item.Settings(), QuiltToolTags.SWORDS, 2));
 		// Register a block that requires a shovel that is as strong or stronger than an iron one.
-		// TODO Implement FabricBlockSettings and FabricMaterialBuilder Alternatives
-//		gravelBlock = Registry.register(Registry.BLOCK, new Identifier("quilt_tool_attributes_testmod", "hardened_gravel_block"),
-//				new Block(FabricBlockSettings.of(new FabricMaterialBuilder(MapColor.PALE_YELLOW).build(), MapColor.STONE_GRAY)
-//						.breakByTool(QuiltToolTags.SHOVELS, 2)
-//						.requiresTool()
-//						.strength(0.6F)
-//						.sounds(BlockSoundGroup.GRAVEL)));
-//		Registry.register(Registry.ITEM, new Identifier("quilt_tool_attributes_testmod", "hardened_gravel_block"), new BlockItem(gravelBlock, new Item.Settings()));
-//		// Register a block that requires a pickaxe that is as strong or stronger than an iron one.
-//		stoneBlock = Registry.register(Registry.BLOCK, new Identifier("quilt_tool_attributes_testmod", "hardened_stone_block"),
-//				new Block(FabricBlockSettings.of(Material.STONE, MapColor.STONE_GRAY)
-//						.breakByTool(QuiltToolTags.PICKAXES, 2)
-//						.requiresTool()
-//						.strength(0.6F)
-//						.sounds(BlockSoundGroup.STONE)));
-//		Registry.register(Registry.ITEM, new Identifier("quilt_tool_attributes_testmod", "hardened_stone_block"), new BlockItem(stoneBlock, new Item.Settings()));
+		gravelBlock = Registry.register(Registry.BLOCK, new Identifier("quilt_tool_attributes_testmod", "hardened_gravel_block"),
+				new Block(QuiltBlockSettings.of(new QuiltMaterialBuilder(MapColor.PALE_YELLOW).build(), MapColor.STONE_GRAY)
+						.requiresTool()
+						.strength(0.6F)
+						.sounds(BlockSoundGroup.GRAVEL)));
+		Registry.register(Registry.ITEM, new Identifier("quilt_tool_attributes_testmod", "hardened_gravel_block"), new BlockItem(gravelBlock, new Item.Settings()));
+		// Register a block that requires a pickaxe that is as strong or stronger than an iron one.
+		stoneBlock = Registry.register(Registry.BLOCK, new Identifier("quilt_tool_attributes_testmod", "hardened_stone_block"),
+				new Block(QuiltBlockSettings.of(Material.STONE, MapColor.STONE_GRAY)
+						.requiresTool()
+						.strength(0.6F)
+						.sounds(BlockSoundGroup.STONE)));
+		Registry.register(Registry.ITEM, new Identifier("quilt_tool_attributes_testmod", "hardened_stone_block"), new BlockItem(stoneBlock, new Item.Settings()));
 
 		// Register a pineapple that has a mining level of 1 (stone).
 		testStoneLevelTater = Registry.register(Registry.ITEM, new Identifier("quilt_tool_attributes_testmod", "test_stone_level_pineapple"), new ToolItem(ToolMaterials.STONE, new Item.Settings()));
@@ -126,13 +117,12 @@ public class ToolAttributesTest implements ModInitializer {
 		//Register a pineapple that has a mining level of 3 (diamond) dynamically.
 		testDiamondDynamicLevelTater = Registry.register(Registry.ITEM, new Identifier("quilt_tool_attributes_testmod", "test_diamond_dynamic_level_pineapple"), new TestTool(new Item.Settings(), PINEAPPLE, 3));
 
-//		pineappleEffectiveBlock = Registry.register(Registry.BLOCK, new Identifier("quilt_tool_attributes_testmod", "pineapple_effective_block"),
-//				new Block(FabricBlockSettings.of(Material.ORGANIC_PRODUCT, MapColor.ORANGE)
-//						.breakByTool(PINEAPPLE, 2) // requires iron pineapple
-//						.requiresTool()
-//						.strength(0.6F)
-//						.sounds(BlockSoundGroup.CROP)));
-//		Registry.register(Registry.ITEM, new Identifier("quilt_tool_attributes_testmod", "pineapple_effective_block"), new BlockItem(pineappleEffectiveBlock, new Item.Settings()));
+		pineappleEffectiveBlock = Registry.register(Registry.BLOCK, new Identifier("quilt_tool_attributes_testmod", "pineapple_effective_block"),
+				new Block(QuiltBlockSettings.of(Material.ORGANIC_PRODUCT, MapColor.ORANGE)
+						.requiresTool()
+						.strength(0.6F)
+						.sounds(BlockSoundGroup.CROP)));
+		Registry.register(Registry.ITEM, new Identifier("quilt_tool_attributes_testmod", "pineapple_effective_block"), new BlockItem(pineappleEffectiveBlock, new Item.Settings()));
 
 		// DYNAMIC ATTRIBUTE MODIFIERS
 		// The Dynamic Sword tests to make sure standard vanilla attributes can co-exist with dynamic attributes.
@@ -144,19 +134,12 @@ public class ToolAttributesTest implements ModInitializer {
 		// Test parameter nullability
 		Registry.register(Registry.ITEM, new Identifier("quilt_tool_attributes_testmod", "null_test"), new TestNullableItem(new Item.Settings()));
 
-//		needsShears = Registry.register(Registry.BLOCK, new Identifier("quilt_tool_attributes_testmod", "needs_shears"), new Block(FabricBlockSettings.of(Material.STONE).requiresTool().strength(1, 1).breakByTool(QuiltToolTags.SHEARS)));
-//		needsSword = Registry.register(Registry.BLOCK, new Identifier("quilt_tool_attributes_testmod", "needs_sword"), new Block(FabricBlockSettings.of(Material.STONE).requiresTool().strength(1, 1).breakByTool(QuiltToolTags.SWORDS)));
-//		needsPickaxe = Registry.register(Registry.BLOCK, new Identifier("quilt_tool_attributes_testmod", "needs_pickaxe"), new Block(FabricBlockSettings.of(Material.STONE).requiresTool().strength(1, 1).breakByTool(QuiltToolTags.PICKAXES)));
-//		needsAxe = Registry.register(Registry.BLOCK, new Identifier("quilt_tool_attributes_testmod", "needs_axe"), new Block(FabricBlockSettings.of(Material.STONE).requiresTool().strength(1, 1).breakByTool(QuiltToolTags.AXES)));
-//		needsHoe = Registry.register(Registry.BLOCK, new Identifier("quilt_tool_attributes_testmod", "needs_hoe"), new Block(FabricBlockSettings.of(Material.STONE).requiresTool().strength(1, 1).breakByTool(QuiltToolTags.HOES)));
-//		needsShovel = Registry.register(Registry.BLOCK, new Identifier("quilt_tool_attributes_testmod", "needs_shovel"), new Block(FabricBlockSettings.of(Material.STONE).requiresTool().strength(1, 1).breakByTool(QuiltToolTags.SHOVELS)));
-//
-//		needsShearsTagged = Registry.register(Registry.BLOCK, new Identifier("quilt_tool_attributes_testmod", "needs_shears_tagged"), new Block(FabricBlockSettings.of(Material.STONE).requiresTool().strength(1, 1)));
-//		needsSwordTagged = Registry.register(Registry.BLOCK, new Identifier("quilt_tool_attributes_testmod", "needs_sword_tagged"), new Block(FabricBlockSettings.of(Material.STONE).requiresTool().strength(1, 1)));
-//		needsPickaxeTagged = Registry.register(Registry.BLOCK, new Identifier("quilt_tool_attributes_testmod", "needs_pickaxe_tagged"), new Block(FabricBlockSettings.of(Material.STONE).requiresTool().strength(1, 1)));
-//		needsAxeTagged = Registry.register(Registry.BLOCK, new Identifier("quilt_tool_attributes_testmod", "needs_axe_tagged"), new Block(FabricBlockSettings.of(Material.STONE).requiresTool().strength(1, 1)));
-//		needsHoeTagged = Registry.register(Registry.BLOCK, new Identifier("quilt_tool_attributes_testmod", "needs_hoe_tagged"), new Block(FabricBlockSettings.of(Material.STONE).requiresTool().strength(1, 1)));
-//		needsShovelTagged = Registry.register(Registry.BLOCK, new Identifier("quilt_tool_attributes_testmod", "needs_shovel_tagged"), new Block(FabricBlockSettings.of(Material.STONE).requiresTool().strength(1, 1)));
+		needsShears = Registry.register(Registry.BLOCK, new Identifier("quilt_tool_attributes_testmod", "needs_shears"), new Block(QuiltBlockSettings.of(Material.STONE).requiresTool().strength(1, 1)));
+		needsSword = Registry.register(Registry.BLOCK, new Identifier("quilt_tool_attributes_testmod", "needs_sword"), new Block(QuiltBlockSettings.of(Material.STONE).requiresTool().strength(1, 1)));
+		needsPickaxe = Registry.register(Registry.BLOCK, new Identifier("quilt_tool_attributes_testmod", "needs_pickaxe"), new Block(QuiltBlockSettings.of(Material.STONE).requiresTool().strength(1, 1)));
+		needsAxe = Registry.register(Registry.BLOCK, new Identifier("quilt_tool_attributes_testmod", "needs_axe"), new Block(QuiltBlockSettings.of(Material.STONE).requiresTool().strength(1, 1)));
+		needsHoe = Registry.register(Registry.BLOCK, new Identifier("quilt_tool_attributes_testmod", "needs_hoe"), new Block(QuiltBlockSettings.of(Material.STONE).requiresTool().strength(1, 1)));
+		needsShovel = Registry.register(Registry.BLOCK, new Identifier("quilt_tool_attributes_testmod", "needs_shovel"), new Block(QuiltBlockSettings.of(Material.STONE).requiresTool().strength(1, 1)));
 
 		// "Fake" tools, see explanation above
 		fakeShears = Registry.register(Registry.ITEM, new Identifier("quilt_tool_attributes_testmod", "fake_shears"), new Item(new Item.Settings()));
@@ -232,36 +215,20 @@ public class ToolAttributesTest implements ModInitializer {
 		// Note: using LinkedHashMultimap to ensure the same order (this makes it more predictable when debugging)
 		Multimap<Item, Block> fakeToolsToEffectiveBlocks = LinkedHashMultimap.create(6, 2);
 		fakeToolsToEffectiveBlocks.put(fakeShears, needsShears);
-		fakeToolsToEffectiveBlocks.put(fakeShears, needsShearsTagged);
 		fakeToolsToEffectiveBlocks.put(fakeSword, needsSword);
-		fakeToolsToEffectiveBlocks.put(fakeSword, needsSwordTagged);
 		fakeToolsToEffectiveBlocks.put(fakeAxe, needsAxe);
-		fakeToolsToEffectiveBlocks.put(fakeAxe, needsAxeTagged);
 		fakeToolsToEffectiveBlocks.put(fakePickaxe, needsPickaxe);
-		fakeToolsToEffectiveBlocks.put(fakePickaxe, needsPickaxeTagged);
 		fakeToolsToEffectiveBlocks.put(fakeHoe, needsHoe);
-		fakeToolsToEffectiveBlocks.put(fakeHoe, needsHoeTagged);
 		fakeToolsToEffectiveBlocks.put(fakeShovel, needsShovel);
-		fakeToolsToEffectiveBlocks.put(fakeShovel, needsShovelTagged);
 		testExclusivelyEffective(fakeToolsToEffectiveBlocks, (tool, block) -> {
-			if (tool == fakeShears && block == needsShearsTagged) {
-				// The mining level API gives the tagged block the speed 5.0
-				// when mined with shears (see ShearsItemMixin in that module),
-				// and ShearsVanillaBlocksToolHandler gets the speeds from the vanilla shears item.
-				return 5.0f;
-			}
-
 			return DEFAULT_BREAK_SPEED;
 		});
 
 		//Test fake tools on corresponding and invalid blocks
 		Multimap<Item, Block> dynamicToolsToEffectiveBlocks = LinkedHashMultimap.create(3, 2);
 		dynamicToolsToEffectiveBlocks.put(testSword, needsSword);
-		dynamicToolsToEffectiveBlocks.put(testSword, needsSwordTagged);
 		dynamicToolsToEffectiveBlocks.put(testPickaxe, needsPickaxe);
-		dynamicToolsToEffectiveBlocks.put(testPickaxe, needsPickaxeTagged);
 		dynamicToolsToEffectiveBlocks.put(testShovel, needsShovel);
-		dynamicToolsToEffectiveBlocks.put(testShovel, needsShovelTagged);
 		testExclusivelyEffective(dynamicToolsToEffectiveBlocks, (tool, block) -> TOOL_BREAK_SPEED);
 	}
 

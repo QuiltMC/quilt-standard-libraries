@@ -1,6 +1,6 @@
 {
   "replace": false,
   "values": [
-    "quilt_tool_attributes_testmod:needs_sword_tagged"
+    "quilt_tool_attributes_testmod:needs_sword"
   ]
 }

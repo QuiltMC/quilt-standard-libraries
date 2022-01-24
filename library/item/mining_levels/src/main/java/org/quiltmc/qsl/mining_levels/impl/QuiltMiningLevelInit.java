@@ -20,12 +20,12 @@ package org.quiltmc.qsl.mining_levels.impl;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.resource.ResourceType;
 import org.jetbrains.annotations.ApiStatus;
-import org.quiltmc.qsl.resource.loader.api.ResourceManagerHelper;
+import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 
 @ApiStatus.Internal
 public class QuiltMiningLevelInit implements ModInitializer {
 	@Override
 	public void onInitialize() {
-		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new MiningLevelCacheInvalidator());
+		ResourceLoader.get(ResourceType.SERVER_DATA).registerReloader(new MiningLevelCacheInvalidator());
 	}
 }

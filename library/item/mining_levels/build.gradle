@@ -18,5 +18,4 @@ qslModule {
 
 dependencies {
 	api project(path: ":data:tags")
-	api project(path: ":item:tool_attributes")
 }
