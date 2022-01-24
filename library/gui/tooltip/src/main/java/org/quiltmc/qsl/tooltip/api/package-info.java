@@ -3,9 +3,9 @@
  *
  * <p>
  * <h3>What are the tooltip APIs?</h3>
- * With Minecraft 1.17, a new system has been introduced through the {@link net.minecraft.item.BundleItem}: custom tooltip renders.
+ * With Minecraft 1.17, a new system has been introduced through the {@link net.minecraft.item.BundleItem}: custom tooltip components.
  * <p>
- * Those tooltip renders are done using mainly two classes:
+ * Those tooltip components are done using mainly two classes:
  * <ul>
  *     <li>{@link net.minecraft.client.item.TooltipData} which will hold information about the tooltip, exist on both sides;</li>
  *     <li>{@link net.minecraft.client.gui.tooltip.TooltipComponent} which will do the rendering of the tooltip, only exist on the client.</li>

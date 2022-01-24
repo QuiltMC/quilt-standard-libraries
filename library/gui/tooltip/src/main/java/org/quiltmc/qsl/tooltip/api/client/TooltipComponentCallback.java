@@ -33,6 +33,8 @@ import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
  * <p>
  * Note that failure to map some data to a component will throw an exception,
  * so make sure that any data you return in {@link Item#getTooltipData} will be handled by one of the callbacks.
+ *
+ * @see org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData ConvertibleTooltipData: for custom tooltip data implementations, avoid the event for those
  */
 @FunctionalInterface
 @Environment(EnvType.CLIENT)
