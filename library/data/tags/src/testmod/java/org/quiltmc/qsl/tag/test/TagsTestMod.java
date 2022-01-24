@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.tag.test;
 
 import com.mojang.brigadier.CommandDispatcher;
+import net.fabricmc.api.ModInitializer;
 import net.minecraft.block.Block;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
@@ -27,6 +28,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
+import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
 import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 import org.quiltmc.qsl.tag.api.TagRegistry;
@@ -40,7 +42,7 @@ import java.util.stream.Collectors;
 import static net.minecraft.server.command.CommandManager.literal;
 
 
-public final class TagsTestMod implements ServerLifecycleEvents.Ready, CommandRegistrationCallback {
+public final class TagsTestMod implements ModInitializer, ServerLifecycleEvents.Ready, CommandRegistrationCallback {
 	public static final String NAMESPACE = "quilt_tags_testmod";
 	public static final Logger LOGGER = LoggerFactory.getLogger(TagsTestMod.class);
 
@@ -59,6 +61,11 @@ public final class TagsTestMod implements ServerLifecycleEvents.Ready, CommandRe
 
 	public static Identifier id(String path) {
 		return new Identifier(NAMESPACE, path);
+	}
+
+	@Override
+	public void onInitialize() {
+		Event.listenAll(this, CommandRegistrationCallback.EVENT, ServerLifecycleEvents.READY);
 	}
 
 	@Override
