@@ -16,10 +16,12 @@
 
 package org.quiltmc.qsl.base.impl.event;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -32,10 +34,9 @@ import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 import org.quiltmc.qsl.base.api.event.server.DedicatedServerEventAwareListener;
 
 @ApiStatus.Internal
-public final class EventRegistry {
-	private EventRegistry() {
-		throw new UnsupportedOperationException("EventRegistry only contains static definitions.");
-	}
+public final class EventRegistry implements ModInitializer {
+	private static List<Event<?>> pendingEventRegistration = new ArrayList<>();
+	private static boolean initialized = false;
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public static void listenAll(Object listener, Event<?>... events) {
@@ -74,6 +75,11 @@ public final class EventRegistry {
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public static <T> void register(Event<T> event) {
+		if (!initialized) {
+			pendingEventRegistration.add(event);
+			return;
+		}
+
 		for (var target : EventSideTarget.VALUES) {
 			// Search if the callback qualifies is unique to this event.
 			if (target.listenerClass().isAssignableFrom(event.getType())) {
@@ -94,6 +100,17 @@ public final class EventRegistry {
 				break;
 			}
 		}
+	}
+
+	@Override
+	public void onInitialize() {
+		initialized = true;
+
+		for (var event : pendingEventRegistration) {
+			register(event);
+		}
+
+		pendingEventRegistration = null;
 	}
 
 	enum EventSideTarget {

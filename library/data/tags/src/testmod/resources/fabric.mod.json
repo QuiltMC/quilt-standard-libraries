@@ -9,7 +9,7 @@
     "quilt_tags": "*"
   },
   "entrypoints": {
-    "main": [
+    "events": [
       "org.quiltmc.qsl.tag.test.TagsTestMod"
     ],
     "client": [
