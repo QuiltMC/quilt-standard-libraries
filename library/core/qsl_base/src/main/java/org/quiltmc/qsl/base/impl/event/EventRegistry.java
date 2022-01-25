@@ -35,7 +35,7 @@ import org.quiltmc.qsl.base.api.event.server.DedicatedServerEventAwareListener;
 
 @ApiStatus.Internal
 public final class EventRegistry implements ModInitializer {
-	private static List<Event<?>> pendingEventRegistration = new ArrayList<>();
+	private static List<Event<?>> pendingEventsRegistration = new ArrayList<>();
 	private static boolean initialized = false;
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
@@ -76,7 +76,7 @@ public final class EventRegistry implements ModInitializer {
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public static <T> void register(Event<T> event) {
 		if (!initialized) {
-			pendingEventRegistration.add(event);
+			pendingEventsRegistration.add(event);
 			return;
 		}
 
@@ -106,11 +106,11 @@ public final class EventRegistry implements ModInitializer {
 	public void onInitialize() {
 		initialized = true;
 
-		for (var event : pendingEventRegistration) {
+		for (var event : pendingEventsRegistration) {
 			register(event);
 		}
 
-		pendingEventRegistration = null;
+		pendingEventsRegistration = null;
 	}
 
 	enum EventSideTarget {
