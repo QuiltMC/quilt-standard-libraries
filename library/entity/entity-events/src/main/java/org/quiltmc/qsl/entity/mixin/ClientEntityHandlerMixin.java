@@ -28,15 +28,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(targets = "net/minecraft/client/world/ClientWorld$ClientEntityHandler")
 public abstract class ClientEntityHandlerMixin {
+	@SuppressWarnings("ShadowTarget") // MinecraftDev plugin may not be able to resolve this
 	@Final @Shadow ClientWorld field_27735; // ClientWorld.this
 
 	@Inject(method = "startTracking(Lnet/minecraft/entity/Entity;)V", at = @At("TAIL"))
-	void invokeEntityLoadEvent(Entity entity, CallbackInfo ci) {
-		ClientEntityLoadEvents.AFTER_ENTITY_LOAD_CLIENT.invoker().onLoadClient(entity, this.field_27735);
+	private void invokeEntityLoadEvent(Entity entity, CallbackInfo ci) {
+		ClientEntityLoadEvents.AFTER_LOAD.invoker().onLoadClient(entity, this.field_27735);
 	}
 
 	@Inject(method = "stopTracking(Lnet/minecraft/entity/Entity;)V", at = @At("TAIL"))
-	void invokeEntityUnloadEvent(Entity entity, CallbackInfo ci) {
-		ClientEntityLoadEvents.AFTER_ENTITY_UNLOAD_CLIENT.invoker().onUnloadClient(entity, this.field_27735);
+	private void invokeEntityUnloadEvent(Entity entity, CallbackInfo ci) {
+		ClientEntityLoadEvents.AFTER_UNLOAD.invoker().onUnloadClient(entity, this.field_27735);
 	}
 }

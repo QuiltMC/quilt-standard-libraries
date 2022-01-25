@@ -37,9 +37,9 @@ public final class EntityWorldChangeEvents {
 	 *
 	 * @see EntityWorldChangeEvents#AFTER_PLAYER_CHANGE_WORLD
 	 */
-	public static final Event<AfterEntityChange> AFTER_ENTITY_CHANGE_WORLD = Event.create(AfterEntityChange.class, callbacks -> (originalEntity, newEntity, origin, destination) -> {
+	public static final Event<AfterEntityChange> AFTER_ENTITY_CHANGE_WORLD = Event.create(AfterEntityChange.class, callbacks -> (original, copy, origin, destination) -> {
 		for (AfterEntityChange callback : callbacks) {
-			callback.afterChangeWorld(originalEntity, newEntity, origin, destination);
+			callback.afterChangeWorld(original, copy, origin, destination);
 		}
 	});
 
@@ -65,12 +65,12 @@ public final class EntityWorldChangeEvents {
 		 * <p>Note this event is not called if the entity is a {@link ServerPlayerEntity}.
 		 * {@link AfterPlayerChange} should be used to track when a player has changed worlds.
 		 *
-		 * @param originalEntity the original entity
-		 * @param newEntity the new entity at the destination
+		 * @param original the original entity
+		 * @param copy the new entity at the destination
 		 * @param origin the world the original entity is in
 		 * @param destination the destination world the new entity is in
 		 */
-		void afterChangeWorld(Entity originalEntity, Entity newEntity, ServerWorld origin, ServerWorld destination);
+		void afterChangeWorld(Entity original, Entity copy, ServerWorld origin, ServerWorld destination);
 	}
 
 	@FunctionalInterface

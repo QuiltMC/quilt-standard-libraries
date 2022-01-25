@@ -24,6 +24,7 @@ import net.minecraft.server.world.ServerWorld;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.entity.api.event.EntityWorldChangeEvents;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -37,7 +38,7 @@ public abstract class TeleportCommandMixin {
 	/**
 	 * We need to fire the change world event for entities that are teleported using the `/teleport` command.
 	 */
-	@SuppressWarnings("InvalidInjectorMethodSignature")
+	@SuppressWarnings("InvalidInjectorMethodSignature") // MinecraftDev plugin doesn't understand @Coerce'd parameters
 	@Inject(method = "teleport", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setRemoved(Lnet/minecraft/entity/Entity$RemovalReason;)V"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
 	private static void invokeAfterEntityChangeWorldEvent(ServerCommandSource source, Entity originalEntity, ServerWorld destination, double x, double y, double z, Set<PlayerPositionLookS2CPacket.Flag> movementFlags, float yaw, float pitch, @Coerce /* TeleportCommand.LookTarget */ @Nullable Object facingLocation, CallbackInfo ci, float clampedYaw, float clampedPitch, float h, Entity newEntity) {
 		EntityWorldChangeEvents.AFTER_ENTITY_CHANGE_WORLD.invoker().afterChangeWorld(originalEntity, newEntity, ((ServerWorld) originalEntity.world), destination);
