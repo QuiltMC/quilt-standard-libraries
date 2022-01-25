@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.entity.test;
+package org.quiltmc.qsl.entity.test;
 
 import java.util.Collections;
 

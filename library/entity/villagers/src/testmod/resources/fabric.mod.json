@@ -22,8 +22,8 @@
   "description": "Test mod for Quilt Villager API.",
   "entrypoints": {
     "main":[
-      "org.quiltmc.test.villagers.VillagerTypeTest1",
-      "org.quiltmc.test.villagers.VillagerTypeTest2"
+      "org.quiltmc.qsl.villagers.test.VillagerTypeTest1",
+      "org.quiltmc.qsl.villagers.test.VillagerTypeTest2"
     ]
   }
 }

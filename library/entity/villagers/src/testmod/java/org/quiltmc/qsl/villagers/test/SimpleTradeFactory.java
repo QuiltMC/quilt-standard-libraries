@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.villagers.test;
+package org.quiltmc.qsl.villagers.test;
 
 import java.util.Random;
 
