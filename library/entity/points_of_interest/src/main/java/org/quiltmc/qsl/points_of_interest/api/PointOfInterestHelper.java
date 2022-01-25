@@ -17,6 +17,8 @@
 
 package org.quiltmc.qsl.points_of_interest.api;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -28,6 +30,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.poi.PointOfInterest;
 import net.minecraft.world.poi.PointOfInterestType;
+import org.quiltmc.qsl.points_of_interest.impl.PointOfInterestTypeExtensions;
 import org.quiltmc.qsl.points_of_interest.mixin.PointOfInterestTypeAccessor;
 
 /**
@@ -44,7 +47,7 @@ public final class PointOfInterestHelper {
 	 * @param id The id of this {@link PointOfInterestType}
 	 * @param ticketCount the max amount of tickets available to be checked out from searches
 	 * @param searchDistance the distance in blocks from the {@link PointOfInterest} a {@link net.minecraft.entity.mob.MobEntity} can be before considering it reached
-	 * @param blocks all blocks where a {@link PointOfInterest} of this type will be present, will apply to all of the {@link Block}'s {@link BlockState}
+	 * @param blocks all blocks where a {@link PointOfInterest} of this type will be present, will apply to all of the {@link Block}'s {@link BlockState}s
 	 * @return a new {@link PointOfInterestType}
 	 */
 	public static PointOfInterestType register(Identifier id, int ticketCount, int searchDistance, Block... blocks) {
@@ -65,7 +68,7 @@ public final class PointOfInterestHelper {
 	 * @param completionCondition determines what {@link PointOfInterestType}s to find when searching using this one
 	 *                            {@link PointOfInterestType#UNEMPLOYED} uses this to find villager workstations
 	 * @param searchDistance the distance in blocks from the {@link PointOfInterest} a {@link net.minecraft.entity.mob.MobEntity} can be before considering it reached
-	 * @param blocks all blocks where a {@link PointOfInterest} of this type will be present, will apply to all of the {@link Block}'s {@link BlockState}
+	 * @param blocks all blocks where a {@link PointOfInterest} of this type will be present, will apply to all of the {@link Block}'s {@link BlockState}s
 	 * @return a new {@link PointOfInterestType}
 	 */
 	public static PointOfInterestType register(Identifier id, int ticketCount, Predicate<PointOfInterestType> completionCondition, int searchDistance, Block... blocks) {
@@ -183,5 +186,45 @@ public final class PointOfInterestHelper {
 	public static PointOfInterestType create(Identifier id, int ticketCount, Predicate<PointOfInterestType> completionCondition, int searchDistance, Set<BlockState> states) {
 		return PointOfInterestTypeAccessor.callSetup(
 				PointOfInterestTypeAccessor.callCreate(id.toString(), states, ticketCount, completionCondition, searchDistance));
+	}
+
+	/**
+	 * Allows adding {@link Block}s to a {@link PointOfInterestType} after construction.
+	 *
+	 * @param poiType the {@link PointOfInterestType} to add these blocks to
+	 * @param blocks all blocks where a {@link PointOfInterest} of this type will be present, will apply to all of the {@link Block}'s {@link BlockState}s
+	 */
+	public static void addBlocks(PointOfInterestType poiType, Block... blocks) {
+		((PointOfInterestTypeExtensions) poiType).addBlocks(Arrays.asList(blocks));
+	}
+
+	/**
+	 * Allows adding {@link Block}s to a {@link PointOfInterestType} after construction.
+	 *
+	 * @param poiType the {@link PointOfInterestType} to add these blocks to
+	 * @param blocks all blocks where a {@link PointOfInterest} of this type will be present, will apply to all of the {@link Block}'s {@link BlockState}s
+	 */
+	public static void addBlocks(PointOfInterestType poiType, Collection<Block> blocks) {
+		((PointOfInterestTypeExtensions) poiType).addBlocks(blocks);
+	}
+
+	/**
+	 * Allows adding {@link Block}s to a {@link PointOfInterestType} after construction.
+	 *
+	 * @param poiType the {@link PointOfInterestType} to add these blocks to
+	 * @param states all {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
+	 */
+	public static void addBlockStates(PointOfInterestType poiType, BlockState... states) {
+		((PointOfInterestTypeExtensions) poiType).addBlockStates(Arrays.asList(states));
+	}
+
+	/**
+	 * Allows adding {@link Block}s to a {@link PointOfInterestType} after construction.
+	 *
+	 * @param poiType the {@link PointOfInterestType} to add these blocks to
+	 * @param states all {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
+	 */
+	public static void addBlockStates(PointOfInterestType poiType, Collection<BlockState> states) {
+		((PointOfInterestTypeExtensions) poiType).addBlockStates(states);
 	}
 }

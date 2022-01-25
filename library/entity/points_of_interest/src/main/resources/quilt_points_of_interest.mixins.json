@@ -3,7 +3,8 @@
   "package": "org.quiltmc.qsl.points_of_interest.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "PointOfInterestTypeAccessor"
+    "PointOfInterestTypeAccessor",
+    "PointOfInterestTypeMixin"
   ],
   "client": [
   ],
