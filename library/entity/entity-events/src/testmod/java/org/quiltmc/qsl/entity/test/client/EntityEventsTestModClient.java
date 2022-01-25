@@ -26,14 +26,14 @@ public class EntityEventsTestModClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		// Chicken Loading is logged.
-		ClientEntityLoadEvents.AFTER_ENTITY_LOAD_CLIENT.register((entity, world) -> {
+		ClientEntityLoadEvents.AFTER_LOAD.register((entity, world) -> {
 			if (entity instanceof ChickenEntity) {
 				EntityEventsTestMod.LOGGER.info("Chicken loaded, client");
 			}
 		});
 
 		// Skeleton Unloading is logged.
-		ClientEntityLoadEvents.AFTER_ENTITY_UNLOAD_CLIENT.register((entity, world) -> {
+		ClientEntityLoadEvents.AFTER_UNLOAD.register((entity, world) -> {
 			if (entity instanceof SkeletonEntity) {
 				EntityEventsTestMod.LOGGER.info("Skeleton unloaded, client");
 			}

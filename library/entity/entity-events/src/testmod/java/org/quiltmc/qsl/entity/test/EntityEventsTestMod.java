@@ -63,14 +63,14 @@ public class EntityEventsTestMod implements ModInitializer {
 		});
 
 		// Chicken Loading is logged.
-		EntityLoadEvents.AFTER_ENTITY_LOAD_SERVER.register((entity, world) -> {
+		ServerEntityLoadEvents.AFTER_LOAD.register((entity, world) -> {
 			if (entity instanceof ChickenEntity) {
 				LOGGER.info("Chicken loaded, server");
 			}
 		});
 
 		// Skeleton Unloading is logged.
-		EntityLoadEvents.AFTER_ENTITY_UNLOAD_SERVER.register((entity, world) -> {
+		ServerEntityLoadEvents.AFTER_UNLOAD.register((entity, world) -> {
 			if (entity instanceof SkeletonEntity) {
 				LOGGER.info("Skeleton unloaded, server");
 			}

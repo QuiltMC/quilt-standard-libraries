@@ -34,14 +34,14 @@ public abstract class LivingEntityMixin {
 	}
 
 	@Inject(method = "tryUseTotem", at = @At("HEAD"), cancellable = true)
-	void invokeTryReviveBeforeTotemEvent(DamageSource source, CallbackInfoReturnable<Boolean> cir) {
+	private void invokeTryReviveBeforeTotemEvent(DamageSource source, CallbackInfoReturnable<Boolean> cir) {
 		if (EntityReviveEvents.BEFORE_TOTEM.invoker().tryReviveBeforeTotem((LivingEntity) (Object) this, source)) {
 			cir.setReturnValue(true);
 		}
 	}
 
 	@Inject(method = "tryUseTotem", at = @At("RETURN"), cancellable = true)
-	void invokeTryReviveAfterTotemEvent(DamageSource source, CallbackInfoReturnable<Boolean> cir) {
+	private void invokeTryReviveAfterTotemEvent(DamageSource source, CallbackInfoReturnable<Boolean> cir) {
 		if (!cir.getReturnValue()) {
 			cir.setReturnValue(EntityReviveEvents.AFTER_TOTEM.invoker().tryReviveAfterTotem((LivingEntity) (Object) this, source));
 		}

@@ -34,9 +34,9 @@ public interface ServerPlayerEntityCopyCallback {
 	/**
 	 * Invoked when a player is copied on the logical server.
 	 */
-	Event<ServerPlayerEntityCopyCallback> EVENT = Event.create(ServerPlayerEntityCopyCallback.class, callbacks -> (newPlayer, original, wasDeath) -> {
+	Event<ServerPlayerEntityCopyCallback> EVENT = Event.create(ServerPlayerEntityCopyCallback.class, callbacks -> (copy, original, wasDeath) -> {
 		for (var callback : callbacks) {
-			callback.onPlayerCopy(newPlayer, original, wasDeath);
+			callback.onPlayerCopy(copy, original, wasDeath);
 		}
 	});
 
@@ -44,9 +44,9 @@ public interface ServerPlayerEntityCopyCallback {
 	/**
 	 * Called when a player is copied.
 	 *
-	 * @param newPlayer the new ServerPlayerEntity instance
+	 * @param copy the new ServerPlayerEntity instance
 	 * @param original 	the original ServerPlayerEntity instance
 	 * @param wasDeath 	true if the copying is due to the player dying, false otherwise
 	 */
-	void onPlayerCopy(ServerPlayerEntity newPlayer, ServerPlayerEntity original, boolean wasDeath);
+	void onPlayerCopy(ServerPlayerEntity copy, ServerPlayerEntity original, boolean wasDeath);
 }

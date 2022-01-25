@@ -28,8 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin {
-	@Shadow
-	public World world;
+	@Shadow public World world;
 
 	@Inject(method = "moveToWorld", at = @At("RETURN"))
 	private void afterWorldChanged(ServerWorld destination, CallbackInfoReturnable<Entity> cir) {

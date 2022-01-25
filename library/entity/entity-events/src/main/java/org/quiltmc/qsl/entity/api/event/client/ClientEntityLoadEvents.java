@@ -30,22 +30,22 @@ public final class ClientEntityLoadEvents {
 	/**
 	 * An event which is called after an entity has been loaded into a client world.
 	 */
-	public static final Event<AfterEntityLoadClient> AFTER_ENTITY_LOAD_CLIENT = Event.create(AfterEntityLoadClient.class, callbacks -> (entity, world) -> {
-		for (AfterEntityLoadClient callback : callbacks) {
+	public static final Event<AfterLoad> AFTER_LOAD = Event.create(AfterLoad.class, callbacks -> (entity, world) -> {
+		for (AfterLoad callback : callbacks) {
 			callback.onLoadClient(entity, world);
 		}
 	});
 	/**
 	 * An event which is called after an entity has been unloaded from a client world.
 	 */
-	public static final Event<AfterEntityUnloadClient> AFTER_ENTITY_UNLOAD_CLIENT = Event.create(AfterEntityUnloadClient.class, callbacks -> (entity, world) -> {
-		for (AfterEntityUnloadClient callback : callbacks) {
+	public static final Event<AfterUnload> AFTER_UNLOAD = Event.create(AfterUnload.class, callbacks -> (entity, world) -> {
+		for (AfterUnload callback : callbacks) {
 			callback.onUnloadClient(entity, world);
 		}
 	});
 
 	@FunctionalInterface
-	public interface AfterEntityLoadClient {
+	public interface AfterLoad {
 		/**
 		 * Called after an entity has loaded into a client world.
 		 *
@@ -56,7 +56,7 @@ public final class ClientEntityLoadEvents {
 	}
 
 	@FunctionalInterface
-	public interface AfterEntityUnloadClient {
+	public interface AfterUnload {
 		/**
 		 * Called after an entity has been unloaded from a client world.
 		 *

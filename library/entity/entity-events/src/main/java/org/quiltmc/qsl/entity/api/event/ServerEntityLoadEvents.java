@@ -23,12 +23,12 @@ import org.quiltmc.qsl.base.api.event.Event;
 /**
  * Events related to an entity being loaded into or unloaded from a server world.
  */
-public final class EntityLoadEvents {
+public final class ServerEntityLoadEvents {
 	/**
 	 * An event which is called after an entity has been loaded into a server world.
 	 */
-	public static final Event<AfterEntityLoadServer> AFTER_ENTITY_LOAD_SERVER = Event.create(AfterEntityLoadServer.class, callbacks -> (entity, world) -> {
-		for (AfterEntityLoadServer callback : callbacks) {
+	public static final Event<AfterLoad> AFTER_LOAD = Event.create(AfterLoad.class, callbacks -> (entity, world) -> {
+		for (AfterLoad callback : callbacks) {
 			callback.onLoad(entity, world);
 		}
 	});
@@ -36,14 +36,14 @@ public final class EntityLoadEvents {
 	/**
 	 * An event which is called after an entity has been unloaded from a server world.
 	 */
-	public static final Event<AfterEntityUnloadServer> AFTER_ENTITY_UNLOAD_SERVER = Event.create(AfterEntityUnloadServer.class, callbacks -> (entity, world) -> {
-		for (AfterEntityUnloadServer callback : callbacks) {
+	public static final Event<AfterUnload> AFTER_UNLOAD = Event.create(AfterUnload.class, callbacks -> (entity, world) -> {
+		for (AfterUnload callback : callbacks) {
 			callback.onUnload(entity, world);
 		}
 	});
 
 	@FunctionalInterface
-	public interface AfterEntityLoadServer {
+	public interface AfterLoad {
 		/**
 		 * Called after an entity has loaded into a server world.
 		 *
@@ -54,7 +54,7 @@ public final class EntityLoadEvents {
 	}
 
 	@FunctionalInterface
-	public interface AfterEntityUnloadServer {
+	public interface AfterUnload {
 		/**
 		 * Called after an entity has been unloaded from a server world.
 		 *
@@ -65,5 +65,5 @@ public final class EntityLoadEvents {
 	}
 
 
-	private EntityLoadEvents() {}
+	private ServerEntityLoadEvents() {}
 }
