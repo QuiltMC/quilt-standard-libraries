@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,55 +61,6 @@ public class QuiltItemSettings extends Item.Settings {
 	 */
 	public QuiltItemSettings customDamage(CustomDamageHandler handler) {
 		return this.customSetting(QuiltCustomItemSettings.CUSTOM_DAMAGE_HANDLER, handler);
-	}
-
-	/**
-	 * Sets the stack-aware recipe remainder provider of the item.
-	 */
-	public QuiltItemSettings recipeRemainder(RecipeRemainderProvider provider) {
-		return this.customSetting(CustomItemSettingImpl.RECIPE_REMAINDER_PROVIDER, provider);
-	}
-
-	/**
-	 * Sets the stack-aware recipe remainder to damage the item by 1 every time it is used in crafting.
-	 */
-	public QuiltItemSettings damageIfUsedInCrafting() {
-		return this.damageIfUsedInCrafting(1);
-	}
-
-	/**
-	 * Sets the stack-aware recipe remainder to return the item itself.
-	 */
-	public QuiltItemSettings returnSelfInCrafting() {
-		return this.damageIfUsedInCrafting(0);
-	}
-
-	/**
-	 * Sets the stack-aware recipe remainder to damage the item by a certain amount every time it is used in crafting.
-	 *
-	 * @param by the amount
-	 */
-	public QuiltItemSettings damageIfUsedInCrafting(int by) {
-		if (by == 0) {
-			return this.recipeRemainder((original, type) -> original);
-		}
-
-		return this.recipeRemainder((original, type) -> {
-			if (!original.isDamageable()) {
-				return ItemStack.EMPTY;
-			}
-
-			ItemStack copy = original.copy();
-
-			copy.setDamage(copy.getDamage() + by);
-
-			if(copy.getDamage() >= copy.getMaxDamage()) {
-				copy.setCount(0);
-				return ItemStack.EMPTY;
-			}
-
-			return copy;
-		});
 	}
 
 	/**

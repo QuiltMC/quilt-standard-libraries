@@ -3,11 +3,9 @@
   "package": "org.quiltmc.qsl.item.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
-    "AbstractFurnaceBlockEntityMixin",
     "ItemMixin",
     "ItemStackMixin",
-    "LivingEntityMixin",
-    "RecipeManagerMixin"
+    "LivingEntityMixin"
   ],
   "client": [
   ],
