@@ -3,6 +3,7 @@
   "package": "org.quiltmc.qsl.tooltip.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "client.ItemStackMixin",
     "client.TooltipComponentMixin"
   ],
   "injectors": {

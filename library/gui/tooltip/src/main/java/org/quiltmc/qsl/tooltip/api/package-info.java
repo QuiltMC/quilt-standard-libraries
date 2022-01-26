@@ -24,6 +24,15 @@
  *         an event which is triggered when a tooltip data tries to be converted to a tooltip component.
  *     </li>
  * </ul>
+ *
+ * <p>
+ * <h3>Text-based tooltips</h3>
+ * When hovering an item, the client can display text about it in a tooltip.
+ * It can be appended to per-item through
+ * {@link net.minecraft.item.Item#appendTooltip(net.minecraft.item.ItemStack, net.minecraft.world.World, java.util.List, net.minecraft.client.item.TooltipContext)},
+ * but what if you want to append new lines on an existing item?
+ * <p>
+ * That's the job of {@link org.quiltmc.qsl.tooltip.api.client.ItemTooltipCallback}.
  */
 
 package org.quiltmc.qsl.tooltip.api;
