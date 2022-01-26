@@ -27,8 +27,8 @@ import net.minecraft.util.profiler.Profiler;
 /**
  * A simplified version of the "resource reload listener" interface, hiding the
  * peculiarities of the API.
- *
- * <p>In essence, there are two stages:
+ * <p>
+ * In essence, there are two stages:
  *
  * <ul>
  *     <li>{@linkplain #load(ResourceManager, Profiler, Executor)}: create an instance of your data object
@@ -37,10 +37,11 @@ import net.minecraft.util.profiler.Profiler;
  * to the game instance.
  * </ul>
  *
- * <p>The load stage should be self-contained as it can run on any thread! However,
+ * <p>
+ * The load stage should be self-contained as it can run on any thread! However,
  * the apply stage is guaranteed to run on the game thread.
- *
- * <p>For a fully synchronous alternative, consider using {@link SimpleSynchronousResourceReloader}.
+ * <p>
+ * For a fully synchronous alternative, consider using {@link SimpleSynchronousResourceReloader}.
  *
  * @param <T> the type for the intermediate reloading state
  */

@@ -52,7 +52,7 @@ public class ReloadableResourceManagerImplMixin {
 
 	@Inject(
 			method = "reload",
-			at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;isDebugEnabled()Z", remap = false)
+			at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;isDebugEnabled()Z", remap = false)
 	)
 	private void reload(Executor prepareExecutor, Executor applyExecutor, CompletableFuture<Unit> initialStage,
 						List<ResourcePack> packs,

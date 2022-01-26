@@ -23,9 +23,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ServerResourceManager;
@@ -51,7 +51,7 @@ import org.quiltmc.qsl.tag.mixin.RequiredTagListRegistryAccessor;
 @SuppressWarnings("ClassCanBeRecord")
 @ApiStatus.Internal
 public final class TagRegistryImpl<T> implements TagRegistry<T> {
-	private static final Logger LOGGER = LogManager.getLogger();
+	private static final Logger LOGGER = LoggerFactory.getLogger("TagRegistry");
 	private static final ThreadLocal<Boolean> MISSING_TAGS_CLIENT_FETCH = new ThreadLocal<>();
 
 	private final RequiredTagList<T> tagList;

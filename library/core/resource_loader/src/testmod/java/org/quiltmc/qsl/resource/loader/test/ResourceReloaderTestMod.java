@@ -23,8 +23,8 @@ import java.util.Collections;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
@@ -35,7 +35,7 @@ import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.quiltmc.qsl.resource.loader.api.reloader.SimpleSynchronousResourceReloader;
 
 public class ResourceReloaderTestMod implements ModInitializer {
-	private static final Logger LOGGER = LogManager.getLogger();
+	private static final Logger LOGGER = LoggerFactory.getLogger(ResourceReloaderTestMod.class);
 
 	private static boolean clientResources = false;
 	private static boolean serverResources = false;
