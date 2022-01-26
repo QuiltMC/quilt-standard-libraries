@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "id": "qsl_item_item",
+  "id": "quilt_item_api",
   "name": "Quilt Item API",
   "version": "1.0.0",
   "environment": "*",
   "license": "Apache-2.0",
   "mixins": [
-    "qsl_item_item.mixin.json"
+    "quilt_item_api.mixin.json"
   ]
 }

@@ -39,7 +39,7 @@ public class QuiltItemSettings extends Item.Settings {
 	 * @return this
 	 */
 	public QuiltItemSettings equipmentSlot(EquipmentSlotProvider equipmentSlotProvider) {
-		return this.customSetting(CustomItemSettingImpl.EQUIPMENT_SLOT_PROVIDER, equipmentSlotProvider);
+		return this.customSetting(QuiltCustomItemSettings.EQUIPMENT_SLOT_PROVIDER, equipmentSlotProvider);
 	}
 
 	/**
@@ -49,7 +49,7 @@ public class QuiltItemSettings extends Item.Settings {
 	 * @return this
 	 */
 	public QuiltItemSettings equipmentSlot(EquipmentSlot equipmentSlot) {
-		return this.customSetting(CustomItemSettingImpl.EQUIPMENT_SLOT_PROVIDER, itemStack -> equipmentSlot);
+		return this.customSetting(QuiltCustomItemSettings.EQUIPMENT_SLOT_PROVIDER, itemStack -> equipmentSlot);
 	}
 
 	/**
@@ -60,7 +60,7 @@ public class QuiltItemSettings extends Item.Settings {
 	 * @return this
 	 */
 	public QuiltItemSettings customDamage(CustomDamageHandler handler) {
-		return this.customSetting(CustomItemSettingImpl.CUSTOM_DAMAGE_HANDLER, handler);
+		return this.customSetting(QuiltCustomItemSettings.CUSTOM_DAMAGE_HANDLER, handler);
 	}
 
 	/**

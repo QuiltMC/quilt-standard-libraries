@@ -6,15 +6,12 @@
   "environment": "*",
   "license": "Apache-2.0",
   "depends": {
-    "qsl_items_item": "*"
+    "quilt_item_api": "*"
   },
   "entrypoints": {
     "main": [
       "org.quiltmc.qsl.item.test.QuiltItemSettingsTests",
       "org.quiltmc.qsl.item.test.CustomDamageTest"
-    ],
-    "client": [
-      "org.quiltmc.qsl.item.test.client.TooltipTests"
     ]
   }
 }

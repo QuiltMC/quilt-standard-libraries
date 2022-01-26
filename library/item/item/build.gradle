@@ -9,4 +9,8 @@ qslModule {
 	coreDependencies([
 			"qsl_base"
 	])
+
+	coreTestmodDependencies([
+	        "resource_loader"
+	])
 }
