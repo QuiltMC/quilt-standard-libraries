@@ -16,8 +16,8 @@
 
 package org.quiltmc.qsl.item.test;
 
-import org.quiltmc.qsl.item.api.item.v1.CustomItemSetting;
-import org.quiltmc.qsl.item.api.item.v1.QuiltItemSettings;
+import org.quiltmc.qsl.item.api.item.setting.CustomItemSetting;
+import org.quiltmc.qsl.item.api.item.setting.QuiltItemSettings;
 
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;

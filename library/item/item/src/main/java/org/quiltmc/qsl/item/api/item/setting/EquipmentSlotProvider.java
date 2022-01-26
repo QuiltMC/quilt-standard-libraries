@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.item.api.item.v1;
+package org.quiltmc.qsl.item.api.item.setting;
 
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;

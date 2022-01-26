@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.item.api.item.v1;
+package org.quiltmc.qsl.item.api.item.setting;
 
 import java.util.function.Supplier;
 
 import net.minecraft.item.Item;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.qsl.item.impl.CustomItemSettingImpl;
 
 /**
@@ -41,7 +42,7 @@ import org.quiltmc.qsl.item.impl.CustomItemSettingImpl;
  * public void onInitializeClient() {
  *     ItemTooltipCallback.EVENT.register((stack, context, lines) -> {
  *         // Gets the setting from the specified item.
- *         String tooltip = CUSTOM_TOOLTIP.getValue(stack.getItem());
+ *         String tooltip = CUSTOM_TOOLTIP.get(stack.getItem());
  *
  *         if (tooltip != null) {
  *             lines.add(new LiteralText(tooltip));
@@ -55,6 +56,7 @@ import org.quiltmc.qsl.item.impl.CustomItemSettingImpl;
  *
  * @param <T> the type of the setting to be attached
  */
+@ApiStatus.Internal
 public interface CustomItemSetting<T> {
 	/**
 	 * Returns the current value of this setting for the given {@link Item}.

@@ -31,7 +31,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-import org.quiltmc.qsl.item.api.item.v1.CustomDamageHandler;
+import org.quiltmc.qsl.item.api.item.setting.CustomDamageHandler;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {

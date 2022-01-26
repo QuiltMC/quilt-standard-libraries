@@ -25,8 +25,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import net.fabricmc.api.ModInitializer;
-import org.quiltmc.qsl.item.api.item.v1.CustomDamageHandler;
-import org.quiltmc.qsl.item.api.item.v1.QuiltItemSettings;
+import org.quiltmc.qsl.item.api.item.setting.CustomDamageHandler;
+import org.quiltmc.qsl.item.api.item.setting.QuiltItemSettings;
 
 public class CustomDamageTest implements ModInitializer {
 	@Override

@@ -27,9 +27,9 @@ import java.util.function.Supplier;
 
 import net.minecraft.item.Item;
 
-import org.quiltmc.qsl.item.api.item.v1.CustomDamageHandler;
-import org.quiltmc.qsl.item.api.item.v1.CustomItemSetting;
-import org.quiltmc.qsl.item.api.item.v1.EquipmentSlotProvider;
+import org.quiltmc.qsl.item.api.item.setting.CustomDamageHandler;
+import org.quiltmc.qsl.item.api.item.setting.CustomItemSetting;
+import org.quiltmc.qsl.item.api.item.setting.EquipmentSlotProvider;
 
 public class CustomItemSettingImpl<T> implements CustomItemSetting<T> {
 	public static final CustomItemSetting<EquipmentSlotProvider> EQUIPMENT_SLOT_PROVIDER = CustomItemSetting.create(() -> null);

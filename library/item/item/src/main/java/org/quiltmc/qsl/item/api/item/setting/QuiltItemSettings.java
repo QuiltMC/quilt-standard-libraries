@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.item.api.item.v1;
+package org.quiltmc.qsl.item.api.item.setting;
 
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.FoodComponent;
@@ -71,7 +71,7 @@ public class QuiltItemSettings extends Item.Settings {
 	 */
 	public <T> QuiltItemSettings customSetting(CustomItemSetting<T> setting, T value) {
 		if (!(setting instanceof CustomItemSettingImpl)) {
-			throw new UnsupportedOperationException("CustomItemSetting should not be ");
+			throw new UnsupportedOperationException("CustomItemSetting should not be custom class " + setting.getClass().getSimpleName());
 		}
 
 		((CustomItemSettingImpl<T>) setting).set(this, value);

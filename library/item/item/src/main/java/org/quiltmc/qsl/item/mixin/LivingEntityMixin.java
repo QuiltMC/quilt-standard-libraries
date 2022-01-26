@@ -28,7 +28,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-import org.quiltmc.qsl.item.api.item.v1.EquipmentSlotProvider;
+import org.quiltmc.qsl.item.api.item.setting.EquipmentSlotProvider;
 
 @Mixin(LivingEntity.class)
 abstract class LivingEntityMixin {
