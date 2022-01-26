@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import net.minecraft.server.MinecraftServer;
 
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 import org.quiltmc.qsl.resource.loader.impl.ModNioResourcePack;
-import org.quiltmc.qsl.resource.loader.impl.ModResourcePackProvider;
+import org.quiltmc.qsl.resource.loader.impl.QuiltBuiltinResourcePackProfile;
 
 @Mixin(MinecraftServer.class)
 public class MinecraftServerMixin {
@@ -51,7 +51,7 @@ public class MinecraftServerMixin {
 
 		ResourcePackProfile profile = resourcePackManager.getProfile(profileName);
 
-		if (profile.getSource() == ModResourcePackProvider.PACK_SOURCE_MOD_BUILTIN) {
+		if (profile instanceof QuiltBuiltinResourcePackProfile) {
 			ResourcePack pack = profile.createResourcePack();
 			// Prevents automatic load for built-in data packs provided by mods that are not enabled by default.
 			return pack instanceof ModNioResourcePack modResourcePack && !modResourcePack.getActivationType().isEnabledByDefault();

@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,6 +69,6 @@ public final class ModResourcePackProvider implements ResourcePackProvider {
 			5. (Invisible) High-priority virtual resource packs
 		 */
 
-		ResourceLoaderImpl.registerBuiltinResourcePacks(this.type, profileAdder, factory);
+		ResourceLoaderImpl.registerBuiltinResourcePacks(this.type, profileAdder);
 	}
 }
