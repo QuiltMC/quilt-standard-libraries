@@ -84,6 +84,7 @@ public class CreateWorldScreenMixin {
 
 	// Lambda method in CreateWorldScreen#applyDataPacks, at CompletableFuture#thenAcceptAsync.
 	// Take a ServerResourceManager parameter.
+	@SuppressWarnings("target")
 	@Inject(
 			method = "m_oezpkwme(Lnet/minecraft/resource/DataPackSettings;Lnet/minecraft/resource/ServerResourceManager;)V",
 			at = @At(
@@ -97,11 +98,13 @@ public class CreateWorldScreenMixin {
 
 	// Lambda method in CreateWorldScreen#applyDataPacks, at CompletableFuture#handle.
 	// Take Void and Throwable parameters.
+	@SuppressWarnings("target")
 	@Inject(
 			method = "m_paskjwcu(Ljava/lang/Void;Ljava/lang/Throwable;)Ljava/lang/Object;",
 			at = @At(
 					value = "INVOKE",
-					target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Throwable;)V"
+					target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Throwable;)V",
+					remap = false
 			)
 	)
 	private void onFailDataPackLoading(Void unused, Throwable throwable, CallbackInfoReturnable<Object> cir) {

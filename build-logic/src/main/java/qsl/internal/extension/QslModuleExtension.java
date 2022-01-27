@@ -97,6 +97,7 @@ public class QslModuleExtension extends QslExtension {
 
 	private void addIntraLibraryDependencies(String configuration, Iterable<String> dependencies) {
 		String library = this.getLibrary().get();
+		this.addInterLibraryDependencies(configuration, library, dependencies);
 	}
 
 	public void interLibraryTestmodDependencies(String library, Iterable<String> dependencies) {
