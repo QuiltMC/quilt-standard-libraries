@@ -13,4 +13,12 @@ qslModule {
 	intraLibraryDependencies([
 			"tags"
 	])
+	interLibraryTestmodDependencies("command", [
+	        "command"
+	])
+}
+
+dependencies {
+	// OPTIONAL dependency on command library
+	compileOnly project(":command:command");
 }

@@ -50,64 +50,36 @@ import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.ArgumentTypes;
+import net.minecraft.command.argument.IdentifierArgumentType;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
 import org.quiltmc.qsl.registry.dict.api.RegistryDict;
 
 @ApiStatus.Internal
 public final class DumpBuiltinDictsCommand {
-	public static final String ENABLE_PROPERTY = "quilt.data.registry_dicts.dumpbuiltin_command";
-
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-	public static final class RegistryArgumentType implements ArgumentType<Registry<?>> {
-		private static final Collection<String> EXAMPLES = Arrays.asList("foo", "foo:bar");
-		public static final DynamicCommandExceptionType UNKNOWN_REGISTRY_EXCEPTION = new DynamicCommandExceptionType(
-				o -> new LiteralText("Could not find registry " + o));
-
-		public static RegistryArgumentType registry() {
-			return new RegistryArgumentType();
-		}
-
-		public static Registry<?> getRegistry(CommandContext<ServerCommandSource> context, String name) {
-			return context.getArgument(name, Registry.class);
-		}
-
-		@Override
-		public Registry<?> parse(StringReader reader) throws CommandSyntaxException {
-			var id = Identifier.fromCommandInput(reader);
-			return Registry.REGISTRIES.getOrEmpty(id).orElseThrow(() -> UNKNOWN_REGISTRY_EXCEPTION.create(id));
-		}
-
-		@Override
-		public Collection<String> getExamples() {
-			return EXAMPLES;
-		}
-
-		@Override
-		public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-			return CommandSource.suggestIdentifiers(Registry.REGISTRIES.getIds(), builder);
-		}
+	public static void register() {
+		CommandRegistrationCallback.EVENT.register((dispatcher, integrated, dedicated) -> register0(dispatcher));
 	}
 
-	public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-		if (Boolean.getBoolean(ENABLE_PROPERTY)) {
-			ArgumentTypes.register(Initializer.NAMESPACE + ":internal_dumpbuiltin_registry",
-					RegistryArgumentType.class, new ConstantArgumentSerializer<>(RegistryArgumentType::registry));
-
-			dispatcher.register(literal("dumpbuiltindicts")
-					.then(argument("registry", RegistryArgumentType.registry())
-							.requires(src -> src.hasPermissionLevel(4))
-							.executes(DumpBuiltinDictsCommand::execute))
-			);
-		}
+	private static void register0(CommandDispatcher<ServerCommandSource> dispatcher) {
+		dispatcher.register(literal("dumpbuiltindicts")
+				.then(argument("registry", IdentifierArgumentType.identifier())
+						.requires(src -> src.hasPermissionLevel(4))
+						.executes(DumpBuiltinDictsCommand::execute))
+		);
 	}
 
 	private static final Logger LOGGER = LogManager.getLogger("DumpBuiltinDictsCommand");
+
+	private static final DynamicCommandExceptionType UNKNOWN_REGISTRY_EXCEPTION = new DynamicCommandExceptionType(
+			o -> new LiteralText("Could not find registry " + o));
 	private static final SimpleCommandExceptionType IO_EXCEPTION =
 			new SimpleCommandExceptionType(new LiteralText("IO exception occurred, check logs"));
 	private static final SimpleCommandExceptionType ILLEGAL_STATE =
@@ -118,7 +90,11 @@ public final class DumpBuiltinDictsCommand {
 			new SimpleCommandExceptionType(new LiteralText("Uncaught exception occurred, check logs"));
 
 	private static int execute(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
-		var registry = RegistryArgumentType.getRegistry(ctx, "registry");
+		var registryId = IdentifierArgumentType.getIdentifier(ctx, "registry");
+		var registry = Registry.REGISTRIES.get(registryId);
+		if (registry == null) {
+			throw UNKNOWN_REGISTRY_EXCEPTION.create(registryId);
+		}
 		try {
 			execute0(ctx, registry);
 		} catch (RuntimeException e) {

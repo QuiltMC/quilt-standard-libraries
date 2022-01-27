@@ -17,6 +17,9 @@
 package org.quiltmc.qsl.registry.dict.impl;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.resource.ResourceType;
@@ -27,8 +30,23 @@ import org.quiltmc.qsl.registry.dict.impl.reloader.RegistryDictReloader;
 public final class Initializer implements ModInitializer {
 	public static final String NAMESPACE = "quilt_registry_dicts";
 
+	public static final String ENABLE_DUMP_BUILTIN_DICTS_CMD_PROPERTY = "quilt.data.registry_dicts.dumpbuiltin_command";
+
+	public static final Logger LOGGER = LogManager.getLogger("QuiltRegistryDicts");
+
 	@Override
 	public void onInitialize() {
 		RegistryDictReloader.register(ResourceType.SERVER_DATA);
+
+		// TODO register sync stuff (S2C)
+
+		if (Boolean.getBoolean(ENABLE_DUMP_BUILTIN_DICTS_CMD_PROPERTY)) {
+			if (FabricLoader.getInstance().isModLoaded("quilt_command")) {
+				DumpBuiltinDictsCommand.register();
+			} else {
+				LOGGER.warn("Property \"{}\" was set to true, but required module \"quilt_command\" is missing!",
+						ENABLE_DUMP_BUILTIN_DICTS_CMD_PROPERTY);
+			}
+		}
 	}
 }
