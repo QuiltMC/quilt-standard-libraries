@@ -23,7 +23,12 @@ import net.minecraft.tag.BlockTags;
 import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.qsl.mining_levels.api.QuiltMineableTags;
 import org.quiltmc.qsl.tool_attributes.api.QuiltToolTags;
-import org.quiltmc.qsl.tool_attributes.impl.handlers.*;
+import org.quiltmc.qsl.tool_attributes.impl.handlers.ModdedToolsVanillaBlocksToolHandler;
+import org.quiltmc.qsl.tool_attributes.impl.handlers.ModdedToolsModdedBlocksToolHandler;
+import org.quiltmc.qsl.tool_attributes.impl.handlers.TaggedToolsTaggedBlocksToolHandler;
+import org.quiltmc.qsl.tool_attributes.impl.handlers.TaggedToolsModdedBlocksToolHandler;
+import org.quiltmc.qsl.tool_attributes.impl.handlers.VanillaToolsModdedBlocksToolHandler;
+import org.quiltmc.qsl.tool_attributes.impl.handlers.ShearsVanillaBlocksToolHandler;
 
 import java.util.Arrays;
 

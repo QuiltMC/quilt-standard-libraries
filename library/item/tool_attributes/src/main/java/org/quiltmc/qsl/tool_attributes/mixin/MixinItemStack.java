@@ -83,7 +83,7 @@ public abstract class MixinItemStack implements ItemStackContext {
 		ItemStack stack = (ItemStack) (Object) this;
 
 		// Only perform our custom operations if hte tool being operated on is dynamic
-		if (stack.getItem() instanceof DynamicAttributeTool) {
+		if (stack.getItem() instanceof DynamicAttributeTool holder) {
 			// The Multimap passed in is not ordered, so we need to re-assemble the vanilla and modded attributes
 			// into a custom, ordered Multimap. If this step is not done, and both vanilla + modded attributes
 			// exist at once, the item tooltip attribute lines will randomly switch positions.
@@ -91,7 +91,6 @@ public abstract class MixinItemStack implements ItemStackContext {
 			// First, add all vanilla attributes to our ordered Multimap
 			orderedAttributes.putAll(multimap);
 			// Second, calculate the dynamic attributes, and add them at the end of our Multimap.
-			DynamicAttributeTool holder = (DynamicAttributeTool) stack.getItem();
 			orderedAttributes.putAll(holder.getDynamicModifiers(slot, stack, contextEntity));
 			return orderedAttributes;
 		}

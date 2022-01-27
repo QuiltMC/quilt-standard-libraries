@@ -123,7 +123,7 @@ public final class ToolManagerImpl {
 	private static final Map<Block, EntryImpl> ENTRIES = new IdentityHashMap<>();
 
 	/**
-	 * Returns a event for the tag provided, creates a new event if it does not exist.
+	 * Returns an event for the tag provided, creates a new event if it does not exist.
 	 *
 	 * @param tag the tag provided for the tool
 	 * @return the event callback.
@@ -140,7 +140,7 @@ public final class ToolManagerImpl {
 	}
 
 	/**
-	 * Returns a event used for every tag registerd
+	 * Returns an event used for every tag registered
 	 *
 	 * @return the event call back
 	 */

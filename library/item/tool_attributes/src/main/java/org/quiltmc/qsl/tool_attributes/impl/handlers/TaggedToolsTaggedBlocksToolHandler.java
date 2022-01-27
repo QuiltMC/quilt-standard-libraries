@@ -36,7 +36,7 @@ import org.quiltmc.qsl.tool_attributes.impl.ToolManagerImpl;
  * but aren't any known tool items in code. For that reason, we use a few callback values:
  * The mining level of this kind of item is always 0, and the mining speed multiplier is always 1.
  *
- * <p>Only applicable to items that are not a subclass of {@link org.quiltmc.qsl.tool_attributes.api.DynamicAttributeTool} or {@link net.minecraft.item.ToolItem}</p>
+ * <p>Only applicable to items that are not a subclass of {@link DynamicAttributeTool} or {@link ToolItem}</p>
  */
 @ApiStatus.Internal
 public class TaggedToolsTaggedBlocksToolHandler implements ToolManagerImpl.ToolHandler {

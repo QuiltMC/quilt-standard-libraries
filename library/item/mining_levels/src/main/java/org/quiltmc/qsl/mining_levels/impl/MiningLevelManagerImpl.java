@@ -31,7 +31,8 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-//import org.quiltmc.quiltmappings.constants.MiningLevels;
+// import org.quiltmc.quiltmappings.constants.MiningLevels; // More Unpick funny
+
 @ApiStatus.Internal
 public class MiningLevelManagerImpl {
 	private static final Logger LOGGER = LogManager.getLogger("quilt-mining-levels");
@@ -44,7 +45,7 @@ public class MiningLevelManagerImpl {
 	private static final ThreadLocal<Reference2IntMap<BlockState>> CACHE = ThreadLocal.withInitial(Reference2IntOpenHashMap::new);
 
 	public static int getRequiredMiningLevel(BlockState state) {
-		return CACHE.get().computeIntIfAbsent(state, s -> {
+		return CACHE.get().computeIfAbsent(state, s -> {
 			TagGroup<Block> blockTags = BlockTags.getTagGroup();
 			// TODO this needs replacing with `MiningLevels.HAND` once unpick is fixed
 			int miningLevel = -1;
@@ -69,7 +70,7 @@ public class MiningLevelManagerImpl {
 
 			// Handle vanilla tags
 			// TODO Replace 3, 2, 1 with respective `MiningLevels`
-			// TODO Replace with a switch-case statement because it's cleaner
+			// TODO Replace with a switch-case
 			if (state.isIn(BlockTags.NEEDS_DIAMOND_TOOL)) {
 				miningLevel = Math.max(miningLevel, 3);
 			} else if (state.isIn(BlockTags.NEEDS_IRON_TOOL)) {

@@ -34,7 +34,7 @@ public abstract class BambooBlockMixin {
 	/**
 	 * When the player is holding a {@link net.minecraft.item.SwordItem SwordItem}, Bamboo return {@code 1.0F} and is instantly mined.
 	 *
-	 * <p>This injection provides that same functionality when mining with items that are in the {@link org.quiltmc.qsl.tool_attributes.api.QuiltToolTags#SWORDS quilt:swords} tag</p>
+	 * <p>This injection provides that same functionality when mining with items that are in the {@link QuiltToolTags#SWORDS quilt:swords} tag</p>
 	 */
 	@Inject(at = @At("HEAD"), method = "calcBlockBreakingDelta", cancellable = true)
 	private void onCalcBlockBreakingDelta(BlockState state, PlayerEntity player, BlockView world, BlockPos pos, CallbackInfoReturnable<Float> info) {

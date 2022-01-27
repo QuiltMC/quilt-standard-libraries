@@ -17,11 +17,13 @@
 
 package org.quiltmc.qsl.tool_attributes.mixin;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolItem;
 import net.minecraft.item.ToolMaterial;
+import net.minecraft.tag.Tag;
 import org.quiltmc.qsl.tool_attributes.api.DynamicAttributeTool;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -36,12 +38,12 @@ public abstract class MixinToolItem extends Item implements DynamicAttributeTool
 	}
 
 	@Override
-	public int getMiningLevel(ItemStack stack, LivingEntity user) {
+	public int getMiningLevel(Tag<Item> tag, BlockState state, ItemStack stack, LivingEntity user) {
 		return this.getMaterial().getMiningLevel();
 	}
 
 	@Override
-	public float getMiningSpeedMultiplier(ItemStack stack, LivingEntity user) {
+	public float getMiningSpeedMultiplier(Tag<Item> tag, BlockState state, ItemStack stack, LivingEntity user) {
 		return this.getMaterial().getMiningSpeedMultiplier();
 	}
 }

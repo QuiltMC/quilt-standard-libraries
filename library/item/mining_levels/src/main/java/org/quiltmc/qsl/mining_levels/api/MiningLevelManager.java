@@ -36,7 +36,7 @@ import org.quiltmc.qsl.mining_levels.impl.MiningLevelManagerImpl;
  * {@code #quilt:needs_tool_level_4}.
  */
 public class MiningLevelManager {
-	private MiningLevelManager() {}
+	private MiningLevelManager() { }
 
 	/**
 	 * Gets the tool mining level required to effectively mine and drop a block state.

@@ -42,41 +42,13 @@ public interface DynamicAttributeTool {
 	/**
 	 * Determines the mining level of the passed stack, which is used for calculating what blocks this tool is allowed to break.
 	 *
-	 * @param stack The item stack being used to mine the block
-	 * @param user  The current user of the tool, or null if there isn't any
-	 * @return The mining level of the item. 3 is equal to a diamond pick.
-	 * @deprecated Use {@link #getMiningLevel(Tag, BlockState, ItemStack, LivingEntity)} to detect tag and block.
-	 */
-	@Deprecated
-	default int getMiningLevel(ItemStack stack, @Nullable LivingEntity user) {
-		return 0;
-	}
-
-	/**
-	 * Determines the mining level of the passed stack, which is used for calculating what blocks this tool is allowed to break.
-	 *
 	 * @param tag   The tool tag the item stack is being compared to
 	 * @param state The block to mine
 	 * @param stack The item stack being used to mine the block
 	 * @param user  The current user of the tool, or null if there isn't any
 	 * @return The mining level of the item. 3 is equal to a diamond pick.
 	 */
-	default int getMiningLevel(Tag<Item> tag, BlockState state, ItemStack stack, @Nullable LivingEntity user) {
-		return getMiningLevel(stack, user);
-	}
-
-	/**
-	 * Determines the mining speed multiplier of the passed stack, which is one factor in overall mining speed.
-	 *
-	 * @param stack The item stack being used to mine the block
-	 * @param user  The current user of the tool, or null if there isn't any
-	 * @return The mining speed multiplier of the item. 8.0 is equal to a diamond pick.
-	 * @deprecated Use {@link #getMiningSpeedMultiplier(Tag, BlockState, ItemStack, LivingEntity)} to detect tag and block.
-	 */
-	@Deprecated
-	default float getMiningSpeedMultiplier(ItemStack stack, @Nullable LivingEntity user) {
-		return 1.0F;
-	}
+	int getMiningLevel(Tag<Item> tag, BlockState state, ItemStack stack, @Nullable LivingEntity user);
 
 	/**
 	 * Determines the mining speed multiplier of the passed stack, which is one factor in overall mining speed.
@@ -87,9 +59,7 @@ public interface DynamicAttributeTool {
 	 * @param user  The current user of the tool, or null if there isn't any
 	 * @return The mining speed multiplier of the item. 8.0 is equal to a diamond pick.
 	 */
-	default float getMiningSpeedMultiplier(Tag<Item> tag, BlockState state, ItemStack stack, @Nullable LivingEntity user) {
-		return getMiningSpeedMultiplier(stack, user);
-	}
+	float getMiningSpeedMultiplier(Tag<Item> tag, BlockState state, ItemStack stack, @Nullable LivingEntity user);
 
 	/**
 	 * Post process the mining speed, this takes place after the mining speed has been calculated.

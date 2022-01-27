@@ -30,7 +30,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
- * Adds support for {@link org.quiltmc.qsl.mining_levels.api.QuiltMineableTags#SWORD_MINEABLE}.
+ * Adds support for {@link QuiltMineableTags#SWORD_MINEABLE}.
  */
 @Mixin(SwordItem.class)
 abstract class SwordItemMixin extends ToolItem {

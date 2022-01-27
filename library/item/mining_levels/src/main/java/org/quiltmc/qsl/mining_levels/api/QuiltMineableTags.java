@@ -43,7 +43,7 @@ public class QuiltMineableTags {
 	 */
 	public static final Tag.Identified<Block> SHEARS_MINEABLE = register("mineable/shears");
 
-	private QuiltMineableTags() {}
+	private QuiltMineableTags() { }
 
 	private static Tag.Identified<Block> register(String id) {
 		return TagRegistry.BLOCK.create(new Identifier("quilt", id));

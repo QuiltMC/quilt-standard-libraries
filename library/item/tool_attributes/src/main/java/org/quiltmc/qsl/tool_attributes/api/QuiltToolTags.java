@@ -34,7 +34,7 @@ public class QuiltToolTags {
 	public static final Tag<Item> SWORDS = register("swords");
 	public static final Tag<Item> SHEARS = register("shears");
 
-	private QuiltToolTags() {}
+	private QuiltToolTags() { }
 
 	private static Tag<Item> register(String id) {
 		return TagRegistry.ITEM.create(new Identifier("quilt", id));

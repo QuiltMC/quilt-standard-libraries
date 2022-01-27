@@ -90,6 +90,5 @@ public final class ToolManager {
 		return ToolManagerImpl.handleBreakingSpeedIgnoresVanilla(state, stack, user);
 	}
 
-	private ToolManager() {
-	}
+	private ToolManager() { }
 }

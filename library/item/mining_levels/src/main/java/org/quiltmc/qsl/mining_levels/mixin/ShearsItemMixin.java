@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
- * Adds support for {@link org.quiltmc.qsl.mining_levels.api.QuiltMineableTags#SHEARS_MINEABLE}.
+ * Adds support for {@link QuiltMineableTags#SHEARS_MINEABLE}.
  */
 @Mixin(ShearsItem.class)
 abstract class ShearsItemMixin {
