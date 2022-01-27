@@ -8,7 +8,9 @@ qslModule {
 	library = "data"
 	coreDependencies([
 			"qsl_base",
-			"resource_loader"
+			"lifecycle_events",
+			"resource_loader",
+			"networking"
 	])
 	intraLibraryDependencies([
 			"tags"

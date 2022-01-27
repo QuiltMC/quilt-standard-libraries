@@ -23,7 +23,14 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.resource.ResourceType;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.util.Identifier;
 
+import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
+import org.quiltmc.qsl.networking.api.PacketSender;
+import org.quiltmc.qsl.networking.api.ServerPlayConnectionEvents;
+import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.registry.dict.impl.reloader.RegistryDictReloader;
 
 @ApiStatus.Internal
@@ -34,11 +41,23 @@ public final class Initializer implements ModInitializer {
 
 	public static final Logger LOGGER = LogManager.getLogger("QuiltRegistryDicts");
 
+	public static Identifier id(String path) {
+		return new Identifier(NAMESPACE, path);
+	}
+
+	private static MinecraftServer server;
+
 	@Override
 	public void onInitialize() {
 		RegistryDictReloader.register(ResourceType.SERVER_DATA);
 
-		// TODO register sync stuff (S2C)
+		ServerLifecycleEvents.READY.register(server1 -> server = server1);
+		ServerLifecycleEvents.STOPPING.register(server1 -> {
+			if (server == server1) {
+				server = null;
+			}
+		});
+		ServerPlayConnectionEvents.JOIN.register(Initializer::syncDictsToNewPlayer);
 
 		if (Boolean.getBoolean(ENABLE_DUMP_BUILTIN_DICTS_CMD_PROPERTY)) {
 			if (FabricLoader.getInstance().isModLoaded("quilt_command")) {
@@ -46,6 +65,24 @@ public final class Initializer implements ModInitializer {
 			} else {
 				LOGGER.warn("Property \"{}\" was set to true, but required module \"quilt_command\" is missing!",
 						ENABLE_DUMP_BUILTIN_DICTS_CMD_PROPERTY);
+			}
+		}
+	}
+
+	private static void syncDictsToNewPlayer(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server) {
+		for (var buf : RegistryDictSync.createSyncPackets()) {
+			sender.sendPacket(RegistryDictSync.PACKET_ID, buf);
+		}
+	}
+
+	public static void resyncDicts() {
+		if (server == null) {
+			return;
+		}
+
+		for (var player : server.getPlayerManager().getPlayerList()) {
+			for (var buf : RegistryDictSync.createSyncPackets()) {
+				ServerPlayNetworking.send(player, RegistryDictSync.PACKET_ID, buf);
 			}
 		}
 	}

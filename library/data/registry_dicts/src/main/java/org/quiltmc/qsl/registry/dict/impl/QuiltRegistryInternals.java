@@ -16,6 +16,9 @@
 
 package org.quiltmc.qsl.registry.dict.impl;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,6 +31,8 @@ public interface QuiltRegistryInternals<R> {
 	void quilt$registerDict(RegistryDict<R, ?> dictionary);
 
 	@Nullable RegistryDict<R, ?> quilt$getDict(Identifier id);
+
+	Set<Map.Entry<Identifier, RegistryDict<R, ?>>> quilt$getDictEntries();
 
 	RegistryDictHolder<R> quilt$getBuiltinDictHolder();
 

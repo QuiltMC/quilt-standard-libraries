@@ -16,9 +16,13 @@
 
 package org.quiltmc.qsl.registry.dict.impl;
 
+import java.util.Map;
+import java.util.Set;
+
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -42,6 +46,10 @@ public final class RegistryDictHolder<R> {
 
 	public static <R> @Nullable RegistryDict<R, ?> getDict(Registry<R> registry, Identifier id) {
 		return getInternals(registry).quilt$getDict(id);
+	}
+
+	public static <R> Set<Map.Entry<Identifier, RegistryDict<R, ?>>> getDictEntries(Registry<R> registry) {
+		return getInternals(registry).quilt$getDictEntries();
 	}
 
 	/// impl for RegistryDict.get
@@ -89,7 +97,7 @@ public final class RegistryDictHolder<R> {
 
 	@SuppressWarnings("UnstableApiUsage")
 	private RegistryDictHolder() {
-		valueTable = Tables.newCustomTable(new Object2ObjectOpenHashMap<>(), Reference2ObjectOpenHashMap::new);
+		valueTable = Tables.newCustomTable(new Object2ReferenceOpenHashMap<>(), Reference2ObjectOpenHashMap::new);
 	}
 
 	@SuppressWarnings("unchecked")

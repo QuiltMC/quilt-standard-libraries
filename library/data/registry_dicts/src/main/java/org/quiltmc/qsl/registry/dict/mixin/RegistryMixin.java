@@ -18,6 +18,7 @@ package org.quiltmc.qsl.registry.dict.mixin;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -49,6 +50,11 @@ public abstract class RegistryMixin<R> implements QuiltRegistryInternals<R> {
 	@Override
 	public @Nullable RegistryDict<R, ?> quilt$getDict(Identifier id) {
 		return quilt$dicts.get(id);
+	}
+
+	@Override
+	public Set<Map.Entry<Identifier, RegistryDict<R, ?>>> quilt$getDictEntries() {
+		return quilt$dicts.entrySet();
 	}
 
 	@Override

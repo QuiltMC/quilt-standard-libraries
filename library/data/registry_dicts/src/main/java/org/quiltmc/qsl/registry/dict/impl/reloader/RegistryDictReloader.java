@@ -40,6 +40,7 @@ import org.quiltmc.qsl.registry.dict.api.RegistryDict;
 import org.quiltmc.qsl.registry.dict.impl.AssetsHolderGuard;
 import org.quiltmc.qsl.registry.dict.impl.Initializer;
 import org.quiltmc.qsl.registry.dict.impl.RegistryDictHolder;
+import org.quiltmc.qsl.registry.dict.impl.RegistryDictSync;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 import org.quiltmc.qsl.resource.loader.api.reloader.SimpleResourceReloader;
@@ -199,7 +200,13 @@ public final class RegistryDictReloader implements SimpleResourceReloader<Regist
 
 	@Override
 	public CompletableFuture<Void> apply(LoadedData data, ResourceManager manager, Profiler profiler, Executor executor) {
-		return CompletableFuture.runAsync(() -> data.apply(profiler), executor);
+		return CompletableFuture.runAsync(() -> {
+			data.apply(profiler);
+			if (source == ResourceType.SERVER_DATA) {
+				RegistryDictSync.markDirty();
+				Initializer.resyncDicts();
+			}
+		}, executor);
 	}
 
 	// "<namespace>:dicts/<path>/<file_name>.json" becomes "<namespace>:<file_name>"
