@@ -3,7 +3,7 @@ plugins {
 }
 
 qslModule {
-	moduleName = "tool_attributes"
+	moduleName = "mining_levels"
 	version = "1.0.0"
 	library = "item"
 	coreDependencies([
