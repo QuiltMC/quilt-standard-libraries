@@ -19,8 +19,7 @@
     "minecraft": ">=1.18.2-alpha.22.3.a",
     "quilt_base": "*",
     "quilt_resource_loader": "*",
-    "quilt_tags": "*",
-    "quilt_tool_attributes": "*"
+    "quilt_tags": "*"
   },
   "description": "Adds support for custom mining levels.",
   "mixins": [

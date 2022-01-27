@@ -100,6 +100,10 @@ public class QslModuleExtension extends QslExtension {
 		this.addInterLibraryDependencies(configuration, library, dependencies);
 	}
 
+	public void interLibraryDependencies(String library, Iterable<String> dependencies) {
+		this.addInterLibraryDependencies(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME, library, dependencies);
+	}
+
 	public void interLibraryTestmodDependencies(String library, Iterable<String> dependencies) {
 		this.addInterLibraryDependencies("testmodImplementation", library, dependencies);
 	}

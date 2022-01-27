@@ -19,14 +19,17 @@ package org.quiltmc.qsl.tool_attributes.test.item;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolMaterials;
+import net.minecraft.tag.Tag;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.tool_attributes.api.DynamicAttributeTool;
 
@@ -36,6 +39,16 @@ public class TestDynamicSwordItem extends SwordItem implements DynamicAttributeT
 	public static final UUID TEST_UUID = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
 	public TestDynamicSwordItem(Settings settings) {
 		super(ToolMaterials.DIAMOND, 6, -2.4f, settings);
+	}
+
+	@Override
+	public int getMiningLevel(Tag<Item> tag, BlockState state, ItemStack stack, @Nullable LivingEntity user) {
+		return 0;
+	}
+
+	@Override
+	public float getMiningSpeedMultiplier(Tag<Item> tag, BlockState state, ItemStack stack, @Nullable LivingEntity user) {
+		return 0;
 	}
 
 	@Override

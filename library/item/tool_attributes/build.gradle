@@ -15,9 +15,6 @@ qslModule {
 			"lifecycle_events"
 	])
 	interLibraryTestmodDependencies("block", ["block_extensions"])
-}
-
-dependencies {
-	api project(path: ":data:tags")
-	api project(path: ":item:mining_levels")
+	interLibraryDependencies("data", ["tags"])
+	intraLibraryDependencies(["mining_levels"])
 }

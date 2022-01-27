@@ -6,7 +6,8 @@
   "environment": "*",
   "license": "Apache-2.0",
   "depends": {
-    "quilt_tool_attributes": "*"
+    "quilt_tool_attributes": "*",
+    "quilt_lifecycle_events": "*"
   },
   "entrypoints": {
     "main": [
