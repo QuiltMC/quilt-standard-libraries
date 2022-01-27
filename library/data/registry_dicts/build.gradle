@@ -7,10 +7,10 @@ qslModule {
 	version = "1.0.0"
 	library = "data"
 	coreDependencies([
-			"qsl_base", // this *should* be implicitly added by the below dep, but isn't...
+			"qsl_base",
 			"resource_loader"
 	])
-	interLibraryDependencies([
+	intraLibraryDependencies([
 			"tags"
 	])
 }
