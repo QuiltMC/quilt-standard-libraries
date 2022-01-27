@@ -22,5 +22,5 @@ qslModule {
 
 dependencies {
 	// OPTIONAL dependency on command library
-	compileOnly project(":command:command");
+	compileOnly project(path: ":command:command", configuration: "dev");
 }
