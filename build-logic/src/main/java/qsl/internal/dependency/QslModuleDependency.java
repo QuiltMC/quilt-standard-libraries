@@ -23,7 +23,7 @@ public class QslModuleDependency implements Named {
 		return configuration;
 	}
 
-	public void testmod() {
+	public void testmodOnly() {
 		configuration.set(ConfigurationType.TESTMOD);
 	}
 
