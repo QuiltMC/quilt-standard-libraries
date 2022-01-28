@@ -6,7 +6,9 @@ qslModule {
 	moduleName = "lifecycle_events"
 	version = "1.0.0"
 	library = "core"
-	coreDependencies([
-			"qsl_base"
-	])
+	moduleDependencies {
+		core {
+			qsl_base
+		}
+	}
 }

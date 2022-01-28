@@ -6,7 +6,9 @@ qslModule {
 	moduleName = "client_command"
 	version = "1.0.0"
 	library = "command"
-	coreDependencies([
-			"qsl_base"
-	])
+	moduleDependencies {
+		core {
+			qsl_base
+		}
+	}
 }
