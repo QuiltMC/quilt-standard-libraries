@@ -8,10 +8,8 @@ qslModule {
 	library = "core"
 	moduleDependencies {
 		core {
-			qsl_base
-			lifecycle_events {
-				testmodOnly()
-			}
+			api("qsl_base")
+			testmodOnly("lifecycle_events")
 		}
 	}
 }

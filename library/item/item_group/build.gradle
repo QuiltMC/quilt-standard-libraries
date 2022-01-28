@@ -8,8 +8,8 @@ qslModule {
 	library = "item"
 	moduleDependencies {
 		core {
-			qsl_base
-			resource_loader
+			api("qsl_base")
+			api("resource_loader")
 		}
 	}
 }

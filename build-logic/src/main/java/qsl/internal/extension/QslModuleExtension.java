@@ -46,15 +46,7 @@ public class QslModuleExtension extends QslExtension {
 				LicenseHeader.Rule.fromFile(project.getRootProject().file("codeformat/HEADER").toPath())
 		);
 
-		this.moduleDependencyDefinitions = project.getObjects().domainObjectContainer(QslLibraryDependency.class, name -> new QslLibraryDependency(name, project));
-		moduleDependencyDefinitions.all(library -> {
-			library.all(module -> {
-				Dependency dep = getModule(library.getName(), module.getName());
-				moduleDependencies.add(dep);
-
-				this.project.getDependencies().add(module.getConfiguration().get().getConfigurationName(), dep);
-			});
-		});
+		this.moduleDependencyDefinitions = project.getObjects().domainObjectContainer(QslLibraryDependency.class, name -> new QslLibraryDependency(name, project, moduleDependencies));
 
 		project.getTasks().register("checkLicenses", CheckLicenseTask.class, this.licenseHeader);
 		project.getTasks().register("applyLicenses", ApplyLicenseTask.class, this.licenseHeader);
@@ -81,14 +73,6 @@ public class QslModuleExtension extends QslExtension {
 
 	public NamedDomainObjectContainer<QslLibraryDependency> getModuleDependencies() {
 		return moduleDependencyDefinitions;
-	}
-
-	private Dependency getModule(String library, String module) {
-		Map<String, String> map = new LinkedHashMap<>(2);
-		map.put("path", ":" + library + ":" + module);
-		map.put("configuration", "dev");
-
-		return this.project.getDependencies().project(map);
 	}
 
 	public void setupModuleDependencies() {

@@ -8,18 +8,12 @@ qslModule {
 	library = "data"
 	moduleDependencies {
 		core {
-			qsl_base {
-				testmodOnly()
-			}
-			lifecycle_events {
-				testmodOnly()
-			}
-			resource_loader
+			api("resource_loader")
+			testmodOnly("qsl_base")
+			testmodOnly("lifecycle_events")
 		}
 		command {
-			command {
-				testmodOnly()
-			}
+			testmodOnly("command")
 		}
 	}
 }

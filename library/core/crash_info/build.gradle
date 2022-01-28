@@ -8,7 +8,7 @@ qslModule {
 	library = "core"
 	moduleDependencies {
 		core {
-			qsl_base
+			api("qsl_base")
 		}
 	}
 }

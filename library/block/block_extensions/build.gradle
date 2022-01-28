@@ -8,10 +8,8 @@ qslModule {
 	library = "block"
 	moduleDependencies {
 		core {
-			qsl_base
-			resource_loader {
-				testmodOnly()
-			}
+			api("qsl_base")
+			testmodOnly("resource_loader")
 		}
 	}
 }
