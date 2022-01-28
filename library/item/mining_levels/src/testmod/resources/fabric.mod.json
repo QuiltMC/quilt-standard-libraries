@@ -11,7 +11,7 @@
   },
   "entrypoints": {
     "main": [
-      "org.quiltmc.qsl.mining_levels.test.QuiltMiningLevelsTestMod"
+      "org.quiltmc.qsl.mining_levels.test.QuiltMiningLevelsTestmod"
     ]
   }
 }

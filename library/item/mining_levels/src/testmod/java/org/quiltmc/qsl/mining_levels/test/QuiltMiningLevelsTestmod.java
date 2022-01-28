@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.mining_levels.test;
 
+import net.fabricmc.api.ModInitializer;
 import net.minecraft.block.*;
 import net.minecraft.item.*;
 import net.minecraft.util.Identifier;
@@ -27,7 +28,7 @@ import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MiningLevelsTest {
+public class QuiltMiningLevelsTestmod implements ModInitializer {
 	private static final String ID = "quilt_mining_levels_testmod";
 	private static final Logger LOGGER = LogManager.getLogger();
 
@@ -49,12 +50,8 @@ public class MiningLevelsTest {
 	// vanilla mineable tag, requires tool (this type of block doesn't exist in vanilla)
 	public static final Block NEEDS_SHOVEL = new Block(AbstractBlock.Settings.of(Material.STONE).strength(2, 3).requiresTool());
 
-
-	public static void run() {
-		registerTestBlocks();
-	}
-
-	private static void registerTestBlocks() {
+	@Override
+	public void onInitialize() {
 		register("needs_netherite_sword", NEEDS_NETHERITE_SWORD);
 		register("needs_stone_sword", NEEDS_STONE_SWORD);
 		register("needs_any_sword", NEEDS_ANY_SWORD);
