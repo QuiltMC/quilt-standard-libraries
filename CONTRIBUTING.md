@@ -187,24 +187,20 @@ This field can be configured like:
 qslModule {
     // ...
     moduleDependencies {
-        library_name { // The QSL Library to depend on
-            // Simple dependencies do not need a code block.
-            module_name // The QSL Module in `library_name` to depend on
-            // api("module_name") is also valid
+        // The QSL Library to depend on
+        library_name {
+            // The QSL Module in `library_name` to depend on
+            api("module_name")
 
             // Only depend on this module when testing the code
-            module_2 {
-                testmodOnly()
-            }
+            testmodOnly("module_2")
 
             // By default, dependencies are `api` dependencies; they are put on the classpath
             // of mods that depend on this module.
             // Impl dependencies are dependencies that are only used internally in a module,
             // and classes from it are never exposed through this module's public API.
             // For example, a dependency on lifecyle events would usually be impl
-            module_3 {
-                impl()
-            }
+            impl("module_3")
         }
     }
 }

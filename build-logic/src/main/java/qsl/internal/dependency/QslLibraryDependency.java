@@ -10,7 +10,7 @@ import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.plugins.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-public class QslLibraryDependency  implements Named {
+public class QslLibraryDependency implements Named {
 	private final String name;
 	private final Project project;
 	private final List<Dependency> moduleDependencies;
@@ -53,7 +53,9 @@ public class QslLibraryDependency  implements Named {
 	 * The configuration type for the module dependency
 	 */
 	public enum ConfigurationType {
-		API(JavaPlugin.API_CONFIGURATION_NAME), IMPLEMENTATION(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME), TESTMOD("testmodImplementation");
+		API(JavaPlugin.API_CONFIGURATION_NAME),
+		IMPLEMENTATION(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME),
+		TESTMOD("testmodImplementation");
 
 		private final String configurationName;
 		ConfigurationType(String configurationName) {
