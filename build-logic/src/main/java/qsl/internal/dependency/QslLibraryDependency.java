@@ -24,7 +24,7 @@ public class QslLibraryDependency extends AbstractNamedDomainObjectContainer<Qsl
 	}
 
 	@Override
-	protected QslModuleDependency doCreate(String s) {
+	protected @NotNull QslModuleDependency doCreate(@NotNull String s) {
 		return objects.newInstance(QslModuleDependency.class, s, objects);
 	}
 }

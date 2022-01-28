@@ -13,7 +13,6 @@ import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.model.ObjectFactory;
-import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.provider.Property;
 import org.gradle.api.publish.PublicationContainer;
 import org.gradle.api.publish.PublishingExtension;
@@ -53,12 +52,7 @@ public class QslModuleExtension extends QslExtension {
 				Dependency dep = getModule(library.getName(), module.getName());
 				moduleDependencies.add(dep);
 
-				if (module.getTestmod().get()) {
-					this.project.getDependencies().add("testmodImplementation", dep);
-				} else { // Cannot be both api/implementation and testmod
-					String configuration = module.getImpl().get() ? JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME : JavaPlugin.API_CONFIGURATION_NAME;
-					this.project.getDependencies().add(configuration, dep);
-				}
+				this.project.getDependencies().add(module.getConfiguration().get().getConfigurationName(), dep);
 			});
 		});
 

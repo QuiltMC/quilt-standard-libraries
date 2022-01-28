@@ -3,33 +3,56 @@ package qsl.internal.dependency;
 import javax.inject.Inject;
 import org.gradle.api.Named;
 import org.gradle.api.model.ObjectFactory;
+import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.provider.Property;
+import org.jetbrains.annotations.NotNull;
 
 public class QslModuleDependency implements Named {
 	private final String name;
-	private final Property<Boolean> impl;
-	private final Property<Boolean> testmod;
+	private final Property<ConfigurationType> configuration;
 
 	@Inject
 	public QslModuleDependency(String name, ObjectFactory objects) {
 		this.name = name;
 
-		impl = objects.property(Boolean.class);
-		impl.convention(false);
-
-		testmod = objects.property(Boolean.class);
-		testmod.convention(false);
+		configuration = objects.property(ConfigurationType.class);
+		configuration.convention(ConfigurationType.API);
 	}
 
-	public Property<Boolean> getImpl() {
-		return impl;
+	public Property<ConfigurationType> getConfiguration() {
+		return configuration;
 	}
-	public Property<Boolean> getTestmod() {
-		return testmod;
+
+	public void testmod() {
+		configuration.set(ConfigurationType.TESTMOD);
+	}
+
+	public void api() {
+		configuration.set(ConfigurationType.API);
+	}
+
+	public void impl() {
+		configuration.set(ConfigurationType.IMPLEMENTATION);
 	}
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return name;
+	}
+
+	/**
+	 * The configuration type for the module dependency
+	 */
+	public enum ConfigurationType {
+		API(JavaPlugin.API_CONFIGURATION_NAME), IMPLEMENTATION(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME), TESTMOD("testmodImplementation");
+
+		private final String configurationName;
+		ConfigurationType(String configurationName) {
+			this.configurationName = configurationName;
+		}
+
+		public String getConfigurationName() {
+			return configurationName;
+		}
 	}
 }

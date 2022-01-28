@@ -177,6 +177,32 @@ In the case of a pseudo-local variable (a field used briefly to pass around a lo
 injections of said method), the field should be named with the namespace first, then the name of the injected method,
 and finally the name of the local (`quilt$injectedMethod$localName`).
 
+## Gradle Conventions
+
+### Declaring dependencies between modules
+
+In the `qslModule` extension, there is a `moduleDependencies` field. Dependencies are declared in a tree like structure reflecting how QSL libraries and modules are layed out.
+This field can be configured like:
+```groovy
+qslModule {
+    // ...
+    moduleDependencies {
+        library_name { // The QSL Library to depend on
+            module_name { // The QSL Module in `library_name` to depend on
+                api() // Default behavior, should not need to be called.
+            }
+            module_2 {
+                testmod() // Only depend on this module when testing the code
+            }
+            module_3 {
+                impl() // This library is only used to compile this module and is not part of the API. This should be rarely used.
+            }
+        }
+    }
+}
+```
+
+
 ## Licensing & DCO
 
 QSL is licensed under [Apache 2.0][LICENSE], and have a [Developer Certificate of Origin (DCO)][DCO]

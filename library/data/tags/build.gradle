@@ -9,16 +9,16 @@ qslModule {
 	moduleDependencies {
 		core {
 			qsl_base {
-				testmod = true
+				testmod()
 			}
 			lifecycle_events {
-				testmod = true
+				testmod()
 			}
 			resource_loader
 		}
 		command {
 			command {
-				testmod = true
+				testmod()
 			}
 		}
 	}

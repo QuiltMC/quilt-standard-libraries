@@ -10,7 +10,7 @@ qslModule {
 		core {
 			qsl_base
 			lifecycle_events {
-				testmod = true
+				testmod()
 			}
 		}
 	}
