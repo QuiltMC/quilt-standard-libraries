@@ -16,9 +16,13 @@
 
 package org.quiltmc.qsl.resource.loader.impl;
 
+import java.io.IOException;
+
 import com.mojang.logging.LogUtils;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.api.FabricLoader;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.ApiStatus;
+import org.slf4j.Logger;
+
 import net.minecraft.resource.ResourcePackCompatibility;
 import net.minecraft.resource.ResourcePackProfile;
 import net.minecraft.resource.ResourcePackSource;
@@ -27,12 +31,8 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
-import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.ApiStatus;
-import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
-import org.slf4j.Logger;
 
-import java.io.IOException;
+import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
 
 @ApiStatus.Internal
 public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
@@ -117,9 +117,7 @@ public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
 			Text sourceText = this.text;
 			boolean isDescriptionSameAsRawName = description.getString().equals(this.pack.getName());
 
-			if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT
-					&& this.text != SOURCE_BUILTIN_TEXT
-					&& !isDescriptionSameAsRawName) {
+			if (this.text != SOURCE_BUILTIN_TEXT && !isDescriptionSameAsRawName) {
 				description = new LiteralText(description.asTruncatedString(28)).append("...");
 			}
 
