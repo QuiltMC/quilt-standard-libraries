@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.fluidflow.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "FluidBlockMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

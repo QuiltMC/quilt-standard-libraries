@@ -1,0 +1,8 @@
+plugins {
+	id("qsl.library")
+}
+
+qslLibrary {
+	libraryName = "fluid"
+	version = "1.0.0"
+}
