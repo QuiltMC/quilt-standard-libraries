@@ -1,0 +1,12 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "bows"
+	version = "1.0.0"
+	library = "item"
+	coreDependencies([
+			"qsl_base"
+	])
+}

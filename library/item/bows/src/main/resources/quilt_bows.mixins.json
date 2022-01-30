@@ -1,0 +1,23 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.bows.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "AbstractSkeletonEntityMixin",
+    "BowAttackGoalMixin",
+    "BowAttackMixin",
+    "BowItemMixin",
+    "CrossbowItemMixin",
+    "EntityUseBowMixin",
+    "EntityUseCrossbowMixin",
+    "ProjectileUtilMixin"
+  ],
+  "client": [
+    "client.HeldItemRendererMixin",
+    "client.PlayerEntityRendererMixin",
+    "client.SkeletonEntityModelMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
