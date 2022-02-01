@@ -191,13 +191,13 @@ qslModule {
         library_name {
             // API dependencies are put on the classpath of mods that depend on this module.
             // Use an API dependency when you expose a class from this dependency in this module's
-            // public API--for example, a method that returns a `FooBar`, defined in `module_name`
+            // public API--for example, a method that returns a `FooBar`, defined in `module_name`.
             // When in doubt, use an API dependency.
             api("module_name")
             
             // Impl dependencies are dependencies that are only used internally in a module,
             // and classes from it are never exposed through this module's public API.
-            // For example, a dependency on lifecyle events would usually be impl
+            // For example, a dependency on lifecyle events would usually be impl.
             impl("module_2")
             
             // This module is only depended on when testing the code
