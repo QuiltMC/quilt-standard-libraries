@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "quilt_tool_attributes_testmod:hardened_gravel_block",
+    "quilt_tool_attributes_testmod:hardened_stone_block"
+  ]
+}

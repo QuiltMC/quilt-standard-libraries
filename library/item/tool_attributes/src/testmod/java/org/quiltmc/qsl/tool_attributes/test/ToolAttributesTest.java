@@ -24,14 +24,20 @@ import net.fabricmc.api.ModInitializer;
 import net.minecraft.block.*;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.*;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.tag.Tag;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Style;
+import net.minecraft.text.TextColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
 import org.quiltmc.qsl.block.extensions.api.QuiltBlockSettings;
 import org.quiltmc.qsl.block.extensions.api.QuiltMaterialBuilder;
-import org.quiltmc.qsl.lifecycle.api.event.ServerTickEvents;
+import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
 import org.quiltmc.qsl.tag.api.TagRegistry;
 import org.quiltmc.qsl.tool_attributes.api.DynamicAttributeTool;
 import org.quiltmc.qsl.tool_attributes.api.QuiltToolTags;
@@ -149,69 +155,81 @@ public class ToolAttributesTest implements ModInitializer {
 		fakeHoe = Registry.register(Registry.ITEM, new Identifier("quilt_tool_attributes_testmod", "fake_hoe"), new Item(new Item.Settings()));
 		fakeShovel = Registry.register(Registry.ITEM, new Identifier("quilt_tool_attributes_testmod", "fake_shovel"), new Item(new Item.Settings()));
 
-		ServerTickEvents.START.register(this::validate);
+//		ServerTickEvents.START.register(this::validate);
+		CommandRegistrationCallback.EVENT.register((dispatcher, integrated, dedicated) -> {
+			dispatcher.register(LiteralArgumentBuilder.<ServerCommandSource>literal("test_tool_attributes").executes(context -> {
+				validate(context);
+				return 1;
+			}));
+		});
 	}
 
-	private void validate(MinecraftServer server) {
-		if (hasValidated) return;
-
-		hasValidated = true;
-
+	private void validate(CommandContext<ServerCommandSource> context) {
 		if (QuiltToolTags.PICKAXES.values().isEmpty()) {
 			throw new AssertionError("Failed to load tool tags");
 		}
 
 		//Test we haven't broken vanilla behavior
-		testToolOnBlock(new ItemStack(Items.STONE_PICKAXE), Blocks.GRAVEL, false, 1.0F);
-		testToolOnBlock(new ItemStack(Items.IRON_PICKAXE), Blocks.STONE, true, ((ToolItem) Items.IRON_PICKAXE).getMaterial().getMiningSpeedMultiplier());
-		testToolOnBlock(new ItemStack(Items.IRON_PICKAXE), Blocks.OBSIDIAN, false, ((ToolItem) Items.IRON_PICKAXE).getMaterial().getMiningSpeedMultiplier());
-		testToolOnBlock(new ItemStack(Items.STONE_SHOVEL), Blocks.STONE, false, 1.0F);
-		testToolOnBlock(new ItemStack(Items.STONE_SHOVEL), Blocks.GRAVEL, true, ((ToolItem) Items.STONE_SHOVEL).getMaterial().getMiningSpeedMultiplier());
+		context.getSource().sendFeedback(new LiteralText("Vanilla behavior"), false);
+		testToolOnBlock(new ItemStack(Items.STONE_PICKAXE), Blocks.GRAVEL, false, 1.0F, context);
+		testToolOnBlock(new ItemStack(Items.IRON_PICKAXE), Blocks.STONE, true, ((ToolItem) Items.IRON_PICKAXE).getMaterial().getMiningSpeedMultiplier(), context);
+		testToolOnBlock(new ItemStack(Items.IRON_PICKAXE), Blocks.OBSIDIAN, false, ((ToolItem) Items.IRON_PICKAXE).getMaterial().getMiningSpeedMultiplier(), context);
+		testToolOnBlock(new ItemStack(Items.STONE_SHOVEL), Blocks.STONE, false, 1.0F, context);
+		testToolOnBlock(new ItemStack(Items.STONE_SHOVEL), Blocks.GRAVEL, true, ((ToolItem) Items.STONE_SHOVEL).getMaterial().getMiningSpeedMultiplier(), context);
 
 		//Test vanilla tools don't bypass fabric mining levels
-		testToolOnBlock(new ItemStack(Items.STONE_PICKAXE), stoneBlock, false, ((ToolItem) Items.STONE_PICKAXE).getMaterial().getMiningSpeedMultiplier());
-		testToolOnBlock(new ItemStack(Items.IRON_PICKAXE), stoneBlock, true, ((ToolItem) Items.IRON_PICKAXE).getMaterial().getMiningSpeedMultiplier());
-		testToolOnBlock(new ItemStack(Items.STONE_SHOVEL), gravelBlock, false, ((ToolItem) Items.STONE_SHOVEL).getMaterial().getMiningSpeedMultiplier());
-		testToolOnBlock(new ItemStack(Items.IRON_SHOVEL), gravelBlock, true, ((ToolItem) Items.IRON_SHOVEL).getMaterial().getMiningSpeedMultiplier());
+		context.getSource().sendFeedback(new LiteralText("Check vanilla doesnt bypass mining level api"), false);
+		testToolOnBlock(new ItemStack(Items.STONE_PICKAXE), stoneBlock, false, ((ToolItem) Items.STONE_PICKAXE).getMaterial().getMiningSpeedMultiplier(), context);
+		testToolOnBlock(new ItemStack(Items.IRON_PICKAXE), stoneBlock, true, ((ToolItem) Items.IRON_PICKAXE).getMaterial().getMiningSpeedMultiplier(), context);
+		testToolOnBlock(new ItemStack(Items.STONE_SHOVEL), gravelBlock, false, ((ToolItem) Items.STONE_SHOVEL).getMaterial().getMiningSpeedMultiplier(), context);
+		testToolOnBlock(new ItemStack(Items.IRON_SHOVEL), gravelBlock, true, ((ToolItem) Items.IRON_SHOVEL).getMaterial().getMiningSpeedMultiplier(), context);
 
 		//Test vanilla tools respect fabric mining tags
-		testToolOnBlock(new ItemStack(Items.IRON_PICKAXE), gravelBlock, false, DEFAULT_BREAK_SPEED);
-		testToolOnBlock(new ItemStack(Items.IRON_SHOVEL), stoneBlock, false, DEFAULT_BREAK_SPEED);
+		context.getSource().sendFeedback(new LiteralText("Check vanilla respects mining level tags"), false);
+		testToolOnBlock(new ItemStack(Items.IRON_PICKAXE), gravelBlock, false, DEFAULT_BREAK_SPEED, context);
+		testToolOnBlock(new ItemStack(Items.IRON_SHOVEL), stoneBlock, false, DEFAULT_BREAK_SPEED, context);
 
 		//Test dynamic tools don't bypass mining level
-		testToolOnBlock(new ItemStack(testPickaxe), Blocks.OBSIDIAN, false, TOOL_BREAK_SPEED);
+		context.getSource().sendFeedback(new LiteralText("Check dynamic respects mining level api"), false);
+		testToolOnBlock(new ItemStack(testPickaxe), Blocks.OBSIDIAN, false, TOOL_BREAK_SPEED, context);
 
 		//Test dynamic tools respect fabric mining tags
-		testToolOnBlock(new ItemStack(testPickaxe), gravelBlock, false, DEFAULT_BREAK_SPEED);
-		testToolOnBlock(new ItemStack(testShovel), stoneBlock, false, DEFAULT_BREAK_SPEED);
+		context.getSource().sendFeedback(new LiteralText("Check dynamic respects mining level tags"), false);
+		testToolOnBlock(new ItemStack(testPickaxe), gravelBlock, false, DEFAULT_BREAK_SPEED, context);
+		testToolOnBlock(new ItemStack(testShovel), stoneBlock, false, DEFAULT_BREAK_SPEED, context);
 
 		//Test dynamic tools on vanilla blocks
-		testToolOnBlock(new ItemStack(testShovel), Blocks.STONE, false, DEFAULT_BREAK_SPEED);
-		testToolOnBlock(new ItemStack(testShovel), Blocks.GRAVEL, true, TOOL_BREAK_SPEED);
-		testToolOnBlock(new ItemStack(testPickaxe), Blocks.GRAVEL, false, DEFAULT_BREAK_SPEED);
-		testToolOnBlock(new ItemStack(testPickaxe), Blocks.STONE, true, TOOL_BREAK_SPEED);
+		context.getSource().sendFeedback(new LiteralText("Check vanilla on vanilla blocks"), false);
+		testToolOnBlock(new ItemStack(testShovel), Blocks.STONE, false, DEFAULT_BREAK_SPEED, context);
+		testToolOnBlock(new ItemStack(testShovel), Blocks.GRAVEL, true, TOOL_BREAK_SPEED, context);
+		testToolOnBlock(new ItemStack(testPickaxe), Blocks.GRAVEL, false, DEFAULT_BREAK_SPEED, context);
+		testToolOnBlock(new ItemStack(testPickaxe), Blocks.STONE, true, TOOL_BREAK_SPEED, context);
 
 		//Test pineapples respect our pineapple block
-		testToolOnBlock(new ItemStack(testDiamondDynamicLevelTater), pineappleEffectiveBlock, true, TOOL_BREAK_SPEED);
-		testToolOnBlock(new ItemStack(testDiamondLevelTater), pineappleEffectiveBlock, true, ToolMaterials.DIAMOND.getMiningSpeedMultiplier());
-		testToolOnBlock(new ItemStack(testStoneDynamicLevelTater), pineappleEffectiveBlock, false, TOOL_BREAK_SPEED);
-		testToolOnBlock(new ItemStack(testStoneLevelTater), pineappleEffectiveBlock, false, ToolMaterials.STONE.getMiningSpeedMultiplier());
+		context.getSource().sendFeedback(new LiteralText("Check pineapples respects pineapple blocks"), false);
+		testToolOnBlock(new ItemStack(testDiamondDynamicLevelTater), pineappleEffectiveBlock, true, TOOL_BREAK_SPEED, context);
+		testToolOnBlock(new ItemStack(testDiamondLevelTater), pineappleEffectiveBlock, true, ToolMaterials.DIAMOND.getMiningSpeedMultiplier(), context);
+		testToolOnBlock(new ItemStack(testStoneDynamicLevelTater), pineappleEffectiveBlock, false, TOOL_BREAK_SPEED, context);
+		testToolOnBlock(new ItemStack(testStoneLevelTater), pineappleEffectiveBlock, false, ToolMaterials.STONE.getMiningSpeedMultiplier(), context);
 
 		//Test other tools on our pineapple block
-		testToolOnBlock(new ItemStack(testPickaxe), pineappleEffectiveBlock, false, DEFAULT_BREAK_SPEED);
-		testToolOnBlock(new ItemStack(testShovel), pineappleEffectiveBlock, false, DEFAULT_BREAK_SPEED);
-		testToolOnBlock(new ItemStack(Items.IRON_PICKAXE), pineappleEffectiveBlock, false, DEFAULT_BREAK_SPEED);
-		testToolOnBlock(new ItemStack(Items.IRON_SHOVEL), pineappleEffectiveBlock, false, DEFAULT_BREAK_SPEED);
+		context.getSource().sendFeedback(new LiteralText("Check tools respects pineapple blocks"), false);
+		testToolOnBlock(new ItemStack(testPickaxe), pineappleEffectiveBlock, false, DEFAULT_BREAK_SPEED, context);
+		testToolOnBlock(new ItemStack(testShovel), pineappleEffectiveBlock, false, DEFAULT_BREAK_SPEED, context);
+		testToolOnBlock(new ItemStack(Items.IRON_PICKAXE), pineappleEffectiveBlock, false, DEFAULT_BREAK_SPEED, context);
+		testToolOnBlock(new ItemStack(Items.IRON_SHOVEL), pineappleEffectiveBlock, false, DEFAULT_BREAK_SPEED, context);
 
 		//Test vanilla tools on blocks
-		testToolOnBlock(new ItemStack(Items.SHEARS), needsShears, true, DEFAULT_BREAK_SPEED);
-		testToolOnBlock(new ItemStack(Items.IRON_SWORD), needsSword, true, ToolMaterials.IRON.getMiningSpeedMultiplier());
-		testToolOnBlock(new ItemStack(Items.IRON_AXE), needsAxe, true, ToolMaterials.IRON.getMiningSpeedMultiplier());
-		testToolOnBlock(new ItemStack(Items.IRON_PICKAXE), needsPickaxe, true, ToolMaterials.IRON.getMiningSpeedMultiplier());
-		testToolOnBlock(new ItemStack(Items.IRON_HOE), needsHoe, true, ToolMaterials.IRON.getMiningSpeedMultiplier());
-		testToolOnBlock(new ItemStack(Items.IRON_SHOVEL), needsShovel, true, ToolMaterials.IRON.getMiningSpeedMultiplier());
+		context.getSource().sendFeedback(new LiteralText("Check vanilla on blocks"), false);
+		testToolOnBlock(new ItemStack(Items.SHEARS), needsShears, true, DEFAULT_BREAK_SPEED, context);
+		testToolOnBlock(new ItemStack(Items.IRON_SWORD), needsSword, true, ToolMaterials.IRON.getMiningSpeedMultiplier(), context);
+		testToolOnBlock(new ItemStack(Items.IRON_AXE), needsAxe, true, ToolMaterials.IRON.getMiningSpeedMultiplier(), context);
+		testToolOnBlock(new ItemStack(Items.IRON_PICKAXE), needsPickaxe, true, ToolMaterials.IRON.getMiningSpeedMultiplier(), context);
+		testToolOnBlock(new ItemStack(Items.IRON_HOE), needsHoe, true, ToolMaterials.IRON.getMiningSpeedMultiplier(), context);
+		testToolOnBlock(new ItemStack(Items.IRON_SHOVEL), needsShovel, true, ToolMaterials.IRON.getMiningSpeedMultiplier(), context);
 
 		//Test fake tools on corresponding and invalid blocks
+		context.getSource().sendFeedback(new LiteralText("Check fake on real and fake blocks"), false);
 		// Note: using LinkedHashMultimap to ensure the same order (this makes it more predictable when debugging)
 		Multimap<Item, Block> fakeToolsToEffectiveBlocks = LinkedHashMultimap.create(6, 2);
 		fakeToolsToEffectiveBlocks.put(fakeShears, needsShears);
@@ -222,37 +240,50 @@ public class ToolAttributesTest implements ModInitializer {
 		fakeToolsToEffectiveBlocks.put(fakeShovel, needsShovel);
 		testExclusivelyEffective(fakeToolsToEffectiveBlocks, (tool, block) -> {
 			return DEFAULT_BREAK_SPEED;
-		});
+		}, context);
 
 		//Test fake tools on corresponding and invalid blocks
 		Multimap<Item, Block> dynamicToolsToEffectiveBlocks = LinkedHashMultimap.create(3, 2);
 		dynamicToolsToEffectiveBlocks.put(testSword, needsSword);
 		dynamicToolsToEffectiveBlocks.put(testPickaxe, needsPickaxe);
 		dynamicToolsToEffectiveBlocks.put(testShovel, needsShovel);
-		testExclusivelyEffective(dynamicToolsToEffectiveBlocks, (tool, block) -> TOOL_BREAK_SPEED);
+		testExclusivelyEffective(dynamicToolsToEffectiveBlocks, (tool, block) -> TOOL_BREAK_SPEED, context);
 	}
 
-	private void testExclusivelyEffective(Multimap<Item, Block> itemsToEffectiveBlocks, BiFunction<Item, Block, Float> effectiveSpeed) {
+	private void testExclusivelyEffective(Multimap<Item, Block> itemsToEffectiveBlocks, BiFunction<Item, Block, Float> effectiveSpeed, CommandContext<ServerCommandSource> context) {
 		for (List<ItemConvertible> pair : Sets.cartesianProduct(itemsToEffectiveBlocks.keySet(), new HashSet<>(itemsToEffectiveBlocks.values()))) {
 			Item item = (Item) pair.get(0);
 			Block block = (Block) pair.get(1);
 
 			if (itemsToEffectiveBlocks.get(item).contains(block)) {
-				testToolOnBlock(new ItemStack(item), block, true, effectiveSpeed.apply(item, block));
+				testToolOnBlock(new ItemStack(item), block, true, effectiveSpeed.apply(item, block), context);
 			} else {
-				testToolOnBlock(new ItemStack(item), block, false, DEFAULT_BREAK_SPEED);
+				testToolOnBlock(new ItemStack(item), block, false, DEFAULT_BREAK_SPEED, context);
 			}
 		}
 	}
 
-	private void testToolOnBlock(ItemStack item, Block block, boolean inEffective, float inSpeed) {
+	public static final Style FAIL = Style.EMPTY.withColor(TextColor.parse("red"));
+	public static final Style SUCCESS = Style.EMPTY.withColor(TextColor.parse("green"));
+
+	private void testToolOnBlock(ItemStack item, Block block, boolean inEffective, float inSpeed, CommandContext<ServerCommandSource> context) {
 		boolean effective = item.isSuitableFor(block.getDefaultState());
 		float speed = item.getMiningSpeedMultiplier(block.getDefaultState());
 
+		context.getSource().sendFeedback(new LiteralText("\tCheck for " + Registry.ITEM.getId(item.getItem()) + " breaking " + Registry.BLOCK.getId(block) + ":"), false);
+
+		boolean failed = false;
 		if (inEffective != effective) {
-			throw new AssertionError("Effective check incorrect for " + Registry.ITEM.getId(item.getItem()) + " breaking " + Registry.BLOCK.getId(block) + " got " + effective);
-		} else if (inSpeed != speed) {
-			throw new AssertionError("Speed check incorrect for " + Registry.ITEM.getId(item.getItem()) + " breaking " + Registry.BLOCK.getId(block) + " got " + speed);
+			context.getSource().sendFeedback(new LiteralText("\t\tEffective check incorrect. Found " + effective + ", expected " + inEffective).setStyle(FAIL), true);
+			failed = true;
+		}
+		if (inSpeed != speed) {
+			context.getSource().sendFeedback(new LiteralText("\t\tSpeed check incorrect. Found " + speed + ", expected " + inSpeed).setStyle(FAIL), true);
+			failed = true;
+		}
+
+		if (!failed) {
+			context.getSource().sendFeedback(new LiteralText("\t\tSuccess").setStyle(SUCCESS), true);
 		}
 	}
 

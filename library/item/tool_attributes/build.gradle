@@ -15,6 +15,7 @@ qslModule {
 			"lifecycle_events"
 	])
 	interLibraryTestmodDependencies("block", ["block_extensions"])
+	interLibraryTestmodDependencies("command", ["command"])
 	interLibraryDependencies("data", ["tags"])
 	intraLibraryDependencies(["mining_levels"])
 }
