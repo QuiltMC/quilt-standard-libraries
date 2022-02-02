@@ -1,7 +1,6 @@
 {
   "replace": false,
   "values": [
-    "quilt_tool_attributes_testmod:needs_shovel",
-    "quilt_tool_attributes_testmod:hardened_gravel_block"
+    "quilt_tool_attributes_testmod:needs_shovel"
   ]
 }
