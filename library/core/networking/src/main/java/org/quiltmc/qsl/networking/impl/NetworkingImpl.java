@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
@@ -38,7 +38,7 @@ import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 @ApiStatus.Internal
 public final class NetworkingImpl {
 	public static final String MOD_ID = "quilt_networking";
-	public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
+	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	/**
 	 * Identifier of packet used to register supported channels.
 	 */
