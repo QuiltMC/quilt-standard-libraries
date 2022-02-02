@@ -69,6 +69,7 @@ public class MinecraftClientMixin {
 
 	// Lambda method in MinecraftClient#<init>, at MinecraftClient#setOverlay.
 	// Take an Optional<Throwable> parameter.
+	@SuppressWarnings("target")
 	@Inject(method = "m_aaltpyph(Ljava/util/Optional;)V", at = @At("HEAD"))
 	private void onFirstEndReloadResources(Optional<Throwable> error, CallbackInfo ci) {
 		ClientResourceLoaderEvents.END_RESOURCE_PACK_RELOAD.invoker().onEndResourcePackReload(
@@ -91,6 +92,7 @@ public class MinecraftClientMixin {
 
 	// Lambda method in MinecraftClient#reloadResources, at MinecraftClient#setOverlay.
 	// Take an Optional<Throwable> parameter.
+	@SuppressWarnings("target")
 	@Inject(method = "m_pxfxqhcl(Ljava/util/concurrent/CompletableFuture;Ljava/util/Optional;)V", at = @At(value = "HEAD"))
 	private void onEndReloadResources(CompletableFuture<Void> completableFuture, Optional<Throwable> error, CallbackInfo ci) {
 		ClientResourceLoaderEvents.END_RESOURCE_PACK_RELOAD.invoker().onEndResourcePackReload(

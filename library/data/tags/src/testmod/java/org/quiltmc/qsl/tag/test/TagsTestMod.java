@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 import static net.minecraft.server.command.CommandManager.literal;
 
 
-public final class TagsTestMod implements ModInitializer, ServerLifecycleEvents.Ready, CommandRegistrationCallback {
+public final class TagsTestMod implements ServerLifecycleEvents.Ready, CommandRegistrationCallback {
 	public static final String NAMESPACE = "quilt_tags_testmod";
 	public static final Logger LOGGER = LoggerFactory.getLogger(TagsTestMod.class);
 
@@ -61,11 +61,6 @@ public final class TagsTestMod implements ModInitializer, ServerLifecycleEvents.
 
 	public static Identifier id(String path) {
 		return new Identifier(NAMESPACE, path);
-	}
-
-	@Override
-	public void onInitialize() {
-		Event.listenAll(this, CommandRegistrationCallback.EVENT, ServerLifecycleEvents.READY);
 	}
 
 	@Override

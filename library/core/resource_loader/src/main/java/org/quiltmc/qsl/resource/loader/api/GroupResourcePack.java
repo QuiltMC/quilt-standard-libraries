@@ -39,7 +39,6 @@ import net.minecraft.util.Identifier;
 
 /**
  * Represents a group resource pack, which holds multiple resource packs as one.
- *
  * <p>
  * The possible use cases are:
  * <ul>
