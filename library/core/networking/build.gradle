@@ -1,0 +1,16 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "networking"
+	version = "1.0.0"
+	library = "core"
+	coreDependencies([
+			"qsl_base",
+			"lifecycle_events"
+	])
+	interLibraryTestmodDependencies("command", [
+			"command"
+	])
+}
