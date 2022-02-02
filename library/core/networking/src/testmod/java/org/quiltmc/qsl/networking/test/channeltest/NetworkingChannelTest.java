@@ -42,7 +42,6 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 
 import net.fabricmc.api.ModInitializer;
-//import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 
