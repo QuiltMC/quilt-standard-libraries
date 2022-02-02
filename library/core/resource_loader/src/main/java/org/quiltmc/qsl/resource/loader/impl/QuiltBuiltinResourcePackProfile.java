@@ -26,7 +26,6 @@ import net.minecraft.resource.ResourcePackCompatibility;
 import net.minecraft.resource.ResourcePackProfile;
 import net.minecraft.resource.ResourcePackSource;
 import net.minecraft.resource.metadata.PackResourceMetadata;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
@@ -95,19 +94,7 @@ public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
 
 		@Override
 		public Text decorate(Text description) {
-			Text sourceText = this.text;
-			boolean isDescriptionSameAsRawName = description.getString().equals(this.pack.getName());
-
-			if (this.text != SOURCE_BUILTIN_TEXT && !isDescriptionSameAsRawName) {
-				description = new LiteralText(description.asTruncatedString(28)).append("...");
-			}
-
-			// This most likely means this was called for the /datapack command, the full raw name is already mentioned.
-			if (isDescriptionSameAsRawName) {
-				sourceText = SOURCE_BUILTIN_TEXT;
-			}
-
-			return new TranslatableText("pack.nameAndSource", description, sourceText).formatted(Formatting.GRAY);
+			return new TranslatableText("pack.nameAndSource", description, this.text).formatted(Formatting.GRAY);
 		}
 
 		public Text getTooltip() {
