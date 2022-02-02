@@ -19,7 +19,6 @@ package org.quiltmc.qsl.resource.loader.impl;
 import java.io.IOException;
 
 import com.mojang.logging.LogUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
@@ -80,36 +79,18 @@ public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
 		private static final Text SOURCE_BUILTIN_TEXT = new TranslatableText("pack.source.builtin");
 		private final ModNioResourcePack pack;
 		private final Text text;
+		private final Text tooltip;
 
 		BuiltinResourcePackSource(ModNioResourcePack pack) {
+			String modName = pack.modInfo.getName();
+
+			if (modName == null) {
+				modName = pack.modInfo.getId();
+			}
+
 			this.pack = pack;
-
-			String displayName = pack.getDisplayName().getString();
-			String name = pack.modInfo.getName();
-			Text text = null;
-
-			// We search if the pack mentions the name of the mod from which it's coming from to determine the source text.
-			if (name != null) {
-				if (displayName.contains(name)) {
-					text = SOURCE_BUILTIN_TEXT;
-				}
-			}
-			if (displayName.contains(pack.modInfo.getId())) {
-				text = SOURCE_BUILTIN_TEXT;
-			}
-
-			// If the name doesn't say anything about the source mod, then say it in the source text.
-			// Abbreviations are needed due to GUI constraints on client.
-			if (text == null) {
-				if (name == null || (name.length() > 22 && name.length() > pack.modInfo.getId().length())) {
-					name = pack.modInfo.getId();
-				}
-
-				name = StringUtils.abbreviate(name, 22);
-				this.text = new TranslatableText("options.generic_value", SOURCE_BUILTIN_TEXT, name);
-			} else {
-				this.text = text;
-			}
+			this.text = SOURCE_BUILTIN_TEXT;
+			this.tooltip = new TranslatableText("options.generic_value", SOURCE_BUILTIN_TEXT, modName);
 		}
 
 		@Override
@@ -127,6 +108,10 @@ public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
 			}
 
 			return new TranslatableText("pack.nameAndSource", description, sourceText).formatted(Formatting.GRAY);
+		}
+
+		public Text getTooltip() {
+			return this.tooltip;
 		}
 	}
 }

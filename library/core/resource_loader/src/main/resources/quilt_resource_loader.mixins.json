@@ -15,10 +15,13 @@
   "client": [
     "client.ClientBuiltinResourcePackProviderMixin",
     "client.CreateWorldScreenMixin",
+    "client.EntryListWidgetAccessor",
     "client.FontManagerResourceReloadListenerMixin",
     "client.GameOptionsMixin",
     "client.KeyedClientResourceReloaderMixin",
-    "client.MinecraftClientMixin"
+    "client.MinecraftClientMixin",
+    "client.PackScreenMixin",
+    "client.ResourcePackEntryAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
