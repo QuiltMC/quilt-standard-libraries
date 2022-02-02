@@ -20,6 +20,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
@@ -35,6 +37,7 @@ import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
 import org.quiltmc.qsl.networking.impl.NetworkingImpl;
 import org.quiltmc.qsl.networking.mixin.accessor.CustomPayloadC2SPacketAccessor;
 
+@ApiStatus.Internal
 public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<ServerPlayNetworking.ChannelReceiver> {
 	private final ServerPlayNetworkHandler handler;
 	private final MinecraftServer server;

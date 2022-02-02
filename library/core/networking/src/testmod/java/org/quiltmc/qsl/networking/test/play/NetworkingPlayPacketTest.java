@@ -34,20 +34,20 @@ import net.fabricmc.api.ModInitializer;
 import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
-import org.quiltmc.qsl.networking.test.NetworkingTestmods;
+import org.quiltmc.qsl.networking.test.NetworkingTestMods;
 
 public final class NetworkingPlayPacketTest implements ModInitializer {
-	public static final Identifier TEST_CHANNEL = NetworkingTestmods.id("test_channel");
+	public static final Identifier TEST_CHANNEL = NetworkingTestMods.id("test_channel");
 
 	public static void sendToTestChannel(ServerPlayerEntity player, String stuff) {
 		PacketByteBuf buf = PacketByteBufs.create();
 		buf.writeText(new LiteralText(stuff));
 		ServerPlayNetworking.send(player, TEST_CHANNEL, buf);
-		NetworkingTestmods.LOGGER.info("Sent custom payload packet in {}", TEST_CHANNEL);
+		NetworkingTestMods.LOGGER.info("Sent custom payload packet in {}", TEST_CHANNEL);
 	}
 
 	public static void registerCommand(CommandDispatcher<ServerCommandSource> dispatcher) {
-		NetworkingTestmods.LOGGER.info("Registering test command");
+		NetworkingTestMods.LOGGER.info("Registering test command");
 
 		dispatcher.register(literal("networktestcommand").then(argument("stuff", string()).executes(ctx -> {
 			String stuff = StringArgumentType.getString(ctx, "stuff");
@@ -58,7 +58,7 @@ public final class NetworkingPlayPacketTest implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		NetworkingTestmods.LOGGER.info("Hello from networking user!");
+		NetworkingTestMods.LOGGER.info("Hello from networking user!");
 
 		CommandRegistrationCallback.EVENT.register((dispatcher, integrated, dedicated) -> {
 			NetworkingPlayPacketTest.registerCommand(dispatcher);

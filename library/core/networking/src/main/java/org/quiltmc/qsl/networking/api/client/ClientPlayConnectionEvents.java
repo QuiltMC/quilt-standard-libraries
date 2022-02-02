@@ -45,8 +45,8 @@ public final class ClientPlayConnectionEvents {
 
 	/**
 	 * An event for notification when the client play network handler is ready to send packets to the server.
-	 *
-	 * <p>At this stage, the network handler is ready to send packets to the server.
+	 * <p>
+	 * At this stage, the network handler is ready to send packets to the server.
 	 * Since the client's local state has been setup.
 	 */
 	public static final Event<Join> JOIN = Event.create(Join.class, callbacks -> (handler, sender, client) -> {
@@ -57,8 +57,8 @@ public final class ClientPlayConnectionEvents {
 
 	/**
 	 * An event for the disconnection of the client play network handler.
-	 *
-	 * <p>No packets should be sent when this event is invoked.
+	 * <p>
+	 * No packets should be sent when this event is invoked.
 	 */
 	public static final Event<Disconnect> DISCONNECT = Event.create(Disconnect.class, callbacks -> (handler, client) -> {
 		for (Disconnect callback : callbacks) {

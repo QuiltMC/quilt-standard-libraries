@@ -30,6 +30,7 @@ import net.minecraft.network.PacketByteBuf;
 
 /**
  * Utilities for working with netty's future listeners.
+ *
  * @see FutureListener
  * @see ChannelFutureListener
  */

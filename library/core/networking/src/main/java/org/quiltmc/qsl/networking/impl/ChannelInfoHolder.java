@@ -18,8 +18,11 @@ package org.quiltmc.qsl.networking.impl;
 
 import java.util.Collection;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.util.Identifier;
 
+@ApiStatus.Internal
 public interface ChannelInfoHolder {
 	/**
 	 * @return Channels which are declared as receivable by the other side but have not been declared yet.

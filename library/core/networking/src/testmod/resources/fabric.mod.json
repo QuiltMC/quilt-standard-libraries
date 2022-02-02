@@ -16,10 +16,12 @@
       "org.quiltmc.qsl.networking.test.play.NetworkingPlayPacketTest"
     ],
     "client": [
-      "org.quiltmc.qsl.networking.test.channeltest.NetworkingChannelClientTest",
       "org.quiltmc.qsl.networking.test.keybindreciever.NetworkingKeybindClientPacketTest",
       "org.quiltmc.qsl.networking.test.login.NetworkingLoginQueryClientTest",
       "org.quiltmc.qsl.networking.test.play.NetworkingPlayPacketClientTest"
+    ],
+    "client_events": [
+      "org.quiltmc.qsl.networking.test.channeltest.NetworkingChannelClientTest"
     ]
   }
 }

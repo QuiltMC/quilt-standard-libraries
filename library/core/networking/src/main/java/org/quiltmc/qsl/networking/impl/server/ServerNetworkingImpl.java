@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.networking.impl.server;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
@@ -28,6 +30,7 @@ import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.networking.impl.GlobalReceiverRegistry;
 import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
 
+@ApiStatus.Internal
 public final class ServerNetworkingImpl {
 	public static final GlobalReceiverRegistry<ServerLoginNetworking.LoginQueryResponseHandler> LOGIN = new GlobalReceiverRegistry<>();
 	public static final GlobalReceiverRegistry<ServerPlayNetworking.ChannelReceiver> PLAY = new GlobalReceiverRegistry<>();

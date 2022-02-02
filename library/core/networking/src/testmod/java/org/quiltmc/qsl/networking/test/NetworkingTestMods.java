@@ -21,7 +21,7 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraft.util.Identifier;
 
-public final class NetworkingTestmods {
+public final class NetworkingTestMods {
 	public static final String ID = "quilt_networking_testmod";
 	public static final Logger LOGGER = LogManager.getLogger(ID);
 
@@ -29,6 +29,6 @@ public final class NetworkingTestmods {
 		return new Identifier(ID, name);
 	}
 
-	private NetworkingTestmods() {
+	private NetworkingTestMods() {
 	}
 }

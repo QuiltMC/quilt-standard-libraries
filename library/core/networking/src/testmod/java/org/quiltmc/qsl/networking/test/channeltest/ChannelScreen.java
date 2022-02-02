@@ -20,7 +20,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
@@ -57,7 +56,7 @@ final class ChannelScreen extends Screen {
 		super.render(matrices, mouseX, mouseY, delta);
 
 		if (this.s2cButton.active && this.c2sButton.active) {
-			final Text clickMe = new LiteralText("Click S2C or C2S to view supported channels");
+			final var clickMe = new LiteralText("Click S2C or C2S to view supported channels");
 
 			final int textWidth = this.textRenderer.getWidth(clickMe);
 			//noinspection ConstantConditions

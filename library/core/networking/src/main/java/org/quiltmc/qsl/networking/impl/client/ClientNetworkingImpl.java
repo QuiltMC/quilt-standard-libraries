@@ -18,9 +18,9 @@ package org.quiltmc.qsl.networking.impl.client;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.MinecraftClient;
@@ -46,6 +46,7 @@ import org.quiltmc.qsl.networking.impl.NetworkingImpl;
 import org.quiltmc.qsl.networking.mixin.accessor.ConnectScreenAccessor;
 import org.quiltmc.qsl.networking.mixin.accessor.MinecraftClientAccessor;
 
+@ApiStatus.Internal
 @Environment(EnvType.CLIENT)
 public final class ClientNetworkingImpl {
 	public static final GlobalReceiverRegistry<ClientLoginNetworking.LoginQueryRequestHandler> LOGIN = new GlobalReceiverRegistry<>();
@@ -117,7 +118,7 @@ public final class ClientNetworkingImpl {
 		// Register a login query handler for early channel registration.
 		ClientLoginNetworking.registerGlobalReceiver(NetworkingImpl.EARLY_REGISTRATION_CHANNEL, (client, handler, buf, listenerAdder) -> {
 			int n = buf.readVarInt();
-			List<Identifier> ids = new ArrayList<>(n);
+			var ids = new ArrayList<Identifier>(n);
 
 			for (int i = 0; i < n; i++) {
 				ids.add(buf.readIdentifier());

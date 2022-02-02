@@ -29,12 +29,12 @@ import net.fabricmc.api.ModInitializer;
 import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.ServerPlayConnectionEvents;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
-import org.quiltmc.qsl.networking.test.NetworkingTestmods;
+import org.quiltmc.qsl.networking.test.NetworkingTestMods;
 
 // Listens for a packet from the client which is sent to the server when a keybinding is pressed.
 // In response the server will send a message containing the keybind text letting the client know it pressed that key.
 public final class NetworkingKeybindPacketTest implements ModInitializer {
-	public static final Identifier KEYBINDING_PACKET_ID = NetworkingTestmods.id("keybind_press_test");
+	public static final Identifier KEYBINDING_PACKET_ID = NetworkingTestMods.id("keybind_press_test");
 
 	private static void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
 		// TODO: Can we send chat off the server thread?

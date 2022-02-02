@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.networking.impl;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -26,8 +25,10 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.util.Identifier;
@@ -37,6 +38,7 @@ import net.minecraft.util.Identifier;
  *
  * @param <H> the channel handler type
  */
+@ApiStatus.Internal
 public abstract class AbstractNetworkAddon<H> {
 	protected final GlobalReceiverRegistry<H> receiver;
 	protected final Logger logger;
@@ -44,7 +46,7 @@ public abstract class AbstractNetworkAddon<H> {
 	private final ReadWriteLock lock = new ReentrantReadWriteLock();
 	// Sync map should be fine as there is little read write competition
 	// All access to this map is guarded by the lock
-	private final Map<Identifier, H> handlers = new HashMap<>();
+	private final Map<Identifier, H> handlers = new Object2ObjectOpenHashMap<>();
 	private final AtomicBoolean disconnected = new AtomicBoolean(); // blocks redundant disconnect notifications
 
 	protected AbstractNetworkAddon(GlobalReceiverRegistry<H> receiver, String description) {

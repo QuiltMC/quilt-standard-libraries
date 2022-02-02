@@ -18,9 +18,12 @@ package org.quiltmc.qsl.networking.impl.server;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.jetbrains.annotations.ApiStatus;
+
 /**
  * Tracks the current query id used for login query responses.
  */
+@ApiStatus.Internal
 interface QueryIdFactory {
 	static QueryIdFactory create() {
 		return new QueryIdFactory() {

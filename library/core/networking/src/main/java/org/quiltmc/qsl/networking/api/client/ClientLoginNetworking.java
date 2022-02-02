@@ -38,8 +38,8 @@ import org.quiltmc.qsl.networking.impl.client.ClientNetworkingImpl;
 
 /**
  * Offers access to login stage client-side networking functionalities.
- *
- * <p>The Minecraft login protocol only allows the client to respond to a server's request, but not initiate one of its own.
+ * <p>
+ * The Minecraft login protocol only allows the client to respond to a server's request, but not initiate one of its own.
  *
  * @see ClientPlayNetworking
  * @see ServerLoginNetworking
@@ -49,8 +49,8 @@ public final class ClientLoginNetworking {
 	/**
 	 * Registers a handler to a query request channel.
 	 * A global receiver is registered to all connections, in the present and future.
-	 *
-	 * <p>If a handler is already registered to the {@code channel}, this method will return {@code false}, and no change will be made.
+	 * <p>
+	 * If a handler is already registered to the {@code channel}, this method will return {@code false}, and no change will be made.
 	 * Use {@link #unregisterGlobalReceiver(Identifier)} to unregister the existing handler.
 	 *
 	 * @param channelName the identifier of the channel
@@ -66,8 +66,8 @@ public final class ClientLoginNetworking {
 	/**
 	 * Removes the handler of a query request channel.
 	 * A global receiver is registered to all connections, in the present and future.
-	 *
-	 * <p>The {@code channel} is guaranteed not to have a handler after this call.
+	 * <p>
+	 * The {@code channel} is guaranteed not to have a handler after this call.
 	 *
 	 * @param channelName the identifier of the channel
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel
@@ -91,8 +91,8 @@ public final class ClientLoginNetworking {
 
 	/**
 	 * Registers a handler to a query request channel.
-	 *
-	 * <p>If a handler is already registered to the {@code channelName}, this method will return {@code false}, and no change will be made.
+	 * <p>
+	 * If a handler is already registered to the {@code channelName}, this method will return {@code false}, and no change will be made.
 	 * Use {@link #unregisterReceiver(Identifier)} to unregister the existing handler.
 	 *
 	 * @param channelName the identifier of the channel
@@ -116,8 +116,8 @@ public final class ClientLoginNetworking {
 
 	/**
 	 * Removes the handler of a query request channel.
-	 *
-	 * <p>The {@code channelName} is guaranteed not to have a handler after this call.
+	 * <p>
+	 * The {@code channelName} is guaranteed not to have a handler after this call.
 	 *
 	 * @param channelName the identifier of the channel
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel name
@@ -146,11 +146,11 @@ public final class ClientLoginNetworking {
 	public interface LoginQueryRequestHandler {
 		/**
 		 * Handles an incoming query request from a server.
-		 *
-		 * <p>This method is executed on {@linkplain io.netty.channel.EventLoop netty's event loops}.
+		 * <p>
+		 * This method is executed on {@linkplain io.netty.channel.EventLoop netty's event loops}.
 		 * Modification to the game should be {@linkplain net.minecraft.util.thread.ThreadExecutor#submit(Runnable) scheduled} using the provided Minecraft client instance.
-		 *
-		 * <p>The return value of this method is a completable future that may be used to delay the login process to the server until a task {@link CompletableFuture#isDone() is done}.
+		 * <p>
+		 * The return value of this method is a completable future that may be used to delay the login process to the server until a task {@link CompletableFuture#isDone() is done}.
 		 * The future should complete in reasonably time to prevent disconnection by the server.
 		 * If your request processes instantly, you may use {@link CompletableFuture#completedFuture(Object)} to wrap your response for immediate sending.
 		 *

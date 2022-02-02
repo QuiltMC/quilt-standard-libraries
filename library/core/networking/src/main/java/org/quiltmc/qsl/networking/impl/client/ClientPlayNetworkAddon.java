@@ -29,6 +29,8 @@ import net.minecraft.util.Identifier;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import org.jetbrains.annotations.ApiStatus;
+
 import org.quiltmc.qsl.networking.api.client.C2SPlayChannelEvents;
 import org.quiltmc.qsl.networking.api.client.ClientPlayConnectionEvents;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
@@ -36,6 +38,7 @@ import org.quiltmc.qsl.networking.impl.AbstractChanneledNetworkAddon;
 import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
 import org.quiltmc.qsl.networking.impl.NetworkingImpl;
 
+@ApiStatus.Internal
 @Environment(EnvType.CLIENT)
 public final class ClientPlayNetworkAddon extends AbstractChanneledNetworkAddon<ClientPlayNetworking.PlayChannelReceiver> {
 	private final ClientPlayNetworkHandler handler;

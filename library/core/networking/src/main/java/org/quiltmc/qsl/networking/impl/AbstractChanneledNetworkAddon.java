@@ -28,6 +28,7 @@ import java.util.Set;
 import io.netty.util.AsciiString;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.network.ClientConnection;
@@ -44,6 +45,7 @@ import org.quiltmc.qsl.networking.api.PacketSender;
  *
  * @param <H> the channel handler type
  */
+@ApiStatus.Internal
 public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAddon<H> implements PacketSender {
 	protected final ClientConnection connection;
 	protected final GlobalReceiverRegistry<H> receiver;
@@ -140,8 +142,8 @@ public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAd
 
 	// wrap in try with res (buf)
 	protected void receiveRegistration(boolean register, PacketByteBuf buf) {
-		List<Identifier> ids = new ArrayList<>();
-		StringBuilder active = new StringBuilder();
+		var ids = new ArrayList<Identifier>();
+		var active = new StringBuilder();
 
 		while (buf.isReadable()) {
 			byte b = buf.readByte();

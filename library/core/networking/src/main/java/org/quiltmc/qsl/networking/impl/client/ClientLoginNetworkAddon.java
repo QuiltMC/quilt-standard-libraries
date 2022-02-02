@@ -17,12 +17,12 @@
 package org.quiltmc.qsl.networking.impl.client;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.MinecraftClient;
@@ -40,6 +40,7 @@ import org.quiltmc.qsl.networking.api.FutureListeners;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.impl.AbstractNetworkAddon;
 
+@ApiStatus.Internal
 @Environment(EnvType.CLIENT)
 public final class ClientLoginNetworkAddon extends AbstractNetworkAddon<ClientLoginNetworking.LoginQueryRequestHandler> {
 	private final ClientLoginNetworkHandler handler;
@@ -79,12 +80,12 @@ public final class ClientLoginNetworkAddon extends AbstractNetworkAddon<ClientLo
 		}
 
 		PacketByteBuf buf = PacketByteBufs.slice(originalBuf);
-		List<GenericFutureListener<? extends Future<? super Void>>> futureListeners = new ArrayList<>();
+		var futureListeners = new ArrayList<GenericFutureListener<? extends Future<? super Void>>>();
 
 		try {
 			CompletableFuture<@Nullable PacketByteBuf> future = handler.receive(this.client, this.handler, buf, futureListeners::add);
 			future.thenAccept(result -> {
-				LoginQueryResponseC2SPacket packet = new LoginQueryResponseC2SPacket(queryId, result);
+				var packet = new LoginQueryResponseC2SPacket(queryId, result);
 				GenericFutureListener<? extends Future<? super Void>> listener = null;
 
 				for (GenericFutureListener<? extends Future<? super Void>> each : futureListeners) {

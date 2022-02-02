@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.networking.impl;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -25,17 +24,20 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.util.Identifier;
 
+@ApiStatus.Internal
 public final class GlobalReceiverRegistry<H> {
 	private final ReadWriteLock lock = new ReentrantReadWriteLock();
 	private final Map<Identifier, H> receivers;
 	private final Set<AbstractNetworkAddon<H>> trackedAddons = new HashSet<>();
 
 	public GlobalReceiverRegistry() {
-		this(new HashMap<>()); // sync map should be fine as there is little read write competitions
+		this(new Object2ObjectOpenHashMap<>()); // sync map should be fine as there is little read write competitions
 	}
 
 	public GlobalReceiverRegistry(Map<Identifier, H> map) {
@@ -106,7 +108,7 @@ public final class GlobalReceiverRegistry<H> {
 		lock.lock();
 
 		try {
-			return new HashMap<>(this.receivers);
+			return new Object2ObjectOpenHashMap<>(this.receivers);
 		} finally {
 			lock.unlock();
 		}

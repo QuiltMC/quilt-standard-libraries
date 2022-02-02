@@ -16,6 +16,9 @@
 
 package org.quiltmc.qsl.networking.impl;
 
+import org.jetbrains.annotations.ApiStatus;
+
+@ApiStatus.Internal
 public interface NetworkHandlerExtensions {
 	AbstractNetworkAddon<?> getAddon();
 }

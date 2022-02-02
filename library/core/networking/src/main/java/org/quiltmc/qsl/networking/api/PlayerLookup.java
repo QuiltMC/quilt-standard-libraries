@@ -40,16 +40,16 @@ import org.quiltmc.qsl.networking.mixin.accessor.ThreadedAnvilChunkStorageAccess
 
 /**
  * For example, a block entity may use the methods in this class to send a packet to all clients which can see the block entity in order to notify clients about a change.
- *
- * <p>The word "tracking" means that an entity/chunk on the server is known to a player's client (within in view distance) and the (block) entity should notify tracking clients of changes.
- *
- * <p>These methods should only be called on the server thread and only be used on logical a server.
+ * <p>
+ * The word "tracking" means that an entity/chunk on the server is known to a player's client (within in view distance) and the (block) entity should notify tracking clients of changes.
+ * <p>
+ * These methods should only be called on the server thread and only be used on logical a server.
  */
 public final class PlayerLookup {
 	/**
 	 * Gets all the players on the minecraft server.
-	 *
-	 * <p>The returned collection is immutable.
+	 * <p>
+	 * The returned collection is immutable.
 	 *
 	 * @param server the server
 	 * @return all players on the server
@@ -67,8 +67,8 @@ public final class PlayerLookup {
 
 	/**
 	 * Gets all the players in a server world.
-	 *
-	 * <p>The returned collection is immutable.
+	 * <p>
+	 * The returned collection is immutable.
 	 *
 	 * @param world the server world
 	 * @return the players in the server world
@@ -96,10 +96,10 @@ public final class PlayerLookup {
 
 	/**
 	 * Gets all players tracking an entity in a server world.
-	 *
-	 * <p>The returned collection is immutable.
-	 *
-	 * <p><b>Warning</b>: If the provided entity is a player, it is not
+	 * <p>
+	 * The returned collection is immutable.
+	 * <p>
+	 * <b>Warning</b>: If the provided entity is a player, it is not
 	 * guaranteed by the contract that said player is included in the
 	 * resulting stream.
 	 *
@@ -160,8 +160,8 @@ public final class PlayerLookup {
 
 	/**
 	 * Gets all players around a position in a world.
-	 *
-	 * <p>The distance check is done in the three-dimensional space instead of in the horizontal plane.
+	 * <p>
+	 * The distance check is done in the three-dimensional space instead of in the horizontal plane.
 	 *
 	 * @param world  the world
 	 * @param pos the position
@@ -179,8 +179,8 @@ public final class PlayerLookup {
 
 	/**
 	 * Gets all players around a position in a world.
-	 *
-	 * <p>The distance check is done in the three-dimensional space instead of in the horizontal plane.
+	 * <p>
+	 * The distance check is done in the three-dimensional space instead of in the horizontal plane.
 	 *
 	 * @param world  the world
 	 * @param pos    the position (can be a block pos)

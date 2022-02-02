@@ -16,8 +16,11 @@
 
 package org.quiltmc.qsl.networking.impl;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.network.Packet;
 
+@ApiStatus.Internal
 public interface PacketCallbackListener {
 	/**
 	 * Called after a packet has been sent.

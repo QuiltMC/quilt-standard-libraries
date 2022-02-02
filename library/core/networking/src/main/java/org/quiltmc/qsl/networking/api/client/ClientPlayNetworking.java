@@ -50,8 +50,8 @@ public final class ClientPlayNetworking {
 	/**
 	 * Registers a handler to a channel.
 	 * A global receiver is registered to all connections, in the present and future.
-	 *
-	 * <p>If a handler is already registered to the {@code channel}, this method will return {@code false}, and no change will be made.
+	 * <p>
+	 * If a handler is already registered to the {@code channel}, this method will return {@code false}, and no change will be made.
 	 * Use {@link #unregisterGlobalReceiver(Identifier)} to unregister the existing handler.
 	 *
 	 * @param channelName the identifier of the channel
@@ -67,8 +67,8 @@ public final class ClientPlayNetworking {
 	/**
 	 * Removes the handler of a channel.
 	 * A global receiver is registered to all connections, in the present and future.
-	 *
-	 * <p>The {@code channel} is guaranteed not to have a handler after this call.
+	 * <p>
+	 * The {@code channel} is guaranteed not to have a handler after this call.
 	 *
 	 * @param channelName the identifier of the channel
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel
@@ -92,11 +92,11 @@ public final class ClientPlayNetworking {
 
 	/**
 	 * Registers a handler to a channel.
-	 *
-	 * <p>If a handler is already registered to the {@code channel}, this method will return {@code false}, and no change will be made.
+	 * <p>
+	 * If a handler is already registered to the {@code channel}, this method will return {@code false}, and no change will be made.
 	 * Use {@link #unregisterReceiver(Identifier)} to unregister the existing handler.
-	 *
-	 * <p>For example, if you only register a receiver using this method when a {@linkplain ClientLoginNetworking#registerGlobalReceiver(Identifier, ClientLoginNetworking.LoginQueryRequestHandler)}
+	 * <p>
+	 * For example, if you only register a receiver using this method when a {@linkplain ClientLoginNetworking#registerGlobalReceiver(Identifier, ClientLoginNetworking.LoginQueryRequestHandler)}
 	 * login query has been received, you should use {@link ClientPlayConnectionEvents#INIT} to register the channel handler.
 	 *
 	 * @param channelName the identifier of the channel
@@ -116,8 +116,8 @@ public final class ClientPlayNetworking {
 
 	/**
 	 * Removes the handler of a channel.
-	 *
-	 * <p>The {@code channelName} is guaranteed not to have a handler after this call.
+	 * <p>
+	 * The {@code channelName} is guaranteed not to have a handler after this call.
 	 *
 	 * @param channelName the identifier of the channel
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel
@@ -235,11 +235,11 @@ public final class ClientPlayNetworking {
 	public interface PlayChannelReceiver {
 		/**
 		 * Receives an incoming packet.
-		 *
-		 * <p>This method is executed on {@linkplain io.netty.channel.EventLoop netty's event loops}.
+		 * <p>
+		 * This method is executed on {@linkplain io.netty.channel.EventLoop netty's event loops}.
 		 * Modification to the game should be {@linkplain net.minecraft.util.thread.ThreadExecutor#submit(Runnable) scheduled} using the provided Minecraft client instance.
-		 *
-		 * <p>An example usage of this is to display an overlay message:
+		 * <p>
+		 * An example usage of this is to display an overlay message:
 		 * <pre>{@code
 		 * ClientPlayNetworking.registerReceiver(new Identifier("mymod", "overlay"), (client, handler, buf, responseSender) -&rt; {
 		 * 	String message = buf.readString(32767);
@@ -250,7 +250,8 @@ public final class ClientPlayNetworking {
 		 * 	});
 		 * });
 		 * }</pre>
-		 *  @param client the client
+		 *
+		 * @param client the client
 		 * @param handler the network handler that received this packet
 		 * @param buf the payload of the packet
 		 * @param responseSender the packet sender

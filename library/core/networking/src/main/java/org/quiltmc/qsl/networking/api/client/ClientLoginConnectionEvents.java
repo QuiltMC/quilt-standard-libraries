@@ -52,11 +52,11 @@ public final class ClientLoginConnectionEvents {
 	 * and therefore bypass the login query phase.
 	 * If this event is fired then it is a sign that a server is not a vanilla server or the server is behind a proxy which
 	 * is capable of handling login queries.
-	 *
-	 * <p>This event may be used to {@link ClientLoginNetworking.LoginQueryRequestHandler register login query handlers}
+	 * <p>
+	 * This event may be used to {@link ClientLoginNetworking.LoginQueryRequestHandler register login query handlers}
 	 * which may be used to send a response to a server.
-	 *
-	 * <p>No packets should be sent when this event is invoked.
+	 * <p>
+	 * No packets should be sent when this event is invoked.
 	 */
 	public static final Event<QueryStart> QUERY_START = Event.create(QueryStart.class, callbacks -> (handler, client) -> {
 		for (QueryStart callback : callbacks) {
@@ -66,8 +66,8 @@ public final class ClientLoginConnectionEvents {
 
 	/**
 	 * An event for when the client's login process has ended due to disconnection.
-	 *
-	 * <p>No packets should be sent when this event is invoked.
+	 * <p>
+	 * No packets should be sent when this event is invoked.
 	 */
 	public static final Event<Disconnect> DISCONNECT = Event.create(Disconnect.class, callbacks -> (handler, client) -> {
 		for (Disconnect callback : callbacks) {

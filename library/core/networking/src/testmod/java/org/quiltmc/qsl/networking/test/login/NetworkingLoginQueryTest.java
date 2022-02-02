@@ -29,7 +29,7 @@ import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.ServerLoginNetworking;
 import org.quiltmc.qsl.networking.test.play.NetworkingPlayPacketTest;
-import org.quiltmc.qsl.networking.test.NetworkingTestmods;
+import org.quiltmc.qsl.networking.test.NetworkingTestMods;
 
 public final class NetworkingLoginQueryTest implements ModInitializer {
 	private static final boolean useLoginDelayTest = System.getProperty("quilt_networking.login_delay_test") != null;
@@ -42,13 +42,13 @@ public final class NetworkingLoginQueryTest implements ModInitializer {
 		// login delaying example
 		ServerLoginNetworking.registerGlobalReceiver(NetworkingPlayPacketTest.TEST_CHANNEL, (server, handler, understood, buf, synchronizer, sender) -> {
 			if (understood) {
-				NetworkingTestmods.LOGGER.info("Understood response from client in {}", NetworkingPlayPacketTest.TEST_CHANNEL);
+				NetworkingTestMods.LOGGER.info("Understood response from client in {}", NetworkingPlayPacketTest.TEST_CHANNEL);
 
 				if (useLoginDelayTest) {
 					FutureTask<?> future = new FutureTask<>(() -> {
 						for (int i = 0; i <= 10; i++) {
 							Thread.sleep(300);
-							NetworkingTestmods.LOGGER.info("Delayed login for number {} 300 milliseconds", i);
+							NetworkingTestMods.LOGGER.info("Delayed login for number {} 300 milliseconds", i);
 						}
 
 						return null;
@@ -59,7 +59,7 @@ public final class NetworkingLoginQueryTest implements ModInitializer {
 					synchronizer.waitFor(future);
 				}
 			} else {
-				NetworkingTestmods.LOGGER.info("Client did not understand response query message with channel name {}", NetworkingPlayPacketTest.TEST_CHANNEL);
+				NetworkingTestMods.LOGGER.info("Client did not understand response query message with channel name {}", NetworkingPlayPacketTest.TEST_CHANNEL);
 			}
 		});
 	}
@@ -67,13 +67,13 @@ public final class NetworkingLoginQueryTest implements ModInitializer {
 	private void delaySimply(ServerLoginNetworkHandler handler, MinecraftServer server, PacketSender sender, ServerLoginNetworking.LoginSynchronizer synchronizer) {
 		if (useLoginDelayTest) {
 			synchronizer.waitFor(CompletableFuture.runAsync(() -> {
-				NetworkingTestmods.LOGGER.info("Starting simple delay task for 3000 milliseconds");
+				NetworkingTestMods.LOGGER.info("Starting simple delay task for 3000 milliseconds");
 
 				try {
 					Thread.sleep(3000);
-					NetworkingTestmods.LOGGER.info("Simple delay task completed");
+					NetworkingTestMods.LOGGER.info("Simple delay task completed");
 				} catch (InterruptedException e) {
-					NetworkingTestmods.LOGGER.error("Delay task caught exception", e);
+					NetworkingTestMods.LOGGER.error("Delay task caught exception", e);
 				}
 			}));
 		}

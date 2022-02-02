@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
@@ -34,6 +35,7 @@ import org.quiltmc.qsl.networking.api.ServerLoginConnectionEvents;
 import org.quiltmc.qsl.networking.api.ServerLoginNetworking;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 
+@ApiStatus.Internal
 public final class NetworkingImpl {
 	public static final String MOD_ID = "quilt_networking";
 	public static final Logger LOGGER = LogManager.getLogger(MOD_ID);

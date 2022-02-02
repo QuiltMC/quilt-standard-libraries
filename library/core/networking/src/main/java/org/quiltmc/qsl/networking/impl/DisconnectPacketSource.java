@@ -16,9 +16,12 @@
 
 package org.quiltmc.qsl.networking.impl;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.network.Packet;
 import net.minecraft.text.Text;
 
+@ApiStatus.Internal
 public interface DisconnectPacketSource {
 	Packet<?> createDisconnectPacket(Text message);
 }

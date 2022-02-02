@@ -27,6 +27,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 
 import io.netty.util.concurrent.GenericFutureListener;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.network.ClientConnection;
@@ -47,6 +48,7 @@ import org.quiltmc.qsl.networking.impl.AbstractNetworkAddon;
 import org.quiltmc.qsl.networking.mixin.accessor.LoginQueryResponseC2SPacketAccessor;
 import org.quiltmc.qsl.networking.mixin.accessor.ServerLoginNetworkHandlerAccessor;
 
+@ApiStatus.Internal
 public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLoginNetworking.LoginQueryResponseHandler> implements PacketSender {
 	private final ClientConnection connection;
 	private final ServerLoginNetworkHandler handler;
@@ -82,7 +84,7 @@ public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLo
 			this.firstQueryTick = false;
 		}
 
-		AtomicReference<Throwable> error = new AtomicReference<>();
+		var error = new AtomicReference<Throwable>();
 		this.waits.removeIf(future -> {
 			if (!future.isDone()) {
 				return false;
@@ -126,7 +128,7 @@ public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLo
 	 * @return true if the packet was handled
 	 */
 	public boolean handle(LoginQueryResponseC2SPacket packet) {
-		LoginQueryResponseC2SPacketAccessor access = (LoginQueryResponseC2SPacketAccessor) packet;
+		var access = (LoginQueryResponseC2SPacketAccessor) packet;
 		return handle(access.getQueryId(), access.getResponse());
 	}
 
@@ -162,8 +164,7 @@ public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLo
 	public Packet<?> createPacket(Identifier channelName, PacketByteBuf buf) {
 		int queryId = this.queryIdFactory.nextId();
 
-		LoginQueryRequestS2CPacket ret = new LoginQueryRequestS2CPacket(queryId, channelName, buf);
-		return ret;
+		return new LoginQueryRequestS2CPacket(queryId, channelName, buf);
 	}
 
 	@Override
