@@ -23,6 +23,7 @@ import static net.minecraft.command.argument.IdentifierArgumentType.identifier;
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import com.mojang.brigadier.context.CommandContext;
@@ -42,50 +43,51 @@ import net.minecraft.util.Identifier;
 
 import net.fabricmc.api.ModInitializer;
 //import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 
 public final class NetworkingChannelTest implements ModInitializer {
 	@Override
 	public void onInitialize() {
-//		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
-//			final LiteralCommandNode<ServerCommandSource> channelTestCommand = literal("network_channel_test").build();
-//
-//			// Info
-//			{
-//				final LiteralCommandNode<ServerCommandSource> info = literal("info")
-//						.executes(context -> infoCommand(context, context.getSource().getPlayer()))
-//						.build();
-//
-//				final ArgumentCommandNode<ServerCommandSource, EntitySelector> player = argument("player", player())
-//						.executes(context -> infoCommand(context, getPlayer(context, "player")))
-//						.build();
-//
-//				info.addChild(player);
-//				channelTestCommand.addChild(info);
-//			}
-//
-//			// Register
-//			{
-//				final LiteralCommandNode<ServerCommandSource> register = literal("register")
-//						.then(argument("channel", identifier())
-//								.executes(context -> registerChannel(context, context.getSource().getPlayer())))
-//						.build();
-//
-//				channelTestCommand.addChild(register);
-//			}
-//
-//			// Unregister
-//			{
-//				final LiteralCommandNode<ServerCommandSource> unregister = literal("unregister")
-//						.then(argument("channel", identifier()).suggests(NetworkingChannelTest::suggestReceivableChannels)
-//								.executes(context -> unregisterChannel(context, context.getSource().getPlayer())))
-//						.build();
-//
-//				channelTestCommand.addChild(unregister);
-//			}
-//
-//			dispatcher.getRoot().addChild(channelTestCommand);
-//		});
+		CommandRegistrationCallback.EVENT.register((dispatcher, integrated, dedicated) -> {
+			final LiteralCommandNode<ServerCommandSource> channelTestCommand = literal("network_channel_test").build();
+
+			// Info
+			{
+				final LiteralCommandNode<ServerCommandSource> info = literal("info")
+						.executes(context -> infoCommand(context, context.getSource().getPlayer()))
+						.build();
+
+				final ArgumentCommandNode<ServerCommandSource, EntitySelector> player = argument("player", player())
+						.executes(context -> infoCommand(context, getPlayer(context, "player")))
+						.build();
+
+				info.addChild(player);
+				channelTestCommand.addChild(info);
+			}
+
+			// Register
+			{
+				final LiteralCommandNode<ServerCommandSource> register = literal("register")
+						.then(argument("channel", identifier())
+								.executes(context -> registerChannel(context, context.getSource().getPlayer())))
+						.build();
+
+				channelTestCommand.addChild(register);
+			}
+
+			// Unregister
+			{
+				final LiteralCommandNode<ServerCommandSource> unregister = literal("unregister")
+						.then(argument("channel", identifier()).suggests(NetworkingChannelTest::suggestReceivableChannels)
+								.executes(context -> unregisterChannel(context, context.getSource().getPlayer())))
+						.build();
+
+				channelTestCommand.addChild(unregister);
+			}
+
+			dispatcher.getRoot().addChild(channelTestCommand);
+		});
 	}
 
 	private static CompletableFuture<Suggestions> suggestReceivableChannels(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder) throws CommandSyntaxException {
@@ -124,7 +126,14 @@ public final class NetworkingChannelTest implements ModInitializer {
 	}
 
 	private static int infoCommand(CommandContext<ServerCommandSource> context, ServerPlayerEntity player) {
-		// TODO:
+		ServerCommandSource source = context.getSource();
+		Set<Identifier> channels = ServerPlayNetworking.getSendable(player);
+
+		source.sendFeedback(new LiteralText(String.format("Available channels for player %s", player.getEntityName())), false);
+
+		for (Identifier channel : channels) {
+			source.sendFeedback(new LiteralText(channel.toString()), false);
+		}
 
 		return 1;
 	}

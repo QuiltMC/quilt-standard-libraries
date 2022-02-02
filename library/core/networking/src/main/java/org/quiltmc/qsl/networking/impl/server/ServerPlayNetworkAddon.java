@@ -35,7 +35,7 @@ import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
 import org.quiltmc.qsl.networking.impl.NetworkingImpl;
 import org.quiltmc.qsl.networking.mixin.accessor.CustomPayloadC2SPacketAccessor;
 
-public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<ServerPlayNetworking.PlayChannelReceiver> {
+public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<ServerPlayNetworking.ChannelReceiver> {
 	private final ServerPlayNetworkHandler handler;
 	private final MinecraftServer server;
 	private boolean sentInitialRegisterPacket;
@@ -54,7 +54,7 @@ public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 
 	@Override
 	public void lateInit() {
-		for (Map.Entry<Identifier, ServerPlayNetworking.PlayChannelReceiver> entry : this.receiver.getReceivers().entrySet()) {
+		for (Map.Entry<Identifier, ServerPlayNetworking.ChannelReceiver> entry : this.receiver.getReceivers().entrySet()) {
 			this.registerChannel(entry.getKey(), entry.getValue());
 		}
 
@@ -85,7 +85,7 @@ public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 	}
 
 	@Override
-	protected void receive(ServerPlayNetworking.PlayChannelReceiver handler, PacketByteBuf buf) {
+	protected void receive(ServerPlayNetworking.ChannelReceiver handler, PacketByteBuf buf) {
 		handler.receive(this.server, this.handler.player, this.handler, buf, this);
 	}
 

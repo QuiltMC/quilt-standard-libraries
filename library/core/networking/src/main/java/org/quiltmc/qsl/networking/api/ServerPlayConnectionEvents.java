@@ -30,7 +30,7 @@ public final class ServerPlayConnectionEvents {
 	/**
 	 * Event indicating a connection entered the PLAY state, ready for registering channel handlers.
 	 *
-	 * @see ServerPlayNetworking#registerReceiver(ServerPlayNetworkHandler, Identifier, ServerPlayNetworking.PlayChannelReceiver)
+	 * @see ServerPlayNetworking#registerReceiver(ServerPlayNetworkHandler, Identifier, ServerPlayNetworking.ChannelReceiver)
 	 */
 	public static final Event<Init> INIT = Event.create(Init.class, callbacks -> (handler, server) -> {
 		for (Init callback : callbacks) {

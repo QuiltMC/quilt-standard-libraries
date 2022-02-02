@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.networking.api;
 
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 
@@ -53,9 +54,9 @@ public final class ServerPlayNetworking {
 	 * @param channelHandler the handler
 	 * @return {@code false} if a handler is already registered to the channel, otherwise {@code true}
 	 * @see ServerPlayNetworking#unregisterGlobalReceiver(Identifier)
-	 * @see ServerPlayNetworking#registerReceiver(ServerPlayNetworkHandler, Identifier, PlayChannelReceiver)
+	 * @see ServerPlayNetworking#registerReceiver(ServerPlayNetworkHandler, Identifier, ChannelReceiver)
 	 */
-	public static boolean registerGlobalReceiver(Identifier channelName, PlayChannelReceiver channelHandler) {
+	public static boolean registerGlobalReceiver(Identifier channelName, ChannelReceiver channelHandler) {
 		return ServerNetworkingImpl.PLAY.registerGlobalReceiver(channelName, channelHandler);
 	}
 
@@ -67,11 +68,11 @@ public final class ServerPlayNetworking {
 	 *
 	 * @param channelName the identifier of the channel
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel
-	 * @see ServerPlayNetworking#registerGlobalReceiver(Identifier, PlayChannelReceiver)
+	 * @see ServerPlayNetworking#registerGlobalReceiver(Identifier, ChannelReceiver)
 	 * @see ServerPlayNetworking#unregisterReceiver(ServerPlayNetworkHandler, Identifier)
 	 */
 	@Nullable
-	public static ServerPlayNetworking.PlayChannelReceiver unregisterGlobalReceiver(Identifier channelName) {
+	public static ServerPlayNetworking.ChannelReceiver unregisterGlobalReceiver(Identifier channelName) {
 		return ServerNetworkingImpl.PLAY.unregisterGlobalReceiver(channelName);
 	}
 
@@ -87,7 +88,7 @@ public final class ServerPlayNetworking {
 
 	/**
 	 * Registers a handler to a channel.
-	 * This method differs from {@link ServerPlayNetworking#registerGlobalReceiver(Identifier, PlayChannelReceiver)} since
+	 * This method differs from {@link ServerPlayNetworking#registerGlobalReceiver(Identifier, ChannelReceiver)} since
 	 * the channel handler will only be applied to the player represented by the {@link ServerPlayNetworkHandler}.
 	 *
 	 * <p>For example, if you only register a receiver using this method when a {@linkplain ServerLoginNetworking#registerGlobalReceiver(Identifier, ServerLoginNetworking.LoginQueryResponseHandler)}
@@ -102,7 +103,7 @@ public final class ServerPlayNetworking {
 	 * @return {@code false} if a handler is already registered to the channel name, otherwise {@code true}
 	 * @see ServerPlayConnectionEvents#INIT
 	 */
-	public static boolean registerReceiver(ServerPlayNetworkHandler networkHandler, Identifier channelName, PlayChannelReceiver channelHandler) {
+	public static boolean registerReceiver(ServerPlayNetworkHandler networkHandler, Identifier channelName, ChannelReceiver channelHandler) {
 		Objects.requireNonNull(networkHandler, "Network handler cannot be null");
 
 		return ServerNetworkingImpl.getAddon(networkHandler).registerChannel(channelName, channelHandler);
@@ -117,7 +118,7 @@ public final class ServerPlayNetworking {
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel name
 	 */
 	@Nullable
-	public static ServerPlayNetworking.PlayChannelReceiver unregisterReceiver(ServerPlayNetworkHandler networkHandler, Identifier channelName) {
+	public static ServerPlayNetworking.ChannelReceiver unregisterReceiver(ServerPlayNetworkHandler networkHandler, Identifier channelName) {
 		Objects.requireNonNull(networkHandler, "Network handler cannot be null");
 
 		return ServerNetworkingImpl.getAddon(networkHandler).unregisterChannel(channelName);
@@ -251,6 +252,19 @@ public final class ServerPlayNetworking {
 		player.networkHandler.sendPacket(createS2CPacket(channelName, buf));
 	}
 
+	/**
+	 * Sends a packet to a collection of players.
+	 *
+	 * @param players the players to send the packet to
+	 * @param channelName the channel of the packet
+	 * @param buf the payload of the packet
+	 */
+	public static void send(Collection<ServerPlayerEntity> players, Identifier channelName, PacketByteBuf buf) {
+		Objects.requireNonNull(players, "Players collection cannot be null");
+
+		players.forEach(player -> send(player, channelName, buf));
+	}
+
 	// Helper methods
 
 	// TODO: Possible future CHASM extension method.
@@ -269,7 +283,7 @@ public final class ServerPlayNetworking {
 	}
 
 	@FunctionalInterface
-	public interface PlayChannelReceiver {
+	public interface ChannelReceiver {
 		/**
 		 * Receives an incoming packet.
 		 *

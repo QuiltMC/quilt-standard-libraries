@@ -59,7 +59,6 @@ public final class NetworkingPlayPacketTest implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		NetworkingTestmods.LOGGER.info("Hello from networking user!");
-		// TODO: Test pending other APIs
 
 		CommandRegistrationCallback.EVENT.register((dispatcher, integrated, dedicated) -> {
 			NetworkingPlayPacketTest.registerCommand(dispatcher);
