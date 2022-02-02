@@ -16,14 +16,14 @@
 
 package org.quiltmc.qsl.networking.test;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.minecraft.util.Identifier;
 
 public final class NetworkingTestMods {
 	public static final String ID = "quilt_networking_testmod";
-	public static final Logger LOGGER = LogManager.getLogger(ID);
+	public static final Logger LOGGER = LoggerFactory.getLogger(ID);
 
 	public static Identifier id(String name) {
 		return new Identifier(ID, name);
