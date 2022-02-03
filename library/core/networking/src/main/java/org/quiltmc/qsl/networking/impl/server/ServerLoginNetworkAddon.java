@@ -49,7 +49,7 @@ import org.quiltmc.qsl.networking.mixin.accessor.LoginQueryResponseC2SPacketAcce
 import org.quiltmc.qsl.networking.mixin.accessor.ServerLoginNetworkHandlerAccessor;
 
 @ApiStatus.Internal
-public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLoginNetworking.LoginQueryResponseHandler> implements PacketSender {
+public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLoginNetworking.QueryResponseReceiver> implements PacketSender {
 	private final ClientConnection connection;
 	private final ServerLoginNetworkHandler handler;
 	private final MinecraftServer server;
@@ -76,7 +76,7 @@ public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLo
 			this.sendCompressionPacket();
 
 			// Register global receivers.
-			for (Map.Entry<Identifier, ServerLoginNetworking.LoginQueryResponseHandler> entry : ServerNetworkingImpl.LOGIN.getReceivers().entrySet()) {
+			for (Map.Entry<Identifier, ServerLoginNetworking.QueryResponseReceiver> entry : ServerNetworkingImpl.LOGIN.getReceivers().entrySet()) {
 				ServerLoginNetworking.registerReceiver(this.handler, entry.getKey(), entry.getValue());
 			}
 
@@ -142,7 +142,7 @@ public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLo
 		}
 
 		boolean understood = originalBuf != null;
-		@Nullable ServerLoginNetworking.LoginQueryResponseHandler handler = ServerNetworkingImpl.LOGIN.getReceiver(channel);
+		@Nullable ServerLoginNetworking.QueryResponseReceiver handler = ServerNetworkingImpl.LOGIN.getReceiver(channel);
 
 		if (handler == null) {
 			return false;

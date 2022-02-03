@@ -32,7 +32,7 @@ import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
 
 @ApiStatus.Internal
 public final class ServerNetworkingImpl {
-	public static final GlobalReceiverRegistry<ServerLoginNetworking.LoginQueryResponseHandler> LOGIN = new GlobalReceiverRegistry<>();
+	public static final GlobalReceiverRegistry<ServerLoginNetworking.QueryResponseReceiver> LOGIN = new GlobalReceiverRegistry<>();
 	public static final GlobalReceiverRegistry<ServerPlayNetworking.ChannelReceiver> PLAY = new GlobalReceiverRegistry<>();
 
 	public static ServerPlayNetworkAddon getAddon(ServerPlayNetworkHandler handler) {

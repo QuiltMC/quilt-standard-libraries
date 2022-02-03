@@ -58,9 +58,9 @@ public final class ClientPlayNetworking {
 	 * @param channelHandler the handler
 	 * @return {@code false} if a handler is already registered to the channel, otherwise {@code true}
 	 * @see ClientPlayNetworking#unregisterGlobalReceiver(Identifier)
-	 * @see ClientPlayNetworking#registerReceiver(Identifier, PlayChannelReceiver)
+	 * @see ClientPlayNetworking#registerReceiver(Identifier, ChannelReceiver)
 	 */
-	public static boolean registerGlobalReceiver(Identifier channelName, PlayChannelReceiver channelHandler) {
+	public static boolean registerGlobalReceiver(Identifier channelName, ChannelReceiver channelHandler) {
 		return ClientNetworkingImpl.PLAY.registerGlobalReceiver(channelName, channelHandler);
 	}
 
@@ -72,11 +72,11 @@ public final class ClientPlayNetworking {
 	 *
 	 * @param channelName the identifier of the channel
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel
-	 * @see ClientPlayNetworking#registerGlobalReceiver(Identifier, PlayChannelReceiver)
+	 * @see ClientPlayNetworking#registerGlobalReceiver(Identifier, ChannelReceiver)
 	 * @see ClientPlayNetworking#unregisterReceiver(Identifier)
 	 */
 	@Nullable
-	public static ClientPlayNetworking.PlayChannelReceiver unregisterGlobalReceiver(Identifier channelName) {
+	public static ClientPlayNetworking.ChannelReceiver unregisterGlobalReceiver(Identifier channelName) {
 		return ClientNetworkingImpl.PLAY.unregisterGlobalReceiver(channelName);
 	}
 
@@ -96,7 +96,7 @@ public final class ClientPlayNetworking {
 	 * If a handler is already registered to the {@code channel}, this method will return {@code false}, and no change will be made.
 	 * Use {@link #unregisterReceiver(Identifier)} to unregister the existing handler.
 	 * <p>
-	 * For example, if you only register a receiver using this method when a {@linkplain ClientLoginNetworking#registerGlobalReceiver(Identifier, ClientLoginNetworking.LoginQueryRequestHandler)}
+	 * For example, if you only register a receiver using this method when a {@linkplain ClientLoginNetworking#registerGlobalReceiver(Identifier, ClientLoginNetworking.QueryRequestReceiver)}
 	 * login query has been received, you should use {@link ClientPlayConnectionEvents#INIT} to register the channel handler.
 	 *
 	 * @param channelName the identifier of the channel
@@ -104,7 +104,7 @@ public final class ClientPlayNetworking {
 	 * @throws IllegalStateException if the client is not connected to a server
 	 * @see ClientPlayConnectionEvents#INIT
 	 */
-	public static boolean registerReceiver(Identifier channelName, PlayChannelReceiver channelHandler) {
+	public static boolean registerReceiver(Identifier channelName, ChannelReceiver channelHandler) {
 		final ClientPlayNetworkAddon addon = ClientNetworkingImpl.getClientPlayAddon();
 
 		if (addon != null) {
@@ -124,7 +124,7 @@ public final class ClientPlayNetworking {
 	 * @throws IllegalStateException if the client is not connected to a server
 	 */
 	@Nullable
-	public static ClientPlayNetworking.PlayChannelReceiver unregisterReceiver(Identifier channelName) throws IllegalStateException {
+	public static ClientPlayNetworking.ChannelReceiver unregisterReceiver(Identifier channelName) throws IllegalStateException {
 		final ClientPlayNetworkAddon addon = ClientNetworkingImpl.getClientPlayAddon();
 
 		if (addon != null) {
@@ -232,7 +232,7 @@ public final class ClientPlayNetworking {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface PlayChannelReceiver {
+	public interface ChannelReceiver {
 		/**
 		 * Receives an incoming packet.
 		 * <p>
