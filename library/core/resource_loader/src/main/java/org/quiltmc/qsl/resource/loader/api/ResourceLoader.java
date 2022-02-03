@@ -80,7 +80,7 @@ public interface ResourceLoader {
 	 * Registers a built-in resource pack.
 	 * <p>
 	 * A built-in resource pack is an extra resource pack provided by your mod which is not always active,
-	 * similar to the "Programmer Art" resource pack.
+	 * similarly to the "Programmer Art" resource pack.
 	 * <p>
 	 * A built-in resource pack should be used to provide extra assets/data that should be optional with your mod but still directly provided by it.
 	 * For example, it could provide textures of your mod in another resolution, or could allow providing different styles of your assets.
@@ -110,7 +110,7 @@ public interface ResourceLoader {
 	 * Registers a built-in resource pack.
 	 * <p>
 	 * A built-in resource pack is an extra resource pack provided by your mod which is not always active,
-	 * similar to the "Programmer Art" resource pack.
+	 * similarly to the "Programmer Art" resource pack.
 	 * <p>
 	 * A built-in resource pack should be used to provide extra assets/data that should be optional with your mod but still directly provided by it.
 	 * For example, it could provide textures of your mod in another resolution, or could allow providing different styles of your assets.
@@ -135,7 +135,7 @@ public interface ResourceLoader {
 	 * Registers a built-in resource pack.
 	 * <p>
 	 * A built-in resource pack is an extra resource pack provided by your mod which is not always active,
-	 * similar to the "Programmer Art" resource pack.
+	 * similarly to the "Programmer Art" resource pack.
 	 * <p>
 	 * A built-in resource pack should be used to provide extra assets/data that should be optional with your mod but still directly provided by it.
 	 * For example, it could provide textures of your mod in another resolution, or could allow providing different styles of your assets.
