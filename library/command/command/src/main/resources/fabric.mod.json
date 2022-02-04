@@ -26,6 +26,9 @@
     ],
     "main": [
       "org.quiltmc.qsl.command.impl.Initializer"
+    ],
+    "client": [
+      "org.quiltmc.qsl.command.impl.ClientInitializer"
     ]
   },
   "mixins": [

@@ -18,6 +18,7 @@ package org.quiltmc.qsl.command.impl;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.util.Identifier;
@@ -35,7 +36,9 @@ public final class Initializer implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		// TODO register known argument type syncing stuff
+		if (FabricLoader.getInstance().isModLoaded("quilt_networking")) {
+			KnownArgumentTypesSync.register();
+		}
 
 		ServerArgumentType.register(id("enum"),
 				EnumArgumentType.class,

@@ -10,4 +10,12 @@ qslModule {
 			"qsl_base",
 			"resource_loader"
 	])
+	coreTestmodDependencies([
+	        "networking"
+	])
+}
+
+dependencies {
+	// OPTIONAL dependency on networking
+	compileOnly project(path: ":core:networking", configuration: "dev")
 }
