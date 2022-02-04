@@ -22,6 +22,7 @@ import java.util.HashSet;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
@@ -29,6 +30,7 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.networking.api.client.C2SPlayChannelEvents;
 
+@ApiStatus.Internal
 public final class KnownArgumentTypesSync {
 	private KnownArgumentTypesSync() { }
 
