@@ -28,10 +28,12 @@ includeBuild("build-logic")
 
 // Libraries
 library("core")
+
 library("block")
-library("data")
-library("item")
 library("command")
+library("data")
+library("gui")
+library("item")
 
 def library(String library) {
 	include(library)

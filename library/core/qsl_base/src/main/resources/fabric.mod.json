@@ -19,6 +19,11 @@
     "minecraft": ">=1.18.2-alpha.22.3.a"
   },
   "description": "Base level API for Quilt mods.",
+  "entrypoints": {
+    "main": [
+      "org.quiltmc.qsl.base.impl.event.EventRegistry"
+    ]
+  },
   "mixins": [
     "quilt_base.mixins.json"
   ],

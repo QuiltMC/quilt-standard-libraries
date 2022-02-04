@@ -1,15 +1,14 @@
 {
   "required": true,
   "package": "org.quiltmc.qsl.command.mixin",
-  "compatibilityLevel": "JAVA_16",
-  "mixins": [
+  "compatibilityLevel": "JAVA_17",
+  "client": [
     "HelpCommandAccessor",
     "client.ClientCommandSourceMixin",
     "client.ClientPlayerEntityMixin",
     "client.ClientPlayNetworkHandlerMixin",
     "client.MinecraftClientMixin"
   ],
-  "client": [],
   "injectors": {
     "defaultRequire": 1
   }
