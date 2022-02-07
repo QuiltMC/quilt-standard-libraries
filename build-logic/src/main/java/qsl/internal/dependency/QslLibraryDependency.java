@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class QslLibraryDependency implements Named {
 	private final String name;
 	private final Project project;
+	// Reference to the extension's moduleDependencies
 	private final List<Dependency> moduleDependencies;
 
 	public QslLibraryDependency(String name, Project project, List<Dependency> moduleDependencies) {
@@ -44,6 +45,10 @@ public class QslLibraryDependency implements Named {
 		add(module, ConfigurationType.TESTMOD);
 	}
 
+	public void compileOnly(String module) {
+		add(module, ConfigurationType.COMPILE_ONLY);
+	}
+
 	@Override
 	public @NotNull String getName() {
 		return name;
@@ -55,7 +60,8 @@ public class QslLibraryDependency implements Named {
 	public enum ConfigurationType {
 		API(JavaPlugin.API_CONFIGURATION_NAME),
 		IMPLEMENTATION(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME),
-		TESTMOD("testmodImplementation");
+		TESTMOD("testmodImplementation"),
+		COMPILE_ONLY("compileOnly");
 
 		private final String configurationName;
 		ConfigurationType(String configurationName) {

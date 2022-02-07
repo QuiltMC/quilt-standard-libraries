@@ -194,14 +194,20 @@ qslModule {
             // public API--for example, a method that returns a `FooBar`, defined in `module_name`.
             // When in doubt, use an API dependency.
             api("module_name")
-            
+
             // Impl dependencies are dependencies that are only used internally in a module,
             // and classes from it are never exposed through this module's public API.
             // For example, a dependency on lifecyle events would usually be impl.
             impl("module_2")
-            
+
             // This module is only depended on when testing the code
             testmodOnly("module_3")
+
+            // This module is only used to compile the module. It is an optional runtime dependency,
+            // and should be also have a testmodOnly dependency as well to test features with and without the dependency
+            compileOnly("module_4")
+            // testmodOnly disabled to test module without optional dependency
+            // testmodOnly("module_4")
         }
     }
 }
