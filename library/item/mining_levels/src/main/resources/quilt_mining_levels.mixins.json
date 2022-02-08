@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.mining_levels.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "client.ClientPlayNetworkHandlerMixin",
+    "MiningToolItemMixin",
+    "ShearsItemMixin",
+    "SwordItemMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

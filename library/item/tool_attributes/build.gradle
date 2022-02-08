@@ -1,0 +1,21 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "tool_attributes"
+	version = "1.0.0"
+	library = "item"
+	coreDependencies([
+			"qsl_base",
+			"resource_loader"
+	])
+	coreTestmodDependencies([
+			"qsl_base",
+			"lifecycle_events"
+	])
+	interLibraryTestmodDependencies("block", ["block_extensions"])
+	interLibraryTestmodDependencies("command", ["command"])
+	interLibraryDependencies("data", ["tags"])
+	intraLibraryDependencies(["mining_levels"])
+}
