@@ -27,12 +27,12 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import net.minecraft.class_6904;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
 import net.minecraft.resource.DataPackSettings;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourcePackManager;
 import net.minecraft.resource.ResourcePackProfile;
-import net.minecraft.resource.ServerResourceManager;
 
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 import org.quiltmc.qsl.resource.loader.impl.ModNioResourcePack;
@@ -42,7 +42,7 @@ import org.quiltmc.qsl.resource.loader.impl.ModResourcePackProvider;
 @Mixin(CreateWorldScreen.class)
 public class CreateWorldScreenMixin {
 	@ModifyArg(
-			method = "create",
+			method = "method_40212",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/screen/world/CreateWorldScreen;<init>(Lnet/minecraft/client/gui/screen/Screen;Lnet/minecraft/resource/DataPackSettings;Lnet/minecraft/client/gui/screen/world/MoreOptionsDialog;)V"
@@ -75,7 +75,7 @@ public class CreateWorldScreenMixin {
 			method = "applyDataPacks",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/resource/ServerResourceManager;reload(Ljava/util/List;Lnet/minecraft/util/registry/DynamicRegistryManager;Lnet/minecraft/server/command/CommandManager$RegistrationEnvironment;ILjava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
+					target = "Lnet/minecraft/class_6904;method_40431(Lnet/minecraft/class_6904$class_6906;Lnet/minecraft/class_6904$class_6905;Lnet/minecraft/class_6904$class_6907;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
 			)
 	)
 	private void onStartDataPackLoading(ResourcePackManager dataPackManager, CallbackInfo ci) {
@@ -86,21 +86,21 @@ public class CreateWorldScreenMixin {
 	// Take a ServerResourceManager parameter.
 	@SuppressWarnings("target")
 	@Inject(
-			method = "m_oezpkwme(Lnet/minecraft/resource/DataPackSettings;Lnet/minecraft/resource/ServerResourceManager;)V",
+			method = "method_37088(Lnet/minecraft/resource/DataPackSettings;Lnet/minecraft/class_6904;)V",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/resource/ServerResourceManager;close()V"
+					target = "Lnet/minecraft/class_6904;close()V"
 			)
 	)
-	private void onEndDataPackLoading(DataPackSettings dataPackSettings, ServerResourceManager resourceManager, CallbackInfo ci) {
-		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resourceManager, null);
+	private void onEndDataPackLoading(DataPackSettings dataPackSettings, class_6904 arg, CallbackInfo ci) {
+		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, arg.comp_356(), null);
 	}
 
 	// Lambda method in CreateWorldScreen#applyDataPacks, at CompletableFuture#handle.
 	// Take Void and Throwable parameters.
 	@SuppressWarnings("target")
 	@Inject(
-			method = "m_paskjwcu(Ljava/lang/Void;Ljava/lang/Throwable;)Ljava/lang/Object;",
+			method = "method_37089(Ljava/lang/Void;Ljava/lang/Throwable;)Ljava/lang/Object;",
 			at = @At(
 					value = "INVOKE",
 					target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Throwable;)V",

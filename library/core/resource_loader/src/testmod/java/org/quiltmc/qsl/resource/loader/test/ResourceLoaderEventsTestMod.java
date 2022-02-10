@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.minecraft.resource.ServerResourceManager;
+import net.minecraft.resource.ResourceManager;
 import net.minecraft.server.MinecraftServer;
 
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
@@ -30,12 +30,12 @@ public class ResourceLoaderEventsTestMod implements ResourceLoaderEvents.StartDa
 	private static final Logger LOGGER = LoggerFactory.getLogger(ResourceLoaderEventsTestMod.class);
 
 	@Override
-	public void onStartDataPackReload(@Nullable MinecraftServer server, @Nullable ServerResourceManager oldResourceManager) {
+	public void onStartDataPackReload(@Nullable MinecraftServer server, @Nullable ResourceManager oldResourceManager) {
 		LOGGER.info("Preparing for data pack reload, old resource manager: {}", oldResourceManager);
 	}
 
 	@Override
-	public void onEndDataPackReload(@Nullable MinecraftServer server, ServerResourceManager resourceManager, @Nullable Throwable error) {
+	public void onEndDataPackReload(@Nullable MinecraftServer server, ResourceManager resourceManager, @Nullable Throwable error) {
 		if (error == null) {
 			LOGGER.info("Finished data pack reloading successfully on {}.", Thread.currentThread());
 		} else {

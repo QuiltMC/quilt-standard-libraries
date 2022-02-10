@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.resource.ServerResourceManager;
+import net.minecraft.class_6904;
 import net.minecraft.server.Main;
 
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
@@ -34,7 +34,7 @@ public class MainMixin {
 			method = "main",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/resource/ServerResourceManager;reload(Ljava/util/List;Lnet/minecraft/util/registry/DynamicRegistryManager;Lnet/minecraft/server/command/CommandManager$RegistrationEnvironment;ILjava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;",
+					target = "Lnet/minecraft/class_6904;method_40431(Lnet/minecraft/class_6904$class_6906;Lnet/minecraft/class_6904$class_6905;Lnet/minecraft/class_6904$class_6907;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;",
 					remap = true
 			),
 			remap = false
@@ -43,10 +43,10 @@ public class MainMixin {
 		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null); // First reload
 	}
 
-	@ModifyVariable(method = "main", at = @At(value = "STORE", ordinal = 0), remap = false)
-	private static ServerResourceManager onSuccessfulReloadResources(ServerResourceManager resourceManager) {
-		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resourceManager, null);
-		return resourceManager; // noop
+	@ModifyVariable(method = "main", at = @At(value = "STORE", ordinal = 1), remap = false)
+	private static class_6904 onSuccessfulReloadResources(class_6904 resources) {
+		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resources.comp_356(), null);
+		return resources; // noop
 	}
 
 	@ModifyArg(

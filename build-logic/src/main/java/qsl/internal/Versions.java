@@ -22,7 +22,7 @@ public final class Versions {
 	/**
 	 * The target Minecraft version.
 	 */
-	public static final String MINECRAFT_VERSION = "22w05a";
+	public static final String MINECRAFT_VERSION = "22w06a";
 
 	/**
 	 * The target Quilt Mappings build.

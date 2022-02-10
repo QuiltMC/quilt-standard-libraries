@@ -8,7 +8,7 @@
     "MinecraftServerMixin",
     "NamespaceResourceManagerAccessor",
     "NamespaceResourceManagerMixin",
-    "ReloadableResourceManagerImplMixin",
+    "ReloadableResourceManagerMixin",
     "VanillaDataPackProviderMixin",
     "server.MainMixin"
   ],
