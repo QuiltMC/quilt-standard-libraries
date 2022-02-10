@@ -9,7 +9,7 @@
     "quilt_base": "*"
   },
   "entrypoints": {
-    "main": [
+    "init": [
       "org.quiltmc.qsl.base.test.QuiltBaseTestMod"
     ]
   }

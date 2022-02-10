@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,30 +14,28 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.lifecycle.mixin;
+package org.quiltmc.qsl.base.mixin.server;
 
-import org.quiltmc.qsl.lifecycle.api.event.ServerWorldTickEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.Main;
 
-@Mixin(ServerWorld.class)
-abstract class ServerWorldMixin {
-	@Shadow
-	public abstract MinecraftServer getServer();
+import org.quiltmc.qsl.base.api.entrypoint.server.DedicatedServerModInitializer;
 
-	@Inject(method = "tick", at = @At("HEAD"))
-	private void startTick(CallbackInfo info) {
-		ServerWorldTickEvents.START.invoker().startWorldTick(this.getServer(), (ServerWorld) (Object) this);
-	}
-
-	@Inject(method = "tick", at = @At("TAIL"))
-	private void endServerTick(CallbackInfo info) {
-		ServerWorldTickEvents.END.invoker().endWorldTick(this.getServer(), (ServerWorld) (Object) this);
+@Mixin(Main.class)
+public class MainMixin {
+	@Inject(
+			method = "main",
+			at = @At(value = "INVOKE", target = "Ljava/io/File;<init>(Ljava/lang/String;)V", ordinal = 0),
+			remap = false
+	)
+	private static void onInit(String[] strings, CallbackInfo ci) {
+		for (var initializer : FabricLoader.getInstance().getEntrypointContainers(DedicatedServerModInitializer.ENTRYPOINT_KEY, DedicatedServerModInitializer.class)) {
+			initializer.getEntrypoint().onInitializeServer(initializer.getProvider());
+		}
 	}
 }
