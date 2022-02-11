@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.quiltmc.qsl.key.binds.mixin.client;
 
 import java.util.List;
 
-import org.quiltmc.qsl.key.binds.impl.ConflictTooltipOwner;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -36,11 +35,13 @@ import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
+import org.quiltmc.qsl.key.binds.impl.ConflictTooltipOwner;
+
 @Environment(EnvType.CLIENT)
 @Mixin(KeyBindingsScreen.class)
 public abstract class KeyBindingsScreenMixin extends GameOptionsScreen {
 	@Shadow
-	private KeyBindingListWidget keyBindsList;
+	private KeyBindingListWidget keybindsList;
 
 	private KeyBindingsScreenMixin(Screen screen, GameOptions gameOptions, Text text) {
 		super(screen, gameOptions, text);

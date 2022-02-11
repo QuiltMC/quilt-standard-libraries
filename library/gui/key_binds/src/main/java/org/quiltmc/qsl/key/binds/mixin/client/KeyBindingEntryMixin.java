@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,6 @@ package org.quiltmc.qsl.key.binds.mixin.client;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.quiltmc.qsl.key.binds.api.KeyBindRegistry;
-import org.quiltmc.qsl.key.binds.impl.ConflictTooltipOwner;
-import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -43,6 +40,10 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
+
+import org.quiltmc.qsl.key.binds.api.KeyBindRegistry;
+import org.quiltmc.qsl.key.binds.impl.ConflictTooltipOwner;
+import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
 
 @Environment(EnvType.CLIENT)
 @Mixin(KeyBindingEntry.class)

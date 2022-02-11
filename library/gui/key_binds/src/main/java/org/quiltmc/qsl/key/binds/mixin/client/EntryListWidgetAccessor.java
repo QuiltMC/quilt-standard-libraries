@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.quiltmc.qsl.key.binds.mixin.client;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 

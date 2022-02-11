@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,14 @@ package org.quiltmc.qsl.key.binds.test.client;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.minecraft.client.option.KeyBinding;
 
 import org.quiltmc.qsl.key.binds.api.KeyBindRegistry;
 import org.quiltmc.qsl.lifecycle.api.client.event.ClientLifecycleEvents;
 import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Environment(EnvType.CLIENT)
 public class KeyBindRegistryTestMod implements ClientModInitializer {
@@ -49,7 +49,7 @@ public class KeyBindRegistryTestMod implements ClientModInitializer {
 
 			LOGGER.info("The registry has the following keys registered:");
 			KeyBindRegistry.getAllKeyBinds(true).forEach((key, value) -> {
-				LOGGER.info("%s: %s", key.getTranslationKey(), value);
+				LOGGER.info(String.format("%s: %s", key.getTranslationKey(), value));
 			});
 		});
 	}
