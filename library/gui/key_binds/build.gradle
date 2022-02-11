@@ -8,9 +8,9 @@ qslModule {
 	library = "gui"
 	moduleDependencies {
 		core {
-			testmodOnly("qsl_base")
+			api("qsl_base")
+			api("resource_loader")
 			testmodOnly("lifecycle_events")
-			testmodOnly("resource_loader")
 		}
 	}
 }
