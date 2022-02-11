@@ -19,23 +19,25 @@ package org.quiltmc.qsl.networking.test.login;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.FutureTask;
 
+import net.fabricmc.loader.api.ModContainer;
+
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.util.Util;
 
-import net.fabricmc.api.ModInitializer;
-import org.quiltmc.qsl.networking.api.ServerLoginConnectionEvents;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.PacketSender;
+import org.quiltmc.qsl.networking.api.ServerLoginConnectionEvents;
 import org.quiltmc.qsl.networking.api.ServerLoginNetworking;
-import org.quiltmc.qsl.networking.test.play.NetworkingPlayPacketTest;
 import org.quiltmc.qsl.networking.test.NetworkingTestMods;
+import org.quiltmc.qsl.networking.test.play.NetworkingPlayPacketTest;
 
 public final class NetworkingLoginQueryTest implements ModInitializer {
 	private static final boolean useLoginDelayTest = System.getProperty("quilt_networking.login_delay_test") != null;
 
 	@Override
-	public void onInitialize() {
+	public void onInitialize(ModContainer mod) {
 		ServerLoginConnectionEvents.QUERY_START.register(this::onLoginStart);
 		ServerLoginConnectionEvents.QUERY_START.register(this::delaySimply);
 

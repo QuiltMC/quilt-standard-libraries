@@ -57,9 +57,9 @@ public final class ClientLoginNetworking {
 	 * @param queryHandler the handler
 	 * @return {@code false} if a handler is already registered to the channel, otherwise {@code true}
 	 * @see ClientLoginNetworking#unregisterGlobalReceiver(Identifier)
-	 * @see ClientLoginNetworking#registerReceiver(Identifier, LoginQueryRequestHandler)
+	 * @see ClientLoginNetworking#registerReceiver(Identifier, QueryRequestReceiver)
 	 */
-	public static boolean registerGlobalReceiver(Identifier channelName, LoginQueryRequestHandler queryHandler) {
+	public static boolean registerGlobalReceiver(Identifier channelName, QueryRequestReceiver queryHandler) {
 		return ClientNetworkingImpl.LOGIN.registerGlobalReceiver(channelName, queryHandler);
 	}
 
@@ -71,11 +71,11 @@ public final class ClientLoginNetworking {
 	 *
 	 * @param channelName the identifier of the channel
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel
-	 * @see ClientLoginNetworking#registerGlobalReceiver(Identifier, LoginQueryRequestHandler)
+	 * @see ClientLoginNetworking#registerGlobalReceiver(Identifier, QueryRequestReceiver)
 	 * @see ClientLoginNetworking#unregisterReceiver(Identifier)
 	 */
 	@Nullable
-	public static ClientLoginNetworking.LoginQueryRequestHandler unregisterGlobalReceiver(Identifier channelName) {
+	public static ClientLoginNetworking.QueryRequestReceiver unregisterGlobalReceiver(Identifier channelName) {
 		return ClientNetworkingImpl.LOGIN.unregisterGlobalReceiver(channelName);
 	}
 
@@ -100,7 +100,7 @@ public final class ClientLoginNetworking {
 	 * @return {@code false} if a handler is already registered to the channel name, otherwise {@code true}
 	 * @throws IllegalStateException if the client is not logging in
 	 */
-	public static boolean registerReceiver(Identifier channelName, LoginQueryRequestHandler queryHandler) throws IllegalStateException {
+	public static boolean registerReceiver(Identifier channelName, QueryRequestReceiver queryHandler) throws IllegalStateException {
 		final ClientConnection connection = ClientNetworkingImpl.getLoginConnection();
 
 		if (connection != null) {
@@ -124,7 +124,7 @@ public final class ClientLoginNetworking {
 	 * @throws IllegalStateException if the client is not logging in
 	 */
 	@Nullable
-	public static LoginQueryRequestHandler unregisterReceiver(Identifier channelName) throws IllegalStateException {
+	public static ClientLoginNetworking.QueryRequestReceiver unregisterReceiver(Identifier channelName) throws IllegalStateException {
 		final ClientConnection connection = ClientNetworkingImpl.getLoginConnection();
 
 		if (connection != null) {
@@ -143,7 +143,7 @@ public final class ClientLoginNetworking {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface LoginQueryRequestHandler {
+	public interface QueryRequestReceiver {
 		/**
 		 * Handles an incoming query request from a server.
 		 * <p>

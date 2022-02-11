@@ -9,11 +9,11 @@
     "quilt_lifecycle_events": "*"
   },
   "entrypoints": {
-    "main": [
+    "init": [
       "org.quiltmc.qsl.lifecycle.test.event.ServerLifecycleTests::TESTS",
       "org.quiltmc.qsl.lifecycle.test.event.ServerTickTests"
     ],
-    "client": [
+    "client_init": [
       "org.quiltmc.qsl.lifecycle.test.event.client.ClientTickTests"
     ],
     "events": [

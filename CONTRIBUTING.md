@@ -177,6 +177,43 @@ In the case of a pseudo-local variable (a field used briefly to pass around a lo
 injections of said method), the field should be named with the namespace first, then the name of the injected method,
 and finally the name of the local (`quilt$injectedMethod$localName`).
 
+## Gradle Conventions
+
+### Declaring dependencies between modules
+
+In the `qslModule` extension, there is a `moduleDependencies` field. Dependencies are declared in a tree like structure reflecting how QSL libraries and modules are layed out.
+This field can be configured like:
+```groovy
+qslModule {
+    // ...
+    moduleDependencies {
+        // The QSL Library to depend on
+        library_name {
+            // API dependencies are put on the classpath of mods that depend on this module.
+            // Use an API dependency when you expose a class from this dependency in this module's
+            // public API--for example, a method that returns a `FooBar`, defined in `module_name`.
+            // When in doubt, use an API dependency.
+            api("module_name")
+
+            // Impl dependencies are dependencies that are only used internally in a module,
+            // and classes from it are never exposed through this module's public API.
+            // For example, a dependency on lifecyle events would usually be impl.
+            impl("module_2")
+
+            // This module is only depended on when testing the code
+            testmodOnly("module_3")
+
+            // This module is only used to compile the module. It is an optional runtime dependency,
+            // and should be also have a testmodOnly dependency as well to test features with and without the dependency
+            compileOnly("module_4")
+            // testmodOnly disabled to test module without optional dependency
+            // testmodOnly("module_4")
+        }
+    }
+}
+```
+
+
 ## Licensing & DCO
 
 QSL is licensed under [Apache 2.0][LICENSE], and have a [Developer Certificate of Origin (DCO)][DCO]

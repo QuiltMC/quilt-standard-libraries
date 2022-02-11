@@ -21,12 +21,13 @@ import java.util.List;
 import java.util.Map;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.EventAwareListener;
 import org.quiltmc.qsl.base.api.event.ListenerPhase;
@@ -103,7 +104,7 @@ public final class EventRegistry implements ModInitializer {
 	}
 
 	@Override
-	public void onInitialize() {
+	public void onInitialize(ModContainer mod) {
 		initialized = true;
 
 		for (var event : pendingEventsRegistration) {

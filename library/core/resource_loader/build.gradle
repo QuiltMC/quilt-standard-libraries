@@ -6,12 +6,12 @@ qslModule {
 	moduleName = "resource_loader"
 	version = "1.0.0"
 	library = "core"
-	coreDependencies([
-			"qsl_base"
-	])
-	coreTestmodDependencies([
-			"lifecycle_events"
-	])
+	moduleDependencies {
+		core {
+			api("qsl_base")
+			testmodOnly("lifecycle_events")
+		}
+	}
 }
 
 loom {

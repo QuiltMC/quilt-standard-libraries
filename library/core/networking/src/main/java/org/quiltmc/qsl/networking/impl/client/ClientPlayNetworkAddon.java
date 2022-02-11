@@ -40,7 +40,7 @@ import org.quiltmc.qsl.networking.impl.NetworkingImpl;
 
 @ApiStatus.Internal
 @Environment(EnvType.CLIENT)
-public final class ClientPlayNetworkAddon extends AbstractChanneledNetworkAddon<ClientPlayNetworking.PlayChannelReceiver> {
+public final class ClientPlayNetworkAddon extends AbstractChanneledNetworkAddon<ClientPlayNetworking.ChannelReceiver> {
 	private final ClientPlayNetworkHandler handler;
 	private final MinecraftClient client;
 	private boolean sentInitialRegisterPacket;
@@ -59,7 +59,7 @@ public final class ClientPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 
 	@Override
 	public void lateInit() {
-		for (Map.Entry<Identifier, ClientPlayNetworking.PlayChannelReceiver> entry : this.receiver.getReceivers().entrySet()) {
+		for (Map.Entry<Identifier, ClientPlayNetworking.ChannelReceiver> entry : this.receiver.getReceivers().entrySet()) {
 			this.registerChannel(entry.getKey(), entry.getValue());
 		}
 
@@ -96,7 +96,7 @@ public final class ClientPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 	}
 
 	@Override
-	protected void receive(ClientPlayNetworking.PlayChannelReceiver handler, PacketByteBuf buf) {
+	protected void receive(ClientPlayNetworking.ChannelReceiver handler, PacketByteBuf buf) {
 		handler.receive(this.client, this.handler, buf, this);
 	}
 

@@ -18,7 +18,7 @@ package org.quiltmc.qsl.itemgroup.test;
 
 import java.util.stream.IntStream;
 
-import org.quiltmc.qsl.itemgroup.api.QuiltItemGroup;
+import net.fabricmc.loader.api.ModContainer;
 
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -26,7 +26,8 @@ import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-import net.fabricmc.api.ModInitializer;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.itemgroup.api.QuiltItemGroup;
 
 public class ItemGroupTest implements ModInitializer {
 	public static final String NAMESPACE = "quilt_item_group_testmod";
@@ -51,7 +52,7 @@ public class ItemGroupTest implements ModInitializer {
 	private static final QuiltItemGroup[] MANY_GROUPS = IntStream.range(0, 20).mapToObj(i -> QuiltItemGroup.builder(new Identifier(NAMESPACE, "many_group_" + i)).build()).toArray(QuiltItemGroup[]::new);
 
 	@Override
-	public void onInitialize() {
+	public void onInitialize(ModContainer mod) {
 		DELAYED_ITEM_GROUP.setIcon(Items.EMERALD);
 	}
 }

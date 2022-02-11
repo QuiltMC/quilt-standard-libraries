@@ -26,6 +26,7 @@ import static net.minecraft.server.command.CommandManager.literal;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
@@ -41,52 +42,49 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 
-import net.fabricmc.api.ModInitializer;
 import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 
-public final class NetworkingChannelTest implements ModInitializer {
+public final class NetworkingChannelTest implements CommandRegistrationCallback {
 	@Override
-	public void onInitialize() {
-		CommandRegistrationCallback.EVENT.register((dispatcher, integrated, dedicated) -> {
-			final LiteralCommandNode<ServerCommandSource> channelTestCommand = literal("network_channel_test").build();
+	public void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, boolean integrated, boolean dedicated) {
+		final LiteralCommandNode<ServerCommandSource> channelTestCommand = literal("network_channel_test").build();
 
-			// Info
-			{
-				final LiteralCommandNode<ServerCommandSource> info = literal("info")
-						.executes(context -> infoCommand(context, context.getSource().getPlayer()))
-						.build();
+		// Info
+		{
+			final LiteralCommandNode<ServerCommandSource> info = literal("info")
+					.executes(context -> infoCommand(context, context.getSource().getPlayer()))
+					.build();
 
-				final ArgumentCommandNode<ServerCommandSource, EntitySelector> player = argument("player", player())
-						.executes(context -> infoCommand(context, getPlayer(context, "player")))
-						.build();
+			final ArgumentCommandNode<ServerCommandSource, EntitySelector> player = argument("player", player())
+					.executes(context -> infoCommand(context, getPlayer(context, "player")))
+					.build();
 
-				info.addChild(player);
-				channelTestCommand.addChild(info);
-			}
+			info.addChild(player);
+			channelTestCommand.addChild(info);
+		}
 
-			// Register
-			{
-				final LiteralCommandNode<ServerCommandSource> register = literal("register")
-						.then(argument("channel", identifier())
-								.executes(context -> registerChannel(context, context.getSource().getPlayer())))
-						.build();
+		// Register
+		{
+			final LiteralCommandNode<ServerCommandSource> register = literal("register")
+					.then(argument("channel", identifier())
+							.executes(context -> registerChannel(context, context.getSource().getPlayer())))
+					.build();
 
-				channelTestCommand.addChild(register);
-			}
+			channelTestCommand.addChild(register);
+		}
 
-			// Unregister
-			{
-				final LiteralCommandNode<ServerCommandSource> unregister = literal("unregister")
-						.then(argument("channel", identifier()).suggests(NetworkingChannelTest::suggestReceivableChannels)
-								.executes(context -> unregisterChannel(context, context.getSource().getPlayer())))
-						.build();
+		// Unregister
+		{
+			final LiteralCommandNode<ServerCommandSource> unregister = literal("unregister")
+					.then(argument("channel", identifier()).suggests(NetworkingChannelTest::suggestReceivableChannels)
+							.executes(context -> unregisterChannel(context, context.getSource().getPlayer())))
+					.build();
 
-				channelTestCommand.addChild(unregister);
-			}
+			channelTestCommand.addChild(unregister);
+		}
 
-			dispatcher.getRoot().addChild(channelTestCommand);
-		});
+		dispatcher.getRoot().addChild(channelTestCommand);
 	}
 
 	private static CompletableFuture<Suggestions> suggestReceivableChannels(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder) throws CommandSyntaxException {

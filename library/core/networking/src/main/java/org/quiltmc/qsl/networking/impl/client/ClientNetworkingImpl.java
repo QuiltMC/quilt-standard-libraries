@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
+import net.fabricmc.loader.api.ModContainer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,8 +50,8 @@ import org.quiltmc.qsl.networking.mixin.accessor.MinecraftClientAccessor;
 @ApiStatus.Internal
 @Environment(EnvType.CLIENT)
 public final class ClientNetworkingImpl {
-	public static final GlobalReceiverRegistry<ClientLoginNetworking.LoginQueryRequestHandler> LOGIN = new GlobalReceiverRegistry<>();
-	public static final GlobalReceiverRegistry<ClientPlayNetworking.PlayChannelReceiver> PLAY = new GlobalReceiverRegistry<>();
+	public static final GlobalReceiverRegistry<ClientLoginNetworking.QueryRequestReceiver> LOGIN = new GlobalReceiverRegistry<>();
+	public static final GlobalReceiverRegistry<ClientPlayNetworking.ChannelReceiver> PLAY = new GlobalReceiverRegistry<>();
 	private static ClientPlayNetworkAddon currentPlayAddon;
 
 	public static ClientPlayNetworkAddon getAddon(ClientPlayNetworkHandler handler) {
@@ -109,7 +110,7 @@ public final class ClientNetworkingImpl {
 		currentPlayAddon = addon;
 	}
 
-	public static void clientInit() {
+	public static void clientInit(ModContainer mod) {
 		// Reference cleanup for the locally stored addon if we are disconnected
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
 			currentPlayAddon = null;

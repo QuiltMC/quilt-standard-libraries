@@ -15,16 +15,16 @@
     "QuiltMC"
   ],
   "entrypoints": {
-    "main": [
+    "init": [
       "org.quiltmc.qsl.networking.impl.NetworkingImpl::init"
     ],
-    "client": [
+    "client_init": [
       "org.quiltmc.qsl.networking.impl.client.ClientNetworkingImpl::clientInit"
     ]
   },
   "depends": {
     "fabricloader": ">=0.12",
-    "minecraft": ">=1.18.2-alpha.22.3.a",
+    "minecraft": ">=1.18.2-alpha.22.6.a",
     "quilt_base": ">=1.0.0",
     "quilt_lifecycle_events": ">=1.0.0"
   },

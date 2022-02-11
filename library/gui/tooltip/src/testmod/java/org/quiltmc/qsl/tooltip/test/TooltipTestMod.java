@@ -17,9 +17,12 @@
 
 package org.quiltmc.qsl.tooltip.test;
 
+import java.util.Optional;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.ModContainer;
+
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.item.Item;
@@ -29,9 +32,9 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
 
-import java.util.Optional;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
 
 public final class TooltipTestMod implements ModInitializer {
 	public static final String NAMESPACE = "quilt_tooltip_testmod";
@@ -39,7 +42,7 @@ public final class TooltipTestMod implements ModInitializer {
 	public static final Item CUSTOM_CONVERTIBLE_TOOLTIP_ITEM = new ConvertibleTooltipItem();
 
 	@Override
-	public void onInitialize() {
+	public void onInitialize(ModContainer mod) {
 		Registry.register(Registry.ITEM, new Identifier(NAMESPACE, "custom_tooltip_item"), CUSTOM_TOOLTIP_ITEM);
 		Registry.register(Registry.ITEM, new Identifier(NAMESPACE, "custom_convertible_tooltip_item"),
 				CUSTOM_CONVERTIBLE_TOOLTIP_ITEM);

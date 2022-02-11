@@ -91,7 +91,7 @@ public final class ServerPlayNetworking {
 	 * This method differs from {@link ServerPlayNetworking#registerGlobalReceiver(Identifier, ChannelReceiver)} since
 	 * the channel handler will only be applied to the player represented by the {@link ServerPlayNetworkHandler}.
 	 * <p>
-	 * For example, if you only register a receiver using this method when a {@linkplain ServerLoginNetworking#registerGlobalReceiver(Identifier, ServerLoginNetworking.LoginQueryResponseHandler)}
+	 * For example, if you only register a receiver using this method when a {@linkplain ServerLoginNetworking#registerGlobalReceiver(Identifier, ServerLoginNetworking.QueryResponseReceiver)}
 	 * login response has been received, you should use {@link ServerPlayConnectionEvents#INIT} to register the channel handler.
 	 * <p>
 	 * If a handler is already registered to the {@code channelName}, this method will return {@code false}, and no change will be made.

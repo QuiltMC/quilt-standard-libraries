@@ -16,18 +16,19 @@
 
 package org.quiltmc.qsl.block.extensions.test;
 
-import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.ModContainer;
 
 import net.minecraft.client.render.RenderLayer;
 
+import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.block.extensions.api.client.BlockRenderLayerMap;
 
 @Environment(EnvType.CLIENT)
 public final class ClientInitializer implements ClientModInitializer {
 	@Override
-	public void onInitializeClient() {
+	public void onInitializeClient(ModContainer mod) {
 		BlockRenderLayerMap.put(RenderLayer.getTranslucent(), Initializer.BLOCK);
 	}
 }

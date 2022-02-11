@@ -9,7 +9,7 @@
     "quilt_item_group": "*"
   },
   "entrypoints": {
-    "main": [
+    "init": [
       "org.quiltmc.qsl.itemgroup.test.ItemGroupTest"
     ]
   }
