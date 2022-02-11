@@ -20,7 +20,7 @@
   },
   "description": "Base level API for Quilt mods.",
   "entrypoints": {
-    "main": [
+    "init": [
       "org.quiltmc.qsl.base.impl.event.EventRegistry"
     ]
   },

@@ -28,9 +28,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourcePack;
-import net.minecraft.resource.ResourcePackManager;
-import net.minecraft.resource.ResourcePackProfile;
+import net.minecraft.resource.pack.ResourcePack;
+import net.minecraft.resource.pack.ResourcePackManager;
+import net.minecraft.resource.pack.ResourcePackProfile;
 import net.minecraft.server.MinecraftServer;
 
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;

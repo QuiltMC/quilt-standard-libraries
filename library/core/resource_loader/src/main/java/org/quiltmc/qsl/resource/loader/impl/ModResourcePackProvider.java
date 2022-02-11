@@ -21,10 +21,10 @@ import java.util.function.Consumer;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.resource.ResourcePackProfile;
-import net.minecraft.resource.ResourcePackProvider;
-import net.minecraft.resource.ResourcePackSource;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.pack.ResourcePackProfile;
+import net.minecraft.resource.pack.ResourcePackProvider;
+import net.minecraft.resource.pack.ResourcePackSource;
 
 /**
  * Represents a resource pack provider for built-in mods resource packs and low-priority virtual resource packs.

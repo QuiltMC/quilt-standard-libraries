@@ -18,11 +18,12 @@ package org.quiltmc.qsl.lifecycle.test.event;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.ModContainer;
 
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.lifecycle.api.event.ServerTickEvents;
 import org.quiltmc.qsl.lifecycle.api.event.ServerWorldTickEvents;
 
@@ -33,7 +34,7 @@ public final class ServerTickTests implements ModInitializer {
 	private final Object2IntMap<RegistryKey<World>> tickTracker = new Object2IntOpenHashMap<>();
 
 	@Override
-	public void onInitialize() {
+	public void onInitialize(ModContainer mod) {
 		ServerTickEvents.END.register(server -> {
 			if (server.getTicks() % 200 == 0) { // Log every 200 ticks to verify the tick callback works on the server
 				ServerLifecycleTests.LOGGER.info("Ticked Server at " + server.getTicks() + " ticks.");

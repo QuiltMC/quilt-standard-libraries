@@ -105,7 +105,7 @@ public class MinecraftClientMixin {
 			method = START_INTEGRATED_SERVER_METHOD,
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/MinecraftClient;method_40183(Lnet/minecraft/resource/ResourcePackManager;ZLnet/minecraft/class_6904$class_6905;Lnet/minecraft/class_6904$class_6907;)Lnet/minecraft/class_6904;"
+					target = "Lnet/minecraft/client/MinecraftClient;method_40183(Lnet/minecraft/resource/pack/ResourcePackManager;ZLnet/minecraft/class_6904$class_6905;Lnet/minecraft/class_6904$class_6907;)Lnet/minecraft/class_6904;"
 			)
 	)
 	private void onStartDataPackReloading(String worldName,

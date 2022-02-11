@@ -29,8 +29,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.resource.DefaultResourcePack;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.pack.DefaultResourcePack;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.resource.loader.impl.ModNioResourcePack;

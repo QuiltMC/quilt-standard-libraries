@@ -40,8 +40,8 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.minecraft.resource.AbstractFileResourcePack;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.pack.AbstractFileResourcePack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
 
@@ -65,8 +65,8 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 	private final Map<ResourceType, Set<String>> namespaces = new EnumMap<>(ResourceType.class);
 
 	public ModNioResourcePack(@Nullable String name, ModMetadata modInfo, Path path,
-	                          ResourceType type, AutoCloseable closer,
-	                          ResourcePackActivationType activationType) {
+							  ResourceType type, AutoCloseable closer,
+							  ResourcePackActivationType activationType) {
 		super(null);
 		this.name = name == null ? ModResourcePackUtil.getName(modInfo) : name;
 		this.modInfo = modInfo;
@@ -122,7 +122,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 
 	@Override
 	public Collection<Identifier> findResources(ResourceType type, String namespace, String path, int depth,
-	                                            Predicate<String> pathFilter) {
+												Predicate<String> pathFilter) {
 		var ids = new ArrayList<Identifier>();
 		String nioPath = path.replace("/", separator);
 

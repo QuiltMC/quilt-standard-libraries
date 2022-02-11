@@ -18,13 +18,14 @@ package org.quiltmc.qsl.lifecycle.test.event.client;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.ModContainer;
 
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 
+import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
 import org.quiltmc.qsl.lifecycle.api.client.event.ClientWorldTickEvents;
 import org.quiltmc.qsl.lifecycle.test.event.ServerLifecycleTests;
@@ -35,7 +36,7 @@ public final class ClientTickTests implements ClientModInitializer {
 	private int ticks;
 
 	@Override
-	public void onInitializeClient() {
+	public void onInitializeClient(ModContainer mod) {
 		ClientTickEvents.END.register(client -> {
 			this.ticks++; // Just track our own tick since the client doesn't have a ticks value.
 

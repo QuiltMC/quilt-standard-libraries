@@ -42,14 +42,14 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.minecraft.resource.AbstractFileResourcePack;
-import net.minecraft.resource.DefaultResourcePack;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceImpl;
-import net.minecraft.resource.ResourcePack;
-import net.minecraft.resource.ResourcePackProfile;
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.pack.AbstractFileResourcePack;
+import net.minecraft.resource.pack.DefaultResourcePack;
+import net.minecraft.resource.pack.ResourcePack;
+import net.minecraft.resource.pack.ResourcePackProfile;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.resource.loader.api.GroupResourcePack;
@@ -233,7 +233,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	}
 
 	public static void appendResourcesFromGroup(NamespaceResourceManagerAccessor manager, Identifier id,
-	                                            GroupResourcePack groupResourcePack, List<Resource> resources)
+												GroupResourcePack groupResourcePack, List<Resource> resources)
 			throws IOException {
 		var packs = groupResourcePack.getPacks(id.getNamespace());
 
@@ -266,7 +266,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	 * @see ResourceLoader#registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType)
 	 */
 	public static boolean registerBuiltinResourcePack(Identifier id, String subPath, ModContainer container,
-	                                                  ResourcePackActivationType activationType) {
+													  ResourcePackActivationType activationType) {
 		String separator = container.getRootPath().getFileSystem().getSeparator();
 		subPath = subPath.replace("/", separator);
 
@@ -303,12 +303,12 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	}
 
 	private static ModNioResourcePack newBuiltinResourcePack(ModContainer container, String name, Path resourcePackPath,
-	                                                         ResourceType type, ResourcePackActivationType activationType) {
+															 ResourceType type, ResourcePackActivationType activationType) {
 		return new ModNioResourcePack(name, container.getMetadata(), resourcePackPath, type, null, activationType);
 	}
 
 	public static void registerBuiltinResourcePacks(ResourceType type, Consumer<ResourcePackProfile> profileAdder,
-	                                                ResourcePackProfile.Factory factory) {
+													ResourcePackProfile.Factory factory) {
 		var builtinPacks = type == ResourceType.CLIENT_RESOURCES
 				? CLIENT_BUILTIN_RESOURCE_PACKS : SERVER_BUILTIN_RESOURCE_PACKS;
 

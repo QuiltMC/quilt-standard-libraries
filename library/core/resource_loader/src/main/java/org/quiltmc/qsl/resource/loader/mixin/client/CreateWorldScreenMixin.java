@@ -29,10 +29,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.class_6904;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
-import net.minecraft.resource.DataPackSettings;
-import net.minecraft.resource.ResourcePack;
-import net.minecraft.resource.ResourcePackManager;
-import net.minecraft.resource.ResourcePackProfile;
+import net.minecraft.resource.pack.DataPackSettings;
+import net.minecraft.resource.pack.ResourcePack;
+import net.minecraft.resource.pack.ResourcePackManager;
+import net.minecraft.resource.pack.ResourcePackProfile;
 
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 import org.quiltmc.qsl.resource.loader.impl.ModNioResourcePack;
@@ -45,7 +45,7 @@ public class CreateWorldScreenMixin {
 			method = "method_40212",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/gui/screen/world/CreateWorldScreen;<init>(Lnet/minecraft/client/gui/screen/Screen;Lnet/minecraft/resource/DataPackSettings;Lnet/minecraft/client/gui/screen/world/MoreOptionsDialog;)V"
+					target = "Lnet/minecraft/client/gui/screen/world/CreateWorldScreen;<init>(Lnet/minecraft/client/gui/screen/Screen;Lnet/minecraft/resource/pack/DataPackSettings;Lnet/minecraft/client/gui/screen/world/MoreOptionsDialog;)V"
 			),
 			index = 1
 	)
@@ -86,10 +86,11 @@ public class CreateWorldScreenMixin {
 	// Take a ServerResourceManager parameter.
 	@SuppressWarnings("target")
 	@Inject(
-			method = "method_37088(Lnet/minecraft/resource/DataPackSettings;Lnet/minecraft/class_6904;)V",
+			method = "method_37088(Lnet/minecraft/resource/pack/DataPackSettings;Lnet/minecraft/class_6904;)V",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/class_6904;close()V"
+					target = "Lnet/minecraft/class_6904;close()V",
+					remap = false
 			)
 	)
 	private void onEndDataPackLoading(DataPackSettings dataPackSettings, class_6904 arg, CallbackInfo ci) {

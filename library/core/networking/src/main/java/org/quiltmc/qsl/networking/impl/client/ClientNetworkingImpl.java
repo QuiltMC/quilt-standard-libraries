@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
+import net.fabricmc.loader.api.ModContainer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -109,7 +110,7 @@ public final class ClientNetworkingImpl {
 		currentPlayAddon = addon;
 	}
 
-	public static void clientInit() {
+	public static void clientInit(ModContainer mod) {
 		// Reference cleanup for the locally stored addon if we are disconnected
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
 			currentPlayAddon = null;

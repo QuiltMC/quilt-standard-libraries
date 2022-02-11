@@ -15,10 +15,10 @@
     "QuiltMC"
   ],
   "entrypoints": {
-    "main": [
+    "init": [
       "org.quiltmc.qsl.networking.impl.NetworkingImpl::init"
     ],
-    "client": [
+    "client_init": [
       "org.quiltmc.qsl.networking.impl.client.ClientNetworkingImpl::clientInit"
     ]
   },
