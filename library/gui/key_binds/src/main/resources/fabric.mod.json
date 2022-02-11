@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "quilt_key_binds",
+  "name": "Quilt Key Binds API",
+  "version": "${version}",
+  "environment": "client",
+  "license": "Apache-2.0",
+  "icon": "assets/quilt_key_binds/icon.png",
+  "contact": {
+    "homepage": "https://quiltmc.org",
+    "issues": "https://github.com/QuiltMC/quilt-standard-libraries/issues",
+    "sources": "https://github.com/QuiltMC/quilt-standard-libraries"
+  },
+  "authors": [
+    "QuiltMC"
+  ],
+  "depends": {
+    "fabricloader": ">=0.12",
+    "minecraft": ">=1.18.2-alpha.22.3.a"
+  },
+  "description": "Key binds registration and utilities.",
+  "accessWidener": "quilt_key_binds.accesswidener",
+  "mixins": [
+    "quilt_key_binds.mixins.json"
+  ]
+}
