@@ -6,10 +6,13 @@ qslModule {
 	moduleName = "key_binds"
 	version = "1.0.0"
 	library = "gui"
-	coreTestmodDependencies([
-			"qsl_base",
-			"lifecycle_events"
-	])
+	moduleDependencies {
+		core {
+			testmodOnly("qsl_base")
+			testmodOnly("lifecycle_events")
+			testmodOnly("resource_loader")
+		}
+	}
 }
 
 loom {

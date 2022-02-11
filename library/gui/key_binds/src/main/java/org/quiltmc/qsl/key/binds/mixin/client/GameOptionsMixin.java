@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@ package org.quiltmc.qsl.key.binds.mixin.client;
 
 import java.io.File;
 
-import org.quiltmc.qsl.key.binds.impl.KeyBindManager;
-import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -34,6 +32,9 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+
+import org.quiltmc.qsl.key.binds.impl.KeyBindManager;
+import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
 
 @Environment(EnvType.CLIENT)
 @Mixin(GameOptions.class)

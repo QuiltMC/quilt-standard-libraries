@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,14 +25,14 @@ import java.util.Objects;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.ApiStatus;
-import org.quiltmc.qsl.key.binds.mixin.client.KeyBindingAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import net.minecraft.client.option.KeyBinding;
+
+import org.quiltmc.qsl.key.binds.mixin.client.KeyBindingAccessor;
 
 @Environment(EnvType.CLIENT)
 @ApiStatus.Internal
