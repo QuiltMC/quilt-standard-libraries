@@ -43,7 +43,7 @@ public class MainMixin {
 		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null); // First reload
 	}
 
-	@ModifyVariable(method = "main", at = @At(value = "STORE", ordinal = 1), remap = false)
+	@ModifyVariable(method = "main", at = @At(value = "STORE"), remap = false)
 	private static class_6904 onSuccessfulReloadResources(class_6904 resources) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resources.comp_356(), null);
 		return resources; // noop
