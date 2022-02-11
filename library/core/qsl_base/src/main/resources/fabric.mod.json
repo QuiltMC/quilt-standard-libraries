@@ -16,7 +16,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.12",
-    "minecraft": ">=1.18.2-alpha.22.3.a"
+    "minecraft": ">=1.18.2-alpha.22.6.a"
   },
   "description": "Base level API for Quilt mods.",
   "entrypoints": {

@@ -3,6 +3,7 @@
   "package": "org.quiltmc.qsl.resource.loader.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "Class5350Mixin",
     "DefaultResourcePackMixin",
     "KeyedResourceReloaderMixin",
     "MinecraftServerMixin",
