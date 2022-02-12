@@ -18,8 +18,6 @@ package org.quiltmc.qsl.base.api.entrypoint.client;
 
 import net.fabricmc.loader.api.ModContainer;
 
-import net.minecraft.client.MinecraftClient;
-
 /**
  * A mod initializer which is run only on {@link net.fabricmc.api.EnvType#CLIENT}.
  * <p>
@@ -27,6 +25,9 @@ import net.minecraft.client.MinecraftClient;
  * or integrated server tweaks.
  * <p>
  * In {@code fabric.mod.json}, the entrypoint is defined with {@value #ENTRYPOINT_KEY} key.
+ * <p>
+ * Currently executed in the {@link net.minecraft.client.MinecraftClient} constructor, just before the initialization of
+ * the splash screen overlay.
  *
  * @see org.quiltmc.qsl.base.api.entrypoint.ModInitializer
  * @see org.quiltmc.qsl.base.api.entrypoint.server.DedicatedServerModInitializer

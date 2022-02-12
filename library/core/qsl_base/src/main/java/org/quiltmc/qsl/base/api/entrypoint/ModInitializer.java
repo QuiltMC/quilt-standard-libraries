@@ -18,10 +18,14 @@ package org.quiltmc.qsl.base.api.entrypoint;
 
 import net.fabricmc.loader.api.ModContainer;
 
+import net.minecraft.Bootstrap;
+
 /**
  * A mod initializer.
  * <p>
  * In {@code fabric.mod.json}, the entrypoint is defined with {@value #ENTRYPOINT_KEY} key.
+ * <p>
+ * Currently executed in {@link Bootstrap#initialize()}, just before the freezing of built-in registries.
  *
  * @see org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer
  * @see org.quiltmc.qsl.base.api.entrypoint.server.DedicatedServerModInitializer
