@@ -24,15 +24,15 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.class_5350;
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.server.ServerReloadableResources;
 
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
-@Mixin(class_5350.class)
-public class Class5350Mixin {
-	@Inject(method = "method_40427", at = @At("RETURN"), cancellable = true)
+@Mixin(ServerReloadableResources.class)
+public class ServerReloadableResourcesMixin {
+	@Inject(method = "listeners", at = @At("RETURN"), cancellable = true)
 	private void onGetResourceReloaders(CallbackInfoReturnable<List<ResourceReloader>> cir) {
 		// Re-inject resource reloaders server-side.
 		// It is currently unknown why ReloadableResourceManager#reload isn't called anymore.

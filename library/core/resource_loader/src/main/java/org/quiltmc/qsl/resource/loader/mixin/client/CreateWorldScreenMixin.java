@@ -27,12 +27,12 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.class_6904;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
 import net.minecraft.resource.pack.DataPackSettings;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.ResourcePackManager;
 import net.minecraft.resource.pack.ResourcePackProfile;
+import net.minecraft.server.WorldStem;
 
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 import org.quiltmc.qsl.resource.loader.impl.ModNioResourcePack;
@@ -75,7 +75,7 @@ public class CreateWorldScreenMixin {
 			method = "applyDataPacks",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/class_6904;method_40431(Lnet/minecraft/class_6904$class_6906;Lnet/minecraft/class_6904$class_6905;Lnet/minecraft/class_6904$class_6907;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
+					target = "Lnet/minecraft/server/WorldStem;load(Lnet/minecraft/server/WorldStem$InitConfig;Lnet/minecraft/server/WorldStem$Supplier;Lnet/minecraft/server/WorldStem$WorldDataSupplier;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
 			)
 	)
 	private void onStartDataPackLoading(ResourcePackManager dataPackManager, CallbackInfo ci) {
@@ -86,15 +86,15 @@ public class CreateWorldScreenMixin {
 	// Take a ServerResourceManager parameter.
 	@SuppressWarnings("target")
 	@Inject(
-			method = "method_37088(Lnet/minecraft/resource/pack/DataPackSettings;Lnet/minecraft/class_6904;)V",
+			method = "method_37088(Lnet/minecraft/resource/pack/DataPackSettings;Lnet/minecraft/server/WorldStem;)V",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/class_6904;close()V",
+					target = "Lnet/minecraft/server/WorldStem;close()V",
 					remap = false
 			)
 	)
-	private void onEndDataPackLoading(DataPackSettings dataPackSettings, class_6904 arg, CallbackInfo ci) {
-		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, arg.comp_356(), null);
+	private void onEndDataPackLoading(DataPackSettings dataPackSettings, WorldStem arg, CallbackInfo ci) {
+		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, arg.resourceManager(), null);
 	}
 
 	// Lambda method in CreateWorldScreen#applyDataPacks, at CompletableFuture#handle.
