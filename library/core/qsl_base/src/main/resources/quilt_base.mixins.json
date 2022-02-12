@@ -3,7 +3,14 @@
   "package": "org.quiltmc.qsl.base.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "BootstrapMixin",
     "MinecraftServerMixin"
+  ],
+  "client": [
+    "client.MinecraftClientMixin"
+  ],
+  "server": [
+    "server.MainMixin"
   ],
   "injectors": {
     "defaultRequire": 1

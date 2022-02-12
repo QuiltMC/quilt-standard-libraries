@@ -24,8 +24,8 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 import net.minecraft.resource.NamespaceResourceManager;
-import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.util.Identifier;
 
 @Mixin(NamespaceResourceManager.class)

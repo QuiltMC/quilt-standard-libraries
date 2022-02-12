@@ -30,24 +30,24 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.resource.ReloadableResourceManagerImpl;
-import net.minecraft.resource.ResourcePack;
+import net.minecraft.resource.ReloadableResourceManager;
 import net.minecraft.resource.ResourceReload;
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.util.Unit;
 
 import org.quiltmc.qsl.resource.loader.api.GroupResourcePack;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
-@Mixin(ReloadableResourceManagerImpl.class)
-public class ReloadableResourceManagerImplMixin {
+@Mixin(ReloadableResourceManager.class)
+public class ReloadableResourceManagerMixin {
 	@Final
-	@Shadow
+	@Shadow(aliases = "field_14294")
 	private ResourceType type;
 
-	@Shadow
 	@Final
+	@Shadow(aliases = "field_17935")
 	private List<ResourceReloader> reloaders;
 
 	@Inject(

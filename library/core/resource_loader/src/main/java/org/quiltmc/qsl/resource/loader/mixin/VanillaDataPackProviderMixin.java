@@ -25,10 +25,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.resource.DefaultResourcePack;
-import net.minecraft.resource.ResourcePack;
-import net.minecraft.resource.ResourcePackProfile;
-import net.minecraft.resource.VanillaDataPackProvider;
+import net.minecraft.resource.pack.DefaultResourcePack;
+import net.minecraft.resource.pack.ResourcePack;
+import net.minecraft.resource.pack.ResourcePackProfile;
+import net.minecraft.resource.pack.VanillaDataPackProvider;
 
 import org.quiltmc.qsl.resource.loader.impl.ModResourcePackProvider;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;

@@ -17,29 +17,37 @@
 
 package org.quiltmc.qsl.resource.loader.impl;
 
-import com.mojang.logging.LogUtils;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.metadata.ModMetadata;
-import net.minecraft.resource.AbstractFileResourcePack;
-import net.minecraft.resource.ResourceType;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.InvalidIdentifierException;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
-import org.slf4j.Logger;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+
+import com.mojang.logging.LogUtils;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.metadata.ModMetadata;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+
+import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.pack.AbstractFileResourcePack;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.InvalidIdentifierException;
+
+import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
 
 /**
  * A NIO implementation of a mod resource pack.

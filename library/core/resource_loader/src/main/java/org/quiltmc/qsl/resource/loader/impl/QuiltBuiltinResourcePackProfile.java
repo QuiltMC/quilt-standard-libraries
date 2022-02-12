@@ -22,10 +22,10 @@ import com.mojang.logging.LogUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
-import net.minecraft.resource.ResourcePackCompatibility;
-import net.minecraft.resource.ResourcePackProfile;
-import net.minecraft.resource.ResourcePackSource;
-import net.minecraft.resource.metadata.PackResourceMetadata;
+import net.minecraft.resource.pack.ResourcePackCompatibility;
+import net.minecraft.resource.pack.ResourcePackProfile;
+import net.minecraft.resource.pack.ResourcePackSource;
+import net.minecraft.resource.pack.metadata.PackResourceMetadata;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;

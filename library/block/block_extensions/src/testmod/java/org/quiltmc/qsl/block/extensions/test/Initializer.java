@@ -16,7 +16,7 @@
 
 package org.quiltmc.qsl.block.extensions.test;
 
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.ModContainer;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -27,6 +27,7 @@ import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.block.extensions.api.QuiltBlockSettings;
 import org.quiltmc.qsl.block.extensions.api.QuiltMaterialBuilder;
 
@@ -42,7 +43,6 @@ public final class Initializer implements ModInitializer {
 					.luminance(15)));
 
 	@Override
-	public void onInitialize() {
-
+	public void onInitialize(ModContainer mod) {
 	}
 }

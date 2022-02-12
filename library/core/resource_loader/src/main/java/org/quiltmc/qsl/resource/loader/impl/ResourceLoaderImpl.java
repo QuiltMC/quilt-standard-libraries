@@ -42,14 +42,14 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.minecraft.resource.AbstractFileResourcePack;
-import net.minecraft.resource.DefaultResourcePack;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceImpl;
-import net.minecraft.resource.ResourcePack;
-import net.minecraft.resource.ResourcePackProfile;
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.pack.AbstractFileResourcePack;
+import net.minecraft.resource.pack.DefaultResourcePack;
+import net.minecraft.resource.pack.ResourcePack;
+import net.minecraft.resource.pack.ResourcePackProfile;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;

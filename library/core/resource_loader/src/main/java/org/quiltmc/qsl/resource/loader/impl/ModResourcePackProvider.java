@@ -17,12 +17,13 @@
 
 package org.quiltmc.qsl.resource.loader.impl;
 
-import net.minecraft.resource.ResourcePackProfile;
-import net.minecraft.resource.ResourcePackProvider;
-import net.minecraft.resource.ResourceType;
+import java.util.function.Consumer;
+
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.function.Consumer;
+import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.pack.ResourcePackProfile;
+import net.minecraft.resource.pack.ResourcePackProvider;
 
 /**
  * Represents a resource pack provider for built-in mods resource packs and low-priority virtual resource packs.

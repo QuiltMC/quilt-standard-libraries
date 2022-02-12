@@ -36,7 +36,7 @@ public final class ClientLoginConnectionEvents {
 	 * This event may be used by mods to prepare their client side state.
 	 * This event does not guarantee that a login attempt will be successful.
 	 *
-	 * @see ClientLoginNetworking#registerReceiver(Identifier, ClientLoginNetworking.LoginQueryRequestHandler)
+	 * @see ClientLoginNetworking#registerReceiver(Identifier, ClientLoginNetworking.QueryRequestReceiver)
 	 */
 	public static final Event<Init> INIT = Event.create(Init.class, callbacks -> (handler, client) -> {
 		for (Init callback : callbacks) {
@@ -53,7 +53,7 @@ public final class ClientLoginConnectionEvents {
 	 * If this event is fired then it is a sign that a server is not a vanilla server or the server is behind a proxy which
 	 * is capable of handling login queries.
 	 * <p>
-	 * This event may be used to {@link ClientLoginNetworking.LoginQueryRequestHandler register login query handlers}
+	 * This event may be used to {@link ClientLoginNetworking.QueryRequestReceiver register login query handlers}
 	 * which may be used to send a response to a server.
 	 * <p>
 	 * No packets should be sent when this event is invoked.

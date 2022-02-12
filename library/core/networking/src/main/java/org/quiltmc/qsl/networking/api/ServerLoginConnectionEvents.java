@@ -21,7 +21,6 @@ import org.quiltmc.qsl.base.api.event.Event;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.util.Identifier;
-import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
 /**
@@ -31,7 +30,7 @@ public final class ServerLoginConnectionEvents {
 	/**
 	 * Event indicating a connection entered the LOGIN state, ready for registering query response handlers.
 	 *
-	 * @see ServerLoginNetworking#registerReceiver(ServerLoginNetworkHandler, Identifier, ServerLoginNetworking.LoginQueryResponseHandler)
+	 * @see ServerLoginNetworking#registerReceiver(ServerLoginNetworkHandler, Identifier, ServerLoginNetworking.QueryResponseReceiver)
 	 */
 	public static final Event<Init> INIT = Event.create(Init.class, callbacks -> (handler, server) -> {
 		for (Init callback : callbacks) {
@@ -41,8 +40,8 @@ public final class ServerLoginConnectionEvents {
 
 	/**
 	 * An event for the start of login queries of the server login network handler.
-	 * This event may be used to register {@link ServerLoginNetworking.LoginQueryResponseHandler login query response handlers}
-	 * using {@link ServerLoginNetworking#registerReceiver(ServerLoginNetworkHandler, Identifier, ServerLoginNetworking.LoginQueryResponseHandler)}
+	 * This event may be used to register {@link ServerLoginNetworking.QueryResponseReceiver login query response handlers}
+	 * using {@link ServerLoginNetworking#registerReceiver(ServerLoginNetworkHandler, Identifier, ServerLoginNetworking.QueryResponseReceiver)}
 	 * since this event is fired just before the first login query response is processed.
 	 * <p>
 	 * You may send login queries to the connected client using the provided {@link PacketSender}.

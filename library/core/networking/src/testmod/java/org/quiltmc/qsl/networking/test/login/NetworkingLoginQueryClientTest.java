@@ -18,9 +18,11 @@ package org.quiltmc.qsl.networking.test.login;
 
 import java.util.concurrent.CompletableFuture;
 
-import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.ModContainer;
+
+import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.networking.api.client.ClientLoginNetworking;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.test.play.NetworkingPlayPacketTest;
@@ -28,7 +30,7 @@ import org.quiltmc.qsl.networking.test.play.NetworkingPlayPacketTest;
 @Environment(EnvType.CLIENT)
 public final class NetworkingLoginQueryClientTest implements ClientModInitializer {
 	@Override
-	public void onInitializeClient() {
+	public void onInitializeClient(ModContainer mod) {
 		// Send a dummy response to the server in return, by registering here we essentially say we understood the server's query
 		ClientLoginNetworking.registerGlobalReceiver(NetworkingPlayPacketTest.TEST_CHANNEL, (client, handler, buf, listenerAdder) -> {
 			return CompletableFuture.completedFuture(PacketByteBufs.empty());
