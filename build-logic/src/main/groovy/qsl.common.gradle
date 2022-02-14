@@ -56,4 +56,6 @@ tasks.withType(JavaCompile).configureEach {
 loom {
 	// Upstream Loom breaks this so we can't have nice things until the quilt-gradle replacement
 	//shareRemapCaches = true
+	// Enable runtime only log4j, forces mods to use SLF4J for logging.
+	runtimeOnlyLog4j = true
 }
