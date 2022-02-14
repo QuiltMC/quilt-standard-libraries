@@ -8,7 +8,7 @@ plugins {
 	id("maven-publish")
 	id("fabric-loom")
 	id("org.quiltmc.quilt-mappings-on-loom")
-	id("io.github.juuxel.loom-quiltflower-mini")
+	id("io.github.juuxel.loom-quiltflower")
 }
 
 def ENV = System.getenv()
