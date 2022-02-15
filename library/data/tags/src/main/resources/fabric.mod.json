@@ -38,7 +38,7 @@
       "net/minecraft/class_3494": [
         "org/quiltmc/qsl/tag/api/QuiltTag"
       ],
-      "net/minecraft/class_3494$class_3495": [
+      "net/minecraft/class_3494\u0024class_3495": [
         "org/quiltmc/qsl/tag/api/QuiltTagBuilder"
       ],
       "net/minecraft/class_6862": [
