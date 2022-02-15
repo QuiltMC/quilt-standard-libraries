@@ -19,8 +19,6 @@ package org.quiltmc.qsl.tag.api;
 
 import java.util.stream.Stream;
 
-import org.jetbrains.annotations.ApiStatus;
-
 import net.minecraft.tag.Tag;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Holder;
@@ -33,15 +31,18 @@ import org.quiltmc.qsl.tag.impl.client.ClientTagRegistryManager;
 /**
  * Represents a tag registry.
  */
-@ApiStatus.NonExtendable
-public interface TagRegistry {
+public final class TagRegistry {
+	private TagRegistry() {
+		throw new UnsupportedOperationException("TagRegistry only contains static definitions.");
+	}
+
 	/**
 	 * {@return a stream of the normal populated tags of the given registry}
 	 *
 	 * @param registry the registry of the values of the tag
 	 * @param <T>      the type of the values held by the tag
 	 */
-	static <T> Stream<TagEntry<T>> stream(RegistryKey<? extends Registry<T>> registry) {
+	public static <T> Stream<TagEntry<T>> stream(RegistryKey<? extends Registry<T>> registry) {
 		return stream(registry, TagType.NORMAL);
 	}
 
@@ -52,7 +53,7 @@ public interface TagRegistry {
 	 * @param type     the type of tags, {@link TagType#CLIENT_FALLBACK} will offer normal tags or the fallback if not present
 	 * @param <T>      the type of the values held by the tag
 	 */
-	static <T> Stream<TagEntry<T>> stream(RegistryKey<? extends Registry<T>> registry, TagType type) {
+	public static <T> Stream<TagEntry<T>> stream(RegistryKey<? extends Registry<T>> registry, TagType type) {
 		return switch (type) {
 			case NORMAL -> TagRegistryImpl.streamTags(registry);
 			case CLIENT_FALLBACK -> TagRegistryImpl.streamTagsWithFallback(registry);
@@ -64,13 +65,18 @@ public interface TagRegistry {
 	 * Returns the currently populated tag of the corresponding tag key.
 	 *
 	 * @param key the key
-	 * @param <T> the type of the tag
+	 * @param <T> the type of the values held by the tag
 	 * @return the populated tag, always empty if the tag doesn't exist or isn't populated yet
 	 */
-	static <T> Tag<Holder<T>> getTag(TagKey<T> key) {
+	public static <T> Tag<Holder<T>> getTag(TagKey<T> key) {
 		return TagRegistryImpl.getTag(key);
 	}
 
-	record TagEntry<T>(TagKey<T> key, Tag<Holder<T>> tag) {
+	/**
+	 * Represents a tag entry for iteration.
+	 *
+	 * @param <T> the type of the values held by the tag
+	 */
+	public record TagEntry<T>(TagKey<T> key, Tag<Holder<T>> tag) {
 	}
 }

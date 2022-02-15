@@ -21,8 +21,6 @@ import java.util.List;
 
 import com.google.gson.JsonObject;
 import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Implements;
-import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -37,8 +35,7 @@ import org.quiltmc.qsl.tag.api.QuiltTagBuilder;
 import org.quiltmc.qsl.tag.impl.QuiltTagHooks;
 
 @Mixin(Tag.Builder.class)
-@Implements({@Interface(iface = QuiltTagBuilder.class, prefix = "qtb$")})
-public abstract class TagBuilderMixin {
+public abstract class TagBuilderMixin implements QuiltTagBuilder {
 	@Final
 	@Shadow
 	private List<Tag.TrackedEntry> entries;
@@ -72,8 +69,9 @@ public abstract class TagBuilderMixin {
 	 * QuiltTagBuilder implementation
 	 */
 
+	@Override
 	@SuppressWarnings("ConstantConditions")
-	public Tag.Builder qtb$clearEntries() {
+	public Tag.Builder clearEntries() {
 		this.entries.clear();
 		this.quilt$replacementCount++;
 		return (Tag.Builder) (Object) this;
