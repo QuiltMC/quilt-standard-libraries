@@ -52,7 +52,7 @@ public class TagKeyMixin<T> implements QuiltTagKey<T>, QuiltTagKeyHooks {
 	private TagType quilt$type;
 
 	@Inject(method = "<init>", at = @At("TAIL"))
-	public void onInit(RegistryKey registryKey, Identifier identifier, CallbackInfo ci) {
+	public void onInit(RegistryKey<? extends Registry<T>> registryKey, Identifier identifier, CallbackInfo ci) {
 		this.quilt$setType(TagType.NORMAL);
 	}
 
@@ -92,7 +92,11 @@ public class TagKeyMixin<T> implements QuiltTagKey<T>, QuiltTagKeyHooks {
 
 	@Redirect(
 			method = "<clinit>",
-			at = @At(value = "INVOKE", target = "Lcom/google/common/collect/Interners;newStrongInterner()Lcom/google/common/collect/Interner;"),
+			at = @At(
+					value = "INVOKE",
+					target = "Lcom/google/common/collect/Interners;newStrongInterner()Lcom/google/common/collect/Interner;",
+					remap = false
+			),
 			require = 0
 	)
 	private static Interner<TagKey<?>> onNewStrongInterner() {
