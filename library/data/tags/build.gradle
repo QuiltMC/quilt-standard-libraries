@@ -9,10 +9,11 @@ qslModule {
 	moduleDependencies {
 		core {
 			api("resource_loader")
-			testmodOnly("qsl_base")
-			testmodOnly("lifecycle_events")
+			impl("qsl_base")
+			impl("lifecycle_events")
 		}
 		command {
+			testmodOnly("client_command")
 			testmodOnly("command")
 		}
 	}

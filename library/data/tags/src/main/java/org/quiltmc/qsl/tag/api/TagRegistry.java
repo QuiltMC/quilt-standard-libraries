@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,84 +17,60 @@
 
 package org.quiltmc.qsl.tag.api;
 
-import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.EntityType;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.item.Item;
-import net.minecraft.tag.BlockTags;
-import net.minecraft.tag.EntityTypeTags;
-import net.minecraft.tag.FluidTags;
-import net.minecraft.tag.GameEventTags;
-import net.minecraft.tag.ItemTags;
 import net.minecraft.tag.Tag;
-import net.minecraft.tag.TagGroup;
-import net.minecraft.util.Identifier;
+import net.minecraft.tag.TagKey;
+import net.minecraft.util.Holder;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.event.GameEvent;
 
 import org.quiltmc.qsl.tag.impl.TagRegistryImpl;
+import org.quiltmc.qsl.tag.impl.client.ClientTagRegistryManager;
 
 /**
  * Represents a tag registry.
- *
- * @param <T> the type of the content in the registered tags
  */
 @ApiStatus.NonExtendable
-public interface TagRegistry<T> {
-	TagRegistry<Block> BLOCK = of(BlockTags::getTagGroup);
-	TagRegistry<Item> ITEM = of(ItemTags::getTagGroup);
-	TagRegistry<Fluid> FLUID = of(FluidTags::getTagGroup);
-	TagRegistry<GameEvent> GAME_EVENT = of(GameEventTags::getTagGroup);
-	TagRegistry<EntityType<?>> ENTITY_TYPE = of(EntityTypeTags::getTagGroup);
-	TagRegistry<Biome> BIOME = of(Registry.BIOME_KEY, "tags/biomes");
-
-	static <T> TagRegistry<T> of(Supplier<TagGroup<T>> tagGroupSupplier) {
-		return TagRegistryImpl.of(tagGroupSupplier);
+public interface TagRegistry {
+	/**
+	 * {@return a stream of the normal populated tags of the given registry}
+	 *
+	 * @param registry the registry of the values of the tag
+	 * @param <T>      the type of the values held by the tag
+	 */
+	static <T> Stream<TagEntry<T>> stream(RegistryKey<? extends Registry<T>> registry) {
+		return stream(registry, TagType.NORMAL);
 	}
 
 	/**
-	 * Create a new tag registry for the specified registry.
-	 * <p>
-	 * This method will fail if a tag registry for a given registry key is already registered
-	 * under a different data type.
+	 * {@return a stream of the populated tags of the given registry}
 	 *
-	 * @param registryKey the key of the registry
-	 * @param dataType    the data type of this tag group, vanilla uses {@code tags/[plural]} format for built-in groups
+	 * @param registry the registry of the values of the tag
+	 * @param type     the type of tags, {@link TagType#CLIENT_FALLBACK} will offer normal tags or the fallback if not present
+	 * @param <T>      the type of the values held by the tag
 	 */
-	static <T> TagRegistry<T> of(RegistryKey<? extends Registry<T>> registryKey, String dataType) {
-		return TagRegistryImpl.of(registryKey, dataType);
+	static <T> Stream<TagEntry<T>> stream(RegistryKey<? extends Registry<T>> registry, TagType type) {
+		return switch (type) {
+			case NORMAL -> TagRegistryImpl.streamTags(registry);
+			case CLIENT_FALLBACK -> TagRegistryImpl.streamTagsWithFallback(registry);
+			case CLIENT_ONLY -> ClientTagRegistryManager.get(registry).streamClientTags();
+		};
 	}
 
 	/**
-	 * Creates a new identified optional tag.
-	 * <p>
-	 * May be required if something else registers one with the same identifier as required.
+	 * Returns the currently populated tag of the corresponding tag key.
 	 *
-	 * @param id the identifier of the tag
-	 * @return the identified tag
-	 * @see #create(Identifier, TagType) create a tag with a specific type
+	 * @param key the key
+	 * @param <T> the type of the tag
+	 * @return the populated tag, always empty if the tag doesn't exist or isn't populated yet
 	 */
-	default Tag.Identified<T> create(Identifier id) {
-		return this.create(id, TagType.OPTIONAL);
+	static <T> Tag<Holder<T>> getTag(TagKey<T> key) {
+		return TagRegistryImpl.getTag(key);
 	}
 
-	/**
-	 * Creates a new identified tag.
-	 * <p>
-	 * If another tag with the same identifier is registered, it will not prevent the creation of a new tag instance,
-	 * but tag types {@link TagType#SERVER_REQUIRED} and {@link TagType#REQUIRED} behavior will take priority,
-	 * {@link TagType#CLIENT_ONLY} tags are entirely separate, and {@link TagType#CLIENT_FALLBACK} fallback content
-	 * will not leak into tags of other types.
-	 *
-	 * @param id   the identifier of the tag
-	 * @param type the type of the tag
-	 * @return the identified tag
-	 */
-	Tag.Identified<T> create(Identifier id, TagType type);
+	record TagEntry<T>(TagKey<T> key, Tag<Holder<T>> tag) {
+	}
 }

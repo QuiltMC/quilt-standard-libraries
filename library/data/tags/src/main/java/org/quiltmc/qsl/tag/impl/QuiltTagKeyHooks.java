@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,9 @@ package org.quiltmc.qsl.tag.impl;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.tag.TagGroup;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
+import org.quiltmc.qsl.tag.api.TagType;
 
-/**
- * Represents hooks for the {@link net.minecraft.tag.TagManager}.
- */
 @ApiStatus.Internal
-public interface QuiltTagManagerHooks {
-	void quilt$putTagGroup(RegistryKey<? extends Registry<?>> registryKey, TagGroup<?> tagGroup);
+public interface QuiltTagKeyHooks {
+	void quilt$setType(TagType type);
 }

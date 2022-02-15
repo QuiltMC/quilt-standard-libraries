@@ -1,4 +1,4 @@
 accessWidener   v1  named
 
-accessible  class   net/minecraft/tag/RequiredTagList$TagWrapper
-accessible  method  net/minecraft/tag/RequiredTagList$TagWrapper    <init>  (Lnet/minecraft/util/Identifier;)V
+accessible  method  net/minecraft/util/HolderSet$NamedSet   <init>      (Lnet/minecraft/tag/TagKey;)V
+accessible  method  net/minecraft/util/HolderSet$NamedSet   setContents (Ljava/util/List;)V

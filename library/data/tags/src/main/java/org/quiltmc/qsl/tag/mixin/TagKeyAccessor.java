@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,16 @@
 
 package org.quiltmc.qsl.tag.mixin;
 
-import java.util.List;
-
+import com.google.common.collect.Interner;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import net.minecraft.tag.RequiredTagList;
-import net.minecraft.tag.RequiredTagListRegistry;
+import net.minecraft.tag.TagKey;
 
-@Mixin(RequiredTagListRegistry.class)
-public interface RequiredTagListRegistryAccessor {
-	@Accessor("ALL")
-	static List<RequiredTagList<?>> getAll() {
-		throw new IllegalStateException("Accessor injection failed.");
+@Mixin(TagKey.class)
+public interface TagKeyAccessor {
+	@Accessor("VALUES")
+	static Interner<TagKey<?>> getInterner() {
+		throw new IllegalStateException("Injection failed.");
 	}
 }

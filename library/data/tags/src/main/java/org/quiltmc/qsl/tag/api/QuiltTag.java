@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,10 @@
 
 package org.quiltmc.qsl.tag.api;
 
-import net.minecraft.tag.Tag;
-
 /**
  * Interface implemented by {@link net.minecraft.tag.Tag} instances when QSL is present.
- * <p>
- * The usage of normal Java cast is discouraged, please use {@link #getExtensions(Tag)} instead as it will ensure the correct
- * generic types.
- * Implementations of {@link net.minecraft.tag.Tag} may implement this interface to retain full functionality,
- * a default implementation is provided to ensure compatibility.
- *
- * @param <T> the type of the values held by the tag
  */
-public interface QuiltTag<T> {
-	/**
-	 * Gets the type of this tag. The type will define how this tag is handled for syncing, requirement, etc.
-	 *
-	 * @return the type of this tag
-	 */
-	TagType getType();
-
+public interface QuiltTag {
 	/**
 	 * {@return {@code true} if the given tag has been "replaced" by a data pack at least once}
 	 * <p>
@@ -43,15 +27,4 @@ public interface QuiltTag<T> {
 	 * but also allow overriding it for "total conversion" data-packs.
 	 */
 	boolean hasBeenReplaced();
-
-	/**
-	 * {@return the corresponding Quilt tag}
-	 *
-	 * @param tag the tag to cast
-	 * @param <T> the type of the values held by the tag
-	 */
-	static <T> QuiltTag<T> getExtensions(Tag<T> tag) {
-		//noinspection unchecked
-		return (QuiltTag<T>) tag;
-	}
 }

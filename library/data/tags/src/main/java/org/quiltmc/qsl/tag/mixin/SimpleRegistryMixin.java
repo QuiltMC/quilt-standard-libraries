@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,24 @@
 
 package org.quiltmc.qsl.tag.mixin;
 
+import java.util.List;
 import java.util.Map;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.tag.TagKey;
+import net.minecraft.util.Holder;
+import net.minecraft.util.registry.SimpleRegistry;
 
-@Mixin(DynamicRegistryManager.class)
-public interface DynamicRegistryManagerAccessor {
-	@Accessor("INFOS")
-	static Map<RegistryKey<? extends Registry<?>>, ?> getInfos() {
-		throw new IllegalStateException("Accessor injection failed.");
+import org.quiltmc.qsl.tag.impl.TagRegistryImpl;
+
+@Mixin(SimpleRegistry.class)
+public class SimpleRegistryMixin {
+	@Inject(method = "method_40257", at = @At("HEAD"))
+	private void onPopulateTags(Map<TagKey<?>, List<Holder<?>>> map, CallbackInfo ci) {
+		TagRegistryImpl.populateTags(map);
 	}
 }
