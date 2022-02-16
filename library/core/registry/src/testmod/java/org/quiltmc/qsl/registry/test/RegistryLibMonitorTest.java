@@ -45,28 +45,28 @@ public class RegistryLibMonitorTest implements ModInitializer {
 		var monitor = RegistryMonitor.create(Registry.BLOCK)
 				.filter(context -> context.id().getNamespace().equals("quilt_registry_test_monitors"));
 
-		var allList = new HashSet<Block>();
-		var upcomingList = new HashSet<Block>();
+		var allSet = new HashSet<Block>();
+		var upcomingSet = new HashSet<Block>();
 
 		monitor.forAll(context -> {
 			LOGGER.info("[forAll event]: Block {} id={} raw={} had its registration monitored in registry {}",
 					context.value(), context.id(), context.rawId(), context.registry());
-			allList.add(context.value());
+			allSet.add(context.value());
 		});
 		monitor.forUpcoming(context -> {
 			LOGGER.info("[forUpcoming event]: Block {} id={} raw={} had its registration monitored in registry {}",
 					context.value(), context.id(), context.rawId(), context.registry());
-			upcomingList.add(context.value());
+			upcomingSet.add(context.value());
 		});
 
 		Block blockB = Registry.register(Registry.BLOCK, TEST_BLOCK_B_ID, new Block(AbstractBlock.Settings.of(Material.STONE, MapColor.BLACK)));
 
-		if (!allList.contains(blockA) || !allList.contains(blockB)) {
-			throw new AssertionError("Entries " + allList + " found by RegistryMonitor via forAll were not as expected");
+		if (!allSet.contains(blockA) || !allSet.contains(blockB)) {
+			throw new AssertionError("Entries " + allSet + " found by RegistryMonitor via forAll were not as expected");
 		}
 
-		if (upcomingList.contains(blockA) || !upcomingList.contains(blockB)) {
-			throw new AssertionError("Entries " + upcomingList + " found by RegistryMonitor via forUpcoming were not as expected");
+		if (upcomingSet.contains(blockA) || !upcomingSet.contains(blockB)) {
+			throw new AssertionError("Entries " + upcomingSet + " found by RegistryMonitor via forUpcoming were not as expected");
 		}
 	}
 }
