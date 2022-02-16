@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,28 +16,32 @@
 
 package org.quiltmc.qsl.resource.loader.test.client;
 
-import net.fabricmc.api.ClientModInitializer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.resource.ResourceManager;
 
 import org.quiltmc.qsl.resource.loader.api.client.ClientResourceLoaderEvents;
 
-public class ClientResourceLoaderEventsTestMod implements ClientModInitializer {
-	private static final Logger LOGGER = LogManager.getLogger();
+public class ClientResourceLoaderEventsTestMod implements ClientResourceLoaderEvents.StartResourcePackReload,
+		ClientResourceLoaderEvents.EndResourcePackReload {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ClientResourceLoaderEventsTestMod.class);
 
 	@Override
-	public void onInitializeClient() {
-		ClientResourceLoaderEvents.START_RESOURCE_PACK_RELOAD.register((client, resourceManager, first) ->
-				LOGGER.info("Preparing for resource pack reload, resource manager: {}. Is it the first time?: {}",
-						resourceManager, first)
-		);
-		ClientResourceLoaderEvents.END_RESOURCE_PACK_RELOAD.register((server, resourceManager, first, error) -> {
-			if (error == null) {
-				LOGGER.info("Finished {}resource pack reloading successfully on {}.",
-						(first ? "first " : ""), Thread.currentThread());
-			} else {
-				LOGGER.error("Failed to reload resource packs on {} because {}.", Thread.currentThread(), error);
-			}
-		});
+	public void onStartResourcePackReload(MinecraftClient client, ResourceManager resourceManager, boolean first) {
+		LOGGER.info("Preparing for resource pack reload, resource manager: {}. Is it the first time?: {}",
+				resourceManager, first);
+	}
+
+	@Override
+	public void onEndResourcePackReload(MinecraftClient client, ResourceManager resourceManager, boolean first, @Nullable Throwable error) {
+		if (error == null) {
+			LOGGER.info("Finished {}resource pack reloading successfully on {}.",
+					(first ? "first " : ""), Thread.currentThread());
+		} else {
+			LOGGER.error("Failed to reload resource packs on {} because {}.", Thread.currentThread(), error);
+		}
 	}
 }

@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "org.quiltmc.qsl"
-version = Versions.QSL_VERSION + (System.getenv("SNAPSHOTS_URL") ? "-SNAPSHOT" : "")
+version = Versions.QSL_VERSION + "+" + Versions.getMinecraftVersionFancyString() + (System.getenv("SNAPSHOTS_URL") ? "-SNAPSHOT" : "")
 
 sourceSets {
 	testmod {
@@ -17,6 +17,10 @@ sourceSets {
 
 // The root project simply just publishes all artifacts.
 // For that reason, do not generate a remapped jar.
+prepareRemapJar {
+	enabled = false
+}
+
 remapJar {
 	enabled = false
 }
@@ -51,7 +55,7 @@ loom.disableDeprecatedPomGeneration(publishing.publications.mavenJava)
 afterEvaluate {
 	// Add sourceSet dependencies on all libraries
 	// Make this project include the compileClasspath and runtimeClasspath of the libraries.
-	subprojects.stream().filter {it.path.count(":") == 1 }.each {
+	subprojects.stream().filter { it.path.count(":") == 1 }.each {
 		project.sourceSets.main.compileClasspath += it.sourceSets.main.compileClasspath
 		project.sourceSets.main.runtimeClasspath += it.sourceSets.main.runtimeClasspath
 		project.sourceSets.testmod.compileClasspath += it.sourceSets.testmod.compileClasspath

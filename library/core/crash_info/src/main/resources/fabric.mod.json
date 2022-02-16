@@ -15,13 +15,14 @@
     "QuiltMC"
   ],
   "entrypoints": {
-    "main": [
+    "events": [
       "org.quiltmc.qsl.crash.impl.CrashInfoImpl"
     ]
   },
   "depends": {
     "fabricloader": ">=0.12",
-    "minecraft": ">=1.18-rc.4"
+    "minecraft": ">=1.18.2-alpha.22.6.a",
+    "quilt_base": "*"
   },
   "description": "Adds information about the Quilt environment in crash reports, and provides an API for other mods to add their own information.",
   "mixins": [

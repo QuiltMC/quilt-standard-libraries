@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 
 import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 
 /**
  * Events indicating progress through the tick loop of a Minecraft client.
@@ -64,7 +65,7 @@ public final class ClientTickEvents {
 	 */
 	@FunctionalInterface
 	@Environment(EnvType.CLIENT)
-	public interface Start {
+	public interface Start extends ClientEventAwareListener {
 		/**
 		 * Called before the client has started an iteration of the tick loop.
 		 *
@@ -80,7 +81,7 @@ public final class ClientTickEvents {
 	 */
 	@FunctionalInterface
 	@Environment(EnvType.CLIENT)
-	public interface End {
+	public interface End extends ClientEventAwareListener {
 		/**
 		 * Called at the end of an iteration of the client's tick loop.
 		 *

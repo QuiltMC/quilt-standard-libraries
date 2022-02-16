@@ -9,13 +9,18 @@
     "quilt_lifecycle_events": "*"
   },
   "entrypoints": {
-    "main": [
-      "org.quiltmc.qsl.lifecycle.test.event.ServerLifecycleTests",
+    "init": [
+      "org.quiltmc.qsl.lifecycle.test.event.ServerLifecycleTests::TESTS",
       "org.quiltmc.qsl.lifecycle.test.event.ServerTickTests"
     ],
-    "client": [
-      "org.quiltmc.qsl.lifecycle.test.event.client.ClientLifecycleTests",
+    "client_init": [
       "org.quiltmc.qsl.lifecycle.test.event.client.ClientTickTests"
+    ],
+    "events": [
+      "org.quiltmc.qsl.lifecycle.test.event.ServerLifecycleTests::TESTS"
+    ],
+    "client_events": [
+      "org.quiltmc.qsl.lifecycle.test.event.client.ClientLifecycleTests"
     ]
   }
 }

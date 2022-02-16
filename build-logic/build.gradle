@@ -9,28 +9,28 @@ repositories {
 	mavenCentral()
 
 	maven {
-		name = "Quilt"
-		url = "https://maven.quiltmc.org/repository/release"
+		name "Quilt"
+		url "https://maven.quiltmc.org/repository/release"
 	}
 	// Note: temporary mavens until Quilt buildtools and loader are ready.
 	maven {
-		name = "Fabric"
-		url = "https://maven.fabricmc.net/"
+		name "Fabric"
+		url "https://maven.fabricmc.net/"
 	}
 	maven {
-		name = "Cotton"
-		url = "https://server.bbkr.space/artifactory/libs-release/"
+		name "Cotton"
+		url "https://server.bbkr.space/artifactory/libs-release/"
 	}
 }
 
 dependencies {
-	implementation "fabric-loom:fabric-loom.gradle.plugin:0.10.46"
+	implementation "fabric-loom:fabric-loom.gradle.plugin:0.11.29"
 	implementation "net.kyori:indra-git:2.0.2"
 	implementation "org.quiltmc:quilt-json5:1.0.0"
 	implementation "org.quiltmc.gradle-conventions:gradle-convention-plugins:0.+"
-	implementation "org.quiltmc:quilt-mappings-on-loom:3.1.2"
+	implementation "org.quiltmc:quilt-mappings-on-loom:4.0.0"
 	implementation "com.diffplug.spotless:spotless-plugin-gradle:5.12.4"
-	implementation "io.github.juuxel:loom-quiltflower-mini:1.2.1"
+	implementation "io.github.juuxel:loom-quiltflower:1.6.0"
 }
 
 // Visual Studio Code needs these

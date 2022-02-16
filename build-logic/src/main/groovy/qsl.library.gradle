@@ -82,6 +82,10 @@ jar {
 	enabled = false
 }
 
+prepareRemapJar {
+	enabled = false
+}
+
 remapJar {
 	enabled = false
 }
@@ -119,7 +123,7 @@ publishing {
 				asNode().appendNode("properties").appendNode("hash", Git.getLatestCommitHash(project))
 				def depsNode = asNode().appendNode("dependencies")
 				rootProject.subprojects.stream().filter {
-					it.path.startsWith(":$extension.libraryName:")
+					it.path.startsWith(":${extension.libraryName.get()}:")
 				}.forEach {
 					def depNode = depsNode.appendNode("dependency")
 					depNode.appendNode("groupId", it.group)

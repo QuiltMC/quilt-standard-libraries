@@ -6,20 +6,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.inject.Inject;
-
 import groovy.util.Node;
+import javax.inject.Inject;
 import org.gradle.api.Action;
+import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.model.ObjectFactory;
-import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.provider.Property;
 import org.gradle.api.publish.PublicationContainer;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.tasks.Input;
 import qsl.internal.GroovyXml;
+import qsl.internal.dependency.QslLibraryDependency;
 import qsl.internal.json.ModJsonObject;
 import qsl.internal.license.LicenseHeader;
 import qsl.internal.task.ApplyLicenseTask;
@@ -30,6 +30,7 @@ public class QslModuleExtension extends QslExtension {
 	private final Property<String> moduleName;
 	private final List<Dependency> moduleDependencies;
 	private final LicenseHeader licenseHeader;
+	private final NamedDomainObjectContainer<QslLibraryDependency> moduleDependencyDefinitions;
 	private Action<ModJsonObject> jsonPostProcessor;
 
 	@Inject
@@ -44,6 +45,8 @@ public class QslModuleExtension extends QslExtension {
 				LicenseHeader.Rule.fromFile(project.getRootProject().file("codeformat/FABRIC_MODIFIED_HEADER").toPath()),
 				LicenseHeader.Rule.fromFile(project.getRootProject().file("codeformat/HEADER").toPath())
 		);
+
+		this.moduleDependencyDefinitions = project.getObjects().domainObjectContainer(QslLibraryDependency.class, name -> new QslLibraryDependency(name, project, moduleDependencies));
 
 		project.getTasks().register("checkLicenses", CheckLicenseTask.class, this.licenseHeader);
 		project.getTasks().register("applyLicenses", ApplyLicenseTask.class, this.licenseHeader);
@@ -68,42 +71,8 @@ public class QslModuleExtension extends QslExtension {
 		this.library.set(name);
 	}
 
-	private Dependency getCoreModule(String module) {
-		Map<String, String> map = new LinkedHashMap<>(2);
-		map.put("path", ":core:" + module);
-		map.put("configuration", "dev");
-
-		return this.project.getDependencies().project(map);
-	}
-
-	public void coreDependencies(Iterable<String> dependencies) {
-		for (String dependency : dependencies) {
-			Dependency project = this.getCoreModule(dependency);
-			this.moduleDependencies.add(project);
-			this.project.getDependencies().add(JavaPlugin.API_CONFIGURATION_NAME, project);
-		}
-	}
-
-	public void coreTestmodDependencies(Iterable<String> dependencies) {
-		for (String dependency : dependencies) {
-			Dependency project = this.getCoreModule(dependency);
-			this.moduleDependencies.add(project);
-			this.project.getDependencies().add("testmodImplementation", project);
-		}
-	}
-
-	public void interLibraryDependencies(Iterable<String> dependencies) {
-		String library = this.getLibrary().get();
-
-		for (String dependency : dependencies) {
-			Map<String, String> map = new LinkedHashMap<>(2);
-			map.put("path", ":" + library + ":" + dependency);
-			map.put("configuration", "dev");
-
-			Dependency project = this.project.getDependencies().project(map);
-			this.moduleDependencies.add(project);
-			this.project.getDependencies().add(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME, project);
-		}
+	public NamedDomainObjectContainer<QslLibraryDependency> getModuleDependencies() {
+		return moduleDependencyDefinitions;
 	}
 
 	public void setupModuleDependencies() {

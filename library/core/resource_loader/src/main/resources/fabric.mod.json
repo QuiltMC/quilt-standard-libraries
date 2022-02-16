@@ -15,8 +15,9 @@
     "QuiltMC"
   ],
   "depends": {
-    "fabricloader": ">=0.12",
-    "minecraft": ">=1.18.1"
+    "fabricloader": ">=0.13.1",
+    "minecraft": ">=1.18.2-alpha.22.6.a",
+    "quilt_base": "*"
   },
   "description": "Asset and data resource loading.",
   "accessWidener": "quilt_resource_loader.accesswidener",

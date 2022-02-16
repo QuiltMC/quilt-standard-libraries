@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,33 +16,27 @@
 
 package org.quiltmc.qsl.lifecycle.test.event;
 
-import net.fabricmc.api.ModInitializer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.fabricmc.loader.api.ModContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import net.minecraft.server.MinecraftServer;
+
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 import org.quiltmc.qsl.lifecycle.api.event.ServerWorldLoadEvents;
 
 /**
  * Tests related to the lifecycle of a server.
  */
-public final class ServerLifecycleTests implements ModInitializer {
-	public static final Logger LOGGER = LogManager.getLogger("LifecycleEventsTest");
+public final class ServerLifecycleTests implements ModInitializer,
+		ServerLifecycleEvents.Starting, ServerLifecycleEvents.Ready,
+		ServerLifecycleEvents.Stopped, ServerLifecycleEvents.Stopping {
+	public static final ServerLifecycleTests TESTS = new ServerLifecycleTests();
+	public static final Logger LOGGER = LoggerFactory.getLogger("LifecycleEventsTest");
 
 	@Override
-	public void onInitialize() {
-		ServerLifecycleEvents.READY.register(server -> {
-			LOGGER.info("Started Server!");
-		});
-
-		ServerLifecycleEvents.STOPPING.register(server -> {
-			LOGGER.info("Stopping Server!");
-		});
-
-		ServerLifecycleEvents.STOPPED.register(server -> {
-			LOGGER.info("Stopped Server!");
-		});
-
+	public void onInitialize(ModContainer mod) {
 		ServerWorldLoadEvents.LOAD.register((server, world) -> {
 			LOGGER.info("Loaded world " + world.getRegistryKey().getValue().toString());
 		});
@@ -50,5 +44,25 @@ public final class ServerLifecycleTests implements ModInitializer {
 		ServerWorldLoadEvents.UNLOAD.register((server, world) -> {
 			LOGGER.info("Unloaded world " + world.getRegistryKey().getValue().toString());
 		});
+	}
+
+	@Override
+	public void startingServer(MinecraftServer server) {
+		LOGGER.info("Starting Server!");
+	}
+
+	@Override
+	public void readyServer(MinecraftServer server) {
+		LOGGER.info("Started Server!");
+	}
+
+	@Override
+	public void stoppingServer(MinecraftServer server) {
+		LOGGER.info("Stopping Server!");
+	}
+
+	@Override
+	public void exitServer(MinecraftServer server) {
+		LOGGER.info("Stopped Server!");
 	}
 }

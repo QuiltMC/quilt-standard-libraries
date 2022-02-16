@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,29 +30,29 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.resource.ReloadableResourceManagerImpl;
-import net.minecraft.resource.ResourcePack;
+import net.minecraft.resource.ReloadableResourceManager;
 import net.minecraft.resource.ResourceReload;
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.util.Unit;
 
 import org.quiltmc.qsl.resource.loader.api.GroupResourcePack;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
-@Mixin(ReloadableResourceManagerImpl.class)
-public class ReloadableResourceManagerImplMixin {
+@Mixin(ReloadableResourceManager.class)
+public class ReloadableResourceManagerMixin {
 	@Final
-	@Shadow
+	@Shadow(aliases = "field_14294")
 	private ResourceType type;
 
-	@Shadow
 	@Final
+	@Shadow(aliases = "field_17935")
 	private List<ResourceReloader> reloaders;
 
 	@Inject(
 			method = "reload",
-			at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;isDebugEnabled()Z", remap = false)
+			at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;isDebugEnabled()Z", remap = false)
 	)
 	private void reload(Executor prepareExecutor, Executor applyExecutor, CompletableFuture<Unit> initialStage,
 						List<ResourcePack> packs,

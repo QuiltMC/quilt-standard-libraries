@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ import net.minecraft.util.Identifier;
 
 /**
  * Interface for "identifiable" resource reloaders.
- *
- * <p>"Identifiable" resource reloaders have a unique identifier, which can be depended on,
+ * <p>
+ * "Identifiable" resource reloaders have a unique identifier, which can be depended on,
  * and can provide dependencies that they would like to see executed before themselves.
  *
  * @see ResourceReloaderKeys

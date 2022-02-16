@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -288,6 +288,17 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 
 	public QuiltBlockSettings mapColor(DyeColor color) {
 		return this.mapColor(color.getMapColor());
+	}
+
+	/**
+	 * Sets the map color provider of this block.
+	 *
+	 * @param mapColorProvider new map color provider
+	 * @return this builder
+	 */
+	public QuiltBlockSettings mapColorProvider(Function<BlockState, MapColor> mapColorProvider) {
+		((AbstractBlockSettingsAccessor) this).setMapColorProvider(mapColorProvider);
+		return this;
 	}
 
 	// endregion

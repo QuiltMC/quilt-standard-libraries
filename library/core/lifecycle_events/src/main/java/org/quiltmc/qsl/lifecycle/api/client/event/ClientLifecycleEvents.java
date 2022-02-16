@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 
 import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 
 /**
  * Events indicating the lifecycle of a Minecraft client.
@@ -87,7 +88,7 @@ public final class ClientLifecycleEvents {
 	 */
 	@FunctionalInterface
 	@Environment(EnvType.CLIENT)
-	public interface Ready {
+	public interface Ready extends ClientEventAwareListener {
 		/**
 		 * Called when a majority of client facilities have been initialized.
 		 *
@@ -105,7 +106,7 @@ public final class ClientLifecycleEvents {
 	 */
 	@FunctionalInterface
 	@Environment(EnvType.CLIENT)
-	public interface Stopping {
+	public interface Stopping extends ClientEventAwareListener {
 		/**
 		 * Called when a Minecraft client has finished its last tick and is shutting down.
 		 *
@@ -121,7 +122,7 @@ public final class ClientLifecycleEvents {
 	 */
 	@FunctionalInterface
 	@Environment(EnvType.CLIENT)
-	public interface Stopped {
+	public interface Stopped extends ClientEventAwareListener {
 		/**
 		 * Called when a Minecraft client has finished shutdown and the client will be exited.
 		 *
