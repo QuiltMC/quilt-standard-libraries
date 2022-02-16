@@ -32,7 +32,7 @@ import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
 @Mixin(ServerReloadableResources.class)
 public class ServerReloadableResourcesMixin {
-	@Inject(method = "listeners", at = @At("RETURN"), cancellable = true)
+	@Inject(method = "getReloaders", at = @At("RETURN"), cancellable = true)
 	private void onGetResourceReloaders(CallbackInfoReturnable<List<ResourceReloader>> cir) {
 		// Re-inject resource reloaders server-side.
 		// It is currently unknown why ReloadableResourceManager#reload isn't called anymore.
