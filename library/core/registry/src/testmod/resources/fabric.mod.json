@@ -9,7 +9,7 @@
     "quilt_registry": "*"
   },
   "entrypoints": {
-    "main": [
+    "init": [
       "org.quiltmc.qsl.registry.test.RegistryLibEventsTest",
       "org.quiltmc.qsl.registry.test.RegistryLibMonitorTest"
     ]

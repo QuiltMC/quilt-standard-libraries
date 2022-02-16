@@ -1,9 +1,26 @@
+/*
+ * Copyright 2022 QuiltMC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.quiltmc.qsl.registry.api.event;
 
-import net.minecraft.util.registry.Registry;
-import org.quiltmc.qsl.registry.impl.event.RegistryMonitorImpl;
-
 import java.util.function.Predicate;
+
+import net.minecraft.util.registry.Registry;
+
+import org.quiltmc.qsl.registry.impl.event.RegistryMonitorImpl;
 
 /**
  * A higher level tool for monitoring the manipulation of Minecraft's content registries.
@@ -16,14 +33,14 @@ public interface RegistryMonitor<V> {
 	 * registered callbacks for.
 	 *
 	 * @param filter a predicate which determines what entries to invoke callbacks for
-	 * @return       the current registry monitor object, so as to allow chaining other methods in builder-like fashion
+	 * @return the current registry monitor object, so as to allow chaining other methods in builder-like fashion
 	 */
 	RegistryMonitor<V> filter(Predicate<RegistryEntryContext<V>> filter);
 
 	/**
 	 * Registers the specified callback to be invoked for <b>every entry ever</b> to be registered in the monitor's registry.
-	 *
-	 * <p>Entries must also match the monitor's filters.
+	 * <p>
+	 * Entries must also match the monitor's filters.
 	 *
 	 * @param callback the callback to be invoked on entries
 	 */
@@ -31,8 +48,8 @@ public interface RegistryMonitor<V> {
 
 	/**
 	 * Registers the specified callback to be invoked for <i>all future entries</i> to registered in the monitor's registry.
-	 *
-	 * <p>Entries must also match the monitor's filters.
+	 * <p>
+	 * Entries must also match the monitor's filters.
 	 *
 	 * @param callback the callback to be invoked on entries
 	 */
@@ -43,7 +60,7 @@ public interface RegistryMonitor<V> {
 	 *
 	 * @param registry the {@link Registry} to monitor
 	 * @param <V>      the entry type of the {@link Registry} being monitored
-	 * @return         a new {@link RegistryMonitor} monitoring the specified {@link Registry}
+	 * @return a new {@link RegistryMonitor} monitoring the specified {@link Registry}
 	 */
 	static <V> RegistryMonitor<V> create(Registry<V> registry) {
 		return new RegistryMonitorImpl<>(registry);

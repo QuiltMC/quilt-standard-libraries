@@ -6,7 +6,9 @@ qslModule {
 	moduleName = "registry"
 	version = "1.0.0"
 	library = "core"
-	coreDependencies([
-			"qsl_base"
-	])
+	moduleDependencies {
+		core {
+			api("qsl_base")
+		}
+	}
 }
