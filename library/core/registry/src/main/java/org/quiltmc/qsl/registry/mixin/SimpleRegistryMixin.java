@@ -28,8 +28,6 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
 
-import org.quiltmc.qsl.base.api.event.Event;
-import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.quiltmc.qsl.registry.impl.event.MutableRegistryEntryContextImpl;
 import org.quiltmc.qsl.registry.impl.event.RegistryEventStorage;
 
@@ -37,17 +35,9 @@ import org.quiltmc.qsl.registry.impl.event.RegistryEventStorage;
  * Stores and invokes registry events.
  */
 @Mixin(SimpleRegistry.class)
-public abstract class SimpleRegistryMixin<V> extends Registry<V> implements RegistryEventStorage<V> {
+public abstract class SimpleRegistryMixin<V> extends Registry<V> {
 	@Unique
 	private final MutableRegistryEntryContextImpl<V> quilt$entryContext = new MutableRegistryEntryContextImpl<>(this);
-
-	@Unique
-	private final Event<RegistryEvents.EntryAdded<V>> quilt$entryAddedEvent = Event.create(RegistryEvents.EntryAdded.class,
-			callbacks -> context -> {
-				for (var callback : callbacks) {
-					callback.onAdded(context);
-				}
-			});
 
 	protected SimpleRegistryMixin(RegistryKey<? extends Registry<V>> key, Lifecycle lifecycle) {
 		super(key, lifecycle);
@@ -63,11 +53,6 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Regi
 	private void quilt$invokeEntryAddEvent(int rawId, RegistryKey<V> key, V entry, Lifecycle lifecycle, boolean checkDuplicateKeys,
 	                                       CallbackInfoReturnable<Holder<V>> cir) {
 		this.quilt$entryContext.set(key.getValue(), entry, rawId);
-		this.quilt$entryAddedEvent.invoker().onAdded(this.quilt$entryContext);
-	}
-
-	@Override
-	public Event<RegistryEvents.EntryAdded<V>> quilt$getEntryAddedEvent() {
-		return this.quilt$entryAddedEvent;
+		RegistryEventStorage.as(this).quilt$getEntryAddedEvent().invoker().onAdded(this.quilt$entryContext);
 	}
 }

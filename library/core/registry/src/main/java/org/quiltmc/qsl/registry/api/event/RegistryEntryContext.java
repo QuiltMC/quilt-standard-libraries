@@ -21,6 +21,8 @@ import net.minecraft.util.registry.Registry;
 
 /**
  * Represents information about a registry entry.
+ * <p>
+ * Underlying implementations may be mutable, do not store this object in your own fields directly.
  *
  * @param <V> the entry type used by the relevant {@link Registry}
  */
