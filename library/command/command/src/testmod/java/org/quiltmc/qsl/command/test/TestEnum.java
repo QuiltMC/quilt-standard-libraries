@@ -1,5 +1,4 @@
 /*
- * Copyright 2016, 2017, 2018, 2019, 2020 zml and Colonel contributors
  * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,17 +14,12 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.command.mixin;
+package org.quiltmc.qsl.command.test;
 
-import com.mojang.brigadier.arguments.ArgumentType;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Mutable;
-import org.spongepowered.asm.mixin.gen.Accessor;
-
-@Mixin(value = RequiredArgumentBuilder.class, remap = false)
-public interface RequiredArgumentBuilderAccessor {
-	@Mutable
-	@Accessor
-	void setType(final ArgumentType<?> type);
+public enum TestEnum {
+	TEST_ENUM,
+	VALUE_1,
+	VALUE_2,
+	VALUE_A,
+	VALUE_B
 }

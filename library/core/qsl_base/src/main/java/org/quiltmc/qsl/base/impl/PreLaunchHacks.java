@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.command.impl;
+package org.quiltmc.qsl.base.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -25,16 +25,18 @@ import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Via i509VCB, a trick to get Brig onto the Knot classpath in order to properly mix in.
- *
- * <p>YOU SHOULD ONLY USE THIS CLASS DURING "preLaunch" and ONLY TARGET A CLASS WHICH IS NOT ANY CLASS YOU MIXIN TO.
- *
- * This will likely not work on Gson because FabricLoader has some special logic related to Gson.</p>
- *
+ * <p>
+ * <b>YOU SHOULD ONLY USE THIS CLASS DURING "preLaunch" and ONLY TARGET A CLASS WHICH IS NOT ANY CLASS YOU MIXIN TO.</b>
+ * <p>
+ * This will likely not work on Gson because FabricLoader has some special logic related to Gson.
+ * <p>
  * Original on GitHub at <a href="https://github.com/i509VCB/Fabric-Junkkyard/blob/ce278daa93804697c745a51af06ec812896ec2ad/src/main/java/me/i509/junkkyard/hacks/PreLaunchHacks.java">i509VCB/Fabric-Junkkyard</a>
  */
+@ApiStatus.Experimental
 @ApiStatus.Internal
 public final class PreLaunchHacks {
-	private PreLaunchHacks() { }
+	private PreLaunchHacks() {
+	}
 
 	private static final ClassLoader KNOT_CLASSLOADER = Thread.currentThread().getContextClassLoader();
 	private static final Method ADD_URL_METHOD;
@@ -50,13 +52,13 @@ public final class PreLaunchHacks {
 
 	/**
 	 * Hackily load the package which a mixin may exist within.
-	 *
-	 * YOU SHOULD NOT TARGET A CLASS WHICH YOU MIXIN TO.
+	 * <p>
+	 * <b>YOU SHOULD NOT TARGET A CLASS WHICH YOU MIXIN TO.</b>
 	 *
 	 * @param pathOfAClass The path of any class within the package.
-	 * @throws ClassNotFoundException if an unknown class name is used
+	 * @throws ClassNotFoundException    if an unknown class name is used
 	 * @throws InvocationTargetException if an error occurs while injecting
-	 * @throws IllegalAccessException if an error occurs while injecting
+	 * @throws IllegalAccessException    if an error occurs while injecting
 	 */
 	public static void hackilyLoadForMixin(String pathOfAClass) throws ClassNotFoundException, InvocationTargetException, IllegalAccessException {
 		URL url = Class.forName(pathOfAClass).getProtectionDomain().getCodeSource().getLocation();

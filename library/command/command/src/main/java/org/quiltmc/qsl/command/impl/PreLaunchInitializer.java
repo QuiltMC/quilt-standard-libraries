@@ -22,6 +22,8 @@ import java.lang.reflect.InvocationTargetException;
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
 import org.jetbrains.annotations.ApiStatus;
 
+import org.quiltmc.qsl.base.impl.PreLaunchHacks;
+
 @ApiStatus.Internal
 public final class PreLaunchInitializer implements PreLaunchEntrypoint {
 	@Override

@@ -32,7 +32,8 @@ import org.quiltmc.qsl.networking.api.client.C2SPlayChannelEvents;
 
 @ApiStatus.Internal
 public final class KnownArgumentTypesSync {
-	private KnownArgumentTypesSync() { }
+	private KnownArgumentTypesSync() {
+	}
 
 	public static final Identifier ID = Initializer.id("registered_arg_types");
 
@@ -48,14 +49,12 @@ public final class KnownArgumentTypesSync {
 	@Environment(EnvType.CLIENT)
 	public static void registerClient() {
 		C2SPlayChannelEvents.REGISTER.register((handler, sender, client, channels) -> {
-			if (channels.contains(ID)) {
-				client.execute(() -> {
-					var idents = ServerArgumentTypes.getIds();
-					var buf = new PacketByteBuf(Unpooled.buffer(idents.size() * 8));
-					buf.writeCollection(idents, PacketByteBuf::writeIdentifier);
-					sender.sendPacket(ID, buf);
-				});
-			}
+			client.execute(() -> {
+				var idents = ServerArgumentTypes.getIds();
+				var buf = new PacketByteBuf(Unpooled.buffer(idents.size() * 8));
+				buf.writeCollection(idents, PacketByteBuf::writeIdentifier);
+				sender.sendPacket(ID, buf);
+			});
 		});
 	}
 }

@@ -53,8 +53,8 @@ public interface ServerArgumentType<T extends ArgumentType<?>> {
 
 	/**
 	 * Gets the serializer of this argument type.
-	 *
-	 * <p>This will only be used on clients who recognize this argument.
+	 * <p>
+	 * This will only be used on clients who recognize this argument.
 	 *
 	 * @return argument serializer
 	 */
@@ -77,19 +77,19 @@ public interface ServerArgumentType<T extends ArgumentType<?>> {
 	/**
 	 * Creates and registers a new server-side argument type.
 	 *
-	 * @param id the argument type's identifier
-	 * @param type the argument type class
-	 * @param serializer the argument serializer
-	 * @param fallbackProvider the fallback provider
+	 * @param id                  the argument type's identifier
+	 * @param type                the argument type class
+	 * @param serializer          the argument serializer
+	 * @param fallbackProvider    the fallback provider
 	 * @param fallbackSuggestions the fallback suggestion provider
-	 * @param <T> the argument type
+	 * @param <T>                 the argument type
 	 * @return a newly-created server-side argument type
 	 */
 	@SuppressWarnings("unchecked")
 	static <T extends ArgumentType<?>> ServerArgumentType<T> register(Identifier id, Class<? extends T> type,
-																	  ArgumentSerializer<T> serializer,
-																	  ArgumentTypeFallbackProvider<T> fallbackProvider,
-																	  @Nullable SuggestionProvider<?> fallbackSuggestions) {
+	                                                                  ArgumentSerializer<T> serializer,
+	                                                                  ArgumentTypeFallbackProvider<T> fallbackProvider,
+	                                                                  @Nullable SuggestionProvider<?> fallbackSuggestions) {
 		var value = new ServerArgumentTypeImpl<>(id, type, serializer, fallbackProvider, fallbackSuggestions);
 		ArgumentTypes.register(id.toString(), (Class<T>) type, serializer);
 		ServerArgumentTypes.register(value);
@@ -99,16 +99,16 @@ public interface ServerArgumentType<T extends ArgumentType<?>> {
 	/**
 	 * Creates and registers a new server-side argument type.
 	 *
-	 * @param id the argument type's identifier
-	 * @param type the argument type class
-	 * @param serializer the argument serializer
+	 * @param id               the argument type's identifier
+	 * @param type             the argument type class
+	 * @param serializer       the argument serializer
 	 * @param fallbackProvider the fallback provider
-	 * @param <T> the argument type
+	 * @param <T>              the argument type
 	 * @return a newly-created server-side argument type
 	 */
 	static <T extends ArgumentType<?>> ServerArgumentType<T> register(Identifier id, Class<? extends T> type,
-																	  ArgumentSerializer<T> serializer,
-																	  ArgumentTypeFallbackProvider<T> fallbackProvider) {
+	                                                                  ArgumentSerializer<T> serializer,
+	                                                                  ArgumentTypeFallbackProvider<T> fallbackProvider) {
 		return register(id, type, serializer, fallbackProvider, SuggestionProviders.ASK_SERVER);
 	}
 }

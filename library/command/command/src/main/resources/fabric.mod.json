@@ -17,7 +17,8 @@
   "depends": {
     "fabricloader": ">=0.12",
     "minecraft": ">=1.18.2-alpha.22.6.a",
-    "quilt_base": "*"
+    "quilt_base": "*",
+    "quilt_resource_loader": "*"
   },
   "recommends": {
     "quilt_networking": "*"

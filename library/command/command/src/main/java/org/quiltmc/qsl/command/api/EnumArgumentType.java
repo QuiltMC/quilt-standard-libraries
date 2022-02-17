@@ -68,16 +68,16 @@ public final class EnumArgumentType implements ArgumentType<String> {
 	}
 
 	// doesn't copy set, assumes all strings are already lowercase
-	private EnumArgumentType(Set<String> values, boolean dummy) {
+	private EnumArgumentType(Set<String> values) {
 		this.values = values;
 	}
 
 	/**
 	 * Creates an {@code EnumArgumentType} based on the constants of the specified {@code enum} class.
 	 *
-	 * @param enumClass enum class
-	 * @param <E> type of enum class
-	 * @return an argument type for enum class
+	 * @param enumClass the enum class
+	 * @param <E>       type of the enum class
+	 * @return an argument type for the enum class
 	 */
 	public static <E extends Enum<E>> EnumArgumentType enumConstant(Class<? extends E> enumClass) {
 		E[] constants = enumClass.getEnumConstants();
@@ -97,29 +97,30 @@ public final class EnumArgumentType implements ArgumentType<String> {
 			}
 		}
 
-		return new EnumArgumentType(values, false);
+		return new EnumArgumentType(values);
 	}
 
 	/**
-	 * Gets the specified argument.
-	 * @param context command context
-	 * @param argumentName argument name
-	 * @return the argument
+	 * Gets the specified argument value from a command context.
+	 *
+	 * @param context      the command context
+	 * @param argumentName the argument name
+	 * @return the argument value
 	 */
 	public static String getEnum(CommandContext<ServerCommandSource> context,
-								 String argumentName) {
+	                             String argumentName) {
 		return context.getArgument(argumentName, String.class);
 	}
 
 	/**
-	 * Gets the specified argument, mapped to its matching {@code enum} constant.
+	 * Gets the specified argument from a command context, mapped to its matching {@code enum} constant.
 	 *
-	 * @param context command context
-	 * @param argumentName argument name
-	 * @param enumClass enum class to map to
-	 * @param <E> type of enum class
+	 * @param context      the command context
+	 * @param argumentName the argument name
+	 * @param enumClass    the enum class to map to
+	 * @param <E>          the type of enum class
 	 * @return the argument as an {@code enum} constant
-	 * @throws CommandSyntaxException if the argument doesn't match a known enum constant.
+	 * @throws CommandSyntaxException if the argument doesn't match a known enum constant
 	 */
 	public static <E extends Enum<E>> E getEnumConstant(CommandContext<ServerCommandSource> context,
 	                                                    String argumentName, Class<? extends E> enumClass)
@@ -143,9 +144,9 @@ public final class EnumArgumentType implements ArgumentType<String> {
 	@Override
 	public String parse(StringReader reader) throws CommandSyntaxException {
 		int cursor = reader.getCursor();
-		String value = reader.getString().toLowerCase(Locale.ROOT);
+		String value = reader.readUnquotedString().toLowerCase(Locale.ROOT);
 
-		if (values.contains(value)) {
+		if (this.values.contains(value)) {
 			return value;
 		}
 
@@ -155,7 +156,7 @@ public final class EnumArgumentType implements ArgumentType<String> {
 
 	@Override
 	public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-		return CommandSource.suggestMatching(values, builder);
+		return CommandSource.suggestMatching(this.values, builder);
 	}
 
 	@Override
@@ -172,7 +173,7 @@ public final class EnumArgumentType implements ArgumentType<String> {
 		@Override
 		public EnumArgumentType fromPacket(PacketByteBuf buf) {
 			Set<String> values = buf.readCollection(LinkedHashSet::new, PacketByteBuf::readString);
-			return new EnumArgumentType(values, false);
+			return new EnumArgumentType(values);
 		}
 
 		@Override
