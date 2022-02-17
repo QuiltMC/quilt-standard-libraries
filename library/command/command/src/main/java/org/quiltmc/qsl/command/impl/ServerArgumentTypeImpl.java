@@ -30,9 +30,9 @@ import org.quiltmc.qsl.command.api.ServerArgumentType;
 
 @ApiStatus.Internal
 public record ServerArgumentTypeImpl<T extends ArgumentType<?>>(Identifier id, Class<? extends T> type,
-																ArgumentSerializer<T> serializer,
-																ArgumentTypeFallbackProvider<T> fallbackProvider,
-																@Nullable SuggestionProvider<?> fallbackSuggestions)
+                                                                ArgumentSerializer<T> serializer,
+                                                                ArgumentTypeFallbackProvider<T> fallbackProvider,
+                                                                @Nullable SuggestionProvider<?> fallbackSuggestions)
 		implements ServerArgumentType<T> {
 	@Override
 	public String toString() {
