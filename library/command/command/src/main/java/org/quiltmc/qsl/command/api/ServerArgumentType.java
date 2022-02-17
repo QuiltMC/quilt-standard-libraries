@@ -40,7 +40,7 @@ public interface ServerArgumentType<T extends ArgumentType<?>> {
 	/**
 	 * Gets the identifier of this argument type.
 	 *
-	 * @return argument type ID
+	 * @return argument type identifier
 	 */
 	Identifier id();
 
