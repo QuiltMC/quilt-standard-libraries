@@ -6,16 +6,14 @@ qslModule {
 	moduleName = "command"
 	version = "1.0.0"
 	library = "command"
-	coreDependencies([
-			"qsl_base",
-			"resource_loader"
-	])
-	coreTestmodDependencies([
-	        "networking"
-	])
-}
+	moduleDependencies {
+		core {
+			api("qsl_base")
+			impl("resource_loader")
+			compileOnly("networking")
 
-dependencies {
-	// OPTIONAL dependency on networking
-	compileOnly project(path: ":core:networking", configuration: "dev")
+			testmodOnly("lifecycle_events")
+			testmodOnly("networking")
+		}
+	}
 }

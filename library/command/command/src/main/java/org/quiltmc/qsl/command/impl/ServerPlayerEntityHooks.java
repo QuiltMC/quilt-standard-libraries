@@ -26,5 +26,6 @@ import net.minecraft.util.Identifier;
 @ApiStatus.Internal
 public interface ServerPlayerEntityHooks {
 	Set<Identifier> quilt$getKnownArgumentTypes();
+
 	void quilt$setKnownArgumentTypes(Set<Identifier> types);
 }

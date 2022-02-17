@@ -15,19 +15,22 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.command.impl;
+package org.quiltmc.qsl.command.impl.client;
 
-import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 import org.jetbrains.annotations.ApiStatus;
+
+import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
+import org.quiltmc.qsl.command.impl.KnownArgumentTypesSync;
 
 @ApiStatus.Internal
 @Environment(EnvType.CLIENT)
 public final class ClientInitializer implements ClientModInitializer {
 	@Override
-	public void onInitializeClient() {
+	public void onInitializeClient(ModContainer mod) {
 		if (FabricLoader.getInstance().isModLoaded("quilt_networking")) {
 			KnownArgumentTypesSync.registerClient();
 		}

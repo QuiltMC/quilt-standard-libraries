@@ -41,14 +41,16 @@ import net.minecraft.text.TranslatableText;
 
 public final class EnumArgumentType implements ArgumentType<String> {
 	public static final DynamicCommandExceptionType UNKNOWN_VALUE_EXCEPTION =
-			new DynamicCommandExceptionType(o -> new TranslatableText("quilt.argument.enum.unknownValue", o));
+			new DynamicCommandExceptionType(o -> new TranslatableText("quilt.argument.enum.unknown_value", o));
 
 	private final Set<String> values;
 
 	public EnumArgumentType(String... values) {
 		this.values = new LinkedHashSet<>(values.length);
+
 		for (String value : values) {
 			var valueLC = value.toLowerCase(Locale.ROOT);
+
 			if (!this.values.add(valueLC)) {
 				throw new IllegalArgumentException("Duplicate value \"%s\" (after converting to lowercase)".formatted(valueLC));
 			}
@@ -62,33 +64,41 @@ public final class EnumArgumentType implements ArgumentType<String> {
 
 	public static <E extends Enum<E>> EnumArgumentType enumConstant(Class<? extends E> enumClass) {
 		E[] constants = enumClass.getEnumConstants();
+
 		if (constants == null) {
 			throw new IllegalArgumentException("%s is not an enum class (getEnumConstants() returned null)".formatted(enumClass));
 		}
-		Set<String> values = new LinkedHashSet<>(constants.length);
+
+		var values = new LinkedHashSet<String>(constants.length);
+
 		for (E constant : constants) {
 			var constNameLC = constant.name().toLowerCase(Locale.ROOT);
+
 			if (!values.add(constNameLC)) {
 				throw new IllegalArgumentException(("%s contains 2 constants with the same name after converting to lowercase " +
 						"(\"%s\")").formatted(enumClass, constNameLC));
 			}
 		}
+
 		return new EnumArgumentType(values, false);
 	}
 
 	public static <E extends Enum<E>> E getEnumConstant(CommandContext<ServerCommandSource> context,
-														String argumentName, Class<? extends E> enumClass)
+	                                                    String argumentName, Class<? extends E> enumClass)
 			throws CommandSyntaxException {
 		String value = context.getArgument(argumentName, String.class);
 		E[] constants = enumClass.getEnumConstants();
+
 		if (constants == null) {
 			throw new IllegalArgumentException(enumClass + " is not an enum class (getEnumConstants() returned null)");
 		}
+
 		for (var constant : constants) {
 			if (constant.name().equalsIgnoreCase(value)) {
 				return constant;
 			}
 		}
+
 		throw UNKNOWN_VALUE_EXCEPTION.create(argumentName);
 	}
 
@@ -96,9 +106,11 @@ public final class EnumArgumentType implements ArgumentType<String> {
 	public String parse(StringReader reader) throws CommandSyntaxException {
 		int cursor = reader.getCursor();
 		String value = reader.getString().toLowerCase(Locale.ROOT);
+
 		if (values.contains(value)) {
 			return value;
 		}
+
 		reader.setCursor(cursor);
 		throw UNKNOWN_VALUE_EXCEPTION.createWithContext(reader, value);
 	}
@@ -128,9 +140,11 @@ public final class EnumArgumentType implements ArgumentType<String> {
 		@Override
 		public void toJson(EnumArgumentType type, JsonObject json) {
 			var valuesArr = new JsonArray();
+
 			for (var value : type.values) {
 				valuesArr.add(value);
 			}
+
 			json.add("values", valuesArr);
 		}
 	}

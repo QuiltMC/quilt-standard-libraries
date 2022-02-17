@@ -22,16 +22,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.mojang.brigadier.CommandDispatcher;
-
-import net.minecraft.command.CommandSource;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.util.Identifier;
-
-import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
-import org.quiltmc.qsl.command.api.ServerArgumentType;
-import org.quiltmc.qsl.command.impl.ServerArgumentTypes;
-
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
@@ -47,15 +37,34 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import net.minecraft.command.CommandSource;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.util.Identifier;
+
+import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
+import org.quiltmc.qsl.command.api.ServerArgumentType;
+import org.quiltmc.qsl.command.impl.ServerArgumentTypes;
+
 @Mixin(CommandManager.class)
 public abstract class CommandManagerMixin {
 	@Shadow
 	@Final
 	private CommandDispatcher<ServerCommandSource> dispatcher;
 
-	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lcom/mojang/brigadier/CommandDispatcher;findAmbiguities(Lcom/mojang/brigadier/AmbiguityConsumer;)V"))
+	@Inject(
+			method = "<init>",
+			at = @At(
+					value = "INVOKE",
+					target = "Lcom/mojang/brigadier/CommandDispatcher;findAmbiguities(Lcom/mojang/brigadier/AmbiguityConsumer;)V",
+					remap = false
+			)
+	)
 	void addQuiltCommands(CommandManager.RegistrationEnvironment environment, CallbackInfo ci) {
-		CommandRegistrationCallback.EVENT.invoker().registerCommands(this.dispatcher, environmentMatches(environment, CommandManager.RegistrationEnvironment.INTEGRATED), environmentMatches(environment, CommandManager.RegistrationEnvironment.DEDICATED));
+		CommandRegistrationCallback.EVENT.invoker().registerCommands(this.dispatcher,
+				environmentMatches(environment, CommandManager.RegistrationEnvironment.INTEGRATED),
+				environmentMatches(environment, CommandManager.RegistrationEnvironment.DEDICATED)
+		);
 	}
 
 	@Unique
@@ -68,11 +77,11 @@ public abstract class CommandManagerMixin {
 	@Inject(method = "makeTreeForSource", locals = LocalCapture.CAPTURE_FAILEXCEPTION,
 			at = @At(value = "INVOKE", target = "com.mojang.brigadier.builder.RequiredArgumentBuilder.getSuggestionsProvider()Lcom/mojang/brigadier/suggestion/SuggestionProvider;", remap = false, ordinal = 0))
 	public <T> void replaceArgumentType(CommandNode<ServerCommandSource> tree, CommandNode<CommandSource> result,
-										ServerCommandSource source,
-										Map<CommandNode<ServerCommandSource>, CommandNode<CommandSource>> nodes,
-										CallbackInfo ci, Iterator<?> it,
-										CommandNode<ServerCommandSource> current, ArgumentBuilder<?, ?> unused,
-										RequiredArgumentBuilder<?, T> builder) throws CommandSyntaxException {
+	                                    ServerCommandSource source,
+	                                    Map<CommandNode<ServerCommandSource>, CommandNode<CommandSource>> nodes,
+	                                    CallbackInfo ci, Iterator<?> it,
+	                                    CommandNode<ServerCommandSource> current, ArgumentBuilder<?, ?> unused,
+	                                    RequiredArgumentBuilder<?, T> builder) throws CommandSyntaxException {
 		ServerArgumentType<ArgumentType<T>> type = ServerArgumentTypes.byClass((Class) builder.getType().getClass());
 		Set<Identifier> knownExtraCommands = ServerArgumentTypes.getKnownArgumentTypes(source.getPlayer()); // throws an exception, we can ignore bc this is always a player
 		// If we have a replacement and the arg type isn't known to the client, change the argument type
@@ -80,9 +89,11 @@ public abstract class CommandManagerMixin {
 		// Repeat as long as a type is replaceable -- that way you can have a hierarchy of argument types.
 		while (type != null && !knownExtraCommands.contains(type.id())) {
 			((RequiredArgumentBuilderAccessor) builder).setType(type.fallbackProvider().createVanillaFallback(builder.getType()));
+
 			if (type.fallbackSuggestions() != null) {
 				builder.suggests((SuggestionProvider) type.fallbackSuggestions());
 			}
+
 			type = ServerArgumentTypes.byClass((Class) builder.getType().getClass());
 		}
 	}

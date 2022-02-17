@@ -31,6 +31,5 @@ public final class PreLaunchInitializer implements PreLaunchEntrypoint {
 		} catch (ClassNotFoundException | InvocationTargetException | IllegalAccessException e) {
 			throw new IllegalStateException("Unable to initialize Brigadier Mixins, will not be able to inject!", e);
 		}
-
 	}
 }

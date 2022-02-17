@@ -38,7 +38,7 @@ public abstract class ServerPlayerEntityMixin implements ServerPlayerEntityHooks
 
 	@Override
 	public Set<Identifier> quilt$getKnownArgumentTypes() {
-		return quilt$knownArgumentTypes;
+		return this.quilt$knownArgumentTypes;
 	}
 
 	@Override
@@ -48,6 +48,6 @@ public abstract class ServerPlayerEntityMixin implements ServerPlayerEntityHooks
 
 	@Inject(method = "copyFrom", at = @At("RETURN"))
 	public void copyKnownArgumentTypes(ServerPlayerEntity from, boolean alive, CallbackInfo ci) {
-		quilt$setKnownArgumentTypes(ServerArgumentTypes.getKnownArgumentTypes(from));
+		this.quilt$setKnownArgumentTypes(ServerArgumentTypes.getKnownArgumentTypes(from));
 	}
 }
