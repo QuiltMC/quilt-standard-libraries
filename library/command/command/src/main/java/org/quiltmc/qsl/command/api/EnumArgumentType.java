@@ -39,12 +39,22 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.TranslatableText;
 
+/**
+ * An {@link ArgumentType} that allows an arbitrary set of (case-insensitive) strings.
+ *
+ * <p>Using this argument type will <em>not</em> prevent Vanilla clients from joining your server.
+ */
 public final class EnumArgumentType implements ArgumentType<String> {
 	public static final DynamicCommandExceptionType UNKNOWN_VALUE_EXCEPTION =
 			new DynamicCommandExceptionType(o -> new TranslatableText("quilt.argument.enum.unknown_value", o));
 
 	private final Set<String> values;
 
+	/**
+	 * Creates a new {@code EnumArgumentType}.
+	 *
+	 * @param values the value set
+	 */
 	public EnumArgumentType(String... values) {
 		this.values = new LinkedHashSet<>(values.length);
 
@@ -62,6 +72,13 @@ public final class EnumArgumentType implements ArgumentType<String> {
 		this.values = values;
 	}
 
+	/**
+	 * Creates an {@code EnumArgumentType} based on the constants of the specified {@code enum} class.
+	 *
+	 * @param enumClass enum class
+	 * @param <E> type of enum class
+	 * @return an argument type for enum class
+	 */
 	public static <E extends Enum<E>> EnumArgumentType enumConstant(Class<? extends E> enumClass) {
 		E[] constants = enumClass.getEnumConstants();
 
@@ -83,6 +100,27 @@ public final class EnumArgumentType implements ArgumentType<String> {
 		return new EnumArgumentType(values, false);
 	}
 
+	/**
+	 * Gets the specified argument.
+	 * @param context command context
+	 * @param argumentName argument name
+	 * @return the argument
+	 */
+	public static String getEnum(CommandContext<ServerCommandSource> context,
+								 String argumentName) {
+		return context.getArgument(argumentName, String.class);
+	}
+
+	/**
+	 * Gets the specified argument, mapped to its matching {@code enum} constant.
+	 *
+	 * @param context command context
+	 * @param argumentName argument name
+	 * @param enumClass enum class to map to
+	 * @param <E> type of enum class
+	 * @return the argument as an {@code enum} constant
+	 * @throws CommandSyntaxException if the argument doesn't match a known enum constant.
+	 */
 	public static <E extends Enum<E>> E getEnumConstant(CommandContext<ServerCommandSource> context,
 	                                                    String argumentName, Class<? extends E> enumClass)
 			throws CommandSyntaxException {
