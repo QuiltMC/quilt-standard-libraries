@@ -225,7 +225,6 @@ Use `{@index}` to allow enclosed text to be indexed by the Javadoc search.
 Javadoc will take the first sentence, ended by the first `.`, as a brief description of the member you are documenting.
 Note that `.` from abbreviations, such as `i.e.`, count.
 
-
 ### Use of the `$` character
 
 The `$` character may be used in mixins to mark a semantic separation in the name, in other words it allows to separate
