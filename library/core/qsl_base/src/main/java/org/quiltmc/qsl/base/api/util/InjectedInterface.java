@@ -1,6 +1,5 @@
 /*
- * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,21 +14,23 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.tag.api;
+package org.quiltmc.qsl.base.api.util;
 
-import net.minecraft.tag.Tag;
-
-import org.quiltmc.qsl.base.api.util.InjectedInterface;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Interface implemented by {@link Tag.Builder} instances when QSL is present.
+ * States that the annotated interface is injected into some of the game's classes.
  */
-@InjectedInterface(Tag.Builder.class)
-public interface QuiltTagBuilder {
+@Documented
+@Retention(RetentionPolicy.CLASS)
+@Target(ElementType.TYPE)
+public @interface InjectedInterface {
 	/**
-	 * Clears the contained entries and mark the tag as replaced.
-	 *
-	 * @return this builder
+	 * {@return the target classes for which the annotated interface is injected into}
 	 */
-	Tag.Builder clearEntries();
+	Class<?>[] value();
 }

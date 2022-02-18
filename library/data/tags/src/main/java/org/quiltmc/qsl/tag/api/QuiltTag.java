@@ -16,9 +16,14 @@
 
 package org.quiltmc.qsl.tag.api;
 
+import net.minecraft.tag.Tag;
+
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
+
 /**
- * Interface implemented by {@link net.minecraft.tag.Tag} instances when QSL is present.
+ * Interface implemented by {@link Tag} instances when QSL is present.
  */
+@InjectedInterface(Tag.class)
 public interface QuiltTag {
 	/**
 	 * {@return {@code true} if the given tag has been "replaced" by a data pack at least once}
