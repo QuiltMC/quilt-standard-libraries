@@ -6,7 +6,9 @@ qslModule {
 	moduleName = "fluid-flow"
 	version = "1.0.0"
 	library = "fluid"
-	coreDependencies([
-			"qsl_base"
-	])
+	moduleDependencies {
+		core {
+			api("qsl_base")
+		}
+	}
 }
