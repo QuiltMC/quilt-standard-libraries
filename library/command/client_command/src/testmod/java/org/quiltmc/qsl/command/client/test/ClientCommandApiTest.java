@@ -16,30 +16,31 @@
 
 package org.quiltmc.qsl.command.client.test;
 
-import net.fabricmc.api.ClientModInitializer;
+import com.mojang.brigadier.CommandDispatcher;
+
 import net.minecraft.text.LiteralText;
+
 import org.quiltmc.qsl.command.api.client.ClientCommandManager;
 import org.quiltmc.qsl.command.api.client.ClientCommandRegistrationCallback;
+import org.quiltmc.qsl.command.api.client.QuiltClientCommandSource;
 
-public class ClientCommandApiTest implements ClientModInitializer {
+public class ClientCommandApiTest implements ClientCommandRegistrationCallback {
 	@Override
-	public void onInitializeClient() {
-		ClientCommandRegistrationCallback.EVENT.register(dispatcher -> {
-			dispatcher.register(
-					ClientCommandManager.literal("test_client_command")
-							.executes(ctx -> {
-								ctx.getSource().sendFeedback(new LiteralText("It works!"));
-								return 0;
-							})
-			);
+	public void registerCommands(CommandDispatcher<QuiltClientCommandSource> dispatcher) {
+		dispatcher.register(
+				ClientCommandManager.literal("test_client_command")
+						.executes(ctx -> {
+							ctx.getSource().sendFeedback(new LiteralText("It works!"));
+							return 0;
+						})
+		);
 
-			dispatcher.register(
-					ClientCommandManager.literal("seed")
-							.executes(ctx -> {
-								ctx.getSource().sendFeedback(new LiteralText("This is a client-only command which conflicts with a server command!"));
-								return 0;
-							})
-			);
-		});
+		dispatcher.register(
+				ClientCommandManager.literal("seed")
+						.executes(ctx -> {
+							ctx.getSource().sendFeedback(new LiteralText("This is a client-only command which conflicts with a server command!"));
+							return 0;
+						})
+		);
 	}
 }

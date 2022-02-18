@@ -6,17 +6,17 @@ pluginManagement {
 		mavenCentral()
 
 		maven {
-			name = "Quilt"
-			url = "https://maven.quiltmc.org/repository/release"
+			name "Quilt"
+			url "https://maven.quiltmc.org/repository/release"
 		}
 		// Note: temporary mavens until Quilt buildtools and loader are ready.
 		maven {
-			name = "Fabric"
-			url = "https://maven.fabricmc.net"
+			name "Fabric"
+			url "https://maven.fabricmc.net"
 		}
 		maven {
-			name = 'Cotton'
-			url = 'https://server.bbkr.space/artifactory/libs-release/'
+			name "Cotton"
+			url "https://server.bbkr.space/artifactory/libs-release/"
 		}
 	}
 }
@@ -28,10 +28,12 @@ includeBuild("build-logic")
 
 // Libraries
 library("core")
+
 library("block")
-library("data")
-library("item")
 library("command")
+library("data")
+library("gui")
+library("item")
 
 def library(String library) {
 	include(library)

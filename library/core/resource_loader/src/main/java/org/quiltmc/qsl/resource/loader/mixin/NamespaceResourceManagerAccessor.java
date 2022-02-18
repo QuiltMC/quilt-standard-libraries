@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,20 +24,20 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 import net.minecraft.resource.NamespaceResourceManager;
-import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.util.Identifier;
 
 @Mixin(NamespaceResourceManager.class)
 public interface NamespaceResourceManagerAccessor {
-	@Accessor("type")
+	@Accessor
 	ResourceType getType();
 
-	@Invoker("open")
-	InputStream accessor_open(Identifier id, ResourcePack pack) throws IOException;
+	@Invoker
+	InputStream invokeOpen(Identifier id, ResourcePack pack) throws IOException;
 
-	@Invoker("getMetadataPath")
-	static Identifier accessor_getMetadataPath(Identifier id) {
+	@Invoker
+	static Identifier invokeGetMetadataPath(Identifier id) {
 		throw new IllegalStateException("Invoker injection failed.");
 	}
 }

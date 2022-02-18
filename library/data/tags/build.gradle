@@ -6,16 +6,16 @@ qslModule {
 	moduleName = "tags"
 	version = "1.0.0"
 	library = "data"
-	coreDependencies([
-			"resource_loader"
-	])
-	coreTestmodDependencies([
-			"qsl_base",
-			"lifecycle_events"
-	])
-	interLibraryTestmodDependencies("command", [
-			"command"
-	])
+	moduleDependencies {
+		core {
+			api("resource_loader")
+			testmodOnly("qsl_base")
+			testmodOnly("lifecycle_events")
+		}
+		command {
+			testmodOnly("command")
+		}
+	}
 }
 
 loom {

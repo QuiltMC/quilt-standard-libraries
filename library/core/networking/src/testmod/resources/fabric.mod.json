@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "quilt_networking_testmod",
+  "name": "Quilt Networking test mod",
+  "version": "1.0.0",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "depends": {
+    "quilt_networking": "*"
+  },
+  "entrypoints": {
+    "init": [
+      "org.quiltmc.qsl.networking.test.keybindreciever.NetworkingKeyBindPacketTest",
+      "org.quiltmc.qsl.networking.test.login.NetworkingLoginQueryTest",
+      "org.quiltmc.qsl.networking.test.play.NetworkingPlayPacketTest"
+    ],
+    "events": [
+      "org.quiltmc.qsl.networking.test.channeltest.NetworkingChannelTest"
+    ],
+    "client_init": [
+      "org.quiltmc.qsl.networking.test.keybindreciever.NetworkingKeyBindClientPacketTest",
+      "org.quiltmc.qsl.networking.test.login.NetworkingLoginQueryClientTest",
+      "org.quiltmc.qsl.networking.test.play.NetworkingPlayPacketClientTest"
+    ],
+    "client_events": [
+      "org.quiltmc.qsl.networking.test.channeltest.NetworkingChannelClientTest"
+    ]
+  }
+}

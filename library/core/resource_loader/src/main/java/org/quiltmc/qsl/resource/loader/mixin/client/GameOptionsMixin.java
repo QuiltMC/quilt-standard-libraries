@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,10 +31,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.option.GameOptions;
-import net.minecraft.resource.ResourcePackManager;
+import net.minecraft.resource.pack.ResourcePackManager;
 
 import org.quiltmc.qsl.resource.loader.impl.ModNioResourcePack;
-import org.quiltmc.qsl.resource.loader.impl.ModResourcePackProvider;
+import org.quiltmc.qsl.resource.loader.impl.QuiltBuiltinResourcePackProfile;
 
 @Environment(EnvType.CLIENT)
 @Mixin(GameOptions.class)
@@ -74,7 +74,7 @@ public abstract class GameOptionsMixin {
 		// Update available resource packs.
 		for (var profile : manager.getProfiles()) {
 			if (!this.quilt$availableResourcePacks.contains(profile.getName())) {
-				if (profile.getSource() == ModResourcePackProvider.PACK_SOURCE_MOD_BUILTIN) {
+				if (profile instanceof QuiltBuiltinResourcePackProfile) {
 					// A built-in resource pack provided by a mod.
 
 					var pack = profile.createResourcePack();

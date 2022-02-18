@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ public abstract class KeyedClientResourceReloaderMixin implements IdentifiableRe
 	private Collection<Identifier> quilt$dependencies;
 
 	@Override
-	@SuppressWarnings({"ConstantConditions", "RedundantCast"})
+	@SuppressWarnings({"ConstantConditions"})
 	public Identifier getQuiltId() {
 		if (this.quilt$id == null) {
 			Object self = this;
@@ -74,7 +74,7 @@ public abstract class KeyedClientResourceReloaderMixin implements IdentifiableRe
 	}
 
 	@Override
-	@SuppressWarnings({"ConstantConditions", "RedundantCast"})
+	@SuppressWarnings({"ConstantConditions"})
 	public Collection<Identifier> getQuiltDependencies() {
 		if (this.quilt$dependencies == null) {
 			Object self = this;
