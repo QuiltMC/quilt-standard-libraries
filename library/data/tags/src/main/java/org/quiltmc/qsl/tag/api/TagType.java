@@ -28,7 +28,7 @@ public enum TagType {
 	NORMAL,
 	/**
 	 * Represents a tag type which is similar to the default one,
-	 * but the client provides a fallback in-case the server doesn't have the relevant tag.
+	 * but the client provides a fallback if the server doesn't have the relevant tag.
 	 * <p>
 	 * If two tags with the same identifier are registered, one with this type and the other one with another,
 	 * they may not have the same content as the fallback content will only be added to the one with this type.
