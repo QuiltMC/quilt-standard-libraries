@@ -18,7 +18,3 @@ qslModule {
 		}
 	}
 }
-
-loom {
-	accessWidenerPath = file("src/main/resources/quilt_tags.accesswidener")
-}

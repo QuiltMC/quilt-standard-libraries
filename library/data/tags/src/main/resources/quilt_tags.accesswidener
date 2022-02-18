@@ -1,4 +1,0 @@
-accessWidener   v1  named
-
-accessible  method  net/minecraft/util/HolderSet$NamedSet   <init>      (Lnet/minecraft/tag/TagKey;)V
-accessible  method  net/minecraft/util/HolderSet$NamedSet   setContents (Ljava/util/List;)V

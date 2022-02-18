@@ -29,7 +29,6 @@
       "org.quiltmc.qsl.tag.impl.client.ClientQuiltTagsMod"
     ]
   },
-  "accessWidener": "quilt_tags.accesswidener",
   "mixins": [
     "quilt_tags.mixins.json"
   ],
