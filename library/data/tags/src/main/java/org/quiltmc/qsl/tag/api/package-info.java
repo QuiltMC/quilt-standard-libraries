@@ -8,8 +8,8 @@
  * <p>
  * By default, tags are available for every registry in the game, and they are entirely controlled by the server.
  * <p>
- * The goal of this API is to give to modders the ability to iterate through tags, have client-only tags,
- * and client fallbacks for server-controlled tags.
+ * The goal of this API is to let you use client-only tags, client fallbacks for server-controlled tags,
+ * and give you the ability to iterate through tags.
  *
  * <p>
  * <h3>Tag Types</h3>
@@ -19,7 +19,7 @@
  * <p>
  * <h3>Use the new tag types</h3>
  * To use one of the new tag types, use {@link org.quiltmc.qsl.tag.api.QuiltTagKey#create(net.minecraft.util.registry.RegistryKey, net.minecraft.util.Identifier, org.quiltmc.qsl.tag.api.TagType)}.
- * It allows to create a new {@link net.minecraft.tag.TagKey} but with a specific {@link org.quiltmc.qsl.tag.api.TagType} instead of the default one.
+ * This lets you create a new {@link net.minecraft.tag.TagKey} but with a specific {@link org.quiltmc.qsl.tag.api.TagType} instead of the default one.
  * The key can be used normally afterwards.
  *
  * <p>
