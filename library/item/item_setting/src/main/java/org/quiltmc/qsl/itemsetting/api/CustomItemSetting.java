@@ -24,7 +24,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.qsl.itemsetting.impl.CustomItemSettingImpl;
 
 /**
- * A type of setting that can be passed to item constructors.
+ * An interface describing the behavior for custom item settings.
  * This feature can be used by mods to add non-standard settings
  * to items in a way that is compatible with other mods that add
  * settings to items.
@@ -56,7 +56,7 @@ import org.quiltmc.qsl.itemsetting.impl.CustomItemSettingImpl;
  *
  * @param <T> the type of the setting to be attached
  */
-@ApiStatus.Internal
+@ApiStatus.NonExtendable
 public interface CustomItemSetting<T> {
 	/**
 	 * Returns the current value of this setting for the given {@link Item}.

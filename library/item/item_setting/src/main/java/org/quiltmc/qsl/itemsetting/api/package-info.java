@@ -1,5 +1,5 @@
 /**
- * <h2>The Quilt Item Setting sub API.</h2>
+ * <h2>The Quilt Item Settings API.</h2>
  *
  * <p>
  * <h3>What are {@link net.minecraft.item.Item.Settings}?</h3>

@@ -21,19 +21,19 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 
 /**
- * A provider for the preferred {@link EquipmentSlot} of an item.
+ * A provider for the {@link EquipmentSlot} that an item stack is able to be placed into.
  * This can be used to give non-armor items, such as blocks,
  * an armor slot that they can go in.
  *
  * <p>{@link EquipmentSlotProvider} can be set with {@link QuiltItemSettings#equipmentSlot(EquipmentSlotProvider)}.
  *
- * <p>Note that items extending {@link net.minecraft.item.ArmorItem} don't need to use this
- * as there's {@link net.minecraft.item.ArmorItem#getSlotType()}.
+ * <p>Note that items extending {@link net.minecraft.item.ArmorItem} should
+ * use {@link net.minecraft.item.ArmorItem#getSlotType()} instead.
  */
 @FunctionalInterface
 public interface EquipmentSlotProvider {
 	/**
-	 * Gets the preferred {@link EquipmentSlot} for an {@link ItemStack}.
+	 * Gets the {@link EquipmentSlot} for an {@link ItemStack} to be placed into.
 	 *
 	 * <p>If there is no preferred armor {@link EquipmentSlot} for the {@link ItemStack},
 	 * {@link EquipmentSlot#MAINHAND} can be returned.
