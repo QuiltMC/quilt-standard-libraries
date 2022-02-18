@@ -1,9 +1,0 @@
-plugins {
-	id("qsl.module")
-}
-
-qslModule {
-	moduleName = "qsl-base"
-	version = "1.0.0"
-	library = "core"
-}

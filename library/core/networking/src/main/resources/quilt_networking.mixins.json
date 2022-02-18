@@ -1,0 +1,26 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.networking.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "ClientConnectionMixin",
+    "EntityTrackerEntryMixin",
+    "PlayerManagerMixin",
+    "ServerLoginNetworkHandlerMixin",
+    "ServerPlayNetworkHandlerMixin",
+    "accessor.CustomPayloadC2SPacketAccessor",
+    "accessor.EntityTrackerAccessor",
+    "accessor.LoginQueryResponseC2SPacketAccessor",
+    "accessor.ServerLoginNetworkHandlerAccessor",
+    "accessor.ThreadedAnvilChunkStorageAccessor"
+  ],
+  "client": [
+    "accessor.ConnectScreenAccessor",
+    "accessor.MinecraftClientAccessor",
+    "client.ClientLoginNetworkHandlerMixin",
+    "client.ClientPlayNetworkHandlerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

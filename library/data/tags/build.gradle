@@ -1,0 +1,23 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "tags"
+	version = "1.0.0"
+	library = "data"
+	moduleDependencies {
+		core {
+			api("resource_loader")
+			testmodOnly("qsl_base")
+			testmodOnly("lifecycle_events")
+		}
+		command {
+			testmodOnly("command")
+		}
+	}
+}
+
+loom {
+	accessWidenerPath = file("src/main/resources/quilt_tags.accesswidener")
+}

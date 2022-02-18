@@ -1,0 +1,15 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "item_group"
+	version = "1.0.0"
+	library = "item"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+			api("resource_loader")
+		}
+	}
+}

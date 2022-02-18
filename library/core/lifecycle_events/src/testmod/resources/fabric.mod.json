@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "quilt_lifecycle_events_testmod",
+  "name": "Quilt Lifecycle Events Test Mod",
+  "version": "1.0.0",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "depends": {
+    "quilt_lifecycle_events": "*"
+  },
+  "entrypoints": {
+    "init": [
+      "org.quiltmc.qsl.lifecycle.test.event.ServerLifecycleTests::TESTS",
+      "org.quiltmc.qsl.lifecycle.test.event.ServerTickTests"
+    ],
+    "client_init": [
+      "org.quiltmc.qsl.lifecycle.test.event.client.ClientTickTests"
+    ],
+    "events": [
+      "org.quiltmc.qsl.lifecycle.test.event.ServerLifecycleTests::TESTS"
+    ],
+    "client_events": [
+      "org.quiltmc.qsl.lifecycle.test.event.client.ClientLifecycleTests"
+    ]
+  }
+}

@@ -13,27 +13,17 @@
  */
 
 import qsl.internal.Git
+import qsl.internal.Versions
 import qsl.internal.extension.QslModuleExtension
 
 plugins {
 	id("java-library")
 	id("maven-publish")
 	id("net.kyori.indra.git")
-	id("org.quiltmc.loom")
 	// FIXME: This convention plugin is just broken
 	// id("org.quiltmc.gradle-conventions.java.style")
-	id("com.diffplug.spotless")
 	id("org.quiltmc.gradle-conventions.java.version")
 	id("qsl.common")
-}
-
-spotless {
-	java {
-		// UPDATING: This needs to be changed when a new branch is created.
-		// This has been disabled for now due to spotless failing builds always because of something something no remote found in new folders.
-		// ratchetFrom("origin/1.17.1")
-		licenseHeaderFile(rootProject.file("codeformat/HEADER")).yearSeparator(", ")
-	}
 }
 
 def extension = project.extensions.create("qslModule", QslModuleExtension, project)
@@ -93,19 +83,9 @@ loom {
 	}
 }
 
-jar {
-	archiveClassifier.set("dev")
-}
-
 afterEvaluate {
-	remapJar {
-		input = file("$buildDir/libs/$archivesBaseName-$version-dev.jar")
-		// Clarifying {} required since groovy thinks I am referring to a property called `jar` on version
-		archiveFileName = "$archivesBaseName-${version}.jar"
-	}
-
 	artifacts {
-		dev file: file("$buildDir/libs/$archivesBaseName-$version-dev.jar"), type: "jar", builtBy: jar
+		dev file: file("$buildDir/devlibs/$archivesBaseName-$version-dev.jar"), type: "jar", builtBy: jar
 	}
 
 	// This is inside the afterEvaluate block because the version is set by the qslModule extension, which is not
@@ -120,13 +100,16 @@ afterEvaluate {
 }
 
 java {
+	sourceCompatibility = JavaVersion.toVersion(Versions.JAVA_VERSION)
+	targetCompatibility = JavaVersion.toVersion(Versions.JAVA_VERSION)
+
 	withJavadocJar()
 	withSourcesJar()
 }
 
 javadoc {
 	options {
-		source = "16"
+		source = String.valueOf(Versions.JAVA_VERSION)
 		encoding = "UTF-8"
 		charSet = "UTF-8"
 		memberLevel = JavadocMemberLevel.PACKAGE
@@ -190,16 +173,10 @@ publishing {
 
 		if (publish) {
 			mavenJava(MavenPublication) {
+				from components.java
+
 				pom.withXml {
 					asNode().appendNode("properties").appendNode("hash", Git.getLatestCommitHash(project))
-				}
-
-				artifact(remapJar) {
-					builtBy remapJar
-				}
-
-				artifact(sourcesJar) {
-					builtBy remapSourcesJar
 				}
 			}
 		}

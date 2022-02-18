@@ -1,0 +1,14 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "crash_info"
+	version = "1.0.0"
+	library = "core"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+		}
+	}
+}

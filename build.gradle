@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "org.quiltmc.qsl"
-version = Versions.QSL_VERSION + (System.getenv("SNAPSHOTS_URL") ? "-SNAPSHOT" : "")
+version = Versions.QSL_VERSION + "+" + Versions.getMinecraftVersionFancyString() + (System.getenv("SNAPSHOTS_URL") ? "-SNAPSHOT" : "")
 
 sourceSets {
 	testmod {
@@ -17,6 +17,10 @@ sourceSets {
 
 // The root project simply just publishes all artifacts.
 // For that reason, do not generate a remapped jar.
+prepareRemapJar {
+	enabled = false
+}
+
 remapJar {
 	enabled = false
 }
@@ -45,11 +49,13 @@ publishing {
 	}
 }
 
+loom.disableDeprecatedPomGeneration(publishing.publications.mavenJava)
+
 // Because we rely on the results of our libraries, we use afterEvaluate to setup the sourcesets and testmod tasks.
 afterEvaluate {
 	// Add sourceSet dependencies on all libraries
 	// Make this project include the compileClasspath and runtimeClasspath of the libraries.
-	subprojects.stream().filter {it.path.count(":") == 1 }.each {
+	subprojects.stream().filter { it.path.count(":") == 1 }.each {
 		project.sourceSets.main.compileClasspath += it.sourceSets.main.compileClasspath
 		project.sourceSets.main.runtimeClasspath += it.sourceSets.main.runtimeClasspath
 		project.sourceSets.testmod.compileClasspath += it.sourceSets.testmod.compileClasspath
@@ -78,7 +84,7 @@ loom {
 			server()
 			configName = "Auto test server"
 			source(project.sourceSets.testmod)
-			property("quilt.autoTest")
+			property("quilt.auto_test")
 			programArg("--nogui")
 		}
 	}

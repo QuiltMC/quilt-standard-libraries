@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:diamond_block",
+    "minecraft:moss_block",
+    "minecraft:azalea",
+    "minecraft:flowering_azalea"
+  ]
+}
