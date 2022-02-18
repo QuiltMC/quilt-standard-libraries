@@ -30,8 +30,9 @@ public enum TagType {
 	 * Represents a tag type which is similar to the default one,
 	 * but the client provides a fallback if the server doesn't have the relevant tag.
 	 * <p>
-	 * If two tags with the same identifier are registered, one with this type and the other one with another,
-	 * they may not have the same content as the fallback content will only be added to the one with this type.
+	 * A {@link net.minecraft.tag.TagKey} with this type will be considered different from
+	 * a {@link net.minecraft.tag.TagKey} with the type {@link #NORMAL} even if they both share the same identifier,
+	 * which means both keys won't link to the same tag content, fallback tag content will not leak into normal tags.
 	 */
 	CLIENT_FALLBACK,
 	/**
@@ -40,8 +41,9 @@ public enum TagType {
 	 * <p>
 	 * Those tags are not present on the server, thus no syncing will happen.
 	 * <p>
-	 * Tags registered with this type are entirely separated from other tags, thus if two tags with the same identifier,
-	 * one with this type and the other with another, they may not have the same content.
+	 * A {@link net.minecraft.tag.TagKey} with this type will be considered entirely different from
+	 * a {@link net.minecraft.tag.TagKey} with any of the other types even if they both share the same identifier,
+	 * which means both keys won't link to the same tag content, client tag content will not leak into other tags, and vice-versa.
 	 */
 	CLIENT_ONLY;
 
