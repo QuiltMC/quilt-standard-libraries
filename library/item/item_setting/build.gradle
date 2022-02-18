@@ -6,11 +6,10 @@ qslModule {
 	moduleName = "item_setting"
 	version = "1.0.0"
 	library = "item"
-	coreDependencies([
-			"qsl_base"
-	])
-
-	coreTestmodDependencies([
-	        "resource_loader"
-	])
+	moduleDependencies {
+		core {
+			api("qsl_base")
+			testmodOnly("resource_loader")
+		}
+	}
 }
