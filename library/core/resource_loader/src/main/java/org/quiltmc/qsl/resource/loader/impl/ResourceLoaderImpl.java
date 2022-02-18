@@ -239,13 +239,13 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 			return;
 		}
 
-		Identifier metadataId = NamespaceResourceManagerAccessor.accessor_getMetadataPath(id);
+		Identifier metadataId = NamespaceResourceManagerAccessor.invokeGetMetadataPath(id);
 
 		for (var pack : packs) {
 			if (pack.contains(manager.getType(), id)) {
 				InputStream metadataInputStream = pack.contains(manager.getType(), metadataId)
-						? manager.accessor_open(metadataId, pack) : null;
-				resources.add(new ResourceImpl(pack.getName(), id, manager.accessor_open(id, pack), metadataInputStream));
+						? manager.invokeOpen(metadataId, pack) : null;
+				resources.add(new ResourceImpl(pack.getName(), id, manager.invokeOpen(id, pack), metadataInputStream));
 			}
 		}
 	}
