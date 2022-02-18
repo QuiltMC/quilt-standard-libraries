@@ -21,15 +21,15 @@ import net.minecraft.item.ItemStack;
 /**
  * An interface to implement for all custom bows in Quilt. <br>
  * This is meant to be used on a {@link net.minecraft.item.BowItem} class. Unless similar functionality is implemented on your custom item, most functionality will not work. <br>
- * In order to modify the projectile shot from your bow, implementing {@link ShotProjectileEvents.ModifyProjectileFromBow} and registering it is recommended.
+ * In order to modify the projectile shot from your bow, implementing and registering {@link ShotProjectileEvents.ModifyProjectileFromBow} is recommended.
  *
  * @see ExtendedBowItem
  */
 public interface BowExtensions {
 	/**
-	 * Returns the pull progress of the bow between 0 and 1.
+	 * Returns the draw progress of the bow between 0 and 1.
 	 *
-	 * @param useTicks the number of ticks the bow has been pulled.
+	 * @param useTicks the number of ticks the bow has been drawn.
 	 * @param bowStack the ItemStack for the bow
 	 * @return the progress of the pull from {@code 0.0f} to {@code 1.0f}.
 	 */

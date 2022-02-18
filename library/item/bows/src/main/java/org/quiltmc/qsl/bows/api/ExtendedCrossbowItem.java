@@ -25,7 +25,7 @@ import net.minecraft.item.ItemStack;
 
 /**
  * This is the default implementation for {@link CrossbowExtensions}, allowing for the easy creation of new crossbows with no new modded functionality. <br>
- * In order to have this crossbow edit the properties of the shot projectiles, you must call {@code ShotProjectileEvents.CROSSBOW_MODIFY_SHOT_PROJECTILE.register(this);} for it to call {@link ExtendedCrossbowItem#onProjectileShot(ItemStack, ItemStack, LivingEntity, PersistentProjectileEntity)}
+ * In order to have this crossbow edit the properties of shot projectiles, you must call {@code ShotProjectileEvents.CROSSBOW_MODIFY_SHOT_PROJECTILE.register(this);} for it to call {@link ExtendedCrossbowItem#onProjectileShot(ItemStack, ItemStack, LivingEntity, PersistentProjectileEntity)}
  */
 public class ExtendedCrossbowItem extends CrossbowItem implements CrossbowExtensions {
 	public ExtendedCrossbowItem(Settings settings) {

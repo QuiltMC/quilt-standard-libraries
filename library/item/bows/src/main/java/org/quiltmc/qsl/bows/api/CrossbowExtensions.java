@@ -28,7 +28,7 @@ import net.minecraft.item.Items;
 /**
  * An interface to implement for all custom crossbows in Quilt. <br>
  * This is meant to be used on a {@link net.minecraft.item.CrossbowItem} class. Unless similar functionality is implemented on your custom item, most functionality will not work. <br>
- * In order to modify the projectile shot from your crossbow, implementing {@link ShotProjectileEvents.ModifyProjectileFromCrossbow} and registering it is recommended.
+ * In order to modify the projectile shot from your crossbow, implementing and  registering {@link ShotProjectileEvents.ModifyProjectileFromCrossbow} is recommended.
  *
  * @see ExtendedCrossbowItem
  */
@@ -47,7 +47,7 @@ public interface CrossbowExtensions extends ShotProjectileEvents.ModifyProjectil
 	/**
 	 * Allows modifying the speed of the crossbow projectile. <br>
 	 * To get the projectile from the crossbow, call {@link CrossbowItem#hasProjectile(ItemStack, Item)} passing in {@code stack} and the {@link Item} for the projectile. <br>
-	 * The default implementation follows the vanilla values for the projectiles
+	 * The default implementation follows the vanilla values for projectiles
 	 *
 	 * @param stack  the ItemStack for the crossbow
 	 * @param entity the Entity shooting the crossbow
