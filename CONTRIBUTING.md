@@ -12,7 +12,7 @@ Note: members of the @quiltmc/quilt-standard-libraries team, technical leads, an
 For pull requests that add new APIs to QSL, defined as anything in a `$modulename.api` package or subfolders.
 
 **Required Approvals**: 2
-- At least 1 approval must come directly from each library team whos code the pull request modifies, or a QSL Core team member.
+- At least 1 approval must come directly from each library team whos code the pull request modifies.
 
 **Final Comment Period**: 7 days
 
@@ -21,8 +21,7 @@ For pull requests that add new APIs to QSL, defined as anything in a `$modulenam
 For pull requests that make internal refactors and do not change any API, such as bugfixes or buildscript changes.
 
 **Required Approvals**: 1
-- At least 1 approval must come directly from each library team whos code the pull request modifies, or a QSL Core team member.
-
+- At least 1 approval must come directly from each library team whos code the pull request modifies.
 **Final Comment Period**: 3 days
 
 ### `T: urgent`
@@ -39,6 +38,7 @@ For pull requests that must be merged quickly, like ports of critical core modul
 ### Other
 Trivial fixes that do not require review (e.g. typos) are exempt from this policy. QSL team members should double check with other members of the team on Discord before pushing a commit without going through this process.
 
+In the event that a QSL subteam has less than two active members, a QSL Core team member may waive the requirement for that team to review a PR.
 ## Naming conventions
 
 ### Use of the `$` character
