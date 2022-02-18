@@ -31,7 +31,7 @@ import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 public abstract class MinecraftClientMixin {
 	@Inject(
 			method = "<init>",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/SplashOverlay;init(Lnet/minecraft/client/MinecraftClient;)V")
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/GameOptions;<init>(Lnet/minecraft/client/MinecraftClient;Ljava/io/File;)V")
 	)
 	private void onInit(RunArgs runArgs, CallbackInfo ci) {
 		for (var initializer : FabricLoader.getInstance().getEntrypointContainers(ClientModInitializer.ENTRYPOINT_KEY, ClientModInitializer.class)) {

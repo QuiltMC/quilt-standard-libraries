@@ -27,7 +27,7 @@ import net.fabricmc.loader.api.ModContainer;
  * In {@code fabric.mod.json}, the entrypoint is defined with {@value #ENTRYPOINT_KEY} key.
  * <p>
  * Currently executed in the {@link net.minecraft.client.MinecraftClient} constructor, just before the initialization of
- * the splash screen overlay.
+ * the {@link net.minecraft.client.option.GameOptions}.
  *
  * @see org.quiltmc.qsl.base.api.entrypoint.ModInitializer
  * @see org.quiltmc.qsl.base.api.entrypoint.server.DedicatedServerModInitializer

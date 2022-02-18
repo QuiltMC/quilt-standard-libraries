@@ -22,7 +22,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.KeybindText;
+import net.minecraft.text.KeyBindText;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -35,20 +35,20 @@ import org.quiltmc.qsl.networking.test.NetworkingTestMods;
 
 // Listens for a packet from the client which is sent to the server when a keybinding is pressed.
 // In response the server will send a message containing the keybind text letting the client know it pressed that key.
-public final class NetworkingKeybindPacketTest implements ModInitializer {
+public final class NetworkingKeyBindPacketTest implements ModInitializer {
 	public static final Identifier KEYBINDING_PACKET_ID = NetworkingTestMods.id("keybind_press_test");
 
 	private static void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
 		// TODO: Can we send chat off the server thread?
 		server.execute(() -> {
-			player.sendMessage(new LiteralText("You pressed ").append(new KeybindText("quilt_networking_keybind_testmod").styled(style -> style.withFormatting(Formatting.BLUE))), false);
+			player.sendMessage(new LiteralText("You pressed ").append(new KeyBindText("quilt_networking_keybind_testmod").styled(style -> style.withFormatting(Formatting.BLUE))), false);
 		});
 	}
 
 	@Override
 	public void onInitialize(ModContainer mod) {
 		ServerPlayConnectionEvents.INIT.register((handler, server) -> {
-			ServerPlayNetworking.registerReceiver(handler, KEYBINDING_PACKET_ID, NetworkingKeybindPacketTest::receive);
+			ServerPlayNetworking.registerReceiver(handler, KEYBINDING_PACKET_ID, NetworkingKeyBindPacketTest::receive);
 		});
 	}
 }
