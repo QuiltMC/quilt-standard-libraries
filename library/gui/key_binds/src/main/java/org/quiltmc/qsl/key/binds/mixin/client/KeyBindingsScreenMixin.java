@@ -28,9 +28,9 @@ import net.fabricmc.api.Environment;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.GameOptionsScreen;
-import net.minecraft.client.gui.screen.option.KeyBindingsScreen;
-import net.minecraft.client.gui.widget.option.KeyBindingListWidget;
-import net.minecraft.client.gui.widget.option.KeyBindingListWidget.KeyBindingEntry;
+import net.minecraft.client.gui.screen.option.KeyBindsScreen;
+import net.minecraft.client.gui.widget.option.KeyBindListWidget;
+import net.minecraft.client.gui.widget.option.KeyBindListWidget.KeyBindEntry;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -38,10 +38,10 @@ import net.minecraft.text.Text;
 import org.quiltmc.qsl.key.binds.impl.ConflictTooltipOwner;
 
 @Environment(EnvType.CLIENT)
-@Mixin(KeyBindingsScreen.class)
+@Mixin(KeyBindsScreen.class)
 public abstract class KeyBindingsScreenMixin extends GameOptionsScreen {
 	@Shadow
-	private KeyBindingListWidget keybindsList;
+	private KeyBindListWidget keybindsList;
 
 	private KeyBindingsScreenMixin(Screen screen, GameOptions gameOptions, Text text) {
 		super(screen, gameOptions, text);
@@ -51,8 +51,8 @@ public abstract class KeyBindingsScreenMixin extends GameOptionsScreen {
 	@Inject(method = "render", at = @At("TAIL"))
 	private void renderConflictTooltips(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 		// TODO - Somehow extend the hover area to include the label too
-		KeyBindingListWidget.Entry entry = ((EntryListWidgetAccessor<KeyBindingListWidget.Entry>) this.keybindsList).invokeGetHoveredEntry();
-		if (entry != null && entry instanceof KeyBindingEntry keyBindEntry) {
+		KeyBindListWidget.Entry entry = ((EntryListWidgetAccessor<KeyBindListWidget.Entry>) this.keybindsList).invokeGetHoveredEntry();
+		if (entry != null && entry instanceof KeyBindEntry keyBindEntry) {
 			List<Text> tooltipLines = ((ConflictTooltipOwner) keyBindEntry).getConflictTooltips();
 			this.renderTooltip(matrices, tooltipLines, mouseX, mouseY);
 		}

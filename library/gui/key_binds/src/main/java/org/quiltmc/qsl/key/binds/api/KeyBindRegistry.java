@@ -18,14 +18,14 @@ package org.quiltmc.qsl.key.binds.api;
 
 import java.util.Map;
 
-import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
-import org.quiltmc.qsl.key.binds.mixin.client.KeyBindingAccessor;
-
+import com.mojang.blaze3d.platform.InputUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.option.KeyBind;
+
+import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
+import org.quiltmc.qsl.key.binds.mixin.client.KeyBindingAccessor;
 
 /**
  * Handles the registration of modded key binds and allows for changing their properties,
@@ -51,7 +51,7 @@ public class KeyBindRegistry {
 	 * @throws NullPointerException if {@code key} is null
 	 * @throws IllegalArgumentException if either {@code key} or it's translation key is already registered
 	 */
-	public static KeyBinding registerKeyBind(KeyBinding key) {
+	public static KeyBind registerKeyBind(KeyBind key) {
 		return registerKeyBind(key, true);
 	}
 
@@ -64,7 +64,7 @@ public class KeyBindRegistry {
 	 * @throws NullPointerException if {@code key} is null
 	 * @throws IllegalArgumentException if either {@code key} or it's translation key is already registered
 	 */
-	public static KeyBinding registerKeyBind(KeyBinding key, boolean enabled) {
+	public static KeyBind registerKeyBind(KeyBind key, boolean enabled) {
 		return KeyBindRegistryImpl.registerKeyBind(key, enabled);
 	}
 
@@ -74,7 +74,7 @@ public class KeyBindRegistry {
 	 * @param translationKey the key bind's translation key
 	 * @return the key bind if found, {@code null} otherwise
 	 */
-	public static KeyBinding getKeyBind(String translationKey) {
+	public static KeyBind getKeyBind(String translationKey) {
 		return KeyBindRegistryImpl.getKeyBind(translationKey);
 	}
 
@@ -87,7 +87,7 @@ public class KeyBindRegistry {
 	 * @param key the key bind
 	 * @return the key bind's bound key
 	 */
-	public static InputUtil.Key getBoundKey(KeyBinding key) {
+	public static InputUtil.Key getBoundKey(KeyBind key) {
 		return ((KeyBindingAccessor) key).getBoundKey();
 	}
 
@@ -104,7 +104,7 @@ public class KeyBindRegistry {
 	 * @return {@code true} if the key bind is enabled, {@code false} otherwise
 	 * @throws IllegalArgumentException if {@code key} is either unregistered or a Vanilla key bind
 	 */
-	public static boolean isEnabled(KeyBinding key) {
+	public static boolean isEnabled(KeyBind key) {
 		return KeyBindRegistryImpl.isEnabled(key);
 	}
 
@@ -119,7 +119,7 @@ public class KeyBindRegistry {
 	 * @param enabled the new state
 	 * @throws IllegalArgumentException if {@code key} is either unregistered or a Vanilla key bind
 	 */
-	public static void setEnabled(KeyBinding key, boolean enabled) {
+	public static void setEnabled(KeyBind key, boolean enabled) {
 		KeyBindRegistryImpl.setEnabled(key, enabled);
 	}
 
@@ -129,7 +129,7 @@ public class KeyBindRegistry {
 	 * @param includeVanilla {@code true} if vanilla entries should be included, else {@code false}
 	 * @return a map containing all modded (and optionally vanilla) key binds
 	 */
-	public static Map<KeyBinding, Boolean> getAllKeyBinds(boolean includeVanilla) {
+	public static Map<KeyBind, Boolean> getAllKeyBinds(boolean includeVanilla) {
 		return KeyBindRegistryImpl.getAllKeyBinds(includeVanilla);
 	}
 }

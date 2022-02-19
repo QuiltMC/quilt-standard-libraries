@@ -22,7 +22,7 @@ import net.fabricmc.api.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.option.KeyBind;
 
 import org.quiltmc.qsl.key.binds.api.KeyBindRegistry;
 import org.quiltmc.qsl.lifecycle.api.client.event.ClientLifecycleEvents;
@@ -35,7 +35,7 @@ public class KeyBindRegistryTestMod implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		ClientLifecycleEvents.READY.register(lifecycleClient -> {
-			KeyBinding enableKeyBindKey = KeyBindRegistry.getKeyBind("key.qsl.enable_key_bind");
+			KeyBind enableKeyBindKey = KeyBindRegistry.getKeyBind("key.qsl.enable_key_bind");
 
 			if (enableKeyBindKey != null) {
 				LOGGER.info("Successfully got the \"Enable Key Bind\" key!");

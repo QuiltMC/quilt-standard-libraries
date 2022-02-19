@@ -18,6 +18,7 @@ package org.quiltmc.qsl.key.binds.mixin.client;
 
 import java.io.File;
 
+import com.mojang.blaze3d.platform.InputUtil;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -30,8 +31,7 @@ import net.fabricmc.api.Environment;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.option.KeyBind;
 
 import org.quiltmc.qsl.key.binds.impl.KeyBindManager;
 import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
@@ -42,7 +42,7 @@ public abstract class GameOptionsMixin {
 	@Shadow
 	@Mutable
 	@Final
-	public KeyBinding[] allKeys;
+	public KeyBind[] allKeys;
 
 	@Shadow
 	@Final
@@ -70,8 +70,8 @@ public abstract class GameOptionsMixin {
 			method = "accept(Lnet/minecraft/client/option/GameOptions$Visitor;)V"
 	)
 	private void includeDisabledEntries(GameOptions.Visitor visitor, CallbackInfo ci) {
-		for (KeyBinding keyBind : KeyBindRegistryImpl.getDisabledKeyBinds()) {
-			String keyTranslationKey = keyBind.getBoundKeyTranslationKey();
+		for (KeyBind keyBind : KeyBindRegistryImpl.getDisabledKeyBinds()) {
+			String keyTranslationKey = keyBind.getKeyTranslationKey();
 			String keyBindTranslationKey = visitor.visitString("key_" + keyBind.getTranslationKey(), keyTranslationKey);
 			if (!keyTranslationKey.equals(keyBindTranslationKey)) {
 				keyBind.setBoundKey(InputUtil.fromTranslationKey(keyTranslationKey));
