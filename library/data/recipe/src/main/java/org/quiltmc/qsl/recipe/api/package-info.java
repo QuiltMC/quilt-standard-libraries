@@ -22,6 +22,6 @@
  *     <li>Dynamic recipe registration, in the case the recipes cannot be determined at compile-time.</li>
  *     <li>Modification and removal of recipes.</li>
  * </ul>
- * This API is <b>NOT</b> supposed to be used for static data-generation, please use the appropriate tools instead.
+ * This API is <b>NOT</b> supposed to be used for known at compile-time data-generation, please use the appropriate tools instead.
  */
 package org.quiltmc.qsl.recipe.api;
