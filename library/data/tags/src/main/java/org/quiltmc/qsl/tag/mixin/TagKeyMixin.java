@@ -101,6 +101,7 @@ public class TagKeyMixin<T> implements QuiltTagKey<T>, QuiltTagKeyHooks {
 	)
 	private static Interner<TagKey<?>> onNewStrongInterner() {
 		// This is to avoid a memory leak.
+		// @TODO Remove once https://bugs.mojang.com/browse/MC-248621 is fixed.
 		return Interners.newWeakInterner();
 	}
 }

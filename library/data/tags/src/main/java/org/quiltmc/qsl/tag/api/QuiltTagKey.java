@@ -30,6 +30,7 @@ import org.quiltmc.qsl.tag.mixin.TagKeyAccessor;
  * @param <T> the type of the values held by the tag
  * @see #create(RegistryKey, Identifier, TagType)
  */
+// @TODO Use loom interface injection once https://github.com/FabricMC/fabric-loom/issues/595 is fixed.
 public interface QuiltTagKey<T> {
 	/**
 	 * {@return the type of tag of this key}
