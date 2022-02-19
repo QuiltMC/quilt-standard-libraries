@@ -1,0 +1,21 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "recipe"
+	version = "1.0.0"
+	library = "data"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+			api("resource_loader")
+			testmodOnly("qsl_base")
+			testmodOnly("lifecycle_events")
+		}
+	}
+}
+
+loom {
+	accessWidenerPath = file("src/main/resources/quilt_recipe.accesswidener")
+}

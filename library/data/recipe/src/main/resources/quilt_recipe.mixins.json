@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.recipe.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "CookingRecipeSerializerMixin",
+    "CuttingRecipeSerializerMixin",
+    "RecipeManagerMixin",
+    "ShapedRecipeSerializerMixin",
+    "ShapelessRecipeSerializerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
