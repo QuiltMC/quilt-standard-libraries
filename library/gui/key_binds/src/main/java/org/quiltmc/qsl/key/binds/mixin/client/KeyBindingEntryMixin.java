@@ -19,6 +19,7 @@ package org.quiltmc.qsl.key.binds.mixin.client;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mojang.blaze3d.platform.InputUtil;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -32,10 +33,9 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.option.KeyBindingListWidget;
-import net.minecraft.client.gui.widget.option.KeyBindingListWidget.KeyBindingEntry;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.gui.widget.option.KeyBindListWidget;
+import net.minecraft.client.gui.widget.option.KeyBindListWidget.KeyBindEntry;
+import net.minecraft.client.option.KeyBind;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -46,11 +46,11 @@ import org.quiltmc.qsl.key.binds.impl.ConflictTooltipOwner;
 import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
 
 @Environment(EnvType.CLIENT)
-@Mixin(KeyBindingEntry.class)
-public abstract class KeyBindingEntryMixin extends KeyBindingListWidget.Entry implements ConflictTooltipOwner {
+@Mixin(KeyBindEntry.class)
+public abstract class KeyBindingEntryMixin extends KeyBindListWidget.Entry implements ConflictTooltipOwner {
 	@Shadow
 	@Final
-	private KeyBinding binding;
+	private KeyBind binding;
 
 	@Shadow
 	@Final
@@ -67,10 +67,10 @@ public abstract class KeyBindingEntryMixin extends KeyBindingListWidget.Entry im
 
 	@Shadow(aliases = "field_2742", remap = false)
 	@Final
-	KeyBindingListWidget field_2742;
+	KeyBindListWidget field_2742;
 
 	@Inject(method = "<init>", at = @At("TAIL"))
-	private void initPreviousBoundKey(KeyBindingListWidget list, KeyBinding keyBinding, Text text, CallbackInfo ci) {
+	private void initPreviousBoundKey(KeyBindListWidget list, KeyBind keyBinding, Text text, CallbackInfo ci) {
 		this.quilt$previousBoundKey = null;
 		quilt$changedBoundKey = null;
 	}
@@ -96,7 +96,7 @@ public abstract class KeyBindingEntryMixin extends KeyBindingListWidget.Entry im
 			}
 
 			if (!this.binding.isUnbound()) {
-				for (KeyBinding keyBind : KeyBindRegistryImpl.getKeyBinds()) {
+				for (KeyBind keyBind : KeyBindRegistryImpl.getKeyBinds()) {
 					if (keyBind != this.binding && this.binding.equals(keyBind)) {
 						if (this.quilt$conflictTooltips.isEmpty()) {
 							this.quilt$conflictTooltips.add(new TranslatableText("key.qsl.key_conflict.tooltip").formatted(Formatting.RED));

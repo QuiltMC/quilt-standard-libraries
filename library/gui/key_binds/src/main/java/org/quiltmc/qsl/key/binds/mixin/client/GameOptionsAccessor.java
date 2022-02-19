@@ -23,15 +23,15 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.option.KeyBind;
 
 @Environment(EnvType.CLIENT)
 @Mixin(GameOptions.class)
 public interface GameOptionsAccessor {
 	@Accessor
-	KeyBinding[] getAllKeys();
+	KeyBind[] getAllKeys();
 
 	@Mutable
 	@Accessor
-	void setAllKeys(KeyBinding[] allKeys);
+	void setAllKeys(KeyBind[] allKeys);
 }

@@ -21,7 +21,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.option.KeyBind;
 import net.minecraft.text.LiteralText;
 
 import org.quiltmc.qsl.key.binds.api.KeyBindRegistry;
@@ -32,20 +32,20 @@ public class KeyBindsTestMod implements ClientModInitializer {
 	public static final String KEY_CATEGORY = "key.qsl.category";
 
 	// A conflicting key test
-	public static final KeyBinding CONFLICT_TEST_KEY_BIND = KeyBindRegistry.registerKeyBind(
-		new KeyBinding("key.qsl.conflict_test", GLFW.GLFW_KEY_H, KEY_CATEGORY)
+	public static final KeyBind CONFLICT_TEST_KEY_BIND = KeyBindRegistry.registerKeyBind(
+		new KeyBind("key.qsl.conflict_test", GLFW.GLFW_KEY_H, KEY_CATEGORY)
 	);
 
-	public static final KeyBinding DISABLE_KEY_BIND = KeyBindRegistry.registerKeyBind(
-		new KeyBinding("key.qsl.disable_key_bind", GLFW.GLFW_KEY_H, KEY_CATEGORY), true
+	public static final KeyBind DISABLE_KEY_BIND = KeyBindRegistry.registerKeyBind(
+		new KeyBind("key.qsl.disable_key_bind", GLFW.GLFW_KEY_H, KEY_CATEGORY), true
 	);
 
-	public static final KeyBinding ENABLE_KEY_BIND = KeyBindRegistry.registerKeyBind(
-		new KeyBinding("key.qsl.enable_key_bind", GLFW.GLFW_KEY_I, KEY_CATEGORY), true
+	public static final KeyBind ENABLE_KEY_BIND = KeyBindRegistry.registerKeyBind(
+		new KeyBind("key.qsl.enable_key_bind", GLFW.GLFW_KEY_I, KEY_CATEGORY), true
 	);
 
-	public static final KeyBinding DISABLED_CONFLICT_TEST_KEY_BIND = KeyBindRegistry.registerKeyBind(
-		new KeyBinding("key.qsl.disabled_conflict_test", GLFW.GLFW_KEY_H, KEY_CATEGORY), false
+	public static final KeyBind DISABLED_CONFLICT_TEST_KEY_BIND = KeyBindRegistry.registerKeyBind(
+		new KeyBind("key.qsl.disabled_conflict_test", GLFW.GLFW_KEY_H, KEY_CATEGORY), false
 	);
 
 	@Override

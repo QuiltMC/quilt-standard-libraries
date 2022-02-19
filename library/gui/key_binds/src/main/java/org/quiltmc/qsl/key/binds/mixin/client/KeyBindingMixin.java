@@ -18,6 +18,7 @@ package org.quiltmc.qsl.key.binds.mixin.client;
 
 import java.util.Map;
 
+import com.mojang.blaze3d.platform.InputUtil;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -28,11 +29,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.option.KeyBind;
 
 @Environment(EnvType.CLIENT)
-@Mixin(KeyBinding.class)
+@Mixin(KeyBind.class)
 public abstract class KeyBindingMixin {
 	@Shadow
 	@Mutable
