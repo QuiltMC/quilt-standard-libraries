@@ -22,6 +22,8 @@ import net.fabricmc.loader.api.ModContainer;
  * A mod initializer which is run only on {@link net.fabricmc.api.EnvType#SERVER}.
  * <p>
  * In {@code fabric.mod.json}, the entrypoint is defined with {@value #ENTRYPOINT_KEY} key.
+ * <p>
+ * Currently executed in {@link net.minecraft.server.Main#main(String[])}, just after the EULA has been agreed to.
  *
  * @see org.quiltmc.qsl.base.api.entrypoint.ModInitializer
  * @see org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer

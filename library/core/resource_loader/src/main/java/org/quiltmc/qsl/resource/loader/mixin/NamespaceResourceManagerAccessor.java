@@ -30,14 +30,14 @@ import net.minecraft.util.Identifier;
 
 @Mixin(NamespaceResourceManager.class)
 public interface NamespaceResourceManagerAccessor {
-	@Accessor("type")
+	@Accessor
 	ResourceType getType();
 
-	@Invoker("open")
-	InputStream accessor_open(Identifier id, ResourcePack pack) throws IOException;
+	@Invoker
+	InputStream invokeOpen(Identifier id, ResourcePack pack) throws IOException;
 
-	@Invoker("getMetadataPath")
-	static Identifier accessor_getMetadataPath(Identifier id) {
+	@Invoker
+	static Identifier invokeGetMetadataPath(Identifier id) {
 		throw new IllegalStateException("Invoker injection failed.");
 	}
 }

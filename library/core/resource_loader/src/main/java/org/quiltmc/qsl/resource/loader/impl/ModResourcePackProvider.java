@@ -24,17 +24,12 @@ import org.jetbrains.annotations.ApiStatus;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePackProfile;
 import net.minecraft.resource.pack.ResourcePackProvider;
-import net.minecraft.resource.pack.ResourcePackSource;
 
 /**
  * Represents a resource pack provider for built-in mods resource packs and low-priority virtual resource packs.
  */
 @ApiStatus.Internal
 public final class ModResourcePackProvider implements ResourcePackProvider {
-	/**
-	 * Equivalent to {@link ResourcePackSource#PACK_SOURCE_BUILTIN} but allows a different reference equality.
-	 */
-	public static final ResourcePackSource PACK_SOURCE_MOD_BUILTIN = ResourcePackSource.nameAndSource("pack.source.builtin");
 	public static final ModResourcePackProvider CLIENT_RESOURCE_PACK_PROVIDER = new ModResourcePackProvider(ResourceType.CLIENT_RESOURCES);
 	public static final ModResourcePackProvider SERVER_RESOURCE_PACK_PROVIDER = new ModResourcePackProvider(ResourceType.SERVER_DATA);
 
@@ -69,6 +64,6 @@ public final class ModResourcePackProvider implements ResourcePackProvider {
 			5. (Invisible) High-priority virtual resource packs
 		 */
 
-		ResourceLoaderImpl.registerBuiltinResourcePacks(this.type, profileAdder, factory);
+		ResourceLoaderImpl.registerBuiltinResourcePacks(this.type, profileAdder);
 	}
 }

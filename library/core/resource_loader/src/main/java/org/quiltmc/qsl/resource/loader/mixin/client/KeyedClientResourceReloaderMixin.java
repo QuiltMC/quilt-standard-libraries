@@ -52,7 +52,7 @@ public abstract class KeyedClientResourceReloaderMixin implements IdentifiableRe
 	private Collection<Identifier> quilt$dependencies;
 
 	@Override
-	@SuppressWarnings({"ConstantConditions", "RedundantCast"})
+	@SuppressWarnings({"ConstantConditions"})
 	public Identifier getQuiltId() {
 		if (this.quilt$id == null) {
 			Object self = this;
@@ -74,7 +74,7 @@ public abstract class KeyedClientResourceReloaderMixin implements IdentifiableRe
 	}
 
 	@Override
-	@SuppressWarnings({"ConstantConditions", "RedundantCast"})
+	@SuppressWarnings({"ConstantConditions"})
 	public Collection<Identifier> getQuiltDependencies() {
 		if (this.quilt$dependencies == null) {
 			Object self = this;

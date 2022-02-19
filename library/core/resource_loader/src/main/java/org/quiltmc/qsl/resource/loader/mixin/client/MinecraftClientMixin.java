@@ -34,10 +34,10 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.class_6904;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
 import net.minecraft.resource.ReloadableResourceManager;
+import net.minecraft.server.WorldStem;
 import net.minecraft.world.level.storage.LevelStorage;
 
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
@@ -105,20 +105,20 @@ public class MinecraftClientMixin {
 			method = START_INTEGRATED_SERVER_METHOD,
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/MinecraftClient;method_40183(Lnet/minecraft/resource/pack/ResourcePackManager;ZLnet/minecraft/class_6904$class_6905;Lnet/minecraft/class_6904$class_6907;)Lnet/minecraft/class_6904;"
+					target = "Lnet/minecraft/client/MinecraftClient;method_40183(Lnet/minecraft/resource/pack/ResourcePackManager;ZLnet/minecraft/server/WorldStem$Supplier;Lnet/minecraft/server/WorldStem$WorldDataSupplier;)Lnet/minecraft/server/WorldStem;"
 			)
 	)
 	private void onStartDataPackReloading(String worldName,
-										  Function<LevelStorage.Session, class_6904.class_6905> dataPackSettingsGetter,
-										  Function<LevelStorage.Session, class_6904.class_6907> function,
-										  boolean safeMode, @Coerce Object worldLoadAction,
-										  CallbackInfo ci) {
+	                                      Function<LevelStorage.Session, WorldStem.Supplier> dataPackSettingsGetter,
+	                                      Function<LevelStorage.Session, WorldStem.WorldDataSupplier> worldDataGetter,
+	                                      boolean safeMode, @Coerce Object worldLoadAction,
+	                                      CallbackInfo ci) {
 		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null);
 	}
 
 	@ModifyVariable(method = START_INTEGRATED_SERVER_METHOD, at = @At(value = "STORE", ordinal = 0))
-	private class_6904 onSuccessfulDataPackReloading(class_6904 resources) {
-		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resources.comp_356(), null);
+	private WorldStem onSuccessfulDataPackReloading(WorldStem resources) {
+		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resources.resourceManager(), null);
 		return resources; // noop
 	}
 
