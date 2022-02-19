@@ -207,7 +207,7 @@ public final class RecipeManagerImpl {
 
 			if (type == null) {
 				throw new IllegalStateException("The given recipe " + recipe.getId()
-						+ " do not have its recipe type " + recipe.getType() + " in the recipe manager.");
+						+ " does not have its recipe type " + recipe.getType() + " in the recipe manager.");
 			}
 
 			type.put(recipe.getId(), recipe);
