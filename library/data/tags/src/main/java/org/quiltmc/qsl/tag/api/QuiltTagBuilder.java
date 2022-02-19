@@ -27,7 +27,7 @@ import org.quiltmc.qsl.base.api.util.InjectedInterface;
 @InjectedInterface(Tag.Builder.class)
 public interface QuiltTagBuilder {
 	/**
-	 * Clears the contained entries and mark the tag as replaced.
+	 * Clears the contained entries and marks the tag as replaced.
 	 *
 	 * @return this builder
 	 */
