@@ -6,10 +6,10 @@
     "client.EntryListWidgetAccessor",
     "client.GameOptionsAccessor",
     "client.GameOptionsMixin",
-    "client.KeyBindingAccessor",
-    "client.KeyBindingEntryMixin",
-    "client.KeyBindingMixin",
-    "client.KeyBindingsScreenMixin"
+    "client.KeyBindAccessor",
+    "client.KeyBindEntryMixin",
+    "client.KeyBindMixin",
+    "client.KeyBindsScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

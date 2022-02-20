@@ -32,7 +32,7 @@ import net.fabricmc.api.Environment;
 
 import net.minecraft.client.option.KeyBind;
 
-import org.quiltmc.qsl.key.binds.mixin.client.KeyBindingAccessor;
+import org.quiltmc.qsl.key.binds.mixin.client.KeyBindAccessor;
 
 @Environment(EnvType.CLIENT)
 @ApiStatus.Internal
@@ -58,7 +58,7 @@ public class KeyBindRegistryImpl {
 		quiltKeys.put(key, enabled);
 		applyChanges();
 		if (!enabled) {
-			KeyBindingAccessor.getKeysById().remove(key.getTranslationKey());
+			KeyBindAccessor.getKeyBinds().remove(key.getTranslationKey());
 		}
 
 		return key;
@@ -96,12 +96,12 @@ public class KeyBindRegistryImpl {
 
 			applyChanges();
 			if (enabled) {
-				KeyBindingAccessor.getKeysById().put(key.getTranslationKey(), key);
+				KeyBindAccessor.getKeyBinds().put(key.getTranslationKey(), key);
 			} else {
-				KeyBindingAccessor.getKeysById().remove(key.getTranslationKey(), key);
+				KeyBindAccessor.getKeyBinds().remove(key.getTranslationKey(), key);
 			}
 
-			((KeyBindingAccessor) key).callReset();
+			((KeyBindAccessor) key).callReset();
 			KeyBind.updateBoundKeys();
 		} else {
 			throwUnregisteredKeyException(key);
