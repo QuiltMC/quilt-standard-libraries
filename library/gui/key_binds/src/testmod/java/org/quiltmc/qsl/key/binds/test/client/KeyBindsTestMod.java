@@ -17,10 +17,9 @@
 package org.quiltmc.qsl.key.binds.test.client;
 
 import org.lwjgl.glfw.GLFW;
-import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBind;
 import net.minecraft.text.LiteralText;
 
@@ -28,7 +27,7 @@ import org.quiltmc.qsl.key.binds.api.KeyBindRegistry;
 import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
 
 @Environment(EnvType.CLIENT)
-public class KeyBindsTestMod implements ClientModInitializer {
+public class KeyBindsTestMod implements ClientTickEvents.Start {
 	public static final String KEY_CATEGORY = "key.qsl.category";
 
 	// A conflicting key test
@@ -49,35 +48,33 @@ public class KeyBindsTestMod implements ClientModInitializer {
 	);
 
 	@Override
-	public void onInitializeClient() {
-		ClientTickEvents.START.register(client -> {
-			if (DISABLE_KEY_BIND.isPressed()) {
-				if (client.player != null) {
-					client.player.sendMessage(new LiteralText("The key has disappeared! Bye bye, key!"), true);
-				}
-
-				KeyBindRegistry.setEnabled(DISABLE_KEY_BIND, false);
+	public void startClientTick(MinecraftClient client) {
+		if (DISABLE_KEY_BIND.isPressed()) {
+			if (client.player != null) {
+				client.player.sendMessage(new LiteralText("The key has disappeared! Bye bye, key!"), true);
 			}
 
-			if (ENABLE_KEY_BIND.isPressed()) {
-				if (client.player != null) {
-					client.player.sendMessage(new LiteralText("The key is back!"), true);
-				}
+			KeyBindRegistry.setEnabled(DISABLE_KEY_BIND, false);
+		}
 
-				KeyBindRegistry.setEnabled(DISABLE_KEY_BIND, true);
+		if (ENABLE_KEY_BIND.isPressed()) {
+			if (client.player != null) {
+				client.player.sendMessage(new LiteralText("The key is back!"), true);
 			}
 
-			if (CONFLICT_TEST_KEY_BIND.isPressed()) {
-				if (client.player != null) {
-					client.player.sendMessage(new LiteralText("This is the conflict key being pressed"), false);
-				}
-			}
+			KeyBindRegistry.setEnabled(DISABLE_KEY_BIND, true);
+		}
 
-			if (DISABLED_CONFLICT_TEST_KEY_BIND.isPressed()) {
-				if (client.player != null) {
-					client.player.sendMessage(new LiteralText("I'm not supposed to do things! Why am I enabled?"), false);
-				}
+		if (CONFLICT_TEST_KEY_BIND.isPressed()) {
+			if (client.player != null) {
+				client.player.sendMessage(new LiteralText("This is the conflict key being pressed"), false);
 			}
-		});
+		}
+
+		if (DISABLED_CONFLICT_TEST_KEY_BIND.isPressed()) {
+			if (client.player != null) {
+				client.player.sendMessage(new LiteralText("I'm not supposed to do things! Why am I enabled?"), false);
+			}
+		}
 	}
 }

@@ -16,12 +16,14 @@
 
 package org.quiltmc.qsl.key.binds.test.client;
 
-import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.ModContainer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBind;
 
 import org.quiltmc.qsl.key.binds.api.KeyBindRegistry;
@@ -29,13 +31,12 @@ import org.quiltmc.qsl.lifecycle.api.client.event.ClientLifecycleEvents;
 import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
 
 @Environment(EnvType.CLIENT)
-public class KeyBindRegistryTestMod implements ClientModInitializer {
+public class KeyBindRegistryTestMod implements ClientLifecycleEvents.Ready {
 	public static final Logger LOGGER = LoggerFactory.getLogger("KeyBindRegistryTest");
 
 	@Override
-	public void onInitializeClient() {
-		ClientLifecycleEvents.READY.register(lifecycleClient -> {
-			KeyBind enableKeyBindKey = KeyBindRegistry.getKeyBind("key.qsl.enable_key_bind");
+	public void readyClient(MinecraftClient client) {
+		KeyBind enableKeyBindKey = KeyBindRegistry.getKeyBind("key.qsl.enable_key_bind");
 
 			if (enableKeyBindKey != null) {
 				LOGGER.info("Successfully got the \"Enable Key Bind\" key!");
@@ -51,6 +52,5 @@ public class KeyBindRegistryTestMod implements ClientModInitializer {
 			KeyBindRegistry.getAllKeyBinds(true).forEach((key, value) -> {
 				LOGGER.info(String.format("%s: %s", key.getTranslationKey(), value));
 			});
-		});
 	}
 }
