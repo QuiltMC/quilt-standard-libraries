@@ -33,16 +33,16 @@ import net.minecraft.client.option.KeyBind;
 
 @Environment(EnvType.CLIENT)
 @Mixin(KeyBind.class)
-public abstract class KeyBindingMixin {
+public abstract class KeyBindMixin {
 	@Shadow
 	@Mutable
 	@Final
-	private static Map<String, Integer> CATEGORY_ORDER_MAP;
+	private static Map<String, Integer> ORDER_BY_CATEGORIES;
 
-	@Inject(method = "<init>(Ljava/lang/String;Lnet/minecraft/client/util/InputUtil$Type;ILjava/lang/String;)V", at = @At("TAIL"))
+	@Inject(method = "<init>(Ljava/lang/String;Lcom/mojang/blaze3d/platform/InputUtil$Type;ILjava/lang/String;)V", at = @At("TAIL"))
 	private void addModdedCategory(String string, InputUtil.Type type, int i, String string2, CallbackInfo ci) {
-		if (!CATEGORY_ORDER_MAP.containsKey(string2)) {
-			CATEGORY_ORDER_MAP.put(string2, CATEGORY_ORDER_MAP.size() + 1);
+		if (!ORDER_BY_CATEGORIES.containsKey(string2)) {
+			ORDER_BY_CATEGORIES.put(string2, ORDER_BY_CATEGORIES.size() + 1);
 		}
 	}
 }

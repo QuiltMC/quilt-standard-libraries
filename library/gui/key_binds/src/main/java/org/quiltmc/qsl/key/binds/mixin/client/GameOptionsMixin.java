@@ -65,7 +65,7 @@ public abstract class GameOptionsMixin {
 	@Inject(
 			at = @At(
 				value = "FIELD",
-				target = "Lnet/minecraft/client/option/GameOptions;allKeys:[Lnet/minecraft/client/option/KeyBinding;"
+				target = "Lnet/minecraft/client/option/GameOptions;allKeys:[Lnet/minecraft/client/option/KeyBind;"
 			),
 			method = "accept(Lnet/minecraft/client/option/GameOptions$Visitor;)V"
 	)

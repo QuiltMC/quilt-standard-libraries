@@ -29,9 +29,9 @@ import net.minecraft.client.option.KeyBind;
 
 @Environment(EnvType.CLIENT)
 @Mixin(KeyBind.class)
-public interface KeyBindingAccessor {
-	@Accessor(value = "KEYS_BY_ID")
-	static Map<String, KeyBind> getKeysById() {
+public interface KeyBindAccessor {
+	@Accessor(value = "KEY_BINDS")
+	static Map<String, KeyBind> getKeyBinds() {
 		return null;
 	}
 

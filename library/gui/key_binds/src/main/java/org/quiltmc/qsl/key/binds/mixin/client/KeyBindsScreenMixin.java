@@ -39,11 +39,11 @@ import org.quiltmc.qsl.key.binds.impl.ConflictTooltipOwner;
 
 @Environment(EnvType.CLIENT)
 @Mixin(KeyBindsScreen.class)
-public abstract class KeyBindingsScreenMixin extends GameOptionsScreen {
+public abstract class KeyBindsScreenMixin extends GameOptionsScreen {
 	@Shadow
-	private KeyBindListWidget keybindsList;
+	private KeyBindListWidget keyBindList;
 
-	private KeyBindingsScreenMixin(Screen screen, GameOptions gameOptions, Text text) {
+	private KeyBindsScreenMixin(Screen screen, GameOptions gameOptions, Text text) {
 		super(screen, gameOptions, text);
 	}
 
@@ -51,7 +51,7 @@ public abstract class KeyBindingsScreenMixin extends GameOptionsScreen {
 	@Inject(method = "render", at = @At("TAIL"))
 	private void renderConflictTooltips(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 		// TODO - Somehow extend the hover area to include the label too
-		KeyBindListWidget.Entry entry = ((EntryListWidgetAccessor<KeyBindListWidget.Entry>) this.keybindsList).invokeGetHoveredEntry();
+		KeyBindListWidget.Entry entry = ((EntryListWidgetAccessor<KeyBindListWidget.Entry>) this.keyBindList).invokeGetHoveredEntry();
 		if (entry != null && entry instanceof KeyBindEntry keyBindEntry) {
 			List<Text> tooltipLines = ((ConflictTooltipOwner) keyBindEntry).getConflictTooltips();
 			this.renderTooltip(matrices, tooltipLines, mouseX, mouseY);

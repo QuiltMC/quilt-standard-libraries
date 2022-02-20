@@ -25,7 +25,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.option.KeyBind;
 
 import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
-import org.quiltmc.qsl.key.binds.mixin.client.KeyBindingAccessor;
+import org.quiltmc.qsl.key.binds.mixin.client.KeyBindAccessor;
 
 /**
  * Handles the registration of modded key binds and allows for changing their properties,
@@ -88,7 +88,7 @@ public class KeyBindRegistry {
 	 * @return the key bind's bound key
 	 */
 	public static InputUtil.Key getBoundKey(KeyBind key) {
-		return ((KeyBindingAccessor) key).getBoundKey();
+		return ((KeyBindAccessor) key).getBoundKey();
 	}
 
 	/**

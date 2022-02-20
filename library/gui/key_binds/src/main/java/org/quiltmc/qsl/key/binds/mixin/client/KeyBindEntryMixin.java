@@ -47,10 +47,10 @@ import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
 
 @Environment(EnvType.CLIENT)
 @Mixin(KeyBindEntry.class)
-public abstract class KeyBindingEntryMixin extends KeyBindListWidget.Entry implements ConflictTooltipOwner {
+public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implements ConflictTooltipOwner {
 	@Shadow
 	@Final
-	private KeyBind binding;
+	private KeyBind key;
 
 	@Shadow
 	@Final
@@ -70,7 +70,7 @@ public abstract class KeyBindingEntryMixin extends KeyBindListWidget.Entry imple
 	KeyBindListWidget field_2742;
 
 	@Inject(method = "<init>", at = @At("TAIL"))
-	private void initPreviousBoundKey(KeyBindListWidget list, KeyBind keyBinding, Text text, CallbackInfo ci) {
+	private void initPreviousBoundKey(KeyBindListWidget list, KeyBind key, Text text, CallbackInfo ci) {
 		this.quilt$previousBoundKey = null;
 		quilt$changedBoundKey = null;
 	}
@@ -79,12 +79,12 @@ public abstract class KeyBindingEntryMixin extends KeyBindListWidget.Entry imple
 			method = "render",
 			at = @At(
 				value = "INVOKE",
-				target = "Lnet/minecraft/client/option/KeyBinding;isUnbound()Z"
+				target = "Lnet/minecraft/client/option/KeyBind;isUnbound()Z"
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private void collectConflictTooltips(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci, boolean bl, boolean bl2) {
-		InputUtil.Key boundKey = KeyBindRegistry.getBoundKey(this.binding);
+		InputUtil.Key boundKey = KeyBindRegistry.getBoundKey(this.key);
 
 		if (!boundKey.equals(this.quilt$previousBoundKey) || quilt$changedBoundKey != null) {
 			this.quilt$conflictTooltips.clear();
@@ -95,9 +95,9 @@ public abstract class KeyBindingEntryMixin extends KeyBindListWidget.Entry imple
 				quilt$changedBoundKey = boundKey;
 			}
 
-			if (!this.binding.isUnbound()) {
+			if (!this.key.isUnbound()) {
 				for (KeyBind keyBind : KeyBindRegistryImpl.getKeyBinds()) {
-					if (keyBind != this.binding && this.binding.equals(keyBind)) {
+					if (keyBind != this.key && this.key.equals(keyBind)) {
 						if (this.quilt$conflictTooltips.isEmpty()) {
 							this.quilt$conflictTooltips.add(new TranslatableText("key.qsl.key_conflict.tooltip").formatted(Formatting.RED));
 						}
