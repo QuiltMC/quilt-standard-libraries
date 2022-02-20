@@ -96,13 +96,13 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 			}
 
 			if (!this.key.isUnbound()) {
-				for (KeyBind keyBind : KeyBindRegistryImpl.getKeyBinds()) {
-					if (keyBind != this.key && this.key.equals(keyBind)) {
+				for (KeyBind otherKey : KeyBindRegistryImpl.getKeyBinds()) {
+					if (otherKey != this.key && this.key.keyEquals(otherKey)) {
 						if (this.quilt$conflictTooltips.isEmpty()) {
 							this.quilt$conflictTooltips.add(new TranslatableText("key.qsl.key_conflict.tooltip").formatted(Formatting.RED));
 						}
 
-						this.quilt$conflictTooltips.add(new TranslatableText("key.qsl.key_conflict.tooltip.entry", new TranslatableText(keyBind.getTranslationKey())).formatted(Formatting.RED));
+						this.quilt$conflictTooltips.add(new TranslatableText("key.qsl.key_conflict.tooltip.entry", new TranslatableText(this.key.getTranslationKey())).formatted(Formatting.RED));
 					}
 				}
 			}

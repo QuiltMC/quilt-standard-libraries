@@ -40,9 +40,9 @@ public abstract class KeyBindMixin {
 	private static Map<String, Integer> ORDER_BY_CATEGORIES;
 
 	@Inject(method = "<init>(Ljava/lang/String;Lcom/mojang/blaze3d/platform/InputUtil$Type;ILjava/lang/String;)V", at = @At("TAIL"))
-	private void addModdedCategory(String string, InputUtil.Type type, int i, String string2, CallbackInfo ci) {
-		if (!ORDER_BY_CATEGORIES.containsKey(string2)) {
-			ORDER_BY_CATEGORIES.put(string2, ORDER_BY_CATEGORIES.size() + 1);
+	private void addModdedCategory(String translationKey, InputUtil.Type type, int keyCode, String category, CallbackInfo ci) {
+		if (!ORDER_BY_CATEGORIES.containsKey(category)) {
+			ORDER_BY_CATEGORIES.put(category, ORDER_BY_CATEGORIES.size() + 1);
 		}
 	}
 }
