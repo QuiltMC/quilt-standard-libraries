@@ -54,7 +54,9 @@ public abstract class KeyBindsScreenMixin extends GameOptionsScreen {
 		KeyBindListWidget.Entry entry = ((EntryListWidgetAccessor<KeyBindListWidget.Entry>) this.keyBindList).invokeGetHoveredEntry();
 		if (entry != null && entry instanceof KeyBindEntry keyBindEntry) {
 			List<Text> tooltipLines = ((ConflictTooltipOwner) keyBindEntry).getConflictTooltips();
-			this.renderTooltip(matrices, tooltipLines, mouseX, mouseY);
+			if (tooltipLines != null) {	
+				this.renderTooltip(matrices, tooltipLines, mouseX, mouseY);
+			}
 		}
 	}
 }
