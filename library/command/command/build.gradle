@@ -3,7 +3,10 @@ plugins {
 }
 
 qslModule {
+	name = "Quilt Command API"
 	moduleName = "command"
+	id = "quilt_command"
+	description = "Quilt APIs relating to commands."
 	version = "1.0.0"
 	library = "command"
 	moduleDependencies {

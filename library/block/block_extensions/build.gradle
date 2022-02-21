@@ -1,9 +1,72 @@
 plugins {
 	id("qsl.module")
 }
+import java.nio.file.Files
+
+abstract class GenerateFmj extends DefaultTask {
+	@OutputDirectory
+	abstract DirectoryProperty getOutputDir()
+
+	@TaskAction
+	def generate() {
+		Files.write(new File(outputDir.get().toString()).toPath().resolve("fabric.mod.json"), new String("""
+{
+  "schemaVersion": 1,
+  "id": "quilt_block_extensions",
+  "name": "Quilt Block Extensions API",
+  "version": "2.0.0",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "icon": "assets/quilt_block_extensions/icon.png",
+  "contact": {
+    "homepage": "https://quiltmc.org",
+    "issues": "https://github.com/QuiltMC/quilt-standard-libraries/issues",
+    "sources": "https://github.com/QuiltMC/quilt-standard-libraries"
+  },
+  "authors": [
+    "QuiltMC"
+  ],
+  "depends": {
+    "fabricloader": ">=0.12",
+    "minecraft": ">=1.18.2-alpha.22.6.a",
+    "quilt_base": "*"
+  },
+  "description": "Extensions for creating and working with blocks.",
+  "mixins": [
+    "quilt_block_extensions.mixins.json"
+  ],
+  "accessWidener": "quilt_block_extensions24.accesswidener",
+  "custom": {
+    "modmenu": {
+      "badges": [
+        "library"
+      ],
+      "parent": {
+        "id": "qsl",
+        "name": "Quilt Standard Libraries",
+        "description": "A set of libraries to assist in making Quilt mods.",
+        "icon": "assets/quilt_block_extensions/icon.png",
+        "badges": [
+          "library"
+        ]
+      }
+    }
+  }
+}
+""").getBytes())
+	}
+}
+def generateFmj = tasks.register("generateFmj", GenerateFmj) {
+	it.outputDir.set(project.file("build/generated/fmj/"))
+}
+
+
 
 qslModule {
+	name = "Quilt Block Extensions API"
 	moduleName = "block_extensions"
+	id = "quilt_block_extensions"
+	description = "Extensions for creating and working with blocks."
 	version = "1.0.0"
 	library = "block"
 	moduleDependencies {
@@ -12,8 +75,14 @@ qslModule {
 			testmodOnly("resource_loader")
 		}
 	}
+	accessWidener()
 }
 
-loom {
-	accessWidenerPath = file("src/main/resources/quilt_block_extensions.accesswidener")
+sourceSets {
+	main {
+		resources {
+			srcDirs += project.file("build/generated/fmj")
+		}
+		output.dir(generateFmj)
+	}
 }
