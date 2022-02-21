@@ -1,11 +1,43 @@
 {
   "schemaVersion": 1,
-  "id": "quilt_item_api",
-  "name": "Quilt Item API",
-  "version": "1.0.0",
+  "id": "quilt_item_setting",
+  "name": "Quilt Item Setting API",
+  "version": "${version}",
   "environment": "*",
   "license": "Apache-2.0",
+  "icon": "assets/quilt_item_setting/icon.png",
+  "contact": {
+    "homepage": "https://quiltmc.org",
+    "issues": "https://github.com/QuiltMC/quilt-standard-libraries/issues",
+    "sources": "https://github.com/QuiltMC/quilt-standard-libraries"
+  },
+  "authors": [
+    "QuiltMC"
+  ],
+  "depends": {
+    "minecraft": ">=1.18.2-beta.1",
+    "quilt_base": "*",
+    "quilt_resource_loader": "*",
+    "fabricloader": ">=0.12"
+  },
+  "description": "An API for extended functionality in Item Settings",
   "mixins": [
     "quilt_item_api.mixin.json"
-  ]
+  ],
+  "custom": {
+    "modmenu": {
+      "badges": [
+        "library"
+      ],
+      "parent": {
+        "id": "qsl",
+        "name": "Quilt Standard Libraries",
+        "description": "A set of libraries to assist in making Quilt mods.",
+        "icon": "assets/quilt_item_setting/icon.png",
+        "badges": [
+          "library"
+        ]
+      }
+    }
+  }
 }

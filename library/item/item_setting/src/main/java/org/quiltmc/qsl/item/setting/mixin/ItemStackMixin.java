@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.itemsetting.mixin;
+package org.quiltmc.qsl.item.setting.mixin;
 
 import java.util.function.Consumer;
 
-import org.quiltmc.qsl.itemsetting.impl.CustomItemSettingImpl;
-import org.quiltmc.qsl.itemsetting.api.CustomDamageHandler;
+import org.quiltmc.qsl.item.setting.api.CustomDamageHandler;
+import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;

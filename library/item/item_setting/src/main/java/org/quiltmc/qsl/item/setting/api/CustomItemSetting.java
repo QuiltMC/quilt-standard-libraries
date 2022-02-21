@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.itemsetting.api;
+package org.quiltmc.qsl.item.setting.api;
 
 import java.util.function.Supplier;
 
 import net.minecraft.item.Item;
 
 import org.jetbrains.annotations.ApiStatus;
-import org.quiltmc.qsl.itemsetting.impl.CustomItemSettingImpl;
+import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
 
 /**
  * An interface describing the behavior for custom item settings.
  * This feature can be used by mods to add non-standard settings
  * to items in a way that is compatible with other mods that add
  * settings to items.
- *
- * <p>Values of this setting can be retrieved from an item using {@link CustomItemSetting#get(Item)},
+ * <p>
+ * Values of this setting can be retrieved from an item using {@link CustomItemSetting#get(Item)},
  * and users that wish to expose a custom setting for use in other mods should do so by exposing
  * the CustomItemSetting instance.
  *
@@ -39,7 +39,7 @@ import org.quiltmc.qsl.itemsetting.impl.CustomItemSettingImpl;
  * public static final CustomItemSetting<String> CUSTOM_TOOLTIP = CustomItemSetting.create(() -> null);
  *
  * @Override
- * public void onInitializeClient() {
+ * public void onInitializeClient(ModContainer mod) {
  *     ItemTooltipCallback.EVENT.register((stack, context, lines) -> {
  *         // Gets the setting from the specified item.
  *         String tooltip = CUSTOM_TOOLTIP.get(stack.getItem());
@@ -49,10 +49,10 @@ import org.quiltmc.qsl.itemsetting.impl.CustomItemSettingImpl;
  *         }
  *     }
  * }}</pre>
- *
- * <p>You should not implement this interface.
- *
- * <p>Use {@link CustomItemSetting#create(Supplier)} to retrieve an instance of QSL's implementation.
+ * <p>
+ * You should not implement this interface.
+ * <p>
+ * Use {@link CustomItemSetting#create(Supplier)} to retrieve an instance of QSL's implementation.
  *
  * @param <T> the type of the setting to be attached
  */

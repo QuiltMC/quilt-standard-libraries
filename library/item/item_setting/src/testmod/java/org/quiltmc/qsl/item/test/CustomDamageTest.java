@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.item.test;
 
+import net.fabricmc.loader.api.ModContainer;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PickaxeItem;
 import net.minecraft.item.ToolMaterials;
@@ -24,14 +26,14 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-import net.fabricmc.api.ModInitializer;
-import org.quiltmc.qsl.itemsetting.api.CustomDamageHandler;
-import org.quiltmc.qsl.itemsetting.api.QuiltItemSettings;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.item.setting.api.CustomDamageHandler;
+import org.quiltmc.qsl.item.setting.api.QuiltItemSettings;
 
 public class CustomDamageTest implements ModInitializer {
 	@Override
-	public void onInitialize() {
-		Registry.register(Registry.ITEM, new Identifier(QuiltItemSettingsTests.MOD_ID, "weird_pickaxe"), new WeirdPick());
+	public void onInitialize(ModContainer mod) {
+		Registry.register(Registry.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "weird_pickaxe"), new WeirdPick());
 	}
 
 	public static final CustomDamageHandler WEIRD_DAMAGE_HANDLER = (stack, amount, entity, breakCallback) -> {

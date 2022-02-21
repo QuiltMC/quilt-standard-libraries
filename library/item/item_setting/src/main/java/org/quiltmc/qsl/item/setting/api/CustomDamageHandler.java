@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.itemsetting.api;
+package org.quiltmc.qsl.item.setting.api;
 
 import java.util.function.Consumer;
 
@@ -26,8 +26,8 @@ import net.minecraft.item.ItemStack;
  * Allows an item to run custom logic when {@link ItemStack#damage(int, LivingEntity, Consumer)} is called.
  * This is useful for items that, for example, may drain durability from some other source before damaging
  * the stack itself.
- *
- * <p>Custom damage handlers can be set with {@link QuiltItemSettings#customDamage}.
+ * <p>
+ * Custom damage handlers can be set with {@link QuiltItemSettings#customDamage}.
  */
 @FunctionalInterface
 public interface CustomDamageHandler {

@@ -16,8 +16,7 @@
 
 package org.quiltmc.qsl.item.test;
 
-import org.quiltmc.qsl.itemsetting.api.CustomItemSetting;
-import org.quiltmc.qsl.itemsetting.api.QuiltItemSettings;
+import net.fabricmc.loader.api.ModContainer;
 
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;
@@ -25,20 +24,22 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-import net.fabricmc.api.ModInitializer;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.item.setting.api.CustomItemSetting;
+import org.quiltmc.qsl.item.setting.api.QuiltItemSettings;
 
 public class QuiltItemSettingsTests implements ModInitializer {
 	public static final CustomItemSetting<String> CUSTOM_DATA_TEST = CustomItemSetting.create(() -> null);
-	public static final String MOD_ID = "qsl_items_item_testmod";
+	public static final String NAMESPACE = "quilt_item_setting_testmod";
 
 	@Override
-	public void onInitialize() {
+	public void onInitialize(ModContainer mod) {
 		// Registers an item with a custom equipment slot.
-		Item testItem = new Item(new QuiltItemSettings().group(ItemGroup.MISC).equipmentSlot(EquipmentSlot.CHEST));
-		Registry.register(Registry.ITEM, new Identifier(MOD_ID, "test_item"), testItem);
+		var testItem = new Item(new QuiltItemSettings().group(ItemGroup.MISC).equipmentSlot(EquipmentSlot.CHEST));
+		Registry.register(Registry.ITEM, new Identifier(NAMESPACE, "test_item"), testItem);
 
 		// Registers an item with a custom item setting that adds some tooltip.
-		Item testItem2 = new Item(new QuiltItemSettings().group(ItemGroup.MISC).customSetting(CUSTOM_DATA_TEST, "Look at me! I have a custom setting!"));
-		Registry.register(Registry.ITEM, new Identifier(MOD_ID, "test_item2"), testItem2);
+		var testItem2 = new Item(new QuiltItemSettings().group(ItemGroup.MISC).customSetting(CUSTOM_DATA_TEST, "Look at me! I have a custom setting!"));
+		Registry.register(Registry.ITEM, new Identifier(NAMESPACE, "test_item2"), testItem2);
 	}
 }

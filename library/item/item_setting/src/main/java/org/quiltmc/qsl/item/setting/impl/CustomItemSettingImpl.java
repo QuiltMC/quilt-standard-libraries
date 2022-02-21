@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.itemsetting.impl;
+package org.quiltmc.qsl.item.setting.impl;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -27,9 +27,9 @@ import java.util.function.Supplier;
 
 import net.minecraft.item.Item;
 
-import org.quiltmc.qsl.itemsetting.api.CustomDamageHandler;
-import org.quiltmc.qsl.itemsetting.api.CustomItemSetting;
-import org.quiltmc.qsl.itemsetting.api.EquipmentSlotProvider;
+import org.quiltmc.qsl.item.setting.api.CustomDamageHandler;
+import org.quiltmc.qsl.item.setting.api.CustomItemSetting;
+import org.quiltmc.qsl.item.setting.api.EquipmentSlotProvider;
 
 public class CustomItemSettingImpl<T> implements CustomItemSetting<T> {
 	public static final CustomItemSetting<EquipmentSlotProvider> EQUIPMENT_SLOT_PROVIDER = CustomItemSetting.create(() -> null);

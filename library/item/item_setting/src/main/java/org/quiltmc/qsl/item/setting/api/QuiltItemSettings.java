@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.itemsetting.api;
+package org.quiltmc.qsl.item.setting.api;
 
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.FoodComponent;
@@ -23,13 +23,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Rarity;
-import org.quiltmc.qsl.itemsetting.impl.CustomItemSettingImpl;
+import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
 
 /**
  * Quilt's version of {@link Item.Settings}. Adds additional methods and hooks
  * not found in the original class.
- *
- * <p>To use it, simply replace {@code new Item.Settings()} with
+ * <p>
+ * To use it, simply replace {@code new Item.Settings()} with
  * {@code new QuiltItemSettings()}.
  */
 public class QuiltItemSettings extends Item.Settings {

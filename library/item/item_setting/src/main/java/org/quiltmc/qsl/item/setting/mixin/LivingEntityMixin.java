@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.itemsetting.mixin;
+package org.quiltmc.qsl.item.setting.mixin;
 
-import org.quiltmc.qsl.itemsetting.impl.CustomItemSettingImpl;
-import org.quiltmc.qsl.itemsetting.api.EquipmentSlotProvider;
+import org.quiltmc.qsl.item.setting.api.EquipmentSlotProvider;
+import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

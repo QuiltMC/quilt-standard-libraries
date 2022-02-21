@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.itemsetting.api;
+package org.quiltmc.qsl.item.setting.api;
 
-import org.quiltmc.qsl.itemsetting.impl.CustomItemSettingImpl;
+import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
 
 /**
  * A list of the {@link CustomItemSetting}s that are provided by Quilt
