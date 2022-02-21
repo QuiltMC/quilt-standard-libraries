@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.itemgroup.mixin.client;
+package org.quiltmc.qsl.item.group.mixin.client;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.item.ItemGroup;
 
-import org.quiltmc.qsl.itemgroup.impl.QuiltCreativePlayerInventoryScreenWidgets;
+import org.quiltmc.qsl.item.group.impl.QuiltCreativePlayerInventoryScreenWidgets;
 
 @Mixin(ItemGroup.class)
 public abstract class ItemGroupMixin {

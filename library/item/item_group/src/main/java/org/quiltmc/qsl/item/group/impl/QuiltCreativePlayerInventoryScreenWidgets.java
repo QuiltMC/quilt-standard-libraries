@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.itemgroup.impl;
+package org.quiltmc.qsl.item.group.impl;
 
 import java.util.HashSet;
 import java.util.Set;

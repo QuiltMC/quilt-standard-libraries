@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.itemgroup.mixin.client;
+package org.quiltmc.qsl.item.group.mixin.client;
 
 import java.util.Map;
 
@@ -35,8 +35,8 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.text.Text;
 
-import org.quiltmc.qsl.itemgroup.impl.CreativeGuiExtensions;
-import org.quiltmc.qsl.itemgroup.impl.QuiltCreativePlayerInventoryScreenWidgets;
+import org.quiltmc.qsl.item.group.impl.CreativeGuiExtensions;
+import org.quiltmc.qsl.item.group.impl.QuiltCreativePlayerInventoryScreenWidgets;
 
 @Mixin(CreativeInventoryScreen.class)
 public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScreen<CreativeInventoryScreen.CreativeScreenHandler> implements CreativeGuiExtensions {

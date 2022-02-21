@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.itemgroup.test;
+package org.quiltmc.qsl.item.group.test;
 
 import java.util.stream.IntStream;
 
@@ -27,7 +27,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-import org.quiltmc.qsl.itemgroup.api.QuiltItemGroup;
+import org.quiltmc.qsl.item.group.api.QuiltItemGroup;
 
 public class ItemGroupTest implements ModInitializer {
 	public static final String NAMESPACE = "quilt_item_group_testmod";
