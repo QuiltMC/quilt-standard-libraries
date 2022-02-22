@@ -72,7 +72,8 @@ public abstract class CommandManagerMixin {
 		return a == b || b == CommandManager.RegistrationEnvironment.ALL;
 	}
 
-	// region Copyright 2016, 2017, 2018, 2019, 2020 zml and Colonel contributors
+	// region Copyright 2016, 2017, 2018, 2019, 2020 zml and Colonel contributors.
+	// Licensed under the Apache 2.0 License; see this file's header for additional information.
 	@SuppressWarnings({"rawtypes", "unchecked"}) // argument type generics
 	@Inject(method = "makeTreeForSource", locals = LocalCapture.CAPTURE_FAILEXCEPTION,
 			at = @At(value = "INVOKE", target = "com.mojang.brigadier.builder.RequiredArgumentBuilder.getSuggestionsProvider()Lcom/mojang/brigadier/suggestion/SuggestionProvider;", remap = false, ordinal = 0))
