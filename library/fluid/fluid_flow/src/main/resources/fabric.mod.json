@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "quilt_fluid_flow",
-  "name": "Quilt Tags API",
+  "name": "Quilt Fluid Flow API",
   "version": "${version}",
   "environment": "*",
   "license": "Apache-2.0",

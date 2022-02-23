@@ -3,7 +3,7 @@ plugins {
 }
 
 qslModule {
-	moduleName = "fluid-flow"
+	moduleName = "fluid_flow"
 	version = "1.0.0"
 	library = "fluid"
 	moduleDependencies {

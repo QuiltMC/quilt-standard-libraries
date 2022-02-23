@@ -10,7 +10,7 @@
   },
   "entrypoints": {
     "main": [
-      "org.quiltmc.qsl.fluidflow.FluidFlowEventTests"
+      "org.quiltmc.qsl.fluid.flow.FluidFlowEventTests"
     ]
   }
 }

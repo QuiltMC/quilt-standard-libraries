@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.fluidflow.mixin;
+package org.quiltmc.qsl.fluid.flow.mixin;
 
 import org.quiltmc.qsl.base.api.event.Event;
-import org.quiltmc.qsl.fluidflow.api.FluidFlowEvents;
+import org.quiltmc.qsl.fluid.flow.api.FluidFlowEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

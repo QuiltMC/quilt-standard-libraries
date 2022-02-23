@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.fluidflow.api;
+package org.quiltmc.qsl.fluid.flow.api;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.base.api.event.Event;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -48,8 +46,8 @@ public final class FluidFlowEvents {
 	 * @param interactionEvent      The event to run when the conditions are met.
 	 */
 	public static void register(Block flowingBlock, Block interactionBlock, Direction[] interactionDirections, FluidFlowInteractionCallback interactionEvent) {
-		Map<Block, Map<Direction, Event<FluidFlowInteractionCallback>>> flowBlockEvents = EVENT_MAP.computeIfAbsent(flowingBlock, flowing -> new HashMap<>());
-		Map<Direction, Event<FluidFlowInteractionCallback>> interactionEvents = flowBlockEvents.computeIfAbsent(interactionBlock, interacting -> new HashMap<>());
+		Map<Block, Map<Direction, Event<FluidFlowInteractionCallback>>> flowBlockEvents = EVENT_MAP.computeIfAbsent(flowingBlock, flowing -> new Object2ObjectOpenHashMap<>());
+		Map<Direction, Event<FluidFlowInteractionCallback>> interactionEvents = flowBlockEvents.computeIfAbsent(interactionBlock, interacting -> new Object2ObjectOpenHashMap<>());
 
 		// Create events for all the different directions for the specified blocks
 		if (interactionEvents.isEmpty()) {

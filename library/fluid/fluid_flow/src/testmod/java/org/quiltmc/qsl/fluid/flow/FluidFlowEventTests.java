@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.fluidflow;
+package org.quiltmc.qsl.fluid.flow;
 
-import org.quiltmc.qsl.fluidflow.api.FluidFlowEvents;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.fluid.flow.api.FluidFlowEvents;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Direction;
 
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.ModContainer;
 
 public class FluidFlowEventTests implements ModInitializer {
 	@Override
-	public void onInitialize() {
+	public void onInitialize(ModContainer container) {
 		FluidFlowEvents.register(Blocks.WATER, Blocks.BLUE_ICE, new Direction[]{Direction.DOWN}, (flowingBlockState, interactingBlockState, flowPos, world) -> {
 			world.setBlockState(flowPos, Blocks.ICE.getDefaultState());
 			world.playSound(null, flowPos, SoundEvents.BLOCK_GLASS_PLACE, SoundCategory.BLOCKS, 1, 1);
