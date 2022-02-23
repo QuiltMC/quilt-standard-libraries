@@ -24,6 +24,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 import org.quiltmc.qsl.base.impl.PreLaunchHacks;
 
+// TODO remove this once we target Quilt Loader (since QLoader lets us mix into Brigadier without hackery)
 @ApiStatus.Internal
 public final class PreLaunchInitializer implements PreLaunchEntrypoint {
 	@Override
