@@ -17,11 +17,13 @@
 
 package org.quiltmc.qsl.command.impl.client;
 
+import com.mojang.logging.LogUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import org.jetbrains.annotations.ApiStatus;
+import org.slf4j.Logger;
 
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.command.impl.KnownArgumentTypesSync;
@@ -29,10 +31,15 @@ import org.quiltmc.qsl.command.impl.KnownArgumentTypesSync;
 @ApiStatus.Internal
 @Environment(EnvType.CLIENT)
 public final class ClientInitializer implements ClientModInitializer {
+	private static final Logger LOGGER = LogUtils.getLogger();
+
 	@Override
 	public void onInitializeClient(ModContainer mod) {
 		if (FabricLoader.getInstance().isModLoaded("quilt_networking")) {
 			KnownArgumentTypesSync.registerClient();
+			LOGGER.info("[Quilt Command|Client] Networking support is enabled");
+		} else {
+			LOGGER.info("[Quilt Command|Client] Networking support is disabled");
 		}
 	}
 }

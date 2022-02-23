@@ -17,9 +17,11 @@
 package org.quiltmc.qsl.command.impl;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.logging.LogUtils;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import org.jetbrains.annotations.ApiStatus;
+import org.slf4j.Logger;
 
 import net.minecraft.util.Identifier;
 
@@ -35,10 +37,15 @@ public final class Initializer implements ModInitializer {
 		return new Identifier(NAMESPACE, path);
 	}
 
+	private static final Logger LOGGER = LogUtils.getLogger();
+
 	@Override
 	public void onInitialize(ModContainer mod) {
 		if (FabricLoader.getInstance().isModLoaded("quilt_networking")) {
 			KnownArgumentTypesSync.register();
+			LOGGER.info("[Quilt Command] Networking support is enabled");
+		} else {
+			LOGGER.info("[Quilt Command] Networking support is disabled");
 		}
 
 		ServerArgumentType.register(id("enum"),
