@@ -34,31 +34,34 @@ import org.quiltmc.qsl.base.api.event.EventAwareListener;
 /**
  * Represents the recipe loading events.
  * <p>
- * Triggered when the recipes are loaded.
- *
- * @version 1.0.0
- * @since 1.0.0
+ * Triggered when the recipes are being loaded in the {@link net.minecraft.recipe.RecipeManager}.
  */
 public final class RecipeLoadingEvents {
 	/**
-	 * Recipe loading event, triggered when the recipes are loaded.
+	 * Event to add new recipes while the {@link net.minecraft.recipe.RecipeManager} is being built.
 	 */
-	public static final Event<RecipeLoadingCallback> REGISTER = Event.create(RecipeLoadingCallback.class,
+	public static final Event<AddRecipesCallback> ADD = Event.create(AddRecipesCallback.class,
 			callbacks -> handler -> {
 				for (var callback : callbacks) {
-					callback.onLoadRecipe(handler);
+					callback.addRecipes(handler);
 				}
 			});
-	public static final Event<RecipeModifyCallback> MODIFY = Event.create(RecipeModifyCallback.class,
+	/**
+	 * Event to modify recipes while the {@link net.minecraft.recipe.RecipeManager} is being built.
+	 */
+	public static final Event<ModifyRecipesCallback> MODIFY = Event.create(ModifyRecipesCallback.class,
 			callbacks -> handler -> {
 				for (var callback : callbacks) {
-					callback.onModifyRecipe(handler);
+					callback.modifyRecipes(handler);
 				}
 			});
-	public static final Event<RecipeRemoveCallback> REMOVE = Event.create(RecipeRemoveCallback.class,
+	/**
+	 * Event to remove recipes while the {@link net.minecraft.recipe.RecipeManager} is being built.
+	 */
+	public static final Event<RemoveRecipesCallback> REMOVE = Event.create(RemoveRecipesCallback.class,
 			callbacks -> handler -> {
 				for (var callback : callbacks) {
-					callback.onRecipeRemovePhase(handler);
+					callback.removeRecipes(handler);
 				}
 			});
 
@@ -70,7 +73,7 @@ public final class RecipeLoadingEvents {
 	 * Callback called to register additional recipes when recipes are loaded.
 	 */
 	@FunctionalInterface
-	public interface RecipeLoadingCallback extends EventAwareListener {
+	public interface AddRecipesCallback extends EventAwareListener {
 		/**
 		 * Called when recipes are loaded.
 		 * <p>
@@ -78,7 +81,7 @@ public final class RecipeLoadingEvents {
 		 *
 		 * @param handler the recipe handler
 		 */
-		void onLoadRecipe(RecipeHandler handler);
+		void addRecipes(RecipeHandler handler);
 
 		/**
 		 * This interface should not be extended by users.
@@ -101,13 +104,13 @@ public final class RecipeLoadingEvents {
 	 * Callback called to modify or replace recipes after recipes are loaded.
 	 */
 	@FunctionalInterface
-	public interface RecipeModifyCallback extends EventAwareListener {
+	public interface ModifyRecipesCallback extends EventAwareListener {
 		/**
 		 * Called after recipes are loaded to modify and replace recipes.
 		 *
 		 * @param handler the recipe handler
 		 */
-		void onModifyRecipe(RecipeHandler handler);
+		void modifyRecipes(RecipeHandler handler);
 
 		/**
 		 * This interface should not be extended by users.
@@ -186,13 +189,13 @@ public final class RecipeLoadingEvents {
 	 * Callback called to remove recipes after recipes are loaded.
 	 */
 	@FunctionalInterface
-	public interface RecipeRemoveCallback extends EventAwareListener {
+	public interface RemoveRecipesCallback extends EventAwareListener {
 		/**
 		 * Called after recipes are loaded to remove recipes.
 		 *
 		 * @param handler the recipe handler
 		 */
-		void onRecipeRemovePhase(RecipeHandler handler);
+		void removeRecipes(RecipeHandler handler);
 
 		/**
 		 * This interface should not be extended by users.

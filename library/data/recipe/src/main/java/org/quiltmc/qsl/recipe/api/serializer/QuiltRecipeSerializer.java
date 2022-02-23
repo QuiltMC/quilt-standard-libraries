@@ -27,8 +27,6 @@ import net.minecraft.recipe.RecipeSerializer;
  * This will allow serialization to JSON of recipes. Useful for recipe dumping.
  *
  * @param <T> the recipe
- * @version 1.0.0
- * @since 1.0.0
  */
 public interface QuiltRecipeSerializer<T extends Recipe<?>> extends RecipeSerializer<T> {
 	/**

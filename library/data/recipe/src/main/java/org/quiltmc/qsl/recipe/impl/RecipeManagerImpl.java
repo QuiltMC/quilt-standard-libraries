@@ -24,10 +24,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Collection;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -36,7 +33,6 @@ import com.google.gson.stream.JsonWriter;
 import com.mojang.logging.LogUtils;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import net.minecraft.recipe.Recipe;
@@ -54,9 +50,9 @@ public final class RecipeManagerImpl {
 	 * loaded.
 	 */
 	private static final Map<Identifier, Recipe<?>> STATIC_RECIPES = new Object2ObjectOpenHashMap<>();
-	private static final boolean DEBUG_MODE = Boolean.getBoolean("quilt.recipe.debug");
+	static final boolean DEBUG_MODE = Boolean.getBoolean("quilt.recipe.debug");
 	private static final boolean DUMP_MODE = Boolean.getBoolean("quilt.recipe.dump");
-	private static final Logger LOGGER = LogUtils.getLogger();
+	static final Logger LOGGER = LogUtils.getLogger();
 
 	private RecipeManagerImpl() {
 		throw new UnsupportedOperationException("RecipeManagerImpl only contains static definitions.");
@@ -72,18 +68,18 @@ public final class RecipeManagerImpl {
 	public static void apply(Map<Identifier, JsonElement> map,
 	                         Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap) {
 		var handler = new RegisterRecipeHandlerImpl(map, builderMap);
-		RecipeLoadingEvents.REGISTER.invoker().onLoadRecipe(handler);
+		RecipeLoadingEvents.ADD.invoker().addRecipes(handler);
 		STATIC_RECIPES.values().forEach(handler::register);
 		LOGGER.info("Registered {} custom recipes.", handler.registered);
 	}
 
 	public static void applyModifications(RecipeManager recipeManager, Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes) {
 		var handler = new ModifyRecipeHandlerImpl(recipeManager, recipes);
-		RecipeLoadingEvents.MODIFY.invoker().onModifyRecipe(handler);
+		RecipeLoadingEvents.MODIFY.invoker().modifyRecipes(handler);
 		LOGGER.info("Modified {} recipes.", handler.counter);
 
 		var removeHandler = new RemoveRecipeHandlerImpl(recipeManager, recipes);
-		RecipeLoadingEvents.REMOVE.invoker().onRecipeRemovePhase(removeHandler);
+		RecipeLoadingEvents.REMOVE.invoker().removeRecipes(removeHandler);
 		LOGGER.info("Removed {} recipes.", removeHandler.counter);
 
 		if (DUMP_MODE) {
@@ -143,301 +139,6 @@ public final class RecipeManagerImpl {
 					}
 				}
 			}
-		}
-	}
-
-	private static class RegisterRecipeHandlerImpl implements RecipeLoadingEvents.RecipeLoadingCallback.RecipeHandler {
-		private final Map<Identifier, JsonElement> resourceMap;
-		private final Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap;
-		int registered = 0;
-
-		private RegisterRecipeHandlerImpl(Map<Identifier, JsonElement> resourceMap,
-		                                  Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap) {
-			this.resourceMap = resourceMap;
-			this.builderMap = builderMap;
-		}
-
-		void register(Recipe<?> recipe) {
-			if (!this.resourceMap.containsKey(recipe.getId())) {
-				ImmutableMap.Builder<Identifier, Recipe<?>> recipeBuilder =
-						this.builderMap.computeIfAbsent(recipe.getType(), o -> ImmutableMap.builder());
-				recipeBuilder.put(recipe.getId(), recipe);
-				this.registered++;
-
-				if (DEBUG_MODE) {
-					LOGGER.info("Added recipe {} with type {} in register phase.", recipe.getId(), recipe.getType());
-				}
-			}
-		}
-
-		@Override
-		public void register(Identifier id, Function<Identifier, Recipe<?>> factory) {
-			// Add the recipe only if nothing already provides the recipe.
-			if (!this.resourceMap.containsKey(id)) {
-				var recipe = factory.apply(id);
-
-				if (!id.equals(recipe.getId())) {
-					throw new IllegalStateException("The recipe " + recipe.getId() + " tried to be registered as " + id);
-				}
-
-				ImmutableMap.Builder<Identifier, Recipe<?>> recipeBuilder =
-						this.builderMap.computeIfAbsent(recipe.getType(), o -> ImmutableMap.builder());
-				recipeBuilder.put(recipe.getId(), recipe);
-				this.registered++;
-
-				if (DEBUG_MODE) {
-					LOGGER.info("Added recipe {} with type {} in register phase.", id, recipe.getType());
-				}
-			}
-		}
-	}
-
-	private static class ModifyRecipeHandlerImpl implements RecipeLoadingEvents.RecipeModifyCallback.RecipeHandler {
-		final RecipeManager recipeManager;
-		final Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes;
-		int counter = 0;
-
-		private ModifyRecipeHandlerImpl(RecipeManager recipeManager, Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes) {
-			this.recipeManager = recipeManager;
-			this.recipes = recipes;
-		}
-
-		private void add(Recipe<?> recipe) {
-			Map<Identifier, Recipe<?>> type = this.recipes.get(recipe.getType());
-
-			if (type == null) {
-				throw new IllegalStateException("The given recipe " + recipe.getId()
-						+ " does not have its recipe type " + recipe.getType() + " in the recipe manager.");
-			}
-
-			type.put(recipe.getId(), recipe);
-		}
-
-		@Override
-		public void replace(Recipe<?> recipe) {
-			RecipeType<?> oldType = this.getTypeOf(recipe.getId());
-
-			if (oldType == null) {
-				if (DEBUG_MODE) {
-					LOGGER.info("Add new recipe {} with type {} in modify phase.", recipe.getId(), recipe.getType());
-				}
-
-				this.add(recipe);
-			} else if (oldType == recipe.getType()) {
-				if (DEBUG_MODE) {
-					LOGGER.info("Replace recipe {} with same type {} in modify phase.", recipe.getId(), recipe.getType());
-				}
-
-				this.recipes.get(oldType).put(recipe.getId(), recipe);
-			} else {
-				if (DEBUG_MODE) {
-					LOGGER.info("Replace new recipe {} with type {} (and old type {}) in modify phase.",
-							recipe.getId(), recipe.getType(), oldType);
-				}
-
-				this.recipes.get(oldType).remove(recipe.getId());
-				this.add(recipe);
-			}
-
-			this.counter++;
-		}
-
-		@Override
-		public @Nullable RecipeType<?> getTypeOf(Identifier id) {
-			return this.recipes.entrySet().stream()
-					.filter(entry -> entry.getValue().containsKey(id))
-					.findFirst()
-					.map(Map.Entry::getKey)
-					.orElse(null);
-		}
-
-		@Override
-		public boolean contains(Identifier id) {
-			for (var recipes : this.recipes.values()) {
-				if (recipes.containsKey(id)) {
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		@Override
-		public boolean contains(Identifier id, RecipeType<?> type) {
-			Map<Identifier, Recipe<?>> recipes = this.recipes.get(type);
-
-			if (recipes == null) return false;
-
-			return recipes.containsKey(id);
-		}
-
-		@Override
-		public @Nullable Recipe<?> getRecipe(Identifier id) {
-			for (var recipes : this.recipes.values()) {
-				Recipe<?> recipe = recipes.get(id);
-
-				if (recipe != null) {
-					return recipe;
-				}
-			}
-
-			return null;
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public <T extends Recipe<?>> @Nullable T getRecipe(Identifier id, RecipeType<T> type) {
-			Map<Identifier, Recipe<?>> recipes = this.recipes.get(type);
-
-			if (recipes == null) return null;
-
-			return (T) recipes.get(id);
-		}
-
-		@Override
-		public Map<RecipeType<?>, Map<Identifier, Recipe<?>>> getRecipes() {
-			return this.recipes;
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public <T extends Recipe<?>> Collection<T> getRecipesOfType(RecipeType<T> type) {
-			Map<Identifier, Recipe<?>> recipes = this.recipes.get(type);
-
-			if (recipes == null) {
-				return ImmutableList.of();
-			}
-
-			return (Collection<T>) recipes.values();
-		}
-	}
-
-	private static class RemoveRecipeHandlerImpl implements RecipeLoadingEvents.RecipeRemoveCallback.RecipeHandler {
-		final RecipeManager recipeManager;
-		final Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes;
-		int counter = 0;
-
-		private RemoveRecipeHandlerImpl(RecipeManager recipeManager, Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes) {
-			this.recipeManager = recipeManager;
-			this.recipes = recipes;
-		}
-
-		@Override
-		public void remove(Identifier id) {
-			RecipeType<?> recipeType = this.getTypeOf(id);
-
-			if (recipeType == null) {
-				return;
-			}
-
-			if (this.recipes.get(recipeType).remove(id) != null) {
-				if (DEBUG_MODE) {
-					LOGGER.info("Remove recipe {} with type {} in removal phase.", id, recipeType);
-				}
-
-				this.counter++;
-			}
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public <T extends Recipe<?>> void removeIf(RecipeType<T> recipeType, Predicate<T> recipeRemovalPredicate) {
-			this.removeIf((Map<Identifier, T>) this.recipes.get(recipeType), recipeRemovalPredicate);
-		}
-
-		@Override
-		public void removeIf(Predicate<Recipe<?>> recipeRemovalPredicate) {
-			for (var entry : this.getRecipes().entrySet()) {
-				this.removeIf(entry.getValue(), recipeRemovalPredicate);
-			}
-		}
-
-		protected <T extends Recipe<?>> void removeIf(Map<Identifier, T> recipeMap, Predicate<T> recipeRemovalPredicate) {
-			if (recipeMap == null) return;
-
-			var it = recipeMap.entrySet().iterator();
-
-			while (it.hasNext()) {
-				var entry = it.next();
-
-				if (recipeRemovalPredicate.test(entry.getValue())) {
-					if (DEBUG_MODE) {
-						LOGGER.info("Remove recipe {} with type {} in removal phase.", entry.getKey(), entry.getValue().getType());
-					}
-
-					it.remove();
-					this.counter++;
-				}
-			}
-		}
-
-		@Override
-		public @Nullable RecipeType<?> getTypeOf(Identifier id) {
-			return this.recipes.entrySet().stream()
-					.filter(entry -> entry.getValue().containsKey(id))
-					.findFirst()
-					.map(Map.Entry::getKey)
-					.orElse(null);
-		}
-
-		@Override
-		public boolean contains(Identifier id) {
-			for (var recipes : this.recipes.values()) {
-				if (recipes.containsKey(id)) {
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		@Override
-		public boolean contains(Identifier id, RecipeType<?> type) {
-			Map<Identifier, Recipe<?>> recipes = this.recipes.get(type);
-
-			if (recipes == null) return false;
-
-			return recipes.containsKey(id);
-		}
-
-		@Override
-		public @Nullable Recipe<?> getRecipe(Identifier id) {
-			for (var recipes : this.recipes.values()) {
-				Recipe<?> recipe = recipes.get(id);
-
-				if (recipe != null) {
-					return recipe;
-				}
-			}
-
-			return null;
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public <T extends Recipe<?>> @Nullable T getRecipe(Identifier id, RecipeType<T> type) {
-			Map<Identifier, Recipe<?>> recipes = this.recipes.get(type);
-
-			if (recipes == null) return null;
-
-			return (T) recipes.get(id);
-		}
-
-		@Override
-		public Map<RecipeType<?>, Map<Identifier, Recipe<?>>> getRecipes() {
-			return this.recipes;
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public <T extends Recipe<?>> Collection<T> getRecipesOfType(RecipeType<T> type) {
-			Map<Identifier, Recipe<?>> recipes = this.recipes.get(type);
-
-			if (recipes == null) {
-				return ImmutableList.of();
-			}
-
-			return (Collection<T>) recipes.values();
 		}
 	}
 }

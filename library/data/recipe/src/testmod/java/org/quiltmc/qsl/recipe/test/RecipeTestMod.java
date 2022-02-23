@@ -33,7 +33,7 @@ import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.recipe.api.RecipeManagerHelper;
-import org.quiltmc.qsl.recipe.api.VanillaRecipeBuilders;
+import org.quiltmc.qsl.recipe.api.builder.VanillaRecipeBuilders;
 
 public class RecipeTestMod implements ModInitializer {
 	public static final String NAMESPACE = "quilt_recipe_testmod";
@@ -54,7 +54,7 @@ public class RecipeTestMod implements ModInitializer {
 						.ingredient(Items.STICK)
 						.build(new Identifier(NAMESPACE, "test1"), ""));
 
-		RecipeManagerHelper.registerDynamicRecipes(handler -> {
+		RecipeManagerHelper.addRecipes(handler -> {
 			handler.register(new Identifier(NAMESPACE, "test2"),
 					id -> VanillaRecipeBuilders.shapedRecipe(new String[] {"IG", "C#"})
 							.ingredient('I', Items.IRON_INGOT)

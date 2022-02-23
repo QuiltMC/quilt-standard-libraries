@@ -22,9 +22,6 @@ import org.quiltmc.qsl.recipe.impl.RecipeManagerImpl;
 
 /**
  * Represents a helper for the {@link net.minecraft.recipe.RecipeManager}.
- *
- * @version 1.0.0
- * @since 1.0.0
  */
 public final class RecipeManagerHelper {
 	private RecipeManagerHelper() {
@@ -38,7 +35,7 @@ public final class RecipeManagerHelper {
 	 * of the game.
 	 * <p>
 	 * Static recipes are automatically added to the {@linkplain net.minecraft.recipe.RecipeManager recipe manager}
-	 * when recipes are loaded, and only is added if no other recipe with the same identifier is already registered.
+	 * when recipes are loaded, and only is added if no other recipe with the same identifier is already loaded.
 	 *
 	 * @param recipe the recipe to register
 	 * @return the registered recipe
@@ -54,30 +51,30 @@ public final class RecipeManagerHelper {
 	 * <p>
 	 * The dynamic recipe provider is called when the recipes are loaded.
 	 *
-	 * @param callback the dynamic recipes provider
-	 * @see RecipeLoadingEvents#REGISTER
+	 * @param callback the callback to add recipes
+	 * @see RecipeLoadingEvents#ADD
 	 */
-	public static void registerDynamicRecipes(RecipeLoadingEvents.RecipeLoadingCallback callback) {
-		RecipeLoadingEvents.REGISTER.register(callback);
+	public static void addRecipes(RecipeLoadingEvents.AddRecipesCallback callback) {
+		RecipeLoadingEvents.ADD.register(callback);
 	}
 
 	/**
-	 * Modifies recipes in the {@link net.minecraft.recipe.RecipeManager}.
+	 * Modifies recipes in the {@link net.minecraft.recipe.RecipeManager} when it is being built.
 	 *
-	 * @param callback the recipe modifier
+	 * @param callback the callback to modify recipes
 	 * @see RecipeLoadingEvents#MODIFY
 	 */
-	public static void modifyRecipes(RecipeLoadingEvents.RecipeModifyCallback callback) {
+	public static void modifyRecipes(RecipeLoadingEvents.ModifyRecipesCallback callback) {
 		RecipeLoadingEvents.MODIFY.register(callback);
 	}
 
 	/**
-	 * Removes recipes in the {@link net.minecraft.recipe.RecipeManager}.
+	 * Removes recipes in the {@link net.minecraft.recipe.RecipeManager} when it is being built.
 	 *
-	 * @param callback the recipe remover
+	 * @param callback the callback to remove recipes
 	 * @see RecipeLoadingEvents#REMOVE
 	 */
-	public static void removeRecipes(RecipeLoadingEvents.RecipeRemoveCallback callback) {
+	public static void removeRecipes(RecipeLoadingEvents.RemoveRecipesCallback callback) {
 		RecipeLoadingEvents.REMOVE.register(callback);
 	}
 }
