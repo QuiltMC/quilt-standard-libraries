@@ -22,6 +22,8 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.StringReader;
@@ -32,6 +34,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import com.mojang.brigadier.tree.ArgumentCommandNode;
 
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.serialize.ArgumentSerializer;
@@ -73,34 +76,6 @@ public final class EnumArgumentType implements ArgumentType<String> {
 	}
 
 	/**
-	 * Creates an {@code EnumArgumentType} based on the constants of the specified {@code enum} class.
-	 *
-	 * @param enumClass the enum class
-	 * @param <E>       type of the enum class
-	 * @return an argument type for the enum class
-	 */
-	public static <E extends Enum<E>> EnumArgumentType enumConstant(Class<? extends E> enumClass) {
-		E[] constants = enumClass.getEnumConstants();
-
-		if (constants == null) {
-			throw new IllegalArgumentException("%s is not an enum class (getEnumConstants() returned null)".formatted(enumClass));
-		}
-
-		var values = new LinkedHashSet<String>(constants.length);
-
-		for (E constant : constants) {
-			var constNameLC = constant.name().toLowerCase(Locale.ROOT);
-
-			if (!values.add(constNameLC)) {
-				throw new IllegalArgumentException(("%s contains 2 constants with the same name after converting to lowercase " +
-						"(\"%s\")").formatted(enumClass, constNameLC));
-			}
-		}
-
-		return new EnumArgumentType(values);
-	}
-
-	/**
 	 * Gets the specified argument value from a command context.
 	 *
 	 * @param context      the command context
@@ -108,8 +83,50 @@ public final class EnumArgumentType implements ArgumentType<String> {
 	 * @return the argument value
 	 */
 	public static String getEnum(CommandContext<ServerCommandSource> context,
-	                             String argumentName) {
+								 String argumentName) {
 		return context.getArgument(argumentName, String.class);
+	}
+
+	private static BiMap<Class<? extends Enum<?>>, EnumArgumentType> enumConstantTypes = null;
+
+	/**
+	 * Creates an {@code EnumArgumentType} based on the constants of the specified {@code enum} class.
+	 *
+	 * @param enumClass the enum class
+	 * @param <E>       type of the enum class
+	 * @return an argument type for the enum class
+	 */
+	public static <E extends Enum<E>> EnumArgumentType enumConstant(Class<? extends E> enumClass) {
+		EnumArgumentType argType = null;
+
+		if (enumConstantTypes == null) {
+			enumConstantTypes = HashBiMap.create();
+		} else {
+			argType = enumConstantTypes.get(enumClass);
+		}
+
+		if (argType == null) {
+			E[] constants = enumClass.getEnumConstants();
+
+			if (constants == null) {
+				throw new IllegalArgumentException("%s is not an enum class (getEnumConstants() returned null)".formatted(enumClass));
+			}
+
+			var values = new LinkedHashSet<String>(constants.length);
+
+			for (E constant : constants) {
+				var constNameLC = constant.name().toLowerCase(Locale.ROOT);
+
+				if (!values.add(constNameLC)) {
+					throw new IllegalArgumentException(("%s contains 2 constants with the same name after converting to lowercase " +
+							"(\"%s\")").formatted(enumClass, constNameLC));
+				}
+			}
+
+			enumConstantTypes.put(enumClass, argType = new EnumArgumentType(values));
+		}
+
+		return argType;
 	}
 
 	/**
@@ -125,6 +142,27 @@ public final class EnumArgumentType implements ArgumentType<String> {
 	public static <E extends Enum<E>> E getEnumConstant(CommandContext<ServerCommandSource> context,
 	                                                    String argumentName, Class<? extends E> enumClass)
 			throws CommandSyntaxException {
+		if (enumConstantTypes == null) {
+			throw new IllegalArgumentException(enumClass + " does not have an associated EnumArgumentType");
+		}
+
+		var argChildNode = context.getRootNode().getChild(argumentName);
+		if (argChildNode instanceof ArgumentCommandNode<?,?> argNode) {
+			if (argNode.getType() instanceof EnumArgumentType enumConstantType) {
+				var expectedClass = enumConstantTypes.inverse().get(enumConstantType);
+				if (expectedClass == null) {
+					throw new IllegalArgumentException(argumentName + "'s type does not have an associated enum class");
+				} else if (expectedClass != enumClass) {
+					throw new IllegalArgumentException(argumentName + "'s type is derived from  " + expectedClass
+							+ ", not from " + enumClass);
+				}
+			} else {
+				throw new IllegalArgumentException(argumentName + " is not of EnumArgumentType");
+			}
+		} else {
+			throw new IllegalArgumentException("Command does not have an argument named " + argumentName);
+		}
+
 		String value = context.getArgument(argumentName, String.class);
 		E[] constants = enumClass.getEnumConstants();
 
