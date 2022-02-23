@@ -64,7 +64,7 @@ public final class VanillaRecipeBuilders {
 	 */
 	public static DefaultedList<Ingredient> getIngredients(String[] pattern, Char2ObjectMap<Ingredient> keys, int width, int height) {
 		DefaultedList<Ingredient> ingredients = DefaultedList.ofSize(width * height, Ingredient.EMPTY);
-		var patternSet = new CharArraySet(keys.keySet());
+		var unusedKeys = new CharArraySet(keys.keySet());
 		patternSet.remove(' ');
 
 		for (int i = 0; i < pattern.length; ++i) {
@@ -83,9 +83,8 @@ public final class VanillaRecipeBuilders {
 
 		if (!patternSet.isEmpty()) {
 			throw new IllegalStateException("Key defines symbols that aren't used in pattern: " + patternSet);
-		} else {
-			return ingredients;
 		}
+		return ingredients;
 	}
 
 	/**
