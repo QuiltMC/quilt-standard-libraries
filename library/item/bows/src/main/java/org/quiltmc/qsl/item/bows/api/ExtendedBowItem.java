@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.bows.api;
+package org.quiltmc.qsl.item.bows.api;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;
 
 /**
- * This is the default implementation for {@link BowExtensions}, allowing for the easy creation of new bows with no new modded functionality. <br>
+ * This is the default implementation for {@link BowExtensions}, allowing for the easy creation of new bows with no new modded functionality. <p>
  * In order to have this bow edit the properties of shot projectiles, you must call {@code ShotProjectileEvents.BOW_MODIFY_SHOT_PROJECTILE.register(this);} for it to call {@link ExtendedBowItem#onProjectileShot(ItemStack, ItemStack, LivingEntity, float, PersistentProjectileEntity)}
  */
-public class ExtendedBowItem extends net.minecraft.item.BowItem implements BowExtensions, ShotProjectileEvents.ModifyProjectileFromBow {
+public class ExtendedBowItem extends BowItem implements BowExtensions, ShotProjectileEvents.ModifyProjectileFromBow {
 	public ExtendedBowItem(Settings settings) {
 		super(settings);
 	}

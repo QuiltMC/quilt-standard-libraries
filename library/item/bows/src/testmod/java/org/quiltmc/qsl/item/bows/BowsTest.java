@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.bows;
+package org.quiltmc.qsl.item.bows;
 
 import org.jetbrains.annotations.NotNull;
-import org.quiltmc.qsl.bows.api.ExtendedBowItem;
-import org.quiltmc.qsl.bows.api.ShotProjectileEvents;
-import org.quiltmc.qsl.bows.api.ExtendedCrossbowItem;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.item.bows.api.ExtendedBowItem;
+import org.quiltmc.qsl.item.bows.api.ShotProjectileEvents;
+import org.quiltmc.qsl.item.bows.api.ExtendedCrossbowItem;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
@@ -29,7 +30,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.ModContainer;
 
 public class BowsTest implements ModInitializer {
 	public static final Item TEST_BOW = new ExtendedBowItem(new Item.Settings().group(ItemGroup.COMBAT)) {
@@ -41,7 +42,7 @@ public class BowsTest implements ModInitializer {
 
 	public static final Item TEST_CROSSBOW = new ExtendedCrossbowItem(new Item.Settings().group(ItemGroup.COMBAT)) {
 		@Override
-		public void modifyProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity entity, @NotNull PersistentProjectileEntity persistentProjectileEntity) {
+		public void onProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity entity, @NotNull PersistentProjectileEntity persistentProjectileEntity) {
 			persistentProjectileEntity.setDamage(1000);
 		}
 
@@ -53,11 +54,12 @@ public class BowsTest implements ModInitializer {
 	public static final String MOD_ID = "quilt_bows_testmod";
 
 	@Override
-	public void onInitialize() {
+	public void onInitialize(ModContainer container) {
 		// Registers a custom bow.
 		Registry.register(Registry.ITEM, new Identifier(MOD_ID, "test_bow"), TEST_BOW);
 		ShotProjectileEvents.BOW_MODIFY_SHOT_PROJECTILE.register((ShotProjectileEvents.ModifyProjectileFromBow) TEST_BOW);
 		// Registers a custom crossbow.
 		Registry.register(Registry.ITEM, new Identifier(MOD_ID, "test_crossbow"), TEST_CROSSBOW);
+		ShotProjectileEvents.CROSSBOW_MODIFY_SHOT_PROJECTILE.register((ShotProjectileEvents.ModifyProjectileFromCrossbow) TEST_CROSSBOW);
 	}
 }

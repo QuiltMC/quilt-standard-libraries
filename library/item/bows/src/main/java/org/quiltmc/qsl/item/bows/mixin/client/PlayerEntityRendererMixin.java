@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.bows.mixin.client;
+package org.quiltmc.qsl.item.bows.mixin.client;
 
-import org.quiltmc.qsl.bows.api.CrossbowExtensions;
+import org.quiltmc.qsl.item.bows.api.CrossbowExtensions;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

@@ -1,12 +1,13 @@
 {
   "required": true,
-  "package": "org.quiltmc.qsl.bows.mixin",
+  "package": "org.quiltmc.qsl.item.bows.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "AbstractSkeletonEntityMixin",
     "BowAttackGoalMixin",
     "BowAttackMixin",
     "BowItemMixin",
+    "CrossbowItemAccessor",
     "CrossbowItemMixin",
     "EntityUseBowMixin",
     "EntityUseCrossbowMixin",

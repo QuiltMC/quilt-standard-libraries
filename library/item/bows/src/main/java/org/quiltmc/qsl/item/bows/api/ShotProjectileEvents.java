@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.bows.api;
+package org.quiltmc.qsl.item.bows.api;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -93,7 +93,7 @@ public final class ShotProjectileEvents {
 
 	public interface ModifyProjectileFromCrossbow {
 		/**
-		 * In this method you can modify the behavior of arrows shot from your custom crossbow. Applies all of the vanilla arrow modifiers first.
+		 * In this method you can modify the behavior of arrows shot from your custom crossbow. Applies all the vanilla arrow modifiers first.
 		 *
 		 * @param crossbowStack              the ItemStack for the Crossbow Item
 		 * @param projectileStack            the ItemStack for the projectile currently being shot

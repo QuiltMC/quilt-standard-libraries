@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.bows.mixin;
+package org.quiltmc.qsl.item.bows.mixin;
 
-import org.quiltmc.qsl.bows.api.BowExtensions;
-import org.quiltmc.qsl.bows.api.ShotProjectileEvents;
+import org.quiltmc.qsl.item.bows.api.BowExtensions;
+import org.quiltmc.qsl.item.bows.api.ShotProjectileEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -36,37 +36,33 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 @Mixin(BowItem.class)
-public abstract class BowItemMixin {
+public class BowItemMixin implements BowExtensions {
 	@Unique
-	private PersistentProjectileEntity shotProjectile;
+	private final ThreadLocal<PersistentProjectileEntity> shotProjectile = new ThreadLocal<>();
 
 	// Allows custom bows to modify the projectile shot by bows
 	// Two mixins are needed for this in order to capture the locals
 	@Inject(method = "onStoppedUsing(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"), locals = LocalCapture.CAPTURE_FAILHARD)
 	public void onStoppedUsing_modifyArrow(ItemStack bowStack, World world, LivingEntity user, int remainingUseTicks, CallbackInfo info, PlayerEntity playerEntity, boolean bl, ItemStack arrowStack, int i, float pullProgress, boolean bl2, ArrowItem arrowItem, PersistentProjectileEntity persistentProjectileEntity) {
-		shotProjectile = ShotProjectileEvents.BOW_REPLACE_SHOT_PROJECTILE.invoker().replaceProjectileShot(bowStack, arrowStack, user, pullProgress, persistentProjectileEntity);
-		ShotProjectileEvents.BOW_MODIFY_SHOT_PROJECTILE.invoker().modifyProjectileShot(bowStack, arrowStack, user, pullProgress, shotProjectile);
+		shotProjectile.set(ShotProjectileEvents.BOW_REPLACE_SHOT_PROJECTILE.invoker().replaceProjectileShot(bowStack, arrowStack, user, pullProgress, persistentProjectileEntity));
+		ShotProjectileEvents.BOW_MODIFY_SHOT_PROJECTILE.invoker().modifyProjectileShot(bowStack, arrowStack, user, pullProgress, shotProjectile.get());
 	}
 
 	// Actually modifies the projectile
 	@ModifyVariable(method = "onStoppedUsing(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"))
 	public PersistentProjectileEntity onStoppedUsing_replaceArrow(PersistentProjectileEntity persistentProjectileEntity) {
-		return shotProjectile;
+		return shotProjectile.get();
 	}
 
 	// Removes the pointer to the shot projectile for GC
 	@Inject(method = "onStoppedUsing(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z", shift = At.Shift.AFTER))
 	public void onStoppedUsing_resetInternalProjectile(ItemStack stack, World world, LivingEntity user, int remainingUseTicks, CallbackInfo ci) {
-		shotProjectile = null;
+		shotProjectile.remove();
 	}
 
 	// Modifies the pull progress if a custom bow is used
 	@Redirect(method = "onStoppedUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/BowItem;getPullProgress(I)F"))
 	private float redirectPullProgress(int useTicks, ItemStack bowStack, World world, LivingEntity user, int remainingUseTicks) {
-		if (this instanceof BowExtensions) {
-			return ((BowExtensions) this).getCustomPullProgress(useTicks, bowStack);
-		}
-
-		return BowItem.getPullProgress(useTicks);
+		return this.getCustomPullProgress(useTicks, bowStack);
 	}
 }

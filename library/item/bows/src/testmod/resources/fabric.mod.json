@@ -10,7 +10,7 @@
   },
   "entrypoints": {
     "main": [
-      "org.quiltmc.qsl.bows.BowsTest"
+      "org.quiltmc.qsl.item.bows.BowsTest"
     ]
   }
 }

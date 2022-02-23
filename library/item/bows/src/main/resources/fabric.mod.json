@@ -25,6 +25,14 @@
     "quilt_bows.mixins.json"
   ],
   "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_1753": [
+        "org/quiltmc/qsl/item/bows/api/BowExtensions"
+      ],
+      "net/minecraft/class_1764": [
+        "org/quiltmc/qsl/item/bows/api/CrossbowExtensions"
+      ]
+    },
     "modmenu": {
       "badges": [
         "library"

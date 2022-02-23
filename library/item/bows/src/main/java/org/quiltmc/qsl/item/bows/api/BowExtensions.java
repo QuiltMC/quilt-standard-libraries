@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.bows.api;
+package org.quiltmc.qsl.item.bows.api;
 
+import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;
 
 /**
- * An interface to implement for all custom bows in Quilt. <br>
- * This is meant to be used on a {@link net.minecraft.item.BowItem} class. Unless similar functionality is implemented on your custom item, most functionality will not work. <br>
+ * An interface to implement for all custom bows in Quilt. <p>
+ * This is meant to be used on a {@link net.minecraft.item.BowItem} class. Unless similar functionality is implemented on your custom item, most functionality will not work. <p>
  * In order to modify the projectile shot from your bow, implementing and registering {@link ShotProjectileEvents.ModifyProjectileFromBow} is recommended.
  *
  * @see ExtendedBowItem
@@ -34,6 +35,6 @@ public interface BowExtensions {
 	 * @return the progress of the pull from {@code 0.0f} to {@code 1.0f}.
 	 */
 	default float getCustomPullProgress(int useTicks, ItemStack bowStack) {
-		return net.minecraft.item.BowItem.getPullProgress(useTicks);
+		return BowItem.getPullProgress(useTicks);
 	}
 }

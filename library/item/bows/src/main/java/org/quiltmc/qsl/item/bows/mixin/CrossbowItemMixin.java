@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.bows.mixin;
+package org.quiltmc.qsl.item.bows.mixin;
 
-import org.quiltmc.qsl.bows.api.CrossbowExtensions;
-import org.quiltmc.qsl.bows.api.ShotProjectileEvents;
+import org.jetbrains.annotations.NotNull;
+import org.quiltmc.qsl.item.bows.api.CrossbowExtensions;
+import org.quiltmc.qsl.item.bows.api.ShotProjectileEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -35,7 +36,7 @@ import net.minecraft.world.World;
 
 
 @Mixin(CrossbowItem.class)
-public abstract class CrossbowItemMixin {
+public class CrossbowItemMixin implements CrossbowExtensions {
 	@Inject(method = "createArrow", at = @At(value = "RETURN"), locals = LocalCapture.CAPTURE_FAILSOFT, cancellable = true)
 	private static void createArrow(World world, LivingEntity entity, ItemStack crossbow, ItemStack projectileStack, CallbackInfoReturnable<PersistentProjectileEntity> cir, ArrowItem arrowItem, PersistentProjectileEntity persistentProjectileEntity) {
 		persistentProjectileEntity = ShotProjectileEvents.CROSSBOW_REPLACE_SHOT_PROJECTILE.invoker().replaceProjectileShot(crossbow, projectileStack, entity, persistentProjectileEntity);
