@@ -9,7 +9,7 @@
     "quilt_resource_loader": "*"
   },
   "entrypoints": {
-    "main": [
+    "init": [
       "org.quiltmc.qsl.resource.loader.test.BuiltinResourcePackTestMod",
       "org.quiltmc.qsl.resource.loader.test.ResourceReloaderTestMod"
     ],
