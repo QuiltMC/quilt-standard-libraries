@@ -74,6 +74,10 @@ public class ShapedRecipeBuilder extends RecipeBuilder<ShapedRecipeBuilder, Shap
 			if (success) break;
 		}
 
+		if (!success) {
+			throw new IllegalArgumentException("The pattern key '" + key + "' doesn't exist in the given pattern.");
+		}
+
 		return this;
 	}
 
@@ -125,7 +129,7 @@ public class ShapedRecipeBuilder extends RecipeBuilder<ShapedRecipeBuilder, Shap
 	 */
 	@Override
 	public ShapedRecipe build(Identifier id, String group) {
-		super.build(id, group);
+		this.checkOutputItem();
 		DefaultedList<Ingredient> ingredients = VanillaRecipeBuilders.getIngredients(this.pattern, this.ingredients, this.width, this.height);
 		return new ShapedRecipe(id, group, this.width, this.height, ingredients, this.output);
 	}

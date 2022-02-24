@@ -43,6 +43,10 @@ public abstract class RecipeBuilder<SELF extends RecipeBuilder<SELF, RESULT>, RE
 		return (SELF) this;
 	}
 
+	protected void checkOutputItem() {
+		Objects.requireNonNull(this.output, "The output stack cannot be null.");
+	}
+
 	/**
 	 * Builds the recipe.
 	 *
@@ -50,8 +54,5 @@ public abstract class RecipeBuilder<SELF extends RecipeBuilder<SELF, RESULT>, RE
 	 * @param group the group of the recipe
 	 * @return the shaped recipe
 	 */
-	public RESULT build(Identifier id, String group) {
-		Objects.requireNonNull(this.output, "The output stack cannot be null.");
-		return null;
-	}
+	public abstract RESULT build(Identifier id, String group);
 }

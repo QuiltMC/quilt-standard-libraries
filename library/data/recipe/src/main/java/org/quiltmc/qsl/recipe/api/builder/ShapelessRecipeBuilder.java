@@ -93,7 +93,7 @@ public class ShapelessRecipeBuilder extends RecipeBuilder<ShapelessRecipeBuilder
 	 * @return the shapeless crafting recipe
 	 */
 	public ShapelessRecipe build(Identifier id, String group) {
-		super.build(id, group);
+		this.checkOutputItem();
 
 		if (this.ingredients.size() == 0) throw new IllegalStateException("Cannot build a recipe without ingredients.");
 

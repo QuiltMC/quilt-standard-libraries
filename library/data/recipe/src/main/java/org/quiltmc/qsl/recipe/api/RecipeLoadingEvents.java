@@ -35,10 +35,19 @@ import org.quiltmc.qsl.base.api.event.EventAwareListener;
  * Represents the recipe loading events.
  * <p>
  * Triggered when the recipes are being loaded in the {@link net.minecraft.recipe.RecipeManager}.
+ * <p>
+ * Events are triggered in the following order:
+ * <ol>
+ *     <li>{@link #ADD}</li>
+ *     <li>{@link #MODIFY}</li>
+ *     <li>{@link #REMOVE}</li>
+ * </ol>
  */
 public final class RecipeLoadingEvents {
 	/**
 	 * Event to add new recipes while the {@link net.minecraft.recipe.RecipeManager} is being built.
+	 * <p>
+	 * Triggered before {@link #MODIFY} and {@link #REMOVE}.
 	 */
 	public static final Event<AddRecipesCallback> ADD = Event.create(AddRecipesCallback.class,
 			callbacks -> handler -> {
@@ -48,6 +57,8 @@ public final class RecipeLoadingEvents {
 			});
 	/**
 	 * Event to modify recipes while the {@link net.minecraft.recipe.RecipeManager} is being built.
+	 * <p>
+	 * Triggered after {@link #ADD} and before {@link #REMOVE}.
 	 */
 	public static final Event<ModifyRecipesCallback> MODIFY = Event.create(ModifyRecipesCallback.class,
 			callbacks -> handler -> {
@@ -57,6 +68,8 @@ public final class RecipeLoadingEvents {
 			});
 	/**
 	 * Event to remove recipes while the {@link net.minecraft.recipe.RecipeManager} is being built.
+	 * <p>
+	 * Triggered after {@link #ADD} and {@link #MODIFY}.
 	 */
 	public static final Event<RemoveRecipesCallback> REMOVE = Event.create(RemoveRecipesCallback.class,
 			callbacks -> handler -> {
@@ -91,7 +104,7 @@ public final class RecipeLoadingEvents {
 			/**
 			 * Registers a recipe into the {@link net.minecraft.recipe.RecipeManager}.
 			 * <p>
-			 * The recipe factory is only called if the recipe can be registered.
+			 * The recipe factory is only called if the recipe is not already present.
 			 *
 			 * @param id      identifier of the recipe
 			 * @param factory the recipe factory
