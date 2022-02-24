@@ -91,7 +91,7 @@ loom {
 	}
 }
 afterEvaluate {
-	def generateQmj = tasks.create("generateQmj")
+	def generateQmj = tasks.create("generateQmjForIdea")
 	project.subprojects.each {
 		it.subprojects.each {
 			generateQmj.dependsOn it.tasks.getByName("generateQmj")

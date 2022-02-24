@@ -114,7 +114,7 @@ public class QslModuleExtensionImpl extends QslExtension implements Serializable
 		project.getExtensions()
 				.getByType(LoomGradleExtensionAPI.class)
 				.getAccessWidenerPath()
-				.fileValue(project.file("src/main/resources/" + id.get() + ".accessWidener"));
+				.fileValue(project.file("src/main/resources/" + id.get() + ".accesswidener"));
 	}
 	public Property<Boolean> getHasMixins() {
 		return hasMixins;
