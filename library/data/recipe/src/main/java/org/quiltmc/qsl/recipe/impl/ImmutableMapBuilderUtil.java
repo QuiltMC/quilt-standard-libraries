@@ -46,7 +46,7 @@ public final class ImmutableMapBuilderUtil {
 			field.setAccessible(true);
 			SIZE_GETTER = MethodHandles.lookup().unreflectGetter(field);
 		} catch (NoSuchFieldException | IllegalAccessException e) {
-			LOGGER.error("Could not access ImmutableMap$Builder entries or size fields. Which is necessary for the Recipe API.");
+			LOGGER.error("Could not access ImmutableMap$Builder entries or size fields, which is necessary for the Recipe API.");
 			throw new IllegalStateException(e);
 		}
 	}

@@ -50,7 +50,7 @@ public class ShapedRecipeBuilder extends RecipeBuilder<ShapedRecipeBuilder, Shap
 	}
 
 	/**
-	 * Puts the specified ingredient at the specified key.
+	 * Associates an ingredient with a specified key.
 	 *
 	 * @param key        the key of the ingredient
 	 * @param ingredient the ingredient

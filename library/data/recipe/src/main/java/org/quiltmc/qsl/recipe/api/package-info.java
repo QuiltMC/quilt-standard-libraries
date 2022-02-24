@@ -3,7 +3,7 @@
  * <p>
  * <h3>Quick note about vocabulary in the Recipe API:</h3>
  * <ul>
- *     <li>A static recipe is a recipe which is registered in the API once and is automatically added to
+ *     <li>A static recipe is a recipe which is registered with the API once and is automatically added to
  *     the {@linkplain net.minecraft.recipe.RecipeManager recipe manager} when recipes are loaded.</li>
  *     <li>A dynamic recipe is a recipe which is registered when recipes are loaded.</li>
  * </ul>
