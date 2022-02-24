@@ -1,5 +1,6 @@
 package qsl.internal.json;
 
+import org.gradle.api.Project;
 import org.quiltmc.json5.JsonWriter;
 import qsl.internal.dependency.QslLibraryDependency;
 import qsl.internal.extension.QslModuleExtensionImpl;
@@ -8,11 +9,11 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public final class QmjBuilder {
-	public static void buildQmj(String version, String loaderVersion, String minecraftVersion, QslModuleExtensionImpl ext, Path path) throws IOException {
+	public static void buildQmj(Project project, String version, String loaderVersion, String minecraftVersion, QslModuleExtensionImpl ext, Path path) throws IOException {
 		JsonWriter writer = JsonWriter.json(path);
 		// write everything that is always present
 		writer.beginObject()
-				.name("schema_version").value("1")
+				.name("schema_version").value(1)
 				.name("quilt_loader").beginObject() // root object -> quilt_loader
 				.name("group").value("org.quiltmc.qsl." + ext.getLibrary().get())
 				.name("id").value(ext.getId().get())
@@ -32,13 +33,26 @@ public final class QmjBuilder {
 				.name("icon").value("assets/" + ext.getId().get() + "/icon.png")
 				.endObject(); // metadata -> quilt_loader
 
-		writer.name("depends").beginObject() // quilt_loader -> depends
-				.name("quilt_loader").value(loaderVersion)
-				.name("minecraft").value(minecraftVersion);
+		writer.name("depends").beginArray();
+		writer.beginObject()
+				.name("id").value("quilt_loader")
+				.name("versions").value(loaderVersion)
+				.endObject()
+				.beginObject()
+				.name("id").value("minecraft")
+					.name("versions").value(minecraftVersion)
+					.endObject();
 		for (QslLibraryDependency depend : ext.getModuleDependencyDefinitions()) {
-			writer.name(depend.getName()).value("*"); // TODO: depend on a semver version range
+			for (QslLibraryDependency.ModuleDependencyInfo moduleDependencyInfo : depend.getDependencyInfo().get()) {
+				Project depProject = project.getRootProject().project(depend.getName()).project(moduleDependencyInfo.module());
+				QslModuleExtensionImpl depExt = depProject.getExtensions().getByType(QslModuleExtensionImpl.class);
+				writer.beginObject()
+						.name("id").value(depExt.getId().get())
+						.name("versions").value(depProject.getVersion().toString())
+						.endObject();
+			}
 		}
-		writer.endObject(); // depends -> quilt_loader
+		writer.endArray(); // depends -> quilt_loader
 
 		if (!ext.getEntrypoints().isEmpty()) {
 			writer.name("entrypoints").beginObject(); // quilt_loader -> entrypoints

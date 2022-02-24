@@ -27,6 +27,6 @@ public abstract class GenerateQmjTask extends DefaultTask {
 			Files.delete(output);
 		}
 
-		QmjBuilder.buildQmj(getProject().getVersion().toString(), "*", "*", getQslModule().get(), output);
+		QmjBuilder.buildQmj(getProject(), getProject().getVersion().toString(), "*", "*", getQslModule().get(), output);
 	}
 }
