@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.screen.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "client.GameRendererMixin",
+    "client.MinecraftClientMixin",
+    "client.ScreenMixin",
+    "client.KeyboardMixin",
+    "client.MouseMixin",
+    "client.ScreenAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
