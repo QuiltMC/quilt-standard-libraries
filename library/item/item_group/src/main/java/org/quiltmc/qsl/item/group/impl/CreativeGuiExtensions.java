@@ -15,11 +15,19 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.itemgroup.impl;
+package org.quiltmc.qsl.item.group.impl;
 
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
-public interface ItemGroupExtensions {
-	void quilt$expandArray();
+public interface CreativeGuiExtensions {
+	void quilt$nextPage();
+
+	void quilt$previousPage();
+
+	int quilt$currentPage();
+
+	boolean quilt$isButtonVisible(QuiltCreativePlayerInventoryScreenWidgets.Type type);
+
+	boolean quilt$isButtonEnabled(QuiltCreativePlayerInventoryScreenWidgets.Type type);
 }
