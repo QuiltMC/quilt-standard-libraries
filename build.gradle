@@ -2,6 +2,7 @@ import qsl.internal.Versions
 
 plugins {
 	id("maven-publish")
+	id("org.jetbrains.gradle.plugin.idea-ext") version("1.1.3")
 	id("qsl.common")
 }
 
@@ -89,6 +90,25 @@ loom {
 		}
 	}
 }
+afterEvaluate {
+	def generateQmj = tasks.create("generateQmj")
+	project.subprojects.each {
+		it.subprojects.each {
+			generateQmj.dependsOn it.tasks.getByName("generateQmj")
+		}
+	}
+
+	idea {
+		project {
+			settings {
+				taskTriggers {
+					afterSync generateQmj
+				}
+			}
+		}
+	}
+}
+
 
 task checkVersion {
 	doFirst {

@@ -11,16 +11,22 @@ import qsl.internal.extension.QslModuleExtensionImpl;
 import qsl.internal.json.QmjBuilder;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public abstract class GenerateQmjTask extends DefaultTask {
 	@OutputDirectory
-	abstract DirectoryProperty getOutputDir();
+	public abstract DirectoryProperty getOutputDir();
 
 	@Nested
-	abstract Property<QslModuleExtensionImpl> getQslModule();
+	public abstract Property<QslModuleExtensionImpl> getQslModule();
 	@TaskAction
-	void generateQmj() throws IOException {
-		QmjBuilder.buildQmj(getProject().getVersion().toString(), "*", "*", getQslModule().get(),
-				getOutputDir().get().getAsFile().toPath().resolve("quilt.mod.json"));
+	public void generateQmj() throws IOException {
+		Path output = getOutputDir().getAsFile().get().toPath().resolve("quilt.mod.json");
+		if (Files.exists(output)) {
+			Files.delete(output);
+		}
+
+		QmjBuilder.buildQmj(getProject().getVersion().toString(), "*", "*", getQslModule().get(), output);
 	}
 }

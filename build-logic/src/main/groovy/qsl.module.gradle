@@ -91,6 +91,7 @@ def generateQmj = tasks.register("generateQmj", qsl.internal.task.GenerateQmjTas
 	it.qslModule.set(extension)
 	it.outputDir.set(project.file("build/generated/generated_resources/"))
 }
+
 sourceSets {
 	main {
 		resources {
@@ -105,6 +106,10 @@ sourceSets {
 		compileClasspath += sourceSets.main.compileClasspath
 		runtimeClasspath += sourceSets.main.runtimeClasspath
 	}
+}
+
+jar {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE // People running with Gradle will have two versions of QMJ present
 }
 
 dependencies {
