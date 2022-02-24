@@ -18,6 +18,8 @@ package org.quiltmc.qsl.registry.api.event;
 
 import java.util.function.Predicate;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.registry.impl.event.RegistryMonitorImpl;
@@ -26,7 +28,9 @@ import org.quiltmc.qsl.registry.impl.event.RegistryMonitorImpl;
  * A higher level tool for monitoring the manipulation of Minecraft's content registries.
  *
  * @param <V> the entry type of the monitored {@link Registry}
+ * @see RegistryEvents RegistryEvents for a low-level API
  */
+@ApiStatus.NonExtendable
 public interface RegistryMonitor<V> {
 	/**
 	 * A builder-like method to append a filter to the current registry monitor, for determining what entries to invoke
