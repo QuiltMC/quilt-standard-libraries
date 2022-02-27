@@ -10,7 +10,7 @@
   },
   "entrypoints": {
     "init": [
-      "org.quiltmc.qsl.itemgroup.test.ItemGroupTest"
+      "org.quiltmc.qsl.item.group.test.ItemGroupTest"
     ]
   }
 }
