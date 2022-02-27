@@ -24,7 +24,7 @@ import net.minecraft.tag.TagKey;
 
 @Mixin(TagKey.class)
 public interface TagKeyAccessor {
-	@Accessor("VALUES")
+	@Accessor("INTERNER")
 	static Interner<TagKey<?>> getInterner() {
 		throw new IllegalStateException("Injection failed.");
 	}

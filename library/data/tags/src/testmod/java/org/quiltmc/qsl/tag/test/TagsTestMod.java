@@ -47,8 +47,8 @@ public final class TagsTestMod implements ServerLifecycleEvents.Ready, CommandRe
 	public static final String NAMESPACE = "quilt_tags_testmod";
 	public static final Logger LOGGER = LoggerFactory.getLogger(TagsTestMod.class);
 
-	public static final TagKey<Block> TEST_BLOCK_TAG = TagKey.create(Registry.BLOCK_KEY, id("block_tag"));
-	public static final TagKey<Biome> TEST_BIOME_TAG = TagKey.create(Registry.BIOME_KEY, id("registry_test"));
+	public static final TagKey<Block> TEST_BLOCK_TAG = TagKey.of(Registry.BLOCK_KEY, id("block_tag"));
+	public static final TagKey<Biome> TEST_BIOME_TAG = TagKey.of(Registry.BIOME_KEY, id("registry_test"));
 
 	public static Identifier id(String path) {
 		return new Identifier(NAMESPACE, path);

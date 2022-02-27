@@ -39,6 +39,9 @@
       ],
       "net/minecraft/class_3494\u0024class_3495": [
         "org/quiltmc/qsl/tag/api/QuiltTagBuilder"
+      ],
+      "net/minecraft/class_6862": [
+        "org/quiltmc/qsl/tag/api/QuiltTagKey"
       ]
     },
     "modmenu": {

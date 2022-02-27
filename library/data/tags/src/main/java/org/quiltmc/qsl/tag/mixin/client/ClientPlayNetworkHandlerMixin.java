@@ -45,7 +45,7 @@ public abstract class ClientPlayNetworkHandlerMixin {
 			method = "onGameJoin",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/network/packet/s2c/play/GameJoinS2CPacket;registryManager()Lnet/minecraft/util/registry/DynamicRegistryManager$class_6890;",
+					target = "Lnet/minecraft/network/packet/s2c/play/GameJoinS2CPacket;registryManager()Lnet/minecraft/util/registry/DynamicRegistryManager$Frozen;",
 					shift = At.Shift.AFTER
 			)
 	)
@@ -55,7 +55,7 @@ public abstract class ClientPlayNetworkHandlerMixin {
 
 	@Inject(method = "onDisconnected", at = @At("TAIL"))
 	private void onDisconnected(Text reason, CallbackInfo ci) {
-		ClientTagRegistryManager.applyAll(BuiltinRegistries.field_36476);
+		ClientTagRegistryManager.applyAll(BuiltinRegistries.MANAGER);
 
 		if (!this.connection.isLocal()) {
 			TagRegistryImpl.resetTags();

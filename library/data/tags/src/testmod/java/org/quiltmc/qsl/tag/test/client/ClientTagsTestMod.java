@@ -40,9 +40,9 @@ import org.quiltmc.qsl.tag.api.TagType;
 import org.quiltmc.qsl.tag.test.TagsTestMod;
 
 public final class ClientTagsTestMod implements ClientModInitializer {
-	public static final TagKey<Block> TEST_CLIENT_BLOCK_TAG = QuiltTagKey.create(Registry.BLOCK_KEY, TagsTestMod.id("client_block_tag"), TagType.CLIENT_ONLY);
-	public static final TagKey<Biome> TEST_CLIENT_BIOME_TAG = QuiltTagKey.create(Registry.BIOME_KEY, TagsTestMod.id("client_biome_tag"), TagType.CLIENT_ONLY);
-	public static final TagKey<Item> TEST_DEFAULT_ITEM_TAG = QuiltTagKey.create(Registry.ITEM_KEY, TagsTestMod.id("default_item_tag"), TagType.CLIENT_FALLBACK);
+	public static final TagKey<Block> TEST_CLIENT_BLOCK_TAG = QuiltTagKey.of(Registry.BLOCK_KEY, TagsTestMod.id("client_block_tag"), TagType.CLIENT_ONLY);
+	public static final TagKey<Biome> TEST_CLIENT_BIOME_TAG = QuiltTagKey.of(Registry.BIOME_KEY, TagsTestMod.id("client_biome_tag"), TagType.CLIENT_ONLY);
+	public static final TagKey<Item> TEST_DEFAULT_ITEM_TAG = QuiltTagKey.of(Registry.ITEM_KEY, TagsTestMod.id("default_item_tag"), TagType.CLIENT_FALLBACK);
 
 	private static final Consumer<Text> FEEDBACK_CONSUMER = msg -> MinecraftClient.getInstance().player.sendMessage(msg, false);
 

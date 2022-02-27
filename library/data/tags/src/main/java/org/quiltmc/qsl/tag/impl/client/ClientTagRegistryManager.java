@@ -63,7 +63,7 @@ public final class ClientTagRegistryManager<T> {
 	private final RegistryKey<? extends Registry<T>> registryKey;
 	private final ClientRegistryFetcher registryFetcher;
 	private final TagGroupLoader<Holder<T>> loader;
-	private DynamicRegistryManager registryManager = BuiltinRegistries.field_36476;
+	private DynamicRegistryManager registryManager = BuiltinRegistries.MANAGER;
 	private Map<Identifier, Tag.Builder> serializedTags = Map.of();
 	private Map<TagKey<T>, Tag<Holder<T>>> clientOnlyValues;
 	private Map<Identifier, Tag.Builder> fallbackSerializedTags = Map.of();
@@ -135,12 +135,12 @@ public final class ClientTagRegistryManager<T> {
 		if (!TagRegistryImpl.isRegistryDynamic(this.registryKey)) {
 			var tags = new Object2ObjectOpenHashMap<TagKey<T>, Tag<Holder<T>>>();
 			var built = this.loader.buildGroup(tagBuilders);
-			built.forEach((id, tag) -> tags.put(QuiltTagKey.create(this.registryKey, id, type), tag));
+			built.forEach((id, tag) -> tags.put(QuiltTagKey.of(this.registryKey, id, type), tag));
 			return tags;
 		}
 
 		var tags = new Object2ObjectOpenHashMap<TagKey<T>, Tag<Holder<T>>>();
-		Function<Identifier, Tag<Holder<T>>> tagGetter = id -> tags.get(QuiltTagKey.create(this.registryKey, id, type));
+		Function<Identifier, Tag<Holder<T>>> tagGetter = id -> tags.get(QuiltTagKey.of(this.registryKey, id, type));
 		Function<Identifier, Holder<T>> registryGetter = identifier -> this.registryFetcher.apply(identifier).orElse(null);
 		Multimap<Identifier, Identifier> tagEntries = HashMultimap.create();
 
@@ -154,7 +154,7 @@ public final class ClientTagRegistryManager<T> {
 		var set = new HashSet<Identifier>();
 		tagBuilders.keySet().forEach(tagId ->
 				TagGroupLoaderAccessor.invokeVisitDependenciesAndEntry(tagBuilders, tagEntries, set, tagId,
-						(currentTagId, builder) -> tags.put(QuiltTagKey.create(this.registryKey, tagId, type),
+						(currentTagId, builder) -> tags.put(QuiltTagKey.of(this.registryKey, tagId, type),
 								this.buildLenientTag(builder, tagGetter, registryGetter))
 				)
 		);
@@ -180,7 +180,7 @@ public final class ClientTagRegistryManager<T> {
 		}
 
 		var boundTags = new IdentityHashMap<Holder.Reference<T>, List<TagKey<T>>>();
-		registry.get().method_40270().forEach(reference -> boundTags.put(reference, new ArrayList<>()));
+		registry.get().holders().forEach(reference -> boundTags.put(reference, new ArrayList<>()));
 
 		map.forEach((tagKey, tag) -> {
 			for (var holder : tag.values()) {
@@ -253,7 +253,7 @@ public final class ClientTagRegistryManager<T> {
 			if (this.cached == null) {
 				return Optional.empty();
 			} else {
-				return this.cached.method_40264(RegistryKey.of(this.cached.getKey(), id));
+				return this.cached.getHolder(RegistryKey.of(this.cached.getKey(), id));
 			}
 		}
 	}

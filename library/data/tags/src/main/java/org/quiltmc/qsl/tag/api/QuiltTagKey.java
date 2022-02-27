@@ -28,9 +28,8 @@ import org.quiltmc.qsl.tag.mixin.TagKeyAccessor;
  * Interface implemented by {@link net.minecraft.tag.TagKey} instances when QSL is present.
  *
  * @param <T> the type of the values held by the tag
- * @see #create(RegistryKey, Identifier, TagType)
+ * @see #of(RegistryKey, Identifier, TagType)
  */
-// @TODO Use loom interface injection once https://github.com/FabricMC/fabric-loom/issues/595 is fixed.
 public interface QuiltTagKey<T> {
 	/**
 	 * {@return the type of tag of this key}
@@ -47,7 +46,7 @@ public interface QuiltTagKey<T> {
 	 * @return the tag key
 	 */
 	@SuppressWarnings({"deprecation", "unchecked"})
-	static <T> TagKey<T> create(RegistryKey<? extends Registry<T>> registry, Identifier id, TagType type) {
+	static <T> TagKey<T> of(RegistryKey<? extends Registry<T>> registry, Identifier id, TagType type) {
 		var key = new TagKey<>(registry, id);
 		((QuiltTagKeyHooks) (Object) key).quilt$setType(type);
 		return (TagKey<T>) TagKeyAccessor.getInterner().intern(key);

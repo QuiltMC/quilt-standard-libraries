@@ -32,7 +32,7 @@ import org.quiltmc.qsl.tag.impl.TagRegistryImpl;
 
 @Mixin(SimpleRegistry.class)
 public class SimpleRegistryMixin {
-	@Inject(method = "method_40257", at = @At("HEAD"))
+	@Inject(method = "bindTags", at = @At("HEAD"))
 	private void onPopulateTags(Map<TagKey<?>, List<Holder<?>>> map, CallbackInfo ci) {
 		TagRegistryImpl.populateTags(map);
 	}
