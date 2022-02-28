@@ -15,6 +15,7 @@
 import qsl.internal.Git
 import qsl.internal.GroovyXml
 import qsl.internal.Versions
+import qsl.internal.extension.QslModuleExtension
 import qsl.internal.extension.QslModuleExtensionImpl
 import qsl.internal.dependency.QslLibraryDependency
 
@@ -28,12 +29,8 @@ plugins {
 	id("qsl.common")
 }
 
-def extension = project.extensions.create("qslModule", QslModuleExtensionImpl, project)
-void accessWidener() {
-	loom {
-		accessWidenerPath = file("src/main/resources/" + extension.id.get() + ".accesswidener")
-	}
-}
+def extension = project.extensions.create(QslModuleExtension, "qslModule", QslModuleExtensionImpl, project)
+
 // We need to wait until project evaluation has finished to peek into a complete QSL module extension.
 afterEvaluate {
 	// Make sure to call get on any properties
@@ -45,6 +42,7 @@ afterEvaluate {
 		throw new GradleException("Module $extension.moduleName needs the `library` field set in the qslModule extension")
 	}
 
+	group = "org.quiltmc.qsl.${extension.library.get()}"
 	// Version is set automatically in extension, verify it is set.
 	if (project.version == "unspecified") { // Gradle will return `unspecified` given no version being set.
 		throw new GradleException("Module $extension.moduleName needs a version to be set in the qslModule extension")
@@ -65,7 +63,7 @@ afterEvaluate {
 
 	}
 
-	PublicationContainer publications = this.project.getExtensions().getByType(PublishingExtension.class).getPublications();
+	PublicationContainer publications = this.project.getExtensions().getByType(PublishingExtension.class).getPublications()
 
 	publications.named("mavenJava", MavenPublication.class, publication -> {
 		publication.pom(pom -> pom.withXml(xml -> {
@@ -83,7 +81,7 @@ afterEvaluate {
 
 	// TODO: Anything else to validate.
 
-	group = "org.quiltmc.qsl.${extension.library.get()}"
+
 }
 
 

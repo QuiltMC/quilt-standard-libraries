@@ -23,30 +23,20 @@ import qsl.internal.license.LicenseHeader;
 import qsl.internal.task.ApplyLicenseTask;
 import qsl.internal.task.CheckLicenseTask;
 
-public class QslModuleExtensionImpl extends QslExtension implements Serializable {
+public class QslModuleExtensionImpl extends QslExtension implements QslModuleExtension, Serializable {
 	@Serial
 	// increment when changing this class to properly invalidate the generateQmj task
-	private static final long serialVersionUID = 2L;
+	private static final long serialVersionUID = 3L;
 	// public properties
-	@Input
 	private final Property<String> name;
-	@Input
 	private final Property<String> library;
-	@Input
 	private final Property<String> moduleName;
-	@Input
 	private final Property<String> id;
-	@Input
 	private final Property<String> description;
-	@Input
 	private final Property<Environment> environment;
-	@Input
 	private final Property<Boolean> hasAccessWidener;
-	@Input
 	private final Property<Boolean> hasMixins;
-	@Nested
 	private final NamedDomainObjectContainer<QslLibraryDependency> moduleDependencyDefinitions;
-	@Nested
 	private final NamedDomainObjectContainer<EntrypointObjectHolder> entrypoints;
 
 
@@ -87,24 +77,30 @@ public class QslModuleExtensionImpl extends QslExtension implements Serializable
 		project.getTasks().findByName("check").dependsOn("checkLicenses");
 	}
 
+	@Input
 	public Property<String> getModuleName() {
 		return this.moduleName;
 	}
 
+	@Input
 	public Property<String> getLibrary() {
 		return this.library;
 	}
 
+	@Input
 	public Property<String> getName() {
 		return this.name;
 	}
+	@Input
 	public Property<String> getId() {
 		return this.id;
 	}
+	@Input
 	public Property<String> getDescription() {
 		return this.description;
 	}
 
+	@Input
 	public Property<Boolean> getHasAccessWidener() {
 		return hasAccessWidener;
 	}
@@ -116,6 +112,8 @@ public class QslModuleExtensionImpl extends QslExtension implements Serializable
 				.getAccessWidenerPath()
 				.fileValue(project.file("src/main/resources/" + id.get() + ".accesswidener"));
 	}
+
+	@Input
 	public Property<Boolean> getHasMixins() {
 		return hasMixins;
 	}
@@ -124,6 +122,7 @@ public class QslModuleExtensionImpl extends QslExtension implements Serializable
 		this.hasMixins.set(false);
 	}
 
+	@Nested
 	public NamedDomainObjectContainer<QslLibraryDependency> getModuleDependencyDefinitions() {
 		return moduleDependencyDefinitions;
 	}
@@ -132,6 +131,7 @@ public class QslModuleExtensionImpl extends QslExtension implements Serializable
 		configure.execute(moduleDependencyDefinitions);
 	}
 
+	@Nested
 	public NamedDomainObjectContainer<EntrypointObjectHolder> getEntrypoints() {
 		return entrypoints;
 	}
@@ -149,6 +149,7 @@ public class QslModuleExtensionImpl extends QslExtension implements Serializable
 		this.environment.set(Environment.DEDICATED_SERVER_ONLY);
 	}
 
+	@Input
 	public Property<Environment> getEnvironment() {
 		return this.environment;
 	}

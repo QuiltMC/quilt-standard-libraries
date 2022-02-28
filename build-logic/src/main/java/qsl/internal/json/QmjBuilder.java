@@ -3,6 +3,7 @@ package qsl.internal.json;
 import org.gradle.api.Project;
 import org.quiltmc.json5.JsonWriter;
 import qsl.internal.dependency.QslLibraryDependency;
+import qsl.internal.extension.QslModuleExtension;
 import qsl.internal.extension.QslModuleExtensionImpl;
 
 import java.io.IOException;
@@ -45,7 +46,7 @@ public final class QmjBuilder {
 		for (QslLibraryDependency depend : ext.getModuleDependencyDefinitions()) {
 			for (QslLibraryDependency.ModuleDependencyInfo moduleDependencyInfo : depend.getDependencyInfo().get()) {
 				Project depProject = project.getRootProject().project(depend.getName()).project(moduleDependencyInfo.module());
-				QslModuleExtensionImpl depExt = depProject.getExtensions().getByType(QslModuleExtensionImpl.class);
+				QslModuleExtension depExt = depProject.getExtensions().getByType(QslModuleExtension.class);
 				writer.beginObject()
 						.name("id").value(depExt.getId().get())
 						.name("versions").value(depProject.getVersion().toString())
