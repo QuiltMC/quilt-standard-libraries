@@ -38,12 +38,7 @@ publishing {
 		}
 	}
 }
-repositories {
-	maven {
-		name "Quilt Snapshots"
-		url "https://maven.quiltmc.org/repository/snapshot"
-	}
-}
+
 dependencies {
 	minecraft "com.mojang:minecraft:${Versions.MINECRAFT_VERSION}"
 	mappings(loom.layered {
