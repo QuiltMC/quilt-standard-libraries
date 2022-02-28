@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "qsl_item_setting_testmod",
+  "name": "Quilt Item Setting API Test Mod",
+  "version": "1.0.0",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "depends": {
+    "quilt_item_setting": "*"
+  },
+  "entrypoints": {
+    "init": [
+      "org.quiltmc.qsl.item.test.QuiltItemSettingsTests",
+      "org.quiltmc.qsl.item.test.CustomDamageTest"
+    ]
+  }
+}

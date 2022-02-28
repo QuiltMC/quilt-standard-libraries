@@ -97,7 +97,7 @@ sourceSets {
 		resources {
 			// this is needed so that people can use their IDE to compile the project (bypassing Gradle).
 			// you must remember to run the generateQmj task manually
-			srcDirs += project.file("build/generated/generated_resources/")
+			srcDir project.file("build/generated/generated_resources/")
 		}
 		output.dir(generateQmj) // makes task run with gradle automagically
 	}

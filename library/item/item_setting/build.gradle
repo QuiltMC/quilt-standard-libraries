@@ -1,0 +1,18 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Item Setting API"
+	moduleName = "item_setting"
+	id = "quilt_item_setting"
+	description = "An API for extended functionality in Item Settings"
+	version = "1.0.0"
+	library = "item"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+			testmodOnly("resource_loader")
+		}
+	}
+}

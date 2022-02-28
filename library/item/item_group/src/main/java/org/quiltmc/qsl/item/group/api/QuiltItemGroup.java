@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.itemgroup.api;
+package org.quiltmc.qsl.item.group.api;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -23,7 +23,8 @@ import java.util.function.Supplier;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.itemgroup.impl.ItemGroupExtensions;
+
+import org.quiltmc.qsl.item.group.impl.ItemGroupExtensions;
 
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.item.Item;

@@ -1,5 +1,4 @@
 /*
- * Copyright 2016, 2017, 2018, 2019 FabricMC
  * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,11 +14,20 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.itemgroup.impl;
+package org.quiltmc.qsl.item.setting.mixin;
 
-import org.jetbrains.annotations.ApiStatus;
+import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@ApiStatus.Internal
-public interface ItemGroupExtensions {
-	void quilt$expandArray();
+import net.minecraft.item.Item;
+
+@Mixin(Item.class)
+abstract class ItemMixin {
+	@Inject(method = "<init>", at = @At("RETURN"))
+	private void onConstruct(Item.Settings settings, CallbackInfo info) {
+		CustomItemSettingImpl.onBuild(settings, (Item) (Object) this);
+	}
 }

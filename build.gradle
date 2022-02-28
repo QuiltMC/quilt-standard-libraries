@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "org.quiltmc.qsl"
-version = Versions.QSL_VERSION + "+" + Versions.getMinecraftVersionFancyString() + (System.getenv("SNAPSHOTS_URL") ? "-SNAPSHOT" : "")
+version = Versions.QSL_VERSION + "+" + Versions.MINECRAFT_VERSION + (System.getenv("SNAPSHOTS_URL") ? "-SNAPSHOT" : "")
 
 sourceSets {
 	testmod {
