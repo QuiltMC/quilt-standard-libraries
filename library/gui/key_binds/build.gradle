@@ -14,7 +14,3 @@ qslModule {
 		}
 	}
 }
-
-loom {
-	accessWidenerPath = file("src/main/resources/quilt_key_binds.accesswidener")
-}

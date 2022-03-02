@@ -19,7 +19,6 @@
     "minecraft": ">=1.18.2-alpha.22.3.a"
   },
   "description": "Key binds registration and utilities.",
-  "accessWidener": "quilt_key_binds.accesswidener",
   "mixins": [
     "quilt_key_binds.mixins.json"
   ]

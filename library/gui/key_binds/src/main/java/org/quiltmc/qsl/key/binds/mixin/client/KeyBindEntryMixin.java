@@ -60,7 +60,7 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 	private List<Text> quilt$conflictTooltips = new ArrayList<>(2);
 
 	@Unique
-	private InputUtil.Key quilt$previousBoundKey;
+	private static InputUtil.Key quilt$previousBoundKey;
 
 	@Unique
 	private static InputUtil.Key quilt$changedBoundKey;
@@ -71,7 +71,7 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void initPreviousBoundKey(KeyBindListWidget list, KeyBind key, Text text, CallbackInfo ci) {
-		this.quilt$previousBoundKey = null;
+		quilt$previousBoundKey = null;
 		quilt$changedBoundKey = null;
 	}
 
@@ -86,7 +86,7 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 	private void collectConflictTooltips(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci, boolean bl, boolean bl2) {
 		InputUtil.Key boundKey = KeyBindRegistry.getBoundKey(this.key);
 
-		if (!boundKey.equals(this.quilt$previousBoundKey) || quilt$changedBoundKey != null) {
+		if (!boundKey.equals(quilt$previousBoundKey) || quilt$changedBoundKey != null) {
 			this.quilt$conflictTooltips.clear();
 
 			if (quilt$changedBoundKey != null && quilt$changedBoundKey.equals(boundKey)) {
@@ -102,13 +102,13 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 							this.quilt$conflictTooltips.add(new TranslatableText("key.qsl.key_conflict.tooltip").formatted(Formatting.RED));
 						}
 
-						this.quilt$conflictTooltips.add(new TranslatableText("key.qsl.key_conflict.tooltip.entry", new TranslatableText(this.key.getTranslationKey())).formatted(Formatting.RED));
+						this.quilt$conflictTooltips.add(new TranslatableText("key.qsl.key_conflict.tooltip.entry", new TranslatableText(otherKey.getTranslationKey())).formatted(Formatting.RED));
 					}
 				}
 			}
 		}
 
-		this.quilt$previousBoundKey = boundKey;
+		quilt$previousBoundKey = boundKey;
 	}
 
 	@ModifyArg(

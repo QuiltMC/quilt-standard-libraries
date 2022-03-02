@@ -18,7 +18,6 @@ package org.quiltmc.qsl.key.binds.mixin.client;
 
 import java.io.File;
 
-import com.mojang.blaze3d.platform.InputUtil;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -60,22 +59,5 @@ public abstract class GameOptionsMixin {
 			KeyBindRegistryImpl.setKeyBindManager(new KeyBindManager((GameOptions) (Object) this, this.allKeys));
 			this.allKeys = KeyBindRegistryImpl.getKeyBinds();
 		}
-	}
-
-	@Inject(
-			at = @At(
-				value = "FIELD",
-				target = "Lnet/minecraft/client/option/GameOptions;allKeys:[Lnet/minecraft/client/option/KeyBind;"
-			),
-			method = "accept(Lnet/minecraft/client/option/GameOptions$Visitor;)V"
-	)
-	private void includeDisabledEntries(GameOptions.Visitor visitor, CallbackInfo ci) {
-		for (KeyBind keyBind : KeyBindRegistryImpl.getDisabledKeyBinds()) {
-			String keyTranslationKey = keyBind.getKeyTranslationKey();
-			String keyBindTranslationKey = visitor.visitString("key_" + keyBind.getTranslationKey(), keyTranslationKey);
-			if (!keyTranslationKey.equals(keyBindTranslationKey)) {
-				keyBind.setBoundKey(InputUtil.fromTranslationKey(keyTranslationKey));
-			}
-		};
 	}
 }
