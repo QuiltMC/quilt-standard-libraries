@@ -15,7 +15,7 @@
     "QuiltMC"
   ],
   "depends": {
-    "minecraft": ">=1.18.2-beta.1",
+    "minecraft": ">=1.18.2",
     "quilt_base": "*",
     "quilt_resource_loader": "*",
     "fabricloader": ">=0.12"

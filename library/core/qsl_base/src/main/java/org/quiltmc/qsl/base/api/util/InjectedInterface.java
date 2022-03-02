@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.tag.impl;
+package org.quiltmc.qsl.base.api.util;
 
-import org.jetbrains.annotations.ApiStatus;
-
-import net.minecraft.tag.TagGroup;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Represents hooks for the {@link net.minecraft.tag.TagManager}.
+ * States that the annotated interface is injected into some of the game's classes.
  */
-@ApiStatus.Internal
-public interface QuiltTagManagerHooks {
-	void quilt$putTagGroup(RegistryKey<? extends Registry<?>> registryKey, TagGroup<?> tagGroup);
+@Documented
+@Retention(RetentionPolicy.CLASS)
+@Target(ElementType.TYPE)
+public @interface InjectedInterface {
+	/**
+	 * {@return the target classes for which the annotated interface is injected into}
+	 */
+	Class<?>[] value();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.tag.impl;
+package org.quiltmc.qsl.tag.mixin;
 
-import org.jetbrains.annotations.ApiStatus;
+import com.google.common.collect.Interner;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-import org.quiltmc.qsl.tag.api.TagType;
+import net.minecraft.tag.TagKey;
 
-@ApiStatus.Internal
-public interface QuiltRequiredTagWrapperHooks {
-	void quilt$setTagType(TagType tagType);
+@Mixin(TagKey.class)
+public interface TagKeyAccessor {
+	@Accessor("INTERNER")
+	static Interner<TagKey<?>> getInterner() {
+		throw new IllegalStateException("Injection failed.");
+	}
 }

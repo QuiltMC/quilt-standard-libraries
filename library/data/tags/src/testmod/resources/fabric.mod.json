@@ -12,11 +12,8 @@
     "events": [
       "org.quiltmc.qsl.tag.test.TagsTestMod"
     ],
-    "client": [
+    "client_init": [
       "org.quiltmc.qsl.tag.test.client.ClientTagsTestMod"
-    ],
-    "server": [
-      "org.quiltmc.qsl.tag.test.server.ServerTagsTestMod"
     ]
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.tag.mixin;
+package org.quiltmc.qsl.tag.impl;
 
-import java.util.List;
+import org.jetbrains.annotations.ApiStatus;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
+import org.quiltmc.qsl.tag.api.TagType;
 
-import net.minecraft.tag.RequiredTagList;
-import net.minecraft.tag.RequiredTagListRegistry;
-
-@Mixin(RequiredTagListRegistry.class)
-public interface RequiredTagListRegistryAccessor {
-	@Accessor("ALL")
-	static List<RequiredTagList<?>> getAll() {
-		throw new IllegalStateException("Accessor injection failed.");
-	}
+@ApiStatus.Internal
+public interface QuiltTagKeyHooks {
+	void quilt$setType(TagType type);
 }

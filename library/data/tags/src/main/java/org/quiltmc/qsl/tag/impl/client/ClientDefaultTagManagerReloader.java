@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,13 @@ package org.quiltmc.qsl.tag.impl.client;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.stream.Collectors;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.resource.ReloadableResourceManagerImpl;
+import net.minecraft.resource.MultiPackResourceManager;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
@@ -49,11 +50,9 @@ final class ClientDefaultTagManagerReloader extends ClientOnlyTagManagerReloader
 	 * @return the modified resource manager
 	 */
 	private static ResourceManager getServerDataResourceManager(ResourceManager base) {
-		var serverDataResourceManager = new ReloadableResourceManagerImpl(ResourceType.SERVER_DATA);
-		base.streamResourcePacks()
+		return new MultiPackResourceManager(ResourceType.SERVER_DATA, base.streamResourcePacks()
 				.filter(resourcePack -> !resourcePack.getNamespaces(ResourceType.SERVER_DATA).isEmpty())
-				.forEach(serverDataResourceManager::addPack);
-		return serverDataResourceManager;
+				.collect(Collectors.toList()));
 	}
 
 	@Override
@@ -67,7 +66,7 @@ final class ClientDefaultTagManagerReloader extends ClientOnlyTagManagerReloader
 	@Override
 	public CompletableFuture<Void> apply(List<Entry> data, ResourceManager manager, Profiler profiler, Executor executor) {
 		return CompletableFuture.runAsync(() -> {
-			data.forEach(entry -> entry.manager().setDefaultSerializedTags(entry.serializedTags()));
+			data.forEach(entry -> entry.manager().setFallbackSerializedTags(entry.serializedTags()));
 		}, executor);
 	}
 }

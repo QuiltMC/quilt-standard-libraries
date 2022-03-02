@@ -89,8 +89,7 @@ public class CreateWorldScreenMixin {
 			method = "method_37088(Lnet/minecraft/resource/pack/DataPackSettings;Lnet/minecraft/server/WorldStem;)V",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/server/WorldStem;close()V",
-					remap = false
+					target = "Lnet/minecraft/server/WorldStem;close()V"
 			)
 	)
 	private void onEndDataPackLoading(DataPackSettings dataPackSettings, WorldStem arg, CallbackInfo ci) {
