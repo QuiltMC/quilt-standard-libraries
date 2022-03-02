@@ -15,21 +15,35 @@
     "QuiltMC"
   ],
   "depends": {
-    "fabricloader": ">=0.12",
-    "minecraft": ">=1.18.2-alpha.22.3.a",
-    "quilt_resource_loader": "*"
+    "fabricloader": ">=0.13.1",
+    "minecraft": ">=1.18.2",
+    "quilt_resource_loader": "*",
+    "quilt_lifecycle_events": "*"
   },
   "description": "Tag loading and management.",
   "entrypoints": {
-    "client": [
+    "events": [
+      "org.quiltmc.qsl.tag.impl.TagRegistryImpl"
+    ],
+    "client_init": [
       "org.quiltmc.qsl.tag.impl.client.ClientQuiltTagsMod"
     ]
   },
-  "accessWidener": "quilt_tags.accesswidener",
   "mixins": [
     "quilt_tags.mixins.json"
   ],
   "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_3494": [
+        "org/quiltmc/qsl/tag/api/QuiltTag"
+      ],
+      "net/minecraft/class_3494\u0024class_3495": [
+        "org/quiltmc/qsl/tag/api/QuiltTagBuilder"
+      ],
+      "net/minecraft/class_6862": [
+        "org/quiltmc/qsl/tag/api/QuiltTagKey"
+      ]
+    },
     "modmenu": {
       "badges": [
         "library"

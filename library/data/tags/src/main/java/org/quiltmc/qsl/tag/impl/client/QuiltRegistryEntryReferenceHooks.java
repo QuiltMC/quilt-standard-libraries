@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.tag.impl;
+package org.quiltmc.qsl.tag.impl.client;
+
+import java.util.Collection;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.tag.Tag;
-import net.minecraft.util.Identifier;
-
-import org.quiltmc.qsl.tag.api.TagType;
+import net.minecraft.tag.TagKey;
 
 @ApiStatus.Internal
-public interface QuiltRequiredTagListHooks<T> {
-	Tag.Identified<T> quilt$addTypedTag(Identifier id, TagType type);
+public interface QuiltRegistryEntryReferenceHooks<T> {
+	void quilt$setFallbackTags(Collection<TagKey<T>> tags);
+
+	void quilt$setClientTags(Collection<TagKey<T>> tags);
 }
