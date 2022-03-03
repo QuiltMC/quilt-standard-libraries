@@ -38,49 +38,49 @@ public interface ScreenExtensions {
 		return (ScreenExtensions) screen;
 	}
 
-	List<ClickableWidget> quilt_getButtons();
+	List<ClickableWidget> quilt$getButtons();
 
-	Event<ScreenEvents.Remove> quilt_getRemoveEvent();
+	Event<ScreenEvents.Remove> quilt$getRemoveEvent();
 
-	Event<ScreenEvents.BeforeTick> quilt_getBeforeTickEvent();
+	Event<ScreenEvents.BeforeTick> quilt$getBeforeTickEvent();
 
-	Event<ScreenEvents.AfterTick> quilt_getAfterTickEvent();
+	Event<ScreenEvents.AfterTick> quilt$getAfterTickEvent();
 
-	Event<ScreenEvents.BeforeRender> quilt_getBeforeRenderEvent();
+	Event<ScreenEvents.BeforeRender> quilt$getBeforeRenderEvent();
 
-	Event<ScreenEvents.AfterRender> quilt_getAfterRenderEvent();
+	Event<ScreenEvents.AfterRender> quilt$getAfterRenderEvent();
 
 	// Keyboard
 
-	Event<ScreenKeyboardEvents.AllowKeyPress> quilt_getAllowKeyPressEvent();
+	Event<ScreenKeyboardEvents.AllowKeyPress> quilt$getAllowKeyPressEvent();
 
-	Event<ScreenKeyboardEvents.BeforeKeyPress> quilt_getBeforeKeyPressEvent();
+	Event<ScreenKeyboardEvents.BeforeKeyPress> quilt$getBeforeKeyPressEvent();
 
-	Event<ScreenKeyboardEvents.AfterKeyPress> quilt_getAfterKeyPressEvent();
+	Event<ScreenKeyboardEvents.AfterKeyPress> quilt$getAfterKeyPressEvent();
 
-	Event<ScreenKeyboardEvents.AllowKeyRelease> quilt_getAllowKeyReleaseEvent();
+	Event<ScreenKeyboardEvents.AllowKeyRelease> quilt$getAllowKeyReleaseEvent();
 
-	Event<ScreenKeyboardEvents.BeforeKeyRelease> quilt_getBeforeKeyReleaseEvent();
+	Event<ScreenKeyboardEvents.BeforeKeyRelease> quilt$getBeforeKeyReleaseEvent();
 
-	Event<ScreenKeyboardEvents.AfterKeyRelease> quilt_getAfterKeyReleaseEvent();
+	Event<ScreenKeyboardEvents.AfterKeyRelease> quilt$getAfterKeyReleaseEvent();
 
 	// Mouse
 
-	Event<ScreenMouseEvents.AllowMouseClick> quilt_getAllowMouseClickEvent();
+	Event<ScreenMouseEvents.AllowMouseClick> quilt$getAllowMouseClickEvent();
 
-	Event<ScreenMouseEvents.BeforeMouseClick> quilt_getBeforeMouseClickEvent();
+	Event<ScreenMouseEvents.BeforeMouseClick> quilt$getBeforeMouseClickEvent();
 
-	Event<ScreenMouseEvents.AfterMouseClick> quilt_getAfterMouseClickEvent();
+	Event<ScreenMouseEvents.AfterMouseClick> quilt$getAfterMouseClickEvent();
 
-	Event<ScreenMouseEvents.AllowMouseRelease> quilt_getAllowMouseReleaseEvent();
+	Event<ScreenMouseEvents.AllowMouseRelease> quilt$getAllowMouseReleaseEvent();
 
-	Event<ScreenMouseEvents.BeforeMouseRelease> quilt_getBeforeMouseReleaseEvent();
+	Event<ScreenMouseEvents.BeforeMouseRelease> quilt$getBeforeMouseReleaseEvent();
 
-	Event<ScreenMouseEvents.AfterMouseRelease> quilt_getAfterMouseReleaseEvent();
+	Event<ScreenMouseEvents.AfterMouseRelease> quilt$getAfterMouseReleaseEvent();
 
-	Event<ScreenMouseEvents.AllowMouseScroll> quilt_getAllowMouseScrollEvent();
+	Event<ScreenMouseEvents.AllowMouseScroll> quilt$getAllowMouseScrollEvent();
 
-	Event<ScreenMouseEvents.BeforeMouseScroll> quilt_getBeforeMouseScrollEvent();
+	Event<ScreenMouseEvents.BeforeMouseScroll> quilt$getBeforeMouseScrollEvent();
 
-	Event<ScreenMouseEvents.AfterMouseScroll> quilt_getAfterMouseScrollEvent();
+	Event<ScreenMouseEvents.AfterMouseScroll> quilt$getAfterMouseScrollEvent();
 }

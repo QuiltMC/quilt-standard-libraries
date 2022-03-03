@@ -138,7 +138,7 @@ abstract class ScreenMixin implements ScreenExtensions {
 	}
 
 	@Override
-	public List<ClickableWidget> quilt_getButtons() {
+	public List<ClickableWidget> quilt$getButtons() {
 		// Lazy init to make the list access safe after Screen#init
 		if (this.quilt$quiltButtons == null) {
 			this.quilt$quiltButtons = new ButtonList(this.drawables, this.selectables, this.children);
@@ -150,113 +150,113 @@ abstract class ScreenMixin implements ScreenExtensions {
 	@Unique
 	private <T> Event<T> ensureEventsAreInitialized(Event<T> event) {
 		if (event == null) {
-			throw new IllegalStateException(String.format("[quilt_screen] The current screen (%s) has not been correctly initialized, please send this crash log to the mod author. This is usually caused by the screen not calling super.init(Lnet/minecraft/client/MinecraftClient;II)V", this.getClass().getSuperclass().getName()));
+			throw new IllegalStateException(String.format("[quilt$screen] The current screen (%s) has not been correctly initialized, please send this crash log to the mod author. This is usually caused by the screen not calling super.init(Lnet/minecraft/client/MinecraftClient;II)V", this.getClass().getSuperclass().getName()));
 		}
 
 		return event;
 	}
 
 	@Override
-	public Event<ScreenEvents.Remove> quilt_getRemoveEvent() {
+	public Event<ScreenEvents.Remove> quilt$getRemoveEvent() {
 		return ensureEventsAreInitialized(this.quilt$removeEvent);
 	}
 
 	@Override
-	public Event<ScreenEvents.BeforeTick> quilt_getBeforeTickEvent() {
+	public Event<ScreenEvents.BeforeTick> quilt$getBeforeTickEvent() {
 		return ensureEventsAreInitialized(this.quilt$beforeTickEvent);
 	}
 
 	@Override
-	public Event<ScreenEvents.AfterTick> quilt_getAfterTickEvent() {
+	public Event<ScreenEvents.AfterTick> quilt$getAfterTickEvent() {
 		return ensureEventsAreInitialized(this.quilt$afterTickEvent);
 	}
 
 	@Override
-	public Event<ScreenEvents.BeforeRender> quilt_getBeforeRenderEvent() {
+	public Event<ScreenEvents.BeforeRender> quilt$getBeforeRenderEvent() {
 		return ensureEventsAreInitialized(this.quilt$beforeRenderEvent);
 	}
 
 	@Override
-	public Event<ScreenEvents.AfterRender> quilt_getAfterRenderEvent() {
+	public Event<ScreenEvents.AfterRender> quilt$getAfterRenderEvent() {
 		return ensureEventsAreInitialized(this.quilt$afterRenderEvent);
 	}
 
 	// Keyboard
 
 	@Override
-	public Event<ScreenKeyboardEvents.AllowKeyPress> quilt_getAllowKeyPressEvent() {
+	public Event<ScreenKeyboardEvents.AllowKeyPress> quilt$getAllowKeyPressEvent() {
 		return ensureEventsAreInitialized(this.quilt$allowKeyPressEvent);
 	}
 
 	@Override
-	public Event<ScreenKeyboardEvents.BeforeKeyPress> quilt_getBeforeKeyPressEvent() {
+	public Event<ScreenKeyboardEvents.BeforeKeyPress> quilt$getBeforeKeyPressEvent() {
 		return ensureEventsAreInitialized(this.quilt$beforeKeyPressEvent);
 	}
 
 	@Override
-	public Event<ScreenKeyboardEvents.AfterKeyPress> quilt_getAfterKeyPressEvent() {
+	public Event<ScreenKeyboardEvents.AfterKeyPress> quilt$getAfterKeyPressEvent() {
 		return ensureEventsAreInitialized(this.quilt$afterKeyPressEvent);
 	}
 
 	@Override
-	public Event<ScreenKeyboardEvents.AllowKeyRelease> quilt_getAllowKeyReleaseEvent() {
+	public Event<ScreenKeyboardEvents.AllowKeyRelease> quilt$getAllowKeyReleaseEvent() {
 		return ensureEventsAreInitialized(this.quilt$allowKeyReleaseEvent);
 	}
 
 	@Override
-	public Event<ScreenKeyboardEvents.BeforeKeyRelease> quilt_getBeforeKeyReleaseEvent() {
+	public Event<ScreenKeyboardEvents.BeforeKeyRelease> quilt$getBeforeKeyReleaseEvent() {
 		return ensureEventsAreInitialized(this.quilt$beforeKeyReleaseEvent);
 	}
 
 	@Override
-	public Event<ScreenKeyboardEvents.AfterKeyRelease> quilt_getAfterKeyReleaseEvent() {
+	public Event<ScreenKeyboardEvents.AfterKeyRelease> quilt$getAfterKeyReleaseEvent() {
 		return ensureEventsAreInitialized(this.quilt$afterKeyReleaseEvent);
 	}
 
 	// Mouse
 
 	@Override
-	public Event<ScreenMouseEvents.AllowMouseClick> quilt_getAllowMouseClickEvent() {
+	public Event<ScreenMouseEvents.AllowMouseClick> quilt$getAllowMouseClickEvent() {
 		return ensureEventsAreInitialized(this.quilt$allowMouseClickEvent);
 	}
 
 	@Override
-	public Event<ScreenMouseEvents.BeforeMouseClick> quilt_getBeforeMouseClickEvent() {
+	public Event<ScreenMouseEvents.BeforeMouseClick> quilt$getBeforeMouseClickEvent() {
 		return ensureEventsAreInitialized(this.quilt$beforeMouseClickEvent);
 	}
 
 	@Override
-	public Event<ScreenMouseEvents.AfterMouseClick> quilt_getAfterMouseClickEvent() {
+	public Event<ScreenMouseEvents.AfterMouseClick> quilt$getAfterMouseClickEvent() {
 		return ensureEventsAreInitialized(this.quilt$afterMouseClickEvent);
 	}
 
 	@Override
-	public Event<ScreenMouseEvents.AllowMouseRelease> quilt_getAllowMouseReleaseEvent() {
+	public Event<ScreenMouseEvents.AllowMouseRelease> quilt$getAllowMouseReleaseEvent() {
 		return ensureEventsAreInitialized(this.quilt$allowMouseReleaseEvent);
 	}
 
 	@Override
-	public Event<ScreenMouseEvents.BeforeMouseRelease> quilt_getBeforeMouseReleaseEvent() {
+	public Event<ScreenMouseEvents.BeforeMouseRelease> quilt$getBeforeMouseReleaseEvent() {
 		return ensureEventsAreInitialized(this.quilt$beforeMouseReleaseEvent);
 	}
 
 	@Override
-	public Event<ScreenMouseEvents.AfterMouseRelease> quilt_getAfterMouseReleaseEvent() {
+	public Event<ScreenMouseEvents.AfterMouseRelease> quilt$getAfterMouseReleaseEvent() {
 		return ensureEventsAreInitialized(this.quilt$afterMouseReleaseEvent);
 	}
 
 	@Override
-	public Event<ScreenMouseEvents.AllowMouseScroll> quilt_getAllowMouseScrollEvent() {
+	public Event<ScreenMouseEvents.AllowMouseScroll> quilt$getAllowMouseScrollEvent() {
 		return ensureEventsAreInitialized(this.quilt$allowMouseScrollEvent);
 	}
 
 	@Override
-	public Event<ScreenMouseEvents.BeforeMouseScroll> quilt_getBeforeMouseScrollEvent() {
+	public Event<ScreenMouseEvents.BeforeMouseScroll> quilt$getBeforeMouseScrollEvent() {
 		return ensureEventsAreInitialized(this.quilt$beforeMouseScrollEvent);
 	}
 
 	@Override
-	public Event<ScreenMouseEvents.AfterMouseScroll> quilt_getAfterMouseScrollEvent() {
+	public Event<ScreenMouseEvents.AfterMouseScroll> quilt$getAfterMouseScrollEvent() {
 		return ensureEventsAreInitialized(this.quilt$afterMouseScrollEvent);
 	}
 }

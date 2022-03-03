@@ -116,7 +116,7 @@ public final class ScreenEvents {
 	public static Event<Remove> remove(Screen screen) {
 		Objects.requireNonNull(screen, "Screen cannot be null");
 
-		return ScreenExtensions.getExtensions(screen).quilt_getRemoveEvent();
+		return ScreenExtensions.getExtensions(screen).quilt$getRemoveEvent();
 	}
 
 	/**
@@ -127,7 +127,7 @@ public final class ScreenEvents {
 	public static Event<BeforeRender> beforeRender(Screen screen) {
 		Objects.requireNonNull(screen, "Screen cannot be null");
 
-		return ScreenExtensions.getExtensions(screen).quilt_getBeforeRenderEvent();
+		return ScreenExtensions.getExtensions(screen).quilt$getBeforeRenderEvent();
 	}
 
 	/**
@@ -138,7 +138,7 @@ public final class ScreenEvents {
 	public static Event<AfterRender> afterRender(Screen screen) {
 		Objects.requireNonNull(screen, "Screen cannot be null");
 
-		return ScreenExtensions.getExtensions(screen).quilt_getAfterRenderEvent();
+		return ScreenExtensions.getExtensions(screen).quilt$getAfterRenderEvent();
 	}
 
 	/**
@@ -149,7 +149,7 @@ public final class ScreenEvents {
 	public static Event<BeforeTick> beforeTick(Screen screen) {
 		Objects.requireNonNull(screen, "Screen cannot be null");
 
-		return ScreenExtensions.getExtensions(screen).quilt_getBeforeTickEvent();
+		return ScreenExtensions.getExtensions(screen).quilt$getBeforeTickEvent();
 	}
 
 	/**
@@ -160,7 +160,7 @@ public final class ScreenEvents {
 	public static Event<AfterTick> afterTick(Screen screen) {
 		Objects.requireNonNull(screen, "Screen cannot be null");
 
-		return ScreenExtensions.getExtensions(screen).quilt_getAfterTickEvent();
+		return ScreenExtensions.getExtensions(screen).quilt$getAfterTickEvent();
 	}
 
 	@Environment(EnvType.CLIENT)
@@ -177,31 +177,31 @@ public final class ScreenEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface Remove extends ClientEventAwareListener {
+	public interface Remove {
 		void onRemove(Screen screen);
 	}
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface BeforeRender extends ClientEventAwareListener {
+	public interface BeforeRender {
 		void beforeRender(Screen screen, MatrixStack matrices, int mouseX, int mouseY, float tickDelta);
 	}
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface AfterRender extends ClientEventAwareListener {
+	public interface AfterRender {
 		void afterRender(Screen screen, MatrixStack matrices, int mouseX, int mouseY, float tickDelta);
 	}
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface BeforeTick extends ClientEventAwareListener {
+	public interface BeforeTick {
 		void beforeTick(Screen screen);
 	}
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface AfterTick extends ClientEventAwareListener {
+	public interface AfterTick {
 		void afterTick(Screen screen);
 	}
 

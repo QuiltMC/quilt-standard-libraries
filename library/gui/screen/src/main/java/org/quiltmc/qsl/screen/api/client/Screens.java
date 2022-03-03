@@ -49,7 +49,7 @@ public final class Screens {
 	public static List<ClickableWidget> getButtons(Screen screen) {
 		Objects.requireNonNull(screen, "Screen cannot be null");
 
-		return ScreenExtensions.getExtensions(screen).quilt_getButtons();
+		return ScreenExtensions.getExtensions(screen).quilt$getButtons();
 	}
 
 	/**

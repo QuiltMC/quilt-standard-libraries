@@ -20,7 +20,6 @@ package org.quiltmc.qsl.screen.api.client;
 import java.util.Objects;
 
 import org.quiltmc.qsl.base.api.event.Event;
-import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 import org.quiltmc.qsl.screen.impl.client.ScreenExtensions;
 
 import net.minecraft.client.gui.screen.Screen;
@@ -51,7 +50,7 @@ public final class ScreenKeyboardEvents {
 	public static Event<AllowKeyPress> allowKeyPress(Screen screen) {
 		Objects.requireNonNull(screen, "Screen cannot be null");
 
-		return ScreenExtensions.getExtensions(screen).quilt_getAllowKeyPressEvent();
+		return ScreenExtensions.getExtensions(screen).quilt$getAllowKeyPressEvent();
 	}
 
 	/**
@@ -62,7 +61,7 @@ public final class ScreenKeyboardEvents {
 	public static Event<BeforeKeyPress> beforeKeyPress(Screen screen) {
 		Objects.requireNonNull(screen, "Screen cannot be null");
 
-		return ScreenExtensions.getExtensions(screen).quilt_getBeforeKeyPressEvent();
+		return ScreenExtensions.getExtensions(screen).quilt$getBeforeKeyPressEvent();
 	}
 
 	/**
@@ -73,7 +72,7 @@ public final class ScreenKeyboardEvents {
 	public static Event<AfterKeyPress> afterKeyPress(Screen screen) {
 		Objects.requireNonNull(screen, "Screen cannot be null");
 
-		return ScreenExtensions.getExtensions(screen).quilt_getAfterKeyPressEvent();
+		return ScreenExtensions.getExtensions(screen).quilt$getAfterKeyPressEvent();
 	}
 
 	/**
@@ -84,7 +83,7 @@ public final class ScreenKeyboardEvents {
 	public static Event<AllowKeyRelease> allowKeyRelease(Screen screen) {
 		Objects.requireNonNull(screen, "Screen cannot be null");
 
-		return ScreenExtensions.getExtensions(screen).quilt_getAllowKeyReleaseEvent();
+		return ScreenExtensions.getExtensions(screen).quilt$getAllowKeyReleaseEvent();
 	}
 
 	/**
@@ -95,7 +94,7 @@ public final class ScreenKeyboardEvents {
 	public static Event<BeforeKeyRelease> beforeKeyRelease(Screen screen) {
 		Objects.requireNonNull(screen, "Screen cannot be null");
 
-		return ScreenExtensions.getExtensions(screen).quilt_getBeforeKeyReleaseEvent();
+		return ScreenExtensions.getExtensions(screen).quilt$getBeforeKeyReleaseEvent();
 	}
 
 	/**
@@ -106,7 +105,7 @@ public final class ScreenKeyboardEvents {
 	public static Event<AfterKeyRelease> afterKeyRelease(Screen screen) {
 		Objects.requireNonNull(screen, "Screen cannot be null");
 
-		return ScreenExtensions.getExtensions(screen).quilt_getAfterKeyReleaseEvent();
+		return ScreenExtensions.getExtensions(screen).quilt$getAfterKeyReleaseEvent();
 	}
 
 	private ScreenKeyboardEvents() {
@@ -114,7 +113,7 @@ public final class ScreenKeyboardEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface AllowKeyPress extends ClientEventAwareListener {
+	public interface AllowKeyPress {
 		/**
 		 * Checks if a key should be allowed to be pressed.
 		 *
@@ -130,7 +129,7 @@ public final class ScreenKeyboardEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface BeforeKeyPress extends ClientEventAwareListener {
+	public interface BeforeKeyPress {
 		/**
 		 * Called before a key press is handled.
 		 *
@@ -145,7 +144,7 @@ public final class ScreenKeyboardEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface AfterKeyPress extends ClientEventAwareListener {
+	public interface AfterKeyPress {
 		/**
 		 * Called after a key press is handled.
 		 *
@@ -160,7 +159,7 @@ public final class ScreenKeyboardEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface AllowKeyRelease extends ClientEventAwareListener {
+	public interface AllowKeyRelease {
 		/**
 		 * Checks if a pressed key should be allowed to be released.
 		 *
@@ -176,7 +175,7 @@ public final class ScreenKeyboardEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface BeforeKeyRelease extends ClientEventAwareListener {
+	public interface BeforeKeyRelease {
 		/**
 		 * Called before a pressed key has been released.
 		 *
@@ -191,7 +190,7 @@ public final class ScreenKeyboardEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface AfterKeyRelease extends ClientEventAwareListener {
+	public interface AfterKeyRelease {
 		/**
 		 * Called after a pressed key has been released.
 		 *

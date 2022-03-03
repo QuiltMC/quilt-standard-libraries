@@ -20,7 +20,6 @@ package org.quiltmc.qsl.screen.api.client;
 import java.util.Objects;
 
 import org.quiltmc.qsl.base.api.event.Event;
-import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 import org.quiltmc.qsl.screen.impl.client.ScreenExtensions;
 
 import net.minecraft.client.gui.screen.Screen;
@@ -51,7 +50,7 @@ public final class ScreenMouseEvents {
 	public static Event<AllowMouseClick> allowMouseClick(Screen screen) {
 		Objects.requireNonNull(screen, "Screen cannot be null");
 
-		return ScreenExtensions.getExtensions(screen).quilt_getAllowMouseClickEvent();
+		return ScreenExtensions.getExtensions(screen).quilt$getAllowMouseClickEvent();
 	}
 
 	/**
@@ -62,7 +61,7 @@ public final class ScreenMouseEvents {
 	public static Event<BeforeMouseClick> beforeMouseClick(Screen screen) {
 		Objects.requireNonNull(screen, "Screen cannot be null");
 
-		return ScreenExtensions.getExtensions(screen).quilt_getBeforeMouseClickEvent();
+		return ScreenExtensions.getExtensions(screen).quilt$getBeforeMouseClickEvent();
 	}
 
 	/**
@@ -73,7 +72,7 @@ public final class ScreenMouseEvents {
 	public static Event<AfterMouseClick> afterMouseClick(Screen screen) {
 		Objects.requireNonNull(screen, "Screen cannot be null");
 
-		return ScreenExtensions.getExtensions(screen).quilt_getAfterMouseClickEvent();
+		return ScreenExtensions.getExtensions(screen).quilt$getAfterMouseClickEvent();
 	}
 
 	/**
@@ -84,7 +83,7 @@ public final class ScreenMouseEvents {
 	public static Event<AllowMouseRelease> allowMouseRelease(Screen screen) {
 		Objects.requireNonNull(screen, "Screen cannot be null");
 
-		return ScreenExtensions.getExtensions(screen).quilt_getAllowMouseReleaseEvent();
+		return ScreenExtensions.getExtensions(screen).quilt$getAllowMouseReleaseEvent();
 	}
 
 	/**
@@ -95,7 +94,7 @@ public final class ScreenMouseEvents {
 	public static Event<BeforeMouseRelease> beforeMouseRelease(Screen screen) {
 		Objects.requireNonNull(screen, "Screen cannot be null");
 
-		return ScreenExtensions.getExtensions(screen).quilt_getBeforeMouseReleaseEvent();
+		return ScreenExtensions.getExtensions(screen).quilt$getBeforeMouseReleaseEvent();
 	}
 
 	/**
@@ -106,7 +105,7 @@ public final class ScreenMouseEvents {
 	public static Event<AfterMouseRelease> afterMouseRelease(Screen screen) {
 		Objects.requireNonNull(screen, "Screen cannot be null");
 
-		return ScreenExtensions.getExtensions(screen).quilt_getAfterMouseReleaseEvent();
+		return ScreenExtensions.getExtensions(screen).quilt$getAfterMouseReleaseEvent();
 	}
 
 	/**
@@ -119,7 +118,7 @@ public final class ScreenMouseEvents {
 	public static Event<AllowMouseScroll> allowMouseScroll(Screen screen) {
 		Objects.requireNonNull(screen, "Screen cannot be null");
 
-		return ScreenExtensions.getExtensions(screen).quilt_getAllowMouseScrollEvent();
+		return ScreenExtensions.getExtensions(screen).quilt$getAllowMouseScrollEvent();
 	}
 
 	/**
@@ -132,7 +131,7 @@ public final class ScreenMouseEvents {
 	public static Event<BeforeMouseScroll> beforeMouseScroll(Screen screen) {
 		Objects.requireNonNull(screen, "Screen cannot be null");
 
-		return ScreenExtensions.getExtensions(screen).quilt_getBeforeMouseScrollEvent();
+		return ScreenExtensions.getExtensions(screen).quilt$getBeforeMouseScrollEvent();
 	}
 
 	/**
@@ -145,7 +144,7 @@ public final class ScreenMouseEvents {
 	public static Event<AfterMouseScroll> afterMouseScroll(Screen screen) {
 		Objects.requireNonNull(screen, "Screen cannot be null");
 
-		return ScreenExtensions.getExtensions(screen).quilt_getAfterMouseScrollEvent();
+		return ScreenExtensions.getExtensions(screen).quilt$getAfterMouseScrollEvent();
 	}
 
 	private ScreenMouseEvents() {
@@ -153,7 +152,7 @@ public final class ScreenMouseEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface AllowMouseClick extends ClientEventAwareListener {
+	public interface AllowMouseClick {
 		/**
 		 * @param mouseX the x position of the mouse
 		 * @param mouseY the y position of the mouse
@@ -165,7 +164,7 @@ public final class ScreenMouseEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface BeforeMouseClick extends ClientEventAwareListener {
+	public interface BeforeMouseClick {
 		/**
 		 * @param mouseX the x position of the mouse
 		 * @param mouseY the y position of the mouse
@@ -177,7 +176,7 @@ public final class ScreenMouseEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface AfterMouseClick extends ClientEventAwareListener {
+	public interface AfterMouseClick {
 		/**
 		 * @param mouseX the x position of the mouse
 		 * @param mouseY the y position of the mouse
@@ -189,7 +188,7 @@ public final class ScreenMouseEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface AllowMouseRelease extends ClientEventAwareListener {
+	public interface AllowMouseRelease {
 		/**
 		 * Checks if the mouse click should be allowed to release in a screen.
 		 *
@@ -203,7 +202,7 @@ public final class ScreenMouseEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface BeforeMouseRelease extends ClientEventAwareListener {
+	public interface BeforeMouseRelease {
 		/**
 		 * Called before a mouse click has released in a screen.
 		 *
@@ -217,7 +216,7 @@ public final class ScreenMouseEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface AfterMouseRelease extends ClientEventAwareListener {
+	public interface AfterMouseRelease {
 		/**
 		 * Called after a mouse click has released in a screen.
 		 *
@@ -231,7 +230,7 @@ public final class ScreenMouseEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface AllowMouseScroll extends ClientEventAwareListener {
+	public interface AllowMouseScroll {
 		/**
 		 * Checks if the mouse should be allowed to scroll in a screen.
 		 *
@@ -246,7 +245,7 @@ public final class ScreenMouseEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface BeforeMouseScroll extends ClientEventAwareListener {
+	public interface BeforeMouseScroll {
 		/**
 		 * Called before a mouse has scrolled on screen.
 		 *
@@ -260,7 +259,7 @@ public final class ScreenMouseEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface AfterMouseScroll extends ClientEventAwareListener {
+	public interface AfterMouseScroll {
 		/**
 		 * Called after a mouse has scrolled on screen.
 		 *
