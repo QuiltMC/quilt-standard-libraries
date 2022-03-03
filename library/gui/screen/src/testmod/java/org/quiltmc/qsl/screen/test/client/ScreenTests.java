@@ -22,7 +22,7 @@ import java.util.List;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import org.quiltmc.qsl.screen.api.client.ScreenEvents;
-import org.quiltmc.qsl.screen.api.client.Screens;
+import org.quiltmc.qsl.screen.api.client.QuiltScreenHooks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +41,7 @@ public class ScreenTests implements ScreenEvents.AfterInit {
 	@Override
 	public void afterInit(MinecraftClient client, Screen screen, int scaledWidth, int scaledHeight) {
 		if (screen instanceof TitleScreen) {
-			final List<ClickableWidget> buttons = ((Screens)screen).getButtons();
+			final List<ClickableWidget> buttons = ((QuiltScreenHooks)screen).getButtons();
 
 			buttons.add(new ButtonWidget((screen.width / 2) + 120, ((screen.height / 4) + 95), 70, 20, new LiteralText("Hello world!!"), button -> { LOGGER.info("Hello world!!"); }));
 

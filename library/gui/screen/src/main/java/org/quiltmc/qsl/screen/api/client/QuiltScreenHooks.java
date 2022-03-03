@@ -34,7 +34,7 @@ import net.fabricmc.api.Environment;
  * @see ScreenEvents
  */
 @Environment(EnvType.CLIENT)
-public interface Screens {
+public interface QuiltScreenHooks {
 	/**
 	 * Gets all of a screen's button widgets.
 	 * The provided list allows for addition and removal of buttons from the screen.

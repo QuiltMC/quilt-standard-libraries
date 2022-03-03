@@ -23,7 +23,7 @@ import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.screen.api.client.ScreenEvents;
 import org.quiltmc.qsl.screen.api.client.ScreenKeyboardEvents;
 import org.quiltmc.qsl.screen.api.client.ScreenMouseEvents;
-import org.quiltmc.qsl.screen.api.client.Screens;
+import org.quiltmc.qsl.screen.api.client.QuiltScreenHooks;
 import org.quiltmc.qsl.screen.impl.client.ButtonList;
 import org.quiltmc.qsl.screen.impl.client.ScreenEventFactory;
 import org.quiltmc.qsl.screen.impl.client.ScreenExtensions;
@@ -45,7 +45,7 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.item.ItemRenderer;
 
 @Mixin(Screen.class)
-abstract class ScreenMixin implements ScreenExtensions, Screens {
+abstract class ScreenMixin implements ScreenExtensions, QuiltScreenHooks {
 	@Shadow
 	@Final
 	private List<Selectable> selectables;

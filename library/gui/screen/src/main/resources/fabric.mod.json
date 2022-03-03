@@ -24,6 +24,11 @@
     "quilt_screen.mixins.json"
   ],
   "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_437": [
+        "org/quiltmc/qsl/screen/api/client/QuiltScreenHooks"
+      ]
+    },
     "modmenu": {
       "badges": [
         "library"
