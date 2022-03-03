@@ -41,7 +41,7 @@ public class ScreenTests implements ScreenEvents.AfterInit {
 	@Override
 	public void afterInit(MinecraftClient client, Screen screen, int scaledWidth, int scaledHeight) {
 		if (screen instanceof TitleScreen) {
-			final List<ClickableWidget> buttons = Screens.getButtons(screen);
+			final List<ClickableWidget> buttons = ((Screens)screen).getButtons();
 
 			buttons.add(new ButtonWidget((screen.width / 2) + 120, ((screen.height / 4) + 95), 70, 20, new LiteralText("Hello world!!"), button -> { LOGGER.info("Hello world!!"); }));
 

@@ -23,6 +23,7 @@ import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.screen.api.client.ScreenEvents;
 import org.quiltmc.qsl.screen.api.client.ScreenKeyboardEvents;
 import org.quiltmc.qsl.screen.api.client.ScreenMouseEvents;
+import org.quiltmc.qsl.screen.api.client.Screens;
 import org.quiltmc.qsl.screen.impl.client.ButtonList;
 import org.quiltmc.qsl.screen.impl.client.ScreenEventFactory;
 import org.quiltmc.qsl.screen.impl.client.ScreenExtensions;
@@ -36,13 +37,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.render.item.ItemRenderer;
 
 @Mixin(Screen.class)
-abstract class ScreenMixin implements ScreenExtensions {
+abstract class ScreenMixin implements ScreenExtensions, Screens {
 	@Shadow
 	@Final
 	private List<Selectable> selectables;
@@ -52,6 +55,15 @@ abstract class ScreenMixin implements ScreenExtensions {
 	@Shadow
 	@Final
 	private List<Drawable> drawables;
+
+	@Shadow
+	private MinecraftClient client;
+
+	@Shadow
+	private ItemRenderer itemRenderer;
+
+	@Shadow
+	private TextRenderer textRenderer;
 
 	@Unique
 	private ButtonList quilt$quiltButtons;
@@ -135,16 +147,6 @@ abstract class ScreenMixin implements ScreenExtensions {
 	@Inject(method = "init(Lnet/minecraft/client/MinecraftClient;II)V", at = @At("TAIL"))
 	private void afterInitScreen(MinecraftClient client, int width, int height, CallbackInfo ci) {
 		ScreenEvents.AFTER_INIT.invoker().afterInit(client, (Screen) (Object) this, width, height);
-	}
-
-	@Override
-	public List<ClickableWidget> quilt$getButtons() {
-		// Lazy init to make the list access safe after Screen#init
-		if (this.quilt$quiltButtons == null) {
-			this.quilt$quiltButtons = new ButtonList(this.drawables, this.selectables, this.children);
-		}
-
-		return this.quilt$quiltButtons;
 	}
 
 	@Unique
@@ -258,5 +260,30 @@ abstract class ScreenMixin implements ScreenExtensions {
 	@Override
 	public Event<ScreenMouseEvents.AfterMouseScroll> quilt$getAfterMouseScrollEvent() {
 		return ensureEventsAreInitialized(this.quilt$afterMouseScrollEvent);
+	}
+
+	@Override
+	public List<ClickableWidget> getButtons() {
+		// Lazy init to make the list access safe after Screen#init
+		if (this.quilt$quiltButtons == null) {
+			this.quilt$quiltButtons = new ButtonList(this.drawables, this.selectables, this.children);
+		}
+
+		return this.quilt$quiltButtons;
+	}
+
+	@Override
+	public ItemRenderer getItemRenderer() {
+		return itemRenderer;
+	}
+
+	@Override
+	public TextRenderer getTextRenderer() {
+		return textRenderer;
+	}
+
+	@Override
+	public MinecraftClient getClient() {
+		return client;
 	}
 }

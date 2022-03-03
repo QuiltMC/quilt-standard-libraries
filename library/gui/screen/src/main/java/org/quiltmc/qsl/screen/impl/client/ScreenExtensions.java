@@ -17,8 +17,6 @@
 
 package org.quiltmc.qsl.screen.impl.client;
 
-import java.util.List;
-
 import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.screen.api.client.ScreenEvents;
@@ -26,7 +24,6 @@ import org.quiltmc.qsl.screen.api.client.ScreenKeyboardEvents;
 import org.quiltmc.qsl.screen.api.client.ScreenMouseEvents;
 
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ClickableWidget;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -37,8 +34,6 @@ public interface ScreenExtensions {
 	static ScreenExtensions getExtensions(Screen screen) {
 		return (ScreenExtensions) screen;
 	}
-
-	List<ClickableWidget> quilt$getButtons();
 
 	Event<ScreenEvents.Remove> quilt$getRemoveEvent();
 

@@ -18,10 +18,6 @@
 package org.quiltmc.qsl.screen.api.client;
 
 import java.util.List;
-import java.util.Objects;
-
-import org.quiltmc.qsl.screen.impl.client.ScreenExtensions;
-import org.quiltmc.qsl.screen.mixin.client.ScreenAccessor;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -38,7 +34,7 @@ import net.fabricmc.api.Environment;
  * @see ScreenEvents
  */
 @Environment(EnvType.CLIENT)
-public final class Screens {
+public interface Screens {
 	/**
 	 * Gets all of a screen's button widgets.
 	 * The provided list allows for addition and removal of buttons from the screen.
@@ -46,40 +42,21 @@ public final class Screens {
 	 *
 	 * @return a list of all of a screen's buttons
 	 */
-	public static List<ClickableWidget> getButtons(Screen screen) {
-		Objects.requireNonNull(screen, "Screen cannot be null");
-
-		return ScreenExtensions.getExtensions(screen).quilt$getButtons();
-	}
+	List<ClickableWidget> getButtons();
 
 	/**
 	 * Gets a screen's item renderer.
 	 *
 	 * @return the screen's item renderer
 	 */
-	public static ItemRenderer getItemRenderer(Screen screen) {
-		Objects.requireNonNull(screen, "Screen cannot be null");
-
-		return ((ScreenAccessor) screen).getItemRenderer();
-	}
+	ItemRenderer getItemRenderer();
 
 	/**
 	 * Gets a screen's text renderer.
 	 *
 	 * @return the screen's text renderer.
 	 */
-	public static TextRenderer getTextRenderer(Screen screen) {
-		Objects.requireNonNull(screen, "Screen cannot be null");
+	TextRenderer getTextRenderer();
 
-		return ((ScreenAccessor) screen).getTextRenderer();
-	}
-
-	public static MinecraftClient getClient(Screen screen) {
-		Objects.requireNonNull(screen, "Screen cannot be null");
-
-		return ((ScreenAccessor) screen).getClient();
-	}
-
-	private Screens() {
-	}
+	MinecraftClient getClient();
 }
