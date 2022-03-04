@@ -34,7 +34,18 @@ public final class QuiltCustomItemSettings {
 	 */
 	public static final CustomItemSetting<CustomDamageHandler> CUSTOM_DAMAGE_HANDLER = CustomItemSettingImpl.CUSTOM_DAMAGE_HANDLER;
 	/**
-	 * The {@link CustomItemSetting} in charge of handing {@link RecipeRemainderProvider}s. This setting should be used when implementing custom crafting systems to properly handle remainders.
+	 * The {@link CustomItemSetting} in charge of handing {@link RecipeRemainderProvider}s. This setting should be used when implementing custom crafting systems to properly handle remainders. <p>
+	 * The setting is currently used in the following places:
+	 * <ul>
+	 *     <li>Crafting Table</li>
+	 *     <li>Furnace Fuel</li>
+	 *     <li>Furnace Ingredient</li>
+	 *     <li>Loom Dye Input</li>
+	 *     <li>Loom Banner Input</li>
+	 *     <li>Brewing Stand Ingredient</li>
+	 *     <li>Smithing Table Addition</li>
+	 *     <li>Stone Cutter Ingredient</li>
+	 * </ul>
 	 */
 	public static final CustomItemSetting<RecipeRemainderProvider> RECIPE_REMAINDER_PROVIDER = CustomItemSettingImpl.RECIPE_REMAINDER_PROVIDER;
 }

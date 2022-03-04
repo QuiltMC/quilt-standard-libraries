@@ -33,14 +33,12 @@ import net.minecraft.world.World;
 
 @Mixin(BrewingStandBlockEntity.class)
 public class BrewingStandBlockEntityMixin {
-	@Shadow
-	private int brewTime;
-
 	@Inject(method = "craft", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"), cancellable = true)
 	private static void applyRecipeRemainder(World world, BlockPos pos, DefaultedList<ItemStack> slots, CallbackInfo ci) {
 		ItemStack ingredient = slots.get(3);
+		ingredient.decrement(1);
 		// TODO: test
-		boolean successful = RecipeRemainderLocationHandler.handleRemainderForNonPlayerCraft(
+		ItemStack remainder = RecipeRemainderLocationHandler.handleRemainderForNonPlayerCraft(
 				ingredient,
 				null,
 				slots,
@@ -48,7 +46,7 @@ public class BrewingStandBlockEntityMixin {
 				world,
 				pos);
 
-		if (successful) {
+		if (!remainder.isEmpty()) {
 			world.syncWorldEvent(1035, pos, 0);
 			ci.cancel();
 		}

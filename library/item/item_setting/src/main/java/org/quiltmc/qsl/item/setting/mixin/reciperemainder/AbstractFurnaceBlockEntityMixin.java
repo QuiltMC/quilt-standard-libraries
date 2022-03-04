@@ -54,8 +54,8 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 	}
 
 	@SuppressWarnings("ConstantConditions")
-	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;getRecipeRemainder()Lnet/minecraft/item/Item;"), locals = LocalCapture.CAPTURE_FAILHARD)
-	private static void setRemainder(World world, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity, CallbackInfo ci, boolean bl, boolean bl2, ItemStack itemStack, Recipe<?> recipe, int i, Item item) {
+	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"), locals = LocalCapture.CAPTURE_FAILHARD)
+	private static void setFuelRemainder(World world, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity, CallbackInfo ci, boolean bl, boolean bl2, ItemStack itemStack, Recipe<?> recipe, int i, Item item) {
 		threadLocalBlockEntity.set(blockEntity);
 		AbstractFurnaceBlockEntityMixin furnaceBlockEntity = (AbstractFurnaceBlockEntityMixin) (BlockEntity) blockEntity;
 		// TODO: test
@@ -65,8 +65,7 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 				furnaceBlockEntity.inventory,
 				1,
 				threadLocalBlockEntity.get().getWorld(),
-				threadLocalBlockEntity.get().getPos()
-		);
+				threadLocalBlockEntity.get().getPos());
 	}
 
 	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/collection/DefaultedList;set(ILjava/lang/Object;)Ljava/lang/Object;"))
@@ -74,8 +73,9 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 		return element;
 	}
 
-	@Inject(method = "craftRecipe", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	private static void setInputRemainder(Recipe<?> recipe, DefaultedList<ItemStack> slots, int count, CallbackInfoReturnable<Boolean> cir, ItemStack inputStack) {
+	@Redirect(method = "craftRecipe", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V", shift = At.Shift.BEFORE))
+	private static void setInputRemainder(ItemStack inputStack, int amount, Recipe<?> recipe, DefaultedList<ItemStack> slots, int count) {
+		inputStack.decrement(amount);
 		// TODO: test
 		RecipeRemainderLocationHandler.handleRemainderForNonPlayerCraft(
 				inputStack,
@@ -85,6 +85,5 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 				threadLocalBlockEntity.get().getWorld(),
 				threadLocalBlockEntity.get().getPos()
 		);
-		cir.setReturnValue(true);
 	}
 }

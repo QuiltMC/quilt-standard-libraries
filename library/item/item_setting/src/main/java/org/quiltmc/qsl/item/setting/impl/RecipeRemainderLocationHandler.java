@@ -59,38 +59,37 @@ public class RecipeRemainderLocationHandler {
 		player.dropItem(item, true);
 	}
 
-	public static boolean handleRemainderForNonPlayerCraft(ItemStack usedItem, Recipe<?> recipe, DefaultedList<ItemStack> inventory, int slot, World world, BlockPos location) {
+	public static ItemStack handleRemainderForNonPlayerCraft(ItemStack usedItem, Recipe<?> recipe, DefaultedList<ItemStack> inventory, int slot, World world, BlockPos location) {
 		ItemStack remainder = CustomItemSettingImpl.RECIPE_REMAINDER_PROVIDER.get(usedItem.getItem()).getRecipeRemainder(
 				usedItem,
 				recipe
 		);
 
 		if (remainder == ItemStack.EMPTY) {
-			return false;
+			return ItemStack.EMPTY;
 		}
 
 		if (!tryReturnItemToInventory(remainder, inventory, slot)) {
 			dropItemInWorld(remainder, world, location);
 		}
 
-		return true;
+		return remainder;
 	}
 
-	public static boolean handleRemainderForPlayerCraft(ItemStack usedItem, Recipe<?> recipe, DefaultedList<ItemStack> inventory, int slot, PlayerEntity player) {
+	public static ItemStack handleRemainderForPlayerCraft(ItemStack usedItem, Recipe<?> recipe, DefaultedList<ItemStack> inventory, int slot, PlayerEntity player) {
 		ItemStack remainder = CustomItemSettingImpl.RECIPE_REMAINDER_PROVIDER.get(usedItem.getItem()).getRecipeRemainder(
 				usedItem,
 				recipe
 		);
 
 		if (remainder == ItemStack.EMPTY) {
-			return false;
+			return ItemStack.EMPTY;
 		}
 
 		if (!tryReturnItemToInventory(remainder, inventory, slot)) {
 			player.getInventory().offerOrDrop(remainder);
-			return true;
 		}
 
-		return false;
+		return remainder;
 	}
 }

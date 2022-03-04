@@ -44,9 +44,9 @@ public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
 
 	@Redirect(method = "onTakeOutput", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/SmithingScreenHandler;decrementStack(I)V"))
 	private void applyRecipeRemainder(SmithingScreenHandler instance, int slot, PlayerEntity player, ItemStack stack) {
-		ItemStack inputStack = this.input.getStack(slot).copy();
+		ItemStack inputStack = this.input.getStack(slot);
 		// TODO: double check input slot is decremented
-		this.input.getStack(slot).decrement(1);
+		inputStack.decrement(1);
 		RecipeRemainderLocationHandler.handleRemainderForPlayerCraft(
 				inputStack,
 				currentRecipe,
