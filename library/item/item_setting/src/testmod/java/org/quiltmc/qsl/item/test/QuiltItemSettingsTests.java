@@ -19,8 +19,13 @@ package org.quiltmc.qsl.item.test;
 import net.fabricmc.loader.api.ModContainer;
 
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.DyeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.recipe.RecipeType;
+import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -41,5 +46,36 @@ public class QuiltItemSettingsTests implements ModInitializer {
 		// Registers an item with a custom item setting that adds some tooltip.
 		var testItem2 = new Item(new QuiltItemSettings().group(ItemGroup.MISC).customSetting(CUSTOM_DATA_TEST, "Look at me! I have a custom setting!"));
 		Registry.register(Registry.ITEM, new Identifier(NAMESPACE, "test_item2"), testItem2);
+
+		// Custom recipe remainders
+		Item hammerItem = new Item(new QuiltItemSettings().group(ItemGroup.TOOLS).maxDamage(16).damageIfUsedInCrafting());
+		Registry.register(Registry.ITEM, new Identifier(NAMESPACE, "hammer"), hammerItem);
+
+		Item furnaceInputRemainder = new Item(new QuiltItemSettings().group(ItemGroup.MISC).maxCount(1).recipeRemainder((original, recipe) -> {
+			if (recipe.getType() == RecipeType.SMELTING) {
+				return Items.DIAMOND.getDefaultStack();
+			}
+			return ItemStack.EMPTY;
+		}));
+		Registry.register(Registry.ITEM, new Identifier(NAMESPACE, "weird_ore"), furnaceInputRemainder);
+
+		Item smithingInputRemainder = new Item(new QuiltItemSettings().group(ItemGroup.MISC).recipeRemainder((original, recipe) -> {
+			if (recipe != null && recipe.getType() == RecipeType.SMITHING) {
+				return Items.NETHERITE_INGOT.getDefaultStack();
+			}
+			return ItemStack.EMPTY;
+		}));
+		Registry.register(Registry.ITEM, new Identifier(NAMESPACE, "infinite_netherite"), smithingInputRemainder);
+
+		Item loomInputRemainder = new DyeItem(DyeColor.RED, new QuiltItemSettings().group(ItemGroup.MISC).maxCount(1).maxDamage(100).recipeRemainder(Items.RED_DYE));
+		Registry.register(Registry.ITEM, new Identifier(NAMESPACE, "infinite_dye"), loomInputRemainder);
+
+		Item cuttingInputRemainder = new Item(new QuiltItemSettings().group(ItemGroup.MISC).recipeRemainder((original, recipe) -> {
+			if (recipe != null && recipe.getType() == RecipeType.STONECUTTING) {
+				return Items.STONE.getDefaultStack();
+			}
+			return ItemStack.EMPTY;
+		}));
+		Registry.register(Registry.ITEM, new Identifier(NAMESPACE, "infinite_stone"), cuttingInputRemainder);
 	}
 }

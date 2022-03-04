@@ -65,6 +65,56 @@ public class QuiltItemSettings extends Item.Settings {
 	}
 
 	/**
+	 * Sets the stack-aware recipe remainder provider of the item.
+	 */
+	public QuiltItemSettings recipeRemainder(RecipeRemainderProvider provider) {
+		// TODO: Should this only support single item stacks?
+		return this.customSetting(QuiltCustomItemSettings.RECIPE_REMAINDER_PROVIDER, provider);
+	}
+
+	/**
+	 * Sets the stack-aware recipe remainder to damage the item by 1 every time it is used in crafting.
+	 */
+	public QuiltItemSettings damageIfUsedInCrafting() {
+		return this.damageIfUsedInCrafting(1);
+	}
+
+	/**
+	 * Sets the stack-aware recipe remainder to return the item itself.
+	 */
+	public QuiltItemSettings returnSelfInCrafting() {
+		return this.damageIfUsedInCrafting(0);
+	}
+
+	/**
+	 * Sets the stack-aware recipe remainder to damage the item by a certain amount every time it is used in crafting.
+	 *
+	 * @param by the amount
+	 */
+	public QuiltItemSettings damageIfUsedInCrafting(int by) {
+		if (by == 0) {
+			return this.recipeRemainder((original, recipe) -> original);
+		}
+
+		return this.recipeRemainder((original, recipe) -> {
+			if (!original.isDamageable()) {
+				return ItemStack.EMPTY;
+			}
+
+			ItemStack copy = original.copy();
+
+			copy.setDamage(copy.getDamage() + by);
+
+			if(copy.getDamage() >= copy.getMaxDamage()) {
+				copy.setCount(0);
+				return ItemStack.EMPTY;
+			}
+
+			return copy;
+		});
+	}
+
+	/**
 	 * Sets a custom setting of the item.
 	 * @param setting the unique type for this setting
 	 * @param value the object containing the setting itself
