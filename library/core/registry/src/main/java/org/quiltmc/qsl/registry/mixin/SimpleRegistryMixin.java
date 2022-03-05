@@ -47,7 +47,7 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> {
 	 * Invokes the entry add event.
 	 */
 	@Inject(
-			method = "method_31051(ILnet/minecraft/util/registry/RegistryKey;Ljava/lang/Object;Lcom/mojang/serialization/Lifecycle;Z)Lnet/minecraft/util/Holder;",
+			method = "registerMapping",
 			at = @At("RETURN")
 	)
 	private void quilt$invokeEntryAddEvent(int rawId, RegistryKey<V> key, V entry, Lifecycle lifecycle, boolean checkDuplicateKeys,
