@@ -16,8 +16,7 @@
 
 package org.quiltmc.qsl.item.setting.mixin.reciperemainder;
 
-import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
-import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLocationHandler;
+import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLogicHandler;
 import org.quiltmc.qsl.item.setting.mixin.SimpleInventoryMixin;
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
@@ -33,10 +32,6 @@ import net.minecraft.screen.slot.Slot;
 
 @Mixin(targets = {"net.minecraft.screen.LoomScreenHandler$C_ntobwfpp"})
 public class LoomOutputSlotMixin extends Slot {
-	@Shadow
-	@Dynamic
-	LoomScreenHandler field_7855;
-
 	public LoomOutputSlotMixin(Inventory inventory, int i, int j, int k) {
 		super(inventory, i, j, k);
 	}
@@ -45,7 +40,7 @@ public class LoomOutputSlotMixin extends Slot {
 	public ItemStack getRecipeRemainder(Slot slot, int amount, PlayerEntity player, ItemStack stack) {
 		ItemStack input = slot.takeStack(amount);
 
-		ItemStack remainder = RecipeRemainderLocationHandler.handleRemainderForPlayerCraft(
+		RecipeRemainderLogicHandler.handleRemainderForPlayerCraft(
 				input,
 				null,
 				((SimpleInventoryMixin) slot.inventory).getStacks(),

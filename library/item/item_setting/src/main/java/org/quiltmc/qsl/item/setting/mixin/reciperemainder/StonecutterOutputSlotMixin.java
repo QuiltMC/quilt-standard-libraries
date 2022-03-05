@@ -16,8 +16,8 @@
 
 package org.quiltmc.qsl.item.setting.mixin.reciperemainder;
 
-import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
-import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLocationHandler;
+import org.checkerframework.common.aliasing.qual.Unique;
+import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLogicHandler;
 import org.quiltmc.qsl.item.setting.mixin.SimpleInventoryMixin;
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,15 +28,19 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.StonecuttingRecipe;
 import net.minecraft.screen.StonecutterScreenHandler;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.util.Identifier;
 
-// "net.minecraft.screen.LoomScreenHandler$C_ntobwfpp",
 @Mixin(targets = {"net.minecraft.screen.StonecutterScreenHandler$C_biccipxg"})
 public class StonecutterOutputSlotMixin extends Slot {
 	@Shadow
 	@Dynamic
 	StonecutterScreenHandler field_17639;
+
+	@Unique Recipe<?> previousRecipe;
 
 	public StonecutterOutputSlotMixin(Inventory inventory, int i, int j, int k) {
 		super(inventory, i, j, k);
@@ -46,11 +50,17 @@ public class StonecutterOutputSlotMixin extends Slot {
 	public ItemStack getRecipeRemainder(Slot slot, int amount, PlayerEntity player, ItemStack stack) {
 		ItemStack input = slot.takeStack(amount);
 
-		return RecipeRemainderLocationHandler.handleRemainderForPlayerCraft(
+		int selectedRecipe = field_17639.getSelectedRecipe();
+		Recipe<?> recipe = selectedRecipe != -1 ? field_17639.getAvailableRecipes().get(selectedRecipe) : previousRecipe;
+		RecipeRemainderLogicHandler.handleRemainderForPlayerCraft(
 				input,
-				field_17639.getAvailableRecipes().get(field_17639.getSelectedRecipe()),
+				recipe,
 				((SimpleInventoryMixin) slot.inventory).getStacks(),
 				slot.id,
 				player);
+
+		previousRecipe = recipe;
+
+		return slot.getStack();
 	}
 }

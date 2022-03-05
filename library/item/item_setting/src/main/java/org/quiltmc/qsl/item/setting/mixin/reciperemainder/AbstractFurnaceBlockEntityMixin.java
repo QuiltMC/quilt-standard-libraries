@@ -21,15 +21,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import org.checkerframework.common.aliasing.qual.Unique;
-import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
-import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLocationHandler;
+import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLogicHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
@@ -59,7 +57,7 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 		threadLocalBlockEntity.set(blockEntity);
 		AbstractFurnaceBlockEntityMixin furnaceBlockEntity = (AbstractFurnaceBlockEntityMixin) (BlockEntity) blockEntity;
 		// TODO: test
-		RecipeRemainderLocationHandler.handleRemainderForNonPlayerCraft(
+		RecipeRemainderLogicHandler.handleRemainderForNonPlayerCraft(
 				itemStack,
 				recipe,
 				furnaceBlockEntity.inventory,
@@ -73,11 +71,9 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 		return element;
 	}
 
-	@Redirect(method = "craftRecipe", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V", shift = At.Shift.BEFORE))
+	@Redirect(method = "craftRecipe", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"))
 	private static void setInputRemainder(ItemStack inputStack, int amount, Recipe<?> recipe, DefaultedList<ItemStack> slots, int count) {
-		inputStack.decrement(amount);
-		// TODO: test
-		RecipeRemainderLocationHandler.handleRemainderForNonPlayerCraft(
+		RecipeRemainderLogicHandler.handleRemainderForNonPlayerCraft(
 				inputStack,
 				recipe,
 				slots,
@@ -85,5 +81,6 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 				threadLocalBlockEntity.get().getWorld(),
 				threadLocalBlockEntity.get().getPos()
 		);
+		inputStack.decrement(amount);
 	}
 }

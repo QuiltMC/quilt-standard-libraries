@@ -16,16 +16,13 @@
 
 package org.quiltmc.qsl.item.setting.mixin.reciperemainder;
 
-import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
-import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLocationHandler;
+import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLogicHandler;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.block.entity.BrewingStandBlockEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
@@ -38,7 +35,7 @@ public class BrewingStandBlockEntityMixin {
 		ItemStack ingredient = slots.get(3);
 		ingredient.decrement(1);
 		// TODO: test
-		ItemStack remainder = RecipeRemainderLocationHandler.handleRemainderForNonPlayerCraft(
+		ItemStack remainder = RecipeRemainderLogicHandler.handleRemainderForNonPlayerCraft(
 				ingredient,
 				null,
 				slots,

@@ -5,7 +5,7 @@
       "item": "minecraft:cobblestone"
     },
     {
-      "tag": "quilt_item_setting_testmod:hammers"
+      "item": "quilt_item_setting_testmod:hammer"
     }
   ],
   "result": {

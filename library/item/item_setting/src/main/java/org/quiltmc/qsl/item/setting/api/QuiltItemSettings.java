@@ -68,7 +68,6 @@ public class QuiltItemSettings extends Item.Settings {
 	 * Sets the stack-aware recipe remainder provider of the item.
 	 */
 	public QuiltItemSettings recipeRemainder(RecipeRemainderProvider provider) {
-		// TODO: Should this only support single item stacks?
 		return this.customSetting(QuiltCustomItemSettings.RECIPE_REMAINDER_PROVIDER, provider);
 	}
 

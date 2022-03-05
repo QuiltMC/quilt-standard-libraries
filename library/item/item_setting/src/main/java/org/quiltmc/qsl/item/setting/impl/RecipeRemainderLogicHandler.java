@@ -24,39 +24,13 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-// TODO: rename
-public class RecipeRemainderLocationHandler {
-	// Remainder Behavior:
-	// Attempt placement back into slot
-	// Attempt move into player inventory (skipped if the crafting action does not include player, ie smelting, brewing, etc)
-	// Drop into world or player inventory full
-
-
-	public static boolean tryReturnItemToInventory(ItemStack item, DefaultedList<ItemStack> inventory, int slot) {
+public class RecipeRemainderLogicHandler {
+	private static boolean tryReturnItemToInventory(ItemStack item, DefaultedList<ItemStack> inventory, int slot) {
 		if (inventory.get(slot).isEmpty() || ItemStack.canCombine(item, inventory.get(slot))) {
 			inventory.set(slot, item);
-			return true;
+			return false;
 		}
-		return false;
-	}
-
-	/**
-	 * Logic run when the crafting output can be done without a player, such as brewing or smelting, and the itemstack cannot return to the slot
-	 * @param item the remainder
-	 * @param world the world
-	 * @param location the location
-	 */
-	public static void dropItemInWorld(ItemStack item, World world, BlockPos location){
-		ItemScatterer.spawn(world, location.getX(), location.getY(), location.getZ(), item);
-	}
-
-	/**
-	 * Logic run when the player crafts an item but is unable to return the remainder of an ingredient it to its inventory
-	 * @param item the remainder
-	 * @param player the player
-	 */
-	public static void dropItemInWorld(ItemStack item, PlayerEntity player){
-		player.dropItem(item, true);
+		return true;
 	}
 
 	public static ItemStack handleRemainderForNonPlayerCraft(ItemStack usedItem, Recipe<?> recipe, DefaultedList<ItemStack> inventory, int slot, World world, BlockPos location) {
@@ -69,8 +43,8 @@ public class RecipeRemainderLocationHandler {
 			return ItemStack.EMPTY;
 		}
 
-		if (!tryReturnItemToInventory(remainder, inventory, slot)) {
-			dropItemInWorld(remainder, world, location);
+		if (tryReturnItemToInventory(remainder, inventory, slot)) {
+			ItemScatterer.spawn(world, location.getX(), location.getY(), location.getZ(), remainder);
 		}
 
 		return remainder;
@@ -86,7 +60,7 @@ public class RecipeRemainderLocationHandler {
 			return ItemStack.EMPTY;
 		}
 
-		if (!tryReturnItemToInventory(remainder, inventory, slot)) {
+		if (tryReturnItemToInventory(remainder, inventory, slot)) {
 			player.getInventory().offerOrDrop(remainder);
 		}
 

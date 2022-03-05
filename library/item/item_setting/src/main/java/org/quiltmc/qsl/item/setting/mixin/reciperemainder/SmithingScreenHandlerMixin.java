@@ -17,12 +17,15 @@
 package org.quiltmc.qsl.item.setting.mixin.reciperemainder;
 
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLocationHandler;
+import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLogicHandler;
 import org.quiltmc.qsl.item.setting.mixin.SimpleInventoryMixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -38,6 +41,12 @@ public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
 	@Shadow
 	private @Nullable SmithingRecipe currentRecipe;
 
+	@Unique
+	private SmithingRecipe pastRecipe;
+
+	@Shadow
+	public abstract void updateResult();
+
 	public SmithingScreenHandlerMixin(@Nullable ScreenHandlerType<?> screenHandlerType, int i, PlayerInventory playerInventory, ScreenHandlerContext screenHandlerContext) {
 		super(screenHandlerType, i, playerInventory, screenHandlerContext);
 	}
@@ -45,13 +54,21 @@ public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
 	@Redirect(method = "onTakeOutput", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/SmithingScreenHandler;decrementStack(I)V"))
 	private void applyRecipeRemainder(SmithingScreenHandler instance, int slot, PlayerEntity player, ItemStack stack) {
 		ItemStack inputStack = this.input.getStack(slot);
-		// TODO: double check input slot is decremented
-		inputStack.decrement(1);
-		RecipeRemainderLocationHandler.handleRemainderForPlayerCraft(
+
+		RecipeRemainderLogicHandler.handleRemainderForPlayerCraft(
 				inputStack,
-				currentRecipe,
+				currentRecipe == null ? pastRecipe : currentRecipe,
 				((SimpleInventoryMixin) this.input).getStacks(),
 				slot,
 				player);
+
+		inputStack.decrement(1);
+
+		pastRecipe = currentRecipe;
+	}
+
+	@Inject(method = "onTakeOutput", at = @At("RETURN"))
+	public void refreshOutput(PlayerEntity player, ItemStack stack, CallbackInfo ci) {
+		this.updateResult();
 	}
 }
