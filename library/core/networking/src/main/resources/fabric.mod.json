@@ -24,9 +24,9 @@
   },
   "depends": {
     "fabricloader": ">=0.12",
-    "minecraft": ">=1.18.2-alpha.22.6.a",
-    "quilt_base": "*",
-    "quilt_lifecycle_events": "*"
+    "minecraft": ">=1.18.2",
+    "quilt_base": ">=1.0.0",
+    "quilt_lifecycle_events": ">=1.0.0"
   },
   "description": "Utilities to assist with sending custom packets over the Minecraft protocol.",
   "mixins": [

@@ -16,25 +16,10 @@
   ],
   "depends": {
     "fabricloader": ">=0.12",
-    "minecraft": ">=1.18.2-alpha.22.6.a",
-    "quilt_base": "*",
-    "quilt_resource_loader": "*"
-  },
-  "recommends": {
-    "quilt_networking": "*"
+    "minecraft": ">=1.18.2",
+    "quilt_base": "*"
   },
   "description": "Quilt APIs relating to commands.",
-  "entrypoints": {
-    "preLaunch": [
-      "org.quiltmc.qsl.command.impl.PreLaunchInitializer"
-    ],
-    "init": [
-      "org.quiltmc.qsl.command.impl.Initializer"
-    ],
-    "client_init": [
-      "org.quiltmc.qsl.command.impl.client.ClientInitializer"
-    ]
-  },
   "mixins": [
     "quilt_command.mixins.json"
   ],
