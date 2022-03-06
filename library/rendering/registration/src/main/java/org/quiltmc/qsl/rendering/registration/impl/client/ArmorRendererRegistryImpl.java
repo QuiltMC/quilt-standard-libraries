@@ -29,29 +29,29 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.registry.Registry;
 
-import org.quiltmc.qsl.rendering.registration.api.client.DynamicItemRenderer;
+import org.quiltmc.qsl.rendering.registration.api.client.ArmorRenderer;
 
 @ApiStatus.Internal
 @Environment(EnvType.CLIENT)
-public final class DynamicItemRendererRegistryImpl {
-	private static final Map<Item, DynamicItemRenderer> RENDERERS = new Object2ObjectOpenHashMap<>();
+public final class ArmorRendererRegistryImpl {
+	private static final Map<Item, ArmorRenderer> RENDERERS = new Object2ObjectOpenHashMap<>();
 
-	private DynamicItemRendererRegistryImpl() {
+	private ArmorRendererRegistryImpl() {
 	}
 
-	public static void register(ItemConvertible itemConvertible, DynamicItemRenderer renderer) {
-		Objects.requireNonNull(itemConvertible, "ItemConvertible cannot be null");
+	public static void register(ItemConvertible itemConvertible, ArmorRenderer renderer) {
+		Objects.requireNonNull(itemConvertible, "item is null");
 		Item item = itemConvertible.asItem();
-		Objects.requireNonNull(item, "Item cannot be null");
-		Objects.requireNonNull(renderer, "DynamicItemRenderer cannot be null");
+		Objects.requireNonNull(item, "item is null");
+		Objects.requireNonNull(renderer, "renderer is null");
 
 		if (RENDERERS.putIfAbsent(item, renderer) != null) {
-			throw new IllegalArgumentException("Item " + Registry.ITEM.getId(item) + " already has a DynamicItemRenderer!");
+			throw new IllegalArgumentException("Item " + Registry.ITEM.getId(item) + " already has an armor renderer!");
 		}
 	}
 
 	@Nullable
-	public static DynamicItemRenderer get(Item item) {
+	public static ArmorRenderer get(Item item) {
 		return RENDERERS.get(item);
 	}
 }

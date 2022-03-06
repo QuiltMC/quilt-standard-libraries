@@ -14,6 +14,19 @@
  * <ul>
  *     <li>Allows items to define dynamic rendering behavior.</li>
  * </ul>
+ *
+ * <p>
+ * <h3>{@linkplain org.quiltmc.qsl.rendering.registration.api.client.ArmorRenderer Custom armor rendering}</h3>
+ * <ul>
+ *     <li>Allows armor items to define custom rendering behavior.</li>
+ * </ul>
+ *
+ * <p>
+ * <h3>{@linkplain org.quiltmc.qsl.rendering.registration.api.client.EntityModelLayerRegistry Entity model layer registry}</h3>
+ * <ul>
+ *     <li>Allows registering {@linkplain net.minecraft.client.render.entity.model.EntityModelLayer entity model layers} and mapping them to
+ *     {@linkplain net.minecraft.client.model.TexturedModelData textured model data}.</li>
+ * </ul>
  */
 
 package org.quiltmc.qsl.rendering.registration.api.client;

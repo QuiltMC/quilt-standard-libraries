@@ -31,10 +31,10 @@ import org.quiltmc.qsl.rendering.registration.api.client.DynamicItemRenderer;
 import org.quiltmc.qsl.rendering.registration.impl.client.DynamicItemRendererRegistryImpl;
 
 @Mixin(BuiltinModelItemRenderer.class)
-public class BuiltinModelItemRendererMixin {
+public abstract class BuiltinModelItemRendererMixin {
 	@Inject(method = "render", at = @At("HEAD"), cancellable = true)
 	private void onRender(ItemStack stack, ModelTransformation.Mode mode, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, CallbackInfo info) {
-		DynamicItemRenderer renderer = DynamicItemRendererRegistryImpl.getRenderer(stack.getItem());
+		DynamicItemRenderer renderer = DynamicItemRendererRegistryImpl.get(stack.getItem());
 
 		if (renderer != null) {
 			renderer.render(stack, mode, matrices, vertexConsumers, light, overlay);

@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.rendering.registration.api.client;
+package org.quiltmc.qsl.rendering.registration.mixin.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import java.util.Set;
 
-import net.minecraft.item.ArmorMaterial;
-import net.minecraft.util.Identifier;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-import org.quiltmc.qsl.base.api.util.InjectedInterface;
+import net.minecraft.client.render.entity.model.EntityModelLayer;
+import net.minecraft.client.render.entity.model.EntityModelLayers;
 
-@Environment(EnvType.CLIENT)
-@InjectedInterface(ArmorMaterial.class)
-public interface QuiltArmorMaterial {
-	default String getTextureNamespace() {
-		return Identifier.DEFAULT_NAMESPACE;
+@Mixin(EntityModelLayers.class)
+public interface EntityModelLayersAccessor {
+	@Accessor("LAYERS")
+	static Set<EntityModelLayer> getLAYERS() {
+		throw new IllegalStateException("Accessor injection failed.");
 	}
 }

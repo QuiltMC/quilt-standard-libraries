@@ -25,16 +25,32 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 
+import org.quiltmc.qsl.rendering.registration.impl.client.DynamicItemRendererRegistryImpl;
+
 /**
  * Dynamic item renderers render items with custom code.
  * They allow using non-model rendering, such as BERs, for items.
  *
  * <p>An item with a dynamic renderer must have a model extending {@code minecraft:builtin/entity}.
- * The renderers are registered with {@link DynamicItemRendererRegistry#register(ItemConvertible, DynamicItemRenderer)}.
+ * The renderers are registered with {@link DynamicItemRenderer#register(ItemConvertible, DynamicItemRenderer)}.
  */
 @FunctionalInterface
 @Environment(EnvType.CLIENT)
 public interface DynamicItemRenderer {
+	/**
+	 * Registers the renderer for the item.
+	 *
+	 * <p>Note that the item's JSON model must also extend {@code minecraft:builtin/entity}.
+	 *
+	 * @param item     the item
+	 * @param renderer the renderer
+	 * @throws IllegalArgumentException if the item already has a registered renderer
+	 * @throws NullPointerException if either the item or the renderer is null
+	 */
+	static void register(ItemConvertible item, DynamicItemRenderer renderer) {
+		DynamicItemRendererRegistryImpl.register(item, renderer);
+	}
+
 	/**
 	 * Renders an item stack.
 	 *

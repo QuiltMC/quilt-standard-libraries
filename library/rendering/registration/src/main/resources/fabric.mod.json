@@ -25,11 +25,6 @@
   ],
   "accessWidener": "quilt_rendering_registration.accesswidener",
   "custom": {
-    "loom:injected_interfaces": {
-      "net/minecraft/class_1741": [
-        "org/quiltmc/qsl/rendering/registration/api/client/QuiltArmorMaterial"
-      ]
-    },
     "modmenu": {
       "badges": [
         "library"
