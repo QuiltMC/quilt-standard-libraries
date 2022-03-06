@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.block.extensions.test;
+package org.quiltmc.qsl.rendering.registration.api.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.loader.api.ModContainer;
 
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.item.ArmorMaterial;
+import net.minecraft.util.Identifier;
 
-import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
-import org.quiltmc.qsl.block.extensions.api.client.BlockRenderLayerMap;
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 @Environment(EnvType.CLIENT)
-public final class ClientInitializer implements ClientModInitializer {
-	@Override
-	public void onInitializeClient(ModContainer mod) {
-		BlockRenderLayerMap.put(RenderLayer.getTranslucent(), Initializer.BLOCK);
+@InjectedInterface(ArmorMaterial.class)
+public interface QuiltArmorMaterial {
+	default String getTextureNamespace() {
+		return Identifier.DEFAULT_NAMESPACE;
 	}
 }

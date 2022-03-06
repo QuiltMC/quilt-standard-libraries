@@ -12,6 +12,9 @@ indent_style = tab
 
 [*.java]
 indent_style = tab
+ij_java_class_count_to_use_import_on_demand = 99
+ij_java_names_count_to_use_import_on_demand = 99
+ij_java_imports_layout = $*,|,java.**,|,javax.**,|,*,|,net.minecraft.**,|,org.quiltmc.**
 
 [*.json]
 indent_style = space

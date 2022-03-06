@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.block.extensions.api.client;
+package org.quiltmc.qsl.rendering.registration.api.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -23,7 +23,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.fluid.Fluid;
 
-import org.quiltmc.qsl.block.extensions.impl.client.BlockRenderLayerMapImpl;
+import org.quiltmc.qsl.rendering.registration.impl.client.BlockRenderLayerMapImpl;
 
 /**
  * Provides methods to set the {@link RenderLayer} of blocks and fluids.
@@ -40,7 +40,7 @@ public final class BlockRenderLayerMap {
 	 * @param blocks target blocks
 	 */
 	public static void put(RenderLayer layer, Block... blocks) {
-		for (var block : blocks) {
+		for (Block block : blocks) {
 			BlockRenderLayerMapImpl.put(block, layer);
 		}
 	}
@@ -52,7 +52,7 @@ public final class BlockRenderLayerMap {
 	 * @param fluids target fluids
 	 */
 	public static void put(RenderLayer layer, Fluid... fluids) {
-		for (var fluid : fluids) {
+		for (Fluid fluid : fluids) {
 			BlockRenderLayerMapImpl.put(fluid, layer);
 		}
 	}

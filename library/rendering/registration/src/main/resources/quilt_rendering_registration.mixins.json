@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.rendering.registration.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "ArmorFeatureRendererMixin",
+    "ArmorMaterialMixin",
+    "BuiltinModelItemRendererMixin",
+    "RenderLayersMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

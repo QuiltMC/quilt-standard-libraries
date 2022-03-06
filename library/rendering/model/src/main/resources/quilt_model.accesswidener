@@ -1,0 +1,3 @@
+accessWidener	v2	named
+transitive-accessible	method	net/minecraft/client/item/ModelPredicateProviderRegistry	register	(Lnet/minecraft/util/Identifier;Lnet/minecraft/client/item/UnclampedModelPredicateProvider;)Lnet/minecraft/client/item/UnclampedModelPredicateProvider;
+transitive-accessible	method	net/minecraft/client/item/ModelPredicateProviderRegistry	register	(Lnet/minecraft/item/Item;Lnet/minecraft/util/Identifier;Lnet/minecraft/client/item/UnclampedModelPredicateProvider;)V

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,13 +31,15 @@ import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.block.extensions.api.QuiltBlockSettings;
 import org.quiltmc.qsl.block.extensions.api.QuiltMaterialBuilder;
 
-public final class Initializer implements ModInitializer {
+public final class BlockExtensionsTestMod implements ModInitializer {
+	public static final String ID = "quilt_block_extensions_testmod";
+
 	public static final Material MATERIAL = QuiltMaterialBuilder.copyOf(Material.GLASS, MapColor.DARK_GREEN)
 			.pistonBehavior(PistonBehavior.PUSH_ONLY)
 			.build();
 
 	public static final Block BLOCK = Registry.register(Registry.BLOCK,
-			new Identifier("quilt_block_extensions_testmod", "test_block"),
+			new Identifier(ID, "test_block"),
 			new GlassBlock(QuiltBlockSettings.copyOf(Blocks.GLASS)
 					.material(MATERIAL)
 					.luminance(15)));

@@ -7,9 +7,6 @@
     "AbstractBlockSettingsAccessor",
     "MaterialBuilderAccessor"
   ],
-  "client": [
-    "client.RenderLayersMixin"
-  ],
   "injectors": {
     "defaultRequire": 1
   }

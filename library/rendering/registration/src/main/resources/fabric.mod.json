@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "id": "quilt_rendering_registration",
+  "name": "Quilt Rendering Registration API",
+  "version": "${version}",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "icon": "assets/quilt_rendering_registration/icon.png",
+  "contact": {
+    "homepage": "https://quiltmc.org",
+    "issues": "https://github.com/QuiltMC/quilt-standard-libraries/issues",
+    "sources": "https://github.com/QuiltMC/quilt-standard-libraries"
+  },
+  "authors": [
+    "QuiltMC"
+  ],
+  "depends": {
+    "fabricloader": ">=0.12",
+    "minecraft": ">=1.18.2",
+    "quilt_base": "*"
+  },
+  "description": "Hooks and registries for rendering-related things.",
+  "mixins": [
+    "quilt_rendering_registration.mixins.json"
+  ],
+  "accessWidener": "quilt_rendering_registration.accesswidener",
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_1741": [
+        "org/quiltmc/qsl/rendering/registration/api/client/QuiltArmorMaterial"
+      ]
+    },
+    "modmenu": {
+      "badges": [
+        "library"
+      ],
+      "parent": {
+        "id": "qsl",
+        "name": "Quilt Standard Libraries",
+        "description": "A set of libraries to assist in making Quilt mods.",
+        "icon": "assets/quilt_rendering_registration/icon.png",
+        "badges": [
+          "library"
+        ]
+      }
+    }
+  }
+}

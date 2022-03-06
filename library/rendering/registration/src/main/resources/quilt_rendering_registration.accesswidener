@@ -1,0 +1,3 @@
+accessWidener	v2	named
+transitive-accessible	method	net/minecraft/client/render/block/entity/BlockEntityRendererFactories	register	(Lnet/minecraft/block/entity/BlockEntityType;Lnet/minecraft/client/render/block/entity/BlockEntityRendererFactory;)V
+transitive-accessible	method	net/minecraft/client/render/entity/EntityRenderers	register	(Lnet/minecraft/entity/EntityType;Lnet/minecraft/client/render/entity/EntityRendererFactory;)V

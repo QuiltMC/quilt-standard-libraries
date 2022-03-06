@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "quilt_rendering_registration_testmod:block/test_block"
+    }
+  }
+}
