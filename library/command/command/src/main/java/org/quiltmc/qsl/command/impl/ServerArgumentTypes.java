@@ -18,7 +18,6 @@
 package org.quiltmc.qsl.command.impl;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -56,8 +55,10 @@ public final class ServerArgumentTypes {
 
 	public static void setKnownArgumentTypes(PlayerEntity player, Set<Identifier> types) {
 		if (player instanceof ServerPlayerEntity serverPlayer) {
-			((ServerPlayerEntityHooks) serverPlayer).quilt$setKnownArgumentTypes(types);
-			if (!types.isEmpty()) {
+			final var hooks = (ServerPlayerEntityHooks) serverPlayer;
+			var oldTypes = hooks.quilt$getKnownArgumentTypes();
+			hooks.quilt$setKnownArgumentTypes(types);
+			if (!types.equals(oldTypes)) {
 				// TODO avoid resending the whole command tree, find a way to receive the packet before sending?
 				serverPlayer.server.getPlayerManager().sendCommandTree(serverPlayer);
 			}
