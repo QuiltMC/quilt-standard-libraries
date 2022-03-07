@@ -31,6 +31,6 @@ import net.minecraft.util.registry.SimpleRegistry;
  */
 @Mixin(SimpleRegistry.class)
 public interface SimpleRegistryAccessor<V> {
-	@Accessor("byLocation")
-	Map<Identifier, Holder.Reference<V>> getIdToEntryMap();
+	@Accessor("byId")
+	Map<Identifier, Holder.Reference<V>> getById();
 }
