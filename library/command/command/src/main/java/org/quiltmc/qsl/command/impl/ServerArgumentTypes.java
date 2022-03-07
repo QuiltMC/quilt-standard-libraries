@@ -26,7 +26,7 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
@@ -53,19 +53,11 @@ public final class ServerArgumentTypes {
 		return Collections.unmodifiableSet(BY_ID.keySet());
 	}
 
-	public static void setKnownArgumentTypes(PlayerEntity player, Set<Identifier> types) {
-		if (player instanceof ServerPlayerEntity serverPlayer) {
-			final var hooks = (ServerPlayerEntityHooks) serverPlayer;
-			var oldTypes = hooks.quilt$getKnownArgumentTypes();
-			hooks.quilt$setKnownArgumentTypes(types);
-			if (!types.equals(oldTypes)) {
-				// TODO avoid resending the whole command tree, find a way to receive the packet before sending?
-				serverPlayer.server.getPlayerManager().sendCommandTree(serverPlayer);
-			}
-		}
+	public static void setKnownArgumentTypes(ServerLoginNetworkHandler handler, Set<Identifier> types) {
+		((KnownArgTypesStorage) handler).quilt$setKnownArgumentTypes(types);
 	}
 
 	public static Set<Identifier> getKnownArgumentTypes(ServerPlayerEntity player) {
-		return ((ServerPlayerEntityHooks) player).quilt$getKnownArgumentTypes();
+		return ((KnownArgTypesStorage) player).quilt$getKnownArgumentTypes();
 	}
 }

@@ -5,6 +5,7 @@
   "mixins": [
     "CommandManagerMixin",
     "RequiredArgumentBuilderAccessor",
+    "ServerLoginNetworkHandlerMixin",
     "ServerPlayerEntityMixin"
   ],
   "client": [],

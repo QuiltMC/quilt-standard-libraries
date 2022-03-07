@@ -88,7 +88,7 @@ public abstract class CommandManagerMixin {
 		// If we have a replacement and the arg type isn't known to the client, change the argument type
 		// This is super un-typesafe, but as long as the returned CommandNode is only used for serialization we are fine.
 		// Repeat as long as a type is replaceable -- that way you can have a hierarchy of argument types.
-		while (type != null && (knownExtraCommands == null || !knownExtraCommands.contains(type.id()))) {
+		while (type != null && !knownExtraCommands.contains(type.id())) {
 			((RequiredArgumentBuilderAccessor) builder).setType(type.fallbackProvider().createVanillaFallback(builder.getType()));
 
 			if (type.fallbackSuggestions() != null) {

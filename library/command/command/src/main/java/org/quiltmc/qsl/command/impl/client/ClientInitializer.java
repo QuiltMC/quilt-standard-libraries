@@ -26,7 +26,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
-import org.quiltmc.qsl.command.impl.KnownArgumentTypesSync;
+import org.quiltmc.qsl.command.impl.KnownArgTypesSync;
 
 @ApiStatus.Internal
 @Environment(EnvType.CLIENT)
@@ -36,7 +36,7 @@ public final class ClientInitializer implements ClientModInitializer {
 	@Override
 	public void onInitializeClient(ModContainer mod) {
 		if (FabricLoader.getInstance().isModLoaded("quilt_networking")) {
-			KnownArgumentTypesSync.registerClient();
+			KnownArgTypesSync.registerClient();
 			LOGGER.info("[Quilt Command|Client] Networking support is enabled");
 		} else {
 			LOGGER.info("[Quilt Command|Client] Networking support is disabled");

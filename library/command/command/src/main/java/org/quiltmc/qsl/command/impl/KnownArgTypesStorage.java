@@ -24,7 +24,7 @@ import org.jetbrains.annotations.ApiStatus;
 import net.minecraft.util.Identifier;
 
 @ApiStatus.Internal
-public interface ServerPlayerEntityHooks {
+public interface KnownArgTypesStorage {
 	Set<Identifier> quilt$getKnownArgumentTypes();
 
 	void quilt$setKnownArgumentTypes(Set<Identifier> types);

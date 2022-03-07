@@ -42,7 +42,7 @@ public final class Initializer implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		if (FabricLoader.getInstance().isModLoaded("quilt_networking")) {
-			KnownArgumentTypesSync.register();
+			KnownArgTypesSync.register();
 			LOGGER.info("[Quilt Command] Networking support is enabled");
 		} else {
 			LOGGER.info("[Quilt Command] Networking support is disabled");

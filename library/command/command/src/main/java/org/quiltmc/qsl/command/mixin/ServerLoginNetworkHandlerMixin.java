@@ -25,14 +25,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.command.impl.KnownArgTypesStorage;
-import org.quiltmc.qsl.command.impl.ServerArgumentTypes;
 
-@Mixin(ServerPlayerEntity.class)
-public abstract class ServerPlayerEntityMixin implements KnownArgTypesStorage {
+@Mixin(ServerLoginNetworkHandler.class)
+public abstract class ServerLoginNetworkHandlerMixin implements KnownArgTypesStorage {
 	@Unique
 	private Set<Identifier> quilt$knownArgumentTypes;
 
@@ -46,8 +46,8 @@ public abstract class ServerPlayerEntityMixin implements KnownArgTypesStorage {
 		this.quilt$knownArgumentTypes = types;
 	}
 
-	@Inject(method = "copyFrom", at = @At("RETURN"))
-	public void copyKnownArgumentTypes(ServerPlayerEntity from, boolean alive, CallbackInfo ci) {
-		this.quilt$setKnownArgumentTypes(ServerArgumentTypes.getKnownArgumentTypes(from));
+	@Inject(method = "addToServer", at = @At("HEAD"))
+	public void passKnownArgumentTypesToPlayer(ServerPlayerEntity player, CallbackInfo ci) {
+		((KnownArgTypesStorage) player).quilt$setKnownArgumentTypes(quilt$knownArgumentTypes);
 	}
 }
