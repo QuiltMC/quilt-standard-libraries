@@ -5,7 +5,6 @@
   "version": "${version}",
   "environment": "*",
   "license": "Apache-2.0",
-  "icon": "assets/quilt_crash_info/icon.png",
   "contact": {
     "homepage": "https://quiltmc.org",
     "issues": "https://github.com/QuiltMC/quilt-standard-libraries/issues",
@@ -23,7 +22,7 @@
     ]
   },
   "depends": {
-    "fabricloader": ">=0.12"
+    "quilt_entity_events": "*"
   },
   "description": "Test mod for Quilt Entity Events"
 }
