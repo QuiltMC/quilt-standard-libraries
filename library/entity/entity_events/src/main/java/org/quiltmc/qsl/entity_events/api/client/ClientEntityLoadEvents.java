@@ -21,6 +21,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 
 /**
  * Events related to an entity being loaded into or unloaded from a client world.
@@ -45,7 +46,7 @@ public final class ClientEntityLoadEvents {
 	});
 
 	@FunctionalInterface
-	public interface AfterLoad {
+	public interface AfterLoad extends ClientEventAwareListener {
 		/**
 		 * Called after an entity has loaded into a client world.
 		 *
@@ -56,7 +57,7 @@ public final class ClientEntityLoadEvents {
 	}
 
 	@FunctionalInterface
-	public interface AfterUnload {
+	public interface AfterUnload extends ClientEventAwareListener {
 		/**
 		 * Called after an entity has been unloaded from a client world.
 		 *

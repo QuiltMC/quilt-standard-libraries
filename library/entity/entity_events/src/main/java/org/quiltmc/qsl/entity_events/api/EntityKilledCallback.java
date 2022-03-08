@@ -21,6 +21,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
 /**
  * A callback which is invoked on the logical server when an entity is killed by another entity.
@@ -29,7 +30,7 @@ import org.quiltmc.qsl.base.api.event.Event;
  * which may have killed it.
  */
 @FunctionalInterface
-public interface EntityKilledCallback {
+public interface EntityKilledCallback extends EventAwareListener {
 	/**
 	 * Invoked when an entity is killed by another entity.
 	 */

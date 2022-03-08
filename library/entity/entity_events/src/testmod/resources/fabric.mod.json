@@ -14,10 +14,10 @@
     "QuiltMC"
   ],
   "entrypoints": {
-    "init": [
+    "events": [
       "org.quiltmc.qsl.entity_events.test.EntityEventsTestMod"
     ],
-    "client_init": [
+    "client_events": [
       "org.quiltmc.qsl.entity_events.test.client.EntityEventsTestModClient"
     ]
   },

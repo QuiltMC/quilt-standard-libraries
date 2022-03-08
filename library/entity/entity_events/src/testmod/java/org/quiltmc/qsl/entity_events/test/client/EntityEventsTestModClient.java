@@ -17,27 +17,28 @@
 package org.quiltmc.qsl.entity_events.test.client;
 
 import net.fabricmc.loader.api.ModContainer;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.SkeletonEntity;
 import net.minecraft.entity.passive.ChickenEntity;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.entity_events.api.client.ClientEntityLoadEvents;
 import org.quiltmc.qsl.entity_events.test.EntityEventsTestMod;
 
-public class EntityEventsTestModClient implements ClientModInitializer {
+public class EntityEventsTestModClient implements ClientEntityLoadEvents.AfterLoad, ClientEntityLoadEvents.AfterUnload {
+	// Chicken Loading is logged.
 	@Override
-	public void onInitializeClient(ModContainer mod) {
-		// Chicken Loading is logged.
-		ClientEntityLoadEvents.AFTER_LOAD.register((entity, world) -> {
-			if (entity instanceof ChickenEntity) {
-				EntityEventsTestMod.LOGGER.info("Chicken loaded, client");
-			}
-		});
+	public void onLoadClient(Entity entity, ClientWorld world) {
+		if (entity instanceof ChickenEntity) {
+			EntityEventsTestMod.LOGGER.info("Chicken loaded, client");
+		}
+	}
 
-		// Skeleton Unloading is logged.
-		ClientEntityLoadEvents.AFTER_UNLOAD.register((entity, world) -> {
-			if (entity instanceof SkeletonEntity) {
-				EntityEventsTestMod.LOGGER.info("Skeleton unloaded, client");
-			}
-		});
+	// Skeleton Unloading is logged.
+	@Override
+	public void onUnloadClient(Entity entity, ClientWorld world) {
+		if (entity instanceof SkeletonEntity) {
+			EntityEventsTestMod.LOGGER.info("Skeleton unloaded, client");
+		}
 	}
 }

@@ -19,6 +19,7 @@ package org.quiltmc.qsl.entity_events.api;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.world.ServerWorld;
 import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
 /**
  * Events related to an entity being loaded into or unloaded from a server world.
@@ -43,7 +44,7 @@ public final class ServerEntityLoadEvents {
 	});
 
 	@FunctionalInterface
-	public interface AfterLoad {
+	public interface AfterLoad extends EventAwareListener {
 		/**
 		 * Called after an entity has loaded into a server world.
 		 *
@@ -54,7 +55,7 @@ public final class ServerEntityLoadEvents {
 	}
 
 	@FunctionalInterface
-	public interface AfterUnload {
+	public interface AfterUnload extends EventAwareListener {
 		/**
 		 * Called after an entity has been unloaded from a server world.
 		 *
