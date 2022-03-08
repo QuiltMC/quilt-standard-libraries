@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.entity.mixin;
+package org.quiltmc.qsl.entity_events.mixin;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.PlayerEntity;
@@ -22,8 +22,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.quiltmc.qsl.entity.api.event.EntityWorldChangeEvents;
-import org.quiltmc.qsl.entity.api.event.ServerPlayerEntityCopyCallback;
+import org.quiltmc.qsl.entity_events.api.EntityWorldChangeEvents;
+import org.quiltmc.qsl.entity_events.api.ServerPlayerEntityCopyCallback;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

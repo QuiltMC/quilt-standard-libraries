@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.entity.mixin;
+package org.quiltmc.qsl.entity_events.mixin.client;
 
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
-import org.quiltmc.qsl.entity.api.event.client.ClientEntityLoadEvents;
+import org.quiltmc.qsl.entity_events.api.client.ClientEntityLoadEvents;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

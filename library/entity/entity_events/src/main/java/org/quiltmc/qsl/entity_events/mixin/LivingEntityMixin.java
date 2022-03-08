@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.entity.mixin;
+package org.quiltmc.qsl.entity_events.mixin;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import org.quiltmc.qsl.entity.api.event.EntityKilledCallback;
-import org.quiltmc.qsl.entity.api.event.EntityReviveEvents;
+import org.quiltmc.qsl.entity_events.api.EntityKilledCallback;
+import org.quiltmc.qsl.entity_events.api.EntityReviveEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

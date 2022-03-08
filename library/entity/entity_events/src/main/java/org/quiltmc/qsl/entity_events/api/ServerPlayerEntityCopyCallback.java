@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.entity.api.event;
+package org.quiltmc.qsl.entity_events.api;
 
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.quiltmc.qsl.base.api.event.Event;

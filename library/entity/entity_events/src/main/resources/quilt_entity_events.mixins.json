@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "org.quiltmc.qsl.entity.mixin",
+  "package": "org.quiltmc.qsl.entity_events.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
     "EntityMixin",
@@ -10,7 +10,7 @@
     "TeleportCommandMixin"
   ],
   "client": [
-    "ClientEntityHandlerMixin"
+    "client.ClientEntityHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

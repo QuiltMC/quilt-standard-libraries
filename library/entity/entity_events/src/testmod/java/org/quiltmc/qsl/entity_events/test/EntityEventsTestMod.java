@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.entity.test;
+package org.quiltmc.qsl.entity_events.test;
 
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.entity.EquipmentSlot;
@@ -25,12 +25,14 @@ import net.minecraft.item.Items;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.dimension.DimensionType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.quiltmc.qsl.entity.api.event.*;
+import org.quiltmc.qsl.entity_events.api.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.logging.LogManager;
 
 public class EntityEventsTestMod implements ModInitializer {
-	public static final Logger LOGGER = LogManager.getLogger();
+	public static final Logger LOGGER = LoggerFactory.getLogger("quilt_entity_events_testmod");
 
 	@Override
 	public void onInitialize() {
