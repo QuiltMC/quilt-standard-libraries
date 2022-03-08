@@ -16,15 +16,16 @@
 
 package org.quiltmc.qsl.entity_events.test.client;
 
-import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.entity.mob.SkeletonEntity;
 import net.minecraft.entity.passive.ChickenEntity;
+import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.entity_events.api.client.ClientEntityLoadEvents;
 import org.quiltmc.qsl.entity_events.test.EntityEventsTestMod;
 
 public class EntityEventsTestModClient implements ClientModInitializer {
 	@Override
-	public void onInitializeClient() {
+	public void onInitializeClient(ModContainer mod) {
 		// Chicken Loading is logged.
 		ClientEntityLoadEvents.AFTER_LOAD.register((entity, world) -> {
 			if (entity instanceof ChickenEntity) {
