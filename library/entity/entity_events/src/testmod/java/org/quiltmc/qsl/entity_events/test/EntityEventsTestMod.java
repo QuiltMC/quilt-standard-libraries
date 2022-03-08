@@ -16,7 +16,7 @@
 
 package org.quiltmc.qsl.entity_events.test;
 
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.SkeletonEntity;
@@ -25,6 +25,7 @@ import net.minecraft.item.Items;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.dimension.DimensionType;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.entity_events.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,7 @@ public class EntityEventsTestMod implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("quilt_entity_events_testmod");
 
 	@Override
-	public void onInitialize() {
+	public void onInitialize(ModContainer mod) {
 		// When an entity is holding an allium in its main hand at death and nothing else revives it, it will be revived with 10 health.
 		EntityReviveEvents.AFTER_TOTEM.register((entity, damagesource) -> {
 			if (entity.getEquippedStack(EquipmentSlot.MAINHAND).isOf(Items.ALLIUM)) {
