@@ -31,7 +31,7 @@ public final class ClientEntityLoadEvents {
 	 * An event which is called after an entity has been loaded into a client world.
 	 */
 	public static final Event<AfterLoad> AFTER_LOAD = Event.create(AfterLoad.class, callbacks -> (entity, world) -> {
-		for (AfterLoad callback : callbacks) {
+		for (var callback : callbacks) {
 			callback.onLoadClient(entity, world);
 		}
 	});
@@ -39,7 +39,7 @@ public final class ClientEntityLoadEvents {
 	 * An event which is called after an entity has been unloaded from a client world.
 	 */
 	public static final Event<AfterUnload> AFTER_UNLOAD = Event.create(AfterUnload.class, callbacks -> (entity, world) -> {
-		for (AfterUnload callback : callbacks) {
+		for (var callback : callbacks) {
 			callback.onUnloadClient(entity, world);
 		}
 	});
