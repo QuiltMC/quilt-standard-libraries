@@ -6,7 +6,9 @@ qslModule {
 	moduleName = "entity_events"
 	version = "1.0.0"
 	library = "entity"
-	coreDependencies([
-		"qsl_base"
-	])
+	moduleDependencies {
+		core {
+			api("qsl_base")
+		}
+	}
 }
