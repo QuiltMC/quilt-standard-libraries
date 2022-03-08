@@ -46,7 +46,7 @@ public final class EntityReviveEvents {
 	 * Called before totems try to revive the player.
 	 */
 	public static Event<TryReviveBeforeTotem> BEFORE_TOTEM = Event.create(TryReviveBeforeTotem.class, callbacks -> (entity, damageSource) -> {
-		for (TryReviveBeforeTotem callback : callbacks) {
+		for (var callback : callbacks) {
 			if (callback.tryReviveBeforeTotem(entity, damageSource)) {
 				return true;
 			}
@@ -59,7 +59,7 @@ public final class EntityReviveEvents {
 	 * Called after there has been an attempt to revive with totems, but it has not been successful.
 	 */
 	public static Event<TryReviveAfterTotem> AFTER_TOTEM = Event.create(TryReviveAfterTotem.class, callbacks -> (entity, damageSource) -> {
-		for (TryReviveAfterTotem callback : callbacks) {
+		for (var callback : callbacks) {
 			if (callback.tryReviveAfterTotem(entity, damageSource)) {
 				return true;
 			}

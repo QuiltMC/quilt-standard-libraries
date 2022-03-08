@@ -34,7 +34,7 @@ public interface EntityKilledCallback {
 	 * Invoked when an entity is killed by another entity.
 	 */
 	Event<EntityKilledCallback> EVENT = Event.create(EntityKilledCallback.class, callbacks -> (world, killer, killed) -> {
-		for (EntityKilledCallback callback : callbacks) {
+		for (var callback : callbacks) {
 			callback.onKilled(world, killer, killed);
 		}
 	});

@@ -38,7 +38,7 @@ public final class EntityWorldChangeEvents {
 	 * @see EntityWorldChangeEvents#AFTER_PLAYER_CHANGE_WORLD
 	 */
 	public static final Event<AfterEntityChange> AFTER_ENTITY_CHANGE_WORLD = Event.create(AfterEntityChange.class, callbacks -> (original, copy, origin, destination) -> {
-		for (AfterEntityChange callback : callbacks) {
+		for (var callback : callbacks) {
 			callback.afterChangeWorld(original, copy, origin, destination);
 		}
 	});
@@ -52,7 +52,7 @@ public final class EntityWorldChangeEvents {
 	 * @see EntityWorldChangeEvents#AFTER_ENTITY_CHANGE_WORLD
 	 */
 	public static final Event<AfterPlayerChange> AFTER_PLAYER_CHANGE_WORLD = Event.create(AfterPlayerChange.class, callbacks -> (player, origin, destination) -> {
-		for (AfterPlayerChange callback : callbacks) {
+		for (var callback : callbacks) {
 			callback.afterChangeWorld(player, origin, destination);
 		}
 	});
