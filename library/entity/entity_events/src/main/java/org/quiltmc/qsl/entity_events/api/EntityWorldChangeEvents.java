@@ -20,6 +20,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
 /**
  * Events related to an entity being moved to another world, run on the server.
@@ -58,7 +59,7 @@ public final class EntityWorldChangeEvents {
 	});
 
 	@FunctionalInterface
-	public interface AfterEntityChange {
+	public interface AfterEntityChange extends EventAwareListener {
 		/**
 		 * Called after an entity has been recreated at the destination when being moved to a different world.
 		 *
@@ -74,7 +75,7 @@ public final class EntityWorldChangeEvents {
 	}
 
 	@FunctionalInterface
-	public interface AfterPlayerChange {
+	public interface AfterPlayerChange extends EventAwareListener {
 		/**
 		 * Called after a player has been moved to different world.
 		 *

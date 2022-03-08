@@ -17,14 +17,21 @@
 package org.quiltmc.qsl.entity_events.test;
 
 import net.fabricmc.loader.api.ModContainer;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.SkeletonEntity;
 import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.item.Items;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
+import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.entity_events.api.*;
 import org.slf4j.Logger;
@@ -32,78 +39,91 @@ import org.slf4j.LoggerFactory;
 
 import java.util.logging.LogManager;
 
-public class EntityEventsTestMod implements ModInitializer {
+public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTotem,
+		EntityReviveEvents.TryReviveBeforeTotem,
+		EntityKilledCallback,
+		ServerEntityLoadEvents.AfterLoad,
+		ServerEntityLoadEvents.AfterUnload,
+		EntityWorldChangeEvents.AfterPlayerChange,
+		EntityWorldChangeEvents.AfterEntityChange,
+		ServerPlayerEntityCopyCallback {
 	public static final Logger LOGGER = LoggerFactory.getLogger("quilt_entity_events_testmod");
 
+	// When an entity is holding an allium in its main hand at death and nothing else revives it, it will be
+	// revived with 10 health.
 	@Override
-	public void onInitialize(ModContainer mod) {
-		// When an entity is holding an allium in its main hand at death and nothing else revives it, it will be revived with 10 health.
-		EntityReviveEvents.AFTER_TOTEM.register((entity, damagesource) -> {
-			if (entity.getEquippedStack(EquipmentSlot.MAINHAND).isOf(Items.ALLIUM)) {
-				entity.setHealth(10f);
-				return true;
-			}
-			return false;
-		});
+	public boolean tryReviveAfterTotem(LivingEntity entity, DamageSource damagesource) {
+		if (entity.getEquippedStack(EquipmentSlot.MAINHAND).isOf(Items.ALLIUM)) {
+			entity.setHealth(10f);
+			return true;
+		}
+		return false;
+	}
 
-		// When an entity is holding an azure bluet in its main hand at death, before the totems of undying kick in, it
-		// will be revived with 10 health.
-		EntityReviveEvents.BEFORE_TOTEM.register((entity, damagesource) -> {
-			if (entity.getEquippedStack(EquipmentSlot.MAINHAND).isOf(Items.AZURE_BLUET)) {
-				entity.setHealth(10f);
-				return true;
-			}
-			return false;
-		});
+	// When an entity is holding an azure bluet in its main hand at death, before the totems of undying kick in, it
+	// will be revived with 10 health.
+	@Override
+	public boolean tryReviveBeforeTotem(LivingEntity entity, DamageSource damagesource) {
+		if (entity.getEquippedStack(EquipmentSlot.MAINHAND).isOf(Items.AZURE_BLUET)) {
+			entity.setHealth(10f);
+			return true;
+		}
+		return false;
+	}
 
-		// All invocations of the entity killed event are logged.
-		EntityKilledCallback.EVENT.register((world, killer, killed) -> {
-			if (killer != null) {
-				LOGGER.info(killer.getName().getString() + " killed " + killed.getName().getString() + " (" + (world.isClient ? "client" : "server") + ")");
-			} else {
-				LOGGER.info("Something killed " + killed.getName().getString() + " (" + (world.isClient ? "client" : "server") + ")");
-			}
-		});
+	// All invocations of the entity killed event are logged.
+	@Override
+	public void onKilled(World world, @Nullable Entity killer, LivingEntity killed) {
+		if (killer != null) {
+			LOGGER.info(killer.getName().getString() + " killed " + killed.getName().getString() + " (" + (world.isClient ? "client" : "server") + ")");
+		} else {
+			LOGGER.info("Something killed " + killed.getName().getString() + " (" + (world.isClient ? "client" : "server") + ")");
+		}
+	}
 
-		// Chicken Loading is logged.
-		ServerEntityLoadEvents.AFTER_LOAD.register((entity, world) -> {
-			if (entity instanceof ChickenEntity) {
-				LOGGER.info("Chicken loaded, server");
-			}
-		});
+	// Chicken Loading is logged.
+	@Override
+	public void onLoad(Entity entity, ServerWorld world) {
+		if (entity instanceof ChickenEntity) {
+			LOGGER.info("Chicken loaded, server");
+		}
+	}
 
-		// Skeleton Unloading is logged.
-		ServerEntityLoadEvents.AFTER_UNLOAD.register((entity, world) -> {
-			if (entity instanceof SkeletonEntity) {
-				LOGGER.info("Skeleton unloaded, server");
-			}
-		});
+	// Skeleton Unloading is logged.
+	@Override
+	public void onUnload(Entity entity, ServerWorld world) {
+		if (entity instanceof SkeletonEntity) {
+			LOGGER.info("Skeleton unloaded, server");
+		}
+	}
 
-		// Players going to the nether are notified
-		EntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register((player, origin, destination) -> {
-			if (destination.getDimension() == destination.getServer().getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).get(DimensionType.THE_NETHER_REGISTRY_KEY)) {
-				player.sendMessage(new LiteralText("Nether Entered"), false);
-			}
-		});
+	// Players going to the nether are notified
+	@Override
+	public void afterChangeWorld(ServerPlayerEntity player, ServerWorld origin, ServerWorld destination) {
+		if (destination.getDimension() == destination.getServer().getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).get(DimensionType.THE_NETHER_REGISTRY_KEY)) {
+			player.sendMessage(new LiteralText("Nether Entered"), false);
+		}
+	}
 
-		// Entities going to the end are named 'end traveller'
-		EntityWorldChangeEvents.AFTER_ENTITY_CHANGE_WORLD.register((originalEntity, newEntity, origin, destination) -> {
-			if (destination.getDimension() == destination.getServer().getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).get(DimensionType.THE_END_REGISTRY_KEY)) {
-				newEntity.setCustomName(new LiteralText("End Traveller"));
-			}
-		});
+	// Entities going to the end are named 'end traveller'
+	@Override
+	public void afterChangeWorld(Entity originalEntity, Entity newEntity, ServerWorld origin, ServerWorld destination) {
+		if (destination.getDimension() == destination.getServer().getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).get(DimensionType.THE_END_REGISTRY_KEY)) {
+			newEntity.setCustomName(new LiteralText("End Traveller"));
+		}
+	}
 
-		// Players keep the glowing enchantment after respawn
-		// Players receive an apple after coming back from the end
-		ServerPlayerEntityCopyCallback.EVENT.register((newPlayer, original, wasDeath) -> {
-			if (wasDeath) {
-				var glowingEffect = original.getStatusEffect(StatusEffects.GLOWING);
-				if (glowingEffect != null) {
-					newPlayer.addStatusEffect(glowingEffect);
-				}
-			} else {
-				newPlayer.giveItemStack(Items.APPLE.getDefaultStack());
+	// Players keep the glowing enchantment after respawn
+	// Players receive an apple after coming back from the end
+	@Override
+	public void onPlayerCopy(ServerPlayerEntity newPlayer, ServerPlayerEntity original, boolean wasDeath) {
+		if (wasDeath) {
+			var glowingEffect = original.getStatusEffect(StatusEffects.GLOWING);
+			if (glowingEffect != null) {
+				newPlayer.addStatusEffect(glowingEffect);
 			}
-		});
+		} else {
+			newPlayer.giveItemStack(Items.APPLE.getDefaultStack());
+		}
 	}
 }

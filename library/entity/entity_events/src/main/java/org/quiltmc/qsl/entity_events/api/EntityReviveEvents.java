@@ -19,6 +19,7 @@ package org.quiltmc.qsl.entity_events.api;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
 /**
  * A pair of callbacks which are invoked when a LivingEntity takes fatal damage.
@@ -69,7 +70,7 @@ public final class EntityReviveEvents {
 	});
 
 	@FunctionalInterface
-	public interface TryReviveBeforeTotem {
+	public interface TryReviveBeforeTotem extends EventAwareListener {
 		/**
 		 * Whether an entity which has fatal damage should be revived.
 		 *
@@ -82,7 +83,7 @@ public final class EntityReviveEvents {
 
 
 	@FunctionalInterface
-	public interface TryReviveAfterTotem {
+	public interface TryReviveAfterTotem extends EventAwareListener {
 		/**
 		 * Whether an entity which has fatal damage and which has not been saved by a totem should be revived.
 		 *
