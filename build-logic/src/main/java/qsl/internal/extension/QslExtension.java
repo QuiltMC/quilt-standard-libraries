@@ -18,7 +18,7 @@ public class QslExtension {
 	}
 
 	public void setVersion(String version) {
-		this.project.setVersion(version + '+' + Versions.getMinecraftVersionFancyString()
+		this.project.setVersion(version + '+' + Versions.MINECRAFT_VERSION
 				+ (System.getenv("SNAPSHOTS_URL") != null ? "-SNAPSHOT" : ""));
 	}
 }

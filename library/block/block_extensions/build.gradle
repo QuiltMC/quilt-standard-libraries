@@ -6,12 +6,12 @@ qslModule {
 	moduleName = "block_extensions"
 	version = "1.0.0"
 	library = "block"
-	coreDependencies([
-			"qsl_base"
-	])
-	coreTestmodDependencies([
-			"resource_loader"
-	])
+	moduleDependencies {
+		core {
+			api("qsl_base")
+			testmodOnly("resource_loader")
+		}
+	}
 }
 
 loom {

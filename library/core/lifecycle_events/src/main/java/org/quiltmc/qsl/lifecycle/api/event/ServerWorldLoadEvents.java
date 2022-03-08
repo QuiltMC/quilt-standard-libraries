@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 
 import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
 /**
  * Events indicating whether a world has been loaded or unloaded from a server.
@@ -61,7 +62,7 @@ public final class ServerWorldLoadEvents {
 	 * @see #LOAD
 	 */
 	@FunctionalInterface
-	public interface Load {
+	public interface Load extends EventAwareListener {
 		/**
 		 * Called when a world is loaded onto a Minecraft server.
 		 *
@@ -79,7 +80,7 @@ public final class ServerWorldLoadEvents {
 	 * @see #UNLOAD
 	 */
 	@FunctionalInterface
-	public interface Unload {
+	public interface Unload extends EventAwareListener {
 		/**
 		 * Called when a world is unloaded from a Minecraft server.
 		 *

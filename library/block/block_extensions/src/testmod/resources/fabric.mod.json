@@ -10,10 +10,10 @@
     "quilt_resource_loader": "*"
   },
   "entrypoints": {
-    "main": [
+    "init": [
       "org.quiltmc.qsl.block.extensions.test.Initializer"
     ],
-    "client": [
+    "client_init": [
       "org.quiltmc.qsl.block.extensions.test.ClientInitializer"
     ]
   }

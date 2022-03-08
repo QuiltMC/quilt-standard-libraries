@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,19 +26,24 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
+import com.mojang.logging.LogUtils;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.metadata.ModMetadata;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
-import net.minecraft.resource.AbstractFileResourcePack;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.pack.AbstractFileResourcePack;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
 
@@ -49,20 +54,35 @@ import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
  */
 @ApiStatus.Internal
 public class ModNioResourcePack extends AbstractFileResourcePack {
-	private static final Logger LOGGER = LogManager.getLogger();
+	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final Pattern RESOURCE_PACK_PATH = Pattern.compile("[a-z0-9-_]+");
-	private final ModMetadata modInfo;
-	private final Path basePath;
-	private final ResourceType type;
-	private final boolean cacheable;
-	private final AutoCloseable closer;
-	private final String separator;
+	/* Metadata */
+	private final String name;
+	private final Text displayName;
+	final ModMetadata modInfo;
 	private final ResourcePackActivationType activationType;
-	private Set<String> namespaceCache;
+	/* Resource Stuff */
+	private final Path basePath;
+	final ResourceType type;
+	private final @Nullable AutoCloseable closer;
+	private final String separator;
+	/* Caches */
+	private final boolean cacheable;
+	private final Map<ResourceType, Set<String>> namespaces = new EnumMap<>(ResourceType.class);
 
-	public ModNioResourcePack(ModMetadata modInfo, Path path, ResourceType type, AutoCloseable closer,
-							  ResourcePackActivationType activationType) {
+	static ModNioResourcePack ofMod(ModMetadata modInfo, Path path, ResourceType type, @Nullable String name) {
+		return new ModNioResourcePack(
+				name, modInfo, null, ResourcePackActivationType.ALWAYS_ENABLED,
+				path, type, null
+		);
+	}
+
+	public ModNioResourcePack(@Nullable String name, ModMetadata modInfo, @Nullable Text displayName,
+	                          ResourcePackActivationType activationType, Path path,
+	                          ResourceType type, @Nullable AutoCloseable closer) {
 		super(null);
+		this.name = name == null ? ModResourcePackUtil.getName(modInfo) : name;
+		this.displayName = displayName == null ? new LiteralText(name) : displayName;
 		this.modInfo = modInfo;
 		this.basePath = path.toAbsolutePath().normalize();
 		this.type = type;
@@ -116,7 +136,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 
 	@Override
 	public Collection<Identifier> findResources(ResourceType type, String namespace, String path, int depth,
-												Predicate<String> pathFilter) {
+	                                            Predicate<String> pathFilter) {
 		var ids = new ArrayList<Identifier>();
 		String nioPath = path.replace("/", separator);
 
@@ -159,8 +179,12 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 
 	@Override
 	public Set<String> getNamespaces(ResourceType type) {
-		if (this.namespaceCache != null) {
-			return this.namespaceCache;
+		if (this.cacheable) {
+			var namespaces = this.namespaces.get(type);
+
+			if (namespaces != null) {
+				return namespaces;
+			}
 		}
 
 		try {
@@ -186,8 +210,8 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 				}
 			}
 
-			if (cacheable) {
-				this.namespaceCache = namespaces;
+			if (this.cacheable) {
+				this.namespaces.put(type, namespaces);
 			}
 
 			return namespaces;
@@ -208,12 +232,18 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 		}
 	}
 
+	//region metadata
+	@Override
+	public String getName() {
+		return this.name;
+	}
+
+	public Text getDisplayName() {
+		return this.displayName;
+	}
+
 	public ResourcePackActivationType getActivationType() {
 		return this.activationType;
 	}
-
-	@Override
-	public String getName() {
-		return ModResourcePackUtil.getName(this.modInfo);
-	}
+	//endregion
 }

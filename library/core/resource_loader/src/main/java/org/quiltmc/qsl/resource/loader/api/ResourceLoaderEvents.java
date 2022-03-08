@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,11 @@ package org.quiltmc.qsl.resource.loader.api;
 
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.resource.ServerResourceManager;
+import net.minecraft.resource.ResourceManager;
 import net.minecraft.server.MinecraftServer;
 
 import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.base.api.event.EventAwareListener;
 import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;
 
 /**
@@ -62,14 +63,14 @@ public final class ResourceLoaderEvents {
 	 * @see #START_DATA_PACK_RELOAD
 	 */
 	@FunctionalInterface
-	public interface StartDataPackReload {
+	public interface StartDataPackReload extends EventAwareListener {
 		/**
 		 * Called before data packs on a Minecraft server have been reloaded.
 		 *
 		 * @param server             the server, may be {@code null} for the first reload
 		 * @param oldResourceManager the old resource manager, to be replaced, may be {@code null} for the first reload
 		 */
-		void onStartDataPackReload(@Nullable MinecraftServer server, @Nullable ServerResourceManager oldResourceManager);
+		void onStartDataPackReload(@Nullable MinecraftServer server, @Nullable ResourceManager oldResourceManager);
 	}
 
 	/**
@@ -78,7 +79,7 @@ public final class ResourceLoaderEvents {
 	 * @see #END_DATA_PACK_RELOAD
 	 */
 	@FunctionalInterface
-	public interface EndDataPackReload {
+	public interface EndDataPackReload extends EventAwareListener {
 		/**
 		 * Called after data packs on a Minecraft server have been reloaded.
 		 * <p>
@@ -88,6 +89,6 @@ public final class ResourceLoaderEvents {
 		 * @param resourceManager the resource manager, may be {@code null} if the data pack reload failed
 		 * @param error           present if the data pack reload failed, otherwise {@code null}
 		 */
-		void onEndDataPackReload(@Nullable MinecraftServer server, ServerResourceManager resourceManager, @Nullable Throwable error);
+		void onEndDataPackReload(@Nullable MinecraftServer server, ResourceManager resourceManager, @Nullable Throwable error);
 	}
 }

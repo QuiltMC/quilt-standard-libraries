@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "quilt_tooltip_testmod",
+  "name": "Quilt Tooltip API Test Mod",
+  "version": "1.0.0",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "depends": {
+    "quilt_tooltip": "*"
+  },
+  "entrypoints": {
+    "init": [
+      "org.quiltmc.qsl.tooltip.test.TooltipTestMod"
+    ],
+    "client_events": [
+      "org.quiltmc.qsl.tooltip.test.client.ClientTooltipTestMod"
+    ]
+  }
+}

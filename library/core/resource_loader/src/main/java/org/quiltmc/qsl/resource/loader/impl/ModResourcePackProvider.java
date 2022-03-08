@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,20 +21,15 @@ import java.util.function.Consumer;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.resource.ResourcePackProfile;
-import net.minecraft.resource.ResourcePackProvider;
-import net.minecraft.resource.ResourcePackSource;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.pack.ResourcePackProfile;
+import net.minecraft.resource.pack.ResourcePackProvider;
 
 /**
  * Represents a resource pack provider for built-in mods resource packs and low-priority virtual resource packs.
  */
 @ApiStatus.Internal
 public final class ModResourcePackProvider implements ResourcePackProvider {
-	/**
-	 * Equivalent to {@link ResourcePackSource#PACK_SOURCE_BUILTIN} but allows a different reference equality.
-	 */
-	public static final ResourcePackSource PACK_SOURCE_MOD_BUILTIN = ResourcePackSource.nameAndSource("pack.source.builtin");
 	public static final ModResourcePackProvider CLIENT_RESOURCE_PACK_PROVIDER = new ModResourcePackProvider(ResourceType.CLIENT_RESOURCES);
 	public static final ModResourcePackProvider SERVER_RESOURCE_PACK_PROVIDER = new ModResourcePackProvider(ResourceType.SERVER_DATA);
 
@@ -69,6 +64,6 @@ public final class ModResourcePackProvider implements ResourcePackProvider {
 			5. (Invisible) High-priority virtual resource packs
 		 */
 
-		ResourceLoaderImpl.registerBuiltinResourcePacks(this.type, profileAdder, factory);
+		ResourceLoaderImpl.registerBuiltinResourcePacks(this.type, profileAdder);
 	}
 }

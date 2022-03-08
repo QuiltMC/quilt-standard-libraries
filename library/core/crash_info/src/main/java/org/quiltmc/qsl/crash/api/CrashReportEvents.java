@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import net.minecraft.world.HeightLimitView;
 import net.minecraft.world.World;
 
 import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
 /**
  * Events which allow the manipulation of crash reports.
@@ -111,7 +112,7 @@ public final class CrashReportEvents {
 	 * @see #SYSTEM_DETAILS
 	 */
 	@FunctionalInterface
-	public interface SystemDetails {
+	public interface SystemDetails extends EventAwareListener {
 		void addDetails(net.minecraft.util.SystemDetails details);
 	}
 
@@ -121,7 +122,7 @@ public final class CrashReportEvents {
 	 * @see #WORLD_DETAILS
 	 */
 	@FunctionalInterface
-	public interface WorldDetails {
+	public interface WorldDetails extends EventAwareListener {
 		void addDetails(World world, CrashReportSection section);
 	}
 
@@ -131,7 +132,7 @@ public final class CrashReportEvents {
 	 * @see #BLOCK_DETAILS
 	 */
 	@FunctionalInterface
-	public interface BlockDetails {
+	public interface BlockDetails extends EventAwareListener {
 		void addDetails(HeightLimitView world, BlockPos pos, @Nullable BlockState state, CrashReportSection section);
 	}
 
@@ -141,7 +142,7 @@ public final class CrashReportEvents {
 	 * @see #ENTITY_DETAILS
 	 */
 	@FunctionalInterface
-	public interface EntityDetails {
+	public interface EntityDetails extends EventAwareListener {
 		void addDetails(Entity entity, CrashReportSection section);
 	}
 
@@ -151,7 +152,7 @@ public final class CrashReportEvents {
 	 * @see #BLOCKENTITY_DETAILS
 	 */
 	@FunctionalInterface
-	public interface BlockEntityDetails {
+	public interface BlockEntityDetails extends EventAwareListener {
 		void addDetails(BlockEntity entity, CrashReportSection section);
 	}
 
@@ -161,7 +162,7 @@ public final class CrashReportEvents {
 	 * @see #CRASH_REPORT_CREATION
 	 */
 	@FunctionalInterface
-	public interface CrashReportCreation {
+	public interface CrashReportCreation extends EventAwareListener {
 		void onCreate(CrashReport report);
 	}
 }

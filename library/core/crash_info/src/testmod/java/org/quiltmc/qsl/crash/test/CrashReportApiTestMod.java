@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,12 @@ package org.quiltmc.qsl.crash.test;
 
 import java.util.Random;
 
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.ModContainer;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.crash.api.CrashReportEvents;
 
 /**
@@ -34,13 +35,13 @@ import org.quiltmc.qsl.crash.api.CrashReportEvents;
  */
 public class CrashReportApiTestMod implements ModInitializer {
 	@Override
-	public void onInitialize() {
+	public void onInitialize(ModContainer mod) {
 		CrashReportEvents.SYSTEM_DETAILS.register(details -> {
 			details.addSection("Value of Pi", Double.toString(Math.PI));
 		});
 
 		CrashReportEvents.WORLD_DETAILS.register((world, section) -> {
-			section.add("Biome at 0,0,0", world.getRegistryManager().get(Registry.BIOME_KEY).getId(world.getBiome(BlockPos.ORIGIN)));
+			section.add("Biome at 0,0,0", world.getRegistryManager().get(Registry.BIOME_KEY).getId(world.getBiome(BlockPos.ORIGIN).value()));
 		});
 
 		CrashReportEvents.BLOCK_DETAILS.register((world, pos, state, section) -> {

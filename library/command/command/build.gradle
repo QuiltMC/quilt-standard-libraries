@@ -1,0 +1,14 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "command"
+	version = "1.0.0"
+	library = "command"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+		}
+	}
+}

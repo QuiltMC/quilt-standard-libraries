@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,57 +21,31 @@ package org.quiltmc.qsl.tag.api;
  */
 public enum TagType {
 	/**
-	 * Represents a tag type whose tags are required to start but not to connect, they will sync to the client.
-	 */
-	SERVER_REQUIRED(true),
-	/**
-	 * Represents a tag type whose tags are required to start and to connect, they will sync if present on the server.
-	 * <p>
-	 * If the client has tags which are of this type, and the server does not,
-	 * the client will disconnect when attempting to connect to said server.
-	 */
-	REQUIRED(true),
-	/**
-	 * Represents an optional tag type, tags are not required to start nor to connect,
-	 * but they will sync if present on the server.
+	 * Represents the default tag type.
 	 * <p>
 	 * The client does not provide a default.
 	 */
-	OPTIONAL(false),
+	NORMAL,
 	/**
-	 * Represents a tag type whose tags are not required to start nor to connect,
-	 * but they will sync if present on the server.
+	 * Represents a tag type which is similar to the default one,
+	 * but the client provides a fallback if the server doesn't have the relevant tag.
 	 * <p>
-	 * The client provides a fallback in-case the server doesn't have the relevant tag.
-	 * <p>
-	 * If two tags with the same identifier are registered, one with this type and the other one with another,
-	 * they may not have the same content as the fallback content will only be added to the one with this type.
+	 * A {@link net.minecraft.tag.TagKey} with this type will be considered different from
+	 * a {@link net.minecraft.tag.TagKey} with the type {@link #NORMAL} even if they both share the same identifier,
+	 * which means both keys won't link to the same tag content, fallback tag content will not leak into normal tags.
 	 */
-	CLIENT_FALLBACK(false),
+	CLIENT_FALLBACK,
 	/**
 	 * Represents a client-only tag type,
 	 * tags are loaded from resource packs' {@code assets} directory instead of the {@code data} directory.
 	 * <p>
 	 * Those tags are not present on the server, thus no syncing will happen.
 	 * <p>
-	 * Tags registered with this type are entirely separated from other tags, thus if two tags with the same identifier,
-	 * one with this type and the other with another, they may not have the same content.
+	 * A {@link net.minecraft.tag.TagKey} with this type will be considered entirely different from
+	 * a {@link net.minecraft.tag.TagKey} with any of the other types even if they both share the same identifier,
+	 * which means both keys won't link to the same tag content, client tag content will not leak into other tags, and vice-versa.
 	 */
-	CLIENT_ONLY(false);
-
-	private final boolean requiredToStart;
-
-	TagType(boolean requiredToStart) {
-		this.requiredToStart = requiredToStart;
-	}
-
-	public boolean isRequiredToStart() {
-		return this.requiredToStart;
-	}
-
-	public boolean isRequiredToConnect() {
-		return this == REQUIRED;
-	}
+	CLIENT_ONLY;
 
 	/**
 	 * {@return whether this tag type is synchronized to the client}

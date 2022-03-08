@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import java.lang.annotation.Target;
  * second parameter is the entity being spooked. The entity being spooked is the invoking parameter.
  *
  * <h2>Why make an event parameter invoking?</h2>
- *
+ * <p>
  * A good reason to make an event parameter invoking is when the event directly relates to an action performed on a
  * specific object. For example, an entity being unloaded from a world. With a traditional event, you would register a
  * callback and check for your specific entity in the callback, typically via an {@code instanceof} check for modded
@@ -67,13 +67,13 @@ import java.lang.annotation.Target;
  * }</pre>
  *
  * <h2>How to use this annotation</h2>
- *
+ * <p>
  * An event which may invoke a parameter should first place the annotation on the field of the event instance or the
  * method which returns an event instance.
  *
  * <pre>{@code
  * @ParameterInvokingEvent
- * public static final ArrayEvent<ScaryEvents.Spooked> SPOOKED = ArrayEvent.create(ScaryEvents.Spooked.class, callbacks -> (ghost, spookedEntity) -> {
+ * public static final Event<ScaryEvents.Spooked> SPOOKED = Event.create(ScaryEvents.Spooked.class, callbacks -> (ghost, spookedEntity) -> {
  *     // Since this event is parameter invoking, does the entity being spooked implement `Spooked`?
  *     if (spookedEntity instanceof ScaryEvents.Spooked callback) {
  *         // Since the entity implements the callback, invoke the callback on the entity.
@@ -90,6 +90,6 @@ import java.lang.annotation.Target;
  */
 @Documented // Documentation
 @Retention(RetentionPolicy.CLASS) // For static analysis
-@Target({ ElementType.FIELD, ElementType.METHOD })
+@Target({ElementType.FIELD, ElementType.METHOD})
 public @interface ParameterInvokingEvent {
 }

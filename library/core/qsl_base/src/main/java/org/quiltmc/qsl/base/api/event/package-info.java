@@ -1,5 +1,5 @@
 /**
- * Quilt standard library event apis.
+ * Quilt standard library event APIs.
  *
  * @see org.quiltmc.qsl.base.api.event.Event
  */
