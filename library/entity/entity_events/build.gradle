@@ -3,7 +3,7 @@ plugins {
 }
 
 qslModule {
-	moduleName = "entity-events"
+	moduleName = "entity_events"
 	version = "1.0.0"
 	library = "entity"
 	coreDependencies([
