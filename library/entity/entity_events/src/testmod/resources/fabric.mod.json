@@ -16,10 +16,10 @@
   ],
   "entrypoints": {
     "main": [
-      "org.quiltmc.qsl.entity.test.EntityEventsTestMod"
+      "org.quiltmc.qsl.entity_events.test.EntityEventsTestMod"
     ],
     "client": [
-      "org.quiltmc.qsl.entity.test.client.EntityEventsTestModClient"
+      "org.quiltmc.qsl.entity_events.test.client.EntityEventsTestModClient"
     ]
   },
   "depends": {

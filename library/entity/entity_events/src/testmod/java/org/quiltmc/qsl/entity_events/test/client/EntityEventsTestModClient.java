@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.entity.test.client;
+package org.quiltmc.qsl.entity_events.test.client;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.entity.mob.SkeletonEntity;
 import net.minecraft.entity.passive.ChickenEntity;
-import org.quiltmc.qsl.entity.api.event.client.ClientEntityLoadEvents;
-import org.quiltmc.qsl.entity.test.EntityEventsTestMod;
+import org.quiltmc.qsl.entity_events.api.client.ClientEntityLoadEvents;
+import org.quiltmc.qsl.entity_events.test.EntityEventsTestMod;
 
 public class EntityEventsTestModClient implements ClientModInitializer {
 	@Override
