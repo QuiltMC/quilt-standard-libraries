@@ -72,7 +72,7 @@ abstract class MinecraftClientMixin {
 		// Store the screen in a variable in case someone tries to change the screen during this before tick event.
 		// If someone changes the screen, the after tick event will likely have class cast exceptions or throw a NPE.
 		this.quilt$tickingScreen = this.currentScreen;
-		org.quiltmc.qsl.screen.api.client.ScreenEvents.beforeTick(this.quilt$tickingScreen).invoker().beforeTick(this.quilt$tickingScreen);
+		ScreenEvents.beforeTick(this.quilt$tickingScreen).invoker().beforeTick(this.quilt$tickingScreen);
 	}
 
 	@Inject(method = "startIntegratedServer(Ljava/lang/String;Ljava/util/function/Function;Ljava/util/function/Function;ZLnet/minecraft/client/MinecraftClient$WorldLoadAction;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;render(Z)V"))
