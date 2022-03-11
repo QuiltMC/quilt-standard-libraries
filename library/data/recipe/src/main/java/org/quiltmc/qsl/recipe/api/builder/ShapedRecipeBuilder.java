@@ -101,10 +101,10 @@ public class ShapedRecipeBuilder extends RecipeBuilder<ShapedRecipeBuilder, Shap
 	 * @param tag the item tag as ingredient
 	 * @return this builder
 	 * @see #ingredient(char, Ingredient)
-	 * @see Ingredient#method_8106(TagKey)
+	 * @see Ingredient#ofTag(TagKey) (TagKey)
 	 */
 	public ShapedRecipeBuilder ingredient(char key, TagKey<Item> tag) {
-		return this.ingredient(key, Ingredient.method_8106(tag));
+		return this.ingredient(key, Ingredient.ofTag(tag));
 	}
 
 	/**

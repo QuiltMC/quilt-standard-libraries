@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "quilt_registry",
+  "name": "Quilt Registry Library",
+  "version": "${version}",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "icon": "assets/quilt_registry/icon.png",
+  "contact": {
+    "homepage": "https://quiltmc.org",
+    "issues": "https://github.com/QuiltMC/quilt-standard-libraries/issues",
+    "sources": "https://github.com/QuiltMC/quilt-standard-libraries"
+  },
+  "authors": [
+    "QuiltMC"
+  ],
+  "depends": {
+    "fabricloader": ">=0.13.1",
+    "minecraft": ">=1.18.2",
+    "quilt_base": "*"
+  },
+  "description": "Tools and events for manipulating, monitoring, and synchronizing Minecraft's content registries.",
+  "mixins": [
+    "quilt_registry.mixins.json"
+  ],
+  "custom": {
+    "modmenu": {
+      "badges": [
+        "library"
+      ],
+      "parent": {
+        "id": "qsl",
+        "name": "Quilt Standard Libraries",
+        "description": "A set of libraries to assist in making Quilt mods.",
+        "icon": "assets/quilt_registry/icon.png",
+        "badges": [
+          "library"
+        ]
+      }
+    }
+  }
+}
