@@ -16,9 +16,16 @@
 
 package org.quiltmc.qsl.registry.mixin;
 
+import java.util.List;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.minecraft.block.BlockState;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.base.api.event.Event;
@@ -38,5 +45,21 @@ public abstract class RegistryMixin<V> implements RegistryEventStorage<V> {
 	@Override
 	public Event<RegistryEvents.EntryAdded<V>> quilt$getEntryAddedEvent() {
 		return this.quilt$entryAddedEvent;
+	}
+
+	@Inject(method = "freezeBuiltins", at = @At("RETURN"))
+	private static void onFreezeBuiltins(CallbackInfo ci) {
+		//region Fix MC-197259
+		final List<BlockState> states = Registry.BLOCK.stream()
+				.flatMap(block -> block.getStateManager().getStates().stream())
+				.toList();
+
+		final int xLength = MathHelper.ceil(MathHelper.sqrt(states.size()));
+		final int zLength = MathHelper.ceil(states.size() / (float) xLength);
+
+		DebugChunkGeneratorAccessor.setBlockStates(states);
+		DebugChunkGeneratorAccessor.setXSideLength(xLength);
+		DebugChunkGeneratorAccessor.setZSideLength(zLength);
+		//endregion
 	}
 }
