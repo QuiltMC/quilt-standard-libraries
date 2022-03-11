@@ -7,7 +7,10 @@
     "CuttingRecipeSerializerMixin",
     "RecipeManagerMixin",
     "ShapedRecipeSerializerMixin",
-    "ShapelessRecipeSerializerMixin"
+    "ShapelessRecipeSerializerMixin",
+    "SmithingRecipeAccessor",
+    "SmithingRecipeSerializerMixin",
+    "SpecialRecipeSerializerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

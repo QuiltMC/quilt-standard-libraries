@@ -32,6 +32,7 @@ import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonWriter;
 import com.mojang.logging.LogUtils;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
@@ -39,6 +40,7 @@ import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.recipe.api.RecipeLoadingEvents;
 import org.quiltmc.qsl.recipe.api.serializer.QuiltRecipeSerializer;
@@ -84,6 +86,17 @@ public final class RecipeManagerImpl {
 
 		if (DUMP_MODE) {
 			dump(recipes.values());
+		}
+
+		if (DEBUG_MODE || FabricLoader.getInstance().isDevelopmentEnvironment()) {
+			for (var serializerEntry : Registry.RECIPE_SERIALIZER.getEntries()) {
+				if (!(serializerEntry.getValue() instanceof QuiltRecipeSerializer)) {
+					LOGGER.warn(
+							"Recipe serializer {} doesn't implement QuiltRecipeSerializer. For full compatibility, the interface should be implemented.",
+							serializerEntry.getKey().getValue()
+					);
+				}
+			}
 		}
 	}
 
