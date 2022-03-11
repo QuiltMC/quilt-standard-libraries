@@ -16,21 +16,32 @@
 
 package org.quiltmc.qsl.registry.mixin;
 
-import java.util.Map;
+import java.util.List;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import net.minecraft.util.Holder;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.SimpleRegistry;
+import net.minecraft.block.BlockState;
+import net.minecraft.world.gen.chunk.DebugChunkGenerator;
 
-/**
- * Used to access the namespaced identifier to entry map in a {@link net.minecraft.util.registry.Registry}
- * to increase iteration speed.
- */
-@Mixin(SimpleRegistry.class)
-public interface SimpleRegistryAccessor<V> {
-	@Accessor("byId")
-	Map<Identifier, Holder.Reference<V>> getById();
+@Mixin(DebugChunkGenerator.class)
+public interface DebugChunkGeneratorAccessor {
+	@Mutable
+	@Accessor("BLOCK_STATES")
+	static void setBlockStates(List<BlockState> states) {
+		throw new IllegalStateException("Mixin injection failed.");
+	}
+
+	@Mutable
+	@Accessor("X_SIDE_LENGTH")
+	static void setXSideLength(int length) {
+		throw new IllegalStateException("Mixin injection failed.");
+	}
+
+	@Mutable
+	@Accessor("Z_SIDE_LENGTH")
+	static void setZSideLength(int length) {
+		throw new IllegalStateException("Mixin injection failed.");
+	}
 }

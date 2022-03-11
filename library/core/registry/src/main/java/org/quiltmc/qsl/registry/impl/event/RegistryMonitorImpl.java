@@ -60,7 +60,7 @@ public class RegistryMonitorImpl<V> implements RegistryMonitor<V> {
 			throw new UnsupportedOperationException("Registry " + this.registry + " is not supported!");
 		}
 
-		for (Map.Entry<Identifier, Holder.Reference<V>> entry : ((SimpleRegistryAccessor<V>) this.registry).getIdToEntryMap().entrySet()) {
+		for (Map.Entry<Identifier, Holder.Reference<V>> entry : ((SimpleRegistryAccessor<V>) this.registry).getById().entrySet()) {
 			context.set(entry.getKey(), entry.getValue().value());
 
 			if (this.testFilter(context)) {
