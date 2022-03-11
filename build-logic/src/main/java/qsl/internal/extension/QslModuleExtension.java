@@ -1,13 +1,12 @@
 package qsl.internal.extension;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
-import groovy.util.Node;
 import javax.inject.Inject;
+
+import groovy.util.Node;
 import org.gradle.api.Action;
 import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.Project;
@@ -21,15 +20,11 @@ import org.gradle.api.tasks.Input;
 import qsl.internal.GroovyXml;
 import qsl.internal.dependency.QslLibraryDependency;
 import qsl.internal.json.ModJsonObject;
-import qsl.internal.license.LicenseHeader;
-import qsl.internal.task.ApplyLicenseTask;
-import qsl.internal.task.CheckLicenseTask;
 
 public class QslModuleExtension extends QslExtension {
 	private final Property<String> library;
 	private final Property<String> moduleName;
 	private final List<Dependency> moduleDependencies;
-	private final LicenseHeader licenseHeader;
 	private final NamedDomainObjectContainer<QslLibraryDependency> moduleDependencyDefinitions;
 	private Action<ModJsonObject> jsonPostProcessor;
 
@@ -41,16 +36,9 @@ public class QslModuleExtension extends QslExtension {
 		this.moduleName = factory.property(String.class);
 		this.moduleName.finalizeValueOnRead();
 		this.moduleDependencies = new ArrayList<>();
-		this.licenseHeader = new LicenseHeader(
-				LicenseHeader.Rule.fromFile(project.getRootProject().file("codeformat/COLONEL_MODIFIED_HEADER").toPath()),
-				LicenseHeader.Rule.fromFile(project.getRootProject().file("codeformat/FABRIC_MODIFIED_HEADER").toPath()),
-				LicenseHeader.Rule.fromFile(project.getRootProject().file("codeformat/HEADER").toPath())
-		);
 
 		this.moduleDependencyDefinitions = project.getObjects().domainObjectContainer(QslLibraryDependency.class, name -> new QslLibraryDependency(name, project, moduleDependencies));
 
-		project.getTasks().register("checkLicenses", CheckLicenseTask.class, this.licenseHeader);
-		project.getTasks().register("applyLicenses", ApplyLicenseTask.class, this.licenseHeader);
 		project.getTasks().findByName("check").dependsOn("checkLicenses");
 	}
 
