@@ -37,7 +37,7 @@ public final class RecipeManagerHelper {
 	 * Static recipes are automatically added to the {@linkplain net.minecraft.recipe.RecipeManager recipe manager}
 	 * when recipes are loaded, and only is added if no other recipe with the same identifier is already loaded.
 	 * <p>
-	 * Only applies after a data pack reload.
+	 * Static recipes can be added at any time, but are only applied after a data pack reload.
 	 *
 	 * @param recipe the recipe to register
 	 * @return the registered recipe
