@@ -70,7 +70,6 @@ final class DictMap<R, V> {
 		return map;
 	}
 
-	// FIXME tag support!
 	public void processResource(Resource resource) {
 		try {
 			boolean replace;
