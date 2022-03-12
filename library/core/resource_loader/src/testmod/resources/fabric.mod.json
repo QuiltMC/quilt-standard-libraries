@@ -9,6 +9,9 @@
     "quilt_resource_loader": "*"
   },
   "entrypoints": {
+    "client_init": [
+      "org.quiltmc.qsl.resource.loader.test.client.ResourcePackProfileProviderTestMod"
+    ],
     "init": [
       "org.quiltmc.qsl.resource.loader.test.BuiltinResourcePackTestMod",
       "org.quiltmc.qsl.resource.loader.test.ResourceReloaderTestMod"
@@ -19,5 +22,8 @@
     "events": [
       "org.quiltmc.qsl.resource.loader.test.ResourceLoaderEventsTestMod"
     ]
-  }
+  },
+  "mixins": [
+    "quilt_resource_loader_testmod.mixins.json"
+  ]
 }

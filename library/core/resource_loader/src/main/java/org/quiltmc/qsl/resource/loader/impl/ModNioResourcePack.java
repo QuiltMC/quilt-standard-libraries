@@ -46,6 +46,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
 
+import org.quiltmc.qsl.resource.loader.api.QuiltResourcePack;
 import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
 import org.quiltmc.qsl.resource.loader.mixin.IdentifierAccessor;
 
@@ -53,7 +54,7 @@ import org.quiltmc.qsl.resource.loader.mixin.IdentifierAccessor;
  * A NIO implementation of a mod resource pack.
  */
 @ApiStatus.Internal
-public class ModNioResourcePack extends AbstractFileResourcePack {
+public class ModNioResourcePack extends AbstractFileResourcePack implements QuiltResourcePack {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	/* Metadata */
 	private final String name;
@@ -238,10 +239,12 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 		return this.name;
 	}
 
+	@Override
 	public Text getDisplayName() {
 		return this.displayName;
 	}
 
+	@Override
 	public ResourcePackActivationType getActivationType() {
 		return this.activationType;
 	}

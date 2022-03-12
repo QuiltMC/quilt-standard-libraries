@@ -33,7 +33,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.resource.pack.ResourcePackManager;
 
-import org.quiltmc.qsl.resource.loader.impl.ModNioResourcePack;
 import org.quiltmc.qsl.resource.loader.impl.QuiltBuiltinResourcePackProfile;
 
 @Environment(EnvType.CLIENT)
@@ -78,10 +77,8 @@ public abstract class GameOptionsMixin {
 					// A built-in resource pack provided by a mod.
 
 					var pack = profile.createResourcePack();
-					if (pack instanceof ModNioResourcePack modResourcePack) {
-						if (modResourcePack.getActivationType().isEnabledByDefault()) {
-							toEnable.add(profile.getName());
-						}
+					if (pack.getActivationType().isEnabledByDefault()) {
+						toEnable.add(profile.getName());
 					}
 				}
 

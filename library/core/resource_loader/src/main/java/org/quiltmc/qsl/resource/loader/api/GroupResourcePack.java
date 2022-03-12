@@ -35,6 +35,7 @@ import net.minecraft.resource.ResourceNotFoundException;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.metadata.ResourceMetadataReader;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 /**
@@ -60,8 +61,21 @@ public abstract class GroupResourcePack implements ResourcePack {
 						.add(pack)));
 	}
 
+	/**
+	 * {@return the list of resource packs contained within this group}
+	 */
+	public List<? extends ResourcePack> getPacks() {
+		return Collections.unmodifiableList(this.packs);
+	}
+
+	/**
+	 * Gets the list of resource packs that contains the given namespace and are contained within this group.
+	 *
+	 * @param namespace the namespace
+	 * @return the list of resource packs
+	 */
 	public List<? extends ResourcePack> getPacks(String namespace) {
-		return this.namespacedPacks.get(namespace);
+		return Collections.unmodifiableList(this.namespacedPacks.get(namespace));
 	}
 
 	@Override
@@ -159,7 +173,7 @@ public abstract class GroupResourcePack implements ResourcePack {
 		}
 
 		private static List<ResourcePack> addToPacksIfNeeded(ResourcePack basePack, List<ResourcePack> packs,
-															 boolean basePriority) {
+		                                                     boolean basePriority) {
 			if (!packs.contains(basePack)) {
 				if (basePriority) {
 					packs.add(basePack);
@@ -184,6 +198,11 @@ public abstract class GroupResourcePack implements ResourcePack {
 		@Override
 		public String getName() {
 			return this.basePack.getName();
+		}
+
+		@Override
+		public Text getDisplayName() {
+			return this.basePack.getDisplayName();
 		}
 
 		@Override

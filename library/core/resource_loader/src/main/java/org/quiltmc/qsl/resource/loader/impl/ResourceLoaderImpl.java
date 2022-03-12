@@ -34,6 +34,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
@@ -50,6 +51,7 @@ import net.minecraft.resource.pack.AbstractFileResourcePack;
 import net.minecraft.resource.pack.DefaultResourcePack;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.ResourcePackProfile;
+import net.minecraft.resource.pack.ResourcePackProvider;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -70,8 +72,9 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	private static final Map<String, ModNioResourcePack> SERVER_BUILTIN_RESOURCE_PACKS = new Object2ObjectOpenHashMap<>();
 	private static final Logger LOGGER = LoggerFactory.getLogger("ResourceLoader");
 
-	private final Set<Identifier> addedListenerIds = new HashSet<>();
+	private final Set<Identifier> addedListenerIds = new ObjectOpenHashSet<>();
 	private final Set<IdentifiableResourceReloader> addedReloaders = new LinkedHashSet<>();
+	final Set<ResourcePackProvider> resourcePackProfileProviders = new ObjectOpenHashSet<>();
 
 	public static ResourceLoaderImpl get(ResourceType type) {
 		return IMPL_MAP.computeIfAbsent(type, t -> new ResourceLoaderImpl());
@@ -95,6 +98,15 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 			throw new IllegalStateException(
 					"Resource reloader with previously unknown ID " + resourceReloader.getQuiltId()
 							+ " already in resource reloader set!"
+			);
+		}
+	}
+
+	@Override
+	public void registerResourcePackProfileProvider(ResourcePackProvider provider) {
+		if (!this.resourcePackProfileProviders.add(provider)) {
+			throw new IllegalStateException(
+					"Tried to register a resource pack profile provider twice!"
 			);
 		}
 	}

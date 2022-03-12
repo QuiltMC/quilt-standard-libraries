@@ -35,7 +35,6 @@ import net.minecraft.resource.pack.ResourcePackProfile;
 import net.minecraft.server.WorldStem;
 
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
-import org.quiltmc.qsl.resource.loader.impl.ModNioResourcePack;
 import org.quiltmc.qsl.resource.loader.impl.ModResourcePackProvider;
 
 @Environment(EnvType.CLIENT)
@@ -61,7 +60,7 @@ public class CreateWorldScreenMixin {
 		for (var profile : moddedResourcePacks) {
 			ResourcePack pack = profile.createResourcePack();
 
-			if (pack instanceof ModNioResourcePack modResourcePack && modResourcePack.getActivationType().isEnabledByDefault()) {
+			if (pack.getActivationType().isEnabledByDefault()) {
 				enabled.add(profile.getName());
 			} else {
 				disabled.add(profile.getName());
