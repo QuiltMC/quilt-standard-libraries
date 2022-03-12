@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.registry.dict.impl.reloader;
 
-import static org.quiltmc.qsl.registry.dict.impl.reloader.RegistryDictReloader.LOGGER;
-
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +26,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
-import org.apache.logging.log4j.Level;
 
 import net.minecraft.resource.Resource;
 import net.minecraft.util.Identifier;
@@ -38,16 +35,18 @@ import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.registry.dict.api.RegistryDict;
 
-final class DictMap {
-	private final Registry<?> registry;
-	private final RegistryDict<?, ?> dictionary;
-	private final TagGetter tagGetter;
+import static org.quiltmc.qsl.registry.dict.impl.reloader.RegistryDictReloader.LOGGER;
+
+final class DictMap<R, V> {
+	private final Registry<R> registry;
+	private final RegistryDict<R, V> dictionary;
+	private final boolean isClient;
 	private final Map<DictTarget, Object> map;
 
-	public DictMap(Registry<?> registry, RegistryDict<?, ?> dictionary, TagGetter tagGetter) {
+	public DictMap(Registry<R> registry, RegistryDict<R, V> dictionary, boolean isClient) {
 		this.registry = registry;
 		this.dictionary = dictionary;
-		this.tagGetter = tagGetter;
+		this.isClient = isClient;
 		map = new HashMap<>();
 	}
 
@@ -55,8 +54,8 @@ final class DictMap {
 		map.put(new DictTarget.Single(id), value);
 	}
 
-	public void putTag(Identifier tagId, Object value, boolean required) {
-		map.put(new DictTarget.Tagged<>(tagGetter, registry, tagId, required), value);
+	public void putTag(Identifier id, Object value, boolean required) {
+		map.put(new DictTarget.Tagged<>(registry, id, isClient, required), value);
 	}
 
 	public Registry<?> getRegistry() {
@@ -136,12 +135,12 @@ final class DictMap {
 			} catch (JsonSyntaxException e) {
 				LOGGER.error("Invalid element at index {} in values of {}: syntax error",
 						i, resource.getId());
-				LOGGER.catching(Level.ERROR, e);
+				LOGGER.error("", e);
 				continue;
 			} catch (InvalidIdentifierException e) {
 				LOGGER.error("Invalid element at index {} in values of {}: invalid identifier",
 						i, resource.getId());
-				LOGGER.catching(Level.ERROR, e);
+				LOGGER.error("", e);
 				continue;
 			}
 
@@ -153,7 +152,7 @@ final class DictMap {
 			} catch (JsonSyntaxException e) {
 				LOGGER.error("Failed to parse value for registry entry {} in values of {}: syntax error",
 						id, resource.getId());
-				LOGGER.catching(Level.ERROR, e);
+				LOGGER.error("", e);
 				continue;
 			}
 
@@ -191,7 +190,7 @@ final class DictMap {
 			} catch (InvalidIdentifierException e) {
 				LOGGER.error("Invalid identifier in values of {}: '{}', ignoring",
 						resource.getId(), entry.getKey());
-				LOGGER.catching(Level.ERROR, e);
+				LOGGER.error("", e);
 				continue;
 			}
 

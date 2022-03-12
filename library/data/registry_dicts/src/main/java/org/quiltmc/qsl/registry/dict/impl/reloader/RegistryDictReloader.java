@@ -21,20 +21,16 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.mojang.logging.LogUtils;
 import org.jetbrains.annotations.ApiStatus;
+import org.slf4j.Logger;
 
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.tag.Tag;
-import net.minecraft.tag.TagGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 
 import org.quiltmc.qsl.registry.dict.api.RegistryDict;
 import org.quiltmc.qsl.registry.dict.impl.AssetsHolderGuard;
@@ -44,26 +40,20 @@ import org.quiltmc.qsl.registry.dict.impl.RegistryDictSync;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 import org.quiltmc.qsl.resource.loader.api.reloader.SimpleResourceReloader;
-import org.quiltmc.qsl.tag.api.QuiltTag;
-import org.quiltmc.qsl.tag.api.TagType;
-import org.quiltmc.qsl.tag.mixin.RequiredTagListRegistryAccessor;
 
 @ApiStatus.Internal
-public final class RegistryDictReloader implements SimpleResourceReloader<RegistryDictReloader.LoadedData>,
-		TagGetter {
+public final class RegistryDictReloader implements SimpleResourceReloader<RegistryDictReloader.LoadedData> {
 	public static void register(ResourceType source) {
 		ResourceLoader.get(source).registerReloader(new RegistryDictReloader(source));
 	}
 
-	static final Logger LOGGER = LogManager.getLogger("RegistryDictReloader");
+	static final Logger LOGGER = LogUtils.getLogger();
 	private static final Identifier ID_DATA = new Identifier(Initializer.NAMESPACE, "data");
 	private static final Identifier ID_ASSETS = new Identifier(Initializer.NAMESPACE, "assets");
 
 	private final ResourceType source;
 	private final Identifier id;
 	private final Collection<Identifier> deps;
-	private final Map<RegistryKey<?>, TagGroup<?>> registryTagGroupCache;
-	private final Set<RegistryKey<?>> erroredNoTagList;
 
 	private RegistryDictReloader(ResourceType source) {
 		if (source == ResourceType.CLIENT_RESOURCES) {
@@ -78,8 +68,6 @@ public final class RegistryDictReloader implements SimpleResourceReloader<Regist
 			case SERVER_DATA -> Set.of(ResourceReloaderKeys.Server.TAGS);
 			case CLIENT_RESOURCES -> Set.of(new Identifier("quilt_tags", "client_only_tags"));
 		};
-		registryTagGroupCache = new HashMap<>();
-		erroredNoTagList = new HashSet<>();
 	}
 
 	@Override
@@ -92,53 +80,10 @@ public final class RegistryDictReloader implements SimpleResourceReloader<Regist
 		return deps;
 	}
 
-	@SuppressWarnings({"unchecked", "ConstantConditions"})
-	@Override
-	public <T> Tag<T> getTag(RegistryKey<? extends Registry<T>> registryKey, Identifier id, boolean required) {
-		if (erroredNoTagList.contains(registryKey)) {
-			return null;
-		}
-
-		var group = (TagGroup<T>) registryTagGroupCache.get(registryKey);
-		if (group == null) {
-			for (var entry : RequiredTagListRegistryAccessor.getAll()) {
-				if (entry.getRegistryKey() == registryKey) {
-					group = (TagGroup<T>) entry.getGroup();
-					break;
-				}
-			}
-		}
-
-		if (group == null) { // suppressed because IDEA is too optimistic and thinks the loop above can't fail
-			if (!erroredNoTagList.add(registryKey)) {
-				LOGGER.error("Tried to use tag in dictionary, but {} isn't configured to have tags!",
-						registryKey.getValue());
-			}
-			return null;
-		} else {
-			registryTagGroupCache.put(registryKey, group);
-			var tag = group.getTag(id);
-			var qTag = QuiltTag.getExtensions(tag);
-			if (source == ResourceType.SERVER_DATA) {
-				if (qTag.getType() == TagType.CLIENT_FALLBACK || qTag.getType() == TagType.CLIENT_ONLY) {
-					LOGGER.error("Tried to use client tag {} in non-client dictionary!", id);
-					return null;
-				}
-			}
-			if (required) {
-				if (!qTag.getType().isRequiredToStart() && !qTag.getType().isRequiredToConnect()) {
-					LOGGER.error("Tried to use non-required tag {} in required entry of dictionary!", id);
-					return null;
-				}
-			}
-			return tag;
-		}
-	}
-
 	@Override
 	public CompletableFuture<LoadedData> load(ResourceManager manager, Profiler profiler, Executor executor) {
 		return CompletableFuture.supplyAsync(() -> {
-			Map<RegistryDict<?, ?>, DictMap> dictionaryMaps = new HashMap<>();
+			Map<RegistryDict<?, ?>, DictMap<?, ?>> dictionaryMaps = new HashMap<>();
 
 			for (var entry : Registry.REGISTRIES.getEntries()) {
 				Identifier registryId = entry.getKey().getValue();
@@ -161,7 +106,7 @@ public final class RegistryDictReloader implements SimpleResourceReloader<Regist
 	}
 
 	private void processResources(ResourceManager manager, Profiler profiler,
-								  Map<RegistryDict<?, ?>, DictMap> dictionaryMaps,
+								  Map<RegistryDict<?, ?>, DictMap<?, ?>> dictionaryMaps,
 								  Collection<Identifier> jsonIds, Registry<?> registry) {
 		for (var jsonId : jsonIds) {
 			Identifier dictId = getDictionaryId(jsonId);
@@ -184,18 +129,21 @@ public final class RegistryDictReloader implements SimpleResourceReloader<Regist
 				resources = manager.getAllResources(jsonId);
 			} catch (IOException e) {
 				LOGGER.error("Failed to get all resources for {}", jsonId);
-				LOGGER.catching(Level.ERROR, e);
+				LOGGER.error("", e);
 				continue;
 			}
 
 			profiler.swap(id + "/processing_resources{" + jsonId + "," + dictId + "}");
 
-			DictMap dictMap = dictionaryMaps.computeIfAbsent(dict,
-					key -> new DictMap(registry, key, this));
+			DictMap<?, ?> dictMap = dictionaryMaps.computeIfAbsent(dict, this::createDictMap);
 			for (var resource : resources) {
 				dictMap.processResource(resource);
 			}
 		}
+	}
+
+	private <R, V> DictMap<R, V> createDictMap(RegistryDict<R, V> dict) {
+		return new DictMap<>(dict.registry(), dict, source == ResourceType.CLIENT_RESOURCES);
 	}
 
 	@Override
@@ -228,12 +176,13 @@ public final class RegistryDictReloader implements SimpleResourceReloader<Regist
 	}
 
 	protected final class LoadedData {
-		private final Map<RegistryDict<?, ?>, DictMap> dictionaryMaps;
+		private final Map<RegistryDict<?, ?>, DictMap<?, ?>> dictionaryMaps;
 
-		private LoadedData(Map<RegistryDict<?, ?>, DictMap> dictionaryMaps) {
+		private LoadedData(Map<RegistryDict<?, ?>, DictMap<?, ?>> dictionaryMaps) {
 			this.dictionaryMaps = dictionaryMaps;
 		}
 
+		@SuppressWarnings("unchecked")
 		public void apply(Profiler profiler) {
 			profiler.push(id + "/clear_dicts");
 
@@ -241,16 +190,16 @@ public final class RegistryDictReloader implements SimpleResourceReloader<Regist
 				getHolder(entry.getValue()).clear();
 			}
 
-			for (Map.Entry<RegistryDict<?, ?>, DictMap> entry : dictionaryMaps.entrySet()) {
+			for (Map.Entry<RegistryDict<?, ?>, DictMap<?, ?>> entry : dictionaryMaps.entrySet()) {
 				profiler.swap(id + "/apply_dict{" + entry.getKey().id() + "}");
-				applyOne(entry.getKey(), entry.getValue());
+				applyOne((RegistryDict<Object, Object>) entry.getKey(), (DictMap<Object, Object>) entry.getValue());
 			}
 
 			profiler.pop();
 		}
 
 		@SuppressWarnings("unchecked")
-		private <R, V> void applyOne(RegistryDict<R, V> dict, DictMap dictMap) {
+		private <R, V> void applyOne(RegistryDict<R, V> dict, DictMap<R, V> dictMap) {
 			var registry = dict.registry();
 			Objects.requireNonNull(registry, "registry");
 
@@ -265,7 +214,7 @@ public final class RegistryDictReloader implements SimpleResourceReloader<Regist
 				} catch (DictTarget.ResolveException e) {
 					// TODO handle this better, somehow??
 					LOGGER.error("Failed to apply values for dictionary {}!", dict.id());
-					LOGGER.catching(Level.ERROR, e);
+					LOGGER.error("", e);
 					break;
 				}
 			}

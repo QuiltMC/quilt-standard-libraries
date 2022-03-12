@@ -16,18 +16,18 @@
 
 package org.quiltmc.qsl.registry.dict.impl.reloader;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import net.minecraft.tag.Tag;
+import net.minecraft.util.Holder;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-sealed interface DictTarget {
+import org.quiltmc.qsl.tag.api.QuiltTagKey;
+import org.quiltmc.qsl.tag.api.TagRegistry;
+import org.quiltmc.qsl.tag.api.TagType;
+
+interface DictTarget {
 	Collection<Identifier> ids() throws ResolveException;
 
 	final class ResolveException extends Exception {
@@ -64,31 +64,48 @@ sealed interface DictTarget {
 
 	@SuppressWarnings("ClassCanBeRecord")
 	final class Tagged<T> implements DictTarget {
-		private final TagGetter tagGetter;
 		private final Registry<T> registry;
-		private final Identifier tagId;
+		private final Identifier id;
+		private final boolean isClient;
 		private final boolean required;
 
-		public Tagged(TagGetter tagGetter, Registry<T> registry, Identifier tagId, boolean required) {
-			this.tagGetter = tagGetter;
+		public Tagged(Registry<T> registry, Identifier id, boolean isClient, boolean required) {
 			this.registry = registry;
-			this.tagId = tagId;
+			this.id = id;
+			this.isClient = isClient;
 			this.required = required;
 		}
 
 		@Override
 		public Collection<Identifier> ids() throws ResolveException {
-			Tag<T> tag = tagGetter.getTag(registry.getKey(), tagId, required);
-			if (tag == null) {
+			var entry = TagRegistry.stream(registry.getKey())
+					.filter(entry1 -> id.equals(entry1.key().id()))
+					.findFirst();
+
+			if (entry.isEmpty()) {
 				if (required) {
-					throw new ResolveException("Tag " + tagId + " does not exist!");
+					throw new ResolveException("Tag " + id + " does not exist!");
 				} else {
 					return Set.of();
 				}
 			}
-			Set<Identifier> ids = new HashSet<>();
-			for (T value : tag.values()) {
-				ids.add(registry.getId(value));
+
+			if (!isClient) {
+				@SuppressWarnings("unchecked") var type = ((QuiltTagKey<T>) (Object) entry.get().key()).type();
+				if (type == TagType.CLIENT_FALLBACK || type == TagType.CLIENT_ONLY) {
+					throw new ResolveException("Tag " + id + " is client-only, but this dict is not!");
+				}
+			}
+
+			return collectTagEntries(registry, entry.get().tag(), new HashSet<>());
+		}
+
+		private static <R> Set<Identifier> collectTagEntries(Registry<R> registry, Tag<Holder<R>> tag, Set<Identifier> ids) {
+			for (var value : tag.values()) {
+				switch (value.getKind()) {
+					case DIRECT -> ids.add(registry.getId(value.value()));
+					case REFERENCE -> value.streamTags().forEach(key -> collectTagEntries(registry, TagRegistry.getTag(key), ids));
+				}
 			}
 			return ids;
 		}
@@ -98,12 +115,12 @@ sealed interface DictTarget {
 			if (this == o) return true;
 			if (o == null || getClass() != o.getClass()) return false;
 			Tagged<?> tagged = (Tagged<?>) o;
-			return registry.getKey().equals(tagged.registry.getKey()) && tagId.equals(tagged.tagId);
+			return registry.getKey().equals(tagged.registry.getKey()) && id.equals(tagged.id);
 		}
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(registry.getKey(), tagId);
+			return Objects.hash(registry.getKey(), id);
 		}
 	}
 }
