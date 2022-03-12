@@ -23,6 +23,7 @@ plugins {
 	// FIXME: This convention plugin is just broken
 	// id("org.quiltmc.gradle-conventions.java.style")
 	id("org.quiltmc.gradle-conventions.java.version")
+	id("org.quiltmc.gradle.licenser")
 	id("qsl.common")
 }
 
@@ -132,6 +133,13 @@ javadoc {
 	}
 
 	failOnError false
+}
+
+license {
+	rule rootProject.file("codeformat/FABRIC_MODIFIED_HEADER")
+	rule rootProject.file("codeformat/HEADER")
+
+	include "**/*.java"
 }
 
 task checkModuleVersion {
