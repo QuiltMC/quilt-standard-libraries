@@ -39,7 +39,7 @@ public class SimpleDictTest implements ModInitializer {
 			RegistryDict.floatBuilder(Registry.ITEM,
 					new Identifier("quilt", "test_dict_2")).build();
 
-	public static final MyItem MY_ITEM = RegistryExtensions.registerWithDictValues(Registry.ITEM,
+	public static final MyItem MY_ITEM = RegistryExtensions.register(Registry.ITEM,
 			new Identifier("quilt", "simple_dict_test_item"),
 			new MyItem(new Item.Settings()),
 			setter -> setter

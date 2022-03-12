@@ -14,7 +14,7 @@
  * <ul>
  *     <li>"Dict" is short for "dictionary".</li>
  *     <li>Dict values set in-code (using
- *     {@link org.quiltmc.qsl.registry.dict.api.RegistryExtensions#registerWithDictValues(net.minecraft.util.registry.Registry, net.minecraft.util.Identifier, java.lang.Object, java.util.function.Consumer)})
+ *     {@link org.quiltmc.qsl.registry.dict.api.RegistryExtensions#register(net.minecraft.util.registry.Registry, net.minecraft.util.Identifier, java.lang.Object, java.util.function.Consumer)})
  *     are referred to as "built-in" values.</li>
  * </ul>
  *

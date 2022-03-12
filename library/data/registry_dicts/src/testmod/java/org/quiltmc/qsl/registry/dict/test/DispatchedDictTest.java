@@ -29,11 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.Util;
+import net.minecraft.util.*;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
@@ -126,13 +122,13 @@ public class DispatchedDictTest implements ModInitializer {
 	/**
 	 * Has a built-in value of one type.
 	 */
-	public static final ModularFunctionItem ITEM_1 = RegistryExtensions.registerWithDictValues(Registry.ITEM,
+	public static final ModularFunctionItem ITEM_1 = RegistryExtensions.register(Registry.ITEM,
 			new Identifier("quilt", "modular_item_1"), new ModularFunctionItem(new Item.Settings()),
 			builder -> builder.put(MODULAR_FUNCTION, new SendMessageFuncValue("Built-in value!")));
 	/**
 	 * Has a built-in value of one type, overridden via datapack by a value with another type.
 	 */
-	public static final ModularFunctionItem ITEM_2 = RegistryExtensions.registerWithDictValues(Registry.ITEM,
+	public static final ModularFunctionItem ITEM_2 = RegistryExtensions.register(Registry.ITEM,
 			new Identifier("quilt", "modular_item_2"), new ModularFunctionItem(new Item.Settings()),
 			builder -> builder.put(MODULAR_FUNCTION, new SendMessageFuncValue("Built-in value!")));
 	/**
