@@ -42,7 +42,7 @@ import org.quiltmc.qsl.networking.impl.AbstractNetworkAddon;
 
 @ApiStatus.Internal
 @Environment(EnvType.CLIENT)
-public final class ClientLoginNetworkAddon extends AbstractNetworkAddon<ClientLoginNetworking.LoginQueryRequestHandler> {
+public final class ClientLoginNetworkAddon extends AbstractNetworkAddon<ClientLoginNetworking.QueryRequestReceiver> {
 	private final ClientLoginNetworkHandler handler;
 	private final MinecraftClient client;
 	private boolean firstResponse = true;
@@ -65,7 +65,7 @@ public final class ClientLoginNetworkAddon extends AbstractNetworkAddon<ClientLo
 
 		if (this.firstResponse) {
 			// Register global handlers
-			for (Map.Entry<Identifier, ClientLoginNetworking.LoginQueryRequestHandler> entry : ClientNetworkingImpl.LOGIN.getReceivers().entrySet()) {
+			for (Map.Entry<Identifier, ClientLoginNetworking.QueryRequestReceiver> entry : ClientNetworkingImpl.LOGIN.getReceivers().entrySet()) {
 				ClientLoginNetworking.registerReceiver(entry.getKey(), entry.getValue());
 			}
 
@@ -73,7 +73,7 @@ public final class ClientLoginNetworkAddon extends AbstractNetworkAddon<ClientLo
 			this.firstResponse = false;
 		}
 
-		@Nullable ClientLoginNetworking.LoginQueryRequestHandler handler = this.getHandler(channelName);
+		@Nullable ClientLoginNetworking.QueryRequestReceiver handler = this.getHandler(channelName);
 
 		if (handler == null) {
 			return false;

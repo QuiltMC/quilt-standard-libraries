@@ -6,18 +6,15 @@ qslModule {
 	moduleName = "tags"
 	version = "1.0.0"
 	library = "data"
-	coreDependencies([
-			"resource_loader"
-	])
-	coreTestmodDependencies([
-			"qsl_base",
-			"lifecycle_events"
-	])
-	interLibraryTestmodDependencies("command", [
-			"command"
-	])
-}
-
-loom {
-	accessWidenerPath = file("src/main/resources/quilt_tags.accesswidener")
+	moduleDependencies {
+		core {
+			api("resource_loader")
+			impl("qsl_base")
+			impl("lifecycle_events")
+		}
+		command {
+			testmodOnly("client_command")
+			testmodOnly("command")
+		}
+	}
 }

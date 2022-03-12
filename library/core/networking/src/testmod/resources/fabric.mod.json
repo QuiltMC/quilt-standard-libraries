@@ -9,14 +9,16 @@
     "quilt_networking": "*"
   },
   "entrypoints": {
-    "main": [
-      "org.quiltmc.qsl.networking.test.channeltest.NetworkingChannelTest",
-      "org.quiltmc.qsl.networking.test.keybindreciever.NetworkingKeybindPacketTest",
+    "init": [
+      "org.quiltmc.qsl.networking.test.keybindreciever.NetworkingKeyBindPacketTest",
       "org.quiltmc.qsl.networking.test.login.NetworkingLoginQueryTest",
       "org.quiltmc.qsl.networking.test.play.NetworkingPlayPacketTest"
     ],
-    "client": [
-      "org.quiltmc.qsl.networking.test.keybindreciever.NetworkingKeybindClientPacketTest",
+    "events": [
+      "org.quiltmc.qsl.networking.test.channeltest.NetworkingChannelTest"
+    ],
+    "client_init": [
+      "org.quiltmc.qsl.networking.test.keybindreciever.NetworkingKeyBindClientPacketTest",
       "org.quiltmc.qsl.networking.test.login.NetworkingLoginQueryClientTest",
       "org.quiltmc.qsl.networking.test.play.NetworkingPlayPacketClientTest"
     ],

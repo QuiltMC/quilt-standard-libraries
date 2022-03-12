@@ -16,19 +16,21 @@
 
 package org.quiltmc.qsl.networking.test.play;
 
+import net.fabricmc.loader.api.ModContainer;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Text;
 
-import net.fabricmc.api.ClientModInitializer;
+import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
+import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.client.ClientPlayConnectionEvents;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
-import org.quiltmc.qsl.networking.api.PacketSender;
 
 public final class NetworkingPlayPacketClientTest implements ClientModInitializer {
 	@Override
-	public void onInitializeClient() {
+	public void onInitializeClient(ModContainer mod) {
 		//ClientPlayNetworking.registerGlobalReceiver(NetworkingPlayPacketTest.TEST_CHANNEL, this::receive);
 
 		ClientPlayConnectionEvents.INIT.register((handler, client) -> {

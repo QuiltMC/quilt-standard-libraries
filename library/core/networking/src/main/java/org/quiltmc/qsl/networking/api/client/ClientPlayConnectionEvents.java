@@ -35,7 +35,7 @@ public final class ClientPlayConnectionEvents {
 	/**
 	 * Event indicating a connection entered the PLAY state, ready for registering channel handlers.
 	 *
-	 * @see ClientPlayNetworking#registerReceiver(Identifier, ClientPlayNetworking.PlayChannelReceiver)
+	 * @see ClientPlayNetworking#registerReceiver(Identifier, ClientPlayNetworking.ChannelReceiver)
 	 */
 	public static final Event<Init> INIT = Event.create(Init.class, callbacks -> (handler, client) -> {
 		for (Init callback : callbacks) {

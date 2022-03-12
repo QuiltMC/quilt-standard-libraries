@@ -16,11 +16,11 @@
   ],
   "depends": {
     "fabricloader": ">=0.12",
-    "minecraft": ">=1.18.2-alpha.22.3.a"
+    "minecraft": ">=1.18.2"
   },
   "description": "Base level API for Quilt mods.",
   "entrypoints": {
-    "main": [
+    "init": [
       "org.quiltmc.qsl.base.impl.event.EventRegistry"
     ]
   },

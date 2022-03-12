@@ -21,7 +21,7 @@
   },
   "depends": {
     "fabricloader": ">=0.12",
-    "minecraft": ">=1.18.2-alpha.22.3.a",
+    "minecraft": ">=1.18.2",
     "quilt_base": "*"
   },
   "description": "Adds information about the Quilt environment in crash reports, and provides an API for other mods to add their own information.",

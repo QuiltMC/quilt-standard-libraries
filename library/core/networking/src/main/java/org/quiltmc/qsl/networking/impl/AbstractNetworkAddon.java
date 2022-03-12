@@ -26,10 +26,10 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.minecraft.util.Identifier;
 
@@ -51,7 +51,7 @@ public abstract class AbstractNetworkAddon<H> {
 
 	protected AbstractNetworkAddon(GlobalReceiverRegistry<H> receiver, String description) {
 		this.receiver = receiver;
-		this.logger = LogManager.getLogger(description);
+		this.logger = LoggerFactory.getLogger(description);
 	}
 
 	@Nullable

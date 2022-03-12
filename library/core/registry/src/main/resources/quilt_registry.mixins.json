@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.registry.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "DebugChunkGeneratorAccessor",
+    "RegistryMixin",
+    "SimpleRegistryAccessor",
+    "SimpleRegistryMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
