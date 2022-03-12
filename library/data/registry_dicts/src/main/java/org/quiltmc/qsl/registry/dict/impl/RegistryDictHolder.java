@@ -21,7 +21,6 @@ import java.util.Set;
 
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
@@ -31,7 +30,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.registry.dict.api.RegistryDict;
-import org.quiltmc.qsl.registry.dict.api.WrongValueClassException;
 
 @ApiStatus.Internal
 public final class RegistryDictHolder<R> {
@@ -54,14 +52,15 @@ public final class RegistryDictHolder<R> {
 
 	/// impl for RegistryDict.get
 	@SuppressWarnings("unchecked")
-	public static <R, V> @Nullable RegistryDict<R, V> getDict(Registry<R> registry, Identifier id, Class<V> valueClass)
-			throws WrongValueClassException {
+	public static <R, V> @Nullable RegistryDict<R, V> getDict(Registry<R> registry, Identifier id, Class<V> valueClass) {
 		var dict = getDict(registry, id);
 		if (dict == null) {
 			return null;
 		}
 		if (dict.valueClass() != valueClass) {
-			throw new WrongValueClassException(registry, id, valueClass, dict.valueClass());
+			throw new IllegalArgumentException(("Found dictionary with ID \"%s\" for registry \"%s\", " +
+					"but it has wrong value class (expected %s, got %s)")
+					.formatted(id, registry.getKey().getValue(), valueClass, dict.valueClass()));
 		}
 		return (RegistryDict<R, V>) dict;
 	}

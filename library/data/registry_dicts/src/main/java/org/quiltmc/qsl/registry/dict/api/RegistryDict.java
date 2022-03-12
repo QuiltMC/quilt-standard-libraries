@@ -47,10 +47,8 @@ public interface RegistryDict<R, V> {
 	 * @param <R>        type of the entries in the registry
 	 * @param <V>        attached value type
 	 * @return the dictionary, or empty if the dictionary was not found
-	 * @throws WrongValueClassException if the dictionary was found, but has a different value class than expected
 	 */
-	static <R, V> Optional<RegistryDict<R, V>> get(Registry<R> registry, Identifier id, Class<V> valueClass)
-			throws WrongValueClassException {
+	static <R, V> Optional<RegistryDict<R, V>> get(Registry<R> registry, Identifier id, Class<V> valueClass) {
 		return Optional.ofNullable(RegistryDictHolder.getDict(registry, id, valueClass));
 	}
 
@@ -268,15 +266,9 @@ public interface RegistryDict<R, V> {
 			this.codec = codec;
 			side = Side.BOTH;
 
-			try {
-				if (get(registry, id, valueClass).isPresent()) {
-					throw new IllegalStateException("Dictionary with ID '%s' is already registered for registry %s!"
-							.formatted(id, registry.getKey().getValue()));
-				}
-			} catch (WrongValueClassException e) {
-				throw new IllegalStateException(("Dictionary with ID '%s' is already registered for registry %s, " +
-						"but with a different value class (expected %s, got %s)!")
-						.formatted(id, registry.getKey().getValue(), e.getExpectedClass(), e.getActualClass()));
+			if (RegistryDictHolder.getDict(registry, id) != null) {
+				throw new IllegalStateException("Dictionary with ID '%s' is already registered for registry %s!"
+						.formatted(id, registry.getKey().getValue()));
 			}
 		}
 
