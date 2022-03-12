@@ -19,9 +19,9 @@ package org.quiltmc.qsl.registry.dict.impl;
 import java.util.Optional;
 
 import com.mojang.serialization.Codec;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -29,7 +29,7 @@ import net.minecraft.util.registry.Registry;
 import org.quiltmc.qsl.registry.dict.api.DefaultValueProvider;
 
 public final class DefaultValueProviderRegistryDictImpl<R, V> extends RegistryDictImpl<R, V> {
-	private static final Logger COMPUTE_LOGGER = LogManager.getLogger("RegistryDict|Compute");
+	private static final Logger COMPUTE_LOGGER = LoggerFactory.getLogger("RegistryDict|Compute");
 
 	private final @NotNull DefaultValueProvider<R, V> defaultValueProvider;
 

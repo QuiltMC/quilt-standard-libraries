@@ -20,10 +20,10 @@ import java.util.*;
 
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
+import com.mojang.logging.LogUtils;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
+import org.slf4j.Logger;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -44,7 +44,7 @@ public final class RegistryDictSync {
 
 	public static final Identifier PACKET_ID = id("sync");
 
-	public static final Logger LOGGER = LogManager.getLogger("RegistryDictSync");
+	public static final Logger LOGGER = LogUtils.getLogger();
 
 	public record CacheEntry(Identifier registryId,
 							 Set<Pair<String, NbtCompound>> valueMaps) { }
