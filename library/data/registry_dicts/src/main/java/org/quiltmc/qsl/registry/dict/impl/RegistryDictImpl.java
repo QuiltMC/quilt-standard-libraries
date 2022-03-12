@@ -20,7 +20,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 import com.mojang.serialization.Codec;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
@@ -29,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-import org.quiltmc.qsl.registry.dict.api.ComputeFunction;
+import org.quiltmc.qsl.registry.dict.api.DefaultValueProvider;
 import org.quiltmc.qsl.registry.dict.api.RegistryDict;
 
 @ApiStatus.Internal
@@ -39,7 +38,7 @@ public record RegistryDictImpl<R, V>(Registry<R> registry,
 									 Codec<V> codec,
 									 Side side,
 									 @Nullable V defaultValue,
-									 @Nullable ComputeFunction<R, V> computeFunction)
+									 @Nullable DefaultValueProvider<R, V> defaultValueProvider)
 		implements RegistryDict<R, V> {
 
 	private static final Logger COMPUTE_LOGGER = LogManager.getLogger("RegistryDict|Compute");
@@ -62,16 +61,16 @@ public record RegistryDictImpl<R, V>(Registry<R> registry,
 		if (value != null) {
 			return Optional.of(value);
 		}
-		if (computeFunction != null) {
-			try {
-				value = computeFunction.computeFor(entry);
-			} catch (ComputeFunction.ComputeFailedException e) {
-				COMPUTE_LOGGER.error("Failed to compute value for entry {}", registry.getId(entry));
-				COMPUTE_LOGGER.catching(Level.ERROR, e);
+		if (defaultValueProvider != null) {
+			var result = defaultValueProvider.computeDefaultValue(entry);
+			if (result.isFailed()) {
+				value = result.get();
+				RegistryDictHolder.getBuiltin(registry).putValue(this, entry, value);
+				return Optional.of(value);
+			} else {
+				COMPUTE_LOGGER.error("Failed to compute value for entry {}: {}", registry.getId(entry), result.error());
 				return Optional.empty();
 			}
-			RegistryDictHolder.getBuiltin(registry).putValue(this, entry, value);
-			return Optional.of(value);
 		}
 		return Optional.ofNullable(defaultValue);
 	}

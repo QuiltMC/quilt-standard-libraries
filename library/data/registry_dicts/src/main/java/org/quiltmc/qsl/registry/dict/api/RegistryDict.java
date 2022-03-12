@@ -259,7 +259,7 @@ public interface RegistryDict<R, V> {
 
 		private Side side;
 		private @Nullable V defaultValue;
-		private @Nullable ComputeFunction<R, V> computeFunction;
+		private @Nullable DefaultValueProvider<R, V> defaultValueProvider;
 
 		private Builder(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec) {
 			this.registry = registry;
@@ -295,14 +295,14 @@ public interface RegistryDict<R, V> {
 		 * Sets the default value of this dictionary.
 		 *
 		 * <p>Setting this will <b>remove</b> the currently set
-		 * {@linkplain #computeFunction(ComputeFunction) compute function}!
+		 * {@linkplain #defaultValueProvider(DefaultValueProvider) compute function}!
 		 *
 		 * @param defaultValue default value
 		 * @return this builder
 		 */
 		public Builder<R, V> defaultValue(@Nullable V defaultValue) {
 			this.defaultValue = defaultValue;
-			this.computeFunction = null;
+			this.defaultValueProvider = null;
 			return this;
 		}
 
@@ -315,11 +315,11 @@ public interface RegistryDict<R, V> {
 		 * <p>Setting this will <b>remove</b> the currently set
 		 * {@linkplain #defaultValue(Object) default value}!
 		 *
-		 * @param computeFunction function to compute otherwise-missing value
+		 * @param defaultValueProvider function to compute otherwise-missing value
 		 * @return this builder
 		 */
-		public Builder<R, V> computeFunction(@Nullable ComputeFunction<R, V> computeFunction) {
-			this.computeFunction = computeFunction;
+		public Builder<R, V> defaultValueProvider(@Nullable DefaultValueProvider<R, V> defaultValueProvider) {
+			this.defaultValueProvider = defaultValueProvider;
 			this.defaultValue = null;
 			return this;
 		}
@@ -330,7 +330,7 @@ public interface RegistryDict<R, V> {
 		 * @return new dictionary
 		 */
 		public RegistryDict<R, V> build() {
-			var dict = new RegistryDictImpl<>(registry, id, valueClass, codec, side, defaultValue, computeFunction);
+			var dict = new RegistryDictImpl<>(registry, id, valueClass, codec, side, defaultValue, defaultValueProvider);
 			RegistryDictHolder.registerDict(registry, dict);
 			return dict;
 		}
