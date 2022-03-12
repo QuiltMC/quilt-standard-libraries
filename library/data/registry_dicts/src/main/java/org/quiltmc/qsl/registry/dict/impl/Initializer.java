@@ -16,8 +16,8 @@
 
 package org.quiltmc.qsl.registry.dict.impl;
 
-import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +27,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.ServerPlayConnectionEvents;
@@ -48,7 +49,7 @@ public final class Initializer implements ModInitializer {
 	private static MinecraftServer server;
 
 	@Override
-	public void onInitialize() {
+	public void onInitialize(ModContainer mod) {
 		RegistryDictReloader.register(ResourceType.SERVER_DATA);
 
 		ServerLifecycleEvents.READY.register(server1 -> server = server1);

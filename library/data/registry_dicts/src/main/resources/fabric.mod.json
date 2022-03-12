@@ -21,10 +21,10 @@
   },
   "description": "Extensible dictionary system for registry entries.",
   "entrypoints": {
-    "main": [
+    "init": [
       "org.quiltmc.qsl.registry.dict.impl.Initializer"
     ],
-    "client": [
+    "client_init": [
       "org.quiltmc.qsl.registry.dict.impl.ClientInitializer"
     ]
   },

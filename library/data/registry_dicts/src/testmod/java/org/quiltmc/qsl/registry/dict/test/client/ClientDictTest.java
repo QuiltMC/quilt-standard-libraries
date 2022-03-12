@@ -16,21 +16,20 @@
 
 package org.quiltmc.qsl.registry.dict.test.client;
 
-import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.loader.api.ModContainer;
 
 import net.minecraft.block.Block;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.registry.dict.api.RegistryDict;
-import org.quiltmc.qsl.registry.dict.impl.RegistryDictImpl;
 
 public class ClientDictTest implements ClientModInitializer {
 	public static final RegistryDict<Block, Boolean> ATTRIBUTE =
 			RegistryDict.boolBuilder(Registry.BLOCK, new Identifier("quilt", "based"))
-					.side(RegistryDictImpl.Side.CLIENT).build();
+					.side(RegistryDict.Side.CLIENT).build();
 
 	@Override
-	public void onInitializeClient() {
-	}
+	public void onInitializeClient(ModContainer mod) { }
 }

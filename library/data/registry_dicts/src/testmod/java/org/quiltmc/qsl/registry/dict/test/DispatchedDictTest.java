@@ -16,7 +16,7 @@
 
 package org.quiltmc.qsl.registry.dict.test;
 
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.ModContainer;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -30,6 +30,7 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.registry.dict.api.RegistryDict;
 import org.quiltmc.qsl.registry.dict.api.RegistryExtensions;
 
@@ -79,6 +80,5 @@ public class DispatchedDictTest implements ModInitializer {
 			new Identifier("quilt", "modular_item_4"), new ModularFunctionItem(new Item.Settings()));
 
 	@Override
-	public void onInitialize() {
-	}
+	public void onInitialize(ModContainer mod) { }
 }

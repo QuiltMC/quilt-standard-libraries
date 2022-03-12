@@ -16,7 +16,7 @@
 
 package org.quiltmc.qsl.registry.dict.impl;
 
-import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.loader.api.ModContainer;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.client.MinecraftClient;
@@ -27,6 +27,7 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 import org.quiltmc.qsl.registry.dict.api.RegistryDict;
@@ -35,7 +36,7 @@ import org.quiltmc.qsl.registry.dict.impl.reloader.RegistryDictReloader;
 @ApiStatus.Internal
 public final class ClientInitializer implements ClientModInitializer {
 	@Override
-	public void onInitializeClient() {
+	public void onInitializeClient(ModContainer mod) {
 		AssetsHolderGuard.setAccessAllowed();
 		RegistryDictReloader.register(ResourceType.CLIENT_RESOURCES);
 

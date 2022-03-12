@@ -9,11 +9,11 @@
     "quilt_registry_dicts": "*"
   },
   "entrypoints": {
-    "main": [
+    "init": [
       "org.quiltmc.qsl.registry.dict.test.SimpleDictTest",
       "org.quiltmc.qsl.registry.dict.test.DispatchedDictTest"
     ],
-    "client": [
+    "client_init": [
       "org.quiltmc.qsl.registry.dict.test.client.ClientDictTest"
     ]
   },
