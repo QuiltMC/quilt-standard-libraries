@@ -288,7 +288,7 @@ public interface RegistryDict<R, V> {
 		 * Sets the default value of this dictionary.
 		 *
 		 * <p>Setting this will <b>remove</b> the currently set
-		 * {@linkplain #defaultValueProvider(DefaultValueProvider) compute function}!
+		 * {@linkplain #defaultValueProvider(DefaultValueProvider) default value provider}!
 		 *
 		 * @param defaultValue default value
 		 * @return this builder
@@ -300,7 +300,7 @@ public interface RegistryDict<R, V> {
 		}
 
 		/**
-		 * Sets the <em>compute function</em> of this dictionary, which will be used to compute a value for a
+		 * Sets the <em>default value provider</em> of this dictionary, which will be used to compute a value for a
 		 * specific entry, should it be missing.
 		 *
 		 * <p>Note that this will be computed on both sides and the computation result will <em>not</em> be synchronized.
