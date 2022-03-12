@@ -20,28 +20,59 @@ import java.util.Objects;
 import java.util.Optional;
 
 import com.mojang.serialization.Codec;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-import org.quiltmc.qsl.registry.dict.api.DefaultValueProvider;
 import org.quiltmc.qsl.registry.dict.api.RegistryDict;
 
 @ApiStatus.Internal
-public record RegistryDictImpl<R, V>(Registry<R> registry,
-									 Identifier id,
-									 Class<V> valueClass,
-									 Codec<V> codec,
-									 Side side,
-									 @Nullable V defaultValue,
-									 @Nullable DefaultValueProvider<R, V> defaultValueProvider)
-		implements RegistryDict<R, V> {
+public abstract class RegistryDictImpl<R, V> implements RegistryDict<R, V> {
+	protected final Registry<R> registry;
+	protected final Identifier id;
+	protected final Class<V> valueClass;
+	protected final Codec<V> codec;
+	protected final Side side;
 
-	private static final Logger COMPUTE_LOGGER = LogManager.getLogger("RegistryDict|Compute");
+	public RegistryDictImpl(Registry<R> registry,
+							Identifier id,
+							Class<V> valueClass,
+							Codec<V> codec,
+							Side side) {
+		this.registry = registry;
+		this.id = id;
+		this.valueClass = valueClass;
+		this.codec = codec;
+		this.side = side;
+	}
+
+	@Override
+	public Registry<R> registry() {
+		return registry;
+	}
+
+	@Override
+	public Identifier id() {
+		return id;
+	}
+
+	@Override
+	public Class<V> valueClass() {
+		return valueClass;
+	}
+
+	@Override
+	public Codec<V> codec() {
+		return codec;
+	}
+
+	@Override
+	public Side side() {
+		return side;
+	}
+
+	protected abstract Optional<V> getDefaultValue(R entry);
 
 	@Override
 	public Optional<V> getValue(R entry) {
@@ -61,18 +92,7 @@ public record RegistryDictImpl<R, V>(Registry<R> registry,
 		if (value != null) {
 			return Optional.of(value);
 		}
-		if (defaultValueProvider != null) {
-			var result = defaultValueProvider.computeDefaultValue(entry);
-			if (result.isFailed()) {
-				value = result.get();
-				RegistryDictHolder.getBuiltin(registry).putValue(this, entry, value);
-				return Optional.of(value);
-			} else {
-				COMPUTE_LOGGER.error("Failed to compute value for entry {}: {}", registry.getId(entry), result.error());
-				return Optional.empty();
-			}
-		}
-		return Optional.ofNullable(defaultValue);
+		return getDefaultValue(entry);
 	}
 
 	@Override

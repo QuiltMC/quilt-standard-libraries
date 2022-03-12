@@ -27,8 +27,9 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.qsl.registry.dict.impl.DefaultValueProviderRegistryDictImpl;
+import org.quiltmc.qsl.registry.dict.impl.DefaultValueRegistryDictImpl;
 import org.quiltmc.qsl.registry.dict.impl.RegistryDictHolder;
-import org.quiltmc.qsl.registry.dict.impl.RegistryDictImpl;
 
 /**
  * Represents a dictionary that is attached to a registry entry.
@@ -322,7 +323,12 @@ public interface RegistryDict<R, V> {
 		 * @return new dictionary
 		 */
 		public RegistryDict<R, V> build() {
-			var dict = new RegistryDictImpl<>(registry, id, valueClass, codec, side, defaultValue, defaultValueProvider);
+			RegistryDict<R, V> dict;
+			if (defaultValueProvider == null) {
+				dict = new DefaultValueRegistryDictImpl<>(registry, id, valueClass, codec, side, defaultValue);
+			} else {
+				dict = new DefaultValueProviderRegistryDictImpl<>(registry, id, valueClass, codec, side, defaultValueProvider);
+			}
 			RegistryDictHolder.registerDict(registry, dict);
 			return dict;
 		}
