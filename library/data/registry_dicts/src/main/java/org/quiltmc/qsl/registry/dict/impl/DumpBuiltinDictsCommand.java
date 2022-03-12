@@ -16,49 +16,38 @@
 
 package org.quiltmc.qsl.registry.dict.impl;
 
-import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
-import static net.minecraft.server.command.CommandManager.argument;
-import static net.minecraft.server.command.CommandManager.literal;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import com.mojang.brigadier.suggestion.Suggestions;
-import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import com.mojang.logging.LogUtils;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import net.fabricmc.loader.api.FabricLoader;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
+import org.slf4j.Logger;
 
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.argument.ArgumentTypes;
 import net.minecraft.command.argument.IdentifierArgumentType;
-import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
 import org.quiltmc.qsl.registry.dict.api.RegistryDict;
+
+import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
+import static net.minecraft.server.command.CommandManager.argument;
+import static net.minecraft.server.command.CommandManager.literal;
 
 @ApiStatus.Internal
 public final class DumpBuiltinDictsCommand {
@@ -76,7 +65,7 @@ public final class DumpBuiltinDictsCommand {
 		);
 	}
 
-	private static final Logger LOGGER = LogManager.getLogger("DumpBuiltinDictsCommand");
+	private static final Logger LOGGER = LogUtils.getLogger();
 
 	private static final DynamicCommandExceptionType UNKNOWN_REGISTRY_EXCEPTION = new DynamicCommandExceptionType(
 			o -> new LiteralText("Could not find registry " + o));
