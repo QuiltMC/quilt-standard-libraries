@@ -18,6 +18,8 @@ package org.quiltmc.qsl.key.binds.mixin.client;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import com.mojang.blaze3d.platform.InputUtil;
 import org.spongepowered.asm.mixin.Final;
@@ -44,6 +46,8 @@ import net.minecraft.util.Formatting;
 import org.quiltmc.qsl.key.binds.api.KeyBindRegistry;
 import org.quiltmc.qsl.key.binds.impl.ConflictTooltipOwner;
 import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
+import org.quiltmc.qsl.key.binds.impl.chords.ChordedKeyBind;
+import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
 
 @Environment(EnvType.CLIENT)
 @Mixin(KeyBindEntry.class)
@@ -60,10 +64,10 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 	private List<Text> quilt$conflictTooltips = new ArrayList<>(2);
 
 	@Unique
-	private static InputUtil.Key quilt$previousBoundKey;
+	private static List<InputUtil.Key> quilt$previousProtoChord;
 
 	@Unique
-	private static InputUtil.Key quilt$changedBoundKey;
+	private static List<InputUtil.Key> quilt$changedProtoChord;
 
 	@Shadow(aliases = "field_2742", remap = false)
 	@Final
@@ -71,10 +75,11 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void initPreviousBoundKey(KeyBindListWidget list, KeyBind key, Text text, CallbackInfo ci) {
-		quilt$previousBoundKey = null;
-		quilt$changedBoundKey = null;
+		quilt$previousProtoChord = null;
+		quilt$changedProtoChord = null;
 	}
 
+	// TODO - Oh god, what is going on here? Investigate
 	@Inject(
 			method = "render",
 			at = @At(
@@ -85,14 +90,21 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 	)
 	private void collectConflictTooltips(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci, boolean bl, boolean bl2) {
 		InputUtil.Key boundKey = KeyBindRegistry.getBoundKey(this.key);
+		KeyChord boundChord = ((ChordedKeyBind)(this.key)).getBoundChord();
+		List<InputUtil.Key> boundProtoChord = new ArrayList<>();
 
-		if (!boundKey.equals(quilt$previousBoundKey) || quilt$changedBoundKey != null) {
+		if (boundChord == null) {
+			boundProtoChord.add(boundKey);
+		} else {
+			boundProtoChord.addAll(boundChord.keys.keySet());
+		}
+
+		if (!boundProtoChord.equals(quilt$previousProtoChord) || quilt$changedProtoChord != null) {
 			this.quilt$conflictTooltips.clear();
-
-			if (quilt$changedBoundKey != null && quilt$changedBoundKey.equals(boundKey)) {
-				quilt$changedBoundKey = null;
+			if (quilt$changedProtoChord != null && quilt$changedProtoChord.equals(boundProtoChord)) {
+				quilt$changedProtoChord = null;
 			} else {
-				quilt$changedBoundKey = boundKey;
+				quilt$changedProtoChord = boundProtoChord;
 			}
 
 			if (!this.key.isUnbound()) {
@@ -108,7 +120,7 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 			}
 		}
 
-		quilt$previousBoundKey = boundKey;
+		quilt$previousProtoChord = boundProtoChord;
 	}
 
 	@ModifyArg(

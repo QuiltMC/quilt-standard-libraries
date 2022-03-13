@@ -96,20 +96,6 @@ public class KeyBindMixin implements ChordedKeyBind {
         }
     }
 
-    @Inject(at = @At("HEAD"), method = "getKeyName", cancellable = true)
-    private void useChordName(CallbackInfoReturnable<Text> cir) {
-        if (this.quilt$boundChord != null) {
-            MutableText text = LiteralText.EMPTY.shallowCopy();
-            for (InputUtil.Key key : this.quilt$boundChord.keys.keySet()) {
-                if (text.getSiblings().size() != 0) {
-                    text.append(" + ");
-                }
-                text.append(key.getDisplayText());
-            }
-            cir.setReturnValue(text);
-        }
-    }
-
     @Inject(
         at = @At(
             value = "INVOKE",
@@ -155,16 +141,48 @@ public class KeyBindMixin implements ChordedKeyBind {
 
     // TODO - Detech chords for matchesMouseButton as well
 
+    @Inject(at = @At("HEAD"), method = "setBoundKey", cancellable = true)
+    private void resetChord(CallbackInfo ci) {
+        this.quilt$boundChord = null;
+    }
+
+    @Inject(at = @At("HEAD"), method = "keyEquals", cancellable = true)
+    private void keyOrChordEquals(KeyBind other, CallbackInfoReturnable<Boolean> cir) {
+        if (this.quilt$boundChord != null) {
+            if (((ChordedKeyBind)other).getBoundChord() != null) {
+                cir.setReturnValue(this.quilt$boundChord.keys.keySet().containsAll(((ChordedKeyBind)other).getBoundChord().keys.keySet()));
+            } else {
+                cir.setReturnValue(false);
+            }
+        }
+    }
+
+    @Inject(at = @At("RETURN"), method = "isUnbound", cancellable = true)
+    private void isChordUnbound(CallbackInfoReturnable<Boolean> cir) {
+        if (cir.getReturnValueZ() && this.quilt$boundChord != null) {
+            cir.setReturnValue(false);
+        }
+    }
+
+    @Inject(at = @At("HEAD"), method = "getKeyName", cancellable = true)
+    private void useChordName(CallbackInfoReturnable<Text> cir) {
+        if (this.quilt$boundChord != null) {
+            MutableText text = LiteralText.EMPTY.shallowCopy();
+            for (InputUtil.Key key : this.quilt$boundChord.keys.keySet()) {
+                if (text.getSiblings().size() != 0) {
+                    text.append(" + ");
+                }
+                text.append(key.getDisplayText());
+            }
+            cir.setReturnValue(text);
+        }
+    }
+
     @Inject(at = @At("HEAD"), method = "isDefault", cancellable = true)
     private void detectDefaultChord(CallbackInfoReturnable<Boolean> cir) {
         if (this.quilt$boundChord != null) {
             cir.setReturnValue(this.quilt$boundChord.equals(this.quilt$defaultChord));
         }
-    }
-
-    @Inject(at = @At("HEAD"), method = "setBoundKey", cancellable = true)
-    private void resetChord(CallbackInfo ci) {
-        this.quilt$boundChord = null;
     }
 
     @Override
