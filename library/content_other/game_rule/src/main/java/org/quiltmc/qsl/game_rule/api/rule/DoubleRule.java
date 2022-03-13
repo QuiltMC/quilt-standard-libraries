@@ -1,0 +1,169 @@
+/*
+ * Copyright 2016, 2017, 2018, 2019 FabricMC
+ * Copyright 2021 QuiltMC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.quiltmc.qsl.game_rule.api.rule;
+
+import com.mojang.brigadier.context.CommandContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
+
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.world.GameRules;
+
+import org.quiltmc.qsl.game_rule.api.GameRuleRegistry;
+
+public final class DoubleRule extends GameRules.Rule<DoubleRule> implements ValidateableRule {
+	private static final Logger LOGGER = LogManager.getLogger(GameRuleRegistry.class);
+
+	private double minimumValue;
+	private double maximumValue;
+	private double value;
+
+	@ApiStatus.Internal
+	public DoubleRule(GameRules.Type<DoubleRule> type, double value, double minimumValue, double maximumValue) {
+		super(type);
+		this.value = value;
+
+		if (areBoundsInvalid(minimumValue, maximumValue)) {
+			throw new IllegalArgumentException(String.format("Invalid bounds %s - %s, minimum must be less than maximum", minimumValue, maximumValue));
+		}
+
+		this.minimumValue = minimumValue;
+		this.maximumValue = maximumValue;
+
+		if (Double.isInfinite(value) || Double.isNaN(value)) {
+			throw new IllegalArgumentException("Value cannot be infinite or NaN");
+		}
+
+		if (Double.isInfinite(minimumValue) || Double.isNaN(minimumValue)) {
+			throw new IllegalArgumentException("Minimum value cannot be infinite or NaN");
+		}
+
+		if (Double.isInfinite(maximumValue) || Double.isNaN(maximumValue)) {
+			throw new IllegalArgumentException("Maximum value cannot be infinite or NaN");
+		}
+	}
+
+	@Override
+	protected void setFromArgument(CommandContext<ServerCommandSource> context, String name) {
+		this.value = context.getArgument(name, Double.class);
+	}
+
+	@Override
+	protected void deserialize(String value) {
+		if (!value.isEmpty()) {
+			try {
+				final double d = Double.parseDouble(value);
+
+				if (this.inBounds(d)) {
+					this.value = d;
+				} else {
+					LOGGER.warn("Failed to parse double {}. Was out of bounds {} - {}", value, this.minimumValue, this.maximumValue);
+				}
+			} catch (NumberFormatException e) {
+				LOGGER.warn("Failed to parse double {}", value);
+			}
+		}
+	}
+
+	@Override
+	public String serialize() {
+		return Double.toString(this.value);
+	}
+
+	@Override
+	public int getCommandResult() {
+		return Double.compare(this.value, 0.0D);
+	}
+
+	@Override
+	protected DoubleRule getThis() {
+		return this;
+	}
+
+	@Override
+	protected DoubleRule copy() {
+		return new DoubleRule(this.type, this.value, this.minimumValue, this.maximumValue);
+	}
+
+	@Override
+	public void setValue(DoubleRule rule, MinecraftServer minecraftServer) {
+		if (!this.inBounds(rule.value)) {
+			throw new IllegalArgumentException(String.format("Could not set value to %s. Was out of bounds %s - %s", rule.value, this.minimumValue, this.maximumValue));
+		}
+
+		this.value = rule.value;
+		this.changed(minecraftServer);
+	}
+
+	@Override
+	public boolean validate(String value) {
+		try {
+			final double d = Double.parseDouble(value);
+
+			return this.inBounds(d);
+		} catch (NumberFormatException ignored) {
+			return false;
+		}
+	}
+
+	public double get() {
+		return this.value;
+	}
+
+	public double getMinimumValue() {
+		return this.minimumValue;
+	}
+
+	public double getMaximumValue() {
+		return this.maximumValue;
+	}
+
+	public void setMinimumValue(double minimumValue) {
+		if (areBoundsInvalid(minimumValue, this.maximumValue)) {
+			throw new IllegalArgumentException(String.format("Invalid bounds %s - %s, minimum must be less than maximum", minimumValue, this.maximumValue));
+		}
+
+		if (this.value < minimumValue) {
+			throw new IllegalArgumentException(String.format("Could not set minimum value to %s. Current value is less than minimum", minimumValue));
+		}
+
+		this.minimumValue = minimumValue;
+	}
+
+	public void setMaximumValue(double maximumValue) {
+		if (areBoundsInvalid(this.minimumValue, maximumValue)) {
+			throw new IllegalArgumentException(String.format("Invalid bounds %s - %s, minimum must be less than maximum", this.minimumValue, maximumValue));
+		}
+
+		if (this.value > maximumValue) {
+			throw new IllegalStateException(String.format("Cannot set maximum value to %s. Current value is less than minimum", maximumValue));
+		}
+
+		this.maximumValue = maximumValue;
+	}
+
+	private boolean inBounds(double value) {
+		return value >= this.minimumValue && value <= this.maximumValue;
+	}
+
+	private static boolean areBoundsInvalid(double minimumValue, double maximumValue) {
+		return minimumValue >= maximumValue;
+	}
+}

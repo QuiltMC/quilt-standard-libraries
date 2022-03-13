@@ -1,0 +1,20 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "game_rule"
+	version = "1.0.0"
+	library = "other_content"
+	coreDependencies([
+			"qsl_base"
+	])
+	coreTestmodDependencies([
+			"lifecycle_events",
+			"resource_loader"
+	])
+}
+
+loom {
+	accessWidenerPath = file("src/main/resources/quilt_game_rule.accesswidener")
+}

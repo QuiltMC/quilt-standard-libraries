@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.game_rule.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "BooleanRuleAccessor",
+    "GameRuleCommandAccessor",
+    "GameRuleCommandVisitorMixin",
+    "GameRulesAccessor",
+    "IntRuleAccessor",
+    "RuleKeyMixin"
+  ],
+  "client": [
+    "client.EditGameRulesScreenAccessor",
+    "client.RuleListWidgetMixin",
+    "client.RuleListWidgetVisitorMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

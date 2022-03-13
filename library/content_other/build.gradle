@@ -1,0 +1,8 @@
+plugins {
+	id("qsl.library")
+}
+
+qslLibrary {
+	libraryName = "content_other"
+	version = "1.0.0"
+}
