@@ -16,10 +16,7 @@
 
 package org.quiltmc.qsl.key.binds.mixin.client;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import com.mojang.blaze3d.platform.InputUtil;
 import org.spongepowered.asm.mixin.Final;
@@ -31,6 +28,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
@@ -61,10 +60,10 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 	private ButtonWidget bindButton;
 
 	@Unique
-	private List<Text> quilt$conflictTooltips = new ArrayList<>(2);
+	private List<Text> quilt$conflictTooltips = new ObjectArrayList<>();
 
 	@Unique
-	private static List<InputUtil.Key> quilt$previousProtoChord;
+	private List<InputUtil.Key> quilt$previousProtoChord;
 
 	@Unique
 	private static List<InputUtil.Key> quilt$changedProtoChord;
@@ -79,7 +78,6 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 		quilt$changedProtoChord = null;
 	}
 
-	// TODO - Oh god, what is going on here? Investigate
 	@Inject(
 			method = "render",
 			at = @At(
@@ -91,15 +89,15 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 	private void collectConflictTooltips(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci, boolean bl, boolean bl2) {
 		InputUtil.Key boundKey = KeyBindRegistry.getBoundKey(this.key);
 		KeyChord boundChord = ((ChordedKeyBind)(this.key)).getBoundChord();
-		List<InputUtil.Key> boundProtoChord = new ArrayList<>();
+		List<InputUtil.Key> boundProtoChord;
 
 		if (boundChord == null) {
-			boundProtoChord.add(boundKey);
+			boundProtoChord = List.of(boundKey);
 		} else {
-			boundProtoChord.addAll(boundChord.keys.keySet());
+			boundProtoChord = List.copyOf(boundChord.keys.keySet());
 		}
 
-		if (!boundProtoChord.equals(quilt$previousProtoChord) || quilt$changedProtoChord != null) {
+		if (!boundProtoChord.equals(this.quilt$previousProtoChord) || quilt$changedProtoChord != null) {
 			this.quilt$conflictTooltips.clear();
 			if (quilt$changedProtoChord != null && quilt$changedProtoChord.equals(boundProtoChord)) {
 				quilt$changedProtoChord = null;
@@ -120,7 +118,7 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 			}
 		}
 
-		quilt$previousProtoChord = boundProtoChord;
+		this.quilt$previousProtoChord = boundProtoChord;
 	}
 
 	@ModifyArg(

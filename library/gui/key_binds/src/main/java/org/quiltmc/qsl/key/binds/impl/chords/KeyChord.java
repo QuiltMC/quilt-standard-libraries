@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.key.binds.impl.chords;
 
-import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
