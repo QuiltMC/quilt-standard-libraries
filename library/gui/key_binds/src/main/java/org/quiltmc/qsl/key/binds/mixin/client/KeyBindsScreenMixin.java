@@ -35,7 +35,7 @@ import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
-import org.quiltmc.qsl.key.binds.impl.ConflictTooltipOwner;
+import org.quiltmc.qsl.key.binds.impl.KeyBindTooltipHolder;
 
 @Environment(EnvType.CLIENT)
 @Mixin(KeyBindsScreen.class)
@@ -53,8 +53,9 @@ public abstract class KeyBindsScreenMixin extends GameOptionsScreen {
 		// TODO - Somehow extend the hover area to include the label too
 		KeyBindListWidget.Entry entry = ((EntryListWidgetAccessor<KeyBindListWidget.Entry>) this.keyBindList).invokeGetHoveredEntry();
 		if (entry != null && entry instanceof KeyBindEntry keyBindEntry) {
-			List<Text> tooltipLines = ((ConflictTooltipOwner) keyBindEntry).getConflictTooltips();
+			List<Text> tooltipLines = ((KeyBindTooltipHolder) keyBindEntry).getKeyBindTooltips();
 			if (tooltipLines != null) {	
+				// TODO - With key names, it's getting too big! Add a maximum width
 				this.renderTooltip(matrices, tooltipLines, mouseX, mouseY);
 			}
 		}

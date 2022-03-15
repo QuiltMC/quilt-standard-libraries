@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.key.binds.mixin.client.chords;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -34,6 +33,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBind;
 import net.minecraft.text.LiteralText;
@@ -48,9 +48,9 @@ public class KeyBindMixin implements ChordedKeyBind {
 
     @Shadow
     private InputUtil.Key boundKey;
-
+    
     @Unique
-    private static final Map<KeyChord, KeyBind> KEY_BINDS_BY_CHORD = new HashMap<>();
+    private static final Map<KeyChord, KeyBind> KEY_BINDS_BY_CHORD = new Reference2ReferenceOpenHashMap<>();
 
     @Unique
     @Final
@@ -138,6 +138,8 @@ public class KeyBindMixin implements ChordedKeyBind {
     }
 
     // TODO - Detect chords for matchesKey too; They are such a weird case
+    @Inject(at = @At("HEAD"), method = "matchesKey", cancellable = true)
+    private void matchesChordKey(CallbackInfoReturnable<Boolean> ci) {}
 
     // TODO - Detech chords for matchesMouseButton as well
 
@@ -150,7 +152,7 @@ public class KeyBindMixin implements ChordedKeyBind {
     private void keyOrChordEquals(KeyBind other, CallbackInfoReturnable<Boolean> cir) {
         if (this.quilt$boundChord != null) {
             if (((ChordedKeyBind)other).getBoundChord() != null) {
-                cir.setReturnValue(this.quilt$boundChord.keys.keySet().containsAll(((ChordedKeyBind)other).getBoundChord().keys.keySet()));
+                cir.setReturnValue(this.quilt$boundChord.keys.keySet().equals(((ChordedKeyBind)other).getBoundChord().keys.keySet()));
             } else {
                 cir.setReturnValue(false);
             }

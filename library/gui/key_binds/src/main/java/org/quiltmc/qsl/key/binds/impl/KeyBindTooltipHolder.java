@@ -26,6 +26,6 @@ import net.minecraft.text.Text;
 
 @Environment(EnvType.CLIENT)
 @ApiStatus.Internal
-public interface ConflictTooltipOwner {
-	List<Text> getConflictTooltips();
+public interface KeyBindTooltipHolder {
+	List<Text> getKeyBindTooltips();
 }

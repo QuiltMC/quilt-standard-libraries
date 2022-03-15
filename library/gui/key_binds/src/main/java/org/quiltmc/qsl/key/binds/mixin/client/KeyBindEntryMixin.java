@@ -32,25 +32,27 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.option.KeyBindListWidget;
 import net.minecraft.client.gui.widget.option.KeyBindListWidget.KeyBindEntry;
 import net.minecraft.client.option.KeyBind;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 
+import org.objectweb.asm.Opcodes;
 import org.quiltmc.qsl.key.binds.api.KeyBindRegistry;
-import org.quiltmc.qsl.key.binds.impl.ConflictTooltipOwner;
+import org.quiltmc.qsl.key.binds.impl.KeyBindTooltipHolder;
 import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
 import org.quiltmc.qsl.key.binds.impl.chords.ChordedKeyBind;
 import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
 
 @Environment(EnvType.CLIENT)
 @Mixin(KeyBindEntry.class)
-public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implements ConflictTooltipOwner {
+public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implements KeyBindTooltipHolder {
 	@Shadow
 	@Final
 	private KeyBind key;
@@ -68,6 +70,9 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 	@Unique
 	private static List<InputUtil.Key> quilt$changedProtoChord;
 
+	@Unique
+	private boolean quilt$addKeyNameToTooltip;
+
 	@Shadow(aliases = "field_2742", remap = false)
 	@Final
 	KeyBindListWidget field_2742;
@@ -76,6 +81,7 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 	private void initPreviousBoundKey(KeyBindListWidget list, KeyBind key, Text text, CallbackInfo ci) {
 		quilt$previousProtoChord = null;
 		quilt$changedProtoChord = null;
+		quilt$addKeyNameToTooltip = false;
 	}
 
 	@Inject(
@@ -105,6 +111,8 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 				quilt$changedProtoChord = boundProtoChord;
 			}
 
+			quilt$addKeyNameToTooltip = true;
+
 			if (!this.key.isUnbound()) {
 				for (KeyBind otherKey : KeyBindRegistryImpl.getKeyBinds()) {
 					if (otherKey != this.key && this.key.keyEquals(otherKey)) {
@@ -121,6 +129,59 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 		this.quilt$previousProtoChord = boundProtoChord;
 	}
 
+	@Inject(
+			method = "render",
+			at = @At(
+				value = "JUMP",
+				opcode = Opcodes.IFEQ,
+				ordinal = 1,
+				shift = At.Shift.BEFORE
+			),
+			locals = LocalCapture.CAPTURE_FAILHARD
+	)
+	private void shortenText(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci, boolean bl, boolean bl2) {
+		// TODO - Get client from the parent screen instead
+		MinecraftClient client = MinecraftClient.getInstance();
+		Text text = this.bindButton.getMessage();
+		int targetWidth = bl || bl2 ? 50 - 10 : 75 - 10;
+		if (client.textRenderer.getWidth(text) > targetWidth) {
+			String protoText = text.getString();
+			if (((ChordedKeyBind)this.key).getBoundChord() != null) {
+				protoText = "";
+				KeyChord chord = ((ChordedKeyBind)this.key).getBoundChord();
+
+				for (InputUtil.Key key : chord.keys.keySet()) {
+					if (!protoText.isEmpty()) {
+						protoText += " + ";
+					}
+
+					String keyString = key.getDisplayText().getString();
+
+					if (keyString.length() > 3) {
+						String[] keySegments = keyString.split(" ");
+						keyString = "";
+						for (String keySegment : keySegments) {
+							keyString += keySegment.substring(0, 1);
+						}
+					}
+
+					protoText += keyString;
+				}
+			}
+
+			if (client.textRenderer.getWidth(protoText) > targetWidth) {
+				if (quilt$addKeyNameToTooltip) {
+					this.quilt$conflictTooltips.add(0, this.key.getKeyName());
+					quilt$addKeyNameToTooltip = false;
+				}
+				protoText = client.textRenderer.trimToWidth(protoText, targetWidth);
+				protoText += "...";
+			}
+
+			this.bindButton.setMessage(new LiteralText(protoText));
+		}
+	}
+
 	@ModifyArg(
 			method = "render",
 			at = @At(
@@ -134,7 +195,7 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 	}
 
 	@Override
-	public List<Text> getConflictTooltips() {
+	public List<Text> getKeyBindTooltips() {
 		return this.quilt$conflictTooltips;
 	}
 }
