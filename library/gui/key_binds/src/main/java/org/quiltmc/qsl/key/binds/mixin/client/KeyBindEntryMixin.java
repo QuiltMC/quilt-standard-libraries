@@ -19,6 +19,7 @@ package org.quiltmc.qsl.key.binds.mixin.client;
 import java.util.List;
 
 import com.mojang.blaze3d.platform.InputUtil;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -28,10 +29,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.option.KeyBindListWidget;
@@ -43,7 +44,6 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 
-import org.objectweb.asm.Opcodes;
 import org.quiltmc.qsl.key.binds.api.KeyBindRegistry;
 import org.quiltmc.qsl.key.binds.impl.KeyBindTooltipHolder;
 import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
@@ -94,7 +94,7 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 	)
 	private void collectConflictTooltips(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci, boolean bl, boolean bl2) {
 		InputUtil.Key boundKey = KeyBindRegistry.getBoundKey(this.key);
-		KeyChord boundChord = ((ChordedKeyBind)(this.key)).getBoundChord();
+		KeyChord boundChord = ((ChordedKeyBind) this.key).getBoundChord();
 		List<InputUtil.Key> boundProtoChord;
 
 		if (boundChord == null) {
@@ -146,9 +146,9 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 		int targetWidth = bl || bl2 ? 50 - 10 : 75 - 10;
 		if (client.textRenderer.getWidth(text) > targetWidth) {
 			String protoText = text.getString();
-			if (((ChordedKeyBind)this.key).getBoundChord() != null) {
+			if (((ChordedKeyBind) this.key).getBoundChord() != null) {
 				protoText = "";
-				KeyChord chord = ((ChordedKeyBind)this.key).getBoundChord();
+				KeyChord chord = ((ChordedKeyBind) this.key).getBoundChord();
 
 				for (InputUtil.Key key : chord.keys.keySet()) {
 					if (!protoText.isEmpty()) {
@@ -174,6 +174,7 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 					this.quilt$conflictTooltips.add(0, this.key.getKeyName());
 					quilt$addKeyNameToTooltip = false;
 				}
+
 				protoText = client.textRenderer.trimToWidth(protoText, targetWidth);
 				protoText += "...";
 			}
