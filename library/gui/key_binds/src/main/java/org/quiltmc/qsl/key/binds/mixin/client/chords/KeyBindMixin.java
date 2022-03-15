@@ -142,7 +142,7 @@ public class KeyBindMixin implements ChordedKeyBind {
 	@Inject(at = @At("HEAD"), method = "matchesKey", cancellable = true)
 	private void matchesChordKey(CallbackInfoReturnable<Boolean> ci) { }
 
-	// TODO - Detech chords for matchesMouseButton as well
+	// TODO - Detect chords for matchesMouseButton as well
 
 	@Inject(at = @At("HEAD"), method = "setBoundKey", cancellable = true)
 	private void resetChord(CallbackInfo ci) {
@@ -153,7 +153,7 @@ public class KeyBindMixin implements ChordedKeyBind {
 	private void keyOrChordEquals(KeyBind other, CallbackInfoReturnable<Boolean> cir) {
 		if (this.quilt$boundChord != null) {
 			if (((ChordedKeyBind) other).getBoundChord() != null) {
-				cir.setReturnValue(this.quilt$boundChord.keys.keySet().equals(((ChordedKeyBind) other).getBoundChord().keys.keySet()));
+				cir.setReturnValue(this.quilt$boundChord.equals(((ChordedKeyBind) other).getBoundChord()));
 			} else {
 				cir.setReturnValue(false);
 			}
