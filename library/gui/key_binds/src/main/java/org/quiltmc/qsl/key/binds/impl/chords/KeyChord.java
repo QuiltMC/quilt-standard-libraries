@@ -31,5 +31,19 @@ public class KeyChord {
 
 	public KeyChord() { }
 
-	// TODO - Override hashCode() so it only counts keys
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		} else if (o != null && o instanceof KeyChord keyChord) {
+			return this.keys.keySet().equals(keyChord.keys.keySet());
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		return keys.keySet().hashCode();
+	}
 }
