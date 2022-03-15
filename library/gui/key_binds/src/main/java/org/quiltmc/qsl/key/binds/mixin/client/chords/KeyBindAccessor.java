@@ -23,9 +23,9 @@ import net.minecraft.client.option.KeyBind;
 
 @Mixin(KeyBind.class)
 public interface KeyBindAccessor {
-    @Accessor
-    int getTimesPressed();
-    
-    @Accessor
-    void setTimesPressed(int timesPressed);
+	@Accessor
+	int getTimesPressed();
+
+	@Accessor
+	void setTimesPressed(int timesPressed);
 }

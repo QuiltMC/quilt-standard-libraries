@@ -19,18 +19,17 @@ package org.quiltmc.qsl.key.binds.impl.chords;
 import java.util.SortedMap;
 
 import com.mojang.blaze3d.platform.InputUtil;
-
 import it.unimi.dsi.fastutil.objects.Object2BooleanAVLTreeMap;
 
 public class KeyChord {
-    // TODO - Private this, add methods for getting/modifying it
-    public SortedMap<InputUtil.Key, Boolean> keys = new Object2BooleanAVLTreeMap<>();
+	// TODO - Private this, add methods for getting/modifying it
+	public SortedMap<InputUtil.Key, Boolean> keys = new Object2BooleanAVLTreeMap<>();
 
-    public KeyChord(SortedMap<InputUtil.Key, Boolean> keys) {
-        this.keys = keys;
-    }
-    
-    public KeyChord() {}
+	public KeyChord(SortedMap<InputUtil.Key, Boolean> keys) {
+		this.keys = keys;
+	}
 
-    // TODO - Override hashCode() so it only counts keys
+	public KeyChord() { }
+
+	// TODO - Override hashCode() so it only counts keys
 }

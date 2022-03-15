@@ -20,11 +20,7 @@ import java.util.List;
 import java.util.SortedMap;
 
 import com.mojang.blaze3d.platform.InputUtil;
-
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.key.binds.impl.chords.ChordedKeyBind;
-import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
-import org.quiltmc.qsl.key.binds.impl.config.QuiltKeyBindsConfigManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -32,9 +28,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
 import it.unimi.dsi.fastutil.objects.Object2BooleanAVLTreeMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.GameOptionsScreen;
 import net.minecraft.client.gui.screen.option.KeyBindsScreen;
@@ -43,118 +39,126 @@ import net.minecraft.client.option.KeyBind;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 
+import org.quiltmc.qsl.key.binds.impl.chords.ChordedKeyBind;
+import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
+import org.quiltmc.qsl.key.binds.impl.config.QuiltKeyBindsConfigManager;
+
 @Mixin(KeyBindsScreen.class)
 public abstract class KeyBindsScreenMixin extends GameOptionsScreen {
-    @Shadow
-    @Nullable
-    public KeyBind focusedKey;
+	@Shadow
+	@Nullable
+	public KeyBind focusedKey;
 
-    @Shadow
-    public long time;
-    
-    @Unique
-    private List<InputUtil.Key> quilt$focusedProtoChord;
+	@Shadow
+	public long time;
 
-    @Unique
-    private boolean quilt$initialMouseRelease;
+	@Unique
+	private List<InputUtil.Key> quilt$focusedProtoChord;
 
-    public KeyBindsScreenMixin(Screen screen, GameOptions gameOptions, Text text) {
-        super(screen, gameOptions, text);
-    }
+	@Unique
+	private boolean quilt$initialMouseRelease;
 
-    @Inject(at = @At("TAIL"), method = "init")
-    private void initializeProtoChord(CallbackInfo ci) {
-        this.quilt$focusedProtoChord = new ObjectArrayList<>();
-        this.quilt$initialMouseRelease = true;
-    }
+	public KeyBindsScreenMixin(Screen screen, GameOptions gameOptions, Text text) {
+		super(screen, gameOptions, text);
+	}
 
-    @Inject(
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/client/option/GameOptions;setKeyCode(Lnet/minecraft/client/option/KeyBind;Lcom/mojang/blaze3d/platform/InputUtil$Key;)V"
-        ),
-        method = "mouseClicked",
-        cancellable = true
-    )
-    private void modifyMouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
-        InputUtil.Key key = InputUtil.Type.MOUSE.createFromKeyCode(button);
-        if (!quilt$focusedProtoChord.contains(key)) {
-            quilt$focusedProtoChord.add(key);
-        }
-        cir.setReturnValue(true);
-    }
+	@Inject(at = @At("TAIL"), method = "init")
+	private void initializeProtoChord(CallbackInfo ci) {
+		this.quilt$focusedProtoChord = new ObjectArrayList<>();
+		this.quilt$initialMouseRelease = true;
+	}
 
-    @Inject(at = @At(value = "RETURN", ordinal = 1), method = "mouseClicked")
-    private void excludeFirstMouseClick(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
-        this.quilt$initialMouseRelease = true;
-    }
+	@Inject(
+			at = @At(
+				value = "INVOKE",
+				target = "Lnet/minecraft/client/option/GameOptions;setKeyCode(Lnet/minecraft/client/option/KeyBind;Lcom/mojang/blaze3d/platform/InputUtil$Key;)V"
+			),
+			method = "mouseClicked",
+			cancellable = true
+	)
+	private void modifyMouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
+		InputUtil.Key key = InputUtil.Type.MOUSE.createFromKeyCode(button);
+		if (!quilt$focusedProtoChord.contains(key)) {
+			quilt$focusedProtoChord.add(key);
+		}
 
-    @Inject(
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/client/option/GameOptions;setKeyCode(Lnet/minecraft/client/option/KeyBind;Lcom/mojang/blaze3d/platform/InputUtil$Key;)V",
-            ordinal = 1
-        ),
-        method = "keyPressed",
-        cancellable = true
-    )
-    private void modifyKeyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
-        InputUtil.Key key = InputUtil.fromKeyCode(keyCode, scanCode);
-        if (!quilt$focusedProtoChord.contains(key)) {
-            quilt$focusedProtoChord.add(key);
-        }
-        cir.setReturnValue(true);
-    }
+		cir.setReturnValue(true);
+	}
 
-    @Override
-    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        if (this.focusedKey != null) {
-            if (quilt$focusedProtoChord.size() == 1) {
-                this.gameOptions.setKeyCode(this.focusedKey, quilt$focusedProtoChord.get(0));
-            } else if (quilt$focusedProtoChord.size() > 1) {
-                SortedMap<InputUtil.Key, Boolean> map = new Object2BooleanAVLTreeMap<>();
-                for (int i = 0; i < quilt$focusedProtoChord.size(); i++) {
-                    map.put(quilt$focusedProtoChord.get(i), false);
-                }
-                ((ChordedKeyBind)this.focusedKey).setBoundChord(new KeyChord(map));
-                QuiltKeyBindsConfigManager.populateConfig();
-                QuiltKeyBindsConfigManager.saveModConfig();
-            }
+	@Inject(at = @At(value = "RETURN", ordinal = 1), method = "mouseClicked")
+	private void excludeFirstMouseClick(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
+		this.quilt$initialMouseRelease = true;
+	}
 
-            quilt$focusedProtoChord.clear();
-            this.focusedKey = null;
+	@Inject(
+			at = @At(
+				value = "INVOKE",
+				target = "Lnet/minecraft/client/option/GameOptions;setKeyCode(Lnet/minecraft/client/option/KeyBind;Lcom/mojang/blaze3d/platform/InputUtil$Key;)V",
+				ordinal = 1
+			),
+			method = "keyPressed",
+			cancellable = true
+	)
+	private void modifyKeyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
+		InputUtil.Key key = InputUtil.fromKeyCode(keyCode, scanCode);
+		if (!quilt$focusedProtoChord.contains(key)) {
+			quilt$focusedProtoChord.add(key);
+		}
+
+		cir.setReturnValue(true);
+	}
+
+	@Override
+	public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+		if (this.focusedKey != null) {
+			if (quilt$focusedProtoChord.size() == 1) {
+				this.gameOptions.setKeyCode(this.focusedKey, quilt$focusedProtoChord.get(0));
+			} else if (quilt$focusedProtoChord.size() > 1) {
+				SortedMap<InputUtil.Key, Boolean> map = new Object2BooleanAVLTreeMap<>();
+				for (int i = 0; i < quilt$focusedProtoChord.size(); i++) {
+					map.put(quilt$focusedProtoChord.get(i), false);
+				}
+
+				((ChordedKeyBind) this.focusedKey).setBoundChord(new KeyChord(map));
+				QuiltKeyBindsConfigManager.populateConfig();
+				QuiltKeyBindsConfigManager.saveModConfig();
+			}
+
+			quilt$focusedProtoChord.clear();
+			this.focusedKey = null;
 			this.time = Util.getMeasuringTimeMs();
 			KeyBind.updateBoundKeys();
 			return true;
-        } else {
-            return super.keyReleased(keyCode, scanCode, modifiers);
-        }
-    }
+		} else {
+			return super.keyReleased(keyCode, scanCode, modifiers);
+		}
+	}
 
-    @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        // TODO - Don't duplicate code, have a common method
-        if (this.focusedKey != null && !this.quilt$initialMouseRelease) {
-            if (quilt$focusedProtoChord.size() == 1) {
-                this.gameOptions.setKeyCode(this.focusedKey, quilt$focusedProtoChord.get(0));
-            } else if (quilt$focusedProtoChord.size() > 1) {
-                SortedMap<InputUtil.Key, Boolean> map = new Object2BooleanAVLTreeMap<>();
-                for (int i = 0; i < quilt$focusedProtoChord.size(); i++) {
-                    map.put(quilt$focusedProtoChord.get(i), false);
-                }
-                ((ChordedKeyBind)this.focusedKey).setBoundChord(new KeyChord(map));
-                QuiltKeyBindsConfigManager.populateConfig();
-                QuiltKeyBindsConfigManager.saveModConfig();
-            }
+	@Override
+	public boolean mouseReleased(double mouseX, double mouseY, int button) {
+		// TODO - Don't duplicate code, have a common method
+		if (this.focusedKey != null && !this.quilt$initialMouseRelease) {
+			if (quilt$focusedProtoChord.size() == 1) {
+				this.gameOptions.setKeyCode(this.focusedKey, quilt$focusedProtoChord.get(0));
+			} else if (quilt$focusedProtoChord.size() > 1) {
+				SortedMap<InputUtil.Key, Boolean> map = new Object2BooleanAVLTreeMap<>();
+				for (int i = 0; i < quilt$focusedProtoChord.size(); i++) {
+					map.put(quilt$focusedProtoChord.get(i), false);
+				}
 
-            quilt$focusedProtoChord.clear();
-            this.focusedKey = null;
+				((ChordedKeyBind) this.focusedKey).setBoundChord(new KeyChord(map));
+				QuiltKeyBindsConfigManager.populateConfig();
+				QuiltKeyBindsConfigManager.saveModConfig();
+			}
+
+			quilt$focusedProtoChord.clear();
+			this.focusedKey = null;
 			this.time = Util.getMeasuringTimeMs();
 			KeyBind.updateBoundKeys();
 			return true;
-        } else {
-            this.quilt$initialMouseRelease = false;
-            return super.mouseReleased(mouseX, mouseY, button);
-        }
-    }
+		} else {
+			this.quilt$initialMouseRelease = false;
+			return super.mouseReleased(mouseX, mouseY, button);
+		}
+	}
 }

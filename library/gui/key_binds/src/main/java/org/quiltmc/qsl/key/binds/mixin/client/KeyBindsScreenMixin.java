@@ -54,7 +54,8 @@ public abstract class KeyBindsScreenMixin extends GameOptionsScreen {
 		KeyBindListWidget.Entry entry = ((EntryListWidgetAccessor<KeyBindListWidget.Entry>) this.keyBindList).invokeGetHoveredEntry();
 		if (entry != null && entry instanceof KeyBindEntry keyBindEntry) {
 			List<Text> tooltipLines = ((KeyBindTooltipHolder) keyBindEntry).getKeyBindTooltips();
-			if (tooltipLines != null) {	
+
+			if (tooltipLines != null) {
 				// TODO - With key names, it's getting too big! Add a maximum width
 				this.renderTooltip(matrices, tooltipLines, mouseX, mouseY);
 			}
