@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "id": "quilt_registry_entry_attachments",
+  "name": "Quilt Registry Entry Attachments",
+  "version": "${version}",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "icon": "assets/quilt_registry_entry_attachments/icon.png",
+  "contact": {
+    "homepage": "https://quiltmc.org",
+    "issues": "https://github.com/QuiltMC/quilt-standard-libraries/issues",
+    "sources": "https://github.com/QuiltMC/quilt-standard-libraries"
+  },
+  "authors": [
+    "QuiltMC"
+  ],
+  "depends": {
+    "fabricloader": ">=0.12",
+    "minecraft": ">=1.18",
+    "quilt_resource_loader": "*"
+  },
+  "description": "Extensible attachment system for registry entries.",
+  "entrypoints": {
+    "init": [
+      "org.quiltmc.qsl.registry.attachment.impl.Initializer"
+    ],
+    "client_init": [
+      "org.quiltmc.qsl.registry.attachment.impl.ClientInitializer"
+    ]
+  },
+  "mixins": [
+    "quilt_registry_entry_attachments.mixins.json"
+  ],
+  "custom": {
+    "modmenu": {
+      "badges": [
+        "library"
+      ],
+      "parent": {
+        "id": "qsl",
+        "name": "Quilt Standard Libraries",
+        "description": "A set of libraries to assist in making Quilt mods.",
+        "icon": "assets/quilt_registry_entry_attachments/icon.png",
+        "badges": [
+          "library"
+        ]
+      }
+    }
+  }
+}

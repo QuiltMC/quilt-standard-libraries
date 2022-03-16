@@ -1,0 +1,24 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "registry_entry_attachments"
+	version = "1.0.0"
+	library = "data"
+	moduleDependencies {
+		core {
+			impl("qsl_base")
+			impl("lifecycle_events")
+			impl("resource_loader")
+			impl("networking")
+		}
+		data {
+			impl("tags")
+		}
+		command {
+			compileOnly("command")
+			//testmodOnly("command")
+		}
+	}
+}
