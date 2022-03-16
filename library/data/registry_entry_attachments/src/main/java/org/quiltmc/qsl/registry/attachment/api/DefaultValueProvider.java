@@ -42,10 +42,12 @@ public interface DefaultValueProvider<R, V> {
 	 */
 	@SuppressWarnings("ClassCanBeRecord")
 	final class Result<V> {
+		private final boolean hasFailed;
 		private final V value;
 		private final String error;
 
-		private Result(V value, String error) {
+		private Result(boolean hasFailed, V value, String error) {
+			this.hasFailed = hasFailed;
 			this.value = value;
 			this.error = error;
 		}
@@ -57,7 +59,7 @@ public interface DefaultValueProvider<R, V> {
 		 * @return successful result
 		 */
 		public static <V> Result<V> of(V value) {
-			return new Result<>(value, null);
+			return new Result<>(false, value, null);
 		}
 
 		/**
@@ -66,23 +68,23 @@ public interface DefaultValueProvider<R, V> {
 		 * @param <V> type of value
 		 * @return failed result
 		 */
-		public static <V> Result<V> ofError(String error) {
-			return new Result<>(null, error);
+		public static <V> Result<V> ofFailure(String error) {
+			return new Result<>(true, null, error);
 		}
 
 		/**
-		 * {@return <code>true</code> if result is failed, <code>false</code> otherwise}
+		 * {@return <code>true</code> if this result represents a failed computation, <code>false</code> otherwise}
 		 */
-		public boolean isFailed() {
-			return value != null;
+		public boolean hasFailed() {
+			return hasFailed;
 		}
 
 		/**
 		 * {@return the value of this result}
 		 */
 		public V get() {
-			if (value == null) {
-				throw new IllegalStateException("Result does not have a value!");
+			if (hasFailed) {
+				throw new IllegalStateException("Result is a failure!");
 			}
 			return value;
 		}
@@ -91,7 +93,7 @@ public interface DefaultValueProvider<R, V> {
 		 * {@return the error string of this result}
 		 */
 		public String error() {
-			if (value != null) {
+			if (hasFailed) {
 				throw new IllegalStateException("Result does not have an error!");
 			}
 			return error;
