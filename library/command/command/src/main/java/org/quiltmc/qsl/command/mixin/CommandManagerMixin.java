@@ -26,6 +26,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.minecraft.class_7157;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -39,14 +40,13 @@ public abstract class CommandManagerMixin {
 
 	@Inject(
 			method = "<init>",
-			at = @At(
-					value = "INVOKE",
-					target = "Lcom/mojang/brigadier/CommandDispatcher;findAmbiguities(Lcom/mojang/brigadier/AmbiguityConsumer;)V",
-					remap = false
-			)
+			at = @At(value = "INVOKE", target = "Lcom/mojang/brigadier/CommandDispatcher;setConsumer(Lcom/mojang/brigadier/ResultConsumer;)V")
 	)
-	void addQuiltCommands(CommandManager.RegistrationEnvironment environment, CallbackInfo ci) {
-		CommandRegistrationCallback.EVENT.invoker().registerCommands(this.dispatcher, environmentMatches(environment, CommandManager.RegistrationEnvironment.INTEGRATED), environmentMatches(environment, CommandManager.RegistrationEnvironment.DEDICATED));
+	void addQuiltCommands(CommandManager.RegistrationEnvironment environment, class_7157 arg, CallbackInfo ci) {
+		CommandRegistrationCallback.EVENT.invoker().registerCommands(this.dispatcher,
+				environmentMatches(environment, CommandManager.RegistrationEnvironment.INTEGRATED),
+				environmentMatches(environment, CommandManager.RegistrationEnvironment.DEDICATED)
+		);
 	}
 
 	@Unique

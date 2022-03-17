@@ -21,14 +21,15 @@ import java.util.List;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import net.minecraft.class_7086;
 import net.minecraft.resource.NamespaceResourceManager;
-import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.util.Identifier;
@@ -39,26 +40,26 @@ import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 @Mixin(NamespaceResourceManager.class)
 public class NamespaceResourceManagerMixin {
 	/**
-	 * Acts as a pseudo-local variable in {@link NamespaceResourceManager#getAllResources(Identifier)}.
+	 * Acts as a pseudo-local variable in {@link NamespaceResourceManager#method_14489(Identifier)}.
 	 * Not thread-safe so a ThreadLocal is required.
 	 */
 	@Unique
-	private final ThreadLocal<List<Resource>> quilt$getAllResources$resources = new ThreadLocal<>();
+	private final ThreadLocal<List<NamespaceResourceManager.class_7083>> quilt$getAllResources$resources = new ThreadLocal<>();
 
 	@Inject(
-			method = "getAllResources",
+			method = "method_14489",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/resource/NamespaceResourceManager;getMetadataPath(Lnet/minecraft/util/Identifier;)Lnet/minecraft/util/Identifier;"
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	private void onGetAllResources(Identifier id, CallbackInfoReturnable<List<Resource>> cir, List<Resource> resources) {
+	private void onGetAllResources(Identifier id, CallbackInfoReturnable<List<class_7086>> cir, List<NamespaceResourceManager.class_7083> resources) {
 		this.quilt$getAllResources$resources.set(resources);
 	}
 
 	@Redirect(
-			method = "getAllResources",
+			method = "method_14489",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/resource/pack/ResourcePack;contains(Lnet/minecraft/resource/ResourceType;Lnet/minecraft/util/Identifier;)Z"
@@ -72,5 +73,13 @@ public class NamespaceResourceManagerMixin {
 		}
 
 		return pack.contains(type, id);
+	}
+
+	@Mixin(NamespaceResourceManager.class_7083.class)
+	public interface Class7083Accessor {
+		@Invoker("<init>")
+		static NamespaceResourceManager.class_7083 create(NamespaceResourceManager parent, Identifier id, Identifier metadataId, ResourcePack source) {
+			throw new IllegalStateException("Mixin injection failed.");
+		}
 	}
 }

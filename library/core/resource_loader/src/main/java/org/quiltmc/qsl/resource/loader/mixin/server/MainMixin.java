@@ -34,7 +34,7 @@ public class MainMixin {
 			method = "main",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/server/WorldStem;load(Lnet/minecraft/server/WorldStem$InitConfig;Lnet/minecraft/server/WorldStem$Supplier;Lnet/minecraft/server/WorldStem$WorldDataSupplier;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;",
+					target = "Ljava/util/concurrent/CompletableFuture;get()Ljava/lang/Object;",
 					remap = true
 			),
 			remap = false

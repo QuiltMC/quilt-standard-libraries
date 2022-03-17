@@ -9,12 +9,14 @@
     "MinecraftServerMixin",
     "NamespaceResourceManagerAccessor",
     "NamespaceResourceManagerMixin",
+    "NamespaceResourceManagerMixin$Class7083Accessor",
     "ReloadableResourceManagerMixin",
     "ServerReloadableResourcesMixin",
     "VanillaDataPackProviderMixin",
     "server.MainMixin"
   ],
   "client": [
+    "client.Class7196Mixin",
     "client.ClientBuiltinResourcePackProviderMixin",
     "client.CreateWorldScreenMixin",
     "client.EntryListWidgetAccessor",

@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -77,8 +78,8 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 	}
 
 	public ModNioResourcePack(@Nullable String name, ModMetadata modInfo, @Nullable Text displayName,
-	                          ResourcePackActivationType activationType, Path path,
-	                          ResourceType type, @Nullable AutoCloseable closer) {
+							  ResourcePackActivationType activationType, Path path,
+							  ResourceType type, @Nullable AutoCloseable closer) {
 		super(null);
 		this.name = name == null ? ModResourcePackUtil.getName(modInfo) : name;
 		this.displayName = displayName == null ? new LiteralText(name) : displayName;
@@ -134,8 +135,8 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 	}
 
 	@Override
-	public Collection<Identifier> findResources(ResourceType type, String namespace, String path, int depth,
-	                                            Predicate<String> pathFilter) {
+	public Collection<Identifier> findResources(ResourceType type, String namespace, String path,
+												Predicate<Identifier> pathFilter) {
 		var ids = new ArrayList<Identifier>();
 		String nioPath = path.replace("/", separator);
 
@@ -146,21 +147,25 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 
 			if (Files.exists(searchPath)) {
 				try {
-					Files.walk(searchPath, depth)
-							.filter(Files::isRegularFile)
-							.filter((p) -> {
-								String filename = p.getFileName().toString();
-								return !filename.endsWith(".mcmeta") && pathFilter.test(filename);
-							})
-							.map(namespacePath::relativize)
-							.map((p) -> p.toString().replace(separator, "/"))
-							.forEach((s) -> {
+					Files.walk(searchPath)
+							.filter(p -> Files.isRegularFile(p) && !p.getFileName().endsWith(".mcmeta"))
+							.map(p -> {
 								try {
-									ids.add(new Identifier(namespace, s));
+									var id = new Identifier(namespace,
+											namespacePath.relativize(p).toString().replace(separator, "/")
+									);
+
+									if (pathFilter.test(id)) {
+										return id;
+									}
 								} catch (InvalidIdentifierException e) {
 									LOGGER.error(e.getMessage());
 								}
-							});
+
+								return null;
+							})
+							.filter(Objects::nonNull)
+							.forEach(ids::add);
 				} catch (IOException e) {
 					LOGGER.warn("findResources at " + path + " in namespace " + namespace
 							+ ", mod " + this.modInfo.getId() + " failed!", e);
