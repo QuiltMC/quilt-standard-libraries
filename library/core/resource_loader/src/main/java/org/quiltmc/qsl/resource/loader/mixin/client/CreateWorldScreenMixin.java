@@ -18,18 +18,28 @@ package org.quiltmc.qsl.resource.loader.mixin.client;
 
 import java.util.ArrayList;
 
+import com.mojang.datafixers.util.Pair;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import net.minecraft.class_7193;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
+import net.minecraft.resource.AutoCloseableResourceManager;
 import net.minecraft.resource.pack.DataPackSettings;
 import net.minecraft.resource.pack.ResourcePack;
+import net.minecraft.resource.pack.ResourcePackManager;
 import net.minecraft.resource.pack.ResourcePackProfile;
+import net.minecraft.server.ServerReloadableResources;
+import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.world.gen.GeneratorOptions;
 
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 import org.quiltmc.qsl.resource.loader.impl.ModNioResourcePack;
@@ -66,6 +76,56 @@ public class CreateWorldScreenMixin {
 		}
 
 		return new DataPackSettings(enabled, disabled);
+	}
+
+	@Inject(
+			method = "applyDataPacks",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/class_7237;method_42098(Lnet/minecraft/class_7237$class_6906;Lnet/minecraft/class_7237$class_6907;Lnet/minecraft/class_7237$class_7239;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
+			)
+	)
+	private void onDataPackLoadStart(ResourcePackManager dataPackManager, CallbackInfo ci) {
+		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null);
+	}
+
+	@Inject(
+			method = "method_31130",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/class_7237;method_42098(Lnet/minecraft/class_7237$class_6906;Lnet/minecraft/class_7237$class_6907;Lnet/minecraft/class_7237$class_7239;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
+			)
+	)
+	private static void onDataPackLoadStart(MinecraftClient minecraftClient, Screen screen, CallbackInfo ci) {
+		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null);
+	}
+
+	// Lambda method in CreateWorldScreen#applyDataPacks, at class_7237#method_42098.
+	// Inject before closing the resource manager.
+	@Inject(
+			method = "method_41850",
+			at = @At("HEAD"),
+			remap = false // Very bad
+	)
+	private static void onDataPackLoadEnd(AutoCloseableResourceManager resourceManager,
+	                                      ServerReloadableResources serverReloadableResources,
+	                                      DynamicRegistryManager.Frozen frozen, Pair pair,
+	                                      CallbackInfoReturnable<class_7193> cir) {
+		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resourceManager, null);
+	}
+
+	// Lambda method in CreateWorldScreen#applyDataPacks, at class_7237#method_42098.
+	// Inject before closing the resource manager.
+	@Inject(
+			method = "method_41851",
+			at = @At("HEAD"),
+			remap = false // Very bad
+	)
+	private static void onCreateDataPackLoadEnd(AutoCloseableResourceManager resourceManager,
+	                                            ServerReloadableResources serverReloadableResources,
+	                                            DynamicRegistryManager.Frozen frozen, GeneratorOptions generatorOptions,
+	                                            CallbackInfoReturnable<class_7193> cir) {
+		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resourceManager, null);
 	}
 
 	// Lambda method in CreateWorldScreen#applyDataPacks, at CompletableFuture#handle.

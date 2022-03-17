@@ -40,7 +40,11 @@ public abstract class CommandManagerMixin {
 
 	@Inject(
 			method = "<init>",
-			at = @At(value = "INVOKE", target = "Lcom/mojang/brigadier/CommandDispatcher;setConsumer(Lcom/mojang/brigadier/ResultConsumer;)V")
+			at = @At(
+					value = "INVOKE",
+					target = "Lcom/mojang/brigadier/CommandDispatcher;setConsumer(Lcom/mojang/brigadier/ResultConsumer;)V",
+					remap = false
+			)
 	)
 	void addQuiltCommands(CommandManager.RegistrationEnvironment environment, class_7157 arg, CallbackInfo ci) {
 		CommandRegistrationCallback.EVENT.invoker().registerCommands(this.dispatcher,
