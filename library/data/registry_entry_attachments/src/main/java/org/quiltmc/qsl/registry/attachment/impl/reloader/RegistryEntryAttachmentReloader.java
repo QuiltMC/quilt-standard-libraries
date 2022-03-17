@@ -151,8 +151,8 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 		return CompletableFuture.runAsync(() -> {
 			data.apply(profiler);
 			if (source == ResourceType.SERVER_DATA) {
-				RegistryEntryAttachmentSync.markDirty();
-				Initializer.resyncAttachments();
+				RegistryEntryAttachmentSync.clearEncodedValuesCache();
+				RegistryEntryAttachmentSync.syncAttachmentsToAllPlayers();
 			}
 		}, executor);
 	}

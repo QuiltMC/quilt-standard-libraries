@@ -19,19 +19,16 @@ package org.quiltmc.qsl.registry.attachment.impl;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.minecraft.resource.ResourceType;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
-import org.quiltmc.qsl.networking.api.PacketSender;
-import org.quiltmc.qsl.networking.api.ServerPlayConnectionEvents;
-import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.registry.attachment.impl.reloader.RegistryEntryAttachmentReloader;
 
 @ApiStatus.Internal
@@ -52,6 +49,7 @@ public final class Initializer implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		RegistryEntryAttachmentReloader.register(ResourceType.SERVER_DATA);
+		RegistryEntryAttachmentSync.register();
 
 		ServerLifecycleEvents.READY.register(server1 -> server = server1);
 		ServerLifecycleEvents.STOPPING.register(server1 -> {
@@ -59,7 +57,6 @@ public final class Initializer implements ModInitializer {
 				server = null;
 			}
 		});
-		ServerPlayConnectionEvents.JOIN.register(Initializer::syncAttachmentsToNewPlayer);
 
 		if (Boolean.getBoolean(ENABLE_DUMP_BUILTIN_COMMAND_PROPERTY)) {
 			if (FabricLoader.getInstance().isModLoaded("quilt_command")) {
@@ -71,21 +68,7 @@ public final class Initializer implements ModInitializer {
 		}
 	}
 
-	private static void syncAttachmentsToNewPlayer(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server) {
-		for (var buf : RegistryEntryAttachmentSync.createSyncPackets()) {
-			sender.sendPacket(RegistryEntryAttachmentSync.PACKET_ID, buf);
-		}
-	}
-
-	public static void resyncAttachments() {
-		if (server == null) {
-			return;
-		}
-
-		for (var player : server.getPlayerManager().getPlayerList()) {
-			for (var buf : RegistryEntryAttachmentSync.createSyncPackets()) {
-				ServerPlayNetworking.send(player, RegistryEntryAttachmentSync.PACKET_ID, buf);
-			}
-		}
+	public static @Nullable MinecraftServer getServer() {
+		return server;
 	}
 }

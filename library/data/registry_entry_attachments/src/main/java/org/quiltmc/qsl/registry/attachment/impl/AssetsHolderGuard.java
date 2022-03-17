@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.registry.attachment.impl;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.util.registry.Registry;
@@ -29,6 +31,7 @@ import net.minecraft.util.registry.Registry;
 public final class AssetsHolderGuard {
 	private static boolean allowed = false;
 
+	@Environment(EnvType.CLIENT)
 	public static void setAccessAllowed() {
 		allowed = true;
 	}

@@ -22,18 +22,28 @@ import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
 import com.mojang.logging.LogUtils;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
+import org.quiltmc.qsl.networking.api.PacketSender;
+import org.quiltmc.qsl.networking.api.ServerPlayConnectionEvents;
+import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
+import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 import static org.quiltmc.qsl.registry.attachment.impl.Initializer.id;
@@ -51,13 +61,46 @@ public final class RegistryEntryAttachmentSync {
 
 	public static final Map<Identifier, CacheEntry> ENCODED_VALUES_CACHE = new Object2ReferenceOpenHashMap<>();
 
-	public static void markDirty() {
-		ENCODED_VALUES_CACHE.clear();
+	public static void register() {
+		ServerPlayConnectionEvents.JOIN.register(RegistryEntryAttachmentSync::syncAttachmentsToPlayer);
 	}
 
-	@SuppressWarnings("UnstableApiUsage")
-	private static Table<String, String, NbtElement> newTable() {
-		return Tables.newCustomTable(new Object2ReferenceOpenHashMap<>(), Object2ReferenceOpenHashMap::new);
+	@Environment(EnvType.CLIENT)
+	public static void registerClient() {
+		ClientPlayNetworking.registerGlobalReceiver(PACKET_ID, RegistryEntryAttachmentSync::receiveSyncPacket);
+	}
+
+	public static List<PacketByteBuf> createSyncPackets() {
+		fillEncodedValuesCache();
+		List<PacketByteBuf> bufs = new ArrayList<>();
+		for (var entry : ENCODED_VALUES_CACHE.entrySet()) {
+			for (var valueMap : entry.getValue().valueMaps()) {
+				var buf = PacketByteBufs.create();
+				buf.writeIdentifier(entry.getValue().registryId());
+				buf.writeIdentifier(entry.getKey());
+				buf.writeString(valueMap.getLeft());
+				buf.writeNbt(valueMap.getRight());
+				bufs.add(buf);
+			}
+		}
+		return bufs;
+	}
+
+	public static void syncAttachmentsToAllPlayers() {
+		var server = Initializer.getServer();
+		if (server == null) {
+			return;
+		}
+
+		for (var player : server.getPlayerManager().getPlayerList()) {
+			for (var buf : createSyncPackets()) {
+				ServerPlayNetworking.send(player, PACKET_ID, buf);
+			}
+		}
+	}
+
+	public static void clearEncodedValuesCache() {
+		ENCODED_VALUES_CACHE.clear();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -68,6 +111,7 @@ public final class RegistryEntryAttachmentSync {
 
 		for (var registryEntry : Registry.REGISTRIES.getEntries()) {
 			var registry = (Registry<Object>) registryEntry.getValue();
+			var dataHolder = RegistryEntryAttachmentHolder.getData(registry);
 
 			for (var attachmentEntry : RegistryEntryAttachmentHolder.getAttachmentEntries(registry)) {
 				var attachment = (RegistryEntryAttachment<Object, Object>) attachmentEntry.getValue();
@@ -75,8 +119,8 @@ public final class RegistryEntryAttachmentSync {
 					continue;
 				}
 
-				var dataHolder = RegistryEntryAttachmentHolder.getData(registry);
-				var myTable = newTable();
+				@SuppressWarnings("UnstableApiUsage")
+				Table<String, String, NbtElement> myTable = Tables.newCustomTable(new Object2ReferenceOpenHashMap<>(), Object2ReferenceOpenHashMap::new);
 				for (var valueEntry : dataHolder.valueTable.rowMap().get(attachmentEntry.getValue()).entrySet()) {
 					var entryId = registry.getId(valueEntry.getKey());
 					if (entryId == null) {
@@ -108,18 +152,45 @@ public final class RegistryEntryAttachmentSync {
 		}
 	}
 
-	public static List<PacketByteBuf> createSyncPackets() {
-		List<PacketByteBuf> bufs = new ArrayList<>();
-		for (var entry : ENCODED_VALUES_CACHE.entrySet()) {
-			for (var valueMap : entry.getValue().valueMaps()) {
-				var buf = PacketByteBufs.create();
-				buf.writeIdentifier(entry.getValue().registryId());
-				buf.writeIdentifier(entry.getKey());
-				buf.writeString(valueMap.getLeft());
-				buf.writeNbt(valueMap.getRight());
-				bufs.add(buf);
-			}
+	private static void syncAttachmentsToPlayer(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server) {
+		for (var buf : RegistryEntryAttachmentSync.createSyncPackets()) {
+			sender.sendPacket(RegistryEntryAttachmentSync.PACKET_ID, buf);
 		}
-		return bufs;
+	}
+
+	@Environment(EnvType.CLIENT)
+	@SuppressWarnings("unchecked")
+	private static void receiveSyncPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
+		var registryId = buf.readIdentifier();
+		var attachmentId = buf.readIdentifier();
+		var namespace = buf.readString();
+		var valueMap = buf.readNbt();
+		client.execute(() -> {
+			var registry = (Registry<Object>) Registry.REGISTRIES.get(registryId);
+			if (registry == null) {
+				throw new IllegalStateException("Unknown registry %s".formatted(registryId));
+			}
+			var attachment = (RegistryEntryAttachment<Object, Object>) RegistryEntryAttachmentHolder.getAttachment(registry, attachmentId);
+			if (attachment == null) {
+				throw new IllegalStateException("Unknown attachment %s for registry %s".formatted(attachmentId, registryId));
+			}
+			var holder = RegistryEntryAttachmentHolder.getData(registry);
+			holder.valueTable.row(attachment).clear();
+			for (var entryKey : valueMap.getKeys()) {
+				var entryId = new Identifier(namespace, entryKey);
+				var registryObject = registry.get(entryId);
+				if (registryObject == null) {
+					throw new IllegalStateException("Foreign ID %s".formatted(entryId));
+				}
+				var parsedValue = attachment.codec()
+						.parse(NbtOps.INSTANCE, valueMap.get(entryKey))
+						.getOrThrow(false, msg -> {
+							throw new IllegalStateException("Failed to decode value for attachment %s of registry entry %s: %s"
+									.formatted(attachment.id(), entryId, msg));
+						});
+				holder.putValue(attachment, registryObject, parsedValue);
+			}
+		});
+		// TODO send "OK" response packet?
 	}
 }
