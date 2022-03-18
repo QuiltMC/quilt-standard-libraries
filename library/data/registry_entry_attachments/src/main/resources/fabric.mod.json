@@ -16,7 +16,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.12",
-    "minecraft": ">=1.18",
+    "minecraft": ">=1.18.2",
     "quilt_resource_loader": "*"
   },
   "description": "Extensible attachment system for registry entries.",
