@@ -25,7 +25,7 @@
       "org.quiltmc.qsl.registry.attachment.impl.Initializer"
     ],
     "client_init": [
-      "org.quiltmc.qsl.registry.attachment.impl.ClientInitializer"
+      "org.quiltmc.qsl.registry.attachment.impl.client.ClientInitializer"
     ]
   },
   "mixins": [

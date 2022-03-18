@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.registry.attachment.impl;
+package org.quiltmc.qsl.registry.attachment.impl.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -24,6 +24,8 @@ import org.jetbrains.annotations.ApiStatus;
 import net.minecraft.resource.ResourceType;
 
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
+import org.quiltmc.qsl.registry.attachment.impl.AssetsHolderGuard;
+import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentSync;
 import org.quiltmc.qsl.registry.attachment.impl.reloader.RegistryEntryAttachmentReloader;
 
 @ApiStatus.Internal
