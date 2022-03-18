@@ -31,7 +31,7 @@ public interface QuiltResourcePack {
 	 * Gets the activation type of this resource pack.
 	 * <p>
 	 * This only serves as a hint as ultimately the {@link net.minecraft.resource.pack.ResourcePackProfile}
-	 * mays have the last word.
+	 * has the last word.
 	 *
 	 * @return the activation type of this resource pack
 	 */
