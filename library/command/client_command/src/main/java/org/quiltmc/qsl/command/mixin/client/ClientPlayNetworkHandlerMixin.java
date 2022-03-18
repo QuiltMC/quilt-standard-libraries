@@ -59,7 +59,7 @@ abstract class ClientPlayNetworkHandlerMixin {
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Inject(method = "onCommandTree", at = @At("RETURN"))
 	private void onOnCommandTree(CommandTreeS2CPacket packet, CallbackInfo info) {
-		ClientCommandInternals.updateCommands(new class_7157(this.registryManager),
+		ClientCommandInternals.updateCommands(null,
 				(CommandDispatcher) this.commandDispatcher, (QuiltClientCommandSource) this.commandSource
 		);
 	}

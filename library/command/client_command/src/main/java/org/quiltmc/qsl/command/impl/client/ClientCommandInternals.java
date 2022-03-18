@@ -307,10 +307,12 @@ public final class ClientCommandInternals {
 		return commands.size();
 	}
 
-	public static void updateCommands(class_7157 buildContext,
+	public static void updateCommands(@Nullable class_7157 buildContext,
 	                                  CommandDispatcher<QuiltClientCommandSource> serverCommandDispatcher,
 	                                  QuiltClientCommandSource source) {
-		initialize(buildContext, false);
+		if (buildContext != null) {
+			initialize(buildContext, false);
+		}
 
 		// Add the commands to the vanilla dispatcher for completion.
 		// It's done here because both the server and the client commands have
