@@ -29,6 +29,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 abstract class MinecraftClientMixin {
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onConstruct(RunArgs args, CallbackInfo info) {
-		ClientCommandInternals.initialize();
+		ClientCommandInternals.initialize(null, true);
 	}
 }

@@ -19,6 +19,9 @@ package org.quiltmc.qsl.command.api.client;
 import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
+import net.minecraft.class_7157;
+
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 
@@ -33,16 +36,17 @@ public interface ClientCommandRegistrationCallback extends ClientEventAwareListe
 	/**
 	 * Event invoked when client-sided commands are registered.
 	 */
-	Event<ClientCommandRegistrationCallback> EVENT = Event.create(ClientCommandRegistrationCallback.class, callbacks -> dispatcher -> {
+	Event<ClientCommandRegistrationCallback> EVENT = Event.create(ClientCommandRegistrationCallback.class, callbacks -> (dispatcher, buildContext) -> {
 		for (var callback : callbacks) {
-			callback.registerCommands(dispatcher);
+			callback.registerCommands(dispatcher, buildContext);
 		}
 	});
 
 	/**
 	 * Called when client-side commands are registered.
 	 *
-	 * @param dispatcher the command dispatcher
+	 * @param dispatcher   the command dispatcher
+	 * @param buildContext the command build context
 	 */
-	void registerCommands(CommandDispatcher<QuiltClientCommandSource> dispatcher);
+	void registerCommands(CommandDispatcher<QuiltClientCommandSource> dispatcher, class_7157 buildContext);
 }
