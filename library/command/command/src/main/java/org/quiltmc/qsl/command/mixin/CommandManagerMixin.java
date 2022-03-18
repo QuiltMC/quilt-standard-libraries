@@ -46,8 +46,9 @@ public abstract class CommandManagerMixin {
 					remap = false
 			)
 	)
-	void addQuiltCommands(CommandManager.RegistrationEnvironment environment, class_7157 arg, CallbackInfo ci) {
+	void addQuiltCommands(CommandManager.RegistrationEnvironment environment, class_7157 context, CallbackInfo ci) {
 		CommandRegistrationCallback.EVENT.invoker().registerCommands(this.dispatcher,
+				context,
 				environmentMatches(environment, CommandManager.RegistrationEnvironment.INTEGRATED),
 				environmentMatches(environment, CommandManager.RegistrationEnvironment.DEDICATED)
 		);

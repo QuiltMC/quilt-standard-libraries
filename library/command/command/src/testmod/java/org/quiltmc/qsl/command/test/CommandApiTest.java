@@ -16,11 +16,15 @@
 
 package org.quiltmc.qsl.command.test;
 
+import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.loader.api.FabricLoader;
 
+import net.minecraft.class_7157;
+import net.minecraft.command.argument.ItemStackArgument;
+import net.minecraft.command.argument.ItemStackArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 
@@ -28,7 +32,7 @@ import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
 
 public class CommandApiTest implements CommandRegistrationCallback {
 	@Override
-	public void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, boolean integrated, boolean dedicated) {
+	public void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, class_7157 context, boolean integrated, boolean dedicated) {
 		if (dedicated) {
 			dispatcher.register(literal("ping")
 					.executes(ctx -> {
@@ -51,6 +55,17 @@ public class CommandApiTest implements CommandRegistrationCallback {
 					ctx.getSource().sendFeedback(new LiteralText("Quilt Version: " + FabricLoader.getInstance().getModContainer("quilt_base").get().getMetadata().getVersion().getFriendlyString()), false);
 					return 0;
 				})
+		);
+
+		dispatcher.register(literal("test_with_arg")
+				.then(literal("item")
+						.then(argument("arg", ItemStackArgumentType.itemStack(context))
+								.executes(ctx -> {
+									ItemStackArgument arg = ItemStackArgumentType.getItemStackArgument(ctx, "arg");
+									ctx.getSource().sendFeedback(new LiteralText("Ooohh, you have chosen: " + arg.getItem() + "!"), false);
+									return 0;
+								}))
+				)
 		);
 	}
 }
