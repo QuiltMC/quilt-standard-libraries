@@ -38,6 +38,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.minecraft.class_7157;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.EntitySelector;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
@@ -48,7 +49,7 @@ import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 
 public final class NetworkingChannelTest implements CommandRegistrationCallback {
 	@Override
-	public void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, class_7157 buildContext, boolean integrated, boolean dedicated) {
+	public void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, class_7157 buildContext, CommandManager.RegistrationEnvironment environment) {
 		final LiteralCommandNode<ServerCommandSource> channelTestCommand = literal("network_channel_test").build();
 
 		// Info

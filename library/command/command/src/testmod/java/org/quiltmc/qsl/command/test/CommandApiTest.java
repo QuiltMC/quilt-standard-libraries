@@ -25,6 +25,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.class_7157;
 import net.minecraft.command.argument.ItemStackArgument;
 import net.minecraft.command.argument.ItemStackArgumentType;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 
@@ -32,15 +33,15 @@ import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
 
 public class CommandApiTest implements CommandRegistrationCallback {
 	@Override
-	public void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, class_7157 context, boolean integrated, boolean dedicated) {
-		if (dedicated) {
+	public void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, class_7157 context, CommandManager.RegistrationEnvironment environment) {
+		if (environment.isDedicated()) {
 			dispatcher.register(literal("ping")
 					.executes(ctx -> {
 						ctx.getSource().sendFeedback(new LiteralText("pong!"), false);
 						return 0;
 					})
 			);
-		} else if (integrated) {
+		} else if (environment.isIntegrated()) {
 			dispatcher.register(literal("singleplayer_only")
 					.executes(ctx -> {
 						ctx.getSource().sendFeedback(new LiteralText("This command should only exist in singleplayer"), false);

@@ -51,6 +51,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.Texts;
@@ -196,19 +197,19 @@ public final class ClientCommandInternals {
 	 * Also registers a {@code /qcc help} command if there are other commands present.
 	 *
 	 * @param buildContext the build context, may be {@code null} if not in-world
-	 * @param firstBuild   {@code true} if it's the first command build, otherwise {@code false}
+	 * @param environment  the command registration environment
 	 */
-	public static void initialize(@Nullable class_7157 buildContext, boolean firstBuild) {
+	public static void initialize(@Nullable class_7157 buildContext, CommandManager.RegistrationEnvironment environment) {
 		if (buildContext == null) {
 			currentDispatcher = DEFAULT_DISPATCHER;
 
-			if (firstBuild) {
-				registerCommands(new class_7157(DynamicRegistryManager.builtInCopy()));
+			if (environment == CommandManager.RegistrationEnvironment.ALL) {
+				registerCommands(new class_7157(DynamicRegistryManager.builtInCopy()), environment);
 			}
 		} else {
 			currentDispatcher = new CommandDispatcher<>();
 
-			registerCommands(buildContext);
+			registerCommands(buildContext, environment);
 		}
 	}
 
@@ -220,8 +221,8 @@ public final class ClientCommandInternals {
 	 *
 	 * @param buildContext the command build context
 	 */
-	private static void registerCommands(class_7157 buildContext) {
-		ClientCommandRegistrationCallback.EVENT.invoker().registerCommands(currentDispatcher, buildContext);
+	private static void registerCommands(class_7157 buildContext, CommandManager.RegistrationEnvironment environment) {
+		ClientCommandRegistrationCallback.EVENT.invoker().registerCommands(currentDispatcher, buildContext, environment);
 
 		if (!currentDispatcher.getRoot().getChildren().isEmpty()) {
 			// Register the qcc command only if there are other commands;
@@ -309,9 +310,10 @@ public final class ClientCommandInternals {
 
 	public static void updateCommands(@Nullable class_7157 buildContext,
 	                                  CommandDispatcher<QuiltClientCommandSource> serverCommandDispatcher,
-	                                  QuiltClientCommandSource source) {
+	                                  QuiltClientCommandSource source,
+	                                  CommandManager.RegistrationEnvironment environment) {
 		if (buildContext != null) {
-			initialize(buildContext, false);
+			initialize(buildContext, environment);
 		}
 
 		// Add the commands to the vanilla dispatcher for completion.

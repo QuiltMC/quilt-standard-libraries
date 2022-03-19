@@ -24,6 +24,11 @@
     "quilt_command.mixins.json"
   ],
   "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_2170$class_5364": [
+        "org/quiltmc/qsl/command/api/QuiltCommandRegistrationEnvironment"
+      ]
+    },
     "modmenu": {
       "badges": [
         "library"

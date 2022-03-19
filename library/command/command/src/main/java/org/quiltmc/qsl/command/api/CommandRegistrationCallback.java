@@ -20,6 +20,7 @@ package org.quiltmc.qsl.command.api;
 import com.mojang.brigadier.CommandDispatcher;
 
 import net.minecraft.class_7157;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
 import org.quiltmc.qsl.base.api.event.Event;
@@ -33,9 +34,9 @@ public interface CommandRegistrationCallback extends EventAwareListener {
 	/**
 	 * Event invoked when server-side commands are registered.
 	 */
-	Event<CommandRegistrationCallback> EVENT = Event.create(CommandRegistrationCallback.class, callbacks -> (dispatcher, context, integrated, dedicated) -> {
+	Event<CommandRegistrationCallback> EVENT = Event.create(CommandRegistrationCallback.class, callbacks -> (dispatcher, context, environment) -> {
 		for (var callback : callbacks) {
-			callback.registerCommands(dispatcher, context, integrated, dedicated);
+			callback.registerCommands(dispatcher, context, environment);
 		}
 	});
 
@@ -44,8 +45,7 @@ public interface CommandRegistrationCallback extends EventAwareListener {
 	 *
 	 * @param dispatcher   the command dispatcher
 	 * @param buildContext the command build context
-	 * @param integrated   whether commands intended for only the integrated server (i.e. singleplayer) should be registered
-	 * @param dedicated    whether commands intended for only the dedicated server should be registered
+	 * @param environment  the registration environment, allows registration of single-player-only commands or dedicated-only commands
 	 */
-	void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, class_7157 buildContext, boolean integrated, boolean dedicated);
+	void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, class_7157 buildContext, CommandManager.RegistrationEnvironment environment);
 }

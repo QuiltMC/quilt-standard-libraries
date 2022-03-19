@@ -50,7 +50,7 @@ public final class ClientTagsTestMod implements ClientModInitializer {
 	public void onInitializeClient(ModContainer mod) {
 		ResourceLoader.registerBuiltinResourcePack(TagsTestMod.id("defaulted_test_pack"), ResourcePackActivationType.NORMAL);
 
-		ClientCommandRegistrationCallback.EVENT.register((dispatcher, buildContext) -> {
+		ClientCommandRegistrationCallback.EVENT.register((dispatcher, buildContext, environment) -> {
 			dispatcher.register(literal("client_tag_test")
 					.then(literal("block")
 							.executes(context -> {

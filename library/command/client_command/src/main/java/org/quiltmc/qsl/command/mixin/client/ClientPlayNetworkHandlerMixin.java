@@ -26,11 +26,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.class_7157;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientCommandSource;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.command.CommandSource;
 import net.minecraft.network.packet.s2c.play.CommandTreeS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.util.registry.DynamicRegistryManager;
 
 import org.quiltmc.qsl.command.api.client.QuiltClientCommandSource;
@@ -48,11 +50,16 @@ abstract class ClientPlayNetworkHandlerMixin {
 	@Shadow
 	private DynamicRegistryManager.Frozen registryManager;
 
+	@Shadow
+	@Final
+	private MinecraftClient client;
+
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Inject(method = "onGameJoin", at = @At("RETURN"))
 	private void onGameJoin(GameJoinS2CPacket packet, CallbackInfo ci) {
 		ClientCommandInternals.updateCommands(new class_7157(this.registryManager),
-				(CommandDispatcher) this.commandDispatcher, (QuiltClientCommandSource) this.commandSource
+				(CommandDispatcher) this.commandDispatcher, (QuiltClientCommandSource) this.commandSource,
+				this.client.isIntegratedServerRunning() ? CommandManager.RegistrationEnvironment.INTEGRATED : CommandManager.RegistrationEnvironment.DEDICATED
 		);
 	}
 
@@ -60,7 +67,8 @@ abstract class ClientPlayNetworkHandlerMixin {
 	@Inject(method = "onCommandTree", at = @At("RETURN"))
 	private void onOnCommandTree(CommandTreeS2CPacket packet, CallbackInfo info) {
 		ClientCommandInternals.updateCommands(null,
-				(CommandDispatcher) this.commandDispatcher, (QuiltClientCommandSource) this.commandSource
+				(CommandDispatcher) this.commandDispatcher, (QuiltClientCommandSource) this.commandSource,
+				this.client.isIntegratedServerRunning() ? CommandManager.RegistrationEnvironment.INTEGRATED : CommandManager.RegistrationEnvironment.DEDICATED
 		);
 	}
 }

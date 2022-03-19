@@ -3,7 +3,8 @@
   "package": "org.quiltmc.qsl.command.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "CommandManagerMixin"
+    "CommandManagerMixin",
+    "CommandManagerMixin$RegistrationEnvironmentMixin"
   ],
   "client": [],
   "injectors": {
