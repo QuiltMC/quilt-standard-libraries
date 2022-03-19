@@ -83,7 +83,7 @@ public final class EnumArgumentType implements ArgumentType<String> {
 	 * @return the argument value
 	 */
 	public static String getEnum(CommandContext<ServerCommandSource> context,
-								 String argumentName) {
+	                             String argumentName) {
 		return context.getArgument(argumentName, String.class);
 	}
 
@@ -146,21 +146,35 @@ public final class EnumArgumentType implements ArgumentType<String> {
 			throw new IllegalArgumentException(enumClass + " does not have an associated EnumArgumentType");
 		}
 
-		var argChildNode = context.getRootNode().getChild(argumentName);
-		if (argChildNode instanceof ArgumentCommandNode<?,?> argNode) {
-			if (argNode.getType() instanceof EnumArgumentType enumConstantType) {
-				var expectedClass = enumConstantTypes.inverse().get(enumConstantType);
-				if (expectedClass == null) {
-					throw new IllegalArgumentException(argumentName + "'s type does not have an associated enum class");
-				} else if (expectedClass != enumClass) {
-					throw new IllegalArgumentException(argumentName + "'s type is derived from  " + expectedClass
-							+ ", not from " + enumClass);
+		boolean found = false;
+
+		for (var node : context.getNodes()) {
+			if (node.getNode().getName().equals(argumentName)) {
+				var argChildNode = node.getNode();
+
+				if (argChildNode instanceof ArgumentCommandNode<?, ?> argNode) {
+					if (argNode.getType() instanceof EnumArgumentType enumConstantType) {
+						var expectedClass = enumConstantTypes.inverse().get(enumConstantType);
+						if (expectedClass == null) {
+							throw new IllegalArgumentException(argumentName + "'s type does not have an associated enum class");
+						} else if (expectedClass != enumClass) {
+							throw new IllegalArgumentException(argumentName + "'s type is derived from  " + expectedClass
+									+ ", not from " + enumClass);
+						}
+
+						found = true;
+						break;
+					} else {
+						throw new IllegalArgumentException(argumentName + " is not of EnumArgumentType");
+					}
+				} else {
+					throw new IllegalArgumentException("Command does not have an argument named " + argumentName);
 				}
-			} else {
-				throw new IllegalArgumentException(argumentName + " is not of EnumArgumentType");
 			}
-		} else {
-			throw new IllegalArgumentException("Command does not have an argument named " + argumentName);
+		}
+
+		if (!found) {
+			throw new IllegalStateException("Analysis of command nodes failed to find and check for argument " + argumentName);
 		}
 
 		String value = context.getArgument(argumentName, String.class);
