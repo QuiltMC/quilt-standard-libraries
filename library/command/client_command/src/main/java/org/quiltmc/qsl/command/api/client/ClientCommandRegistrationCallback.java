@@ -48,6 +48,7 @@ public interface ClientCommandRegistrationCallback extends ClientEventAwareListe
 	 *
 	 * @param dispatcher   the command dispatcher
 	 * @param buildContext the command build context
+	 * @param environment  the registration environment, allows registration of single-player-only commands or dedicated-only commands
 	 */
 	void registerCommands(CommandDispatcher<QuiltClientCommandSource> dispatcher, class_7157 buildContext, CommandManager.RegistrationEnvironment environment);
 }
