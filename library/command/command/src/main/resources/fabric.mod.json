@@ -25,7 +25,7 @@
   ],
   "custom": {
     "loom:injected_interfaces": {
-      "net/minecraft/class_2170$class_5364": [
+      "net/minecraft/class_2170\u0024class_5364": [
         "org/quiltmc/qsl/command/api/QuiltCommandRegistrationEnvironment"
       ]
     },
