@@ -191,12 +191,12 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 
 	@Override
 	public void resetTags() {
-		// noop
+		throw new UnsupportedOperationException("DelayedRegistry does not support resetTags.");
 	}
 
 	@Override
 	public void bindTags(Map<TagKey<T>, List<Holder<T>>> tags) {
-		// noop
+		throw new UnsupportedOperationException("DelayedRegistry does not support bindTags.");
 	}
 
 	@Override
