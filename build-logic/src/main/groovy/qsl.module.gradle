@@ -160,6 +160,13 @@ java {
 	withSourcesJar()
 }
 
+sourcesJar {
+	dependsOn(generateQmj)
+}
+processResources {
+	dependsOn(generateQmj)
+}
+
 javadoc {
 	options {
 		source = String.valueOf(Versions.JAVA_VERSION)

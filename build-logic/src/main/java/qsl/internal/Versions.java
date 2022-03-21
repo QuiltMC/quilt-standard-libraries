@@ -32,7 +32,7 @@ public final class Versions {
 	/**
 	 * The version of Quilt Loader to use.
 	 */
-	public static final String LOADER_VERSION = "0.14.0";
+	public static final String LOADER_VERSION = "0.14.3";
 
 	/**
 	 * The target Java version.
