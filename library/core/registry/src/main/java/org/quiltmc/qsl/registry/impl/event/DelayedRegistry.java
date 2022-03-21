@@ -119,11 +119,6 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	}
 
 	@Override
-	public Set<RegistryKey<T>> method_42021() {
-		return this.wrapped.method_42021();
-	}
-
-	@Override
 	public Optional<Holder<T>> getRandom(Random random) {
 		return this.wrapped.getRandom(random);
 	}
