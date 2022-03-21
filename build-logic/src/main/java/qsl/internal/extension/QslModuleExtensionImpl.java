@@ -1,12 +1,5 @@
 package qsl.internal.extension;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import net.fabricmc.loom.api.LoomGradleExtensionAPI;
 import org.gradle.api.Action;
 import org.gradle.api.Named;
@@ -19,9 +12,10 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Nested;
 import qsl.internal.dependency.QslLibraryDependency;
 import qsl.internal.json.Environment;
-import qsl.internal.license.LicenseHeader;
-import qsl.internal.task.ApplyLicenseTask;
-import qsl.internal.task.CheckLicenseTask;
+
+import javax.inject.Inject;
+import java.io.Serial;
+import java.io.Serializable;
 
 public class QslModuleExtensionImpl extends QslExtension implements QslModuleExtension, Serializable {
 	@Serial
@@ -37,9 +31,8 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 	private final Property<Boolean> hasAccessWidener;
 	private final Property<Boolean> hasMixins;
 	private final NamedDomainObjectContainer<QslLibraryDependency> moduleDependencyDefinitions;
-	private final NamedDomainObjectContainer<EntrypointObjectHolder> entrypoints;
-
-
+	private final NamedDomainObjectContainer<NamedWriteOnlyList> entrypoints;
+	private final NamedDomainObjectContainer<NamedWriteOnlyList> injectedInterfaces;
 
 	@Inject
 	public QslModuleExtensionImpl(ObjectFactory factory, Project project) {
@@ -54,26 +47,15 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 		this.name.finalizeValueOnRead();
 		this.description = factory.property(String.class);
 		this.description.finalizeValueOnRead();
-		this.environment = factory.property(Environment.class);
-		this.environment.set(Environment.ANY);
+		this.environment = factory.property(Environment.class).convention(Environment.ANY);
 		this.environment.finalizeValueOnRead();
-		this.hasAccessWidener = factory.property(Boolean.class);
-		this.hasAccessWidener.set(false);
+		this.hasAccessWidener = factory.property(Boolean.class).convention(false);
 		this.hasAccessWidener.finalizeValueOnRead();
-		this.hasMixins = factory.property(Boolean.class);
-		hasMixins.set(true);
+		this.hasMixins = factory.property(Boolean.class).convention(true);
 		this.hasMixins.finalizeValueOnRead();
-		this.entrypoints = factory.domainObjectContainer(EntrypointObjectHolder.class, n -> new EntrypointObjectHolder(factory, n));
-		//this.moduleDependencies = new ArrayList<>();
-		LicenseHeader licenseHeader = new LicenseHeader(
-				LicenseHeader.Rule.fromFile(project.getRootProject().file("codeformat/FABRIC_MODIFIED_HEADER").toPath()),
-				LicenseHeader.Rule.fromFile(project.getRootProject().file("codeformat/HEADER").toPath())
-		);
-
+		this.entrypoints = factory.domainObjectContainer(NamedWriteOnlyList.class, n -> new NamedWriteOnlyList(factory, n));
 		this.moduleDependencyDefinitions = factory.domainObjectContainer(QslLibraryDependency.class, name -> new QslLibraryDependency(factory, name));
-
-		project.getTasks().register("checkLicenses", CheckLicenseTask.class, licenseHeader);
-		project.getTasks().register("applyLicenses", ApplyLicenseTask.class, licenseHeader);
+		this.injectedInterfaces = factory.domainObjectContainer(NamedWriteOnlyList.class, n -> new NamedWriteOnlyList(factory, n));
 		project.getTasks().findByName("check").dependsOn("checkLicenses");
 	}
 
@@ -132,14 +114,23 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 	}
 
 	@Nested
-	public NamedDomainObjectContainer<EntrypointObjectHolder> getEntrypoints() {
+	public NamedDomainObjectContainer<NamedWriteOnlyList> getEntrypoints() {
 		return entrypoints;
 	}
 
-	public void entrypoints(Action<NamedDomainObjectContainer<EntrypointObjectHolder>> configure) {
+	public void entrypoints(Action<NamedDomainObjectContainer<NamedWriteOnlyList>> configure) {
 		configure.execute(entrypoints);
 	}
 
+	@Override
+	public void injectedInterface(String minecraftClass, Action<NamedWriteOnlyList> action) {
+		action.execute(this.injectedInterfaces.create(minecraftClass));
+	}
+
+	@Nested
+	public NamedDomainObjectContainer<NamedWriteOnlyList> getInjectedInterfaces() {
+		return this.injectedInterfaces;
+	}
 
 	public void clientOnly() {
 		this.environment.set(Environment.CLIENT_ONLY);
@@ -154,11 +145,11 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 		return this.environment;
 	}
 
-	public static class EntrypointObjectHolder implements Named {
+	public static class NamedWriteOnlyList implements Named {
 		private final String name;
 		private final ListProperty<String> values;
 
-		public EntrypointObjectHolder(ObjectFactory factory, String name) {
+		public NamedWriteOnlyList(ObjectFactory factory, String name) {
 			this.values = factory.listProperty(String.class);
 			this.name = name;
 		}

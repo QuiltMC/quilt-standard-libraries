@@ -7,6 +7,10 @@ pluginManagement {
 
 		maven {
 			name "Quilt"
+			url "https://maven.quiltmc.org/repository/snapshot"
+		}
+		maven {
+			name "Quilt"
 			url "https://maven.quiltmc.org/repository/release"
 		}
 		maven {

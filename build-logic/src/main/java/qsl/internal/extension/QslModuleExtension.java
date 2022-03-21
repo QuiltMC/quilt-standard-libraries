@@ -51,7 +51,9 @@ public interface QslModuleExtension {
 	 * Configures the entrypoints for this module.
 	 * See the "Gradle Conventions" section of CONTRIBUTING.MD for more information
 	 */
-	void entrypoints(Action<NamedDomainObjectContainer<QslModuleExtensionImpl.EntrypointObjectHolder>> action);
+	void entrypoints(Action<NamedDomainObjectContainer<QslModuleExtensionImpl.NamedWriteOnlyList>> action);
+
+	void injectedInterface(String minecraftClass, Action<QslModuleExtensionImpl.NamedWriteOnlyList> action);
 
 	/**
 	 * Makes Loader only load this mod on the physical client.

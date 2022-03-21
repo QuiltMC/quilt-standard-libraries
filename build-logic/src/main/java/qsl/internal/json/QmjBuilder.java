@@ -57,7 +57,7 @@ public final class QmjBuilder {
 
 		if (!ext.getEntrypoints().isEmpty()) {
 			writer.name("entrypoints").beginObject(); // quilt_loader -> entrypoints
-			for (QslModuleExtensionImpl.EntrypointObjectHolder entrypoint : ext.getEntrypoints()) {
+			for (QslModuleExtensionImpl.NamedWriteOnlyList entrypoint : ext.getEntrypoints()) {
 				writer.name(entrypoint.getName());
 				writer.beginArray();
 				for (String clazz : entrypoint.getValues().get()) {
@@ -92,6 +92,25 @@ public final class QmjBuilder {
 				.name("badges").beginArray().value("library").endArray()
 				.endObject() // parent -> modmenu
 				.endObject(); // modmenu -> root
+
+		if (!ext.getInjectedInterfaces().isEmpty()) {
+			writer.name("quilt_loom").beginObject() // root object -> quilt_loom
+					.name("injected_interfaces").beginObject(); // quilt_loom -> injected_interfaces
+
+			for (QslModuleExtensionImpl.NamedWriteOnlyList injectedInterface : ext.getInjectedInterfaces()) {
+				writer.name(injectedInterface.getName());
+				writer.beginArray();
+
+				for (String clazz : injectedInterface.getValues().get()) {
+					writer.value(clazz);
+				}
+
+				writer.endArray();
+			}
+
+			writer.endObject() // injected_interfaces -> quilt_loom
+					.endObject(); // quilt_loom -> root object
+		}
 
 		writer.endObject(); // end root object
 		writer.flush();

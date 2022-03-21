@@ -1,0 +1,17 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Registry API"
+	moduleName = "registry"
+	id = "quilt_registry"
+	description = "Tools and events for manipulating and monitoring Minecraft's content registries."
+	version = "1.0.0"
+	library = "core"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+		}
+	}
+}
