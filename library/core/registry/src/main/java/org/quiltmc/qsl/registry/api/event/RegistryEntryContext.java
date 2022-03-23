@@ -50,7 +50,7 @@ public interface RegistryEntryContext<V> {
 	/**
 	 * Safely registers a new entry in the registry of this context.
 	 * <p>
-	 * Registration may be delayed with {@link RegistryMonitor#forAll(RegistryEvents.EntryAdded)}.
+	 * Registration may be delayed when called from {@link RegistryMonitor#forAll(RegistryEvents.EntryAdded)}.
 	 *
 	 * @param id    the identifier of the entry
 	 * @param value the value to register
