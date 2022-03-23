@@ -46,4 +46,18 @@ public interface RegistryEntryContext<V> {
 	 * {@return the entry's raw int identifier}
 	 */
 	int rawId();
+
+	/**
+	 * Safely registers a new entry in the registry of this context.
+	 * <p>
+	 * Registration may be delayed with {@link RegistryMonitor#forAll(RegistryEvents.EntryAdded)}.
+	 *
+	 * @param id    the identifier of the entry
+	 * @param value the value to register
+	 * @param <T>   the type of the value
+	 * @return the registered value
+	 */
+	default <T extends V> T register(Identifier id, T value) {
+		return Registry.register(this.registry(), id, value);
+	}
 }
