@@ -47,8 +47,8 @@ public interface RegistryMonitor<V> {
 	 * <p>
 	 * Entries must also match the monitor's filters.
 	 * <p>
- 	 * Registration to the registry being iterated must use the {@link RegistryEntryContext#registry()} method to get the registry instance inside the callback,
-	 * or alternatively use the {@link RegistryEntryContext#register(Identifier, Object)} method,
+ 	 * Registration to the registry being iterated must use the {@link RegistryEntryContext#register(Identifier, Object)} method inside the callback,
+	 * or alternatively use the {@link RegistryEntryContext#registry()} method to get the registry instance,
 	 * for example: {@code context.register(id, block);}.
  	 *
 	 * @param callback the callback to be invoked on entries
