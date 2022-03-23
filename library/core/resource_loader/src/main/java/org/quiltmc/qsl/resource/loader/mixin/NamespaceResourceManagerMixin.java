@@ -16,11 +16,11 @@
 
 package org.quiltmc.qsl.resource.loader.mixin;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -65,7 +65,7 @@ public class NamespaceResourceManagerMixin {
 					target = "Lnet/minecraft/resource/pack/ResourcePack;contains(Lnet/minecraft/resource/ResourceType;Lnet/minecraft/util/Identifier;)Z"
 			)
 	)
-	private boolean onResourceAdd(ResourcePack pack, ResourceType type, Identifier id) throws IOException {
+	private boolean onResourceAdd(ResourcePack pack, ResourceType type, Identifier id) {
 		if (pack instanceof GroupResourcePack groupResourcePack) {
 			ResourceLoaderImpl.appendResourcesFromGroup((NamespaceResourceManagerAccessor) this, id, groupResourcePack,
 					this.quilt$getAllResources$resources.get());
@@ -75,11 +75,39 @@ public class NamespaceResourceManagerMixin {
 		return pack.contains(type, id);
 	}
 
+	@Redirect(
+			method = "method_41258",
+			at = @At(
+					value = "INVOKE",
+					target = "Ljava/util/List;add(Ljava/lang/Object;)Z"
+			),
+			allow = 1
+	)
+	private boolean onResourceAdd(List<NamespaceResourceManager.class_7083> entries, Object entryObject) {
+		// Required due to type erasure of List.add
+		Class7083Accessor entry = (Class7083Accessor) entryObject;
+		ResourcePack pack = entry.getSource();
+
+		if (pack instanceof GroupResourcePack groupResourcePack) {
+			ResourceLoaderImpl.appendResourcesFromGroup((NamespaceResourceManagerAccessor) this, entry.getId(),
+					groupResourcePack, entries);
+			return true;
+		}
+
+		return entries.add((NamespaceResourceManager.class_7083) entry);
+	}
+
 	@Mixin(NamespaceResourceManager.class_7083.class)
 	public interface Class7083Accessor {
 		@Invoker("<init>")
 		static NamespaceResourceManager.class_7083 create(NamespaceResourceManager parent, Identifier id, Identifier metadataId, ResourcePack source) {
 			throw new IllegalStateException("Mixin injection failed.");
 		}
+
+		@Accessor("field_37284")
+		Identifier getId();
+
+		@Accessor("field_37286")
+		ResourcePack getSource();
 	}
 }

@@ -49,7 +49,7 @@ import org.quiltmc.qsl.resource.loader.impl.ModResourcePackProvider;
 @Mixin(CreateWorldScreen.class)
 public class CreateWorldScreenMixin {
 	@ModifyArg(
-			method = "method_40212",
+			method = "createFromExisting",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/screen/world/CreateWorldScreen;<init>(Lnet/minecraft/client/gui/screen/Screen;Lnet/minecraft/resource/pack/DataPackSettings;Lnet/minecraft/client/gui/screen/world/MoreOptionsDialog;)V"
