@@ -1,0 +1,16 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "interaction_events"
+	version = "1.0.0"
+	library = "entity"
+	coreDependencies([
+			"qsl_base"
+	])
+}
+
+loom {
+	accessWidenerPath = file("src/main/resources/quilt_interaction_events.accesswidener")
+}
