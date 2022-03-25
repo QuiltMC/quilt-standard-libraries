@@ -70,7 +70,7 @@ public interface QuiltClientCommandSource extends CommandSource {
 	 * @return the entity
 	 */
 	default Entity getEntity() {
-		return getPlayer();
+		return this.getPlayer();
 	}
 
 	/**
@@ -79,7 +79,7 @@ public interface QuiltClientCommandSource extends CommandSource {
 	 * @return the position
 	 */
 	default Vec3d getPosition() {
-		return getPlayer().getPos();
+		return this.getPlayer().getPos();
 	}
 
 	/**
@@ -88,7 +88,7 @@ public interface QuiltClientCommandSource extends CommandSource {
 	 * @return the rotation
 	 */
 	default Vec2f getRotation() {
-		return getPlayer().getRotationClient();
+		return this.getPlayer().getRotationClient();
 	}
 
 	/**
