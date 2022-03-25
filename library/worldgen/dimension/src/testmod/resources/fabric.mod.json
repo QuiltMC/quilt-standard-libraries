@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "qsl_dimension_testmod",
+  "name": "Quilt Dimension API Test Mod",
+  "version": "1.0.0",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "depends": {
+    "quilt_dimension": "*",
+    "quilt_lifecycle_events": "*"
+  },
+  "entrypoints": {
+    "init": [
+      "org.quiltmc.qsl.worldgen.dimension.QuiltDimensionTest"
+    ],
+    "events": [
+      "org.quiltmc.qsl.worldgen.dimension.QuiltDimensionTest"
+    ]
+  }
+}
