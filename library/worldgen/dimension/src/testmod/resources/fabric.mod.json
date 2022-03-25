@@ -6,6 +6,7 @@
   "environment": "*",
   "license": "Apache-2.0",
   "depends": {
+    "quilt_command": "*",
     "quilt_dimension": "*",
     "quilt_lifecycle_events": "*"
   },

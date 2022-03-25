@@ -12,5 +12,8 @@ qslModule {
 			api("resource_loader")
 			testmodOnly("lifecycle_events")
 		}
+		command {
+			testmodOnly("command")
+		}
 	}
 }
