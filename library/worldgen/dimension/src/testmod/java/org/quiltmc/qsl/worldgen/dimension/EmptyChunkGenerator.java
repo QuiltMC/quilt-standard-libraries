@@ -83,7 +83,7 @@ public class EmptyChunkGenerator extends ChunkGenerator {
 
 	@Override
 	public int getWorldHeight() {
-		return 0;
+		return 256;
 	}
 
 	@Override
