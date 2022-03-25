@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.quiltmc.qsl.worldgen.dimension.mixin;
+package org.quiltmc.qsl.worldgen.dimension.mixin.server;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.server.world.ServerWorld;
