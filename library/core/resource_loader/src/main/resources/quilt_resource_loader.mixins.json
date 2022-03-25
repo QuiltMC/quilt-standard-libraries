@@ -9,7 +9,7 @@
     "MinecraftServerMixin",
     "NamespaceResourceManagerAccessor",
     "NamespaceResourceManagerMixin",
-    "NamespaceResourceManagerMixin$Class7083Accessor",
+    "NamespaceResourceManagerMixin$ResourceEntryAccessor",
     "ReloadableResourceManagerMixin",
     "ServerReloadableResourcesMixin",
     "VanillaDataPackProviderMixin",

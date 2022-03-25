@@ -19,7 +19,7 @@ package org.quiltmc.qsl.command.api;
 
 import com.mojang.brigadier.CommandDispatcher;
 
-import net.minecraft.class_7157;
+import net.minecraft.command.CommandBuildContext;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -47,5 +47,5 @@ public interface CommandRegistrationCallback extends EventAwareListener {
 	 * @param buildContext the command build context
 	 * @param environment  the registration environment, allows registration of single-player-only commands or dedicated-only commands
 	 */
-	void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, class_7157 buildContext, CommandManager.RegistrationEnvironment environment);
+	void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, CommandBuildContext buildContext, CommandManager.RegistrationEnvironment environment);
 }

@@ -230,7 +230,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 
 	public static void appendResourcesFromGroup(NamespaceResourceManagerAccessor manager, Identifier id,
 	                                            GroupResourcePack groupResourcePack,
-	                                            List<NamespaceResourceManager.class_7083> resources) {
+	                                            List<NamespaceResourceManager.ResourceEntry> resources) {
 		var packs = groupResourcePack.getPacks(id.getNamespace());
 
 		if (packs == null) {
@@ -242,7 +242,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		for (var pack : packs) {
 			if (pack.contains(manager.getType(), id)) {
 				var casted = (NamespaceResourceManager) manager;
-				var resource = NamespaceResourceManagerMixin.Class7083Accessor.create(casted, id, metadataId, pack);
+				var resource = NamespaceResourceManagerMixin.ResourceEntryAccessor.create(casted, id, metadataId, pack);
 				resources.add(resource);
 			}
 		}

@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.class_7157;
+import net.minecraft.command.CommandBuildContext;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -46,7 +46,7 @@ public abstract class CommandManagerMixin {
 					remap = false
 			)
 	)
-	void addQuiltCommands(CommandManager.RegistrationEnvironment environment, class_7157 context, CallbackInfo ci) {
+	void addQuiltCommands(CommandManager.RegistrationEnvironment environment, CommandBuildContext context, CallbackInfo ci) {
 		CommandRegistrationCallback.EVENT.invoker().registerCommands(this.dispatcher, context, environment);
 	}
 

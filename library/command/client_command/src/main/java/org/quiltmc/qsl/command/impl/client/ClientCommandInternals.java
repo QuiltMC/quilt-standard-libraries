@@ -46,9 +46,9 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.minecraft.class_7157;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.command.CommandBuildContext;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.CommandManager;
@@ -199,12 +199,12 @@ public final class ClientCommandInternals {
 	 * @param buildContext the build context, may be {@code null} if not in-world
 	 * @param environment  the command registration environment
 	 */
-	public static void initialize(@Nullable class_7157 buildContext, CommandManager.RegistrationEnvironment environment) {
+	public static void initialize(@Nullable CommandBuildContext buildContext, CommandManager.RegistrationEnvironment environment) {
 		if (buildContext == null) {
 			currentDispatcher = DEFAULT_DISPATCHER;
 
 			if (environment == CommandManager.RegistrationEnvironment.ALL) {
-				registerCommands(new class_7157(DynamicRegistryManager.builtInCopy()), environment);
+				registerCommands(new CommandBuildContext(DynamicRegistryManager.builtInCopy()), environment);
 			}
 		} else {
 			currentDispatcher = new CommandDispatcher<>();
@@ -221,7 +221,7 @@ public final class ClientCommandInternals {
 	 *
 	 * @param buildContext the command build context
 	 */
-	private static void registerCommands(class_7157 buildContext, CommandManager.RegistrationEnvironment environment) {
+	private static void registerCommands(CommandBuildContext buildContext, CommandManager.RegistrationEnvironment environment) {
 		ClientCommandRegistrationCallback.EVENT.invoker().registerCommands(currentDispatcher, buildContext, environment);
 
 		if (!currentDispatcher.getRoot().getChildren().isEmpty()) {
@@ -308,7 +308,7 @@ public final class ClientCommandInternals {
 		return commands.size();
 	}
 
-	public static void updateCommands(@Nullable class_7157 buildContext,
+	public static void updateCommands(@Nullable CommandBuildContext buildContext,
 	                                  CommandDispatcher<QuiltClientCommandSource> serverCommandDispatcher,
 	                                  QuiltClientCommandSource source,
 	                                  CommandManager.RegistrationEnvironment environment) {

@@ -18,7 +18,7 @@ package org.quiltmc.qsl.command.client.test;
 
 import com.mojang.brigadier.CommandDispatcher;
 
-import net.minecraft.class_7157;
+import net.minecraft.command.CommandBuildContext;
 import net.minecraft.command.argument.BlockStateArgument;
 import net.minecraft.command.argument.BlockStateArgumentType;
 import net.minecraft.server.command.CommandManager;
@@ -31,7 +31,7 @@ import org.quiltmc.qsl.command.api.client.QuiltClientCommandSource;
 
 public class ClientCommandApiTest implements ClientCommandRegistrationCallback {
 	@Override
-	public void registerCommands(CommandDispatcher<QuiltClientCommandSource> dispatcher, class_7157 buildContext,
+	public void registerCommands(CommandDispatcher<QuiltClientCommandSource> dispatcher, CommandBuildContext buildContext,
 	                             CommandManager.RegistrationEnvironment environment) {
 		dispatcher.register(
 				ClientCommandManager.literal("test_client_command")

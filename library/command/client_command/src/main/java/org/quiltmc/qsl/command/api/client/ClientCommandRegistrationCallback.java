@@ -20,7 +20,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import net.minecraft.class_7157;
+import net.minecraft.command.CommandBuildContext;
 import net.minecraft.server.command.CommandManager;
 
 import org.quiltmc.qsl.base.api.event.Event;
@@ -50,5 +50,5 @@ public interface ClientCommandRegistrationCallback extends ClientEventAwareListe
 	 * @param buildContext the command build context
 	 * @param environment  the registration environment, allows registration of single-player-only commands or dedicated-only commands
 	 */
-	void registerCommands(CommandDispatcher<QuiltClientCommandSource> dispatcher, class_7157 buildContext, CommandManager.RegistrationEnvironment environment);
+	void registerCommands(CommandDispatcher<QuiltClientCommandSource> dispatcher, CommandBuildContext buildContext, CommandManager.RegistrationEnvironment environment);
 }

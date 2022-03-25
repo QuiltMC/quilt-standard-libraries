@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.util.Holder;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.SimpleRegistry;
 
 import org.quiltmc.qsl.registry.api.event.RegistryEntryContext;
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
@@ -54,11 +55,12 @@ public class RegistryMonitorImpl<V> implements RegistryMonitor<V> {
 	@Override
 	@SuppressWarnings("unchecked")
 	public void forAll(RegistryEvents.EntryAdded<V> callback) {
-		var context = new MutableRegistryEntryContextImpl<>(this.registry);
-
 		if (!(this.registry instanceof SimpleRegistryAccessor)) {
 			throw new UnsupportedOperationException("Registry " + this.registry + " is not supported!");
 		}
+
+		var delayed = new DelayedRegistry<>((SimpleRegistry<V>) this.registry);
+		var context = new MutableRegistryEntryContextImpl<>(delayed);
 
 		for (Map.Entry<Identifier, Holder.Reference<V>> entry : ((SimpleRegistryAccessor<V>) this.registry).getById().entrySet()) {
 			context.set(entry.getKey(), entry.getValue().value());
@@ -69,6 +71,8 @@ public class RegistryMonitorImpl<V> implements RegistryMonitor<V> {
 		}
 
 		this.forUpcoming(callback);
+
+		delayed.applyDelayed();
 	}
 
 	@Override

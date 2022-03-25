@@ -22,7 +22,7 @@ import static net.minecraft.server.command.CommandManager.literal;
 import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.loader.api.FabricLoader;
 
-import net.minecraft.class_7157;
+import net.minecraft.command.CommandBuildContext;
 import net.minecraft.command.argument.ItemStackArgument;
 import net.minecraft.command.argument.ItemStackArgumentType;
 import net.minecraft.server.command.CommandManager;
@@ -33,7 +33,7 @@ import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
 
 public class CommandApiTest implements CommandRegistrationCallback {
 	@Override
-	public void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, class_7157 context, CommandManager.RegistrationEnvironment environment) {
+	public void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, CommandBuildContext context, CommandManager.RegistrationEnvironment environment) {
 		if (environment.isDedicated()) {
 			dispatcher.register(literal("ping")
 					.executes(ctx -> {
