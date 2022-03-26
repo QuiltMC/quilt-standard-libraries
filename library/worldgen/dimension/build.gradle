@@ -10,6 +10,7 @@ qslModule {
 		core {
 			api("qsl_base")
 			testmodOnly("lifecycle_events")
+			testmodOnly("resource_loader")
 		}
 		command {
 			testmodOnly("command")
