@@ -13,5 +13,5 @@
   "piglin_safe": false,
   "height": 256,
   "min_y": 0,
-  "effects": "fabric_dimension:void"
+  "effects": "quilt_dimension:void"
 }
