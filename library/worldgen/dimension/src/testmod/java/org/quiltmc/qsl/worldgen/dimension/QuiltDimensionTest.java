@@ -62,7 +62,8 @@ public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents
 		ServerWorld overworld = server.getWorld(World.OVERWORLD);
 		ServerWorld targetWorld = server.getWorld(WORLD_KEY);
 
-		if (targetWorld == null) throw new AssertionError("Test world somehow doesn't exist.");
+		if (targetWorld == null)
+			throw new AssertionError("Test world somehow doesn't exist.");
 
 		CowEntity cow = EntityType.COW.create(overworld);
 
@@ -93,16 +94,16 @@ public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents
 			TeleportTarget target = new TeleportTarget(new Vec3d(0.5, 101, 0.5), Vec3d.ZERO, 0, 0);
 			QuiltDimensions.teleport(player, modWorld, target);
 
-			if (player.world != modWorld) {
+			if (player.world != modWorld)
 				throw new CommandException(new LiteralText("Teleportation failed!"));
-			}
+
 
 			modWorld.setBlockState(new BlockPos(0, 100, 0), Blocks.DIAMOND_BLOCK.getDefaultState());
 			modWorld.setBlockState(new BlockPos(0, 101, 0), Blocks.TORCH.getDefaultState());
 		} else {
 			TeleportTarget target = new TeleportTarget(new Vec3d(0, 100, 0), Vec3d.ZERO,
 					(float) Math.random() * 360 - 180, (float) Math.random() * 360 - 180);
-			QuiltDimensions.teleport(player, context.getSource().getServer().getWorld(World.OVERWORLD), target);
+			QuiltDimensions.teleport(player, context.getSource().getServer().getWorld(World.END), target);
 		}
 
 		return 1;

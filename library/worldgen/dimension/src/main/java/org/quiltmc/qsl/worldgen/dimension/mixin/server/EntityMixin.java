@@ -40,6 +40,11 @@ public class EntityMixin implements EntityAccess {
 	}
 
 	@Override
+	public TeleportTarget getTeleportTarget() {
+		return quilt$overriddenTeleportTarget;
+	}
+
+	@Override
 	public void setTeleportTarget(TeleportTarget target) {
 		quilt$overriddenTeleportTarget = target;
 	}

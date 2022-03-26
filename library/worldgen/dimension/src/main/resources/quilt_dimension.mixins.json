@@ -3,7 +3,8 @@
   "package": "org.quiltmc.qsl.worldgen.dimension.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "server.EntityMixin"
+    "server.EntityMixin",
+    "server.ServerPlayerEntityMixin"
   ],
   "client": [
   ],

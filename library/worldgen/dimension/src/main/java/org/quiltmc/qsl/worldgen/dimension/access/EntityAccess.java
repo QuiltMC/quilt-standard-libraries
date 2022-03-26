@@ -22,6 +22,7 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.Internal
 public interface EntityAccess {
 
+	TeleportTarget getTeleportTarget();
 	void setTeleportTarget(TeleportTarget target);
 
 }
