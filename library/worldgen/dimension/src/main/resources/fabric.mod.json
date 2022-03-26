@@ -17,7 +17,6 @@
   "depends": {
     "minecraft": ">=1.18.2",
     "quilt_base": "*",
-    "quilt_resource_loader": "*",
     "fabricloader": ">=0.12"
   },
   "description": "An API for managing custom dimensions in Minecraft",
