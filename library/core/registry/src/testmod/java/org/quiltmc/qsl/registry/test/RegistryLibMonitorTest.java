@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.registry.test;
 
+import static org.quiltmc.qsl.registry.test.RegistryLibEventsTest.register;
+
 import java.util.HashSet;
 
 import net.fabricmc.loader.api.ModContainer;
@@ -40,7 +42,7 @@ public class RegistryLibMonitorTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		Block blockA = Registry.register(Registry.BLOCK, TEST_BLOCK_A_ID, new Block(AbstractBlock.Settings.of(Material.STONE, MapColor.BLACK)));
+		Block blockA = register(TEST_BLOCK_A_ID, new Block(AbstractBlock.Settings.of(Material.STONE, MapColor.BLACK)));
 
 		var monitor = RegistryMonitor.create(Registry.BLOCK)
 				.filter(context -> context.id().getNamespace().equals("quilt_registry_test_monitors"));
@@ -59,7 +61,7 @@ public class RegistryLibMonitorTest implements ModInitializer {
 			upcomingSet.add(context.value());
 		});
 
-		Block blockB = Registry.register(Registry.BLOCK, TEST_BLOCK_B_ID, new Block(AbstractBlock.Settings.of(Material.STONE, MapColor.BLACK)));
+		Block blockB = register(TEST_BLOCK_B_ID, new Block(AbstractBlock.Settings.of(Material.STONE, MapColor.BLACK)));
 
 		if (!allSet.contains(blockA) || !allSet.contains(blockB)) {
 			throw new AssertionError("Entries " + allSet + " found by RegistryMonitor via forAll were not as expected");

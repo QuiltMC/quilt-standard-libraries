@@ -45,7 +45,10 @@ public interface RegistryMonitor<V> {
 	 * Registers the specified callback to be invoked for <b>every entry ever</b> to be registered in the monitor's registry.
 	 * <p>
 	 * Entries must also match the monitor's filters.
-	 *
+	 * <p>
+	 * Registration inside the callback must use the {@link RegistryEntryContext#registry()} method to get the registry instance,
+	 * for example: {@code Registry.register(context.registry(), id, block);}.
+ 	 *
 	 * @param callback the callback to be invoked on entries
 	 */
 	void forAll(RegistryEvents.EntryAdded<V> callback);
