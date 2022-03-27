@@ -91,10 +91,10 @@ loom {
 	}
 }
 afterEvaluate {
-	def generateQmj = tasks.create("generateQmjForIdea")
+	def generateQmjForIdea = tasks.create("generateQmjForIdea")
 	project.subprojects.each {
 		it.subprojects.each {
-			generateQmj.dependsOn it.tasks.getByName("generateQmj")
+			generateQmjForIdea.dependsOn it.tasks.getByName("generateQmj")
 		}
 	}
 
@@ -102,7 +102,7 @@ afterEvaluate {
 		project {
 			settings {
 				taskTriggers {
-					afterSync generateQmj
+					afterSync generateQmjForIdea
 				}
 			}
 		}
