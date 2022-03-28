@@ -33,7 +33,8 @@ public class QuiltDimensionsImpl {
 
 	@SuppressWarnings("unchecked")
 	public static <E extends Entity> E teleport(Entity entity, ServerWorld destinationWorld, TeleportTarget location) {
-		Preconditions.checkArgument(Thread.currentThread() == ((ServerWorld) entity.getWorld()).getServer().getThread(), "This method may only be called from the main server thread");
+		// 
+		Preconditions.checkArgument(Thread.currentThread() == entity.getServer().getThread(), "This method may only be called from the main server thread");
 
 		EntityAccess access = (EntityAccess) entity;
 		access.setTeleportTarget(location);

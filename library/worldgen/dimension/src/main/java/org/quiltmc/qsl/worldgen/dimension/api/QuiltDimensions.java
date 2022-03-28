@@ -55,7 +55,7 @@ public final class QuiltDimensions {
 	public static <E extends Entity> E teleport(@NotNull Entity entity, @NotNull ServerWorld destinationWorld, @Nullable TeleportTarget location) {
 		Preconditions.checkNotNull(entity, "entity may not be null");
 		Preconditions.checkNotNull(destinationWorld, "destinationWorld may not be null");
-		Preconditions.checkArgument(!destinationWorld.isClient, "This method may only be called from the server side");
+		Preconditions.checkArgument(!destinationWorld.isClient(), "This method may only be called from the server side");
 
 		return QuiltDimensionsImpl.teleport(entity, destinationWorld, location);
 	}

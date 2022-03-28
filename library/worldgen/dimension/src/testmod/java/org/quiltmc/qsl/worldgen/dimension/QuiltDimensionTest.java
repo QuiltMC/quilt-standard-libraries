@@ -62,22 +62,26 @@ public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents
 		ServerWorld overworld = server.getWorld(World.OVERWORLD);
 		ServerWorld targetWorld = server.getWorld(WORLD_KEY);
 
-		if (targetWorld == null)
+		if (targetWorld == null) {
 			throw new AssertionError("Test world somehow doesn't exist.");
+		}
 
 		CowEntity cow = EntityType.COW.create(overworld);
 
-		if (!cow.world.getRegistryKey().equals(World.OVERWORLD))
+		if (!cow.world.getRegistryKey().equals(World.OVERWORLD)) {
 			throw new AssertionError("Cow was spawned but isn't in the overworld.");
+		}
 
 		TeleportTarget target = new TeleportTarget(Vec3d.ZERO, new Vec3d(1, 1, 1), 45f, 60f);
 		CowEntity teleportedEntity = QuiltDimensions.teleport(cow, targetWorld, target);
 
-		if (teleportedEntity == null || !teleportedEntity.world.getRegistryKey().equals(WORLD_KEY))
+		if (teleportedEntity == null || !teleportedEntity.world.getRegistryKey().equals(WORLD_KEY)) {
 			throw new AssertionError("Cow was not teleported correctly.");
+		}
 
-		if (!teleportedEntity.getPos().equals(target.position))
+		if (!teleportedEntity.getPos().equals(target.position)) {
 			throw new AssertionError("Cow was moved to different world, but not to the correct location.");
+		}
 	}
 
 	@Override
@@ -94,8 +98,9 @@ public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents
 			TeleportTarget target = new TeleportTarget(new Vec3d(0.5, 101, 0.5), Vec3d.ZERO, 0, 0);
 			QuiltDimensions.teleport(player, modWorld, target);
 
-			if (player.world != modWorld)
+			if (player.world != modWorld) {
 				throw new CommandException(new LiteralText("Teleportation failed!"));
+			}
 
 
 			modWorld.setBlockState(new BlockPos(0, 100, 0), Blocks.DIAMOND_BLOCK.getDefaultState());

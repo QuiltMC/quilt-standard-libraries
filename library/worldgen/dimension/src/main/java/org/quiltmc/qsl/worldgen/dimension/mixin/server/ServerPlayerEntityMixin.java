@@ -31,8 +31,9 @@ public class ServerPlayerEntityMixin {
 	@Inject(method = "createEndSpawnPlatform", at = @At("HEAD"), cancellable = true, allow = 1)
 	public void createEndSpawnPlatform(ServerWorld world, BlockPos centerPos, CallbackInfo ci) {
 		// Don't generate the platform below the players' feet if they are being teleported to a custom location
-		if (((EntityAccess) this).getTeleportTarget() != null)
+		if (((EntityAccess) this).getTeleportTarget() != null) {
 			ci.cancel();
+		}
 	}
 
 
