@@ -39,7 +39,6 @@ import net.minecraft.client.option.KeyBind;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 
-import org.quiltmc.qsl.key.binds.impl.chords.ChordedKeyBind;
 import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
 import org.quiltmc.qsl.key.binds.impl.config.QuiltKeyBindsConfigManager;
 
@@ -119,7 +118,7 @@ public abstract class KeyBindsScreenMixin extends GameOptionsScreen {
 					map.put(quilt$focusedProtoChord.get(i), false);
 				}
 
-				((ChordedKeyBind) this.focusedKey).setBoundChord(new KeyChord(map));
+				this.focusedKey.setBoundChord(new KeyChord(map));
 				QuiltKeyBindsConfigManager.populateConfig();
 				QuiltKeyBindsConfigManager.saveModConfig();
 			}
@@ -146,7 +145,7 @@ public abstract class KeyBindsScreenMixin extends GameOptionsScreen {
 					map.put(quilt$focusedProtoChord.get(i), false);
 				}
 
-				((ChordedKeyBind) this.focusedKey).setBoundChord(new KeyChord(map));
+				this.focusedKey.setBoundChord(new KeyChord(map));
 				QuiltKeyBindsConfigManager.populateConfig();
 				QuiltKeyBindsConfigManager.saveModConfig();
 			}

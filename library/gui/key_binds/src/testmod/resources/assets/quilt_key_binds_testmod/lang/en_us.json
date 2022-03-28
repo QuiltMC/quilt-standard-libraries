@@ -3,5 +3,6 @@
     "key.qsl.disable_key_bind": "Disable Key Bind",
     "key.qsl.enable_key_bind": "Enable Key Bind",
     "key.qsl.conflict_test": "Conflict Test",
-    "key.qsl.disabled_conflict_test": "Disabled Conflict Test"
+    "key.qsl.disabled_conflict_test": "Disabled Conflict Test",
+    "key.qsl.clap": "Clap"
 }
