@@ -14,9 +14,24 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.key.binds.impl.chords;
+package org.quiltmc.qsl.key.binds.api;
+
+import com.mojang.blaze3d.platform.InputUtil;
+
+import net.minecraft.client.option.KeyBind;
+
+import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
 
 public interface ChordedKeyBind {
-	KeyChord getBoundChord();
-	void setBoundChord(KeyChord chord);
+	default KeyChord getBoundChord() {
+		System.out.println("This should never happen");
+		return null;
+	}
+
+	default void setBoundChord(KeyChord chord) { }
+
+	// TODO - This is a temporary measure until CHASM comes. Replace it with a proper constructor or builder
+	default KeyBind withChord(InputUtil.Key... keys) {
+		return null;
+	}
 }

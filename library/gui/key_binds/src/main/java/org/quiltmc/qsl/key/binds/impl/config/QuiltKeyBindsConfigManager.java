@@ -43,7 +43,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBind;
 
 import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
-import org.quiltmc.qsl.key.binds.impl.chords.ChordedKeyBind;
 import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
 
 // TODO - Understand this mess that you have written down
@@ -99,7 +98,7 @@ public class QuiltKeyBindsConfigManager {
 						map.put(InputUtil.fromTranslationKey(string), false);
 					}
 
-					((ChordedKeyBind) key).setBoundChord(new KeyChord(map));
+					key.setBoundChord(new KeyChord(map));
 				}
 			}
 		};
@@ -124,9 +123,9 @@ public class QuiltKeyBindsConfigManager {
 		Map<String, List<String>> keyBindMap = new HashMap<>();
 
 		KeyBindRegistryImpl.getAllKeyBinds(true).forEach((keyBind, disabled) -> {
-			if (((ChordedKeyBind) keyBind).getBoundChord() != null) {
+			if (keyBind.getBoundChord() != null) {
 				List<String> list = new ArrayList<>();
-				for (InputUtil.Key key : ((ChordedKeyBind) keyBind).getBoundChord().keys.keySet()) {
+				for (InputUtil.Key key : keyBind.getBoundChord().keys.keySet()) {
 					list.add(key.getTranslationKey());
 				}
 

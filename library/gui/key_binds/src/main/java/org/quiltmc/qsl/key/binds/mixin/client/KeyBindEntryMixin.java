@@ -47,7 +47,6 @@ import net.minecraft.util.Formatting;
 import org.quiltmc.qsl.key.binds.api.KeyBindRegistry;
 import org.quiltmc.qsl.key.binds.impl.KeyBindTooltipHolder;
 import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
-import org.quiltmc.qsl.key.binds.impl.chords.ChordedKeyBind;
 import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
 
 @Environment(EnvType.CLIENT)
@@ -94,7 +93,7 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 	)
 	private void collectConflictTooltips(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci, boolean bl, boolean bl2) {
 		InputUtil.Key boundKey = KeyBindRegistry.getBoundKey(this.key);
-		KeyChord boundChord = ((ChordedKeyBind) this.key).getBoundChord();
+		KeyChord boundChord = this.key.getBoundChord();
 		List<InputUtil.Key> boundProtoChord;
 
 		if (boundChord == null) {
@@ -146,9 +145,9 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 		int targetWidth = bl || bl2 ? 50 - 10 : 75 - 10;
 		if (client.textRenderer.getWidth(text) > targetWidth) {
 			String protoText = text.getString();
-			if (((ChordedKeyBind) this.key).getBoundChord() != null) {
+			if (this.key.getBoundChord() != null) {
 				protoText = "";
-				KeyChord chord = ((ChordedKeyBind) this.key).getBoundChord();
+				KeyChord chord = this.key.getBoundChord();
 
 				for (InputUtil.Key key : chord.keys.keySet()) {
 					if (!protoText.isEmpty()) {

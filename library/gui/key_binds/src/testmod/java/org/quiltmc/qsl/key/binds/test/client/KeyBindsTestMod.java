@@ -16,12 +16,16 @@
 
 package org.quiltmc.qsl.key.binds.test.client;
 
+import com.mojang.blaze3d.platform.InputUtil;
 import org.lwjgl.glfw.GLFW;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBind;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.LiteralText;
+import net.minecraft.util.Hand;
 
 import org.quiltmc.qsl.key.binds.api.KeyBindRegistry;
 import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
@@ -31,50 +35,54 @@ public class KeyBindsTestMod implements ClientTickEvents.Start {
 	public static final String KEY_CATEGORY = "key.qsl.category";
 
 	// A conflicting key test
-	public static final KeyBind CONFLICT_TEST_KEY_BIND = KeyBindRegistry.registerKeyBind(
+	public static final KeyBind CONFLICT_TEST_KEY = KeyBindRegistry.registerKeyBind(
 		new KeyBind("key.qsl.conflict_test", GLFW.GLFW_KEY_H, KEY_CATEGORY)
 	);
 
-	public static final KeyBind DISABLE_KEY_BIND = KeyBindRegistry.registerKeyBind(
+	public static final KeyBind DISABLE_KEY_BIND_KEY = KeyBindRegistry.registerKeyBind(
 		new KeyBind("key.qsl.disable_key_bind", GLFW.GLFW_KEY_H, KEY_CATEGORY), true
 	);
 
-	public static final KeyBind ENABLE_KEY_BIND = KeyBindRegistry.registerKeyBind(
+	public static final KeyBind ENABLE_KEY_BIND_KEY = KeyBindRegistry.registerKeyBind(
 		new KeyBind("key.qsl.enable_key_bind", GLFW.GLFW_KEY_I, KEY_CATEGORY), true
 	);
 
-	public static final KeyBind DISABLED_CONFLICT_TEST_KEY_BIND = KeyBindRegistry.registerKeyBind(
+	public static final KeyBind DISABLED_CONFLICT_TEST_KEY = KeyBindRegistry.registerKeyBind(
 		new KeyBind("key.qsl.disabled_conflict_test", GLFW.GLFW_KEY_H, KEY_CATEGORY), false
+	);
+
+	public static final KeyBind CLAP_KEY = KeyBindRegistry.registerKeyBind(
+		new KeyBind("key.qsl.clap", InputUtil.UNKNOWN_KEY.getKeyCode(), KEY_CATEGORY).withChord(
+			InputUtil.Type.MOUSE.createFromKeyCode(GLFW.GLFW_MOUSE_BUTTON_LEFT),
+			InputUtil.Type.MOUSE.createFromKeyCode(GLFW.GLFW_MOUSE_BUTTON_RIGHT)
+		)
 	);
 
 	@Override
 	public void startClientTick(MinecraftClient client) {
-		if (DISABLE_KEY_BIND.isPressed()) {
-			if (client.player != null) {
-				client.player.sendMessage(new LiteralText("The key has disappeared! Bye bye, key!"), true);
-			}
+		if (client.player == null) return;
 
-			KeyBindRegistry.setEnabled(DISABLE_KEY_BIND, false);
+		if (DISABLE_KEY_BIND_KEY.isPressed()) {
+			client.player.sendMessage(new LiteralText("The key has disappeared! Bye bye, key!"), true);
+			KeyBindRegistry.setEnabled(DISABLE_KEY_BIND_KEY, false);
 		}
 
-		if (ENABLE_KEY_BIND.isPressed()) {
-			if (client.player != null) {
-				client.player.sendMessage(new LiteralText("The key is back!"), true);
-			}
-
-			KeyBindRegistry.setEnabled(DISABLE_KEY_BIND, true);
+		if (ENABLE_KEY_BIND_KEY.isPressed()) {
+			client.player.sendMessage(new LiteralText("The key is back!"), true);
+			KeyBindRegistry.setEnabled(DISABLE_KEY_BIND_KEY, true);
 		}
 
-		if (CONFLICT_TEST_KEY_BIND.isPressed()) {
-			if (client.player != null) {
-				client.player.sendMessage(new LiteralText("This is the conflict key being pressed"), false);
-			}
+		if (CONFLICT_TEST_KEY.isPressed()) {
+			client.player.sendMessage(new LiteralText("This is the conflict key being pressed"), false);
 		}
 
-		if (DISABLED_CONFLICT_TEST_KEY_BIND.isPressed()) {
-			if (client.player != null) {
-				client.player.sendMessage(new LiteralText("I'm not supposed to do things! Why am I enabled?"), false);
-			}
+		if (DISABLED_CONFLICT_TEST_KEY.isPressed()) {
+			client.player.sendMessage(new LiteralText("I'm not supposed to do things! Why am I enabled?"), false);
+		}
+
+		if (CLAP_KEY.wasPressed()) {
+			client.player.sendMessage(new LiteralText("*clap*"), true);
+			client.player.playSound(SoundEvents.ENTITY_GENERIC_SMALL_FALL, 1.5F, 1.5F);
 		}
 	}
 }

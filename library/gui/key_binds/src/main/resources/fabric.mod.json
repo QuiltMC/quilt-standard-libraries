@@ -15,11 +15,34 @@
     "QuiltMC"
   ],
   "depends": {
-    "fabricloader": ">=0.12",
-    "minecraft": ">=1.18.2-alpha.22.3.a"
+    "minecraft": ">=1.18.2",
+    "quilt_base": "*",
+    "quilt_resource_loader": "*",
+    "fabricloader": ">=0.12"
   },
   "description": "Key binds registration and utilities.",
   "mixins": [
     "quilt_key_binds.mixins.json"
-  ]
+  ],
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_304": [
+        "org/quiltmc/qsl/key/binds/api/ChordedKeyBind"
+      ]
+    },
+    "modmenu": {
+      "badges": [
+        "library"
+      ],
+      "parent": {
+        "id": "qsl",
+        "name": "Quilt Standard Libraries",
+        "description": "A set of libraries to assist in making Quilt mods.",
+        "icon": "assets/quilt_item_group/icon.png",
+        "badges": [
+          "library"
+        ]
+      }
+    }
+  }
 }

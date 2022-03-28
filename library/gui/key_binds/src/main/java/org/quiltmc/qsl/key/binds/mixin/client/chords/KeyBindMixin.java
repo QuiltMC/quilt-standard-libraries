@@ -18,8 +18,10 @@ package org.quiltmc.qsl.key.binds.mixin.client.chords;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.SortedMap;
 
 import com.mojang.blaze3d.platform.InputUtil;
+import com.mojang.blaze3d.platform.InputUtil.Key;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -29,6 +31,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import it.unimi.dsi.fastutil.objects.Object2BooleanAVLTreeMap;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 
 import net.minecraft.client.MinecraftClient;
@@ -37,7 +40,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
-import org.quiltmc.qsl.key.binds.impl.chords.ChordedKeyBind;
+import org.quiltmc.qsl.key.binds.api.ChordedKeyBind;
 import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
 
 @Mixin(KeyBind.class)
@@ -152,8 +155,8 @@ public class KeyBindMixin implements ChordedKeyBind {
 	@Inject(at = @At("HEAD"), method = "keyEquals", cancellable = true)
 	private void keyOrChordEquals(KeyBind other, CallbackInfoReturnable<Boolean> cir) {
 		if (this.quilt$boundChord != null) {
-			if (((ChordedKeyBind) other).getBoundChord() != null) {
-				cir.setReturnValue(this.quilt$boundChord.equals(((ChordedKeyBind) other).getBoundChord()));
+			if (other.getBoundChord() != null) {
+				cir.setReturnValue(this.quilt$boundChord.equals(other.getBoundChord()));
 			} else {
 				cir.setReturnValue(false);
 			}
@@ -197,7 +200,25 @@ public class KeyBindMixin implements ChordedKeyBind {
 
 	@Override
 	public void setBoundChord(KeyChord chord) {
-		this.quilt$boundChord = chord;
 		this.boundKey = InputUtil.UNKNOWN_KEY;
+		this.quilt$boundChord = chord;
+	}
+
+	@Override
+	public KeyBind withChord(InputUtil.Key... keys) {
+		// TODO - Perhaps have cases for length 0 and 1?
+		if (keys.length > 1) {
+			SortedMap<InputUtil.Key, Boolean> protoChord = new Object2BooleanAVLTreeMap<>();
+			for (Key key : keys) {
+				protoChord.put(key, false);
+			}
+
+			KeyChord chord = new KeyChord(protoChord);
+			this.setBoundChord(chord);
+			this.quilt$defaultChord = chord;
+			KeyBind.updateBoundKeys();
+		}
+
+		return (KeyBind) (Object) this;
 	}
 }
