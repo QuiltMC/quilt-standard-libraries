@@ -1,0 +1,20 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "biome"
+	version = "1.0.0"
+	library = "worldgen"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+			testmodOnly("resource_loader")
+			testmodOnly("lifecycle_events")
+		}
+	}
+}
+
+loom {
+	accessWidenerPath = file("src/main/resources/quilt_biome.accesswidener")
+}
