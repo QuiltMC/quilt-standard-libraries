@@ -21,7 +21,6 @@ import java.util.function.Predicate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.util.Holder;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
 
@@ -51,7 +50,6 @@ public class RegistryMonitorImpl<V> implements RegistryMonitor<V> {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void forAll(RegistryEvents.EntryAdded<V> callback) {
 		if (!(this.registry instanceof SimpleRegistryAccessor)) {
 			throw new UnsupportedOperationException("Registry " + this.registry + " is not supported!");
@@ -60,13 +58,13 @@ public class RegistryMonitorImpl<V> implements RegistryMonitor<V> {
 		var delayed = new DelayedRegistry<>((SimpleRegistry<V>) this.registry);
 		var context = new MutableRegistryEntryContextImpl<>(delayed);
 
-		for (Holder.Reference<V> entry : ((SimpleRegistryAccessor<V>) this.registry).getRawIdToEntry()) {
+		this.registry.holders().forEach(entry -> {
 			context.set(entry.getRegistryKey().getValue(), entry.value());
 
 			if (this.testFilter(context)) {
 				callback.onAdded(context);
 			}
-		}
+		});
 
 		this.forUpcoming(callback);
 
