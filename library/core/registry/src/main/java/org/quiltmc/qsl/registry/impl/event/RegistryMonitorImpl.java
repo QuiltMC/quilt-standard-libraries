@@ -16,14 +16,12 @@
 
 package org.quiltmc.qsl.registry.impl.event;
 
-import java.util.Map;
 import java.util.function.Predicate;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.util.Holder;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
 
@@ -62,8 +60,8 @@ public class RegistryMonitorImpl<V> implements RegistryMonitor<V> {
 		var delayed = new DelayedRegistry<>((SimpleRegistry<V>) this.registry);
 		var context = new MutableRegistryEntryContextImpl<>(delayed);
 
-		for (Map.Entry<Identifier, Holder.Reference<V>> entry : ((SimpleRegistryAccessor<V>) this.registry).getById().entrySet()) {
-			context.set(entry.getKey(), entry.getValue().value());
+		for (Holder.Reference<V> entry : ((SimpleRegistryAccessor<V>) this.registry).getRawIdToEntry()) {
+			context.set(entry.getRegistryKey().getValue(), entry.value());
 
 			if (this.testFilter(context)) {
 				callback.onAdded(context);
