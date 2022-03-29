@@ -96,6 +96,7 @@ public final class BiomeSelectors {
 	/**
 	 * Returns a biome selector that will match all biomes in the given tag.
 	 *
+	 * @see net.minecraft.tag.TagKey
 	 */
 	public static Predicate<BiomeSelectionContext> tag(TagKey<Biome> tag) {
 		return context -> context.hasTag(tag);

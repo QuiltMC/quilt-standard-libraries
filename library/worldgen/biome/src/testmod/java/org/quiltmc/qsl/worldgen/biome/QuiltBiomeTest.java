@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.worldgen.test.biome;
+package org.quiltmc.qsl.worldgen.biome;
 
 
 import net.fabricmc.loader.api.ModContainer;
@@ -84,7 +84,7 @@ public class QuiltBiomeTest implements ModInitializer {
 		PlacedFeature PLACED_COMMON_DESERT_WELL = new PlacedFeature(featureEntry, List.of(InSquarePlacementModifier.getInstance(), PlacedFeatureUtil.MOTION_BLOCKING_HEIGHTMAP, BiomePlacementModifier.getInstance()));
 		Registry.register(BuiltinRegistries.PLACED_FEATURE, new Identifier(MOD_ID, "fab_desert_well"), PLACED_COMMON_DESERT_WELL);
 
-		BiomeModifications.create(new Identifier("quilt_biome:test_mod"))
+		BiomeModifications.create(new Identifier("quilt:testmod"))
 				.add(ModificationPhase.ADDITIONS,
 						BiomeSelectors.foundInOverworld(),
 						modification -> modification.getWeather().setDownfall(100))

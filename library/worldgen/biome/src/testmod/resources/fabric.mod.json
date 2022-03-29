@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
-  "id": "qsl_biome_testmod",
+  "id": "quilt_biome_testmod",
   "name": "Quilt Biome API Test Mod",
   "version": "1.0.0",
   "environment": "*",
   "license": "Apache-2.0",
   "depends": {
     "quilt_command": "*",
-    "quilt_dimension": "*",
+    "quilt_biome": "*",
     "quilt_lifecycle_events": "*",
     "quilt_resource_loader": "*"
   },
   "entrypoints": {
     "init": [
-      "org.quiltmc.qsl.worldgen.test.biome.QuiltBiomeTest"
+      "org.quiltmc.qsl.worldgen.biome.QuiltBiomeTest"
     ],
     "events": [
-      "org.quiltmc.qsl.worldgen.test.biome.QuiltBiomeTest"
+      "org.quiltmc.qsl.worldgen.biome.QuiltBiomeTest"
     ]
   }
 }
