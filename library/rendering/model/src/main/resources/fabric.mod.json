@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "id": "quilt_model",
+  "name": "Quilt Model API",
+  "version": "${version}",
+  "environment": "client",
+  "license": "Apache-2.0",
+  "icon": "assets/quilt_model/icon.png",
+  "contact": {
+    "homepage": "https://quiltmc.org",
+    "issues": "https://github.com/QuiltMC/quilt-standard-libraries/issues",
+    "sources": "https://github.com/QuiltMC/quilt-standard-libraries"
+  },
+  "authors": [
+    "QuiltMC"
+  ],
+  "depends": {
+    "fabricloader": ">=0.12",
+    "minecraft": ">=1.18.2",
+    "quilt_base": "*"
+  },
+  "description": "Hooks for models and model loading.",
+  "mixins": [
+    "quilt_model.mixins.json"
+  ],
+  "accessWidener": "quilt_model.accesswidener",
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_1092": [
+        "org/quiltmc/qsl/model/api/QuiltBakedModelManager"
+      ]
+    },
+    "modmenu": {
+      "badges": [
+        "library"
+      ],
+      "parent": {
+        "id": "qsl",
+        "name": "Quilt Standard Libraries",
+        "description": "A set of libraries to assist in making Quilt mods.",
+        "icon": "assets/quilt_model/icon.png",
+        "badges": [
+          "library"
+        ]
+      }
+    }
+  }
+}

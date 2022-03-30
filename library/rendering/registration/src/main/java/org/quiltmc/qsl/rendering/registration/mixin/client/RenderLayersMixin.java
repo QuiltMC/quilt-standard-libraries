@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.block.extensions.mixin.client;
+package org.quiltmc.qsl.rendering.registration.mixin.client;
 
 import java.util.Map;
 
@@ -27,7 +27,7 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderLayers;
 import net.minecraft.fluid.Fluid;
 
-import org.quiltmc.qsl.block.extensions.impl.client.BlockRenderLayerMapImpl;
+import org.quiltmc.qsl.rendering.registration.impl.client.BlockRenderLayerMapImpl;
 
 @Mixin(RenderLayers.class)
 public abstract class RenderLayersMixin {

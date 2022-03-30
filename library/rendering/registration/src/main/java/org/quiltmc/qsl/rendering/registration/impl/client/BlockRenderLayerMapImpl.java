@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.block.extensions.impl.client;
+package org.quiltmc.qsl.rendering.registration.impl.client;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,14 +31,14 @@ import net.minecraft.fluid.Fluid;
 @ApiStatus.Internal
 @Environment(EnvType.CLIENT)
 public final class BlockRenderLayerMapImpl {
-	private BlockRenderLayerMapImpl() {
-	}
-
 	private static Map<Block, RenderLayer> blockMap = new HashMap<>();
 	private static Map<Fluid, RenderLayer> fluidMap = new HashMap<>();
 
 	private static BiConsumer<Block, RenderLayer> blockHandler = blockMap::put;
 	private static BiConsumer<Fluid, RenderLayer> fluidHandler = fluidMap::put;
+
+	private BlockRenderLayerMapImpl() {
+	}
 
 	public static void initialize(BiConsumer<Block, RenderLayer> blockHandlerIn, BiConsumer<Fluid, RenderLayer> fluidHandlerIn) {
 		// add pre-existing render layer assignments

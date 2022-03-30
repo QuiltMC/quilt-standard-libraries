@@ -1,0 +1,18 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "rendering_registration"
+	version = "1.0.0"
+	library = "rendering"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+		}
+	}
+}
+
+loom {
+	accessWidenerPath = file("src/main/resources/quilt_rendering_registration.accesswidener")
+}

@@ -1,0 +1,8 @@
+plugins {
+	id("qsl.library")
+}
+
+qslLibrary {
+	libraryName = "rendering"
+	version = "1.0.0"
+}

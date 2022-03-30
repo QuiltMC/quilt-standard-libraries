@@ -11,10 +11,7 @@
   },
   "entrypoints": {
     "init": [
-      "org.quiltmc.qsl.block.extensions.test.Initializer"
-    ],
-    "client_init": [
-      "org.quiltmc.qsl.block.extensions.test.ClientInitializer"
+      "org.quiltmc.qsl.block.extensions.test.BlockExtensionsTestMod"
     ]
   }
 }

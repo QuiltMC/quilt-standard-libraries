@@ -61,7 +61,7 @@ public class QslLibraryDependency implements Named {
 		API(JavaPlugin.API_CONFIGURATION_NAME),
 		IMPLEMENTATION(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME),
 		TESTMOD("testmodImplementation"),
-		COMPILE_ONLY("compileOnly");
+		COMPILE_ONLY(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME);
 
 		private final String configurationName;
 		ConfigurationType(String configurationName) {

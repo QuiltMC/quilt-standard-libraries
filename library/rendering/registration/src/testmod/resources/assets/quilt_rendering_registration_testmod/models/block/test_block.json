@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "quilt_rendering_registration_testmod:block/test_block"
+  }
+}
