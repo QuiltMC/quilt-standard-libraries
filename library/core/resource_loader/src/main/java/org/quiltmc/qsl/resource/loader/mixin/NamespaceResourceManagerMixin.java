@@ -18,6 +18,7 @@ package org.quiltmc.qsl.resource.loader.mixin;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -72,5 +73,18 @@ public class NamespaceResourceManagerMixin {
 		}
 
 		return pack.contains(type, id);
+	}
+
+	@Inject(method = "streamResourcePacks", at = @At("RETURN"), cancellable = true)
+	private void onStreamResourcePacks(CallbackInfoReturnable<Stream<ResourcePack>> cir) {
+		cir.setReturnValue(cir.getReturnValue()
+				.flatMap(pack -> {
+					if (pack instanceof GroupResourcePack grouped) {
+						return grouped.streamPacks();
+					} else {
+						return Stream.of(pack);
+					}
+				})
+		);
 	}
 }
