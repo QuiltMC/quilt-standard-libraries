@@ -33,11 +33,11 @@ public class MultiPackResourceManagerMixin {
 	@Inject(method = "streamResourcePacks", at = @At("RETURN"), cancellable = true)
 	private void onStreamResourcePacks(CallbackInfoReturnable<Stream<ResourcePack>> cir) {
 		cir.setReturnValue(cir.getReturnValue()
-				.flatMap(pack -> {
+				.mapMulti((pack, consumer) -> {
 					if (pack instanceof GroupResourcePack grouped) {
-						return grouped.streamPacks();
+						grouped.streamPacks().forEach(consumer);
 					} else {
-						return Stream.of(pack);
+						consumer.accept(pack);
 					}
 				})
 		);

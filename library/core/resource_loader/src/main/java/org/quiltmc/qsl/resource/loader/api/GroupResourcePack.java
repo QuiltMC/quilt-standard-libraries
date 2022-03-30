@@ -87,12 +87,11 @@ public abstract class GroupResourcePack implements ResourcePack {
 	 * @return the flattened stream of resource packs
 	 */
 	public Stream<? extends ResourcePack> streamPacks() {
-		return this.packs.stream().flatMap(pack -> {
+		return this.packs.stream().mapMulti((pack, consumer) -> {
 			if (pack instanceof GroupResourcePack grouped) {
-				return grouped.streamPacks();
+				grouped.streamPacks().forEach(consumer);
 			} else {
-				// flatMap doesn't let us return pack, which is quite bad
-				return Stream.of(pack);
+				consumer.accept(pack);
 			}
 		});
 	}
