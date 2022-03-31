@@ -88,7 +88,7 @@ public final class QmjBuilder {
 				.name("parent").beginObject() // modmenu -> parent
 				.name("id").value("qsl")
 				.name("name").value("Quilt Standard Libraries")
-				.name("description").value("A set of libraries to assist in making Quilt mods")
+				.name("description").value("A set of libraries to assist in making Quilt mods.")
 				.name("badges").beginArray().value("library").endArray()
 				.endObject() // parent -> modmenu
 				.endObject(); // modmenu -> root
