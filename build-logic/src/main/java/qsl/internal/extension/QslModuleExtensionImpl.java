@@ -1,26 +1,35 @@
 package qsl.internal.extension;
 
+import groovy.util.Node;
 import net.fabricmc.loom.api.LoomGradleExtensionAPI;
 import org.gradle.api.Action;
 import org.gradle.api.Named;
 import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.Project;
+import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.api.publish.PublicationContainer;
+import org.gradle.api.publish.PublishingExtension;
+import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Nested;
+import qsl.internal.GroovyXml;
 import qsl.internal.dependency.QslLibraryDependency;
 import qsl.internal.json.Environment;
 
 import javax.inject.Inject;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class QslModuleExtensionImpl extends QslExtension implements QslModuleExtension, Serializable {
 	@Serial
-	// increment when changing this class to properly invalidate the generateQmj task
-	private static final long serialVersionUID = 3L;
+	private static final long serialVersionUID = 1L;
 	// public properties
 	private final Property<String> name;
 	private final Property<String> library;
@@ -143,6 +152,39 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 	@Input
 	public Property<Environment> getEnvironment() {
 		return this.environment;
+	}
+
+	public void setupModuleDependencies() {
+		List<Dependency> deps = new ArrayList<>();
+
+		for (QslLibraryDependency library : this.getModuleDependencyDefinitions()) {
+			for (QslLibraryDependency.ModuleDependencyInfo info : library.getDependencyInfo().get()) {
+				Map<String, String> map = new LinkedHashMap<>(2);
+				map.put("path", ":" + library.getName() + ":" + info.module());
+				map.put("configuration", "dev");
+
+				Dependency dep = project.getDependencies().project(map);
+				deps.add(dep);
+				project.getDependencies().add(info.type().getConfigurationName(), dep);
+			}
+
+		}
+
+		PublicationContainer publications = this.project.getExtensions().getByType(PublishingExtension.class).getPublications();
+
+		publications.named("mavenJava", MavenPublication.class, publication -> {
+			publication.pom(pom -> pom.withXml(xml -> {
+				Node pomDeps = GroovyXml.getOrCreateNode(xml.asNode(), "dependencies");
+
+				for (Dependency dependency : deps) {
+					Node pomDep = pomDeps.appendNode("dependency");
+					pomDep.appendNode("groupId", dependency.getGroup());
+					pomDep.appendNode("artifactId", dependency.getName());
+					pomDep.appendNode("version", dependency.getVersion());
+					pomDep.appendNode("scope", "compile");
+				}
+			}));
+		});
 	}
 
 	public static class NamedWriteOnlyList implements Named {
