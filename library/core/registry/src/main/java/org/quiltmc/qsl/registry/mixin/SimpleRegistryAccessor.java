@@ -18,7 +18,6 @@ package org.quiltmc.qsl.registry.mixin;
 
 import java.util.function.Function;
 
-import it.unimi.dsi.fastutil.objects.ObjectList;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
@@ -32,9 +31,6 @@ import net.minecraft.util.registry.SimpleRegistry;
  */
 @Mixin(SimpleRegistry.class)
 public interface SimpleRegistryAccessor<V> {
-	@Accessor
-	ObjectList<Holder.Reference<V>> getRawIdToEntry();
-
 	@Accessor
 	@Nullable Function<V, Holder.Reference<V>> getCustomHolderProvider();
 }
