@@ -42,6 +42,7 @@ Everything within this section is the definitions for the actual PR policy follo
 
 **Required Approvals**: 1
 - At least 1 approval must come directly from each library team whose code the pull request modifies.
+
 **Final Comment Period**: 3 days
 
 ### `T: urgent`
