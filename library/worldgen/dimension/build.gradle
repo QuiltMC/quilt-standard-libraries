@@ -1,0 +1,19 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	moduleName = "dimension"
+	version = "1.0.0"
+	library = "worldgen"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+			testmodOnly("lifecycle_events")
+			testmodOnly("resource_loader")
+		}
+		command {
+			testmodOnly("command")
+		}
+	}
+}
