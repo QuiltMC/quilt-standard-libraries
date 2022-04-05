@@ -20,6 +20,7 @@ import java.util.function.Predicate;
 
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.registry.impl.event.RegistryMonitorImpl;
@@ -46,8 +47,9 @@ public interface RegistryMonitor<V> {
 	 * <p>
 	 * Entries must also match the monitor's filters.
 	 * <p>
-	 * Registration inside the callback must use the {@link RegistryEntryContext#registry()} method to get the registry instance,
-	 * for example: {@code Registry.register(context.registry(), id, block);}.
+ 	 * Registration to the registry being iterated must use the {@link RegistryEntryContext#register(Identifier, Object)} method inside the callback,
+	 * or alternatively use the {@link RegistryEntryContext#registry()} method to get the registry instance,
+	 * for example: {@code context.register(id, block);}.
  	 *
 	 * @param callback the callback to be invoked on entries
 	 */
