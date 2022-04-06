@@ -30,8 +30,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.resource.NamespaceResourceManager;
+import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.resource.SourcedResource;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.util.Identifier;
 
@@ -55,7 +55,7 @@ public class NamespaceResourceManagerMixin {
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	private void onGetAllResources(Identifier id, CallbackInfoReturnable<List<SourcedResource>> cir, List<NamespaceResourceManager.ResourceEntry> resources) {
+	private void onGetAllResources(Identifier id, CallbackInfoReturnable<List<Resource>> cir, List<NamespaceResourceManager.ResourceEntry> resources) {
 		this.quilt$getAllResources$resources.set(resources);
 	}
 

@@ -25,6 +25,7 @@ import java.util.concurrent.Executor;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.class_7138;
 import net.minecraft.structure.StructureManager;
 import net.minecraft.util.math.BlockPos;
@@ -100,12 +101,11 @@ public class EmptyChunkGenerator extends ChunkGenerator {
 
 	@Override
 	public VerticalBlockSample getColumnSample(int x, int z, HeightLimitView world, class_7138 arg) {
-		return null;
+		return new VerticalBlockSample(0, new BlockState[0]);
 	}
 
 	@Override
 	public void method_40450(List<String> list, class_7138 arg, BlockPos blockPos) {
 
 	}
-
 }

@@ -69,6 +69,7 @@ loom {
 			client()
 			configName = "Testmod Client"
 			source(project.sourceSets.testmod)
+			programArg("--uuid=1")
 		}
 
 		testmodServer {
