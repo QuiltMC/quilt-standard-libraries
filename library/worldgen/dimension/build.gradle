@@ -3,17 +3,17 @@ plugins {
 }
 
 qslModule {
-	moduleName = "command"
+	moduleName = "dimension"
 	version = "1.0.0"
-	library = "command"
+	library = "worldgen"
 	moduleDependencies {
 		core {
 			api("qsl_base")
-			impl("resource_loader")
-			compileOnly("networking")
-
 			testmodOnly("lifecycle_events")
-			testmodOnly("networking")
+			testmodOnly("resource_loader")
+		}
+		command {
+			testmodOnly("command")
 		}
 	}
 }
