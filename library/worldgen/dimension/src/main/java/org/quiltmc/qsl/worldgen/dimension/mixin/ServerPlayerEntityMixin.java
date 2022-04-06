@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.worldgen.dimension.mixin.server;
+package org.quiltmc.qsl.worldgen.dimension.mixin;
 
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import org.quiltmc.qsl.worldgen.dimension.access.EntityAccess;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
+
+import org.quiltmc.qsl.worldgen.dimension.impl.EntityAccess;
+
 @Mixin(ServerPlayerEntity.class)
 public class ServerPlayerEntityMixin {
-
 	@Inject(method = "createEndSpawnPlatform", at = @At("HEAD"), cancellable = true, allow = 1)
 	public void createEndSpawnPlatform(ServerWorld world, BlockPos centerPos, CallbackInfo ci) {
 		// Don't generate the platform below the players' feet if they are being teleported to a custom location
@@ -35,6 +36,4 @@ public class ServerPlayerEntityMixin {
 			ci.cancel();
 		}
 	}
-
-
 }

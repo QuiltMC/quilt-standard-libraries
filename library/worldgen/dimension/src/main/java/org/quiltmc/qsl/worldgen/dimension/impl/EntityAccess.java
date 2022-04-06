@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.worldgen.dimension.access;
+package org.quiltmc.qsl.worldgen.dimension.impl;
+
+import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.world.TeleportTarget;
-import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 public interface EntityAccess {
-
 	TeleportTarget getTeleportTarget();
-	void setTeleportTarget(TeleportTarget target);
 
+	void setTeleportTarget(TeleportTarget target);
 }

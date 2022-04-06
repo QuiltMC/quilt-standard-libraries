@@ -21,6 +21,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.fabricmc.loader.api.ModContainer;
+
 import net.minecraft.block.Blocks;
 import net.minecraft.command.CommandException;
 import net.minecraft.entity.EntityType;
@@ -39,14 +40,16 @@ import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionOptions;
+
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
 import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 import org.quiltmc.qsl.worldgen.dimension.api.QuiltDimensions;
 
 public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents.Ready, CommandRegistrationCallback {
-
-	private static final RegistryKey<DimensionOptions> DIMENSION_KEY = RegistryKey.of(Registry.DIMENSION_KEY, new Identifier("quilt_dimension", "void"));
+	private static final RegistryKey<DimensionOptions> DIMENSION_KEY = RegistryKey.of(Registry.DIMENSION_KEY,
+			new Identifier("quilt_dimension", "void")
+	);
 
 	private static RegistryKey<World> WORLD_KEY = RegistryKey.of(Registry.WORLD_KEY, DIMENSION_KEY.getValue());
 
@@ -72,7 +75,7 @@ public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents
 			throw new AssertionError("Cow was spawned but isn't in the overworld.");
 		}
 
-		TeleportTarget target = new TeleportTarget(Vec3d.ZERO, new Vec3d(1, 1, 1), 45f, 60f);
+		var target = new TeleportTarget(Vec3d.ZERO, new Vec3d(1, 1, 1), 45f, 60f);
 		CowEntity teleportedEntity = QuiltDimensions.teleport(cow, targetWorld, target);
 
 		if (teleportedEntity == null || !teleportedEntity.world.getRegistryKey().equals(WORLD_KEY)) {
@@ -95,7 +98,7 @@ public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents
 		ServerWorld modWorld = context.getSource().getServer().getWorld(WORLD_KEY);
 
 		if (serverWorld != modWorld) {
-			TeleportTarget target = new TeleportTarget(new Vec3d(0.5, 101, 0.5), Vec3d.ZERO, 0, 0);
+			var target = new TeleportTarget(new Vec3d(0.5, 101, 0.5), Vec3d.ZERO, 0, 0);
 			QuiltDimensions.teleport(player, modWorld, target);
 
 			if (player.world != modWorld) {
@@ -106,12 +109,11 @@ public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents
 			modWorld.setBlockState(new BlockPos(0, 100, 0), Blocks.DIAMOND_BLOCK.getDefaultState());
 			modWorld.setBlockState(new BlockPos(0, 101, 0), Blocks.TORCH.getDefaultState());
 		} else {
-			TeleportTarget target = new TeleportTarget(new Vec3d(0, 100, 0), Vec3d.ZERO,
+			var target = new TeleportTarget(new Vec3d(0, 100, 0), Vec3d.ZERO,
 					(float) Math.random() * 360 - 180, (float) Math.random() * 360 - 180);
 			QuiltDimensions.teleport(player, context.getSource().getServer().getWorld(World.END), target);
 		}
 
 		return 1;
 	}
-
 }
