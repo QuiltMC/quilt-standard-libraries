@@ -11,16 +11,16 @@ By contributing to the Quilt Standard Libraries you agree with the [Developer Ce
 2. ### Open your PR and wait for reviews
     Once you have forked QSL and opened a pull request, you need to wait for people to review it. When you get reviews, try to thoughtfully address any concerns other people have. If you get confused, be sure to ask questions!
 3. ### Entering a Final Comment Period
-    Once your PR has no "changes requested" reviews, the minimum number of approvals for its [triage cateogry](#triage-categories), and nobody has their review requested, it is eligable to enter a Final Comment Period (FCP). A FCP is a last call for any reviewers to look at your PR before it is merged. The minimum length of your PR's FCP is determined by its triage category, but if any further changes are requested, the FCP might be lengthened, or if the concerns are significant, the FCP cancelled until the concerns are resolved.
+    Once your PR has no "changes requested" reviews, the minimum number of approvals for its [triage category](#guide-triage-categories), and nobody has their review requested, it is eligible to enter a Final Comment Period (FCP). A FCP is a last call for any reviewers to look at your PR before it is merged. The minimum length of your PR's FCP is determined by its triage category, but if any further changes are requested, the FCP might be lengthened, or if the concerns are significant, the FCP cancelled until the concerns are resolved.
 4. ### Request a merge!
     Once the minimum time on the Final Comment Period has passed, and you have resolved any concerns reviewers have raised during that time, leave a comment on your PR requesting for it to be merged. A QSL Core Team member will take a final look over your PR, and if everything looks good, merge it!
 
 
 ## Guide: Triage Categories
 
-Triage categories ensure that important, but small PRs--like bugfixes--are merged quickly, while large changes--like new stable APIs--are throughly reviewed before they are merged.
+Triage categories ensure that important, but small PRs--like bugfixes--are merged quickly, while large changes--like new stable APIs--are thoroughly reviewed before they are merged.
 
-QSL is split into groups of modules called "libraries." Each library is maintained by an independent team (though many QSL team members maintain mulitple libraries!), and your PR must be reviewed by the team of each library that your PR modifies. 
+QSL is split into groups of modules called "libraries." Each library is maintained by an independent team (though many QSL team members maintain multiple libraries!), and your PR must be reviewed by the team of each library that your PR modifies.
 
 In the event that there is no-one available on a library team to review your PR, a QSL Core team member may waive the requirement for a review by their team.
 
@@ -32,7 +32,7 @@ Everything within this section is the definitions for the actual PR policy follo
 **Description**: Used for pull requests that add new APIs to QSL, defined as anything in a `$modulename.api` package or subfolders.
 
 **Required Approvals**: 2
-- At least 1 approval must come directly from each library team whos code the pull request modifies.
+- At least 1 approval must come directly from each library team whose code the pull request modifies.
 
 **Final Comment Period**: 7 days
 
@@ -41,7 +41,8 @@ Everything within this section is the definitions for the actual PR policy follo
 **Description**: Used for pull requests that make internal refactors and do not change any API, such as bugfixes or buildscript changes.
 
 **Required Approvals**: 1
-- At least 1 approval must come directly from each library team whos code the pull request modifies.
+- At least 1 approval must come directly from each library team whose code the pull request modifies.
+
 **Final Comment Period**: 3 days
 
 ### `T: urgent`
@@ -49,7 +50,7 @@ Everything within this section is the definitions for the actual PR policy follo
 **Description**: For pull requests that must be merged quickly, like ports of critical core modules and game- or build-breaking bugs.
 
 **Required Approvals**: 2
-- Only members of the QSL Core Team, technical leads, and admins count for approvals in urgent PRs to prevent abuse. 
+- Only members of the QSL Core Team, technical leads, and admins count for approvals in urgent PRs to prevent abuse.
 
 **Final Comment Period**: N/A
 
@@ -57,7 +58,7 @@ Everything within this section is the definitions for the actual PR policy follo
 
 Trivial fixes that do not require review (e.g. typos) are exempt from this policy. QSL team members should double check with other members of the team on Discord before pushing a commit or merging a PR without going through this process.
 
-PRs that do not fit under any of these categories but are not "trivial fixes" are merged at the consensus of the QSL Core team, using whatever criteria they determine to be appropriate. (For example, amending the PR policy may require every core member to approve, and have a 1-week FCP). 
+PRs that do not fit under any of these categories but are not "trivial fixes" are merged at the consensus of the QSL Core team, using whatever criteria they determine to be appropriate. (For example, amending the PR policy may require every core member to approve, and have a 1-week FCP).
 
 In the event that a QSL subteam has less than two active members, a QSL Core team member may waive the requirement for that team to review a PR.
 
@@ -240,7 +241,7 @@ and finally the name of the local (`quilt$injectedMethod$localName`).
 
 ### Declaring dependencies between modules
 
-In the `qslModule` extension, there is a `moduleDependencies` field. Dependencies are declared in a tree like structure reflecting how QSL libraries and modules are layed out.
+In the `qslModule` extension, there is a `moduleDependencies` field. Dependencies are declared in a tree like structure reflecting how QSL libraries and modules are laid out.
 This field can be configured like:
 ```groovy
 qslModule {
@@ -256,7 +257,7 @@ qslModule {
 
             // Impl dependencies are dependencies that are only used internally in a module,
             // and classes from it are never exposed through this module's public API.
-            // For example, a dependency on lifecyle events would usually be impl.
+            // For example, a dependency on lifecycle events would usually be impl.
             impl("module_2")
 
             // This module is only depended on when testing the code

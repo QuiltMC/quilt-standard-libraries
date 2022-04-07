@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.Nullable;
@@ -62,20 +63,38 @@ public abstract class GroupResourcePack implements ResourcePack {
 	}
 
 	/**
-	 * {@return the list of resource packs contained within this group}
+	 * Gets an unmodifiable list of the resource packs stored in this group resourced pack.
+	 *
+	 * @return the resource packs
 	 */
 	public List<? extends ResourcePack> getPacks() {
 		return Collections.unmodifiableList(this.packs);
 	}
 
 	/**
-	 * Gets the list of resource packs that contains the given namespace and are contained within this group.
+	 * Gets an unmodifiable list of the resource packs stored in this group resource pack
+	 * which contain the given {@code namespace}.
 	 *
-	 * @param namespace the namespace
-	 * @return the list of resource packs
+	 * @param namespace the namespace the packs must contain
+	 * @return the list of the matching resource packs
 	 */
 	public List<? extends ResourcePack> getPacks(String namespace) {
 		return Collections.unmodifiableList(this.namespacedPacks.get(namespace));
+	}
+
+	/**
+	 * Gets a flattened stream of resource packs in this group resource pack.
+	 *
+	 * @return the flattened stream of resource packs
+	 */
+	public Stream<? extends ResourcePack> streamPacks() {
+		return this.packs.stream().mapMulti((pack, consumer) -> {
+			if (pack instanceof GroupResourcePack grouped) {
+				grouped.streamPacks().forEach(consumer);
+			} else {
+				consumer.accept(pack);
+			}
+		});
 	}
 
 	@Override
