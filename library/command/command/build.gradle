@@ -12,6 +12,11 @@ qslModule {
 	moduleDependencies {
 		core {
 			api("qsl_base")
+			impl("resource_loader")
+			compileOnly("networking")
+
+			testmodOnly("lifecycle_events")
+			testmodOnly("networking")
 		}
 	}
 }
