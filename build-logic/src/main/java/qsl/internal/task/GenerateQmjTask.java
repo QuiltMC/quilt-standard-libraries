@@ -6,6 +6,7 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
+import qsl.internal.Versions;
 import qsl.internal.extension.QslModuleExtensionImpl;
 import qsl.internal.json.QmjBuilder;
 
@@ -26,6 +27,6 @@ public abstract class GenerateQmjTask extends DefaultTask {
 			Files.delete(output);
 		}
 
-		QmjBuilder.buildQmj(getProject(), getProject().getVersion().toString(), "*", "*", getQslModule().get(), output);
+		QmjBuilder.buildQmj(getProject(), getProject().getVersion().toString(), Versions.LOADER_VERSION, Versions.MINECRAFT_VERSION, getQslModule().get(), output);
 	}
 }
