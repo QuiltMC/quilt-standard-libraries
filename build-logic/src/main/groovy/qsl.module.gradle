@@ -41,10 +41,6 @@ afterEvaluate {
 	}
 
 	group = "org.quiltmc.qsl.${extension.library.get()}"
-	// Version is set automatically in extension, verify it is set.
-	if (project.version == "unspecified") { // Gradle will return `unspecified` given no version being set.
-		throw new GradleException("Module $extension.moduleName needs a version to be set in the qslModule extension")
-	}
 
 
 	publishing {
@@ -81,6 +77,9 @@ afterEvaluate {
 
 	(extension as QslModuleExtensionImpl).setupModuleDependencies()
 	// TODO: Anything else to validate.
+	if (version != rootProject.version) {
+		throw new GradleException("Module ${extension.moduleName.get()} version ($version) does not match root project version ($rootProject.version). Do not change it!")
+	}
 }
 
 

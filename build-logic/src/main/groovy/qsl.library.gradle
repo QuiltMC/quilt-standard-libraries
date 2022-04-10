@@ -96,6 +96,12 @@ afterEvaluate {
 	}
 
 	loom.disableDeprecatedPomGeneration(publishing.publications.mavenJava)
+
+	// Print the version and throw an exception if it doesn't match
+	if (version != rootProject.version) {
+		throw new GradleException("Library ${extension.libraryName.get()} version ($version) does not match root project version ($rootProject.version). Do not change it!")
+
+	}
 }
 
 // A library isn't truly a distributed artifact, rather it is just maven metadata to depend on the modules of a library.
@@ -134,7 +140,30 @@ project.getTasksByName("checkModuleVersion", true).each {
 	checkLibVersion.mustRunAfter it
 }
 
+publishing {
+	repositories {
+		mavenLocal()
+	}
 
+	publications {
+		mavenJava(MavenPublication) {
+			pom.withXml {
+				asNode().appendNode("properties").appendNode("hash", Git.getLatestCommitHash(project))
+				def depsNode = asNode().appendNode("dependencies")
+				rootProject.subprojects.stream().filter {
+					it.path.startsWith(":${extension.libraryName.get()}:")
+				}.forEach {
+					def depNode = depsNode.appendNode("dependency")
+					depNode.appendNode("groupId", it.group)
+					depNode.appendNode("artifactId", it.name)
+					depNode.appendNode("version", it.version)
+					depNode.appendNode("scope", "compile")
+				}
+			}
+		}
+	}
+}
 
+loom.disableDeprecatedPomGeneration(publishing.publications.mavenJava)
 
 publish.dependsOn checkLibVersion
