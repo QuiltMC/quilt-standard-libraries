@@ -22,7 +22,6 @@ import java.util.List;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import org.quiltmc.qsl.screen.api.client.ScreenEvents;
-import org.quiltmc.qsl.screen.api.client.QuiltScreenHooks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,15 +38,17 @@ public class ScreenTests implements ScreenEvents.AfterInit {
 	public static final Logger LOGGER = LoggerFactory.getLogger("ScreenEventsTest");
 
 	@Override
-	public void afterInit(MinecraftClient client, Screen screen, int scaledWidth, int scaledHeight) {
+	public void afterInit(Screen screen, MinecraftClient client, int scaledWidth, int scaledHeight) {
 		if (screen instanceof TitleScreen) {
 			final List<ClickableWidget> buttons = screen.getButtons();
 
 			buttons.add(new ButtonWidget((screen.width / 2) + 120, ((screen.height / 4) + 95), 70, 20, new LiteralText("Hello world!!"), button -> { LOGGER.info("Hello world!!"); }));
 
-			ScreenEvents.afterRender(screen).register((_screen, matrices, mouseX, mouseY, tickDelta) -> {
-				RenderSystem.setShaderTexture(0, InGameHud.GUI_ICONS_TEXTURE);
-				DrawableHelper.drawTexture(matrices, (screen.width / 2) - 124, (screen.height / 4) + 96, 20, 20, 34, 9, 9, 9, 256, 256);
+			ScreenEvents.AFTER_RENDER.register((_screen, matrices, mouseX, mouseY, tickDelta) -> {
+				if(_screen == screen) {
+					RenderSystem.setShaderTexture(0, InGameHud.GUI_ICONS_TEXTURE);
+					DrawableHelper.drawTexture(matrices, (screen.width / 2) - 124, (screen.height / 4) + 96, 20, 20, 34, 9, 9, 9, 256, 256);
+				}
 			});
 		}
 	}

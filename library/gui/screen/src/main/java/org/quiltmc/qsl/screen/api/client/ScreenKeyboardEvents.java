@@ -17,10 +17,8 @@
 
 package org.quiltmc.qsl.screen.api.client;
 
-import java.util.Objects;
-
 import org.quiltmc.qsl.base.api.event.Event;
-import org.quiltmc.qsl.screen.impl.client.ScreenExtensions;
+import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 
 import net.minecraft.client.gui.screen.Screen;
 
@@ -44,76 +42,65 @@ import net.fabricmc.api.Environment;
 public final class ScreenKeyboardEvents {
 	/**
 	 * An event that checks if a key press should be allowed.
-	 *
-	 * @return the event
 	 */
-	public static Event<AllowKeyPress> allowKeyPress(Screen screen) {
-		Objects.requireNonNull(screen, "Screen cannot be null");
+	public static final Event<AllowKeyPress> ALLOW_KEY_PRESS = Event.create(AllowKeyPress.class, callbacks -> (screen, key, scancode, modifiers) -> {
+		for (AllowKeyPress callback : callbacks) {
+			return callback.allowKeyPress(screen, key, scancode, modifiers);
+		}
 
-		return ScreenExtensions.getExtensions(screen).quilt$getAllowKeyPressEvent();
-	}
+		return true;
+	});
 
 	/**
 	 * An event that is called before a key press is processed for a screen.
-	 *
-	 * @return the event
 	 */
-	public static Event<BeforeKeyPress> beforeKeyPress(Screen screen) {
-		Objects.requireNonNull(screen, "Screen cannot be null");
-
-		return ScreenExtensions.getExtensions(screen).quilt$getBeforeKeyPressEvent();
-	}
+	public static final Event<BeforeKeyPress> BEFORE_KEY_PRESS = Event.create(BeforeKeyPress.class, callbacks -> (screen, key, scancode, modifiers) -> {
+		for (BeforeKeyPress callback : callbacks) {
+			callback.beforeKeyPress(screen, key, scancode, modifiers);
+		}
+	});
 
 	/**
 	 * An event that is called after a key press is processed for a screen.
-	 *
-	 * @return the event
 	 */
-	public static Event<AfterKeyPress> afterKeyPress(Screen screen) {
-		Objects.requireNonNull(screen, "Screen cannot be null");
-
-		return ScreenExtensions.getExtensions(screen).quilt$getAfterKeyPressEvent();
-	}
+	public static final Event<AfterKeyPress> AFTER_KEY_PRESS = Event.create(AfterKeyPress.class, callbacks -> (screen, key, scancode, modifiers) -> {
+		for (AfterKeyPress callback : callbacks) {
+			callback.afterKeyPress(screen, key, scancode, modifiers);
+		}
+	});
 
 	/**
 	 * An event that checks if a pressed key should be allowed to release.
-	 *
-	 * @return the event
 	 */
-	public static Event<AllowKeyRelease> allowKeyRelease(Screen screen) {
-		Objects.requireNonNull(screen, "Screen cannot be null");
+	public static final Event<AllowKeyRelease> ALLOW_KEY_RELEASE = Event.create(AllowKeyRelease.class, callbacks -> (screen, key, scancode, modifiers) -> {
+		for (AllowKeyRelease callback : callbacks) {
+			return callback.allowKeyRelease(screen, key, scancode, modifiers);
+		}
 
-		return ScreenExtensions.getExtensions(screen).quilt$getAllowKeyReleaseEvent();
-	}
+		return true;
+	});
 
 	/**
 	 * An event that is called after the release of a key is processed for a screen.
-	 *
-	 * @return the event
 	 */
-	public static Event<BeforeKeyRelease> beforeKeyRelease(Screen screen) {
-		Objects.requireNonNull(screen, "Screen cannot be null");
-
-		return ScreenExtensions.getExtensions(screen).quilt$getBeforeKeyReleaseEvent();
-	}
+	public static final Event<BeforeKeyRelease> BEFORE_KEY_RELEASE = Event.create(BeforeKeyRelease.class, callbacks -> (screen, key, scancode, modifiers) -> {
+		for (BeforeKeyRelease callback : callbacks) {
+			callback.beforeKeyRelease(screen, key, scancode, modifiers);
+		}
+	});
 
 	/**
 	 * An event that is called after the release a key is processed for a screen.
-	 *
-	 * @return the event
 	 */
-	public static Event<AfterKeyRelease> afterKeyRelease(Screen screen) {
-		Objects.requireNonNull(screen, "Screen cannot be null");
-
-		return ScreenExtensions.getExtensions(screen).quilt$getAfterKeyReleaseEvent();
-	}
-
-	private ScreenKeyboardEvents() {
-	}
+	public static final Event<AfterKeyRelease> AFTER_KEY_RELEASE = Event.create(AfterKeyRelease.class, callbacks -> (screen, key, scancode, modifiers) -> {
+		for (AfterKeyRelease callback : callbacks) {
+			callback.afterKeyRelease(screen, key, scancode, modifiers);
+		}
+	});
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface AllowKeyPress {
+	public interface AllowKeyPress extends ClientEventAwareListener {
 		/**
 		 * Checks if a key should be allowed to be pressed.
 		 *
@@ -129,7 +116,7 @@ public final class ScreenKeyboardEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface BeforeKeyPress {
+	public interface BeforeKeyPress extends ClientEventAwareListener {
 		/**
 		 * Called before a key press is handled.
 		 *
@@ -144,7 +131,7 @@ public final class ScreenKeyboardEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface AfterKeyPress {
+	public interface AfterKeyPress extends ClientEventAwareListener {
 		/**
 		 * Called after a key press is handled.
 		 *
@@ -159,7 +146,7 @@ public final class ScreenKeyboardEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface AllowKeyRelease {
+	public interface AllowKeyRelease extends ClientEventAwareListener {
 		/**
 		 * Checks if a pressed key should be allowed to be released.
 		 *
@@ -175,7 +162,7 @@ public final class ScreenKeyboardEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface BeforeKeyRelease {
+	public interface BeforeKeyRelease extends ClientEventAwareListener {
 		/**
 		 * Called before a pressed key has been released.
 		 *
@@ -190,7 +177,7 @@ public final class ScreenKeyboardEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface AfterKeyRelease {
+	public interface AfterKeyRelease extends ClientEventAwareListener {
 		/**
 		 * Called after a pressed key has been released.
 		 *

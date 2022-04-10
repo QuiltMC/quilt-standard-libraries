@@ -31,36 +31,36 @@ abstract class KeyboardMixin {
 	// private synthetic method_1454(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V
 	@Inject(method = "method_1454(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;keyPressed(III)Z"), cancellable = true)
 	private void beforeKeyPressedEvent(int code, Screen screen, boolean[] resultHack, int key, int scancode, int modifiers, CallbackInfo ci) {
-		if (!ScreenKeyboardEvents.allowKeyPress(screen).invoker().allowKeyPress(screen, key, scancode, modifiers)) {
+		if (!ScreenKeyboardEvents.ALLOW_KEY_PRESS.invoker().allowKeyPress(screen, key, scancode, modifiers)) {
 			resultHack[0] = true; // Set this press action as handled.
 			ci.cancel(); // Exit the lambda
 			return;
 		}
 
-		ScreenKeyboardEvents.beforeKeyPress(screen).invoker().beforeKeyPress(screen, key, scancode, modifiers);
+		ScreenKeyboardEvents.BEFORE_KEY_PRESS.invoker().beforeKeyPress(screen, key, scancode, modifiers);
 	}
 
 	// private synthetic method_1454(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V
 	@Inject(method = "method_1454(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;keyPressed(III)Z", shift = At.Shift.AFTER))
 	private void afterKeyPressedEvent(int code, Screen screen, boolean[] resultHack, int key, int scancode, int modifiers, CallbackInfo ci) {
-		ScreenKeyboardEvents.afterKeyPress(screen).invoker().afterKeyPress(screen, key, scancode, modifiers);
+		ScreenKeyboardEvents.AFTER_KEY_PRESS.invoker().afterKeyPress(screen, key, scancode, modifiers);
 	}
 
 	// private synthetic method_1454(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V
 	@Inject(method = "method_1454(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;keyReleased(III)Z"), cancellable = true)
 	private void beforeKeyReleasedEvent(int code, Screen screen, boolean[] resultHack, int key, int scancode, int modifiers, CallbackInfo ci) {
-		if (!ScreenKeyboardEvents.allowKeyRelease(screen).invoker().allowKeyRelease(screen, key, scancode, modifiers)) {
+		if (!ScreenKeyboardEvents.ALLOW_KEY_RELEASE.invoker().allowKeyRelease(screen, key, scancode, modifiers)) {
 			resultHack[0] = true; // Set this press action as handled.
 			ci.cancel(); // Exit the lambda
 			return;
 		}
 
-		ScreenKeyboardEvents.beforeKeyRelease(screen).invoker().beforeKeyRelease(screen, key, scancode, modifiers);
+		ScreenKeyboardEvents.BEFORE_KEY_RELEASE.invoker().beforeKeyRelease(screen, key, scancode, modifiers);
 	}
 
 	// private synthetic method_1454(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V
 	@Inject(method = "method_1454(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;keyReleased(III)Z", shift = At.Shift.AFTER))
 	private void afterKeyReleasedEvent(int code, Screen screen, boolean[] resultHack, int key, int scancode, int modifiers, CallbackInfo ci) {
-		ScreenKeyboardEvents.afterKeyRelease(screen).invoker().afterKeyRelease(screen, key, scancode, modifiers);
+		ScreenKeyboardEvents.AFTER_KEY_RELEASE.invoker().afterKeyRelease(screen, key, scancode, modifiers);
 	}
 }

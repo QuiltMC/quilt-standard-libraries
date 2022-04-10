@@ -17,10 +17,8 @@
 
 package org.quiltmc.qsl.screen.api.client;
 
-import java.util.Objects;
-
 import org.quiltmc.qsl.base.api.event.Event;
-import org.quiltmc.qsl.screen.impl.client.ScreenExtensions;
+import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 
 import net.minecraft.client.gui.screen.Screen;
 
@@ -44,115 +42,100 @@ import net.fabricmc.api.Environment;
 public final class ScreenMouseEvents {
 	/**
 	 * An event that checks if the mouse click should be allowed.
-	 *
-	 * @return the event
 	 */
-	public static Event<AllowMouseClick> allowMouseClick(Screen screen) {
-		Objects.requireNonNull(screen, "Screen cannot be null");
+	public static final Event<AllowMouseClick> ALLOW_MOUSE_CLICK = Event.create(AllowMouseClick.class, callbacks -> (screen, mouseX, mouseY, button) -> {
+		for (AllowMouseClick callback : callbacks) {
+			return callback.allowMouseClick(screen, mouseX, mouseY, button);
+		}
 
-		return ScreenExtensions.getExtensions(screen).quilt$getAllowMouseClickEvent();
-	}
+		return true;
+	});
 
 	/**
 	 * An event that is called before a mouse click is processed for a screen.
-	 *
-	 * @return the event
 	 */
-	public static Event<BeforeMouseClick> beforeMouseClick(Screen screen) {
-		Objects.requireNonNull(screen, "Screen cannot be null");
-
-		return ScreenExtensions.getExtensions(screen).quilt$getBeforeMouseClickEvent();
-	}
+	public static final Event<BeforeMouseClick> BEFORE_MOUSE_CLICK = Event.create(BeforeMouseClick.class, callbacks -> (screen, mouseX, mouseY, button) -> {
+		for (BeforeMouseClick callback : callbacks) {
+			callback.beforeMouseClick(screen, mouseX, mouseY, button);
+		}
+	});
 
 	/**
 	 * An event that is called after a mouse click is processed for a screen.
-	 *
-	 * @return the event
 	 */
-	public static Event<AfterMouseClick> afterMouseClick(Screen screen) {
-		Objects.requireNonNull(screen, "Screen cannot be null");
-
-		return ScreenExtensions.getExtensions(screen).quilt$getAfterMouseClickEvent();
-	}
+	public static final Event<AfterMouseClick> AFTER_MOUSE_CLICK = Event.create(AfterMouseClick.class, callbacks -> (screen, mouseX, mouseY, button) -> {
+		for (AfterMouseClick callback : callbacks) {
+			callback.afterMouseClick(screen, mouseX, mouseY, button);
+		}
+	});
 
 	/**
 	 * An event that checks if the mouse click should be allowed to release in a screen.
-	 *
-	 * @return the event
 	 */
-	public static Event<AllowMouseRelease> allowMouseRelease(Screen screen) {
-		Objects.requireNonNull(screen, "Screen cannot be null");
+	public static final Event<AllowMouseRelease> ALLOW_MOUSE_RELEASE = Event.create(AllowMouseRelease.class, callbacks -> (screen, mouseX, mouseY, button) -> {
+		for (AllowMouseRelease callback : callbacks) {
+			return callback.allowMouseRelease(screen, mouseX, mouseY, button);
+		}
 
-		return ScreenExtensions.getExtensions(screen).quilt$getAllowMouseReleaseEvent();
-	}
+		return true;
+	});
 
 	/**
 	 * An event that is called before the release of a mouse click is processed for a screen.
-	 *
-	 * @return the event
 	 */
-	public static Event<BeforeMouseRelease> beforeMouseRelease(Screen screen) {
-		Objects.requireNonNull(screen, "Screen cannot be null");
-
-		return ScreenExtensions.getExtensions(screen).quilt$getBeforeMouseReleaseEvent();
-	}
+	public static final Event<BeforeMouseRelease> BEFORE_MOUSE_RELEASE = Event.create(BeforeMouseRelease.class, callbacks -> (screen, mouseX, mouseY, button) -> {
+		for (BeforeMouseRelease callback : callbacks) {
+			callback.beforeMouseRelease(screen, mouseX, mouseY, button);
+		}
+	});
 
 	/**
 	 * An event that is called after the release of a mouse click is processed for a screen.
-	 *
-	 * @return the event
 	 */
-	public static Event<AfterMouseRelease> afterMouseRelease(Screen screen) {
-		Objects.requireNonNull(screen, "Screen cannot be null");
-
-		return ScreenExtensions.getExtensions(screen).quilt$getAfterMouseReleaseEvent();
-	}
+	public static final Event<AfterMouseRelease> AFTER_MOUSE_RELEASE = Event.create(AfterMouseRelease.class, callbacks -> (screen, mouseX, mouseY, button) -> {
+		for (AfterMouseRelease callback : callbacks) {
+			callback.afterMouseRelease(screen, mouseX, mouseY, button);
+		}
+	});
 
 	/**
 	 * An event that is checks if the mouse should be allowed to scroll in a screen.
 	 *
 	 * <p>This event tracks amount of vertical and horizontal scroll.
-	 *
-	 * @return the event
 	 */
-	public static Event<AllowMouseScroll> allowMouseScroll(Screen screen) {
-		Objects.requireNonNull(screen, "Screen cannot be null");
+	public static final Event<AllowMouseScroll> ALLOW_MOUSE_SCROLL = Event.create(AllowMouseScroll.class, callbacks -> (screen, mouseX, mouseY, horizontalAmount, verticalAmount) -> {
+		for (AllowMouseScroll callback : callbacks) {
+			return callback.allowMouseScroll(screen, mouseX, mouseY, horizontalAmount, verticalAmount);
+		}
 
-		return ScreenExtensions.getExtensions(screen).quilt$getAllowMouseScrollEvent();
-	}
+		return true;
+	});
 
 	/**
 	 * An event that is called after mouse scrolling is processed for a screen.
 	 *
 	 * <p>This event tracks amount of vertical and horizontal scroll.
-	 *
-	 * @return the event
 	 */
-	public static Event<BeforeMouseScroll> beforeMouseScroll(Screen screen) {
-		Objects.requireNonNull(screen, "Screen cannot be null");
-
-		return ScreenExtensions.getExtensions(screen).quilt$getBeforeMouseScrollEvent();
-	}
+	public static final Event<BeforeMouseScroll> BEFORE_MOUSE_SCROLL = Event.create(BeforeMouseScroll.class, callbacks -> (screen, mouseX, mouseY, horizontalAmount, verticalAmount) -> {
+		for (BeforeMouseScroll callback : callbacks) {
+			callback.beforeMouseScroll(screen, mouseX, mouseY, horizontalAmount, verticalAmount);
+		}
+	});
 
 	/**
 	 * An event that is called after mouse scrolling is processed for a screen.
 	 *
 	 * <p>This event tracks amount a mouse was scrolled both vertically and horizontally.
-	 *
-	 * @return the event
 	 */
-	public static Event<AfterMouseScroll> afterMouseScroll(Screen screen) {
-		Objects.requireNonNull(screen, "Screen cannot be null");
-
-		return ScreenExtensions.getExtensions(screen).quilt$getAfterMouseScrollEvent();
-	}
-
-	private ScreenMouseEvents() {
-	}
+	public static final Event<AfterMouseScroll> AFTER_MOUSE_SCROLL = Event.create(AfterMouseScroll.class, callbacks -> (screen, mouseX, mouseY, horizontalAmount, verticalAmount) -> {
+		for (AfterMouseScroll callback : callbacks) {
+			callback.afterMouseScroll(screen, mouseX, mouseY, horizontalAmount, verticalAmount);
+		}
+	});
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface AllowMouseClick {
+	public interface AllowMouseClick extends ClientEventAwareListener {
 		/**
 		 * @param mouseX the x position of the mouse
 		 * @param mouseY the y position of the mouse
@@ -164,7 +147,7 @@ public final class ScreenMouseEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface BeforeMouseClick {
+	public interface BeforeMouseClick extends ClientEventAwareListener {
 		/**
 		 * @param mouseX the x position of the mouse
 		 * @param mouseY the y position of the mouse
@@ -176,7 +159,7 @@ public final class ScreenMouseEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface AfterMouseClick {
+	public interface AfterMouseClick extends ClientEventAwareListener {
 		/**
 		 * @param mouseX the x position of the mouse
 		 * @param mouseY the y position of the mouse
@@ -188,7 +171,7 @@ public final class ScreenMouseEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface AllowMouseRelease {
+	public interface AllowMouseRelease extends ClientEventAwareListener {
 		/**
 		 * Checks if the mouse click should be allowed to release in a screen.
 		 *
@@ -202,7 +185,7 @@ public final class ScreenMouseEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface BeforeMouseRelease {
+	public interface BeforeMouseRelease extends ClientEventAwareListener {
 		/**
 		 * Called before a mouse click has released in a screen.
 		 *
@@ -216,7 +199,7 @@ public final class ScreenMouseEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface AfterMouseRelease {
+	public interface AfterMouseRelease extends ClientEventAwareListener {
 		/**
 		 * Called after a mouse click has released in a screen.
 		 *
@@ -230,7 +213,7 @@ public final class ScreenMouseEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface AllowMouseScroll {
+	public interface AllowMouseScroll extends ClientEventAwareListener {
 		/**
 		 * Checks if the mouse should be allowed to scroll in a screen.
 		 *
@@ -245,7 +228,7 @@ public final class ScreenMouseEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface BeforeMouseScroll {
+	public interface BeforeMouseScroll extends ClientEventAwareListener {
 		/**
 		 * Called before a mouse has scrolled on screen.
 		 *
@@ -259,7 +242,7 @@ public final class ScreenMouseEvents {
 
 	@Environment(EnvType.CLIENT)
 	@FunctionalInterface
-	public interface AfterMouseScroll {
+	public interface AfterMouseScroll extends ClientEventAwareListener {
 		/**
 		 * Called after a mouse has scrolled on screen.
 		 *

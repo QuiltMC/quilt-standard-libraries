@@ -54,14 +54,14 @@ abstract class MouseMixin {
 			return;
 		}
 
-		if (!ScreenMouseEvents.allowMouseClick(thisRef.quilt$currentScreen).invoker().allowMouseClick(thisRef.quilt$currentScreen, mouseX, mouseY, button)) {
+		if (!ScreenMouseEvents.ALLOW_MOUSE_CLICK.invoker().allowMouseClick(thisRef.quilt$currentScreen, mouseX, mouseY, button)) {
 			resultHack[0] = true; // Set this press action as handled.
 			thisRef.quilt$currentScreen = null;
 			ci.cancel(); // Exit the lambda
 			return;
 		}
 
-		ScreenMouseEvents.beforeMouseClick(thisRef.quilt$currentScreen).invoker().beforeMouseClick(thisRef.quilt$currentScreen, mouseX, mouseY, button);
+		ScreenMouseEvents.BEFORE_MOUSE_CLICK.invoker().beforeMouseClick(thisRef.quilt$currentScreen, mouseX, mouseY, button);
 	}
 
 	// private synthetic method_1611([ZDDI)V
@@ -74,7 +74,7 @@ abstract class MouseMixin {
 			return;
 		}
 
-		ScreenMouseEvents.afterMouseClick(thisRef.quilt$currentScreen).invoker().afterMouseClick(thisRef.quilt$currentScreen, mouseX, mouseY, button);
+		ScreenMouseEvents.AFTER_MOUSE_CLICK.invoker().afterMouseClick(thisRef.quilt$currentScreen, mouseX, mouseY, button);
 		thisRef.quilt$currentScreen = null;
 	}
 
@@ -92,14 +92,14 @@ abstract class MouseMixin {
 			return;
 		}
 
-		if (!ScreenMouseEvents.allowMouseRelease(thisRef.quilt$currentScreen).invoker().allowMouseRelease(thisRef.quilt$currentScreen, mouseX, mouseY, button)) {
+		if (!ScreenMouseEvents.ALLOW_MOUSE_RELEASE.invoker().allowMouseRelease(thisRef.quilt$currentScreen, mouseX, mouseY, button)) {
 			resultHack[0] = true; // Set this press action as handled.
 			thisRef.quilt$currentScreen = null;
 			ci.cancel(); // Exit the lambda
 			return;
 		}
 
-		ScreenMouseEvents.beforeMouseRelease(thisRef.quilt$currentScreen).invoker().beforeMouseRelease(thisRef.quilt$currentScreen, mouseX, mouseY, button);
+		ScreenMouseEvents.BEFORE_MOUSE_RELEASE.invoker().beforeMouseRelease(thisRef.quilt$currentScreen, mouseX, mouseY, button);
 	}
 
 	// private synthetic method_1605([ZDDI)V
@@ -112,7 +112,7 @@ abstract class MouseMixin {
 			return;
 		}
 
-		ScreenMouseEvents.afterMouseRelease(thisRef.quilt$currentScreen).invoker().afterMouseRelease(thisRef.quilt$currentScreen, mouseX, mouseY, button);
+		ScreenMouseEvents.AFTER_MOUSE_RELEASE.invoker().afterMouseRelease(thisRef.quilt$currentScreen, mouseX, mouseY, button);
 		thisRef.quilt$currentScreen = null;
 	}
 
@@ -129,14 +129,14 @@ abstract class MouseMixin {
 		// Apply same calculations to horizontal scroll as vertical scroll amount has
 		this.quilt$horizontalScrollAmount = this.client.options.discreteMouseScroll ? Math.signum(scrollDeltaX) : scrollDeltaX * this.client.options.mouseWheelSensitivity;
 
-		if (!ScreenMouseEvents.allowMouseScroll(this.quilt$currentScreen).invoker().allowMouseScroll(this.quilt$currentScreen, mouseX, mouseY, this.quilt$horizontalScrollAmount, verticalAmount)) {
+		if (!ScreenMouseEvents.ALLOW_MOUSE_SCROLL.invoker().allowMouseScroll(this.quilt$currentScreen, mouseX, mouseY, this.quilt$horizontalScrollAmount, verticalAmount)) {
 			this.quilt$currentScreen = null;
 			this.quilt$horizontalScrollAmount = null;
 			ci.cancel();
 			return;
 		}
 
-		ScreenMouseEvents.beforeMouseScroll(this.quilt$currentScreen).invoker().beforeMouseScroll(this.quilt$currentScreen, mouseX, mouseY, this.quilt$horizontalScrollAmount, verticalAmount);
+		ScreenMouseEvents.BEFORE_MOUSE_SCROLL.invoker().beforeMouseScroll(this.quilt$currentScreen, mouseX, mouseY, this.quilt$horizontalScrollAmount, verticalAmount);
 	}
 
 	@Inject(method = "onMouseScroll", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseScrolled(DDD)Z", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
@@ -145,7 +145,7 @@ abstract class MouseMixin {
 			return;
 		}
 
-		ScreenMouseEvents.afterMouseScroll(this.quilt$currentScreen).invoker().afterMouseScroll(this.quilt$currentScreen, mouseX, mouseY, this.quilt$horizontalScrollAmount, verticalAmount);
+		ScreenMouseEvents.AFTER_MOUSE_SCROLL.invoker().afterMouseScroll(this.quilt$currentScreen, mouseX, mouseY, this.quilt$horizontalScrollAmount, verticalAmount);
 		this.quilt$currentScreen = null;
 		this.quilt$horizontalScrollAmount = null;
 	}

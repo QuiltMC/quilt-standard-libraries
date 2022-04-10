@@ -51,13 +51,13 @@ abstract class GameRendererMixin {
 		// Store the screen in a variable in case someone tries to change the screen during this before render event.
 		// If someone changes the screen, the after render event will likely have class cast exceptions or an NPE.
 		this.quilt$renderingScreen = this.client.currentScreen;
-		ScreenEvents.beforeRender(this.quilt$renderingScreen).invoker().beforeRender(this.quilt$renderingScreen, matrices, mouseX, mouseY, tickDelta);
+		ScreenEvents.BEFORE_RENDER.invoker().beforeRender(this.quilt$renderingScreen, matrices, mouseX, mouseY, tickDelta);
 	}
 
 	// This injection should end up in the try block so exceptions are caught
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;render(Lnet/minecraft/client/util/math/MatrixStack;IIF)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void onAfterRenderScreen(float tickDelta, long startTime, boolean tick, CallbackInfo ci, int mouseX, int mouseY, Window window, Matrix4f projection, MatrixStack modelViewStack, MatrixStack matrices) {
-		ScreenEvents.afterRender(this.quilt$renderingScreen).invoker().afterRender(this.quilt$renderingScreen, matrices, mouseX, mouseY, tickDelta);
+		ScreenEvents.AFTER_RENDER.invoker().afterRender(this.quilt$renderingScreen, matrices, mouseX, mouseY, tickDelta);
 		// Finally set the currently rendering screen to null
 		this.quilt$renderingScreen = null;
 	}

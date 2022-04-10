@@ -39,12 +39,12 @@ abstract class MinecraftClientMixin {
 
 	@Inject(method = "setScreen", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;removed()V", shift = At.Shift.AFTER))
 	private void onScreenRemove(@Nullable Screen screen, CallbackInfo ci) {
-		ScreenEvents.remove(this.currentScreen).invoker().onRemove(this.currentScreen);
+		ScreenEvents.REMOVE.invoker().onRemove(this.currentScreen);
 	}
 
 	@Inject(method = "stop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;removed()V", shift = At.Shift.AFTER))
 	private void onScreenRemoveBecauseStopping(CallbackInfo ci) {
-		ScreenEvents.remove(this.currentScreen).invoker().onRemove(this.currentScreen);
+		ScreenEvents.REMOVE.invoker().onRemove(this.currentScreen);
 	}
 
 	// Synthetic method in `tick`
@@ -54,13 +54,13 @@ abstract class MinecraftClientMixin {
 		// Store the screen in a variable in case someone tries to change the screen during this before tick event.
 		// If someone changes the screen, the after tick event will likely have class cast exceptions or an NPE.
 		this.quilt$tickingScreen = this.currentScreen;
-		ScreenEvents.beforeTick(this.quilt$tickingScreen).invoker().beforeTick(this.quilt$tickingScreen);
+		ScreenEvents.BEFORE_TICK.invoker().beforeTick(this.quilt$tickingScreen);
 	}
 
 	// Synthetic method in `tick`
 	@Inject(method = "method_1572", at = @At("TAIL"))
 	private void afterScreenTick(CallbackInfo ci) {
-		ScreenEvents.afterTick(this.quilt$tickingScreen).invoker().afterTick(this.quilt$tickingScreen);
+		ScreenEvents.AFTER_TICK.invoker().afterTick(this.quilt$tickingScreen);
 		// Finally set the currently ticking screen to null
 		this.quilt$tickingScreen = null;
 	}
@@ -72,12 +72,12 @@ abstract class MinecraftClientMixin {
 		// Store the screen in a variable in case someone tries to change the screen during this before tick event.
 		// If someone changes the screen, the after tick event will likely have class cast exceptions or throw a NPE.
 		this.quilt$tickingScreen = this.currentScreen;
-		ScreenEvents.beforeTick(this.quilt$tickingScreen).invoker().beforeTick(this.quilt$tickingScreen);
+		ScreenEvents.BEFORE_TICK.invoker().beforeTick(this.quilt$tickingScreen);
 	}
 
 	@Inject(method = "startIntegratedServer(Ljava/lang/String;Ljava/util/function/Function;Ljava/util/function/Function;ZLnet/minecraft/client/MinecraftClient$WorldLoadAction;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;render(Z)V"))
 	private void afterLoadingScreenTick(CallbackInfo ci) {
-		ScreenEvents.afterTick(this.quilt$tickingScreen).invoker().afterTick(this.quilt$tickingScreen);
+		ScreenEvents.AFTER_TICK.invoker().afterTick(this.quilt$tickingScreen);
 		// Finally set the currently ticking screen to null
 		this.quilt$tickingScreen = null;
 	}
