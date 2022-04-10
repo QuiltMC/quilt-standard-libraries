@@ -25,16 +25,19 @@ public final class ServerPackets {
 
 	/**
 	 * Sets registry next data packets belong to
+	 * <pre><code>
 	 * {
 	 *   Registry identifier: Identifier
 	 *   Count: VarInt
 	 *   Flags: byte
 	 * }
+	 * </code></pre>
 	 */
 	public static final Identifier START = id("registry/start");
 
 	/**
 	 * This packet transmits required for sync
+	 * <pre><code>
 	 * {
 	 *   Count: VarInt
 	 *   [
@@ -47,6 +50,7 @@ public final class ServerPackets {
 	 *     ]
 	 *   ]
 	 * }
+	 * </code></pre>
 	 */
 	public static final Identifier DATA = id("registry/data");
 

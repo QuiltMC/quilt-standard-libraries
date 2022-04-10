@@ -32,7 +32,6 @@ public class ConnectScreenMixin {
 	private void quilt$snapshotRegistry(MinecraftClient client, ServerAddress address, CallbackInfo ci) {
 		for (var reg : Registry.REGISTRIES) {
 			if (reg instanceof SynchronizedRegistry registry && registry.quilt$requiresSyncing()) {
-				System.out.println("Created snapshot of " + ((Registry<Registry<?>>) Registry.REGISTRIES).getId(reg));
 				registry.quilt$createIdSnapshot();
 			}
 		}
