@@ -9,4 +9,9 @@ qslModule {
 	description = "Basic APIs for Quilt mods, such as events and entrypoints."
 	version = "1.0.0"
 	library = "core"
+	entrypoints {
+		init {
+			values = ["org.quiltmc.qsl.base.impl.event.EventRegistry"]
+		}
+	}
 }
