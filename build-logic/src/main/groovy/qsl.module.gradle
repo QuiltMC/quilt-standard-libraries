@@ -13,8 +13,11 @@
  */
 
 import qsl.internal.Git
+import qsl.internal.GroovyXml
 import qsl.internal.Versions
 import qsl.internal.extension.QslModuleExtension
+import qsl.internal.extension.QslModuleExtensionImpl
+import qsl.internal.dependency.QslLibraryDependency
 
 plugins {
 	id("java-library")
@@ -27,7 +30,7 @@ plugins {
 	id("qsl.common")
 }
 
-def extension = project.extensions.create("qslModule", QslModuleExtension, project)
+def extension = project.extensions.create(QslModuleExtension, "qslModule", QslModuleExtensionImpl, project)
 
 // We need to wait until project evaluation has finished to peek into a complete QSL module extension.
 afterEvaluate {
@@ -40,23 +43,40 @@ afterEvaluate {
 		throw new GradleException("Module $extension.moduleName needs the `library` field set in the qslModule extension")
 	}
 
+	group = "org.quiltmc.qsl.${extension.library.get()}"
 	// Version is set automatically in extension, verify it is set.
 	if (project.version == "unspecified") { // Gradle will return `unspecified` given no version being set.
 		throw new GradleException("Module $extension.moduleName needs a version to be set in the qslModule extension")
 	}
 
-	// Apply module dependencies for maven.
-	extension.setupModuleDependencies()
+	(extension as QslModuleExtensionImpl).setupModuleDependencies()
 	// TODO: Anything else to validate.
+}
 
-	group = "org.quiltmc.qsl.${extension.library.get()}"
+
+def generateQmj = tasks.register("generateQmj", qsl.internal.task.GenerateQmjTask) {
+	it.qslModule.set(extension)
+	it.outputDir.set(project.file("build/generated/generated_resources/"))
 }
 
 sourceSets {
+	main {
+		resources {
+			// this is needed so that people can use their IDE to compile the project (bypassing Gradle).
+			// you must remember to run the generateQmj task manually
+			srcDir project.file("build/generated/generated_resources/")
+		}
+		output.dir(generateQmj) // makes task run with gradle automagically
+	}
+
 	testmod {
 		compileClasspath += sourceSets.main.compileClasspath
 		runtimeClasspath += sourceSets.main.runtimeClasspath
 	}
+}
+
+jar {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE // People running with Gradle will have two versions of QMJ present
 }
 
 dependencies {
@@ -106,6 +126,13 @@ java {
 
 	withJavadocJar()
 	withSourcesJar()
+}
+
+sourcesJar {
+	dependsOn(generateQmj)
+}
+processResources {
+	dependsOn(generateQmj)
 }
 
 javadoc {

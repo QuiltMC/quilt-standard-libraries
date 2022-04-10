@@ -3,7 +3,10 @@ plugins {
 }
 
 qslModule {
+	name = "Quilt Base API"
 	moduleName = "qsl_base"
+	id = "quilt_base"
+	description = "Basic APIs for Quilt mods, such as events and entrypoints."
 	version = "1.0.0"
 	library = "core"
 }
