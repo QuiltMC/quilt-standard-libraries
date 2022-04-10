@@ -19,6 +19,9 @@ package org.quiltmc.qsl.registry.impl.sync;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 
+/**
+ * Identifiers of packets send by server
+ */
 @ApiStatus.Internal
 public final class ServerPackets {
 	public static final Identifier HELLO = id("registry/hello");
@@ -36,7 +39,7 @@ public final class ServerPackets {
 	public static final Identifier START = id("registry/start");
 
 	/**
-	 * This packet transmits required for sync
+	 * This packet transmits registry data required for sync
 	 * <pre><code>
 	 * {
 	 *   Count: VarInt

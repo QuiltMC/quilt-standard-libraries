@@ -21,6 +21,9 @@ import net.minecraft.util.registry.SimpleRegistry;
 import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
 
+/**
+ * Registry flags used to determine how registry (entries) should be handled by sync
+ */
 @ApiStatus.Experimental
 public enum RegistryFlag {
 	OPTIONAL,

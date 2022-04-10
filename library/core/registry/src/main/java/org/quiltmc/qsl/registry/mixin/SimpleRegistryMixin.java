@@ -40,6 +40,7 @@ import java.util.*;
 
 /**
  * Stores and invokes registry events.
+ * Handles applying and creating sync data.
  */
 @Mixin(SimpleRegistry.class)
 public abstract class SimpleRegistryMixin<V> extends Registry<V> implements SynchronizedRegistry<V> {
@@ -76,6 +77,10 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 	private byte quilt$flags;
 
 	@Unique
+	@Nullable
+	private Status quilt$syncStatus = null;
+
+	@Unique
 	private Object2ByteMap<V> quilt$entryToFlag = new Object2ByteOpenHashMap<>();
 
 	protected SimpleRegistryMixin(RegistryKey<? extends Registry<V>> key, Lifecycle lifecycle) {
@@ -94,7 +99,7 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 		this.quilt$entryContext.set(key.getValue(), entry, rawId);
 		RegistryEventStorage.as(this).quilt$getEntryAddedEvent().invoker().onAdded(this.quilt$entryContext);
 
-		this.quilt$syncMap = null;
+		this.quilt$markDirty();
 	}
 
 	@Override
@@ -116,7 +121,6 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 				var identifier = this.getId(entry);
 				var flag = this.quilt$entryToFlag.getOrDefault(entry, (byte) 0);
 
-
 				if (!RegistryFlag.isSkipped(flag)) {
 					map.computeIfAbsent(
 							identifier.getNamespace(),
@@ -129,6 +133,34 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 		}
 
 		return this.quilt$syncMap;
+	}
+
+	@Override
+	public Status quilt$getContentStatus() {
+		if (this.quilt$syncStatus == null) {
+			var status = Status.VANILLA;
+			var optional = RegistryFlag.isOptional(this.quilt$flags);
+			for (var entry : this.rawIdToEntry) {
+				if (entry != null && !entry.getRegistryKey().getValue().getNamespace().equals("minecraft")) {
+					var flag = this.quilt$entryToFlag.getOrDefault(entry.value(), (byte) 0);
+					if (!RegistryFlag.isSkipped(flag)) {
+						if (RegistryFlag.isOptional(flag)) {
+							status = Status.OPTIONAL;
+							if (optional) {
+								break;
+							}
+						} else {
+							status = optional ? Status.OPTIONAL : Status.REQUIRED;
+							break;
+						}
+					}
+				}
+			}
+
+			this.quilt$syncStatus = status;
+		}
+
+		return this.quilt$syncStatus;
 	}
 
 	@Override
@@ -165,11 +197,12 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 	@Override
 	public void quilt$markDirty() {
 		this.quilt$syncMap = null;
+		this.quilt$syncStatus = null;
 	}
 
 	@Override
 	public void quilt$setRegistryFlag(RegistryFlag flag) {
-		this.quilt$flags = (byte) (this.quilt$flags | flag.ordinal());
+		this.quilt$flags = (byte) (this.quilt$flags | (0x1 << flag.ordinal()));
 	}
 
 	@Override
@@ -179,7 +212,7 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 
 	@Override
 	public void quilt$setEntryFlag(V o, RegistryFlag flag) {
-		this.quilt$entryToFlag.put(o, (byte) (this.quilt$entryToFlag.getByte(o) | flag.ordinal()));
+		this.quilt$entryToFlag.put(o, (byte) (this.quilt$entryToFlag.getByte(o) | (0x1 << flag.ordinal())));
 	}
 
 	@Override

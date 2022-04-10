@@ -29,6 +29,8 @@ public interface SynchronizedRegistry<T> {
 
 	boolean quilt$requiresSyncing();
 
+	Status quilt$getContentStatus();
+
 	Map<String, Collection<SyncEntry>> quilt$getSyncMap();
 
 	void quilt$markDirty();
@@ -59,4 +61,10 @@ public interface SynchronizedRegistry<T> {
 
 	record SyncEntry(String path, int rawId, byte flags) {};
 	record MissingEntry(Identifier identifier, int rawId, byte flags) {};
+
+	enum Status {
+		VANILLA,
+		OPTIONAL,
+		REQUIRED;
+	}
 }

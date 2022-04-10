@@ -20,7 +20,9 @@
     "quilt_base": "*"
   },
   "entrypoints": {
-    "client_init": ["org.quiltmc.qsl.registry.impl.RegistryLibInitializer"]
+    "client_init": [
+      "org.quiltmc.qsl.registry.impl.sync.RegistrySyncClientInitializer"
+    ]
   },
   "description": "Tools and events for manipulating, monitoring, and synchronizing Minecraft's content registries.",
   "mixins": [

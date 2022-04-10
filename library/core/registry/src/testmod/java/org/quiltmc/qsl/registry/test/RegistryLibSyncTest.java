@@ -32,11 +32,16 @@ import net.minecraft.util.registry.Registry;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.lifecycle.api.client.event.ClientLifecycleEvents;
 import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
+import org.quiltmc.qsl.registry.api.sync.RegistryFlag;
+import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
 
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 
-
+/**
+ * Items/Blocks are registered in different order on client/server to make sure sync works correctly
+ * Server also gets its own entry that shouldn't block client from joining
+ */
 public class RegistryLibSyncTest implements ModInitializer {
 	private static final String NAMESPACE = "quilt_registry_test_sync";
 
@@ -51,6 +56,8 @@ public class RegistryLibSyncTest implements ModInitializer {
 			for (int i = 9; i >= 0; i--) {
 				register(i);
 			}
+			var opt = register(10);
+			RegistryFlag.setEntry(Registry.BLOCK, opt, RegistryFlag.OPTIONAL);
 			ServerLifecycleEvents.READY.register((x) -> printReg());
 		}
 	}
@@ -63,9 +70,11 @@ public class RegistryLibSyncTest implements ModInitializer {
 					);
 
 			for (var reg : Registry.REGISTRIES) {
-				writer.write("\n");
-				writer.write("=== Registry: " + ((Registry<Registry<?>>) Registry.REGISTRIES).getId(reg));
-				writer.write("\n");
+				writer.write("\n=== Registry: " + ((Registry<Registry<?>>) Registry.REGISTRIES).getId(reg) + "\n");
+				if (reg instanceof SynchronizedRegistry<?> sync) {
+					writer.write("== Requires Sync: " + sync.quilt$requiresSyncing() + "\n");
+					writer.write("== Status: " + sync.quilt$getContentStatus() + "\n");
+				}
 
 				for (var entry : reg) {
 					writer.write("" + ((Registry<Object>)reg).getRawId(entry) + ": " + ((Registry<Object>)reg).getId(entry));
@@ -90,11 +99,13 @@ public class RegistryLibSyncTest implements ModInitializer {
 	}
 
 
-	static void register(int i) {
+	static Identifier register(int i) {
 		var id = new Identifier(NAMESPACE, "entry_" + i);
 		var block = new Block(AbstractBlock.Settings.of(Material.STONE, MapColor.BLACK));
 
 		Registry.register(Registry.BLOCK, id, block);
 		Registry.register(Registry.ITEM, id, new BlockItem(block, new Item.Settings().group(ItemGroup.BUILDING_BLOCKS)));
+		RegistryFlag.setEntry(Registry.ITEM, id, RegistryFlag.OPTIONAL);
+		return id;
 	}
 }

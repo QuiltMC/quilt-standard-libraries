@@ -19,7 +19,7 @@ package org.quiltmc.qsl.registry.mixin;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.registry.Registry;
-import org.quiltmc.qsl.registry.api.event.RegistryMonitor;
+import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -29,7 +29,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class BlocksMixin {
 	@Inject(method = "<clinit>", at = @At("RETURN"))
 	private static void onInit(CallbackInfo ci) {
-		RegistryMonitor.create(Registry.BLOCK)
-				.forUpcoming(context -> context.value().getStateManager().getStates().forEach(Block.STATE_IDS::add));
+		RegistryEvents.getEntryAddEvent(Registry.BLOCK).register(context -> context.value().getStateManager().getStates().forEach(Block.STATE_IDS::add));
 	}
 }

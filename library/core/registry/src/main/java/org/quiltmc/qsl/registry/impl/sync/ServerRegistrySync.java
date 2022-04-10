@@ -22,6 +22,7 @@ import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
+import org.quiltmc.qsl.registry.api.sync.RegistryFlag;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +32,8 @@ import java.util.Map;
 public final class ServerRegistrySync {
 	public static void sendSyncPackets(ClientConnection connection, ServerPlayerEntity player) {
 		for (var registry : Registry.REGISTRIES) {
-			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry && synchronizedRegistry.quilt$requiresSyncing()) {
+			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
+				&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
 				var map = synchronizedRegistry.quilt$getSyncMap();
 
 				var packetData = new HashMap<String, ArrayList<SynchronizedRegistry.SyncEntry>>();
@@ -67,7 +69,11 @@ public final class ServerRegistrySync {
 
 		buf.writeIdentifier(((Registry<T>) Registry.REGISTRIES).getId(registry));
 		buf.writeVarInt(registry.size());
-		buf.writeByte(((SynchronizedRegistry<T>) registry).quilt$getRegistryFlag());
+		var flag = ((SynchronizedRegistry<T>) registry).quilt$getRegistryFlag();
+		if (((SynchronizedRegistry<T>) registry).quilt$getContentStatus() == SynchronizedRegistry.Status.OPTIONAL) {
+			flag |= (0x1 << RegistryFlag.OPTIONAL.ordinal());
+		}
+		buf.writeByte(flag);
 
 		connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.START, buf));
 	}
