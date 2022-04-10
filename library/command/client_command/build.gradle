@@ -3,12 +3,16 @@ plugins {
 }
 
 qslModule {
+	name = "Quilt Client Command API"
 	moduleName = "client_command"
+	id = "quilt_client_command"
 	version = "1.0.0"
+	description = "Quilt APIs for creating and managing client-side commands."
 	library = "command"
 	moduleDependencies {
 		core {
 			api("qsl_base")
 		}
 	}
+	clientOnly()
 }

@@ -3,7 +3,10 @@ plugins {
 }
 
 qslModule {
+	name = "Quilt Networking"
 	moduleName = "networking"
+	id = "quilt_networking"
+	description = "Utilites to assist with sending custom packets over the Minecraft protocol."
 	version = "1.0.0"
 	library = "core"
 	moduleDependencies {
@@ -13,6 +16,14 @@ qslModule {
 		}
 		command {
 			testmodOnly("command")
+		}
+	}
+	entrypoints {
+		init {
+			values = ["org.quiltmc.qsl.networking.impl.NetworkingImpl::init"]
+		}
+		client_init {
+			values = ["org.quiltmc.qsl.networking.impl.client.ClientNetworkingImpl::clientInit"]
 		}
 	}
 }

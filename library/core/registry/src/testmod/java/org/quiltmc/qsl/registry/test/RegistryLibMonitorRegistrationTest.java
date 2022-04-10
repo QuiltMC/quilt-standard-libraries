@@ -55,7 +55,7 @@ public class RegistryLibMonitorRegistrationTest implements ModInitializer {
 					context.value(), context.id(), context.rawId(), context.registry());
 
 			if (context.id() == TEST_BLOCK_A_ID) {
-				Registry.register(context.registry(), TEST_BLOCK_B_ID, new Block(AbstractBlock.Settings.of(Material.STONE, MapColor.BLACK)));
+				context.register(TEST_BLOCK_B_ID, new Block(AbstractBlock.Settings.of(Material.STONE, MapColor.BLACK)));
 			}
 		});
 	}
