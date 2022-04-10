@@ -64,6 +64,4 @@ public interface QslModuleExtension {
 	 * Makes Loader only load this mod on the physical, dedicated server. This is almost never needed.
 	 */
 	void dedicatedServerOnly();
-
-
 }

@@ -6,9 +6,7 @@ import qsl.internal.Versions;
 
 plugins {
 	id("maven-publish")
-	id("fabric-loom")
-	id("org.quiltmc.quilt-mappings-on-loom")
-	id("io.github.juuxel.loom-quiltflower")
+	id("org.quiltmc.loom")
 }
 
 def ENV = System.getenv()
