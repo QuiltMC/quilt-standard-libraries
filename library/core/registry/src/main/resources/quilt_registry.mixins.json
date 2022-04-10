@@ -3,11 +3,18 @@
   "package": "org.quiltmc.qsl.registry.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "BlocksMixin",
     "DebugChunkGeneratorAccessor",
+    "IdListMixin",
     "ItemsMixin",
+    "PlayerManagerMixin",
     "RegistryMixin",
     "SimpleRegistryAccessor",
     "SimpleRegistryMixin"
+  ],
+  "client": [
+    "client.ConnectScreenMixin",
+    "client.MinecraftClientMixin"
   ],
   "injectors": {
     "defaultRequire": 1

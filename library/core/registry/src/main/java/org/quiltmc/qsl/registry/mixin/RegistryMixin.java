@@ -18,6 +18,7 @@ package org.quiltmc.qsl.registry.mixin;
 
 import java.util.List;
 
+import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -61,5 +62,26 @@ public abstract class RegistryMixin<V> implements RegistryEventStorage<V> {
 		DebugChunkGeneratorAccessor.setXSideLength(xLength);
 		DebugChunkGeneratorAccessor.setZSideLength(zLength);
 		//endregion
+	}
+
+	@Inject(method = "<clinit>", at = @At("TAIL"))
+	private static void quilt$markRegistriesForSync(CallbackInfo ci) {
+		SynchronizedRegistry.markForSync(
+				Registry.BLOCK,
+				Registry.ITEM,
+				Registry.FLUID,
+				Registry.SOUND_EVENT,
+				Registry.STATUS_EFFECT,
+				Registry.PARTICLE_TYPE,
+				Registry.PAINTING_MOTIVE,
+				Registry.SCREEN_HANDLER,
+				Registry.STAT_TYPE,
+				Registry.ENCHANTMENT,
+				Registry.ENTITY_TYPE,
+				Registry.BLOCK_ENTITY_TYPE,
+				Registry.VILLAGER_TYPE,
+				Registry.VILLAGER_PROFESSION,
+				Registry.GAME_EVENT
+		);
 	}
 }
