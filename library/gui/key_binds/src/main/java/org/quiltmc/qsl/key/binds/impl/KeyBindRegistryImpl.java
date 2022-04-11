@@ -32,6 +32,7 @@ import net.fabricmc.api.Environment;
 
 import net.minecraft.client.option.KeyBind;
 
+import org.quiltmc.qsl.key.binds.impl.config.QuiltKeyBindsConfigManager;
 import org.quiltmc.qsl.key.binds.mixin.client.KeyBindAccessor;
 
 @Environment(EnvType.CLIENT)
@@ -138,6 +139,10 @@ public class KeyBindRegistryImpl {
 		if (keyBindManager != null) {
 			keyBindManager.addModdedKeyBinds();
 		}
+
+		// TODO - Perhaps this should be executed somewhere else?
+		QuiltKeyBindsConfigManager.populateConfig();
+		QuiltKeyBindsConfigManager.saveModConfig();
 	}
 
 	public static KeyBind[] getKeyBinds() {

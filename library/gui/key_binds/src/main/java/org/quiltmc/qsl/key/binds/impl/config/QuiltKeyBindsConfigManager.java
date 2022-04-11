@@ -36,12 +36,13 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonWriter;
 import com.mojang.blaze3d.platform.InputUtil;
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.JsonOps;
-import net.fabricmc.loader.api.FabricLoader;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBind;
 
+import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
 import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
 
@@ -49,7 +50,7 @@ import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
 public class QuiltKeyBindsConfigManager {
 	public static Optional<Boolean> isConfigLoaded = Optional.empty();
 	public static final QuiltKeyBindsConfig CONFIG = new QuiltKeyBindsConfig();
-	public static final Path QSL_CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("qsl");
+	public static final Path QSL_CONFIG_PATH = QuiltLoader.getConfigDir().resolve("qsl");
 	public static final Path KEY_BINDS_CONFIG_PATH = QSL_CONFIG_PATH.resolve("key_binds.json");
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().serializeNulls().disableHtmlEscaping().create();
 
@@ -89,17 +90,28 @@ public class QuiltKeyBindsConfigManager {
 		MinecraftClient client = MinecraftClient.getInstance();
 		for (KeyBind key : client.options.allKeys) {
 			if (newConfig.getKeyBinds().containsKey(key.getTranslationKey())) {
-				List<String> keyList = newConfig.getKeyBinds().get(key.getTranslationKey());
-				if (keyList.size() == 1) {
-					key.setBoundKey(InputUtil.fromTranslationKey(keyList.get(0)));
-				} else if (keyList.size() > 1) {
-					SortedMap<InputUtil.Key, Boolean> map = new TreeMap<>();
-					for (String string : keyList) {
-						map.put(InputUtil.fromTranslationKey(string), false);
+				Either<String, List<String>> keyEither = newConfig.getKeyBinds().get(key.getTranslationKey());
+				keyEither.ifLeft(singleKey -> {
+					key.setBoundKey(InputUtil.fromTranslationKey(singleKey));
+				});
+				keyEither.ifRight(keyList -> {
+					switch (keyList.size()) {
+					case 0 -> {
+						key.setBoundKey(InputUtil.UNKNOWN_KEY);
 					}
+					case 1 -> {
+						key.setBoundKey(InputUtil.fromTranslationKey(keyList.get(0)));
+					}
+					default -> {
+						SortedMap<InputUtil.Key, Boolean> map = new TreeMap<>();
+						for (String string : keyList) {
+							map.put(InputUtil.fromTranslationKey(string), false);
+						}
 
-					key.setBoundChord(new KeyChord(map));
-				}
+						key.setBoundChord(new KeyChord(map));
+					}
+					};
+				});
 			}
 		};
 		CONFIG.setKeyBinds(newConfig.getKeyBinds());
@@ -120,18 +132,35 @@ public class QuiltKeyBindsConfigManager {
 	}
 
 	public static void populateConfig() {
-		Map<String, List<String>> keyBindMap = new HashMap<>();
+		Map<String, Either<String, List<String>>> keyBindMap = new HashMap<>();
 
 		KeyBindRegistryImpl.getAllKeyBinds(true).forEach((keyBind, disabled) -> {
 			if (keyBind.getBoundChord() != null) {
-				List<String> list = new ArrayList<>();
-				for (InputUtil.Key key : keyBind.getBoundChord().keys.keySet()) {
-					list.add(key.getTranslationKey());
+				Either<String, List<String>> either = switch (keyBind.getBoundChord().keys.size()) {
+				case 0 -> {
+					yield Either.right(List.of());
 				}
+				case 1 -> {
+					InputUtil.Key key = keyBind.getBoundChord().keys.firstKey();
+					yield Either.left(key.getTranslationKey());
+				}
+				default -> {
+					List<String> list = new ArrayList<>();
+					for (InputUtil.Key key : keyBind.getBoundChord().keys.keySet()) {
+						list.add(key.getTranslationKey());
+					}
 
-				keyBindMap.put(keyBind.getTranslationKey(), list);
+					yield Either.right(list);
+				} };
+
+				keyBindMap.put(keyBind.getTranslationKey(), either);
 			} else {
-				keyBindMap.put(keyBind.getTranslationKey(), List.of(keyBind.getKeyTranslationKey()));
+				// TODO - Rushed in order to debug issue; Clean this up!
+				if (keyBind.getKeyTranslationKey().equals("key.keyboard.unknown")) {
+					keyBindMap.put(keyBind.getTranslationKey(), Either.right(List.of()));
+				} else {
+					keyBindMap.put(keyBind.getTranslationKey(), Either.left(keyBind.getKeyTranslationKey()));
+				}
 			}
 
 			/*
