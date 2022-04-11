@@ -18,7 +18,6 @@ package org.quiltmc.qsl.key.binds.test.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,19 +36,18 @@ public class KeyBindRegistryTestMod implements ClientLifecycleEvents.Ready {
 	public void readyClient(MinecraftClient client) {
 		KeyBind enableKeyBindKey = KeyBindRegistry.getKeyBind("key.qsl.enable_key_bind");
 
-			if (enableKeyBindKey != null) {
-				LOGGER.info("Successfully got the \"Enable Key Bind\" key!");
-
-				ClientTickEvents.END.register(tickClient -> {
-					if (enableKeyBindKey.wasPressed()) {
-						LOGGER.info("I can add behavior to other keys!");
-					}
-				});
-			}
-
-			LOGGER.info("The registry has the following keys registered:");
-			KeyBindRegistry.getAllKeyBinds(true).forEach((key, value) -> {
-				LOGGER.info(String.format("%s: %s", key.getTranslationKey(), value));
+		if (enableKeyBindKey != null) {
+			LOGGER.info("Successfully got the \"Enable Key Bind\" key!");
+			ClientTickEvents.END.register(tickClient -> {
+				if (enableKeyBindKey.wasPressed()) {
+					LOGGER.info("I can add behavior to other keys!");
+				}
 			});
+		}
+
+		LOGGER.info("The registry has the following keys registered:");
+		KeyBindRegistry.getAllKeyBinds(true).forEach((key, value) -> {
+			LOGGER.info(String.format("%s: %s", key.getTranslationKey(), value));
+		});
 	}
 }

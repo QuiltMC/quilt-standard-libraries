@@ -25,7 +25,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBind;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.LiteralText;
-import net.minecraft.util.Hand;
 
 import org.quiltmc.qsl.key.binds.api.KeyBindRegistry;
 import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
