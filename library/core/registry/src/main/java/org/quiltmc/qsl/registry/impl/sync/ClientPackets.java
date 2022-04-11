@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.registry.impl.sync;
 
-import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -24,61 +23,28 @@ import org.jetbrains.annotations.ApiStatus;
  * Identifiers of packets send by server
  */
 @ApiStatus.Internal
-public final class ServerPackets {
-	public static final IntSet SUPPORTED_VERSIONS = IntSet.of(1);
+public final class ClientPackets {
 	/**
-	 * Starts registry sync
+	 * Response for {@link ServerPackets#HELLO}
+	 *
 	 * <pre><code>
 	 * {
-	 *   Count: VarInt
-	 *   [
 	 *     Supported Version: VarInt
-	 *   ]
 	 * }
 	 * </code></pre>
 	 */
 	public static final Identifier HELLO = id("registry/hello");
 
-	/**
-	 * Ends registry sync. No data
-	 */
-	public static final Identifier GOODBYE = id("registry/goodbye");
 
 	/**
-	 * Sets registry next data packets belong to
+	 * Sent after registry sync failure before client disconnect
 	 * <pre><code>
 	 * {
-	 *   Registry identifier: Identifier
-	 *   Count: VarInt
-	 *   Flags: byte
+	 *     Registry: Identifier
 	 * }
 	 * </code></pre>
 	 */
-	public static final Identifier START = id("registry/start");
-
-	/**
-	 * This packet transmits registry data required for sync
-	 * <pre><code>
-	 * {
-	 *   Count: VarInt
-	 *   [
-	 *     Common Namespace: String
-	 *     Count: VarInt
-	 *     [
-	 *       Path: String
-	 *       Id: VarInt
-	 *       Flags: byte
-	 *     ]
-	 *   ]
-	 * }
-	 * </code></pre>
-	 */
-	public static final Identifier DATA = id("registry/data");
-
-	/**
-	 * Applies changes, doesn't have any data
-	 */
-	public static final Identifier APPLY = id("registry/apply");
+	public static final Identifier SYNC_FAILED = id("registry/sync_failed");
 
 
 	private static Identifier id(String path) {

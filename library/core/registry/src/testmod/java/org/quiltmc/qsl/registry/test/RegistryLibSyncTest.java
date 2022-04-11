@@ -16,9 +16,7 @@
 
 package org.quiltmc.qsl.registry.test;
 
-import com.mojang.serialization.Lifecycle;
 import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -29,10 +27,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import org.quiltmc.loader.api.QuiltLoader;
+import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.lifecycle.api.client.event.ClientLifecycleEvents;
 import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
-import org.quiltmc.qsl.registry.api.sync.RegistryFlag;
+import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
 
 import java.nio.file.Files;
@@ -47,7 +47,7 @@ public class RegistryLibSyncTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+		if (MinecraftQuiltLoader.getEnvironmentType() == EnvType.CLIENT) {
 			for (int i = 0; i < 10; i++) {
 				register(i);
 			}
@@ -57,7 +57,8 @@ public class RegistryLibSyncTest implements ModInitializer {
 				register(i);
 			}
 			var opt = register(10);
-			RegistryFlag.setEntry(Registry.BLOCK, opt, RegistryFlag.OPTIONAL);
+			RegistrySynchronization.setEntryOptional(Registry.ITEM, opt);
+			RegistrySynchronization.setEntryOptional(Registry.BLOCK, opt);
 			ServerLifecycleEvents.READY.register((x) -> printReg());
 		}
 	}
@@ -65,7 +66,7 @@ public class RegistryLibSyncTest implements ModInitializer {
 	private void printReg() {
 		try {
 			var writer = Files.newBufferedWriter(
-					FabricLoader.getInstance().getGameDir().resolve("reg-" + FabricLoader.getInstance().getEnvironmentType() + ".txt"),
+					QuiltLoader.getGameDir().resolve("reg-" + MinecraftQuiltLoader.getEnvironmentType() + ".txt"),
 					StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE
 					);
 
@@ -105,7 +106,7 @@ public class RegistryLibSyncTest implements ModInitializer {
 
 		Registry.register(Registry.BLOCK, id, block);
 		Registry.register(Registry.ITEM, id, new BlockItem(block, new Item.Settings().group(ItemGroup.BUILDING_BLOCKS)));
-		RegistryFlag.setEntry(Registry.ITEM, id, RegistryFlag.OPTIONAL);
+		RegistrySynchronization.setEntryOptional(Registry.ITEM, id);
 		return id;
 	}
 }

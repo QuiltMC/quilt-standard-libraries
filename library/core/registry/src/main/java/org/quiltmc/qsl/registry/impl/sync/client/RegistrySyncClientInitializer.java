@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.registry.impl.sync;
+package org.quiltmc.qsl.registry.impl.sync.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

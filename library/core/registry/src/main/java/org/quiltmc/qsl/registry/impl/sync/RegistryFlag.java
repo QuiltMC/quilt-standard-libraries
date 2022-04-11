@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.registry.api.sync;
+package org.quiltmc.qsl.registry.impl.sync;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.SimpleRegistry;
 import org.jetbrains.annotations.ApiStatus;
-import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
 
 /**
  * Registry flags used to determine how registry (entries) should be handled by sync
  */
 @ApiStatus.Experimental
+@ApiStatus.Internal
 public enum RegistryFlag {
 	OPTIONAL,
 	SKIP;

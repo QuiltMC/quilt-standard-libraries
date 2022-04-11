@@ -19,7 +19,6 @@ package org.quiltmc.qsl.registry.impl.sync;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
-import org.quiltmc.qsl.registry.api.sync.RegistryFlag;
 
 import java.util.Collection;
 import java.util.Map;
@@ -58,6 +57,8 @@ public interface SynchronizedRegistry<T> {
 	byte quilt$getRegistryFlag();
 
 	void quilt$setEntryFlag(T o, RegistryFlag flag);
+
+	byte quilt$getEntryFlag(T o);
 
 	record SyncEntry(String path, int rawId, byte flags) {};
 	record MissingEntry(Identifier identifier, int rawId, byte flags) {};

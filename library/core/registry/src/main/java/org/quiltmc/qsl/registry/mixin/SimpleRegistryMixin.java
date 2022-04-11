@@ -24,7 +24,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.registry.api.sync.RegistryFlag;
+import org.quiltmc.qsl.registry.impl.sync.RegistryFlag;
 import org.quiltmc.qsl.registry.impl.event.MutableRegistryEntryContextImpl;
 import org.quiltmc.qsl.registry.impl.event.RegistryEventStorage;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
@@ -213,6 +213,11 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 	@Override
 	public void quilt$setEntryFlag(V o, RegistryFlag flag) {
 		this.quilt$entryToFlag.put(o, (byte) (this.quilt$entryToFlag.getByte(o) | (0x1 << flag.ordinal())));
+	}
+
+	@Override
+	public byte quilt$getEntryFlag(V o) {
+		return this.quilt$entryToFlag.getByte(o);
 	}
 
 	@Override

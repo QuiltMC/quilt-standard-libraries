@@ -34,7 +34,7 @@ public class PlayerManagerMixin {
 	@Final
 	private MinecraftServer server;
 
-	@Inject(method = "onPlayerConnect", at = @At("HEAD"))
+	@Inject(method = "onPlayerConnect", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;getGameRules()Lnet/minecraft/world/GameRules;"))
 	private void quilt$sendSync(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
 		if (!this.server.isHost(player.getGameProfile())) {
 			ServerRegistrySync.sendSyncPackets(connection, player);

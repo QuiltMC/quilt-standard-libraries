@@ -18,7 +18,7 @@ package org.quiltmc.qsl.registry.mixin.client;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.registry.Registry;
-import org.quiltmc.qsl.registry.impl.sync.ClientRegistrySync;
+import org.quiltmc.qsl.registry.impl.sync.client.ClientRegistrySync;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
