@@ -7,9 +7,12 @@ pluginManagement {
 
 		maven {
 			name "Quilt"
+			url "https://maven.quiltmc.org/repository/snapshot"
+		}
+		maven {
+			name "Quilt"
 			url "https://maven.quiltmc.org/repository/release"
 		}
-		// Note: temporary mavens until Quilt buildtools and loader are ready.
 		maven {
 			name "Fabric"
 			url "https://maven.fabricmc.net"
@@ -50,7 +53,7 @@ def library(String library) {
 				&& !it.name.startsWith(".") // Ignore anything hidden on unix-like OSes
 		) {
 			// Libraries can be disabled by adding a file named DISABLE at the root of its directory
-			if (Files.notExists(it.toPath().resolve("DISABLE"))) {
+			if (Files.exists(it.toPath().resolve("build.gradle")) && Files.notExists(it.toPath().resolve("DISABLE"))) {
 				include "$library:$it.name"
 			}
 		}

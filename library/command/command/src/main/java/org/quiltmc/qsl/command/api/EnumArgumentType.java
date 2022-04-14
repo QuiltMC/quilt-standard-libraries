@@ -44,8 +44,8 @@ import net.minecraft.text.TranslatableText;
 
 /**
  * An {@link ArgumentType} that allows an arbitrary set of (case-insensitive) strings.
- *
- * <p>This argument type is compatible with Vanilla clients.
+ * <p>
+ * This argument type is compatible with Vanilla clients.
  */
 public final class EnumArgumentType implements ArgumentType<String> {
 	public static final DynamicCommandExceptionType UNKNOWN_VALUE_EXCEPTION =

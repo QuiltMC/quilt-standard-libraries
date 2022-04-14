@@ -17,8 +17,14 @@
 
 package org.quiltmc.qsl.worldgen.dimension;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
@@ -39,13 +45,7 @@ import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.VerticalBlockSample;
 import net.minecraft.world.gen.structure.StructureSet;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-
 public class EmptyChunkGenerator extends ChunkGenerator {
-
 	public static final Codec<EmptyChunkGenerator> CODEC = RecordCodecBuilder.create((instance) -> method_41042(instance).and(RegistryOps.getRegistry(Registry.BIOME_KEY).forGetter((generator) -> generator.biomeRegistry)).apply(instance, instance.stable(EmptyChunkGenerator::new)));
 
 	private final Registry<Biome> biomeRegistry;
@@ -115,5 +115,4 @@ public class EmptyChunkGenerator extends ChunkGenerator {
 	@Override
 	public void method_40450(List<String> list, BlockPos blockPos) {
 	}
-
 }
