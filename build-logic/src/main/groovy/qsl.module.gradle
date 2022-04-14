@@ -23,9 +23,6 @@ plugins {
 	id("java-library")
 	id("maven-publish")
 	id("net.kyori.indra.git")
-	// FIXME: This convention plugin is just broken
-	// id("org.quiltmc.gradle-conventions.java.style")
-	id("org.quiltmc.gradle-conventions.java.version")
 	id("org.quiltmc.gradle.licenser")
 	id("qsl.common")
 }
