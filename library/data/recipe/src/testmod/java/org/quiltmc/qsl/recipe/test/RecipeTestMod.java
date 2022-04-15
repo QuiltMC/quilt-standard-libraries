@@ -20,8 +20,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import net.fabricmc.loader.api.ModContainer;
-
 import net.minecraft.block.PressurePlateBlock;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -31,6 +29,7 @@ import net.minecraft.recipe.RecipeType;
 import net.minecraft.tag.ItemTags;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.recipe.api.RecipeManagerHelper;
 import org.quiltmc.qsl.recipe.api.builder.VanillaRecipeBuilders;

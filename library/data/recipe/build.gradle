@@ -3,7 +3,10 @@ plugins {
 }
 
 qslModule {
+	name = "Quilt Recipe API"
 	moduleName = "recipe"
+	id = "quilt_recipe"
+	description = "Recipe manipulation APIs."
 	version = "1.0.0"
 	library = "data"
 	moduleDependencies {
@@ -13,8 +16,5 @@ qslModule {
 			testmodOnly("resource_loader")
 		}
 	}
-}
-
-loom {
-	accessWidenerPath = file("src/main/resources/quilt_recipe.accesswidener")
+	accessWidener()
 }
