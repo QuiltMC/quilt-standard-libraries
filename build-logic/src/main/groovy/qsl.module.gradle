@@ -46,6 +46,39 @@ afterEvaluate {
 		throw new GradleException("Module $extension.moduleName needs a version to be set in the qslModule extension")
 	}
 
+
+	publishing {
+		publications {
+			def moduleName = extension.moduleName.get()
+			def library = extension.library.get()
+			boolean publish = true
+
+			try {
+				def xml = new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/$library/$moduleName/$project.version/" +
+						"$moduleName-$project.version" + ".pom").text
+				def metadata = new groovy.xml.XmlSlurper().parseText(xml)
+
+				if (metadata.properties.hash == Git.getLatestCommitHash(project)) {
+					publish = false
+				}
+			} catch (FileNotFoundException ignored) {
+				// No existing version was published.
+			}
+
+			if (publish) {
+				mavenJava(MavenPublication) {
+					from components.java
+
+					pom.withXml {
+						asNode().appendNode("properties").appendNode("hash", Git.getLatestCommitHash(project))
+					}
+				}
+			}
+
+		}
+	}
+
+
 	(extension as QslModuleExtensionImpl).setupModuleDependencies()
 	// TODO: Anything else to validate.
 }
@@ -154,8 +187,8 @@ license {
 
 task checkModuleVersion {
 	doFirst {
-		def moduleName = extension.moduleName
-		def library = extension.library
+		def moduleName = extension.moduleName.get()
+		def library = extension.library.get()
 
 		try {
 			def xml = new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/$library/$moduleName/$project.version/" +
@@ -171,35 +204,5 @@ task checkModuleVersion {
 	}
 }
 
-publishing {
-	publications {
-		def moduleName = extension.moduleName.get()
-		def library = extension.library.get()
-		boolean publish = true
-
-		try {
-			def xml = new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/$library/$moduleName/$project.version/" +
-					"$moduleName-$project.version" + ".pom").text
-			def metadata = new groovy.xml.XmlSlurper().parseText(xml)
-
-			if (metadata.properties.hash == Git.getLatestCommitHash(project)) {
-				publish = false
-			}
-		} catch (FileNotFoundException ignored) {
-			// No existing version was published.
-		}
-
-		if (publish) {
-			mavenJava(MavenPublication) {
-				from components.java
-
-				pom.withXml {
-					asNode().appendNode("properties").appendNode("hash", Git.getLatestCommitHash(project))
-				}
-			}
-		}
-
-	}
-}
 
 publish.dependsOn checkModuleVersion
