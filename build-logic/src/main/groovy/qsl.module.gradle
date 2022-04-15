@@ -61,19 +61,14 @@ sourceSets {
 		resources {
 			// this is needed so that people can use their IDE to compile the project (bypassing Gradle).
 			// you must remember to run the generateQmj task manually
-			srcDir project.file("build/generated/generated_resources/")
+			srcDir generateQmj
 		}
-		output.dir(generateQmj) // makes task run with gradle automagically
 	}
 
 	testmod {
 		compileClasspath += sourceSets.main.compileClasspath
 		runtimeClasspath += sourceSets.main.runtimeClasspath
 	}
-}
-
-jar {
-	duplicatesStrategy = DuplicatesStrategy.EXCLUDE // People running with Gradle will have two versions of QMJ present
 }
 
 dependencies {
@@ -108,13 +103,6 @@ afterEvaluate {
 
 	// This is inside the afterEvaluate block because the version is set by the qslModule extension, which is not
 	// complete until project evaluation has finished.
-	processResources {
-		inputs.property "version", project.version
-
-		filesMatching("fabric.mod.json") {
-			expand "version": project.version
-		}
-	}
 }
 
 java {
@@ -126,9 +114,6 @@ java {
 }
 
 sourcesJar {
-	dependsOn(generateQmj)
-}
-processResources {
 	dependsOn(generateQmj)
 }
 
