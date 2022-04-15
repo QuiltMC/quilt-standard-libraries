@@ -72,7 +72,7 @@ public final class EntityReviveEvents {
 	@FunctionalInterface
 	public interface TryReviveBeforeTotem extends EventAwareListener {
 		/**
-		 * Whether an entity which has fatal damage should be revived.
+		 * Returns whether an entity which has fatal damage should be revived.
 		 *
 		 * @param entity       the entity
 		 * @param damageSource the fatal damage source
