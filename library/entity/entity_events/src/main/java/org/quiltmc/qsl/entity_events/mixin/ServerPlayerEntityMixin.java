@@ -37,8 +37,8 @@ abstract class ServerPlayerEntityMixin extends PlayerEntity {
 	}
 
 	/**
-	 * This is called by both "moveToWorld" and "teleport".
-	 * So this is suitable to handle the after event from both call sites.
+	 * This is called by both "moveToWorld" and "teleport",
+	 * so this is suitable to handle the after event from both call sites.
 	 */
 	@Inject(method = "worldChanged(Lnet/minecraft/server/world/ServerWorld;)V", at = @At("TAIL"))
 	private void afterWorldChanged(ServerWorld origin, CallbackInfo ci) {
