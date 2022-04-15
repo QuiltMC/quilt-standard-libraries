@@ -71,7 +71,7 @@ public class MinecraftClientMixin {
 	// Lambda method in MinecraftClient#<init>, at MinecraftClient#setOverlay.
 	// Take an Optional<Throwable> parameter.
 	@SuppressWarnings("target")
-	@Inject(method = "method_24040(Ljava/util/Optional;)V", at = @At("HEAD"))
+	@Inject(method = "m_aaltpyph(Ljava/util/Optional;)V", at = @At("HEAD"))
 	private void onFirstEndReloadResources(Optional<Throwable> error, CallbackInfo ci) {
 		ClientResourceLoaderEvents.END_RESOURCE_PACK_RELOAD.invoker().onEndResourcePackReload(
 				(MinecraftClient) (Object) this, this.resourceManager, true, error.orElse(null)
@@ -105,7 +105,7 @@ public class MinecraftClientMixin {
 			method = START_INTEGRATED_SERVER_METHOD,
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/MinecraftClient;method_40183(Lnet/minecraft/resource/pack/ResourcePackManager;ZLnet/minecraft/server/WorldStem$Supplier;Lnet/minecraft/server/WorldStem$WorldDataSupplier;)Lnet/minecraft/server/WorldStem;"
+					target = "Lnet/minecraft/client/MinecraftClient;createWorldStem(Lnet/minecraft/resource/pack/ResourcePackManager;ZLnet/minecraft/server/WorldStem$Supplier;Lnet/minecraft/server/WorldStem$WorldDataSupplier;)Lnet/minecraft/server/WorldStem;"
 			)
 	)
 	private void onStartDataPackReloading(String worldName,
