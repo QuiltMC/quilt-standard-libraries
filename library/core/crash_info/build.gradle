@@ -17,7 +17,7 @@ qslModule {
 	}
 	entrypoints {
 		events {
-				values = ["org.quiltmc.qsl.crash.impl.CrashInfoImpl"]
+			values = ["org.quiltmc.qsl.crash.impl.CrashInfoImpl"]
 		}
 	}
 }
