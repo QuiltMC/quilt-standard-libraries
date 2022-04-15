@@ -173,8 +173,8 @@ task checkModuleVersion {
 
 publishing {
 	publications {
-		def moduleName = extension.moduleName
-		def library = extension.library
+		def moduleName = extension.moduleName.get()
+		def library = extension.library.get()
 		boolean publish = true
 
 		try {
