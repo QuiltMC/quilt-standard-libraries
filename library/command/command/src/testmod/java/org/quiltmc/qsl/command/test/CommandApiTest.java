@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.command.test;
 
+import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 import com.mojang.brigadier.CommandDispatcher;
@@ -23,10 +24,14 @@ import net.fabricmc.loader.api.FabricLoader;
 
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
+import net.minecraft.util.Formatting;
 
 import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
+import org.quiltmc.qsl.command.api.EnumArgumentType;
 
 public class CommandApiTest implements CommandRegistrationCallback {
+	private static final EnumArgumentType ENUM_ARGUMENT_TYPE = EnumArgumentType.enumConstant(TestEnum.class);
+
 	@Override
 	public void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, boolean integrated, boolean dedicated) {
 		if (dedicated) {
@@ -51,6 +56,18 @@ public class CommandApiTest implements CommandRegistrationCallback {
 					ctx.getSource().sendFeedback(new LiteralText("Quilt Version: " + FabricLoader.getInstance().getModContainer("quilt_base").get().getMetadata().getVersion().getFriendlyString()), false);
 					return 0;
 				})
+				.then(literal("enum_arg")
+						.then(argument("enum", ENUM_ARGUMENT_TYPE)
+								.executes(ctx -> {
+									var arg = EnumArgumentType.getEnumConstant(ctx, "enum", TestEnum.class);
+									ctx.getSource().sendFeedback(
+											new LiteralText("Got: ").append(new LiteralText(arg.toString()).formatted(Formatting.GOLD)),
+											false
+									);
+									return 0;
+								})
+						)
+				)
 		);
 	}
 }

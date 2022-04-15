@@ -16,15 +16,13 @@
 
 package org.quiltmc.qsl.registry.impl.event;
 
-import java.util.Map;
 import java.util.function.Predicate;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.util.Holder;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.SimpleRegistry;
 
 import org.quiltmc.qsl.registry.api.event.RegistryEntryContext;
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
@@ -52,23 +50,25 @@ public class RegistryMonitorImpl<V> implements RegistryMonitor<V> {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void forAll(RegistryEvents.EntryAdded<V> callback) {
-		var context = new MutableRegistryEntryContextImpl<>(this.registry);
-
 		if (!(this.registry instanceof SimpleRegistryAccessor)) {
 			throw new UnsupportedOperationException("Registry " + this.registry + " is not supported!");
 		}
 
-		for (Map.Entry<Identifier, Holder.Reference<V>> entry : ((SimpleRegistryAccessor<V>) this.registry).getById().entrySet()) {
-			context.set(entry.getKey(), entry.getValue().value());
+		var delayed = new DelayedRegistry<>((SimpleRegistry<V>) this.registry);
+		var context = new MutableRegistryEntryContextImpl<>(delayed);
+
+		this.registry.holders().forEach(entry -> {
+			context.set(entry.getRegistryKey().getValue(), entry.value());
 
 			if (this.testFilter(context)) {
 				callback.onAdded(context);
 			}
-		}
+		});
 
 		this.forUpcoming(callback);
+
+		delayed.applyDelayed();
 	}
 
 	@Override

@@ -74,6 +74,28 @@ afterEvaluate {
 			}
 		}
 	}
+
+	publishing {
+		publications {
+			mavenJava(MavenPublication) {
+				pom.withXml {
+					asNode().appendNode("properties").appendNode("hash", Git.getLatestCommitHash(project))
+					def depsNode = asNode().appendNode("dependencies")
+					rootProject.subprojects.stream().filter {
+						it.path.startsWith(":${extension.libraryName.get()}:")
+					}.forEach {
+						def depNode = depsNode.appendNode("dependency")
+						depNode.appendNode("groupId", it.group)
+						depNode.appendNode("artifactId", it.name)
+						depNode.appendNode("version", it.version)
+						depNode.appendNode("scope", "compile")
+					}
+				}
+			}
+		}
+	}
+
+	loom.disableDeprecatedPomGeneration(publishing.publications.mavenJava)
 }
 
 // A library isn't truly a distributed artifact, rather it is just maven metadata to depend on the modules of a library.
@@ -92,7 +114,7 @@ remapJar {
 
 task checkLibVersion {
 	doFirst {
-		def libraryName = extension.libraryName
+		def libraryName = extension.libraryName.get()
 
 		try {
 			def xml = new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/$libraryName/$project.version/" +
@@ -112,30 +134,7 @@ project.getTasksByName("checkModuleVersion", true).each {
 	checkLibVersion.mustRunAfter it
 }
 
-publishing {
-	repositories {
-		mavenLocal()
-	}
 
-	publications {
-		mavenJava(MavenPublication) {
-			pom.withXml {
-				asNode().appendNode("properties").appendNode("hash", Git.getLatestCommitHash(project))
-				def depsNode = asNode().appendNode("dependencies")
-				rootProject.subprojects.stream().filter {
-					it.path.startsWith(":${extension.libraryName.get()}:")
-				}.forEach {
-					def depNode = depsNode.appendNode("dependency")
-					depNode.appendNode("groupId", it.group)
-					depNode.appendNode("artifactId", it.name)
-					depNode.appendNode("version", it.version)
-					depNode.appendNode("scope", "compile")
-				}
-			}
-		}
-	}
-}
 
-loom.disableDeprecatedPomGeneration(publishing.publications.mavenJava)
 
 publish.dependsOn checkLibVersion

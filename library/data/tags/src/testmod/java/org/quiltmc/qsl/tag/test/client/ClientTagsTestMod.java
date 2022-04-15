@@ -16,12 +16,9 @@
 
 package org.quiltmc.qsl.tag.test.client;
 
-
 import static org.quiltmc.qsl.command.api.client.ClientCommandManager.literal;
 
 import java.util.function.Consumer;
-
-import net.fabricmc.loader.api.ModContainer;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
@@ -31,6 +28,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 
+import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.command.api.client.ClientCommandRegistrationCallback;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;

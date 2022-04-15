@@ -21,8 +21,6 @@ import java.util.Collection;
 import java.util.Collections;
 
 import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +28,8 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.lifecycle.api.event.ServerTickEvents;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
@@ -48,7 +48,7 @@ public class ResourceReloaderTestMod implements ModInitializer {
 
 		// No lifecycle events yet
 		ServerTickEvents.START.register(server -> {
-			if (!clientResources && FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+			if (!clientResources && MinecraftQuiltLoader.getEnvironmentType() == EnvType.CLIENT) {
 				throw new AssertionError("Client reload listener was not called.");
 			}
 

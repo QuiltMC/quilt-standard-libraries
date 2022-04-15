@@ -11,6 +11,7 @@
   "entrypoints": {
     "init": [
       "org.quiltmc.qsl.registry.test.RegistryLibEventsTest",
+      "org.quiltmc.qsl.registry.test.RegistryLibMonitorRegistrationTest",
       "org.quiltmc.qsl.registry.test.RegistryLibMonitorTest"
     ]
   }

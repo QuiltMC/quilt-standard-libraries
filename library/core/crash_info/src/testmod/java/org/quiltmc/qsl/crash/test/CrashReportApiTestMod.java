@@ -18,11 +18,10 @@ package org.quiltmc.qsl.crash.test;
 
 import java.util.Random;
 
-import net.fabricmc.loader.api.ModContainer;
-
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.crash.api.CrashReportEvents;
 

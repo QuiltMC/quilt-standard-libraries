@@ -16,13 +16,13 @@
 
 package org.quiltmc.qsl.registry.mixin;
 
-import java.util.Map;
+import java.util.function.Function;
 
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 import net.minecraft.util.Holder;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.SimpleRegistry;
 
 /**
@@ -31,6 +31,6 @@ import net.minecraft.util.registry.SimpleRegistry;
  */
 @Mixin(SimpleRegistry.class)
 public interface SimpleRegistryAccessor<V> {
-	@Accessor("byId")
-	Map<Identifier, Holder.Reference<V>> getById();
+	@Accessor
+	@Nullable Function<V, Holder.Reference<V>> getCustomHolderProvider();
 }
