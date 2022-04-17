@@ -120,7 +120,7 @@ public abstract class KeyBindsScreenMixin extends GameOptionsScreen {
 
 				this.focusedKey.setBoundChord(new KeyChord(map));
 				QuiltKeyBindsConfigManager.populateConfig();
-				QuiltKeyBindsConfigManager.saveModConfig();
+				QuiltKeyBindsConfigManager.saveConfig();
 			}
 
 			quilt$focusedProtoChord.clear();
@@ -147,7 +147,7 @@ public abstract class KeyBindsScreenMixin extends GameOptionsScreen {
 
 				this.focusedKey.setBoundChord(new KeyChord(map));
 				QuiltKeyBindsConfigManager.populateConfig();
-				QuiltKeyBindsConfigManager.saveModConfig();
+				QuiltKeyBindsConfigManager.saveConfig();
 			}
 
 			quilt$focusedProtoChord.clear();

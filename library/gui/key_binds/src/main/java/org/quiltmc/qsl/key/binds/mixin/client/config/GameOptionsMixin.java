@@ -39,7 +39,7 @@ public abstract class GameOptionsMixin {
 	)
 	private void writeToKeyBindConfig(KeyBind key, InputUtil.Key code, CallbackInfo ci) {
 		QuiltKeyBindsConfigManager.populateConfig();
-		QuiltKeyBindsConfigManager.saveModConfig();
+		QuiltKeyBindsConfigManager.saveConfig();
 	}
 
 	@Redirect(

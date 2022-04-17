@@ -45,6 +45,7 @@ import net.minecraft.client.option.KeyBind;
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
 import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
+import org.quiltmc.qsl.key.binds.mixin.client.KeyBindAccessor;
 
 // TODO - Understand this mess that you have written down
 public class QuiltKeyBindsConfigManager {
@@ -64,7 +65,7 @@ public class QuiltKeyBindsConfigManager {
 				if (result.isPresent()) {
 					registerConfigChanges(result.get());
 					populateConfig();
-					saveModConfig();
+					saveConfig();
 					isConfigLoaded = Optional.of(true);
 				} else {
 					isConfigLoaded = Optional.of(false);
@@ -82,7 +83,7 @@ public class QuiltKeyBindsConfigManager {
 			}
 
 			populateConfig();
-			saveModConfig();
+			saveConfig();
 		}
 	}
 
@@ -117,7 +118,7 @@ public class QuiltKeyBindsConfigManager {
 		CONFIG.setKeyBinds(newConfig.getKeyBinds());
 	}
 
-	public static void saveModConfig() {
+	public static void saveConfig() {
 		var result = QuiltKeyBindsConfig.CODEC.encodeStart(JsonOps.INSTANCE, CONFIG).result();
 		if (result.isPresent()) {
 			try {
@@ -155,23 +156,12 @@ public class QuiltKeyBindsConfigManager {
 
 				keyBindMap.put(keyBind.getTranslationKey(), either);
 			} else {
-				// TODO - Rushed in order to debug issue; Clean this up!
-				if (keyBind.getKeyTranslationKey().equals("key.keyboard.unknown")) {
-					keyBindMap.put(keyBind.getTranslationKey(), Either.right(List.of()));
-				} else {
-					keyBindMap.put(keyBind.getTranslationKey(), Either.left(keyBind.getKeyTranslationKey()));
-				}
+				Either<String, List<String>> either =
+						((KeyBindAccessor) keyBind).getBoundKey().equals(InputUtil.UNKNOWN_KEY)
+						? Either.right(List.of())
+						: Either.left(keyBind.getKeyTranslationKey());
+				keyBindMap.put(keyBind.getTranslationKey(), either);
 			}
-
-			/*
-			if (!CONFIG.getKeyBinds().containsKey(key.getTranslationKey())) {
-				keyBindMap.put(key.getTranslationKey(), List.of(key.getKeyTranslationKey()));
-			} else {
-				keyBindMap.put(key.getTranslationKey(), List.of(key.getKeyTranslationKey()));
-				//key.setBoundKey(InputUtil.fromTranslationKey(CONFIG.getKeyBinds().get(key.getTranslationKey())));
-			}
-
-			*/
 		});
 		CONFIG.setKeyBinds(keyBindMap);
 	}
