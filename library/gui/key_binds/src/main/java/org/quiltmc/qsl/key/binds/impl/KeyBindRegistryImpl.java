@@ -140,9 +140,7 @@ public class KeyBindRegistryImpl {
 			keyBindManager.addModdedKeyBinds();
 		}
 
-		// TODO - Perhaps this should be executed somewhere else?
-		QuiltKeyBindsConfigManager.populateConfig();
-		QuiltKeyBindsConfigManager.saveModConfig();
+		QuiltKeyBindsConfigManager.saveConfig();
 	}
 
 	public static KeyBind[] getKeyBinds() {
