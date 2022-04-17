@@ -184,24 +184,3 @@ license {
 	include "**/*.java"
 }
 
-task checkModuleVersion {
-	doFirst {
-		def moduleName = extension.moduleName.get()
-		def library = extension.library.get()
-
-		try {
-			def xml = new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/$library/$moduleName/$project.version/" +
-					"$moduleName-$project.version" + ".pom").text
-			def metadata = new groovy.xml.XmlSlurper().parseText(xml)
-
-			if (metadata.properties.hash != Git.getLatestCommitHash(project)) {
-				throw new RuntimeException("A module is already published with a different hash!")
-			}
-		} catch (FileNotFoundException ignored) {
-			// No existing version of the module was found.
-		}
-	}
-}
-
-
-publish.dependsOn checkModuleVersion

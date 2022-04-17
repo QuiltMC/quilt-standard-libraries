@@ -6,7 +6,7 @@ plugins {
 	id("qsl.common")
 }
 def ENV = System.getenv()
-group = "org.quiltmc.qsl"
+group = "org.quiltmc"
 version = Versions.QSL_VERSION
 // Takes "1.0.0-beta.1" and changes it to "1.0.0-beta.2.snapshot, unless we are releasing.
 if (version.contains("beta") && !ENV.MAVEN_URL) {
