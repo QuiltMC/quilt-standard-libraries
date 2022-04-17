@@ -51,10 +51,10 @@ public final class Initializer implements ModInitializer {
 
 	}
 
-	public static final Block QUILT_BLOCK = new QuiltBlock(QuiltBlockSettings.of(Material.STONE), Blocks.OAK_STAIRS, Blocks.QUARTZ_PILLAR);
-	public static final Block QUILT_BLOCK_2 = new QuiltBlock(QuiltBlockSettings.of(Material.STONE), Blocks.OAK_SLAB, Blocks.QUARTZ_PILLAR);
-	public static final Block QUILT_BLOCK_3 = new QuiltBlock(QuiltBlockSettings.of(Material.STONE), Blocks.ANDESITE_WALL, Blocks.OAK_SLAB);
-	public static final Block QUILT_BLOCK_4 = new QuiltBlock(QuiltBlockSettings.of(Material.STONE), Blocks.POTTED_ALLIUM, Blocks.LANTERN);
+	public static final Block QUILT_BLOCK = new TestBlock(QuiltBlockSettings.of(Material.STONE), Blocks.OAK_STAIRS, Blocks.QUARTZ_PILLAR);
+	public static final Block QUILT_BLOCK_2 = new TestBlock(QuiltBlockSettings.of(Material.STONE), Blocks.OAK_SLAB, Blocks.QUARTZ_PILLAR);
+	public static final Block QUILT_BLOCK_3 = new TestBlock(QuiltBlockSettings.of(Material.STONE), Blocks.ANDESITE_WALL, Blocks.OAK_SLAB);
+	public static final Block QUILT_BLOCK_4 = new TestBlock(QuiltBlockSettings.of(Material.STONE), Blocks.POTTED_ALLIUM, Blocks.LANTERN);
 
 	@Override
 	public void onInitialize(ModContainer mod) {

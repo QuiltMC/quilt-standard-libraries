@@ -6,8 +6,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Property;
 import org.apache.commons.compress.utils.Lists;
-import org.quiltmc.qsl.block.extensions.api.QuiltBlock;
 import org.quiltmc.qsl.block.extensions.impl.BlockExtension;
+import org.quiltmc.qsl.block.extensions.impl.BlockWithProxies;
+import org.quiltmc.qsl.block.extensions.impl.QuiltBlockImpl;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -31,9 +32,9 @@ public abstract class MixinBlock implements BlockExtension {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/state/StateManager$Builder;build(Ljava/util/function/Function;Lnet/minecraft/state/StateManager$Factory;)Lnet/minecraft/state/StateManager;"),
             locals = LocalCapture.CAPTURE_FAILHARD)
     private void injectProxyProperties(AbstractBlock.Settings settings, CallbackInfo ci, StateManager.Builder<Block, BlockState> builder) {
-        if (this.asBlock() instanceof QuiltBlock){
+        if (this instanceof BlockWithProxies){
             var properties = Lists.newArrayList();
-            for (var proxyBlock : QuiltBlock.PROXY_BLOCKS_TEMP_CONTAINER.get()) {
+            for (var proxyBlock : QuiltBlockImpl.PROXY_BLOCKS_TEMP_CONTAINER.get()) {
                 for (var property : proxyBlock.getStateManager().getProperties()) {
                     if (!properties.contains(property)) {
                         properties.add(property);
@@ -42,15 +43,17 @@ public abstract class MixinBlock implements BlockExtension {
                 this.proxies.add(proxyBlock);
             }
             builder.add(properties.toArray(Property[]::new));
-            QuiltBlock.PROXY_BLOCKS_TEMP_CONTAINER.remove();
+            QuiltBlockImpl.PROXY_BLOCKS_TEMP_CONTAINER.remove();
         }
     }
 
     @Override
     public boolean isInstanceOf(Class<? extends Block> type) {
-        for (var proxy : this.proxies) {
-            if (proxy.getClass().isAssignableFrom(type)) {
-                return true;
+        if (!this.proxies.isEmpty()){
+            for (var proxy : this.proxies) {
+                if (proxy.getClass().isAssignableFrom(type)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -60,9 +63,11 @@ public abstract class MixinBlock implements BlockExtension {
     @Override
     public Block getProxyOfType(Class<? extends Block> type) {
         var result = (Block) null;
-        for (var proxy : this.proxies) {
-            if (proxy.getClass().isAssignableFrom(type)) {
-                result = proxy;
+        if (!this.proxies.isEmpty()){
+            for (var proxy : this.proxies) {
+                if (proxy.getClass().isAssignableFrom(type)) {
+                    result = proxy;
+                }
             }
         }
         if (result != null) {
