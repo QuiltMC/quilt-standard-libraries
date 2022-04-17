@@ -7,7 +7,6 @@ import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Property;
 import org.apache.commons.compress.utils.Lists;
 import org.quiltmc.qsl.block.extensions.impl.BlockExtension;
-import org.quiltmc.qsl.block.extensions.impl.BlockWithProxies;
 import org.quiltmc.qsl.block.extensions.impl.QuiltBlockImpl;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
@@ -32,7 +31,7 @@ public abstract class MixinBlock implements BlockExtension {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/state/StateManager$Builder;build(Ljava/util/function/Function;Lnet/minecraft/state/StateManager$Factory;)Lnet/minecraft/state/StateManager;"),
             locals = LocalCapture.CAPTURE_FAILHARD)
     private void injectProxyProperties(AbstractBlock.Settings settings, CallbackInfo ci, StateManager.Builder<Block, BlockState> builder) {
-        if (this instanceof BlockWithProxies){
+        if (QuiltBlockImpl.PROXY_BLOCKS_TEMP_CONTAINER.get() != null && QuiltBlockImpl.PROXY_BLOCKS_TEMP_CONTAINER.get().length > 0){
             var properties = Lists.newArrayList();
             for (var proxyBlock : QuiltBlockImpl.PROXY_BLOCKS_TEMP_CONTAINER.get()) {
                 for (var property : proxyBlock.getStateManager().getProperties()) {
