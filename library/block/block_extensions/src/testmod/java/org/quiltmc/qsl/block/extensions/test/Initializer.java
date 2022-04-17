@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.block.extensions.test;
 
-import net.fabricmc.loader.api.ModContainer;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.GlassBlock;
@@ -27,6 +25,7 @@ import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.block.extensions.api.QuiltBlockSettings;
 import org.quiltmc.qsl.block.extensions.api.QuiltMaterialBuilder;

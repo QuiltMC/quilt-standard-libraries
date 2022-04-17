@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import net.fabricmc.loader.api.ModContainer;
 import org.jetbrains.annotations.ApiStatus;
+import org.quiltmc.loader.api.ModContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

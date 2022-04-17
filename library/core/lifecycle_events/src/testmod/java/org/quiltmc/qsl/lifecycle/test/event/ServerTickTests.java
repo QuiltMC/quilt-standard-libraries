@@ -18,11 +18,11 @@ package org.quiltmc.qsl.lifecycle.test.event;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.fabricmc.loader.api.ModContainer;
 
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 
+import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.lifecycle.api.event.ServerTickEvents;
 import org.quiltmc.qsl.lifecycle.api.event.ServerWorldTickEvents;

@@ -45,12 +45,20 @@ public final class QmjBuilder {
 					.endObject();
 		for (QslLibraryDependency depend : ext.getModuleDependencyDefinitions()) {
 			for (QslLibraryDependency.ModuleDependencyInfo moduleDependencyInfo : depend.getDependencyInfo().get()) {
+				if (moduleDependencyInfo.type() == QslLibraryDependency.ConfigurationType.TESTMOD) {
+					continue;
+				}
+
 				Project depProject = project.getRootProject().project(depend.getName()).project(moduleDependencyInfo.module());
 				QslModuleExtension depExt = depProject.getExtensions().getByType(QslModuleExtension.class);
 				writer.beginObject()
 						.name("id").value(depExt.getId().get())
-						.name("versions").value(depProject.getVersion().toString())
-						.endObject();
+						.name("versions").value(">=" + depProject.getVersion());
+
+				if (moduleDependencyInfo.type() == QslLibraryDependency.ConfigurationType.COMPILE_ONLY)  {
+					writer.name("optional").value(true);
+				}
+				writer.endObject();
 			}
 		}
 		writer.endArray(); // depends -> quilt_loader

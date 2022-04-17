@@ -16,7 +16,7 @@
 
 package org.quiltmc.qsl.base.api.entrypoint.server;
 
-import net.fabricmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.ModContainer;
 
 /**
  * A mod initializer which is run only on {@link net.fabricmc.api.EnvType#SERVER}.

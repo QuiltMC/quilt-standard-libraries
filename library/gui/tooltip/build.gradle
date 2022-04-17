@@ -17,7 +17,7 @@ qslModule {
 	}
 	entrypoints {
 		client_events {
-			"org.quiltmc.qsl.tooltip.impl.client.QuiltClientTooltipMod"
+			values = ["org.quiltmc.qsl.tooltip.impl.client.QuiltClientTooltipMod"]
 		}
 	}
 }
