@@ -31,7 +31,7 @@ public final class QmjBuilder {
 				.name("sources").value("https://github.com/quiltmc/quilt-standard-libraries")
 				.endObject() // contact -> metadata
 				.name("license").value("Apache-2.0")
-				.name("icon").value("assets/" + ext.getId().get() + "/icon.png")
+				.name("icon").value("assets/qsl_" + ext.getLibrary().get() + "/icon.png")
 				.endObject(); // metadata -> quilt_loader
 		writer.name("intermediate_mappings").value("net.fabricmc:intermediary");
 		writer.name("depends").beginArray();
@@ -97,6 +97,7 @@ public final class QmjBuilder {
 				.name("id").value("qsl")
 				.name("name").value("Quilt Standard Libraries")
 				.name("description").value("A set of libraries to assist in making Quilt mods.")
+				.name("id").value("assets/qsl/icon.png") // Located at Quilt Base API
 				.name("badges").beginArray().value("library").endArray()
 				.endObject() // parent -> modmenu
 				.endObject(); // modmenu -> root
