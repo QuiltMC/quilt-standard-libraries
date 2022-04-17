@@ -16,9 +16,8 @@
 
 package org.quiltmc.qsl.registry.impl.sync;
 
-import net.fabricmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-import org.quiltmc.qsl.registry.impl.sync.client.ClientRegistrySync;
 
 public class RegistrySyncInitializer implements ModInitializer {
 	@Override
