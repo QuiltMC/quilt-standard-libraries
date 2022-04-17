@@ -97,6 +97,7 @@ public final class QmjBuilder {
 				.name("id").value("qsl")
 				.name("name").value("Quilt Standard Libraries")
 				.name("description").value("A set of libraries to assist in making Quilt mods.")
+				.name("icon").value("assets/" + ext.getId().get() + "/icon.png")
 				.name("badges").beginArray().value("library").endArray()
 				.endObject() // parent -> modmenu
 				.endObject(); // modmenu -> root
