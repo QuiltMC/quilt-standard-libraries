@@ -1,0 +1,27 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Permission API"
+	moduleName = "permission"
+	id = "quilt_permission"
+	library = "management"
+	description = "An API for checking permissions on Entities and CommandSources."
+	hasMixins = false
+	moduleDependencies {
+		core {
+			api("qsl_base")
+			testmodOnly("lifecycle_events")
+		}
+		management {
+			testmodOnly("command")
+		}
+	}
+	injectedInterface("net/minecraft/class_1297") {
+		values = ["org/quiltmc/qsl/permission/api/Permissible"]
+	}
+	injectedInterface("net/minecraft/class_2168") {
+		values = ["org/quiltmc/qsl/permission/api/Permissible"]
+	}
+}
