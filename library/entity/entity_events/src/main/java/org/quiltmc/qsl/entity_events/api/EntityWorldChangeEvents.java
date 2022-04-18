@@ -51,7 +51,10 @@ public final class EntityWorldChangeEvents {
 	 * <p>This is similar to {@link EntityWorldChangeEvents#AFTER_ENTITY_CHANGE_WORLD} but is only called for players.
 	 * This is because the player is physically moved to the new world instead of being recreated at the destination.
 	 *
+	 * <p>Note that returning from the end via an end portal does not count as a world-change in this way.</p>
+	 *
 	 * @see EntityWorldChangeEvents#AFTER_ENTITY_CHANGE_WORLD
+	 * @see ServerPlayerEntityCopyCallback
 	 */
 	public static final Event<AfterPlayerChange> AFTER_PLAYER_CHANGE_WORLD = Event.create(AfterPlayerChange.class, callbacks -> (player, origin, destination) -> {
 		for (var callback : callbacks) {

@@ -23,12 +23,13 @@ import org.quiltmc.qsl.base.api.event.EventAwareListener;
 /**
  * A callback which is called on the logical server when a player is copied.
  *
- * <p>Players are copied on death and when returning from the end. The {@code wasDeath} parameter can be used to
- * differentiate between the two situations.
+ * <p>Players are copied on death and when returning from the end through a portal. The {@code wasDeath} parameter can
+ * be used to differentiate between the two situations.
  *
  * <p>The callback is called after vanilla has done its own copying logic.
  *
  * @see ServerPlayerEntity#copyFrom(ServerPlayerEntity, boolean)
+ * @see EntityWorldChangeEvents#AFTER_PLAYER_CHANGE_WORLD
  */
 @FunctionalInterface
 public interface ServerPlayerEntityCopyCallback extends EventAwareListener {
