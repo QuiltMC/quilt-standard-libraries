@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.entity_events.test;
 
-import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -32,16 +31,13 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.entity_events.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.logging.LogManager;
-
 public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTotem,
 		EntityReviveEvents.TryReviveBeforeTotem,
-		EntityKilledCallback,
+		LivingEntityDeathCallback,
 		ServerEntityLoadEvents.AfterLoad,
 		ServerEntityLoadEvents.AfterUnload,
 		EntityWorldChangeEvents.AfterPlayerChange,
@@ -71,14 +67,10 @@ public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTot
 		return false;
 	}
 
-	// All invocations of the entity killed event are logged.
+	// All invocations of the livingentity death event are logged.
 	@Override
-	public void onKilled(World world, @Nullable Entity killer, LivingEntity killed) {
-		if (killer != null) {
-			LOGGER.info(killer.getName().getString() + " killed " + killed.getName().getString() + " (" + (world.isClient ? "client" : "server") + ")");
-		} else {
-			LOGGER.info("Something killed " + killed.getName().getString() + " (" + (world.isClient ? "client" : "server") + ")");
-		}
+	public void onDeath(LivingEntity killed, DamageSource source) {
+		LOGGER.info(source.getName() + " killed " + killed.getName().getString());
 	}
 
 	// Chicken Loading is logged.
