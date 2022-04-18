@@ -3,6 +3,7 @@
   "package": "org.quiltmc.qsl.entity_events.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "LivingEntityDeathEventMixin",
     "EntityMixin",
     "LivingEntityMixin",
     "ServerEntityHandlerMixin",
