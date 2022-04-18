@@ -89,12 +89,10 @@ public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTot
 		}
 	}
 
-	// Players going to the nether are notified
+	// Players going to another world are notified
 	@Override
 	public void afterChangeWorld(ServerPlayerEntity player, ServerWorld origin, ServerWorld destination) {
-		if (destination.getDimension() == destination.getServer().getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).get(DimensionType.THE_NETHER_REGISTRY_KEY)) {
-			player.sendMessage(new LiteralText("Nether Entered"), false);
-		}
+		player.sendMessage(new LiteralText("Welcome to "+destination.getRegistryKey().toString()), false);
 	}
 
 	// Entities going to the end are named 'end traveller'
@@ -105,7 +103,7 @@ public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTot
 		}
 	}
 
-	// Players keep the glowing enchantment after respawn
+	// Players keep the glowing effect after respawn
 	// Players receive an apple after coming back from the end
 	@Override
 	public void onPlayerCopy(ServerPlayerEntity newPlayer, ServerPlayerEntity original, boolean wasDeath) {
