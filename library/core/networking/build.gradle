@@ -7,7 +7,6 @@ qslModule {
 	moduleName = "networking"
 	id = "quilt_networking"
 	description = "Utilites to assist with sending custom packets over the Minecraft protocol."
-	version = "1.0.0"
 	library = "core"
 	moduleDependencies {
 		core {

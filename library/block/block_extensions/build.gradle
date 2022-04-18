@@ -7,7 +7,6 @@ qslModule {
 	moduleName = "block_extensions"
 	id = "quilt_block_extensions"
 	description = "Extensions for creating and working with blocks."
-	version = "1.0.0"
 	library = "block"
 	moduleDependencies {
 		core {

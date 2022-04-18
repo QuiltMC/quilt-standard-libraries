@@ -4,5 +4,4 @@ plugins {
 
 qslLibrary {
 	libraryName = "command"
-	version = "1.0.0"
 }
