@@ -7,7 +7,6 @@ qslModule {
 	moduleName = "recipe"
 	id = "quilt_recipe"
 	description = "Recipe manipulation APIs."
-	version = "1.0.0"
 	library = "data"
 	moduleDependencies {
 		core {
