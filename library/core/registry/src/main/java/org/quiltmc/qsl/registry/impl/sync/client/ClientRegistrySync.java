@@ -110,7 +110,7 @@ public final class ClientRegistrySync {
 		} else if (RegistryFlag.isOptional(flags)) {
 			optionalRegistry = true;
 		} else {
-			LOGGER.warn("Trying to sync registry " + identifier + " which doesn't " + (registry == null ? "support it!" : "exist!"));
+			LOGGER.warn("Trying to sync registry " + identifier + " which doesn't " + (registry != null ? "support it!" : "exist!"));
 			sendSyncFailedPacket(handler, identifier);
 			handler.getConnection().disconnect(new LiteralText("Client is missing required registry! Mismatched mods?"));
 		}

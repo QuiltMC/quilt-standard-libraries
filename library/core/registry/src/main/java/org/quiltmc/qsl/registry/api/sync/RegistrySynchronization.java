@@ -79,14 +79,14 @@ public final class RegistrySynchronization {
 	}
 
 	/**
-	 * Blocks entry from being synced
+	 * Prevents entry from being synced
 	 */
 	public static <T> void setEntrySkipped(SimpleRegistry<T> registry, T entry) {
 		RegistryFlag.setEntry(registry, entry, RegistryFlag.SKIP);
 	}
 
 	/**
-	 * Blocks entry from being synced
+	 * Prevents entry from being synced
 	 */
 	public static <T> void setEntrySkipped(SimpleRegistry<T> registry, Identifier identifier) {
 		RegistryFlag.setEntry(registry, identifier, RegistryFlag.SKIP);
