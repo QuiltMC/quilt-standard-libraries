@@ -26,7 +26,6 @@ import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-import org.quiltmc.qsl.block.extensions.api.QuiltBlock;
 import org.quiltmc.qsl.block.extensions.api.QuiltBlockSettings;
 import org.quiltmc.qsl.block.extensions.api.QuiltMaterialBuilder;
 

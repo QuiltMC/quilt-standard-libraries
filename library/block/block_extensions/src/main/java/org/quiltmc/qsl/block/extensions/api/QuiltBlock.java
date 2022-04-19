@@ -7,9 +7,7 @@ import net.minecraft.state.property.Property;
 import org.quiltmc.qsl.block.extensions.impl.BlockExtension;
 import org.quiltmc.qsl.block.extensions.impl.QuiltBlockImpl;
 
-//TODO: add a way to make any item place-able
-//TODO: access widen stairs and other privated blocks by default
-
+//TODO: find a way to proxy default states
 public class QuiltBlock {
 
     /**
