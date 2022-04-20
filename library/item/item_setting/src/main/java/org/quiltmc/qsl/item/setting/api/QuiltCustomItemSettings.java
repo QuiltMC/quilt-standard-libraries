@@ -41,7 +41,6 @@ public final class QuiltCustomItemSettings {
 	 *     <li>Furnace Fuel</li>
 	 *     <li>Furnace Ingredient</li>
 	 *     <li>Loom Dye Input</li>
-	 *     <li>Loom Banner Input</li>
 	 *     <li>Brewing Stand Ingredient</li>
 	 *     <li>Smithing Table Addition</li>
 	 *     <li>Stone Cutter Ingredient</li>
