@@ -23,7 +23,7 @@ public final class QmjBuilder {
 				.name("name").value(ext.getName().get())
 				.name("description").value(ext.getDescription().get())
 				.name("contributors").beginObject() // metadata -> contributors
-				.name("Owner").value("QuiltMC: QSL Team")
+				.name("QuiltMC: QSL Team").value("Owner")
 				.endObject() // contributors -> metadata
 				.name("contact").beginObject() // contributors -> contact
 				.name("homepage").value("https://quiltmc.org")
