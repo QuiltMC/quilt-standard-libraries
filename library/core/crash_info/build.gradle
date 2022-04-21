@@ -8,7 +8,6 @@ qslModule {
 	id = "quilt_crash_info"
 	description = "Adds information about the Quilt environment to crash reports," +
 			" and allows other mods to do the same."
-	version = "1.0.0"
 	library = "core"
 	moduleDependencies {
 		core {
