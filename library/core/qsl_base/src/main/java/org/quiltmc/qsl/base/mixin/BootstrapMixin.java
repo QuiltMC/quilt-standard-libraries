@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.base.mixin;
 
-import net.fabricmc.loader.api.FabricLoader;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,6 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.Bootstrap;
 
+import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 
 @Mixin(Bootstrap.class)
@@ -38,7 +38,7 @@ public abstract class BootstrapMixin {
 	private static void onInitialize(CallbackInfo ci) {
 		setOutputStreams(); // We need to make this a bit early in case a mod uses System.out to print stuff.
 
-		for (var initializer : FabricLoader.getInstance().getEntrypointContainers(ModInitializer.ENTRYPOINT_KEY, ModInitializer.class)) {
+		for (var initializer : QuiltLoader.getEntrypointContainers(ModInitializer.ENTRYPOINT_KEY, ModInitializer.class)) {
 			initializer.getEntrypoint().onInitialize(initializer.getProvider());
 		}
 	}

@@ -3,8 +3,10 @@ plugins {
 }
 
 qslModule {
+	name = "Quilt Command API"
 	moduleName = "command"
-	version = "1.0.0"
+	id = "quilt_command"
+	description = "Quilt APIs relating to commands."
 	library = "command"
 	moduleDependencies {
 		core {
@@ -14,6 +16,14 @@ qslModule {
 
 			testmodOnly("lifecycle_events")
 			testmodOnly("networking")
+		}
+	}
+	entrypoints {
+		init {
+			values = ["org.quiltmc.qsl.command.impl.Initializer"]
+		}
+		client_init {
+			values = ["org.quiltmc.qsl.command.impl.client.ClientInitializer"]
 		}
 	}
 }

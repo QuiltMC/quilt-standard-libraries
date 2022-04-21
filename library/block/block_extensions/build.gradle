@@ -3,8 +3,10 @@ plugins {
 }
 
 qslModule {
+	name = "Quilt Block Extensions API"
 	moduleName = "block_extensions"
-	version = "1.0.0"
+	id = "quilt_block_extensions"
+	description = "Extensions for creating and working with blocks."
 	library = "block"
 	moduleDependencies {
 		core {
@@ -12,8 +14,5 @@ qslModule {
 			testmodOnly("resource_loader")
 		}
 	}
-}
-
-loom {
-	accessWidenerPath = file("src/main/resources/quilt_block_extensions.accesswidener")
+	accessWidener()
 }

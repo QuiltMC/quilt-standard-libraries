@@ -4,5 +4,4 @@ plugins {
 
 qslLibrary {
 	libraryName = "worldgen"
-	version = "1.0.0"
 }

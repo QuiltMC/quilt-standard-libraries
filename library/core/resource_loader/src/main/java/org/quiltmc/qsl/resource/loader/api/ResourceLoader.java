@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.resource.loader.api;
 
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.resource.ResourceType;
@@ -25,6 +23,8 @@ import net.minecraft.resource.pack.ResourcePackProvider;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
@@ -111,7 +111,7 @@ public interface ResourceLoader {
 	 * @see #registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType, Text)
 	 */
 	static boolean registerBuiltinResourcePack(Identifier id, ResourcePackActivationType activationType, Text displayName) {
-		var container = FabricLoader.getInstance().getModContainer(id.getNamespace())
+		var container = QuiltLoader.getModContainer(id.getNamespace())
 				.orElseThrow(() ->
 						new IllegalArgumentException("No mod with mod id " + id.getNamespace() + " could be found"));
 		return registerBuiltinResourcePack(id, container, activationType, displayName);
