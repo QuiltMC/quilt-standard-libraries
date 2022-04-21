@@ -40,7 +40,7 @@ public final class RegistrySynchronization {
 	 * Makes registry synchronize with client
 	 */
 	public static void synchronize(SimpleRegistry<?> registry) {
-		SynchronizedRegistry.as(registry).quilt$requiresSyncing();
+		SynchronizedRegistry.as(registry).quilt$markForSync();
 	}
 
 	/**
