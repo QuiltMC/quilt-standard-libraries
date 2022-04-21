@@ -30,7 +30,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import com.google.common.base.Charsets;
-import net.fabricmc.loader.api.ModContainer;
 import org.apache.commons.io.IOUtils;
 
 import net.minecraft.SharedConstants;
@@ -43,6 +42,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.quiltmc.qsl.resource.loader.test.mixin.client.NativeImageAccessor;
