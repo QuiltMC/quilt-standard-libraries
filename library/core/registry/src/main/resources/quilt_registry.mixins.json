@@ -7,7 +7,11 @@
     "ItemsMixin",
     "RegistryMixin",
     "SimpleRegistryAccessor",
-    "SimpleRegistryMixin"
+    "SimpleRegistryMixin",
+    "patch.BeaconBlockEntityMixin",
+    "patch.MooshroomEntityMixin",
+    "patch.StatusEffectInstanceMixin",
+    "patch.SuspiciousStewItemMixin"
   ],
   "injectors": {
     "defaultRequire": 1
