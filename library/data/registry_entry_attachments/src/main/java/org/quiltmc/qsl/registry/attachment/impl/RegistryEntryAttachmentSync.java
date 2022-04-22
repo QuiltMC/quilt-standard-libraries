@@ -125,19 +125,22 @@ public final class RegistryEntryAttachmentSync {
 
 				@SuppressWarnings("UnstableApiUsage")
 				Table<String, String, NbtElement> myTable = Tables.newCustomTable(new Object2ReferenceOpenHashMap<>(), Object2ReferenceOpenHashMap::new);
-				for (var valueEntry : dataHolder.valueTable.rowMap().get(attachmentEntry.getValue()).entrySet()) {
-					var entryId = registry.getId(valueEntry.getKey());
-					if (entryId == null) {
-						throw new IllegalStateException("Foreign object in data holder of attachment %s: %s"
-								.formatted(attachment.id(), valueEntry.getKey()));
-					}
+				Map<Object, Object> entryValues = dataHolder.valueTable.rowMap().get(attachmentEntry.getValue());
+				if (entryValues != null) {
+					for (var valueEntry : entryValues.entrySet()) {
+						var entryId = registry.getId(valueEntry.getKey());
+						if (entryId == null) {
+							throw new IllegalStateException("Foreign object in data holder of attachment %s: %s"
+									.formatted(attachment.id(), valueEntry.getKey()));
+						}
 
-					myTable.put(entryId.getNamespace(), entryId.getPath(), attachment.codec()
-							.encodeStart(NbtOps.INSTANCE, valueEntry.getKey())
-							.getOrThrow(false, msg -> {
-								throw new IllegalStateException("Failed to encode value for attachment %s of registry entry %s: %s"
-										.formatted(attachment.id(), entryId, msg));
-							}));
+						myTable.put(entryId.getNamespace(), entryId.getPath(), attachment.codec()
+								.encodeStart(NbtOps.INSTANCE, valueEntry.getValue())
+								.getOrThrow(false, msg -> {
+									throw new IllegalStateException("Failed to encode value for attachment %s of registry entry %s: %s"
+											.formatted(attachment.id(), entryId, msg));
+								}));
+					}
 				}
 
 				Set<Pair<String, NbtCompound>> valueMaps = new HashSet<>();
