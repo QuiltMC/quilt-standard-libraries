@@ -13,21 +13,21 @@
  */
 
 import qsl.internal.Git
+import qsl.internal.GroovyXml
 import qsl.internal.Versions
 import qsl.internal.extension.QslModuleExtension
+import qsl.internal.extension.QslModuleExtensionImpl
+import qsl.internal.dependency.QslLibraryDependency
 
 plugins {
 	id("java-library")
 	id("maven-publish")
 	id("net.kyori.indra.git")
-	// FIXME: This convention plugin is just broken
-	// id("org.quiltmc.gradle-conventions.java.style")
-	id("org.quiltmc.gradle-conventions.java.version")
 	id("org.quiltmc.gradle.licenser")
 	id("qsl.common")
 }
 
-def extension = project.extensions.create("qslModule", QslModuleExtension, project)
+def extension = project.extensions.create(QslModuleExtension, "qslModule", QslModuleExtensionImpl, project)
 
 // We need to wait until project evaluation has finished to peek into a complete QSL module extension.
 afterEvaluate {
@@ -40,19 +40,63 @@ afterEvaluate {
 		throw new GradleException("Module $extension.moduleName needs the `library` field set in the qslModule extension")
 	}
 
-	// Version is set automatically in extension, verify it is set.
-	if (project.version == "unspecified") { // Gradle will return `unspecified` given no version being set.
-		throw new GradleException("Module $extension.moduleName needs a version to be set in the qslModule extension")
+	group = "org.quiltmc.qsl.${extension.library.get()}"
+
+
+	publishing {
+		publications {
+			def moduleName = extension.moduleName.get()
+			def library = extension.library.get()
+			boolean publish = true
+
+			try {
+				def xml = new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/$library/$moduleName/$project.version/" +
+						"$moduleName-$project.version" + ".pom").text
+				def metadata = new groovy.xml.XmlSlurper().parseText(xml)
+
+				if (metadata.properties.hash == Git.getLatestCommitHash(project)) {
+					publish = false
+				}
+			} catch (FileNotFoundException ignored) {
+				// No existing version was published.
+			}
+
+			if (publish) {
+				mavenJava(MavenPublication) {
+					from components.java
+
+					pom.withXml {
+						asNode().appendNode("properties").appendNode("hash", Git.getLatestCommitHash(project))
+					}
+				}
+			}
+
+		}
 	}
 
-	// Apply module dependencies for maven.
-	extension.setupModuleDependencies()
-	// TODO: Anything else to validate.
 
-	group = "org.quiltmc.qsl.${extension.library.get()}"
+	(extension as QslModuleExtensionImpl).setupModuleDependencies()
+	// TODO: Anything else to validate.
+	if (version != rootProject.version) {
+		throw new GradleException("Module ${extension.moduleName.get()} version ($version) does not match root project version ($rootProject.version). Do not change it!")
+	}
+}
+
+
+def generateQmj = tasks.register("generateQmj", qsl.internal.task.GenerateQmjTask) {
+	it.qslModule.set(extension)
+	it.outputDir.set(project.file("build/generated/generated_resources/"))
 }
 
 sourceSets {
+	main {
+		resources {
+			// this is needed so that people can use their IDE to compile the project (bypassing Gradle).
+			// you must remember to run the generateQmj task manually
+			srcDir generateQmj
+		}
+	}
+
 	testmod {
 		compileClasspath += sourceSets.main.compileClasspath
 		runtimeClasspath += sourceSets.main.runtimeClasspath
@@ -91,13 +135,6 @@ afterEvaluate {
 
 	// This is inside the afterEvaluate block because the version is set by the qslModule extension, which is not
 	// complete until project evaluation has finished.
-	processResources {
-		inputs.property "version", project.version
-
-		filesMatching("fabric.mod.json") {
-			expand "version": project.version
-		}
-	}
 }
 
 java {
@@ -106,6 +143,10 @@ java {
 
 	withJavadocJar()
 	withSourcesJar()
+}
+
+sourcesJar {
+	dependsOn(generateQmj)
 }
 
 javadoc {
@@ -136,60 +177,10 @@ javadoc {
 }
 
 license {
+	rule rootProject.file("codeformat/COLONEL_MODIFIED_HEADER")
 	rule rootProject.file("codeformat/FABRIC_MODIFIED_HEADER")
 	rule rootProject.file("codeformat/HEADER")
 
 	include "**/*.java"
 }
 
-task checkModuleVersion {
-	doFirst {
-		def moduleName = extension.moduleName
-		def library = extension.library
-
-		try {
-			def xml = new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/$library/$moduleName/$project.version/" +
-					"$moduleName-$project.version" + ".pom").text
-			def metadata = new groovy.xml.XmlSlurper().parseText(xml)
-
-			if (metadata.properties.hash != Git.getLatestCommitHash(project)) {
-				throw new RuntimeException("A module is already published with a different hash!")
-			}
-		} catch (FileNotFoundException ignored) {
-			// No existing version of the module was found.
-		}
-	}
-}
-
-publishing {
-	publications {
-		def moduleName = extension.moduleName
-		def library = extension.library
-		boolean publish = true
-
-		try {
-			def xml = new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/$library/$moduleName/$project.version/" +
-					"$moduleName-$project.version" + ".pom").text
-			def metadata = new groovy.xml.XmlSlurper().parseText(xml)
-
-			if (metadata.properties.hash == Git.getLatestCommitHash(project)) {
-				publish = false
-			}
-		} catch (FileNotFoundException ignored) {
-			// No existing version was published.
-		}
-
-		if (publish) {
-			mavenJava(MavenPublication) {
-				from components.java
-
-				pom.withXml {
-					asNode().appendNode("properties").appendNode("hash", Git.getLatestCommitHash(project))
-				}
-			}
-		}
-
-	}
-}
-
-publish.dependsOn checkModuleVersion
