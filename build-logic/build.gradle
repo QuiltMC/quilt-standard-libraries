@@ -10,10 +10,6 @@ repositories {
 
 	maven {
 		name "Quilt"
-		url "https://maven.quiltmc.org/repository/snapshot"
-	}
-	maven {
-		name "Quilt"
 		url "https://maven.quiltmc.org/repository/release"
 	}
 	// Note: temporary mavens until Quilt buildtools and loader are ready.
@@ -21,14 +17,10 @@ repositories {
 		name "Fabric"
 		url "https://maven.fabricmc.net/"
 	}
-	maven {
-		name "Cotton"
-		url "https://server.bbkr.space/artifactory/libs-release/"
-	}
 }
 
 dependencies {
-	implementation "org.quiltmc:loom:0.12.23"
+	implementation "org.quiltmc:loom:0.12.+"
 	implementation "net.kyori:indra-git:2.0.2"
 	implementation "org.quiltmc:quilt-json5:1.0.0"
 	implementation "org.quiltmc:quilt-gradle-licenser:1.1.+"

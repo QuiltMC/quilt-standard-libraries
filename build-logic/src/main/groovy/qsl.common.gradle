@@ -11,6 +11,8 @@ plugins {
 
 def ENV = System.getenv()
 
+version = rootProject.version
+
 publishing {
 	repositories {
 		if (ENV.MAVEN_URL) {
