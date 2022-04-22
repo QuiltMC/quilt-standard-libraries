@@ -36,10 +36,10 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	protected final Side side;
 
 	public RegistryEntryAttachmentImpl(Registry<R> registry,
-									   Identifier id,
-									   Class<V> valueClass,
-									   Codec<V> codec,
-									   Side side) {
+	                                   Identifier id,
+	                                   Class<V> valueClass,
+	                                   Codec<V> codec,
+	                                   Side side) {
 		this.registry = registry;
 		this.id = id;
 		this.valueClass = valueClass;
@@ -49,27 +49,27 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 
 	@Override
 	public Registry<R> registry() {
-		return registry;
+		return this.registry;
 	}
 
 	@Override
 	public Identifier id() {
-		return id;
+		return this.id;
 	}
 
 	@Override
 	public Class<V> valueClass() {
-		return valueClass;
+		return this.valueClass;
 	}
 
 	@Override
 	public Codec<V> codec() {
-		return codec;
+		return this.codec;
 	}
 
 	@Override
 	public Side side() {
-		return side;
+		return this.side;
 	}
 
 	protected abstract Optional<V> getDefaultValue(R entry);
@@ -77,42 +77,45 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	@Override
 	public Optional<V> getValue(R entry) {
 		V value;
-		if (side == Side.CLIENT) {
+		if (this.side == Side.CLIENT) {
 			AssetsHolderGuard.assertAccessAllowed();
-			value = RegistryEntryAttachmentHolder.getAssets(registry).getValue(this, entry);
+			value = RegistryEntryAttachmentHolder.getAssets(this.registry).getValue(this, entry);
 			if (value != null) {
 				return Optional.of(value);
 			}
 		}
-		value = RegistryEntryAttachmentHolder.getData(registry).getValue(this, entry);
+
+		value = RegistryEntryAttachmentHolder.getData(this.registry).getValue(this, entry);
 		if (value != null) {
 			return Optional.of(value);
 		}
-		value = RegistryEntryAttachmentHolder.getBuiltin(registry).getValue(this, entry);
+
+		value = RegistryEntryAttachmentHolder.getBuiltin(this.registry).getValue(this, entry);
 		if (value != null) {
 			return Optional.of(value);
 		}
-		return getDefaultValue(entry);
+
+		return this.getDefaultValue(entry);
 	}
 
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof RegistryEntryAttachmentImpl<?, ?> that)) return false;
-		return Objects.equals(registry.getKey(), that.registry.getKey()) && Objects.equals(id, that.id);
+		return Objects.equals(this.registry.getKey(), that.registry.getKey()) && Objects.equals(this.id, that.id);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(registry.getKey(), id);
+		return Objects.hash(this.registry.getKey(), this.id);
 	}
 
 	@Override
 	public String toString() {
 		return "RegistryAttachment{" +
-				"registry=" + registry +
-				", id=" + id +
-				", valueClass=" + valueClass +
+				"registry=" + this.registry +
+				", id=" + this.id +
+				", valueClass=" + this.valueClass +
 				'}';
 	}
 }

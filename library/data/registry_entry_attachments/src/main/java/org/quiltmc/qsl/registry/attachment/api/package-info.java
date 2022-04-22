@@ -1,12 +1,13 @@
 /**
  * <h2>Registry Entry Attachments</h2>
  *
- * <p>A simple API for adding arbitrary values to any instances managed by a {@link net.minecraft.util.registry.Registry Registry}.
- *
- * <p>{@link org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment RegistryEntryAttachment} contains a number of methods for building
+ * <p>
+ * A simple API for adding arbitrary values to any instances managed by a {@link net.minecraft.util.registry.Registry Registry}.
+ * <p>
+ * {@link org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment RegistryEntryAttachment} contains a number of methods for building
  * new attachments.
- *
- * <p>To retrieve an attachment's value, use {@link org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment#getValue(java.lang.Object)}
+ * <p>
+ * To retrieve an attachment's value, use {@link org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment#getValue(java.lang.Object)}
  * to get the value assigned to the specified registry entry.
  *
  * <p><h3>Vocabulary</h3>
@@ -19,16 +20,16 @@
  *
  *
  * <h3>Data-Driven Capabilities</h3>
- *
- * <p>All attachments declared using this API can be set using a data pack (or a resource pack, if the attachment is client-side)!
+ * <p>
+ * All attachments declared using this API can be set using a data pack (or a resource pack, if the attachment is client-side)!
  * Simply create the following file:<br>
  * {@code <data|assets>/<attachment_namespace>/attachments/<registry_key_path>/<attachment_name>.json}
- *
- * <p>These "attachment dictionaries" use a tag-like format, with a {@code replace} property that allows replacing all (non built-in) values.
- *
- * <p>The {@code values} object functions as a map, mapping registry entry IDs to attachment values.
- *
- * <p>For example, say we have an {@code Integer} attachment for the {@code Item} registry with an ID of {@code example_mod:coolness}.<br>
+ * <p>
+ * These "attachment dictionaries" use a tag-like format, with a {@code replace} property that allows replacing all (non built-in) values.
+ * <p>
+ * The {@code values} object functions as a map, mapping registry entry IDs to attachment values.
+ * <p>
+ * For example, say we have an {@code Integer} attachment for the {@code Item} registry with an ID of {@code example_mod:coolness}.<br>
  * To set Netherite Pickaxe's coolness to 20, we create this file at {@code data/example_mod/attachments/minecraft/item/coolness.json}:
  * <pre><code>
  * {

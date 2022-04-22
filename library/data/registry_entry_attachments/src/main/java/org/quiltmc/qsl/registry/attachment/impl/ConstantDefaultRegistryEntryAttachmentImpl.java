@@ -27,13 +27,13 @@ public final class ConstantDefaultRegistryEntryAttachmentImpl<R, V> extends Regi
 	private final V defaultValue;
 
 	public ConstantDefaultRegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec, Side side,
-													  V defaultValue) {
+	                                                  V defaultValue) {
 		super(registry, id, valueClass, codec, side);
 		this.defaultValue = defaultValue;
 	}
 
 	@Override
 	protected Optional<V> getDefaultValue(R entry) {
-		return Optional.ofNullable(defaultValue);
+		return Optional.ofNullable(this.defaultValue);
 	}
 }

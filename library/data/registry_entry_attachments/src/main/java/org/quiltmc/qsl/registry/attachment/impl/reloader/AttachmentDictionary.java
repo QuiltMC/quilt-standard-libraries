@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.registry.attachment.impl.reloader;
 
+import static org.quiltmc.qsl.registry.attachment.impl.reloader.RegistryEntryAttachmentReloader.LOGGER;
+
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,8 +37,6 @@ import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
-import static org.quiltmc.qsl.registry.attachment.impl.reloader.RegistryEntryAttachmentReloader.LOGGER;
-
 final class AttachmentDictionary<R, V> {
 	private final Registry<R> registry;
 	private final RegistryEntryAttachment<R, V> attachment;
@@ -47,27 +47,27 @@ final class AttachmentDictionary<R, V> {
 		this.registry = registry;
 		this.attachment = attachment;
 		this.isClient = isClient;
-		map = new HashMap<>();
+		this.map = new HashMap<>();
 	}
 
 	public void put(Identifier id, Object value) {
-		map.put(new ValueTarget.Single(id), value);
+		this.map.put(new ValueTarget.Single(id), value);
 	}
 
 	public void putTag(Identifier id, Object value, boolean required) {
-		map.put(new ValueTarget.Tagged<>(registry, id, isClient, required), value);
+		this.map.put(new ValueTarget.Tagged<>(this.registry, id, this.isClient, required), value);
 	}
 
 	public Registry<?> getRegistry() {
-		return registry;
+		return this.registry;
 	}
 
 	public RegistryEntryAttachment<?, ?> getAttachment() {
-		return attachment;
+		return this.attachment;
 	}
 
 	public Map<ValueTarget, Object> getMap() {
-		return map;
+		return this.map;
 	}
 
 	public void processResource(Resource resource) {
@@ -79,6 +79,7 @@ final class AttachmentDictionary<R, V> {
 				JsonObject obj = JsonHelper.deserialize(new InputStreamReader(resource.getInputStream()));
 				replace = JsonHelper.getBoolean(obj, "replace", false);
 				values = obj.get("values");
+
 				if (values == null) {
 					throw new JsonSyntaxException("Missing values, expected to find a JsonArray or JsonObject");
 				} else if (!values.isJsonArray() && !values.isJsonObject()) {
@@ -92,13 +93,13 @@ final class AttachmentDictionary<R, V> {
 
 			// if "replace" is true, the data file wants us to clear all entries from other files before it
 			if (replace) {
-				map.clear();
+				this.map.clear();
 			}
 
 			if (values.isJsonArray()) {
-				handleArray(resource, values.getAsJsonArray());
+				this.handleArray(resource, values.getAsJsonArray());
 			} else if (values.isJsonObject()) {
-				handleObject(resource, values.getAsJsonObject());
+				this.handleObject(resource, values.getAsJsonObject());
 			}
 		} catch (Exception e) {
 			LOGGER.error("Exception occurred while parsing " + resource.getId() + "!", e);
@@ -114,6 +115,7 @@ final class AttachmentDictionary<R, V> {
 						i, resource.getId(), JsonHelper.getType(entry));
 				continue;
 			}
+
 			JsonObject entryO = entry.getAsJsonObject();
 			Identifier id;
 			boolean tagId = false;
@@ -122,6 +124,7 @@ final class AttachmentDictionary<R, V> {
 
 			try {
 				String idStr;
+
 				if (entryO.has("id")) {
 					idStr = JsonHelper.getString(entryO, "id");
 				} else if (entryO.has("tag")) {
@@ -130,6 +133,7 @@ final class AttachmentDictionary<R, V> {
 				} else {
 					throw new JsonSyntaxException("Expected id or tag, got neither");
 				}
+
 				id = new Identifier(idStr);
 			} catch (JsonSyntaxException e) {
 				LOGGER.error("Invalid element at index {} in values of {}: syntax error",
@@ -162,15 +166,15 @@ final class AttachmentDictionary<R, V> {
 				continue;
 			}
 
-			Object parsedValue = parseValue(resource, id, value);
+			Object parsedValue = this.parseValue(resource, id, value);
 			if (parsedValue == null) {
 				continue;
 			}
 
 			if (tagId) {
-				putTag(id, parsedValue, required);
+				this.putTag(id, parsedValue, required);
 			} else {
-				put(id, parsedValue);
+				this.put(id, parsedValue);
 			}
 		}
 	}
@@ -179,12 +183,15 @@ final class AttachmentDictionary<R, V> {
 		for (Map.Entry<String, JsonElement> entry : values.entrySet()) {
 			Identifier id;
 			boolean tagId = false;
+
 			try {
 				String idStr = entry.getKey();
+
 				if (idStr.startsWith("#")) {
 					tagId = true;
 					idStr = idStr.substring(1);
 				}
+
 				id = new Identifier(idStr);
 			} catch (InvalidIdentifierException e) {
 				LOGGER.error("Invalid identifier in values of {}: '{}', ignoring",
@@ -198,32 +205,35 @@ final class AttachmentDictionary<R, V> {
 				continue;
 			}
 
-			Object parsedValue = parseValue(resource, id, entry.getValue());
+			Object parsedValue = this.parseValue(resource, id, entry.getValue());
 			if (parsedValue == null) {
 				continue;
 			}
 
 			if (tagId) {
-				putTag(id, parsedValue, false);
+				this.putTag(id, parsedValue, false);
 			} else {
-				put(id, parsedValue);
+				this.put(id, parsedValue);
 			}
 		}
 	}
 
 	private Object parseValue(Resource resource, Identifier id, JsonElement value) {
-		DataResult<?> parsedValue = attachment.codec().parse(JsonOps.INSTANCE, value);
+		DataResult<?> parsedValue = this.attachment.codec().parse(JsonOps.INSTANCE, value);
+
 		if (parsedValue.result().isEmpty()) {
 			if (parsedValue.error().isPresent()) {
 				LOGGER.error("Failed to parse value for attachment {} of registry entry {}: {}",
-						attachment.id(), id, parsedValue.error().get().message());
+						this.attachment.id(), id, parsedValue.error().get().message());
 			} else {
 				LOGGER.error("Failed to parse value for attachment {} of registry entry {}: unknown error",
-						attachment.id(), id);
+						this.attachment.id(), id);
 			}
+
 			LOGGER.error("Ignoring attachment value for '{}' in {} since it's invalid", id, resource.getId());
 			return null;
 		}
+
 		return parsedValue.result().get();
 	}
 }

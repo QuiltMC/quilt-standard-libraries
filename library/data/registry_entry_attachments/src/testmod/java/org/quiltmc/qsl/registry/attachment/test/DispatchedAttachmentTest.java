@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.registry.attachment.test;
 
-import net.fabricmc.loader.api.ModContainer;
-
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -30,6 +28,7 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
+import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 import org.quiltmc.qsl.registry.attachment.api.RegistryExtensions;
@@ -80,5 +79,6 @@ public class DispatchedAttachmentTest implements ModInitializer {
 			new Identifier("quilt", "modular_item_4"), new ModularFunctionItem(new Item.Settings()));
 
 	@Override
-	public void onInitialize(ModContainer mod) { }
+	public void onInitialize(ModContainer mod) {
+	}
 }

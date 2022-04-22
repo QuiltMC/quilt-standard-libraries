@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.registry.attachment.impl;
 
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -27,6 +25,8 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 import org.quiltmc.qsl.registry.attachment.impl.reloader.RegistryEntryAttachmentReloader;
@@ -59,7 +59,7 @@ public final class Initializer implements ModInitializer {
 		});
 
 		if (Boolean.getBoolean(ENABLE_DUMP_BUILTIN_COMMAND_PROPERTY)) {
-			if (FabricLoader.getInstance().isModLoaded("quilt_command")) {
+			if (QuiltLoader.isModLoaded("quilt_command")) {
 				DumpBuiltinAttachmentsCommand.register();
 			} else {
 				LOGGER.warn("Property \"{}\" was set to true, but required module \"quilt_command\" is missing!",

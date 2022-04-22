@@ -35,7 +35,8 @@ public interface DefaultValueProvider<R, V> {
 	@NotNull Result<V> computeDefaultValue(R entry);
 
 	/**
-	 * Represents the result of computing a default value.<br>
+	 * Represents the result of computing a default value.
+	 * <p>
 	 * Can either have a value or an error string.
 	 *
 	 * @param <V> type of value
@@ -54,8 +55,9 @@ public interface DefaultValueProvider<R, V> {
 
 		/**
 		 * Creates a successful {@code Result} with the specified value.
+		 *
 		 * @param value value
-		 * @param <V> type of value
+		 * @param <V>   type of value
 		 * @return successful result
 		 */
 		public static <V> Result<V> of(V value) {
@@ -64,8 +66,9 @@ public interface DefaultValueProvider<R, V> {
 
 		/**
 		 * Creates a failed {@code Result} with the specified error string.
+		 *
 		 * @param error error string
-		 * @param <V> type of value
+		 * @param <V>   type of value
 		 * @return failed result
 		 */
 		public static <V> Result<V> ofFailure(String error) {
@@ -73,30 +76,30 @@ public interface DefaultValueProvider<R, V> {
 		}
 
 		/**
-		 * {@return <code>true</code> if this result represents a failed computation, <code>false</code> otherwise}
+		 * {@return {@code true} if this result represents a failed computation, {@code false} otherwise}
 		 */
 		public boolean hasFailed() {
-			return hasFailed;
+			return this.hasFailed;
 		}
 
 		/**
 		 * {@return the value of this result}
 		 */
 		public V get() {
-			if (hasFailed) {
+			if (this.hasFailed) {
 				throw new IllegalStateException("Result is a failure!");
 			}
-			return value;
+			return this.value;
 		}
 
 		/**
 		 * {@return the error string of this result}
 		 */
 		public String error() {
-			if (hasFailed) {
+			if (this.hasFailed) {
 				throw new IllegalStateException("Result does not have an error!");
 			}
-			return error;
+			return this.error;
 		}
 	}
 }

@@ -16,12 +16,11 @@
 
 package org.quiltmc.qsl.registry.attachment.test.client;
 
-import net.fabricmc.loader.api.ModContainer;
-
 import net.minecraft.block.Block;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
@@ -31,5 +30,6 @@ public class ClientAttachmentTest implements ClientModInitializer {
 					.side(RegistryEntryAttachment.Side.CLIENT).build();
 
 	@Override
-	public void onInitializeClient(ModContainer mod) { }
+	public void onInitializeClient(ModContainer mod) {
+	}
 }

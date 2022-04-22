@@ -16,6 +16,10 @@
 
 package org.quiltmc.qsl.registry.attachment.impl;
 
+import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
+import static net.minecraft.server.command.CommandManager.argument;
+import static net.minecraft.server.command.CommandManager.literal;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -33,7 +37,6 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
-import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
@@ -42,12 +45,9 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
-
-import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
-import static net.minecraft.server.command.CommandManager.argument;
-import static net.minecraft.server.command.CommandManager.literal;
 
 @ApiStatus.Internal
 public final class DumpBuiltinAttachmentsCommand {
@@ -108,7 +108,7 @@ public final class DumpBuiltinAttachmentsCommand {
 				continue;
 			}
 
-			var path = FabricLoader.getInstance().getGameDir().resolve("quilt/builtin_registry_attachments")
+			var path = QuiltLoader.getGameDir().resolve("quilt/builtin_registry_attachments")
 					.resolve(attachment.side().getSource().getDirectory())
 					.resolve(attachmentId.getNamespace())
 					.resolve("attachments")

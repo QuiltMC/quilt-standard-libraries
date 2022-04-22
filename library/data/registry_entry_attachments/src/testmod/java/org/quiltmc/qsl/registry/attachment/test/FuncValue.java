@@ -43,7 +43,7 @@ public abstract class FuncValue implements DispatchedType {
 
 	@Override
 	public final Identifier getType() {
-		return type;
+		return this.type;
 	}
 
 	public abstract void invoke(ServerPlayerEntity player);

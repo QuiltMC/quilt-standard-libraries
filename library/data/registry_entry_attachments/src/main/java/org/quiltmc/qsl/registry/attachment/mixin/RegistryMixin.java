@@ -44,22 +44,22 @@ public abstract class RegistryMixin<R> implements QuiltRegistryInternals<R> {
 
 	@Override
 	public void quilt$registerAttachment(RegistryEntryAttachment<R, ?> attachment) {
-		quilt$attachments.put(attachment.id(), attachment);
+		this.quilt$attachments.put(attachment.id(), attachment);
 	}
 
 	@Override
 	public @Nullable RegistryEntryAttachment<R, ?> quilt$getAttachment(Identifier id) {
-		return quilt$attachments.get(id);
+		return this.quilt$attachments.get(id);
 	}
 
 	@Override
 	public Set<Map.Entry<Identifier, RegistryEntryAttachment<R, ?>>> quilt$getAttachmentEntries() {
-		return quilt$attachments.entrySet();
+		return this.quilt$attachments.entrySet();
 	}
 
 	@Override
 	public RegistryEntryAttachmentHolder<R> quilt$getBuiltinAttachmentHolder() {
-		return quilt$builtinAttachmentHolder;
+		return this.quilt$builtinAttachmentHolder;
 	}
 
 	@Override
@@ -69,7 +69,7 @@ public abstract class RegistryMixin<R> implements QuiltRegistryInternals<R> {
 
 	@Override
 	public RegistryEntryAttachmentHolder<R> quilt$getDataAttachmentHolder() {
-		return quilt$dataAttachmentHolder;
+		return this.quilt$dataAttachmentHolder;
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public abstract class RegistryMixin<R> implements QuiltRegistryInternals<R> {
 
 	@Override
 	public RegistryEntryAttachmentHolder<R> quilt$getAssetsAttachmentHolder() {
-		return quilt$assetsAttachmentHolder;
+		return this.quilt$assetsAttachmentHolder;
 	}
 
 	@Override

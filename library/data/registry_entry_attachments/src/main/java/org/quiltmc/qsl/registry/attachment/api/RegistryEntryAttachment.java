@@ -72,17 +72,17 @@ public interface RegistryEntryAttachment<R, V> {
 	 * Creates a builder for an attachment using {@linkplain Codec#dispatch(Function, Function) dispatched codecs}
 	 * for polymorphic types.
 	 *
-	 * @param registry    registry to attach to
-	 * @param id          attachment identifier
-	 * @param valueClass  attached value class
-	 * @param codec       type to codec mapper
-	 * @param <R>         type of the entries in the registry
-	 * @param <V>         attached value type
+	 * @param registry   registry to attach to
+	 * @param id         attachment identifier
+	 * @param valueClass attached value class
+	 * @param codec      type to codec mapper
+	 * @param <R>        type of the entries in the registry
+	 * @param <V>        attached value type
 	 * @return a builder
 	 */
 	static <R, V extends DispatchedType> Builder<R, V> dispatchedBuilder(Registry<R> registry, Identifier id,
-																		 Class<V> valueClass,
-																		 Function<Identifier, Codec<? extends V>> codec) {
+	                                                                     Class<V> valueClass,
+	                                                                     Function<Identifier, Codec<? extends V>> codec) {
 		return builder(registry, id, valueClass, Identifier.CODEC.dispatch(V::getType, codec));
 	}
 
@@ -166,9 +166,9 @@ public interface RegistryEntryAttachment<R, V> {
 	Registry<R> registry();
 
 	/**
-	 * Gets the ID of this attachment.
+	 * Gets the identifier of this attachment.
 	 *
-	 * @return attachment ID
+	 * @return the attachment identifier
 	 */
 	Identifier id();
 
@@ -230,7 +230,7 @@ public interface RegistryEntryAttachment<R, V> {
 		 * @return source to use for attachments of this side
 		 */
 		public ResourceType getSource() {
-			return source;
+			return this.source;
 		}
 
 		/**
@@ -265,7 +265,7 @@ public interface RegistryEntryAttachment<R, V> {
 			this.id = id;
 			this.valueClass = valueClass;
 			this.codec = codec;
-			side = Side.BOTH;
+			this.side = Side.BOTH;
 
 			if (RegistryEntryAttachmentHolder.getAttachment(registry, id) != null) {
 				throw new IllegalStateException("Attachment with ID '%s' is already registered for registry %s!"
@@ -286,8 +286,8 @@ public interface RegistryEntryAttachment<R, V> {
 
 		/**
 		 * Sets the default value of this attachment.
-		 *
-		 * <p>Setting this will <b>remove</b> the currently set
+		 * <p>
+		 * Setting this will <b>remove</b> the currently set
 		 * {@linkplain #defaultValueProvider(DefaultValueProvider) default value provider}!
 		 *
 		 * @param defaultValue default value
@@ -302,10 +302,10 @@ public interface RegistryEntryAttachment<R, V> {
 		/**
 		 * Sets the <em>default value provider</em> of this attachment, which will be used to compute a value for a
 		 * specific entry, should it be missing.
-		 *
-		 * <p>Note that this will be computed on both sides and the computation result will <em>not</em> be synchronized.
-		 *
-		 * <p>Setting this will <b>remove</b> the currently set
+		 * <p>
+		 * Note that this will be computed on both sides and the computation result will <em>not</em> be synchronized.
+		 * <p>
+		 * Setting this will <b>remove</b> the currently set
 		 * {@linkplain #defaultValue(Object) default value}!
 		 *
 		 * @param defaultValueProvider function to compute otherwise-missing value
@@ -324,12 +324,14 @@ public interface RegistryEntryAttachment<R, V> {
 		 */
 		public RegistryEntryAttachment<R, V> build() {
 			RegistryEntryAttachment<R, V> attachment;
-			if (defaultValueProvider == null) {
-				attachment = new ConstantDefaultRegistryEntryAttachmentImpl<>(registry, id, valueClass, codec, side, defaultValue);
+			if (this.defaultValueProvider == null) {
+				attachment = new ConstantDefaultRegistryEntryAttachmentImpl<>(this.registry, this.id, this.valueClass,
+						this.codec, this.side, this.defaultValue);
 			} else {
-				attachment = new ComputedDefaultRegistryEntryAttachmentImpl<>(registry, id, valueClass, codec, side, defaultValueProvider);
+				attachment = new ComputedDefaultRegistryEntryAttachmentImpl<>(this.registry, this.id, this.valueClass,
+						this.codec, this.side, this.defaultValueProvider);
 			}
-			RegistryEntryAttachmentHolder.registerAttachment(registry, attachment);
+			RegistryEntryAttachmentHolder.registerAttachment(this.registry, attachment);
 			return attachment;
 		}
 	}

@@ -38,6 +38,6 @@ public final class GiveStackFuncValue extends FuncValue {
 
 	@Override
 	public void invoke(ServerPlayerEntity player) {
-		player.getInventory().offerOrDrop(stack.copy());
+		player.getInventory().offerOrDrop(this.stack.copy());
 	}
 }

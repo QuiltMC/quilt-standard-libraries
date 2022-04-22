@@ -96,19 +96,19 @@ public final class RegistryEntryAttachmentHolder<R> {
 
 	@SuppressWarnings("UnstableApiUsage")
 	private RegistryEntryAttachmentHolder() {
-		valueTable = Tables.newCustomTable(new Object2ReferenceOpenHashMap<>(), Reference2ObjectOpenHashMap::new);
+		this.valueTable = Tables.newCustomTable(new Object2ReferenceOpenHashMap<>(), Reference2ObjectOpenHashMap::new);
 	}
 
 	@SuppressWarnings("unchecked")
 	public <V> V getValue(RegistryEntryAttachment<R, V> attachment, R entry) {
-		return (V) valueTable.get(attachment, entry);
+		return (V) this.valueTable.get(attachment, entry);
 	}
 
 	public <T> void putValue(RegistryEntryAttachment<R, T> attachment, R entry, T value) {
-		valueTable.put(attachment, entry, value);
+		this.valueTable.put(attachment, entry, value);
 	}
 
 	public void clear() {
-		valueTable.clear();
+		this.valueTable.clear();
 	}
 }

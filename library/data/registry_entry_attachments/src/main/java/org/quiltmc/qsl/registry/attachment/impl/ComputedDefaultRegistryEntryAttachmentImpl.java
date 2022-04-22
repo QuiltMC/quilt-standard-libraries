@@ -40,13 +40,14 @@ public final class ComputedDefaultRegistryEntryAttachmentImpl<R, V> extends Regi
 
 	@Override
 	protected Optional<V> getDefaultValue(R entry) {
-		var result = defaultValueProvider.computeDefaultValue(entry);
+		var result = this.defaultValueProvider.computeDefaultValue(entry);
+
 		if (result.hasFailed()) {
-			COMPUTE_LOGGER.error("Failed to compute value for entry {}: {}", registry.getId(entry), result.error());
+			COMPUTE_LOGGER.error("Failed to compute value for entry {}: {}", this.registry.getId(entry), result.error());
 			return Optional.empty();
 		} else {
 			var value = result.get();
-			RegistryEntryAttachmentHolder.getBuiltin(registry).putValue(this, entry, value);
+			RegistryEntryAttachmentHolder.getBuiltin(this.registry).putValue(this, entry, value);
 			return Optional.of(value);
 		}
 	}

@@ -17,7 +17,12 @@
 package org.quiltmc.qsl.registry.attachment.impl.reloader;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -59,12 +64,13 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 		if (source == ResourceType.CLIENT_RESOURCES) {
 			AssetsHolderGuard.assertAccessAllowed();
 		}
+
 		this.source = source;
-		id = switch (source) {
+		this.id = switch (source) {
 			case SERVER_DATA -> ID_DATA;
 			case CLIENT_RESOURCES -> ID_ASSETS;
 		};
-		deps = switch (source) {
+		this.deps = switch (source) {
 			case SERVER_DATA -> Set.of(ResourceReloaderKeys.Server.TAGS);
 			case CLIENT_RESOURCES -> Set.of(new Identifier("quilt_tags", "client_only_tags"));
 		};
@@ -72,18 +78,18 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 
 	@Override
 	public Identifier getQuiltId() {
-		return id;
+		return this.id;
 	}
 
 	@Override
 	public Collection<Identifier> getQuiltDependencies() {
-		return deps;
+		return this.deps;
 	}
 
 	@Override
 	public CompletableFuture<LoadedData> load(ResourceManager manager, Profiler profiler, Executor executor) {
 		return CompletableFuture.supplyAsync(() -> {
-			Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> attachmentMaps = new HashMap<>();
+			var attachmentMaps = new HashMap<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>>();
 
 			for (var entry : Registry.REGISTRIES.getEntries()) {
 				Identifier registryId = entry.getKey().getValue();
@@ -106,19 +112,19 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	}
 
 	private void processResources(ResourceManager manager, Profiler profiler,
-								  Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> attachmentMaps,
-								  Collection<Identifier> jsonIds, Registry<?> registry) {
+	                              Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> attachmentMaps,
+	                              Collection<Identifier> jsonIds, Registry<?> registry) {
 		for (var jsonId : jsonIds) {
-			Identifier attachmentId = getAttachmentId(jsonId);
+			Identifier attachmentId = this.getAttachmentId(jsonId);
 			RegistryEntryAttachment<?, ?> attachment = RegistryEntryAttachmentHolder.getAttachment(registry, attachmentId);
 			if (attachment == null) {
 				LOGGER.warn("Unknown attachment {} (from {})", attachmentId, jsonId);
 				continue;
 			}
 
-			if (!attachment.side().shouldLoad(source)) {
+			if (!attachment.side().shouldLoad(this.source)) {
 				LOGGER.warn("Ignoring attachment {} (from {}) since it shouldn't be loaded from this source ({}, we're loading from {})",
-						attachmentId, jsonId, attachment.side().getSource(), source);
+						attachmentId, jsonId, attachment.side().getSource(), this.source);
 				continue;
 			}
 
@@ -143,7 +149,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	}
 
 	private <R, V> AttachmentDictionary<R, V> createAttachmentMap(RegistryEntryAttachment<R, V> attachment) {
-		return new AttachmentDictionary<>(attachment.registry(), attachment, source == ResourceType.CLIENT_RESOURCES);
+		return new AttachmentDictionary<>(attachment.registry(), attachment, this.source == ResourceType.CLIENT_RESOURCES);
 	}
 
 	@Override
@@ -169,7 +175,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	}
 
 	private <R> RegistryEntryAttachmentHolder<R> getHolder(Registry<R> registry) {
-		return switch (source) {
+		return switch (this.source) {
 			case CLIENT_RESOURCES -> RegistryEntryAttachmentHolder.getAssets(registry);
 			case SERVER_DATA -> RegistryEntryAttachmentHolder.getData(registry);
 		};
@@ -190,7 +196,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 				getHolder(entry.getValue()).clear();
 			}
 
-			for (Map.Entry<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> entry : attachmentMaps.entrySet()) {
+			for (var entry : this.attachmentMaps.entrySet()) {
 				profiler.swap(id + "/apply_attachment{" + entry.getKey().id() + "}");
 				applyOne((RegistryEntryAttachment<Object, Object>) entry.getKey(), (AttachmentDictionary<Object, Object>) entry.getValue());
 			}

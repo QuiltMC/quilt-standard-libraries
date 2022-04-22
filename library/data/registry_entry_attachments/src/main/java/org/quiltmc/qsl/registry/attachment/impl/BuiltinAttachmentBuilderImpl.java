@@ -35,7 +35,7 @@ public final class BuiltinAttachmentBuilderImpl<R> implements RegistryExtensions
 
 	@Override
 	public <V> RegistryExtensions.BuiltinAttachmentBuilder<R> put(RegistryEntryAttachment<R, V> attach, V value) {
-		holder.putValue(attach, item, value);
+		this.holder.putValue(attach, this.item, value);
 		return this;
 	}
 }

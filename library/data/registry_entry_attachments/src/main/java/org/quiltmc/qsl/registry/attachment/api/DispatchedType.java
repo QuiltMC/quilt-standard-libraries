@@ -23,16 +23,16 @@ import net.minecraft.util.registry.Registry;
 
 /**
  * Utility interface used for {@link RegistryEntryAttachment#dispatchedBuilder(Registry, Identifier, Class, Function)}.
- *
- * <p>This allows for polymorphic attachment types!<br>
+ * <p>
+ * This allows for polymorphic attachment types!<br>
  * For example, say you have this interface:
  * <pre><code>
  * public interface Behavior extends DispatchedType {
  *     void execute(ServerPlayerEntity player);
  * }
  * </code></pre>
- *
- * <p>Using the {@code createDispatched} method, you can create a attachment for a composable behavior:
+ * <p>
+ * Using the {@code createDispatched} method, you can create an attachment for a composable behavior:
  * <pre><code>
  * public static final SimpleRegistry&lt;Codec&lt;? extends Behavior&gt;&gt; REGISTRY = new SimpleRegistry&lt;&gt;();
  * public static final RegistryEntryAttachment&lt;Item, Behavior&gt; ATTACHMENT =
@@ -47,8 +47,8 @@ import net.minecraft.util.registry.Registry;
 public interface DispatchedType {
 	/**
 	 * Gets this instance's type.
-	 *
-	 * <p>This is used by the {@linkplain com.mojang.serialization.Codec#dispatch(Function, Function) dispatched codec}
+	 * <p>
+	 * This is used by the {@linkplain com.mojang.serialization.Codec#dispatch(Function, Function) dispatched codec}
 	 * to get the {@code Codec} instance used to (de)serialize instances of this type.
 	 *
 	 * @return type identifier

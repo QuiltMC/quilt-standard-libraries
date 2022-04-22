@@ -16,7 +16,12 @@
 
 package org.quiltmc.qsl.registry.attachment.impl.reloader;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import net.minecraft.tag.Tag;
 import net.minecraft.util.Holder;
@@ -40,25 +45,25 @@ interface ValueTarget {
 		private final List<Identifier> ids;
 
 		public Single(Identifier id) {
-			ids = Collections.singletonList(id);
+			this.ids = Collections.singletonList(id);
 		}
 
 		@Override
 		public Collection<Identifier> ids() {
-			return ids;
+			return this.ids;
 		}
 
 		@Override
 		public boolean equals(Object o) {
 			if (this == o) return true;
 			if (o == null || getClass() != o.getClass()) return false;
-			Single that = (Single) o;
-			return ids.get(0).equals(that.ids.get(0));
+			var that = (Single) o;
+			return this.ids.get(0).equals(that.ids.get(0));
 		}
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(ids.get(0));
+			return Objects.hash(this.ids.get(0));
 		}
 	}
 
@@ -78,33 +83,33 @@ interface ValueTarget {
 
 		@Override
 		public Collection<Identifier> ids() throws ResolveException {
-			var entry = TagRegistry.stream(registry.getKey())
-					.filter(entry1 -> id.equals(entry1.key().id()))
+			var entry = TagRegistry.stream(this.registry.getKey())
+					.filter(entry1 -> this.id.equals(entry1.key().id()))
 					.findFirst();
 
 			if (entry.isEmpty()) {
-				if (required) {
-					throw new ResolveException("Tag " + id + " does not exist!");
+				if (this.required) {
+					throw new ResolveException("Tag " + this.id + " does not exist!");
 				} else {
 					return Set.of();
 				}
 			}
 
-			if (!isClient) {
+			if (!this.isClient) {
 				@SuppressWarnings("unchecked") var type = ((QuiltTagKey<T>) (Object) entry.get().key()).type();
 				if (type == TagType.CLIENT_FALLBACK || type == TagType.CLIENT_ONLY) {
-					throw new ResolveException("Tag " + id + " is client-only, but this attachment is not!");
+					throw new ResolveException("Tag " + this.id + " is client-only, but this attachment is not!");
 				}
 			}
 
-			return collectTagEntries(registry, entry.get().tag(), new HashSet<>());
+			return collectTagEntries(this.registry, entry.get().tag(), new HashSet<>());
 		}
 
 		private static <R> Set<Identifier> collectTagEntries(Registry<R> registry, Tag<Holder<R>> tag, Set<Identifier> ids) {
 			for (var value : tag.values()) {
 				switch (value.getKind()) {
-					case DIRECT -> ids.add(registry.getId(value.value()));
-					case REFERENCE -> value.streamTags().forEach(key -> collectTagEntries(registry, TagRegistry.getTag(key), ids));
+				case DIRECT -> ids.add(registry.getId(value.value()));
+				case REFERENCE -> value.streamTags().forEach(key -> collectTagEntries(registry, TagRegistry.getTag(key), ids));
 				}
 			}
 			return ids;
@@ -114,13 +119,13 @@ interface ValueTarget {
 		public boolean equals(Object o) {
 			if (this == o) return true;
 			if (o == null || getClass() != o.getClass()) return false;
-			Tagged<?> tagged = (Tagged<?>) o;
-			return registry.getKey().equals(tagged.registry.getKey()) && id.equals(tagged.id);
+			var tagged = (Tagged<?>) o;
+			return this.registry.getKey().equals(tagged.registry.getKey()) && this.id.equals(tagged.id);
 		}
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(registry.getKey(), id);
+			return Objects.hash(this.registry.getKey(), this.id);
 		}
 	}
 }
