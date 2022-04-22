@@ -7,7 +7,6 @@ import net.minecraft.state.property.Property;
 import org.quiltmc.qsl.block.extensions.impl.BlockExtension;
 import org.quiltmc.qsl.block.extensions.impl.QuiltBlockImpl;
 
-//TODO: find a way to proxy default states
 public class QuiltBlock {
 
     /**
