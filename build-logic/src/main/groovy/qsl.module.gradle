@@ -30,7 +30,7 @@ plugins {
 def extension = project.extensions.create(QslModuleExtension, "qslModule", QslModuleExtensionImpl, project)
 
 // We need to wait until project evaluation has finished to peek into a complete QSL module extension.
-afterEvaluate {
+rootProject.afterEvaluate {
 	// Make sure to call get on any properties
 
 	// Module name should also be the name of artifacts.
