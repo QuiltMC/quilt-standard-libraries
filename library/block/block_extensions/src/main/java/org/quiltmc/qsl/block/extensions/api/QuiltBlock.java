@@ -15,7 +15,7 @@ public class QuiltBlock {
      * @param proxies   Array of proxy blocks to be "merged" together as one (property merging).
      * @return          Same Block settings as above.
      */
-    public static AbstractBlock.Settings createProxy(AbstractBlock.Settings settings, Block... proxies) {
+    public static <S extends AbstractBlock.Settings> S createProxy(S settings, Block... proxies) {
         QuiltBlockImpl.PROXY_BLOCKS_TEMP_CONTAINER.set(proxies);
         return settings;
     }
