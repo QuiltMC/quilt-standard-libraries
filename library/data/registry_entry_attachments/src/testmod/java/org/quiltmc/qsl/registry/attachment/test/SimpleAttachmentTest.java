@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 import org.quiltmc.qsl.registry.attachment.api.RegistryExtensions;
+import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentHolder;
 
 public class SimpleAttachmentTest implements ModInitializer {
 	public static final RegistryEntryAttachment<Item, Integer> TEST_ATTACHMENT =
@@ -46,6 +47,7 @@ public class SimpleAttachmentTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
+
 	}
 
 	public static final class MyItem extends Item {

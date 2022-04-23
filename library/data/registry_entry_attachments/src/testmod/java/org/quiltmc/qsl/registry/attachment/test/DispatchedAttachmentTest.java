@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.tag.TagKey;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
@@ -32,6 +33,7 @@ import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 import org.quiltmc.qsl.registry.attachment.api.RegistryExtensions;
+import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentHolder;
 
 public class DispatchedAttachmentTest implements ModInitializer {
 	public static final RegistryEntryAttachment<Item, FuncValue> MODULAR_FUNCTION =
@@ -77,8 +79,20 @@ public class DispatchedAttachmentTest implements ModInitializer {
 	 */
 	public static final ModularFunctionItem ITEM_4 = Registry.register(Registry.ITEM,
 			new Identifier("quilt", "modular_item_4"), new ModularFunctionItem(new Item.Settings()));
+	/**
+	 * Has a value a provided by a tag.
+	 */
+	public static final ModularFunctionItem ITEM_5 = Registry.register(Registry.ITEM,
+			new Identifier("quilt", "modular_item_5"), new ModularFunctionItem(new Item.Settings()));
+
+	/**
+	 * Has a value a provided by a tag via datapack.
+	 */
+	public static final ModularFunctionItem ITEM_6 = Registry.register(Registry.ITEM,
+			new Identifier("quilt", "modular_item_6"), new ModularFunctionItem(new Item.Settings()));
 
 	@Override
 	public void onInitialize(ModContainer mod) {
+		RegistryEntryAttachmentHolder.getBuiltin(Registry.ITEM).putValueTag(MODULAR_FUNCTION, TagKey.of(Registry.ITEM_KEY, new Identifier("quilt", "modular_tag_1")), new SendMessageFuncValue("Provided via tag"));
 	}
 }
