@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -238,7 +238,7 @@ public final class RegistryEntryAttachmentSync {
 						});
 
 				if (attachmentEntry.isTag) {
-					holder.putValueTag(attachment, TagKey.of(registry.getKey(), entryId), parsedValue);
+					holder.putValue(attachment, TagKey.of(registry.getKey(), entryId), parsedValue);
 				} else {
 					holder.putValue(attachment, registryObject, parsedValue);
 				}

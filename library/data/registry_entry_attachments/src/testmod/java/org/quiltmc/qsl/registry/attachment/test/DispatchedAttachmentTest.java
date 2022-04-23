@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,6 +93,6 @@ public class DispatchedAttachmentTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		RegistryEntryAttachmentHolder.getBuiltin(Registry.ITEM).putValueTag(MODULAR_FUNCTION, TagKey.of(Registry.ITEM_KEY, new Identifier("quilt", "modular_tag_1")), new SendMessageFuncValue("Provided via tag"));
+		RegistryEntryAttachmentHolder.getBuiltin(Registry.ITEM).putValue(MODULAR_FUNCTION, TagKey.of(Registry.ITEM_KEY, new Identifier("quilt", "modular_tag_1")), new SendMessageFuncValue("Provided via tag"));
 	}
 }

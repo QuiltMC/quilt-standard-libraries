@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -129,7 +129,7 @@ public final class RegistryEntryAttachmentHolder<R> {
 		this.valueTable.put(attachment, entry, value);
 	}
 
-	public <T> void putValueTag(RegistryEntryAttachment<R, T> attachment, TagKey<R> tag, T value) {
+	public <T> void putValue(RegistryEntryAttachment<R, T> attachment, TagKey<R> tag, T value) {
 		this.valueTagTable.put(attachment, tag, value);
 	}
 

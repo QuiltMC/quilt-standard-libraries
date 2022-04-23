@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -215,7 +215,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 				AttachmentDictionary.ValueTarget target = attachmentEntry.getKey();
 				switch (target.type()) {
 					case ENTRY -> holder.putValue(attachment, attachment.registry().get(target.id()), value);
-					case TAG -> holder.putValueTag(attachment, TagKey.of(attachment.registry().getKey(), target.id()), value);
+					case TAG -> holder.putValue(attachment, TagKey.of(attachment.registry().getKey(), target.id()), value);
 					default -> throw new IllegalStateException("Unexpected value: " + target.type());
 				}
 			}
