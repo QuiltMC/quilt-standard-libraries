@@ -6,7 +6,7 @@
     "AbstractBlockAccessor",
     "AbstractBlockSettingsAccessor",
     "MaterialBuilderAccessor",
-    "MixinBlock"
+      "BlockMixin"
   ],
   "client": [
     "client.RenderLayersMixin"

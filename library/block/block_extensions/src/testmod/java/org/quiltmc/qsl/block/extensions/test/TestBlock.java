@@ -16,7 +16,7 @@ public class TestBlock extends Block {
 
     public TestBlock(Settings settings, Block... proxies) {
         super(QuiltBlock.createProxy(settings, proxies));
-        this.setDefaultState(QuiltBlock.getProxyDefaultState(this));
+        this.setDefaultState(QuiltBlock.mergeStates(this, Block::getDefaultState));
     }
 
     @Override

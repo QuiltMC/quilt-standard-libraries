@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import java.util.LinkedList;
 
 @Mixin(Block.class)
-public abstract class MixinBlock implements BlockExtension {
+public abstract class BlockMixin implements BlockExtension {
 
     @Shadow protected abstract Block asBlock();
     @Shadow @Final private static Logger LOGGER;

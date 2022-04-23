@@ -6,11 +6,14 @@ import net.minecraft.block.BlockState;
 import net.minecraft.state.property.Property;
 import org.quiltmc.qsl.block.extensions.impl.BlockExtension;
 import org.quiltmc.qsl.block.extensions.impl.QuiltBlockImpl;
+import org.quiltmc.qsl.block.extensions.mixin.BlockMixin;
+
+import java.util.function.Function;
 
 public class QuiltBlock {
 
     /**
-     * Creates a proxy from one or multiple blocks (will be temporarily stocked in a {@link ThreadLocal} and used in {@link org.quiltmc.qsl.block.extensions.mixin.MixinBlock}).
+     * Creates a proxy from one or multiple blocks (will be temporarily stocked in a {@link ThreadLocal} and used in {@link BlockMixin}).
      * @param settings  Block settings of the block you want to add Proxies for (dummy usage, to be able to insert logic at {@code  super()} call.
      * @param proxies   Array of proxy blocks to be "merged" together as one (property merging).
      * @return          Same Block settings as above.
@@ -25,16 +28,16 @@ public class QuiltBlock {
      * @param ownerBlock    The block that "owns" the proxies ot create the state from.
      * @return              A {@link BlockState} usable as a default state for our block.
      */
-    public static BlockState getProxyDefaultState(Block ownerBlock) {
+    public static BlockState mergeStates(Block ownerBlock, Function<Block ,BlockState> proxyState) {
         var proxies = ((BlockExtension) ownerBlock).getProxies();
-        var defaultState = ownerBlock.getDefaultState();
+        var ownerState = ownerBlock.getDefaultState();
         for (var proxy : proxies) {
-            var proxyDefaultState = proxy.getDefaultState();
-            for (Property<?> property : proxy.getDefaultState().getProperties()) {
-                defaultState = QuiltBlock.copyProperty(proxyDefaultState, defaultState, property);
+            var appliedProxyState = proxyState.apply(proxy);
+            for (Property<?> property : appliedProxyState.getProperties()) {
+                ownerState = QuiltBlock.copyProperty(appliedProxyState, ownerState, property);
             }
         }
-        return defaultState;
+        return ownerState;
     }
 
     /**
@@ -47,7 +50,13 @@ public class QuiltBlock {
      * @param <T>       The {@link Property}'s type
      */
     public static <T extends Comparable<T>> BlockState copyProperty(BlockState source, BlockState target, Property<T> property) {
-        return target.with(property, source.get(property));
+        if (target.contains(property)) {
+            return target.with(property, source.get(property));
+        }
+        else {
+            QuiltBlockImpl.LOGGER.warn("Failed to copy properties from {}, {} does not exist in {}", source, property, target);
+            return target;
+        }
     }
 
     /**
@@ -61,7 +70,7 @@ public class QuiltBlock {
         if (state.contains(property)) {
             return state.get(property);
         } else {
-            QuiltBlockImpl.LOGGER.warn(String.format("Cannot get property %s as it does not exist in %s, falling back on null", property, state.getBlock()));
+            QuiltBlockImpl.LOGGER.warn("Cannot get property {} as it does not exist in {}, falling back on null", property, state.getBlock());
             return (T) null;
         }
     }
