@@ -201,10 +201,6 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 						case API -> QslLibraryDependency.ConfigurationType.IMPLEMENTATION;
 						default -> QslLibraryDependency.ConfigurationType.RUNTIME_ONLY;
 					};
-//					System.out.println(type);
-//					System.out.println(project);
-//					System.out.println(depProject);
-//					System.out.println();
 					project.getDependencies().add(type.getConfigurationName(), depDep);
 
 					addTransitiveImplementations(depLibrary, depInfo);
