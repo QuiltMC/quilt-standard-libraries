@@ -32,7 +32,7 @@ public abstract class BlockMixin implements BlockExtension {
             locals = LocalCapture.CAPTURE_FAILHARD)
     private void injectProxyProperties(AbstractBlock.Settings settings, CallbackInfo ci, StateManager.Builder<Block, BlockState> builder) {
         if (QuiltBlockImpl.PROXY_BLOCKS_TEMP_CONTAINER.get() != null && QuiltBlockImpl.PROXY_BLOCKS_TEMP_CONTAINER.get().length > 0){
-            var properties = Lists.newArrayList();
+            var properties = new ArrayList<Property>();
             for (var proxyBlock : QuiltBlockImpl.PROXY_BLOCKS_TEMP_CONTAINER.get()) {
                 for (var property : proxyBlock.getStateManager().getProperties()) {
                     if (!properties.contains(property)) {
