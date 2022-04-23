@@ -42,6 +42,7 @@ public class QuiltBlock {
     /**
      * Creates a default state {@link BlockState} for blocks that have Proxies.
      * @param ownerBlock    The block that "owns" the proxies ot create the state from.
+     * @param proxyState    A {@link Function} taking a Block as its input, and outputting a Blockstate, this is used to tell each proxy what state to give this method.
      * @return              A {@link BlockState} usable as a default state for our block.
      */
     public static BlockState mergeStates(Block ownerBlock, Function<Block ,BlockState> proxyState) {
