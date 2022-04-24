@@ -166,6 +166,10 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 				Dependency dep = project.getDependencies().project(map);
 				deps.add(dep);
 				project.getDependencies().add(info.type().getConfigurationName(), dep);
+
+				if (info.type().isTransitive()) {
+					addTransitiveImplementations(library, info);
+				}
 			}
 		}
 
