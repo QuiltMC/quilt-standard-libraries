@@ -29,7 +29,7 @@ import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
 public final class RegistrySynchronization {
 
 	/**
-	 * Marks registry status as dirty, rebuilding its sync data
+	 * Marks registry status as dirty, requiring its synchronization data to be rebuilt.
 	 */
 	public static void markDirty(SimpleRegistry registry) {
 		SynchronizedRegistry.as(registry).quilt$markDirty();
