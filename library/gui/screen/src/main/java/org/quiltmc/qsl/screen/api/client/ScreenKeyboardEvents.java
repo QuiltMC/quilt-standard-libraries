@@ -29,7 +29,7 @@ import net.fabricmc.api.Environment;
  * Events related to use of the keyboard in a {@link Screen}.
  *
  * <p>All of these events work on top of a specific screen instance.
- * Subscriptions will only last as long as the screen itself, they'll disappear once the screen gets refreshed, closed or replaced.
+ * Subscriptions will only last as long as the screen object itself; they disappear once the screen is refreshed, closed or replaced.
  * Use {@link ScreenEvents#BEFORE_INIT} to register the desired events every time it is necessary.
  *
  * <p>Events are fired in the following order:
