@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.resource.loader.api;
 
 import net.minecraft.resource.pack.ResourcePack;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
@@ -29,7 +30,10 @@ public interface QuiltResourcePack {
 	/**
 	 * {@return a display name for this resource pack}
 	 */
-	Text getDisplayName();
+	default Text getDisplayName() {
+		// To avoid javac complaining, the actual default implementation is mixin-ed into ResourcePack.
+		return LiteralText.EMPTY;
+	}
 
 	/**
 	 * Gets the activation type of this resource pack.
