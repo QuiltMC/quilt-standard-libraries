@@ -7,7 +7,6 @@ qslModule {
 	moduleName = "tooltip"
 	id = "quilt_tooltip"
 	description = "Hooks and APIs for manipulating tooltips."
-	version = "1.0.0"
 	library = "gui"
 	moduleDependencies {
 		core {
@@ -17,7 +16,7 @@ qslModule {
 	}
 	entrypoints {
 		client_events {
-			"org.quiltmc.qsl.tooltip.impl.client.QuiltClientTooltipMod"
+			values = ["org.quiltmc.qsl.tooltip.impl.client.QuiltClientTooltipMod"]
 		}
 	}
 }
