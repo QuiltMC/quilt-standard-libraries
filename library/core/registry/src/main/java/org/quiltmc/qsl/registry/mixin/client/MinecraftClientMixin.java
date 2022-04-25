@@ -34,6 +34,6 @@ public class MinecraftClientMixin {
 				registry.quilt$restoreIdSnapshot();
 			}
 		}
-		ClientRegistrySync.rebuildStates();
+		ClientRegistrySync.rebuildBlockStates();
 	}
 }

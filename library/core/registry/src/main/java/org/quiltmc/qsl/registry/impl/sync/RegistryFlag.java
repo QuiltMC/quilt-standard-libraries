@@ -23,7 +23,6 @@ import org.jetbrains.annotations.ApiStatus;
 /**
  * Registry flags used to determine how registry (entries) should be handled by sync
  */
-@ApiStatus.Experimental
 @ApiStatus.Internal
 public enum RegistryFlag {
 	OPTIONAL,

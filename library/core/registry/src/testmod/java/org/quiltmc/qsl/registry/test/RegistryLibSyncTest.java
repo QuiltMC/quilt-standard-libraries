@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.registry.test;
 
+import com.mojang.serialization.Lifecycle;
 import net.fabricmc.api.EnvType;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -26,6 +27,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.util.registry.SimpleRegistry;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader;
@@ -36,6 +39,7 @@ import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
 /**
@@ -47,6 +51,7 @@ public class RegistryLibSyncTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
+
 		if (MinecraftQuiltLoader.getEnvironmentType() == EnvType.CLIENT) {
 			for (int i = 0; i < 10; i++) {
 				register(i);
@@ -59,8 +64,16 @@ public class RegistryLibSyncTest implements ModInitializer {
 			var opt = register(10);
 			RegistrySynchronization.setEntryOptional(Registry.ITEM, opt);
 			RegistrySynchronization.setEntryOptional(Registry.BLOCK, opt);
+
 			ServerLifecycleEvents.READY.register((x) -> printReg());
 		}
+
+		var customRequiredRegistry = Registry.register((Registry<Registry<Path>>) Registry.REGISTRIES,
+				new Identifier(NAMESPACE, "synced_registry"),
+				new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(NAMESPACE, "synced_registry")), Lifecycle.stable(), null));
+
+		Registry.register(customRequiredRegistry, new Identifier("quilt:game_dir"), QuiltLoader.getGameDir());
+		RegistrySynchronization.markForSync(customRequiredRegistry);
 	}
 
 	private void printReg() {

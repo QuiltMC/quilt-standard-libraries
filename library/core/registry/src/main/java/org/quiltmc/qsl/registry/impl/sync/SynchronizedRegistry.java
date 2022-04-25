@@ -19,10 +19,12 @@ package org.quiltmc.qsl.registry.impl.sync;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Collection;
 import java.util.Map;
 
+@ApiStatus.Internal
 public interface SynchronizedRegistry<T> {
 	void quilt$markForSync();
 

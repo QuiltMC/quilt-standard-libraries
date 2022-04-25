@@ -37,33 +37,33 @@ public final class ServerPackets {
 	 * }
 	 * </code></pre>
 	 */
-	public static final Identifier HELLO = id("registry/hello");
+	public static final Identifier HANDSHAKE = id("registry_sync/handshake");
 
 	/**
 	 * Ends registry sync. No data
 	 */
-	public static final Identifier GOODBYE = id("registry/goodbye");
+	public static final Identifier END = id("registry_sync/end");
 
 	/**
-	 * Sets registry next data packets belong to
+	 * Sets current registry for next {@link ServerPackets#REGISTRY_DATA} and {@link ServerPackets#REGISTRY_APPLY} packets
 	 * <pre><code>
 	 * {
 	 *   Registry identifier: Identifier
-	 *   Count: VarInt
+	 *   Count of entries: VarInt
 	 *   Flags: byte
 	 * }
 	 * </code></pre>
 	 */
-	public static final Identifier START = id("registry/start");
+	public static final Identifier REGISTRY_START = id("registry_sync/registry_start");
 
 	/**
 	 * This packet transmits registry data required for sync
 	 * <pre><code>
 	 * {
-	 *   Count: VarInt
+	 *   Count of Namespaces: VarInt
 	 *   [
 	 *     Common Namespace: String
-	 *     Count: VarInt
+	 *     Count of Entries: VarInt
 	 *     [
 	 *       Path: String
 	 *       Id: VarInt
@@ -73,12 +73,12 @@ public final class ServerPackets {
 	 * }
 	 * </code></pre>
 	 */
-	public static final Identifier DATA = id("registry/data");
+	public static final Identifier REGISTRY_DATA = id("registry_sync/registry_data");
 
 	/**
-	 * Applies changes, doesn't have any data
+	 * Applies changes to current registry, doesn't have any data.
 	 */
-	public static final Identifier APPLY = id("registry/apply");
+	public static final Identifier REGISTRY_APPLY = id("registry_sync/registry_apply");
 
 
 	private static Identifier id(String path) {

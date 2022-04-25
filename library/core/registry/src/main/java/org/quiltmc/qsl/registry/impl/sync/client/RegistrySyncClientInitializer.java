@@ -18,9 +18,11 @@ package org.quiltmc.qsl.registry.impl.sync.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 
+@ApiStatus.Internal
 @Environment(EnvType.CLIENT)
 public class RegistrySyncClientInitializer implements ClientModInitializer {
 	@Override

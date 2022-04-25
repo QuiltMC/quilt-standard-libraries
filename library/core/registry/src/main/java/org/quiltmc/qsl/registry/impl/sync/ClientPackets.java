@@ -25,7 +25,7 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.Internal
 public final class ClientPackets {
 	/**
-	 * Response for {@link ServerPackets#HELLO}
+	 * Response for {@link ServerPackets#HANDSHAKE}
 	 *
 	 * <pre><code>
 	 * {
@@ -33,7 +33,7 @@ public final class ClientPackets {
 	 * }
 	 * </code></pre>
 	 */
-	public static final Identifier HELLO = id("registry/hello");
+	public static final Identifier HANDSHAKE = id("registry_sync/handshake");
 
 
 	/**
@@ -44,7 +44,7 @@ public final class ClientPackets {
 	 * }
 	 * </code></pre>
 	 */
-	public static final Identifier SYNC_FAILED = id("registry/sync_failed");
+	public static final Identifier SYNC_FAILED = id("registry_sync/sync_failed");
 
 
 	private static Identifier id(String path) {

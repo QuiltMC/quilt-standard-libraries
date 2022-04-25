@@ -17,7 +17,6 @@
 package org.quiltmc.qsl.registry.api.sync;
 
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
 import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.qsl.registry.impl.sync.RegistryFlag;
@@ -39,7 +38,7 @@ public final class RegistrySynchronization {
 	/**
 	 * Makes registry synchronize with client
 	 */
-	public static void synchronize(SimpleRegistry<?> registry) {
+	public static void markForSync(SimpleRegistry<?> registry) {
 		SynchronizedRegistry.as(registry).quilt$markForSync();
 	}
 

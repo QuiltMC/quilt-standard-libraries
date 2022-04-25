@@ -38,7 +38,7 @@ public final class ServerRegistrySync {
 	private static final Logger LOGGER = LoggerFactory.getLogger("quilt_registry_sync");
 
 	public static void registerHandlers() {
-		ServerPlayNetworking.registerGlobalReceiver(ClientPackets.HELLO, ServerRegistrySync::handleHelloPacket);
+		ServerPlayNetworking.registerGlobalReceiver(ClientPackets.HANDSHAKE, ServerRegistrySync::handleHelloPacket);
 		ServerPlayNetworking.registerGlobalReceiver(ClientPackets.SYNC_FAILED, ServerRegistrySync::handleSyncFailedPacket);
 	}
 
@@ -48,12 +48,12 @@ public final class ServerRegistrySync {
 	// Ideally we should introduce new stage/api for it by creating custom ServerPlayPacketListener
 	// that just handles all of custom logic/emulation of login stage, which is fairly possible
 	// to do while keeping compatibility with vanilla clients (as long as other mods on server allow it).
-	// It's thanks to ping packets send by server and tpc/Minecraft preserving packet order!
+	// It's thanks to ping packets send by server and tcp/Minecraft preserving packet order!
 	// But for now they will be registered, but just ignored
 	private static void handleHelloPacket(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {}
 
 	private static void handleSyncFailedPacket(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
-		LOGGER.info("Disconnecting {} due to registry sync failure", player.getGameProfile().getName());
+		LOGGER.info("Disconnecting {} due to sync failure of {} registry", player.getGameProfile().getName(), buf.readIdentifier());
 	}
 
 	public static void sendSyncPackets(ClientConnection connection, ServerPlayerEntity player) {
@@ -91,12 +91,12 @@ public final class ServerRegistrySync {
 					}
 				}
 
-				connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.APPLY, PacketByteBufs.empty()));
+				connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.REGISTRY_APPLY, PacketByteBufs.empty()));
 			}
 		}
 
 		if (sentHello) {
-			connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.GOODBYE, PacketByteBufs.empty()));
+			connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.END, PacketByteBufs.empty()));
 		}
 	}
 
@@ -109,7 +109,7 @@ public final class ServerRegistrySync {
 			buf.writeVarInt(version);
 		}
 
-		connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.HELLO, buf));
+		connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.HANDSHAKE, buf));
 	}
 
 	private static <T extends Registry<?>> void sendStartPacket(ClientConnection connection, T registry) {
@@ -128,7 +128,7 @@ public final class ServerRegistrySync {
 		}
 		buf.writeByte(flag);
 
-		connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.START, buf));
+		connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.REGISTRY_START, buf));
 	}
 
 	private static void sendDataPacket(ClientConnection connection, Map<String, ArrayList<SynchronizedRegistry.SyncEntry>> packetData) {
@@ -155,7 +155,7 @@ public final class ServerRegistrySync {
 			}
 		}
 
-		connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.DATA, buf));
+		connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.REGISTRY_DATA, buf));
 
 		packetData.clear();
 	}

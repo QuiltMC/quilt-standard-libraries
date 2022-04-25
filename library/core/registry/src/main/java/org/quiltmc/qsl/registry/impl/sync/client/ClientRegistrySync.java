@@ -20,10 +20,15 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Language;
 import net.minecraft.util.registry.Registry;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.PacketSender;
@@ -36,6 +41,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+@ApiStatus.Internal
 public final class ClientRegistrySync {
 	private static final Logger LOGGER = LogUtils.getLogger();
 
@@ -53,11 +59,11 @@ public final class ClientRegistrySync {
 	private static boolean optionalRegistry;
 
 	public static void registerHandlers() {
-		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.HELLO, ClientRegistrySync::handleHelloPacket);
-		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.START, ClientRegistrySync::handleStartPacket);
-		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.DATA, ClientRegistrySync::handleDataPacket);
-		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.APPLY, ClientRegistrySync::handleApplyPacket);
-		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.GOODBYE, ClientRegistrySync::handleGoodbyePacket);
+		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.HANDSHAKE, ClientRegistrySync::handleHelloPacket);
+		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_START, ClientRegistrySync::handleStartPacket);
+		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_DATA, ClientRegistrySync::handleDataPacket);
+		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_APPLY, ClientRegistrySync::handleApplyPacket);
+		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.END, ClientRegistrySync::handleGoodbyePacket);
 
 	}
 
@@ -81,7 +87,7 @@ public final class ClientRegistrySync {
 		var buf = PacketByteBufs.create();
 		buf.writeVarInt(version);
 
-		sender.sendPacket(ClientPackets.HELLO, buf);
+		sender.sendPacket(ClientPackets.HANDSHAKE, buf);
 	}
 
 	public static void sendSyncFailedPacket(ClientPlayNetworkHandler handler, Identifier identifier) {
@@ -112,7 +118,7 @@ public final class ClientRegistrySync {
 		} else {
 			LOGGER.warn("Trying to sync registry " + identifier + " which doesn't " + (registry != null ? "support it!" : "exist!"));
 			sendSyncFailedPacket(handler, identifier);
-			handler.getConnection().disconnect(new LiteralText("Client is missing required registry! Mismatched mods?"));
+			handler.getConnection().disconnect(getMessage("missing_registry","Client is missing required registry! Mismatched mods?"));
 		}
 	}
 
@@ -156,7 +162,7 @@ public final class ClientRegistrySync {
 			for (var entry : missingEntries) {
 				if (!RegistryFlag.isOptional(entry.flags())) {
 					sendSyncFailedPacket(handler, currentRegistryId);
-					handler.getConnection().disconnect(new LiteralText("Client registry is missing entries! Mismatched mods?"));
+					handler.getConnection().disconnect(getMessage("missing_entries", "Client registry is missing entries! Mismatched mods?"));
 					break;
 				}
 			}
@@ -164,7 +170,9 @@ public final class ClientRegistrySync {
 
 
 		if (!disconnect && reg == Registry.BLOCK) {
-			rebuildStates();
+			rebuildBlockStates();
+		} else if (!disconnect && reg == Registry.FLUID) {
+			rebuildFluidStates();
 		}
 
 		currentRegistry = null;
@@ -176,11 +184,27 @@ public final class ClientRegistrySync {
 		syncMap = null;
 	}
 
-	public static void rebuildStates() {
+	public static void rebuildBlockStates() {
 		SynchronizedIdList.clear(Block.STATE_IDS);
 
 		for (var block : Registry.BLOCK) {
 			block.getStateManager().getStates().forEach(Block.STATE_IDS::add);
+		}
+	}
+
+	public static void rebuildFluidStates() {
+		SynchronizedIdList.clear(Fluid.STATE_IDS);
+
+		for (var fluid : Registry.FLUID) {
+			fluid.getStateManager().getStates().forEach(Fluid.STATE_IDS::add);
+		}
+	}
+
+	private static Text getMessage(String type, String fallback) {
+		if (Language.getInstance().hasTranslation("quilt.core.registry_sync." + type)) {
+			return new TranslatableText("quilt.core.registry_sync." + type);
+		} else {
+			return new LiteralText(fallback);
 		}
 	}
 }
