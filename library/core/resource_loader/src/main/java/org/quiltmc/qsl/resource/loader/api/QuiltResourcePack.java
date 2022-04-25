@@ -16,11 +16,15 @@
 
 package org.quiltmc.qsl.resource.loader.api;
 
+import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.text.Text;
+
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 /**
  * Represents a resource pack with extended metadata, injected into {@link net.minecraft.resource.pack.ResourcePack}.
  */
+@InjectedInterface(ResourcePack.class)
 public interface QuiltResourcePack {
 	/**
 	 * {@return a display name for this resource pack}
