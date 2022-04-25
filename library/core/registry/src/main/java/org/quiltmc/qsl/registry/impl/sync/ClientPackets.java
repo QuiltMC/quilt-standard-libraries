@@ -20,12 +20,12 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
- * Identifiers of packets send by server
+ * Identifiers of packets sent by server
  */
 @ApiStatus.Internal
 public final class ClientPackets {
 	/**
-	 * Response for {@link ServerPackets#HELLO}
+	 * Response for {@link ServerPackets#HELLO}. Selects the registry sync version to be used from the server's supported options.
 	 *
 	 * <pre><code>
 	 * {

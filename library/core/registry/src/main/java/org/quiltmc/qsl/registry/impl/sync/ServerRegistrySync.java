@@ -48,7 +48,7 @@ public final class ServerRegistrySync {
 	// Ideally we should introduce new stage/api for it by creating custom ServerPlayPacketListener
 	// that just handles all of custom logic/emulation of login stage, which is fairly possible
 	// to do while keeping compatibility with vanilla clients (as long as other mods on server allow it).
-	// It's thanks to ping packets send by server and tpc/Minecraft preserving packet order!
+	// It's thanks to ping packets sent by server and tpc/Minecraft preserving packet order!
 	// But for now they will be registered, but just ignored
 	private static void handleHelloPacket(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {}
 
