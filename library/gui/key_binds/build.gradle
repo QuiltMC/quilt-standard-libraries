@@ -7,7 +7,6 @@ qslModule {
 	moduleName = "key_binds"
 	id = "quilt_key_binds"
 	description = "Key binds registration and utilities."
-	version = "1.0.0"
 	library = "gui"
 	moduleDependencies {
 		core {
