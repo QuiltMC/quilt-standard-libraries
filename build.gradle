@@ -5,10 +5,19 @@ plugins {
 	id("org.jetbrains.gradle.plugin.idea-ext") version("1.1.3")
 	id("qsl.common")
 }
+def ENV = System.getenv()
+group = "org.quiltmc"
+version = Versions.QSL_VERSION
 
-group = "org.quiltmc.qsl"
-version = Versions.QSL_VERSION + "+" + Versions.MINECRAFT_VERSION + (System.getenv("SNAPSHOTS_URL") ? "-SNAPSHOT" : "")
+// Takes "1.0.0-beta.1" and changes it to "1.0.0-beta.2, unless we are releasing.
+// TODO: there is no way to semantically identify if a release is a snapshot or not right now
+if (version.contains("beta") && !ENV.MAVEN_URL) {
+	int beta = Integer.parseInt(version.substring(version.indexOf("beta.") + 5))
+	version = version.replace(version.substring(version.indexOf("beta.")), "beta." + (beta + 1))
+}
 
+version = version + "+" + Versions.MINECRAFT_VERSION + (System.getenv("SNAPSHOTS_URL") ? "-SNAPSHOT" : "")
+println("QSL: " + version)
 sourceSets {
 	testmod {
 		compileClasspath += main.compileClasspath
@@ -108,7 +117,6 @@ afterEvaluate {
 		}
 	}
 }
-
 
 task checkVersion {
 	doFirst {

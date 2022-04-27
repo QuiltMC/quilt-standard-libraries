@@ -4,5 +4,4 @@ plugins {
 
 qslLibrary {
 	libraryName = "block"
-	version = "1.0.0"
 }

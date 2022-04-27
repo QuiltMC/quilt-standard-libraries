@@ -7,7 +7,6 @@ qslModule {
 	moduleName = "resource_loader"
 	id = "quilt_resource_loader"
 	description = "Asset and data resource loading for Quilt mods."
-	version = "1.0.0"
 	library = "core"
 	moduleDependencies {
 		core {

@@ -20,11 +20,11 @@ package org.quiltmc.qsl.command.impl.client;
 import com.mojang.logging.LogUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.command.impl.KnownArgTypesSync;
 
@@ -35,7 +35,7 @@ public final class ClientInitializer implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient(ModContainer mod) {
-		if (FabricLoader.getInstance().isModLoaded("quilt_networking")) {
+		if (QuiltLoader.isModLoaded("quilt_networking")) {
 			KnownArgTypesSync.registerClient();
 			LOGGER.info("[Quilt Command|Client] Networking support is enabled");
 		} else {

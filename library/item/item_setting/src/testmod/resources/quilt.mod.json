@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "org.quiltmc.qsl.item",
+    "id": "qsl_item_setting_testmod",
+    "version": "1.0.0",
+    "metadata": {
+      "name": "Quilt Item Setting API Test Mod",
+      "license": "Apache-2.0"
+    },
+    "intermediate_mappings": "net.fabricmc:intermediary",
+    "entrypoints": {
+      "init": [
+        "org.quiltmc.qsl.item.test.QuiltItemSettingsTests",
+        "org.quiltmc.qsl.item.test.CustomDamageTest"
+      ]
+    },
+    "depends": [
+      "quilt_loader",
+      "quilt_item_setting"
+    ]
+  }
+}

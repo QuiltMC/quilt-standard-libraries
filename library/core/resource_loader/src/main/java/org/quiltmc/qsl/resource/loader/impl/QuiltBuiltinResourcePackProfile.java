@@ -81,10 +81,10 @@ public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
 		private final Text tooltip;
 
 		BuiltinResourcePackSource(ModNioResourcePack pack) {
-			String modName = pack.modInfo.getName();
+			String modName = pack.modInfo.name();
 
 			if (modName == null) {
-				modName = pack.modInfo.getId();
+				modName = pack.modInfo.id();
 			}
 
 			this.pack = pack;

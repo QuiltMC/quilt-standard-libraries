@@ -33,8 +33,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import com.mojang.logging.LogUtils;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.metadata.ModMetadata;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -46,6 +44,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
 
+import org.quiltmc.loader.api.ModMetadata;
+import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
 import org.quiltmc.qsl.resource.loader.mixin.IdentifierAccessor;
 
@@ -86,7 +86,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 		this.basePath = path.toAbsolutePath().normalize();
 		this.type = type;
 		// Cache ModNioResourcePacks if not in dev environment because it's not supposed to be mutable in production.
-		this.cacheable = modInfo.getId().equals("minecraft") || !FabricLoader.getInstance().isDevelopmentEnvironment();
+		this.cacheable = modInfo.id().equals("minecraft") || !QuiltLoader.isDevelopmentEnvironment();
 		this.closer = closer;
 		this.separator = basePath.getFileSystem().getSeparator();
 		this.activationType = activationType;
@@ -120,7 +120,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 
 		// FileNotFoundException is an IOException, which is properly handled by the Vanilla resource loader and
 		// prints to the logs.
-		throw new FileNotFoundException("\"" + filename + "\" in Quilt mod \"" + modInfo.getId() + "\"");
+		throw new FileNotFoundException("\"" + filename + "\" in Quilt mod \"" + modInfo.id() + "\"");
 	}
 
 	@Override
@@ -163,7 +163,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 							});
 				} catch (IOException e) {
 					LOGGER.warn("findResources at " + path + " in namespace " + namespace
-							+ ", mod " + this.modInfo.getId() + " failed!", e);
+							+ ", mod " + this.modInfo.id() + " failed!", e);
 				}
 			}
 		}
@@ -173,7 +173,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 
 	protected void warnInvalidNamespace(String s) {
 		LOGGER.warn("Quilt NioResourcePack: ignored invalid namespace: {} in mod ID {}",
-				s, this.modInfo.getId());
+				s, this.modInfo.id());
 	}
 
 	@Override
@@ -216,7 +216,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 
 			return namespaces;
 		} catch (IOException e) {
-			LOGGER.warn("getNamespaces in mod " + modInfo.getId() + " failed!", e);
+			LOGGER.warn("getNamespaces in mod " + modInfo.id() + " failed!", e);
 			return Collections.emptySet();
 		}
 	}

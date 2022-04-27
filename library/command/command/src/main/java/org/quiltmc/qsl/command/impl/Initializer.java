@@ -18,13 +18,13 @@ package org.quiltmc.qsl.command.impl;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.logging.LogUtils;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.command.api.EnumArgumentType;
 import org.quiltmc.qsl.command.api.ServerArgumentType;
@@ -41,7 +41,7 @@ public final class Initializer implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		if (FabricLoader.getInstance().isModLoaded("quilt_networking")) {
+		if (QuiltLoader.isModLoaded("quilt_networking")) {
 			KnownArgTypesSync.register();
 			LOGGER.info("[Quilt Command] Networking support is enabled");
 		} else {

@@ -23,7 +23,7 @@ public final class QmjBuilder {
 				.name("name").value(ext.getName().get())
 				.name("description").value(ext.getDescription().get())
 				.name("contributors").beginObject() // metadata -> contributors
-				.name("Owner").value("QuiltMC: QSL Team")
+				.name("QuiltMC: QSL Team").value("Owner")
 				.endObject() // contributors -> metadata
 				.name("contact").beginObject() // contributors -> contact
 				.name("homepage").value("https://quiltmc.org")
@@ -45,12 +45,20 @@ public final class QmjBuilder {
 					.endObject();
 		for (QslLibraryDependency depend : ext.getModuleDependencyDefinitions()) {
 			for (QslLibraryDependency.ModuleDependencyInfo moduleDependencyInfo : depend.getDependencyInfo().get()) {
+				if (moduleDependencyInfo.type() == QslLibraryDependency.ConfigurationType.TESTMOD) {
+					continue;
+				}
+
 				Project depProject = project.getRootProject().project(depend.getName()).project(moduleDependencyInfo.module());
 				QslModuleExtension depExt = depProject.getExtensions().getByType(QslModuleExtension.class);
 				writer.beginObject()
 						.name("id").value(depExt.getId().get())
-						.name("versions").value(depProject.getVersion().toString())
-						.endObject();
+						.name("versions").value(">=" + depProject.getVersion());
+
+				if (moduleDependencyInfo.type() == QslLibraryDependency.ConfigurationType.COMPILE_ONLY)  {
+					writer.name("optional").value(true);
+				}
+				writer.endObject();
 			}
 		}
 		writer.endArray(); // depends -> quilt_loader
@@ -89,6 +97,7 @@ public final class QmjBuilder {
 				.name("id").value("qsl")
 				.name("name").value("Quilt Standard Libraries")
 				.name("description").value("A set of libraries to assist in making Quilt mods.")
+				.name("icon").value("assets/" + ext.getId().get() + "/icon.png")
 				.name("badges").beginArray().value("library").endArray()
 				.endObject() // parent -> modmenu
 				.endObject(); // modmenu -> root

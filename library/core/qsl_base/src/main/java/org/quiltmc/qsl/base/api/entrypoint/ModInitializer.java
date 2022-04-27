@@ -16,9 +16,9 @@
 
 package org.quiltmc.qsl.base.api.entrypoint;
 
-import net.fabricmc.loader.api.ModContainer;
-
 import net.minecraft.Bootstrap;
+
+import org.quiltmc.loader.api.ModContainer;
 
 /**
  * A mod initializer.
