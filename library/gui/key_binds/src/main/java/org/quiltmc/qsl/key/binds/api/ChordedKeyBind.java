@@ -20,8 +20,10 @@ import com.mojang.blaze3d.platform.InputUtil;
 
 import net.minecraft.client.option.KeyBind;
 
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
 import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
 
+@InjectedInterface(KeyBind.class)
 public interface ChordedKeyBind {
 	default KeyChord getBoundChord() {
 		System.out.println("This should never happen");
