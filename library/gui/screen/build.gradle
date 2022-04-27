@@ -7,7 +7,6 @@ qslModule {
 	moduleName = "screen"
 	id = "quilt_screen"
 	description = "Hooks and APIs for manipulating screens."
-	version = "1.0.0"
 	library = "gui"
 	moduleDependencies {
 		core {

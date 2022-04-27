@@ -19,6 +19,8 @@ package org.quiltmc.qsl.screen.api.client;
 
 import java.util.List;
 
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
@@ -34,6 +36,7 @@ import net.fabricmc.api.Environment;
  * @see ScreenEvents
  */
 @Environment(EnvType.CLIENT)
+@InjectedInterface(Screen.class)
 public interface QuiltScreenExtensions {
 	/**
 	 * Gets all of a screen's button widgets.
