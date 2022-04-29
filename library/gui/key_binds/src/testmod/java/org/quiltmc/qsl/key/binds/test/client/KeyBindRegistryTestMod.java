@@ -46,8 +46,8 @@ public class KeyBindRegistryTestMod implements ClientLifecycleEvents.Ready {
 		}
 
 		LOGGER.info("The registry has the following keys registered:");
-		KeyBindRegistry.getAllKeyBinds(true).forEach((key, value) -> {
-			LOGGER.info(String.format("%s: %s", key.getTranslationKey(), value));
-		});
+		for (KeyBind key : KeyBindRegistry.getAllKeyBinds(true)) {
+			LOGGER.info(String.format("Found key %s!", key.getTranslationKey()));
+		}
 	}
 }

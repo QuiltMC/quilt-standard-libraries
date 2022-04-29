@@ -29,7 +29,8 @@ public class QuiltKeyBindsConfig {
 			instance -> instance.group(
 				// TODO - Implement me!
 				Codec.BOOL.fieldOf("show_tutorial_toast").forGetter(QuiltKeyBindsConfig::getShowTutorialToast),
-				Codec.unboundedMap(Codec.STRING, Codec.either(Codec.STRING, Codec.list(Codec.STRING))).fieldOf("key_binds").forGetter(QuiltKeyBindsConfig::getKeyBinds)
+				Codec.unboundedMap(Codec.STRING, Codec.either(Codec.STRING, Codec.list(Codec.STRING))).fieldOf("key_binds").forGetter(QuiltKeyBindsConfig::getKeyBinds),
+				Codec.unboundedMap(Codec.STRING, Codec.either(Codec.STRING, Codec.list(Codec.STRING))).fieldOf("unused_key_binds").forGetter(QuiltKeyBindsConfig::getUnusedKeyBinds)
 			)
 			.apply(instance, QuiltKeyBindsConfig::new)
 	);
@@ -37,18 +38,22 @@ public class QuiltKeyBindsConfig {
 	private boolean showTutorialToast;
 	// TODO - This type is super long; Use an object for this
 	private Map<String, Either<String, List<String>>> keyBinds;
+	private Map<String, Either<String, List<String>>> unusedKeyBinds;
 
 	public QuiltKeyBindsConfig() {
-		this.keyBinds = new HashMap<>();
 		this.showTutorialToast = false;
+		this.keyBinds = new HashMap<>();
+		this.unusedKeyBinds = new HashMap<>();
 	}
 
 	public QuiltKeyBindsConfig(
 			boolean showTutorialToast,
-			Map<String, Either<String, List<String>>> keyBinds
+			Map<String, Either<String, List<String>>> keyBinds,
+			Map<String, Either<String, List<String>>> unusedKeyBinds
 	) {
 		this.showTutorialToast = showTutorialToast;
 		this.keyBinds = keyBinds;
+		this.unusedKeyBinds = unusedKeyBinds;
 	}
 
 	public boolean getShowTutorialToast() {
@@ -60,10 +65,18 @@ public class QuiltKeyBindsConfig {
 	}
 
 	public Map<String, Either<String, List<String>>> getKeyBinds() {
-		return keyBinds;
+		return this.keyBinds;
 	}
 
 	public void setKeyBinds(Map<String, Either<String, List<String>>> keyBinds) {
 		this.keyBinds = keyBinds;
+	}
+
+	public Map<String, Either<String, List<String>>> getUnusedKeyBinds() {
+		return this.unusedKeyBinds;
+	}
+
+	public void setUnusedKeyBinds(Map<String, Either<String, List<String>>> unusedKeyBinds) {
+		this.unusedKeyBinds = unusedKeyBinds;
 	}
 }

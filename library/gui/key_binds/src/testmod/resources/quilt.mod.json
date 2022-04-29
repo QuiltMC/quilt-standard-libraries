@@ -9,6 +9,7 @@
 			"quilt_key_binds"
 		],
 		"entrypoints": {
+      "client_init": "org.quiltmc.qsl.key.binds.test.client.KeyBindsTestMod",
 			"client_events": [
 				"org.quiltmc.qsl.key.binds.test.client.KeyBindRegistryTestMod",
 				"org.quiltmc.qsl.key.binds.test.client.KeyBindsTestMod"

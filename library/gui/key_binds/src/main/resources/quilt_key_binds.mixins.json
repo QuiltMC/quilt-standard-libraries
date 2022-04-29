@@ -9,6 +9,7 @@
     "client.chords.KeyBindsScreenMixin",
     "client.config.GameOptionsMixin",
     "client.config.MinecraftClientMixin",
+    "client.toggle.KeyBindMixin",
     "client.EntryListWidgetAccessor",
     "client.GameOptionsAccessor",
     "client.GameOptionsMixin",
