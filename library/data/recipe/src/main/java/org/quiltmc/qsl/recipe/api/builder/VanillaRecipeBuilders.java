@@ -59,7 +59,7 @@ public final class VanillaRecipeBuilders {
 	 * @param pattern the pattern of the shaped crafting recipe
 	 * @return the builder
 	 */
-	public static ShapedRecipeBuilder shapedRecipe(String[] pattern) {
+	public static ShapedRecipeBuilder shapedRecipe(String... pattern) {
 		return new ShapedRecipeBuilder(pattern);
 	}
 
