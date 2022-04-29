@@ -10,12 +10,16 @@ qslModule {
 	library = "gui"
 	moduleDependencies {
 		core {
-			api("qsl_base")
 			api("resource_loader")
+			impl("qsl_base")
 			testmodOnly("lifecycle_events")
 		}
 	}
 	injectedInterface("net/minecraft/class_304") {
-		values = ["org/quiltmc/qsl/key/binds/api/ChordedKeyBind"]
+		values = [
+			"org/quiltmc/qsl/key/binds/api/ChordedKeyBind",
+			"org/quiltmc/qsl/key/binds/api/ToggleableKeyBind"
+		]
 	}
+	clientOnly()
 }

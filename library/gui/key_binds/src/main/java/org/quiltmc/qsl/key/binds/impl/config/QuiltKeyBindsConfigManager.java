@@ -132,10 +132,11 @@ public class QuiltKeyBindsConfigManager {
 		}
 	}
 
+	// TODO - This is the ideal place to store the unused key binds; Do that!
 	public static void populateConfig() {
 		Map<String, Either<String, List<String>>> keyBindMap = new HashMap<>();
 
-		KeyBindRegistryImpl.getAllKeyBinds(true).forEach((keyBind, disabled) -> {
+		for (KeyBind keyBind : KeyBindRegistryImpl.getAllKeyBinds(true)) {
 			if (keyBind.getBoundChord() != null) {
 				Either<String, List<String>> either = switch (keyBind.getBoundChord().keys.size()) {
 				case 0 -> {
@@ -162,7 +163,8 @@ public class QuiltKeyBindsConfigManager {
 						: Either.left(keyBind.getKeyTranslationKey());
 				keyBindMap.put(keyBind.getTranslationKey(), either);
 			}
-		});
+		}
+
 		CONFIG.setKeyBinds(keyBindMap);
 	}
 }

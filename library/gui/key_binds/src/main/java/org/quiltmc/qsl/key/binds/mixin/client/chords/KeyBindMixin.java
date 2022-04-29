@@ -66,7 +66,7 @@ public class KeyBindMixin implements ChordedKeyBind {
 			at = @At("RETURN"),
 			method = "<init>(Ljava/lang/String;Lcom/mojang/blaze3d/platform/InputUtil$Type;ILjava/lang/String;)V"
 	)
-	private void expandInit(String string, InputUtil.Type type, int i, String string2, CallbackInfo ci) {
+	private void initializeChordFields(String string, InputUtil.Type type, int i, String string2, CallbackInfo ci) {
 		quilt$defaultChord = null;
 		quilt$boundChord = null;
 	}

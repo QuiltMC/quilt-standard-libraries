@@ -18,9 +18,7 @@ package org.quiltmc.qsl.key.binds.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -33,40 +31,37 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.option.KeyBind;
 
 import org.quiltmc.qsl.key.binds.impl.config.QuiltKeyBindsConfigManager;
-import org.quiltmc.qsl.key.binds.mixin.client.KeyBindAccessor;
 
 @Environment(EnvType.CLIENT)
 @ApiStatus.Internal
 public class KeyBindRegistryImpl {
 	public static final Logger LOGGER = LoggerFactory.getLogger("KeyBindRegistry");
 
-	private static Map<KeyBind, Boolean> quiltKeys = new HashMap<>();
+	// TODO - FastUtils
+	private static final List<KeyBind> QUILT_KEY_BINDS = new ArrayList<>();
+	private static final List<KeyBind> DISABLED_KEYS = new ArrayList<>(0);
 	private static KeyBind[] enabledQuiltKeysArray = new KeyBind[] {};
-	private static List<KeyBind> disabledQuiltKeys = new ArrayList<>(0);
 	private static KeyBindManager keyBindManager = null;
 
-	public static KeyBind registerKeyBind(KeyBind key, boolean enabled) {
+	public static KeyBind registerKeyBind(KeyBind key) {
 		Objects.requireNonNull(key, "Attempted to register a null key bind!");
 
-		for (KeyBind otherKey : quiltKeys.keySet()) {
-			if (key == otherKey) {
+		for (KeyBind otherKey : QUILT_KEY_BINDS) {
+			if (key.equals(otherKey)) {
 				throw new IllegalArgumentException(String.format("%s has already been registered!", key.getTranslationKey()));
 			} else if (key.getTranslationKey().equals(otherKey.getTranslationKey())) {
 				throw new IllegalArgumentException(String.format("Attempted to register {}, but a key bind with the same translation key has already been registered!", key.getTranslationKey()));
 			}
 		}
 
-		quiltKeys.put(key, enabled);
+		QUILT_KEY_BINDS.add(key);
 		applyChanges();
-		if (!enabled) {
-			KeyBindAccessor.getKeyBinds().remove(key.getTranslationKey());
-		}
 
 		return key;
 	}
 
 	public static KeyBind getKeyBind(String translationKey) {
-		for (KeyBind key : quiltKeys.keySet()) {
+		for (KeyBind key : QUILT_KEY_BINDS) {
 			if (key.getTranslationKey().equals(translationKey)) {
 				return key;
 			}
@@ -83,58 +78,30 @@ public class KeyBindRegistryImpl {
 		throw new IllegalArgumentException(String.format("%s isn't a registered key!", key.getTranslationKey()));
 	}
 
-	public static boolean isEnabled(KeyBind key) {
-		if (quiltKeys.containsKey(key)) {
-			return quiltKeys.get(key);
-		} else {
-			return throwUnregisteredKeyException(key);
-		}
-	}
-
-	public static void setEnabled(KeyBind key, boolean enabled) {
-		if (quiltKeys.containsKey(key)) {
-			quiltKeys.replace(key, enabled);
-
-			applyChanges();
-			if (enabled) {
-				KeyBindAccessor.getKeyBinds().put(key.getTranslationKey(), key);
-			} else {
-				KeyBindAccessor.getKeyBinds().remove(key.getTranslationKey(), key);
-			}
-
-			((KeyBindAccessor) key).callReset();
-			KeyBind.updateBoundKeys();
-		} else {
-			throwUnregisteredKeyException(key);
-		}
-	}
-
-	public static Map<KeyBind, Boolean> getAllKeyBinds(boolean includeVanilla) {
-		Map<KeyBind, Boolean> allKeys = new HashMap<>();
+	// TODO - includeVanilla is bad; Let's change it to something else
+	public static List<KeyBind> getAllKeyBinds(boolean includeVanilla) {
+		List<KeyBind> allKeys = new ArrayList<>();
 
 		if (includeVanilla) {
 			for (int i = 0; i < keyBindManager.getAllKeys().length; i++) {
-				allKeys.put(keyBindManager.getAllKeys()[i], false);
+				allKeys.add(keyBindManager.getAllKeys()[i]);
 			}
 		}
 
-		allKeys.putAll(quiltKeys);
+		allKeys.addAll(QUILT_KEY_BINDS);
 
 		return allKeys;
 	}
 
+	// TODO - Wait a hecking minute, this isn't applying the changes as intended!
 	public static void applyChanges() {
-		List<KeyBind> enabledQuiltKeys = new ArrayList<>();
-		disabledQuiltKeys.clear();
-		for (var entry : quiltKeys.entrySet()) {
-			if (entry.getValue()) {
-				enabledQuiltKeys.add(entry.getKey());
-			} else {
-				disabledQuiltKeys.add(entry.getKey());
-			}
+		List<KeyBind> enabledKeys = new ArrayList<>();
+		DISABLED_KEYS.clear();
+		for (KeyBind key : QUILT_KEY_BINDS) {
+			(key.isEnabled() ? enabledKeys : DISABLED_KEYS).add(key);
 		}
 
-		enabledQuiltKeysArray = enabledQuiltKeys.toArray(new KeyBind[enabledQuiltKeys.size()]);
+		enabledQuiltKeysArray = enabledKeys.toArray(new KeyBind[enabledKeys.size()]);
 
 		if (keyBindManager != null) {
 			keyBindManager.addModdedKeyBinds();
@@ -148,7 +115,7 @@ public class KeyBindRegistryImpl {
 	}
 
 	public static List<KeyBind> getDisabledKeyBinds() {
-		return disabledQuiltKeys;
+		return DISABLED_KEYS;
 	}
 
 	public static void setKeyBindManager(KeyBindManager manager) {
