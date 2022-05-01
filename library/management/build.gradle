@@ -3,5 +3,5 @@ plugins {
 }
 
 qslLibrary {
-	libraryName = "command"
+	libraryName = "management"
 }

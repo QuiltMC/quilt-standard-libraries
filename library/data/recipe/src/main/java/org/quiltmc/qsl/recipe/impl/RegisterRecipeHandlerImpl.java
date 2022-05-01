@@ -31,12 +31,15 @@ import org.quiltmc.qsl.recipe.api.RecipeLoadingEvents;
 final class RegisterRecipeHandlerImpl implements RecipeLoadingEvents.AddRecipesCallback.RecipeHandler {
 	private final Map<Identifier, JsonElement> resourceMap;
 	private final Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap;
+	private final ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder;
 	int registered = 0;
 
 	RegisterRecipeHandlerImpl(Map<Identifier, JsonElement> resourceMap,
-									  Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap) {
+	                          Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap,
+	                          ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder) {
 		this.resourceMap = resourceMap;
 		this.builderMap = builderMap;
+		this.globalRecipeMapBuilder = globalRecipeMapBuilder;
 	}
 
 	void register(Recipe<?> recipe) {
@@ -44,6 +47,7 @@ final class RegisterRecipeHandlerImpl implements RecipeLoadingEvents.AddRecipesC
 			ImmutableMap.Builder<Identifier, Recipe<?>> recipeBuilder =
 					this.builderMap.computeIfAbsent(recipe.getType(), o -> ImmutableMap.builder());
 			recipeBuilder.put(recipe.getId(), recipe);
+			this.globalRecipeMapBuilder.put(recipe.getId(), recipe);
 			this.registered++;
 
 			if (RecipeManagerImpl.DEBUG_MODE) {

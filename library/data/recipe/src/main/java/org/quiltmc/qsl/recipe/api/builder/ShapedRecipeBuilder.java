@@ -43,10 +43,11 @@ public class ShapedRecipeBuilder extends RecipeBuilder<ShapedRecipeBuilder, Shap
 	 * @param pattern the pattern of the shaped recipe. Each string in this array is a line of ingredients.
 	 *                A character represents an ingredient and space is no ingredient
 	 */
-	public ShapedRecipeBuilder(String[] pattern) {
+	public ShapedRecipeBuilder(String... pattern) {
 		this.pattern = pattern;
 		this.width = pattern[0].length();
 		this.height = pattern.length;
+		this.ingredients.put(' ', Ingredient.EMPTY); // By default, space is an empty ingredient.
 	}
 
 	/**

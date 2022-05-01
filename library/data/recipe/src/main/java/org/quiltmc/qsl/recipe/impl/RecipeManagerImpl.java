@@ -22,7 +22,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Collection;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
@@ -68,24 +67,27 @@ public final class RecipeManagerImpl {
 	}
 
 	public static void apply(Map<Identifier, JsonElement> map,
-	                         Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap) {
-		var handler = new RegisterRecipeHandlerImpl(map, builderMap);
+	                         Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap,
+	                         ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder) {
+		var handler = new RegisterRecipeHandlerImpl(map, builderMap, globalRecipeMapBuilder);
 		RecipeLoadingEvents.ADD.invoker().addRecipes(handler);
 		STATIC_RECIPES.values().forEach(handler::register);
 		LOGGER.info("Registered {} custom recipes.", handler.registered);
 	}
 
-	public static void applyModifications(RecipeManager recipeManager, Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes) {
-		var handler = new ModifyRecipeHandlerImpl(recipeManager, recipes);
+	public static void applyModifications(RecipeManager recipeManager,
+	                                      Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes,
+	                                      Map<Identifier, Recipe<?>> globalRecipes) {
+		var handler = new ModifyRecipeHandlerImpl(recipeManager, recipes, globalRecipes);
 		RecipeLoadingEvents.MODIFY.invoker().modifyRecipes(handler);
 		LOGGER.info("Modified {} recipes.", handler.counter);
 
-		var removeHandler = new RemoveRecipeHandlerImpl(recipeManager, recipes);
+		var removeHandler = new RemoveRecipeHandlerImpl(recipeManager, recipes, globalRecipes);
 		RecipeLoadingEvents.REMOVE.invoker().removeRecipes(removeHandler);
 		LOGGER.info("Removed {} recipes.", removeHandler.counter);
 
 		if (DUMP_MODE) {
-			dump(recipes.values());
+			dump(globalRecipes);
 		}
 
 		if (DEBUG_MODE || QuiltLoader.isDevelopmentEnvironment()) {
@@ -101,7 +103,7 @@ public final class RecipeManagerImpl {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static void dump(Collection<Map<Identifier, Recipe<?>>> recipes) {
+	private static void dump(Map<Identifier, Recipe<?>> recipes) {
 		Path debugPath = Paths.get("debug", "quilt", "recipe").normalize();
 
 		if (!Files.exists(debugPath)) {
@@ -113,43 +115,41 @@ public final class RecipeManagerImpl {
 			}
 		}
 
-		for (var map : recipes) {
-			for (Recipe<?> recipe : map.values()) {
-				if (!(recipe.getSerializer() instanceof QuiltRecipeSerializer)) continue;
+		for (Recipe<?> recipe : recipes.values()) {
+			if (!(recipe.getSerializer() instanceof QuiltRecipeSerializer)) continue;
 
-				var serializer = (QuiltRecipeSerializer<Recipe<?>>) recipe.getSerializer();
-				JsonObject serialized = serializer.toJson(recipe);
+			var serializer = (QuiltRecipeSerializer<Recipe<?>>) recipe.getSerializer();
+			JsonObject serialized = serializer.toJson(recipe);
 
-				Path path = debugPath.resolve(recipe.getId().getNamespace() + "/recipes/" + recipe.getId().getPath() + ".json");
-				Path parent = path.getParent();
+			Path path = debugPath.resolve(recipe.getId().getNamespace() + "/recipes/" + recipe.getId().getPath() + ".json");
+			Path parent = path.getParent();
 
-				if (!Files.exists(parent)) {
-					try {
-						Files.createDirectories(parent);
-					} catch (IOException e) {
-						LOGGER.error("Failed to create parent recipe directory {}. Cannot dump recipe {}.",
-								parent, recipe.getId(), e);
-						continue;
-					}
-				}
-
-				var stringWriter = new StringWriter();
-				var jsonWriter = new JsonWriter(stringWriter);
-				jsonWriter.setLenient(true);
-				jsonWriter.setIndent("  ");
-
+			if (!Files.exists(parent)) {
 				try {
-					Streams.write(serialized, jsonWriter);
-					Files.writeString(path, stringWriter.toString(),
-							StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+					Files.createDirectories(parent);
 				} catch (IOException e) {
-					LOGGER.error("Failed to write JSON for recipe {}.", recipe.getId(), e);
-				} finally {
-					try {
-						jsonWriter.close();
-					} catch (IOException e) {
-						LOGGER.error("Failed to close JSON writer for recipe {}.", recipe.getId(), e);
-					}
+					LOGGER.error("Failed to create parent recipe directory {}. Cannot dump recipe {}.",
+							parent, recipe.getId(), e);
+					continue;
+				}
+			}
+
+			var stringWriter = new StringWriter();
+			var jsonWriter = new JsonWriter(stringWriter);
+			jsonWriter.setLenient(true);
+			jsonWriter.setIndent("  ");
+
+			try {
+				Streams.write(serialized, jsonWriter);
+				Files.writeString(path, stringWriter.toString(),
+						StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+			} catch (IOException e) {
+				LOGGER.error("Failed to write JSON for recipe {}.", recipe.getId(), e);
+			} finally {
+				try {
+					jsonWriter.close();
+				} catch (IOException e) {
+					LOGGER.error("Failed to close JSON writer for recipe {}.", recipe.getId(), e);
 				}
 			}
 		}

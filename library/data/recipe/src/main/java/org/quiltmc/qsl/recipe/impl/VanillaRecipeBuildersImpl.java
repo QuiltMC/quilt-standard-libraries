@@ -90,7 +90,7 @@ public final class VanillaRecipeBuildersImpl {
 	}
 
 	public static CampfireCookingRecipe campfireCookingRecipe(Identifier id, String group, Ingredient input,
-															  ItemStack output, float experience, int cookTime) {
+	                                                          ItemStack output, float experience, int cookTime) {
 		if (input == Ingredient.EMPTY) throw new IllegalArgumentException("Input cannot be empty.");
 		if (cookTime < 0) throw new IllegalArgumentException("Cook time must be equal or greater than 0");
 
