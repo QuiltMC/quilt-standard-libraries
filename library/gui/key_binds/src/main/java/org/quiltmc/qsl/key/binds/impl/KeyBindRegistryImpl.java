@@ -17,11 +17,9 @@
 package org.quiltmc.qsl.key.binds.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,9 +36,10 @@ public class KeyBindRegistryImpl {
 	public static final Logger LOGGER = LoggerFactory.getLogger("KeyBindRegistry");
 
 	// TODO - FastUtils
+	// TODO - Wait a hecking minute; What's the point of QUILT_KEY_BINDS now?
 	private static final List<KeyBind> QUILT_KEY_BINDS = new ArrayList<>();
 	private static final List<KeyBind> DISABLED_KEYS = new ArrayList<>(0);
-	private static KeyBind[] enabledQuiltKeysArray = new KeyBind[] {};
+	private static KeyBind[] enabledKeysArray = new KeyBind[] {};
 	private static KeyBindManager keyBindManager = null;
 
 	public static KeyBind registerKeyBind(KeyBind key) {
@@ -70,21 +69,13 @@ public class KeyBindRegistryImpl {
 		return null;
 	}
 
-	public static boolean throwUnregisteredKeyException(KeyBind key) {
-		if (keyBindManager != null && Arrays.asList(keyBindManager.getAllKeys()).contains(key)) {
-			throw new IllegalArgumentException(String.format("%s is a vanilla key and therefore doesn't have an active state!", key.getTranslationKey()));
-		}
-
-		throw new IllegalArgumentException(String.format("%s isn't a registered key!", key.getTranslationKey()));
-	}
-
 	// TODO - includeVanilla is bad; Let's change it to something else
 	public static List<KeyBind> getAllKeyBinds(boolean includeVanilla) {
 		List<KeyBind> allKeys = new ArrayList<>();
 
 		if (includeVanilla) {
-			for (int i = 0; i < keyBindManager.getAllKeys().length; i++) {
-				allKeys.add(keyBindManager.getAllKeys()[i]);
+			for (KeyBind keyBind : keyBindManager.getAllKeys()) {
+				allKeys.add(keyBind);
 			}
 		}
 
@@ -93,15 +84,18 @@ public class KeyBindRegistryImpl {
 		return allKeys;
 	}
 
-	// TODO - Wait a hecking minute, this isn't applying the changes as intended!
 	public static void applyChanges() {
 		List<KeyBind> enabledKeys = new ArrayList<>();
 		DISABLED_KEYS.clear();
+		for (KeyBind key : keyBindManager.getAllKeys()) {
+			(key.isEnabled() ? enabledKeys : DISABLED_KEYS).add(key);
+		}
+
 		for (KeyBind key : QUILT_KEY_BINDS) {
 			(key.isEnabled() ? enabledKeys : DISABLED_KEYS).add(key);
 		}
 
-		enabledQuiltKeysArray = enabledKeys.toArray(new KeyBind[enabledKeys.size()]);
+		enabledKeysArray = enabledKeys.toArray(new KeyBind[enabledKeys.size()]);
 
 		if (keyBindManager != null) {
 			keyBindManager.addModdedKeyBinds();
@@ -111,7 +105,7 @@ public class KeyBindRegistryImpl {
 	}
 
 	public static KeyBind[] getKeyBinds() {
-		return ArrayUtils.addAll(keyBindManager.getAllKeys(), enabledQuiltKeysArray);
+		return enabledKeysArray;
 	}
 
 	public static List<KeyBind> getDisabledKeyBinds() {
