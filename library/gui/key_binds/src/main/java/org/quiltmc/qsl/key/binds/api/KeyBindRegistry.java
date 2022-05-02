@@ -27,6 +27,7 @@ import net.minecraft.client.option.KeyBind;
 import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
 import org.quiltmc.qsl.key.binds.mixin.client.KeyBindAccessor;
 
+// TODO - This isn't a registry anymore; What the heck should it be named?
 /**
  * Handles the registration of modded key binds and allows for changing their properties,
  * such as their state.
@@ -35,33 +36,7 @@ import org.quiltmc.qsl.key.binds.mixin.client.KeyBindAccessor;
  */
 @Environment(EnvType.CLIENT)
 public class KeyBindRegistry {
-	/**
-	 * Registers a key bind, with it being initially enabled.
-	 *
-	 * <pre>
-	 * {@code
-	 * public static final KeyBind EXAMPLE_KEY_BIND = KeyBindRegistry.registerKeyBind(
-	 * 	new KeyBind("key.modid.example", GLFW.GLFW_KEY_M, "key.modid.category")
-	 * )
-	 * }
-	 * </pre>
-	 *
-	 * @param key the key bind to be registered
-	 * @return the successfully-registered key bind
-	 * @throws NullPointerException if {@code key} is null
-	 * @throws IllegalArgumentException if either {@code key} or it's translation key is already registered
-	 */
-	public static KeyBind registerKeyBind(KeyBind key) {
-		return KeyBindRegistryImpl.registerKeyBind(key);
-	}
-
-	// TODO - doc me!
-	public static void registerKeyBinds(KeyBind... keys) {
-		for (KeyBind key : keys) {
-			KeyBindRegistryImpl.registerKeyBind(key);
-		}
-	}
-
+	// TODO - Shouldn't we use Vanilla's Map for getAllKeyBinds instead? Two birds, one stone, zero thoughts, head empty
 	/**
 	 * Searches for a modded key bind with the specified translation key in the registry.
 	 *
@@ -72,6 +47,7 @@ public class KeyBindRegistry {
 		return KeyBindRegistryImpl.getKeyBind(translationKey);
 	}
 
+	// TODO - Would a transitive AW be safe for getBoundKey?
 	/**
 	 * Gets the bound key of the key bind.
 	 *
@@ -86,12 +62,11 @@ public class KeyBindRegistry {
 	}
 
 	/**
-	 * Returns a list containing all modded key binds (and vanilla ones if specified).
+	 * Returns a list containing all key binds.
 	 *
-	 * @param includeVanilla {@code true} if vanilla entries should be included, else {@code false}
-	 * @return a list containing all modded (and optionally vanilla) key binds
+	 * @return a list containing key binds
 	 */
-	public static List<KeyBind> getAllKeyBinds(boolean includeVanilla) {
-		return KeyBindRegistryImpl.getAllKeyBinds(includeVanilla);
+	public static List<KeyBind> getAllKeyBinds() {
+		return KeyBindRegistryImpl.getAllKeyBinds();
 	}
 }

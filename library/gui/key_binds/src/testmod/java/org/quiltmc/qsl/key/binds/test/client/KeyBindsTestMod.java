@@ -28,7 +28,6 @@ import net.minecraft.text.LiteralText;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
-import org.quiltmc.qsl.key.binds.api.KeyBindRegistry;
 import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
 
 @Environment(EnvType.CLIENT)
@@ -45,21 +44,13 @@ public class KeyBindsTestMod implements ClientModInitializer, ClientTickEvents.S
 	public static final KeyBind DISABLED_CONFLICT_TEST_KEY = new KeyBind("key.qsl.disabled_conflict_test", GLFW.GLFW_KEY_H, KEY_CATEGORY);
 
 	public static final KeyBind CLAP_KEY = new KeyBind("key.qsl.clap", InputUtil.UNKNOWN_KEY.getKeyCode(), KEY_CATEGORY).withChord(
-		InputUtil.Type.MOUSE.createFromKeyCode(GLFW.GLFW_MOUSE_BUTTON_LEFT),
-		InputUtil.Type.MOUSE.createFromKeyCode(GLFW.GLFW_MOUSE_BUTTON_RIGHT)
+			InputUtil.Type.MOUSE.createFromKeyCode(GLFW.GLFW_MOUSE_BUTTON_LEFT),
+			InputUtil.Type.MOUSE.createFromKeyCode(GLFW.GLFW_MOUSE_BUTTON_RIGHT)
 	);
 
 	@Override
 	public void onInitializeClient(ModContainer mod) {
 		DISABLED_CONFLICT_TEST_KEY.disable();
-
-		KeyBindRegistry.registerKeyBinds(
-				CONFLICT_TEST_KEY,
-				DISABLE_KEY_BIND_KEY,
-				ENABLE_KEY_BIND_KEY,
-				DISABLED_CONFLICT_TEST_KEY,
-				CLAP_KEY
-		);
 	}
 
 	// TODO - Add a test for toggling vanilla key binds; They probably don't work right now, but actually seeing that in action would help a lot
