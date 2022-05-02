@@ -47,7 +47,7 @@ import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
 import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
 import org.quiltmc.qsl.key.binds.mixin.client.KeyBindAccessor;
 
-// TODO - Understand this mess that you have written down
+// TODO - Massively simplify the config system
 public class QuiltKeyBindsConfigManager {
 	public static Optional<Boolean> isConfigLoaded = Optional.empty();
 	public static final QuiltKeyBindsConfig CONFIG = new QuiltKeyBindsConfig();
@@ -87,6 +87,7 @@ public class QuiltKeyBindsConfigManager {
 		}
 	}
 
+	// TODO - Wait, why am I using two different config objects? Just use one!
 	public static void registerConfigChanges(QuiltKeyBindsConfig newConfig) {
 		MinecraftClient client = MinecraftClient.getInstance();
 		for (KeyBind key : client.options.allKeys) {
@@ -115,7 +116,9 @@ public class QuiltKeyBindsConfigManager {
 				});
 			}
 		};
+		CONFIG.setShowTutorialToast(newConfig.getShowTutorialToast());
 		CONFIG.setKeyBinds(newConfig.getKeyBinds());
+		CONFIG.setUnusedKeyBinds(newConfig.getUnusedKeyBinds());
 	}
 
 	public static void saveConfig() {
@@ -132,11 +135,11 @@ public class QuiltKeyBindsConfigManager {
 		}
 	}
 
-	// TODO - This is the ideal place to store the unused key binds; Do that!
 	public static void populateConfig() {
-		Map<String, Either<String, List<String>>> keyBindMap = new HashMap<>();
+		Map<String, Either<String, List<String>>> keyBindsMap = new HashMap<>();
 
-		for (KeyBind keyBind : KeyBindRegistryImpl.getAllKeyBinds(true)) {
+		for (KeyBind keyBind : KeyBindRegistryImpl.getAllKeyBinds()) {
+			if (keyBind.isDisabled()) continue;
 			if (keyBind.getBoundChord() != null) {
 				Either<String, List<String>> either = switch (keyBind.getBoundChord().keys.size()) {
 				case 0 -> {
@@ -155,16 +158,16 @@ public class QuiltKeyBindsConfigManager {
 					yield Either.right(list);
 				} };
 
-				keyBindMap.put(keyBind.getTranslationKey(), either);
+				keyBindsMap.put(keyBind.getTranslationKey(), either);
 			} else {
 				Either<String, List<String>> either =
 						((KeyBindAccessor) keyBind).getBoundKey().equals(InputUtil.UNKNOWN_KEY)
 						? Either.right(List.of())
 						: Either.left(keyBind.getKeyTranslationKey());
-				keyBindMap.put(keyBind.getTranslationKey(), either);
+				keyBindsMap.put(keyBind.getTranslationKey(), either);
 			}
 		}
 
-		CONFIG.setKeyBinds(keyBindMap);
+		CONFIG.setKeyBinds(keyBindsMap);
 	}
 }

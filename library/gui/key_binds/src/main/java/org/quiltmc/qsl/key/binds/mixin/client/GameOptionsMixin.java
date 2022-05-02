@@ -32,6 +32,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBind;
 
+import org.quiltmc.qsl.key.binds.impl.InternalQuiltKeyBind;
 import org.quiltmc.qsl.key.binds.impl.KeyBindManager;
 import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
 
@@ -56,6 +57,11 @@ public abstract class GameOptionsMixin {
 	)
 	private void modifyAllKeys(MinecraftClient client, File file, CallbackInfo ci) {
 		if (this.optionsFile.equals(new File(file, "options.txt"))) {
+			// Mark the Vanilla key binds as Vanilla
+			for (KeyBind key : this.allKeys) {
+				((InternalQuiltKeyBind) key).markAsVanilla();
+			}
+
 			KeyBindRegistryImpl.setKeyBindManager(new KeyBindManager((GameOptions) (Object) this, this.allKeys));
 			this.allKeys = KeyBindRegistryImpl.getKeyBinds();
 		}

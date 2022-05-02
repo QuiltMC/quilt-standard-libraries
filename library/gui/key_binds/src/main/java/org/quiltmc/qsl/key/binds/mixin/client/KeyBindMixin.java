@@ -23,6 +23,7 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -31,18 +32,36 @@ import net.fabricmc.api.Environment;
 
 import net.minecraft.client.option.KeyBind;
 
+import org.quiltmc.qsl.key.binds.api.QuiltKeyBind;
+import org.quiltmc.qsl.key.binds.impl.InternalQuiltKeyBind;
+
 @Environment(EnvType.CLIENT)
 @Mixin(KeyBind.class)
-public abstract class KeyBindMixin {
+public abstract class KeyBindMixin implements QuiltKeyBind, InternalQuiltKeyBind {
 	@Shadow
 	@Mutable
 	@Final
 	private static Map<String, Integer> ORDER_BY_CATEGORIES;
 
-	@Inject(method = "<init>(Ljava/lang/String;Lcom/mojang/blaze3d/platform/InputUtil$Type;ILjava/lang/String;)V", at = @At("TAIL"))
+	@Unique
+	private boolean quilt$vanilla;
+
+	@Inject(method = "<init>(Ljava/lang/String;Lcom/mojang/blaze3d/platform/InputUtil$Type;ILjava/lang/String;)V", at = @At("RETURN"))
 	private void addModdedCategory(String translationKey, InputUtil.Type type, int keyCode, String category, CallbackInfo ci) {
 		if (!ORDER_BY_CATEGORIES.containsKey(category)) {
 			ORDER_BY_CATEGORIES.put(category, ORDER_BY_CATEGORIES.size() + 1);
 		}
+
+		this.quilt$vanilla = false;
+	}
+
+	@Override
+	public boolean isVanilla() {
+		return this.quilt$vanilla;
+	}
+
+	@Override
+	public void markAsVanilla() {
+		this.quilt$vanilla = true;
 	}
 }
