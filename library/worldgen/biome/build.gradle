@@ -4,7 +4,6 @@ plugins {
 
 qslModule {
 	moduleName = "biome"
-	version = "1.0.0"
 	library = "worldgen"
 	moduleDependencies {
 		core {
