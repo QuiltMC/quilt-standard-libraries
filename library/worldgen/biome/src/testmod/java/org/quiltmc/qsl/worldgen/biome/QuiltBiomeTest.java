@@ -18,7 +18,6 @@
 package org.quiltmc.qsl.worldgen.biome;
 
 
-import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.sound.BiomeMoodSound;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Holder;
@@ -33,6 +32,7 @@ import net.minecraft.world.gen.decorator.BiomePlacementModifier;
 import net.minecraft.world.gen.decorator.InSquarePlacementModifier;
 import net.minecraft.world.gen.feature.*;
 import net.minecraft.world.gen.feature.util.PlacedFeatureUtil;
+import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.worldgen.biome.api.*;
 
