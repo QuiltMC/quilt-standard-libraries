@@ -3,8 +3,11 @@ plugins {
 }
 
 qslModule {
+	name = "Quilt Biome API"
 	moduleName = "biome"
+	id = "quilt_biome"
 	library = "worldgen"
+	description = "An API for managing custom biomes."
 	moduleDependencies {
 		core {
 			api("qsl_base")
