@@ -17,7 +17,7 @@ public final class Versions {
 	/**
 	 * The QSL version
 	 */
-	public static final String QSL_VERSION = "0.1.0";
+	public static final String QSL_VERSION = "1.1.0-beta.8";
 
 	/**
 	 * The target Minecraft version.
@@ -32,7 +32,7 @@ public final class Versions {
 	/**
 	 * The version of Quilt Loader to use.
 	 */
-	public static final String LOADER_VERSION = "0.16.0-beta.3";
+	public static final String LOADER_VERSION = "0.16.0-beta.16";
 
 	/**
 	 * The target Java version.

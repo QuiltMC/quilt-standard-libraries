@@ -7,7 +7,6 @@ qslModule {
 	moduleName = "tags"
 	id = "quilt_tags"
 	description = "Tag loading and management."
-	version = "1.0.0"
 	library = "data"
 	moduleDependencies {
 		core {
@@ -15,7 +14,7 @@ qslModule {
 			impl("qsl_base")
 			impl("lifecycle_events")
 		}
-		command {
+		management {
 			testmodOnly("client_command")
 			testmodOnly("command")
 		}
