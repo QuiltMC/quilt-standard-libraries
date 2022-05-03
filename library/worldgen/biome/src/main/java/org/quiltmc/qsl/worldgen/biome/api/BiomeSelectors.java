@@ -171,7 +171,7 @@ public final class BiomeSelectors {
 	/**
 	 * Matches Biomes that have one of the given categories.
 	 *
-	 * @see Biome#getCategory()
+	 * @see Biome#category
 	 */
 	public static Predicate<BiomeSelectionContext> categories(Biome.Category... categories) {
 		Set<Biome.Category> categorySet = EnumSet.noneOf(Biome.Category.class);
