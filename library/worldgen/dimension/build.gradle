@@ -8,7 +8,6 @@ qslModule {
 	id = "quilt_dimension"
 	library = "worldgen"
 	description = "An API for managing custom dimensions."
-	version = "1.0.0"
 	moduleDependencies {
 		core {
 			api("qsl_base")
