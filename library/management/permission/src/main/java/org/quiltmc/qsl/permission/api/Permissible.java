@@ -17,14 +17,18 @@
 
 package org.quiltmc.qsl.permission.api;
 
+import net.minecraft.command.CommandSource;
+import net.minecraft.entity.Entity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
 import org.quiltmc.qsl.base.api.util.TriState;
 
 /**
  * Represents an Entity or CommandSource that can have permissions.
  */
+@InjectedInterface({Entity.class, CommandSource.class})
 public interface Permissible {
 
 	/**

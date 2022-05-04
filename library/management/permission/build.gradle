@@ -8,7 +8,6 @@ qslModule {
 	id = "quilt_permission"
 	library = "management"
 	description = "An API for checking permissions on Entities and CommandSources."
-	hasMixins = false
 	moduleDependencies {
 		core {
 			api("qsl_base")

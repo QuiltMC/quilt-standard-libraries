@@ -24,6 +24,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.base.api.event.EventAwareListener;
 import org.quiltmc.qsl.base.api.util.TriState;
 
 import java.util.UUID;
@@ -31,7 +32,7 @@ import java.util.UUID;
 /**
  * Simple permissions check event for {@link CommandSource}s.
  */
-public interface PermissionCheckEvent {
+public interface PermissionCheckEvent extends EventAwareListener {
 
 	Event<PermissionCheckEvent> EVENT = Event.create(PermissionCheckEvent.class, (callbacks) -> (source, permission) -> {
 		for (PermissionCheckEvent callback : callbacks) {
