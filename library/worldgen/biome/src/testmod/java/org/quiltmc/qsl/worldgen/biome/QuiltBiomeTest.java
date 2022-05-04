@@ -90,11 +90,9 @@ public class QuiltBiomeTest implements ModInitializer {
 						modification -> modification.getWeather().setDownfall(100))
 				.add(ModificationPhase.ADDITIONS,
 						BiomeSelectors.categories(Biome.Category.DESERT),
-						context -> {
-							context.getGenerationSettings().addFeature(GenerationStep.Feature.TOP_LAYER_MODIFICATION,
-									BuiltinRegistries.PLACED_FEATURE.getKey(PLACED_COMMON_DESERT_WELL).orElseThrow()
-							);
-						})
+						context -> context.getGenerationSettings().addFeature(GenerationStep.Feature.TOP_LAYER_MODIFICATION,
+								BuiltinRegistries.PLACED_FEATURE.getKey(PLACED_COMMON_DESERT_WELL).orElseThrow()
+						))
 				.add(ModificationPhase.ADDITIONS,
 						BiomeSelectors.tag(TagKey.of(Registry.BIOME_KEY, new Identifier(MOD_ID, "tag_selector_test"))),
 						context -> context.getEffects().setSkyColor(0x770000));
