@@ -19,6 +19,7 @@ package org.quiltmc.qsl.screen.api.client;
 
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
+import org.quiltmc.qsl.base.api.util.TriState;
 
 import net.minecraft.client.gui.screen.Screen;
 
@@ -44,11 +45,15 @@ public final class ScreenKeyboardEvents {
 	 * An event that checks if a key press should be allowed.
 	 */
 	public static final Event<AllowKeyPress> ALLOW_KEY_PRESS = Event.create(AllowKeyPress.class, callbacks -> (screen, key, scancode, modifiers) -> {
+		TriState state = TriState.DEFAULT;
 		for (AllowKeyPress callback : callbacks) {
-			return callback.allowKeyPress(screen, key, scancode, modifiers);
+			state = callback.allowKeyPress(screen, key, scancode, modifiers);
+			if (state != TriState.DEFAULT) {
+				return state;
+			}
 		}
 
-		return true;
+		return state;
 	});
 
 	/**
@@ -73,11 +78,15 @@ public final class ScreenKeyboardEvents {
 	 * An event that checks if a pressed key should be allowed to release.
 	 */
 	public static final Event<AllowKeyRelease> ALLOW_KEY_RELEASE = Event.create(AllowKeyRelease.class, callbacks -> (screen, key, scancode, modifiers) -> {
+		TriState state = TriState.DEFAULT;
 		for (AllowKeyRelease callback : callbacks) {
-			return callback.allowKeyRelease(screen, key, scancode, modifiers);
+			state = callback.allowKeyRelease(screen, key, scancode, modifiers);
+			if (state != TriState.DEFAULT) {
+				return state;
+			}
 		}
 
-		return true;
+		return state;
 	});
 
 	/**
@@ -111,7 +120,7 @@ public final class ScreenKeyboardEvents {
 		 * @see org.lwjgl.glfw.GLFW#GLFW_KEY_Q
 		 * @see <a href="https://www.glfw.org/docs/3.3/group__mods.html">Modifier key flags</a>
 		 */
-		boolean allowKeyPress(Screen screen, int key, int scancode, int modifiers);
+		TriState allowKeyPress(Screen screen, int key, int scancode, int modifiers);
 	}
 
 	@Environment(EnvType.CLIENT)
@@ -157,7 +166,7 @@ public final class ScreenKeyboardEvents {
 		 * @see org.lwjgl.glfw.GLFW#GLFW_KEY_Q
 		 * @see <a href="https://www.glfw.org/docs/3.3/group__mods.html">Modifier key flags</a>
 		 */
-		boolean allowKeyRelease(Screen screen, int key, int scancode, int modifiers);
+		TriState allowKeyRelease(Screen screen, int key, int scancode, int modifiers);
 	}
 
 	@Environment(EnvType.CLIENT)

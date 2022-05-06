@@ -17,6 +17,7 @@
 
 package org.quiltmc.qsl.screen.mixin.client;
 
+import org.quiltmc.qsl.base.api.util.TriState;
 import org.quiltmc.qsl.screen.api.client.ScreenKeyboardEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,7 +32,7 @@ abstract class KeyboardMixin {
 	// Synthetic method method_1454(ILnet/minecraft/client/gui/screen/Screen;[ZIII))V -> lambda in Screen.wrapScreenError in Keyboard.onKey
 	@Inject(method = "method_1454(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;keyPressed(III)Z"), cancellable = true)
 	private void beforeKeyPressedEvent(int code, Screen screen, boolean[] resultHack, int key, int scancode, int modifiers, CallbackInfo ci) {
-		if (!ScreenKeyboardEvents.ALLOW_KEY_PRESS.invoker().allowKeyPress(screen, key, scancode, modifiers)) {
+		if (ScreenKeyboardEvents.ALLOW_KEY_PRESS.invoker().allowKeyPress(screen, key, scancode, modifiers) == TriState.FALSE) {
 			resultHack[0] = true; // Set this press action as handled.
 			ci.cancel(); // Exit the lambda
 			return;
@@ -49,7 +50,7 @@ abstract class KeyboardMixin {
 	// Synthetic method method_1454(ILnet/minecraft/client/gui/screen/Screen;[ZIII))V -> lambda in Screen.wrapScreenError in Keyboard.onKey
 	@Inject(method = "method_1454(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;keyReleased(III)Z"), cancellable = true)
 	private void beforeKeyReleasedEvent(int code, Screen screen, boolean[] resultHack, int key, int scancode, int modifiers, CallbackInfo ci) {
-		if (!ScreenKeyboardEvents.ALLOW_KEY_RELEASE.invoker().allowKeyRelease(screen, key, scancode, modifiers)) {
+		if (ScreenKeyboardEvents.ALLOW_KEY_RELEASE.invoker().allowKeyRelease(screen, key, scancode, modifiers) == TriState.FALSE) {
 			resultHack[0] = true; // Set this press action as handled.
 			ci.cancel(); // Exit the lambda
 			return;

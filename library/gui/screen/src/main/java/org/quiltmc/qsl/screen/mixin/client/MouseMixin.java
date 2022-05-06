@@ -17,6 +17,7 @@
 
 package org.quiltmc.qsl.screen.mixin.client;
 
+import org.quiltmc.qsl.base.api.util.TriState;
 import org.quiltmc.qsl.screen.api.client.ScreenMouseEvents;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -41,7 +42,7 @@ abstract class MouseMixin {
 	@Unique
 	private Double quilt$horizontalScrollAmount;
 
-	// private synthetic method_1611([ZDDI)V
+	// Synthetic method method_1611([ZDDI)V -> lambda in Screen.wrapScreenError in Mouse.onMouseButton
 	@Inject(method = "method_1611([ZLnet/minecraft/client/gui/screen/Screen;DDI)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z"), cancellable = true)
 	private static void beforeMouseClickedEvent(boolean[] resultHack, Screen screen, double mouseX, double mouseY, int button, CallbackInfo ci) {
 		@SuppressWarnings("resource")
@@ -54,7 +55,7 @@ abstract class MouseMixin {
 			return;
 		}
 
-		if (!ScreenMouseEvents.ALLOW_MOUSE_CLICK.invoker().allowMouseClick(thisRef.quilt$currentScreen, mouseX, mouseY, button)) {
+		if (ScreenMouseEvents.ALLOW_MOUSE_CLICK.invoker().allowMouseClick(thisRef.quilt$currentScreen, mouseX, mouseY, button) == TriState.FALSE) {
 			resultHack[0] = true; // Set this press action as handled.
 			thisRef.quilt$currentScreen = null;
 			ci.cancel(); // Exit the lambda
@@ -64,7 +65,7 @@ abstract class MouseMixin {
 		ScreenMouseEvents.BEFORE_MOUSE_CLICK.invoker().beforeMouseClick(thisRef.quilt$currentScreen, mouseX, mouseY, button);
 	}
 
-	// private synthetic method_1611([ZDDI)V
+	// Synthetic method method_1611([ZDDI)V -> lambda in Screen.wrapScreenError in Mouse.onMouseButton
 	@Inject(method = "method_1611([ZLnet/minecraft/client/gui/screen/Screen;DDI)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z", shift = At.Shift.AFTER))
 	private static void afterMouseClickedEvent(boolean[] resultHack, Screen screen, double mouseX, double mouseY, int button, CallbackInfo ci) {
 		@SuppressWarnings("resource")
@@ -78,7 +79,7 @@ abstract class MouseMixin {
 		thisRef.quilt$currentScreen = null;
 	}
 
-	// private synthetic method_1605([ZDDI)V
+	// Synthetic method method_1605([ZDDI)V -> lambda in Screen.wrapScreenError in Mouse.onMouseButton
 	@Inject(method = "method_1605([ZLnet/minecraft/client/gui/screen/Screen;DDI)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z"), cancellable = true)
 	private static void beforeMouseReleasedEvent(boolean[] resultHack, Screen screen, double mouseX, double mouseY, int button, CallbackInfo ci) {
 		@SuppressWarnings("resource")
@@ -92,7 +93,7 @@ abstract class MouseMixin {
 			return;
 		}
 
-		if (!ScreenMouseEvents.ALLOW_MOUSE_RELEASE.invoker().allowMouseRelease(thisRef.quilt$currentScreen, mouseX, mouseY, button)) {
+		if (ScreenMouseEvents.ALLOW_MOUSE_RELEASE.invoker().allowMouseRelease(thisRef.quilt$currentScreen, mouseX, mouseY, button) == TriState.FALSE) {
 			resultHack[0] = true; // Set this press action as handled.
 			thisRef.quilt$currentScreen = null;
 			ci.cancel(); // Exit the lambda
@@ -102,7 +103,7 @@ abstract class MouseMixin {
 		ScreenMouseEvents.BEFORE_MOUSE_RELEASE.invoker().beforeMouseRelease(thisRef.quilt$currentScreen, mouseX, mouseY, button);
 	}
 
-	// private synthetic method_1605([ZDDI)V
+	// Synthetic method method_1605([ZDDI)V -> lambda in Screen.wrapScreenError in Mouse.onMouseButton
 	@Inject(method = "method_1605([ZLnet/minecraft/client/gui/screen/Screen;DDI)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z", shift = At.Shift.AFTER))
 	private static void afterMouseReleasedEvent(boolean[] resultHack, Screen screen, double mouseX, double mouseY, int button, CallbackInfo ci) {
 		@SuppressWarnings("resource")
@@ -129,7 +130,7 @@ abstract class MouseMixin {
 		// Apply same calculations to horizontal scroll as vertical scroll amount has
 		this.quilt$horizontalScrollAmount = this.client.options.discreteMouseScroll ? Math.signum(scrollDeltaX) : scrollDeltaX * this.client.options.mouseWheelSensitivity;
 
-		if (!ScreenMouseEvents.ALLOW_MOUSE_SCROLL.invoker().allowMouseScroll(this.quilt$currentScreen, mouseX, mouseY, this.quilt$horizontalScrollAmount, verticalAmount)) {
+		if (ScreenMouseEvents.ALLOW_MOUSE_SCROLL.invoker().allowMouseScroll(this.quilt$currentScreen, mouseX, mouseY, this.quilt$horizontalScrollAmount, verticalAmount) == TriState.FALSE) {
 			this.quilt$currentScreen = null;
 			this.quilt$horizontalScrollAmount = null;
 			ci.cancel();

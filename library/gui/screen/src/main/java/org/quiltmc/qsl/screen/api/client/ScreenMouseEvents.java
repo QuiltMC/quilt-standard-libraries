@@ -19,6 +19,7 @@ package org.quiltmc.qsl.screen.api.client;
 
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
+import org.quiltmc.qsl.base.api.util.TriState;
 
 import net.minecraft.client.gui.screen.Screen;
 
@@ -44,11 +45,15 @@ public final class ScreenMouseEvents {
 	 * An event that checks if the mouse click should be allowed.
 	 */
 	public static final Event<AllowMouseClick> ALLOW_MOUSE_CLICK = Event.create(AllowMouseClick.class, callbacks -> (screen, mouseX, mouseY, button) -> {
+		TriState state = TriState.DEFAULT;
 		for (AllowMouseClick callback : callbacks) {
-			return callback.allowMouseClick(screen, mouseX, mouseY, button);
+			state = callback.allowMouseClick(screen, mouseX, mouseY, button);
+			if (state != TriState.DEFAULT) {
+				return state;
+			}
 		}
 
-		return true;
+		return state;
 	});
 
 	/**
@@ -73,11 +78,15 @@ public final class ScreenMouseEvents {
 	 * An event that checks if the mouse click should be allowed to release in a screen.
 	 */
 	public static final Event<AllowMouseRelease> ALLOW_MOUSE_RELEASE = Event.create(AllowMouseRelease.class, callbacks -> (screen, mouseX, mouseY, button) -> {
+		TriState state = TriState.DEFAULT;
 		for (AllowMouseRelease callback : callbacks) {
-			return callback.allowMouseRelease(screen, mouseX, mouseY, button);
+			state = callback.allowMouseRelease(screen, mouseX, mouseY, button);
+			if (state != TriState.DEFAULT) {
+				return state;
+			}
 		}
 
-		return true;
+		return state;
 	});
 
 	/**
@@ -104,11 +113,15 @@ public final class ScreenMouseEvents {
 	 * <p>This event tracks amount of vertical and horizontal scroll.
 	 */
 	public static final Event<AllowMouseScroll> ALLOW_MOUSE_SCROLL = Event.create(AllowMouseScroll.class, callbacks -> (screen, mouseX, mouseY, horizontalAmount, verticalAmount) -> {
+		TriState state = TriState.DEFAULT;
 		for (AllowMouseScroll callback : callbacks) {
-			return callback.allowMouseScroll(screen, mouseX, mouseY, horizontalAmount, verticalAmount);
+			state = callback.allowMouseScroll(screen, mouseX, mouseY, horizontalAmount, verticalAmount);
+			if (state != TriState.DEFAULT) {
+				return state;
+			}
 		}
 
-		return true;
+		return state;
 	});
 
 	/**
@@ -142,7 +155,7 @@ public final class ScreenMouseEvents {
 		 * @param button the button number, which can be identified by the constants in {@link org.lwjgl.glfw.GLFW GLFW}.
 		 * @see org.lwjgl.glfw.GLFW#GLFW_MOUSE_BUTTON_1
 		 */
-		boolean allowMouseClick(Screen screen, double mouseX, double mouseY, int button);
+		TriState allowMouseClick(Screen screen, double mouseX, double mouseY, int button);
 	}
 
 	@Environment(EnvType.CLIENT)
@@ -180,7 +193,7 @@ public final class ScreenMouseEvents {
 		 * @param button the button number, which can be identified by the constants in {@link org.lwjgl.glfw.GLFW GLFW}.
 		 * @see org.lwjgl.glfw.GLFW#GLFW_MOUSE_BUTTON_1
 		 */
-		boolean allowMouseRelease(Screen screen, double mouseX, double mouseY, int button);
+		TriState allowMouseRelease(Screen screen, double mouseX, double mouseY, int button);
 	}
 
 	@Environment(EnvType.CLIENT)
@@ -223,7 +236,7 @@ public final class ScreenMouseEvents {
 		 * @param verticalAmount the vertical scroll amount
 		 * @return whether the mouse should be allowed to scroll
 		 */
-		boolean allowMouseScroll(Screen screen, double mouseX, double mouseY, double horizontalAmount, double verticalAmount);
+		TriState allowMouseScroll(Screen screen, double mouseX, double mouseY, double horizontalAmount, double verticalAmount);
 	}
 
 	@Environment(EnvType.CLIENT)
