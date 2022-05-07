@@ -23,8 +23,14 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.biome.*;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.TheNetherBiomeCreator;
+import net.minecraft.world.biome.BiomeKeys;
+import net.minecraft.world.biome.OverworldBiomeCreator;
 import net.minecraft.world.biome.source.util.MultiNoiseUtil;
+import net.minecraft.world.biome.GenerationSettings;
+import net.minecraft.world.biome.SpawnSettings;
+import net.minecraft.world.biome.BiomeEffects;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.decorator.BiomePlacementModifier;
 import net.minecraft.world.gen.decorator.InSquarePlacementModifier;
@@ -32,7 +38,12 @@ import net.minecraft.world.gen.feature.*;
 import net.minecraft.world.gen.feature.util.PlacedFeatureUtil;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-import org.quiltmc.qsl.worldgen.biome.api.*;
+import org.quiltmc.qsl.worldgen.biome.api.NetherBiomes;
+import org.quiltmc.qsl.worldgen.biome.api.TheEndBiomes;
+import org.quiltmc.qsl.worldgen.biome.api.BiomeModifications;
+import org.quiltmc.qsl.worldgen.biome.api.ModificationPhase;
+import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectors;
+
 import java.util.List;
 
 /**

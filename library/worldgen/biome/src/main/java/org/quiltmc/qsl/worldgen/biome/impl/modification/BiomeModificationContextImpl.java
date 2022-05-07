@@ -42,9 +42,16 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModificationContext;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
+import java.util.List;
+import java.util.EnumMap;
+import java.util.Collections;
+import java.util.HashMap;
 
 @ApiStatus.Internal
 public class BiomeModificationContextImpl implements BiomeModificationContext {
