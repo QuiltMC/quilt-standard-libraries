@@ -76,7 +76,7 @@ public enum TriState {
 	 * @param fallbackSupplier The supplier to get the value to return if the TriState is {@link #UNSET} from.
 	 * @return the boolean value of the TriState. {@link #UNSET} will be represented by the boolean fetched from the fallbackSupplier parameter
 	 */
-	public boolean toBooleanOrElseGet(@NotNull BooleanSupplier fallbackSupplier) {
+	public boolean toBooleanOrElseGet(BooleanSupplier fallbackSupplier) {
 		Objects.requireNonNull(fallbackSupplier, "fallbackSupplier may not be null");
 
 		return switch (this) {
@@ -92,7 +92,6 @@ public enum TriState {
 	 * @param bool the boolean to convert
 	 * @return the TriState value of the boolean.
 	 */
-	@NotNull
 	public static TriState fromBoolean(boolean bool) {
 		return bool ? TRUE : FALSE;
 	}
@@ -103,7 +102,6 @@ public enum TriState {
 	 * @param bool the boxed boolean to convert
 	 * @return the TriState value of the boolean.
 	 */
-	@NotNull
 	public static TriState fromBoolean(@Nullable Boolean bool) {
 		return bool == null ? DEFAULT : fromBoolean(bool);
 	}
