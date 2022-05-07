@@ -102,11 +102,13 @@ public class QuiltBiomeTest implements ModInitializer {
 				.add(ModificationPhase.ADDITIONS,
 						BiomeSelectors.foundInOverworld(),
 						modification -> modification.getWeather().setDownfall(100))
+				//check for an excess of desert wells
 				.add(ModificationPhase.ADDITIONS,
 						BiomeSelectors.categories(Biome.Category.DESERT),
 						context -> context.getGenerationSettings().addFeature(GenerationStep.Feature.TOP_LAYER_MODIFICATION,
 								BuiltinRegistries.PLACED_FEATURE.getKey(PLACED_COMMON_DESERT_WELL).orElseThrow()
 						))
+				//these three test should be glaringly obvious if they work or not, be sure to check forests as well
 				.add(ModificationPhase.ADDITIONS,
 						BiomeSelectors.foundInOverworld(),
 						context -> context.getEffects().setSkyColor(0x111111))
