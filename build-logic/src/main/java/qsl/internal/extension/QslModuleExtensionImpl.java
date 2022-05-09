@@ -190,6 +190,12 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 		});
 	}
 
+	/**
+	 * This method traverses up the internal QSL module dependency tree, adding the different modules as either runtime or implementation only based on the dependency type for the module.
+	 *
+	 * @param library The library that the module is in
+	 * @param info    The module info to add transitive dependecies from
+	 */
 	private void addTransitiveImplementations(QslLibraryDependency library, QslLibraryDependency.ModuleDependencyInfo info) {
 		Project depProject = project.getRootProject().project(":" + library.getName() + ":" + info.module());
 		QslModuleExtensionImpl qslModuleExtension = (QslModuleExtensionImpl) depProject.getExtensions().getByType(QslModuleExtension.class);
