@@ -179,7 +179,6 @@ public final class RegistryEntryAttachmentSync {
 
 				Set<Pair<String, Set<AttachmentEntry>>> valueMaps = new HashSet<>();
 				for (var namespaceEntry : encoded.entrySet()) {
-					// this is probably a horrible idea lmao
 					valueMaps.add(new Pair<>(namespaceEntry.getKey(), namespaceEntry.getValue()));
 				}
 

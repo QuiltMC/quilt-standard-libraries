@@ -30,7 +30,6 @@ import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 import org.quiltmc.qsl.registry.attachment.api.RegistryExtensions;
-import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentHolder;
 
 public class SimpleAttachmentTest implements ModInitializer {
 	public static final RegistryEntryAttachment<Item, Integer> TEST_ATTACHMENT =

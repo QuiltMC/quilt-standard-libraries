@@ -93,6 +93,6 @@ public class DispatchedAttachmentTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		RegistryEntryAttachmentHolder.getBuiltin(Registry.ITEM).putValue(MODULAR_FUNCTION, TagKey.of(Registry.ITEM_KEY, new Identifier("quilt", "modular_tag_1")), new SendMessageFuncValue("Provided via tag"));
+		MODULAR_FUNCTION.put(TagKey.of(Registry.ITEM_KEY, new Identifier("quilt", "modular_tag_1")), new SendMessageFuncValue("Provided via tag"));
 	}
 }

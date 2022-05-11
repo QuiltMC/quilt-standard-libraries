@@ -24,6 +24,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.resource.ResourceType;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -200,6 +201,23 @@ public interface RegistryEntryAttachment<R, V> {
 	 * @return attachment value, or empty if no value is assigned
 	 */
 	Optional<V> getValue(R entry);
+
+	/**
+	 * Associates a value with an entry.
+	 *
+	 * @param entry registry entry
+	 * @param value value
+	 */
+	void put(R entry, V value);
+
+
+	/**
+	 * Associates a value with a tag.
+	 *
+	 * @param tag tag
+	 * @param value value
+	 */
+	void put(TagKey<R> tag, V value);
 
 	/**
 	 * Specifies on what side this attachment should exist.

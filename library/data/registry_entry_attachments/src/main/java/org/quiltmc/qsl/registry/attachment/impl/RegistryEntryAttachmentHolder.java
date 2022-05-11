@@ -104,14 +104,14 @@ public final class RegistryEntryAttachmentHolder<R> {
 
 	@SuppressWarnings("unchecked")
 	public <V> V getValue(RegistryEntryAttachment<R, V> attachment, R entry) {
-		V value = (V) this.valueTable.get(attachment, entry);
-		if (value == null) {
+		V value = (V) this.valueTable.get(attachment, entry); // Check for a direct value in valueTable
+		if (value == null) { // If there is no value, check the valueTagTable
 			Map<TagKey<R>, Object> row = valueTagTable.row(attachment);
-			for (Map.Entry<TagKey<R>, Object> tagValue : row.entrySet()) {
-				for (Holder<R> holder : attachment.registry().getTagOrEmpty(tagValue.getKey())) {
-					if (holder.value().equals(entry)) {
-						if (value != null) {
-							Initializer.LOGGER.warn("Entry {} for Registry {} already has Attachment {} defined. Overriding with value from tag {}",
+			for (Map.Entry<TagKey<R>, Object> tagValue : row.entrySet()) { // Loop over the tags
+				for (Holder<R> holder : attachment.registry().getTagOrEmpty(tagValue.getKey())) { // Loop over the holders in the tag
+					if (holder.value().equals(entry)) { // The holder matches the entry
+						if (value != null) { // Warn if two values point to the same value are found.
+							Initializer.LOGGER.warn("Entry {} for registry {} already has attachment {} defined. Overriding with value from tag {}.",
 									attachment.registry().getId(entry),
 									attachment.registry().getKey().getValue(),
 									attachment.id(),

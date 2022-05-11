@@ -20,6 +20,7 @@ qslModule {
 		}
 		command {
 			compileOnly("command")
+			testmodOnly("command")
 		}
 	}
 	entrypoints {
