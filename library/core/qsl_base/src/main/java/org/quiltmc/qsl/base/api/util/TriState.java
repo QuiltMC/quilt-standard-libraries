@@ -105,7 +105,7 @@ public enum TriState {
 	 */
 	@NotNull
 	public static TriState fromBoolean(@Nullable Boolean bool) {
-		return bool == null ? UNSET : fromBoolean(bool);
+		return bool == null ? UNSET : fromBoolean(bool.booleanValue());
 	}
 
 }
