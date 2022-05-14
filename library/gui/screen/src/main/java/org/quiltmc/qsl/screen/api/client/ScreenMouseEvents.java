@@ -17,25 +17,21 @@
 
 package org.quiltmc.qsl.screen.api.client;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+import net.minecraft.client.gui.screen.Screen;
+
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 import org.quiltmc.qsl.base.api.util.TriState;
 
-import net.minecraft.client.gui.screen.Screen;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 /**
  * Events related to use of the mouse in a {@link Screen}.
- *
- * <p>All of these events work on top of a specific screen instance.
- * Subscriptions will only last as long as the screen object itself; they disappear once the screen is refreshed, closed or replaced.
- * Use {@link ScreenEvents#BEFORE_INIT} to register the desired events every time it is necessary.
- *
- * <p>Events are fired in the following order:
+ * <p>
+ * Events are fired in the following order:
  * <pre>{@code AllowX -> BeforeX -> AfterX}</pre>
- * If the result of the Allow event is false, then Before and After are not called.
+ * If the result of the Allow event is {@link TriState#FALSE}, then Before and After are not called.
  *
  * @see ScreenEvents
  */
@@ -46,8 +42,10 @@ public final class ScreenMouseEvents {
 	 */
 	public static final Event<AllowMouseClick> ALLOW_MOUSE_CLICK = Event.create(AllowMouseClick.class, callbacks -> (screen, mouseX, mouseY, button) -> {
 		TriState state = TriState.DEFAULT;
-		for (AllowMouseClick callback : callbacks) {
+
+		for (var callback : callbacks) {
 			state = callback.allowMouseClick(screen, mouseX, mouseY, button);
+
 			if (state != TriState.DEFAULT) {
 				return state;
 			}
@@ -60,7 +58,7 @@ public final class ScreenMouseEvents {
 	 * An event that is called before a mouse click is processed for a screen.
 	 */
 	public static final Event<BeforeMouseClick> BEFORE_MOUSE_CLICK = Event.create(BeforeMouseClick.class, callbacks -> (screen, mouseX, mouseY, button) -> {
-		for (BeforeMouseClick callback : callbacks) {
+		for (var callback : callbacks) {
 			callback.beforeMouseClick(screen, mouseX, mouseY, button);
 		}
 	});
@@ -69,7 +67,7 @@ public final class ScreenMouseEvents {
 	 * An event that is called after a mouse click is processed for a screen.
 	 */
 	public static final Event<AfterMouseClick> AFTER_MOUSE_CLICK = Event.create(AfterMouseClick.class, callbacks -> (screen, mouseX, mouseY, button) -> {
-		for (AfterMouseClick callback : callbacks) {
+		for (var callback : callbacks) {
 			callback.afterMouseClick(screen, mouseX, mouseY, button);
 		}
 	});
@@ -79,8 +77,10 @@ public final class ScreenMouseEvents {
 	 */
 	public static final Event<AllowMouseRelease> ALLOW_MOUSE_RELEASE = Event.create(AllowMouseRelease.class, callbacks -> (screen, mouseX, mouseY, button) -> {
 		TriState state = TriState.DEFAULT;
-		for (AllowMouseRelease callback : callbacks) {
+
+		for (var callback : callbacks) {
 			state = callback.allowMouseRelease(screen, mouseX, mouseY, button);
+
 			if (state != TriState.DEFAULT) {
 				return state;
 			}
@@ -93,7 +93,7 @@ public final class ScreenMouseEvents {
 	 * An event that is called before the release of a mouse click is processed for a screen.
 	 */
 	public static final Event<BeforeMouseRelease> BEFORE_MOUSE_RELEASE = Event.create(BeforeMouseRelease.class, callbacks -> (screen, mouseX, mouseY, button) -> {
-		for (BeforeMouseRelease callback : callbacks) {
+		for (var callback : callbacks) {
 			callback.beforeMouseRelease(screen, mouseX, mouseY, button);
 		}
 	});
@@ -102,20 +102,22 @@ public final class ScreenMouseEvents {
 	 * An event that is called after the release of a mouse click is processed for a screen.
 	 */
 	public static final Event<AfterMouseRelease> AFTER_MOUSE_RELEASE = Event.create(AfterMouseRelease.class, callbacks -> (screen, mouseX, mouseY, button) -> {
-		for (AfterMouseRelease callback : callbacks) {
+		for (var callback : callbacks) {
 			callback.afterMouseRelease(screen, mouseX, mouseY, button);
 		}
 	});
 
 	/**
 	 * An event that is checks if the mouse should be allowed to scroll in a screen.
-	 *
-	 * <p>This event tracks amount of vertical and horizontal scroll.
+	 * <p>
+	 * This event tracks amount of vertical and horizontal scroll.
 	 */
 	public static final Event<AllowMouseScroll> ALLOW_MOUSE_SCROLL = Event.create(AllowMouseScroll.class, callbacks -> (screen, mouseX, mouseY, horizontalAmount, verticalAmount) -> {
 		TriState state = TriState.DEFAULT;
-		for (AllowMouseScroll callback : callbacks) {
+
+		for (var callback : callbacks) {
 			state = callback.allowMouseScroll(screen, mouseX, mouseY, horizontalAmount, verticalAmount);
+
 			if (state != TriState.DEFAULT) {
 				return state;
 			}
@@ -126,22 +128,22 @@ public final class ScreenMouseEvents {
 
 	/**
 	 * An event that is called after mouse scrolling is processed for a screen.
-	 *
-	 * <p>This event tracks amount of vertical and horizontal scroll.
+	 * <p>
+	 * This event tracks amount of vertical and horizontal scroll.
 	 */
 	public static final Event<BeforeMouseScroll> BEFORE_MOUSE_SCROLL = Event.create(BeforeMouseScroll.class, callbacks -> (screen, mouseX, mouseY, horizontalAmount, verticalAmount) -> {
-		for (BeforeMouseScroll callback : callbacks) {
+		for (var callback : callbacks) {
 			callback.beforeMouseScroll(screen, mouseX, mouseY, horizontalAmount, verticalAmount);
 		}
 	});
 
 	/**
 	 * An event that is called after mouse scrolling is processed for a screen.
-	 *
-	 * <p>This event tracks amount a mouse was scrolled both vertically and horizontally.
+	 * <p>
+	 * This event tracks amount a mouse was scrolled both vertically and horizontally.
 	 */
 	public static final Event<AfterMouseScroll> AFTER_MOUSE_SCROLL = Event.create(AfterMouseScroll.class, callbacks -> (screen, mouseX, mouseY, horizontalAmount, verticalAmount) -> {
-		for (AfterMouseScroll callback : callbacks) {
+		for (var callback : callbacks) {
 			callback.afterMouseScroll(screen, mouseX, mouseY, horizontalAmount, verticalAmount);
 		}
 	});
@@ -150,8 +152,10 @@ public final class ScreenMouseEvents {
 	@FunctionalInterface
 	public interface AllowMouseClick extends ClientEventAwareListener {
 		/**
-		 * @param mouseX the x position of the mouse
-		 * @param mouseY the y position of the mouse
+		 * Checks if the mouse click should be allowed to be pressed in a screen.
+		 *
+		 * @param mouseX the X position of the mouse
+		 * @param mouseY the Y position of the mouse
 		 * @param button the button number, which can be identified by the constants in {@link org.lwjgl.glfw.GLFW GLFW}.
 		 * @see org.lwjgl.glfw.GLFW#GLFW_MOUSE_BUTTON_1
 		 */
@@ -162,8 +166,10 @@ public final class ScreenMouseEvents {
 	@FunctionalInterface
 	public interface BeforeMouseClick extends ClientEventAwareListener {
 		/**
-		 * @param mouseX the x position of the mouse
-		 * @param mouseY the y position of the mouse
+		 * Called before a mouse click has been pressed in a screen.
+		 *
+		 * @param mouseX the X position of the mouse
+		 * @param mouseY the Y position of the mouse
 		 * @param button the button number, which can be identified by the constants in {@link org.lwjgl.glfw.GLFW GLFW}.
 		 * @see org.lwjgl.glfw.GLFW#GLFW_MOUSE_BUTTON_1
 		 */
@@ -174,8 +180,10 @@ public final class ScreenMouseEvents {
 	@FunctionalInterface
 	public interface AfterMouseClick extends ClientEventAwareListener {
 		/**
-		 * @param mouseX the x position of the mouse
-		 * @param mouseY the y position of the mouse
+		 * Called after a mouse click has been pressed in a screen.
+		 *
+		 * @param mouseX the X position of the mouse
+		 * @param mouseY the Y position of the mouse
 		 * @param button the button number, which can be identified by the constants in {@link org.lwjgl.glfw.GLFW GLFW}.
 		 * @see org.lwjgl.glfw.GLFW#GLFW_MOUSE_BUTTON_1
 		 */
@@ -188,8 +196,8 @@ public final class ScreenMouseEvents {
 		/**
 		 * Checks if the mouse click should be allowed to release in a screen.
 		 *
-		 * @param mouseX the x position of the mouse
-		 * @param mouseY the y position of the mouse
+		 * @param mouseX the X position of the mouse
+		 * @param mouseY the Y position of the mouse
 		 * @param button the button number, which can be identified by the constants in {@link org.lwjgl.glfw.GLFW GLFW}.
 		 * @see org.lwjgl.glfw.GLFW#GLFW_MOUSE_BUTTON_1
 		 */
@@ -202,8 +210,8 @@ public final class ScreenMouseEvents {
 		/**
 		 * Called before a mouse click has released in a screen.
 		 *
-		 * @param mouseX the x position of the mouse
-		 * @param mouseY the y position of the mouse
+		 * @param mouseX the X position of the mouse
+		 * @param mouseY the Y position of the mouse
 		 * @param button the button number, which can be identified by the constants in {@link org.lwjgl.glfw.GLFW GLFW}.
 		 * @see org.lwjgl.glfw.GLFW#GLFW_MOUSE_BUTTON_1
 		 */
@@ -216,8 +224,8 @@ public final class ScreenMouseEvents {
 		/**
 		 * Called after a mouse click has released in a screen.
 		 *
-		 * @param mouseX the x position of the mouse
-		 * @param mouseY the y position of the mouse
+		 * @param mouseX the X position of the mouse
+		 * @param mouseY the Y position of the mouse
 		 * @param button the button number, which can be identified by the constants in {@link org.lwjgl.glfw.GLFW GLFW}.
 		 * @see org.lwjgl.glfw.GLFW#GLFW_MOUSE_BUTTON_1
 		 */
@@ -230,10 +238,10 @@ public final class ScreenMouseEvents {
 		/**
 		 * Checks if the mouse should be allowed to scroll in a screen.
 		 *
-		 * @param mouseX the x position of the mouse
-		 * @param mouseY the y position of the mouse
+		 * @param mouseX           the X position of the mouse
+		 * @param mouseY           the Y position of the mouse
 		 * @param horizontalAmount the horizontal scroll amount
-		 * @param verticalAmount the vertical scroll amount
+		 * @param verticalAmount   the vertical scroll amount
 		 * @return whether the mouse should be allowed to scroll
 		 */
 		TriState allowMouseScroll(Screen screen, double mouseX, double mouseY, double horizontalAmount, double verticalAmount);
@@ -245,10 +253,10 @@ public final class ScreenMouseEvents {
 		/**
 		 * Called before a mouse has scrolled on screen.
 		 *
-		 * @param mouseX the x position of the mouse
-		 * @param mouseY the y position of the mouse
+		 * @param mouseX           the X position of the mouse
+		 * @param mouseY           the Y position of the mouse
 		 * @param horizontalAmount the horizontal scroll amount
-		 * @param verticalAmount the vertical scroll amount
+		 * @param verticalAmount   the vertical scroll amount
 		 */
 		void beforeMouseScroll(Screen screen, double mouseX, double mouseY, double horizontalAmount, double verticalAmount);
 	}
@@ -259,10 +267,10 @@ public final class ScreenMouseEvents {
 		/**
 		 * Called after a mouse has scrolled on screen.
 		 *
-		 * @param mouseX the x position of the mouse
-		 * @param mouseY the y position of the mouse
+		 * @param mouseX           the X position of the mouse
+		 * @param mouseY           the Y position of the mouse
 		 * @param horizontalAmount the horizontal scroll amount
-		 * @param verticalAmount the vertical scroll amount
+		 * @param verticalAmount   the vertical scroll amount
 		 */
 		void afterMouseScroll(Screen screen, double mouseX, double mouseY, double horizontalAmount, double verticalAmount);
 	}

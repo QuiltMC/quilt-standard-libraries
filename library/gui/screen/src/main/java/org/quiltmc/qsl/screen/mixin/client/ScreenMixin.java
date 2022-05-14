@@ -19,9 +19,6 @@ package org.quiltmc.qsl.screen.mixin.client;
 
 import java.util.List;
 
-import org.quiltmc.qsl.screen.api.client.ScreenEvents;
-import org.quiltmc.qsl.screen.api.client.QuiltScreenExtensions;
-import org.quiltmc.qsl.screen.impl.client.ButtonList;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -30,14 +27,18 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.item.ItemRenderer;
+
+import org.quiltmc.qsl.screen.api.client.QuiltScreenExtensions;
+import org.quiltmc.qsl.screen.api.client.ScreenEvents;
+import org.quiltmc.qsl.screen.impl.client.ButtonList;
 
 @Mixin(Screen.class)
 abstract class ScreenMixin implements QuiltScreenExtensions {
@@ -52,13 +53,13 @@ abstract class ScreenMixin implements QuiltScreenExtensions {
 	private List<Drawable> drawables;
 
 	@Shadow
-	private MinecraftClient client;
+	protected MinecraftClient client;
 
 	@Shadow
-	private ItemRenderer itemRenderer;
+	protected ItemRenderer itemRenderer;
 
 	@Shadow
-	private TextRenderer textRenderer;
+	protected TextRenderer textRenderer;
 
 	@Unique
 	private ButtonList quilt$quiltButtons;
@@ -87,16 +88,16 @@ abstract class ScreenMixin implements QuiltScreenExtensions {
 
 	@Override
 	public ItemRenderer getItemRenderer() {
-		return itemRenderer;
+		return this.itemRenderer;
 	}
 
 	@Override
 	public TextRenderer getTextRenderer() {
-		return textRenderer;
+		return this.textRenderer;
 	}
 
 	@Override
 	public MinecraftClient getClient() {
-		return client;
+		return this.client;
 	}
 }

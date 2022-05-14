@@ -17,25 +17,21 @@
 
 package org.quiltmc.qsl.screen.api.client;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+import net.minecraft.client.gui.screen.Screen;
+
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 import org.quiltmc.qsl.base.api.util.TriState;
 
-import net.minecraft.client.gui.screen.Screen;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 /**
  * Events related to use of the keyboard in a {@link Screen}.
- *
- * <p>All of these events work on top of a specific screen instance.
- * Subscriptions will only last as long as the screen object itself; they disappear once the screen is refreshed, closed or replaced.
- * Use {@link ScreenEvents#BEFORE_INIT} to register the desired events every time it is necessary.
- *
- * <p>Events are fired in the following order:
+ * <p>
+ * Events are fired in the following order:
  * <pre>{@code AllowX -> BeforeX -> AfterX}</pre>
- * If the result of the Allow event is false, then Before and After are not called.
+ * If the result of the Allow event is {@link TriState#FALSE}, then Before and After are not called.
  *
  * @see ScreenEvents
  */
@@ -46,8 +42,10 @@ public final class ScreenKeyboardEvents {
 	 */
 	public static final Event<AllowKeyPress> ALLOW_KEY_PRESS = Event.create(AllowKeyPress.class, callbacks -> (screen, key, scancode, modifiers) -> {
 		TriState state = TriState.DEFAULT;
-		for (AllowKeyPress callback : callbacks) {
+
+		for (var callback : callbacks) {
 			state = callback.allowKeyPress(screen, key, scancode, modifiers);
+
 			if (state != TriState.DEFAULT) {
 				return state;
 			}
@@ -60,7 +58,7 @@ public final class ScreenKeyboardEvents {
 	 * An event that is called before a key press is processed for a screen.
 	 */
 	public static final Event<BeforeKeyPress> BEFORE_KEY_PRESS = Event.create(BeforeKeyPress.class, callbacks -> (screen, key, scancode, modifiers) -> {
-		for (BeforeKeyPress callback : callbacks) {
+		for (var callback : callbacks) {
 			callback.beforeKeyPress(screen, key, scancode, modifiers);
 		}
 	});
@@ -69,7 +67,7 @@ public final class ScreenKeyboardEvents {
 	 * An event that is called after a key press is processed for a screen.
 	 */
 	public static final Event<AfterKeyPress> AFTER_KEY_PRESS = Event.create(AfterKeyPress.class, callbacks -> (screen, key, scancode, modifiers) -> {
-		for (AfterKeyPress callback : callbacks) {
+		for (var callback : callbacks) {
 			callback.afterKeyPress(screen, key, scancode, modifiers);
 		}
 	});
@@ -79,8 +77,10 @@ public final class ScreenKeyboardEvents {
 	 */
 	public static final Event<AllowKeyRelease> ALLOW_KEY_RELEASE = Event.create(AllowKeyRelease.class, callbacks -> (screen, key, scancode, modifiers) -> {
 		TriState state = TriState.DEFAULT;
-		for (AllowKeyRelease callback : callbacks) {
+
+		for (var callback : callbacks) {
 			state = callback.allowKeyRelease(screen, key, scancode, modifiers);
+
 			if (state != TriState.DEFAULT) {
 				return state;
 			}
@@ -93,7 +93,7 @@ public final class ScreenKeyboardEvents {
 	 * An event that is called after the release of a key is processed for a screen.
 	 */
 	public static final Event<BeforeKeyRelease> BEFORE_KEY_RELEASE = Event.create(BeforeKeyRelease.class, callbacks -> (screen, key, scancode, modifiers) -> {
-		for (BeforeKeyRelease callback : callbacks) {
+		for (var callback : callbacks) {
 			callback.beforeKeyRelease(screen, key, scancode, modifiers);
 		}
 	});
@@ -102,7 +102,7 @@ public final class ScreenKeyboardEvents {
 	 * An event that is called after the release a key is processed for a screen.
 	 */
 	public static final Event<AfterKeyRelease> AFTER_KEY_RELEASE = Event.create(AfterKeyRelease.class, callbacks -> (screen, key, scancode, modifiers) -> {
-		for (AfterKeyRelease callback : callbacks) {
+		for (var callback : callbacks) {
 			callback.afterKeyRelease(screen, key, scancode, modifiers);
 		}
 	});
@@ -113,8 +113,8 @@ public final class ScreenKeyboardEvents {
 		/**
 		 * Checks if a key should be allowed to be pressed.
 		 *
-		 * @param key the named key code which can be identified by the constants in {@link org.lwjgl.glfw.GLFW GLFW}
-		 * @param scancode the unique/platform-specific scan code of the keyboard input
+		 * @param key       the named key code which can be identified by the constants in {@link org.lwjgl.glfw.GLFW GLFW}
+		 * @param scancode  the unique/platform-specific scan code of the keyboard input
 		 * @param modifiers a GLFW bitfield describing the modifier keys that are held down
 		 * @return whether the key press should be processed
 		 * @see org.lwjgl.glfw.GLFW#GLFW_KEY_Q
@@ -129,8 +129,8 @@ public final class ScreenKeyboardEvents {
 		/**
 		 * Called before a key press is handled.
 		 *
-		 * @param key the named key code which can be identified by the constants in {@link org.lwjgl.glfw.GLFW GLFW}
-		 * @param scancode the unique/platform-specific scan code of the keyboard input
+		 * @param key       the named key code which can be identified by the constants in {@link org.lwjgl.glfw.GLFW GLFW}
+		 * @param scancode  the unique/platform-specific scan code of the keyboard input
 		 * @param modifiers a GLFW bitfield describing the modifier keys that are held down
 		 * @see org.lwjgl.glfw.GLFW#GLFW_KEY_Q
 		 * @see <a href="https://www.glfw.org/docs/3.3/group__mods.html">Modifier key flags</a>
@@ -144,8 +144,8 @@ public final class ScreenKeyboardEvents {
 		/**
 		 * Called after a key press is handled.
 		 *
-		 * @param key the named key code which can be identified by the constants in {@link org.lwjgl.glfw.GLFW GLFW}
-		 * @param scancode the unique/platform-specific scan code of the keyboard input
+		 * @param key       the named key code which can be identified by the constants in {@link org.lwjgl.glfw.GLFW GLFW}
+		 * @param scancode  the unique/platform-specific scan code of the keyboard input
 		 * @param modifiers a GLFW bitfield describing the modifier keys that are held down
 		 * @see org.lwjgl.glfw.GLFW#GLFW_KEY_Q
 		 * @see <a href="https://www.glfw.org/docs/3.3/group__mods.html">Modifier key flags</a>
@@ -159,8 +159,8 @@ public final class ScreenKeyboardEvents {
 		/**
 		 * Checks if a pressed key should be allowed to be released.
 		 *
-		 * @param key the named key code which can be identified by the constants in {@link org.lwjgl.glfw.GLFW GLFW}
-		 * @param scancode the unique/platform-specific scan code of the keyboard input
+		 * @param key       the named key code which can be identified by the constants in {@link org.lwjgl.glfw.GLFW GLFW}
+		 * @param scancode  the unique/platform-specific scan code of the keyboard input
 		 * @param modifiers a GLFW bitfield describing the modifier keys that are held down
 		 * @return whether the key press should be released
 		 * @see org.lwjgl.glfw.GLFW#GLFW_KEY_Q
@@ -175,8 +175,8 @@ public final class ScreenKeyboardEvents {
 		/**
 		 * Called before a pressed key has been released.
 		 *
-		 * @param key the named key code which can be identified by the constants in {@link org.lwjgl.glfw.GLFW GLFW}
-		 * @param scancode the unique/platform-specific scan code of the keyboard input
+		 * @param key       the named key code which can be identified by the constants in {@link org.lwjgl.glfw.GLFW GLFW}
+		 * @param scancode  the unique/platform-specific scan code of the keyboard input
 		 * @param modifiers a GLFW bitfield describipackage org.quiltmc.qsl.screen.api.client;ng the modifier keys that are held down
 		 * @see org.lwjgl.glfw.GLFW#GLFW_KEY_Q
 		 * @see <a href="https://www.glfw.org/docs/3.3/group__mods.html">Modifier key flags</a>
@@ -190,8 +190,8 @@ public final class ScreenKeyboardEvents {
 		/**
 		 * Called after a pressed key has been released.
 		 *
-		 * @param key the named key code which can be identified by the constants in {@link org.lwjgl.glfw.GLFW GLFW}
-		 * @param scancode the unique/platform-specific scan code of the keyboard input
+		 * @param key       the named key code which can be identified by the constants in {@link org.lwjgl.glfw.GLFW GLFW}
+		 * @param scancode  the unique/platform-specific scan code of the keyboard input
 		 * @param modifiers a GLFW bitfield describing the modifier keys that are held down
 		 * @see org.lwjgl.glfw.GLFW#GLFW_KEY_Q
 		 * @see <a href="https://www.glfw.org/docs/3.3/group__mods.html">Modifier key flags</a>

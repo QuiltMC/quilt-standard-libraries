@@ -20,15 +20,14 @@ package org.quiltmc.qsl.screen.impl.client;
 import java.util.AbstractList;
 import java.util.List;
 
-import org.jetbrains.annotations.ApiStatus;
-
-import net.minecraft.client.gui.Selectable;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.widget.ClickableWidget;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import org.jetbrains.annotations.ApiStatus;
+
+import net.minecraft.client.gui.Drawable;
+import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.Selectable;
+import net.minecraft.client.gui.widget.ClickableWidget;
 
 // TODO: When events for listening to addition of child elements are added, fire events from this list.
 @ApiStatus.Internal
@@ -46,52 +45,52 @@ public final class ButtonList extends AbstractList<ClickableWidget> {
 
 	@Override
 	public ClickableWidget get(int index) {
-		final int drawableIndex = translateIndex(drawables, index, false);
-		return (ClickableWidget) drawables.get(drawableIndex);
+		final int drawableIndex = this.translateIndex(this.drawables, index, false);
+		return (ClickableWidget) this.drawables.get(drawableIndex);
 	}
 
 	@Override
 	public ClickableWidget set(int index, ClickableWidget element) {
-		final int drawableIndex = translateIndex(drawables, index, false);
-		drawables.set(drawableIndex, element);
+		final int drawableIndex = this.translateIndex(this.drawables, index, false);
+		this.drawables.set(drawableIndex, element);
 
-		final int selectableIndex = translateIndex(selectables, index, false);
-		selectables.set(selectableIndex, element);
+		final int selectableIndex = this.translateIndex(this.selectables, index, false);
+		this.selectables.set(selectableIndex, element);
 
-		final int childIndex = translateIndex(children, index, false);
-		return (ClickableWidget) children.set(childIndex, element);
+		final int childIndex = this.translateIndex(this.children, index, false);
+		return (ClickableWidget) this.children.set(childIndex, element);
 	}
 
 	@Override
 	public void add(int index, ClickableWidget element) {
 		// ensure no duplicates
-		final int duplicateIndex = drawables.indexOf(element);
+		final int duplicateIndex = this.drawables.indexOf(element);
 
 		if (duplicateIndex >= 0) {
-			drawables.remove(element);
-			selectables.remove(element);
-			children.remove(element);
+			this.drawables.remove(element);
+			this.selectables.remove(element);
+			this.children.remove(element);
 
-			if (duplicateIndex <= translateIndex(drawables, index, true)) {
+			if (duplicateIndex <= this.translateIndex(this.drawables, index, true)) {
 				index--;
 			}
 		}
 
-		final int drawableIndex = translateIndex(drawables, index, true);
-		drawables.add(drawableIndex, element);
+		final int drawableIndex = this.translateIndex(this.drawables, index, true);
+		this.drawables.add(drawableIndex, element);
 
-		final int selectableIndex = translateIndex(selectables, index, true);
-		selectables.add(selectableIndex, element);
+		final int selectableIndex = this.translateIndex(this.selectables, index, true);
+		this.selectables.add(selectableIndex, element);
 
-		final int childIndex = translateIndex(children, index, true);
-		children.add(childIndex, element);
+		final int childIndex = this.translateIndex(this.children, index, true);
+		this.children.add(childIndex, element);
 	}
 
 	@Override
 	public ClickableWidget remove(int index) {
-		index = translateIndex(drawables, index, false);
+		index = this.translateIndex(this.drawables, index, false);
 
-		final ClickableWidget removedButton = (ClickableWidget) drawables.remove(index);
+		final var removedButton = (ClickableWidget) this.drawables.remove(index);
 		this.selectables.remove(removedButton);
 		this.children.remove(removedButton);
 
@@ -102,7 +101,7 @@ public final class ButtonList extends AbstractList<ClickableWidget> {
 	public int size() {
 		int ret = 0;
 
-		for (Drawable drawable : drawables) {
+		for (var drawable : this.drawables) {
 			if (drawable instanceof ClickableWidget) {
 				ret++;
 			}

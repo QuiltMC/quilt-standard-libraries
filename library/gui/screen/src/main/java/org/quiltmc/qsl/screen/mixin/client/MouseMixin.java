@@ -17,8 +17,6 @@
 
 package org.quiltmc.qsl.screen.mixin.client;
 
-import org.quiltmc.qsl.base.api.util.TriState;
-import org.quiltmc.qsl.screen.api.client.ScreenMouseEvents;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -31,6 +29,9 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
 import net.minecraft.client.gui.screen.Screen;
+
+import org.quiltmc.qsl.base.api.util.TriState;
+import org.quiltmc.qsl.screen.api.client.ScreenMouseEvents;
 
 @Mixin(Mouse.class)
 abstract class MouseMixin {
@@ -46,7 +47,7 @@ abstract class MouseMixin {
 	@Inject(method = "method_1611([ZLnet/minecraft/client/gui/screen/Screen;DDI)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z"), cancellable = true)
 	private static void beforeMouseClickedEvent(boolean[] resultHack, Screen screen, double mouseX, double mouseY, int button, CallbackInfo ci) {
 		@SuppressWarnings("resource")
-		MouseMixin thisRef = (MouseMixin) (Object) MinecraftClient.getInstance().mouse;
+		var thisRef = (MouseMixin) (Object) MinecraftClient.getInstance().mouse;
 		// Store the screen in a variable in case someone tries to change the screen during this before event.
 		// If someone changes the screen, the after event will likely have class cast exceptions or throw a NPE.
 		thisRef.quilt$currentScreen = thisRef.client.currentScreen;
@@ -69,7 +70,7 @@ abstract class MouseMixin {
 	@Inject(method = "method_1611([ZLnet/minecraft/client/gui/screen/Screen;DDI)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z", shift = At.Shift.AFTER))
 	private static void afterMouseClickedEvent(boolean[] resultHack, Screen screen, double mouseX, double mouseY, int button, CallbackInfo ci) {
 		@SuppressWarnings("resource")
-		MouseMixin thisRef = (MouseMixin) (Object) MinecraftClient.getInstance().mouse;
+		var thisRef = (MouseMixin) (Object) MinecraftClient.getInstance().mouse;
 
 		if (thisRef.quilt$currentScreen == null) {
 			return;
@@ -83,7 +84,7 @@ abstract class MouseMixin {
 	@Inject(method = "method_1605([ZLnet/minecraft/client/gui/screen/Screen;DDI)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z"), cancellable = true)
 	private static void beforeMouseReleasedEvent(boolean[] resultHack, Screen screen, double mouseX, double mouseY, int button, CallbackInfo ci) {
 		@SuppressWarnings("resource")
-		MouseMixin thisRef = (MouseMixin) (Object) MinecraftClient.getInstance().mouse;
+		var thisRef = (MouseMixin) (Object) MinecraftClient.getInstance().mouse;
 
 		// Store the screen in a variable in case someone tries to change the screen during this before event.
 		// If someone changes the screen, the after event will likely have class cast exceptions or throw a NPE.
@@ -107,7 +108,7 @@ abstract class MouseMixin {
 	@Inject(method = "method_1605([ZLnet/minecraft/client/gui/screen/Screen;DDI)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z", shift = At.Shift.AFTER))
 	private static void afterMouseReleasedEvent(boolean[] resultHack, Screen screen, double mouseX, double mouseY, int button, CallbackInfo ci) {
 		@SuppressWarnings("resource")
-		MouseMixin thisRef = (MouseMixin) (Object) MinecraftClient.getInstance().mouse;
+		var thisRef = (MouseMixin) (Object) MinecraftClient.getInstance().mouse;
 
 		if (thisRef.quilt$currentScreen == null) {
 			return;

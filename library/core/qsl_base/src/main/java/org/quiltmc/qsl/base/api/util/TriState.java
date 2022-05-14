@@ -17,14 +17,13 @@
 
 package org.quiltmc.qsl.base.api.util;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Objects;
 import java.util.function.BooleanSupplier;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
- * A enum that represents either true, false or a default/unset value.
+ * A enum that represents either {@code true}, {@code false} or a default/unset value.
  */
 public enum TriState {
 	/**
@@ -43,10 +42,9 @@ public enum TriState {
 	/**
 	 * Converts this TriState into a boxed boolean.
 	 *
-	 * @return the boolean value of the TriState. {@link #UNSET} will be represented by {@code null}
+	 * @return the boolean value of the TriState. {@link #DEFAULT} will be represented by {@code null}
 	 */
-	@Nullable
-	public Boolean toBoolean() {
+	public @Nullable Boolean toBoolean() {
 		return switch (this) {
 			case TRUE -> true;
 			case FALSE -> false;
@@ -55,11 +53,11 @@ public enum TriState {
 	}
 
 	/**
-	 * Converts this TriState into boolean. When the TriState is {@link #UNSET}, the boolean parameter
+	 * Converts this TriState into boolean. When the TriState is {@link #DEFAULT}, the boolean parameter
 	 * will be returned instead.
 	 *
-	 * @param fallback The value to return if the TriState is {@link #UNSET}.
-	 * @return the boolean value of the TriState. {@link #UNSET} will be represented by the fallback parameter
+	 * @param fallback The value to return if the TriState is {@link #DEFAULT}.
+	 * @return the boolean value of the TriState. {@link #DEFAULT} will be represented by the fallback parameter
 	 */
 	public boolean toBooleanOrElse(boolean fallback) {
 		return switch (this) {
@@ -70,11 +68,11 @@ public enum TriState {
 	}
 
 	/**
-	 * Converts this TriState into boolean. When the TriState is {@link #UNSET}, the boolean parameter
+	 * Converts this TriState into boolean. When the TriState is {@link #DEFAULT}, the boolean parameter
 	 * will be returned instead.
 	 *
-	 * @param fallbackSupplier The supplier to get the value to return if the TriState is {@link #UNSET} from.
-	 * @return the boolean value of the TriState. {@link #UNSET} will be represented by the boolean fetched from the fallbackSupplier parameter
+	 * @param fallbackSupplier The supplier to get the value to return if the TriState is {@link #DEFAULT} from.
+	 * @return the boolean value of the TriState. {@link #DEFAULT} will be represented by the boolean fetched from the fallbackSupplier parameter
 	 */
 	public boolean toBooleanOrElseGet(BooleanSupplier fallbackSupplier) {
 		Objects.requireNonNull(fallbackSupplier, "fallbackSupplier may not be null");
@@ -90,7 +88,7 @@ public enum TriState {
 	 * Converts the specified boolean into a TriState.
 	 *
 	 * @param bool the boolean to convert
-	 * @return the TriState value of the boolean.
+	 * @return the TriState value of the boolean
 	 */
 	public static TriState fromBoolean(boolean bool) {
 		return bool ? TRUE : FALSE;
@@ -100,7 +98,7 @@ public enum TriState {
 	 * Converts the specified boxed boolean into a TriState.
 	 *
 	 * @param bool the boxed boolean to convert
-	 * @return the TriState value of the boolean.
+	 * @return the TriState value of the boolean
 	 */
 	public static TriState fromBoolean(@Nullable Boolean bool) {
 		return bool == null ? DEFAULT : fromBoolean(bool);

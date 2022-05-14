@@ -18,7 +18,6 @@
 package org.quiltmc.qsl.screen.mixin.client;
 
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.screen.api.client.ScreenEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -28,6 +27,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+
+import org.quiltmc.qsl.screen.api.client.ScreenEvents;
 
 @Mixin(MinecraftClient.class)
 abstract class MinecraftClientMixin {

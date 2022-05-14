@@ -17,7 +17,8 @@
 
 package org.quiltmc.qsl.screen.mixin.client;
 
-import org.quiltmc.qsl.screen.api.client.ScreenEvents;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -31,8 +32,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+
+import org.quiltmc.qsl.screen.api.client.ScreenEvents;
 
 @Environment(EnvType.CLIENT)
 @Mixin(GameRenderer.class)

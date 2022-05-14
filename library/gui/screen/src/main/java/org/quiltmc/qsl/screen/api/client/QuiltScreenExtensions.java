@@ -19,7 +19,8 @@ package org.quiltmc.qsl.screen.api.client;
 
 import java.util.List;
 
-import org.quiltmc.qsl.base.api.util.InjectedInterface;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -27,11 +28,10 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.item.ItemRenderer;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 /**
- * Utility methods related to screens.
+ * Utility methods related to {@link Screen}s.
  *
  * @see ScreenEvents
  */
@@ -40,6 +40,7 @@ import net.fabricmc.api.Environment;
 public interface QuiltScreenExtensions {
 	/**
 	 * Gets all of a screen's button widgets.
+	 * <p>
 	 * The provided list allows for addition and removal of buttons from the screen.
 	 * This method should be preferred over adding buttons directly to a screen's {@link Screen#children() child elements}.
 	 *
@@ -48,18 +49,17 @@ public interface QuiltScreenExtensions {
 	List<ClickableWidget> getButtons();
 
 	/**
-	 * Gets a screen's item renderer.
-	 *
-	 * @return the screen's item renderer
+	 * {@return the screen's item renderer}
 	 */
 	ItemRenderer getItemRenderer();
 
 	/**
-	 * Gets a screen's text renderer.
-	 *
-	 * @return the screen's text renderer.
+	 * {@return the screen's text renderer}
 	 */
 	TextRenderer getTextRenderer();
 
+	/**
+	 * {@return the Minecraft client instance}
+	 */
 	MinecraftClient getClient();
 }
