@@ -25,5 +25,6 @@
       "quilt_loader",
       "quilt_resource_loader"
     ]
-  }
+  },
+  "mixin": "quilt_resource_loader_testmod.mixins.json"
 }

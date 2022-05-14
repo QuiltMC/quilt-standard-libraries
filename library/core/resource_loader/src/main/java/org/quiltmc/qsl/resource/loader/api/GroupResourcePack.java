@@ -36,6 +36,7 @@ import net.minecraft.resource.ResourceNotFoundException;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.metadata.ResourceMetadataReader;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 /**
@@ -216,6 +217,11 @@ public abstract class GroupResourcePack implements ResourcePack {
 		@Override
 		public String getName() {
 			return this.basePack.getName();
+		}
+
+		@Override
+		public Text getDisplayName() {
+			return this.basePack.getDisplayName();
 		}
 
 		@Override
