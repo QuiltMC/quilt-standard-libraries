@@ -99,6 +99,7 @@ loom {
 		}
 	}
 }
+
 afterEvaluate {
 	def generateQmjForIdea = tasks.create("generateQmjForIdea")
 	project.subprojects.each {
