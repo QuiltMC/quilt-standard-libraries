@@ -135,10 +135,10 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 	}
 
 	@Override
-	public Collection<Identifier> findResources(ResourceType type, String namespace, String path, int depth,
+	public Collection<Identifier> findResources(ResourceType type, String namespace, String startingPath, int depth,
 	                                            Predicate<String> pathFilter) {
 		var ids = new ArrayList<Identifier>();
-		String nioPath = path.replace("/", separator);
+		String nioPath = startingPath.replace("/", separator);
 
 		Path namespacePath = this.getPath(type.getDirectory() + "/" + namespace);
 
@@ -163,7 +163,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 								}
 							});
 				} catch (IOException e) {
-					LOGGER.warn("findResources at " + path + " in namespace " + namespace
+					LOGGER.warn("findResources at " + startingPath + " in namespace " + namespace
 							+ ", mod " + this.modInfo.id() + " failed!", e);
 				}
 			}

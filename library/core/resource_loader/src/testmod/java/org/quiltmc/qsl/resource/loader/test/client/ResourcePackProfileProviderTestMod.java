@@ -76,10 +76,10 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 		}
 
 		@Override
-		public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, int maxDepth,
+		public Collection<Identifier> findResources(ResourceType type, String namespace, String startingPath, int maxDepth,
 		                                            Predicate<String> pathFilter) {
 			if (type == ResourceType.CLIENT_RESOURCES && namespace.equals(DIRT_IDENTIFIER.getNamespace())) {
-				if (DIRT_IDENTIFIER.getPath().startsWith(prefix) && pathFilter.test(DIRT_IDENTIFIER.getPath())) {
+				if (DIRT_IDENTIFIER.getPath().startsWith(startingPath) && pathFilter.test(DIRT_IDENTIFIER.getPath())) {
 					return List.of(DIRT_IDENTIFIER);
 				}
 			}
