@@ -14,11 +14,14 @@
         "org.quiltmc.qsl.resource.loader.test.BuiltinResourcePackTestMod",
         "org.quiltmc.qsl.resource.loader.test.ResourceReloaderTestMod"
       ],
-      "client_events": [
-        "org.quiltmc.qsl.resource.loader.test.client.ClientResourceLoaderEventsTestMod"
+      "client_init": [
+        "org.quiltmc.qsl.resource.loader.test.client.ResourcePackProfileProviderTestMod"
       ],
       "events": [
         "org.quiltmc.qsl.resource.loader.test.ResourceLoaderEventsTestMod"
+      ],
+      "client_events": [
+        "org.quiltmc.qsl.resource.loader.test.client.ClientResourceLoaderEventsTestMod"
       ]
     },
     "depends": [
