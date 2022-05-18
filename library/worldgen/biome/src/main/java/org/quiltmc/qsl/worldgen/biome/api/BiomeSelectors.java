@@ -98,8 +98,8 @@ public final class BiomeSelectors {
 	 *
 	 * @see net.minecraft.tag.TagKey
 	 */
-	public static Predicate<BiomeSelectionContext> tag(TagKey<Biome> tag) {
-		return context -> context.hasTag(tag);
+	public static Predicate<BiomeSelectionContext> isIn(TagKey<Biome> tag) {
+		return context -> context.isIn(tag);
 	}
 
 	/**

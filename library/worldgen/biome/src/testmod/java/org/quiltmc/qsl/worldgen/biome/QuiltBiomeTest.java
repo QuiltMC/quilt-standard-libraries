@@ -116,7 +116,7 @@ public class QuiltBiomeTest implements ModInitializer {
 						BiomeSelectors.foundInOverworld(),
 						context -> context.getEffects().setFogColor(0x000099))
 				.add(ModificationPhase.ADDITIONS,
-						BiomeSelectors.tag(BiomeTags.IS_FOREST),
+						BiomeSelectors.isIn(BiomeTags.IS_FOREST),
 						context -> context.getEffects().setFogColor(0x990000));
 	}
 

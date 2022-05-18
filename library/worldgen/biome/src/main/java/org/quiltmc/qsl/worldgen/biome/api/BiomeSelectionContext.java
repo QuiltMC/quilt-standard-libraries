@@ -150,5 +150,5 @@ public interface BiomeSelectionContext {
 	/**
 	 * {@return true if this biome is in the given {@link TagKey}}.
 	 */
-	boolean hasTag(TagKey<Biome> tag);
+	boolean isIn(TagKey<Biome> tag);
 }
