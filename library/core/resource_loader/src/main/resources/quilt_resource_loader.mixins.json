@@ -12,6 +12,7 @@
     "NamespaceResourceManagerMixin",
     "NamespaceResourceManagerMixin$ResourceEntryAccessor",
     "ReloadableResourceManagerMixin",
+    "ResourcePackMixin",
     "ServerReloadableResourcesMixin",
     "VanillaDataPackProviderMixin",
     "server.MainMixin"

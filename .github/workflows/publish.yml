@@ -8,8 +8,9 @@ jobs:
         with:
           distribution: "temurin"
           java-version: "17"
-      - uses: actions/checkout@v2 # Required for indra-git
-      - run: ./gradlew checkVersion build publish -stacktrace
+      - uses: actions/checkout@v2
+      - run: ./gradlew checkLicenses generateQmj --parallel --stacktrace
+      - run: ./gradlew build publish --stacktrace
         env:
           MAVEN_URL: ${{ secrets.MAVEN_URL }}
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}

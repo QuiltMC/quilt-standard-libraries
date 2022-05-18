@@ -76,18 +76,16 @@ public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
 	 */
 	public static class BuiltinResourcePackSource implements ResourcePackSource {
 		private static final Text SOURCE_BUILTIN_TEXT = new TranslatableText("pack.source.builtin");
-		private final ModNioResourcePack pack;
 		private final Text text;
 		private final Text tooltip;
 
 		BuiltinResourcePackSource(ModNioResourcePack pack) {
-			String modName = pack.modInfo.getName();
+			String modName = pack.modInfo.name();
 
 			if (modName == null) {
-				modName = pack.modInfo.getId();
+				modName = pack.modInfo.id();
 			}
 
-			this.pack = pack;
 			this.text = SOURCE_BUILTIN_TEXT;
 			this.tooltip = new TranslatableText("options.generic_value", SOURCE_BUILTIN_TEXT, modName);
 		}

@@ -36,6 +36,7 @@ import net.minecraft.resource.ResourceNotFoundException;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.metadata.ResourceMetadataReader;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 /**
@@ -116,7 +117,8 @@ public abstract class GroupResourcePack implements ResourcePack {
 	}
 
 	@Override
-	public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, Predicate<Identifier> pathFilter) {
+	public Collection<Identifier> findResources(ResourceType type, String namespace, String startingPath,
+	                                            Predicate<Identifier> pathFilter) {
 		var packs = this.namespacedPacks.get(namespace);
 
 		if (packs == null) {
@@ -128,7 +130,7 @@ public abstract class GroupResourcePack implements ResourcePack {
 		// Iterating backwards as higher-priority packs are placed at the end.
 		for (int i = packs.size() - 1; i >= 0; i--) {
 			ResourcePack pack = packs.get(i);
-			Collection<Identifier> modResources = pack.findResources(type, namespace, prefix, pathFilter);
+			Collection<Identifier> modResources = pack.findResources(type, namespace, startingPath, pathFilter);
 
 			resources.addAll(modResources);
 		}
@@ -216,6 +218,11 @@ public abstract class GroupResourcePack implements ResourcePack {
 		@Override
 		public String getName() {
 			return this.basePack.getName();
+		}
+
+		@Override
+		public Text getDisplayName() {
+			return this.basePack.getDisplayName();
 		}
 
 		@Override

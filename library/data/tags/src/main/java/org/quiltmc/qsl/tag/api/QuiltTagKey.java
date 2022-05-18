@@ -21,6 +21,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
 import org.quiltmc.qsl.tag.impl.QuiltTagKeyHooks;
 import org.quiltmc.qsl.tag.mixin.TagKeyAccessor;
 
@@ -30,6 +31,7 @@ import org.quiltmc.qsl.tag.mixin.TagKeyAccessor;
  * @param <T> the type of the values held by the tag
  * @see #of(RegistryKey, Identifier, TagType)
  */
+@InjectedInterface(TagKey.class)
 public interface QuiltTagKey<T> {
 	/**
 	 * {@return the type of tag of this key}
