@@ -22,7 +22,7 @@ public final class Versions {
 	/**
 	 * The target Minecraft version.
 	 */
-	public static final String MINECRAFT_VERSION = "1.18.2";
+	public static final MinecraftVersion MINECRAFT_VERSION = new MinecraftVersion("1.18.2");
 
 	/**
 	 * The target Quilt Mappings build.
@@ -38,25 +38,6 @@ public final class Versions {
 	 * The target Java version.
 	 */
 	public static final int JAVA_VERSION = 17; // Minecraft is Java 17
-
-	public static boolean isMinecraftVersionNonRelease() {
-		return MINECRAFT_VERSION.matches("^\\d\\dw\\d\\d[a-z]$");
-	}
-
-	public static String getMinecraftVersionFancyString() {
-		if (isMinecraftVersionNonRelease()) {
-			return MINECRAFT_VERSION;
-		}
-
-		String[] version = MINECRAFT_VERSION.split("\\.");
-
-		int index;
-		if ((index = version[1].indexOf("-pre")) != -1 || (index = version[1].indexOf("-rc")) != -1) {
-			version[1] = version[1].substring(0, index);
-		}
-
-		return version[0] + '.' + version[1];
-	}
 
 	private Versions() {
 	}

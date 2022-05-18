@@ -16,7 +16,7 @@ if (version.contains("beta") && !ENV.MAVEN_URL) {
 	version = version.replace(version.substring(version.indexOf("beta.")), "beta." + (beta + 1))
 }
 
-version = version + "+" + Versions.MINECRAFT_VERSION + (System.getenv("SNAPSHOTS_URL") ? "-SNAPSHOT" : "")
+version = version + "+" + Versions.MINECRAFT_VERSION.version() + (System.getenv("SNAPSHOTS_URL") ? "-SNAPSHOT" : "")
 println("QSL: " + version)
 sourceSets {
 	testmod {

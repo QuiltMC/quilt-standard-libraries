@@ -2,6 +2,8 @@ package qsl.internal.json;
 
 import org.gradle.api.Project;
 import org.quiltmc.json5.JsonWriter;
+
+import qsl.internal.MinecraftVersion;
 import qsl.internal.dependency.QslLibraryDependency;
 import qsl.internal.extension.QslModuleExtension;
 import qsl.internal.extension.QslModuleExtensionImpl;
@@ -10,7 +12,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public final class QmjBuilder {
-	public static void buildQmj(Project project, String version, String loaderVersion, String minecraftVersion, QslModuleExtensionImpl ext, Path path) throws IOException {
+	public static void buildQmj(Project project, String version, String loaderVersion, MinecraftVersion minecraftVersion, QslModuleExtensionImpl ext, Path path) throws IOException {
 		JsonWriter writer = JsonWriter.json(path);
 		// write everything that is always present
 		writer.beginObject()
@@ -41,7 +43,7 @@ public final class QmjBuilder {
 				.endObject()
 				.beginObject()
 				.name("id").value("minecraft")
-					.name("versions").value("=" + minecraftVersion)
+					.name("versions").value("=" + minecraftVersion.getSemVer())
 					.endObject();
 		for (QslLibraryDependency depend : ext.getModuleDependencyDefinitions()) {
 			for (QslLibraryDependency.ModuleDependencyInfo moduleDependencyInfo : depend.getDependencyInfo().get()) {
