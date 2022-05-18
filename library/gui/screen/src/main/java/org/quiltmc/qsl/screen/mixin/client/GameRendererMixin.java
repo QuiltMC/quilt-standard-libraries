@@ -31,7 +31,9 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.Matrix4f;
 
 import org.quiltmc.qsl.screen.api.client.ScreenEvents;
 
@@ -45,8 +47,14 @@ abstract class GameRendererMixin {
 	@Unique
 	private Screen quilt$renderingScreen;
 
-	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;render(Lnet/minecraft/client/util/math/MatrixStack;IIF)V"), locals = LocalCapture.CAPTURE_FAILHARD)
-	private void onBeforeRenderScreen(float tickDelta, long startTime, boolean tick, CallbackInfo ci, int mouseX, int mouseY, MatrixStack matrices) {
+	@Inject(
+			method = "render",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;render(Lnet/minecraft/client/util/math/MatrixStack;IIF)V"),
+			locals = LocalCapture.CAPTURE_FAILHARD
+	)
+	private void onBeforeRenderScreen(float tickDelta, long startTime, boolean tick, CallbackInfo ci,
+	                                  int mouseX, int mouseY, Window window, Matrix4f projectionMatrix,
+	                                  MatrixStack modelViewMatrices, MatrixStack matrices) {
 		// Store the screen in a variable in case someone tries to change the screen during this before render event.
 		// If someone changes the screen, the after render event will likely have class cast exceptions or an NPE.
 		this.quilt$renderingScreen = this.client.currentScreen;
@@ -54,8 +62,18 @@ abstract class GameRendererMixin {
 	}
 
 	// This injection should end up in the try block so exceptions are caught
-	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;render(Lnet/minecraft/client/util/math/MatrixStack;IIF)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
-	private void onAfterRenderScreen(float tickDelta, long startTime, boolean tick, CallbackInfo ci, int mouseX, int mouseY, MatrixStack matrices) {
+	@Inject(
+			method = "render",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/gui/screen/Screen;render(Lnet/minecraft/client/util/math/MatrixStack;IIF)V",
+					shift = At.Shift.AFTER
+			),
+			locals = LocalCapture.CAPTURE_FAILHARD
+	)
+	private void onAfterRenderScreen(float tickDelta, long startTime, boolean tick, CallbackInfo ci,
+	                                 int mouseX, int mouseY, Window window, Matrix4f projectionMatrix,
+	                                 MatrixStack modelViewMatrices, MatrixStack matrices) {
 		ScreenEvents.AFTER_RENDER.invoker().afterRender(this.quilt$renderingScreen, matrices, mouseX, mouseY, tickDelta);
 		// Finally set the currently rendering screen to null
 		this.quilt$renderingScreen = null;

@@ -20,8 +20,6 @@ package org.quiltmc.qsl.screen.test.client;
 import java.util.List;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-
-import org.quiltmc.qsl.screen.api.client.ScreenEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,24 +30,38 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 
-public class ScreenTests implements ScreenEvents.AfterInit {
+import org.quiltmc.qsl.screen.api.client.ScreenEvents;
+
+public class ScreenTests implements ScreenEvents.AfterInit, ScreenEvents.AfterRender {
 	public static final Logger LOGGER = LoggerFactory.getLogger("ScreenEventsTest");
+	private Screen actualScreen;
 
 	@Override
 	public void afterInit(Screen screen, MinecraftClient client, int scaledWidth, int scaledHeight) {
 		if (screen instanceof TitleScreen) {
 			final List<ClickableWidget> buttons = screen.getButtons();
 
-			buttons.add(new ButtonWidget((screen.width / 2) + 120, ((screen.height / 4) + 95), 70, 20, new LiteralText("Hello world!!"), button -> { LOGGER.info("Hello world!!"); }));
+			buttons.add(
+					new ButtonWidget((screen.width / 2) + 120, ((screen.height / 4) + 95), 70, 20, new LiteralText("Hello world!!"),
+							button -> {
+								LOGGER.info("Hello world!!");
+							})
+			);
 
-			ScreenEvents.AFTER_RENDER.register((_screen, matrices, mouseX, mouseY, tickDelta) -> {
-				if(_screen == screen) {
-					RenderSystem.setShaderTexture(0, InGameHud.GUI_ICONS_TEXTURE);
-					DrawableHelper.drawTexture(matrices, (screen.width / 2) - 124, (screen.height / 4) + 96, 20, 20, 34, 9, 9, 9, 256, 256);
-				}
-			});
+			this.actualScreen = screen;
+		} else {
+			this.actualScreen = null;
+		}
+	}
+
+	@Override
+	public void afterRender(Screen screen, MatrixStack matrices, int mouseX, int mouseY, float tickDelta) {
+		if (screen == this.actualScreen) {
+			RenderSystem.setShaderTexture(0, InGameHud.GUI_ICONS_TEXTURE);
+			DrawableHelper.drawTexture(matrices, (screen.width / 2) - 124, (screen.height / 4) + 96, 20, 20, 34, 9, 9, 9, 256, 256);
 		}
 	}
 }
