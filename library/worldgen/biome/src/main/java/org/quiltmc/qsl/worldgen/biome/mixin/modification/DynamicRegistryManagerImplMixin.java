@@ -33,7 +33,7 @@ public class DynamicRegistryManagerImplMixin implements BiomeModificationMarker 
 	private boolean modified;
 
 	@Override
-	public void quilt_markModified() {
+	public void quilt$markModified() {
 		if (modified) {
 			throw new IllegalStateException("This dynamic registries instance has already been modified");
 		}

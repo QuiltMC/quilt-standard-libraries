@@ -111,8 +111,8 @@ public class BiomeModificationImpl {
 		// Now that we apply biome modifications inside the MinecraftServer constructor, we should only ever do
 		// this once for a dynamic registry manager. Marking the dynamic registry manager as modified ensures a crash
 		// if the precondition is violated.
-		BiomeModificationMarker modificationTracker = (BiomeModificationMarker) impl;
-		modificationTracker.quilt_markModified();
+		var modificationTracker = (BiomeModificationMarker) impl;
+		modificationTracker.quilt$markModified();
 
 		Registry<Biome> biomes = impl.get(Registry.BIOME_KEY);
 
