@@ -44,7 +44,7 @@ public class BiomeModification {
 	 * to constants.
 	 */
 	public BiomeModification add(ModificationPhase phase, Predicate<BiomeSelectionContext> selector, Consumer<BiomeModificationContext> modifier) {
-		BiomeModificationImpl.INSTANCE.addModifier(id, phase, selector, modifier);
+		BiomeModificationImpl.INSTANCE.addModifier(this.id, phase, selector, modifier);
 		return this;
 	}
 
@@ -57,7 +57,7 @@ public class BiomeModification {
 	 * with debugging world generation issues.
 	 */
 	public BiomeModification add(ModificationPhase phase, Predicate<BiomeSelectionContext> selector, BiConsumer<BiomeSelectionContext, BiomeModificationContext> modifier) {
-		BiomeModificationImpl.INSTANCE.addModifier(id, phase, selector, modifier);
+		BiomeModificationImpl.INSTANCE.addModifier(this.id, phase, selector, modifier);
 		return this;
 	}
 }
