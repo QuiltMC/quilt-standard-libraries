@@ -63,25 +63,25 @@ public class BiomeModificationImpl {
 		Objects.requireNonNull(selector);
 		Objects.requireNonNull(modifier);
 
-		modifiers.add(new ModifierRecord(phase, id, selector, modifier));
-		modifiersUnsorted = true;
+		this.modifiers.add(new ModifierRecord(phase, id, selector, modifier));
+		this.modifiersUnsorted = true;
 	}
 
 	public void addModifier(Identifier id, ModificationPhase phase, Predicate<BiomeSelectionContext> selector, Consumer<BiomeModificationContext> modifier) {
 		Objects.requireNonNull(selector);
 		Objects.requireNonNull(modifier);
 
-		modifiers.add(new ModifierRecord(phase, id, selector, modifier));
-		modifiersUnsorted = true;
+		this.modifiers.add(new ModifierRecord(phase, id, selector, modifier));
+		this.modifiersUnsorted = true;
 	}
 
 	/**
 	 * This is currently not publicly exposed but likely useful for modpack support mods.
 	 */
 	void changeOrder(Identifier id, int order) {
-		modifiersUnsorted = true;
+		this.modifiersUnsorted = true;
 
-		for (ModifierRecord modifierRecord : modifiers) {
+		for (ModifierRecord modifierRecord : this.modifiers) {
 			if (id.equals(modifierRecord.id)) {
 				modifierRecord.setOrder(order);
 			}
@@ -90,18 +90,18 @@ public class BiomeModificationImpl {
 
 	@TestOnly
 	void clearModifiers() {
-		modifiers.clear();
-		modifiersUnsorted = true;
+		this.modifiers.clear();
+		this.modifiersUnsorted = true;
 	}
 
 	private List<ModifierRecord> getSortedModifiers() {
-		if (modifiersUnsorted) {
+		if (this.modifiersUnsorted) {
 			// Resort modifiers
-			modifiers.sort(MODIFIER_ORDER_COMPARATOR);
-			modifiersUnsorted = false;
+			this.modifiers.sort(MODIFIER_ORDER_COMPARATOR);
+			this.modifiersUnsorted = false;
 		}
 
-		return modifiers;
+		return this.modifiers;
 	}
 
 	@SuppressWarnings("ConstantConditions")
@@ -111,8 +111,8 @@ public class BiomeModificationImpl {
 		// Now that we apply biome modifications inside the MinecraftServer constructor, we should only ever do
 		// this once for a dynamic registry manager. Marking the dynamic registry manager as modified ensures a crash
 		// if the precondition is violated.
-		BiomeModificationMarker modificationTracker = (BiomeModificationMarker) impl;
-		modificationTracker.quilt_markModified();
+		var modificationTracker = (BiomeModificationMarker) impl;
+		modificationTracker.quilt$markModified();
 
 		Registry<Biome> biomes = impl.get(Registry.BIOME_KEY);
 
@@ -168,9 +168,7 @@ public class BiomeModificationImpl {
 				BiomeSource biomeSource = dimension.getChunkGenerator().getBiomeSource();
 
 				// Replace the Supplier to force it to rebuild on next call
-				biomeSource.featuresStepData = Suppliers.memoize(() -> {
-					return biomeSource.createFeatureStepData(biomeSource.biomes.stream().distinct().toList(), true);
-				});
+				biomeSource.featuresStepData = Suppliers.memoize(() -> biomeSource.createFeatureStepData(biomeSource.biomes.stream().distinct().toList(), true));
 			}
 
 			LOGGER.info("Applied {} biome modifications to {} of {} new biomes in {}", modifiersApplied, biomesChanged,
@@ -210,18 +208,18 @@ public class BiomeModificationImpl {
 
 		@Override
 		public String toString() {
-			if (modifier != null) {
-				return modifier.toString();
+			if (this.modifier != null) {
+				return this.modifier.toString();
 			} else {
-				return contextSensitiveModifier.toString();
+				return this.contextSensitiveModifier.toString();
 			}
 		}
 
 		public void apply(BiomeSelectionContext context, BiomeModificationContextImpl modificationContext) {
 			if (contextSensitiveModifier != null) {
-				contextSensitiveModifier.accept(context, modificationContext);
+				this.contextSensitiveModifier.accept(context, modificationContext);
 			} else {
-				modifier.accept(modificationContext);
+				this.modifier.accept(modificationContext);
 			}
 		}
 

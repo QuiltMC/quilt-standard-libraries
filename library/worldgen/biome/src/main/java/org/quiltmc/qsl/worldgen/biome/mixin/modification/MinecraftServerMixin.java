@@ -38,7 +38,7 @@ public abstract class MinecraftServerMixin {
 
 	@Inject(method = "<init>", at = @At(value = "RETURN"))
 	private void finalizeWorldGen(CallbackInfo ci) {
-		if (!(saveProperties instanceof LevelProperties levelProperties)) {
+		if (!(this.saveProperties instanceof LevelProperties levelProperties)) {
 			throw new RuntimeException("Incompatible SaveProperties passed to MinecraftServer: " + saveProperties);
 		}
 

@@ -25,5 +25,5 @@ import org.jetbrains.annotations.ApiStatus;
  */
 @ApiStatus.Internal
 public interface BiomeModificationMarker {
-	void quilt_markModified();
+	void quilt$markModified();
 }

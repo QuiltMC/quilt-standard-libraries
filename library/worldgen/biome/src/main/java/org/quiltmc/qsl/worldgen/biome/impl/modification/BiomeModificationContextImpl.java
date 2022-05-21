@@ -75,35 +75,35 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 
 	@Override
 	public void setCategory(Biome.Category category) {
-		biome.category = category;
+		this.biome.category = category;
 	}
 
 	@Override
 	public WeatherContext getWeather() {
-		return weather;
+		return this.weather;
 	}
 
 	@Override
 	public EffectsContext getEffects() {
-		return effects;
+		return this.effects;
 	}
 
 	@Override
 	public GenerationSettingsContext getGenerationSettings() {
-		return generationSettings;
+		return this.generationSettings;
 	}
 
 	@Override
 	public SpawnSettingsContext getSpawnSettings() {
-		return spawnSettings;
+		return this.spawnSettings;
 	}
 
 	/**
 	 * Re-freeze any immutable lists and perform general post-modification cleanup.
 	 */
 	void freeze() {
-		generationSettings.freeze();
-		spawnSettings.freeze();
+		this.generationSettings.freeze();
+		this.spawnSettings.freeze();
 	}
 
 	private class WeatherContextImpl implements WeatherContext {
@@ -111,22 +111,22 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 
 		@Override
 		public void setPrecipitation(Biome.Precipitation precipitation) {
-			weather.precipitation = Objects.requireNonNull(precipitation);
+			this.weather.precipitation = Objects.requireNonNull(precipitation);
 		}
 
 		@Override
 		public void setTemperature(float temperature) {
-			weather.temperature = temperature;
+			this.weather.temperature = temperature;
 		}
 
 		@Override
 		public void setTemperatureModifier(Biome.TemperatureModifier temperatureModifier) {
-			weather.temperatureModifier = Objects.requireNonNull(temperatureModifier);
+			this.weather.temperatureModifier = Objects.requireNonNull(temperatureModifier);
 		}
 
 		@Override
 		public void setDownfall(float downfall) {
-			weather.downfall = downfall;
+			this.weather.downfall = downfall;
 		}
 	}
 
@@ -135,62 +135,62 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 
 		@Override
 		public void setFogColor(int color) {
-			effects.fogColor = color;
+			this.effects.fogColor = color;
 		}
 
 		@Override
 		public void setWaterColor(int color) {
-			effects.waterColor = color;
+			this.effects.waterColor = color;
 		}
 
 		@Override
 		public void setWaterFogColor(int color) {
-			effects.waterFogColor = color;
+			this.effects.waterFogColor = color;
 		}
 
 		@Override
 		public void setSkyColor(int color) {
-			effects.skyColor = color;
+			this.effects.skyColor = color;
 		}
 
 		@Override
 		public void setFoliageColor(Optional<Integer> color) {
-			effects.foliageColor = Objects.requireNonNull(color);
+			this.effects.foliageColor = Objects.requireNonNull(color);
 		}
 
 		@Override
 		public void setGrassColor(Optional<Integer> color) {
-			effects.grassColor = Objects.requireNonNull(color);
+			this.effects.grassColor = Objects.requireNonNull(color);
 		}
 
 		@Override
 		public void setGrassColorModifier(@NotNull BiomeEffects.GrassColorModifier colorModifier) {
-			effects.grassColorModifier = Objects.requireNonNull(colorModifier);
+			this.effects.grassColorModifier = Objects.requireNonNull(colorModifier);
 		}
 
 		@Override
 		public void setParticleConfig(Optional<BiomeParticleConfig> particleConfig) {
-			effects.particleConfig = Objects.requireNonNull(particleConfig);
+			this.effects.particleConfig = Objects.requireNonNull(particleConfig);
 		}
 
 		@Override
 		public void setAmbientSound(Optional<SoundEvent> sound) {
-			effects.loopSound = Objects.requireNonNull(sound);
+			this.effects.loopSound = Objects.requireNonNull(sound);
 		}
 
 		@Override
 		public void setMoodSound(Optional<BiomeMoodSound> sound) {
-			effects.moodSound = Objects.requireNonNull(sound);
+			this.effects.moodSound = Objects.requireNonNull(sound);
 		}
 
 		@Override
 		public void setAdditionsSound(Optional<BiomeAdditionsSound> sound) {
-			effects.additionsSound = Objects.requireNonNull(sound);
+			this.effects.additionsSound = Objects.requireNonNull(sound);
 		}
 
 		@Override
 		public void setMusic(Optional<MusicSound> sound) {
-			effects.music = Objects.requireNonNull(sound);
+			this.effects.music = Objects.requireNonNull(sound);
 		}
 	}
 
@@ -207,32 +207,32 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 		 * possible step if they're dense lists.
 		 */
 		GenerationSettingsContextImpl() {
-			unfreezeCarvers();
-			unfreezeFeatures();
+			this.unfreezeCarvers();
+			this.unfreezeFeatures();
 
-			rebuildFlowerFeatures = false;
+			this.rebuildFlowerFeatures = false;
 		}
 
 		private void unfreezeCarvers() {
 			Map<GenerationStep.Carver, HolderSet<ConfiguredCarver<?>>> carversByStep = new EnumMap<>(GenerationStep.Carver.class);
 			carversByStep.putAll(generationSettings.carvers);
 
-			generationSettings.carvers = carversByStep;
+			this.generationSettings.carvers = carversByStep;
 		}
 
 		private void unfreezeFeatures() {
-			generationSettings.features = new ArrayList<>(generationSettings.features);
+			this.generationSettings.features = new ArrayList<>(generationSettings.features);
 		}
 
 		/**
 		 * Re-freeze the lists in the generation settings to immutable variants, also fixes the flower features.
 		 */
 		public void freeze() {
-			freezeCarvers();
-			freezeFeatures();
+			this.freezeCarvers();
+			this.freezeFeatures();
 
 			if (rebuildFlowerFeatures) {
-				rebuildFlowerFeatures();
+				this.rebuildFlowerFeatures();
 			}
 		}
 
@@ -241,28 +241,30 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 		}
 
 		private void freezeFeatures() {
-			generationSettings.features = ImmutableList.copyOf(generationSettings.features);
+			this.generationSettings.features = ImmutableList.copyOf(generationSettings.features);
 			// Replace the supplier to force a rebuild next time its called.
-			generationSettings.allowedFeatures = Suppliers.memoize(() -> {
-				return generationSettings.features.stream().flatMap(HolderSet::stream).map(Holder::value).collect(Collectors.toSet());
-			});
+			this.generationSettings.allowedFeatures = Suppliers.memoize(() -> this.generationSettings.features.stream()
+					.flatMap(HolderSet::stream)
+					.map(Holder::value)
+					.collect(Collectors.toSet()));
 		}
 
 		private void rebuildFlowerFeatures() {
 			// Replace the supplier to force a rebuild next time its called.
-			generationSettings.flowerFeatures = Suppliers.memoize(() -> {
-				return generationSettings.features.stream().flatMap(HolderSet::stream).map(Holder::value).flatMap(PlacedFeature::getDecoratedFeatures).filter((configuredFeature) -> {
-					return configuredFeature.getFeature() == Feature.FLOWER;
-				}).collect(ImmutableList.toImmutableList());
-			});
+			generationSettings.flowerFeatures = Suppliers.memoize(() -> this.generationSettings.features.stream()
+					.flatMap(HolderSet::stream)
+					.map(Holder::value)
+					.flatMap(PlacedFeature::getDecoratedFeatures)
+					.filter((configuredFeature) -> configuredFeature.getFeature() == Feature.FLOWER)
+					.collect(ImmutableList.toImmutableList()));
 		}
 
 		@Override
 		public boolean removeFeature(GenerationStep.Feature step, RegistryKey<PlacedFeature> placedFeatureKey) {
-			PlacedFeature configuredFeature = features.getOrThrow(placedFeatureKey);
+			PlacedFeature configuredFeature = this.features.getOrThrow(placedFeatureKey);
 
 			int stepIndex = step.ordinal();
-			List<HolderSet<PlacedFeature>> featureSteps = generationSettings.features;
+			List<HolderSet<PlacedFeature>> featureSteps = this.generationSettings.features;
 
 			if (stepIndex >= featureSteps.size()) {
 				return false; // The step was not populated with any features yet
@@ -273,7 +275,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 
 			if (features.removeIf(feature -> feature.value() == configuredFeature)) {
 				featureSteps.set(stepIndex, HolderSet.createDirect(features));
-				rebuildFlowerFeatures = true;
+				this.rebuildFlowerFeatures = true;
 
 				return true;
 			}
@@ -283,7 +285,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 
 		@Override
 		public void addFeature(GenerationStep.Feature step, RegistryKey<PlacedFeature> entry) {
-			List<HolderSet<PlacedFeature>> featureSteps = generationSettings.features;
+			List<HolderSet<PlacedFeature>> featureSteps = this.generationSettings.features;
 			int index = step.ordinal();
 
 			// Add new empty lists for the generation steps that have no features yet
@@ -291,25 +293,25 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 				featureSteps.add(HolderSet.createDirect(Collections.emptyList()));
 			}
 
-			featureSteps.set(index, plus(featureSteps.get(index), features.getHolderOrThrow(entry)));
+			featureSteps.set(index, plus(featureSteps.get(index), this.features.getHolderOrThrow(entry)));
 
 			// Ensure the list of flower features is up to date
-			rebuildFlowerFeatures = true;
+			this.rebuildFlowerFeatures = true;
 		}
 
 		@Override
 		public void addCarver(GenerationStep.Carver step, RegistryKey<ConfiguredCarver<?>> entry) {
 			// We do not need to delay evaluation of this since the registries are already fully built
-			generationSettings.carvers.put(step, plus(generationSettings.carvers.get(step), carvers.getHolderOrThrow(entry)));
+			this.generationSettings.carvers.put(step, plus(generationSettings.carvers.get(step), carvers.getHolderOrThrow(entry)));
 		}
 
 		@Override
 		public boolean removeCarver(GenerationStep.Carver step, RegistryKey<ConfiguredCarver<?>> configuredCarverKey) {
-			ConfiguredCarver<?> carver = carvers.getOrThrow(configuredCarverKey);
-			List<Holder<ConfiguredCarver<?>>> genCarvers = new ArrayList<Holder<ConfiguredCarver<?>>>(generationSettings.carvers.get(step).stream().toList());
+			ConfiguredCarver<?> carver = this.carvers.getOrThrow(configuredCarverKey);
+			List<Holder<ConfiguredCarver<?>>> genCarvers = new ArrayList<Holder<ConfiguredCarver<?>>>(this.generationSettings.carvers.get(step).stream().toList());
 
 			if (genCarvers.removeIf(entry -> entry.value() == carver)) {
-				generationSettings.carvers.put(step, HolderSet.createDirect(genCarvers));
+				this.generationSettings.carvers.put(step, HolderSet.createDirect(genCarvers));
 				return true;
 			}
 
@@ -333,21 +335,21 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 		}
 
 		private void unfreezeSpawners() {
-			quiltSpawners.clear();
+			this.quiltSpawners.clear();
 
 			for (SpawnGroup spawnGroup : SpawnGroup.values()) {
-				Pool<SpawnSettings.SpawnEntry> entries = spawnSettings.spawners.get(spawnGroup);
+				Pool<SpawnSettings.SpawnEntry> entries = this.spawnSettings.spawners.get(spawnGroup);
 
 				if (entries != null) {
-					quiltSpawners.put(spawnGroup, new ArrayList<>(entries.getEntries()));
+					this.quiltSpawners.put(spawnGroup, new ArrayList<>(entries.getEntries()));
 				} else {
-					quiltSpawners.put(spawnGroup, new ArrayList<>());
+					this.quiltSpawners.put(spawnGroup, new ArrayList<>());
 				}
 			}
 		}
 
 		private void unfreezeSpawnCost() {
-			spawnSettings.spawnCosts = new HashMap<>(spawnSettings.spawnCosts);
+			this.spawnSettings.spawnCosts = new HashMap<>(this.spawnSettings.spawnCosts);
 		}
 
 		public void freeze() {
@@ -356,9 +358,9 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 		}
 
 		private void freezeSpawners() {
-			Map<SpawnGroup, Pool<SpawnSettings.SpawnEntry>> spawners = new HashMap<>(spawnSettings.spawners);
+			Map<SpawnGroup, Pool<SpawnSettings.SpawnEntry>> spawners = new HashMap<>(this.spawnSettings.spawners);
 
-			for (Map.Entry<SpawnGroup, List<SpawnSettings.SpawnEntry>> entry : quiltSpawners.entrySet()) {
+			for (Map.Entry<SpawnGroup, List<SpawnSettings.SpawnEntry>> entry : this.quiltSpawners.entrySet()) {
 				if (entry.getValue().isEmpty()) {
 					spawners.put(entry.getKey(), Pool.empty());
 				} else {
@@ -366,16 +368,16 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 				}
 			}
 
-			spawnSettings.spawners = ImmutableMap.copyOf(spawners);
+			this.spawnSettings.spawners = ImmutableMap.copyOf(spawners);
 		}
 
 		private void freezeSpawnCosts() {
-			spawnSettings.spawnCosts = ImmutableMap.copyOf(spawnSettings.spawnCosts);
+			this.spawnSettings.spawnCosts = ImmutableMap.copyOf(this.spawnSettings.spawnCosts);
 		}
 
 		@Override
 		public void setCreatureSpawnProbability(float probability) {
-			spawnSettings.creatureSpawnProbability = probability;
+			this.spawnSettings.creatureSpawnProbability = probability;
 		}
 
 		@Override
@@ -383,7 +385,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 			Objects.requireNonNull(spawnGroup);
 			Objects.requireNonNull(spawnEntry);
 
-			quiltSpawners.get(spawnGroup).add(spawnEntry);
+			this.quiltSpawners.get(spawnGroup).add(spawnEntry);
 		}
 
 		@Override
@@ -391,7 +393,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 			boolean anyRemoved = false;
 
 			for (SpawnGroup group : SpawnGroup.values()) {
-				if (quiltSpawners.get(group).removeIf(entry -> predicate.test(group, entry))) {
+				if (this.quiltSpawners.get(group).removeIf(entry -> predicate.test(group, entry))) {
 					anyRemoved = true;
 				}
 			}
@@ -402,12 +404,12 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 		@Override
 		public void setSpawnCost(EntityType<?> entityType, double mass, double gravityLimit) {
 			Objects.requireNonNull(entityType);
-			spawnSettings.spawnCosts.put(entityType, new SpawnSettings.SpawnDensity(gravityLimit, mass));
+			this.spawnSettings.spawnCosts.put(entityType, new SpawnSettings.SpawnDensity(gravityLimit, mass));
 		}
 
 		@Override
 		public void clearSpawnCost(EntityType<?> entityType) {
-			spawnSettings.spawnCosts.remove(entityType);
+			this.spawnSettings.spawnCosts.remove(entityType);
 		}
 	}
 }

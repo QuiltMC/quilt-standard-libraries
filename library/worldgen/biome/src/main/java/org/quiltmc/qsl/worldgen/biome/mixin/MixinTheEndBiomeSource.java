@@ -37,11 +37,11 @@ public class MixinTheEndBiomeSource {
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void init(Registry<Biome> biomeRegistry, long seed, CallbackInfo ci) {
-		overrides = TheEndBiomeData.createOverrides(biomeRegistry, seed);
+		this.overrides = TheEndBiomeData.createOverrides(biomeRegistry, seed);
 	}
 
 	@Inject(method = "method_38109", at = @At("RETURN"), cancellable = true)
 	private void getWeightedEndBiome(int biomeX, int biomeY, int biomeZ, MultiNoiseUtil.MultiNoiseSampler multiNoiseSampler, CallbackInfoReturnable<Holder<Biome>> cir) {
-		cir.setReturnValue(overrides.pick(biomeX, biomeY, biomeZ, cir.getReturnValue()));
+		cir.setReturnValue(this.overrides.pick(biomeX, biomeY, biomeZ, cir.getReturnValue()));
 	}
 }

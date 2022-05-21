@@ -41,13 +41,13 @@ public final class WeightedPicker<T> {
 	}
 
 	void add(T biome, final double weight) {
-		currentTotal += weight;
+		this.currentTotal += weight;
 
-		entries.add(new WeightedEntry<>(biome, weight, currentTotal));
+		this.entries.add(new WeightedEntry<>(biome, weight, currentTotal));
 	}
 
 	double getCurrentWeightTotal() {
-		return currentTotal;
+		return this.currentTotal;
 	}
 
 	public T pickFromNoise(PerlinNoiseSampler sampler, double x, double y, double z) {
@@ -61,8 +61,8 @@ public final class WeightedPicker<T> {
 	 */
 	<U> WeightedPicker<U> map(Function<T, U> mapper) {
 		return new WeightedPicker<U>(
-				currentTotal,
-				entries.stream()
+				this.currentTotal,
+				this.entries.stream()
 						.map(e -> new WeightedEntry<>(mapper.apply(e.entry), e.weight, e.upperWeightBound))
 						.toList()
 		);
@@ -76,23 +76,23 @@ public final class WeightedPicker<T> {
 	 */
 	WeightedEntry<T> search(final double target) {
 		// Sanity checks, fail fast if stuff is going wrong.
-		Preconditions.checkArgument(target <= currentTotal, "The provided target value for entry selection must be less than or equal to the weight total");
+		Preconditions.checkArgument(target <= this.currentTotal, "The provided target value for entry selection must be less than or equal to the weight total");
 		Preconditions.checkArgument(target >= 0, "The provided target value for entry selection cannot be negative");
 
 		int low = 0;
-		int high = entries.size() - 1;
+		int high = this.entries.size() - 1;
 
 		while (low < high) {
 			int mid = (high + low) >>> 1;
 
-			if (target < entries.get(mid).upperWeightBound()) {
+			if (target < this.entries.get(mid).upperWeightBound()) {
 				high = mid;
 			} else {
 				low = mid + 1;
 			}
 		}
 
-		return entries.get(low);
+		return this.entries.get(low);
 	}
 
 	/**
