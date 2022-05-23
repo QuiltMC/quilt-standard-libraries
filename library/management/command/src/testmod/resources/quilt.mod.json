@@ -18,6 +18,7 @@
       }
     },
     "intermediate_mappings": "net.fabricmc:intermediary",
+    "load_type": "always",
     "entrypoints": {
       "events": [
         "org.quiltmc.qsl.command.test.CommandApiTest"
