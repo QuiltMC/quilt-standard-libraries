@@ -21,8 +21,8 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: Artifacts
-          path: ./*/build/libs/
+          path: ./**/build/libs/
       - uses: actions/upload-artifact@v2
         with:
           name: Test Mod
-          path: ./build/libs/qsl-**-testmod.jar
+          path: ./**/build/libs/qsl-**-testmod.jar

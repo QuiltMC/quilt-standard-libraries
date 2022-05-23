@@ -124,6 +124,7 @@ project.getTasksByName("checkModuleVersion", true).each {
 rootProject.afterEvaluate {
 	testmodRemapJar { tsk ->
 		nestedJars.setFrom(Collections.emptySet())
+
 		rootProject.subprojects.stream().filter {
 			it.path.startsWith(":${extension.libraryName.get()}:")
 		}.forEach {
