@@ -103,6 +103,7 @@ sourceSets {
 		runtimeClasspath += sourceSets.main.runtimeClasspath
 	}
 }
+
 processTestmodResources {
 	filesMatching("quilt.mod.json") {
 		boolean found = false
@@ -119,6 +120,7 @@ processTestmodResources {
 		}
 	}
 }
+
 dependencies {
 	// testmod sourceSet should depend on everything in the main source set.
 	testmodImplementation sourceSets.main.output
