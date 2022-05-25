@@ -34,8 +34,10 @@ public final class QmjBuilder {
 				.endObject() // contact -> metadata
 				.name("license").value("Apache-2.0")
 				.name("icon").value("assets/" + ext.getId().get() + "/icon.png")
-				.endObject(); // metadata -> quilt_loader
-		writer.name("intermediate_mappings").value("net.fabricmc:intermediary");
+				.endObject() // metadata -> quilt_loader
+				.name("intermediate_mappings").value("net.fabricmc:intermediary")
+				.name("load_type").value("if_possible");
+
 		writer.name("depends").beginArray();
 		writer.beginObject()
 				.name("id").value("quilt_loader")

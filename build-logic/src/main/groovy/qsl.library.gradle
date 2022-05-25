@@ -120,3 +120,16 @@ remapJar {
 project.getTasksByName("checkModuleVersion", true).each {
 	checkLibVersion.mustRunAfter it
 }
+
+rootProject.afterEvaluate {
+	testmodRemapJar { tsk ->
+		nestedJars.setFrom(Collections.emptySet())
+
+		rootProject.subprojects.stream().filter {
+			it.path.startsWith(":${extension.libraryName.get()}:")
+		}.forEach {
+			tsk.nestedJars.from it.tasks.getByName("remapJar")
+			tsk.nestedJars.from it.tasks.getByName("testmodRemapJar")
+		}
+	}
+}
