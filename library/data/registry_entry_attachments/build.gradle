@@ -18,7 +18,7 @@ qslModule {
 		data {
 			impl("tags")
 		}
-		command {
+		management {
 			compileOnly("command")
 			testmodOnly("command")
 		}

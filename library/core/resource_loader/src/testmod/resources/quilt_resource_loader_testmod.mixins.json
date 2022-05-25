@@ -1,0 +1,10 @@
+{
+  "package": "org.quiltmc.qsl.resource.loader.test.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "client.NativeImageAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

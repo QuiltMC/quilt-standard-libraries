@@ -31,6 +31,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.DefaultResourcePack;
+import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.resource.loader.impl.ModNioResourcePack;
@@ -42,7 +43,7 @@ import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
  * This well-known bug caused many issues of Vanilla tags being overwritten by mods' tags.
  */
 @Mixin(DefaultResourcePack.class)
-public abstract class DefaultResourcePackMixin {
+public abstract class DefaultResourcePackMixin implements ResourcePack {
 	// Redirects all resource access to the MC resource pack.
 	@Unique
 	final ModNioResourcePack quilt$internalPack = this.locateAndLoad();
@@ -61,6 +62,7 @@ public abstract class DefaultResourcePackMixin {
 	 * @reason Rewrite default resource access to avoid resource leaking.
 	 */
 	@Overwrite
+	@Override
 	public boolean contains(ResourceType type, Identifier id) {
 		return this.quilt$internalPack.contains(type, id);
 	}
@@ -96,6 +98,7 @@ public abstract class DefaultResourcePackMixin {
 	 * @reason Rewrite default resource access to avoid resource leaking.
 	 */
 	@Overwrite
+	@Override
 	public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, int maxDepth,
 												Predicate<String> pathFilter) {
 		return this.quilt$internalPack.findResources(type, namespace, prefix, maxDepth, pathFilter);
