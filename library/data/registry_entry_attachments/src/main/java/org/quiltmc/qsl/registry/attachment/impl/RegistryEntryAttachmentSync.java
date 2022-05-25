@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,12 +51,18 @@ import static org.quiltmc.qsl.registry.attachment.impl.Initializer.id;
 
 @ApiStatus.Internal
 public final class RegistryEntryAttachmentSync {
+	// TODO: Update this value when packets are changed
+	private static final byte PACKET_VERSION = 1;
+
 	private RegistryEntryAttachmentSync() {
 	}
 
 	public static final Identifier PACKET_ID = id("sync");
 
-	private record CacheEntry(Identifier registryId, Set<Pair<String, Set<AttachmentEntry>>> namespacesToValues) {
+	private record NamespaceValuePair(String namespace, Set<AttachmentEntry> entries){
+	}
+
+	private record CacheEntry(Identifier registryId, Set<NamespaceValuePair> namespacesToValues) {
 	}
 
 	private record AttachmentEntry(String path, boolean isTag, NbtElement value) {
@@ -96,11 +102,12 @@ public final class RegistryEntryAttachmentSync {
 		for (var entry : ENCODED_VALUES_CACHE.entrySet()) {
 			for (var valueMap : entry.getValue().namespacesToValues()) {
 				var buf = PacketByteBufs.create();
+				buf.writeByte(PACKET_VERSION);
 				buf.writeIdentifier(entry.getValue().registryId());
 				buf.writeIdentifier(entry.getKey());
-				buf.writeString(valueMap.getLeft());
-				buf.writeInt(valueMap.getRight().size());
-				for (AttachmentEntry attachmentEntry : valueMap.getRight()) {
+				buf.writeString(valueMap.namespace());
+				buf.writeInt(valueMap.entries().size());
+				for (AttachmentEntry attachmentEntry : valueMap.entries()) {
 					attachmentEntry.write(buf);
 				}
 				bufs.add(buf);
@@ -177,9 +184,9 @@ public final class RegistryEntryAttachmentSync {
 					}
 				}
 
-				Set<Pair<String, Set<AttachmentEntry>>> valueMaps = new HashSet<>();
+				Set<NamespaceValuePair> valueMaps = new HashSet<>();
 				for (var namespaceEntry : encoded.entrySet()) {
-					valueMaps.add(new Pair<>(namespaceEntry.getKey(), namespaceEntry.getValue()));
+					valueMaps.add(new NamespaceValuePair(namespaceEntry.getKey(), namespaceEntry.getValue()));
 				}
 
 				ENCODED_VALUES_CACHE.put(attachment.id(), new CacheEntry(attachment.registry().getKey().getValue(), valueMaps));
@@ -196,6 +203,11 @@ public final class RegistryEntryAttachmentSync {
 	@Environment(EnvType.CLIENT)
 	@SuppressWarnings("unchecked")
 	private static void receiveSyncPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
+		var packetVersion = buf.readByte();
+		if (packetVersion != PACKET_VERSION) {
+			throw new UnsupportedOperationException("Unable to read RegistryEntryAttachmentSync packet. Please install the same version of QSL as the server you play on");
+		}
+
 		var registryId = buf.readIdentifier();
 		var attachmentId = buf.readIdentifier();
 		var namespace = buf.readString();
