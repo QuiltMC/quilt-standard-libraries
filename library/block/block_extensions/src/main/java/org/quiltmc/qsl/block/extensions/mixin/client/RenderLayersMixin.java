@@ -28,9 +28,6 @@ import net.minecraft.client.render.RenderLayers;
 import net.minecraft.fluid.Fluid;
 
 import org.quiltmc.qsl.block.extensions.impl.client.BlockRenderLayerMapImpl;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(RenderLayers.class)
 public abstract class RenderLayersMixin {
@@ -41,8 +38,10 @@ public abstract class RenderLayersMixin {
 	@Final
 	private static Map<Fluid, RenderLayer> FLUIDS;
 
-	@Inject(method = "<clinit>", at = @At("TAIL"))
-	private static void init(CallbackInfo ci) {
-		BlockRenderLayerMapImpl.initialize(BLOCKS::put, FLUIDS::put);
+	static {
+		BlockRenderLayerMapImpl.initialize(
+				(block, renderLayer) -> BLOCKS.put(block, renderLayer),
+				(fluid, renderLayer) -> FLUIDS.put(fluid, renderLayer)
+		);
 	}
 }
