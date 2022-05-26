@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,12 +101,12 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 
 	@Override
 	public void put(R entry, V value) {
-		RegistryEntryAttachmentHolder.getBuiltin(registry()).putValue(this, entry, value);
+		RegistryEntryAttachmentHolder.getBuiltin(this.registry).putValue(this, entry, value);
 	}
 
 	@Override
 	public void put(TagKey<R> entry, V value) {
-		RegistryEntryAttachmentHolder.getBuiltin(registry()).putValue(this, entry, value);
+		RegistryEntryAttachmentHolder.getBuiltin(this.registry).putValue(this, entry, value);
 	}
 
 	@Override
