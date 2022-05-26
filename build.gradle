@@ -16,7 +16,7 @@ if (version.contains("beta") && !ENV.MAVEN_URL) {
 	version = version.replace(version.substring(version.indexOf("beta.")), "beta." + (beta + 1))
 }
 
-version = version + "+" + Versions.MINECRAFT_VERSION + (System.getenv("SNAPSHOTS_URL") ? "-SNAPSHOT" : "")
+version = version + "+" + Versions.MINECRAFT_VERSION.version() + (System.getenv("SNAPSHOTS_URL") ? "-SNAPSHOT" : "")
 println("QSL: " + version)
 sourceSets {
 	testmod {
@@ -148,6 +148,7 @@ loom {
 		}
 	}
 }
+
 afterEvaluate {
 	def generateQmjForIdea = tasks.create("generateQmjForIdea")
 	project.subprojects.each {
@@ -163,6 +164,16 @@ afterEvaluate {
 					afterSync generateQmjForIdea
 				}
 			}
+		}
+	}
+
+	testmodRemapJar { tsk ->
+		nestedJars.setFrom(Collections.emptySet())
+
+		rootProject.subprojects.stream().filter {
+			it.path.count(':') == 1
+		}.forEach {
+			tsk.nestedJars.from it.tasks.getByName("testmodRemapJar")
 		}
 	}
 }

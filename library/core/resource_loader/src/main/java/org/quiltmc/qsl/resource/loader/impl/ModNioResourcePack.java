@@ -46,6 +46,7 @@ import net.minecraft.util.InvalidIdentifierException;
 
 import org.quiltmc.loader.api.ModMetadata;
 import org.quiltmc.loader.api.QuiltLoader;
+import org.quiltmc.qsl.resource.loader.api.QuiltResourcePack;
 import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
 import org.quiltmc.qsl.resource.loader.mixin.IdentifierAccessor;
 
@@ -53,7 +54,7 @@ import org.quiltmc.qsl.resource.loader.mixin.IdentifierAccessor;
  * A NIO implementation of a mod resource pack.
  */
 @ApiStatus.Internal
-public class ModNioResourcePack extends AbstractFileResourcePack {
+public class ModNioResourcePack extends AbstractFileResourcePack implements QuiltResourcePack {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	/* Metadata */
 	private final String name;
@@ -134,10 +135,10 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 	}
 
 	@Override
-	public Collection<Identifier> findResources(ResourceType type, String namespace, String path, int depth,
+	public Collection<Identifier> findResources(ResourceType type, String namespace, String startingPath, int depth,
 	                                            Predicate<String> pathFilter) {
 		var ids = new ArrayList<Identifier>();
-		String nioPath = path.replace("/", separator);
+		String nioPath = startingPath.replace("/", separator);
 
 		Path namespacePath = this.getPath(type.getDirectory() + "/" + namespace);
 
@@ -162,7 +163,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 								}
 							});
 				} catch (IOException e) {
-					LOGGER.warn("findResources at " + path + " in namespace " + namespace
+					LOGGER.warn("findResources at " + startingPath + " in namespace " + namespace
 							+ ", mod " + this.modInfo.id() + " failed!", e);
 				}
 			}
@@ -238,10 +239,12 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 		return this.name;
 	}
 
+	@Override
 	public Text getDisplayName() {
 		return this.displayName;
 	}
 
+	@Override
 	public ResourcePackActivationType getActivationType() {
 		return this.activationType;
 	}

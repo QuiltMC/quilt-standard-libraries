@@ -55,7 +55,7 @@ public class RecipeTestMod implements ModInitializer {
 
 		RecipeManagerHelper.addRecipes(handler -> {
 			handler.register(new Identifier(NAMESPACE, "test2"),
-					id -> VanillaRecipeBuilders.shapedRecipe(new String[] {"IG", "C#"})
+					id -> VanillaRecipeBuilders.shapedRecipe("IG", "C#")
 							.ingredient('I', Items.IRON_INGOT)
 							.ingredient('G', Items.GOLD_INGOT)
 							.ingredient('C', Items.COAL)
@@ -68,7 +68,7 @@ public class RecipeTestMod implements ModInitializer {
 			handler.replace(VanillaRecipeBuilders.shapelessRecipe(new ItemStack(Items.NETHER_STAR))
 					.ingredient(Items.ACACIA_PLANKS)
 					.build(new Identifier("acacia_button"), ""));
-			handler.replace(VanillaRecipeBuilders.shapedRecipe(new String[] {"A", "C"})
+			handler.replace(VanillaRecipeBuilders.shapedRecipe("A", "C")
 					.ingredient('A', ItemTags.PLANKS)
 					.ingredient('C', Items.COAL)
 					.output(new ItemStack(Items.NETHER_BRICK))

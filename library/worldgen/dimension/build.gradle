@@ -14,7 +14,7 @@ qslModule {
 			testmodOnly("lifecycle_events")
 			testmodOnly("resource_loader")
 		}
-		command {
+		management {
 			testmodOnly("command")
 		}
 	}

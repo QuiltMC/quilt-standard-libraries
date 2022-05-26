@@ -16,13 +16,10 @@
 
 package org.quiltmc.qsl.recipe.api;
 
-import java.util.Collection;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeType;
@@ -129,72 +126,13 @@ public final class RecipeLoadingEvents {
 		 * This interface should not be extended by users.
 		 */
 		@ApiStatus.NonExtendable
-		interface RecipeHandler {
+		interface RecipeHandler extends BaseRecipeHandler {
 			/**
 			 * Replaces a recipe in the {@link net.minecraft.recipe.RecipeManager}.
 			 *
 			 * @param recipe the recipe
 			 */
 			void replace(Recipe<?> recipe);
-
-			/**
-			 * Returns the recipe type of the specified recipe.
-			 *
-			 * @param id the identifier of the recipe
-			 * @return the recipe type if the recipe is present, else {@code null}
-			 */
-			@Nullable RecipeType<?> getTypeOf(Identifier id);
-
-			/**
-			 * Returns whether the {@link net.minecraft.recipe.RecipeManager} contains the specified recipe.
-			 *
-			 * @param id the identifier of the recipe
-			 * @return {@code true} if the recipe is present in the {@link net.minecraft.recipe.RecipeManager}, else {@code false}
-			 */
-			boolean contains(Identifier id);
-
-			/**
-			 * Returns whether the {@link net.minecraft.recipe.RecipeManager} contains the specified recipe of the specified recipe type.
-			 *
-			 * @param id   the identifier of the recipe
-			 * @param type the type of the recipe
-			 * @return {@code true} if the recipe is present in the {@link net.minecraft.recipe.RecipeManager}, else {@code false}
-			 */
-			boolean contains(Identifier id, RecipeType<?> type);
-
-			/**
-			 * Returns the recipe in {@link net.minecraft.recipe.RecipeManager} from its identifier.
-			 *
-			 * @param id the identifier of the recipe
-			 * @return the recipe if present, else {@code null}
-			 */
-			@Nullable Recipe<?> getRecipe(Identifier id);
-
-			/**
-			 * Returns the recipe of the specified recipe type in {@link net.minecraft.recipe.RecipeManager} from its identifier.
-			 *
-			 * @param id   the identifier of the recipe
-			 * @param type the type of the recipe
-			 * @param <T>  the type of the recipe
-			 * @return the recipe if present and of the correct type, else {@code null}
-			 */
-			@Nullable <T extends Recipe<?>> T getRecipe(Identifier id, RecipeType<T> type);
-
-			/**
-			 * Returns all registered recipes.
-			 *
-			 * @return the registered recipes
-			 */
-			Map<RecipeType<?>, Map<Identifier, Recipe<?>>> getRecipes();
-
-			/**
-			 * Returns all registered recipes of the specified type.
-			 *
-			 * @param type the recipe type
-			 * @param <T>  the type of the recipe
-			 * @return all registered recipes of the specified type
-			 */
-			<T extends Recipe<?>> Collection<T> getRecipesOfType(RecipeType<T> type);
 		}
 	}
 
@@ -214,7 +152,7 @@ public final class RecipeLoadingEvents {
 		 * This interface should not be extended by users.
 		 */
 		@ApiStatus.NonExtendable
-		interface RecipeHandler {
+		interface RecipeHandler extends BaseRecipeHandler {
 			/**
 			 * Removes a recipe in the {@link net.minecraft.recipe.RecipeManager}.
 			 *
@@ -237,65 +175,6 @@ public final class RecipeLoadingEvents {
 			 * @param recipeRemovalPredicate the recipe removal predicate
 			 */
 			void removeIf(Predicate<Recipe<?>> recipeRemovalPredicate);
-
-			/**
-			 * Returns the recipe type of the specified recipe.
-			 *
-			 * @param id the identifier of the recipe
-			 * @return the recipe type if the recipe is present, else {@code null}
-			 */
-			@Nullable RecipeType<?> getTypeOf(Identifier id);
-
-			/**
-			 * Returns whether the {@link net.minecraft.recipe.RecipeManager} contains the specified recipe.
-			 *
-			 * @param id the identifier of the recipe
-			 * @return {@code true} if the recipe is present in the {@link net.minecraft.recipe.RecipeManager}, else {@code false}
-			 */
-			boolean contains(Identifier id);
-
-			/**
-			 * Returns whether the {@link net.minecraft.recipe.RecipeManager} contains the specified recipe of the specified recipe type.
-			 *
-			 * @param id   the identifier of the recipe
-			 * @param type the type of the recipe
-			 * @return {@code true} if the recipe is present in the {@link net.minecraft.recipe.RecipeManager}, else {@code false}
-			 */
-			boolean contains(Identifier id, RecipeType<?> type);
-
-			/**
-			 * Returns the recipe in {@link net.minecraft.recipe.RecipeManager} from its identifier.
-			 *
-			 * @param id the identifier of the recipe
-			 * @return the recipe if present, else {@code null}
-			 */
-			@Nullable Recipe<?> getRecipe(Identifier id);
-
-			/**
-			 * Returns the recipe of the specified recipe type in {@link net.minecraft.recipe.RecipeManager} from its identifier.
-			 *
-			 * @param id   the identifier of the recipe
-			 * @param type the type of the recipe
-			 * @param <T>  the type of the recipe
-			 * @return the recipe if present and of the correct type, else {@code null}
-			 */
-			@Nullable <T extends Recipe<?>> T getRecipe(Identifier id, RecipeType<T> type);
-
-			/**
-			 * Returns all registered recipes.
-			 *
-			 * @return the registered recipes
-			 */
-			Map<RecipeType<?>, Map<Identifier, Recipe<?>>> getRecipes();
-
-			/**
-			 * Returns all registered recipes of the specified type.
-			 *
-			 * @param type the recipe type
-			 * @param <T>  the type of the recipe
-			 * @return all registered recipes of the specified type
-			 */
-			<T extends Recipe<?>> Collection<T> getRecipesOfType(RecipeType<T> type);
 		}
 	}
 }
