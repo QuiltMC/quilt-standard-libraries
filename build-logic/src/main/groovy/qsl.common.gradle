@@ -2,6 +2,8 @@
  * Common buildscript for QSL in projects which depend on Minecraft, whether for the API or for running the game.
  */
 
+
+import net.fabricmc.loom.task.RemapJarTask
 import qsl.internal.Versions;
 
 plugins {
@@ -53,9 +55,31 @@ tasks.withType(JavaCompile).configureEach {
 	it.options.release.set(Versions.JAVA_VERSION)
 }
 
+sourceSets {
+	testmod
+}
+
+task testmodJar(type: Jar) {
+	from sourceSets.testmod.output
+	archiveClassifier = "testmod-dev"
+	destinationDirectory = project.file("build/devlibs")
+}
+
+task testmodRemapJar(type: RemapJarTask, dependsOn: testmodJar) {
+	inputFile = testmodJar.archiveFile
+	classpath.from sourceSets.testmod.compileClasspath
+	archiveClassifier = "testmod"
+}
+build.dependsOn testmodRemapJar
+
 loom {
 	// Upstream Loom breaks this so we can't have nice things until the quilt-gradle replacement
 	//shareRemapCaches = true
 	// Enable runtime only log4j, forces mods to use SLF4J for logging.
 	runtimeOnlyLog4j = true
+
+	mixin {
+		add(sourceSets.main, project.name + ".refmap.json")
+		add(sourceSets.testmod, project.name + '_testmod.refmap.json')
+	}
 }

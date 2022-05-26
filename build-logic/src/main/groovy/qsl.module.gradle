@@ -12,12 +12,13 @@
  * `gradle LIBRARY_NAME:MODULE_NAME:TASK_NAME`.
  */
 
+
 import qsl.internal.Git
-import qsl.internal.GroovyXml
 import qsl.internal.Versions
 import qsl.internal.extension.QslModuleExtension
 import qsl.internal.extension.QslModuleExtensionImpl
-import qsl.internal.dependency.QslLibraryDependency
+
+import java.nio.file.Files
 
 plugins {
 	id("java-library")
@@ -100,6 +101,23 @@ sourceSets {
 	testmod {
 		compileClasspath += sourceSets.main.compileClasspath
 		runtimeClasspath += sourceSets.main.runtimeClasspath
+	}
+}
+
+processTestmodResources {
+	filesMatching("quilt.mod.json") {
+		boolean found = false
+
+		Files.readAllLines(it.file.toPath()).stream().forEach {
+			// Look for load_type of "always"
+			if (it.contains("\"load_type\": \"always\"")) {
+				found = true
+			}
+		}
+
+		if (!found) {
+			throw new GradleException("Testmod resource $it does not contain a load_type of \"always\"")
+		}
 	}
 }
 

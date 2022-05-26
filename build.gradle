@@ -118,6 +118,16 @@ afterEvaluate {
 			}
 		}
 	}
+
+	testmodRemapJar { tsk ->
+		nestedJars.setFrom(Collections.emptySet())
+
+		rootProject.subprojects.stream().filter {
+			it.path.count(':') == 1
+		}.forEach {
+			tsk.nestedJars.from it.tasks.getByName("testmodRemapJar")
+		}
+	}
 }
 
 task checkVersion {
