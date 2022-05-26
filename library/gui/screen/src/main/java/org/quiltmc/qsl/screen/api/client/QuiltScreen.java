@@ -28,37 +28,40 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.item.ItemRenderer;
 
-import org.quiltmc.qsl.base.api.util.InjectedInterface;
-
 /**
- * Utility methods related to {@link Screen}s.
+ * An interface implemented by {@link Screen} through a mixin in order to expose QSL extensions and also provide utility methods.
  *
  * @see ScreenEvents
  */
 @Environment(EnvType.CLIENT)
-@InjectedInterface(Screen.class)
-public interface QuiltScreenExtensions {
+public interface QuiltScreen {
 	/**
-	 * Gets all of a screen's button widgets.
-	 * <p>
-	 * The provided list allows for addition and removal of buttons from the screen.
+	 * Gets all of the screen's button widgets.
+	 *
+	 * <p>The provided list allows for addition and removal of buttons from the screen.
 	 * This method should be preferred over adding buttons directly to a screen's {@link Screen#children() child elements}.
 	 *
-	 * @return a list of all of a screen's buttons
+	 * @return a list of all of the screen's buttons
 	 */
 	List<ClickableWidget> getButtons();
 
 	/**
+	 * Gets the screen's internal item renderer.
+	 *
 	 * {@return the screen's item renderer}
 	 */
 	ItemRenderer getItemRenderer();
 
 	/**
+	 * Gets the screen's internal text renderer.
+	 *
 	 * {@return the screen's text renderer}
 	 */
 	TextRenderer getTextRenderer();
 
 	/**
+	 * Gets the screen's internal Minecraft client instance.
+	 *
 	 * {@return the Minecraft client instance}
 	 */
 	MinecraftClient getClient();

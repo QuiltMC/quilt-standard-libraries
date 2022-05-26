@@ -13,7 +13,4 @@ qslModule {
 			api("qsl_base")
 		}
 	}
-	injectedInterface("net/minecraft/class_437") {
-		values = ["org/quiltmc/qsl/screen/api/client/QuiltScreenExtensions"]
-	}
 }

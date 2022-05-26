@@ -28,8 +28,8 @@ import org.quiltmc.qsl.base.api.util.TriState;
 
 /**
  * Events related to use of the keyboard in a {@link Screen}.
- * <p>
- * Events are fired in the following order:
+ *
+ * <p>Events are fired in the following order:
  * <pre>{@code AllowX -> BeforeX -> AfterX}</pre>
  * If the result of the Allow event is {@link TriState#FALSE}, then Before and After are not called.
  *

@@ -41,7 +41,7 @@ abstract class MouseMixin {
 	@Unique
 	private Screen quilt$currentScreen;
 	@Unique
-	private Double quilt$horizontalScrollAmount;
+	private Double quilt$scrollDistanceX;
 
 	// Synthetic method method_1611([ZDDI)V -> lambda in Screen.wrapScreenError in Mouse.onMouseButton
 	@Inject(method = "method_1611([ZLnet/minecraft/client/gui/screen/Screen;DDI)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z"), cancellable = true)
@@ -119,7 +119,7 @@ abstract class MouseMixin {
 	}
 
 	@Inject(method = "onMouseScroll", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseScrolled(DDD)Z"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	private void beforeMouseScrollEvent(long window, double scrollDeltaX, double scrollDeltaY, CallbackInfo ci, double verticalAmount, double mouseX, double mouseY) {
+	private void beforeMouseScrollEvent(long window, double scrollDeltaX, double scrollDeltaY, CallbackInfo ci, double scrollDistanceY, double mouseX, double mouseY) {
 		// Store the screen in a variable in case someone tries to change the screen during this before event.
 		// If someone changes the screen, the after event will likely have class cast exceptions or throw a NPE.
 		this.quilt$currentScreen = this.client.currentScreen;
@@ -128,27 +128,27 @@ abstract class MouseMixin {
 			return;
 		}
 
-		// Apply same calculations to horizontal scroll as vertical scroll amount has
-		this.quilt$horizontalScrollAmount = this.client.options.discreteMouseScroll ? Math.signum(scrollDeltaX) : scrollDeltaX * this.client.options.mouseWheelSensitivity;
+		// Apply same calculations to horizontal scroll as vertical scroll distance has
+		this.quilt$scrollDistanceX = this.client.options.discreteMouseScroll ? Math.signum(scrollDeltaX) : scrollDeltaX * this.client.options.mouseWheelSensitivity;
 
-		if (ScreenMouseEvents.ALLOW_MOUSE_SCROLL.invoker().allowMouseScroll(this.quilt$currentScreen, mouseX, mouseY, this.quilt$horizontalScrollAmount, verticalAmount) == TriState.FALSE) {
+		if (ScreenMouseEvents.ALLOW_MOUSE_SCROLL.invoker().allowMouseScroll(this.quilt$currentScreen, mouseX, mouseY, this.quilt$scrollDistanceX, scrollDistanceY) == TriState.FALSE) {
 			this.quilt$currentScreen = null;
-			this.quilt$horizontalScrollAmount = null;
+			this.quilt$scrollDistanceX = null;
 			ci.cancel();
 			return;
 		}
 
-		ScreenMouseEvents.BEFORE_MOUSE_SCROLL.invoker().beforeMouseScroll(this.quilt$currentScreen, mouseX, mouseY, this.quilt$horizontalScrollAmount, verticalAmount);
+		ScreenMouseEvents.BEFORE_MOUSE_SCROLL.invoker().beforeMouseScroll(this.quilt$currentScreen, mouseX, mouseY, this.quilt$scrollDistanceX, scrollDistanceY);
 	}
 
 	@Inject(method = "onMouseScroll", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseScrolled(DDD)Z", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
-	private void afterMouseScrollEvent(long window, double scrollDeltaX, double scrollDeltaY, CallbackInfo ci, double verticalAmount, double mouseX, double mouseY) {
+	private void afterMouseScrollEvent(long window, double scrollDeltaX, double scrollDeltaY, CallbackInfo ci, double scrollDistanceY, double mouseX, double mouseY) {
 		if (this.quilt$currentScreen == null) {
 			return;
 		}
 
-		ScreenMouseEvents.AFTER_MOUSE_SCROLL.invoker().afterMouseScroll(this.quilt$currentScreen, mouseX, mouseY, this.quilt$horizontalScrollAmount, verticalAmount);
+		ScreenMouseEvents.AFTER_MOUSE_SCROLL.invoker().afterMouseScroll(this.quilt$currentScreen, mouseX, mouseY, this.quilt$scrollDistanceX, scrollDistanceY);
 		this.quilt$currentScreen = null;
-		this.quilt$horizontalScrollAmount = null;
+		this.quilt$scrollDistanceX = null;
 	}
 }
