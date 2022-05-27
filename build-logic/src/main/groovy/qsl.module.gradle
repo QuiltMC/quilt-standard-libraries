@@ -178,17 +178,20 @@ javadoc {
 				"https://asm.ow2.io/javadoc/",
 				"https://docs.oracle.com/en/java/javase/16/docs/api/",
 				"https://jenkins.liteloader.com/job/Mixin/javadoc/",
-				"https://logging.apache.org/log4j/2.x/log4j-api/apidocs/"
-				// TODO: Javadoc for mappings
+				"https://logging.apache.org/log4j/2.x/log4j-api/apidocs/",
+				"https://maven.quiltmc.org/repository/release/org/quiltmc/quilt-mappings/${Versions.MINECRAFT_VERSION}+build.${Versions.MAPPINGS_BUILD}/quilt-mappings-${Versions.MINECRAFT_VERSION}+build.${Versions.MAPPINGS_BUILD}-javadoc.jar/"
 		)
 
-		// TODO: Restrict this to api packages only.
 		// Disable the overzealous doclint tool in Java 8
 		addStringOption("Xdoclint:none", "-quiet")
 		tags(
 				"author:a",
 				'reason:m:"Reason:"'
 		)
+	}
+
+	exclude {
+		it.file.absolutePath.contains("mixin") || it.file.absolutePath.contains("impl")
 	}
 
 	failOnError false
