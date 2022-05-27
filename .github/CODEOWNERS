@@ -1,15 +1,15 @@
 # The core team takes responsibility for anything not delegated to a subteam
-* @qsl-core-library
+* @QuiltMC/qsl-core-library
 
 # Individual subteams. Teams with less than two members are "inactive" and commented out.
-# /library/block/ @qsl-block-library
-/library/core/ @qsl-core-library
-/library/data/ @qsl-data-library
-/library/entity/ @qsl-entity-library
-# /library/gui/ @qsl-gui-library
-# /library/item/ @qsl-item-library
-# /library/management/ @qsl-management-library
-# /library/other_content/ @qsl-other-content-library
-# /library/rendering/ @qsl-rendering-library
-# /library/transfer/ @qsl-transfer-library
-/library/worldgen/ @qsl-worldgen-library
+# /library/block/ @QuiltMC/qsl-block-library
+/library/core/ @QuiltMC/qsl-core-library
+/library/data/ @QuiltMC/qsl-data-library
+/library/entity/ @QuiltMC/qsl-entity-library
+# /library/gui/ @QuiltMC/qsl-gui-library
+# /library/item/ @QuiltMC/qsl-item-library
+# /library/management/ @QuiltMC/qsl-management-library
+# /library/other_content/ @QuiltMC/qsl-other-content-library
+# /library/rendering/ @QuiltMC/qsl-rendering-library
+# /library/transfer/ @QuiltMC/qsl-transfer-library
+/library/worldgen/ @QuiltMC/qsl-worldgen-library
