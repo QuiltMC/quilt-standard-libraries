@@ -37,8 +37,8 @@ import net.minecraft.client.render.item.ItemRenderer;
 public interface QuiltScreen {
 	/**
 	 * Gets all of the screen's button widgets.
-	 *
-	 * <p>The provided list allows for addition and removal of buttons from the screen.
+	 * <p>
+	 * The provided list allows for addition and removal of buttons from the screen.
 	 * This method should be preferred over adding buttons directly to a screen's {@link Screen#children() child elements}.
 	 *
 	 * @return a list of all of the screen's buttons

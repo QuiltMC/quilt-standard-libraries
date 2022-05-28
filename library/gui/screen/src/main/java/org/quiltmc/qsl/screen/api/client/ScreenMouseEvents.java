@@ -128,8 +128,8 @@ public final class ScreenMouseEvents {
 
 	/**
 	 * An event that is called after mouse scrolling is processed for a screen.
-	 *
-	 * <p>This event tracks amount of vertical and horizontal scroll.
+	 * <p>
+	 * This event tracks amount of vertical and horizontal scroll.
 	 */
 	public static final Event<BeforeMouseScroll> BEFORE_MOUSE_SCROLL = Event.create(BeforeMouseScroll.class, callbacks -> (screen, mouseX, mouseY, scrollDistanceX, scrollDistanceY) -> {
 		for (var callback : callbacks) {
@@ -139,8 +139,8 @@ public final class ScreenMouseEvents {
 
 	/**
 	 * An event that is called after mouse scrolling is processed for a screen.
-	 *
-	 * <p>This event tracks amount a mouse was scrolled both vertically and horizontally.
+	 * <p>
+	 * This event tracks amount a mouse was scrolled both vertically and horizontally.
 	 */
 	public static final Event<AfterMouseScroll> AFTER_MOUSE_SCROLL = Event.create(AfterMouseScroll.class, callbacks -> (screen, mouseX, mouseY, scrollDistanceX, scrollDistanceY) -> {
 		for (var callback : callbacks) {
