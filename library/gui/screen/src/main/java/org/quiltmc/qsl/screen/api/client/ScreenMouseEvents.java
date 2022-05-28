@@ -109,8 +109,8 @@ public final class ScreenMouseEvents {
 
 	/**
 	 * An event that is checks if the mouse should be allowed to scroll in a screen.
-	 *
-	 * <p>This event tracks amount of vertical and horizontal scroll.
+	 * <p>
+	 * This event tracks amount of vertical and horizontal scroll.
 	 */
 	public static final Event<AllowMouseScroll> ALLOW_MOUSE_SCROLL = Event.create(AllowMouseScroll.class, callbacks -> (screen, mouseX, mouseY, scrollDistanceX, scrollDistanceY) -> {
 		TriState state = TriState.DEFAULT;

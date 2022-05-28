@@ -29,11 +29,11 @@ import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 
 /**
  * Holds events related to {@link Screen}s.
- *
- * <p>A screen being (re)initialized will reset the screen to its default state,
+ * <p>
+ * A screen being (re)initialized will reset the screen to its default state,
  * therefore reverting all changes a mod developer may have applied to a screen.
- *
- * <p>The primary entrypoint into a screen is when it is being opened, this is signified by an event {@link ScreenEvents#BEFORE_INIT before}
+ * <p>
+ * The primary entrypoint into a screen is when it is being opened, this is signified by an event {@link ScreenEvents#BEFORE_INIT before}
  * and {@link ScreenEvents#AFTER_INIT after} initialization of the screen.
  *
  * @see QuiltScreen
