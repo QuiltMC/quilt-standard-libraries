@@ -40,7 +40,7 @@ Everything within this section is the definitions for the actual PR policy follo
 
 **Description**: Used for pull requests that make internal refactors and do not change any API, such as bugfixes or buildscript changes.
 
-**Required Approvals**: 1
+**Required Approvals**: 2
 - At least 1 approval must come directly from each library team whose code the pull request modifies.
 
 **Final Comment Period**: 3 days
