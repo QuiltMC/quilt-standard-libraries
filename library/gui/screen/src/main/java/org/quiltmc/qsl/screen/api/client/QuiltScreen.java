@@ -46,22 +46,16 @@ public interface QuiltScreen {
 	List<ClickableWidget> getButtons();
 
 	/**
-	 * Gets the screen's internal item renderer.
-	 *
 	 * {@return the screen's item renderer}
 	 */
 	ItemRenderer getItemRenderer();
 
 	/**
-	 * Gets the screen's internal text renderer.
-	 *
 	 * {@return the screen's text renderer}
 	 */
 	TextRenderer getTextRenderer();
 
 	/**
-	 * Gets the screen's internal Minecraft client instance.
-	 *
 	 * {@return the Minecraft client instance}
 	 */
 	MinecraftClient getClient();
