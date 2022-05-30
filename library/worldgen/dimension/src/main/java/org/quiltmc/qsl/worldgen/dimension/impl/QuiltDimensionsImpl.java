@@ -18,6 +18,7 @@
 package org.quiltmc.qsl.worldgen.dimension.impl;
 
 import com.google.common.base.Preconditions;
+import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.entity.Entity;
@@ -41,6 +42,19 @@ public class QuiltDimensionsImpl {
 		access.setTeleportTarget(location);
 
 		try {
+			// Fast path for teleporting within the same dimension.
+			if (entity.getWorld() == destinationWorld) {
+				if (entity instanceof ServerPlayerEntity serverPlayerEntity) {
+					serverPlayerEntity.networkHandler.requestTeleport(location.position.x, location.position.y, location.position.z, location.yaw, entity.getPitch());
+				} else {
+					entity.refreshPositionAndAngles(location.position.x, location.position.y, location.position.z, location.yaw, entity.getPitch());
+				}
+
+				entity.setVelocity(location.velocity);
+				entity.setHeadYaw(location.yaw);
+
+				return (E) entity;
+			}
 			return (E) entity.moveToWorld(destinationWorld);
 		} finally {
 			// Always clean up!
