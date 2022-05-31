@@ -112,11 +112,11 @@ public final class ScreenMouseEvents {
 	 * <p>
 	 * This event tracks amount of vertical and horizontal scroll.
 	 */
-	public static final Event<AllowMouseScroll> ALLOW_MOUSE_SCROLL = Event.create(AllowMouseScroll.class, callbacks -> (screen, mouseX, mouseY, horizontalAmount, verticalAmount) -> {
+	public static final Event<AllowMouseScroll> ALLOW_MOUSE_SCROLL = Event.create(AllowMouseScroll.class, callbacks -> (screen, mouseX, mouseY, scrollDistanceX, scrollDistanceY) -> {
 		TriState state = TriState.DEFAULT;
 
 		for (var callback : callbacks) {
-			state = callback.allowMouseScroll(screen, mouseX, mouseY, horizontalAmount, verticalAmount);
+			state = callback.allowMouseScroll(screen, mouseX, mouseY, scrollDistanceX, scrollDistanceY);
 
 			if (state != TriState.DEFAULT) {
 				return state;
@@ -131,9 +131,9 @@ public final class ScreenMouseEvents {
 	 * <p>
 	 * This event tracks amount of vertical and horizontal scroll.
 	 */
-	public static final Event<BeforeMouseScroll> BEFORE_MOUSE_SCROLL = Event.create(BeforeMouseScroll.class, callbacks -> (screen, mouseX, mouseY, horizontalAmount, verticalAmount) -> {
+	public static final Event<BeforeMouseScroll> BEFORE_MOUSE_SCROLL = Event.create(BeforeMouseScroll.class, callbacks -> (screen, mouseX, mouseY, scrollDistanceX, scrollDistanceY) -> {
 		for (var callback : callbacks) {
-			callback.beforeMouseScroll(screen, mouseX, mouseY, horizontalAmount, verticalAmount);
+			callback.beforeMouseScroll(screen, mouseX, mouseY, scrollDistanceX, scrollDistanceY);
 		}
 	});
 
@@ -142,9 +142,9 @@ public final class ScreenMouseEvents {
 	 * <p>
 	 * This event tracks amount a mouse was scrolled both vertically and horizontally.
 	 */
-	public static final Event<AfterMouseScroll> AFTER_MOUSE_SCROLL = Event.create(AfterMouseScroll.class, callbacks -> (screen, mouseX, mouseY, horizontalAmount, verticalAmount) -> {
+	public static final Event<AfterMouseScroll> AFTER_MOUSE_SCROLL = Event.create(AfterMouseScroll.class, callbacks -> (screen, mouseX, mouseY, scrollDistanceX, scrollDistanceY) -> {
 		for (var callback : callbacks) {
-			callback.afterMouseScroll(screen, mouseX, mouseY, horizontalAmount, verticalAmount);
+			callback.afterMouseScroll(screen, mouseX, mouseY, scrollDistanceX, scrollDistanceY);
 		}
 	});
 
@@ -240,11 +240,11 @@ public final class ScreenMouseEvents {
 		 *
 		 * @param mouseX           the X position of the mouse
 		 * @param mouseY           the Y position of the mouse
-		 * @param horizontalAmount the horizontal scroll amount
-		 * @param verticalAmount   the vertical scroll amount
+		 * @param scrollDistanceX  the horizontal scroll distance
+		 * @param scrollDistanceY  the vertical scroll distance
 		 * @return whether the mouse should be allowed to scroll
 		 */
-		TriState allowMouseScroll(Screen screen, double mouseX, double mouseY, double horizontalAmount, double verticalAmount);
+		TriState allowMouseScroll(Screen screen, double mouseX, double mouseY, double scrollDistanceX, double scrollDistanceY);
 	}
 
 	@Environment(EnvType.CLIENT)
@@ -255,10 +255,10 @@ public final class ScreenMouseEvents {
 		 *
 		 * @param mouseX           the X position of the mouse
 		 * @param mouseY           the Y position of the mouse
-		 * @param horizontalAmount the horizontal scroll amount
-		 * @param verticalAmount   the vertical scroll amount
+		 * @param scrollDistanceX  the horizontal scroll distance
+		 * @param scrollDistanceY  the vertical scroll distance
 		 */
-		void beforeMouseScroll(Screen screen, double mouseX, double mouseY, double horizontalAmount, double verticalAmount);
+		void beforeMouseScroll(Screen screen, double mouseX, double mouseY, double scrollDistanceX, double scrollDistanceY);
 	}
 
 	@Environment(EnvType.CLIENT)
@@ -269,9 +269,9 @@ public final class ScreenMouseEvents {
 		 *
 		 * @param mouseX           the X position of the mouse
 		 * @param mouseY           the Y position of the mouse
-		 * @param horizontalAmount the horizontal scroll amount
-		 * @param verticalAmount   the vertical scroll amount
+		 * @param scrollDistanceX  the horizontal scroll distance
+		 * @param scrollDistanceY  the vertical scroll distance
 		 */
-		void afterMouseScroll(Screen screen, double mouseX, double mouseY, double horizontalAmount, double verticalAmount);
+		void afterMouseScroll(Screen screen, double mouseX, double mouseY, double scrollDistanceX, double scrollDistanceY);
 	}
 }

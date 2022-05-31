@@ -33,6 +33,7 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 
+import org.quiltmc.qsl.screen.api.client.QuiltScreen;
 import org.quiltmc.qsl.screen.api.client.ScreenEvents;
 
 public class ScreenTests implements ScreenEvents.AfterInit, ScreenEvents.AfterRender {
@@ -42,7 +43,7 @@ public class ScreenTests implements ScreenEvents.AfterInit, ScreenEvents.AfterRe
 	@Override
 	public void afterInit(Screen screen, MinecraftClient client, int scaledWidth, int scaledHeight) {
 		if (screen instanceof TitleScreen) {
-			final List<ClickableWidget> buttons = screen.getButtons();
+			final List<ClickableWidget> buttons = ((QuiltScreen) screen).getButtons();
 
 			buttons.add(
 					new ButtonWidget((screen.width / 2) + 120, ((screen.height / 4) + 95), 70, 20, new LiteralText("Hello world!!"),
