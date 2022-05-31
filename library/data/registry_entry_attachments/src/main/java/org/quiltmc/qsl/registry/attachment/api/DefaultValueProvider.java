@@ -96,7 +96,7 @@ public interface DefaultValueProvider<R, V> {
 		 * {@return the error string of this result}
 		 */
 		public String error() {
-			if (this.hasFailed) {
+			if (!this.hasFailed) {
 				throw new IllegalStateException("Result does not have an error!");
 			}
 			return this.error;
