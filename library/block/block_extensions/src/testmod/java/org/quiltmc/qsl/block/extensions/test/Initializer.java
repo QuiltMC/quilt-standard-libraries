@@ -16,12 +16,11 @@
 
 package org.quiltmc.qsl.block.extensions.test;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.GlassBlock;
-import net.minecraft.block.MapColor;
-import net.minecraft.block.Material;
+import net.minecraft.block.*;
 import net.minecraft.block.piston.PistonBehavior;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -36,12 +35,31 @@ public final class Initializer implements ModInitializer {
 			.build();
 
 	public static final Block BLOCK = Registry.register(Registry.BLOCK,
-			new Identifier("quilt_block_extensions_testmod", "test_block"),
+			testModId("test_block"),
 			new GlassBlock(QuiltBlockSettings.copyOf(Blocks.GLASS)
 					.material(MATERIAL)
 					.luminance(15)));
 
+	public static Identifier testModId(String path) {
+		return new Identifier("quilt_block_extensions_testmod", path);
+	}
+
+	public static void registerBlockAndItem(Identifier identifier, Block block) {
+		Registry.register(Registry.BLOCK, identifier, block);
+		Registry.register(Registry.ITEM, identifier, new BlockItem(block, new Item.Settings().group(ItemGroup.MATERIALS)));
+
+	}
+
+	public static final Block QUILT_BLOCK = new TestBlock(QuiltBlockSettings.of(Material.STONE), Blocks.OAK_STAIRS, Blocks.QUARTZ_PILLAR);
+	public static final Block QUILT_BLOCK_2 = new TestBlock(QuiltBlockSettings.of(Material.STONE), Blocks.OAK_SLAB, Blocks.QUARTZ_PILLAR);
+	public static final Block QUILT_BLOCK_3 = new TestBlock(QuiltBlockSettings.of(Material.STONE), Blocks.ANDESITE_WALL, Blocks.OAK_SLAB);
+	public static final Block QUILT_BLOCK_4 = new TestBlock(QuiltBlockSettings.of(Material.STONE), Blocks.POTTED_ALLIUM, Blocks.LANTERN);
+
 	@Override
 	public void onInitialize(ModContainer mod) {
+		registerBlockAndItem(testModId("oak_stairs__quartz_pillar"), QUILT_BLOCK);
+		registerBlockAndItem(testModId("oak_slab__quartz_pillar"), QUILT_BLOCK_2);
+		registerBlockAndItem(testModId("andesite_wall__oak_slab"), QUILT_BLOCK_3);
+		registerBlockAndItem(testModId("potted_allium__lantern"), QUILT_BLOCK_4);
 	}
 }
