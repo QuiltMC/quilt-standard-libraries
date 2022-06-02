@@ -14,34 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.quiltmc.qsl.worldgen.dimension.mixin;
 
+package org.quiltmc.qsl.worldgen.dimension.mixin;
 
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.Lifecycle;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.world.gen.GeneratorOptions;
-import net.minecraft.world.level.storage.LevelStorage;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.world.gen.GeneratorOptions;
+import net.minecraft.world.level.storage.LevelStorage;
+
 /**
- * After removing a dimension mod or a dimension datapack, Minecraft may fail to enter
+ * After removing a dimension mod or a dimension data pack, Minecraft may fail to enter
  * the world, because it fails to deserialize the chunk generator of the custom dimensions in file {@code level.dat}
  * This mixin will remove the custom dimensions from the nbt tag, so the deserializer and DFU cannot see custom
  * dimensions and won't cause errors.
  * The custom dimensions will be re-added later.
- *
- * <p>This Mixin changes a vanilla behavior that is deemed as a bug (MC-197860). In vanilla, the custom dimension
- * is not removed after uninstalling the dimension datapack.
+ * <p>
+ * This Mixin changes a vanilla behavior that is deemed as a bug (MC-197860). In vanilla, the custom dimension
+ * is not removed after uninstalling the dimension data pack.
  * This makes custom dimensions non-removable. Most players don't want this behavior.
- * With this Mixin, custom dimensions will be removed when its datapack is removed.
+ * With this Mixin, custom dimensions will be removed when its data pack is removed.
  */
 @Mixin(LevelStorage.class)
 public class LevelStorageBugfixMixin {
@@ -59,19 +60,18 @@ public class LevelStorageBugfixMixin {
 	}
 
 	/**
-	 * Removes all non-vanilla dimensions from the tag. The custom dimensions will be re-added later from the datapacks.
+	 * Removes all non-vanilla dimensions from the tag. The custom dimensions will be re-added later from the data packs.
 	 */
 	@Unique
 	private static void quilt$removeNonVanillaDimensionsFromNbt(NbtCompound worldGenSettings) {
-		String[] vanillaDimensionIds =
-				new String[]{"minecraft:overworld", "minecraft:the_nether", "minecraft:the_end"};
+		var vanillaDimensionIds = new String[] {"minecraft:overworld", "minecraft:the_nether", "minecraft:the_end"};
 
 		NbtCompound dimensions = worldGenSettings.getCompound("dimensions");
 
 		if (dimensions.getSize() > vanillaDimensionIds.length) {
-			NbtCompound newDimensions = new NbtCompound();
+			var newDimensions = new NbtCompound();
 
-			for (String dimId : vanillaDimensionIds) {
+			for (var dimId : vanillaDimensionIds) {
 				if (dimensions.contains(dimId)) {
 					newDimensions.put(dimId, dimensions.getCompound(dimId));
 				}
