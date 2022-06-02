@@ -6,7 +6,7 @@
 /library/core/ @QuiltMC/qsl-core-library
 /library/data/ @QuiltMC/qsl-data-library
 /library/entity/ @QuiltMC/qsl-entity-library
-# /library/gui/ @QuiltMC/qsl-gui-library
+/library/gui/ @QuiltMC/qsl-gui-library
 # /library/item/ @QuiltMC/qsl-item-library
 # /library/management/ @QuiltMC/qsl-management-library
 # /library/other_content/ @QuiltMC/qsl-other-content-library
