@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,21 @@
 
 package org.quiltmc.qsl.registry.attachment.impl;
 
-import static org.quiltmc.qsl.registry.attachment.impl.Initializer.id;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.Table;
-import com.google.common.collect.Tables;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
+import org.quiltmc.qsl.networking.api.PacketByteBufs;
+import org.quiltmc.qsl.networking.api.PacketSender;
+import org.quiltmc.qsl.networking.api.ServerPlayConnectionEvents;
+import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
+import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
+import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -39,26 +40,48 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.registry.Registry;
 
-import org.quiltmc.qsl.networking.api.PacketByteBufs;
-import org.quiltmc.qsl.networking.api.PacketSender;
-import org.quiltmc.qsl.networking.api.ServerPlayConnectionEvents;
-import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
-import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
-import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import static org.quiltmc.qsl.registry.attachment.impl.Initializer.id;
 
 @ApiStatus.Internal
 public final class RegistryEntryAttachmentSync {
+	// TODO: Update this value when packets are changed
+	private static final byte PACKET_VERSION = 1;
+
 	private RegistryEntryAttachmentSync() {
 	}
 
 	public static final Identifier PACKET_ID = id("sync");
 
-	public record CacheEntry(Identifier registryId,
-	                         Set<Pair<String, NbtCompound>> valueMaps) {
+	private record NamespaceValuePair(String namespace, Set<AttachmentEntry> entries){
+	}
+
+	private record CacheEntry(Identifier registryId, Set<NamespaceValuePair> namespacesToValues) {
+	}
+
+	private record AttachmentEntry(String path, boolean isTag, NbtElement value) {
+		public void write(PacketByteBuf buf) {
+			buf.writeString(path);
+			buf.writeBoolean(isTag);
+
+			NbtCompound compound = new NbtCompound();
+			compound.put("value", value);
+			buf.writeNbt(compound);
+		}
+
+		public static AttachmentEntry read(PacketByteBuf buf) {
+			String path = buf.readString();
+			boolean isTag = buf.readBoolean();
+			NbtElement value = buf.readNbt().get("value");
+
+			return new AttachmentEntry(path, isTag, value);
+		}
 	}
 
 	public static final Map<Identifier, CacheEntry> ENCODED_VALUES_CACHE = new Object2ReferenceOpenHashMap<>();
@@ -77,12 +100,16 @@ public final class RegistryEntryAttachmentSync {
 		var bufs = new ArrayList<PacketByteBuf>();
 
 		for (var entry : ENCODED_VALUES_CACHE.entrySet()) {
-			for (var valueMap : entry.getValue().valueMaps()) {
+			for (var valueMap : entry.getValue().namespacesToValues()) {
 				var buf = PacketByteBufs.create();
+				buf.writeByte(PACKET_VERSION);
 				buf.writeIdentifier(entry.getValue().registryId());
 				buf.writeIdentifier(entry.getKey());
-				buf.writeString(valueMap.getLeft());
-				buf.writeNbt(valueMap.getRight());
+				buf.writeString(valueMap.namespace());
+				buf.writeInt(valueMap.entries().size());
+				for (AttachmentEntry attachmentEntry : valueMap.entries()) {
+					attachmentEntry.write(buf);
+				}
 				bufs.add(buf);
 			}
 		}
@@ -123,8 +150,8 @@ public final class RegistryEntryAttachmentSync {
 					continue;
 				}
 
-				@SuppressWarnings("UnstableApiUsage")
-				Table<String, String, NbtElement> myTable = Tables.newCustomTable(new Object2ReferenceOpenHashMap<>(), Object2ReferenceOpenHashMap::new);
+				// Namespace, Attachment
+				Map<String, Set<AttachmentEntry>> encoded = new HashMap<>();
 				Map<Object, Object> entryValues = dataHolder.valueTable.rowMap().get(attachmentEntry.getValue());
 				if (entryValues != null) {
 					for (var valueEntry : entryValues.entrySet()) {
@@ -134,25 +161,32 @@ public final class RegistryEntryAttachmentSync {
 									.formatted(attachment.id(), valueEntry.getKey()));
 						}
 
-						myTable.put(entryId.getNamespace(), entryId.getPath(), attachment.codec()
+						encoded.computeIfAbsent(entryId.getNamespace(), id -> new HashSet<>()).add(
+								new AttachmentEntry(entryId.getPath(), false, attachment.codec()
 								.encodeStart(NbtOps.INSTANCE, valueEntry.getValue())
 								.getOrThrow(false, msg -> {
 									throw new IllegalStateException("Failed to encode value for attachment %s of registry entry %s: %s"
 											.formatted(attachment.id(), entryId, msg));
-								}));
+								})));
 					}
 				}
 
-				Set<Pair<String, NbtCompound>> valueMaps = new HashSet<>();
-				for (var tableEntry : myTable.rowMap().entrySet()) {
-					/*var valueMap = new NbtCompound();
-					for (var valueEntry : tableEntry.getValue().entrySet()) {
-						valueMap.put(valueEntry.getKey(), valueEntry.getValue());
-					}*/
-					// this is probably a horrible idea lmao
-					var valueMap = new NbtCompound(Map.copyOf(tableEntry.getValue())) {
-					};
-					valueMaps.add(new Pair<>(tableEntry.getKey(), valueMap));
+				Map<TagKey<Object>, Object> entryTagValues = dataHolder.valueTagTable.rowMap().get(attachmentEntry.getValue());
+				if (entryTagValues != null) {
+					for (var valueEntry : entryTagValues.entrySet()) {
+						encoded.computeIfAbsent(valueEntry.getKey().id().getNamespace(), id -> new HashSet<>()).add(
+								new AttachmentEntry(valueEntry.getKey().id().getPath(), true, attachment.codec()
+										.encodeStart(NbtOps.INSTANCE, valueEntry.getValue())
+										.getOrThrow(false, msg -> {
+											throw new IllegalStateException("Failed to encode value for attachment tag %s of registry %s: %s"
+													.formatted(attachment.id(), valueEntry.getKey().id(), msg));
+										})));
+					}
+				}
+
+				Set<NamespaceValuePair> valueMaps = new HashSet<>();
+				for (var namespaceEntry : encoded.entrySet()) {
+					valueMaps.add(new NamespaceValuePair(namespaceEntry.getKey(), namespaceEntry.getValue()));
 				}
 
 				ENCODED_VALUES_CACHE.put(attachment.id(), new CacheEntry(attachment.registry().getKey().getValue(), valueMaps));
@@ -169,10 +203,22 @@ public final class RegistryEntryAttachmentSync {
 	@Environment(EnvType.CLIENT)
 	@SuppressWarnings("unchecked")
 	private static void receiveSyncPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
+		var packetVersion = buf.readByte();
+		if (packetVersion != PACKET_VERSION) {
+			throw new UnsupportedOperationException("Unable to read RegistryEntryAttachmentSync packet. Please install the same version of QSL as the server you play on");
+		}
+
 		var registryId = buf.readIdentifier();
 		var attachmentId = buf.readIdentifier();
 		var namespace = buf.readString();
-		var valueMap = buf.readNbt();
+
+		var size = buf.readInt();
+		Set<AttachmentEntry> attachments = new HashSet<>();
+
+		while (size > 0) {
+			attachments.add(AttachmentEntry.read(buf));
+			size--;
+		}
 
 		client.execute(() -> {
 			var registry = (Registry<Object>) Registry.REGISTRIES.get(registryId);
@@ -187,8 +233,8 @@ public final class RegistryEntryAttachmentSync {
 
 			var holder = RegistryEntryAttachmentHolder.getData(registry);
 			holder.valueTable.row(attachment).clear();
-			for (var entryKey : valueMap.getKeys()) {
-				var entryId = new Identifier(namespace, entryKey);
+			for (AttachmentEntry attachmentEntry : attachments) {
+				var entryId = new Identifier(namespace, attachmentEntry.path);
 
 				var registryObject = registry.get(entryId);
 				if (registryObject == null) {
@@ -196,13 +242,17 @@ public final class RegistryEntryAttachmentSync {
 				}
 
 				var parsedValue = attachment.codec()
-						.parse(NbtOps.INSTANCE, valueMap.get(entryKey))
+						.parse(NbtOps.INSTANCE, attachmentEntry.value)
 						.getOrThrow(false, msg -> {
 							throw new IllegalStateException("Failed to decode value for attachment %s of registry entry %s: %s"
 									.formatted(attachment.id(), entryId, msg));
 						});
 
-				holder.putValue(attachment, registryObject, parsedValue);
+				if (attachmentEntry.isTag) {
+					holder.putValue(attachment, TagKey.of(registry.getKey(), entryId), parsedValue);
+				} else {
+					holder.putValue(attachment, registryObject, parsedValue);
+				}
 			}
 		});
 		// TODO send "OK" response packet?
