@@ -17,13 +17,15 @@
 
 package org.quiltmc.qsl.worldgen.biome.api;
 
-import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.ApiStatus;
-import org.quiltmc.qsl.worldgen.biome.impl.modification.BiomeModificationImpl;
-
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
+import org.jetbrains.annotations.ApiStatus;
+
+import net.minecraft.util.Identifier;
+
+import org.quiltmc.qsl.worldgen.biome.impl.modification.BiomeModificationImpl;
 
 /**
  * @see BiomeModifications

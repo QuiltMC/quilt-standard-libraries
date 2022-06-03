@@ -181,5 +181,6 @@ public final class ScreenEvents {
 		void afterTick(Screen screen);
 	}
 
-	private ScreenEvents() { }
+	private ScreenEvents() {
+	}
 }

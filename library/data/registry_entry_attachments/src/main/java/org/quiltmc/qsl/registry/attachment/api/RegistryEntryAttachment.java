@@ -82,8 +82,7 @@ public interface RegistryEntryAttachment<R, V> {
 	 * @return a builder
 	 */
 	static <R, V extends DispatchedType> Builder<R, V> dispatchedBuilder(Registry<R> registry, Identifier id,
-	                                                                     Class<V> valueClass,
-	                                                                     Function<Identifier, Codec<? extends V>> codec) {
+			Class<V> valueClass, Function<Identifier, Codec<? extends V>> codec) {
 		return builder(registry, id, valueClass, Identifier.CODEC.dispatch(V::getType, codec));
 	}
 
@@ -214,7 +213,7 @@ public interface RegistryEntryAttachment<R, V> {
 	/**
 	 * Associates a value with a tag.
 	 *
-	 * @param tag tag
+	 * @param tag   tag
 	 * @param value value
 	 */
 	void put(TagKey<R> tag, V value);

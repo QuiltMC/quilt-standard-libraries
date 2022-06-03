@@ -163,7 +163,7 @@ public final class ClientTagRegistryManager<T> {
 
 	@Environment(EnvType.CLIENT)
 	private Tag<Holder<T>> buildLenientTag(Tag.Builder tagBuilder,
-	                                       Function<Identifier, Tag<Holder<T>>> tagGetter, Function<Identifier, Holder<T>> objectGetter) {
+			Function<Identifier, Tag<Holder<T>>> tagGetter, Function<Identifier, Holder<T>> objectGetter) {
 		ImmutableSet.Builder<Holder<T>> builder = ImmutableSet.builder();
 
 		tagBuilder.streamEntries().forEach(trackedEntry -> trackedEntry.entry().resolve(tagGetter, objectGetter, builder::add));

@@ -17,6 +17,11 @@
 
 package org.quiltmc.qsl.worldgen.biome.api;
 
+import java.util.Optional;
+import java.util.function.BiPredicate;
+
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.sound.BiomeAdditionsSound;
@@ -32,11 +37,8 @@ import net.minecraft.world.biome.SpawnSettings;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.carver.ConfiguredCarver;
 import net.minecraft.world.gen.feature.PlacedFeature;
-import org.jetbrains.annotations.NotNull;
-import org.quiltmc.qsl.worldgen.biome.impl.modification.BuiltInRegistryKeys;
 
-import java.util.Optional;
-import java.util.function.BiPredicate;
+import org.quiltmc.qsl.worldgen.biome.impl.modification.BuiltInRegistryKeys;
 
 /**
  * Allows {@link Biome} properties to be modified.

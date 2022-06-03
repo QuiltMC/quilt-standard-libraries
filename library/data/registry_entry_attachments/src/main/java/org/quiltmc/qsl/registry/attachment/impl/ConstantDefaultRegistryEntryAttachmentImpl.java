@@ -26,8 +26,8 @@ import net.minecraft.util.registry.Registry;
 public final class ConstantDefaultRegistryEntryAttachmentImpl<R, V> extends RegistryEntryAttachmentImpl<R, V> {
 	private final V defaultValue;
 
-	public ConstantDefaultRegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec, Side side,
-	                                                  V defaultValue) {
+	public ConstantDefaultRegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass,
+			Codec<V> codec, Side side, V defaultValue) {
 		super(registry, id, valueClass, codec, side);
 		this.defaultValue = defaultValue;
 	}

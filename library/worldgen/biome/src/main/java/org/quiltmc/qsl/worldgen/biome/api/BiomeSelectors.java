@@ -17,7 +17,14 @@
 
 package org.quiltmc.qsl.worldgen.biome.api;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
+import java.util.function.Predicate;
+
 import com.google.common.collect.ImmutableSet;
+
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.tag.TagKey;
@@ -26,12 +33,6 @@ import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.SpawnSettings;
 import net.minecraft.world.dimension.DimensionOptions;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.Set;
-import java.util.function.Predicate;
 
 /**
  * Provides several convenient biome selectors that can be used with {@link BiomeModifications}.

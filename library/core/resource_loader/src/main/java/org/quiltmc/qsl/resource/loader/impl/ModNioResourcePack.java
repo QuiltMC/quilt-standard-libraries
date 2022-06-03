@@ -78,8 +78,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 	}
 
 	public ModNioResourcePack(@Nullable String name, ModMetadata modInfo, @Nullable Text displayName,
-	                          ResourcePackActivationType activationType, Path path,
-	                          ResourceType type, @Nullable AutoCloseable closer) {
+			ResourcePackActivationType activationType, Path path, ResourceType type, @Nullable AutoCloseable closer) {
 		super(null);
 		this.name = name == null ? ModResourcePackUtil.getName(modInfo) : name;
 		this.displayName = displayName == null ? new LiteralText(name) : displayName;
@@ -136,7 +135,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 
 	@Override
 	public Collection<Identifier> findResources(ResourceType type, String namespace, String startingPath, int depth,
-	                                            Predicate<String> pathFilter) {
+			Predicate<String> pathFilter) {
 		var ids = new ArrayList<Identifier>();
 		String nioPath = startingPath.replace("/", separator);
 

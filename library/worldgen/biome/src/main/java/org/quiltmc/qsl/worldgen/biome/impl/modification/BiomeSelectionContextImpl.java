@@ -17,6 +17,10 @@
 
 package org.quiltmc.qsl.worldgen.biome.impl.modification;
 
+import java.util.Optional;
+
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Holder;
 import net.minecraft.util.registry.DynamicRegistryManager;
@@ -28,10 +32,8 @@ import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
 import net.minecraft.world.gen.feature.PlacedFeature;
 import net.minecraft.world.level.LevelProperties;
-import org.jetbrains.annotations.ApiStatus;
-import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
-import java.util.Optional;
+import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
 @ApiStatus.Internal
 public class BiomeSelectionContextImpl implements BiomeSelectionContext {

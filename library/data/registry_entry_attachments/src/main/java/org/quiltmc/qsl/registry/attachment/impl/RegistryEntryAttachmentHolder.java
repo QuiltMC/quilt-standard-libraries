@@ -25,12 +25,13 @@ import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Holder;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+
+import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 @ApiStatus.Internal
 public final class RegistryEntryAttachmentHolder<R> {
@@ -60,7 +61,7 @@ public final class RegistryEntryAttachmentHolder<R> {
 		}
 		if (attachment.valueClass() != valueClass) {
 			throw new IllegalArgumentException(("Found attachment with ID \"%s\" for registry \"%s\", " +
-												"but it has wrong value class (expected %s, got %s)")
+					"but it has wrong value class (expected %s, got %s)")
 					.formatted(id, registry.getKey().getValue(), valueClass, attachment.valueClass()));
 		}
 		return (RegistryEntryAttachment<R, V>) attachment;

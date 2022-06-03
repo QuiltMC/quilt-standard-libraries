@@ -17,7 +17,10 @@
 
 package org.quiltmc.qsl.worldgen.biome.api;
 
+import java.util.function.Predicate;
+
 import com.google.common.base.Preconditions;
+
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.util.Identifier;
@@ -27,8 +30,6 @@ import net.minecraft.world.biome.SpawnSettings;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.carver.ConfiguredCarver;
 import net.minecraft.world.gen.feature.PlacedFeature;
-
-import java.util.function.Predicate;
 
 /**
  * Provides an API to modify Biomes after they have been loaded and before they are used in the World.
@@ -66,8 +67,8 @@ public final class BiomeModifications {
 	 * @see SpawnSettings.Builder#spawn(SpawnGroup, SpawnSettings.SpawnEntry)
 	 */
 	public static void addSpawn(Predicate<BiomeSelectionContext> biomeSelector,
-								SpawnGroup spawnGroup, EntityType<?> entityType,
-								int weight, int minGroupSize, int maxGroupSize) {
+			SpawnGroup spawnGroup, EntityType<?> entityType,
+			int weight, int minGroupSize, int maxGroupSize) {
 		// See constructor of SpawnSettings.SpawnEntry for context
 		Preconditions.checkArgument(entityType.getSpawnGroup() != SpawnGroup.MISC,
 				"Cannot add spawns for entities with spawnGroup=MISC since they'd be replaced by pigs.");

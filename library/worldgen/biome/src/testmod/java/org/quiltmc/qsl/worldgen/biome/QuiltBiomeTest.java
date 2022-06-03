@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.worldgen.biome;
 
+import java.util.List;
+
 import net.minecraft.sound.BiomeMoodSound;
 import net.minecraft.tag.BiomeTags;
 import net.minecraft.util.Holder;
@@ -24,13 +26,13 @@ import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.TheNetherBiomeCreator;
-import net.minecraft.world.biome.BiomeKeys;
-import net.minecraft.world.biome.OverworldBiomeCreator;
-import net.minecraft.world.biome.source.util.MultiNoiseUtil;
-import net.minecraft.world.biome.GenerationSettings;
-import net.minecraft.world.biome.SpawnSettings;
 import net.minecraft.world.biome.BiomeEffects;
+import net.minecraft.world.biome.BiomeKeys;
+import net.minecraft.world.biome.GenerationSettings;
+import net.minecraft.world.biome.OverworldBiomeCreator;
+import net.minecraft.world.biome.SpawnSettings;
+import net.minecraft.world.biome.TheNetherBiomeCreator;
+import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.decorator.BiomePlacementModifier;
 import net.minecraft.world.gen.decorator.InSquarePlacementModifier;
@@ -41,25 +43,24 @@ import net.minecraft.world.gen.feature.EndPlacedFeatures;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.PlacedFeature;
 import net.minecraft.world.gen.feature.util.PlacedFeatureUtil;
+
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.worldgen.biome.api.BiomeModifications;
+import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectors;
+import org.quiltmc.qsl.worldgen.biome.api.ModificationPhase;
 import org.quiltmc.qsl.worldgen.biome.api.NetherBiomes;
 import org.quiltmc.qsl.worldgen.biome.api.TheEndBiomes;
-import org.quiltmc.qsl.worldgen.biome.api.BiomeModifications;
-import org.quiltmc.qsl.worldgen.biome.api.ModificationPhase;
-import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectors;
-
-import java.util.List;
 
 /**
  * <b>NOTES FOR TESTING:</b>
  * When running with this test-mod, also test this when running a dedicated server since there
  * are significant differences between server + client and how they sync biomes.
- *
- * <p>Ingame, you can use <code>/locatebiome</code> since we use nether- and end-biomes in the overworld,
+ * <p>
+ * Ingame, you can use {@code /locatebiome} since we use nether- and end-biomes in the overworld,
  * and vice-versa, making them easy to find to verify the injection worked.
- *
- * <p>If you don't find a biome right away, teleport far away (~10000 blocks) from spawn and try again.
+ * <p>
+ * If you don't find a biome right away, teleport far away (~10000 blocks) from spawn and try again.
  */
 public class QuiltBiomeTest implements ModInitializer {
 	public static final String MOD_ID = "quilt_biome_testmod";

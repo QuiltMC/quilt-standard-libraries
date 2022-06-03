@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.lifecycle.mixin.client;
 
-import org.quiltmc.qsl.lifecycle.api.client.event.ClientWorldTickEvents;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Final;
@@ -29,6 +27,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
+
+import org.quiltmc.qsl.lifecycle.api.client.event.ClientWorldTickEvents;
 
 @Environment(EnvType.CLIENT)
 @Mixin(ClientWorld.class)

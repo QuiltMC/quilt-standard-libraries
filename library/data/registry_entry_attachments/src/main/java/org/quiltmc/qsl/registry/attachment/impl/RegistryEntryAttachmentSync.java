@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.registry.attachment.impl;
 
+import static org.quiltmc.qsl.registry.attachment.impl.Initializer.id;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,13 +26,9 @@ import java.util.Map;
 import java.util.Set;
 
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
-import org.quiltmc.qsl.networking.api.PacketByteBufs;
-import org.quiltmc.qsl.networking.api.PacketSender;
-import org.quiltmc.qsl.networking.api.ServerPlayConnectionEvents;
-import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
-import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
-import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -42,12 +40,14 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
 import net.minecraft.util.registry.Registry;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import static org.quiltmc.qsl.registry.attachment.impl.Initializer.id;
+import org.quiltmc.qsl.networking.api.PacketByteBufs;
+import org.quiltmc.qsl.networking.api.PacketSender;
+import org.quiltmc.qsl.networking.api.ServerPlayConnectionEvents;
+import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
+import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
+import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 @ApiStatus.Internal
 public final class RegistryEntryAttachmentSync {
@@ -59,7 +59,7 @@ public final class RegistryEntryAttachmentSync {
 
 	public static final Identifier PACKET_ID = id("sync");
 
-	private record NamespaceValuePair(String namespace, Set<AttachmentEntry> entries){
+	private record NamespaceValuePair(String namespace, Set<AttachmentEntry> entries) {
 	}
 
 	private record CacheEntry(Identifier registryId, Set<NamespaceValuePair> namespacesToValues) {
@@ -151,7 +151,7 @@ public final class RegistryEntryAttachmentSync {
 				}
 
 				// Namespace, Attachment
-				Map<String, Set<AttachmentEntry>> encoded = new HashMap<>();
+				var encoded = new HashMap<String, Set<AttachmentEntry>>();
 				Map<Object, Object> entryValues = dataHolder.valueTable.rowMap().get(attachmentEntry.getValue());
 				if (entryValues != null) {
 					for (var valueEntry : entryValues.entrySet()) {
@@ -163,11 +163,13 @@ public final class RegistryEntryAttachmentSync {
 
 						encoded.computeIfAbsent(entryId.getNamespace(), id -> new HashSet<>()).add(
 								new AttachmentEntry(entryId.getPath(), false, attachment.codec()
-								.encodeStart(NbtOps.INSTANCE, valueEntry.getValue())
-								.getOrThrow(false, msg -> {
-									throw new IllegalStateException("Failed to encode value for attachment %s of registry entry %s: %s"
-											.formatted(attachment.id(), entryId, msg));
-								})));
+										.encodeStart(NbtOps.INSTANCE, valueEntry.getValue())
+										.getOrThrow(false, msg -> {
+											throw new IllegalStateException("Failed to encode value for attachment %s of registry entry %s: %s"
+													.formatted(attachment.id(), entryId, msg));
+										})
+								)
+						);
 					}
 				}
 
@@ -184,7 +186,7 @@ public final class RegistryEntryAttachmentSync {
 					}
 				}
 
-				Set<NamespaceValuePair> valueMaps = new HashSet<>();
+				var valueMaps = new HashSet<NamespaceValuePair>();
 				for (var namespaceEntry : encoded.entrySet()) {
 					valueMaps.add(new NamespaceValuePair(namespaceEntry.getKey(), namespaceEntry.getValue()));
 				}
@@ -213,7 +215,7 @@ public final class RegistryEntryAttachmentSync {
 		var namespace = buf.readString();
 
 		var size = buf.readInt();
-		Set<AttachmentEntry> attachments = new HashSet<>();
+		var attachments = new HashSet<AttachmentEntry>();
 
 		while (size > 0) {
 			attachments.add(AttachmentEntry.read(buf));

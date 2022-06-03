@@ -36,7 +36,7 @@ public abstract class DebugHudMixin {
 	@Inject(method = "getRightText", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 2,
 			shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
 	public void quilt$addTestAttachment(CallbackInfoReturnable<List<String>> cir, long l, long m, long n, long o,
-									   List<String> list, BlockPos blockPos, BlockState blockState) {
+			List<String> list, BlockPos blockPos, BlockState blockState) {
 		list.add("based: " + ClientAttachmentTest.BASED.getValue(blockState.getBlock())
 				.map(b -> b ? Formatting.GREEN + "yes" : Formatting.RED + "no")
 				.orElse(Formatting.BLUE + "unset"));

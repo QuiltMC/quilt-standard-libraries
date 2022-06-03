@@ -28,14 +28,6 @@ import java.util.concurrent.Executor;
 
 import com.mojang.logging.LogUtils;
 import org.jetbrains.annotations.ApiStatus;
-import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
-import org.quiltmc.qsl.registry.attachment.impl.AssetsHolderGuard;
-import org.quiltmc.qsl.registry.attachment.impl.Initializer;
-import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentHolder;
-import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentSync;
-import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
-import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
-import org.quiltmc.qsl.resource.loader.api.reloader.SimpleResourceReloader;
 import org.slf4j.Logger;
 
 import net.minecraft.resource.Resource;
@@ -45,6 +37,15 @@ import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.registry.Registry;
+
+import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
+import org.quiltmc.qsl.registry.attachment.impl.AssetsHolderGuard;
+import org.quiltmc.qsl.registry.attachment.impl.Initializer;
+import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentHolder;
+import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentSync;
+import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
+import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
+import org.quiltmc.qsl.resource.loader.api.reloader.SimpleResourceReloader;
 
 @ApiStatus.Internal
 public final class RegistryEntryAttachmentReloader implements SimpleResourceReloader<RegistryEntryAttachmentReloader.LoadedData> {
@@ -112,8 +113,8 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	}
 
 	private void processResources(ResourceManager manager, Profiler profiler,
-								  Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> attachmentMaps,
-								  Collection<Identifier> jsonIds, Registry<?> registry) {
+			Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> attachmentMaps,
+			Collection<Identifier> jsonIds, Registry<?> registry) {
 		for (var jsonId : jsonIds) {
 			Identifier attachmentId = this.getAttachmentId(jsonId);
 			RegistryEntryAttachment<?, ?> attachment = RegistryEntryAttachmentHolder.getAttachment(registry, attachmentId);

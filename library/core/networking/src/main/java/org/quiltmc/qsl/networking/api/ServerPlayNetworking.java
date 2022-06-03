@@ -50,7 +50,7 @@ public final class ServerPlayNetworking {
 	 * If a handler is already registered to the {@code channel}, this method will return {@code false}, and no change will be made.
 	 * Use {@link #unregisterReceiver(ServerPlayNetworkHandler, Identifier)} to unregister the existing handler.
 	 *
-	 * @param channelName the identifier of the channel
+	 * @param channelName    the identifier of the channel
 	 * @param channelHandler the handler
 	 * @return {@code false} if a handler is already registered to the channel, otherwise {@code true}
 	 * @see ServerPlayNetworking#unregisterGlobalReceiver(Identifier)
@@ -98,7 +98,7 @@ public final class ServerPlayNetworking {
 	 * Use {@link #unregisterReceiver(ServerPlayNetworkHandler, Identifier)} to unregister the existing handler.
 	 *
 	 * @param networkHandler the handler
-	 * @param channelName the identifier of the channel
+	 * @param channelName    the identifier of the channel
 	 * @param channelHandler the handler
 	 * @return {@code false} if a handler is already registered to the channel name, otherwise {@code true}
 	 * @see ServerPlayConnectionEvents#INIT
@@ -175,7 +175,7 @@ public final class ServerPlayNetworking {
 	/**
 	 * Checks if the connected client declared the ability to receive a packet on a specified channel name.
 	 *
-	 * @param player the player
+	 * @param player      the player
 	 * @param channelName the channel name
 	 * @return {@code true} if the connected client has declared the ability to receive a packet on the specified channel, otherwise {@code false}
 	 */
@@ -188,7 +188,7 @@ public final class ServerPlayNetworking {
 	/**
 	 * Checks if the connected client declared the ability to receive a packet on a specified channel name.
 	 *
-	 * @param handler the network handler
+	 * @param handler     the network handler
 	 * @param channelName the channel name
 	 * @return {@code true} if the connected client has declared the ability to receive a packet on the specified channel, otherwise {@code false}
 	 */
@@ -203,7 +203,7 @@ public final class ServerPlayNetworking {
 	 * Creates a packet which may be sent to a the connected client.
 	 *
 	 * @param channelName the channel name
-	 * @param buf the packet byte buf which represents the payload of the packet
+	 * @param buf         the packet byte buf which represents the payload of the packet
 	 * @return a new packet
 	 */
 	public static Packet<?> createS2CPacket(Identifier channelName, PacketByteBuf buf) {
@@ -240,9 +240,9 @@ public final class ServerPlayNetworking {
 	/**
 	 * Sends a packet to a player.
 	 *
-	 * @param player the player to send the packet to
+	 * @param player      the player to send the packet to
 	 * @param channelName the channel of the packet
-	 * @param buf the payload of the packet
+	 * @param buf         the payload of the packet
 	 */
 	public static void send(ServerPlayerEntity player, Identifier channelName, PacketByteBuf buf) {
 		Objects.requireNonNull(player, "Server player entity cannot be null");
@@ -255,9 +255,9 @@ public final class ServerPlayNetworking {
 	/**
 	 * Sends a packet to a collection of players.
 	 *
-	 * @param players the players to send the packet to
+	 * @param players     the players to send the packet to
 	 * @param channelName the channel of the packet
-	 * @param buf the payload of the packet
+	 * @param buf         the payload of the packet
 	 */
 	public static void send(Collection<ServerPlayerEntity> players, Identifier channelName, PacketByteBuf buf) {
 		Objects.requireNonNull(players, "Players collection cannot be null");
@@ -268,6 +268,7 @@ public final class ServerPlayNetworking {
 	// Helper methods
 
 	// TODO: Possible future CHASM extension method.
+
 	/**
 	 * Returns the <i>Minecraft</i> Server of a server play network handler.
 	 *
@@ -298,14 +299,14 @@ public final class ServerPlayNetworking {
 		 * 	// All operations on the server or world must be executed on the server thread
 		 * 	server.execute(() -> {
 		 * 		ModPacketHandler.createExplosion(player, fire);
-		 * 	});
+		 *    });
 		 * });
 		 * }</pre>
 		 *
-		 * @param server the server
-		 * @param player the player
-		 * @param handler the network handler that received this packet, representing the player/client who sent the packet
-		 * @param buf the payload of the packet
+		 * @param server         the server
+		 * @param player         the player
+		 * @param handler        the network handler that received this packet, representing the player/client who sent the packet
+		 * @param buf            the payload of the packet
 		 * @param responseSender the packet sender
 		 */
 		void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender);

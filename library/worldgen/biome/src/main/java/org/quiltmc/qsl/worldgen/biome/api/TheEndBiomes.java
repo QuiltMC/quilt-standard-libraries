@@ -20,6 +20,7 @@ package org.quiltmc.qsl.worldgen.biome.api;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeKeys;
+
 import org.quiltmc.qsl.worldgen.biome.impl.TheEndBiomeData;
 
 /**

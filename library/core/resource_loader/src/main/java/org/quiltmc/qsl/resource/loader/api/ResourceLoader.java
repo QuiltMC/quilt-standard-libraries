@@ -138,7 +138,7 @@ public interface ResourceLoader {
 	 * @see #registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType, Text)
 	 */
 	static boolean registerBuiltinResourcePack(Identifier id, ModContainer container,
-	                                           ResourcePackActivationType activationType) {
+			ResourcePackActivationType activationType) {
 		return registerBuiltinResourcePack(id, container, activationType, ResourceLoaderImpl.getBuiltinPackDisplayNameFromId(id));
 	}
 
@@ -164,7 +164,7 @@ public interface ResourceLoader {
 	 * @see #registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType)
 	 */
 	static boolean registerBuiltinResourcePack(Identifier id, ModContainer container,
-	                                           ResourcePackActivationType activationType, Text displayName) {
+			ResourcePackActivationType activationType, Text displayName) {
 		return ResourceLoaderImpl.registerBuiltinResourcePack(id, "resourcepacks/" + id.getPath(), container,
 				activationType, displayName);
 	}

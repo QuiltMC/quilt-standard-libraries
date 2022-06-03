@@ -244,7 +244,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	}
 
 	public static void appendResourcesFromGroup(NamespaceResourceManagerAccessor manager, Identifier id,
-	                                            GroupResourcePack groupResourcePack, List<Resource> resources)
+			GroupResourcePack groupResourcePack, List<Resource> resources)
 			throws IOException {
 		var packs = groupResourcePack.getPacks(id.getNamespace());
 
@@ -281,7 +281,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	 * @see ResourceLoader#registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType, Text)
 	 */
 	public static boolean registerBuiltinResourcePack(Identifier id, String subPath, ModContainer container,
-	                                                  ResourcePackActivationType activationType, Text displayName) {
+			ResourcePackActivationType activationType, Text displayName) {
 		Path resourcePackPath = container.getPath(subPath).toAbsolutePath().normalize();
 
 		if (!Files.exists(resourcePackPath)) {
@@ -315,8 +315,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	}
 
 	private static ModNioResourcePack newBuiltinResourcePack(ModContainer container, String name, Text displayName,
-	                                                         Path resourcePackPath, ResourceType type,
-	                                                         ResourcePackActivationType activationType) {
+			Path resourcePackPath, ResourceType type, ResourcePackActivationType activationType) {
 		return new ModNioResourcePack(name, container.metadata(), displayName, activationType, resourcePackPath, type, null);
 	}
 

@@ -40,7 +40,7 @@ public final class RegistryExtensions {
 	 * @return the newly registered entry
 	 */
 	public static <R, T extends R> T register(Registry<R> registry, Identifier id, T toRegister,
-	                                          Consumer<BuiltinAttachmentBuilder<R>> builderConsumer) {
+			Consumer<BuiltinAttachmentBuilder<R>> builderConsumer) {
 		Registry.register(registry, id, toRegister);
 		builderConsumer.accept(new BuiltinAttachmentBuilderImpl<>(registry, toRegister));
 		return toRegister;
@@ -65,7 +65,7 @@ public final class RegistryExtensions {
 	}
 
 	public static <R, T extends R, V1> T register(Registry<R> registry, Identifier id, T toRegister,
-	                                              RegistryEntryAttachment<R, V1> attach1, V1 value1) {
+			RegistryEntryAttachment<R, V1> attach1, V1 value1) {
 		Registry.register(registry, id, toRegister);
 		var holder = RegistryEntryAttachmentHolder.getBuiltin(registry);
 		holder.putValue(attach1, toRegister, value1);
@@ -73,8 +73,8 @@ public final class RegistryExtensions {
 	}
 
 	public static <R, T extends R, V1, V2> T register(Registry<R> registry, Identifier id, T toRegister,
-	                                                  RegistryEntryAttachment<R, V1> attach1, V1 value1,
-	                                                  RegistryEntryAttachment<R, V2> attach2, V2 value2) {
+			RegistryEntryAttachment<R, V1> attach1, V1 value1,
+			RegistryEntryAttachment<R, V2> attach2, V2 value2) {
 		Registry.register(registry, id, toRegister);
 		var holder = RegistryEntryAttachmentHolder.getBuiltin(registry);
 		holder.putValue(attach1, toRegister, value1);
@@ -83,9 +83,9 @@ public final class RegistryExtensions {
 	}
 
 	public static <R, T extends R, V1, V2, V3> T register(Registry<R> registry, Identifier id, T toRegister,
-	                                                      RegistryEntryAttachment<R, V1> attach1, V1 value1,
-	                                                      RegistryEntryAttachment<R, V2> attach2, V2 value2,
-	                                                      RegistryEntryAttachment<R, V3> attach3, V3 value3) {
+			RegistryEntryAttachment<R, V1> attach1, V1 value1,
+			RegistryEntryAttachment<R, V2> attach2, V2 value2,
+			RegistryEntryAttachment<R, V3> attach3, V3 value3) {
 		Registry.register(registry, id, toRegister);
 		var holder = RegistryEntryAttachmentHolder.getBuiltin(registry);
 		holder.putValue(attach1, toRegister, value1);
@@ -95,10 +95,10 @@ public final class RegistryExtensions {
 	}
 
 	public static <R, T extends R, V1, V2, V3, V4> T register(Registry<R> registry, Identifier id, T toRegister,
-	                                                          RegistryEntryAttachment<R, V1> attach1, V1 value1,
-	                                                          RegistryEntryAttachment<R, V2> attach2, V2 value2,
-	                                                          RegistryEntryAttachment<R, V3> attach3, V3 value3,
-	                                                          RegistryEntryAttachment<R, V4> attach4, V4 value4) {
+			RegistryEntryAttachment<R, V1> attach1, V1 value1,
+			RegistryEntryAttachment<R, V2> attach2, V2 value2,
+			RegistryEntryAttachment<R, V3> attach3, V3 value3,
+			RegistryEntryAttachment<R, V4> attach4, V4 value4) {
 		Registry.register(registry, id, toRegister);
 		var holder = RegistryEntryAttachmentHolder.getBuiltin(registry);
 		holder.putValue(attach1, toRegister, value1);

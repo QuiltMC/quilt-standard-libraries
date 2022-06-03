@@ -36,11 +36,8 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	protected final Codec<V> codec;
 	protected final Side side;
 
-	public RegistryEntryAttachmentImpl(Registry<R> registry,
-	                                   Identifier id,
-	                                   Class<V> valueClass,
-	                                   Codec<V> codec,
-	                                   Side side) {
+	public RegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec,
+			Side side) {
 		this.registry = registry;
 		this.id = id;
 		this.valueClass = valueClass;
