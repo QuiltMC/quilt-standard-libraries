@@ -30,10 +30,10 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import com.google.common.base.Charsets;
+import com.mojang.blaze3d.texture.NativeImage;
 import org.apache.commons.io.IOUtils;
 
 import net.minecraft.SharedConstants;
-import net.minecraft.client.texture.NativeImage;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.AbstractFileResourcePack;
 import net.minecraft.resource.pack.ResourcePackProfile;

@@ -22,17 +22,17 @@ public final class Versions {
 	/**
 	 * The target Minecraft version.
 	 */
-	public static final MinecraftVersion MINECRAFT_VERSION = new MinecraftVersion("22w14a", "1.19");
+	public static final MinecraftVersion MINECRAFT_VERSION = new MinecraftVersion("22w15a", "1.19");
 
 	/**
 	 * The target Quilt Mappings build.
 	 */
-	public static final int MAPPINGS_BUILD = 2;
+	public static final int MAPPINGS_BUILD = 13;
 
 	/**
 	 * The version of Quilt Loader to use.
 	 */
-	public static final String LOADER_VERSION = "0.16.0";
+	public static final String LOADER_VERSION = "0.16.1";
 
 	/**
 	 * The target Java version.

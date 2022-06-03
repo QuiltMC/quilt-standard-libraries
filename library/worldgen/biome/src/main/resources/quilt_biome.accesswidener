@@ -6,8 +6,6 @@ accessible field net/minecraft/world/biome/source/BiomeSource featuresStepData L
 mutable field net/minecraft/world/biome/source/BiomeSource featuresStepData Ljava/util/function/Supplier;
 accessible method net/minecraft/world/biome/source/BiomeSource createFeatureStepData (Ljava/util/List;Z)Ljava/util/List;
 accessible field net/minecraft/world/biome/source/BiomeSource biomes Ljava/util/Set;
-accessible    field    net/minecraft/world/biome/Biome    category    Lnet/minecraft/world/biome/Biome$Category;
-mutable       field    net/minecraft/world/biome/Biome    category    Lnet/minecraft/world/biome/Biome$Category;
 
 
 # Top-Level Biome Fields Access

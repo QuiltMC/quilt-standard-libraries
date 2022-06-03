@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.util.Holder;
 import net.minecraft.util.math.noise.PerlinNoiseSampler;
+import net.minecraft.util.random.LegacySimpleRandom;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
@@ -34,7 +35,6 @@ import net.minecraft.world.biome.BiomeKeys;
 import net.minecraft.world.biome.source.TheEndBiomeSource;
 import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 import net.minecraft.world.gen.ChunkRandom;
-import net.minecraft.world.gen.LegacySimpleRandom;
 
 /**
  * Internal data for modding Vanilla's {@link TheEndBiomeSource}.

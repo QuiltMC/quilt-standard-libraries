@@ -55,7 +55,7 @@ public abstract class ItemStackMixin {
 			method = "damage(ILnet/minecraft/entity/LivingEntity;Ljava/util/function/Consumer;)V",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/item/ItemStack;damage(ILnet/minecraft/world/gen/WorldGenRandom;Lnet/minecraft/server/network/ServerPlayerEntity;)Z"
+					target = "Lnet/minecraft/item/ItemStack;damage(ILnet/minecraft/util/random/RandomGenerator;Lnet/minecraft/server/network/ServerPlayerEntity;)Z"
 			),
 			index = 0
 	)

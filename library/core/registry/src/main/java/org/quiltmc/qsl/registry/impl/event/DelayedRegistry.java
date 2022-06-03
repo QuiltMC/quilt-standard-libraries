@@ -36,10 +36,10 @@ import net.minecraft.tag.TagKey;
 import net.minecraft.util.Holder;
 import net.minecraft.util.HolderSet;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.gen.WorldGenRandom;
 
 import org.quiltmc.qsl.registry.mixin.SimpleRegistryAccessor;
 
@@ -124,7 +124,7 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	}
 
 	@Override
-	public Optional<Holder<T>> getRandom(WorldGenRandom random) {
+	public Optional<Holder<T>> getRandom(RandomGenerator random) {
 		return this.wrapped.getRandom(random);
 	}
 
