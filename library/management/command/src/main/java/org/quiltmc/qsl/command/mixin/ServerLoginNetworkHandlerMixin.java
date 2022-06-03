@@ -48,6 +48,6 @@ public abstract class ServerLoginNetworkHandlerMixin implements KnownArgTypesSto
 
 	@Inject(method = "addToServer", at = @At("HEAD"))
 	public void passKnownArgumentTypesToPlayer(ServerPlayerEntity player, CallbackInfo ci) {
-		((KnownArgTypesStorage) player).quilt$setKnownArgumentTypes(quilt$knownArgumentTypes);
+		((KnownArgTypesStorage) player).quilt$setKnownArgumentTypes(this.quilt$knownArgumentTypes);
 	}
 }
