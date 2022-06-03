@@ -31,7 +31,6 @@ import com.mojang.brigadier.tree.CommandNode;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -45,6 +44,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
+import org.quiltmc.qsl.command.api.QuiltCommandRegistrationEnvironment;
 import org.quiltmc.qsl.command.api.ServerArgumentType;
 import org.quiltmc.qsl.command.impl.ServerArgumentTypes;
 
@@ -63,15 +63,7 @@ public abstract class CommandManagerMixin {
 			)
 	)
 	void addQuiltCommands(CommandManager.RegistrationEnvironment environment, CommandBuildContext context, CallbackInfo ci) {
-		CommandRegistrationCallback.EVENT.invoker().registerCommands(this.dispatcher,
-				environmentMatches(environment, CommandManager.RegistrationEnvironment.INTEGRATED),
-				environmentMatches(environment, CommandManager.RegistrationEnvironment.DEDICATED)
-		);
-	}
-
-	@Unique
-	private static boolean environmentMatches(CommandManager.RegistrationEnvironment a, CommandManager.RegistrationEnvironment b) {
-		return a == b || b == CommandManager.RegistrationEnvironment.ALL;
+		CommandRegistrationCallback.EVENT.invoker().registerCommands(this.dispatcher, context, environment);
 	}
 
 	// region Copyright 2016, 2017, 2018, 2019, 2020 zml and Colonel contributors.
@@ -102,4 +94,25 @@ public abstract class CommandManagerMixin {
 		}
 	}
 	// endregion
+
+	@Mixin(CommandManager.RegistrationEnvironment.class)
+	public static abstract class RegistrationEnvironmentMixin implements QuiltCommandRegistrationEnvironment {
+		@Shadow
+		@Final
+		boolean dedicated;
+
+		@Shadow
+		@Final
+		boolean integrated;
+
+		@Override
+		public boolean isDedicated() {
+			return this.dedicated;
+		}
+
+		@Override
+		public boolean isIntegrated() {
+			return this.integrated;
+		}
+	}
 }

@@ -26,7 +26,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.minecraft.block.Block;
+import net.minecraft.command.CommandBuildContext;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.tag.Tag;
 import net.minecraft.tag.TagKey;
@@ -55,7 +57,7 @@ public final class TagsTestMod implements ServerLifecycleEvents.Ready, CommandRe
 	}
 
 	@Override
-	public void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, boolean integrated, boolean dedicated) {
+	public void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, CommandBuildContext buildContext, CommandManager.RegistrationEnvironment environment) {
 		dispatcher.register(literal("biome_tag_test")
 				.then(literal("registry").executes(context -> {
 					displayTag(TEST_BIOME_TAG, context.getSource().getRegistryManager().get(Registry.BIOME_KEY),

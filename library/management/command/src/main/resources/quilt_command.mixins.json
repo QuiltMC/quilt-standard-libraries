@@ -5,6 +5,7 @@
   "mixins": [
     "ArgumentTypeInfosAccessor",
     "CommandManagerMixin",
+    "CommandManagerMixin$RegistrationEnvironmentMixin",
     "RequiredArgumentBuilderAccessor",
     "ServerLoginNetworkHandlerMixin",
     "ServerPlayerEntityMixin"

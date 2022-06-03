@@ -24,6 +24,8 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import org.quiltmc.qsl.command.impl.client.ClientCommandInternals;
+
 /**
  * Manages client-sided commands and provides some related helper methods, analogous to
  * {@link net.minecraft.server.command.CommandManager CommandManager}.
@@ -58,12 +60,16 @@ import net.fabricmc.api.Environment;
  */
 @Environment(EnvType.CLIENT)
 public final class ClientCommandManager {
-	/**
-	 * The command dispatcher that handles client command registration and execution.
-	 */
-	public static final CommandDispatcher<QuiltClientCommandSource> DISPATCHER = new CommandDispatcher<>();
-
 	private ClientCommandManager() {
+	}
+
+	/**
+	 * {@return the command dispatcher that handles client command registration and execution}
+	 *
+	 * @see ClientCommandRegistrationCallback client command registration
+	 */
+	public static CommandDispatcher<QuiltClientCommandSource> getDispatcher() {
+		return ClientCommandInternals.getDispatcher();
 	}
 
 	/**
@@ -71,7 +77,6 @@ public final class ClientCommandManager {
 	 *
 	 * @param name the literal name
 	 * @return the created argument builder
-	 *
 	 * @see LiteralArgumentBuilder#literal(String)
 	 * @see net.minecraft.server.command.CommandManager#literal(String)
 	 */
@@ -86,7 +91,6 @@ public final class ClientCommandManager {
 	 * @param type the type of the argument
 	 * @param <T>  the type of the parsed argument value
 	 * @return the created argument builder
-	 *
 	 * @see RequiredArgumentBuilder#argument(String, ArgumentType)
 	 * @see net.minecraft.server.command.CommandManager#argument(String, ArgumentType)
 	 */

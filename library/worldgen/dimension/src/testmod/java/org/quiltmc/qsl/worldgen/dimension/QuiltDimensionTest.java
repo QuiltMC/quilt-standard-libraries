@@ -22,6 +22,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import net.minecraft.block.Blocks;
+import net.minecraft.command.CommandBuildContext;
 import net.minecraft.command.CommandException;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.CowEntity;
@@ -88,7 +89,8 @@ public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents
 	}
 
 	@Override
-	public void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, boolean integrated, boolean dedicated) {
+	public void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, CommandBuildContext buildContext,
+	                             CommandManager.RegistrationEnvironment environment) {
 		dispatcher.register(CommandManager.literal("quilt_dimension_test").executes(this::swapTargeted));
 	}
 

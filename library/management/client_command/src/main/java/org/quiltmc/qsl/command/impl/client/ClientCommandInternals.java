@@ -17,7 +17,6 @@
 
 package org.quiltmc.qsl.command.impl.client;
 
-import static org.quiltmc.qsl.command.api.client.ClientCommandManager.DISPATCHER;
 import static org.quiltmc.qsl.command.api.client.ClientCommandManager.argument;
 import static org.quiltmc.qsl.command.api.client.ClientCommandManager.literal;
 
@@ -43,19 +42,22 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.command.CommandBuildContext;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.Texts;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.registry.DynamicRegistryManager;
 
-import org.quiltmc.qsl.command.api.client.ClientCommandManager;
 import org.quiltmc.qsl.command.api.client.ClientCommandRegistrationCallback;
 import org.quiltmc.qsl.command.api.client.QuiltClientCommandSource;
 import org.quiltmc.qsl.command.mixin.HelpCommandAccessor;
@@ -68,14 +70,19 @@ public final class ClientCommandInternals {
 	private static final String API_COMMAND_NAME = "quilt_commands:client_commands";
 	private static final String SHORT_API_COMMAND_NAME = "qcc";
 	private static final Command<QuiltClientCommandSource> DUMMY_COMMAND = ctx -> 0;
+	private static final CommandDispatcher<QuiltClientCommandSource> DEFAULT_DISPATCHER = new CommandDispatcher<>();
+	private static CommandDispatcher<QuiltClientCommandSource> currentDispatcher = DEFAULT_DISPATCHER;
+
+	public static CommandDispatcher<QuiltClientCommandSource> getDispatcher() {
+		return currentDispatcher;
+	}
 
 	/**
 	 * Executes a client-sided command from a message.
 	 *
-	 * @param  message the command message
-	 *
+	 * @param message the command message
 	 * @return {@code true} if the message was executed as a command client-side (and therefore should not be sent to the
-	 *         server), {@code false} otherwise
+	 * server), {@code false} otherwise
 	 */
 	public static boolean executeCommand(String message) {
 		if (message.isEmpty()) {
@@ -90,7 +97,7 @@ public final class ClientCommandInternals {
 
 		// The interface is implemented on ClientCommandSource with a mixin.
 		// noinspection ConstantConditions
-		QuiltClientCommandSource commandSource = (QuiltClientCommandSource) client.getNetworkHandler().getCommandSource();
+		var commandSource = client.getNetworkHandler().getCommandSource();
 
 		client.getProfiler().push(message);
 
@@ -101,7 +108,7 @@ public final class ClientCommandInternals {
 			ParseResults<CommandSource> serverResults = serverDispatcher.parse(command, client.getNetworkHandler().getCommandSource());
 
 			if (serverResults.getReader().canRead() || isCommandInvalidOrDummy(serverResults)) {
-				DISPATCHER.execute(command, commandSource);
+				currentDispatcher.execute(command, commandSource);
 				return true;
 			} else {
 				return false;
@@ -136,12 +143,11 @@ public final class ClientCommandInternals {
 
 	/**
 	 * Tests whether a parse result is invalid or the command it resolves to is a dummy command.
-	 *
+	 * <p>
 	 * Used to work out whether a command in the main dispatcher is a dummy command added by {@link ClientCommandInternals#addDummyCommands(CommandDispatcher, QuiltClientCommandSource)}.
 	 *
 	 * @param parse the parse results to test
 	 * @param <S>   the command source type
-	 *
 	 * @return {@code true} if the parse result is invalid or the command is a dummy, {@code false} otherwise
 	 */
 	public static <S extends CommandSource> boolean isCommandInvalidOrDummy(final ParseResults<S> parse) {
@@ -176,7 +182,6 @@ public final class ClientCommandInternals {
 	 * {@link net.minecraft.text.OrderedText OrderedText}.
 	 *
 	 * @param e the exception to get the error message from
-	 *
 	 * @return the error message as a {@link Text}
 	 */
 	private static Text getErrorMessage(CommandSyntaxException e) {
@@ -188,25 +193,50 @@ public final class ClientCommandInternals {
 
 	/**
 	 * Registers client-sided commands, then runs final initialization tasks such as
-	 * {@link CommandDispatcher#findAmbiguities(AmbiguityConsumer)} on the command dispatcher. Also registers
-	 * a {@code /qcc help} command if there are other commands present.
+	 * {@link CommandDispatcher#findAmbiguities(AmbiguityConsumer)} on the command dispatcher.
+	 * Also registers a {@code /qcc help} command if there are other commands present.
+	 *
+	 * @param buildContext the build context, may be {@code null} if not in-world
+	 * @param environment  the command registration environment
 	 */
-	public static void initialize() {
-		ClientCommandRegistrationCallback.EVENT.invoker().registerCommands(DISPATCHER);
+	public static void initialize(@Nullable CommandBuildContext buildContext, CommandManager.RegistrationEnvironment environment) {
+		if (buildContext == null) {
+			currentDispatcher = DEFAULT_DISPATCHER;
 
-		if (!DISPATCHER.getRoot().getChildren().isEmpty()) {
+			if (environment == CommandManager.RegistrationEnvironment.ALL) {
+				registerCommands(new CommandBuildContext(DynamicRegistryManager.builtInCopy()), environment);
+			}
+		} else {
+			currentDispatcher = new CommandDispatcher<>();
+
+			registerCommands(buildContext, environment);
+		}
+	}
+
+	/**
+	 * Registers client-sided commands, then runs final initialization tasks such as
+	 * {@link CommandDispatcher#findAmbiguities(AmbiguityConsumer)} on the command dispatcher.
+	 * Also registers a {@code /qcc help} command if there are other commands present.
+	 * Done for the current command dispatcher with the given build context.
+	 *
+	 * @param buildContext the command build context
+	 */
+	private static void registerCommands(CommandBuildContext buildContext, CommandManager.RegistrationEnvironment environment) {
+		ClientCommandRegistrationCallback.EVENT.invoker().registerCommands(currentDispatcher, buildContext, environment);
+
+		if (!currentDispatcher.getRoot().getChildren().isEmpty()) {
 			// Register the qcc command only if there are other commands;
 			// it is not needed if there are no client commands.
-			CommandNode<QuiltClientCommandSource> mainNode = DISPATCHER.register(
+			CommandNode<QuiltClientCommandSource> mainNode = currentDispatcher.register(
 					literal(API_COMMAND_NAME)
 							.then(createHelpCommand())
 							.then(createRunCommand())
 			);
-			DISPATCHER.register(literal(SHORT_API_COMMAND_NAME).redirect(mainNode));
+			currentDispatcher.register(literal(SHORT_API_COMMAND_NAME).redirect(mainNode));
 		}
 
-		DISPATCHER.findAmbiguities((parent, child, sibling, inputs) ->
-				LOGGER.warn("Ambiguity between arguments {} and {} with inputs: {}", DISPATCHER.getPath(child), DISPATCHER.getPath(sibling), inputs)
+		currentDispatcher.findAmbiguities((parent, child, sibling, inputs) ->
+				LOGGER.warn("Ambiguity between arguments {} and {} with inputs: {}", currentDispatcher.getPath(child), currentDispatcher.getPath(sibling), inputs)
 		);
 	}
 
@@ -215,7 +245,7 @@ public final class ClientCommandInternals {
 	 */
 	private static LiteralArgumentBuilder<QuiltClientCommandSource> createRunCommand() {
 		LiteralArgumentBuilder<QuiltClientCommandSource> runCommand = literal("run");
-		for (CommandNode<QuiltClientCommandSource> node : ClientCommandManager.DISPATCHER.getRoot().getChildren()) {
+		for (CommandNode<QuiltClientCommandSource> node : currentDispatcher.getRoot().getChildren()) {
 			runCommand.then(node);
 		}
 		return runCommand;
@@ -235,11 +265,10 @@ public final class ClientCommandInternals {
 	 * Runs {@link #executeHelp(CommandNode, CommandContext)} on the root node of the client-side command dispatcher.
 	 *
 	 * @param context the command context
-	 *
 	 * @return the number of commands
 	 */
 	private static int executeRootHelp(CommandContext<QuiltClientCommandSource> context) {
-		return executeHelp(DISPATCHER.getRoot(), context);
+		return executeHelp(currentDispatcher.getRoot(), context);
 	}
 
 	/**
@@ -247,13 +276,11 @@ public final class ClientCommandInternals {
 	 * argument.
 	 *
 	 * @param context the command context
-	 *
 	 * @return the number of subcommands of the command specified in the command argument
-	 *
 	 * @throws CommandSyntaxException if no such command as given in the command argument is given
 	 */
 	private static int executeSpecificHelp(CommandContext<QuiltClientCommandSource> context) throws CommandSyntaxException {
-		ParseResults<QuiltClientCommandSource> parseResults = DISPATCHER.parse(StringArgumentType.getString(context, "command"), context.getSource());
+		ParseResults<QuiltClientCommandSource> parseResults = currentDispatcher.parse(StringArgumentType.getString(context, "command"), context.getSource());
 		List<ParsedCommandNode<QuiltClientCommandSource>> nodes = parseResults.getContext().getNodes();
 
 		if (nodes.isEmpty()) {
@@ -268,18 +295,31 @@ public final class ClientCommandInternals {
 	 * Shows usage hints for a command node.
 	 *
 	 * @param startNode the node to get the usages of
-	 * @param context the command context
-	 *
+	 * @param context   the command context
 	 * @return the amount of usage hints (i.e. the number of subcommands of startNode)
 	 */
 	private static int executeHelp(CommandNode<QuiltClientCommandSource> startNode, CommandContext<QuiltClientCommandSource> context) {
-		Map<CommandNode<QuiltClientCommandSource>, String> commands = DISPATCHER.getSmartUsage(startNode, context.getSource());
+		Map<CommandNode<QuiltClientCommandSource>, String> commands = currentDispatcher.getSmartUsage(startNode, context.getSource());
 
 		for (var command : commands.values()) {
 			context.getSource().sendFeedback(new LiteralText(PREFIX + command));
 		}
 
 		return commands.size();
+	}
+
+	public static void updateCommands(@Nullable CommandBuildContext buildContext,
+	                                  CommandDispatcher<QuiltClientCommandSource> serverCommandDispatcher,
+	                                  QuiltClientCommandSource source,
+	                                  CommandManager.RegistrationEnvironment environment) {
+		if (buildContext != null) {
+			initialize(buildContext, environment);
+		}
+
+		// Add the commands to the vanilla dispatcher for completion.
+		// It's done here because both the server and the client commands have
+		// to be in the same dispatcher and completion results.
+		addDummyCommands(serverCommandDispatcher, source);
 	}
 
 	/**
@@ -289,10 +329,10 @@ public final class ClientCommandInternals {
 	 * @param target the target command dispatcher
 	 * @param source the command source - commands which the source cannot use are filtered out
 	 */
-	public static void addDummyCommands(CommandDispatcher<QuiltClientCommandSource> target, QuiltClientCommandSource source) {
+	private static void addDummyCommands(CommandDispatcher<QuiltClientCommandSource> target, QuiltClientCommandSource source) {
 		var originalToCopy = new Object2ObjectOpenHashMap<CommandNode<QuiltClientCommandSource>, CommandNode<QuiltClientCommandSource>>();
-		originalToCopy.put(DISPATCHER.getRoot(), target.getRoot());
-		copyChildren(DISPATCHER.getRoot(), target.getRoot(), source, originalToCopy);
+		originalToCopy.put(currentDispatcher.getRoot(), target.getRoot());
+		copyChildren(currentDispatcher.getRoot(), target.getRoot(), source, originalToCopy);
 	}
 
 	/**

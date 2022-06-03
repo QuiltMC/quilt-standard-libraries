@@ -21,6 +21,10 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 import com.mojang.brigadier.CommandDispatcher;
 
+import net.minecraft.command.CommandBuildContext;
+import net.minecraft.command.argument.ItemStackArgument;
+import net.minecraft.command.argument.ItemStackArgumentType;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
@@ -33,15 +37,15 @@ public class CommandApiTest implements CommandRegistrationCallback {
 	private static final EnumArgumentType ENUM_ARGUMENT_TYPE = EnumArgumentType.enumConstant(TestEnum.class);
 
 	@Override
-	public void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, boolean integrated, boolean dedicated) {
-		if (dedicated) {
+	public void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, CommandBuildContext context, CommandManager.RegistrationEnvironment environment) {
+		if (environment.isDedicated()) {
 			dispatcher.register(literal("ping")
 					.executes(ctx -> {
 						ctx.getSource().sendFeedback(new LiteralText("pong!"), false);
 						return 0;
 					})
 			);
-		} else if (integrated) {
+		} else if (environment.isIntegrated()) {
 			dispatcher.register(literal("singleplayer_only")
 					.executes(ctx -> {
 						ctx.getSource().sendFeedback(new LiteralText("This command should only exist in singleplayer"), false);
@@ -67,6 +71,17 @@ public class CommandApiTest implements CommandRegistrationCallback {
 									return 0;
 								})
 						)
+				)
+		);
+
+		dispatcher.register(literal("test_with_arg")
+				.then(literal("item")
+						.then(argument("arg", ItemStackArgumentType.itemStack(context))
+								.executes(ctx -> {
+									ItemStackArgument arg = ItemStackArgumentType.getItemStackArgument(ctx, "arg");
+									ctx.getSource().sendFeedback(new LiteralText("Ooohh, you have chosen: " + arg.getItem() + "!"), false);
+									return 0;
+								}))
 				)
 		);
 	}
