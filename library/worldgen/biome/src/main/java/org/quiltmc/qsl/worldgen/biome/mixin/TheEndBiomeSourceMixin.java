@@ -33,7 +33,7 @@ import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 import org.quiltmc.qsl.worldgen.biome.impl.TheEndBiomeData;
 
 @Mixin(TheEndBiomeSource.class)
-public class MixinTheEndBiomeSource {
+public class TheEndBiomeSourceMixin {
 	@Unique
 	private TheEndBiomeData.Overrides overrides;
 

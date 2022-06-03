@@ -38,7 +38,7 @@ import org.quiltmc.qsl.worldgen.biome.impl.NetherBiomeData;
  * This Mixin is responsible for adding mod-biomes to the NETHER preset in the MultiNoiseBiomeSource.
  */
 @Mixin(MultiNoiseBiomeSource.Preset.class)
-public class MixinMultiNoiseBiomeSource {
+public class MultiNoiseBiomeSourceMixin {
 	// NOTE: This is a lambda-function in the NETHER preset field initializer
 	@Inject(method = "m_ixtcdgmf", at = @At("RETURN"), cancellable = true)
 	private static void appendNetherBiomes(Registry<Biome> registry, CallbackInfoReturnable<MultiNoiseUtil.ParameterRangeList<Holder<Biome>>> cir) {

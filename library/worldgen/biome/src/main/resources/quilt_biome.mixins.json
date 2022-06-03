@@ -3,8 +3,8 @@
   "package": "org.quiltmc.qsl.worldgen.biome.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "MixinMultiNoiseBiomeSource",
-    "MixinTheEndBiomeSource",
+    "MultiNoiseBiomeSourceMixin",
+    "TheEndBiomeSourceMixin",
     "modification.DynamicRegistryManagerImplMixin",
     "modification.MinecraftServerMixin"
   ],
