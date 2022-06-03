@@ -36,7 +36,7 @@ import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
  * The primary entrypoint into a screen is when it is being opened, this is signified by an event {@link ScreenEvents#BEFORE_INIT before}
  * and {@link ScreenEvents#AFTER_INIT after} initialization of the screen.
  *
- * @see QuiltScreenExtensions
+ * @see QuiltScreen
  * @see ScreenKeyboardEvents
  * @see ScreenMouseEvents
  */
@@ -44,8 +44,8 @@ import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 public final class ScreenEvents {
 	/**
 	 * An event that is called before {@link Screen#init(MinecraftClient, int, int) a screen is initialized} to its default state.
-	 * It should be noted that some methods in {@link QuiltScreenExtensions} such
-	 * as a screen's {@link QuiltScreenExtensions#getTextRenderer() text renderer} may not be initialized yet,
+	 * It should be noted that some methods in {@link QuiltScreen} such
+	 * as a screen's {@link QuiltScreen#getTextRenderer() text renderer} may not be initialized yet,
 	 * and as such their use is discouraged.
 	 * <p>
 	 * This event indicates a screen has been resized, and therefore is being re-initialized.
@@ -70,8 +70,8 @@ public final class ScreenEvents {
 	 * <p>
 	 * Note that by adding an element to a screen, the element is not automatically {@link net.minecraft.client.gui.screen.Screen ticked} or {@link net.minecraft.client.gui.Drawable drawn}.
 	 * Unless the element is a button, you need to call the specific {@link Screen#tick() tick} and {@link net.minecraft.client.gui.Drawable#render(MatrixStack, int, int, float) render} methods in the corresponding screen events.
-	 *
-	 * <p>For example, to add a button to the title screen, the following code could be used:
+	 * <p>
+	 * For example, to add a button to the title screen, the following code could be used:
 	 * <pre>{@code
 	 * ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
 	 * 	if (screen instanceof TitleScreen) {

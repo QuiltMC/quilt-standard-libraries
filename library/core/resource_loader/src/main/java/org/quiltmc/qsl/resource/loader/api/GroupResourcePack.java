@@ -118,7 +118,7 @@ public abstract class GroupResourcePack implements ResourcePack {
 
 	@Override
 	public Collection<Identifier> findResources(ResourceType type, String namespace, String startingPath,
-	                                            Predicate<Identifier> pathFilter) {
+			Predicate<Identifier> pathFilter) {
 		var packs = this.namespacedPacks.get(namespace);
 
 		if (packs == null) {
@@ -193,7 +193,7 @@ public abstract class GroupResourcePack implements ResourcePack {
 		}
 
 		private static List<ResourcePack> addToPacksIfNeeded(ResourcePack basePack, List<ResourcePack> packs,
-		                                                     boolean basePriority) {
+				boolean basePriority) {
 			if (!packs.contains(basePack)) {
 				if (basePriority) {
 					packs.add(basePack);

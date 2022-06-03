@@ -6,8 +6,8 @@
     "ItemGroupMixin"
   ],
   "client": [
-    "client.ItemGroupMixin",
-    "client.CreativeInventoryScreenMixin"
+    "client.CreativeInventoryScreenMixin",
+    "client.ItemGroupMixin"
   ],
   "injectors": {
     "defaultRequire": 1

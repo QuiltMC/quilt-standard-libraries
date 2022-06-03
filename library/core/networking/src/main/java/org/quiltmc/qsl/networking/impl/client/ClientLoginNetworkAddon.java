@@ -22,6 +22,8 @@ import java.util.concurrent.CompletableFuture;
 
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,12 +34,10 @@ import net.minecraft.network.packet.c2s.login.LoginQueryResponseC2SPacket;
 import net.minecraft.network.packet.s2c.login.LoginQueryRequestS2CPacket;
 import net.minecraft.util.Identifier;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import org.quiltmc.qsl.networking.api.client.ClientLoginConnectionEvents;
-import org.quiltmc.qsl.networking.api.client.ClientLoginNetworking;
 import org.quiltmc.qsl.networking.api.FutureListeners;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
+import org.quiltmc.qsl.networking.api.client.ClientLoginConnectionEvents;
+import org.quiltmc.qsl.networking.api.client.ClientLoginNetworking;
 import org.quiltmc.qsl.networking.impl.AbstractNetworkAddon;
 
 @ApiStatus.Internal
@@ -57,7 +57,7 @@ public final class ClientLoginNetworkAddon extends AbstractNetworkAddon<ClientLo
 	}
 
 	public boolean handlePacket(LoginQueryRequestS2CPacket packet) {
-		return handlePacket(packet.getQueryId(), packet.getChannel(), packet.getPayload());
+		return this.handlePacket(packet.getQueryId(), packet.getChannel(), packet.getPayload());
 	}
 
 	private boolean handlePacket(int queryId, Identifier channelName, PacketByteBuf originalBuf) {

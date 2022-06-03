@@ -23,7 +23,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.mojang.brigadier.arguments.ArgumentType;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.command.argument.ArgumentTypeInfo;
@@ -35,9 +35,10 @@ import org.quiltmc.qsl.command.api.ServerArgumentType;
 
 @ApiStatus.Internal
 public final class ServerArgumentTypes {
-	private ServerArgumentTypes() { }
+	private ServerArgumentTypes() {
+	}
 
-	private static final Map<Class<?>, ServerArgumentType<?, ?>> BY_TYPE = new Object2ObjectOpenHashMap<>();
+	private static final Map<Class<?>, ServerArgumentType<?, ?>> BY_TYPE = new Reference2ObjectOpenHashMap<>();
 	private static final Map<Identifier, ServerArgumentType<?, ?>> BY_ID = new ConcurrentHashMap<>();
 
 	@SuppressWarnings("unchecked")

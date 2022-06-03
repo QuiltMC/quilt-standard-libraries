@@ -16,11 +16,11 @@
 
 package org.quiltmc.qsl.networking.api;
 
-import org.quiltmc.qsl.base.api.event.Event;
-
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.util.Identifier;
+
+import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
 /**
@@ -67,7 +67,7 @@ public final class ServerPlayConnectionEvents {
 	 * @see #INIT
 	 */
 	@FunctionalInterface
-	public interface Init extends EventAwareListener  {
+	public interface Init extends EventAwareListener {
 		void onPlayInit(ServerPlayNetworkHandler handler, MinecraftServer server);
 	}
 

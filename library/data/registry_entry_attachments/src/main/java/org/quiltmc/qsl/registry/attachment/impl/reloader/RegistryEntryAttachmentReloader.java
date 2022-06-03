@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.registry.attachment.impl.reloader;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +32,7 @@ import org.slf4j.Logger;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.registry.Registry;
@@ -114,8 +114,8 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	}
 
 	private void processResources(Profiler profiler,
-	                              Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> attachmentMaps,
-	                              Map<Identifier, List<Resource>> resources, Registry<?> registry) {
+			Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> attachmentMaps,
+			Map<Identifier, List<Resource>> resources, Registry<?> registry) {
 		for (var entry : resources.entrySet()) {
 			Identifier attachmentId = this.getAttachmentId(entry.getKey());
 			RegistryEntryAttachment<?, ?> attachment = RegistryEntryAttachmentHolder.getAttachment(registry, attachmentId);
@@ -140,7 +140,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	}
 
 	private <R, V> AttachmentDictionary<R, V> createAttachmentMap(RegistryEntryAttachment<R, V> attachment) {
-		return new AttachmentDictionary<>(attachment.registry(), attachment, this.source == ResourceType.CLIENT_RESOURCES);
+		return new AttachmentDictionary<>(attachment.registry(), attachment);
 	}
 
 	@Override
@@ -201,18 +201,13 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 			Objects.requireNonNull(registry, "registry");
 
 			RegistryEntryAttachmentHolder<R> holder = getHolder(registry);
-			for (Map.Entry<ValueTarget, Object> attachmentEntry : attachAttachment.getMap().entrySet()) {
+			for (Map.Entry<AttachmentDictionary.ValueTarget, Object> attachmentEntry : attachAttachment.getMap().entrySet()) {
 				V value = (V) attachmentEntry.getValue();
-				try {
-					for (Identifier id : attachmentEntry.getKey().ids()) {
-						R item = registry.get(id);
-						holder.putValue(attachment, item, value);
-					}
-				} catch (ValueTarget.ResolveException e) {
-					// TODO handle this better, somehow??
-					LOGGER.error("Failed to apply values for attachment {}!", attachment.id());
-					LOGGER.error("", e);
-					break;
+				AttachmentDictionary.ValueTarget target = attachmentEntry.getKey();
+				switch (target.type()) {
+				case ENTRY -> holder.putValue(attachment, attachment.registry().get(target.id()), value);
+				case TAG -> holder.putValue(attachment, TagKey.of(attachment.registry().getKey(), target.id()), value);
+				default -> throw new IllegalStateException("Unexpected value: " + target.type());
 				}
 			}
 		}

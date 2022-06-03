@@ -100,7 +100,7 @@ public abstract class DefaultResourcePackMixin implements ResourcePack {
 	@Overwrite
 	@Override
 	public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix,
-	                                            Predicate<Identifier> pathFilter) {
+			Predicate<Identifier> pathFilter) {
 		return this.quilt$internalPack.findResources(type, namespace, prefix, pathFilter);
 	}
 

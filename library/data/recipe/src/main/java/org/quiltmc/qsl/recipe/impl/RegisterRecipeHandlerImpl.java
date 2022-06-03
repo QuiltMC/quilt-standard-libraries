@@ -35,8 +35,8 @@ final class RegisterRecipeHandlerImpl implements RecipeLoadingEvents.AddRecipesC
 	int registered = 0;
 
 	RegisterRecipeHandlerImpl(Map<Identifier, JsonElement> resourceMap,
-	                          Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap,
-	                          ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder) {
+			Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap,
+			ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder) {
 		this.resourceMap = resourceMap;
 		this.builderMap = builderMap;
 		this.globalRecipeMapBuilder = globalRecipeMapBuilder;

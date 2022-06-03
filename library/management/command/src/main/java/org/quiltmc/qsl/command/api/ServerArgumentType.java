@@ -87,10 +87,8 @@ public interface ServerArgumentType<A extends ArgumentType<?>, T extends Argumen
 	 * @return a newly-created server-side argument type
 	 */
 	static <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> ServerArgumentType<A, T> register(
-			Identifier id, Class<? extends A> type,
-			ArgumentTypeInfo<A, T> typeInfo,
-			ArgumentTypeFallbackProvider<A> fallbackProvider,
-			@Nullable SuggestionProvider<?> fallbackSuggestions) {
+			Identifier id, Class<? extends A> type, ArgumentTypeInfo<A, T> typeInfo,
+			ArgumentTypeFallbackProvider<A> fallbackProvider, @Nullable SuggestionProvider<?> fallbackSuggestions) {
 		var value = new ServerArgumentTypeImpl<>(id, type, typeInfo, fallbackProvider, fallbackSuggestions);
 		ArgumentTypeInfosAccessor.callRegister(Registry.field_38000, id.toString(), type, typeInfo);
 		ServerArgumentTypes.register(value);
@@ -101,17 +99,16 @@ public interface ServerArgumentType<A extends ArgumentType<?>, T extends Argumen
 	 * Creates and registers a new server-side argument type.
 	 *
 	 * @param id               the argument type's identifier
-	 * @param type             the argument type class
-	 * @param serializer       the argument serializer
+	 * @param type             the argument type info
+	 * @param typeInfo         the argument serializer
 	 * @param fallbackProvider the fallback provider
 	 * @param <A>              the argument type
 	 * @return a newly-created server-side argument type
 	 */
 	static <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> ServerArgumentType<A, T> register(
-			Identifier id, Class<? extends A> type,
-			ArgumentTypeInfo<A, T> serializer,
+			Identifier id, Class<? extends A> type, ArgumentTypeInfo<A, T> typeInfo,
 			ArgumentTypeFallbackProvider<A> fallbackProvider
 	) {
-		return register(id, type, serializer, fallbackProvider, SuggestionProviders.ASK_SERVER);
+		return register(id, type, typeInfo, fallbackProvider, SuggestionProviders.ASK_SERVER);
 	}
 }

@@ -32,7 +32,7 @@ final class ModifyRecipeHandlerImpl extends BasicRecipeHandlerImpl implements Re
 	int counter = 0;
 
 	ModifyRecipeHandlerImpl(RecipeManager recipeManager, Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes,
-	                        Map<Identifier, Recipe<?>> globalRecipes) {
+			Map<Identifier, Recipe<?>> globalRecipes) {
 		super(recipeManager, recipes, globalRecipes);
 	}
 

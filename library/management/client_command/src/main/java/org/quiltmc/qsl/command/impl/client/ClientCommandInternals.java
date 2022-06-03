@@ -105,7 +105,7 @@ public final class ClientCommandInternals {
 			// Only run client commands if there are no matching server-side commands.
 			String command = message.substring(1);
 			CommandDispatcher<CommandSource> serverDispatcher = client.getNetworkHandler().getCommandDispatcher();
-			ParseResults<CommandSource> serverResults = serverDispatcher.parse(command, client.getNetworkHandler().getCommandSource());
+			ParseResults<CommandSource> serverResults = serverDispatcher.parse(command, commandSource);
 
 			if (serverResults.getReader().canRead() || isCommandInvalidOrDummy(serverResults)) {
 				currentDispatcher.execute(command, commandSource);
@@ -144,7 +144,8 @@ public final class ClientCommandInternals {
 	/**
 	 * Tests whether a parse result is invalid or the command it resolves to is a dummy command.
 	 * <p>
-	 * Used to work out whether a command in the main dispatcher is a dummy command added by {@link ClientCommandInternals#addDummyCommands(CommandDispatcher, QuiltClientCommandSource)}.
+	 * Used to work out whether a command in the main dispatcher is a dummy command added
+	 * by {@link ClientCommandInternals#addDummyCommands(CommandDispatcher, QuiltClientCommandSource)}.
 	 *
 	 * @param parse the parse results to test
 	 * @param <S>   the command source type

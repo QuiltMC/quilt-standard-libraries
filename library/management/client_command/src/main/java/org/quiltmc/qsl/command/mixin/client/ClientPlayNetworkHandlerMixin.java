@@ -35,7 +35,6 @@ import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.util.registry.DynamicRegistryManager;
 
-import org.quiltmc.qsl.command.api.client.QuiltClientCommandSource;
 import org.quiltmc.qsl.command.impl.client.ClientCommandInternals;
 
 @Mixin(ClientPlayNetworkHandler.class)
@@ -58,7 +57,7 @@ abstract class ClientPlayNetworkHandlerMixin {
 	@Inject(method = "onGameJoin", at = @At("RETURN"))
 	private void onGameJoin(GameJoinS2CPacket packet, CallbackInfo ci) {
 		ClientCommandInternals.updateCommands(new CommandBuildContext(this.registryManager),
-				(CommandDispatcher) this.commandDispatcher, (QuiltClientCommandSource) this.commandSource,
+				(CommandDispatcher) this.commandDispatcher, this.commandSource,
 				this.client.isIntegratedServerRunning() ? CommandManager.RegistrationEnvironment.INTEGRATED : CommandManager.RegistrationEnvironment.DEDICATED
 		);
 	}
@@ -67,7 +66,7 @@ abstract class ClientPlayNetworkHandlerMixin {
 	@Inject(method = "onCommandTree", at = @At("RETURN"))
 	private void onOnCommandTree(CommandTreeS2CPacket packet, CallbackInfo info) {
 		ClientCommandInternals.updateCommands(null,
-				(CommandDispatcher) this.commandDispatcher, (QuiltClientCommandSource) this.commandSource,
+				(CommandDispatcher) this.commandDispatcher, this.commandSource,
 				this.client.isIntegratedServerRunning() ? CommandManager.RegistrationEnvironment.INTEGRATED : CommandManager.RegistrationEnvironment.DEDICATED
 		);
 	}
