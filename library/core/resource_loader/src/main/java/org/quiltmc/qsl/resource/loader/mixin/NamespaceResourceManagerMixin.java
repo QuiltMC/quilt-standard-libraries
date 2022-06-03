@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.resource.loader.mixin;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -29,8 +30,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.resource.NamespaceResourceManager;
+import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.resource.SourcedResource;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.util.Identifier;
 
@@ -54,7 +55,7 @@ public class NamespaceResourceManagerMixin {
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	private void onGetAllResources(Identifier id, CallbackInfoReturnable<List<SourcedResource>> cir, List<NamespaceResourceManager.ResourceEntry> resources) {
+	private void onGetAllResources(Identifier id, CallbackInfoReturnable<List<Resource>> cir, List<NamespaceResourceManager.ResourceEntry> resources) {
 		this.quilt$getAllResources$resources.set(resources);
 	}
 
@@ -95,6 +96,19 @@ public class NamespaceResourceManagerMixin {
 		}
 
 		return entries.add((NamespaceResourceManager.ResourceEntry) entry);
+	}
+
+	@Inject(method = "streamResourcePacks", at = @At("RETURN"), cancellable = true)
+	private void onStreamResourcePacks(CallbackInfoReturnable<Stream<ResourcePack>> cir) {
+		cir.setReturnValue(cir.getReturnValue()
+				.mapMulti((pack, consumer) -> {
+					if (pack instanceof GroupResourcePack grouped) {
+						grouped.streamPacks().forEach(consumer);
+					} else {
+						consumer.accept(pack);
+					}
+				})
+		);
 	}
 
 	@Mixin(NamespaceResourceManager.ResourceEntry.class)

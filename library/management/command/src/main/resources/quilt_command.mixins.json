@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.command.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "ArgumentTypeInfosAccessor",
+    "CommandManagerMixin",
+    "CommandManagerMixin$RegistrationEnvironmentMixin",
+    "RequiredArgumentBuilderAccessor",
+    "ServerLoginNetworkHandlerMixin",
+    "ServerPlayerEntityMixin"
+  ],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Queue;
-import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -40,6 +39,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.gen.WorldGenRandom;
 
 import org.quiltmc.qsl.registry.mixin.SimpleRegistryAccessor;
 
@@ -124,7 +124,7 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	}
 
 	@Override
-	public Optional<Holder<T>> getRandom(Random random) {
+	public Optional<Holder<T>> getRandom(WorldGenRandom random) {
 		return this.wrapped.getRandom(random);
 	}
 

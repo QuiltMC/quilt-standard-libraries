@@ -18,7 +18,6 @@ package org.quiltmc.qsl.registry.test;
 
 import static org.quiltmc.qsl.registry.test.RegistryLibEventsTest.register;
 
-import net.fabricmc.loader.api.ModContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +28,7 @@ import net.minecraft.block.Material;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.registry.api.event.RegistryMonitor;
 
@@ -55,7 +55,7 @@ public class RegistryLibMonitorRegistrationTest implements ModInitializer {
 					context.value(), context.id(), context.rawId(), context.registry());
 
 			if (context.id() == TEST_BLOCK_A_ID) {
-				Registry.register(context.registry(), TEST_BLOCK_B_ID, new Block(AbstractBlock.Settings.of(Material.STONE, MapColor.BLACK)));
+				context.register(TEST_BLOCK_B_ID, new Block(AbstractBlock.Settings.of(Material.STONE, MapColor.BLACK)));
 			}
 		});
 	}

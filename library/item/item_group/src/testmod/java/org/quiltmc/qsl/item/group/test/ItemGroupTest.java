@@ -18,14 +18,13 @@ package org.quiltmc.qsl.item.group.test;
 
 import java.util.stream.IntStream;
 
-import net.fabricmc.loader.api.ModContainer;
-
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.item.group.api.QuiltItemGroup;
 
