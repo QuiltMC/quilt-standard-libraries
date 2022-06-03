@@ -21,7 +21,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.tag.TagKey;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
@@ -49,7 +49,7 @@ public class DispatchedAttachmentTest implements ModInitializer {
 			if (!world.isClient()) {
 				ServerPlayerEntity player = (ServerPlayerEntity) user;
 				MODULAR_FUNCTION.getValue(this).ifPresentOrElse(funcValue -> funcValue.invoke(player),
-						() -> player.sendMessage(new LiteralText("No function assigned!")
+						() -> player.sendMessage(Text.create("No function assigned!")
 								.styled(style -> style.withColor(Formatting.RED)), true));
 			}
 			return TypedActionResult.pass(user.getStackInHand(hand));

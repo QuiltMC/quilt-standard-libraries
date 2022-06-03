@@ -31,7 +31,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -90,7 +90,7 @@ public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents
 
 	@Override
 	public void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, CommandBuildContext buildContext,
-	                             CommandManager.RegistrationEnvironment environment) {
+			CommandManager.RegistrationEnvironment environment) {
 		dispatcher.register(CommandManager.literal("quilt_dimension_test").executes(this::swapTargeted));
 	}
 
@@ -104,7 +104,7 @@ public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents
 			QuiltDimensions.teleport(player, modWorld, target);
 
 			if (player.world != modWorld) {
-				throw new CommandException(new LiteralText("Teleportation failed!"));
+				throw new CommandException(Text.create("Teleportation failed!"));
 			}
 
 

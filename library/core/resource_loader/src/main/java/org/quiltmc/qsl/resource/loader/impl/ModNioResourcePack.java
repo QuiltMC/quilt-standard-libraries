@@ -40,7 +40,6 @@ import org.slf4j.Logger;
 
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.AbstractFileResourcePack;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
@@ -82,7 +81,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 			ResourcePackActivationType activationType, Path path, ResourceType type, @Nullable AutoCloseable closer) {
 		super(null);
 		this.name = name == null ? ModResourcePackUtil.getName(modInfo) : name;
-		this.displayName = displayName == null ? new LiteralText(name) : displayName;
+		this.displayName = displayName == null ? Text.of(name) : displayName;
 		this.modInfo = modInfo;
 		this.basePath = path.toAbsolutePath().normalize();
 		this.type = type;

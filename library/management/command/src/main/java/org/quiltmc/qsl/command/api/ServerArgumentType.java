@@ -90,7 +90,7 @@ public interface ServerArgumentType<A extends ArgumentType<?>, T extends Argumen
 			Identifier id, Class<? extends A> type, ArgumentTypeInfo<A, T> typeInfo,
 			ArgumentTypeFallbackProvider<A> fallbackProvider, @Nullable SuggestionProvider<?> fallbackSuggestions) {
 		var value = new ServerArgumentTypeImpl<>(id, type, typeInfo, fallbackProvider, fallbackSuggestions);
-		ArgumentTypeInfosAccessor.callRegister(Registry.field_38000, id.toString(), type, typeInfo);
+		ArgumentTypeInfosAccessor.callRegister(Registry.COMMAND_ARGUMENT_TYPE, id.toString(), type, typeInfo);
 		ServerArgumentTypes.register(value);
 		return value;
 	}

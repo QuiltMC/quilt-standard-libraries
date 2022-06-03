@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 
 import net.minecraft.command.argument.IdentifierArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.QuiltLoader;
@@ -68,15 +68,15 @@ public final class DumpBuiltinAttachmentsCommand {
 	private static final Logger LOGGER = LogUtils.getLogger();
 
 	private static final DynamicCommandExceptionType UNKNOWN_REGISTRY_EXCEPTION = new DynamicCommandExceptionType(
-			o -> new LiteralText("Could not find registry " + o));
+			o -> Text.create("Could not find registry " + o));
 	private static final SimpleCommandExceptionType IO_EXCEPTION =
-			new SimpleCommandExceptionType(new LiteralText("IO exception occurred, check logs"));
+			new SimpleCommandExceptionType(Text.create("IO exception occurred, check logs"));
 	private static final SimpleCommandExceptionType ILLEGAL_STATE =
-			new SimpleCommandExceptionType(new LiteralText("Encountered illegal state, check logs"));
+			new SimpleCommandExceptionType(Text.create("Encountered illegal state, check logs"));
 	private static final SimpleCommandExceptionType ENCODE_FAILURE =
-			new SimpleCommandExceptionType(new LiteralText("Failed to encode value, check logs"));
+			new SimpleCommandExceptionType(Text.create("Failed to encode value, check logs"));
 	private static final SimpleCommandExceptionType UNCAUGHT_EXCEPTION =
-			new SimpleCommandExceptionType(new LiteralText("Uncaught exception occurred, check logs"));
+			new SimpleCommandExceptionType(Text.create("Uncaught exception occurred, check logs"));
 
 	private static int execute(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
 		var registryId = IdentifierArgumentType.getIdentifier(ctx, "registry");
@@ -169,7 +169,7 @@ public final class DumpBuiltinAttachmentsCommand {
 			attachmentCount++;
 		}
 
-		ctx.getSource().sendFeedback(new LiteralText("Done. Dumped " + attachmentCount + " attachments, " + valueCount + " values."),
+		ctx.getSource().sendFeedback(Text.create("Done. Dumped " + attachmentCount + " attachments, " + valueCount + " values."),
 				false);
 	}
 }

@@ -27,7 +27,6 @@ import net.minecraft.resource.pack.ResourcePackProfile;
 import net.minecraft.resource.pack.ResourcePackSource;
 import net.minecraft.resource.pack.metadata.PackResourceMetadata;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 
 import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
@@ -75,7 +74,7 @@ public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
 	 * Similar to {@link ResourcePackSource#PACK_SOURCE_BUILTIN} but specifies the mod name too.
 	 */
 	public static class BuiltinResourcePackSource implements ResourcePackSource {
-		private static final Text SOURCE_BUILTIN_TEXT = new TranslatableText("pack.source.builtin");
+		private static final Text SOURCE_BUILTIN_TEXT = Text.createFormatted("pack.source.builtin");
 		private final Text text;
 		private final Text tooltip;
 
@@ -87,12 +86,12 @@ public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
 			}
 
 			this.text = SOURCE_BUILTIN_TEXT;
-			this.tooltip = new TranslatableText("options.generic_value", SOURCE_BUILTIN_TEXT, modName);
+			this.tooltip = Text.createFormatted("options.generic_value", SOURCE_BUILTIN_TEXT, modName);
 		}
 
 		@Override
 		public Text decorate(Text description) {
-			return new TranslatableText("pack.nameAndSource", description, this.text).formatted(Formatting.GRAY);
+			return Text.createFormatted("pack.nameAndSource", description, this.text).formatted(Formatting.GRAY);
 		}
 
 		public Text getTooltip() {

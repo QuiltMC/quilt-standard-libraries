@@ -32,7 +32,6 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.tag.Tag;
 import net.minecraft.tag.TagKey;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Holder;
@@ -99,12 +98,12 @@ public final class TagsTestMod implements ServerLifecycleEvents.Ready, CommandRe
 	}
 
 	private static <T> void displayTag(TagKey<T> tagKey, Tag<Holder<T>> tag, Registry<T> registry, Consumer<Text> feedbackConsumer) {
-		feedbackConsumer.accept(new LiteralText(tagKey.id() + ":").formatted(Formatting.GREEN));
+		feedbackConsumer.accept(Text.create(tagKey.id() + ":").formatted(Formatting.GREEN));
 
 		for (var value : tag.values()) {
 			Identifier id = registry.getId(value.value());
-			feedbackConsumer.accept(new LiteralText(" - ")
-					.append(new LiteralText(id.toString()).formatted(Formatting.GOLD)));
+			feedbackConsumer.accept(Text.create(" - ")
+					.append(Text.create(id.toString()).formatted(Formatting.GOLD)));
 		}
 	}
 }

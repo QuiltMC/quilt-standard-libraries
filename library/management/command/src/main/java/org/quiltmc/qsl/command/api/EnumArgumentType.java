@@ -41,7 +41,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.ArgumentTypeInfo;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 /**
  * An {@link ArgumentType} that allows an arbitrary set of (case-insensitive) strings.
@@ -50,7 +50,7 @@ import net.minecraft.text.TranslatableText;
  */
 public final class EnumArgumentType implements ArgumentType<String> {
 	public static final DynamicCommandExceptionType UNKNOWN_VALUE_EXCEPTION =
-			new DynamicCommandExceptionType(o -> new TranslatableText("quilt.argument.enum.unknown_value", o));
+			new DynamicCommandExceptionType(o -> Text.createFormatted("quilt.argument.enum.unknown_value", o));
 
 	private final Set<String> values;
 

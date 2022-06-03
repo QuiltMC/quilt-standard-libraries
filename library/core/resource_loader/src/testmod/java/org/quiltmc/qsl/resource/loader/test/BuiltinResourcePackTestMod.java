@@ -18,7 +18,7 @@ package org.quiltmc.qsl.resource.loader.test;
 
 import static org.quiltmc.qsl.resource.loader.test.ResourceLoaderTestMod.id;
 
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -30,7 +30,7 @@ public class BuiltinResourcePackTestMod implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		if (!ResourceLoader.registerBuiltinResourcePack(id("test"), mod, ResourcePackActivationType.DEFAULT_ENABLED,
-				new LiteralText("Test built-in resource pack").formatted(Formatting.GOLD))) {
+				Text.create("Test built-in resource pack").formatted(Formatting.GOLD))) {
 			throw new RuntimeException("Could not register built-in resource pack.");
 		}
 	}

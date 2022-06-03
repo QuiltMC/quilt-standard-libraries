@@ -37,7 +37,6 @@ import net.minecraft.SharedConstants;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.AbstractFileResourcePack;
 import net.minecraft.resource.pack.ResourcePackProfile;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -56,7 +55,7 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 			profileAdder.accept(ResourcePackProfile.of(
 					PACK_NAME, false, TestPack::new, factory,
 					ResourcePackProfile.InsertionPosition.TOP,
-					text -> text.shallowCopy().append(new LiteralText(" (Virtual Provider)").formatted(Formatting.DARK_GRAY))
+					text -> text.shallowCopy().append(Text.create(" (Virtual Provider)").formatted(Formatting.DARK_GRAY))
 			));
 		});
 	}
@@ -146,7 +145,7 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 
 		@Override
 		public Text getDisplayName() {
-			return new LiteralText(this.getName());
+			return Text.of(this.getName());
 		}
 	}
 }

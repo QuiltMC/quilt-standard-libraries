@@ -27,7 +27,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -42,7 +42,7 @@ public final class NetworkingPlayPacketTest implements ModInitializer {
 
 	public static void sendToTestChannel(ServerPlayerEntity player, String stuff) {
 		PacketByteBuf buf = PacketByteBufs.create();
-		buf.writeText(new LiteralText(stuff));
+		buf.writeText(Text.of(stuff));
 		ServerPlayNetworking.send(player, TEST_CHANNEL, buf);
 		NetworkingTestMods.LOGGER.info("Sent custom payload packet in {}", TEST_CHANNEL);
 	}

@@ -47,7 +47,6 @@ import net.minecraft.resource.pack.DefaultResourcePack;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.ResourcePackProfile;
 import net.minecraft.resource.pack.ResourcePackProvider;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -263,7 +262,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	/* Built-in resource packs */
 
 	public static Text getBuiltinPackDisplayNameFromId(Identifier id) {
-		return new LiteralText(id.getNamespace() + "/" + id.getPath());
+		return Text.of(id.getNamespace() + "/" + id.getPath());
 	}
 
 	/**

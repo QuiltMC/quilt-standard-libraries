@@ -30,7 +30,6 @@ import net.minecraft.client.network.ClientCommandSource;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.MessageType;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
@@ -53,7 +52,7 @@ abstract class ClientCommandSourceMixin implements QuiltClientCommandSource {
 
 	@Override
 	public void sendError(Text message) {
-		this.client.inGameHud.addChatMessage(MessageType.SYSTEM, new LiteralText("").append(message).formatted(Formatting.RED), Util.NIL_UUID);
+		this.client.inGameHud.addChatMessage(MessageType.SYSTEM, message.shallowCopy().formatted(Formatting.RED), Util.NIL_UUID);
 	}
 
 	@Override

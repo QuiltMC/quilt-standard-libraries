@@ -52,10 +52,8 @@ import net.minecraft.command.CommandBuildContext;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.CommandManager;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.Texts;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.registry.DynamicRegistryManager;
 
 import org.quiltmc.qsl.command.api.client.ClientCommandRegistrationCallback;
@@ -189,7 +187,7 @@ public final class ClientCommandInternals {
 		Text message = Texts.toText(e.getRawMessage());
 		String context = e.getContext();
 
-		return context != null ? new TranslatableText("command.context.parse_error", message, context) : message;
+		return context != null ? Text.createFormatted("command.context.parse_error", message, context) : message;
 	}
 
 	/**
@@ -303,16 +301,16 @@ public final class ClientCommandInternals {
 		Map<CommandNode<QuiltClientCommandSource>, String> commands = currentDispatcher.getSmartUsage(startNode, context.getSource());
 
 		for (var command : commands.values()) {
-			context.getSource().sendFeedback(new LiteralText(PREFIX + command));
+			context.getSource().sendFeedback(Text.of(PREFIX + command));
 		}
 
 		return commands.size();
 	}
 
 	public static void updateCommands(@Nullable CommandBuildContext buildContext,
-	                                  CommandDispatcher<QuiltClientCommandSource> serverCommandDispatcher,
-	                                  QuiltClientCommandSource source,
-	                                  CommandManager.RegistrationEnvironment environment) {
+			CommandDispatcher<QuiltClientCommandSource> serverCommandDispatcher,
+			QuiltClientCommandSource source,
+			CommandManager.RegistrationEnvironment environment) {
 		if (buildContext != null) {
 			initialize(buildContext, environment);
 		}

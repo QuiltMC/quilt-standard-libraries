@@ -19,12 +19,12 @@ package org.quiltmc.qsl.worldgen.biome.impl.modification;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.class_3195;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.gen.carver.ConfiguredCarver;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.PlacedFeature;
+import net.minecraft.world.gen.feature.StructureFeature;
 
 /**
  * Utility class for getting the registry keys of built-in worldgen objects and throwing proper exceptions if they
@@ -35,9 +35,9 @@ public final class BuiltInRegistryKeys {
 	private BuiltInRegistryKeys() {
 	}
 
-	public static RegistryKey<class_3195> get(class_3195 configuredStructure) {
-		return BuiltinRegistries.field_25930.getKey(configuredStructure)
-				.orElseThrow(() -> new IllegalArgumentException("Given configured structure is not built-in: " + configuredStructure));
+	public static RegistryKey<StructureFeature> get(StructureFeature structureFeature) {
+		return BuiltinRegistries.STRUCTURE.getKey(structureFeature)
+				.orElseThrow(() -> new IllegalArgumentException("Given configured structure is not built-in: " + structureFeature));
 	}
 
 	public static RegistryKey<ConfiguredFeature<?, ?>> get(ConfiguredFeature<?, ?> configuredFeature) {
