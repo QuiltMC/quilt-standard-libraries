@@ -38,40 +38,40 @@ public interface BiomeSelectionContext {
 	RegistryKey<Biome> getBiomeKey();
 
 	/**
-	 * Returns the biome with modifications by biome modifiers of higher priority already applied.
+	 * {@return the biome with modifications by biome modifiers of higher priority already applied}
 	 */
 	Biome getBiome();
 
 	Holder<Biome> getBiomeRegistryEntry();
 
 	/**
-	 * Returns true if this biome has the given configured feature, which must be registered
-	 * in the {@link net.minecraft.util.registry.BuiltinRegistries}.
-	 *
-	 * <p>This method is intended for use with the Vanilla configured features found in
+	 * {@return {@code true} if this biome has the given configured feature, which must be registered
+	 * in the {@link net.minecraft.util.registry.BuiltinRegistries}, otherwise {@code false}}
+	 * <p>
+	 * This method is intended for use with the Vanilla configured features found in
 	 * classes such as {@link net.minecraft.world.gen.feature.OreConfiguredFeatures}.
 	 */
 	default boolean hasBuiltInFeature(ConfiguredFeature<?, ?> configuredFeature) {
 		RegistryKey<ConfiguredFeature<?, ?>> key = BuiltInRegistryKeys.get(configuredFeature);
-		return hasFeature(key);
+		return this.hasFeature(key);
 	}
 
 	/**
 	 * Returns true if this biome has the given placed feature, which must be registered
 	 * in the {@link net.minecraft.util.registry.BuiltinRegistries}.
-	 *
-	 * <p>This method is intended for use with the Vanilla placed features found in
+	 * <p>
+	 * This method is intended for use with the Vanilla placed features found in
 	 * classes such as {@link net.minecraft.world.gen.feature.OrePlacedFeatures}.
 	 */
 	default boolean hasBuiltInPlacedFeature(PlacedFeature placedFeature) {
-		return hasPlacedFeature(BuiltInRegistryKeys.get(placedFeature));
+		return this.hasPlacedFeature(BuiltInRegistryKeys.get(placedFeature));
 	}
 
 	/**
-	 * Returns true if this biome contains a placed feature referencing a configured feature with the given key.
+	 * {@return {@code true} if this biome contains a placed feature referencing a configured feature with the given key, otherwise {@code false}}
 	 */
 	default boolean hasFeature(RegistryKey<ConfiguredFeature<?, ?>> key) {
-		List<HolderSet<PlacedFeature>> featureSteps = getBiome().getGenerationSettings().getFeatures();
+		List<HolderSet<PlacedFeature>> featureSteps = this.getBiome().getGenerationSettings().getFeatures();
 
 		for (HolderSet<PlacedFeature> featureSuppliers : featureSteps) {
 			for (Holder<PlacedFeature> featureSupplier : featureSuppliers) {
@@ -85,14 +85,14 @@ public interface BiomeSelectionContext {
 	}
 
 	/**
-	 * Returns true if this biome contains a placed feature with the given key.
+	 * {@return {@code true} if this biome contains a placed feature with the given key, otherwise {@code false}}
 	 */
 	default boolean hasPlacedFeature(RegistryKey<PlacedFeature> key) {
-		List<HolderSet<PlacedFeature>> featureSteps = getBiome().getGenerationSettings().getFeatures();
+		List<HolderSet<PlacedFeature>> featureSteps = this.getBiome().getGenerationSettings().getFeatures();
 
 		for (HolderSet<PlacedFeature> featureSuppliers : featureSteps) {
 			for (Holder<PlacedFeature> featureSupplier : featureSuppliers) {
-				if (getPlacedFeatureKey(featureSupplier.value()).orElse(null) == key) {
+				if (this.getPlacedFeatureKey(featureSupplier.value()).orElse(null) == key) {
 					return true;
 				}
 			}
@@ -116,19 +116,19 @@ public interface BiomeSelectionContext {
 	Optional<RegistryKey<PlacedFeature>> getPlacedFeatureKey(PlacedFeature placedFeature);
 
 	/**
-	 * Returns true if the given built-in configured structure from {@link net.minecraft.util.registry.BuiltinRegistries}
-	 * can start in this biome in any of the chunk generators used by the current world-save.
-	 *
-	 * <p>This method is intended for use with the Vanilla configured structures found in {@link net.minecraft.world.gen.feature.ConfiguredStructureFeatures}.
+	 * {@return {@code true} if the given built-in configured structure from {@link net.minecraft.util.registry.BuiltinRegistries}
+	 * can start in this biome in any of the chunk generators used by the current world-save}
+	 * <p>
+	 * This method is intended for use with the Vanilla configured structures found in {@link net.minecraft.world.gen.feature.ConfiguredStructureFeatures}.
 	 */
 	default boolean validForBuiltInStructure(ConfiguredStructureFeature<?, ?> configuredStructure) {
 		RegistryKey<ConfiguredStructureFeature<?, ?>> key = BuiltInRegistryKeys.get(configuredStructure);
-		return validForStructure(key);
+		return this.validForStructure(key);
 	}
 
 	/**
-	 * Returns true if the configured structure with the given key can start in this biome in any chunk generator
-	 * used by the current world-save.
+	 * {@return {@code true} if the configured structure with the given key can start in this biome in any chunk generator
+	 * used by the current world-save, otherwise {@code false}}
 	 */
 	boolean validForStructure(RegistryKey<ConfiguredStructureFeature<?, ?>> key);
 
@@ -142,13 +142,13 @@ public interface BiomeSelectionContext {
 	/**
 	 * Tries to determine whether this biome generates in a specific dimension, based on the {@link net.minecraft.world.gen.GeneratorOptions}
 	 * used by the current world-save.
-	 *
-	 * <p>If no dimension options exist for the given dimension key, <code>false</code> is returned.
+	 * <p>
+	 * If no dimension options exist for the given dimension key, {@code false} is returned.
 	 */
 	boolean canGenerateIn(RegistryKey<DimensionOptions> dimensionKey);
 
 	/**
-	 * {@return true if this biome is in the given {@link TagKey}}.
+	 * {@return true if this biome is in the given {@link TagKey}, otherwise {@code false}}
 	 */
 	boolean isIn(TagKey<Biome> tag);
 }

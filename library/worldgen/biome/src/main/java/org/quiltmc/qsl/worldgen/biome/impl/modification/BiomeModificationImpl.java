@@ -104,7 +104,6 @@ public class BiomeModificationImpl {
 		return this.modifiers;
 	}
 
-	@SuppressWarnings("ConstantConditions")
 	public void finalizeWorldGen(DynamicRegistryManager impl, LevelProperties levelProperties) {
 		Stopwatch sw = Stopwatch.createStarted();
 
@@ -123,7 +122,7 @@ public class BiomeModificationImpl {
 				.sorted(Comparator.comparingInt(key -> biomes.getRawId(biomes.getOrThrow(key))))
 				.toList();
 
-		List<ModifierRecord> sortedModifiers = getSortedModifiers();
+		List<ModifierRecord> sortedModifiers = this.getSortedModifiers();
 
 		int biomesChanged = 0;
 		int biomesProcessed = 0;
@@ -136,7 +135,7 @@ public class BiomeModificationImpl {
 
 			// Make a copy of the biome to allow selection contexts to see it unmodified,
 			// But do so only once it's known anything wants to modify the biome at all
-			BiomeSelectionContext context = new BiomeSelectionContextImpl(impl, levelProperties, key, biome);
+			var context = new BiomeSelectionContextImpl(impl, levelProperties, key, biome);
 			BiomeModificationContextImpl modificationContext = null;
 
 			for (ModifierRecord modifier : sortedModifiers) {

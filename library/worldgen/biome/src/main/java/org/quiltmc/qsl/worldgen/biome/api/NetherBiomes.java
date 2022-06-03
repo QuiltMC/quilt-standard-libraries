@@ -24,8 +24,6 @@ import org.quiltmc.qsl.worldgen.biome.impl.NetherBiomeData;
 
 /**
  * API that exposes the internals of Minecraft's nether biome code.
- *
- * <p><b>Experimental feature</b>, may be removed or changed without further notice.
  */
 public final class NetherBiomes {
 	private NetherBiomes() {
@@ -62,8 +60,8 @@ public final class NetherBiomes {
 	}
 
 	/**
-	 * Returns true if the given biome can generate in the nether, considering the Vanilla nether biomes,
-	 * and any biomes added to the Nether by mods.
+	 * {@return {@code true} if the given biome can generate in the nether, considering the Vanilla nether biomes,
+	 * and any biomes added to the Nether by mods, otherwise {@code false}}
 	 */
 	public static boolean canGenerateInNether(RegistryKey<Biome> biome) {
 		return NetherBiomeData.canGenerateInNether(biome);

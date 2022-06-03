@@ -39,8 +39,8 @@ import java.util.List;
 public class MixinMultiNoiseBiomeSource {
 	// NOTE: This is a lambda-function in the NETHER preset field initializer
 	@Inject(method = "m_ixtcdgmf", at = @At("RETURN"), cancellable = true)
-	private static void appendNetherBiomes(Registry<Biome> registry, CallbackInfoReturnable<MultiNoiseUtil.ParameterRangeList<Holder<Biome>>> cri) {
-		MultiNoiseUtil.ParameterRangeList<Holder<Biome>> biomes = cri.getReturnValue();
+	private static void appendNetherBiomes(Registry<Biome> registry, CallbackInfoReturnable<MultiNoiseUtil.ParameterRangeList<Holder<Biome>>> cir) {
+		MultiNoiseUtil.ParameterRangeList<Holder<Biome>> biomes = cir.getReturnValue();
 		List<Pair<MultiNoiseUtil.NoiseHypercube, Holder<Biome>>> entries = new ArrayList<>(biomes.getEntries());
 
 		// add fabric biome noise point data to list && BiomeSource biome list
@@ -48,7 +48,7 @@ public class MixinMultiNoiseBiomeSource {
 			entries.add(Pair.of(noisePoint, registry.getHolderOrThrow(biomeKey)));
 		});
 
-		cri.setReturnValue(new MultiNoiseUtil.ParameterRangeList<>(entries));
+		cir.setReturnValue(new MultiNoiseUtil.ParameterRangeList<>(entries));
 	}
 }
 

@@ -17,9 +17,23 @@
 
 package org.quiltmc.qsl.worldgen.biome.impl.modification;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
+
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.sound.BiomeAdditionsSound;
@@ -32,26 +46,18 @@ import net.minecraft.util.collection.Pool;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.biome.*;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeEffects;
+import net.minecraft.world.biome.BiomeParticleConfig;
+import net.minecraft.world.biome.GenerationSettings;
+import net.minecraft.world.biome.SpawnSettings;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.carver.ConfiguredCarver;
 import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.PlacedFeature;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.quiltmc.qsl.worldgen.biome.api.BiomeModificationContext;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.BiPredicate;
-import java.util.stream.Collectors;
-import java.util.List;
-import java.util.EnumMap;
-import java.util.Collections;
-import java.util.HashMap;
+import org.quiltmc.qsl.worldgen.biome.api.BiomeModificationContext;
 
 @ApiStatus.Internal
 public class BiomeModificationContextImpl implements BiomeModificationContext {
@@ -214,14 +220,14 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 		}
 
 		private void unfreezeCarvers() {
-			Map<GenerationStep.Carver, HolderSet<ConfiguredCarver<?>>> carversByStep = new EnumMap<>(GenerationStep.Carver.class);
-			carversByStep.putAll(generationSettings.carvers);
+			var carversByStep = new EnumMap<GenerationStep.Carver, HolderSet<ConfiguredCarver<?>>>(GenerationStep.Carver.class);
+			carversByStep.putAll(this.generationSettings.carvers);
 
 			this.generationSettings.carvers = carversByStep;
 		}
 
 		private void unfreezeFeatures() {
-			this.generationSettings.features = new ArrayList<>(generationSettings.features);
+			this.generationSettings.features = new ArrayList<>(this.generationSettings.features);
 		}
 
 		/**
@@ -231,17 +237,17 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 			this.freezeCarvers();
 			this.freezeFeatures();
 
-			if (rebuildFlowerFeatures) {
+			if (this.rebuildFlowerFeatures) {
 				this.rebuildFlowerFeatures();
 			}
 		}
 
 		private void freezeCarvers() {
-			generationSettings.carvers = ImmutableMap.copyOf(generationSettings.carvers);
+			this.generationSettings.carvers = ImmutableMap.copyOf(this.generationSettings.carvers);
 		}
 
 		private void freezeFeatures() {
-			this.generationSettings.features = ImmutableList.copyOf(generationSettings.features);
+			this.generationSettings.features = ImmutableList.copyOf(this.generationSettings.features);
 			// Replace the supplier to force a rebuild next time its called.
 			this.generationSettings.allowedFeatures = Suppliers.memoize(() -> this.generationSettings.features.stream()
 					.flatMap(HolderSet::stream)
@@ -251,7 +257,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 
 		private void rebuildFlowerFeatures() {
 			// Replace the supplier to force a rebuild next time its called.
-			generationSettings.flowerFeatures = Suppliers.memoize(() -> this.generationSettings.features.stream()
+			this.generationSettings.flowerFeatures = Suppliers.memoize(() -> this.generationSettings.features.stream()
 					.flatMap(HolderSet::stream)
 					.map(Holder::value)
 					.flatMap(PlacedFeature::getDecoratedFeatures)
@@ -293,7 +299,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 				featureSteps.add(HolderSet.createDirect(Collections.emptyList()));
 			}
 
-			featureSteps.set(index, plus(featureSteps.get(index), this.features.getHolderOrThrow(entry)));
+			featureSteps.set(index, this.plus(featureSteps.get(index), this.features.getHolderOrThrow(entry)));
 
 			// Ensure the list of flower features is up to date
 			this.rebuildFlowerFeatures = true;
@@ -302,13 +308,13 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 		@Override
 		public void addCarver(GenerationStep.Carver step, RegistryKey<ConfiguredCarver<?>> entry) {
 			// We do not need to delay evaluation of this since the registries are already fully built
-			this.generationSettings.carvers.put(step, plus(generationSettings.carvers.get(step), carvers.getHolderOrThrow(entry)));
+			this.generationSettings.carvers.put(step, this.plus(this.generationSettings.carvers.get(step), carvers.getHolderOrThrow(entry)));
 		}
 
 		@Override
 		public boolean removeCarver(GenerationStep.Carver step, RegistryKey<ConfiguredCarver<?>> configuredCarverKey) {
 			ConfiguredCarver<?> carver = this.carvers.getOrThrow(configuredCarverKey);
-			List<Holder<ConfiguredCarver<?>>> genCarvers = new ArrayList<Holder<ConfiguredCarver<?>>>(this.generationSettings.carvers.get(step).stream().toList());
+			var genCarvers = new ArrayList<>(this.generationSettings.carvers.get(step).stream().toList());
 
 			if (genCarvers.removeIf(entry -> entry.value() == carver)) {
 				this.generationSettings.carvers.put(step, HolderSet.createDirect(genCarvers));
@@ -319,7 +325,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 		}
 
 		private <T> HolderSet<T> plus(HolderSet<T> values, Holder<T> entry) {
-			List<Holder<T>> list = new ArrayList<>(values.stream().toList());
+			var list = new ArrayList<>(values.stream().toList());
 			list.add(entry);
 			return HolderSet.createDirect(list);
 		}
@@ -330,8 +336,8 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 		private final EnumMap<SpawnGroup, List<SpawnSettings.SpawnEntry>> quiltSpawners = new EnumMap<>(SpawnGroup.class);
 
 		SpawnSettingsContextImpl() {
-			unfreezeSpawners();
-			unfreezeSpawnCost();
+			this.unfreezeSpawners();
+			this.unfreezeSpawnCost();
 		}
 
 		private void unfreezeSpawners() {
@@ -353,8 +359,8 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 		}
 
 		public void freeze() {
-			freezeSpawners();
-			freezeSpawnCosts();
+			this.freezeSpawners();
+			this.freezeSpawnCosts();
 		}
 
 		private void freezeSpawners() {

@@ -17,12 +17,13 @@
 
 package org.quiltmc.qsl.worldgen.biome.impl;
 
-import com.google.common.base.Preconditions;
-import net.minecraft.util.math.noise.PerlinNoiseSampler;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+
+import com.google.common.base.Preconditions;
+
+import net.minecraft.util.math.noise.PerlinNoiseSampler;
 
 /**
  * Picks entries with arbitrary double weights using a binary search.
@@ -53,7 +54,7 @@ public final class WeightedPicker<T> {
 	public T pickFromNoise(PerlinNoiseSampler sampler, double x, double y, double z) {
 		double target = Math.abs(sampler.sample(x, y, z)) * getCurrentWeightTotal();
 
-		return search(target).entry();
+		return this.search(target).entry();
 	}
 
 	/**
@@ -71,8 +72,8 @@ public final class WeightedPicker<T> {
 	/**
 	 * Searches with the specified target value.
 	 *
-	 * @param target The target value, must satisfy the constraint 0 <= target <= currentTotal
-	 * @return The result of the search
+	 * @param target the target value, must satisfy the constraint 0 <= target <= currentTotal
+	 * @return the result of the search
 	 */
 	WeightedEntry<T> search(final double target) {
 		// Sanity checks, fail fast if stuff is going wrong.

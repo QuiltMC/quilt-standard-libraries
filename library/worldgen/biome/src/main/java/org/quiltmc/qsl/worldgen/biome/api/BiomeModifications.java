@@ -32,11 +32,9 @@ import java.util.function.Predicate;
 
 /**
  * Provides an API to modify Biomes after they have been loaded and before they are used in the World.
- *
- * <p>Any modifications made to biomes will not be available for use in server.properties (as of 1.16.1),
+ * <p>
+ * Any modifications made to biomes will not be available for use in server.properties (as of 1.16.1),
  * or the demo level.
- *
- * <p><b>Experimental feature</b>, may be removed or changed without further notice.
  */
 public final class BiomeModifications {
 	/**

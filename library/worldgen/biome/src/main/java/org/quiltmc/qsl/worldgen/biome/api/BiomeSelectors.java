@@ -35,8 +35,6 @@ import java.util.function.Predicate;
 
 /**
  * Provides several convenient biome selectors that can be used with {@link BiomeModifications}.
- *
- * <p><b>Experimental feature</b>, may be removed or changed without further notice.
  */
 public final class BiomeSelectors {
 	private BiomeSelectors() {
@@ -57,7 +55,7 @@ public final class BiomeSelectors {
 	}
 
 	/**
-	 * Returns a biome selector that will match all biomes from the minecraft namespace.
+	 * {@return a biome selector that will match all biomes from the minecraft namespace}
 	 */
 	public static Predicate<BiomeSelectionContext> vanilla() {
 		return context -> {
@@ -78,8 +76,8 @@ public final class BiomeSelectors {
 	/**
 	 * Returns a biome selector that will match all biomes that would normally spawn in the Nether,
 	 * assuming Vanilla's default multi noise biome source with the nether preset is used.
-	 *
-	 * <p>This selector will also match modded biomes that have been added to the nether using {@link NetherBiomes}.
+	 * <p>
+	 * This selector will also match modded biomes that have been added to the nether using {@link NetherBiomes}.
 	 */
 	public static Predicate<BiomeSelectionContext> foundInTheNether() {
 		return context -> context.canGenerateIn(DimensionOptions.NETHER);
@@ -94,7 +92,7 @@ public final class BiomeSelectors {
 	}
 
 	/**
-	 * Returns a biome selector that will match all biomes in the given tag.
+	 * {@return a biome selector that will match all biomes in the given tag}
 	 *
 	 * @see net.minecraft.tag.TagKey
 	 */
@@ -111,9 +109,9 @@ public final class BiomeSelectors {
 	}
 
 	/**
-	 * Returns a selector that will reject any biome whos keys is in the given collection of keys.
-	 *
-	 * <p>This is useful for allowing a list of biomes to be defined in the config file, where
+	 * {@return a selector that will reject any biome whose keys are in the given collection of keys}
+	 * <p>
+	 * This is useful for allowing a list of biomes to be defined in the config file, where
 	 * a certain feature should not spawn.
 	 */
 	public static Predicate<BiomeSelectionContext> excludeByKey(Collection<RegistryKey<Biome>> keys) {
@@ -129,9 +127,9 @@ public final class BiomeSelectors {
 	}
 
 	/**
-	 * Returns a selector that will accept only biomes whos keys are in the given collection of keys.
-	 *
-	 * <p>This is useful for allowing a list of biomes to be defined in the config file, where
+	 * {@return a selector that will accept only biomes whos keys are in the given collection of keys}
+	 * <p>
+	 * This is useful for allowing a list of biomes to be defined in the config file, where
 	 * a certain feature should spawn exclusively.
 	 */
 	public static Predicate<BiomeSelectionContext> includeByKey(Collection<RegistryKey<Biome>> keys) {
@@ -139,18 +137,18 @@ public final class BiomeSelectors {
 	}
 
 	/**
-	 * Returns a biome selector that will match biomes in which one of the given entity types can spawn.
-	 *
-	 * <p>Matches spawns in all {@link SpawnGroup spawn groups}.
+	 * {@return a biome selector that will match biomes in which one of the given entity types can spawn}
+	 * <p>
+	 * Matches spawns in all {@link SpawnGroup spawn groups}.
 	 */
 	public static Predicate<BiomeSelectionContext> spawnsOneOf(EntityType<?>... entityTypes) {
 		return spawnsOneOf(ImmutableSet.copyOf(entityTypes));
 	}
 
 	/**
-	 * Returns a biome selector that will match biomes in which one of the given entity types can spawn.
-	 *
-	 * <p>Matches spawns in all {@link SpawnGroup spawn groups}.
+	 * {@return a biome selector that will match biomes in which one of the given entity types can spawn}
+	 * <p>
+	 * Matches spawns in all {@link SpawnGroup spawn groups}.
 	 */
 	public static Predicate<BiomeSelectionContext> spawnsOneOf(Set<EntityType<?>> entityTypes) {
 		return context -> {

@@ -40,8 +40,6 @@ import java.util.function.BiPredicate;
 
 /**
  * Allows {@link Biome} properties to be modified.
- *
- * <p><b>Experimental feature</b>, may be removed or changed without further notice.
  */
 public interface BiomeModificationContext {
 	/**
@@ -51,22 +49,22 @@ public interface BiomeModificationContext {
 	void setCategory(Biome.Category category);
 
 	/**
-	 * Returns the modification context for the biomes weather properties.
+	 * {@return the modification context for the biomes weather properties}
 	 */
 	WeatherContext getWeather();
 
 	/**
-	 * Returns the modification context for the biomes effects.
+	 * {@return the modification context for the biomes effects}
 	 */
 	EffectsContext getEffects();
 
 	/**
-	 * Returns the modification context for the biomes generation settings.
+	 * {@return the modification context for the biomes generation settings}
 	 */
 	GenerationSettingsContext getGenerationSettings();
 
 	/**
-	 * Returns the modification context for the biomes spawn settings.
+	 * {@return the modification context for the biomes spawn settings}
 	 */
 	SpawnSettingsContext getSpawnSettings();
 
@@ -131,7 +129,7 @@ public interface BiomeModificationContext {
 		 * @see BiomeEffects.Builder#foliageColor(int)
 		 */
 		default void setFoliageColor(int color) {
-			setFoliageColor(Optional.of(color));
+			this.setFoliageColor(Optional.of(color));
 		}
 
 		/**
@@ -139,7 +137,7 @@ public interface BiomeModificationContext {
 		 * @see BiomeEffects.Builder#foliageColor(int)
 		 */
 		default void clearFoliageColor() {
-			setFoliageColor(Optional.empty());
+			this.setFoliageColor(Optional.empty());
 		}
 
 		/**
@@ -153,7 +151,7 @@ public interface BiomeModificationContext {
 		 * @see BiomeEffects.Builder#grassColor(int)
 		 */
 		default void setGrassColor(int color) {
-			setGrassColor(Optional.of(color));
+			this.setGrassColor(Optional.of(color));
 		}
 
 		/**
@@ -161,7 +159,7 @@ public interface BiomeModificationContext {
 		 * @see BiomeEffects.Builder#grassColor(int)
 		 */
 		default void clearGrassColor() {
-			setGrassColor(Optional.empty());
+			this.setGrassColor(Optional.empty());
 		}
 
 		/**
@@ -181,7 +179,7 @@ public interface BiomeModificationContext {
 		 * @see BiomeEffects.Builder#particleConfig(BiomeParticleConfig)
 		 */
 		default void setParticleConfig(@NotNull BiomeParticleConfig particleConfig) {
-			setParticleConfig(Optional.of(particleConfig));
+			this.setParticleConfig(Optional.of(particleConfig));
 		}
 
 		/**
@@ -189,7 +187,7 @@ public interface BiomeModificationContext {
 		 * @see BiomeEffects.Builder#particleConfig(BiomeParticleConfig)
 		 */
 		default void clearParticleConfig() {
-			setParticleConfig(Optional.empty());
+			this.setParticleConfig(Optional.empty());
 		}
 
 		/**
@@ -203,7 +201,7 @@ public interface BiomeModificationContext {
 		 * @see BiomeEffects.Builder#loopSound(SoundEvent)
 		 */
 		default void setAmbientSound(@NotNull SoundEvent sound) {
-			setAmbientSound(Optional.of(sound));
+			this.setAmbientSound(Optional.of(sound));
 		}
 
 		/**
@@ -211,7 +209,7 @@ public interface BiomeModificationContext {
 		 * @see BiomeEffects.Builder#loopSound(SoundEvent)
 		 */
 		default void clearAmbientSound() {
-			setAmbientSound(Optional.empty());
+			this.setAmbientSound(Optional.empty());
 		}
 
 		/**
@@ -225,7 +223,7 @@ public interface BiomeModificationContext {
 		 * @see BiomeEffects.Builder#moodSound(BiomeMoodSound)
 		 */
 		default void setMoodSound(@NotNull BiomeMoodSound sound) {
-			setMoodSound(Optional.of(sound));
+			this.setMoodSound(Optional.of(sound));
 		}
 
 		/**
@@ -233,7 +231,7 @@ public interface BiomeModificationContext {
 		 * @see BiomeEffects.Builder#moodSound(BiomeMoodSound)
 		 */
 		default void clearMoodSound() {
-			setMoodSound(Optional.empty());
+			this.setMoodSound(Optional.empty());
 		}
 
 		/**
@@ -247,7 +245,7 @@ public interface BiomeModificationContext {
 		 * @see BiomeEffects.Builder#additionsSound(BiomeAdditionsSound)
 		 */
 		default void setAdditionsSound(@NotNull BiomeAdditionsSound sound) {
-			setAdditionsSound(Optional.of(sound));
+			this.setAdditionsSound(Optional.of(sound));
 		}
 
 		/**
@@ -255,7 +253,7 @@ public interface BiomeModificationContext {
 		 * @see BiomeEffects.Builder#additionsSound(BiomeAdditionsSound)
 		 */
 		default void clearAdditionsSound() {
-			setAdditionsSound(Optional.empty());
+			this.setAdditionsSound(Optional.empty());
 		}
 
 		/**
@@ -269,7 +267,7 @@ public interface BiomeModificationContext {
 		 * @see BiomeEffects.Builder#music(MusicSound)
 		 */
 		default void setMusic(@NotNull MusicSound sound) {
-			setMusic(Optional.of(sound));
+			this.setMusic(Optional.of(sound));
 		}
 
 		/**
@@ -277,7 +275,7 @@ public interface BiomeModificationContext {
 		 * @see BiomeEffects.Builder#music(MusicSound)
 		 */
 		default void clearMusic() {
-			setMusic(Optional.empty());
+			this.setMusic(Optional.empty());
 		}
 	}
 
@@ -294,7 +292,7 @@ public interface BiomeModificationContext {
 			boolean anyFound = false;
 
 			for (GenerationStep.Feature step : GenerationStep.Feature.values()) {
-				if (removeFeature(step, placedFeatureKey)) {
+				if (this.removeFeature(step, placedFeatureKey)) {
 					anyFound = true;
 				}
 			}
@@ -306,14 +304,14 @@ public interface BiomeModificationContext {
 		 * {@link #removeFeature(RegistryKey)} for built-in features (see {@link #addBuiltInFeature(GenerationStep.Feature, PlacedFeature)}).
 		 */
 		default boolean removeBuiltInFeature(PlacedFeature placedFeature) {
-			return removeFeature(BuiltInRegistryKeys.get(placedFeature));
+			return this.removeFeature(BuiltInRegistryKeys.get(placedFeature));
 		}
 
 		/**
 		 * {@link #removeFeature(GenerationStep.Feature, RegistryKey)} for built-in features (see {@link #addBuiltInFeature(GenerationStep.Feature, PlacedFeature)}).
 		 */
 		default boolean removeBuiltInFeature(GenerationStep.Feature step, PlacedFeature placedFeature) {
-			return removeFeature(step, BuiltInRegistryKeys.get(placedFeature));
+			return this.removeFeature(step, BuiltInRegistryKeys.get(placedFeature));
 		}
 
 		/**
@@ -325,15 +323,15 @@ public interface BiomeModificationContext {
 
 		/**
 		 * Adds a placed feature from {@link BuiltinRegistries#PLACED_FEATURE} to this biome.
-		 *
-		 * <p>This method is intended for use with the placed features found in
+		 * <p>
+		 * This method is intended for use with the placed features found in
 		 * classes such as {@link net.minecraft.world.gen.feature.OrePlacedFeatures}.
-		 *
-		 * <p><b>NOTE:</b> In case the placed feature is overridden in a datapack, the datapacks version
+		 * <p>
+		 * <b>NOTE:</b> In case the placed feature is overridden in a datapack, the datapacks version
 		 * will be used.
 		 */
 		default void addBuiltInFeature(GenerationStep.Feature step, PlacedFeature placedFeature) {
-			addFeature(step, BuiltInRegistryKeys.get(placedFeature));
+			this.addFeature(step, BuiltInRegistryKeys.get(placedFeature));
 		}
 
 		/**
@@ -343,14 +341,14 @@ public interface BiomeModificationContext {
 
 		/**
 		 * Adds a configured carver from {@link BuiltinRegistries#CONFIGURED_CARVER} to this biome.
-		 *
-		 * <p>This method is intended for use with the configured carvers found in {@link net.minecraft.world.gen.carver.ConfiguredCarvers}.
-		 *
-		 * <p><b>NOTE:</b> In case the configured carver is overridden in a datapack, the datapacks version
+		 * <p>
+		 * This method is intended for use with the configured carvers found in {@link net.minecraft.world.gen.carver.ConfiguredCarvers}.
+		 * <p>
+		 * <b>NOTE:</b> In case the configured carver is overridden in a datapack, the datapacks version
 		 * will be used.
 		 */
 		default void addBuiltInCarver(GenerationStep.Carver step, ConfiguredCarver<?> configuredCarver) {
-			addCarver(step, BuiltInRegistryKeys.get(configuredCarver));
+			this.addCarver(step, BuiltInRegistryKeys.get(configuredCarver));
 		}
 
 		/**
@@ -363,13 +361,13 @@ public interface BiomeModificationContext {
 		/**
 		 * Removes all carvers with the given key from all of this biomes generation steps.
 		 *
-		 * @return True if any carvers were removed.
+		 * @return {@code true} if any carvers were removed, otherwise {@code false}
 		 */
 		default boolean removeCarver(RegistryKey<ConfiguredCarver<?>> configuredCarverKey) {
 			boolean anyFound = false;
 
 			for (GenerationStep.Carver step : GenerationStep.Carver.values()) {
-				if (removeCarver(step, configuredCarverKey)) {
+				if (this.removeCarver(step, configuredCarverKey)) {
 					anyFound = true;
 				}
 			}
@@ -381,20 +379,20 @@ public interface BiomeModificationContext {
 		 * {@link #removeCarver(RegistryKey)} for built-in carvers (see {@link #addBuiltInCarver(GenerationStep.Carver, ConfiguredCarver)}).
 		 */
 		default boolean removeBuiltInCarver(ConfiguredCarver<?> configuredCarver) {
-			return removeCarver(BuiltInRegistryKeys.get(configuredCarver));
+			return this.removeCarver(BuiltInRegistryKeys.get(configuredCarver));
 		}
 
 		/**
 		 * {@link #removeCarver(GenerationStep.Carver, RegistryKey)} for built-in carvers (see {@link #addBuiltInCarver(GenerationStep.Carver, ConfiguredCarver)}).
 		 */
 		default boolean removeBuiltInCarver(GenerationStep.Carver step, ConfiguredCarver<?> configuredCarver) {
-			return removeCarver(step, BuiltInRegistryKeys.get(configuredCarver));
+			return this.removeCarver(step, BuiltInRegistryKeys.get(configuredCarver));
 		}
 	}
 
 	interface SpawnSettingsContext {
 		/**
-		 * Associated JSON property: <code>creature_spawn_probability</code>.
+		 * Associated JSON property: {@code creature_spawn_probability}.
 		 *
 		 * @see SpawnSettings#getCreatureSpawnProbability()
 		 * @see SpawnSettings.Builder#creatureSpawnProbability(float)
@@ -402,7 +400,7 @@ public interface BiomeModificationContext {
 		void setCreatureSpawnProbability(float probability);
 
 		/**
-		 * Associated JSON property: <code>spawners</code>.
+		 * Associated JSON property: {@code spawners}.
 		 *
 		 * @see SpawnSettings#getSpawnEntries(SpawnGroup)
 		 * @see SpawnSettings.Builder#spawn(SpawnGroup, SpawnSettings.SpawnEntry)
@@ -411,42 +409,42 @@ public interface BiomeModificationContext {
 
 		/**
 		 * Removes any spawns matching the given predicate from this biome, and returns true if any matched.
-		 *
-		 * <p>Associated JSON property: <code>spawners</code>.
+		 * <p>
+		 * Associated JSON property: {@code spawners}.
 		 */
 		boolean removeSpawns(BiPredicate<SpawnGroup, SpawnSettings.SpawnEntry> predicate);
 
 		/**
 		 * Removes all spawns of the given entity type.
-		 *
-		 * <p>Associated JSON property: <code>spawners</code>.
+		 * <p>
+		 * Associated JSON property: {@code spawners}.
 		 *
 		 * @return True if any spawns were removed.
 		 */
 		default boolean removeSpawnsOfEntityType(EntityType<?> entityType) {
-			return removeSpawns((spawnGroup, spawnEntry) -> spawnEntry.type == entityType);
+			return this.removeSpawns((spawnGroup, spawnEntry) -> spawnEntry.type == entityType);
 		}
 
 		/**
 		 * Removes all spawns of the given spawn group.
-		 *
-		 * <p>Associated JSON property: <code>spawners</code>.
+		 * <p>
+		 * Associated JSON property: {@code spawners}.
 		 */
 		default void clearSpawns(SpawnGroup group) {
-			removeSpawns((spawnGroup, spawnEntry) -> spawnGroup == group);
+			this.removeSpawns((spawnGroup, spawnEntry) -> spawnGroup == group);
 		}
 
 		/**
 		 * Removes all spawns.
-		 *
-		 * <p>Associated JSON property: <code>spawners</code>.
+		 * <p>
+		 * Associated JSON property: {@code spawners}.
 		 */
 		default void clearSpawns() {
-			removeSpawns((spawnGroup, spawnEntry) -> true);
+			this.removeSpawns((spawnGroup, spawnEntry) -> true);
 		}
 
 		/**
-		 * Associated JSON property: <code>spawn_costs</code>.
+		 * Associated JSON property: {@code spawn_costs}.
 		 *
 		 * @see SpawnSettings#getSpawnDensity(EntityType)
 		 * @see SpawnSettings.Builder#spawnCost(EntityType, double, double)
@@ -455,8 +453,8 @@ public interface BiomeModificationContext {
 
 		/**
 		 * Removes a spawn cost entry for a given entity type.
-		 *
-		 * <p>Associated JSON property: <code>spawn_costs</code>.
+		 * <p>
+		 * Associated JSON property: {@code spawn_costs}.
 		 */
 		void clearSpawnCost(EntityType<?> entityType);
 	}
