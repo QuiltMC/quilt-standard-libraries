@@ -179,7 +179,7 @@ javadoc {
 				"https://docs.oracle.com/en/java/javase/16/docs/api/",
 				"https://jenkins.liteloader.com/job/Mixin/javadoc/",
 				"https://logging.apache.org/log4j/2.x/log4j-api/apidocs/",
-				"https://maven.quiltmc.org/repository/release/org/quiltmc/quilt-mappings/${Versions.MINECRAFT_VERSION}+build.${Versions.MAPPINGS_BUILD}/quilt-mappings-${Versions.MINECRAFT_VERSION}+build.${Versions.MAPPINGS_BUILD}-javadoc.jar/"
+				"https://maven.quiltmc.org/repository/release/org/quiltmc/quilt-mappings/${Versions.MINECRAFT_VERSION.version()}+build.${Versions.MAPPINGS_BUILD}/quilt-mappings-${Versions.MINECRAFT_VERSION.version()}+build.${Versions.MAPPINGS_BUILD}-javadoc.jar/"
 		)
 
 		// Disable the overzealous doclint tool in Java 8
