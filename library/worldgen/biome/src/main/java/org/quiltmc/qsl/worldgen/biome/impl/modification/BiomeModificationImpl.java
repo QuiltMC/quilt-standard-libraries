@@ -163,16 +163,16 @@ public class BiomeModificationImpl {
 		}
 
 		if (biomesProcessed > 0) {
+			// TODO Get Snooze in to fix this. FAPI just removes this whole for loop...
 			// Rebuild caches within biome sources after modifying feature lists
-			for (DimensionOptions dimension : levelProperties.getGeneratorOptions().getDimensions()) {
-				// The Biome source has a total ordering of feature generation that might have changed
-				// by us adding or removing features from biomes.
-				BiomeSource biomeSource = dimension.getChunkGenerator().getBiomeSource();
-
-				// Replace the Supplier to force it to rebuild on next call
-				// FIXME What da heck were these updated too??
-				biomeSource.featuresStepData = Suppliers.memoize(() -> biomeSource.createFeatureStepData(biomeSource.biomes.stream().distinct().toList(), true));
-			}
+//			for (DimensionOptions dimension : levelProperties.getGeneratorOptions().getDimensions()) {
+//				// The Biome source has a total ordering of feature generation that might have changed
+//				// by us adding or removing features from biomes.
+//				BiomeSource biomeSource = dimension.getChunkGenerator().getBiomeSource();
+//
+//				// Replace the Supplier to force it to rebuild on next call
+//				biomeSource.featuresStepData = Suppliers.memoize(() -> biomeSource.createFeatureStepData(biomeSource.biomes.stream().distinct().toList(), true));
+//			}
 
 			LOGGER.info("Applied {} biome modifications to {} of {} new biomes in {}", modifiersApplied, biomesChanged,
 					biomesProcessed, sw);

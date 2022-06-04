@@ -13,5 +13,7 @@
   "piglin_safe": false,
   "height": 256,
   "min_y": 0,
+  "monster_spawn_block_light_limit": 5,
+  "monster_spawn_light_level": 1,
   "effects": "quilt_dimension:void"
 }
