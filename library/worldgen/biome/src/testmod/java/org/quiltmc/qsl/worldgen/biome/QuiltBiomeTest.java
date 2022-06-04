@@ -51,6 +51,8 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectors;
 import org.quiltmc.qsl.worldgen.biome.api.ModificationPhase;
 import org.quiltmc.qsl.worldgen.biome.api.NetherBiomes;
 import org.quiltmc.qsl.worldgen.biome.api.TheEndBiomes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <b>NOTES FOR TESTING:</b>
@@ -63,6 +65,7 @@ import org.quiltmc.qsl.worldgen.biome.api.TheEndBiomes;
  * If you don't find a biome right away, teleport far away (~10000 blocks) from spawn and try again.
  */
 public class QuiltBiomeTest implements ModInitializer {
+	private static final Logger BIOME_TEST_LOGGER = LoggerFactory.getLogger("QuiltBiome|QuiltBiomeTest");
 	public static final String MOD_ID = "quilt_biome_testmod";
 
 	private static final RegistryKey<Biome> TEST_CRIMSON_FOREST = RegistryKey.of(Registry.BIOME_KEY, new Identifier(MOD_ID, "test_crimson_forest"));
@@ -93,7 +96,7 @@ public class QuiltBiomeTest implements ModInitializer {
 
 		ConfiguredFeature<?, ?> COMMON_DESERT_WELL = new ConfiguredFeature<>(Feature.DESERT_WELL, DefaultFeatureConfig.INSTANCE);
 		Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, new Identifier(MOD_ID, "quilt_desert_well"), COMMON_DESERT_WELL);
-		Holder<ConfiguredFeature<?, ?>> featureEntry = BuiltinRegistries.CONFIGURED_FEATURE.getHolderOrThrow(BuiltinRegistries.CONFIGURED_FEATURE.getKey(COMMON_DESERT_WELL).orElseThrow());
+		Holder<ConfiguredFeature<?, ?>> featureEntry = BuiltinRegistries.CONFIGURED_FEATURE.getOrCreateHolder(BuiltinRegistries.CONFIGURED_FEATURE.getKey(COMMON_DESERT_WELL).orElseThrow()).getOrThrow(false, BIOME_TEST_LOGGER::error);
 
 		// The placement config is taken from the vanilla desert well, but no randomness
 		PlacedFeature PLACED_COMMON_DESERT_WELL = new PlacedFeature(featureEntry, List.of(InSquarePlacementModifier.getInstance(), PlacedFeatureUtil.MOTION_BLOCKING_HEIGHTMAP, BiomePlacementModifier.getInstance()));
