@@ -34,7 +34,7 @@ public class MainMixin {
 			method = "main",
 			at = @At(
 					value = "INVOKE",
-					target = "Ljava/util/concurrent/CompletableFuture;get()Ljava/lang/Object;",
+					target = "Lnet/minecraft/util/Util;method_43499(Ljava/util/function/Function;)Ljava/util/concurrent/CompletableFuture;",
 					remap = true
 			),
 			remap = false
