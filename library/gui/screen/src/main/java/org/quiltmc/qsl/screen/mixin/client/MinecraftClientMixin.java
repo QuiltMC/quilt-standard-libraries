@@ -50,7 +50,7 @@ abstract class MinecraftClientMixin {
 
 	// Synthetic method method_1572()V -> lambda in Screen.wrapScreenError in MinecraftClient.tick
 	// These two injections should be caught by "Screen#wrapScreenError" if anything fails in an event and then rethrown in the crash report
-	@Inject(method = "method_1572", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;tick()V"))
+	@Inject(method = "method_1572()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;tick()V"))
 	private void beforeScreenTick(CallbackInfo ci) {
 		// Store the screen in a variable in case someone tries to change the screen during this before tick event.
 		// If someone changes the screen, the after tick event will likely have class cast exceptions or an NPE.
@@ -59,7 +59,7 @@ abstract class MinecraftClientMixin {
 	}
 
 	// Synthetic method method_1572()V -> lambda in Screen.wrapScreenError in MinecraftClient.tick
-	@Inject(method = "method_1572", at = @At("TAIL"))
+	@Inject(method = "method_1572()V", at = @At("TAIL"))
 	private void afterScreenTick(CallbackInfo ci) {
 		ScreenEvents.AFTER_TICK.invoker().afterTick(this.quilt$tickingScreen);
 		// Finally set the currently ticking screen to null

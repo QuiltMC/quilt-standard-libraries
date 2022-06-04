@@ -28,6 +28,7 @@ import java.util.function.Predicate;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Suppliers;
+import net.minecraft.world.biome.source.BiomeAccess;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.TestOnly;
 import org.slf4j.Logger;
@@ -169,6 +170,7 @@ public class BiomeModificationImpl {
 				BiomeSource biomeSource = dimension.getChunkGenerator().getBiomeSource();
 
 				// Replace the Supplier to force it to rebuild on next call
+				// FIXME What da heck were these updated too??
 				biomeSource.featuresStepData = Suppliers.memoize(() -> biomeSource.createFeatureStepData(biomeSource.biomes.stream().distinct().toList(), true));
 			}
 

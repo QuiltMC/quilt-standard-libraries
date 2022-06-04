@@ -28,6 +28,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Lifecycle;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -145,7 +146,12 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	}
 
 	@Override
-	public Holder<T> getOrCreateHolder(RegistryKey<T> key) {
+	public Holder<T> method_44298(RegistryKey<T> registryKey) {
+		return this.wrapped.getHolderOrThrow(registryKey); // I hope?
+	}
+
+	@Override
+	public DataResult<Holder<T>> getOrCreateHolder(RegistryKey<T> key) {
 		return this.wrapped.getOrCreateHolder(key);
 	}
 
