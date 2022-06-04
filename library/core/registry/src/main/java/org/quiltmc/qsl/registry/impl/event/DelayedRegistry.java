@@ -147,7 +147,7 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 
 	@Override
 	public Holder<T> method_44298(RegistryKey<T> registryKey) {
-		return this.wrapped.getHolderOrThrow(registryKey); // I hope?
+		return this.wrapped.method_44298(registryKey);
 	}
 
 	@Override
