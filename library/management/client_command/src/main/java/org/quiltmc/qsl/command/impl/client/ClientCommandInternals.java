@@ -82,12 +82,12 @@ public final class ClientCommandInternals {
 	 * @return {@code true} if the message was executed as a command client-side (and therefore should not be sent to the
 	 * server), {@code false} otherwise
 	 */
-	public static boolean executeCommand(String message) {
+	public static boolean executeCommand(String message, boolean ignorePrefix) {
 		if (message.isEmpty()) {
 			return false; // Nothing to process
 		}
 
-		if (message.charAt(0) != PREFIX) {
+		if (message.charAt(0) != PREFIX && !ignorePrefix) {
 			return false; // Incorrect prefix, won't execute anything.
 		}
 
@@ -101,7 +101,7 @@ public final class ClientCommandInternals {
 
 		try {
 			// Only run client commands if there are no matching server-side commands.
-			String command = message.substring(1);
+			String command = ignorePrefix ? message : message.substring(1);
 			CommandDispatcher<CommandSource> serverDispatcher = client.getNetworkHandler().getCommandDispatcher();
 			ParseResults<CommandSource> serverResults = serverDispatcher.parse(command, commandSource);
 
