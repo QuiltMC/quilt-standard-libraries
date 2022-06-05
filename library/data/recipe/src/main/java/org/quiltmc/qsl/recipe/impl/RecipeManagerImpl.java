@@ -71,7 +71,7 @@ public final class RecipeManagerImpl {
 			ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder) {
 		var handler = new RegisterRecipeHandlerImpl(map, builderMap, globalRecipeMapBuilder);
 		RecipeLoadingEvents.ADD.invoker().addRecipes(handler);
-		STATIC_RECIPES.values().forEach(handler::register);
+		STATIC_RECIPES.values().forEach(handler::tryRegister);
 		LOGGER.info("Registered {} custom recipes.", handler.registered);
 	}
 

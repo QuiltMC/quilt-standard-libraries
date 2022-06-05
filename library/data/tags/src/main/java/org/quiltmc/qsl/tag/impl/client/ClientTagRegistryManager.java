@@ -17,6 +17,8 @@
 package org.quiltmc.qsl.tag.impl.client;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -36,9 +38,10 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.tag.Tag;
+import net.minecraft.tag.TagEntry;
 import net.minecraft.tag.TagGroupLoader;
 import net.minecraft.tag.TagKey;
 import net.minecraft.tag.TagManagerLoader;
@@ -64,10 +67,10 @@ public final class ClientTagRegistryManager<T> {
 	private final ClientRegistryFetcher registryFetcher;
 	private final TagGroupLoader<Holder<T>> loader;
 	private DynamicRegistryManager registryManager = BuiltinRegistries.MANAGER;
-	private Map<Identifier, Tag.Builder> serializedTags = Map.of();
-	private Map<TagKey<T>, Tag<Holder<T>>> clientOnlyValues;
-	private Map<Identifier, Tag.Builder> fallbackSerializedTags = Map.of();
-	private Map<TagKey<T>, Tag<Holder<T>>> fallbackValues;
+	private Map<Identifier, List<TagGroupLoader.EntryWithSource>> serializedTags = Map.of();
+	private Map<TagKey<T>, Collection<Holder<T>>> clientOnlyValues;
+	private Map<Identifier, List<TagGroupLoader.EntryWithSource>> fallbackSerializedTags = Map.of();
+	private Map<TagKey<T>, Collection<Holder<T>>> fallbackValues;
 
 	private ClientTagRegistryManager(RegistryKey<? extends Registry<T>> registryKey, String dataType) {
 		this.registryKey = registryKey;
@@ -75,50 +78,50 @@ public final class ClientTagRegistryManager<T> {
 		this.loader = new TagGroupLoader<>(this.registryFetcher, dataType);
 	}
 
-	public Tag<Holder<T>> getClientTag(TagKey<T> key) {
+	public Collection<Holder<T>> getClientTag(TagKey<T> key) {
 		if (this.clientOnlyValues != null) {
-			return this.clientOnlyValues.getOrDefault(key, Tag.getEmpty());
+			return this.clientOnlyValues.getOrDefault(key, Collections.emptySet());
 		}
 
-		return Tag.getEmpty();
+		return Collections.emptyList();
 	}
 
-	public Stream<TagRegistry.TagEntry<T>> streamClientTags() {
-		return this.clientOnlyValues.entrySet().stream().map(entry -> new TagRegistry.TagEntry<>(entry.getKey(), entry.getValue()));
+	public Stream<TagRegistry.TagValues<T>> streamClientTags() {
+		return this.clientOnlyValues.entrySet().stream().map(entry -> new TagRegistry.TagValues<>(entry.getKey(), entry.getValue()));
 	}
 
 	@SuppressWarnings("unchecked")
 	@Environment(EnvType.CLIENT)
-	public void setSerializedTags(Map<Identifier, Tag.Builder> serializedTags) {
+	public void setSerializedTags(Map<Identifier, List<TagGroupLoader.EntryWithSource>> serializedTags) {
 		this.serializedTags = serializedTags;
 		this.clientOnlyValues = this.buildDynamicGroup(this.serializedTags, TagType.CLIENT_ONLY);
-		this.bindTags(this.clientOnlyValues, (ref, tags) -> ((QuiltRegistryEntryReferenceHooks<T>) ref).quilt$setClientTags(tags));
+		this.bindTags(this.clientOnlyValues, (ref, tags) -> ((QuiltHolderReferenceHooks<T>) ref).quilt$setClientTags(tags));
 	}
 
-	public Tag<Holder<T>> getFallbackTag(TagKey<T> key) {
+	public Collection<Holder<T>> getFallbackTag(TagKey<T> key) {
 		if (this.fallbackValues != null) {
-			return this.fallbackValues.getOrDefault(key, Tag.getEmpty());
+			return this.fallbackValues.getOrDefault(key, Collections.emptySet());
 		}
 
-		return Tag.getEmpty();
+		return Collections.emptySet();
 	}
 
-	public Stream<TagRegistry.TagEntry<T>> streamFallbackTags(Predicate<Map.Entry<TagKey<T>, Tag<Holder<T>>>> filter) {
+	public Stream<TagRegistry.TagValues<T>> streamFallbackTags(Predicate<Map.Entry<TagKey<T>, Collection<Holder<T>>>> filter) {
 		return this.clientOnlyValues.entrySet().stream()
 				.filter(filter)
-				.map(entry -> new TagRegistry.TagEntry<>(entry.getKey(), entry.getValue()));
+				.map(entry -> new TagRegistry.TagValues<>(entry.getKey(), entry.getValue()));
 	}
 
 	@SuppressWarnings("unchecked")
 	@Environment(EnvType.CLIENT)
-	public void setFallbackSerializedTags(Map<Identifier, Tag.Builder> serializedTags) {
+	public void setFallbackSerializedTags(Map<Identifier, List<TagGroupLoader.EntryWithSource>> serializedTags) {
 		this.fallbackSerializedTags = serializedTags;
 		this.fallbackValues = this.buildDynamicGroup(this.fallbackSerializedTags, TagType.CLIENT_FALLBACK);
-		this.bindTags(this.fallbackValues, (ref, tags) -> ((QuiltRegistryEntryReferenceHooks<T>) ref).quilt$setFallbackTags(tags));
+		this.bindTags(this.fallbackValues, (ref, tags) -> ((QuiltHolderReferenceHooks<T>) ref).quilt$setFallbackTags(tags));
 	}
 
 	@Environment(EnvType.CLIENT)
-	public Map<Identifier, Tag.Builder> load(ResourceManager resourceManager) {
+	public Map<Identifier, List<TagGroupLoader.EntryWithSource>> load(ResourceManager resourceManager) {
 		return this.loader.loadTags(resourceManager);
 	}
 
@@ -131,48 +134,40 @@ public final class ClientTagRegistryManager<T> {
 	}
 
 	@Environment(EnvType.CLIENT)
-	private Map<TagKey<T>, Tag<Holder<T>>> buildDynamicGroup(Map<Identifier, Tag.Builder> tagBuilders, TagType type) {
+	private Map<TagKey<T>, Collection<Holder<T>>> buildDynamicGroup(Map<Identifier, List<TagGroupLoader.EntryWithSource>> tagBuilders, TagType type) {
 		if (!TagRegistryImpl.isRegistryDynamic(this.registryKey)) {
-			var tags = new Object2ObjectOpenHashMap<TagKey<T>, Tag<Holder<T>>>();
-			var built = this.loader.buildGroup(tagBuilders);
+			var tags = new Object2ObjectOpenHashMap<TagKey<T>, Collection<Holder<T>>>();
+			var built = this.loader.build(tagBuilders);
 			built.forEach((id, tag) -> tags.put(QuiltTagKey.of(this.registryKey, id, type), tag));
 			return tags;
 		}
 
-		var tags = new Object2ObjectOpenHashMap<TagKey<T>, Tag<Holder<T>>>();
-		Function<Identifier, Tag<Holder<T>>> tagGetter = id -> tags.get(QuiltTagKey.of(this.registryKey, id, type));
-		Function<Identifier, Holder<T>> registryGetter = identifier -> this.registryFetcher.apply(identifier).orElse(null);
+		var resolver = new TagResolver(type);
 		Multimap<Identifier, Identifier> tagEntries = HashMultimap.create();
 
-		tagBuilders.forEach((tagId, builder) -> builder.visitRequiredDependencies(
+		this.visitDependencies(tagBuilders, (tagId, entry) -> entry.visitRequiredDependencies(
 				tagEntryId -> TagGroupLoaderAccessor.invokeAddDependencyIfNotCyclic(tagEntries, tagId, tagEntryId)
 		));
-		tagBuilders.forEach((tagId, builder) -> builder.visitOptionalDependencies(
-				entryId -> TagGroupLoaderAccessor.invokeAddDependencyIfNotCyclic(tagEntries, tagId, entryId)
+		this.visitDependencies(tagBuilders, (tagId, entry) -> entry.visitOptionalDependencies(
+				tagEntryId -> TagGroupLoaderAccessor.invokeAddDependencyIfNotCyclic(tagEntries, tagId, tagEntryId)
 		));
 
 		var set = new HashSet<Identifier>();
 		tagBuilders.keySet().forEach(tagId ->
 				TagGroupLoaderAccessor.invokeVisitDependenciesAndEntry(tagBuilders, tagEntries, set, tagId,
-						(currentTagId, builder) -> tags.put(QuiltTagKey.of(this.registryKey, tagId, type),
-								this.buildLenientTag(builder, tagGetter, registryGetter))
+						resolver.getDependencyConsumer(tagId)
 				)
 		);
-		return tags;
+		return resolver.getTags();
+	}
+
+	private void visitDependencies(Map<Identifier, List<TagGroupLoader.EntryWithSource>> tagBuilders,
+			BiConsumer<Identifier, TagEntry> dependencyConsumer) {
+		tagBuilders.forEach((tagId, builder) -> builder.forEach(entry -> dependencyConsumer.accept(tagId, entry.entry())));
 	}
 
 	@Environment(EnvType.CLIENT)
-	private Tag<Holder<T>> buildLenientTag(Tag.Builder tagBuilder,
-			Function<Identifier, Tag<Holder<T>>> tagGetter, Function<Identifier, Holder<T>> objectGetter) {
-		ImmutableSet.Builder<Holder<T>> builder = ImmutableSet.builder();
-
-		tagBuilder.streamEntries().forEach(trackedEntry -> trackedEntry.entry().resolve(tagGetter, objectGetter, builder::add));
-
-		return new Tag<>(builder.build());
-	}
-
-	@Environment(EnvType.CLIENT)
-	public void bindTags(Map<TagKey<T>, Tag<Holder<T>>> map, BiConsumer<Holder.Reference<T>, List<TagKey<T>>> consumer) {
+	public void bindTags(Map<TagKey<T>, Collection<Holder<T>>> map, BiConsumer<Holder.Reference<T>, List<TagKey<T>>> consumer) {
 		var registry = this.registryManager.getOptional(this.registryKey);
 
 		if (registry.isEmpty()) {
@@ -183,7 +178,7 @@ public final class ClientTagRegistryManager<T> {
 		registry.get().holders().forEach(reference -> boundTags.put(reference, new ArrayList<>()));
 
 		map.forEach((tagKey, tag) -> {
-			for (var holder : tag.values()) {
+			for (var holder : tag) {
 				if (!holder.isRegistry(registry.get())) {
 					throw new IllegalStateException(
 							"Can't create named set " + tagKey + " containing value "
@@ -226,6 +221,45 @@ public final class ClientTagRegistryManager<T> {
 	@Environment(EnvType.CLIENT)
 	public static void applyAll(DynamicRegistryManager registryManager) {
 		TAG_GROUP_MANAGERS.forEach((registryKey, manager) -> manager.apply(registryManager));
+	}
+
+	@Environment(EnvType.CLIENT)
+	private class TagResolver implements TagEntry.Lookup<Holder<T>> {
+		private final Map<TagKey<T>, Collection<Holder<T>>> tags = new Object2ObjectOpenHashMap<>();
+		private final TagType type;
+
+		private TagResolver(TagType type) {
+			this.type = type;
+		}
+
+		@Override
+		public @Nullable Holder<T> getElement(Identifier id) {
+			return ClientTagRegistryManager.this.registryFetcher.apply(id).orElse(null);
+		}
+
+		@Override
+		public @Nullable Collection<Holder<T>> getTag(Identifier id) {
+			return this.tags.get(QuiltTagKey.of(ClientTagRegistryManager.this.registryKey, id, this.type));
+		}
+
+		public BiConsumer<Identifier, List<TagGroupLoader.EntryWithSource>> getDependencyConsumer(Identifier tagId) {
+			return (currentTagId, builder) -> this.tags.put(
+					QuiltTagKey.of(ClientTagRegistryManager.this.registryKey, tagId, type),
+					this.buildLenientTag(builder)
+			);
+		}
+
+		private Collection<Holder<T>> buildLenientTag(List<TagGroupLoader.EntryWithSource> tagBuilder) {
+			ImmutableSet.Builder<Holder<T>> builder = ImmutableSet.builder();
+
+			tagBuilder.forEach(trackedEntry -> trackedEntry.entry().build(this, builder::add));
+
+			return builder.build();
+		}
+
+		public Map<TagKey<T>, Collection<Holder<T>>> getTags() {
+			return this.tags;
+		}
 	}
 
 	/**

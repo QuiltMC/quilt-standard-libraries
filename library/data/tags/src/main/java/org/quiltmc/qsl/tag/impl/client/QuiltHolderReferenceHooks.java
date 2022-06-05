@@ -1,6 +1,5 @@
 /*
- * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,21 +14,17 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.tag.api;
+package org.quiltmc.qsl.tag.impl.client;
 
-import net.minecraft.tag.Tag;
+import java.util.Collection;
 
-import org.quiltmc.qsl.base.api.util.InjectedInterface;
+import org.jetbrains.annotations.ApiStatus;
 
-/**
- * Interface implemented by {@link Tag.Builder} instances when QSL is present.
- */
-@InjectedInterface(Tag.Builder.class)
-public interface QuiltTagBuilder {
-	/**
-	 * Clears the contained entries and marks the tag as replaced.
-	 *
-	 * @return this builder
-	 */
-	Tag.Builder clearEntries();
+import net.minecraft.tag.TagKey;
+
+@ApiStatus.Internal
+public interface QuiltHolderReferenceHooks<T> {
+	void quilt$setFallbackTags(Collection<TagKey<T>> tags);
+
+	void quilt$setClientTags(Collection<TagKey<T>> tags);
 }

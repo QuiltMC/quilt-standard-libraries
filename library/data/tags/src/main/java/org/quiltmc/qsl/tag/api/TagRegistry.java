@@ -17,9 +17,9 @@
 
 package org.quiltmc.qsl.tag.api;
 
+import java.util.Collection;
 import java.util.stream.Stream;
 
-import net.minecraft.tag.Tag;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Holder;
 import net.minecraft.util.registry.Registry;
@@ -42,7 +42,7 @@ public final class TagRegistry {
 	 * @param registry the registry of the values of the tag
 	 * @param <T>      the type of the values held by the tag
 	 */
-	public static <T> Stream<TagEntry<T>> stream(RegistryKey<? extends Registry<T>> registry) {
+	public static <T> Stream<TagValues<T>> stream(RegistryKey<? extends Registry<T>> registry) {
 		return stream(registry, TagType.NORMAL);
 	}
 
@@ -53,7 +53,7 @@ public final class TagRegistry {
 	 * @param type     the type of tags, {@link TagType#CLIENT_FALLBACK} will offer normal tags or the fallback if not present
 	 * @param <T>      the type of the values held by the tag
 	 */
-	public static <T> Stream<TagEntry<T>> stream(RegistryKey<? extends Registry<T>> registry, TagType type) {
+	public static <T> Stream<TagValues<T>> stream(RegistryKey<? extends Registry<T>> registry, TagType type) {
 		return switch (type) {
 			case NORMAL -> TagRegistryImpl.streamTags(registry);
 			case CLIENT_FALLBACK -> TagRegistryImpl.streamTagsWithFallback(registry);
@@ -68,7 +68,7 @@ public final class TagRegistry {
 	 * @param <T> the type of the values held by the tag
 	 * @return the populated tag, always empty if the tag doesn't exist or isn't populated yet
 	 */
-	public static <T> Tag<Holder<T>> getTag(TagKey<T> key) {
+	public static <T> Collection<Holder<T>> getTag(TagKey<T> key) {
 		return TagRegistryImpl.getTag(key);
 	}
 
@@ -77,6 +77,6 @@ public final class TagRegistry {
 	 *
 	 * @param <T> the type of the values held by the tag
 	 */
-	public record TagEntry<T>(TagKey<T> key, Tag<Holder<T>> tag) {
+	public record TagValues<T>(TagKey<T> key, Collection<Holder<T>> values) {
 	}
 }

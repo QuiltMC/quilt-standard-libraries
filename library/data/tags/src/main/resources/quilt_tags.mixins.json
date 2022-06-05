@@ -5,14 +5,12 @@
   "mixins": [
     "DynamicRegistryManagerAccessor",
     "SimpleRegistryMixin",
-    "TagBuilderMixin",
     "TagKeyAccessor",
-    "TagKeyMixin",
-    "TagMixin"
+    "TagKeyMixin"
   ],
   "client": [
     "client.ClientPlayNetworkHandlerMixin",
-    "client.RegistryEntryReferenceMixin",
+    "client.HolderReferenceMixin",
     "client.TagGroupLoaderAccessor"
   ],
   "injectors": {

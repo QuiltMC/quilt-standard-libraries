@@ -27,7 +27,7 @@ import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.tag.Tag;
+import net.minecraft.tag.TagGroupLoader;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 
@@ -63,6 +63,7 @@ class ClientOnlyTagManagerReloader implements SimpleResourceReloader<List<Client
 		}, executor);
 	}
 
-	protected static record Entry(ClientTagRegistryManager<?> manager, Map<Identifier, Tag.Builder> serializedTags) {
+	protected record Entry(ClientTagRegistryManager<?> manager,
+	                       Map<Identifier, List<TagGroupLoader.EntryWithSource>> serializedTags) {
 	}
 }
