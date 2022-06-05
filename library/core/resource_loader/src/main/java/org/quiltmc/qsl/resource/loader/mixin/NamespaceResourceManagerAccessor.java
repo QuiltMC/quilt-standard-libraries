@@ -34,8 +34,8 @@ public interface NamespaceResourceManagerAccessor {
 	@Accessor
 	ResourceType getType();
 
-	@Invoker("method_14476")
-	Resource.class_7367<InputStream> invokeOpen(Identifier id, ResourcePack pack) throws IOException;
+	@Invoker("getResourceInputStreamSupplier")
+	Resource.InputSupplier<InputStream> invokeOpen(Identifier id, ResourcePack pack) throws IOException;
 
 	@Invoker
 	static Identifier invokeGetMetadataPath(Identifier id) {

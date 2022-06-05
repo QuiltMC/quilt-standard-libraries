@@ -1,13 +1,6 @@
 accessWidener	v1	named
 accessible  class   net/minecraft/world/biome/Biome$Weather
 
-# Rebuilding biome source feature lists
-accessible field net/minecraft/world/biome/source/BiomeSource featuresStepData Ljava/util/function/Supplier;
-mutable field net/minecraft/world/biome/source/BiomeSource featuresStepData Ljava/util/function/Supplier;
-accessible method net/minecraft/world/biome/source/BiomeSource createFeatureStepData (Ljava/util/List;Z)Ljava/util/List;
-accessible field net/minecraft/world/biome/source/BiomeSource biomes Ljava/util/Set;
-
-
 # Top-Level Biome Fields Access
 accessible field net/minecraft/world/biome/Biome weather Lnet/minecraft/world/biome/Biome$Weather;
 accessible field net/minecraft/world/biome/Biome generationSettings Lnet/minecraft/world/biome/GenerationSettings;

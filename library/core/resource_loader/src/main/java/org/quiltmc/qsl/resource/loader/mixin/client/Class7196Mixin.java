@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.class_7196;
-import net.minecraft.class_7237;
+import net.minecraft.unmapped.C_kjxfcecs;
 import net.minecraft.server.WorldStem;
 import net.minecraft.world.SaveProperties;
 
@@ -32,12 +32,12 @@ import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 @Mixin(class_7196.class)
 public class Class7196Mixin {
 	@Inject(method = "method_41900", at = @At("HEAD"))
-	private void onStartDataPackLoad(class_7237.class_7238 arg, class_7237.class_6907<SaveProperties> arg2, CallbackInfoReturnable<WorldStem> cir) {
+	private void onStartDataPackLoad(C_kjxfcecs.C_nrmvgbka c_nrmvgbka, C_kjxfcecs.class_6907<SaveProperties> arg, CallbackInfoReturnable<WorldStem> cir) {
 		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null);
 	}
 
 	@Inject(method = "method_41900", at = @At("RETURN"))
-	private void onEndDataPackLoad(class_7237.class_7238 arg, class_7237.class_6907<SaveProperties> arg2, CallbackInfoReturnable<WorldStem> cir) {
+	private void onEndDataPackLoad(C_kjxfcecs.C_nrmvgbka c_nrmvgbka, C_kjxfcecs.class_6907<SaveProperties> arg, CallbackInfoReturnable<WorldStem> cir) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, cir.getReturnValue().resourceManager(), null);
 	}
 

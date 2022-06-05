@@ -139,7 +139,7 @@ public final class TheEndBiomeData {
 
 				return this.pick(highlandsReplacement, vanillaBiome, map, x, z, noise);
 			} else {
-				assert END_BIOMES_MAP.containsKey(vanillaBiome.method_40230().orElseThrow());
+				assert END_BIOMES_MAP.containsKey(vanillaBiome.getKey().orElseThrow());
 
 				return this.pick(vanillaBiome, vanillaBiome, endBiomesMap, x, z, noise);
 			}

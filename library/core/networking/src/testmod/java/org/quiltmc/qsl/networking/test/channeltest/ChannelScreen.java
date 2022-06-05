@@ -45,7 +45,7 @@ final class ChannelScreen extends Screen {
 		this.c2sButton = this.addDrawableChild(new ButtonWidget(this.width / 2 + 5, 5, 50, 20, Text.create("C2S"), this::toC2S, (button, matrices, mouseX, mouseY) -> {
 			this.renderTooltip(matrices, Text.create("Packets the server can receive"), mouseX, mouseY);
 		}));
-		this.closeButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 60, this.height - 25, 120, 20, Text.create("Close"), button -> this.onClose()));
+		this.closeButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 60, this.height - 25, 120, 20, Text.create("Close"), button -> this.closeScreen()));
 		this.channelList = this.addDrawable(new ChannelList(this.client, this.width, this.height - 60, 30, this.height - 30, this.textRenderer.fontHeight + 2));
 	}
 

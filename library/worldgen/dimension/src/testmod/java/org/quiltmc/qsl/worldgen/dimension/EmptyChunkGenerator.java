@@ -44,14 +44,17 @@ import net.minecraft.world.gen.chunk.Blender;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.VerticalBlockSample;
 import net.minecraft.world.gen.structure.StructureSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EmptyChunkGenerator extends ChunkGenerator {
+	private static final Logger EMPTY_CHUNK_GENERATOR_LOGGER = LoggerFactory.getLogger("QuiltDimensionTest|EmptyChunkGenerator");
 	public static final Codec<EmptyChunkGenerator> CODEC = RecordCodecBuilder.create((instance) -> method_41042(instance).and(RegistryOps.getRegistry(Registry.BIOME_KEY).forGetter((generator) -> generator.biomeRegistry)).apply(instance, instance.stable(EmptyChunkGenerator::new)));
 
 	private final Registry<Biome> biomeRegistry;
 
 	public EmptyChunkGenerator(Registry<StructureSet> registry, Registry<Biome> biomeRegistry) {
-		super(registry, Optional.empty(), new FixedBiomeSource(biomeRegistry.getOrCreateHolder(BiomeKeys.PLAINS)));
+		super(registry, Optional.empty(), new FixedBiomeSource(biomeRegistry.getOrCreateHolder(BiomeKeys.PLAINS).getOrThrow(false, EMPTY_CHUNK_GENERATOR_LOGGER::error)));
 		this.biomeRegistry = biomeRegistry;
 	}
 
