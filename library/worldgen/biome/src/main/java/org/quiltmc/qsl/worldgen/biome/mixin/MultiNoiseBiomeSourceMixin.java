@@ -40,7 +40,7 @@ import org.quiltmc.qsl.worldgen.biome.impl.NetherBiomeData;
 @Mixin(MultiNoiseBiomeSource.Preset.class)
 public class MultiNoiseBiomeSourceMixin {
 	// NOTE: This is a lambda-function in the NETHER preset field initializer
-	@Inject(method = "m_ixtcdgmf", at = @At("RETURN"), cancellable = true)
+	@Inject(method = "m_ixtcdgmf(Lnet/minecraft/util/registry/Registry;)Lnet/minecraft/world/biome/source/util/MultiNoiseUtil$ParameterRangeList;", at = @At("RETURN"), cancellable = true)
 	private static void appendNetherBiomes(Registry<Biome> registry, CallbackInfoReturnable<MultiNoiseUtil.ParameterRangeList<Holder<Biome>>> cir) {
 		MultiNoiseUtil.ParameterRangeList<Holder<Biome>> biomes = cir.getReturnValue();
 		List<Pair<MultiNoiseUtil.NoiseHypercube, Holder<Biome>>> entries = new ArrayList<>(biomes.getEntries());
