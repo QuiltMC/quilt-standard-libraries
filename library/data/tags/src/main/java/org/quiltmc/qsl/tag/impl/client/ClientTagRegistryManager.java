@@ -92,7 +92,7 @@ public final class ClientTagRegistryManager<T> {
 	public void setSerializedTags(Map<Identifier, Tag.Builder> serializedTags) {
 		this.serializedTags = serializedTags;
 		this.clientOnlyValues = this.buildDynamicGroup(this.serializedTags, TagType.CLIENT_ONLY);
-		this.bindTags(this.clientOnlyValues, (ref, tags) -> ((QuiltRegistryEntryReferenceHooks<T>) ref).quilt$setClientTags(tags));
+		this.bindTags(this.clientOnlyValues, (ref, tags) -> ((QuiltHolderReferenceHooks<T>) ref).quilt$setClientTags(tags));
 	}
 
 	public Tag<Holder<T>> getFallbackTag(TagKey<T> key) {
@@ -114,7 +114,7 @@ public final class ClientTagRegistryManager<T> {
 	public void setFallbackSerializedTags(Map<Identifier, Tag.Builder> serializedTags) {
 		this.fallbackSerializedTags = serializedTags;
 		this.fallbackValues = this.buildDynamicGroup(this.fallbackSerializedTags, TagType.CLIENT_FALLBACK);
-		this.bindTags(this.fallbackValues, (ref, tags) -> ((QuiltRegistryEntryReferenceHooks<T>) ref).quilt$setFallbackTags(tags));
+		this.bindTags(this.fallbackValues, (ref, tags) -> ((QuiltHolderReferenceHooks<T>) ref).quilt$setFallbackTags(tags));
 	}
 
 	@Environment(EnvType.CLIENT)

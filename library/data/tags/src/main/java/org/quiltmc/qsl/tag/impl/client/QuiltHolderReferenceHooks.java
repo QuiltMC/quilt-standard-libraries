@@ -23,7 +23,7 @@ import org.jetbrains.annotations.ApiStatus;
 import net.minecraft.tag.TagKey;
 
 @ApiStatus.Internal
-public interface QuiltRegistryEntryReferenceHooks<T> {
+public interface QuiltHolderReferenceHooks<T> {
 	void quilt$setFallbackTags(Collection<TagKey<T>> tags);
 
 	void quilt$setClientTags(Collection<TagKey<T>> tags);
