@@ -97,7 +97,7 @@ public class QuiltBiomeTest implements ModInitializer {
 
 		// The placement config is taken from the vanilla desert well, but no randomness
 		PlacedFeature PLACED_COMMON_DESERT_WELL = new PlacedFeature(featureEntry, List.of(InSquarePlacementModifier.getInstance(), PlacedFeatureUtil.MOTION_BLOCKING_HEIGHTMAP, BiomePlacementModifier.getInstance()));
-		Registry.register(BuiltinRegistries.PLACED_FEATURE, new Identifier(MOD_ID, "fab_desert_well"), PLACED_COMMON_DESERT_WELL);
+		Registry.register(BuiltinRegistries.PLACED_FEATURE, new Identifier(MOD_ID, "quilt_desert_well_placed"), PLACED_COMMON_DESERT_WELL);
 
 		BiomeModifications.create(new Identifier("quilt:testmod"))
 				.add(ModificationPhase.ADDITIONS,
@@ -109,7 +109,7 @@ public class QuiltBiomeTest implements ModInitializer {
 						context -> context.getGenerationSettings().addFeature(GenerationStep.Feature.TOP_LAYER_MODIFICATION,
 								BuiltinRegistries.PLACED_FEATURE.getKey(PLACED_COMMON_DESERT_WELL).orElseThrow()
 						))
-				//these three test should be glaringly obvious if they work or not, be sure to check forests as well
+				//it should be glaringly obvious if these three tests work or not; be sure to check forests as well
 				.add(ModificationPhase.ADDITIONS,
 						BiomeSelectors.foundInOverworld(),
 						context -> context.getEffects().setSkyColor(0x111111))
