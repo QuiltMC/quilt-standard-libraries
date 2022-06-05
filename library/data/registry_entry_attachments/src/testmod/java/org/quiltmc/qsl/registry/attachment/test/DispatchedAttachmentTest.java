@@ -83,7 +83,6 @@ public class DispatchedAttachmentTest implements ModInitializer {
 	 */
 	public static final ModularFunctionItem ITEM_5 = Registry.register(Registry.ITEM,
 			new Identifier("quilt", "modular_item_5"), new ModularFunctionItem(new Item.Settings()));
-
 	/**
 	 * Has a value a provided by a tag via datapack.
 	 */
