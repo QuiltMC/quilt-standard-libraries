@@ -73,8 +73,8 @@ final class AttachmentDictionary<R, V> {
 			boolean replace;
 			JsonElement values;
 
-			try {
-				JsonObject obj = JsonHelper.deserialize(new InputStreamReader(resource.getInputStream()));
+			try (var reader = new InputStreamReader(resource.getInputStream())) {
+				JsonObject obj = JsonHelper.deserialize(reader);
 				replace = JsonHelper.getBoolean(obj, "replace", false);
 				values = obj.get("values");
 

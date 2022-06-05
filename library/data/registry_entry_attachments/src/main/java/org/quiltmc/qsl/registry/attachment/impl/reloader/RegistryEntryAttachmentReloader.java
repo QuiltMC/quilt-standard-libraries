@@ -95,10 +95,11 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 			for (var entry : Registry.REGISTRIES.getEntries()) {
 				Identifier registryId = entry.getKey().getValue();
 				String path = registryId.getNamespace() + "/" + registryId.getPath();
-				profiler.push(id + "/finding_resources/" + path);
+				profiler.push(this.id + "/finding_resources/" + path);
 
 				Collection<Identifier> jsonIds = manager.findResources("attachments/" + path, s -> s.endsWith(".json"));
 				if (jsonIds.isEmpty()) {
+					profiler.pop();
 					continue;
 				}
 
@@ -129,7 +130,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 				continue;
 			}
 
-			profiler.swap(id + "/getting_resources{" + jsonId + "}");
+			profiler.swap(this.id + "/getting_resources{" + jsonId + "}");
 
 			List<Resource> resources;
 			try {
@@ -140,7 +141,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 				continue;
 			}
 
-			profiler.swap(id + "/processing_resources{" + jsonId + "," + attachmentId + "}");
+			profiler.swap(this.id + "/processing_resources{" + jsonId + "," + attachmentId + "}");
 
 			AttachmentDictionary<?, ?> attachAttachment = attachmentMaps.computeIfAbsent(attachment, this::createAttachmentMap);
 			for (var resource : resources) {
@@ -157,7 +158,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	public CompletableFuture<Void> apply(LoadedData data, ResourceManager manager, Profiler profiler, Executor executor) {
 		return CompletableFuture.runAsync(() -> {
 			data.apply(profiler);
-			if (source == ResourceType.SERVER_DATA) {
+			if (this.source == ResourceType.SERVER_DATA) {
 				RegistryEntryAttachmentSync.clearEncodedValuesCache();
 				RegistryEntryAttachmentSync.syncAttachmentsToAllPlayers();
 			}
