@@ -17,20 +17,15 @@
 
 package org.quiltmc.qsl.permission.api;
 
-import net.minecraft.command.CommandSource;
-import net.minecraft.entity.Entity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.EventAwareListener;
 import org.quiltmc.qsl.base.api.util.TriState;
 
-import java.util.UUID;
-
 /**
- * Simple permissions check event for {@link CommandSource}s.
+ * Simple permissions check event for {@link ServerCommandSource}s.
  */
 public interface PermissionCheckEvent extends EventAwareListener {
 
@@ -47,28 +42,11 @@ public interface PermissionCheckEvent extends EventAwareListener {
 	/**
 	 * This method is called whenever a mod performs a permission check on a {@link ServerCommandSource}.
 	 *
-	 * Note: When this method isn't overridden, it will call {@link #onPermissionCheck(UUID, Identifier)}.
-	 *       The UUID that is passed in will be either the UUID of the CommandSource's entity or, if it
-	 *       doesn't have one, {@link Util#NIL_UUID}.
-	 *
 	 * @param source the ServerCommandSource to check the permission for
 	 * @param permission the permission to check for
 	 * @return a {@link TriState} value representing the outcome of the permission check.
 	 */
 	@NotNull
-	default TriState onPermissionCheck(@NotNull ServerCommandSource source, @NotNull Identifier permission) {
-		Entity sourceEntity = source.getEntity();
-		return onPermissionCheck(sourceEntity == null ? Util.NIL_UUID : sourceEntity.getUuid(), permission);
-	}
-
-	/**
-	 * This method is called whenever a mod performs a permission check on an entity with the specified {@link UUID}.
-	 *
-	 * @param source the UUID to check the permission for
-	 * @param permission the permission to check for
-	 * @return a {@link TriState} value representing the outcome of the permission check.
-	 */
-	@NotNull
-	TriState onPermissionCheck(@NotNull UUID source, @NotNull Identifier permission);
+	TriState onPermissionCheck(@NotNull ServerCommandSource source, @NotNull Identifier permission);
 
 }

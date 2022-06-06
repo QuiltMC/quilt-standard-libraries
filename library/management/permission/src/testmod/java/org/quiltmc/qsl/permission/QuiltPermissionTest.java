@@ -49,7 +49,7 @@ public class QuiltPermissionTest implements ServerLifecycleEvents.Starting, Comm
 	public void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, boolean integrated, boolean dedicated) {
 		dispatcher.register(literal("checkpermission").then(argument("permission", identifier()).executes(ctx -> {
 			Identifier permission = getIdentifier(ctx, "permission");
-			ctx.getSource().sendFeedback(Text.of("Permission '" + permission + "' is set to " + ctx.getSource().checkPermission(permission) + "."), false);
+			ctx.getSource().sendFeedback(Text.of("Permission '" + permission + "' is set to " + ctx.getSource().hasPermission(permission) + "."), false);
 
 			return 0;
 		})));

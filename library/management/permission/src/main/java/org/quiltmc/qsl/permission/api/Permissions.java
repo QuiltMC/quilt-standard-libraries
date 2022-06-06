@@ -36,7 +36,7 @@ public class Permissions {
 	 * @return the state of the permission
 	 */
 	@NotNull
-	public static TriState getPermissionValue(@NotNull ServerCommandSource source, @NotNull Identifier permission) {
+	public static TriState getPermission(@NotNull ServerCommandSource source, @NotNull Identifier permission) {
 		Objects.requireNonNull(source, "source may not be null");
 		Objects.requireNonNull(permission, "permission may not be null");
 
@@ -53,7 +53,7 @@ public class Permissions {
 	 * @return the result of the permission check
 	 */
 	public static boolean check(@NotNull ServerCommandSource source, @NotNull Identifier permission, boolean defaultValue) {
-		return getPermissionValue(source, permission).toBooleanOrElse(defaultValue);
+		return getPermission(source, permission).toBooleanOrElse(defaultValue);
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class Permissions {
 	 * @return the result of the permission check
 	 */
 	public static boolean check(@NotNull ServerCommandSource source, @NotNull Identifier permission, int defaultRequiredLevel) {
-		return getPermissionValue(source, permission).toBooleanOrElseGet(() -> source.hasPermissionLevel(defaultRequiredLevel));
+		return getPermission(source, permission).toBooleanOrElseGet(() -> source.hasPermissionLevel(defaultRequiredLevel));
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class Permissions {
 	 * @return the result of the permission check
 	 */
 	public static boolean check(@NotNull ServerCommandSource source, @NotNull Identifier permission) {
-		return getPermissionValue(source, permission).toBooleanOrElse(false);
+		return getPermission(source, permission).toBooleanOrElse(false);
 	}
 
 	/**
@@ -134,10 +134,10 @@ public class Permissions {
 	 * @return the state of the permission
 	 */
 	@NotNull
-	public static TriState getPermissionValue(@NotNull Entity entity, @NotNull Identifier permission) {
+	public static TriState getPermission(@NotNull Entity entity, @NotNull Identifier permission) {
 		Objects.requireNonNull(entity, "entity may not be null");
 
-		return getPermissionValue(entity.getCommandSource(), permission);
+		return getPermission(entity.getCommandSource(), permission);
 	}
 
 	/**

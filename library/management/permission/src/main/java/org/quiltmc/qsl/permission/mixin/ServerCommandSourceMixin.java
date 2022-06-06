@@ -31,10 +31,10 @@ public class ServerCommandSourceMixin implements Permissible {
 
 	@NotNull
 	@Override
-	public TriState getPermissionValue(@NotNull Identifier permission) {
+	public TriState getPermission(@NotNull Identifier permission) {
 		Objects.requireNonNull(permission, "permission may not be null");
 
-		return Permissions.getPermissionValue((ServerCommandSource) (Object) this, permission);
+		return Permissions.getPermission((ServerCommandSource) (Object) this, permission);
 	}
 
 }

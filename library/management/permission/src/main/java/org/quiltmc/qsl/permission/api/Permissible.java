@@ -38,7 +38,7 @@ public interface Permissible {
 	 * @return the state of the permission
 	 */
 	@NotNull
-	default TriState getPermissionValue(@NotNull Identifier permission) {
+	default TriState getPermission(@NotNull Identifier permission) {
 		return TriState.DEFAULT;
 	}
 
@@ -50,8 +50,8 @@ public interface Permissible {
 	 * @param defaultValue the default value to use if nothing has been set
 	 * @return the result of the permission check
 	 */
-	default boolean checkPermission(@NotNull Identifier permission, boolean defaultValue) {
-		return getPermissionValue(permission).toBooleanOrElse(defaultValue);
+	default boolean hasPermission(@NotNull Identifier permission, boolean defaultValue) {
+		return getPermission(permission).toBooleanOrElse(defaultValue);
 	}
 
 	/**
@@ -62,8 +62,8 @@ public interface Permissible {
 	 * @param defaultRequiredLevel the required permission level to check for as a fallback
 	 * @return the result of the permission check
 	 */
-	default boolean checkPermission(@NotNull Identifier permission, int defaultRequiredLevel) {
-		return getPermissionValue(permission).toBooleanOrElseGet(() -> ((ServerCommandSource) this).hasPermissionLevel(defaultRequiredLevel));
+	default boolean hasPermission(@NotNull Identifier permission, int defaultRequiredLevel) {
+		return getPermission(permission).toBooleanOrElseGet(() -> ((ServerCommandSource) this).hasPermissionLevel(defaultRequiredLevel));
 	}
 
 	/**
@@ -73,8 +73,8 @@ public interface Permissible {
 	 * @param permission the permission to check
 	 * @return the result of the permission check
 	 */
-	default boolean checkPermission(@NotNull Identifier permission) {
-		return getPermissionValue(permission).toBooleanOrElse(false);
+	default boolean hasPermission(@NotNull Identifier permission) {
+		return getPermission(permission).toBooleanOrElse(false);
 	}
 
 }

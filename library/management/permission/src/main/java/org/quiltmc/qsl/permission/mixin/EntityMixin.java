@@ -31,10 +31,10 @@ public class EntityMixin implements Permissible {
 
 	@NotNull
 	@Override
-	public TriState getPermissionValue(@NotNull Identifier permission) {
+	public TriState getPermission(@NotNull Identifier permission) {
 		Objects.requireNonNull(permission, "permission may not be null");
 
-		return Permissions.getPermissionValue((Entity) (Object) this, permission);
+		return Permissions.getPermission((Entity) (Object) this, permission);
 	}
 
 }
