@@ -37,11 +37,11 @@ public interface PermissionCheckEvent extends EventAwareListener {
 	Event<PermissionCheckEvent> EVENT = Event.create(PermissionCheckEvent.class, (callbacks) -> (source, permission) -> {
 		for (PermissionCheckEvent callback : callbacks) {
 			TriState state = callback.onPermissionCheck(source, permission);
-			if (state != TriState.UNSET) {
+			if (state != TriState.DEFAULT) {
 				return state;
 			}
 		}
-		return TriState.UNSET;
+		return TriState.DEFAULT;
 	});
 
 	/**

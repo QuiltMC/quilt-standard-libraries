@@ -39,12 +39,12 @@ public interface Permissible {
 	 */
 	@NotNull
 	default TriState getPermissionValue(@NotNull Identifier permission) {
-		return TriState.UNSET;
+		return TriState.DEFAULT;
 	}
 
 	/**
 	 * Performs a permission check on this source, falling back to the {@code defaultValue}
-	 * if the resultant state is {@link TriState#UNSET}.
+	 * if the resultant state is {@link TriState#DEFAULT}.
 	 *
 	 * @param permission the permission to check
 	 * @param defaultValue the default value to use if nothing has been set
@@ -56,7 +56,7 @@ public interface Permissible {
 
 	/**
 	 * Performs a permission check on this source, falling back to requiring the
-	 * {@code defaultRequiredLevel} if the resultant state is {@link TriState#UNSET}.
+	 * {@code defaultRequiredLevel} if the resultant state is {@link TriState#DEFAULT}.
 	 *
 	 * @param permission the permission to check
 	 * @param defaultRequiredLevel the required permission level to check for as a fallback
@@ -68,7 +68,7 @@ public interface Permissible {
 
 	/**
 	 * Performs a permission check on this source, falling back to {@code false}
-	 * if the resultant state is {@link TriState#UNSET}.
+	 * if the resultant state is {@link TriState#DEFAULT}.
 	 *
 	 * @param permission the permission to check
 	 * @return the result of the permission check

@@ -45,7 +45,7 @@ public class Permissions {
 
 	/**
 	 * Performs a permission check, falling back to the {@code defaultValue} if the resultant
-	 * state is {@link TriState#UNSET}.
+	 * state is {@link TriState#DEFAULT}.
 	 *
 	 * @param source the source to perform the check for
 	 * @param permission the permission to check
@@ -58,7 +58,7 @@ public class Permissions {
 
 	/**
 	 * Performs a permission check, falling back to requiring the {@code defaultRequiredLevel}
-	 * if the resultant state is {@link TriState#UNSET}.
+	 * if the resultant state is {@link TriState#DEFAULT}.
 	 *
 	 * @param source the source to perform the check for
 	 * @param permission the permission to check
@@ -71,7 +71,7 @@ public class Permissions {
 
 	/**
 	 * Performs a permission check, falling back to {@code false} if the resultant state
-	 * is {@link TriState#UNSET}.
+	 * is {@link TriState#DEFAULT}.
 	 *
 	 * @param source the source to perform the check for
 	 * @param permission the permission to check
@@ -83,7 +83,7 @@ public class Permissions {
 
 	/**
 	 * Creates a predicate which returns the result of performing a permission check,
-	 * falling back to the {@code defaultValue} if the resultant state is {@link TriState#UNSET}.
+	 * falling back to the {@code defaultValue} if the resultant state is {@link TriState#DEFAULT}.
 	 *
 	 * @param permission the permission to check
 	 * @param defaultValue the default value to use if nothing has been set
@@ -99,7 +99,7 @@ public class Permissions {
 	/**
 	 * Creates a predicate which returns the result of performing a permission check,
 	 * falling back to requiring the {@code defaultRequiredLevel} if the resultant state is
-	 * {@link TriState#UNSET}.
+	 * {@link TriState#DEFAULT}.
 	 *
 	 * @param permission the permission to check
 	 * @param defaultRequiredLevel the required permission level to check for as a fallback
@@ -114,7 +114,7 @@ public class Permissions {
 
 	/**
 	 * Creates a predicate which returns the result of performing a permission check,
-	 * falling back to {@code false} if the resultant state is {@link TriState#UNSET}.
+	 * falling back to {@code false} if the resultant state is {@link TriState#DEFAULT}.
 	 *
 	 * @param permission the permission to check
 	 * @return a predicate that will perform the permission check
@@ -142,7 +142,7 @@ public class Permissions {
 
 	/**
 	 * Performs a permission check, falling back to the {@code defaultValue} if the resultant
-	 * state is {@link TriState#UNSET}.
+	 * state is {@link TriState#DEFAULT}.
 	 *
 	 * @param entity the entity to perform the check for
 	 * @param permission the permission to check
@@ -157,7 +157,7 @@ public class Permissions {
 
 	/**
 	 * Performs a permission check, falling back to requiring the {@code defaultRequiredLevel}
-	 * if the resultant state is {@link TriState#UNSET}.
+	 * if the resultant state is {@link TriState#DEFAULT}.
 	 *
 	 * @param entity the entity to perform the check for
 	 * @param permission the permission to check
@@ -172,7 +172,7 @@ public class Permissions {
 
 	/**
 	 * Performs a permission check, falling back to {@code false} if the resultant state
-	 * is {@link TriState#UNSET}.
+	 * is {@link TriState#DEFAULT}.
 	 *
 	 * @param entity the entity to perform the check for
 	 * @param permission the permission to check
