@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.registry.Registry;
@@ -94,10 +95,11 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 			for (var entry : Registry.REGISTRIES.getEntries()) {
 				Identifier registryId = entry.getKey().getValue();
 				String path = registryId.getNamespace() + "/" + registryId.getPath();
-				profiler.push(id + "/finding_resources/" + path);
+				profiler.push(this.id + "/finding_resources/" + path);
 
 				Collection<Identifier> jsonIds = manager.findResources("attachments/" + path, s -> s.endsWith(".json"));
 				if (jsonIds.isEmpty()) {
+					profiler.pop();
 					continue;
 				}
 
@@ -112,8 +114,8 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	}
 
 	private void processResources(ResourceManager manager, Profiler profiler,
-	                              Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> attachmentMaps,
-	                              Collection<Identifier> jsonIds, Registry<?> registry) {
+			Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> attachmentMaps,
+			Collection<Identifier> jsonIds, Registry<?> registry) {
 		for (var jsonId : jsonIds) {
 			Identifier attachmentId = this.getAttachmentId(jsonId);
 			RegistryEntryAttachment<?, ?> attachment = RegistryEntryAttachmentHolder.getAttachment(registry, attachmentId);
@@ -128,7 +130,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 				continue;
 			}
 
-			profiler.swap(id + "/getting_resources{" + jsonId + "}");
+			profiler.swap(this.id + "/getting_resources{" + jsonId + "}");
 
 			List<Resource> resources;
 			try {
@@ -139,7 +141,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 				continue;
 			}
 
-			profiler.swap(id + "/processing_resources{" + jsonId + "," + attachmentId + "}");
+			profiler.swap(this.id + "/processing_resources{" + jsonId + "," + attachmentId + "}");
 
 			AttachmentDictionary<?, ?> attachAttachment = attachmentMaps.computeIfAbsent(attachment, this::createAttachmentMap);
 			for (var resource : resources) {
@@ -149,14 +151,14 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	}
 
 	private <R, V> AttachmentDictionary<R, V> createAttachmentMap(RegistryEntryAttachment<R, V> attachment) {
-		return new AttachmentDictionary<>(attachment.registry(), attachment, this.source == ResourceType.CLIENT_RESOURCES);
+		return new AttachmentDictionary<>(attachment.registry(), attachment);
 	}
 
 	@Override
 	public CompletableFuture<Void> apply(LoadedData data, ResourceManager manager, Profiler profiler, Executor executor) {
 		return CompletableFuture.runAsync(() -> {
 			data.apply(profiler);
-			if (source == ResourceType.SERVER_DATA) {
+			if (this.source == ResourceType.SERVER_DATA) {
 				RegistryEntryAttachmentSync.clearEncodedValuesCache();
 				RegistryEntryAttachmentSync.syncAttachmentsToAllPlayers();
 			}
@@ -210,18 +212,13 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 			Objects.requireNonNull(registry, "registry");
 
 			RegistryEntryAttachmentHolder<R> holder = getHolder(registry);
-			for (Map.Entry<ValueTarget, Object> attachmentEntry : attachAttachment.getMap().entrySet()) {
+			for (Map.Entry<AttachmentDictionary.ValueTarget, Object> attachmentEntry : attachAttachment.getMap().entrySet()) {
 				V value = (V) attachmentEntry.getValue();
-				try {
-					for (Identifier id : attachmentEntry.getKey().ids()) {
-						R item = registry.get(id);
-						holder.putValue(attachment, item, value);
-					}
-				} catch (ValueTarget.ResolveException e) {
-					// TODO handle this better, somehow??
-					LOGGER.error("Failed to apply values for attachment {}!", attachment.id());
-					LOGGER.error("", e);
-					break;
+				AttachmentDictionary.ValueTarget target = attachmentEntry.getKey();
+				switch (target.type()) {
+					case ENTRY -> holder.putValue(attachment, attachment.registry().get(target.id()), value);
+					case TAG -> holder.putValue(attachment, TagKey.of(attachment.registry().getKey(), target.id()), value);
+					default -> throw new IllegalStateException("Unexpected value: " + target.type());
 				}
 			}
 		}

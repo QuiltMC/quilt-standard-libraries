@@ -16,7 +16,7 @@ if (version.contains("beta") && !ENV.MAVEN_URL) {
 	version = version.replace(version.substring(version.indexOf("beta.")), "beta." + (beta + 1))
 }
 
-version = version + "+" + Versions.MINECRAFT_VERSION + (System.getenv("SNAPSHOTS_URL") ? "-SNAPSHOT" : "")
+version = version + "+" + Versions.MINECRAFT_VERSION.version() + (System.getenv("SNAPSHOTS_URL") ? "-SNAPSHOT" : "")
 println("QSL: " + version)
 sourceSets {
 	testmod {
@@ -39,9 +39,58 @@ jar {
 	enabled = false
 }
 
+task fatJavadoc(type: Javadoc) {
+	options {
+		source = String.valueOf(Versions.JAVA_VERSION)
+		encoding = "UTF-8"
+		charSet = "UTF-8"
+		memberLevel = JavadocMemberLevel.PACKAGE
+		links(
+				"https://guava.dev/releases/21.0/api/docs/",
+				"https://asm.ow2.io/javadoc/",
+				"https://docs.oracle.com/en/java/javase/16/docs/api/",
+				"https://jenkins.liteloader.com/job/Mixin/javadoc/",
+				"https://logging.apache.org/log4j/2.x/log4j-api/apidocs/",
+				"https://maven.quiltmc.org/repository/release/org/quiltmc/quilt-mappings/${Versions.MINECRAFT_VERSION.version()}+build.${Versions.MAPPINGS_BUILD}/quilt-mappings-${Versions.MINECRAFT_VERSION.version()}+build.${Versions.MAPPINGS_BUILD}-javadoc.jar/"
+		)
+
+		// Disable the overzealous doclint tool in Java 8
+		addStringOption("Xdoclint:none", "-quiet")
+		tags(
+				"author:a",
+				'reason:m:"Reason:"'
+		)
+	}
+
+	failOnError false
+
+	exclude {
+		it.file.absolutePath.contains("mixin") || it.file.absolutePath.contains("impl")
+	}
+
+	afterEvaluate {
+		subprojects.each { subproject ->
+			subproject.tasks.withType(Javadoc).each { javadocTask ->
+				source += javadocTask.source
+				classpath += javadocTask.classpath
+			}
+		}
+	}
+	destinationDir = file("${buildDir}/docs/fat-javadoc")
+}
+
+
+task fatJavadocJar(type: Jar) {
+	classifier "fat-javadoc"
+	dependsOn fatJavadoc
+	from fatJavadoc.destinationDir
+}
+
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
+			artifact fatJavadocJar
+
 			pom.withXml {
 				def depsNode = asNode().appendNode("dependencies")
 
@@ -99,6 +148,7 @@ loom {
 		}
 	}
 }
+
 afterEvaluate {
 	def generateQmjForIdea = tasks.create("generateQmjForIdea")
 	project.subprojects.each {
@@ -114,6 +164,16 @@ afterEvaluate {
 					afterSync generateQmjForIdea
 				}
 			}
+		}
+	}
+
+	testmodRemapJar { tsk ->
+		nestedJars.setFrom(Collections.emptySet())
+
+		rootProject.subprojects.stream().filter {
+			it.path.count(':') == 1
+		}.forEach {
+			tsk.nestedJars.from it.tasks.getByName("testmodRemapJar")
 		}
 	}
 }

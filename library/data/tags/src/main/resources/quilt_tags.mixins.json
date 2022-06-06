@@ -12,7 +12,7 @@
   ],
   "client": [
     "client.ClientPlayNetworkHandlerMixin",
-    "client.RegistryEntryReferenceMixin",
+    "client.HolderReferenceMixin",
     "client.TagGroupLoaderAccessor"
   ],
   "injectors": {

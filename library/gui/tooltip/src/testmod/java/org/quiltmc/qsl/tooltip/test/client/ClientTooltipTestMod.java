@@ -19,6 +19,8 @@ package org.quiltmc.qsl.tooltip.test.client;
 
 import java.util.List;
 
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.item.TooltipData;
@@ -27,7 +29,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import org.jetbrains.annotations.Nullable;
 
 import org.quiltmc.qsl.tooltip.api.client.ItemTooltipCallback;
 import org.quiltmc.qsl.tooltip.api.client.TooltipComponentCallback;

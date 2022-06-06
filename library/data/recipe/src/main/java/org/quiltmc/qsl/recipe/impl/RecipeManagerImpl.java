@@ -67,17 +67,17 @@ public final class RecipeManagerImpl {
 	}
 
 	public static void apply(Map<Identifier, JsonElement> map,
-	                         Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap,
-	                         ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder) {
+			Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap,
+			ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder) {
 		var handler = new RegisterRecipeHandlerImpl(map, builderMap, globalRecipeMapBuilder);
 		RecipeLoadingEvents.ADD.invoker().addRecipes(handler);
-		STATIC_RECIPES.values().forEach(handler::register);
+		STATIC_RECIPES.values().forEach(handler::tryRegister);
 		LOGGER.info("Registered {} custom recipes.", handler.registered);
 	}
 
 	public static void applyModifications(RecipeManager recipeManager,
-	                                      Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes,
-	                                      Map<Identifier, Recipe<?>> globalRecipes) {
+			Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes,
+			Map<Identifier, Recipe<?>> globalRecipes) {
 		var handler = new ModifyRecipeHandlerImpl(recipeManager, recipes, globalRecipes);
 		RecipeLoadingEvents.MODIFY.invoker().modifyRecipes(handler);
 		LOGGER.info("Modified {} recipes.", handler.counter);
