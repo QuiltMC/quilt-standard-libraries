@@ -9,7 +9,7 @@ def ENV = System.getenv()
 group = "org.quiltmc"
 version = Versions.QSL_VERSION
 
-// Takes "1.0.0-beta.1" and changes it to "1.0.0-beta.2, unless we are releasing.
+// Takes "1.0.0-beta.1" and changes it to "1.0.0-beta.2", unless we are releasing.
 // TODO: there is no way to semantically identify if a release is a snapshot or not right now
 if (version.contains("beta") && !ENV.MAVEN_URL) {
 	int beta = Integer.parseInt(version.substring(version.indexOf("beta.") + 5))
