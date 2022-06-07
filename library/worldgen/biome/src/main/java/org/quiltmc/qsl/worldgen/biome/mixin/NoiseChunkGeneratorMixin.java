@@ -1,5 +1,4 @@
 /*
- * Copyright 2016, 2017, 2018, 2019 FabricMC
  * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,31 +16,26 @@
 
 package org.quiltmc.qsl.worldgen.biome.mixin;
 
-import java.util.concurrent.Executor;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.structure.StructureManager;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.RandomState;
 import net.minecraft.world.gen.chunk.Blender;
-import net.minecraft.world.gen.chunk.ChunkGenerator;
+import net.minecraft.world.gen.chunk.NoiseChunkGenerator;
 
 import org.quiltmc.qsl.worldgen.biome.impl.TheEndBiomeData;
 
-@Mixin(ChunkGenerator.class)
-public class ChunkGeneratorMixin {
-	/**
-	 * Injection into {@link ChunkGenerator#populateBiomes(Registry, Executor, RandomState, Blender, StructureManager, Chunk)},
-	 * first lambda.
-	 */
-	@Inject(method = "method_38267", at = @At("HEAD"))
-	private void populateBiomes(Chunk chunk, RandomState randomState, CallbackInfoReturnable<Chunk> cir) {
-		// capture seed so TheEndBiomeData.Overrides has it if it needs it
+@Mixin(NoiseChunkGenerator.class)
+public class NoiseChunkGeneratorMixin {
+	@Inject(
+			method = "populateBiomes(Lnet/minecraft/world/gen/chunk/Blender;Lnet/minecraft/world/gen/RandomState;Lnet/minecraft/structure/StructureManager;Lnet/minecraft/world/chunk/Chunk;)V",
+			at = @At(value = "HEAD")
+	)
+	private void quilt$onPopulateBiomes(Blender blender, RandomState randomState, StructureManager structureManager, Chunk chunk, CallbackInfo ci) {
 		TheEndBiomeData.Overrides.setSeed(randomState.getLegacyWorldSeed());
 	}
 }

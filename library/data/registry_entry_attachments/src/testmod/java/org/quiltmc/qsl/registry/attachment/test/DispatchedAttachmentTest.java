@@ -49,8 +49,8 @@ public class DispatchedAttachmentTest implements ModInitializer {
 			if (!world.isClient()) {
 				ServerPlayerEntity player = (ServerPlayerEntity) user;
 				MODULAR_FUNCTION.getValue(this).ifPresentOrElse(funcValue -> funcValue.invoke(player),
-						() -> player.sendMessage(Text.create("No function assigned!")
-								.styled(style -> style.withColor(Formatting.RED)), true));
+						() -> player.sendMessage(Text.literal("No function assigned!")
+								.formatted(Formatting.RED), true));
 			}
 			return TypedActionResult.pass(user.getStackInHand(hand));
 		}

@@ -67,9 +67,9 @@ abstract class ClientConnectionMixin implements ChannelInfoHolder {
 	@Redirect(method = "Lnet/minecraft/network/ClientConnection;exceptionCaught(Lio/netty/channel/ChannelHandlerContext;Ljava/lang/Throwable;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/ClientConnection;send(Lnet/minecraft/network/Packet;Lio/netty/util/concurrent/GenericFutureListener;)V"))
 	private void resendOnExceptionCaught(ClientConnection self, Packet<?> packet, GenericFutureListener<? extends Future<? super Void>> futureListener) {
 		if (this.packetListener instanceof DisconnectPacketSource dcSource) {
-			this.send(dcSource.createDisconnectPacket(Text.createFormatted("disconnect.genericReason")), futureListener);
+			this.send(dcSource.createDisconnectPacket(Text.translatable("disconnect.genericReason")), futureListener);
 		} else {
-			this.disconnect(Text.createFormatted("disconnect.genericReason")); // Don't send packet if we cannot send proper packets
+			this.disconnect(Text.translatable("disconnect.genericReason")); // Don't send packet if we cannot send proper packets
 		}
 	}
 

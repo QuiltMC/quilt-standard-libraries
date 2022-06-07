@@ -45,9 +45,9 @@ public class MultiNoiseBiomeSourceMixin {
 		MultiNoiseUtil.ParameterRangeList<Holder<Biome>> biomes = cir.getReturnValue();
 		List<Pair<MultiNoiseUtil.NoiseHypercube, Holder<Biome>>> entries = new ArrayList<>(biomes.getEntries());
 
-		// add fabric biome noise point data to list && BiomeSource biome list
+		// Add Quilt biome noise point data to list && BiomeSource biome list
 		NetherBiomeData.getNetherBiomeNoisePoints().forEach((biomeKey, noisePoint) -> {
-			entries.add(Pair.of(noisePoint, registry.getHolderOrThrow(biomeKey)));
+			entries.add(Pair.of(noisePoint, registry.method_44298(biomeKey)));
 		});
 
 		cir.setReturnValue(new MultiNoiseUtil.ParameterRangeList<>(entries));

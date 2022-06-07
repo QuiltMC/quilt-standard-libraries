@@ -74,7 +74,7 @@ public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
 	 * Similar to {@link ResourcePackSource#PACK_SOURCE_BUILTIN} but specifies the mod name too.
 	 */
 	public static class BuiltinResourcePackSource implements ResourcePackSource {
-		private static final Text SOURCE_BUILTIN_TEXT = Text.createFormatted("pack.source.builtin");
+		private static final Text SOURCE_BUILTIN_TEXT = Text.translatable("pack.source.builtin");
 		private final Text text;
 		private final Text tooltip;
 
@@ -86,12 +86,12 @@ public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
 			}
 
 			this.text = SOURCE_BUILTIN_TEXT;
-			this.tooltip = Text.createFormatted("options.generic_value", SOURCE_BUILTIN_TEXT, modName);
+			this.tooltip = Text.translatable("options.generic_value", SOURCE_BUILTIN_TEXT, modName);
 		}
 
 		@Override
 		public Text decorate(Text description) {
-			return Text.createFormatted("pack.nameAndSource", description, this.text).formatted(Formatting.GRAY);
+			return Text.translatable("pack.nameAndSource", description, this.text).formatted(Formatting.GRAY);
 		}
 
 		public Text getTooltip() {

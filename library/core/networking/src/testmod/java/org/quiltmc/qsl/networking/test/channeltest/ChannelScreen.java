@@ -33,19 +33,19 @@ final class ChannelScreen extends Screen {
 	private ChannelList channelList;
 
 	ChannelScreen(NetworkingChannelClientTest mod) {
-		super(Text.create("TODO"));
+		super(Text.literal("TODO"));
 		this.mod = mod;
 	}
 
 	@Override
 	protected void init() {
-		this.s2cButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 55, 5, 50, 20, Text.create("S2C"), this::toS2C, (button, matrices, mouseX, mouseY) -> {
-			this.renderTooltip(matrices, Text.create("Packets this client can receive"), mouseX, mouseY);
+		this.s2cButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 55, 5, 50, 20, Text.literal("S2C"), this::toS2C, (button, matrices, mouseX, mouseY) -> {
+			this.renderTooltip(matrices, Text.literal("Packets this client can receive"), mouseX, mouseY);
 		}));
-		this.c2sButton = this.addDrawableChild(new ButtonWidget(this.width / 2 + 5, 5, 50, 20, Text.create("C2S"), this::toC2S, (button, matrices, mouseX, mouseY) -> {
-			this.renderTooltip(matrices, Text.create("Packets the server can receive"), mouseX, mouseY);
+		this.c2sButton = this.addDrawableChild(new ButtonWidget(this.width / 2 + 5, 5, 50, 20, Text.literal("C2S"), this::toC2S, (button, matrices, mouseX, mouseY) -> {
+			this.renderTooltip(matrices, Text.literal("Packets the server can receive"), mouseX, mouseY);
 		}));
-		this.closeButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 60, this.height - 25, 120, 20, Text.create("Close"), button -> this.closeScreen()));
+		this.closeButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 60, this.height - 25, 120, 20, Text.literal("Close"), button -> this.closeScreen()));
 		this.channelList = this.addDrawable(new ChannelList(this.client, this.width, this.height - 60, 30, this.height - 30, this.textRenderer.fontHeight + 2));
 	}
 

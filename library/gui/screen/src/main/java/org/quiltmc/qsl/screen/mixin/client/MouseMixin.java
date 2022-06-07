@@ -129,9 +129,9 @@ abstract class MouseMixin {
 		}
 
 		// Apply same calculations to horizontal scroll as vertical scroll amount has
-		this.quilt$scrollDistanceX = this.client.options.method_42439().method_41753()
+		this.quilt$scrollDistanceX = this.client.options.getDiscreteMouseScroll().get()
 				? Math.signum(scrollDeltaX)
-				: scrollDeltaX * this.client.options.method_41806().method_41753();
+				: scrollDeltaX * this.client.options.getMouseWheelSensitivity().get();
 
 		if (ScreenMouseEvents.ALLOW_MOUSE_SCROLL.invoker().allowMouseScroll(this.quilt$currentScreen, mouseX, mouseY, this.quilt$scrollDistanceX, scrollDistanceY) == TriState.FALSE) {
 			this.quilt$currentScreen = null;

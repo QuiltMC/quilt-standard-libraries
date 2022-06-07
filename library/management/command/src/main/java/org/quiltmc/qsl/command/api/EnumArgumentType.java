@@ -50,7 +50,7 @@ import net.minecraft.text.Text;
  */
 public final class EnumArgumentType implements ArgumentType<String> {
 	public static final DynamicCommandExceptionType UNKNOWN_VALUE_EXCEPTION =
-			new DynamicCommandExceptionType(o -> Text.createFormatted("quilt.argument.enum.unknown_value", o));
+			new DynamicCommandExceptionType(o -> Text.translatable("quilt.argument.enum.unknown_value", o));
 
 	private final Set<String> values;
 

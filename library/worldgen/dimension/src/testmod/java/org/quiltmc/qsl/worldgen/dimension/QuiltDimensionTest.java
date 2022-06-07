@@ -104,7 +104,7 @@ public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents
 			QuiltDimensions.teleport(player, modWorld, target);
 
 			if (player.world != modWorld) {
-				throw new CommandException(Text.create("Teleportation failed!"));
+				throw new CommandException(Text.literal("Teleportation failed!"));
 			}
 
 

@@ -53,7 +53,7 @@ final class ChannelList extends EntryListWidget<ChannelList.Entry> {
 		@Override
 		public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight,
 				int mouseX, int mouseY, boolean hovered, float tickDelta) {
-			ChannelList.this.client.textRenderer.draw(matrices, Text.create(this.channel.toString()), x, y, Formatting.WHITE.getColorValue());
+			ChannelList.this.client.textRenderer.draw(matrices, Text.literal(this.channel.toString()), x, y, Formatting.WHITE.getColorValue());
 		}
 	}
 }

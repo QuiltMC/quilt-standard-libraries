@@ -30,7 +30,7 @@ public class BuiltinResourcePackTestMod implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		if (!ResourceLoader.registerBuiltinResourcePack(id("test"), mod, ResourcePackActivationType.DEFAULT_ENABLED,
-				Text.create("Test built-in resource pack").formatted(Formatting.GOLD))) {
+				Text.literal("Test built-in resource pack").formatted(Formatting.GOLD))) {
 			throw new RuntimeException("Could not register built-in resource pack.");
 		}
 	}

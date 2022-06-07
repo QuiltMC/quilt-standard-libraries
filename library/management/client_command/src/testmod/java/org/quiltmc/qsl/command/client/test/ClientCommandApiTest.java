@@ -43,8 +43,8 @@ public class ClientCommandApiTest implements ClientCommandRegistrationCallback {
 								.then(ClientCommandManager.argument("block", BlockStateArgumentType.blockState(buildContext))
 										.executes(ctx -> {
 											BlockStateArgument arg = ctx.getArgument("block", BlockStateArgument.class);
-											ctx.getSource().sendFeedback(Text.create("You have given me: ")
-													.append(Text.create(arg.getBlockState().toString()).formatted(Formatting.GOLD))
+											ctx.getSource().sendFeedback(Text.literal("You have given me: ")
+													.append(Text.literal(arg.getBlockState().toString()).formatted(Formatting.GOLD))
 													.append("!"));
 
 											return 0;
