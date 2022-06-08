@@ -64,16 +64,16 @@ public class LevelStorageBugfixMixin {
 	 */
 	@Unique
 	private static void quilt$removeNonVanillaDimensionsFromNbt(NbtCompound worldGenSettings) {
-		var vanillaDimensionIds = new String[] {"minecraft:overworld", "minecraft:the_nether", "minecraft:the_end"};
-
 		NbtCompound dimensions = worldGenSettings.getCompound("dimensions");
 
-		if (dimensions.getSize() > vanillaDimensionIds.length) {
+		if (dimensions.getSize() > DimensionOptionsAccessor.getBaseDimensions().size()) {
 			var newDimensions = new NbtCompound();
 
-			for (var dimId : vanillaDimensionIds) {
-				if (dimensions.contains(dimId)) {
-					newDimensions.put(dimId, dimensions.getCompound(dimId));
+			for (var dimId : DimensionOptionsAccessor.getBaseDimensions()) {
+				var strId = dimId.getValue().toString();
+
+				if (dimensions.contains(strId)) {
+					newDimensions.put(strId, dimensions.getCompound(strId));
 				}
 			}
 

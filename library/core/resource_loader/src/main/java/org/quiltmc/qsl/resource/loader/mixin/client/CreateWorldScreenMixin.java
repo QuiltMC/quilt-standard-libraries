@@ -16,65 +16,92 @@
 
 package org.quiltmc.qsl.resource.loader.mixin.client;
 
-import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
+import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.Lifecycle;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import org.slf4j.Logger;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.unmapped.C_njsjipmy;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.SaveLevelScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
+import net.minecraft.client.world.GeneratorTypes;
 import net.minecraft.resource.AutoCloseableResourceManager;
+import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.DataPackSettings;
-import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.ResourcePackManager;
-import net.minecraft.resource.pack.ResourcePackProfile;
+import net.minecraft.resource.pack.VanillaDataPackProvider;
 import net.minecraft.server.ServerReloadableResources;
+import net.minecraft.text.Text;
+import net.minecraft.unmapped.C_kjxfcecs;
+import net.minecraft.unmapped.C_njsjipmy;
+import net.minecraft.util.Util;
 import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryOps;
 import net.minecraft.world.gen.GeneratorOptions;
 
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
-import org.quiltmc.qsl.resource.loader.impl.ModResourcePackProvider;
+import org.quiltmc.qsl.resource.loader.impl.DataPackLoadingContext;
+import org.quiltmc.qsl.resource.loader.impl.ModResourcePackUtil;
 
 @Environment(EnvType.CLIENT)
 @Mixin(CreateWorldScreen.class)
-public class CreateWorldScreenMixin {
-	@ModifyArg(
-			method = "createFromExisting",
+public abstract class CreateWorldScreenMixin {
+	@Shadow
+	@Final
+	private static Logger LOGGER;
+
+	@Shadow
+	private static C_kjxfcecs.C_kculhjuh method_41849(ResourcePackManager resourcePackManager, DataPackSettings dataPackSettings) {
+		throw new IllegalStateException("Mixin injection failed.");
+	}
+
+	@Redirect(
+			method = "method_31130",
+			at = @At(value = "FIELD", target = "Lnet/minecraft/resource/pack/DataPackSettings;SAFE_MODE:Lnet/minecraft/resource/pack/DataPackSettings;")
+	)
+	private static DataPackSettings replaceDefaultSettings() {
+		return ModResourcePackUtil.DEFAULT_SETTINGS;
+	}
+
+	@Redirect(
+			method = "method_31130",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/gui/screen/world/CreateWorldScreen;<init>(Lnet/minecraft/client/gui/screen/Screen;Lnet/minecraft/resource/pack/DataPackSettings;Lnet/minecraft/client/gui/screen/world/MoreOptionsDialog;)V"
-			),
-			index = 1
+					target = "Lnet/minecraft/unmapped/C_kjxfcecs;method_42098(Lnet/minecraft/unmapped/C_kjxfcecs$C_kculhjuh;Lnet/minecraft/unmapped/C_kjxfcecs$class_6907;Lnet/minecraft/unmapped/C_kjxfcecs$class_7239;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
+			)
 	)
-	private static DataPackSettings onNew(DataPackSettings settings) {
-		var moddedResourcePacks = new ArrayList<ResourcePackProfile>();
-		ModResourcePackProvider.SERVER_RESOURCE_PACK_PROVIDER.register(moddedResourcePacks::add);
-
-		var enabled = new ArrayList<>(settings.getEnabled());
-		var disabled = new ArrayList<>(settings.getDisabled());
-
-		// This ensure that any built-in registered data packs by mods which needs to be enabled by default are
-		// as the data pack screen automatically put any data pack as disabled except the Default data pack.
-		for (var profile : moddedResourcePacks) {
-			ResourcePack pack = profile.createResourcePack();
-
-			if (pack.getActivationType().isEnabledByDefault()) {
-				enabled.add(profile.getName());
-			} else {
-				disabled.add(profile.getName());
-			}
-		}
-
-		return new DataPackSettings(enabled, disabled);
+	private static <D> CompletableFuture<C_njsjipmy> loadDynamicRegistry(C_kjxfcecs.C_kculhjuh initConfig,
+			C_kjxfcecs.class_6907<D> arg, C_kjxfcecs.class_7239<D, C_njsjipmy> arg2, Executor executor, Executor executor2) {
+		return quilt$applyDefaultDataPacks(C_kjxfcecs.method_42098(initConfig, (resourceManager, dataPackSettings) -> {
+			DynamicRegistryManager.Writable registryManager = DynamicRegistryManager.builtInCopy();
+			// Force-loads the dynamic registry from data-packs as some mods may define dynamic game objects via data-driven capabilities.
+			RegistryOps.createAndLoad(JsonOps.INSTANCE, registryManager, resourceManager);
+			DynamicRegistryManager.Frozen frozen = registryManager.freeze();
+			GeneratorOptions generatorOptions = GeneratorTypes.create(frozen);
+			return Pair.of(generatorOptions, frozen);
+		}, (autoCloseableResourceManager, serverReloadableResources, frozen, generatorOptions) -> {
+			autoCloseableResourceManager.close();
+			return new C_njsjipmy(generatorOptions, Lifecycle.stable(), frozen, serverReloadableResources);
+		}, Util.getMainWorkerExecutor(), MinecraftClient.getInstance()));
 	}
 
 	@Inject(
@@ -107,9 +134,9 @@ public class CreateWorldScreenMixin {
 			remap = false // Very bad
 	)
 	private static void onDataPackLoadEnd(AutoCloseableResourceManager resourceManager,
-	                                      ServerReloadableResources serverReloadableResources,
-	                                      DynamicRegistryManager.Frozen frozen, Pair pair,
-	                                      CallbackInfoReturnable<C_njsjipmy> cir) {
+			ServerReloadableResources serverReloadableResources,
+			DynamicRegistryManager.Frozen frozen, Pair pair,
+			CallbackInfoReturnable<C_njsjipmy> cir) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resourceManager, null);
 	}
 
@@ -121,9 +148,9 @@ public class CreateWorldScreenMixin {
 			remap = false // Very bad
 	)
 	private static void onCreateDataPackLoadEnd(AutoCloseableResourceManager resourceManager,
-	                                            ServerReloadableResources serverReloadableResources,
-	                                            DynamicRegistryManager.Frozen frozen, GeneratorOptions generatorOptions,
-	                                            CallbackInfoReturnable<C_njsjipmy> cir) {
+			ServerReloadableResources serverReloadableResources,
+			DynamicRegistryManager.Frozen frozen, GeneratorOptions generatorOptions,
+			CallbackInfoReturnable<C_njsjipmy> cir) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resourceManager, null);
 	}
 
@@ -140,5 +167,44 @@ public class CreateWorldScreenMixin {
 	)
 	private void onFailDataPackLoading(Void unused, Throwable throwable, CallbackInfoReturnable<Object> cir) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, null, throwable);
+	}
+
+	@Unique
+	private static CompletableFuture<C_njsjipmy> quilt$applyDefaultDataPacks(CompletableFuture<C_njsjipmy> base) {
+		var client = MinecraftClient.getInstance();
+		client.send(() -> client.setScreen(new SaveLevelScreen(Text.translatable("dataPack.validation.working"))));
+
+		C_kjxfcecs.C_kculhjuh initConfig = method_41849(new ResourcePackManager(ResourceType.SERVER_DATA, new VanillaDataPackProvider()),
+				ModResourcePackUtil.DEFAULT_SETTINGS);
+		return C_kjxfcecs.method_42098(
+				initConfig,
+				(resourceManager, dataPackSettings) -> {
+					var dataPackLoadingContext = new DataPackLoadingContext(DynamicRegistryManager.builtInCopy(), resourceManager);
+					DataResult<GeneratorOptions> result = dataPackLoadingContext.loadDefaultGeneratorOptions(dataPackLoadingContext.loadRegistries());
+
+					DynamicRegistryManager.Frozen frozenRegistryManager = dataPackLoadingContext.registryManager().freeze();
+					Lifecycle lifecycle = result.lifecycle().add(frozenRegistryManager.allElementsLifecycle());
+					GeneratorOptions generatorOptions = result.getOrThrow(
+							false, Util.addPrefix("Error parsing worldgen settings after loading data-packs: ", LOGGER::error)
+					);
+
+					if (frozenRegistryManager.get(Registry.WORLD_PRESET_WORLDGEN).size() == 0) {
+						throw new IllegalStateException("Needs at least one world preset to continue");
+					} else if (frozenRegistryManager.get(Registry.BIOME_KEY).size() == 0) {
+						throw new IllegalStateException("Needs at least one biome continue");
+					} else {
+						return Pair.of(Pair.of(generatorOptions, lifecycle), frozenRegistryManager);
+					}
+				},
+				(resourceManager, serverReloadableResources, registryManager, pair) -> {
+					resourceManager.close();
+					return new C_njsjipmy(pair.getFirst(), pair.getSecond(), registryManager, serverReloadableResources);
+				},
+				Util.getMainWorkerExecutor(),
+				client
+		).exceptionallyCompose(error -> {
+			LOGGER.warn("Failed to validate default data-pack.", error);
+			return base;
+		});
 	}
 }
