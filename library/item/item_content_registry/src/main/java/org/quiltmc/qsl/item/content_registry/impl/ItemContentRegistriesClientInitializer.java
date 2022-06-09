@@ -27,9 +27,7 @@ import net.minecraft.text.Text;
 
 
 public class ItemContentRegistriesClientInitializer implements ClientModInitializer {
-
-	public static final String ENABLE_TOOLTIP_DEBUG =
-			"quilt.item.content_registry.enable_tooltip_debug";
+	public static final String ENABLE_TOOLTIP_DEBUG = "quilt.item.content_registry.enable_tooltip_debug";
 
 	@Override
 	public void onInitializeClient(ModContainer mod) {
