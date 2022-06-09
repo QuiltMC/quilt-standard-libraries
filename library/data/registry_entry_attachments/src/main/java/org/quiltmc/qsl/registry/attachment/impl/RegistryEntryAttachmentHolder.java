@@ -127,5 +127,6 @@ public final class RegistryEntryAttachmentHolder<R> {
 
 	public void clear() {
 		this.valueTable.clear();
+		this.valueTagTable.clear();
 	}
 }
