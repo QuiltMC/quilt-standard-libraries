@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": {
-    "minecraft:coal": 0.5
+    "minecraft:coal": 0.5,
+    "#quilt_item_content_registry:test_compost_tag": 0.1
   }
 }

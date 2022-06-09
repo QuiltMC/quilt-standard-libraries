@@ -23,6 +23,7 @@ import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 
+import net.minecraft.block.ComposterBlock;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.item.Item;
 
@@ -32,9 +33,13 @@ public class ItemContentRegistriesInitializer implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		AbstractFurnaceBlockEntity.createFuelTimeMap();
+
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, error) -> {
 			FUEL_MAP.clear();
 			AbstractFurnaceBlockEntity.createFuelTimeMap();
+
+			ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.clear();
+			ComposterBlock.registerDefaultCompostableItems();
 		});
 	}
 }

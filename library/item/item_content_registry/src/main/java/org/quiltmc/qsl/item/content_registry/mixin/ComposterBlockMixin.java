@@ -18,7 +18,9 @@ package org.quiltmc.qsl.item.content_registry.mixin;
 
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import org.quiltmc.qsl.item.content_registry.api.ItemContentRegistries;
+import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentHolder;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -27,9 +29,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.block.ComposterBlock;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.util.Holder;
+import net.minecraft.util.registry.Registry;
 
 @Mixin(ComposterBlock.class)
-public class ComposterBlockMixin {
+public abstract class ComposterBlockMixin {
+
+
 	@Redirect(method = "compost", at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/objects/Object2FloatMap;containsKey(Ljava/lang/Object;)Z"))
 	private static boolean useAttachmentStatic(Object2FloatMap<ItemConvertible> instance, Object o) {
 		return ItemContentRegistries.COMPOST_CHANCE.getValue((Item) o).isPresent();
@@ -45,8 +51,23 @@ public class ComposterBlockMixin {
 		return ItemContentRegistries.COMPOST_CHANCE.getValue((Item) o).orElse(-1f);
 	}
 
+	@Inject(method = "registerDefaultCompostableItems", at = @At("TAIL"))
+	private static void addAttachmentEntries(CallbackInfo ci) {
+		var builtin = RegistryEntryAttachmentHolder.getBuiltin(Registry.ITEM);
+		builtin.valueTable.row(ItemContentRegistries.COMPOST_CHANCE).forEach((item, o) -> registerCompostableItem((float) o, item));
+		builtin.valueTagTable.row(ItemContentRegistries.COMPOST_CHANCE).forEach((tag, o) -> {
+			for (Holder<Item> holder : Registry.ITEM.getTagOrEmpty(tag)) {
+				registerCompostableItem((float) o, holder.value());
+			}
+		});
+	}
+
 	@Inject(method = "registerCompostableItem", at = @At("HEAD"))
 	private static void addToAttachment(float levelIncreaseChance, ItemConvertible item, CallbackInfo ci) {
 		ItemContentRegistries.COMPOST_CHANCE.put(item.asItem(), levelIncreaseChance);
+	}
+
+	@Shadow
+	private static void registerCompostableItem(float levelIncreaseChance, ItemConvertible item) {
 	}
 }

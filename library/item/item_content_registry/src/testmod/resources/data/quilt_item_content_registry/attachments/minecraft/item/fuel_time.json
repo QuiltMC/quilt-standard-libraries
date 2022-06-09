@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": {
-    "minecraft:cake": 200
+    "minecraft:cake": 200,
+    "minecraft:coal": 2000
   }
 }
