@@ -46,7 +46,11 @@ public class TestServerMixin {
 		return ModResourcePackUtil.DEFAULT_SETTINGS;
 	}
 
-	@Redirect(method = "method_40377", at = @At(value = "INVOKE", target = "Ljava/util/function/Supplier;get()Ljava/lang/Object;"))
+	@Redirect(
+			method = "method_40377",
+			at = @At(value = "INVOKE", target = "Ljava/util/function/Supplier;get()Ljava/lang/Object;", remap = false),
+			remap = false
+	)
 	private static Object loadRegistry(Supplier<Object> unused, ResourceManager resourceManager) {
 		DynamicRegistryManager.Writable registryManager = DynamicRegistryManager.builtInCopy();
 		// Force-loads the dynamic registry from data-packs as some mods may define dynamic game objects via data-driven capabilities.

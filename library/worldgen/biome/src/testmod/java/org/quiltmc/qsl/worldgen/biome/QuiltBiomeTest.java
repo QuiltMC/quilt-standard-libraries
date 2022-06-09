@@ -122,6 +122,13 @@ public class QuiltBiomeTest implements ModInitializer {
 				.add(ModificationPhase.ADDITIONS,
 						BiomeSelectors.isIn(BiomeTags.IS_FOREST),
 						context -> context.getEffects().setFogColor(0x990000));
+
+		// Allows checking very clearly if on world-creation the data-pack contents are properly loaded.
+		BiomeModifications.addFeature(
+				BiomeSelectors.foundInOverworld(),
+				GenerationStep.Feature.VEGETAL_DECORATION,
+				RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier(MOD_ID, "concrete_pile"))
+		);
 	}
 
 	// These are used for testing the spacing of custom end biomes.
