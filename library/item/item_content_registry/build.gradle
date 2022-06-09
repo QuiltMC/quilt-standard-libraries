@@ -11,13 +11,21 @@ qslModule {
 	moduleDependencies {
 		core {
 			api("qsl_base")
-//			testmodOnly("resource_loader")
-//			testmodOnly("lifecycle_events")
-//			testmodOnly("networking")
 		}
 		data {
 			api("registry_entry_attachments")
-//			testmodOnly("tags")
+		}
+		gui {
+			compileOnly("tooltip")
+			testmodOnly("tooltip")
+		}
+	}
+	entrypoints {
+		init {
+			values = ["org.quiltmc.qsl.item.content_registry.impl.ItemContentRegistriesInitializer"]
+		}
+		client_init {
+			values = ["org.quiltmc.qsl.item.content_registry.impl.ItemContentRegistriesClientInitializer"]
 		}
 	}
 }
