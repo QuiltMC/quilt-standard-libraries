@@ -284,7 +284,7 @@ public interface RegistryEntryAttachment<R, V> {
 	}
 
 	/**
-	 * Event that is fired on a value being associated with an tag.
+	 * Event that is fired on a value being associated with a tag.
 	 *
 	 * @param <R> type of the entries in the registry
 	 * @param <V> attached value type
