@@ -26,6 +26,7 @@ import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 @ApiStatus.Internal
@@ -35,6 +36,8 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	protected final Class<V> valueClass;
 	protected final Codec<V> codec;
 	protected final Side side;
+	protected final Event<ValueAdded<R, V>> valueAddedEvent;
+	protected final Event<TagValueAdded<R, V>> tagValueAddedEvent;
 
 	public RegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec,
 			Side side) {
@@ -43,6 +46,17 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 		this.valueClass = valueClass;
 		this.codec = codec;
 		this.side = side;
+
+		valueAddedEvent = Event.create(ValueAdded.class, listeners -> (entry, value) -> {
+			for (var listener : listeners) {
+				listener.onValueAdded(entry, value);
+			}
+		});
+		tagValueAddedEvent = Event.create(TagValueAdded.class, listeners -> (entry, value) -> {
+			for (var listener : listeners) {
+				listener.onTagValueAdded(entry, value);
+			}
+		});
 	}
 
 	@Override
@@ -99,11 +113,23 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	@Override
 	public void put(R entry, V value) {
 		RegistryEntryAttachmentHolder.getBuiltin(this.registry).putValue(this, entry, value);
+		valueAddedEvent.invoker().onValueAdded(entry, value);
 	}
 
 	@Override
 	public void put(TagKey<R> entry, V value) {
 		RegistryEntryAttachmentHolder.getBuiltin(this.registry).putValue(this, entry, value);
+		tagValueAddedEvent.invoker().onTagValueAdded(entry, value);
+	}
+
+	@Override
+	public Event<ValueAdded<R, V>> valueAddedEvent() {
+		return valueAddedEvent;
+	}
+
+	@Override
+	public Event<TagValueAdded<R, V>> tagValueAddedEvent() {
+		return tagValueAddedEvent;
 	}
 
 	@Override

@@ -28,6 +28,7 @@ import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.registry.attachment.impl.ComputedDefaultRegistryEntryAttachmentImpl;
 import org.quiltmc.qsl.registry.attachment.impl.ConstantDefaultRegistryEntryAttachmentImpl;
 import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentHolder;
@@ -219,6 +220,16 @@ public interface RegistryEntryAttachment<R, V> {
 	void put(TagKey<R> tag, V value);
 
 	/**
+	 * {@return this attachment's "value associated with entry" event}
+	 */
+	Event<ValueAdded<R, V>> valueAddedEvent();
+
+	/**
+	 * {@return this attachment's "value associated with tag" event}
+	 */
+	Event<TagValueAdded<R, V>> tagValueAddedEvent();
+
+	/**
 	 * Specifies on what side this attachment should exist.
 	 */
 	enum Side {
@@ -259,6 +270,28 @@ public interface RegistryEntryAttachment<R, V> {
 		public boolean shouldLoad(ResourceType source) {
 			return this.source == source;
 		}
+	}
+
+	/**
+	 * Event that is fired on a value being associated with an entry.
+	 *
+	 * @param <R> type of the entries in the registry
+	 * @param <V> attached value type
+	 */
+	@FunctionalInterface
+	interface ValueAdded<R, V> {
+		void onValueAdded(R entry, V value);
+	}
+
+	/**
+	 * Event that is fired on a value being associated with an tag.
+	 *
+	 * @param <R> type of the entries in the registry
+	 * @param <V> attached value type
+	 */
+	@FunctionalInterface
+	interface TagValueAdded<R, V> {
+		void onTagValueAdded(TagKey<R> tag, V value);
 	}
 
 	/**
