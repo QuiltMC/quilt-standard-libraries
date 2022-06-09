@@ -7,7 +7,6 @@ qslModule {
 	moduleName = "entity_events"
 	id = "quilt_entity_events"
 	description = "Provides various events to do with entities"
-	version = "1.0.0"
 	library = "entity"
 	moduleDependencies {
 		core {
