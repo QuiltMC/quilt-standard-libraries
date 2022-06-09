@@ -107,12 +107,14 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 
 	@Override
 	public void put(R entry, V value) {
+		CodecUtils.assertValid(codec, value);
 		RegistryEntryAttachmentHolder.getBuiltin(this.registry).putValue(this, entry, value);
 		valueAddedEvent.invoker().onValueAdded(entry, value);
 	}
 
 	@Override
 	public void put(TagKey<R> entry, V value) {
+		CodecUtils.assertValid(codec, value);
 		RegistryEntryAttachmentHolder.getBuiltin(this.registry).putValue(this, entry, value);
 		tagValueAddedEvent.invoker().onTagValueAdded(entry, value);
 	}

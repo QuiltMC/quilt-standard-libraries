@@ -19,6 +19,7 @@ package org.quiltmc.qsl.registry.attachment.impl;
 import java.util.Optional;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,18 @@ public final class ComputedDefaultRegistryEntryAttachmentImpl<R, V> extends Regi
 			return Optional.empty();
 		} else {
 			var value = result.get();
+			var encoded = codec.encodeStart(JsonOps.INSTANCE, value);
+			if (encoded.result().isEmpty()) {
+				if (encoded.error().isPresent()) {
+					COMPUTE_LOGGER.error("Computed invalid value for entry {}: {}",
+							this.registry.getId(entry), encoded.error().get().message());
+				} else {
+					COMPUTE_LOGGER.error("Computed invalid value for entry {}: unknown error",
+							this.registry.getId(entry));
+				}
+				return Optional.empty();
+			}
+
 			RegistryEntryAttachmentHolder.getBuiltin(this.registry).putValue(this, entry, value,
 					BuiltinRegistryEntryAttachmentHolder.FLAG_COMPUTED);
 			return Optional.of(value);
