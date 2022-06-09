@@ -113,6 +113,10 @@ public class RegistryEntryAttachmentHolder<R> {
 					}
 				}
 			}
+
+			if (value != null) {
+				putValueFromTag(attachment, entry, value);
+			}
 		}
 		return value;
 	}
@@ -123,6 +127,10 @@ public class RegistryEntryAttachmentHolder<R> {
 
 	public <T> void putValue(RegistryEntryAttachment<R, T> attachment, TagKey<R> tag, T value) {
 		this.valueTagTable.put(attachment, tag, value);
+	}
+
+	protected <T> void putValueFromTag(RegistryEntryAttachment<R, T> attachment, R entry, T value) {
+		putValue(attachment, entry, value);
 	}
 
 	public void clear() {
