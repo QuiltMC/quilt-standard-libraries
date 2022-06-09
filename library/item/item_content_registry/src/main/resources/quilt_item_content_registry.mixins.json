@@ -3,7 +3,8 @@
   "package": "org.quiltmc.qsl.item.content_registry.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "AbstractFurnaceBlockEntityMixin"
+    "AbstractFurnaceBlockEntityMixin",
+    "ComposterBlockMixin"
   ],
   "client": [
   ],
