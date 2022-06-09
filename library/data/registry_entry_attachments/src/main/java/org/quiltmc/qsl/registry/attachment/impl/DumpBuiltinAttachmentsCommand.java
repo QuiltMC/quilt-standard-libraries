@@ -135,6 +135,10 @@ public final class DumpBuiltinAttachmentsCommand {
 			var valuesObj = new JsonObject();
 
 			for (Map.Entry<R, Object> attachmentEntry : entry.getValue().entrySet()) {
+				if (holder.isValueComputed(attachment, attachmentEntry.getKey())) {
+					continue;
+				}
+
 				var entryId = registry.getId(attachmentEntry.getKey());
 				if (entryId == null) {
 					throw ILLEGAL_STATE.create();

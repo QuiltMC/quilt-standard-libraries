@@ -34,7 +34,7 @@ import net.minecraft.util.registry.Registry;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 @ApiStatus.Internal
-public final class RegistryEntryAttachmentHolder<R> {
+public class RegistryEntryAttachmentHolder<R> {
 	@SuppressWarnings("unchecked")
 	public static <R> QuiltRegistryInternals<R> getInternals(Registry<R> registry) {
 		return (QuiltRegistryInternals<R>) registry;
@@ -67,11 +67,11 @@ public final class RegistryEntryAttachmentHolder<R> {
 		return (RegistryEntryAttachment<R, V>) attachment;
 	}
 
-	public static <R> RegistryEntryAttachmentHolder<R> getBuiltin(Registry<R> registry) {
+	public static <R> BuiltinRegistryEntryAttachmentHolder<R> getBuiltin(Registry<R> registry) {
 		var internals = getInternals(registry);
 		var holder = internals.quilt$getBuiltinAttachmentHolder();
 		if (holder == null) {
-			internals.quilt$setBuiltinAttachmentHolder(holder = new RegistryEntryAttachmentHolder<>());
+			internals.quilt$setBuiltinAttachmentHolder(holder = new BuiltinRegistryEntryAttachmentHolder<>());
 		}
 		return holder;
 	}
@@ -89,7 +89,7 @@ public final class RegistryEntryAttachmentHolder<R> {
 	public final Table<RegistryEntryAttachment<R, ?>, TagKey<R>, Object> valueTagTable;
 
 	@SuppressWarnings("UnstableApiUsage")
-	private RegistryEntryAttachmentHolder() {
+	protected RegistryEntryAttachmentHolder() {
 		this.valueTable = Tables.newCustomTable(new Object2ReferenceOpenHashMap<>(), Reference2ObjectOpenHashMap::new);
 		this.valueTagTable = Tables.newCustomTable(new Object2ReferenceOpenHashMap<>(), Reference2ObjectOpenHashMap::new);
 	}

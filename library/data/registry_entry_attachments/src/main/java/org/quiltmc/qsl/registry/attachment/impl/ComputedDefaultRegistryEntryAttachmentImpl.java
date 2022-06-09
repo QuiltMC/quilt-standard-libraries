@@ -47,7 +47,8 @@ public final class ComputedDefaultRegistryEntryAttachmentImpl<R, V> extends Regi
 			return Optional.empty();
 		} else {
 			var value = result.get();
-			RegistryEntryAttachmentHolder.getBuiltin(this.registry).putValue(this, entry, value);
+			RegistryEntryAttachmentHolder.getBuiltin(this.registry).putValue(this, entry, value,
+					BuiltinRegistryEntryAttachmentHolder.FLAG_COMPUTED);
 			return Optional.of(value);
 		}
 	}
