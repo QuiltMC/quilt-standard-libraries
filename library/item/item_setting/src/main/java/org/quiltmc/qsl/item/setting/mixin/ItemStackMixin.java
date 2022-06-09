@@ -19,9 +19,6 @@ package org.quiltmc.qsl.item.setting.mixin;
 
 import java.util.function.Consumer;
 
-import org.quiltmc.qsl.item.setting.api.CustomDamageHandler;
-import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -34,9 +31,13 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
+import org.quiltmc.qsl.item.setting.api.CustomDamageHandler;
+import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
+
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
-	@Shadow public abstract Item getItem();
+	@Shadow
+	public abstract Item getItem();
 
 	@Unique
 	private LivingEntity damagingEntity;

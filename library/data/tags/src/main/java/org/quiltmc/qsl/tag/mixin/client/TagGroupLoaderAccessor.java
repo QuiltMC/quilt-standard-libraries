@@ -35,8 +35,8 @@ import net.minecraft.util.Identifier;
 public interface TagGroupLoaderAccessor {
 	@Invoker
 	static void invokeVisitDependenciesAndEntry(Map<Identifier, Tag.Builder> map,
-	                                            Multimap<Identifier, Identifier> tagEntries, Set<Identifier> set,
-	                                            Identifier identifier, BiConsumer<Identifier, Tag.Builder> consumer) {
+			Multimap<Identifier, Identifier> tagEntries, Set<Identifier> set,
+			Identifier identifier, BiConsumer<Identifier, Tag.Builder> consumer) {
 		throw new IllegalStateException("Invoker injection failed.");
 	}
 

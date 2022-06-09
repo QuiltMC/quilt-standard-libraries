@@ -35,7 +35,7 @@ import org.quiltmc.qsl.tooltip.api.client.ItemTooltipCallback;
 public final class ItemStackMixin {
 	@Inject(method = "getTooltip", at = @At("RETURN"))
 	private void onGetTooltip(@Nullable PlayerEntity player, TooltipContext context,
-	                          CallbackInfoReturnable<List<Text>> cir) {
+			CallbackInfoReturnable<List<Text>> cir) {
 		ItemTooltipCallback.EVENT.invoker().onTooltipRequest(
 				(ItemStack) (Object) this, player, context,
 				cir.getReturnValue()

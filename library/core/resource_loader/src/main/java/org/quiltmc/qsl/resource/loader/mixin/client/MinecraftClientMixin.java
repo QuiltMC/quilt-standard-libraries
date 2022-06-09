@@ -109,10 +109,9 @@ public class MinecraftClientMixin {
 			)
 	)
 	private void onStartDataPackReloading(String worldName,
-	                                      Function<LevelStorage.Session, WorldStem.Supplier> dataPackSettingsGetter,
-	                                      Function<LevelStorage.Session, WorldStem.WorldDataSupplier> worldDataGetter,
-	                                      boolean safeMode, @Coerce Object worldLoadAction,
-	                                      CallbackInfo ci) {
+			Function<LevelStorage.Session, WorldStem.Supplier> dataPackSettingsGetter,
+			Function<LevelStorage.Session, WorldStem.WorldDataSupplier> worldDataGetter,
+			boolean safeMode, @Coerce Object worldLoadAction, CallbackInfo ci) {
 		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null);
 	}
 

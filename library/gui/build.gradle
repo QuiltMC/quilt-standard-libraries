@@ -4,5 +4,4 @@ plugins {
 
 qslLibrary {
 	libraryName = "gui"
-	version = "1.0.0"
 }

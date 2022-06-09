@@ -1,0 +1,19 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Recipe API"
+	moduleName = "recipe"
+	id = "quilt_recipe"
+	description = "Recipe manipulation APIs."
+	library = "data"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+			testmodOnly("lifecycle_events")
+			testmodOnly("resource_loader")
+		}
+	}
+	accessWidener()
+}

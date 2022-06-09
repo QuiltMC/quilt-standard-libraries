@@ -16,10 +16,10 @@
 
 package org.quiltmc.qsl.block.extensions.impl.client;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
@@ -34,22 +34,26 @@ public final class BlockRenderLayerMapImpl {
 	private BlockRenderLayerMapImpl() {
 	}
 
-	private static Map<Block, RenderLayer> blockMap = new HashMap<>();
-	private static Map<Fluid, RenderLayer> fluidMap = new HashMap<>();
+	private static Map<Block, RenderLayer> blockMap = new Reference2ReferenceOpenHashMap<>();
+	private static Map<Fluid, RenderLayer> fluidMap = new Reference2ReferenceOpenHashMap<>();
 
 	private static BiConsumer<Block, RenderLayer> blockHandler = blockMap::put;
 	private static BiConsumer<Fluid, RenderLayer> fluidHandler = fluidMap::put;
 
 	public static void initialize(BiConsumer<Block, RenderLayer> blockHandlerIn, BiConsumer<Fluid, RenderLayer> fluidHandlerIn) {
-		// add pre-existing render layer assignments
-		blockMap.forEach(blockHandlerIn);
-		fluidMap.forEach(fluidHandlerIn);
+		// Add pre-existing render layer assignments.
+		if (blockMap != null) {
+			blockMap.forEach(blockHandlerIn);
+		}
+		if (fluidMap != null) {
+			fluidMap.forEach(fluidHandlerIn);
+		}
 
-		// set handlers to directly accept later additions
+		// Set handlers to directly accept later additions.
 		blockHandler = blockHandlerIn;
 		fluidHandler = fluidHandlerIn;
 
-		// lose the maps, let the GC take care of them
+		// Lose the maps, let the GC take care of them.
 		blockMap = null;
 		fluidMap = null;
 	}

@@ -6,7 +6,6 @@ qslModule {
 	name = "Quilt Dimension API"
 	moduleName = "dimension"
 	id = "quilt_dimension"
-	version = "1.0.0"
 	library = "worldgen"
 	description = "An API for managing custom dimensions."
 	moduleDependencies {
@@ -15,7 +14,7 @@ qslModule {
 			testmodOnly("lifecycle_events")
 			testmodOnly("resource_loader")
 		}
-		command {
+		management {
 			testmodOnly("command")
 		}
 	}

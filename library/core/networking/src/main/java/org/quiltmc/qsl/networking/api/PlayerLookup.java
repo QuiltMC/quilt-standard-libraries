@@ -25,6 +25,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.EntityTrackingListener;
 import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.server.world.ThreadedAnvilChunkStorage;
@@ -33,7 +34,6 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.chunk.ChunkManager;
-import net.minecraft.server.world.EntityTrackingListener;
 
 import org.quiltmc.qsl.networking.mixin.accessor.EntityTrackerAccessor;
 import org.quiltmc.qsl.networking.mixin.accessor.ThreadedAnvilChunkStorageAccessor;
@@ -164,7 +164,7 @@ public final class PlayerLookup {
 	 * The distance check is done in the three-dimensional space instead of in the horizontal plane.
 	 *
 	 * @param world  the world
-	 * @param pos the position
+	 * @param pos    the position
 	 * @param radius the maximum distance from the position in blocks
 	 * @return the players around the position
 	 */

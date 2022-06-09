@@ -56,7 +56,7 @@
         <module name="UnusedImports"/>
 
         <module name="ImportOrder">
-            <property name="groups" value="java,javax,*,net.minecraft,org.quiltmc"/>
+            <property name="groups" value="java,javax,*,com.mojang.blaze3d,net.minecraft,org.quiltmc"/>
             <property name="ordered" value="false"/><!-- the plugin orders alphabetically without considering separators.. -->
             <property name="separated" value="true"/>
             <property name="option" value="top"/>
