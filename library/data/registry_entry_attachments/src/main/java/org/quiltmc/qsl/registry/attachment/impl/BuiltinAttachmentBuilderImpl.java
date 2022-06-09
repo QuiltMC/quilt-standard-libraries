@@ -18,24 +18,20 @@ package org.quiltmc.qsl.registry.attachment.impl;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.util.registry.Registry;
-
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 import org.quiltmc.qsl.registry.attachment.api.RegistryExtensions;
 
 @ApiStatus.Internal
 public final class BuiltinAttachmentBuilderImpl<R> implements RegistryExtensions.BuiltinAttachmentBuilder<R> {
-	private final R item;
-	private final RegistryEntryAttachmentHolder<R> holder;
+	private final R entry;
 
-	public BuiltinAttachmentBuilderImpl(Registry<R> registry, R item) {
-		this.item = item;
-		this.holder = RegistryEntryAttachmentHolder.getBuiltin(registry);
+	public BuiltinAttachmentBuilderImpl(R entry) {
+		this.entry = entry;
 	}
 
 	@Override
 	public <V> RegistryExtensions.BuiltinAttachmentBuilder<R> put(RegistryEntryAttachment<R, V> attach, V value) {
-		this.holder.putValue(attach, this.item, value);
+		attach.put(entry, value);
 		return this;
 	}
 }

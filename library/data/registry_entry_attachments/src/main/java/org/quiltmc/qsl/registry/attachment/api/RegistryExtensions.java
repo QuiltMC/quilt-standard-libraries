@@ -22,7 +22,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.registry.attachment.impl.BuiltinAttachmentBuilderImpl;
-import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentHolder;
 
 /**
  * Extensions for working with {@link Registry}s.
@@ -42,7 +41,7 @@ public final class RegistryExtensions {
 	public static <R, T extends R> T register(Registry<R> registry, Identifier id, T toRegister,
 			Consumer<BuiltinAttachmentBuilder<R>> builderConsumer) {
 		Registry.register(registry, id, toRegister);
-		builderConsumer.accept(new BuiltinAttachmentBuilderImpl<>(registry, toRegister));
+		builderConsumer.accept(new BuiltinAttachmentBuilderImpl<>(toRegister));
 		return toRegister;
 	}
 
@@ -67,8 +66,7 @@ public final class RegistryExtensions {
 	public static <R, T extends R, V1> T register(Registry<R> registry, Identifier id, T toRegister,
 			RegistryEntryAttachment<R, V1> attach1, V1 value1) {
 		Registry.register(registry, id, toRegister);
-		var holder = RegistryEntryAttachmentHolder.getBuiltin(registry);
-		holder.putValue(attach1, toRegister, value1);
+		attach1.put(toRegister, value1);
 		return toRegister;
 	}
 
@@ -76,9 +74,8 @@ public final class RegistryExtensions {
 			RegistryEntryAttachment<R, V1> attach1, V1 value1,
 			RegistryEntryAttachment<R, V2> attach2, V2 value2) {
 		Registry.register(registry, id, toRegister);
-		var holder = RegistryEntryAttachmentHolder.getBuiltin(registry);
-		holder.putValue(attach1, toRegister, value1);
-		holder.putValue(attach2, toRegister, value2);
+		attach1.put(toRegister, value1);
+		attach2.put(toRegister, value2);
 		return toRegister;
 	}
 
@@ -87,10 +84,9 @@ public final class RegistryExtensions {
 			RegistryEntryAttachment<R, V2> attach2, V2 value2,
 			RegistryEntryAttachment<R, V3> attach3, V3 value3) {
 		Registry.register(registry, id, toRegister);
-		var holder = RegistryEntryAttachmentHolder.getBuiltin(registry);
-		holder.putValue(attach1, toRegister, value1);
-		holder.putValue(attach2, toRegister, value2);
-		holder.putValue(attach3, toRegister, value3);
+		attach1.put(toRegister, value1);
+		attach2.put(toRegister, value2);
+		attach3.put(toRegister, value3);
 		return toRegister;
 	}
 
@@ -100,11 +96,10 @@ public final class RegistryExtensions {
 			RegistryEntryAttachment<R, V3> attach3, V3 value3,
 			RegistryEntryAttachment<R, V4> attach4, V4 value4) {
 		Registry.register(registry, id, toRegister);
-		var holder = RegistryEntryAttachmentHolder.getBuiltin(registry);
-		holder.putValue(attach1, toRegister, value1);
-		holder.putValue(attach2, toRegister, value2);
-		holder.putValue(attach3, toRegister, value3);
-		holder.putValue(attach4, toRegister, value4);
+		attach1.put(toRegister, value1);
+		attach2.put(toRegister, value2);
+		attach3.put(toRegister, value3);
+		attach4.put(toRegister, value4);
 		return toRegister;
 	}
 }
