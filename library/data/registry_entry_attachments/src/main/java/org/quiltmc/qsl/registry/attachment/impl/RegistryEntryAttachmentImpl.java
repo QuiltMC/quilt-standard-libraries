@@ -88,16 +88,11 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 
 	@Override
 	public Optional<V> getValue(R entry) {
-		V value;
 		if (this.side == Side.CLIENT) {
-			AssetsHolderGuard.assertAccessAllowed();
-			value = RegistryEntryAttachmentHolder.getAssets(this.registry).getValue(this, entry);
-			if (value != null) {
-				return Optional.of(value);
-			}
+			ClientSideGuard.assertAccessAllowed();
 		}
 
-		value = RegistryEntryAttachmentHolder.getData(this.registry).getValue(this, entry);
+		V value = RegistryEntryAttachmentHolder.getData(this.registry).getValue(this, entry);
 		if (value != null) {
 			return Optional.of(value);
 		}

@@ -41,8 +41,4 @@ public interface QuiltRegistryInternals<R> {
 	RegistryEntryAttachmentHolder<R> quilt$getDataAttachmentHolder();
 
 	void quilt$setDataAttachmentHolder(RegistryEntryAttachmentHolder<R> holder);
-
-	RegistryEntryAttachmentHolder<R> quilt$getAssetsAttachmentHolder();
-
-	void quilt$setAssetsAttachmentHolder(RegistryEntryAttachmentHolder<R> holder);
 }

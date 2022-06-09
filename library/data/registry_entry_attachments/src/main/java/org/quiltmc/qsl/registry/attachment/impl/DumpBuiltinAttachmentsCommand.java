@@ -104,7 +104,7 @@ public final class DumpBuiltinAttachmentsCommand {
 			RegistryEntryAttachment<R, Object> attachment = (RegistryEntryAttachment<R, Object>) entry.getKey();
 			var attachmentId = attachment.id();
 
-			if (!AssetsHolderGuard.isAccessAllowed() && attachment.side() == RegistryEntryAttachment.Side.CLIENT) {
+			if (!ClientSideGuard.isAccessAllowed() && attachment.side() == RegistryEntryAttachment.Side.CLIENT) {
 				continue;
 			}
 

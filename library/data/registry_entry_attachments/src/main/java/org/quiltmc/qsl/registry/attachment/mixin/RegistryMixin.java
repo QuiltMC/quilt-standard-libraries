@@ -39,8 +39,6 @@ public abstract class RegistryMixin<R> implements QuiltRegistryInternals<R> {
 	private RegistryEntryAttachmentHolder<R> quilt$builtinAttachmentHolder;
 	@Unique
 	private RegistryEntryAttachmentHolder<R> quilt$dataAttachmentHolder;
-	@Unique
-	private RegistryEntryAttachmentHolder<R> quilt$assetsAttachmentHolder;
 
 	@Override
 	public void quilt$registerAttachment(RegistryEntryAttachment<R, ?> attachment) {
@@ -75,15 +73,5 @@ public abstract class RegistryMixin<R> implements QuiltRegistryInternals<R> {
 	@Override
 	public void quilt$setDataAttachmentHolder(RegistryEntryAttachmentHolder<R> holder) {
 		this.quilt$dataAttachmentHolder = holder;
-	}
-
-	@Override
-	public RegistryEntryAttachmentHolder<R> quilt$getAssetsAttachmentHolder() {
-		return this.quilt$assetsAttachmentHolder;
-	}
-
-	@Override
-	public void quilt$setAssetsAttachmentHolder(RegistryEntryAttachmentHolder<R> holder) {
-		this.quilt$assetsAttachmentHolder = holder;
 	}
 }

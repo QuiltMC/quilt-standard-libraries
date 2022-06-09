@@ -85,15 +85,6 @@ public final class RegistryEntryAttachmentHolder<R> {
 		return holder;
 	}
 
-	public static <R> RegistryEntryAttachmentHolder<R> getAssets(Registry<R> registry) {
-		var internals = getInternals(registry);
-		var holder = internals.quilt$getAssetsAttachmentHolder();
-		if (holder == null) {
-			internals.quilt$setAssetsAttachmentHolder(holder = new RegistryEntryAttachmentHolder<>());
-		}
-		return holder;
-	}
-
 	public final Table<RegistryEntryAttachment<R, ?>, R, Object> valueTable;
 	public final Table<RegistryEntryAttachment<R, ?>, TagKey<R>, Object> valueTagTable;
 
