@@ -102,7 +102,7 @@ public class RegistryEntryAttachmentHolder<R> {
 			for (Map.Entry<TagKey<R>, Object> tagValue : row.entrySet()) { // Loop over the tags
 				for (Holder<R> holder : attachment.registry().getTagOrEmpty(tagValue.getKey())) { // Loop over the holders in the tag
 					if (holder.value().equals(entry)) { // The holder matches the entry
-						if (value != null) { // Warn if two values point to the same value are found.
+						if (value != null) { // Warn if two values pointing to the same entry are found.
 							Initializer.LOGGER.warn("Entry {} for registry {} already has attachment {} defined. Overriding with value from tag {}.",
 									attachment.registry().getId(entry),
 									attachment.registry().getKey().getValue(),
