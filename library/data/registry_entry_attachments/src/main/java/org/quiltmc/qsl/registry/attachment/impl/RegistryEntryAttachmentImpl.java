@@ -108,7 +108,8 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	@Override
 	public void put(R entry, V value) {
 		CodecUtils.assertValid(codec, value);
-		RegistryEntryAttachmentHolder.getBuiltin(this.registry).putValue(this, entry, value);
+		RegistryEntryAttachmentHolder.getBuiltin(this.registry).putValue(this, entry, value,
+				BuiltinRegistryEntryAttachmentHolder.FLAG_NONE);
 		valueAddedEvent.invoker().onValueAdded(entry, value);
 	}
 
