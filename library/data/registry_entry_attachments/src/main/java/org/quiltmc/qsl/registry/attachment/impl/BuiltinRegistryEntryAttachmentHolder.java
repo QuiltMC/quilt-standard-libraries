@@ -50,11 +50,6 @@ public final class BuiltinRegistryEntryAttachmentHolder<R> extends RegistryEntry
 	}
 
 	@Override
-	protected <T> void putValueFromTag(RegistryEntryAttachment<R, T> attachment, R entry, T value) {
-		putValue(attachment, entry, value, FLAG_COMPUTED);
-	}
-
-	@Override
 	public void clear() {
 		super.clear();
 		this.valueFlagTable.clear();
