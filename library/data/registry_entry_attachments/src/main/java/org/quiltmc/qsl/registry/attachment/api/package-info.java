@@ -7,7 +7,7 @@
  * {@link org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment RegistryEntryAttachment} contains a number of methods for building
  * new attachments.
  * <p>
- * To retrieve an attachment's value, use {@link org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment#getValue(java.lang.Object)}
+ * To retrieve an attachment's value, use {@link org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment#get(java.lang.Object)}
  * to get the value assigned to the specified registry entry.
  *
  * <p><h3>Vocabulary</h3>

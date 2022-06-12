@@ -87,7 +87,7 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	protected abstract Optional<V> getDefaultValue(R entry);
 
 	@Override
-	public Optional<V> getValue(R entry) {
+	public Optional<V> get(R entry) {
 		if (this.side == Side.CLIENT) {
 			ClientSideGuard.assertAccessAllowed();
 		}

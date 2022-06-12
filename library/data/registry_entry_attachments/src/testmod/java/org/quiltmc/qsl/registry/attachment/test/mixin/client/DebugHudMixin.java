@@ -37,7 +37,7 @@ public abstract class DebugHudMixin {
 			shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
 	public void quilt$addTestAttachment(CallbackInfoReturnable<List<String>> cir, long l, long m, long n, long o,
 			List<String> list, BlockPos blockPos, BlockState blockState) {
-		list.add("based: " + ClientAttachmentTest.BASED.getValue(blockState.getBlock())
+		list.add("based: " + ClientAttachmentTest.BASED.get(blockState.getBlock())
 				.map(b -> b ? Formatting.GREEN + "yes" : Formatting.RED + "no")
 				.orElse(Formatting.BLUE + "unset"));
 		list.add(Formatting.UNDERLINE + "Properties:");

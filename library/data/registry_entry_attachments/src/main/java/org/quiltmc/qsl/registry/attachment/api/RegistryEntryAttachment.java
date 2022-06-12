@@ -200,7 +200,7 @@ public interface RegistryEntryAttachment<R, V> {
 	 * @param entry registry entry
 	 * @return attachment value, or empty if no value is assigned
 	 */
-	Optional<V> getValue(R entry);
+	Optional<V> get(R entry);
 
 	/**
 	 * Associates a value with an entry.
