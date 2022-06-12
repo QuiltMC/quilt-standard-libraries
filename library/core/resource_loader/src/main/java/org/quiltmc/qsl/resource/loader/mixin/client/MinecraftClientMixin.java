@@ -40,6 +40,7 @@ import net.minecraft.resource.ReloadableResourceManager;
 import net.minecraft.server.WorldStem;
 import net.minecraft.world.level.storage.LevelStorage;
 
+import org.quiltmc.qsl.base.api.util.TriState;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 import org.quiltmc.qsl.resource.loader.api.client.ClientResourceLoaderEvents;
 
@@ -50,6 +51,8 @@ public class MinecraftClientMixin {
 	private static final String START_INTEGRATED_SERVER_METHOD = "startIntegratedServer(" +
 			"Ljava/lang/String;Ljava/util/function/Function;Ljava/util/function/Function;" +
 			"ZLnet/minecraft/client/MinecraftClient$WorldLoadAction;)V";
+	@Unique
+	private static final TriState EXPERIMENTAL_SCREEN_OVERRIDE = TriState.fromProperty("quilt.resource_loader.experimental_screen_override");
 
 	@Shadow
 	@Final
@@ -129,5 +132,22 @@ public class MinecraftClientMixin {
 	private Throwable onFailedDataPackReloading(Throwable throwable) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, null, throwable);
 		return throwable; // noop
+	}
+
+	@ModifyVariable(
+			method = START_INTEGRATED_SERVER_METHOD,
+			at = @At(
+					value = "FIELD",
+					target = "Lnet/minecraft/client/MinecraftClient$WorldLoadAction;NONE:Lnet/minecraft/client/MinecraftClient$WorldLoadAction;",
+					ordinal = 0
+			),
+			ordinal = 2,
+			index = 11,
+			name = "bl2",
+			require = 0
+	)
+	private boolean replaceIsExperimental(boolean isExperimental) {
+		if (EXPERIMENTAL_SCREEN_OVERRIDE.toBooleanOrElse(true)) return false;
+		return isExperimental;
 	}
 }
