@@ -14,7 +14,7 @@
  *
  * <ul>
  *     <li>Attachment values set in-code (using
- *     {@link org.quiltmc.qsl.registry.attachment.api.RegistryExtensions#register(net.minecraft.util.registry.Registry, net.minecraft.util.Identifier, java.lang.Object, java.util.function.Consumer)})
+ *     {@link org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment#put(java.lang.Object, java.lang.Object)})
  *     are referred to as "built-in" values.</li>
  * </ul>
  *
