@@ -44,7 +44,7 @@ public class ComponentTestMod implements ModInitializer {
 			new Identifier("quilt_component_test", "cow_inventory")
 	);
 	public static final ComponentIdentifier<IntegerComponent> CREEPER_DYED_TIME =
-			IntegerComponent.create(new Identifier(MODID, "creeper_dye_time"));
+			IntegerComponent.create(200, new Identifier(MODID, "creeper_dye_time"));
 
 	@Override
 	public void onInitialize(ModContainer mod) {
@@ -73,8 +73,8 @@ public class ComponentTestMod implements ModInitializer {
 							});
 				} else if (entity instanceof CreeperEntity creeper) {
 					Optional<IntegerComponent> exposed = Components.expose(CREEPER_DYED_TIME, creeper);
-					exposed.ifPresent(IntegerComponent::increment);
-					exposed.filter(it -> it.get() >= 200).ifPresent(integerComponent -> creeper.ignite());
+					exposed.ifPresent(IntegerComponent::decrement);
+					exposed.filter(it -> it.get() <= 0).ifPresent(ignored -> creeper.ignite());
 				}
 			});
 		});
