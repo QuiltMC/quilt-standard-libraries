@@ -61,6 +61,7 @@ public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 		return this.biome;
 	}
 
+	@SuppressWarnings("removal")
 	@Override
 	public Holder<Biome> getBiomeRegistryEntry() {
 		return this.entry;
@@ -86,7 +87,7 @@ public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 			return false;
 		}
 
-		return instance.getBiomes().contains(getBiomeRegistryEntry());
+		return instance.getBiomes().contains(this.getBiomeHolder());
 	}
 
 	@Override
