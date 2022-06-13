@@ -44,7 +44,7 @@ public final class QuiltClientTooltipMod implements ClientModInitializer, Toolti
 
 	@Override
 	public void onInitializeClient(ModContainer mod) {
-		// We make the convertible tooltip data runs after the usual tooltip data conversion listeners to allow overriding through events.
+		// We make the convertible tooltip data run after the usual tooltip data conversion listeners to allow overriding through events.
 		// (Whoever returns a tooltip component first wins.)
 		TooltipComponentCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, ConvertibleTooltipData.EVENT_PHASE);
 	}
