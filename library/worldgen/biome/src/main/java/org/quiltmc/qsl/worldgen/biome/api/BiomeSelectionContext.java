@@ -23,6 +23,7 @@ import java.util.Optional;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Holder;
 import net.minecraft.util.HolderSet;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionOptions;
@@ -36,6 +37,9 @@ import org.quiltmc.qsl.worldgen.biome.impl.modification.BuiltInRegistryKeys;
  * Context given to a biome selector for deciding whether it applies to a biome or not.
  */
 public interface BiomeSelectionContext {
+	/**
+	 * {@return the biome key}
+	 */
 	RegistryKey<Biome> getBiomeKey();
 
 	/**
@@ -43,6 +47,9 @@ public interface BiomeSelectionContext {
 	 */
 	Biome getBiome();
 
+	/**
+	 * {@return the biome registry holder}
+	 */
 	Holder<Biome> getBiomeRegistryEntry();
 
 	/**
@@ -152,4 +159,24 @@ public interface BiomeSelectionContext {
 	 * {@return true if this biome is in the given {@link TagKey}, otherwise {@code false}}
 	 */
 	boolean isIn(TagKey<Biome> tag);
+
+	/**
+	 * Returns whether the given key to a registry entry exists in the registry or not.
+	 *
+	 * @param registryKey the key of the registry to check in
+	 * @param entryKey    the key of the registry entry to check the existence for
+	 * @param <T>         the type of the registry entry
+	 * @return {@code true if the registry entry exists, otherwise {@code false}}
+	 */
+	<T> boolean doesRegistryEntryExist(RegistryKey<? extends Registry<? extends T>> registryKey, RegistryKey<T> entryKey);
+
+	/**
+	 * {@return {@code true} if the given placed feature key exists in the registry, otherwise {@code false}}
+	 *
+	 * @param key the key of the placed feature
+	 * @see #doesRegistryEntryExist(RegistryKey, RegistryKey)
+	 */
+	default boolean doesPlacedFeatureExist(RegistryKey<PlacedFeature> key) {
+		return this.doesRegistryEntryExist(Registry.PLACED_FEATURE_KEY, key);
+	}
 }
