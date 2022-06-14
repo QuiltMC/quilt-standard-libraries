@@ -41,7 +41,7 @@ public final class BuiltinRegistryEntryAttachmentHolder<R> extends RegistryEntry
 	}
 
 	public boolean isValueComputed(RegistryEntryAttachment<R, ?> attachment, R entry) {
-		return (getValueFlags(attachment, entry) & FLAG_COMPUTED) == FLAG_COMPUTED;
+		return (this.getValueFlags(attachment, entry) & FLAG_COMPUTED) == FLAG_COMPUTED;
 	}
 
 	public <T> void putValue(RegistryEntryAttachment<R, T> attachment, R entry, T value, int flags) {
