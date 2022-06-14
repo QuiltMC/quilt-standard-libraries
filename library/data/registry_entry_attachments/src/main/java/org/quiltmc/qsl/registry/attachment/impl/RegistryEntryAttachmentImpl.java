@@ -47,12 +47,12 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 		this.codec = codec;
 		this.side = side;
 
-		valueAddedEvent = Event.create(ValueAdded.class, listeners -> (entry, value) -> {
+		this.valueAddedEvent = Event.create(ValueAdded.class, listeners -> (entry, value) -> {
 			for (var listener : listeners) {
 				listener.onValueAdded(entry, value);
 			}
 		});
-		tagValueAddedEvent = Event.create(TagValueAdded.class, listeners -> (entry, value) -> {
+		this.tagValueAddedEvent = Event.create(TagValueAdded.class, listeners -> (entry, value) -> {
 			for (var listener : listeners) {
 				listener.onTagValueAdded(entry, value);
 			}
