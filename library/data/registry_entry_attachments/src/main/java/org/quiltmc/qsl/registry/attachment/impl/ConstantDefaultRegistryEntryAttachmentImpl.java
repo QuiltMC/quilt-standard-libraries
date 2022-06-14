@@ -16,9 +16,8 @@
 
 package org.quiltmc.qsl.registry.attachment.impl;
 
-import java.util.Optional;
-
 import com.mojang.serialization.Codec;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -33,7 +32,7 @@ public final class ConstantDefaultRegistryEntryAttachmentImpl<R, V> extends Regi
 	}
 
 	@Override
-	protected Optional<V> getDefaultValue(R entry) {
-		return Optional.ofNullable(this.defaultValue);
+	protected @Nullable V getDefaultValue(R entry) {
+		return this.defaultValue;
 	}
 }

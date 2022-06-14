@@ -17,10 +17,10 @@
 package org.quiltmc.qsl.registry.attachment.impl;
 
 import java.util.Objects;
-import java.util.Optional;
 
 import com.mojang.serialization.Codec;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
@@ -84,22 +84,22 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 		return this.side;
 	}
 
-	protected abstract Optional<V> getDefaultValue(R entry);
+	protected abstract @Nullable V getDefaultValue(R entry);
 
 	@Override
-	public Optional<V> get(R entry) {
+	public @Nullable V getNullable(R entry) {
 		if (this.side == Side.CLIENT) {
 			ClientSideGuard.assertAccessAllowed();
 		}
 
 		V value = RegistryEntryAttachmentHolder.getData(this.registry).getValue(this, entry);
 		if (value != null) {
-			return Optional.of(value);
+			return value;
 		}
 
 		value = RegistryEntryAttachmentHolder.getBuiltin(this.registry).getValue(this, entry);
 		if (value != null) {
-			return Optional.of(value);
+			return value;
 		}
 
 		return this.getDefaultValue(entry);

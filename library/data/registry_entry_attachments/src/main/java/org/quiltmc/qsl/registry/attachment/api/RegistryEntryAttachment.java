@@ -198,10 +198,20 @@ public interface RegistryEntryAttachment<R, V> {
 	 * Gets the value associated with this attachment for the specified entry.
 	 *
 	 * @param entry registry entry
+	 * @return attachment value, or {@code null} if no value is assigned
+	 */
+	@Nullable V getNullable(R entry);
+
+	/**
+	 * Gets the value associated with this attachment for the specified entry.
+	 *
+	 * @param entry registry entry
 	 * @return attachment value, or empty if no value is assigned
 	 */
-	Optional<V> get(R entry);
-	
+	default Optional<V> get(R entry) {
+		return Optional.ofNullable(this.getNullable(entry));
+	}
+
 	/**
 	 * Gets the value associated with this attachment for the specified entry.
 	 *
