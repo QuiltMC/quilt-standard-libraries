@@ -16,13 +16,53 @@
 
 package org.quiltmc.qsl.registry.attachment.api;
 
+import java.util.function.Consumer;
+
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+
+import org.quiltmc.qsl.registry.attachment.impl.BuiltinAttachmentBuilderImpl;
 
 /**
  * Extensions for working with {@link Registry}s.
  */
 public final class RegistryExtensions {
+	/**
+	 * Registers an entry into a registry, also setting built-in attachment values for it.
+	 *
+	 * @param registry        target registry
+	 * @param id              entry identifier
+	 * @param toRegister      entry to register
+	 * @param builderConsumer builder consumer
+	 * @param <R>             type of the entries in the registry
+	 * @param <T>             type of the entry we're currently registering (may be a subclass of {@code R})
+	 * @return the newly registered entry
+	 */
+	public static <R, T extends R> T register(Registry<R> registry, Identifier id, T toRegister,
+			Consumer<BuiltinAttachmentBuilder<R>> builderConsumer) {
+		Registry.register(registry, id, toRegister);
+		builderConsumer.accept(new BuiltinAttachmentBuilderImpl<>(toRegister));
+		return toRegister;
+	}
+
+	/**
+	 * Used to set built-in attachment values in a builder-like fashion.
+	 *
+	 * @param <R> type of the entries in the registry
+	 */
+	@FunctionalInterface
+	public interface BuiltinAttachmentBuilder<R> {
+		/**
+		 * Sets a built-in attachment value.
+		 *
+		 * @param attach attachment
+		 * @param value  value to attach
+		 * @param <V>    attached value type
+		 * @return this setter
+		 */
+		<V> BuiltinAttachmentBuilder<R> put(RegistryEntryAttachment<R, V> attach, V value);
+	}
+
 	/**
 	 * Utility method to register an entry and associate a value to it in an attachment.
 	 *
