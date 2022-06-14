@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.registry.attachment.impl;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.util.Identifier;
@@ -28,6 +29,16 @@ public final class ConstantDefaultRegistryEntryAttachmentImpl<R, V> extends Regi
 	public ConstantDefaultRegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass,
 			Codec<V> codec, Side side, V defaultValue) {
 		super(registry, id, valueClass, codec, side);
+
+		var result = this.codec.encodeStart(JsonOps.INSTANCE, defaultValue);
+		if (result.result().isEmpty()) {
+			if (result.error().isPresent()) {
+				throw new IllegalArgumentException("Default value is invalid: " + result.error().get().message());
+			} else {
+				throw new IllegalArgumentException("Default value is invalid: unknown error");
+			}
+		}
+
 		this.defaultValue = defaultValue;
 	}
 
