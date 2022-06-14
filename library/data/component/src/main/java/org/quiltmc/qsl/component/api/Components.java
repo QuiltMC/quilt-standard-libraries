@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import org.quiltmc.qsl.component.api.identifier.ComponentIdentifier;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.predicates.ClassInjectionPredicate;
+import org.quiltmc.qsl.component.impl.predicates.FilteredInheritedInjectionPredicate;
 import org.quiltmc.qsl.component.impl.predicates.InheritedInjectionPredicate;
 
 import java.util.Optional;
@@ -18,9 +19,15 @@ public final class Components {
 		ComponentsImpl.inject(new InheritedInjectionPredicate(clazz), component);
 	}
 
+	public static <T, C extends Component> void injectInheritanceExcept(Class<?> clazz, ComponentIdentifier<C> component, Class<?>... exceptions) {
+		ComponentsImpl.inject(new FilteredInheritedInjectionPredicate(clazz, exceptions), component);
+	}
+
 	public static <T extends Component, S> Optional<T> expose(ComponentIdentifier<T> id, S obj) {
 		if (obj instanceof ComponentProvider provider) {
-			return provider.expose(id);
+			return provider.expose(id)
+					.map(id::cast)
+					.map(Optional::orElseThrow);
 		}
 
 		return Optional.empty();

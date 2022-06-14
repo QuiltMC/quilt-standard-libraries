@@ -11,11 +11,11 @@ public class InheritedInjectionPredicate extends ClassInjectionPredicate {
 
 	@Override
 	public boolean canInject(ComponentProvider provider) {
-		return canInject(this.clazz, provider.getClass());
+		return this.canInject(provider.getClass());
 	}
 
-	public static boolean canInject(Class<?> target, Class<?> current) {
-		return target == current || (current != null && canInject(target, current.getSuperclass()));
+	public boolean canInject(Class<?> current) {
+		return this.clazz == current || (current != null && canInject(current.getSuperclass()));
 	}
 
 	@Override
@@ -25,7 +25,7 @@ public class InheritedInjectionPredicate extends ClassInjectionPredicate {
 
 	@Override
 	public boolean equals(Object o) {
-		return o.getClass() == InheritedInjectionPredicate.class && super.equals(o);
+		return o instanceof InheritedInjectionPredicate && super.equals(o);
 	}
 
 	@Override

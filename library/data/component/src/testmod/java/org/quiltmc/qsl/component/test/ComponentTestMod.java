@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.component.test;
 
 import net.minecraft.entity.mob.CreeperEntity;
+import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -32,8 +33,7 @@ import org.quiltmc.qsl.component.api.components.IntegerComponent;
 import org.quiltmc.qsl.component.api.components.InventoryComponent;
 import org.quiltmc.qsl.component.api.identifier.ComponentIdentifier;
 import org.quiltmc.qsl.lifecycle.api.event.ServerTickEvents;
-
-import java.util.Optional;
+import org.quiltmc.qsl.lifecycle.api.event.ServerWorldTickEvents;
 
 public class ComponentTestMod implements ModInitializer {
 	public static final String MODID = "quilt_component_test";
@@ -45,39 +45,50 @@ public class ComponentTestMod implements ModInitializer {
 	);
 	public static final ComponentIdentifier<IntegerComponent> CREEPER_EXPLODE_TIME =
 			IntegerComponent.create(200, new Identifier(MODID, "creeper_explode_time"));
+	public static final ComponentIdentifier<IntegerComponent> HOSTILE_EXPLODE_TIME =
+			IntegerComponent.create(new Identifier(MODID, "hostile_explode_time"));
 
 	@Override
 	public void onInitialize(ModContainer mod) {
 		// Application Code
 		Components.inject(CreeperEntity.class, CREEPER_EXPLODE_TIME);
 		Components.injectInheritage(CowEntity.class, COW_INVENTORY);
+		Components.injectInheritanceExcept(HostileEntity.class, HOSTILE_EXPLODE_TIME, CreeperEntity.class);
 
 		// Testing Code
-		ServerTickEvents.START.register(server -> {
-			ServerWorld world = server.getWorld(World.OVERWORLD);
-			assert world != null;
-			world.iterateEntities().forEach(entity -> {
-				if (entity instanceof CowEntity) {
-					Components.expose(COW_INVENTORY, entity)
-							.ifPresent(inventoryComponent -> {
-								if (inventoryComponent.isEmpty()) {
-									entity.discard();
-									world.createExplosion(
-											entity,
-											entity.getX(), entity.getY(), entity.getZ(),
-											4.0f, Explosion.DestructionType.NONE
-									);
-								} else {
-									inventoryComponent.removeStack(0, 1);
-								}
-							});
-				} else if (entity instanceof CreeperEntity creeper) {
-					Optional<IntegerComponent> exposed = Components.expose(CREEPER_EXPLODE_TIME, creeper);
-					exposed.ifPresent(IntegerComponent::decrement);
-					exposed.filter(it -> it.get() <= 0).ifPresent(ignored -> creeper.ignite());
-				}
-			});
-		});
+		ServerWorldTickEvents.START.register((ignored, world) -> world.iterateEntities().forEach(entity -> {
+			if (entity instanceof CowEntity) {
+				Components.expose(COW_INVENTORY, entity).ifPresent(inventoryComponent -> {
+					if (inventoryComponent.isEmpty()) {
+						entity.discard();
+						world.createExplosion(
+								entity,
+								entity.getX(), entity.getY(), entity.getZ(),
+								4.0f, Explosion.DestructionType.NONE
+						);
+					} else {
+						inventoryComponent.removeStack(0, 1);
+					}
+				});
+			} else if (entity instanceof CreeperEntity creeper) {
+				Components.expose(CREEPER_EXPLODE_TIME, creeper).ifPresent(explodeTime -> {
+					if (explodeTime.get() > 0) {
+						explodeTime.decrement();
+					} else {
+						creeper.ignite();
+					}
+				});
+			} else if (entity instanceof HostileEntity hostile) {
+				Components.expose(HOSTILE_EXPLODE_TIME, hostile).ifPresent(explodeTime -> {
+					if (explodeTime.get() <= 200) {
+						explodeTime.increment();
+					} else {
+						hostile.discard();
+						hostile.getWorld().createExplosion(null, hostile.getX(), hostile.getY(), hostile.getZ(), 1.0f, Explosion.DestructionType.NONE);
+					}
+				});
+			}
+		}));
 	}
 
 }

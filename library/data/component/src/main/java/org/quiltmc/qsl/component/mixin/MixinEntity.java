@@ -2,10 +2,9 @@ package org.quiltmc.qsl.component.mixin;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMap;
-import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import org.quiltmc.qsl.component.api.Component;
@@ -22,8 +21,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.*;
-import java.util.function.BiConsumer;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 @Mixin(Entity.class)
@@ -31,25 +30,32 @@ import java.util.function.Supplier;
 public abstract class MixinEntity {
 
 	private ImmutableMap<Identifier, Component> qsl$components;
+	private ImmutableMap<Identifier, NbtComponent<?>> qsl$nbtComponents;
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onEntityInit(EntityType<?> entityType, World world, CallbackInfo ci) {
 		if (!world.isClient) {
-			var this$ = (Entity) (Object) this;
-			System.out.println(this.getClass());
+			System.out.println(this.getClass()); // TODO: Remove this
 			var builder = ImmutableMap.<Identifier, Component>builder();
 
-			Map<Identifier, Supplier<? extends Component>> injections =
-					ComponentsImpl.get((ComponentProvider) this$);
+			Map<Identifier, Supplier<? extends Component>> injections = ComponentsImpl.get((ComponentProvider) this);
 			injections.forEach((id, supplier) -> builder.put(id, supplier.get()));
 			this.qsl$components = builder.build();
+			this.qsl$nbtComponents = this.qsl$components.entrySet().stream()
+					.filter(it -> it.getValue() instanceof NbtComponent<?>)
+					.collect(
+							ImmutableMap::<Identifier, NbtComponent<?>>builder,
+							(map, entry) -> map.put(entry.getKey(), ((NbtComponent<?>) entry.getValue())),
+							(builder1, builder2) -> builder1.putAll(builder2.build())
+					).build();
+		} else {
+			this.qsl$components = ImmutableMap.of();
+			this.qsl$nbtComponents = ImmutableMap.of();
 		}
 	}
 
-	public <T extends Component> Optional<T> comp$expose(ComponentIdentifier<T> id) {
-		return Optional.ofNullable(this.qsl$components.get(id.id()))
-				.map(id::cast)
-				.map(Optional::orElseThrow);
+	public Optional<Component> comp$expose(ComponentIdentifier<?> id) {
+		return Optional.ofNullable(this.qsl$components.get(id.id()));
 	}
 
 	public ImmutableCollection<Component> comp$exposeAll() {
@@ -58,22 +64,15 @@ public abstract class MixinEntity {
 
 	@Inject(method = "writeNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;writeCustomDataToNbt(Lnet/minecraft/nbt/NbtCompound;)V"))
 	private void onSerialize(NbtCompound nbt, CallbackInfoReturnable<NbtCompound> cir) {
-		var componentNbt = new NbtCompound();
-		this.qsl$applyActionToSerializable((id, nbtComponent) -> componentNbt.put(id.toString(), nbtComponent.write()));
+		var rootQslNbt = new NbtCompound();
+		this.qsl$nbtComponents.forEach((id, nbtComponent) -> rootQslNbt.put(id.toString(), nbtComponent.write()));
 
-		nbt.put(StringConstants.COMPONENT_ROOT, componentNbt);
+		nbt.put(StringConstants.COMPONENT_ROOT, rootQslNbt);
 	}
 
 	@Inject(method = "readNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;readCustomDataFromNbt(Lnet/minecraft/nbt/NbtCompound;)V"))
 	private void onDeserialize(NbtCompound nbt, CallbackInfo ci) {
 		var rootQslNbt = nbt.getCompound(StringConstants.COMPONENT_ROOT);
-		this.qsl$applyActionToSerializable((id, nbtComponent) -> NbtComponent.forward(nbtComponent, id, rootQslNbt));
-	}
-
-	private void qsl$applyActionToSerializable(BiConsumer<Identifier, NbtComponent<?>> action) {
-		this.qsl$components.entrySet().stream()
-				.filter(it -> it.getValue() instanceof NbtComponent<?>)
-				.map(it -> Pair.of(it.getKey(), ((NbtComponent<?>) it.getValue())))
-				.forEach(pair -> action.accept(pair.key(), pair.value()));
+		this.qsl$nbtComponents.forEach((id, nbtComponent) -> NbtComponent.forward(nbtComponent, id, rootQslNbt));
 	}
 }

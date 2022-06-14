@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface ComponentProvider {
 
-	<T extends Component> Optional<T> expose(ComponentIdentifier<T> id);
+	Optional<Component> expose(ComponentIdentifier<?> id);
 
 	ImmutableCollection<Component> exposeAll();
 

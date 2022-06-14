@@ -40,9 +40,7 @@ public class ComponentsImpl {
 	}
 
 	public static Map<Identifier, Supplier<? extends Component>> get(ComponentProvider provider) {
-		Optional<Map<Identifier, Supplier<? extends Component>>> cache = ComponentCache.getInstance().getCache(provider.getClass());
-
-		return cache.orElseGet(() -> {
+		return ComponentCache.getInstance().getCache(provider.getClass()).orElseGet(() -> {
 			Map<Identifier, Supplier<? extends Component>> returnMap = INJECTION_REGISTRY.entrySet().stream()
 				.filter(it -> it.getKey().canInject(provider))
 				.map(Map.Entry::getValue)
