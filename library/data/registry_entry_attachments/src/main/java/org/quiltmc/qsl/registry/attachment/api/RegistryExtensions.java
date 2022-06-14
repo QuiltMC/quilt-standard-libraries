@@ -37,7 +37,10 @@ public final class RegistryExtensions {
 	 * @param <R>             type of the entries in the registry
 	 * @param <T>             type of the entry we're currently registering (may be a subclass of {@code R})
 	 * @return the newly registered entry
+	 * @deprecated use {@link RegistryEntryAttachment#put(Object, Object)} directly,
+	 * or use one of the other methods in this class
 	 */
+	@Deprecated(forRemoval = true)
 	public static <R, T extends R> T register(Registry<R> registry, Identifier id, T toRegister,
 			Consumer<BuiltinAttachmentBuilder<R>> builderConsumer) {
 		Registry.register(registry, id, toRegister);
@@ -49,7 +52,11 @@ public final class RegistryExtensions {
 	 * Used to set built-in attachment values in a builder-like fashion.
 	 *
 	 * @param <R> type of the entries in the registry
+	 * @deprecated use {@link RegistryEntryAttachment#put(Object, Object)} directly,
+	 * or use one of the other methods in this class
 	 */
+	@SuppressWarnings("DeprecatedIsStillUsed")
+	@Deprecated(forRemoval = true)
 	@FunctionalInterface
 	public interface BuiltinAttachmentBuilder<R> {
 		/**

@@ -21,6 +21,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 import org.quiltmc.qsl.registry.attachment.api.RegistryExtensions;
 
+@SuppressWarnings("removal")
 @ApiStatus.Internal
 public final class BuiltinAttachmentBuilderImpl<R> implements RegistryExtensions.BuiltinAttachmentBuilder<R> {
 	private final R entry;
