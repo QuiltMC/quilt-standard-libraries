@@ -11,7 +11,6 @@ import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.api.components.NbtComponent;
 import org.quiltmc.qsl.component.api.identifier.ComponentIdentifier;
-import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.util.StringConstants;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
@@ -21,9 +20,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 @Mixin(Entity.class)
 @Implements(@Interface(iface = ComponentProvider.class, prefix = "comp$"))
@@ -35,19 +32,8 @@ public abstract class MixinEntity {
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onEntityInit(EntityType<?> entityType, World world, CallbackInfo ci) {
 		if (!world.isClient) {
-			System.out.println(this.getClass()); // TODO: Remove this
-			var builder = ImmutableMap.<Identifier, Component>builder();
-
-			Map<Identifier, Supplier<? extends Component>> injections = ComponentsImpl.get((ComponentProvider) this);
-			injections.forEach((id, supplier) -> builder.put(id, supplier.get()));
-			this.qsl$components = builder.build();
-			this.qsl$nbtComponents = this.qsl$components.entrySet().stream()
-					.filter(it -> it.getValue() instanceof NbtComponent<?>)
-					.collect(
-							ImmutableMap::<Identifier, NbtComponent<?>>builder,
-							(map, entry) -> map.put(entry.getKey(), ((NbtComponent<?>) entry.getValue())),
-							(builder1, builder2) -> builder1.putAll(builder2.build())
-					).build();
+			this.qsl$components = ComponentProvider.createComponents((ComponentProvider) this);
+			this.qsl$nbtComponents = NbtComponent.getNbtSerializable(this.qsl$components);
 		} else {
 			this.qsl$components = ImmutableMap.of();
 			this.qsl$nbtComponents = ImmutableMap.of();

@@ -16,15 +16,17 @@
 
 package org.quiltmc.qsl.component.test;
 
+import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.world.World;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.explosion.Explosion;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -32,7 +34,6 @@ import org.quiltmc.qsl.component.api.Components;
 import org.quiltmc.qsl.component.api.components.IntegerComponent;
 import org.quiltmc.qsl.component.api.components.InventoryComponent;
 import org.quiltmc.qsl.component.api.identifier.ComponentIdentifier;
-import org.quiltmc.qsl.lifecycle.api.event.ServerTickEvents;
 import org.quiltmc.qsl.lifecycle.api.event.ServerWorldTickEvents;
 
 public class ComponentTestMod implements ModInitializer {
@@ -47,6 +48,8 @@ public class ComponentTestMod implements ModInitializer {
 			IntegerComponent.create(200, new Identifier(MODID, "creeper_explode_time"));
 	public static final ComponentIdentifier<IntegerComponent> HOSTILE_EXPLODE_TIME =
 			IntegerComponent.create(new Identifier(MODID, "hostile_explode_time"));
+	public static final ComponentIdentifier<IntegerComponent> CHEST_NUMBER =
+			IntegerComponent.create(new Identifier(MODID, "chest_number"));
 
 	@Override
 	public void onInitialize(ModContainer mod) {
@@ -54,6 +57,7 @@ public class ComponentTestMod implements ModInitializer {
 		Components.inject(CreeperEntity.class, CREEPER_EXPLODE_TIME);
 		Components.injectInheritage(CowEntity.class, COW_INVENTORY);
 		Components.injectInheritanceExcept(HostileEntity.class, HOSTILE_EXPLODE_TIME, CreeperEntity.class);
+		Components.inject(ChestBlockEntity.class, CHEST_NUMBER);
 
 		// Testing Code
 		ServerWorldTickEvents.START.register((ignored, world) -> world.iterateEntities().forEach(entity -> {
@@ -89,6 +93,23 @@ public class ComponentTestMod implements ModInitializer {
 				});
 			}
 		}));
+
+
+		ServerWorldTickEvents.START.register((server, world) ->
+				BlockPos.streamOutwards(new BlockPos(0, 0, 0), 5, 5, 5).forEach(pos -> {
+					BlockEntity blockEntity = world.getBlockEntity(pos);
+					if (blockEntity instanceof ChestBlockEntity chest) {
+						Components.expose(CHEST_NUMBER, chest)
+								.ifPresent(integerComponent -> {
+									if (integerComponent.get() == 0) {
+										integerComponent.set(world.random.nextInt(10));
+									} else if (integerComponent.get() == 6) {
+										world.setBlockState(pos, Blocks.DIAMOND_BLOCK.getDefaultState());
+									}
+								});
+					}
+				})
+		);
 	}
 
 }
