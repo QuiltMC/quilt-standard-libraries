@@ -24,18 +24,20 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 public final class ConstantDefaultRegistryEntryAttachmentImpl<R, V> extends RegistryEntryAttachmentImpl<R, V> {
-	private final V defaultValue;
+	private final @Nullable V defaultValue;
 
 	public ConstantDefaultRegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass,
-			Codec<V> codec, Side side, V defaultValue) {
+			Codec<V> codec, Side side, @Nullable V defaultValue) {
 		super(registry, id, valueClass, codec, side);
 
-		var result = this.codec.encodeStart(JsonOps.INSTANCE, defaultValue);
-		if (result.result().isEmpty()) {
-			if (result.error().isPresent()) {
-				throw new IllegalArgumentException("Default value is invalid: " + result.error().get().message());
-			} else {
-				throw new IllegalArgumentException("Default value is invalid: unknown error");
+		if (defaultValue != null) {
+			var result = this.codec.encodeStart(JsonOps.INSTANCE, defaultValue);
+			if (result.result().isEmpty()) {
+				if (result.error().isPresent()) {
+					throw new IllegalArgumentException("Default value is invalid: " + result.error().get().message());
+				} else {
+					throw new IllegalArgumentException("Default value is invalid: unknown error");
+				}
 			}
 		}
 
