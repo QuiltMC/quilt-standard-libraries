@@ -23,10 +23,11 @@ public final class CodecUtils {
 	private CodecUtils() { }
 
 	public static <T> void assertValid(Codec<T> codec, T value) {
-		var result = codec.encodeStart(JsonOps.INSTANCE, value);
-		if (result.result().isEmpty()) {
-			if (result.error().isPresent()) {
-				throw new IllegalArgumentException("Value is invalid: " + result.error().get().message());
+		var encoded = codec.encodeStart(JsonOps.INSTANCE, value);
+
+		if (encoded.result().isEmpty()) {
+			if (encoded.error().isPresent()) {
+				throw new IllegalArgumentException("Value is invalid: " + encoded.error().get().message());
 			} else {
 				throw new IllegalArgumentException("Value is invalid: unknown error");
 			}

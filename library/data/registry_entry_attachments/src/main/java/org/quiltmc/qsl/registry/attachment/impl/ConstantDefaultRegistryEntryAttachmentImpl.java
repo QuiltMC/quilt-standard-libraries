@@ -31,10 +31,11 @@ public final class ConstantDefaultRegistryEntryAttachmentImpl<R, V> extends Regi
 		super(registry, id, valueClass, codec, side);
 
 		if (defaultValue != null) {
-			var result = this.codec.encodeStart(JsonOps.INSTANCE, defaultValue);
-			if (result.result().isEmpty()) {
-				if (result.error().isPresent()) {
-					throw new IllegalArgumentException("Default value is invalid: " + result.error().get().message());
+			var encoded = this.codec.encodeStart(JsonOps.INSTANCE, defaultValue);
+
+			if (encoded.result().isEmpty()) {
+				if (encoded.error().isPresent()) {
+					throw new IllegalArgumentException("Default value is invalid: " + encoded.error().get().message());
 				} else {
 					throw new IllegalArgumentException("Default value is invalid: unknown error");
 				}

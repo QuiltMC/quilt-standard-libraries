@@ -48,6 +48,7 @@ public final class ComputedDefaultRegistryEntryAttachmentImpl<R, V> extends Regi
 		} else {
 			var value = result.get();
 			var encoded = codec.encodeStart(JsonOps.INSTANCE, value);
+
 			if (encoded.result().isEmpty()) {
 				if (encoded.error().isPresent()) {
 					COMPUTE_LOGGER.error("Computed invalid value for entry {}: {}",
