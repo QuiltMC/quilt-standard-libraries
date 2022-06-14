@@ -201,6 +201,18 @@ public interface RegistryEntryAttachment<R, V> {
 	 * @return attachment value, or empty if no value is assigned
 	 */
 	Optional<V> get(R entry);
+	
+	/**
+	 * Gets the value associated with this attachment for the specified entry.
+	 *
+	 * @param entry registry entry
+	 * @return attachment value, or empty if no value is assigned
+	 * @deprecated use {@link #get} instead
+	 */
+	@Deprecated(forRemoval = true)
+	default Optional<V> getValue(R entry) {
+		return this.get(entry);
+	}
 
 	/**
 	 * Associates a value with an entry.
