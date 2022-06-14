@@ -39,7 +39,6 @@ public abstract class MixinEntity {
 			System.out.println(this.getClass());
 			var builder = ImmutableMap.<Identifier, Component>builder();
 
-			// TODO: Caching
 			Map<Identifier, Supplier<? extends Component>> injections =
 					ComponentsImpl.get((ComponentProvider) this$);
 			injections.forEach((id, supplier) -> builder.put(id, supplier.get()));
@@ -60,7 +59,6 @@ public abstract class MixinEntity {
 	@Inject(method = "writeNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;writeCustomDataToNbt(Lnet/minecraft/nbt/NbtCompound;)V"))
 	private void onSerialize(NbtCompound nbt, CallbackInfoReturnable<NbtCompound> cir) {
 		var componentNbt = new NbtCompound();
-
 		this.qsl$applyActionToSerializable((id, nbtComponent) -> componentNbt.put(id.toString(), nbtComponent.write()));
 
 		nbt.put(StringConstants.COMPONENT_ROOT, componentNbt);
@@ -69,7 +67,6 @@ public abstract class MixinEntity {
 	@Inject(method = "readNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;readCustomDataFromNbt(Lnet/minecraft/nbt/NbtCompound;)V"))
 	private void onDeserialize(NbtCompound nbt, CallbackInfo ci) {
 		var rootQslNbt = nbt.getCompound(StringConstants.COMPONENT_ROOT);
-
 		this.qsl$applyActionToSerializable((id, nbtComponent) -> NbtComponent.forward(nbtComponent, id, rootQslNbt));
 	}
 

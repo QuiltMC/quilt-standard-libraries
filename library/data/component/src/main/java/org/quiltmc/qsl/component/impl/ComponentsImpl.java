@@ -1,6 +1,7 @@
 package org.quiltmc.qsl.component.impl;
 
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentInjectionPredicate;
 import org.quiltmc.qsl.component.api.ComponentProvider;
@@ -10,19 +11,27 @@ import java.util.*;
 import java.util.function.Supplier;
 
 public class ComponentsImpl {
-	private static final Map<ComponentInjectionPredicate, Map<Identifier, Supplier<? extends Component>>> INJECTION_REGISTRY = new HashMap<>();
-	private static final Map<Identifier, Supplier<? extends Component>> REGISTRY  = new HashMap<>();
+	private static final Map<ComponentInjectionPredicate, Set<Identifier>> INJECTION_REGISTRY = new HashMap<>();
+	private static final Map<Identifier, Supplier<? extends Component>> REGISTRY = new HashMap<>();
 
 	public static <C extends Component> void inject(ComponentInjectionPredicate predicate, ComponentIdentifier<C> id) {
-		Map<Identifier, Supplier<? extends Component>> currentInjections = INJECTION_REGISTRY.getOrDefault(predicate, new HashMap<>());
 		Supplier<? extends Component> supplier = REGISTRY.get(id.id());
 		if (supplier == null) {
-			throw new IllegalArgumentException("The target id %s does not match any registered component!".formatted(id.toString()));
+			throw new IllegalArgumentException(
+					"The target id %s does not match any registered component!".formatted(id.toString())
+			);
 		}
 
-		currentInjections.put(id.id(), supplier);
-
-		INJECTION_REGISTRY.put(predicate, currentInjections);
+		if (INJECTION_REGISTRY.containsKey(predicate)) {
+			if (!INJECTION_REGISTRY.get(predicate).add(id.id())) {
+				throw new IllegalStateException(
+						"Cannot inject the predicate %s with %s more than once! Consider creating a new component!"
+								.formatted(predicate.toString(), id.id().toString())
+				);
+			}
+		} else {
+			INJECTION_REGISTRY.put(predicate, Util.make(new HashSet<>(), set -> set.add(id.id())));
+		}
 	}
 
 	public static <T extends Component> ComponentIdentifier<T> register(Identifier id, Supplier<T> component) {
@@ -31,8 +40,21 @@ public class ComponentsImpl {
 	}
 
 	public static Map<Identifier, Supplier<? extends Component>> get(ComponentProvider provider) {
-		return INJECTION_REGISTRY.entrySet().stream()
+		Optional<Map<Identifier, Supplier<? extends Component>>> cache = ComponentCache.getInstance().getCache(provider.getClass());
+
+		return cache.orElseGet(() -> {
+			Map<Identifier, Supplier<? extends Component>> returnMap = INJECTION_REGISTRY.entrySet().stream()
 				.filter(it -> it.getKey().canInject(provider))
-				.collect(HashMap::new, (map, entry) -> map.putAll(entry.getValue()), HashMap::putAll);
+				.map(Map.Entry::getValue)
+				.collect(HashMap::new, (map, ids) -> ids.forEach(id -> map.put(id, REGISTRY.get(id))), HashMap::putAll);
+
+			ComponentCache.getInstance().record(provider.getClass(), returnMap.keySet());
+
+			return returnMap;
+		});
+	}
+
+	public static Supplier<? extends Component> getEntry(Identifier id) {
+		return REGISTRY.get(id);
 	}
 }

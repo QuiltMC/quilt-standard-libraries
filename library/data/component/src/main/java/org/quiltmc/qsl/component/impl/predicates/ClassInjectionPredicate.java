@@ -39,4 +39,9 @@ public class ClassInjectionPredicate implements ComponentInjectionPredicate {
 	public int hashCode() {
 		return Objects.hash(clazz);
 	}
+
+	@Override
+	public String toString() {
+		return "ClassInjectionPredicate{clazz=" + clazz + '}';
+	}
 }

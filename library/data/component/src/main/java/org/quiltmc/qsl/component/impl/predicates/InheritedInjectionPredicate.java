@@ -27,4 +27,9 @@ public class InheritedInjectionPredicate extends ClassInjectionPredicate {
 	public boolean equals(Object o) {
 		return o.getClass() == InheritedInjectionPredicate.class && super.equals(o);
 	}
+
+	@Override
+	public String toString() {
+		return "InheritedInjectionPredicate{clazz=" + this.clazz + '}';
+	}
 }

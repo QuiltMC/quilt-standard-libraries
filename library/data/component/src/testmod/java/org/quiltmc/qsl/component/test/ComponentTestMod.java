@@ -43,13 +43,13 @@ public class ComponentTestMod implements ModInitializer {
 			() -> DefaultedList.ofSize(1, new ItemStack(Items.COBBLESTONE, 64)),
 			new Identifier("quilt_component_test", "cow_inventory")
 	);
-	public static final ComponentIdentifier<IntegerComponent> CREEPER_DYED_TIME =
-			IntegerComponent.create(200, new Identifier(MODID, "creeper_dye_time"));
+	public static final ComponentIdentifier<IntegerComponent> CREEPER_EXPLODE_TIME =
+			IntegerComponent.create(200, new Identifier(MODID, "creeper_explode_time"));
 
 	@Override
 	public void onInitialize(ModContainer mod) {
 		// Application Code
-		Components.inject(CreeperEntity.class, CREEPER_DYED_TIME);
+		Components.inject(CreeperEntity.class, CREEPER_EXPLODE_TIME);
 		Components.injectInheritage(CowEntity.class, COW_INVENTORY);
 
 		// Testing Code
@@ -72,7 +72,7 @@ public class ComponentTestMod implements ModInitializer {
 								}
 							});
 				} else if (entity instanceof CreeperEntity creeper) {
-					Optional<IntegerComponent> exposed = Components.expose(CREEPER_DYED_TIME, creeper);
+					Optional<IntegerComponent> exposed = Components.expose(CREEPER_EXPLODE_TIME, creeper);
 					exposed.ifPresent(IntegerComponent::decrement);
 					exposed.filter(it -> it.get() <= 0).ifPresent(ignored -> creeper.ignite());
 				}
