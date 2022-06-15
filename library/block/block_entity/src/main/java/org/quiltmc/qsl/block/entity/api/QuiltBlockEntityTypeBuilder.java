@@ -45,9 +45,9 @@ public final class QuiltBlockEntityTypeBuilder<BE extends BlockEntity> {
 	 * Creates a new block entity type builder from a block entity factory and an initial array of supported blocks.
 	 *
 	 * @param factory       the block entity factory
-	 * @param supportBlocks
-	 * @param <BE>
-	 * @return
+	 * @param supportBlocks the initial array of supported blocks
+	 * @param <BE>          the block entity Java type
+	 * @return a new block entity type builder
 	 */
 	public static <BE extends BlockEntity> QuiltBlockEntityTypeBuilder<BE> create(BlockEntityType.BlockEntityFactory<? extends BE> factory,
 			Block... supportBlocks) {
