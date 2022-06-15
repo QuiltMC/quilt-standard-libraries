@@ -56,7 +56,7 @@ public final class QuiltBlockEntityImpl implements ModInitializer, ServerLifecyc
 
 	public void ensureCanModify() {
 		if (this.isFrozen) {
-			throw new IllegalStateException("BlockEntityType cannot be frozen! Game states are already frozen.");
+			throw new IllegalStateException("BlockEntityType cannot be modified! Game states are already frozen.");
 		}
 	}
 
