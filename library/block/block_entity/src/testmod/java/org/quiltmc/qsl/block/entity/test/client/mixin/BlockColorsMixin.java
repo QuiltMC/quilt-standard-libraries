@@ -30,6 +30,7 @@ import org.quiltmc.qsl.block.entity.test.client.BlockEntityTypeTestClient;
 public class BlockColorsMixin {
 	@Inject(method = "create", at = @At("RETURN"))
 	private static void onCreate(CallbackInfoReturnable<BlockColors> cir) {
+		// @TODO use QSL color provider API once available instead
 		cir.getReturnValue().registerColorProvider(BlockEntityTypeTestClient.ANGY_BLOCK_COLOR_PROVIDER,
 				BlockEntityTypeTest.INITIAL_ANGY_BLOCK,
 				BlockEntityTypeTest.BUILDER_ADDED_ANGY_BLOCK,
