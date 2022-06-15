@@ -43,10 +43,10 @@ public interface QuiltBlockEntity {
 			if (world instanceof ServerWorld serverWorld) {
 				serverWorld.getChunkManager().markForUpdate(blockEntity.getPos());
 			} else {
-				throw new IllegalStateException("Cannot call sync() on the logical client! Did you check world.isClient() first?");
+				throw new UnsupportedOperationException("Cannot call sync() on the logical client!");
 			}
 		} else {
-			throw new UnsupportedOperationException("QuiltBlockEntity has been implemented onto a non-BlockEntity class, please override sync().");
+			throw new IllegalStateException("QuiltBlockEntity has been implemented onto a non-BlockEntity class, please override sync().");
 		}
 	}
 }
