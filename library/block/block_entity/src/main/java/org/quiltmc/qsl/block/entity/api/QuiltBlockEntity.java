@@ -16,7 +16,7 @@
 
 package org.quiltmc.qsl.block.entity.api;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -39,7 +39,7 @@ public interface QuiltBlockEntity {
 		if (this instanceof BlockEntity blockEntity) {
 			World world = blockEntity.getWorld();
 
-			Preconditions.checkNotNull(world); // Maintain distinct failure case from below.
+			Objects.requireNonNull(world); // Maintain distinct failure case from below.
 			if (world instanceof ServerWorld serverWorld) {
 				serverWorld.getChunkManager().markForUpdate(blockEntity.getPos());
 			} else {
