@@ -73,8 +73,8 @@ final class AttachmentDictionary<R, V> {
 			boolean replace;
 			JsonElement values;
 
-			try {
-				JsonObject obj = JsonHelper.deserialize(new InputStreamReader(resource.method_14482()));
+			try (var reader = new InputStreamReader(resource.open())) {
+				JsonObject obj = JsonHelper.deserialize(reader);
 				replace = JsonHelper.getBoolean(obj, "replace", false);
 				values = obj.get("values");
 
@@ -228,7 +228,7 @@ final class AttachmentDictionary<R, V> {
 						this.attachment.id(), id);
 			}
 
-			LOGGER.error("Ignoring attachment value for '{}' in {} since it's invalid", id, resource.method_14480());
+			LOGGER.error("Ignoring attachment value for '{}' in {} since it's invalid", id, resource.getSourceName());
 			return null;
 		}
 

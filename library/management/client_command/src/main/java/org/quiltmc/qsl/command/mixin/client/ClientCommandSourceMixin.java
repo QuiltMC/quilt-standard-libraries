@@ -50,7 +50,7 @@ abstract class ClientCommandSourceMixin implements QuiltClientCommandSource {
 
 	@Override
 	public void sendError(Text message) {
-		this.client.inGameHud.getChatHud().addMessage(message.shallowCopy().formatted(Formatting.RED));
+		this.client.inGameHud.getChatHud().addMessage(message.copy().formatted(Formatting.RED));
 	}
 
 	@Override

@@ -77,7 +77,7 @@ public final class TooltipTestMod implements ModInitializer {
 		@Environment(EnvType.CLIENT)
 		@Override
 		public TooltipComponent toComponent() {
-			return TooltipComponent.of(Text.create("Converted Tooltip Data").formatted(Formatting.GOLD).asOrderedText());
+			return TooltipComponent.of(Text.literal("Converted Tooltip Data").formatted(Formatting.GOLD).asOrderedText());
 		}
 	}
 }

@@ -82,7 +82,7 @@ public class EmptyChunkGenerator extends ChunkGenerator {
 
 	@Override
 	public CompletableFuture<Chunk> populateNoise(Executor executor, Blender blender, RandomState randomState, StructureManager structureManager, Chunk chunk) {
-		return null;
+		return CompletableFuture.completedFuture(chunk);
 	}
 
 	@Override

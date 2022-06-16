@@ -3,8 +3,10 @@
   "package": "org.quiltmc.qsl.worldgen.biome.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "ChunkGeneratorMixin",
     "MultiNoiseBiomeSourceMixin",
+    "MultiNoiseSamplerMixin",
+    "NoiseChunkGeneratorMixin",
+    "RandomStateMixin",
     "TheEndBiomeSourceMixin",
     "modification.DynamicRegistryManagerImplMixin",
     "modification.MinecraftServerMixin"

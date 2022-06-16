@@ -41,14 +41,14 @@ public class CommandApiTest implements CommandRegistrationCallback {
 		if (environment.isDedicated()) {
 			dispatcher.register(literal("ping")
 					.executes(ctx -> {
-						ctx.getSource().sendFeedback(Text.create("pong!"), false);
+						ctx.getSource().sendFeedback(Text.literal("pong!"), false);
 						return 0;
 					})
 			);
 		} else if (environment.isIntegrated()) {
 			dispatcher.register(literal("singleplayer_only")
 					.executes(ctx -> {
-						ctx.getSource().sendFeedback(Text.create("This command should only exist in singleplayer"), false);
+						ctx.getSource().sendFeedback(Text.literal("This command should only exist in singleplayer"), false);
 						return 0;
 					})
 			);
@@ -57,7 +57,7 @@ public class CommandApiTest implements CommandRegistrationCallback {
 		dispatcher.register(literal("quilt")
 				.executes(ctx -> {
 					//noinspection OptionalGetWithoutIsPresent
-					ctx.getSource().sendFeedback(Text.create("Quilt Version: " + QuiltLoader.getModContainer("quilt_base").get().metadata().version().raw()), false);
+					ctx.getSource().sendFeedback(Text.literal("Quilt Version: " + QuiltLoader.getModContainer("quilt_base").get().metadata().version().raw()), false);
 					return 0;
 				})
 				.then(literal("enum_arg")
@@ -65,7 +65,7 @@ public class CommandApiTest implements CommandRegistrationCallback {
 								.executes(ctx -> {
 									var arg = EnumArgumentType.getEnumConstant(ctx, "enum", TestEnum.class);
 									ctx.getSource().sendFeedback(
-											Text.create("Got: ").append(Text.create(arg.toString()).formatted(Formatting.GOLD)),
+											Text.literal("Got: ").append(Text.literal(arg.toString()).formatted(Formatting.GOLD)),
 											false
 									);
 									return 0;
@@ -79,7 +79,7 @@ public class CommandApiTest implements CommandRegistrationCallback {
 						.then(argument("arg", ItemStackArgumentType.itemStack(context))
 								.executes(ctx -> {
 									ItemStackArgument arg = ItemStackArgumentType.getItemStackArgument(ctx, "arg");
-									ctx.getSource().sendFeedback(Text.create("Ooohh, you have chosen: " + arg.getItem() + "!"), false);
+									ctx.getSource().sendFeedback(Text.literal("Ooohh, you have chosen: " + arg.getItem() + "!"), false);
 									return 0;
 								}))
 				)

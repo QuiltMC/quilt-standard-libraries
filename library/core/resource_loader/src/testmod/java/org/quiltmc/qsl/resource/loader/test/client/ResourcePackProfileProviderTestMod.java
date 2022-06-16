@@ -55,7 +55,7 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 			profileAdder.accept(ResourcePackProfile.of(
 					PACK_NAME, false, TestPack::new, factory,
 					ResourcePackProfile.InsertionPosition.TOP,
-					text -> text.shallowCopy().append(Text.create(" (Virtual Provider)").formatted(Formatting.DARK_GRAY))
+					text -> text.copy().append(Text.literal(" (Virtual Provider)").formatted(Formatting.DARK_GRAY))
 			));
 		});
 	}

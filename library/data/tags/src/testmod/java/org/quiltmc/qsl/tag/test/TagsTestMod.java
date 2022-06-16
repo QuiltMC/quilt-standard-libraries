@@ -97,12 +97,12 @@ public final class TagsTestMod implements ServerLifecycleEvents.Ready, CommandRe
 	}
 
 	private static <T> void displayTag(TagKey<T> tagKey, Collection<Holder<T>> tag, Registry<T> registry, Consumer<Text> feedbackConsumer) {
-		feedbackConsumer.accept(Text.create(tagKey.id() + ":").formatted(Formatting.GREEN));
+		feedbackConsumer.accept(Text.literal(tagKey.id() + ":").formatted(Formatting.GREEN));
 
 		for (var value : tag) {
 			Identifier id = registry.getId(value.value());
-			feedbackConsumer.accept(Text.create(" - ")
-					.append(Text.create(id.toString()).formatted(Formatting.GOLD)));
+			feedbackConsumer.accept(Text.literal(" - ")
+					.append(Text.literal(id.toString()).formatted(Formatting.GOLD)));
 		}
 	}
 }

@@ -46,7 +46,7 @@ public class RecipeManagerMixin {
 	private Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes;
 
 	@Shadow
-	private Map<Identifier, Recipe<?>> field_36308;
+	private Map<Identifier, Recipe<?>> recipeFlatMap;
 
 	@Inject(
 			method = "apply",
@@ -97,6 +97,6 @@ public class RecipeManagerMixin {
 
 		RecipeManagerImpl.applyModifications((RecipeManager) (Object) this, this.recipes, globalRecipes);
 
-		this.field_36308 = Collections.unmodifiableMap(globalRecipes);
+		this.recipeFlatMap = Collections.unmodifiableMap(globalRecipes);
 	}
 }
