@@ -22,7 +22,7 @@ public final class Versions {
 	/**
 	 * The target Minecraft version.
 	 */
-	public static final MinecraftVersion MINECRAFT_VERSION = new MinecraftVersion("1.19");
+	public static final MinecraftVersion MINECRAFT_VERSION = new MinecraftVersion("22w24a","1.19.1");
 
 	/**
 	 * The target Quilt Mappings build.
@@ -32,7 +32,7 @@ public final class Versions {
 	/**
 	 * The version of Quilt Loader to use.
 	 */
-	public static final String LOADER_VERSION = "0.17.0";
+	public static final String LOADER_VERSION = "0.17.1-beta.2";
 
 	/**
 	 * The target Java version.
