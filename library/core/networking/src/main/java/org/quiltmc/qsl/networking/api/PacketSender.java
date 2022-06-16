@@ -29,6 +29,7 @@ import net.minecraft.util.Identifier;
 
 /**
  * Represents something that supports sending packets to channels.
+ *
  * @see PacketByteBufs
  */
 public interface PacketSender {
@@ -36,7 +37,7 @@ public interface PacketSender {
 	 * Makes a packet for a channel.
 	 *
 	 * @param channelName the identifier of the channel
-	 * @param buf     the content of the packet
+	 * @param buf         the content of the packet
 	 */
 	Packet<?> createPacket(Identifier channelName, PacketByteBuf buf);
 
@@ -50,7 +51,7 @@ public interface PacketSender {
 	/**
 	 * Sends a packet.
 	 *
-	 * @param packet the packet
+	 * @param packet   the packet
 	 * @param callback an optional callback to execute after the packet is sent, may be {@code null}. The callback may also accept a {@link ChannelFutureListener}.
 	 */
 	void sendPacket(Packet<?> packet, @Nullable GenericFutureListener<? extends Future<? super Void>> callback);
@@ -59,7 +60,7 @@ public interface PacketSender {
 	 * Sends a packet to a channel.
 	 *
 	 * @param channel the identifier of the channel
-	 * @param buf the content of the packet
+	 * @param buf     the content of the packet
 	 */
 	default void sendPacket(Identifier channel, PacketByteBuf buf) {
 		Objects.requireNonNull(channel, "Channel cannot be null");
@@ -72,7 +73,7 @@ public interface PacketSender {
 	 * Sends a packet to a channel.
 	 *
 	 * @param channel  the identifier of the channel
-	 * @param buf the content of the packet
+	 * @param buf      the content of the packet
 	 * @param callback an optional callback to execute after the packet is sent, may be {@code null}
 	 */
 	// the generic future listener can accept ChannelFutureListener

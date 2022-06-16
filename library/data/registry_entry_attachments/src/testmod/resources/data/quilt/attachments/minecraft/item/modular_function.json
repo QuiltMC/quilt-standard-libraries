@@ -11,6 +11,10 @@
     "quilt:modular_item_3": {
       "type": "quilt:send_message",
       "message": "Data-driven value!"
+    },
+    "#quilt:modular_tag_2": {
+      "type": "quilt:send_message",
+      "message": "Data driven value via tag!"
     }
   }
 }

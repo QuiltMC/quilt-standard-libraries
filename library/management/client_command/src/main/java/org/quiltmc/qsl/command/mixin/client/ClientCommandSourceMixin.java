@@ -43,7 +43,8 @@ abstract class ClientCommandSourceMixin implements QuiltClientCommandSource {
 	@Final
 	private MinecraftClient client;
 
-	@Unique private final Map<String, Object> meta = new Object2ObjectOpenHashMap<>();
+	@Unique
+	private final Map<String, Object> meta = new Object2ObjectOpenHashMap<>();
 
 	@Override
 	public void sendFeedback(Text message) {

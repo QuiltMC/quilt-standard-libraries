@@ -20,6 +20,7 @@ qslModule {
 		}
 		management {
 			compileOnly("command")
+			testmodOnly("command")
 		}
 	}
 	entrypoints {

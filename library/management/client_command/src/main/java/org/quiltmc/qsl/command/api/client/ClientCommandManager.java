@@ -71,7 +71,6 @@ public final class ClientCommandManager {
 	 *
 	 * @param name the literal name
 	 * @return the created argument builder
-	 *
 	 * @see LiteralArgumentBuilder#literal(String)
 	 * @see net.minecraft.server.command.CommandManager#literal(String)
 	 */
@@ -86,7 +85,6 @@ public final class ClientCommandManager {
 	 * @param type the type of the argument
 	 * @param <T>  the type of the parsed argument value
 	 * @return the created argument builder
-	 *
 	 * @see RequiredArgumentBuilder#argument(String, ArgumentType)
 	 * @see net.minecraft.server.command.CommandManager#argument(String, ArgumentType)
 	 */

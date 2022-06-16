@@ -18,18 +18,20 @@
 package org.quiltmc.qsl.command.mixin.client;
 
 import com.mojang.brigadier.CommandDispatcher;
-import net.minecraft.client.network.ClientCommandSource;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.command.CommandSource;
-import net.minecraft.network.packet.s2c.play.CommandTreeS2CPacket;
-import org.quiltmc.qsl.command.api.client.QuiltClientCommandSource;
-import org.quiltmc.qsl.command.impl.client.ClientCommandInternals;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import net.minecraft.client.network.ClientCommandSource;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.command.CommandSource;
+import net.minecraft.network.packet.s2c.play.CommandTreeS2CPacket;
+
+import org.quiltmc.qsl.command.api.client.QuiltClientCommandSource;
+import org.quiltmc.qsl.command.impl.client.ClientCommandInternals;
 
 @Mixin(ClientPlayNetworkHandler.class)
 abstract class ClientPlayNetworkHandlerMixin {
@@ -46,6 +48,6 @@ abstract class ClientPlayNetworkHandlerMixin {
 		// Add the commands to the vanilla dispatcher for completion.
 		// It's done here because both the server and the client commands have
 		// to be in the same dispatcher and completion results.
-		ClientCommandInternals.addDummyCommands((CommandDispatcher) commandDispatcher, (QuiltClientCommandSource) commandSource);
+		ClientCommandInternals.addDummyCommands((CommandDispatcher) commandDispatcher, commandSource);
 	}
 }

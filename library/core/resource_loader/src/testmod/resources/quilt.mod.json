@@ -9,21 +9,26 @@
       "license": "Apache-2.0"
     },
     "intermediate_mappings": "net.fabricmc:intermediary",
+    "load_type": "always",
     "entrypoints": {
       "init": [
         "org.quiltmc.qsl.resource.loader.test.BuiltinResourcePackTestMod",
         "org.quiltmc.qsl.resource.loader.test.ResourceReloaderTestMod"
       ],
-      "client_events": [
-        "org.quiltmc.qsl.resource.loader.test.client.ClientResourceLoaderEventsTestMod"
+      "client_init": [
+        "org.quiltmc.qsl.resource.loader.test.client.ResourcePackProfileProviderTestMod"
       ],
       "events": [
         "org.quiltmc.qsl.resource.loader.test.ResourceLoaderEventsTestMod"
+      ],
+      "client_events": [
+        "org.quiltmc.qsl.resource.loader.test.client.ClientResourceLoaderEventsTestMod"
       ]
     },
     "depends": [
       "quilt_loader",
       "quilt_resource_loader"
     ]
-  }
+  },
+  "mixin": "quilt_resource_loader_testmod.mixins.json"
 }

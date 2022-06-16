@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.Optional;
 import com.mojang.serialization.Codec;
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -35,11 +36,8 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	protected final Codec<V> codec;
 	protected final Side side;
 
-	public RegistryEntryAttachmentImpl(Registry<R> registry,
-	                                   Identifier id,
-	                                   Class<V> valueClass,
-	                                   Codec<V> codec,
-	                                   Side side) {
+	public RegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec,
+			Side side) {
 		this.registry = registry;
 		this.id = id;
 		this.valueClass = valueClass;
@@ -96,6 +94,16 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 		}
 
 		return this.getDefaultValue(entry);
+	}
+
+	@Override
+	public void put(R entry, V value) {
+		RegistryEntryAttachmentHolder.getBuiltin(this.registry).putValue(this, entry, value);
+	}
+
+	@Override
+	public void put(TagKey<R> entry, V value) {
+		RegistryEntryAttachmentHolder.getBuiltin(this.registry).putValue(this, entry, value);
 	}
 
 	@Override

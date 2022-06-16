@@ -14,6 +14,7 @@ jobs:
           distribution: "temurin"
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v2
+      - run: ./gradlew checkLicenses generateQmj --parallel --stacktrace
       - run: ./gradlew build publish --stacktrace --parallel
         env:
           SNAPSHOTS_URL: ${{ secrets.SNAPSHOTS_URL }}

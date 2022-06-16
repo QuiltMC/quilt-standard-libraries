@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.tag.TagKey;
+import net.minecraft.util.Holder;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -93,19 +95,43 @@ public final class RegistryEntryAttachmentHolder<R> {
 	}
 
 	public final Table<RegistryEntryAttachment<R, ?>, R, Object> valueTable;
+	public final Table<RegistryEntryAttachment<R, ?>, TagKey<R>, Object> valueTagTable;
 
 	@SuppressWarnings("UnstableApiUsage")
 	private RegistryEntryAttachmentHolder() {
 		this.valueTable = Tables.newCustomTable(new Object2ReferenceOpenHashMap<>(), Reference2ObjectOpenHashMap::new);
+		this.valueTagTable = Tables.newCustomTable(new Object2ReferenceOpenHashMap<>(), Reference2ObjectOpenHashMap::new);
 	}
 
 	@SuppressWarnings("unchecked")
 	public <V> V getValue(RegistryEntryAttachment<R, V> attachment, R entry) {
-		return (V) this.valueTable.get(attachment, entry);
+		V value = (V) this.valueTable.get(attachment, entry); // Check for a direct value in valueTable
+		if (value == null) { // If there is no value, check the valueTagTable
+			Map<TagKey<R>, Object> row = valueTagTable.row(attachment);
+			for (Map.Entry<TagKey<R>, Object> tagValue : row.entrySet()) { // Loop over the tags
+				for (Holder<R> holder : attachment.registry().getTagOrEmpty(tagValue.getKey())) { // Loop over the holders in the tag
+					if (holder.value().equals(entry)) { // The holder matches the entry
+						if (value != null) { // Warn if two values point to the same value are found.
+							Initializer.LOGGER.warn("Entry {} for registry {} already has attachment {} defined. Overriding with value from tag {}.",
+									attachment.registry().getId(entry),
+									attachment.registry().getKey().getValue(),
+									attachment.id(),
+									tagValue.getKey().id());
+						}
+						value = (V) tagValue.getValue();
+					}
+				}
+			}
+		}
+		return value;
 	}
 
 	public <T> void putValue(RegistryEntryAttachment<R, T> attachment, R entry, T value) {
 		this.valueTable.put(attachment, entry, value);
+	}
+
+	public <T> void putValue(RegistryEntryAttachment<R, T> attachment, TagKey<R> tag, T value) {
+		this.valueTagTable.put(attachment, tag, value);
 	}
 
 	public void clear() {

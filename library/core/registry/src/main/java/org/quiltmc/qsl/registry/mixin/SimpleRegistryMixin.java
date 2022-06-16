@@ -51,7 +51,7 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> {
 			at = @At("RETURN")
 	)
 	private void quilt$invokeEntryAddEvent(int rawId, RegistryKey<V> key, V entry, Lifecycle lifecycle, boolean checkDuplicateKeys,
-	                                       CallbackInfoReturnable<Holder<V>> cir) {
+			CallbackInfoReturnable<Holder<V>> cir) {
 		this.quilt$entryContext.set(key.getValue(), entry, rawId);
 		RegistryEventStorage.as(this).quilt$getEntryAddedEvent().invoker().onAdded(this.quilt$entryContext);
 	}

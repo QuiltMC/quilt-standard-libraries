@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.networking.mixin.client;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -29,8 +31,6 @@ import net.minecraft.client.network.ClientLoginNetworkHandler;
 import net.minecraft.network.packet.s2c.login.LoginQueryRequestS2CPacket;
 import net.minecraft.text.Text;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
 import org.quiltmc.qsl.networking.impl.client.ClientLoginNetworkAddon;
 

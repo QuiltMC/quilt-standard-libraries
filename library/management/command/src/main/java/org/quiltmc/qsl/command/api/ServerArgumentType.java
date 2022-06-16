@@ -87,9 +87,8 @@ public interface ServerArgumentType<T extends ArgumentType<?>> {
 	 */
 	@SuppressWarnings("unchecked")
 	static <T extends ArgumentType<?>> ServerArgumentType<T> register(Identifier id, Class<? extends T> type,
-	                                                                  ArgumentSerializer<T> serializer,
-	                                                                  ArgumentTypeFallbackProvider<T> fallbackProvider,
-	                                                                  @Nullable SuggestionProvider<?> fallbackSuggestions) {
+			ArgumentSerializer<T> serializer,
+			ArgumentTypeFallbackProvider<T> fallbackProvider, @Nullable SuggestionProvider<?> fallbackSuggestions) {
 		var value = new ServerArgumentTypeImpl<>(id, type, serializer, fallbackProvider, fallbackSuggestions);
 		ArgumentTypes.register(id.toString(), (Class<T>) type, serializer);
 		ServerArgumentTypes.register(value);
@@ -107,8 +106,8 @@ public interface ServerArgumentType<T extends ArgumentType<?>> {
 	 * @return a newly-created server-side argument type
 	 */
 	static <T extends ArgumentType<?>> ServerArgumentType<T> register(Identifier id, Class<? extends T> type,
-	                                                                  ArgumentSerializer<T> serializer,
-	                                                                  ArgumentTypeFallbackProvider<T> fallbackProvider) {
+			ArgumentSerializer<T> serializer,
+			ArgumentTypeFallbackProvider<T> fallbackProvider) {
 		return register(id, type, serializer, fallbackProvider, SuggestionProviders.ASK_SERVER);
 	}
 }

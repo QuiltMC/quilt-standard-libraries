@@ -16,8 +16,10 @@
 
 package org.quiltmc.qsl.registry.impl.event;
 
-import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
+
+import net.minecraft.util.registry.Registry;
+
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 

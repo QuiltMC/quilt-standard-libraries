@@ -19,7 +19,9 @@ package org.quiltmc.qsl.command.api.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientCommandSource;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.command.CommandSource;
@@ -28,13 +30,15 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
+
 /**
- * Extensions to {@link CommandSource}, implemented on {@link net.minecraft.client.network.ClientCommandSource
- * ClientCommandSource} for
+ * Extensions to {@link CommandSource}, implemented on {@link ClientCommandSource ClientCommandSource} for
  * client commands - most of these methods are equivalents to methods on
  * {@link net.minecraft.server.command.ServerCommandSource ServerCommandSource}, to provide a more familiar API.
  */
 @Environment(EnvType.CLIENT)
+@InjectedInterface(ClientCommandSource.class)
 public interface QuiltClientCommandSource extends CommandSource {
 	/**
 	 * Sends a feedback message to the player.
@@ -70,7 +74,7 @@ public interface QuiltClientCommandSource extends CommandSource {
 	 * @return the entity
 	 */
 	default Entity getEntity() {
-		return getPlayer();
+		return this.getPlayer();
 	}
 
 	/**
@@ -79,7 +83,7 @@ public interface QuiltClientCommandSource extends CommandSource {
 	 * @return the position
 	 */
 	default Vec3d getPosition() {
-		return getPlayer().getPos();
+		return this.getPlayer().getPos();
 	}
 
 	/**
@@ -88,7 +92,7 @@ public interface QuiltClientCommandSource extends CommandSource {
 	 * @return the rotation
 	 */
 	default Vec2f getRotation() {
-		return getPlayer().getRotationClient();
+		return this.getPlayer().getRotationClient();
 	}
 
 	/**
@@ -104,7 +108,6 @@ public interface QuiltClientCommandSource extends CommandSource {
 	 * This method should return the same result for every call with the same {@code key}.
 	 *
 	 * @param key the meta key
-	 *
 	 * @return the meta
 	 */
 	Object getMeta(String key);
@@ -112,7 +115,7 @@ public interface QuiltClientCommandSource extends CommandSource {
 	/**
 	 * Sets the meta property under key {@code key} with the value {@code value}.
 	 *
-	 * @param key the meta key
+	 * @param key   the meta key
 	 * @param value the meta value
 	 */
 	void setMeta(String key, Object value);

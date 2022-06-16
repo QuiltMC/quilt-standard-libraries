@@ -78,11 +78,10 @@ public abstract class CommandManagerMixin {
 	@Inject(method = "makeTreeForSource", locals = LocalCapture.CAPTURE_FAILHARD,
 			at = @At(value = "INVOKE", target = "com.mojang.brigadier.builder.RequiredArgumentBuilder.getSuggestionsProvider()Lcom/mojang/brigadier/suggestion/SuggestionProvider;", remap = false, ordinal = 0))
 	public <T> void replaceArgumentType(CommandNode<ServerCommandSource> tree, CommandNode<CommandSource> result,
-	                                    ServerCommandSource source,
-	                                    Map<CommandNode<ServerCommandSource>, CommandNode<CommandSource>> nodes,
-	                                    CallbackInfo ci, Iterator<?> it,
-	                                    CommandNode<ServerCommandSource> current, ArgumentBuilder<?, ?> unused,
-	                                    RequiredArgumentBuilder<?, T> builder) throws CommandSyntaxException {
+			ServerCommandSource source, Map<CommandNode<ServerCommandSource>, CommandNode<CommandSource>> nodes,
+			CallbackInfo ci,
+			Iterator<?> it, CommandNode<ServerCommandSource> current, ArgumentBuilder<?, ?> unused,
+			RequiredArgumentBuilder<?, T> builder) throws CommandSyntaxException {
 		ServerArgumentType<ArgumentType<T>> type = ServerArgumentTypes.byClass((Class) builder.getType().getClass());
 		Set<Identifier> knownExtraCommands = ServerArgumentTypes.getKnownArgumentTypes(source.getPlayer()); // throws an exception, we can ignore bc this is always a player
 		// If we have a replacement and the arg type isn't known to the client, change the argument type

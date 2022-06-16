@@ -54,9 +54,9 @@ public class RecipeManagerMixin {
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private void onReload(Map<Identifier, JsonElement> map, ResourceManager resourceManager, Profiler profiler,
-	                      CallbackInfo ci,
-	                      Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap,
-	                      ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder) {
+			CallbackInfo ci,
+			Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap,
+			ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder) {
 		RecipeManagerImpl.apply(map, builderMap, globalRecipeMapBuilder);
 	}
 
@@ -90,9 +90,9 @@ public class RecipeManagerMixin {
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private void onReloadEnd(Map<Identifier, JsonElement> map, ResourceManager resourceManager, Profiler profiler,
-	                         CallbackInfo ci,
-	                         Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap,
-	                         ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder) {
+			CallbackInfo ci,
+			Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap,
+			ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder) {
 		Map<Identifier, Recipe<?>> globalRecipes = ImmutableMapBuilderUtil.specialBuild(globalRecipeMapBuilder);
 
 		RecipeManagerImpl.applyModifications((RecipeManager) (Object) this, this.recipes, globalRecipes);

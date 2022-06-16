@@ -30,10 +30,10 @@ import net.minecraft.util.Holder;
 
 import org.quiltmc.qsl.tag.api.QuiltTagKey;
 import org.quiltmc.qsl.tag.api.TagType;
-import org.quiltmc.qsl.tag.impl.client.QuiltRegistryEntryReferenceHooks;
+import org.quiltmc.qsl.tag.impl.client.QuiltHolderReferenceHooks;
 
 @Mixin(Holder.Reference.class)
-public abstract class RegistryEntryReferenceMixin<T> implements Holder<T>, QuiltRegistryEntryReferenceHooks<T> {
+public abstract class HolderReferenceMixin<T> implements Holder<T>, QuiltHolderReferenceHooks<T> {
 	@Unique
 	private Set<TagKey<T>> quilt$fallbackTags = Set.of();
 	@Unique

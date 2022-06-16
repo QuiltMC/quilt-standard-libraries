@@ -33,7 +33,7 @@ final class RemoveRecipeHandlerImpl extends BasicRecipeHandlerImpl implements Re
 	int counter = 0;
 
 	RemoveRecipeHandlerImpl(RecipeManager recipeManager, Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes,
-	                        Map<Identifier, Recipe<?>> globalRecipes) {
+			Map<Identifier, Recipe<?>> globalRecipes) {
 		super(recipeManager, recipes, globalRecipes);
 	}
 

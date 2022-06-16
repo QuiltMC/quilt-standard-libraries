@@ -15,8 +15,11 @@ qslModule {
 		}
 	}
 	entrypoints {
+		client_init {
+			values = ["org.quiltmc.qsl.tooltip.impl.client.QuiltClientTooltipMod::INSTANCE"]
+		}
 		client_events {
-			values = ["org.quiltmc.qsl.tooltip.impl.client.QuiltClientTooltipMod"]
+			values = ["org.quiltmc.qsl.tooltip.impl.client.QuiltClientTooltipMod::INSTANCE"]
 		}
 	}
 }

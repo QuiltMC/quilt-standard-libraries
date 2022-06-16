@@ -17,9 +17,6 @@
 
 package org.quiltmc.qsl.item.setting.mixin;
 
-import org.quiltmc.qsl.item.setting.api.EquipmentSlotProvider;
-import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -30,6 +27,9 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
+import org.quiltmc.qsl.item.setting.api.EquipmentSlotProvider;
+import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
 
 @Mixin(LivingEntity.class)
 abstract class LivingEntityMixin {

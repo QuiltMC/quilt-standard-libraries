@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,7 +96,7 @@ public interface DefaultValueProvider<R, V> {
 		 * {@return the error string of this result}
 		 */
 		public String error() {
-			if (this.hasFailed) {
+			if (!this.hasFailed) {
 				throw new IllegalStateException("Result does not have an error!");
 			}
 			return this.error;

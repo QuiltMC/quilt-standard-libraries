@@ -96,6 +96,6 @@ public final class ClientResourceLoaderEvents {
 		 * @param error           present if the resource pack reload failed, otherwise {@code null}
 		 */
 		void onEndResourcePackReload(MinecraftClient client, ResourceManager resourceManager, boolean first,
-		                             @Nullable Throwable error);
+				@Nullable Throwable error);
 	}
 }

@@ -166,8 +166,11 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 				Dependency dep = project.getDependencies().project(map);
 				deps.add(dep);
 				project.getDependencies().add(info.type().getConfigurationName(), dep);
-			}
 
+				if (info.type().isTransitive()) {
+					addTransitiveImplementations(library, info);
+				}
+			}
 		}
 
 		PublicationContainer publications = this.project.getExtensions().getByType(PublishingExtension.class).getPublications();
@@ -185,6 +188,35 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 				}
 			}));
 		});
+	}
+
+	/**
+	 * This method traverses up the internal QSL module dependency tree, adding the different modules as either runtime or implementation only based on the dependency type for the module.
+	 *
+	 * @param library The library that the module is in
+	 * @param info    The module info to add transitive dependecies from
+	 */
+	private void addTransitiveImplementations(QslLibraryDependency library, QslLibraryDependency.ModuleDependencyInfo info) {
+		Project depProject = project.getRootProject().project(":" + library.getName() + ":" + info.module());
+		QslModuleExtensionImpl qslModuleExtension = (QslModuleExtensionImpl) depProject.getExtensions().getByType(QslModuleExtension.class);
+		for (QslLibraryDependency depLibrary : qslModuleExtension.getModuleDependencyDefinitions()) {
+			for (QslLibraryDependency.ModuleDependencyInfo depInfo : depLibrary.getDependencyInfo().get()) {
+				if (depInfo.type().isTransitive()) {
+					Map<String, String> depMap = new LinkedHashMap<>(2);
+					depMap.put("path", ":" + depLibrary.getName() + ":" + depInfo.module());
+					depMap.put("configuration", "namedElements");
+
+					Dependency depDep = project.getDependencies().project(depMap);
+					QslLibraryDependency.ConfigurationType type = switch (depInfo.type()) {
+						case API -> QslLibraryDependency.ConfigurationType.IMPLEMENTATION;
+						default -> QslLibraryDependency.ConfigurationType.RUNTIME_ONLY;
+					};
+					project.getDependencies().add(type.getConfigurationName(), depDep);
+
+					addTransitiveImplementations(depLibrary, depInfo);
+				}
+			}
+		}
 	}
 
 	public static class NamedWriteOnlyList implements Named {

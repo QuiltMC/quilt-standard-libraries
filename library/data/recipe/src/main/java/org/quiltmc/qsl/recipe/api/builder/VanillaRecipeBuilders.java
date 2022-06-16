@@ -143,7 +143,7 @@ public final class VanillaRecipeBuilders {
 	 * @return the campfire cooking recipe
 	 */
 	public static CampfireCookingRecipe campfireCookingRecipe(Identifier id, String group, Ingredient input,
-	                                                          ItemStack output, float experience, int cookTime) {
+			ItemStack output, float experience, int cookTime) {
 		return VanillaRecipeBuildersImpl.campfireCookingRecipe(id, group, input, output, experience, cookTime);
 	}
 }

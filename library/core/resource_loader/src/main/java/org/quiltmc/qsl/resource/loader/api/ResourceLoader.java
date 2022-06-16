@@ -19,6 +19,7 @@ package org.quiltmc.qsl.resource.loader.api;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.pack.ResourcePackProvider;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -49,6 +50,16 @@ public interface ResourceLoader {
 	 * @param resourceReloader the resource reloader
 	 */
 	void registerReloader(IdentifiableResourceReloader resourceReloader);
+
+	/**
+	 * Registers a resource pack profile provider.
+	 * <p>
+	 * A resource pack profile means any provided resource packs will show up in the resource pack selection screen.
+	 * Always fired <i>after</i> the built-in resource pack providers.
+	 *
+	 * @param provider the provider
+	 */
+	void registerResourcePackProfileProvider(ResourcePackProvider provider);
 
 	/**
 	 * Registers a built-in resource pack.
@@ -127,7 +138,7 @@ public interface ResourceLoader {
 	 * @see #registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType, Text)
 	 */
 	static boolean registerBuiltinResourcePack(Identifier id, ModContainer container,
-	                                           ResourcePackActivationType activationType) {
+			ResourcePackActivationType activationType) {
 		return registerBuiltinResourcePack(id, container, activationType, ResourceLoaderImpl.getBuiltinPackDisplayNameFromId(id));
 	}
 
@@ -153,7 +164,7 @@ public interface ResourceLoader {
 	 * @see #registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType)
 	 */
 	static boolean registerBuiltinResourcePack(Identifier id, ModContainer container,
-	                                           ResourcePackActivationType activationType, Text displayName) {
+			ResourcePackActivationType activationType, Text displayName) {
 		return ResourceLoaderImpl.registerBuiltinResourcePack(id, "resourcepacks/" + id.getPath(), container,
 				activationType, displayName);
 	}

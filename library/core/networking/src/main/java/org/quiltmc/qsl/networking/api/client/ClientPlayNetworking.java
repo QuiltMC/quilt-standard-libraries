@@ -19,6 +19,8 @@ package org.quiltmc.qsl.networking.api.client;
 import java.util.Objects;
 import java.util.Set;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.MinecraftClient;
@@ -27,8 +29,6 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.networking.impl.client.ClientNetworkingImpl;
@@ -54,7 +54,7 @@ public final class ClientPlayNetworking {
 	 * If a handler is already registered to the {@code channel}, this method will return {@code false}, and no change will be made.
 	 * Use {@link #unregisterGlobalReceiver(Identifier)} to unregister the existing handler.
 	 *
-	 * @param channelName the identifier of the channel
+	 * @param channelName    the identifier of the channel
 	 * @param channelHandler the handler
 	 * @return {@code false} if a handler is already registered to the channel, otherwise {@code true}
 	 * @see ClientPlayNetworking#unregisterGlobalReceiver(Identifier)
@@ -185,7 +185,7 @@ public final class ClientPlayNetworking {
 	 * Creates a packet which may be sent to a the connected server.
 	 *
 	 * @param channelName the channel name
-	 * @param buf the packet byte buf which represents the payload of the packet
+	 * @param buf         the packet byte buf which represents the payload of the packet
 	 * @return a new packet
 	 */
 	public static Packet<?> createC2SPacket(Identifier channelName, PacketByteBuf buf) {
@@ -214,7 +214,7 @@ public final class ClientPlayNetworking {
 	 * Sends a packet to the connected server.
 	 *
 	 * @param channelName the channel of the packet
-	 * @param buf the payload of the packet
+	 * @param buf         the payload of the packet
 	 * @throws IllegalStateException if the client is not connected to a server
 	 */
 	public static void send(Identifier channelName, PacketByteBuf buf) throws IllegalStateException {
@@ -247,13 +247,13 @@ public final class ClientPlayNetworking {
 		 * 	// All operations on the server or world must be executed on the server thread
 		 * 	client.execute(() -&rt; {
 		 * 		client.inGameHud.setOverlayMessage(message, true);
-		 * 	});
+		 *    });
 		 * });
 		 * }</pre>
 		 *
-		 * @param client the client
-		 * @param handler the network handler that received this packet
-		 * @param buf the payload of the packet
+		 * @param client         the client
+		 * @param handler        the network handler that received this packet
+		 * @param buf            the payload of the packet
 		 * @param responseSender the packet sender
 		 */
 		void receive(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender);

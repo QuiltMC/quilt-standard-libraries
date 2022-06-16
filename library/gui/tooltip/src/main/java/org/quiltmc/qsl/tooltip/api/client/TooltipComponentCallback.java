@@ -19,10 +19,12 @@ package org.quiltmc.qsl.tooltip.api.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.item.Item;
-import org.jetbrains.annotations.Nullable;
+
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 
