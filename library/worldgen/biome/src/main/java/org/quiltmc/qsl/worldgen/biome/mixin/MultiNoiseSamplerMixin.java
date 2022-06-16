@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,27 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.tag.mixin;
+package org.quiltmc.qsl.worldgen.biome.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
-import net.minecraft.tag.Tag;
+import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 
-import org.quiltmc.qsl.tag.api.QuiltTag;
-import org.quiltmc.qsl.tag.impl.QuiltTagHooks;
+import org.quiltmc.qsl.worldgen.biome.impl.MultiNoiseSamplerExtensions;
 
-@Mixin(Tag.class)
-public class TagMixin implements QuiltTag, QuiltTagHooks {
+@Mixin(MultiNoiseUtil.MultiNoiseSampler.class)
+public class MultiNoiseSamplerMixin implements MultiNoiseSamplerExtensions {
 	@Unique
-	private int quilt$replaced;
+	private Long quilt$seed = null;
 
 	@Override
-	public boolean hasBeenReplaced() {
-		return this.quilt$replaced > 0;
+	public Long quilt$getSeed() {
+		return this.quilt$seed;
 	}
 
 	@Override
-	public void quilt$setReplacementCount(int replacementCount) {
-		this.quilt$replaced = replacementCount;
+	public void quilt$setSeed(long seed) {
+		this.quilt$seed = seed;
 	}
 }

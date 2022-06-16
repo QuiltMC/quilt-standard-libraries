@@ -21,7 +21,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.tag.TagKey;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
@@ -49,8 +49,8 @@ public class DispatchedAttachmentTest implements ModInitializer {
 			if (!world.isClient()) {
 				ServerPlayerEntity player = (ServerPlayerEntity) user;
 				MODULAR_FUNCTION.getValue(this).ifPresentOrElse(funcValue -> funcValue.invoke(player),
-						() -> player.sendMessage(new LiteralText("No function assigned!")
-								.styled(style -> style.withColor(Formatting.RED)), true));
+						() -> player.sendMessage(Text.literal("No function assigned!")
+								.formatted(Formatting.RED), true));
 			}
 			return TypedActionResult.pass(user.getStackInHand(hand));
 		}
@@ -83,7 +83,6 @@ public class DispatchedAttachmentTest implements ModInitializer {
 	 */
 	public static final ModularFunctionItem ITEM_5 = Registry.register(Registry.ITEM,
 			new Identifier("quilt", "modular_item_5"), new ModularFunctionItem(new Item.Settings()));
-
 	/**
 	 * Has a value a provided by a tag via datapack.
 	 */

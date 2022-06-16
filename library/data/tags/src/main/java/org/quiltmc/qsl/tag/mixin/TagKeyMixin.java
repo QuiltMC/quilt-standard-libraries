@@ -18,8 +18,6 @@ package org.quiltmc.qsl.tag.mixin;
 
 import java.util.Objects;
 
-import com.google.common.collect.Interner;
-import com.google.common.collect.Interners;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -27,7 +25,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -88,20 +85,5 @@ public class TagKeyMixin<T> implements QuiltTagKey<T>, QuiltTagKeyHooks {
 	@Overwrite
 	public final int hashCode() {
 		return Objects.hash(this.registry, this.id, this.type());
-	}
-
-	@Redirect(
-			method = "<clinit>",
-			at = @At(
-					value = "INVOKE",
-					target = "Lcom/google/common/collect/Interners;newStrongInterner()Lcom/google/common/collect/Interner;",
-					remap = false
-			),
-			require = 0
-	)
-	private static Interner<TagKey<?>> onNewStrongInterner() {
-		// This is to avoid a memory leak.
-		// @TODO Remove once https://bugs.mojang.com/browse/MC-248621 is fixed.
-		return Interners.newWeakInterner();
 	}
 }

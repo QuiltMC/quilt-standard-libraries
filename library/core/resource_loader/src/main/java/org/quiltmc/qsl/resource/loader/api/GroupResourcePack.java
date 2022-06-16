@@ -117,8 +117,8 @@ public abstract class GroupResourcePack implements ResourcePack {
 	}
 
 	@Override
-	public Collection<Identifier> findResources(ResourceType type, String namespace, String startingPath, int maxDepth,
-			Predicate<String> pathFilter) {
+	public Collection<Identifier> findResources(ResourceType type, String namespace, String startingPath,
+			Predicate<Identifier> pathFilter) {
 		var packs = this.namespacedPacks.get(namespace);
 
 		if (packs == null) {
@@ -130,7 +130,7 @@ public abstract class GroupResourcePack implements ResourcePack {
 		// Iterating backwards as higher-priority packs are placed at the end.
 		for (int i = packs.size() - 1; i >= 0; i--) {
 			ResourcePack pack = packs.get(i);
-			Collection<Identifier> modResources = pack.findResources(type, namespace, startingPath, maxDepth, pathFilter);
+			Collection<Identifier> modResources = pack.findResources(type, namespace, startingPath, pathFilter);
 
 			resources.addAll(modResources);
 		}

@@ -31,18 +31,20 @@ import com.mojang.brigadier.tree.CommandNode;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import net.minecraft.command.CommandBuildContext;
 import net.minecraft.command.CommandSource;
+import net.minecraft.command.argument.ArgumentTypeInfo;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
+import org.quiltmc.qsl.command.api.QuiltCommandRegistrationEnvironment;
 import org.quiltmc.qsl.command.api.ServerArgumentType;
 import org.quiltmc.qsl.command.impl.ServerArgumentTypes;
 
@@ -56,20 +58,12 @@ public abstract class CommandManagerMixin {
 			method = "<init>",
 			at = @At(
 					value = "INVOKE",
-					target = "Lcom/mojang/brigadier/CommandDispatcher;findAmbiguities(Lcom/mojang/brigadier/AmbiguityConsumer;)V",
+					target = "Lcom/mojang/brigadier/CommandDispatcher;setConsumer(Lcom/mojang/brigadier/ResultConsumer;)V",
 					remap = false
 			)
 	)
-	void addQuiltCommands(CommandManager.RegistrationEnvironment environment, CallbackInfo ci) {
-		CommandRegistrationCallback.EVENT.invoker().registerCommands(this.dispatcher,
-				environmentMatches(environment, CommandManager.RegistrationEnvironment.INTEGRATED),
-				environmentMatches(environment, CommandManager.RegistrationEnvironment.DEDICATED)
-		);
-	}
-
-	@Unique
-	private static boolean environmentMatches(CommandManager.RegistrationEnvironment a, CommandManager.RegistrationEnvironment b) {
-		return a == b || b == CommandManager.RegistrationEnvironment.ALL;
+	void addQuiltCommands(CommandManager.RegistrationEnvironment environment, CommandBuildContext context, CallbackInfo ci) {
+		CommandRegistrationCallback.EVENT.invoker().registerCommands(this.dispatcher, context, environment);
 	}
 
 	// region Copyright 2016, 2017, 2018, 2019, 2020 zml and Colonel contributors.
@@ -82,12 +76,13 @@ public abstract class CommandManagerMixin {
 			CallbackInfo ci,
 			Iterator<?> it, CommandNode<ServerCommandSource> current, ArgumentBuilder<?, ?> unused,
 			RequiredArgumentBuilder<?, T> builder) throws CommandSyntaxException {
-		ServerArgumentType<ArgumentType<T>> type = ServerArgumentTypes.byClass((Class) builder.getType().getClass());
+		ServerArgumentType<ArgumentType<T>, ArgumentTypeInfo.Template<ArgumentType<T>>> type
+				= ServerArgumentTypes.byClass((Class) builder.getType().getClass());
 		Set<Identifier> knownExtraCommands = ServerArgumentTypes.getKnownArgumentTypes(source.getPlayer()); // throws an exception, we can ignore bc this is always a player
 		// If we have a replacement and the arg type isn't known to the client, change the argument type
 		// This is super un-typesafe, but as long as the returned CommandNode is only used for serialization we are fine.
 		// Repeat as long as a type is replaceable -- that way you can have a hierarchy of argument types.
-		while (type != null && !knownExtraCommands.contains(type.id())) {
+		while (type != null && knownExtraCommands != null && !knownExtraCommands.contains(type.id())) {
 			((RequiredArgumentBuilderAccessor) builder).setType(type.fallbackProvider().createVanillaFallback(builder.getType()));
 
 			if (type.fallbackSuggestions() != null) {
@@ -98,4 +93,25 @@ public abstract class CommandManagerMixin {
 		}
 	}
 	// endregion
+
+	@Mixin(CommandManager.RegistrationEnvironment.class)
+	public static abstract class RegistrationEnvironmentMixin implements QuiltCommandRegistrationEnvironment {
+		@Shadow
+		@Final
+		boolean dedicated;
+
+		@Shadow
+		@Final
+		boolean integrated;
+
+		@Override
+		public boolean isDedicated() {
+			return this.dedicated;
+		}
+
+		@Override
+		public boolean isIntegrated() {
+			return this.integrated;
+		}
+	}
 }

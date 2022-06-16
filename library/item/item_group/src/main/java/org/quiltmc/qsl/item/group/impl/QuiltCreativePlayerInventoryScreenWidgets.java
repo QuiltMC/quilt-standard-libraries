@@ -28,9 +28,7 @@ import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 @ApiStatus.Internal
@@ -72,15 +70,15 @@ public final class QuiltCreativePlayerInventoryScreenWidgets {
 				this.drawTexture(matrices, this.x, this.y, u + (this.type == Type.NEXT ? 11 : 0), v, 11, 10);
 
 				if (this.hovered) {
-					gui.renderTooltip(matrices, new TranslatableText(TRANSLATION_KEY, extensions.quilt$currentPage() + 1, ((ItemGroup.GROUPS.length - 12) / 9) + 2), mouseX, mouseY);
+					gui.renderTooltip(matrices, Text.translatable(TRANSLATION_KEY, extensions.quilt$currentPage() + 1, ((ItemGroup.GROUPS.length - 12) / 9) + 2), mouseX, mouseY);
 				}
 			}
 		}
 	}
 
 	public enum Type {
-		NEXT(new LiteralText(">"), CreativeGuiExtensions::quilt$nextPage),
-		PREVIOUS(new LiteralText("<"), CreativeGuiExtensions::quilt$previousPage);
+		NEXT(Text.of(">"), CreativeGuiExtensions::quilt$nextPage),
+		PREVIOUS(Text.of("<"), CreativeGuiExtensions::quilt$previousPage);
 
 		final Text text;
 		final Consumer<CreativeGuiExtensions> clickConsumer;

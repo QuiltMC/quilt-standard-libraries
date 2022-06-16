@@ -24,6 +24,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 import net.minecraft.resource.NamespaceResourceManager;
+import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.util.Identifier;
@@ -33,8 +34,8 @@ public interface NamespaceResourceManagerAccessor {
 	@Accessor
 	ResourceType getType();
 
-	@Invoker
-	InputStream invokeOpen(Identifier id, ResourcePack pack) throws IOException;
+	@Invoker("getResourceInputStreamSupplier")
+	Resource.InputSupplier<InputStream> invokeOpen(Identifier id, ResourcePack pack) throws IOException;
 
 	@Invoker
 	static Identifier invokeGetMetadataPath(Identifier id) {

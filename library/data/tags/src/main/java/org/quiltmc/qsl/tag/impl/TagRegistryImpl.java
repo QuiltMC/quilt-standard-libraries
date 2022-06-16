@@ -17,6 +17,8 @@
 
 package org.quiltmc.qsl.tag.impl;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -25,7 +27,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.tag.Tag;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Holder;
 import net.minecraft.util.registry.Registry;
@@ -40,7 +41,7 @@ import org.quiltmc.qsl.tag.mixin.DynamicRegistryManagerAccessor;
 
 @ApiStatus.Internal
 public final class TagRegistryImpl implements ServerLifecycleEvents.Stopped {
-	private static final Map<TagKey<?>, Tag<Holder<?>>> TAGS = new Object2ObjectOpenHashMap<>();
+	private static final Map<TagKey<?>, Collection<Holder<?>>> TAGS = new Object2ObjectOpenHashMap<>();
 
 	/**
 	 * Returns whether the given registry key is the key of a dynamic registry.
@@ -53,7 +54,7 @@ public final class TagRegistryImpl implements ServerLifecycleEvents.Stopped {
 	}
 
 	public static void populateTags(Map<TagKey<?>, List<Holder<?>>> tags) {
-		tags.forEach((key, values) -> TAGS.put(key, new Tag<>(values)));
+		TAGS.putAll(tags);
 	}
 
 	public static void resetTags() {
@@ -61,17 +62,17 @@ public final class TagRegistryImpl implements ServerLifecycleEvents.Stopped {
 	}
 
 	@SuppressWarnings({"unchecked", "RedundantCast"})
-	public static <T> Tag<Holder<T>> getTag(TagKey<T> key) {
+	public static <T> Collection<Holder<T>> getTag(TagKey<T> key) {
 		var type = ((QuiltTagKey<T>) (Object) key).type();
 
 		if (type.hasSync()) {
-			Tag<Holder<T>> tag = (Tag<Holder<T>>) (Object) TAGS.get(key);
+			Collection<Holder<T>> tag = (Collection<Holder<T>>) (Object) TAGS.get(key);
 
 			if (tag == null) {
 				if (type == TagType.CLIENT_FALLBACK) {
 					tag = ClientTagRegistryManager.get(key.registry()).getFallbackTag(key);
 				} else {
-					tag = Tag.getEmpty();
+					tag = Collections.emptySet();
 				}
 			}
 
@@ -80,21 +81,21 @@ public final class TagRegistryImpl implements ServerLifecycleEvents.Stopped {
 			return ClientTagRegistryManager.get(key.registry()).getClientTag(key);
 		}
 
-		return Tag.getEmpty();
+		return Collections.emptySet();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> Stream<TagRegistry.TagEntry<T>> streamTags(RegistryKey<? extends Registry<T>> registry) {
+	public static <T> Stream<TagRegistry.TagValues<T>> streamTags(RegistryKey<? extends Registry<T>> registry) {
 		return TAGS.entrySet().stream()
 				.filter(entry -> entry.getKey().registry() == registry)
-				.map(entry -> new TagRegistry.TagEntry<>((TagKey<T>) entry.getKey(), (Tag<Holder<T>>) (Object) entry.getValue()));
+				.map(entry -> new TagRegistry.TagValues<>((TagKey<T>) entry.getKey(), (Collection<Holder<T>>) (Object) entry.getValue()));
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> Stream<TagRegistry.TagEntry<T>> streamTagsWithFallback(RegistryKey<? extends Registry<T>> registry) {
+	public static <T> Stream<TagRegistry.TagValues<T>> streamTagsWithFallback(RegistryKey<? extends Registry<T>> registry) {
 		return Stream.concat(TAGS.entrySet().stream()
 						.filter(entry -> entry.getKey().registry() == registry)
-						.map(entry -> new TagRegistry.TagEntry<>((TagKey<T>) entry.getKey(), (Tag<Holder<T>>) (Object) entry.getValue())),
+						.map(entry -> new TagRegistry.TagValues<>((TagKey<T>) entry.getKey(), (Collection<Holder<T>>) (Object) entry.getValue())),
 				ClientTagRegistryManager.get(registry).streamFallbackTags(entry -> !TAGS.containsKey(entry.getKey())));
 	}
 

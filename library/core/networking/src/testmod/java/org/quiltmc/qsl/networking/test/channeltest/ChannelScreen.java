@@ -19,7 +19,7 @@ package org.quiltmc.qsl.networking.test.channeltest;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
@@ -33,19 +33,19 @@ final class ChannelScreen extends Screen {
 	private ChannelList channelList;
 
 	ChannelScreen(NetworkingChannelClientTest mod) {
-		super(new LiteralText("TODO"));
+		super(Text.literal("TODO"));
 		this.mod = mod;
 	}
 
 	@Override
 	protected void init() {
-		this.s2cButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 55, 5, 50, 20, new LiteralText("S2C"), this::toS2C, (button, matrices, mouseX, mouseY) -> {
-			this.renderTooltip(matrices, new LiteralText("Packets this client can receive"), mouseX, mouseY);
+		this.s2cButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 55, 5, 50, 20, Text.literal("S2C"), this::toS2C, (button, matrices, mouseX, mouseY) -> {
+			this.renderTooltip(matrices, Text.literal("Packets this client can receive"), mouseX, mouseY);
 		}));
-		this.c2sButton = this.addDrawableChild(new ButtonWidget(this.width / 2 + 5, 5, 50, 20, new LiteralText("C2S"), this::toC2S, (button, matrices, mouseX, mouseY) -> {
-			this.renderTooltip(matrices, new LiteralText("Packets the server can receive"), mouseX, mouseY);
+		this.c2sButton = this.addDrawableChild(new ButtonWidget(this.width / 2 + 5, 5, 50, 20, Text.literal("C2S"), this::toC2S, (button, matrices, mouseX, mouseY) -> {
+			this.renderTooltip(matrices, Text.literal("Packets the server can receive"), mouseX, mouseY);
 		}));
-		this.closeButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 60, this.height - 25, 120, 20, new LiteralText("Close"), button -> this.onClose()));
+		this.closeButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 60, this.height - 25, 120, 20, Text.literal("Close"), button -> this.closeScreen()));
 		this.channelList = this.addDrawable(new ChannelList(this.client, this.width, this.height - 60, 30, this.height - 30, this.textRenderer.fontHeight + 2));
 	}
 
@@ -56,7 +56,7 @@ final class ChannelScreen extends Screen {
 		super.render(matrices, mouseX, mouseY, delta);
 
 		if (this.s2cButton.active && this.c2sButton.active) {
-			final var clickMe = new LiteralText("Click S2C or C2S to view supported channels");
+			final var clickMe = Text.of("Click S2C or C2S to view supported channels");
 
 			final int textWidth = this.textRenderer.getWidth(clickMe);
 			//noinspection ConstantConditions

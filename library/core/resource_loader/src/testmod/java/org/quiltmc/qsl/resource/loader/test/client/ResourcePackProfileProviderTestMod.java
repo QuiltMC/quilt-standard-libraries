@@ -30,14 +30,13 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import com.google.common.base.Charsets;
+import com.mojang.blaze3d.texture.NativeImage;
 import org.apache.commons.io.IOUtils;
 
 import net.minecraft.SharedConstants;
-import net.minecraft.client.texture.NativeImage;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.AbstractFileResourcePack;
 import net.minecraft.resource.pack.ResourcePackProfile;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -56,7 +55,7 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 			profileAdder.accept(ResourcePackProfile.of(
 					PACK_NAME, false, TestPack::new, factory,
 					ResourcePackProfile.InsertionPosition.TOP,
-					text -> text.shallowCopy().append(new LiteralText(" (Virtual Provider)").formatted(Formatting.DARK_GRAY))
+					text -> text.copy().append(Text.literal(" (Virtual Provider)").formatted(Formatting.DARK_GRAY))
 			));
 		});
 	}
@@ -76,10 +75,10 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 		}
 
 		@Override
-		public Collection<Identifier> findResources(ResourceType type, String namespace, String startingPath, int maxDepth,
-				Predicate<String> pathFilter) {
+		public Collection<Identifier> findResources(ResourceType type, String namespace, String startingPath,
+				Predicate<Identifier> pathFilter) {
 			if (type == ResourceType.CLIENT_RESOURCES && namespace.equals(DIRT_IDENTIFIER.getNamespace())) {
-				if (DIRT_IDENTIFIER.getPath().startsWith(startingPath) && pathFilter.test(DIRT_IDENTIFIER.getPath())) {
+				if (DIRT_IDENTIFIER.getPath().startsWith(startingPath) && pathFilter.test(DIRT_IDENTIFIER)) {
 					return List.of(DIRT_IDENTIFIER);
 				}
 			}
@@ -146,7 +145,7 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 
 		@Override
 		public Text getDisplayName() {
-			return new LiteralText(this.getName());
+			return Text.of(this.getName());
 		}
 	}
 }

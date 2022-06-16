@@ -50,7 +50,7 @@ public final class Initializer implements ModInitializer {
 
 		ServerArgumentType.register(id("enum"),
 				EnumArgumentType.class,
-				new EnumArgumentType.Serializer(),
+				new EnumArgumentType.Info(),
 				arg -> StringArgumentType.word());
 	}
 }

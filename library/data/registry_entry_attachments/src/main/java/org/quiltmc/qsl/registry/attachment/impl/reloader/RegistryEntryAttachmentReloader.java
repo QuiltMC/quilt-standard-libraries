@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.registry.attachment.impl.reloader;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -97,14 +96,16 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 				String path = registryId.getNamespace() + "/" + registryId.getPath();
 				profiler.push(this.id + "/finding_resources/" + path);
 
-				Collection<Identifier> jsonIds = manager.findResources("attachments/" + path, s -> s.endsWith(".json"));
-				if (jsonIds.isEmpty()) {
+				Map<Identifier, List<Resource>> resources = manager.findAllResources("attachments/" + path,
+						s -> s.getPath().endsWith(".json")
+				);
+				if (resources.isEmpty()) {
 					profiler.pop();
 					continue;
 				}
 
 				Registry<?> registry = entry.getValue();
-				processResources(manager, profiler, attachmentMaps, jsonIds, registry);
+				this.processResources(profiler, attachmentMaps, resources, registry);
 
 				profiler.pop();
 			}
@@ -113,39 +114,28 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 		}, executor);
 	}
 
-	private void processResources(ResourceManager manager, Profiler profiler,
+	private void processResources(Profiler profiler,
 			Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> attachmentMaps,
-			Collection<Identifier> jsonIds, Registry<?> registry) {
-		for (var jsonId : jsonIds) {
-			Identifier attachmentId = this.getAttachmentId(jsonId);
+			Map<Identifier, List<Resource>> resources, Registry<?> registry) {
+		for (var entry : resources.entrySet()) {
+			Identifier attachmentId = this.getAttachmentId(entry.getKey());
 			RegistryEntryAttachment<?, ?> attachment = RegistryEntryAttachmentHolder.getAttachment(registry, attachmentId);
 			if (attachment == null) {
-				LOGGER.warn("Unknown attachment {} (from {})", attachmentId, jsonId);
+				LOGGER.warn("Unknown attachment {} (from {})", attachmentId, entry);
 				continue;
 			}
 
 			if (!attachment.side().shouldLoad(this.source)) {
 				LOGGER.warn("Ignoring attachment {} (from {}) since it shouldn't be loaded from this source ({}, we're loading from {})",
-						attachmentId, jsonId, attachment.side().getSource(), this.source);
+						attachmentId, entry, attachment.side().getSource(), this.source);
 				continue;
 			}
 
-			profiler.swap(this.id + "/getting_resources{" + jsonId + "}");
-
-			List<Resource> resources;
-			try {
-				resources = manager.getAllResources(jsonId);
-			} catch (IOException e) {
-				LOGGER.error("Failed to get all resources for {}", jsonId);
-				LOGGER.error("", e);
-				continue;
-			}
-
-			profiler.swap(this.id + "/processing_resources{" + jsonId + "," + attachmentId + "}");
+			profiler.swap(this.id + "/processing_resources{" + entry + "," + attachmentId + "}");
 
 			AttachmentDictionary<?, ?> attachAttachment = attachmentMaps.computeIfAbsent(attachment, this::createAttachmentMap);
-			for (var resource : resources) {
-				attachAttachment.processResource(resource);
+			for (var resource : entry.getValue()) {
+				attachAttachment.processResource(entry.getKey(), resource);
 			}
 		}
 	}
@@ -216,9 +206,9 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 				V value = (V) attachmentEntry.getValue();
 				AttachmentDictionary.ValueTarget target = attachmentEntry.getKey();
 				switch (target.type()) {
-					case ENTRY -> holder.putValue(attachment, attachment.registry().get(target.id()), value);
-					case TAG -> holder.putValue(attachment, TagKey.of(attachment.registry().getKey(), target.id()), value);
-					default -> throw new IllegalStateException("Unexpected value: " + target.type());
+				case ENTRY -> holder.putValue(attachment, attachment.registry().get(target.id()), value);
+				case TAG -> holder.putValue(attachment, TagKey.of(attachment.registry().getKey(), target.id()), value);
+				default -> throw new IllegalStateException("Unexpected value: " + target.type());
 				}
 			}
 		}

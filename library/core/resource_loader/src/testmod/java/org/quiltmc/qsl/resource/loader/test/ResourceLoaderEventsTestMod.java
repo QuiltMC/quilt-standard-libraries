@@ -32,6 +32,8 @@ public class ResourceLoaderEventsTestMod implements ResourceLoaderEvents.StartDa
 	@Override
 	public void onStartDataPackReload(@Nullable MinecraftServer server, @Nullable ResourceManager oldResourceManager) {
 		LOGGER.info("Preparing for data pack reload, old resource manager: {}", oldResourceManager);
+
+		ResourceLoaderTestMod.loadingServerResources = true;
 	}
 
 	@Override

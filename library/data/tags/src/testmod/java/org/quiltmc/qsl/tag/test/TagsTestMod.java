@@ -18,6 +18,7 @@ package org.quiltmc.qsl.tag.test;
 
 import static net.minecraft.server.command.CommandManager.literal;
 
+import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -26,11 +27,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.minecraft.block.Block;
+import net.minecraft.command.CommandBuildContext;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.tag.Tag;
 import net.minecraft.tag.TagKey;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Holder;
@@ -41,7 +42,6 @@ import net.minecraft.world.biome.Biome;
 import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
 import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 import org.quiltmc.qsl.tag.api.TagRegistry;
-
 
 public final class TagsTestMod implements ServerLifecycleEvents.Ready, CommandRegistrationCallback {
 	public static final String NAMESPACE = "quilt_tags_testmod";
@@ -55,7 +55,7 @@ public final class TagsTestMod implements ServerLifecycleEvents.Ready, CommandRe
 	}
 
 	@Override
-	public void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, boolean integrated, boolean dedicated) {
+	public void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, CommandBuildContext buildContext, CommandManager.RegistrationEnvironment environment) {
 		dispatcher.register(literal("biome_tag_test")
 				.then(literal("registry").executes(context -> {
 					displayTag(TEST_BIOME_TAG, context.getSource().getRegistryManager().get(Registry.BIOME_KEY),
@@ -66,7 +66,7 @@ public final class TagsTestMod implements ServerLifecycleEvents.Ready, CommandRe
 				.then(literal("list_all").executes(context -> {
 					TagRegistry.stream(Registry.BIOME_KEY).forEach((entry) -> {
 						displayTag(
-								entry.key(), entry.tag(),
+								entry.key(), entry.values(),
 								context.getSource().getRegistryManager().get(Registry.BIOME_KEY),
 								msg -> context.getSource().sendFeedback(msg, false)
 						);
@@ -80,7 +80,7 @@ public final class TagsTestMod implements ServerLifecycleEvents.Ready, CommandRe
 	@Override
 	public void readyServer(MinecraftServer server) {
 		// Asserts the existence of the tag.
-		LOGGER.info("Tag content: {}", TagRegistry.getTag(TEST_BLOCK_TAG).values().stream()
+		LOGGER.info("Tag content: {}", TagRegistry.getTag(TEST_BLOCK_TAG).stream()
 				.map(Holder::value)
 				.map(Registry.BLOCK::getId)
 				.map(Identifier::toString)
@@ -96,13 +96,13 @@ public final class TagsTestMod implements ServerLifecycleEvents.Ready, CommandRe
 		displayTag(tag, TagRegistry.getTag(tag), registry, feedbackConsumer);
 	}
 
-	private static <T> void displayTag(TagKey<T> tagKey, Tag<Holder<T>> tag, Registry<T> registry, Consumer<Text> feedbackConsumer) {
-		feedbackConsumer.accept(new LiteralText(tagKey.id() + ":").formatted(Formatting.GREEN));
+	private static <T> void displayTag(TagKey<T> tagKey, Collection<Holder<T>> tag, Registry<T> registry, Consumer<Text> feedbackConsumer) {
+		feedbackConsumer.accept(Text.literal(tagKey.id() + ":").formatted(Formatting.GREEN));
 
-		for (var value : tag.values()) {
+		for (var value : tag) {
 			Identifier id = registry.getId(value.value());
-			feedbackConsumer.accept(new LiteralText(" - ")
-					.append(new LiteralText(id.toString()).formatted(Formatting.GOLD)));
+			feedbackConsumer.accept(Text.literal(" - ")
+					.append(Text.literal(id.toString()).formatted(Formatting.GOLD)));
 		}
 	}
 }

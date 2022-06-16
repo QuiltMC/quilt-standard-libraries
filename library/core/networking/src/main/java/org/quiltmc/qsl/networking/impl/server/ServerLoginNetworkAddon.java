@@ -129,7 +129,7 @@ public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLo
 	 */
 	public boolean handle(LoginQueryResponseC2SPacket packet) {
 		var access = (LoginQueryResponseC2SPacketAccessor) packet;
-		return handle(access.getQueryId(), access.getResponse());
+		return this.handle(access.getQueryId(), access.getResponse());
 	}
 
 	private boolean handle(int queryId, @Nullable PacketByteBuf originalBuf) {

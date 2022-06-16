@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.tag.mixin.client;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -26,7 +27,6 @@ import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-import net.minecraft.tag.Tag;
 import net.minecraft.tag.TagGroupLoader;
 import net.minecraft.util.Identifier;
 
@@ -34,9 +34,9 @@ import net.minecraft.util.Identifier;
 @Mixin(TagGroupLoader.class)
 public interface TagGroupLoaderAccessor {
 	@Invoker
-	static void invokeVisitDependenciesAndEntry(Map<Identifier, Tag.Builder> map,
+	static void invokeVisitDependenciesAndEntry(Map<Identifier, List<TagGroupLoader.EntryWithSource>> map,
 			Multimap<Identifier, Identifier> tagEntries, Set<Identifier> set,
-			Identifier identifier, BiConsumer<Identifier, Tag.Builder> consumer) {
+			Identifier identifier, BiConsumer<Identifier, List<TagGroupLoader.EntryWithSource>> consumer) {
 		throw new IllegalStateException("Invoker injection failed.");
 	}
 

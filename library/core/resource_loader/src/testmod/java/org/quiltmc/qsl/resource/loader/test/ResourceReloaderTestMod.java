@@ -91,6 +91,12 @@ public class ResourceReloaderTestMod implements ModInitializer {
 				clientResources = true;
 
 				LOGGER.info("First client resource reloader is called.");
+
+				if (!ResourceLoaderTestMod.loadingClientResources) {
+					LOGGER.error("Client resource start reload did not trigger!");
+				} else {
+					ResourceLoaderTestMod.loadingClientResources = false;
+				}
 			}
 		});
 	}
@@ -128,6 +134,12 @@ public class ResourceReloaderTestMod implements ModInitializer {
 				serverResources = true;
 
 				LOGGER.info("First server resource reloader is called.");
+
+				if (!ResourceLoaderTestMod.loadingServerResources) {
+					LOGGER.error("Server resource start reload did not trigger!");
+				} else {
+					ResourceLoaderTestMod.loadingServerResources = false;
+				}
 			}
 		});
 	}

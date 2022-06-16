@@ -23,15 +23,17 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.text.Text;
+import net.minecraft.unmapped.C_byvkekfd;
 
 import org.quiltmc.qsl.command.impl.client.ClientCommandInternals;
 
 @Mixin(ClientPlayerEntity.class)
 abstract class ClientPlayerEntityMixin {
-	@Inject(method = "sendChatMessage", at = @At("HEAD"), cancellable = true)
-	private void onSendChatMessage(String message, CallbackInfo info) {
-		if (ClientCommandInternals.executeCommand(message)) {
-			info.cancel();
+	@Inject(method = "method_43787", at = @At("HEAD"), cancellable = true)
+	private void onSendChatMessage(C_byvkekfd c_byvkekfd, String message, Text text, CallbackInfo ci) {
+		if (ClientCommandInternals.executeCommand(message, true)) {
+			ci.cancel();
 		}
 	}
 }

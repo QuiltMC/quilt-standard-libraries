@@ -5,10 +5,8 @@
   "mixins": [
     "DynamicRegistryManagerAccessor",
     "SimpleRegistryMixin",
-    "TagBuilderMixin",
     "TagKeyAccessor",
-    "TagKeyMixin",
-    "TagMixin"
+    "TagKeyMixin"
   ],
   "client": [
     "client.ClientPlayNetworkHandlerMixin",

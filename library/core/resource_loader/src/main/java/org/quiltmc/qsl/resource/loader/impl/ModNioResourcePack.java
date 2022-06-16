@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -39,7 +40,6 @@ import org.slf4j.Logger;
 
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.AbstractFileResourcePack;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
@@ -81,7 +81,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 			ResourcePackActivationType activationType, Path path, ResourceType type, @Nullable AutoCloseable closer) {
 		super(null);
 		this.name = name == null ? ModResourcePackUtil.getName(modInfo) : name;
-		this.displayName = displayName == null ? new LiteralText(name) : displayName;
+		this.displayName = displayName == null ? Text.of(name) : displayName;
 		this.modInfo = modInfo;
 		this.basePath = path.toAbsolutePath().normalize();
 		this.type = type;
@@ -134,8 +134,8 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 	}
 
 	@Override
-	public Collection<Identifier> findResources(ResourceType type, String namespace, String startingPath, int depth,
-			Predicate<String> pathFilter) {
+	public Collection<Identifier> findResources(ResourceType type, String namespace, String startingPath,
+			Predicate<Identifier> pathFilter) {
 		var ids = new ArrayList<Identifier>();
 		String nioPath = startingPath.replace("/", separator);
 
@@ -146,21 +146,25 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 
 			if (Files.exists(searchPath)) {
 				try {
-					Files.walk(searchPath, depth)
-							.filter(Files::isRegularFile)
-							.filter((p) -> {
-								String filename = p.getFileName().toString();
-								return !filename.endsWith(".mcmeta") && pathFilter.test(filename);
-							})
-							.map(namespacePath::relativize)
-							.map((p) -> p.toString().replace(separator, "/"))
-							.forEach((s) -> {
+					Files.walk(searchPath)
+							.filter(p -> Files.isRegularFile(p) && !p.getFileName().endsWith(".mcmeta"))
+							.map(p -> {
 								try {
-									ids.add(new Identifier(namespace, s));
+									var id = new Identifier(namespace,
+											namespacePath.relativize(p).toString().replace(separator, "/")
+									);
+
+									if (pathFilter.test(id)) {
+										return id;
+									}
 								} catch (InvalidIdentifierException e) {
 									LOGGER.error(e.getMessage());
 								}
-							});
+
+								return null;
+							})
+							.filter(Objects::nonNull)
+							.forEach(ids::add);
 				} catch (IOException e) {
 					LOGGER.warn("findResources at " + startingPath + " in namespace " + namespace
 							+ ", mod " + this.modInfo.id() + " failed!", e);

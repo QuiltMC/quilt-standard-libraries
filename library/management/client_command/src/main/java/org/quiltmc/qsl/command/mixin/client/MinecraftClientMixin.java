@@ -24,6 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
+import net.minecraft.server.command.CommandManager;
 
 import org.quiltmc.qsl.command.impl.client.ClientCommandInternals;
 
@@ -31,6 +32,6 @@ import org.quiltmc.qsl.command.impl.client.ClientCommandInternals;
 abstract class MinecraftClientMixin {
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onConstruct(RunArgs args, CallbackInfo info) {
-		ClientCommandInternals.initialize();
+		ClientCommandInternals.initialize(null, CommandManager.RegistrationEnvironment.ALL);
 	}
 }

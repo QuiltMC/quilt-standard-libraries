@@ -21,8 +21,12 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 import com.mojang.brigadier.CommandDispatcher;
 
+import net.minecraft.command.CommandBuildContext;
+import net.minecraft.command.argument.ItemStackArgument;
+import net.minecraft.command.argument.ItemStackArgumentType;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 import org.quiltmc.loader.api.QuiltLoader;
@@ -33,18 +37,18 @@ public class CommandApiTest implements CommandRegistrationCallback {
 	private static final EnumArgumentType ENUM_ARGUMENT_TYPE = EnumArgumentType.enumConstant(TestEnum.class);
 
 	@Override
-	public void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, boolean integrated, boolean dedicated) {
-		if (dedicated) {
+	public void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, CommandBuildContext context, CommandManager.RegistrationEnvironment environment) {
+		if (environment.isDedicated()) {
 			dispatcher.register(literal("ping")
 					.executes(ctx -> {
-						ctx.getSource().sendFeedback(new LiteralText("pong!"), false);
+						ctx.getSource().sendFeedback(Text.literal("pong!"), false);
 						return 0;
 					})
 			);
-		} else if (integrated) {
+		} else if (environment.isIntegrated()) {
 			dispatcher.register(literal("singleplayer_only")
 					.executes(ctx -> {
-						ctx.getSource().sendFeedback(new LiteralText("This command should only exist in singleplayer"), false);
+						ctx.getSource().sendFeedback(Text.literal("This command should only exist in singleplayer"), false);
 						return 0;
 					})
 			);
@@ -53,7 +57,7 @@ public class CommandApiTest implements CommandRegistrationCallback {
 		dispatcher.register(literal("quilt")
 				.executes(ctx -> {
 					//noinspection OptionalGetWithoutIsPresent
-					ctx.getSource().sendFeedback(new LiteralText("Quilt Version: " + QuiltLoader.getModContainer("quilt_base").get().metadata().version().raw()), false);
+					ctx.getSource().sendFeedback(Text.literal("Quilt Version: " + QuiltLoader.getModContainer("quilt_base").get().metadata().version().raw()), false);
 					return 0;
 				})
 				.then(literal("enum_arg")
@@ -61,12 +65,23 @@ public class CommandApiTest implements CommandRegistrationCallback {
 								.executes(ctx -> {
 									var arg = EnumArgumentType.getEnumConstant(ctx, "enum", TestEnum.class);
 									ctx.getSource().sendFeedback(
-											new LiteralText("Got: ").append(new LiteralText(arg.toString()).formatted(Formatting.GOLD)),
+											Text.literal("Got: ").append(Text.literal(arg.toString()).formatted(Formatting.GOLD)),
 											false
 									);
 									return 0;
 								})
 						)
+				)
+		);
+
+		dispatcher.register(literal("test_with_arg")
+				.then(literal("item")
+						.then(argument("arg", ItemStackArgumentType.itemStack(context))
+								.executes(ctx -> {
+									ItemStackArgument arg = ItemStackArgumentType.getItemStackArgument(ctx, "arg");
+									ctx.getSource().sendFeedback(Text.literal("Ooohh, you have chosen: " + arg.getItem() + "!"), false);
+									return 0;
+								}))
 				)
 		);
 	}

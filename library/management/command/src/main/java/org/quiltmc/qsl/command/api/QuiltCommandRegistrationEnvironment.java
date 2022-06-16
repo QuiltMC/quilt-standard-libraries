@@ -14,22 +14,28 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.tag.api;
+package org.quiltmc.qsl.command.api;
 
-import net.minecraft.tag.Tag;
+import org.jetbrains.annotations.ApiStatus;
+
+import net.minecraft.server.command.CommandManager;
 
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 /**
- * Interface implemented by {@link Tag} instances when QSL is present.
+ * Represents an extension to the {@link CommandManager.RegistrationEnvironment} enum,
+ * and is automatically injected into it.
  */
-@InjectedInterface(Tag.class)
-public interface QuiltTag {
+@ApiStatus.NonExtendable
+@InjectedInterface(CommandManager.RegistrationEnvironment.class)
+public interface QuiltCommandRegistrationEnvironment {
 	/**
-	 * {@return {@code true} if the given tag has been "replaced" by a data pack at least once}
-	 * <p>
-	 * The use case for such method is to be able to provide vanilla behaviour compatibility in a hook,
-	 * but also allow overriding it for "total conversion" data-packs.
+	 * {@return {@code true} if the environment corresponds to the dedicated server, otherwise {@code false}}
 	 */
-	boolean hasBeenReplaced();
+	boolean isDedicated();
+
+	/**
+	 * {@return {@code true} if the environment corresponds to single-player, otherwise {@code false}}
+	 */
+	boolean isIntegrated();
 }

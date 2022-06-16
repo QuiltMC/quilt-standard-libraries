@@ -26,4 +26,8 @@ qslModule {
 			values = ["org.quiltmc.qsl.command.impl.client.ClientInitializer"]
 		}
 	}
+
+	injectedInterface("net/minecraft/class_2170\u0024class_5364") {
+		values = ["org/quiltmc/qsl/command/api/QuiltCommandRegistrationEnvironment"]
+	}
 }

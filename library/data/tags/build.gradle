@@ -27,12 +27,6 @@ qslModule {
 			values = ["org.quiltmc.qsl.tag.impl.client.ClientQuiltTagsMod"]
 		}
 	}
-	injectedInterface("net/minecraft/class_3494") {
-		values = ["org/quiltmc/qsl/tag/api/QuiltTag"]
-	}
-	injectedInterface("net/minecraft/class_3494\$class_3495") {
-		values = ["org/quiltmc/qsl/tag/api/QuiltTagBuilder"]
-	}
 	injectedInterface("net/minecraft/class_6862") {
 		values = ["org/quiltmc/qsl/tag/api/QuiltTagKey"]
 	}

@@ -1,0 +1,43 @@
+{
+  "feature": {
+    "type": "minecraft:block_pile",
+    "config": {
+      "state_provider": {
+        "type": "minecraft:weighted_state_provider",
+        "entries": [
+          {
+            "data": {
+              "Name": "minecraft:pink_concrete"
+            },
+            "weight": 2
+          },
+          {
+            "data": {
+              "Name": "minecraft:light_blue_concrete"
+            },
+            "weight": 2
+          },
+          {
+            "data": {
+              "Name": "minecraft:white_concrete"
+            },
+            "weight": 1
+          }
+        ]
+      }
+    }
+  },
+  "placement": [
+    {
+      "type": "minecraft:count",
+      "count": 2
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:heightmap",
+      "heightmap": "WORLD_SURFACE"
+    }
+  ]
+}

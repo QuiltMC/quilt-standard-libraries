@@ -21,6 +21,9 @@ import net.minecraft.util.Identifier;
 public final class ResourceLoaderTestMod {
 	public static final String NAMESPACE = "quilt_resource_loader_testmod";
 
+	public static boolean loadingClientResources = false;
+	public static boolean loadingServerResources = false;
+
 	public static Identifier id(String path) {
 		return new Identifier(NAMESPACE, path);
 	}

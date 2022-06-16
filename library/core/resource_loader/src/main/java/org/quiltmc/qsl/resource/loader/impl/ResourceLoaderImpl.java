@@ -17,8 +17,6 @@
 
 package org.quiltmc.qsl.resource.loader.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,8 +39,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourceImpl;
+import net.minecraft.resource.NamespaceResourceManager;
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.AbstractFileResourcePack;
@@ -50,7 +47,6 @@ import net.minecraft.resource.pack.DefaultResourcePack;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.ResourcePackProfile;
 import net.minecraft.resource.pack.ResourcePackProvider;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -62,6 +58,7 @@ import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
 import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;
 import org.quiltmc.qsl.resource.loader.mixin.NamespaceResourceManagerAccessor;
+import org.quiltmc.qsl.resource.loader.mixin.NamespaceResourceManagerMixin;
 
 /**
  * Represents the implementation of the resource loader.
@@ -244,8 +241,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	}
 
 	public static void appendResourcesFromGroup(NamespaceResourceManagerAccessor manager, Identifier id,
-			GroupResourcePack groupResourcePack, List<Resource> resources)
-			throws IOException {
+			GroupResourcePack groupResourcePack, List<NamespaceResourceManager.ResourceEntry> resources) {
 		var packs = groupResourcePack.getPacks(id.getNamespace());
 
 		if (packs == null) {
@@ -256,9 +252,9 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 
 		for (var pack : packs) {
 			if (pack.contains(manager.getType(), id)) {
-				InputStream metadataInputStream = pack.contains(manager.getType(), metadataId)
-						? manager.invokeOpen(metadataId, pack) : null;
-				resources.add(new ResourceImpl(pack.getName(), id, manager.invokeOpen(id, pack), metadataInputStream));
+				var casted = (NamespaceResourceManager) manager;
+				var resource = NamespaceResourceManagerMixin.ResourceEntryAccessor.create(casted, id, metadataId, pack);
+				resources.add(resource);
 			}
 		}
 	}
@@ -266,7 +262,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	/* Built-in resource packs */
 
 	public static Text getBuiltinPackDisplayNameFromId(Identifier id) {
-		return new LiteralText(id.getNamespace() + "/" + id.getPath());
+		return Text.of(id.getNamespace() + "/" + id.getPath());
 	}
 
 	/**
