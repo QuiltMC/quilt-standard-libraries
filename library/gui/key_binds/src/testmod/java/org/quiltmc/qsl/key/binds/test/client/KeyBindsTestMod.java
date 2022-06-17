@@ -16,15 +16,16 @@
 
 package org.quiltmc.qsl.key.binds.test.client;
 
-import com.mojang.blaze3d.platform.InputUtil;
 import org.lwjgl.glfw.GLFW;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import com.mojang.blaze3d.platform.InputUtil;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBind;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
@@ -59,27 +60,27 @@ public class KeyBindsTestMod implements ClientModInitializer, ClientTickEvents.S
 		if (client.player == null) return;
 
 		if (DISABLE_KEY_BIND_KEY.wasPressed()) {
-			client.player.sendMessage(new LiteralText("The clap key has disappeared!"), true);
+			client.player.sendMessage(Text.literal("The clap key has disappeared!"), true);
 			CLAP_KEY.disable();
 			client.player.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 1.5F, 1.5F);
 		}
 
 		if (ENABLE_KEY_BIND_KEY.wasPressed()) {
-			client.player.sendMessage(new LiteralText("The clap key is back!"), true);
+			client.player.sendMessage(Text.literal("The clap key is back!"), true);
 			CLAP_KEY.enable();
 			client.player.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 1.5F, 1.5F);
 		}
 
 		if (CONFLICT_TEST_KEY.wasPressed()) {
-			client.player.sendMessage(new LiteralText("This is the conflict key being pressed"), false);
+			client.player.sendMessage(Text.literal("This is the conflict key being pressed"), false);
 		}
 
 		if (DISABLED_CONFLICT_TEST_KEY.wasPressed()) {
-			client.player.sendMessage(new LiteralText("I'm not supposed to do things! Why am I enabled?"), false);
+			client.player.sendMessage(Text.literal("I'm not supposed to do things! Why am I enabled?"), false);
 		}
 
 		if (CLAP_KEY.wasPressed()) {
-			client.player.sendMessage(new LiteralText("*clap*"), true);
+			client.player.sendMessage(Text.literal("*clap*"), true);
 			client.player.playSound(SoundEvents.ENTITY_GENERIC_SMALL_FALL, 1.5F, 1.5F);
 		}
 	}

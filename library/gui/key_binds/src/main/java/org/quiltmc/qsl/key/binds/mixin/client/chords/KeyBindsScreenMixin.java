@@ -19,7 +19,6 @@ package org.quiltmc.qsl.key.binds.mixin.client.chords;
 import java.util.List;
 import java.util.SortedMap;
 
-import com.mojang.blaze3d.platform.InputUtil;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -30,6 +29,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import it.unimi.dsi.fastutil.objects.Object2BooleanAVLTreeMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
+import com.mojang.blaze3d.platform.InputUtil;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.GameOptionsScreen;
@@ -119,8 +120,7 @@ public abstract class KeyBindsScreenMixin extends GameOptionsScreen {
 				}
 
 				this.focusedKey.setBoundChord(new KeyChord(map));
-				QuiltKeyBindsConfigManager.populateConfig();
-				QuiltKeyBindsConfigManager.saveConfig();
+				QuiltKeyBindsConfigManager.updateConfig(false);
 			}
 
 			quilt$focusedProtoChord.clear();
@@ -146,8 +146,7 @@ public abstract class KeyBindsScreenMixin extends GameOptionsScreen {
 				}
 
 				this.focusedKey.setBoundChord(new KeyChord(map));
-				QuiltKeyBindsConfigManager.populateConfig();
-				QuiltKeyBindsConfigManager.saveConfig();
+				QuiltKeyBindsConfigManager.updateConfig(false);
 			}
 
 			quilt$focusedProtoChord.clear();

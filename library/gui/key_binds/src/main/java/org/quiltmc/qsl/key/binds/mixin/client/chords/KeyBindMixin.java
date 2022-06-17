@@ -20,8 +20,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedMap;
 
-import com.mojang.blaze3d.platform.InputUtil;
-import com.mojang.blaze3d.platform.InputUtil.Key;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -34,9 +32,11 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import it.unimi.dsi.fastutil.objects.Object2BooleanAVLTreeMap;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 
+import com.mojang.blaze3d.platform.InputUtil;
+import com.mojang.blaze3d.platform.InputUtil.Key;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBind;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
@@ -173,7 +173,7 @@ public class KeyBindMixin implements ChordedKeyBind {
 	@Inject(at = @At("HEAD"), method = "getKeyName", cancellable = true)
 	private void useChordName(CallbackInfoReturnable<Text> cir) {
 		if (this.quilt$boundChord != null) {
-			MutableText text = LiteralText.EMPTY.shallowCopy();
+			MutableText text = Text.empty();
 			for (InputUtil.Key key : this.quilt$boundChord.keys.keySet()) {
 				if (text.getSiblings().size() != 0) {
 					text.append(" + ");

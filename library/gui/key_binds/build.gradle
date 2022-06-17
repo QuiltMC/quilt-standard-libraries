@@ -18,8 +18,8 @@ qslModule {
 	injectedInterface("net/minecraft/class_304") {
 		values = [
 			"org/quiltmc/qsl/key/binds/api/ChordedKeyBind",
-			"org/quiltmc/qsl/key/binds/api/ToggleableKeyBind",
-			"org/quiltmc/qsl/key/binds/api/QuiltKeyBind"
+			"org/quiltmc/qsl/key/binds/api/QuiltKeyBind",
+			"org/quiltmc/qsl/key/binds/api/ToggleableKeyBind"
 		]
 	}
 	clientOnly()

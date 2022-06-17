@@ -16,9 +16,10 @@
 
 package org.quiltmc.qsl.key.binds.api;
 
-import com.mojang.blaze3d.platform.InputUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
+import com.mojang.blaze3d.platform.InputUtil;
 
 import net.minecraft.client.option.KeyBind;
 
