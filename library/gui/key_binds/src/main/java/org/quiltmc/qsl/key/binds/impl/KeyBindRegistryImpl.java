@@ -18,17 +18,14 @@ package org.quiltmc.qsl.key.binds.impl;
 
 import java.util.List;
 
+import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import net.minecraft.client.option.KeyBind;
-
-import org.quiltmc.qsl.key.binds.impl.config.QuiltKeyBindsConfigManager;
 
 @Environment(EnvType.CLIENT)
 @ApiStatus.Internal
@@ -69,7 +66,7 @@ public class KeyBindRegistryImpl {
 			keyBindManager.addModdedKeyBinds();
 		}
 
-		QuiltKeyBindsConfigManager.saveConfig();
+		//QuiltKeyBindsConfigManager.CONFIG.save();
 	}
 
 	public static KeyBind[] getKeyBinds() {

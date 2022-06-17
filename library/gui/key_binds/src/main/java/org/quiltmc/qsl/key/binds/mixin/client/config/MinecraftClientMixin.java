@@ -25,6 +25,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
 import net.minecraft.client.option.KeyBind;
 
+import org.quiltmc.qsl.key.binds.impl.config.QuiltKeyBindsConfig;
 import org.quiltmc.qsl.key.binds.impl.config.QuiltKeyBindsConfigManager;
 
 @Mixin(MinecraftClient.class)
@@ -35,7 +36,8 @@ public abstract class MinecraftClientMixin {
 			method = "<init>"
 	)
 	private void handleQuiltKeyBindsConfig(RunArgs runArgs, CallbackInfo ci) {
-		QuiltKeyBindsConfigManager.loadConfig();
+		new QuiltKeyBindsConfig();
+		QuiltKeyBindsConfigManager.updateConfig(true);
 		KeyBind.updateBoundKeys();
 	}
 }

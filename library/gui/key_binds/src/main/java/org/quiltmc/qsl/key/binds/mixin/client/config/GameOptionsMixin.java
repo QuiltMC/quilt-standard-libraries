@@ -16,12 +16,13 @@
 
 package org.quiltmc.qsl.key.binds.mixin.client.config;
 
-import com.mojang.blaze3d.platform.InputUtil;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import com.mojang.blaze3d.platform.InputUtil;
 
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBind;
@@ -38,8 +39,7 @@ public abstract class GameOptionsMixin {
 			method = "setKeyCode"
 	)
 	private void writeToKeyBindConfig(KeyBind key, InputUtil.Key code, CallbackInfo ci) {
-		QuiltKeyBindsConfigManager.populateConfig();
-		QuiltKeyBindsConfigManager.saveConfig();
+		QuiltKeyBindsConfigManager.updateConfig(false);
 	}
 
 	@Redirect(

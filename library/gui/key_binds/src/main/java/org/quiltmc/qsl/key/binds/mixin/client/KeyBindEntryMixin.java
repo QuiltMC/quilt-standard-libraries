@@ -18,7 +18,6 @@ package org.quiltmc.qsl.key.binds.mixin.client;
 
 import java.util.List;
 
-import com.mojang.blaze3d.platform.InputUtil;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -33,15 +32,15 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import com.mojang.blaze3d.platform.InputUtil;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.option.KeyBindListWidget;
 import net.minecraft.client.gui.widget.option.KeyBindListWidget.KeyBindEntry;
 import net.minecraft.client.option.KeyBind;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 
 import org.quiltmc.qsl.key.binds.api.KeyBindRegistry;
@@ -116,10 +115,10 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 				for (KeyBind otherKey : KeyBindRegistryImpl.getKeyBinds()) {
 					if (otherKey != this.key && this.key.keyEquals(otherKey)) {
 						if (this.quilt$conflictTooltips.isEmpty()) {
-							this.quilt$conflictTooltips.add(new TranslatableText("key.qsl.key_conflict.tooltip").formatted(Formatting.RED));
+							this.quilt$conflictTooltips.add(Text.translatable("key.qsl.key_conflict.tooltip").formatted(Formatting.RED));
 						}
 
-						this.quilt$conflictTooltips.add(new TranslatableText("key.qsl.key_conflict.tooltip.entry", new TranslatableText(otherKey.getTranslationKey())).formatted(Formatting.RED));
+						this.quilt$conflictTooltips.add(Text.translatable("key.qsl.key_conflict.tooltip.entry", Text.translatable(otherKey.getTranslationKey())).formatted(Formatting.RED));
 					}
 				}
 			}
@@ -178,7 +177,7 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 				protoText += "...";
 			}
 
-			this.bindButton.setMessage(new LiteralText(protoText));
+			this.bindButton.setMessage(Text.literal(protoText));
 		}
 	}
 
@@ -191,7 +190,7 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 			)
 	)
 	private Text addConflictIndicator(Text originalText) {
-		return new TranslatableText("key.qsl.key_conflict.indicator", originalText).formatted(Formatting.RED);
+		return Text.translatable("key.qsl.key_conflict.indicator", originalText).formatted(Formatting.RED);
 	}
 
 	@Override
