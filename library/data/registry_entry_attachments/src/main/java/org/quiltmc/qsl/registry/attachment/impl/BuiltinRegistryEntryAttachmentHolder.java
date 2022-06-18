@@ -45,13 +45,12 @@ public final class BuiltinRegistryEntryAttachmentHolder<R> extends RegistryEntry
 	}
 
 	public <T> void putValue(RegistryEntryAttachment<R, T> attachment, R entry, T value, int flags) {
-		this.valueTable.put(attachment, entry, value);
+		super.putValue(attachment, entry, value);
 		this.valueFlagTable.put(attachment, entry, flags);
 	}
 
 	@Override
-	public void clear() {
-		super.clear();
-		this.valueFlagTable.clear();
+	public <T> void putValue(RegistryEntryAttachment<R, T> attachment, R entry, T value) {
+		this.putValue(attachment, entry, value, FLAG_NONE);
 	}
 }

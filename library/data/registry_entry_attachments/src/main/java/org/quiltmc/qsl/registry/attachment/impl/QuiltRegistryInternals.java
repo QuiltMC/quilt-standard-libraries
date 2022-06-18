@@ -38,7 +38,7 @@ public interface QuiltRegistryInternals<R> {
 
 	void quilt$setBuiltinAttachmentHolder(BuiltinRegistryEntryAttachmentHolder<R> holder);
 
-	RegistryEntryAttachmentHolder<R> quilt$getDataAttachmentHolder();
+	DataRegistryEntryAttachmentHolder<R> quilt$getDataAttachmentHolder();
 
-	void quilt$setDataAttachmentHolder(RegistryEntryAttachmentHolder<R> holder);
+	void quilt$setDataAttachmentHolder(DataRegistryEntryAttachmentHolder<R> holder);
 }

@@ -175,10 +175,11 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 
 		@SuppressWarnings("unchecked")
 		public void apply(Profiler profiler) {
-			profiler.push(id + "/clear_attachments");
+			profiler.push(id + "/prepare_attachments");
 
 			for (var entry : Registry.REGISTRIES.getEntries()) {
-				RegistryEntryAttachmentHolder.getData(entry.getValue()).clear();
+				RegistryEntryAttachmentHolder.getData(entry.getValue())
+						.prepareReloadSource(RegistryEntryAttachmentReloader.this.source);
 			}
 
 			for (var entry : this.dicts.entrySet()) {

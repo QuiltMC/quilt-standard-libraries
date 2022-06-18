@@ -34,7 +34,7 @@ import net.minecraft.util.registry.Registry;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 @ApiStatus.Internal
-public class RegistryEntryAttachmentHolder<R> {
+public abstract class RegistryEntryAttachmentHolder<R> {
 	@SuppressWarnings("unchecked")
 	public static <R> QuiltRegistryInternals<R> getInternals(Registry<R> registry) {
 		return (QuiltRegistryInternals<R>) registry;
@@ -76,11 +76,11 @@ public class RegistryEntryAttachmentHolder<R> {
 		return holder;
 	}
 
-	public static <R> RegistryEntryAttachmentHolder<R> getData(Registry<R> registry) {
+	public static <R> DataRegistryEntryAttachmentHolder<R> getData(Registry<R> registry) {
 		var internals = getInternals(registry);
 		var holder = internals.quilt$getDataAttachmentHolder();
 		if (holder == null) {
-			internals.quilt$setDataAttachmentHolder(holder = new RegistryEntryAttachmentHolder<>());
+			internals.quilt$setDataAttachmentHolder(holder = new DataRegistryEntryAttachmentHolder<>());
 		}
 		return holder;
 	}
@@ -125,8 +125,4 @@ public class RegistryEntryAttachmentHolder<R> {
 		this.valueTagTable.put(attachment, tag, value);
 	}
 
-	public void clear() {
-		this.valueTable.clear();
-		this.valueTagTable.clear();
-	}
 }

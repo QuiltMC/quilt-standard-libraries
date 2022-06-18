@@ -29,6 +29,7 @@ import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 import org.quiltmc.qsl.registry.attachment.impl.BuiltinRegistryEntryAttachmentHolder;
+import org.quiltmc.qsl.registry.attachment.impl.DataRegistryEntryAttachmentHolder;
 import org.quiltmc.qsl.registry.attachment.impl.QuiltRegistryInternals;
 import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentHolder;
 
@@ -39,7 +40,7 @@ public abstract class RegistryMixin<R> implements QuiltRegistryInternals<R> {
 	@Unique
 	private BuiltinRegistryEntryAttachmentHolder<R> quilt$builtinAttachmentHolder;
 	@Unique
-	private RegistryEntryAttachmentHolder<R> quilt$dataAttachmentHolder;
+	private DataRegistryEntryAttachmentHolder<R> quilt$dataAttachmentHolder;
 
 	@Override
 	public void quilt$registerAttachment(RegistryEntryAttachment<R, ?> attachment) {
@@ -67,12 +68,12 @@ public abstract class RegistryMixin<R> implements QuiltRegistryInternals<R> {
 	}
 
 	@Override
-	public RegistryEntryAttachmentHolder<R> quilt$getDataAttachmentHolder() {
+	public DataRegistryEntryAttachmentHolder<R> quilt$getDataAttachmentHolder() {
 		return this.quilt$dataAttachmentHolder;
 	}
 
 	@Override
-	public void quilt$setDataAttachmentHolder(RegistryEntryAttachmentHolder<R> holder) {
+	public void quilt$setDataAttachmentHolder(DataRegistryEntryAttachmentHolder<R> holder) {
 		this.quilt$dataAttachmentHolder = holder;
 	}
 }
