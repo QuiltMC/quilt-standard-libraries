@@ -72,7 +72,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 		};
 		this.deps = switch (source) {
 			case SERVER_DATA -> Set.of(ResourceReloaderKeys.Server.TAGS);
-			case CLIENT_RESOURCES -> Set.of(new Identifier("quilt_tags", "client_only_tags"));
+			case CLIENT_RESOURCES -> Set.of();
 		};
 	}
 
@@ -133,9 +133,9 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 
 			profiler.swap(this.id + "/processing_resources{" + entry + "," + attachmentId + "}");
 
-			AttachmentDictionary<?, ?> attachAttachment = attachmentMaps.computeIfAbsent(attachment, this::createAttachmentMap);
+			AttachmentDictionary<?, ?> dict = attachmentMaps.computeIfAbsent(attachment, this::createAttachmentMap);
 			for (var resource : entry.getValue()) {
-				attachAttachment.processResource(entry.getKey(), resource);
+				dict.processResource(entry.getKey(), resource);
 			}
 		}
 	}
@@ -167,10 +167,10 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	}
 
 	protected final class LoadedData {
-		private final Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> attachmentMaps;
+		private final Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> dicts;
 
-		private LoadedData(Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> attachmentMaps) {
-			this.attachmentMaps = attachmentMaps;
+		private LoadedData(Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> dicts) {
+			this.dicts = dicts;
 		}
 
 		@SuppressWarnings("unchecked")
@@ -181,7 +181,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 				RegistryEntryAttachmentHolder.getData(entry.getValue()).clear();
 			}
 
-			for (var entry : this.attachmentMaps.entrySet()) {
+			for (var entry : this.dicts.entrySet()) {
 				profiler.swap(id + "/apply_attachment{" + entry.getKey().id() + "}");
 				applyOne((RegistryEntryAttachment<Object, Object>) entry.getKey(), (AttachmentDictionary<Object, Object>) entry.getValue());
 			}
