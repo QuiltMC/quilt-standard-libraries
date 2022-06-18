@@ -26,18 +26,18 @@ import java.util.WeakHashMap;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
+import it.unimi.dsi.fastutil.Hash;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.util.Holder;
 import net.minecraft.util.math.noise.PerlinNoiseSampler;
-import net.minecraft.util.random.LegacySimpleRandom;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeKeys;
 import net.minecraft.world.biome.source.TheEndBiomeSource;
 import net.minecraft.world.biome.source.util.MultiNoiseUtil;
-import net.minecraft.world.gen.ChunkRandom;
 
 /**
  * Internal data for modding Vanilla's {@link TheEndBiomeSource}.
@@ -95,7 +95,7 @@ public final class TheEndBiomeData {
 	}
 
 	public static Collection<Holder<Biome>> getAddedBiomes(Registry<Biome> registry) {
-		return BIOMES.stream().map(registry::method_44298).collect(Collectors.toSet());
+		return BIOMES.stream().map(registry::getHolderOrThrow).collect(Collectors.toSet());
 	}
 
 	/**
@@ -115,42 +115,43 @@ public final class TheEndBiomeData {
 		private final Map<Holder<Biome>, WeightedPicker<Holder<Biome>>> endMidlandsMap;
 		private final Map<Holder<Biome>, WeightedPicker<Holder<Biome>>> endBarrensMap;
 
-		// current seed, set from ChunkGenerator hook since it is not normally available
-		private static final ThreadLocal<Long> SEED = new ThreadLocal<>();
-
 		public Overrides(Registry<Biome> biomeRegistry) {
 			this.endMidlands = biomeRegistry.getHolderOrThrow(BiomeKeys.END_MIDLANDS);
 			this.endBarrens = biomeRegistry.getHolderOrThrow(BiomeKeys.END_BARRENS);
 			this.endHighlands = biomeRegistry.getHolderOrThrow(BiomeKeys.END_HIGHLANDS);
 
-			this.endBiomesMap = this.resolveOverrides(biomeRegistry, END_BIOMES_MAP);
-			this.endMidlandsMap = this.resolveOverrides(biomeRegistry, END_MIDLANDS_MAP);
-			this.endBarrensMap = this.resolveOverrides(biomeRegistry, END_BARRENS_MAP);
+			this.endBiomesMap = this.resolveOverrides(biomeRegistry, END_BIOMES_MAP, BiomeKeys.THE_END);
+			this.endMidlandsMap = this.resolveOverrides(biomeRegistry, END_MIDLANDS_MAP, BiomeKeys.END_MIDLANDS);
+			this.endBarrensMap = this.resolveOverrides(biomeRegistry, END_BARRENS_MAP, BiomeKeys.END_BARRENS);
 		}
 
 		// Resolves all RegistryKey instances to RegistryEntries
-		private Map<Holder<Biome>, WeightedPicker<Holder<Biome>>> resolveOverrides(Registry<Biome> biomeRegistry, Map<RegistryKey<Biome>, WeightedPicker<RegistryKey<Biome>>> overrides) {
-			var result = new IdentityHashMap<Holder<Biome>, WeightedPicker<Holder<Biome>>>(overrides.size());
+		private Map<Holder<Biome>, WeightedPicker<Holder<Biome>>> resolveOverrides(Registry<Biome> biomeRegistry, Map<RegistryKey<Biome>, WeightedPicker<RegistryKey<Biome>>> overrides, RegistryKey<Biome> vanillaKey) {
+			Map<Holder<Biome>, WeightedPicker<Holder<Biome>>> result = new Object2ObjectOpenCustomHashMap<>(overrides.size(), HolderHashStrategy.INSTANCE);
 
 			for (Map.Entry<RegistryKey<Biome>, WeightedPicker<RegistryKey<Biome>>> entry : overrides.entrySet()) {
-				result.put(biomeRegistry.getHolderOrThrow(entry.getKey()), entry.getValue().map(biomeRegistry::getHolderOrThrow));
+				var picker = entry.getValue();
+				int count = picker.getEntryCount();
+				if (count == 0 || (count == 1 && entry.getKey() == vanillaKey)) continue;
+
+				result.put(biomeRegistry.getHolderOrThrow(entry.getKey()), picker.map(biomeRegistry::getHolderOrThrow));
 			}
 
 			return result;
 		}
 
 		public Holder<Biome> pick(int x, int y, int z, MultiNoiseUtil.MultiNoiseSampler noise, Holder<Biome> vanillaBiome) {
-			PerlinNoiseSampler sampler = this.getSampler(noise);
+			var sampler = ((MultiNoiseSamplerExtensions) (Object) noise).quilt$getTheEndBiomesSampler();
 			Holder<Biome> replacementKey;
 
 			// The x and z of the entry are divided by 64 to ensure custom biomes are large enough; going larger than this]
 			// seems to make custom biomes too hard to find.
-			if (vanillaBiome == endMidlands || vanillaBiome == endBarrens) {
+			if (vanillaBiome.matches(endMidlands::isRegistryKey) || vanillaBiome.matches(endBarrens::isRegistryKey)) {
 				// Since the highlands picker is statically populated by InternalBiomeData, picker will never be null.
 				WeightedPicker<Holder<Biome>> highlandsPicker = this.endBiomesMap.get(this.endHighlands);
 				Holder<Biome> highlandsKey = highlandsPicker.pickFromNoise(sampler, x / 64.0, 0, z / 64.0);
 
-				if (vanillaBiome == endMidlands) {
+				if (vanillaBiome.matches(endMidlands::isRegistryKey)) {
 					WeightedPicker<Holder<Biome>> midlandsPicker = this.endMidlandsMap.get(highlandsKey);
 					replacementKey = (midlandsPicker == null) ? vanillaBiome : midlandsPicker.pickFromNoise(sampler, x / 64.0, 0, z / 64.0);
 				} else {
@@ -160,34 +161,32 @@ public final class TheEndBiomeData {
 			} else {
 				// Since the main island and small islands pickers are statically populated by InternalBiomeData, picker will never be null.
 				WeightedPicker<Holder<Biome>> picker = this.endBiomesMap.get(vanillaBiome);
-				replacementKey = (picker == null) ? vanillaBiome : picker.pickFromNoise(sampler, x / 64.0, 0, z / 64.0);
+				int count = picker.getEntryCount();
+				boolean useVanilla = picker == null || (count == 0 || (count == 1 && vanillaBiome.matches(endHighlands::isRegistryKey)));
+				replacementKey = useVanilla ? vanillaBiome : picker.pickFromNoise(sampler, x / 64.0, 0, z / 64.0);
 			}
 
 			return replacementKey;
 		}
+	}
 
-		private synchronized PerlinNoiseSampler getSampler(MultiNoiseUtil.MultiNoiseSampler noise) {
-			PerlinNoiseSampler ret = this.samplers.get(noise);
-
-			if (ret == null) {
-				Long seed = Overrides.SEED.get();
-				if (seed == null) {
-					seed = ((MultiNoiseSamplerExtensions) (Object) noise).quilt$getSeed();
-
-					if (seed == null) {
-						throw new IllegalStateException("seed isn't set, ChunkGenerator hook not working?");
-					}
-				}
-
-				ret = new PerlinNoiseSampler(new ChunkRandom(new LegacySimpleRandom(seed)));
-				this.samplers.put(noise, ret);
-			}
-
-			return ret;
+	enum HolderHashStrategy implements Hash.Strategy<Holder<?>> {
+		INSTANCE;
+		@Override
+		public boolean equals(Holder<?> a, Holder<?> b) {
+			if (a == b) return true;
+			if (a == null || b == null) return false;
+			if (a.getKind() != b.getKind()) return false;
+			// This Optional#get is safe - if a has key, b should also have key
+			// given a.getType() != b.getType() check above
+			// noinspection OptionalGetWithoutIsPresent
+			return a.unwrap().map(key -> b.getKey().get() == key, b.value()::equals);
 		}
 
-		public static void setSeed(long seed) {
-			Overrides.SEED.set(seed);
+		@Override
+		public int hashCode(Holder<?> a) {
+			if (a == null) return 0;
+			return a.unwrap().map(System::identityHashCode, Object::hashCode);
 		}
 	}
 }

@@ -18,6 +18,8 @@ package org.quiltmc.qsl.worldgen.biome.impl;
 
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.util.math.noise.PerlinNoiseSampler;
+
 /**
  * Extends {@link net.minecraft.world.biome.source.util.MultiNoiseUtil.MultiNoiseSampler} to hold the seed as well,
  * this allows us to reduce a lot the injections to get back the seed for {@link TheEndBiomeData}.
@@ -27,4 +29,6 @@ public interface MultiNoiseSamplerExtensions {
 	Long quilt$getSeed();
 
 	void quilt$setSeed(long seed);
+
+	PerlinNoiseSampler quilt$getTheEndBiomesSampler();
 }

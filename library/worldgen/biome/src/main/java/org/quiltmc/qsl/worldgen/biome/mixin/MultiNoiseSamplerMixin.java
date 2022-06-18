@@ -16,10 +16,14 @@
 
 package org.quiltmc.qsl.worldgen.biome.mixin;
 
+import com.google.common.base.Preconditions;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
+import net.minecraft.util.math.noise.PerlinNoiseSampler;
+import net.minecraft.util.random.LegacySimpleRandom;
 import net.minecraft.world.biome.source.util.MultiNoiseUtil;
+import net.minecraft.world.gen.ChunkRandom;
 
 import org.quiltmc.qsl.worldgen.biome.impl.MultiNoiseSamplerExtensions;
 
@@ -27,6 +31,9 @@ import org.quiltmc.qsl.worldgen.biome.impl.MultiNoiseSamplerExtensions;
 public class MultiNoiseSamplerMixin implements MultiNoiseSamplerExtensions {
 	@Unique
 	private Long quilt$seed = null;
+
+	@Unique
+	private PerlinNoiseSampler quilt$theEndBiomesSampler = null;
 
 	@Override
 	public Long quilt$getSeed() {
@@ -36,5 +43,15 @@ public class MultiNoiseSamplerMixin implements MultiNoiseSamplerExtensions {
 	@Override
 	public void quilt$setSeed(long seed) {
 		this.quilt$seed = seed;
+	}
+
+	@Override
+	public PerlinNoiseSampler quilt$getTheEndBiomesSampler() {
+		if (this.quilt$theEndBiomesSampler == null) {
+			Preconditions.checkState(quilt$seed != null, "MultiNoiseSampler doesn't have a seed set, created using different method?");
+			this.quilt$theEndBiomesSampler = new PerlinNoiseSampler(new ChunkRandom(new LegacySimpleRandom((this.quilt$seed))));
+		}
+
+		return this.quilt$theEndBiomesSampler;
 	}
 }

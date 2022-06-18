@@ -46,8 +46,8 @@ public abstract class TheEndBiomeSourceMixin extends BiomeSource {
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void init(Registry<Biome> biomeRegistry, CallbackInfo ci) {
-		this.overrides = TheEndBiomeData.createOverrides(biomeRegistry);
 		this.getBiomes().addAll(TheEndBiomeData.getAddedBiomes(biomeRegistry));
+		this.overrides = TheEndBiomeData.createOverrides(biomeRegistry);
 	}
 
 	@Inject(method = "method_38109", at = @At("RETURN"), cancellable = true)

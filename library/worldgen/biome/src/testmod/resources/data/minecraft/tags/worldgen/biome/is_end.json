@@ -3,6 +3,7 @@
   "values": [
     "quilt_biome_testmod:test_end_highlands",
     "quilt_biome_testmod:test_end_midlands",
-    "quilt_biome_testmod:test_end_barrens"
+    "quilt_biome_testmod:test_end_barrens",
+    "quilt_biome_testmod:example_biome"
   ]
 }
