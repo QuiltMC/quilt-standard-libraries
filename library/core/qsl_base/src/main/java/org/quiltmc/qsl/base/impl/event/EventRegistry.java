@@ -16,15 +16,18 @@
 
 package org.quiltmc.qsl.base.impl.event;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.QuiltLoader;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.EventAwareListener;
 import org.quiltmc.qsl.base.api.event.ListenerPhase;
@@ -32,10 +35,9 @@ import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 import org.quiltmc.qsl.base.api.event.server.DedicatedServerEventAwareListener;
 
 @ApiStatus.Internal
-public final class EventRegistry {
-	private EventRegistry() {
-		throw new UnsupportedOperationException("EventRegistry only contains static definitions.");
-	}
+public final class EventRegistry implements ModInitializer {
+	private static List<Event<?>> pendingEventsRegistration = new ArrayList<>();
+	private static boolean initialized = false;
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public static void listenAll(Object listener, Event<?>... events) {
@@ -74,10 +76,15 @@ public final class EventRegistry {
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public static <T> void register(Event<T> event) {
+		if (!initialized) {
+			pendingEventsRegistration.add(event);
+			return;
+		}
+
 		for (var target : EventSideTarget.VALUES) {
 			// Search if the callback qualifies is unique to this event.
 			if (target.listenerClass().isAssignableFrom(event.getType())) {
-				List<?> entrypoints = FabricLoader.getInstance().getEntrypoints(target.entrypointKey(), target.listenerClass());
+				List<?> entrypoints = QuiltLoader.getEntrypoints(target.entrypointKey(), target.listenerClass());
 
 				// Search for matching entrypoint.
 				for (Object entrypoint : entrypoints) {
@@ -94,6 +101,17 @@ public final class EventRegistry {
 				break;
 			}
 		}
+	}
+
+	@Override
+	public void onInitialize(ModContainer mod) {
+		initialized = true;
+
+		for (var event : pendingEventsRegistration) {
+			register(event);
+		}
+
+		pendingEventsRegistration = null;
 	}
 
 	enum EventSideTarget {

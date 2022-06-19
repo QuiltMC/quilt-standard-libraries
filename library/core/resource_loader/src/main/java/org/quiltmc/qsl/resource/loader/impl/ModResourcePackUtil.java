@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,13 @@ package org.quiltmc.qsl.resource.loader.impl;
 import java.io.InputStream;
 
 import com.google.common.base.Charsets;
-import net.fabricmc.loader.api.metadata.ModMetadata;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.resource.ResourceType;
+
+import org.quiltmc.loader.api.ModMetadata;
 
 @ApiStatus.Internal
 public final class ModResourcePackUtil {
@@ -35,7 +36,7 @@ public final class ModResourcePackUtil {
 
 	public static InputStream openDefault(ModMetadata info, ResourceType type, String filename) {
 		if ("pack.mcmeta".equals(filename)) {
-			String description = info.getName();
+			String description = info.name();
 
 			if (description == null) {
 				description = "";
@@ -53,10 +54,10 @@ public final class ModResourcePackUtil {
 	}
 
 	public static String getName(ModMetadata info) {
-		if (info.getName() != null) {
-			return info.getName();
+		if (info.name() != null) {
+			return info.name();
 		} else {
-			return "Quilt Mod \"" + info.getId() + "\"";
+			return "Quilt Mod \"" + info.id() + "\"";
 		}
 	}
 }

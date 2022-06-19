@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,8 @@ import net.minecraft.util.profiler.Profiler;
 /**
  * A simplified version of the "resource reload listener" interface, hiding the
  * peculiarities of the API.
- *
- * <p>In essence, there are two stages:
+ * <p>
+ * In essence, there are two stages:
  *
  * <ul>
  *     <li>{@linkplain #load(ResourceManager, Profiler, Executor)}: create an instance of your data object
@@ -37,18 +37,19 @@ import net.minecraft.util.profiler.Profiler;
  * to the game instance.
  * </ul>
  *
- * <p>The load stage should be self-contained as it can run on any thread! However,
+ * <p>
+ * The load stage should be self-contained as it can run on any thread! However,
  * the apply stage is guaranteed to run on the game thread.
- *
- * <p>For a fully synchronous alternative, consider using {@link SimpleSynchronousResourceReloader}.
+ * <p>
+ * For a fully synchronous alternative, consider using {@link SimpleSynchronousResourceReloader}.
  *
  * @param <T> the type for the intermediate reloading state
  */
 public interface SimpleResourceReloader<T> extends IdentifiableResourceReloader {
 	@Override
 	default CompletableFuture<Void> reload(ResourceReloader.Synchronizer helper, ResourceManager manager,
-										   Profiler loadProfiler, Profiler applyProfiler,
-										   Executor loadExecutor, Executor applyExecutor) {
+			Profiler loadProfiler, Profiler applyProfiler,
+			Executor loadExecutor, Executor applyExecutor) {
 		return this.load(manager, loadProfiler, loadExecutor).thenCompose(helper::whenPrepared)
 				.thenCompose(o -> this.apply(o, manager, applyProfiler, applyExecutor));
 	}

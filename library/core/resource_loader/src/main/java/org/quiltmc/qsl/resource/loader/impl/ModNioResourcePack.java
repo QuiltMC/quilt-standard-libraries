@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,49 +31,62 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.metadata.ModMetadata;
+import com.mojang.logging.LogUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import net.minecraft.resource.AbstractFileResourcePack;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.pack.AbstractFileResourcePack;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
 
+import org.quiltmc.loader.api.ModMetadata;
+import org.quiltmc.loader.api.QuiltLoader;
+import org.quiltmc.qsl.resource.loader.api.QuiltResourcePack;
 import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
+import org.quiltmc.qsl.resource.loader.mixin.IdentifierAccessor;
 
 /**
  * A NIO implementation of a mod resource pack.
  */
 @ApiStatus.Internal
-public class ModNioResourcePack extends AbstractFileResourcePack {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ModNioResourcePack.class);
-	private static final Pattern RESOURCE_PACK_PATH = Pattern.compile("[a-z0-9-_]+");
+public class ModNioResourcePack extends AbstractFileResourcePack implements QuiltResourcePack {
+	private static final Logger LOGGER = LogUtils.getLogger();
+	/* Metadata */
 	private final String name;
-	private final ModMetadata modInfo;
-	private final Path basePath;
-	private final ResourceType type;
-	private final boolean cacheable;
-	private final AutoCloseable closer;
-	private final String separator;
+	private final Text displayName;
+	final ModMetadata modInfo;
 	private final ResourcePackActivationType activationType;
+	/* Resource Stuff */
+	private final Path basePath;
+	final ResourceType type;
+	private final @Nullable AutoCloseable closer;
+	private final String separator;
+	/* Caches */
+	private final boolean cacheable;
 	private final Map<ResourceType, Set<String>> namespaces = new EnumMap<>(ResourceType.class);
 
-	public ModNioResourcePack(@Nullable String name, ModMetadata modInfo, Path path,
-	                          ResourceType type, AutoCloseable closer,
-	                          ResourcePackActivationType activationType) {
+	static ModNioResourcePack ofMod(ModMetadata modInfo, Path path, ResourceType type, @Nullable String name) {
+		return new ModNioResourcePack(
+				name, modInfo, null, ResourcePackActivationType.ALWAYS_ENABLED,
+				path, type, null
+		);
+	}
+
+	public ModNioResourcePack(@Nullable String name, ModMetadata modInfo, @Nullable Text displayName,
+			ResourcePackActivationType activationType, Path path, ResourceType type, @Nullable AutoCloseable closer) {
 		super(null);
 		this.name = name == null ? ModResourcePackUtil.getName(modInfo) : name;
+		this.displayName = displayName == null ? new LiteralText(name) : displayName;
 		this.modInfo = modInfo;
 		this.basePath = path.toAbsolutePath().normalize();
 		this.type = type;
 		// Cache ModNioResourcePacks if not in dev environment because it's not supposed to be mutable in production.
-		this.cacheable = modInfo.getId().equals("minecraft") || !FabricLoader.getInstance().isDevelopmentEnvironment();
+		this.cacheable = modInfo.id().equals("minecraft") || !QuiltLoader.isDevelopmentEnvironment();
 		this.closer = closer;
 		this.separator = basePath.getFileSystem().getSeparator();
 		this.activationType = activationType;
@@ -107,7 +120,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 
 		// FileNotFoundException is an IOException, which is properly handled by the Vanilla resource loader and
 		// prints to the logs.
-		throw new FileNotFoundException("\"" + filename + "\" in Quilt mod \"" + modInfo.getId() + "\"");
+		throw new FileNotFoundException("\"" + filename + "\" in Quilt mod \"" + modInfo.id() + "\"");
 	}
 
 	@Override
@@ -121,10 +134,10 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 	}
 
 	@Override
-	public Collection<Identifier> findResources(ResourceType type, String namespace, String path, int depth,
-	                                            Predicate<String> pathFilter) {
+	public Collection<Identifier> findResources(ResourceType type, String namespace, String startingPath, int depth,
+			Predicate<String> pathFilter) {
 		var ids = new ArrayList<Identifier>();
-		String nioPath = path.replace("/", separator);
+		String nioPath = startingPath.replace("/", separator);
 
 		Path namespacePath = this.getPath(type.getDirectory() + "/" + namespace);
 
@@ -149,8 +162,8 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 								}
 							});
 				} catch (IOException e) {
-					LOGGER.warn("findResources at " + path + " in namespace " + namespace
-							+ ", mod " + this.modInfo.getId() + " failed!", e);
+					LOGGER.warn("findResources at " + startingPath + " in namespace " + namespace
+							+ ", mod " + this.modInfo.id() + " failed!", e);
 				}
 			}
 		}
@@ -160,7 +173,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 
 	protected void warnInvalidNamespace(String s) {
 		LOGGER.warn("Quilt NioResourcePack: ignored invalid namespace: {} in mod ID {}",
-				s, this.modInfo.getId());
+				s, this.modInfo.id());
 	}
 
 	@Override
@@ -186,9 +199,10 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 				for (Path path : stream) {
 					String s = path.getFileName().toString();
 					// s may contain trailing slashes, remove them
-					s = s.replace(separator, "");
+					s = s.replace(this.separator, "");
 
-					if (RESOURCE_PACK_PATH.matcher(s).matches()) {
+					// Empty file names are disallowed anyway so no need to check for length.
+					if (IdentifierAccessor.callIsNamespaceValid(s)) {
 						namespaces.add(s);
 					} else {
 						this.warnInvalidNamespace(s);
@@ -202,7 +216,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 
 			return namespaces;
 		} catch (IOException e) {
-			LOGGER.warn("getNamespaces in mod " + modInfo.getId() + " failed!", e);
+			LOGGER.warn("getNamespaces in mod " + modInfo.id() + " failed!", e);
 			return Collections.emptySet();
 		}
 	}
@@ -218,12 +232,20 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 		}
 	}
 
-	public ResourcePackActivationType getActivationType() {
-		return this.activationType;
-	}
-
+	//region metadata
 	@Override
 	public String getName() {
 		return this.name;
 	}
+
+	@Override
+	public Text getDisplayName() {
+		return this.displayName;
+	}
+
+	@Override
+	public ResourcePackActivationType getActivationType() {
+		return this.activationType;
+	}
+	//endregion
 }

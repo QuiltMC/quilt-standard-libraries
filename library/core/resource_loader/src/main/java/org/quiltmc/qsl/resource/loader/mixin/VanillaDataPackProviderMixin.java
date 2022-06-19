@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.resource.DefaultResourcePack;
-import net.minecraft.resource.ResourcePack;
-import net.minecraft.resource.ResourcePackProfile;
-import net.minecraft.resource.VanillaDataPackProvider;
+import net.minecraft.resource.pack.DefaultResourcePack;
+import net.minecraft.resource.pack.ResourcePack;
+import net.minecraft.resource.pack.ResourcePackProfile;
+import net.minecraft.resource.pack.VanillaDataPackProvider;
 
 import org.quiltmc.qsl.resource.loader.impl.ModResourcePackProvider;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
@@ -37,7 +37,7 @@ import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 public class VanillaDataPackProviderMixin {
 	@Inject(method = "register", at = @At("RETURN"))
 	private void addBuiltinResourcePacks(Consumer<ResourcePackProfile> profileAdder, ResourcePackProfile.Factory factory,
-										 CallbackInfo ci) {
+			CallbackInfo ci) {
 		// Register built-in resource packs after vanilla built-in resource packs are registered.
 		ModResourcePackProvider.SERVER_RESOURCE_PACK_PROVIDER.register(profileAdder, factory);
 	}

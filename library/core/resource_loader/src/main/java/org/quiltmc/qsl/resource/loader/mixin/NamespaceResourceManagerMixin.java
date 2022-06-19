@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.quiltmc.qsl.resource.loader.mixin;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -29,8 +30,8 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.resource.NamespaceResourceManager;
 import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.resource.loader.api.GroupResourcePack;
@@ -61,7 +62,7 @@ public class NamespaceResourceManagerMixin {
 			method = "getAllResources",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/resource/ResourcePack;contains(Lnet/minecraft/resource/ResourceType;Lnet/minecraft/util/Identifier;)Z"
+					target = "Lnet/minecraft/resource/pack/ResourcePack;contains(Lnet/minecraft/resource/ResourceType;Lnet/minecraft/util/Identifier;)Z"
 			)
 	)
 	private boolean onResourceAdd(ResourcePack pack, ResourceType type, Identifier id) throws IOException {
@@ -72,5 +73,18 @@ public class NamespaceResourceManagerMixin {
 		}
 
 		return pack.contains(type, id);
+	}
+
+	@Inject(method = "streamResourcePacks", at = @At("RETURN"), cancellable = true)
+	private void onStreamResourcePacks(CallbackInfoReturnable<Stream<ResourcePack>> cir) {
+		cir.setReturnValue(cir.getReturnValue()
+				.mapMulti((pack, consumer) -> {
+					if (pack instanceof GroupResourcePack grouped) {
+						grouped.streamPacks().forEach(consumer);
+					} else {
+						consumer.accept(pack);
+					}
+				})
+		);
 	}
 }

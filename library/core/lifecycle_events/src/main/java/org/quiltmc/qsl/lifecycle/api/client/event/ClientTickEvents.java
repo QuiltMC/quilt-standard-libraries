@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,8 +45,8 @@ public final class ClientTickEvents {
 
 	/**
 	 * An event indicating the client has finished an iteration of the tick loop.
-	 *
-	 * <p>Since there will be a time gap before the next tick, this is a great spot to run any asynchronous operations
+	 * <p>
+	 * Since there will be a time gap before the next tick, this is a great spot to run any asynchronous operations
 	 * for the next tick.
 	 */
 	public static final Event<End> END = Event.create(End.class, callbacks -> client -> {

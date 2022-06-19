@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,6 +96,6 @@ public final class ClientResourceLoaderEvents {
 		 * @param error           present if the resource pack reload failed, otherwise {@code null}
 		 */
 		void onEndResourcePackReload(MinecraftClient client, ResourceManager resourceManager, boolean first,
-		                             @Nullable Throwable error);
+				@Nullable Throwable error);
 	}
 }

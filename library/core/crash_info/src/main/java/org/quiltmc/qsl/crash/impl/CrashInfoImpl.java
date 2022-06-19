@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,13 @@
 
 package org.quiltmc.qsl.crash.impl;
 
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
+import java.util.Comparator;
+
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.util.SystemDetails;
 
+import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.crash.api.CrashReportEvents;
 
 @ApiStatus.Internal
@@ -31,15 +32,15 @@ public final class CrashInfoImpl implements CrashReportEvents.SystemDetails {
 		details.addSection("Quilt Mods", () -> {
 			var builder = new StringBuilder();
 
-			for (ModContainer mod : FabricLoader.getInstance().getAllMods()) {
-				var metadata = mod.getMetadata();
+			QuiltLoader.getAllMods().stream().sorted(Comparator.comparing(o -> o.metadata().id())).forEach(mod -> {
+				var metadata = mod.metadata();
 
 				builder.append("\n\t\t%s: %s %s".formatted(
-						metadata.getId(),
-						metadata.getName(),
-						metadata.getVersion().getFriendlyString())
+						metadata.id(),
+						metadata.name(),
+						metadata.version().raw())
 				);
-			}
+			});
 
 			return builder.toString();
 		});

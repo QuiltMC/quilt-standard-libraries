@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,9 @@ public abstract class RenderLayersMixin {
 	private static Map<Fluid, RenderLayer> FLUIDS;
 
 	static {
-		BlockRenderLayerMapImpl.initialize(BLOCKS::put, FLUIDS::put);
+		BlockRenderLayerMapImpl.initialize(
+				(block, renderLayer) -> BLOCKS.put(block, renderLayer),
+				(fluid, renderLayer) -> FLUIDS.put(fluid, renderLayer)
+		);
 	}
 }

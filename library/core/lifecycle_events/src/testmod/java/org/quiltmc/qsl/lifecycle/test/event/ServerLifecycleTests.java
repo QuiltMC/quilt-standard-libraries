@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,13 @@
 
 package org.quiltmc.qsl.lifecycle.test.event;
 
-import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.minecraft.server.MinecraftServer;
 
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 import org.quiltmc.qsl.lifecycle.api.event.ServerWorldLoadEvents;
 
@@ -35,7 +36,7 @@ public final class ServerLifecycleTests implements ModInitializer,
 	public static final Logger LOGGER = LoggerFactory.getLogger("LifecycleEventsTest");
 
 	@Override
-	public void onInitialize() {
+	public void onInitialize(ModContainer mod) {
 		ServerWorldLoadEvents.LOAD.register((server, world) -> {
 			LOGGER.info("Loaded world " + world.getRegistryKey().getValue().toString());
 		});

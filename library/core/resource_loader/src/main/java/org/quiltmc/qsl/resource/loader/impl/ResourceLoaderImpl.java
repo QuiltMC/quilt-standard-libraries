@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,24 +34,29 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.minecraft.resource.AbstractFileResourcePack;
-import net.minecraft.resource.DefaultResourcePack;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceImpl;
-import net.minecraft.resource.ResourcePack;
-import net.minecraft.resource.ResourcePackProfile;
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.pack.AbstractFileResourcePack;
+import net.minecraft.resource.pack.DefaultResourcePack;
+import net.minecraft.resource.pack.ResourcePack;
+import net.minecraft.resource.pack.ResourcePackProfile;
+import net.minecraft.resource.pack.ResourcePackProvider;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.QuiltLoader;
+import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader;
 import org.quiltmc.qsl.resource.loader.api.GroupResourcePack;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
@@ -68,8 +73,9 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	private static final Map<String, ModNioResourcePack> SERVER_BUILTIN_RESOURCE_PACKS = new Object2ObjectOpenHashMap<>();
 	private static final Logger LOGGER = LoggerFactory.getLogger("ResourceLoader");
 
-	private final Set<Identifier> addedListenerIds = new HashSet<>();
+	private final Set<Identifier> addedListenerIds = new ObjectOpenHashSet<>();
 	private final Set<IdentifiableResourceReloader> addedReloaders = new LinkedHashSet<>();
+	final Set<ResourcePackProvider> resourcePackProfileProviders = new ObjectOpenHashSet<>();
 
 	public static ResourceLoaderImpl get(ResourceType type) {
 		return IMPL_MAP.computeIfAbsent(type, t -> new ResourceLoaderImpl());
@@ -93,6 +99,15 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 			throw new IllegalStateException(
 					"Resource reloader with previously unknown ID " + resourceReloader.getQuiltId()
 							+ " already in resource reloader set!"
+			);
+		}
+	}
+
+	@Override
+	public void registerResourcePackProfileProvider(ResourcePackProvider provider) {
+		if (!this.resourcePackProfileProviders.add(provider)) {
+			throw new IllegalStateException(
+					"Tried to register a resource pack profile provider twice!"
 			);
 		}
 	}
@@ -166,14 +181,11 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	}
 
 	public static ModNioResourcePack locateAndLoadDefaultResourcePack(ResourceType type) {
-		return new ModNioResourcePack(
-				"Default",
-				FabricLoader.getInstance().getModContainer("minecraft").map(ModContainer::getMetadata).orElseThrow(),
+		return ModNioResourcePack.ofMod(
+				QuiltLoader.getModContainer("minecraft").map(ModContainer::metadata).orElseThrow(),
 				locateDefaultResourcePack(type),
 				type,
-				() -> {
-				},
-				ResourcePackActivationType.ALWAYS_ENABLED
+				"Default"
 		);
 	}
 
@@ -187,15 +199,15 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	 * @param subPath the resource pack sub path directory in mods, may be {@code null}
 	 */
 	public static void appendModResourcePacks(List<ResourcePack> packs, ResourceType type, @Nullable String subPath) {
-		for (var container : FabricLoader.getInstance().getAllMods()) {
-			if (container.getMetadata().getType().equals("builtin")) {
+		for (var container : QuiltLoader.getAllMods()) {
+			if (container.getSourceType() == ModContainer.BasicSourceType.BUILTIN) {
 				continue;
 			}
 
-			Path path = container.getRootPath();
+			Path path = container.rootPath();
 
 			if (subPath != null) {
-				Path childPath = path.resolve(subPath.replace("/", path.getFileSystem().getSeparator())).toAbsolutePath().normalize();
+				Path childPath = container.getPath(subPath).toAbsolutePath().normalize();
 
 				if (!childPath.startsWith(path) || !Files.exists(childPath)) {
 					continue;
@@ -204,8 +216,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 				path = childPath;
 			}
 
-			var pack = new ModNioResourcePack(null, container.getMetadata(), path, type, null,
-					ResourcePackActivationType.ALWAYS_ENABLED);
+			var pack = ModNioResourcePack.ofMod(container.metadata(), path, type, null);
 
 			if (!pack.getNamespaces(type).isEmpty()) {
 				packs.add(pack);
@@ -233,7 +244,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	}
 
 	public static void appendResourcesFromGroup(NamespaceResourceManagerAccessor manager, Identifier id,
-	                                            GroupResourcePack groupResourcePack, List<Resource> resources)
+			GroupResourcePack groupResourcePack, List<Resource> resources)
 			throws IOException {
 		var packs = groupResourcePack.getPacks(id.getNamespace());
 
@@ -241,18 +252,22 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 			return;
 		}
 
-		Identifier metadataId = NamespaceResourceManagerAccessor.accessor_getMetadataPath(id);
+		Identifier metadataId = NamespaceResourceManagerAccessor.invokeGetMetadataPath(id);
 
 		for (var pack : packs) {
 			if (pack.contains(manager.getType(), id)) {
 				InputStream metadataInputStream = pack.contains(manager.getType(), metadataId)
-						? manager.accessor_open(metadataId, pack) : null;
-				resources.add(new ResourceImpl(pack.getName(), id, manager.accessor_open(id, pack), metadataInputStream));
+						? manager.invokeOpen(metadataId, pack) : null;
+				resources.add(new ResourceImpl(pack.getName(), id, manager.invokeOpen(id, pack), metadataInputStream));
 			}
 		}
 	}
 
 	/* Built-in resource packs */
+
+	public static Text getBuiltinPackDisplayNameFromId(Identifier id) {
+		return new LiteralText(id.getNamespace() + "/" + id.getPath());
+	}
 
 	/**
 	 * Registers a built-in resource pack. Internal implementation.
@@ -261,16 +276,13 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	 * @param subPath        the sub path in the mod resources
 	 * @param container      the mod container
 	 * @param activationType the activation type of the resource pack
+	 * @param displayName    the display name of the resource pack
 	 * @return {@code true} if successfully registered the resource pack, else {@code false}
-	 * @see ResourceLoader#registerBuiltinResourcePack(Identifier, ResourcePackActivationType)
-	 * @see ResourceLoader#registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType)
+	 * @see ResourceLoader#registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType, Text)
 	 */
 	public static boolean registerBuiltinResourcePack(Identifier id, String subPath, ModContainer container,
-	                                                  ResourcePackActivationType activationType) {
-		String separator = container.getRootPath().getFileSystem().getSeparator();
-		subPath = subPath.replace("/", separator);
-
-		Path resourcePackPath = container.getRootPath().resolve(subPath).toAbsolutePath().normalize();
+			ResourcePackActivationType activationType, Text displayName) {
+		Path resourcePackPath = container.getPath(subPath).toAbsolutePath().normalize();
 
 		if (!Files.exists(resourcePackPath)) {
 			return false;
@@ -279,21 +291,21 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		var name = id.getNamespace() + "/" + id.getPath();
 
 		boolean result = false;
-		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+		if (MinecraftQuiltLoader.getEnvironmentType() == EnvType.CLIENT) {
 			result = registerBuiltinResourcePack(ResourceType.CLIENT_RESOURCES,
-					newBuiltinResourcePack(container, name, resourcePackPath, ResourceType.CLIENT_RESOURCES, activationType)
+					newBuiltinResourcePack(container, name, displayName, resourcePackPath, ResourceType.CLIENT_RESOURCES, activationType)
 			);
 		}
 
 		result |= registerBuiltinResourcePack(ResourceType.SERVER_DATA,
-				newBuiltinResourcePack(container, name, resourcePackPath, ResourceType.SERVER_DATA, activationType)
+				newBuiltinResourcePack(container, name, displayName, resourcePackPath, ResourceType.SERVER_DATA, activationType)
 		);
 
 		return result;
 	}
 
 	private static boolean registerBuiltinResourcePack(ResourceType type, ModNioResourcePack pack) {
-		if (FabricLoader.getInstance().isDevelopmentEnvironment() || !pack.getNamespaces(type).isEmpty()) {
+		if (QuiltLoader.isDevelopmentEnvironment() || !pack.getNamespaces(type).isEmpty()) {
 			var builtinResourcePacks = type == ResourceType.CLIENT_RESOURCES
 					? CLIENT_BUILTIN_RESOURCE_PACKS : SERVER_BUILTIN_RESOURCE_PACKS;
 			builtinResourcePacks.put(pack.getName(), pack);
@@ -302,13 +314,12 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		return false;
 	}
 
-	private static ModNioResourcePack newBuiltinResourcePack(ModContainer container, String name, Path resourcePackPath,
-	                                                         ResourceType type, ResourcePackActivationType activationType) {
-		return new ModNioResourcePack(name, container.getMetadata(), resourcePackPath, type, null, activationType);
+	private static ModNioResourcePack newBuiltinResourcePack(ModContainer container, String name, Text displayName,
+			Path resourcePackPath, ResourceType type, ResourcePackActivationType activationType) {
+		return new ModNioResourcePack(name, container.metadata(), displayName, activationType, resourcePackPath, type, null);
 	}
 
-	public static void registerBuiltinResourcePacks(ResourceType type, Consumer<ResourcePackProfile> profileAdder,
-	                                                ResourcePackProfile.Factory factory) {
+	public static void registerBuiltinResourcePacks(ResourceType type, Consumer<ResourcePackProfile> profileAdder) {
 		var builtinPacks = type == ResourceType.CLIENT_RESOURCES
 				? CLIENT_BUILTIN_RESOURCE_PACKS : SERVER_BUILTIN_RESOURCE_PACKS;
 
@@ -319,10 +330,8 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 			// Add the built-in pack only if namespaces for the specified resource type are present.
 			if (!pack.getNamespaces(type).isEmpty()) {
 				// Make the resource pack profile for built-in pack, should never be always enabled.
-				var profile = ResourcePackProfile.of(entry.getKey(),
-						pack.getActivationType() == ResourcePackActivationType.ALWAYS_ENABLED,
-						entry::getValue, factory, ResourcePackProfile.InsertionPosition.TOP,
-						ModResourcePackProvider.PACK_SOURCE_MOD_BUILTIN);
+				var profile = QuiltBuiltinResourcePackProfile.of(pack);
+
 				if (profile != null) {
 					profileAdder.accept(profile);
 				}

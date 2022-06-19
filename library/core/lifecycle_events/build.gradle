@@ -3,10 +3,14 @@ plugins {
 }
 
 qslModule {
+	name = "Quilt Lifecycle Events"
 	moduleName = "lifecycle_events"
-	version = "1.0.0"
+	description = "Events to track the lifecycle of Minecraft."
+	id = "quilt_lifecycle_events"
 	library = "core"
-	coreDependencies([
-			"qsl_base"
-	])
+	moduleDependencies {
+		core {
+			api("qsl_base")
+		}
+	}
 }

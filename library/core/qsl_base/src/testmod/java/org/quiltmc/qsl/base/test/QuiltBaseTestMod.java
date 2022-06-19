@@ -18,10 +18,11 @@ package org.quiltmc.qsl.base.test;
 
 import java.util.List;
 
-import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.base.test.event.EventListenAllTests;
 import org.quiltmc.qsl.base.test.event.EventTests;
 
@@ -29,7 +30,7 @@ public final class QuiltBaseTestMod implements ModInitializer {
 	private static final Logger LOGGER = LoggerFactory.getLogger(QuiltBaseTestMod.class);
 
 	@Override
-	public void onInitialize() {
+	public void onInitialize(ModContainer mod) {
 		List.of(new EventTests(), new EventListenAllTests())
 				.forEach(test -> {
 					LOGGER.info("Testing " + test.getClass().getSimpleName() + "...");

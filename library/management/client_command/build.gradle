@@ -1,0 +1,21 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Client Command API"
+	moduleName = "client_command"
+	id = "quilt_client_command"
+	description = "Quilt APIs for creating and managing client-side commands."
+	library = "management"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+		}
+	}
+	clientOnly()
+
+	injectedInterface("net/minecraft/class_637") {
+		values = ["org/quiltmc/qsl/command/api/client/QuiltClientCommandSource"]
+	}
+}

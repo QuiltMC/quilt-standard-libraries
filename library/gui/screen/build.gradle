@@ -1,0 +1,16 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Screen API"
+	moduleName = "screen"
+	id = "quilt_screen"
+	description = "Hooks and APIs for manipulating screens."
+	library = "gui"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+		}
+	}
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ public abstract class EndCrystalEntityMixin extends Entity {
 
 	@Inject(method = "tick", at = @At("HEAD"))
 	void crashOnTick(CallbackInfo ci) {
-		if (world.getBlockState(getBlockPos().down()).getBlock() == Blocks.DIAMOND_BLOCK) {
+		if (this.world.getBlockState(this.getBlockPos().down()).getBlock() == Blocks.DIAMOND_BLOCK) {
 			this.kill();
 			throw new RuntimeException("Crash Test!");
 		}

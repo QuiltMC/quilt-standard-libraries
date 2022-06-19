@@ -1,144 +1,67 @@
 package qsl.internal.extension;
 
-import groovy.util.Node;
 import org.gradle.api.Action;
-import org.gradle.api.Project;
-import org.gradle.api.artifacts.Dependency;
-import org.gradle.api.model.ObjectFactory;
-import org.gradle.api.plugins.JavaPlugin;
+import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.provider.Property;
-import org.gradle.api.publish.PublicationContainer;
-import org.gradle.api.publish.PublishingExtension;
-import org.gradle.api.publish.maven.MavenPublication;
-import org.gradle.api.tasks.Input;
-import qsl.internal.GroovyXml;
-import qsl.internal.json.ModJsonObject;
-import qsl.internal.license.LicenseHeader;
-import qsl.internal.task.ApplyLicenseTask;
-import qsl.internal.task.CheckLicenseTask;
+import qsl.internal.dependency.QslLibraryDependency;
 
-import javax.inject.Inject;
-import java.util.*;
-
-public class QslModuleExtension extends QslExtension {
-	private final Property<String> library;
-	private final Property<String> moduleName;
-	private final List<Dependency> moduleDependencies;
-	private final LicenseHeader licenseHeader;
-	private Action<ModJsonObject> jsonPostProcessor;
-
-	@Inject
-	public QslModuleExtension(ObjectFactory factory, Project project) {
-		super(project);
-		this.library = factory.property(String.class);
-		this.library.finalizeValueOnRead();
-		this.moduleName = factory.property(String.class);
-		this.moduleName.finalizeValueOnRead();
-		this.moduleDependencies = new ArrayList<>();
-		this.licenseHeader = new LicenseHeader(
-				LicenseHeader.Rule.fromFile(project.getRootProject().file("codeformat/FABRIC_MODIFIED_HEADER").toPath()),
-				LicenseHeader.Rule.fromFile(project.getRootProject().file("codeformat/HEADER").toPath())
-		);
-
-		project.getTasks().register("checkLicenses", CheckLicenseTask.class, this.licenseHeader);
-		project.getTasks().register("applyLicenses", ApplyLicenseTask.class, this.licenseHeader);
-		project.getTasks().findByName("check").dependsOn("checkLicenses");
-	}
-
-	@Input
-	public Property<String> getModuleName() {
-		return this.moduleName;
-	}
-
-	public void setModuleName(String name) {
-		this.moduleName.set(name);
-	}
-
-	@Input
-	public Property<String> getLibrary() {
-		return this.library;
-	}
-
-	public void setLibrary(String name) {
-		this.library.set(name);
-	}
-
-	private Dependency getCoreModule(String module) {
-		Map<String, String> map = new LinkedHashMap<>(2);
-		map.put("path", ":core:" + module);
-		map.put("configuration", "dev");
-
-		return this.project.getDependencies().project(map);
-	}
-
-	public void coreDependencies(Iterable<String> dependencies) {
-		for (String dependency : dependencies) {
-			Dependency project = this.getCoreModule(dependency);
-			this.moduleDependencies.add(project);
-			this.project.getDependencies().add(JavaPlugin.API_CONFIGURATION_NAME, project);
-		}
-	}
-
-	public void coreTestmodDependencies(Iterable<String> dependencies) {
-		for (String dependency : dependencies) {
-			Dependency project = this.getCoreModule(dependency);
-			this.moduleDependencies.add(project);
-			this.project.getDependencies().add("testmodImplementation", project);
-		}
-	}
-
-	public void intraLibraryDependencies(Iterable<String> dependencies) {
-		this.addIntraLibraryDependencies(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME, dependencies);
-	}
-
-	public void intraLibraryTestmodDependencies(Iterable<String> dependencies) {
-		this.addIntraLibraryDependencies("testmodImplementation", dependencies);
-	}
-
-	private void addIntraLibraryDependencies(String configuration, Iterable<String> dependencies) {
-		String library = this.getLibrary().get();
-	}
-
-	public void interLibraryTestmodDependencies(String library, Iterable<String> dependencies) {
-		this.addInterLibraryDependencies("testmodImplementation", library, dependencies);
-	}
-
-	private void addInterLibraryDependencies(String configuration, String library, Iterable<String> dependencies) {
-		for (String dependency : dependencies) {
-			var map = new LinkedHashMap<String, String>(2);
-			map.put("path", ":" + library + ":" + dependency);
-			map.put("configuration", "dev");
-
-			Dependency project = this.project.getDependencies().project(map);
-			this.moduleDependencies.add(project);
-			this.project.getDependencies().add(configuration, project);
-		}
-	}
-
-	public void setupModuleDependencies() {
-		PublicationContainer publications = this.project.getExtensions().getByType(PublishingExtension.class).getPublications();
-
-		publications.named("mavenJava", MavenPublication.class, publication -> {
-			publication.pom(pom -> pom.withXml(xml -> {
-				Node pomDeps = GroovyXml.getOrCreateNode(xml.asNode(), "dependencies");
-
-				for (Dependency dependency : this.moduleDependencies) {
-					Node pomDep = pomDeps.appendNode("dependency");
-					pomDep.appendNode("groupId", dependency.getGroup());
-					pomDep.appendNode("artifactId", dependency.getName());
-					pomDep.appendNode("version", dependency.getVersion());
-					pomDep.appendNode("scope", "compile");
-				}
-			}));
-		});
-	}
+/**
+ * The definition of a QSL module within its buildscript.
+ */
+public interface QslModuleExtension {
+	/**
+	 * The name of this module, used for maven and moduleDependencies.
+	 */
+	Property<String> getModuleName();
+	Property<String> getLibrary();
 
 	/**
-	 * Registers a post-processor used to add additional data to the quilt.mod.json file for this module.
-	 *
-	 * @param postProcessor the post processor
+	 * The display name of this module, e.g. "Quilt Block Extensions API"
 	 */
-	public void modJson(Action<ModJsonObject> postProcessor) {
-		this.jsonPostProcessor = Objects.requireNonNull(postProcessor);
-	}
+	Property<String> getName();
+
+	/**
+	 * The mod id of this module. Usually "quilt" + the module name
+	 */
+	Property<String> getId();
+
+	/**
+	 * A one-sentence description of what this module does.
+	 */
+	Property<String> getDescription();
+
+	/**
+	 * Adds an access widener to this module, which must be named "$MOD_ID.accesswidener" at the root of the module's
+	 * resources directory.
+	 */
+	void accessWidener();
+
+	/**
+	 * Disables expecting "$MOD_ID.mixins.json" to be present in the resources directory
+	 */
+	void noMixins();
+
+	/**
+	 * Configures this module's dependencies on other modules.
+	 * See the "Gradle Conventions" section of CONTRIBUTING.MD for more information.
+	 */
+	void moduleDependencies(Action<NamedDomainObjectContainer<QslLibraryDependency>> action);
+
+	/**
+	 * Configures the entrypoints for this module.
+	 * See the "Gradle Conventions" section of CONTRIBUTING.MD for more information
+	 */
+	void entrypoints(Action<NamedDomainObjectContainer<QslModuleExtensionImpl.NamedWriteOnlyList>> action);
+
+	void injectedInterface(String minecraftClass, Action<QslModuleExtensionImpl.NamedWriteOnlyList> action);
+
+	/**
+	 * Makes Loader only load this mod on the physical client.
+	 */
+	void clientOnly();
+
+	/**
+	 * Makes Loader only load this mod on the physical, dedicated server. This is almost never needed.
+	 */
+	void dedicatedServerOnly();
 }

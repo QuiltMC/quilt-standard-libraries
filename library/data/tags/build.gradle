@@ -3,21 +3,37 @@ plugins {
 }
 
 qslModule {
+	name = "Quilt Tags API"
 	moduleName = "tags"
-	version = "1.0.0"
+	id = "quilt_tags"
+	description = "Tag loading and management."
 	library = "data"
-	coreDependencies([
-			"resource_loader"
-	])
-	coreTestmodDependencies([
-			"qsl_base",
-			"lifecycle_events"
-	])
-	interLibraryTestmodDependencies("command", [
-			"command"
-	])
-}
-
-loom {
-	accessWidenerPath = file("src/main/resources/quilt_tags.accesswidener")
+	moduleDependencies {
+		core {
+			api("resource_loader")
+			impl("qsl_base")
+			impl("lifecycle_events")
+		}
+		management {
+			testmodOnly("client_command")
+			testmodOnly("command")
+		}
+	}
+	entrypoints {
+		events {
+			values = ["org.quiltmc.qsl.tag.impl.TagRegistryImpl"]
+		}
+		client_init {
+			values = ["org.quiltmc.qsl.tag.impl.client.ClientQuiltTagsMod"]
+		}
+	}
+	injectedInterface("net/minecraft/class_3494") {
+		values = ["org/quiltmc/qsl/tag/api/QuiltTag"]
+	}
+	injectedInterface("net/minecraft/class_3494\$class_3495") {
+		values = ["org/quiltmc/qsl/tag/api/QuiltTagBuilder"]
+	}
+	injectedInterface("net/minecraft/class_6862") {
+		values = ["org/quiltmc/qsl/tag/api/QuiltTagKey"]
+	}
 }

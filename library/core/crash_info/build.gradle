@@ -3,10 +3,20 @@ plugins {
 }
 
 qslModule {
+	name = "Quilt Crash Info"
 	moduleName = "crash_info"
-	version = "1.0.0"
+	id = "quilt_crash_info"
+	description = "Adds information about the Quilt environment to crash reports," +
+			" and allows other mods to do the same."
 	library = "core"
-	coreDependencies([
-		"qsl_base"
-	])
+	moduleDependencies {
+		core {
+			api("qsl_base")
+		}
+	}
+	entrypoints {
+		events {
+			values = ["org.quiltmc.qsl.crash.impl.CrashInfoImpl"]
+		}
+	}
 }

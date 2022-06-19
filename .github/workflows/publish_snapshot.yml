@@ -1,0 +1,27 @@
+name: Publish Snapshot
+on: [push]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        # Keep the matrix for when jdk 17 rc come out
+        java: [17]
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/setup-java@v2
+        with:
+          distribution: "temurin"
+          java-version: ${{ matrix.java }}
+      - uses: actions/checkout@v2
+      - run: ./gradlew checkLicenses generateQmj --parallel --stacktrace
+      - run: ./gradlew build publish --stacktrace --parallel
+        env:
+          SNAPSHOTS_URL: ${{ secrets.SNAPSHOTS_URL }}
+          SNAPSHOTS_USERNAME: ${{ secrets.SNAPSHOTS_USERNAME }}
+          SNAPSHOTS_PASSWORD: ${{ secrets.SNAPSHOTS_PASSWORD }}
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Artifacts
+          path: ./*/build/libs/

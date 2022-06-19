@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,6 @@ import java.util.Collection;
 import java.util.Collections;
 
 import net.fabricmc.api.EnvType;
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +28,9 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.lifecycle.api.event.ServerTickEvents;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.quiltmc.qsl.resource.loader.api.reloader.SimpleSynchronousResourceReloader;
@@ -41,13 +42,13 @@ public class ResourceReloaderTestMod implements ModInitializer {
 	private static boolean serverResources = false;
 
 	@Override
-	public void onInitialize() {
+	public void onInitialize(ModContainer mod) {
 		this.setupClientReloadListeners();
 		this.setupServerReloadListeners();
 
 		// No lifecycle events yet
 		ServerTickEvents.START.register(server -> {
-			if (!clientResources && FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+			if (!clientResources && MinecraftQuiltLoader.getEnvironmentType() == EnvType.CLIENT) {
 				throw new AssertionError("Client reload listener was not called.");
 			}
 

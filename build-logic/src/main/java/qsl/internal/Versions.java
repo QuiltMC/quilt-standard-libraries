@@ -1,7 +1,5 @@
 package qsl.internal;
 
-import javax.naming.spi.ObjectFactory;
-
 /**
  * Version constants used across the convention build scripts.
  * <p>
@@ -19,46 +17,27 @@ public final class Versions {
 	/**
 	 * The QSL version
 	 */
-	public static final String QSL_VERSION = "0.1.0";
+	public static final String QSL_VERSION = "1.1.0-beta.19";
 
 	/**
 	 * The target Minecraft version.
 	 */
-	public static final String MINECRAFT_VERSION = "22w03a";
+	public static final MinecraftVersion MINECRAFT_VERSION = new MinecraftVersion("1.18.2");
 
 	/**
 	 * The target Quilt Mappings build.
 	 */
-	public static final int MAPPINGS_BUILD = 1;
+	public static final int MAPPINGS_BUILD = 22;
 
 	/**
 	 * The version of Quilt Loader to use.
 	 */
-	public static final String LOADER_VERSION = "0.12.12";
+	public static final String LOADER_VERSION = "0.17.0";
 
 	/**
 	 * The target Java version.
 	 */
 	public static final int JAVA_VERSION = 17; // Minecraft is Java 17
-
-	public static boolean isMinecraftVersionNonRelease() {
-		return MINECRAFT_VERSION.matches("^\\d\\dw\\d\\d[a-z]$");
-	}
-
-	public static String getMinecraftVersionFancyString() {
-		if (isMinecraftVersionNonRelease()) {
-			return MINECRAFT_VERSION;
-		}
-
-		String[] version = MINECRAFT_VERSION.split("\\.");
-
-		int index;
-		if ((index = version[1].indexOf("-pre")) != -1 || (index = version[1].indexOf("-rc")) != -1) {
-			version[1] = version[1].substring(0, index);
-		}
-
-		return version[0] + '.' + version[1];
-	}
 
 	private Versions() {
 	}
