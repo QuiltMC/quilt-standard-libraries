@@ -38,7 +38,8 @@ public class RandomStateMixin {
 	private MultiNoiseUtil.MultiNoiseSampler sampler;
 
 	@Inject(method = "<init>", at = @At("RETURN"))
-	private void quilt$onInit(ChunkGeneratorSettings chunkGeneratorSettings, Registry<DoublePerlinNoiseSampler.NoiseParameters> registry, long seed, CallbackInfo ci) {
+	private void quilt$onInit(ChunkGeneratorSettings chunkGeneratorSettings, Registry<DoublePerlinNoiseSampler.NoiseParameters> registry, long seed,
+			CallbackInfo ci) {
 		((MultiNoiseSamplerExtensions) (Object) this.sampler).quilt$setSeed(seed);
 	}
 }

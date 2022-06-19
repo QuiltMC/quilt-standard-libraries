@@ -20,7 +20,6 @@ package org.quiltmc.qsl.worldgen.biome.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -53,7 +52,8 @@ public final class NetherBiomeData {
 
 	private static final Logger LOGGER = LogUtils.getLogger();
 
-	private NetherBiomeData() { }
+	private NetherBiomeData() {
+	}
 
 	public static void addNetherBiome(RegistryKey<Biome> biome, MultiNoiseUtil.NoiseHypercube spawnNoisePoint) {
 		Preconditions.checkArgument(biome != null, "Biome is null");
@@ -87,11 +87,11 @@ public final class NetherBiomeData {
 			return defaultEntries;
 		}
 
-		List<Pair<MultiNoiseUtil.NoiseHypercube, Holder<Biome>>> entries = new ArrayList<>(defaultEntries.getEntries());
+		var entries = new ArrayList<>(defaultEntries.getEntries());
 
 		for (Map.Entry<RegistryKey<Biome>, MultiNoiseUtil.NoiseHypercube> entry : NETHER_BIOME_NOISE_POINTS.entrySet()) {
 			if (biomeRegistry.contains(entry.getKey())) {
-				entries.add(Pair.of(entry.getValue(), biomeRegistry.getHolderOrThrow(entry.getKey())));
+				entries.add(Pair.of(entry.getValue(), biomeRegistry.method_44298(entry.getKey())));
 			} else {
 				LOGGER.warn("Nether biome {} not loaded", entry.getKey().getValue());
 			}

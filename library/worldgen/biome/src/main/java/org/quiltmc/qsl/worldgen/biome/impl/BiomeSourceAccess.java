@@ -17,6 +17,9 @@
 
 package org.quiltmc.qsl.worldgen.biome.impl;
 
+import org.jetbrains.annotations.ApiStatus;
+
+@ApiStatus.Internal
 public interface BiomeSourceAccess {
 	boolean quilt$shouldModifyBiomePoints();
 

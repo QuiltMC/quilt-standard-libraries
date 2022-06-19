@@ -61,7 +61,8 @@ public final class TheEndBiomeData {
 				.add(BiomeKeys.END_BARRENS, 1.0);
 	}
 
-	private TheEndBiomeData() { }
+	private TheEndBiomeData() {
+	}
 
 	public static void addEndBiomeReplacement(RegistryKey<Biome> replaced, RegistryKey<Biome> variant, double weight) {
 		Preconditions.checkNotNull(replaced, "replaced entry is null");
@@ -181,6 +182,7 @@ public final class TheEndBiomeData {
 
 	enum HolderHashStrategy implements Hash.Strategy<Holder<?>> {
 		INSTANCE;
+
 		@Override
 		public boolean equals(Holder<?> a, Holder<?> b) {
 			if (a == b) return true;
