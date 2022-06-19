@@ -66,7 +66,7 @@ public final class NetherBiomeData {
 			}
 		}
 
-		return NETHER_BIOMES.contains(biome);
+		return NETHER_BIOMES.contains(biome) || NETHER_BIOME_NOISE_POINTS.containsKey(biome);
 	}
 
 	private static void clearBiomeSourceCache() {

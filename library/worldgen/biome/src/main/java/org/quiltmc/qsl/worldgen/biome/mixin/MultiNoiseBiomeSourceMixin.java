@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.mojang.datafixers.util.Pair;
+import com.mojang.logging.LogUtils;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -33,12 +35,15 @@ import net.minecraft.world.biome.source.MultiNoiseBiomeSource;
 import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 
 import org.quiltmc.qsl.worldgen.biome.impl.NetherBiomeData;
+import org.slf4j.Logger;
 
 /**
  * This Mixin is responsible for adding mod-biomes to the NETHER preset in the MultiNoiseBiomeSource.
  */
 @Mixin(MultiNoiseBiomeSource.Preset.class)
 public class MultiNoiseBiomeSourceMixin {
+	private static final Logger LOGGER = LogUtils.getLogger();
+
 	// NOTE: This is a lambda-function in the NETHER preset field initializer
 	@Inject(method = "m_ixtcdgmf(Lnet/minecraft/util/registry/Registry;)Lnet/minecraft/world/biome/source/util/MultiNoiseUtil$ParameterRangeList;", at = @At("RETURN"), cancellable = true)
 	private static void appendNetherBiomes(Registry<Biome> registry, CallbackInfoReturnable<MultiNoiseUtil.ParameterRangeList<Holder<Biome>>> cir) {
@@ -47,7 +52,11 @@ public class MultiNoiseBiomeSourceMixin {
 
 		// Add Quilt biome noise point data to list && BiomeSource biome list
 		NetherBiomeData.getNetherBiomeNoisePoints().forEach((biomeKey, noisePoint) -> {
-			entries.add(Pair.of(noisePoint, registry.method_44298(biomeKey)));
+			if (registry.contains(biomeKey)) {
+				entries.add(Pair.of(noisePoint, registry.getHolderOrThrow(biomeKey)));
+			} else {
+				LOGGER.warn("Nether biome {} not loaded", biomeKey.getValue());
+			}
 		});
 
 		cir.setReturnValue(new MultiNoiseUtil.ParameterRangeList<>(entries));

@@ -22,7 +22,6 @@ import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
@@ -31,7 +30,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.util.Holder;
-import net.minecraft.util.math.noise.PerlinNoiseSampler;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
@@ -63,8 +61,7 @@ public final class TheEndBiomeData {
 				.add(BiomeKeys.END_BARRENS, 1.0);
 	}
 
-	private TheEndBiomeData() {
-	}
+	private TheEndBiomeData() { }
 
 	public static void addEndBiomeReplacement(RegistryKey<Biome> replaced, RegistryKey<Biome> variant, double weight) {
 		Preconditions.checkNotNull(replaced, "replaced entry is null");
@@ -102,17 +99,21 @@ public final class TheEndBiomeData {
 	 * An instance of this class is attached to each {@link TheEndBiomeSource}.
 	 */
 	public static class Overrides {
-		// Vanilla entries to compare against
+		// Biome holders to add on the biome list
+		private final Collection<Holder<Biome>> addedBiomes;
+
+		// Vanilla holder to compare against
 		private final Holder<Biome> endMidlands;
 		private final Holder<Biome> endBarrens;
 		private final Holder<Biome> endHighlands;
 
-		// Maps where the keys have been resolved to actual entries
+		// Maps where the keys have been resolved to actual holders
 		private final Map<Holder<Biome>, WeightedPicker<Holder<Biome>>> endBiomesMap;
 		private final Map<Holder<Biome>, WeightedPicker<Holder<Biome>>> endMidlandsMap;
 		private final Map<Holder<Biome>, WeightedPicker<Holder<Biome>>> endBarrensMap;
 
 		public Overrides(Registry<Biome> biomeRegistry) {
+			this.addedBiomes = TheEndBiomeData.getAddedBiomes(biomeRegistry);
 			this.endMidlands = biomeRegistry.getHolderOrThrow(BiomeKeys.END_MIDLANDS);
 			this.endBarrens = biomeRegistry.getHolderOrThrow(BiomeKeys.END_BARRENS);
 			this.endHighlands = biomeRegistry.getHolderOrThrow(BiomeKeys.END_HIGHLANDS);
@@ -120,6 +121,7 @@ public final class TheEndBiomeData {
 			this.endBiomesMap = this.resolveOverrides(biomeRegistry, END_BIOMES_MAP, BiomeKeys.THE_END);
 			this.endMidlandsMap = this.resolveOverrides(biomeRegistry, END_MIDLANDS_MAP, BiomeKeys.END_MIDLANDS);
 			this.endBarrensMap = this.resolveOverrides(biomeRegistry, END_BARRENS_MAP, BiomeKeys.END_BARRENS);
+
 		}
 
 		// Resolves all RegistryKey instances to Holders
@@ -129,7 +131,6 @@ public final class TheEndBiomeData {
 			for (Map.Entry<RegistryKey<Biome>, WeightedPicker<RegistryKey<Biome>>> entry : overrides.entrySet()) {
 				var picker = entry.getValue();
 				int count = picker.getEntryCount();
-				System.out.println(entry.getKey().toString() + " - " + count + " - " + vanillaKey.toString());
 				if (count == 0 || (count == 1 && entry.getKey() == vanillaKey)) continue;
 
 				result.put(biomeRegistry.getHolderOrThrow(entry.getKey()), picker.map(biomeRegistry::getHolderOrThrow));
@@ -172,6 +173,10 @@ public final class TheEndBiomeData {
 			}
 
 			return replacementKey;
+		}
+
+		public Collection<Holder<Biome>> getAddedBiomes() {
+			return this.addedBiomes;
 		}
 	}
 

@@ -47,16 +47,12 @@ public abstract class TheEndBiomeSourceMixin extends BiomeSource {
 	@Unique
 	private boolean quilt$hasAddedBiomes = false;
 
-	@Unique
-	private Registry<Biome> quilt$registry;
-
 	protected TheEndBiomeSourceMixin(Stream<Holder<Biome>> stream) {
 		super(stream);
 	}
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void init(Registry<Biome> biomeRegistry, CallbackInfo ci) {
-		this.quilt$registry = biomeRegistry;
 		this.overrides = Suppliers.memoize(() -> TheEndBiomeData.createOverrides(biomeRegistry));
 	}
 
@@ -68,9 +64,10 @@ public abstract class TheEndBiomeSourceMixin extends BiomeSource {
 	@Override
 	public Set<Holder<Biome>> getBiomes() {
 		if (!this.quilt$hasAddedBiomes) {
-			super.getBiomes().addAll(TheEndBiomeData.getAddedBiomes(this.quilt$registry));
 			this.quilt$hasAddedBiomes = true;
+			super.getBiomes().addAll(this.overrides.get().getAddedBiomes());
 		}
+
 		return super.getBiomes();
 	}
 }
