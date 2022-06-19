@@ -1,5 +1,9 @@
 package qsl.internal;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Version constants used across the convention build scripts.
  * <p>
@@ -25,6 +29,11 @@ public final class Versions {
 	public static final MinecraftVersion MINECRAFT_VERSION = new MinecraftVersion("1.18.2");
 
 	/**
+	 * The Minecraft versions this version of QSL is compatible with.
+	 */
+	public static final List<MinecraftVersion> COMPATIBLE_VERSIONS = versions();
+
+	/**
 	 * The target Quilt Mappings build.
 	 */
 	public static final int MAPPINGS_BUILD = 22;
@@ -40,5 +49,21 @@ public final class Versions {
 	public static final int JAVA_VERSION = 17; // Minecraft is Java 17
 
 	private Versions() {
+	}
+
+	private static List<MinecraftVersion> versions(Object... versions) {
+		var list = new ArrayList<MinecraftVersion>();
+
+		for (var version : versions) {
+			if (version instanceof String name) {
+				list.add(new MinecraftVersion(name, MINECRAFT_VERSION.versionEdition()));
+			} else if (version instanceof MinecraftVersion mcVersion) {
+				list.add(mcVersion);
+			} else {
+				throw new IllegalArgumentException("Unexpected version \"" + version + "\", only String and MinecraftVersion are accepted.");
+			}
+		}
+
+		return Collections.unmodifiableList(list);
 	}
 }
