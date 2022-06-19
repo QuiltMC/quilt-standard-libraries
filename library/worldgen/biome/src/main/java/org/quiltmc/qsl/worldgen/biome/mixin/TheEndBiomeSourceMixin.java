@@ -17,6 +17,8 @@
 
 package org.quiltmc.qsl.worldgen.biome.mixin;
 
+import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -25,6 +27,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import com.google.common.base.Suppliers;
 
 import net.minecraft.util.Holder;
 import net.minecraft.util.registry.Registry;
@@ -38,7 +42,13 @@ import org.quiltmc.qsl.worldgen.biome.impl.TheEndBiomeData;
 @Mixin(TheEndBiomeSource.class)
 public abstract class TheEndBiomeSourceMixin extends BiomeSource {
 	@Unique
-	private TheEndBiomeData.Overrides overrides;
+	private Supplier<TheEndBiomeData.Overrides> overrides;
+
+	@Unique
+	private boolean quilt$hasAddedBiomes = false;
+
+	@Unique
+	private Registry<Biome> quilt$registry;
 
 	protected TheEndBiomeSourceMixin(Stream<Holder<Biome>> stream) {
 		super(stream);
@@ -46,12 +56,21 @@ public abstract class TheEndBiomeSourceMixin extends BiomeSource {
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void init(Registry<Biome> biomeRegistry, CallbackInfo ci) {
-		this.getBiomes().addAll(TheEndBiomeData.getAddedBiomes(biomeRegistry));
-		this.overrides = TheEndBiomeData.createOverrides(biomeRegistry);
+		this.quilt$registry = biomeRegistry;
+		this.overrides = Suppliers.memoize(() -> TheEndBiomeData.createOverrides(biomeRegistry));
 	}
 
 	@Inject(method = "method_38109", at = @At("RETURN"), cancellable = true)
 	private void getWeightedEndBiome(int biomeX, int biomeY, int biomeZ, MultiNoiseUtil.MultiNoiseSampler noise, CallbackInfoReturnable<Holder<Biome>> cir) {
-		cir.setReturnValue(this.overrides.pick(biomeX, biomeY, biomeZ, noise, cir.getReturnValue()));
+		cir.setReturnValue(this.overrides.get().pick(biomeX, biomeY, biomeZ, noise, cir.getReturnValue()));
+	}
+
+	@Override
+	public Set<Holder<Biome>> getBiomes() {
+		if (!this.quilt$hasAddedBiomes) {
+			super.getBiomes().addAll(TheEndBiomeData.getAddedBiomes(this.quilt$registry));
+			this.quilt$hasAddedBiomes = true;
+		}
+		return super.getBiomes();
 	}
 }

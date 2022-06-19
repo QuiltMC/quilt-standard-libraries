@@ -131,12 +131,10 @@ public class QuiltBiomeTest implements ModInitializer {
 		);
 
 		// Make sure data packs can define biomes
-		/*
 		NetherBiomes.addNetherBiome(
 			RegistryKey.of(Registry.BIOME_KEY, new Identifier(MOD_ID, "example_biome")),
 			MultiNoiseUtil.createNoiseHypercube(1.0f, 0.0f, 0.0f, 0.0f, 0.2f, 0.5f, 0.3f)
 		);
-		*/
 		TheEndBiomes.addHighlandsBiome(
 				RegistryKey.of(Registry.BIOME_KEY, new Identifier(MOD_ID, "example_biome")),
 				10.0
