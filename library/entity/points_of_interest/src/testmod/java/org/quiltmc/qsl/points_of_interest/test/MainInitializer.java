@@ -1,15 +1,16 @@
 package org.quiltmc.qsl.points_of_interest.test;
 
-import net.fabricmc.api.ModInitializer;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.poi.PointOfInterestType;
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.points_of_interest.api.PointOfInterestHelper;
 
 public class MainInitializer implements ModInitializer {
 	@Override
-	public void onInitialize() {
+	public void onInitialize(ModContainer mod) {
 		PointOfInterestHelper.addBlocks(PointOfInterestType.ARMORER, Blocks.ANVIL, Blocks.CHIPPED_ANVIL, Blocks.DAMAGED_ANVIL);
 		PointOfInterestHelper.addBlockStates(PointOfInterestType.CARTOGRAPHER, Blocks.OAK_LEAVES.getDefaultState().with(LeavesBlock.PERSISTENT, true));
 

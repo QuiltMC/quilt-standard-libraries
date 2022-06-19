@@ -3,13 +3,15 @@ plugins {
 }
 
 qslModule {
+	name = "Quilt Entity API"
 	moduleName = "entity"
-	version = "1.0.0"
+	id = "quilt_entity"
+	description = "Base module for creating and registering entity attributes and types."
 	library = "entity"
-	coreDependencies([
-			"resource_loader"
-	])
-	coreTestmodDependencies([
-			"qsl_base"
-	])
+	moduleDependencies {
+		core {
+			api("resource_loader")
+			testmodOnly("qsl_base")
+		}
+	}
 }

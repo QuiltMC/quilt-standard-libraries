@@ -3,10 +3,10 @@ plugins {
 }
 
 qslModule {
-	name = "Quilt Points of Interest"
-	moduleName = "points_of_interest"
-	id = "quilt_points_of_interest"
-	description = "Builders for Points of Interest."
+	name = "Quilt Villager API"
+	moduleName = "villager"
+	id = "quilt_villager"
+	description = "Helpers for creating villager types and trades."
 	library = "entity"
 	moduleDependencies {
 		core {

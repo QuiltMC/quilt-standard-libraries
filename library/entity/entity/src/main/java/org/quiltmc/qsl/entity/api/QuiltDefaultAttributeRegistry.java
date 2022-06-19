@@ -21,9 +21,9 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.util.registry.Registry;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.quiltmc.qsl.entity.mixin.DefaultAttributeRegistryAccessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.function.Supplier;
 
@@ -38,7 +38,7 @@ import java.util.function.Supplier;
  * @see net.minecraft.entity.attribute.DefaultAttributeRegistry
  */
 public final class QuiltDefaultAttributeRegistry {
-	private static final Logger LOGGER = LogManager.getLogger();
+	private static final Logger LOGGER = LoggerFactory.getLogger("quilt_entity");
 
 	/**
 	 * Registers a default attribute for a type of living entity.
