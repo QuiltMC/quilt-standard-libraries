@@ -27,8 +27,7 @@ import org.quiltmc.qsl.worldgen.biome.impl.TheEndBiomeData;
  * API that exposes some internals of the minecraft default biome source for The End.
  */
 public final class TheEndBiomes {
-	private TheEndBiomes() {
-	}
+	private TheEndBiomes() { }
 
 	/**
 	 * Adds the biome as a main end island biome with the specified weight; note that this includes the main island

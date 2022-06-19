@@ -75,7 +75,6 @@ public class QuiltBiomeTest implements ModInitializer {
 	private static final RegistryKey<Biome> TEST_END_MIDLANDS = RegistryKey.of(Registry.BIOME_KEY, new Identifier(MOD_ID, "test_end_midlands"));
 	private static final RegistryKey<Biome> TEST_END_BARRRENS = RegistryKey.of(Registry.BIOME_KEY, new Identifier(MOD_ID, "test_end_barrens"));
 
-
 	@Override
 	public void onInitialize(ModContainer mod) {
 		Registry.register(BuiltinRegistries.BIOME, TEST_CRIMSON_FOREST.getValue(), TheNetherBiomeCreator.createCrimsonForest());
@@ -134,8 +133,8 @@ public class QuiltBiomeTest implements ModInitializer {
 
 		// Make sure data packs can define biomes
 		NetherBiomes.addNetherBiome(
-			RegistryKey.of(Registry.BIOME_KEY, new Identifier(MOD_ID, "example_biome")),
-			MultiNoiseUtil.createNoiseHypercube(1.0f, 0.0f, 0.0f, 0.0f, 0.2f, 0.5f, 0.3f)
+				RegistryKey.of(Registry.BIOME_KEY, new Identifier(MOD_ID, "example_biome")),
+				MultiNoiseUtil.createNoiseHypercube(1.0f, 0.0f, 0.0f, 0.0f, 0.2f, 0.5f, 0.3f)
 		);
 		TheEndBiomes.addHighlandsBiome(
 				RegistryKey.of(Registry.BIOME_KEY, new Identifier(MOD_ID, "example_biome")),

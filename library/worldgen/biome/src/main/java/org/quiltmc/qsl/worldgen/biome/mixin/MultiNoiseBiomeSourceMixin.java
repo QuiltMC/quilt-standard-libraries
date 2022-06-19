@@ -17,49 +17,25 @@
 
 package org.quiltmc.qsl.worldgen.biome.mixin;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.mojang.datafixers.util.Pair;
-import com.mojang.logging.LogUtils;
-
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.Unique;
 
-import net.minecraft.util.Holder;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.MultiNoiseBiomeSource;
-import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 
-import org.quiltmc.qsl.worldgen.biome.impl.NetherBiomeData;
-import org.slf4j.Logger;
+import org.quiltmc.qsl.worldgen.biome.impl.BiomeSourceAccess;
 
-/**
- * This Mixin is responsible for adding mod-biomes to the NETHER preset in the MultiNoiseBiomeSource.
- */
-@Mixin(MultiNoiseBiomeSource.Preset.class)
-public class MultiNoiseBiomeSourceMixin {
-	private static final Logger LOGGER = LogUtils.getLogger();
+@Mixin(MultiNoiseBiomeSource.class)
+public class MultiNoiseBiomeSourceMixin implements BiomeSourceAccess {
+	@Unique
+	private boolean quilt$modifyBiomePoints = true;
 
-	// NOTE: This is a lambda-function in the NETHER preset field initializer
-	@Inject(method = "m_ixtcdgmf(Lnet/minecraft/util/registry/Registry;)Lnet/minecraft/world/biome/source/util/MultiNoiseUtil$ParameterRangeList;", at = @At("RETURN"), cancellable = true)
-	private static void appendNetherBiomes(Registry<Biome> registry, CallbackInfoReturnable<MultiNoiseUtil.ParameterRangeList<Holder<Biome>>> cir) {
-		MultiNoiseUtil.ParameterRangeList<Holder<Biome>> biomes = cir.getReturnValue();
-		List<Pair<MultiNoiseUtil.NoiseHypercube, Holder<Biome>>> entries = new ArrayList<>(biomes.getEntries());
+	@Override
+	public boolean quilt$shouldModifyBiomePoints() {
+		return this.quilt$modifyBiomePoints;
+	}
 
-		// Add Quilt biome noise point data to list && BiomeSource biome list
-		NetherBiomeData.getNetherBiomeNoisePoints().forEach((biomeKey, noisePoint) -> {
-			if (registry.contains(biomeKey)) {
-				entries.add(Pair.of(noisePoint, registry.getHolderOrThrow(biomeKey)));
-			} else {
-				LOGGER.warn("Nether biome {} not loaded", biomeKey.getValue());
-			}
-		});
-
-		cir.setReturnValue(new MultiNoiseUtil.ParameterRangeList<>(entries));
+	@Override
+	public void quilt$setModifyBiomePoints(boolean modifyBiomePoints) {
+		this.quilt$modifyBiomePoints = modifyBiomePoints;
 	}
 }
-

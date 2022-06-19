@@ -36,8 +36,7 @@ import net.minecraft.world.dimension.DimensionOptions;
  * Provides several convenient biome selectors that can be used with {@link BiomeModifications}.
  */
 public final class BiomeSelectors {
-	private BiomeSelectors() {
-	}
+	private BiomeSelectors() { }
 
 	/**
 	 * Matches all Biomes. Use a more specific selector if possible.

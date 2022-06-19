@@ -121,7 +121,6 @@ public final class TheEndBiomeData {
 			this.endBiomesMap = this.resolveOverrides(biomeRegistry, END_BIOMES_MAP, BiomeKeys.THE_END);
 			this.endMidlandsMap = this.resolveOverrides(biomeRegistry, END_MIDLANDS_MAP, BiomeKeys.END_MIDLANDS);
 			this.endBarrensMap = this.resolveOverrides(biomeRegistry, END_BARRENS_MAP, BiomeKeys.END_BARRENS);
-
 		}
 
 		// Resolves all RegistryKey instances to Holders
