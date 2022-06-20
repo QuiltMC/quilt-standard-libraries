@@ -33,17 +33,19 @@ import net.minecraft.world.World;
 
 @Mixin(FluidBlock.class)
 public class FluidBlockMixin extends Block {
+	private static final Direction[] DIRECTIONS = Direction.values();
+
 	public FluidBlockMixin(Settings settings) {
 		super(settings);
 	}
 
 	@Inject(method = "receiveNeighborFluids", at = @At("HEAD"), cancellable = true)
 	private void receiveNeighborFluids(World world, BlockPos pos, BlockState state, CallbackInfoReturnable<Boolean> cir) {
-		for (Direction direction : Direction.values()) {
-			Event<FluidFlowEvents.FluidFlowInteractionCallback> event = FluidFlowEvents.getEvent(this, world.getBlockState(pos.offset(direction)).getBlock(), direction);
+		for (Direction direction : DIRECTIONS) {
+			Event<FluidFlowEvents.FluidFlowInteractionCallback> event = FluidFlowEvents.getEvent(this, world.getBlockState(pos.offset(direction)).getBlock());
 
 			if (event != null) {
-				if (!event.invoker().onFlow(state, world.getBlockState(pos.offset(direction)), pos, world)) {
+				if (!event.invoker().onFlow(state, world.getBlockState(pos.offset(direction)), direction, pos, world)) {
 					cir.setReturnValue(false);
 					return;
 				}

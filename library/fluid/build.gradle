@@ -4,5 +4,4 @@ plugins {
 
 qslLibrary {
 	libraryName = "fluid"
-	version = "1.0.0"
 }
