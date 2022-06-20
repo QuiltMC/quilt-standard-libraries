@@ -51,7 +51,7 @@ public interface InventoryComponent extends NbtComponent<NbtCompound>, Inventory
 	@Override
 	default ItemStack removeStack(int slot, int amount) {
 		var result = Inventories.splitStack(this.getStacks(), slot, amount);
-		this.markDirty();
+		this.saveNeeded();
 
 		return result;
 	}
@@ -59,7 +59,7 @@ public interface InventoryComponent extends NbtComponent<NbtCompound>, Inventory
 	@Override
 	default ItemStack removeStack(int slot) {
 		var result = Inventories.removeStack(this.getStacks(), slot);
-		this.markDirty();
+		this.saveNeeded();
 
 		return result;
 	}
@@ -71,7 +71,7 @@ public interface InventoryComponent extends NbtComponent<NbtCompound>, Inventory
 			stack.setCount(getMaxCountPerStack());
 		}
 
-		this.markDirty();
+		this.saveNeeded();
 	}
 
 	@Override
@@ -95,11 +95,8 @@ public interface InventoryComponent extends NbtComponent<NbtCompound>, Inventory
 	}
 
 	@Override
-	void markDirty();
-
-	@Override
 	default void clear() {
 		this.getStacks().clear();
-		this.markDirty();
+		this.saveNeeded();
 	}
 }

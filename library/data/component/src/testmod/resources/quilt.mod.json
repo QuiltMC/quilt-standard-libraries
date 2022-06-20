@@ -17,7 +17,8 @@
         },
         "depends": [
             "quilt_loader",
-            "quilt_component"
+            "quilt_component",
+            "quilt_lifecycle_events"
         ]
     }
 }

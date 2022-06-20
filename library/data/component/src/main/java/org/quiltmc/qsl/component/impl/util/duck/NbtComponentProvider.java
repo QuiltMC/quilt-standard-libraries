@@ -6,5 +6,5 @@ import org.quiltmc.qsl.component.api.components.NbtComponent;
 import java.util.Map;
 
 public interface NbtComponentProvider {
-	Map<Identifier, NbtComponent<?>> get();
+	Map<Identifier, NbtComponent<?>> getNbtComponents();
 }

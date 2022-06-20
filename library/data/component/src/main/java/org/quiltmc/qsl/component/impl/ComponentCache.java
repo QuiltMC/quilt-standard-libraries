@@ -33,8 +33,13 @@ public class ComponentCache {
 		return Optional.of(this.injectionCache.get(clazz));
 	}
 
-	public void record(Class<?> clazz, Collection<Identifier> components) {
-		if (this.injectionCache.put(clazz, Util.make(new HashMap<>(), map -> components.forEach(id -> map.put(id, ComponentsImpl.getEntry(id))))) != null) {
+	public void clear() {
+		this.injectionCache.clear();
+	}
+
+	public void record(Class<?> clazz, Map<Identifier, Supplier<? extends Component>> components) {
+		if (this.injectionCache.put(clazz, Util.make(new HashMap<>(), map -> map.putAll(components))) != null) {
+			// If there was a value there, it means we attempted an override, and so we throw.
 			throw new IllegalStateException("Cannot register cache twice for class %s".formatted(clazz));
 		}
 	}

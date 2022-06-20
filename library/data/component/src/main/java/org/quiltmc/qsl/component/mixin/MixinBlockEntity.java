@@ -55,10 +55,10 @@ public class MixinBlockEntity {
 	)
 	private static void onReadNbt(NbtCompound nbt, String string, BlockEntity blockEntity, CallbackInfoReturnable<BlockEntity> cir) {
 		var rootQslNbt = nbt.getCompound(StringConstants.COMPONENT_ROOT);
-		((NbtComponentProvider) blockEntity).get().forEach((id, nbtComponent) -> NbtComponent.forward(nbtComponent, id, rootQslNbt));
+		((NbtComponentProvider) blockEntity).getNbtComponents().forEach((id, nbtComponent) -> NbtComponent.readFrom(nbtComponent, id, rootQslNbt));
 	}
 
-	public Map<Identifier, NbtComponent<?>> nbtExp$get() {
+	public Map<Identifier, NbtComponent<?>> nbtExp$getNbtComponents() {
 		return this.qsl$nbtComponents;
 	}
 

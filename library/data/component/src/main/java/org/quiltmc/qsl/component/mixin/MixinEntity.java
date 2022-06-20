@@ -54,6 +54,6 @@ public abstract class MixinEntity {
 	@Inject(method = "readNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;readCustomDataFromNbt(Lnet/minecraft/nbt/NbtCompound;)V"))
 	private void onDeserialize(NbtCompound nbt, CallbackInfo ci) {
 		var rootQslNbt = nbt.getCompound(StringConstants.COMPONENT_ROOT);
-		this.qsl$nbtComponents.forEach((id, nbtComponent) -> NbtComponent.forward(nbtComponent, id, rootQslNbt));
+		this.qsl$nbtComponents.forEach((id, nbtComponent) -> NbtComponent.readFrom(nbtComponent, id, rootQslNbt));
 	}
 }

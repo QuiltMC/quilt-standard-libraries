@@ -22,6 +22,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.passive.CowEntity;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -57,15 +58,18 @@ public class ComponentTestMod implements ModInitializer {
 	public static final ComponentIdentifier<InventoryComponent> CHUNK_INVENTORY = InventoryComponent.ofSize(1,
 			new Identifier(MODID, "chunk_inventory")
 	);
+	public static final ComponentIdentifier<IntegerComponent> ITEMSTACK_NOMBER =
+			IntegerComponent.create(new Identifier(MODID, "itemstack_nomber"));
 
 	@Override
 	public void onInitialize(ModContainer mod) {
 		// Application Code
-		Components.injectInheritage(Chunk.class, CHUNK_INVENTORY);
 		Components.inject(CreeperEntity.class, CREEPER_EXPLODE_TIME);
 		Components.injectInheritage(CowEntity.class, COW_INVENTORY);
 		Components.injectInheritanceExcept(HostileEntity.class, HOSTILE_EXPLODE_TIME, CreeperEntity.class);
 		Components.inject(ChestBlockEntity.class, CHEST_NUMBER);
+		Components.injectInheritage(Chunk.class, CHUNK_INVENTORY);
+		Components.inject(ItemStack.class, ITEMSTACK_NOMBER);
 
 		// Testing Code
 		ServerWorldTickEvents.START.register((ignored, world) -> {
@@ -126,8 +130,14 @@ public class ComponentTestMod implements ModInitializer {
 						stack.increment(1);
 					}
 				}
-				player.sendMessage(Text.literal(inventory.getStack(0).toString()), false);
+				player.sendMessage(Text.literal(inventory.getStack(0).toString()), true);
 			});
+
+			Inventory inventory = player.getInventory();
+			ItemStack stack = inventory.getStack(9);
+			if (!stack.isEmpty()) {
+				Components.expose(ITEMSTACK_NOMBER, stack).ifPresent(IntegerComponent::increment);
+			}
 		});
 	}
 }

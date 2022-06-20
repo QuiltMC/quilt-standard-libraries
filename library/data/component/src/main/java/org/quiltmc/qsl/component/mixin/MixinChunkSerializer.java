@@ -20,19 +20,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinChunkSerializer {
 	@Inject(method = "deserialize", at = @At("RETURN"), cancellable = true)
 	private static void deserializeComponents(ServerWorld world, PointOfInterestStorage poiStorage, ChunkPos pos, NbtCompound nbt, CallbackInfoReturnable<ProtoChunk> cir) {
-		Chunk ret = cir.getReturnValue();
+		ProtoChunk ret = cir.getReturnValue();
+		NbtCompound rootQslNbt = nbt.getCompound(StringConstants.COMPONENT_ROOT);
 
 		if (ret instanceof ReadOnlyChunk readOnly) {
-			NbtCompound rootQslNbt = nbt.getCompound(StringConstants.COMPONENT_ROOT);
-			((NbtComponentProvider) readOnly.getWrappedChunk()).get().forEach((id, component) -> NbtComponent.forward(component, id, rootQslNbt));
-			cir.setReturnValue(readOnly);
+			((NbtComponentProvider) readOnly.getWrappedChunk()).getNbtComponents().forEach((id, component) -> NbtComponent.readFrom(component, id, rootQslNbt));
+		} else {
+			((NbtComponentProvider) ret).getNbtComponents().forEach((id, component) -> NbtComponent.readFrom(component, id, rootQslNbt));
 		}
+
+		cir.setReturnValue(ret);
 	}
 
 	@Inject(method = "serialize", at = @At("RETURN"), cancellable = true)
 	private static void serializeComponents(ServerWorld world, Chunk chunk, CallbackInfoReturnable<NbtCompound> cir) {
 		var rootQslNbt = new NbtCompound();
-		((NbtComponentProvider) chunk).get().forEach((id, component) -> rootQslNbt.put(id.toString(), component.write()));
+		((NbtComponentProvider) chunk).getNbtComponents().forEach((id, component) -> NbtComponent.writeTo(rootQslNbt, component, id));
 		NbtCompound ret = cir.getReturnValue();
 		ret.put(StringConstants.COMPONENT_ROOT, rootQslNbt);
 		cir.setReturnValue(ret);

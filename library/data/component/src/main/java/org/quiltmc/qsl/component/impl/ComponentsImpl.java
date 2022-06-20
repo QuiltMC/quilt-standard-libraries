@@ -32,6 +32,7 @@ public class ComponentsImpl {
 		} else {
 			INJECTION_REGISTRY.put(predicate, Util.make(new HashSet<>(), set -> set.add(id.id())));
 		}
+		ComponentCache.getInstance().clear(); // Always clear the cache after an injection is registered.
 	}
 
 	public static <T extends Component> ComponentIdentifier<T> register(Identifier id, Supplier<T> component) {
@@ -46,13 +47,9 @@ public class ComponentsImpl {
 				.map(Map.Entry::getValue)
 				.collect(HashMap::new, (map, ids) -> ids.forEach(id -> map.put(id, REGISTRY.get(id))), HashMap::putAll);
 
-			ComponentCache.getInstance().record(provider.getClass(), returnMap.keySet());
+			ComponentCache.getInstance().record(provider.getClass(), returnMap);
 
 			return returnMap;
 		});
-	}
-
-	public static Supplier<? extends Component> getEntry(Identifier id) {
-		return REGISTRY.get(id);
 	}
 }

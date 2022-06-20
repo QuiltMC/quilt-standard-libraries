@@ -16,7 +16,7 @@ public interface ComponentProvider {
 	Map<Identifier, Component> exposeAll();
 
 	static @NotNull Map<Identifier, Component> createComponents(@NotNull ComponentProvider provider) {
-		System.out.println(provider.getClass()); // TODO: Remove this
+		// System.out.println(provider.getClass()); // TODO: Remove this
 		var map = new HashMap<Identifier, Component>();
 		ComponentsImpl.get(provider).forEach((identifier, supplier) -> map.put(identifier, supplier.get()));
 
