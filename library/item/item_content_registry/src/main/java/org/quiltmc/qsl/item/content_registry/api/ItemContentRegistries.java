@@ -34,13 +34,18 @@ import net.minecraft.util.registry.Registry;
  */
 public class ItemContentRegistries {
 	/**
+	 * The namespace for the content registries.
+	 */
+	public static final String NAMESPACE = "quilt_item_content_registry";
+
+	/**
 	 * A {@link RegistryEntryAttachment} for how long different items burn in a furnace. The value is stored in ticks.
 	 * <p>
 	 * Values can be set via code and through a datapack with the file {@code data/quilt_item_content_registry/attachments/minecraft/item/fuel_time.json}
 	 */
 	public static final RegistryEntryAttachment<Item, Integer> FUEL_TIME = RegistryEntryAttachment
 			.builder(Registry.ITEM,
-					new Identifier("quilt_item_content_registry", "fuel_time"),
+					new Identifier(NAMESPACE, "fuel_time"),
 					Integer.class,
 					Codec.intRange(0, Short.MAX_VALUE))
 			.build();
@@ -52,7 +57,7 @@ public class ItemContentRegistries {
 	 */
 	public static final RegistryEntryAttachment<Item, Float> COMPOST_CHANCE = RegistryEntryAttachment
 			.builder(Registry.ITEM,
-					new Identifier("quilt_item_content_registry", "compost_chance"),
+					new Identifier(NAMESPACE, "compost_chance"),
 					Float.class,
 					Codec.floatRange(0, 1))
 			.build();

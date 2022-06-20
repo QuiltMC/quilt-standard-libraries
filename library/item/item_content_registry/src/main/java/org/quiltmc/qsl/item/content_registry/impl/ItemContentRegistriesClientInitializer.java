@@ -21,12 +21,16 @@ import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.item.content_registry.api.ItemContentRegistries;
 import org.quiltmc.qsl.tooltip.api.client.ItemTooltipCallback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.minecraft.item.Item;
 import net.minecraft.text.Text;
 
 
 public class ItemContentRegistriesClientInitializer implements ClientModInitializer {
+	public static final Logger LOGGER = LoggerFactory.getLogger("ItemContentRegistriesClientInitializer");
+
 	public static final String ENABLE_TOOLTIP_DEBUG = "quilt.item.content_registry.enable_tooltip_debug";
 
 	@Override
@@ -38,6 +42,8 @@ public class ItemContentRegistriesClientInitializer implements ClientModInitiali
 				ItemContentRegistries.FUEL_TIME.getValue(item).ifPresent(time -> lines.add(Text.literal("Fuel Time: " + time + " ticks")));
 				ItemContentRegistries.COMPOST_CHANCE.getValue(item).ifPresent(chance -> lines.add(Text.literal("Compost chance: " + (chance * 100) + "%")));
 			});
+		} else if (Boolean.getBoolean(ENABLE_TOOLTIP_DEBUG)) {
+			LOGGER.warn("Tooltip debug was enabled, but the QSL module `quilt_tooltip` was missing.");
 		}
 	}
 }

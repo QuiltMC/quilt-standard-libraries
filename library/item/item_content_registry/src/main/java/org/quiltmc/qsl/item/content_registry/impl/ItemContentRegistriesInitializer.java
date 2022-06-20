@@ -16,9 +16,9 @@
 
 package org.quiltmc.qsl.item.content_registry.impl;
 
-import java.util.HashMap;
 import java.util.Map;
 
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
