@@ -37,7 +37,7 @@ import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 public class VanillaDataPackProviderMixin {
 	@Inject(method = "register", at = @At("RETURN"))
 	private void addBuiltinResourcePacks(Consumer<ResourcePackProfile> profileAdder, ResourcePackProfile.Factory factory,
-										 CallbackInfo ci) {
+			CallbackInfo ci) {
 		// Register built-in resource packs after vanilla built-in resource packs are registered.
 		ModResourcePackProvider.SERVER_RESOURCE_PACK_PROVIDER.register(profileAdder, factory);
 	}

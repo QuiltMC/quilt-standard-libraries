@@ -65,5 +65,9 @@ public final class ModResourcePackProvider implements ResourcePackProvider {
 		 */
 
 		ResourceLoaderImpl.registerBuiltinResourcePacks(this.type, profileAdder);
+
+		for (var provider : ResourceLoaderImpl.get(this.type).resourcePackProfileProviders) {
+			provider.register(profileAdder, factory);
+		}
 	}
 }

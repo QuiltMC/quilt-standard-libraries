@@ -18,11 +18,11 @@ package org.quiltmc.qsl.networking.api;
 
 import java.util.List;
 
-import org.quiltmc.qsl.base.api.event.Event;
-
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.util.Identifier;
+
+import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
 /**

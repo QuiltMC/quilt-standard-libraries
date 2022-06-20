@@ -21,7 +21,7 @@
  * <h4>Built-in Mod Resource Pack</h4>
  * The Resource Loader adds manually registered mod resource packs. Those resource packs are registered with
  * {@link org.quiltmc.qsl.resource.loader.api.ResourceLoader#registerBuiltinResourcePack(net.minecraft.util.Identifier, org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType)}, or
- * {@link org.quiltmc.qsl.resource.loader.api.ResourceLoader#registerBuiltinResourcePack(net.minecraft.util.Identifier, net.fabricmc.loader.api.ModContainer, ResourcePackActivationType)}
+ * {@link org.quiltmc.qsl.resource.loader.api.ResourceLoader#registerBuiltinResourcePack(net.minecraft.util.Identifier, org.quiltmc.loader.api.ModContainer, ResourcePackActivationType)}
  *
  * <p>
  * <h4>Programmer Art Resource Pack</h4>

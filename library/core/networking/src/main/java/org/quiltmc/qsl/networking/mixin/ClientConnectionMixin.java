@@ -36,7 +36,6 @@ import net.minecraft.network.NetworkSide;
 import net.minecraft.network.Packet;
 import net.minecraft.network.listener.PacketListener;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
@@ -67,12 +66,10 @@ abstract class ClientConnectionMixin implements ChannelInfoHolder {
 	@SuppressWarnings("UnnecessaryQualifiedMemberReference")
 	@Redirect(method = "Lnet/minecraft/network/ClientConnection;exceptionCaught(Lio/netty/channel/ChannelHandlerContext;Ljava/lang/Throwable;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/ClientConnection;send(Lnet/minecraft/network/Packet;Lio/netty/util/concurrent/GenericFutureListener;)V"))
 	private void resendOnExceptionCaught(ClientConnection self, Packet<?> packet, GenericFutureListener<? extends Future<? super Void>> futureListener) {
-		PacketListener packetListener = this.packetListener;
-
-		if (packetListener instanceof DisconnectPacketSource dcSource) {
-			this.send(dcSource.createDisconnectPacket(new TranslatableText("disconnect.genericReason")), futureListener);
+		if (this.packetListener instanceof DisconnectPacketSource dcSource) {
+			this.send(dcSource.createDisconnectPacket(Text.translatable("disconnect.genericReason")), futureListener);
 		} else {
-			this.disconnect(new TranslatableText("disconnect.genericReason")); // Don't send packet if we cannot send proper packets
+			this.disconnect(Text.translatable("disconnect.genericReason")); // Don't send packet if we cannot send proper packets
 		}
 	}
 
@@ -85,7 +82,7 @@ abstract class ClientConnectionMixin implements ChannelInfoHolder {
 
 	@Inject(method = "channelInactive", at = @At("HEAD"))
 	private void handleDisconnect(ChannelHandlerContext channelHandlerContext, CallbackInfo ci) throws Exception {
-		if (packetListener instanceof NetworkHandlerExtensions ext) { // not the case for client/server query
+		if (this.packetListener instanceof NetworkHandlerExtensions ext) { // not the case for client/server query
 			ext.getAddon().handleDisconnect();
 		}
 	}

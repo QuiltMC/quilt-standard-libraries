@@ -1,13 +1,13 @@
 {
   "required": true,
-  "package": "org.quiltmc.qsl.itemgroup.mixin",
+  "package": "org.quiltmc.qsl.item.group.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "ItemGroupMixin"
   ],
   "client": [
-    "client.ItemGroupMixin",
-    "client.CreativeInventoryScreenMixin"
+    "client.CreativeInventoryScreenMixin",
+    "client.ItemGroupMixin"
   ],
   "injectors": {
     "defaultRequire": 1

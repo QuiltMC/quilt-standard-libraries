@@ -3,13 +3,23 @@ plugins {
 }
 
 qslModule {
+	name = "Quilt Tooltip API"
 	moduleName = "tooltip"
-	version = "1.0.0"
+	id = "quilt_tooltip"
+	description = "Hooks and APIs for manipulating tooltips."
 	library = "gui"
 	moduleDependencies {
 		core {
 			api("qsl_base")
 			testmodOnly("resource_loader")
+		}
+	}
+	entrypoints {
+		client_init {
+			values = ["org.quiltmc.qsl.tooltip.impl.client.QuiltClientTooltipMod::INSTANCE"]
+		}
+		client_events {
+			values = ["org.quiltmc.qsl.tooltip.impl.client.QuiltClientTooltipMod::INSTANCE"]
 		}
 	}
 }

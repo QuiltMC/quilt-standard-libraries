@@ -16,15 +16,14 @@
 
 package org.quiltmc.qsl.networking.mixin.accessor;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.ClientConnection;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
 @Mixin(MinecraftClient.class)

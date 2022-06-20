@@ -74,6 +74,33 @@ afterEvaluate {
 			}
 		}
 	}
+
+	publishing {
+		publications {
+			mavenJava(MavenPublication) {
+				pom.withXml {
+					def depsNode = asNode().appendNode("dependencies")
+					rootProject.subprojects.stream().filter {
+						it.path.startsWith(":${extension.libraryName.get()}:")
+					}.forEach {
+						def depNode = depsNode.appendNode("dependency")
+						depNode.appendNode("groupId", it.group)
+						depNode.appendNode("artifactId", it.name)
+						depNode.appendNode("version", it.version)
+						depNode.appendNode("scope", "compile")
+					}
+				}
+			}
+		}
+	}
+
+	loom.disableDeprecatedPomGeneration(publishing.publications.mavenJava)
+
+	// Print the version and throw an exception if it doesn't match
+	if (version != rootProject.version) {
+		throw new GradleException("Library ${extension.libraryName.get()} version ($version) does not match root project version ($rootProject.version). Do not change it!")
+
+	}
 }
 
 // A library isn't truly a distributed artifact, rather it is just maven metadata to depend on the modules of a library.
@@ -90,52 +117,19 @@ remapJar {
 	enabled = false
 }
 
-task checkLibVersion {
-	doFirst {
-		def libraryName = extension.libraryName
-
-		try {
-			def xml = new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/$libraryName/$project.version/" +
-					"$libraryName-$project.version" + ".pom").text
-			def metadata = new groovy.xml.XmlSlurper().parseText(xml)
-
-			if (metadata.properties.hash != Git.getLatestCommitHash(project)) {
-				throw new RuntimeException("Library is already published with a different hash!")
-			}
-		} catch (FileNotFoundException ignored) {
-			//
-		}
-	}
-}
-
 project.getTasksByName("checkModuleVersion", true).each {
 	checkLibVersion.mustRunAfter it
 }
 
-publishing {
-	repositories {
-		mavenLocal()
-	}
+rootProject.afterEvaluate {
+	testmodRemapJar { tsk ->
+		nestedJars.setFrom(Collections.emptySet())
 
-	publications {
-		mavenJava(MavenPublication) {
-			pom.withXml {
-				asNode().appendNode("properties").appendNode("hash", Git.getLatestCommitHash(project))
-				def depsNode = asNode().appendNode("dependencies")
-				rootProject.subprojects.stream().filter {
-					it.path.startsWith(":${extension.libraryName.get()}:")
-				}.forEach {
-					def depNode = depsNode.appendNode("dependency")
-					depNode.appendNode("groupId", it.group)
-					depNode.appendNode("artifactId", it.name)
-					depNode.appendNode("version", it.version)
-					depNode.appendNode("scope", "compile")
-				}
-			}
+		rootProject.subprojects.stream().filter {
+			it.path.startsWith(":${extension.libraryName.get()}:")
+		}.forEach {
+			tsk.nestedJars.from it.tasks.getByName("remapJar")
+			tsk.nestedJars.from it.tasks.getByName("testmodRemapJar")
 		}
 	}
 }
-
-loom.disableDeprecatedPomGeneration(publishing.publications.mavenJava)
-
-publish.dependsOn checkLibVersion

@@ -16,11 +16,13 @@
 
 package org.quiltmc.qsl.resource.loader.mixin;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.gen.Accessor;
+import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -43,7 +45,7 @@ public class NamespaceResourceManagerMixin {
 	 * Not thread-safe so a ThreadLocal is required.
 	 */
 	@Unique
-	private final ThreadLocal<List<Resource>> quilt$getAllResources$resources = new ThreadLocal<>();
+	private final ThreadLocal<List<NamespaceResourceManager.ResourceEntry>> quilt$getAllResources$resources = new ThreadLocal<>();
 
 	@Inject(
 			method = "getAllResources",
@@ -53,7 +55,7 @@ public class NamespaceResourceManagerMixin {
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	private void onGetAllResources(Identifier id, CallbackInfoReturnable<List<Resource>> cir, List<Resource> resources) {
+	private void onGetAllResources(Identifier id, CallbackInfoReturnable<List<Resource>> cir, List<NamespaceResourceManager.ResourceEntry> resources) {
 		this.quilt$getAllResources$resources.set(resources);
 	}
 
@@ -64,7 +66,7 @@ public class NamespaceResourceManagerMixin {
 					target = "Lnet/minecraft/resource/pack/ResourcePack;contains(Lnet/minecraft/resource/ResourceType;Lnet/minecraft/util/Identifier;)Z"
 			)
 	)
-	private boolean onResourceAdd(ResourcePack pack, ResourceType type, Identifier id) throws IOException {
+	private boolean onResourceAdd(ResourcePack pack, ResourceType type, Identifier id) {
 		if (pack instanceof GroupResourcePack groupResourcePack) {
 			ResourceLoaderImpl.appendResourcesFromGroup((NamespaceResourceManagerAccessor) this, id, groupResourcePack,
 					this.quilt$getAllResources$resources.get());
@@ -72,5 +74,54 @@ public class NamespaceResourceManagerMixin {
 		}
 
 		return pack.contains(type, id);
+	}
+
+	@Redirect(
+			method = "findResourcesOf",
+			at = @At(
+					value = "INVOKE",
+					target = "Ljava/util/List;add(Ljava/lang/Object;)Z"
+			),
+			allow = 1
+	)
+	private boolean onResourceAdd(List<NamespaceResourceManager.ResourceEntry> entries, Object entryObject) {
+		// Required due to type erasure of List.add
+		ResourceEntryAccessor entry = (ResourceEntryAccessor) entryObject;
+		ResourcePack pack = entry.getSource();
+
+		if (pack instanceof GroupResourcePack groupResourcePack) {
+			ResourceLoaderImpl.appendResourcesFromGroup((NamespaceResourceManagerAccessor) this, entry.getId(),
+					groupResourcePack, entries);
+			return true;
+		}
+
+		return entries.add((NamespaceResourceManager.ResourceEntry) entry);
+	}
+
+	@Inject(method = "streamResourcePacks", at = @At("RETURN"), cancellable = true)
+	private void onStreamResourcePacks(CallbackInfoReturnable<Stream<ResourcePack>> cir) {
+		cir.setReturnValue(cir.getReturnValue()
+				.mapMulti((pack, consumer) -> {
+					if (pack instanceof GroupResourcePack grouped) {
+						grouped.streamPacks().forEach(consumer);
+					} else {
+						consumer.accept(pack);
+					}
+				})
+		);
+	}
+
+	@Mixin(NamespaceResourceManager.ResourceEntry.class)
+	public interface ResourceEntryAccessor {
+		@Invoker("<init>")
+		static NamespaceResourceManager.ResourceEntry create(NamespaceResourceManager parent, Identifier id, Identifier metadataId, ResourcePack source) {
+			throw new IllegalStateException("Mixin injection failed.");
+		}
+
+		@Accessor
+		Identifier getId();
+
+		@Accessor
+		ResourcePack getSource();
 	}
 }
