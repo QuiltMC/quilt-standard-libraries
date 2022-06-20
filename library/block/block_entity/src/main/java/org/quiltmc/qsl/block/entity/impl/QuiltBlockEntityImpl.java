@@ -37,7 +37,7 @@ public final class QuiltBlockEntityImpl implements ModInitializer, ServerLifecyc
 	public static final String BLOCK_ENTITY_FREEZING_PHASE = "block_entity_freezing";
 	public static final Identifier BLOCK_ENTITY_FREEZING_PHASE_ID = new Identifier(NAMESPACE, BLOCK_ENTITY_FREEZING_PHASE);
 	public static final QuiltBlockEntityImpl INSTANCE = new QuiltBlockEntityImpl();
-	private boolean isFrozen = false;
+	private boolean frozen = false;
 
 	/**
 	 * Sets whether adding supported blocks to {@link net.minecraft.block.entity.BlockEntityType} is allowed or not.
@@ -51,11 +51,11 @@ public final class QuiltBlockEntityImpl implements ModInitializer, ServerLifecyc
 	 * @param frozen {@code true} if modifying the supported blocks set is forbidden, otherwise {@code false}
 	 */
 	public void setFrozen(boolean frozen) {
-		this.isFrozen = frozen;
+		this.frozen = frozen;
 	}
 
 	public void ensureCanModify() {
-		if (this.isFrozen) {
+		if (this.frozen) {
 			throw new IllegalStateException("BlockEntityType cannot be modified! Game states are already frozen.");
 		}
 	}
