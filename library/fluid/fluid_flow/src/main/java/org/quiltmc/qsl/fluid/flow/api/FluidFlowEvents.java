@@ -44,7 +44,7 @@ public final class FluidFlowEvents {
 	 * @param interactionEvent      the event to run when the conditions are met
 	 */
 	public static void register(Block flowingBlock, Block interactionBlock, FluidFlowInteractionCallback interactionEvent) {
-		Map<Block, Event<FluidFlowInteractionCallback>> flowBlockEvents = EVENT_MAP.computeIfAbsent(flowingBlock, flowing -> new Object2ObjectOpenHashMap<>());
+		var flowBlockEvents = EVENT_MAP.computeIfAbsent(flowingBlock, flowing -> new Object2ObjectOpenHashMap<>());
 		flowBlockEvents.computeIfAbsent(interactionBlock, (block) -> Event.create(FluidFlowInteractionCallback.class, fluidFlowInteractionEvents -> (flowingBlockState, interactingBlockState, interactionDirection, flowPos, world) -> {
 			for (FluidFlowInteractionCallback event : fluidFlowInteractionEvents) {
 				if (!event.onFlow(flowingBlockState, interactingBlockState, interactionDirection, flowPos, world)) {
@@ -64,7 +64,7 @@ public final class FluidFlowEvents {
 	 * @return an event if the conditions are met, otherwise {@code null}
 	 */
 	public static @Nullable Event<FluidFlowInteractionCallback> getEvent(Block flowingBlock, Block interactionBlock) {
-		Map<Block, Event<FluidFlowInteractionCallback>> flowBlockEvents = EVENT_MAP.get(flowingBlock);
+		var flowBlockEvents = EVENT_MAP.get(flowingBlock);
 		if (flowBlockEvents != null) {
 			return flowBlockEvents.get(interactionBlock);
 		}
