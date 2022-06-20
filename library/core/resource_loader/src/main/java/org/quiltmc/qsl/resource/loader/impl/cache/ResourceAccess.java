@@ -86,11 +86,7 @@ public class ResourceAccess {
 	public EntryType getEntryType(String pathName) {
 		var entry = this.getEntry(pathName);
 
-		if (entry == null) {
-			return EntryType.EMPTY;
-		} else {
-			return entry.type();
-		}
+		return entry != null ? entry.type() : EntryType.EMPTY;
 	}
 
 	/**

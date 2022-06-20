@@ -44,11 +44,8 @@ public final class ResourceTreeCache extends ResourceAccess {
 	@Override
 	public @Nullable Entry getEntry(String pathName) {
 		var node = this.tree.resolveOrCompute(this.io, pathName);
-		if (node != null) {
-			return node.toEntry(this.io);
-		} else {
-			return null;
-		}
+
+		return node != null ? node.toEntry(this.io) : null;
 	}
 
 	@Override
