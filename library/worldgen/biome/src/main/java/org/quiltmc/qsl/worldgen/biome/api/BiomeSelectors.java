@@ -18,8 +18,6 @@
 package org.quiltmc.qsl.worldgen.biome.api;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumSet;
 import java.util.Set;
 import java.util.function.Predicate;
 
