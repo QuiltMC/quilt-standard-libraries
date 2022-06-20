@@ -28,7 +28,7 @@ import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.item.Item;
 
 public class ItemContentRegistriesInitializer implements ModInitializer {
-	public static final Map<Item, Integer> FUEL_MAP = new HashMap<>();
+	public static final Map<Item, Integer> FUEL_MAP = new Reference2ObjectOpenHashMap<>();
 
 	@Override
 	public void onInitialize(ModContainer mod) {
