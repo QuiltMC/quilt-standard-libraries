@@ -1,29 +1,26 @@
 package org.quiltmc.qsl.component.api;
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableMap;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.component.api.identifier.ComponentIdentifier;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public interface ComponentProvider {
 
 	Optional<Component> expose(ComponentIdentifier<?> id);
 
-	ImmutableCollection<Component> exposeAll();
+	Map<Identifier, Component> exposeAll();
 
-	static ImmutableMap<Identifier, Component> createComponents(ComponentProvider provider) {
+	static @NotNull Map<Identifier, Component> createComponents(@NotNull ComponentProvider provider) {
 		System.out.println(provider.getClass()); // TODO: Remove this
-		var builder = ImmutableMap.<Identifier, Component>builder();
+		var map = new HashMap<Identifier, Component>();
+		ComponentsImpl.get(provider).forEach((identifier, supplier) -> map.put(identifier, supplier.get()));
 
-		Map<Identifier, Supplier<? extends Component>> injections = ComponentsImpl.get(provider);
-		injections.forEach((id, supplier) -> builder.put(id, supplier.get()));
-
-		return builder.build();
+		return map;
 	}
 
 }

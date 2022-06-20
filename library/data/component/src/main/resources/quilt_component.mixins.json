@@ -4,7 +4,10 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "MixinBlockEntity",
-    "MixinEntity"
+    "MixinChunk",
+    "MixinChunkSerializer",
+    "MixinEntity",
+    "MixinItemStack"
   ],
   "injectors": {
     "defaultRequire": 1

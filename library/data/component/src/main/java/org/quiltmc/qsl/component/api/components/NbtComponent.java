@@ -1,10 +1,10 @@
 package org.quiltmc.qsl.component.api.components;
 
-import com.google.common.collect.ImmutableMap;
 import net.minecraft.nbt.*;
 import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.component.api.Component;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public interface NbtComponent<T extends NbtElement> extends Component {
@@ -36,15 +36,15 @@ public interface NbtComponent<T extends NbtElement> extends Component {
 		}
 	}
 
-	static ImmutableMap<Identifier, NbtComponent<?>> getNbtSerializable(ImmutableMap<Identifier, Component> components) {
-		var builder = ImmutableMap.<Identifier, NbtComponent<?>>builder();
+	static Map<Identifier, NbtComponent<?>> getNbtSerializable(Map<Identifier, Component> components) {
+		var map = new HashMap<Identifier, NbtComponent<?>>();
 
 		for (var entry : components.entrySet()) {
 			if (entry.getValue() instanceof NbtComponent<?> nbtComponent) {
-				builder.put(entry.getKey(), nbtComponent);
+				map.put(entry.getKey(), nbtComponent);
 			}
 		}
 
-		return builder.build();
+		return map;
 	}
 }

@@ -1,6 +1,5 @@
 package org.quiltmc.qsl.component.mixin;
 
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -22,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Implements({
@@ -31,22 +31,14 @@ import java.util.Optional;
 @Mixin(BlockEntity.class)
 public class MixinBlockEntity {
 
-	private ImmutableMap<Identifier, Component> qsl$components;
-	private ImmutableMap<Identifier, NbtComponent<?>> qsl$nbtComponents;
+	private Map<Identifier, Component> qsl$components;
+	private Map<Identifier, NbtComponent<?>> qsl$nbtComponents;
 
-	@Inject(
-			method = "m_qgnqsprj", // The lambda used in second map operation.
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/block/entity/BlockEntity;readNbt(Lnet/minecraft/nbt/NbtCompound;)V")
-	)
-	private static void onReadNbt(NbtCompound nbt, String string, BlockEntity blockEntity, CallbackInfoReturnable<BlockEntity> cir) {
-		var rootQslNbt = nbt.getCompound(StringConstants.COMPONENT_ROOT);
-		((NbtComponentProvider) blockEntity).get().forEach((id, nbtComponent) -> NbtComponent.forward(nbtComponent, id, rootQslNbt));
-	}
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onInit(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState, CallbackInfo ci) {
-		this.qsl$components = ComponentProvider.createComponents((ComponentProvider) this);
-		this.qsl$nbtComponents = NbtComponent.getNbtSerializable(this.qsl$components);
+		this.qsl$components = ImmutableMap.copyOf(ComponentProvider.createComponents((ComponentProvider) this));
+		this.qsl$nbtComponents = ImmutableMap.copyOf(NbtComponent.getNbtSerializable(this.qsl$components));
 	}
 
 	@Inject(method = "toNbt", at = @At("RETURN"))
@@ -57,7 +49,16 @@ public class MixinBlockEntity {
 		cir.getReturnValue().put(StringConstants.COMPONENT_ROOT, rootQslNbt);
 	}
 
-	public ImmutableMap<Identifier, NbtComponent<?>> nbtExp$get() {
+	@Inject(
+			method = "m_qgnqsprj", // The lambda used in second map operation.
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/block/entity/BlockEntity;readNbt(Lnet/minecraft/nbt/NbtCompound;)V")
+	)
+	private static void onReadNbt(NbtCompound nbt, String string, BlockEntity blockEntity, CallbackInfoReturnable<BlockEntity> cir) {
+		var rootQslNbt = nbt.getCompound(StringConstants.COMPONENT_ROOT);
+		((NbtComponentProvider) blockEntity).get().forEach((id, nbtComponent) -> NbtComponent.forward(nbtComponent, id, rootQslNbt));
+	}
+
+	public Map<Identifier, NbtComponent<?>> nbtExp$get() {
 		return this.qsl$nbtComponents;
 	}
 
@@ -65,7 +66,7 @@ public class MixinBlockEntity {
 		return Optional.ofNullable(this.qsl$components.get(id.id()));
 	}
 
-	public ImmutableCollection<Component> comp$exposeAll() {
-		return this.qsl$components.values();
+	public Map<Identifier, Component> comp$exposeAll() {
+		return this.qsl$components;
 	}
 }

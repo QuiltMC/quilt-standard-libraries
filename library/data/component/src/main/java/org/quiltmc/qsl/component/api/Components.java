@@ -1,25 +1,26 @@
 package org.quiltmc.qsl.component.api;
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.component.api.identifier.ComponentIdentifier;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.predicates.ClassInjectionPredicate;
 import org.quiltmc.qsl.component.impl.predicates.FilteredInheritedInjectionPredicate;
 import org.quiltmc.qsl.component.impl.predicates.InheritedInjectionPredicate;
 
+import java.util.Map;
 import java.util.Optional;
 
 public final class Components {
-	public static <T, C extends Component> void inject(Class<T> clazz, ComponentIdentifier<C> component) {
+	public static <C extends Component> void inject(Class<?> clazz, ComponentIdentifier<C> component) {
 		ComponentsImpl.inject(new ClassInjectionPredicate(clazz), component);
 	}
 
-	public static <T, C extends Component> void injectInheritage(Class<T> clazz, ComponentIdentifier<C> component) {
+	public static <C extends Component> void injectInheritage(Class<?> clazz, ComponentIdentifier<C> component) {
 		ComponentsImpl.inject(new InheritedInjectionPredicate(clazz), component);
 	}
 
-	public static <T, C extends Component> void injectInheritanceExcept(Class<?> clazz, ComponentIdentifier<C> component, Class<?>... exceptions) {
+	public static <C extends Component> void injectInheritanceExcept(Class<?> clazz, ComponentIdentifier<C> component, Class<?>... exceptions) {
 		ComponentsImpl.inject(new FilteredInheritedInjectionPredicate(clazz, exceptions), component);
 	}
 
@@ -27,13 +28,13 @@ public final class Components {
 		if (obj instanceof ComponentProvider provider) {
 			return provider.expose(id)
 					.map(id::cast)
-					.map(Optional::orElseThrow);
+					.map(Optional::orElseThrow); // If the casting fails something is wrong with the provided ComponentIdentifier. In that case we just throw.
 		}
 
 		return Optional.empty();
 	}
 
-	public static <S> ImmutableCollection<Component> exposeAll(S obj) {
-		return obj instanceof ComponentProvider provider ? provider.exposeAll() : ImmutableList.of();
+	public static <S> Map<Identifier, Component> exposeAll(S obj) {
+		return obj instanceof ComponentProvider provider ? provider.exposeAll() : ImmutableMap.of();
 	}
 }
