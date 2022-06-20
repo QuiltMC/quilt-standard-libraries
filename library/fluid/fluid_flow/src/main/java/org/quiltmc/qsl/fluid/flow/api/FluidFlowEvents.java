@@ -40,10 +40,10 @@ public final class FluidFlowEvents {
 	/**
 	 * Registers a new event on a fluid flow. The same two blocks can register a different event for different directions, but the same directions will run the event that was registered first.
 	 *
-	 * @param flowingBlock          The fluid block that flowed.
-	 * @param interactionBlock      The block in one of the {@code interactionDirections}.
-	 * @param interactionDirections The direction to search for {@code interactionBlock}.
-	 * @param interactionEvent      The event to run when the conditions are met.
+	 * @param flowingBlock          the fluid block that flowed
+	 * @param interactionBlock      the block in one of the {@code interactionDirections}
+	 * @param interactionDirections the direction to search for {@code interactionBlock}
+	 * @param interactionEvent      the event to run when the conditions are met
 	 */
 	public static void register(Block flowingBlock, Block interactionBlock, Direction[] interactionDirections, FluidFlowInteractionCallback interactionEvent) {
 		Map<Block, Map<Direction, Event<FluidFlowInteractionCallback>>> flowBlockEvents = EVENT_MAP.computeIfAbsent(flowingBlock, flowing -> new Object2ObjectOpenHashMap<>());
@@ -77,10 +77,10 @@ public final class FluidFlowEvents {
 	/**
 	 * Gets the event from the following blocks and direction.
 	 *
-	 * @param flowingBlock         The fluid block that flowed.
-	 * @param interactionBlock     The block it interacts with.
-	 * @param interactionDirection The interaction direction
-	 * @return An event if the conditions are met, otherwise {@code null}
+	 * @param flowingBlock         the fluid block that flowed
+	 * @param interactionBlock     the block it interacts with
+	 * @param interactionDirection the interaction direction
+	 * @return an event if the conditions are met, otherwise {@code null}
 	 */
 	public static @Nullable Event<FluidFlowInteractionCallback> getEvent(Block flowingBlock, Block interactionBlock, Direction interactionDirection) {
 		if (EVENT_MAP.containsKey(flowingBlock)) {
