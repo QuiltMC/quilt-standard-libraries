@@ -16,6 +16,7 @@ import org.quiltmc.qsl.component.impl.util.duck.NbtComponentProvider;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -29,25 +30,10 @@ import java.util.Optional;
 		@Interface(iface = ComponentProvider.class, prefix = "comp$")
 })
 @Mixin(BlockEntity.class)
-public class MixinBlockEntity {
+public abstract class MixinBlockEntity {
 
 	private Map<Identifier, Component> qsl$components;
 	private Map<Identifier, NbtComponent<?>> qsl$nbtComponents;
-
-
-	@Inject(method = "<init>", at = @At("RETURN"))
-	private void onInit(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState, CallbackInfo ci) {
-		this.qsl$components = ImmutableMap.copyOf(ComponentProvider.createComponents((ComponentProvider) this));
-		this.qsl$nbtComponents = ImmutableMap.copyOf(NbtComponent.getNbtSerializable(this.qsl$components));
-	}
-
-	@Inject(method = "toNbt", at = @At("RETURN"))
-	private void onWriteNbt(CallbackInfoReturnable<NbtCompound> cir) {
-		var rootQslNbt = new NbtCompound();
-		this.qsl$nbtComponents.forEach((id, nbtComponent) -> rootQslNbt.put(id.toString(), nbtComponent.write()));
-
-		cir.getReturnValue().put(StringConstants.COMPONENT_ROOT, rootQslNbt);
-	}
 
 	@Inject(
 			method = "m_qgnqsprj", // The lambda used in second map operation.
@@ -56,6 +42,24 @@ public class MixinBlockEntity {
 	private static void onReadNbt(NbtCompound nbt, String string, BlockEntity blockEntity, CallbackInfoReturnable<BlockEntity> cir) {
 		var rootQslNbt = nbt.getCompound(StringConstants.COMPONENT_ROOT);
 		((NbtComponentProvider) blockEntity).getNbtComponents().forEach((id, nbtComponent) -> NbtComponent.readFrom(nbtComponent, id, rootQslNbt));
+	}
+
+	@Shadow
+	public abstract void markDirty();
+
+	@Inject(method = "<init>", at = @At("RETURN"))
+	private void onInit(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState, CallbackInfo ci) {
+		this.qsl$components = ImmutableMap.copyOf(ComponentProvider.createComponents((ComponentProvider) this));
+		this.qsl$nbtComponents = ImmutableMap.copyOf(NbtComponent.getNbtSerializable(this.qsl$components));
+		this.qsl$nbtComponents.forEach((id, component) -> component.setSaveOperation(this::markDirty));
+	}
+
+	@Inject(method = "toNbt", at = @At("RETURN"))
+	private void onWriteNbt(CallbackInfoReturnable<NbtCompound> cir) {
+		var rootQslNbt = new NbtCompound();
+		this.qsl$nbtComponents.forEach((id, nbtComponent) -> rootQslNbt.put(id.toString(), nbtComponent.write()));
+
+		cir.getReturnValue().put(StringConstants.COMPONENT_ROOT, rootQslNbt);
 	}
 
 	public Map<Identifier, NbtComponent<?>> nbtExp$getNbtComponents() {

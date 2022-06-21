@@ -6,6 +6,7 @@ import java.util.Objects;
 
 public class DefaultIntegerComponent implements IntegerComponent {
 	private int value;
+	private Runnable saveOperation;
 
 	public DefaultIntegerComponent(int defaultValue) {
 		this.value = defaultValue;
@@ -45,5 +46,17 @@ public class DefaultIntegerComponent implements IntegerComponent {
 	@Override
 	public int hashCode() {
 		return Objects.hash(value);
+	}
+
+	@Override
+	public void saveNeeded() {
+		if (this.saveOperation != null) {
+			this.saveOperation.run();
+		}
+	}
+
+	@Override
+	public void setSaveOperation(Runnable runnable) {
+		this.saveOperation = runnable;
 	}
 }

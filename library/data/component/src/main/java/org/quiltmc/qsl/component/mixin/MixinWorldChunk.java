@@ -11,6 +11,7 @@ import net.minecraft.world.gen.chunk.BlendingData;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentProvider;
+import org.quiltmc.qsl.component.impl.util.duck.NbtComponentProvider;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -29,5 +30,8 @@ public abstract class MixinWorldChunk extends Chunk {
 		var this$ = (ComponentProvider) this;
 		Map<Identifier, Component> componentMap = this$.exposeAll();
 		componentMap.putAll(((ComponentProvider) protoChunk).exposeAll());
+		((NbtComponentProvider) this$).getNbtComponents().forEach((id, component) ->
+				component.setSaveOperation(() -> this.setNeedsSaving(true))
+		);
 	}
 }
