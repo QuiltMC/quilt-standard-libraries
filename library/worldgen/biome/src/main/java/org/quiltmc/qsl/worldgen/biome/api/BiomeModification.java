@@ -21,7 +21,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import net.minecraft.tag.TagKey;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.util.Identifier;
@@ -52,8 +51,8 @@ public class BiomeModification {
 	/**
 	 * Adds a modifier that is sensitive to the current state of the biome when it is applied.
 	 * Examples for this are modifiers that apply scales to existing values (e.g. half the temperature).
-	 * <p>
-	 * For modifiers that should only be applied if a given condition is met for a Biome, please add these
+	 *
+	 * <p>For modifiers that should only be applied if a given condition is met for a Biome, please add these
 	 * conditions to the selector, and use a context-free modifier instead, as this will greatly help
 	 * with debugging world generation issues.
 	 */
