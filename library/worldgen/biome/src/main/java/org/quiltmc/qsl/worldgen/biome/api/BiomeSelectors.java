@@ -81,7 +81,6 @@ public final class BiomeSelectors {
 	 * This selector will also match modded biomes that have been added to the nether using {@link NetherBiomes}.
 	 */
 	public static Predicate<BiomeSelectionContext> foundInTheNether() {
-		TagKey<Biome> NETHER = TagKey.of(Registry.BIOME_KEY, new Identifier("minecraft", "is_nether"));
 		return context -> context.isIn(BiomeTags.IS_NETHER) || context.canGenerateIn(DimensionOptions.NETHER);
 	}
 
