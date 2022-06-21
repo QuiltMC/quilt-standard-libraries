@@ -55,7 +55,7 @@ public final class BiomeSelectors {
 	}
 
 	/**
-	 * {@return a biome selector that will match all biomes from the minecraft namespace}.
+	 * {@return a biome selector that will match all biomes from the minecraft namespace}
 	 */
 	public static Predicate<BiomeSelectionContext> vanilla() {
 		return context -> {
