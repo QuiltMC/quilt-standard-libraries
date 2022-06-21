@@ -26,7 +26,9 @@ import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.tag.TagKey;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.BuiltinRegistries;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.SpawnSettings;
@@ -69,25 +71,26 @@ public final class BiomeSelectors {
 	 * assuming Vanilla's default biome source is used.
 	 */
 	public static Predicate<BiomeSelectionContext> foundInOverworld() {
-		return context -> context.canGenerateIn(DimensionOptions.OVERWORLD);
+		TagKey<Biome> OVERWORLD = TagKey.of(Registry.BIOME_KEY, new Identifier("minecraft", "is_overworld"));
+		return context -> context.isIn(OVERWORLD);
 	}
 
 	/**
-	 * Returns a biome selector that will match all biomes that would normally spawn in the Nether,
-	 * assuming Vanilla's default multi noise biome source with the nether preset is used.
+	 * Returns a biome selector that will match all biomes that would normally spawn in the Nether. Datapack Compatible.
 	 * <p>
 	 * This selector will also match modded biomes that have been added to the nether using {@link NetherBiomes}.
 	 */
 	public static Predicate<BiomeSelectionContext> foundInTheNether() {
-		return context -> context.canGenerateIn(DimensionOptions.NETHER);
+		TagKey<Biome> NETHER = TagKey.of(Registry.BIOME_KEY, new Identifier("minecraft", "is_nether"));
+		return context -> context.isIn(NETHER) || context.canGenerateIn(DimensionOptions.NETHER);
 	}
 
 	/**
-	 * Returns a biome selector that will match all biomes that would normally spawn in the End,
-	 * assuming Vanilla's default End biome source is used.
+	 * Returns a biome selector that will match all biomes that spawn in the end. Datapack compatible.
 	 */
 	public static Predicate<BiomeSelectionContext> foundInTheEnd() {
-		return context -> context.canGenerateIn(DimensionOptions.END);
+		TagKey<Biome> END = TagKey.of(Registry.BIOME_KEY, new Identifier("minecraft", "is_end"));
+		return context -> context.isIn(END) || context.canGenerateIn(DimensionOptions.NETHER);
 	}
 
 	/**

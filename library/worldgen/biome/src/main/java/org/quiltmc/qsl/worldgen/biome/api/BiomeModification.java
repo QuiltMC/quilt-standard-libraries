@@ -21,6 +21,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import net.minecraft.tag.TagKey;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.util.Identifier;
