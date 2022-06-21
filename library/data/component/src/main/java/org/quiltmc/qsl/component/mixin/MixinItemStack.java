@@ -22,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Map;
 import java.util.Optional;
 
+@SuppressWarnings("ConstantConditions")
 @Implements({
 		@Interface(iface = ComponentProvider.class, prefix = "comp$"),
 		@Interface(iface = NbtComponentProvider.class, prefix = "nbtExp$")

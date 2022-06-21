@@ -69,7 +69,7 @@ public class ComponentTestMod implements ModInitializer {
 		Components.injectInheritanceExcept(HostileEntity.class, HOSTILE_EXPLODE_TIME, CreeperEntity.class);
 		Components.inject(ChestBlockEntity.class, CHEST_NUMBER);
 		Components.injectInheritage(Chunk.class, CHUNK_INVENTORY);
-		Components.inject(ItemStack.class, ITEMSTACK_NOMBER);
+//		Components.inject(ItemStack.class, ITEMSTACK_NOMBER);
 
 		// Testing Code
 		ServerWorldTickEvents.START.register((ignored, world) -> {
@@ -121,8 +121,9 @@ public class ComponentTestMod implements ModInitializer {
 			}
 			Chunk chunk = world.getChunk(player.getBlockPos());
 			Components.expose(CHUNK_INVENTORY, chunk).ifPresent(inventory -> {
-				if (player.getInventory().getStack(9).isOf(Items.DIRT)) {
-					player.getInventory().getStack(9).decrement(1);
+				ItemStack playerStack = player.getInventory().getStack(9);
+				if (playerStack.isOf(Items.DIRT)) {
+					playerStack.decrement(1);
 					ItemStack stack = inventory.getStack(0);
 					if (stack.isEmpty()) {
 						inventory.setStack(0, Items.DIRT.getDefaultStack());

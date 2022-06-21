@@ -67,8 +67,9 @@ public interface InventoryComponent extends NbtComponent<NbtCompound>, Inventory
 	@Override
 	default void setStack(int slot, ItemStack stack) {
 		this.getStacks().set(slot, stack);
-		if (stack.getCount() > getMaxCountPerStack()) {
-			stack.setCount(getMaxCountPerStack());
+		ItemStack slotStack = this.getStack(slot);
+		if (slotStack.getCount() > this.getMaxCountPerStack()) {
+			slotStack.setCount(this.getMaxCountPerStack());
 		}
 
 		this.saveNeeded();

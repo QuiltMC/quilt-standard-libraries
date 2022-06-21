@@ -22,13 +22,9 @@ public class MixinChunkSerializer {
 	private static void deserializeComponents(ServerWorld world, PointOfInterestStorage poiStorage, ChunkPos pos, NbtCompound nbt, CallbackInfoReturnable<ProtoChunk> cir) {
 		ProtoChunk ret = cir.getReturnValue();
 		NbtCompound rootQslNbt = nbt.getCompound(StringConstants.COMPONENT_ROOT);
+		var target = ret instanceof ReadOnlyChunk readOnly ? readOnly.getWrappedChunk() : ret;
 
-		if (ret instanceof ReadOnlyChunk readOnly) {
-			((NbtComponentProvider) readOnly.getWrappedChunk()).getNbtComponents().forEach((id, component) -> NbtComponent.readFrom(component, id, rootQslNbt));
-		} else {
-			((NbtComponentProvider) ret).getNbtComponents().forEach((id, component) -> NbtComponent.readFrom(component, id, rootQslNbt));
-		}
-
+		((NbtComponentProvider) target).getNbtComponents().forEach((id, component) -> NbtComponent.readFrom(component, id, rootQslNbt));
 		cir.setReturnValue(ret);
 	}
 

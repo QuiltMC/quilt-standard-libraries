@@ -7,7 +7,6 @@ import org.quiltmc.qsl.component.api.Component;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public interface NbtComponent<T extends NbtElement> extends Component {
 

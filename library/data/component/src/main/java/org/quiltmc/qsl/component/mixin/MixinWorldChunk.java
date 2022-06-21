@@ -27,9 +27,10 @@ public abstract class MixinWorldChunk extends Chunk {
 
 	@Inject(method = "<init>(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/world/chunk/ProtoChunk;Lnet/minecraft/world/chunk/WorldChunk$PostLoadProcessor;)V", at = @At("TAIL"))
 	private void copyComponentData(ServerWorld serverWorld, ProtoChunk protoChunk, WorldChunk.PostLoadProcessor postLoadProcessor, CallbackInfo ci) {
+		var target = protoChunk instanceof ReadOnlyChunk readOnly ? readOnly.getWrappedChunk() : protoChunk;
 		var this$ = (ComponentProvider) this;
 		Map<Identifier, Component> componentMap = this$.exposeAll();
-		componentMap.putAll(((ComponentProvider) protoChunk).exposeAll());
+		componentMap.putAll(((ComponentProvider) target).exposeAll());
 		((NbtComponentProvider) this$).getNbtComponents().forEach((id, component) ->
 				component.setSaveOperation(() -> this.setNeedsSaving(true))
 		);
