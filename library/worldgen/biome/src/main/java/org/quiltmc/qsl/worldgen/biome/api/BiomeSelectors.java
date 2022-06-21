@@ -55,7 +55,7 @@ public final class BiomeSelectors {
 	}
 
 	/**
-	 * {@return a biome selector that will match all biomes from the minecraft namespace}
+	 * {@return a biome selector that will match all biomes from the minecraft namespace}.
 	 */
 	public static Predicate<BiomeSelectionContext> vanilla() {
 		return context -> {
@@ -67,14 +67,17 @@ public final class BiomeSelectors {
 
 	/**
 	 * Returns a biome selector that will match all biomes that would normally spawn in the Overworld,
-	 * assuming Vanilla's default biome source is used.
+	 * assuming Vanilla's biome source is used.
+	 * Datapack compatible.
 	 */
 	public static Predicate<BiomeSelectionContext> foundInOverworld() {
 		return context -> context.isIn(BiomeTags.IS_OVERWORLD) || context.canGenerateIn(DimensionOptions.OVERWORLD);
 	}
 
 	/**
-	 * Returns a biome selector that will match all biomes that would normally spawn in the Nether. Datapack Compatible.
+	 * Returns a biome selector that will match all biomes that would normally spawn in the Nether,
+	 * assuming Vanilla's biome source is used.
+	 * Datapack compatible.
 	 * <p>
 	 * This selector will also match modded biomes that have been added to the nether using {@link NetherBiomes}.
 	 */
@@ -83,7 +86,9 @@ public final class BiomeSelectors {
 	}
 
 	/**
-	 * Returns a biome selector that will match all biomes that spawn in the end. Datapack compatible.
+	 * Returns a biome selector that will match all biomes that spawn in the End,
+	 * assuming Vanilla's biome source is used.
+	 * Datapack compatible.
 	 */
 	public static Predicate<BiomeSelectionContext> foundInTheEnd() {
 		return context -> context.isIn(BiomeTags.IS_END) || context.canGenerateIn(DimensionOptions.END);
