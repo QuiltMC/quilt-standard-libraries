@@ -1,6 +1,5 @@
 package org.quiltmc.qsl.component.mixin;
 
-import com.google.common.collect.ImmutableMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.NbtCompound;
@@ -31,8 +30,8 @@ public abstract class MixinEntity {
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onEntityInit(EntityType<?> entityType, World world, CallbackInfo ci) {
-		this.qsl$components = ImmutableMap.copyOf(ComponentProvider.createComponents((ComponentProvider) this));
-		this.qsl$nbtComponents = ImmutableMap.copyOf(NbtComponent.getNbtSerializable(this.qsl$components));
+		this.qsl$components = ComponentProvider.createComponents((ComponentProvider) this);
+		this.qsl$nbtComponents = NbtComponent.getNbtSerializable(this.qsl$components);
 	}
 
 	public Optional<Component> comp$expose(ComponentIdentifier<?> id) {

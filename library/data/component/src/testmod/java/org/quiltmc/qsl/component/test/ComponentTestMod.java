@@ -30,12 +30,15 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.world.SaveProperties;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.explosion.Explosion;
+import net.minecraft.world.level.LevelProperties;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.component.api.Components;
+import org.quiltmc.qsl.component.api.components.FloatComponent;
 import org.quiltmc.qsl.component.api.components.IntegerComponent;
 import org.quiltmc.qsl.component.api.components.InventoryComponent;
 import org.quiltmc.qsl.component.api.identifier.ComponentIdentifier;
@@ -60,6 +63,8 @@ public class ComponentTestMod implements ModInitializer {
 	);
 	public static final ComponentIdentifier<IntegerComponent> ITEMSTACK_NOMBER =
 			IntegerComponent.create(new Identifier(MODID, "itemstack_nomber"));
+	public static final ComponentIdentifier<FloatComponent> SAVE_FLOAT =
+			FloatComponent.create(new Identifier(MODID, "save_float"));
 
 	@Override
 	public void onInitialize(ModContainer mod) {
@@ -69,10 +74,11 @@ public class ComponentTestMod implements ModInitializer {
 		Components.injectInheritanceExcept(HostileEntity.class, HOSTILE_EXPLODE_TIME, CreeperEntity.class);
 		Components.inject(ChestBlockEntity.class, CHEST_NUMBER);
 		Components.injectInheritage(Chunk.class, CHUNK_INVENTORY);
+		Components.inject(LevelProperties.class, SAVE_FLOAT);
 //		Components.inject(ItemStack.class, ITEMSTACK_NOMBER);
 
 		// Testing Code
-		ServerWorldTickEvents.START.register((ignored, world) -> {
+		ServerWorldTickEvents.START.register((server, world) -> {
 			world.getEntitiesByType(TypeFilter.instanceOf(CowEntity.class), cowEntity -> true).forEach(entity ->
 					Components.expose(COW_INVENTORY, entity).ifPresent(inventoryComponent -> {
 						if (inventoryComponent.isEmpty()) {
@@ -139,6 +145,13 @@ public class ComponentTestMod implements ModInitializer {
 			if (!stack.isEmpty()) {
 				Components.expose(ITEMSTACK_NOMBER, stack).ifPresent(IntegerComponent::increment);
 			}
+
+			SaveProperties props = server.getSaveProperties();
+			Components.expose(SAVE_FLOAT, props)
+					.ifPresent(floatComponent -> {
+						floatComponent.set(floatComponent.get() + 0.5f);
+						player.sendMessage(Text.literal("%.3f".formatted(floatComponent.get())), false);
+					});
 		});
 	}
 }

@@ -7,12 +7,15 @@ import org.quiltmc.qsl.component.api.ComponentInjectionPredicate;
 import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.api.identifier.ComponentIdentifier;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public class ComponentsImpl {
 	private static final Map<ComponentInjectionPredicate, Set<Identifier>> INJECTION_REGISTRY = new HashMap<>();
-	private static final Map<Identifier, Supplier<? extends Component>> REGISTRY = new HashMap<>();
+	private static final Map<Identifier, Supplier<? extends Component>> REGISTRY = new HashMap<>(); // Look into using a Minecraft Registry for this.
 
 	public static <C extends Component> void inject(ComponentInjectionPredicate predicate, ComponentIdentifier<C> id) {
 		Supplier<? extends Component> supplier = REGISTRY.get(id.id());
@@ -32,6 +35,7 @@ public class ComponentsImpl {
 		} else {
 			INJECTION_REGISTRY.put(predicate, Util.make(new HashSet<>(), set -> set.add(id.id())));
 		}
+
 		ComponentCache.getInstance().clear(); // Always clear the cache after an injection is registered.
 	}
 
@@ -43,9 +47,9 @@ public class ComponentsImpl {
 	public static Map<Identifier, Supplier<? extends Component>> get(ComponentProvider provider) {
 		return ComponentCache.getInstance().getCache(provider.getClass()).orElseGet(() -> {
 			Map<Identifier, Supplier<? extends Component>> returnMap = INJECTION_REGISTRY.entrySet().stream()
-				.filter(it -> it.getKey().canInject(provider))
-				.map(Map.Entry::getValue)
-				.collect(HashMap::new, (map, ids) -> ids.forEach(id -> map.put(id, REGISTRY.get(id))), HashMap::putAll);
+					.filter(it -> it.getKey().canInject(provider))
+					.map(Map.Entry::getValue)
+					.collect(HashMap::new, (map, ids) -> ids.forEach(id -> map.put(id, REGISTRY.get(id))), HashMap::putAll);
 
 			ComponentCache.getInstance().record(provider.getClass(), returnMap);
 
