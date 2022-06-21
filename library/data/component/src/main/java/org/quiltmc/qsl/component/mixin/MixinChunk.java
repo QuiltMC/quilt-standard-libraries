@@ -31,11 +31,11 @@ import java.util.Optional;
 @Mixin(Chunk.class)
 public abstract class MixinChunk {
 
-	@Shadow
-	public abstract void setNeedsSaving(boolean needsSaving);
-
 	private Map<Identifier, Component> qsl$components;
 	private Map<Identifier, NbtComponent<?>> qsl$nbtComponents;
+
+	@Shadow
+	public abstract void setNeedsSaving(boolean needsSaving);
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onInit(ChunkPos chunkPos, UpgradeData upgradeData, HeightLimitView heightLimitView, Registry<?> registry, long l, ChunkSection[] chunkSections, BlendingData blendingData, CallbackInfo ci) {

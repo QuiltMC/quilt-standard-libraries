@@ -11,11 +11,11 @@ public class DefaultInventoryComponent implements InventoryComponent {
 	private final DefaultedList<ItemStack> stacks;
 	private Runnable dirtyOperation;
 
-	public DefaultInventoryComponent(int size){
+	public DefaultInventoryComponent(int size) {
 		this.stacks = DefaultedList.ofSize(size, ItemStack.EMPTY);
 	}
 
-	public DefaultInventoryComponent(Supplier<DefaultedList<ItemStack>> stacks){
+	public DefaultInventoryComponent(Supplier<DefaultedList<ItemStack>> stacks) {
 		this.stacks = stacks.get();
 	}
 

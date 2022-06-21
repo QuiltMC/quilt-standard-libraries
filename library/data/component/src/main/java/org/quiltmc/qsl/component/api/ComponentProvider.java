@@ -11,10 +11,6 @@ import java.util.Optional;
 
 public interface ComponentProvider {
 
-	Optional<Component> expose(ComponentIdentifier<?> id);
-
-	Map<Identifier, Component> exposeAll();
-
 	static @NotNull Map<Identifier, Component> createComponents(@NotNull ComponentProvider provider) {
 		// System.out.println(provider.getClass()); // TODO: Remove this
 		var map = new HashMap<Identifier, Component>();
@@ -22,5 +18,9 @@ public interface ComponentProvider {
 
 		return map;
 	}
+
+	Optional<Component> expose(ComponentIdentifier<?> id);
+
+	Map<Identifier, Component> exposeAll();
 
 }

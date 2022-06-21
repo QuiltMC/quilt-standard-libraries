@@ -4,7 +4,9 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import org.quiltmc.qsl.component.api.Component;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class ComponentCache {
@@ -17,7 +19,7 @@ public class ComponentCache {
 
 	}
 
-	public static ComponentCache getInstance(){
+	public static ComponentCache getInstance() {
 		if (INSTANCE == null) {
 			INSTANCE = new ComponentCache();
 		}

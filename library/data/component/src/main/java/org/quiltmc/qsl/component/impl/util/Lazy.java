@@ -14,14 +14,14 @@ public class Lazy<T> {
 	@Nullable
 	private T value;
 
-	@NotNull
-	public static <T> Lazy<T> of(@NotNull Supplier<T> sup) {
-		return new Lazy<>(sup);
-	}
-
 	private Lazy(@NotNull Supplier<T> sup) {
 		this.sup = sup;
 		this.value = null;
+	}
+
+	@NotNull
+	public static <T> Lazy<T> of(@NotNull Supplier<T> sup) {
+		return new Lazy<>(sup);
 	}
 
 	@NotNull

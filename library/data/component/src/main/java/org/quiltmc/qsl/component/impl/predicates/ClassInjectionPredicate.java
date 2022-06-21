@@ -9,7 +9,7 @@ import java.util.Objects;
 public class ClassInjectionPredicate implements ComponentInjectionPredicate {
 	protected final Class<?> clazz;
 
-	public ClassInjectionPredicate(Class<?> clazz){
+	public ClassInjectionPredicate(Class<?> clazz) {
 		if (implementsComponentProvider(clazz)) {
 			this.clazz = clazz;
 		} else {

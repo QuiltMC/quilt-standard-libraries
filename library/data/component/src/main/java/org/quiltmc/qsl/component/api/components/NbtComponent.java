@@ -10,16 +10,6 @@ import java.util.Map;
 
 public interface NbtComponent<T extends NbtElement> extends Component {
 
-	T write();
-
-	void read(T nbt);
-
-	byte nbtType();
-
-	void saveNeeded();
-
-	void setSaveOperation(Runnable runnable);
-
 	static void readFrom(@NotNull NbtComponent<?> nbtComponent, @NotNull Identifier id, @NotNull NbtCompound nbt) {
 		NbtElement nbtTarget = nbt.get(id.toString());
 		read(nbtComponent, nbtTarget);
@@ -32,7 +22,7 @@ public interface NbtComponent<T extends NbtElement> extends Component {
 	@SuppressWarnings("unchecked")
 	// Suppressing because we know those values are hardcoded either way.
 	static void read(@NotNull NbtComponent<?> nbtComponent, NbtElement nbt) {
-		switch (nbtComponent.nbtType()){
+		switch (nbtComponent.nbtType()) {
 			case NbtElement.BYTE_TYPE -> ((NbtComponent<NbtByte>) nbtComponent).read((NbtByte) nbt);
 			case NbtElement.SHORT_TYPE -> ((NbtComponent<NbtShort>) nbtComponent).read((NbtShort) nbt);
 			case NbtElement.INT_TYPE -> ((NbtComponent<NbtInt>) nbtComponent).read((NbtInt) nbt);
@@ -61,4 +51,14 @@ public interface NbtComponent<T extends NbtElement> extends Component {
 
 		return map;
 	}
+
+	T write();
+
+	void read(T nbt);
+
+	byte nbtType();
+
+	void saveNeeded();
+
+	void setSaveOperation(Runnable runnable);
 }

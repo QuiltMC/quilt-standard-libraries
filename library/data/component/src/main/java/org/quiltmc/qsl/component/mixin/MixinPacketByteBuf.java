@@ -20,7 +20,7 @@ public abstract class MixinPacketByteBuf extends ByteBuf {
 		var this$ = (PacketByteBuf) (Object) this;
 		NbtCompound rootQslNbt = this$.readNbt();
 		if (rootQslNbt != null) {
-			((NbtComponentProvider) (Object)ret).getNbtComponents().forEach((id, component) -> NbtComponent.readFrom(component, id, rootQslNbt));
+			((NbtComponentProvider) (Object) ret).getNbtComponents().forEach((id, component) -> NbtComponent.readFrom(component, id, rootQslNbt));
 			cir.setReturnValue(ret);
 		}
 	}

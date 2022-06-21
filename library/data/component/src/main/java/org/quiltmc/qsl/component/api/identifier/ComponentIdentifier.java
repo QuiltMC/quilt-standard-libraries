@@ -5,12 +5,12 @@ import org.quiltmc.qsl.component.api.Component;
 
 import java.util.Optional;
 
-public record ComponentIdentifier<T extends Component>(Identifier id){
+public record ComponentIdentifier<T extends Component>(Identifier id) {
 
 	@SuppressWarnings("unchecked")
 	public Optional<T> cast(Component component) {
 		try {
-			return Optional.of((T)component);
+			return Optional.of((T) component);
 		} catch (ClassCastException ignored) {
 			return Optional.empty();
 		}
