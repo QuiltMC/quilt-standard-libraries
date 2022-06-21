@@ -88,7 +88,6 @@ public final class BiomeSelectors {
 	 * Returns a biome selector that will match all biomes that spawn in the end. Datapack compatible.
 	 */
 	public static Predicate<BiomeSelectionContext> foundInTheEnd() {
-		TagKey<Biome> END = TagKey.of(Registry.BIOME_KEY, new Identifier("minecraft", "is_end"));
 		return context -> context.isIn(BiomeTags.IS_END) || context.canGenerateIn(DimensionOptions.END);
 	}
 
