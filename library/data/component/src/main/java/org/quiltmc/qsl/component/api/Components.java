@@ -26,7 +26,7 @@ public final class Components {
 
 	public static <T extends Component, S> Optional<T> expose(ComponentIdentifier<T> id, S obj) {
 		if (obj instanceof ComponentProvider provider) {
-			return provider.expose(id)
+			return provider.expose(id.id())
 					.map(id::cast)
 					.map(Optional::orElseThrow); // If the casting fails something is wrong with the provided ComponentIdentifier. In that case we just throw.
 		}
