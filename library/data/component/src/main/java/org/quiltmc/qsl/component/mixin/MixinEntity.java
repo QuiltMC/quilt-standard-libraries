@@ -23,7 +23,7 @@ import java.util.Optional;
 
 @Mixin(Entity.class)
 @Implements(@Interface(iface = ComponentProvider.class, prefix = "comp$"))
-public abstract class MixinEntity {
+public abstract class MixinEntity { //TODO: Consider creating a container-like class to handle this instead of doing it manually.
 
 	private Map<Identifier, Component> qsl$components;
 	private Map<Identifier, NbtComponent<?>> qsl$nbtComponents;

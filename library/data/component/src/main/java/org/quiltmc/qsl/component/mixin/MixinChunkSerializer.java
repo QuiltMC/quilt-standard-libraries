@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ChunkSerializer.class)
 public class MixinChunkSerializer {
-	@Inject(method = "deserialize", at = @At("RETURN"), cancellable = true)
+	@Inject(method = "deserialize", at = @At("RETURN"), cancellable = true) // FIXME: More chunk issues
 	private static void deserializeComponents(ServerWorld world, PointOfInterestStorage poiStorage, ChunkPos pos, NbtCompound nbt, CallbackInfoReturnable<ProtoChunk> cir) {
 		ProtoChunk ret = cir.getReturnValue();
 		NbtCompound rootQslNbt = nbt.getCompound(StringConstants.COMPONENT_ROOT);
