@@ -25,6 +25,7 @@ import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.tag.BiomeTags;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.BuiltinRegistries;
@@ -71,8 +72,7 @@ public final class BiomeSelectors {
 	 * assuming Vanilla's default biome source is used.
 	 */
 	public static Predicate<BiomeSelectionContext> foundInOverworld() {
-		TagKey<Biome> OVERWORLD = TagKey.of(Registry.BIOME_KEY, new Identifier("minecraft", "is_overworld"));
-		return context -> context.isIn(OVERWORLD);
+		return context -> context.isIn(BiomeTags.IS_OVERWORLD) || context.canGenerateIn(DimensionOptions.OVERWORLD);
 	}
 
 	/**
@@ -82,7 +82,7 @@ public final class BiomeSelectors {
 	 */
 	public static Predicate<BiomeSelectionContext> foundInTheNether() {
 		TagKey<Biome> NETHER = TagKey.of(Registry.BIOME_KEY, new Identifier("minecraft", "is_nether"));
-		return context -> context.isIn(NETHER) || context.canGenerateIn(DimensionOptions.NETHER);
+		return context -> context.isIn(BiomeTags.IS_NETHER) || context.canGenerateIn(DimensionOptions.NETHER);
 	}
 
 	/**
@@ -90,7 +90,7 @@ public final class BiomeSelectors {
 	 */
 	public static Predicate<BiomeSelectionContext> foundInTheEnd() {
 		TagKey<Biome> END = TagKey.of(Registry.BIOME_KEY, new Identifier("minecraft", "is_end"));
-		return context -> context.isIn(END) || context.canGenerateIn(DimensionOptions.NETHER);
+		return context -> context.isIn(BiomeTags.IS_END) || context.canGenerateIn(DimensionOptions.END);
 	}
 
 	/**
