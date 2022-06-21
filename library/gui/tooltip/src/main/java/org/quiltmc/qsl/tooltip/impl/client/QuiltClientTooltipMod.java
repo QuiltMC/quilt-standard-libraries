@@ -24,6 +24,8 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipData;
 
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.ListenerPhase;
 import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
@@ -35,9 +37,17 @@ import org.quiltmc.qsl.tooltip.api.client.TooltipComponentCallback;
 )
 @ApiStatus.Internal
 @Environment(EnvType.CLIENT)
-public final class QuiltClientTooltipMod implements TooltipComponentCallback {
+public final class QuiltClientTooltipMod implements ClientModInitializer, TooltipComponentCallback {
 	public static final String NAMESPACE = "quilt_tooltip";
 	public static final String CONVERTIBLE_TOOLTIP_DATA_PHASE = "convertible_tooltip_data";
+	public static final QuiltClientTooltipMod INSTANCE = new QuiltClientTooltipMod();
+
+	@Override
+	public void onInitializeClient(ModContainer mod) {
+		// We make the convertible tooltip data run after the usual tooltip data conversion listeners to allow overriding through events.
+		// (Whoever returns a tooltip component first wins.)
+		TooltipComponentCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, ConvertibleTooltipData.EVENT_PHASE);
+	}
 
 	@Override
 	public @Nullable TooltipComponent getComponent(TooltipData data) {
@@ -46,11 +56,5 @@ public final class QuiltClientTooltipMod implements TooltipComponentCallback {
 		}
 
 		return null;
-	}
-
-	static {
-		// We make the convertible tooltip data runs after the usual tooltip data conversion listeners to allow overriding through events.
-		// (Whoever returns a tooltip component first wins.)
-		TooltipComponentCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, ConvertibleTooltipData.EVENT_PHASE);
 	}
 }
