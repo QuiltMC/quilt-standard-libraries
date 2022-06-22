@@ -308,7 +308,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	 * @param container      the mod container
 	 * @param activationType the activation type of the resource pack
 	 * @param displayName    the display name of the resource pack
-	 * @return {@code true} if successfully registered the resource pack, else {@code false}
+	 * @return {@code true} if successfully registered the resource pack, or {@code false} otherwise
 	 * @see ResourceLoader#registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType, Text)
 	 */
 	public static boolean registerBuiltinResourcePack(Identifier id, String subPath, ModContainer container,

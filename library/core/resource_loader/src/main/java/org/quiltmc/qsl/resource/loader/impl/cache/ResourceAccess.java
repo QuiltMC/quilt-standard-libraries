@@ -53,7 +53,7 @@ public class ResourceAccess {
 	 * Gets a resource entry from the given path.
 	 *
 	 * @param pathName the path of the resource
-	 * @return the resource entry if it exists, otherwise {@code null}
+	 * @return the resource entry if it exists, or {@code null} otherwise
 	 */
 	public @Nullable Entry getEntry(String pathName) {
 		var path = this.io.getPath(pathName);

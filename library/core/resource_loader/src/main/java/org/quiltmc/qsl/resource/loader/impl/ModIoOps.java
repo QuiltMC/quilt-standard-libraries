@@ -50,7 +50,7 @@ public abstract class ModIoOps {
 	}
 
 	/**
-	 * {@return the normalized path to access this mod's resources if it exists, otherwise {@code null}}
+	 * {@return the normalized path to access this mod's resources if it exists, or {@code null} otherwise}
 	 *
 	 * @param path the Minecraft-formatted path
 	 */
