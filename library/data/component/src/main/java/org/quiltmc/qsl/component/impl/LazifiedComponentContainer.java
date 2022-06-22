@@ -22,7 +22,7 @@ public class LazifiedComponentContainer implements ComponentContainer {
 	private Runnable saveOperation = null;
 
 	private LazifiedComponentContainer(ComponentProvider provider) {
-		this.components = ComponentProvider.createComponents(provider);
+		this.components = createComponents(provider);
 		this.nbtComponents = new ArrayList<>(components.size());
 	}
 
@@ -32,6 +32,12 @@ public class LazifiedComponentContainer implements ComponentContainer {
 		}
 
 		return Optional.of(new LazifiedComponentContainer(provider));
+	}
+
+	public static @NotNull Map<Identifier, Lazy<Component>> createComponents(@NotNull ComponentProvider provider) {
+		var map = new HashMap<Identifier, Lazy<Component>>();
+		ComponentsImpl.get(provider).forEach((identifier, supplier) -> map.put(identifier, Lazy.of(supplier::get)));
+		return map;
 	}
 
 	public Optional<Component> expose(Identifier id) {

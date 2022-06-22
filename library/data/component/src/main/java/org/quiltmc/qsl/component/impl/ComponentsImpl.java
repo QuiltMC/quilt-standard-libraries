@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 
 public class ComponentsImpl {
 	private static final Map<ComponentInjectionPredicate, Set<Identifier>> INJECTION_REGISTRY = new HashMap<>();
-	private static final Map<Identifier, Supplier<? extends Component>> REGISTRY = new HashMap<>(); // Look into using a Minecraft Registry for this.
+	private static final Map<Identifier, Supplier<? extends Component>> REGISTRY = new HashMap<>(); // TODO: Look into using a Minecraft Registry for this.
 
 	public static <C extends Component> void inject(ComponentInjectionPredicate predicate, ComponentIdentifier<C> id) {
 		Supplier<? extends Component> supplier = REGISTRY.get(id.id());
@@ -55,5 +55,9 @@ public class ComponentsImpl {
 
 			return returnMap;
 		});
+	}
+
+	public static Supplier<? extends Component> getEntry(Identifier id) {
+		return REGISTRY.get(id);
 	}
 }

@@ -14,4 +14,5 @@ qslModule {
 			testmodOnly("lifecycle_events")
 		}
 	}
+	accessWidener()
 }

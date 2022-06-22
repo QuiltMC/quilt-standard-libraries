@@ -16,6 +16,10 @@
 
 package org.quiltmc.qsl.component.test;
 
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -29,6 +33,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.SaveProperties;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.explosion.Explosion;
@@ -60,13 +65,17 @@ public class ComponentTestMod implements ModInitializer {
 	public static final ComponentIdentifier<InventoryComponent> CHUNK_INVENTORY = InventoryComponent.ofSize(1,
 			new Identifier(MODID, "chunk_inventory")
 	);
-	public static final ComponentIdentifier<IntegerComponent> ITEMSTACK_NOMBER =
-			IntegerComponent.create(new Identifier(MODID, "itemstack_nomber"));
 	public static final ComponentIdentifier<FloatComponent> SAVE_FLOAT =
 			FloatComponent.create(new Identifier(MODID, "save_float"));
 
+	public static final Block TEST_BLOCK = new TestBlock(AbstractBlock.Settings.copy(Blocks.STONE));
+	public static final BlockEntityType<TestBlockEntity> TEST_BE_TYPE =
+			BlockEntityType.Builder.create(TestBlockEntity::new, TEST_BLOCK).build(null);
+
 	@Override
 	public void onInitialize(ModContainer mod) {
+		Registry.register(Registry.BLOCK, new Identifier(MODID, "test_block"), TEST_BLOCK);
+		Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(MODID, "block_entity"), TEST_BE_TYPE);
 		// Application Code
 		Components.inject(CreeperEntity.class, CREEPER_EXPLODE_TIME);
 		Components.injectInheritage(CowEntity.class, COW_INVENTORY);
@@ -74,7 +83,6 @@ public class ComponentTestMod implements ModInitializer {
 		Components.inject(ChestBlockEntity.class, CHEST_NUMBER);
 		Components.injectInheritage(Chunk.class, CHUNK_INVENTORY);
 		Components.inject(LevelProperties.class, SAVE_FLOAT);
-//		Components.inject(ItemStack.class, ITEMSTACK_NOMBER);
 
 		// Testing Code
 		ServerWorldTickEvents.START.register((server, world) -> {
@@ -127,23 +135,19 @@ public class ComponentTestMod implements ModInitializer {
 			Chunk chunk = world.getChunk(player.getBlockPos());
 			Components.expose(CHUNK_INVENTORY, chunk).ifPresent(inventory -> {
 				ItemStack playerStack = player.getInventory().getStack(9);
-				if (playerStack.isOf(Items.DIRT)) {
-					playerStack.decrement(1);
-					ItemStack stack = inventory.getStack(0);
+				ItemStack stack = inventory.getStack(0);
+				if (!playerStack.isEmpty()) {
 					if (stack.isEmpty()) {
-						inventory.setStack(0, Items.DIRT.getDefaultStack());
+						inventory.setStack(0, new ItemStack(playerStack.getItem()));
+						playerStack.decrement(1);
 					} else {
 						stack.increment(1);
+						playerStack.decrement(1);
+						inventory.saveNeeded();
 					}
 				}
 				player.sendMessage(Text.literal(inventory.getStack(0).toString()), true);
 			});
-
-//			Inventory inventory = player.getInventory(); // TODO: Put this back once ItemStack is fully implemented.
-//			ItemStack stack = inventory.getStack(9);
-//			if (!stack.isEmpty()) {
-//				Components.expose(ITEMSTACK_NOMBER, stack).ifPresent(IntegerComponent::increment);
-//			}
 
 			SaveProperties props = server.getSaveProperties();
 			Components.expose(SAVE_FLOAT, props)
