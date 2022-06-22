@@ -2,13 +2,11 @@ package org.quiltmc.qsl.component.api;
 
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
-import org.quiltmc.qsl.component.api.identifier.ComponentIdentifier;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.util.Lazy;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public interface ComponentProvider {
 
@@ -20,8 +18,7 @@ public interface ComponentProvider {
 		return map;
 	}
 
-	Optional<Component> expose(Identifier id);
-
-	Map<Identifier, Component> exposeAll();
+	@NotNull
+	ComponentContainer getContainer();
 
 }

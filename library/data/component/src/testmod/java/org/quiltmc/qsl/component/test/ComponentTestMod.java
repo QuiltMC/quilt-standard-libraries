@@ -22,7 +22,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.passive.CowEntity;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -140,17 +139,19 @@ public class ComponentTestMod implements ModInitializer {
 				player.sendMessage(Text.literal(inventory.getStack(0).toString()), true);
 			});
 
-			Inventory inventory = player.getInventory();
-			ItemStack stack = inventory.getStack(9);
-			if (!stack.isEmpty()) {
-				Components.expose(ITEMSTACK_NOMBER, stack).ifPresent(IntegerComponent::increment);
-			}
+//			Inventory inventory = player.getInventory(); // TODO: Put this back once ItemStack is fully implemented.
+//			ItemStack stack = inventory.getStack(9);
+//			if (!stack.isEmpty()) {
+//				Components.expose(ITEMSTACK_NOMBER, stack).ifPresent(IntegerComponent::increment);
+//			}
 
 			SaveProperties props = server.getSaveProperties();
 			Components.expose(SAVE_FLOAT, props)
 					.ifPresent(floatComponent -> {
 						floatComponent.set(floatComponent.get() + 0.5f);
-						player.sendMessage(Text.literal("%.3f".formatted(floatComponent.get())), false);
+						if (world.getTime() % 20 * 5 == 0) {
+							player.sendMessage(Text.literal("%.3f".formatted(floatComponent.get())), false);
+						}
 					});
 		});
 	}

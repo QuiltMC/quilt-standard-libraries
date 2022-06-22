@@ -3,6 +3,7 @@ package org.quiltmc.qsl.component.impl.util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -22,6 +23,11 @@ public class Lazy<T> {
 	@NotNull
 	public static <T> Lazy<T> of(@NotNull Supplier<T> sup) {
 		return new Lazy<>(sup);
+	}
+
+	@NotNull
+	public <U> Lazy<U> compose(Function<T, U> transformer) {
+		return Lazy.of(() -> transformer.apply(this.sup.get()));
 	}
 
 	@NotNull
@@ -47,7 +53,7 @@ public class Lazy<T> {
 		return Lazy.of(() -> func.apply(this.get()));
 	}
 
-	public void computeIfPresent(@NotNull Consumer<T> action) {
+	public void ifPresent(@NotNull Consumer<T> action) {
 		if (!this.isEmpty()) {
 			action.accept(this.get());
 		}
@@ -55,5 +61,23 @@ public class Lazy<T> {
 
 	public void compute(@NotNull Consumer<T> action) {
 		action.accept(this.get());
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Lazy<?> other) {
+			if (other.isEmpty() == this.isEmpty()) {
+				return this.sup == other.sup;
+			} else {
+				return this.value == other.value;
+			}
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(sup, value);
 	}
 }

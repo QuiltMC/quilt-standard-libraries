@@ -7,10 +7,7 @@
     "MixinChunk",
     "MixinChunkSerializer",
     "MixinEntity",
-    "MixinItemEntity",
-    "MixinItemStack",
     "MixinLevelProperties",
-    "MixinPacketByteBuf",
     "MixinWorldChunk"
   ],
   "injectors": {

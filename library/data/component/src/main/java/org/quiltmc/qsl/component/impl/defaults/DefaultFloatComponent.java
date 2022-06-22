@@ -1,9 +1,11 @@
 package org.quiltmc.qsl.component.impl.defaults;
 
+import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.components.FloatComponent;
 
 public class DefaultFloatComponent implements FloatComponent {
 	private float value;
+	@Nullable
 	private Runnable saveOperation;
 
 	public DefaultFloatComponent() {
@@ -32,7 +34,7 @@ public class DefaultFloatComponent implements FloatComponent {
 	}
 
 	@Override
-	public void setSaveOperation(Runnable runnable) {
+	public void setSaveOperation(@Nullable Runnable runnable) {
 		this.saveOperation = runnable;
 	}
 }

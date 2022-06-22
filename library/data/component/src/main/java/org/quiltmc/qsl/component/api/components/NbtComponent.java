@@ -3,10 +3,8 @@ package org.quiltmc.qsl.component.api.components;
 import net.minecraft.nbt.*;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.Component;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public interface NbtComponent<T extends NbtElement> extends Component {
 
@@ -40,18 +38,6 @@ public interface NbtComponent<T extends NbtElement> extends Component {
 		}
 	}
 
-	static Map<Identifier, NbtComponent<?>> getNbtSerializable(Map<Identifier, Component> components) {
-		var map = new HashMap<Identifier, NbtComponent<?>>();
-
-		for (var entry : components.entrySet()) {
-			if (entry.getValue() instanceof NbtComponent<?> nbtComponent) {
-				map.put(entry.getKey(), nbtComponent);
-			}
-		}
-
-		return map;
-	}
-
 	T write();
 
 	void read(T nbt);
@@ -60,5 +46,5 @@ public interface NbtComponent<T extends NbtElement> extends Component {
 
 	void saveNeeded();
 
-	void setSaveOperation(Runnable runnable);
+	void setSaveOperation(@Nullable Runnable runnable);
 }

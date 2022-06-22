@@ -1,11 +1,14 @@
 package org.quiltmc.qsl.component.impl.defaults;
 
+import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.components.IntegerComponent;
 
 import java.util.Objects;
 
 public class DefaultIntegerComponent implements IntegerComponent {
+
 	private int value;
+	@Nullable
 	private Runnable saveOperation;
 
 	public DefaultIntegerComponent(int defaultValue) {
@@ -56,7 +59,7 @@ public class DefaultIntegerComponent implements IntegerComponent {
 	}
 
 	@Override
-	public void setSaveOperation(Runnable runnable) {
+	public void setSaveOperation(@Nullable Runnable runnable) {
 		this.saveOperation = runnable;
 	}
 }

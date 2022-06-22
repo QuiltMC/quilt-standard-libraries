@@ -2,14 +2,17 @@ package org.quiltmc.qsl.component.impl.defaults;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
+import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.components.InventoryComponent;
 
 import java.util.Objects;
 import java.util.function.Supplier;
 
 public class DefaultInventoryComponent implements InventoryComponent {
+
 	private final DefaultedList<ItemStack> stacks;
-	private Runnable dirtyOperation;
+	@Nullable
+	private Runnable saveOperation;
 
 	public DefaultInventoryComponent(int size) {
 		this.stacks = DefaultedList.ofSize(size, ItemStack.EMPTY);
@@ -26,14 +29,14 @@ public class DefaultInventoryComponent implements InventoryComponent {
 
 	@Override
 	public void saveNeeded() {
-		if (this.dirtyOperation != null) {
-			this.dirtyOperation.run();
+		if (this.saveOperation != null) {
+			this.saveOperation.run();
 		}
 	}
 
 	@Override
-	public void setSaveOperation(Runnable runnable) {
-		this.dirtyOperation = runnable;
+	public void setSaveOperation(@Nullable Runnable runnable) {
+		this.saveOperation = runnable;
 	}
 
 	@Override
