@@ -68,14 +68,16 @@ public class ComponentTestMod implements ModInitializer {
 	public static final ComponentIdentifier<FloatComponent> SAVE_FLOAT =
 			FloatComponent.create(new Identifier(MODID, "save_float"));
 
+	// Attention do NOT place this block in any world because registry sync issues will make the game hung upon rejoining.
 	public static final Block TEST_BLOCK = new TestBlock(AbstractBlock.Settings.copy(Blocks.STONE));
 	public static final BlockEntityType<TestBlockEntity> TEST_BE_TYPE =
-			BlockEntityType.Builder.create(TestBlockEntity::new, TEST_BLOCK).build(null);
+			BlockEntityType.Builder.create(TestBlockEntity::new, TEST_BLOCK, Blocks.NOTE_BLOCK).build(null);
 
 	@Override
 	public void onInitialize(ModContainer mod) {
 		Registry.register(Registry.BLOCK, new Identifier(MODID, "test_block"), TEST_BLOCK);
 		Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(MODID, "block_entity"), TEST_BE_TYPE);
+		Block.STATE_IDS.add(TEST_BLOCK.getDefaultState());
 		// Application Code
 		Components.inject(CreeperEntity.class, CREEPER_EXPLODE_TIME);
 		Components.injectInheritage(CowEntity.class, COW_INVENTORY);
@@ -138,12 +140,16 @@ public class ComponentTestMod implements ModInitializer {
 				ItemStack stack = inventory.getStack(0);
 				if (!playerStack.isEmpty()) {
 					if (stack.isEmpty()) {
-						inventory.setStack(0, new ItemStack(playerStack.getItem()));
+						var newStack = playerStack.copy();
+						newStack.setCount(1);
+						inventory.setStack(0, newStack);
 						playerStack.decrement(1);
 					} else {
-						stack.increment(1);
-						playerStack.decrement(1);
-						inventory.saveNeeded();
+						if (ItemStack.canCombine(stack, playerStack)) {
+							stack.increment(1);
+							playerStack.decrement(1);
+							inventory.saveNeeded();
+						}
 					}
 				}
 				player.sendMessage(Text.literal(inventory.getStack(0).toString()), true);
