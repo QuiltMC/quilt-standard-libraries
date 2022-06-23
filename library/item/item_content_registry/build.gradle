@@ -22,10 +22,10 @@ qslModule {
 	}
 	entrypoints {
 		init {
-			values = ["org.quiltmc.qsl.item.content_registry.impl.ItemContentRegistriesInitializer"]
+			values = ["org.quiltmc.qsl.item.content.registry.impl.ItemContentRegistriesInitializer"]
 		}
 		client_init {
-			values = ["org.quiltmc.qsl.item.content_registry.impl.ItemContentRegistriesClientInitializer"]
+			values = ["org.quiltmc.qsl.item.content.registry.impl.ItemContentRegistriesClientInitializer"]
 		}
 	}
 }
