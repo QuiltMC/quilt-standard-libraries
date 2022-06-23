@@ -32,7 +32,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.*;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.level.LevelProperties;
@@ -53,7 +53,7 @@ public class ComponentTestMod implements ModInitializer {
 	// Registration Code
 	public static final ComponentIdentifier<InventoryComponent> COW_INVENTORY = InventoryComponent.of(
 			() -> DefaultedList.ofSize(1, new ItemStack(Items.COBBLESTONE, 64)),
-			new Identifier("quilt_component_test", "cow_inventory")
+			new Identifier(MODID, "cow_inventory")
 	);
 	public static final ComponentIdentifier<IntegerComponent> CREEPER_EXPLODE_TIME =
 			IntegerComponent.create(200, new Identifier(MODID, "creeper_explode_time"));
@@ -169,6 +169,5 @@ public class ComponentTestMod implements ModInitializer {
 
 	public static final BlockEntityType<TestBlockEntity> TEST_BE_TYPE =
 			BlockEntityType.Builder.create(TestBlockEntity::new, TEST_BLOCK, Blocks.NOTE_BLOCK).build(null);
-
 
 }
