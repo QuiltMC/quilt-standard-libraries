@@ -2,7 +2,6 @@ package org.quiltmc.qsl.component.impl;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.Component;
@@ -18,7 +17,7 @@ public class SimpleComponentContainer implements ComponentContainer {
 	private final Map<Identifier, Component> components;
 	private final List<Identifier> nbtComponents;
 
-	public static @NotNull SimpleComponentContainer create(@Nullable Runnable saveOperation, ComponentIdentifier<?>... ids) {
+	public static @NotNull SimpleComponentContainer create(Runnable saveOperation, ComponentIdentifier<?>... ids) {
 		return new SimpleComponentContainer(saveOperation, Stream.of(ids).map(ComponentIdentifier::id));
 	}
 
@@ -51,6 +50,7 @@ public class SimpleComponentContainer implements ComponentContainer {
 
 	@Override
 	public void moveComponents(ComponentContainer other) {
+		throw new IllegalStateException("Cannot move components into a SimpleComponentContainer");
 	}
 
 	@Override
@@ -78,13 +78,6 @@ public class SimpleComponentContainer implements ComponentContainer {
 
 	@Override
 	public void setSaveOperation(@NotNull Runnable runnable) {
-
-	}
-
-	@Override
-	public Map<Identifier, NbtComponent<?>> getNbtComponents() {
-		return this.nbtComponents.stream()
-				.map(id -> new Pair<>(id, this.components.get(id)))
-				.collect(HashMap::new, (map, pair) -> map.put(pair.getLeft(), (NbtComponent<?>) pair.getRight()), HashMap::putAll);
+		throw new IllegalStateException("Cannot change the save operation of a SimpleComponentContainer since it needs to be passed into the constructor");
 	}
 }

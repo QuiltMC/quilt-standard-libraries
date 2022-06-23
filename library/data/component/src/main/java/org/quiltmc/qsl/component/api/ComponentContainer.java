@@ -20,6 +20,4 @@ public interface ComponentContainer {
 	void readNbt(NbtCompound providerRootNbt);
 
 	void setSaveOperation(@NotNull Runnable runnable);
-
-	Map<Identifier, NbtComponent<?>> getNbtComponents();
 }

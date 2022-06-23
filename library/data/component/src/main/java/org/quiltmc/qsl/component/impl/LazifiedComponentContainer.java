@@ -40,6 +40,7 @@ public class LazifiedComponentContainer implements ComponentContainer {
 		return map;
 	}
 
+	@Override
 	public Optional<Component> expose(Identifier id) {
 		return Optional.ofNullable(this.components.get(id))
 				.map(componentLazy -> {
@@ -53,24 +54,27 @@ public class LazifiedComponentContainer implements ComponentContainer {
 				});
 	}
 
+	@Override
 	public Map<Identifier, Component> exposeAll() {
 		return this.components.entrySet().stream()
 				.filter(entry -> !entry.getValue().isEmpty())
 				.collect(HashMap::new, (map, entry) -> map.put(entry.getKey(), entry.getValue().get()), HashMap::putAll);
 	}
 
-	public Map<Identifier, NbtComponent<?>> getNbtComponents() {
-		return this.nbtComponents.stream()
-				.map(id -> new Pair<>(id, this.components.get(id)))
-				.filter(pair -> Objects.nonNull(pair.getRight()))
-				.filter(pair -> pair.getRight().isEmpty())
-				.collect(HashMap::new, (map, pair) -> map.put(pair.getLeft(), (NbtComponent<?>) pair.getRight().get()), HashMap::putAll);
-	}
+//	public Map<Identifier, NbtComponent<?>> getNbtComponents() {
+//		return this.nbtComponents.stream()
+//				.map(id -> new Pair<>(id, this.components.get(id)))
+//				.filter(pair -> Objects.nonNull(pair.getRight()))
+//				.filter(pair -> pair.getRight().isEmpty())
+//				.collect(HashMap::new, (map, pair) -> map.put(pair.getLeft(), (NbtComponent<?>) pair.getRight().get()), HashMap::putAll);
+//	}
 
+	@Override
 	public void setSaveOperation(@NotNull Runnable runnable) {
 		this.saveOperation = runnable;
 	}
 
+	@Override
 	public void writeNbt(@NotNull NbtCompound providerRootNbt) {
 		var rootQslNbt = new NbtCompound();
 		this.nbtComponents.forEach(id -> this.components.get(id).ifPresent(component ->
@@ -82,6 +86,7 @@ public class LazifiedComponentContainer implements ComponentContainer {
 		}
 	}
 
+	@Override
 	public void readNbt(@NotNull NbtCompound providerRootNbt) {
 		var rootQslNbt = providerRootNbt.getCompound(StringConstants.COMPONENT_ROOT);
 
@@ -95,6 +100,7 @@ public class LazifiedComponentContainer implements ComponentContainer {
 				}));
 	}
 
+	@Override
 	public void moveComponents(ComponentContainer other) {
 		if (other instanceof LazifiedComponentContainer otherContainer) {
 			otherContainer.components.forEach((id, componentLazy) -> {
