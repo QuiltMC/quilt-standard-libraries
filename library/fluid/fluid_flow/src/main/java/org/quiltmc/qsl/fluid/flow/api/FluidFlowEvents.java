@@ -39,9 +39,9 @@ public final class FluidFlowEvents {
 	/**
 	 * Registers a new event on a fluid flow.
 	 *
-	 * @param flowingBlock          the fluid block that flowed
-	 * @param interactionBlock      the block in one of the {@code interactionDirections}
-	 * @param interactionEvent      the event to run when the conditions are met
+	 * @param flowingBlock     the fluid block that flowed
+	 * @param interactionBlock the block in one of the {@code interactionDirections}
+	 * @param interactionEvent the event to run when the conditions are met
 	 */
 	public static void register(Block flowingBlock, Block interactionBlock, FluidFlowInteractionCallback interactionEvent) {
 		var flowBlockEvents = EVENT_MAP.computeIfAbsent(flowingBlock, flowing -> new Object2ObjectOpenHashMap<>());
@@ -59,8 +59,8 @@ public final class FluidFlowEvents {
 	/**
 	 * Gets the event from the following blocks and direction.
 	 *
-	 * @param flowingBlock         the fluid block that flowed
-	 * @param interactionBlock     the block it interacts with
+	 * @param flowingBlock     the fluid block that flowed
+	 * @param interactionBlock the block it interacts with
 	 * @return an event if the conditions are met, otherwise {@code null}
 	 */
 	public static @Nullable Event<FluidFlowInteractionCallback> getEvent(Block flowingBlock, Block interactionBlock) {
@@ -77,13 +77,13 @@ public final class FluidFlowEvents {
 		/**
 		 * An event run when a fluid flows next to a block.
 		 *
-		 * @param flowingBlockState                The block state of the fluid block.
-		 * @param interactingBlockState            The block state of the interacting block.
-		 * @param fluidToInteractingBlockDirection The direction from the flowingBlockState to the interactingBlockState.
-		 * @param flowPos                          The position in the world that the fluid flowed into.
-		 * @param world                            The world the event took place in.
+		 * @param flowingBlockState     The block state of the fluid block.
+		 * @param interactingBlockState The block state of the interacting block.
+		 * @param interactionDirection  The direction from the flowingBlockState to the interactingBlockState.
+		 * @param flowPos               The position in the world that the fluid flowed into.
+		 * @param world                 The world the event took place in.
 		 * @return {@code false} if the event successfully ran, and {@code true} if it was unsuccessful or did not run.
 		 */
-		boolean onFlow(BlockState flowingBlockState, BlockState interactingBlockState, Direction fluidToInteractingBlockDirection, BlockPos flowPos, World world);
+		boolean onFlow(BlockState flowingBlockState, BlockState interactingBlockState, Direction interactionDirection, BlockPos flowPos, World world);
 	}
 }
