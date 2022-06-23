@@ -3,7 +3,6 @@ package org.quiltmc.qsl.component.api;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
-import org.quiltmc.qsl.component.api.components.NbtComponent;
 
 import java.util.Map;
 import java.util.Optional;

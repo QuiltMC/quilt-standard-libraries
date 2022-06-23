@@ -1,24 +1,24 @@
 {
-    "schema_version": 1,
-    "quilt_loader": {
-        "group": "org.quiltmc.qsl.data",
-        "id": "quilt_component_test",
-        "version": "1.0.0",
-        "metadata": {
-            "name": "Quilt Component API Test mod.",
-            "license": "Apache-2.0"
-        },
-        "intermediate_mappings": "net.fabricmc:intermediary",
-        "load_type": "always",
-        "entrypoints": {
-            "init": [
-                "org.quiltmc.qsl.component.test.ComponentTestMod"
-            ]
-        },
-        "depends": [
-            "quilt_loader",
-            "quilt_component",
-            "quilt_lifecycle_events"
-        ]
-    }
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "org.quiltmc.qsl.data",
+    "id": "quilt_component_test",
+    "version": "1.0.0",
+    "metadata": {
+      "name": "Quilt Component API Test mod.",
+      "license": "Apache-2.0"
+    },
+    "intermediate_mappings": "net.fabricmc:intermediary",
+    "load_type": "always",
+    "entrypoints": {
+      "init": [
+        "org.quiltmc.qsl.component.test.ComponentTestMod"
+      ]
+    },
+    "depends": [
+      "quilt_loader",
+      "quilt_component",
+      "quilt_lifecycle_events"
+    ]
+  }
 }

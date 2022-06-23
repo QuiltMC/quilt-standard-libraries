@@ -34,34 +34,6 @@ public class TestBlockEntity extends BlockEntity {
 		super(ComponentTestMod.TEST_BE_TYPE, blockPos, blockState);
 	}
 
-	@Override
-	public @NotNull ComponentContainer getContainer() {
-		return this.container;
-	}
-
-	@Override
-	protected void writeNbt(NbtCompound nbt) {
-		super.writeNbt(nbt);
-		this.container.writeNbt(nbt);
-	}
-
-	@Override
-	public void readNbt(NbtCompound nbt) {
-		super.readNbt(nbt);
-		this.container.readNbt(nbt);
-	}
-
-	@Override
-	public NbtCompound toInitialChunkDataNbt() {
-		return this.toNbt();
-	}
-
-	@Nullable
-	@Override
-	public Packet<ClientPlayPacketListener> toUpdatePacket() {
-		return BlockEntityUpdateS2CPacket.of(this);
-	}
-
 	public static <T extends BlockEntity> void tick(World world, BlockPos pos, BlockState ignoredState, T blockEntity) {
 		if (world.isClient) {
 			return;
@@ -89,5 +61,33 @@ public class TestBlockEntity extends BlockEntity {
 						expand(initialPos, offsetPos, world, visited);
 					}
 				});
+	}
+
+	@Override
+	public @NotNull ComponentContainer getContainer() {
+		return this.container;
+	}
+
+	@Override
+	protected void writeNbt(NbtCompound nbt) {
+		super.writeNbt(nbt);
+		this.container.writeNbt(nbt);
+	}
+
+	@Override
+	public void readNbt(NbtCompound nbt) {
+		super.readNbt(nbt);
+		this.container.readNbt(nbt);
+	}
+
+	@Override
+	public NbtCompound toInitialChunkDataNbt() {
+		return this.toNbt();
+	}
+
+	@Nullable
+	@Override
+	public Packet<ClientPlayPacketListener> toUpdatePacket() {
+		return BlockEntityUpdateS2CPacket.of(this);
 	}
 }

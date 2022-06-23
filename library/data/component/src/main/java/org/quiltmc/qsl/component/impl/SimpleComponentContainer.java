@@ -17,11 +17,7 @@ public class SimpleComponentContainer implements ComponentContainer {
 	private final Map<Identifier, Component> components;
 	private final List<Identifier> nbtComponents;
 
-	public static @NotNull SimpleComponentContainer create(Runnable saveOperation, ComponentIdentifier<?>... ids) {
-		return new SimpleComponentContainer(saveOperation, Stream.of(ids).map(ComponentIdentifier::id));
-	}
-
-	private SimpleComponentContainer(@Nullable Runnable saveOperation, Stream<Identifier> componentIds) {
+	protected SimpleComponentContainer(@Nullable Runnable saveOperation, Stream<Identifier> componentIds) {
 		this.components = new HashMap<>();
 		this.nbtComponents = new ArrayList<>();
 
@@ -36,6 +32,10 @@ public class SimpleComponentContainer implements ComponentContainer {
 		});
 
 		componentIds.close();
+	}
+
+	public static @NotNull SimpleComponentContainer create(Runnable saveOperation, ComponentIdentifier<?>... ids) {
+		return new SimpleComponentContainer(saveOperation, Stream.of(ids).map(ComponentIdentifier::id));
 	}
 
 	@Override

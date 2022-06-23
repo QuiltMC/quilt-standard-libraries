@@ -20,7 +20,7 @@ public class LazifiedComponentContainer implements ComponentContainer {
 	@Nullable
 	private Runnable saveOperation = null;
 
-	private LazifiedComponentContainer(ComponentProvider provider) {
+	protected LazifiedComponentContainer(ComponentProvider provider) {
 		this.components = createComponents(provider);
 		this.nbtComponents = new HashSet<>(components.size());
 	}
