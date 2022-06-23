@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.entity.test.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "TntMinecartEntityMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
