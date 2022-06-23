@@ -17,18 +17,25 @@
 
 package org.quiltmc.qsl.worldgen.biome.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.logging.LogUtils;
 import org.jetbrains.annotations.ApiStatus;
+import org.slf4j.Logger;
 
 import net.minecraft.util.Holder;
 import net.minecraft.util.registry.BuiltinRegistries;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.biome.source.MultiNoiseBiomeSource;
 import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 
@@ -42,6 +49,8 @@ public final class NetherBiomeData {
 	private static final Set<RegistryKey<Biome>> NETHER_BIOMES = new HashSet<>();
 
 	private static final Map<RegistryKey<Biome>, MultiNoiseUtil.NoiseHypercube> NETHER_BIOME_NOISE_POINTS = new HashMap<>();
+
+	private static final Logger LOGGER = LogUtils.getLogger();
 
 	private NetherBiomeData() {
 	}
@@ -66,10 +75,40 @@ public final class NetherBiomeData {
 			}
 		}
 
-		return NETHER_BIOMES.contains(biome);
+		return NETHER_BIOMES.contains(biome) || NETHER_BIOME_NOISE_POINTS.containsKey(biome);
 	}
 
 	private static void clearBiomeSourceCache() {
 		NETHER_BIOMES.clear(); // Clear cached biome source data
+	}
+
+	private static MultiNoiseUtil.ParameterRangeList<Holder<Biome>> withModdedBiomePoints(MultiNoiseUtil.ParameterRangeList<Holder<Biome>> defaultEntries, Registry<Biome> biomeRegistry) {
+		if (NETHER_BIOME_NOISE_POINTS.isEmpty()) {
+			return defaultEntries;
+		}
+
+		var entries = new ArrayList<>(defaultEntries.getEntries());
+
+		for (Map.Entry<RegistryKey<Biome>, MultiNoiseUtil.NoiseHypercube> entry : NETHER_BIOME_NOISE_POINTS.entrySet()) {
+			if (biomeRegistry.contains(entry.getKey())) {
+				entries.add(Pair.of(entry.getValue(), biomeRegistry.getHolderOrThrow(entry.getKey())));
+			} else {
+				LOGGER.warn("Nether biome {} not loaded", entry.getKey().getValue());
+			}
+		}
+
+		return new MultiNoiseUtil.ParameterRangeList<>(entries);
+	}
+
+	public static void modifyBiomeSource(Registry<Biome> biomeRegistry, BiomeSource biomeSource) {
+		if (biomeSource instanceof MultiNoiseBiomeSource multiNoiseBiomeSource) {
+			if (((BiomeSourceAccess) multiNoiseBiomeSource).quilt$shouldModifyBiomePoints() && multiNoiseBiomeSource.matchesInstance(MultiNoiseBiomeSource.Preset.NETHER)) {
+				multiNoiseBiomeSource.biomePoints = NetherBiomeData.withModdedBiomePoints(
+						MultiNoiseBiomeSource.Preset.NETHER.biomeSourceFunction.apply(biomeRegistry),
+						biomeRegistry);
+				multiNoiseBiomeSource.biomes = multiNoiseBiomeSource.biomePoints.getEntries().stream().map(Pair::getSecond).collect(Collectors.toSet());
+				((BiomeSourceAccess) multiNoiseBiomeSource).quilt$setModifyBiomePoints(false);
+			}
+		}
 	}
 }

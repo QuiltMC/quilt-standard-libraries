@@ -17,33 +17,56 @@
 
 package org.quiltmc.qsl.worldgen.biome.mixin;
 
+import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import com.google.common.base.Suppliers;
 
 import net.minecraft.util.Holder;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.biome.source.TheEndBiomeSource;
 import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 
 import org.quiltmc.qsl.worldgen.biome.impl.TheEndBiomeData;
 
 @Mixin(TheEndBiomeSource.class)
-public class TheEndBiomeSourceMixin {
+public abstract class TheEndBiomeSourceMixin extends BiomeSource {
 	@Unique
-	private TheEndBiomeData.Overrides overrides;
+	private Supplier<TheEndBiomeData.Overrides> overrides;
+
+	@Unique
+	private boolean quilt$hasAddedBiomes = false;
+
+	protected TheEndBiomeSourceMixin(Stream<Holder<Biome>> stream) {
+		super(stream);
+	}
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void init(Registry<Biome> biomeRegistry, long seed, CallbackInfo ci) {
-		this.overrides = TheEndBiomeData.createOverrides(biomeRegistry, seed);
+		this.overrides = Suppliers.memoize(() -> TheEndBiomeData.createOverrides(biomeRegistry, seed));
 	}
 
 	@Inject(method = "method_38109", at = @At("RETURN"), cancellable = true)
-	private void getWeightedEndBiome(int biomeX, int biomeY, int biomeZ, MultiNoiseUtil.MultiNoiseSampler multiNoiseSampler, CallbackInfoReturnable<Holder<Biome>> cir) {
-		cir.setReturnValue(this.overrides.pick(biomeX, biomeY, biomeZ, cir.getReturnValue()));
+	private void getWeightedEndBiome(int biomeX, int biomeY, int biomeZ, MultiNoiseUtil.MultiNoiseSampler noise, CallbackInfoReturnable<Holder<Biome>> cir) {
+		cir.setReturnValue(this.overrides.get().pick(biomeX, biomeY, biomeZ, noise, cir.getReturnValue()));
+	}
+
+	@Override
+	public Set<Holder<Biome>> getBiomes() {
+		if (!this.quilt$hasAddedBiomes) {
+			this.quilt$hasAddedBiomes = true;
+			super.getBiomes().addAll(this.overrides.get().getAddedBiomes());
+		}
+
+		return super.getBiomes();
 	}
 }

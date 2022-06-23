@@ -23,6 +23,7 @@ import java.util.function.Function;
 
 import com.google.common.base.Preconditions;
 
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.noise.PerlinNoiseSampler;
 
 /**
@@ -44,15 +45,19 @@ public final class WeightedPicker<T> {
 	void add(T biome, final double weight) {
 		this.currentTotal += weight;
 
-		this.entries.add(new WeightedEntry<>(biome, weight, currentTotal));
+		this.entries.add(new WeightedEntry<>(biome, weight, this.currentTotal));
 	}
 
 	double getCurrentWeightTotal() {
 		return this.currentTotal;
 	}
 
+	int getEntryCount() {
+		return this.entries.size();
+	}
+
 	public T pickFromNoise(PerlinNoiseSampler sampler, double x, double y, double z) {
-		double target = Math.abs(sampler.sample(x, y, z)) * getCurrentWeightTotal();
+		double target = MathHelper.clamp(Math.abs(sampler.sample(x, y, z)), 0.0, 1.0) * this.getCurrentWeightTotal();
 
 		return this.search(target).entry();
 	}
@@ -61,7 +66,7 @@ public final class WeightedPicker<T> {
 	 * Applies a mapping function to each entry and returns a picker with otherwise equivalent settings.
 	 */
 	<U> WeightedPicker<U> map(Function<T, U> mapper) {
-		return new WeightedPicker<U>(
+		return new WeightedPicker<>(
 				this.currentTotal,
 				this.entries.stream()
 						.map(e -> new WeightedEntry<>(mapper.apply(e.entry), e.weight, e.upperWeightBound))

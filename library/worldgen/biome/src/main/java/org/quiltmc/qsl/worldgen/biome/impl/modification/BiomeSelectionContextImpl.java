@@ -61,6 +61,7 @@ public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 		return this.biome;
 	}
 
+	@SuppressWarnings("removal")
 	@Override
 	public Holder<Biome> getBiomeRegistryEntry() {
 		return this.entry;
@@ -86,7 +87,7 @@ public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 			return false;
 		}
 
-		return instance.getBiomes().contains(getBiomeRegistryEntry());
+		return instance.getBiomes().contains(this.getBiomeHolder());
 	}
 
 	@Override
@@ -109,6 +110,11 @@ public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 	@Override
 	public boolean isIn(TagKey<Biome> tag) {
 		Registry<Biome> biomeRegistry = this.dynamicRegistries.get(Registry.BIOME_KEY);
-		return biomeRegistry.getHolderOrThrow(getBiomeKey()).hasTag(tag);
+		return biomeRegistry.getHolderOrThrow(this.getBiomeKey()).hasTag(tag);
+	}
+
+	@Override
+	public <T> boolean doesRegistryEntryExist(RegistryKey<? extends Registry<? extends T>> registryKey, RegistryKey<T> entryKey) {
+		return this.dynamicRegistries.getOptional(registryKey).map(registry -> registry.contains(entryKey)).orElse(false);
 	}
 }

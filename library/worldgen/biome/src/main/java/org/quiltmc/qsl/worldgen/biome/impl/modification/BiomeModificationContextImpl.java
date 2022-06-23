@@ -62,16 +62,14 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeModificationContext;
 @ApiStatus.Internal
 public class BiomeModificationContextImpl implements BiomeModificationContext {
 	private final DynamicRegistryManager registries;
-	private final RegistryKey<Biome> biomeKey;
 	private final Biome biome;
 	private final WeatherContext weather;
 	private final EffectsContext effects;
 	private final GenerationSettingsContextImpl generationSettings;
 	private final SpawnSettingsContextImpl spawnSettings;
 
-	public BiomeModificationContextImpl(DynamicRegistryManager registries, RegistryKey<Biome> biomeKey, Biome biome) {
+	public BiomeModificationContextImpl(DynamicRegistryManager registries, Biome biome) {
 		this.registries = registries;
-		this.biomeKey = biomeKey;
 		this.biome = biome;
 		this.weather = new WeatherContextImpl();
 		this.effects = new EffectsContextImpl();
