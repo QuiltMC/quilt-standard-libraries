@@ -6,7 +6,8 @@ qslModule {
 	name = "Quilt Advancement API"
 	moduleName = "advancement"
 	id = "quilt_advancement"
-	description = "Advancement criterion creation api."
+	description = "Provides APIs for working with advancements."
 	library = "data"
 	accessWidener()
+	noMixins()
 }
