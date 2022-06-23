@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.item.content_registry.mixin;
+package org.quiltmc.qsl.item.content.registry.mixin;
 
 import java.util.Map;
 
-import org.quiltmc.qsl.item.content_registry.api.ItemContentRegistries;
-import org.quiltmc.qsl.item.content_registry.impl.ItemContentRegistriesInitializer;
+import org.quiltmc.qsl.item.content.registry.api.ItemContentRegistries;
+import org.quiltmc.qsl.item.content.registry.impl.ItemContentRegistriesInitializer;
 import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentHolder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

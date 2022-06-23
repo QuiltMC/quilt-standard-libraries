@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.item.content_registry.impl;
+package org.quiltmc.qsl.item.content.registry.impl;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
-import org.quiltmc.qsl.item.content_registry.api.ItemContentRegistries;
+import org.quiltmc.qsl.item.content.registry.api.ItemContentRegistries;
 import org.quiltmc.qsl.tooltip.api.client.ItemTooltipCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

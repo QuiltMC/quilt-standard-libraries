@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.item.content_registry.api;
+package org.quiltmc.qsl.item.content.registry.api;
 
 import com.mojang.serialization.Codec;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;

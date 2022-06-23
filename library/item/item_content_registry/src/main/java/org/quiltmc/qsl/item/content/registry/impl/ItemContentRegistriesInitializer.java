@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.item.content_registry.impl;
+package org.quiltmc.qsl.item.content.registry.impl;
 
 import java.util.Map;
 
