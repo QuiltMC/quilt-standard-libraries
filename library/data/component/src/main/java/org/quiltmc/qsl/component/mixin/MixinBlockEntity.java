@@ -9,8 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.impl.LazifiedComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentProvider;
-import org.spongepowered.asm.mixin.Implements;
-import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,18 +16,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Implements(@Interface(iface = ComponentProvider.class, prefix = "comp$"))
 @Mixin(BlockEntity.class)
-public abstract class MixinBlockEntity {
+public abstract class MixinBlockEntity implements ComponentProvider {
 
 	private ComponentContainer qsl$container;
 
-	@Inject(
-			method = "m_qgnqsprj", // The lambda used in second map operation.
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/block/entity/BlockEntity;readNbt(Lnet/minecraft/nbt/NbtCompound;)V")
-	)
-	private static void onReadNbt(NbtCompound nbt, String string, BlockEntity blockEntity, CallbackInfoReturnable<BlockEntity> cir) {
-		((ComponentProvider) blockEntity).getContainer().readNbt(nbt);
+	@Inject(method = "readNbt", at = @At("TAIL"))
+	private void onReadNbt(NbtCompound nbt, CallbackInfo ci) {
+		this.qsl$container.readNbt(nbt);
 	}
 
 	@Shadow
@@ -41,13 +35,13 @@ public abstract class MixinBlockEntity {
 		this.qsl$container.setSaveOperation(this::markDirty);
 	}
 
-	@Inject(method = "toNbt", at = @At("RETURN"))
+	@Inject(method = "toNbt", at = @At("TAIL"))
 	private void onWriteNbt(CallbackInfoReturnable<NbtCompound> cir) {
 		this.qsl$container.writeNbt(cir.getReturnValue());
 	}
 
-	@NotNull
-	public ComponentContainer comp$getContainer() {
+	@Override
+	public @NotNull ComponentContainer getContainer() {
 		return this.qsl$container;
 	}
 }

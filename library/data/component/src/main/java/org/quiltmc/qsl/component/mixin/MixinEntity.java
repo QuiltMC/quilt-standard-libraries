@@ -8,17 +8,14 @@ import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.impl.LazifiedComponentContainer;
-import org.spongepowered.asm.mixin.Implements;
-import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Implements(@Interface(iface = ComponentProvider.class, prefix = "comp$"))
 @Mixin(Entity.class)
-public abstract class MixinEntity {
+public abstract class MixinEntity implements ComponentProvider {
 
 	private ComponentContainer qsl$container;
 
@@ -37,8 +34,8 @@ public abstract class MixinEntity {
 		this.qsl$container.readNbt(nbt);
 	}
 
-	@NotNull
-	public ComponentContainer comp$getContainer() {
+	@Override
+	public @NotNull ComponentContainer getContainer() {
 		return this.qsl$container;
 	}
 }

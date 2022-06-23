@@ -2,7 +2,6 @@ package org.quiltmc.qsl.component.impl;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.Component;
@@ -17,13 +16,13 @@ import java.util.*;
 public class LazifiedComponentContainer implements ComponentContainer {
 
 	private final Map<Identifier, Lazy<Component>> components;
-	private final List<Identifier> nbtComponents;
+	private final Set<Identifier> nbtComponents;
 	@Nullable
 	private Runnable saveOperation = null;
 
 	private LazifiedComponentContainer(ComponentProvider provider) {
 		this.components = createComponents(provider);
-		this.nbtComponents = new ArrayList<>(components.size());
+		this.nbtComponents = new HashSet<>(components.size());
 	}
 
 	public static <T> Optional<LazifiedComponentContainer> create(T obj) {
@@ -61,13 +60,15 @@ public class LazifiedComponentContainer implements ComponentContainer {
 				.collect(HashMap::new, (map, entry) -> map.put(entry.getKey(), entry.getValue().get()), HashMap::putAll);
 	}
 
-//	public Map<Identifier, NbtComponent<?>> getNbtComponents() {
-//		return this.nbtComponents.stream()
-//				.map(id -> new Pair<>(id, this.components.get(id)))
-//				.filter(pair -> Objects.nonNull(pair.getRight()))
-//				.filter(pair -> pair.getRight().isEmpty())
-//				.collect(HashMap::new, (map, pair) -> map.put(pair.getLeft(), (NbtComponent<?>) pair.getRight().get()), HashMap::putAll);
-//	}
+	/*
+	public Map<Identifier, NbtComponent<?>> getNbtComponents() {
+		return this.nbtComponents.stream()
+				.map(id -> new Pair<>(id, this.components.get(id)))
+				.filter(pair -> Objects.nonNull(pair.getRight()))
+				.filter(pair -> pair.getRight().isEmpty())
+				.collect(HashMap::new, (map, pair) -> map.put(pair.getLeft(), (NbtComponent<?>) pair.getRight().get()), HashMap::putAll);
+	}
+	*/
 
 	@Override
 	public void setSaveOperation(@NotNull Runnable runnable) {
@@ -103,16 +104,14 @@ public class LazifiedComponentContainer implements ComponentContainer {
 	@Override
 	public void moveComponents(ComponentContainer other) {
 		if (other instanceof LazifiedComponentContainer otherContainer) {
-			otherContainer.components.forEach((id, componentLazy) -> {
-				if (!componentLazy.isEmpty()) {
-					this.components.put(id, componentLazy);
+			otherContainer.components.forEach((id, componentLazy) -> componentLazy.ifPresent(component -> {
+				this.components.put(id, componentLazy); // Directly overriding our value.
 
-					if (componentLazy.get() instanceof NbtComponent<?> nbtComponent) {
-						this.nbtComponents.add(id);
-						nbtComponent.setSaveOperation(this.saveOperation);
-					}
+				if (component instanceof NbtComponent<?> nbtComponent) {
+					this.nbtComponents.add(id);
+					nbtComponent.setSaveOperation(this.saveOperation);
 				}
-			});
+			}));
 
 			otherContainer.components.clear();
 			otherContainer.nbtComponents.clear();

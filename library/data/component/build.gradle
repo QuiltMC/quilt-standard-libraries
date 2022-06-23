@@ -14,5 +14,22 @@ qslModule {
 			testmodOnly("lifecycle_events")
 		}
 	}
+
 	accessWidener()
+
+	injectedInterface("net/minecraft/class_2586") {
+		values = ["org/quiltmc/qsl/component/api/ComponentProvider"]
+	}
+
+	injectedInterface("net/minecraft/class_1297") {
+		values = ["org/quiltmc/qsl/component/api/ComponentProvider"]
+	}
+
+	injectedInterface("net/minecraft/class_2791") {
+		values = ["org/quiltmc/qsl/component/api/ComponentProvider"]
+	}
+
+	injectedInterface("net/minecraft/class_31") {
+		values = ["org/quiltmc/qsl/component/api/ComponentProvider"]
+	}
 }

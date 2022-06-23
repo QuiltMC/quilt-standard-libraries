@@ -24,6 +24,7 @@ public class DefaultFloatComponent implements FloatComponent {
 	@Override
 	public void set(float value) {
 		this.value = value;
+		this.saveNeeded();
 	}
 
 	@Override

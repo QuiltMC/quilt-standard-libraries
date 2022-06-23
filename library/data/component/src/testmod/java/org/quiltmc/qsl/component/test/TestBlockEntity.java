@@ -1,17 +1,27 @@
 package org.quiltmc.qsl.component.test;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.Packet;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.ComponentContainer;
-import org.quiltmc.qsl.component.api.Components;
 import org.quiltmc.qsl.component.api.components.IntegerComponent;
 import org.quiltmc.qsl.component.api.identifier.ComponentIdentifier;
 import org.quiltmc.qsl.component.impl.SimpleComponentContainer;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class TestBlockEntity extends BlockEntity {
 	public static final ComponentIdentifier<IntegerComponent> TEST_BE_INT =
@@ -41,11 +51,43 @@ public class TestBlockEntity extends BlockEntity {
 		this.container.readNbt(nbt);
 	}
 
-	public static <T extends BlockEntity> void tick(World world, BlockPos ignoredPos, BlockState ignoredState, T blockEntity) {
+	@Override
+	public NbtCompound toInitialChunkDataNbt() {
+		return this.toNbt();
+	}
+
+	@Nullable
+	@Override
+	public Packet<ClientPlayPacketListener> toUpdatePacket() {
+		return BlockEntityUpdateS2CPacket.of(this);
+	}
+
+	public static <T extends BlockEntity> void tick(World world, BlockPos pos, BlockState ignoredState, T blockEntity) {
 		if (world.isClient) {
 			return;
 		}
 
-		Components.expose(TEST_BE_INT, blockEntity).ifPresent(IntegerComponent::increment);
+		blockEntity.expose(TEST_BE_INT).ifPresent(integerComponent -> {
+			if (integerComponent.get() % 20 == 0) {
+				HashSet<BlockPos> set = new HashSet<>(List.of(pos));
+				expand(pos, pos, world, set);
+			}
+
+			integerComponent.increment();
+		});
+	}
+
+	private static void expand(BlockPos initialPos, BlockPos pos, World world, Set<BlockPos> visited) {
+		Arrays.stream(Direction.values())
+				.map(pos::offset)
+				.filter(visited::add)
+				.forEach(offsetPos -> {
+					BlockState stateAt = world.getBlockState(offsetPos);
+					if (stateAt.isAir()) {
+						world.setBlockState(offsetPos, Blocks.DIAMOND_BLOCK.getDefaultState());
+					} else if (stateAt.isOf(Blocks.DIAMOND_BLOCK) && initialPos.isWithinDistance(offsetPos, 5)) {
+						expand(initialPos, offsetPos, world, visited);
+					}
+				});
 	}
 }

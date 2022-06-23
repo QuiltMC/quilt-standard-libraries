@@ -25,6 +25,7 @@ public class TestBlock extends Block implements BlockEntityProvider {
 		return ComponentTestMod.TEST_BE_TYPE.instantiate(pos, state);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public BlockRenderType getRenderType(BlockState state) {
 		return BlockRenderType.MODEL;

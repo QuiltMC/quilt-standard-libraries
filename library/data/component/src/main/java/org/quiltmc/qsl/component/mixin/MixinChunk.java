@@ -11,17 +11,14 @@ import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.impl.LazifiedComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentProvider;
-import org.spongepowered.asm.mixin.Implements;
-import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Implements(@Interface(iface = ComponentProvider.class, prefix = "comp$"))
 @Mixin(Chunk.class)
-public abstract class MixinChunk {
+public abstract class MixinChunk implements ComponentProvider {
 
 	private ComponentContainer qsl$container;
 
@@ -34,8 +31,8 @@ public abstract class MixinChunk {
 		this.qsl$container.setSaveOperation(() -> this.setNeedsSaving(true));
 	}
 
-	@NotNull
-	public ComponentContainer comp$getContainer() {
+	@Override
+	public @NotNull ComponentContainer getContainer() {
 		return this.qsl$container;
 	}
 }

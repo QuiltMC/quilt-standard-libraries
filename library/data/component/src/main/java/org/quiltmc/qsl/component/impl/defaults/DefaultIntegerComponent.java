@@ -27,18 +27,22 @@ public class DefaultIntegerComponent implements IntegerComponent {
 	@Override
 	public void set(int value) {
 		this.value = value;
+		this.saveNeeded();
 	}
 
 	@Override
 	public void increment() {
 		this.value++;
+		this.saveNeeded();
 	}
 
 	@Override
 	public void decrement() {
 		this.value--;
+		this.saveNeeded();
 	}
 
+	// TODO: Fix hashing and equals
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;

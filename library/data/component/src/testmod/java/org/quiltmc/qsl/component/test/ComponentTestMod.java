@@ -21,7 +21,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.ChestBlockEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.mob.HostileEntity;
@@ -34,11 +33,9 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.SaveProperties;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.level.LevelProperties;
-import org.jetbrains.annotations.Nullable;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.component.api.Components;
@@ -47,6 +44,8 @@ import org.quiltmc.qsl.component.api.components.IntegerComponent;
 import org.quiltmc.qsl.component.api.components.InventoryComponent;
 import org.quiltmc.qsl.component.api.identifier.ComponentIdentifier;
 import org.quiltmc.qsl.lifecycle.api.event.ServerWorldTickEvents;
+
+import java.util.Objects;
 
 public class ComponentTestMod implements ModInitializer {
 	public static final String MODID = "quilt_component_test";
@@ -61,7 +60,7 @@ public class ComponentTestMod implements ModInitializer {
 	public static final ComponentIdentifier<IntegerComponent> HOSTILE_EXPLODE_TIME =
 			IntegerComponent.create(new Identifier(MODID, "hostile_explode_time"));
 	public static final ComponentIdentifier<IntegerComponent> CHEST_NUMBER =
-			IntegerComponent.create(new Identifier(MODID, "chest_number"));
+			IntegerComponent.create(200, new Identifier(MODID, "chest_number"));
 	public static final ComponentIdentifier<InventoryComponent> CHUNK_INVENTORY = InventoryComponent.ofSize(1,
 			new Identifier(MODID, "chunk_inventory")
 	);
@@ -70,8 +69,6 @@ public class ComponentTestMod implements ModInitializer {
 
 	// Attention do NOT place this block in any world because registry sync issues will make the game hung upon rejoining.
 	public static final Block TEST_BLOCK = new TestBlock(AbstractBlock.Settings.copy(Blocks.STONE));
-	public static final BlockEntityType<TestBlockEntity> TEST_BE_TYPE =
-			BlockEntityType.Builder.create(TestBlockEntity::new, TEST_BLOCK, Blocks.NOTE_BLOCK).build(null);
 
 	@Override
 	public void onInitialize(ModContainer mod) {
@@ -89,7 +86,7 @@ public class ComponentTestMod implements ModInitializer {
 		// Testing Code
 		ServerWorldTickEvents.START.register((server, world) -> {
 			world.getEntitiesByType(TypeFilter.instanceOf(CowEntity.class), cowEntity -> true).forEach(entity ->
-					Components.expose(COW_INVENTORY, entity).ifPresent(inventoryComponent -> {
+					entity.expose(COW_INVENTORY).ifPresent(inventoryComponent -> {
 						if (inventoryComponent.isEmpty()) {
 							world.createExplosion(
 									entity,
@@ -102,40 +99,45 @@ public class ComponentTestMod implements ModInitializer {
 						}
 					}));
 
-			world.getEntitiesByType(new TypeFilter<Entity, CreeperEntity>() {
-				@Nullable
-				@Override
-				public CreeperEntity downcast(Entity obj) {
-					return obj.getType() == EntityType.CREEPER ? (CreeperEntity) obj : null;
-				}
+			world.getEntitiesByType(EntityType.CREEPER, creeper -> true)
+					.forEach(creeper -> Components.expose(CREEPER_EXPLODE_TIME, creeper).ifPresent(explodeTime -> {
+						if (explodeTime.get() > 0) {
+							explodeTime.decrement();
+						} else {
+							creeper.ignite();
+						}
+					}));
 
-				@Override
-				public Class<CreeperEntity> getBaseClass() {
-					return CreeperEntity.class;
-				}
-			}, creeper -> true).forEach(creeper -> Components.expose(CREEPER_EXPLODE_TIME, creeper).ifPresent(explodeTime -> {
-				if (explodeTime.get() > 0) {
-					explodeTime.decrement();
-				} else {
-					creeper.ignite();
-				}
-			}));
-
-			world.getEntitiesByType(TypeFilter.instanceOf(HostileEntity.class), hostile -> true).forEach(hostile -> Components.expose(HOSTILE_EXPLODE_TIME, hostile).ifPresent(explodeTime -> {
-				if (explodeTime.get() <= 200) {
-					explodeTime.increment();
-				} else {
-					hostile.getWorld().createExplosion(null, hostile.getX(), hostile.getY(), hostile.getZ(), 1.0f, Explosion.DestructionType.NONE);
-					hostile.discard();
-				}
-			}));
+			world.getEntitiesByType(TypeFilter.instanceOf(HostileEntity.class), hostile -> true)
+					.forEach(hostile -> hostile.expose(HOSTILE_EXPLODE_TIME).ifPresent(explodeTime -> {
+						if (explodeTime.get() <= 200) {
+							explodeTime.increment();
+						} else {
+							hostile.getWorld().createExplosion(
+									null,
+									hostile.getX(), hostile.getY(), hostile.getZ(),
+									1.0f, Explosion.DestructionType.NONE
+							);
+							hostile.discard();
+						}
+					}));
 
 			ServerPlayerEntity player = world.getRandomAlivePlayer();
 			if (player == null) {
 				return;
 			}
 			Chunk chunk = world.getChunk(player.getBlockPos());
-			Components.expose(CHUNK_INVENTORY, chunk).ifPresent(inventory -> {
+			chunk.getBlockEntityPositions().stream()
+					.map(chunk::getBlockEntity)
+					.filter(Objects::nonNull)
+					.forEach(blockEntity -> blockEntity.expose(CHEST_NUMBER).ifPresent(integerComponent -> {
+						integerComponent.decrement();
+
+						if (integerComponent.get() <= 0) {
+							world.setBlockState(blockEntity.getPos(), Blocks.DIAMOND_BLOCK.getDefaultState());
+						}
+					}));
+			chunk.expose(CHUNK_INVENTORY).ifPresent(inventory -> {
 				ItemStack playerStack = player.getInventory().getStack(9);
 				ItemStack stack = inventory.getStack(0);
 				if (!playerStack.isEmpty()) {
@@ -155,14 +157,18 @@ public class ComponentTestMod implements ModInitializer {
 				player.sendMessage(Text.literal(inventory.getStack(0).toString()), true);
 			});
 
-			SaveProperties props = server.getSaveProperties();
-			Components.expose(SAVE_FLOAT, props)
-					.ifPresent(floatComponent -> {
-						floatComponent.set(floatComponent.get() + 0.5f);
-						if (world.getTime() % 20 * 5 == 0) {
-							player.sendMessage(Text.literal("%.3f".formatted(floatComponent.get())), false);
-						}
-					});
+			LevelProperties props = ((LevelProperties) server.getSaveProperties());
+			props.expose(SAVE_FLOAT).ifPresent(floatComponent -> {
+				floatComponent.set(floatComponent.get() + 0.5f);
+				if (world.getTime() % 100 == 0) {
+					player.sendMessage(Text.literal("%.3f".formatted(floatComponent.get())), false);
+				}
+			});
 		});
 	}
+
+	public static final BlockEntityType<TestBlockEntity> TEST_BE_TYPE =
+			BlockEntityType.Builder.create(TestBlockEntity::new, TEST_BLOCK, Blocks.NOTE_BLOCK).build(null);
+
+
 }

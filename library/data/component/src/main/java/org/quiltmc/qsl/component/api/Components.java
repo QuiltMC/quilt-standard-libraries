@@ -24,7 +24,7 @@ public final class Components {
 		ComponentsImpl.inject(new FilteredInheritedInjectionPredicate(clazz, exceptions), component);
 	}
 
-	public static <T extends Component, S> Optional<T> expose(ComponentIdentifier<T> id, S obj) {
+	public static <C extends Component, S> Optional<C> expose(ComponentIdentifier<C> id, S obj) {
 		if (obj instanceof ComponentProvider provider) {
 			return provider.getContainer().expose(id.id())
 					.map(id::cast)

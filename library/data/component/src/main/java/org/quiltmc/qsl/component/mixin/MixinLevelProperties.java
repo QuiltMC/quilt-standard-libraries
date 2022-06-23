@@ -20,8 +20,6 @@ import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.impl.LazifiedComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentProvider;
-import org.spongepowered.asm.mixin.Implements;
-import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -31,16 +29,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Set;
 import java.util.UUID;
 
-@Implements(@Interface(iface = ComponentProvider.class, prefix = "comp$"))
 @Mixin(LevelProperties.class)
-public abstract class MixinLevelProperties implements ServerWorldProperties, SaveProperties {
+public abstract class MixinLevelProperties implements ServerWorldProperties, SaveProperties, ComponentProvider {
 
 	private ComponentContainer qsl$container;
 
 	@Inject(method = "readProperties", at = @At("RETURN"))
 	private static void readComponentData(Dynamic<NbtElement> dynamic, DataFixer dataFixer, int dataVersion, @Nullable NbtCompound playerData, LevelInfo levelInfo, SaveVersionInfo saveVersionInfo, GeneratorOptions generatorOptions, Lifecycle lifecycle, CallbackInfoReturnable<LevelProperties> cir) {
-		LevelProperties retProperties = cir.getReturnValue();
-		((ComponentProvider) retProperties).getContainer().readNbt((NbtCompound) dynamic.getValue());
+		cir.getReturnValue().getContainer().readNbt((NbtCompound) dynamic.getValue());
 	}
 
 	@Inject(method = "<init>(Lcom/mojang/datafixers/DataFixer;ILnet/minecraft/nbt/NbtCompound;ZIIIFJJIIIZIZZZLnet/minecraft/world/border/WorldBorder$Properties;IILjava/util/UUID;Ljava/util/Set;Lnet/minecraft/world/timer/Timer;Lnet/minecraft/nbt/NbtCompound;Lnet/minecraft/nbt/NbtCompound;Lnet/minecraft/world/level/LevelInfo;Lnet/minecraft/world/gen/GeneratorOptions;Lcom/mojang/serialization/Lifecycle;)V", at = @At("TAIL"))
@@ -53,8 +49,8 @@ public abstract class MixinLevelProperties implements ServerWorldProperties, Sav
 		this.qsl$container.writeNbt(levelNbt);
 	}
 
-	@NotNull
-	public ComponentContainer comp$getContainer() {
+	@Override
+	public @NotNull ComponentContainer getContainer() {
 		return this.qsl$container;
 	}
 }
