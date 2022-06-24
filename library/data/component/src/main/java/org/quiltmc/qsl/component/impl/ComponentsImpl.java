@@ -27,6 +27,7 @@ import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentInjectionPredicate;
 import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.api.ComponentType;
+import org.quiltmc.qsl.component.api.event.ComponentEvents;
 
 import java.util.*;
 
@@ -64,6 +65,7 @@ public class ComponentsImpl {
 		return Registry.register(REGISTRY, id, componentId);
 	}
 
+	// TODO: Figure out to make caching work with provider specific injections.
 	public static Map<Identifier, Component.Factory<?>> get(ComponentProvider provider) {
 		return ComponentInjectionCache.getInstance().getCache(provider.getClass()).orElseGet(() -> {
 			Map<Identifier, Component.Factory<?>> returnMap = INJECTION_REGISTRY.entrySet().stream()
@@ -71,6 +73,13 @@ public class ComponentsImpl {
 					.map(Map.Entry::getValue)
 					.collect(HashMap::new, (map, ids) -> ids.forEach(id -> map.put(id, getEntry(id))), HashMap::putAll);
 
+			ComponentEvents.INJECT.invoker().onInject(provider, type -> {
+				if (returnMap.containsKey(type.id())) {
+					throw new IllegalStateException("Cannot inject the same component twice on a provider!");
+				}
+
+				returnMap.putIfAbsent(type.id(), type.factory());
+			});
 			ComponentInjectionCache.getInstance().record(provider.getClass(), returnMap);
 
 			return returnMap;

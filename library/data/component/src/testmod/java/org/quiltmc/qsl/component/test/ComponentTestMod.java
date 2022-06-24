@@ -38,6 +38,7 @@ import org.quiltmc.qsl.component.api.Components;
 import org.quiltmc.qsl.component.api.components.FloatComponent;
 import org.quiltmc.qsl.component.api.components.IntegerComponent;
 import org.quiltmc.qsl.component.api.components.InventoryComponent;
+import org.quiltmc.qsl.component.api.event.ComponentEvents;
 
 public class ComponentTestMod implements ModInitializer {
 	public static final String MODID = "quilt_component_test";
@@ -76,8 +77,12 @@ public class ComponentTestMod implements ModInitializer {
 		Components.inject(ChestBlockEntity.class, CHEST_NUMBER);
 		Components.injectInheritage(Chunk.class, CHUNK_INVENTORY);
 		Components.inject(LevelProperties.class, SAVE_FLOAT);
-		Components.inject(ItemStack.class, ITEMSTACK_INT);
-//		Components.inject(new ItemStackInjectionPredicate(Items.BOOKSHELF), ITEMSTACK_INT);
+//		Components.inject(new ItemStackInjectionPredicate(Items.BOOKSHELF), ITEMSTACK_INT); // TODO: Make this work at some point!
+		ComponentEvents.INJECT.register((provider, creator) -> {
+			if (provider instanceof ItemStack) {
+				creator.inject(ITEMSTACK_INT);
+			}
+		});
 	}
 
 	public static final BlockEntityType<TestBlockEntity> TEST_BE_TYPE =

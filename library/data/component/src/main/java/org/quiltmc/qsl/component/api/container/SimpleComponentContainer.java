@@ -22,9 +22,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentContainer;
+import org.quiltmc.qsl.component.api.Components;
 import org.quiltmc.qsl.component.api.components.NbtComponent;
 import org.quiltmc.qsl.component.api.ComponentType;
-import org.quiltmc.qsl.component.impl.ComponentsImpl;
+import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 import org.quiltmc.qsl.component.impl.util.StringConstants;
 
 import java.util.*;
@@ -34,12 +35,14 @@ public class SimpleComponentContainer implements ComponentContainer {
 	private final Map<Identifier, Component> components;
 	private final List<Identifier> nbtComponents;
 
-	protected SimpleComponentContainer(@Nullable Runnable saveOperation, Stream<Identifier> componentIds) {
+	public SimpleComponentContainer(@Nullable Runnable saveOperation, Stream<Identifier> componentIds) {
 		this.components = new HashMap<>();
 		this.nbtComponents = new ArrayList<>();
 
 		componentIds.forEach(id -> {
-			Component component = ComponentsImpl.getEntry(id).create();
+			Component component = Components.REGISTRY.getOrEmpty(id)
+					.orElseThrow(ErrorUtil.illegalArgument("Attempted to get invalid component with id %s".formatted(id.toString())))
+					.create();
 			this.components.put(id, component);
 
 			if (component instanceof NbtComponent<?> nbtComponent) {
