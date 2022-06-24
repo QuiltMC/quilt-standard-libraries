@@ -22,7 +22,6 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.level.LevelProperties;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
-import org.quiltmc.qsl.component.api.components.ComponentIdentifier;
 
 import java.util.Optional;
 
@@ -36,7 +35,7 @@ public interface ComponentProvider {
 	@NotNull
 	ComponentContainer getContainer();
 
-	default <C extends Component> Optional<C> expose(ComponentIdentifier<C> id) {
+	default <C extends Component> Optional<C> expose(ComponentType<C> id) {
 		return Components.expose(id, this);
 	}
 }

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.api.components;
+package org.quiltmc.qsl.component.api;
 
 import net.minecraft.util.Identifier;
-import org.quiltmc.qsl.component.api.Component;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public record ComponentIdentifier<T extends Component>(Identifier id) {
+public record ComponentType<T extends Component>(Identifier id, Component.Factory<T> factory) implements Component.Factory<T> {
 
 	@SuppressWarnings("unchecked")
 	public Optional<T> cast(Component component) {
@@ -30,5 +30,10 @@ public record ComponentIdentifier<T extends Component>(Identifier id) {
 		} catch (ClassCastException ignored) {
 			return Optional.empty();
 		}
+	}
+
+	@Override
+	public @NotNull T create() {
+		return this.factory.create();
 	}
 }

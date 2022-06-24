@@ -42,7 +42,7 @@ import org.quiltmc.qsl.component.api.Components;
 import org.quiltmc.qsl.component.api.components.FloatComponent;
 import org.quiltmc.qsl.component.api.components.IntegerComponent;
 import org.quiltmc.qsl.component.api.components.InventoryComponent;
-import org.quiltmc.qsl.component.api.components.ComponentIdentifier;
+import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.lifecycle.api.event.ServerWorldTickEvents;
 
 import java.util.Objects;
@@ -51,20 +51,20 @@ public class ComponentTestMod implements ModInitializer {
 	public static final String MODID = "quilt_component_test";
 
 	// Registration Code
-	public static final ComponentIdentifier<InventoryComponent> COW_INVENTORY = InventoryComponent.of(
+	public static final ComponentType<InventoryComponent> COW_INVENTORY = InventoryComponent.of(
 			() -> DefaultedList.ofSize(1, new ItemStack(Items.COBBLESTONE, 64)),
 			new Identifier(MODID, "cow_inventory")
 	);
-	public static final ComponentIdentifier<IntegerComponent> CREEPER_EXPLODE_TIME =
+	public static final ComponentType<IntegerComponent> CREEPER_EXPLODE_TIME =
 			IntegerComponent.create(200, new Identifier(MODID, "creeper_explode_time"));
-	public static final ComponentIdentifier<IntegerComponent> HOSTILE_EXPLODE_TIME =
+	public static final ComponentType<IntegerComponent> HOSTILE_EXPLODE_TIME =
 			IntegerComponent.create(new Identifier(MODID, "hostile_explode_time"));
-	public static final ComponentIdentifier<IntegerComponent> CHEST_NUMBER =
+	public static final ComponentType<IntegerComponent> CHEST_NUMBER =
 			IntegerComponent.create(200, new Identifier(MODID, "chest_number"));
-	public static final ComponentIdentifier<InventoryComponent> CHUNK_INVENTORY = InventoryComponent.ofSize(1,
+	public static final ComponentType<InventoryComponent> CHUNK_INVENTORY = InventoryComponent.ofSize(1,
 			new Identifier(MODID, "chunk_inventory")
 	);
-	public static final ComponentIdentifier<FloatComponent> SAVE_FLOAT =
+	public static final ComponentType<FloatComponent> SAVE_FLOAT =
 			FloatComponent.create(new Identifier(MODID, "save_float"));
 
 	// Attention do NOT place this block in any world because registry sync issues will make the game hung upon rejoining.
