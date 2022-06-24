@@ -67,7 +67,6 @@ public class ComponentTestMod implements ModInitializer {
 	public static final ComponentIdentifier<FloatComponent> SAVE_FLOAT =
 			FloatComponent.create(new Identifier(MODID, "save_float"));
 
-	// Attention do NOT place this block in any world because registry sync issues will make the game hung upon rejoining.
 	public static final Block TEST_BLOCK = new TestBlock(AbstractBlock.Settings.copy(Blocks.STONE));
 
 	@Override
