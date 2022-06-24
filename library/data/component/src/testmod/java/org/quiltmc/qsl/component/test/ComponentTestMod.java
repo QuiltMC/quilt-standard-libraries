@@ -29,6 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.collection.DefaultedList;
@@ -69,12 +70,15 @@ public class ComponentTestMod implements ModInitializer {
 
 	// Attention do NOT place this block in any world because registry sync issues will make the game hung upon rejoining.
 	public static final Block TEST_BLOCK = new TestBlock(AbstractBlock.Settings.copy(Blocks.STONE));
+	public static final ComponentType<IntegerComponent> ITEMSTACK_INT =
+			IntegerComponent.create(new Identifier(MODID, "itemstack_int"));
 
 	@Override
 	public void onInitialize(ModContainer mod) {
 		Registry.register(Registry.BLOCK, new Identifier(MODID, "test_block"), TEST_BLOCK);
 		Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(MODID, "block_entity"), TEST_BE_TYPE);
 		Block.STATE_IDS.add(TEST_BLOCK.getDefaultState());
+
 		// Application Code
 		Components.inject(CreeperEntity.class, CREEPER_EXPLODE_TIME);
 		Components.injectInheritage(CowEntity.class, COW_INVENTORY);
@@ -82,89 +86,8 @@ public class ComponentTestMod implements ModInitializer {
 		Components.inject(ChestBlockEntity.class, CHEST_NUMBER);
 		Components.injectInheritage(Chunk.class, CHUNK_INVENTORY);
 		Components.inject(LevelProperties.class, SAVE_FLOAT);
-
-		// Testing Code
-		ServerWorldTickEvents.START.register((server, world) -> {
-			world.getEntitiesByType(TypeFilter.instanceOf(CowEntity.class), cowEntity -> true).forEach(entity ->
-					entity.expose(COW_INVENTORY).ifPresent(inventoryComponent -> {
-						if (inventoryComponent.isEmpty()) {
-							world.createExplosion(
-									entity,
-									entity.getX(), entity.getY(), entity.getZ(),
-									4.0f, Explosion.DestructionType.NONE
-							);
-							entity.discard();
-						} else {
-							inventoryComponent.removeStack(0, 1);
-						}
-					}));
-
-			world.getEntitiesByType(EntityType.CREEPER, creeper -> true)
-					.forEach(creeper -> Components.expose(CREEPER_EXPLODE_TIME, creeper).ifPresent(explodeTime -> {
-						if (explodeTime.get() > 0) {
-							explodeTime.decrement();
-						} else {
-							creeper.ignite();
-						}
-					}));
-
-			world.getEntitiesByType(TypeFilter.instanceOf(HostileEntity.class), hostile -> true)
-					.forEach(hostile -> hostile.expose(HOSTILE_EXPLODE_TIME).ifPresent(explodeTime -> {
-						if (explodeTime.get() <= 200) {
-							explodeTime.increment();
-						} else {
-							hostile.getWorld().createExplosion(
-									null,
-									hostile.getX(), hostile.getY(), hostile.getZ(),
-									1.0f, Explosion.DestructionType.NONE
-							);
-							hostile.discard();
-						}
-					}));
-
-			ServerPlayerEntity player = world.getRandomAlivePlayer();
-			if (player == null) {
-				return;
-			}
-			Chunk chunk = world.getChunk(player.getBlockPos());
-			chunk.getBlockEntityPositions().stream()
-					.map(chunk::getBlockEntity)
-					.filter(Objects::nonNull)
-					.forEach(blockEntity -> blockEntity.expose(CHEST_NUMBER).ifPresent(integerComponent -> {
-						integerComponent.decrement();
-
-						if (integerComponent.get() <= 0) {
-							world.setBlockState(blockEntity.getPos(), Blocks.DIAMOND_BLOCK.getDefaultState());
-						}
-					}));
-			chunk.expose(CHUNK_INVENTORY).ifPresent(inventory -> {
-				ItemStack playerStack = player.getInventory().getStack(9);
-				ItemStack stack = inventory.getStack(0);
-				if (!playerStack.isEmpty()) {
-					if (stack.isEmpty()) {
-						var newStack = playerStack.copy();
-						newStack.setCount(1);
-						inventory.setStack(0, newStack);
-						playerStack.decrement(1);
-					} else {
-						if (ItemStack.canCombine(stack, playerStack)) {
-							stack.increment(1);
-							playerStack.decrement(1);
-							inventory.saveNeeded();
-						}
-					}
-				}
-				player.sendMessage(Text.literal(inventory.getStack(0).toString()), true);
-			});
-
-			LevelProperties props = ((LevelProperties) server.getSaveProperties());
-			props.expose(SAVE_FLOAT).ifPresent(floatComponent -> {
-				floatComponent.set(floatComponent.get() + 0.5f);
-				if (world.getTime() % 100 == 0) {
-					player.sendMessage(Text.literal("%.3f".formatted(floatComponent.get())), false);
-				}
-			});
-		});
+		Components.inject(ItemStack.class, ITEMSTACK_INT);
+//		Components.inject(new ItemStackInjectionPredicate(Items.BOOKSHELF), ITEMSTACK_INT);
 	}
 
 	public static final BlockEntityType<TestBlockEntity> TEST_BE_TYPE =

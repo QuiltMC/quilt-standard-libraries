@@ -13,6 +13,9 @@
     "entrypoints": {
       "init": [
         "org.quiltmc.qsl.component.test.ComponentTestMod"
+      ],
+      "events": [
+        "org.quiltmc.qsl.component.test.ServerTickListener"
       ]
     },
     "depends": [

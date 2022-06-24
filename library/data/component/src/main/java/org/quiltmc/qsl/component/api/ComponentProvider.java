@@ -18,6 +18,7 @@ package org.quiltmc.qsl.component.api;
 
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.level.LevelProperties;
 import org.jetbrains.annotations.NotNull;
@@ -26,10 +27,11 @@ import org.quiltmc.qsl.base.api.util.InjectedInterface;
 import java.util.Optional;
 
 @InjectedInterface({
-		BlockEntity.class,
 		Entity.class,
+		BlockEntity.class,
 		Chunk.class,
-		LevelProperties.class
+		LevelProperties.class,
+		ItemStack.class
 })
 public interface ComponentProvider {
 	@NotNull
