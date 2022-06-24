@@ -20,16 +20,17 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtFloat;
 import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.component.api.Component;
+import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.api.components.defaults.DefaultFloatComponent;
 
 
 public interface FloatComponent extends Component, NbtComponent<NbtFloat> {
-	static ComponentIdentifier<FloatComponent> create(Identifier id) {
+	static ComponentType<FloatComponent> create(Identifier id) {
 		return ComponentsImpl.register(id, DefaultFloatComponent::new);
 	}
 
-	static ComponentIdentifier<FloatComponent> create(float initialValue, Identifier id) {
+	static ComponentType<FloatComponent> create(float initialValue, Identifier id) {
 		return ComponentsImpl.register(id, () -> new DefaultFloatComponent(initialValue));
 	}
 

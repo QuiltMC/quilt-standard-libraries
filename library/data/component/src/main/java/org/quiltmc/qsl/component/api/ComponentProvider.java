@@ -18,25 +18,26 @@ package org.quiltmc.qsl.component.api;
 
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.level.LevelProperties;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
-import org.quiltmc.qsl.component.api.components.ComponentIdentifier;
 
 import java.util.Optional;
 
 @InjectedInterface({
-		BlockEntity.class,
 		Entity.class,
+		BlockEntity.class,
 		Chunk.class,
-		LevelProperties.class
+		LevelProperties.class,
+		ItemStack.class
 })
 public interface ComponentProvider {
 	@NotNull
 	ComponentContainer getContainer();
 
-	default <C extends Component> Optional<C> expose(ComponentIdentifier<C> id) {
+	default <C extends Component> Optional<C> expose(ComponentType<C> id) {
 		return Components.expose(id, this);
 	}
 }

@@ -24,19 +24,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class ComponentCache {
+public class ComponentInjectionCache {
 
-	private static ComponentCache INSTANCE;
+	private static ComponentInjectionCache INSTANCE;
 
 	private final Map<Class<?>, Map<Identifier, Component.Factory<?>>> injectionCache = new HashMap<>();
 
-	private ComponentCache() {
+	private ComponentInjectionCache() {
 
 	}
 
-	public static ComponentCache getInstance() {
+	public static ComponentInjectionCache getInstance() {
 		if (INSTANCE == null) {
-			INSTANCE = new ComponentCache();
+			INSTANCE = new ComponentInjectionCache();
 		}
 
 		return INSTANCE;

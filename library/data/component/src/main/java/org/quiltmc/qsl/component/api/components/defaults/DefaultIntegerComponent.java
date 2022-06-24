@@ -19,8 +19,6 @@ package org.quiltmc.qsl.component.api.components.defaults;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.components.IntegerComponent;
 
-import java.util.Objects;
-
 public class DefaultIntegerComponent implements IntegerComponent {
 
 	private int value;
@@ -56,19 +54,6 @@ public class DefaultIntegerComponent implements IntegerComponent {
 	public void decrement() {
 		this.value--;
 		this.saveNeeded();
-	}
-
-	// TODO: Fix hashing and equals
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof DefaultIntegerComponent that)) return false;
-		return value == that.value;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(value);
 	}
 
 	@Override

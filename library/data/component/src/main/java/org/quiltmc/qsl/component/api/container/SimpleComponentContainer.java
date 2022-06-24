@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.api.components.NbtComponent;
-import org.quiltmc.qsl.component.api.components.ComponentIdentifier;
+import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.util.StringConstants;
 
@@ -51,8 +51,8 @@ public class SimpleComponentContainer implements ComponentContainer {
 		componentIds.close();
 	}
 
-	public static @NotNull SimpleComponentContainer create(Runnable saveOperation, ComponentIdentifier<?>... ids) {
-		return new SimpleComponentContainer(saveOperation, Stream.of(ids).map(ComponentIdentifier::id));
+	public static @NotNull SimpleComponentContainer create(Runnable saveOperation, ComponentType<?>... ids) {
+		return new SimpleComponentContainer(saveOperation, Stream.of(ids).map(ComponentType::id));
 	}
 
 	@Override

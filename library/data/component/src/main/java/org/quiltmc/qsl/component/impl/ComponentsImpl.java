@@ -16,23 +16,29 @@
 
 package org.quiltmc.qsl.component.impl;
 
+import com.mojang.serialization.Lifecycle;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.util.registry.SimpleRegistry;
+import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentInjectionPredicate;
 import org.quiltmc.qsl.component.api.ComponentProvider;
-import org.quiltmc.qsl.component.api.components.ComponentIdentifier;
+import org.quiltmc.qsl.component.api.ComponentType;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
+@ApiStatus.Internal
 public class ComponentsImpl {
 	private static final Map<ComponentInjectionPredicate, Set<Identifier>> INJECTION_REGISTRY = new HashMap<>();
-	private static final Map<Identifier, Component.Factory<?>> REGISTRY = new HashMap<>(); // TODO: Look into using a Minecraft Registry for this.
+	private static final RegistryKey<Registry<ComponentType<?>>> REGISTRY_KEY =
+			RegistryKey.ofRegistry(new Identifier("quilt", "components"));
+	public static final Registry<ComponentType<?>> REGISTRY =
+			new SimpleRegistry<>(REGISTRY_KEY, Lifecycle.experimental(), null);
 
-	public static <C extends Component> void inject(ComponentInjectionPredicate predicate, ComponentIdentifier<C> id) {
+	public static <C extends Component> void inject(ComponentInjectionPredicate predicate, ComponentType<C> id) {
 		if (REGISTRY.get(id.id()) == null) {
 			throw new IllegalArgumentException(
 					"The target id %s does not match any registered component!".formatted(id.toString())
@@ -50,28 +56,32 @@ public class ComponentsImpl {
 			INJECTION_REGISTRY.put(predicate, Util.make(new HashSet<>(), set -> set.add(id.id())));
 		}
 
-		ComponentCache.getInstance().clear(); // Always clear the cache after an injection is registered.
+		ComponentInjectionCache.getInstance().clear(); // Always clear the cache after an injection is registered.
 	}
 
-	public static <T extends Component> ComponentIdentifier<T> register(Identifier id, Component.Factory<T> component) {
-		REGISTRY.put(id, component);
-		return new ComponentIdentifier<>(id);
+	public static <T extends Component> ComponentType<T> register(Identifier id, Component.Factory<T> factory) {
+		var componentId = new ComponentType<>(id, factory);
+		return Registry.register(REGISTRY, id, componentId);
 	}
 
 	public static Map<Identifier, Component.Factory<?>> get(ComponentProvider provider) {
-		return ComponentCache.getInstance().getCache(provider.getClass()).orElseGet(() -> {
+		return ComponentInjectionCache.getInstance().getCache(provider.getClass()).orElseGet(() -> {
 			Map<Identifier, Component.Factory<?>> returnMap = INJECTION_REGISTRY.entrySet().stream()
 					.filter(it -> it.getKey().canInject(provider))
 					.map(Map.Entry::getValue)
-					.collect(HashMap::new, (map, ids) -> ids.forEach(id -> map.put(id, REGISTRY.get(id))), HashMap::putAll);
+					.collect(HashMap::new, (map, ids) -> ids.forEach(id -> map.put(id, getEntry(id))), HashMap::putAll);
 
-			ComponentCache.getInstance().record(provider.getClass(), returnMap);
+			ComponentInjectionCache.getInstance().record(provider.getClass(), returnMap);
 
 			return returnMap;
 		});
 	}
 
 	public static Component.Factory<?> getEntry(Identifier id) {
-		return REGISTRY.get(id);
+		return REGISTRY.getOrEmpty(id)
+				.orElseThrow(() ->
+						new IllegalArgumentException("Cannot access element with id %s in the component registry!"
+							.formatted(id.toString())
+				));
 	}
 }

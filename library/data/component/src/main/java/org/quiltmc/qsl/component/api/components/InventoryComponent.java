@@ -24,17 +24,18 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
+import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.api.components.defaults.DefaultInventoryComponent;
 
 import java.util.function.Supplier;
 
 public interface InventoryComponent extends NbtComponent<NbtCompound>, Inventory {
-	static ComponentIdentifier<InventoryComponent> ofSize(int size, Identifier id) {
+	static ComponentType<InventoryComponent> ofSize(int size, Identifier id) {
 		return ComponentsImpl.register(id, () -> new DefaultInventoryComponent(size));
 	}
 
-	static ComponentIdentifier<InventoryComponent> of(Supplier<DefaultedList<ItemStack>> items, Identifier id) {
+	static ComponentType<InventoryComponent> of(Supplier<DefaultedList<ItemStack>> items, Identifier id) {
 		return ComponentsImpl.register(id, () -> new DefaultInventoryComponent(items));
 	}
 
