@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.impl;
+package org.quiltmc.qsl.component.api.container;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
@@ -24,6 +24,7 @@ import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.api.components.NbtComponent;
+import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.util.Lazy;
 import org.quiltmc.qsl.component.impl.util.StringConstants;
 
@@ -51,7 +52,7 @@ public class LazifiedComponentContainer implements ComponentContainer {
 
 	public static @NotNull Map<Identifier, Lazy<Component>> createComponents(@NotNull ComponentProvider provider) {
 		var map = new HashMap<Identifier, Lazy<Component>>();
-		ComponentsImpl.get(provider).forEach((identifier, supplier) -> map.put(identifier, Lazy.of(supplier::get)));
+		ComponentsImpl.get(provider).forEach((identifier, factory) -> map.put(identifier, Lazy.of(factory::create)));
 		return map;
 	}
 
@@ -75,16 +76,6 @@ public class LazifiedComponentContainer implements ComponentContainer {
 				.filter(entry -> !entry.getValue().isEmpty())
 				.collect(HashMap::new, (map, entry) -> map.put(entry.getKey(), entry.getValue().get()), HashMap::putAll);
 	}
-
-	/*
-	public Map<Identifier, NbtComponent<?>> getNbtComponents() {
-		return this.nbtComponents.stream()
-				.map(id -> new Pair<>(id, this.components.get(id)))
-				.filter(pair -> Objects.nonNull(pair.getRight()))
-				.filter(pair -> pair.getRight().isEmpty())
-				.collect(HashMap::new, (map, pair) -> map.put(pair.getLeft(), (NbtComponent<?>) pair.getRight().get()), HashMap::putAll);
-	}
-	*/
 
 	@Override
 	public void setSaveOperation(@NotNull Runnable runnable) {

@@ -21,21 +21,19 @@ import net.minecraft.util.Util;
 import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentInjectionPredicate;
 import org.quiltmc.qsl.component.api.ComponentProvider;
-import org.quiltmc.qsl.component.api.identifier.ComponentIdentifier;
+import org.quiltmc.qsl.component.api.components.ComponentIdentifier;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Supplier;
 
 public class ComponentsImpl {
 	private static final Map<ComponentInjectionPredicate, Set<Identifier>> INJECTION_REGISTRY = new HashMap<>();
-	private static final Map<Identifier, Supplier<? extends Component>> REGISTRY = new HashMap<>(); // TODO: Look into using a Minecraft Registry for this.
+	private static final Map<Identifier, Component.Factory<?>> REGISTRY = new HashMap<>(); // TODO: Look into using a Minecraft Registry for this.
 
 	public static <C extends Component> void inject(ComponentInjectionPredicate predicate, ComponentIdentifier<C> id) {
-		Supplier<? extends Component> supplier = REGISTRY.get(id.id());
-		if (supplier == null) {
+		if (REGISTRY.get(id.id()) == null) {
 			throw new IllegalArgumentException(
 					"The target id %s does not match any registered component!".formatted(id.toString())
 			);
@@ -55,14 +53,14 @@ public class ComponentsImpl {
 		ComponentCache.getInstance().clear(); // Always clear the cache after an injection is registered.
 	}
 
-	public static <T extends Component> ComponentIdentifier<T> register(Identifier id, Supplier<T> component) {
+	public static <T extends Component> ComponentIdentifier<T> register(Identifier id, Component.Factory<T> component) {
 		REGISTRY.put(id, component);
 		return new ComponentIdentifier<>(id);
 	}
 
-	public static Map<Identifier, Supplier<? extends Component>> get(ComponentProvider provider) {
+	public static Map<Identifier, Component.Factory<?>> get(ComponentProvider provider) {
 		return ComponentCache.getInstance().getCache(provider.getClass()).orElseGet(() -> {
-			Map<Identifier, Supplier<? extends Component>> returnMap = INJECTION_REGISTRY.entrySet().stream()
+			Map<Identifier, Component.Factory<?>> returnMap = INJECTION_REGISTRY.entrySet().stream()
 					.filter(it -> it.getKey().canInject(provider))
 					.map(Map.Entry::getValue)
 					.collect(HashMap::new, (map, ids) -> ids.forEach(id -> map.put(id, REGISTRY.get(id))), HashMap::putAll);
@@ -73,7 +71,7 @@ public class ComponentsImpl {
 		});
 	}
 
-	public static Supplier<? extends Component> getEntry(Identifier id) {
+	public static Component.Factory<?> getEntry(Identifier id) {
 		return REGISTRY.get(id);
 	}
 }

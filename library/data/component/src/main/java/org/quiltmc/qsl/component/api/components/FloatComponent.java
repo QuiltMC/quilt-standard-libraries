@@ -20,9 +20,8 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtFloat;
 import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.component.api.Component;
-import org.quiltmc.qsl.component.api.identifier.ComponentIdentifier;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
-import org.quiltmc.qsl.component.impl.defaults.DefaultFloatComponent;
+import org.quiltmc.qsl.component.api.components.defaults.DefaultFloatComponent;
 
 
 public interface FloatComponent extends Component, NbtComponent<NbtFloat> {

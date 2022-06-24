@@ -19,16 +19,12 @@ package org.quiltmc.qsl.component.api.components;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtInt;
 import net.minecraft.util.Identifier;
-import org.quiltmc.qsl.component.api.identifier.ComponentIdentifier;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
-import org.quiltmc.qsl.component.impl.defaults.DefaultIntegerComponent;
-
-import java.util.function.Supplier;
+import org.quiltmc.qsl.component.api.components.defaults.DefaultIntegerComponent;
 
 public interface IntegerComponent extends NbtComponent<NbtInt> {
 	static ComponentIdentifier<IntegerComponent> create(int initialValue, Identifier id) {
-		Supplier<IntegerComponent> supplier = () -> new DefaultIntegerComponent(initialValue);
-		return ComponentsImpl.register(id, supplier);
+		return ComponentsImpl.register(id, () -> new DefaultIntegerComponent(initialValue));
 	}
 
 	static ComponentIdentifier<IntegerComponent> create(Identifier id) {

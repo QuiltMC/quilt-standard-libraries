@@ -14,33 +14,61 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.impl.defaults;
+package org.quiltmc.qsl.component.api.components.defaults;
 
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.component.api.components.FloatComponent;
+import org.quiltmc.qsl.component.api.components.IntegerComponent;
 
-public class DefaultFloatComponent implements FloatComponent {
-	private float value;
+import java.util.Objects;
+
+public class DefaultIntegerComponent implements IntegerComponent {
+
+	private int value;
 	@Nullable
 	private Runnable saveOperation;
 
-	public DefaultFloatComponent() {
+	public DefaultIntegerComponent(int defaultValue) {
+		this.value = defaultValue;
+	}
+
+	public DefaultIntegerComponent() {
 		this(0);
 	}
 
-	public DefaultFloatComponent(float initialValue) {
-		this.value = initialValue;
-	}
-
 	@Override
-	public float get() {
+	public int get() {
 		return this.value;
 	}
 
 	@Override
-	public void set(float value) {
+	public void set(int value) {
 		this.value = value;
 		this.saveNeeded();
+	}
+
+	@Override
+	public void increment() {
+		this.value++;
+		this.saveNeeded();
+	}
+
+	@Override
+	public void decrement() {
+		this.value--;
+		this.saveNeeded();
+	}
+
+	// TODO: Fix hashing and equals
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof DefaultIntegerComponent that)) return false;
+		return value == that.value;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(value);
 	}
 
 	@Override

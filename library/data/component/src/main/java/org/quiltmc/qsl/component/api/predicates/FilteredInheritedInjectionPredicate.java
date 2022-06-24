@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.impl.predicates;
+package org.quiltmc.qsl.component.api.predicates;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,9 +42,8 @@ public class FilteredInheritedInjectionPredicate extends InheritedInjectionPredi
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (!(o instanceof FilteredInheritedInjectionPredicate)) return false;
+		if (!(o instanceof FilteredInheritedInjectionPredicate that)) return false;
 		if (!super.equals(o)) return false;
-		FilteredInheritedInjectionPredicate that = (FilteredInheritedInjectionPredicate) o;
 		return exceptions.equals(that.exceptions);
 	}
 

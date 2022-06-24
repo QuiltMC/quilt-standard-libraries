@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.impl;
+package org.quiltmc.qsl.component.api.container;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
@@ -23,7 +23,8 @@ import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.api.components.NbtComponent;
-import org.quiltmc.qsl.component.api.identifier.ComponentIdentifier;
+import org.quiltmc.qsl.component.api.components.ComponentIdentifier;
+import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.util.StringConstants;
 
 import java.util.*;
@@ -38,7 +39,7 @@ public class SimpleComponentContainer implements ComponentContainer {
 		this.nbtComponents = new ArrayList<>();
 
 		componentIds.forEach(id -> {
-			Component component = ComponentsImpl.getEntry(id).get();
+			Component component = ComponentsImpl.getEntry(id).create();
 			this.components.put(id, component);
 
 			if (component instanceof NbtComponent<?> nbtComponent) {

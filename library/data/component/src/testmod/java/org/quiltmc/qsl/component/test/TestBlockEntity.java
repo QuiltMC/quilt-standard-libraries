@@ -31,8 +31,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.api.components.IntegerComponent;
-import org.quiltmc.qsl.component.api.identifier.ComponentIdentifier;
-import org.quiltmc.qsl.component.impl.SimpleComponentContainer;
+import org.quiltmc.qsl.component.api.components.ComponentIdentifier;
+import org.quiltmc.qsl.component.api.container.SimpleComponentContainer;
 
 import java.util.Arrays;
 import java.util.HashSet;

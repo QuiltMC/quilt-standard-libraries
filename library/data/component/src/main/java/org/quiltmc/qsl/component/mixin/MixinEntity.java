@@ -23,7 +23,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentProvider;
-import org.quiltmc.qsl.component.impl.LazifiedComponentContainer;
+import org.quiltmc.qsl.component.api.container.LazifiedComponentContainer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

@@ -22,7 +22,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.level.LevelProperties;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
-import org.quiltmc.qsl.component.api.identifier.ComponentIdentifier;
+import org.quiltmc.qsl.component.api.components.ComponentIdentifier;
 
 import java.util.Optional;
 

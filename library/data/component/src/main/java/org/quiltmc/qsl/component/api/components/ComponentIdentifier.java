@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.api.identifier;
+package org.quiltmc.qsl.component.api.components;
 
 import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.component.api.Component;

@@ -18,11 +18,11 @@ package org.quiltmc.qsl.component.api;
 
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.util.Identifier;
-import org.quiltmc.qsl.component.api.identifier.ComponentIdentifier;
+import org.quiltmc.qsl.component.api.components.ComponentIdentifier;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
-import org.quiltmc.qsl.component.impl.predicates.ClassInjectionPredicate;
-import org.quiltmc.qsl.component.impl.predicates.FilteredInheritedInjectionPredicate;
-import org.quiltmc.qsl.component.impl.predicates.InheritedInjectionPredicate;
+import org.quiltmc.qsl.component.api.predicates.ClassInjectionPredicate;
+import org.quiltmc.qsl.component.api.predicates.FilteredInheritedInjectionPredicate;
+import org.quiltmc.qsl.component.api.predicates.InheritedInjectionPredicate;
 
 import java.util.Map;
 import java.util.Optional;

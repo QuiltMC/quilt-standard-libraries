@@ -42,7 +42,7 @@ import org.quiltmc.qsl.component.api.Components;
 import org.quiltmc.qsl.component.api.components.FloatComponent;
 import org.quiltmc.qsl.component.api.components.IntegerComponent;
 import org.quiltmc.qsl.component.api.components.InventoryComponent;
-import org.quiltmc.qsl.component.api.identifier.ComponentIdentifier;
+import org.quiltmc.qsl.component.api.components.ComponentIdentifier;
 import org.quiltmc.qsl.lifecycle.api.event.ServerWorldTickEvents;
 
 import java.util.Objects;
