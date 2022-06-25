@@ -107,7 +107,7 @@ public class QuiltBiomeTest implements ModInitializer {
 
 		// The placement config is taken from the vanilla desert well, but no randomness
 		PlacedFeature PLACED_COMMON_DESERT_WELL = new PlacedFeature(featureEntry, List.of(InSquarePlacementModifier.getInstance(), PlacedFeatureUtil.MOTION_BLOCKING_HEIGHTMAP, BiomePlacementModifier.getInstance()));
-		Registry.register(BuiltinRegistries.PLACED_FEATURE, id("quilt_desert_well_placed"), PLACED_COMMON_DESERT_WELL);
+		Registry.register(BuiltinRegistries.PLACED_FEATURE, id("quilt_desert_well"), PLACED_COMMON_DESERT_WELL);
 
 		BiomeModifications.create(new Identifier("quilt:testmod"))
 				.add(ModificationPhase.ADDITIONS,
