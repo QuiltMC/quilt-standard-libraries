@@ -24,6 +24,7 @@ import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.api.components.NbtComponent;
+import org.quiltmc.qsl.component.api.event.ComponentEvents;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.util.Lazy;
 import org.quiltmc.qsl.component.impl.util.StringConstants;
@@ -53,6 +54,7 @@ public class LazifiedComponentContainer implements ComponentContainer {
 	public static @NotNull Map<Identifier, Lazy<Component>> createComponents(@NotNull ComponentProvider provider) {
 		var map = new HashMap<Identifier, Lazy<Component>>();
 		ComponentsImpl.get(provider).forEach((identifier, factory) -> map.put(identifier, Lazy.of(factory::create)));
+		ComponentEvents.INJECT.invoker().onInject(provider, type -> map.put(type.id(), Lazy.of(type::create)));
 		return map;
 	}
 
