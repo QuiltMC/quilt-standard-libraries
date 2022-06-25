@@ -96,7 +96,7 @@
 
         <module name="Indentation">
             <property name="basicOffset" value="4"/>
-            <property name="caseIndent" value="0"/>
+            <property name="caseIndent" value="4"/>
             <property name="throwsIndent" value="4"/>
             <property name="arrayInitIndent" value="4"/>
             <property name="lineWrappingIndentation" value="8"/>
@@ -133,6 +133,11 @@
 
         <!-- By default this allows catch blocks with only comments -->
         <module name="EmptyCatchBlock"/>
+
+        <!-- Require the use of the "this" keyword -->
+        <module name="RequireThis">
+            <property name="validateOnlyOverlapping" value="false"/>
+        </module>
 
         <!-- Enforce tabs -->
         <module name="RegexpSinglelineJava">
