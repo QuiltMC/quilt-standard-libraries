@@ -42,6 +42,7 @@ import org.slf4j.Logger;
 
 import net.minecraft.command.argument.IdentifierArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.tag.TagKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.registry.Registry;
 
@@ -134,6 +135,26 @@ public final class DumpBuiltinAttachmentsCommand {
 
 			var valuesObj = new JsonObject();
 
+			// do tags first
+			for (Map.Entry<TagKey<R>, Object> attachmentEntry : holder.valueTagTable.row(attachment).entrySet()) {
+				var entryId = attachmentEntry.getKey().id();
+				DataResult<JsonElement> encodedValue =
+						attachment.codec().encodeStart(JsonOps.INSTANCE, attachmentEntry.getValue());
+				if (encodedValue.result().isEmpty()) {
+					if (encodedValue.error().isPresent()) {
+						LOGGER.error("Failed to encode value for attachment #{} of registry entry {}: {}",
+								attachment.id(), entryId, encodedValue.error().get().message());
+					} else {
+						LOGGER.error("Failed to encode value for attachment #{} of registry entry {}: unknown error",
+								attachment.id(), entryId);
+					}
+					throw ENCODE_FAILURE.create();
+				}
+
+				valuesObj.add("#" + entryId, encodedValue.result().get());
+				valueCount++;
+			}
+
 			for (Map.Entry<R, Object> attachmentEntry : entry.getValue().entrySet()) {
 				if (holder.isValueComputed(attachment, attachmentEntry.getKey())) {
 					continue;
@@ -173,7 +194,8 @@ public final class DumpBuiltinAttachmentsCommand {
 			attachmentCount++;
 		}
 
-		ctx.getSource().sendFeedback(Text.literal("Done. Dumped " + attachmentCount + " attachments, " + valueCount + " values."),
+		ctx.getSource().sendFeedback(Text.literal("Done. Dumped " + attachmentCount + " attachments, " +
+						valueCount + " values."),
 				false);
 	}
 }

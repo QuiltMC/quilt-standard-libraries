@@ -63,8 +63,7 @@ public class MainMixin {
 			method = "main",
 			at = @At(
 					value = "INVOKE",
-					target = "Ljava/util/Objects;requireNonNullElse(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;",
-					remap = true
+					target = "Ljava/util/Objects;requireNonNullElse(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"
 			),
 			index = 1,
 			remap = false
@@ -110,8 +109,10 @@ public class MainMixin {
 			method = "method_43613",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/world/level/LevelProperties;<init>(Lnet/minecraft/world/level/LevelInfo;Lnet/minecraft/world/gen/GeneratorOptions;Lcom/mojang/serialization/Lifecycle;)V"
+					target = "Lnet/minecraft/world/level/LevelProperties;<init>(Lnet/minecraft/world/level/LevelInfo;Lnet/minecraft/world/gen/GeneratorOptions;Lcom/mojang/serialization/Lifecycle;)V",
+					remap = true
 			),
+			remap = false,
 			cancellable = true,
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
