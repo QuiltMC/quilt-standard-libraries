@@ -86,6 +86,7 @@ public final class BiomeSelectors {
 	/**
 	 * Returns a biome selector that will match all biomes that would normally spawn in the End.
 	 * This method is compatible with biomes defined on the {@code minecraft:is_end} tag.
+	 * his selector will also match modded biomes that have been added to the End using {@link TheEndBiomes}.
 	 */
 	public static Predicate<BiomeSelectionContext> foundInTheEnd() {
 		return context -> context.isIn(BiomeTags.IS_END) || context.canGenerateIn(DimensionOptions.END);
