@@ -67,7 +67,7 @@ public final class BiomeSelectors {
 
 	/**
 	 * Returns a biome selector that will match all biomes that would normally spawn in the Overworld.
-	 * This method is compatible with biomes defined on the {@code minecraft:is_overworld} tag.
+	 * This method is compatible with biomes defined in the {@code minecraft:is_overworld} tag.
 	 */
 	public static Predicate<BiomeSelectionContext> foundInOverworld() {
 		return context -> context.isIn(BiomeTags.IS_OVERWORLD) || context.canGenerateIn(DimensionOptions.OVERWORLD);
@@ -75,7 +75,7 @@ public final class BiomeSelectors {
 
 	/**
 	 * Returns a biome selector that will match all biomes that would normally spawn in the Nether.
-	 * This method is compatible with biomes defined on the {@code minecraft:is_nether} tag.
+	 * This method is compatible with biomes defined in the {@code minecraft:is_nether} tag.
 	 * <p>
 	 * This selector will also match modded biomes that have been added to the nether using {@link NetherBiomes}.
 	 */
@@ -85,7 +85,7 @@ public final class BiomeSelectors {
 
 	/**
 	 * Returns a biome selector that will match all biomes that would normally spawn in the End.
-	 * This method is compatible with biomes defined on the {@code minecraft:is_end} tag.
+	 * This method is compatible with biomes defined in the {@code minecraft:is_end} tag.
 	 * his selector will also match modded biomes that have been added to the End using {@link TheEndBiomes}.
 	 */
 	public static Predicate<BiomeSelectionContext> foundInTheEnd() {
