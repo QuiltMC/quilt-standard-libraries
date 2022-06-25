@@ -18,6 +18,11 @@
 package org.quiltmc.qsl.worldgen.biome.impl.modification;
 
 import com.google.common.base.Stopwatch;
+<<<<<<< HEAD
+=======
+import com.google.common.base.Suppliers;
+
+>>>>>>> 1.18
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
