@@ -72,7 +72,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 		};
 		this.deps = switch (source) {
 			case SERVER_DATA -> Set.of(ResourceReloaderKeys.Server.TAGS);
-			case CLIENT_RESOURCES -> Set.of();
+			case CLIENT_RESOURCES -> Set.of(new Identifier("quilt_tags", "client_only_tags"));
 		};
 	}
 
@@ -133,9 +133,9 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 
 			profiler.swap(this.id + "/processing_resources{" + entry + "," + attachmentId + "}");
 
-			AttachmentDictionary<?, ?> dict = attachmentMaps.computeIfAbsent(attachment, this::createAttachmentMap);
+			AttachmentDictionary<?, ?> attachAttachment = attachmentMaps.computeIfAbsent(attachment, this::createAttachmentMap);
 			for (var resource : entry.getValue()) {
-				dict.processResource(entry.getKey(), resource);
+				attachAttachment.processResource(entry.getKey(), resource);
 			}
 		}
 	}
@@ -167,10 +167,10 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	}
 
 	protected final class LoadedData {
-		private final Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> dicts;
+		private final Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> attachmentMaps;
 
-		private LoadedData(Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> dicts) {
-			this.dicts = dicts;
+		private LoadedData(Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> attachmentMaps) {
+			this.attachmentMaps = attachmentMaps;
 		}
 
 		@SuppressWarnings("unchecked")
@@ -182,7 +182,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 						.prepareReloadSource(RegistryEntryAttachmentReloader.this.source);
 			}
 
-			for (var entry : this.dicts.entrySet()) {
+			for (var entry : this.attachmentMaps.entrySet()) {
 				profiler.swap(id + "/apply_attachment{" + entry.getKey().id() + "}");
 				applyOne((RegistryEntryAttachment<Object, Object>) entry.getKey(), (AttachmentDictionary<Object, Object>) entry.getValue());
 			}
