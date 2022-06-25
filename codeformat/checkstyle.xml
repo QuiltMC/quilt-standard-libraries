@@ -134,6 +134,11 @@
         <!-- By default this allows catch blocks with only comments -->
         <module name="EmptyCatchBlock"/>
 
+        <!-- Require the use of the "this" keyword -->
+        <module name="RequireThis">
+            <property name="validateOnlyOverlapping" value="false"/>
+        </module>
+
         <!-- Enforce tabs -->
         <module name="RegexpSinglelineJava">
             <property name="format" value="^\t* ([^*]|\*[^ /])"/>
@@ -176,7 +181,9 @@
 <!--        </module>-->
 
         <!--<module name="InvalidJavadocPosition"/>-->
-        <module name="JavadocParagraph"/>
+        <module name="JavadocParagraph">
+            <property name="allowNewlineParagraph" value="false"/>
+        </module>
         <module name="JavadocStyle"/>
         <module name="AtclauseOrder">
             <property name="tagOrder" value="@param,@return,@throws,@deprecated"/>
