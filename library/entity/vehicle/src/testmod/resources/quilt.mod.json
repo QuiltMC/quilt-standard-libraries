@@ -10,11 +10,6 @@
     },
     "intermediate_mappings": "net.fabricmc:intermediary",
     "load_type": "always",
-    "entrypoints": {
-      "init":[
-        "org.quiltmc.qsl.vehicle.test.BoatTypeTestMain"
-      ]
-    },
     "depends": [
       "quilt_loader",
       "quilt_vehicle"
