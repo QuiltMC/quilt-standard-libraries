@@ -248,6 +248,10 @@ public interface RegistryEntryAttachment<R, V> {
 
 	/**
 	 * Associates a value with an entry.
+	 * <p>
+	 * <strong>NOTE:</strong> You should only call this method <em>before</em> registries are frozen!
+	 * <br>
+	 * Mods are allowed to ignore value associations that happen after registry freezing.
 	 *
 	 * @param entry registry entry
 	 * @param value value
@@ -257,6 +261,10 @@ public interface RegistryEntryAttachment<R, V> {
 
 	/**
 	 * Associates a value with a tag.
+	 * <p>
+	 * <strong>NOTE:</strong> You should only call this method <em>before</em> registries are frozen!
+	 * <br>
+	 * Mods are allowed to ignore value associations that happen after registry freezing.
 	 *
 	 * @param tag   tag
 	 * @param value value
