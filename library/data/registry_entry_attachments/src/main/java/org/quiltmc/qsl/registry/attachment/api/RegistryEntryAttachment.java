@@ -258,7 +258,6 @@ public interface RegistryEntryAttachment<R, V> {
 	 */
 	void put(R entry, V value);
 
-
 	/**
 	 * Associates a value with a tag.
 	 * <p>
