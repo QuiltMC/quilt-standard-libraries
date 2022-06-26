@@ -118,7 +118,7 @@ public abstract class GroupResourcePack implements ResourcePack {
 
 	@Override
 	public Collection<Identifier> findResources(ResourceType type, String namespace, String startingPath, int maxDepth,
-	                                            Predicate<String> pathFilter) {
+			Predicate<String> pathFilter) {
 		var packs = this.namespacedPacks.get(namespace);
 
 		if (packs == null) {
@@ -184,7 +184,7 @@ public abstract class GroupResourcePack implements ResourcePack {
 		 * @param type         the resource type of this resource pack
 		 * @param basePack     the base resource pack
 		 * @param packs        the additional packs
-		 * @param basePriority {@code true} if the base resource pack has priority over the additional packs, otherwise {@code false}.
+		 * @param basePriority {@code true} if the base resource pack has priority over the additional packs, or {@code false} otherwise.
 		 *                     Ignored if the base resource pack is already present in the list
 		 */
 		public Wrapped(ResourceType type, ResourcePack basePack, List<ResourcePack> packs, boolean basePriority) {
@@ -193,7 +193,7 @@ public abstract class GroupResourcePack implements ResourcePack {
 		}
 
 		private static List<ResourcePack> addToPacksIfNeeded(ResourcePack basePack, List<ResourcePack> packs,
-		                                                     boolean basePriority) {
+				boolean basePriority) {
 			if (!packs.contains(basePack)) {
 				if (basePriority) {
 					packs.add(basePack);

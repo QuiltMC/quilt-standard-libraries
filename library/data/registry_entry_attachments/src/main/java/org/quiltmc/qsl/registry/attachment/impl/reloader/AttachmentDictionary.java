@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,22 +40,20 @@ import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 final class AttachmentDictionary<R, V> {
 	private final Registry<R> registry;
 	private final RegistryEntryAttachment<R, V> attachment;
-	private final boolean isClient;
 	private final Map<ValueTarget, Object> map;
 
-	public AttachmentDictionary(Registry<R> registry, RegistryEntryAttachment<R, V> attachment, boolean isClient) {
+	public AttachmentDictionary(Registry<R> registry, RegistryEntryAttachment<R, V> attachment) {
 		this.registry = registry;
 		this.attachment = attachment;
-		this.isClient = isClient;
 		this.map = new HashMap<>();
 	}
 
 	public void put(Identifier id, Object value) {
-		this.map.put(new ValueTarget.Single(id), value);
+		this.map.put(new ValueTarget(id, ValueTarget.Type.ENTRY), value);
 	}
 
-	public void putTag(Identifier id, Object value, boolean required) {
-		this.map.put(new ValueTarget.Tagged<>(this.registry, id, this.isClient, required), value);
+	public void putTag(Identifier id, Object value) {
+		this.map.put(new ValueTarget(id, ValueTarget.Type.TAG), value);
 	}
 
 	public Registry<?> getRegistry() {
@@ -75,8 +73,8 @@ final class AttachmentDictionary<R, V> {
 			boolean replace;
 			JsonElement values;
 
-			try {
-				JsonObject obj = JsonHelper.deserialize(new InputStreamReader(resource.getInputStream()));
+			try (var reader = new InputStreamReader(resource.getInputStream())) {
+				JsonObject obj = JsonHelper.deserialize(reader);
 				replace = JsonHelper.getBoolean(obj, "replace", false);
 				values = obj.get("values");
 
@@ -172,7 +170,7 @@ final class AttachmentDictionary<R, V> {
 			}
 
 			if (tagId) {
-				this.putTag(id, parsedValue, required);
+				this.putTag(id, parsedValue);
 			} else {
 				this.put(id, parsedValue);
 			}
@@ -211,7 +209,7 @@ final class AttachmentDictionary<R, V> {
 			}
 
 			if (tagId) {
-				this.putTag(id, parsedValue, false);
+				this.putTag(id, parsedValue);
 			} else {
 				this.put(id, parsedValue);
 			}
@@ -235,5 +233,11 @@ final class AttachmentDictionary<R, V> {
 		}
 
 		return parsedValue.result().get();
+	}
+
+	public record ValueTarget(Identifier id, Type type) {
+		enum Type {
+			ENTRY, TAG;
+		}
 	}
 }

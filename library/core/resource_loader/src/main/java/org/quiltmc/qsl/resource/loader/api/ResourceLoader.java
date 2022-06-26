@@ -77,7 +77,7 @@ public interface ResourceLoader {
 	 *
 	 * @param id             the identifier of the resource pack; its namespace must be the same as the mod id
 	 * @param activationType the activation type of the resource pack
-	 * @return {@code true} if the resource pack was successfully registered, otherwise {@code false}
+	 * @return {@code true} if the resource pack was successfully registered, or {@code false} otherwise
 	 * @throws IllegalArgumentException if a mod with the corresponding namespace given in id cannot be found
 	 * @see #registerBuiltinResourcePack(Identifier, ResourcePackActivationType, Text)
 	 * @see #registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType)
@@ -104,7 +104,7 @@ public interface ResourceLoader {
 	 * @param id             the identifier of the resource pack; its namespace must be the same as the mod id
 	 * @param activationType the activation type of the resource pack
 	 * @param displayName    the display name of the resource pack
-	 * @return {@code true} if the resource pack was successfully registered, otherwise {@code false}
+	 * @return {@code true} if the resource pack was successfully registered, or {@code false} otherwise
 	 * @throws IllegalArgumentException if a mod with the corresponding namespace given in id cannot be found
 	 * @see #registerBuiltinResourcePack(Identifier, ResourcePackActivationType)
 	 * @see #registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType)
@@ -132,13 +132,13 @@ public interface ResourceLoader {
 	 * @param id             the identifier of the resource pack
 	 * @param container      the mod container
 	 * @param activationType the activation type of the resource pack
-	 * @return {@code true} if the resource pack was successfully registered, otherwise {@code false}
+	 * @return {@code true} if the resource pack was successfully registered, or {@code false} otherwise
 	 * @see #registerBuiltinResourcePack(Identifier, ResourcePackActivationType)
 	 * @see #registerBuiltinResourcePack(Identifier, ResourcePackActivationType, Text)
 	 * @see #registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType, Text)
 	 */
 	static boolean registerBuiltinResourcePack(Identifier id, ModContainer container,
-	                                           ResourcePackActivationType activationType) {
+			ResourcePackActivationType activationType) {
 		return registerBuiltinResourcePack(id, container, activationType, ResourceLoaderImpl.getBuiltinPackDisplayNameFromId(id));
 	}
 
@@ -158,13 +158,13 @@ public interface ResourceLoader {
 	 * @param container      the mod container
 	 * @param activationType the activation type of the resource pack
 	 * @param displayName    the display name of the resource pack
-	 * @return {@code true} if the resource pack was successfully registered, otherwise {@code false}
+	 * @return {@code true} if the resource pack was successfully registered, or {@code false} otherwise
 	 * @see #registerBuiltinResourcePack(Identifier, ResourcePackActivationType)
 	 * @see #registerBuiltinResourcePack(Identifier, ResourcePackActivationType, Text)
 	 * @see #registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType)
 	 */
 	static boolean registerBuiltinResourcePack(Identifier id, ModContainer container,
-	                                           ResourcePackActivationType activationType, Text displayName) {
+			ResourcePackActivationType activationType, Text displayName) {
 		return ResourceLoaderImpl.registerBuiltinResourcePack(id, "resourcepacks/" + id.getPath(), container,
 				activationType, displayName);
 	}

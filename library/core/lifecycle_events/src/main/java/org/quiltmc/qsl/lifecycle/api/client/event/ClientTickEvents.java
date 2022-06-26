@@ -45,8 +45,8 @@ public final class ClientTickEvents {
 
 	/**
 	 * An event indicating the client has finished an iteration of the tick loop.
-	 *
-	 * <p>Since there will be a time gap before the next tick, this is a great spot to run any asynchronous operations
+	 * <p>
+	 * Since there will be a time gap before the next tick, this is a great spot to run any asynchronous operations
 	 * for the next tick.
 	 */
 	public static final Event<End> END = Event.create(End.class, callbacks -> client -> {

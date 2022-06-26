@@ -14,4 +14,8 @@ qslModule {
 		}
 	}
 	clientOnly()
+
+	injectedInterface("net/minecraft/class_637") {
+		values = ["org/quiltmc/qsl/command/api/client/QuiltClientCommandSource"]
+	}
 }

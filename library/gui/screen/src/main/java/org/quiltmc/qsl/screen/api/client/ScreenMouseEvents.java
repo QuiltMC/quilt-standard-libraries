@@ -238,10 +238,10 @@ public final class ScreenMouseEvents {
 		/**
 		 * Checks if the mouse should be allowed to scroll in a screen.
 		 *
-		 * @param mouseX           the X position of the mouse
-		 * @param mouseY           the Y position of the mouse
-		 * @param scrollDistanceX  the horizontal scroll distance
-		 * @param scrollDistanceY  the vertical scroll distance
+		 * @param mouseX          the X position of the mouse
+		 * @param mouseY          the Y position of the mouse
+		 * @param scrollDistanceX the horizontal scroll distance
+		 * @param scrollDistanceY the vertical scroll distance
 		 * @return whether the mouse should be allowed to scroll
 		 */
 		TriState allowMouseScroll(Screen screen, double mouseX, double mouseY, double scrollDistanceX, double scrollDistanceY);
@@ -253,10 +253,10 @@ public final class ScreenMouseEvents {
 		/**
 		 * Called before a mouse has scrolled on screen.
 		 *
-		 * @param mouseX           the X position of the mouse
-		 * @param mouseY           the Y position of the mouse
-		 * @param scrollDistanceX  the horizontal scroll distance
-		 * @param scrollDistanceY  the vertical scroll distance
+		 * @param mouseX          the X position of the mouse
+		 * @param mouseY          the Y position of the mouse
+		 * @param scrollDistanceX the horizontal scroll distance
+		 * @param scrollDistanceY the vertical scroll distance
 		 */
 		void beforeMouseScroll(Screen screen, double mouseX, double mouseY, double scrollDistanceX, double scrollDistanceY);
 	}
@@ -267,10 +267,10 @@ public final class ScreenMouseEvents {
 		/**
 		 * Called after a mouse has scrolled on screen.
 		 *
-		 * @param mouseX           the X position of the mouse
-		 * @param mouseY           the Y position of the mouse
-		 * @param scrollDistanceX  the horizontal scroll distance
-		 * @param scrollDistanceY  the vertical scroll distance
+		 * @param mouseX          the X position of the mouse
+		 * @param mouseY          the Y position of the mouse
+		 * @param scrollDistanceX the horizontal scroll distance
+		 * @param scrollDistanceY the vertical scroll distance
 		 */
 		void afterMouseScroll(Screen screen, double mouseX, double mouseY, double scrollDistanceX, double scrollDistanceY);
 	}

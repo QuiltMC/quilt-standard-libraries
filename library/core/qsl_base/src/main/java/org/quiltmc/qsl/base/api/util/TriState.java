@@ -103,4 +103,21 @@ public enum TriState {
 	public static TriState fromBoolean(@Nullable Boolean bool) {
 		return bool == null ? DEFAULT : fromBoolean(bool);
 	}
+
+	/**
+	 * {@return a parsed TriState from a system property}
+	 *
+	 * @param property the system property
+	 */
+	public static TriState fromProperty(String property) {
+		String value = System.getProperty(property);
+
+		if ("true".equalsIgnoreCase(value) || "on".equalsIgnoreCase(value)) {
+			return TRUE;
+		} else if ("false".equalsIgnoreCase(value) || "off".equalsIgnoreCase(value)) {
+			return FALSE;
+		} else {
+			return DEFAULT;
+		}
+	}
 }

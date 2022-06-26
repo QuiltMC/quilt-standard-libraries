@@ -1,4 +1,5 @@
 /*
+ * Copyright 2016, 2017, 2018, 2019 FabricMC
  * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,17 +15,15 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.tag.impl.client;
-
-import java.util.Collection;
+package org.quiltmc.qsl.worldgen.biome.impl.modification;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.tag.TagKey;
-
+/**
+ * Prevents double-modification of biomes in the same dynamic registry manager from occurring and fails-fast
+ * if it does occur.
+ */
 @ApiStatus.Internal
-public interface QuiltRegistryEntryReferenceHooks<T> {
-	void quilt$setFallbackTags(Collection<TagKey<T>> tags);
-
-	void quilt$setClientTags(Collection<TagKey<T>> tags);
+public interface BiomeModificationMarker {
+	void quilt$markModified();
 }

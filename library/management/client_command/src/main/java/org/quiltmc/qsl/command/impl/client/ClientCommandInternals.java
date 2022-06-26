@@ -72,10 +72,9 @@ public final class ClientCommandInternals {
 	/**
 	 * Executes a client-sided command from a message.
 	 *
-	 * @param  message the command message
-	 *
+	 * @param message the command message
 	 * @return {@code true} if the message was executed as a command client-side (and therefore should not be sent to the
-	 *         server), {@code false} otherwise
+	 * server), {@code false} otherwise
 	 */
 	public static boolean executeCommand(String message) {
 		if (message.isEmpty()) {
@@ -90,7 +89,7 @@ public final class ClientCommandInternals {
 
 		// The interface is implemented on ClientCommandSource with a mixin.
 		// noinspection ConstantConditions
-		QuiltClientCommandSource commandSource = (QuiltClientCommandSource) client.getNetworkHandler().getCommandSource();
+		var commandSource = client.getNetworkHandler().getCommandSource();
 
 		client.getProfiler().push(message);
 
@@ -98,7 +97,7 @@ public final class ClientCommandInternals {
 			// Only run client commands if there are no matching server-side commands.
 			String command = message.substring(1);
 			CommandDispatcher<CommandSource> serverDispatcher = client.getNetworkHandler().getCommandDispatcher();
-			ParseResults<CommandSource> serverResults = serverDispatcher.parse(command, client.getNetworkHandler().getCommandSource());
+			ParseResults<CommandSource> serverResults = serverDispatcher.parse(command, commandSource);
 
 			if (serverResults.getReader().canRead() || isCommandInvalidOrDummy(serverResults)) {
 				DISPATCHER.execute(command, commandSource);
@@ -136,12 +135,12 @@ public final class ClientCommandInternals {
 
 	/**
 	 * Tests whether a parse result is invalid or the command it resolves to is a dummy command.
-	 *
-	 * Used to work out whether a command in the main dispatcher is a dummy command added by {@link ClientCommandInternals#addDummyCommands(CommandDispatcher, QuiltClientCommandSource)}.
+	 * <p>
+	 * Used to work out whether a command in the main dispatcher is a dummy command added
+	 * by {@link ClientCommandInternals#addDummyCommands(CommandDispatcher, QuiltClientCommandSource)}.
 	 *
 	 * @param parse the parse results to test
 	 * @param <S>   the command source type
-	 *
 	 * @return {@code true} if the parse result is invalid or the command is a dummy, {@code false} otherwise
 	 */
 	public static <S extends CommandSource> boolean isCommandInvalidOrDummy(final ParseResults<S> parse) {
@@ -176,7 +175,6 @@ public final class ClientCommandInternals {
 	 * {@link net.minecraft.text.OrderedText OrderedText}.
 	 *
 	 * @param e the exception to get the error message from
-	 *
 	 * @return the error message as a {@link Text}
 	 */
 	private static Text getErrorMessage(CommandSyntaxException e) {
@@ -235,7 +233,6 @@ public final class ClientCommandInternals {
 	 * Runs {@link #executeHelp(CommandNode, CommandContext)} on the root node of the client-side command dispatcher.
 	 *
 	 * @param context the command context
-	 *
 	 * @return the number of commands
 	 */
 	private static int executeRootHelp(CommandContext<QuiltClientCommandSource> context) {
@@ -247,9 +244,7 @@ public final class ClientCommandInternals {
 	 * argument.
 	 *
 	 * @param context the command context
-	 *
 	 * @return the number of subcommands of the command specified in the command argument
-	 *
 	 * @throws CommandSyntaxException if no such command as given in the command argument is given
 	 */
 	private static int executeSpecificHelp(CommandContext<QuiltClientCommandSource> context) throws CommandSyntaxException {
@@ -268,8 +263,7 @@ public final class ClientCommandInternals {
 	 * Shows usage hints for a command node.
 	 *
 	 * @param startNode the node to get the usages of
-	 * @param context the command context
-	 *
+	 * @param context   the command context
 	 * @return the amount of usage hints (i.e. the number of subcommands of startNode)
 	 */
 	private static int executeHelp(CommandNode<QuiltClientCommandSource> startNode, CommandContext<QuiltClientCommandSource> context) {

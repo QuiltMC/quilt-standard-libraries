@@ -35,7 +35,7 @@ class BasicRecipeHandlerImpl implements BaseRecipeHandler {
 	final Map<Identifier, Recipe<?>> globalRecipes;
 
 	BasicRecipeHandlerImpl(RecipeManager recipeManager, Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes,
-	                       Map<Identifier, Recipe<?>> globalRecipes) {
+			Map<Identifier, Recipe<?>> globalRecipes) {
 		this.recipeManager = recipeManager;
 		this.recipes = recipes;
 		this.globalRecipes = globalRecipes;

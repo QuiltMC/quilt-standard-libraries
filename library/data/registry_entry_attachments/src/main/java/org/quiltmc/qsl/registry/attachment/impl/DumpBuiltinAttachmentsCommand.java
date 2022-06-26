@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import net.minecraft.command.argument.IdentifierArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.QuiltLoader;
@@ -133,6 +134,26 @@ public final class DumpBuiltinAttachmentsCommand {
 			}
 
 			var valuesObj = new JsonObject();
+
+			// do tags first
+			for (Map.Entry<TagKey<R>, Object> attachmentEntry : holder.valueTagTable.row(attachment).entrySet()) {
+				var entryId = attachmentEntry.getKey().id();
+				DataResult<JsonElement> encodedValue =
+						attachment.codec().encodeStart(JsonOps.INSTANCE, attachmentEntry.getValue());
+				if (encodedValue.result().isEmpty()) {
+					if (encodedValue.error().isPresent()) {
+						LOGGER.error("Failed to encode value for attachment #{} of registry entry {}: {}",
+								attachment.id(), entryId, encodedValue.error().get().message());
+					} else {
+						LOGGER.error("Failed to encode value for attachment #{} of registry entry {}: unknown error",
+								attachment.id(), entryId);
+					}
+					throw ENCODE_FAILURE.create();
+				}
+
+				valuesObj.add("#" + entryId, encodedValue.result().get());
+				valueCount++;
+			}
 
 			for (Map.Entry<R, Object> attachmentEntry : entry.getValue().entrySet()) {
 				var entryId = registry.getId(attachmentEntry.getKey());
