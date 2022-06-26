@@ -16,9 +16,13 @@
 
 package org.quiltmc.qsl.registry.attachment.impl;
 
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import com.mojang.serialization.Codec;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashBigSet;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -106,6 +110,32 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	}
 
 	@Override
+	public Set<R> keySet() {
+		Set<R> set = new ReferenceOpenHashBigSet<>();
+		set.addAll(RegistryEntryAttachmentHolder.getBuiltin(this.registry).valueTable.row(this).keySet());
+		set.addAll(RegistryEntryAttachmentHolder.getData(this.registry).valueTable.row(this).keySet());
+		return set;
+	}
+
+	@Override
+	public Set<TagKey<R>> tagKeySet() {
+		Set<TagKey<R>> set = new ReferenceOpenHashBigSet<>();
+		set.addAll(RegistryEntryAttachmentHolder.getBuiltin(this.registry).valueTagTable.row(this).keySet());
+		set.addAll(RegistryEntryAttachmentHolder.getData(this.registry).valueTagTable.row(this).keySet());
+		return set;
+	}
+
+	@Override
+	public Iterator<Entry<R, V>> entryIterator() {
+		return new EntryIterator();
+	}
+
+	@Override
+	public Iterator<TagEntry<R, V>> tagEntryIterator() {
+		return new TagEntryIterator();
+	}
+
+	@Override
 	public void put(R entry, V value) {
 		CodecUtils.assertValid(this.codec, value);
 		RegistryEntryAttachmentHolder.getBuiltin(this.registry).putValue(this, entry, value,
@@ -149,5 +179,89 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 				", id=" + this.id +
 				", valueClass=" + this.valueClass +
 				'}';
+	}
+
+	protected enum IteratorStage {
+		BUILTIN, DATA, EOF
+	}
+
+	protected class EntryIterator implements Iterator<Entry<R, V>> {
+		protected IteratorStage stage;
+		protected Iterator<Map.Entry<R, Object>> backingIt;
+
+		public EntryIterator() {
+			backingIt = RegistryEntryAttachmentHolder.getBuiltin(RegistryEntryAttachmentImpl.this.registry)
+					.valueTable.row(RegistryEntryAttachmentImpl.this).entrySet().iterator();
+			stage = IteratorStage.BUILTIN;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return stage != IteratorStage.EOF;
+		}
+
+		@Override
+		public Entry<R, V> next() {
+			if (stage == IteratorStage.EOF) {
+				throw new IllegalStateException("No more entries!");
+			}
+
+			var rawEntry = backingIt.next();
+			Entry<R, V> entry = new Entry<>(rawEntry.getKey(),
+					RegistryEntryAttachmentImpl.this.valueClass.cast(rawEntry.getValue()));
+
+			if (!backingIt.hasNext()) {
+				if (stage == IteratorStage.BUILTIN) {
+					stage = IteratorStage.DATA;
+					backingIt = RegistryEntryAttachmentHolder.getData(RegistryEntryAttachmentImpl.this.registry)
+							.valueTable.row(RegistryEntryAttachmentImpl.this).entrySet().iterator();
+				} else {
+					stage = IteratorStage.EOF;
+					backingIt = null;
+				}
+			}
+
+			return entry;
+		}
+	}
+
+	protected class TagEntryIterator implements Iterator<TagEntry<R, V>> {
+		protected IteratorStage stage;
+		protected Iterator<Map.Entry<TagKey<R>, Object>> backingIt;
+
+		public TagEntryIterator() {
+			backingIt = RegistryEntryAttachmentHolder.getBuiltin(RegistryEntryAttachmentImpl.this.registry)
+					.valueTagTable.row(RegistryEntryAttachmentImpl.this).entrySet().iterator();
+			stage = IteratorStage.BUILTIN;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return stage != IteratorStage.EOF;
+		}
+
+		@Override
+		public TagEntry<R, V> next() {
+			if (stage == IteratorStage.EOF) {
+				throw new IllegalStateException("No more entries!");
+			}
+
+			var rawEntry = backingIt.next();
+			TagEntry<R, V> entry = new TagEntry<>(rawEntry.getKey(),
+					RegistryEntryAttachmentImpl.this.valueClass.cast(rawEntry.getValue()));
+
+			if (!backingIt.hasNext()) {
+				if (stage == IteratorStage.BUILTIN) {
+					stage = IteratorStage.DATA;
+					backingIt = RegistryEntryAttachmentHolder.getData(RegistryEntryAttachmentImpl.this.registry)
+							.valueTagTable.row(RegistryEntryAttachmentImpl.this).entrySet().iterator();
+				} else {
+					stage = IteratorStage.EOF;
+					backingIt = null;
+				}
+			}
+
+			return entry;
+		}
 	}
 }

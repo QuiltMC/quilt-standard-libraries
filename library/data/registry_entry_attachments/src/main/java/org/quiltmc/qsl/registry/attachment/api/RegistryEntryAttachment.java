@@ -16,7 +16,9 @@
 
 package org.quiltmc.qsl.registry.attachment.api;
 
+import java.util.Iterator;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 
 import com.mojang.serialization.Codec;
@@ -225,6 +227,26 @@ public interface RegistryEntryAttachment<R, V> {
 	}
 
 	/**
+	 * {@return a set of all registry entries with an associated value}
+	 */
+	Set<R> keySet();
+
+	/**
+	 * {@return a set of all tags with an associated value}
+	 */
+	Set<TagKey<R>> tagKeySet();
+
+	/**
+	 * {@return an iterator over all the value association entries}
+	 */
+	Iterator<Entry<R, V>> entryIterator();
+
+	/**
+	 * {@return an iterator over all the tag value association entries}
+	 */
+	Iterator<TagEntry<R, V>> tagEntryIterator();
+
+	/**
 	 * Associates a value with an entry.
 	 *
 	 * @param entry registry entry
@@ -291,6 +313,80 @@ public interface RegistryEntryAttachment<R, V> {
 		 */
 		public boolean shouldLoad(ResourceType source) {
 			return this.source == source;
+		}
+	}
+
+	/**
+	 * Specifies a value association entry.
+	 *
+	 * @param <R> type of registry entry
+	 * @param <V> type of value
+	 */
+	@SuppressWarnings("ClassCanBeRecord")
+	final class Entry<R, V> {
+		private final R entry;
+		private final V value;
+
+		/**
+		 * Creates a new entry.
+		 *
+		 * @param entry the registry entry
+		 * @param value the associated value
+		 */
+		public Entry(R entry, V value) {
+			this.entry = entry;
+			this.value = value;
+		}
+
+		/**
+		 * {@return the registry entry}
+		 */
+		public R entry() {
+			return entry;
+		}
+
+		/**
+		 * {@return the associated value}
+		 */
+		public V value() {
+			return value;
+		}
+	}
+
+	/**
+	 * Specifies a tag value association entry.
+	 *
+	 * @param <R> type of registry entry
+	 * @param <V> type of value
+	 */
+	@SuppressWarnings("ClassCanBeRecord")
+	final class TagEntry<R, V> {
+		private final TagKey<R> tag;
+		private final V value;
+
+		/**
+		 * Creates a new entry.
+		 *
+		 * @param tag the tag
+		 * @param value the associated value
+		 */
+		public TagEntry(TagKey<R> tag, V value) {
+			this.tag = tag;
+			this.value = value;
+		}
+
+		/**
+		 * {@return the tag}
+		 */
+		public TagKey<R> tag() {
+			return tag;
+		}
+
+		/**
+		 * {@return the associated value}
+		 */
+		public V value() {
+			return value;
 		}
 	}
 
