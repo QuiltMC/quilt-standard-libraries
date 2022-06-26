@@ -45,7 +45,7 @@ public final class ServerPackets {
 	public static final Identifier END = id("registry_sync/end");
 
 	/**
-	 * Sets current registry for next {@link ServerPackets#REGISTRY_DATA} and {@link ServerPackets#REGISTRY_APPLY} packets
+	 * Sets current registry for next {@link ServerPackets#REGISTRY_DATA} and {@link ServerPackets#REGISTRY_RESTORE} packets
 	 * <pre><code>
 	 * {
 	 *   Registry identifier: Identifier
@@ -79,6 +79,11 @@ public final class ServerPackets {
 	 * Applies changes to current registry, doesn't have any data.
 	 */
 	public static final Identifier REGISTRY_APPLY = id("registry_sync/registry_apply");
+
+	/**
+	 * Applies changes to current registry, doesn't have any data.
+	 */
+	public static final Identifier REGISTRY_RESTORE = id("registry_sync/registry_restore");
 
 
 	private static Identifier id(String path) {

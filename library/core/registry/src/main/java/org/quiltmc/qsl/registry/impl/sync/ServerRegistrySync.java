@@ -17,54 +17,68 @@
 package org.quiltmc.qsl.registry.impl.sync;
 
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
-import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
+import org.quiltmc.qsl.registry.impl.RegistryConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @ApiStatus.Internal
 public final class ServerRegistrySync {
 	private static final Logger LOGGER = LoggerFactory.getLogger("quilt_registry_sync");
 
-	public static void registerHandlers() {
-		ServerPlayNetworking.registerGlobalReceiver(ClientPackets.HANDSHAKE, ServerRegistrySync::handleHelloPacket);
-		ServerPlayNetworking.registerGlobalReceiver(ClientPackets.SYNC_FAILED, ServerRegistrySync::handleSyncFailedPacket);
+	public static Text noRegistrySyncMessage = LiteralText.EMPTY;
+	public static boolean supportFabric = false;
+
+	public static void readConfig() {
+		var config = RegistryConfig.getConfig();
+
+		var message = ((String) config.getValue(List.of(RegistryConfig.REGISTRY_SYNC, RegistryConfig.NO_REGISTRY_SYNC_MESSAGE)).value()).trim();
+		try {
+			noRegistrySyncMessage = Text.Serializer.fromJson(message);
+		} catch (Exception e) {
+			noRegistrySyncMessage = new LiteralText(message);
+		}
+
+		supportFabric = (boolean) config.getValue(List.of(RegistryConfig.REGISTRY_SYNC, RegistryConfig.SUPPORT_FABRIC_API_SYNC)).value();
 	}
 
-	// This is currently unused, as it requires "preplay" networking api to be useful in any way
-	// Why can't it use Minecraft's Login stage you might ask? That's simple, it would limit compatibility with
-	// any proxy software like Velocity (this is issue with forge for example).
-	// Ideally we should introduce new stage/api for it by creating custom ServerPlayPacketListener
-	// that just handles all of custom logic/emulation of login stage, which is fairly possible
-	// to do while keeping compatibility with vanilla clients (as long as other mods on server allow it).
-	// It's thanks to ping packets sent by server and TCP/Minecraft preserving packet order!
-	// But for now they will be registered, but just ignored
-	private static void handleHelloPacket(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {}
+	public static boolean shouldSync() {
+		for (var registry : Registry.REGISTRIES) {
+			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
+					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
+				return true;
+			}
+		}
 
-	private static void handleSyncFailedPacket(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
-		LOGGER.info("Disconnecting {} due to sync failure of {} registry", player.getGameProfile().getName(), buf.readIdentifier());
+		return false;
+	}
+
+	public static boolean requiresSync() {
+		for (var registry : Registry.REGISTRIES) {
+			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
+					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() == SynchronizedRegistry.Status.REQUIRED) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public static void sendSyncPackets(ClientConnection connection, ServerPlayerEntity player) {
-		boolean sentHello = false;
 		for (var registry : Registry.REGISTRIES) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
 				&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
-				if (!sentHello) {
-					sentHello = true;
-					sendHelloPacket(connection);
-				}
 
 				var map = synchronizedRegistry.quilt$getSyncMap();
 
@@ -91,16 +105,14 @@ public final class ServerRegistrySync {
 					}
 				}
 
-				connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.REGISTRY_APPLY, PacketByteBufs.empty()));
+				connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.REGISTRY_RESTORE, PacketByteBufs.empty()));
 			}
 		}
 
-		if (sentHello) {
-			connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.END, PacketByteBufs.empty()));
-		}
+		connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.END, PacketByteBufs.empty()));
 	}
 
-	private static void sendHelloPacket(ClientConnection connection) {
+	public static void sendHelloPacket(ClientConnection connection) {
 		var buf = PacketByteBufs.create();
 
 		buf.writeVarInt(ServerPackets.SUPPORTED_VERSIONS.size());

@@ -17,6 +17,8 @@
 package org.quiltmc.qsl.registry.impl.sync.client;
 
 import com.mojang.logging.LogUtils;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -42,6 +44,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @ApiStatus.Internal
+@Environment(EnvType.CLIENT)
 public final class ClientRegistrySync {
 	private static final Logger LOGGER = LogUtils.getLogger();
 
@@ -62,8 +65,9 @@ public final class ClientRegistrySync {
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.HANDSHAKE, ClientRegistrySync::handleHelloPacket);
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_START, ClientRegistrySync::handleStartPacket);
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_DATA, ClientRegistrySync::handleDataPacket);
-		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_APPLY, ClientRegistrySync::handleApplyPacket);
+		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_RESTORE, ClientRegistrySync::handleApplyPacket);
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.END, ClientRegistrySync::handleGoodbyePacket);
+		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_RESTORE, ClientRegistrySync::handleRestorePacket);
 
 	}
 
@@ -75,7 +79,7 @@ public final class ClientRegistrySync {
 		while (count-- > 0) {
 			var version = buf.readVarInt();
 
-			if (version > highestSupported) {
+			if (version > highestSupported && ServerPackets.SUPPORTED_VERSIONS.contains(version)) {
 				highestSupported = version;
 			}
 		}
@@ -159,13 +163,7 @@ public final class ClientRegistrySync {
 		boolean disconnect = false;
 
 		if (!optionalRegistry) {
-			for (var entry : missingEntries) {
-				if (!RegistryFlag.isOptional(entry.flags())) {
-					sendSyncFailedPacket(handler, currentRegistryId);
-					handler.getConnection().disconnect(getMessage("missing_entries", "Client registry is missing entries! Mismatched mods?"));
-					break;
-				}
-			}
+			disconnect = checkMissing(handler, currentRegistryId, missingEntries);
 		}
 
 
@@ -200,11 +198,63 @@ public final class ClientRegistrySync {
 		}
 	}
 
-	private static Text getMessage(String type, String fallback) {
+	static Text getMessage(String type, String fallback) {
 		if (Language.getInstance().hasTranslation("quilt.core.registry_sync." + type)) {
 			return new TranslatableText("quilt.core.registry_sync." + type);
 		} else {
 			return new LiteralText(fallback);
 		}
+	}
+
+	public static boolean checkMissing(ClientPlayNetworkHandler handler, Identifier registry, Collection<SynchronizedRegistry.MissingEntry> missingEntries) {
+		var disconnect = false;
+
+		for (var entry : missingEntries) {
+			if (!RegistryFlag.isOptional(entry.flags())) {
+				disconnect = true;
+				break;
+			}
+		}
+
+		if (disconnect) {
+			sendSyncFailedPacket(handler, registry);
+			handler.getConnection().disconnect(getMessage("missing_entries", "Client registry is missing entries! Mismatched mods?"));
+			var builder = new StringBuilder("Missing entries for registry \"" + registry + "\":\n");
+
+			for (var entry : missingEntries) {
+				builder.append("\t- ").append(entry.identifier());
+				if (RegistryFlag.isOptional(entry.flags())) {
+					builder.append(" (Optional)");
+				}
+				builder.append("\n");
+			}
+
+			LOGGER.warn(builder.toString());
+		}
+
+		return disconnect;
+	}
+
+	private static void handleRestorePacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
+		restoreSnapshot();
+		createSnapshot();
+	}
+
+	public static void createSnapshot() {
+		for (var reg : Registry.REGISTRIES) {
+			if (reg instanceof SynchronizedRegistry registry && registry.quilt$requiresSyncing()) {
+				registry.quilt$createIdSnapshot();
+			}
+		}
+	}
+
+	public static void restoreSnapshot() {
+		for (var reg : Registry.REGISTRIES) {
+			if (reg instanceof SynchronizedRegistry registry && registry.quilt$requiresSyncing()) {
+				registry.quilt$restoreIdSnapshot();
+			}
+		}
+		ClientRegistrySync.rebuildBlockStates();
+		ClientRegistrySync.rebuildFluidStates();
 	}
 }

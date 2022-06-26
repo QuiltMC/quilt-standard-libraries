@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.registry.impl.sync.client;
+package org.quiltmc.qsl.registry.impl.sync;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import org.jetbrains.annotations.ApiStatus;
-import org.quiltmc.loader.api.ModContainer;
-import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
+
+import java.util.List;
 
 @ApiStatus.Internal
-@Environment(EnvType.CLIENT)
-public class RegistrySyncClientInitializer implements ClientModInitializer {
-	@Override
-	public void onInitializeClient(ModContainer mod) {
-		ClientRegistrySync.registerHandlers();
-		ClientFabricRegistrySync.registerHandlers();
-	}
+public interface DelayedPacketsHolder {
+	void quilt$setPacketList(List<CustomPayloadC2SPacket> packetList);
+	List<CustomPayloadC2SPacket> quilt$getPacketList();
 }

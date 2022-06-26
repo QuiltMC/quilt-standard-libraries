@@ -5,10 +5,13 @@
   "mixins": [
     "BlocksMixin",
     "DebugChunkGeneratorAccessor",
+    "FluidsMixin",
     "IdListMixin",
     "ItemsMixin",
     "PlayerManagerMixin",
     "RegistryMixin",
+    "ServerLoginNetworkHandlerMixin",
+    "ServerPlayerEntityMixin",
     "SimpleRegistryAccessor",
     "SimpleRegistryMixin"
   ],
