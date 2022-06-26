@@ -73,7 +73,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 		};
 		this.deps = switch (source) {
 			case SERVER_DATA -> Set.of(ResourceReloaderKeys.Server.TAGS);
-			case CLIENT_RESOURCES -> Set.of(new Identifier("quilt_tags", "client_only_tags"));
+			case CLIENT_RESOURCES -> Set.of();
 		};
 	}
 
