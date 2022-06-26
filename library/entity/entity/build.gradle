@@ -13,8 +13,5 @@ qslModule {
 			api("resource_loader")
 			testmodOnly("qsl_base")
 		}
-		injectedInterface("net/minecraft/class_1688") {
-			values = ["org/quiltmc/qsl/entity/api/MinecartComparatorLogic"]
-		}
 	}
 }

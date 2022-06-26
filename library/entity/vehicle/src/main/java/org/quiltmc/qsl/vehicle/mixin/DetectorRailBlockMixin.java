@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.entity.mixin;
+package org.quiltmc.qsl.vehicle.mixin;
 
 import java.util.List;
 import java.util.function.Predicate;
 
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.entity.api.MinecartComparatorLogic;
+import org.quiltmc.qsl.vehicle.api.MinecartComparatorLogic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

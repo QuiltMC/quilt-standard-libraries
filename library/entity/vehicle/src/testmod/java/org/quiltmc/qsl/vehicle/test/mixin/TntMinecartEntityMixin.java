@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.entity.test.mixin;
+package org.quiltmc.qsl.vehicle.test.mixin;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;

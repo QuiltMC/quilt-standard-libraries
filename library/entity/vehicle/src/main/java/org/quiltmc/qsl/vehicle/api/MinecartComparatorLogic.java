@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.entity.api;
+package org.quiltmc.qsl.vehicle.api;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;

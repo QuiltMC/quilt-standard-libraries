@@ -23,8 +23,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+@ApiStatus.Internal
 public class QuiltEntityType<T extends Entity> extends EntityType<T> {
 	private final @Nullable Boolean alwaysUpdateVelocity;
 

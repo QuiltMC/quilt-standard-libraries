@@ -5,7 +5,6 @@
   "mixins": [
     "DefaultAttributeRegistryAccessor",
     "DefaultAttributeRegistryMixin",
-    "DetectorRailBlockMixin",
     "SpawnRestrictionAccessor"
   ],
   "client": [

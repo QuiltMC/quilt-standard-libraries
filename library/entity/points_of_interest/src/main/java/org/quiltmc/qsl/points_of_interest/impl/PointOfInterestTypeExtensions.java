@@ -18,9 +18,11 @@ package org.quiltmc.qsl.points_of_interest.impl;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Collection;
 
+@ApiStatus.Internal
 public interface PointOfInterestTypeExtensions {
 	void addBlocks(Collection<Block> blocks);
 
