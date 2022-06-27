@@ -17,7 +17,6 @@
 package org.quiltmc.qsl.registry.attachment.impl;
 
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -88,6 +87,15 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 		return this.side;
 	}
 
+	protected @Nullable V getExisting(R entry) {
+		V value = RegistryEntryAttachmentHolder.getData(this.registry).getValue(this, entry);
+		if (value != null) {
+			return value;
+		}
+
+		return RegistryEntryAttachmentHolder.getBuiltin(this.registry).getValue(this, entry);
+	}
+
 	protected abstract @Nullable V getDefaultValue(R entry);
 
 	@Override
@@ -96,42 +104,53 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 			ClientSideGuard.assertAccessAllowed();
 		}
 
-		V value = RegistryEntryAttachmentHolder.getData(this.registry).getValue(this, entry);
-		if (value != null) {
-			return value;
+		V value = this.getExisting(entry);
+		if (value == null) {
+			value = this.getDefaultValue(entry);
 		}
 
-		value = RegistryEntryAttachmentHolder.getBuiltin(this.registry).getValue(this, entry);
-		if (value != null) {
-			return value;
-		}
-
-		return this.getDefaultValue(entry);
+		return value;
 	}
 
 	@Override
 	public Set<R> keySet() {
+		if (this.side == Side.CLIENT) {
+			ClientSideGuard.assertAccessAllowed();
+		}
+
 		Set<R> set = new ReferenceOpenHashBigSet<>();
-		set.addAll(RegistryEntryAttachmentHolder.getBuiltin(this.registry).valueTable.row(this).keySet());
 		set.addAll(RegistryEntryAttachmentHolder.getData(this.registry).valueTable.row(this).keySet());
+		set.addAll(RegistryEntryAttachmentHolder.getBuiltin(this.registry).valueTable.row(this).keySet());
 		return set;
 	}
 
 	@Override
 	public Set<TagKey<R>> tagKeySet() {
+		if (this.side == Side.CLIENT) {
+			ClientSideGuard.assertAccessAllowed();
+		}
+
 		Set<TagKey<R>> set = new ReferenceOpenHashBigSet<>();
-		set.addAll(RegistryEntryAttachmentHolder.getBuiltin(this.registry).valueTagTable.row(this).keySet());
 		set.addAll(RegistryEntryAttachmentHolder.getData(this.registry).valueTagTable.row(this).keySet());
+		set.addAll(RegistryEntryAttachmentHolder.getBuiltin(this.registry).valueTagTable.row(this).keySet());
 		return set;
 	}
 
 	@Override
 	public Iterator<Entry<R, V>> entryIterator() {
+		if (this.side == Side.CLIENT) {
+			ClientSideGuard.assertAccessAllowed();
+		}
+
 		return new EntryIterator();
 	}
 
 	@Override
 	public Iterator<TagEntry<R, V>> tagEntryIterator() {
+		if (this.side == Side.CLIENT) {
+			ClientSideGuard.assertAccessAllowed();
+		}
+
 		return new TagEntryIterator();
 	}
 
@@ -181,87 +200,50 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 				'}';
 	}
 
-	protected enum IteratorStage {
-		BUILTIN, DATA, EOF
-	}
-
 	protected class EntryIterator implements Iterator<Entry<R, V>> {
-		protected IteratorStage stage;
-		protected Iterator<Map.Entry<R, Object>> backingIt;
+		protected Iterator<R> keyIt;
 
 		public EntryIterator() {
-			backingIt = RegistryEntryAttachmentHolder.getBuiltin(RegistryEntryAttachmentImpl.this.registry)
-					.valueTable.row(RegistryEntryAttachmentImpl.this).entrySet().iterator();
-			stage = IteratorStage.BUILTIN;
+			this.keyIt = RegistryEntryAttachmentImpl.this.keySet().iterator();
 		}
 
 		@Override
 		public boolean hasNext() {
-			return stage != IteratorStage.EOF;
+			return keyIt.hasNext();
 		}
 
 		@Override
 		public Entry<R, V> next() {
-			if (stage == IteratorStage.EOF) {
-				throw new IllegalStateException("No more entries!");
-			}
-
-			var rawEntry = backingIt.next();
-			Entry<R, V> entry = new Entry<>(rawEntry.getKey(),
-					RegistryEntryAttachmentImpl.this.valueClass.cast(rawEntry.getValue()));
-
-			if (!backingIt.hasNext()) {
-				if (stage == IteratorStage.BUILTIN) {
-					stage = IteratorStage.DATA;
-					backingIt = RegistryEntryAttachmentHolder.getData(RegistryEntryAttachmentImpl.this.registry)
-							.valueTable.row(RegistryEntryAttachmentImpl.this).entrySet().iterator();
-				} else {
-					stage = IteratorStage.EOF;
-					backingIt = null;
-				}
-			}
-
-			return entry;
+			R key = keyIt.next();
+			return new Entry<>(key, RegistryEntryAttachmentImpl.this.getExisting(key));
 		}
 	}
 
 	protected class TagEntryIterator implements Iterator<TagEntry<R, V>> {
-		protected IteratorStage stage;
-		protected Iterator<Map.Entry<TagKey<R>, Object>> backingIt;
+		protected final RegistryEntryAttachmentHolder<R> dataHolder, builtinHolder;
+		protected Iterator<TagKey<R>> keyIt;
 
 		public TagEntryIterator() {
-			backingIt = RegistryEntryAttachmentHolder.getBuiltin(RegistryEntryAttachmentImpl.this.registry)
-					.valueTagTable.row(RegistryEntryAttachmentImpl.this).entrySet().iterator();
-			stage = IteratorStage.BUILTIN;
+			this.dataHolder = RegistryEntryAttachmentHolder.getData(RegistryEntryAttachmentImpl.this.registry);
+			this.builtinHolder = RegistryEntryAttachmentHolder.getBuiltin(RegistryEntryAttachmentImpl.this.registry);
+			this.keyIt = RegistryEntryAttachmentImpl.this.tagKeySet().iterator();
 		}
 
 		@Override
 		public boolean hasNext() {
-			return stage != IteratorStage.EOF;
+			return keyIt.hasNext();
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public TagEntry<R, V> next() {
-			if (stage == IteratorStage.EOF) {
-				throw new IllegalStateException("No more entries!");
+			TagKey<R> key = keyIt.next();
+			V value = (V) dataHolder.valueTagTable.get(RegistryEntryAttachmentImpl.this, key);
+			if (value == null) {
+				value = (V) builtinHolder.valueTagTable.get(RegistryEntryAttachmentImpl.this, key);
 			}
 
-			var rawEntry = backingIt.next();
-			TagEntry<R, V> entry = new TagEntry<>(rawEntry.getKey(),
-					RegistryEntryAttachmentImpl.this.valueClass.cast(rawEntry.getValue()));
-
-			if (!backingIt.hasNext()) {
-				if (stage == IteratorStage.BUILTIN) {
-					stage = IteratorStage.DATA;
-					backingIt = RegistryEntryAttachmentHolder.getData(RegistryEntryAttachmentImpl.this.registry)
-							.valueTagTable.row(RegistryEntryAttachmentImpl.this).entrySet().iterator();
-				} else {
-					stage = IteratorStage.EOF;
-					backingIt = null;
-				}
-			}
-
-			return entry;
+			return new TagEntry<>(key, value);
 		}
 	}
 }
