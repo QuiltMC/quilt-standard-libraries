@@ -42,6 +42,7 @@ import java.util.List;
  * protocol isn't too hard and gives equal results. And doing them on PLAY
  * is needed for Fabric compatibility anyway
  */
+@ApiStatus.Internal
 public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketListener {
 	private static final Logger LOGGER = LogUtils.getLogger();
 

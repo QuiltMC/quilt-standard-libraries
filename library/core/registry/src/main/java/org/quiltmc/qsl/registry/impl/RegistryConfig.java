@@ -20,6 +20,7 @@ import org.quiltmc.config.api.Config;
 import org.quiltmc.config.api.values.TrackedValue;
 import org.quiltmc.loader.api.config.QuiltConfig;
 
+@ApiStatus.Internal
 public class RegistryConfig {
 	public static final String REGISTRY_SYNC = "registry_sync";
 	public static final String NO_REGISTRY_SYNC_MESSAGE = "no_registry_sync_message";

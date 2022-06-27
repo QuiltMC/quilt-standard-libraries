@@ -21,7 +21,7 @@ import net.minecraft.util.registry.SimpleRegistry;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
- * Registry flags used to determine how registry (entries) should be handled by sync
+ * Registry flags used to determine how registry (entries) should be handled by sync.
  */
 @ApiStatus.Internal
 public enum RegistryFlag {
