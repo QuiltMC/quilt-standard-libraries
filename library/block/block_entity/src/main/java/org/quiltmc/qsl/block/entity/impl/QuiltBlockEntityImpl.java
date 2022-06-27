@@ -48,7 +48,7 @@ public final class QuiltBlockEntityImpl implements ModInitializer, ServerLifecyc
 	 * This freezing is done to avoid possible bad behavior from some mods.
 	 * Freezing happens in a specific event phase to avoid any issue for those who might want to use lifecycle events.
 	 *
-	 * @param frozen {@code true} if modifying the supported blocks set is forbidden, otherwise {@code false}
+	 * @param frozen {@code true} if modifying the supported blocks set is forbidden, or {@code false} otherwise
 	 */
 	public void setFrozen(boolean frozen) {
 		this.frozen = frozen;
