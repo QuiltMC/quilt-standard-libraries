@@ -72,12 +72,12 @@ public final class ClientRegistrySync {
 	}
 
 	private static void handleHelloPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
-		var count = buf.readVarInt();
+		int count = buf.readVarInt();
 
 		int highestSupported = -1;
 
 		while (count-- > 0) {
-			var version = buf.readVarInt();
+			int version = buf.readVarInt();
 
 			if (version > highestSupported && ServerPackets.SUPPORTED_VERSIONS.contains(version)) {
 				highestSupported = version;
@@ -106,8 +106,8 @@ public final class ClientRegistrySync {
 
 	private static void handleStartPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
 		var identifier = buf.readIdentifier();
-		var count = buf.readVarInt();
-		var flags = buf.readByte();
+		int count = buf.readVarInt();
+		byte flags = buf.readByte();
 
 		var registry = Registry.REGISTRIES.get(identifier);
 
@@ -134,15 +134,15 @@ public final class ClientRegistrySync {
 			return;
 		}
 
-		var countNamespace = buf.readVarInt();
+		int countNamespace = buf.readVarInt();
 		while (countNamespace-- > 0) {
 			var namespace = buf.readString();
-			var countLocal = buf.readVarInt();
+			int countLocal = buf.readVarInt();
 
 			while (countLocal-- > 0) {
 				var path = buf.readString();
-				var id = buf.readVarInt();
-				var flags = buf.readByte();
+				int id = buf.readVarInt();
+				byte flags = buf.readByte();
 
 				syncMap.computeIfAbsent(namespace, n -> new ArrayList<>()).add(new SynchronizedRegistry.SyncEntry(path, id, flags));
 			}
@@ -207,7 +207,7 @@ public final class ClientRegistrySync {
 	}
 
 	public static boolean checkMissing(ClientPlayNetworkHandler handler, Identifier registry, Collection<SynchronizedRegistry.MissingEntry> missingEntries) {
-		var disconnect = false;
+		boolean disconnect = false;
 
 		for (var entry : missingEntries) {
 			if (!RegistryFlag.isOptional(entry.flags())) {

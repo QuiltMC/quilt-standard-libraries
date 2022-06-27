@@ -25,6 +25,7 @@ import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayPingS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
 import org.slf4j.Logger;
 
@@ -81,7 +82,7 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 			}
 			case GOODBYE_PING -> {
 				if (this.syncVersion == -1 && ServerRegistrySync.requiresSync()) {
-						this.disconnect(ServerRegistrySync.noRegistrySyncMessage);
+					this.disconnect(ServerRegistrySync.noRegistrySyncMessage);
 				} else {
 					this.continueLogin();
 				}

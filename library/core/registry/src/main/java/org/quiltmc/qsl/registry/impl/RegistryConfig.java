@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.registry.impl;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.config.api.Config;
 import org.quiltmc.config.api.values.TrackedValue;
 import org.quiltmc.loader.api.config.QuiltConfig;
