@@ -22,9 +22,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class MixinItemStack implements ComponentProvider { // TODO: Make sure nothing else may be broken before final PR.
 
 	@Shadow
-	public abstract NbtCompound getOrCreateNbt();
-
-	@Shadow
 	private @Nullable NbtCompound nbt;
 	private LazifiedComponentContainer qsl$container;
 
@@ -36,6 +33,9 @@ public abstract class MixinItemStack implements ComponentProvider { // TODO: Mak
 				.ticking()
 				.build();
 	}
+
+	@Shadow
+	public abstract NbtCompound getOrCreateNbt();
 
 	@Inject(method = "<init>(Lnet/minecraft/nbt/NbtCompound;)V", at = @At("TAIL"))
 	private void readContainer(NbtCompound nbtCompound, CallbackInfo ci) {

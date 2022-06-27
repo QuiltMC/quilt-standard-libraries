@@ -30,11 +30,6 @@ public class FilteredInheritedInjectionPredicate extends InheritedInjectionPredi
 	}
 
 	@Override
-	public boolean canInject(Class<?> current) {
-		return !this.exceptions.contains(current) && super.canInject(current);
-	}
-
-	@Override
 	public int hashCode() {
 		return super.hashCode() + 37 * Objects.hash(this.exceptions);
 	}
@@ -50,5 +45,10 @@ public class FilteredInheritedInjectionPredicate extends InheritedInjectionPredi
 	@Override
 	public String toString() {
 		return "FilteredInheritedInjectionPredicate{clazz=" + clazz + ", exceptions=" + exceptions + '}';
+	}
+
+	@Override
+	public boolean canInject(Class<?> current) {
+		return !this.exceptions.contains(current) && super.canInject(current);
 	}
 }

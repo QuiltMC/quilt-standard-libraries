@@ -21,7 +21,10 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.component.api.*;
+import org.quiltmc.qsl.component.api.Component;
+import org.quiltmc.qsl.component.api.ComponentContainer;
+import org.quiltmc.qsl.component.api.ComponentProvider;
+import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.components.NbtComponent;
 import org.quiltmc.qsl.component.api.components.TickingComponent;
 import org.quiltmc.qsl.component.impl.util.StringConstants;
@@ -62,7 +65,38 @@ public class SimpleComponentContainer implements ComponentContainer {
 		return new Builder();
 	}
 
-	@Override
+	public static class Builder {
+		@NotNull
+		private final List<ComponentType<?>> types;
+		@Nullable
+		private Runnable saveOperation;
+
+		private Builder() {
+			this.types = new ArrayList<>();
+		}
+
+		@NotNull
+		public Builder setSaveOperation(@NotNull Runnable runnable) {
+			this.saveOperation = runnable;
+			return this;
+		}
+
+		@NotNull
+		public Builder add(ComponentType<?> type) {
+			this.types.add(type);
+			return this;
+		}
+
+		@NotNull
+		public Builder add(ComponentType<?>... types) {
+			this.types.addAll(Arrays.asList(types));
+			return this;
+		}
+
+		public SimpleComponentContainer build() {
+			return new SimpleComponentContainer(this.saveOperation, this.types.stream());
+		}
+	}	@Override
 	public Optional<Component> expose(Identifier id) {
 		return Optional.ofNullable(this.components.get(id));
 	}
@@ -101,38 +135,5 @@ public class SimpleComponentContainer implements ComponentContainer {
 				.map(this.components::get)
 				.map(it -> ((TickingComponent) it))
 				.forEach(tickingComponent -> tickingComponent.tick(provider));
-	}
-
-	public static class Builder {
-		@Nullable
-		private Runnable saveOperation;
-		@NotNull
-		private final List<ComponentType<?>> types;
-
-		private Builder() {
-			this.types = new ArrayList<>();
-		}
-
-		@NotNull
-		public Builder setSaveOperation(@NotNull Runnable runnable) {
-			this.saveOperation = runnable;
-			return this;
-		}
-
-		@NotNull
-		public Builder add(ComponentType<?> type) {
-			this.types.add(type);
-			return this;
-		}
-
-		@NotNull
-		public Builder add(ComponentType<?>... types) {
-			this.types.addAll(Arrays.asList(types));
-			return this;
-		}
-
-		public SimpleComponentContainer build() {
-			return new SimpleComponentContainer(this.saveOperation, this.types.stream());
-		}
 	}
 }

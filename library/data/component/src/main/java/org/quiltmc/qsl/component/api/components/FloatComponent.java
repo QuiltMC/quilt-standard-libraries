@@ -24,21 +24,21 @@ import org.quiltmc.qsl.component.api.Component;
 public interface FloatComponent extends Component, NbtComponent<NbtFloat> {
 
 	@Override
-	default NbtFloat write() {
-		return NbtFloat.of(this.get());
+	default byte nbtType() {
+		return NbtElement.FLOAT_TYPE;
 	}
-
-	float get();
 
 	@Override
 	default void read(NbtFloat nbt) {
 		this.set(nbt.floatValue());
 	}
 
-	void set(float value);
-
 	@Override
-	default byte nbtType() {
-		return NbtElement.FLOAT_TYPE;
+	default NbtFloat write() {
+		return NbtFloat.of(this.get());
 	}
+
+	float get();
+
+	void set(float value);
 }

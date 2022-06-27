@@ -42,11 +42,6 @@ public class Lazy<T> {
 	}
 
 	@NotNull
-	public static <T> Lazy<T> of(@NotNull Supplier<T> sup) {
-		return new Lazy<>(sup);
-	}
-
-	@NotNull
 	public static <T> Lazy<T> filled(@NotNull T value) {
 		return new Lazy<>(value);
 	}
@@ -54,6 +49,21 @@ public class Lazy<T> {
 	@NotNull
 	public <U> Lazy<U> compose(Function<T, U> transformer) {
 		return Lazy.of(() -> transformer.apply(this.sup.get()));
+	}
+
+	@NotNull
+	public static <T> Lazy<T> of(@NotNull Supplier<T> sup) {
+		return new Lazy<>(sup);
+	}
+
+	@NotNull
+	public Supplier<T> getSupplier() {
+		return sup;
+	}
+
+	@NotNull
+	public <U> Lazy<U> map(@NotNull Function<T, U> func) {
+		return Lazy.of(() -> func.apply(this.get()));
 	}
 
 	@NotNull
@@ -65,28 +75,23 @@ public class Lazy<T> {
 		return value;
 	}
 
-	@NotNull
-	public Supplier<T> getSupplier() {
-		return sup;
-	}
-
-	public boolean isEmpty() {
-		return this.value == null;
-	}
-
-	@NotNull
-	public <U> Lazy<U> map(@NotNull Function<T, U> func) {
-		return Lazy.of(() -> func.apply(this.get()));
-	}
-
 	public void ifPresent(@NotNull Consumer<T> action) {
 		if (!this.isEmpty()) {
 			action.accept(this.get());
 		}
 	}
 
+	public boolean isEmpty() {
+		return this.value == null;
+	}
+
 	public void compute(@NotNull Consumer<T> action) {
 		action.accept(this.get());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(sup, value);
 	}
 
 	@Override
@@ -100,10 +105,5 @@ public class Lazy<T> {
 		}
 
 		return false;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(sup, value);
 	}
 }

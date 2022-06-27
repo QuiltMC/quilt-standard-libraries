@@ -31,8 +31,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentType;
+import org.quiltmc.qsl.component.api.Components;
 import org.quiltmc.qsl.component.api.components.IntegerComponent;
 import org.quiltmc.qsl.component.api.components.InventoryComponent;
+import org.quiltmc.qsl.component.impl.components.DefaultIntegerComponent;
 import org.quiltmc.qsl.component.impl.container.SimpleComponentContainer;
 
 import java.util.Arrays;
@@ -41,8 +43,10 @@ import java.util.List;
 import java.util.Set;
 
 public class TestBlockEntity extends BlockEntity {
-	public static final ComponentType<IntegerComponent> TEST_BE_INT =
-			IntegerComponent.create(new Identifier("quilt_component_test", "test_be_int"));
+	public static final ComponentType<IntegerComponent> TEST_BE_INT = Components.register(
+			new Identifier(ComponentTestMod.MODID, "test_be_int"),
+			DefaultIntegerComponent::new
+	);
 
 	private final ComponentContainer container = SimpleComponentContainer.builder()
 			.setSaveOperation(this::markDirty)

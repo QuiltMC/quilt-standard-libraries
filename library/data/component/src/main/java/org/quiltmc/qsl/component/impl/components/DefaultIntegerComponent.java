@@ -25,23 +25,12 @@ public class DefaultIntegerComponent implements IntegerComponent {
 	@Nullable
 	private Runnable saveOperation;
 
-	public DefaultIntegerComponent(int defaultValue) {
-		this.value = defaultValue;
-	}
-
 	public DefaultIntegerComponent() {
 		this(0);
 	}
 
-	@Override
-	public int get() {
-		return this.value;
-	}
-
-	@Override
-	public void set(int value) {
-		this.value = value;
-		this.saveNeeded();
+	public DefaultIntegerComponent(int defaultValue) {
+		this.value = defaultValue;
 	}
 
 	@Override
@@ -57,12 +46,23 @@ public class DefaultIntegerComponent implements IntegerComponent {
 	}
 
 	@Override
-	public void setSaveOperation(@Nullable Runnable runnable) {
-		this.saveOperation = runnable;
+	public void set(int value) {
+		this.value = value;
+		this.saveNeeded();
+	}
+
+	@Override
+	public int get() {
+		return this.value;
 	}
 
 	@Override
 	public @Nullable Runnable getSaveOperation() {
 		return this.saveOperation;
+	}
+
+	@Override
+	public void setSaveOperation(@Nullable Runnable runnable) {
+		this.saveOperation = runnable;
 	}
 }

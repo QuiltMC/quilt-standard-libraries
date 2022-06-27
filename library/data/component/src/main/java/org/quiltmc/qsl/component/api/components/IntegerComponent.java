@@ -18,30 +18,26 @@ package org.quiltmc.qsl.component.api.components;
 
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtInt;
-import net.minecraft.util.Identifier;
-import org.quiltmc.qsl.component.api.ComponentType;
-import org.quiltmc.qsl.component.impl.ComponentsImpl;
-import org.quiltmc.qsl.component.impl.components.DefaultIntegerComponent;
 
 public interface IntegerComponent extends NbtComponent<NbtInt> {
-
-	int get();
-
-	void set(int value);
 
 	void increment();
 
 	void decrement();
 
-	default NbtInt write() {
-		return NbtInt.of(this.get());
+	default byte nbtType() {
+		return NbtElement.INT_TYPE;
 	}
 
 	default void read(NbtInt nbt) {
 		this.set(nbt.intValue());
 	}
 
-	default byte nbtType() {
-		return NbtElement.INT_TYPE;
+	void set(int value);
+
+	default NbtInt write() {
+		return NbtInt.of(this.get());
 	}
+
+	int get();
 }

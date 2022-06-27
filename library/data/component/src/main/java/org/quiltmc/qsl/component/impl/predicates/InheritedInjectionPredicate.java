@@ -30,10 +30,6 @@ public class InheritedInjectionPredicate extends ClassInjectionPredicate {
 		return this.canInject(provider.getClass());
 	}
 
-	public boolean canInject(Class<?> current) {
-		return this.clazz == current || (current != null && canInject(current.getSuperclass()));
-	}
-
 	@Override
 	public int hashCode() {
 		return super.hashCode() + Objects.hash(this.getClass());
@@ -47,5 +43,9 @@ public class InheritedInjectionPredicate extends ClassInjectionPredicate {
 	@Override
 	public String toString() {
 		return "InheritedInjectionPredicate{clazz=" + this.clazz + '}';
+	}
+
+	public boolean canInject(Class<?> current) {
+		return this.clazz == current || (current != null && canInject(current.getSuperclass()));
 	}
 }

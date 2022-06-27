@@ -44,13 +44,18 @@ public class DefaultInventoryComponent implements InventoryComponent {
 	}
 
 	@Override
+	public @Nullable Runnable getSaveOperation() {
+		return this.saveOperation;
+	}
+
+	@Override
 	public void setSaveOperation(@Nullable Runnable runnable) {
 		this.saveOperation = runnable;
 	}
 
 	@Override
-	public @Nullable Runnable getSaveOperation() {
-		return this.saveOperation;
+	public int hashCode() {
+		return Objects.hash(stacks);
 	}
 
 	@Override
@@ -58,10 +63,5 @@ public class DefaultInventoryComponent implements InventoryComponent {
 		if (this == o) return true;
 		if (!(o instanceof DefaultInventoryComponent that)) return false;
 		return stacks.equals(that.stacks);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(stacks);
 	}
 }

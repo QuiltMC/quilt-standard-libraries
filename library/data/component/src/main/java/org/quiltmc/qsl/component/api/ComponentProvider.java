@@ -38,11 +38,11 @@ public interface ComponentProvider {
 	@NotNull
 	ComponentContainer getContainer();
 
-	default <C extends Component> Optional<C> expose(ComponentType<C> id) {
-		return Components.expose(id, this);
-	}
-
 	default <T, U, C extends FunctionComponent<T, U>> Optional<U> call(ComponentType<C> type, T t) {
 		return this.expose(type).map(func -> func.call(this, t));
+	}
+
+	default <C extends Component> Optional<C> expose(ComponentType<C> id) {
+		return Components.expose(id, this);
 	}
 }

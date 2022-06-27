@@ -91,6 +91,34 @@ public class LazifiedComponentContainer implements ComponentContainer {
 		return Optional.of(new Builder(provider));
 	}
 
+	public static class Builder {
+
+		private final ComponentProvider provider;
+		@Nullable
+		private Runnable saveOperation;
+		private boolean ticking;
+
+		private Builder(ComponentProvider provider) {
+			this.provider = provider;
+			this.ticking = false;
+			this.saveOperation = null;
+		}
+
+		public Builder setSaveOperation(Runnable runnable) {
+			this.saveOperation = runnable;
+			return this;
+		}
+
+		public Builder ticking() {
+			this.ticking = true;
+			return this;
+		}
+
+		public LazifiedComponentContainer build() {
+			return new LazifiedComponentContainer(this.provider, this.saveOperation, this.ticking);
+		}
+	}
+
 	@Override
 	public Optional<Component> expose(Identifier id) {
 		return Optional.ofNullable(this.components.get(id)).map(Lazy::get);
@@ -154,31 +182,5 @@ public class LazifiedComponentContainer implements ComponentContainer {
 		}
 	}
 
-	public static class Builder {
 
-		private final ComponentProvider provider;
-		@Nullable
-		private Runnable saveOperation;
-		private boolean ticking;
-
-		private Builder(ComponentProvider provider) {
-			this.provider = provider;
-			this.ticking = false;
-			this.saveOperation = null;
-		}
-
-		public Builder setSaveOperation(Runnable runnable) {
-			this.saveOperation = runnable;
-			return this;
-		}
-
-		public Builder ticking() {
-			this.ticking = true;
-			return this;
-		}
-
-		public LazifiedComponentContainer build() {
-			return new LazifiedComponentContainer(this.provider, this.saveOperation, this.ticking);
-		}
-	}
 }

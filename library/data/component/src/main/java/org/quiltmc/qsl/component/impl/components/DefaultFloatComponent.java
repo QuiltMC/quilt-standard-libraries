@@ -44,12 +44,12 @@ public class DefaultFloatComponent implements FloatComponent {
 	}
 
 	@Override
-	public void setSaveOperation(@Nullable Runnable runnable) {
-		this.saveOperation = runnable;
+	public @Nullable Runnable getSaveOperation() {
+		return this.saveOperation;
 	}
 
 	@Override
-	public @Nullable Runnable getSaveOperation() {
-		return this.saveOperation;
+	public void setSaveOperation(@Nullable Runnable runnable) {
+		this.saveOperation = runnable;
 	}
 }

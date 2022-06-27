@@ -43,17 +43,17 @@ public class ClassInjectionPredicate implements ComponentInjectionPredicate {
 	}
 
 	@Override
+	public int hashCode() {
+		return Objects.hash(clazz);
+	}
+
+	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o instanceof ClassInjectionPredicate that) {
 			return clazz.equals(that.clazz);
 		}
 		return false;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(clazz);
 	}
 
 	@Override

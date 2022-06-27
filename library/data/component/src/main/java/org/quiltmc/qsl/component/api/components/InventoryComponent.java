@@ -87,8 +87,8 @@ public interface InventoryComponent extends NbtComponent<NbtCompound>, Inventory
 	}
 
 	@Override
-	default NbtCompound write() {
-		return Inventories.writeNbt(new NbtCompound(), this.getStacks());
+	default byte nbtType() {
+		return NbtElement.COMPOUND_TYPE;
 	}
 
 	@Override
@@ -97,8 +97,8 @@ public interface InventoryComponent extends NbtComponent<NbtCompound>, Inventory
 	}
 
 	@Override
-	default byte nbtType() {
-		return NbtElement.COMPOUND_TYPE;
+	default NbtCompound write() {
+		return Inventories.writeNbt(new NbtCompound(), this.getStacks());
 	}
 
 	@Override

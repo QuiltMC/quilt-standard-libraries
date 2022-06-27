@@ -29,10 +29,6 @@ public interface NbtComponent<T extends NbtElement> extends Component {
 		read(nbtComponent, nbtTarget);
 	}
 
-	static void writeTo(@NotNull NbtCompound root, @NotNull NbtComponent<?> nbtComponent, @NotNull Identifier id) {
-		root.put(id.toString(), nbtComponent.write());
-	}
-
 	@SuppressWarnings("unchecked")
 	// Suppressing because we know those values are hardcoded either way.
 	static void read(@NotNull NbtComponent<?> nbtComponent, NbtElement nbt) {
@@ -54,11 +50,15 @@ public interface NbtComponent<T extends NbtElement> extends Component {
 		}
 	}
 
-	T write();
+	byte nbtType();
 
 	void read(T nbt);
 
-	byte nbtType();
+	static void writeTo(@NotNull NbtCompound root, @NotNull NbtComponent<?> nbtComponent, @NotNull Identifier id) {
+		root.put(id.toString(), nbtComponent.write());
+	}
+
+	T write();
 
 	default void saveNeeded() {
 		if (this.getSaveOperation() != null) {
@@ -66,7 +66,7 @@ public interface NbtComponent<T extends NbtElement> extends Component {
 		}
 	}
 
-	void setSaveOperation(@Nullable Runnable runnable);
-
 	@Nullable Runnable getSaveOperation();
+
+	void setSaveOperation(@Nullable Runnable runnable);
 }

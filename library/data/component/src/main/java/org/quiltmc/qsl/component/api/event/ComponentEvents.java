@@ -19,12 +19,12 @@ public class ComponentEvents {
 
 	@FunctionalInterface
 	public interface Injector {
-		void inject(ComponentType<?> type);
-
 		default void injectIf(boolean condition, ComponentType<?> type) {
 			if (condition) {
 				this.inject(type);
 			}
 		}
+
+		void inject(ComponentType<?> type);
 	}
 }
