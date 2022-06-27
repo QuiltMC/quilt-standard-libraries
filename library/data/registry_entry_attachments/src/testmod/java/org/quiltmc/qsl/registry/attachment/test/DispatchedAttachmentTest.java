@@ -102,7 +102,7 @@ public class DispatchedAttachmentTest implements ModInitializer,
 	@Override
 	public void onInitialize(ModContainer mod) {
 		MODULAR_FUNCTION.put(TagKey.of(Registry.ITEM_KEY, new Identifier("quilt", "modular_tag_1")),
-				new SendMessageFuncValue("Provided via tag"));
+				new SendMessageFuncValue("Built-in value via tag!"));
 	}
 
 	@Override
