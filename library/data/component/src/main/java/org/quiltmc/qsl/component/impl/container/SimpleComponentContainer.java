@@ -74,7 +74,7 @@ public class SimpleComponentContainer implements ComponentContainer {
 	}
 
 	@Override
-	public void writeNbt(NbtCompound providerRootNbt) {
+	public void writeNbt(@NotNull NbtCompound providerRootNbt) {
 		var rootQslNbt = new NbtCompound();
 		this.nbtComponents.forEach(id -> this.expose(id).ifPresent(component -> NbtComponent.writeTo(rootQslNbt, (NbtComponent<?>) component, id)));
 		if (!rootQslNbt.isEmpty()) {
@@ -83,7 +83,7 @@ public class SimpleComponentContainer implements ComponentContainer {
 	}
 
 	@Override
-	public void readNbt(NbtCompound providerRootNbt) {
+	public void readNbt(@NotNull NbtCompound providerRootNbt) {
 		var rootQslNbt = providerRootNbt.getCompound(StringConstants.COMPONENT_ROOT);
 
 		if (rootQslNbt.isEmpty()) {
@@ -94,10 +94,5 @@ public class SimpleComponentContainer implements ComponentContainer {
 				.map(Identifier::tryParse)
 				.filter(Objects::nonNull)
 				.forEach(id -> this.expose(id).ifPresent(component -> NbtComponent.readFrom((NbtComponent<?>) component, id, rootQslNbt)));
-	}
-
-	@Override
-	public void setSaveOperation(@NotNull Runnable runnable) {
-		throw new IllegalStateException("Cannot change the save operation of a SimpleComponentContainer since it needs to be passed into the constructor");
 	}
 }

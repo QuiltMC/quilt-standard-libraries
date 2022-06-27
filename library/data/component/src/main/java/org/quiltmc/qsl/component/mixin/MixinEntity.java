@@ -37,7 +37,9 @@ public abstract class MixinEntity implements ComponentProvider {
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onEntityInit(EntityType<?> entityType, World world, CallbackInfo ci) {
-		this.qsl$container = LazifiedComponentContainer.create(this).orElseThrow();
+		this.qsl$container = LazifiedComponentContainer.builder(this)
+				.orElseThrow()
+				.build();
 	}
 
 	@Inject(method = "writeNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;writeCustomDataToNbt(Lnet/minecraft/nbt/NbtCompound;)V"))

@@ -10,4 +10,8 @@ public class ErrorUtil {
 	public static Supplier<IllegalStateException> illegalState(String message) {
 		return () -> new IllegalStateException(message);
 	}
+
+	public static Supplier<RuntimeException> runtime(String msg) {
+		return () -> new RuntimeException(msg);
+	}
 }

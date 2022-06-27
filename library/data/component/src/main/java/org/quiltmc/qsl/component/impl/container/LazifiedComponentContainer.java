@@ -23,9 +23,11 @@ import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentProvider;
+import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.components.NbtComponent;
 import org.quiltmc.qsl.component.api.event.ComponentEvents;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
+import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 import org.quiltmc.qsl.component.impl.util.Lazy;
 import org.quiltmc.qsl.component.impl.util.StringConstants;
 
@@ -36,40 +38,44 @@ public class LazifiedComponentContainer implements ComponentContainer {
 	private final Map<Identifier, Lazy<Component>> components;
 	private final Set<Identifier> nbtComponents;
 	@Nullable
-	private Runnable saveOperation = null;
+	private final Runnable saveOperation;
 
-	protected LazifiedComponentContainer(ComponentProvider provider) {
-		this.components = createComponents(provider);
-		this.nbtComponents = new HashSet<>(components.size());
+	protected LazifiedComponentContainer(@NotNull ComponentProvider provider, @Nullable Runnable saveOperation) {
+		this.components = this.initializeComponents(provider);
+		this.nbtComponents = new HashSet<>(this.components.size());
+		this.saveOperation = saveOperation;
 	}
 
-	public static <T> Optional<LazifiedComponentContainer> create(T obj) {
+	private Map<Identifier, Lazy<Component>> initializeComponents(ComponentProvider provider) {
+		var map = new HashMap<Identifier, Lazy<Component>>();
+		ComponentsImpl.get(provider).forEach(type -> map.put(type.id(), this.createLazy(type)));
+		ComponentEvents.INJECT.invoker().onInject(provider, type -> map.put(type.id(), this.createLazy(type)));
+		return map;
+	}
+
+	private Lazy<Component> createLazy(ComponentType<?> type) {
+		return Lazy.of(() -> {
+			Component component = type.create();
+			if (component instanceof NbtComponent<?> nbtComponent) {
+				this.nbtComponents.add(type.id());
+				nbtComponent.setSaveOperation(this.saveOperation);
+			}
+
+			return component;
+		});
+	}
+
+	public static <T> Optional<LazifiedComponentContainer.Builder> builder(T obj) {
 		if (!(obj instanceof ComponentProvider provider)) {
 			return Optional.empty();
 		}
 
-		return Optional.of(new LazifiedComponentContainer(provider));
-	}
-
-	public static @NotNull Map<Identifier, Lazy<Component>> createComponents(@NotNull ComponentProvider provider) {
-		var map = new HashMap<Identifier, Lazy<Component>>();
-		ComponentsImpl.get(provider).forEach((identifier, factory) -> map.put(identifier, Lazy.of(factory::create)));
-		ComponentEvents.INJECT.invoker().onInject(provider, type -> map.put(type.id(), Lazy.of(type::create)));
-		return map;
+		return Optional.of(new Builder(provider));
 	}
 
 	@Override
 	public Optional<Component> expose(Identifier id) {
-		return Optional.ofNullable(this.components.get(id))
-				.map(componentLazy -> {
-					if (componentLazy.isEmpty() && componentLazy.get() instanceof NbtComponent<?> nbtComponent) {
-						this.nbtComponents.add(id);
-						nbtComponent.setSaveOperation(this.saveOperation);
-						return nbtComponent;
-					}
-
-					return componentLazy.get();
-				});
+		return Optional.ofNullable(this.components.get(id)).map(Lazy::get);
 	}
 
 	@Override
@@ -77,11 +83,6 @@ public class LazifiedComponentContainer implements ComponentContainer {
 		return this.components.entrySet().stream()
 				.filter(entry -> !entry.getValue().isEmpty())
 				.collect(HashMap::new, (map, entry) -> map.put(entry.getKey(), entry.getValue().get()), HashMap::putAll);
-	}
-
-	@Override
-	public void setSaveOperation(@NotNull Runnable runnable) {
-		this.saveOperation = runnable;
 	}
 
 	@Override
@@ -125,7 +126,26 @@ public class LazifiedComponentContainer implements ComponentContainer {
 			otherContainer.components.clear();
 			otherContainer.nbtComponents.clear();
 		} else {
-			throw new IllegalArgumentException("Cannot move components from a non-lazified container to one that is!");
+			throw ErrorUtil.illegalArgument("Cannot move components from a non-lazified container to one that is!").get();
+		}
+	}
+
+	public static class Builder {
+
+		private final ComponentProvider provider;
+		private Runnable saveOperation;
+
+		private Builder(ComponentProvider provider) {
+			this.provider = provider;
+		}
+
+		public Builder setSaveOperation(Runnable runnable) {
+			this.saveOperation = runnable;
+			return this;
+		}
+
+		public LazifiedComponentContainer build() {
+			return new LazifiedComponentContainer(this.provider, this.saveOperation);
 		}
 	}
 }

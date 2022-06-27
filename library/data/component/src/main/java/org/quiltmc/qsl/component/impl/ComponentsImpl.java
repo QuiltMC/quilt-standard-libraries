@@ -27,8 +27,10 @@ import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentInjectionPredicate;
 import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.api.ComponentType;
+import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @ApiStatus.Internal
 public class ComponentsImpl {
@@ -65,25 +67,24 @@ public class ComponentsImpl {
 	}
 
 	// TODO: Figure out to make caching work with provider specific injections.
-	public static Map<Identifier, Component.Factory<?>> get(ComponentProvider provider) {
+	public static List<ComponentType<?>> get(ComponentProvider provider) {
 		return ComponentInjectionCache.getInstance().getCache(provider.getClass()).orElseGet(() -> {
-			Map<Identifier, Component.Factory<?>> returnMap = INJECTION_REGISTRY.entrySet().stream()
+			List<ComponentType<?>> injectedTypes = INJECTION_REGISTRY.entrySet().stream()
 					.filter(it -> it.getKey().canInject(provider))
 					.map(Map.Entry::getValue)
-					.collect(HashMap::new, (map, ids) -> ids.forEach(id -> map.put(id, getEntry(id))), HashMap::putAll);
+					.flatMap(Set::stream)
+					.map(ComponentsImpl::getEntry)
+					.collect(Collectors.toList());
 
+			ComponentInjectionCache.getInstance().record(provider.getClass(), injectedTypes);
 
-			ComponentInjectionCache.getInstance().record(provider.getClass(), returnMap);
-
-			return returnMap;
+			return injectedTypes;
 		});
 	}
 
-	public static Component.Factory<?> getEntry(Identifier id) {
-		return REGISTRY.getOrEmpty(id)
-				.orElseThrow(() ->
-						new IllegalArgumentException("Cannot access element with id %s in the component registry!"
-							.formatted(id.toString())
-				));
+	public static ComponentType<?> getEntry(Identifier id) {
+		return REGISTRY.getOrEmpty(id).orElseThrow(
+				ErrorUtil.illegalArgument("Cannot access element with id %s in the component registry!".formatted(id))
+		);
 	}
 }

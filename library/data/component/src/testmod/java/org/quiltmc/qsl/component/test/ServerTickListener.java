@@ -80,8 +80,8 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 				} else {
 					if (ItemStack.canCombine(stack, playerStack)) {
 						stack.increment(1);
-						stack.expose(ComponentTestMod.ITEMSTACK_INT).ifPresent(IntegerComponent::increment);
 						playerStack.decrement(1);
+						stack.expose(ComponentTestMod.ITEMSTACK_INT).ifPresent(IntegerComponent::increment);
 						inventory.saveNeeded();
 					}
 				}

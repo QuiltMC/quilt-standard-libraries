@@ -47,8 +47,10 @@ public abstract class MixinBlockEntity implements ComponentProvider {
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onInit(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState, CallbackInfo ci) {
-		this.qsl$container = LazifiedComponentContainer.create(this).orElseThrow();
-		this.qsl$container.setSaveOperation(this::markDirty);
+		this.qsl$container = LazifiedComponentContainer.builder(this)
+				.orElseThrow()
+				.setSaveOperation(this::markDirty)
+				.build();
 	}
 
 	@Inject(method = "toNbt", at = @At("TAIL"))

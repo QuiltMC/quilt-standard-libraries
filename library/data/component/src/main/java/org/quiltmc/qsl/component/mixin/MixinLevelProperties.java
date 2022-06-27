@@ -57,7 +57,9 @@ public abstract class MixinLevelProperties implements ServerWorldProperties, Sav
 
 	@Inject(method = "<init>(Lcom/mojang/datafixers/DataFixer;ILnet/minecraft/nbt/NbtCompound;ZIIIFJJIIIZIZZZLnet/minecraft/world/border/WorldBorder$Properties;IILjava/util/UUID;Ljava/util/Set;Lnet/minecraft/world/timer/Timer;Lnet/minecraft/nbt/NbtCompound;Lnet/minecraft/nbt/NbtCompound;Lnet/minecraft/world/level/LevelInfo;Lnet/minecraft/world/gen/GeneratorOptions;Lcom/mojang/serialization/Lifecycle;)V", at = @At("TAIL"))
 	private void onInit(DataFixer dataFixer, int i, NbtCompound nbtCompound, boolean bl, int j, int k, int l, float f, long m, long n, int o, int p, int q, boolean bl2, int r, boolean bl3, boolean bl4, boolean bl5, WorldBorder.Properties properties, int s, int t, UUID uUID, Set<String> set, Timer<MinecraftServer> timer, NbtCompound nbtCompound2, NbtCompound nbtCompound3, LevelInfo levelInfo, GeneratorOptions generatorOptions, Lifecycle lifecycle, CallbackInfo ci) {
-		this.qsl$container = LazifiedComponentContainer.create(this).orElseThrow();
+		this.qsl$container = LazifiedComponentContainer.builder(this)
+				.orElseThrow()
+				.build();
 	}
 
 	@Inject(method = "updateProperties", at = @At("TAIL"))

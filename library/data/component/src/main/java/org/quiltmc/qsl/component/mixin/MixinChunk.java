@@ -43,8 +43,10 @@ public abstract class MixinChunk implements ComponentProvider {
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onInit(ChunkPos chunkPos, UpgradeData upgradeData, HeightLimitView heightLimitView, Registry<?> registry, long l, ChunkSection[] chunkSections, BlendingData blendingData, CallbackInfo ci) {
-		this.qsl$container = LazifiedComponentContainer.create(this).orElseThrow();
-		this.qsl$container.setSaveOperation(() -> this.setNeedsSaving(true));
+		this.qsl$container = LazifiedComponentContainer.builder(this)
+				.orElseThrow()
+				.setSaveOperation(() -> this.setNeedsSaving(true))
+				.build();
 	}
 
 	@Override

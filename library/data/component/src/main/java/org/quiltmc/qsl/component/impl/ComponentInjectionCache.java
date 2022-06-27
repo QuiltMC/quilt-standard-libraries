@@ -16,19 +16,16 @@
 
 package org.quiltmc.qsl.component.impl;
 
-import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
-import org.quiltmc.qsl.component.api.Component;
+import org.quiltmc.qsl.component.api.ComponentType;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class ComponentInjectionCache {
 
 	private static ComponentInjectionCache INSTANCE;
 
-	private final Map<Class<?>, Map<Identifier, Component.Factory<?>>> injectionCache = new HashMap<>();
+	private final Map<Class<?>, List<ComponentType<?>>> injectionCache = new HashMap<>();
 
 	private ComponentInjectionCache() {
 
@@ -42,7 +39,7 @@ public class ComponentInjectionCache {
 		return INSTANCE;
 	}
 
-	public Optional<Map<Identifier, Component.Factory<?>>> getCache(Class<?> clazz) {
+	public Optional<List<ComponentType<?>>> getCache(Class<?> clazz) {
 		if (!this.injectionCache.containsKey(clazz)) {
 			return Optional.empty();
 		}
@@ -54,8 +51,8 @@ public class ComponentInjectionCache {
 		this.injectionCache.clear();
 	}
 
-	public void record(Class<?> clazz, Map<Identifier, Component.Factory<?>> components) {
-		if (this.injectionCache.put(clazz, Util.make(new HashMap<>(), map -> map.putAll(components))) != null) {
+	public void record(Class<?> clazz, List<ComponentType<?>> components) {
+		if (this.injectionCache.put(clazz, Util.make(new ArrayList<>(), list -> list.addAll(components))) != null) {
 			// If there was a value there, it means we attempted an override, and so we throw.
 			throw new IllegalStateException("Cannot register cache twice for class %s".formatted(clazz));
 		}

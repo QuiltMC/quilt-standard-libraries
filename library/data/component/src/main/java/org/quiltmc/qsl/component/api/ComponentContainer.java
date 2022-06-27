@@ -30,9 +30,7 @@ public interface ComponentContainer {
 
 	void moveComponents(ComponentContainer other);
 
-	void writeNbt(NbtCompound providerRootNbt);
+	void writeNbt(@NotNull NbtCompound providerRootNbt);
 
-	void readNbt(NbtCompound providerRootNbt);
-
-	void setSaveOperation(@NotNull Runnable runnable);
+	void readNbt(@NotNull NbtCompound providerRootNbt);
 }

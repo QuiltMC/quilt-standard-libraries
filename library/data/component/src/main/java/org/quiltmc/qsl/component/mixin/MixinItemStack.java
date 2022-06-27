@@ -20,37 +20,46 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class MixinItemStack implements ComponentProvider { // TODO: Make sure nothing else may be broken before final PR.
 
 	@Shadow
-	public abstract @Nullable NbtCompound getNbt();
-
-	@Shadow
 	public abstract NbtCompound getOrCreateNbt();
 
+	@Shadow
+	private @Nullable NbtCompound nbt;
 	private LazifiedComponentContainer qsl$container;
 
 	@Inject(method = "<init>(Lnet/minecraft/item/ItemConvertible;I)V", at = @At("TAIL"))
 	private void initContainer(ItemConvertible itemConvertible, int i, CallbackInfo ci) {
-		this.qsl$container = LazifiedComponentContainer.create(this).orElseThrow();
-		this.qsl$container.setSaveOperation(() -> this.qsl$container.writeNbt(this.getOrCreateNbt()));
+		this.qsl$container = LazifiedComponentContainer.builder(this)
+				.orElseThrow()
+				.setSaveOperation(() -> this.qsl$container.writeNbt(this.getOrCreateNbt()))
+				.build();
 	}
 
 	@Inject(method = "<init>(Lnet/minecraft/nbt/NbtCompound;)V", at = @At("TAIL"))
 	private void readContainer(NbtCompound nbtCompound, CallbackInfo ci) {
-		this.qsl$container = LazifiedComponentContainer.create(this).orElseThrow();
-		this.qsl$container.setSaveOperation(() -> this.qsl$container.writeNbt(this.getOrCreateNbt()));
-		this.qsl$container.readNbt(this.getNbt());
+		this.qsl$container = LazifiedComponentContainer.builder(this)
+				.orElseThrow()
+				.setSaveOperation(() -> this.qsl$container.writeNbt(this.getOrCreateNbt()))
+				.build();
+
+		if (this.nbt != null) {
+			this.qsl$container.readNbt(this.nbt);
+		}
 	}
 
 	@Inject(method = "setNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;postProcessNbt(Lnet/minecraft/nbt/NbtCompound;)V"))
 	private void readContainerAgain(NbtCompound nbt, CallbackInfo ci) {
 		if (this.qsl$container != null) {
-			this.qsl$container.readNbt(this.getNbt());
+			this.qsl$container.readNbt(this.nbt);
 		}
 	}
 
 	@Inject(method = "copy", at = @At(value = "RETURN", ordinal = 1))
 	private void deserializeContainer(CallbackInfoReturnable<ItemStack> cir) {
-		var container = cir.getReturnValue().getContainer();
-		container.readNbt(this.getOrCreateNbt());
+		ItemStack copiedStack = cir.getReturnValue();
+		NbtCompound nbt = copiedStack.getNbt();
+		if (nbt != null) {
+			copiedStack.getContainer().readNbt(nbt);
+		}
 	}
 
 	@Override
