@@ -16,15 +16,12 @@
 
 package org.quiltmc.qsl.component.api;
 
-import com.google.common.collect.ImmutableMap;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.api.predicates.ClassInjectionPredicate;
 import org.quiltmc.qsl.component.api.predicates.FilteredInheritedInjectionPredicate;
 import org.quiltmc.qsl.component.api.predicates.InheritedInjectionPredicate;
 
-import java.util.Map;
 import java.util.Optional;
 
 public final class Components {
@@ -54,9 +51,5 @@ public final class Components {
 		}
 
 		return Optional.empty();
-	}
-
-	public static <S> Map<Identifier, Component> exposeAll(S obj) {
-		return obj instanceof ComponentProvider provider ? provider.getContainer().exposeAll() : ImmutableMap.of();
 	}
 }

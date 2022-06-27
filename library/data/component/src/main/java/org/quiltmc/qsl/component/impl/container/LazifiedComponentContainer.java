@@ -48,8 +48,8 @@ public class LazifiedComponentContainer implements ComponentContainer {
 
 	private Map<Identifier, Lazy<Component>> initializeComponents(ComponentProvider provider) {
 		var map = new HashMap<Identifier, Lazy<Component>>();
-		ComponentsImpl.get(provider).forEach(type -> map.put(type.id(), this.createLazy(type)));
-		ComponentEvents.INJECT.invoker().onInject(provider, type -> map.put(type.id(), this.createLazy(type)));
+		ComponentsImpl.getInjections(provider).forEach(type -> map.put(type.id(), this.createLazy(type)));
+		ComponentEvents.DYNAMIC_INJECT.invoker().onInject(provider, type -> map.put(type.id(), this.createLazy(type)));
 		return map;
 	}
 
@@ -76,13 +76,6 @@ public class LazifiedComponentContainer implements ComponentContainer {
 	@Override
 	public Optional<Component> expose(Identifier id) {
 		return Optional.ofNullable(this.components.get(id)).map(Lazy::get);
-	}
-
-	@Override
-	public Map<Identifier, Component> exposeAll() {
-		return this.components.entrySet().stream()
-				.filter(entry -> !entry.getValue().isEmpty())
-				.collect(HashMap::new, (map, entry) -> map.put(entry.getKey(), entry.getValue().get()), HashMap::putAll);
 	}
 
 	@Override

@@ -30,8 +30,9 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.ComponentContainer;
-import org.quiltmc.qsl.component.api.components.IntegerComponent;
 import org.quiltmc.qsl.component.api.ComponentType;
+import org.quiltmc.qsl.component.api.components.IntegerComponent;
+import org.quiltmc.qsl.component.api.components.InventoryComponent;
 import org.quiltmc.qsl.component.impl.container.SimpleComponentContainer;
 
 import java.util.Arrays;
@@ -43,8 +44,10 @@ public class TestBlockEntity extends BlockEntity {
 	public static final ComponentType<IntegerComponent> TEST_BE_INT =
 			IntegerComponent.create(new Identifier("quilt_component_test", "test_be_int"));
 
-	private final ComponentContainer container =
-			SimpleComponentContainer.create(this::markDirty, TEST_BE_INT, ComponentTestMod.CHUNK_INVENTORY);
+	private final ComponentContainer container = SimpleComponentContainer.builder()
+			.setSaveOperation(this::markDirty)
+			.add(TEST_BE_INT, ComponentTestMod.CHUNK_INVENTORY)
+			.build();
 
 	public TestBlockEntity(BlockPos blockPos, BlockState blockState) {
 		super(ComponentTestMod.TEST_BE_TYPE, blockPos, blockState);
@@ -55,14 +58,16 @@ public class TestBlockEntity extends BlockEntity {
 			return;
 		}
 
-		blockEntity.expose(TEST_BE_INT).ifPresent(integerComponent -> {
-			if (integerComponent.get() % 20 == 0) {
-				HashSet<BlockPos> set = new HashSet<>(List.of(pos));
-				expand(pos, pos, world, set);
-			}
+		if (blockEntity.expose(ComponentTestMod.CHUNK_INVENTORY).map(InventoryComponent::isEmpty).orElse(true)) {
+			blockEntity.expose(TEST_BE_INT).ifPresent(integerComponent -> {
+				if (integerComponent.get() % 40 == 0) {
+					HashSet<BlockPos> set = new HashSet<>(List.of(pos));
+					expand(pos, pos, world, set);
+				}
 
-			integerComponent.increment();
-		});
+				integerComponent.increment();
+			});
+		}
 	}
 
 	private static void expand(BlockPos initialPos, BlockPos pos, World world, Set<BlockPos> visited) {
@@ -85,25 +90,25 @@ public class TestBlockEntity extends BlockEntity {
 	}
 
 	@Override
-	protected void writeNbt(NbtCompound nbt) {
-		super.writeNbt(nbt);
-		this.container.writeNbt(nbt);
-	}
-
-	@Override
 	public void readNbt(NbtCompound nbt) {
 		super.readNbt(nbt);
 		this.container.readNbt(nbt);
 	}
 
 	@Override
-	public NbtCompound toInitialChunkDataNbt() {
-		return this.toNbt();
+	protected void writeNbt(NbtCompound nbt) {
+		super.writeNbt(nbt);
+		this.container.writeNbt(nbt);
 	}
 
 	@Nullable
 	@Override
 	public Packet<ClientPlayPacketListener> toUpdatePacket() {
 		return BlockEntityUpdateS2CPacket.of(this);
+	}
+
+	@Override
+	public NbtCompound toInitialChunkDataNbt() {
+		return this.toNbt();
 	}
 }

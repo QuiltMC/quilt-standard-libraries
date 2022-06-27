@@ -18,14 +18,11 @@ package org.quiltmc.qsl.component.impl.container;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.component.api.Component;
-import org.quiltmc.qsl.component.api.ComponentContainer;
-import org.quiltmc.qsl.component.api.Components;
+import org.quiltmc.qsl.component.api.*;
 import org.quiltmc.qsl.component.api.components.NbtComponent;
-import org.quiltmc.qsl.component.api.ComponentType;
-import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 import org.quiltmc.qsl.component.impl.util.StringConstants;
 
 import java.util.*;
@@ -35,37 +32,32 @@ public class SimpleComponentContainer implements ComponentContainer {
 	private final Map<Identifier, Component> components;
 	private final List<Identifier> nbtComponents;
 
-	public SimpleComponentContainer(@Nullable Runnable saveOperation, Stream<Identifier> componentIds) {
+	protected SimpleComponentContainer(@Nullable Runnable saveOperation, Stream<ComponentType<?>> types) {
 		this.components = new HashMap<>();
 		this.nbtComponents = new ArrayList<>();
 
-		componentIds.forEach(id -> {
-			Component component = Components.REGISTRY.getOrEmpty(id)
-					.orElseThrow(ErrorUtil.illegalArgument("Attempted to get invalid component with id %s".formatted(id.toString())))
-					.create();
-			this.components.put(id, component);
+		types.forEach(type -> {
+			Component component = type.create();
+			this.components.put(type.id(), component);
 
 			if (component instanceof NbtComponent<?> nbtComponent) {
-				this.nbtComponents.add(id);
+				this.nbtComponents.add(type.id());
 				nbtComponent.setSaveOperation(saveOperation);
 			}
 		});
 
-		componentIds.close();
+		types.close();
 	}
 
-	public static @NotNull SimpleComponentContainer create(Runnable saveOperation, ComponentType<?>... ids) {
-		return new SimpleComponentContainer(saveOperation, Stream.of(ids).map(ComponentType::id));
+	@Contract("-> new")
+	@NotNull
+	public static Builder builder() {
+		return new Builder();
 	}
 
 	@Override
 	public Optional<Component> expose(Identifier id) {
 		return Optional.ofNullable(this.components.get(id));
-	}
-
-	@Override
-	public Map<Identifier, Component> exposeAll() {
-		return this.components;
 	}
 
 	@Override
@@ -94,5 +86,38 @@ public class SimpleComponentContainer implements ComponentContainer {
 				.map(Identifier::tryParse)
 				.filter(Objects::nonNull)
 				.forEach(id -> this.expose(id).ifPresent(component -> NbtComponent.readFrom((NbtComponent<?>) component, id, rootQslNbt)));
+	}
+
+	public static class Builder {
+		@Nullable
+		private Runnable saveOperation;
+		@NotNull
+		private final List<ComponentType<?>> types;
+
+		private Builder() {
+			this.types = new ArrayList<>();
+		}
+
+		@NotNull
+		public Builder setSaveOperation(@NotNull Runnable runnable) {
+			this.saveOperation = runnable;
+			return this;
+		}
+
+		@NotNull
+		public Builder add(ComponentType<?> type) {
+			this.types.add(type);
+			return this;
+		}
+
+		@NotNull
+		public Builder add(ComponentType<?>... types) {
+			this.types.addAll(Arrays.asList(types));
+			return this;
+		}
+
+		public SimpleComponentContainer build() {
+			return new SimpleComponentContainer(this.saveOperation, this.types.stream());
+		}
 	}
 }

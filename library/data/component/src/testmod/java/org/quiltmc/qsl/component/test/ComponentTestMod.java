@@ -78,10 +78,8 @@ public class ComponentTestMod implements ModInitializer {
 		Components.injectInheritage(Chunk.class, CHUNK_INVENTORY);
 		Components.inject(LevelProperties.class, SAVE_FLOAT);
 
-		ComponentEvents.INJECT.register((provider, injector) -> {
-			if (provider instanceof ItemStack stack && stack.isOf(Items.BOOKSHELF)) {
-				injector.inject(ITEMSTACK_INT);
-			}
+		ComponentEvents.DYNAMIC_INJECT.register((provider, injector) -> {
+			injector.injectIf(provider instanceof ItemStack stack && stack.isOf(Items.BOOKSHELF), ITEMSTACK_INT);
 		});
 	}
 

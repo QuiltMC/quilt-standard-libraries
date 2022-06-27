@@ -66,8 +66,7 @@ public class ComponentsImpl {
 		return Registry.register(REGISTRY, id, componentId);
 	}
 
-	// TODO: Figure out to make caching work with provider specific injections.
-	public static List<ComponentType<?>> get(ComponentProvider provider) {
+	public static List<ComponentType<?>> getInjections(ComponentProvider provider) {
 		return ComponentInjectionCache.getInstance().getCache(provider.getClass()).orElseGet(() -> {
 			List<ComponentType<?>> injectedTypes = INJECTION_REGISTRY.entrySet().stream()
 					.filter(it -> it.getKey().canInject(provider))
