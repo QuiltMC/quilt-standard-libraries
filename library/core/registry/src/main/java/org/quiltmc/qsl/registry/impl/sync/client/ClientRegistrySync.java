@@ -253,7 +253,7 @@ public final class ClientRegistrySync {
 				registry.quilt$restoreIdSnapshot();
 			}
 		}
-		ClientRegistrySync.rebuildBlockStates();
-		ClientRegistrySync.rebuildFluidStates();
+		rebuildBlockStates();
+		rebuildFluidStates();
 	}
 }

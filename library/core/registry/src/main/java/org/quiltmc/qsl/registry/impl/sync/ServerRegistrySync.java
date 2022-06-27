@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @ApiStatus.Internal
@@ -41,16 +40,14 @@ public final class ServerRegistrySync {
 	public static boolean supportFabric = false;
 
 	public static void readConfig() {
-		var config = RegistryConfig.getConfig();
 
-		var message = ((String) config.getValue(List.of(RegistryConfig.REGISTRY_SYNC, RegistryConfig.NO_REGISTRY_SYNC_MESSAGE)).value()).trim();
 		try {
-			noRegistrySyncMessage = Text.Serializer.fromJson(message);
+			noRegistrySyncMessage = Text.Serializer.fromJson(RegistryConfig.INSTANCE.registry_sync.missing_registry_sync_message);
 		} catch (Exception e) {
-			noRegistrySyncMessage = new LiteralText(message);
+			noRegistrySyncMessage = new LiteralText(RegistryConfig.INSTANCE.registry_sync.missing_registry_sync_message);
 		}
 
-		supportFabric = (boolean) config.getValue(List.of(RegistryConfig.REGISTRY_SYNC, RegistryConfig.SUPPORT_FABRIC_API_SYNC)).value();
+		supportFabric = RegistryConfig.INSTANCE.registry_sync.support_fabric_api_protocol;
 	}
 
 	public static boolean shouldSync() {

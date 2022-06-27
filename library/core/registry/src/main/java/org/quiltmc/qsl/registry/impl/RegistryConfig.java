@@ -17,25 +17,20 @@
 package org.quiltmc.qsl.registry.impl;
 
 import org.jetbrains.annotations.ApiStatus;
-import org.quiltmc.config.api.Config;
-import org.quiltmc.config.api.values.TrackedValue;
+import org.quiltmc.config.api.WrappedConfig;
+import org.quiltmc.config.api.annotations.Comment;
 import org.quiltmc.loader.api.config.QuiltConfig;
 
 @ApiStatus.Internal
-public class RegistryConfig {
-	public static final String REGISTRY_SYNC = "registry_sync";
-	public static final String NO_REGISTRY_SYNC_MESSAGE = "no_registry_sync_message";
-	public static final String SUPPORT_FABRIC_API_SYNC = "support_fabric_api_sync";
-	private static Config config = null;
-	public static Config getConfig() {
-		if (config == null) {
-			config = QuiltConfig.create("quilt", "registry", (builder) -> {
-				builder.section("registry_sync", s -> {
-					s.field(TrackedValue.create("Unsupported (vanilla?) client!\n This server requires modded client to join!", NO_REGISTRY_SYNC_MESSAGE));
-					s.field(TrackedValue.create(true, SUPPORT_FABRIC_API_SYNC));
-				});
-			});
-		}
-		return config;
+public class RegistryConfig extends WrappedConfig {
+	public static final RegistryConfig INSTANCE = QuiltConfig.create("quilt", "registry", RegistryConfig.class);
+
+	public final RegistrySync registry_sync = new RegistrySync();
+
+	public class RegistrySync implements Section {
+		@Comment("Message displayed for players joining with incompatible clients. Support strings and Minecraft's json text format")
+		public final String missing_registry_sync_message = "Unsupported (vanilla?) client!\nThis server requires modded client to join!";
+		@Comment("Allows players with Fabric API to connect, as long as they have all required mods")
+		public final boolean support_fabric_api_protocol = true;
 	}
 }
