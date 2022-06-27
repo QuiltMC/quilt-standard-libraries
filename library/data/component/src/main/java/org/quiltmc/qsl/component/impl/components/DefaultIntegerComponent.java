@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.impl.components.defaults;
+package org.quiltmc.qsl.component.impl.components;
 
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.components.IntegerComponent;

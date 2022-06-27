@@ -20,9 +20,9 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.quiltmc.qsl.component.api.components.TickingComponent;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
-import org.quiltmc.qsl.component.api.predicates.ClassInjectionPredicate;
-import org.quiltmc.qsl.component.api.predicates.FilteredInheritedInjectionPredicate;
-import org.quiltmc.qsl.component.api.predicates.InheritedInjectionPredicate;
+import org.quiltmc.qsl.component.impl.predicates.ClassInjectionPredicate;
+import org.quiltmc.qsl.component.impl.predicates.FilteredInheritedInjectionPredicate;
+import org.quiltmc.qsl.component.impl.predicates.InheritedInjectionPredicate;
 
 import java.util.Optional;
 

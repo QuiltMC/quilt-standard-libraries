@@ -22,29 +22,16 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
-import org.quiltmc.qsl.component.api.ComponentType;
-import org.quiltmc.qsl.component.impl.ComponentsImpl;
-import org.quiltmc.qsl.component.impl.components.defaults.DefaultInventoryComponent;
-
-import java.util.function.Supplier;
 
 public interface InventoryComponent extends NbtComponent<NbtCompound>, Inventory {
-	static ComponentType<InventoryComponent> ofSize(int size, Identifier id) {
-		return ComponentsImpl.register(id, () -> new DefaultInventoryComponent(size));
-	}
-
-	static ComponentType<InventoryComponent> of(Supplier<DefaultedList<ItemStack>> items, Identifier id) {
-		return ComponentsImpl.register(id, () -> new DefaultInventoryComponent(items));
-	}
-
-	DefaultedList<ItemStack> getStacks();
 
 	@Override
 	default int size() {
 		return this.getStacks().size();
 	}
+
+	DefaultedList<ItemStack> getStacks();
 
 	@Override
 	default boolean isEmpty() {
@@ -90,6 +77,11 @@ public interface InventoryComponent extends NbtComponent<NbtCompound>, Inventory
 	}
 
 	@Override
+	default void markDirty() {
+		this.saveNeeded();
+	}
+
+	@Override
 	default boolean canPlayerUse(PlayerEntity player) {
 		return true;
 	}
@@ -112,11 +104,6 @@ public interface InventoryComponent extends NbtComponent<NbtCompound>, Inventory
 	@Override
 	default void clear() {
 		this.getStacks().clear();
-		this.saveNeeded();
-	}
-
-	@Override
-	default void markDirty() {
 		this.saveNeeded();
 	}
 }

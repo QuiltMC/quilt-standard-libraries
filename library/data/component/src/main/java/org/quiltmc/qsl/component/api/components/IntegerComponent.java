@@ -21,16 +21,9 @@ import net.minecraft.nbt.NbtInt;
 import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
-import org.quiltmc.qsl.component.impl.components.defaults.DefaultIntegerComponent;
+import org.quiltmc.qsl.component.impl.components.DefaultIntegerComponent;
 
 public interface IntegerComponent extends NbtComponent<NbtInt> {
-	static ComponentType<IntegerComponent> create(int initialValue, Identifier id) {
-		return ComponentsImpl.register(id, () -> new DefaultIntegerComponent(initialValue));
-	}
-
-	static ComponentType<IntegerComponent> create(Identifier id) {
-		return ComponentsImpl.register(id, DefaultIntegerComponent::new);
-	}
 
 	int get();
 

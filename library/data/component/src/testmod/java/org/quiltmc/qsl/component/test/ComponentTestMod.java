@@ -34,7 +34,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Unit;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.WorldProperties;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.level.LevelProperties;
 import org.quiltmc.loader.api.ModContainer;
@@ -43,61 +42,77 @@ import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.Components;
 import org.quiltmc.qsl.component.api.components.*;
 import org.quiltmc.qsl.component.api.event.ComponentEvents;
+import org.quiltmc.qsl.component.impl.components.DefaultFloatComponent;
+import org.quiltmc.qsl.component.impl.components.DefaultIntegerComponent;
+import org.quiltmc.qsl.component.impl.components.DefaultInventoryComponent;
 
 public class ComponentTestMod implements ModInitializer {
 	public static final String MODID = "quilt_component_test";
 
-	// Registration Code
-	public static final ComponentType<InventoryComponent> COW_INVENTORY = InventoryComponent.of(
-			() -> DefaultedList.ofSize(1, new ItemStack(Items.COBBLESTONE, 64)),
-			new Identifier(MODID, "cow_inventory")
+	public static final ComponentType<InventoryComponent> COW_INVENTORY = Components.register(
+			new Identifier(MODID, "cow_inventory"),
+			() -> new DefaultInventoryComponent(() -> DefaultedList.ofSize(1, new ItemStack(Items.COBBLESTONE, 64)))
 	);
-	public static final ComponentType<IntegerComponent> CREEPER_EXPLODE_TIME =
-			IntegerComponent.create(200, new Identifier(MODID, "creeper_explode_time"));
-	public static final ComponentType<IntegerComponent> HOSTILE_EXPLODE_TIME =
-			IntegerComponent.create(new Identifier(MODID, "hostile_explode_time"));
-	public static final ComponentType<IntegerComponent> CHEST_NUMBER =
-			IntegerComponent.create(200, new Identifier(MODID, "chest_number"));
-	public static final ComponentType<InventoryComponent> CHUNK_INVENTORY = InventoryComponent.ofSize(1,
-			new Identifier(MODID, "chunk_inventory")
+	public static final ComponentType<IntegerComponent> CREEPER_EXPLODE_TIME = Components.register(
+			new Identifier(MODID, "creeper_explode_time"),
+			() -> new DefaultIntegerComponent(200)
 	);
-	public static final ComponentType<FloatComponent> SAVE_FLOAT =
-			FloatComponent.create(new Identifier(MODID, "save_float"));
-
-	public static final Block TEST_BLOCK = new TestBlock(AbstractBlock.Settings.copy(Blocks.STONE));
-	public static final ComponentType<IntegerComponent> ITEMSTACK_INT =
-			IntegerComponent.create(new Identifier(MODID, "itemstack_int"));
-	public static final ComponentType<FunctionComponent<Unit, Unit>> FUNC_COMP =
-			Components.registerStatic(new Identifier(MODID, "player_thing"), () -> (provider, unused) -> {
-				if (provider instanceof PlayerEntity entity) {
-					entity.giveItemStack(new ItemStack(Items.WHEAT));
-				}
-				return Unit.INSTANCE;
-			});
-	public static final ComponentType<TickingComponent> PLAYER_TICK =
-			Components.registerTicking(new Identifier(MODID, "warden_tick"),
-					provider -> {
-						if (provider instanceof ServerPlayerEntity player) {
-							ItemStack stackInHand = player.getStackInHand(Hand.MAIN_HAND);
-							if (stackInHand.isOf(Items.WHEAT)) {
-								player.call(ComponentTestMod.FUNC_COMP, Unit.INSTANCE)
-										.ifPresent(unit -> player.sendMessage(Text.literal("Prankt"), true));
-							}
-
-							var props = player.getWorld().getServer().getSaveProperties();
-							if (props instanceof LevelProperties levelProperties && player.getWorld().getTime() % 100 == 0) {
-								player.sendMessage(Text.literal(
-										levelProperties.expose(SAVE_FLOAT).map(FloatComponent::get).orElse(0f).toString()
-								), false);
-							}
-						}
-					});
-	public static final ComponentType<TickingComponent> SERVER_TICK = Components.registerTicking(new Identifier(MODID, "level_tick"),
+	public static final ComponentType<IntegerComponent> HOSTILE_EXPLODE_TIME = Components.register(
+			new Identifier(MODID, "hostile_explode_time"),
+			DefaultIntegerComponent::new
+	);
+	public static final ComponentType<IntegerComponent> CHEST_NUMBER = Components.register(
+			new Identifier(MODID, "chest_number"),
+			() -> new DefaultIntegerComponent(200)
+	);
+	public static final ComponentType<InventoryComponent> CHUNK_INVENTORY = Components.register(
+			new Identifier(MODID, "chunk_inventory"),
+			() -> new DefaultInventoryComponent(1)
+	);
+	public static final ComponentType<FloatComponent> SAVE_FLOAT = Components.register(
+			new Identifier(MODID, "save_float"),
+			DefaultFloatComponent::new
+	);
+	public static final ComponentType<TickingComponent> SERVER_TICK = Components.registerTicking(
+			new Identifier(MODID, "level_tick"),
 			provider -> {
 				if (provider instanceof LevelProperties properties) {
 					properties.expose(SAVE_FLOAT).ifPresent(floatComponent -> floatComponent.set(floatComponent.get() + 0.5f));
 				}
-			});
+			}
+	);
+	public static final Block TEST_BLOCK = new TestBlock(AbstractBlock.Settings.copy(Blocks.STONE));
+	public static final ComponentType<IntegerComponent> ITEMSTACK_INT = Components.register(
+			new Identifier(MODID, "itemstack_int"),
+			DefaultIntegerComponent::new
+	);
+	public static final ComponentType<FunctionComponent<Unit, Unit>> FUNC_COMP = Components.registerStatic(
+			new Identifier(MODID, "player_thing"),
+			() -> (provider, unused) -> {
+				if (provider instanceof PlayerEntity entity) {
+					entity.giveItemStack(new ItemStack(Items.WHEAT));
+				}
+				return Unit.INSTANCE;
+			}
+	);
+	public static final ComponentType<TickingComponent> PLAYER_TICK = Components.registerTicking(
+			new Identifier(MODID, "warden_tick"),
+			provider -> {
+				if (provider instanceof ServerPlayerEntity player) {
+					ItemStack stackInHand = player.getStackInHand(Hand.MAIN_HAND);
+					if (stackInHand.isOf(Items.WHEAT)) {
+						player.call(ComponentTestMod.FUNC_COMP, Unit.INSTANCE)
+								.ifPresent(unit -> player.sendMessage(Text.literal("Prankt"), true));
+					}
+					var props = player.getWorld().getServer().getSaveProperties();
+					if (props instanceof LevelProperties levelProperties && player.getWorld().getTime() % 100 == 0) {
+						player.sendMessage(Text.literal(
+								levelProperties.expose(SAVE_FLOAT).map(FloatComponent::get).orElse(0f).toString()
+						), false);
+					}
+				}
+			}
+	);
 
 	@Override
 	public void onInitialize(ModContainer mod) {
@@ -105,7 +120,7 @@ public class ComponentTestMod implements ModInitializer {
 		Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(MODID, "block_entity"), TEST_BE_TYPE);
 		Block.STATE_IDS.add(TEST_BLOCK.getDefaultState());
 
-		// Application Code
+		// Cached Injection
 		Components.inject(CreeperEntity.class, CREEPER_EXPLODE_TIME);
 		Components.injectInheritage(CowEntity.class, COW_INVENTORY);
 		Components.injectInheritanceExcept(HostileEntity.class, HOSTILE_EXPLODE_TIME, CreeperEntity.class);
@@ -115,6 +130,7 @@ public class ComponentTestMod implements ModInitializer {
 		Components.injectInheritage(ServerPlayerEntity.class, FUNC_COMP);
 		Components.inject(LevelProperties.class, SERVER_TICK);
 
+		// Dynamic Injection
 		ComponentEvents.DYNAMIC_INJECT.register((provider, injector) -> {
 			injector.injectIf(provider instanceof ItemStack stack && stack.isOf(Items.BOOKSHELF), ITEMSTACK_INT);
 			injector.injectIf(provider instanceof PlayerEntity, PLAYER_TICK);

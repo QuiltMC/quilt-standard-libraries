@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.api.predicates;
+package org.quiltmc.qsl.component.impl.predicates;
 
 import java.util.ArrayList;
 import java.util.Arrays;

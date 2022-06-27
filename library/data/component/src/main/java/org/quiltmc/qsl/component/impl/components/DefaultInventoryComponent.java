@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.impl.components.defaults;
+package org.quiltmc.qsl.component.impl.components;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
