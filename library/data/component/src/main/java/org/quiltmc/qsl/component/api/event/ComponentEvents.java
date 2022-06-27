@@ -3,9 +3,6 @@ package org.quiltmc.qsl.component.api.event;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.api.ComponentType;
-import org.quiltmc.qsl.component.api.components.IntegerComponent;
-
-import java.util.function.BooleanSupplier;
 
 public class ComponentEvents {
 

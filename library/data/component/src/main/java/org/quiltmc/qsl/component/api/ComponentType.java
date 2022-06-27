@@ -19,9 +19,12 @@ package org.quiltmc.qsl.component.api;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
-public record ComponentType<T extends Component>(Identifier id, Component.Factory<T> factory) implements Component.Factory<T> {
+public record ComponentType<T extends Component>(Identifier id, Component.Factory<T> factory, boolean isStatic) implements Component.Factory<T> {
+	public static final Static STATIC_CACHE = new Static();
 
 	@SuppressWarnings("unchecked")
 	public Optional<T> cast(Component component) {
@@ -34,6 +37,28 @@ public record ComponentType<T extends Component>(Identifier id, Component.Factor
 
 	@Override
 	public @NotNull T create() {
+		if (this.isStatic) {
+			return STATIC_CACHE.getOrCreate(this);
+		}
 		return this.factory.create();
+	}
+
+	public static class Static {
+		private final Map<Identifier, Component> staticInstances = new HashMap<>();
+
+		private Static() {
+
+		}
+
+		@SuppressWarnings("unchecked")
+		@NotNull <C extends Component> C getOrCreate(ComponentType<C> type) {
+			if (this.staticInstances.containsKey(type.id())) {
+				return (C) this.staticInstances.get(type.id());
+			} else {
+				C singleton = type.factory.create();
+				this.staticInstances.put(type.id(), singleton);
+				return singleton;
+			}
+		}
 	}
 }

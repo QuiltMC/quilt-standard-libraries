@@ -25,6 +25,7 @@ import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.components.NbtComponent;
+import org.quiltmc.qsl.component.api.components.TickingComponent;
 import org.quiltmc.qsl.component.api.event.ComponentEvents;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.util.ErrorUtil;
@@ -36,14 +37,18 @@ import java.util.*;
 public class LazifiedComponentContainer implements ComponentContainer {
 
 	private final Map<Identifier, Lazy<Component>> components;
-	private final Set<Identifier> nbtComponents;
+	private final List<Identifier> nbtComponents;
+	private final List<Identifier> tickingComponents;
 	@Nullable
 	private final Runnable saveOperation;
+	private final boolean ticking;
 
-	protected LazifiedComponentContainer(@NotNull ComponentProvider provider, @Nullable Runnable saveOperation) {
-		this.components = this.initializeComponents(provider);
-		this.nbtComponents = new HashSet<>(this.components.size());
+	protected LazifiedComponentContainer(@NotNull ComponentProvider provider, @Nullable Runnable saveOperation, boolean ticking) {
 		this.saveOperation = saveOperation;
+		this.ticking = ticking;
+		this.nbtComponents = new ArrayList<>();
+		this.tickingComponents = new ArrayList<>();
+		this.components = this.initializeComponents(provider);
 	}
 
 	private Map<Identifier, Lazy<Component>> initializeComponents(ComponentProvider provider) {
@@ -54,11 +59,24 @@ public class LazifiedComponentContainer implements ComponentContainer {
 	}
 
 	private Lazy<Component> createLazy(ComponentType<?> type) {
+		if (type.isStatic()) {
+			Component singleton = type.create();
+			if (this.ticking && singleton instanceof TickingComponent) {
+				this.tickingComponents.add(type.id());
+			}
+
+			return Lazy.filled(singleton);
+		}
+
 		return Lazy.of(() -> {
 			Component component = type.create();
 			if (component instanceof NbtComponent<?> nbtComponent) {
 				this.nbtComponents.add(type.id());
 				nbtComponent.setSaveOperation(this.saveOperation);
+			}
+
+			if (this.ticking && component instanceof TickingComponent) {
+				this.tickingComponents.add(type.id());
 			}
 
 			return component;
@@ -105,6 +123,19 @@ public class LazifiedComponentContainer implements ComponentContainer {
 	}
 
 	@Override
+	public void tick(@NotNull ComponentProvider provider) {
+		if (!this.ticking) {
+			throw ErrorUtil.runtime("Attempted to tick a non-tickable ComponentContainer instance").get();
+		}
+
+		this.tickingComponents.stream()
+				.map(this::expose)
+				.map(Optional::orElseThrow)
+				.map(it -> ((TickingComponent) it))
+				.forEach(tickingComponent -> tickingComponent.tick(provider));
+	}
+
+	@Override
 	public void moveComponents(ComponentContainer other) {
 		if (other instanceof LazifiedComponentContainer otherContainer) {
 			otherContainer.components.forEach((id, componentLazy) -> componentLazy.ifPresent(component -> {
@@ -126,10 +157,14 @@ public class LazifiedComponentContainer implements ComponentContainer {
 	public static class Builder {
 
 		private final ComponentProvider provider;
+		@Nullable
 		private Runnable saveOperation;
+		private boolean ticking;
 
 		private Builder(ComponentProvider provider) {
 			this.provider = provider;
+			this.ticking = false;
+			this.saveOperation = null;
 		}
 
 		public Builder setSaveOperation(Runnable runnable) {
@@ -137,8 +172,13 @@ public class LazifiedComponentContainer implements ComponentContainer {
 			return this;
 		}
 
+		public Builder ticking() {
+			this.ticking = true;
+			return this;
+		}
+
 		public LazifiedComponentContainer build() {
-			return new LazifiedComponentContainer(this.provider, this.saveOperation);
+			return new LazifiedComponentContainer(this.provider, this.saveOperation, this.ticking);
 		}
 	}
 }

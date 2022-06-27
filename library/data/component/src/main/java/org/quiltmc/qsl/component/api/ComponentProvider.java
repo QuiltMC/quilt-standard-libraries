@@ -23,6 +23,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.level.LevelProperties;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
+import org.quiltmc.qsl.component.api.components.FunctionComponent;
 
 import java.util.Optional;
 
@@ -39,5 +40,9 @@ public interface ComponentProvider {
 
 	default <C extends Component> Optional<C> expose(ComponentType<C> id) {
 		return Components.expose(id, this);
+	}
+
+	default <T, U, C extends FunctionComponent<T, U>> Optional<U> call(ComponentType<C> type, T t) {
+		return this.expose(type).map(func -> func.call(this, t));
 	}
 }

@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.*;
 import org.quiltmc.qsl.component.api.components.NbtComponent;
+import org.quiltmc.qsl.component.api.components.TickingComponent;
 import org.quiltmc.qsl.component.impl.util.StringConstants;
 
 import java.util.*;
@@ -31,10 +32,12 @@ import java.util.stream.Stream;
 public class SimpleComponentContainer implements ComponentContainer {
 	private final Map<Identifier, Component> components;
 	private final List<Identifier> nbtComponents;
+	private final List<Identifier> tickingComponents;
 
 	protected SimpleComponentContainer(@Nullable Runnable saveOperation, Stream<ComponentType<?>> types) {
 		this.components = new HashMap<>();
 		this.nbtComponents = new ArrayList<>();
+		this.tickingComponents = new ArrayList<>();
 
 		types.forEach(type -> {
 			Component component = type.create();
@@ -43,6 +46,10 @@ public class SimpleComponentContainer implements ComponentContainer {
 			if (component instanceof NbtComponent<?> nbtComponent) {
 				this.nbtComponents.add(type.id());
 				nbtComponent.setSaveOperation(saveOperation);
+			}
+
+			if (component instanceof TickingComponent) {
+				this.tickingComponents.add(type.id());
 			}
 		});
 
@@ -86,6 +93,14 @@ public class SimpleComponentContainer implements ComponentContainer {
 				.map(Identifier::tryParse)
 				.filter(Objects::nonNull)
 				.forEach(id -> this.expose(id).ifPresent(component -> NbtComponent.readFrom((NbtComponent<?>) component, id, rootQslNbt)));
+	}
+
+	@Override
+	public void tick(@NotNull ComponentProvider provider) {
+		this.tickingComponents.stream()
+				.map(this.components::get)
+				.map(it -> ((TickingComponent) it))
+				.forEach(tickingComponent -> tickingComponent.tick(provider));
 	}
 
 	public static class Builder {

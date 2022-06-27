@@ -36,9 +36,19 @@ public class Lazy<T> {
 		this.value = null;
 	}
 
+	private Lazy(@NotNull T value) {
+		this.value = value;
+		this.sup = () -> value;
+	}
+
 	@NotNull
 	public static <T> Lazy<T> of(@NotNull Supplier<T> sup) {
 		return new Lazy<>(sup);
+	}
+
+	@NotNull
+	public static <T> Lazy<T> filled(@NotNull T value) {
+		return new Lazy<>(value);
 	}
 
 	@NotNull

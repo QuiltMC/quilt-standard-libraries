@@ -42,16 +42,17 @@ public abstract class MixinBlockEntity implements ComponentProvider {
 		this.qsl$container.readNbt(nbt);
 	}
 
-	@Shadow
-	public abstract void markDirty();
-
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onInit(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState, CallbackInfo ci) {
 		this.qsl$container = LazifiedComponentContainer.builder(this)
 				.orElseThrow()
 				.setSaveOperation(this::markDirty)
+				.ticking()
 				.build();
 	}
+
+	@Shadow
+	public abstract void markDirty();
 
 	@Inject(method = "toNbt", at = @At("TAIL"))
 	private void onWriteNbt(CallbackInfoReturnable<NbtCompound> cir) {

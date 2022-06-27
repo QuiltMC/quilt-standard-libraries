@@ -14,7 +14,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.explosion.Explosion;
-import net.minecraft.world.level.LevelProperties;
 import org.quiltmc.qsl.base.api.event.ListenerPhase;
 import org.quiltmc.qsl.component.api.Components;
 import org.quiltmc.qsl.component.api.components.IntegerComponent;
@@ -34,7 +33,6 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 			return;
 		}
 		Chunk chunk = world.getChunk(player.getBlockPos());
-		LevelProperties props = ((LevelProperties) server.getSaveProperties());
 		ItemStack stackInHand = player.getStackInHand(Hand.MAIN_HAND);
 
 		cowTick(world);
@@ -42,7 +40,6 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 		hostileTick(world);
 		currentChunkBETick(world, chunk);
 		currentChunkTick(player, chunk);
-		worldTick(world, player, props);
 		stackInHandTick(player, stackInHand);
 	}
 
@@ -56,15 +53,6 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 				}
 			});
 		}
-	}
-
-	private void worldTick(ServerWorld world, ServerPlayerEntity player, LevelProperties props) {
-		props.expose(ComponentTestMod.SAVE_FLOAT).ifPresent(floatComponent -> {
-			floatComponent.set(floatComponent.get() + 0.5f);
-			if (world.getTime() % 100 == 0) {
-				player.sendMessage(Text.literal("%.3f".formatted(floatComponent.get())), false);
-			}
-		});
 	}
 
 	private void currentChunkTick(ServerPlayerEntity player, Chunk chunk) {

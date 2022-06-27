@@ -16,7 +16,9 @@
 
 package org.quiltmc.qsl.component.api;
 
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import org.quiltmc.qsl.component.api.components.TickingComponent;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.api.predicates.ClassInjectionPredicate;
 import org.quiltmc.qsl.component.api.predicates.FilteredInheritedInjectionPredicate;
@@ -51,5 +53,17 @@ public final class Components {
 		}
 
 		return Optional.empty();
+	}
+
+	public static <C extends Component> ComponentType<C> register(Identifier id, Component.Factory<C> factory) {
+		return ComponentsImpl.register(id, factory);
+	}
+
+	public static <C extends Component> ComponentType<C> registerStatic(Identifier id, Component.Factory<C> factory) {
+		return ComponentsImpl.registerStatic(id, factory);
+	}
+
+	public static <C extends TickingComponent> ComponentType<C> registerTicking(Identifier id, C component) {
+		return ComponentsImpl.registerStatic(id, () -> component);
 	}
 }

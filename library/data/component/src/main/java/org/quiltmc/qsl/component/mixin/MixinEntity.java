@@ -35,10 +35,11 @@ public abstract class MixinEntity implements ComponentProvider {
 
 	private ComponentContainer qsl$container;
 
-	@Inject(method = "<init>", at = @At("RETURN"))
+	@Inject(method = "<init>", at = @At("RETURN")) // TODO: Mixin into the ServerWorld#spawnEntity method for this!
 	private void onEntityInit(EntityType<?> entityType, World world, CallbackInfo ci) {
 		this.qsl$container = LazifiedComponentContainer.builder(this)
 				.orElseThrow()
+				.ticking()
 				.build();
 	}
 
@@ -50,6 +51,11 @@ public abstract class MixinEntity implements ComponentProvider {
 	@Inject(method = "readNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;readCustomDataFromNbt(Lnet/minecraft/nbt/NbtCompound;)V"))
 	private void onDeserialize(NbtCompound nbt, CallbackInfo ci) {
 		this.qsl$container.readNbt(nbt);
+	}
+
+	@Inject(method = "tick", at = @At("TAIL"))
+	private void tickContainer(CallbackInfo ci) {
+		this.getContainer().tick(this);
 	}
 
 	@Override

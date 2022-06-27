@@ -6,6 +6,7 @@
     "MixinBlockEntity",
     "MixinChunk",
     "MixinChunkSerializer",
+    "MixinDirectBlockEntityTickInvoker",
     "MixinEntity",
     "MixinItemStack",
     "MixinLevelProperties",

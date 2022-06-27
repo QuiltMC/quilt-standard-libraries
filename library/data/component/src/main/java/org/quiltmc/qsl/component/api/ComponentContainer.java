@@ -30,4 +30,6 @@ public interface ComponentContainer {
 	void writeNbt(@NotNull NbtCompound providerRootNbt);
 
 	void readNbt(@NotNull NbtCompound providerRootNbt);
+
+	void tick(@NotNull ComponentProvider provider);
 }

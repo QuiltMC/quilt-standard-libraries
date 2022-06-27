@@ -1,8 +1,10 @@
 package org.quiltmc.qsl.component.mixin;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.ComponentContainer;
@@ -31,6 +33,7 @@ public abstract class MixinItemStack implements ComponentProvider { // TODO: Mak
 		this.qsl$container = LazifiedComponentContainer.builder(this)
 				.orElseThrow()
 				.setSaveOperation(() -> this.qsl$container.writeNbt(this.getOrCreateNbt()))
+				.ticking()
 				.build();
 	}
 
@@ -39,6 +42,7 @@ public abstract class MixinItemStack implements ComponentProvider { // TODO: Mak
 		this.qsl$container = LazifiedComponentContainer.builder(this)
 				.orElseThrow()
 				.setSaveOperation(() -> this.qsl$container.writeNbt(this.getOrCreateNbt()))
+				.ticking()
 				.build();
 
 		if (this.nbt != null) {
@@ -60,6 +64,11 @@ public abstract class MixinItemStack implements ComponentProvider { // TODO: Mak
 		if (nbt != null) {
 			copiedStack.getContainer().readNbt(nbt);
 		}
+	}
+
+	@Inject(method = "inventoryTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;inventoryTick(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/entity/Entity;IZ)V"))
+	private void tickContainer(World world, Entity entity, int slot, boolean selected, CallbackInfo ci) {
+
 	}
 
 	@Override

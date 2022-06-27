@@ -62,8 +62,13 @@ public class ComponentsImpl {
 	}
 
 	public static <T extends Component> ComponentType<T> register(Identifier id, Component.Factory<T> factory) {
-		var componentId = new ComponentType<>(id, factory);
-		return Registry.register(REGISTRY, id, componentId);
+		var componentType = new ComponentType<>(id, factory, false);
+		return Registry.register(REGISTRY, id, componentType);
+	}
+
+	public static <C extends Component> ComponentType<C> registerStatic(Identifier id, Component.Factory<C> factory) {
+		var componentType = new ComponentType<>(id, factory, true);
+		return Registry.register(REGISTRY, id, componentType);
 	}
 
 	public static List<ComponentType<?>> getInjections(ComponentProvider provider) {
