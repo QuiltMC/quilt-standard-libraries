@@ -178,7 +178,6 @@ public class ClientFabricRegistrySync {
 			}
 		}
 
-
 		ClientRegistrySync.rebuildBlockStates();
 		ClientRegistrySync.rebuildFluidStates();
 	}

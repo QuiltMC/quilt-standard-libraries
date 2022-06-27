@@ -27,7 +27,6 @@ import java.util.List;
 
 @Mixin(IdList.class)
 public class IdListMixin<T> implements SynchronizedIdList {
-
 	@Shadow
 	private int nextId;
 
