@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.api.components.IntegerComponent;
 import org.quiltmc.qsl.component.api.ComponentType;
-import org.quiltmc.qsl.component.api.container.SimpleComponentContainer;
+import org.quiltmc.qsl.component.impl.container.SimpleComponentContainer;
 
 import java.util.Arrays;
 import java.util.HashSet;

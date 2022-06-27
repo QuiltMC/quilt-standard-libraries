@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.api.container;
+package org.quiltmc.qsl.component.impl.container;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;

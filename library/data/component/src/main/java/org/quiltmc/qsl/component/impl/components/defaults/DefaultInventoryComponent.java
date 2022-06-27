@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.api.components.defaults;
+package org.quiltmc.qsl.component.impl.components.defaults;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
@@ -44,15 +44,13 @@ public class DefaultInventoryComponent implements InventoryComponent {
 	}
 
 	@Override
-	public void saveNeeded() {
-		if (this.saveOperation != null) {
-			this.saveOperation.run();
-		}
+	public void setSaveOperation(@Nullable Runnable runnable) {
+		this.saveOperation = runnable;
 	}
 
 	@Override
-	public void setSaveOperation(@Nullable Runnable runnable) {
-		this.saveOperation = runnable;
+	public @Nullable Runnable getSaveOperation() {
+		return this.saveOperation;
 	}
 
 	@Override
@@ -65,10 +63,5 @@ public class DefaultInventoryComponent implements InventoryComponent {
 	@Override
 	public int hashCode() {
 		return Objects.hash(stacks);
-	}
-
-	@Override
-	public void markDirty() {
-		this.saveNeeded();
 	}
 }

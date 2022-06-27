@@ -21,7 +21,7 @@ import net.minecraft.nbt.NbtInt;
 import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
-import org.quiltmc.qsl.component.api.components.defaults.DefaultIntegerComponent;
+import org.quiltmc.qsl.component.impl.components.defaults.DefaultIntegerComponent;
 
 public interface IntegerComponent extends NbtComponent<NbtInt> {
 	static ComponentType<IntegerComponent> create(int initialValue, Identifier id) {

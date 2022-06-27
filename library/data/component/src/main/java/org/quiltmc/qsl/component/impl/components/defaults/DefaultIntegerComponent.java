@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.api.components.defaults;
+package org.quiltmc.qsl.component.impl.components.defaults;
 
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.components.IntegerComponent;
@@ -57,14 +57,12 @@ public class DefaultIntegerComponent implements IntegerComponent {
 	}
 
 	@Override
-	public void saveNeeded() {
-		if (this.saveOperation != null) {
-			this.saveOperation.run();
-		}
+	public void setSaveOperation(@Nullable Runnable runnable) {
+		this.saveOperation = runnable;
 	}
 
 	@Override
-	public void setSaveOperation(@Nullable Runnable runnable) {
-		this.saveOperation = runnable;
+	public @Nullable Runnable getSaveOperation() {
+		return this.saveOperation;
 	}
 }

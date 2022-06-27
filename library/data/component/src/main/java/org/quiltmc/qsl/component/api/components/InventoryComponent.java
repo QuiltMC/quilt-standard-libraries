@@ -26,7 +26,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
-import org.quiltmc.qsl.component.api.components.defaults.DefaultInventoryComponent;
+import org.quiltmc.qsl.component.impl.components.defaults.DefaultInventoryComponent;
 
 import java.util.function.Supplier;
 
@@ -112,6 +112,11 @@ public interface InventoryComponent extends NbtComponent<NbtCompound>, Inventory
 	@Override
 	default void clear() {
 		this.getStacks().clear();
+		this.saveNeeded();
+	}
+
+	@Override
+	default void markDirty() {
 		this.saveNeeded();
 	}
 }

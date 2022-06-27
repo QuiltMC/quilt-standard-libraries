@@ -60,7 +60,13 @@ public interface NbtComponent<T extends NbtElement> extends Component {
 
 	byte nbtType();
 
-	void saveNeeded();
+	default void saveNeeded() {
+		if (this.getSaveOperation() != null) {
+			this.getSaveOperation().run();
+		}
+	}
 
 	void setSaveOperation(@Nullable Runnable runnable);
+
+	@Nullable Runnable getSaveOperation();
 }
