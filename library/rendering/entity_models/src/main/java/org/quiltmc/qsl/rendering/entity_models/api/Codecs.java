@@ -16,8 +16,8 @@ public class Codecs {
 			Codec.floatRange(0, Float.MAX_VALUE).fieldOf("timestamp").forGetter(AnimationKeyframe::timestamp),
 			Vec3f.CODEC.fieldOf("transformation").forGetter(AnimationKeyframe::transformation),
 			Codec.STRING.flatXmap(
-					s -> Interpolators.get(s).map(DataResult::success).orElseGet(() -> DataResult.error("Unknown interpolator: " + s)),
-					i -> Interpolators.get(i).map(DataResult::success).orElse(DataResult.error("Unknown interpolator"))
+					s -> AnimationUtils.getInterpolatorFromName(s).map(DataResult::success).orElseGet(() -> DataResult.error("Unknown interpolator: " + s)),
+					i -> AnimationUtils.getNameForInterpolator(i).map(DataResult::success).orElse(DataResult.error("Unknown interpolator"))
 			).fieldOf("interpolator").forGetter(AnimationKeyframe::interpolator)
 	).apply(instance, AnimationKeyframe::new));
 
