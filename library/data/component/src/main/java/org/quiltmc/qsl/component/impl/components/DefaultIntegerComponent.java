@@ -16,10 +16,13 @@
 
 package org.quiltmc.qsl.component.impl.components;
 
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtInt;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.components.IntegerComponent;
+import org.quiltmc.qsl.component.api.components.NbtComponent;
 
-public class DefaultIntegerComponent implements IntegerComponent {
+public class DefaultIntegerComponent implements IntegerComponent, NbtComponent<NbtInt> {
 
 	private int value;
 	@Nullable
@@ -36,24 +39,36 @@ public class DefaultIntegerComponent implements IntegerComponent {
 	@Override
 	public void increment() {
 		this.value++;
-		this.saveNeeded();
 	}
 
 	@Override
 	public void decrement() {
 		this.value--;
-		this.saveNeeded();
 	}
 
 	@Override
 	public void set(int value) {
 		this.value = value;
-		this.saveNeeded();
 	}
 
 	@Override
 	public int get() {
 		return this.value;
+	}
+
+	@Override
+	public byte nbtType() {
+		return NbtElement.INT_TYPE;
+	}
+
+	@Override
+	public void read(NbtInt nbt) {
+		this.value = nbt.intValue();
+	}
+
+	@Override
+	public NbtInt write() {
+		return NbtInt.of(this.value);
 	}
 
 	@Override

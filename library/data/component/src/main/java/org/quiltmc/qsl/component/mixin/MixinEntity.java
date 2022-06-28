@@ -19,12 +19,16 @@ package org.quiltmc.qsl.component.mixin;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.impl.container.LazifiedComponentContainer;
+import org.quiltmc.qsl.component.impl.sync.DefaultSyncPacketHeaders;
+import org.quiltmc.qsl.networking.api.PlayerLookup;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -40,6 +44,7 @@ public abstract class MixinEntity implements ComponentProvider {
 		this.qsl$container = LazifiedComponentContainer.builder(this)
 				.orElseThrow()
 				.ticking()
+				.syncing(DefaultSyncPacketHeaders.ENTITY, () -> PlayerLookup.tracking((Entity) (Object)this))
 				.build();
 	}
 

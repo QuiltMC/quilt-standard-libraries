@@ -16,7 +16,6 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.explosion.Explosion;
 import org.quiltmc.qsl.base.api.event.ListenerPhase;
 import org.quiltmc.qsl.component.api.Components;
-import org.quiltmc.qsl.component.api.components.IntegerComponent;
 import org.quiltmc.qsl.lifecycle.api.event.ServerWorldTickEvents;
 
 import java.util.Objects;
@@ -47,6 +46,7 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 		if (!stackInHand.isEmpty() && stackInHand.isOf(Items.BOOKSHELF)) {
 			stackInHand.expose(ComponentTestMod.ITEMSTACK_INT).ifPresent(integerComponent -> {
 				integerComponent.increment();
+				integerComponent.save();
 
 				if (integerComponent.get() >= 200) {
 					player.setStackInHand(Hand.MAIN_HAND, new ItemStack(Items.BOOK, 12));
@@ -64,13 +64,17 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 					var newStack = playerStack.copy();
 					newStack.setCount(1);
 					inventory.setStack(0, newStack);
+					inventory.save();
 					playerStack.decrement(1);
 				} else {
 					if (ItemStack.canCombine(stack, playerStack)) {
 						stack.increment(1);
 						playerStack.decrement(1);
-						stack.expose(ComponentTestMod.ITEMSTACK_INT).ifPresent(IntegerComponent::increment);
-						inventory.saveNeeded();
+						stack.expose(ComponentTestMod.ITEMSTACK_INT).ifPresent(defaultIntegerComponent -> {
+							defaultIntegerComponent.increment();
+							defaultIntegerComponent.save();
+						});
+						inventory.save();
 					}
 				}
 			}
@@ -84,6 +88,7 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 				.filter(Objects::nonNull)
 				.forEach(blockEntity -> blockEntity.expose(ComponentTestMod.CHEST_NUMBER).ifPresent(integerComponent -> {
 					integerComponent.decrement();
+					integerComponent.save();
 
 					if (integerComponent.get() <= 0) {
 						world.setBlockState(blockEntity.getPos(), Blocks.DIAMOND_BLOCK.getDefaultState());
@@ -96,6 +101,7 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 				.forEach(hostile -> hostile.expose(ComponentTestMod.HOSTILE_EXPLODE_TIME).ifPresent(explodeTime -> {
 					if (explodeTime.get() <= 200) {
 						explodeTime.increment();
+						explodeTime.save();
 					} else {
 						hostile.getWorld().createExplosion(
 								null,
@@ -112,6 +118,7 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 				.forEach(creeper -> Components.expose(ComponentTestMod.CREEPER_EXPLODE_TIME, creeper).ifPresent(explodeTime -> {
 					if (explodeTime.get() > 0) {
 						explodeTime.decrement();
+						explodeTime.save();
 					} else {
 						creeper.ignite();
 					}
@@ -130,6 +137,7 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 						entity.discard();
 					} else {
 						inventoryComponent.removeStack(0, 1);
+						inventoryComponent.save();
 					}
 				}));
 	}

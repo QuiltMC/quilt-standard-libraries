@@ -23,18 +23,13 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.ComponentContainer;
-import org.quiltmc.qsl.component.api.ComponentType;
-import org.quiltmc.qsl.component.api.Components;
-import org.quiltmc.qsl.component.api.components.IntegerComponent;
 import org.quiltmc.qsl.component.api.components.InventoryComponent;
-import org.quiltmc.qsl.component.impl.components.DefaultIntegerComponent;
 import org.quiltmc.qsl.component.impl.container.SimpleComponentContainer;
 
 import java.util.Arrays;
@@ -43,14 +38,14 @@ import java.util.List;
 import java.util.Set;
 
 public class TestBlockEntity extends BlockEntity {
-	public static final ComponentType<IntegerComponent> TEST_BE_INT = Components.register(
-			new Identifier(ComponentTestMod.MODID, "test_be_int"),
-			DefaultIntegerComponent::new
-	);
+//	public static final ComponentType<IntegerComponent> TEST_BE_INT = Components.register(
+//			new Identifier(ComponentTestMod.MODID, "test_be_int"),
+//			DefaultIntegerComponent::new
+//	); Crashes due to our freezing the registry!
 
 	private final ComponentContainer container = SimpleComponentContainer.builder()
 			.setSaveOperation(this::markDirty)
-			.add(TEST_BE_INT, ComponentTestMod.CHUNK_INVENTORY)
+			.add(ComponentTestMod.TEST_BE_INT, ComponentTestMod.CHUNK_INVENTORY)
 			.build();
 
 	public TestBlockEntity(BlockPos blockPos, BlockState blockState) {
@@ -63,13 +58,14 @@ public class TestBlockEntity extends BlockEntity {
 		}
 
 		if (blockEntity.expose(ComponentTestMod.CHUNK_INVENTORY).map(InventoryComponent::isEmpty).orElse(true)) {
-			blockEntity.expose(TEST_BE_INT).ifPresent(integerComponent -> {
+			blockEntity.expose(ComponentTestMod.TEST_BE_INT).ifPresent(integerComponent -> {
 				if (integerComponent.get() % 40 == 0) {
 					HashSet<BlockPos> set = new HashSet<>(List.of(pos));
 					expand(pos, pos, world, set);
 				}
 
 				integerComponent.increment();
+				integerComponent.save();
 			});
 		}
 	}
@@ -99,12 +95,6 @@ public class TestBlockEntity extends BlockEntity {
 		this.container.readNbt(nbt);
 	}
 
-	@Override
-	protected void writeNbt(NbtCompound nbt) {
-		super.writeNbt(nbt);
-		this.container.writeNbt(nbt);
-	}
-
 	@Nullable
 	@Override
 	public Packet<ClientPlayPacketListener> toUpdatePacket() {
@@ -114,5 +104,11 @@ public class TestBlockEntity extends BlockEntity {
 	@Override
 	public NbtCompound toInitialChunkDataNbt() {
 		return this.toNbt();
+	}
+
+	@Override
+	protected void writeNbt(NbtCompound nbt) {
+		super.writeNbt(nbt);
+		this.container.writeNbt(nbt);
 	}
 }

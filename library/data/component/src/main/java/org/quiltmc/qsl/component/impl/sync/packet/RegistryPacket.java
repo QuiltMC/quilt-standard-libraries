@@ -1,0 +1,37 @@
+package org.quiltmc.qsl.component.impl.sync.packet;
+
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.network.ServerLoginNetworkHandler;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
+import org.jetbrains.annotations.NotNull;
+import org.quiltmc.qsl.component.impl.ComponentsImpl;
+import org.quiltmc.qsl.networking.api.PacketByteBufs;
+
+public final class RegistryPacket {
+	@NotNull
+	public static <T> PacketByteBuf createRegistryPacket(@NotNull Registry<T> registry) {
+		var buf = PacketByteBufs.create();
+		buf.writeInt(registry.size());
+		registry.forEach(t -> {
+			var id = registry.getId(t);
+			var rawId = registry.getRawId(t);
+
+			buf.writeIdentifier(id).writeInt(rawId);
+		});
+
+		return buf;
+	}
+
+	public static void handleRegistryResponse(@NotNull PacketByteBuf buf, ServerLoginNetworkHandler handler, String msg) {
+		String retString = buf.readString();
+
+		if (!retString.equals("Ok")) {
+			Identifier id = Identifier.tryParse(retString);
+
+			handler.disconnect(Text.literal(msg.formatted(id)));
+			ComponentsImpl.getLogger().warn(msg.formatted(id));
+		}
+	}
+}

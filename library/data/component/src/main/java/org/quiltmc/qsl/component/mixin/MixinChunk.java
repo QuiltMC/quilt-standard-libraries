@@ -27,6 +27,8 @@ import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.impl.container.LazifiedComponentContainer;
+import org.quiltmc.qsl.component.impl.sync.DefaultSyncPacketHeaders;
+import org.quiltmc.qsl.networking.api.PlayerLookup;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -43,6 +45,7 @@ public abstract class MixinChunk implements ComponentProvider {
 		this.qsl$container = LazifiedComponentContainer.builder(this)
 				.orElseThrow()
 				.setSaveOperation(() -> this.setNeedsSaving(true))
+//				.syncing(DefaultSyncPacketHeaders.CHUNK, () -> ) TODO
 				.build();
 	}
 

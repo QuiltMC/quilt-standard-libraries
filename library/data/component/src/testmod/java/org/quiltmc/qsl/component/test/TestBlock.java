@@ -70,12 +70,13 @@ public class TestBlock extends Block implements BlockEntityProvider {
 					var copied = handStack.copy();
 					copied.setCount(1);
 					inventoryComponent.setStack(0, copied);
+					inventoryComponent.save();
 					ret.set(ActionResult.SUCCESS);
 				} else {
 					if (ItemStack.canCombine(stack, handStack)) {
 						stack.increment(1);
 						handStack.decrement(1);
-						inventoryComponent.saveNeeded();
+						inventoryComponent.save();
 						ret.set(ActionResult.SUCCESS);
 					}
 				}

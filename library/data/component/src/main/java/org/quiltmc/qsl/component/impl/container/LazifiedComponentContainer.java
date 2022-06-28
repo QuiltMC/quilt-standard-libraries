@@ -17,6 +17,8 @@
 package org.quiltmc.qsl.component.impl.container;
 
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,14 +27,20 @@ import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.components.NbtComponent;
+import org.quiltmc.qsl.component.api.components.SyncedComponent;
 import org.quiltmc.qsl.component.api.components.TickingComponent;
 import org.quiltmc.qsl.component.api.event.ComponentEvents;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
+import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
+import org.quiltmc.qsl.component.impl.sync.packet.ComponentSyncPacket;
+import org.quiltmc.qsl.component.impl.sync.packet.PacketIds;
 import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 import org.quiltmc.qsl.component.impl.util.Lazy;
 import org.quiltmc.qsl.component.impl.util.StringConstants;
+import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 public class LazifiedComponentContainer implements ComponentContainer {
 
@@ -42,45 +50,24 @@ public class LazifiedComponentContainer implements ComponentContainer {
 	@Nullable
 	private final Runnable saveOperation;
 	private final boolean ticking;
+	private final boolean syncing;
+	private final SyncContext syncContext;
+	private final Queue<Identifier> pendingSync;
 
-	protected LazifiedComponentContainer(@NotNull ComponentProvider provider, @Nullable Runnable saveOperation, boolean ticking) {
+	protected LazifiedComponentContainer(
+			@NotNull ComponentProvider provider,
+			@Nullable Runnable saveOperation,
+			boolean ticking,
+			@Nullable SyncContext syncContext
+	) {
 		this.saveOperation = saveOperation;
 		this.ticking = ticking;
+		this.syncing = syncContext != null;
+		this.syncContext = syncContext;
 		this.nbtComponents = new ArrayList<>();
 		this.tickingComponents = new ArrayList<>();
+		this.pendingSync = new ArrayDeque<>();
 		this.components = this.initializeComponents(provider);
-	}
-
-	private Map<Identifier, Lazy<Component>> initializeComponents(ComponentProvider provider) {
-		var map = new HashMap<Identifier, Lazy<Component>>();
-		ComponentsImpl.getInjections(provider).forEach(type -> map.put(type.id(), this.createLazy(type)));
-		ComponentEvents.DYNAMIC_INJECT.invoker().onInject(provider, type -> map.put(type.id(), this.createLazy(type)));
-		return map;
-	}
-
-	private Lazy<Component> createLazy(ComponentType<?> type) {
-		if (type.isStatic()) {
-			Component singleton = type.create();
-			if (this.ticking && singleton instanceof TickingComponent) {
-				this.tickingComponents.add(type.id());
-			}
-
-			return Lazy.filled(singleton);
-		}
-
-		return Lazy.of(() -> {
-			Component component = type.create();
-			if (component instanceof NbtComponent<?> nbtComponent) {
-				this.nbtComponents.add(type.id());
-				nbtComponent.setSaveOperation(this.saveOperation);
-			}
-
-			if (this.ticking && component instanceof TickingComponent) {
-				this.tickingComponents.add(type.id());
-			}
-
-			return component;
-		});
 	}
 
 	public static <T> Optional<LazifiedComponentContainer.Builder> builder(T obj) {
@@ -91,32 +78,18 @@ public class LazifiedComponentContainer implements ComponentContainer {
 		return Optional.of(new Builder(provider));
 	}
 
-	public static class Builder {
+	public static void move(@NotNull LazifiedComponentContainer from, @NotNull LazifiedComponentContainer into) {
+		from.components.forEach((id, componentLazy) -> componentLazy.ifPresent(component -> {
+			into.components.put(id, componentLazy); // Directly overriding our value.
 
-		private final ComponentProvider provider;
-		@Nullable
-		private Runnable saveOperation;
-		private boolean ticking;
+			if (component instanceof NbtComponent<?> nbtComponent) {
+				into.nbtComponents.add(id);
+				nbtComponent.setSaveOperation(into.saveOperation);
+			}
+		}));
 
-		private Builder(ComponentProvider provider) {
-			this.provider = provider;
-			this.ticking = false;
-			this.saveOperation = null;
-		}
-
-		public Builder setSaveOperation(Runnable runnable) {
-			this.saveOperation = runnable;
-			return this;
-		}
-
-		public Builder ticking() {
-			this.ticking = true;
-			return this;
-		}
-
-		public LazifiedComponentContainer build() {
-			return new LazifiedComponentContainer(this.provider, this.saveOperation, this.ticking);
-		}
+		from.components.clear();
+		from.nbtComponents.clear();
 	}
 
 	@Override
@@ -161,26 +134,103 @@ public class LazifiedComponentContainer implements ComponentContainer {
 				.map(Optional::orElseThrow)
 				.map(it -> ((TickingComponent) it))
 				.forEach(tickingComponent -> tickingComponent.tick(provider));
+		// Sync any queued components
+		this.sync(provider);
 	}
 
 	@Override
-	public void moveComponents(ComponentContainer other) {
-		if (other instanceof LazifiedComponentContainer otherContainer) {
-			otherContainer.components.forEach((id, componentLazy) -> componentLazy.ifPresent(component -> {
-				this.components.put(id, componentLazy); // Directly overriding our value.
+	public void receiveSyncPacket(@NotNull Identifier id, @NotNull PacketByteBuf buf) {
+		this.expose(id).map(it -> ((SyncedComponent) it)).ifPresent(syncedComponent -> syncedComponent.readFromBuf(buf));
+	}
 
-				if (component instanceof NbtComponent<?> nbtComponent) {
-					this.nbtComponents.add(id);
-					nbtComponent.setSaveOperation(this.saveOperation);
-				}
-			}));
+	@Override
+	public void sync(@NotNull ComponentProvider provider) {
+		var map = new HashMap<Identifier, SyncedComponent>();
 
-			otherContainer.components.clear();
-			otherContainer.nbtComponents.clear();
-		} else {
-			throw ErrorUtil.illegalArgument("Cannot move components from a non-lazified container to one that is!").get();
+		while (!this.pendingSync.isEmpty()) {
+			var id = this.pendingSync.poll();
+			map.put(id, (SyncedComponent) this.components.get(id).get());
+		}
+
+		if (!map.isEmpty()) {
+			var packet = ComponentSyncPacket.create(this.syncContext.header(), provider, map);
+
+			this.syncContext.playerGenerator().get().forEach(serverPlayer ->
+					ServerPlayNetworking.send(serverPlayer, PacketIds.SYNC, packet)
+			);
 		}
 	}
 
+	private Map<Identifier, Lazy<Component>> initializeComponents(ComponentProvider provider) {
+		var map = new HashMap<Identifier, Lazy<Component>>();
+		ComponentsImpl.getInjections(provider).forEach(type -> map.put(type.id(), this.createLazy(type)));
+		ComponentEvents.DYNAMIC_INJECT.invoker().onInject(provider, type -> map.put(type.id(), this.createLazy(type)));
+		return map;
+	}
 
+	private Lazy<Component> createLazy(ComponentType<?> type) {
+		if (type.isStatic()) {
+			Component singleton = type.create();
+			if (this.ticking && singleton instanceof TickingComponent) {
+				this.tickingComponents.add(type.id());
+			}
+
+			return Lazy.filled(singleton);
+		}
+
+		return Lazy.of(() -> {
+			Component component = type.create();
+			if (component instanceof NbtComponent<?> nbtComponent) {
+				this.nbtComponents.add(type.id());
+				nbtComponent.setSaveOperation(this.saveOperation);
+			}
+
+			if (this.ticking && component instanceof TickingComponent) {
+				this.tickingComponents.add(type.id());
+			}
+
+			if (this.syncing && component instanceof SyncedComponent syncedComponent) {
+				syncedComponent.setSyncOperation(() -> this.pendingSync.add(type.id()));
+			}
+
+			return component;
+		});
+	}
+
+	public static class Builder {
+
+		private final ComponentProvider provider;
+		@Nullable
+		private Runnable saveOperation;
+		private boolean ticking;
+		private SyncContext syncContext;
+
+		private Builder(ComponentProvider provider) {
+			this.provider = provider;
+			this.ticking = false;
+			this.saveOperation = null;
+		}
+
+		public Builder setSaveOperation(Runnable runnable) {
+			this.saveOperation = runnable;
+			return this;
+		}
+
+		public Builder ticking() {
+			this.ticking = true;
+			return this;
+		}
+
+		public Builder syncing(@NotNull SyncPacketHeader<?> header, Supplier<Collection<ServerPlayerEntity>> playerGenerator) {
+			this.syncContext = new SyncContext(header, playerGenerator);
+			return this;
+		}
+
+		public LazifiedComponentContainer build() {
+			return new LazifiedComponentContainer(this.provider, this.saveOperation, this.ticking, this.syncContext);
+		}
+	}
+
+	public record SyncContext(SyncPacketHeader<?> header, Supplier<Collection<ServerPlayerEntity>> playerGenerator) {
+	}
 }

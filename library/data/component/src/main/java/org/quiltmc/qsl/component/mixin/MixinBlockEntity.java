@@ -19,12 +19,15 @@ package org.quiltmc.qsl.component.mixin;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.impl.container.LazifiedComponentContainer;
+import org.quiltmc.qsl.component.impl.sync.DefaultSyncPacketHeaders;
+import org.quiltmc.qsl.networking.api.PlayerLookup;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -48,6 +51,7 @@ public abstract class MixinBlockEntity implements ComponentProvider {
 				.orElseThrow()
 				.setSaveOperation(this::markDirty)
 				.ticking()
+				.syncing(DefaultSyncPacketHeaders.BLOCK_ENTITY, () -> PlayerLookup.tracking((BlockEntity) (Object)this))
 				.build();
 	}
 

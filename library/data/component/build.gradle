@@ -12,12 +12,23 @@ qslModule {
 		core {
 			api("qsl_base")
 			api("lifecycle_events")
+			api("networking")
 		}
 	}
 
 	entrypoints {
 		events {
-			values = ["org.quiltmc.qsl.component.impl.event.ServerTickEventListener"]
+			values = [
+				"org.quiltmc.qsl.component.impl.event.ServerTickEventListener"
+			]
+		}
+
+		init {
+			values = ["org.quiltmc.qsl.component.impl.CommonInitializer"]
+		}
+
+		client_init {
+			values = ["org.quiltmc.qsl.component.impl.client.ClientInitializer"]
 		}
 	}
 

@@ -36,6 +36,8 @@ import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.impl.container.LazifiedComponentContainer;
+import org.quiltmc.qsl.component.impl.sync.DefaultSyncPacketHeaders;
+import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -60,6 +62,7 @@ public abstract class MixinLevelProperties implements ServerWorldProperties, Sav
 		this.qsl$container = LazifiedComponentContainer.builder(this)
 				.orElseThrow()
 				.ticking()
+//				.syncing(DefaultSyncPacketHeaders.LEVEL) TODO
 				.build();
 	}
 

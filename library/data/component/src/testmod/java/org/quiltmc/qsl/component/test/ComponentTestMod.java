@@ -53,15 +53,15 @@ public class ComponentTestMod implements ModInitializer {
 			new Identifier(MODID, "cow_inventory"),
 			() -> new DefaultInventoryComponent(() -> DefaultedList.ofSize(1, new ItemStack(Items.COBBLESTONE, 64)))
 	);
-	public static final ComponentType<IntegerComponent> CREEPER_EXPLODE_TIME = Components.register(
+	public static final ComponentType<DefaultIntegerComponent> CREEPER_EXPLODE_TIME = Components.register(
 			new Identifier(MODID, "creeper_explode_time"),
 			() -> new DefaultIntegerComponent(200)
 	);
-	public static final ComponentType<IntegerComponent> HOSTILE_EXPLODE_TIME = Components.register(
+	public static final ComponentType<DefaultIntegerComponent> HOSTILE_EXPLODE_TIME = Components.register(
 			new Identifier(MODID, "hostile_explode_time"),
 			DefaultIntegerComponent::new
 	);
-	public static final ComponentType<IntegerComponent> CHEST_NUMBER = Components.register(
+	public static final ComponentType<DefaultIntegerComponent> CHEST_NUMBER = Components.register(
 			new Identifier(MODID, "chest_number"),
 			() -> new DefaultIntegerComponent(200)
 	);
@@ -69,7 +69,7 @@ public class ComponentTestMod implements ModInitializer {
 			new Identifier(MODID, "chunk_inventory"),
 			() -> new DefaultInventoryComponent(1)
 	);
-	public static final ComponentType<FloatComponent> SAVE_FLOAT = Components.register(
+	public static final ComponentType<DefaultFloatComponent> SAVE_FLOAT = Components.register(
 			new Identifier(MODID, "save_float"),
 			DefaultFloatComponent::new
 	);
@@ -77,12 +77,15 @@ public class ComponentTestMod implements ModInitializer {
 			new Identifier(MODID, "level_tick"),
 			provider -> {
 				if (provider instanceof LevelProperties properties) {
-					properties.expose(SAVE_FLOAT).ifPresent(floatComponent -> floatComponent.set(floatComponent.get() + 0.5f));
+					properties.expose(SAVE_FLOAT).ifPresent(floatComponent -> {
+						floatComponent.set(floatComponent.get() + 0.5f);
+						floatComponent.save();
+					});
 				}
 			}
 	);
 	public static final Block TEST_BLOCK = new TestBlock(AbstractBlock.Settings.copy(Blocks.STONE));
-	public static final ComponentType<IntegerComponent> ITEMSTACK_INT = Components.register(
+	public static final ComponentType<DefaultIntegerComponent> ITEMSTACK_INT = Components.register(
 			new Identifier(MODID, "itemstack_int"),
 			DefaultIntegerComponent::new
 	);
@@ -96,7 +99,7 @@ public class ComponentTestMod implements ModInitializer {
 			}
 	);
 	public static final ComponentType<TickingComponent> PLAYER_TICK = Components.registerTicking(
-			new Identifier(MODID, "warden_tick"),
+			new Identifier(MODID, "player_tick"),
 			provider -> {
 				if (provider instanceof ServerPlayerEntity player) {
 					ItemStack stackInHand = player.getStackInHand(Hand.MAIN_HAND);
@@ -112,6 +115,10 @@ public class ComponentTestMod implements ModInitializer {
 					}
 				}
 			}
+	);
+	public static final ComponentType<DefaultIntegerComponent> TEST_BE_INT = Components.register(
+			new Identifier(ComponentTestMod.MODID, "test_be_int"),
+			DefaultIntegerComponent::new
 	);
 
 	@Override

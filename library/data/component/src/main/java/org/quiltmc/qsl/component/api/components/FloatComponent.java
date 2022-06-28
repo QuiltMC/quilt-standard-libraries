@@ -21,22 +21,7 @@ import net.minecraft.nbt.NbtFloat;
 import org.quiltmc.qsl.component.api.Component;
 
 
-public interface FloatComponent extends Component, NbtComponent<NbtFloat> {
-
-	@Override
-	default byte nbtType() {
-		return NbtElement.FLOAT_TYPE;
-	}
-
-	@Override
-	default void read(NbtFloat nbt) {
-		this.set(nbt.floatValue());
-	}
-
-	@Override
-	default NbtFloat write() {
-		return NbtFloat.of(this.get());
-	}
+public interface FloatComponent extends Component {
 
 	float get();
 

@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.component.api;
 
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,11 +26,13 @@ import java.util.Optional;
 public interface ComponentContainer {
 	Optional<Component> expose(Identifier id);
 
-	void moveComponents(ComponentContainer other);
-
 	void writeNbt(@NotNull NbtCompound providerRootNbt);
 
 	void readNbt(@NotNull NbtCompound providerRootNbt);
 
 	void tick(@NotNull ComponentProvider provider);
+
+	void receiveSyncPacket(@NotNull Identifier id, @NotNull PacketByteBuf buf);
+
+	void sync(@NotNull ComponentProvider provider);
 }

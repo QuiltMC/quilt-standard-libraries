@@ -23,18 +23,24 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentInjectionPredicate;
 import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.api.ComponentType;
+import org.quiltmc.qsl.component.impl.sync.ComponentHeaderRegistry;
 import org.quiltmc.qsl.component.impl.util.ErrorUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @ApiStatus.Internal
 public class ComponentsImpl {
-	private static final Map<ComponentInjectionPredicate, Set<Identifier>> INJECTION_REGISTRY = new HashMap<>();
+	private static final Logger LOGGER = LoggerFactory.getLogger("QSL/Components");
+	public static final String MODID = "quilt_component";
+    private static final Map<ComponentInjectionPredicate, Set<Identifier>> INJECTION_REGISTRY = new HashMap<>();
 	private static final RegistryKey<Registry<ComponentType<?>>> REGISTRY_KEY =
 			RegistryKey.ofRegistry(new Identifier("quilt", "components"));
 	public static final Registry<ComponentType<?>> REGISTRY =
@@ -90,5 +96,15 @@ public class ComponentsImpl {
 		return REGISTRY.getOrEmpty(id).orElseThrow(
 				ErrorUtil.illegalArgument("Cannot access element with id %s in the component registry!".formatted(id))
 		);
+	}
+
+	@NotNull
+	public static Logger getLogger() {
+		return LOGGER;
+	}
+
+	public static void freezeRegistries() {
+		REGISTRY.freeze();
+		ComponentHeaderRegistry.HEADERS.freeze();
 	}
 }
