@@ -23,7 +23,7 @@ import org.quiltmc.loader.api.config.QuiltConfig;
 
 @ApiStatus.Internal
 public class RegistryConfig extends WrappedConfig {
-	public static final RegistryConfig INSTANCE = QuiltConfig.create("quilt", "registry", RegistryConfig.class);
+	public static final RegistryConfig INSTANCE = QuiltConfig.create("quilt/qsl", "registry", RegistryConfig.class);
 
 	public final RegistrySync registry_sync = new RegistrySync();
 
