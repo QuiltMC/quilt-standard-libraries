@@ -18,6 +18,7 @@ package org.quiltmc.qsl.component.api;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import org.quiltmc.qsl.component.api.components.TickingComponent;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.predicates.ClassInjectionPredicate;
@@ -29,6 +30,8 @@ import java.util.Optional;
 import java.util.Set;
 
 public final class Components {
+	public static final RegistryKey<Registry<ComponentType<?>>> REGISTRY_KEY = ComponentsImpl.REGISTRY_KEY;
+
 	public static final Registry<ComponentType<?>> REGISTRY = ComponentsImpl.REGISTRY;
 
 	public static <C extends Component> void inject(ComponentInjectionPredicate predicate, ComponentType<C> component) {
