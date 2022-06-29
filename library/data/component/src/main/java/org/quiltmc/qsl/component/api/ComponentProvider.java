@@ -38,7 +38,7 @@ import java.util.Optional;
 })
 public interface ComponentProvider {
 	@NotNull
-	ComponentContainer getContainer();
+	ComponentContainer getComponentContainer();
 
 	default <T, U, C extends FunctionComponent<T, U>> Optional<U> call(ComponentType<C> type, T t) {
 		return this.expose(type).map(func -> func.call(this, t));
@@ -48,7 +48,7 @@ public interface ComponentProvider {
 		return Components.expose(id, this);
 	}
 
-	default void sync() {
-		this.getContainer().sync(this);
+	default void syncComponents() {
+		this.getComponentContainer().sync(this);
 	}
 }

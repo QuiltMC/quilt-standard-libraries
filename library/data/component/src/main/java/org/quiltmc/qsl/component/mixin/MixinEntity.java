@@ -58,11 +58,11 @@ public abstract class MixinEntity implements ComponentProvider {
 
 	@Inject(method = "tick", at = @At("TAIL"))
 	private void tickContainer(CallbackInfo ci) {
-		this.getContainer().tick(this);
+		this.getComponentContainer().tick(this);
 	}
 
 	@Override
-	public @NotNull ComponentContainer getContainer() {
+	public @NotNull ComponentContainer getComponentContainer() {
 		return this.qsl$container;
 	}
 }

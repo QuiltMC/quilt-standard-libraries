@@ -72,7 +72,7 @@ public abstract class MixinBlockEntity implements ComponentProvider {
 	}
 
 	@Override
-	public @NotNull ComponentContainer getContainer() {
+	public @NotNull ComponentContainer getComponentContainer() {
 		return this.qsl$container;
 	}
 }

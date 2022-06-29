@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.component.impl.sync.packet;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
@@ -55,7 +54,7 @@ public class SyncPacket {
 			for (int i = 0; i < size; i++) {
 				NetworkCodec.COMPONENT_TYPE.decode(buf)
 						.map(Components.REGISTRY::getId)
-						.ifPresent(id -> provider.getContainer().receiveSyncPacket(id, buf));
+						.ifPresent(id -> provider.getComponentContainer().receiveSyncPacket(id, buf));
 			}
 		});
 	}

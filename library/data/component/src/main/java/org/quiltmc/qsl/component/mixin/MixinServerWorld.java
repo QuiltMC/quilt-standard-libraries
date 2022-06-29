@@ -39,6 +39,6 @@ public abstract class MixinServerWorld extends World {
 
 	@Inject(method = "tickChunk", at = @At("TAIL"))
 	private void tickContainer(WorldChunk chunk, int randomTickSpeed, CallbackInfo ci) {
-		chunk.getContainer().tick(chunk);
+		chunk.getComponentContainer().tick(chunk);
 	}
 }

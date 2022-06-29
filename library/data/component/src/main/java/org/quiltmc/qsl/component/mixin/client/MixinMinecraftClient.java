@@ -32,7 +32,7 @@ public class MixinMinecraftClient implements ComponentProvider {
 	private ComponentContainer qsl$container;
 
 	@Override
-	public @NotNull ComponentContainer getContainer() {
+	public @NotNull ComponentContainer getComponentContainer() {
 		return this.qsl$container;
 	}
 

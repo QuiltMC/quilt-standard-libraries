@@ -38,6 +38,6 @@ public abstract class MixinThreadedChunkStorage {
 			)
 	)
 	private void syncChunkContainer(ServerPlayerEntity player, MutableObject<ChunkDataS2CPacket> mutableObject, WorldChunk chunk, CallbackInfo ci) {
-		chunk.sync();
+		chunk.syncComponents();
 	}
 }

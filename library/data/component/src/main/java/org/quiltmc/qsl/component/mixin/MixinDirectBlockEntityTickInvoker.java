@@ -37,6 +37,6 @@ public class MixinDirectBlockEntityTickInvoker<T extends BlockEntity> {
 	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/entity/BlockEntityTicker;tick(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/block/entity/BlockEntity;)V"))
 	private void tickContainer(BlockEntityTicker<T> instance, World world, BlockPos blockPos, BlockState blockState, T t) {
 		instance.tick(world, blockPos, blockState, t);
-		this.blockEntity.getContainer().tick(this.blockEntity);
+		this.blockEntity.getComponentContainer().tick(this.blockEntity);
 	}
 }

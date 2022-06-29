@@ -35,14 +35,14 @@ public class MixinChunkSerializer {
 	private static void deserializeComponents(ServerWorld world, PointOfInterestStorage poiStorage, ChunkPos pos, NbtCompound nbt, CallbackInfoReturnable<ProtoChunk> cir) {
 		var ret = cir.getReturnValue();
 		var target = ret instanceof ReadOnlyChunk readOnly ? readOnly.getWrappedChunk() : ret;
-		target.getContainer().readNbt(nbt);
+		target.getComponentContainer().readNbt(nbt);
 		cir.setReturnValue(ret);
 	}
 
 	@Inject(method = "serialize", at = @At("RETURN"), cancellable = true)
 	private static void serializeComponents(ServerWorld world, Chunk chunk, CallbackInfoReturnable<NbtCompound> cir) {
 		var ret = cir.getReturnValue();
-		chunk.getContainer().writeNbt(ret);
+		chunk.getComponentContainer().writeNbt(ret);
 		cir.setReturnValue(ret);
 	}
 }

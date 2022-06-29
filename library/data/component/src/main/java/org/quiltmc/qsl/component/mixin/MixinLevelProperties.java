@@ -51,7 +51,7 @@ public abstract class MixinLevelProperties implements ServerWorldProperties, Sav
 
 	@Inject(method = "readProperties", at = @At("RETURN"))
 	private static void readComponentData(Dynamic<NbtElement> dynamic, DataFixer dataFixer, int dataVersion, @Nullable NbtCompound playerData, LevelInfo levelInfo, SaveVersionInfo saveVersionInfo, GeneratorOptions generatorOptions, Lifecycle lifecycle, CallbackInfoReturnable<LevelProperties> cir) {
-		cir.getReturnValue().getContainer().readNbt((NbtCompound) dynamic.getValue());
+		cir.getReturnValue().getComponentContainer().readNbt((NbtCompound) dynamic.getValue());
 	}
 
 	@Inject(method = "<init>(Lcom/mojang/datafixers/DataFixer;ILnet/minecraft/nbt/NbtCompound;ZIIIFJJIIIZIZZZLnet/minecraft/world/border/WorldBorder$Properties;IILjava/util/UUID;Ljava/util/Set;Lnet/minecraft/world/timer/Timer;Lnet/minecraft/nbt/NbtCompound;Lnet/minecraft/nbt/NbtCompound;Lnet/minecraft/world/level/LevelInfo;Lnet/minecraft/world/gen/GeneratorOptions;Lcom/mojang/serialization/Lifecycle;)V", at = @At("TAIL"))
@@ -69,7 +69,7 @@ public abstract class MixinLevelProperties implements ServerWorldProperties, Sav
 	}
 
 	@Override
-	public @NotNull ComponentContainer getContainer() {
+	public @NotNull ComponentContainer getComponentContainer() {
 		return this.qsl$container;
 	}
 }

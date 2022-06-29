@@ -77,7 +77,7 @@ public abstract class MixinItemStack implements ComponentProvider { // TODO: Mak
 		ItemStack copiedStack = cir.getReturnValue();
 		NbtCompound nbt = copiedStack.getNbt();
 		if (nbt != null) {
-			copiedStack.getContainer().readNbt(nbt);
+			copiedStack.getComponentContainer().readNbt(nbt);
 		}
 	}
 
@@ -87,7 +87,7 @@ public abstract class MixinItemStack implements ComponentProvider { // TODO: Mak
 	}
 
 	@Override
-	public @NotNull ComponentContainer getContainer() {
+	public @NotNull ComponentContainer getComponentContainer() {
 		return this.qsl$container;
 	}
 }

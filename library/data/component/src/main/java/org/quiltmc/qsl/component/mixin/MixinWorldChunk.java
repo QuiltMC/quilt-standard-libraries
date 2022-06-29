@@ -41,8 +41,8 @@ public abstract class MixinWorldChunk extends Chunk implements ComponentProvider
 	private void copyComponentData(ServerWorld serverWorld, ProtoChunk protoChunk, WorldChunk.PostLoadProcessor postLoadProcessor, CallbackInfo ci) {
 		var target = protoChunk instanceof ReadOnlyChunk readOnly ? readOnly.getWrappedChunk() : protoChunk;
 		LazyComponentContainer.move(
-				(LazyComponentContainer) target.getContainer(),
-				(LazyComponentContainer) this.getContainer()
+				(LazyComponentContainer) target.getComponentContainer(),
+				(LazyComponentContainer) this.getComponentContainer()
 		);
 	}
 }

@@ -31,7 +31,7 @@ public class ServerTickEventListener implements ServerTickEvents.End {
 	public void endServerTick(MinecraftServer server) {
 		SaveProperties saveProperties = server.getSaveProperties();
 		if (saveProperties instanceof LevelProperties levelProperties) {
-			levelProperties.getContainer().tick(levelProperties);
+			levelProperties.getComponentContainer().tick(levelProperties);
 		}
 	}
 }

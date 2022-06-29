@@ -44,7 +44,7 @@ public abstract class MixinChunk implements ComponentProvider {
 	public abstract void setNeedsSaving(boolean needsSaving);
 
 	@Override
-	public @NotNull ComponentContainer getContainer() {
+	public @NotNull ComponentContainer getComponentContainer() {
 		return this.qsl$container;
 	}
 
