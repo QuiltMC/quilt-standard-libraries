@@ -22,13 +22,14 @@ import net.minecraft.world.HeightLimitView;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.UpgradeData;
+import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.gen.chunk.BlendingData;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.impl.container.LazifiedComponentContainer;
-import org.quiltmc.qsl.component.impl.sync.DefaultSyncPacketHeaders;
-import org.quiltmc.qsl.networking.api.PlayerLookup;
+import org.quiltmc.qsl.component.impl.sync.SyncPlayerList;
+import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -40,20 +41,25 @@ public abstract class MixinChunk implements ComponentProvider {
 
 	private ComponentContainer qsl$container;
 
-	@Inject(method = "<init>", at = @At("RETURN"))
-	private void onInit(ChunkPos chunkPos, UpgradeData upgradeData, HeightLimitView heightLimitView, Registry<?> registry, long l, ChunkSection[] chunkSections, BlendingData blendingData, CallbackInfo ci) {
-		this.qsl$container = LazifiedComponentContainer.builder(this)
-				.orElseThrow()
-				.setSaveOperation(() -> this.setNeedsSaving(true))
-//				.syncing(DefaultSyncPacketHeaders.CHUNK, () -> ) TODO
-				.build();
-	}
-
 	@Shadow
 	public abstract void setNeedsSaving(boolean needsSaving);
 
 	@Override
 	public @NotNull ComponentContainer getContainer() {
 		return this.qsl$container;
+	}
+
+	@Inject(method = "<init>", at = @At("RETURN"))
+	private void onInit(ChunkPos chunkPos, UpgradeData upgradeData, HeightLimitView heightLimitView, Registry<?> registry, long l, ChunkSection[] chunkSections, BlendingData blendingData, CallbackInfo ci) {
+		LazifiedComponentContainer.Builder builder = LazifiedComponentContainer.builder(this)
+				.orElseThrow()
+				.setSaveOperation(() -> this.setNeedsSaving(true));
+
+		//noinspection ConstantConditions
+		if ((Chunk) (Object) this instanceof WorldChunk worldChunk) {
+			builder.syncing(SyncPacketHeader.CHUNK, () -> SyncPlayerList.create(worldChunk)).ticking();
+		}
+
+		this.qsl$container = builder.build();
 	}
 }

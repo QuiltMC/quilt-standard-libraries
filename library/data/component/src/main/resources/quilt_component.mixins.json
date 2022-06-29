@@ -10,9 +10,14 @@
     "MixinEntity",
     "MixinItemStack",
     "MixinLevelProperties",
+    "MixinServerWorld",
+    "MixinThreadedChunkStorage",
     "MixinWorldChunk"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "client": [
+    "client.MixinMinecraftClient"
+  ]
 }

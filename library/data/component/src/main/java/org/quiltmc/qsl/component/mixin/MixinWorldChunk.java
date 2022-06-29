@@ -24,6 +24,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.*;
 import net.minecraft.world.gen.chunk.BlendingData;
 import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.impl.container.LazifiedComponentContainer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,7 +32,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(WorldChunk.class)
-public abstract class MixinWorldChunk extends Chunk {
+public abstract class MixinWorldChunk extends Chunk implements ComponentProvider {
 	public MixinWorldChunk(ChunkPos chunkPos, UpgradeData upgradeData, HeightLimitView heightLimitView, Registry<Biome> registry, long l, @Nullable ChunkSection[] chunkSections, @Nullable BlendingData blendingData) {
 		super(chunkPos, upgradeData, heightLimitView, registry, l, chunkSections, blendingData);
 	}

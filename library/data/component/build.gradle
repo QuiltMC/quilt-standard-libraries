@@ -53,4 +53,8 @@ qslModule {
 	injectedInterface("net/minecraft/class_1799") {
 		values = ["org/quiltmc/qsl/component/api/ComponentProvider"]
 	}
+
+	injectedInterface("net/minecraft/class_310") {
+		values = ["org/quiltmc/qsl/component/api/ComponentProvider"]
+	}
 }

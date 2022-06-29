@@ -40,7 +40,10 @@ import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.Components;
-import org.quiltmc.qsl.component.api.components.*;
+import org.quiltmc.qsl.component.api.components.FloatComponent;
+import org.quiltmc.qsl.component.api.components.FunctionComponent;
+import org.quiltmc.qsl.component.api.components.InventoryComponent;
+import org.quiltmc.qsl.component.api.components.TickingComponent;
 import org.quiltmc.qsl.component.api.event.ComponentEvents;
 import org.quiltmc.qsl.component.impl.components.DefaultFloatComponent;
 import org.quiltmc.qsl.component.impl.components.DefaultIntegerComponent;
@@ -65,7 +68,7 @@ public class ComponentTestMod implements ModInitializer {
 			new Identifier(MODID, "chest_number"),
 			() -> new DefaultIntegerComponent(200)
 	);
-	public static final ComponentType<InventoryComponent> CHUNK_INVENTORY = Components.register(
+	public static final ComponentType<DefaultInventoryComponent> CHUNK_INVENTORY = Components.register(
 			new Identifier(MODID, "chunk_inventory"),
 			() -> new DefaultInventoryComponent(1)
 	);

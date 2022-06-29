@@ -16,17 +16,20 @@
 
 package org.quiltmc.qsl.component.mixin;
 
+import com.mojang.serialization.Lifecycle;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.impl.container.LazifiedComponentContainer;
-import org.quiltmc.qsl.component.impl.sync.DefaultSyncPacketHeaders;
+import org.quiltmc.qsl.component.impl.sync.SyncPlayerList;
+import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
 import org.quiltmc.qsl.networking.api.PlayerLookup;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -34,6 +37,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.List;
 
 @Mixin(BlockEntity.class)
 public abstract class MixinBlockEntity implements ComponentProvider {
@@ -51,12 +56,19 @@ public abstract class MixinBlockEntity implements ComponentProvider {
 				.orElseThrow()
 				.setSaveOperation(this::markDirty)
 				.ticking()
-				.syncing(DefaultSyncPacketHeaders.BLOCK_ENTITY, () -> PlayerLookup.tracking((BlockEntity) (Object)this))
+				.syncing(SyncPacketHeader.BLOCK_ENTITY, () -> SyncPlayerList.create((BlockEntity) (Object)this))
 				.build();
 	}
 
 	@Shadow
 	public abstract void markDirty();
+
+	@Shadow
+	@Nullable
+	protected World world;
+
+	@Shadow
+	public abstract @Nullable World getWorld();
 
 	@Inject(method = "toNbt", at = @At("TAIL"))
 	private void onWriteNbt(CallbackInfoReturnable<NbtCompound> cir) {

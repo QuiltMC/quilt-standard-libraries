@@ -23,8 +23,10 @@ import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.predicates.ClassInjectionPredicate;
 import org.quiltmc.qsl.component.impl.predicates.FilteredInheritedInjectionPredicate;
 import org.quiltmc.qsl.component.impl.predicates.InheritedInjectionPredicate;
+import org.quiltmc.qsl.component.impl.predicates.RedirectedInjectionPredicate;
 
 import java.util.Optional;
+import java.util.Set;
 
 public final class Components {
 	public static final Registry<ComponentType<?>> REGISTRY = ComponentsImpl.REGISTRY;
@@ -43,6 +45,10 @@ public final class Components {
 
 	public static <C extends Component> void injectInheritanceExcept(Class<?> clazz, ComponentType<C> component, Class<?>... exceptions) {
 		ComponentsImpl.inject(new FilteredInheritedInjectionPredicate(clazz, exceptions), component);
+	}
+
+	public static <C extends Component> void injectRedirected(Class<?> mainClass, ComponentType<C> type, Class<?> others) {
+		ComponentsImpl.inject(new RedirectedInjectionPredicate(mainClass, Set.of(others)), type);
 	}
 
 	public static <C extends Component, S> Optional<C> expose(ComponentType<C> id, S obj) {

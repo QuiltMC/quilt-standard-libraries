@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public interface ComponentContainer {
+public interface ComponentContainer { // TODO: Maybe split up responsibilities?
 	Optional<Component> expose(Identifier id);
 
 	void writeNbt(@NotNull NbtCompound providerRootNbt);

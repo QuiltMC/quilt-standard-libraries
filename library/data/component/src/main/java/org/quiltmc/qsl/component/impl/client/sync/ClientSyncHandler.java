@@ -5,8 +5,10 @@ import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.Components;
 import org.quiltmc.qsl.component.impl.sync.ComponentHeaderRegistry;
 import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
+import org.quiltmc.qsl.component.impl.sync.packet.SyncPacket;
 import org.quiltmc.qsl.component.impl.sync.packet.PacketIds;
 import org.quiltmc.qsl.networking.api.client.ClientLoginNetworking;
+import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 
 public class ClientSyncHandler {
 
@@ -29,6 +31,9 @@ public class ClientSyncHandler {
 
 		ClientLoginNetworking.registerGlobalReceiver(PacketIds.HEADERS, (client, handler, buf, listenerAdder) ->
 				ClientRegistryPacket.handleRegistryPacket(buf, ComponentHeaderRegistry.HEADERS, list -> this.headerList = list)
+		);
+		ClientPlayNetworking.registerGlobalReceiver(PacketIds.SYNC, (client, handler, buf, responseSender) ->
+				SyncPacket.handle(client, buf)
 		);
 	}
 

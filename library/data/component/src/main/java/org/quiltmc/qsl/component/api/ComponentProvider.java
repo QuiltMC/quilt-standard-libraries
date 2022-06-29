@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.component.api;
 
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.chunk.Chunk;
@@ -32,7 +33,8 @@ import java.util.Optional;
 		BlockEntity.class,
 		Chunk.class,
 		LevelProperties.class,
-		ItemStack.class
+		ItemStack.class,
+		MinecraftClient.class
 })
 public interface ComponentProvider {
 	@NotNull
@@ -44,5 +46,9 @@ public interface ComponentProvider {
 
 	default <C extends Component> Optional<C> expose(ComponentType<C> id) {
 		return Components.expose(id, this);
+	}
+
+	default void sync() {
+		this.getContainer().sync(this);
 	}
 }

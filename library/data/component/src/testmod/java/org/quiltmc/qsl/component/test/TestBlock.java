@@ -71,6 +71,7 @@ public class TestBlock extends Block implements BlockEntityProvider {
 					copied.setCount(1);
 					inventoryComponent.setStack(0, copied);
 					inventoryComponent.save();
+					inventoryComponent.sync();
 					ret.set(ActionResult.SUCCESS);
 				} else {
 					if (ItemStack.canCombine(stack, handStack)) {
@@ -90,6 +91,6 @@ public class TestBlock extends Block implements BlockEntityProvider {
 	@SuppressWarnings("deprecation")
 	@Override
 	public BlockRenderType getRenderType(BlockState state) {
-		return BlockRenderType.MODEL;
+		return BlockRenderType.ENTITYBLOCK_ANIMATED;
 	}
 }

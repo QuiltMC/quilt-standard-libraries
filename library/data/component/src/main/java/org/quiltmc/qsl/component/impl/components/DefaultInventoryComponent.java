@@ -17,18 +17,24 @@
 package org.quiltmc.qsl.component.impl.components;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.collection.DefaultedList;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.components.InventoryComponent;
+import org.quiltmc.qsl.component.api.components.SyncedComponent;
+import org.quiltmc.qsl.component.impl.sync.codec.NetworkCodec;
 
 import java.util.Objects;
 import java.util.function.Supplier;
 
-public class DefaultInventoryComponent implements InventoryComponent {
+public class DefaultInventoryComponent implements InventoryComponent, SyncedComponent {
 
 	private final DefaultedList<ItemStack> stacks;
 	@Nullable
 	private Runnable saveOperation;
+	@Nullable
+	private Runnable syncOperation;
 
 	public DefaultInventoryComponent(int size) {
 		this.stacks = DefaultedList.ofSize(size, ItemStack.EMPTY);
@@ -63,5 +69,29 @@ public class DefaultInventoryComponent implements InventoryComponent {
 		if (this == o) return true;
 		if (!(o instanceof DefaultInventoryComponent that)) return false;
 		return stacks.equals(that.stacks);
+	}
+
+	@Override
+	public void writeToBuf(@NotNull PacketByteBuf buf) {
+		NetworkCodec.INVENTORY.encode(buf, this.stacks);
+	}
+
+	@Override
+	public void readFromBuf(@NotNull PacketByteBuf buf) {
+		NetworkCodec.INVENTORY.decode(buf).ifPresent(itemStacks -> {
+			for (int i = 0; i < itemStacks.size(); i++) {
+				this.stacks.set(i, itemStacks.get(i));
+			}
+		});
+	}
+
+	@Override
+	public @Nullable Runnable getSyncOperation() {
+		return this.syncOperation;
+	}
+
+	@Override
+	public void setSyncOperation(@NotNull Runnable runnable) {
+		this.syncOperation = runnable;
 	}
 }

@@ -32,7 +32,7 @@ import org.quiltmc.qsl.component.api.components.TickingComponent;
 import org.quiltmc.qsl.component.api.event.ComponentEvents;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
-import org.quiltmc.qsl.component.impl.sync.packet.ComponentSyncPacket;
+import org.quiltmc.qsl.component.impl.sync.packet.SyncPacket;
 import org.quiltmc.qsl.component.impl.sync.packet.PacketIds;
 import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 import org.quiltmc.qsl.component.impl.util.Lazy;
@@ -51,14 +51,14 @@ public class LazifiedComponentContainer implements ComponentContainer {
 	private final Runnable saveOperation;
 	private final boolean ticking;
 	private final boolean syncing;
-	private final SyncContext syncContext;
+	private final SyncPacket.SyncContext syncContext;
 	private final Queue<Identifier> pendingSync;
 
 	protected LazifiedComponentContainer(
 			@NotNull ComponentProvider provider,
 			@Nullable Runnable saveOperation,
 			boolean ticking,
-			@Nullable SyncContext syncContext
+			@Nullable SyncPacket.SyncContext syncContext
 	) {
 		this.saveOperation = saveOperation;
 		this.ticking = ticking;
@@ -134,13 +134,17 @@ public class LazifiedComponentContainer implements ComponentContainer {
 				.map(Optional::orElseThrow)
 				.map(it -> ((TickingComponent) it))
 				.forEach(tickingComponent -> tickingComponent.tick(provider));
+
 		// Sync any queued components
-		this.sync(provider);
+		if (this.syncing) {
+			this.sync(provider);
+		}
 	}
 
 	@Override
 	public void receiveSyncPacket(@NotNull Identifier id, @NotNull PacketByteBuf buf) {
 		this.expose(id).map(it -> ((SyncedComponent) it)).ifPresent(syncedComponent -> syncedComponent.readFromBuf(buf));
+		ComponentsImpl.getLogger().info("Received packet for {}", id);
 	}
 
 	@Override
@@ -153,7 +157,7 @@ public class LazifiedComponentContainer implements ComponentContainer {
 		}
 
 		if (!map.isEmpty()) {
-			var packet = ComponentSyncPacket.create(this.syncContext.header(), provider, map);
+			var packet = SyncPacket.create(this.syncContext.header(), provider, map);
 
 			this.syncContext.playerGenerator().get().forEach(serverPlayer ->
 					ServerPlayNetworking.send(serverPlayer, PacketIds.SYNC, packet)
@@ -203,7 +207,7 @@ public class LazifiedComponentContainer implements ComponentContainer {
 		@Nullable
 		private Runnable saveOperation;
 		private boolean ticking;
-		private SyncContext syncContext;
+		private SyncPacket.SyncContext syncContext;
 
 		private Builder(ComponentProvider provider) {
 			this.provider = provider;
@@ -222,7 +226,7 @@ public class LazifiedComponentContainer implements ComponentContainer {
 		}
 
 		public Builder syncing(@NotNull SyncPacketHeader<?> header, Supplier<Collection<ServerPlayerEntity>> playerGenerator) {
-			this.syncContext = new SyncContext(header, playerGenerator);
+			this.syncContext = new SyncPacket.SyncContext(header, playerGenerator);
 			return this;
 		}
 
@@ -231,6 +235,5 @@ public class LazifiedComponentContainer implements ComponentContainer {
 		}
 	}
 
-	public record SyncContext(SyncPacketHeader<?> header, Supplier<Collection<ServerPlayerEntity>> playerGenerator) {
-	}
+
 }

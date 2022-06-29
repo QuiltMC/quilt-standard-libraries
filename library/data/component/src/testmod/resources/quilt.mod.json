@@ -14,6 +14,9 @@
       "init": [
         "org.quiltmc.qsl.component.test.ComponentTestMod"
       ],
+      "client_init": [
+        "org.quiltmc.qsl.component.test.client.ComponentTestModClient"
+      ],
       "events": [
         "org.quiltmc.qsl.component.test.ServerTickListener"
       ]
@@ -23,5 +26,6 @@
       "quilt_component",
       "quilt_lifecycle_events"
     ]
-  }
+  },
+  "mixin": "quilt_component_test.mixins.json"
 }

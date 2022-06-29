@@ -19,6 +19,7 @@ package org.quiltmc.qsl.component.test;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.network.listener.ClientPlayPacketListener;
@@ -31,6 +32,8 @@ import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.api.components.InventoryComponent;
 import org.quiltmc.qsl.component.impl.container.SimpleComponentContainer;
+import org.quiltmc.qsl.component.impl.sync.SyncPlayerList;
+import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -46,6 +49,7 @@ public class TestBlockEntity extends BlockEntity {
 	private final ComponentContainer container = SimpleComponentContainer.builder()
 			.setSaveOperation(this::markDirty)
 			.add(ComponentTestMod.TEST_BE_INT, ComponentTestMod.CHUNK_INVENTORY)
+			.syncing(SyncPacketHeader.BLOCK_ENTITY, () -> SyncPlayerList.create(this))
 			.build();
 
 	public TestBlockEntity(BlockPos blockPos, BlockState blockState) {

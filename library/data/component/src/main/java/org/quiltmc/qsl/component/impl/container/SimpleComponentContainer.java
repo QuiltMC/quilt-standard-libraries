@@ -18,6 +18,7 @@ package org.quiltmc.qsl.component.impl.container;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -30,26 +31,31 @@ import org.quiltmc.qsl.component.api.components.NbtComponent;
 import org.quiltmc.qsl.component.api.components.SyncedComponent;
 import org.quiltmc.qsl.component.api.components.TickingComponent;
 import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
-import org.quiltmc.qsl.component.impl.sync.packet.ComponentSyncPacket;
+import org.quiltmc.qsl.component.impl.sync.packet.SyncPacket;
+import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 import org.quiltmc.qsl.component.impl.util.StringConstants;
 
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class SimpleComponentContainer implements ComponentContainer {
 	private final Map<Identifier, Component> components;
 	private final List<Identifier> nbtComponents;
 	private final List<Identifier> tickingComponents;
+	@Nullable
+	private final SyncPacket.SyncContext syncContext;
 	private Queue<Identifier> pendingSync;
-	private SyncPacketHeader<?> header;
 
-	protected SimpleComponentContainer(@Nullable Runnable saveOperation, SyncPacketHeader<?> header, Stream<ComponentType<?>> types) {
+	protected SimpleComponentContainer(@Nullable Runnable saveOperation, SyncPacket.SyncContext syncContext, Stream<ComponentType<?>> types) {
 		this.components = new HashMap<>();
 		this.nbtComponents = new ArrayList<>();
 		this.tickingComponents = new ArrayList<>();
-		if (header != null) {
-			this.header = header;
+		if (syncContext != null) {
+			this.syncContext = syncContext;
 			this.pendingSync = new ArrayDeque<>();
+		} else {
+			this.syncContext = null;
 		}
 
 		types.forEach(type -> this.initializeComponent(saveOperation, type));
@@ -87,7 +93,9 @@ public class SimpleComponentContainer implements ComponentContainer {
 		rootQslNbt.getKeys().stream()
 				.map(Identifier::tryParse)
 				.filter(Objects::nonNull)
-				.forEach(id -> this.expose(id).ifPresent(component -> NbtComponent.readFrom((NbtComponent<?>) component, id, rootQslNbt)));
+				.forEach(id -> this.expose(id)
+						.ifPresent(component -> NbtComponent.readFrom((NbtComponent<?>) component, id, rootQslNbt))
+				);
 	}
 
 	@Override
@@ -107,6 +115,9 @@ public class SimpleComponentContainer implements ComponentContainer {
 
 	@Override
 	public void sync(@NotNull ComponentProvider provider) {
+		if (this.syncContext == null) {
+			throw ErrorUtil.illegalState("Cannot sync a non-syncable component container! Make sure you provider a context!").get();
+		}
 		var map = new HashMap<Identifier, SyncedComponent>();
 
 		while (!this.pendingSync.isEmpty()) {
@@ -115,7 +126,7 @@ public class SimpleComponentContainer implements ComponentContainer {
 		}
 
 		if (!map.isEmpty()) {
-			var packet = ComponentSyncPacket.create(this.header, provider, map);
+			SyncPacket.send(this.syncContext, provider, map);
 		}
 	}
 
@@ -142,7 +153,8 @@ public class SimpleComponentContainer implements ComponentContainer {
 		private final List<ComponentType<?>> types;
 		@Nullable
 		private Runnable saveOperation;
-		private SyncPacketHeader<?> header;
+		@Nullable
+		private SyncPacket.SyncContext syncContext;
 
 		private Builder() {
 			this.types = new ArrayList<>();
@@ -155,8 +167,8 @@ public class SimpleComponentContainer implements ComponentContainer {
 		}
 
 		@NotNull
-		public Builder syncing(SyncPacketHeader<?> header) {
-			this.header = header;
+		public Builder syncing(SyncPacketHeader<?> header, Supplier<Collection<ServerPlayerEntity>> supplier) {
+			this.syncContext = new SyncPacket.SyncContext(header, supplier);
 			return this;
 		}
 
@@ -174,7 +186,7 @@ public class SimpleComponentContainer implements ComponentContainer {
 
 		@NotNull
 		public SimpleComponentContainer build() {
-			return new SimpleComponentContainer(this.saveOperation, this.header, this.types.stream());
+			return new SimpleComponentContainer(this.saveOperation, this.syncContext, this.types.stream());
 		}
 	}
 }
