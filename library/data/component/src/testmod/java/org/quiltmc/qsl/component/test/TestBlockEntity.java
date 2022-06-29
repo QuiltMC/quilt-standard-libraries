@@ -87,7 +87,7 @@ public class TestBlockEntity extends BlockEntity {
 	}
 
 	@Override
-	public @NotNull ComponentContainer getContainer() {
+	public @NotNull ComponentContainer getComponentContainer() {
 		return this.container;
 	}
 

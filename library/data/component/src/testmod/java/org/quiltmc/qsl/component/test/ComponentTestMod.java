@@ -38,6 +38,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.level.LevelProperties;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.block.entity.api.QuiltBlockEntityTypeBuilder;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.Components;
 import org.quiltmc.qsl.component.api.components.FloatComponent;
@@ -148,6 +149,5 @@ public class ComponentTestMod implements ModInitializer {
 	}
 
 	public static final BlockEntityType<TestBlockEntity> TEST_BE_TYPE =
-			BlockEntityType.Builder.create(TestBlockEntity::new, TEST_BLOCK, Blocks.NOTE_BLOCK).build(null);
-
+			QuiltBlockEntityTypeBuilder.create(TestBlockEntity::new, TEST_BLOCK).build();
 }

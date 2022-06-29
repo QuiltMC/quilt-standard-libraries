@@ -24,7 +24,8 @@
     "depends": [
       "quilt_loader",
       "quilt_component",
-      "quilt_lifecycle_events"
+      "quilt_lifecycle_events",
+      "quilt_block_entity"
     ]
   },
   "mixin": "quilt_component_test.mixins.json"

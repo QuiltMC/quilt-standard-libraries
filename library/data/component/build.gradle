@@ -14,13 +14,15 @@ qslModule {
 			api("lifecycle_events")
 			api("networking")
 		}
+
+		block {
+			testmodOnly("block_entity")
+		}
 	}
 
 	entrypoints {
 		events {
-			values = [
-				"org.quiltmc.qsl.component.impl.event.ServerTickEventListener"
-			]
+			values = ["org.quiltmc.qsl.component.impl.event.ServerTickEventListener"]
 		}
 
 		init {
