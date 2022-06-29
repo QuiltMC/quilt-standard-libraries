@@ -16,13 +16,15 @@
 
 package org.quiltmc.qsl.component.impl.predicates;
 
+import org.quiltmc.qsl.component.api.ComponentProvider;
+
 import java.util.Objects;
 import java.util.Set;
 
 public class FilteredInheritedInjectionPredicate extends InheritedInjectionPredicate {
 	private final Set<Class<?>> exceptions;
 
-	public FilteredInheritedInjectionPredicate(Class<?> clazz, Class<?>[] exceptions) {
+	public FilteredInheritedInjectionPredicate(Class<?> clazz, Class<?>... exceptions) {
 		super(clazz);
 		this.exceptions = Set.of(exceptions);
 	}
@@ -46,7 +48,7 @@ public class FilteredInheritedInjectionPredicate extends InheritedInjectionPredi
 	}
 
 	@Override
-	public boolean canInject(Class<?> current) {
-		return !this.exceptions.contains(current) && super.canInject(current);
+	public boolean canInject(ComponentProvider provider) {
+		return !this.exceptions.contains(provider.getClass()) && super.canInject(provider.getClass());
 	}
 }
