@@ -32,7 +32,7 @@ public class InheritedInjectionPredicate extends ClassInjectionPredicate {
 
 	@Override
 	public int hashCode() {
-		return super.hashCode() + Objects.hash(this.getClass());
+		return super.hashCode() + 67 * Objects.hash(this.getClass());
 	}
 
 	@Override

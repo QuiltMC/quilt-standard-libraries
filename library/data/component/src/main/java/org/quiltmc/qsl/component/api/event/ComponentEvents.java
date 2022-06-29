@@ -21,7 +21,6 @@ import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.api.ComponentType;
 
 public class ComponentEvents {
-
 	public static final Event<DynamicInject> DYNAMIC_INJECT = Event.create(DynamicInject.class, listeners -> (provider, injector) -> {
 		for (DynamicInject listener : listeners) {
 			listener.onInject(provider, injector);

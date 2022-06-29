@@ -29,7 +29,6 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 public class DefaultInventoryComponent implements InventoryComponent, SyncedComponent {
-
 	private final DefaultedList<ItemStack> stacks;
 	@Nullable
 	private Runnable saveOperation;

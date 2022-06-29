@@ -25,7 +25,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class Lazy<T> {
-
 	@NotNull
 	private final Supplier<T> sup;
 	@Nullable
@@ -48,7 +47,7 @@ public class Lazy<T> {
 
 	@NotNull
 	public <U> Lazy<U> compose(Function<T, U> transformer) {
-		return Lazy.of(() -> transformer.apply(this.sup.get()));
+		return Lazy.of(() -> transformer.apply(this.get()));
 	}
 
 	@NotNull
@@ -87,23 +86,5 @@ public class Lazy<T> {
 
 	public void compute(@NotNull Consumer<T> action) {
 		action.accept(this.get());
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(sup, value);
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (o instanceof Lazy<?> other) {
-			if (other.isEmpty() == this.isEmpty()) {
-				return this.sup == other.sup;
-			} else {
-				return this.value == other.value;
-			}
-		}
-
-		return false;
 	}
 }

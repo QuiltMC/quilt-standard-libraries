@@ -31,7 +31,6 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.component.api.wrapper.Wrapper;
 
 public class TestBlock extends Block implements BlockEntityProvider {
 	public TestBlock(Settings settings) {
@@ -61,7 +60,7 @@ public class TestBlock extends Block implements BlockEntityProvider {
 		ItemStack handStack = player.getStackInHand(hand);
 
 		if (!handStack.isEmpty()) {
-			final Wrapper<ActionResult> ret = new Wrapper<>(ActionResult.PASS);
+			final ActionResult[] ret = new ActionResult[]{ActionResult.PASS};
 
 			be.expose(ComponentTestMod.CHUNK_INVENTORY).ifPresent(inventoryComponent -> {
 				var stack = inventoryComponent.getStack(0);
@@ -72,18 +71,18 @@ public class TestBlock extends Block implements BlockEntityProvider {
 					inventoryComponent.setStack(0, copied);
 					inventoryComponent.save();
 					inventoryComponent.sync();
-					ret.set(ActionResult.SUCCESS);
+					ret[0] = ActionResult.SUCCESS;
 				} else {
 					if (ItemStack.canCombine(stack, handStack)) {
 						stack.increment(1);
 						handStack.decrement(1);
 						inventoryComponent.save();
-						ret.set(ActionResult.SUCCESS);
+						ret[0] = ActionResult.SUCCESS;
 					}
 				}
 			});
 
-			return ret.get();
+			return ret[0];
 		}
 		return super.onUse(state, world, pos, player, hand, hit);
 	}

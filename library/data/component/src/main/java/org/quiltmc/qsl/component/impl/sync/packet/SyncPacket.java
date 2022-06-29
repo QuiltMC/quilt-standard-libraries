@@ -47,7 +47,7 @@ public class SyncPacket {
 		return buff;
 	}
 
-	public static void handle(MinecraftClient client, PacketByteBuf buf) {
+	public static void handle(PacketByteBuf buf) {
 		var header = ClientSyncHandler.getInstance().getHeader(buf.readInt());
 		header.codec().decode(buf).ifPresent(provider -> {
 			var size = buf.readInt();

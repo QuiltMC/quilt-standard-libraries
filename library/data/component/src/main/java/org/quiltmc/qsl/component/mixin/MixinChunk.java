@@ -27,7 +27,7 @@ import net.minecraft.world.gen.chunk.BlendingData;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentProvider;
-import org.quiltmc.qsl.component.impl.container.LazifiedComponentContainer;
+import org.quiltmc.qsl.component.impl.container.LazyComponentContainer;
 import org.quiltmc.qsl.component.impl.sync.SyncPlayerList;
 import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
 import org.spongepowered.asm.mixin.Mixin;
@@ -38,7 +38,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Chunk.class)
 public abstract class MixinChunk implements ComponentProvider {
-
 	private ComponentContainer qsl$container;
 
 	@Shadow
@@ -51,7 +50,7 @@ public abstract class MixinChunk implements ComponentProvider {
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onInit(ChunkPos chunkPos, UpgradeData upgradeData, HeightLimitView heightLimitView, Registry<?> registry, long l, ChunkSection[] chunkSections, BlendingData blendingData, CallbackInfo ci) {
-		LazifiedComponentContainer.Builder builder = LazifiedComponentContainer.builder(this)
+		LazyComponentContainer.Builder builder = LazyComponentContainer.builder(this)
 				.orElseThrow()
 				.setSaveOperation(() -> this.setNeedsSaving(true));
 

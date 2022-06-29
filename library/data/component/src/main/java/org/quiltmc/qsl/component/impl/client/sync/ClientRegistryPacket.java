@@ -29,7 +29,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public final class ClientRegistryPacket {
-
 	@NotNull
 	public static <T> CompletableFuture<PacketByteBuf> handleRegistryPacket(@NotNull PacketByteBuf buf, Registry<T> registry, Consumer<IdList<T>> action) {
 		return CompletableFuture.supplyAsync(() -> {

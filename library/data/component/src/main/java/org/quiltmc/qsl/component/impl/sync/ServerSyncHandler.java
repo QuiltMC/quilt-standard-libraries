@@ -26,7 +26,6 @@ import org.quiltmc.qsl.networking.api.ServerLoginConnectionEvents;
 import org.quiltmc.qsl.networking.api.ServerLoginNetworking;
 
 public final class ServerSyncHandler implements ServerLoginConnectionEvents.QueryStart {
-
 	private static ServerSyncHandler INSTANCE = null;
 
 	private ServerSyncHandler() {
@@ -53,6 +52,6 @@ public final class ServerSyncHandler implements ServerLoginConnectionEvents.Quer
 	@Override
 	public void onLoginStart(ServerLoginNetworkHandler handler, MinecraftServer server, PacketSender sender, ServerLoginNetworking.LoginSynchronizer synchronizer) {
 		sender.sendPacket(PacketIds.TYPES, RegistryPacket.createRegistryPacket(Components.REGISTRY));
-		sender.sendPacket(PacketIds.HEADERS, RegistryPacket.createRegistryPacket(ComponentHeaderRegistry.HEADERS));
+		sender.sendPacket(PacketIds.HEADERS, RegistryPacket.createRegistryPacket(SyncHeaderRegistry.HEADERS));
 	}
 }

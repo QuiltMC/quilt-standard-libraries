@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentProvider;
-import org.quiltmc.qsl.component.impl.container.LazifiedComponentContainer;
+import org.quiltmc.qsl.component.impl.container.LazyComponentContainer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -36,14 +36,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @SuppressWarnings("ConstantConditions")
 @Mixin(ItemStack.class)
 public abstract class MixinItemStack implements ComponentProvider { // TODO: Make sure nothing else may be broken before final PR.
-
 	@Shadow
 	private @Nullable NbtCompound nbt;
-	private LazifiedComponentContainer qsl$container;
+	private LazyComponentContainer qsl$container;
 
 	@Inject(method = "<init>(Lnet/minecraft/item/ItemConvertible;I)V", at = @At("TAIL"))
 	private void initContainer(ItemConvertible itemConvertible, int i, CallbackInfo ci) {
-		this.qsl$container = LazifiedComponentContainer.builder(this)
+		this.qsl$container = LazyComponentContainer.builder(this)
 				.orElseThrow()
 				.setSaveOperation(() -> this.qsl$container.writeNbt(this.getOrCreateNbt()))
 				.ticking()
@@ -55,7 +54,7 @@ public abstract class MixinItemStack implements ComponentProvider { // TODO: Mak
 
 	@Inject(method = "<init>(Lnet/minecraft/nbt/NbtCompound;)V", at = @At("TAIL"))
 	private void readContainer(NbtCompound nbtCompound, CallbackInfo ci) {
-		this.qsl$container = LazifiedComponentContainer.builder(this)
+		this.qsl$container = LazyComponentContainer.builder(this)
 				.orElseThrow()
 				.setSaveOperation(() -> this.qsl$container.writeNbt(this.getOrCreateNbt()))
 				.ticking()

@@ -14,10 +14,10 @@
     "MixinThreadedChunkStorage",
     "MixinWorldChunk"
   ],
-  "injectors": {
-    "defaultRequire": 1
-  },
   "client": [
     "client.MixinMinecraftClient"
-  ]
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }

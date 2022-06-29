@@ -19,7 +19,6 @@ package org.quiltmc.qsl.component.api.components;
 import org.quiltmc.qsl.component.api.Component;
 
 public interface IntegerComponent extends Component {
-
 	void increment();
 
 	void decrement();

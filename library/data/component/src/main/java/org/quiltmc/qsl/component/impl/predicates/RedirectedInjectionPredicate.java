@@ -18,6 +18,7 @@ package org.quiltmc.qsl.component.impl.predicates;
 
 import org.quiltmc.qsl.component.api.ComponentProvider;
 
+import java.util.Objects;
 import java.util.Set;
 
 public class RedirectedInjectionPredicate extends ClassInjectionPredicate {
@@ -25,11 +26,29 @@ public class RedirectedInjectionPredicate extends ClassInjectionPredicate {
 
 	public RedirectedInjectionPredicate(Class<?> clazz, Set<Class<?>> redirections) {
 		super(clazz);
-		this.redirections = redirections;
+		this.redirections = Set.copyOf(redirections);
 	}
 
 	@Override
 	public boolean canInject(ComponentProvider provider) {
 		return super.canInject(provider) || this.redirections.contains(provider.getClass());
+	}
+
+	@Override
+	public String toString() {
+		return "RedirectedInjectionPredicate{redirections=" + redirections + ", clazz=" + clazz + '}';
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof RedirectedInjectionPredicate that)) return false;
+		if (!super.equals(o)) return false;
+		return redirections.equals(that.redirections);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), redirections);
 	}
 }

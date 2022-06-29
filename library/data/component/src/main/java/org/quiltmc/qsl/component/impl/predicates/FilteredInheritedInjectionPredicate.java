@@ -16,17 +16,15 @@
 
 package org.quiltmc.qsl.component.impl.predicates;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class FilteredInheritedInjectionPredicate extends InheritedInjectionPredicate {
-	private final List<Class<?>> exceptions;
+	private final Set<Class<?>> exceptions;
 
 	public FilteredInheritedInjectionPredicate(Class<?> clazz, Class<?>[] exceptions) {
 		super(clazz);
-		this.exceptions = new ArrayList<>(Arrays.asList(exceptions));
+		this.exceptions = Set.of(exceptions);
 	}
 
 	@Override

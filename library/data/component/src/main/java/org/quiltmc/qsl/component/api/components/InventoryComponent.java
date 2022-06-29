@@ -25,7 +25,6 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.collection.DefaultedList;
 
 public interface InventoryComponent extends NbtComponent<NbtCompound>, Inventory {
-
 	@Override
 	default int size() {
 		return this.getStacks().size();

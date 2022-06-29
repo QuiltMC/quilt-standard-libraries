@@ -33,7 +33,6 @@ import java.util.function.Supplier;
 
 @Mixin(ServerWorld.class)
 public abstract class MixinServerWorld extends World {
-
 	protected MixinServerWorld(MutableWorldProperties mutableWorldProperties, RegistryKey<World> registryKey, Holder<DimensionType> holder, Supplier<Profiler> supplier, boolean bl, boolean bl2, long l, int i) {
 		super(mutableWorldProperties, registryKey, holder, supplier, bl, bl2, l, i);
 	}

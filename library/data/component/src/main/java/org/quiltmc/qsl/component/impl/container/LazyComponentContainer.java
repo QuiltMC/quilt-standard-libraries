@@ -32,8 +32,8 @@ import org.quiltmc.qsl.component.api.components.TickingComponent;
 import org.quiltmc.qsl.component.api.event.ComponentEvents;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
-import org.quiltmc.qsl.component.impl.sync.packet.SyncPacket;
 import org.quiltmc.qsl.component.impl.sync.packet.PacketIds;
+import org.quiltmc.qsl.component.impl.sync.packet.SyncPacket;
 import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 import org.quiltmc.qsl.component.impl.util.Lazy;
 import org.quiltmc.qsl.component.impl.util.StringConstants;
@@ -42,8 +42,7 @@ import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import java.util.*;
 import java.util.function.Supplier;
 
-public class LazifiedComponentContainer implements ComponentContainer {
-
+public class LazyComponentContainer implements ComponentContainer {
 	private final Map<Identifier, Lazy<Component>> components;
 	private final List<Identifier> nbtComponents;
 	private final List<Identifier> tickingComponents;
@@ -54,7 +53,7 @@ public class LazifiedComponentContainer implements ComponentContainer {
 	private final SyncPacket.SyncContext syncContext;
 	private final Queue<Identifier> pendingSync;
 
-	protected LazifiedComponentContainer(
+	protected LazyComponentContainer(
 			@NotNull ComponentProvider provider,
 			@Nullable Runnable saveOperation,
 			boolean ticking,
@@ -70,7 +69,7 @@ public class LazifiedComponentContainer implements ComponentContainer {
 		this.components = this.initializeComponents(provider);
 	}
 
-	public static <T> Optional<LazifiedComponentContainer.Builder> builder(T obj) {
+	public static <T> Optional<LazyComponentContainer.Builder> builder(T obj) {
 		if (!(obj instanceof ComponentProvider provider)) {
 			return Optional.empty();
 		}
@@ -78,7 +77,7 @@ public class LazifiedComponentContainer implements ComponentContainer {
 		return Optional.of(new Builder(provider));
 	}
 
-	public static void move(@NotNull LazifiedComponentContainer from, @NotNull LazifiedComponentContainer into) {
+	public static void move(@NotNull LazyComponentContainer from, @NotNull LazyComponentContainer into) {
 		from.components.forEach((id, componentLazy) -> componentLazy.ifPresent(component -> {
 			into.components.put(id, componentLazy); // Directly overriding our value.
 
@@ -230,8 +229,8 @@ public class LazifiedComponentContainer implements ComponentContainer {
 			return this;
 		}
 
-		public LazifiedComponentContainer build() {
-			return new LazifiedComponentContainer(this.provider, this.saveOperation, this.ticking, this.syncContext);
+		public LazyComponentContainer build() {
+			return new LazyComponentContainer(this.provider, this.saveOperation, this.ticking, this.syncContext);
 		}
 	}
 

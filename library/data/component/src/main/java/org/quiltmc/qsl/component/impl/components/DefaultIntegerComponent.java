@@ -26,7 +26,6 @@ import org.quiltmc.qsl.component.api.components.NbtComponent;
 import org.quiltmc.qsl.component.api.components.SyncedComponent;
 
 public class DefaultIntegerComponent implements IntegerComponent, NbtComponent<NbtInt>, SyncedComponent {
-
 	private int value;
 	@Nullable
 	private Runnable saveOperation;

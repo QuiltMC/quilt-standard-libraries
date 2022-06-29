@@ -19,7 +19,6 @@ package org.quiltmc.qsl.component.test;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.network.listener.ClientPlayPacketListener;
@@ -41,11 +40,10 @@ import java.util.List;
 import java.util.Set;
 
 public class TestBlockEntity extends BlockEntity {
-//	public static final ComponentType<IntegerComponent> TEST_BE_INT = Components.register(
-//			new Identifier(ComponentTestMod.MODID, "test_be_int"),
-//			DefaultIntegerComponent::new
-//	); Crashes due to our freezing the registry!
-
+	//	public static final ComponentType<IntegerComponent> TEST_BE_INT = Components.register(
+	//			new Identifier(ComponentTestMod.MODID, "test_be_int"),
+	//			DefaultIntegerComponent::new
+	//	); Crashes due to our freezing the registry!
 	private final ComponentContainer container = SimpleComponentContainer.builder()
 			.setSaveOperation(this::markDirty)
 			.add(ComponentTestMod.TEST_BE_INT, ComponentTestMod.CHUNK_INVENTORY)

@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.Component;
 
 public interface NbtComponent<T extends NbtElement> extends Component {
-
 	@SuppressWarnings("unchecked")
 	static void readFrom(@NotNull NbtComponent<?> nbtComponent, @NotNull Identifier id, @NotNull NbtCompound root) {
 		NbtElement nbtTarget = root.get(id.toString());
@@ -34,7 +33,8 @@ public interface NbtComponent<T extends NbtElement> extends Component {
 			case NbtElement.LONG_TYPE -> ((NbtComponent<NbtLong>) nbtComponent).read((NbtLong) nbtTarget);
 			case NbtElement.FLOAT_TYPE -> ((NbtComponent<NbtFloat>) nbtComponent).read((NbtFloat) nbtTarget);
 			case NbtElement.DOUBLE_TYPE -> ((NbtComponent<NbtDouble>) nbtComponent).read((NbtDouble) nbtTarget);
-			case NbtElement.BYTE_ARRAY_TYPE -> ((NbtComponent<NbtByteArray>) nbtComponent).read((NbtByteArray) nbtTarget);
+			case NbtElement.BYTE_ARRAY_TYPE ->
+					((NbtComponent<NbtByteArray>) nbtComponent).read((NbtByteArray) nbtTarget);
 			case NbtElement.STRING_TYPE -> ((NbtComponent<NbtString>) nbtComponent).read((NbtString) nbtTarget);
 			case NbtElement.LIST_TYPE -> ((NbtComponent<NbtList>) nbtComponent).read((NbtList) nbtTarget);
 			case NbtElement.COMPOUND_TYPE -> ((NbtComponent<NbtCompound>) nbtComponent).read((NbtCompound) nbtTarget);

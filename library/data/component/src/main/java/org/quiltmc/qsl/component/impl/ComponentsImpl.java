@@ -28,7 +28,7 @@ import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentInjectionPredicate;
 import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.api.ComponentType;
-import org.quiltmc.qsl.component.impl.sync.ComponentHeaderRegistry;
+import org.quiltmc.qsl.component.impl.sync.SyncHeaderRegistry;
 import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,47 +38,51 @@ import java.util.stream.Collectors;
 
 @ApiStatus.Internal
 public class ComponentsImpl {
-	private static final Logger LOGGER = LoggerFactory.getLogger("QSL/Components");
-	public static final String MODID = "quilt_component";
-    private static final Map<ComponentInjectionPredicate, Set<Identifier>> INJECTION_REGISTRY = new HashMap<>();
-	private static final RegistryKey<Registry<ComponentType<?>>> REGISTRY_KEY =
-			RegistryKey.ofRegistry(new Identifier("quilt", "components"));
+	public static final RegistryKey<Registry<ComponentType<?>>> REGISTRY_KEY =
+			RegistryKey.ofRegistry(CommonInitializer.id("component_types"));
 	public static final Registry<ComponentType<?>> REGISTRY =
 			new SimpleRegistry<>(REGISTRY_KEY, Lifecycle.experimental(), null);
 
-	public static <C extends Component> void inject(ComponentInjectionPredicate predicate, ComponentType<C> id) {
-		if (REGISTRY.get(id.id()) == null) {
-			throw new IllegalArgumentException(
-					"The target id %s does not match any registered component!".formatted(id.toString())
-			);
+	private static final Logger LOGGER = LoggerFactory.getLogger("QSL/Components");
+
+	private static final Map<ComponentInjectionPredicate, Set<Identifier>> INJECTION_REGISTRY = new HashMap<>();
+
+	public static <C extends Component> void inject(ComponentInjectionPredicate predicate, ComponentType<C> type) {
+		if (REGISTRY.get(type.id()) == null) {
+			throw ErrorUtil.illegalArgument(
+					"The target id %s does not match any registered component".formatted(type)
+			).get();
 		}
 
 		if (INJECTION_REGISTRY.containsKey(predicate)) {
-			if (!INJECTION_REGISTRY.get(predicate).add(id.id())) {
-				throw new IllegalStateException(
-						"Cannot inject the predicate %s with %s more than once! Consider creating a new component!"
-								.formatted(predicate.toString(), id.id().toString())
-				);
+			if (!INJECTION_REGISTRY.get(predicate).add(type.id())) {
+				throw ErrorUtil.illegalArgument(
+					"Cannot inject the predicate %s with id %s more than once! Consider creating a new component type!"
+							.formatted(predicate, type)
+				).get();
 			}
 		} else {
-			INJECTION_REGISTRY.put(predicate, Util.make(new HashSet<>(), set -> set.add(id.id())));
+			INJECTION_REGISTRY.put(predicate, Util.make(new HashSet<>(), set -> set.add(type.id())));
 		}
 
-		ComponentInjectionCache.getInstance().clear(); // Always clear the cache after an injection is registered.
+		ComponentInjectionCache.clear(); // Always clear the cache after an injection is registered.
 	}
 
+	@NotNull
 	public static <T extends Component> ComponentType<T> register(Identifier id, Component.Factory<T> factory) {
 		var componentType = new ComponentType<>(id, factory, false);
 		return Registry.register(REGISTRY, id, componentType);
 	}
 
+	@NotNull
 	public static <C extends Component> ComponentType<C> registerStatic(Identifier id, Component.Factory<C> factory) {
 		var componentType = new ComponentType<>(id, factory, true);
 		return Registry.register(REGISTRY, id, componentType);
 	}
 
-	public static List<ComponentType<?>> getInjections(ComponentProvider provider) {
-		return ComponentInjectionCache.getInstance().getCache(provider.getClass()).orElseGet(() -> {
+	@NotNull
+	public static List<ComponentType<?>> getInjections(@NotNull ComponentProvider provider) {
+		return ComponentInjectionCache.getCache(provider.getClass()).orElseGet(() -> {
 			List<ComponentType<?>> injectedTypes = INJECTION_REGISTRY.entrySet().stream()
 					.filter(it -> it.getKey().canInject(provider))
 					.map(Map.Entry::getValue)
@@ -86,12 +90,13 @@ public class ComponentsImpl {
 					.map(ComponentsImpl::getEntry)
 					.collect(Collectors.toList());
 
-			ComponentInjectionCache.getInstance().record(provider.getClass(), injectedTypes);
+			ComponentInjectionCache.record(provider.getClass(), injectedTypes);
 
 			return injectedTypes;
 		});
 	}
 
+	@NotNull
 	public static ComponentType<?> getEntry(Identifier id) {
 		return REGISTRY.getOrEmpty(id).orElseThrow(
 				ErrorUtil.illegalArgument("Cannot access element with id %s in the component registry!".formatted(id))
@@ -105,6 +110,6 @@ public class ComponentsImpl {
 
 	public static void freezeRegistries() {
 		REGISTRY.freeze();
-		ComponentHeaderRegistry.HEADERS.freeze();
+		SyncHeaderRegistry.HEADERS.freeze();
 	}
 }

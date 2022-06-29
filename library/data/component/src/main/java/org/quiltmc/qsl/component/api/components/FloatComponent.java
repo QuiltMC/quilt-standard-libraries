@@ -16,13 +16,10 @@
 
 package org.quiltmc.qsl.component.api.components;
 
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtFloat;
 import org.quiltmc.qsl.component.api.Component;
 
 
 public interface FloatComponent extends Component {
-
 	float get();
 
 	void set(float value);

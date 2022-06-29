@@ -38,6 +38,6 @@ public abstract class MixinThreadedChunkStorage {
 			)
 	)
 	private void syncChunkContainer(ServerPlayerEntity player, ChunkPos pos, MutableObject<ChunkDataS2CPacket> mutableObject, boolean withinMaxWatchDistance, boolean withinViewDistance, CallbackInfo ci) {
-		player.getWorld().getChunk(pos.x, pos.z).sync();
+		player.getWorld().getChunk(pos.x, pos.z).sync(); // FIXME: Initial chunk sync
 	}
 }

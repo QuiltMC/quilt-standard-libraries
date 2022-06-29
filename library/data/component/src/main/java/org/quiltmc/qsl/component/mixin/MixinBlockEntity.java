@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.component.mixin;
 
-import com.mojang.serialization.Lifecycle;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -27,10 +26,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentProvider;
-import org.quiltmc.qsl.component.impl.container.LazifiedComponentContainer;
+import org.quiltmc.qsl.component.impl.container.LazyComponentContainer;
 import org.quiltmc.qsl.component.impl.sync.SyncPlayerList;
 import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
-import org.quiltmc.qsl.networking.api.PlayerLookup;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -38,11 +36,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.List;
-
 @Mixin(BlockEntity.class)
 public abstract class MixinBlockEntity implements ComponentProvider {
-
 	private ComponentContainer qsl$container;
 
 	@Inject(method = "readNbt", at = @At("TAIL"))
@@ -52,11 +47,12 @@ public abstract class MixinBlockEntity implements ComponentProvider {
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onInit(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState, CallbackInfo ci) {
-		this.qsl$container = LazifiedComponentContainer.builder(this)
+		//noinspection ConstantConditions
+		this.qsl$container = LazyComponentContainer.builder(this)
 				.orElseThrow()
 				.setSaveOperation(this::markDirty)
 				.ticking()
-				.syncing(SyncPacketHeader.BLOCK_ENTITY, () -> SyncPlayerList.create((BlockEntity) (Object)this))
+				.syncing(SyncPacketHeader.BLOCK_ENTITY, () -> SyncPlayerList.create((BlockEntity) (Object) this))
 				.build();
 	}
 
