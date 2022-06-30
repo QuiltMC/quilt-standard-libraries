@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 public interface ComponentContainer { // TODO: Maybe split up responsibilities?
-	Optional<Component> expose(Identifier id);
+	Optional<Component> expose(ComponentType<?> type);
 
 	void writeNbt(@NotNull NbtCompound providerRootNbt);
 
@@ -32,7 +32,7 @@ public interface ComponentContainer { // TODO: Maybe split up responsibilities?
 
 	void tick(@NotNull ComponentProvider provider);
 
-	void receiveSyncPacket(@NotNull Identifier id, @NotNull PacketByteBuf buf);
+	void receiveSyncPacket(@NotNull ComponentType<?> type, @NotNull PacketByteBuf buf);
 
 	void sync(@NotNull ComponentProvider provider);
 }

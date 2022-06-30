@@ -19,7 +19,6 @@ package org.quiltmc.qsl.component.impl.util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -46,13 +45,13 @@ public class Lazy<T> {
 	}
 
 	@NotNull
-	public <U> Lazy<U> compose(Function<T, U> transformer) {
-		return Lazy.of(() -> transformer.apply(this.get()));
+	public static <T> Lazy<T> of(@NotNull Supplier<T> sup) {
+		return new Lazy<>(sup);
 	}
 
 	@NotNull
-	public static <T> Lazy<T> of(@NotNull Supplier<T> sup) {
-		return new Lazy<>(sup);
+	public <U> Lazy<U> compose(Function<T, U> transformer) {
+		return Lazy.of(() -> transformer.apply(this.get()));
 	}
 
 	@NotNull

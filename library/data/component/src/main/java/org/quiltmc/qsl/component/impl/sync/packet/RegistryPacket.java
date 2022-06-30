@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 
-public final class RegistryPacket {
+public final class RegistryPacket { // TODO: Fix this with registry sync maybe?!
 	@NotNull
 	public static <T> PacketByteBuf createRegistryPacket(@NotNull Registry<T> registry) {
 		var buf = PacketByteBufs.create();

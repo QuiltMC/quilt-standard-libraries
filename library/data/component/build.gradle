@@ -13,6 +13,7 @@ qslModule {
 			api("qsl_base")
 			api("lifecycle_events")
 			api("networking")
+			testmodOnly("registry") // Required by block_entity
 		}
 
 		block {

@@ -23,10 +23,7 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.component.api.Component;
-import org.quiltmc.qsl.component.api.ComponentContainer;
-import org.quiltmc.qsl.component.api.ComponentProvider;
-import org.quiltmc.qsl.component.api.ComponentType;
+import org.quiltmc.qsl.component.api.*;
 import org.quiltmc.qsl.component.api.components.NbtComponent;
 import org.quiltmc.qsl.component.api.components.SyncedComponent;
 import org.quiltmc.qsl.component.api.components.TickingComponent;
@@ -40,15 +37,15 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class SimpleComponentContainer implements ComponentContainer {
-	private final Map<Identifier, Component> components;
-	private final List<Identifier> nbtComponents;
-	private final List<Identifier> tickingComponents;
+	private final IdentityHashMap<ComponentType<?>, Component> components;
+	private final List<ComponentType<?>> nbtComponents;
+	private final List<ComponentType<?>> tickingComponents;
 	@Nullable
 	private final SyncPacket.SyncContext syncContext;
-	private Queue<Identifier> pendingSync;
+	private Queue<ComponentType<?>> pendingSync;
 
-	protected SimpleComponentContainer(@Nullable Runnable saveOperation, SyncPacket.SyncContext syncContext, Stream<ComponentType<?>> types) {
-		this.components = new HashMap<>();
+	protected SimpleComponentContainer(@Nullable Runnable saveOperation, SyncPacket.@Nullable SyncContext syncContext, Stream<ComponentType<?>> types) {
+		this.components = new IdentityHashMap<>();
 		this.nbtComponents = new ArrayList<>();
 		this.tickingComponents = new ArrayList<>();
 		if (syncContext != null) {
@@ -69,14 +66,17 @@ public class SimpleComponentContainer implements ComponentContainer {
 	}
 
 	@Override
-	public Optional<Component> expose(Identifier id) {
-		return Optional.ofNullable(this.components.get(id));
+	public Optional<Component> expose(ComponentType<?> type) {
+		return Optional.ofNullable(this.components.get(type));
 	}
 
 	@Override
 	public void writeNbt(@NotNull NbtCompound providerRootNbt) {
 		var rootQslNbt = new NbtCompound();
-		this.nbtComponents.forEach(id -> this.expose(id).ifPresent(component -> NbtComponent.writeTo(rootQslNbt, (NbtComponent<?>) component, id)));
+		this.nbtComponents.forEach(id -> this.expose(id)
+				.ifPresent(component -> NbtComponent.writeTo(rootQslNbt, (NbtComponent<?>) component, id.id()))
+		);
+
 		if (!rootQslNbt.isEmpty()) {
 			providerRootNbt.put(StringConstants.COMPONENT_ROOT, rootQslNbt);
 		}
@@ -93,8 +93,10 @@ public class SimpleComponentContainer implements ComponentContainer {
 		rootQslNbt.getKeys().stream()
 				.map(Identifier::tryParse)
 				.filter(Objects::nonNull)
+				.map(Components.REGISTRY::get)
+				.filter(Objects::nonNull)
 				.forEach(id -> this.expose(id)
-						.ifPresent(component -> NbtComponent.readFrom((NbtComponent<?>) component, id, rootQslNbt))
+						.ifPresent(component -> NbtComponent.readFrom((NbtComponent<?>) component, id.id(), rootQslNbt))
 				);
 	}
 
@@ -109,20 +111,20 @@ public class SimpleComponentContainer implements ComponentContainer {
 	}
 
 	@Override
-	public void receiveSyncPacket(@NotNull Identifier id, @NotNull PacketByteBuf buf) {
-		((SyncedComponent) this.components.get(id)).readFromBuf(buf);
+	public void receiveSyncPacket(@NotNull ComponentType<?> type, @NotNull PacketByteBuf buf) {
+		((SyncedComponent) this.components.get(type)).readFromBuf(buf);
 	}
 
 	@Override
 	public void sync(@NotNull ComponentProvider provider) {
 		if (this.syncContext == null) {
-			throw ErrorUtil.illegalState("Cannot sync a non-syncable component container! Make sure you provider a context!").get();
+			throw ErrorUtil.illegalState("Cannot sync a non-syncable component container! Make sure you provide a context!").get();
 		}
-		var map = new HashMap<Identifier, SyncedComponent>();
+		var map = new HashMap<ComponentType<?>, SyncedComponent>();
 
 		while (!this.pendingSync.isEmpty()) {
-			var currentId = this.pendingSync.poll();
-			map.put(currentId, (SyncedComponent) this.components.get(currentId));
+			var currentType = this.pendingSync.poll();
+			map.put(currentType, (SyncedComponent) this.components.get(currentType));
 		}
 
 		if (!map.isEmpty()) {
@@ -132,19 +134,19 @@ public class SimpleComponentContainer implements ComponentContainer {
 
 	private void initializeComponent(@Nullable Runnable saveOperation, ComponentType<?> type) {
 		Component component = type.create();
-		this.components.put(type.id(), component);
+		this.components.put(type, component);
 
 		if (component instanceof NbtComponent<?> nbtComponent) {
-			this.nbtComponents.add(type.id());
+			this.nbtComponents.add(type);
 			nbtComponent.setSaveOperation(saveOperation);
 		}
 
 		if (component instanceof TickingComponent) {
-			this.tickingComponents.add(type.id());
+			this.tickingComponents.add(type);
 		}
 
 		if (component instanceof SyncedComponent synced) {
-			synced.setSyncOperation(() -> this.pendingSync.add(type.id()));
+			synced.setSyncOperation(() -> this.pendingSync.add(type));
 		}
 	}
 

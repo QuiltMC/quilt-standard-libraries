@@ -18,10 +18,9 @@ package org.quiltmc.qsl.component.impl.sync.packet;
 
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.component.api.ComponentProvider;
-import org.quiltmc.qsl.component.api.Components;
+import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.components.SyncedComponent;
 import org.quiltmc.qsl.component.impl.client.sync.ClientSyncHandler;
 import org.quiltmc.qsl.component.impl.sync.codec.NetworkCodec;
@@ -29,17 +28,16 @@ import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
 public class SyncPacket {
 	@NotNull
-	public static PacketByteBuf create(SyncPacketHeader<?> headerCreator, @NotNull ComponentProvider provider, Map<Identifier, SyncedComponent> components) {
+	public static PacketByteBuf create(SyncPacketHeader<?> headerCreator, @NotNull ComponentProvider provider, Map<ComponentType<?>, SyncedComponent> components) {
 		PacketByteBuf buff = headerCreator.start(provider);
 		buff.writeInt(components.size());
-		components.forEach((id, syncedComponent) -> {
-			NetworkCodec.COMPONENT_TYPE.encode(buff, Components.REGISTRY.get(id));
+		components.forEach((type, syncedComponent) -> {
+			NetworkCodec.COMPONENT_TYPE.encode(buff, type);
 			syncedComponent.writeToBuf(buff);
 		});
 
@@ -53,13 +51,12 @@ public class SyncPacket {
 
 			for (int i = 0; i < size; i++) {
 				NetworkCodec.COMPONENT_TYPE.decode(buf)
-						.map(Components.REGISTRY::getId)
-						.ifPresent(id -> provider.getComponentContainer().receiveSyncPacket(id, buf));
+						.ifPresent(type -> provider.getComponentContainer().receiveSyncPacket(type, buf));
 			}
 		});
 	}
 
-	public static void send(SyncContext context, ComponentProvider provider, HashMap<Identifier, SyncedComponent> map) {
+	public static void send(SyncContext context, ComponentProvider provider, Map<ComponentType<?>, SyncedComponent> map) {
 		PacketByteBuf packet = create(context.header(), provider, map);
 
 		context.playerGenerator().get().forEach(serverPlayer ->
