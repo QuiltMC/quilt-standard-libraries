@@ -78,7 +78,7 @@ public class AnimationManager implements SimpleResourceReloader<AnimationManager
 			}
 
 			JsonObject json = JsonHelper.deserialize(reader);
-			DataResult<Pair<Animation, JsonElement>> result = Codecs.ANIMATION.decode(JsonOps.INSTANCE, json);
+			DataResult<Pair<Animation, JsonElement>> result = Codecs.Animations.ANIMATION.decode(JsonOps.INSTANCE, json);
 
 			if (result.error().isPresent()) {
 				LOGGER.error(String.format("Unable to parse animation file %s.\nReason: %s", id, result.error().get().message()));

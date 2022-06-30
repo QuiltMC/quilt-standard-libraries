@@ -3,8 +3,14 @@
   "package": "org.quiltmc.qsl.rendering.entity_models.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "DilationAccessor",
     "EntityRenderDispatcherMixin",
-    "EntityRendererFactoryContextMixin"
+    "EntityRendererFactoryContextMixin",
+    "ModelCuboidDataAccessor",
+    "ModelPartDataAccessor",
+    "TextureDimensionsAccessor",
+    "TexturedModelDataAccessor",
+    "Vector2fMixin"
   ],
   "injectors": {
     "defaultRequire": 1
