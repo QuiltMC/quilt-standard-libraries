@@ -47,7 +47,7 @@ public final class RegistryPacket {
 			Identifier id = Identifier.tryParse(retString);
 
 			handler.disconnect(Text.literal(msg.formatted(id)));
-			ComponentsImpl.getLogger().warn(msg.formatted(id));
+			ComponentsImpl.LOGGER.warn(msg.formatted(id));
 		}
 	}
 }

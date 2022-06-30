@@ -43,7 +43,7 @@ public class ComponentsImpl {
 	public static final Registry<ComponentType<?>> REGISTRY =
 			new SimpleRegistry<>(REGISTRY_KEY, Lifecycle.experimental(), null);
 
-	private static final Logger LOGGER = LoggerFactory.getLogger("QSL/Components");
+	public static final Logger LOGGER = LoggerFactory.getLogger("QSL/Components");
 
 	private static final Map<ComponentInjectionPredicate, Set<Identifier>> INJECTION_REGISTRY = new HashMap<>();
 
@@ -101,11 +101,6 @@ public class ComponentsImpl {
 		return REGISTRY.getOrEmpty(id).orElseThrow(
 				ErrorUtil.illegalArgument("Cannot access element with id %s in the component registry!".formatted(id))
 		);
-	}
-
-	@NotNull
-	public static Logger getLogger() {
-		return LOGGER;
 	}
 
 	public static void freezeRegistries() {

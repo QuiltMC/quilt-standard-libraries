@@ -143,7 +143,7 @@ public class LazyComponentContainer implements ComponentContainer {
 	@Override
 	public void receiveSyncPacket(@NotNull Identifier id, @NotNull PacketByteBuf buf) {
 		this.expose(id).map(it -> ((SyncedComponent) it)).ifPresent(syncedComponent -> syncedComponent.readFromBuf(buf));
-		ComponentsImpl.getLogger().info("Received packet for {}", id);
+		ComponentsImpl.LOGGER.info("Received packet for {}", id);
 	}
 
 	@Override
