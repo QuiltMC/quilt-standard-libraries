@@ -90,7 +90,7 @@ public class DefaultInventoryComponent implements InventoryComponent, SyncedComp
 	}
 
 	@Override
-	public void setSyncOperation(@NotNull Runnable runnable) {
+	public void setSyncOperation(@Nullable Runnable runnable) {
 		this.syncOperation = runnable;
 	}
 }

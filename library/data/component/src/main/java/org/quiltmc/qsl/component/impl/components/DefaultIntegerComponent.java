@@ -101,7 +101,7 @@ public class DefaultIntegerComponent implements IntegerComponent, NbtComponent<N
 	}
 
 	@Override
-	public void setSyncOperation(@NotNull Runnable runnable) {
+	public void setSyncOperation(@Nullable Runnable runnable) {
 		this.syncOperation = runnable;
 	}
 }

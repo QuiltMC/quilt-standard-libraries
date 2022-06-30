@@ -21,6 +21,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.ChestBlockEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.passive.CowEntity;
@@ -33,6 +34,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Unit;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.level.LevelProperties;
@@ -41,14 +43,13 @@ import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.block.entity.api.QuiltBlockEntityTypeBuilder;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.Components;
-import org.quiltmc.qsl.component.api.components.FloatComponent;
-import org.quiltmc.qsl.component.api.components.FunctionComponent;
-import org.quiltmc.qsl.component.api.components.InventoryComponent;
-import org.quiltmc.qsl.component.api.components.TickingComponent;
+import org.quiltmc.qsl.component.api.components.*;
 import org.quiltmc.qsl.component.api.event.ComponentEvents;
 import org.quiltmc.qsl.component.impl.components.DefaultFloatComponent;
 import org.quiltmc.qsl.component.impl.components.DefaultIntegerComponent;
 import org.quiltmc.qsl.component.impl.components.DefaultInventoryComponent;
+
+import java.util.UUID;
 
 public class ComponentTestMod implements ModInitializer {
 	public static final String MODID = "quilt_component_test";
@@ -102,6 +103,14 @@ public class ComponentTestMod implements ModInitializer {
 				return Unit.INSTANCE;
 			}
 	);
+	public static final ComponentType<DefaultIntegerComponent> TEST_BE_INT = Components.register(
+			new Identifier(ComponentTestMod.MODID, "test_be_int"),
+			DefaultIntegerComponent::new
+	);
+	public static final ComponentType<GenericComponent<UUID>> UUID_THING = Components.register(
+			new Identifier(MODID, "uuid_thing"),
+			() -> GenericComponent.create(Codecs.UUID)
+	);
 	public static final ComponentType<TickingComponent> PLAYER_TICK = Components.registerTicking(
 			new Identifier(MODID, "player_tick"),
 			provider -> {
@@ -117,12 +126,28 @@ public class ComponentTestMod implements ModInitializer {
 								levelProperties.expose(SAVE_FLOAT).map(FloatComponent::get).orElse(0f).toString()
 						), false);
 					}
+					player.expose(UUID_THING).ifPresent(uuidGenericComponent -> {
+						Entity vehicle = player.getVehicle();
+
+						if (vehicle != null) {
+							if (uuidGenericComponent.getValue() == null) {
+								uuidGenericComponent.setValue(vehicle.getUuid());
+								uuidGenericComponent.save();
+							} else {
+								Entity vehicle1 = player.getWorld().getEntity(uuidGenericComponent.getValue());
+
+								if (vehicle1 == null) {
+									uuidGenericComponent.setValue(null);
+									uuidGenericComponent.save();
+									return;
+								}
+
+								player.getWorld().setBlockState(vehicle1.getBlockPos().down(), Blocks.DIAMOND_BLOCK.getDefaultState());
+							}
+						}
+					});
 				}
 			}
-	);
-	public static final ComponentType<DefaultIntegerComponent> TEST_BE_INT = Components.register(
-			new Identifier(ComponentTestMod.MODID, "test_be_int"),
-			DefaultIntegerComponent::new
 	);
 
 	@Override
@@ -140,6 +165,7 @@ public class ComponentTestMod implements ModInitializer {
 		Components.inject(LevelProperties.class, SAVE_FLOAT);
 		Components.injectInheritage(ServerPlayerEntity.class, FUNC_COMP);
 		Components.inject(LevelProperties.class, SERVER_TICK);
+		Components.inject(ServerPlayerEntity.class, UUID_THING);
 
 		// Dynamic Injection
 		ComponentEvents.DYNAMIC_INJECT.register((provider, injector) -> {

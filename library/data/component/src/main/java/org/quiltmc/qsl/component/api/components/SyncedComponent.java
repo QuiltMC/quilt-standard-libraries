@@ -28,7 +28,7 @@ public interface SyncedComponent extends Component {
 
 	@Nullable Runnable getSyncOperation();
 
-	void setSyncOperation(@NotNull Runnable runnable);
+	void setSyncOperation(@Nullable Runnable runnable);
 
 	default void sync() {
 		if (this.getSyncOperation() != null) {
