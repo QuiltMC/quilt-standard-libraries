@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.impl.sync;
+package org.quiltmc.qsl.component.impl.sync.header;
 
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.util.Identifier;
@@ -23,7 +23,6 @@ import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
 import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.impl.CommonInitializer;
-import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
 
 public class SyncHeaderRegistry {
 	private static final RegistryKey<Registry<SyncPacketHeader<?>>> HEADERS_KEY =

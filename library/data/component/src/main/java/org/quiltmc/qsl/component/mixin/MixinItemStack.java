@@ -45,7 +45,7 @@ public abstract class MixinItemStack implements ComponentProvider { // TODO: Mak
 	private void initContainer(ItemConvertible itemConvertible, int i, CallbackInfo ci) {
 		this.qsl$container = LazyComponentContainer.builder(this)
 				.orElseThrow()
-				.setSaveOperation(() -> this.qsl$container.writeNbt(this.getOrCreateNbt()))
+				.saving(() -> this.qsl$container.writeNbt(this.getOrCreateNbt()))
 				.ticking()
 				.build();
 	}
@@ -57,7 +57,7 @@ public abstract class MixinItemStack implements ComponentProvider { // TODO: Mak
 	private void readContainer(NbtCompound nbtCompound, CallbackInfo ci) {
 		this.qsl$container = LazyComponentContainer.builder(this)
 				.orElseThrow()
-				.setSaveOperation(() -> this.qsl$container.writeNbt(this.getOrCreateNbt()))
+				.saving(() -> this.qsl$container.writeNbt(this.getOrCreateNbt()))
 				.ticking()
 				.build();
 

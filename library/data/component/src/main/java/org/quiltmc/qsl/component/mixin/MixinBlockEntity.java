@@ -21,9 +21,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.impl.container.LazyComponentContainer;
@@ -40,6 +38,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class MixinBlockEntity implements ComponentProvider {
 	private ComponentContainer qsl$container;
 
+	@Shadow
+	public abstract void markDirty();
+
+	@Override
+	public @NotNull ComponentContainer getComponentContainer() {
+		return this.qsl$container;
+	}
+
 	@Inject(method = "readNbt", at = @At("TAIL"))
 	private void onReadNbt(NbtCompound nbt, CallbackInfo ci) {
 		this.qsl$container.readNbt(nbt);
@@ -50,29 +56,14 @@ public abstract class MixinBlockEntity implements ComponentProvider {
 		//noinspection ConstantConditions
 		this.qsl$container = LazyComponentContainer.builder(this)
 				.orElseThrow()
-				.setSaveOperation(this::markDirty)
+				.saving(this::markDirty)
 				.ticking()
 				.syncing(SyncPacketHeader.BLOCK_ENTITY, () -> SyncPlayerList.create((BlockEntity) (Object) this))
 				.build();
 	}
 
-	@Shadow
-	public abstract void markDirty();
-
-	@Shadow
-	@Nullable
-	protected World world;
-
-	@Shadow
-	public abstract @Nullable World getWorld();
-
 	@Inject(method = "toNbt", at = @At("TAIL"))
 	private void onWriteNbt(CallbackInfoReturnable<NbtCompound> cir) {
 		this.qsl$container.writeNbt(cir.getReturnValue());
-	}
-
-	@Override
-	public @NotNull ComponentContainer getComponentContainer() {
-		return this.qsl$container;
 	}
 }

@@ -19,7 +19,7 @@ package org.quiltmc.qsl.component.impl.client.sync;
 import net.minecraft.util.collection.IdList;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.Components;
-import org.quiltmc.qsl.component.impl.sync.SyncHeaderRegistry;
+import org.quiltmc.qsl.component.impl.sync.header.SyncHeaderRegistry;
 import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
 import org.quiltmc.qsl.component.impl.sync.packet.SyncPacket;
 import org.quiltmc.qsl.component.impl.sync.packet.PacketIds;

@@ -207,8 +207,8 @@ public class LazyComponentContainer implements ComponentContainer {
 			this.saveOperation = null;
 		}
 
-		public Builder setSaveOperation(Runnable runnable) {
-			this.saveOperation = runnable;
+		public Builder saving(Runnable saveOperation) {
+			this.saveOperation = saveOperation;
 			return this;
 		}
 

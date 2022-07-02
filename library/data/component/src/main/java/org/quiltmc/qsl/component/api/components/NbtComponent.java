@@ -21,6 +21,7 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.Component;
+import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 
 public interface NbtComponent<T extends NbtElement> extends Component {
 	@SuppressWarnings("unchecked")
@@ -52,7 +53,10 @@ public interface NbtComponent<T extends NbtElement> extends Component {
 			case NbtElement.LONG_ARRAY_TYPE ->
 					((NbtComponent<NbtLongArray>) nbtComponent).read((NbtLongArray) nbtTarget);
 			default -> // We throw if we ever find a non-vanilla type trying to be used for component serialization!
-					throw new RuntimeException("The nbt data type with id %d is not vanilla!".formatted(nbtComponent.nbtType()));
+					throw ErrorUtil.runtime(
+							"The nbt data type with id %D is not vanilla!",
+							nbtComponent.nbtType()
+					).get();
 		}
 	}
 

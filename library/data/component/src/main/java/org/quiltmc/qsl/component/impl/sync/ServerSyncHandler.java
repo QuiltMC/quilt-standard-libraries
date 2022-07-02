@@ -19,6 +19,7 @@ package org.quiltmc.qsl.component.impl.sync;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import org.quiltmc.qsl.component.api.Components;
+import org.quiltmc.qsl.component.impl.sync.header.SyncHeaderRegistry;
 import org.quiltmc.qsl.component.impl.sync.packet.PacketIds;
 import org.quiltmc.qsl.component.impl.sync.packet.RegistryPacket;
 import org.quiltmc.qsl.networking.api.PacketSender;

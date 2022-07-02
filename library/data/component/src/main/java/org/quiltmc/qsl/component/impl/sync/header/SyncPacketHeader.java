@@ -17,13 +17,13 @@
 package org.quiltmc.qsl.component.impl.sync.header;
 
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.world.chunk.Chunk;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.impl.CommonInitializer;
-import org.quiltmc.qsl.component.impl.sync.SyncHeaderRegistry;
 import org.quiltmc.qsl.component.impl.sync.codec.NetworkCodec;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 
@@ -31,13 +31,17 @@ public record SyncPacketHeader<P extends ComponentProvider>(@NotNull NetworkCode
 	public static final SyncPacketHeader<BlockEntity> BLOCK_ENTITY = new SyncPacketHeader<>(NetworkCodec.BLOCK_ENTITY);
 	public static final SyncPacketHeader<Entity> ENTITY = new SyncPacketHeader<>(NetworkCodec.ENTITY);
 	public static final SyncPacketHeader<Chunk> CHUNK = new SyncPacketHeader<>(NetworkCodec.CHUNK);
-	// TODO: LevelProperties sync
-//	public static final SyncPacketHeader<?> LEVEL = new SyncPacketHeader<>(NetworkCodec.LEVEL);
+	private static final NetworkCodec<ComponentProvider> LEVEL_CODEC = new NetworkCodec<>(
+			(buf, provider) -> {},
+			buf -> MinecraftClient.getInstance()
+	);
+	public static final SyncPacketHeader<?> LEVEL = new SyncPacketHeader<>(LEVEL_CODEC);
 
 	public static void registerDefaults() {
 		SyncHeaderRegistry.register(CommonInitializer.id("block_entity"), BLOCK_ENTITY);
 		SyncHeaderRegistry.register(CommonInitializer.id("entity"), ENTITY);
 		SyncHeaderRegistry.register(CommonInitializer.id("chunk"), CHUNK);
+		SyncHeaderRegistry.register(CommonInitializer.id("level"), LEVEL);
 	}
 
 	public @NotNull PacketByteBuf start(@NotNull ComponentProvider provider) {

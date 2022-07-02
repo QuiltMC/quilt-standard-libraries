@@ -52,7 +52,7 @@ public abstract class MixinChunk implements ComponentProvider {
 	private void onInit(ChunkPos chunkPos, UpgradeData upgradeData, HeightLimitView heightLimitView, Registry<?> registry, long l, ChunkSection[] chunkSections, BlendingData blendingData, CallbackInfo ci) {
 		LazyComponentContainer.Builder builder = LazyComponentContainer.builder(this)
 				.orElseThrow()
-				.setSaveOperation(() -> this.setNeedsSaving(true));
+				.saving(() -> this.setNeedsSaving(true));
 
 		//noinspection ConstantConditions
 		if ((Chunk) (Object) this instanceof WorldChunk worldChunk) {

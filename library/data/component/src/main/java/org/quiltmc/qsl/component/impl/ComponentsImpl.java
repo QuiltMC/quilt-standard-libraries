@@ -28,7 +28,7 @@ import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentInjectionPredicate;
 import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.api.ComponentType;
-import org.quiltmc.qsl.component.impl.sync.SyncHeaderRegistry;
+import org.quiltmc.qsl.component.impl.sync.header.SyncHeaderRegistry;
 import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,16 +49,14 @@ public class ComponentsImpl {
 
 	public static <C extends Component> void inject(ComponentInjectionPredicate predicate, ComponentType<C> type) {
 		if (REGISTRY.get(type.id()) == null) {
-			throw ErrorUtil.illegalArgument(
-					"The target id %s does not match any registered component".formatted(type)
-			).get();
+			throw ErrorUtil.illegalArgument("The target id %s does not match any registered component", type).get();
 		}
 
 		if (INJECTION_REGISTRY.containsKey(predicate)) {
 			if (!INJECTION_REGISTRY.get(predicate).add(type.id())) {
 				throw ErrorUtil.illegalArgument(
-					"Cannot inject the predicate %s with id %s more than once! Consider creating a new component type!"
-							.formatted(predicate, type)
+						"Cannot inject the predicate %s with id %s more than once! Consider creating a new component type!",
+						predicate, type.id()
 				).get();
 			}
 		} else {
@@ -99,7 +97,7 @@ public class ComponentsImpl {
 	@NotNull
 	public static ComponentType<?> getEntry(Identifier id) {
 		return REGISTRY.getOrEmpty(id).orElseThrow(
-				ErrorUtil.illegalArgument("Cannot access element with id %s in the component registry!".formatted(id))
+				ErrorUtil.illegalArgument("Cannot access element with id %s in the component registry!", id)
 		);
 	}
 

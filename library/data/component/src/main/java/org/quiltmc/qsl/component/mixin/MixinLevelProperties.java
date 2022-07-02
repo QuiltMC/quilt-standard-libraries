@@ -36,15 +36,18 @@ import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.ComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.impl.container.LazyComponentContainer;
+import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+// TODO: Try saving using an external file so that worlds can also be handled and this is easier to save/sync
 @Mixin(LevelProperties.class)
 public abstract class MixinLevelProperties implements ServerWorldProperties, SaveProperties, ComponentProvider {
 	private ComponentContainer qsl$container;
@@ -54,22 +57,22 @@ public abstract class MixinLevelProperties implements ServerWorldProperties, Sav
 		cir.getReturnValue().getComponentContainer().readNbt((NbtCompound) dynamic.getValue());
 	}
 
+	@Override
+	public @NotNull ComponentContainer getComponentContainer() {
+		return this.qsl$container;
+	}
+
 	@Inject(method = "<init>(Lcom/mojang/datafixers/DataFixer;ILnet/minecraft/nbt/NbtCompound;ZIIIFJJIIIZIZZZLnet/minecraft/world/border/WorldBorder$Properties;IILjava/util/UUID;Ljava/util/Set;Lnet/minecraft/world/timer/Timer;Lnet/minecraft/nbt/NbtCompound;Lnet/minecraft/nbt/NbtCompound;Lnet/minecraft/world/level/LevelInfo;Lnet/minecraft/world/gen/GeneratorOptions;Lcom/mojang/serialization/Lifecycle;)V", at = @At("TAIL"))
 	private void onInit(DataFixer dataFixer, int i, NbtCompound nbtCompound, boolean bl, int j, int k, int l, float f, long m, long n, int o, int p, int q, boolean bl2, int r, boolean bl3, boolean bl4, boolean bl5, WorldBorder.Properties properties, int s, int t, UUID uUID, Set<String> set, Timer<MinecraftServer> timer, NbtCompound nbtCompound2, NbtCompound nbtCompound3, LevelInfo levelInfo, GeneratorOptions generatorOptions, Lifecycle lifecycle, CallbackInfo ci) {
 		this.qsl$container = LazyComponentContainer.builder(this)
 				.orElseThrow()
 				.ticking()
-//				.syncing(DefaultSyncPacketHeaders.LEVEL) TODO
+				.syncing(SyncPacketHeader.LEVEL, List::of) // TODO
 				.build();
 	}
 
 	@Inject(method = "updateProperties", at = @At("TAIL"))
 	private void writeComponentData(DynamicRegistryManager registryManager, NbtCompound levelNbt, NbtCompound playerNbt, CallbackInfo ci) {
 		this.qsl$container.writeNbt(levelNbt);
-	}
-
-	@Override
-	public @NotNull ComponentContainer getComponentContainer() {
-		return this.qsl$container;
 	}
 }

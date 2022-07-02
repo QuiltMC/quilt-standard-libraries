@@ -54,8 +54,9 @@ public class SyncPacket {
 				var size = buf.readInt();
 
 				for (int i = 0; i < size; i++) {
-					NetworkCodec.COMPONENT_TYPE.decode(buf)
-							.ifPresent(type -> provider.getComponentContainer().receiveSyncPacket(type, buf));
+					NetworkCodec.COMPONENT_TYPE.decode(buf).ifPresent(
+							type -> provider.getComponentContainer().receiveSyncPacket(type, buf)
+					);
 				}
 			});
 			buf.release();
