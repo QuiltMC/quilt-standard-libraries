@@ -34,6 +34,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @SuppressWarnings("ConstantConditions")
+@Deprecated
 @Mixin(ItemStack.class)
 public abstract class MixinItemStack implements ComponentProvider { // TODO: Make sure nothing else may be broken before final PR.
 	@Shadow

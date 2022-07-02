@@ -48,9 +48,7 @@ public class GenericComponent<T> implements NbtComponent<NbtCompound> {
 		var nbt = new NbtCompound();
 		if (this.value != null) {
 			this.codec.encodeStart(NbtOps.INSTANCE, this.value).result()
-					.ifPresent(nbtElement -> {
-						nbt.put("Value", nbtElement);
-					});
+					.ifPresent(nbtElement -> nbt.put("Value", nbtElement));
 		}
 		return nbt;
 	}

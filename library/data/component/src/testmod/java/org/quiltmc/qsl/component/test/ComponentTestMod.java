@@ -32,7 +32,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Unit;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.util.registry.Registry;
@@ -43,7 +42,10 @@ import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.block.entity.api.QuiltBlockEntityTypeBuilder;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.Components;
-import org.quiltmc.qsl.component.api.components.*;
+import org.quiltmc.qsl.component.api.components.FloatComponent;
+import org.quiltmc.qsl.component.api.components.GenericComponent;
+import org.quiltmc.qsl.component.api.components.InventoryComponent;
+import org.quiltmc.qsl.component.api.components.TickingComponent;
 import org.quiltmc.qsl.component.api.event.ComponentEvents;
 import org.quiltmc.qsl.component.impl.components.DefaultFloatComponent;
 import org.quiltmc.qsl.component.impl.components.DefaultIntegerComponent;
@@ -94,15 +96,6 @@ public class ComponentTestMod implements ModInitializer {
 			new Identifier(MODID, "itemstack_int"),
 			DefaultIntegerComponent::new
 	);
-	public static final ComponentType<FunctionComponent<Unit, Unit>> FUNC_COMP = Components.registerStatic(
-			new Identifier(MODID, "player_thing"),
-			() -> (provider, unused) -> {
-				if (provider instanceof PlayerEntity entity) {
-					entity.giveItemStack(new ItemStack(Items.WHEAT));
-				}
-				return Unit.INSTANCE;
-			}
-	);
 	public static final ComponentType<DefaultIntegerComponent> TEST_BE_INT = Components.register(
 			new Identifier(ComponentTestMod.MODID, "test_be_int"),
 			DefaultIntegerComponent::new
@@ -117,8 +110,8 @@ public class ComponentTestMod implements ModInitializer {
 				if (provider instanceof ServerPlayerEntity player) {
 					ItemStack stackInHand = player.getStackInHand(Hand.MAIN_HAND);
 					if (stackInHand.isOf(Items.WHEAT)) {
-						player.call(ComponentTestMod.FUNC_COMP, Unit.INSTANCE)
-								.ifPresent(unit -> player.sendMessage(Text.literal("Prankt"), true));
+						player.giveItemStack(new ItemStack(Items.WHEAT));
+						player.sendMessage(Text.literal("Prankt"), true);
 					}
 					var props = player.getWorld().getServer().getSaveProperties();
 					if (props instanceof LevelProperties levelProperties && player.getWorld().getTime() % 100 == 0) {
@@ -142,8 +135,13 @@ public class ComponentTestMod implements ModInitializer {
 									return;
 								}
 
-								player.getWorld().setBlockState(vehicle1.getBlockPos().down(), Blocks.DIAMOND_BLOCK.getDefaultState());
+								player.getWorld().setBlockState(
+										vehicle1.getBlockPos().down(),
+										Blocks.DIAMOND_BLOCK.getDefaultState()
+								);
 							}
+						} else {
+							uuidGenericComponent.setValue(null);
 						}
 					});
 				}
@@ -163,7 +161,7 @@ public class ComponentTestMod implements ModInitializer {
 		Components.inject(ChestBlockEntity.class, CHEST_NUMBER);
 		Components.injectInheritage(Chunk.class, CHUNK_INVENTORY);
 		Components.inject(LevelProperties.class, SAVE_FLOAT);
-		Components.injectInheritage(ServerPlayerEntity.class, FUNC_COMP);
+		// Components.injectInheritage(ServerPlayerEntity.class, FUNC_COMP); Function components have been removed
 		Components.inject(LevelProperties.class, SERVER_TICK);
 		Components.inject(ServerPlayerEntity.class, UUID_THING);
 

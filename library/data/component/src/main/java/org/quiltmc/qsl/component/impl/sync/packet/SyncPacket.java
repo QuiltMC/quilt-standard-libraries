@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.component.impl.sync.packet;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.NotNull;
@@ -44,15 +45,20 @@ public class SyncPacket {
 		return buff;
 	}
 
-	public static void handle(PacketByteBuf buf) {
-		var header = ClientSyncHandler.getInstance().getHeader(buf.readInt());
-		header.codec().decode(buf).ifPresent(provider -> {
-			var size = buf.readInt();
+	public static void handle(PacketByteBuf buf, MinecraftClient client) {
+		buf.retain();
 
-			for (int i = 0; i < size; i++) {
-				NetworkCodec.COMPONENT_TYPE.decode(buf)
-						.ifPresent(type -> provider.getComponentContainer().receiveSyncPacket(type, buf));
-			}
+		client.execute(() -> {
+			var header = ClientSyncHandler.getInstance().getHeader(buf.readInt());
+			header.codec().decode(buf).ifPresent(provider -> {
+				var size = buf.readInt();
+
+				for (int i = 0; i < size; i++) {
+					NetworkCodec.COMPONENT_TYPE.decode(buf)
+							.ifPresent(type -> provider.getComponentContainer().receiveSyncPacket(type, buf));
+				}
+			});
+			buf.release();
 		});
 	}
 

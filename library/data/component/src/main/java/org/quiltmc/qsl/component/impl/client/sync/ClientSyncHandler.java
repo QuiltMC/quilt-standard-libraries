@@ -50,7 +50,7 @@ public class ClientSyncHandler {
 				ClientRegistryPacket.handleRegistryPacket(buf, SyncHeaderRegistry.HEADERS, list -> this.headerList = list)
 		);
 		ClientPlayNetworking.registerGlobalReceiver(PacketIds.SYNC, (client, handler, buf, responseSender) ->
-				SyncPacket.handle(buf)
+				SyncPacket.handle(buf, client)
 		);
 	}
 
