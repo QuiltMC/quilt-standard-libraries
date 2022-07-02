@@ -17,7 +17,6 @@
 package org.quiltmc.qsl.component.impl.container;
 
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -40,12 +39,13 @@ import java.util.function.Supplier;
 public class LazyComponentContainer implements ComponentContainer {
 	private final IdentityHashMap<ComponentType<?>, Lazy<Component>> components;
 	private final List<ComponentType<?>> nbtComponents;
+	@Nullable
 	private final List<ComponentType<?>> tickingComponents;
 	@Nullable
 	private final Runnable saveOperation;
-	private final boolean ticking;
-	private final boolean syncing;
+	@Nullable
 	private final SyncPacket.SyncContext syncContext;
+	@Nullable
 	private final Queue<ComponentType<?>> pendingSync;
 
 	protected LazyComponentContainer(
@@ -55,12 +55,10 @@ public class LazyComponentContainer implements ComponentContainer {
 			@Nullable SyncPacket.SyncContext syncContext
 	) {
 		this.saveOperation = saveOperation;
-		this.ticking = ticking;
-		this.syncing = syncContext != null;
 		this.syncContext = syncContext;
 		this.nbtComponents = new ArrayList<>();
-		this.tickingComponents = new ArrayList<>();
-		this.pendingSync = new ArrayDeque<>();
+		this.tickingComponents = ticking ? new ArrayList<>() : null;
+		this.pendingSync = this.syncContext != null ? new ArrayDeque<>() : null;
 		this.components = this.initializeComponents(provider);
 	}
 
@@ -75,12 +73,16 @@ public class LazyComponentContainer implements ComponentContainer {
 	public static void move(@NotNull LazyComponentContainer from, @NotNull LazyComponentContainer into) {
 		from.components.forEach((id, componentLazy) -> componentLazy.ifPresent(component -> {
 			into.components.put(id, componentLazy); // Directly overriding our value.
-
-			if (component instanceof NbtComponent<?> nbtComponent) {
-				into.nbtComponents.add(id);
-				nbtComponent.setSaveOperation(into.saveOperation);
-			}
 		}));
+
+		into.nbtComponents.addAll(from.nbtComponents);
+		if (into.pendingSync != null && from.pendingSync != null) {
+			into.pendingSync.addAll(from.pendingSync);
+		}
+
+		if (into.tickingComponents != null && from.tickingComponents != null) {
+			into.tickingComponents.addAll(from.tickingComponents);
+		}
 
 		from.components.clear();
 		from.nbtComponents.clear();
@@ -121,10 +123,9 @@ public class LazyComponentContainer implements ComponentContainer {
 
 	@Override
 	public void tick(@NotNull ComponentProvider provider) {
-		if (!this.ticking) {
-			throw ErrorUtil.runtime("Attempted to tick a non-tickable ComponentContainer instance").get();
+		if (this.tickingComponents == null) {
+			throw ErrorUtil.illegalState("Attempted to tick a non-ticking component container!").get();
 		}
-
 		this.tickingComponents.stream()
 				.map(this::expose)
 				.map(Optional::orElseThrow)
@@ -132,28 +133,18 @@ public class LazyComponentContainer implements ComponentContainer {
 				.forEach(tickingComponent -> tickingComponent.tick(provider));
 
 		// Sync any queued components
-		if (this.syncing) {
-			this.sync(provider);
-		}
-	}
-
-	@Override
-	public void receiveSyncPacket(@NotNull ComponentType<?> type, @NotNull PacketByteBuf buf) {
-		this.expose(type).map(it -> ((SyncedComponent) it)).ifPresent(syncedComponent -> syncedComponent.readFromBuf(buf));
-		ComponentsImpl.LOGGER.info("Received packet for {}", type);
+		this.sync(provider);
 	}
 
 	@Override
 	public void sync(@NotNull ComponentProvider provider) {
-		var map = new HashMap<ComponentType<?>, SyncedComponent>();
-
-		while (!this.pendingSync.isEmpty()) {
-			var id = this.pendingSync.poll();
-			map.put(id, (SyncedComponent) this.components.get(id).get());
-		}
-
-		if (!map.isEmpty()) {
-			SyncPacket.send(this.syncContext, provider, map);
+		if (this.syncContext != null && this.pendingSync != null /* this is not needed but IJ complains, so I'll leave it in*/) {
+			SyncPacket.syncFromQueue(
+					this.pendingSync,
+					this.syncContext,
+					type -> ((SyncedComponent) this.components.get(type).get()),
+					provider
+			);
 		}
 	}
 
@@ -167,7 +158,7 @@ public class LazyComponentContainer implements ComponentContainer {
 	private Lazy<Component> createLazy(ComponentType<?> type) {
 		if (type.isStatic()) {
 			Component singleton = type.create();
-			if (this.ticking && singleton instanceof TickingComponent) {
+			if (singleton instanceof TickingComponent && this.tickingComponents != null) {
 				this.tickingComponents.add(type);
 			}
 
@@ -181,11 +172,11 @@ public class LazyComponentContainer implements ComponentContainer {
 				nbtComponent.setSaveOperation(this.saveOperation);
 			}
 
-			if (this.ticking && component instanceof TickingComponent) {
+			if (component instanceof TickingComponent && this.tickingComponents != null) {
 				this.tickingComponents.add(type);
 			}
 
-			if (this.syncing && component instanceof SyncedComponent syncedComponent) {
+			if (component instanceof SyncedComponent syncedComponent && this.syncContext != null && this.pendingSync != null /* also not needed */) {
 				syncedComponent.setSyncOperation(() -> this.pendingSync.add(type));
 			}
 

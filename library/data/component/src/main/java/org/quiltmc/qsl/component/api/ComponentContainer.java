@@ -32,7 +32,5 @@ public interface ComponentContainer { // TODO: Maybe split up responsibilities?
 
 	void tick(@NotNull ComponentProvider provider);
 
-	void receiveSyncPacket(@NotNull ComponentType<?> type, @NotNull PacketByteBuf buf);
-
 	void sync(@NotNull ComponentProvider provider);
 }

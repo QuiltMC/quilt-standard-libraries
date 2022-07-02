@@ -29,12 +29,15 @@ import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class SyncPacket {
 	@NotNull
-	public static PacketByteBuf create(SyncPacketHeader<?> headerCreator, @NotNull ComponentProvider provider, Map<ComponentType<?>, SyncedComponent> components) {
+	public static PacketByteBuf create(@NotNull SyncPacketHeader<?> headerCreator, @NotNull ComponentProvider provider, @NotNull Map<ComponentType<?>, SyncedComponent> components) {
 		PacketByteBuf buff = headerCreator.start(provider);
 		buff.writeInt(components.size());
 		components.forEach((type, syncedComponent) -> {
@@ -54,9 +57,10 @@ public class SyncPacket {
 				var size = buf.readInt();
 
 				for (int i = 0; i < size; i++) {
-					NetworkCodec.COMPONENT_TYPE.decode(buf).ifPresent(
-							type -> provider.getComponentContainer().receiveSyncPacket(type, buf)
-					);
+					NetworkCodec.COMPONENT_TYPE.decode(buf)
+							.flatMap(provider::expose)
+							.map(it -> ((SyncedComponent) it))
+							.ifPresent(synced -> synced.readFromBuf(buf));
 				}
 			});
 			buf.release();
@@ -69,6 +73,24 @@ public class SyncPacket {
 		context.playerGenerator().get().forEach(serverPlayer ->
 				ServerPlayNetworking.send(serverPlayer, PacketIds.SYNC, packet)
 		);
+	}
+
+	public static void syncFromQueue(
+			Queue<ComponentType<?>> pendingSync,
+			SyncPacket.SyncContext context,
+			Function<ComponentType<?>, SyncedComponent> mapper,
+			ComponentProvider provider
+	) {
+		var map = new HashMap<ComponentType<?>, SyncedComponent>(); // TODO: Find a way to *not* create this map?!
+
+		while (!pendingSync.isEmpty()) {
+			var currentType = pendingSync.poll();
+			map.put(currentType, mapper.apply(currentType));
+		}
+
+		if (!map.isEmpty()) {
+			SyncPacket.send(context, provider, map);
+		}
 	}
 
 	public record SyncContext(SyncPacketHeader<?> header, Supplier<Collection<ServerPlayerEntity>> playerGenerator) {

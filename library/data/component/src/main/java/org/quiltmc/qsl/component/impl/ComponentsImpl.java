@@ -33,11 +33,15 @@ import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @ApiStatus.Internal
 public class ComponentsImpl {
+	// TODO: Maybe move this to the ComponentType class?!
 	public static final RegistryKey<Registry<ComponentType<?>>> REGISTRY_KEY =
 			RegistryKey.ofRegistry(CommonInitializer.id("component_types"));
 	public static final Registry<ComponentType<?>> REGISTRY =
@@ -45,7 +49,7 @@ public class ComponentsImpl {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger("QSL/Components");
 
-	private static final Map<ComponentInjectionPredicate, Set<Identifier>> INJECTION_REGISTRY = new HashMap<>();
+	private static final Map<ComponentInjectionPredicate, Set<ComponentType<?>>> INJECTION_REGISTRY = new HashMap<>();
 
 	public static <C extends Component> void inject(ComponentInjectionPredicate predicate, ComponentType<C> type) {
 		if (REGISTRY.get(type.id()) == null) {
@@ -53,40 +57,27 @@ public class ComponentsImpl {
 		}
 
 		if (INJECTION_REGISTRY.containsKey(predicate)) {
-			if (!INJECTION_REGISTRY.get(predicate).add(type.id())) {
+			if (!INJECTION_REGISTRY.get(predicate).add(type)) {
 				throw ErrorUtil.illegalArgument(
 						"Cannot inject the predicate %s with id %s more than once! Consider creating a new component type!",
 						predicate, type.id()
 				).get();
 			}
 		} else {
-			INJECTION_REGISTRY.put(predicate, Util.make(new HashSet<>(), set -> set.add(type.id())));
+			INJECTION_REGISTRY.put(predicate, Util.make(new HashSet<>(), set -> set.add(type)));
 		}
 
 		ComponentInjectionCache.clear(); // Always clear the cache after an injection is registered.
 	}
 
 	@NotNull
-	public static <T extends Component> ComponentType<T> register(Identifier id, Component.Factory<T> factory) {
-		var componentType = new ComponentType<>(id, factory, false);
-		return Registry.register(REGISTRY, id, componentType);
-	}
-
-	@NotNull
-	public static <C extends Component> ComponentType<C> registerStatic(Identifier id, Component.Factory<C> factory) {
-		var componentType = new ComponentType<>(id, factory, true);
-		return Registry.register(REGISTRY, id, componentType);
-	}
-
-	@NotNull
-	public static List<ComponentType<?>> getInjections(@NotNull ComponentProvider provider) {
+	public static Set<ComponentType<?>> getInjections(@NotNull ComponentProvider provider) {
 		return ComponentInjectionCache.getCache(provider.getClass()).orElseGet(() -> {
-			List<ComponentType<?>> injectedTypes = INJECTION_REGISTRY.entrySet().stream()
+			Set<ComponentType<?>> injectedTypes = INJECTION_REGISTRY.entrySet().stream()
 					.filter(it -> it.getKey().canInject(provider))
 					.map(Map.Entry::getValue)
 					.flatMap(Set::stream)
-					.map(ComponentsImpl::getEntry)
-					.collect(Collectors.toList());
+					.collect(Collectors.toSet());
 
 			ComponentInjectionCache.record(provider.getClass(), injectedTypes);
 
@@ -95,10 +86,8 @@ public class ComponentsImpl {
 	}
 
 	@NotNull
-	public static ComponentType<?> getEntry(Identifier id) {
-		return REGISTRY.getOrEmpty(id).orElseThrow(
-				ErrorUtil.illegalArgument("Cannot access element with id %s in the component registry!", id)
-		);
+	public static <C extends Component> ComponentType<C> register(Identifier id, @NotNull ComponentType<C> type) {
+		return Registry.register(REGISTRY, id, type);
 	}
 
 	public static void freezeRegistries() {

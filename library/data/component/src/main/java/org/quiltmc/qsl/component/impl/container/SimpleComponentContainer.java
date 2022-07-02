@@ -17,7 +17,6 @@
 package org.quiltmc.qsl.component.impl.container;
 
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
@@ -42,18 +41,14 @@ public class SimpleComponentContainer implements ComponentContainer {
 	private final List<ComponentType<?>> tickingComponents;
 	@Nullable
 	private final SyncPacket.SyncContext syncContext;
-	private Queue<ComponentType<?>> pendingSync;
+	private final Queue<ComponentType<?>> pendingSync;
 
 	protected SimpleComponentContainer(@Nullable Runnable saveOperation, SyncPacket.@Nullable SyncContext syncContext, Stream<ComponentType<?>> types) {
 		this.components = new IdentityHashMap<>();
 		this.nbtComponents = new ArrayList<>();
 		this.tickingComponents = new ArrayList<>();
-		if (syncContext != null) {
-			this.syncContext = syncContext;
-			this.pendingSync = new ArrayDeque<>();
-		} else {
-			this.syncContext = null;
-		}
+		this.syncContext = syncContext;
+		this.pendingSync = new ArrayDeque<>();
 
 		types.forEach(type -> this.initializeComponent(saveOperation, type));
 		types.close();
@@ -111,28 +106,19 @@ public class SimpleComponentContainer implements ComponentContainer {
 	}
 
 	@Override
-	public void receiveSyncPacket(@NotNull ComponentType<?> type, @NotNull PacketByteBuf buf) {
-		((SyncedComponent) this.components.get(type)).readFromBuf(buf);
-	}
-
-	@Override
 	public void sync(@NotNull ComponentProvider provider) {
 		if (this.syncContext == null) {
 			throw ErrorUtil.illegalState("Cannot sync a non-syncable component container! Make sure you provide a context!").get();
 		}
-		var map = new HashMap<ComponentType<?>, SyncedComponent>();
-
-		while (!this.pendingSync.isEmpty()) {
-			var currentType = this.pendingSync.poll();
-			map.put(currentType, (SyncedComponent) this.components.get(currentType));
-		}
-
-		if (!map.isEmpty()) {
-			SyncPacket.send(this.syncContext, provider, map);
-		}
+		SyncPacket.syncFromQueue(
+				this.pendingSync,
+				this.syncContext,
+				type -> ((SyncedComponent) this.components.get(type)),
+				provider
+		);
 	}
 
-	private void initializeComponent(@Nullable Runnable saveOperation, ComponentType<?> type) {
+	private void initializeComponent(@Nullable Runnable saveOperation, @NotNull ComponentType<?> type) {
 		Component component = type.create();
 		this.components.put(type, component);
 

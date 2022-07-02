@@ -82,7 +82,7 @@ public class ComponentTestMod implements ModInitializer {
 	);
 	public static final ComponentType<TickingComponent> SERVER_TICK = Components.registerTicking(
 			new Identifier(MODID, "level_tick"),
-			provider -> {
+			() -> provider -> {
 				if (provider instanceof LevelProperties properties) {
 					properties.expose(SAVE_FLOAT).ifPresent(floatComponent -> {
 						floatComponent.set(floatComponent.get() + 0.5f);
@@ -106,7 +106,7 @@ public class ComponentTestMod implements ModInitializer {
 	);
 	public static final ComponentType<TickingComponent> PLAYER_TICK = Components.registerTicking(
 			new Identifier(MODID, "player_tick"),
-			provider -> {
+			() -> provider -> {
 				if (provider instanceof ServerPlayerEntity player) {
 					ItemStack stackInHand = player.getStackInHand(Hand.MAIN_HAND);
 					if (stackInHand.isOf(Items.WHEAT)) {

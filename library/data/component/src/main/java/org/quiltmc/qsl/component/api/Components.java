@@ -56,23 +56,21 @@ public final class Components {
 
 	public static <C extends Component, S> Optional<C> expose(ComponentType<C> id, S obj) {
 		if (obj instanceof ComponentProvider provider) {
-			return provider.getComponentContainer().expose(id)
-					.map(id::cast)
-					.map(Optional::orElseThrow); // If the casting fails something is wrong with the provided ComponentType. In that case we just throw.
+			return provider.getComponentContainer().expose(id).flatMap(id::cast);
 		}
 
 		return Optional.empty();
 	}
 
 	public static <C extends Component> ComponentType<C> register(Identifier id, Component.Factory<C> factory) {
-		return ComponentsImpl.register(id, factory);
+		return ComponentsImpl.register(id, new ComponentType<>(id, factory, false, false));
 	}
 
 	public static <C extends Component> ComponentType<C> registerStatic(Identifier id, Component.Factory<C> factory) {
-		return ComponentsImpl.registerStatic(id, factory);
+		return ComponentsImpl.register(id, new ComponentType<>(id, factory, true, false));
 	}
 
-	public static <C extends TickingComponent> ComponentType<C> registerTicking(Identifier id, C component) {
-		return ComponentsImpl.registerStatic(id, () -> component);
+	public static <C extends TickingComponent> ComponentType<C> registerTicking(Identifier id, Component.Factory<C> factory) {
+		return ComponentsImpl.register(id, new ComponentType<>(id, factory, false, true));
 	}
 }

@@ -50,11 +50,6 @@ public class Lazy<T> {
 	}
 
 	@NotNull
-	public <U> Lazy<U> compose(Function<T, U> transformer) {
-		return Lazy.of(() -> transformer.apply(this.get()));
-	}
-
-	@NotNull
 	public Supplier<T> getSupplier() {
 		return sup;
 	}

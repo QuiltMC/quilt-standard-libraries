@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public record ComponentType<T extends Component>(Identifier id, Component.Factory<T> factory,
-												 boolean isStatic) implements Component.Factory<T> {
+												 boolean isStatic, boolean isInstant) implements Component.Factory<T> {
 	public static final Static STATIC_CACHE = new Static();
 
 	@SuppressWarnings("unchecked")
