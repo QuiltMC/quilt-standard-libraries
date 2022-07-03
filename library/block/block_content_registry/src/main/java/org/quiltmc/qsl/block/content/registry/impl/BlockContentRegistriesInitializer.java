@@ -69,7 +69,7 @@ public class BlockContentRegistriesInitializer implements ModInitializer {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, error) -> resetMaps());
 	}
 
-	private void resetMaps() {
+	private static void resetMaps() {
 		ShovelItem.PATH_STATES.clear();
 		addMapToAttachment(INITIAL_PATH_STATES, BlockContentRegistries.FLATTENABLE_BLOCK);
 		setMapFromAttachment(ShovelItem.PATH_STATES::put, BlockContentRegistries.FLATTENABLE_BLOCK);
