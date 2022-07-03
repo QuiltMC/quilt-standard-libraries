@@ -18,6 +18,7 @@ package org.quiltmc.qsl.block.content.registry.impl;
 
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -26,6 +27,7 @@ import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
 import org.quiltmc.qsl.block.content.registry.api.FlammableBlockEntry;
+import org.quiltmc.qsl.block.content.registry.api.ReversibleBlockEntry;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 
@@ -84,15 +86,21 @@ public class BlockContentRegistriesInitializer implements ModInitializer {
 
 		OXIDATION_INCREASE_BLOCKS.clear();
 		OXIDATION_DECREASE_BLOCKS.clear();
-		addMapToAttachment(INITIAL_OXIDATION_BLOCKS, BlockContentRegistries.OXIDIZABLE_BLOCK);
-		setMapFromAttachment(OXIDATION_INCREASE_BLOCKS::put, BlockContentRegistries.OXIDIZABLE_BLOCK);
-		OXIDATION_DECREASE_BLOCKS.putAll(OXIDATION_INCREASE_BLOCKS.inverse());
+		addMapToAttachment(INITIAL_OXIDATION_BLOCKS.entrySet().stream().collect(Collectors.toMap(
+				Map.Entry::getKey,
+				entry -> new ReversibleBlockEntry(entry.getValue(), true)
+		)), BlockContentRegistries.OXIDIZABLE_BLOCK);
+		setMapFromAttachment((entry, value) -> OXIDATION_INCREASE_BLOCKS.put(entry, value.block()), BlockContentRegistries.OXIDIZABLE_BLOCK);
+		setMapFromAttachment((entry, value) -> value.reversible() ? OXIDATION_INCREASE_BLOCKS.put(value.block(), entry) : null, BlockContentRegistries.OXIDIZABLE_BLOCK);
 
 		UNWAXED_WAXED_BLOCKS.clear();
 		WAXED_UNWAXED_BLOCKS.clear();
-		addMapToAttachment(INITIAL_WAXED_BLOCKS, BlockContentRegistries.WAXABLE_BLOCK);
-		setMapFromAttachment(UNWAXED_WAXED_BLOCKS::put, BlockContentRegistries.WAXABLE_BLOCK);
-		WAXED_UNWAXED_BLOCKS.putAll(UNWAXED_WAXED_BLOCKS.inverse());
+		addMapToAttachment(INITIAL_WAXED_BLOCKS.entrySet().stream().collect(Collectors.toMap(
+				Map.Entry::getKey,
+				entry -> new ReversibleBlockEntry(entry.getValue(), true)
+		)), BlockContentRegistries.WAXABLE_BLOCK);
+		setMapFromAttachment((entry, value) -> UNWAXED_WAXED_BLOCKS.put(entry, value.block()), BlockContentRegistries.WAXABLE_BLOCK);
+		setMapFromAttachment((entry, value) -> value.reversible() ? WAXED_UNWAXED_BLOCKS.put(value.block(), entry) : null, BlockContentRegistries.OXIDIZABLE_BLOCK);
 
 		FireBlock fireBlock = ((FireBlock) Blocks.FIRE);
 		fireBlock.burnChances.clear();

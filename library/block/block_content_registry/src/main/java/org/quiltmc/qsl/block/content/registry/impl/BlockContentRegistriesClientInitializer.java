@@ -42,8 +42,8 @@ public class BlockContentRegistriesClientInitializer implements ClientModInitial
 
 				Block block = Block.getBlockFromItem(item);
 				BlockContentRegistries.FLATTENABLE_BLOCK.getValue(block).ifPresent(state -> lines.add(Text.literal("Flattenable block: " + state)));
-				BlockContentRegistries.OXIDIZABLE_BLOCK.getValue(block).ifPresent(_block -> lines.add(Text.literal("Oxidizes to: " + _block)));
-				BlockContentRegistries.WAXABLE_BLOCK.getValue(block).ifPresent(_block -> lines.add(Text.literal("Waxes to: " + _block)));
+				BlockContentRegistries.OXIDIZABLE_BLOCK.getValue(block).ifPresent(_block -> lines.add(Text.literal("Oxidizes to: " + _block.block())));
+				BlockContentRegistries.WAXABLE_BLOCK.getValue(block).ifPresent(_block -> lines.add(Text.literal("Waxes to: " + _block.block())));
 				BlockContentRegistries.STRIPPABLE_BLOCK.getValue(block).ifPresent(_block -> lines.add(Text.literal("Strips to: " + _block)));
 				BlockContentRegistries.FLAMMABLE_BLOCK.getValue(block).ifPresent(entry -> lines.add(Text.literal("Flammable: " + entry.burn() + " burn chance, " + entry.spread() + " spread chance")));
 			});

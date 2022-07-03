@@ -19,6 +19,7 @@ package org.quiltmc.qsl.block.test;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
+import org.quiltmc.qsl.block.content.registry.api.ReversibleBlockEntry;
 import org.quiltmc.qsl.registry.attachment.api.RegistryExtensions;
 
 import net.minecraft.block.AbstractBlock;
@@ -35,6 +36,6 @@ public class BlockContentRegistryTest implements ModInitializer {
 	public void onInitialize(ModContainer mod) {
 		RegistryExtensions.register(Registry.BLOCK, new Identifier(ID, "oxidizable_iron_block"),
 				new OxidizableBlock(Oxidizable.OxidizationLevel.UNAFFECTED, AbstractBlock.Settings.copy(Blocks.IRON_BLOCK)),
-				BlockContentRegistries.OXIDIZABLE_BLOCK, Blocks.IRON_BLOCK);
+				BlockContentRegistries.OXIDIZABLE_BLOCK, new ReversibleBlockEntry(Blocks.IRON_BLOCK, false));
 	}
 }

@@ -64,11 +64,11 @@ public class BlockContentRegistries {
 	 * <p>
 	 * Values can be set via code and through a datapack with the file {@code data/quilt_block_content_registry/attachments/minecraft/block/oxdizable_block.json}
 	 */
-	public static final RegistryEntryAttachment<Block, Block> OXIDIZABLE_BLOCK = RegistryEntryAttachment
+	public static final RegistryEntryAttachment<Block, ReversibleBlockEntry> OXIDIZABLE_BLOCK = RegistryEntryAttachment
 			.builder(Registry.BLOCK,
 					new Identifier(NAMESPACE, "oxdizable_block"),
-					Block.class,
-					Registry.BLOCK.getCodec())
+					ReversibleBlockEntry.class,
+					ReversibleBlockEntry.CODEC)
 			.build();
 
 	/**
@@ -76,11 +76,11 @@ public class BlockContentRegistries {
 	 * <p>
 	 * Values can be set via code and through a datapack with the file {@code data/quilt_block_content_registry/attachments/minecraft/block/waxable_block.json}
 	 */
-	public static final RegistryEntryAttachment<Block, Block> WAXABLE_BLOCK = RegistryEntryAttachment
+	public static final RegistryEntryAttachment<Block, ReversibleBlockEntry> WAXABLE_BLOCK = RegistryEntryAttachment
 			.builder(Registry.BLOCK,
 					new Identifier(NAMESPACE, "waxable_block"),
-					Block.class,
-					Registry.BLOCK.getCodec())
+					ReversibleBlockEntry.class,
+					ReversibleBlockEntry.CODEC)
 			.build();
 
 	/**
