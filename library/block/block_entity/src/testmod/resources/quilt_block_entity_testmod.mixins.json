@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.block.entity.test.client.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "BlockColorsMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
