@@ -51,9 +51,9 @@ public abstract class MixinBlockEntity implements ComponentProvider {
 		this.qsl$container.readNbt(nbt);
 	}
 
+	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onInit(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState, CallbackInfo ci) {
-		//noinspection ConstantConditions
 		this.qsl$container = LazyComponentContainer.builder(this)
 				.orElseThrow()
 				.saving(this::markDirty)

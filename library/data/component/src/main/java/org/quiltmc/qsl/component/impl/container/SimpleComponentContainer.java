@@ -41,6 +41,7 @@ public class SimpleComponentContainer implements ComponentContainer {
 	private final List<ComponentType<?>> tickingComponents;
 	@Nullable
 	private final SyncPacket.SyncContext syncContext;
+	@Nullable
 	private final Queue<ComponentType<?>> pendingSync;
 
 	protected SimpleComponentContainer(@Nullable Runnable saveOperation, SyncPacket.@Nullable SyncContext syncContext, Stream<ComponentType<?>> types) {
@@ -48,7 +49,7 @@ public class SimpleComponentContainer implements ComponentContainer {
 		this.nbtComponents = new ArrayList<>();
 		this.tickingComponents = new ArrayList<>();
 		this.syncContext = syncContext;
-		this.pendingSync = new ArrayDeque<>();
+		this.pendingSync = this.syncContext != null ? new ArrayDeque<>() : null;
 
 		types.forEach(type -> this.initializeComponent(saveOperation, type));
 		types.close();
@@ -105,6 +106,7 @@ public class SimpleComponentContainer implements ComponentContainer {
 		this.sync(provider);
 	}
 
+	@SuppressWarnings("ConstantConditions") // pendingSync will be null if syncContext is null and the other way around
 	@Override
 	public void sync(@NotNull ComponentProvider provider) {
 		if (this.syncContext == null) {
@@ -131,7 +133,7 @@ public class SimpleComponentContainer implements ComponentContainer {
 			this.tickingComponents.add(type);
 		}
 
-		if (component instanceof SyncedComponent synced) {
+		if (component instanceof SyncedComponent synced && this.pendingSync != null) {
 			synced.setSyncOperation(() -> this.pendingSync.add(type));
 		}
 	}

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2022 QuiltMC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.quiltmc.qsl.component.impl.container;
 
 import net.minecraft.nbt.NbtCompound;
@@ -10,6 +26,7 @@ import org.quiltmc.qsl.component.api.components.SyncedComponent;
 import org.quiltmc.qsl.component.api.components.TickingComponent;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.sync.packet.SyncPacket;
+import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 import org.quiltmc.qsl.component.impl.util.StringConstants;
 
 import java.util.*;
@@ -87,18 +104,19 @@ public class OnAccessComponentContainer implements ComponentContainer {
 				.forEach(tickingComponent -> tickingComponent.tick(provider));
 	}
 
+
+	@SuppressWarnings("ConstantConditions") // pendingSync will be null if syncContext is null and the other way around
 	@Override
 	public void sync(@NotNull ComponentProvider provider) {
-		if (this.syncContext != null) {
-			// pendingsync will be null if synccontext is null and the other way around
-			//noinspection ConstantConditions
-			SyncPacket.syncFromQueue(
-					this.pendingSync,
-					this.syncContext,
-					type -> ((SyncedComponent) this.components.get(type)),
-					provider
-			);
+		if (this.syncContext == null) {
+			throw ErrorUtil.illegalState("Cannot sync a non-syncable component container! Make sure you provide a context!").get();
 		}
+		SyncPacket.syncFromQueue(
+				this.pendingSync,
+				this.syncContext,
+				type -> ((SyncedComponent) this.components.get(type)),
+				provider
+		);
 	}
 
 	private Map<ComponentType<?>, Component> getInitialComponents() {
@@ -118,9 +136,7 @@ public class OnAccessComponentContainer implements ComponentContainer {
 			this.tickingComponents.add(type);
 		}
 
-		if (component instanceof SyncedComponent synced && this.syncContext != null) {
-			// pendingsync will be null if synccontext is null and the other way around
-			//noinspection ConstantConditions
+		if (component instanceof SyncedComponent synced && this.pendingSync != null) {
 			synced.setSyncOperation(() -> this.pendingSync.add(type));
 		}
 

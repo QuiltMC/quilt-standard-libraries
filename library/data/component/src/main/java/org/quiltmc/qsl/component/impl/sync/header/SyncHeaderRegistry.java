@@ -25,7 +25,7 @@ import org.quiltmc.qsl.component.api.ComponentProvider;
 import org.quiltmc.qsl.component.impl.CommonInitializer;
 
 public class SyncHeaderRegistry {
-	private static final RegistryKey<Registry<SyncPacketHeader<?>>> HEADERS_KEY =
+	public static final RegistryKey<Registry<SyncPacketHeader<?>>> HEADERS_KEY =
 			RegistryKey.ofRegistry(CommonInitializer.id("sync_headers"));
 
 	public static final Registry<SyncPacketHeader<?>> HEADERS =

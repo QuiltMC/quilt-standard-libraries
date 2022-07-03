@@ -48,13 +48,13 @@ public abstract class MixinChunk implements ComponentProvider {
 		return this.qsl$container;
 	}
 
+	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onInit(ChunkPos chunkPos, UpgradeData upgradeData, HeightLimitView heightLimitView, Registry<?> registry, long l, ChunkSection[] chunkSections, BlendingData blendingData, CallbackInfo ci) {
 		LazyComponentContainer.Builder builder = LazyComponentContainer.builder(this)
 				.orElseThrow()
 				.saving(() -> this.setNeedsSaving(true));
 
-		//noinspection ConstantConditions
 		if ((Chunk) (Object) this instanceof WorldChunk worldChunk) {
 			builder.syncing(SyncPacketHeader.CHUNK, () -> SyncPlayerList.create(worldChunk)).ticking();
 		}

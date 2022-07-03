@@ -136,16 +136,18 @@ public class LazyComponentContainer implements ComponentContainer {
 		this.sync(provider);
 	}
 
+	@SuppressWarnings("ConstantConditions") // pendingSync will be null if syncContext is null and the other way around
 	@Override
 	public void sync(@NotNull ComponentProvider provider) {
-		if (this.syncContext != null && this.pendingSync != null /* this is not needed but IJ complains, so I'll leave it in*/) {
-			SyncPacket.syncFromQueue(
-					this.pendingSync,
-					this.syncContext,
-					type -> ((SyncedComponent) this.components.get(type).get()),
-					provider
-			);
+		if (this.syncContext == null) {
+			throw ErrorUtil.illegalState("Cannot sync a non-syncable component container! Make sure you provide a context!").get();
 		}
+		SyncPacket.syncFromQueue(
+				this.pendingSync,
+				this.syncContext,
+				type -> ((SyncedComponent) this.components.get(type).get()),
+				provider
+		);
 	}
 
 	private IdentityHashMap<ComponentType<?>, Lazy<Component>> initializeComponents(ComponentProvider provider) {

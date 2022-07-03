@@ -67,7 +67,7 @@ public record NetworkCodec<T>(@NotNull BiConsumer<PacketByteBuf, T> encoder,
 					.map(chunkPos -> MinecraftClient.getInstance().world.getChunk(chunkPos.x, chunkPos.z))
 					.orElseThrow()
 	);
-	public static final NetworkCodec<ItemStack> ITEMSTACK = new NetworkCodec<>(
+	public static final NetworkCodec<ItemStack> ITEM_STACK = new NetworkCodec<>(
 			PacketByteBuf::writeItemStack, PacketByteBuf::readItemStack
 	);
 	public static final NetworkCodec<Long> LONG = new NetworkCodec<>(
@@ -79,7 +79,8 @@ public record NetworkCodec<T>(@NotNull BiConsumer<PacketByteBuf, T> encoder,
 	public static final NetworkCodec<Identifier> IDENTIFIER = new NetworkCodec<>(
 			PacketByteBuf::writeIdentifier, PacketByteBuf::readIdentifier
 	);
-	public static final NetworkCodec<DefaultedList<ItemStack>> INVENTORY = list(ITEMSTACK, integer -> DefaultedList.ofSize(integer, ItemStack.EMPTY));
+	public static final NetworkCodec<DefaultedList<ItemStack>> INVENTORY =
+			list(ITEM_STACK, size -> DefaultedList.ofSize(size, ItemStack.EMPTY));
 	public static final NetworkCodec<NbtCompound> NBT_COMPOUND = new NetworkCodec<>(
 			PacketByteBuf::writeNbt, PacketByteBuf::readNbt
 	);
@@ -91,7 +92,7 @@ public record NetworkCodec<T>(@NotNull BiConsumer<PacketByteBuf, T> encoder,
 			buf -> ClientSyncHandler.getInstance().getType(buf.readInt())
 	);
 
-	public static <O, L extends List<O>> NetworkCodec<L> list(NetworkCodec<O> entryCodec, Function<Integer, L> function) {
+	public static <O, L extends List<O>> NetworkCodec<L> list(NetworkCodec<O> entryCodec, Function<Integer, L> listFactory) {
 		return new NetworkCodec<>(
 				(buf, os) -> {
 					INT.encode(buf, os.size());
@@ -101,7 +102,7 @@ public record NetworkCodec<T>(@NotNull BiConsumer<PacketByteBuf, T> encoder,
 				},
 				buf -> {
 					int size = INT.decode(buf).orElseThrow();
-					L newList = function.apply(size);
+					L newList = listFactory.apply(size);
 
 					for (int i = 0; i < size; i++) {
 						newList.set(i, entryCodec.decode(buf).orElseThrow());

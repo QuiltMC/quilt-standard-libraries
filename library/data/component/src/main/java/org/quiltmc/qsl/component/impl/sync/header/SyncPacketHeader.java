@@ -44,11 +44,11 @@ public record SyncPacketHeader<P extends ComponentProvider>(@NotNull NetworkCode
 		SyncHeaderRegistry.register(CommonInitializer.id("level"), LEVEL);
 	}
 
+	@SuppressWarnings("unchecked")
 	public @NotNull PacketByteBuf start(@NotNull ComponentProvider provider) {
 		var buf = PacketByteBufs.create();
 		buf.writeInt(SyncHeaderRegistry.HEADERS.getRawId(this));
 		// the person calling is responsible to make sure we get a valid provider instance!
-		//noinspection unchecked
 		this.codec.encode(buf, (P) provider);
 
 		return buf;

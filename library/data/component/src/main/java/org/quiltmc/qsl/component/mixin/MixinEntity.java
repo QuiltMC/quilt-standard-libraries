@@ -36,9 +36,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class MixinEntity implements ComponentProvider {
 	private ComponentContainer qsl$container;
 
+	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onEntityInit(EntityType<?> entityType, World world, CallbackInfo ci) {
-		//noinspection ConstantConditions
 		this.qsl$container = LazyComponentContainer.builder(this)
 				.orElseThrow()
 				.ticking()
