@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.block.content.registry.api;
 
 
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
@@ -25,6 +26,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.event.GameEvent;
 
 /**
  * Holds {@link RegistryEntryAttachment}s for different properties that blocks can hold.
@@ -35,6 +37,8 @@ import net.minecraft.util.registry.Registry;
  *     <li>{@link #OXIDIZABLE_BLOCK}</li>
  *     <li>{@link #WAXABLE_BLOCK}</li>
  *     <li>{@link #STRIPPABLE_BLOCK}</li>
+ *     <li>{@link #FLAMMABLE_BLOCK}</li>
+ *     <li>{@link #SCULK_FREQUENCY}</li>
  * </ul>
  */
 public class BlockContentRegistries {
@@ -111,6 +115,18 @@ public class BlockContentRegistries {
 					new Identifier(NAMESPACE, "flammable_block"),
 					FlammableBlockEntry.class,
 					FlammableBlockEntry.CODEC)
+			.build();
+
+	/**
+	 * A {@link RegistryEntryAttachment} for sculk frequencies.
+	 * <p>
+	 * Values can be set via code and through a datapack with the file {@code data/quilt_block_content_registry/attachments/minecraft/game_event/sculk_frequency.json}
+	 */
+	public static final RegistryEntryAttachment<GameEvent, Integer> SCULK_FREQUENCY = RegistryEntryAttachment
+			.builder(Registry.GAME_EVENT,
+					new Identifier(NAMESPACE, "sculk_frequency"),
+					Integer.class,
+					Codec.intRange(1, 15))
 			.build();
 }
 

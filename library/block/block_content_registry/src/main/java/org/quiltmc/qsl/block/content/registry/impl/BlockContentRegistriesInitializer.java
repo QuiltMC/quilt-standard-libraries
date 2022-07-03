@@ -34,9 +34,11 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FireBlock;
 import net.minecraft.block.Oxidizable;
+import net.minecraft.block.SculkSensorBlock;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.HoneycombItem;
 import net.minecraft.item.ShovelItem;
+import net.minecraft.world.event.GameEvent;
 
 public class BlockContentRegistriesInitializer implements ModInitializer {
 	private static final Map<Block, BlockState> INITIAL_PATH_STATES = ImmutableMap.copyOf(ShovelItem.PATH_STATES);
@@ -58,6 +60,8 @@ public class BlockContentRegistriesInitializer implements ModInitializer {
 		fireBlock.spreadChances.keySet().forEach(block -> builder.put(block, new FlammableBlockEntry(fireBlock.burnChances.getInt(block), fireBlock.spreadChances.getInt(block))));
 		INITIAL_FLAMMABLE_BLOCKS = builder.build();
 	}
+
+	private static final Map<GameEvent, Integer> INITIAL_SCULK_SENSOR_BLOCK_EVENTS = ImmutableMap.copyOf(SculkSensorBlock.EVENTS);
 
 	@Override
 	public void onInitialize(ModContainer mod) {
@@ -98,6 +102,10 @@ public class BlockContentRegistriesInitializer implements ModInitializer {
 			fireBlock.burnChances.put(entry, v.burn());
 			fireBlock.spreadChances.put(entry, v.spread());
 		}));
+
+		SculkSensorBlock.EVENTS.clear();
+		addMapToAttachment(INITIAL_SCULK_SENSOR_BLOCK_EVENTS, BlockContentRegistries.SCULK_FREQUENCY);
+		setMapFromAttachment(SculkSensorBlock.EVENTS::put, BlockContentRegistries.SCULK_FREQUENCY);
 	}
 
 	private static <T, V> void setMapFromAttachment(BiFunction<T, V, ?> map, RegistryEntryAttachment<T, V> attachment) {
