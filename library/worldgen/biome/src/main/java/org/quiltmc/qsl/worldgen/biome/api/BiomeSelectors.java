@@ -25,6 +25,7 @@ import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.tag.BiomeTags;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.RegistryKey;
@@ -65,29 +66,31 @@ public final class BiomeSelectors {
 	}
 
 	/**
-	 * Returns a biome selector that will match all biomes that would normally spawn in the Overworld,
-	 * assuming Vanilla's default biome source is used.
+	 * Returns a biome selector that will match all biomes that would normally spawn in the Overworld.
+	 * This method is compatible with biomes defined in the {@code minecraft:is_overworld} tag.
 	 */
 	public static Predicate<BiomeSelectionContext> foundInOverworld() {
-		return context -> context.canGenerateIn(DimensionOptions.OVERWORLD);
+		return context -> context.isIn(BiomeTags.IS_OVERWORLD) || context.canGenerateIn(DimensionOptions.OVERWORLD);
 	}
 
 	/**
-	 * Returns a biome selector that will match all biomes that would normally spawn in the Nether,
-	 * assuming Vanilla's default multi noise biome source with the nether preset is used.
+	 * Returns a biome selector that will match all biomes that would normally spawn in the Nether.
+	 * This method is compatible with biomes defined in the {@code minecraft:is_nether} tag.
 	 * <p>
 	 * This selector will also match modded biomes that have been added to the nether using {@link NetherBiomes}.
 	 */
 	public static Predicate<BiomeSelectionContext> foundInTheNether() {
-		return context -> context.canGenerateIn(DimensionOptions.NETHER);
+		return context -> context.isIn(BiomeTags.IS_NETHER) || context.canGenerateIn(DimensionOptions.NETHER);
 	}
 
 	/**
-	 * Returns a biome selector that will match all biomes that would normally spawn in the End,
-	 * assuming Vanilla's default End biome source is used.
+	 * Returns a biome selector that will match all biomes that would normally spawn in the End.
+	 * This method is compatible with biomes defined in the {@code minecraft:is_end} tag.
+   * <p>
+	 * This selector will also match modded biomes that have been added to the End using {@link TheEndBiomes}.
 	 */
 	public static Predicate<BiomeSelectionContext> foundInTheEnd() {
-		return context -> context.canGenerateIn(DimensionOptions.END);
+		return context -> context.isIn(BiomeTags.IS_END) || context.canGenerateIn(DimensionOptions.END);
 	}
 
 	/**
