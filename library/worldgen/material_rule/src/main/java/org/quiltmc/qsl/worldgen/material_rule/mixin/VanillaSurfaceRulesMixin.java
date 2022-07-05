@@ -32,7 +32,6 @@ import java.util.ArrayList;
 
 @Mixin(VanillaSurfaceRules.class)
 public abstract class VanillaSurfaceRulesMixin {
-
     @Inject(
 			method = "getOverworldRules",
 			at = @At("RETURN"),
@@ -43,9 +42,7 @@ public abstract class VanillaSurfaceRulesMixin {
 		MaterialRuleRegistrationEvents.OVERWORLD_RULE_INIT.invoker().registerRules(overworldMaterialRules);
 
 		overworldMaterialRules.add(cir.getReturnValue());
-		Logger LOGGER = LoggerFactory.getLogger(VanillaSurfaceRulesMixin.class);
 		SurfaceRules.MaterialRule sequence = SurfaceRules.sequence(overworldMaterialRules.toArray(new SurfaceRules.MaterialRule[0]));
-		LOGGER.info(String.valueOf(sequence));
         cir.setReturnValue(sequence);
     }
 
@@ -64,7 +61,7 @@ public abstract class VanillaSurfaceRulesMixin {
     }
 
 	@Inject(
-			method = "getNetherRules",
+			method = "getEndRules",
 			at = @At("RETURN"),
 			cancellable = true)
 	private static void quiltInjectEndRules(CallbackInfoReturnable<SurfaceRules.MaterialRule> cir) {
