@@ -1,0 +1,17 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Material Rule API"
+	moduleName = "material_rule"
+	id = "quilt_material_rule"
+	library = "worldgen"
+	description = "An API for managing custom Material Rules."
+	moduleDependencies {
+		core {
+			api("qsl_base")
+			testmodOnly("resource_loader")
+		}
+	}
+}
