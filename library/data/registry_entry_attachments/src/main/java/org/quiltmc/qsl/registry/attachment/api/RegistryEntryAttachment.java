@@ -329,25 +329,19 @@ public interface RegistryEntryAttachment<R, V> {
 	 * @param <R> type of registry entry
 	 * @param <V> type of value
 	 */
-	@SuppressWarnings("ClassCanBeRecord")
-	final class Entry<R, V> {
-		private final R entry;
-		private final V value;
-
+	record Entry<R, V>(R entry, V value) {
 		/**
 		 * Creates a new entry.
 		 *
 		 * @param entry the registry entry
 		 * @param value the associated value
 		 */
-		public Entry(R entry, V value) {
-			this.entry = entry;
-			this.value = value;
-		}
+		public Entry { }
 
 		/**
 		 * {@return the registry entry}
 		 */
+		@Override
 		public R entry() {
 			return entry;
 		}
@@ -355,6 +349,7 @@ public interface RegistryEntryAttachment<R, V> {
 		/**
 		 * {@return the associated value}
 		 */
+		@Override
 		public V value() {
 			return value;
 		}
@@ -366,25 +361,19 @@ public interface RegistryEntryAttachment<R, V> {
 	 * @param <R> type of registry entry
 	 * @param <V> type of value
 	 */
-	@SuppressWarnings("ClassCanBeRecord")
-	final class TagEntry<R, V> {
-		private final TagKey<R> tag;
-		private final V value;
-
+	record TagEntry<R, V>(TagKey<R> tag, V value) {
 		/**
 		 * Creates a new entry.
 		 *
-		 * @param tag the tag
+		 * @param tag   the tag
 		 * @param value the associated value
 		 */
-		public TagEntry(TagKey<R> tag, V value) {
-			this.tag = tag;
-			this.value = value;
-		}
+		public TagEntry { }
 
 		/**
 		 * {@return the tag}
 		 */
+		@Override
 		public TagKey<R> tag() {
 			return tag;
 		}
@@ -392,6 +381,7 @@ public interface RegistryEntryAttachment<R, V> {
 		/**
 		 * {@return the associated value}
 		 */
+		@Override
 		public V value() {
 			return value;
 		}
