@@ -326,6 +326,8 @@ public interface RegistryEntryAttachment<R, V> {
 	/**
 	 * Specifies a value association entry.
 	 *
+	 * @param entry the registry entry
+	 * @param value the associated value
 	 * @param <R> type of registry entry
 	 * @param <V> type of value
 	 */
@@ -337,27 +339,13 @@ public interface RegistryEntryAttachment<R, V> {
 		 * @param value the associated value
 		 */
 		public Entry { }
-
-		/**
-		 * {@return the registry entry}
-		 */
-		@Override
-		public R entry() {
-			return entry;
-		}
-
-		/**
-		 * {@return the associated value}
-		 */
-		@Override
-		public V value() {
-			return value;
-		}
 	}
 
 	/**
 	 * Specifies a tag value association entry.
 	 *
+	 * @param tag   the tag
+	 * @param value the associated value
 	 * @param <R> type of registry entry
 	 * @param <V> type of value
 	 */
@@ -369,22 +357,6 @@ public interface RegistryEntryAttachment<R, V> {
 		 * @param value the associated value
 		 */
 		public TagEntry { }
-
-		/**
-		 * {@return the tag}
-		 */
-		@Override
-		public TagKey<R> tag() {
-			return tag;
-		}
-
-		/**
-		 * {@return the associated value}
-		 */
-		@Override
-		public V value() {
-			return value;
-		}
 	}
 
 	/**
