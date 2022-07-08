@@ -29,7 +29,7 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(CreeperEntity.class)
 public abstract class CreeperEntityMixin extends HostileEntity implements MultipartEntity {
-	private final SecretCreeperPart secretHitbox = new SecretCreeperPart((CreeperEntity) (Object) this, 0.6f, 0.6f);
+	private final SecretCreeperPart secretHitbox = new SecretCreeperPart((CreeperEntity) (Object) this, 0.65f, 0.65f);
 
 	protected CreeperEntityMixin(EntityType<? extends HostileEntity> entityType, World world) {
 		super(entityType, world);
