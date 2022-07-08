@@ -65,7 +65,7 @@ public final class MaterialRuleRegistrationEvents {
 		 *
 		 * @param materialRules the list of surface rules to be added to the overworld, including vanilla ones.
 		 */
-		void registerRules(ArrayList<SurfaceRules.MaterialRule> materialRules);
+		void registerRules(List<SurfaceRules.MaterialRule> materialRules);
 	}
 
 	/**
@@ -82,7 +82,7 @@ public final class MaterialRuleRegistrationEvents {
 		 *
 		 * @param materialRules the list of surface rules to be added to the Nether, including vanilla ones.
 		 */
-		void registerRules(ArrayList<SurfaceRules.MaterialRule> materialRules);
+		void registerRules(List<SurfaceRules.MaterialRule> materialRules);
 	}
 
 	/**
@@ -99,6 +99,6 @@ public final class MaterialRuleRegistrationEvents {
 		 *
 		 * @param materialRules the list of surface rules to be added to The End, including vanilla ones.
 		 */
-		void registerRules(ArrayList<SurfaceRules.MaterialRule> materialRules);
+		void registerRules(List<SurfaceRules.MaterialRule> materialRules);
 	}
 }

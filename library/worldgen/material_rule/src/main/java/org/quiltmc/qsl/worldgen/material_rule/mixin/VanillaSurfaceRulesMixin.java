@@ -42,8 +42,7 @@ public abstract class VanillaSurfaceRulesMixin {
 		MaterialRuleRegistrationEvents.OVERWORLD_RULE_INIT.invoker().registerRules(overworldMaterialRules);
 
 		overworldMaterialRules.add(cir.getReturnValue());
-		SurfaceRules.MaterialRule sequence = SurfaceRules.sequence(overworldMaterialRules.toArray(new SurfaceRules.MaterialRule[0]));
-        cir.setReturnValue(sequence);
+        cir.setReturnValue(SurfaceRules.sequence(overworldMaterialRules.toArray(new SurfaceRules.MaterialRule[0])));
     }
 
     @Inject(
@@ -56,7 +55,6 @@ public abstract class VanillaSurfaceRulesMixin {
 		MaterialRuleRegistrationEvents.NETHER_RULE_INIT.invoker().registerRules(netherMaterialRules);
 
 		netherMaterialRules.add(cir.getReturnValue());
-
 		cir.setReturnValue(SurfaceRules.sequence(netherMaterialRules.toArray(new SurfaceRules.MaterialRule[0])));
     }
 
@@ -70,7 +68,6 @@ public abstract class VanillaSurfaceRulesMixin {
 		MaterialRuleRegistrationEvents.THE_END_RULE_INIT.invoker().registerRules(theEndMaterialRules);
 
 		theEndMaterialRules.add(cir.getReturnValue());
-
 		cir.setReturnValue(SurfaceRules.sequence(theEndMaterialRules.toArray(new SurfaceRules.MaterialRule[0])));
 	}
 }
