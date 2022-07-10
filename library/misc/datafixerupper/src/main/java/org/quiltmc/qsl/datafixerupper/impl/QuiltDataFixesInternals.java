@@ -18,9 +18,7 @@ package org.quiltmc.qsl.datafixerupper.impl;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.function.BiFunction;
 
-import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.schemas.Schema;
 import com.mojang.logging.LogUtils;
@@ -54,9 +52,13 @@ public final class QuiltDataFixesInternals {
 		return modDataFixers.get(modId);
 	}
 
+	@SuppressWarnings("deprecation")
+	private static final Schema VANILLA_SCHEMA = Schemas.getFixer()
+			.getSchema(SharedConstants.getGameVersion().getWorldVersion());
+
 	public static Schema getModSchema() {
 		if (modSchema == null) {
-			modSchema = new Schema(0, VanillaDataFixers.VANILLA_DATAFIXER.apply(-1, null));
+			modSchema = new Schema(0, VANILLA_SCHEMA);
 		}
 
 		return modSchema;
@@ -105,17 +107,4 @@ public final class QuiltDataFixesInternals {
 	}
 
 	public record DataFixerEntry(DataFixer dataFixer, int currentVersion) { }
-
-	public static final class VanillaDataFixers {
-		private static final int LATEST_VANILLA_SCHEMA_VERSION =
-				DataFixUtils.makeKey(SharedConstants.getGameVersion().getWorldVersion());
-
-		private static Schema getVanillaDataFixer(Integer integer, Schema schema) {
-			LOGGER.info("[DFUBuddy DataFixer] Started with a Vanilla Schema version of " + LATEST_VANILLA_SCHEMA_VERSION);
-			return Schemas.getFixer().getSchema(LATEST_VANILLA_SCHEMA_VERSION);
-		}
-
-		public static final BiFunction<Integer, Schema, Schema> VANILLA_DATAFIXER =
-				(version, parent) -> Schemas.getFixer().getSchema(LATEST_VANILLA_SCHEMA_VERSION);
-	}
 }
