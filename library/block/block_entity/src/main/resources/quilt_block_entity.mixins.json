@@ -3,7 +3,6 @@
   "package": "org.quiltmc.qsl.block.entity.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "BlockEntityMixin",
     "BlockEntityTypeMixin"
   ],
   "injectors": {
