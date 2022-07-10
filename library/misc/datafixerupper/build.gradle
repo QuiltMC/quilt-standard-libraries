@@ -1,0 +1,24 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt DataFixerUpper API"
+	moduleName = "datafixerupper"
+	id = "quilt_datafixerupper"
+	description = "Provides APIs for adding custom DataFixers."
+	library = "misc"
+	moduleDependencies {
+		core {
+			impl("lifecycle_events")
+		}
+	}
+	entrypoints {
+		events {
+			values = ["org.quiltmc.qsl.datafixerupper.impl.Initializer"]
+		}
+		client_events {
+			values = ["org.quiltmc.qsl.datafixerupper.impl.client.ClientInitializer"]
+		}
+	}
+}
