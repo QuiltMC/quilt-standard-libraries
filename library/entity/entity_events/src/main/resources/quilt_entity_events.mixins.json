@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.entity_events.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "LivingEntityDeathEventMixin",
+    "EntityMixin",
+    "LivingEntityMixin",
+    "ServerEntityHandlerMixin",
+    "ServerPlayerEntityMixin",
+    "TeleportCommandMixin"
+  ],
+  "client": [
+    "client.ClientEntityHandlerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
