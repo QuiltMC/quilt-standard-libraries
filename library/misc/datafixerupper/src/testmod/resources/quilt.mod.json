@@ -19,6 +19,14 @@
     },
     "intermediate_mappings": "net.fabricmc:intermediary",
     "load_type": "always",
+    "entrypoints": {
+      "init": [
+        "org.quiltmc.qsl.datafixerupper.test.DataFixerUpperTestMod"
+      ],
+      "events": [
+        "org.quiltmc.qsl.datafixerupper.test.DataFixerUpperTestMod"
+      ]
+    },
     "depends": [
       "quilt_loader",
       "quilt_datafixerupper"
