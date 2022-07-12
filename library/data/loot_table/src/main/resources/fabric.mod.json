@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "quilt_loot_table",
+  "name": "Quilt Loot Table API",
+  "version": "${version}",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "icon": "assets/quilt_loot_table/icon.png",
+  "contact": {
+    "homepage": "https://quiltmc.org",
+    "issues": "https://github.com/QuiltMC/quilt-standard-libraries/issues",
+    "sources": "https://github.com/QuiltMC/quilt-standard-libraries"
+  },
+  "authors": [
+    "QuiltMC"
+  ],
+  "depends": {
+    "fabricloader": ">=0.12"
+  },
+  "description": "Hooks for manipulating loot tables.",
+  "mixins": [
+    "quilt_loot_table.mixins.json"
+  ]
+}

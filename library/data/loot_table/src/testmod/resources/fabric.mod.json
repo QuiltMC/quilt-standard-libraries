@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "quilt_loot_table_testmod",
+  "name": "Quilt Loot Table API Test Mod",
+  "version": "1.0.0",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "depends": {
+    "quilt_loot_table": "*"
+  },
+  "entrypoints": {
+    "main": [
+      "org.quiltmc.qsl.loot.test.LootTableTestMod"
+    ]
+  }
+}

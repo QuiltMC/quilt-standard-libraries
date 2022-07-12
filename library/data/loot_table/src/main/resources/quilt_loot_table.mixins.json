@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.loot.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "LootManagerMixin",
+    "LootPoolAccessor",
+    "LootPoolBuilderAccessor",
+    "LootTableAccessor",
+    "LootTableBuilderAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
