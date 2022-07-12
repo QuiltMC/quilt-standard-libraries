@@ -19,10 +19,9 @@ package org.quiltmc.qsl.component.impl.client.sync;
 import net.minecraft.util.collection.IdList;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.Components;
-import org.quiltmc.qsl.component.impl.sync.header.SyncHeaderRegistry;
 import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
-import org.quiltmc.qsl.component.impl.sync.packet.SyncPacket;
 import org.quiltmc.qsl.component.impl.sync.packet.PacketIds;
+import org.quiltmc.qsl.component.impl.sync.packet.SyncPacket;
 import org.quiltmc.qsl.networking.api.client.ClientLoginNetworking;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 
@@ -47,8 +46,9 @@ public class ClientSyncHandler {
 		);
 
 		ClientLoginNetworking.registerGlobalReceiver(PacketIds.HEADERS, (client, handler, buf, listenerAdder) ->
-				ClientRegistryPacket.handleRegistryPacket(buf, SyncHeaderRegistry.HEADERS, list -> this.headerList = list)
+				ClientRegistryPacket.handleRegistryPacket(buf, SyncPacketHeader.REGISTRY, list -> this.headerList = list)
 		);
+
 		ClientPlayNetworking.registerGlobalReceiver(PacketIds.SYNC, (client, handler, buf, responseSender) ->
 				SyncPacket.handle(buf, client)
 		);

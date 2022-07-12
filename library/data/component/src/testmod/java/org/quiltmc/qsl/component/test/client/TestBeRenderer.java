@@ -35,7 +35,7 @@ public class TestBeRenderer implements BlockEntityRenderer<TestBlockEntity> {
 		entity.expose(ComponentTestMod.CHUNK_INVENTORY)
 				.map(inventoryComponent -> inventoryComponent.getStack(0))
 				.filter(Predicate.not(ItemStack::isEmpty))
-				.ifPresent(itemStack -> {
+				.ifJust(itemStack -> {
 					matrices.push();
 					matrices.translate(0.5f, 1, 0.5f);
 					matrices.multiply(Vec3f.NEGATIVE_Y.getDegreesQuaternion(System.currentTimeMillis() % 360));

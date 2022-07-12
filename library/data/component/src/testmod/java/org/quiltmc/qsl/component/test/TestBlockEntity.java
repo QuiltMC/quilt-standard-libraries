@@ -26,9 +26,11 @@ import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.component.api.ComponentContainer;
+import org.quiltmc.qsl.base.api.util.Maybe;
+import org.quiltmc.qsl.component.api.Component;
+import org.quiltmc.qsl.component.api.container.ComponentContainer;
+import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.components.InventoryComponent;
 import org.quiltmc.qsl.component.impl.container.SimpleComponentContainer;
 import org.quiltmc.qsl.component.impl.sync.SyncPlayerList;
@@ -40,15 +42,12 @@ import java.util.List;
 import java.util.Set;
 
 public class TestBlockEntity extends BlockEntity {
-	//	public static final ComponentType<IntegerComponent> TEST_BE_INT = Components.register(
-	//			new Identifier(ComponentTestMod.MODID, "test_be_int"),
-	//			DefaultIntegerComponent::new
-	//	); Crashes due to our freezing the registry!
-	private final ComponentContainer container = SimpleComponentContainer.builder()
-			.setSaveOperation(this::markDirty)
+	private final ComponentContainer container = ComponentContainer.builder(this)
+			.unwrap()
+			.saving(this::markDirty)
 			.add(ComponentTestMod.TEST_BE_INT, ComponentTestMod.CHUNK_INVENTORY)
 			.syncing(SyncPacketHeader.BLOCK_ENTITY, () -> SyncPlayerList.create(this))
-			.build();
+			.build(SimpleComponentContainer.FACTORY);
 
 	public TestBlockEntity(BlockPos blockPos, BlockState blockState) {
 		super(ComponentTestMod.TEST_BE_TYPE, blockPos, blockState);
@@ -59,8 +58,8 @@ public class TestBlockEntity extends BlockEntity {
 			return;
 		}
 
-		if (blockEntity.expose(ComponentTestMod.CHUNK_INVENTORY).map(InventoryComponent::isEmpty).orElse(true)) {
-			blockEntity.expose(ComponentTestMod.TEST_BE_INT).ifPresent(integerComponent -> {
+		if (blockEntity.expose(ComponentTestMod.CHUNK_INVENTORY).map(InventoryComponent::isEmpty).unwrapOr(true)) {
+			blockEntity.expose(ComponentTestMod.TEST_BE_INT).ifJust(integerComponent -> {
 				if (integerComponent.get() % 40 == 0) {
 					HashSet<BlockPos> set = new HashSet<>(List.of(pos));
 					expand(pos, pos, world, set);
@@ -87,8 +86,13 @@ public class TestBlockEntity extends BlockEntity {
 	}
 
 	@Override
-	public @NotNull ComponentContainer getComponentContainer() {
+	public ComponentContainer getComponentContainer() {
 		return this.container;
+	}
+
+	@Override
+	public <C extends Component> Maybe<C> expose(ComponentType<C> id) {
+		return super.expose(id).or(() -> this.container.expose(id).filterMap(id::cast));
 	}
 
 	@Override

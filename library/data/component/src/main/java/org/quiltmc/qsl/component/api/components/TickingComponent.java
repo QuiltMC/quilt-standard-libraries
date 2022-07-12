@@ -16,10 +16,9 @@
 
 package org.quiltmc.qsl.component.api.components;
 
-import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.component.api.Component;
-import org.quiltmc.qsl.component.api.ComponentProvider;
+import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 
 public interface TickingComponent extends Component {
-	void tick(@NotNull ComponentProvider provider);
+	void tick(ComponentProvider provider);
 }

@@ -19,7 +19,7 @@ package org.quiltmc.qsl.component.impl.sync;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import org.quiltmc.qsl.component.api.Components;
-import org.quiltmc.qsl.component.impl.sync.header.SyncHeaderRegistry;
+import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
 import org.quiltmc.qsl.component.impl.sync.packet.PacketIds;
 import org.quiltmc.qsl.component.impl.sync.packet.RegistryPacket;
 import org.quiltmc.qsl.networking.api.PacketSender;
@@ -52,7 +52,8 @@ public final class ServerSyncHandler implements ServerLoginConnectionEvents.Quer
 
 	@Override
 	public void onLoginStart(ServerLoginNetworkHandler handler, MinecraftServer server, PacketSender sender, ServerLoginNetworking.LoginSynchronizer synchronizer) {
+		// TODO: Maybe use regitry sync for this?!
 		sender.sendPacket(PacketIds.TYPES, RegistryPacket.createRegistryPacket(Components.REGISTRY));
-		sender.sendPacket(PacketIds.HEADERS, RegistryPacket.createRegistryPacket(SyncHeaderRegistry.HEADERS));
+		sender.sendPacket(PacketIds.HEADERS, RegistryPacket.createRegistryPacket(SyncPacketHeader.REGISTRY));
 	}
 }

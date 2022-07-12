@@ -19,7 +19,6 @@ package org.quiltmc.qsl.component.impl.components;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtInt;
 import net.minecraft.network.PacketByteBuf;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.components.IntegerComponent;
 import org.quiltmc.qsl.component.api.components.NbtComponent;
@@ -28,16 +27,18 @@ import org.quiltmc.qsl.component.api.components.SyncedComponent;
 public class DefaultIntegerComponent implements IntegerComponent, NbtComponent<NbtInt>, SyncedComponent {
 	private int value;
 	@Nullable
-	private Runnable saveOperation;
+	private final Runnable saveOperation;
 	@Nullable
-	private Runnable syncOperation;
+	private final Runnable syncOperation;
 
-	public DefaultIntegerComponent() {
-		this(0);
+	public DefaultIntegerComponent(@Nullable Runnable saveOperation, @Nullable Runnable syncOperation) {
+		this(saveOperation, syncOperation, 0);
 	}
 
-	public DefaultIntegerComponent(int defaultValue) {
+	public DefaultIntegerComponent(@Nullable Runnable saveOperation, @Nullable Runnable syncOperation, int defaultValue) {
 		this.value = defaultValue;
+		this.saveOperation = saveOperation;
+		this.syncOperation = syncOperation;
 	}
 
 	@Override
@@ -81,27 +82,17 @@ public class DefaultIntegerComponent implements IntegerComponent, NbtComponent<N
 	}
 
 	@Override
-	public void setSaveOperation(@Nullable Runnable runnable) {
-		this.saveOperation = runnable;
-	}
-
-	@Override
-	public void writeToBuf(@NotNull PacketByteBuf buf) {
+	public void writeToBuf(PacketByteBuf buf) {
 		buf.writeInt(this.value);
 	}
 
 	@Override
-	public void readFromBuf(@NotNull PacketByteBuf buf) {
+	public void readFromBuf(PacketByteBuf buf) {
 		this.value = buf.readInt();
 	}
 
 	@Override
 	public @Nullable Runnable getSyncOperation() {
 		return this.syncOperation;
-	}
-
-	@Override
-	public void setSyncOperation(@Nullable Runnable runnable) {
-		this.syncOperation = runnable;
 	}
 }

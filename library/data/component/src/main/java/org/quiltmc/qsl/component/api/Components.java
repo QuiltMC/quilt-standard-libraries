@@ -19,50 +19,66 @@ package org.quiltmc.qsl.component.api;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
+import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.components.TickingComponent;
+import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
-import org.quiltmc.qsl.component.impl.predicates.ClassInjectionPredicate;
-import org.quiltmc.qsl.component.impl.predicates.FilteredInheritedInjectionPredicate;
-import org.quiltmc.qsl.component.impl.predicates.InheritedInjectionPredicate;
-import org.quiltmc.qsl.component.impl.predicates.RedirectedInjectionPredicate;
+import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
+import org.quiltmc.qsl.component.impl.injection.predicate.cached.ClassInjectionPredicate;
+import org.quiltmc.qsl.component.impl.injection.predicate.cached.FilteredInheritedInjectionPredicate;
+import org.quiltmc.qsl.component.impl.injection.predicate.cached.InheritedInjectionPredicate;
+import org.quiltmc.qsl.component.impl.injection.predicate.cached.RedirectedInjectionPredicate;
+import org.quiltmc.qsl.component.impl.injection.predicate.dynamic.DynamicClassInjectionPredicate;
+import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 
-import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public final class Components {
 	public static final RegistryKey<Registry<ComponentType<?>>> REGISTRY_KEY = ComponentsImpl.REGISTRY_KEY;
-
 	public static final Registry<ComponentType<?>> REGISTRY = ComponentsImpl.REGISTRY;
 
-	public static <C extends Component> void inject(ComponentInjectionPredicate predicate, ComponentType<C> component) {
-		ComponentsImpl.inject(predicate, component);
+	public static <C extends Component> void inject(CachedInjectionPredicate predicate, ComponentType<C> type) {
+		ComponentsImpl.inject(predicate, new ComponentEntry<>(type));
 	}
 
-	public static <C extends Component> void inject(Class<?> clazz, ComponentType<C> component) {
-		ComponentsImpl.inject(new ClassInjectionPredicate(clazz), component);
+	public static <C extends Component> void inject(Class<?> clazz, ComponentType<C> type) {
+		ComponentsImpl.inject(new ClassInjectionPredicate(clazz), new ComponentEntry<>(type));
 	}
 
-	public static <C extends Component> void injectInheritage(Class<?> clazz, ComponentType<C> component) {
-		ComponentsImpl.inject(new InheritedInjectionPredicate(clazz), component);
+	public static <C extends Component> void injectInheritage(Class<?> clazz, ComponentType<C> type) {
+		ComponentsImpl.inject(new InheritedInjectionPredicate(clazz), new ComponentEntry<>(type));
 	}
 
-	public static <C extends Component> void injectInheritanceExcept(Class<?> clazz, ComponentType<C> component, Class<?>... exceptions) {
-		ComponentsImpl.inject(new FilteredInheritedInjectionPredicate(clazz, exceptions), component);
+	public static <C extends Component> void injectInheritanceExcept(Class<?> clazz, ComponentType<C> type, Class<?>... exceptions) {
+		ComponentsImpl.inject(new FilteredInheritedInjectionPredicate(clazz, exceptions), new ComponentEntry<>(type));
 	}
 
-	public static <C extends Component> void injectRedirected(Class<?> mainClass, ComponentType<C> type, Class<?> others) {
-		ComponentsImpl.inject(new RedirectedInjectionPredicate(mainClass, Set.of(others)), type);
+	public static <C extends Component> void injectRedirected(Class<?> mainClass, ComponentType<C> type, Class<?>... others) {
+		ComponentsImpl.inject(new RedirectedInjectionPredicate(mainClass, Set.of(others)), new ComponentEntry<>(type));
 	}
 
-	public static <C extends Component, S> Optional<C> expose(ComponentType<C> id, S obj) {
+	public static <C extends Component, P extends ComponentProvider> void injectDynamic(Class<P> clazz, ComponentType<C> type, Predicate<P> predicate) {
+		// TODO: Fix evil hack if possible
+		ComponentsImpl.inject(new DynamicClassInjectionPredicate<>(clazz, predicate), new ComponentEntry<>(type));
+	}
+
+	public static <C extends Component, S> Maybe<C> expose(ComponentType<C> id, S obj) {
 		if (obj instanceof ComponentProvider provider) {
-			return provider.getComponentContainer().expose(id).flatMap(id::cast);
+			return provider.getComponentContainer().expose(id).filterMap(id::cast);
 		}
 
-		return Optional.empty();
+		return Maybe.nothing();
+	}
+
+	public static <C extends Component> ComponentType<C> register(Identifier id, ComponentType<C> type) {
+		return ComponentsImpl.register(id, type);
 	}
 
 	public static <C extends Component> ComponentType<C> register(Identifier id, Component.Factory<C> factory) {
+		if (factory instanceof ComponentType<C>) {
+			throw ErrorUtil.illegalArgument("Do NOT register ComponentTypes as factories, use the correct method").get();
+		}
 		return ComponentsImpl.register(id, new ComponentType<>(id, factory, false, false));
 	}
 

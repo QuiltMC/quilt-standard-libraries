@@ -17,38 +17,35 @@
 package org.quiltmc.qsl.component.api.components;
 
 import com.mojang.serialization.Codec;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.impl.sync.codec.NetworkCodec;
 
-public class SyncedGenericComponent<T> extends GenericComponent<T> implements SyncedComponent {
+public class SyncedGenericComponent<T, E extends NbtElement> extends GenericComponent<T, E> implements SyncedComponent {
 	private final NetworkCodec<T> networkCodec;
 	@Nullable
-	private Runnable syncOperation;
+	private final Runnable syncOperation;
 
-	protected SyncedGenericComponent(@NotNull Codec<T> codec, @NotNull NetworkCodec<T> networkCodec) {
-		super(codec);
+	protected SyncedGenericComponent(
+			@Nullable Runnable saveOperation, @Nullable Runnable syncOperation, Codec<T> codec, NetworkCodec<T> networkCodec) {
+		super(saveOperation, codec);
+		this.syncOperation = syncOperation;
 		this.networkCodec = networkCodec;
 	}
 
 	@Override
-	public void writeToBuf(@NotNull PacketByteBuf buf) {
+	public void writeToBuf(PacketByteBuf buf) {
 		this.networkCodec.encode(buf, this.value);
 	}
 
 	@Override
-	public void readFromBuf(@NotNull PacketByteBuf buf) {
-		this.networkCodec.decode(buf).ifPresent(t -> this.value = t);
+	public void readFromBuf(PacketByteBuf buf) {
+		this.networkCodec.decode(buf).ifJust(t -> this.value = t);
 	}
 
 	@Override
 	public @Nullable Runnable getSyncOperation() {
 		return this.syncOperation;
-	}
-
-	@Override
-	public void setSyncOperation(@Nullable Runnable runnable) {
-		this.syncOperation = runnable;
 	}
 }

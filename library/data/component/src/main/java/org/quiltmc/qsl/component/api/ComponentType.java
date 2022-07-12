@@ -17,31 +17,34 @@
 package org.quiltmc.qsl.component.api;
 
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
+import org.quiltmc.qsl.base.api.util.Maybe;
+import org.quiltmc.qsl.component.impl.client.sync.ClientSyncHandler;
+import org.quiltmc.qsl.component.impl.sync.codec.NetworkCodec;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
-import java.util.Optional;
 
-public record ComponentType<T extends Component>(Identifier id, Component.Factory<T> factory,
+public record ComponentType<T extends Component>(Identifier id, Component.Factory<T> defaultFactory,
 												 boolean isStatic, boolean isInstant) implements Component.Factory<T> {
-	public static final Static STATIC_CACHE = new Static();
+	public static final NetworkCodec<ComponentType<?>> NETWORK_CODEC =
+			NetworkCodec.INT.map(Components.REGISTRY::getRawId, ClientSyncHandler.getInstance()::getType);
+	private static final Static STATIC_CACHE = new Static();
 
 	@SuppressWarnings("unchecked")
-	public Optional<T> cast(Component component) {
+	public Maybe<T> cast(Component component) {
 		try {
-			return Optional.of((T) component);
+			return Maybe.just((T) component);
 		} catch (ClassCastException ignored) {
-			return Optional.empty();
+			return Maybe.nothing();
 		}
 	}
 
 	@Override
-	public @NotNull T create() {
+	public T create(Runnable saveOperation, Runnable syncOperation) {
 		if (this.isStatic) {
-			return STATIC_CACHE.getOrCreate(this);
+			return STATIC_CACHE.getOrCreate(this, saveOperation, syncOperation);
 		}
-		return this.factory.create();
+		return this.defaultFactory.create(saveOperation, syncOperation);
 	}
 
 	public static class Static {
@@ -52,11 +55,11 @@ public record ComponentType<T extends Component>(Identifier id, Component.Factor
 		}
 
 		@SuppressWarnings("unchecked")
-		@NotNull <C extends Component> C getOrCreate(ComponentType<C> type) {
+		<C extends Component> C getOrCreate(ComponentType<C> type, Runnable saveOperation, Runnable syncOperation) {
 			if (this.staticInstances.containsKey(type)) {
 				return (C) this.staticInstances.get(type);
 			} else {
-				C singleton = type.factory.create();
+				C singleton = type.defaultFactory.create(saveOperation, syncOperation);
 				this.staticInstances.put(type, singleton);
 				return singleton;
 			}

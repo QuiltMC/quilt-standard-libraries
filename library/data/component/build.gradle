@@ -11,8 +11,8 @@ qslModule {
 	moduleDependencies {
 		core {
 			api("qsl_base")
-			api("lifecycle_events")
-			api("networking")
+			impl("lifecycle_events")
+			impl("networking")
 			testmodOnly("registry") // Required by block_entity
 		}
 
@@ -37,27 +37,27 @@ qslModule {
 
 	accessWidener()
 
-	injectedInterface("net/minecraft/class_2586") {
+	injectedInterface("net/minecraft/class_2586") { // BlockEntity
 		values = ["org/quiltmc/qsl/component/api/ComponentProvider"]
 	}
 
-	injectedInterface("net/minecraft/class_1297") {
+	injectedInterface("net/minecraft/class_1297") { // Entity
 		values = ["org/quiltmc/qsl/component/api/ComponentProvider"]
 	}
 
-	injectedInterface("net/minecraft/class_2791") {
+	injectedInterface("net/minecraft/class_2791") { // Chunk
 		values = ["org/quiltmc/qsl/component/api/ComponentProvider"]
 	}
 
-	injectedInterface("net/minecraft/class_31") {
+	injectedInterface("net/minecraft/class_1799") { // ItemStack
 		values = ["org/quiltmc/qsl/component/api/ComponentProvider"]
 	}
 
-	injectedInterface("net/minecraft/class_1799") {
+	injectedInterface("net/minecraft/class_310") { // MinecraftClient
 		values = ["org/quiltmc/qsl/component/api/ComponentProvider"]
 	}
 
-	injectedInterface("net/minecraft/class_310") {
+	injectedInterface("net/minecraft/server/MinecraftServer") { // MinecraftServer
 		values = ["org/quiltmc/qsl/component/api/ComponentProvider"]
 	}
 }

@@ -62,7 +62,7 @@ public class TestBlock extends Block implements BlockEntityProvider {
 		if (!handStack.isEmpty()) {
 			final ActionResult[] ret = new ActionResult[]{ActionResult.PASS};
 
-			be.expose(ComponentTestMod.CHUNK_INVENTORY).ifPresent(inventoryComponent -> {
+			be.expose(ComponentTestMod.CHUNK_INVENTORY).ifJust(inventoryComponent -> {
 				var stack = inventoryComponent.getStack(0);
 
 				if (stack.isEmpty()) {

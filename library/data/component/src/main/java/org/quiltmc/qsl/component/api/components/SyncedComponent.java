@@ -17,18 +17,19 @@
 package org.quiltmc.qsl.component.api.components;
 
 import net.minecraft.network.PacketByteBuf;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.Component;
+import org.quiltmc.qsl.component.impl.sync.codec.NetworkCodec;
+import org.quiltmc.qsl.component.impl.sync.packet.SyncPacket;
+
+import java.util.function.Consumer;
 
 public interface SyncedComponent extends Component {
-	void writeToBuf(@NotNull PacketByteBuf buf);
+	void writeToBuf(PacketByteBuf buf);
 
-	void readFromBuf(@NotNull PacketByteBuf buf);
+	void readFromBuf(PacketByteBuf buf); // Investigate what happens when the server doesn't send correct data?!
 
 	@Nullable Runnable getSyncOperation();
-
-	void setSyncOperation(@Nullable Runnable runnable);
 
 	default void sync() {
 		if (this.getSyncOperation() != null) {

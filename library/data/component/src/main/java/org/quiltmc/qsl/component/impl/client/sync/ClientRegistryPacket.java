@@ -21,16 +21,14 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.IdList;
 import net.minecraft.util.registry.Registry;
-import org.jetbrains.annotations.NotNull;
+import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public final class ClientRegistryPacket {
-	@NotNull
-	public static <T> CompletableFuture<PacketByteBuf> handleRegistryPacket(@NotNull PacketByteBuf buf, Registry<T> registry, Consumer<IdList<T>> action) {
+	public static <T> CompletableFuture<PacketByteBuf> handleRegistryPacket(PacketByteBuf buf, Registry<T> registry, Consumer<IdList<T>> action) {
 		return CompletableFuture.supplyAsync(() -> {
 			var finalEither = createIdList(buf, registry)
 					.ifLeft(action)
@@ -41,7 +39,6 @@ public final class ClientRegistryPacket {
 		});
 	}
 
-	@NotNull
 	public static <T> Either<IdList<T>, Identifier> createIdList(PacketByteBuf buf, Registry<T> targetRegistry) {
 		int size = buf.readInt();
 		IdList<T> ret = new IdList<>(size); // size is dropped
@@ -50,12 +47,12 @@ public final class ClientRegistryPacket {
 			Identifier id = buf.readIdentifier();
 			int rawId = buf.readInt(); // a whole entry is dropped
 
-			Optional<T> type = targetRegistry.getOrEmpty(id);
-			if (type.isEmpty()) {
+			Maybe<T> type = Maybe.fromOptional(targetRegistry.getOrEmpty(id));
+			if (type.isNothing()) {
 				return Either.right(id);
 			}
 
-			ret.set(type.get(), rawId);
+			ret.set(type.unwrap(), rawId);
 		}
 
 		return Either.left(ret);

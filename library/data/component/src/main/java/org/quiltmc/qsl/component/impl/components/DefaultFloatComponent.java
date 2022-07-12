@@ -25,14 +25,15 @@ import org.quiltmc.qsl.component.api.components.NbtComponent;
 public class DefaultFloatComponent implements FloatComponent, NbtComponent<NbtFloat> {
 	private float value;
 	@Nullable
-	private Runnable saveOperation;
+	private final Runnable saveOperation;
 
-	public DefaultFloatComponent() {
-		this(0);
+	public DefaultFloatComponent(@Nullable Runnable saveOperation) {
+		this(saveOperation, 0);
 	}
 
-	public DefaultFloatComponent(float initialValue) {
+	public DefaultFloatComponent(@Nullable Runnable saveOperation, float initialValue) {
 		this.value = initialValue;
+		this.saveOperation = saveOperation;
 	}
 
 	@Override
@@ -63,10 +64,5 @@ public class DefaultFloatComponent implements FloatComponent, NbtComponent<NbtFl
 	@Override
 	public @Nullable Runnable getSaveOperation() {
 		return this.saveOperation;
-	}
-
-	@Override
-	public void setSaveOperation(@Nullable Runnable runnable) {
-		this.saveOperation = runnable;
 	}
 }

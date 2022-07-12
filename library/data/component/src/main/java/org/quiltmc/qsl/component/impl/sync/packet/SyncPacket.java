@@ -19,57 +19,45 @@ package org.quiltmc.qsl.component.impl.sync.packet;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
-import org.jetbrains.annotations.NotNull;
-import org.quiltmc.qsl.component.api.ComponentProvider;
+import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.components.SyncedComponent;
-import org.quiltmc.qsl.component.impl.client.sync.ClientSyncHandler;
-import org.quiltmc.qsl.component.impl.sync.codec.NetworkCodec;
 import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Queue;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class SyncPacket {
-	@NotNull
-	public static PacketByteBuf create(@NotNull SyncPacketHeader<?> headerCreator, @NotNull ComponentProvider provider, @NotNull Map<ComponentType<?>, SyncedComponent> components) {
-		PacketByteBuf buff = headerCreator.start(provider);
-		buff.writeInt(components.size());
-		components.forEach((type, syncedComponent) -> {
-			NetworkCodec.COMPONENT_TYPE.encode(buff, type);
-			syncedComponent.writeToBuf(buff);
-		});
-
-		return buff;
-	}
-
+	/**
+	 * <pre>
+ *     		Handled by SyncPacketHeader		The data we add
+	 *        HEADER_ID PROVIDER_DATA       SIZE [TYPE DATA]
+	 *        	32bit		var				32bit	 var
+	 * </pre>
+	 */
 	public static void handle(PacketByteBuf buf, MinecraftClient client) {
 		buf.retain();
 
 		client.execute(() -> {
-			var header = ClientSyncHandler.getInstance().getHeader(buf.readInt());
-			header.codec().decode(buf).ifPresent(provider -> {
+			SyncPacketHeader.toProvider(buf).ifJust(provider -> {
 				var size = buf.readInt();
 
 				for (int i = 0; i < size; i++) {
-					NetworkCodec.COMPONENT_TYPE.decode(buf)
-							.flatMap(provider::expose)
+					ComponentType.NETWORK_CODEC.decode(buf)
+							.filterMap(provider::expose)
 							.map(it -> ((SyncedComponent) it))
-							.ifPresent(synced -> synced.readFromBuf(buf));
+							.ifJust(synced -> synced.readFromBuf(buf));
 				}
 			});
+
 			buf.release();
 		});
 	}
 
-	public static void send(SyncContext context, ComponentProvider provider, Map<ComponentType<?>, SyncedComponent> map) {
-		PacketByteBuf packet = create(context.header(), provider, map);
-
+	public static void send(SyncContext context, PacketByteBuf packet) {
 		context.playerGenerator().get().forEach(serverPlayer ->
 				ServerPlayNetworking.send(serverPlayer, PacketIds.SYNC, packet)
 		);
@@ -81,16 +69,20 @@ public class SyncPacket {
 			Function<ComponentType<?>, SyncedComponent> mapper,
 			ComponentProvider provider
 	) {
-		var map = new HashMap<ComponentType<?>, SyncedComponent>(); // TODO: Find a way to *not* create this map?!
+		if (pendingSync.isEmpty()) {
+			return;
+		}
+
+		PacketByteBuf buf = context.header().start(provider);
+		buf.writeInt(pendingSync.size());
 
 		while (!pendingSync.isEmpty()) {
 			var currentType = pendingSync.poll();
-			map.put(currentType, mapper.apply(currentType));
+			ComponentType.NETWORK_CODEC.encode(buf, currentType);
+			mapper.apply(currentType).writeToBuf(buf);
 		}
 
-		if (!map.isEmpty()) {
-			SyncPacket.send(context, provider, map);
-		}
+		SyncPacket.send(context, buf);
 	}
 
 	public record SyncContext(SyncPacketHeader<?> header, Supplier<Collection<ServerPlayerEntity>> playerGenerator) {

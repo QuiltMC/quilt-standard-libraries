@@ -32,7 +32,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(BlockEntityRendererFactories.class)
 public abstract class MixinBlockEntityRendererFactories {
 	@Shadow
-	protected static <T extends BlockEntity> void register(BlockEntityType<? extends T> type, BlockEntityRendererFactory<T> factory) {
+	private static <T extends BlockEntity> void register(BlockEntityType<? extends T> type, BlockEntityRendererFactory<T> factory) {
 		throw ErrorUtil.illegalState("This should never happen").get();
 	}
 

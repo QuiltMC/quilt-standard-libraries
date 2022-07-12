@@ -60,7 +60,7 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 
 	private void stackInHandTick(ServerPlayerEntity player, ItemStack stackInHand) {
 		if (!stackInHand.isEmpty() && stackInHand.isOf(Items.BOOKSHELF)) {
-			stackInHand.expose(ComponentTestMod.ITEMSTACK_INT).ifPresent(integerComponent -> {
+			stackInHand.expose(ComponentTestMod.ITEMSTACK_INT).ifJust(integerComponent -> {
 				integerComponent.increment();
 				integerComponent.save();
 
@@ -72,7 +72,7 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 	}
 
 	private void currentChunkTick(ServerPlayerEntity player, Chunk chunk) {
-		chunk.expose(ComponentTestMod.CHUNK_INVENTORY).ifPresent(inventory -> {
+		chunk.expose(ComponentTestMod.CHUNK_INVENTORY).ifJust(inventory -> {
 			ItemStack playerStack = player.getInventory().getStack(9);
 			ItemStack stack = inventory.getStack(0);
 			if (!playerStack.isEmpty()) {
@@ -87,7 +87,7 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 					if (ItemStack.canCombine(stack, playerStack)) {
 						stack.increment(1);
 						playerStack.decrement(1);
-						stack.expose(ComponentTestMod.ITEMSTACK_INT).ifPresent(defaultIntegerComponent -> {
+						stack.expose(ComponentTestMod.ITEMSTACK_INT).ifJust(defaultIntegerComponent -> {
 							defaultIntegerComponent.increment();
 							defaultIntegerComponent.save();
 						});
@@ -104,7 +104,7 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 		chunk.getBlockEntityPositions().stream()
 				.map(chunk::getBlockEntity)
 				.filter(Objects::nonNull)
-				.forEach(blockEntity -> blockEntity.expose(ComponentTestMod.CHEST_NUMBER).ifPresent(integerComponent -> {
+				.forEach(blockEntity -> blockEntity.expose(ComponentTestMod.CHEST_NUMBER).ifJust(integerComponent -> {
 					integerComponent.decrement();
 					integerComponent.save();
 
@@ -116,7 +116,7 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 
 	private void hostileTick(ServerWorld world) {
 		world.getEntitiesByType(TypeFilter.instanceOf(HostileEntity.class), hostile -> true)
-				.forEach(hostile -> hostile.expose(ComponentTestMod.HOSTILE_EXPLODE_TIME).ifPresent(explodeTime -> {
+				.forEach(hostile -> hostile.expose(ComponentTestMod.HOSTILE_EXPLODE_TIME).ifJust(explodeTime -> {
 					if (explodeTime.get() <= 200) {
 						explodeTime.increment();
 						explodeTime.save();
@@ -134,7 +134,7 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 
 	private void creeperTick(ServerWorld world) {
 		world.getEntitiesByType(EntityType.CREEPER, creeper -> true)
-				.forEach(creeper -> Components.expose(ComponentTestMod.CREEPER_EXPLODE_TIME, creeper).ifPresent(explodeTime -> {
+				.forEach(creeper -> Components.expose(ComponentTestMod.CREEPER_EXPLODE_TIME, creeper).ifJust(explodeTime -> {
 					if (explodeTime.get() > 0) {
 						explodeTime.decrement();
 						explodeTime.save();
@@ -146,7 +146,7 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 
 	private void cowTick(ServerWorld world) {
 		world.getEntitiesByType(TypeFilter.instanceOf(CowEntity.class), cowEntity -> true).forEach(entity ->
-				entity.expose(ComponentTestMod.COW_INVENTORY).ifPresent(inventoryComponent -> {
+				entity.expose(ComponentTestMod.COW_INVENTORY).ifJust(inventoryComponent -> {
 					if (inventoryComponent.isEmpty()) {
 						world.createExplosion(
 								entity,

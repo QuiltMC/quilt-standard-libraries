@@ -16,167 +16,46 @@
 
 package org.quiltmc.qsl.component.impl.container;
 
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.component.api.*;
-import org.quiltmc.qsl.component.api.components.NbtComponent;
-import org.quiltmc.qsl.component.api.components.SyncedComponent;
-import org.quiltmc.qsl.component.api.components.TickingComponent;
-import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
+import org.quiltmc.qsl.base.api.util.Maybe;
+import org.quiltmc.qsl.component.api.Component;
+import org.quiltmc.qsl.component.api.container.ComponentContainer;
+import org.quiltmc.qsl.component.api.ComponentType;
+import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
 import org.quiltmc.qsl.component.impl.sync.packet.SyncPacket;
 import org.quiltmc.qsl.component.impl.util.ErrorUtil;
-import org.quiltmc.qsl.component.impl.util.StringConstants;
 
-import java.util.*;
-import java.util.function.Supplier;
+import java.util.IdentityHashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 
-public class SimpleComponentContainer implements ComponentContainer {
-	private final IdentityHashMap<ComponentType<?>, Component> components;
-	private final List<ComponentType<?>> nbtComponents;
-	private final List<ComponentType<?>> tickingComponents;
-	@Nullable
-	private final SyncPacket.SyncContext syncContext;
-	@Nullable
-	private final Queue<ComponentType<?>> pendingSync;
+public class SimpleComponentContainer extends AbstractComponentContainer {
+	public static final ComponentContainer.Factory<SimpleComponentContainer> FACTORY =
+			(provider, injections, saveOperation, ticking, syncContext) -> new SimpleComponentContainer(
+					saveOperation, ticking, syncContext, injections.get().stream()
+			);
+	private final Map<ComponentType<?>, Component> components;
 
-	protected SimpleComponentContainer(@Nullable Runnable saveOperation, SyncPacket.@Nullable SyncContext syncContext, Stream<ComponentType<?>> types) {
+	protected SimpleComponentContainer(Runnable saveOperation,
+									   boolean ticking,
+									   @Nullable SyncPacket.SyncContext syncContext,
+									   Stream<ComponentEntry<?>> types) {
+		super(saveOperation, ticking, syncContext);
 		this.components = new IdentityHashMap<>();
-		this.nbtComponents = new ArrayList<>();
-		this.tickingComponents = new ArrayList<>();
-		this.syncContext = syncContext;
-		this.pendingSync = this.syncContext != null ? new ArrayDeque<>() : null;
-
-		types.forEach(type -> this.initializeComponent(saveOperation, type));
+		types.forEach(this::initializeComponent);
 		types.close();
 	}
 
-	@Contract("-> new")
-	@NotNull
-	public static Builder builder() {
-		return new Builder();
+	@Override
+	public Maybe<Component> expose(ComponentType<?> type) {
+		return Maybe.wrap(this.components.get(type));
 	}
 
 	@Override
-	public Optional<Component> expose(ComponentType<?> type) {
-		return Optional.ofNullable(this.components.get(type));
-	}
-
-	@Override
-	public void writeNbt(@NotNull NbtCompound providerRootNbt) {
-		var rootQslNbt = new NbtCompound();
-		this.nbtComponents.forEach(id -> this.expose(id)
-				.ifPresent(component -> NbtComponent.writeTo(rootQslNbt, (NbtComponent<?>) component, id.id()))
-		);
-
-		if (!rootQslNbt.isEmpty()) {
-			providerRootNbt.put(StringConstants.COMPONENT_ROOT, rootQslNbt);
-		}
-	}
-
-	@Override
-	public void readNbt(@NotNull NbtCompound providerRootNbt) {
-		var rootQslNbt = providerRootNbt.getCompound(StringConstants.COMPONENT_ROOT);
-
-		if (rootQslNbt.isEmpty()) {
-			return;
-		}
-
-		rootQslNbt.getKeys().stream()
-				.map(Identifier::tryParse)
-				.filter(Objects::nonNull)
-				.map(Components.REGISTRY::get)
-				.filter(Objects::nonNull)
-				.forEach(id -> this.expose(id)
-						.ifPresent(component -> NbtComponent.readFrom((NbtComponent<?>) component, id.id(), rootQslNbt))
-				);
-	}
-
-	@Override
-	public void tick(@NotNull ComponentProvider provider) {
-		this.tickingComponents.stream()
-				.map(this.components::get)
-				.map(it -> ((TickingComponent) it))
-				.forEach(tickingComponent -> tickingComponent.tick(provider));
-
-		this.sync(provider);
-	}
-
-	@SuppressWarnings("ConstantConditions") // pendingSync will be null if syncContext is null and the other way around
-	@Override
-	public void sync(@NotNull ComponentProvider provider) {
-		if (this.syncContext == null) {
-			throw ErrorUtil.illegalState("Cannot sync a non-syncable component container! Make sure you provide a context!").get();
-		}
-		SyncPacket.syncFromQueue(
-				this.pendingSync,
-				this.syncContext,
-				type -> ((SyncedComponent) this.components.get(type)),
-				provider
-		);
-	}
-
-	private void initializeComponent(@Nullable Runnable saveOperation, @NotNull ComponentType<?> type) {
-		Component component = type.create();
-		this.components.put(type, component);
-
-		if (component instanceof NbtComponent<?> nbtComponent) {
-			this.nbtComponents.add(type);
-			nbtComponent.setSaveOperation(saveOperation);
-		}
-
-		if (component instanceof TickingComponent) {
-			this.tickingComponents.add(type);
-		}
-
-		if (component instanceof SyncedComponent synced && this.pendingSync != null) {
-			synced.setSyncOperation(() -> this.pendingSync.add(type));
-		}
-	}
-
-	public static class Builder {
-		@NotNull
-		private final List<ComponentType<?>> types;
-		@Nullable
-		private Runnable saveOperation;
-		@Nullable
-		private SyncPacket.SyncContext syncContext;
-
-		private Builder() {
-			this.types = new ArrayList<>();
-		}
-
-		@NotNull
-		public Builder setSaveOperation(@NotNull Runnable runnable) {
-			this.saveOperation = runnable;
-			return this;
-		}
-
-		@NotNull
-		public Builder syncing(SyncPacketHeader<?> header, Supplier<Collection<ServerPlayerEntity>> supplier) {
-			this.syncContext = new SyncPacket.SyncContext(header, supplier);
-			return this;
-		}
-
-		@NotNull
-		public Builder add(ComponentType<?> type) {
-			this.types.add(type);
-			return this;
-		}
-
-		@NotNull
-		public Builder add(ComponentType<?>... types) {
-			this.types.addAll(Arrays.asList(types));
-			return this;
-		}
-
-		@NotNull
-		public SimpleComponentContainer build() {
-			return new SimpleComponentContainer(this.saveOperation, this.syncContext, this.types.stream());
+	protected <COMP extends Component> void addComponent(ComponentType<COMP> type, Component component) {
+		Component result = this.components.put(type, component);
+		if (result != null) {
+			throw ErrorUtil.illegalState("Attempted to override a component on a simple container!").get();
 		}
 	}
 }

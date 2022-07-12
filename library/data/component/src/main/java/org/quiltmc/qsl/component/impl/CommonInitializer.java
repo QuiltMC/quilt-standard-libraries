@@ -18,7 +18,6 @@ package org.quiltmc.qsl.component.impl;
 
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.component.impl.sync.ServerSyncHandler;
@@ -30,7 +29,7 @@ import org.quiltmc.qsl.networking.api.ServerLoginConnectionEvents;
 public final class CommonInitializer implements ModInitializer {
 	public static final String MODID = "quilt_component";
 
-	public static @NotNull Identifier id(@NotNull String id) {
+	public static Identifier id(String id) {
 		return new Identifier(MODID, id);
 	}
 

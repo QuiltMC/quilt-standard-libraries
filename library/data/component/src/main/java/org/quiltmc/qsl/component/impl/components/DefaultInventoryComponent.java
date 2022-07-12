@@ -19,7 +19,6 @@ package org.quiltmc.qsl.component.impl.components;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.collection.DefaultedList;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.components.InventoryComponent;
 import org.quiltmc.qsl.component.api.components.SyncedComponent;
@@ -31,16 +30,20 @@ import java.util.function.Supplier;
 public class DefaultInventoryComponent implements InventoryComponent, SyncedComponent {
 	private final DefaultedList<ItemStack> stacks;
 	@Nullable
-	private Runnable saveOperation;
+	private final Runnable saveOperation;
 	@Nullable
-	private Runnable syncOperation;
+	private final Runnable syncOperation;
 
-	public DefaultInventoryComponent(int size) {
+	public DefaultInventoryComponent(@Nullable Runnable saveOperation, @Nullable Runnable syncOperation, int size) {
 		this.stacks = DefaultedList.ofSize(size, ItemStack.EMPTY);
+		this.saveOperation = saveOperation;
+		this.syncOperation = syncOperation;
 	}
 
-	public DefaultInventoryComponent(Supplier<DefaultedList<ItemStack>> stacks) {
+	public DefaultInventoryComponent(@Nullable Runnable saveOperation, @Nullable Runnable syncOperation, Supplier<DefaultedList<ItemStack>> stacks) {
+		this.syncOperation = syncOperation;
 		this.stacks = stacks.get();
+		this.saveOperation = saveOperation;
 	}
 
 	@Override
@@ -54,8 +57,8 @@ public class DefaultInventoryComponent implements InventoryComponent, SyncedComp
 	}
 
 	@Override
-	public void setSaveOperation(@Nullable Runnable runnable) {
-		this.saveOperation = runnable;
+	public @Nullable Runnable getSyncOperation() {
+		return this.syncOperation;
 	}
 
 	@Override
@@ -71,26 +74,16 @@ public class DefaultInventoryComponent implements InventoryComponent, SyncedComp
 	}
 
 	@Override
-	public void writeToBuf(@NotNull PacketByteBuf buf) {
+	public void writeToBuf(PacketByteBuf buf) {
 		NetworkCodec.INVENTORY.encode(buf, this.stacks);
 	}
 
 	@Override
-	public void readFromBuf(@NotNull PacketByteBuf buf) {
-		NetworkCodec.INVENTORY.decode(buf).ifPresent(itemStacks -> {
+	public void readFromBuf(PacketByteBuf buf) {
+		NetworkCodec.INVENTORY.decode(buf).ifJust(itemStacks -> {
 			for (int i = 0; i < itemStacks.size(); i++) {
 				this.stacks.set(i, itemStacks.get(i));
 			}
 		});
-	}
-
-	@Override
-	public @Nullable Runnable getSyncOperation() {
-		return this.syncOperation;
-	}
-
-	@Override
-	public void setSyncOperation(@Nullable Runnable runnable) {
-		this.syncOperation = runnable;
 	}
 }
