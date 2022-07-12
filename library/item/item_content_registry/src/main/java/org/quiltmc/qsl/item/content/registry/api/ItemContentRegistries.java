@@ -17,11 +17,12 @@
 package org.quiltmc.qsl.item.content.registry.api;
 
 import com.mojang.serialization.Codec;
-import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+
+import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 /**
  * Holds {@link RegistryEntryAttachment}s for different properties that items can hold.
