@@ -27,6 +27,23 @@ import org.quiltmc.qsl.base.api.util.InjectedInterface;
  * The natural uses for multipart entities is for entities to have specific hitboxes with damage multipliers
  * or for large {@link Entity entities} to have more accurate hitboxes.</p>
  * <p>
+ * NOTE: When instantiating {@link EntityPart}s, on the client, make sure to call {@link Entity#setId(int)}.</p>
+ *
+ * <pre>{@code
+ * @Override
+ * public void onSpawnPacket(EntitySpawnS2CPacket packet) {
+ *     super.onSpawnPacket(packet);
+ *     var entityParts = this.getEntityParts();
+ *
+ *     // We make sure not to override the base entity id
+ *     // Mojang did this on the ender dragon, and it caused very janky hitboxes
+ *     for(int i = 1; i <= entityParts.length; i++) {
+ *         entityParts[i].setId(i + packet.getId());
+ *     }
+ * }
+ * }</pre>
+ *
+ * <p>
  * When moving this {@link Entity}, do note that you should also change the position of the child {@link EntityPart}s too.
  * This also includes updating their {@link Entity#prevX}, {@link Entity#prevY}, {@link Entity#prevZ},
  * {@link Entity#lastRenderX}, {@link Entity#lastRenderY}, and {@link Entity#lastRenderZ}.</p>
