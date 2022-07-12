@@ -20,7 +20,7 @@ import net.minecraft.world.gen.surfacebuilder.SurfaceRules;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public final class MaterialRuleRegistrationEvents {
 	/**
