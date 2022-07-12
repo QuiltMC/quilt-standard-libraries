@@ -22,7 +22,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.registry.attachment.impl.BuiltinAttachmentBuilderImpl;
-import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentHolder;
 
 /**
  * Extensions for working with {@link Registry}s.
@@ -38,11 +37,14 @@ public final class RegistryExtensions {
 	 * @param <R>             type of the entries in the registry
 	 * @param <T>             type of the entry we're currently registering (may be a subclass of {@code R})
 	 * @return the newly registered entry
+	 * @deprecated use {@link RegistryEntryAttachment#put(Object, Object)} directly,
+	 * or use one of the other methods in this class
 	 */
+	@Deprecated(forRemoval = true)
 	public static <R, T extends R> T register(Registry<R> registry, Identifier id, T toRegister,
 			Consumer<BuiltinAttachmentBuilder<R>> builderConsumer) {
 		Registry.register(registry, id, toRegister);
-		builderConsumer.accept(new BuiltinAttachmentBuilderImpl<>(registry, toRegister));
+		builderConsumer.accept(new BuiltinAttachmentBuilderImpl<>(toRegister));
 		return toRegister;
 	}
 
@@ -50,7 +52,11 @@ public final class RegistryExtensions {
 	 * Used to set built-in attachment values in a builder-like fashion.
 	 *
 	 * @param <R> type of the entries in the registry
+	 * @deprecated use {@link RegistryEntryAttachment#put(Object, Object)} directly,
+	 * or use one of the other methods in this class
 	 */
+	@SuppressWarnings("DeprecatedIsStillUsed")
+	@Deprecated(forRemoval = true)
 	@FunctionalInterface
 	public interface BuiltinAttachmentBuilder<R> {
 		/**
@@ -64,47 +70,112 @@ public final class RegistryExtensions {
 		<V> BuiltinAttachmentBuilder<R> put(RegistryEntryAttachment<R, V> attach, V value);
 	}
 
-	public static <R, T extends R, V1> T register(Registry<R> registry, Identifier id, T toRegister,
+	/**
+	 * Utility method to register an entry and associate a value to it in an attachment.
+	 *
+	 * @param registry target registry
+	 * @param id       entry identifier
+	 * @param entry    entry to register
+	 * @param attach1  attachment
+	 * @param value1   value to associate to entry in attachment
+	 * @param <R>      type of the entries in the registry
+	 * @param <T>      type of the entry we're currently registering (may be a subclass of {@code R})
+	 * @param <V1>     type of the attached value
+	 * @return the newly registered entry
+	 */
+	public static <R, T extends R, V1> T register(Registry<R> registry, Identifier id, T entry,
 			RegistryEntryAttachment<R, V1> attach1, V1 value1) {
-		Registry.register(registry, id, toRegister);
-		var holder = RegistryEntryAttachmentHolder.getBuiltin(registry);
-		holder.putValue(attach1, toRegister, value1);
-		return toRegister;
+		Registry.register(registry, id, entry);
+		attach1.put(entry, value1);
+		return entry;
 	}
 
-	public static <R, T extends R, V1, V2> T register(Registry<R> registry, Identifier id, T toRegister,
+	/**
+	 * Utility method to register an entry and associate values to it in multiple attachments.
+	 *
+	 * @param registry target registry
+	 * @param id       entry identifier
+	 * @param entry    entry to register
+	 * @param attach1  first attachment
+	 * @param value1   value to associate to entry in first attachment
+	 * @param attach2  second attachment
+	 * @param value2   value to associate to entry in second attachment
+	 * @param <R>      type of the entries in the registry
+	 * @param <T>      type of the entry we're currently registering (may be a subclass of {@code R})
+	 * @param <V1>     type of the first attached value
+	 * @param <V2>     type of the second attached value
+	 * @return the newly registered entry
+	 */
+	public static <R, T extends R, V1, V2> T register(Registry<R> registry, Identifier id, T entry,
 			RegistryEntryAttachment<R, V1> attach1, V1 value1,
 			RegistryEntryAttachment<R, V2> attach2, V2 value2) {
-		Registry.register(registry, id, toRegister);
-		var holder = RegistryEntryAttachmentHolder.getBuiltin(registry);
-		holder.putValue(attach1, toRegister, value1);
-		holder.putValue(attach2, toRegister, value2);
-		return toRegister;
+		Registry.register(registry, id, entry);
+		attach1.put(entry, value1);
+		attach2.put(entry, value2);
+		return entry;
 	}
-
-	public static <R, T extends R, V1, V2, V3> T register(Registry<R> registry, Identifier id, T toRegister,
+	/**
+	 * Utility method to register an entry and associate values to it in multiple attachments.
+	 *
+	 * @param registry target registry
+	 * @param id       entry identifier
+	 * @param entry    entry to register
+	 * @param attach1  first attachment
+	 * @param value1   value to associate to entry in first attachment
+	 * @param attach2  second attachment
+	 * @param value2   value to associate to entry in second attachment
+	 * @param attach3  third attachment
+	 * @param value3   value to associate to entry in third attachment
+	 * @param <R>      type of the entries in the registry
+	 * @param <T>      type of the entry we're currently registering (may be a subclass of {@code R})
+	 * @param <V1>     type of the first attached value
+	 * @param <V2>     type of the second attached value
+	 * @param <V3>     type of the third attached value
+	 * @return the newly registered entry
+	 */
+	public static <R, T extends R, V1, V2, V3> T register(Registry<R> registry, Identifier id, T entry,
 			RegistryEntryAttachment<R, V1> attach1, V1 value1,
 			RegistryEntryAttachment<R, V2> attach2, V2 value2,
 			RegistryEntryAttachment<R, V3> attach3, V3 value3) {
-		Registry.register(registry, id, toRegister);
-		var holder = RegistryEntryAttachmentHolder.getBuiltin(registry);
-		holder.putValue(attach1, toRegister, value1);
-		holder.putValue(attach2, toRegister, value2);
-		holder.putValue(attach3, toRegister, value3);
-		return toRegister;
+		Registry.register(registry, id, entry);
+		attach1.put(entry, value1);
+		attach2.put(entry, value2);
+		attach3.put(entry, value3);
+		return entry;
 	}
 
-	public static <R, T extends R, V1, V2, V3, V4> T register(Registry<R> registry, Identifier id, T toRegister,
+	/**
+	 * Utility method to register an entry and associate values to it in multiple attachments.
+	 *
+	 * @param registry target registry
+	 * @param id       entry identifier
+	 * @param entry    entry to register
+	 * @param attach1  first attachment
+	 * @param value1   value to associate to entry in first attachment
+	 * @param attach2  second attachment
+	 * @param value2   value to associate to entry in second attachment
+	 * @param attach3  third attachment
+	 * @param value3   value to associate to entry in third attachment
+	 * @param attach4  fourth attachment
+	 * @param value4   value to associate to entry in fourth attachment
+	 * @param <R>      type of the entries in the registry
+	 * @param <T>      type of the entry we're currently registering (may be a subclass of {@code R})
+	 * @param <V1>     type of the first attached value
+	 * @param <V2>     type of the second attached value
+	 * @param <V3>     type of the third attached value
+	 * @param <V4>     type of the fourth attached value
+	 * @return the newly registered entry
+	 */
+	public static <R, T extends R, V1, V2, V3, V4> T register(Registry<R> registry, Identifier id, T entry,
 			RegistryEntryAttachment<R, V1> attach1, V1 value1,
 			RegistryEntryAttachment<R, V2> attach2, V2 value2,
 			RegistryEntryAttachment<R, V3> attach3, V3 value3,
 			RegistryEntryAttachment<R, V4> attach4, V4 value4) {
-		Registry.register(registry, id, toRegister);
-		var holder = RegistryEntryAttachmentHolder.getBuiltin(registry);
-		holder.putValue(attach1, toRegister, value1);
-		holder.putValue(attach2, toRegister, value2);
-		holder.putValue(attach3, toRegister, value3);
-		holder.putValue(attach4, toRegister, value4);
-		return toRegister;
+		Registry.register(registry, id, entry);
+		attach1.put(entry, value1);
+		attach2.put(entry, value2);
+		attach3.put(entry, value3);
+		attach4.put(entry, value4);
+		return entry;
 	}
 }
