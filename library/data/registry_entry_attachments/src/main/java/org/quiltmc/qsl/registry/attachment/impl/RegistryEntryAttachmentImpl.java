@@ -87,15 +87,6 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 		return this.side;
 	}
 
-	protected @Nullable V getExisting(R entry) {
-		V value = RegistryEntryAttachmentHolder.getData(this.registry).getValue(this, entry);
-		if (value != null) {
-			return value;
-		}
-
-		return RegistryEntryAttachmentHolder.getBuiltin(this.registry).getValue(this, entry);
-	}
-
 	protected abstract @Nullable V getDefaultValue(R entry);
 
 	@Override
@@ -104,12 +95,17 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 			ClientSideGuard.assertAccessAllowed();
 		}
 
-		V value = this.getExisting(entry);
-		if (value == null) {
-			value = this.getDefaultValue(entry);
+		V value = RegistryEntryAttachmentHolder.getData(this.registry).getValue(this, entry);
+		if (value != null) {
+			return value;
 		}
 
-		return value;
+		value = RegistryEntryAttachmentHolder.getBuiltin(this.registry).getValue(this, entry);
+		if (value != null) {
+			return value;
+		}
+
+		return this.getDefaultValue(entry);
 	}
 
 	@Override
@@ -201,9 +197,12 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	}
 
 	protected class EntryIterator implements Iterator<Entry<R, V>> {
+		protected final RegistryEntryAttachmentHolder<R> dataHolder, builtinHolder;
 		protected Iterator<R> keyIt;
 
 		public EntryIterator() {
+			this.dataHolder = RegistryEntryAttachmentHolder.getData(RegistryEntryAttachmentImpl.this.registry);
+			this.builtinHolder = RegistryEntryAttachmentHolder.getBuiltin(RegistryEntryAttachmentImpl.this.registry);
 			this.keyIt = RegistryEntryAttachmentImpl.this.keySet().iterator();
 		}
 
@@ -215,7 +214,12 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 		@Override
 		public Entry<R, V> next() {
 			R key = keyIt.next();
-			return new Entry<>(key, RegistryEntryAttachmentImpl.this.getExisting(key));
+			V value = (V) dataHolder.valueTable.get(RegistryEntryAttachmentImpl.this, key);
+			if (value == null) {
+				value = (V) builtinHolder.valueTable.get(RegistryEntryAttachmentImpl.this, key);
+			}
+
+			return new Entry<>(key, value);
 		}
 	}
 
