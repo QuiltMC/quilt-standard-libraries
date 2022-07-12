@@ -49,46 +49,49 @@ public record SyncPacketHeader<P extends ComponentProvider>(NetworkCodec<P> code
 	// BlockEntity
 	public static final NetworkCodec<BlockEntity> BLOCK_ENTITY_CODEC =
 			NetworkCodec.BLOCK_POS.map(BlockEntity::getPos, ClientResolution::getBlockEntity);
-	public static final SyncPacketHeader<BlockEntity> BLOCK_ENTITY = new SyncPacketHeader<>(BLOCK_ENTITY_CODEC);
+	public static final SyncPacketHeader<BlockEntity> BLOCK_ENTITY = register("block_entity", BLOCK_ENTITY_CODEC);
+
 
 	// Entity
 	public static final NetworkCodec<Entity> ENTITY_CODEC =
 			NetworkCodec.INT.map(Entity::getId, ClientResolution::getEntity);
-	public static final SyncPacketHeader<Entity> ENTITY = new SyncPacketHeader<>(ENTITY_CODEC);
+	public static final SyncPacketHeader<Entity> ENTITY = register("entity", ENTITY_CODEC);
 
 	// Chunk
 	public static final NetworkCodec<Chunk> CHUNK_CODEC =
 			NetworkCodec.CHUNK_POS.map(Chunk::getPos, ClientResolution::getChunk);
-	public static final SyncPacketHeader<Chunk> CHUNK = new SyncPacketHeader<>(CHUNK_CODEC);
+	public static final SyncPacketHeader<Chunk> CHUNK = register("chunk", CHUNK_CODEC);
 
 	// World
 	public static final NetworkCodec<World> WORLD_CODEC = NetworkCodec.empty(() -> MinecraftClient.getInstance().world);
-	public static final SyncPacketHeader<World> WORLD = new SyncPacketHeader<>(WORLD_CODEC);
+	public static final SyncPacketHeader<World> WORLD = register("world", WORLD_CODEC);
 
 	// Level aka Save
 	private static final NetworkCodec<ComponentProvider> LEVEL_CODEC = NetworkCodec.empty(MinecraftClient::getInstance);
-	public static final SyncPacketHeader<?> LEVEL = new SyncPacketHeader<>(LEVEL_CODEC);
+	public static final SyncPacketHeader<?> LEVEL = register("level", LEVEL_CODEC);
 
 	public static void registerDefaults() {
-		register(CommonInitializer.id("block_entity"), BLOCK_ENTITY);
-		register(CommonInitializer.id("entity"), ENTITY);
-		register(CommonInitializer.id("chunk"), CHUNK);
-		register(CommonInitializer.id("world"), WORLD);
-		register(CommonInitializer.id("level"), LEVEL);
+		// Only exists to make sure these fields are classloaded before registries are frozen.
+	}
+
+	private static <P extends ComponentProvider> SyncPacketHeader<P> register(String id, NetworkCodec<P> codec) {
+		SyncPacketHeader<P> header = new SyncPacketHeader<>(codec);
+		register(CommonInitializer.id(id), header);
+		return header;
 	}
 
 	public static <P extends ComponentProvider> void register(Identifier id, SyncPacketHeader<P> header) {
 		Registry.register(REGISTRY, id, header);
 	}
 
-	public static Maybe<? extends ComponentProvider> toProvider(PacketByteBuf buf) {
+	public static Maybe<? extends ComponentProvider> fromBuffer(PacketByteBuf buf) {
 		return NETWORK_CODEC.decode(buf)
 				.map(SyncPacketHeader::codec)
 				.filterMap(networkCodec -> networkCodec.decode(buf));
 	}
 
 	@SuppressWarnings("unchecked")
-	public PacketByteBuf start(ComponentProvider provider) {
+	public PacketByteBuf toBuffer(ComponentProvider provider) {
 		var buf = PacketByteBufs.create();
 		buf.writeInt(REGISTRY.getRawId(this));
 		// the person calling is responsible to make sure we get a valid provider instance!

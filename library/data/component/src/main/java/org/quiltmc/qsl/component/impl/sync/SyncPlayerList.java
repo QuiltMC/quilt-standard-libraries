@@ -28,6 +28,7 @@ import org.quiltmc.qsl.networking.api.PlayerLookup;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 public final class SyncPlayerList {
 	public static Collection<ServerPlayerEntity> create(World world, BlockPos pos) {
@@ -48,5 +49,9 @@ public final class SyncPlayerList {
 
 	public static Collection<ServerPlayerEntity> create(ServerWorld world) {
 		return PlayerLookup.world(world);
+	}
+
+	public static Collection<ServerPlayerEntity> create(World world) {
+		return world.isClient ? List.of() : PlayerLookup.world((ServerWorld) world);
 	}
 }

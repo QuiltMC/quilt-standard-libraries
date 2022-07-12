@@ -17,9 +17,6 @@
 package org.quiltmc.qsl.component.impl.sync.codec;
 
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
@@ -27,13 +24,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 import org.quiltmc.qsl.base.api.util.Maybe;
-import org.quiltmc.qsl.component.api.ComponentType;
-import org.quiltmc.qsl.component.api.Components;
-import org.quiltmc.qsl.component.impl.client.ClientResolution;
-import org.quiltmc.qsl.component.impl.client.sync.ClientSyncHandler;
+import org.quiltmc.qsl.component.impl.ComponentsImpl;
 
 import java.util.List;
 import java.util.Map;
@@ -87,7 +79,6 @@ public record NetworkCodec<T>(BiConsumer<PacketByteBuf, T> encoder,
 	public static final NetworkCodec<DefaultedList<ItemStack>> INVENTORY =
 			list(ITEM_STACK, size -> DefaultedList.ofSize(size, ItemStack.EMPTY));
 
-
 	public static <O, L extends List<O>> NetworkCodec<L> list(NetworkCodec<O> entryCodec, IntFunction<L> listFactory) {
 		return new NetworkCodec<>(
 				(buf, os) -> {
@@ -137,7 +128,8 @@ public record NetworkCodec<T>(BiConsumer<PacketByteBuf, T> encoder,
 
 	public static <T> NetworkCodec<T> empty(Supplier<T> instanceProvider) {
 		return new NetworkCodec<>(
-				(buf, t) -> {},
+				(buf, t) -> {
+				},
 				buf -> instanceProvider.get()
 		);
 	}
@@ -147,7 +139,12 @@ public record NetworkCodec<T>(BiConsumer<PacketByteBuf, T> encoder,
 	}
 
 	public Maybe<T> decode(PacketByteBuf buf) {
-		return Maybe.wrap(this.decoder.apply(buf));
+		try {
+			return Maybe.just(this.decoder.apply(buf));
+		} catch (IndexOutOfBoundsException e) { // An IOOB exception is thrown if the memory is either
+			ComponentsImpl.LOGGER.warn(e.getMessage());
+			return Maybe.nothing();
+		}
 	}
 
 	public <U> NetworkCodec<U> map(Function<U, T> decoder, Function<T, U> encoder) {

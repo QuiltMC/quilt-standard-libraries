@@ -20,9 +20,11 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.PersistentState;
+import net.minecraft.world.World;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.container.LazyComponentContainer;
+import org.quiltmc.qsl.component.impl.sync.SyncPlayerList;
 import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
 
 public class ComponentProviderState extends PersistentState implements ComponentProvider {
@@ -31,23 +33,24 @@ public class ComponentProviderState extends PersistentState implements Component
 
 	private final ComponentContainer container;
 
-	public ComponentProviderState(ServerWorld world) {
-		this.container = this.initContainer(world);
+	public ComponentProviderState(ServerWorld world, boolean level) {
+		this.container = this.initLevelContainer(world);
 	}
 
 	public ComponentProviderState(NbtCompound rootQslNbt, ServerWorld world) {
-		this.container = this.initContainer(world);
+		this.container = this.initLevelContainer(world);
 		this.container.readNbt(rootQslNbt);
 	}
 
 	public static ComponentProviderState get(Object obj) {
+		// TODO: Client world treatment!
 		if (!(obj instanceof ServerWorld world)) {
 			throw ErrorUtil.illegalArgument("A ServerWorld instance needs to be provided to initialize a container!").get();
 		}
 
 		return world.getPersistentStateManager().getOrCreate(
 				nbtCompound -> new ComponentProviderState(nbtCompound, world),
-				() -> new ComponentProviderState(world),
+				() -> new ComponentProviderState(world, false),
 				ID
 		);
 	}
@@ -60,7 +63,7 @@ public class ComponentProviderState extends PersistentState implements Component
 		ServerWorld overworld = server.getOverworld();
 		return overworld.getPersistentStateManager().getOrCreate(
 				nbtCompound -> new ComponentProviderState(nbtCompound, overworld),
-				() -> new ComponentProviderState(overworld),
+				() -> new ComponentProviderState(overworld, true),
 				GLOBAL_ID
 		);
 	}
@@ -76,11 +79,20 @@ public class ComponentProviderState extends PersistentState implements Component
 		return this.container;
 	}
 
-	private LazyComponentContainer initContainer(ServerWorld world) {
+	private LazyComponentContainer initLevelContainer(ServerWorld world) {
 		return ComponentContainer.builder(this)
 				.unwrap()
 				.saving(this::markDirty)
 				.syncing(SyncPacketHeader.LEVEL, world::getPlayers)
+				.ticking()
+				.build(LazyComponentContainer.FACTORY);
+	}
+
+	private LazyComponentContainer initWorldContainer(World world) {
+		return ComponentContainer.builder(this)
+				.unwrap()
+				.saving(this::markDirty)
+				.syncing(SyncPacketHeader.LEVEL, () -> SyncPlayerList.create(world))
 				.ticking()
 				.build(LazyComponentContainer.FACTORY);
 	}

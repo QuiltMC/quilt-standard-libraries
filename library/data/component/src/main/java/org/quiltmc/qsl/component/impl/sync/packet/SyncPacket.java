@@ -39,10 +39,10 @@ public class SyncPacket {
 	 * </pre>
 	 */
 	public static void handle(PacketByteBuf buf, MinecraftClient client) {
-		buf.retain();
+		buf.retain(); // We need the buffer to exist until the client next pulls tasks on the main thread!
 
 		client.execute(() -> {
-			SyncPacketHeader.toProvider(buf).ifJust(provider -> {
+			SyncPacketHeader.fromBuffer(buf).ifJust(provider -> {
 				var size = buf.readInt();
 
 				for (int i = 0; i < size; i++) {
@@ -53,7 +53,7 @@ public class SyncPacket {
 				}
 			});
 
-			buf.release();
+			buf.release(); // Make sure the buffer is cleared!
 		});
 	}
 
@@ -73,7 +73,7 @@ public class SyncPacket {
 			return;
 		}
 
-		PacketByteBuf buf = context.header().start(provider);
+		PacketByteBuf buf = context.header().toBuffer(provider);
 		buf.writeInt(pendingSync.size());
 
 		while (!pendingSync.isEmpty()) {
