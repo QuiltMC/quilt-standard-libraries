@@ -31,9 +31,6 @@ qslModule {
 		}
 	}
 	accessWidener()
-	injectedInterface("net/minecraft/class_2586") {
-		values = ["org/quiltmc/qsl/block/entity/api/QuiltBlockEntity"]
-	}
 	injectedInterface("net/minecraft/class_2591") {
 		values = ["org/quiltmc/qsl/block/entity/api/QuiltBlockEntityType"]
 	}
