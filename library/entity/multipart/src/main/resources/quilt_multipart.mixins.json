@@ -13,7 +13,6 @@
   ],
   "client": [
     "client.ClientEntityHandlerMixin",
-    "client.ClientWorldMixin",
     "client.EntityRenderDispatcherMixin"
   ],
   "injectors": {

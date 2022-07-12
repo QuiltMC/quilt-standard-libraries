@@ -16,20 +16,23 @@
 
 package org.quiltmc.qsl.multipart.mixin;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import org.quiltmc.qsl.multipart.api.EntityPart;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
+
+import org.quiltmc.qsl.multipart.api.EntityPart;
+
 @Mixin(PlayerEntity.class)
 public class PlayerEntityMixin {
-	@ModifyVariable(method = "attack", at=@At(value = "STORE"), ordinal = 1)
+	@ModifyVariable(method = "attack", at = @At(value = "STORE"), ordinal = 1)
 	private Entity attackEntityPart(Entity entity) {
 		if (entity instanceof EntityPart<?> entityPart) {
 			return entityPart.getOwner();
 		}
+
 		return entity;
 	}
 }

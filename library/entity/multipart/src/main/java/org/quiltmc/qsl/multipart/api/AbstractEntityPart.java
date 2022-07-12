@@ -26,6 +26,7 @@ import net.minecraft.network.Packet;
 
 /**
  * A partial implementation of an {@link EntityPart} with the most common methods implemented.
+ *
  * @param <E> The {@link Entity} that owns this {@link EntityPart}
  * @see EnderDragonPart
  */
@@ -46,19 +47,13 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	}
 
 	@Override
-	protected void initDataTracker() {
-
-	}
+	protected void initDataTracker() { }
 
 	@Override
-	protected void readCustomDataFromNbt(NbtCompound nbt) {
-
-	}
+	protected void readCustomDataFromNbt(NbtCompound nbt) { }
 
 	@Override
-	protected void writeCustomDataToNbt(NbtCompound nbt) {
-
-	}
+	protected void writeCustomDataToNbt(NbtCompound nbt) { }
 
 	@Override
 	public boolean collides() {

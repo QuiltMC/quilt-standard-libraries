@@ -17,10 +17,15 @@
 package org.quiltmc.qsl.multipart.impl;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.world.World;
+
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
+
 @ApiStatus.Internal
+@InjectedInterface(World.class)
 public interface EntityPartTracker {
 	Int2ObjectMap<Entity> getEntityParts();
 }

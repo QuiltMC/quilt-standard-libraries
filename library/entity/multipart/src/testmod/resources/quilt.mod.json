@@ -10,10 +10,6 @@
     },
     "intermediate_mappings": "net.fabricmc:intermediary",
     "load_type": "always",
-    "entrypoints": {
-      "init": [
-      ]
-    },
     "depends": [
       "quilt_loader"
     ]

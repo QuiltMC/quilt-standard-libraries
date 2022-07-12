@@ -16,16 +16,18 @@
 
 package org.quiltmc.qsl.multipart.test.mixin;
 
+import org.spongepowered.asm.mixin.Mixin;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.world.World;
+
 import org.quiltmc.qsl.multipart.api.EntityPart;
 import org.quiltmc.qsl.multipart.api.MultipartEntity;
 import org.quiltmc.qsl.multipart.test.SecretCreeperPart;
-import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(CreeperEntity.class)
 public abstract class CreeperEntityMixin extends HostileEntity implements MultipartEntity {
@@ -37,7 +39,7 @@ public abstract class CreeperEntityMixin extends HostileEntity implements Multip
 
 	@Override
 	public EntityPart<?>[] getEntityParts() {
-		return new EntityPart[] { secretHitbox };
+		return new EntityPart[] {secretHitbox};
 	}
 
 	@Override
@@ -57,7 +59,7 @@ public abstract class CreeperEntityMixin extends HostileEntity implements Multip
 		super.onSpawnPacket(packet);
 		EntityPart<?>[] parts = this.getEntityParts();
 
-		for(int i = 0; i < parts.length; ++i) {
+		for (int i = 0; i < parts.length; i++) {
 			if (parts[i] instanceof Entity entity) {
 				entity.setId(i + 1 + packet.getId());
 			}

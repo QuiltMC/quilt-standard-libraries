@@ -16,61 +16,17 @@
 
 package org.quiltmc.qsl.multipart.test;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.CreeperEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.Packet;
-import org.quiltmc.qsl.multipart.api.EntityPart;
 
-public class SecretCreeperPart extends Entity implements EntityPart<CreeperEntity> {
-	private final CreeperEntity owner;
-	private final EntityDimensions partDimensions;
+import org.quiltmc.qsl.multipart.api.AbstractEntityPart;
 
+public class SecretCreeperPart extends AbstractEntityPart<CreeperEntity> {
 	public SecretCreeperPart(CreeperEntity creeper, float f, float g) {
-		super(creeper.getType(), creeper.world);
-		this.partDimensions = EntityDimensions.changing(f, g);
-		this.calculateDimensions();
-		this.owner = creeper;
-	}
-
-	protected void initDataTracker() {
-	}
-
-	protected void readCustomDataFromNbt(NbtCompound nbt) {
-	}
-
-	protected void writeCustomDataToNbt(NbtCompound nbt) {
-	}
-
-	public boolean collides() {
-		return true;
+		super(creeper, f, g);
 	}
 
 	public boolean damage(DamageSource source, float amount) {
-		return !this.isInvulnerableTo(source) && this.owner.damage(source, amount * 10);
-	}
-
-	public boolean isPartOf(Entity entity) {
-		return this == entity || this.owner == entity;
-	}
-
-	public Packet<?> createSpawnPacket() {
-		throw new UnsupportedOperationException();
-	}
-
-	public EntityDimensions getDimensions(EntityPose pose) {
-		return this.partDimensions;
-	}
-
-	public boolean shouldSave() {
-		return false;
-	}
-
-	@Override
-	public CreeperEntity getOwner() {
-		return owner;
+		return super.damage(source, amount * 10);
 	}
 }

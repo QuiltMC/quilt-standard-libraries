@@ -16,12 +16,14 @@
 
 package org.quiltmc.qsl.multipart.mixin;
 
-import net.minecraft.entity.boss.dragon.EnderDragonEntity;
-import net.minecraft.entity.boss.dragon.EnderDragonPart;
-import org.quiltmc.qsl.multipart.api.EntityPart;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+
+import net.minecraft.entity.boss.dragon.EnderDragonEntity;
+import net.minecraft.entity.boss.dragon.EnderDragonPart;
+
+import org.quiltmc.qsl.multipart.api.EntityPart;
 
 @Mixin(EnderDragonPart.class)
 public class EnderDragonPartMixin implements EntityPart<EnderDragonEntity> {

@@ -19,6 +19,8 @@ package org.quiltmc.qsl.multipart.api;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
+
 /**
  * Represents an entity that contains multiple {@link EntityPart}s.
  * <p>
@@ -28,8 +30,10 @@ import net.minecraft.entity.boss.dragon.EnderDragonEntity;
  * When moving this {@link Entity}, do note that you should also change the position of the child {@link EntityPart}s too.
  * This also includes updating their {@link Entity#prevX}, {@link Entity#prevY}, {@link Entity#prevZ},
  * {@link Entity#lastRenderX}, {@link Entity#lastRenderY}, and {@link Entity#lastRenderZ}.</p>
+ *
  * @see EnderDragonEntity
  */
+@InjectedInterface({EnderDragonEntity.class})
 public interface MultipartEntity {
 	EntityPart<?>[] getEntityParts();
 }
