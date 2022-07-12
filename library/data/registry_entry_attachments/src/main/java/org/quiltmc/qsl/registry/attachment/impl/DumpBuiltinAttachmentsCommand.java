@@ -105,7 +105,7 @@ public final class DumpBuiltinAttachmentsCommand {
 			RegistryEntryAttachment<R, Object> attachment = (RegistryEntryAttachment<R, Object>) entry.getKey();
 			var attachmentId = attachment.id();
 
-			if (!AssetsHolderGuard.isAccessAllowed() && attachment.side() == RegistryEntryAttachment.Side.CLIENT) {
+			if (!ClientSideGuard.isAccessAllowed() && attachment.side() == RegistryEntryAttachment.Side.CLIENT) {
 				continue;
 			}
 
@@ -156,6 +156,10 @@ public final class DumpBuiltinAttachmentsCommand {
 			}
 
 			for (Map.Entry<R, Object> attachmentEntry : entry.getValue().entrySet()) {
+				if (holder.isValueComputed(attachment, attachmentEntry.getKey())) {
+					continue;
+				}
+
 				var entryId = registry.getId(attachmentEntry.getKey());
 				if (entryId == null) {
 					throw ILLEGAL_STATE.create();

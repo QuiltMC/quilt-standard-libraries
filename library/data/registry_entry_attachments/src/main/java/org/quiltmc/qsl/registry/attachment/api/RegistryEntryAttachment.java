@@ -16,7 +16,9 @@
 
 package org.quiltmc.qsl.registry.attachment.api;
 
+import java.util.Iterator;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 
 import com.mojang.serialization.Codec;
@@ -28,6 +30,7 @@ import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.registry.attachment.impl.ComputedDefaultRegistryEntryAttachmentImpl;
 import org.quiltmc.qsl.registry.attachment.impl.ConstantDefaultRegistryEntryAttachmentImpl;
 import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentHolder;
@@ -197,26 +200,85 @@ public interface RegistryEntryAttachment<R, V> {
 	 * Gets the value associated with this attachment for the specified entry.
 	 *
 	 * @param entry registry entry
+	 * @return attachment value, or {@code null} if no value is assigned
+	 */
+	@Nullable V getNullable(R entry);
+
+	/**
+	 * Gets the value associated with this attachment for the specified entry.
+	 *
+	 * @param entry registry entry
 	 * @return attachment value, or empty if no value is assigned
 	 */
-	Optional<V> getValue(R entry);
+	default Optional<V> get(R entry) {
+		return Optional.ofNullable(this.getNullable(entry));
+	}
+
+	/**
+	 * Gets the value associated with this attachment for the specified entry.
+	 *
+	 * @param entry registry entry
+	 * @return attachment value, or empty if no value is assigned
+	 * @deprecated use {@link #get} instead
+	 */
+	@Deprecated(forRemoval = true)
+	default Optional<V> getValue(R entry) {
+		return this.get(entry);
+	}
+
+	/**
+	 * {@return a set of all registry entries with an associated value}
+	 */
+	Set<R> keySet();
+
+	/**
+	 * {@return a set of all tags with an associated value}
+	 */
+	Set<TagKey<R>> tagKeySet();
+
+	/**
+	 * {@return an iterator over all the value association entries}
+	 */
+	Iterator<Entry<R, V>> entryIterator();
+
+	/**
+	 * {@return an iterator over all the tag value association entries}
+	 */
+	Iterator<TagEntry<R, V>> tagEntryIterator();
 
 	/**
 	 * Associates a value with an entry.
+	 * <p>
+	 * <strong>NOTE:</strong> You should only call this method <em>before</em> registries are frozen!
+	 * <br>
+	 * Mods are allowed to ignore value associations that happen after registry freezing.
 	 *
 	 * @param entry registry entry
 	 * @param value value
 	 */
 	void put(R entry, V value);
 
-
 	/**
 	 * Associates a value with a tag.
+	 * <p>
+	 * <strong>NOTE:</strong> You should only call this method <em>before</em> registries are frozen!
+	 * <br>
+	 * Mods are allowed to ignore value associations that happen after registry freezing.
 	 *
 	 * @param tag   tag
 	 * @param value value
 	 */
 	void put(TagKey<R> tag, V value);
+
+	/**
+	 * {@return this attachment's "value associated with entry" event}
+	 */
+	Event<ValueAdded<R, V>> valueAddedEvent();
+
+	/**
+	 * {@return this attachment's "value associated with tag" event}
+	 */
+	Event<TagValueAdded<R, V>> tagValueAddedEvent();
 
 	/**
 	 * Specifies on what side this attachment should exist.
@@ -259,6 +321,64 @@ public interface RegistryEntryAttachment<R, V> {
 		public boolean shouldLoad(ResourceType source) {
 			return this.source == source;
 		}
+	}
+
+	/**
+	 * Specifies a value association entry.
+	 *
+	 * @param entry the registry entry
+	 * @param value the associated value
+	 * @param <R> type of registry entry
+	 * @param <V> type of value
+	 */
+	record Entry<R, V>(R entry, V value) {
+		/**
+		 * Creates a new entry.
+		 *
+		 * @param entry the registry entry
+		 * @param value the associated value
+		 */
+		public Entry { }
+	}
+
+	/**
+	 * Specifies a tag value association entry.
+	 *
+	 * @param tag   the tag
+	 * @param value the associated value
+	 * @param <R> type of registry entry
+	 * @param <V> type of value
+	 */
+	record TagEntry<R, V>(TagKey<R> tag, V value) {
+		/**
+		 * Creates a new entry.
+		 *
+		 * @param tag   the tag
+		 * @param value the associated value
+		 */
+		public TagEntry { }
+	}
+
+	/**
+	 * Event that is fired on a value being associated with an entry.
+	 *
+	 * @param <R> type of the entries in the registry
+	 * @param <V> attached value type
+	 */
+	@FunctionalInterface
+	interface ValueAdded<R, V> {
+		void onValueAdded(R entry, V value);
+	}
+
+	/**
+	 * Event that is fired on a value being associated with a tag.
+	 *
+	 * @param <R> type of the entries in the registry
+	 * @param <V> attached value type
+	 */
+	@FunctionalInterface
+	interface TagValueAdded<R, V> {
+		void onTagValueAdded(TagKey<R> tag, V value);
 	}
 
 	/**

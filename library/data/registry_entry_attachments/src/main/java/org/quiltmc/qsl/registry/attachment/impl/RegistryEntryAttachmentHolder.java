@@ -34,7 +34,7 @@ import net.minecraft.util.registry.Registry;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 @ApiStatus.Internal
-public final class RegistryEntryAttachmentHolder<R> {
+public abstract class RegistryEntryAttachmentHolder<R> {
 	@SuppressWarnings("unchecked")
 	public static <R> QuiltRegistryInternals<R> getInternals(Registry<R> registry) {
 		return (QuiltRegistryInternals<R>) registry;
@@ -67,29 +67,20 @@ public final class RegistryEntryAttachmentHolder<R> {
 		return (RegistryEntryAttachment<R, V>) attachment;
 	}
 
-	public static <R> RegistryEntryAttachmentHolder<R> getBuiltin(Registry<R> registry) {
+	public static <R> BuiltinRegistryEntryAttachmentHolder<R> getBuiltin(Registry<R> registry) {
 		var internals = getInternals(registry);
 		var holder = internals.quilt$getBuiltinAttachmentHolder();
 		if (holder == null) {
-			internals.quilt$setBuiltinAttachmentHolder(holder = new RegistryEntryAttachmentHolder<>());
+			internals.quilt$setBuiltinAttachmentHolder(holder = new BuiltinRegistryEntryAttachmentHolder<>());
 		}
 		return holder;
 	}
 
-	public static <R> RegistryEntryAttachmentHolder<R> getData(Registry<R> registry) {
+	public static <R> DataRegistryEntryAttachmentHolder<R> getData(Registry<R> registry) {
 		var internals = getInternals(registry);
 		var holder = internals.quilt$getDataAttachmentHolder();
 		if (holder == null) {
-			internals.quilt$setDataAttachmentHolder(holder = new RegistryEntryAttachmentHolder<>());
-		}
-		return holder;
-	}
-
-	public static <R> RegistryEntryAttachmentHolder<R> getAssets(Registry<R> registry) {
-		var internals = getInternals(registry);
-		var holder = internals.quilt$getAssetsAttachmentHolder();
-		if (holder == null) {
-			internals.quilt$setAssetsAttachmentHolder(holder = new RegistryEntryAttachmentHolder<>());
+			internals.quilt$setDataAttachmentHolder(holder = new DataRegistryEntryAttachmentHolder<>());
 		}
 		return holder;
 	}
@@ -98,7 +89,7 @@ public final class RegistryEntryAttachmentHolder<R> {
 	public final Table<RegistryEntryAttachment<R, ?>, TagKey<R>, Object> valueTagTable;
 
 	@SuppressWarnings("UnstableApiUsage")
-	private RegistryEntryAttachmentHolder() {
+	protected RegistryEntryAttachmentHolder() {
 		this.valueTable = Tables.newCustomTable(new Object2ReferenceOpenHashMap<>(), Reference2ObjectOpenHashMap::new);
 		this.valueTagTable = Tables.newCustomTable(new Object2ReferenceOpenHashMap<>(), Reference2ObjectOpenHashMap::new);
 	}
@@ -111,7 +102,7 @@ public final class RegistryEntryAttachmentHolder<R> {
 			for (Map.Entry<TagKey<R>, Object> tagValue : row.entrySet()) { // Loop over the tags
 				for (Holder<R> holder : attachment.registry().getTagOrEmpty(tagValue.getKey())) { // Loop over the holders in the tag
 					if (holder.value().equals(entry)) { // The holder matches the entry
-						if (value != null) { // Warn if two values point to the same value are found.
+						if (value != null) { // Warn if two values pointing to the same entry are found.
 							Initializer.LOGGER.warn("Entry {} for registry {} already has attachment {} defined. Overriding with value from tag {}.",
 									attachment.registry().getId(entry),
 									attachment.registry().getKey().getValue(),
@@ -134,7 +125,4 @@ public final class RegistryEntryAttachmentHolder<R> {
 		this.valueTagTable.put(attachment, tag, value);
 	}
 
-	public void clear() {
-		this.valueTable.clear();
-	}
 }
