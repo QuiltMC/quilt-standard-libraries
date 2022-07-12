@@ -57,6 +57,6 @@ public class ItemContentRegistriesInitializer implements ModInitializer {
 	}
 
 	private static <T, V> void setMapFromAttachment(BiFunction<T, V, ?> map, RegistryEntryAttachment<T, V> attachment) {
-		attachment.registry().stream().forEach(entry -> attachment.getValue(entry).ifPresent(v -> map.apply(entry, v)));
+		attachment.registry().stream().forEach(entry -> attachment.get(entry).ifPresent(v -> map.apply(entry, v)));
 	}
 }
