@@ -16,7 +16,7 @@
 
 package org.quiltmc.qsl.component.impl.injection.manager.cached;
 
-import org.quiltmc.qsl.component.api.CachedInjectionPredicate;
+import org.quiltmc.qsl.component.api.predicate.InjectionPredicate;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
 import org.quiltmc.qsl.component.impl.injection.manager.InjectionManager;
@@ -24,7 +24,7 @@ import org.quiltmc.qsl.component.impl.injection.manager.InjectionManager;
 import java.util.List;
 import java.util.Objects;
 
-public class CachedInjectionManager extends InjectionManager<CachedInjectionPredicate, ComponentEntry<?>> {
+public class CachedInjectionManager extends InjectionManager<InjectionPredicate, ComponentEntry<?>> {
 	@Override
 	public List<ComponentEntry<?>> getInjections(ComponentProvider provider) {
 		Class<? extends ComponentProvider> providerClass = provider.getClass();

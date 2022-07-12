@@ -23,6 +23,8 @@ import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
 import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.qsl.component.api.*;
+import org.quiltmc.qsl.component.api.predicate.InjectionPredicate;
+import org.quiltmc.qsl.component.api.predicate.DynamicInjectionPredicate;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
 import org.quiltmc.qsl.component.impl.injection.manager.cached.CachedInjectionManager;
@@ -46,7 +48,7 @@ public class ComponentsImpl {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger("QSL/Components");
 
-	public static <C extends Component> void inject(CachedInjectionPredicate predicate, ComponentEntry<C> componentEntry) {
+	public static <C extends Component> void inject(InjectionPredicate predicate, ComponentEntry<C> componentEntry) {
 		if (predicate instanceof DynamicInjectionPredicate dynamicPredicate) {
 			DYNAMIC_MANAGER.inject(dynamicPredicate, componentEntry);
 		} else {

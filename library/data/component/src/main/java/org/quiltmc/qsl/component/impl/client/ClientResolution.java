@@ -19,8 +19,10 @@ package org.quiltmc.qsl.component.impl.client;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
 public final class ClientResolution {
@@ -34,5 +36,9 @@ public final class ClientResolution {
 
 	public static Chunk getChunk(ChunkPos pos) {
 		return MinecraftClient.getInstance().world.getChunk(pos.x, pos.z);
+	}
+
+	public static World getWorld(Identifier identifier) {
+		return MinecraftClient.getInstance().world;
 	}
 }

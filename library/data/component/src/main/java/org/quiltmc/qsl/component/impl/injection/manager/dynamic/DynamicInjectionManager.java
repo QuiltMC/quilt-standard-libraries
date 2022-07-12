@@ -17,7 +17,7 @@
 package org.quiltmc.qsl.component.impl.injection.manager.dynamic;
 
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
-import org.quiltmc.qsl.component.api.DynamicInjectionPredicate;
+import org.quiltmc.qsl.component.api.predicate.DynamicInjectionPredicate;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
 import org.quiltmc.qsl.component.impl.injection.manager.InjectionManager;
 import org.quiltmc.qsl.base.api.util.Maybe;

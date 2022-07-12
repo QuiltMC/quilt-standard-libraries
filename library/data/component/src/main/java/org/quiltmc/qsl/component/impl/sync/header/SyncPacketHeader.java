@@ -25,10 +25,12 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.CommonInitializer;
+import org.quiltmc.qsl.component.impl.client.ClientResolution;
 import org.quiltmc.qsl.component.impl.client.sync.ClientSyncHandler;
 import org.quiltmc.qsl.component.impl.sync.codec.NetworkCodec;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
@@ -44,22 +46,35 @@ public record SyncPacketHeader<P extends ComponentProvider>(NetworkCodec<P> code
 	public static final NetworkCodec<SyncPacketHeader<?>> NETWORK_CODEC =
 			NetworkCodec.INT.map(REGISTRY::getRawId, ClientSyncHandler.getInstance()::getHeader);
 
-	// The default implemented types, that can sync.
-	public static final SyncPacketHeader<BlockEntity> BLOCK_ENTITY = new SyncPacketHeader<>(NetworkCodec.BLOCK_ENTITY);
-	public static final SyncPacketHeader<Entity> ENTITY = new SyncPacketHeader<>(NetworkCodec.ENTITY);
-	public static final SyncPacketHeader<Chunk> CHUNK = new SyncPacketHeader<>(NetworkCodec.CHUNK);
-	private static final NetworkCodec<ComponentProvider> LEVEL_CODEC = new NetworkCodec<>(
-			(buf, provider) -> {
-			},
-			buf -> MinecraftClient.getInstance()
-	);
-	public static final SyncPacketHeader<?> SAVE = new SyncPacketHeader<>(LEVEL_CODEC);
+	// BlockEntity
+	public static final NetworkCodec<BlockEntity> BLOCK_ENTITY_CODEC =
+			NetworkCodec.BLOCK_POS.map(BlockEntity::getPos, ClientResolution::getBlockEntity);
+	public static final SyncPacketHeader<BlockEntity> BLOCK_ENTITY = new SyncPacketHeader<>(BLOCK_ENTITY_CODEC);
+
+	// Entity
+	public static final NetworkCodec<Entity> ENTITY_CODEC =
+			NetworkCodec.INT.map(Entity::getId, ClientResolution::getEntity);
+	public static final SyncPacketHeader<Entity> ENTITY = new SyncPacketHeader<>(ENTITY_CODEC);
+
+	// Chunk
+	public static final NetworkCodec<Chunk> CHUNK_CODEC =
+			NetworkCodec.CHUNK_POS.map(Chunk::getPos, ClientResolution::getChunk);
+	public static final SyncPacketHeader<Chunk> CHUNK = new SyncPacketHeader<>(CHUNK_CODEC);
+
+	// World
+	public static final NetworkCodec<World> WORLD_CODEC = NetworkCodec.empty(() -> MinecraftClient.getInstance().world);
+	public static final SyncPacketHeader<World> WORLD = new SyncPacketHeader<>(WORLD_CODEC);
+
+	// Level aka Save
+	private static final NetworkCodec<ComponentProvider> LEVEL_CODEC = NetworkCodec.empty(MinecraftClient::getInstance);
+	public static final SyncPacketHeader<?> LEVEL = new SyncPacketHeader<>(LEVEL_CODEC);
 
 	public static void registerDefaults() {
 		register(CommonInitializer.id("block_entity"), BLOCK_ENTITY);
 		register(CommonInitializer.id("entity"), ENTITY);
 		register(CommonInitializer.id("chunk"), CHUNK);
-		register(CommonInitializer.id("level"), SAVE);
+		register(CommonInitializer.id("world"), WORLD);
+		register(CommonInitializer.id("level"), LEVEL);
 	}
 
 	public static <P extends ComponentProvider> void register(Identifier id, SyncPacketHeader<P> header) {

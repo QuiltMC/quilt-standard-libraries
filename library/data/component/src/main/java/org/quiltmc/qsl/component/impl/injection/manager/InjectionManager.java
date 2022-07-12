@@ -19,6 +19,7 @@ package org.quiltmc.qsl.component.impl.injection.manager;
 import net.minecraft.util.Util;
 import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.*;
+import org.quiltmc.qsl.component.api.predicate.InjectionPredicate;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
 import org.quiltmc.qsl.component.impl.util.ErrorUtil;
@@ -26,7 +27,7 @@ import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 import java.util.*;
 import java.util.stream.Stream;
 
-public abstract class InjectionManager<P extends CachedInjectionPredicate, I> {
+public abstract class InjectionManager<P extends InjectionPredicate, I> {
 	private final Map<P, List<ComponentEntry<?>>> injections = new HashMap<>();
 	private final Map<Class<?>, List<I>> cache = new IdentityHashMap<>();
 

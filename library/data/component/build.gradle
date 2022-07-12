@@ -23,7 +23,10 @@ qslModule {
 
 	entrypoints {
 		events {
-			values = ["org.quiltmc.qsl.component.impl.event.ServerTickEventListener"]
+			values = [
+					"org.quiltmc.qsl.component.impl.event.ServerTickEventListener",
+					"org.quiltmc.qsl.component.impl.event.ServerWorldTickEventListener"
+			]
 		}
 
 		init {
@@ -38,26 +41,30 @@ qslModule {
 	accessWidener()
 
 	injectedInterface("net/minecraft/class_2586") { // BlockEntity
-		values = ["org/quiltmc/qsl/component/api/ComponentProvider"]
+		values = ["org/quiltmc/qsl/component/api/provider/ComponentProvider"]
 	}
 
 	injectedInterface("net/minecraft/class_1297") { // Entity
-		values = ["org/quiltmc/qsl/component/api/ComponentProvider"]
+		values = ["org/quiltmc/qsl/component/api/provider/ComponentProvider"]
 	}
 
 	injectedInterface("net/minecraft/class_2791") { // Chunk
-		values = ["org/quiltmc/qsl/component/api/ComponentProvider"]
+		values = ["org/quiltmc/qsl/component/api/provider/ComponentProvider"]
 	}
 
 	injectedInterface("net/minecraft/class_1799") { // ItemStack
-		values = ["org/quiltmc/qsl/component/api/ComponentProvider"]
+		values = ["org/quiltmc/qsl/component/api/provider/ComponentProvider"]
 	}
 
 	injectedInterface("net/minecraft/class_310") { // MinecraftClient
-		values = ["org/quiltmc/qsl/component/api/ComponentProvider"]
+		values = ["org/quiltmc/qsl/component/api/provider/ComponentProvider"]
 	}
 
 	injectedInterface("net/minecraft/server/MinecraftServer") { // MinecraftServer
-		values = ["org/quiltmc/qsl/component/api/ComponentProvider"]
+		values = ["org/quiltmc/qsl/component/api/provider/ComponentProvider"]
+	}
+
+	injectedInterface("net/minecraft/class_1937") { // World
+		values = ["org/quiltmc/qsl/component/api/provider/ComponentProvider"]
 	}
 }

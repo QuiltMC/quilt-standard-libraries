@@ -16,14 +16,14 @@
 
 package org.quiltmc.qsl.component.impl.injection.predicate.cached;
 
-import org.quiltmc.qsl.component.api.CachedInjectionPredicate;
+import org.quiltmc.qsl.component.api.predicate.InjectionPredicate;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 
 import java.util.Arrays;
 import java.util.Objects;
 
-public class ClassInjectionPredicate implements CachedInjectionPredicate {
+public class ClassInjectionPredicate implements InjectionPredicate {
 	protected final Class<?> clazz;
 
 	public ClassInjectionPredicate(Class<?> clazz) {

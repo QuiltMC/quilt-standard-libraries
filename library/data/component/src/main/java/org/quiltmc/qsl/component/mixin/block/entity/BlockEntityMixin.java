@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.mixin.chunk;
+package org.quiltmc.qsl.component.mixin.block.entity;
 
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.HeightLimitView;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.ChunkSection;
-import net.minecraft.world.chunk.UpgradeData;
-import net.minecraft.world.chunk.WorldChunk;
-import net.minecraft.world.gen.chunk.BlendingData;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.BlockPos;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.container.LazyComponentContainer;
@@ -34,30 +31,38 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(Chunk.class)
-public abstract class MixinChunk implements ComponentProvider {
+@Mixin(BlockEntity.class)
+public abstract class BlockEntityMixin implements ComponentProvider {
 	private ComponentContainer qsl$container;
 
 	@Shadow
-	public abstract void setNeedsSaving(boolean needsSaving);
+	public abstract void markDirty();
 
 	@Override
 	public ComponentContainer getComponentContainer() {
 		return this.qsl$container;
 	}
 
+	@Inject(method = "readNbt", at = @At("TAIL"))
+	private void onReadNbt(NbtCompound nbt, CallbackInfo ci) {
+		this.qsl$container.readNbt(nbt);
+	}
+
 	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "<init>", at = @At("RETURN"))
-	private void onInit(ChunkPos chunkPos, UpgradeData upgradeData, HeightLimitView heightLimitView, Registry<?> registry, long l, ChunkSection[] chunkSections, BlendingData blendingData, CallbackInfo ci) {
-		LazyComponentContainer.Builder builder = ComponentContainer.builder(this)
+	private void onInit(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState, CallbackInfo ci) {
+		this.qsl$container = ComponentContainer.builder(this)
 				.unwrap()
-				.saving(() -> this.setNeedsSaving(true));
+				.saving(this::markDirty)
+				.ticking()
+				.syncing(SyncPacketHeader.BLOCK_ENTITY, () -> SyncPlayerList.create((BlockEntity) (Object) this))
+				.build(LazyComponentContainer.FACTORY);
+	}
 
-		if ((Chunk) (Object) this instanceof WorldChunk worldChunk) {
-			builder.syncing(SyncPacketHeader.CHUNK, () -> SyncPlayerList.create(worldChunk)).ticking();
-		}
-
-		this.qsl$container = builder.build(LazyComponentContainer.FACTORY);
+	@Inject(method = "toNbt", at = @At("TAIL"))
+	private void onWriteNbt(CallbackInfoReturnable<NbtCompound> cir) {
+		this.qsl$container.writeNbt(cir.getReturnValue());
 	}
 }

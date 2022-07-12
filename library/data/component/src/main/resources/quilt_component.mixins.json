@@ -3,19 +3,19 @@
   "package": "org.quiltmc.qsl.component.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "block.entity.MixinBlockEntity",
-    "chunk.MixinChunk",
-    "chunk.MixinChunkSerializer",
-    "block.entity.MixinDirectBlockEntityTickInvoker",
-    "entity.MixinEntity",
-    "item.stack.MixinItemStack",
-    "level.MixinMinecraftServer",
-    "world.MixinServerWorld",
-    "chunk.MixinThreadedChunkStorage",
-    "chunk.MixinWorldChunk"
+    "block.entity.BlockEntityMixin",
+    "block.entity.DirectBlockEntityTickInvokerMixin",
+    "chunk.ChunkMixin",
+    "chunk.ChunkSerializerMixin",
+    "chunk.ServerWorldMixin",
+    "chunk.ThreadedChunkStorageMixin",
+    "chunk.WorldChunkMixin",
+    "entity.EntityMixin",
+    "level.MinecraftServerMixin",
+    "world.WorldMixin"
   ],
   "client": [
-    "client.level.MixinMinecraftClient"
+    "client.level.MinecraftClientMixin"
   ],
   "injectors": {
     "defaultRequire": 1

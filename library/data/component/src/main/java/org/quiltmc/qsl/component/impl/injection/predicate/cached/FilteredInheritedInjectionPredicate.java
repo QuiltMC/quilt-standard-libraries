@@ -47,6 +47,6 @@ public class FilteredInheritedInjectionPredicate extends InheritedInjectionPredi
 
 	@Override
 	public boolean isClassValid(Class<?> clazz) {
-		return !this.exceptions.contains(clazz) && this.clazz == clazz || (clazz != null && this.isClassValid(clazz.getSuperclass()));
+		return super.isClassValid(clazz) && !this.exceptions.contains(clazz);
 	}
 }

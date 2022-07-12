@@ -21,6 +21,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.components.TickingComponent;
+import org.quiltmc.qsl.component.api.predicate.InjectionPredicate;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
@@ -38,8 +39,8 @@ public final class Components {
 	public static final RegistryKey<Registry<ComponentType<?>>> REGISTRY_KEY = ComponentsImpl.REGISTRY_KEY;
 	public static final Registry<ComponentType<?>> REGISTRY = ComponentsImpl.REGISTRY;
 
-	public static <C extends Component> void inject(CachedInjectionPredicate predicate, ComponentType<C> type) {
-		ComponentsImpl.inject(predicate, new ComponentEntry<>(type));
+	public static <C extends Component> void inject(InjectionPredicate predicate, ComponentEntry<C> entry) {
+		ComponentsImpl.inject(predicate, entry);
 	}
 
 	public static <C extends Component> void inject(Class<?> clazz, ComponentType<C> type) {
@@ -59,7 +60,6 @@ public final class Components {
 	}
 
 	public static <C extends Component, P extends ComponentProvider> void injectDynamic(Class<P> clazz, ComponentType<C> type, Predicate<P> predicate) {
-		// TODO: Fix evil hack if possible
 		ComponentsImpl.inject(new DynamicClassInjectionPredicate<>(clazz, predicate), new ComponentEntry<>(type));
 	}
 

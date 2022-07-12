@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.api;
+package org.quiltmc.qsl.component.api.predicate;
 
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 
-public interface DynamicInjectionPredicate extends CachedInjectionPredicate {
+public interface DynamicInjectionPredicate extends InjectionPredicate {
 	boolean canInject(ComponentProvider provider);
 }

@@ -27,7 +27,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ThreadedAnvilChunkStorage.class)
-public abstract class MixinThreadedChunkStorage {
+public abstract class ThreadedChunkStorageMixin {
 
 	@Inject(
 			method = "sendChunkDataPackets",

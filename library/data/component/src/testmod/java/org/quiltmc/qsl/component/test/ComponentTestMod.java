@@ -25,10 +25,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.passive.CowEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtLongArray;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -38,7 +36,6 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.level.LevelProperties;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.block.entity.api.QuiltBlockEntityTypeBuilder;
@@ -102,7 +99,7 @@ public class ComponentTestMod implements ModInitializer {
 			new Identifier(ComponentTestMod.MODID, "test_be_int"),
 			DefaultIntegerComponent::new
 	);
-	public static final ComponentType<GenericComponent<UUID, NbtLongArray>> UUID_THING = Components.register(
+	public static final ComponentType<GenericComponent<UUID>> UUID_THING = Components.register(
 			new Identifier(MODID, "uuid_thing"),
 			(saveOperation, syncOperation) -> new GenericComponent<>(saveOperation, Codecs.UUID)
 	);
@@ -162,14 +159,12 @@ public class ComponentTestMod implements ModInitializer {
 		Components.injectInheritanceExcept(HostileEntity.class, HOSTILE_EXPLODE_TIME, CreeperEntity.class);
 		Components.inject(ChestBlockEntity.class, CHEST_NUMBER);
 		Components.injectInheritage(Chunk.class, CHUNK_INVENTORY);
-//		Components.inject(LevelProperties.class, SAVE_FLOAT);
-	 	Components.injectInheritage(ServerPlayerEntity.class, PLAYER_TICK);
 		Components.inject(MinecraftServer.class, SERVER_TICK);
+		Components.injectInheritage(ServerPlayerEntity.class, PLAYER_TICK);
 		Components.inject(ServerPlayerEntity.class, UUID_THING);
-		Components.inject(ComponentProviderState.class, SAVE_FLOAT); // FIXME
+		Components.inject(ComponentProviderState.class, SAVE_FLOAT);
 
 		// Dynamic Injection
-		Components.injectDynamic(PlayerEntity.class, SAVE_FLOAT, player -> player.world.isClient);
 	}
 
 	public static final BlockEntityType<TestBlockEntity> TEST_BE_TYPE =

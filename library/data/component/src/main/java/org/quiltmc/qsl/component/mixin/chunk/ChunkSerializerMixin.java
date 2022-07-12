@@ -30,7 +30,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ChunkSerializer.class)
-public class MixinChunkSerializer {
+public class ChunkSerializerMixin {
 	@Inject(method = "deserialize", at = @At("RETURN"), cancellable = true)
 	private static void deserializeComponents(ServerWorld world, PointOfInterestStorage poiStorage, ChunkPos pos, NbtCompound nbt, CallbackInfoReturnable<ProtoChunk> cir) {
 		var ret = cir.getReturnValue();

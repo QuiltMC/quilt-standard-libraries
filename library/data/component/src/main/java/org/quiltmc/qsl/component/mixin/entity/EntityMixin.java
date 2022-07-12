@@ -14,55 +14,54 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.mixin.block.entity;
+package org.quiltmc.qsl.component.mixin.entity;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.container.LazyComponentContainer;
 import org.quiltmc.qsl.component.impl.sync.SyncPlayerList;
 import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(BlockEntity.class)
-public abstract class MixinBlockEntity implements ComponentProvider {
+@Mixin(Entity.class)
+public abstract class EntityMixin implements ComponentProvider {
 	private ComponentContainer qsl$container;
-
-	@Shadow
-	public abstract void markDirty();
 
 	@Override
 	public ComponentContainer getComponentContainer() {
 		return this.qsl$container;
 	}
 
-	@Inject(method = "readNbt", at = @At("TAIL"))
-	private void onReadNbt(NbtCompound nbt, CallbackInfo ci) {
-		this.qsl$container.readNbt(nbt);
-	}
-
 	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "<init>", at = @At("RETURN"))
-	private void onInit(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState, CallbackInfo ci) {
+	private void onEntityInit(EntityType<?> entityType, World world, CallbackInfo ci) {
 		this.qsl$container = ComponentContainer.builder(this)
 				.unwrap()
-				.saving(this::markDirty)
 				.ticking()
-				.syncing(SyncPacketHeader.BLOCK_ENTITY, () -> SyncPlayerList.create((BlockEntity) (Object) this))
+				.syncing(SyncPacketHeader.ENTITY, () -> SyncPlayerList.create((Entity) (Object) this))
 				.build(LazyComponentContainer.FACTORY);
 	}
 
-	@Inject(method = "toNbt", at = @At("TAIL"))
-	private void onWriteNbt(CallbackInfoReturnable<NbtCompound> cir) {
-		this.qsl$container.writeNbt(cir.getReturnValue());
+	@Inject(method = "writeNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;writeCustomDataToNbt(Lnet/minecraft/nbt/NbtCompound;)V"))
+	private void onSerialize(NbtCompound nbt, CallbackInfoReturnable<NbtCompound> cir) {
+		this.qsl$container.writeNbt(nbt);
+	}
+
+	@Inject(method = "readNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;readCustomDataFromNbt(Lnet/minecraft/nbt/NbtCompound;)V"))
+	private void onDeserialize(NbtCompound nbt, CallbackInfo ci) {
+		this.qsl$container.readNbt(nbt);
+	}
+
+	@Inject(method = "tick", at = @At("TAIL"))
+	private void tickContainer(CallbackInfo ci) {
+		this.getComponentContainer().tick(this);
 	}
 }

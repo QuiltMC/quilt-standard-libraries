@@ -17,12 +17,13 @@
 package org.quiltmc.qsl.component.api.components;
 
 import com.mojang.serialization.Codec;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtNull;
 import net.minecraft.nbt.NbtOps;
 import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.component.impl.ComponentsImpl;
 
-public class GenericComponent<T, E extends NbtElement> implements NbtComponent<E> {
+public class GenericComponent<T> implements NbtComponent<NbtCompound> {
 	protected final Codec<T> codec;
 	@Nullable
 	private final Runnable saveOperation;
@@ -47,14 +48,22 @@ public class GenericComponent<T, E extends NbtElement> implements NbtComponent<E
 	}
 
 	@Override
-	public void read(E nbt) {
-		NbtOps.INSTANCE.withParser(this.codec).apply(nbt).result().ifPresent(t -> this.value = t);
+	public void read(NbtCompound nbt) {
+		this.codec.parse(NbtOps.INSTANCE, nbt.get("Value"))
+				.resultOrPartial(ComponentsImpl.LOGGER::error)
+				.ifPresent(this::setValue);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public E write() { // TODO: Make sure this doesn't cause problems.
-		return (E) NbtOps.INSTANCE.withEncoder(this.codec).apply(this.value).result().orElse(NbtNull.INSTANCE);
+	public NbtCompound write() {
+		var ret = new NbtCompound();
+		if (this.value != null) {
+			this.codec.encodeStart(NbtOps.INSTANCE, this.value)
+					.result()
+					.ifPresent(nbtElement -> ret.put("Value", nbtElement));
+		}
+
+		return ret;
 	}
 
 	@Override

@@ -29,7 +29,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(WorldChunk.DirectBlockEntityTickInvoker.class)
-public class MixinDirectBlockEntityTickInvoker<T extends BlockEntity> {
+public class DirectBlockEntityTickInvokerMixin<T extends BlockEntity> {
 	@Shadow
 	@Final
 	private T blockEntity;

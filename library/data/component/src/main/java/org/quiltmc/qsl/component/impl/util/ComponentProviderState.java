@@ -80,7 +80,7 @@ public class ComponentProviderState extends PersistentState implements Component
 		return ComponentContainer.builder(this)
 				.unwrap()
 				.saving(this::markDirty)
-				.syncing(SyncPacketHeader.SAVE, world::getPlayers)
+				.syncing(SyncPacketHeader.LEVEL, world::getPlayers)
 				.ticking()
 				.build(LazyComponentContainer.FACTORY);
 	}

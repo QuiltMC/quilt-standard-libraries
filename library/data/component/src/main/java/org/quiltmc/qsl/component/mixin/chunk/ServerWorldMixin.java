@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.mixin.world;
+package org.quiltmc.qsl.component.mixin.chunk;
 
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Holder;
@@ -24,9 +24,7 @@ import net.minecraft.world.MutableWorldProperties;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.dimension.DimensionType;
-import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
-import org.quiltmc.qsl.component.impl.util.ComponentProviderState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -35,18 +33,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.function.Supplier;
 
 @Mixin(ServerWorld.class)
-public abstract class MixinServerWorld extends World implements ComponentProvider {
-	protected MixinServerWorld(MutableWorldProperties mutableWorldProperties, RegistryKey<World> registryKey, Holder<DimensionType> holder, Supplier<Profiler> supplier, boolean bl, boolean bl2, long l, int i) {
+public abstract class ServerWorldMixin extends World implements ComponentProvider {
+	protected ServerWorldMixin(MutableWorldProperties mutableWorldProperties, RegistryKey<World> registryKey, Holder<DimensionType> holder, Supplier<Profiler> supplier, boolean bl, boolean bl2, long l, int i) {
 		super(mutableWorldProperties, registryKey, holder, supplier, bl, bl2, l, i);
 	}
 
-	@Override
-	public ComponentContainer getComponentContainer() {
-		return ComponentProviderState.get(this).getComponentContainer();
-	}
-
 	@Inject(method = "tickChunk", at = @At("TAIL"))
-	private void tickContainer(WorldChunk chunk, int randomTickSpeed, CallbackInfo ci) {
+	private void tickChunkContainers(WorldChunk chunk, int randomTickSpeed, CallbackInfo ci) {
 		chunk.getComponentContainer().tick(chunk);
 	}
 }

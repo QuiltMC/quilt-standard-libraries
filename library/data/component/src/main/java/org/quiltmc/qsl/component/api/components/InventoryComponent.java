@@ -22,9 +22,10 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.util.collection.DefaultedList;
 
-public interface InventoryComponent extends NbtComponent<NbtCompound>, Inventory {
+public interface InventoryComponent extends NbtComponent<NbtList>, Inventory {
 	@Override
 	default int size() {
 		return this.getStacks().size();
@@ -83,13 +84,20 @@ public interface InventoryComponent extends NbtComponent<NbtCompound>, Inventory
 	}
 
 	@Override
-	default void read(NbtCompound nbt) {
-		Inventories.readNbt(nbt, this.getStacks());
+	default void read(NbtList nbt) {
+		for (int i = 0; i < nbt.size(); i++) {
+			this.setStack(i, ItemStack.fromNbt(nbt.getCompound(i)));
+		}
 	}
 
 	@Override
-	default NbtCompound write() {
-		return Inventories.writeNbt(new NbtCompound(), this.getStacks());
+	default NbtList write() {
+		var nbt = new NbtList();
+		for (int i = 0; i < this.getStacks().size(); i++) {
+			nbt.add(this.getStack(i).writeNbt(new NbtCompound()));
+		}
+
+		return nbt;
 	}
 
 	@Override

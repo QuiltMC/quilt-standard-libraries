@@ -22,7 +22,7 @@ import net.minecraft.network.PacketByteBuf;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.impl.sync.codec.NetworkCodec;
 
-public class SyncedGenericComponent<T, E extends NbtElement> extends GenericComponent<T, E> implements SyncedComponent {
+public class SyncedGenericComponent<T, E extends NbtElement> extends GenericComponent<T> implements SyncedComponent {
 	private final NetworkCodec<T> networkCodec;
 	@Nullable
 	private final Runnable syncOperation;

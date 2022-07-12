@@ -18,6 +18,7 @@ package org.quiltmc.qsl.component.impl.sync.codec;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -26,6 +27,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.ComponentType;
@@ -39,6 +41,7 @@ import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
+import java.util.function.Supplier;
 
 public record NetworkCodec<T>(BiConsumer<PacketByteBuf, T> encoder,
 							  Function<PacketByteBuf, T> decoder) {
@@ -83,12 +86,7 @@ public record NetworkCodec<T>(BiConsumer<PacketByteBuf, T> encoder,
 	);
 	public static final NetworkCodec<DefaultedList<ItemStack>> INVENTORY =
 			list(ITEM_STACK, size -> DefaultedList.ofSize(size, ItemStack.EMPTY));
-	public static final NetworkCodec<BlockEntity> BLOCK_ENTITY =
-			BLOCK_POS.map(BlockEntity::getPos, ClientResolution::getBlockEntity);
-	public static final NetworkCodec<Entity> ENTITY =
-			INT.map(Entity::getId, ClientResolution::getEntity);
-	public static final NetworkCodec<Chunk> CHUNK =
-			CHUNK_POS.map(Chunk::getPos, ClientResolution::getChunk);
+
 
 	public static <O, L extends List<O>> NetworkCodec<L> list(NetworkCodec<O> entryCodec, IntFunction<L> listFactory) {
 		return new NetworkCodec<>(
@@ -137,6 +135,13 @@ public record NetworkCodec<T>(BiConsumer<PacketByteBuf, T> encoder,
 		);
 	}
 
+	public static <T> NetworkCodec<T> empty(Supplier<T> instanceProvider) {
+		return new NetworkCodec<>(
+				(buf, t) -> {},
+				buf -> instanceProvider.get()
+		);
+	}
+
 	public void encode(PacketByteBuf buf, T t) {
 		this.encoder.accept(buf, t);
 	}
@@ -150,8 +155,5 @@ public record NetworkCodec<T>(BiConsumer<PacketByteBuf, T> encoder,
 				(buf, u) -> this.encoder.accept(buf, decoder.apply(u)),
 				buf -> encoder.apply(this.decoder.apply(buf))
 		);
-	}
-
-	public record Thingy(Identifier id, String idString, int twelve) {
 	}
 }

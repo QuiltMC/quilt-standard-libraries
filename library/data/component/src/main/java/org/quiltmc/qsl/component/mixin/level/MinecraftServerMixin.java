@@ -14,8 +14,18 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.api;
+package org.quiltmc.qsl.component.mixin.level;
 
-public interface CachedInjectionPredicate {
-	boolean isClassValid(Class<?> clazz);
+import net.minecraft.server.MinecraftServer;
+import org.quiltmc.qsl.component.api.container.ComponentContainer;
+import org.quiltmc.qsl.component.api.provider.ComponentProvider;
+import org.quiltmc.qsl.component.impl.util.ComponentProviderState;
+import org.spongepowered.asm.mixin.Mixin;
+
+@Mixin(MinecraftServer.class)
+public abstract class MinecraftServerMixin implements ComponentProvider {
+	@Override
+	public ComponentContainer getComponentContainer() {
+		return ComponentProviderState.getGlobal(this).getComponentContainer();
+	}
 }
