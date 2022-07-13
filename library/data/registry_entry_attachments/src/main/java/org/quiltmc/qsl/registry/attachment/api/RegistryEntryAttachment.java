@@ -271,6 +271,30 @@ public interface RegistryEntryAttachment<R, V> {
 	void put(TagKey<R> tag, V value);
 
 	/**
+	 * Removes any value associated with an entry.
+	 * <p>
+	 * <strong>NOTE:</strong> You should only call this method <em>before</em> registries are frozen!
+	 * <br>
+	 * Mods are allowed to ignore value removals that happen after registry freezing.
+	 *
+	 * @param entry registry entry
+	 * @return {@code true} if an associated value existed, {@code false} otherwise
+	 */
+	boolean remove(R entry);
+
+	/**
+	 * Removes any value associated with a tag.
+	 * <p>
+	 * <strong>NOTE:</strong> You should only call this method <em>before</em> registries are frozen!
+	 * <br>
+	 * Mods are allowed to ignore value removals that happen after registry freezing.
+	 *
+	 * @param tag tag
+	 * @return {@code true} if an associated value existed, {@code false} otherwise
+	 */
+	boolean remove(TagKey<R> tag);
+
+	/**
 	 * {@return this attachment's "value associated with entry" event}
 	 */
 	Event<ValueAdded<R, V>> valueAddedEvent();
@@ -279,6 +303,16 @@ public interface RegistryEntryAttachment<R, V> {
 	 * {@return this attachment's "value associated with tag" event}
 	 */
 	Event<TagValueAdded<R, V>> tagValueAddedEvent();
+
+	/**
+	 * {@return this attachment's "entry's associated value removed" event}
+	 */
+	Event<ValueRemoved<R>> valueRemovedEvent();
+
+	/**
+	 * {@return this attachment's "tag's associated value removed" event}
+	 */
+	Event<TagValueRemoved<R>> tagValueRemovedEvent();
 
 	/**
 	 * Specifies on what side this attachment should exist.
@@ -379,6 +413,26 @@ public interface RegistryEntryAttachment<R, V> {
 	@FunctionalInterface
 	interface TagValueAdded<R, V> {
 		void onTagValueAdded(TagKey<R> tag, V value);
+	}
+
+	/**
+	 * Event that is fired on an entry's associated value being removed.
+	 *
+	 * @param <R> attached value type
+	 */
+	@FunctionalInterface
+	interface ValueRemoved<R> {
+		void onValueRemoved(R entry);
+	}
+
+	/**
+	 * Event that is fired on a tag's associated value being removed.
+	 *
+	 * @param <R> attached value type
+	 */
+	@FunctionalInterface
+	interface TagValueRemoved<R> {
+		void onTagValueRemoved(TagKey<R> tag);
 	}
 
 	/**
