@@ -16,7 +16,9 @@
 
 package org.quiltmc.qsl.multipart.mixin;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -60,7 +62,17 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 	@Inject(method = "getOtherEntities", at = @At("RETURN"))
 	private void getOtherEntityParts(Entity except, Box box, Predicate<? super Entity> predicate, CallbackInfoReturnable<List<Entity>> cir) {
 		List<Entity> list = cir.getReturnValue();
+
+		// We don't want to check the parts of entities that we already know are invalid
+		Set<Entity> skippedOwners = new HashSet<>();
+
 		for (Entity part : this.getEntityParts().values()) {
+			var owner = ((EntityPart<?>) part).getOwner();
+			if (skippedOwners.contains(owner) || owner == except) {
+				skippedOwners.add(owner);
+				continue;
+			}
+
 			if (part != except && part.getBoundingBox().intersects(box) && predicate.test(part)) {
 				list.add(part);
 			}
@@ -75,9 +87,20 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 	@Inject(method = "getEntitiesByType", at = @At("RETURN"))
 	private <T extends Entity> void getEntityPartsByType(TypeFilter<Entity, T> filter, Box box, Predicate<? super T> predicate, CallbackInfoReturnable<List<T>> cir) {
 		List<T> list = cir.getReturnValue();
+
+		// We don't want to check the parts of entities that we already know are invalid
+		Set<Entity> skippedOwners = new HashSet<>();
+
 		for (Entity part : this.getEntityParts().values()) {
+			var owner = ((EntityPart<?>) part).getOwner();
 			T entity = filter.downcast(part);
-			if (entity != null && entity.getBoundingBox().intersects(box) && predicate.test(entity)) {
+
+			if (skippedOwners.contains(owner) || filter.downcast(owner) == null || entity == null) {
+				skippedOwners.add(owner);
+				continue;
+			}
+
+			if (entity.getBoundingBox().intersects(box) && predicate.test(entity)) {
 				list.add(entity);
 			}
 		}
