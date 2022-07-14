@@ -43,15 +43,14 @@ public class ItemContentRegistriesInitializer implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
+		INITIAL_FUEL_MAP.get().forEach(ItemContentRegistries.FUEL_TIME::put);
 		INITIAL_COMPOST_CHANCE.forEach((item, f) -> ItemContentRegistries.COMPOST_CHANCE.put(item.asItem(), f));
 
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, error) -> {
 			FUEL_MAP.clear();
-			INITIAL_FUEL_MAP.get().forEach(ItemContentRegistries.FUEL_TIME::put);
 			setMapFromAttachment(FUEL_MAP::put, ItemContentRegistries.FUEL_TIME);
 
 			ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.clear();
-			INITIAL_COMPOST_CHANCE.forEach((item, f) -> ItemContentRegistries.COMPOST_CHANCE.put(item.asItem(), f));
 			setMapFromAttachment(ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE::put, ItemContentRegistries.COMPOST_CHANCE);
 		});
 	}
