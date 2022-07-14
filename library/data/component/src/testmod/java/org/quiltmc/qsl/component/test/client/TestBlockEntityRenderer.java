@@ -29,7 +29,7 @@ import org.quiltmc.qsl.component.test.TestBlockEntity;
 
 import java.util.function.Predicate;
 
-public class TestBeRenderer implements BlockEntityRenderer<TestBlockEntity> {
+public class TestBlockEntityRenderer implements BlockEntityRenderer<TestBlockEntity> {
 	@Override
 	public void render(TestBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
 		entity.expose(ComponentTestMod.CHUNK_INVENTORY)

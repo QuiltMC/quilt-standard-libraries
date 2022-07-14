@@ -3,10 +3,10 @@ plugins {
 }
 
 qslModule {
-	name = "Quilt Component Attachment API"
+	name = "Quilt Component API"
 	moduleName = "component"
 	id = "quilt_component"
-	description = "API allowing attachment and querying of an ECS-like interface for entities, block-entities, chunks, etc."
+	description = "API allowing attachment and querying of an ECS-like interface to entities, block-entities, chunks, etc."
 	library = "data"
 	moduleDependencies {
 		core {

@@ -22,7 +22,7 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 import org.quiltmc.qsl.component.test.ComponentTestMod;
-import org.quiltmc.qsl.component.test.client.TestBeRenderer;
+import org.quiltmc.qsl.component.test.client.TestBlockEntityRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -38,6 +38,6 @@ public abstract class MixinBlockEntityRendererFactories {
 
 	@Inject(method = "<clinit>", at = @At("TAIL"))
 	private static void registerCustom(CallbackInfo ci) {
-		register(ComponentTestMod.TEST_BE_TYPE, context -> new TestBeRenderer());
+		register(ComponentTestMod.TEST_BE_TYPE, context -> new TestBlockEntityRenderer());
 	}
 }

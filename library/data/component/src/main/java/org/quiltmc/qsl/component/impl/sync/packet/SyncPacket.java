@@ -21,7 +21,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.api.ComponentType;
-import org.quiltmc.qsl.component.api.components.SyncedComponent;
+import org.quiltmc.qsl.component.api.component.SyncedComponent;
 import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 

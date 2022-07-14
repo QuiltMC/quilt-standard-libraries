@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.api.components;
+package org.quiltmc.qsl.component.api.component;
 
 import net.minecraft.network.PacketByteBuf;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.Component;
-import org.quiltmc.qsl.component.impl.sync.codec.NetworkCodec;
-import org.quiltmc.qsl.component.impl.sync.packet.SyncPacket;
-
-import java.util.function.Consumer;
 
 public interface SyncedComponent extends Component {
 	void writeToBuf(PacketByteBuf buf);

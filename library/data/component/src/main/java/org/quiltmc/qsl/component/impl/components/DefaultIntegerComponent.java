@@ -20,11 +20,10 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtInt;
 import net.minecraft.network.PacketByteBuf;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.component.api.components.IntegerComponent;
-import org.quiltmc.qsl.component.api.components.NbtComponent;
-import org.quiltmc.qsl.component.api.components.SyncedComponent;
+import org.quiltmc.qsl.component.api.component.NbtComponent;
+import org.quiltmc.qsl.component.api.component.SyncedComponent;
 
-public class DefaultIntegerComponent implements IntegerComponent, NbtComponent<NbtInt>, SyncedComponent {
+public class DefaultIntegerComponent implements NbtComponent<NbtInt>, SyncedComponent {
 	private int value;
 	@Nullable
 	private final Runnable saveOperation;
@@ -41,22 +40,18 @@ public class DefaultIntegerComponent implements IntegerComponent, NbtComponent<N
 		this.syncOperation = syncOperation;
 	}
 
-	@Override
 	public void increment() {
 		this.value++;
 	}
 
-	@Override
 	public void decrement() {
 		this.value--;
 	}
 
-	@Override
 	public void set(int value) {
 		this.value = value;
 	}
 
-	@Override
 	public int get() {
 		return this.value;
 	}

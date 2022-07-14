@@ -286,8 +286,7 @@ public sealed abstract class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 		 */
 		private static final Nothing<?> INSTANCE = new Nothing<>();
 
-		private Nothing() {
-		}
+		private Nothing() { }
 
 		/**
 		 * @see Maybe#map

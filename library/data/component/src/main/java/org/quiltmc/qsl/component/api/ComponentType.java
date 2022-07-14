@@ -50,12 +50,10 @@ public record ComponentType<T extends Component>(Identifier id, Component.Factor
 	public static class Static {
 		private final Map<ComponentType<?>, Component> staticInstances = new IdentityHashMap<>();
 
-		private Static() {
-
-		}
+		private Static() { }
 
 		@SuppressWarnings("unchecked")
-		<C extends Component> C getOrCreate(ComponentType<C> type, Runnable saveOperation, Runnable syncOperation) {
+		public <C extends Component> C getOrCreate(ComponentType<C> type, Runnable saveOperation, Runnable syncOperation) {
 			if (this.staticInstances.containsKey(type)) {
 				return (C) this.staticInstances.get(type);
 			} else {

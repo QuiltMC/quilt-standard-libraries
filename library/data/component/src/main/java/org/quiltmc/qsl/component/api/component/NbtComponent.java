@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.api.components;
+package org.quiltmc.qsl.component.api.component;
 
 import net.minecraft.nbt.*;
 import net.minecraft.util.Identifier;
@@ -33,14 +33,12 @@ public interface NbtComponent<T extends NbtElement> extends Component {
 			case NbtElement.LONG_TYPE -> ((NbtComponent<NbtLong>) nbtComponent).read((NbtLong) nbtTarget);
 			case NbtElement.FLOAT_TYPE -> ((NbtComponent<NbtFloat>) nbtComponent).read((NbtFloat) nbtTarget);
 			case NbtElement.DOUBLE_TYPE -> ((NbtComponent<NbtDouble>) nbtComponent).read((NbtDouble) nbtTarget);
-			case NbtElement.BYTE_ARRAY_TYPE ->
-					((NbtComponent<NbtByteArray>) nbtComponent).read((NbtByteArray) nbtTarget);
+			case NbtElement.BYTE_ARRAY_TYPE -> ((NbtComponent<NbtByteArray>) nbtComponent).read((NbtByteArray) nbtTarget);
 			case NbtElement.STRING_TYPE -> ((NbtComponent<NbtString>) nbtComponent).read((NbtString) nbtTarget);
 			case NbtElement.LIST_TYPE -> ((NbtComponent<NbtList>) nbtComponent).read((NbtList) nbtTarget);
 			case NbtElement.COMPOUND_TYPE -> ((NbtComponent<NbtCompound>) nbtComponent).read((NbtCompound) nbtTarget);
 			case NbtElement.INT_ARRAY_TYPE -> ((NbtComponent<NbtIntArray>) nbtComponent).read((NbtIntArray) nbtTarget);
-			case NbtElement.LONG_ARRAY_TYPE ->
-					((NbtComponent<NbtLongArray>) nbtComponent).read((NbtLongArray) nbtTarget);
+			case NbtElement.LONG_ARRAY_TYPE -> ((NbtComponent<NbtLongArray>) nbtComponent).read((NbtLongArray) nbtTarget);
 			default -> // We throw if we ever find a non-vanilla type trying to be used for component serialization!
 					throw ErrorUtil.runtime(
 							"The nbt data type with id %D is not vanilla!",

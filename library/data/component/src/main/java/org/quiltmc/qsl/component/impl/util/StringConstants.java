@@ -17,5 +17,6 @@
 package org.quiltmc.qsl.component.impl.util;
 
 public final class StringConstants {
-	public static final String COMPONENT_ROOT = "QslComponentRoot";
+	// TODO: Check about this key!
+	public static final String COMPONENT_ROOT = "QuiltComponentRoot";
 }

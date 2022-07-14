@@ -46,7 +46,7 @@ public class ComponentsImpl {
 	public static final CachedInjectionManager CACHED_MANAGER = new CachedInjectionManager();
 	public static final DynamicInjectionManager DYNAMIC_MANAGER = new DynamicInjectionManager();
 
-	public static final Logger LOGGER = LoggerFactory.getLogger("QSL/Components");
+	public static final Logger LOGGER = LoggerFactory.getLogger("Quilt Component");
 
 	public static <C extends Component> void inject(InjectionPredicate predicate, ComponentEntry<C> componentEntry) {
 		if (predicate instanceof DynamicInjectionPredicate dynamicPredicate) {

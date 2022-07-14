@@ -20,8 +20,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.collection.DefaultedList;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.component.api.components.InventoryComponent;
-import org.quiltmc.qsl.component.api.components.SyncedComponent;
+import org.quiltmc.qsl.component.api.component.InventoryComponent;
+import org.quiltmc.qsl.component.api.component.SyncedComponent;
 import org.quiltmc.qsl.component.impl.sync.codec.NetworkCodec;
 
 import java.util.Objects;

@@ -5,9 +5,9 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.*;
-import org.quiltmc.qsl.component.api.components.NbtComponent;
-import org.quiltmc.qsl.component.api.components.SyncedComponent;
-import org.quiltmc.qsl.component.api.components.TickingComponent;
+import org.quiltmc.qsl.component.api.component.NbtComponent;
+import org.quiltmc.qsl.component.api.component.SyncedComponent;
+import org.quiltmc.qsl.component.api.component.TickingComponent;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
@@ -113,7 +113,5 @@ public abstract class AbstractComponentContainer implements ComponentContainer {
 		return component;
 	}
 
-	public record ContainerOperations(Runnable saveOperation,
-									  Function<ComponentType<?>, Runnable> syncOperationFactory) {
-	}
+	public record ContainerOperations(Runnable saveOperation, Function<ComponentType<?>, Runnable> syncOperationFactory) { }
 }

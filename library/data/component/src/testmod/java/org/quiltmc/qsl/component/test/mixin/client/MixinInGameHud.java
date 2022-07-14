@@ -23,7 +23,7 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.ChunkPos;
-import org.quiltmc.qsl.component.api.components.IntegerComponent;
+import org.quiltmc.qsl.component.impl.components.DefaultIntegerComponent;
 import org.quiltmc.qsl.component.test.ComponentTestMod;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -46,7 +46,7 @@ public abstract class MixinInGameHud {
 	private void renderCustom(MatrixStack matrices, float tickDelta, CallbackInfo ci) {
 		Entity entity = MinecraftClient.getInstance().targetedEntity;
 		if (entity != null) {
-			entity.expose(ComponentTestMod.HOSTILE_EXPLODE_TIME).map(IntegerComponent::get).ifJust(integer -> {
+			entity.expose(ComponentTestMod.HOSTILE_EXPLODE_TIME).map(DefaultIntegerComponent::get).ifJust(integer -> {
 				this.getTextRenderer().draw(matrices, integer.toString(), 10, 10, 0xfafafa);
 			});
 		}

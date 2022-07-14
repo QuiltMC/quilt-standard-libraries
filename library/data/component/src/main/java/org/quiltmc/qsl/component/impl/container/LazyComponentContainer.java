@@ -68,9 +68,7 @@ public class LazyComponentContainer extends AbstractComponentContainer {
 	}
 
 	@Override
-	protected <COMP extends Component> void addComponent(ComponentType<COMP> type, Component component) {
-
-	}
+	protected <COMP extends Component> void addComponent(ComponentType<COMP> type, Component component) { }
 
 	private IdentityHashMap<ComponentType<?>, Lazy<Component>> initializeComponents(ComponentProvider provider) {
 		var map = new IdentityHashMap<ComponentType<?>, Lazy<Component>>();

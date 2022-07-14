@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.api.components;
+package org.quiltmc.qsl.component.api.component;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.nbt.NbtElement;

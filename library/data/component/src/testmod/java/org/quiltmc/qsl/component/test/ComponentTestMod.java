@@ -41,10 +41,10 @@ import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.block.entity.api.QuiltBlockEntityTypeBuilder;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.Components;
-import org.quiltmc.qsl.component.api.components.FloatComponent;
-import org.quiltmc.qsl.component.api.components.GenericComponent;
-import org.quiltmc.qsl.component.api.components.InventoryComponent;
-import org.quiltmc.qsl.component.api.components.TickingComponent;
+import org.quiltmc.qsl.component.api.component.GenericComponent;
+import org.quiltmc.qsl.component.api.component.InventoryComponent;
+import org.quiltmc.qsl.component.api.component.TickingComponent;
+import org.quiltmc.qsl.component.impl.components.DefaultFloatComponent;
 import org.quiltmc.qsl.component.impl.components.DefaultIntegerComponent;
 import org.quiltmc.qsl.component.impl.components.DefaultInventoryComponent;
 import org.quiltmc.qsl.component.impl.util.ComponentProviderState;
@@ -115,7 +115,7 @@ public class ComponentTestMod implements ModInitializer {
 					var props = player.getWorld().getServer().getSaveProperties();
 					if (props instanceof MinecraftServer levelProperties && player.getWorld().getTime() % 100 == 0) {
 						player.sendMessage(Text.literal(
-								levelProperties.expose(SAVE_FLOAT).map(FloatComponent::get).unwrapOr(0f).toString()
+								levelProperties.expose(SAVE_FLOAT).map(DefaultFloatComponent::get).unwrapOr(0f).toString()
 						), false);
 					}
 					player.expose(UUID_THING).ifJust(uuidGenericComponent -> {

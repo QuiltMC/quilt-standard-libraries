@@ -28,15 +28,14 @@ import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.Components;
-import org.quiltmc.qsl.component.impl.container.AbstractComponentContainer;
 
 @InjectedInterface({
-		Entity.class,
-		BlockEntity.class,
-		Chunk.class,
-		ItemStack.class,
-		MinecraftServer.class,
-		MinecraftClient.class
+	Entity.class,
+	BlockEntity.class,
+	Chunk.class,
+	ItemStack.class,
+	MinecraftServer.class,
+	MinecraftClient.class
 })
 public interface ComponentProvider {
 	default ComponentContainer getComponentContainer() {

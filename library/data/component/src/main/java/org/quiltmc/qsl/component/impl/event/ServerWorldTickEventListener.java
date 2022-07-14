@@ -7,9 +7,10 @@ import org.quiltmc.qsl.component.impl.CommonInitializer;
 import org.quiltmc.qsl.component.impl.util.ComponentProviderState;
 import org.quiltmc.qsl.lifecycle.api.event.ServerWorldTickEvents;
 
+@SuppressWarnings("unused")
 @ListenerPhase(
 		callbackTarget = ServerWorldTickEvents.End.class,
-		namespace = CommonInitializer.MODID, path = "tick_world_container"
+		namespace = CommonInitializer.MOD_ID, path = "tick_world_container"
 )
 public class ServerWorldTickEventListener implements ServerWorldTickEvents.End {
 	@Override

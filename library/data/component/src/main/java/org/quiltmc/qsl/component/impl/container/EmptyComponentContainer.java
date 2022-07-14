@@ -29,9 +29,7 @@ public final class EmptyComponentContainer implements ComponentContainer {
 	public static final ComponentContainer.Factory<EmptyComponentContainer> FACTORY =
 			(provider, injections, saveOperation, ticking, syncContext) -> INSTANCE;
 
-	private EmptyComponentContainer() {
-
-	}
+	private EmptyComponentContainer() { }
 
 	@Override
 	public Maybe<Component> expose(ComponentType<?> type) {

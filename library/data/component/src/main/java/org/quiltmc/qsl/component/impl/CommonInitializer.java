@@ -27,10 +27,10 @@ import org.quiltmc.qsl.networking.api.ServerLoginConnectionEvents;
 
 @ApiStatus.Internal
 public final class CommonInitializer implements ModInitializer {
-	public static final String MODID = "quilt_component";
+	public static final String MOD_ID = "quilt_component";
 
 	public static Identifier id(String id) {
-		return new Identifier(MODID, id);
+		return new Identifier(MOD_ID, id);
 	}
 
 	@Override

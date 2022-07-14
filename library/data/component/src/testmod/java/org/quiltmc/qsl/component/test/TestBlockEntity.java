@@ -31,7 +31,7 @@ import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentType;
-import org.quiltmc.qsl.component.api.components.InventoryComponent;
+import org.quiltmc.qsl.component.api.component.InventoryComponent;
 import org.quiltmc.qsl.component.impl.container.SimpleComponentContainer;
 import org.quiltmc.qsl.component.impl.sync.SyncPlayerList;
 import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;

@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.api.components;
+package org.quiltmc.qsl.component.api.component;
 
 import org.quiltmc.qsl.component.api.Component;
+import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 
-public interface IntegerComponent extends Component {
-	void increment();
-
-	void decrement();
-
-	void set(int value);
-
-	int get();
+public interface TickingComponent extends Component {
+	void tick(ComponentProvider provider);
 }
