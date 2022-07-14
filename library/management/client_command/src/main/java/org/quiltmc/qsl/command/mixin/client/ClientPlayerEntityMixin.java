@@ -19,6 +19,7 @@ package org.quiltmc.qsl.command.mixin.client;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Group;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -30,8 +31,20 @@ import org.quiltmc.qsl.command.impl.client.ClientCommandInternals;
 
 @Mixin(ClientPlayerEntity.class)
 abstract class ClientPlayerEntityMixin {
-	@Inject(method = "method_43787", at = @At("HEAD"), cancellable = true)
-	private void onSendChatMessage(C_byvkekfd c_byvkekfd, String message, Text text, CallbackInfo ci) {
+	// This mixin will only work on Minecraft 1.19
+	@Group(name = "Client command execution", min = 1, max = 1)
+	@Inject(method = "method_43787(Lnet/minecraft/unmapped/C_byvkekfd;Ljava/lang/String;Lnet/minecraft/text/Text;)V", at = @At("HEAD"), cancellable = true)
+	private void onSendChatMessageOld(C_byvkekfd c_byvkekfd, String message, Text text, CallbackInfo ci) {
+		if (ClientCommandInternals.executeCommand(message, true)) {
+			ci.cancel();
+		}
+	}
+
+	// TODO - Once 1.19.1 releases, make this the only one
+	// This mixin will only work on Minecraft 1.19.1
+	@Group(name = "Client command execution", min = 1, max = 1)
+	@Inject(method = "method_43787(Ljava/lang/String;Lnet/minecraft/text/Text;)V", at = @At("HEAD"), cancellable = true)
+	private void onSendChatMessageNew(String message, Text text, CallbackInfo ci) {
 		if (ClientCommandInternals.executeCommand(message, true)) {
 			ci.cancel();
 		}
