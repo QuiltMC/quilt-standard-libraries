@@ -56,7 +56,7 @@ public final class BuiltinRegistryEntryAttachmentHolder<R> extends RegistryEntry
 
 	@Override
 	public boolean removeValue(RegistryEntryAttachment<R, ?> attachment, R entry) {
-		if (isValueComputed(attachment, entry)) {
+		if (this.isValueComputed(attachment, entry)) {
 			return false;
 		}
 

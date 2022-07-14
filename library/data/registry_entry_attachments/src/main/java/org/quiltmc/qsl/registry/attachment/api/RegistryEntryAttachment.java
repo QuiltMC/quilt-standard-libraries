@@ -278,7 +278,7 @@ public interface RegistryEntryAttachment<R, V> {
 	 * Mods are allowed to ignore value removals that happen after registry freezing.
 	 *
 	 * @param entry registry entry
-	 * @return {@code true} if an associated value existed, {@code false} otherwise
+	 * @return {@code true} if an associated value existed, or {@code false} otherwise
 	 */
 	boolean remove(R entry);
 
@@ -290,7 +290,7 @@ public interface RegistryEntryAttachment<R, V> {
 	 * Mods are allowed to ignore value removals that happen after registry freezing.
 	 *
 	 * @param tag tag
-	 * @return {@code true} if an associated value existed, {@code false} otherwise
+	 * @return {@code true} if an associated value existed, or {@code false} otherwise
 	 */
 	boolean remove(TagKey<R> tag);
 
