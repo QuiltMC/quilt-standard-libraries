@@ -26,8 +26,8 @@ import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 public final class BuiltinRegistryEntryAttachmentHolder<R> extends RegistryEntryAttachmentHolder<R> {
-	public static final int FLAG_NONE = 0;
-	public static final int FLAG_COMPUTED = 1;
+	public static final int FLAG_NONE =     0b0000_0000;
+	public static final int FLAG_COMPUTED = 0b0000_0001;
 
 	public final Table<RegistryEntryAttachment<R, ?>, R, Integer> valueFlagTable;
 
@@ -52,5 +52,15 @@ public final class BuiltinRegistryEntryAttachmentHolder<R> extends RegistryEntry
 	@Override
 	public <T> void putValue(RegistryEntryAttachment<R, T> attachment, R entry, T value) {
 		this.putValue(attachment, entry, value, FLAG_NONE);
+	}
+
+	@Override
+	public boolean removeValue(RegistryEntryAttachment<R, ?> attachment, R entry) {
+		if (this.isValueComputed(attachment, entry)) {
+			return false;
+		}
+
+		this.valueFlagTable.remove(attachment, entry);
+		return super.removeValue(attachment, entry);
 	}
 }

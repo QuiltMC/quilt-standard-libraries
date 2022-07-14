@@ -125,4 +125,11 @@ public abstract class RegistryEntryAttachmentHolder<R> {
 		this.valueTagTable.put(attachment, tag, value);
 	}
 
+	public boolean removeValue(RegistryEntryAttachment<R, ?> attachment, R entry) {
+		return this.valueTable.remove(attachment, entry) != null;
+	}
+
+	public boolean removeValue(RegistryEntryAttachment<R, ?> attachment, TagKey<R> tag) {
+		return this.valueTagTable.remove(attachment, tag) != null;
+	}
 }

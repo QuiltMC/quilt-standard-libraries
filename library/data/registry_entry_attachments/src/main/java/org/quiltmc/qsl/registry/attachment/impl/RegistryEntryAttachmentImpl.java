@@ -41,6 +41,8 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	protected final Side side;
 	protected final Event<ValueAdded<R, V>> valueAddedEvent;
 	protected final Event<TagValueAdded<R, V>> tagValueAddedEvent;
+	protected final Event<ValueRemoved<R>> valueRemovedEvent;
+	protected final Event<TagValueRemoved<R>> tagValueRemovedEvent;
 
 	public RegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec,
 			Side side) {
@@ -55,9 +57,19 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 				listener.onValueAdded(entry, value);
 			}
 		});
-		this.tagValueAddedEvent = Event.create(TagValueAdded.class, listeners -> (entry, value) -> {
+		this.tagValueAddedEvent = Event.create(TagValueAdded.class, listeners -> (tag, value) -> {
 			for (var listener : listeners) {
-				listener.onTagValueAdded(entry, value);
+				listener.onTagValueAdded(tag, value);
+			}
+		});
+		this.valueRemovedEvent = Event.create(ValueRemoved.class, listeners -> entry -> {
+			for (var listener : listeners) {
+				listener.onValueRemoved(entry);
+			}
+		});
+		this.tagValueRemovedEvent = Event.create(TagValueRemoved.class, listeners -> tag -> {
+			for (var listener : listeners) {
+				listener.onTagValueRemoved(tag);
 			}
 		});
 	}
@@ -166,6 +178,26 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	}
 
 	@Override
+	public boolean remove(R entry) {
+		if (RegistryEntryAttachmentHolder.getBuiltin(this.registry).removeValue(this, entry)) {
+			this.valueRemovedEvent.invoker().onValueRemoved(entry);
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean remove(TagKey<R> tag) {
+		if (RegistryEntryAttachmentHolder.getBuiltin(this.registry).removeValue(this, tag)) {
+			this.tagValueRemovedEvent.invoker().onTagValueRemoved(tag);
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
 	public Event<ValueAdded<R, V>> valueAddedEvent() {
 		return this.valueAddedEvent;
 	}
@@ -173,6 +205,16 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	@Override
 	public Event<TagValueAdded<R, V>> tagValueAddedEvent() {
 		return this.tagValueAddedEvent;
+	}
+
+	@Override
+	public Event<ValueRemoved<R>> valueRemovedEvent() {
+		return valueRemovedEvent;
+	}
+
+	@Override
+	public Event<TagValueRemoved<R>> tagValueRemovedEvent() {
+		return tagValueRemovedEvent;
 	}
 
 	@Override
