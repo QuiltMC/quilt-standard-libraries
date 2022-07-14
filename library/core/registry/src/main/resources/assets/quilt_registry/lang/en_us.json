@@ -1,0 +1,4 @@
+{
+  "quilt.core.registry_sync.missing_registry": "Client is missing required registry! Mismatched mods?",
+  "quilt.core.registry_sync.missing_entries": "Client registry is missing entries! Mismatched mods?"
+}
