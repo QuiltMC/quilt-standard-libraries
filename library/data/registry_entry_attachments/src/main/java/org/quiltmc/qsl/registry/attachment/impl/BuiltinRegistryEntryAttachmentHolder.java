@@ -60,6 +60,7 @@ public final class BuiltinRegistryEntryAttachmentHolder<R> extends RegistryEntry
 			return false;
 		}
 
+		this.valueFlagTable.remove(attachment, entry);
 		return super.removeValue(attachment, entry);
 	}
 }
