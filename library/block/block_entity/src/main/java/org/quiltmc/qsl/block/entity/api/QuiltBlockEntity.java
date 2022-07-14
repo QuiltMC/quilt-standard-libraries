@@ -22,12 +22,9 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 
-import org.quiltmc.qsl.base.api.util.InjectedInterface;
-
 /**
  * Extensions of {@link BlockEntity}, provides some utilities like easy syncing.
  */
-@InjectedInterface(BlockEntity.class)
 public interface QuiltBlockEntity {
 	/**
 	 * Attempts to synchronize the block entity data to the client.
