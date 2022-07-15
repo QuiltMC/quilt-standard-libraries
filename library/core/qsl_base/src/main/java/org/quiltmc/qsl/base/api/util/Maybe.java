@@ -31,7 +31,7 @@ import java.util.function.Supplier;
  *
  * Can either be {@link Just} or {@link Nothing}.<br/>
  * {@link Just} instances contain a value of type {@link T}.<br/>
- * {@link Nothing} instance all reference the {@link Nothing} singleton and contain no data.<br/>
+ * {@link Nothing} instances all contain no data.<br/>
  *
  * @param <T> The type of the wrapped object
  * @author 0xJoeMama
@@ -44,7 +44,7 @@ public sealed abstract class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	 * @param value A {@link Nullable} value that will be wrapped into a {@link Maybe}.
 	 * @param <T>   The type of object the {@link Maybe} instance will hold.
 	 * @return An instance of {@link Just} if the provided value is not <code>null</code>,<br/>
-	 * otherwise the singleton {@link Nothing} instance.
+	 * otherwise a {@link Nothing} instance.
 	 * @see Optional#ofNullable
 	 */
 	public static <T> Maybe<T> wrap(@Nullable T value) {
@@ -68,7 +68,7 @@ public sealed abstract class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	 * Similar function to {@link Optional#empty()}.
 	 *
 	 * @param <T> The type the {@link Nothing} instance will take the form of.
-	 * @return the singleton {@link Nothing} instance after casting it to the proper type.
+	 * @return A {@link Nothing} instance after casting it to the proper type.
 	 * @see Optional#empty()
 	 */
 	@SuppressWarnings("unchecked") // Nothing doesn't contain a value, so we can freely cast it!
@@ -258,7 +258,7 @@ public sealed abstract class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	public abstract T unwrapOr(T defaultValue);
 
 	/**
-	 * Works like {@link Maybe#unwrapOr} except that it lazily evaluated the return value using the provided {@link Supplier}.
+	 * Works like {@link Maybe#unwrapOr} except that it lazily evaluates the return value using the provided {@link Supplier}.
 	 *
 	 * @param supplier A {@link Supplier} that will create the {@link T} value to be returns if the current instance is {@link Nothing}.
 	 * @return The current {@link T} value if the current instance if {@link Just},
@@ -266,6 +266,15 @@ public sealed abstract class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	 * @see Optional#orElseGet
 	 */
 	public abstract T unwrapOrGet(Supplier<? extends T> supplier);
+
+	/**
+	 * Works like {@link Maybe#unwrap} except it throws the provided {@link Throwable} and not the default one.
+	 *
+	 * @param throwableSupplier The {@link Throwable} to throw.
+	 * @return The contained value, if it exists.
+	 * @throws Throwable A customizable throwable.
+	 */
+	public abstract T unwrapOrThrow(Supplier<? extends Throwable> throwableSupplier) throws Throwable;
 
 	/**
 	 * Turns the current {@link Maybe} instance into an {@link Optional}, for inter-operability.
@@ -386,6 +395,14 @@ public sealed abstract class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 		}
 
 		/**
+		 * @see Maybe#unwrapOrThrow
+		 */
+		@Override
+		public T unwrapOrThrow(Supplier<? extends Throwable> throwableSupplier) throws Throwable {
+			throw throwableSupplier.get();
+		}
+
+		/**
 		 * @see Maybe#toOptional
 		 */
 		@Override
@@ -501,6 +518,14 @@ public sealed abstract class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 		 */
 		@Override
 		public T unwrapOrGet(Supplier<? extends T> supplier) {
+			return this.unwrap();
+		}
+
+		/**
+		 * @see Maybe#unwrapOrThrow
+		 */
+		@Override
+		public T unwrapOrThrow(Supplier<? extends Throwable> throwableSupplier) throws Throwable {
 			return this.unwrap();
 		}
 

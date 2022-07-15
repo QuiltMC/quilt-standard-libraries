@@ -19,6 +19,7 @@ package org.quiltmc.qsl.component.api.container;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.base.api.util.Lazy;
 import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentType;
@@ -27,7 +28,6 @@ import org.quiltmc.qsl.component.impl.container.EmptyComponentContainer;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
 import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
 import org.quiltmc.qsl.component.impl.sync.packet.SyncPacket;
-import org.quiltmc.qsl.component.impl.util.Lazy;
 
 import java.util.ArrayList;
 import java.util.Collection;

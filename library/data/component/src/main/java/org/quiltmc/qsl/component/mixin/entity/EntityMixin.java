@@ -62,6 +62,6 @@ public abstract class EntityMixin implements ComponentProvider {
 
 	@Inject(method = "tick", at = @At("TAIL"))
 	private void tickContainer(CallbackInfo ci) {
-		this.getComponentContainer().tick(this);
+		this.qsl$container.tick(this);
 	}
 }
