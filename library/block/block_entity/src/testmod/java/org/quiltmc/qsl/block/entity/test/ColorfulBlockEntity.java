@@ -28,7 +28,9 @@ import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
 
-public class ColorfulBlockEntity extends BlockEntity {
+import org.quiltmc.qsl.block.entity.api.QuiltBlockEntity;
+
+public class ColorfulBlockEntity extends BlockEntity implements QuiltBlockEntity {
 	private static final Random RANDOM = new Random();
 	private int color = RANDOM.nextInt(0xffffff + 1);
 
