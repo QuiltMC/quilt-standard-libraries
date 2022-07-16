@@ -14,26 +14,15 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.item.rendering.impl.client;
+package org.quiltmc.qsl.item.rendering.api.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.item.ItemStack;
 
-import org.quiltmc.qsl.item.rendering.api.client.ItemBarProvider;
-import org.quiltmc.qsl.item.rendering.api.client.SolidColorItemBarProvider;
-
-@ApiStatus.Internal
 @Environment(EnvType.CLIENT)
 public final class VanillaItemBarProvider extends SolidColorItemBarProvider {
-	public static ItemBarProvider[] getVanillaProviders() {
-		return new ItemBarProvider[] { new VanillaItemBarProvider() };
-	}
-
-	private VanillaItemBarProvider() { }
-
 	@Override
 	public boolean isItemBarVisible(ItemStack stack) {
 		return stack.isItemBarVisible();

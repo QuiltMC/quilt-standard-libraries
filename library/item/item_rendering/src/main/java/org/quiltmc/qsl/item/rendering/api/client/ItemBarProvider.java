@@ -23,12 +23,10 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 
-import org.quiltmc.qsl.item.rendering.impl.client.VanillaItemBarProvider;
-
 @Environment(EnvType.CLIENT)
 public interface ItemBarProvider {
 	static ItemBarProvider[] getVanillaProviders() {
-		return VanillaItemBarProvider.getVanillaProviders();
+		return new ItemBarProvider[] { new VanillaItemBarProvider() };
 	}
 
 	boolean isItemBarVisible(ItemStack stack);
