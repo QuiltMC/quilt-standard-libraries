@@ -51,6 +51,7 @@ abstract class ServerLoginNetworkHandlerMixin implements NetworkHandlerExtension
 		this.addon = new ServerLoginNetworkAddon((ServerLoginNetworkHandler) (Object) this);
 	}
 
+	// TODO - This only has two methods due to 1.19.1; Once it releases, remove method_18785, translate method_18784, remove the "remap = false" and "require = 0"
 	@Redirect(method = { "method_18785", "method_18784" }, at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerLoginNetworkHandler;acceptPlayer()V"), remap = false, require = 0)
 	private void handlePlayerJoin(ServerLoginNetworkHandler handler) {
 		// Do not accept the player, thereby moving into play stage until all login futures being waited on are completed

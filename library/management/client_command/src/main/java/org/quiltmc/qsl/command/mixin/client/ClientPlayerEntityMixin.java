@@ -38,6 +38,7 @@ abstract class ClientPlayerEntityMixin {
 		}
 	}
 
+	// TODO - Remove this once 1.19.1 releases
 	@Surrogate
 	private void onSendChatMessage(C_byvkekfd c_byvkekfd, String string, Text text, CallbackInfo ci) { }
 }
