@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.impl.components;
+package org.quiltmc.qsl.component.impl.component;
 
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtFloat;

@@ -44,9 +44,9 @@ import org.quiltmc.qsl.component.api.Components;
 import org.quiltmc.qsl.component.api.component.GenericComponent;
 import org.quiltmc.qsl.component.api.component.InventoryComponent;
 import org.quiltmc.qsl.component.api.component.TickingComponent;
-import org.quiltmc.qsl.component.impl.components.DefaultFloatComponent;
-import org.quiltmc.qsl.component.impl.components.DefaultIntegerComponent;
-import org.quiltmc.qsl.component.impl.components.DefaultInventoryComponent;
+import org.quiltmc.qsl.component.impl.component.DefaultFloatComponent;
+import org.quiltmc.qsl.component.impl.component.DefaultIntegerComponent;
+import org.quiltmc.qsl.component.impl.component.DefaultInventoryComponent;
 import org.quiltmc.qsl.component.impl.util.ComponentProviderState;
 import org.quiltmc.qsl.component.test.component.SaveFloatComponent;
 

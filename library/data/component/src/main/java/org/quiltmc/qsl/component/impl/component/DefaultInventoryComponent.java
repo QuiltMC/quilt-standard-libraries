@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.impl.components;
+package org.quiltmc.qsl.component.impl.component;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;

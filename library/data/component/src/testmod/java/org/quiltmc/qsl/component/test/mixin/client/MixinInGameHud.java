@@ -23,7 +23,7 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.ChunkPos;
-import org.quiltmc.qsl.component.impl.components.DefaultIntegerComponent;
+import org.quiltmc.qsl.component.impl.component.DefaultIntegerComponent;
 import org.quiltmc.qsl.component.test.ComponentTestMod;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

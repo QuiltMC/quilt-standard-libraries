@@ -19,7 +19,7 @@ package org.quiltmc.qsl.component.test.component;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.api.component.TickingComponent;
-import org.quiltmc.qsl.component.impl.components.DefaultFloatComponent;
+import org.quiltmc.qsl.component.impl.component.DefaultFloatComponent;
 
 public class SaveFloatComponent extends DefaultFloatComponent implements TickingComponent {
 	public SaveFloatComponent(@Nullable Runnable saveOperation, @Nullable Runnable ignored) {

@@ -274,7 +274,7 @@ public sealed abstract class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	 * @return The contained value, if it exists.
 	 * @throws Throwable A customizable throwable.
 	 */
-	public abstract T unwrapOrThrow(Supplier<? extends Throwable> throwableSupplier) throws Throwable;
+	public abstract <E extends Throwable> T unwrapOrThrow(Supplier<? extends E> throwableSupplier) throws E;
 
 	/**
 	 * Turns the current {@link Maybe} instance into an {@link Optional}, for inter-operability.
@@ -398,7 +398,7 @@ public sealed abstract class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 		 * @see Maybe#unwrapOrThrow
 		 */
 		@Override
-		public T unwrapOrThrow(Supplier<? extends Throwable> throwableSupplier) throws Throwable {
+		public <E extends Throwable> T unwrapOrThrow(Supplier<? extends E> throwableSupplier) throws E {
 			throw throwableSupplier.get();
 		}
 
@@ -525,7 +525,7 @@ public sealed abstract class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 		 * @see Maybe#unwrapOrThrow
 		 */
 		@Override
-		public T unwrapOrThrow(Supplier<? extends Throwable> throwableSupplier) throws Throwable {
+		public <E extends Throwable> T unwrapOrThrow(Supplier<? extends E> throwableSupplier) throws E {
 			return this.unwrap();
 		}
 

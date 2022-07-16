@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.component.impl.container;
 
 import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.base.api.util.Lazy;
 import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
@@ -25,7 +26,6 @@ import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
 import org.quiltmc.qsl.component.impl.sync.packet.SyncPacket;
-import org.quiltmc.qsl.component.impl.util.Lazy;
 
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -48,7 +48,7 @@ public class LazyComponentContainer extends AbstractComponentContainer {
 	}
 
 	public static void move(LazyComponentContainer from, LazyComponentContainer into) {
-		from.components.forEach((id, componentLazy) -> componentLazy.ifPresent(component -> {
+		from.components.forEach((id, componentLazy) -> componentLazy.ifFilled(component -> {
 			into.components.put(id, componentLazy); // Directly overriding our value.
 		}));
 
