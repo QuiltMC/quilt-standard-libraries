@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.item.rendering.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "ItemMixin"
+  ],
+  "client": [
+    "client.ItemRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
