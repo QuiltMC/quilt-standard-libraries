@@ -31,7 +31,15 @@ import org.quiltmc.qsl.command.impl.client.ClientCommandInternals;
 
 @Mixin(ClientPlayerEntity.class)
 abstract class ClientPlayerEntityMixin {
-	@Inject(method = "method_43787", at = @At("HEAD"), cancellable = true)
+	@Inject(
+		method = {
+			"method_43787(Lnet/minecraft/unmapped/C_byvkekfd;Ljava/lang/String;Lnet/minecraft/text/Text;)V",
+			"method_43787(Ljava/lang/String;Lnet/minecraft/text/Text;)V"
+		},
+		at = @At("HEAD"),
+		cancellable = true,
+		require = 0
+	)
 	private void onSendChatMessage(String message, Text text, CallbackInfo ci) {
 		if (ClientCommandInternals.executeCommand(message, true)) {
 			ci.cancel();
