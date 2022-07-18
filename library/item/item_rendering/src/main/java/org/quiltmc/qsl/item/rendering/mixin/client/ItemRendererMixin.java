@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.item.rendering.mixin.client;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.Tessellator;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -58,7 +56,7 @@ public abstract class ItemRendererMixin {
 		item.getCountLabelRenderer().renderCountLabel(matrices, renderer, this.zOffset, stack, countLabel);
 
 		var itemBarRenderers = item.getItemBarRenderers();
-		int itemBarY = y + 13;
+		int itemBarY = 13;
 		boolean anyItemBarsVisible = false;
 		for (var provider : itemBarRenderers) {
 			if (provider.isItemBarVisible(stack)) {
@@ -69,12 +67,10 @@ public abstract class ItemRendererMixin {
 
 		if (anyItemBarsVisible) {
 			// TODO figure out if we can NOT render immediately here
-			Tessellator tessellator = Tessellator.getInstance();
-			BufferBuilder buffer = tessellator.getBufferBuilder();
 			for (var provider : itemBarRenderers) {
 				if (provider.isItemBarVisible(stack)) {
 					matrices.push();
-					matrices.translate(x, itemBarY, 0);
+					matrices.translate(0, itemBarY, 0);
 					provider.renderItemBar(matrices, renderer, this.zOffset, stack);
 					itemBarY += 2;
 					matrices.pop();
