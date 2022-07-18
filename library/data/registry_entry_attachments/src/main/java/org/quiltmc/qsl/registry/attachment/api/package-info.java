@@ -7,14 +7,14 @@
  * {@link org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment RegistryEntryAttachment} contains a number of methods for building
  * new attachments.
  * <p>
- * To retrieve an attachment's value, use {@link org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment#getValue(java.lang.Object)}
+ * To retrieve an attachment's value, use {@link org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment#get(java.lang.Object)}
  * to get the value assigned to the specified registry entry.
  *
  * <p><h3>Vocabulary</h3>
  *
  * <ul>
  *     <li>Attachment values set in-code (using
- *     {@link org.quiltmc.qsl.registry.attachment.api.RegistryExtensions#register(net.minecraft.util.registry.Registry, net.minecraft.util.Identifier, java.lang.Object, java.util.function.Consumer)})
+ *     {@link org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment#put(java.lang.Object, java.lang.Object)})
  *     are referred to as "built-in" values.</li>
  * </ul>
  *

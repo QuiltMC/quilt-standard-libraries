@@ -14,14 +14,23 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.block.entity.mixin;
+package org.quiltmc.qsl.registry.attachment.impl;
 
-import org.spongepowered.asm.mixin.Mixin;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
 
-import net.minecraft.block.entity.BlockEntity;
+public final class CodecUtils {
+	private CodecUtils() { }
 
-import org.quiltmc.qsl.block.entity.api.QuiltBlockEntity;
+	public static <T> void assertValid(Codec<T> codec, T value) {
+		var encoded = codec.encodeStart(JsonOps.INSTANCE, value);
 
-@Mixin(BlockEntity.class)
-public abstract class BlockEntityMixin implements QuiltBlockEntity {
+		if (encoded.result().isEmpty()) {
+			if (encoded.error().isPresent()) {
+				throw new IllegalArgumentException("Value is invalid: " + encoded.error().get().message());
+			} else {
+				throw new IllegalArgumentException("Value is invalid: unknown error");
+			}
+		}
+	}
 }
