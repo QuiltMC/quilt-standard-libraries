@@ -23,6 +23,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
@@ -62,7 +63,7 @@ public final class VanillaCountLabelRenderer implements CountLabelRenderer {
 				immediate,
 				false,
 				0x000000,
-				0xF000F0
+				LightmapTextureManager.MAX_LIGHT_COORDINATE
 		);
 		immediate.draw();
 		matrices.pop();
