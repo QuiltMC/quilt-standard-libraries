@@ -19,7 +19,8 @@ package org.quiltmc.qsl.component.impl.client.sync;
 import net.minecraft.util.collection.IdList;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.Components;
-import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
+import org.quiltmc.qsl.component.api.provider.ComponentProvider;
+import org.quiltmc.qsl.component.impl.sync.SyncChannel;
 import org.quiltmc.qsl.component.impl.sync.packet.PacketIds;
 import org.quiltmc.qsl.component.impl.sync.packet.SyncPacket;
 import org.quiltmc.qsl.networking.api.client.ClientLoginNetworking;
@@ -30,7 +31,7 @@ public class ClientSyncHandler {
 
 	private IdList<ComponentType<?>> componentList = null;
 
-	private IdList<SyncPacketHeader<?>> headerList = null;
+	private ClientSyncHandler() { }
 
 	public static ClientSyncHandler getInstance() {
 		if (INSTANCE == null) {
@@ -40,22 +41,19 @@ public class ClientSyncHandler {
 		return INSTANCE;
 	}
 
+	public <P extends ComponentProvider> void registerChannel(SyncChannel<P> channel) {
+		ClientPlayNetworking.registerGlobalReceiver(channel.channelId(), (client, handler, buf, responseSender) -> {
+			ComponentProvider provider = channel.to(buf);
+			SyncPacket.handle(client, provider, buf);
+		});
+	}
+
 	public void registerPackets() {
 		ClientLoginNetworking.registerGlobalReceiver(PacketIds.TYPES, (client, handler, buf, listenerAdder) ->
 				ClientRegistryPacket.handleRegistryPacket(buf, Components.REGISTRY, list -> this.componentList = list)
 		);
 
-		ClientLoginNetworking.registerGlobalReceiver(PacketIds.HEADERS, (client, handler, buf, listenerAdder) ->
-				ClientRegistryPacket.handleRegistryPacket(buf, SyncPacketHeader.REGISTRY, list -> this.headerList = list)
-		);
-
-		ClientPlayNetworking.registerGlobalReceiver(PacketIds.SYNC, (client, handler, buf, responseSender) ->
-				SyncPacket.handle(buf, client)
-		);
-	}
-
-	public SyncPacketHeader<?> getHeader(int rawId) {
-		return this.headerList.get(rawId);
+		SyncChannel.createPacketChannels(this::registerChannel);
 	}
 
 	public ComponentType<?> getType(int rawId) {

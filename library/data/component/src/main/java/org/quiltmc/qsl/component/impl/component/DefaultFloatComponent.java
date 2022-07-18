@@ -19,6 +19,7 @@ package org.quiltmc.qsl.component.impl.component;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtFloat;
 import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.component.NbtComponent;
 
 public class DefaultFloatComponent implements NbtComponent<NbtFloat> {
@@ -26,13 +27,13 @@ public class DefaultFloatComponent implements NbtComponent<NbtFloat> {
 	@Nullable
 	private final Runnable saveOperation;
 
-	public DefaultFloatComponent(@Nullable Runnable saveOperation) {
-		this(saveOperation, 0);
+	public DefaultFloatComponent(Component.Operations ops) {
+		this(ops, 0);
 	}
 
-	public DefaultFloatComponent(@Nullable Runnable saveOperation, float initialValue) {
+	public DefaultFloatComponent(Component.Operations ops, float initialValue) {
 		this.value = initialValue;
-		this.saveOperation = saveOperation;
+		this.saveOperation = ops.saveOperation();
 	}
 
 	public float get() {

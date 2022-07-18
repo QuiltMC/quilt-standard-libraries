@@ -16,52 +16,62 @@
 
 package org.quiltmc.qsl.component.impl.container;
 
+import com.mojang.datafixers.util.Either;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.api.ComponentType;
+import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
-import org.quiltmc.qsl.component.impl.sync.packet.SyncPacket;
+import org.quiltmc.qsl.component.impl.sync.SyncChannel;
 
-import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 
 // Suggestion from Technici4n from fabric. May help improve performance and memory footprint once done.
 public class OnAccessComponentContainer extends AbstractComponentContainer {
-	private final Map<ComponentType<?>, Component> components;
+	public static final Factory<OnAccessComponentContainer> FACTORY =
+			(provider, injections, saveOperation, ticking, syncChannel) ->
+				new OnAccessComponentContainer(provider, saveOperation, ticking, syncChannel);
+	private final Map<ComponentType<?>, Either<ComponentEntry<?>, Component>> components;
 
-	private OnAccessComponentContainer(ComponentProvider provider,
+	protected OnAccessComponentContainer(ComponentProvider provider,
 									   @Nullable Runnable saveOperation,
 									   boolean ticking,
-									   @Nullable SyncPacket.SyncContext syncContext) {
-		super(saveOperation, ticking, syncContext);
-		this.components = this.getInitialComponents(provider);
+									   @Nullable SyncChannel<?> syncChannel) {
+		super(saveOperation, ticking, syncChannel);
+		this.components = this.createComponents(provider);
+	}
+
+	private Map<ComponentType<?>, Either<ComponentEntry<?>, Component>> createComponents(ComponentProvider provider) {
+		List<ComponentEntry<?>> injections = ComponentsImpl.getInjections(provider);
+		var map = new IdentityHashMap<ComponentType<?>, Either<ComponentEntry<?>, Component>>();
+		injections.forEach(entry -> {
+			ComponentType<?> type = entry.type();
+			if (type.isStatic() || type.isInstant()) {
+				this.initializeComponent(entry);
+			} else {
+				map.put(type, Either.left(entry));
+			}
+		});
+
+		return map;
 	}
 
 	@Override
 	public Maybe<Component> expose(ComponentType<?> type) {
-		return Maybe.wrap(this.components.get(type))
-				.or(() -> this.supports(type) ? Maybe.just(this.initializeComponent(this.getInjection(type))) : Maybe.nothing());
+		return Maybe.fromOptional(this.components.get(type).right())
+				.or(() -> this.supports(type) ? Maybe.just(this.initializeComponent(this.components.get(type).left().orElseThrow())) : Maybe.nothing());
 	}
 
 	@Override
 	protected <COMP extends Component> void addComponent(ComponentType<COMP> type, Component component) {
-		this.components.put(type, component);
-	}
-
-	private <C extends Component> ComponentEntry<C> getInjection(ComponentType<C> type) {
-		throw new UnsupportedOperationException("TODO: NOT IMPLEMENTED");
+		this.components.put(type, Either.right(component));
 	}
 
 	private boolean supports(ComponentType<?> type) {
-		throw new UnsupportedOperationException("TODO: NOT IMPLEMENTED");
-	}
-
-	private Map<ComponentType<?>, Component> getInitialComponents(ComponentProvider provider) {
-//		return this.supportedTypes.stream() // TODO: We can cache this value.
-//				.filter(((Predicate<ComponentType<?>>) ComponentType::isStatic).or(ComponentType::isInstant))
-//				.collect(IdentityHashMap::new, (map, type) -> map.put(type, this.createComponent(type)), Map::putAll);
-		return new HashMap<>();
+		return this.components.containsKey(type);
 	}
 }

@@ -15,7 +15,7 @@
     "world.WorldMixin"
   ],
   "client": [
-    "client.level.MinecraftClientMixin"
+    "level.client.MinecraftClientMixin"
   ],
   "injectors": {
     "defaultRequire": 1

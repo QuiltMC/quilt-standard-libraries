@@ -11,6 +11,7 @@ import org.quiltmc.qsl.component.api.component.TickingComponent;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
+import org.quiltmc.qsl.component.impl.sync.SyncChannel;
 import org.quiltmc.qsl.component.impl.sync.packet.SyncPacket;
 import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 import org.quiltmc.qsl.component.impl.util.StringConstants;
@@ -23,24 +24,24 @@ public abstract class AbstractComponentContainer implements ComponentContainer {
 	protected final List<ComponentType<?>> nbtComponents;
 	protected final Maybe<List<ComponentType<?>>> ticking;
 	protected final Maybe<Queue<ComponentType<?>>> pendingSync;
-	protected final Maybe<SyncPacket.SyncContext> syncContext;
+	protected final Maybe<SyncChannel<?>> syncContext;
 
-	public AbstractComponentContainer(Runnable saveOperation,
+	public AbstractComponentContainer(@Nullable Runnable saveOperation,
 									  boolean ticking,
-									  @Nullable SyncPacket.SyncContext syncContext) {
+									  @Nullable SyncChannel<?> syncChannel) {
 		this.ticking = ticking ? Maybe.just(new ArrayList<>()) : Maybe.nothing();
 		this.nbtComponents = new ArrayList<>();
-		this.syncContext = Maybe.wrap(syncContext);
+		this.syncContext = Maybe.wrap(syncChannel);
 		this.pendingSync = this.syncContext.map(it -> new ArrayDeque<>());
 		this.operations = new ContainerOperations(
-				saveOperation,
-				type -> () -> this.pendingSync.ifJust(pending -> pending.add(type))
+			saveOperation,
+			type -> () -> this.pendingSync.ifJust(pending -> pending.add(type))
 		);
 	}
 
 	@Override
 	public void writeNbt(NbtCompound providerRootNbt) {
-		var rootQslNbt = new NbtCompound();
+		var rootQslNbt = providerRootNbt.getCompound(StringConstants.COMPONENT_ROOT);
 		this.nbtComponents.forEach(type -> this.expose(type)
 				.map(it -> ((NbtComponent<?>) it))
 				.ifJust(nbtComponent -> NbtComponent.writeTo(rootQslNbt, nbtComponent, type.id()))
@@ -56,12 +57,18 @@ public abstract class AbstractComponentContainer implements ComponentContainer {
 		var rootQslNbt = providerRootNbt.getCompound(StringConstants.COMPONENT_ROOT);
 
 		rootQslNbt.getKeys().stream()
-				.map(Identifier::new)
+				.map(Identifier::new) // All encoded component types *must* strictly be identifiers
 				.map(Components.REGISTRY::get)
 				.filter(Objects::nonNull)
 				.forEach(type -> this.expose(type)
 						.map(component -> ((NbtComponent<?>) component))
-						.ifJust(component -> NbtComponent.readFrom(component, type.id(), rootQslNbt))
+						.ifJust(component -> {
+							NbtComponent.readFrom(component, type.id(), rootQslNbt);
+
+							if (component instanceof SyncedComponent synced) {
+								synced.sync();
+							}
+						})
 				);
 	}
 
@@ -69,8 +76,8 @@ public abstract class AbstractComponentContainer implements ComponentContainer {
 	public void tick(ComponentProvider provider) {
 		this.ticking.ifJust(componentTypes -> componentTypes.forEach(type ->
 				this.expose(type)
-						.map(it -> ((TickingComponent) it))
-						.ifJust(tickingComponent -> tickingComponent.tick(provider)))
+					.map(it -> ((TickingComponent) it))
+					.ifJust(tickingComponent -> tickingComponent.tick(provider)))
 		).ifNothing(() -> {
 			throw ErrorUtil.illegalState("Attempted to tick a non-ticking container").get();
 		});
@@ -80,10 +87,10 @@ public abstract class AbstractComponentContainer implements ComponentContainer {
 
 	@Override
 	public void sync(ComponentProvider provider) {
-		this.syncContext.ifJust(ctx -> SyncPacket.syncFromQueue(
+		this.syncContext.ifJust(channel -> SyncPacket.createFromQueue(
 				this.pendingSync.unwrap(),
-				ctx,
-				type -> (SyncedComponent) this.expose(type).unwrap(),
+				channel,
+				type -> (SyncedComponent) this.expose(type).unwrap(), // We *need* to contain the provided type therefore it's definitely in here.
 				provider
 		)).ifNothing(() -> {
 			throw ErrorUtil.illegalState("Attempted to sync a non-syncable container!").get();
@@ -94,7 +101,9 @@ public abstract class AbstractComponentContainer implements ComponentContainer {
 
 	protected <COMP extends Component> COMP initializeComponent(ComponentEntry<COMP> componentEntry) {
 		ComponentType<?> type = componentEntry.type();
-		Runnable syncOperation = this.operations.syncOperationFactory().apply(type);
+
+		Function<ComponentType<?>, Runnable> factory = this.operations.syncOperationFactory();
+		Runnable syncOperation = factory != null ? factory.apply(type) : null;
 
 		COMP component = componentEntry.apply(this.operations.saveOperation(), syncOperation);
 
@@ -113,5 +122,5 @@ public abstract class AbstractComponentContainer implements ComponentContainer {
 		return component;
 	}
 
-	public record ContainerOperations(Runnable saveOperation, Function<ComponentType<?>, Runnable> syncOperationFactory) { }
+	public record ContainerOperations(@Nullable Runnable saveOperation, @Nullable Function<ComponentType<?>, Runnable> syncOperationFactory) { }
 }

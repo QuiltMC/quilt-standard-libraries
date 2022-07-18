@@ -25,7 +25,7 @@ import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
-import org.quiltmc.qsl.component.impl.sync.packet.SyncPacket;
+import org.quiltmc.qsl.component.impl.sync.SyncChannel;
 
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -33,18 +33,18 @@ import java.util.Queue;
 
 public class LazyComponentContainer extends AbstractComponentContainer {
 	public static final ComponentContainer.Factory<LazyComponentContainer> FACTORY =
-			(provider, injections, saveOperation, ticking, syncContext) ->
-					new LazyComponentContainer(provider, saveOperation, ticking, syncContext);
+			(provider, injections, saveOperation, ticking, syncChannel) ->
+					new LazyComponentContainer(provider, saveOperation, ticking, syncChannel);
 	private final IdentityHashMap<ComponentType<?>, Lazy<Component>> components;
 
 	protected LazyComponentContainer(
 			ComponentProvider provider,
 			@Nullable Runnable saveOperation,
 			boolean ticking,
-			@Nullable SyncPacket.SyncContext syncContext
+			@Nullable SyncChannel<?> syncChannel
 	) {
-		super(saveOperation, ticking, syncContext);
-		this.components = this.initializeComponents(provider);
+		super(saveOperation, ticking, syncChannel);
+		this.components = this.createLazyMap(provider);
 	}
 
 	public static void move(LazyComponentContainer from, LazyComponentContainer into) {
@@ -70,7 +70,7 @@ public class LazyComponentContainer extends AbstractComponentContainer {
 	@Override
 	protected <COMP extends Component> void addComponent(ComponentType<COMP> type, Component component) { }
 
-	private IdentityHashMap<ComponentType<?>, Lazy<Component>> initializeComponents(ComponentProvider provider) {
+	private IdentityHashMap<ComponentType<?>, Lazy<Component>> createLazyMap(ComponentProvider provider) {
 		var map = new IdentityHashMap<ComponentType<?>, Lazy<Component>>();
 		ComponentsImpl.getInjections(provider).forEach(injection -> map.put(injection.type(), this.createLazy(injection)));
 		return map;
@@ -81,7 +81,6 @@ public class LazyComponentContainer extends AbstractComponentContainer {
 
 		if (type.isStatic() || type.isInstant()) {
 			var component = this.initializeComponent(componentEntry);
-
 			return Lazy.filled(component);
 		}
 

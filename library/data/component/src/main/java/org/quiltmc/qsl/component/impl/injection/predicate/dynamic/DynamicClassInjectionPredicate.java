@@ -30,8 +30,10 @@ public class DynamicClassInjectionPredicate<P extends ComponentProvider> extends
 		this.predicate = predicate;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean canInject(ComponentProvider provider) {
+		// The class will be checked first so the provider will most definitely match the target type.
 		return this.predicate.test((P) provider);
 	}
 }

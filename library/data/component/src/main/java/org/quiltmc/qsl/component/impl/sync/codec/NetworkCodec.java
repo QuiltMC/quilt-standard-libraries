@@ -141,7 +141,7 @@ public record NetworkCodec<T>(BiConsumer<PacketByteBuf, T> encoder,
 	public Maybe<T> decode(PacketByteBuf buf) {
 		try {
 			return Maybe.just(this.decoder.apply(buf));
-		} catch (IndexOutOfBoundsException e) { // An IOOB exception is thrown if the memory is either
+		} catch (IndexOutOfBoundsException e) { // An IOOB exception is thrown if we try to read invalid memory
 			ComponentsImpl.LOGGER.warn(e.getMessage());
 			return Maybe.nothing();
 		}

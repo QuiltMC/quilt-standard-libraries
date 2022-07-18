@@ -22,6 +22,7 @@ import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
+import org.quiltmc.qsl.component.impl.sync.SyncChannel;
 import org.quiltmc.qsl.component.impl.sync.packet.SyncPacket;
 import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 
@@ -31,14 +32,14 @@ import java.util.stream.Stream;
 
 public class SimpleComponentContainer extends AbstractComponentContainer {
 	public static final ComponentContainer.Factory<SimpleComponentContainer> FACTORY =
-			(provider, injections, saveOperation, ticking, syncContext) -> new SimpleComponentContainer(
-					saveOperation, ticking, syncContext, injections.get().stream()
+			(provider, injections, saveOperation, ticking, syncChannel) -> new SimpleComponentContainer(
+					saveOperation, ticking, syncChannel, injections.get().stream()
 			);
 	private final Map<ComponentType<?>, Component> components;
 
-	protected SimpleComponentContainer(Runnable saveOperation,
+	protected SimpleComponentContainer(@Nullable Runnable saveOperation,
 									   boolean ticking,
-									   @Nullable SyncPacket.SyncContext syncContext,
+									   @Nullable SyncChannel<?> syncContext,
 									   Stream<ComponentEntry<?>> types) {
 		super(saveOperation, ticking, syncContext);
 		this.components = new IdentityHashMap<>();

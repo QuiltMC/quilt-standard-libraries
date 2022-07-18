@@ -28,7 +28,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ThreadedAnvilChunkStorage.class)
 public abstract class ThreadedChunkStorageMixin {
-
 	@Inject(
 			method = "sendChunkDataPackets",
 			at = @At(
@@ -38,6 +37,6 @@ public abstract class ThreadedChunkStorageMixin {
 			)
 	)
 	private void syncChunkContainer(ServerPlayerEntity player, MutableObject<ChunkDataS2CPacket> mutableObject, WorldChunk chunk, CallbackInfo ci) {
-		// FIXME: Make this work
+		chunk.getComponentContainer().sync(chunk);
 	}
 }

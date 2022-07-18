@@ -20,7 +20,10 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.component.impl.CommonInitializer;
 
 public final class PacketIds {
-	public static final Identifier HEADERS = CommonInitializer.id("headers");
 	public static final Identifier TYPES = CommonInitializer.id("types");
-	public static final Identifier SYNC = CommonInitializer.id("sync");
+	public static final Identifier BLOCK_ENTITY_SYNC = CommonInitializer.id("block_entity");
+	public static final Identifier ENTITY_SYNC = CommonInitializer.id("entity");
+	public static final Identifier CHUNK_SYNC = CommonInitializer.id("chunk");
+	public static final Identifier WORLD_SYNC = CommonInitializer.id("world");
+	public static final Identifier LEVEL_SYNC = CommonInitializer.id("level");
 }

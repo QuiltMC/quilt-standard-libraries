@@ -17,33 +17,27 @@
 package org.quiltmc.qsl.component.impl.component;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.collection.DefaultedList;
 import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.component.InventoryComponent;
-import org.quiltmc.qsl.component.api.component.SyncedComponent;
-import org.quiltmc.qsl.component.impl.sync.codec.NetworkCodec;
 
 import java.util.Objects;
 import java.util.function.Supplier;
 
-public class DefaultInventoryComponent implements InventoryComponent, SyncedComponent {
+public class DefaultInventoryComponent implements InventoryComponent {
 	private final DefaultedList<ItemStack> stacks;
 	@Nullable
 	private final Runnable saveOperation;
-	@Nullable
-	private final Runnable syncOperation;
 
-	public DefaultInventoryComponent(@Nullable Runnable saveOperation, @Nullable Runnable syncOperation, int size) {
+	public DefaultInventoryComponent(Component.Operations ops, int size) {
 		this.stacks = DefaultedList.ofSize(size, ItemStack.EMPTY);
-		this.saveOperation = saveOperation;
-		this.syncOperation = syncOperation;
+		this.saveOperation = ops.saveOperation();
 	}
 
-	public DefaultInventoryComponent(@Nullable Runnable saveOperation, @Nullable Runnable syncOperation, Supplier<DefaultedList<ItemStack>> stacks) {
-		this.syncOperation = syncOperation;
+	public DefaultInventoryComponent(Component.Operations ops, Supplier<? extends DefaultedList<ItemStack>> stacks) {
 		this.stacks = stacks.get();
-		this.saveOperation = saveOperation;
+		this.saveOperation = ops.saveOperation();
 	}
 
 	@Override
@@ -57,11 +51,6 @@ public class DefaultInventoryComponent implements InventoryComponent, SyncedComp
 	}
 
 	@Override
-	public @Nullable Runnable getSyncOperation() {
-		return this.syncOperation;
-	}
-
-	@Override
 	public int hashCode() {
 		return Objects.hash(stacks);
 	}
@@ -71,19 +60,5 @@ public class DefaultInventoryComponent implements InventoryComponent, SyncedComp
 		if (this == o) return true;
 		if (!(o instanceof DefaultInventoryComponent that)) return false;
 		return stacks.equals(that.stacks);
-	}
-
-	@Override
-	public void writeToBuf(PacketByteBuf buf) {
-		NetworkCodec.INVENTORY.encode(buf, this.stacks);
-	}
-
-	@Override
-	public void readFromBuf(PacketByteBuf buf) {
-		NetworkCodec.INVENTORY.decode(buf).ifJust(itemStacks -> {
-			for (int i = 0; i < itemStacks.size(); i++) {
-				this.stacks.set(i, itemStacks.get(i));
-			}
-		});
 	}
 }

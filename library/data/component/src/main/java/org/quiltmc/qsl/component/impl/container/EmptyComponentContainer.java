@@ -27,7 +27,7 @@ public final class EmptyComponentContainer implements ComponentContainer {
 	public static final EmptyComponentContainer INSTANCE = new EmptyComponentContainer();
 
 	public static final ComponentContainer.Factory<EmptyComponentContainer> FACTORY =
-			(provider, injections, saveOperation, ticking, syncContext) -> INSTANCE;
+			(provider, injections, saveOperation, ticking, syncChannel) -> INSTANCE;
 
 	private EmptyComponentContainer() { }
 

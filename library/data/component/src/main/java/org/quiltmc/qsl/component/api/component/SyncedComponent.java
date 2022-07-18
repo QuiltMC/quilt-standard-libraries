@@ -23,7 +23,7 @@ import org.quiltmc.qsl.component.api.Component;
 public interface SyncedComponent extends Component {
 	void writeToBuf(PacketByteBuf buf);
 
-	void readFromBuf(PacketByteBuf buf); // Investigate what happens when the server doesn't send correct data?!
+	void readFromBuf(PacketByteBuf buf);
 
 	@Nullable Runnable getSyncOperation();
 

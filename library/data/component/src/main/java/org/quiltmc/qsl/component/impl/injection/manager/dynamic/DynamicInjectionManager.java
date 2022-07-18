@@ -31,12 +31,13 @@ public class DynamicInjectionManager extends InjectionManager<DynamicInjectionPr
 	@Override
 	public List<ComponentEntry<?>> getInjections(ComponentProvider provider) {
 		Class<? extends ComponentProvider> providerClass = provider.getClass();
+		// First check the cached side
 		return this.getCache(providerClass).or(() -> {
 					var injections = this.initInjections(providerClass);
 					this.record(providerClass, injections);
 					return Maybe.just(injections);
 				}).unwrap().stream()
-				.map(dynamicInjection -> dynamicInjection.test(provider) ? dynamicInjection.componentEntries() : null)
+				.map(dynamicInjection -> dynamicInjection.test(provider) ? dynamicInjection.componentEntries() : null) // After check the dynamic side
 				.filter(Objects::nonNull)
 				.flatMap(List::stream)
 				.collect(Collectors.toList());

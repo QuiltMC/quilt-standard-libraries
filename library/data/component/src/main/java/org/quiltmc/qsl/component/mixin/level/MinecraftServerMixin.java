@@ -24,8 +24,9 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin implements ComponentProvider {
+	@SuppressWarnings("ConstantConditions")
 	@Override
 	public ComponentContainer getComponentContainer() {
-		return ComponentProviderState.getGlobal(this).getComponentContainer();
+		return ComponentProviderState.getGlobal((MinecraftServer) (Object)this).getComponentContainer();
 	}
 }

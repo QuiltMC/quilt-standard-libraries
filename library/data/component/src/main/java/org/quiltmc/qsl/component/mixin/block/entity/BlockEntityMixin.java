@@ -24,8 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.container.LazyComponentContainer;
-import org.quiltmc.qsl.component.impl.sync.SyncPlayerList;
-import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
+import org.quiltmc.qsl.component.impl.sync.SyncChannel;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -50,15 +49,13 @@ public abstract class BlockEntityMixin implements ComponentProvider {
 		this.qsl$container.readNbt(nbt);
 	}
 
-	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onInit(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState, CallbackInfo ci) {
 		this.qsl$container = ComponentContainer.builder(this)
-				.unwrap()
 				.saving(this::markDirty)
 				.ticking()
-				.syncing(SyncPacketHeader.BLOCK_ENTITY, () -> SyncPlayerList.create((BlockEntity) (Object) this))
-				.build(LazyComponentContainer.FACTORY);
+				.syncing(SyncChannel.BLOCK_ENTITY)
+				.build(ComponentContainer.LAZY_FACTORY);
 	}
 
 	@Inject(method = "toNbt", at = @At("TAIL"))

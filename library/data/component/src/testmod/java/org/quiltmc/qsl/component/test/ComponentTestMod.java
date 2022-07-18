@@ -35,6 +35,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -47,7 +48,6 @@ import org.quiltmc.qsl.component.api.component.TickingComponent;
 import org.quiltmc.qsl.component.impl.component.DefaultFloatComponent;
 import org.quiltmc.qsl.component.impl.component.DefaultIntegerComponent;
 import org.quiltmc.qsl.component.impl.component.DefaultInventoryComponent;
-import org.quiltmc.qsl.component.impl.util.ComponentProviderState;
 import org.quiltmc.qsl.component.test.component.SaveFloatComponent;
 
 import java.util.UUID;
@@ -57,11 +57,11 @@ public class ComponentTestMod implements ModInitializer {
 
 	public static final ComponentType<InventoryComponent> COW_INVENTORY = Components.register(
 			new Identifier(MODID, "cow_inventory"),
-			(saveOp, syncOp) -> new DefaultInventoryComponent(saveOp, syncOp, () -> DefaultedList.ofSize(1, new ItemStack(Items.COBBLESTONE, 64)))
+			operations -> new DefaultInventoryComponent(operations, () -> DefaultedList.ofSize(1, new ItemStack(Items.COBBLESTONE, 64)))
 	);
 	public static final ComponentType<DefaultIntegerComponent> CREEPER_EXPLODE_TIME = Components.register(
 			new Identifier(MODID, "creeper_explode_time"),
-			(saveOp, syncOp) -> new DefaultIntegerComponent(saveOp, syncOp, 200)
+			operations -> new DefaultIntegerComponent(operations, 200)
 	);
 	public static final ComponentType<DefaultIntegerComponent> HOSTILE_EXPLODE_TIME = Components.register(
 			new Identifier(MODID, "hostile_explode_time"),
@@ -69,19 +69,19 @@ public class ComponentTestMod implements ModInitializer {
 	);
 	public static final ComponentType<DefaultIntegerComponent> CHEST_NUMBER = Components.register(
 			new Identifier(MODID, "chest_number"),
-			(saveOp, syncOp) -> new DefaultIntegerComponent(saveOp, syncOp, 200)
+			operations -> new DefaultIntegerComponent(operations, 200)
 	);
 	public static final ComponentType<DefaultInventoryComponent> CHUNK_INVENTORY = Components.register(
 			new Identifier(MODID, "chunk_inventory"),
-			(saveOp, syncOp) -> new DefaultInventoryComponent(saveOp, syncOp, 1)
+			operations -> new DefaultInventoryComponent(operations, 1)
 	);
-	public static final ComponentType<SaveFloatComponent> SAVE_FLOAT = Components.registerTicking(
+	public static final ComponentType<SaveFloatComponent> SAVE_FLOAT = Components.registerInstant(
 			new Identifier(MODID, "save_float"),
 			SaveFloatComponent::new
 	);
-	public static final ComponentType<TickingComponent> SERVER_TICK = Components.registerTicking(
+	public static final ComponentType<TickingComponent> SERVER_TICK = Components.registerInstant(
 			new Identifier(MODID, "level_tick"),
-			(saveOp, syncOP) -> provider -> {
+			(ops) -> provider -> {
 				if (provider instanceof MinecraftServer properties) {
 					properties.expose(SAVE_FLOAT).ifJust(floatComponent -> {
 						floatComponent.set(floatComponent.get() + 0.5f);
@@ -101,11 +101,11 @@ public class ComponentTestMod implements ModInitializer {
 	);
 	public static final ComponentType<GenericComponent<UUID>> UUID_THING = Components.register(
 			new Identifier(MODID, "uuid_thing"),
-			(saveOperation, syncOperation) -> new GenericComponent<>(saveOperation, Codecs.UUID)
+			(ops) -> new GenericComponent<>(ops, Codecs.UUID)
 	);
-	public static final ComponentType<TickingComponent> PLAYER_TICK = Components.registerTicking(
+	public static final ComponentType<TickingComponent> PLAYER_TICK = Components.registerInstant(
 			new Identifier(MODID, "player_tick"),
-			(saveOP, syncOp) -> provider -> {
+			(ops) -> provider -> {
 				if (provider instanceof ServerPlayerEntity player) {
 					ItemStack stackInHand = player.getStackInHand(Hand.MAIN_HAND);
 					if (stackInHand.isOf(Items.WHEAT)) {
@@ -159,10 +159,10 @@ public class ComponentTestMod implements ModInitializer {
 		Components.injectInheritanceExcept(HostileEntity.class, HOSTILE_EXPLODE_TIME, CreeperEntity.class);
 		Components.inject(ChestBlockEntity.class, CHEST_NUMBER);
 		Components.injectInheritage(Chunk.class, CHUNK_INVENTORY);
-		Components.inject(MinecraftServer.class, SERVER_TICK);
+//		Components.inject(MinecraftServer.class, SERVER_TICK);
 		Components.injectInheritage(ServerPlayerEntity.class, PLAYER_TICK);
 		Components.inject(ServerPlayerEntity.class, UUID_THING);
-		Components.inject(ComponentProviderState.class, SAVE_FLOAT);
+		Components.injectInheritage(World.class, SAVE_FLOAT);
 
 		// Dynamic Injection
 	}

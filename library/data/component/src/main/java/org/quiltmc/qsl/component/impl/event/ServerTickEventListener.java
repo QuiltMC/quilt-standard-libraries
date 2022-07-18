@@ -18,9 +18,7 @@ package org.quiltmc.qsl.component.impl.event;
 
 import net.minecraft.server.MinecraftServer;
 import org.quiltmc.qsl.base.api.event.ListenerPhase;
-import org.quiltmc.qsl.component.impl.util.ComponentProviderState;
 import org.quiltmc.qsl.lifecycle.api.event.ServerTickEvents;
-import org.quiltmc.qsl.lifecycle.api.event.ServerWorldTickEvents;
 
 @ListenerPhase(
 		callbackTarget = ServerTickEvents.End.class,
@@ -30,8 +28,5 @@ public class ServerTickEventListener implements ServerTickEvents.End {
 	@Override
 	public void endServerTick(MinecraftServer server) {
 		server.getComponentContainer().tick(server);
-		server.getWorlds().forEach(world -> {
-			// Add world ticking!
-		});
 	}
 }

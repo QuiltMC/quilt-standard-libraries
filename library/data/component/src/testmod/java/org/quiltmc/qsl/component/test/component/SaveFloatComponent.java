@@ -16,19 +16,42 @@
 
 package org.quiltmc.qsl.component.test.component;
 
+import net.minecraft.network.PacketByteBuf;
 import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.component.api.Component;
+import org.quiltmc.qsl.component.api.component.SyncedComponent;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.api.component.TickingComponent;
 import org.quiltmc.qsl.component.impl.component.DefaultFloatComponent;
+import org.quiltmc.qsl.component.impl.sync.codec.NetworkCodec;
 
-public class SaveFloatComponent extends DefaultFloatComponent implements TickingComponent {
-	public SaveFloatComponent(@Nullable Runnable saveOperation, @Nullable Runnable ignored) {
-		super(saveOperation);
+public class SaveFloatComponent extends DefaultFloatComponent implements TickingComponent, SyncedComponent {
+	private final Runnable syncOperation;
+
+	public SaveFloatComponent(Component.Operations ops) {
+		super(ops);
+		this.syncOperation = ops.syncOperation();
 	}
 
 	@Override
 	public void tick(ComponentProvider provider) {
-		this.set(this.get() + 0.5f);
+		this.set(this.get() + 50);
 		this.save();
+		this.sync();
+	}
+
+	@Override
+	public void writeToBuf(PacketByteBuf buf) {
+		NetworkCodec.FLOAT.encode(buf, this.get());
+	}
+
+	@Override
+	public void readFromBuf(PacketByteBuf buf) {
+		this.set(NetworkCodec.FLOAT.decode(buf).unwrapOr(0f));
+	}
+
+	@Override
+	public @Nullable Runnable getSyncOperation() {
+		return this.syncOperation;
 	}
 }

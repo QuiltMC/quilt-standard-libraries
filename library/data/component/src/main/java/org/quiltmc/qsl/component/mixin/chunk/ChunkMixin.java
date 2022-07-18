@@ -27,8 +27,7 @@ import net.minecraft.world.gen.chunk.BlendingData;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.container.LazyComponentContainer;
-import org.quiltmc.qsl.component.impl.sync.SyncPlayerList;
-import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
+import org.quiltmc.qsl.component.impl.sync.SyncChannel;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -51,13 +50,12 @@ public abstract class ChunkMixin implements ComponentProvider {
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onInit(ChunkPos chunkPos, UpgradeData upgradeData, HeightLimitView heightLimitView, Registry<?> registry, long l, ChunkSection[] chunkSections, BlendingData blendingData, CallbackInfo ci) {
 		LazyComponentContainer.Builder builder = ComponentContainer.builder(this)
-				.unwrap()
 				.saving(() -> this.setNeedsSaving(true));
 
-		if ((Chunk) (Object) this instanceof WorldChunk worldChunk) {
-			builder.syncing(SyncPacketHeader.CHUNK, () -> SyncPlayerList.create(worldChunk)).ticking();
+		if ((Chunk) (Object) this instanceof WorldChunk) {
+			builder.syncing(SyncChannel.CHUNK).ticking();
 		}
 
-		this.qsl$container = builder.build(LazyComponentContainer.FACTORY);
+		this.qsl$container = builder.build(ComponentContainer.LAZY_FACTORY);
 	}
 }

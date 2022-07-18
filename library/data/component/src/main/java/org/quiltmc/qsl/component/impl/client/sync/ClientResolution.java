@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.impl.client;
+package org.quiltmc.qsl.component.impl.client.sync;
 
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
@@ -38,7 +37,7 @@ public final class ClientResolution {
 		return MinecraftClient.getInstance().world.getChunk(pos.x, pos.z);
 	}
 
-	public static World getWorld(Identifier identifier) {
+	public static World getWorld() {
 		return MinecraftClient.getInstance().world;
 	}
 }

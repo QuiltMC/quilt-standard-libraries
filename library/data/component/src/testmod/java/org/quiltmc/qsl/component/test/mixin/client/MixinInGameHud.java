@@ -25,6 +25,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.math.ChunkPos;
 import org.quiltmc.qsl.component.impl.component.DefaultIntegerComponent;
 import org.quiltmc.qsl.component.test.ComponentTestMod;
+import org.quiltmc.qsl.component.test.component.SaveFloatComponent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -44,11 +45,17 @@ public abstract class MixinInGameHud {
 
 	@Inject(method = "render", at = @At("TAIL"))
 	private void renderCustom(MatrixStack matrices, float tickDelta, CallbackInfo ci) {
+		MinecraftClient.getInstance().world
+				       .expose(ComponentTestMod.SAVE_FLOAT)
+					   .map(SaveFloatComponent::get)
+					   .map(String::valueOf)
+					   .ifJust(saveFloat -> this.getTextRenderer().draw(matrices, saveFloat, 10, 20, 0xfafafa));
+
 		Entity entity = MinecraftClient.getInstance().targetedEntity;
 		if (entity != null) {
-			entity.expose(ComponentTestMod.HOSTILE_EXPLODE_TIME).map(DefaultIntegerComponent::get).ifJust(integer -> {
-				this.getTextRenderer().draw(matrices, integer.toString(), 10, 10, 0xfafafa);
-			});
+			entity.expose(ComponentTestMod.HOSTILE_EXPLODE_TIME)
+				  .map(DefaultIntegerComponent::get)
+				  .ifJust(integer -> this.getTextRenderer().draw(matrices, integer.toString(), 10, 10, 0xfafafa));
 		}
 		ChunkPos chunkPos = MinecraftClient.getInstance().player.getChunkPos();
 		MinecraftClient.getInstance().world.getChunk(chunkPos.x, chunkPos.z).expose(ComponentTestMod.CHUNK_INVENTORY)

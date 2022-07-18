@@ -29,7 +29,6 @@ import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
 import org.quiltmc.qsl.component.impl.injection.manager.cached.CachedInjectionManager;
 import org.quiltmc.qsl.component.impl.injection.manager.dynamic.DynamicInjectionManager;
-import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,10 +64,5 @@ public class ComponentsImpl {
 
 	public static <C extends Component> ComponentType<C> register(Identifier id, ComponentType<C> type) {
 		return Registry.register(REGISTRY, id, type);
-	}
-
-	public static void freezeRegistries() {
-		REGISTRY.freeze();
-		SyncPacketHeader.REGISTRY.freeze();
 	}
 }

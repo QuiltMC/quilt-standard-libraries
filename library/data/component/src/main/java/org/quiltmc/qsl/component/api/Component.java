@@ -16,9 +16,60 @@
 
 package org.quiltmc.qsl.component.api;
 
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
+
+/**
+ * Marks a type as a container for data and/or behaviour.
+ *
+ * @author 0xJoeMama
+ */
 public interface Component {
+	/**
+	 * Class meant to provide a component using the provided {@link Operations} argument.
+	 *
+	 * @param <T> The type of the returned {@link Component}.
+	 * @author 0xJoeMama
+	 */
 	@FunctionalInterface
 	interface Factory<T extends Component> {
-		T create(Runnable saveOperation, Runnable syncOperation);
+		/**
+		 * @param operations The {@link Operations} that the {@link Component} may use.
+		 * @return A {@link T} instance.
+		 */
+		T create(Component.Operations operations);
+	}
+
+	/**
+	 * A list of method a {@link Component} may call when needed to interact with outside factors.<br/>
+	 * The <i>outside factors</i> statement refers to things like the {@link org.quiltmc.qsl.component.api.container.ComponentContainer}
+	 * or the {@link org.quiltmc.qsl.component.api.provider.ComponentProvider} this {@link Component} belongs to.
+	 *
+	 * @author 0xJoeMama
+	 */
+	@SuppressWarnings("ClassCanBeRecord") // we want the class to be extendable to people can create their own Operations
+	class Operations {
+		private final @Nullable Runnable saveOperation;
+		private final @Nullable Runnable syncOperation;
+
+		/**
+		 * Both of these parameters may be <code>null</code>, depending on the container this {@link Component} belongs to.
+		 *
+		 * @param saveOperation The action performed to cause an {@link org.quiltmc.qsl.component.api.component.NbtComponent} to issue a save to its {@linkplain org.quiltmc.qsl.component.api.provider.ComponentProvider provider}.
+		 * @param syncOperation The action performed to cause a {@link org.quiltmc.qsl.component.api.component.SyncedComponent} to issue a sync to its {@linkplain org.quiltmc.qsl.component.api.container.ComponentContainer container}.
+		 */
+		public Operations(@Nullable Runnable saveOperation, @Nullable Runnable syncOperation) {
+			this.saveOperation = saveOperation;
+			this.syncOperation = syncOperation;
+		}
+
+		public @Nullable Runnable saveOperation() {
+			return this.saveOperation;
+		}
+
+		public @Nullable Runnable syncOperation() {
+			return this.syncOperation;
+		}
 	}
 }

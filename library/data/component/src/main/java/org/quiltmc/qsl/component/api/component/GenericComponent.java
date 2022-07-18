@@ -21,6 +21,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
 import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 
 public class GenericComponent<T> implements NbtComponent<NbtCompound> {
@@ -29,8 +30,8 @@ public class GenericComponent<T> implements NbtComponent<NbtCompound> {
 	private final Runnable saveOperation;
 	protected T value;
 
-	public GenericComponent(@Nullable Runnable saveOperation, Codec<T> codec) {
-		this.saveOperation = saveOperation;
+	public GenericComponent(Component.Operations ops, Codec<T> codec) {
+		this.saveOperation = ops.saveOperation();
 		this.codec = codec;
 	}
 
@@ -50,7 +51,7 @@ public class GenericComponent<T> implements NbtComponent<NbtCompound> {
 	@Override
 	public void read(NbtCompound nbt) {
 		this.codec.parse(NbtOps.INSTANCE, nbt.get("Value"))
-				.resultOrPartial(ComponentsImpl.LOGGER::error)
+				.result()
 				.ifPresent(this::setValue);
 	}
 
@@ -59,7 +60,7 @@ public class GenericComponent<T> implements NbtComponent<NbtCompound> {
 		var ret = new NbtCompound();
 		if (this.value != null) {
 			this.codec.encodeStart(NbtOps.INSTANCE, this.value)
-					.result()
+					.resultOrPartial(ComponentsImpl.LOGGER::error)
 					.ifPresent(nbtElement -> ret.put("Value", nbtElement));
 		}
 

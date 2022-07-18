@@ -25,5 +25,6 @@ import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 public class ComponentTestModClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient(ModContainer mod) {
+//		Components.inject(MinecraftClient.class, ComponentTestMod.SAVE_FLOAT);
 	}
 }

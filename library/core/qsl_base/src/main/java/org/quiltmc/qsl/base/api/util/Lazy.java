@@ -21,8 +21,6 @@ public sealed abstract class Lazy<T> implements Supplier<T> permits Lazy.Filled,
         return new OfSupplier<>(supplier);
     }
 
-
-
 	/**
 	 * Returns an {@link Filled} instance wrapping the provided {@link T} value.
 	 *
@@ -38,8 +36,8 @@ public sealed abstract class Lazy<T> implements Supplier<T> permits Lazy.Filled,
 	 * Creates a new {@link Lazy} containing the current value mapped using the provided {@link Function}.<br/>
 	 * <i><b>This does not initialize the contained value!</b></i>
 	 *
-	 * @param mapper
-	 * @return
+	 * @param mapper The function to apply to the contained value.
+	 * @return A new {@link Lazy} instance, that may or may not be initialized that contains the mapped value.
 	 * @param <U> The new contained type.
 	 */
     public abstract <U> Lazy<U> map(Function<T, ? extends U> mapper);

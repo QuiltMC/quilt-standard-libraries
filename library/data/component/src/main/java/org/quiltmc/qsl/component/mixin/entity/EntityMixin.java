@@ -23,8 +23,7 @@ import net.minecraft.world.World;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.container.LazyComponentContainer;
-import org.quiltmc.qsl.component.impl.sync.SyncPlayerList;
-import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
+import org.quiltmc.qsl.component.impl.sync.SyncChannel;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -40,14 +39,12 @@ public abstract class EntityMixin implements ComponentProvider {
 		return this.qsl$container;
 	}
 
-	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onEntityInit(EntityType<?> entityType, World world, CallbackInfo ci) {
 		this.qsl$container = ComponentContainer.builder(this)
-				.unwrap()
 				.ticking()
-				.syncing(SyncPacketHeader.ENTITY, () -> SyncPlayerList.create((Entity) (Object) this))
-				.build(LazyComponentContainer.FACTORY);
+				.syncing(SyncChannel.ENTITY)
+				.build(ComponentContainer.LAZY_FACTORY);
 	}
 
 	@Inject(method = "writeNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;writeCustomDataToNbt(Lnet/minecraft/nbt/NbtCompound;)V"))

@@ -17,28 +17,40 @@
 package org.quiltmc.qsl.component.api.container;
 
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.base.api.util.Lazy;
 import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
-import org.quiltmc.qsl.component.impl.container.EmptyComponentContainer;
+import org.quiltmc.qsl.component.impl.container.*;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
-import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
-import org.quiltmc.qsl.component.impl.sync.packet.SyncPacket;
+import org.quiltmc.qsl.component.impl.sync.SyncChannel;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.function.Supplier;
 
 public interface ComponentContainer {
 	ComponentContainer EMPTY = EmptyComponentContainer.INSTANCE;
+	ComponentContainer.Factory<EmptyComponentContainer> EMPTY_FACTORY = EmptyComponentContainer.FACTORY;
+	ComponentContainer.Factory<SimpleComponentContainer> SIMPLE_FACTORY = SimpleComponentContainer.FACTORY;
+	ComponentContainer.Factory<LazyComponentContainer> LAZY_FACTORY = LazyComponentContainer.FACTORY;
+	ComponentContainer.Factory<OnAccessComponentContainer> ON_ACCESS_FACTORY = OnAccessComponentContainer.FACTORY;
 
-	static Maybe<Builder> builder(Object obj) {
-		return obj instanceof ComponentProvider provider ? Maybe.just(new Builder(provider)) : Maybe.nothing();
+	static <C extends Component> ComponentContainer.Factory<SingleComponentContainer<C>> createSingleFactory(ComponentType<C> type) {
+		return SingleComponentContainer.createFactory(new ComponentEntry<>(type));
+	}
+
+	static <C extends Component> ComponentContainer.Factory<SingleComponentContainer<C>> createSingleFactory(ComponentEntry<C> entry) {
+		return SingleComponentContainer.createFactory(entry);
+	}
+
+	static Builder builder(Object obj) {
+		if (!(obj instanceof ComponentProvider provider)) {
+			throw new UnsupportedOperationException("Cannot create a container for a non-provider object");
+		}
+
+		return new Builder(provider);
 	}
 
 	Maybe<Component> expose(ComponentType<?> type);
@@ -57,7 +69,7 @@ public interface ComponentContainer {
 				   Lazy<List<ComponentEntry<?>>> injections,
 				   @Nullable Runnable saveOperation,
 				   boolean ticking,
-				   SyncPacket.SyncContext syncContext);
+				   @Nullable SyncChannel<?> syncChannel);
 	}
 
 	class Builder {
@@ -67,13 +79,13 @@ public interface ComponentContainer {
 		@Nullable
 		private Runnable saveOperation;
 		@Nullable
-		private SyncPacket.SyncContext syncContext;
+		private SyncChannel<?> syncChannel;
 
 		private Builder(ComponentProvider provider) {
 			this.provider = provider;
 			this.injections = Lazy.of(ArrayList::new);
 			this.saveOperation = null;
-			this.syncContext = null;
+			this.syncChannel = null;
 		}
 
 		public Builder saving(Runnable saveOperation) {
@@ -86,8 +98,8 @@ public interface ComponentContainer {
 			return this;
 		}
 
-		public Builder syncing(SyncPacketHeader<?> header, Supplier<Collection<ServerPlayerEntity>> playerGenerator) {
-			this.syncContext = new SyncPacket.SyncContext(header, playerGenerator);
+		public Builder syncing(SyncChannel<?> syncChannel) {
+			this.syncChannel = syncChannel;
 			return this;
 		}
 
@@ -115,7 +127,7 @@ public interface ComponentContainer {
 		}
 
 		public <T extends ComponentContainer> T build(ComponentContainer.Factory<T> factory) {
-			return factory.generate(this.provider, this.injections, this.saveOperation, this.ticking, this.syncContext);
+			return factory.generate(this.provider, this.injections, this.saveOperation, this.ticking, this.syncChannel);
 		}
 	}
 }

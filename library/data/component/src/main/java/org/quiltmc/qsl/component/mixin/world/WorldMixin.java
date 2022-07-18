@@ -8,8 +8,9 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(World.class)
 public class WorldMixin implements ComponentProvider {
+	@SuppressWarnings("ConstantConditions")
 	@Override
 	public ComponentContainer getComponentContainer() {
-		return ComponentProviderState.get(this).getComponentContainer();
+		return ComponentProviderState.get((World)(Object)this).getComponentContainer();
 	}
 }

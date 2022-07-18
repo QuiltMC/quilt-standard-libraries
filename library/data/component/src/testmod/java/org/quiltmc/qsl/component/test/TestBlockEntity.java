@@ -27,14 +27,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.base.api.util.Maybe;
-import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
-import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.component.InventoryComponent;
+import org.quiltmc.qsl.component.impl.container.CompositeComponentContainer;
 import org.quiltmc.qsl.component.impl.container.SimpleComponentContainer;
-import org.quiltmc.qsl.component.impl.sync.SyncPlayerList;
-import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
+import org.quiltmc.qsl.component.impl.sync.SyncChannel;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -43,11 +40,12 @@ import java.util.Set;
 
 public class TestBlockEntity extends BlockEntity {
 	private final ComponentContainer container = ComponentContainer.builder(this)
-			.unwrap()
 			.saving(this::markDirty)
+			.ticking()
 			.add(ComponentTestMod.TEST_BE_INT, ComponentTestMod.CHUNK_INVENTORY)
-			.syncing(SyncPacketHeader.BLOCK_ENTITY, () -> SyncPlayerList.create(this))
+			.syncing(SyncChannel.BLOCK_ENTITY)
 			.build(SimpleComponentContainer.FACTORY);
+	private final ComponentContainer composite = new CompositeComponentContainer(this.container, super.getComponentContainer());
 
 	public TestBlockEntity(BlockPos blockPos, BlockState blockState) {
 		super(ComponentTestMod.TEST_BE_TYPE, blockPos, blockState);
@@ -87,18 +85,7 @@ public class TestBlockEntity extends BlockEntity {
 
 	@Override
 	public ComponentContainer getComponentContainer() {
-		return this.container;
-	}
-
-	@Override
-	public <C extends Component> Maybe<C> expose(ComponentType<C> id) {
-		return super.expose(id).or(() -> this.container.expose(id).filterMap(id::cast));
-	}
-
-	@Override
-	public void readNbt(NbtCompound nbt) {
-		super.readNbt(nbt);
-		this.container.readNbt(nbt);
+		return this.composite;
 	}
 
 	@Nullable
@@ -110,11 +97,5 @@ public class TestBlockEntity extends BlockEntity {
 	@Override
 	public NbtCompound toInitialChunkDataNbt() {
 		return this.toNbt();
-	}
-
-	@Override
-	protected void writeNbt(NbtCompound nbt) {
-		super.writeNbt(nbt);
-		this.container.writeNbt(nbt);
 	}
 }

@@ -21,12 +21,10 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.explosion.Explosion;
@@ -48,27 +46,12 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 			return;
 		}
 		Chunk chunk = world.getChunk(player.getBlockPos());
-		ItemStack stackInHand = player.getStackInHand(Hand.MAIN_HAND);
 
 		cowTick(world);
 		creeperTick(world);
 		hostileTick(world);
 		currentChunkBETick(world, chunk);
 		currentChunkTick(player, chunk);
-		stackInHandTick(player, stackInHand);
-	}
-
-	private void stackInHandTick(ServerPlayerEntity player, ItemStack stackInHand) {
-		if (!stackInHand.isEmpty() && stackInHand.isOf(Items.BOOKSHELF)) {
-			stackInHand.expose(ComponentTestMod.ITEMSTACK_INT).ifJust(integerComponent -> {
-				integerComponent.increment();
-				integerComponent.save();
-
-				if (integerComponent.get() >= 200) {
-					player.setStackInHand(Hand.MAIN_HAND, new ItemStack(Items.BOOK, 12));
-				}
-			});
-		}
 	}
 
 	private void currentChunkTick(ServerPlayerEntity player, Chunk chunk) {
@@ -87,10 +70,10 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 					if (ItemStack.canCombine(stack, playerStack)) {
 						stack.increment(1);
 						playerStack.decrement(1);
-						stack.expose(ComponentTestMod.ITEMSTACK_INT).ifJust(defaultIntegerComponent -> {
-							defaultIntegerComponent.increment();
-							defaultIntegerComponent.save();
-						});
+//						stack.expose(ComponentTestMod.ITEMSTACK_INT).ifJust(defaultIntegerComponent -> {
+//							defaultIntegerComponent.increment();
+//							defaultIntegerComponent.save();
+//						});
 						inventory.save();
 						inventory.sync();
 					}
@@ -120,7 +103,7 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 					if (explodeTime.get() <= 200) {
 						explodeTime.increment();
 						explodeTime.save();
-//						explodeTime.sync(); Causes mucho lag!!
+						explodeTime.sync(); // Causes mucho lag!!
 					} else {
 						hostile.getWorld().createExplosion(
 								null,

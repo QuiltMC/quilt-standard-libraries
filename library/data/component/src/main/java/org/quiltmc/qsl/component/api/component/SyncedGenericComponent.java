@@ -17,31 +17,30 @@
 package org.quiltmc.qsl.component.api.component;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
 import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.impl.sync.codec.NetworkCodec;
 
-public class SyncedGenericComponent<T, E extends NbtElement> extends GenericComponent<T> implements SyncedComponent {
+public class SyncedGenericComponent<T> extends GenericComponent<T> implements SyncedComponent {
 	private final NetworkCodec<T> networkCodec;
 	@Nullable
 	private final Runnable syncOperation;
 
-	protected SyncedGenericComponent(
-			@Nullable Runnable saveOperation, @Nullable Runnable syncOperation, Codec<T> codec, NetworkCodec<T> networkCodec) {
-		super(saveOperation, codec);
-		this.syncOperation = syncOperation;
+	protected SyncedGenericComponent(Component.Operations ops, Codec<T> codec, NetworkCodec<T> networkCodec) {
+		super(ops, codec);
+		this.syncOperation = ops.syncOperation();
 		this.networkCodec = networkCodec;
 	}
 
 	@Override
 	public void writeToBuf(PacketByteBuf buf) {
-		this.networkCodec.encode(buf, this.value);
+		this.networkCodec.encode(buf, this.getValue());
 	}
 
 	@Override
 	public void readFromBuf(PacketByteBuf buf) {
-		this.networkCodec.decode(buf).ifJust(t -> this.value = t);
+		this.networkCodec.decode(buf).ifJust(this::setValue);
 	}
 
 	@Override

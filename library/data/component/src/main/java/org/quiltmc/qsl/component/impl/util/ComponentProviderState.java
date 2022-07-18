@@ -19,14 +19,18 @@ package org.quiltmc.qsl.component.impl.util;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.World;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.container.LazyComponentContainer;
-import org.quiltmc.qsl.component.impl.sync.SyncPlayerList;
-import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
+import org.quiltmc.qsl.component.impl.sync.SyncChannel;
 
+import java.util.HashMap;
+import java.util.Map;
+
+// TODO: Fix this
 public class ComponentProviderState extends PersistentState implements ComponentProvider {
 	public static final String ID = "components";
 	public static final String GLOBAL_ID = "save_components";
@@ -34,32 +38,23 @@ public class ComponentProviderState extends PersistentState implements Component
 	private final ComponentContainer container;
 
 	public ComponentProviderState(ServerWorld world, boolean level) {
-		this.container = this.initLevelContainer(world);
+		this.container = level ? this.initLevelContainer(world.getServer()) : this.initWorldContainer(world);
 	}
 
 	public ComponentProviderState(NbtCompound rootQslNbt, ServerWorld world) {
-		this.container = this.initLevelContainer(world);
+		this.container = this.initWorldContainer(world);
 		this.container.readNbt(rootQslNbt);
 	}
 
-	public static ComponentProviderState get(Object obj) {
-		// TODO: Client world treatment!
-		if (!(obj instanceof ServerWorld world)) {
-			throw ErrorUtil.illegalArgument("A ServerWorld instance needs to be provided to initialize a container!").get();
-		}
-
-		return world.getPersistentStateManager().getOrCreate(
-				nbtCompound -> new ComponentProviderState(nbtCompound, world),
-				() -> new ComponentProviderState(world, false),
+	public static ComponentProvider get(World world) {
+		return !world.isClient ? ((ServerWorld) world).getPersistentStateManager().getOrCreate(
+				nbtCompound -> new ComponentProviderState(nbtCompound, (ServerWorld) world),
+				() -> new ComponentProviderState((ServerWorld) world, false),
 				ID
-		);
+		) : ClientComponentProviderState.getOrCreate(world);
 	}
 
-	public static ComponentProviderState getGlobal(Object obj) {
-		if (!(obj instanceof MinecraftServer server)) {
-			throw ErrorUtil.illegalArgument("A MinecraftServer instance needs to be provided to initialize a container!").get();
-		}
-
+	public static ComponentProvider getGlobal(MinecraftServer server) {
 		ServerWorld overworld = server.getOverworld();
 		return overworld.getPersistentStateManager().getOrCreate(
 				nbtCompound -> new ComponentProviderState(nbtCompound, overworld),
@@ -79,21 +74,40 @@ public class ComponentProviderState extends PersistentState implements Component
 		return this.container;
 	}
 
-	private LazyComponentContainer initLevelContainer(ServerWorld world) {
-		return ComponentContainer.builder(this)
-				.unwrap()
+	private LazyComponentContainer initLevelContainer(MinecraftServer server) {
+		return ComponentContainer.builder(server)
 				.saving(this::markDirty)
-				.syncing(SyncPacketHeader.LEVEL, world::getPlayers)
+				.syncing(SyncChannel.LEVEL)
 				.ticking()
-				.build(LazyComponentContainer.FACTORY);
+				.build(ComponentContainer.LAZY_FACTORY);
 	}
 
-	private LazyComponentContainer initWorldContainer(World world) {
-		return ComponentContainer.builder(this)
-				.unwrap()
+	private LazyComponentContainer initWorldContainer(ServerWorld world) {
+		return ComponentContainer.builder(world)
 				.saving(this::markDirty)
-				.syncing(SyncPacketHeader.LEVEL, () -> SyncPlayerList.create(world))
+				.syncing(SyncChannel.WORLD)
 				.ticking()
-				.build(LazyComponentContainer.FACTORY);
+				.build(ComponentContainer.LAZY_FACTORY);
+	}
+
+	public static class ClientComponentProviderState implements ComponentProvider {
+		private static final Map<RegistryKey<World>, ComponentProvider> cachedValue = new HashMap<>();
+		private final ComponentContainer container;
+
+		private static ComponentProvider getOrCreate(World world) {
+			return cachedValue.computeIfAbsent(
+					world.getRegistryKey(),
+					worldRegistryKey -> new ClientComponentProviderState(world)
+			);
+		}
+
+		private ClientComponentProviderState(World world) {
+			this.container = ComponentContainer.builder(world).build(ComponentContainer.LAZY_FACTORY);
+		}
+
+		@Override
+		public ComponentContainer getComponentContainer() {
+			return this.container;
+		}
 	}
 }

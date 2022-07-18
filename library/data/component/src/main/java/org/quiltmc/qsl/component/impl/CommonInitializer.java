@@ -21,7 +21,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.component.impl.sync.ServerSyncHandler;
-import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
 import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 import org.quiltmc.qsl.networking.api.ServerLoginConnectionEvents;
 
@@ -35,13 +34,12 @@ public final class CommonInitializer implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		SyncPacketHeader.registerDefaults();
 		ServerSyncHandler.getInstance().registerPackets();
 		ServerLoginConnectionEvents.QUERY_START.register(id("component_sync"), ServerSyncHandler.getInstance());
 
 		ServerLifecycleEvents.STARTING.register(
 				id("freeze_component_registries"),
-				server -> ComponentsImpl.freezeRegistries()
+				server -> ComponentsImpl.REGISTRY.freeze()
 		);
 	}
 }

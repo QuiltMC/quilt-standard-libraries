@@ -20,6 +20,7 @@ public class DynamicWrappedPredicate<P extends ComponentProvider> implements Dyn
 		return this.wrapped.isClassValid(clazz);
 	}
 
+	@SuppressWarnings("unchecked") // Whoever hands us the provider should make sure it's valid!
 	@Override
 	public boolean canInject(ComponentProvider provider) {
 		return this.predicate.test((P) provider);

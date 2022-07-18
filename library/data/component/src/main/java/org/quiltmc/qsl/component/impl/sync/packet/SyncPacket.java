@@ -16,56 +16,28 @@
 
 package org.quiltmc.qsl.component.impl.sync.packet;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.network.ServerPlayerEntity;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.component.SyncedComponent;
-import org.quiltmc.qsl.component.impl.sync.header.SyncPacketHeader;
-import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
+import org.quiltmc.qsl.component.impl.sync.SyncChannel;
 
-import java.util.Collection;
 import java.util.Queue;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
+/**
+ * <pre>
+ *         PROVIDER_DATA  SIZE [TYPE DATA]
+ *             var		  32bit	   var
+ * </pre>
+ */
 public class SyncPacket {
-	/**
-	 * <pre>
- *     		Handled by SyncPacketHeader		The data we add
-	 *        HEADER_ID PROVIDER_DATA       SIZE [TYPE DATA]
-	 *        	32bit		var				32bit	 var
-	 * </pre>
-	 */
-	public static void handle(PacketByteBuf buf, MinecraftClient client) {
-		buf.retain(); // We need the buffer to exist until the client next pulls tasks on the main thread!
-
-		client.execute(() -> {
-			SyncPacketHeader.fromBuffer(buf).ifJust(provider -> {
-				var size = buf.readInt();
-
-				for (int i = 0; i < size; i++) {
-					ComponentType.NETWORK_CODEC.decode(buf)
-							.filterMap(provider::expose)
-							.map(it -> ((SyncedComponent) it))
-							.ifJust(synced -> synced.readFromBuf(buf));
-				}
-			});
-
-			buf.release(); // Make sure the buffer is cleared!
-		});
-	}
-
-	public static void send(SyncContext context, PacketByteBuf packet) {
-		context.playerGenerator().get().forEach(serverPlayer ->
-				ServerPlayNetworking.send(serverPlayer, PacketIds.SYNC, packet)
-		);
-	}
-
-	public static void syncFromQueue(
+	public static <P extends ComponentProvider> void createFromQueue(
 			Queue<ComponentType<?>> pendingSync,
-			SyncPacket.SyncContext context,
+			SyncChannel<P> channel,
 			Function<ComponentType<?>, SyncedComponent> mapper,
 			ComponentProvider provider
 	) {
@@ -73,18 +45,32 @@ public class SyncPacket {
 			return;
 		}
 
-		PacketByteBuf buf = context.header().toBuffer(provider);
-		buf.writeInt(pendingSync.size());
+		channel.send(provider, buf -> {
+			buf.writeInt(pendingSync.size()); // append size
 
-		while (!pendingSync.isEmpty()) {
-			var currentType = pendingSync.poll();
-			ComponentType.NETWORK_CODEC.encode(buf, currentType);
-			mapper.apply(currentType).writeToBuf(buf);
-		}
-
-		SyncPacket.send(context, buf);
+			while (!pendingSync.isEmpty()) {
+				var currentType = pendingSync.poll();
+				ComponentType.NETWORK_CODEC.encode(buf, currentType); // append type rawId
+				mapper.apply(currentType).writeToBuf(buf); // append component data
+			}
+		});
 	}
 
-	public record SyncContext(SyncPacketHeader<?> header, Supplier<Collection<ServerPlayerEntity>> playerGenerator) {
+	@Environment(EnvType.CLIENT)
+	public static void handle(MinecraftClient client, ComponentProvider provider, PacketByteBuf buf) {
+		buf.retain(); // hold the buffer in memory
+
+		client.execute(() -> {
+			int size = buf.readInt(); // consume size
+
+			for (int i = 0; i < size; i++) {
+				ComponentType.NETWORK_CODEC.decode(buf) // consume type rawId
+						.filterMap(provider::expose)
+						.map(it -> ((SyncedComponent) it))
+						.ifJust(syncedComponent -> syncedComponent.readFromBuf(buf)); // consume data
+			}
+
+			buf.release(); // make sure the buffer is freed now that we don't need it
+		});
 	}
 }
