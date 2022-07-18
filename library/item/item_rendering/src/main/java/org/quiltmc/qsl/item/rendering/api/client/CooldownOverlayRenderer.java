@@ -19,22 +19,17 @@ package org.quiltmc.qsl.item.rendering.api.client;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 
-@Environment(EnvType.CLIENT)
-public final class VanillaItemBarProvider extends SolidColorItemBarProvider {
-	@Override
-	public boolean isItemBarVisible(ItemStack stack) {
-		return stack.isItemBarVisible();
-	}
+import org.quiltmc.qsl.item.rendering.impl.client.VanillaCooldownOverlayRenderer;
 
-	@Override
-	protected int getItemBarStep(ItemStack stack) {
-		return stack.getItemBarStep();
-	}
+@FunctionalInterface
+public interface CooldownOverlayRenderer extends GuiRendererHelper {
+	@Environment(EnvType.CLIENT)
+	CooldownOverlayRenderer VANILLA = VanillaCooldownOverlayRenderer.INSTANCE;
 
-	@Override
-	protected int getItemBarForeground(ItemStack stack) {
-		return 0xFF000000 | stack.getItemBarColor();
-	}
+	@Environment(EnvType.CLIENT)
+	void renderCooldownOverlay(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack);
 }

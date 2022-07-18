@@ -16,8 +16,8 @@
 
 package org.quiltmc.qsl.item.rendering.mixin.client;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.Tessellator;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -25,8 +25,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
@@ -53,35 +51,16 @@ public abstract class ItemRendererMixin {
 
 		var matrices = quilt$matrices.get();
 		matrices.push();
+		matrices.translate(x, y, 0);
 
-		var countLabelProvider = item.getCountLabelProvider();
-		if (countLabelProvider.isCountLabelVisible(stack, countLabel)) {
-			var text = countLabelProvider.getCountLabelText(stack, countLabel).asOrderedText();
+		item.preRenderOverlay(matrices, renderer, this.zOffset, stack);
 
-			matrices.push();
-			matrices.translate(x + 19 - 2 - renderer.getWidth(text), y + 6 + 3, zOffset + 200);
-			// TODO figure out if we can NOT render immediately here
-			var immediate = VertexConsumerProvider.immediate(Tessellator.getInstance().getBufferBuilder());
-			renderer.draw(
-					text,
-					0,
-					0,
-					0xFFFFFF,
-					true,
-					matrices.peek().getPosition(),
-					immediate,
-					false,
-					0x000000,
-					0xF000F0
-			);
-			immediate.draw();
-			matrices.pop();
-		}
+		item.getCountLabelRenderer().renderCountLabel(matrices, renderer, this.zOffset, stack, countLabel);
 
-		var itemBarProviders = item.getItemBarProviders();
+		var itemBarRenderers = item.getItemBarRenderers();
 		int itemBarY = y + 13;
 		boolean anyItemBarsVisible = false;
-		for (var provider : itemBarProviders) {
+		for (var provider : itemBarRenderers) {
 			if (provider.isItemBarVisible(stack)) {
 				itemBarY -= 2;
 				anyItemBarsVisible = true;
@@ -92,52 +71,21 @@ public abstract class ItemRendererMixin {
 			// TODO figure out if we can NOT render immediately here
 			Tessellator tessellator = Tessellator.getInstance();
 			BufferBuilder buffer = tessellator.getBufferBuilder();
-			for (var provider : itemBarProviders) {
+			for (var provider : itemBarRenderers) {
 				if (provider.isItemBarVisible(stack)) {
 					matrices.push();
 					matrices.translate(x, itemBarY, 0);
-					provider.renderItemBar(matrices, buffer, stack);
+					provider.renderItemBar(matrices, renderer, this.zOffset, stack);
 					itemBarY += 2;
 					matrices.pop();
 				}
 			}
 		}
 
-		var cooldownProvider = item.getCooldownOverlayProvider();
-		if (cooldownProvider.isCooldownOverlayVisible(stack)) {
-			int step = cooldownProvider.getCooldownOverlayStep(stack);
-			int color = cooldownProvider.getCooldownOverlayColor(stack);
+		item.getCooldownOverlayRenderer().renderCooldownOverlay(matrices, renderer, this.zOffset, stack);
 
-			RenderSystem.disableDepthTest();
-			RenderSystem.disableTexture();
-			RenderSystem.enableBlend();
-			RenderSystem.defaultBlendFunc();
-			Tessellator tessellator = Tessellator.getInstance();
-			BufferBuilder buffer = tessellator.getBufferBuilder();
-			this.renderGuiQuad(matrices, buffer, x, y + (16 - step), 16, step, color);
-			RenderSystem.enableTexture();
-			RenderSystem.enableDepthTest();
-		}
+		item.postRenderOverlay(matrices, renderer, this.zOffset, stack);
 
 		matrices.pop();
-	}
-
-	// TODO figure out if we can NOT render immediately here
-	@Unique
-	private void renderGuiQuad(MatrixStack matrices,
-							   BufferBuilder buffer, int x, int y, int width, int height, int color) {
-		var mat = matrices.peek().getPosition();
-		int r = (color >> 16) & 0xFF;
-		int g = (color >> 8) & 0xFF;
-		int b = color & 0xFF;
-		int a = (color >> 24) & 0xFF;
-
-		RenderSystem.setShader(GameRenderer::getPositionColorShader);
-		buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-		buffer.vertex(mat, x, y, 0.0f).color(r, g, b, a).next();
-		buffer.vertex(mat, x, y + height, 0.0f).color(r, g, b, a).next();
-		buffer.vertex(mat, x + width, y + height, 0.0f).color(r, g, b, a).next();
-		buffer.vertex(mat, x + width, y, 0.0f).color(r, g, b, a).next();
-		BufferRenderer.drawWithShader(buffer.end());
 	}
 }

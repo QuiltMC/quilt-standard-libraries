@@ -18,46 +18,28 @@ package org.quiltmc.qsl.item.rendering.api.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferRenderer;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormats;
+import com.mojang.blaze3d.vertex.Tessellator;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 
 @Environment(EnvType.CLIENT)
-public abstract class SolidColorItemBarProvider implements ItemBarProvider {
+public abstract class SolidColorItemBarRenderer implements ItemBarRenderer {
 	@Override
-	public void renderItemBar(MatrixStack matrices, BufferBuilder buffer, ItemStack stack) {
+	public void renderItemBar(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack) {
 		RenderSystem.disableDepthTest();
 		RenderSystem.disableTexture();
 		RenderSystem.disableBlend();
+		Tessellator tessellator = Tessellator.getInstance();
+		BufferBuilder buffer = tessellator.getBufferBuilder();
 		this.renderGuiQuad(matrices, buffer, 2, 0, 13, 2, getItemBarBackground(stack));
 		this.renderGuiQuad(matrices, buffer, 2, 0, getItemBarStep(stack), 1, getItemBarForeground(stack));
 		RenderSystem.enableBlend();
 		RenderSystem.enableTexture();
 		RenderSystem.enableDepthTest();
-	}
-
-	// TODO figure out if we can NOT render immediately here
-	protected void renderGuiQuad(MatrixStack matrices,
-								 BufferBuilder buffer, int x, int y, int width, int height, int color) {
-		var mat = matrices.peek().getPosition();
-		int r = (color >> 16) & 0xFF;
-		int g = (color >> 8) & 0xFF;
-		int b = color & 0xFF;
-		int a = (color >> 24) & 0xFF;
-
-		RenderSystem.setShader(GameRenderer::getPositionColorShader);
-		buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-		buffer.vertex(mat, x, y, 0.0f).color(r, g, b, a).next();
-		buffer.vertex(mat, x, y + height, 0.0f).color(r, g, b, a).next();
-		buffer.vertex(mat, x + width, y + height, 0.0f).color(r, g, b, a).next();
-		buffer.vertex(mat, x + width, y, 0.0f).color(r, g, b, a).next();
-		BufferRenderer.drawWithShader(buffer.end());
 	}
 
 	protected int getItemBarBackground(ItemStack stack) {

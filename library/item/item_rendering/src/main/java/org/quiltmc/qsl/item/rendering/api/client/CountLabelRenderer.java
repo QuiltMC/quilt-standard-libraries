@@ -20,15 +20,18 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
 
-import org.quiltmc.qsl.item.rendering.impl.client.VanillaCountLabelProvider;
+import org.quiltmc.qsl.item.rendering.impl.client.VanillaCountLabelRenderer;
 
-@Environment(EnvType.CLIENT)
-public interface CountLabelProvider {
-	CountLabelProvider VANILLA = VanillaCountLabelProvider.INSTANCE;
+@FunctionalInterface
+public interface CountLabelRenderer extends GuiRendererHelper {
+	@Environment(EnvType.CLIENT)
+	CountLabelRenderer VANILLA = VanillaCountLabelRenderer.INSTANCE;
 
-	boolean isCountLabelVisible(ItemStack stack, @Nullable String override);
-	Text getCountLabelText(ItemStack stack, @Nullable String override);
+	@Environment(EnvType.CLIENT)
+	void renderCountLabel(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack,
+						  @Nullable String override);
 }

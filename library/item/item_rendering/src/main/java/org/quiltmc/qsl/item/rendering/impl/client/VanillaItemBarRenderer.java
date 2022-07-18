@@ -19,27 +19,31 @@ package org.quiltmc.qsl.item.rendering.impl.client;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
 
-import org.quiltmc.qsl.item.rendering.api.client.CountLabelProvider;
+import org.quiltmc.qsl.item.rendering.api.client.ItemBarRenderer;
+import org.quiltmc.qsl.item.rendering.api.client.SolidColorItemBarRenderer;
 
 @ApiStatus.Internal
 @Environment(EnvType.CLIENT)
-public final class VanillaCountLabelProvider implements CountLabelProvider {
-	public static final CountLabelProvider INSTANCE = new VanillaCountLabelProvider();
+public final class VanillaItemBarRenderer extends SolidColorItemBarRenderer {
+	public static final ItemBarRenderer INSTANCE = new VanillaItemBarRenderer();
 
-	private VanillaCountLabelProvider() { }
+	private VanillaItemBarRenderer() { }
 
 	@Override
-	public boolean isCountLabelVisible(ItemStack stack, @Nullable String override) {
-		return override != null || stack.getCount() > 0;
+	public boolean isItemBarVisible(ItemStack stack) {
+		return stack.isItemBarVisible();
 	}
 
 	@Override
-	public Text getCountLabelText(ItemStack stack, @Nullable String override) {
-		return override == null ? Text.of(Integer.toString(stack.getCount())) : Text.of(override);
+	protected int getItemBarStep(ItemStack stack) {
+		return stack.getItemBarStep();
+	}
+
+	@Override
+	protected int getItemBarForeground(ItemStack stack) {
+		return 0xFF000000 | stack.getItemBarColor();
 	}
 }

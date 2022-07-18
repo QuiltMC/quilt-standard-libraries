@@ -23,14 +23,15 @@ import org.jetbrains.annotations.ApiStatus;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 
-import org.quiltmc.qsl.item.rendering.api.client.CooldownOverlayProvider;
+import org.quiltmc.qsl.item.rendering.api.client.CooldownOverlayRenderer;
+import org.quiltmc.qsl.item.rendering.api.client.SolidColorCooldownOverlayRenderer;
 
 @ApiStatus.Internal
 @Environment(EnvType.CLIENT)
-public final class VanillaCooldownOverlayProvider implements CooldownOverlayProvider {
-	public static final CooldownOverlayProvider INSTANCE = new VanillaCooldownOverlayProvider();
+public final class VanillaCooldownOverlayRenderer extends SolidColorCooldownOverlayRenderer {
+	public static final CooldownOverlayRenderer INSTANCE = new VanillaCooldownOverlayRenderer();
 
-	private VanillaCooldownOverlayProvider() { }
+	private VanillaCooldownOverlayRenderer() { }
 
 	private final MinecraftClient client = MinecraftClient.getInstance();
 
@@ -43,17 +44,17 @@ public final class VanillaCooldownOverlayProvider implements CooldownOverlayProv
 	}
 
 	@Override
-	public boolean isCooldownOverlayVisible(ItemStack stack) {
+	protected boolean isCooldownOverlayVisible(ItemStack stack) {
 		return getCooldown(stack) > 0;
 	}
 
 	@Override
-	public int getCooldownOverlayStep(ItemStack stack) {
+	protected int getCooldownOverlayStep(ItemStack stack) {
 		return (int) (getCooldown(stack) * 16);
 	}
 
 	@Override
-	public int getCooldownOverlayColor(ItemStack stack) {
+	protected int getCooldownOverlayColor(ItemStack stack) {
 		return 0x7FFFFFFF;
 	}
 }

@@ -16,19 +16,27 @@
 
 package org.quiltmc.qsl.item.rendering.api.client;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 
-@Environment(EnvType.CLIENT)
-public interface ItemBarProvider {
-	static ItemBarProvider[] getVanillaProviders() {
-		return new ItemBarProvider[] { new VanillaItemBarProvider() };
+import org.quiltmc.qsl.item.rendering.impl.client.VanillaItemBarRenderer;
+
+public interface ItemBarRenderer extends GuiRendererHelper {
+	@Environment(EnvType.CLIENT)
+	ItemBarRenderer VANILLA = VanillaItemBarRenderer.INSTANCE;
+
+	@Environment(EnvType.CLIENT)
+	static ItemBarRenderer[] getDefaultRenderers() {
+		return new ItemBarRenderer[] { VANILLA };
 	}
 
+	@Environment(EnvType.CLIENT)
 	boolean isItemBarVisible(ItemStack stack);
-	void renderItemBar(MatrixStack matrices, BufferBuilder buffer, ItemStack stack);
+
+	@Environment(EnvType.CLIENT)
+	void renderItemBar(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack);
 }

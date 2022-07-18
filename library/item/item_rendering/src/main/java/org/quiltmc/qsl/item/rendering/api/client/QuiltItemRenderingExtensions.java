@@ -19,24 +19,33 @@ package org.quiltmc.qsl.item.rendering.api.client;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 @InjectedInterface(Item.class)
 public interface QuiltItemRenderingExtensions {
 	@Environment(EnvType.CLIENT)
-	default CountLabelProvider getCountLabelProvider() {
-		return CountLabelProvider.VANILLA;
+	default void preRenderOverlay(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack) { }
+
+	@Environment(EnvType.CLIENT)
+	default CountLabelRenderer getCountLabelRenderer() {
+		return CountLabelRenderer.VANILLA;
 	}
 
 	@Environment(EnvType.CLIENT)
-	default CooldownOverlayProvider getCooldownOverlayProvider() {
-		return CooldownOverlayProvider.VANILLA;
+	default CooldownOverlayRenderer getCooldownOverlayRenderer() {
+		return CooldownOverlayRenderer.VANILLA;
 	}
 
 	@Environment(EnvType.CLIENT)
-	default ItemBarProvider[] getItemBarProviders() {
-		return ItemBarProvider.getVanillaProviders();
+	default ItemBarRenderer[] getItemBarRenderers() {
+		return ItemBarRenderer.getDefaultRenderers();
 	}
+
+	@Environment(EnvType.CLIENT)
+	default void postRenderOverlay(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack) { }
 }
