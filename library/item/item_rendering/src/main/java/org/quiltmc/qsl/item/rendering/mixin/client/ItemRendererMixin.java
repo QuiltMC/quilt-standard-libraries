@@ -45,7 +45,7 @@ public abstract class ItemRendererMixin {
 			return;
 		}
 
-		var item = (QuiltItemRenderingExtensions) stack.getItem();
+		var item = stack.getItem();
 
 		var matrices = quilt$matrices.get();
 		matrices.push();
