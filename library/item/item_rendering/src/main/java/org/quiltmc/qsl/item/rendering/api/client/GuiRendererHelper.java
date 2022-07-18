@@ -26,6 +26,7 @@ import net.fabricmc.api.Environment;
 
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Identifier;
 
 public interface GuiRendererHelper {
 	@Environment(EnvType.CLIENT)
@@ -44,5 +45,50 @@ public interface GuiRendererHelper {
 		buffer.vertex(mat, x + width, y + height, 0.0f).color(r, g, b, a).next();
 		buffer.vertex(mat, x + width, y, 0.0f).color(r, g, b, a).next();
 		BufferRenderer.drawWithShader(buffer.end());
+	}
+
+	@Environment(EnvType.CLIENT)
+	default void renderGuiTexturedQuad(MatrixStack matrices,
+									   BufferBuilder buffer, int x, int y, int width, int height,
+									   Identifier texture, int u, int v, int texWidth, int texHeight,
+									   int color) {
+		var mat = matrices.peek().getPosition();
+
+		RenderSystem.setShaderColor(((color >> 16) & 0xFF) / 255f,
+				((color >> 8) & 0xFF) / 255f,
+				(color & 0xFF) / 255f,
+				((color >> 24) & 0xFF) / 255f);
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShaderTexture(0, texture);
+		buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
+		buffer.vertex(mat, x, y, 0.0f).uv(u, v).next();
+		buffer.vertex(mat, x, y + height, 0.0f).uv(u, v + texHeight).next();
+		buffer.vertex(mat, x + width, y + height, 0.0f).uv(u + texWidth, v + texHeight).next();
+		buffer.vertex(mat, x + width, y, 0.0f).uv(u + texWidth, v).next();
+		BufferRenderer.drawWithShader(buffer.end());
+	}
+
+	@Environment(EnvType.CLIENT)
+	default void renderGuiTexturedQuad(MatrixStack matrices,
+									   BufferBuilder buffer, int x, int y, int width, int height,
+									   Identifier texture, int u, int v, int texWidth, int texHeight) {
+		renderGuiTexturedQuad(matrices, buffer, x, y, width, height, texture, u, v, texWidth, texHeight,
+				0xFFFFFFFF);
+	}
+
+	@Environment(EnvType.CLIENT)
+	default void renderGuiTexturedQuad(MatrixStack matrices,
+									   BufferBuilder buffer, int x, int y, int width, int height,
+									   Identifier texture, int u, int v,
+									   int color) {
+		renderGuiTexturedQuad(matrices, buffer, x, y, width, height, texture, u, v, width, height, color);
+	}
+
+	@Environment(EnvType.CLIENT)
+	default void renderGuiTexturedQuad(MatrixStack matrices,
+									   BufferBuilder buffer, int x, int y, int width, int height,
+									   Identifier texture, int u, int v) {
+		renderGuiTexturedQuad(matrices, buffer, x, y, width, height, texture, u, v, width, height,
+				0xFFFFFFFF);
 	}
 }
