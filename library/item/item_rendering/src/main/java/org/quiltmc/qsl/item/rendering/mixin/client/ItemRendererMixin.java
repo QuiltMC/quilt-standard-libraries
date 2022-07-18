@@ -51,36 +51,44 @@ public abstract class ItemRendererMixin {
 		matrices.push();
 		matrices.translate(x, y, 0);
 
-		item.preRenderOverlay(matrices, renderer, this.zOffset, stack);
+		if (item.preRenderOverlay(matrices, renderer, this.zOffset, stack)) {
+			item.getCountLabelRenderer().renderCountLabel(matrices, renderer, this.zOffset, stack, countLabel);
 
-		item.getCountLabelRenderer().renderCountLabel(matrices, renderer, this.zOffset, stack, countLabel);
+			var itemBarRenderers = item.getItemBarRenderers();
 
-		var itemBarRenderers = item.getItemBarRenderers();
-		int itemBarY = 13;
-		boolean anyItemBarsVisible = false;
-		for (var provider : itemBarRenderers) {
-			if (provider.isItemBarVisible(stack)) {
-				itemBarY -= 2;
-				anyItemBarsVisible = true;
-			}
-		}
+			int itemBarY = 13;
+			if (itemBarRenderers.length == 1) {
+				matrices.push();
+				matrices.translate(0, itemBarY, 0);
+				itemBarRenderers[0].renderItemBar(matrices, renderer, this.zOffset, stack);
+				matrices.pop();
+			} else if (itemBarRenderers.length > 0) {
+				boolean anyItemBarsVisible = false;
+				for (var itemBar : itemBarRenderers) {
+					if (itemBar.isItemBarVisible(stack)) {
+						itemBarY -= 2;
+						anyItemBarsVisible = true;
+					}
+				}
 
-		if (anyItemBarsVisible) {
-			// TODO figure out if we can NOT render immediately here
-			for (var provider : itemBarRenderers) {
-				if (provider.isItemBarVisible(stack)) {
-					matrices.push();
-					matrices.translate(0, itemBarY, 0);
-					provider.renderItemBar(matrices, renderer, this.zOffset, stack);
-					itemBarY += 2;
-					matrices.pop();
+				if (anyItemBarsVisible) {
+					// TODO figure out if we can NOT render immediately here
+					for (var itemBar : itemBarRenderers) {
+						if (itemBar.isItemBarVisible(stack)) {
+							matrices.push();
+							matrices.translate(0, itemBarY, 0);
+							itemBar.renderItemBar(matrices, renderer, this.zOffset, stack);
+							itemBarY += 2;
+							matrices.pop();
+						}
+					}
 				}
 			}
+
+			item.getCooldownOverlayRenderer().renderCooldownOverlay(matrices, renderer, this.zOffset, stack);
+
+			item.postRenderOverlay(matrices, renderer, this.zOffset, stack);
 		}
-
-		item.getCooldownOverlayRenderer().renderCooldownOverlay(matrices, renderer, this.zOffset, stack);
-
-		item.postRenderOverlay(matrices, renderer, this.zOffset, stack);
 
 		matrices.pop();
 	}

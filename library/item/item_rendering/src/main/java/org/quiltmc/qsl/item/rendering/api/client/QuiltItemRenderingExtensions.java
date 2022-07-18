@@ -28,8 +28,11 @@ import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 @InjectedInterface(Item.class)
 public interface QuiltItemRenderingExtensions {
+	/**
+	 * @return {@code true} to render the rest of overlay, {@code false} otherwise.
+	 */
 	@Environment(EnvType.CLIENT)
-	default void preRenderOverlay(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack) { }
+	default boolean preRenderOverlay(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack) { }
 
 	@Environment(EnvType.CLIENT)
 	default CountLabelRenderer getCountLabelRenderer() {
