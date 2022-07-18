@@ -28,6 +28,13 @@ import net.minecraft.item.ItemStack;
 
 @Environment(EnvType.CLIENT)
 public abstract class SolidColorItemBarRenderer implements ItemBarRenderer {
+	public static final int MAX_STEP = 13;
+
+	@Override
+	public boolean isItemBarVisible(ItemStack stack) {
+		return getItemBarStep(stack) > 0;
+	}
+
 	@Override
 	public void renderItemBar(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack) {
 		RenderSystem.disableDepthTest();
@@ -50,5 +57,6 @@ public abstract class SolidColorItemBarRenderer implements ItemBarRenderer {
 	 * {@return the length of the filled section of the durability bar in pixels (out of 13)}
 	 */
 	protected abstract int getItemBarStep(ItemStack stack);
+
 	protected abstract int getItemBarForeground(ItemStack stack);
 }

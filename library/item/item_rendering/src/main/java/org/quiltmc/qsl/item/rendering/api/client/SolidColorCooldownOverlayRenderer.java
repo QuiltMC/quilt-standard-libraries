@@ -25,8 +25,14 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 
 public abstract class SolidColorCooldownOverlayRenderer implements CooldownOverlayRenderer {
+	public static final int MAX_STEP = 16;
+
 	@Override
 	public void renderCooldownOverlay(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack) {
+		if (!isCooldownOverlayVisible(stack)) {
+			return;
+		}
+
 		int step = getCooldownOverlayStep(stack);
 		int color = getCooldownOverlayColor(stack);
 
@@ -41,7 +47,9 @@ public abstract class SolidColorCooldownOverlayRenderer implements CooldownOverl
 		RenderSystem.enableDepthTest();
 	}
 
-	protected abstract boolean isCooldownOverlayVisible(ItemStack stack);
+	protected boolean isCooldownOverlayVisible(ItemStack stack) {
+		return getCooldownOverlayStep(stack) > 0;
+	}
 
 	/**
 	 * {@return the height of the cooldown overlay in pixels (out of 13)}

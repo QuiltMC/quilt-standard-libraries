@@ -42,7 +42,7 @@ public class VanillaCooldownOverlayRenderer extends SolidColorCooldownOverlayRen
 
 	@Override
 	protected int getCooldownOverlayStep(ItemStack stack) {
-		return (int) (getCooldown(stack) * 16);
+		return (int) (getCooldown(stack) * MAX_STEP);
 	}
 
 	@Override
