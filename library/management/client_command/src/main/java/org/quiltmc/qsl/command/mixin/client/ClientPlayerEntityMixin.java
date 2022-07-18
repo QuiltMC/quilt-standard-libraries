@@ -39,7 +39,7 @@ abstract class ClientPlayerEntityMixin {
 			ci.cancel();
 		}
 	}
-
+	/*
 	// TODO - Once 1.19.1 releases, make this the only one
 	// This mixin will only work on Minecraft 1.19.1
 	@Group(name = "Client command execution", min = 1, max = 1)
@@ -49,4 +49,6 @@ abstract class ClientPlayerEntityMixin {
 			ci.cancel();
 		}
 	}
+
+	 */
 }

@@ -3,6 +3,7 @@
   "package": "org.quiltmc.qsl.worldgen.material_rule.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "Class7196Mixin",
     "VanillaSurfaceRulesMixin"
   ],
   "injectors": {

@@ -19,30 +19,26 @@ package org.quiltmc.qsl.worldgen.material_rule.mixin;
 import net.minecraft.world.gen.surfacebuilder.SurfaceRules;
 import net.minecraft.world.gen.surfacebuilder.VanillaSurfaceRules;
 
-import org.quiltmc.qsl.worldgen.material_rule.api.MaterialRuleRegistrationEvents;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.codec.language.bm.Rule;
+import org.quiltmc.qsl.worldgen.material_rule.impl.RuleHolder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.ArrayList;
-
+/**
+ This class is used to replace vanilla surface rules with mutable references, to allow for injection in {@code Class7196Mixin}
+ * @see Class7196Mixin
+ */
 @Mixin(VanillaSurfaceRules.class)
 public abstract class VanillaSurfaceRulesMixin {
     @Inject(
 			method = "getOverworldRules",
 			at = @At("RETURN"),
 			cancellable = true)
-    private static void quilt$injectOverworldRules(CallbackInfoReturnable<SurfaceRules.MaterialRule> cir) {
-        ArrayList<SurfaceRules.MaterialRule> overworldMaterialRules = new ArrayList<>();
-
-		MaterialRuleRegistrationEvents.OVERWORLD_RULE_INIT.invoker().registerRules(overworldMaterialRules);
-
-		overworldMaterialRules.add(cir.getReturnValue());
-        cir.setReturnValue(SurfaceRules.sequence(overworldMaterialRules.toArray(new SurfaceRules.MaterialRule[0])));
+    private static void quilt$getOverworldAccess(CallbackInfoReturnable<SurfaceRules.MaterialRule> cir) {
+		RuleHolder.overworldRules.add(cir.getReturnValue());
+        cir.setReturnValue(new SurfaceRules.SequenceMaterialRule(RuleHolder.overworldRules));
     }
 
     @Inject(
@@ -50,12 +46,8 @@ public abstract class VanillaSurfaceRulesMixin {
 			at = @At("RETURN"),
 			cancellable = true)
     private static void quilt$injectNetherRules(CallbackInfoReturnable<SurfaceRules.MaterialRule> cir) {
-		ArrayList<SurfaceRules.MaterialRule> netherMaterialRules = new ArrayList<>();
-
-		MaterialRuleRegistrationEvents.NETHER_RULE_INIT.invoker().registerRules(netherMaterialRules);
-
-		netherMaterialRules.add(cir.getReturnValue());
-		cir.setReturnValue(SurfaceRules.sequence(netherMaterialRules.toArray(new SurfaceRules.MaterialRule[0])));
+		RuleHolder.netherRules.add(cir.getReturnValue());
+		cir.setReturnValue(new SurfaceRules.SequenceMaterialRule(RuleHolder.netherRules));
     }
 
 	@Inject(
@@ -63,11 +55,8 @@ public abstract class VanillaSurfaceRulesMixin {
 			at = @At("RETURN"),
 			cancellable = true)
 	private static void quiltInjectEndRules(CallbackInfoReturnable<SurfaceRules.MaterialRule> cir) {
-		ArrayList<SurfaceRules.MaterialRule> theEndMaterialRules = new ArrayList<>();
-
-		MaterialRuleRegistrationEvents.THE_END_RULE_INIT.invoker().registerRules(theEndMaterialRules);
-
-		theEndMaterialRules.add(cir.getReturnValue());
-		cir.setReturnValue(SurfaceRules.sequence(theEndMaterialRules.toArray(new SurfaceRules.MaterialRule[0])));
+		RuleHolder.theEndRules.add(cir.getReturnValue());
+		cir.setReturnValue(new SurfaceRules.SequenceMaterialRule(RuleHolder.theEndRules));
 	}
+
 }

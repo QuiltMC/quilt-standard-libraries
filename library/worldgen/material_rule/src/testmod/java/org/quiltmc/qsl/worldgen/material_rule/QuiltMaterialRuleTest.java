@@ -33,28 +33,48 @@ import org.slf4j.LoggerFactory;
 public class QuiltMaterialRuleTest implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
-		SurfaceRules.MaterialCondition blueNoise1 = SurfaceRules.noiseThreshold(NoiseParametersKeys.CALCITE, 0.0, 0.2);
-		SurfaceRules.MaterialCondition pinkNoise1 = SurfaceRules.noiseThreshold(NoiseParametersKeys.CALCITE, 0.2, 0.4);
-		SurfaceRules.MaterialCondition whiteNoise = SurfaceRules.noiseThreshold(NoiseParametersKeys.CALCITE, 0.4, 0.6);
-		SurfaceRules.MaterialCondition pinkNoise2 = SurfaceRules.noiseThreshold(NoiseParametersKeys.CALCITE, 0.6, 0.8);
-		SurfaceRules.MaterialCondition blueNoise2 = SurfaceRules.noiseThreshold(NoiseParametersKeys.CALCITE, 0.8, 1.0);
+		SurfaceRules.MaterialCondition blueNoise1 = SurfaceRules.noiseThreshold(NoiseParametersKeys.TEMPERATURE, 0.0, 0.2);
+		SurfaceRules.MaterialCondition pinkNoise1 = SurfaceRules.noiseThreshold(NoiseParametersKeys.TEMPERATURE, 0.2, 0.4);
+		SurfaceRules.MaterialCondition whiteNoise = SurfaceRules.noiseThreshold(NoiseParametersKeys.TEMPERATURE, 0.4, 0.6);
+		SurfaceRules.MaterialCondition pinkNoise2 = SurfaceRules.noiseThreshold(NoiseParametersKeys.TEMPERATURE, 0.6, 0.8);
+		SurfaceRules.MaterialCondition blueNoise2 = SurfaceRules.noiseThreshold(NoiseParametersKeys.TEMPERATURE, 0.8, 1.0);
 
-		SurfaceRules.MaterialRule BLUE_CONCRETE = SurfaceRules.block(Blocks.BLUE_CONCRETE.getDefaultState());
+		SurfaceRules.MaterialRule LIGHT_BLUE_CONCRETE = SurfaceRules.block(Blocks.LIGHT_BLUE_CONCRETE.getDefaultState());
 		SurfaceRules.MaterialRule PINK_CONCRETE = SurfaceRules.block(Blocks.PINK_CONCRETE.getDefaultState());
 		SurfaceRules.MaterialRule WHITE_CONCRETE = SurfaceRules.block(Blocks.WHITE_CONCRETE.getDefaultState());
 
 		//always, always make it trans.
-		MaterialRuleRegistrationEvents.OVERWORLD_RULE_INIT.register(((materialRules) -> materialRules.add(
-			SurfaceRules.condition(
-					SurfaceRules.ON_FLOOR,
-					SurfaceRules.sequence(
-							SurfaceRules.condition(blueNoise1,BLUE_CONCRETE),
-							SurfaceRules.condition(pinkNoise1,PINK_CONCRETE),
-							SurfaceRules.condition(whiteNoise,WHITE_CONCRETE),
-							SurfaceRules.condition(pinkNoise2,PINK_CONCRETE),
-							SurfaceRules.condition(blueNoise2,BLUE_CONCRETE)
-					)
-			)
-		)));
+		MaterialRuleRegistrationEvents.OVERWORLD_RULE_INIT.register((materialRules) -> {
+			materialRules.add(0,
+					SurfaceRules.condition(
+							SurfaceRules.abovePreliminarySurface(),
+							SurfaceRules.condition(
+									SurfaceRules.ON_FLOOR,
+									SurfaceRules.sequence(
+											SurfaceRules.condition(blueNoise1, LIGHT_BLUE_CONCRETE),
+											SurfaceRules.condition(pinkNoise1, PINK_CONCRETE),
+											SurfaceRules.condition(whiteNoise, WHITE_CONCRETE),
+											SurfaceRules.condition(pinkNoise2, PINK_CONCRETE),
+											SurfaceRules.condition(blueNoise2, LIGHT_BLUE_CONCRETE)
+									))
+					));
+		});
+
+		// /locate biome minecraft:plains
+		MaterialRuleRegistrationEvents.NETHER_RULE_INIT.register((materialRules) -> {
+			materialRules.add(
+					SurfaceRules.condition(
+							SurfaceRules.biome(BiomeKeys.PLAINS),
+							SurfaceRules.condition(
+									SurfaceRules.ON_FLOOR,
+									SurfaceRules.sequence(
+											SurfaceRules.condition(blueNoise1, LIGHT_BLUE_CONCRETE),
+											SurfaceRules.condition(pinkNoise1, PINK_CONCRETE),
+											SurfaceRules.condition(whiteNoise, WHITE_CONCRETE),
+											SurfaceRules.condition(pinkNoise2, PINK_CONCRETE),
+											SurfaceRules.condition(blueNoise2, LIGHT_BLUE_CONCRETE)
+									))
+					));
+		});
 	}
 }
