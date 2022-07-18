@@ -2,7 +2,7 @@
   "schema_version": 1,
   "quilt_loader": {
     "group": "org.quiltmc.qsl.worldgen",
-    "id": "qsl_material_rule_testmod",
+    "id": "quilt_material_rule_testmod",
     "version": "1.0.0",
     "metadata": {
       "name": "Quilt Material Rule API Test Mod",
