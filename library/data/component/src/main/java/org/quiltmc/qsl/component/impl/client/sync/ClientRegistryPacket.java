@@ -44,8 +44,8 @@ public final class ClientRegistryPacket {
 		IdList<T> ret = new IdList<>(size); // size is dropped
 
 		for (int i = 0; i < size; i++) {
-			Identifier id = buf.readIdentifier();
-			int rawId = buf.readInt(); // a whole entry is dropped
+			Identifier id = buf.readIdentifier(); // consume identifier
+			int rawId = buf.readVarInt(); // consumer rawId
 
 			Maybe<T> type = Maybe.fromOptional(targetRegistry.getOrEmpty(id));
 			if (type.isNothing()) {

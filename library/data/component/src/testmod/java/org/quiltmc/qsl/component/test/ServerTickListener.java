@@ -64,7 +64,7 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 					newStack.setCount(1);
 					inventory.setStack(0, newStack);
 					inventory.save();
-					inventory.sync();
+					// inventory.sync();
 					playerStack.decrement(1);
 				} else {
 					if (ItemStack.canCombine(stack, playerStack)) {
@@ -75,7 +75,7 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 //							defaultIntegerComponent.save();
 //						});
 						inventory.save();
-						inventory.sync();
+						// inventory.sync();
 					}
 				}
 			}
@@ -103,7 +103,7 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 					if (explodeTime.get() <= 200) {
 						explodeTime.increment();
 						explodeTime.save();
-						explodeTime.sync(); // Causes mucho lag!!
+						// explodeTime.sync(); // Causes mucho lag!!
 					} else {
 						hostile.getWorld().createExplosion(
 								null,

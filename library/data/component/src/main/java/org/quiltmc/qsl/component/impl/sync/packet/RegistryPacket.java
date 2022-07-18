@@ -33,7 +33,7 @@ public final class RegistryPacket {
 			var id = registry.getId(t);
 			var rawId = registry.getRawId(t);
 
-			buf.writeIdentifier(id).writeInt(rawId); // append id and rawId
+			buf.writeIdentifier(id).writeVarInt(rawId); // append id and rawId
 		});
 
 		return buf;

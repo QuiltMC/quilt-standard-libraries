@@ -1,3 +1,19 @@
+/*
+ * Copyright 2022 QuiltMC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.quiltmc.qsl.component.impl.sync;
 
 import net.minecraft.block.entity.BlockEntity;
@@ -24,39 +40,42 @@ import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+// ClientResolution.* all reference client-only classes,
+// so we need to just make sure we use lambdas so no attempt at class loading non-existent classes
+@SuppressWarnings("Convert2MethodRef")
 public record SyncChannel<P extends ComponentProvider>(Identifier channelId,
 													   NetworkCodec<P> codec,
 													   Function<? super P, Collection<ServerPlayerEntity>> playerProvider)
 													   implements TwoWayFunction<P, PacketByteBuf> {
 	// BlockEntity
 	private static final NetworkCodec<BlockEntity> BLOCK_ENTITY_CODEC =
-			NetworkCodec.BLOCK_POS.map(BlockEntity::getPos, ClientResolution::getBlockEntity);
+			NetworkCodec.BLOCK_POS.map(BlockEntity::getPos, blockPos -> ClientResolution.getBlockEntity(blockPos));
 	public static final SyncChannel<BlockEntity> BLOCK_ENTITY =
 			new SyncChannel<>(PacketIds.BLOCK_ENTITY_SYNC, BLOCK_ENTITY_CODEC, PlayerLookup::tracking);
 
 	// Entity
 	private static final NetworkCodec<Entity> ENTITY_CODEC =
-			NetworkCodec.INT.map(Entity::getId, ClientResolution::getEntity);
+			NetworkCodec.INT.map(Entity::getId, rawId -> ClientResolution.getEntity(rawId));
 	public static final SyncChannel<Entity> ENTITY =
 			new SyncChannel<>(PacketIds.ENTITY_SYNC, ENTITY_CODEC, PlayerLookup::tracking);
 
 	// Chunk
 	private static final NetworkCodec<Chunk> CHUNK_CODEC =
-			NetworkCodec.CHUNK_POS.map(Chunk::getPos, ClientResolution::getChunk);
+			NetworkCodec.CHUNK_POS.map(Chunk::getPos, chunkPos -> ClientResolution.getChunk(chunkPos));
 	public static final SyncChannel<Chunk> CHUNK = // **Careful**: This only works with WorldChunks not other chunk types!
 			new SyncChannel<>(PacketIds.CHUNK_SYNC, CHUNK_CODEC,
 				  chunk -> PlayerLookup.tracking((ServerWorld) ((WorldChunk) chunk).getWorld(), chunk.getPos()));
 
 	// World
 	private static final NetworkCodec<World> WORLD_CODEC =
-			NetworkCodec.empty(ClientResolution::getWorld);
+			NetworkCodec.empty(() -> ClientResolution.getWorld());
 	public static final SyncChannel<World> WORLD =
 			new SyncChannel<>(PacketIds.WORLD_SYNC, WORLD_CODEC,
 				  world -> PlayerLookup.world(((ServerWorld) world)));
 
 	// Level
 	private static final NetworkCodec<ComponentProvider> LEVEL_CODEC =
-			NetworkCodec.empty(MinecraftClient::getInstance);
+			NetworkCodec.empty(() -> MinecraftClient.getInstance());
 	public static final SyncChannel<?> LEVEL =
 			new SyncChannel<>(PacketIds.LEVEL_SYNC, LEVEL_CODEC,
 				  provider -> PlayerLookup.all(((MinecraftServer) provider)));

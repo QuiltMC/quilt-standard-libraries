@@ -43,7 +43,7 @@ public record ComponentType<T extends Component>(Identifier id, Component.Factor
 	 * We provide a {@link NetworkCodec} to be used with manual registry sync, until the registry sync API is merged.
 	 */
 	public static final NetworkCodec<ComponentType<?>> NETWORK_CODEC =
-			NetworkCodec.INT.map(Components.REGISTRY::getRawId, ClientSyncHandler.getInstance()::getType);
+			NetworkCodec.VAR_INT.map(Components.REGISTRY::getRawId, ClientSyncHandler.getInstance()::getType);
 	/**
 	 * @see Static
 	 */

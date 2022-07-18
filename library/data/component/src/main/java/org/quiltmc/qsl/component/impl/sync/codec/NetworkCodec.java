@@ -35,19 +35,24 @@ import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
-public record NetworkCodec<T>(BiConsumer<PacketByteBuf, T> encoder,
-							  Function<PacketByteBuf, T> decoder) {
+public record NetworkCodec<T>(BiConsumer<PacketByteBuf, T> encoder, Function<PacketByteBuf, T> decoder) {
 	public static final NetworkCodec<Byte> BYTE = new NetworkCodec<>(
 			(buf, aByte) -> buf.writeByte(aByte), PacketByteBuf::readByte
 	);
 	public static final NetworkCodec<Integer> INT = new NetworkCodec<>(
 			PacketByteBuf::writeInt, PacketByteBuf::readInt
 	);
+	public static final NetworkCodec<Integer> VAR_INT = new NetworkCodec<>(
+			PacketByteBuf::writeVarInt, PacketByteBuf::readVarInt
+	);
 	public static final NetworkCodec<Short> SHORT = new NetworkCodec<>(
 			(buf, aShort) -> buf.writeShort(aShort), PacketByteBuf::readShort
 	);
 	public static final NetworkCodec<Long> LONG = new NetworkCodec<>(
 			PacketByteBuf::writeLong, PacketByteBuf::readLong
+	);
+	public static final NetworkCodec<Long> VAR_LONG = new NetworkCodec<>(
+			PacketByteBuf::writeVarLong, PacketByteBuf::readVarLong
 	);
 	public static final NetworkCodec<Float> FLOAT = new NetworkCodec<>(
 			PacketByteBuf::writeFloat, PacketByteBuf::readFloat
@@ -82,11 +87,11 @@ public record NetworkCodec<T>(BiConsumer<PacketByteBuf, T> encoder,
 	public static <O, L extends List<O>> NetworkCodec<L> list(NetworkCodec<O> entryCodec, IntFunction<L> listFactory) {
 		return new NetworkCodec<>(
 				(buf, os) -> {
-					INT.encode(buf, os.size());
+					VAR_INT.encode(buf, os.size());
 					os.forEach(o -> entryCodec.encode(buf, o));
 				},
 				buf -> {
-					int size = INT.decode(buf).unwrap();
+					int size = VAR_INT.decode(buf).unwrap();
 					L newList = listFactory.apply(size);
 
 					for (int i = 0; i < size; i++) {
@@ -101,11 +106,11 @@ public record NetworkCodec<T>(BiConsumer<PacketByteBuf, T> encoder,
 	public static <O, V, M extends Map<O, V>> NetworkCodec<M> map(NetworkCodec<Pair<O, V>> entryCodec, IntFunction<M> mapFactory) {
 		return new NetworkCodec<>(
 				(buf, m) -> {
-					INT.encode(buf, m.size());
+					VAR_INT.encode(buf, m.size());
 					m.forEach((key, value) -> entryCodec.encode(buf, Pair.of(key, value)));
 				},
 				buf -> {
-					int size = INT.decode(buf).unwrap();
+					int size = VAR_INT.decode(buf).unwrap();
 					var map = mapFactory.apply(size);
 					for (int i = 0; i < size; i++) {
 						entryCodec.decode(buf).ifJust(ovPair -> map.put(ovPair.getFirst(), ovPair.getSecond()));

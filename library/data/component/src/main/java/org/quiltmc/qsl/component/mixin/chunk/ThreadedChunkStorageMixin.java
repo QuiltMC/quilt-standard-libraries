@@ -37,6 +37,7 @@ public abstract class ThreadedChunkStorageMixin {
 			)
 	)
 	private void syncChunkContainer(ServerPlayerEntity player, MutableObject<ChunkDataS2CPacket> mutableObject, WorldChunk chunk, CallbackInfo ci) {
-		chunk.getComponentContainer().sync(chunk);
+		chunk.getComponentContainer().sync(chunk); // Handles initial chunk sync
+		chunk.getBlockEntities().forEach((blockPos, blockEntity) -> blockEntity.getComponentContainer().sync(blockEntity)); // Handles initial block entity sync
 	}
 }

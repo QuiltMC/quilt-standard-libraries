@@ -70,7 +70,7 @@ public class TestBlock extends Block implements BlockEntityProvider {
 					copied.setCount(1);
 					inventoryComponent.setStack(0, copied);
 					inventoryComponent.save();
-					inventoryComponent.sync();
+					// inventoryComponent.sync();
 					ret[0] = ActionResult.SUCCESS;
 				} else {
 					if (ItemStack.canCombine(stack, handStack)) {
