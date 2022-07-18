@@ -58,10 +58,13 @@ public abstract class ItemRendererMixin {
 
 			int itemBarY = 13;
 			if (itemBarRenderers.length == 1) {
-				matrices.push();
-				matrices.translate(0, itemBarY, 0);
-				itemBarRenderers[0].renderItemBar(matrices, renderer, this.zOffset, stack);
-				matrices.pop();
+				var itemBar = itemBarRenderers[0];
+				if (itemBar.isItemBarVisible(stack)) {
+					matrices.push();
+					matrices.translate(0, itemBarY, 0);
+					itemBar.renderItemBar(matrices, renderer, this.zOffset, stack);
+					matrices.pop();
+				}
 			} else if (itemBarRenderers.length > 0) {
 				boolean anyItemBarsVisible = false;
 				for (var itemBar : itemBarRenderers) {
@@ -75,10 +78,11 @@ public abstract class ItemRendererMixin {
 					// TODO figure out if we can NOT render immediately here
 					for (var itemBar : itemBarRenderers) {
 						if (itemBar.isItemBarVisible(stack)) {
+							itemBarY += 2;
+
 							matrices.push();
 							matrices.translate(0, itemBarY, 0);
 							itemBar.renderItemBar(matrices, renderer, this.zOffset, stack);
-							itemBarY += 2;
 							matrices.pop();
 						}
 					}
