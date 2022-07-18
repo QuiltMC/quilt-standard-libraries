@@ -1,0 +1,9 @@
+{
+  "item.quilt_item_rendering_testmod.energy_storage": "Energy Storage",
+  "item.quilt_item_rendering_testmod.mana_storage": "Mana Storage",
+  "item.quilt_item_rendering_testmod.disco_ball": "Disco Ball",
+  "item.quilt_item_rendering_testmod.multi_bar": "Multi Bar",
+  "item.quilt_item_rendering_testmod.long_cooldown": "Long Cooldown",
+  "item.quilt_item_rendering_testmod.hidden_cooldown": "Hidden Cooldown",
+  "item.quilt_item_rendering_testmod.obfuscated_count": "Obfuscated Count Label"
+}
