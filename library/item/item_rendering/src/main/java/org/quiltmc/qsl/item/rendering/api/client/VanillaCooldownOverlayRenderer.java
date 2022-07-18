@@ -14,32 +14,24 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.item.rendering.impl.client;
+package org.quiltmc.qsl.item.rendering.api.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 
-import org.quiltmc.qsl.item.rendering.api.client.CooldownOverlayRenderer;
-import org.quiltmc.qsl.item.rendering.api.client.SolidColorCooldownOverlayRenderer;
-
-@ApiStatus.Internal
 @Environment(EnvType.CLIENT)
-public final class VanillaCooldownOverlayRenderer extends SolidColorCooldownOverlayRenderer {
-	public static final CooldownOverlayRenderer INSTANCE = new VanillaCooldownOverlayRenderer();
+public class VanillaCooldownOverlayRenderer extends SolidColorCooldownOverlayRenderer {
+	protected float getCooldown(ItemStack stack) {
+		MinecraftClient client = MinecraftClient.getInstance();
 
-	private VanillaCooldownOverlayRenderer() { }
-
-	private final MinecraftClient client = MinecraftClient.getInstance();
-
-	private float getCooldown(ItemStack stack) {
 		var player = client.player;
 		if (player == null) {
 			return 0;
 		}
+
 		return player.getItemCooldownManager().getCooldownProgress(stack.getItem(), client.getTickDelta());
 	}
 

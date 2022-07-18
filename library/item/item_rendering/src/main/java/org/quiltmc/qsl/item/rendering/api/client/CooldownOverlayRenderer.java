@@ -23,12 +23,10 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 
-import org.quiltmc.qsl.item.rendering.impl.client.VanillaCooldownOverlayRenderer;
-
 @FunctionalInterface
 public interface CooldownOverlayRenderer extends GuiRendererHelper {
 	@Environment(EnvType.CLIENT)
-	CooldownOverlayRenderer VANILLA = VanillaCooldownOverlayRenderer.INSTANCE;
+	CooldownOverlayRenderer VANILLA = new VanillaCooldownOverlayRenderer();
 
 	@Environment(EnvType.CLIENT)
 	void renderCooldownOverlay(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack);

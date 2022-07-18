@@ -24,12 +24,10 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 
-import org.quiltmc.qsl.item.rendering.impl.client.VanillaCountLabelRenderer;
-
 @FunctionalInterface
 public interface CountLabelRenderer extends GuiRendererHelper {
 	@Environment(EnvType.CLIENT)
-	CountLabelRenderer VANILLA = VanillaCountLabelRenderer.INSTANCE;
+	CountLabelRenderer VANILLA = new VanillaCountLabelRenderer();
 
 	@Environment(EnvType.CLIENT)
 	void renderCountLabel(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack,

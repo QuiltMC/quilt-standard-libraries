@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.item.rendering.impl.client;
+package org.quiltmc.qsl.item.rendering.api.client;
 
 import com.mojang.blaze3d.vertex.Tessellator;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.font.TextRenderer;
@@ -28,25 +27,13 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 
-import org.quiltmc.qsl.item.rendering.api.client.CountLabelRenderer;
-
-@ApiStatus.Internal
 @Environment(EnvType.CLIENT)
-public final class VanillaCountLabelRenderer implements CountLabelRenderer {
-	public static final CountLabelRenderer INSTANCE = new VanillaCountLabelRenderer();
-
-	private VanillaCountLabelRenderer() { }
-
+public class VanillaCountLabelRenderer implements CountLabelRenderer {
 	@Override
 	public void renderCountLabel(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack, @Nullable String override) {
-		String label = override;
+		String label = getCountLabel(stack, override);
 		if (label == null) {
-			int count = stack.getCount();
-			if (count <= 1) {
-				return;
-			} else {
-				label = Integer.toString(stack.getCount());
-			}
+			return;
 		}
 
 		matrices.push();
@@ -67,5 +54,15 @@ public final class VanillaCountLabelRenderer implements CountLabelRenderer {
 		);
 		immediate.draw();
 		matrices.pop();
+	}
+
+	protected @Nullable String getCountLabel(ItemStack stack, @Nullable String override) {
+		if (override != null) {
+			return override;
+		} else if (stack.getCount() > 1) {
+			return Integer.toString(stack.getCount());
+		} else {
+			return null;
+		}
 	}
 }
