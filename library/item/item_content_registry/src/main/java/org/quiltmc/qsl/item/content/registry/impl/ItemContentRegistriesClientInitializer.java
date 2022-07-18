@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.item.content.registry.impl;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +29,7 @@ import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.item.content.registry.api.ItemContentRegistries;
 import org.quiltmc.qsl.tooltip.api.client.ItemTooltipCallback;
 
+@ApiStatus.Internal
 public class ItemContentRegistriesClientInitializer implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("ItemContentRegistriesClientInitializer");
 
