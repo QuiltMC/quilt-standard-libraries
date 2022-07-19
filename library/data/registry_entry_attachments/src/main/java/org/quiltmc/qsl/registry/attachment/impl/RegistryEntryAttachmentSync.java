@@ -16,14 +16,7 @@
 
 package org.quiltmc.qsl.registry.attachment.impl;
 
-import static org.quiltmc.qsl.registry.attachment.impl.Initializer.id;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import net.fabricmc.api.EnvType;
@@ -48,6 +41,8 @@ import org.quiltmc.qsl.networking.api.ServerPlayConnectionEvents;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
+
+import static org.quiltmc.qsl.registry.attachment.impl.Initializer.id;
 
 @ApiStatus.Internal
 public final class RegistryEntryAttachmentSync {
@@ -235,6 +230,7 @@ public final class RegistryEntryAttachmentSync {
 
 			var holder = RegistryEntryAttachmentHolder.getData(registry);
 			holder.valueTable.row(attachment).clear();
+			holder.valueTagTable.row(attachment).clear();
 			for (AttachmentEntry attachmentEntry : attachments) {
 				var entryId = new Identifier(namespace, attachmentEntry.path);
 
