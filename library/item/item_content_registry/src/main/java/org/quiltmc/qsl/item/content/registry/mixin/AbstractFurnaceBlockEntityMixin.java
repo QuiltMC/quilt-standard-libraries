@@ -18,14 +18,17 @@ package org.quiltmc.qsl.item.content.registry.mixin;
 
 import java.util.Map;
 
-import org.quiltmc.qsl.item.content.registry.impl.ItemContentRegistriesInitializer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.item.Item;
+import net.minecraft.tag.TagKey;
+
+import org.quiltmc.qsl.item.content.registry.impl.ItemContentRegistriesInitializer;
 
 @Mixin(AbstractFurnaceBlockEntity.class)
 public abstract class AbstractFurnaceBlockEntityMixin {
@@ -33,6 +36,14 @@ public abstract class AbstractFurnaceBlockEntityMixin {
 	private static void returnCachedMap(CallbackInfoReturnable<Map<Item, Integer>> cir) {
 		if (!ItemContentRegistriesInitializer.FUEL_MAP.isEmpty()) {
 			cir.setReturnValue(ItemContentRegistriesInitializer.FUEL_MAP);
+		}
+	}
+
+	@Inject(method = "addFuel(Ljava/util/Map;Lnet/minecraft/tag/TagKey;I)V", at = @At("HEAD"), cancellable = true)
+	private static void collectInitialTags(Map<Item, Integer> fuelTimes, TagKey<Item> tag, int fuelTime, CallbackInfo ci) {
+		if (ItemContentRegistriesInitializer.shouldCollectInitialTags()) {
+			ItemContentRegistriesInitializer.INITIAL_FUEL_TAG_MAP.put(tag, fuelTime);
+			ci.cancel();
 		}
 	}
 }

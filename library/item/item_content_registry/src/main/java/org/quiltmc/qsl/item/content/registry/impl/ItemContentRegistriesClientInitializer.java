@@ -16,18 +16,20 @@
 
 package org.quiltmc.qsl.item.content.registry.impl;
 
-import org.quiltmc.loader.api.ModContainer;
-import org.quiltmc.loader.api.QuiltLoader;
-import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
-import org.quiltmc.qsl.item.content.registry.api.ItemContentRegistries;
-import org.quiltmc.qsl.tooltip.api.client.ItemTooltipCallback;
+import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.minecraft.item.Item;
 import net.minecraft.text.Text;
 
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.QuiltLoader;
+import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
+import org.quiltmc.qsl.item.content.registry.api.ItemContentRegistries;
+import org.quiltmc.qsl.tooltip.api.client.ItemTooltipCallback;
 
+@ApiStatus.Internal
 public class ItemContentRegistriesClientInitializer implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("ItemContentRegistriesClientInitializer");
 
@@ -35,15 +37,17 @@ public class ItemContentRegistriesClientInitializer implements ClientModInitiali
 
 	@Override
 	public void onInitializeClient(ModContainer mod) {
-		if (Boolean.getBoolean(ENABLE_TOOLTIP_DEBUG) && QuiltLoader.isModLoaded("quilt_tooltip")) {
-			ItemTooltipCallback.EVENT.register((stack, player, context, lines) -> {
-				Item item = stack.getItem();
+		if (Boolean.getBoolean(ENABLE_TOOLTIP_DEBUG)) {
+			if (QuiltLoader.isModLoaded("quilt_tooltip")) {
+				ItemTooltipCallback.EVENT.register((stack, player, context, lines) -> {
+					Item item = stack.getItem();
 
-				ItemContentRegistries.FUEL_TIME.getValue(item).ifPresent(time -> lines.add(Text.literal("Fuel Time: " + time + " ticks")));
-				ItemContentRegistries.COMPOST_CHANCE.getValue(item).ifPresent(chance -> lines.add(Text.literal("Compost chance: " + (chance * 100) + "%")));
-			});
-		} else if (Boolean.getBoolean(ENABLE_TOOLTIP_DEBUG)) {
-			LOGGER.warn("Tooltip debug was enabled, but the QSL module `quilt_tooltip` was missing.");
+					ItemContentRegistries.FUEL_TIME.get(item).ifPresent(time -> lines.add(Text.literal("Fuel Time: " + time + " ticks")));
+					ItemContentRegistries.COMPOST_CHANCE.get(item).ifPresent(chance -> lines.add(Text.literal("Compost chance: " + (chance * 100) + "%")));
+				});
+			} else {
+				LOGGER.warn("Tooltip debug was enabled, but the QSL module `quilt_tooltip` was missing.");
+			}
 		}
 	}
 }
