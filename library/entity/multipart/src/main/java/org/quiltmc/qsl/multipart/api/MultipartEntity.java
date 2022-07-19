@@ -45,8 +45,8 @@ import org.quiltmc.qsl.base.api.util.InjectedInterface;
  *
  * <p>
  * When moving this {@link Entity}, do note that you should also change the position of the child {@link EntityPart}s too.
- * This also includes updating their {@link Entity#prevX}, {@link Entity#prevY}, {@link Entity#prevZ},
- * {@link Entity#lastRenderX}, {@link Entity#lastRenderY}, and {@link Entity#lastRenderZ}.</p>
+ * This also includes updating their {@link Entity#prevX prevX}, {@link Entity#prevY prevY}, {@link Entity#prevZ prevZ},
+ * {@link Entity#lastRenderX lastRenderX}, {@link Entity#lastRenderY lastRenderY}, and {@link Entity#lastRenderZ lastRenderZ}.</p>
  *
  * @see EnderDragonEntity
  */
