@@ -43,8 +43,8 @@ public class QuiltDataFixerBuilder extends DataFixerBuilder {
 	 */
 	public DataFixer build(Supplier<Executor> executorGetter) {
 		return switch (SharedConstants.DATA_FIXER_MODE) {
-		case UNINITIALIZED_UNOPTIMIZED, INITIALIZED_UNOPTIMIZED -> buildUnoptimized();
-		case UNINITIALIZED_OPTIMIZED, INITIALIZED_OPTIMIZED -> buildOptimized(executorGetter.get());
+			case UNINITIALIZED_UNOPTIMIZED, INITIALIZED_UNOPTIMIZED -> buildUnoptimized();
+			case UNINITIALIZED_OPTIMIZED, INITIALIZED_OPTIMIZED -> buildOptimized(executorGetter.get());
 		};
 	}
 }

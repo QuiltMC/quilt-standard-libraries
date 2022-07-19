@@ -71,9 +71,11 @@ public final class QuiltDataFixes {
 	 */
 	public static Optional<DataFixer> getFixer(String modId) {
 		checkNotNull(modId, "modId cannot be null");
+
 		QuiltDataFixesInternals.DataFixerEntry entry = QuiltDataFixesInternals.getFixerEntry(modId);
-		if (entry == null)
+		if (entry == null) {
 			return Optional.empty();
+		}
 		return Optional.of(entry.dataFixer());
 	}
 
@@ -87,6 +89,7 @@ public final class QuiltDataFixes {
 	public static int getModDataVersion(NbtCompound compound, String modId) {
 		checkNotNull(compound, "compound cannot be null");
 		checkNotNull(modId, "modId cannot be null");
+
 		return QuiltDataFixesInternals.getModDataVersion(compound, modId);
 	}
 
