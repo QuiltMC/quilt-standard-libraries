@@ -18,12 +18,15 @@ package org.quiltmc.qsl.multipart.test;
 
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.CreeperEntity;
+import net.minecraft.util.math.Vec3d;
 
 import org.quiltmc.qsl.multipart.api.AbstractEntityPart;
 
 public class SecretCreeperPart extends AbstractEntityPart<CreeperEntity> {
-	public SecretCreeperPart(CreeperEntity creeper, float f, float g) {
-		super(creeper, f, g);
+	public SecretCreeperPart(CreeperEntity creeper, float width, float height, Vec3d relativePosition, Vec3d relativePivot) {
+		super(creeper, width, height);
+		this.setRelativePosition(relativePosition);
+		this.setPivot(relativePivot);
 	}
 
 	public boolean damage(DamageSource source, float amount) {

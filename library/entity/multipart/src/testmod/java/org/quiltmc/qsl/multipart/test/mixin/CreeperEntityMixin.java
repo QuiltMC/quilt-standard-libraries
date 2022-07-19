@@ -18,11 +18,11 @@ package org.quiltmc.qsl.multipart.test.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import org.quiltmc.qsl.multipart.api.EntityPart;
@@ -31,7 +31,7 @@ import org.quiltmc.qsl.multipart.test.SecretCreeperPart;
 
 @Mixin(CreeperEntity.class)
 public abstract class CreeperEntityMixin extends HostileEntity implements MultipartEntity {
-	private final SecretCreeperPart secretHitbox = new SecretCreeperPart((CreeperEntity) (Object) this, 0.65f, 0.65f);
+	private final SecretCreeperPart secretHitbox = new SecretCreeperPart((CreeperEntity) (Object) this, 0.65f, 0.65f, new Vec3d(0.0d, 1.1d, 0.325d), new Vec3d(0.0d, 1.1d, 0.0d));
 
 	protected CreeperEntityMixin(EntityType<? extends HostileEntity> entityType, World world) {
 		super(entityType, world);
@@ -45,24 +45,14 @@ public abstract class CreeperEntityMixin extends HostileEntity implements Multip
 	@Override
 	public void tickMovement() {
 		super.tickMovement();
-		this.secretHitbox.setPosition(this.getX(), this.getY() + 1.1, this.getZ());
-		this.secretHitbox.prevX = this.prevX;
-		this.secretHitbox.prevY = this.prevY + 1.1;
-		this.secretHitbox.prevZ = this.prevZ;
-		this.secretHitbox.lastRenderX = this.lastRenderX;
-		this.secretHitbox.lastRenderY = this.lastRenderY + 1.1;
-		this.secretHitbox.lastRenderZ = this.lastRenderZ;
+		var cycle = 0.5f + (age % 100) / 100f;
+		this.secretHitbox.scale(cycle);
+		this.secretHitbox.rotate(this.getPitch(), this.getHeadYaw(), 0.0f);
 	}
 
 	@Override
 	public void onSpawnPacket(EntitySpawnS2CPacket packet) {
 		super.onSpawnPacket(packet);
-		EntityPart<?>[] parts = this.getEntityParts();
-
-		for (int i = 0; i < parts.length; i++) {
-			if (parts[i] instanceof Entity entity) {
-				entity.setId(i + 1 + packet.getId());
-			}
-		}
+		this.secretHitbox.setId(1 + packet.getId());
 	}
 }
