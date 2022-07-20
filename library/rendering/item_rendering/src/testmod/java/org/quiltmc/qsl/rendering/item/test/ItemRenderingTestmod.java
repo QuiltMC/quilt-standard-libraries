@@ -19,8 +19,12 @@ package org.quiltmc.qsl.rendering.item.test;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -29,6 +33,7 @@ import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.rendering.item.api.client.CooldownOverlayRenderer;
 import org.quiltmc.qsl.rendering.item.api.client.CountLabelRenderer;
 import org.quiltmc.qsl.rendering.item.api.client.ItemBarRenderer;
+import org.quiltmc.qsl.rendering.item.test.client.ItemDecorations;
 import org.quiltmc.qsl.rendering.item.test.client.cooldown.FlashingCooldownOverlayRenderer;
 import org.quiltmc.qsl.rendering.item.test.client.cooldown.HiddenCooldownOverlayRenderer;
 import org.quiltmc.qsl.rendering.item.test.client.countlabel.ObfuscatedCountLabelRenderer;
@@ -108,6 +113,27 @@ public class ItemRenderingTestmod implements ModInitializer {
 		}
 	};
 
+	public static final Item TUNISIAN_DIAMOND = new Item(itemSettings()) {
+		@Override
+		public boolean preRenderOverlay(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack) {
+			ItemDecorations.renderStackBorder(matrices, Formatting.GOLD);
+			return true;
+		}
+	};
+
+	public static final Item MYSTERIOUS_BOOK = new Item(itemSettings()) {
+		@Override
+		public boolean preRenderOverlay(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack) {
+			ItemDecorations.renderStackBorder(matrices, Formatting.DARK_PURPLE);
+			return true;
+		}
+
+		@Override
+		public void postRenderOverlay(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack) {
+			ItemDecorations.renderWarningIcon(matrices);
+		}
+	};
+
 	@Override
 	public void onInitialize(ModContainer mod) {
 		Registry.register(Registry.ITEM, id("obfuscated_count"), OBFUSCATED_COUNT);
@@ -117,5 +143,7 @@ public class ItemRenderingTestmod implements ModInitializer {
 		Registry.register(Registry.ITEM, id("multi_bar"), MULTI_BAR);
 		Registry.register(Registry.ITEM, id("long_cooldown"), LONG_COOLDOWN);
 		Registry.register(Registry.ITEM, id("hidden_cooldown"), HIDDEN_COOLDOWN);
+		Registry.register(Registry.ITEM, id("tunisian_diamond"), TUNISIAN_DIAMOND);
+		Registry.register(Registry.ITEM, id("mysterious_book"), MYSTERIOUS_BOOK);
 	}
 }

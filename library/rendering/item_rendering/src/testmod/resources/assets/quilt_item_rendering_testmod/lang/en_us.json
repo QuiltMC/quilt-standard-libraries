@@ -5,5 +5,7 @@
   "item.quilt_item_rendering_testmod.multi_bar": "Multi Bar",
   "item.quilt_item_rendering_testmod.long_cooldown": "Long Cooldown",
   "item.quilt_item_rendering_testmod.hidden_cooldown": "Hidden Cooldown",
-  "item.quilt_item_rendering_testmod.obfuscated_count": "Obfuscated Count Label"
+  "item.quilt_item_rendering_testmod.obfuscated_count": "Obfuscated Count Label",
+  "item.quilt_item_rendering_testmod.tunisian_diamond": "Tunisian Diamond",
+  "item.quilt_item_rendering_testmod.mysterious_book": "Mysterious Book"
 }
