@@ -132,7 +132,7 @@ public abstract class CreateWorldScreenMixin {
 	// Lambda method in CreateWorldScreen#applyDataPacks, at class_7237#method_42098.
 	// Inject before closing the resource manager.
 	@Inject(
-			method = "m_paskjwcu",
+			method = "m_paskjwcu(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/util/registry/DynamicRegistryManager$Frozen;Lcom/mojang/datafixers/util/Pair;)Lnet/minecraft/unmapped/C_njsjipmy;",
 			at = @At("HEAD")
 	)
 	private static void onDataPackLoadEnd(AutoCloseableResourceManager resourceManager,
@@ -145,7 +145,7 @@ public abstract class CreateWorldScreenMixin {
 	// Lambda method in CreateWorldScreen#applyDataPacks, at class_7237#method_42098.
 	// Inject before closing the resource manager.
 	@Inject(
-			method = "m_tlckpqyc",
+			method = "m_tlckpqyc(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/util/registry/DynamicRegistryManager$Frozen;Lnet/minecraft/world/gen/GeneratorOptions;)Lnet/minecraft/unmapped/C_njsjipmy;",
 			at = @At("HEAD")
 	)
 	private static void onCreateDataPackLoadEnd(AutoCloseableResourceManager resourceManager,
