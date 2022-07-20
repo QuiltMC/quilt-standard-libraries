@@ -30,7 +30,7 @@ import net.minecraft.util.math.Vec3f;
 /**
  * A partial implementation of an {@link EntityPart} with the most common methods implemented.
  *
- * @param <E> The {@link Entity} that owns this {@link EntityPart}
+ * @param <E> the {@link Entity} that owns this {@link EntityPart}
  * @see EnderDragonPart
  */
 public abstract class AbstractEntityPart<E extends Entity> extends Entity implements EntityPart<E> {
@@ -54,13 +54,16 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	}
 
 	@Override
-	protected void initDataTracker() { }
+	protected void initDataTracker() {
+	}
 
 	@Override
-	protected void readCustomDataFromNbt(NbtCompound nbt) { }
+	protected void readCustomDataFromNbt(NbtCompound nbt) {
+	}
 
 	@Override
-	protected void writeCustomDataToNbt(NbtCompound nbt) { }
+	protected void writeCustomDataToNbt(NbtCompound nbt) {
+	}
 
 	@Override
 	public boolean collides() {
@@ -69,7 +72,8 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 
 	/**
 	 * Scales the {@link EntityPart}'s {@link EntityDimensions dimensions}.
-	 * @param width the ratio to scale the bounding width by
+	 *
+	 * @param width  the ratio to scale the bounding width by
 	 * @param height the ratio to scale the bounding height by
 	 */
 	public void scale(float width, float height) {
@@ -80,6 +84,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 
 	/**
 	 * Scales the {@link EntityPart}'s {@link EntityDimensions dimensions}.
+	 *
 	 * @param ratio the ratio to scale the bounding box by
 	 */
 	public void scale(float ratio) {
@@ -88,7 +93,8 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 
 	/**
 	 * Sets the {@link EntityPart}'s {@link EntityDimensions dimensions}.
-	 * @param width the bounding width
+	 *
+	 * @param width  the bounding width
 	 * @param height the bounding height
 	 */
 	public void setDimensions(float width, float height) {
@@ -98,6 +104,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 
 	/**
 	 * Set the position relative to the {@link AbstractEntityPart#owner owner}.
+	 *
 	 * @param position the relative position
 	 */
 	public void setRelativePosition(Vec3d position) {
@@ -106,6 +113,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 
 	/**
 	 * Gets the absolute default position for this {@link AbstractEntityPart}.
+	 *
 	 * @return the absolute position
 	 */
 	public Vec3d getAbsolutePosition() {
@@ -114,6 +122,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 
 	/**
 	 * Gets the position relative to the {@link AbstractEntityPart#owner owner}.
+	 *
 	 * @return the relative position
 	 */
 	public Vec3d getRelativePosition() {
@@ -122,6 +131,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 
 	/**
 	 * Gets the relative x position in regard to the {@link AbstractEntityPart#owner owner}.
+	 *
 	 * @return the relative x position
 	 */
 	public double getRelativeX() {
@@ -130,6 +140,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 
 	/**
 	 * Gets the relative y position in regard to the {@link AbstractEntityPart#owner owner}.
+	 *
 	 * @return the relative y position
 	 */
 	public double getRelativeY() {
@@ -138,6 +149,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 
 	/**
 	 * Gets the relative z position in regard to the {@link AbstractEntityPart#owner owner}.
+	 *
 	 * @return the relative z position
 	 */
 	public double getRelativeZ() {
@@ -146,6 +158,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 
 	/**
 	 * A much more computationally simple movement method for entity parts.
+	 *
 	 * @param distance the distance to move with respect to the {@link AbstractEntityPart#owner owner}'s position
 	 */
 	public void move(Vec3d distance) {
@@ -154,6 +167,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 
 	/**
 	 * A much more computationally simple movement method for entity parts.
+	 *
 	 * @param dx the distance to move with respect to the {@link AbstractEntityPart#owner owner}'s position along the world x-axis
 	 * @param dy the distance to move with respect to the {@link AbstractEntityPart#owner owner}'s position along the world y-axis
 	 * @param dz the distance to move with respect to the {@link AbstractEntityPart#owner owner}'s position along the world z-axis
@@ -168,10 +182,11 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 
 	/**
 	 * Rotates this {@link AbstractEntityPart} about the pivot point with the given rotation.
+	 *
 	 * @param pivot the pivot point to rotate about in relative coordinates
 	 * @param pitch the rotation about z-axis in degrees
-	 * @param yaw the rotation about y-axis in degrees
-	 * @param roll the rotation about x-axis in degrees
+	 * @param yaw   the rotation about y-axis in degrees
+	 * @param roll  the rotation about x-axis in degrees
 	 */
 	public void rotate(Vec3d pivot, float pitch, float yaw, float roll) {
 		this.setPivot(pivot);
@@ -180,9 +195,10 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 
 	/**
 	 * Rotates this {@link AbstractEntityPart} about its {@link AbstractEntityPart#pivot pivot point} with the given rotation.
+	 *
 	 * @param pitch the rotation about z-axis in degrees
-	 * @param yaw the rotation about y-axis in degrees
-	 * @param roll the rotation about x-axis in degrees
+	 * @param yaw   the rotation about y-axis in degrees
+	 * @param roll  the rotation about x-axis in degrees
 	 */
 	public void rotate(float pitch, float yaw, float roll) {
 		Vec3f relativePos = new Vec3f(this.getAbsolutePosition().subtract(this.getAbsolutePivot()));
@@ -194,6 +210,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 
 	/**
 	 * Gets the pivot point relative to the {@link AbstractEntityPart#owner owner}.
+	 *
 	 * @return the pivot point
 	 */
 	public Vec3d getPivot() {
@@ -202,6 +219,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 
 	/**
 	 * Gets the pivot point in absolute coordinates.
+	 *
 	 * @return the pivot point
 	 */
 	public Vec3d getAbsolutePivot() {
@@ -210,6 +228,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 
 	/**
 	 * Sets the point to {@link AbstractEntityPart#rotate(float, float, float) rotate} about.
+	 *
 	 * @param pivot the pivot point
 	 */
 	public void setPivot(Vec3d pivot) {
@@ -218,6 +237,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 
 	/**
 	 * Sets the point to {@link AbstractEntityPart#rotate(float, float, float) rotate} about.
+	 *
 	 * @param x the x coordinate of the pivot point
 	 * @param y the y coordinate of the pivot point
 	 * @param z the z coordinate of the pivot point

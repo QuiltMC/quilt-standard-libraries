@@ -43,7 +43,7 @@ public class ClientEntityHandlerMixin {
 	private void startTrackingEntityParts(Entity entity, CallbackInfo ci) {
 		if (entity instanceof MultipartEntity multipartEntity) {
 			for (EntityPart<?> part : multipartEntity.getEntityParts()) {
-				((EntityPartTracker) field_27735).getEntityParts().put(((Entity) part).getId(), (Entity) part);
+				((EntityPartTracker) this.field_27735).getEntityParts().put(((Entity) part).getId(), (Entity) part);
 			}
 		}
 	}
@@ -52,7 +52,7 @@ public class ClientEntityHandlerMixin {
 	private void stopTrackingEntityParts(Entity entity, CallbackInfo ci) {
 		if (entity instanceof MultipartEntity multipartEntity) {
 			for (EntityPart<?> part : multipartEntity.getEntityParts()) {
-				((EntityPartTracker) field_27735).getEntityParts().remove(((Entity) part).getId(), part);
+				((EntityPartTracker) this.field_27735).getEntityParts().remove(((Entity) part).getId(), part);
 			}
 		}
 	}

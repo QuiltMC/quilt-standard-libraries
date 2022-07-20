@@ -46,7 +46,7 @@ public class ServerEntityHandlerMixin {
 	private void startTrackingEntityParts(Entity entity, CallbackInfo ci) {
 		if (entity instanceof MultipartEntity multipartEntity) {
 			for (EntityPart<?> part : multipartEntity.getEntityParts()) {
-				((EntityPartTracker) field_26936).getEntityParts().put(((Entity) part).getId(), (Entity) part);
+				((EntityPartTracker) this.field_26936).getEntityParts().put(((Entity) part).getId(), (Entity) part);
 			}
 		}
 	}
@@ -55,7 +55,7 @@ public class ServerEntityHandlerMixin {
 	private void stopTrackingEntityParts(Entity entity, CallbackInfo ci) {
 		if (entity instanceof MultipartEntity multipartEntity) {
 			for (EntityPart<?> part : multipartEntity.getEntityParts()) {
-				((EntityPartTracker) field_26936).getEntityParts().remove(((Entity) part).getId(), part);
+				((EntityPartTracker) this.field_26936).getEntityParts().remove(((Entity) part).getId(), part);
 			}
 		}
 	}

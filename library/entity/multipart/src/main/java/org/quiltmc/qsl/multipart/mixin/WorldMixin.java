@@ -51,7 +51,7 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 
 	@Override
 	public Int2ObjectMap<Entity> getEntityParts() {
-		return quilt$entityParts;
+		return this.quilt$entityParts;
 	}
 
 	/**

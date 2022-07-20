@@ -24,7 +24,7 @@ import org.quiltmc.qsl.base.api.util.InjectedInterface;
 /**
  * Represents the sub-parts of a {@link MultipartEntity}.
  *
- * @param <E> The {@link Entity} that owns this {@link EntityPart}
+ * @param <E> the {@link Entity} that owns this {@link EntityPart}
  * @see EnderDragonPart
  */
 @InjectedInterface(EnderDragonPart.class)
