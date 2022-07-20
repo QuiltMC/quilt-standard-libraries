@@ -132,8 +132,10 @@ public abstract class CreateWorldScreenMixin {
 	// Lambda method in CreateWorldScreen#applyDataPacks, at C_kjxfcecs#method_42098.
 	// Inject before closing the resource manager.
 	@Inject(
-			method = "m_paskjwcu(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/util/registry/DynamicRegistryManager$Frozen;Lcom/mojang/datafixers/util/Pair;)Lnet/minecraft/unmapped/C_njsjipmy;",
-			at = @At("HEAD")
+			method = {"method_41850", "m_paskjwcu"},
+			at = @At("HEAD"),
+			require = 1,
+			remap = false // Very bad, someone please fix the Mixin annotation processor already.
 	)
 	private static void onDataPackLoadEnd(AutoCloseableResourceManager resourceManager,
 			ServerReloadableResources serverReloadableResources,
@@ -142,11 +144,13 @@ public abstract class CreateWorldScreenMixin {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resourceManager, null);
 	}
 
-	// Lambda method in CreateWorldScreen#applyDataPacks, at C_kjxfcecs#method_42098.
+	// Lambda method in CreateWorldScreen#create, at C_kjxfcecs#method_42098.
 	// Inject before closing the resource manager.
 	@Inject(
-			method = "m_tlckpqyc(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/util/registry/DynamicRegistryManager$Frozen;Lnet/minecraft/world/gen/GeneratorOptions;)Lnet/minecraft/unmapped/C_njsjipmy;",
-			at = @At("HEAD")
+			method = {"method_41851", "m_tlckpqyc"},
+			at = @At("HEAD"),
+			require = 1,
+			remap = false // Very bad, someone please fix the Mixin annotation processor already.
 	)
 	private static void onCreateDataPackLoadEnd(AutoCloseableResourceManager resourceManager,
 			ServerReloadableResources serverReloadableResources,
