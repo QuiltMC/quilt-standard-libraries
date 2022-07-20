@@ -16,7 +16,14 @@
 
 package org.quiltmc.qsl.registry.attachment.impl;
 
-import java.util.*;
+import static org.quiltmc.qsl.registry.attachment.impl.Initializer.id;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import net.fabricmc.api.EnvType;
@@ -31,10 +38,12 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.ServerPlayConnectionEvents;
@@ -42,11 +51,13 @@ import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
-import static org.quiltmc.qsl.registry.attachment.impl.Initializer.id;
-
 @ApiStatus.Internal
 public final class RegistryEntryAttachmentSync {
-	// TODO: Update this value when packets are changed
+	/**
+	 * Indicates the packet version.
+	 * <p>
+	 * This value should be updated whenever packet formats are changed.
+	 */
 	private static final byte PACKET_VERSION = 1;
 
 	private RegistryEntryAttachmentSync() {
@@ -114,15 +125,28 @@ public final class RegistryEntryAttachmentSync {
 
 	public static void syncAttachmentsToAllPlayers() {
 		var server = Initializer.getServer();
+
 		if (server == null) {
 			return;
 		}
 
 		for (var player : server.getPlayerManager().getPlayerList()) {
+			if (!canSyncToPlay(player)) continue;
+
 			for (var buf : createSyncPackets()) {
 				ServerPlayNetworking.send(player, PACKET_ID, buf);
 			}
 		}
+	}
+
+	private static boolean canSyncToPlay(ServerPlayerEntity player) {
+		if (MinecraftQuiltLoader.getEnvironmentType() == EnvType.CLIENT) {
+			var clientPlayer = MinecraftClient.getInstance().player;
+
+			return clientPlayer == null || !player.getUuid().equals(MinecraftClient.getInstance().player.getUuid());
+		}
+
+		return true;
 	}
 
 	public static void clearEncodedValuesCache() {
@@ -231,6 +255,7 @@ public final class RegistryEntryAttachmentSync {
 			var holder = RegistryEntryAttachmentHolder.getData(registry);
 			holder.valueTable.row(attachment).clear();
 			holder.valueTagTable.row(attachment).clear();
+
 			for (AttachmentEntry attachmentEntry : attachments) {
 				var entryId = new Identifier(namespace, attachmentEntry.path);
 
@@ -253,6 +278,5 @@ public final class RegistryEntryAttachmentSync {
 				}
 			}
 		});
-		// TODO send "OK" response packet?
 	}
 }
