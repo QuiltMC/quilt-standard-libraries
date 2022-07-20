@@ -74,7 +74,7 @@ public abstract class CreateWorldScreenMixin {
 	}
 
 	@Redirect(
-			method = "m_sajvmluy",
+			method = "create",
 			at = @At(value = "FIELD", target = "Lnet/minecraft/resource/pack/DataPackSettings;SAFE_MODE:Lnet/minecraft/resource/pack/DataPackSettings;")
 	)
 	private static DataPackSettings replaceDefaultSettings() {
@@ -82,7 +82,7 @@ public abstract class CreateWorldScreenMixin {
 	}
 
 	@Redirect(
-			method = "m_sajvmluy",
+			method = "create",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/unmapped/C_kjxfcecs;method_42098(Lnet/minecraft/unmapped/C_kjxfcecs$C_kculhjuh;Lnet/minecraft/unmapped/C_kjxfcecs$C_ueybpquh;Lnet/minecraft/unmapped/C_kjxfcecs$C_cknyxhnl;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
@@ -119,7 +119,7 @@ public abstract class CreateWorldScreenMixin {
 	}
 
 	@Inject(
-			method = "m_sajvmluy",
+			method = "create",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/unmapped/C_kjxfcecs;method_42098(Lnet/minecraft/unmapped/C_kjxfcecs$C_kculhjuh;Lnet/minecraft/unmapped/C_kjxfcecs$C_ueybpquh;Lnet/minecraft/unmapped/C_kjxfcecs$C_cknyxhnl;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
@@ -129,7 +129,7 @@ public abstract class CreateWorldScreenMixin {
 		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null);
 	}
 
-	// Lambda method in CreateWorldScreen#applyDataPacks, at class_7237#method_42098.
+	// Lambda method in CreateWorldScreen#applyDataPacks, at C_kjxfcecs#method_42098.
 	// Inject before closing the resource manager.
 	@Inject(
 			method = "m_paskjwcu(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/util/registry/DynamicRegistryManager$Frozen;Lcom/mojang/datafixers/util/Pair;)Lnet/minecraft/unmapped/C_njsjipmy;",
@@ -142,7 +142,7 @@ public abstract class CreateWorldScreenMixin {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resourceManager, null);
 	}
 
-	// Lambda method in CreateWorldScreen#applyDataPacks, at class_7237#method_42098.
+	// Lambda method in CreateWorldScreen#applyDataPacks, at C_kjxfcecs#method_42098.
 	// Inject before closing the resource manager.
 	@Inject(
 			method = "m_tlckpqyc(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/util/registry/DynamicRegistryManager$Frozen;Lnet/minecraft/world/gen/GeneratorOptions;)Lnet/minecraft/unmapped/C_njsjipmy;",
