@@ -19,6 +19,7 @@ package org.quiltmc.qsl.resource.loader.test;
 import static org.quiltmc.qsl.resource.loader.test.ResourceLoaderTestMod.id;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 
 import net.minecraft.resource.ResourceType;
@@ -56,12 +57,18 @@ public class BuiltinResourcePackTestMod implements ModInitializer {
 
 	private void testPackMetaGeneration(String name) {
 		String pack = ModResourcePackUtil.getPackMeta(name, ResourceType.CLIENT_RESOURCES);
+		JsonObject obj;
 
-		var obj = (JsonObject) JsonParser.parseString(pack);
+		try {
+			obj = (JsonObject) JsonParser.parseString(pack);
+		} catch (JsonParseException e) {
+			throw new AssertionError("Pack metadata parsing test for description \"" + name + "\".", e);
+		}
+
 		String desc = obj.getAsJsonObject("pack").get("description").getAsString();
 
 		if (!desc.equals(name == null ? "" : name)) {
-			throw new IllegalStateException("Escaped name is different from name after parsing. Got \"" + desc + "\", expected \"" + name + "\".");
+			throw new AssertionError("Escaped name is different from name after parsing. Got \"" + desc + "\", expected \"" + name + "\".");
 		}
 	}
 }
