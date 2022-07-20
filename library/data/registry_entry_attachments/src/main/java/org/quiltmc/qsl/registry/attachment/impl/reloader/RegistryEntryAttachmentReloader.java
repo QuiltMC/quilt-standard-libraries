@@ -188,7 +188,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 
 			for (var entry : this.attachmentMaps.entrySet()) {
 				profiler.swap(id + "/apply_attachment{" + entry.getKey().id() + "}");
-				applyOne((RegistryEntryAttachment<Object, Object>) entry.getKey(), (AttachmentDictionary<Object, Object>) entry.getValue());
+				this.applyOne((RegistryEntryAttachment<Object, Object>) entry.getKey(), (AttachmentDictionary<Object, Object>) entry.getValue());
 			}
 
 			profiler.pop();
