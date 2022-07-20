@@ -18,6 +18,10 @@ package org.quiltmc.qsl.resource.loader.test;
 
 import static org.quiltmc.qsl.resource.loader.test.ResourceLoaderTestMod.id;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import net.minecraft.resource.ResourceType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -25,6 +29,7 @@ import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
+import org.quiltmc.qsl.resource.loader.impl.ModResourcePackUtil;
 
 public class BuiltinResourcePackTestMod implements ModInitializer {
 	@Override
@@ -32,6 +37,31 @@ public class BuiltinResourcePackTestMod implements ModInitializer {
 		if (!ResourceLoader.registerBuiltinResourcePack(id("test"), mod, ResourcePackActivationType.DEFAULT_ENABLED,
 				Text.literal("Test built-in resource pack").formatted(Formatting.GOLD))) {
 			throw new RuntimeException("Could not register built-in resource pack.");
+		}
+
+		this.testPackMetaGenerations();
+	}
+
+	/**
+	 * Tests {@link ModResourcePackUtil#getPackMeta(String, ResourceType)} so it generates a perfectly valid JSON.
+	 */
+	private void testPackMetaGenerations() {
+		this.testPackMetaGeneration(null);
+		this.testPackMetaGeneration("");
+		this.testPackMetaGeneration("Test");
+		this.testPackMetaGeneration("\"Test\"");
+		this.testPackMetaGeneration("\"Test\\");
+		this.testPackMetaGeneration("\"Test\\\\\"");
+	}
+
+	private void testPackMetaGeneration(String name) {
+		String pack = ModResourcePackUtil.getPackMeta(name, ResourceType.CLIENT_RESOURCES);
+
+		var obj = (JsonObject) JsonParser.parseString(pack);
+		String desc = obj.getAsJsonObject("pack").get("description").getAsString();
+
+		if (!desc.equals(name == null ? "" : name)) {
+			throw new IllegalStateException("Escaped name is different from name after parsing. Got \"" + desc + "\", expected \"" + name + "\".");
 		}
 	}
 }
