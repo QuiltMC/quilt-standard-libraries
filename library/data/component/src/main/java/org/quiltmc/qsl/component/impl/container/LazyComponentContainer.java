@@ -16,22 +16,23 @@
 
 package org.quiltmc.qsl.component.impl.container;
 
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.function.BiConsumer;
+
 import org.jetbrains.annotations.Nullable;
+
 import org.quiltmc.qsl.base.api.util.Lazy;
 import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
+import org.quiltmc.qsl.component.api.sync.SyncChannel;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
-import org.quiltmc.qsl.component.api.sync.SyncChannel;
-
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.function.BiConsumer;
 
 public class LazyComponentContainer extends AbstractComponentContainer {
 	public static final ComponentContainer.Factory<LazyComponentContainer> FACTORY =

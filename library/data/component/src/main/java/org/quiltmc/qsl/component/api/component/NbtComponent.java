@@ -16,9 +16,23 @@
 
 package org.quiltmc.qsl.component.api.component;
 
-import net.minecraft.nbt.*;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.nbt.NbtByte;
+import net.minecraft.nbt.NbtByteArray;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtDouble;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtFloat;
+import net.minecraft.nbt.NbtInt;
+import net.minecraft.nbt.NbtIntArray;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtLong;
+import net.minecraft.nbt.NbtLongArray;
+import net.minecraft.nbt.NbtShort;
+import net.minecraft.nbt.NbtString;
+import net.minecraft.util.Identifier;
+
 import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 

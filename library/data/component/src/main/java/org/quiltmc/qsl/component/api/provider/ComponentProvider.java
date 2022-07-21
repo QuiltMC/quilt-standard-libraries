@@ -22,24 +22,26 @@ import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.Component;
-import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.Components;
+import org.quiltmc.qsl.component.api.container.ComponentContainer;
 
 /**
  * Any object that wishes to allow {@link Component components} to be attached to and queried from it,
  * needs to implement this interface.<br/>
  *
+ * <p>
  * Currectly it consists of the {@link ComponentProvider#getComponentContainer()} method, which is the abstract one,
  * as well as the {@link ComponentProvider#expose(ComponentType)} method, which is just a utility method.<br/>
  * In the future, more methods may be added, but for now this is all the API we need to expose on game objects.<br/>
  * You may create custom implementations of this interface. However, to do so, I would suggest looking at
  * {@link ComponentContainer} beforehand.
- * <p/>
  *
+ * <p>
  * By default, QSL provides the following, interface injected {@linkplain ComponentProvider providers}:
  * <ul>
  *     <li>BlockEntity</li>
@@ -49,22 +51,23 @@ import org.quiltmc.qsl.component.api.Components;
  *     <li>Level(in other words a world save)</li>
  * </ul>
  *
+ * <p>
  * Furthermore, all of them support component saving and syncing.<br/>
  *
  * <b>Note: You shouldn't have to use the {@link ComponentProvider#getComponentContainer()} method that often,
  * if ever, because it's needed for implementations not for using the API.</b>
  *
+ * @author 0xJoeMama
  * @see ComponentContainer
  * @see Components
- * @author 0xJoeMama
  */
 @InjectedInterface({ // We inject this inteface, so that modders don't need to use the methods in Components directly with our default implementations.
-	Entity.class,
-	BlockEntity.class,
-	Chunk.class,
-	MinecraftServer.class, // MinecraftServer and MinecraftClient contain Level components
-	MinecraftClient.class,
-	World.class
+		Entity.class,
+		BlockEntity.class,
+		Chunk.class,
+		MinecraftServer.class, // MinecraftServer and MinecraftClient contain Level components
+		MinecraftClient.class,
+		World.class
 })
 public interface ComponentProvider {
 	/**
@@ -81,8 +84,8 @@ public interface ComponentProvider {
 	 * Utility method to call {@link Components#expose(ComponentType, Object)} on the actual provider.
 	 *
 	 * @param type The {@linkplain ComponentType type} we want to query.
+	 * @param <C>  The type of the held component.
 	 * @return A {@link Maybe} instance following the rules defined in {@link Components#expose(ComponentType, Object)}.
-	 * @param <C> The type of the held component.
 	 */
 	default <C extends Component> Maybe<C> expose(ComponentType<C> type) {
 		return Components.expose(type, this);

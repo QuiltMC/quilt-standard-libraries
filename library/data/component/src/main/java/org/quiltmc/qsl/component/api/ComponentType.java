@@ -16,29 +16,30 @@
 
 package org.quiltmc.qsl.component.api;
 
-import net.minecraft.util.Identifier;
-import org.quiltmc.qsl.base.api.util.Maybe;
-import org.quiltmc.qsl.component.impl.client.sync.ClientSyncHandler;
-import org.quiltmc.qsl.component.api.sync.codec.NetworkCodec;
-
 import java.util.IdentityHashMap;
 import java.util.Map;
+
+import net.minecraft.util.Identifier;
+
+import org.quiltmc.qsl.base.api.util.Maybe;
+import org.quiltmc.qsl.component.api.sync.codec.NetworkCodec;
+import org.quiltmc.qsl.component.impl.client.sync.ClientSyncHandler;
 
 /**
  * A global identifier for a specific type of {@linkplain Component components}.<br/>
  * This class <b>must always exist as singleton instances, which have to be registered under the {@linkplain Components#REGISTRY registry}</b>.
  *
- * @param id The {@link Identifier} the type is registered with(it's here just for accesibility, however you may also get access to it using the {@linkplain Components#REGISTRY registry} and a {@link ComponentType} instance).
+ * @param id             The {@link Identifier} the type is registered with(it's here just for accesibility, however you may also get access to it using the {@linkplain Components#REGISTRY registry} and a {@link ComponentType} instance).
  * @param defaultFactory A factory to a default {@link Component} instance, that this type may produce,
  *                       if no specific factory is defined under the container {@link org.quiltmc.qsl.component.impl.injection.ComponentEntry}.<br/>
  *                       Used only during component injections or creation of {@linkplain org.quiltmc.qsl.component.api.container.ComponentContainer containers}.
- * @param isStatic Whether this {@linkplain ComponentType type} works as a static type.
- * @param isInstant Whether this {@linkplain ComponentType type} will be instantly initialized when put in a container. Useful for {@link org.quiltmc.qsl.component.api.component.TickingComponent}s or componens you want to initialize on {@linkplain org.quiltmc.qsl.component.api.container.ComponentContainer container} creation.
- * @param <T> The generic type of {@link Component} this type will provide. Most of the time, you would want this to be an interface providing all the needed API you may use to interact with a {@link Component} of this {@linkplain ComponentType type}.
+ * @param isStatic       Whether this {@linkplain ComponentType type} works as a static type.
+ * @param isInstant      Whether this {@linkplain ComponentType type} will be instantly initialized when put in a container. Useful for {@link org.quiltmc.qsl.component.api.component.TickingComponent}s or componens you want to initialize on {@linkplain org.quiltmc.qsl.component.api.container.ComponentContainer container} creation.
+ * @param <T>            The generic type of {@link Component} this type will provide. Most of the time, you would want this to be an interface providing all the needed API you may use to interact with a {@link Component} of this {@linkplain ComponentType type}.
  * @author 0xJoeMama
  */
 public record ComponentType<T extends Component>(Identifier id, Component.Factory<T> defaultFactory,
-												 boolean isStatic, boolean isInstant) implements Component.Factory<T> {
+												boolean isStatic, boolean isInstant) implements Component.Factory<T> {
 	/**
 	 * We provide a {@link NetworkCodec} to be used with manual registry sync, until the registry sync API is merged.
 	 */
@@ -101,10 +102,11 @@ public record ComponentType<T extends Component>(Identifier id, Component.Factor
 		/**
 		 * Performs simple lazy initialization on the provided {@link ComponentType static type}
 		 * using the provided {@link org.quiltmc.qsl.component.api.Component.Operations} as initialization arguments.
-		 * @param type The type of the component to be created.
+		 *
+		 * @param type       The type of the component to be created.
 		 * @param operations The operations to use as initialization arguments.
+		 * @param <C>        The type of {@linkplain Component component} to be created.
 		 * @return A singleton {@link C} instance.
-		 * @param <C> The type of {@linkplain Component component} to be created.
 		 */
 		@SuppressWarnings("unchecked")
 		public <C extends Component> C getOrCreate(ComponentType<C> type, Component.Operations operations) {

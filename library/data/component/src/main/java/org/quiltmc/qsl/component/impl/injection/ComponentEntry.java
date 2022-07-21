@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.component.impl.injection;
 
 import org.jetbrains.annotations.Nullable;
+
 import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentType;
 

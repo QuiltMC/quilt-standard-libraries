@@ -16,8 +16,10 @@
 
 package org.quiltmc.qsl.component.impl;
 
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
+
+import net.minecraft.util.Identifier;
+
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.component.impl.event.CommonEventListener;

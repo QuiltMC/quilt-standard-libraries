@@ -18,6 +18,7 @@ package org.quiltmc.qsl.component.impl.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.component.impl.client.sync.ClientSyncHandler;

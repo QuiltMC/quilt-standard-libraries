@@ -17,10 +17,12 @@
 package org.quiltmc.qsl.component.api.component;
 
 import com.mojang.serialization.Codec;
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
-import org.jetbrains.annotations.Nullable;
+
 import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 

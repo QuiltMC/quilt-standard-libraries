@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.component.test;
 
+import java.util.Objects;
+
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.HostileEntity;
@@ -28,13 +30,10 @@ import net.minecraft.text.Text;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.explosion.Explosion;
+
 import org.quiltmc.qsl.base.api.event.ListenerPhase;
 import org.quiltmc.qsl.component.api.Components;
-import org.quiltmc.qsl.component.api.component.SyncedComponent;
-import org.quiltmc.qsl.component.impl.component.DefaultInventoryComponent;
 import org.quiltmc.qsl.lifecycle.api.event.ServerWorldTickEvents;
-
-import java.util.Objects;
 
 @ListenerPhase(
 		callbackTarget = ServerWorldTickEvents.End.class,
@@ -47,13 +46,14 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 		if (player == null) {
 			return;
 		}
+
 		Chunk chunk = world.getChunk(player.getBlockPos());
 
-		cowTick(world);
-		creeperTick(world);
-		hostileTick(world);
-		currentChunkBETick(world, chunk);
-		currentChunkTick(player, chunk);
+		this.cowTick(world);
+		this.creeperTick(world);
+		this.hostileTick(world);
+		this.currentChunkBETick(world, chunk);
+		this.currentChunkTick(player, chunk);
 	}
 
 	private void currentChunkTick(ServerPlayerEntity player, Chunk chunk) {
@@ -72,15 +72,13 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 					if (ItemStack.canCombine(stack, playerStack)) {
 						stack.increment(1);
 						playerStack.decrement(1);
-//						stack.expose(ComponentTestMod.ITEMSTACK_INT).ifJust(defaultIntegerComponent -> {
-//							defaultIntegerComponent.increment();
-//							defaultIntegerComponent.save();
-//						});
+
 						inventory.save();
 						inventory.sync();
 					}
 				}
 			}
+
 			player.sendMessage(Text.literal(inventory.getStack(0).toString()), true);
 		});
 	}

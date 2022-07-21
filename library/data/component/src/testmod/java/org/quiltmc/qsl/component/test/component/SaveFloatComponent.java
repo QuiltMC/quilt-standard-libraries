@@ -16,14 +16,15 @@
 
 package org.quiltmc.qsl.component.test.component;
 
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.world.ServerWorld;
-import org.jetbrains.annotations.Nullable;
+
 import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.component.SyncedComponent;
-import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.api.component.TickingComponent;
-import org.quiltmc.qsl.component.impl.component.DefaultFloatComponent;
+import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.api.sync.codec.NetworkCodec;
 
 public class SaveFloatComponent extends DefaultFloatComponent implements TickingComponent, SyncedComponent {

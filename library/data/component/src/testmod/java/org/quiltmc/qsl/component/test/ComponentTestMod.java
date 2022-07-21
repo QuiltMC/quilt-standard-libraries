@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.component.test;
 
+import java.util.UUID;
+
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -38,23 +40,22 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.WorldChunk;
+
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.block.entity.api.QuiltBlockEntityTypeBuilder;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.Components;
 import org.quiltmc.qsl.component.api.component.GenericComponent;
-import org.quiltmc.qsl.component.api.component.InventoryComponent;
 import org.quiltmc.qsl.component.api.component.TickingComponent;
-import org.quiltmc.qsl.component.impl.component.DefaultFloatComponent;
-import org.quiltmc.qsl.component.impl.component.DefaultIntegerComponent;
-import org.quiltmc.qsl.component.impl.component.DefaultInventoryComponent;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
 import org.quiltmc.qsl.component.impl.injection.predicate.cached.ClassInjectionPredicate;
 import org.quiltmc.qsl.component.test.component.ChunkInventoryComponent;
+import org.quiltmc.qsl.component.test.component.DefaultFloatComponent;
+import org.quiltmc.qsl.component.test.component.DefaultIntegerComponent;
+import org.quiltmc.qsl.component.test.component.DefaultInventoryComponent;
+import org.quiltmc.qsl.component.test.component.InventoryComponent;
 import org.quiltmc.qsl.component.test.component.SaveFloatComponent;
-
-import java.util.UUID;
 
 public class ComponentTestMod implements ModInitializer {
 	public static final String MODID = "quilt_component_test";
@@ -116,12 +117,14 @@ public class ComponentTestMod implements ModInitializer {
 						player.giveItemStack(new ItemStack(Items.WHEAT));
 						player.sendMessage(Text.literal("Prankt"), true);
 					}
+
 					var props = player.getWorld().getServer().getSaveProperties();
 					if (props instanceof MinecraftServer levelProperties && player.getWorld().getTime() % 100 == 0) {
 						player.sendMessage(Text.literal(
 								levelProperties.expose(SAVE_FLOAT).map(DefaultFloatComponent::get).unwrapOr(0f).toString()
 						), false);
 					}
+
 					player.expose(UUID_THING).ifJust(uuidGenericComponent -> {
 						Entity vehicle = player.getVehicle();
 
@@ -164,7 +167,7 @@ public class ComponentTestMod implements ModInitializer {
 		Components.inject(ChestBlockEntity.class, CHEST_NUMBER);
 		Components.injectInheritage(Chunk.class, CHUNK_INVENTORY);
 		Components.inject(new ClassInjectionPredicate(WorldChunk.class), new ComponentEntry<>(CHUNK_INVENTORY, ChunkInventoryComponent::new));
-//		Components.inject(MinecraftServer.class, SERVER_TICK);
+		// Components.inject(MinecraftServer.class, SERVER_TICK);
 		Components.injectInheritage(ServerPlayerEntity.class, PLAYER_TICK);
 		Components.inject(ServerPlayerEntity.class, UUID_THING);
 		Components.injectInheritage(World.class, SAVE_FLOAT);

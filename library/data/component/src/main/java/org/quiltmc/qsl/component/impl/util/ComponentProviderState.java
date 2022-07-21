@@ -16,19 +16,20 @@
 
 package org.quiltmc.qsl.component.impl.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.World;
+
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
-import org.quiltmc.qsl.component.impl.container.LazyComponentContainer;
 import org.quiltmc.qsl.component.api.sync.SyncChannel;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.quiltmc.qsl.component.impl.container.LazyComponentContainer;
 
 // TODO: Fix this
 public class ComponentProviderState extends PersistentState implements ComponentProvider {
@@ -94,15 +95,15 @@ public class ComponentProviderState extends PersistentState implements Component
 		private static final Map<RegistryKey<World>, ComponentProvider> cachedValue = new HashMap<>();
 		private final ComponentContainer container;
 
+		private ClientComponentProviderState(World world) {
+			this.container = ComponentContainer.builder(world).build(ComponentContainer.LAZY_FACTORY);
+		}
+
 		private static ComponentProvider getOrCreate(World world) {
 			return cachedValue.computeIfAbsent(
 					world.getRegistryKey(),
 					worldRegistryKey -> new ClientComponentProviderState(world)
 			);
-		}
-
-		private ClientComponentProviderState(World world) {
-			this.container = ComponentContainer.builder(world).build(ComponentContainer.LAZY_FACTORY);
 		}
 
 		@Override

@@ -2,11 +2,13 @@ package org.quiltmc.qsl.component.impl.event;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+
 import org.quiltmc.qsl.component.api.Components;
-import org.quiltmc.qsl.component.impl.client.sync.ClientSyncHandler;
 import org.quiltmc.qsl.component.api.sync.SyncChannel;
+import org.quiltmc.qsl.component.impl.client.sync.ClientSyncHandler;
 import org.quiltmc.qsl.networking.api.PacketSender;
 
 @Environment(EnvType.CLIENT)

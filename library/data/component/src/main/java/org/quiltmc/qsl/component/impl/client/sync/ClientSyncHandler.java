@@ -16,12 +16,17 @@
 
 package org.quiltmc.qsl.component.impl.client.sync;
 
+import java.util.ArrayDeque;
+import java.util.Queue;
+
 import com.mojang.datafixers.util.Pair;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.collection.IdList;
+
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.Components;
 import org.quiltmc.qsl.component.api.sync.SyncChannel;
@@ -29,9 +34,6 @@ import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.sync.packet.PacketIds;
 import org.quiltmc.qsl.networking.api.client.ClientLoginNetworking;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
-
-import java.util.ArrayDeque;
-import java.util.Queue;
 
 @Environment(EnvType.CLIENT)
 public final class ClientSyncHandler {

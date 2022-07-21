@@ -3,6 +3,7 @@ package org.quiltmc.qsl.component.impl.event;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.world.ServerWorld;
+
 import org.quiltmc.qsl.component.api.Components;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.sync.packet.PacketIds;

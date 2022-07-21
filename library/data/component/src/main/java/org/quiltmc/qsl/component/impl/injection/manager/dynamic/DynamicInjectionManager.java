@@ -16,16 +16,16 @@
 
 package org.quiltmc.qsl.component.impl.injection.manager.dynamic;
 
-import org.quiltmc.qsl.component.api.provider.ComponentProvider;
-import org.quiltmc.qsl.component.api.predicate.DynamicInjectionPredicate;
-import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
-import org.quiltmc.qsl.component.impl.injection.manager.InjectionManager;
-import org.quiltmc.qsl.base.api.util.Maybe;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import org.quiltmc.qsl.base.api.util.Maybe;
+import org.quiltmc.qsl.component.api.predicate.DynamicInjectionPredicate;
+import org.quiltmc.qsl.component.api.provider.ComponentProvider;
+import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
+import org.quiltmc.qsl.component.impl.injection.manager.InjectionManager;
 
 public class DynamicInjectionManager extends InjectionManager<DynamicInjectionPredicate, DynamicInjectionManager.DynamicInjection> {
 	@Override
@@ -33,10 +33,10 @@ public class DynamicInjectionManager extends InjectionManager<DynamicInjectionPr
 		Class<? extends ComponentProvider> providerClass = provider.getClass();
 		// First check the cached side
 		return this.getCache(providerClass).or(() -> {
-					var injections = this.initInjections(providerClass);
-					this.record(providerClass, injections);
-					return Maybe.just(injections);
-				}).unwrap().stream()
+			var injections = this.initInjections(providerClass);
+			this.record(providerClass, injections);
+			return Maybe.just(injections);
+		}).unwrap().stream()
 				.map(dynamicInjection -> dynamicInjection.test(provider) ? dynamicInjection.componentEntries() : null) // After check the dynamic side
 				.filter(Objects::nonNull)
 				.flatMap(List::stream)
@@ -51,7 +51,7 @@ public class DynamicInjectionManager extends InjectionManager<DynamicInjectionPr
 	}
 
 	public record DynamicInjection(DynamicInjectionPredicate predicate,
-								   List<ComponentEntry<?>> componentEntries) implements Predicate<ComponentProvider> {
+								List<ComponentEntry<?>> componentEntries) implements Predicate<ComponentProvider> {
 		@Override
 		public boolean test(ComponentProvider provider) {
 			return this.predicate.canInject(provider);

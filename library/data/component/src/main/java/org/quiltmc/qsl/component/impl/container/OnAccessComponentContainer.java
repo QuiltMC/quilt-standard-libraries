@@ -16,32 +16,33 @@
 
 package org.quiltmc.qsl.component.impl.container;
 
-import com.mojang.datafixers.util.Either;
-import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.base.api.util.Maybe;
-import org.quiltmc.qsl.component.api.Component;
-import org.quiltmc.qsl.component.api.provider.ComponentProvider;
-import org.quiltmc.qsl.component.api.ComponentType;
-import org.quiltmc.qsl.component.impl.ComponentsImpl;
-import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
-import org.quiltmc.qsl.component.api.sync.SyncChannel;
-
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+import com.mojang.datafixers.util.Either;
+import org.jetbrains.annotations.Nullable;
+
+import org.quiltmc.qsl.base.api.util.Maybe;
+import org.quiltmc.qsl.component.api.Component;
+import org.quiltmc.qsl.component.api.ComponentType;
+import org.quiltmc.qsl.component.api.provider.ComponentProvider;
+import org.quiltmc.qsl.component.api.sync.SyncChannel;
+import org.quiltmc.qsl.component.impl.ComponentsImpl;
+import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
+
 // Suggestion from Technici4n from fabric. May help improve performance and memory footprint once done.
 public class OnAccessComponentContainer extends AbstractComponentContainer {
 	public static final Factory<OnAccessComponentContainer> FACTORY =
 			(provider, injections, saveOperation, ticking, syncChannel) ->
-				new OnAccessComponentContainer(provider, saveOperation, ticking, syncChannel);
+					new OnAccessComponentContainer(provider, saveOperation, ticking, syncChannel);
 	private final Map<ComponentType<?>, Either<ComponentEntry<?>, Component>> components;
 
 	protected OnAccessComponentContainer(ComponentProvider provider,
-									   @Nullable Runnable saveOperation,
-									   boolean ticking,
-									   @Nullable SyncChannel<?, ?> syncChannel) {
+										@Nullable Runnable saveOperation,
+										boolean ticking,
+										@Nullable SyncChannel<?, ?> syncChannel) {
 		super(saveOperation, ticking, syncChannel);
 		this.components = this.createComponents(provider);
 	}

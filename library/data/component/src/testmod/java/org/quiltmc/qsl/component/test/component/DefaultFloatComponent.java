@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.impl.component;
+package org.quiltmc.qsl.component.test.component;
+
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtFloat;
-import org.jetbrains.annotations.Nullable;
+
 import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.component.NbtComponent;
 
 public class DefaultFloatComponent implements NbtComponent<NbtFloat> {
-	private float value;
 	@Nullable
 	private final Runnable saveOperation;
+	private float value;
 
 	public DefaultFloatComponent(Component.Operations ops) {
 		this(ops, 0);

@@ -2,6 +2,7 @@ package org.quiltmc.qsl.component.impl.client.sync;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
@@ -9,9 +10,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 
-@SuppressWarnings("ConstantConditions") // all of these are called after the client joins a world, so no NPEs will be thrown
+// all of these are called after the client joins a world, so no NPEs will be thrown
+@SuppressWarnings("ConstantConditions")
 @Environment(EnvType.CLIENT)
 public final class ClientResolution {
 	public static Entity entity(int id) {

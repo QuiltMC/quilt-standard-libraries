@@ -16,11 +16,11 @@
 
 package org.quiltmc.qsl.component.impl.injection.predicate.dynamic;
 
+import java.util.function.Predicate;
+
 import org.quiltmc.qsl.component.api.predicate.DynamicInjectionPredicate;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.injection.predicate.cached.ClassInjectionPredicate;
-
-import java.util.function.Predicate;
 
 public class DynamicClassInjectionPredicate<P extends ComponentProvider> extends ClassInjectionPredicate implements DynamicInjectionPredicate {
 	private final Predicate<P> predicate;

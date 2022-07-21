@@ -16,11 +16,13 @@
 
 package org.quiltmc.qsl.component.mixin.level;
 
+import org.spongepowered.asm.mixin.Mixin;
+
 import net.minecraft.server.MinecraftServer;
+
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.util.ComponentProviderState;
-import org.spongepowered.asm.mixin.Mixin;
 
 // FIXME: Fix level and world being weird with one another
 @Mixin(MinecraftServer.class)
@@ -28,6 +30,6 @@ public abstract class MinecraftServerMixin implements ComponentProvider {
 	@SuppressWarnings("ConstantConditions")
 	@Override
 	public ComponentContainer getComponentContainer() {
-		return ComponentProviderState.getGlobal((MinecraftServer) (Object)this).getComponentContainer();
+		return ComponentProviderState.getGlobal((MinecraftServer) (Object) this).getComponentContainer();
 	}
 }

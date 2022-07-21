@@ -21,6 +21,7 @@ import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 

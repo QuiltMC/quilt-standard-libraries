@@ -16,12 +16,12 @@
 
 package org.quiltmc.qsl.component.impl.injection.predicate.cached;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 import org.quiltmc.qsl.component.api.predicate.InjectionPredicate;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.util.ErrorUtil;
-
-import java.util.Arrays;
-import java.util.Objects;
 
 public class ClassInjectionPredicate implements InjectionPredicate {
 	protected final Class<?> clazz;
@@ -37,8 +37,8 @@ public class ClassInjectionPredicate implements InjectionPredicate {
 	}
 
 	private static boolean implementsComponentProvider(Class<?> clazz) {
-		return Arrays.stream(clazz.getInterfaces()).anyMatch(it -> it == ComponentProvider.class) ||
-				(clazz.getSuperclass() != null && implementsComponentProvider(clazz.getSuperclass()));
+		return Arrays.stream(clazz.getInterfaces()).anyMatch(it -> it == ComponentProvider.class)
+				|| (clazz.getSuperclass() != null && implementsComponentProvider(clazz.getSuperclass()));
 	}
 
 	@Override
@@ -48,20 +48,21 @@ public class ClassInjectionPredicate implements InjectionPredicate {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(clazz);
+		return Objects.hash(this.clazz);
 	}
 
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o instanceof ClassInjectionPredicate that) {
-			return clazz.equals(that.clazz);
+			return this.clazz.equals(that.clazz);
 		}
+
 		return false;
 	}
 
 	@Override
 	public String toString() {
-		return "ClassInjectionPredicate{clazz=" + clazz + '}';
+		return "ClassInjectionPredicate{clazz=" + this.clazz + '}';
 	}
 }

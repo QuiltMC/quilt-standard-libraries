@@ -16,14 +16,15 @@
 
 package org.quiltmc.qsl.component.impl.container;
 
+import java.util.function.BiConsumer;
+
 import net.minecraft.nbt.NbtCompound;
+
 import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
-
-import java.util.function.BiConsumer;
 
 public final class EmptyComponentContainer implements ComponentContainer {
 	public static final EmptyComponentContainer INSTANCE = new EmptyComponentContainer();

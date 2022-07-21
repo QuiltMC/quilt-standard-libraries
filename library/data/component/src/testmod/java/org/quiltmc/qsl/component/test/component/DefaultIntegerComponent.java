@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.impl.component;
+package org.quiltmc.qsl.component.test.component;
+
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtInt;
-import org.jetbrains.annotations.Nullable;
+
 import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.component.NbtComponent;
 
 public class DefaultIntegerComponent implements NbtComponent<NbtInt> {
-	private int value;
 	@Nullable
 	private final Runnable saveOperation;
+	private int value;
 
 	public DefaultIntegerComponent(Component.Operations ops) {
 		this(ops, 0);

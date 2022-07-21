@@ -16,19 +16,20 @@
 
 package org.quiltmc.qsl.component.impl.container;
 
-import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.base.api.util.Maybe;
-import org.quiltmc.qsl.component.api.Component;
-import org.quiltmc.qsl.component.api.container.ComponentContainer;
-import org.quiltmc.qsl.component.api.ComponentType;
-import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
-import org.quiltmc.qsl.component.api.sync.SyncChannel;
-import org.quiltmc.qsl.component.impl.util.ErrorUtil;
-
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
+
+import org.jetbrains.annotations.Nullable;
+
+import org.quiltmc.qsl.base.api.util.Maybe;
+import org.quiltmc.qsl.component.api.Component;
+import org.quiltmc.qsl.component.api.ComponentType;
+import org.quiltmc.qsl.component.api.container.ComponentContainer;
+import org.quiltmc.qsl.component.api.sync.SyncChannel;
+import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
+import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 
 public class SimpleComponentContainer extends AbstractComponentContainer {
 	public static final ComponentContainer.Factory<SimpleComponentContainer> FACTORY =
@@ -38,9 +39,9 @@ public class SimpleComponentContainer extends AbstractComponentContainer {
 	private final Map<ComponentType<?>, Component> components;
 
 	protected SimpleComponentContainer(@Nullable Runnable saveOperation,
-									   boolean ticking,
-									   @Nullable SyncChannel<?, ?> syncContext,
-									   Stream<ComponentEntry<?>> types) {
+									boolean ticking,
+									@Nullable SyncChannel<?, ?> syncContext,
+									Stream<ComponentEntry<?>> types) {
 		super(saveOperation, ticking, syncContext);
 		this.components = new IdentityHashMap<>();
 		types.forEach(this::initializeComponent);

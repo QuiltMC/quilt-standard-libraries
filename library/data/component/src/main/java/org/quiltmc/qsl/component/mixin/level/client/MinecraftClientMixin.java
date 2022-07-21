@@ -16,14 +16,16 @@
 
 package org.quiltmc.qsl.component.mixin.level.client;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.RunArgs;
-import org.quiltmc.qsl.component.api.container.ComponentContainer;
-import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.RunArgs;
+
+import org.quiltmc.qsl.component.api.container.ComponentContainer;
+import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin implements ComponentProvider {

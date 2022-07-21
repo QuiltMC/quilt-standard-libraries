@@ -16,8 +16,20 @@
 
 package org.quiltmc.qsl.component.api.sync;
 
+import java.util.ArrayDeque;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Queue;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Stream;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
@@ -32,6 +44,7 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.WorldChunk;
+
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.component.SyncedComponent;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
@@ -43,17 +56,10 @@ import org.quiltmc.qsl.networking.api.PlayerLookup;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 
-import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
 // ClientResolution.* all reference client-only classes,
 // so we need to just make sure we use lambdas so no attempt at class loading non-existent classes
 @SuppressWarnings("Convert2MethodRef")
 public class SyncChannel<P extends ComponentProvider, U> {
-
 	// BlockEntity
 	public static final SyncChannel<BlockEntity, BlockPos> BLOCK_ENTITY = new SyncChannel<>(
 			PacketIds.BLOCK_ENTITY_SYNC,
@@ -115,9 +121,10 @@ public class SyncChannel<P extends ComponentProvider, U> {
 	protected final Queue<U> requestQueue = new ArrayDeque<>();
 	protected final NetworkCodec<Queue<U>> queueCodec;
 
-	public SyncChannel(Identifier channelId, NetworkCodec<U> codec, Function<P, U> identifyingDataTransformer,
-					   Function<U, P> clientLocator, BiFunction<ServerPlayerEntity, U, P> serverLocator,
-					   Function<? super P, Collection<ServerPlayerEntity>> playerProvider) {
+	public SyncChannel(Identifier channelId, NetworkCodec<U> codec,
+					Function<P, U> identifyingDataTransformer,
+					Function<U, P> clientLocator, BiFunction<ServerPlayerEntity, U, P> serverLocator,
+					Function<? super P, Collection<ServerPlayerEntity>> playerProvider) {
 		this.channelId = channelId;
 		this.codec = codec;
 		this.identifyingDataTransformer = identifyingDataTransformer;
@@ -197,7 +204,7 @@ public class SyncChannel<P extends ComponentProvider, U> {
 	public void handleClientSyncRequest(MinecraftServer server, ServerPlayerEntity sender, PacketByteBuf buf) {
 		buf.retain();
 		server.execute(() -> {
-			Queue<U> queued = this.queueCodec.decode(buf);
+			Queue<U> queued = this.queueCodec.decode(buf); // we retrive the queue of identifying data
 
 			while (!queued.isEmpty()) {
 				var identifyingData = queued.poll();
@@ -207,6 +214,7 @@ public class SyncChannel<P extends ComponentProvider, U> {
 					return;
 				}
 
+				// force sync the target container
 				this.forceSync(provider, sender);
 			}
 
@@ -259,7 +267,7 @@ public class SyncChannel<P extends ComponentProvider, U> {
 	}
 
 	public Identifier getChannelId() {
-		return channelId;
+		return this.channelId;
 	}
 
 	@Override
@@ -278,7 +286,7 @@ public class SyncChannel<P extends ComponentProvider, U> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(channelId, codec, identifyingDataTransformer, clientLocator, serverLocator, playerProvider);
+		return Objects.hash(this.channelId, this.codec, this.identifyingDataTransformer, this.clientLocator, this.serverLocator, this.playerProvider);
 	}
 
 	@Override

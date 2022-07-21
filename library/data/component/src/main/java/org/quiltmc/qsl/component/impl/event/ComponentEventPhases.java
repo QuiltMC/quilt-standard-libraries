@@ -1,6 +1,7 @@
 package org.quiltmc.qsl.component.impl.event;
 
 import net.minecraft.util.Identifier;
+
 import org.quiltmc.qsl.component.impl.CommonInitializer;
 
 public final class ComponentEventPhases {

@@ -17,8 +17,10 @@
 package org.quiltmc.qsl.component.api.component;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.network.PacketByteBuf;
 import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.network.PacketByteBuf;
+
 import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.sync.codec.NetworkCodec;
 

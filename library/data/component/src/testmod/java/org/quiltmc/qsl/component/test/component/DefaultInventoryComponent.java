@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.impl.component;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.DefaultedList;
-import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.component.api.Component;
-import org.quiltmc.qsl.component.api.component.InventoryComponent;
+package org.quiltmc.qsl.component.test.component;
 
 import java.util.Objects;
 import java.util.function.Supplier;
+
+import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.collection.DefaultedList;
+
+import org.quiltmc.qsl.component.api.Component;
 
 public class DefaultInventoryComponent implements InventoryComponent {
 	private final DefaultedList<ItemStack> stacks;
@@ -52,13 +53,13 @@ public class DefaultInventoryComponent implements InventoryComponent {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(stacks);
+		return Objects.hash(this.stacks);
 	}
 
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof DefaultInventoryComponent that)) return false;
-		return stacks.equals(that.stacks);
+		return this.stacks.equals(that.stacks);
 	}
 }

@@ -16,6 +16,9 @@
 
 package org.quiltmc.qsl.component.test;
 
+import org.apache.commons.lang3.mutable.MutableObject;
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockRenderType;
@@ -30,8 +33,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.apache.commons.lang3.mutable.MutableObject;
-import org.jetbrains.annotations.Nullable;
 
 public class TestBlock extends Block implements BlockEntityProvider {
 	public TestBlock(Settings settings) {
@@ -86,6 +87,7 @@ public class TestBlock extends Block implements BlockEntityProvider {
 
 			return ret.getValue();
 		}
+
 		return super.onUse(state, world, pos, player, hand, hit);
 	}
 

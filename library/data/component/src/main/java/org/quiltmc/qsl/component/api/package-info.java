@@ -7,7 +7,7 @@
  * The simplest thing you can do using this module is create a {@link org.quiltmc.qsl.component.api.ComponentType}.
  * It works as an identifier for components of a specific type.<br/>
  * To create one simply follow this:
- *<pre>{@code
+ * <pre>{@code
  * public class MainClass implements ModInitializer {
  *    // ...
  *    public static final ComponentType<AComponent> A_COMPONENT = Components.register(
@@ -27,7 +27,7 @@
  * }
  *
  * public class ADefaultComponent implements AComponent {
- *	   private final String stringData;
+ * 	   private final String stringData;
  *
  *     public ADefaultComponent(Component.Operations ignored) {
  *         this.stringData = "Hello there";
@@ -64,20 +64,22 @@
  * For more info on {@linkplain org.quiltmc.qsl.component.api.provider.ComponentProvider providers} check the {@linkplain org.quiltmc.qsl.component.api.provider.ComponentProvider relevant documentation}.
  * <p/>
  *
+ * <p>
  * Choose one of those and then you are 1 step away from getting a functioning component injected to it.<br/>
  * On the below example, I have chosen BlockEntity as the target of my injection.
  * <pre>{@code
  * public class MainClass implements ModInitializer {
  *     // ...
- * 	   @Override
- * 	   public void onInitialize(ModContainer mod) {
+ *       @Override
+ *       public void onInitialize(ModContainer mod) {
  * 	   	   // ...
  * 	       Components.inject(ChestBlockEntity.class, A_COMPONENT);
  * 	       // ...
- * 	   }
+ *       }
  * }
  * }</pre>
  *
+ * <p>
  * Now all chests should have {@code AComponent} injected into them, when they are created.
  * <p/>
  * <h2>Accessing Components</h2>
@@ -97,6 +99,7 @@
  * }</pre>
  * <p/>
  *
+ * <p>
  * Keep in mind that when exposing component instances:
  * <ol>
  *     <li>You always get back the type that matches your {@link org.quiltmc.qsl.component.api.ComponentType}. In this case that would be an AComponent instance.</li>
@@ -109,4 +112,5 @@
  *
  * @author 0xJoeMama
  */
+
 package org.quiltmc.qsl.component.api;

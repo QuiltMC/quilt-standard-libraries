@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.api.component;
+package org.quiltmc.qsl.component.test.component;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
@@ -23,6 +23,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.collection.DefaultedList;
+
+import org.quiltmc.qsl.component.api.component.NbtComponent;
 
 public interface InventoryComponent extends NbtComponent<NbtCompound>, Inventory {
 	@Override

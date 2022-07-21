@@ -16,16 +16,23 @@
 
 package org.quiltmc.qsl.component.impl.injection.manager;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+
 import net.minecraft.util.Util;
+
 import org.quiltmc.qsl.base.api.util.Maybe;
-import org.quiltmc.qsl.component.api.*;
+import org.quiltmc.qsl.component.api.Component;
+import org.quiltmc.qsl.component.api.ComponentType;
+import org.quiltmc.qsl.component.api.Components;
 import org.quiltmc.qsl.component.api.predicate.InjectionPredicate;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
 import org.quiltmc.qsl.component.impl.util.ErrorUtil;
-
-import java.util.*;
-import java.util.stream.Stream;
 
 public abstract class InjectionManager<P extends InjectionPredicate, I> {
 	private final Map<P, List<ComponentEntry<?>>> injections = new HashMap<>();
@@ -50,6 +57,7 @@ public abstract class InjectionManager<P extends InjectionPredicate, I> {
 		} else {
 			this.injections.put(predicate, Util.make(new ArrayList<>(), injections -> injections.add(componentEntry)));
 		}
+
 		this.cache.clear();
 	}
 

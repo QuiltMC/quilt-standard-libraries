@@ -34,7 +34,7 @@ public class RedirectedInjectionPredicate extends ClassInjectionPredicate {
 
 	@Override
 	public String toString() {
-		return "RedirectedInjectionPredicate{redirections=" + redirections + ", clazz=" + clazz + '}';
+		return "RedirectedInjectionPredicate{redirections=" + this.redirections + ", clazz=" + this.clazz + '}';
 	}
 
 	@Override
@@ -42,11 +42,11 @@ public class RedirectedInjectionPredicate extends ClassInjectionPredicate {
 		if (this == o) return true;
 		if (!(o instanceof RedirectedInjectionPredicate that)) return false;
 		if (!super.equals(o)) return false;
-		return redirections.equals(that.redirections);
+		return this.redirections.equals(that.redirections);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(super.hashCode(), redirections);
+		return Objects.hash(super.hashCode(), this.redirections);
 	}
 }

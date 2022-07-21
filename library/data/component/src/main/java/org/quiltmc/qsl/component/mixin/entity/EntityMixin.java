@@ -16,18 +16,20 @@
 
 package org.quiltmc.qsl.component.mixin.entity;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.world.World;
-import org.quiltmc.qsl.component.api.container.ComponentContainer;
-import org.quiltmc.qsl.component.api.provider.ComponentProvider;
-import org.quiltmc.qsl.component.api.sync.SyncChannel;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.world.World;
+
+import org.quiltmc.qsl.component.api.container.ComponentContainer;
+import org.quiltmc.qsl.component.api.provider.ComponentProvider;
+import org.quiltmc.qsl.component.api.sync.SyncChannel;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin implements ComponentProvider {

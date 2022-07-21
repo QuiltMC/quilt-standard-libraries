@@ -16,10 +16,15 @@
 
 package org.quiltmc.qsl.component.api;
 
+import java.util.Set;
+import java.util.function.Predicate;
+
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
-import org.jetbrains.annotations.ApiStatus;
+
 import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.component.TickingComponent;
 import org.quiltmc.qsl.component.api.predicate.InjectionPredicate;
@@ -33,14 +38,12 @@ import org.quiltmc.qsl.component.impl.injection.predicate.cached.RedirectedInjec
 import org.quiltmc.qsl.component.impl.injection.predicate.dynamic.DynamicClassInjectionPredicate;
 import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 
-import java.util.Set;
-import java.util.function.Predicate;
-
 /**
  * The external version of the component API, meant to be used by modders.<br/>
  * Use this and not {@link ComponentsImpl}.<br/>
  *
- * For usage docs, check {@link package-info.java}
+ * <p>
+ * For usage docs, check package-info.java
  *
  * @author 0xJoeMama
  */
@@ -55,12 +58,14 @@ public final class Components {
 	// end registry
 
 	// begin injection methods
+
 	/**
 	 * The most manual method of injection.<br/>
 	 * Callers can provide custom {@link InjectionPredicate}s and also custom {@linkplain ComponentEntry entries}
+	 *
 	 * @param predicate The {@linkplain InjectionPredicate predicate} used for the injection
-	 * @param entry The {@linkplain ComponentEntry entry} used for the injection.
-	 * @param <C> The type of the injected component.
+	 * @param entry     The {@linkplain ComponentEntry entry} used for the injection.
+	 * @param <C>       The type of the injected component.
 	 * @see InjectionPredicate
 	 * @see ComponentEntry
 	 */
@@ -73,8 +78,8 @@ public final class Components {
 	 * Injects the provided {@link ComponentType} into all <i>direct</i> instances of the provided {@link Class}.
 	 *
 	 * @param clazz The target class(must implement {@link ComponentProvider}).
-	 * @param type The type to inject(the {@linkplain ComponentType#defaultFactory() default factory of the type} is used).
-	 * @param <C> The type held by the injected type.
+	 * @param type  The type to inject(the {@linkplain ComponentType#defaultFactory() default factory of the type} is used).
+	 * @param <C>   The type held by the injected type.
 	 * @see ClassInjectionPredicate
 	 */
 	public static <C extends Component> void inject(Class<?> clazz, ComponentType<C> type) {
@@ -83,9 +88,10 @@ public final class Components {
 
 	/**
 	 * Similar to {@link Components#inject(Class, ComponentType)} except it injects into all subclasses and indirect instances of the provided class.
+	 *
 	 * @param clazz The highest class in the hierarchy that will be injected.
-	 * @param type The type to inject(the {@linkplain ComponentType#defaultFactory() default factory of the type} is used).
-	 * @param <C> The type held by the injected type.
+	 * @param type  The type to inject(the {@linkplain ComponentType#defaultFactory() default factory of the type} is used).
+	 * @param <C>   The type held by the injected type.
 	 * @see InheritedInjectionPredicate
 	 */
 	public static <C extends Component> void injectInheritage(Class<?> clazz, ComponentType<C> type) {
@@ -95,10 +101,10 @@ public final class Components {
 	/**
 	 * Similar to {@link Components#injectInheritage(Class, ComponentType)}, except it skips the provided classes in the hierarchy.
 	 *
-	 * @param clazz The highest class in the hierarchy that will be injected.
-	 * @param type The type to inject(the {@linkplain ComponentType#defaultFactory() default factory of the type} is used).
+	 * @param clazz      The highest class in the hierarchy that will be injected.
+	 * @param type       The type to inject(the {@linkplain ComponentType#defaultFactory() default factory of the type} is used).
 	 * @param exceptions The classes to avoid injecting into.
-	 * @param <C> The type help by the provided type.
+	 * @param <C>        The type help by the provided type.
 	 * @see FilteredInheritedInjectionPredicate
 	 */
 	public static <C extends Component> void injectInheritanceExcept(Class<?> clazz, ComponentType<C> type, Class<?>... exceptions) {
@@ -116,36 +122,38 @@ public final class Components {
 	 * Dynamically injects into the provided {@link Class} using the provided predicate.<br/>
 	 * For more info on dynamic injection check {@link org.quiltmc.qsl.component.api.predicate.DynamicInjectionPredicate};
 	 *
-	 * @param clazz The target class(must implement {@link ComponentProvider}).
-	 * @param type The type to inject(the {@linkplain ComponentType#defaultFactory() default factory of the type} is used).
+	 * @param clazz     The target class(must implement {@link ComponentProvider}).
+	 * @param type      The type to inject(the {@linkplain ComponentType#defaultFactory() default factory of the type} is used).
 	 * @param predicate The predicate used to determine if injection is possible.
-	 * @param <C> The type of component that will be injected.
-	 * @param <P> The type of the provider that the dynamic injection targets.
+	 * @param <C>       The type of component that will be injected.
+	 * @param <P>       The type of the provider that the dynamic injection targets.
 	 */
 	public static <C extends Component, P extends ComponentProvider> void injectDynamic(Class<P> clazz, ComponentType<C> type, Predicate<P> predicate) {
 		ComponentsImpl.inject(new DynamicClassInjectionPredicate<>(clazz, predicate), new ComponentEntry<>(type));
 	}
+
 	// end injection methods
 
 	// begin registration methods
+
 	/**
 	 * The proper way to expose component instances.<br/>
 	 * This does type-checking and also makes sure a {@link ComponentProvider} is given.<br/>
 	 * This should be used where interface injection cannot apply(in other words custom implementations of {@link ComponentProvider}).<br/>
 	 *
-	 * @param id The {@link ComponentType} to expose.
+	 * @param id  The {@link ComponentType} to expose.
 	 * @param obj Any object will work. If it does not implement {@link ComponentProvider} an empty will be instantly returned.
-	 * @return Either {@link org.quiltmc.qsl.base.api.util.Maybe.Just} the result of expose called on the provider's container
-	 *		   or {@link org.quiltmc.qsl.base.api.util.Maybe.Nothing} if the provided object is not a {@link ComponentProvider}.
 	 * @param <C> The type of component held by the {@link ComponentType}.
 	 * @param <S> The object to attempt to expose the component on.
+	 * @return Either {@link org.quiltmc.qsl.base.api.util.Maybe.Just} the result of expose called on the provider's container
+	 * or {@link org.quiltmc.qsl.base.api.util.Maybe.Nothing} if the provided object is not a {@link ComponentProvider}.
 	 * @see ComponentProvider#expose
 	 * @see org.quiltmc.qsl.component.api.container.ComponentContainer#expose
 	 */
 	public static <C extends Component, S> Maybe<C> expose(ComponentType<C> id, S obj) {
 		if (obj instanceof ComponentProvider provider) {
 			return provider.getComponentContainer().expose(id)
-							   .filterMap(id::cast); // mapping with cast will make sure we get the correct type back.
+					.filterMap(id::cast); // mapping with cast will make sure we get the correct type back.
 		}
 
 		return Maybe.nothing();
@@ -154,10 +162,10 @@ public final class Components {
 	/**
 	 * Register a manually created {@link ComponentType}.
 	 *
-	 * @param id The id to register the type with.
+	 * @param id   The id to register the type with.
 	 * @param type The type to register.
+	 * @param <C>  The type of component held by the type.
 	 * @return The registered version of the component type.
-	 * @param <C> The type of component held by the type.
 	 */
 	public static <C extends Component> ComponentType<C> register(Identifier id, ComponentType<C> type) {
 		return ComponentsImpl.register(id, type);
@@ -166,24 +174,26 @@ public final class Components {
 	/**
 	 * Register a normal {@link ComponentType} using the provided {@linkplain Component.Factory default factory}.
 	 *
-	 * @param id The id to register the type with.
+	 * @param id      The id to register the type with.
 	 * @param factory The default {@link Component.Factory} of the type.
+	 * @param <C>     The type of component held by the type.
 	 * @return A new {@link ComponentType} of {@link C} components.
-	 * @param <C> The type of component held by the type.
 	 */
 	public static <C extends Component> ComponentType<C> register(Identifier id, Component.Factory<C> factory) {
 		if (factory instanceof ComponentType<C>) {
 			throw ErrorUtil.illegalArgument("Do NOT register ComponentTypes as factories, use the correct method").get();
 		}
+
 		return ComponentsImpl.register(id, new ComponentType<>(id, factory, false, false));
 	}
 
 	/**
 	 * Register a {@linkplain ComponentType.Static static} {@linkplain ComponentType type} using the provided factory.
-	 * @param id THe id to register the type with.
+	 *
+	 * @param id      THe id to register the type with.
 	 * @param factory The default {@link Component.Factory} of the type.
+	 * @param <C>     The type of component held by the type.
 	 * @return A new static {@link ComponentType}.
-	 * @param <C> The type of component held by the type.
 	 */
 	public static <C extends Component> ComponentType<C> registerStatic(Identifier id, Component.Factory<C> factory) {
 		return ComponentsImpl.register(id, new ComponentType<>(id, factory, true, false));
@@ -193,13 +203,14 @@ public final class Components {
 	 * Register an instance {@link ComponentType}.<br/>
 	 * For more info check the {@linkplain ComponentType relevant docs}.
 	 *
-	 * @param id The id to register the type with.
+	 * @param id      The id to register the type with.
 	 * @param factory The default {@link Component.Factory} of the type.
+	 * @param <C>     The type of component held by the type.
 	 * @return A new instant {@link ComponentType}.
-	 * @param <C> The type of component held by the type.
 	 */
 	public static <C extends TickingComponent> ComponentType<C> registerInstant(Identifier id, Component.Factory<C> factory) {
 		return ComponentsImpl.register(id, new ComponentType<>(id, factory, false, true));
 	}
+
 	// end registration method
 }

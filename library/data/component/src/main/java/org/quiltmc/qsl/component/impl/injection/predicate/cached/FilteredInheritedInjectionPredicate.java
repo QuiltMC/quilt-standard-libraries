@@ -37,12 +37,12 @@ public class FilteredInheritedInjectionPredicate extends InheritedInjectionPredi
 		if (this == o) return true;
 		if (!(o instanceof FilteredInheritedInjectionPredicate that)) return false;
 		if (!super.equals(o)) return false;
-		return exceptions.equals(that.exceptions);
+		return this.exceptions.equals(that.exceptions);
 	}
 
 	@Override
 	public String toString() {
-		return "FilteredInheritedInjectionPredicate{clazz=" + clazz + ", exceptions=" + exceptions + '}';
+		return "FilteredInheritedInjectionPredicate{clazz=" + this.clazz + ", exceptions=" + this.exceptions + '}';
 	}
 
 	@Override

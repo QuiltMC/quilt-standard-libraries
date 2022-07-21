@@ -1,15 +1,16 @@
 package org.quiltmc.qsl.component.test.component;
 
+import java.util.List;
+
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.collection.DefaultedList;
-import org.jetbrains.annotations.Nullable;
+
 import org.quiltmc.qsl.component.api.Component;
-import org.quiltmc.qsl.component.api.component.InventoryComponent;
 import org.quiltmc.qsl.component.api.component.SyncedComponent;
 import org.quiltmc.qsl.component.api.sync.codec.NetworkCodec;
-
-import java.util.List;
 
 public class ChunkInventoryComponent implements InventoryComponent, SyncedComponent {
 	public static final NetworkCodec<List<ItemStack>> NETWORK_CODEC =

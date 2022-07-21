@@ -16,21 +16,24 @@
 
 package org.quiltmc.qsl.component.impl.client.sync;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
+
 import com.mojang.datafixers.util.Either;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.IdList;
 import net.minecraft.util.registry.Registry;
+
 import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
-
 @Environment(EnvType.CLIENT)
 public final class ClientRegistryPacket {
+	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	public static <T> CompletableFuture<PacketByteBuf> handleRegistryPacket(PacketByteBuf buf, Registry<T> registry, Consumer<IdList<T>> action) {
 		return CompletableFuture.supplyAsync(() -> {
 			var finalEither = createIdList(buf, registry)
@@ -38,7 +41,7 @@ public final class ClientRegistryPacket {
 					.mapLeft(clientHeaderList -> PacketByteBufs.create().writeString("Ok"))
 					.mapRight(PacketByteBufs.create()::writeIdentifier);
 
-			return finalEither.left().isPresent() ? finalEither.left().get() : finalEither.right().get();
+			return finalEither.left().isPresent() ? finalEither.left().get() : finalEither.right().get(); // if we don't have a left value we will definitely have a right one
 		});
 	}
 

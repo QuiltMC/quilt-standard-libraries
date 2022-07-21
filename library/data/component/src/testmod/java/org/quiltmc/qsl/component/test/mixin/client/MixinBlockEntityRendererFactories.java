@@ -16,18 +16,20 @@
 
 package org.quiltmc.qsl.component.test.mixin.client;
 
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import org.quiltmc.qsl.component.impl.util.ErrorUtil;
-import org.quiltmc.qsl.component.test.ComponentTestMod;
-import org.quiltmc.qsl.component.test.client.TestBlockEntityRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
+
+import org.quiltmc.qsl.component.impl.util.ErrorUtil;
+import org.quiltmc.qsl.component.test.ComponentTestMod;
+import org.quiltmc.qsl.component.test.client.TestBlockEntityRenderer;
 
 @Mixin(BlockEntityRendererFactories.class)
 public abstract class MixinBlockEntityRendererFactories {

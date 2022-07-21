@@ -16,8 +16,15 @@
 
 package org.quiltmc.qsl.component.impl.container;
 
-import net.minecraft.nbt.NbtCompound;
+import java.util.ArrayDeque;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
+
 import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.nbt.NbtCompound;
+
 import org.quiltmc.qsl.base.api.util.Lazy;
 import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.Component;
@@ -27,13 +34,8 @@ import org.quiltmc.qsl.component.api.component.SyncedComponent;
 import org.quiltmc.qsl.component.api.component.TickingComponent;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
-import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
 import org.quiltmc.qsl.component.api.sync.SyncChannel;
-
-import java.util.ArrayDeque;
-import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Supplier;
+import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
 
 public class SingleComponentContainer<C extends Component> implements ComponentContainer {
 	private final ComponentType<C> type;

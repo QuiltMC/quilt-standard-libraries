@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.component.test.client;
 
+import java.util.function.Predicate;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -24,10 +26,9 @@ import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3f;
+
 import org.quiltmc.qsl.component.test.ComponentTestMod;
 import org.quiltmc.qsl.component.test.TestBlockEntity;
-
-import java.util.function.Predicate;
 
 public class TestBlockEntityRenderer implements BlockEntityRenderer<TestBlockEntity> {
 	@Override

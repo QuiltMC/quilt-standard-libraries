@@ -16,7 +16,17 @@
 
 package org.quiltmc.qsl.component.api.sync.codec;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.UUID;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.Supplier;
+
 import com.mojang.datafixers.util.Pair;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
@@ -27,15 +37,6 @@ import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.UUID;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-import java.util.function.IntFunction;
-import java.util.function.Supplier;
 
 public record NetworkCodec<T>(BiConsumer<PacketByteBuf, T> encoder, Function<PacketByteBuf, T> decoder) {
 	public static final NetworkCodec<Byte> BYTE = new NetworkCodec<>(

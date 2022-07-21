@@ -16,9 +16,18 @@
 
 package org.quiltmc.qsl.component.impl.container;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Queue;
+import java.util.function.Function;
+
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Nullable;
+
 import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentType;
@@ -28,13 +37,10 @@ import org.quiltmc.qsl.component.api.component.SyncedComponent;
 import org.quiltmc.qsl.component.api.component.TickingComponent;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
-import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
 import org.quiltmc.qsl.component.api.sync.SyncChannel;
+import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
 import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 import org.quiltmc.qsl.component.impl.util.StringConstants;
-
-import java.util.*;
-import java.util.function.Function;
 
 public abstract class AbstractComponentContainer implements ComponentContainer {
 	protected final ContainerOperations operations;
@@ -44,8 +50,8 @@ public abstract class AbstractComponentContainer implements ComponentContainer {
 	protected final Maybe<SyncChannel<?, ?>> syncContext;
 
 	public AbstractComponentContainer(@Nullable Runnable saveOperation,
-									  boolean ticking,
-									  @Nullable SyncChannel<?, ?> syncChannel) {
+									boolean ticking,
+									@Nullable SyncChannel<?, ?> syncChannel) {
 		this.ticking = ticking ? Maybe.just(new ArrayList<>()) : Maybe.nothing();
 		this.nbtComponents = new ArrayList<>();
 		this.syncContext = Maybe.wrap(syncChannel);
@@ -79,8 +85,7 @@ public abstract class AbstractComponentContainer implements ComponentContainer {
 				.filter(Objects::nonNull)
 				.forEach(type -> this.expose(type)
 						.map(component -> ((NbtComponent<?>) component))
-						.ifJust(component -> NbtComponent.readFrom(component, type.id(), rootQslNbt))
-				);
+						.ifJust(component -> NbtComponent.readFrom(component, type.id(), rootQslNbt)));
 	}
 
 	@Override
@@ -131,7 +136,5 @@ public abstract class AbstractComponentContainer implements ComponentContainer {
 		return component;
 	}
 
-	public record ContainerOperations(@Nullable Runnable saveOperation,
-									  @Nullable Function<ComponentType<?>, Runnable> syncOperationFactory) {
-	}
+	public record ContainerOperations(@Nullable Runnable saveOperation, @Nullable Function<ComponentType<?>, Runnable> syncOperationFactory) { }
 }

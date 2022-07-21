@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.component.impl.sync.packet;
 
 import net.minecraft.util.Identifier;
+
 import org.quiltmc.qsl.component.impl.CommonInitializer;
 
 public final class PacketIds {

@@ -16,8 +16,10 @@
 
 package org.quiltmc.qsl.component.api.component;
 
-import net.minecraft.network.PacketByteBuf;
 import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.network.PacketByteBuf;
+
 import org.quiltmc.qsl.component.api.Component;
 
 public interface SyncedComponent extends Component {
