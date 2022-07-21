@@ -37,6 +37,7 @@ import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.WorldChunk;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.block.entity.api.QuiltBlockEntityTypeBuilder;
@@ -48,6 +49,9 @@ import org.quiltmc.qsl.component.api.component.TickingComponent;
 import org.quiltmc.qsl.component.impl.component.DefaultFloatComponent;
 import org.quiltmc.qsl.component.impl.component.DefaultIntegerComponent;
 import org.quiltmc.qsl.component.impl.component.DefaultInventoryComponent;
+import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
+import org.quiltmc.qsl.component.impl.injection.predicate.cached.ClassInjectionPredicate;
+import org.quiltmc.qsl.component.test.component.ChunkInventoryComponent;
 import org.quiltmc.qsl.component.test.component.SaveFloatComponent;
 
 import java.util.UUID;
@@ -71,9 +75,9 @@ public class ComponentTestMod implements ModInitializer {
 			new Identifier(MODID, "chest_number"),
 			operations -> new DefaultIntegerComponent(operations, 200)
 	);
-	public static final ComponentType<DefaultInventoryComponent> CHUNK_INVENTORY = Components.register(
+	public static final ComponentType<ChunkInventoryComponent> CHUNK_INVENTORY = Components.register(
 			new Identifier(MODID, "chunk_inventory"),
-			operations -> new DefaultInventoryComponent(operations, 1)
+			ChunkInventoryComponent::new
 	);
 	public static final ComponentType<SaveFloatComponent> SAVE_FLOAT = Components.registerInstant(
 			new Identifier(MODID, "save_float"),
@@ -159,6 +163,7 @@ public class ComponentTestMod implements ModInitializer {
 		Components.injectInheritanceExcept(HostileEntity.class, HOSTILE_EXPLODE_TIME, CreeperEntity.class);
 		Components.inject(ChestBlockEntity.class, CHEST_NUMBER);
 		Components.injectInheritage(Chunk.class, CHUNK_INVENTORY);
+		Components.inject(new ClassInjectionPredicate(WorldChunk.class), new ComponentEntry<>(CHUNK_INVENTORY, ChunkInventoryComponent::new));
 //		Components.inject(MinecraftServer.class, SERVER_TICK);
 		Components.injectInheritage(ServerPlayerEntity.class, PLAYER_TICK);
 		Components.inject(ServerPlayerEntity.class, UUID_THING);

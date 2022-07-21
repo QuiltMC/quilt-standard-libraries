@@ -30,6 +30,8 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.explosion.Explosion;
 import org.quiltmc.qsl.base.api.event.ListenerPhase;
 import org.quiltmc.qsl.component.api.Components;
+import org.quiltmc.qsl.component.api.component.SyncedComponent;
+import org.quiltmc.qsl.component.impl.component.DefaultInventoryComponent;
 import org.quiltmc.qsl.lifecycle.api.event.ServerWorldTickEvents;
 
 import java.util.Objects;
@@ -64,7 +66,7 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 					newStack.setCount(1);
 					inventory.setStack(0, newStack);
 					inventory.save();
-					// inventory.sync();
+					inventory.sync();
 					playerStack.decrement(1);
 				} else {
 					if (ItemStack.canCombine(stack, playerStack)) {
@@ -75,7 +77,7 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 //							defaultIntegerComponent.save();
 //						});
 						inventory.save();
-						// inventory.sync();
+						inventory.sync();
 					}
 				}
 			}

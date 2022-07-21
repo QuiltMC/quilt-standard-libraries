@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.impl.sync.codec;
+package org.quiltmc.qsl.component.api.sync.codec;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.Unit;
+import net.minecraft.util.collection.IndexedIterable;
+import net.minecraft.util.crash.CrashException;
+import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import org.quiltmc.qsl.base.api.util.Maybe;
-import org.quiltmc.qsl.component.impl.ComponentsImpl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -81,8 +83,7 @@ public record NetworkCodec<T>(BiConsumer<PacketByteBuf, T> encoder, Function<Pac
 	public static final NetworkCodec<ItemStack> ITEM_STACK = new NetworkCodec<>(
 			PacketByteBuf::writeItemStack, PacketByteBuf::readItemStack
 	);
-	public static final NetworkCodec<DefaultedList<ItemStack>> INVENTORY =
-			list(ITEM_STACK, size -> DefaultedList.ofSize(size, ItemStack.EMPTY));
+	public static final NetworkCodec<Unit> EMPTY = new NetworkCodec<>((buf, unit) -> { }, buf -> Unit.INSTANCE);
 
 	public static <O, L extends List<O>> NetworkCodec<L> list(NetworkCodec<O> entryCodec, IntFunction<L> listFactory) {
 		return new NetworkCodec<>(
@@ -91,11 +92,11 @@ public record NetworkCodec<T>(BiConsumer<PacketByteBuf, T> encoder, Function<Pac
 					os.forEach(o -> entryCodec.encode(buf, o));
 				},
 				buf -> {
-					int size = VAR_INT.decode(buf).unwrap();
+					int size = VAR_INT.decode(buf);
 					L newList = listFactory.apply(size);
 
 					for (int i = 0; i < size; i++) {
-						newList.set(i, entryCodec.decode(buf).unwrap());
+						newList.set(i, entryCodec.decode(buf));
 					}
 
 					return newList;
@@ -103,17 +104,40 @@ public record NetworkCodec<T>(BiConsumer<PacketByteBuf, T> encoder, Function<Pac
 		);
 	}
 
-	public static <O, V, M extends Map<O, V>> NetworkCodec<M> map(NetworkCodec<Pair<O, V>> entryCodec, IntFunction<M> mapFactory) {
+	public static <O, Q extends Queue<O>> NetworkCodec<Q> queue(NetworkCodec<O> elementCodec, IntFunction<Q> queueFactory) {
 		return new NetworkCodec<>(
-				(buf, m) -> {
-					VAR_INT.encode(buf, m.size());
-					m.forEach((key, value) -> entryCodec.encode(buf, Pair.of(key, value)));
+				(buf, os) -> {
+					VAR_INT.encode(buf, os.size());
+					os.forEach(o -> elementCodec.encode(buf, o));
 				},
 				buf -> {
-					int size = VAR_INT.decode(buf).unwrap();
-					var map = mapFactory.apply(size);
+					int size = VAR_INT.decode(buf);
+					var queue = queueFactory.apply(size);
+
 					for (int i = 0; i < size; i++) {
-						entryCodec.decode(buf).ifJust(ovPair -> map.put(ovPair.getFirst(), ovPair.getSecond()));
+						queue.add(elementCodec.decode(buf));
+					}
+
+					return queue;
+				}
+		);
+	}
+
+	public static <O, V, M extends Map<O, V>> NetworkCodec<M> map(NetworkCodec<O> keyCodec, NetworkCodec<V> valueCodec, IntFunction<M> mapFactory) {
+		return new NetworkCodec<>(
+				(buf, map) -> {
+					VAR_INT.encode(buf, map.size()); // append size
+					map.forEach((o, v) -> {
+						keyCodec.encode(buf, o); // append key
+						valueCodec.encode(buf, v); // append value
+					});
+				},
+				buf -> {
+					int size = VAR_INT.decode(buf); // consume size
+					var map = mapFactory.apply(size);
+
+					for (int i = 0; i < size; i++) {
+						map.put(keyCodec.decode(buf), valueCodec.decode(buf)); // consume key-value pair
 					}
 
 					return map;
@@ -131,7 +155,11 @@ public record NetworkCodec<T>(BiConsumer<PacketByteBuf, T> encoder, Function<Pac
 		);
 	}
 
-	public static <T> NetworkCodec<T> empty(Supplier<T> instanceProvider) {
+	public static <T> NetworkCodec<T> idIndexed(IndexedIterable<T> idList) {
+		return NetworkCodec.VAR_INT.map(idList::getRawId, idList::get);
+	}
+
+	public static <T> NetworkCodec<T> defaultReturn(Supplier<T> instanceProvider) {
 		return new NetworkCodec<>(
 				(buf, t) -> {
 				},
@@ -143,12 +171,12 @@ public record NetworkCodec<T>(BiConsumer<PacketByteBuf, T> encoder, Function<Pac
 		this.encoder.accept(buf, t);
 	}
 
-	public Maybe<T> decode(PacketByteBuf buf) {
+	public T decode(PacketByteBuf buf) {
 		try {
-			return Maybe.just(this.decoder.apply(buf));
+			return this.decoder.apply(buf);
 		} catch (IndexOutOfBoundsException e) { // An IOOB exception is thrown if we try to read invalid memory
-			ComponentsImpl.LOGGER.warn(e.getMessage());
-			return Maybe.nothing();
+			CrashReport report = new CrashReport("Attempted to read invalid memory!", e);
+			throw new CrashException(report);
 		}
 	}
 

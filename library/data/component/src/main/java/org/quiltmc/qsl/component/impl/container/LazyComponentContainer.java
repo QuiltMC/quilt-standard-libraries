@@ -20,28 +20,30 @@ import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.base.api.util.Lazy;
 import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.Component;
+import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
-import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
-import org.quiltmc.qsl.component.impl.sync.SyncChannel;
+import org.quiltmc.qsl.component.api.sync.SyncChannel;
 
 import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
+import java.util.function.BiConsumer;
 
 public class LazyComponentContainer extends AbstractComponentContainer {
 	public static final ComponentContainer.Factory<LazyComponentContainer> FACTORY =
 			(provider, injections, saveOperation, ticking, syncChannel) ->
 					new LazyComponentContainer(provider, saveOperation, ticking, syncChannel);
-	private final IdentityHashMap<ComponentType<?>, Lazy<Component>> components;
+	private final Map<ComponentType<?>, Lazy<Maybe.Just<Component>>> components;
 
 	protected LazyComponentContainer(
 			ComponentProvider provider,
 			@Nullable Runnable saveOperation,
 			boolean ticking,
-			@Nullable SyncChannel<?> syncChannel
+			@Nullable SyncChannel<?, ?> syncChannel
 	) {
 		super(saveOperation, ticking, syncChannel);
 		this.components = this.createLazyMap(provider);
@@ -64,26 +66,33 @@ public class LazyComponentContainer extends AbstractComponentContainer {
 
 	@Override
 	public Maybe<Component> expose(ComponentType<?> id) {
-		return Maybe.wrap(this.components.get(id)).map(Lazy::get);
+		return this.components.containsKey(id) ? this.components.get(id).get() : Maybe.nothing();
+	}
+
+	@Override
+	public void forEach(BiConsumer<ComponentType<?>, ? super Component> action) {
+		// unwrap will work here since all Lazies are Just instances for this.
+		this.components.forEach((type, componentLazy) -> componentLazy.ifFilled(component -> action.accept(type, component.unwrap())));
 	}
 
 	@Override
 	protected <COMP extends Component> void addComponent(ComponentType<COMP> type, Component component) { }
 
-	private IdentityHashMap<ComponentType<?>, Lazy<Component>> createLazyMap(ComponentProvider provider) {
-		var map = new IdentityHashMap<ComponentType<?>, Lazy<Component>>();
+	private Map<ComponentType<?>, Lazy<Maybe.Just<Component>>> createLazyMap(ComponentProvider provider) {
+		// TODO: Consider adding a way to directly add components to the builder.
+		var map = new IdentityHashMap<ComponentType<?>, Lazy<Maybe.Just<Component>>>();
 		ComponentsImpl.getInjections(provider).forEach(injection -> map.put(injection.type(), this.createLazy(injection)));
 		return map;
 	}
 
-	private <C extends Component> Lazy<Component> createLazy(ComponentEntry<C> componentEntry) {
+	private <C extends Component> Lazy<Maybe.Just<Component>> createLazy(ComponentEntry<C> componentEntry) {
 		ComponentType<?> type = componentEntry.type();
 
 		if (type.isStatic() || type.isInstant()) {
 			var component = this.initializeComponent(componentEntry);
-			return Lazy.filled(component);
+			return Lazy.filled((Maybe.Just<Component>) Maybe.just(component)); // this cast will obviously never fail
 		}
 
-		return Lazy.of(() -> this.initializeComponent(componentEntry));
+		return Lazy.of(() -> ((Maybe.Just<Component>) Maybe.just(this.initializeComponent(componentEntry)))); // same here
 	}
 }

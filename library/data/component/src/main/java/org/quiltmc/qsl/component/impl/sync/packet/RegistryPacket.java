@@ -24,6 +24,7 @@ import net.minecraft.util.registry.Registry;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 
+// TODO: This should eventually be replaced with registry sync!
 public final class RegistryPacket {
 	public static <T> PacketByteBuf createRegistryPacket(Registry<T> registry) {
 		var buf = PacketByteBufs.create();

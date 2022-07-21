@@ -17,6 +17,8 @@
 package org.quiltmc.qsl.component.impl.client.sync;
 
 import com.mojang.datafixers.util.Either;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.IdList;
@@ -27,6 +29,7 @@ import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
+@Environment(EnvType.CLIENT)
 public final class ClientRegistryPacket {
 	public static <T> CompletableFuture<PacketByteBuf> handleRegistryPacket(PacketByteBuf buf, Registry<T> registry, Consumer<IdList<T>> action) {
 		return CompletableFuture.supplyAsync(() -> {

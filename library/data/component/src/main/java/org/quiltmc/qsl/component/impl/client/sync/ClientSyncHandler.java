@@ -16,20 +16,29 @@
 
 package org.quiltmc.qsl.component.impl.client.sync;
 
+import com.mojang.datafixers.util.Pair;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.collection.IdList;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.Components;
-import org.quiltmc.qsl.component.api.provider.ComponentProvider;
-import org.quiltmc.qsl.component.impl.sync.SyncChannel;
+import org.quiltmc.qsl.component.api.sync.SyncChannel;
+import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.sync.packet.PacketIds;
-import org.quiltmc.qsl.component.impl.sync.packet.SyncPacket;
 import org.quiltmc.qsl.networking.api.client.ClientLoginNetworking;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 
-public class ClientSyncHandler {
-	private static ClientSyncHandler INSTANCE = null;
+import java.util.ArrayDeque;
+import java.util.Queue;
 
+@Environment(EnvType.CLIENT)
+public final class ClientSyncHandler {
+	private static ClientSyncHandler INSTANCE = null;
+	private final Queue<Pair<SyncChannel<?, ?>, PacketByteBuf>> queue = new ArrayDeque<>();
 	private IdList<ComponentType<?>> componentList = null;
+	private boolean frozen = true;
 
 	private ClientSyncHandler() { }
 
@@ -41,10 +50,15 @@ public class ClientSyncHandler {
 		return INSTANCE;
 	}
 
-	public <P extends ComponentProvider> void registerChannel(SyncChannel<P> channel) {
-		ClientPlayNetworking.registerGlobalReceiver(channel.channelId(), (client, handler, buf, responseSender) -> {
-			ComponentProvider provider = channel.to(buf);
-			SyncPacket.handle(client, provider, buf);
+	public void registerChannel(SyncChannel<?, ?> channel) {
+		ComponentsImpl.LOGGER.info("Registering client-side component sync channel with id " + channel.getChannelId());
+		ClientPlayNetworking.registerGlobalReceiver(channel.getChannelId(), (client, handler, buf, responseSender) -> {
+			if (this.frozen) {
+				buf.retain(); // we keep the buffer in memory
+				this.queue.add(Pair.of(channel, buf));
+			} else {
+				channel.handleServerPushedSync(client, buf);
+			}
 		});
 	}
 
@@ -58,5 +72,26 @@ public class ClientSyncHandler {
 
 	public ComponentType<?> getType(int rawId) {
 		return this.componentList.get(rawId);
+	}
+
+	public void unfreeze() {
+		this.frozen = false;
+	}
+
+	public void freeze() {
+		this.frozen = true;
+	}
+
+	public void processQueued(MinecraftClient client) {
+		while (!this.queue.isEmpty()) {
+			Pair<SyncChannel<?, ?>, PacketByteBuf> currentPair = this.queue.poll();
+
+			var channel = currentPair.getFirst();
+			var buf = currentPair.getSecond();
+
+			channel.handleServerPushedSync(client, buf);
+
+			buf.release(); // release it once we are done
+		}
 	}
 }

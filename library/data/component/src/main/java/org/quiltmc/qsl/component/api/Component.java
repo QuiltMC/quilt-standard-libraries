@@ -18,8 +18,6 @@ package org.quiltmc.qsl.component.api;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-
 /**
  * Marks a type as a container for data and/or behaviour.
  *

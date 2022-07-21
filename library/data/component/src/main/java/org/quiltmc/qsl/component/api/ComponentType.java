@@ -19,7 +19,7 @@ package org.quiltmc.qsl.component.api;
 import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.impl.client.sync.ClientSyncHandler;
-import org.quiltmc.qsl.component.impl.sync.codec.NetworkCodec;
+import org.quiltmc.qsl.component.api.sync.codec.NetworkCodec;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -43,7 +43,7 @@ public record ComponentType<T extends Component>(Identifier id, Component.Factor
 	 * We provide a {@link NetworkCodec} to be used with manual registry sync, until the registry sync API is merged.
 	 */
 	public static final NetworkCodec<ComponentType<?>> NETWORK_CODEC =
-			NetworkCodec.VAR_INT.map(Components.REGISTRY::getRawId, ClientSyncHandler.getInstance()::getType);
+			NetworkCodec.VAR_INT.map(Components.REGISTRY::getRawId, rawId -> ClientSyncHandler.getInstance().getType(rawId));
 	/**
 	 * @see Static
 	 */

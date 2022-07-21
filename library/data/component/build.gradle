@@ -22,12 +22,12 @@ qslModule {
 	}
 
 	entrypoints {
-		events {
-			values = [
-					"org.quiltmc.qsl.component.impl.event.ServerTickEventListener",
-					"org.quiltmc.qsl.component.impl.event.ServerWorldTickEventListener"
-			]
-		}
+//		events {
+//			values = [
+//					"org.quiltmc.qsl.component.impl.event.ServerTickEventListener",
+//					"org.quiltmc.qsl.component.impl.event.ServerWorldTickEventListener"
+//			]
+//		}
 
 		init {
 			values = ["org.quiltmc.qsl.component.impl.CommonInitializer"]

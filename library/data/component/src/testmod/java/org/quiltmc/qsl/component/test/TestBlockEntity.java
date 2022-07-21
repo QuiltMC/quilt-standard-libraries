@@ -29,9 +29,8 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.component.InventoryComponent;
-import org.quiltmc.qsl.component.impl.container.CompositeComponentContainer;
 import org.quiltmc.qsl.component.impl.container.SimpleComponentContainer;
-import org.quiltmc.qsl.component.impl.sync.SyncChannel;
+import org.quiltmc.qsl.component.api.sync.SyncChannel;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -45,7 +44,7 @@ public class TestBlockEntity extends BlockEntity {
 			.add(ComponentTestMod.TEST_BE_INT, ComponentTestMod.CHUNK_INVENTORY)
 			.syncing(SyncChannel.BLOCK_ENTITY)
 			.build(SimpleComponentContainer.FACTORY);
-	private final ComponentContainer composite = new CompositeComponentContainer(this.container, super.getComponentContainer());
+	private final ComponentContainer composite = ComponentContainer.createComposite(container, super.getComponentContainer());
 
 	public TestBlockEntity(BlockPos blockPos, BlockState blockState) {
 		super(ComponentTestMod.TEST_BE_TYPE, blockPos, blockState);

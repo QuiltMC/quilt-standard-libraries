@@ -43,9 +43,9 @@
  * }
  * }</pre>
  * <p/>
- * The AComponent interface provides the API for AComponent instances.<br/>
- * The ADefaultComponent class provides a default implementation of the AComponent interface.
- * The data contained by ADefaultComponent is not saved or synced. If you want to learn how to save or sync data, <br/>
+ * The {@code AComponent} interface provides the API for {@code AComponent} instances.<br/>
+ * The {@code ADefaultComponent} class provides a default implementation of the {@code AComponent} interface.
+ * The data contained by {@code ADefaultComponent} is not saved or synced. If you want to learn how to save or sync data, <br/>
  * visit the {@linkplain  org.quiltmc.qsl.component.api.component.NbtComponent NbtComponent} and {@linkplain org.quiltmc.qsl.component.api.component.SyncedComponent SyncedComponent} documentation.
  * <p/>
  * <h2>Component Injection</h2>
@@ -78,7 +78,7 @@
  * }
  * }</pre>
  *
- * Now all chests should have A_COMPONENT injected into them, when they are created.
+ * Now all chests should have {@code AComponent} injected into them, when they are created.
  * <p/>
  * <h2>Accessing Components</h2>
  * For any {@link org.quiltmc.qsl.component.api.provider.ComponentProvider} that has components injected into it, accessing them follows pretty much the same pattern.<br/>
@@ -86,7 +86,7 @@
  * After that you can do this:
  * <pre>{@code
  * //...
- * // consider pos and world to be an arguments
+ * // consider pos and world to be arguments
  * // passed into the current method.
  * var blockEntity = world.getBlockEntity(pos);
  * // The expose method returns a Maybe instance.

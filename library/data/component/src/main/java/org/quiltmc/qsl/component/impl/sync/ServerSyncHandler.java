@@ -16,16 +16,14 @@
 
 package org.quiltmc.qsl.component.impl.sync;
 
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerLoginNetworkHandler;
-import org.quiltmc.qsl.component.api.Components;
+import org.quiltmc.qsl.component.api.sync.SyncChannel;
+import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.sync.packet.PacketIds;
 import org.quiltmc.qsl.component.impl.sync.packet.RegistryPacket;
-import org.quiltmc.qsl.networking.api.PacketSender;
-import org.quiltmc.qsl.networking.api.ServerLoginConnectionEvents;
 import org.quiltmc.qsl.networking.api.ServerLoginNetworking;
+import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 
-public final class ServerSyncHandler implements ServerLoginConnectionEvents.QueryStart {
+public final class ServerSyncHandler {
 	private static ServerSyncHandler INSTANCE = null;
 
 	private ServerSyncHandler() { }
@@ -38,15 +36,18 @@ public final class ServerSyncHandler implements ServerLoginConnectionEvents.Quer
 		return INSTANCE;
 	}
 
-	public void registerPackets() {
-		ServerLoginNetworking.registerGlobalReceiver(PacketIds.TYPES, (server, handler, understood, buf, sync, sender) ->
-			RegistryPacket.handleRegistryResponse(buf, handler, "Component with id %s was not found in the client!")
+	public void registerChannel(SyncChannel<?, ?> syncChannel) {
+		ComponentsImpl.LOGGER.info("Registering server-side component sync channel with id {}", syncChannel.getChannelId());
+		ServerPlayNetworking.registerGlobalReceiver(syncChannel.getChannelId(), (server, sender, handler, buf, responseSender) ->
+				syncChannel.handleClientSyncRequest(server, sender, buf)
 		);
 	}
 
-	@Override
-	public void onLoginStart(ServerLoginNetworkHandler handler, MinecraftServer server, PacketSender sender, ServerLoginNetworking.LoginSynchronizer synchronizer) {
-		// TODO: Maybe use regitry sync for this?!
-		sender.sendPacket(PacketIds.TYPES, RegistryPacket.createRegistryPacket(Components.REGISTRY));
+	public void registerPackets() {
+		ServerLoginNetworking.registerGlobalReceiver(PacketIds.TYPES, (server, handler, understood, buf, sync, sender) ->
+				RegistryPacket.handleRegistryResponse(buf, handler, "Component with id %s was not found in the client!")
+		);
+
+		SyncChannel.createPacketChannels(this::registerChannel);
 	}
 }

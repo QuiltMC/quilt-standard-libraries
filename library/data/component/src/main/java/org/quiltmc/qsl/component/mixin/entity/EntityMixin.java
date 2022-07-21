@@ -22,8 +22,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.World;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
-import org.quiltmc.qsl.component.impl.container.LazyComponentContainer;
-import org.quiltmc.qsl.component.impl.sync.SyncChannel;
+import org.quiltmc.qsl.component.api.sync.SyncChannel;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -49,16 +48,16 @@ public abstract class EntityMixin implements ComponentProvider {
 
 	@Inject(method = "writeNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;writeCustomDataToNbt(Lnet/minecraft/nbt/NbtCompound;)V"))
 	private void onSerialize(NbtCompound nbt, CallbackInfoReturnable<NbtCompound> cir) {
-		this.qsl$container.writeNbt(nbt);
+		this.getComponentContainer().writeNbt(nbt);
 	}
 
 	@Inject(method = "readNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;readCustomDataFromNbt(Lnet/minecraft/nbt/NbtCompound;)V"))
 	private void onDeserialize(NbtCompound nbt, CallbackInfo ci) {
-		this.qsl$container.readNbt(nbt);
+		this.getComponentContainer().readNbt(nbt);
 	}
 
 	@Inject(method = "tick", at = @At("TAIL"))
 	private void tickContainer(CallbackInfo ci) {
-		this.qsl$container.tick(this);
+		this.getComponentContainer().tick(this);
 	}
 }

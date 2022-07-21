@@ -25,7 +25,7 @@ import net.minecraft.world.World;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.container.LazyComponentContainer;
-import org.quiltmc.qsl.component.impl.sync.SyncChannel;
+import org.quiltmc.qsl.component.api.sync.SyncChannel;
 
 import java.util.HashMap;
 import java.util.Map;

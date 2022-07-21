@@ -20,7 +20,7 @@ import com.mojang.serialization.Codec;
 import net.minecraft.network.PacketByteBuf;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.component.api.Component;
-import org.quiltmc.qsl.component.impl.sync.codec.NetworkCodec;
+import org.quiltmc.qsl.component.api.sync.codec.NetworkCodec;
 
 public class SyncedGenericComponent<T> extends GenericComponent<T> implements SyncedComponent {
 	private final NetworkCodec<T> networkCodec;
@@ -40,7 +40,7 @@ public class SyncedGenericComponent<T> extends GenericComponent<T> implements Sy
 
 	@Override
 	public void readFromBuf(PacketByteBuf buf) {
-		this.networkCodec.decode(buf).ifJust(this::setValue);
+		this.setValue(this.networkCodec.decode(buf));
 	}
 
 	@Override

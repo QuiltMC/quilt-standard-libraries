@@ -16,17 +16,14 @@
 
 package org.quiltmc.qsl.component.mixin.block.entity;
 
-import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraft.world.chunk.WorldChunk;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(WorldChunk.DirectBlockEntityTickInvoker.class)
 public class DirectBlockEntityTickInvokerMixin<T extends BlockEntity> {
@@ -34,9 +31,14 @@ public class DirectBlockEntityTickInvokerMixin<T extends BlockEntity> {
 	@Final
 	private T blockEntity;
 
-	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/entity/BlockEntityTicker;tick(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/block/entity/BlockEntity;)V"))
-	private void tickContainer(BlockEntityTicker<T> instance, World world, BlockPos blockPos, BlockState blockState, T t) {
-		instance.tick(world, blockPos, blockState, t);
-		this.blockEntity.getComponentContainer().tick(this.blockEntity);
+	@SuppressWarnings("ConstantConditions")
+	@Inject(
+			method = "tick",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/block/entity/BlockEntityTicker;tick(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/block/entity/BlockEntity;)V")
+	)
+	private void tickContainer(CallbackInfo ci) {
+		if (!this.blockEntity.getWorld().isClient) { // we know the block entity will have a world if it is contained in a ticker
+			this.blockEntity.getComponentContainer().tick(this.blockEntity);
+		}
 	}
 }

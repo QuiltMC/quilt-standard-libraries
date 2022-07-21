@@ -23,7 +23,8 @@ import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 
-// TODO: Make this work!!!
+import java.util.function.BiConsumer;
+
 public class CompositeComponentContainer implements ComponentContainer {
 	private final ComponentContainer main;
 	private final ComponentContainer fallback;
@@ -60,5 +61,11 @@ public class CompositeComponentContainer implements ComponentContainer {
 	public void sync(ComponentProvider provider) {
 		this.main.sync(provider);
 		this.fallback.sync(provider);
+	}
+
+	@Override
+	public void forEach(BiConsumer<ComponentType<?>, ? super Component> action) {
+		this.main.forEach(action);
+		this.fallback.forEach(action);
 	}
 }

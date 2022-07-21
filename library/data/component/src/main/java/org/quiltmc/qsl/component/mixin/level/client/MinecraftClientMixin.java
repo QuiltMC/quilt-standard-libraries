@@ -20,7 +20,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
-import org.quiltmc.qsl.component.impl.container.LazyComponentContainer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

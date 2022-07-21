@@ -23,7 +23,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
-import org.quiltmc.qsl.component.impl.sync.SyncChannel;
+import org.quiltmc.qsl.component.api.sync.SyncChannel;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -45,7 +45,7 @@ public abstract class BlockEntityMixin implements ComponentProvider {
 
 	@Inject(method = "readNbt", at = @At("TAIL"))
 	private void onReadNbt(NbtCompound nbt, CallbackInfo ci) {
-		this.qsl$container.readNbt(nbt);
+		this.getComponentContainer().readNbt(nbt);
 	}
 
 	@Inject(method = "<init>", at = @At("RETURN"))
@@ -59,6 +59,6 @@ public abstract class BlockEntityMixin implements ComponentProvider {
 
 	@Inject(method = "toNbt", at = @At("TAIL"))
 	private void onWriteNbt(CallbackInfoReturnable<NbtCompound> cir) {
-		this.qsl$container.writeNbt(cir.getReturnValue());
+		this.getComponentContainer().writeNbt(cir.getReturnValue());
 	}
 }

@@ -20,15 +20,16 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.base.api.util.Maybe;
-import org.quiltmc.qsl.component.api.*;
+import org.quiltmc.qsl.component.api.Component;
+import org.quiltmc.qsl.component.api.ComponentType;
+import org.quiltmc.qsl.component.api.Components;
 import org.quiltmc.qsl.component.api.component.NbtComponent;
 import org.quiltmc.qsl.component.api.component.SyncedComponent;
 import org.quiltmc.qsl.component.api.component.TickingComponent;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
-import org.quiltmc.qsl.component.impl.sync.SyncChannel;
-import org.quiltmc.qsl.component.impl.sync.packet.SyncPacket;
+import org.quiltmc.qsl.component.api.sync.SyncChannel;
 import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 import org.quiltmc.qsl.component.impl.util.StringConstants;
 
@@ -40,18 +41,18 @@ public abstract class AbstractComponentContainer implements ComponentContainer {
 	protected final List<ComponentType<?>> nbtComponents;
 	protected final Maybe<List<ComponentType<?>>> ticking;
 	protected final Maybe<Queue<ComponentType<?>>> pendingSync;
-	protected final Maybe<SyncChannel<?>> syncContext;
+	protected final Maybe<SyncChannel<?, ?>> syncContext;
 
 	public AbstractComponentContainer(@Nullable Runnable saveOperation,
 									  boolean ticking,
-									  @Nullable SyncChannel<?> syncChannel) {
+									  @Nullable SyncChannel<?, ?> syncChannel) {
 		this.ticking = ticking ? Maybe.just(new ArrayList<>()) : Maybe.nothing();
 		this.nbtComponents = new ArrayList<>();
 		this.syncContext = Maybe.wrap(syncChannel);
 		this.pendingSync = this.syncContext.map(it -> new ArrayDeque<>());
 		this.operations = new ContainerOperations(
-			saveOperation,
-			type -> () -> this.pendingSync.ifJust(pending -> pending.add(type))
+				saveOperation,
+				type -> () -> this.pendingSync.ifJust(pending -> pending.add(type))
 		);
 	}
 
@@ -78,22 +79,15 @@ public abstract class AbstractComponentContainer implements ComponentContainer {
 				.filter(Objects::nonNull)
 				.forEach(type -> this.expose(type)
 						.map(component -> ((NbtComponent<?>) component))
-						.ifJust(component -> {
-							NbtComponent.readFrom(component, type.id(), rootQslNbt);
-
-							if (component instanceof SyncedComponent synced) {
-								synced.sync();
-							}
-						})
+						.ifJust(component -> NbtComponent.readFrom(component, type.id(), rootQslNbt))
 				);
 	}
 
 	@Override
 	public void tick(ComponentProvider provider) {
-		this.ticking.ifJust(componentTypes -> componentTypes.forEach(type ->
-				this.expose(type)
-					.map(it -> ((TickingComponent) it))
-					.ifJust(tickingComponent -> tickingComponent.tick(provider)))
+		this.ticking.ifJust(componentTypes -> componentTypes.forEach(type -> this.expose(type)
+				.map(it -> ((TickingComponent) it))
+				.ifJust(tickingComponent -> tickingComponent.tick(provider)))
 		).ifNothing(() -> {
 			throw ErrorUtil.illegalState("Attempted to tick a non-ticking container").get();
 		});
@@ -103,10 +97,9 @@ public abstract class AbstractComponentContainer implements ComponentContainer {
 
 	@Override
 	public void sync(ComponentProvider provider) {
-		this.syncContext.ifJust(channel -> SyncPacket.createFromQueue(
+		this.syncContext.ifJust(channel -> channel.syncFromQueue(
 				this.pendingSync.unwrap(),
-				channel,
-				type -> (SyncedComponent) this.expose(type).unwrap(), // We *need* to contain the provided type therefore it's definitely in here.
+				type -> (SyncedComponent) this.expose(type).unwrap(),
 				provider
 		)).ifNothing(() -> {
 			throw ErrorUtil.illegalState("Attempted to sync a non-syncable container!").get();
@@ -138,5 +131,7 @@ public abstract class AbstractComponentContainer implements ComponentContainer {
 		return component;
 	}
 
-	public record ContainerOperations(@Nullable Runnable saveOperation, @Nullable Function<ComponentType<?>, Runnable> syncOperationFactory) { }
+	public record ContainerOperations(@Nullable Runnable saveOperation,
+									  @Nullable Function<ComponentType<?>, Runnable> syncOperationFactory) {
+	}
 }

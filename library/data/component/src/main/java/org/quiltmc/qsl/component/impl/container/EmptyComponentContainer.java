@@ -19,9 +19,11 @@ package org.quiltmc.qsl.component.impl.container;
 import net.minecraft.nbt.NbtCompound;
 import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.Component;
+import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
-import org.quiltmc.qsl.component.api.ComponentType;
+
+import java.util.function.BiConsumer;
 
 public final class EmptyComponentContainer implements ComponentContainer {
 	public static final EmptyComponentContainer INSTANCE = new EmptyComponentContainer();
@@ -37,22 +39,17 @@ public final class EmptyComponentContainer implements ComponentContainer {
 	}
 
 	@Override
-	public void writeNbt(NbtCompound providerRootNbt) {
-
-	}
+	public void writeNbt(NbtCompound providerRootNbt) { }
 
 	@Override
-	public void readNbt(NbtCompound providerRootNbt) {
-
-	}
+	public void readNbt(NbtCompound providerRootNbt) { }
 
 	@Override
-	public void tick(ComponentProvider provider) {
-
-	}
+	public void tick(ComponentProvider provider) { }
 
 	@Override
-	public void sync(ComponentProvider provider) {
+	public void sync(ComponentProvider provider) { }
 
-	}
+	@Override
+	public void forEach(BiConsumer<ComponentType<?>, ? super Component> action) { }
 }

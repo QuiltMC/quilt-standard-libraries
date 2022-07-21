@@ -30,6 +30,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.mutable.MutableObject;
 import org.jetbrains.annotations.Nullable;
 
 public class TestBlock extends Block implements BlockEntityProvider {
@@ -60,7 +61,7 @@ public class TestBlock extends Block implements BlockEntityProvider {
 		ItemStack handStack = player.getStackInHand(hand);
 
 		if (!handStack.isEmpty()) {
-			final ActionResult[] ret = new ActionResult[]{ActionResult.PASS};
+			final MutableObject<ActionResult> ret = new MutableObject<>(ActionResult.PASS);
 
 			be.expose(ComponentTestMod.CHUNK_INVENTORY).ifJust(inventoryComponent -> {
 				var stack = inventoryComponent.getStack(0);
@@ -70,19 +71,20 @@ public class TestBlock extends Block implements BlockEntityProvider {
 					copied.setCount(1);
 					inventoryComponent.setStack(0, copied);
 					inventoryComponent.save();
-					// inventoryComponent.sync();
-					ret[0] = ActionResult.SUCCESS;
+					inventoryComponent.sync();
+					ret.setValue(ActionResult.SUCCESS);
 				} else {
 					if (ItemStack.canCombine(stack, handStack)) {
 						stack.increment(1);
 						handStack.decrement(1);
 						inventoryComponent.save();
-						ret[0] = ActionResult.SUCCESS;
+						inventoryComponent.sync();
+						ret.setValue(ActionResult.SUCCESS);
 					}
 				}
 			});
 
-			return ret[0];
+			return ret.getValue();
 		}
 		return super.onUse(state, world, pos, player, hand, hit);
 	}

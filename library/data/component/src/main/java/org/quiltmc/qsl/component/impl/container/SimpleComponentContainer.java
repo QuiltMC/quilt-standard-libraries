@@ -22,12 +22,12 @@ import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
-import org.quiltmc.qsl.component.impl.sync.SyncChannel;
-import org.quiltmc.qsl.component.impl.sync.packet.SyncPacket;
+import org.quiltmc.qsl.component.api.sync.SyncChannel;
 import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
 public class SimpleComponentContainer extends AbstractComponentContainer {
@@ -39,7 +39,7 @@ public class SimpleComponentContainer extends AbstractComponentContainer {
 
 	protected SimpleComponentContainer(@Nullable Runnable saveOperation,
 									   boolean ticking,
-									   @Nullable SyncChannel<?> syncContext,
+									   @Nullable SyncChannel<?, ?> syncContext,
 									   Stream<ComponentEntry<?>> types) {
 		super(saveOperation, ticking, syncContext);
 		this.components = new IdentityHashMap<>();
@@ -50,6 +50,11 @@ public class SimpleComponentContainer extends AbstractComponentContainer {
 	@Override
 	public Maybe<Component> expose(ComponentType<?> type) {
 		return Maybe.wrap(this.components.get(type));
+	}
+
+	@Override
+	public void forEach(BiConsumer<ComponentType<?>, ? super Component> action) {
+		this.components.forEach(action);
 	}
 
 	@Override

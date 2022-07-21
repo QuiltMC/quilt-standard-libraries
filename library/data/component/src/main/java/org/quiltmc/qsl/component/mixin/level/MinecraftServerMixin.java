@@ -22,6 +22,7 @@ import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.util.ComponentProviderState;
 import org.spongepowered.asm.mixin.Mixin;
 
+// FIXME: Fix level and world being weird with one another
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin implements ComponentProvider {
 	@SuppressWarnings("ConstantConditions")
