@@ -18,6 +18,7 @@ package org.quiltmc.qsl.component.impl;
 
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -32,34 +33,30 @@ import org.quiltmc.qsl.networking.api.ServerLoginConnectionEvents;
 
 @ApiStatus.Internal
 public final class CommonInitializer implements ModInitializer {
-	public static final String MOD_ID = "quilt_component";
+    public static final String MOD_ID = "quilt_component";
 
-	public static Identifier id(String id) {
-		return new Identifier(MOD_ID, id);
-	}
+    public static Identifier id(String id) {
+        return new Identifier(MOD_ID, id);
+    }
 
-	@Override
-	public void onInitialize(ModContainer mod) {
-		ServerSyncHandler.getInstance().registerPackets();
+    @Override
+    public void onInitialize(ModContainer mod) {
+        ServerSyncHandler.getInstance().registerPackets();
 
-		ServerLoginConnectionEvents.QUERY_START.register(
-				ComponentEventPhases.SYNC_COMPONENT_REGISTRY,
-				CommonEventListener::onQueryStart
-		);
+        ServerLoginConnectionEvents.QUERY_START.register(
+                ComponentEventPhases.SYNC_COMPONENT_REGISTRY,
+                CommonEventListener::onQueryStart);
 
-		ServerLifecycleEvents.STARTING.register(
-				ComponentEventPhases.FREEZE_COMPONENT_REGISTRIES,
-				CommonEventListener::onServerStart
-		);
+        ServerLifecycleEvents.STARTING.register(
+                ComponentEventPhases.FREEZE_COMPONENT_REGISTRIES,
+                CommonEventListener::onServerStart);
 
-		ServerTickEvents.END.register(
-				ComponentEventPhases.TICK_LEVEL_CONTAINER,
-				CommonEventListener::onServerTick
-		);
+        ServerTickEvents.END.register(
+                ComponentEventPhases.TICK_LEVEL_CONTAINER,
+                CommonEventListener::onServerTick);
 
-		ServerWorldTickEvents.END.register(
-				ComponentEventPhases.TICK_WORLD_CONTAINER,
-				CommonEventListener::onServerWorldTick
-		);
-	}
+        ServerWorldTickEvents.END.register(
+                ComponentEventPhases.TICK_WORLD_CONTAINER,
+                CommonEventListener::onServerWorldTick);
+    }
 }

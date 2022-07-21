@@ -16,19 +16,20 @@
 
 package org.quiltmc.qsl.base.api.util;
 
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * Represents a monad that can either contain a value or no value.<br/>
  * Similar to the {@link Optional} class but with some performance improvements
  * and quality of life changes.<br/>
  *
+ * <p>
  * Can either be {@link Just} or {@link Nothing}.<br/>
  * {@link Just} instances contain a value of type {@link T}.<br/>
  * {@link Nothing} instances all contain no data.<br/>
@@ -36,7 +37,7 @@ import java.util.function.Supplier;
  * @param <T> The type of the wrapped object
  * @author 0xJoeMama
  */
-public sealed abstract class Maybe<T> permits Maybe.Just, Maybe.Nothing {
+public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	/**
 	 * Similar function to {@link Optional#ofNullable} function.<br/>
 	 * Wraps a {@link T} value into an {@link Maybe}.
