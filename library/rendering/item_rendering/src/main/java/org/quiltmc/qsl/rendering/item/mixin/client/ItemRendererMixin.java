@@ -45,6 +45,10 @@ public abstract class ItemRendererMixin {
 			at = @At("HEAD"), cancellable = true)
 	private void quilt$customizeItemOverlay(TextRenderer renderer, ItemStack stack, int x, int y, String countLabel,
 											CallbackInfo ci) {
+		if (stack.isEmpty()) {
+			return;
+		}
+
 		var item = stack.getItem();
 
 		var matrices = quilt$matrices.get();
@@ -88,10 +92,6 @@ public abstract class ItemRendererMixin {
 			at = @At("TAIL"))
 	private void quilt$invokePostRenderOverlay(TextRenderer renderer, ItemStack stack, int x, int y, String countLabel,
 											   CallbackInfo ci) {
-		if (stack.isEmpty()) {
-			return;
-		}
-
 		var matrices = quilt$matrices.get();
 		matrices.push();
 		matrices.translate(x, y, 0);
