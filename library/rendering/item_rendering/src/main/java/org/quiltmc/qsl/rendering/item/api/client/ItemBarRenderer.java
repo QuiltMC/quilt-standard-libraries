@@ -25,13 +25,32 @@ import net.minecraft.item.ItemStack;
 
 import org.quiltmc.qsl.rendering.item.impl.client.VanillaItemBarRenderer;
 
+/**
+ * Renders an item bar.
+ */
 public interface ItemBarRenderer extends GuiRendererHelper {
+	/**
+	 * An {@code ItemBarRenderer} that replicates vanilla behavior.
+	 */
 	@Environment(EnvType.CLIENT)
 	ItemBarRenderer VANILLA = VanillaItemBarRenderer.INSTANCE;
 
+	/**
+	 *
+	 * @param stack the item stack
+	 * @return {@code true} if the item bar is visible, {@code false} otherwise
+	 */
 	@Environment(EnvType.CLIENT)
 	boolean isItemBarVisible(ItemStack stack);
 
+	/**
+	 * Renders the item bar.
+	 *
+	 * @param matrices the matrices
+	 * @param renderer the text renderer
+	 * @param zOffset the Z offset
+	 * @param stack the item stack
+	 */
 	@Environment(EnvType.CLIENT)
 	void renderItemBar(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack);
 }

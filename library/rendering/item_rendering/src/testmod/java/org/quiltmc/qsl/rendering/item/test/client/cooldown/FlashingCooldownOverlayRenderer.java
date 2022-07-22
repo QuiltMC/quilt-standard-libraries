@@ -31,7 +31,7 @@ public class FlashingCooldownOverlayRenderer extends VanillaCooldownOverlayRende
 
 	@Override
 	protected int getCooldownOverlayStep(ItemStack stack) {
-		if (getCooldown(stack) > 0.8) {
+		if (getCooldownProgress(stack) > 0.8) {
 			return MAX_STEP;
 		}
 
@@ -41,7 +41,7 @@ public class FlashingCooldownOverlayRenderer extends VanillaCooldownOverlayRende
 	@Override
 	protected int getCooldownOverlayColor(ItemStack stack) {
 		// Between 1 and 0.5 color it red, otherwise use the default color
-		if (getCooldown(stack) > 0.8f) {
+		if (getCooldownProgress(stack) > 0.8f) {
 			float a = 0.1f + 0.7f * (float) Math.sin((Util.getMeasuringTimeMs() % 250) / 250.0f * (float) Math.PI);
 			a = MathHelper.clamp(a, 0f, 1f);
 			return 0xFF0000 | ((int)(a * 0xFF) << 24);

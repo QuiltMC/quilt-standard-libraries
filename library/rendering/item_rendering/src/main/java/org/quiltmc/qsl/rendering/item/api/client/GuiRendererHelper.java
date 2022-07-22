@@ -27,6 +27,9 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 
+/**
+ * Contains various helper methods for rendering GUI elements.
+ */
 public interface GuiRendererHelper {
 	@Environment(EnvType.CLIENT)
 	static void renderQuad(MatrixStack matrices, BufferBuilder buffer,
@@ -157,6 +160,7 @@ public interface GuiRendererHelper {
 				textureWidth, textureHeight,
 				color);
 	}
+
 	@Environment(EnvType.CLIENT)
 	default void renderGuiTexturedQuad(MatrixStack matrices, BufferBuilder buffer,
 									   int x, int y, int width, int height,

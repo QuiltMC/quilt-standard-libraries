@@ -26,8 +26,16 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 
+/**
+ * An {@link ItemBarRenderer} implementation that renders a partially-filled item bar with a solid color over the item.
+ */
 @Environment(EnvType.CLIENT)
 public abstract class SolidColorItemBarRenderer implements ItemBarRenderer {
+	/**
+	 * The maximum return value of {@link #getItemBarStep(ItemStack)} (ItemStack)}.
+	 * <p>
+	 * Higher return values are <em>unsupported</em>, and may cause rendering errors.
+	 */
 	public static final int MAX_STEP = 13;
 
 	@Override
@@ -49,14 +57,30 @@ public abstract class SolidColorItemBarRenderer implements ItemBarRenderer {
 		RenderSystem.enableDepthTest();
 	}
 
+	/**
+	 * Gets the background color of the item bar, in ARGB format.
+	 *
+	 * @param stack the item stack
+	 * @return the background color of the item bar
+	 */
 	protected int getItemBarBackground(ItemStack stack) {
 		return 0xFF000000;
 	}
 
 	/**
-	 * {@return the length of the filled section of the durability bar in pixels (out of 13)}
+	 * Gets the length of the filled section of the item bar, in pixels.
+	 *
+	 * @param stack the item stack
+	 * @return the length of the filled section
+	 * @see #MAX_STEP
 	 */
 	protected abstract int getItemBarStep(ItemStack stack);
 
+	/**
+	 * Gets the foreground color of the item bar (the filled section), in ARGB format.
+	 *
+	 * @param stack the item stack
+	 * @return the foreground color of the item bar
+	 */
 	protected abstract int getItemBarForeground(ItemStack stack);
 }

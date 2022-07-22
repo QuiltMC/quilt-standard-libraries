@@ -23,11 +23,25 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 
+/**
+ * Renders a cooldown overlay.
+ */
 @FunctionalInterface
 public interface CooldownOverlayRenderer extends GuiRendererHelper {
+	/**
+	 * A {@code CooldownOverlayRenderer} that replicates vanilla behavior.
+	 */
 	@Environment(EnvType.CLIENT)
 	CooldownOverlayRenderer VANILLA = new VanillaCooldownOverlayRenderer();
 
+	/**
+	 * Renders the cooldown overlay.
+	 *
+	 * @param matrices the matrices
+	 * @param renderer the text renderer
+	 * @param zOffset the Z offset
+	 * @param stack the item stack
+	 */
 	@Environment(EnvType.CLIENT)
 	void renderCooldownOverlay(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack);
 }

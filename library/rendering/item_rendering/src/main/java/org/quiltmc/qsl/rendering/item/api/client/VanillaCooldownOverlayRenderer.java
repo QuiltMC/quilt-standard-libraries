@@ -22,9 +22,18 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 
+/**
+ * A {@link CooldownOverlayRenderer} implementation that replicates vanilla behavior.
+ */
 @Environment(EnvType.CLIENT)
 public class VanillaCooldownOverlayRenderer extends SolidColorCooldownOverlayRenderer {
-	protected float getCooldown(ItemStack stack) {
+	/**
+	 * Gets the cooldown progress of the item.
+	 *
+	 * @param stack the item stack
+	 * @return the cooldown progress of the item, between 0 and 1
+	 */
+	protected float getCooldownProgress(ItemStack stack) {
 		MinecraftClient client = MinecraftClient.getInstance();
 
 		var player = client.player;
@@ -37,12 +46,12 @@ public class VanillaCooldownOverlayRenderer extends SolidColorCooldownOverlayRen
 
 	@Override
 	protected boolean isCooldownOverlayVisible(ItemStack stack) {
-		return getCooldown(stack) > 0;
+		return getCooldownProgress(stack) > 0;
 	}
 
 	@Override
 	protected int getCooldownOverlayStep(ItemStack stack) {
-		return (int) (getCooldown(stack) * MAX_STEP);
+		return (int) (getCooldownProgress(stack) * MAX_STEP);
 	}
 
 	@Override

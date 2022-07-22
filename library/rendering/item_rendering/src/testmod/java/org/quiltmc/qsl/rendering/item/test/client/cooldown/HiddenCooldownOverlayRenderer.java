@@ -29,6 +29,6 @@ public class HiddenCooldownOverlayRenderer extends VanillaCooldownOverlayRendere
 
 	@Override
 	protected boolean isCooldownOverlayVisible(ItemStack stack) {
-		return getCooldown(stack) <= 0.2;
+		return getCooldownProgress(stack) <= 0.2;
 	}
 }

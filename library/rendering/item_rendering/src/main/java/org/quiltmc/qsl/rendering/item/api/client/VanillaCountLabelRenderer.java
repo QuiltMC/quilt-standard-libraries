@@ -27,6 +27,9 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 
+/**
+ * A {@link CountLabelRenderer} implementation that replicates vanilla behavior.
+ */
 @Environment(EnvType.CLIENT)
 public class VanillaCountLabelRenderer implements CountLabelRenderer {
 	@Override
@@ -56,6 +59,18 @@ public class VanillaCountLabelRenderer implements CountLabelRenderer {
 		matrices.pop();
 	}
 
+	/**
+	 * Gets the item stack's count label's contents.
+	 * Subclasses may override this method to decorate the count label.
+	 * <p>
+	 * If {@code override} is not null, this returns {@code override}.<br>
+	 * Otherwise, if the stack has more than 1 item, this returns the size of the stack.<br>
+	 * Otherwise, this returns {@code null}.
+	 *
+	 * @param stack the item stack
+	 * @param override the label contents, or {@code null} to use the default contents
+	 * @return the label contents to draw, or {@code null} to not draw a label
+	 */
 	protected @Nullable String getCountLabel(ItemStack stack, @Nullable String override) {
 		if (override != null) {
 			return override;

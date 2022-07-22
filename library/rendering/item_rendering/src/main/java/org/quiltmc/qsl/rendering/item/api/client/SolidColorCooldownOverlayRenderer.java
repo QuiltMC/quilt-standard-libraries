@@ -24,7 +24,15 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 
+/**
+ * A {@link CooldownOverlayRenderer} implementation that renders a quad with a solid color over the item.
+ */
 public abstract class SolidColorCooldownOverlayRenderer implements CooldownOverlayRenderer {
+	/**
+	 * The maximum return value of {@link #getCooldownOverlayStep(ItemStack)}.
+	 * <p>
+	 * Higher return values are <em>unsupported</em>, and may cause rendering errors.
+	 */
 	public static final int MAX_STEP = 16;
 
 	@Override
@@ -47,14 +55,30 @@ public abstract class SolidColorCooldownOverlayRenderer implements CooldownOverl
 		RenderSystem.enableDepthTest();
 	}
 
+	/**
+	 * Checks if the cooldown overlay should be visible.
+	 *
+	 * @param stack the item stack
+	 * @return {@code true} if cooldown overlay should be visible {@code false} otherwise
+	 */
 	protected boolean isCooldownOverlayVisible(ItemStack stack) {
 		return getCooldownOverlayStep(stack) > 0;
 	}
 
 	/**
-	 * {@return the height of the cooldown overlay in pixels (out of 13)}
+	 * Gets the height of the cooldown overlay, in pixels.
+	 *
+	 * @param stack the item stack
+	 * @return the height of the cooldown overlay
+	 * @see #MAX_STEP
 	 */
 	protected abstract int getCooldownOverlayStep(ItemStack stack);
 
+	/**
+	 * Gets the color of the cooldown overlay, in ARGB format.
+	 *
+	 * @param stack the item stack
+	 * @return the color of the cooldown overlay
+	 */
 	protected abstract int getCooldownOverlayColor(ItemStack stack);
 }

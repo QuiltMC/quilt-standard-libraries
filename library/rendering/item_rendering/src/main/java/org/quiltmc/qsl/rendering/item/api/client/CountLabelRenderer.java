@@ -24,11 +24,26 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 
+/**
+ * Renders a count label.
+ */
 @FunctionalInterface
 public interface CountLabelRenderer extends GuiRendererHelper {
+	/**
+	 * A {@code CountLabelRenderer} that replicates vanilla behavior.
+	 */
 	@Environment(EnvType.CLIENT)
 	CountLabelRenderer VANILLA = new VanillaCountLabelRenderer();
 
+	/**
+	 * Renders the count label.
+	 *
+	 * @param matrices the matrices
+	 * @param renderer the text renderer
+	 * @param zOffset the Z offset
+	 * @param stack the item stack
+	 * @param override the label contents, or {@code null} to use the default contents
+	 */
 	@Environment(EnvType.CLIENT)
 	void renderCountLabel(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack,
 						  @Nullable String override);
