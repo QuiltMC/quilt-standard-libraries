@@ -14,6 +14,9 @@
     "entrypoints": {
       "init": [
         "org.quiltmc.qsl.worldgen.material_rule.QuiltMaterialRuleTest"
+      ],
+      "qsl:material_rule_modifier": [
+        "org.quiltmc.qsl.worldgen.material_rule.QuiltMaterialRuleTest"
       ]
     },
     "depends": [
