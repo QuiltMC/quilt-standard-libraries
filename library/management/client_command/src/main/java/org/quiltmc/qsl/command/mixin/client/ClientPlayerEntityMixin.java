@@ -19,7 +19,6 @@ package org.quiltmc.qsl.command.mixin.client;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Group;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -45,6 +44,8 @@ abstract class ClientPlayerEntityMixin {
 	@Group(name = "Client command execution", min = 1, max = 1)
 	@Inject(method = "method_43787(Ljava/lang/String;Lnet/minecraft/text/Text;)V", at = @At("HEAD"), cancellable = true)
 	private void onSendChatMessageNew(String message, Text text, CallbackInfo ci) {
+	@Inject(method = "method_43787", at = @At("HEAD"), cancellable = true)
+	private void onSendChatMessage(C_byvkekfd c_byvkekfd, String message, Text text, CallbackInfo ci) {
 		if (ClientCommandInternals.executeCommand(message, true)) {
 			ci.cancel();
 		}
