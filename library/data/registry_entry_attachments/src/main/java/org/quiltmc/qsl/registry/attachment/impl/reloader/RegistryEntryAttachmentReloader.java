@@ -184,7 +184,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 
 			for (var entry : this.attachmentMaps.entrySet()) {
 				profiler.swap(id + "/apply_attachment{" + entry.getKey().id() + "}");
-				applyOne((RegistryEntryAttachment<Object, Object>) entry.getKey(), (AttachmentDictionary<Object, Object>) entry.getValue());
+				this.applyOne((RegistryEntryAttachment<Object, Object>) entry.getKey(), (AttachmentDictionary<Object, Object>) entry.getValue());
 			}
 
 			profiler.pop();
@@ -200,9 +200,9 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 				V value = (V) attachmentEntry.getValue();
 				AttachmentDictionary.ValueTarget target = attachmentEntry.getKey();
 				switch (target.type()) {
-				case ENTRY -> holder.putValue(attachment, attachment.registry().get(target.id()), value);
-				case TAG -> holder.putValue(attachment, TagKey.of(attachment.registry().getKey(), target.id()), value);
-				default -> throw new IllegalStateException("Unexpected value: " + target.type());
+					case ENTRY -> holder.putValue(attachment, attachment.registry().get(target.id()), value);
+					case TAG -> holder.putValue(attachment, TagKey.of(attachment.registry().getKey(), target.id()), value);
+					default -> throw new IllegalStateException("Unexpected value: " + target.type());
 				}
 			}
 		}
