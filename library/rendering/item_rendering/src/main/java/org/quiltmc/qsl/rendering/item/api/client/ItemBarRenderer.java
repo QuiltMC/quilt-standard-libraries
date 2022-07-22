@@ -30,11 +30,6 @@ public interface ItemBarRenderer extends GuiRendererHelper {
 	ItemBarRenderer VANILLA = VanillaItemBarRenderer.INSTANCE;
 
 	@Environment(EnvType.CLIENT)
-	static ItemBarRenderer[] getDefaultRenderers() {
-		return new ItemBarRenderer[] { VANILLA };
-	}
-
-	@Environment(EnvType.CLIENT)
 	boolean isItemBarVisible(ItemStack stack);
 
 	@Environment(EnvType.CLIENT)

@@ -18,16 +18,22 @@ package org.quiltmc.qsl.rendering.item.mixin.client;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-import org.quiltmc.qsl.rendering.item.api.client.QuiltItemRenderingExtensions;
+import org.quiltmc.qsl.rendering.item.api.client.CooldownOverlayRenderer;
+import org.quiltmc.qsl.rendering.item.api.client.CountLabelRenderer;
+import org.quiltmc.qsl.rendering.item.api.client.ItemBarRenderer;
 
 @Mixin(ItemRenderer.class)
 public abstract class ItemRendererMixin {
@@ -35,16 +41,10 @@ public abstract class ItemRendererMixin {
 
 	@Shadow public float zOffset;
 
-	/**
-	 * @author QuiltMC
-	 * @reason Completely refactoring overlay rendering logic to use {@link QuiltItemRenderingExtensions}
-	 */
-	@Overwrite
-	public void renderGuiItemOverlay(TextRenderer renderer, ItemStack stack, int x, int y, @Nullable String countLabel) {
-		if (stack.isEmpty()) {
-			return;
-		}
-
+	@Inject(method = "renderGuiItemOverlay(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V",
+			at = @At("HEAD"), cancellable = true)
+	private void quilt$customizeItemOverlay(TextRenderer renderer, ItemStack stack, int x, int y, String countLabel,
+											CallbackInfo ci) {
 		var item = stack.getItem();
 
 		var matrices = quilt$matrices.get();
@@ -52,48 +52,112 @@ public abstract class ItemRendererMixin {
 		matrices.translate(x, y, 0);
 
 		if (item.preRenderOverlay(matrices, renderer, this.zOffset, stack)) {
-			item.getCountLabelRenderer().renderCountLabel(matrices, renderer, this.zOffset, stack, countLabel);
-
-			var itemBarRenderers = item.getItemBarRenderers();
-
-			int itemBarY = 13;
-			if (itemBarRenderers.length == 1) {
-				var itemBar = itemBarRenderers[0];
-				if (itemBar.isItemBarVisible(stack)) {
-					matrices.push();
-					matrices.translate(0, itemBarY, 0);
-					itemBar.renderItemBar(matrices, renderer, this.zOffset, stack);
-					matrices.pop();
-				}
-			} else if (itemBarRenderers.length > 0) {
-				boolean anyItemBarsVisible = false;
-				for (var itemBar : itemBarRenderers) {
-					if (itemBar.isItemBarVisible(stack)) {
-						itemBarY -= 2;
-						anyItemBarsVisible = true;
-					}
-				}
-
-				if (anyItemBarsVisible) {
-					// TODO figure out if we can NOT render immediately here
-					for (var itemBar : itemBarRenderers) {
-						if (itemBar.isItemBarVisible(stack)) {
-							itemBarY += 2;
-
-							matrices.push();
-							matrices.translate(0, itemBarY, 0);
-							itemBar.renderItemBar(matrices, renderer, this.zOffset, stack);
-							matrices.pop();
-						}
-					}
-				}
+			if (isItemOverlayRenderingCustomized(item)) {
+				ci.cancel();
+				renderCustomGuiItemOverlay(matrices, renderer, stack, countLabel);
 			}
-
-			item.getCooldownOverlayRenderer().renderCooldownOverlay(matrices, renderer, this.zOffset, stack);
-
-			item.postRenderOverlay(matrices, renderer, this.zOffset, stack);
+		} else {
+			ci.cancel();
 		}
 
 		matrices.pop();
+	}
+
+	@Redirect(method = "renderGuiItemOverlay(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V",
+			at = @At(value = "NEW", target = "net/minecraft/client/util/math/MatrixStack"))
+	private MatrixStack quilt$avoidMatrixStackAllocation() {
+		return quilt$matrices.get(); // no need to push now, matrices are only modified when count label is rendered
+	}
+
+	@Redirect(method = "renderGuiItemOverlay(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(DDD)V"))
+	private void quilt$renderCountLabel_pushMatrixStack(MatrixStack instance, double x, double y, double z) {
+		instance.push();
+		instance.translate(x, y, z);
+	}
+
+	@Inject(method = "renderGuiItemOverlay(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/VertexConsumerProvider$Immediate;draw()V",
+					shift = At.Shift.AFTER))
+	private void quilt$renderCountLabel_popMatrixStack(TextRenderer renderer, ItemStack stack, int x, int y, String countLabel,
+													   CallbackInfo ci) {
+		quilt$matrices.get().pop();
+	}
+
+	@Inject(method = "renderGuiItemOverlay(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V",
+			at = @At("TAIL"))
+	private void quilt$invokePostRenderOverlay(TextRenderer renderer, ItemStack stack, int x, int y, String countLabel,
+											   CallbackInfo ci) {
+		if (stack.isEmpty()) {
+			return;
+		}
+
+		var matrices = quilt$matrices.get();
+		matrices.push();
+		matrices.translate(x, y, 0);
+		stack.getItem().postRenderOverlay(matrices, renderer, this.zOffset, stack);
+		matrices.pop();
+	}
+
+	@Unique
+	private boolean isItemOverlayRenderingCustomized(Item item) {
+		return item.getCountLabelRenderer() != CountLabelRenderer.VANILLA
+				|| item.getItemBarRenderers() != null
+				|| item.getCooldownOverlayRenderer() != CooldownOverlayRenderer.VANILLA;
+	}
+
+	@Unique
+	private void renderCustomGuiItemOverlay(MatrixStack matrices,
+										   TextRenderer renderer, ItemStack stack, @Nullable String countLabel) {
+		if (stack.isEmpty()) {
+			return;
+		}
+
+		var item = stack.getItem();
+
+		item.getCountLabelRenderer().renderCountLabel(matrices, renderer, this.zOffset, stack, countLabel);
+
+		var itemBarRenderers = item.getItemBarRenderers();
+
+		int itemBarY = 13;
+		if (itemBarRenderers == null || itemBarRenderers.length == 1) {
+			var itemBar = ItemBarRenderer.VANILLA;
+			if (itemBarRenderers != null) {
+				itemBar = itemBarRenderers[0];
+			}
+
+			if (itemBar.isItemBarVisible(stack)) {
+				matrices.push();
+				matrices.translate(0, itemBarY, 0);
+				itemBar.renderItemBar(matrices, renderer, this.zOffset, stack);
+				matrices.pop();
+			}
+		} else if (itemBarRenderers.length > 0) {
+			boolean anyItemBarsVisible = false;
+			for (var itemBar : itemBarRenderers) {
+				if (itemBar.isItemBarVisible(stack)) {
+					itemBarY -= 2;
+					anyItemBarsVisible = true;
+				}
+			}
+
+			if (anyItemBarsVisible) {
+				// TODO figure out if we can NOT render immediately here
+				for (var itemBar : itemBarRenderers) {
+					if (itemBar.isItemBarVisible(stack)) {
+						itemBarY += 2;
+
+						matrices.push();
+						matrices.translate(0, itemBarY, 0);
+						itemBar.renderItemBar(matrices, renderer, this.zOffset, stack);
+						matrices.pop();
+					}
+				}
+			}
+		}
+
+		item.getCooldownOverlayRenderer().renderCooldownOverlay(matrices, renderer, this.zOffset, stack);
+
+		item.postRenderOverlay(matrices, renderer, this.zOffset, stack);
 	}
 }

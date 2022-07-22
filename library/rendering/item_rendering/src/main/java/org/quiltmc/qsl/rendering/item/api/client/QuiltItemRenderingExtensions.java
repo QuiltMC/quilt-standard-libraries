@@ -18,6 +18,7 @@ package org.quiltmc.qsl.rendering.item.api.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -46,9 +47,14 @@ public interface QuiltItemRenderingExtensions {
 		return CooldownOverlayRenderer.VANILLA;
 	}
 
+	/**
+	 * Gets the item bar renderers assoicated with this item.
+	 *
+	 * @return array of item bar renderers, or {@code null} to use the vanilla renderer only
+	 */
 	@Environment(EnvType.CLIENT)
-	default ItemBarRenderer[] getItemBarRenderers() {
-		return ItemBarRenderer.getDefaultRenderers();
+	default ItemBarRenderer @Nullable [] getItemBarRenderers() {
+		return null;
 	}
 
 	@Environment(EnvType.CLIENT)
