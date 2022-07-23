@@ -3,17 +3,17 @@
  * <p>
  * This API abstracts many of the previously {@link net.minecraft.entity.boss.dragon.EnderDragonEntity EnderDragon} and
  * {@link net.minecraft.entity.boss.dragon.EnderDragonPart EnderDragonPart} specific code so that modders can implement
- * their own {@link org.quiltmc.qsl.multipart.api.MultipartEntity MultipartEntities}.</p>
+ * their own {@link org.quiltmc.qsl.entity.multipart.api.MultipartEntity MultipartEntities}.</p>
  * <p>
  * <h3>Creating a Multipart Entity</h3>
- * To create a {@link org.quiltmc.qsl.multipart.api.MultipartEntity MultipartEntity},
+ * To create a {@link org.quiltmc.qsl.entity.multipart.api.MultipartEntity MultipartEntity},
  * your {@link net.minecraft.entity.Entity Entity} simply has to implement the interface and its one method,
- * {@link org.quiltmc.qsl.multipart.api.MultipartEntity#getEntityParts() getEntityParts()}. Then, each of its parts must
- * be an instance of {@link org.quiltmc.qsl.multipart.api.EntityPart EntityPart}. This is made easy with the provided
- * {@link org.quiltmc.qsl.multipart.api.AbstractEntityPart AbstractEntityPart}.</p>
+ * {@link org.quiltmc.qsl.entity.multipart.api.MultipartEntity#getEntityParts() getEntityParts()}. Then, each of its parts must
+ * be an instance of {@link org.quiltmc.qsl.entity.multipart.api.EntityPart EntityPart}. This is made easy with the provided
+ * {@link org.quiltmc.qsl.entity.multipart.api.AbstractEntityPart AbstractEntityPart}.</p>
  * <p>
  * <h3>NOTE:</h3>
- * When instantiating {@link org.quiltmc.qsl.multipart.api.EntityPart EntityParts}, on the client,
+ * When instantiating {@link org.quiltmc.qsl.entity.multipart.api.EntityPart EntityParts}, on the client,
  * make sure to call {@link net.minecraft.entity.Entity#setId(int) setId(int)}.</p>
  * <pre>{@code
  * @Override
@@ -37,4 +37,4 @@
  * </p>
  */
 
-package org.quiltmc.qsl.multipart.api;
+package org.quiltmc.qsl.entity.multipart.api;

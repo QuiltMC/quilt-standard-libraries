@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.multipart.mixin;
+package org.quiltmc.qsl.entity.multipart.mixin;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -27,9 +27,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.world.ServerWorld;
 
-import org.quiltmc.qsl.multipart.api.EntityPart;
-import org.quiltmc.qsl.multipart.api.MultipartEntity;
-import org.quiltmc.qsl.multipart.impl.EntityPartTracker;
+import org.quiltmc.qsl.entity.multipart.api.EntityPart;
+import org.quiltmc.qsl.entity.multipart.api.MultipartEntity;
+import org.quiltmc.qsl.entity.multipart.impl.EntityPartTracker;
 
 @Mixin(targets = "net/minecraft/server/world/ServerWorld$ServerEntityHandler")
 public class ServerEntityHandlerMixin {
@@ -46,7 +46,7 @@ public class ServerEntityHandlerMixin {
 	private void startTrackingEntityParts(Entity entity, CallbackInfo ci) {
 		if (entity instanceof MultipartEntity multipartEntity) {
 			for (EntityPart<?> part : multipartEntity.getEntityParts()) {
-				((EntityPartTracker) this.field_26936).getEntityParts().put(((Entity) part).getId(), (Entity) part);
+				((EntityPartTracker) this.field_26936).quilt$getEntityParts().put(((Entity) part).getId(), (Entity) part);
 			}
 		}
 	}
@@ -55,7 +55,7 @@ public class ServerEntityHandlerMixin {
 	private void stopTrackingEntityParts(Entity entity, CallbackInfo ci) {
 		if (entity instanceof MultipartEntity multipartEntity) {
 			for (EntityPart<?> part : multipartEntity.getEntityParts()) {
-				((EntityPartTracker) this.field_26936).getEntityParts().remove(((Entity) part).getId(), part);
+				((EntityPartTracker) this.field_26936).quilt$getEntityParts().remove(((Entity) part).getId(), part);
 			}
 		}
 	}

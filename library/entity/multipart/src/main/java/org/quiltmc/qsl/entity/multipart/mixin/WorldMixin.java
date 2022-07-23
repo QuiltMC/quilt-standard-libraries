@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.multipart.mixin;
+package org.quiltmc.qsl.entity.multipart.mixin;
 
 import java.util.HashSet;
 import java.util.List;
@@ -36,8 +36,8 @@ import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 
-import org.quiltmc.qsl.multipart.api.EntityPart;
-import org.quiltmc.qsl.multipart.impl.EntityPartTracker;
+import org.quiltmc.qsl.entity.multipart.api.EntityPart;
+import org.quiltmc.qsl.entity.multipart.impl.EntityPartTracker;
 
 @Mixin(World.class)
 public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPartTracker {
@@ -50,7 +50,7 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 	}
 
 	@Override
-	public Int2ObjectMap<Entity> getEntityParts() {
+	public Int2ObjectMap<Entity> quilt$getEntityParts() {
 		return this.quilt$entityParts;
 	}
 
@@ -66,7 +66,7 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 		// We don't want to check the parts of entities that we already know are invalid
 		Set<Entity> skippedOwners = new HashSet<>();
 
-		for (Entity part : this.getEntityParts().values()) {
+		for (Entity part : this.quilt$getEntityParts().values()) {
 			var owner = ((EntityPart<?>) part).getOwner();
 			if (skippedOwners.contains(owner) || owner == except) {
 				skippedOwners.add(owner);
@@ -91,7 +91,7 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 		// We don't want to check the parts of entities that we already know are invalid
 		Set<Entity> skippedOwners = new HashSet<>();
 
-		for (Entity part : this.getEntityParts().values()) {
+		for (Entity part : this.quilt$getEntityParts().values()) {
 			var owner = ((EntityPart<?>) part).getOwner();
 			T entity = filter.downcast(part);
 

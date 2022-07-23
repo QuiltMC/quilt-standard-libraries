@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.multipart.impl;
+package org.quiltmc.qsl.entity.multipart.impl;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.jetbrains.annotations.ApiStatus;
@@ -25,7 +25,6 @@ import net.minecraft.world.World;
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 @ApiStatus.Internal
-@InjectedInterface(World.class)
 public interface EntityPartTracker {
-	Int2ObjectMap<Entity> getEntityParts();
+	Int2ObjectMap<Entity> quilt$getEntityParts();
 }

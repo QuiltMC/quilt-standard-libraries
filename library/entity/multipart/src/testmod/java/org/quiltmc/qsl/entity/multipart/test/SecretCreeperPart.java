@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.multipart.test;
+package org.quiltmc.qsl.entity.multipart.test;
 
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.util.math.Vec3d;
 
-import org.quiltmc.qsl.multipart.api.AbstractEntityPart;
+import org.quiltmc.qsl.entity.multipart.api.AbstractEntityPart;
 
 public class SecretCreeperPart extends AbstractEntityPart<CreeperEntity> {
 	public SecretCreeperPart(CreeperEntity creeper, float width, float height, Vec3d relativePosition, Vec3d relativePivot) {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.multipart.mixin.client;
+package org.quiltmc.qsl.entity.multipart.mixin.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -32,8 +32,8 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 
-import org.quiltmc.qsl.multipart.api.EntityPart;
-import org.quiltmc.qsl.multipart.api.MultipartEntity;
+import org.quiltmc.qsl.entity.multipart.api.EntityPart;
+import org.quiltmc.qsl.entity.multipart.api.MultipartEntity;
 
 @Environment(EnvType.CLIENT)
 @Mixin(EntityRenderDispatcher.class)

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.multipart.test.mixin;
+package org.quiltmc.qsl.entity.multipart.test.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 
@@ -25,9 +25,9 @@ import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-import org.quiltmc.qsl.multipart.api.EntityPart;
-import org.quiltmc.qsl.multipart.api.MultipartEntity;
-import org.quiltmc.qsl.multipart.test.SecretCreeperPart;
+import org.quiltmc.qsl.entity.multipart.api.EntityPart;
+import org.quiltmc.qsl.entity.multipart.api.MultipartEntity;
+import org.quiltmc.qsl.entity.multipart.test.SecretCreeperPart;
 
 @Mixin(CreeperEntity.class)
 public abstract class CreeperEntityMixin extends HostileEntity implements MultipartEntity {

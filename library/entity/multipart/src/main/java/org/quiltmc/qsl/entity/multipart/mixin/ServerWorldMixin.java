@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.multipart.mixin;
+package org.quiltmc.qsl.entity.multipart.mixin;
 
 import java.util.function.Supplier;
 
@@ -33,14 +33,16 @@ import net.minecraft.world.MutableWorldProperties;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 
+import org.quiltmc.qsl.entity.multipart.impl.EntityPartTracker;
+
 @Mixin(ServerWorld.class)
-public abstract class ServerWorldMixin extends World {
+public abstract class ServerWorldMixin extends World implements EntityPartTracker {
 	protected ServerWorldMixin(MutableWorldProperties mutableWorldProperties, RegistryKey<World> registryKey, Holder<DimensionType> holder, Supplier<Profiler> supplier, boolean bl, boolean bl2, long l, int i) {
 		super(mutableWorldProperties, registryKey, holder, supplier, bl, bl2, l, i);
 	}
 
 	@Redirect(method = "getDragonPart(I)Lnet/minecraft/entity/Entity;", at = @At(value = "FIELD", target = "Lnet/minecraft/server/world/ServerWorld;dragonParts:Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;", opcode = Opcodes.GETFIELD))
 	private Int2ObjectMap<Entity> quilt$getPart(ServerWorld world) {
-		return this.getEntityParts();
+		return this.quilt$getEntityParts();
 	}
 }

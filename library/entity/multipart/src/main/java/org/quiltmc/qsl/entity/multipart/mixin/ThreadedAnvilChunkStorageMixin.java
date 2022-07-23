@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.multipart.mixin;
+package org.quiltmc.qsl.entity.multipart.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.server.world.ThreadedAnvilChunkStorage;
 
-import org.quiltmc.qsl.multipart.api.EntityPart;
+import org.quiltmc.qsl.entity.multipart.api.EntityPart;
 
 @Mixin(ThreadedAnvilChunkStorage.class)
 public class ThreadedAnvilChunkStorageMixin {

@@ -5,7 +5,7 @@ plugins {
 qslModule {
 	name = "Quilt Multipart Entity API"
 	moduleName = "multipart"
-	id = "quilt_multipart"
+	id = "quilt_entity_multipart"
 	description = "An API to support custom multipart entities."
 	library = "entity"
 	moduleDependencies {
@@ -13,13 +13,10 @@ qslModule {
 			api("qsl_base")
 		}
 	}
-	injectedInterface("net/minecraft/class_1937") {
-		values = ["org/quiltmc/qsl/multipart/impl/EntityPartTracker"]
-	}
 	injectedInterface("net/minecraft/class_1510") {
-		values = ["org/quiltmc/qsl/multipart/api/MultipartEntity"]
+		values = ["org/quiltmc/qsl/entity/multipart/api/MultipartEntity"]
 	}
 	injectedInterface("net/minecraft/class_1508") {
-		values = ["org/quiltmc/qsl/multipart/api/EntityPart"]
+		values = ["org/quiltmc/qsl/entity/multipart/api/EntityPart"]
 	}
 }
