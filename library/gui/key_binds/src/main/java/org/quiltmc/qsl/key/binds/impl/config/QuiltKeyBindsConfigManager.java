@@ -54,7 +54,7 @@ public class QuiltKeyBindsConfigManager {
 			System.out.println(keyBindKey);
 			var keyBind = KeyBindRegistryImpl.getKeyBind(keyBindKey);
 			var keyList = KEY_BINDS.value().get(keyBindKey);
-			if (keyBind != null) {
+			if (keyBind != null && keyBind.isEnabled()) {
 				if (load) {
 					switch (keyList.size()) {
 						case 0 -> keyBind.setBoundKey(InputUtil.UNKNOWN_KEY);
@@ -96,20 +96,22 @@ public class QuiltKeyBindsConfigManager {
 		removalList.forEach(key -> KEY_BINDS.value().remove(key));
 
 		for (KeyBind keyBind : filteredList) {
-			ValueList<String> list;
-			if (keyBind.getBoundChord() == null) {
-				if (((KeyBindAccessor) keyBind).getBoundKey().equals(InputUtil.UNKNOWN_KEY)) {
-					list = ValueList.create("", new String[] {});
+			if (keyBind.isEnabled()) {
+				ValueList<String> list;
+				if (keyBind.getBoundChord() == null) {
+					if (((KeyBindAccessor) keyBind).getBoundKey().equals(InputUtil.UNKNOWN_KEY)) {
+						list = ValueList.create("", new String[] {});
+					} else {
+						list = ValueList.create("", keyBind.getKeyTranslationKey());
+					}
 				} else {
-					list = ValueList.create("", keyBind.getKeyTranslationKey());
+					var protoList = keyBind.getBoundChord().keys.keySet().stream().map(key -> key.getTranslationKey()).toList();
+					var array = protoList.toArray(new String[] {});
+					list = ValueList.create("", array);
 				}
-			} else {
-				var protoList = keyBind.getBoundChord().keys.keySet().stream().map(key -> key.getTranslationKey()).toList();
-				var array = protoList.toArray(new String[] {});
-				list = ValueList.create("", array);
-			}
 
-			KEY_BINDS.value().put(keyBind.getTranslationKey(), list);
+				KEY_BINDS.value().put(keyBind.getTranslationKey(), list);
+			}
 		}
 	}
 }
