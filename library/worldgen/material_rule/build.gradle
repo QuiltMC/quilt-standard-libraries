@@ -14,8 +14,5 @@ qslModule {
 			testmodOnly("resource_loader")
 		}
 	}
-}
-
-loom {
-	accessWidenerPath = file("src/main/resources/quilt_material_rule.accesswidener")
+	accessWidener()
 }
