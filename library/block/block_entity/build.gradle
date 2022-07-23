@@ -1,0 +1,37 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Block Entity API"
+	moduleName = "block_entity"
+	id = "quilt_block_entity"
+	description = "Extensions for creating and working with block entities."
+	library = "block"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+			impl("registry") // For registry-sync.
+			impl("lifecycle_events")
+			testmodOnly("resource_loader")
+		}
+	}
+	entrypoints {
+		init {
+			values = ["org.quiltmc.qsl.block.entity.impl.QuiltBlockEntityImpl::INSTANCE"]
+		}
+		events {
+			values = ["org.quiltmc.qsl.block.entity.impl.QuiltBlockEntityImpl::INSTANCE"]
+		}
+		client_init {
+			values = ["org.quiltmc.qsl.block.entity.impl.client.QuiltBlockEntityImplClient::INSTANCE"]
+		}
+		client_events {
+			values = ["org.quiltmc.qsl.block.entity.impl.client.QuiltBlockEntityImplClient::INSTANCE"]
+		}
+	}
+	accessWidener()
+	injectedInterface("net/minecraft/class_2591") {
+		values = ["org/quiltmc/qsl/block/entity/api/QuiltBlockEntityType"]
+	}
+}

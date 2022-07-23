@@ -29,6 +29,7 @@ import org.quiltmc.qsl.resource.loader.test.ResourceLoaderTestMod;
 public class ClientResourceLoaderEventsTestMod implements ClientResourceLoaderEvents.StartResourcePackReload,
 		ClientResourceLoaderEvents.EndResourcePackReload {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ClientResourceLoaderEventsTestMod.class);
+	private long start;
 
 	@Override
 	public void onStartResourcePackReload(MinecraftClient client, ResourceManager resourceManager, boolean first) {
@@ -36,10 +37,13 @@ public class ClientResourceLoaderEventsTestMod implements ClientResourceLoaderEv
 				resourceManager, first);
 
 		ResourceLoaderTestMod.loadingClientResources = true;
+		this.start = System.currentTimeMillis();
 	}
 
 	@Override
 	public void onEndResourcePackReload(MinecraftClient client, ResourceManager resourceManager, boolean first, @Nullable Throwable error) {
+		LOGGER.info("Took {}ms to perform resource pack reload.", (System.currentTimeMillis() - this.start));
+
 		if (error == null) {
 			LOGGER.info("Finished {}resource pack reloading successfully on {}.",
 					(first ? "first " : ""), Thread.currentThread());

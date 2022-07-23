@@ -73,7 +73,7 @@ public final class ClientResourceLoaderEvents {
 		 *
 		 * @param client          the server
 		 * @param resourceManager the resource manager
-		 * @param first           {@code true} if it's the first resource reload, otherwise {@code false}
+		 * @param first           {@code true} if it's the first resource reload, or {@code false} otherwise
 		 */
 		void onStartResourcePackReload(MinecraftClient client, ResourceManager resourceManager, boolean first);
 	}
@@ -92,8 +92,8 @@ public final class ClientResourceLoaderEvents {
 		 *
 		 * @param client          the client
 		 * @param resourceManager the resource manager
-		 * @param first           {@code true} if it's the first resource reload, otherwise {@code false}
-		 * @param error           present if the resource pack reload failed, otherwise {@code null}
+		 * @param first           {@code true} if it's the first resource reload, or {@code false} otherwise
+		 * @param error           present if the resource pack reload failed, or {@code null} otherwise
 		 */
 		void onEndResourcePackReload(MinecraftClient client, ResourceManager resourceManager, boolean first,
 				@Nullable Throwable error);

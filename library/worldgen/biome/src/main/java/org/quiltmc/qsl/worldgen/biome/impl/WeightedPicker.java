@@ -23,6 +23,7 @@ import java.util.function.Function;
 
 import com.google.common.base.Preconditions;
 
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.noise.PerlinNoiseSampler;
 
 /**
@@ -56,7 +57,7 @@ public final class WeightedPicker<T> {
 	}
 
 	public T pickFromNoise(PerlinNoiseSampler sampler, double x, double y, double z) {
-		double target = Math.abs(sampler.sample(x, y, z)) * this.getCurrentWeightTotal();
+		double target = MathHelper.clamp(Math.abs(sampler.sample(x, y, z)), 0.0, 1.0) * this.getCurrentWeightTotal();
 
 		return this.search(target).entry();
 	}

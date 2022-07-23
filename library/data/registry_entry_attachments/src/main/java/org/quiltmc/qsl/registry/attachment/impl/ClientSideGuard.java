@@ -20,15 +20,11 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.util.registry.Registry;
-
 /**
- * Simple guard class that prevents access to the
- * {@linkplain RegistryEntryAttachmentHolder#getAssets(Registry) assets-based <code>RegistryAttachmentHolder</code> instance}
- * in a dedicated server environment.
+ * Simple guard class that prevents access to client-sided attachments in a dedicated server environment.
  */
 @ApiStatus.Internal
-public final class AssetsHolderGuard {
+public final class ClientSideGuard {
 	private static boolean allowed = false;
 
 	@Environment(EnvType.CLIENT)
@@ -42,7 +38,7 @@ public final class AssetsHolderGuard {
 
 	public static void assertAccessAllowed() {
 		if (!allowed) {
-			throw new IllegalStateException("Access to assets-based registry attachments is not allowed here!");
+			throw new IllegalStateException("Access to client-sided registry attachments is not allowed here!");
 		}
 	}
 }

@@ -18,6 +18,7 @@ if (version.contains("beta") && !ENV.MAVEN_URL) {
 
 version = version + "+" + Versions.MINECRAFT_VERSION.version() + (System.getenv("SNAPSHOTS_URL") ? "-SNAPSHOT" : "")
 println("QSL: " + version)
+
 sourceSets {
 	testmod {
 		compileClasspath += main.compileClasspath
@@ -40,6 +41,8 @@ jar {
 }
 
 task fatJavadoc(type: Javadoc) {
+	group "documentation"
+
 	options {
 		source = String.valueOf(Versions.JAVA_VERSION)
 		encoding = "UTF-8"
@@ -81,6 +84,8 @@ task fatJavadoc(type: Javadoc) {
 
 
 task fatJavadocJar(type: Jar) {
+	group "build"
+
 	classifier "fat-javadoc"
 	dependsOn fatJavadoc
 	from fatJavadoc.destinationDir

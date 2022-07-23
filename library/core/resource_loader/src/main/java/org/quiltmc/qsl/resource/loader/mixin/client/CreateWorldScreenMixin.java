@@ -18,6 +18,7 @@ package org.quiltmc.qsl.resource.loader.mixin.client;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.function.Supplier;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
@@ -89,17 +90,21 @@ public abstract class CreateWorldScreenMixin {
 	)
 	private static <D> CompletableFuture<C_njsjipmy> loadDynamicRegistry(C_kjxfcecs.C_kculhjuh initConfig,
 			C_kjxfcecs.class_6907<D> arg, C_kjxfcecs.class_7239<D, C_njsjipmy> arg2, Executor executor, Executor executor2) {
-		return quilt$applyDefaultDataPacks(C_kjxfcecs.method_42098(initConfig, (resourceManager, dataPackSettings) -> {
-			DynamicRegistryManager.Writable registryManager = DynamicRegistryManager.builtInCopy();
-			// Force-loads the dynamic registry from data-packs as some mods may define dynamic game objects via data-driven capabilities.
-			RegistryOps.createAndLoad(JsonOps.INSTANCE, registryManager, resourceManager);
-			DynamicRegistryManager.Frozen frozen = registryManager.freeze();
-			GeneratorOptions generatorOptions = GeneratorTypes.create(frozen);
-			return Pair.of(generatorOptions, frozen);
-		}, (autoCloseableResourceManager, serverReloadableResources, frozen, generatorOptions) -> {
-			autoCloseableResourceManager.close();
-			return new C_njsjipmy(generatorOptions, Lifecycle.stable(), frozen, serverReloadableResources);
-		}, Util.getMainWorkerExecutor(), MinecraftClient.getInstance()));
+		return quilt$applyDefaultDataPacks(() -> {
+			ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null);
+			return C_kjxfcecs.method_42098(initConfig, (resourceManager, dataPackSettings) -> {
+				DynamicRegistryManager.Writable registryManager = DynamicRegistryManager.builtInCopy();
+				// Force-loads the dynamic registry from data-packs as some mods may define dynamic game objects via data-driven capabilities.
+				RegistryOps.createAndLoad(JsonOps.INSTANCE, registryManager, resourceManager);
+				DynamicRegistryManager.Frozen frozen = registryManager.freeze();
+				GeneratorOptions generatorOptions = GeneratorTypes.create(frozen);
+				return Pair.of(generatorOptions, frozen);
+			}, (resourceManager, serverReloadableResources, frozen, generatorOptions) -> {
+				ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resourceManager, null);
+				resourceManager.close();
+				return new C_njsjipmy(generatorOptions, Lifecycle.stable(), frozen, serverReloadableResources);
+			}, Util.getMainWorkerExecutor(), MinecraftClient.getInstance());
+		});
 	}
 
 	@Inject(
@@ -160,6 +165,7 @@ public abstract class CreateWorldScreenMixin {
 			at = @At(
 					value = "INVOKE",
 					target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Throwable;)V",
+					shift = At.Shift.AFTER,
 					remap = false
 			)
 	)
@@ -168,7 +174,7 @@ public abstract class CreateWorldScreenMixin {
 	}
 
 	@Unique
-	private static CompletableFuture<C_njsjipmy> quilt$applyDefaultDataPacks(CompletableFuture<C_njsjipmy> base) {
+	private static CompletableFuture<C_njsjipmy> quilt$applyDefaultDataPacks(Supplier<CompletableFuture<C_njsjipmy>> base) {
 		var client = MinecraftClient.getInstance();
 		client.send(() -> client.setScreen(new SaveLevelScreen(Text.translatable("dataPack.validation.working"))));
 
@@ -183,7 +189,7 @@ public abstract class CreateWorldScreenMixin {
 					DynamicRegistryManager.Frozen frozenRegistryManager = dataPackLoadingContext.registryManager().freeze();
 					Lifecycle lifecycle = result.lifecycle().add(frozenRegistryManager.allElementsLifecycle());
 					GeneratorOptions generatorOptions = result.getOrThrow(
-							false, Util.addPrefix("Error parsing worldgen settings after loading data-packs: ", LOGGER::error)
+							false, Util.addPrefix("Error parsing world-gen settings after loading data-packs: ", LOGGER::error)
 					);
 
 					if (frozenRegistryManager.get(Registry.WORLD_PRESET_WORLDGEN).size() == 0) {
@@ -195,6 +201,7 @@ public abstract class CreateWorldScreenMixin {
 					}
 				},
 				(resourceManager, serverReloadableResources, registryManager, pair) -> {
+					ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resourceManager, null);
 					resourceManager.close();
 					return new C_njsjipmy(pair.getFirst(), pair.getSecond(), registryManager, serverReloadableResources);
 				},
@@ -202,7 +209,8 @@ public abstract class CreateWorldScreenMixin {
 				client
 		).exceptionallyCompose(error -> {
 			LOGGER.warn("Failed to validate default data-pack.", error);
-			return base;
+			ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, null, error);
+			return base.get();
 		});
 	}
 }

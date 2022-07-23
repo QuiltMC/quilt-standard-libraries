@@ -32,7 +32,7 @@ import net.minecraft.util.registry.Registry;
  * }
  * </code></pre>
  * <p>
- * Using the {@code createDispatched} method, you can create an attachment for a composable behavior:
+ * Using the {@code dispatchedBuilder} method, you can create an attachment for a composable behavior:
  * <pre><code>
  * public static final SimpleRegistry&lt;Codec&lt;? extends Behavior&gt;&gt; REGISTRY = new SimpleRegistry&lt;&gt;();
  * public static final RegistryEntryAttachment&lt;Item, Behavior&gt; ATTACHMENT =

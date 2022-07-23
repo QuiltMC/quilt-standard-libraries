@@ -47,4 +47,7 @@ public abstract class FuncValue implements DispatchedType {
 	}
 
 	public abstract void invoke(ServerPlayerEntity player);
+
+	@Override
+	public abstract String toString();
 }

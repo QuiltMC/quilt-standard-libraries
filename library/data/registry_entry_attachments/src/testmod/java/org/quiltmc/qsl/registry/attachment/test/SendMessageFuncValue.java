@@ -40,4 +40,9 @@ public final class SendMessageFuncValue extends FuncValue {
 	public void invoke(ServerPlayerEntity player) {
 		player.sendMessage(Text.of("Quilt says: '" + this.message + "'"), false);
 	}
+
+	@Override
+	public String toString() {
+		return "send_message{'" + message + "'}";
+	}
 }

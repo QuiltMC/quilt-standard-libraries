@@ -34,15 +34,11 @@ public interface QuiltRegistryInternals<R> {
 
 	Set<Map.Entry<Identifier, RegistryEntryAttachment<R, ?>>> quilt$getAttachmentEntries();
 
-	RegistryEntryAttachmentHolder<R> quilt$getBuiltinAttachmentHolder();
+	BuiltinRegistryEntryAttachmentHolder<R> quilt$getBuiltinAttachmentHolder();
 
-	void quilt$setBuiltinAttachmentHolder(RegistryEntryAttachmentHolder<R> holder);
+	void quilt$setBuiltinAttachmentHolder(BuiltinRegistryEntryAttachmentHolder<R> holder);
 
-	RegistryEntryAttachmentHolder<R> quilt$getDataAttachmentHolder();
+	DataRegistryEntryAttachmentHolder<R> quilt$getDataAttachmentHolder();
 
-	void quilt$setDataAttachmentHolder(RegistryEntryAttachmentHolder<R> holder);
-
-	RegistryEntryAttachmentHolder<R> quilt$getAssetsAttachmentHolder();
-
-	void quilt$setAssetsAttachmentHolder(RegistryEntryAttachmentHolder<R> holder);
+	void quilt$setDataAttachmentHolder(DataRegistryEntryAttachmentHolder<R> holder);
 }

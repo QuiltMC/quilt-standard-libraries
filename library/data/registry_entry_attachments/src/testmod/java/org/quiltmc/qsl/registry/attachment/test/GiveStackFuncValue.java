@@ -22,6 +22,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 public final class GiveStackFuncValue extends FuncValue {
 	public static final Identifier TYPE = new Identifier("quilt", "give_stack");
@@ -39,5 +40,10 @@ public final class GiveStackFuncValue extends FuncValue {
 	@Override
 	public void invoke(ServerPlayerEntity player) {
 		player.getInventory().offerOrDrop(this.stack.copy());
+	}
+
+	@Override
+	public String toString() {
+		return "give_stack{" + Registry.ITEM.getId(stack.getItem()) + " x" + stack.getCount() + "}";
 	}
 }

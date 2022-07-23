@@ -57,9 +57,9 @@ public class SimpleAttachmentTest implements ModInitializer {
 		@Override
 		public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
 			if (!world.isClient) {
-				int one = TEST_ATTACHMENT.getValue(this)
+				int one = TEST_ATTACHMENT.get(this)
 						.orElseThrow(() -> new RuntimeException(TEST_ATTACHMENT + " not set via datapack!"));
-				float two = TEST_ATTACHMENT_2.getValue(this)
+				float two = TEST_ATTACHMENT_2.get(this)
 						.orElseThrow(() -> new RuntimeException(TEST_ATTACHMENT_2 + " not set via built-in!"));
 				user.sendMessage(Text.of("Test1 = " + one + ", Test2 = " + two), true);
 			}

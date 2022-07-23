@@ -41,7 +41,6 @@ public interface DefaultValueProvider<R, V> {
 	 *
 	 * @param <V> type of value
 	 */
-	@SuppressWarnings("ClassCanBeRecord")
 	final class Result<V> {
 		private final boolean hasFailed;
 		private final V value;

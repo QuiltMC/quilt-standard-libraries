@@ -24,7 +24,7 @@ import net.minecraft.resource.ResourceType;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
-import org.quiltmc.qsl.registry.attachment.impl.AssetsHolderGuard;
+import org.quiltmc.qsl.registry.attachment.impl.ClientSideGuard;
 import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentSync;
 import org.quiltmc.qsl.registry.attachment.impl.reloader.RegistryEntryAttachmentReloader;
 
@@ -33,7 +33,7 @@ import org.quiltmc.qsl.registry.attachment.impl.reloader.RegistryEntryAttachment
 public final class ClientInitializer implements ClientModInitializer {
 	@Override
 	public void onInitializeClient(ModContainer mod) {
-		AssetsHolderGuard.setAccessAllowed();
+		ClientSideGuard.setAccessAllowed();
 		RegistryEntryAttachmentReloader.register(ResourceType.CLIENT_RESOURCES);
 		RegistryEntryAttachmentSync.registerClient();
 	}

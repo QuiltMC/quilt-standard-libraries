@@ -40,7 +40,6 @@ import net.minecraft.command.CommandBuildContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.ArgumentTypeInfo;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 
 /**
@@ -83,8 +82,7 @@ public final class EnumArgumentType implements ArgumentType<String> {
 	 * @param argumentName the argument name
 	 * @return the argument value
 	 */
-	public static String getEnum(CommandContext<ServerCommandSource> context,
-			String argumentName) {
+	public static String getEnum(CommandContext<?> context, String argumentName) {
 		return context.getArgument(argumentName, String.class);
 	}
 
@@ -140,7 +138,7 @@ public final class EnumArgumentType implements ArgumentType<String> {
 	 * @return the argument as an {@code enum} constant
 	 * @throws CommandSyntaxException if the argument doesn't match a known enum constant
 	 */
-	public static <E extends Enum<E>> E getEnumConstant(CommandContext<ServerCommandSource> context,
+	public static <E extends Enum<E>> E getEnumConstant(CommandContext<?> context,
 			String argumentName, Class<? extends E> enumClass)
 			throws CommandSyntaxException {
 		if (enumConstantTypes == null) {

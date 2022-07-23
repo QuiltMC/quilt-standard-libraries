@@ -17,6 +17,9 @@
       ],
       "client_init": [
         "org.quiltmc.qsl.registry.attachment.test.client.ClientAttachmentTest"
+      ],
+      "events": [
+        "org.quiltmc.qsl.registry.attachment.test.DispatchedAttachmentTest"
       ]
     },
     "depends": [
