@@ -24,19 +24,17 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeKeys;
 import net.minecraft.world.gen.noise.NoiseParametersKeys;
 import net.minecraft.world.gen.surfacebuilder.SurfaceRules;
+
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-import org.quiltmc.qsl.worldgen.material_rule.api.MaterialRuleModifier;
+import org.quiltmc.qsl.worldgen.material_rule.api.SurfaceMaterialRuleContext;
+import org.quiltmc.qsl.worldgen.material_rule.api.SurfaceMaterialRuleEvents;
 
-import java.util.List;
-
-public class QuiltMaterialRuleTest implements ModInitializer, MaterialRuleModifier {
+public class QuiltMaterialRuleTest implements SurfaceMaterialRuleEvents.OverworldModifierCallback,
+		SurfaceMaterialRuleEvents.NetherModifierCallback,
+		SurfaceMaterialRuleEvents.TheEndModifierCallback {
 	@Override
-	public void onInitialize(ModContainer mod) {
-	}
-
-	@Override
-	public void addOverworldRules(boolean surface, boolean bedrockRoof, boolean bedrockFloor, List<SurfaceRules.MaterialRule> materialRules) {
+	public void modifyOverworldRules(SurfaceMaterialRuleContext.Overworld context) {
 		//when in doubt, T R A N S. seed 7205143747332514273 is a good one for testing.
 		SurfaceRules.MaterialCondition blueNoise1 = SurfaceRules.noiseThreshold(NoiseParametersKeys.CALCITE, 0.05, 0.1);
 		SurfaceRules.MaterialCondition pinkNoise1 = SurfaceRules.noiseThreshold(NoiseParametersKeys.CALCITE, 0.1, 0.15);
@@ -48,7 +46,7 @@ public class QuiltMaterialRuleTest implements ModInitializer, MaterialRuleModifi
 		SurfaceRules.MaterialRule PINK_CONCRETE = SurfaceRules.block(Blocks.PINK_CONCRETE.getDefaultState());
 		SurfaceRules.MaterialRule WHITE_CONCRETE = SurfaceRules.block(Blocks.WHITE_CONCRETE.getDefaultState());
 
-		materialRules.add(0,
+		context.materialRules().add(0,
 				SurfaceRules.condition(
 						SurfaceRules.abovePreliminarySurface(),
 						SurfaceRules.condition(
@@ -66,7 +64,7 @@ public class QuiltMaterialRuleTest implements ModInitializer, MaterialRuleModifi
 	}
 
 	@Override
-	public void addNetherRules(List<SurfaceRules.MaterialRule> materialRules) {
+	public void modifyNetherRules(SurfaceMaterialRuleContext.Nether context) {
 		SurfaceRules.MaterialCondition redNoise = SurfaceRules.noiseThreshold(NoiseParametersKeys.NETHER_STATE_SELECTOR, -0.04, -0.08);
 		SurfaceRules.MaterialCondition orangeNoise = SurfaceRules.noiseThreshold(NoiseParametersKeys.NETHER_STATE_SELECTOR, -0.8, -0.12);
 		SurfaceRules.MaterialCondition yellowNoise = SurfaceRules.noiseThreshold(NoiseParametersKeys.NETHER_STATE_SELECTOR, -0.12, -0.16);
@@ -83,24 +81,24 @@ public class QuiltMaterialRuleTest implements ModInitializer, MaterialRuleModifi
 		SurfaceRules.MaterialRule DARK_BLUE_CONCRETE = SurfaceRules.block(Blocks.BLUE_CONCRETE.getDefaultState());
 		SurfaceRules.MaterialRule PURPLE_CONCRETE = SurfaceRules.block(Blocks.PURPLE_CONCRETE.getDefaultState());
 
-		materialRules.add(0,
+		context.materialRules().add(0,
 				SurfaceRules.condition(
 						SurfaceRules.UNDER_CEILING,
-							SurfaceRules.sequence(
-									SurfaceRules.condition(redNoise, RED_CONCRETE),
-									SurfaceRules.condition(orangeNoise, ORANGE_CONCRETE),
-									SurfaceRules.condition(yellowNoise, YELLOW_CONCRETE),
-									SurfaceRules.condition(greenNoise, GREEN_CONCRETE),
-									SurfaceRules.condition(lightBlueNoise, LIGHT_BLUE_CONCRETE),
-									SurfaceRules.condition(darkBlueNoise, DARK_BLUE_CONCRETE),
-									SurfaceRules.condition(purpleNoise, PURPLE_CONCRETE)
+						SurfaceRules.sequence(
+								SurfaceRules.condition(redNoise, RED_CONCRETE),
+								SurfaceRules.condition(orangeNoise, ORANGE_CONCRETE),
+								SurfaceRules.condition(yellowNoise, YELLOW_CONCRETE),
+								SurfaceRules.condition(greenNoise, GREEN_CONCRETE),
+								SurfaceRules.condition(lightBlueNoise, LIGHT_BLUE_CONCRETE),
+								SurfaceRules.condition(darkBlueNoise, DARK_BLUE_CONCRETE),
+								SurfaceRules.condition(purpleNoise, PURPLE_CONCRETE)
 						)
 				)
 		);
 	}
 
 	@Override
-	public void addEndRules(List<SurfaceRules.MaterialRule> materialRules) {
+	public void modifyTheEndRules(SurfaceMaterialRuleContext.TheEnd context) {
 		RegistryKey<Biome> TEST_END_HIGHLANDS = RegistryKey.of(Registry.BIOME_KEY, new Identifier("quilt_biome_testmod", "test_end_highlands"));
 		RegistryKey<Biome> TEST_END_MIDLANDS = RegistryKey.of(Registry.BIOME_KEY, new Identifier("quilt_biome_testmod", "test_end_midlands"));
 		RegistryKey<Biome> TEST_END_BARRRENS = RegistryKey.of(Registry.BIOME_KEY, new Identifier("quilt_biome_testmod", "test_end_barrens"));
@@ -118,7 +116,7 @@ public class QuiltMaterialRuleTest implements ModInitializer, MaterialRuleModifi
 		SurfaceRules.MaterialRule BLUE_CONCRETE = SurfaceRules.block(Blocks.BLUE_CONCRETE.getDefaultState());
 
 		// genderfluEND :D
-		materialRules.add(0,
+		context.materialRules().add(0,
 				SurfaceRules.sequence(
 						SurfaceRules.condition(pinkBiome, PINK_CONCRETE),
 						SurfaceRules.condition(whiteBiome, WHITE_CONCRETE),

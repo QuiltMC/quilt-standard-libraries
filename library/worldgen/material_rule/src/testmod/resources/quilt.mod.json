@@ -8,14 +8,10 @@
       "name": "Quilt Material Rule API Test Mod",
       "license": "Apache-2.0"
     },
-
     "intermediate_mappings": "net.fabricmc:intermediary",
     "load_type": "always",
     "entrypoints": {
-      "init": [
-        "org.quiltmc.qsl.worldgen.material_rule.QuiltMaterialRuleTest"
-      ],
-      "qsl:material_rule_modifier": [
+      "events": [
         "org.quiltmc.qsl.worldgen.material_rule.QuiltMaterialRuleTest"
       ]
     },
