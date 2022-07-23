@@ -18,14 +18,12 @@ package org.quiltmc.qsl.key.binds.api;
 
 import java.util.List;
 
-import com.mojang.blaze3d.platform.InputUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import net.minecraft.client.option.KeyBind;
 
 import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
-import org.quiltmc.qsl.key.binds.mixin.client.KeyBindAccessor;
 
 // TODO - This isn't a registry anymore; What the heck should it be named?
 /**
@@ -45,20 +43,6 @@ public class KeyBindRegistry {
 	 */
 	public static KeyBind getKeyBind(String translationKey) {
 		return KeyBindRegistryImpl.getKeyBind(translationKey);
-	}
-
-	// TODO - Would a transitive AW be safe for getBoundKey?
-	/**
-	 * Gets the bound key of the key bind.
-	 *
-	 * <p>The bound key is only directly used by the key bind system's internal logic.
-	 * If possible, use the methods provided by the KeyBind class instead.
-	 *
-	 * @param key the key bind
-	 * @return the key bind's bound key
-	 */
-	public static InputUtil.Key getBoundKey(KeyBind key) {
-		return ((KeyBindAccessor) key).getBoundKey();
 	}
 
 	/**

@@ -18,7 +18,6 @@ package org.quiltmc.qsl.key.binds.mixin.client;
 
 import java.util.Map;
 
-import com.mojang.blaze3d.platform.InputUtil;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
@@ -34,9 +33,6 @@ public interface KeyBindAccessor {
 	static Map<String, KeyBind> getKeyBinds() {
 		return null;
 	}
-
-	@Accessor
-	InputUtil.Key getBoundKey();
 
 	@Invoker
 	void callReset();

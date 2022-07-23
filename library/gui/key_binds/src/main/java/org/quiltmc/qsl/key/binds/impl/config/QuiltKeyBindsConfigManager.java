@@ -31,7 +31,6 @@ import org.quiltmc.config.api.values.ValueMap;
 import org.quiltmc.loader.api.config.QuiltConfig;
 import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
 import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
-import org.quiltmc.qsl.key.binds.mixin.client.KeyBindAccessor;
 
 @SuppressWarnings("unchecked")
 public class QuiltKeyBindsConfigManager {
@@ -71,7 +70,7 @@ public class QuiltKeyBindsConfigManager {
 				} else {
 					ValueList<String> list;
 					if (keyBind.getBoundChord() == null) {
-						if (((KeyBindAccessor) keyBind).getBoundKey().equals(InputUtil.UNKNOWN_KEY)) {
+						if (keyBind.getBoundKey().equals(InputUtil.UNKNOWN_KEY)) {
 							list = ValueList.create("", new String[] {});
 						} else {
 							list = ValueList.create("", keyBind.getKeyTranslationKey());
@@ -99,7 +98,7 @@ public class QuiltKeyBindsConfigManager {
 			if (keyBind.isEnabled()) {
 				ValueList<String> list;
 				if (keyBind.getBoundChord() == null) {
-					if (((KeyBindAccessor) keyBind).getBoundKey().equals(InputUtil.UNKNOWN_KEY)) {
+					if (keyBind.getBoundKey().equals(InputUtil.UNKNOWN_KEY)) {
 						list = ValueList.create("", new String[] {});
 					} else {
 						list = ValueList.create("", keyBind.getKeyTranslationKey());

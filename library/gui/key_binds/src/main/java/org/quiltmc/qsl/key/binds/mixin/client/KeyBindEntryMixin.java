@@ -43,7 +43,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
-import org.quiltmc.qsl.key.binds.api.KeyBindRegistry;
 import org.quiltmc.qsl.key.binds.impl.KeyBindTooltipHolder;
 import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
 import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
@@ -91,7 +90,7 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private void collectConflictTooltips(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci, boolean bl, boolean bl2) {
-		InputUtil.Key boundKey = KeyBindRegistry.getBoundKey(this.key);
+		InputUtil.Key boundKey = this.key.getBoundKey();
 		KeyChord boundChord = this.key.getBoundChord();
 		List<InputUtil.Key> boundProtoChord;
 

@@ -16,14 +16,28 @@
 
 package org.quiltmc.qsl.key.binds.api;
 
+import com.mojang.blaze3d.platform.InputUtil;
+
 public interface QuiltKeyBind {
 	/**
 	 * Gets whenever the key bind is from Vanilla or not.
 	 * This is automatically determined by using GameOptions' allKeys property.
 	 *
-	 * @return {@code true} if the key bind is from Vanilla, {@code false} otherwise
+	 * @return {@code true} if the key bind is from Vanilla, or {@code false} otherwise
 	 */
 	default boolean isVanilla() {
 		return false;
+	}
+
+	/**
+	 * Gets the bound key of the key bind.
+	 *
+	 * <p>The bound key is only directly used by the key bind system's internal logic.
+	 * If possible, use the methods provided by the KeyBind class instead.
+	 *
+	 * @return the key bind's bound key
+	 */
+	default InputUtil.Key getBoundKey() {
+		throw new UnsupportedOperationException();
 	}
 }
