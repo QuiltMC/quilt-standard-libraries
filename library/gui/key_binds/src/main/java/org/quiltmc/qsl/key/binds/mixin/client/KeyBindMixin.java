@@ -43,6 +43,9 @@ public abstract class KeyBindMixin implements QuiltKeyBind, InternalQuiltKeyBind
 	@Final
 	private static Map<String, Integer> ORDER_BY_CATEGORIES;
 
+	@Shadow
+	private InputUtil.Key boundKey;
+
 	@Unique
 	private boolean quilt$vanilla;
 
@@ -64,4 +67,9 @@ public abstract class KeyBindMixin implements QuiltKeyBind, InternalQuiltKeyBind
 	public void markAsVanilla() {
 		this.quilt$vanilla = true;
 	}
+
+	@Override
+	public InputUtil.Key getBoundKey() {
+		return this.boundKey;
+	};
 }

@@ -31,14 +31,13 @@ import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
 @InjectedInterface(KeyBind.class)
 public interface ChordedKeyBind {
 	default KeyChord getBoundChord() {
-		System.out.println("This should never happen");
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	default void setBoundChord(KeyChord chord) { }
 
 	// TODO - This is a temporary measure until CHASM comes. Replace it with a proper constructor or builder
 	default KeyBind withChord(InputUtil.Key... keys) {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 }
