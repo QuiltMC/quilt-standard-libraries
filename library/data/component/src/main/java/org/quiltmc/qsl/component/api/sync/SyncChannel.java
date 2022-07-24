@@ -163,6 +163,7 @@ public class SyncChannel<P extends ComponentProvider, U> {
 		ServerPlayNetworking.send(players.isEmpty() ? this.playerProvider.apply(providerAsP) : players, this.channelId, buf);
 	}
 
+	// TODO: Figure out a way to avoid the unsafe casting if possible
 	public void syncFromQueue(Queue<ComponentType<?>> pendingSync, Function<ComponentType<?>, Syncable> mapper, ComponentProvider provider) {
 		this.syncFromQueue(pendingSync, mapper, provider, List.of());
 	}
@@ -208,7 +209,7 @@ public class SyncChannel<P extends ComponentProvider, U> {
 	public void handleClientSyncRequest(MinecraftServer server, ServerPlayerEntity sender, PacketByteBuf buf) {
 		buf.retain();
 		server.execute(() -> {
-			Queue<U> queued = this.queueCodec.decode(buf); // we retrive the queue of identifying data
+			Queue<U> queued = this.queueCodec.decode(buf); // we retrieve the queue of identifying data
 
 			while (!queued.isEmpty()) {
 				var identifyingData = queued.poll();
@@ -218,7 +219,7 @@ public class SyncChannel<P extends ComponentProvider, U> {
 					return;
 				}
 
-				// force sync the target container
+				// force sync the target provider
 				this.forceSync(provider, sender);
 			}
 

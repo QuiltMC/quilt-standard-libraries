@@ -18,7 +18,7 @@ package org.quiltmc.qsl.component.impl.injection.predicate.dynamic;
 
 import java.util.function.Predicate;
 
-import org.quiltmc.qsl.component.api.predicate.DynamicInjectionPredicate;
+import org.quiltmc.qsl.component.api.injection.predicate.DynamicInjectionPredicate;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.injection.predicate.cached.ClassInjectionPredicate;
 

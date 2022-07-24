@@ -29,7 +29,7 @@ import org.quiltmc.qsl.component.api.component.Tickable;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.api.sync.SyncChannel;
 import org.quiltmc.qsl.component.impl.container.*;
-import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
+import org.quiltmc.qsl.component.api.injection.ComponentEntry;
 
 import java.util.ArrayList;
 import java.util.List;

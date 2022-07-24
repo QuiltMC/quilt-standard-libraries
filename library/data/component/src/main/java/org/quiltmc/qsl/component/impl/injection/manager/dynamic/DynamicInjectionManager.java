@@ -22,9 +22,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.quiltmc.qsl.base.api.util.Maybe;
-import org.quiltmc.qsl.component.api.predicate.DynamicInjectionPredicate;
+import org.quiltmc.qsl.component.api.injection.predicate.DynamicInjectionPredicate;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
-import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
+import org.quiltmc.qsl.component.api.injection.ComponentEntry;
 import org.quiltmc.qsl.component.impl.injection.manager.InjectionManager;
 
 public class DynamicInjectionManager extends InjectionManager<DynamicInjectionPredicate, DynamicInjectionManager.DynamicInjection> {

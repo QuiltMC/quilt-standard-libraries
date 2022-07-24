@@ -16,29 +16,15 @@
 
 package org.quiltmc.qsl.component.impl.injection.predicate.cached;
 
-import java.util.Arrays;
-import java.util.Objects;
+import org.quiltmc.qsl.component.api.injection.predicate.InjectionPredicate;
 
-import org.quiltmc.qsl.component.api.predicate.InjectionPredicate;
-import org.quiltmc.qsl.component.api.provider.ComponentProvider;
-import org.quiltmc.qsl.component.impl.util.ErrorUtil;
+import java.util.Objects;
 
 public class ClassInjectionPredicate implements InjectionPredicate {
 	protected final Class<?> clazz;
 
 	public ClassInjectionPredicate(Class<?> clazz) {
-		if (implementsComponentProvider(clazz)) {
-			this.clazz = clazz;
-		} else {
-			throw ErrorUtil.illegalArgument(
-					"Cannot create an injection predicate for a class that doesn't implement ComponentProvider"
-			).get();
-		}
-	}
-
-	private static boolean implementsComponentProvider(Class<?> clazz) {
-		return Arrays.stream(clazz.getInterfaces()).anyMatch(it -> it == ComponentProvider.class)
-				|| (clazz.getSuperclass() != null && implementsComponentProvider(clazz.getSuperclass()));
+		this.clazz = clazz;
 	}
 
 	@Override

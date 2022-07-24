@@ -16,7 +16,10 @@
 
 package org.quiltmc.qsl.component.test;
 
+import java.util.UUID;
+
 import com.mojang.serialization.Codec;
+
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -39,7 +42,7 @@ import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.WorldChunk;
+
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.block.entity.api.QuiltBlockEntityTypeBuilder;
@@ -47,12 +50,14 @@ import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.Components;
 import org.quiltmc.qsl.component.api.component.Tickable;
 import org.quiltmc.qsl.component.api.component.field.SyncedGenericSerializableField;
+import org.quiltmc.qsl.component.api.injection.ComponentInjector;
 import org.quiltmc.qsl.component.api.sync.codec.NetworkCodec;
-import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
-import org.quiltmc.qsl.component.impl.injection.predicate.cached.ClassInjectionPredicate;
-import org.quiltmc.qsl.component.test.component.*;
-
-import java.util.UUID;
+import org.quiltmc.qsl.component.test.component.ChunkInventorySerializable;
+import org.quiltmc.qsl.component.test.component.DefaultFloatSerializable;
+import org.quiltmc.qsl.component.test.component.DefaultIntegerSerializable;
+import org.quiltmc.qsl.component.test.component.DefaultInventorySerializable;
+import org.quiltmc.qsl.component.test.component.InventorySerializable;
+import org.quiltmc.qsl.component.test.component.SaveFloatSerializable;
 
 public class ComponentTestMod implements ModInitializer {
 	public static final String MOD_ID = "quilt_component_test";
@@ -152,21 +157,39 @@ public class ComponentTestMod implements ModInitializer {
 		Block.STATE_IDS.add(TEST_BLOCK.getDefaultState());
 
 		// Cached Injection
-		Components.inject(CreeperEntity.class, CREEPER_EXPLODE_TIME);
-		Components.injectInheritage(CowEntity.class, COW_INVENTORY);
-		Components.injectInheritanceExcept(HostileEntity.class, HOSTILE_EXPLODE_TIME, CreeperEntity.class);
-		Components.inject(ChestBlockEntity.class, CHEST_NUMBER);
-		Components.injectInheritage(Chunk.class, CHUNK_INVENTORY);
-		Components.inject(
-				new ClassInjectionPredicate(WorldChunk.class),
-				new ComponentEntry<>(CHUNK_INVENTORY, ChunkInventorySerializable::new)
-		);
 		// Components.inject(MinecraftServer.class, SERVER_TICK);
-		Components.injectInheritage(ServerPlayerEntity.class, PLAYER_TICK);
-		Components.injectInheritage(PlayerEntity.class, UUID_THING);
-		Components.injectInheritage(World.class, SAVE_FLOAT);
-
-		// Dynamic Injection
+		ComponentInjector.injector(CreeperEntity.class)
+						 .entry(CREEPER_EXPLODE_TIME).add()
+						 .inject();
+		ComponentInjector.injector(Chunk.class)
+						 .entry(CHUNK_INVENTORY).factory(ChunkInventorySerializable::new).add()
+						 .inherited()
+						 .inject();
+		ComponentInjector.injector(CreeperEntity.class)
+						 .entry(CREEPER_EXPLODE_TIME).add()
+						 .inject();
+		ComponentInjector.injector(HostileEntity.class)
+						 .entry(HOSTILE_EXPLODE_TIME).add()
+						 .inherited()
+						 .exclude(CreeperEntity.class)
+						 .inject();
+		ComponentInjector.injector(ChestBlockEntity.class)
+						 .entry(CHEST_NUMBER).add()
+						 .inject();
+		ComponentInjector.injector(CowEntity.class)
+						 .entry(COW_INVENTORY).add()
+						 .inject();
+		ComponentInjector.injector(ServerPlayerEntity.class)
+						 .entry(PLAYER_TICK).add()
+						 .inject();
+		ComponentInjector.injector(PlayerEntity.class)
+						 .entry(UUID_THING).add()
+						 .inherited()
+						 .inject();
+		ComponentInjector.injector(World.class)
+						 .entry(SAVE_FLOAT).add()
+						 .inherited()
+						 .inject();
 	}
 
 	public static final BlockEntityType<TestBlockEntity> TEST_BE_TYPE =

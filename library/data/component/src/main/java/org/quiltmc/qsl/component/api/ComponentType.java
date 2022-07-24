@@ -18,6 +18,7 @@ package org.quiltmc.qsl.component.api;
 
 import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.component.api.component.Tickable;
+import org.quiltmc.qsl.component.api.injection.ComponentEntry;
 import org.quiltmc.qsl.component.api.sync.codec.NetworkCodec;
 import org.quiltmc.qsl.component.impl.client.sync.ClientSyncHandler;
 
@@ -34,7 +35,7 @@ import java.util.Map;
  *                       {@link ComponentType} instance).
  * @param defaultFactory A default factory for an instance of {@link T} instance, that this type may produce,
  *                       if no specific factory is defined under the container
- *                       {@link org.quiltmc.qsl.component.impl.injection.ComponentEntry}.<br/>
+ *                       {@link ComponentEntry}.<br/>
  *                       Used only during component injections or creation of
  *                       {@linkplain org.quiltmc.qsl.component.api.container.ComponentContainer containers}.
  * @param isStatic       Whether this {@linkplain ComponentType type} works as a static type.

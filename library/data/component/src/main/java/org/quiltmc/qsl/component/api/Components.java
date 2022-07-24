@@ -16,25 +16,19 @@
 
 package org.quiltmc.qsl.component.api;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
-import org.jetbrains.annotations.ApiStatus;
+
 import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.component.Tickable;
-import org.quiltmc.qsl.component.api.predicate.InjectionPredicate;
+import org.quiltmc.qsl.component.api.injection.ComponentEntry;
+import org.quiltmc.qsl.component.api.injection.predicate.InjectionPredicate;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
-import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
-import org.quiltmc.qsl.component.impl.injection.predicate.cached.ClassInjectionPredicate;
-import org.quiltmc.qsl.component.impl.injection.predicate.cached.FilteredInheritedInjectionPredicate;
-import org.quiltmc.qsl.component.impl.injection.predicate.cached.InheritedInjectionPredicate;
-import org.quiltmc.qsl.component.impl.injection.predicate.cached.RedirectedInjectionPredicate;
-import org.quiltmc.qsl.component.impl.injection.predicate.dynamic.DynamicClassInjectionPredicate;
 import org.quiltmc.qsl.component.impl.util.ErrorUtil;
-
-import java.util.Set;
-import java.util.function.Predicate;
 
 /**
  * The external version of the component API, meant to be used by modders.<br/>
@@ -56,10 +50,12 @@ public final class Components {
 	// end registry
 
 	// begin injection methods
-
 	/**
 	 * The most manual method of injection.<br/>
-	 * Callers can provide custom {@link InjectionPredicate}s and also custom {@linkplain ComponentEntry entries}
+	 * Callers can provide custom {@link InjectionPredicate}s and also custom {@linkplain ComponentEntry entries}.
+	 *
+	 * <p>
+	 * For users who wish to use an easier method of injection, see {@link org.quiltmc.qsl.component.api.injection.ComponentInjector}.
 	 *
 	 * @param predicate The {@linkplain InjectionPredicate predicate} used for the injection
 	 * @param entry     The {@linkplain ComponentEntry entry} used for the injection.
@@ -70,79 +66,9 @@ public final class Components {
 	public static <C> void inject(InjectionPredicate predicate, ComponentEntry<C> entry) {
 		ComponentsImpl.inject(predicate, entry);
 	}
-
-	/**
-	 * The simplest method of injection.<br/>
-	 * Injects the provided {@link ComponentType} into all <i>direct</i> instances of the provided {@link Class}.
-	 *
-	 * @param clazz The target class(must implement {@link ComponentProvider}).
-	 * @param type  The type to inject(the {@linkplain ComponentType#defaultFactory() default factory of the type} is
-	 *                 used).
-	 * @param <C>   The type held by the injected type.
-	 * @see ClassInjectionPredicate
-	 */
-	public static <C> void inject(Class<?> clazz, ComponentType<C> type) {
-		ComponentsImpl.inject(new ClassInjectionPredicate(clazz), new ComponentEntry<>(type));
-	}
-
-	/**
-	 * Similar to {@link Components#inject(Class, ComponentType)} except it injects into all subclasses and indirect
-	 * instances of the provided class.
-	 *
-	 * @param clazz The highest class in the hierarchy that will be injected.
-	 * @param type  The type to inject(the {@linkplain ComponentType#defaultFactory() default factory of the type} is
-	 *                 used).
-	 * @param <C>   The type held by the injected type.
-	 * @see InheritedInjectionPredicate
-	 */
-	public static <C> void injectInheritage(Class<?> clazz, ComponentType<C> type) {
-		ComponentsImpl.inject(new InheritedInjectionPredicate(clazz), new ComponentEntry<>(type));
-	}
-
-	/**
-	 * Similar to {@link Components#injectInheritage(Class, ComponentType)}, except it skips the provided classes in
-	 * the hierarchy.
-	 *
-	 * @param clazz      The highest class in the hierarchy that will be injected.
-	 * @param type       The type to inject(the {@linkplain ComponentType#defaultFactory() default factory of the
-	 * type} is used).
-	 * @param exceptions The classes to avoid injecting into.
-	 * @param <C>        The type help by the provided type.
-	 * @see FilteredInheritedInjectionPredicate
-	 */
-	public static <C> void injectInheritanceExcept(Class<?> clazz, ComponentType<C> type, Class<?>... exceptions) {
-		ComponentsImpl.inject(new FilteredInheritedInjectionPredicate(clazz, exceptions), new ComponentEntry<>(type));
-	}
-
-	/**
-	 * TODO: This is supposed to be merged with {@link Components#inject(Class, ComponentType)} and a mapping to
-	 * redirections is to be created.
-	 */
-	public static <C> void injectRedirected(Class<?> mainClass, ComponentType<C> type, Class<?>... others) {
-		ComponentsImpl.inject(new RedirectedInjectionPredicate(mainClass, Set.of(others)), new ComponentEntry<>(type));
-	}
-
-	/**
-	 * Dynamically injects into the provided {@link Class} using the provided predicate.<br/>
-	 * For more info on dynamic injection check
-	 * {@link org.quiltmc.qsl.component.api.predicate.DynamicInjectionPredicate};
-	 *
-	 * @param clazz     The target class(must implement {@link ComponentProvider}).
-	 * @param type      The type to inject(the {@linkplain ComponentType#defaultFactory() default factory of the type}
-	 *                    is used).
-	 * @param predicate The predicate used to determine if injection is possible.
-	 * @param <C>       The type of component that will be injected.
-	 * @param <P>       The type of the provider that the dynamic injection targets.
-	 */
-	public static <C, P extends ComponentProvider> void injectDynamic(Class<P> clazz, ComponentType<C> type,
-			Predicate<P> predicate) {
-		ComponentsImpl.inject(new DynamicClassInjectionPredicate<>(clazz, predicate), new ComponentEntry<>(type));
-	}
-
 	// end injection methods
 
 	// begin registration methods
-
 	/**
 	 * The proper way to expose component instances.<br/>
 	 * This does type-checking and also makes sure a {@link ComponentProvider} is given.<br/>
@@ -151,7 +77,7 @@ public final class Components {
 	 *
 	 * @param id  The {@link ComponentType} to expose.
 	 * @param obj Any object will work. If it does not implement {@link ComponentProvider} an empty will be instantly
-	 *               returned.
+	 *            returned.
 	 * @param <C> The type of component held by the {@link ComponentType}.
 	 * @param <S> The object to attempt to expose the component on.
 	 * @return Either {@link org.quiltmc.qsl.base.api.util.Maybe.Just} the result of expose called on the provider's
@@ -222,6 +148,5 @@ public final class Components {
 	public static <C extends Tickable> ComponentType<C> registerInstant(Identifier id, ComponentFactory<C> factory) {
 		return ComponentsImpl.register(id, new ComponentType<>(id, factory, false, true));
 	}
-
 	// end registration method
 }

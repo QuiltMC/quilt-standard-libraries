@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.api.predicate;
+package org.quiltmc.qsl.component.api.injection.predicate;
 
 public interface InjectionPredicate {
 	boolean isClassValid(Class<?> clazz);

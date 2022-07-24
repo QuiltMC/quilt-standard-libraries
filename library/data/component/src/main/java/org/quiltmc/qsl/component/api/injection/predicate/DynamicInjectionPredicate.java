@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.api.predicate;
+package org.quiltmc.qsl.component.api.injection.predicate;
 
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 
