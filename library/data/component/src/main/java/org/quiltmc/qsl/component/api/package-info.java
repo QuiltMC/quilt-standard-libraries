@@ -20,7 +20,7 @@
  * Java is now gonna complain since we need 2 more things: the AComponent interface as well as the ADefaultComponent default class.
  * Creating them is as simple as this:
  * <pre>{@code
- * public interface AComponent extends Component {
+ * public interface AComponent {
  *     void doSomething();
  *
  *     String getStringData();
@@ -52,7 +52,7 @@
  * The {@link org.quiltmc.qsl.component.api.ComponentType} we have created does exist, but nothing actually exposes it's interface.<br/>
  * For that to happen we need to inject our type into game objects.
  * <p/>
- * Game Objects that can have {@linkplain org.quiltmc.qsl.component.api.Component components} injected to them are by convention called {@link org.quiltmc.qsl.component.api.provider.ComponentProvider}s.<br/>
+ * Game Objects that can have components injected to them are by convention called {@link org.quiltmc.qsl.component.api.provider.ComponentProvider}s.<br/>
  * The {@linkplain org.quiltmc.qsl.component.api.provider.ComponentProvider providers} implemented by default are the following:
  * <ul>
  *     <li>BlockEntity</li>

@@ -37,7 +37,7 @@ import java.util.Queue;
 import java.util.function.BiConsumer;
 
 /**
- * A base container for all {@link Component}s that a {@link ComponentProvider} contains.
+ * A base container for all components that a {@link ComponentProvider} contains.
  * The implementation of this, needs to not take up too much runtime, since the methods in here may be called really
  * often.
  * <p/>
@@ -136,7 +136,8 @@ public interface ComponentContainer {
 	 *
 	 * @see ComponentContainer#createSingleFactory(ComponentType)
 	 */
-	static <C> ComponentContainer.Factory<SingleComponentContainer<C>> createSingleFactory(ComponentType<C> type, ComponentFactory<C> factory) {
+	static <C> ComponentContainer.Factory<SingleComponentContainer<C>> createSingleFactory(ComponentType<C> type,
+			ComponentFactory<C> factory) {
 		return SingleComponentContainer.createFactory(new ComponentEntry<>(type, factory));
 	}
 
@@ -169,7 +170,7 @@ public interface ComponentContainer {
 
 	/**
 	 * The deepest level implementation of {@link org.quiltmc.qsl.component.api.Components#expose}.<br/>
-	 * This takes in a wildcarded type and only returns a {@link Component} without casting it.<br/>
+	 * This takes in a generic type and only returns a cast {@link C} instance.
 	 * This is type-unsafe and if not implemented correctly, may lead to crashes with {@link ClassCastException}s.<br/>
 	 *
 	 * <p>
@@ -179,7 +180,7 @@ public interface ComponentContainer {
 	 * @return Should return {@link org.quiltmc.qsl.base.api.util.Maybe.Nothing} if the provided {@link ComponentType}
 	 * is not contained in the current container.
 	 * Otherwise, should always return {@link org.quiltmc.qsl.base.api.util.Maybe.Just} the contained
-	 * {@link Component} instance.
+	 * {@link C} instance.
 	 */
 	<C> Maybe<C> expose(ComponentType<C> type);
 
@@ -213,7 +214,7 @@ public interface ComponentContainer {
 	 * Most of the time this method is invoked by {@link ComponentContainer#tick}.<br/>
 	 *
 	 * @param provider The provider is passed in so that {@link SyncChannel#syncFromQueue} can use it, when creating a
-	 *                   packet to sync data to the client.
+	 *                 packet to sync data to the client.
 	 * @implNote The best way to sync components at the moment is using {@link SyncChannel#syncFromQueue}, which takes
 	 * in a {@link Queue} of components that need syncing.
 	 */
@@ -239,12 +240,12 @@ public interface ComponentContainer {
 		 *
 		 * @param provider      The {@link ComponentProvider} that will contain the created {@link ComponentContainer}.
 		 * @param entries       A {@link List} containing all the entries that were manually added by the
-		 * {@link Builder}.
-		 * @param saveOperation The operation to be run by the contained {@link Component}s to mark the
-		 * {@linkplain ComponentProvider provider} as needing to save.
+		 *                      {@link Builder}.
+		 * @param saveOperation The operation to be run by the contained components to mark the containing
+		 *                      {@linkplain ComponentProvider provider} as needing to save.
 		 * @param ticking       Whether this container can tick.
 		 * @param syncChannel   The {@link SyncChannel} representing the {@link ComponentProvider} that contains the
-		 *                            created {@link ComponentContainer}.
+		 *                      created {@link ComponentContainer}.
 		 * @return A {@link ComponentContainer} created using the specified parameters.
 		 */
 		T generate(ComponentProvider provider,

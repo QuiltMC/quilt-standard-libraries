@@ -9,8 +9,8 @@ package org.quiltmc.qsl.component.api;
 @FunctionalInterface
 public interface ComponentFactory<T> {
 	/**
-	 * @param operations The {@link ComponentCreationContext} that the {@link Component} may use.
+	 * @param ctx The {@link ComponentCreationContext} that can be used by the component.
 	 * @return A {@link T} instance.
 	 */
-	T create(ComponentCreationContext operations);
+	T create(ComponentCreationContext ctx);
 }
