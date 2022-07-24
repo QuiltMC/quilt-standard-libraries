@@ -16,20 +16,12 @@
 
 package org.quiltmc.qsl.component.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.mojang.serialization.Lifecycle;
-import org.jetbrains.annotations.ApiStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
-
-import org.quiltmc.qsl.component.api.Component;
+import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.predicate.DynamicInjectionPredicate;
 import org.quiltmc.qsl.component.api.predicate.InjectionPredicate;
@@ -37,6 +29,11 @@ import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
 import org.quiltmc.qsl.component.impl.injection.manager.cached.CachedInjectionManager;
 import org.quiltmc.qsl.component.impl.injection.manager.dynamic.DynamicInjectionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @ApiStatus.Internal
 public class ComponentsImpl {
@@ -50,7 +47,7 @@ public class ComponentsImpl {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger("Quilt Component");
 
-	public static <C extends Component> void inject(InjectionPredicate predicate, ComponentEntry<C> componentEntry) {
+	public static <C> void inject(InjectionPredicate predicate, ComponentEntry<C> componentEntry) {
 		if (predicate instanceof DynamicInjectionPredicate dynamicPredicate) {
 			DYNAMIC_MANAGER.inject(dynamicPredicate, componentEntry);
 		} else {
@@ -65,7 +62,7 @@ public class ComponentsImpl {
 		return result;
 	}
 
-	public static <C extends Component> ComponentType<C> register(Identifier id, ComponentType<C> type) {
+	public static <C> ComponentType<C> register(Identifier id, ComponentType<C> type) {
 		return Registry.register(REGISTRY, id, type);
 	}
 }

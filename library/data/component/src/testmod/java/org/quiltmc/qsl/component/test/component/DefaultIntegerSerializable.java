@@ -16,26 +16,25 @@
 
 package org.quiltmc.qsl.component.test.component;
 
-import org.jetbrains.annotations.Nullable;
-
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtInt;
+import net.minecraft.network.PacketByteBuf;
+import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.component.api.ComponentCreationContext;
+import org.quiltmc.qsl.component.api.component.NbtSerializable;
+import org.quiltmc.qsl.component.api.component.Syncable;
 
-import org.quiltmc.qsl.component.api.Component;
-import org.quiltmc.qsl.component.api.component.NbtComponent;
-
-public class DefaultIntegerComponent implements NbtComponent<NbtInt> {
-	@Nullable
-	private final Runnable saveOperation;
+public class DefaultIntegerSerializable implements NbtSerializable<NbtInt>, Syncable {
+	private final ComponentCreationContext ops;
 	private int value;
 
-	public DefaultIntegerComponent(Component.Operations ops) {
+	public DefaultIntegerSerializable(ComponentCreationContext ops) {
 		this(ops, 0);
 	}
 
-	public DefaultIntegerComponent(Component.Operations ops, int defaultValue) {
+	public DefaultIntegerSerializable(ComponentCreationContext ops, int defaultValue) {
 		this.value = defaultValue;
-		this.saveOperation = ops.saveOperation();
+		this.ops = ops;
 	}
 
 	public void increment() {
@@ -71,6 +70,27 @@ public class DefaultIntegerComponent implements NbtComponent<NbtInt> {
 
 	@Override
 	public @Nullable Runnable getSaveOperation() {
-		return this.saveOperation;
+		return this.ops.saveOperation();
+	}
+
+	@Override
+	public void writeToBuf(PacketByteBuf buf) {
+		buf.writeVarInt(this.value);
+	}
+
+	@Override
+	public void readFromBuf(PacketByteBuf buf) {
+		this.value = buf.readVarInt();
+	}
+
+	@Override
+	public @Nullable Runnable getSyncOperation() {
+		return this.ops.syncOperation();
+	}
+
+	@Override
+	public void save() {
+		NbtSerializable.super.save();
+		this.sync();
 	}
 }

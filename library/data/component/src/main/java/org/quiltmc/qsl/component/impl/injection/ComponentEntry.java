@@ -17,16 +17,16 @@
 package org.quiltmc.qsl.component.impl.injection;
 
 import org.jetbrains.annotations.Nullable;
-
-import org.quiltmc.qsl.component.api.Component;
+import org.quiltmc.qsl.component.api.ComponentCreationContext;
+import org.quiltmc.qsl.component.api.ComponentFactory;
 import org.quiltmc.qsl.component.api.ComponentType;
 
-public record ComponentEntry<C extends Component>(ComponentType<C> type, Component.Factory<C> factory) {
+public record ComponentEntry<C>(ComponentType<C> type, ComponentFactory<C> factory) {
 	public ComponentEntry(ComponentType<C> type) {
 		this(type, type.defaultFactory());
 	}
 
 	public C apply(@Nullable Runnable saveOperation, @Nullable Runnable syncOperation) {
-		return this.factory.create(new Component.Operations(saveOperation, syncOperation));
+		return this.factory.create(new ComponentCreationContext(saveOperation, syncOperation));
 	}
 }

@@ -46,7 +46,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.WorldChunk;
 
 import org.quiltmc.qsl.component.api.ComponentType;
-import org.quiltmc.qsl.component.api.component.SyncedComponent;
+import org.quiltmc.qsl.component.api.component.Syncable;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.api.sync.codec.NetworkCodec;
 import org.quiltmc.qsl.component.impl.client.sync.ClientResolution;
@@ -163,11 +163,11 @@ public class SyncChannel<P extends ComponentProvider, U> {
 		ServerPlayNetworking.send(players.isEmpty() ? this.playerProvider.apply(providerAsP) : players, this.channelId, buf);
 	}
 
-	public void syncFromQueue(Queue<ComponentType<?>> pendingSync, Function<ComponentType<?>, SyncedComponent> mapper, ComponentProvider provider) {
+	public void syncFromQueue(Queue<ComponentType<?>> pendingSync, Function<ComponentType<?>, Syncable> mapper, ComponentProvider provider) {
 		this.syncFromQueue(pendingSync, mapper, provider, List.of());
 	}
 
-	public void syncFromQueue(Queue<ComponentType<?>> pendingSync, Function<ComponentType<?>, SyncedComponent> mapper, ComponentProvider provider, Collection<ServerPlayerEntity> players) {
+	public void syncFromQueue(Queue<ComponentType<?>> pendingSync, Function<ComponentType<?>, Syncable> mapper, ComponentProvider provider, Collection<ServerPlayerEntity> players) {
 		if (pendingSync.isEmpty()) {
 			return;
 		}
@@ -192,9 +192,13 @@ public class SyncChannel<P extends ComponentProvider, U> {
 
 			int size = buf.readInt(); // consume size
 
+			if (provider == null) {
+				return;
+			}
+
 			for (int i = 0; i < size; i++) {
 				ComponentType<?> type = ComponentType.NETWORK_CODEC.decode(buf); // consume rawId
-				provider.expose(type).ifJust(component -> ((SyncedComponent) component).readFromBuf(buf)); // consume component data
+				provider.expose(type).ifJust(component -> ((Syncable) component).readFromBuf(buf)); // consume component data
 			}
 
 			buf.release(); // make sure the buffer is properly freed
@@ -235,12 +239,12 @@ public class SyncChannel<P extends ComponentProvider, U> {
 		var queue = new ArrayDeque<ComponentType<?>>();
 
 		provider.getComponentContainer().forEach((type, component) -> {
-			if (component instanceof SyncedComponent) {
+			if (component instanceof Syncable) {
 				queue.add(type);
 			}
 		});
 
-		this.syncFromQueue(queue, type -> ((SyncedComponent) provider.expose(type).unwrap()), provider, Collections.singletonList(sender));
+		this.syncFromQueue(queue, type -> ((Syncable) provider.expose(type).unwrap()), provider, Collections.singletonList(sender));
 	}
 
 	@Environment(EnvType.CLIENT)

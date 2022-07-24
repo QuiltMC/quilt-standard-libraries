@@ -25,13 +25,12 @@ import net.minecraft.world.chunk.Chunk;
 
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 import org.quiltmc.qsl.base.api.util.Maybe;
-import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.Components;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 
 /**
- * Any object that wishes to allow {@link Component components} to be attached to and queried from it,
+ * Any object that wishes to allow components to be attached to and queried from it,
  * needs to implement this interface.<br/>
  *
  * <p>
@@ -87,7 +86,7 @@ public interface ComponentProvider {
 	 * @param <C>  The type of the held component.
 	 * @return A {@link Maybe} instance following the rules defined in {@link Components#expose(ComponentType, Object)}.
 	 */
-	default <C extends Component> Maybe<C> expose(ComponentType<C> type) {
-		return Components.expose(type, this);
+	default <C> Maybe<C> expose(ComponentType<C> type) {
+		return this.getComponentContainer().expose(type);
 	}
 }

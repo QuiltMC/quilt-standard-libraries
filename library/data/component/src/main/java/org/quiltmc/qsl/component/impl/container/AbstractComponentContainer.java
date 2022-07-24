@@ -16,31 +16,24 @@
 
 package org.quiltmc.qsl.component.impl.container;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Queue;
-import java.util.function.Function;
-
-import org.jetbrains.annotations.Nullable;
-
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
-
+import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.base.api.util.Maybe;
-import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.Components;
-import org.quiltmc.qsl.component.api.component.NbtComponent;
-import org.quiltmc.qsl.component.api.component.SyncedComponent;
-import org.quiltmc.qsl.component.api.component.TickingComponent;
+import org.quiltmc.qsl.component.api.component.NbtSerializable;
+import org.quiltmc.qsl.component.api.component.Syncable;
+import org.quiltmc.qsl.component.api.component.Tickable;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.api.sync.SyncChannel;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
 import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 import org.quiltmc.qsl.component.impl.util.StringConstants;
+
+import java.util.*;
+import java.util.function.Function;
 
 public abstract class AbstractComponentContainer implements ComponentContainer {
 	protected final ContainerOperations operations;
@@ -50,8 +43,8 @@ public abstract class AbstractComponentContainer implements ComponentContainer {
 	protected final Maybe<SyncChannel<?, ?>> syncContext;
 
 	public AbstractComponentContainer(@Nullable Runnable saveOperation,
-									boolean ticking,
-									@Nullable SyncChannel<?, ?> syncChannel) {
+			boolean ticking,
+			@Nullable SyncChannel<?, ?> syncChannel) {
 		this.ticking = ticking ? Maybe.just(new ArrayList<>()) : Maybe.nothing();
 		this.nbtComponents = new ArrayList<>();
 		this.syncContext = Maybe.wrap(syncChannel);
@@ -66,8 +59,9 @@ public abstract class AbstractComponentContainer implements ComponentContainer {
 	public void writeNbt(NbtCompound providerRootNbt) {
 		var rootQslNbt = providerRootNbt.getCompound(StringConstants.COMPONENT_ROOT);
 		this.nbtComponents.forEach(type -> this.expose(type)
-				.map(it -> ((NbtComponent<?>) it))
-				.ifJust(nbtComponent -> NbtComponent.writeTo(rootQslNbt, nbtComponent, type.id()))
+											   .map(it -> ((NbtSerializable<?>) it))
+											   .ifJust(nbtComponent -> NbtSerializable.writeTo(
+													   rootQslNbt, nbtComponent, type.id()))
 		);
 
 		if (!rootQslNbt.isEmpty()) {
@@ -80,19 +74,20 @@ public abstract class AbstractComponentContainer implements ComponentContainer {
 		var rootQslNbt = providerRootNbt.getCompound(StringConstants.COMPONENT_ROOT);
 
 		rootQslNbt.getKeys().stream()
-				.map(Identifier::new) // All encoded component types *must* strictly be identifiers
-				.map(Components.REGISTRY::get)
-				.filter(Objects::nonNull)
-				.forEach(type -> this.expose(type)
-						.map(component -> ((NbtComponent<?>) component))
-						.ifJust(component -> NbtComponent.readFrom(component, type.id(), rootQslNbt)));
+				  .map(Identifier::new) // All encoded component types *must* strictly be identifiers
+				  .map(Components.REGISTRY::get)
+				  .filter(Objects::nonNull)
+				  .forEach(type -> this.expose(type)
+									   .map(component -> ((NbtSerializable<?>) component))
+									   .ifJust(component -> NbtSerializable.readFrom(component, type.id(), rootQslNbt)));
 	}
 
 	@Override
 	public void tick(ComponentProvider provider) {
 		this.ticking.ifJust(componentTypes -> componentTypes.forEach(type -> this.expose(type)
-				.map(it -> ((TickingComponent) it))
-				.ifJust(tickingComponent -> tickingComponent.tick(provider)))
+																				 .map(it -> ((Tickable) it))
+																				 .ifJust(tickingComponent -> tickingComponent.tick(
+																						 provider)))
 		).ifNothing(() -> {
 			throw ErrorUtil.illegalState("Attempted to tick a non-ticking container").get();
 		});
@@ -104,29 +99,29 @@ public abstract class AbstractComponentContainer implements ComponentContainer {
 	public void sync(ComponentProvider provider) {
 		this.syncContext.ifJust(channel -> channel.syncFromQueue(
 				this.pendingSync.unwrap(),
-				type -> (SyncedComponent) this.expose(type).unwrap(),
+				type -> (Syncable) this.expose(type).unwrap(),
 				provider
 		)).ifNothing(() -> {
 			throw ErrorUtil.illegalState("Attempted to sync a non-syncable container!").get();
 		});
 	}
 
-	protected abstract <COMP extends Component> void addComponent(ComponentType<COMP> type, Component component);
+	protected abstract <COMP> void addComponent(ComponentType<COMP> type, COMP component);
 
-	protected <COMP extends Component> COMP initializeComponent(ComponentEntry<COMP> componentEntry) {
-		ComponentType<?> type = componentEntry.type();
+	protected <COMP> COMP initializeComponent(ComponentEntry<COMP> componentEntry) {
+		ComponentType<COMP> type = componentEntry.type();
 
 		Function<ComponentType<?>, Runnable> factory = this.operations.syncOperationFactory();
 		Runnable syncOperation = factory != null ? factory.apply(type) : null;
 
 		COMP component = componentEntry.apply(this.operations.saveOperation(), syncOperation);
 
-		if (component instanceof NbtComponent<?>) {
+		if (component instanceof NbtSerializable<?>) {
 			this.nbtComponents.add(type);
 		}
 
 		this.ticking.ifJust(componentTypes -> {
-			if (component instanceof TickingComponent) {
+			if (component instanceof Tickable) {
 				componentTypes.add(type);
 			}
 		});
@@ -136,5 +131,6 @@ public abstract class AbstractComponentContainer implements ComponentContainer {
 		return component;
 	}
 
-	public record ContainerOperations(@Nullable Runnable saveOperation, @Nullable Function<ComponentType<?>, Runnable> syncOperationFactory) { }
+	public record ContainerOperations(@Nullable Runnable saveOperation,
+									  @Nullable Function<ComponentType<?>, Runnable> syncOperationFactory) { }
 }

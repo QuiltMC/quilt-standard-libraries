@@ -14,33 +14,39 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.api.component;
+package org.quiltmc.qsl.component.api.component.field;
 
 import com.mojang.serialization.Codec;
-import org.jetbrains.annotations.Nullable;
-
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
-
-import org.quiltmc.qsl.component.api.Component;
+import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.component.api.ComponentCreationContext;
+import org.quiltmc.qsl.component.api.component.NbtSerializable;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 
-public class GenericComponent<T> implements NbtComponent<NbtCompound> {
+public class GenericSerializableField<T> implements GenericField<T>, NbtSerializable<NbtCompound> {
 	protected final Codec<T> codec;
 	@Nullable
 	private final Runnable saveOperation;
 	protected T value;
 
-	public GenericComponent(Component.Operations ops, Codec<T> codec) {
-		this.saveOperation = ops.saveOperation();
-		this.codec = codec;
+	public GenericSerializableField(ComponentCreationContext ctx, Codec<T> codec) {
+		this(ctx, codec, null);
 	}
 
+	public GenericSerializableField(ComponentCreationContext ops, Codec<T> codec, T defaultValue) {
+		this.saveOperation = ops.saveOperation();
+		this.codec = codec;
+		this.value = defaultValue;
+	}
+
+	@Override
 	public T getValue() {
 		return this.value;
 	}
 
+	@Override
 	public void setValue(T value) {
 		this.value = value;
 	}
@@ -53,8 +59,8 @@ public class GenericComponent<T> implements NbtComponent<NbtCompound> {
 	@Override
 	public void read(NbtCompound nbt) {
 		this.codec.parse(NbtOps.INSTANCE, nbt.get("Value"))
-				.result()
-				.ifPresent(this::setValue);
+				  .result()
+				  .ifPresent(this::setValue);
 	}
 
 	@Override
@@ -62,8 +68,8 @@ public class GenericComponent<T> implements NbtComponent<NbtCompound> {
 		var ret = new NbtCompound();
 		if (this.value != null) {
 			this.codec.encodeStart(NbtOps.INSTANCE, this.value)
-					.resultOrPartial(ComponentsImpl.LOGGER::error)
-					.ifPresent(nbtElement -> ret.put("Value", nbtElement));
+					  .resultOrPartial(ComponentsImpl.LOGGER::error)
+					  .ifPresent(nbtElement -> ret.put("Value", nbtElement));
 		}
 
 		return ret;

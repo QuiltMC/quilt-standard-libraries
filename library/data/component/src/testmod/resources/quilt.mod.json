@@ -28,5 +28,6 @@
       "quilt_block_entity"
     ]
   },
-  "mixin": "quilt_component_test.mixins.json"
+  "mixin": "quilt_component_test.mixins.json",
+  "access_widener": "quilt_component_test.accesswidener"
 }

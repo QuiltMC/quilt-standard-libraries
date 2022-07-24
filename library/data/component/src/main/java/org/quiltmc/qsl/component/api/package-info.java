@@ -46,7 +46,7 @@
  * The {@code AComponent} interface provides the API for {@code AComponent} instances.<br/>
  * The {@code ADefaultComponent} class provides a default implementation of the {@code AComponent} interface.
  * The data contained by {@code ADefaultComponent} is not saved or synced. If you want to learn how to save or sync data, <br/>
- * visit the {@linkplain  org.quiltmc.qsl.component.api.component.NbtComponent NbtComponent} and {@linkplain org.quiltmc.qsl.component.api.component.SyncedComponent SyncedComponent} documentation.
+ * visit the {@linkplain  org.quiltmc.qsl.component.api.component.NbtSerializable NbtComponent} and {@linkplain org.quiltmc.qsl.component.api.component.Syncable SyncedComponent} documentation.
  * <p/>
  * <h2>Component Injection</h2>
  * The {@link org.quiltmc.qsl.component.api.ComponentType} we have created does exist, but nothing actually exposes it's interface.<br/>

@@ -37,7 +37,7 @@ import org.quiltmc.qsl.lifecycle.api.event.ServerWorldTickEvents;
 
 @ListenerPhase(
 		callbackTarget = ServerWorldTickEvents.End.class,
-		namespace = ComponentTestMod.MODID, path = "component_test_tick"
+		namespace = ComponentTestMod.MOD_ID, path = "component_test_tick"
 )
 public class ServerTickListener implements ServerWorldTickEvents.End {
 	@Override
@@ -88,10 +88,11 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 				.map(chunk::getBlockEntity)
 				.filter(Objects::nonNull)
 				.forEach(blockEntity -> blockEntity.expose(ComponentTestMod.CHEST_NUMBER).ifJust(integerComponent -> {
-					integerComponent.decrement();
+					integerComponent.setValue(integerComponent.getValue() - 1);
 					integerComponent.save();
+					integerComponent.sync();
 
-					if (integerComponent.get() <= 0) {
+					if (integerComponent.getValue() <= 0) {
 						world.setBlockState(blockEntity.getPos(), Blocks.DIAMOND_BLOCK.getDefaultState());
 					}
 				}));
@@ -103,7 +104,7 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 					if (explodeTime.get() <= 200) {
 						explodeTime.increment();
 						explodeTime.save();
-						// explodeTime.sync(); // Causes mucho lag!!
+						explodeTime.sync(); // Causes mucho lag!!
 					} else {
 						hostile.getWorld().createExplosion(
 								null,

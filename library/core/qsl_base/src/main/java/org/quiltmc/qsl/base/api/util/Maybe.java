@@ -16,13 +16,13 @@
 
 package org.quiltmc.qsl.base.api.util;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a monad that can either contain a value or no value.<br/>
@@ -72,9 +72,8 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	 * @return A {@link Nothing} instance after casting it to the proper type.
 	 * @see Optional#empty()
 	 */
-	@SuppressWarnings("unchecked") // Nothing doesn't contain a value, so we can freely cast it!
 	public static <T> Maybe<T> nothing() {
-		return (Maybe<T>) Nothing.INSTANCE;
+		return Nothing.INSTANCE.castUnchecked();
 	}
 
 	/**
@@ -113,11 +112,13 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	public abstract Maybe<T> filter(Predicate<T> predicate);
 
 	/**
-	 * Filters the current instance based on whether mapping it with the provided {@link Function} provides {@link Nothing} or {@link Just}.
+	 * Filters the current instance based on whether mapping it with the provided {@link Function} provides
+	 * {@link Nothing} or {@link Just}.
 	 * Can be used as {@link Optional#flatMap} or as the <code>bind</code> operation of this monad.
 	 * The table below explains in detail.
 	 *
-	 * @param transform A {@link Function} returning a {@link Maybe} instance instead of directly returning the mapping value.
+	 * @param transform A {@link Function} returning a {@link Maybe} instance instead of directly returning the
+	 *                     mapping value.
 	 * @param <U>       The value the returned {@link Maybe} will contain.
 	 * @return <table>
 	 * <tr>
@@ -179,7 +180,8 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	public abstract Maybe<T> ifNothing(Runnable runnable);
 
 	/**
-	 * Performs an operation similar to the boolean <code>or</code> operation on the current instance, using the one provided.
+	 * Performs an operation similar to the boolean <code>or</code> operation on the current instance, using the one
+	 * provided.
 	 * The table below describes the different return values.
 	 *
 	 * @param supplier A {@link Supplier} of a {@link Maybe}, be it {@link Just} or {@link Nothing}.
@@ -210,7 +212,8 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	public abstract Maybe<T> or(Supplier<? extends Maybe<T>> supplier);
 
 	/**
-	 * Performs an operation similar to the boolean <code>and</code> operation on the current instance using the one provided.
+	 * Performs an operation similar to the boolean <code>and</code> operation on the current instance using the one
+	 * provided.
 	 * The table below describes the different return values.
 	 *
 	 * @param other A {@link Supplier} of a {@link Maybe} instance, be it {@link Nothing} or {@link Just}.
@@ -253,15 +256,18 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	 * In that case it returns the provided {@link T} value.
 	 *
 	 * @param defaultValue The value to get if the current instance if {@link Nothing}.
-	 * @return The current {@link T} value if the current instance is {@link Just}, otherwise the provided {@link T} value.
+	 * @return The current {@link T} value if the current instance is {@link Just}, otherwise the provided {@link T}
+	 * value.
 	 * @see Optional#orElse
 	 */
 	public abstract T unwrapOr(T defaultValue);
 
 	/**
-	 * Works like {@link Maybe#unwrapOr} except that it lazily evaluates the return value using the provided {@link Supplier}.
+	 * Works like {@link Maybe#unwrapOr} except that it lazily evaluates the return value using the provided
+	 * {@link Supplier}.
 	 *
-	 * @param supplier A {@link Supplier} that will create the {@link T} value to be returns if the current instance is {@link Nothing}.
+	 * @param supplier A {@link Supplier} that will create the {@link T} value to be returns if the current instance
+	 *                    is {@link Nothing}.
 	 * @return The current {@link T} value if the current instance if {@link Just},
 	 * otherwise the value produces by calling {@link Supplier#get()} on the provided {@link Supplier}.
 	 * @see Optional#orElseGet
@@ -286,13 +292,25 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	public abstract Optional<T> toOptional();
 
 	/**
+	 * Attempts to perform and unchecked, unsafe cast on the current instance.
+	 *
+	 * @param <C> The target type
+	 * @return The cast instance.
+	 */
+	@SuppressWarnings("unchecked")
+	public <C> Maybe<C> castUnchecked() {
+		return (Maybe<C>) this;
+	}
+
+	/**
 	 * The {@link Maybe} state representing the absence of a value.
 	 *
 	 * @param <T> In this case this type parameter is unused.
 	 */
 	public static final class Nothing<T> extends Maybe<T> {
 		/**
-		 * A singleton instance is used for Nothing since it doesn't contain data and can therefore be cast to any <code>Maybe</code> type.
+		 * A singleton instance is used for Nothing since it doesn't contain data and can therefore be cast to any
+		 * <code>Maybe</code> type.
 		 */
 		private static final Nothing<?> INSTANCE = new Nothing<>();
 

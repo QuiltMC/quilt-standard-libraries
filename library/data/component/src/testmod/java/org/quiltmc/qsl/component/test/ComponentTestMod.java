@@ -16,8 +16,7 @@
 
 package org.quiltmc.qsl.component.test;
 
-import java.util.UUID;
-
+import com.mojang.serialization.Codec;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -27,6 +26,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.passive.CowEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.MinecraftServer;
@@ -40,76 +40,60 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.WorldChunk;
-
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.block.entity.api.QuiltBlockEntityTypeBuilder;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.Components;
-import org.quiltmc.qsl.component.api.component.GenericComponent;
-import org.quiltmc.qsl.component.api.component.TickingComponent;
+import org.quiltmc.qsl.component.api.component.Tickable;
+import org.quiltmc.qsl.component.api.component.field.SyncedGenericSerializableField;
+import org.quiltmc.qsl.component.api.sync.codec.NetworkCodec;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
 import org.quiltmc.qsl.component.impl.injection.predicate.cached.ClassInjectionPredicate;
-import org.quiltmc.qsl.component.test.component.ChunkInventoryComponent;
-import org.quiltmc.qsl.component.test.component.DefaultFloatComponent;
-import org.quiltmc.qsl.component.test.component.DefaultIntegerComponent;
-import org.quiltmc.qsl.component.test.component.DefaultInventoryComponent;
-import org.quiltmc.qsl.component.test.component.InventoryComponent;
-import org.quiltmc.qsl.component.test.component.SaveFloatComponent;
+import org.quiltmc.qsl.component.test.component.*;
+
+import java.util.UUID;
 
 public class ComponentTestMod implements ModInitializer {
-	public static final String MODID = "quilt_component_test";
+	public static final String MOD_ID = "quilt_component_test";
 
-	public static final ComponentType<InventoryComponent> COW_INVENTORY = Components.register(
-			new Identifier(MODID, "cow_inventory"),
-			operations -> new DefaultInventoryComponent(operations, () -> DefaultedList.ofSize(1, new ItemStack(Items.COBBLESTONE, 64)))
+	public static final ComponentType<InventorySerializable> COW_INVENTORY = Components.register(
+			new Identifier(MOD_ID, "cow_inventory"),
+			operations -> new DefaultInventorySerializable(
+					operations, () -> DefaultedList.ofSize(1, new ItemStack(Items.COBBLESTONE, 64))
+			)
 	);
-	public static final ComponentType<DefaultIntegerComponent> CREEPER_EXPLODE_TIME = Components.register(
-			new Identifier(MODID, "creeper_explode_time"),
-			operations -> new DefaultIntegerComponent(operations, 200)
+	public static final ComponentType<DefaultIntegerSerializable> CREEPER_EXPLODE_TIME = Components.register(
+			new Identifier(MOD_ID, "creeper_explode_time"),
+			operations -> new DefaultIntegerSerializable(operations, 200)
 	);
-	public static final ComponentType<DefaultIntegerComponent> HOSTILE_EXPLODE_TIME = Components.register(
-			new Identifier(MODID, "hostile_explode_time"),
-			DefaultIntegerComponent::new
+	public static final ComponentType<DefaultIntegerSerializable> HOSTILE_EXPLODE_TIME = Components.register(
+			new Identifier(MOD_ID, "hostile_explode_time"),
+			DefaultIntegerSerializable::new
 	);
-	public static final ComponentType<DefaultIntegerComponent> CHEST_NUMBER = Components.register(
-			new Identifier(MODID, "chest_number"),
-			operations -> new DefaultIntegerComponent(operations, 200)
+	public static final ComponentType<SyncedGenericSerializableField<Integer>> CHEST_NUMBER = Components.register(
+			new Identifier(MOD_ID, "chest_number"),
+			operations -> new SyncedGenericSerializableField<>(operations, Codec.INT, NetworkCodec.VAR_INT, 200)
 	);
-	public static final ComponentType<ChunkInventoryComponent> CHUNK_INVENTORY = Components.register(
-			new Identifier(MODID, "chunk_inventory"),
-			ChunkInventoryComponent::new
+	public static final ComponentType<ChunkInventorySerializable> CHUNK_INVENTORY = Components.register(
+			new Identifier(MOD_ID, "chunk_inventory"),
+			ChunkInventorySerializable::new
 	);
-	public static final ComponentType<SaveFloatComponent> SAVE_FLOAT = Components.registerInstant(
-			new Identifier(MODID, "save_float"),
-			SaveFloatComponent::new
-	);
-	public static final ComponentType<TickingComponent> SERVER_TICK = Components.registerInstant(
-			new Identifier(MODID, "level_tick"),
-			(ops) -> provider -> {
-				if (provider instanceof MinecraftServer properties) {
-					properties.expose(SAVE_FLOAT).ifJust(floatComponent -> {
-						floatComponent.set(floatComponent.get() + 0.5f);
-						floatComponent.save();
-					});
-				}
-			}
+	public static final ComponentType<SaveFloatSerializable> SAVE_FLOAT = Components.registerInstant(
+			new Identifier(MOD_ID, "save_float"),
+			SaveFloatSerializable::new
 	);
 	public static final Block TEST_BLOCK = new TestBlock(AbstractBlock.Settings.copy(Blocks.STONE));
-	public static final ComponentType<DefaultIntegerComponent> ITEMSTACK_INT = Components.register(
-			new Identifier(MODID, "itemstack_int"),
-			DefaultIntegerComponent::new
+	public static final ComponentType<DefaultIntegerSerializable> TEST_BE_INT = Components.register(
+			new Identifier(ComponentTestMod.MOD_ID, "test_be_int"),
+			DefaultIntegerSerializable::new
 	);
-	public static final ComponentType<DefaultIntegerComponent> TEST_BE_INT = Components.register(
-			new Identifier(ComponentTestMod.MODID, "test_be_int"),
-			DefaultIntegerComponent::new
+	public static final ComponentType<SyncedGenericSerializableField<UUID>> UUID_THING = Components.register(
+			new Identifier(MOD_ID, "uuid_thing"),
+			(ops) -> new SyncedGenericSerializableField<>(ops, Codecs.UUID, NetworkCodec.UUID)
 	);
-	public static final ComponentType<GenericComponent<UUID>> UUID_THING = Components.register(
-			new Identifier(MODID, "uuid_thing"),
-			(ops) -> new GenericComponent<>(ops, Codecs.UUID)
-	);
-	public static final ComponentType<TickingComponent> PLAYER_TICK = Components.registerInstant(
-			new Identifier(MODID, "player_tick"),
+	public static final ComponentType<Tickable> PLAYER_TICK = Components.registerInstant(
+			new Identifier(MOD_ID, "player_tick"),
 			(ops) -> provider -> {
 				if (provider instanceof ServerPlayerEntity player) {
 					ItemStack stackInHand = player.getStackInHand(Hand.MAIN_HAND);
@@ -121,7 +105,10 @@ public class ComponentTestMod implements ModInitializer {
 					var props = player.getWorld().getServer().getSaveProperties();
 					if (props instanceof MinecraftServer levelProperties && player.getWorld().getTime() % 100 == 0) {
 						player.sendMessage(Text.literal(
-								levelProperties.expose(SAVE_FLOAT).map(DefaultFloatComponent::get).unwrapOr(0f).toString()
+								levelProperties.expose(SAVE_FLOAT)
+											   .map(DefaultFloatSerializable::get)
+											   .unwrapOr(0f)
+											   .toString()
 						), false);
 					}
 
@@ -132,12 +119,14 @@ public class ComponentTestMod implements ModInitializer {
 							if (uuidGenericComponent.getValue() == null) {
 								uuidGenericComponent.setValue(vehicle.getUuid());
 								uuidGenericComponent.save();
+								uuidGenericComponent.sync();
 							} else {
 								Entity vehicle1 = player.getWorld().getEntity(uuidGenericComponent.getValue());
 
 								if (vehicle1 == null) {
 									uuidGenericComponent.setValue(null);
 									uuidGenericComponent.save();
+									uuidGenericComponent.sync();
 									return;
 								}
 
@@ -148,6 +137,8 @@ public class ComponentTestMod implements ModInitializer {
 							}
 						} else {
 							uuidGenericComponent.setValue(null);
+							uuidGenericComponent.save();
+							uuidGenericComponent.sync();
 						}
 					});
 				}
@@ -156,8 +147,8 @@ public class ComponentTestMod implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		Registry.register(Registry.BLOCK, new Identifier(MODID, "test_block"), TEST_BLOCK);
-		Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(MODID, "block_entity"), TEST_BE_TYPE);
+		Registry.register(Registry.BLOCK, new Identifier(MOD_ID, "test_block"), TEST_BLOCK);
+		Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(MOD_ID, "block_entity"), TEST_BE_TYPE);
 		Block.STATE_IDS.add(TEST_BLOCK.getDefaultState());
 
 		// Cached Injection
@@ -166,10 +157,13 @@ public class ComponentTestMod implements ModInitializer {
 		Components.injectInheritanceExcept(HostileEntity.class, HOSTILE_EXPLODE_TIME, CreeperEntity.class);
 		Components.inject(ChestBlockEntity.class, CHEST_NUMBER);
 		Components.injectInheritage(Chunk.class, CHUNK_INVENTORY);
-		Components.inject(new ClassInjectionPredicate(WorldChunk.class), new ComponentEntry<>(CHUNK_INVENTORY, ChunkInventoryComponent::new));
+		Components.inject(
+				new ClassInjectionPredicate(WorldChunk.class),
+				new ComponentEntry<>(CHUNK_INVENTORY, ChunkInventorySerializable::new)
+		);
 		// Components.inject(MinecraftServer.class, SERVER_TICK);
 		Components.injectInheritage(ServerPlayerEntity.class, PLAYER_TICK);
-		Components.inject(ServerPlayerEntity.class, UUID_THING);
+		Components.injectInheritage(PlayerEntity.class, UUID_THING);
 		Components.injectInheritage(World.class, SAVE_FLOAT);
 
 		// Dynamic Injection

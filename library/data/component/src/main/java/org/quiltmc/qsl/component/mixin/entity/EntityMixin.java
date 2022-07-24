@@ -16,7 +16,9 @@
 
 package org.quiltmc.qsl.component.mixin.entity;
 
+import org.quiltmc.qsl.component.impl.container.LazyComponentContainer;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -33,6 +35,8 @@ import org.quiltmc.qsl.component.api.sync.SyncChannel;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin implements ComponentProvider {
+	@Shadow
+	public World world;
 	private ComponentContainer qsl$container;
 
 	@Override
@@ -42,10 +46,13 @@ public abstract class EntityMixin implements ComponentProvider {
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onEntityInit(EntityType<?> entityType, World world, CallbackInfo ci) {
-		this.qsl$container = ComponentContainer.builder(this)
-				.ticking()
-				.syncing(SyncChannel.ENTITY)
-				.build(ComponentContainer.LAZY_FACTORY);
+		var builder = ComponentContainer.builder(this);
+
+		if (!world.isClient) {
+			builder.syncing(SyncChannel.ENTITY).ticking();
+		}
+
+		this.qsl$container = builder.build(LazyComponentContainer.FACTORY);
 	}
 
 	@Inject(method = "writeNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;writeCustomDataToNbt(Lnet/minecraft/nbt/NbtCompound;)V"))
@@ -60,6 +67,8 @@ public abstract class EntityMixin implements ComponentProvider {
 
 	@Inject(method = "tick", at = @At("TAIL"))
 	private void tickContainer(CallbackInfo ci) {
-		this.getComponentContainer().tick(this);
+		if (!this.world.isClient) {
+			this.getComponentContainer().tick(this);
+		}
 	}
 }

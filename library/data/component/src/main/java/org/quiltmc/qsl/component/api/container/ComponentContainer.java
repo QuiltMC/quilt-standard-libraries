@@ -16,43 +16,45 @@
 
 package org.quiltmc.qsl.component.api.container;
 
+import net.minecraft.nbt.NbtCompound;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.base.api.util.Lazy;
+import org.quiltmc.qsl.base.api.util.Maybe;
+import org.quiltmc.qsl.component.api.ComponentFactory;
+import org.quiltmc.qsl.component.api.ComponentType;
+import org.quiltmc.qsl.component.api.component.NbtSerializable;
+import org.quiltmc.qsl.component.api.component.Syncable;
+import org.quiltmc.qsl.component.api.component.Tickable;
+import org.quiltmc.qsl.component.api.provider.ComponentProvider;
+import org.quiltmc.qsl.component.api.sync.SyncChannel;
+import org.quiltmc.qsl.component.impl.container.*;
+import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.function.BiConsumer;
 
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
-
-import net.minecraft.nbt.NbtCompound;
-
-import org.quiltmc.qsl.base.api.util.Lazy;
-import org.quiltmc.qsl.base.api.util.Maybe;
-import org.quiltmc.qsl.component.api.Component;
-import org.quiltmc.qsl.component.api.ComponentType;
-import org.quiltmc.qsl.component.api.provider.ComponentProvider;
-import org.quiltmc.qsl.component.api.sync.SyncChannel;
-import org.quiltmc.qsl.component.impl.container.CompositeComponentContainer;
-import org.quiltmc.qsl.component.impl.container.EmptyComponentContainer;
-import org.quiltmc.qsl.component.impl.container.LazyComponentContainer;
-import org.quiltmc.qsl.component.impl.container.OnAccessComponentContainer;
-import org.quiltmc.qsl.component.impl.container.SimpleComponentContainer;
-import org.quiltmc.qsl.component.impl.container.SingleComponentContainer;
-import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
-
 /**
  * A base container for all {@link Component}s that a {@link ComponentProvider} contains.
- * The implementation of this, needs to not take up too much runtime, since the methods in here may be called really often.
+ * The implementation of this, needs to not take up too much runtime, since the methods in here may be called really
+ * often.
  * <p/>
- * There are default implementations used internally in the API implementation, but they are also usable outside of internals.
+ * There are default implementations used internally in the API implementation, but they are also usable outside of
+ * internals.
  * These include:
  * <ol>
- *     <li>{@link EmptyComponentContainer}: usable through the {@link ComponentContainer#EMPTY} instance or the {@link ComponentContainer#EMPTY_FACTORY} instance.</li>
+ *     <li>{@link EmptyComponentContainer}: usable through the {@link ComponentContainer#EMPTY} instance or the
+ *     {@link ComponentContainer#EMPTY_FACTORY} instance.</li>
  *     <li>{@link SimpleComponentContainer}: usable through the {@link ComponentContainer#SIMPLE_FACTORY} instance.</li>
  *     <li>{@link LazyComponentContainer}: usable through the {@link ComponentContainer#LAZY_FACTORY} instance.</li>
- *     <li>{@link OnAccessComponentContainer}: usable through the {@link ComponentContainer#ON_ACCESS_FACTORY} instance.</li>
- *     <li>{@link SingleComponentContainer}: usable through the {@link ComponentContainer#createSingleFactory} method.</li>
- *     <li>{@link CompositeComponentContainer}: usable through the {@link ComponentContainer#createComposite} method.</li>
+ *     <li>{@link OnAccessComponentContainer}: usable through the {@link ComponentContainer#ON_ACCESS_FACTORY}
+ *     instance.</li>
+ *     <li>{@link SingleComponentContainer}: usable through the {@link ComponentContainer#createSingleFactory} method
+ *     .</li>
+ *     <li>{@link CompositeComponentContainer}: usable through the {@link ComponentContainer#createComposite} method
+ *     .</li>
  * </ol>
  *
  * <p>
@@ -62,7 +64,6 @@ import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
  * @author 0xJoeMama
  * @see ComponentProvider
  * @see ComponentType
- * @see Component
  */
 public interface ComponentContainer {
 	/**
@@ -80,26 +81,31 @@ public interface ComponentContainer {
 	 * {@link ComponentType#isInstant()} value for their types.<br/>
 	 *
 	 * <p>
-	 * The advantage of this {@linkplain ComponentContainer container} is that by initializing all of its components right off the bat,
+	 * The advantage of this {@linkplain ComponentContainer container} is that by initializing all of its components
+	 * right off the bat,
 	 * it can have a faster runtime. However, that does sacrifice on memory and also on disc space,
-	 * since all {@link org.quiltmc.qsl.component.api.component.NbtComponent}s, even if their value hasn't been modified, will be saved.
+	 * since all {@link NbtSerializable}s, even if their value hasn't been modified, will be saved.
 	 */
 	ComponentContainer.Factory<SimpleComponentContainer> SIMPLE_FACTORY = SimpleComponentContainer.FACTORY;
 	/**
 	 * A {@link Factory} to a {@link LazyComponentContainer}.<br/>
 	 * A {@link LazyComponentContainer} lazily initializes its components.
 	 * This saves on memory and disc space, since non-initialized components, will not be written to disc.<br/>
-	 * The runtime hit of using this {@linkplain ComponentContainer container} is minimal, since it mostly consists of work that would also be done at runtime by a {@link SimpleComponentContainer}.<br/>
+	 * The runtime hit of using this {@linkplain ComponentContainer container} is minimal, since it mostly consists of
+	 * work that would also be done at runtime by a {@link SimpleComponentContainer}.<br/>
 	 * The only functional difference is that this container will pull injections targetting its provider.
 	 * This container is used as the default for all type at the moment.
 	 */
 	ComponentContainer.Factory<LazyComponentContainer> LAZY_FACTORY = LazyComponentContainer.FACTORY;
 	/**
 	 * A {@link Factory} to a {@link OnAccessComponentContainer}.<br/>
-	 * An {@link OnAccessComponentContainer} is similar to a {@link LazyComponentContainer} in that it lazily initializes its components.
+	 * An {@link OnAccessComponentContainer} is similar to a {@link LazyComponentContainer} in that it lazily
+	 * initializes its components.
 	 * However, it does so in a different way. Instead of storing {@link Lazy} instances,
-	 * it stores {@link com.mojang.datafixers.util.Either} instances that it attempts to access and/or initialize on expose.
-	 * This currently leads to extra object creation, hence it's considered {@linkplain org.jetbrains.annotations.ApiStatus.Experimental experimental}.<br/>
+	 * it stores {@link com.mojang.datafixers.util.Either} instances that it attempts to access and/or initialize on
+	 * expose.
+	 * This currently leads to extra object creation, hence it's considered
+	 * {@linkplain org.jetbrains.annotations.ApiStatus.Experimental experimental}.<br/>
 	 *
 	 * <p>
 	 * May be used as the default container for our implementations in the future.
@@ -113,22 +119,24 @@ public interface ComponentContainer {
 	 * Creates a {@link Factory} to a {@link SingleComponentContainer}.<br/>
 	 *
 	 * <p>
-	 * A {@link SingleComponentContainer} is identical to a {@link LazyComponentContainer}, except <b><i>it can only store 1 component</i></b>.
+	 * A {@link SingleComponentContainer} is identical to a {@link LazyComponentContainer}, except <b><i>it can only
+	 * store 1 component</i></b>.
 	 *
 	 * @param type The {@link ComponentType} to store. The default factory of the type is used for initialization.
 	 * @param <C>  The type of component that is contained by the container.
 	 * @return A new {@link Factory} for {@link SingleComponentContainer} holding the provided {@link ComponentType}.
 	 */
-	static <C extends Component> ComponentContainer.Factory<SingleComponentContainer<C>> createSingleFactory(ComponentType<C> type) {
+	static <C> ComponentContainer.Factory<SingleComponentContainer<C>> createSingleFactory(ComponentType<C> type) {
 		return SingleComponentContainer.createFactory(new ComponentEntry<>(type));
 	}
 
 	/**
-	 * Identical to {@link ComponentContainer#createSingleFactory(ComponentType)}, except that it allows the caller to specify the {@link Component.Factory} used.
+	 * Identical to {@link ComponentContainer#createSingleFactory(ComponentType)}, except that it allows the caller to
+	 * specify the {@link ComponentFactory} used.
 	 *
 	 * @see ComponentContainer#createSingleFactory(ComponentType)
 	 */
-	static <C extends Component> ComponentContainer.Factory<SingleComponentContainer<C>> createSingleFactory(ComponentType<C> type, Component.Factory<C> factory) {
+	static <C> ComponentContainer.Factory<SingleComponentContainer<C>> createSingleFactory(ComponentType<C> type, ComponentFactory<C> factory) {
 		return SingleComponentContainer.createFactory(new ComponentEntry<>(type, factory));
 	}
 
@@ -137,7 +145,8 @@ public interface ComponentContainer {
 	 *
 	 * @param main     The main container.
 	 * @param fallback The secondary container.
-	 * @return A {@link CompositeComponentContainer} which basically just wraos the other two containers and functions as their union.
+	 * @return A {@link CompositeComponentContainer} which basically just wraos the other two containers and functions
+	 * as their union.
 	 */
 	static ComponentContainer createComposite(ComponentContainer main, ComponentContainer fallback) {
 		return new CompositeComponentContainer(main, fallback);
@@ -167,20 +176,24 @@ public interface ComponentContainer {
 	 * This method is called <i>really</i> often, so it is advised you make it have a really fast runtime.
 	 *
 	 * @param type The type to expose.
-	 * @return Should return {@link org.quiltmc.qsl.base.api.util.Maybe.Nothing} if the provided {@link ComponentType} is not contained in the current container.
-	 * Otherwise, should always return {@link org.quiltmc.qsl.base.api.util.Maybe.Just} the contained {@link Component} instance.
+	 * @return Should return {@link org.quiltmc.qsl.base.api.util.Maybe.Nothing} if the provided {@link ComponentType}
+	 * is not contained in the current container.
+	 * Otherwise, should always return {@link org.quiltmc.qsl.base.api.util.Maybe.Just} the contained
+	 * {@link Component} instance.
 	 */
-	Maybe<Component> expose(ComponentType<?> type);
+	<C> Maybe<C> expose(ComponentType<C> type);
 
 	/**
-	 * Serializes the {@link org.quiltmc.qsl.component.api.component.NbtComponent}s this {@linkplain ComponentContainer container} contains, into the provided nbt tag.
+	 * Serializes the {@link NbtSerializable}s this {@linkplain ComponentContainer container} contains, into the
+	 * provided nbt tag.
 	 *
 	 * @param providerRootNbt The root nbt tag of the provider containing this {@link ComponentContainer}.
 	 */
 	void writeNbt(NbtCompound providerRootNbt);
 
 	/**
-	 * Deserializes the {@link org.quiltmc.qsl.component.api.component.NbtComponent}s this {@link ComponentContainer container} contains, from the provided nbt tag.<br/>
+	 * Deserializes the {@link NbtSerializable}s this {@link ComponentContainer container} contains, from the provided
+	 * nbt tag.<br/>
 	 *
 	 * @param providerRootNbt The root nbt tag of the provider containing this {@link ComponentContainer}.
 	 * @implNote There is no guarantee that the provided tag will contain exactly the same components as the container.
@@ -189,18 +202,20 @@ public interface ComponentContainer {
 	void readNbt(NbtCompound providerRootNbt);
 
 	/**
-	 * Ticks all {@link org.quiltmc.qsl.component.api.component.TickingComponent}s contained in this {@link ComponentContainer}.
+	 * Ticks all {@link Tickable}s contained in this {@link ComponentContainer}.
 	 *
-	 * @param provider The provider is passed in so that {@link org.quiltmc.qsl.component.api.component.TickingComponent}s can use it.
+	 * @param provider The provider is passed in so that {@link Tickable}s can use it.
 	 */
 	void tick(ComponentProvider provider);
 
 	/**
-	 * Syncs all {@link org.quiltmc.qsl.component.api.component.SyncedComponent}s contained in this {@link ComponentContainer}, provided they need syncing.
+	 * Syncs all {@link Syncable}s contained in this {@link ComponentContainer}, provided they need syncing.
 	 * Most of the time this method is invoked by {@link ComponentContainer#tick}.<br/>
 	 *
-	 * @param provider The provider is passed in so that {@link SyncChannel#syncFromQueue} can use it, when creating a packet to sync data to the client.
-	 * @implNote The best way to sync components at the moment is using {@link SyncChannel#syncFromQueue}, which takes in a {@link Queue} of components that need syncing.
+	 * @param provider The provider is passed in so that {@link SyncChannel#syncFromQueue} can use it, when creating a
+	 *                   packet to sync data to the client.
+	 * @implNote The best way to sync components at the moment is using {@link SyncChannel#syncFromQueue}, which takes
+	 * in a {@link Queue} of components that need syncing.
 	 */
 	void sync(ComponentProvider provider);
 
@@ -209,7 +224,7 @@ public interface ComponentContainer {
 	 *
 	 * @apiNote May be slow, so use sparingly!
 	 */
-	void forEach(BiConsumer<ComponentType<?>, ? super Component> action);
+	void forEach(BiConsumer<ComponentType<?>, ? super Object> action);
 
 	/**
 	 * An interface representing the way to create a new {@link ComponentContainer}.
@@ -223,10 +238,13 @@ public interface ComponentContainer {
 		 * Creates a {@link ComponentContainer} using the specified arguments.
 		 *
 		 * @param provider      The {@link ComponentProvider} that will contain the created {@link ComponentContainer}.
-		 * @param entries       A {@link List} containing all the entries that were manually added by the {@link Builder}.
-		 * @param saveOperation The operation to be run by the contained {@link Component}s to mark the {@linkplain ComponentProvider provider} as needing to save.
+		 * @param entries       A {@link List} containing all the entries that were manually added by the
+		 * {@link Builder}.
+		 * @param saveOperation The operation to be run by the contained {@link Component}s to mark the
+		 * {@linkplain ComponentProvider provider} as needing to save.
 		 * @param ticking       Whether this container can tick.
-		 * @param syncChannel   The {@link SyncChannel} representing the {@link ComponentProvider} that contains the created {@link ComponentContainer}.
+		 * @param syncChannel   The {@link SyncChannel} representing the {@link ComponentProvider} that contains the
+		 *                            created {@link ComponentContainer}.
 		 * @return A {@link ComponentContainer} created using the specified parameters.
 		 */
 		T generate(ComponentProvider provider,
@@ -273,17 +291,17 @@ public interface ComponentContainer {
 			return this;
 		}
 
-		public <C extends Component> Builder add(ComponentEntry<C> componentEntry) {
+		public <C> Builder add(ComponentEntry<C> componentEntry) {
 			this.injections.get().add(componentEntry);
 			return this;
 		}
 
-		public <C extends Component> Builder add(ComponentType<C> type) {
+		public <C> Builder add(ComponentType<C> type) {
 			this.add(new ComponentEntry<>(type));
 			return this;
 		}
 
-		public <C extends Component> Builder add(ComponentType<C> type, Component.Factory<C> factory) {
+		public <C> Builder add(ComponentType<C> type, ComponentFactory<C> factory) {
 			this.add(new ComponentEntry<>(type, factory));
 			return this;
 		}

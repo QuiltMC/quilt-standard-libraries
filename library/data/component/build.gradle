@@ -22,13 +22,6 @@ qslModule {
 	}
 
 	entrypoints {
-//		events {
-//			values = [
-//					"org.quiltmc.qsl.component.impl.event.ServerTickEventListener",
-//					"org.quiltmc.qsl.component.impl.event.ServerWorldTickEventListener"
-//			]
-//		}
-
 		init {
 			values = ["org.quiltmc.qsl.component.impl.CommonInitializer"]
 		}
@@ -38,7 +31,7 @@ qslModule {
 		}
 	}
 
-	accessWidener()
+	// accessWidener()
 
 	injectedInterface("net/minecraft/class_2586") { // BlockEntity
 		values = ["org/quiltmc/qsl/component/api/provider/ComponentProvider"]
@@ -52,10 +45,6 @@ qslModule {
 		values = ["org/quiltmc/qsl/component/api/provider/ComponentProvider"]
 	}
 
-//	injectedInterface("net/minecraft/class_1799") { // ItemStack
-//		values = ["org/quiltmc/qsl/component/api/provider/ComponentProvider"]
-//	}
-
 	injectedInterface("net/minecraft/class_310") { // MinecraftClient
 		values = ["org/quiltmc/qsl/component/api/provider/ComponentProvider"]
 	}
@@ -67,4 +56,8 @@ qslModule {
 	injectedInterface("net/minecraft/class_1937") { // World
 		values = ["org/quiltmc/qsl/component/api/provider/ComponentProvider"]
 	}
+}
+
+loom {
+	accessWidenerPath = file("src/testmod/resources/quilt_component_test.accesswidener")
 }

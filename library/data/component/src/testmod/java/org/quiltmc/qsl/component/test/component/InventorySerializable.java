@@ -24,9 +24,9 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.collection.DefaultedList;
 
-import org.quiltmc.qsl.component.api.component.NbtComponent;
+import org.quiltmc.qsl.component.api.component.NbtSerializable;
 
-public interface InventoryComponent extends NbtComponent<NbtCompound>, Inventory {
+public interface InventorySerializable extends NbtSerializable<NbtCompound>, Inventory {
 	@Override
 	default int size() {
 		return this.getStacks().size();

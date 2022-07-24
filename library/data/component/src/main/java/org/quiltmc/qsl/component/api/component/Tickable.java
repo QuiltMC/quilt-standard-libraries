@@ -16,9 +16,8 @@
 
 package org.quiltmc.qsl.component.api.component;
 
-import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 
-public interface TickingComponent extends Component {
+public interface Tickable {
 	void tick(ComponentProvider provider);
 }

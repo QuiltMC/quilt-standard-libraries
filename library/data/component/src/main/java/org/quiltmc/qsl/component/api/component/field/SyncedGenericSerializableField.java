@@ -14,30 +14,39 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.component.api.component;
+package org.quiltmc.qsl.component.api.component.field;
 
 import com.mojang.serialization.Codec;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.network.PacketByteBuf;
 
-import org.quiltmc.qsl.component.api.Component;
+import org.quiltmc.qsl.component.api.ComponentCreationContext;
+import org.quiltmc.qsl.component.api.component.Syncable;
 import org.quiltmc.qsl.component.api.sync.codec.NetworkCodec;
 
-public class SyncedGenericComponent<T> extends GenericComponent<T> implements SyncedComponent {
+public class SyncedGenericSerializableField<T> extends GenericSerializableField<T> implements Syncable {
 	private final NetworkCodec<T> networkCodec;
 	@Nullable
 	private final Runnable syncOperation;
 
-	protected SyncedGenericComponent(Component.Operations ops, Codec<T> codec, NetworkCodec<T> networkCodec) {
-		super(ops, codec);
+	public SyncedGenericSerializableField(ComponentCreationContext ctx, Codec<T> codec, NetworkCodec<T> networkCodec) {
+		super(ctx, codec);
+		this.networkCodec = networkCodec;
+		this.syncOperation = ctx.syncOperation();
+	}
+
+	public SyncedGenericSerializableField(ComponentCreationContext ops, Codec<T> codec, NetworkCodec<T> networkCodec, T defaultValue) {
+		super(ops, codec, defaultValue);
 		this.syncOperation = ops.syncOperation();
 		this.networkCodec = networkCodec;
 	}
 
 	@Override
 	public void writeToBuf(PacketByteBuf buf) {
-		this.networkCodec.encode(buf, this.getValue());
+		if (this.getValue() != null) {
+			this.networkCodec.encode(buf, this.getValue());
+		}
 	}
 
 	@Override

@@ -16,40 +16,57 @@
 
 package org.quiltmc.qsl.component.impl.container;
 
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiConsumer;
-
 import com.mojang.datafixers.util.Either;
 import org.jetbrains.annotations.Nullable;
-
 import org.quiltmc.qsl.base.api.util.Maybe;
-import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.api.sync.SyncChannel;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
 
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
+
 // Suggestion from Technici4n from fabric. May help improve performance and memory footprint once done.
 public class OnAccessComponentContainer extends AbstractComponentContainer {
 	public static final Factory<OnAccessComponentContainer> FACTORY =
 			(provider, injections, saveOperation, ticking, syncChannel) ->
 					new OnAccessComponentContainer(provider, saveOperation, ticking, syncChannel);
-	private final Map<ComponentType<?>, Either<ComponentEntry<?>, Component>> components;
+	private final Map<ComponentType<?>, Either<ComponentEntry<?>, Object>> components;
 
 	protected OnAccessComponentContainer(ComponentProvider provider,
-										@Nullable Runnable saveOperation,
-										boolean ticking,
-										@Nullable SyncChannel<?, ?> syncChannel) {
+			@Nullable Runnable saveOperation,
+			boolean ticking,
+			@Nullable SyncChannel<?, ?> syncChannel) {
 		super(saveOperation, ticking, syncChannel);
 		this.components = this.createComponents(provider);
 	}
 
-	private Map<ComponentType<?>, Either<ComponentEntry<?>, Component>> createComponents(ComponentProvider provider) {
+	@Override
+	public <C> Maybe<C> expose(ComponentType<C> type) {
+		return Maybe.fromOptional(this.components.get(type).right())
+					.or(() -> this.supports(type) ?
+							  Maybe.just(this.initializeComponent(this.components.get(type).left().orElseThrow())) :
+							  Maybe.nothing())
+					.castUnchecked();
+	}
+
+	@Override
+	public void forEach(BiConsumer<ComponentType<?>, ? super Object> action) {
+		this.components.forEach((type, either) -> either.ifRight(component -> action.accept(type, component)));
+	}
+
+	@Override
+	protected <COMP> void addComponent(ComponentType<COMP> type, COMP component) {
+		this.components.put(type, Either.right(component));
+	}
+
+	private Map<ComponentType<?>, Either<ComponentEntry<?>, Object>> createComponents(ComponentProvider provider) {
 		List<ComponentEntry<?>> injections = ComponentsImpl.getInjections(provider);
-		var map = new IdentityHashMap<ComponentType<?>, Either<ComponentEntry<?>, Component>>();
+		var map = new IdentityHashMap<ComponentType<?>, Either<ComponentEntry<?>, Object>>();
 		injections.forEach(entry -> {
 			ComponentType<?> type = entry.type();
 			if (type.isStatic() || type.isInstant()) {
@@ -60,22 +77,6 @@ public class OnAccessComponentContainer extends AbstractComponentContainer {
 		});
 
 		return map;
-	}
-
-	@Override
-	public Maybe<Component> expose(ComponentType<?> type) {
-		return Maybe.fromOptional(this.components.get(type).right())
-				.or(() -> this.supports(type) ? Maybe.just(this.initializeComponent(this.components.get(type).left().orElseThrow())) : Maybe.nothing());
-	}
-
-	@Override
-	public void forEach(BiConsumer<ComponentType<?>, ? super Component> action) {
-		this.components.forEach((type, either) -> either.ifRight(component -> action.accept(type, component)));
-	}
-
-	@Override
-	protected <COMP extends Component> void addComponent(ComponentType<COMP> type, Component component) {
-		this.components.put(type, Either.right(component));
 	}
 
 	private boolean supports(ComponentType<?> type) {

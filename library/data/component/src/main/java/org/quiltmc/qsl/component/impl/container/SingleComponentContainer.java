@@ -16,41 +16,39 @@
 
 package org.quiltmc.qsl.component.impl.container;
 
-import java.util.ArrayDeque;
-import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Supplier;
-
-import org.jetbrains.annotations.Nullable;
-
 import net.minecraft.nbt.NbtCompound;
-
+import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.base.api.util.Lazy;
 import org.quiltmc.qsl.base.api.util.Maybe;
-import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentType;
-import org.quiltmc.qsl.component.api.component.NbtComponent;
-import org.quiltmc.qsl.component.api.component.SyncedComponent;
-import org.quiltmc.qsl.component.api.component.TickingComponent;
+import org.quiltmc.qsl.component.api.component.NbtSerializable;
+import org.quiltmc.qsl.component.api.component.Syncable;
+import org.quiltmc.qsl.component.api.component.Tickable;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.api.sync.SyncChannel;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
 
-public class SingleComponentContainer<C extends Component> implements ComponentContainer {
-	private final ComponentType<C> type;
+import java.util.ArrayDeque;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
+
+public class SingleComponentContainer<T> implements ComponentContainer {
+	private final ComponentType<T> type;
 	private final Maybe<SyncChannel<?, ?>> syncChannel;
 	private final boolean ticking;
-	private Lazy<? extends C> entry;
+	private Lazy<? extends T> entry;
 	private boolean shouldSync = false;
 
-	protected SingleComponentContainer(ComponentType<C> type, boolean ticking, @Nullable SyncChannel<?, ?> syncChannel) {
+	protected SingleComponentContainer(ComponentType<T> type, boolean ticking,
+			@Nullable SyncChannel<?, ?> syncChannel) {
 		this.type = type;
 		this.ticking = ticking;
 		this.syncChannel = Maybe.wrap(syncChannel);
 	}
 
-	public static <C extends Component> ComponentContainer.Factory<SingleComponentContainer<C>> createFactory(ComponentEntry<C> entry) {
+	public static <C> ComponentContainer.Factory<SingleComponentContainer<C>> createFactory(ComponentEntry<C> entry) {
 		return (provider, ignored, saveOperation, ticking, syncChannel) -> {
 			ComponentType<C> type = entry.type();
 			var container = new SingleComponentContainer<>(type, ticking, syncChannel);
@@ -61,15 +59,15 @@ public class SingleComponentContainer<C extends Component> implements ComponentC
 	}
 
 	@Override
-	public Maybe<Component> expose(ComponentType<?> type) {
-		return type == this.type ? Maybe.just(this.entry.get()) : Maybe.nothing();
+	public <C> Maybe<C> expose(ComponentType<C> type) {
+		return (type == this.type ? Maybe.just(this.entry.get()) : Maybe.nothing()).castUnchecked();
 	}
 
 	@Override
 	public void writeNbt(NbtCompound providerRootNbt) {
 		this.entry.ifFilled(c -> {
-			if (c instanceof NbtComponent<?> nbtComponent) {
-				NbtComponent.writeTo(providerRootNbt, nbtComponent, this.type.id());
+			if (c instanceof NbtSerializable<?> nbtSerializable) {
+				NbtSerializable.writeTo(providerRootNbt, nbtSerializable, this.type.id());
 			}
 		});
 	}
@@ -79,8 +77,8 @@ public class SingleComponentContainer<C extends Component> implements ComponentC
 		String idString = this.type.id().toString();
 		if (providerRootNbt.getKeys().contains(idString)) {
 			this.expose(this.type)
-					.map(it -> ((NbtComponent<?>) it))
-					.ifJust(nbtComponent -> NbtComponent.readFrom(nbtComponent, this.type.id(), providerRootNbt));
+				.map(it -> ((NbtSerializable<?>) it))
+				.ifJust(nbtComponent -> NbtSerializable.readFrom(nbtComponent, this.type.id(), providerRootNbt));
 		}
 	}
 
@@ -88,8 +86,8 @@ public class SingleComponentContainer<C extends Component> implements ComponentC
 	public void tick(ComponentProvider provider) {
 		if (this.ticking) {
 			this.expose(this.type)
-					.map(it -> ((TickingComponent) it))
-					.ifJust(tickingComponent -> tickingComponent.tick(provider));
+				.map(it -> ((Tickable) it))
+				.ifJust(tickingComponent -> tickingComponent.tick(provider));
 		}
 	}
 
@@ -98,20 +96,20 @@ public class SingleComponentContainer<C extends Component> implements ComponentC
 		if (this.shouldSync) {
 			this.syncChannel.ifJust(channel -> channel.syncFromQueue(
 					new ArrayDeque<>(List.of(this.type)),
-					type -> (SyncedComponent) this.entry.get(),
+					type -> (Syncable) this.entry.get(),
 					provider
 			));
 		}
 	}
 
 	@Override
-	public void forEach(BiConsumer<ComponentType<?>, ? super Component> action) {
+	public void forEach(BiConsumer<ComponentType<?>, ? super Object> action) {
 		if (this.entry.isFilled()) {
 			action.accept(this.type, this.entry.get());
 		}
 	}
 
-	private void setEntry(Supplier<? extends C> supplier) {
+	private void setEntry(Supplier<? extends T> supplier) {
 		this.entry = Lazy.of(supplier);
 	}
 }

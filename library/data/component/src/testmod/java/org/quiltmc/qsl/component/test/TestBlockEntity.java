@@ -37,7 +37,7 @@ import net.minecraft.world.World;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.sync.SyncChannel;
 import org.quiltmc.qsl.component.impl.container.SimpleComponentContainer;
-import org.quiltmc.qsl.component.test.component.InventoryComponent;
+import org.quiltmc.qsl.component.test.component.InventorySerializable;
 
 public class TestBlockEntity extends BlockEntity {
 	private final ComponentContainer container = ComponentContainer.builder(this)
@@ -57,7 +57,7 @@ public class TestBlockEntity extends BlockEntity {
 			return;
 		}
 
-		if (blockEntity.expose(ComponentTestMod.CHUNK_INVENTORY).map(InventoryComponent::isEmpty).unwrapOr(true)) {
+		if (blockEntity.expose(ComponentTestMod.CHUNK_INVENTORY).map(InventorySerializable::isEmpty).unwrapOr(true)) {
 			blockEntity.expose(ComponentTestMod.TEST_BE_INT).ifJust(integerComponent -> {
 				if (integerComponent.get() % 40 == 0) {
 					HashSet<BlockPos> set = new HashSet<>(List.of(pos));

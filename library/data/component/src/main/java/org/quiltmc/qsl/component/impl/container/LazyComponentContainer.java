@@ -16,17 +16,9 @@
 
 package org.quiltmc.qsl.component.impl.container;
 
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.function.BiConsumer;
-
 import org.jetbrains.annotations.Nullable;
-
 import org.quiltmc.qsl.base.api.util.Lazy;
 import org.quiltmc.qsl.base.api.util.Maybe;
-import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
@@ -34,11 +26,17 @@ import org.quiltmc.qsl.component.api.sync.SyncChannel;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
 
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.function.BiConsumer;
+
 public class LazyComponentContainer extends AbstractComponentContainer {
 	public static final ComponentContainer.Factory<LazyComponentContainer> FACTORY =
 			(provider, injections, saveOperation, ticking, syncChannel) ->
 					new LazyComponentContainer(provider, saveOperation, ticking, syncChannel);
-	private final Map<ComponentType<?>, Lazy<Maybe.Just<Component>>> components;
+	private final Map<ComponentType<?>, Lazy<Maybe<? super Object>>> components;
 
 	protected LazyComponentContainer(
 			ComponentProvider provider,
@@ -66,34 +64,38 @@ public class LazyComponentContainer extends AbstractComponentContainer {
 	}
 
 	@Override
-	public Maybe<Component> expose(ComponentType<?> id) {
-		return this.components.containsKey(id) ? this.components.get(id).get() : Maybe.nothing();
+	public <C> Maybe<C> expose(ComponentType<C> type) {
+		return this.components.containsKey(type) ? this.components.get(type).unwrap().castUnchecked() :
+			   Maybe.nothing();
 	}
 
 	@Override
-	public void forEach(BiConsumer<ComponentType<?>, ? super Component> action) {
+	public void forEach(BiConsumer<ComponentType<?>, ? super Object> action) {
 		// unwrap will work here since all Lazies are Just instances for this.
-		this.components.forEach((type, componentLazy) -> componentLazy.ifFilled(component -> action.accept(type, component.unwrap())));
+		this.components.forEach(
+				(type, componentLazy) -> componentLazy.ifFilled(component -> action.accept(type, component.unwrap()))
+		);
 	}
 
 	@Override
-	protected <COMP extends Component> void addComponent(ComponentType<COMP> type, Component component) { }
+	protected <COMP> void addComponent(ComponentType<COMP> type, COMP component) { }
 
-	private Map<ComponentType<?>, Lazy<Maybe.Just<Component>>> createLazyMap(ComponentProvider provider) {
+	private Map<ComponentType<?>, Lazy<Maybe<? super Object>>> createLazyMap(ComponentProvider provider) {
 		// TODO: Consider adding a way to directly add components to the builder.
-		var map = new IdentityHashMap<ComponentType<?>, Lazy<Maybe.Just<Component>>>();
-		ComponentsImpl.getInjections(provider).forEach(injection -> map.put(injection.type(), this.createLazy(injection)));
+		var map = new IdentityHashMap<ComponentType<?>, Lazy<Maybe<? super Object>>>();
+		ComponentsImpl.getInjections(provider)
+					  .forEach(injection -> map.put(injection.type(), this.createLazy(injection)));
 		return map;
 	}
 
-	private <C extends Component> Lazy<Maybe.Just<Component>> createLazy(ComponentEntry<C> componentEntry) {
+	private Lazy<Maybe<? super Object>> createLazy(ComponentEntry<?> componentEntry) {
 		ComponentType<?> type = componentEntry.type();
 
 		if (type.isStatic() || type.isInstant()) {
 			var component = this.initializeComponent(componentEntry);
-			return Lazy.filled((Maybe.Just<Component>) Maybe.just(component)); // this cast will obviously never fail
+			return Lazy.filled(Maybe.just(component)); // this cast will obviously never fail
 		}
 
-		return Lazy.of(() -> ((Maybe.Just<Component>) Maybe.just(this.initializeComponent(componentEntry)))); // same here
+		return Lazy.of(() -> (Maybe.just(this.initializeComponent(componentEntry)))); // same here
 	}
 }

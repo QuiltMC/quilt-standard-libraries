@@ -24,18 +24,18 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.collection.DefaultedList;
 
-import org.quiltmc.qsl.component.api.Component;
-import org.quiltmc.qsl.component.api.component.SyncedComponent;
+import org.quiltmc.qsl.component.api.ComponentCreationContext;
+import org.quiltmc.qsl.component.api.component.Syncable;
 import org.quiltmc.qsl.component.api.sync.codec.NetworkCodec;
 
-public class ChunkInventoryComponent implements InventoryComponent, SyncedComponent {
+public class ChunkInventorySerializable implements InventorySerializable, Syncable {
 	public static final NetworkCodec<List<ItemStack>> NETWORK_CODEC =
 			NetworkCodec.list(NetworkCodec.ITEM_STACK, value -> DefaultedList.ofSize(value, ItemStack.EMPTY));
 
 	private final DefaultedList<ItemStack> stacks = DefaultedList.ofSize(1, ItemStack.EMPTY);
-	private final Operations ops;
+	private final ComponentCreationContext ops;
 
-	public ChunkInventoryComponent(Component.Operations ops) {
+	public ChunkInventorySerializable(ComponentCreationContext ops) {
 		this.ops = ops;
 	}
 

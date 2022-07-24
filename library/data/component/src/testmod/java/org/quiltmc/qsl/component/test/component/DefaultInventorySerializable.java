@@ -24,19 +24,19 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
 
-import org.quiltmc.qsl.component.api.Component;
+import org.quiltmc.qsl.component.api.ComponentCreationContext;
 
-public class DefaultInventoryComponent implements InventoryComponent {
+public class DefaultInventorySerializable implements InventorySerializable {
 	private final DefaultedList<ItemStack> stacks;
 	@Nullable
 	private final Runnable saveOperation;
 
-	public DefaultInventoryComponent(Component.Operations ops, int size) {
+	public DefaultInventorySerializable(ComponentCreationContext ops, int size) {
 		this.stacks = DefaultedList.ofSize(size, ItemStack.EMPTY);
 		this.saveOperation = ops.saveOperation();
 	}
 
-	public DefaultInventoryComponent(Component.Operations ops, Supplier<? extends DefaultedList<ItemStack>> stacks) {
+	public DefaultInventorySerializable(ComponentCreationContext ops, Supplier<? extends DefaultedList<ItemStack>> stacks) {
 		this.stacks = stacks.get();
 		this.saveOperation = ops.saveOperation();
 	}
@@ -59,7 +59,7 @@ public class DefaultInventoryComponent implements InventoryComponent {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (!(o instanceof DefaultInventoryComponent that)) return false;
+		if (!(o instanceof DefaultInventorySerializable that)) return false;
 		return this.stacks.equals(that.stacks);
 	}
 }

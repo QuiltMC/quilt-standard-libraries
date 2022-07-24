@@ -24,9 +24,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.world.chunk.WorldChunk;
 
-@Mixin(WorldChunk.DirectBlockEntityTickInvoker.class)
+@Mixin(targets = "net/minecraft/world/chunk/WorldChunk$DirectBlockEntityTickInvoker")
 public class DirectBlockEntityTickInvokerMixin<T extends BlockEntity> {
 	@Shadow
 	@Final
@@ -35,7 +34,11 @@ public class DirectBlockEntityTickInvokerMixin<T extends BlockEntity> {
 	@SuppressWarnings("ConstantConditions")
 	@Inject(
 			method = "tick",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/block/entity/BlockEntityTicker;tick(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/block/entity/BlockEntity;)V")
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/block/entity/BlockEntityTicker;tick(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/block/entity/BlockEntity;)V",
+					shift = At.Shift.AFTER
+			)
 	)
 	private void tickContainer(CallbackInfo ci) {
 		if (!this.blockEntity.getWorld().isClient) { // we know the block entity will have a world if it is contained in a ticker

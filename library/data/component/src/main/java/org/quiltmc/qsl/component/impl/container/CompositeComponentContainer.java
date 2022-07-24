@@ -21,7 +21,6 @@ import java.util.function.BiConsumer;
 import net.minecraft.nbt.NbtCompound;
 
 import org.quiltmc.qsl.base.api.util.Maybe;
-import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
@@ -36,7 +35,7 @@ public class CompositeComponentContainer implements ComponentContainer {
 	}
 
 	@Override
-	public Maybe<Component> expose(ComponentType<?> type) {
+	public <C> Maybe<C> expose(ComponentType<C> type) {
 		return this.main.expose(type).or(() -> this.fallback.expose(type));
 	}
 
@@ -65,7 +64,7 @@ public class CompositeComponentContainer implements ComponentContainer {
 	}
 
 	@Override
-	public void forEach(BiConsumer<ComponentType<?>, ? super Component> action) {
+	public void forEach(BiConsumer<ComponentType<?>, ? super Object> action) {
 		this.main.forEach(action);
 		this.fallback.forEach(action);
 	}

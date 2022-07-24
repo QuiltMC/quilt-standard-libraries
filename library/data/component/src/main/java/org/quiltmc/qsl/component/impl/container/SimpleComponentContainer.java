@@ -16,32 +16,30 @@
 
 package org.quiltmc.qsl.component.impl.container;
 
-import java.util.IdentityHashMap;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.stream.Stream;
-
 import org.jetbrains.annotations.Nullable;
-
 import org.quiltmc.qsl.base.api.util.Maybe;
-import org.quiltmc.qsl.component.api.Component;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.sync.SyncChannel;
 import org.quiltmc.qsl.component.impl.injection.ComponentEntry;
 import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 
+import java.util.IdentityHashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.stream.Stream;
+
 public class SimpleComponentContainer extends AbstractComponentContainer {
 	public static final ComponentContainer.Factory<SimpleComponentContainer> FACTORY =
 			(provider, injections, saveOperation, ticking, syncChannel) -> new SimpleComponentContainer(
 					saveOperation, ticking, syncChannel, injections.get().stream()
 			);
-	private final Map<ComponentType<?>, Component> components;
+	private final Map<ComponentType<?>, Object> components;
 
 	protected SimpleComponentContainer(@Nullable Runnable saveOperation,
-									boolean ticking,
-									@Nullable SyncChannel<?, ?> syncContext,
-									Stream<ComponentEntry<?>> types) {
+			boolean ticking,
+			@Nullable SyncChannel<?, ?> syncContext,
+			Stream<ComponentEntry<?>> types) {
 		super(saveOperation, ticking, syncContext);
 		this.components = new IdentityHashMap<>();
 		types.forEach(this::initializeComponent);
@@ -49,18 +47,18 @@ public class SimpleComponentContainer extends AbstractComponentContainer {
 	}
 
 	@Override
-	public Maybe<Component> expose(ComponentType<?> type) {
-		return Maybe.wrap(this.components.get(type));
+	public <C> Maybe<C> expose(ComponentType<C> type) {
+		return Maybe.wrap(this.components.get(type)).castUnchecked();
 	}
 
 	@Override
-	public void forEach(BiConsumer<ComponentType<?>, ? super Component> action) {
+	public void forEach(BiConsumer<ComponentType<?>, ? super Object> action) {
 		this.components.forEach(action);
 	}
 
 	@Override
-	protected <COMP extends Component> void addComponent(ComponentType<COMP> type, Component component) {
-		Component result = this.components.put(type, component);
+	protected <COMP> void addComponent(ComponentType<COMP> type, COMP component) {
+		Object result = this.components.put(type, component);
 		if (result != null) {
 			throw ErrorUtil.illegalState("Attempted to override a component on a simple container!").get();
 		}

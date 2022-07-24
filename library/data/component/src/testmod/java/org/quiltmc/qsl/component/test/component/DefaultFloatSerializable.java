@@ -21,19 +21,19 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtFloat;
 
-import org.quiltmc.qsl.component.api.Component;
-import org.quiltmc.qsl.component.api.component.NbtComponent;
+import org.quiltmc.qsl.component.api.ComponentCreationContext;
+import org.quiltmc.qsl.component.api.component.NbtSerializable;
 
-public class DefaultFloatComponent implements NbtComponent<NbtFloat> {
+public class DefaultFloatSerializable implements NbtSerializable<NbtFloat> {
 	@Nullable
 	private final Runnable saveOperation;
 	private float value;
 
-	public DefaultFloatComponent(Component.Operations ops) {
+	public DefaultFloatSerializable(ComponentCreationContext ops) {
 		this(ops, 0);
 	}
 
-	public DefaultFloatComponent(Component.Operations ops, float initialValue) {
+	public DefaultFloatSerializable(ComponentCreationContext ops, float initialValue) {
 		this.value = initialValue;
 		this.saveOperation = ops.saveOperation();
 	}
