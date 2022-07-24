@@ -62,7 +62,7 @@ public final class SurfaceRuleEvents {
 		}
 	});
 
-
+	@FunctionalInterface
 	public interface OverworldModifierCallback extends EventAwareListener {
 		/**
 		 * Called to modify the given Overworld surface rules.
@@ -72,6 +72,7 @@ public final class SurfaceRuleEvents {
 		void modifyOverworldRules(SurfaceRuleContext.Overworld context);
 	}
 
+	@FunctionalInterface
 	public interface NetherModifierCallback extends EventAwareListener {
 		/**
 		 * Called to modify the given Nether surface rules.
@@ -81,6 +82,7 @@ public final class SurfaceRuleEvents {
 		void modifyNetherRules(SurfaceRuleContext.Nether context);
 	}
 
+	@FunctionalInterface
 	public interface TheEndModifierCallback extends EventAwareListener {
 		/**
 		 * Called to modify the given End surface rules.
