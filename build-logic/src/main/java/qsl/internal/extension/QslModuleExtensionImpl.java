@@ -1,5 +1,12 @@
 package qsl.internal.extension;
 
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import net.fabricmc.loom.api.LoomGradleExtensionAPI;
 import org.gradle.api.Action;
 import org.gradle.api.Named;
@@ -11,15 +18,8 @@ import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Nested;
-
 import qsl.internal.dependency.QslLibraryDependency;
 import qsl.internal.json.Environment;
-
-import javax.inject.Inject;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class QslModuleExtensionImpl extends QslExtension implements QslModuleExtension, Serializable {
 	@Serial
@@ -76,10 +76,12 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 	public Property<String> getName() {
 		return this.name;
 	}
+
 	@Input
 	public Property<String> getId() {
 		return this.id;
 	}
+
 	@Input
 	public Property<String> getDescription() {
 		return this.description;
@@ -91,11 +93,13 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 	}
 
 	public void accessWidener() {
-		hasAccessWidener.set(true);
-		project.getExtensions()
+		this.hasAccessWidener.set(true);
+		this.project.getExtensions()
 				.getByType(LoomGradleExtensionAPI.class)
 				.getAccessWidenerPath()
-				.fileValue(project.file("src/main/resources/" + id.get() + ".accesswidener"));
+				.fileValue(this.project.file("src/main/resources/" + this.id.get() + ".accesswidener"));
+
+		this.allowGenTasks();
 	}
 
 	@Input

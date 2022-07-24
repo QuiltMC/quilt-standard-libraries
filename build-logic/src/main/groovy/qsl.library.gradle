@@ -11,7 +11,6 @@
  * can be run using `gradle LIBRARY_NAME:TASK_NAME`.
  */
 
-import qsl.internal.Git
 import qsl.internal.extension.QslLibraryExtension
 
 plugins {
@@ -99,7 +98,6 @@ afterEvaluate {
 	// Print the version and throw an exception if it doesn't match
 	if (version != rootProject.version) {
 		throw new GradleException("Library ${extension.libraryName.get()} version ($version) does not match root project version ($rootProject.version). Do not change it!")
-
 	}
 }
 

@@ -4,7 +4,7 @@
 
 
 import net.fabricmc.loom.task.RemapJarTask
-import qsl.internal.Versions;
+import qsl.internal.Versions
 
 plugins {
 	id("maven-publish")
