@@ -21,62 +21,70 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Represents a value that is only initialized once it's needed.<br/>
+ * Represents a value that is only initialized once it's needed.
+ *
+ * <p>
  * Similar to {@link com.google.common.base.Suppliers#memoize}.
  *
- * @param <T> The type of the value this {@link Lazy} represents.
+ * @param <T> the type of the value this {@link Lazy} represents
  */
 public abstract sealed class Lazy<T> implements Supplier<T> permits Lazy.Filled, Lazy.OfSupplier {
 	/**
 	 * Wraps the provided {@link Supplier} into a {@link OfSupplier} instance.
 	 *
-	 * @param supplier The {@link Supplier} to a value.
-	 * @param <T>      The type of the wrapped value.
-	 * @return A new {@link OfSupplier} instance.
+	 * @param supplier the {@link Supplier} to a value
+	 * @param <T>      The type of the wrapped value
+	 * @return a new {@link OfSupplier} instance
 	 */
-	public static <T> Lazy<T> of(Supplier<? extends T> supplier) {
+	public static <T> Lazy.OfSupplier<T> of(Supplier<? extends T> supplier) {
 		return new OfSupplier<>(supplier);
 	}
 
 	/**
 	 * Returns an {@link Filled} instance wrapping the provided {@link T} value.
 	 *
-	 * @param value The value to wrap.
-	 * @param <T>   The type of the wrapped value.
-	 * @return A new {@link Filled} instance.
+	 * @param value the value to wrap
+	 * @param <T>   The type of the wrapped value
+	 * @return a new {@link Filled} instance
 	 */
-	public static <T> Lazy<T> filled(T value) {
+	public static <T> Lazy.Filled<T> filled(T value) {
 		return new Filled<>(value);
 	}
 
 	/**
-	 * Creates a new {@link Lazy} containing the current value mapped using the provided {@link Function}.<br/>
+	 * Creates a new {@link Lazy} containing the current value mapped using the provided {@link Function}.
+	 *
+	 * <p>
 	 * <i><b>This does not initialize the contained value!</b></i>
 	 *
-	 * @param mapper The function to apply to the contained value.
-	 * @param <U>    The new contained type.
-	 * @return A new {@link Lazy} instance, that may or may not be initialized that contains the mapped value.
+	 * @param mapper the function to apply to the contained value
+	 * @param <U>    The new contained type
+	 * @return a new {@link Lazy} instance, that may or may not be initialized that contains the mapped value
 	 */
 	public abstract <U> Lazy<U> map(Function<T, ? extends U> mapper);
 
 	/**
-	 * If we contain a value, we instantly return the transformed version, using the {@link Function} provided.<br/>
-	 * Otherwise, we return a new {@link Lazy} containing the value of the result of the mapper {@link  Function}.<br/>
+	 * If we contain a value, we instantly return the transformed version, using the {@link Function} provided.
+	 * Otherwise, we return a new {@link Lazy} containing the value of the result of the mapper {@link  Function}.
+	 *
+	 * <p>
 	 * <i><b>This does not initialize the contained value!</b></i>
 	 *
-	 * @param mapper The {@link Function} to use.
-	 * @param <U>    The new contained type.
-	 * @return The mapped {@link Lazy} value.
+	 * @param mapper the {@link Function} to use
+	 * @param <U>    The new contained type
+	 * @return the mapped {@link Lazy} value
 	 */
 	public abstract <U> Lazy<U> flatMap(Function<T, ? extends Lazy<U>> mapper);
 
 	/**
-	 * Initializes the current {@link Lazy} and returns the result of applying the provided {@link Function} to the value.<br/>
+	 * Initializes the current {@link Lazy} and returns the result of applying the provided {@link Function} to the value.
+	 *
+	 * <p>
 	 * <i><b>This initializes the contained value.</b></i>
 	 *
-	 * @param function The {@link Function} to use.
-	 * @param <M>      The return type.
-	 * @return The {@link M} value produced from the application of the provided {@link Function}}.
+	 * @param function the {@link Function} to use
+	 * @param <M>      The return type
+	 * @return the {@link M} value produced from the application of the provided {@link Function}}
 	 */
 	public <M> M mapUnwrap(Function<T, ? extends M> function) {
 		return function.apply(this.unwrap());
@@ -85,39 +93,41 @@ public abstract sealed class Lazy<T> implements Supplier<T> permits Lazy.Filled,
 	/**
 	 * Whether the current {@link Lazy} has initialized its value.
 	 *
-	 * @return Whether the current {@link Lazy} contains an initialized value.
+	 * @return {@code true} if the current value is initialized, or {@code false} otherwise
 	 */
 	public abstract boolean isFilled();
 
 	/**
 	 * Applies the provided {@link Consumer} on the current value, if it is initialized.
 	 *
-	 * @param action The {@link Consumer} to apply the value to.
-	 * @return This instance(for chaining).
+	 * @param action the {@link Consumer} to apply the value to
+	 * @return this instance(for chaining)
 	 */
 	public abstract Lazy<T> ifFilled(Consumer<? super T> action);
 
 	/**
-	 * Runs the provided {@link Runnable}, if our value is not initialized.<br/>
+	 * Runs the provided {@link Runnable}, if our value is not initialized.
 	 *
-	 * @param action The {@link Runnable} to run.
-	 * @return This instance(for chaining).
+	 * @param action the {@link Runnable} to run
+	 * @return this instance(for chaining)
 	 */
 	public abstract Lazy<T> ifEmpty(Runnable action);
 
 	/**
 	 * Whether the current instance has an initialized value.
 	 *
-	 * @return Whether there is a value in this {@link Lazy} that is initialized.
+	 * @return {@code true} if the current value isn't initialized, or {@code false} otherwise
 	 */
 	public abstract boolean isEmpty();
 
 	/**
-	 * Initializes the current value and applies it to the provided {@link Consumer}.<br/>
+	 * Initializes the current value and applies it to the provided {@link Consumer}.
+	 *
+	 * <p>
 	 * <i><b>This initializes the contained value.</b></i>
 	 *
-	 * @param action The {@link Consumer} to accept the current value.
-	 * @return This instance(for chaining).
+	 * @param action the {@link Consumer} to accept the current value
+	 * @return this instance(for chaining)
 	 */
 	public Lazy<T> compute(Consumer<? super T> action) {
 		action.accept(this.get());
@@ -133,35 +143,37 @@ public abstract sealed class Lazy<T> implements Supplier<T> permits Lazy.Filled,
 
 	/**
 	 * Returns the contained value if it is initialized, otherwise the provided {@link T} instance.
+	 *
+	 * <p>
 	 * <i><b>This does not initialize the contained value.</b></i>
 	 *
-	 * @param defaultValue The default {@link T} instance to return.
-	 * @return The contained value or the provided {@link T}.
+	 * @param defaultValue the default {@link T} instance to return
+	 * @return the contained value or the provided {@link T}
 	 */
 	public abstract T unwrapOr(T defaultValue);
 
 	/**
 	 * Works like {@link Lazy#unwrapOr} except the default {@link T} value is provided lazily.
 	 *
-	 * @param defaultSupplier A provider of a {@link T} instance.
-	 * @return Either the contained value or the result of {@link Supplier#get} when called on the provided {@link Supplier}.
+	 * @param defaultSupplier a provider of a {@link T} instance
+	 * @return either the contained value or the result of {@link Supplier#get} when called on the provided {@link Supplier}
 	 */
 	public abstract T unwrapOrGet(Supplier<? extends T> defaultSupplier);
 
 	/**
-	 * A {@link Lazy} with an already initialized value.<br/>
+	 * A {@link Lazy} with an already initialized value.
 	 *
 	 * <p>
-	 * This class can either be created using the {@link Lazy#filled} method or by mapping a {@link Lazy} with an initialized value.<br/>
+	 * This class can either be created using the {@link Lazy#filled} method or by mapping a {@link Lazy} with an initialized value.
 	 * A {@link Lazy} cannot be converted by itself into a {@link Filled}.
 	 *
-	 * @param <T> The contained type.
+	 * @param <T> the contained type
 	 */
 	public static final class Filled<T> extends Lazy<T> {
 		private final T value;
 
 		/**
-		 * @param value The contained value.
+		 * @param value the contained value
 		 */
 		private Filled(T value) {
 			this.value = value;
@@ -244,15 +256,15 @@ public abstract sealed class Lazy<T> implements Supplier<T> permits Lazy.Filled,
 	/**
 	 * A {@link Lazy} with either an initialized value or not.
 	 *
-	 * @param <T>
+	 * @param <T> the type of object this {@link Lazy} contains
 	 */
 	public static final class OfSupplier<T> extends Lazy<T> {
 		private Supplier<? extends T> supplier;
-		// There is no overhead to using a Maybe here since Maybe has statically evaluated returns for Nothing instances..
+		// There is no overhead caused by using a Maybe here since Maybe has statically evaluated returns for Nothing instances.
 		private Maybe<T> value;
 
 		/**
-		 * @param supplier The {@link Supplier} used to initialize the value.
+		 * @param supplier the {@link Supplier} used to initialize the value
 		 */
 		private OfSupplier(Supplier<? extends T> supplier) {
 			this.supplier = supplier;
@@ -266,7 +278,7 @@ public abstract sealed class Lazy<T> implements Supplier<T> permits Lazy.Filled,
 		public T get() {
 			if (this.value.isNothing()) {
 				this.value = Maybe.just(this.supplier.get());
-				this.supplier = null;
+				this.supplier = null; // maybe this shouldn't happen, but I am keeping it for now
 			}
 
 			return this.value.unwrap();
@@ -336,6 +348,10 @@ public abstract sealed class Lazy<T> implements Supplier<T> permits Lazy.Filled,
 		@Override
 		public T unwrapOrGet(Supplier<? extends T> defaultSupplier) {
 			return this.value.unwrapOrGet(defaultSupplier);
+		}
+
+		public Lazy.Filled<T> toFilled() {
+			return filled(this.get());
 		}
 	}
 }

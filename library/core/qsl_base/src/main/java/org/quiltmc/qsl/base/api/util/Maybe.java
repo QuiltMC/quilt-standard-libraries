@@ -16,36 +16,42 @@
 
 package org.quiltmc.qsl.base.api.util;
 
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
- * Represents a monad that can either contain a value or no value.<br/>
- * Similar to the {@link Optional} class but with some performance improvements
- * and quality of life changes.<br/>
+ * Represents a monad that can either contain a value or no value.
  *
  * <p>
- * Can either be {@link Just} or {@link Nothing}.<br/>
- * {@link Just} instances contain a value of type {@link T}.<br/>
- * {@link Nothing} instances all contain no data.<br/>
+ * Similar to the {@link Optional} class but with some performance improvements
+ * and quality of life changes.
  *
- * @param <T> The type of the wrapped object
+ * <p>
+ * Can either be {@link Just} or {@link Nothing}.
+ *
+ * <p>
+ * {@link Just} instances contain a value of type {@link T}.
+ *
+ * <p>
+ * {@link Nothing} instances all contain no data.
+ *
+ * @param <T> the type of the wrapped object
  * @author 0xJoeMama
  */
 public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	/**
-	 * Similar function to {@link Optional#ofNullable} function.<br/>
+	 * Similar function to {@link Optional#ofNullable} function.
 	 * Wraps a {@link T} value into an {@link Maybe}.
 	 *
-	 * @param value A {@link Nullable} value that will be wrapped into a {@link Maybe}.
-	 * @param <T>   The type of object the {@link Maybe} instance will hold.
-	 * @return An instance of {@link Just} if the provided value is not <code>null</code>,<br/>
-	 * otherwise a {@link Nothing} instance.
+	 * @param value a {@link Nullable} value that will be wrapped into a {@link Maybe}
+	 * @param <T>   the type of object the {@link Maybe} instance will hold
+	 * @return an instance of {@link Just} if the provided value is not <code>null</code>,
+	 * otherwise a {@link Nothing} instance
 	 * @see Optional#ofNullable
 	 */
 	public static <T> Maybe<T> wrap(@Nullable T value) {
@@ -53,51 +59,52 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	}
 
 	/**
-	 * Similar function to {@link Optional#of}.<br/>
+	 * Similar function to {@link Optional#of}.
 	 * Wraps the provided value into a {@link Just} instance.
 	 *
-	 * @param value A {@linkplain org.jetbrains.annotations.NotNull non-null} value that is to be wrapped.
-	 * @param <T>   The type of object the {@link Maybe} instance will hold.
-	 * @return A {@link Just} instance containing the provided value.
+	 * @param value a {@linkplain org.jetbrains.annotations.NotNull non-null} value that is to be wrapped.
+	 * @param <T>   the type of object the {@link Maybe} instance will hold
+	 * @return a {@link Just} instance containing the provided value
 	 * @see Optional#of
 	 */
-	public static <T> Maybe<T> just(T value) {
+	public static <T> Maybe.Just<T> just(T value) {
 		return new Just<>(value);
 	}
 
 	/**
 	 * Similar function to {@link Optional#empty()}.
 	 *
-	 * @param <T> The type the {@link Nothing} instance will take the form of.
-	 * @return A {@link Nothing} instance after casting it to the proper type.
+	 * @param <T> the type the {@link Nothing} instance will take the form of
+	 * @return a {@link Nothing} instance after casting it to the proper type
 	 * @see Optional#empty()
 	 */
-	public static <T> Maybe<T> nothing() {
-		return Nothing.INSTANCE.castUnchecked();
+	@SuppressWarnings("unchecked")
+	public static <T> Maybe.Nothing<T> nothing() {
+		return (Nothing<T>) Nothing.INSTANCE;
 	}
 
 	/**
 	 * Converts an {@link Optional} into a {@link Maybe}.<br/>
 	 * Exists for the sake of inter-operability.
 	 *
-	 * @param opt The {@link Optional} whose value will be wrapped in a {@link Maybe}.
-	 * @param <T> The type of the value, which the {@link Maybe} instance will contain.
-	 * @return A {@link Maybe} instance containing the value contained in the provided {@link Optional}.
+	 * @param opt the {@link Optional} whose value will be wrapped in a {@link Maybe}
+	 * @param <T> the type of the value, which the {@link Maybe} instance will contain
+	 * @return a {@link Maybe} instance containing the value contained in the provided {@link Optional}
 	 */
 	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 	// Obviously since we need to convert, the parameter is Optional.
 	public static <T> Maybe<T> fromOptional(Optional<T> opt) {
-		return opt.map(Maybe::just).orElseGet(Maybe::nothing);
+		return opt.map(Maybe::wrap).orElseGet(Maybe::nothing);
 	}
 
 	/**
 	 * Maps the internal value of this {@link Maybe} into a new {@link Maybe} with a different value<br/>
 	 * using the provided {@link Function}.
 	 *
-	 * @param transformer A {@link T} -> {@link U} function used in the mapping process.
-	 * @param <U>         The type of the value after the mapping operation.
-	 * @return A new {@link Just} instance containing the mapped value if the current instance is a {@link Just},
-	 * otherwise {@link Nothing}.
+	 * @param transformer a {@link T} -> {@link U} function used in the mapping process
+	 * @param <U>         the type of the value after the mapping operation
+	 * @return a new {@link Just} instance containing the mapped value if the current instance is a {@link Just},
+	 * otherwise {@link Nothing}
 	 * @see Optional#map
 	 */
 	public abstract <U> Maybe<U> map(Function<? super T, ? extends U> transformer);
@@ -105,8 +112,8 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	/**
 	 * Filters the current instance, based on whether it follows the provided {@link Predicate}.
 	 *
-	 * @param predicate A {@link Predicate} instance which <i>may</i> use the current value.
-	 * @return The current instance if {@link Predicate#test} returns true, otherwise {@link Nothing}.
+	 * @param predicate a {@link Predicate} instance which <i>may</i> use the current value
+	 * @return the current instance if {@link Predicate#test} returns true, otherwise {@link Nothing}
 	 * @see Optional#filter
 	 */
 	public abstract Maybe<T> filter(Predicate<T> predicate);
@@ -117,9 +124,9 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	 * Can be used as {@link Optional#flatMap} or as the <code>bind</code> operation of this monad.
 	 * The table below explains in detail.
 	 *
-	 * @param transform A {@link Function} returning a {@link Maybe} instance instead of directly returning the
-	 *                     mapping value.
-	 * @param <U>       The value the returned {@link Maybe} will contain.
+	 * @param transform a {@link Function} returning a {@link Maybe} instance instead of directly returning the
+	 *                  mapping value
+	 * @param <U>       the value the returned {@link Maybe} will contain
 	 * @return <table>
 	 * <tr>
 	 * <th>This</th>
@@ -149,7 +156,7 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	/**
 	 * Whether the current instance is {@link Nothing} or not.
 	 *
-	 * @return A boolean expressing the aforementioned fact.
+	 * @return {@code true} if this is a {@link Nothing}, or {@code false} otherwise
 	 * @see Optional#isEmpty()
 	 */
 	public abstract boolean isNothing();
@@ -157,7 +164,7 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	/**
 	 * Whether the current instance is {@link Just} or not.
 	 *
-	 * @return A boolean expressing the aforementioned fact.
+	 * @return {@code true} if this is a {@link Just}, or {@code false} otherwise
 	 * @see Optional#isPresent()
 	 */
 	public abstract boolean isJust();
@@ -165,8 +172,8 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	/**
 	 * Applies the provided {@link Consumer} to the current value, if the current instance is {@link Just}.
 	 *
-	 * @param action A {@link Consumer} that <i>may</i> use the current value.
-	 * @return This instance(for chaining).
+	 * @param action a {@link Consumer} that <i>may</i> use the current value
+	 * @return this instance(for chaining)
 	 * @see Optional#ifPresent
 	 */
 	public abstract Maybe<T> ifJust(Consumer<? super T> action);
@@ -174,8 +181,8 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	/**
 	 * Runs the provided {@link Runnable} if the current instance is {@link Nothing}.
 	 *
-	 * @param runnable The action to run.
-	 * @return This instance(for chaining).
+	 * @param runnable the action to run
+	 * @return this instance(for chaining)
 	 */
 	public abstract Maybe<T> ifNothing(Runnable runnable);
 
@@ -184,7 +191,7 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	 * provided.
 	 * The table below describes the different return values.
 	 *
-	 * @param supplier A {@link Supplier} of a {@link Maybe}, be it {@link Just} or {@link Nothing}.
+	 * @param supplier a {@link Supplier} of a {@link Maybe}, be it {@link Just} or {@link Nothing}
 	 * @return <table>
 	 * <tr>
 	 * <th>This</th>
@@ -216,7 +223,7 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	 * provided.
 	 * The table below describes the different return values.
 	 *
-	 * @param other A {@link Supplier} of a {@link Maybe} instance, be it {@link Nothing} or {@link Just}.
+	 * @param other a {@link Supplier} of a {@link Maybe} instance, be it {@link Nothing} or {@link Just}
 	 * @return <table>
 	 * <tr>
 	 * <th>This</th>
@@ -245,7 +252,7 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	/**
 	 * Returns the {@link T} value container in the current {@link Maybe} instance.
 	 *
-	 * @return The {@link T} value that was wrapped.
+	 * @return the {@link T} value that was wrapped
 	 * @throws IllegalStateException if the current instance is {@link Nothing}.
 	 * @see Optional#orElseThrow()
 	 */
@@ -255,9 +262,9 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	 * Works like {@link Maybe#unwrap()} except that it doesn't throw if the current instance if {@link Nothing}.
 	 * In that case it returns the provided {@link T} value.
 	 *
-	 * @param defaultValue The value to get if the current instance if {@link Nothing}.
-	 * @return The current {@link T} value if the current instance is {@link Just}, otherwise the provided {@link T}
-	 * value.
+	 * @param defaultValue the value to get if the current instance if {@link Nothing}
+	 * @return the current {@link T} value if the current instance is {@link Just}, otherwise the provided {@link T}
+	 * value
 	 * @see Optional#orElse
 	 */
 	public abstract T unwrapOr(T defaultValue);
@@ -266,10 +273,10 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	 * Works like {@link Maybe#unwrapOr} except that it lazily evaluates the return value using the provided
 	 * {@link Supplier}.
 	 *
-	 * @param supplier A {@link Supplier} that will create the {@link T} value to be returns if the current instance
-	 *                    is {@link Nothing}.
-	 * @return The current {@link T} value if the current instance if {@link Just},
-	 * otherwise the value produces by calling {@link Supplier#get()} on the provided {@link Supplier}.
+	 * @param supplier a {@link Supplier} that will create the {@link T} value to be returns if the current instance
+	 *                 is {@link Nothing}
+	 * @return the current {@link T} value if the current instance if {@link Just},
+	 * otherwise the value produces by calling {@link Supplier#get()} on the provided {@link Supplier}
 	 * @see Optional#orElseGet
 	 */
 	public abstract T unwrapOrGet(Supplier<? extends T> supplier);
@@ -277,9 +284,9 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	/**
 	 * Works like {@link Maybe#unwrap} except it throws the provided {@link Throwable} and not the default one.
 	 *
-	 * @param throwableSupplier The {@link Throwable} to throw.
-	 * @return The contained value, if it exists.
-	 * @throws E A customizable throwable.
+	 * @param throwableSupplier the {@link Throwable} to throw
+	 * @return the contained value, if it exists
+	 * @throws E a customizable throwable
 	 */
 	public abstract <E extends Throwable> T unwrapOrThrow(Supplier<? extends E> throwableSupplier) throws E;
 
@@ -287,25 +294,25 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	 * Turns the current {@link Maybe} instance into an {@link Optional}, for inter-operability.
 	 *
 	 * @return {@link Optional#empty()} if the current instance is {@link Nothing},
-	 * otherwise an {@link Optional} containing the current value.
+	 * otherwise an {@link Optional} containing the current value
 	 */
 	public abstract Optional<T> toOptional();
 
 	/**
-	 * Attempts to perform and unchecked, unsafe cast on the current instance.
+	 * Attempts to perform an unchecked, unsafe cast on the current instance.
 	 *
-	 * @param <C> The target type
-	 * @return The cast instance.
+	 * @param <U> the target type
+	 * @return the cast instance
 	 */
 	@SuppressWarnings("unchecked")
-	public <C> Maybe<C> castUnchecked() {
-		return (Maybe<C>) this;
+	public <U> Maybe<U> castUnchecked() {
+		return (Maybe<U>) this;
 	}
 
 	/**
 	 * The {@link Maybe} state representing the absence of a value.
 	 *
-	 * @param <T> In this case this type parameter is unused.
+	 * @param <T> in this case this type parameter is unused
 	 */
 	public static final class Nothing<T> extends Maybe<T> {
 		/**
@@ -433,7 +440,7 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	/**
 	 * The {@link Maybe} state representing the existence of a {@link T} value.
 	 *
-	 * @param <T> The type of the contained value.
+	 * @param <T> the type of the contained value
 	 */
 	public static final class Just<T> extends Maybe<T> {
 		private final T value;
