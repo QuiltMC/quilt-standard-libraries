@@ -30,11 +30,12 @@ import java.util.function.Function;
 
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.qsl.base.api.phase.PhaseData;
+import org.quiltmc.qsl.base.api.phase.PhaseSorting;
 import org.quiltmc.qsl.base.api.util.QuiltAssertions;
 import org.quiltmc.qsl.base.impl.QuiltBaseImpl;
 import org.quiltmc.qsl.base.impl.event.EventPhaseData;
 import org.quiltmc.qsl.base.impl.event.EventRegistry;
-import org.quiltmc.qsl.base.impl.event.PhaseSorting;
 
 /**
  * An object which stores event callbacks.
@@ -313,7 +314,7 @@ public final class Event<T> {
 		synchronized (this.lock) {
 			var first = this.getOrCreatePhase(firstPhase, false);
 			var second = this.getOrCreatePhase(secondPhase, false);
-			EventPhaseData.link(first, second);
+			PhaseData.link(first, second);
 			PhaseSorting.sortPhases(this.sortedPhases);
 			rebuildInvoker(this.callbacks.length);
 		}
@@ -341,15 +342,15 @@ public final class Event<T> {
 		// Rebuild handlers.
 		if (this.sortedPhases.size() == 1) {
 			// Special case with a single phase: use the array of the phase directly.
-			this.callbacks = this.sortedPhases.get(0).getListeners();
+			this.callbacks = this.sortedPhases.get(0).getData();
 		} else {
 			@SuppressWarnings("unchecked")
 			var newCallbacks = (T[]) Array.newInstance(this.callbacks.getClass().getComponentType(), newLength);
 			int newHandlersIndex = 0;
 
 			for (var existingPhase : this.sortedPhases) {
-				int length = existingPhase.getListeners().length;
-				System.arraycopy(existingPhase.getListeners(), 0, newCallbacks, newHandlersIndex, length);
+				int length = existingPhase.getData().length;
+				System.arraycopy(existingPhase.getData(), 0, newCallbacks, newHandlersIndex, length);
 				newHandlersIndex += length;
 			}
 

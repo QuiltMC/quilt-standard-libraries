@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.base.impl.event;
+package org.quiltmc.qsl.base.api.phase;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,14 +25,12 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 import com.google.common.annotations.VisibleForTesting;
-import org.jetbrains.annotations.ApiStatus;
 
 import org.quiltmc.qsl.base.impl.QuiltBaseImpl;
 
 /**
- * Contains phase-sorting logic for {@link org.quiltmc.qsl.base.api.event.Event}.
+ * Provides the phase-sorting logic of {@link PhaseData}.
  */
-@ApiStatus.Internal
 public final class PhaseSorting {
 	@VisibleForTesting
 	public static boolean ENABLE_CYCLE_WARNING = true;
@@ -46,10 +44,14 @@ public final class PhaseSorting {
 	 * 1) Compute phase SCCs (i.e. cycles).
 	 * 2) Sort phases by id within SCCs.
 	 * 3) Sort SCCs with respect to each other by respecting constraints, and by id in case of a tie.
+	 *
+	 * @param sortedPhases the phases to sort
+	 * @param <T>          the type of data held in a phase
+	 * @param <P>          the type of the phase data
 	 */
-	public static <T> void sortPhases(List<EventPhaseData<T>> sortedPhases) {
+	public static <T, P extends PhaseData<T, P>> void sortPhases(List<P> sortedPhases) {
 		// FIRST KOSARAJU SCC VISIT
-		var topoSort = new ArrayList<EventPhaseData<T>>(sortedPhases.size());
+		var topoSort = new ArrayList<P>(sortedPhases.size());
 
 		for (var phase : sortedPhases) {
 			forwardVisit(phase, null, topoSort);
@@ -59,11 +61,11 @@ public final class PhaseSorting {
 		Collections.reverse(topoSort);
 
 		// SECOND KOSARAJU SCC VISIT
-		var phaseToScc = new IdentityHashMap<EventPhaseData<T>, PhaseScc<T>>();
+		var phaseToScc = new IdentityHashMap<P, PhaseScc<T, P>>();
 
 		for (var phase : topoSort) {
-			if (phase.visitStatus == EventPhaseData.VisitStatus.NOT_VISITED) {
-				var sccPhases = new ArrayList<EventPhaseData<T>>();
+			if (phase.visitStatus == PhaseData.VisitStatus.NOT_VISITED) {
+				var sccPhases = new ArrayList<P>();
 				// Collect phases in SCC.
 				backwardVisit(phase, sccPhases);
 				// Sort phases by id.
@@ -81,9 +83,9 @@ public final class PhaseSorting {
 
 		// Build SCC graph
 		for (var scc : phaseToScc.values()) {
-			for (EventPhaseData<T> phase : scc.phases) {
-				for (EventPhaseData<T> subsequentPhase : phase.subsequentPhases) {
-					PhaseScc<T> subsequentScc = phaseToScc.get(subsequentPhase);
+			for (P phase : scc.phases) {
+				for (P subsequentPhase : phase.subsequentPhases) {
+					PhaseScc<T, P> subsequentScc = phaseToScc.get(subsequentPhase);
 
 					if (subsequentScc != scc) {
 						scc.subsequentSccs.add(subsequentScc);
@@ -95,7 +97,7 @@ public final class PhaseSorting {
 
 		// Order SCCs according to priorities. When there is a choice, use the SCC with the lowest id.
 		// The priority queue contains all SCCs that currently have 0 in-degree.
-		var pq = new PriorityQueue<PhaseScc<T>>(Comparator.comparing(scc -> scc.phases.get(0).id));
+		var pq = new PriorityQueue<PhaseScc<T, P>>(Comparator.comparing(scc -> scc.phases.get(0).id));
 		sortedPhases.clear();
 
 		for (var scc : phaseToScc.values()) {
@@ -107,7 +109,7 @@ public final class PhaseSorting {
 		}
 
 		while (!pq.isEmpty()) {
-			PhaseScc<T> scc = pq.poll();
+			PhaseScc<T, P> scc = pq.poll();
 			sortedPhases.addAll(scc.phases);
 
 			for (var subsequentScc : scc.subsequentSccs) {
@@ -120,18 +122,18 @@ public final class PhaseSorting {
 		}
 	}
 
-	private static <T> void forwardVisit(EventPhaseData<T> phase, EventPhaseData<T> parent, List<EventPhaseData<T>> toposort) {
-		if (phase.visitStatus == EventPhaseData.VisitStatus.NOT_VISITED) {
+	private static <T, P extends PhaseData<T, P>> void forwardVisit(P phase, P parent, List<P> toposort) {
+		if (phase.visitStatus == PhaseData.VisitStatus.NOT_VISITED) {
 			// Not yet visited.
-			phase.visitStatus = EventPhaseData.VisitStatus.VISITING;
+			phase.visitStatus = PhaseData.VisitStatus.VISITING;
 
 			for (var data : phase.subsequentPhases) {
 				forwardVisit(data, phase, toposort);
 			}
 
 			toposort.add(phase);
-			phase.visitStatus = EventPhaseData.VisitStatus.VISITED;
-		} else if (phase.visitStatus == EventPhaseData.VisitStatus.VISITING && ENABLE_CYCLE_WARNING) {
+			phase.visitStatus = PhaseData.VisitStatus.VISITED;
+		} else if (phase.visitStatus == PhaseData.VisitStatus.VISITING && ENABLE_CYCLE_WARNING) {
 			// Already visiting, so we have found a cycle.
 			QuiltBaseImpl.LOGGER.warn(String.format(
 					"Event phase ordering conflict detected.%nEvent phase %s is ordered both before and after event phase %s.",
@@ -141,15 +143,15 @@ public final class PhaseSorting {
 		}
 	}
 
-	private static <T> void clearStatus(List<EventPhaseData<T>> phases) {
+	private static <T, P extends PhaseData<T, P>> void clearStatus(List<P> phases) {
 		for (var phase : phases) {
-			phase.visitStatus = EventPhaseData.VisitStatus.NOT_VISITED;
+			phase.visitStatus = PhaseData.VisitStatus.NOT_VISITED;
 		}
 	}
 
-	private static <T> void backwardVisit(EventPhaseData<T> phase, List<EventPhaseData<T>> sccPhases) {
-		if (phase.visitStatus == EventPhaseData.VisitStatus.NOT_VISITED) {
-			phase.visitStatus = EventPhaseData.VisitStatus.VISITING;
+	private static <T, P extends PhaseData<T, P>> void backwardVisit(P phase, List<P> sccPhases) {
+		if (phase.visitStatus == PhaseData.VisitStatus.NOT_VISITED) {
+			phase.visitStatus = PhaseData.VisitStatus.VISITING;
 			sccPhases.add(phase);
 
 			for (var data : phase.previousPhases) {
@@ -158,12 +160,12 @@ public final class PhaseSorting {
 		}
 	}
 
-	private static class PhaseScc<T> {
-		final List<EventPhaseData<T>> phases;
-		final List<PhaseScc<T>> subsequentSccs = new ArrayList<>();
+	private static class PhaseScc<T, P extends PhaseData<T, P>> {
+		final List<P> phases;
+		final List<PhaseScc<T, P>> subsequentSccs = new ArrayList<>();
 		int inDegree = 0;
 
-		private PhaseScc(List<EventPhaseData<T>> phases) {
+		private PhaseScc(List<P> phases) {
 			this.phases = phases;
 		}
 	}
