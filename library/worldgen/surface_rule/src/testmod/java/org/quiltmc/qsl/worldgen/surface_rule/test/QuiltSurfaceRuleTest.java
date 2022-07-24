@@ -33,7 +33,7 @@ public class QuiltSurfaceRuleTest implements SurfaceRuleEvents.OverworldModifier
 		SurfaceRuleEvents.TheEndModifierCallback {
 	@Override
 	public void modifyOverworldRules(SurfaceRuleContext.Overworld context) {
-		//when in doubt, T R A N S. seed 7205143747332514273 is a good one for testing.
+		// When in doubt, T R A N S. Seed 7205143747332514273 is a good one for testing.
 		SurfaceRules.MaterialCondition blueNoise1 = SurfaceRules.noiseThreshold(NoiseParametersKeys.CALCITE, 0.05, 0.1);
 		SurfaceRules.MaterialCondition pinkNoise1 = SurfaceRules.noiseThreshold(NoiseParametersKeys.CALCITE, 0.1, 0.15);
 		SurfaceRules.MaterialCondition whiteNoise = SurfaceRules.noiseThreshold(NoiseParametersKeys.CALCITE, 0.15, 0.20);
