@@ -71,7 +71,6 @@ rootProject.afterEvaluate {
 					}
 				}
 			}
-
 		}
 	}
 
