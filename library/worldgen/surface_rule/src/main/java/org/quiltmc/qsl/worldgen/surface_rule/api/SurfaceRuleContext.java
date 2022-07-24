@@ -38,17 +38,17 @@ public interface SurfaceRuleContext {
 	 */
 	interface Overworld extends SurfaceRuleContext {
 		/**
-		 * {@return {@code true} if this overworld dimension has a surface exposed to the sky, or {@code false} otherwise}
+		 * {@return {@code true} if this overworld dimension should have a surface exposed to the sky, or {@code false} otherwise}
 		 */
 		boolean hasSurface();
 
 		/**
-		 * {@return {@code true} if this overworld dimension has a bedrock roof, or {@code false} otherwise}
+		 * {@return {@code true} if this overworld dimension should have a bedrock roof, or {@code false} otherwise}
 		 */
 		boolean hasBedrockRoof();
 
 		/**
-		 * {@return {@code true} if this overworld dimension has a bedrock floor, or {@code false} otherwise}
+		 * {@return {@code true} if this overworld dimension should have a bedrock floor, or {@code false} otherwise}
 		 */
 		boolean hasBedrockFloor();
 	}
