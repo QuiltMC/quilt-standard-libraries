@@ -30,7 +30,12 @@ import net.minecraft.client.util.math.MatrixStack;
 /**
  * Contains various helper methods for rendering GUI elements.
  */
-public interface GuiRendererHelper {
+@Environment(EnvType.CLIENT)
+public final class GuiRendererHelper {
+	private GuiRendererHelper() {
+		throw new RuntimeException("GuiRendererHelper only contains static declarations.");
+	}
+
 	/**
 	 * Renders a solid-colored quad to the screen.
 	 *
@@ -42,10 +47,9 @@ public interface GuiRendererHelper {
 	 * @param height the height of the quad
 	 * @param color the color of the quad
 	 */
-	@Environment(EnvType.CLIENT)
-	static void renderQuad(MatrixStack matrices, BufferBuilder buffer,
-						   int x, int y, int width, int height,
-						   int color) {
+	public static void renderQuad(MatrixStack matrices, BufferBuilder buffer,
+								  int x, int y, int width, int height,
+								  int color) {
 		var mat = matrices.peek().getPosition();
 		int r = (color >> 16) & 0xFF;
 		int g = (color >> 8) & 0xFF;
@@ -76,12 +80,11 @@ public interface GuiRendererHelper {
 	 * @param regionHeight the height of the texture region
 	 * @param color the color of the quad
 	 */
-	@Environment(EnvType.CLIENT)
-	static void renderTexturedQuad(MatrixStack matrices, BufferBuilder buffer,
-								   int x, int y, int width, int height,
-								   int u, int v, int regionWidth, int regionHeight,
-								   int textureWidth, int textureHeight,
-								   int color) {
+	public static void renderTexturedQuad(MatrixStack matrices, BufferBuilder buffer,
+										  int x, int y, int width, int height,
+										  int u, int v, int regionWidth, int regionHeight,
+										  int textureWidth, int textureHeight,
+										  int color) {
 		var mat = matrices.peek().getPosition();
 		int r = (color >> 16) & 0xFF;
 		int g = (color >> 8) & 0xFF;
@@ -119,11 +122,10 @@ public interface GuiRendererHelper {
 	 * @param regionWidth the width of the texture region
 	 * @param regionHeight the height of the texture region
 	 */
-	@Environment(EnvType.CLIENT)
-	static void renderTexturedQuad(MatrixStack matrices, BufferBuilder buffer,
-								   int x, int y, int width, int height,
-								   int u, int v, int regionWidth, int regionHeight,
-								   int textureWidth, int textureHeight) {
+	public static void renderTexturedQuad(MatrixStack matrices, BufferBuilder buffer,
+										  int x, int y, int width, int height,
+										  int u, int v, int regionWidth, int regionHeight,
+										  int textureWidth, int textureHeight) {
 		renderTexturedQuad(matrices, buffer,
 				x, y, width, height,
 				u, v, regionWidth, regionHeight,
@@ -144,12 +146,11 @@ public interface GuiRendererHelper {
 	 * @param v the Y position of the texture region
 	 * @param color the color of the quad
 	 */
-	@Environment(EnvType.CLIENT)
-	static void renderTexturedQuad(MatrixStack matrices, BufferBuilder buffer,
-								   int x, int y, int width, int height,
-								   int u, int v,
-								   int textureWidth, int textureHeight,
-								   int color) {
+	public static void renderTexturedQuad(MatrixStack matrices, BufferBuilder buffer,
+										  int x, int y, int width, int height,
+										  int u, int v,
+										  int textureWidth, int textureHeight,
+										  int color) {
 		renderTexturedQuad(matrices, buffer,
 				x, y, width, height,
 				u, v, width, height,
@@ -169,138 +170,14 @@ public interface GuiRendererHelper {
 	 * @param u the X position of the texture region
 	 * @param v the Y position of the texture region
 	 */
-	@Environment(EnvType.CLIENT)
-	static void renderTexturedQuad(MatrixStack matrices, BufferBuilder buffer,
-								   int x, int y, int width, int height,
-								   int u, int v,
-								   int textureWidth, int textureHeight) {
+	public static void renderTexturedQuad(MatrixStack matrices, BufferBuilder buffer,
+										  int x, int y, int width, int height,
+										  int u, int v,
+										  int textureWidth, int textureHeight) {
 		renderTexturedQuad(matrices, buffer,
 				x, y, width, height,
 				u, v, width, height,
 				textureWidth, textureHeight,
 				0xFFFFFFFF);
 	}
-
-	/**
-	 * Renders a solid-colored quad to the screen.
-	 *
-	 * @param matrices the matrices
-	 * @param buffer the buffer builder
-	 * @param x the X position of the quad
-	 * @param y the Y position of the quad
-	 * @param width the width of the quad
-	 * @param height the height of the quad
-	 * @param color the color of the quad
-	 */
-	@Environment(EnvType.CLIENT)
-	default void renderGuiQuad(MatrixStack matrices, BufferBuilder buffer,
-							   int x, int y, int width, int height,
-							   int color) {
-		renderQuad(matrices, buffer, x, y, width, height, color);
-	}
-
-	/**
-	 * Renders a textured and tinted quad to the screen.
-	 *
-	 * @param matrices the matrices
-	 * @param buffer the buffer builder
-	 * @param x the X position of the quad
-	 * @param y the Y position of the quad
-	 * @param width the width of the quad
-	 * @param height the height of the quad
-	 * @param u the X position of the texture region
-	 * @param v the Y position of the texture region
-	 * @param regionWidth the width of the texture region
-	 * @param regionHeight the height of the texture region
-	 * @param color the color of the quad
-	 */
-	@Environment(EnvType.CLIENT)
-	default void renderGuiTexturedQuad(MatrixStack matrices, BufferBuilder buffer,
-									   int x, int y, int width, int height,
-									   int u, int v, int regionWidth, int regionHeight,
-									   int textureWidth, int textureHeight,
-									   int color) {
-		renderTexturedQuad(matrices, buffer,
-				x, y, width, height,
-				u, v, regionWidth, regionHeight,
-				textureWidth, textureHeight,
-				color);
-	}
-
-	/**
-	 * Renders a textured quad to the screen.
-	 *
-	 * @param matrices the matrices
-	 * @param buffer the buffer builder
-	 * @param x the X position of the quad
-	 * @param y the Y position of the quad
-	 * @param width the width of the quad
-	 * @param height the height of the quad
-	 * @param u the X position of the texture region
-	 * @param v the Y position of the texture region
-	 * @param regionWidth the width of the texture region
-	 * @param regionHeight the height of the texture region
-	 */
-	@Environment(EnvType.CLIENT)
-	default void renderGuiTexturedQuad(MatrixStack matrices, BufferBuilder buffer,
-									   int x, int y, int width, int height,
-									   int u, int v, int regionWidth, int regionHeight,
-									   int textureWidth, int textureHeight) {
-		renderTexturedQuad(matrices, buffer,
-				x, y, width, height,
-				u, v, regionWidth, regionHeight,
-				textureWidth, textureHeight,
-				0xFFFFFFFF);
-	}
-
-	/**
-	 * Renders a textured and tinted quad to the screen.
-	 *
-	 * @param matrices the matrices
-	 * @param buffer the buffer builder
-	 * @param x the X position of the quad
-	 * @param y the Y position of the quad
-	 * @param width the width of the quad
-	 * @param height the height of the quad
-	 * @param u the X position of the texture region
-	 * @param v the Y position of the texture region
-	 * @param color the color of the quad
-	 */
-	@Environment(EnvType.CLIENT)
-	default void renderGuiTexturedQuad(MatrixStack matrices, BufferBuilder buffer,
-									   int x, int y, int width, int height,
-									   int u, int v,
-									   int textureWidth, int textureHeight,
-									   int color) {
-		renderTexturedQuad(matrices, buffer,
-				x, y, width, height,
-				u, v, width, height,
-				textureWidth, textureHeight,
-				color);
-	}
-
-	/**
-	 * Renders a textured quad to the screen.
-	 *
-	 * @param matrices the matrices
-	 * @param buffer the buffer builder
-	 * @param x the X position of the quad
-	 * @param y the Y position of the quad
-	 * @param width the width of the quad
-	 * @param height the height of the quad
-	 * @param u the X position of the texture region
-	 * @param v the Y position of the texture region
-	 */
-	@Environment(EnvType.CLIENT)
-	default void renderGuiTexturedQuad(MatrixStack matrices, BufferBuilder buffer,
-									   int x, int y, int width, int height,
-									   int u, int v,
-									   int textureWidth, int textureHeight) {
-		renderTexturedQuad(matrices, buffer,
-				x, y, width, height,
-				u, v, width, height,
-				textureWidth, textureHeight,
-				0xFFFFFFFF);
-	}
-
 }

@@ -27,7 +27,7 @@ import net.minecraft.item.ItemStack;
  * Renders a cooldown overlay.
  */
 @FunctionalInterface
-public interface CooldownOverlayRenderer extends GuiRendererHelper {
+public interface CooldownOverlayRenderer {
 	/**
 	 * A {@code CooldownOverlayRenderer} that replicates vanilla behavior.
 	 */

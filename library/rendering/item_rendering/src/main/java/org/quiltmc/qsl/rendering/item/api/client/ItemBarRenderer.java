@@ -28,7 +28,7 @@ import org.quiltmc.qsl.rendering.item.impl.client.VanillaItemBarRenderer;
 /**
  * Renders an item bar.
  */
-public interface ItemBarRenderer extends GuiRendererHelper {
+public interface ItemBarRenderer {
 	/**
 	 * An {@code ItemBarRenderer} that replicates vanilla behavior.
 	 */

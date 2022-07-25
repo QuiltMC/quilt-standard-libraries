@@ -28,7 +28,7 @@ import net.minecraft.item.ItemStack;
  * Renders a count label.
  */
 @FunctionalInterface
-public interface CountLabelRenderer extends GuiRendererHelper {
+public interface CountLabelRenderer {
 	/**
 	 * A {@code CountLabelRenderer} that replicates vanilla behavior.
 	 */
