@@ -26,17 +26,13 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a monad that can either contain a value or no value.
- *
  * <p>
  * Similar to the {@link Optional} class but with some performance improvements
  * and quality of life changes.
- *
  * <p>
  * Can either be {@link Just} or {@link Nothing}.
- *
  * <p>
  * {@link Just} instances contain a value of type {@link T}.
- *
  * <p>
  * {@link Nothing} instances all contain no data.
  *
@@ -51,7 +47,7 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	 * @param value a {@link Nullable} value that will be wrapped into a {@link Maybe}
 	 * @param <T>   the type of object the {@link Maybe} instance will hold
 	 * @return an instance of {@link Just} if the provided value is not <code>null</code>,
-	 * otherwise a {@link Nothing} instance
+	 * or a {@link Nothing} instance otherwise
 	 * @see Optional#ofNullable
 	 */
 	public static <T> Maybe<T> wrap(@Nullable T value) {
@@ -84,7 +80,8 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	}
 
 	/**
-	 * Converts an {@link Optional} into a {@link Maybe}.<br/>
+	 * Converts an {@link Optional} into a {@link Maybe}.
+	 * <p>
 	 * Exists for the sake of inter-operability.
 	 *
 	 * @param opt the {@link Optional} whose value will be wrapped in a {@link Maybe}
@@ -98,7 +95,7 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	}
 
 	/**
-	 * Maps the internal value of this {@link Maybe} into a new {@link Maybe} with a different value<br/>
+	 * Maps the internal value of this {@link Maybe} into a new {@link Maybe} with a different value
 	 * using the provided {@link Function}.
 	 *
 	 * @param transformer a {@link T} -> {@link U} function used in the mapping process
@@ -253,7 +250,7 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	 * Returns the {@link T} value container in the current {@link Maybe} instance.
 	 *
 	 * @return the {@link T} value that was wrapped
-	 * @throws IllegalStateException if the current instance is {@link Nothing}.
+	 * @throws IllegalStateException if the current instance is {@link Nothing}
 	 * @see Optional#orElseThrow()
 	 */
 	public abstract T unwrap() throws IllegalStateException;
@@ -263,8 +260,8 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	 * In that case it returns the provided {@link T} value.
 	 *
 	 * @param defaultValue the value to get if the current instance if {@link Nothing}
-	 * @return the current {@link T} value if the current instance is {@link Just}, otherwise the provided {@link T}
-	 * value
+	 * @return the current {@link T} value if the current instance is {@link Just}, or the provided {@link T}
+	 * value otherwise
 	 * @see Optional#orElse
 	 */
 	public abstract T unwrapOr(T defaultValue);
@@ -276,7 +273,7 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 	 * @param supplier a {@link Supplier} that will create the {@link T} value to be returns if the current instance
 	 *                 is {@link Nothing}
 	 * @return the current {@link T} value if the current instance if {@link Just},
-	 * otherwise the value produces by calling {@link Supplier#get()} on the provided {@link Supplier}
+	 * or the value produced by calling {@link Supplier#get()} on the provided {@link Supplier} otherwise.
 	 * @see Optional#orElseGet
 	 */
 	public abstract T unwrapOrGet(Supplier<? extends T> supplier);
@@ -560,7 +557,7 @@ public abstract sealed class Maybe<T> permits Maybe.Just, Maybe.Nothing {
 		 */
 		@Override
 		public Optional<T> toOptional() {
-			// Using Optional$of since our value should never be null!
+			// Using Optional#of since our value should never be null!
 			return Optional.of(this.value);
 		}
 	}

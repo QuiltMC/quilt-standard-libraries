@@ -22,7 +22,6 @@ import java.util.function.Supplier;
 
 /**
  * Represents a value that is only initialized once it's needed.
- *
  * <p>
  * Similar to {@link com.google.common.base.Suppliers#memoize}.
  *
@@ -53,7 +52,6 @@ public abstract sealed class Lazy<T> implements Supplier<T> permits Lazy.Filled,
 
 	/**
 	 * Creates a new {@link Lazy} containing the current value mapped using the provided {@link Function}.
-	 *
 	 * <p>
 	 * <i><b>This does not initialize the contained value!</b></i>
 	 *
@@ -66,7 +64,6 @@ public abstract sealed class Lazy<T> implements Supplier<T> permits Lazy.Filled,
 	/**
 	 * If we contain a value, we instantly return the transformed version, using the {@link Function} provided.
 	 * Otherwise, we return a new {@link Lazy} containing the value of the result of the mapper {@link  Function}.
-	 *
 	 * <p>
 	 * <i><b>This does not initialize the contained value!</b></i>
 	 *
@@ -78,7 +75,6 @@ public abstract sealed class Lazy<T> implements Supplier<T> permits Lazy.Filled,
 
 	/**
 	 * Initializes the current {@link Lazy} and returns the result of applying the provided {@link Function} to the value.
-	 *
 	 * <p>
 	 * <i><b>This initializes the contained value.</b></i>
 	 *
@@ -122,7 +118,6 @@ public abstract sealed class Lazy<T> implements Supplier<T> permits Lazy.Filled,
 
 	/**
 	 * Initializes the current value and applies it to the provided {@link Consumer}.
-	 *
 	 * <p>
 	 * <i><b>This initializes the contained value.</b></i>
 	 *
@@ -143,7 +138,6 @@ public abstract sealed class Lazy<T> implements Supplier<T> permits Lazy.Filled,
 
 	/**
 	 * Returns the contained value if it is initialized, otherwise the provided {@link T} instance.
-	 *
 	 * <p>
 	 * <i><b>This does not initialize the contained value.</b></i>
 	 *
@@ -162,7 +156,6 @@ public abstract sealed class Lazy<T> implements Supplier<T> permits Lazy.Filled,
 
 	/**
 	 * A {@link Lazy} with an already initialized value.
-	 *
 	 * <p>
 	 * This class can either be created using the {@link Lazy#filled} method or by mapping a {@link Lazy} with an initialized value.
 	 * A {@link Lazy} cannot be converted by itself into a {@link Filled}.
