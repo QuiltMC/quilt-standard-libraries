@@ -316,7 +316,7 @@ public final class Event<T> {
 			var second = this.getOrCreatePhase(secondPhase, false);
 			PhaseData.link(first, second);
 			PhaseSorting.sortPhases(this.sortedPhases);
-			rebuildInvoker(this.callbacks.length);
+			this.rebuildInvoker(this.callbacks.length);
 		}
 	}
 

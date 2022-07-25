@@ -23,7 +23,7 @@
  * <h3>Phase Sorting APIs</h3>
  * This module offers a phase sorter, which is a very simple non-cyclic graph resolver.
  * This is used for ordering event phases and may be used for other stuff.
- * To sort phases {@link org.quiltmc.qsl.base.api.phase.PhaseSorting#sortPhases(java.util.List) a sort method is provided}.
+ * To sort phases {@linkplain org.quiltmc.qsl.base.api.phase.PhaseSorting#sortPhases(java.util.List) a sort method is provided}.
  *
  * <p>
  * <h3>Other Utilities</h3>

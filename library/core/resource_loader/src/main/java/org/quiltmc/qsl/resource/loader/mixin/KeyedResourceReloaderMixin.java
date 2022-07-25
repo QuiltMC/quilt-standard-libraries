@@ -17,14 +17,14 @@
 
 package org.quiltmc.qsl.resource.loader.mixin;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Locale;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 import net.minecraft.loot.LootManager;
+import net.minecraft.loot.condition.LootConditionManager;
+import net.minecraft.loot.function.LootFunctionManager;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.server.ServerAdvancementLoader;
 import net.minecraft.server.function.FunctionLoader;
@@ -36,13 +36,11 @@ import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 
 @Mixin({
 		RecipeManager.class, ServerAdvancementLoader.class, FunctionLoader.class,
-		LootManager.class, TagManagerLoader.class
+		LootManager.class, TagManagerLoader.class, LootConditionManager.class, LootFunctionManager.class
 })
 public abstract class KeyedResourceReloaderMixin implements IdentifiableResourceReloader {
 	@Unique
 	private Identifier quilt$id;
-	@Unique
-	private Collection<Identifier> quilt$dependencies;
 
 	@Override
 	@SuppressWarnings({"ConstantConditions"})
@@ -58,6 +56,10 @@ public abstract class KeyedResourceReloaderMixin implements IdentifiableResource
 				this.quilt$id = ResourceReloaderKeys.Server.FUNCTIONS;
 			} else if (self instanceof LootManager) {
 				this.quilt$id = ResourceReloaderKeys.Server.LOOT_TABLES;
+			} else if (self instanceof LootConditionManager) {
+				this.quilt$id = ResourceReloaderKeys.Server.PREDICATES;
+			} else if (self instanceof LootFunctionManager) {
+				this.quilt$id = ResourceReloaderKeys.Server.ITEM_MODIFIERS;
 			} else if (self instanceof TagManagerLoader) {
 				this.quilt$id = ResourceReloaderKeys.Server.TAGS;
 			} else {
@@ -66,21 +68,5 @@ public abstract class KeyedResourceReloaderMixin implements IdentifiableResource
 		}
 
 		return this.quilt$id;
-	}
-
-	@Override
-	@SuppressWarnings({"ConstantConditions"})
-	public Collection<Identifier> getQuiltDependencies() {
-		if (this.quilt$dependencies == null) {
-			Object self = this;
-
-			if (self instanceof TagManagerLoader) {
-				this.quilt$dependencies = Collections.emptyList();
-			} else {
-				this.quilt$dependencies = Collections.singletonList(ResourceReloaderKeys.Server.TAGS);
-			}
-		}
-
-		return this.quilt$dependencies;
 	}
 }

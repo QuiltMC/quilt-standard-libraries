@@ -17,9 +17,6 @@
 
 package org.quiltmc.qsl.resource.loader.test;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import net.fabricmc.api.EnvType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +30,7 @@ import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.lifecycle.api.event.ServerTickEvents;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
+import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 import org.quiltmc.qsl.resource.loader.api.reloader.SimpleSynchronousResourceReloader;
 
 public class ResourceReloaderTestMod implements ModInitializer {
@@ -43,8 +41,8 @@ public class ResourceReloaderTestMod implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		this.setupClientReloadListeners();
-		this.setupServerReloadListeners();
+		this.setupClientReloadListeners(ResourceLoader.get(ResourceType.CLIENT_RESOURCES));
+		this.setupServerReloadListeners(ResourceLoader.get(ResourceType.SERVER_DATA));
 
 		// No lifecycle events yet
 		ServerTickEvents.START.register(server -> {
@@ -58,8 +56,10 @@ public class ResourceReloaderTestMod implements ModInitializer {
 		});
 	}
 
-	private void setupClientReloadListeners() {
-		ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerReloader(new SimpleSynchronousResourceReloader() {
+	private void setupClientReloadListeners(ResourceLoader resourceLoader) {
+		resourceLoader.addReloaderOrdering(ResourceLoaderTestMod.id("client_first"), ResourceLoaderTestMod.id("client_second"));
+
+		resourceLoader.registerReloader(new SimpleSynchronousResourceReloader() {
 			@Override
 			public Identifier getQuiltId() {
 				return ResourceLoaderTestMod.id("client_second");
@@ -73,14 +73,9 @@ public class ResourceReloaderTestMod implements ModInitializer {
 
 				LOGGER.info("Second client resource reloader is called.");
 			}
-
-			@Override
-			public Collection<Identifier> getQuiltDependencies() {
-				return Collections.singletonList(ResourceLoaderTestMod.id("client_first"));
-			}
 		});
 
-		ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerReloader(new SimpleSynchronousResourceReloader() {
+		resourceLoader.registerReloader(new SimpleSynchronousResourceReloader() {
 			@Override
 			public Identifier getQuiltId() {
 				return ResourceLoaderTestMod.id("client_first");
@@ -101,8 +96,10 @@ public class ResourceReloaderTestMod implements ModInitializer {
 		});
 	}
 
-	private void setupServerReloadListeners() {
-		ResourceLoader.get(ResourceType.SERVER_DATA).registerReloader(new SimpleSynchronousResourceReloader() {
+	private void setupServerReloadListeners(ResourceLoader resourceLoader) {
+		resourceLoader.addReloaderOrdering(ResourceLoaderTestMod.id("server_first"), ResourceLoaderTestMod.id("server_second"));
+
+		resourceLoader.registerReloader(new SimpleSynchronousResourceReloader() {
 			@Override
 			public Identifier getQuiltId() {
 				return ResourceLoaderTestMod.id("server_second");
@@ -116,14 +113,9 @@ public class ResourceReloaderTestMod implements ModInitializer {
 
 				LOGGER.info("Second server resource reloader is called.");
 			}
-
-			@Override
-			public Collection<Identifier> getQuiltDependencies() {
-				return Collections.singletonList(ResourceLoaderTestMod.id("server_first"));
-			}
 		});
 
-		ResourceLoader.get(ResourceType.SERVER_DATA).registerReloader(new SimpleSynchronousResourceReloader() {
+		resourceLoader.registerReloader(new SimpleSynchronousResourceReloader() {
 			@Override
 			public Identifier getQuiltId() {
 				return ResourceLoaderTestMod.id("server_first");

@@ -20,6 +20,8 @@ package org.quiltmc.qsl.base.api.phase;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.util.Identifier;
 
 /**
@@ -31,8 +33,8 @@ import net.minecraft.util.Identifier;
 public class PhaseData<T, P extends PhaseData<T, P>> {
 	final Identifier id;
 	protected T data;
-	final List<P> subsequentPhases = new ArrayList<>();
-	final List<P> previousPhases = new ArrayList<>();
+	protected final List<P> subsequentPhases = new ArrayList<>();
+	protected final List<P> previousPhases = new ArrayList<>();
 	VisitStatus visitStatus = VisitStatus.NOT_VISITED;
 
 	public PhaseData(Identifier id, T data) {
@@ -54,6 +56,14 @@ public class PhaseData<T, P extends PhaseData<T, P>> {
 		return this.data;
 	}
 
+	protected void addSubsequentPhase(P phase) {
+		this.subsequentPhases.add(phase);
+	}
+
+	protected void addPreviousPhase(P phase) {
+		this.previousPhases.add(phase);
+	}
+
 	/**
 	 * Links two given phases together.
 	 *
@@ -62,8 +72,8 @@ public class PhaseData<T, P extends PhaseData<T, P>> {
 	 * @param <T>    the type of data held by the phases
 	 */
 	public static <T, P extends PhaseData<T, P>> void link(P first, P second) {
-		first.subsequentPhases.add(second);
-		second.previousPhases.add(first);
+		first.addSubsequentPhase(second);
+		second.addPreviousPhase(first);
 	}
 
 	enum VisitStatus {

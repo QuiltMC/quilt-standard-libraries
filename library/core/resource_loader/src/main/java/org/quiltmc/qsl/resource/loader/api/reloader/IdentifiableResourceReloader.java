@@ -45,7 +45,9 @@ public interface IdentifiableResourceReloader extends ResourceReloader {
 	 *
 	 * @return the identifiers this resource reloader depends on
 	 * @see ResourceReloaderKeys
+	 * @deprecated use {@linkplain org.quiltmc.qsl.resource.loader.api.ResourceLoader#addReloaderOrdering(Identifier, Identifier)} instead
 	 */
+	@Deprecated(forRemoval = true)
 	default Collection<Identifier> getQuiltDependencies() {
 		return Collections.emptyList();
 	}

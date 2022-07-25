@@ -16,12 +16,10 @@
 
 package org.quiltmc.qsl.registry.attachment.impl.reloader;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -49,6 +47,10 @@ import org.quiltmc.qsl.resource.loader.api.reloader.SimpleResourceReloader;
 @ApiStatus.Internal
 public final class RegistryEntryAttachmentReloader implements SimpleResourceReloader<RegistryEntryAttachmentReloader.LoadedData> {
 	public static void register(ResourceType source) {
+		if (source == ResourceType.SERVER_DATA) {
+			ResourceLoader.get(source).addReloaderOrdering(ResourceReloaderKeys.Server.TAGS, ID_DATA);
+		}
+
 		ResourceLoader.get(source).registerReloader(new RegistryEntryAttachmentReloader(source));
 	}
 
@@ -58,7 +60,6 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 
 	private final ResourceType source;
 	private final Identifier id;
-	private final Collection<Identifier> deps;
 
 	private RegistryEntryAttachmentReloader(ResourceType source) {
 		if (source == ResourceType.CLIENT_RESOURCES) {
@@ -70,20 +71,11 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 			case SERVER_DATA -> ID_DATA;
 			case CLIENT_RESOURCES -> ID_ASSETS;
 		};
-		this.deps = switch (source) {
-			case SERVER_DATA -> Set.of(ResourceReloaderKeys.Server.TAGS);
-			case CLIENT_RESOURCES -> Set.of();
-		};
 	}
 
 	@Override
 	public Identifier getQuiltId() {
 		return this.id;
-	}
-
-	@Override
-	public Collection<Identifier> getQuiltDependencies() {
-		return this.deps;
 	}
 
 	@Override

@@ -52,6 +52,20 @@ public interface ResourceLoader {
 	void registerReloader(IdentifiableResourceReloader resourceReloader);
 
 	/**
+	 * Requests that resource reloaders registered as the first identifier is applied before the other referenced resource reloader.
+	 * <p>
+	 * Incompatible ordering constraints such as cycles will lead to inconsistent behavior:
+	 * some constraints will be respected and some will be ignored. If this happens, a warning will be logged.
+	 * <p>
+	 * Please keep in mind that this only takes effect during the application stage!
+	 *
+	 * @param firstReloader  the identifier of the resource reloader that should run before the other
+	 * @param secondReloader the identifier of the resource reloader that should run after the other
+	 * @see org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys identifiers of Vanilla resource reloaders
+	 */
+	void addReloaderOrdering(Identifier firstReloader, Identifier secondReloader);
+
+	/**
 	 * Registers a resource pack profile provider.
 	 * <p>
 	 * A resource pack profile means any provided resource packs will show up in the resource pack selection screen.
