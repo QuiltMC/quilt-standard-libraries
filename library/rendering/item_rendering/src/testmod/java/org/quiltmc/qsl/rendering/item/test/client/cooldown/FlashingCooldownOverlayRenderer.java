@@ -16,6 +16,9 @@
 
 package org.quiltmc.qsl.rendering.item.test.client.cooldown;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
@@ -26,6 +29,7 @@ import org.quiltmc.qsl.rendering.item.api.client.VanillaCooldownOverlayRenderer;
 /**
  * Shows a full red, flashing overlay if there's more than 80% of the cooldown still remaining.
  */
+@Environment(EnvType.CLIENT)
 public class FlashingCooldownOverlayRenderer extends VanillaCooldownOverlayRenderer {
 	public static final CooldownOverlayRenderer INSTANCE = new FlashingCooldownOverlayRenderer();
 

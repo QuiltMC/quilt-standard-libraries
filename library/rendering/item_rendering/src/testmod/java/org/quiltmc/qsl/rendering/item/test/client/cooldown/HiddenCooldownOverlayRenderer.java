@@ -16,6 +16,9 @@
 
 package org.quiltmc.qsl.rendering.item.test.client.cooldown;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import net.minecraft.item.ItemStack;
 
 import org.quiltmc.qsl.rendering.item.api.client.CooldownOverlayRenderer;
@@ -24,6 +27,7 @@ import org.quiltmc.qsl.rendering.item.api.client.VanillaCooldownOverlayRenderer;
 /**
  * Hides the cooldown overlay, even if there is a cooldown, as long as it has more than 20% remaining.
  */
+@Environment(EnvType.CLIENT)
 public class HiddenCooldownOverlayRenderer extends VanillaCooldownOverlayRenderer {
 	public static final CooldownOverlayRenderer INSTANCE = new HiddenCooldownOverlayRenderer();
 

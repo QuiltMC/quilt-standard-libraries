@@ -16,10 +16,14 @@
 
 package org.quiltmc.qsl.rendering.item.test.client.itembar;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import net.minecraft.item.ItemStack;
 
 import org.quiltmc.qsl.rendering.item.api.client.SolidColorItemBarRenderer;
 
+@Environment(EnvType.CLIENT)
 public class ConstantItemBarRenderer extends SolidColorItemBarRenderer {
 	protected final int step, color;
 
