@@ -1,5 +1,5 @@
 /**
- * <h2>Item Rendering Extensions</h2>
+ * <h2>Item Rendering</h2>
  *
  * Provides APIs for adding to and modifying the rendering of items in inventories.
  *

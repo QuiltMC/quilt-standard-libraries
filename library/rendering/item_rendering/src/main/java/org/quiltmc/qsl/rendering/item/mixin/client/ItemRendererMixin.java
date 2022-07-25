@@ -29,12 +29,10 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-import org.quiltmc.qsl.rendering.item.api.client.CooldownOverlayRenderer;
-import org.quiltmc.qsl.rendering.item.api.client.CountLabelRenderer;
 import org.quiltmc.qsl.rendering.item.api.client.ItemBarRenderer;
+import org.quiltmc.qsl.rendering.item.api.client.QuiltItemRendering;
 
 @Mixin(ItemRenderer.class)
 public abstract class ItemRendererMixin {
@@ -57,7 +55,7 @@ public abstract class ItemRendererMixin {
 		matrices.translate(x, y, 0);
 
 		if (item.preRenderOverlay(matrices, renderer, this.zOffset, stack)) {
-			if (isItemOverlayRenderingCustomized(item)) {
+			if (QuiltItemRendering.areOverlayComponentsCustomized(item)) {
 				ci.cancel();
 				renderCustomGuiItemOverlay(matrices, renderer, stack, countLabel);
 			}
@@ -101,13 +99,6 @@ public abstract class ItemRendererMixin {
 		matrices.translate(x, y, 0);
 		stack.getItem().postRenderOverlay(matrices, renderer, this.zOffset, stack);
 		matrices.pop();
-	}
-
-	@Unique
-	private boolean isItemOverlayRenderingCustomized(Item item) {
-		return item.getCountLabelRenderer() != CountLabelRenderer.VANILLA
-				|| item.getItemBarRenderers() != null
-				|| item.getCooldownOverlayRenderer() != CooldownOverlayRenderer.VANILLA;
 	}
 
 	@Unique
