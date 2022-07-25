@@ -3,7 +3,6 @@
   "package": "org.quiltmc.qsl.component.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "RegistryAccessor",
     "block.entity.BlockEntityMixin",
     "block.entity.DirectBlockEntityTickInvokerMixin",
     "chunk.ChunkMixin",

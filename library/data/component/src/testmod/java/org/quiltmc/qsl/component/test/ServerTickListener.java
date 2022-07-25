@@ -32,6 +32,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.explosion.Explosion;
 
 import org.quiltmc.qsl.base.api.event.ListenerPhase;
+import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.Components;
 import org.quiltmc.qsl.lifecycle.api.event.ServerWorldTickEvents;
 
@@ -78,6 +79,10 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 					}
 				}
 			}
+
+			Components.expose(ComponentTestMod.CREEPER_EXPLODE_TIME, player).ifJust(defaultIntegerSerializable -> {
+
+			});
 
 			player.sendMessage(Text.literal(inventory.getStack(0).toString()), true);
 		});
