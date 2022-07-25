@@ -35,7 +35,7 @@ public interface CooldownOverlayRenderer extends GuiRendererHelper {
 	CooldownOverlayRenderer VANILLA = new VanillaCooldownOverlayRenderer();
 
 	/**
-	 * Renders the cooldown overlay.
+	 * Renders the cooldown overlay for the given {@code ItemStack}.
 	 *
 	 * @param matrices the matrices
 	 * @param renderer the text renderer

@@ -60,16 +60,16 @@ public class VanillaCountLabelRenderer implements CountLabelRenderer {
 	}
 
 	/**
-	 * Gets the item stack's count label's contents.
+	 * Gets the item stack's count label text for the given {@code ItemStack}.<br>
 	 * Subclasses may override this method to decorate the count label.
 	 * <p>
 	 * If {@code override} is not null, this returns {@code override}.<br>
-	 * Otherwise, if the stack has more than 1 item, this returns the size of the stack.<br>
+	 * Otherwise, if the stack bigger than 1, this returns the size of the stack.<br>
 	 * Otherwise, this returns {@code null}.
 	 *
 	 * @param stack the item stack
-	 * @param override the label contents, or {@code null} to use the default contents
-	 * @return the label contents to draw, or {@code null} to not draw a label
+	 * @param override the override text, or {@code null} to use the default text
+	 * @return the text to render, or {@code null} to not render anything
 	 */
 	protected @Nullable String getCountLabel(ItemStack stack, @Nullable String override) {
 		if (override != null) {

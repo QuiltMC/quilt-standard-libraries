@@ -36,15 +36,16 @@ public interface ItemBarRenderer extends GuiRendererHelper {
 	ItemBarRenderer VANILLA = VanillaItemBarRenderer.INSTANCE;
 
 	/**
+	 * Checks if the item bar should be rendered for the given {@code ItemStack}.
 	 *
 	 * @param stack the item stack
-	 * @return {@code true} if the item bar is visible, {@code false} otherwise
+	 * @return {@code true} if the item bar should be rendered, {@code false} otherwise
 	 */
 	@Environment(EnvType.CLIENT)
 	boolean isItemBarVisible(ItemStack stack);
 
 	/**
-	 * Renders the item bar.
+	 * Renders the item bar for the given {@code ItemStack}.
 	 *
 	 * @param matrices the matrices
 	 * @param renderer the text renderer

@@ -58,7 +58,7 @@ public abstract class SolidColorItemBarRenderer implements ItemBarRenderer {
 	}
 
 	/**
-	 * Gets the background color of the item bar, in ARGB format.
+	 * Gets the background color of the item bar, in ARGB format, for the given {@code ItemStack}.
 	 *
 	 * @param stack the item stack
 	 * @return the background color of the item bar
@@ -68,7 +68,7 @@ public abstract class SolidColorItemBarRenderer implements ItemBarRenderer {
 	}
 
 	/**
-	 * Gets the length of the filled section of the item bar, in pixels.
+	 * Gets the length of the filled section of the item bar, in pixels, for the given {@code ItemStack}.
 	 *
 	 * @param stack the item stack
 	 * @return the length of the filled section
@@ -77,7 +77,7 @@ public abstract class SolidColorItemBarRenderer implements ItemBarRenderer {
 	protected abstract int getItemBarStep(ItemStack stack);
 
 	/**
-	 * Gets the foreground color of the item bar (the filled section), in ARGB format.
+	 * Gets the foreground color of the item bar (the filled section), in ARGB format, for the given {@code ItemStack}.
 	 *
 	 * @param stack the item stack
 	 * @return the foreground color of the item bar

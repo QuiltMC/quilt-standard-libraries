@@ -56,17 +56,17 @@ public abstract class SolidColorCooldownOverlayRenderer implements CooldownOverl
 	}
 
 	/**
-	 * Checks if the cooldown overlay should be visible.
+	 * Checks if the cooldown overlay should be rendered for the given {@code ItemStack}.
 	 *
 	 * @param stack the item stack
-	 * @return {@code true} if cooldown overlay should be visible {@code false} otherwise
+	 * @return {@code true} if cooldown overlay should be rendered, {@code false} otherwise
 	 */
 	protected boolean isCooldownOverlayVisible(ItemStack stack) {
 		return getCooldownOverlayStep(stack) > 0;
 	}
 
 	/**
-	 * Gets the height of the cooldown overlay, in pixels.
+	 * Gets the height of the cooldown overlay, in pixels, for the given {@code ItemStack}.
 	 *
 	 * @param stack the item stack
 	 * @return the height of the cooldown overlay
@@ -75,7 +75,7 @@ public abstract class SolidColorCooldownOverlayRenderer implements CooldownOverl
 	protected abstract int getCooldownOverlayStep(ItemStack stack);
 
 	/**
-	 * Gets the color of the cooldown overlay, in ARGB format.
+	 * Gets the color of the cooldown overlay, in ARGB format, for the given {@code ItemStack}.
 	 *
 	 * @param stack the item stack
 	 * @return the color of the cooldown overlay

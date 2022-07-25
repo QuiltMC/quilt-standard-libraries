@@ -36,7 +36,7 @@ public interface CountLabelRenderer extends GuiRendererHelper {
 	CountLabelRenderer VANILLA = new VanillaCountLabelRenderer();
 
 	/**
-	 * Renders the count label.
+	 * Renders the count label for the given {@code ItemStack}.
 	 *
 	 * @param matrices the matrices
 	 * @param renderer the text renderer
