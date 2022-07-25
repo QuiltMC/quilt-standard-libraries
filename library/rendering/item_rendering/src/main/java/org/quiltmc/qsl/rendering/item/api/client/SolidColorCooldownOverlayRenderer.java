@@ -50,8 +50,8 @@ public abstract class SolidColorCooldownOverlayRenderer implements CooldownOverl
 		RenderSystem.defaultBlendFunc();
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder buffer = tessellator.getBufferBuilder();
-        GuiRendererHelper.renderQuad(matrices, buffer, 0, 16 - step, 16, step, color);
-        RenderSystem.enableTexture();
+		GuiRendererHelper.renderQuad(matrices, buffer, 0, 16 - step, 16, step, color);
+		RenderSystem.enableTexture();
 		RenderSystem.enableDepthTest();
 	}
 

@@ -50,9 +50,9 @@ public abstract class SolidColorItemBarRenderer implements ItemBarRenderer {
 		RenderSystem.disableBlend();
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder buffer = tessellator.getBufferBuilder();
-        GuiRendererHelper.renderQuad(matrices, buffer, 2, 0, 13, 2, getItemBarBackground(stack));
+		GuiRendererHelper.renderQuad(matrices, buffer, 2, 0, 13, 2, getItemBarBackground(stack));
 		GuiRendererHelper.renderQuad(matrices, buffer, 2, 0, getItemBarStep(stack), 1, getItemBarForeground(stack));
-        RenderSystem.enableBlend();
+		RenderSystem.enableBlend();
 		RenderSystem.enableTexture();
 		RenderSystem.enableDepthTest();
 	}
