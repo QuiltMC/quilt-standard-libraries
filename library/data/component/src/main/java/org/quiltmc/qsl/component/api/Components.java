@@ -58,14 +58,14 @@ public final class Components {
 	 * For users who wish to use an easier method of injection, see {@link org.quiltmc.qsl.component.api.injection.ComponentInjector}.
 	 *
 	 * @param predicate The {@linkplain InjectionPredicate predicate} used for the injection
-	 * @param entry     The {@linkplain ComponentEntry entry} used for the injection.
-	 * @param <C>       The type of the injected component.
+	 * @param entries   The {@linkplain ComponentEntry entries} that will be injected.
 	 * @see InjectionPredicate
 	 * @see ComponentEntry
 	 */
-	public static <C> void inject(InjectionPredicate predicate, ComponentEntry<C> entry) {
-		ComponentsImpl.inject(predicate, entry);
+	public static void inject(InjectionPredicate predicate, ComponentEntry<?>... entries) {
+		ComponentsImpl.inject(predicate, entries);
 	}
+
 	// end injection methods
 
 	// begin registration methods
@@ -118,7 +118,7 @@ public final class Components {
 	public static <C> ComponentType<C> register(Identifier id, ComponentFactory<C> factory) {
 		if (factory instanceof ComponentType<C>) {
 			throw ErrorUtil.illegalArgument("Do NOT register ComponentTypes as factories, use the correct method")
-						   .get();
+						.get();
 		}
 
 		return ComponentsImpl.register(id, new ComponentType<>(id, factory, false, false));
@@ -148,5 +148,6 @@ public final class Components {
 	public static <C extends Tickable> ComponentType<C> registerInstant(Identifier id, ComponentFactory<C> factory) {
 		return ComponentsImpl.register(id, new ComponentType<>(id, factory, false, true));
 	}
+
 	// end registration method
 }

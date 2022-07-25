@@ -16,23 +16,24 @@
 
 package org.quiltmc.qsl.component.impl.container;
 
-import net.minecraft.nbt.NbtCompound;
-import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.base.api.util.Lazy;
-import org.quiltmc.qsl.base.api.util.Maybe;
-import org.quiltmc.qsl.component.api.ComponentType;
-import org.quiltmc.qsl.component.api.component.NbtSerializable;
-import org.quiltmc.qsl.component.api.component.Syncable;
-import org.quiltmc.qsl.component.api.component.Tickable;
-import org.quiltmc.qsl.component.api.container.ComponentContainer;
-import org.quiltmc.qsl.component.api.provider.ComponentProvider;
-import org.quiltmc.qsl.component.api.sync.SyncChannel;
-import org.quiltmc.qsl.component.api.injection.ComponentEntry;
-
 import java.util.ArrayDeque;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
+
+import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.nbt.NbtCompound;
+
+import org.quiltmc.qsl.base.api.util.Lazy;
+import org.quiltmc.qsl.base.api.util.Maybe;
+import org.quiltmc.qsl.component.api.ComponentType;
+import org.quiltmc.qsl.component.api.component.NbtSerializable;
+import org.quiltmc.qsl.component.api.component.Tickable;
+import org.quiltmc.qsl.component.api.container.ComponentContainer;
+import org.quiltmc.qsl.component.api.injection.ComponentEntry;
+import org.quiltmc.qsl.component.api.provider.ComponentProvider;
+import org.quiltmc.qsl.component.api.sync.SyncChannel;
 
 public class SingleComponentContainer<T> implements ComponentContainer {
 	private final ComponentType<T> type;
@@ -41,8 +42,7 @@ public class SingleComponentContainer<T> implements ComponentContainer {
 	private Lazy<? extends T> entry;
 	private boolean shouldSync = false;
 
-	protected SingleComponentContainer(ComponentType<T> type, boolean ticking,
-			@Nullable SyncChannel<?, ?> syncChannel) {
+	protected SingleComponentContainer(ComponentType<T> type, boolean ticking, @Nullable SyncChannel<?, ?> syncChannel) {
 		this.type = type;
 		this.ticking = ticking;
 		this.syncChannel = Maybe.wrap(syncChannel);
@@ -77,8 +77,8 @@ public class SingleComponentContainer<T> implements ComponentContainer {
 		String idString = this.type.id().toString();
 		if (providerRootNbt.getKeys().contains(idString)) {
 			this.expose(this.type)
-				.map(it -> ((NbtSerializable<?>) it))
-				.ifJust(nbtComponent -> NbtSerializable.readFrom(nbtComponent, this.type.id(), providerRootNbt));
+					.map(it -> ((NbtSerializable<?>) it))
+					.ifJust(nbtComponent -> NbtSerializable.readFrom(nbtComponent, this.type.id(), providerRootNbt));
 		}
 	}
 
@@ -86,19 +86,15 @@ public class SingleComponentContainer<T> implements ComponentContainer {
 	public void tick(ComponentProvider provider) {
 		if (this.ticking) {
 			this.expose(this.type)
-				.map(it -> ((Tickable) it))
-				.ifJust(tickingComponent -> tickingComponent.tick(provider));
+					.map(it -> ((Tickable) it))
+					.ifJust(tickingComponent -> tickingComponent.tick(provider));
 		}
 	}
 
 	@Override
 	public void sync(ComponentProvider provider) {
 		if (this.shouldSync) {
-			this.syncChannel.ifJust(channel -> channel.syncFromQueue(
-					new ArrayDeque<>(List.of(this.type)),
-					type -> (Syncable) this.entry.get(),
-					provider
-			));
+			this.syncChannel.ifJust(channel -> channel.syncFromQueue(new ArrayDeque<>(List.of(this.type)), provider));
 		}
 	}
 

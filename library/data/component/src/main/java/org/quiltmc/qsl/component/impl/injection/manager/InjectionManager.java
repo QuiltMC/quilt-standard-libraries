@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.component.impl.injection.manager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -26,7 +27,6 @@ import java.util.stream.Stream;
 import net.minecraft.util.Util;
 
 import org.quiltmc.qsl.base.api.util.Maybe;
-import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.Components;
 import org.quiltmc.qsl.component.api.injection.ComponentEntry;
 import org.quiltmc.qsl.component.api.injection.predicate.InjectionPredicate;
@@ -37,15 +37,19 @@ public abstract class InjectionManager<P extends InjectionPredicate, I> {
 	private final Map<P, List<ComponentEntry<?>>> injections = new HashMap<>();
 	private final Map<Class<?>, List<I>> cache = new IdentityHashMap<>();
 
-	// TODO: See what happens when the type collides
-	public <C> void inject(P predicate, ComponentEntry<C> componentEntry) {
-		ComponentType<C> type = componentEntry.type();
-		if (Components.REGISTRY.get(type.id()) == null) {
-			throw ErrorUtil.illegalArgument("The target id %s does not match any registered component", type).get();
+	// When a type collides, one of the two variants will override the other one.
+	// That would mean only the last added type, will ever be properly processed.
+	public void inject(P predicate, ComponentEntry<?>... entries) {
+		for (ComponentEntry<?> entry : entries) {
+			var type = entry.type();
+
+			if (Components.REGISTRY.get(type.id()) == null) {
+				throw ErrorUtil.illegalArgument("The target id %s does not match any registered component", type).get();
+			}
 		}
 
 		var targetBucket = this.injections.computeIfAbsent(predicate, p -> new ArrayList<>());
-		targetBucket.add(componentEntry);
+		Collections.addAll(targetBucket, entries);
 
 		this.cache.clear();
 	}

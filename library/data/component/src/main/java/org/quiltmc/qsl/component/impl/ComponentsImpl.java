@@ -49,11 +49,11 @@ public class ComponentsImpl {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger("Quilt Component");
 
-	public static <C> void inject(InjectionPredicate predicate, ComponentEntry<C> componentEntry) {
+	public static void inject(InjectionPredicate predicate, ComponentEntry<?>... entries) {
 		if (predicate instanceof DynamicInjectionPredicate dynamicPredicate) {
-			DYNAMIC_MANAGER.inject(dynamicPredicate, componentEntry);
+			DYNAMIC_MANAGER.inject(dynamicPredicate, entries);
 		} else {
-			CACHED_MANAGER.inject(predicate, componentEntry);
+			CACHED_MANAGER.inject(predicate, entries);
 		}
 	}
 

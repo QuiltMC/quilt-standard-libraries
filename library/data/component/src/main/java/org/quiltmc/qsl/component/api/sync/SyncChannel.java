@@ -110,7 +110,6 @@ public class SyncChannel<P extends ComponentProvider, U> {
 			provider -> PlayerLookup.all((MinecraftServer) provider) // only called server side so the cast is safe
 	);
 
-	// TODO: Do we need accessors for these fields?
 	protected final Identifier channelId;
 	protected final NetworkCodec<U> codec;
 	protected final Function<P, U> identifyingDataTransformer;
@@ -163,12 +162,11 @@ public class SyncChannel<P extends ComponentProvider, U> {
 		ServerPlayNetworking.send(players.isEmpty() ? this.playerProvider.apply(providerAsP) : players, this.channelId, buf);
 	}
 
-	// TODO: Figure out a way to avoid the unsafe casting if possible
-	public void syncFromQueue(Queue<ComponentType<?>> pendingSync, Function<ComponentType<?>, Syncable> mapper, ComponentProvider provider) {
-		this.syncFromQueue(pendingSync, mapper, provider, List.of());
+	public void syncFromQueue(Queue<ComponentType<?>> pendingSync, ComponentProvider provider) {
+		this.syncFromQueue(pendingSync, provider, List.of());
 	}
 
-	public void syncFromQueue(Queue<ComponentType<?>> pendingSync, Function<ComponentType<?>, Syncable> mapper, ComponentProvider provider, Collection<ServerPlayerEntity> players) {
+	public void syncFromQueue(Queue<ComponentType<?>> pendingSync, ComponentProvider provider, Collection<ServerPlayerEntity> players) {
 		if (pendingSync.isEmpty()) {
 			return;
 		}
@@ -179,7 +177,7 @@ public class SyncChannel<P extends ComponentProvider, U> {
 			while (!pendingSync.isEmpty()) {
 				var currentType = pendingSync.poll();
 				ComponentType.NETWORK_CODEC.encode(buf, currentType); // append type rawId
-				mapper.apply(currentType).writeToBuf(buf); // append component data
+				((Syncable) provider.expose(currentType).unwrap()).writeToBuf(buf); // append component data
 			}
 		});
 	}
@@ -236,7 +234,6 @@ public class SyncChannel<P extends ComponentProvider, U> {
 	 * @apiNote Avoid using this to sync components. Sync should be initiated from the server, unless specifically needed.
 	 */
 	public void forceSync(ComponentProvider provider, ServerPlayerEntity sender) {
-		// TODO: Is there a way to avoid object creation here?
 		var queue = new ArrayDeque<ComponentType<?>>();
 
 		provider.getComponentContainer().forEach((type, component) -> {
@@ -245,7 +242,7 @@ public class SyncChannel<P extends ComponentProvider, U> {
 			}
 		});
 
-		this.syncFromQueue(queue, type -> ((Syncable) provider.expose(type).unwrap()), provider, Collections.singletonList(sender));
+		this.syncFromQueue(queue, provider, Collections.singletonList(sender));
 	}
 
 	@Environment(EnvType.CLIENT)
@@ -269,6 +266,26 @@ public class SyncChannel<P extends ComponentProvider, U> {
 		this.requestQueue.clear();
 
 		ClientPlayNetworking.send(this.channelId, buf);
+	}
+
+	public NetworkCodec<U> getCodec() {
+		return this.codec;
+	}
+
+	public Function<P, U> getIdentifyingDataTransformer() {
+		return this.identifyingDataTransformer;
+	}
+
+	public Function<U, P> getClientLocator() {
+		return this.clientLocator;
+	}
+
+	public BiFunction<ServerPlayerEntity, U, P> getServerLocator() {
+		return this.serverLocator;
+	}
+
+	public Function<? super P, Collection<ServerPlayerEntity>> getPlayerProvider() {
+		return this.playerProvider;
 	}
 
 	public Identifier getChannelId() {

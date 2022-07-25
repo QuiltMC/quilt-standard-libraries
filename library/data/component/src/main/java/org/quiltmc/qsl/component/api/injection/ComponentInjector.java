@@ -1,14 +1,15 @@
 package org.quiltmc.qsl.component.api.injection;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
 import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.ComponentFactory;
 import org.quiltmc.qsl.component.api.ComponentType;
-import org.quiltmc.qsl.component.api.Components;
 import org.quiltmc.qsl.component.api.injection.predicate.InjectionPredicate;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
+import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.injection.predicate.cached.ClassInjectionPredicate;
 import org.quiltmc.qsl.component.impl.injection.predicate.cached.FilteredInheritedInjectionPredicate;
 import org.quiltmc.qsl.component.impl.injection.predicate.cached.InheritedInjectionPredicate;
@@ -17,34 +18,34 @@ import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 
 public class ComponentInjector<T extends ComponentProvider> {
 	protected final Class<T> target;
-	protected List<ComponentEntry<?>> entries;
+	protected final List<ComponentEntry<?>> entries;
 	protected InjectionPredicate predicate;
 
 	public ComponentInjector(Class<T> target) {
 		this.target = target;
 		this.predicate = new ClassInjectionPredicate(this.target);
-		this.entries = List.of();
+		this.entries = new ArrayList<>();
 	}
 
 	public static <T extends ComponentProvider> ComponentInjector<T> injector(Class<?> clazz) {
-		Class<T> properClass = asProvider(clazz).<Class<T>>castUnchecked().unwrapOrThrow(
-				ErrorUtil.illegalArgument("Class %s is not a ComponentProvider implementor!")
+		Class<T> properClass = ComponentInjector.<T>asProvider(clazz).unwrapOrThrow(
+				ErrorUtil.illegalArgument("Class %s is not a ComponentProvider implementor!", clazz)
 		);
 		return new ComponentInjector<>(properClass);
 	}
 
-	public static Maybe<Class<? extends ComponentProvider>> asProvider(Class<?> clazz) {
+	public static <T extends ComponentProvider> Maybe<Class<T>> asProvider(Class<?> clazz) {
 		var currClass = clazz;
 
 		while (currClass != null) {
-			for (Class<?> currInterface : clazz.getInterfaces()) {
+			for (Class<?> currInterface : currClass.getInterfaces()) {
 				if (currInterface == ComponentProvider.class) {
-					// we can safely cast, since this method checks for that
+					// we can safely cast, since the class implements ComponentProvider
 					return Maybe.just(clazz).castUnchecked();
 				}
 			}
 
-			currClass = clazz.getSuperclass();
+			currClass = currClass.getSuperclass();
 		}
 
 		return Maybe.nothing();
@@ -74,8 +75,7 @@ public class ComponentInjector<T extends ComponentProvider> {
 	}
 
 	public void inject() {
-		// TODO: Maybe create a vararg equivalent to the inject method
-		this.entries.forEach(entry -> Components.inject(this.predicate, entry));
+		ComponentsImpl.inject(this.predicate, this.entries.toArray(ComponentEntry[]::new));
 	}
 
 	public class EntryBuilder<E> {
