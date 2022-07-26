@@ -105,6 +105,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		get(type).sort(reloaders);
 	}
 
+	@SuppressWarnings("removal")
 	@Override
 	public void registerReloader(IdentifiableResourceReloader resourceReloader) {
 		if (!this.addedReloaderIds.add(resourceReloader.getQuiltId())) {
@@ -121,7 +122,6 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		}
 
 		// Keep this for compatibility.
-		//noinspection removal
 		for (var dependency : resourceReloader.getQuiltDependencies()) {
 			this.addReloaderOrdering(dependency, resourceReloader.getQuiltId());
 		}
