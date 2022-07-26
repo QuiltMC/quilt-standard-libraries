@@ -21,6 +21,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.text.Text;
@@ -29,9 +30,16 @@ import org.quiltmc.qsl.command.impl.client.ClientCommandInternals;
 
 @Mixin(ClientPlayerEntity.class)
 abstract class ClientPlayerEntityMixin {
+	@Inject(method = "method_44099", at = @At("HEAD"), cancellable = true)
+	private void onSendCommand(String command, CallbackInfoReturnable<Boolean> cir) {
+		if (ClientCommandInternals.executeCommand(command, true)) {
+			cir.setReturnValue(true);
+		}
+	}
+
 	@Inject(method = "method_43787", at = @At("HEAD"), cancellable = true)
-	private void onSendChatMessage(String message, Text text, CallbackInfo ci) {
-		if (ClientCommandInternals.executeCommand(message, true)) {
+	private void onSendCommand(String command, Text preview, CallbackInfo ci) {
+		if (ClientCommandInternals.executeCommand(command, true)) {
 			ci.cancel();
 		}
 	}
