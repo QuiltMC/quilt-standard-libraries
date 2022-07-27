@@ -106,7 +106,7 @@ public class MainMixin {
 	}
 
 	@Inject(
-			method = "m_cbzunkqe",
+			method = {"m_cbzunkqe", "method_43613"},
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/world/level/LevelProperties;<init>(Lnet/minecraft/world/level/LevelInfo;Lnet/minecraft/world/gen/GeneratorOptions;Lcom/mojang/serialization/Lifecycle;)V",
