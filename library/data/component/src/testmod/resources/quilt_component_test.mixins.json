@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.component.test.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+  ],
+  "client": [
+    "client.MixinInGameHud",
+    "client.MixinBlockEntityRendererFactories"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
