@@ -16,12 +16,8 @@
 
 package org.quiltmc.qsl.registry.attachment.api;
 
-import java.util.function.Consumer;
-
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-
-import org.quiltmc.qsl.registry.attachment.impl.BuiltinAttachmentBuilderImpl;
 
 /**
  * Extensions for working with {@link Registry}s.
@@ -71,6 +67,7 @@ public final class RegistryExtensions {
 		attach2.put(entry, value2);
 		return entry;
 	}
+
 	/**
 	 * Utility method to register an entry and associate values to it in multiple attachments.
 	 *
