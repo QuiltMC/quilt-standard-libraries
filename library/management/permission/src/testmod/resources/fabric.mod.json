@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "qsl_permission_testmod",
+  "name": "Quilt Permission API Test Mod",
+  "version": "1.0.0",
+  "environment": "*",
+  "license": "Apache-2.0",
+  "depends": {
+    "quilt_command": "*",
+    "quilt_lifecycle_events": "*",
+    "quilt_permission": "*"
+  },
+  "entrypoints": {
+    "events": [
+      "org.quiltmc.qsl.permission.QuiltPermissionTest"
+    ]
+  }
+}
