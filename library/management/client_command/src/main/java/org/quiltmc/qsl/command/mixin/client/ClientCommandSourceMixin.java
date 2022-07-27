@@ -46,7 +46,7 @@ abstract class ClientCommandSourceMixin implements QuiltClientCommandSource {
 	@Override
 	public void sendFeedback(Text message) {
 		this.client.inGameHud.getChatHud().addMessage(message);
-		this.client.method_44713().method_37015(message);
+		this.client.getChatNarratorManager().narrate(message);
 	}
 
 	@Override
