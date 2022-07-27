@@ -1,0 +1,18 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Surface Rule API"
+	moduleName = "surface_rule"
+	id = "quilt_surface_rule"
+	library = "worldgen"
+	description = "An API for managing custom Surface Rules."
+	moduleDependencies {
+		core {
+			api("qsl_base")
+			testmodOnly("resource_loader")
+		}
+	}
+	accessWidener()
+}
