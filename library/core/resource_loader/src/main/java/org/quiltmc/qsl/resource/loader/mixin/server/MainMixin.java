@@ -113,6 +113,7 @@ public class MainMixin {
 					remap = true
 			),
 			remap = false,
+			require = 1,
 			cancellable = true,
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
