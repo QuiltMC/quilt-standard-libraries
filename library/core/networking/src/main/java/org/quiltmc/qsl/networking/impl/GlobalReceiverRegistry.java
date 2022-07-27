@@ -68,13 +68,13 @@ public final class GlobalReceiverRegistry<H> {
 		lock.lock();
 
 		try {
-			final boolean replaced = this.receivers.putIfAbsent(channelName, handler) == null;
+			final boolean inserted = this.receivers.putIfAbsent(channelName, handler) == null;
 
-			if (!replaced) {
+			if (inserted) {
 				this.handleRegistration(channelName, handler);
 			}
 
-			return replaced;
+			return inserted;
 		} finally {
 			lock.unlock();
 		}

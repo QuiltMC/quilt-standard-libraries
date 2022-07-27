@@ -215,18 +215,6 @@ public interface RegistryEntryAttachment<R, V> {
 	}
 
 	/**
-	 * Gets the value associated with this attachment for the specified entry.
-	 *
-	 * @param entry registry entry
-	 * @return attachment value, or empty if no value is assigned
-	 * @deprecated use {@link #get} instead
-	 */
-	@Deprecated(forRemoval = true)
-	default Optional<V> getValue(R entry) {
-		return this.get(entry);
-	}
-
-	/**
 	 * {@return a set of all registry entries with an associated value}
 	 */
 	Set<R> keySet();
@@ -362,8 +350,8 @@ public interface RegistryEntryAttachment<R, V> {
 	 *
 	 * @param entry the registry entry
 	 * @param value the associated value
-	 * @param <R> type of registry entry
-	 * @param <V> type of value
+	 * @param <R>   type of registry entry
+	 * @param <V>   type of value
 	 */
 	record Entry<R, V>(R entry, V value) {
 		/**
@@ -372,7 +360,7 @@ public interface RegistryEntryAttachment<R, V> {
 		 * @param entry the registry entry
 		 * @param value the associated value
 		 */
-		public Entry { }
+		public Entry {}
 	}
 
 	/**
@@ -380,8 +368,8 @@ public interface RegistryEntryAttachment<R, V> {
 	 *
 	 * @param tag   the tag
 	 * @param value the associated value
-	 * @param <R> type of registry entry
-	 * @param <V> type of value
+	 * @param <R>   type of registry entry
+	 * @param <V>   type of value
 	 */
 	record TagEntry<R, V>(TagKey<R> tag, V value) {
 		/**
@@ -390,7 +378,7 @@ public interface RegistryEntryAttachment<R, V> {
 		 * @param tag   the tag
 		 * @param value the associated value
 		 */
-		public TagEntry { }
+		public TagEntry {}
 	}
 
 	/**
