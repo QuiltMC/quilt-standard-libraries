@@ -47,8 +47,9 @@ public class TestServerMixin {
 	}
 
 	@Redirect(
-			method = "method_40377",
+			method = {"method_40377", "m_pckcekot"},
 			at = @At(value = "INVOKE", target = "Ljava/util/function/Supplier;get()Ljava/lang/Object;", remap = false),
+			require = 1,
 			remap = false
 	)
 	private static Object loadRegistry(Supplier<Object> unused, ResourceManager resourceManager) {

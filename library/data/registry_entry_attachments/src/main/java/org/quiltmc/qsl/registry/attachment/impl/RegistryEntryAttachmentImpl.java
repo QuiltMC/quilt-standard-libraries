@@ -253,6 +253,7 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 			return keyIt.hasNext();
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public Entry<R, V> next() {
 			R key = keyIt.next();

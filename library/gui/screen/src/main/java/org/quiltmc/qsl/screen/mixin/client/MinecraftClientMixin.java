@@ -68,7 +68,7 @@ abstract class MinecraftClientMixin {
 
 	// The LevelLoadingScreen is the odd screen that isn't ticked by the main tick loop, so we fire events for this screen.
 	// We Coerce the package-private inner class representing the world load action so we don't need an access widener.
-	@Inject(method = "method_29610", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/LevelLoadingScreen;tick()V"))
+	@Inject(method = "startIntegratedServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/LevelLoadingScreen;tick()V"))
 	private void beforeLoadingScreenTick(CallbackInfo ci) {
 		// Store the screen in a variable in case someone tries to change the screen during this before tick event.
 		// If someone changes the screen, the after tick event will likely have class cast exceptions or throw a NPE.
@@ -76,7 +76,7 @@ abstract class MinecraftClientMixin {
 		ScreenEvents.BEFORE_TICK.invoker().beforeTick(this.quilt$tickingScreen);
 	}
 
-	@Inject(method = "method_29610", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;render(Z)V"))
+	@Inject(method = "startIntegratedServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;render(Z)V"))
 	private void afterLoadingScreenTick(CallbackInfo ci) {
 		ScreenEvents.AFTER_TICK.invoker().afterTick(this.quilt$tickingScreen);
 		// Finally set the currently ticking screen to null

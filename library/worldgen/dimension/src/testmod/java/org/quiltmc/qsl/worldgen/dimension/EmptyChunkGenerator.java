@@ -106,6 +106,6 @@ public class EmptyChunkGenerator extends ChunkGenerator {
 	}
 
 	@Override
-	public void method_40450(List<String> list, RandomState randomState, BlockPos blockPos) {
+	public void m_hfetlfug(List<String> list, RandomState randomState, BlockPos blockPos) {
 	}
 }
