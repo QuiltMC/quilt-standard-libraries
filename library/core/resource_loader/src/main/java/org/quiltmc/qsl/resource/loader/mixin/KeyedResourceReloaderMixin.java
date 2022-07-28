@@ -19,6 +19,7 @@ package org.quiltmc.qsl.resource.loader.mixin;
 
 import java.util.Locale;
 
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -44,7 +45,7 @@ public abstract class KeyedResourceReloaderMixin implements IdentifiableResource
 
 	@Override
 	@SuppressWarnings({"ConstantConditions"})
-	public Identifier getQuiltId() {
+	public @NotNull Identifier getQuiltId() {
 		if (this.quilt$id == null) {
 			Object self = this;
 

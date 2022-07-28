@@ -36,7 +36,9 @@ class ResourceReloaderPhaseData extends PhaseData<ResourceReloader, ResourceRelo
 	 * Marks this phase and all preceding phases as running before Vanilla.
 	 */
 	void markBefore() {
-		if (this.vanillaStatus != VanillaStatus.NONE) return;
+		boolean isAfter = this.vanillaStatus == VanillaStatus.AFTER;
+
+		if (this.vanillaStatus != VanillaStatus.NONE && !isAfter) return;
 
 		this.vanillaStatus = VanillaStatus.BEFORE;
 
@@ -78,6 +80,7 @@ class ResourceReloaderPhaseData extends PhaseData<ResourceReloader, ResourceRelo
 		super.addPreviousPhase(phase);
 
 		if (this.vanillaStatus == VanillaStatus.VANILLA || this.vanillaStatus == VanillaStatus.BEFORE) {
+			// We also mark the phase before
 			phase.markBefore();
 		}
 	}

@@ -25,6 +25,7 @@ import java.util.concurrent.Executor;
 
 import com.mojang.logging.LogUtils;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import net.minecraft.resource.Resource;
@@ -74,7 +75,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	}
 
 	@Override
-	public Identifier getQuiltId() {
+	public @NotNull Identifier getQuiltId() {
 		return this.id;
 	}
 

@@ -28,6 +28,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -37,6 +38,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.fabricmc.api.EnvType;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,7 +109,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 
 	@SuppressWarnings("removal")
 	@Override
-	public void registerReloader(IdentifiableResourceReloader resourceReloader) {
+	public void registerReloader(@NotNull IdentifiableResourceReloader resourceReloader) {
 		if (!this.addedReloaderIds.add(resourceReloader.getQuiltId())) {
 			throw new IllegalStateException(
 					"Tried to register resource reloader " + resourceReloader.getQuiltId() + " twice!"
@@ -128,7 +130,10 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	}
 
 	@Override
-	public void addReloaderOrdering(Identifier firstReloader, Identifier secondReloader) {
+	public void addReloaderOrdering(@NotNull Identifier firstReloader, @NotNull Identifier secondReloader) {
+		Objects.requireNonNull(firstReloader, "The first reloader identifier should not be null.");
+		Objects.requireNonNull(secondReloader, "The second reloader identifier should not be null.");
+
 		if (firstReloader.equals(secondReloader)) {
 			throw new IllegalArgumentException("Tried to add a phase that depends on itself.");
 		}
@@ -137,7 +142,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	}
 
 	@Override
-	public void registerResourcePackProfileProvider(ResourcePackProvider provider) {
+	public void registerResourcePackProfileProvider(@NotNull ResourcePackProvider provider) {
 		if (!this.resourcePackProfileProviders.add(provider)) {
 			throw new IllegalStateException(
 					"Tried to register a resource pack profile provider twice!"
@@ -215,7 +220,8 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		for (var putAfter : runtimePhases.values()) {
 			if (putAfter == afterVanilla) continue;
 
-			if (putAfter.vanillaStatus == ResourceReloaderPhaseData.VanillaStatus.NONE) {
+			if (putAfter.vanillaStatus == ResourceReloaderPhaseData.VanillaStatus.NONE
+					|| putAfter.vanillaStatus == ResourceReloaderPhaseData.VanillaStatus.AFTER) {
 				PhaseData.link(afterVanilla, putAfter);
 			}
 		}

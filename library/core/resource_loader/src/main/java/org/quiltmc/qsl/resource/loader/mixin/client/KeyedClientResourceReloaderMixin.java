@@ -21,6 +21,7 @@ import java.util.Locale;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -66,7 +67,7 @@ public abstract class KeyedClientResourceReloaderMixin implements IdentifiableRe
 
 	@Override
 	@SuppressWarnings({"ConstantConditions"})
-	public Identifier getQuiltId() {
+	public @NotNull Identifier getQuiltId() {
 		if (this.quilt$id == null) {
 			Object self = this;
 

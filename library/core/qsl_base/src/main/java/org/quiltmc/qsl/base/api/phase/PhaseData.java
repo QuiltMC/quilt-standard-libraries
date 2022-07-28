@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.util.Identifier;
 
@@ -45,6 +47,7 @@ public class PhaseData<T, P extends PhaseData<T, P>> {
 	/**
 	 * {@return the identifier of this phase}
 	 */
+	@Contract(pure = true)
 	public Identifier getId() {
 		return this.id;
 	}
@@ -52,6 +55,7 @@ public class PhaseData<T, P extends PhaseData<T, P>> {
 	/**
 	 * {@return the data held by this phase}
 	 */
+	@Contract(pure = true)
 	public T getData() {
 		return this.data;
 	}
@@ -71,7 +75,7 @@ public class PhaseData<T, P extends PhaseData<T, P>> {
 	 * @param second the phase that should be ordered second
 	 * @param <T>    the type of data held by the phases
 	 */
-	public static <T, P extends PhaseData<T, P>> void link(P first, P second) {
+	public static <T, P extends PhaseData<T, P>> void link(@NotNull P first, @NotNull P second) {
 		first.addSubsequentPhase(second);
 		second.addPreviousPhase(first);
 	}

@@ -18,6 +18,7 @@
 package org.quiltmc.qsl.resource.loader.test;
 
 import net.fabricmc.api.EnvType;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +31,6 @@ import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.lifecycle.api.event.ServerTickEvents;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
-import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 import org.quiltmc.qsl.resource.loader.api.reloader.SimpleSynchronousResourceReloader;
 
 public class ResourceReloaderTestMod implements ModInitializer {
@@ -61,7 +61,7 @@ public class ResourceReloaderTestMod implements ModInitializer {
 
 		resourceLoader.registerReloader(new SimpleSynchronousResourceReloader() {
 			@Override
-			public Identifier getQuiltId() {
+			public @NotNull Identifier getQuiltId() {
 				return ResourceLoaderTestMod.id("client_second");
 			}
 
@@ -77,7 +77,7 @@ public class ResourceReloaderTestMod implements ModInitializer {
 
 		resourceLoader.registerReloader(new SimpleSynchronousResourceReloader() {
 			@Override
-			public Identifier getQuiltId() {
+			public @NotNull Identifier getQuiltId() {
 				return ResourceLoaderTestMod.id("client_first");
 			}
 
@@ -101,7 +101,7 @@ public class ResourceReloaderTestMod implements ModInitializer {
 
 		resourceLoader.registerReloader(new SimpleSynchronousResourceReloader() {
 			@Override
-			public Identifier getQuiltId() {
+			public @NotNull Identifier getQuiltId() {
 				return ResourceLoaderTestMod.id("server_second");
 			}
 
@@ -117,7 +117,7 @@ public class ResourceReloaderTestMod implements ModInitializer {
 
 		resourceLoader.registerReloader(new SimpleSynchronousResourceReloader() {
 			@Override
-			public Identifier getQuiltId() {
+			public @NotNull Identifier getQuiltId() {
 				return ResourceLoaderTestMod.id("server_first");
 			}
 
