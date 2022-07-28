@@ -19,8 +19,8 @@ package org.quiltmc.qsl.base.api.phase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +39,9 @@ public class PhaseData<T, P extends PhaseData<T, P>> {
 	protected final List<P> previousPhases = new ArrayList<>();
 	VisitStatus visitStatus = VisitStatus.NOT_VISITED;
 
-	public PhaseData(Identifier id, T data) {
+	public PhaseData(@NotNull Identifier id, T data) {
+		Objects.requireNonNull(id);
+
 		this.id = id;
 		this.data = data;
 	}
@@ -48,7 +50,7 @@ public class PhaseData<T, P extends PhaseData<T, P>> {
 	 * {@return the identifier of this phase}
 	 */
 	@Contract(pure = true)
-	public Identifier getId() {
+	public @NotNull Identifier getId() {
 		return this.id;
 	}
 
