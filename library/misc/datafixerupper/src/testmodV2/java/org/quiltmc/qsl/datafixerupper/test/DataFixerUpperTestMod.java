@@ -21,7 +21,10 @@ import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
 
 import net.minecraft.datafixer.schema.IdentifierNormalizingSchema;
+import net.minecraft.item.Item;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
+import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -34,6 +37,9 @@ public final class DataFixerUpperTestMod implements ModInitializer {
 	private static final int DATA_VERSION = 1;
 
 	private static final Logger LOGGER = LogUtils.getLogger();
+
+	private static final Item ITEM = Registry.register(
+			Registry.ITEM, new Identifier(NAMESPACE, "new_item"), new Item(new Item.Settings()));
 
 	@Override
 	public void onInitialize(ModContainer mod) {
