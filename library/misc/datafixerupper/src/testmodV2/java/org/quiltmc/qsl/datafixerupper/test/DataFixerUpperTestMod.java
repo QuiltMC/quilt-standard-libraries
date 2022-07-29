@@ -27,20 +27,20 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.datafixer.schema.IdentifierNormalizingSchema;
 import net.minecraft.item.Item;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.datafixerupper.api.QuiltDataFixerBuilder;
 import org.quiltmc.qsl.datafixerupper.api.QuiltDataFixes;
 import org.quiltmc.qsl.datafixerupper.api.SimpleFixes;
-import org.quiltmc.qsl.lifecycle.api.event.ServerWorldLoadEvents;
+import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 
-public final class DataFixerUpperTestMod implements ModInitializer, ServerWorldLoadEvents.Load {
+public final class DataFixerUpperTestMod implements ModInitializer, ServerLifecycleEvents.Ready {
 	private static final String NAMESPACE = "quilt_datafixerupper_testmod";
 	private static final int DATA_VERSION = 1;
 
@@ -51,8 +51,12 @@ public final class DataFixerUpperTestMod implements ModInitializer, ServerWorldL
 
 	@Override
 	public void onInitialize(ModContainer mod) {
+		if (!Files.exists(Paths.get("dfu-testmod-v1.txt"))) {
+			throw new IllegalStateException("DataFixer testmod v1 must be run before v2!");
+		}
+
 		QuiltDataFixerBuilder builder = new QuiltDataFixerBuilder(DATA_VERSION);
-		builder.addSchema(0, QuiltDataFixes.MOD_SCHEMA);
+		builder.addSchema(0, QuiltDataFixes.BASE_SCHEMA);
 		Schema schemaV1 = builder.addSchema(1, IdentifierNormalizingSchema::new);
 		SimpleFixes.addItemRenameFix(builder, "Rename old_item to new_item",
 				NAMESPACE + ":old_item", NAMESPACE + ":new_item", schemaV1);
@@ -61,9 +65,10 @@ public final class DataFixerUpperTestMod implements ModInitializer, ServerWorldL
 	}
 
 	@Override
-	public void loadWorld(MinecraftServer server, ServerWorld world) {
-		if (!Files.exists(Paths.get("dfu-testmod-v1.txt"))) {
-			throw new IllegalStateException("DataFixer testmod v1.0.0 must be run before v2.0.0!");
+	public void readyServer(MinecraftServer server) {
+		var world = server.getWorld(World.OVERWORLD);
+		if (world == null) {
+			throw new IllegalStateException("NO OVERWORLD?!");
 		}
 
 		var chest = world.getBlockEntity(BlockPos.ORIGIN, BlockEntityType.CHEST)

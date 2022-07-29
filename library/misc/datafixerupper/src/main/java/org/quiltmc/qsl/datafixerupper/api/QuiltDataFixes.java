@@ -37,12 +37,16 @@ public final class QuiltDataFixes {
 	private QuiltDataFixes() { }
 
 	/**
-	 * Provides a "modded" schema, for use by all mods.
-	 * <p>
-	 * Use this in {@link DataFixerBuilder#addSchema(int, BiFunction)}.
+	 * A "base" version 0 schema, for use by all mods.<br>
+	 * This schema <em>must</em> be the first one added!
+	 *
+	 * @see DataFixerBuilder#addSchema(int, BiFunction)
 	 */
-	public static final BiFunction<Integer, Schema, Schema> MOD_SCHEMA =
-			(versionKey, parent) -> QuiltDataFixesInternals.getModSchema();
+	public static final BiFunction<Integer, Schema, Schema> BASE_SCHEMA = (version, parent) -> {
+		checkArgument(version == 0, "version must be 0");
+		checkArgument(parent == null, "parent must be null");
+		return QuiltDataFixesInternals.createBaseSchema();
+	};
 
 	/**
 	 * Registers a new data fixer.

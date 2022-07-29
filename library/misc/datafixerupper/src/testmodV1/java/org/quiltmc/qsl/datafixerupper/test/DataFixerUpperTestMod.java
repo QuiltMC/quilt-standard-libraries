@@ -29,19 +29,19 @@ import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.datafixerupper.api.QuiltDataFixerBuilder;
 import org.quiltmc.qsl.datafixerupper.api.QuiltDataFixes;
-import org.quiltmc.qsl.lifecycle.api.event.ServerWorldLoadEvents;
+import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 
-public final class DataFixerUpperTestMod implements ModInitializer, ServerWorldLoadEvents.Load {
+public final class DataFixerUpperTestMod implements ModInitializer, ServerLifecycleEvents.Ready {
 	private static final String NAMESPACE = "quilt_datafixerupper_testmod";
 	private static final int DATA_VERSION = 0;
 
@@ -53,13 +53,18 @@ public final class DataFixerUpperTestMod implements ModInitializer, ServerWorldL
 	@Override
 	public void onInitialize(ModContainer mod) {
 		QuiltDataFixerBuilder builder = new QuiltDataFixerBuilder(DATA_VERSION);
-		builder.addSchema(0, QuiltDataFixes.MOD_SCHEMA);
+		builder.addSchema(0, QuiltDataFixes.BASE_SCHEMA);
 
 		QuiltDataFixes.registerFixer(NAMESPACE, DATA_VERSION, builder.build(Util::getBootstrapExecutor));
 	}
 
 	@Override
-	public void loadWorld(MinecraftServer server, ServerWorld world) {
+	public void readyServer(MinecraftServer server) {
+		var world = server.getWorld(World.OVERWORLD);
+		if (world == null) {
+			throw new IllegalStateException("NO OVERWORLD?!");
+		}
+
 		world.setBlockState(BlockPos.ORIGIN, Blocks.CHEST.getDefaultState());
 		world.addBlockEntity(new ChestBlockEntity(BlockPos.ORIGIN, Blocks.CHEST.getDefaultState()));
 
@@ -69,7 +74,7 @@ public final class DataFixerUpperTestMod implements ModInitializer, ServerWorldL
 		chest.setStack(0, new ItemStack(ITEM, 1));
 
 		try (var writer = Files.newBufferedWriter(Paths.get("dfu-testmod-v1.txt"))) {
-			writer.write("DataFixerUpper testmod v1.0.0 was run!");
+			writer.write("DataFixerUpper testmod v1 was run!");
 		} catch (IOException e) {
 			throw new RuntimeException("Failed to write marker file", e);
 		}

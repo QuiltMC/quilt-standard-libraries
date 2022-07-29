@@ -19,6 +19,7 @@ package org.quiltmc.qsl.datafixerupper.impl;
 import java.util.Collections;
 import java.util.Map;
 
+import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.schemas.Schema;
 import com.mojang.logging.LogUtils;
@@ -41,7 +42,6 @@ public final class QuiltDataFixesInternals {
 	public static final Logger LOGGER = LogUtils.getLogger();
 
 	private static Map<String, DataFixerEntry> modDataFixers = new Object2ReferenceOpenHashMap<>();
-	private static Schema modSchema;
 	private static boolean frozen = false;
 
 	public static void registerFixer(String modId, int currentVersion, DataFixer dataFixer) {
@@ -52,16 +52,11 @@ public final class QuiltDataFixesInternals {
 		return modDataFixers.get(modId);
 	}
 
-	@SuppressWarnings("deprecation")
-	private static final Schema VANILLA_SCHEMA = Schemas.getFixer()
-			.getSchema(SharedConstants.getGameVersion().getWorldVersion());
+	public static final Schema VANILLA_SCHEMA = Schemas.getFixer()
+			.getSchema(DataFixUtils.makeKey(SharedConstants.getGameVersion().getWorldVersionData().getDataVersion()));
 
-	public static Schema getModSchema() {
-		if (modSchema == null) {
-			modSchema = new Schema(0, VANILLA_SCHEMA);
-		}
-
-		return modSchema;
+	public static Schema createBaseSchema() {
+		return new Schema(0, VANILLA_SCHEMA);
 	}
 
 	public static NbtCompound updateWithAllFixers(DataFixTypes dataFixTypes, NbtCompound compound) {
