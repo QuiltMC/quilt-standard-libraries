@@ -45,6 +45,14 @@ task prepareDfuTestmod {
 
 loom {
 	runs {
+		autoTestServerDfuTestmodV1 {
+			server()
+			configName = "Auto test server - DFU testmod v1"
+			source(project.sourceSets.testmod)
+			property("quilt.auto_test")
+			programArg("--nogui")
+		}
+
 		autoTestServerDfuTestmodV2 {
 			server()
 			configName = "Auto test server - DFU testmod v2"
@@ -55,7 +63,9 @@ loom {
 	}
 }
 
+runAutoTestServerDfuTestmodV1.dependsOn prepareDfuTestmod
+runAutoTestServerDfuTestmodV2.dependsOn runAutoTestServerDfuTestmodV1
+
 rootProject.afterEvaluate {
-	rootProject.tasks.runAutoTestServer.dependsOn prepareDfuTestmod
     rootProject.tasks.runAutoTestServer.finalizedBy runAutoTestServerDfuTestmodV2
 }
