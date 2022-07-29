@@ -35,20 +35,27 @@ dependencies {
 }
 
 task prepareDfuTestmod {
-	delete "run"
-	mkdir "run"
-	logger.quiet("NOTE: By running this testmod, you automatically agree to the EULA.")
-	file("run/eula.txt").text = "true"
+	doLast {
+		delete "run"
+		mkdir "run"
+		logger.quiet("NOTE: By running this testmod, you automatically agree to the EULA.")
+		file("run/eula.txt").text = "true"
+	}
 }
 
 loom {
 	runs {
-		testmodV2 {
+		autoTestServerDfuTestmodV2 {
 			server()
-			configName = "Run DFU Testmod V2"
+			configName = "Auto test server - DFU testmod v2"
 			source(project.sourceSets.testmodV2)
 			property("quilt.auto_test")
 			programArg("--nogui")
 		}
 	}
+}
+
+rootProject.afterEvaluate {
+	rootProject.tasks.runAutoTestServer.dependsOn prepareDfuTestmod
+    rootProject.tasks.runAutoTestServer.finalizedBy runAutoTestServerDfuTestmodV2
 }
