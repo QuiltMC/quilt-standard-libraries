@@ -34,8 +34,11 @@ dependencies {
 	testmodV2Implementation sourceSets.main.output
 }
 
-task cleanupDfuTestmod() {
+task prepareDfuTestmod {
 	delete "run"
+	mkdir "run"
+	logger.quiet("NOTE: By running this testmod, you automatically agree to the EULA.")
+	file("run/eula.txt").text = "true"
 }
 
 loom {
