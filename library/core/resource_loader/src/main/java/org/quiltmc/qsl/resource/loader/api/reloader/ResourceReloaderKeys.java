@@ -26,7 +26,7 @@ import net.minecraft.util.Identifier;
  */
 public final class ResourceReloaderKeys {
 	/**
-	 * Represents the before Vanilla resource reloaders application phase.
+	 * Represents the application phase before Vanilla resource reloaders are invoked.
 	 * <p>
 	 * No resource reloaders are assigned to this identifier.
 	 *
@@ -34,7 +34,7 @@ public final class ResourceReloaderKeys {
 	 */
 	public static final Identifier BEFORE_VANILLA = new Identifier("quilt", "before_vanilla");
 	/**
-	 * Represents the after Vanilla resource reloaders application phase.
+	 * Represents the application phase after Vanilla resource reloaders are invoked.
 	 * <p>
 	 * No resource reloaders are assigned to this identifier.
 	 *
