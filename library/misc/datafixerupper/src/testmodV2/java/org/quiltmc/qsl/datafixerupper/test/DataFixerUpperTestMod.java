@@ -16,14 +16,21 @@
 
 package org.quiltmc.qsl.datafixerupper.test;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import com.mojang.datafixers.schemas.Schema;
 import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
 
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.datafixer.schema.IdentifierNormalizingSchema;
 import net.minecraft.item.Item;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -31,8 +38,9 @@ import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.datafixerupper.api.QuiltDataFixerBuilder;
 import org.quiltmc.qsl.datafixerupper.api.QuiltDataFixes;
 import org.quiltmc.qsl.datafixerupper.api.SimpleFixes;
+import org.quiltmc.qsl.lifecycle.api.event.ServerWorldLoadEvents;
 
-public final class DataFixerUpperTestMod implements ModInitializer {
+public final class DataFixerUpperTestMod implements ModInitializer, ServerWorldLoadEvents.Load {
 	private static final String NAMESPACE = "quilt_datafixerupper_testmod";
 	private static final int DATA_VERSION = 1;
 
@@ -50,5 +58,19 @@ public final class DataFixerUpperTestMod implements ModInitializer {
 				NAMESPACE + ":old_item", NAMESPACE + ":new_item", schemaV1);
 
 		QuiltDataFixes.registerFixer(NAMESPACE, DATA_VERSION, builder.build(Util::getBootstrapExecutor));
+	}
+
+	@Override
+	public void loadWorld(MinecraftServer server, ServerWorld world) {
+		if (!Files.exists(Paths.get("dfu-testmod-v1.txt"))) {
+			throw new IllegalStateException("DataFixer testmod v1.0.0 must be run before v2.0.0!");
+		}
+
+		var chest = world.getBlockEntity(BlockPos.ORIGIN, BlockEntityType.CHEST)
+				.orElseThrow(() -> new IllegalStateException("no chest block entity?"));
+
+		if (chest.getStack(0).getItem() != ITEM) {
+			throw new IllegalStateException("TEST FAILED - Item was not upgraded!");
+		}
 	}
 }
