@@ -26,14 +26,43 @@ import net.minecraft.util.Identifier;
  */
 public final class ResourceReloaderKeys {
 	/**
+	 * Represents the application phase before Vanilla resource reloaders are invoked.
+	 * <p>
+	 * No resource reloaders are assigned to this identifier.
+	 *
+	 * @see org.quiltmc.qsl.resource.loader.api.ResourceLoader#addReloaderOrdering(Identifier, Identifier)
+	 */
+	public static final Identifier BEFORE_VANILLA = new Identifier("quilt", "before_vanilla");
+	/**
+	 * Represents the application phase after Vanilla resource reloaders are invoked.
+	 * <p>
+	 * No resource reloaders are assigned to this identifier.
+	 *
+	 * @see org.quiltmc.qsl.resource.loader.api.ResourceLoader#addReloaderOrdering(Identifier, Identifier)
+	 */
+	public static final Identifier AFTER_VANILLA = new Identifier("quilt", "after_vanilla");
+
+	/**
 	 * Keys for various client resource reloaders.
 	 */
 	public static final class Client {
-		public static final Identifier SOUNDS = new Identifier("minecraft:sounds");
-		public static final Identifier FONTS = new Identifier("minecraft:fonts");
-		public static final Identifier MODELS = new Identifier("minecraft:models");
-		public static final Identifier LANGUAGES = new Identifier("minecraft:languages");
-		public static final Identifier TEXTURES = new Identifier("minecraft:textures");
+		public static final Identifier BLOCK_ENTITY_RENDERERS = id("block_entity_renderers");
+		public static final Identifier BLOCK_RENDER_MANAGER = id("block_render_manager");
+		public static final Identifier BUILTIN_ITEM_MODELS = id("builtin_item_models");
+		public static final Identifier ENTITY_MODELS = id("entity_models");
+		public static final Identifier ENTITY_RENDERERS = id("entity_renderers");
+		public static final Identifier FOLIAGE_COLORMAP = id("foliage_colormap");
+		public static final Identifier FONTS = id("fonts");
+		public static final Identifier GRASS_COLORMAP = id("grass_colormap");
+		public static final Identifier ITEM_RENDERER = id("item_renderer");
+		public static final Identifier LANGUAGES = id("languages");
+		public static final Identifier MODELS = id("models");
+		public static final Identifier PAINTINGS = id("paintings");
+		public static final Identifier PARTICLES = id("particles");
+		public static final Identifier SOUNDS = id("sounds");
+		public static final Identifier SPLASH_TEXTS = id("splash_texts");
+		public static final Identifier STATUS_EFFECTS = id("status_effects");
+		public static final Identifier TEXTURES = id("textures");
 
 		private Client() {
 		}
@@ -43,16 +72,22 @@ public final class ResourceReloaderKeys {
 	 * Keys for various server resource reloaders.
 	 */
 	public static final class Server {
-		public static final Identifier TAGS = new Identifier("minecraft:tags");
-		public static final Identifier RECIPES = new Identifier("minecraft:recipes");
-		public static final Identifier ADVANCEMENTS = new Identifier("minecraft:advancements");
-		public static final Identifier FUNCTIONS = new Identifier("minecraft:functions");
-		public static final Identifier LOOT_TABLES = new Identifier("minecraft:loot_tables");
+		public static final Identifier ADVANCEMENTS = id("advancements");
+		public static final Identifier FUNCTIONS = id("functions");
+		public static final Identifier ITEM_MODIFIERS = id("item_modifiers");
+		public static final Identifier LOOT_TABLES = id("loot_tables");
+		public static final Identifier PREDICATES = id("predicates");
+		public static final Identifier RECIPES = id("recipes");
+		public static final Identifier TAGS = id("tags");
 
 		private Server() {
 		}
 	}
 
 	private ResourceReloaderKeys() {
+	}
+
+	private static Identifier id(String path) {
+		return new Identifier(Identifier.DEFAULT_NAMESPACE, path);
 	}
 }

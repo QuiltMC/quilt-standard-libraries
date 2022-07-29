@@ -23,19 +23,22 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.fabricmc.api.EnvType;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,15 +53,20 @@ import net.minecraft.resource.pack.ResourcePackProfile;
 import net.minecraft.resource.pack.ResourcePackProvider;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.ModMetadata;
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader;
+import org.quiltmc.qsl.base.api.phase.PhaseData;
+import org.quiltmc.qsl.base.api.phase.PhaseSorting;
+import org.quiltmc.qsl.base.api.util.TriState;
 import org.quiltmc.qsl.resource.loader.api.GroupResourcePack;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
 import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;
+import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 import org.quiltmc.qsl.resource.loader.mixin.NamespaceResourceManagerAccessor;
 import org.quiltmc.qsl.resource.loader.mixin.NamespaceResourceManagerMixin;
 
@@ -80,8 +88,13 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	private static final Map<String, ModNioResourcePack> SERVER_BUILTIN_RESOURCE_PACKS = new Object2ObjectOpenHashMap<>();
 	private static final Logger LOGGER = LoggerFactory.getLogger("ResourceLoader");
 
-	private final Set<Identifier> addedListenerIds = new ObjectOpenHashSet<>();
+	private static final boolean DEBUG_RELOADERS_ORDER = TriState.fromProperty("quilt.resource_loader.debug.reloaders_order")
+			.toBooleanOrElse(false);
+
+
+	private final Set<Identifier> addedReloaderIds = new ObjectOpenHashSet<>();
 	private final Set<IdentifiableResourceReloader> addedReloaders = new LinkedHashSet<>();
+	private final Set<Pair<Identifier, Identifier>> reloadersOrdering = new LinkedHashSet<>();
 	final Set<ResourcePackProvider> resourcePackProfileProviders = new ObjectOpenHashSet<>();
 
 	public static ResourceLoaderImpl get(ResourceType type) {
@@ -94,9 +107,10 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		get(type).sort(reloaders);
 	}
 
+	@SuppressWarnings("removal")
 	@Override
-	public void registerReloader(IdentifiableResourceReloader resourceReloader) {
-		if (!this.addedListenerIds.add(resourceReloader.getQuiltId())) {
+	public void registerReloader(@NotNull IdentifiableResourceReloader resourceReloader) {
+		if (!this.addedReloaderIds.add(resourceReloader.getQuiltId())) {
 			throw new IllegalStateException(
 					"Tried to register resource reloader " + resourceReloader.getQuiltId() + " twice!"
 			);
@@ -108,10 +122,27 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 							+ " already in resource reloader set!"
 			);
 		}
+
+		// Keep this for compatibility.
+		for (var dependency : resourceReloader.getQuiltDependencies()) {
+			this.addReloaderOrdering(dependency, resourceReloader.getQuiltId());
+		}
 	}
 
 	@Override
-	public void registerResourcePackProfileProvider(ResourcePackProvider provider) {
+	public void addReloaderOrdering(@NotNull Identifier firstReloader, @NotNull Identifier secondReloader) {
+		Objects.requireNonNull(firstReloader, "The first reloader identifier should not be null.");
+		Objects.requireNonNull(secondReloader, "The second reloader identifier should not be null.");
+
+		if (firstReloader.equals(secondReloader)) {
+			throw new IllegalArgumentException("Tried to add a phase that depends on itself.");
+		}
+
+		this.reloadersOrdering.add(new Pair<>(firstReloader, secondReloader));
+	}
+
+	@Override
+	public void registerResourcePackProfileProvider(@NotNull ResourcePackProvider provider) {
 		if (!this.resourcePackProfileProviders.add(provider)) {
 			throw new IllegalStateException(
 					"Tried to register a resource pack profile provider twice!"
@@ -129,48 +160,95 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		reloaders.removeAll(this.addedReloaders);
 
 		// General rules:
-		// - We *do not* touch the ordering of vanilla listeners. Ever.
+		// - We *do not* touch the ordering of vanilla reloaders. Ever.
 		//   While dependency values are provided where possible, we cannot
 		//   trust them 100%. Only code doesn't lie.
-		// - We addReloadListener all custom listeners after vanilla listeners. Same reasons.
+		// - We add all custom reloaders after vanilla reloaders if they don't have contrary ordering. Same reasons.
 
-		var reloadersToAdd = new ArrayList<>(this.addedReloaders);
-		var resolvedIds = new HashSet<Identifier>();
+		var runtimePhases = new Object2ObjectOpenHashMap<Identifier, ResourceReloaderPhaseData>();
 
-		// Build a list of resolve identifiers from the reloaders that are already registered.
-		for (var reloader : reloaders) {
-			if (reloader instanceof IdentifiableResourceReloader identifiableResourceReloader) {
-				resolvedIds.add(identifiableResourceReloader.getQuiltId());
+		Iterator<ResourceReloader> itPhases = reloaders.iterator();
+		// Add the virtual before Vanilla phase.
+		ResourceReloaderPhaseData last = new ResourceReloaderPhaseData(ResourceReloaderKeys.BEFORE_VANILLA, null);
+		last.setVanillaStatus(ResourceReloaderPhaseData.VanillaStatus.VANILLA);
+		runtimePhases.put(last.getId(), last);
+
+		// Add all the Vanilla reloaders.
+		while (itPhases.hasNext()) {
+			var currentReloader = itPhases.next();
+			Identifier id;
+
+			if (currentReloader instanceof IdentifiableResourceReloader identifiable) {
+				id = identifiable.getQuiltId();
+			} else {
+				id = new Identifier("unknown", "private/" + currentReloader.getClass().getName().replace(".", "/").toLowerCase(Locale.ROOT));
+			}
+
+			var current = new ResourceReloaderPhaseData(id, currentReloader);
+			current.setVanillaStatus(ResourceReloaderPhaseData.VanillaStatus.VANILLA);
+			runtimePhases.put(id, current);
+
+			PhaseData.link(last, current);
+			last = current;
+		}
+
+		// Add the virtual after Vanilla phase.
+		var afterVanilla = new ResourceReloaderPhaseData.AfterVanilla(ResourceReloaderKeys.AFTER_VANILLA);
+		runtimePhases.put(afterVanilla.getId(), afterVanilla);
+		PhaseData.link(last, afterVanilla);
+
+		// Add the modded reloaders.
+		for (var moddedReloader : this.addedReloaders) {
+			var phase = new ResourceReloaderPhaseData(moddedReloader.getQuiltId(), moddedReloader);
+			runtimePhases.put(phase.getId(), phase);
+		}
+
+		// Add the ordering.
+		for (var order : this.reloadersOrdering) {
+			var first = runtimePhases.get(order.getLeft());
+
+			if (first == null) continue;
+
+			var second = runtimePhases.get(order.getRight());
+
+			if (second == null) continue;
+
+			PhaseData.link(first, second);
+		}
+
+		// Attempt to order un-ordered modded reloaders to after Vanilla to respect the rules.
+		for (var putAfter : runtimePhases.values()) {
+			if (putAfter == afterVanilla) continue;
+
+			if (putAfter.vanillaStatus == ResourceReloaderPhaseData.VanillaStatus.NONE
+					|| putAfter.vanillaStatus == ResourceReloaderPhaseData.VanillaStatus.AFTER) {
+				PhaseData.link(afterVanilla, putAfter);
 			}
 		}
 
-		int lastSize = -1;
+		// Sort the phases.
+		var phases = new ArrayList<>(runtimePhases.values());
+		PhaseSorting.sortPhases(phases);
 
-		// Loop as long as the reloader list is changed in the loop.
-		while (reloaders.size() != lastSize) {
-			lastSize = reloaders.size();
+		// Apply the sorting!
+		reloaders.clear();
 
-			Iterator<IdentifiableResourceReloader> it = reloadersToAdd.iterator();
+		for (var phase : phases) {
+			if (phase.getData() != null) {
+				reloaders.add(phase.getData());
+			}
+		}
 
-			// Loop through all remaining reloaders to add.
-			while (it.hasNext()) {
-				IdentifiableResourceReloader listener = it.next();
+		if (DEBUG_RELOADERS_ORDER) {
+			LOGGER.info("Sorted reloaders: " + phases.stream().map(data -> {
+				String str = data.getId().toString();
 
-				// If all the dependencies of the reloader are satisfied then
-				//  - add the reloader id to the resolved ids.
-				//  - add the reloader to the reloader list.
-				//  - remove the reloader from the "to add" list.
-				if (resolvedIds.containsAll(listener.getQuiltDependencies())) {
-					resolvedIds.add(listener.getQuiltId());
-					reloaders.add(listener);
-					it.remove();
+				if (data.getData() == null) {
+					str += " (virtual)";
 				}
-			}
-		}
 
-		// Warn about all unsatisfied reloaders.
-		for (var reloader : reloadersToAdd) {
-			LOGGER.warn("Could not resolve dependencies for resource reloader: " + reloader.getQuiltId() + "!");
+				return str;
+			}).collect(Collectors.joining(", ")));
 		}
 	}
 

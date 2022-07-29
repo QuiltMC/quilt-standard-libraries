@@ -20,6 +20,8 @@ package org.quiltmc.qsl.resource.loader.api.reloader;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.util.Identifier;
 
@@ -35,7 +37,7 @@ public interface IdentifiableResourceReloader extends ResourceReloader {
 	/**
 	 * {@return the unique identifier of this resource reloader}
 	 */
-	Identifier getQuiltId();
+	@NotNull Identifier getQuiltId();
 
 	/**
 	 * Returns the identifiers of resource reloaders this resource reloader expects to have been
@@ -45,7 +47,9 @@ public interface IdentifiableResourceReloader extends ResourceReloader {
 	 *
 	 * @return the identifiers this resource reloader depends on
 	 * @see ResourceReloaderKeys
+	 * @deprecated use {@linkplain org.quiltmc.qsl.resource.loader.api.ResourceLoader#addReloaderOrdering(Identifier, Identifier)} instead
 	 */
+	@Deprecated(forRemoval = true)
 	default Collection<Identifier> getQuiltDependencies() {
 		return Collections.emptyList();
 	}

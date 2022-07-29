@@ -1,5 +1,5 @@
 /**
- * <h2>The Resource Loader.</h2>
+ * <h2>The Resource Loader</h2>
  *
  * <p>
  * <h3>Quick note about vocabulary in Resource Loader and Minecraft:</h3>
