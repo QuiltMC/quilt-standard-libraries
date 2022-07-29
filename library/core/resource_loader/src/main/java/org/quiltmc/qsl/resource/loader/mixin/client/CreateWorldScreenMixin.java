@@ -35,14 +35,13 @@ import net.minecraft.resource.pack.ResourcePackProfile;
 import net.minecraft.server.WorldStem;
 
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
-import org.quiltmc.qsl.resource.loader.impl.ModNioResourcePack;
 import org.quiltmc.qsl.resource.loader.impl.ModResourcePackProvider;
 
 @Environment(EnvType.CLIENT)
 @Mixin(CreateWorldScreen.class)
 public class CreateWorldScreenMixin {
 	@ModifyArg(
-			method = "method_40212",
+			method = "createFromExisting",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/screen/world/CreateWorldScreen;<init>(Lnet/minecraft/client/gui/screen/Screen;Lnet/minecraft/resource/pack/DataPackSettings;Lnet/minecraft/client/gui/screen/world/MoreOptionsDialog;)V"
@@ -61,7 +60,7 @@ public class CreateWorldScreenMixin {
 		for (var profile : moddedResourcePacks) {
 			ResourcePack pack = profile.createResourcePack();
 
-			if (pack instanceof ModNioResourcePack modResourcePack && modResourcePack.getActivationType().isEnabledByDefault()) {
+			if (pack.getActivationType().isEnabledByDefault()) {
 				enabled.add(profile.getName());
 			} else {
 				disabled.add(profile.getName());
@@ -89,8 +88,7 @@ public class CreateWorldScreenMixin {
 			method = "method_37088(Lnet/minecraft/resource/pack/DataPackSettings;Lnet/minecraft/server/WorldStem;)V",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/server/WorldStem;close()V",
-					remap = false
+					target = "Lnet/minecraft/server/WorldStem;close()V"
 			)
 	)
 	private void onEndDataPackLoading(DataPackSettings dataPackSettings, WorldStem arg, CallbackInfo ci) {

@@ -21,12 +21,12 @@ import java.util.List;
 import java.util.Map;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.EventAwareListener;
@@ -84,7 +84,7 @@ public final class EventRegistry implements ModInitializer {
 		for (var target : EventSideTarget.VALUES) {
 			// Search if the callback qualifies is unique to this event.
 			if (target.listenerClass().isAssignableFrom(event.getType())) {
-				List<?> entrypoints = FabricLoader.getInstance().getEntrypoints(target.entrypointKey(), target.listenerClass());
+				List<?> entrypoints = QuiltLoader.getEntrypoints(target.entrypointKey(), target.listenerClass());
 
 				// Search for matching entrypoint.
 				for (Object entrypoint : entrypoints) {

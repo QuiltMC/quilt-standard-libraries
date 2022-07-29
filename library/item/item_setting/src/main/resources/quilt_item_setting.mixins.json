@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.item.setting.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "ItemMixin",
+    "ItemStackMixin",
+    "LivingEntityMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

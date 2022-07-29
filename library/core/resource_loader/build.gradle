@@ -3,8 +3,10 @@ plugins {
 }
 
 qslModule {
+	name = "Quilt Resource Loader"
 	moduleName = "resource_loader"
-	version = "1.0.0"
+	id = "quilt_resource_loader"
+	description = "Asset and data resource loading for Quilt mods."
 	library = "core"
 	moduleDependencies {
 		core {
@@ -12,8 +14,8 @@ qslModule {
 			testmodOnly("lifecycle_events")
 		}
 	}
-}
-
-loom {
-	accessWidenerPath = file("src/main/resources/quilt_resource_loader.accesswidener")
+	accessWidener()
+	injectedInterface("net/minecraft/class_3262") {
+		values = ["org/quiltmc/qsl/resource/loader/api/QuiltResourcePack"]
+	}
 }

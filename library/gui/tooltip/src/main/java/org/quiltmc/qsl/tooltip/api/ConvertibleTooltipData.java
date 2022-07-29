@@ -18,9 +18,11 @@ package org.quiltmc.qsl.tooltip.api;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.util.Identifier;
+
 import org.quiltmc.qsl.tooltip.impl.client.QuiltClientTooltipMod;
 
 /**

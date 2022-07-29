@@ -16,13 +16,15 @@
 
 package org.quiltmc.qsl.tooltip.mixin.client;
 
-import net.minecraft.client.gui.tooltip.TooltipComponent;
-import net.minecraft.client.item.TooltipData;
-import org.quiltmc.qsl.tooltip.api.client.TooltipComponentCallback;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import net.minecraft.client.gui.tooltip.TooltipComponent;
+import net.minecraft.client.item.TooltipData;
+
+import org.quiltmc.qsl.tooltip.api.client.TooltipComponentCallback;
 
 @Mixin(TooltipComponent.class)
 public interface TooltipComponentMixin {

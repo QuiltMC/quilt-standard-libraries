@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,14 +33,14 @@ import net.minecraft.util.Identifier;
 @Environment(EnvType.CLIENT)
 @Mixin(TagGroupLoader.class)
 public interface TagGroupLoaderAccessor {
-	@Invoker("method_32839")
-	static void invokeVisitDependenciesAndElement(Map<Identifier, Tag.Builder> map,
-	                                              Multimap<Identifier, Identifier> tagEntries, Set<Identifier> set,
-	                                              Identifier identifier, BiConsumer<Identifier, Tag.Builder> consumer) {
+	@Invoker
+	static void invokeVisitDependenciesAndEntry(Map<Identifier, Tag.Builder> map,
+			Multimap<Identifier, Identifier> tagEntries, Set<Identifier> set,
+			Identifier identifier, BiConsumer<Identifier, Tag.Builder> consumer) {
 		throw new IllegalStateException("Invoker injection failed.");
 	}
 
-	@Invoker("method_32844")
+	@Invoker
 	static void invokeAddDependencyIfNotCyclic(Multimap<Identifier, Identifier> tagEntries, Identifier tagId, Identifier entryId) {
 		throw new IllegalStateException("Invoker injection failed.");
 	}

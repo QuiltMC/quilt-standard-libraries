@@ -40,6 +40,7 @@ import net.minecraft.resource.ReloadableResourceManager;
 import net.minecraft.server.WorldStem;
 import net.minecraft.world.level.storage.LevelStorage;
 
+import org.quiltmc.qsl.base.api.util.TriState;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 import org.quiltmc.qsl.resource.loader.api.client.ClientResourceLoaderEvents;
 
@@ -50,6 +51,8 @@ public class MinecraftClientMixin {
 	private static final String START_INTEGRATED_SERVER_METHOD = "startIntegratedServer(" +
 			"Ljava/lang/String;Ljava/util/function/Function;Ljava/util/function/Function;" +
 			"ZLnet/minecraft/client/MinecraftClient$WorldLoadAction;)V";
+	@Unique
+	private static final TriState EXPERIMENTAL_SCREEN_OVERRIDE = TriState.fromProperty("quilt.resource_loader.experimental_screen_override");
 
 	@Shadow
 	@Final
@@ -71,7 +74,7 @@ public class MinecraftClientMixin {
 	// Lambda method in MinecraftClient#<init>, at MinecraftClient#setOverlay.
 	// Take an Optional<Throwable> parameter.
 	@SuppressWarnings("target")
-	@Inject(method = "method_24040(Ljava/util/Optional;)V", at = @At("HEAD"))
+	@Inject(method = "m_aaltpyph(Ljava/util/Optional;)V", at = @At("HEAD"))
 	private void onFirstEndReloadResources(Optional<Throwable> error, CallbackInfo ci) {
 		ClientResourceLoaderEvents.END_RESOURCE_PACK_RELOAD.invoker().onEndResourcePackReload(
 				(MinecraftClient) (Object) this, this.resourceManager, true, error.orElse(null)
@@ -105,14 +108,13 @@ public class MinecraftClientMixin {
 			method = START_INTEGRATED_SERVER_METHOD,
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/MinecraftClient;method_40183(Lnet/minecraft/resource/pack/ResourcePackManager;ZLnet/minecraft/server/WorldStem$Supplier;Lnet/minecraft/server/WorldStem$WorldDataSupplier;)Lnet/minecraft/server/WorldStem;"
+					target = "Lnet/minecraft/client/MinecraftClient;createWorldStem(Lnet/minecraft/resource/pack/ResourcePackManager;ZLnet/minecraft/server/WorldStem$Supplier;Lnet/minecraft/server/WorldStem$WorldDataSupplier;)Lnet/minecraft/server/WorldStem;"
 			)
 	)
 	private void onStartDataPackReloading(String worldName,
-	                                      Function<LevelStorage.Session, WorldStem.Supplier> dataPackSettingsGetter,
-	                                      Function<LevelStorage.Session, WorldStem.WorldDataSupplier> worldDataGetter,
-	                                      boolean safeMode, @Coerce Object worldLoadAction,
-	                                      CallbackInfo ci) {
+			Function<LevelStorage.Session, WorldStem.Supplier> dataPackSettingsGetter,
+			Function<LevelStorage.Session, WorldStem.WorldDataSupplier> worldDataGetter,
+			boolean safeMode, @Coerce Object worldLoadAction, CallbackInfo ci) {
 		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null);
 	}
 
@@ -130,5 +132,22 @@ public class MinecraftClientMixin {
 	private Throwable onFailedDataPackReloading(Throwable throwable) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, null, throwable);
 		return throwable; // noop
+	}
+
+	@ModifyVariable(
+			method = START_INTEGRATED_SERVER_METHOD,
+			at = @At(
+					value = "FIELD",
+					target = "Lnet/minecraft/client/MinecraftClient$WorldLoadAction;NONE:Lnet/minecraft/client/MinecraftClient$WorldLoadAction;",
+					ordinal = 0
+			),
+			ordinal = 2,
+			index = 11,
+			name = "bl2",
+			require = 0
+	)
+	private boolean replaceIsExperimental(boolean isExperimental) {
+		if (EXPERIMENTAL_SCREEN_OVERRIDE.toBooleanOrElse(true)) return false;
+		return isExperimental;
 	}
 }

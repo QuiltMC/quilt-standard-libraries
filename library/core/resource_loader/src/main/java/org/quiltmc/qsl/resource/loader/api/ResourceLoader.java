@@ -16,14 +16,15 @@
 
 package org.quiltmc.qsl.resource.loader.api;
 
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.pack.ResourcePackProvider;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
@@ -51,6 +52,16 @@ public interface ResourceLoader {
 	void registerReloader(IdentifiableResourceReloader resourceReloader);
 
 	/**
+	 * Registers a resource pack profile provider.
+	 * <p>
+	 * A resource pack profile means any provided resource packs will show up in the resource pack selection screen.
+	 * Always fired <i>after</i> the built-in resource pack providers.
+	 *
+	 * @param provider the provider
+	 */
+	void registerResourcePackProfileProvider(ResourcePackProvider provider);
+
+	/**
 	 * Registers a built-in resource pack.
 	 * <p>
 	 * A built-in resource pack is an extra resource pack provided by your mod which is not always active,
@@ -66,7 +77,7 @@ public interface ResourceLoader {
 	 *
 	 * @param id             the identifier of the resource pack; its namespace must be the same as the mod id
 	 * @param activationType the activation type of the resource pack
-	 * @return {@code true} if the resource pack was successfully registered, otherwise {@code false}
+	 * @return {@code true} if the resource pack was successfully registered, or {@code false} otherwise
 	 * @throws IllegalArgumentException if a mod with the corresponding namespace given in id cannot be found
 	 * @see #registerBuiltinResourcePack(Identifier, ResourcePackActivationType, Text)
 	 * @see #registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType)
@@ -93,14 +104,14 @@ public interface ResourceLoader {
 	 * @param id             the identifier of the resource pack; its namespace must be the same as the mod id
 	 * @param activationType the activation type of the resource pack
 	 * @param displayName    the display name of the resource pack
-	 * @return {@code true} if the resource pack was successfully registered, otherwise {@code false}
+	 * @return {@code true} if the resource pack was successfully registered, or {@code false} otherwise
 	 * @throws IllegalArgumentException if a mod with the corresponding namespace given in id cannot be found
 	 * @see #registerBuiltinResourcePack(Identifier, ResourcePackActivationType)
 	 * @see #registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType)
 	 * @see #registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType, Text)
 	 */
 	static boolean registerBuiltinResourcePack(Identifier id, ResourcePackActivationType activationType, Text displayName) {
-		var container = FabricLoader.getInstance().getModContainer(id.getNamespace())
+		var container = QuiltLoader.getModContainer(id.getNamespace())
 				.orElseThrow(() ->
 						new IllegalArgumentException("No mod with mod id " + id.getNamespace() + " could be found"));
 		return registerBuiltinResourcePack(id, container, activationType, displayName);
@@ -121,13 +132,13 @@ public interface ResourceLoader {
 	 * @param id             the identifier of the resource pack
 	 * @param container      the mod container
 	 * @param activationType the activation type of the resource pack
-	 * @return {@code true} if the resource pack was successfully registered, otherwise {@code false}
+	 * @return {@code true} if the resource pack was successfully registered, or {@code false} otherwise
 	 * @see #registerBuiltinResourcePack(Identifier, ResourcePackActivationType)
 	 * @see #registerBuiltinResourcePack(Identifier, ResourcePackActivationType, Text)
 	 * @see #registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType, Text)
 	 */
 	static boolean registerBuiltinResourcePack(Identifier id, ModContainer container,
-	                                           ResourcePackActivationType activationType) {
+			ResourcePackActivationType activationType) {
 		return registerBuiltinResourcePack(id, container, activationType, ResourceLoaderImpl.getBuiltinPackDisplayNameFromId(id));
 	}
 
@@ -147,13 +158,13 @@ public interface ResourceLoader {
 	 * @param container      the mod container
 	 * @param activationType the activation type of the resource pack
 	 * @param displayName    the display name of the resource pack
-	 * @return {@code true} if the resource pack was successfully registered, otherwise {@code false}
+	 * @return {@code true} if the resource pack was successfully registered, or {@code false} otherwise
 	 * @see #registerBuiltinResourcePack(Identifier, ResourcePackActivationType)
 	 * @see #registerBuiltinResourcePack(Identifier, ResourcePackActivationType, Text)
 	 * @see #registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType)
 	 */
 	static boolean registerBuiltinResourcePack(Identifier id, ModContainer container,
-	                                           ResourcePackActivationType activationType, Text displayName) {
+			ResourcePackActivationType activationType, Text displayName) {
 		return ResourceLoaderImpl.registerBuiltinResourcePack(id, "resourcepacks/" + id.getPath(), container,
 				activationType, displayName);
 	}

@@ -24,8 +24,6 @@ import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import org.quiltmc.qsl.item.group.impl.ItemGroupExtensions;
-
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
@@ -35,9 +33,11 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 
+import org.quiltmc.qsl.item.group.impl.ItemGroupExtensions;
+
 /**
  * Extensions for the {@link ItemGroup} class. Currently, the only extension is setting the icon with either an {@link ItemConvertible} or {@link ItemStack} after the item has been created ({@link QuiltItemGroup#setIcon(ItemConvertible)}, {@link QuiltItemGroup#setIcon(ItemStack)}).<br>
- *
+ * <p>
  * A {@link QuiltItemGroup} can be directly created with {@link QuiltItemGroup#create(Identifier)} or {@link QuiltItemGroup#createWithIcon(Identifier, Supplier)}.<br>
  * A {@link Builder}, which is used to add specific {@link ItemStack}s, especially with {@link net.minecraft.nbt.NbtElement}s, can be obtained with {@link QuiltItemGroup#builder(Identifier)}.
  */
@@ -182,7 +182,7 @@ public final class QuiltItemGroup extends ItemGroup {
 	 *   	.appendItems(stacks -> {
 	 *   	    stacks.add(new ItemStack(MyMod.MY_ITEM));
 	 *   	    stacks.add(new ItemStack(Items.STONE));
-	 *   	})
+	 *    })
 	 *   	.build();
 	 *
 	 *   public static Item MY_ITEM;
@@ -228,6 +228,7 @@ public final class QuiltItemGroup extends ItemGroup {
 
 		/**
 		 * Set the {@link Text} used as the name when rendering the {@link ItemGroup}
+		 *
 		 * @param text The {@link Text} to render as the name
 		 * @return {@code this}
 		 */

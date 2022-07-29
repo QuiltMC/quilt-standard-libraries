@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,22 +17,25 @@
 package org.quiltmc.qsl.tag.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
 import net.minecraft.tag.Tag;
 
 import org.quiltmc.qsl.tag.api.QuiltTag;
-import org.quiltmc.qsl.tag.api.TagType;
+import org.quiltmc.qsl.tag.impl.QuiltTagHooks;
 
 @Mixin(Tag.class)
-public interface TagMixin<T> extends QuiltTag<T> {
+public class TagMixin implements QuiltTag, QuiltTagHooks {
+	@Unique
+	private int quilt$replaced;
+
 	@Override
-	default TagType getType() {
-		return TagType.OPTIONAL;
+	public boolean hasBeenReplaced() {
+		return this.quilt$replaced > 0;
 	}
 
 	@Override
-	default boolean hasBeenReplaced() {
-		return false; // The goal is to prevent hard-fails with custom Tag implementations.
-		// Please look at the javadoc of the method for more insight.
+	public void quilt$setReplacementCount(int replacementCount) {
+		this.quilt$replaced = replacementCount;
 	}
 }

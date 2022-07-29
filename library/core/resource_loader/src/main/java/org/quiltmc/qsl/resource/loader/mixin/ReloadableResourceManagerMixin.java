@@ -55,8 +55,7 @@ public class ReloadableResourceManagerMixin {
 			at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;isDebugEnabled()Z", remap = false)
 	)
 	private void reload(Executor prepareExecutor, Executor applyExecutor, CompletableFuture<Unit> initialStage,
-						List<ResourcePack> packs,
-						CallbackInfoReturnable<ResourceReload> info) {
+			List<ResourcePack> packs, CallbackInfoReturnable<ResourceReload> info) {
 		ResourceLoaderImpl.sort(this.type, this.reloaders);
 	}
 

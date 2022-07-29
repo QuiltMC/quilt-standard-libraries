@@ -87,7 +87,7 @@ public final class ResourceLoaderEvents {
 		 *
 		 * @param server          the server, may be {@code null} for the first reload
 		 * @param resourceManager the resource manager, may be {@code null} if the data pack reload failed
-		 * @param error           present if the data pack reload failed, otherwise {@code null}
+		 * @param error           present if the data pack reload failed, or {@code null} otherwise
 		 */
 		void onEndDataPackReload(@Nullable MinecraftServer server, ResourceManager resourceManager, @Nullable Throwable error);
 	}

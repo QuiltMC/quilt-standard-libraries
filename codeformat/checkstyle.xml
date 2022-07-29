@@ -56,7 +56,7 @@
         <module name="UnusedImports"/>
 
         <module name="ImportOrder">
-            <property name="groups" value="java,javax,*,net.minecraft,org.quiltmc"/>
+            <property name="groups" value="java,javax,*,com.mojang.blaze3d,net.minecraft,org.quiltmc"/>
             <property name="ordered" value="false"/><!-- the plugin orders alphabetically without considering separators.. -->
             <property name="separated" value="true"/>
             <property name="option" value="top"/>
@@ -96,7 +96,7 @@
 
         <module name="Indentation">
             <property name="basicOffset" value="4"/>
-            <property name="caseIndent" value="0"/>
+            <property name="caseIndent" value="4"/>
             <property name="throwsIndent" value="4"/>
             <property name="arrayInitIndent" value="4"/>
             <property name="lineWrappingIndentation" value="8"/>
@@ -133,6 +133,11 @@
 
         <!-- By default this allows catch blocks with only comments -->
         <module name="EmptyCatchBlock"/>
+
+        <!-- Require the use of the "this" keyword -->
+        <module name="RequireThis">
+            <property name="validateOnlyOverlapping" value="false"/>
+        </module>
 
         <!-- Enforce tabs -->
         <module name="RegexpSinglelineJava">
@@ -176,7 +181,9 @@
 <!--        </module>-->
 
         <!--<module name="InvalidJavadocPosition"/>-->
-        <module name="JavadocParagraph"/>
+        <module name="JavadocParagraph">
+            <property name="allowNewlineParagraph" value="false"/>
+        </module>
         <module name="JavadocStyle"/>
         <module name="AtclauseOrder">
             <property name="tagOrder" value="@param,@return,@throws,@deprecated"/>

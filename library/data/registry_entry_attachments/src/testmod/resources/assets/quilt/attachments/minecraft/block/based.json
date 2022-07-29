@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": {
+    "minecraft:netherite_block": true,
+    "minecraft:diamond_block": true,
+    "minecraft:emerald_block": false,
+    "minecraft:gold_block": false,
+    "minecraft:grass_block": false,
+    "minecraft:dirt": false
+  }
+}
