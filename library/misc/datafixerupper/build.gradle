@@ -24,6 +24,10 @@ qslModule {
 }
 
 sourceSets {
+	testmodV1 {
+		compileClasspath += main.compileClasspath
+		runtimeClasspath += main.runtimeClasspath
+	}
 	testmodV2 {
 		compileClasspath += main.compileClasspath
 		runtimeClasspath += main.runtimeClasspath
@@ -31,6 +35,7 @@ sourceSets {
 }
 
 dependencies {
+	testmodV1Implementation sourceSets.main.output
 	testmodV2Implementation sourceSets.main.output
 }
 
@@ -48,7 +53,7 @@ loom {
 		autoTestServerDfuTestmodV1 {
 			server()
 			configName = "Auto test server - DFU testmod v1"
-			source(project.sourceSets.testmod)
+			source(project.sourceSets.testmodV1)
 			property("quilt.auto_test")
 			programArg("--nogui")
 		}

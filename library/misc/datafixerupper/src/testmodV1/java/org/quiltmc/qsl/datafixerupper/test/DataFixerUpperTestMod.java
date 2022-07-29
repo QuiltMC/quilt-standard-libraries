@@ -73,5 +73,7 @@ public final class DataFixerUpperTestMod implements ModInitializer, ServerWorldL
 		} catch (IOException e) {
 			throw new RuntimeException("Failed to write marker file", e);
 		}
+
+		LOGGER.info("[v1] Prepared for v2 test!");
 	}
 }

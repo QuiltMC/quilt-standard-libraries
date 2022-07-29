@@ -72,5 +72,7 @@ public final class DataFixerUpperTestMod implements ModInitializer, ServerWorldL
 		if (chest.getStack(0).getItem() != ITEM) {
 			throw new IllegalStateException("TEST FAILED - Item was not upgraded!");
 		}
+
+		LOGGER.info("[v2] TEST SUCCEEDED - Item was upgraded!");
 	}
 }
