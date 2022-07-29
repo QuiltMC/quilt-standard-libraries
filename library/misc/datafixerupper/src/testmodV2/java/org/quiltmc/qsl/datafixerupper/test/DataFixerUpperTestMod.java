@@ -16,19 +16,22 @@
 
 package org.quiltmc.qsl.datafixerupper.test;
 
+import com.mojang.datafixers.schemas.Schema;
 import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
 
+import net.minecraft.datafixer.schema.IdentifierNormalizingSchema;
 import net.minecraft.util.Util;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.datafixerupper.api.QuiltDataFixerBuilder;
 import org.quiltmc.qsl.datafixerupper.api.QuiltDataFixes;
+import org.quiltmc.qsl.datafixerupper.api.SimpleFixes;
 
 public final class DataFixerUpperTestMod implements ModInitializer {
 	private static final String NAMESPACE = "quilt_datafixerupper_testmod";
-	private static final int DATA_VERSION = 0;
+	private static final int DATA_VERSION = 1;
 
 	private static final Logger LOGGER = LogUtils.getLogger();
 
@@ -36,6 +39,9 @@ public final class DataFixerUpperTestMod implements ModInitializer {
 	public void onInitialize(ModContainer mod) {
 		QuiltDataFixerBuilder builder = new QuiltDataFixerBuilder(DATA_VERSION);
 		builder.addSchema(0, QuiltDataFixes.MOD_SCHEMA);
+		Schema schemaV1 = builder.addSchema(1, IdentifierNormalizingSchema::new);
+		SimpleFixes.addItemRenameFix(builder, "Rename old_item to new_item",
+				NAMESPACE + ":old_item", NAMESPACE + ":new_item", schemaV1);
 
 		QuiltDataFixes.registerFixer(NAMESPACE, DATA_VERSION, builder.build(Util::getBootstrapExecutor));
 	}

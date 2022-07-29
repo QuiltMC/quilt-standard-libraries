@@ -22,3 +22,30 @@ qslModule {
 		}
 	}
 }
+
+sourceSets {
+	testmodV2 {
+		compileClasspath += main.compileClasspath
+		runtimeClasspath += main.runtimeClasspath
+	}
+}
+
+dependencies {
+	testmodV2Implementation sourceSets.main.output
+}
+
+task cleanupDfuTestmod() {
+	delete "run"
+}
+
+loom {
+	runs {
+		testmodV2 {
+			server()
+			configName = "Run DFU Testmod V2"
+			source(project.sourceSets.testmodV2)
+			property("quilt.auto_test")
+			programArg("--nogui")
+		}
+	}
+}
