@@ -29,9 +29,11 @@ import org.quiltmc.qsl.datafixerupper.impl.QuiltDataFixesInternals;
 
 @Mixin(HotbarStorage.class)
 public abstract class HotbarStorageMixin {
-	@Inject(method = "save",
+	@Inject(
+			method = "save",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/NbtIo;write(Lnet/minecraft/nbt/NbtCompound;Ljava/io/File;)V"),
-			locals = LocalCapture.CAPTURE_FAILHARD)
+			locals = LocalCapture.CAPTURE_FAILHARD
+	)
 	private void addModDataVersions(CallbackInfo ci, NbtCompound compound) {
 		QuiltDataFixesInternals.addModDataVersions(compound);
 	}

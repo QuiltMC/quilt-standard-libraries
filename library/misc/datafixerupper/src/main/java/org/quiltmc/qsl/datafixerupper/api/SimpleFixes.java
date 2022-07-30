@@ -42,8 +42,8 @@ public final class SimpleFixes {
 	 *
 	 * @param builder the builder
 	 * @param name the fix's name
-	 * @param oldId the block's old ID
-	 * @param newId the block's new ID
+	 * @param oldId the block's old identifier
+	 * @param newId the block's new identifier
 	 * @param schema the schema
 	 * @see BlockNameFix
 	 */
@@ -62,8 +62,8 @@ public final class SimpleFixes {
 	 *
 	 * @param builder the builder
 	 * @param name the fix's name
-	 * @param oldId the item's old ID
-	 * @param newId the item's new ID
+	 * @param oldId the item's old identifier
+	 * @param newId the item's new identifier
 	 * @param schema the schema
 	 * @see ItemNameFix
 	 */
@@ -82,7 +82,7 @@ public final class SimpleFixes {
 	 *
 	 * @param builder the builder
 	 * @param name the fix's name
-	 * @param changes a map of old biome IDs to new biome IDs
+	 * @param changes a map of old biome identifiers to new biome identifiers
 	 * @param schema the schema
 	 * @see BiomeRenameFix
 	 */

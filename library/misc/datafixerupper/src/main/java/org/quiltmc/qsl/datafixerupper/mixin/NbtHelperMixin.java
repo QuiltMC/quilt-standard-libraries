@@ -30,8 +30,11 @@ import org.quiltmc.qsl.datafixerupper.impl.QuiltDataFixesInternals;
 
 @Mixin(NbtHelper.class)
 public abstract class NbtHelperMixin {
-	@Inject(method = "update(Lcom/mojang/datafixers/DataFixer;Lnet/minecraft/datafixer/DataFixTypes;Lnet/minecraft/nbt/NbtCompound;II)Lnet/minecraft/nbt/NbtCompound;",
-			at = @At("RETURN"), cancellable = true)
+	@Inject(
+			method = "update(Lcom/mojang/datafixers/DataFixer;Lnet/minecraft/datafixer/DataFixTypes;Lnet/minecraft/nbt/NbtCompound;II)Lnet/minecraft/nbt/NbtCompound;",
+			at = @At("RETURN"),
+			cancellable = true
+	)
 	private static void updateDataWithFixers(DataFixer fixer, DataFixTypes fixTypes, NbtCompound compound,
 											 int oldVersion, int targetVersion, CallbackInfoReturnable<NbtCompound> cir) {
 		cir.setReturnValue(QuiltDataFixesInternals.updateWithAllFixers(fixTypes, cir.getReturnValue()));

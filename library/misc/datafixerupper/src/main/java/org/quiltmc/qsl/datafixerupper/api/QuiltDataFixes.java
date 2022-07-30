@@ -37,7 +37,8 @@ public final class QuiltDataFixes {
 	private QuiltDataFixes() { }
 
 	/**
-	 * A "base" version 0 schema, for use by all mods.<br>
+	 * A "base" version {@code 0} schema, for use by all mods.
+	 * <p>
 	 * This schema <em>must</em> be the first one added!
 	 *
 	 * @see DataFixerBuilder#addSchema(int, BiFunction)
@@ -51,7 +52,7 @@ public final class QuiltDataFixes {
 	/**
 	 * Registers a new data fixer.
 	 *
-	 * @param modId the ID of the mod
+	 * @param modId the mod identifier
 	 * @param currentVersion the current version of the mod's data
 	 * @param dataFixer the data fixer
 	 */
@@ -70,7 +71,7 @@ public final class QuiltDataFixes {
 	/**
 	 * Gets a mod's data fixer.
 	 *
-	 * @param modId the mod ID
+	 * @param modId the mod identifier
 	 * @return the mod's data fixer, or empty if the mod hasn't registered one
 	 */
 	public static Optional<DataFixer> getFixer(String modId) {
@@ -87,8 +88,8 @@ public final class QuiltDataFixes {
 	 * Gets a mod's data version from a {@link NbtCompound}.
 	 *
 	 * @param compound the compound
-	 * @param modId the mod ID
-	 * @return the mod's data version, or 0 if the compound has no data for that mod
+	 * @param modId the mod identifier
+	 * @return the mod's data version, or {@code 0} if the compound has no data for that mod
 	 */
 	public static int getModDataVersion(NbtCompound compound, String modId) {
 		checkNotNull(compound, "compound cannot be null");
@@ -100,7 +101,7 @@ public final class QuiltDataFixes {
 	/**
 	 * Checks if the data fixer registry is frozen.
 	 *
-	 * @return {@code true} if frozen, {@code false} otherwise.
+	 * @return {@code true} if frozen, or {@code false} otherwise.
 	 */
 	public static boolean isFrozen() {
 		return QuiltDataFixesInternals.isFrozen();
