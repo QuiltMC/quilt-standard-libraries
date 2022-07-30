@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.entity.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "DefaultAttributeRegistryAccessor",
+    "DefaultAttributeRegistryMixin",
+    "SpawnRestrictionAccessor"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
