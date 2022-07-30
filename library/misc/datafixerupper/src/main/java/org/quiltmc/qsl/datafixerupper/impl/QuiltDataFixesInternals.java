@@ -45,6 +45,10 @@ public final class QuiltDataFixesInternals {
 	private static boolean frozen = false;
 
 	public static void registerFixer(String modId, int currentVersion, DataFixer dataFixer) {
+		if (modDataFixers.containsKey(modId)) {
+			throw new IllegalArgumentException("Mod '" + modId + "' already has a registered data fixer");
+		}
+
 		modDataFixers.put(modId, new DataFixerEntry(dataFixer, currentVersion));
 	}
 
