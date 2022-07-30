@@ -21,6 +21,7 @@ import java.util.function.Supplier;
 
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.DataFixerBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.SharedConstants;
 
@@ -41,7 +42,7 @@ public class QuiltDataFixerBuilder extends DataFixerBuilder {
 	 * @param executorGetter the executor supplier, only invoked if the game is using optimized data fixers
 	 * @return the newly built data fixer
 	 */
-	public DataFixer build(Supplier<Executor> executorGetter) {
+	public DataFixer build(@NotNull Supplier<Executor> executorGetter) {
 		return switch (SharedConstants.DATA_FIXER_MODE) {
 			case UNINITIALIZED_UNOPTIMIZED, INITIALIZED_UNOPTIMIZED -> buildUnoptimized();
 			case UNINITIALIZED_OPTIMIZED, INITIALIZED_OPTIMIZED -> buildOptimized(executorGetter.get());

@@ -22,6 +22,7 @@ import java.util.function.BiFunction;
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.DataFixerBuilder;
 import com.mojang.datafixers.schemas.Schema;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.nbt.NbtCompound;
 
@@ -59,7 +60,7 @@ public final class QuiltDataFixes {
 	 * @param currentVersion the current version of the mod's data
 	 * @param dataFixer      the data fixer
 	 */
-	public static void registerFixer(String modId, int currentVersion, DataFixer dataFixer) {
+	public static void registerFixer(@NotNull String modId, int currentVersion, @NotNull DataFixer dataFixer) {
 		checkNotNull(modId, "modId cannot be null");
 		checkArgument(currentVersion >= 0, "currentVersion must be positive");
 		checkNotNull(dataFixer, "dataFixer cannot be null");
@@ -78,7 +79,7 @@ public final class QuiltDataFixes {
 	 * @param currentVersion the current version of the mod's data
 	 * @param dataFixer      the data fixer
 	 */
-	public static void registerFixer(ModContainer mod, int currentVersion, DataFixer dataFixer) {
+	public static void registerFixer(@NotNull ModContainer mod, int currentVersion, @NotNull DataFixer dataFixer) {
 		checkNotNull(mod, "mod cannot be null");
 
 		registerFixer(mod.metadata().id(), currentVersion, dataFixer);
@@ -90,7 +91,7 @@ public final class QuiltDataFixes {
 	 * @param modId the mod identifier
 	 * @return the mod's data fixer, or empty if the mod hasn't registered one
 	 */
-	public static Optional<DataFixer> getFixer(String modId) {
+	public static @NotNull Optional<DataFixer> getFixer(@NotNull String modId) {
 		checkNotNull(modId, "modId cannot be null");
 
 		QuiltDataFixesInternals.DataFixerEntry entry = QuiltDataFixesInternals.getFixerEntry(modId);
@@ -107,7 +108,7 @@ public final class QuiltDataFixes {
 	 * @param modId    the mod identifier
 	 * @return the mod's data version, or {@code 0} if the compound has no data for that mod
 	 */
-	public static int getModDataVersion(NbtCompound compound, String modId) {
+	public static int getModDataVersion(@NotNull NbtCompound compound, @NotNull String modId) {
 		checkNotNull(compound, "compound cannot be null");
 		checkNotNull(modId, "modId cannot be null");
 

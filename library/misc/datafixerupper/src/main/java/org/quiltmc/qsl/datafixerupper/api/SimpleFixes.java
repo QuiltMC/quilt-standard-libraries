@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.DataFix;
 import com.mojang.datafixers.DataFixerBuilder;
 import com.mojang.datafixers.schemas.Schema;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.datafixer.fix.BiomeRenameFix;
 import net.minecraft.datafixer.fix.BlockNameFix;
@@ -50,8 +51,9 @@ public final class SimpleFixes {
 	 * @param schema  the schema this fixer should be a part of
 	 * @see BlockNameFix
 	 */
-	public static void addBlockRenameFix(DataFixerBuilder builder, String name,
-										 Identifier oldId, Identifier newId, Schema schema) {
+	public static void addBlockRenameFix(@NotNull DataFixerBuilder builder, @NotNull String name,
+										 @NotNull Identifier oldId, @NotNull Identifier newId,
+										 @NotNull Schema schema) {
 		checkNotNull(builder, "DataFixerBuilder cannot be null");
 		checkNotNull(name, "Fix name cannot be null");
 		checkNotNull(oldId, "Old identifier cannot be null");
@@ -73,8 +75,9 @@ public final class SimpleFixes {
 	 * @param schema  the schema this fix should be a part of
 	 * @see ItemNameFix
 	 */
-	public static void addItemRenameFix(DataFixerBuilder builder, String name,
-										Identifier oldId, Identifier newId, Schema schema) {
+	public static void addItemRenameFix(@NotNull DataFixerBuilder builder, @NotNull String name,
+										@NotNull Identifier oldId, @NotNull Identifier newId,
+										@NotNull Schema schema) {
 		checkNotNull(builder, "DataFixerBuilder cannot be null");
 		checkNotNull(name, "Fix name cannot be null");
 		checkNotNull(oldId, "Old identifier cannot be null");
@@ -95,8 +98,9 @@ public final class SimpleFixes {
 	 * @param schema  the schema this fixer should be a part of
 	 * @see BiomeRenameFix
 	 */
-	public static void addBiomeRenameFix(DataFixerBuilder builder, String name,
-										 Map<Identifier, Identifier> changes, Schema schema) {
+	public static void addBiomeRenameFix(@NotNull DataFixerBuilder builder, @NotNull String name,
+										 @NotNull Map<Identifier, Identifier> changes,
+										 @NotNull Schema schema) {
 		checkNotNull(builder, "DataFixerBuilder cannot be null");
 		checkNotNull(name, "Fix name cannot be null");
 		checkNotNull(changes, "Changes cannot be null");
