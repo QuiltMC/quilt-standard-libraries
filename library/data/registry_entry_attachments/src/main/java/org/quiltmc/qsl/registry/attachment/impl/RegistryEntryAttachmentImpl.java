@@ -16,13 +16,16 @@
 
 package org.quiltmc.qsl.registry.attachment.impl;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.mojang.serialization.Codec;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashBigSet;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.tag.TagKey;
@@ -142,6 +145,15 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 		set.addAll(RegistryEntryAttachmentHolder.getData(this.registry).valueTagTable.row(this).keySet());
 		set.addAll(RegistryEntryAttachmentHolder.getBuiltin(this.registry).valueTagTable.row(this).keySet());
 		return set;
+	}
+
+	@NotNull
+	@Override
+	public Iterator<Entry<R, V>> iterator() {
+		return RegistryEntryAttachmentImpl.this.registry.stream()
+				.filter(r -> RegistryEntryAttachmentImpl.this.get(r).isPresent())
+				.map(r -> new Entry<>(r, RegistryEntryAttachmentImpl.this.get(r).get()))
+				.iterator();
 	}
 
 	@Override

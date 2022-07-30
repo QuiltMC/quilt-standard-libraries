@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": {
-    "minecraft:anvil": {
+    "#minecraft:anvil": {
       "burn": 100,
       "spread": 100
     }

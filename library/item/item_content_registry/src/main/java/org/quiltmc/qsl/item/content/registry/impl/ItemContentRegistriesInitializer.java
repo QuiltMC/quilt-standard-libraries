@@ -66,7 +66,7 @@ public class ItemContentRegistriesInitializer implements ModInitializer {
 	}
 
 	private static <T, V> void setMapFromAttachment(BiFunction<T, V, ?> map, RegistryEntryAttachment<T, V> attachment) {
-		attachment.entryIterator().forEachRemaining(entry -> map.apply(entry.entry(), entry.value()));
+		attachment.forEach(entry -> map.apply(entry.entry(), entry.value()));
 	}
 
 	public static boolean shouldCollectInitialTags() {

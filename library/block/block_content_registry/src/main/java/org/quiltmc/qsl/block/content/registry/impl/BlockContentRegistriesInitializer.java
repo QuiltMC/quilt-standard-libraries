@@ -118,7 +118,7 @@ public class BlockContentRegistriesInitializer implements ModInitializer {
 	}
 
 	private static <T, V> void setMapFromAttachment(BiFunction<T, V, ?> map, RegistryEntryAttachment<T, V> attachment) {
-		attachment.entryIterator().forEachRemaining(entry -> map.apply(entry.entry(), entry.value()));
+		attachment.forEach(entry -> map.apply(entry.entry(), entry.value()));
 	}
 
 	private static <T, V> void addMapToAttachment(Map<T, V> map, RegistryEntryAttachment<T, V> attachment) {
