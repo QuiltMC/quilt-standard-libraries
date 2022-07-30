@@ -25,6 +25,7 @@ import com.mojang.datafixers.schemas.Schema;
 
 import net.minecraft.nbt.NbtCompound;
 
+import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.datafixerupper.impl.QuiltDataFixesInternals;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -68,6 +69,19 @@ public final class QuiltDataFixes {
 		}
 
 		QuiltDataFixesInternals.registerFixer(modId, currentVersion, dataFixer);
+	}
+
+	/**
+	 * Registers a new data fixer.
+	 *
+	 * @param mod the mod container
+	 * @param currentVersion the current version of the mod's data
+	 * @param dataFixer the data fixer
+	 */
+	public static void registerFixer(ModContainer mod, int currentVersion, DataFixer dataFixer) {
+		checkNotNull(mod, "mod cannot be null");
+
+		registerFixer(mod.metadata().id(), currentVersion, dataFixer);
 	}
 
 	/**
