@@ -27,8 +27,10 @@ import org.quiltmc.qsl.datafixerupper.impl.QuiltDataFixesInternals;
 
 @Mixin(ChunkSerializer.class)
 public abstract class ChunkSerializerMixin {
-	@ModifyVariable(method = "serialize",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/NbtCompound;putInt(Ljava/lang/String;I)V", ordinal = 0))
+	@ModifyVariable(
+			method = "serialize",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/NbtCompound;putInt(Ljava/lang/String;I)V", ordinal = 0)
+	)
 	private static NbtCompound addModDataVersions(NbtCompound compound) {
 		return QuiltDataFixesInternals.addModDataVersions(compound);
 	}

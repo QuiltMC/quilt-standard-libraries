@@ -21,7 +21,7 @@
  *     Schema schemaV1 = builder.addSchema(1, IdentifierNormalizingSchema::new)
  *     // add fixes to the schema - for example, an item rename (identifier change)
  *     SimpleFixes.addItemRenameFix(builder, "Rename cool_item to awesome_item",
- *         new Identifier("mymod", "cool_item", new Identifier("mymod", "awesome_item", schemaV1);
+ *         new Identifier("mymod", "cool_item"), new Identifier("mymod", "awesome_item"), schemaV1);
  *
  *     // register the fixer!
  *     // QuiltDataFixerBuilder.build creates either an unoptimized fixer or an optimized fixer, depending
