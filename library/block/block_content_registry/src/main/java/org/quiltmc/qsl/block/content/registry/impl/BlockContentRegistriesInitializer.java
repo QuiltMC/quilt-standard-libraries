@@ -71,53 +71,54 @@ public class BlockContentRegistriesInitializer implements ModInitializer {
 		Oxidizable.OXIDATION_LEVEL_INCREASES.get();
 		HoneycombItem.UNWAXED_TO_WAXED_BLOCKS.get();
 
+		addMapToAttachment(INITIAL_PATH_STATES, BlockContentRegistries.FLATTENABLE_BLOCK);
+		addMapToAttachment(INITIAL_STRIPPED_BLOCKS, BlockContentRegistries.STRIPPABLE_BLOCK);
+		addMapToAttachment(INITIAL_OXIDATION_BLOCKS.entrySet().stream().collect(Collectors.toMap(
+				Map.Entry::getKey,
+				entry -> new ReversibleBlockEntry(entry.getValue(), true)
+		)), BlockContentRegistries.OXIDIZABLE_BLOCK);
+		addMapToAttachment(INITIAL_WAXED_BLOCKS.entrySet().stream().collect(Collectors.toMap(
+				Map.Entry::getKey,
+				entry -> new ReversibleBlockEntry(entry.getValue(), true)
+		)), BlockContentRegistries.WAXABLE_BLOCK);
+		addMapToAttachment(INITIAL_FLAMMABLE_BLOCKS, BlockContentRegistries.FLAMMABLE_BLOCK);
+		addMapToAttachment(INITIAL_SCULK_SENSOR_BLOCK_EVENTS, BlockContentRegistries.SCULK_FREQUENCY);
+
 		resetMaps();
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, error) -> resetMaps());
 	}
 
 	private static void resetMaps() {
 		ShovelItem.PATH_STATES.clear();
-		addMapToAttachment(INITIAL_PATH_STATES, BlockContentRegistries.FLATTENABLE_BLOCK);
 		setMapFromAttachment(ShovelItem.PATH_STATES::put, BlockContentRegistries.FLATTENABLE_BLOCK);
 
 		AxeItem.STRIPPED_BLOCKS.clear();
-		addMapToAttachment(INITIAL_STRIPPED_BLOCKS, BlockContentRegistries.STRIPPABLE_BLOCK);
 		setMapFromAttachment(AxeItem.STRIPPED_BLOCKS::put, BlockContentRegistries.STRIPPABLE_BLOCK);
 
 		OXIDATION_INCREASE_BLOCKS.clear();
 		OXIDATION_DECREASE_BLOCKS.clear();
-		addMapToAttachment(INITIAL_OXIDATION_BLOCKS.entrySet().stream().collect(Collectors.toMap(
-				Map.Entry::getKey,
-				entry -> new ReversibleBlockEntry(entry.getValue(), true)
-		)), BlockContentRegistries.OXIDIZABLE_BLOCK);
 		setMapFromAttachment((entry, value) -> OXIDATION_INCREASE_BLOCKS.put(entry, value.block()), BlockContentRegistries.OXIDIZABLE_BLOCK);
 		setMapFromAttachment((entry, value) -> value.reversible() ? OXIDATION_DECREASE_BLOCKS.put(value.block(), entry) : null, BlockContentRegistries.OXIDIZABLE_BLOCK);
 
 		UNWAXED_WAXED_BLOCKS.clear();
 		WAXED_UNWAXED_BLOCKS.clear();
-		addMapToAttachment(INITIAL_WAXED_BLOCKS.entrySet().stream().collect(Collectors.toMap(
-				Map.Entry::getKey,
-				entry -> new ReversibleBlockEntry(entry.getValue(), true)
-		)), BlockContentRegistries.WAXABLE_BLOCK);
 		setMapFromAttachment((entry, value) -> UNWAXED_WAXED_BLOCKS.put(entry, value.block()), BlockContentRegistries.WAXABLE_BLOCK);
 		setMapFromAttachment((entry, value) -> value.reversible() ? WAXED_UNWAXED_BLOCKS.put(value.block(), entry) : null, BlockContentRegistries.OXIDIZABLE_BLOCK);
 
 		FireBlock fireBlock = ((FireBlock) Blocks.FIRE);
 		fireBlock.burnChances.clear();
 		fireBlock.spreadChances.clear();
-		addMapToAttachment(INITIAL_FLAMMABLE_BLOCKS, BlockContentRegistries.FLAMMABLE_BLOCK);
-		BlockContentRegistries.FLAMMABLE_BLOCK.registry().stream().forEach(entry -> BlockContentRegistries.FLAMMABLE_BLOCK.getValue(entry).ifPresent(v -> {
+		BlockContentRegistries.FLAMMABLE_BLOCK.registry().stream().forEach(entry -> BlockContentRegistries.FLAMMABLE_BLOCK.get(entry).ifPresent(v -> {
 			fireBlock.burnChances.put(entry, v.burn());
 			fireBlock.spreadChances.put(entry, v.spread());
 		}));
 
 		SculkSensorBlock.EVENTS.clear();
-		addMapToAttachment(INITIAL_SCULK_SENSOR_BLOCK_EVENTS, BlockContentRegistries.SCULK_FREQUENCY);
 		setMapFromAttachment(SculkSensorBlock.EVENTS::put, BlockContentRegistries.SCULK_FREQUENCY);
 	}
 
 	private static <T, V> void setMapFromAttachment(BiFunction<T, V, ?> map, RegistryEntryAttachment<T, V> attachment) {
-		attachment.registry().stream().forEach(entry -> attachment.getValue(entry).ifPresent(v -> map.apply(entry, v)));
+		attachment.entryIterator().forEachRemaining(entry -> map.apply(entry.entry(), entry.value()));
 	}
 
 	private static <T, V> void addMapToAttachment(Map<T, V> map, RegistryEntryAttachment<T, V> attachment) {

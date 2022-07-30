@@ -41,11 +41,11 @@ public class BlockContentRegistriesClientInitializer implements ClientModInitial
                 ItemTooltipCallback.EVENT.register((stack, player, context, lines) -> {
 					Block block = Block.getBlockFromItem(stack.getItem());
 
-                    BlockContentRegistries.FLATTENABLE_BLOCK.getValue(block).ifPresent(state -> lines.add(Text.literal("Flattenable block: " + state)));
-                    BlockContentRegistries.OXIDIZABLE_BLOCK.getValue(block).ifPresent(_block -> lines.add(Text.literal("Oxidizes to: " + _block.block())));
-                    BlockContentRegistries.WAXABLE_BLOCK.getValue(block).ifPresent(_block -> lines.add(Text.literal("Waxes to: " + _block.block())));
-                    BlockContentRegistries.STRIPPABLE_BLOCK.getValue(block).ifPresent(_block -> lines.add(Text.literal("Strips to: " + _block)));
-                    BlockContentRegistries.FLAMMABLE_BLOCK.getValue(block).ifPresent(entry -> lines.add(Text.literal("Flammable: " + entry.burn() + " burn chance, " + entry.spread() + " spread chance")));
+                    BlockContentRegistries.FLATTENABLE_BLOCK.get(block).ifPresent(state -> lines.add(Text.literal("Flattenable block: " + state)));
+                    BlockContentRegistries.OXIDIZABLE_BLOCK.get(block).ifPresent(_block -> lines.add(Text.literal("Oxidizes to: " + _block.block())));
+                    BlockContentRegistries.WAXABLE_BLOCK.get(block).ifPresent(_block -> lines.add(Text.literal("Waxes to: " + _block.block())));
+                    BlockContentRegistries.STRIPPABLE_BLOCK.get(block).ifPresent(_block -> lines.add(Text.literal("Strips to: " + _block)));
+                    BlockContentRegistries.FLAMMABLE_BLOCK.get(block).ifPresent(entry -> lines.add(Text.literal("Flammable: " + entry.burn() + " burn chance, " + entry.spread() + " spread chance")));
                 });
             } else {
                 LOGGER.warn("Tooltip debug was enabled, but the QSL module `quilt_tooltip` was missing.");
