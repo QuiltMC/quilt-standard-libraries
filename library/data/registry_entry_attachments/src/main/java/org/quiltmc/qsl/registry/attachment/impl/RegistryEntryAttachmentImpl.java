@@ -18,6 +18,7 @@ package org.quiltmc.qsl.registry.attachment.impl;
 
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import com.mojang.serialization.Codec;
@@ -149,8 +150,11 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	@Override
 	public Iterator<Entry<R, V>> iterator() {
 		return RegistryEntryAttachmentImpl.this.registry.stream()
-				.filter(r -> RegistryEntryAttachmentImpl.this.get(r).isPresent())
-				.map(r -> new Entry<>(r, RegistryEntryAttachmentImpl.this.get(r).get()))
+				.map(r -> {
+					Optional<V> value = RegistryEntryAttachmentImpl.this.get(r);
+					return value.map(v -> new Entry<>(r, v)).orElse(null);
+				})
+				.filter(Objects::nonNull)
 				.iterator();
 	}
 
