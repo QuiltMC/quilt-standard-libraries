@@ -23,6 +23,7 @@ import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.DataFixerBuilder;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 
 import net.minecraft.SharedConstants;
 
@@ -30,7 +31,7 @@ import net.minecraft.SharedConstants;
  * An extended variant of the {@link DataFixerBuilder} class, which provides an extra method.
  */
 public class QuiltDataFixerBuilder extends DataFixerBuilder {
-	public QuiltDataFixerBuilder(int dataVersion) {
+	public QuiltDataFixerBuilder(@Range(from = 0, to = Integer.MAX_VALUE) int dataVersion) {
 		super(dataVersion);
 	}
 
