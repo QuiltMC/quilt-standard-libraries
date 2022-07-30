@@ -1,0 +1,29 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Entity Model API"
+	moduleName = "entity_models"
+	id = "quilt_entity_models"
+	description = "Adds data driven entity models and animations"
+	library = "rendering"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+			impl("resource_loader")
+		}
+	}
+	entrypoints {
+		client_init {
+			values = ["org.quiltmc.qsl.rendering.entity_models.impl.QuiltEntityModelsClientInitializer"]
+		}
+	}
+	injectedInterface("net/minecraft/class_898") {
+		values = ["org/quiltmc/qsl/rendering/entity_models/api/HasAnimationManager"]
+	}
+	injectedInterface("net/minecraft/class_5617\$class_5618") {
+		values = ["org/quiltmc/qsl/rendering/entity_models/api/HasAnimationManager"]
+	}
+	clientOnly()
+}

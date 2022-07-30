@@ -32,6 +32,7 @@ library("data")
 library("gui")
 library("item")
 library("management")
+library("rendering")
 library("worldgen")
 
 def library(String library) {
