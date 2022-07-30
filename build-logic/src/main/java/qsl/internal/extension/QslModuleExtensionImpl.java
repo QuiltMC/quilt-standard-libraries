@@ -1,6 +1,12 @@
 package qsl.internal.extension;
 
-import groovy.util.Node;
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import net.fabricmc.loom.api.LoomGradleExtensionAPI;
 import org.gradle.api.Action;
 import org.gradle.api.Named;
@@ -10,22 +16,10 @@ import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
-import org.gradle.api.publish.PublicationContainer;
-import org.gradle.api.publish.PublishingExtension;
-import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Nested;
-import qsl.internal.GroovyXml;
 import qsl.internal.dependency.QslLibraryDependency;
 import qsl.internal.json.Environment;
-
-import javax.inject.Inject;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 public class QslModuleExtensionImpl extends QslExtension implements QslModuleExtension, Serializable {
 	@Serial
@@ -82,10 +76,12 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 	public Property<String> getName() {
 		return this.name;
 	}
+
 	@Input
 	public Property<String> getId() {
 		return this.id;
 	}
+
 	@Input
 	public Property<String> getDescription() {
 		return this.description;
@@ -97,11 +93,13 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 	}
 
 	public void accessWidener() {
-		hasAccessWidener.set(true);
-		project.getExtensions()
+		this.hasAccessWidener.set(true);
+		this.project.getExtensions()
 				.getByType(LoomGradleExtensionAPI.class)
 				.getAccessWidenerPath()
-				.fileValue(project.file("src/main/resources/" + id.get() + ".accesswidener"));
+				.fileValue(this.project.file("src/main/resources/" + this.id.get() + ".accesswidener"));
+
+		this.allowGenTasks();
 	}
 
 	@Input
@@ -155,8 +153,6 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 	}
 
 	public void setupModuleDependencies() {
-		List<Dependency> deps = new ArrayList<>();
-
 		for (QslLibraryDependency library : this.getModuleDependencyDefinitions()) {
 			for (QslLibraryDependency.ModuleDependencyInfo info : library.getDependencyInfo().get()) {
 				Map<String, String> map = new LinkedHashMap<>(2);
@@ -164,7 +160,6 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 				map.put("configuration", "dev");
 
 				Dependency dep = project.getDependencies().project(map);
-				deps.add(dep);
 				project.getDependencies().add(info.type().getConfigurationName(), dep);
 
 				if (info.type().isTransitive()) {
@@ -172,22 +167,6 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 				}
 			}
 		}
-
-		PublicationContainer publications = this.project.getExtensions().getByType(PublishingExtension.class).getPublications();
-
-		publications.named("mavenJava", MavenPublication.class, publication -> {
-			publication.pom(pom -> pom.withXml(xml -> {
-				Node pomDeps = GroovyXml.getOrCreateNode(xml.asNode(), "dependencies");
-
-				for (Dependency dependency : deps) {
-					Node pomDep = pomDeps.appendNode("dependency");
-					pomDep.appendNode("groupId", dependency.getGroup());
-					pomDep.appendNode("artifactId", dependency.getName());
-					pomDep.appendNode("version", dependency.getVersion());
-					pomDep.appendNode("scope", "compile");
-				}
-			}));
-		});
 	}
 
 	/**

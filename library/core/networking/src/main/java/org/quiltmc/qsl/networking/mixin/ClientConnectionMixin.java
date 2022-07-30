@@ -34,6 +34,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkSide;
 import net.minecraft.network.Packet;
+import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.listener.PacketListener;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -49,7 +50,7 @@ abstract class ClientConnectionMixin implements ChannelInfoHolder {
 	private PacketListener packetListener;
 
 	@Shadow
-	public abstract void send(Packet<?> packet, GenericFutureListener<? extends Future<? super Void>> callback);
+	public abstract void send(Packet<?> packet, PacketSendListener listener);
 
 	@Shadow
 	public abstract void disconnect(Text disconnectReason);
@@ -63,18 +64,23 @@ abstract class ClientConnectionMixin implements ChannelInfoHolder {
 	}
 
 	// Must be fully qualified due to mixin not working in production without it
-	@SuppressWarnings("UnnecessaryQualifiedMemberReference")
-	@Redirect(method = "Lnet/minecraft/network/ClientConnection;exceptionCaught(Lio/netty/channel/ChannelHandlerContext;Ljava/lang/Throwable;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/ClientConnection;send(Lnet/minecraft/network/Packet;Lio/netty/util/concurrent/GenericFutureListener;)V"))
-	private void resendOnExceptionCaught(ClientConnection self, Packet<?> packet, GenericFutureListener<? extends Future<? super Void>> futureListener) {
+	@Redirect(
+			method = "exceptionCaught",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/network/ClientConnection;send(Lnet/minecraft/network/Packet;Lnet/minecraft/network/PacketSendListener;)V"
+			)
+	)
+	private void resendOnExceptionCaught(ClientConnection self, Packet<?> packet, PacketSendListener listener) {
 		if (this.packetListener instanceof DisconnectPacketSource dcSource) {
-			this.send(dcSource.createDisconnectPacket(Text.translatable("disconnect.genericReason")), futureListener);
+			this.send(dcSource.createDisconnectPacket(Text.translatable("disconnect.genericReason")), listener);
 		} else {
 			this.disconnect(Text.translatable("disconnect.genericReason")); // Don't send packet if we cannot send proper packets
 		}
 	}
 
 	@Inject(method = "sendImmediately", at = @At(value = "FIELD", target = "Lnet/minecraft/network/ClientConnection;packetsSentCounter:I"))
-	private void checkPacket(Packet<?> packet, GenericFutureListener<? extends Future<? super Void>> callback, CallbackInfo ci) {
+	private void checkPacket(Packet<?> packet, PacketSendListener listener, CallbackInfo ci) {
 		if (this.packetListener instanceof PacketCallbackListener callbackListener) {
 			callbackListener.sent(packet);
 		}
