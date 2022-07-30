@@ -44,10 +44,10 @@ public final class SimpleFixes {
 	 * Adds a block rename fix to the builder, in case a block's identifier is changed.
 	 *
 	 * @param builder the builder
-	 * @param name the fix's name
-	 * @param oldId the block's old identifier
-	 * @param newId the block's new identifier
-	 * @param schema the schema this fixer should be a part of
+	 * @param name    the fix's name
+	 * @param oldId   the block's old identifier
+	 * @param newId   the block's new identifier
+	 * @param schema  the schema this fixer should be a part of
 	 * @see BlockNameFix
 	 */
 	public static void addBlockRenameFix(DataFixerBuilder builder, String name,
@@ -67,10 +67,10 @@ public final class SimpleFixes {
 	 * Adds an item rename fix to the builder, in case an item's identifier is changed.
 	 *
 	 * @param builder the builder
-	 * @param name the fix's name
-	 * @param oldId the item's old identifier
-	 * @param newId the item's new identifier
-	 * @param schema the schema this fix should be a part of
+	 * @param name    the fix's name
+	 * @param oldId   the item's old identifier
+	 * @param newId   the item's new identifier
+	 * @param schema  the schema this fix should be a part of
 	 * @see ItemNameFix
 	 */
 	public static void addItemRenameFix(DataFixerBuilder builder, String name,
@@ -90,9 +90,9 @@ public final class SimpleFixes {
 	 * Adds a biome rename fix to the builder, in case biome identifiers are changed.
 	 *
 	 * @param builder the builder
-	 * @param name the fix's name
+	 * @param name    the fix's name
 	 * @param changes a map of old biome identifiers to new biome identifiers
-	 * @param schema the schema
+	 * @param schema  the schema this fixer should be a part of
 	 * @see BiomeRenameFix
 	 */
 	public static void addBiomeRenameFix(DataFixerBuilder builder, String name,

@@ -55,9 +55,9 @@ public final class QuiltDataFixes {
 	/**
 	 * Registers a new data fixer.
 	 *
-	 * @param modId the mod identifier
+	 * @param modId          the mod identifier
 	 * @param currentVersion the current version of the mod's data
-	 * @param dataFixer the data fixer
+	 * @param dataFixer      the data fixer
 	 */
 	public static void registerFixer(String modId, int currentVersion, DataFixer dataFixer) {
 		checkNotNull(modId, "modId cannot be null");
@@ -74,9 +74,9 @@ public final class QuiltDataFixes {
 	/**
 	 * Registers a new data fixer.
 	 *
-	 * @param mod the mod container
+	 * @param mod            the mod container
 	 * @param currentVersion the current version of the mod's data
-	 * @param dataFixer the data fixer
+	 * @param dataFixer      the data fixer
 	 */
 	public static void registerFixer(ModContainer mod, int currentVersion, DataFixer dataFixer) {
 		checkNotNull(mod, "mod cannot be null");
@@ -104,7 +104,7 @@ public final class QuiltDataFixes {
 	 * Gets a mod's data version from a {@link NbtCompound}.
 	 *
 	 * @param compound the compound
-	 * @param modId the mod identifier
+	 * @param modId    the mod identifier
 	 * @return the mod's data version, or {@code 0} if the compound has no data for that mod
 	 */
 	public static int getModDataVersion(NbtCompound compound, String modId) {
