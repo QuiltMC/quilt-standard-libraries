@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "org.quiltmc.qsl.core",
+    "id": "quilt_resource_loader_testmod",
+    "version": "1.0.0",
+    "metadata": {
+      "name": "Quilt Resource Loader Test Mod",
+      "license": "Apache-2.0"
+    },
+    "intermediate_mappings": "net.fabricmc:intermediary",
+    "load_type": "always",
+    "entrypoints": {
+      "init": [
+        "org.quiltmc.qsl.resource.loader.test.BuiltinResourcePackTestMod",
+        "org.quiltmc.qsl.resource.loader.test.ResourceReloaderTestMod"
+      ],
+      "client_init": [
+        "org.quiltmc.qsl.resource.loader.test.client.ResourcePackProfileProviderTestMod"
+      ],
+      "events": [
+        "org.quiltmc.qsl.resource.loader.test.ResourceLoaderEventsTestMod"
+      ],
+      "client_events": [
+        "org.quiltmc.qsl.resource.loader.test.client.ClientResourceLoaderEventsTestMod"
+      ]
+    },
+    "depends": [
+      "quilt_loader",
+      "quilt_resource_loader"
+    ]
+  },
+  "mixin": "quilt_resource_loader_testmod.mixins.json"
+}

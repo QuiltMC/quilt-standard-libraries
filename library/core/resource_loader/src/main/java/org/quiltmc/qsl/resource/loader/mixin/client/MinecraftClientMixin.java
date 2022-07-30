@@ -18,39 +18,26 @@ package org.quiltmc.qsl.resource.loader.mixin.client;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
 import net.minecraft.resource.ReloadableResourceManager;
-import net.minecraft.server.WorldStem;
-import net.minecraft.world.level.storage.LevelStorage;
 
-import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 import org.quiltmc.qsl.resource.loader.api.client.ClientResourceLoaderEvents;
 
 @Environment(EnvType.CLIENT)
 @Mixin(MinecraftClient.class)
 public class MinecraftClientMixin {
-	@Unique
-	private static final String START_INTEGRATED_SERVER_METHOD = "startIntegratedServer(" +
-			"Ljava/lang/String;Ljava/util/function/Function;Ljava/util/function/Function;" +
-			"ZLnet/minecraft/client/MinecraftClient$WorldLoadAction;)V";
-
 	@Shadow
 	@Final
 	private ReloadableResourceManager resourceManager;
@@ -71,7 +58,7 @@ public class MinecraftClientMixin {
 	// Lambda method in MinecraftClient#<init>, at MinecraftClient#setOverlay.
 	// Take an Optional<Throwable> parameter.
 	@SuppressWarnings("target")
-	@Inject(method = "method_24040(Ljava/util/Optional;)V", at = @At("HEAD"))
+	@Inject(method = "m_aaltpyph(Ljava/util/Optional;)V", at = @At("HEAD"))
 	private void onFirstEndReloadResources(Optional<Throwable> error, CallbackInfo ci) {
 		ClientResourceLoaderEvents.END_RESOURCE_PACK_RELOAD.invoker().onEndResourcePackReload(
 				(MinecraftClient) (Object) this, this.resourceManager, true, error.orElse(null)
@@ -99,36 +86,5 @@ public class MinecraftClientMixin {
 		ClientResourceLoaderEvents.END_RESOURCE_PACK_RELOAD.invoker().onEndResourcePackReload(
 				(MinecraftClient) (Object) this, this.resourceManager, false, error.orElse(null)
 		);
-	}
-
-	@Inject(
-			method = START_INTEGRATED_SERVER_METHOD,
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/client/MinecraftClient;method_40183(Lnet/minecraft/resource/pack/ResourcePackManager;ZLnet/minecraft/server/WorldStem$Supplier;Lnet/minecraft/server/WorldStem$WorldDataSupplier;)Lnet/minecraft/server/WorldStem;"
-			)
-	)
-	private void onStartDataPackReloading(String worldName,
-	                                      Function<LevelStorage.Session, WorldStem.Supplier> dataPackSettingsGetter,
-	                                      Function<LevelStorage.Session, WorldStem.WorldDataSupplier> worldDataGetter,
-	                                      boolean safeMode, @Coerce Object worldLoadAction,
-	                                      CallbackInfo ci) {
-		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null);
-	}
-
-	@ModifyVariable(method = START_INTEGRATED_SERVER_METHOD, at = @At(value = "STORE", ordinal = 0))
-	private WorldStem onSuccessfulDataPackReloading(WorldStem resources) {
-		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resources.resourceManager(), null);
-		return resources; // noop
-	}
-
-	@ModifyArg(
-			method = START_INTEGRATED_SERVER_METHOD,
-			at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Throwable;)V", remap = false, ordinal = 0),
-			index = 1
-	)
-	private Throwable onFailedDataPackReloading(Throwable throwable) {
-		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, null, throwable);
-		return throwable; // noop
 	}
 }

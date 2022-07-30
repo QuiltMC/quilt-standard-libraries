@@ -26,14 +26,13 @@ import java.util.Objects;
 import java.util.Set;
 
 import io.netty.util.AsciiString;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.PacketSendListener;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
 
@@ -178,10 +177,10 @@ public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAd
 	}
 
 	@Override
-	public void sendPacket(Packet<?> packet, GenericFutureListener<? extends Future<? super Void>> callback) {
+	public void sendPacket(Packet<?> packet, PacketSendListener listener) {
 		Objects.requireNonNull(packet, "Packet cannot be null");
 
-		this.connection.send(packet, callback);
+		this.connection.send(packet, listener);
 	}
 
 	/**

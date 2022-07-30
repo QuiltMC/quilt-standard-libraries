@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.item.test;
 
-import net.fabricmc.loader.api.ModContainer;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PickaxeItem;
 import net.minecraft.item.ToolMaterials;
@@ -26,6 +24,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.item.setting.api.CustomDamageHandler;
 import org.quiltmc.qsl.item.setting.api.QuiltItemSettings;
@@ -55,7 +54,7 @@ public class CustomDamageTest implements ModInitializer {
 		@Override
 		public Text getName(ItemStack stack) {
 			int v = stack.getOrCreateNbt().getInt("weird");
-			return super.getName(stack).shallowCopy().append(" (Weird Value: " + v + ")");
+			return super.getName(stack).copy().append(" (Weird Value: " + v + ")");
 		}
 	}
 }

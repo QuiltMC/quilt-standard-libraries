@@ -18,17 +18,16 @@ package org.quiltmc.qsl.networking.api;
 
 import java.util.Objects;
 
-import io.netty.channel.ChannelFutureListener;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.PacketSendListener;
 import net.minecraft.util.Identifier;
 
 /**
  * Represents something that supports sending packets to channels.
+ *
  * @see PacketByteBufs
  */
 public interface PacketSender {
@@ -36,7 +35,7 @@ public interface PacketSender {
 	 * Makes a packet for a channel.
 	 *
 	 * @param channelName the identifier of the channel
-	 * @param buf     the content of the packet
+	 * @param buf         the content of the packet
 	 */
 	Packet<?> createPacket(Identifier channelName, PacketByteBuf buf);
 
@@ -50,16 +49,16 @@ public interface PacketSender {
 	/**
 	 * Sends a packet.
 	 *
-	 * @param packet the packet
-	 * @param callback an optional callback to execute after the packet is sent, may be {@code null}. The callback may also accept a {@link ChannelFutureListener}.
+	 * @param packet   the packet
+	 * @param listener an optional listener containing callbacks to execute after the packet is sent, may be {@code null}
 	 */
-	void sendPacket(Packet<?> packet, @Nullable GenericFutureListener<? extends Future<? super Void>> callback);
+	void sendPacket(Packet<?> packet, @Nullable PacketSendListener listener);
 
 	/**
 	 * Sends a packet to a channel.
 	 *
 	 * @param channel the identifier of the channel
-	 * @param buf the content of the packet
+	 * @param buf     the content of the packet
 	 */
 	default void sendPacket(Identifier channel, PacketByteBuf buf) {
 		Objects.requireNonNull(channel, "Channel cannot be null");
@@ -72,14 +71,13 @@ public interface PacketSender {
 	 * Sends a packet to a channel.
 	 *
 	 * @param channel  the identifier of the channel
-	 * @param buf the content of the packet
-	 * @param callback an optional callback to execute after the packet is sent, may be {@code null}
+	 * @param buf      the content of the packet
+	 * @param listener an optional listener containing callbacks to execute after the packet is sent, may be {@code null}
 	 */
-	// the generic future listener can accept ChannelFutureListener
-	default void sendPacket(Identifier channel, PacketByteBuf buf, @Nullable GenericFutureListener<? extends Future<? super Void>> callback) {
+	default void sendPacket(Identifier channel, PacketByteBuf buf, @Nullable PacketSendListener listener) {
 		Objects.requireNonNull(channel, "Channel cannot be null");
 		Objects.requireNonNull(buf, "Payload cannot be null");
 
-		this.sendPacket(this.createPacket(channel, buf), callback);
+		this.sendPacket(this.createPacket(channel, buf), listener);
 	}
 }

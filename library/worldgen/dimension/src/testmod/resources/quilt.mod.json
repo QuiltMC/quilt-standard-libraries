@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "org.quiltmc.qsl.worldgen",
+    "id": "quilt_dimension_testmod",
+    "version": "1.0.0",
+    "metadata": {
+      "name": "Quilt Dimension API Test Mod",
+      "license": "Apache-2.0"
+    },
+    "intermediate_mappings": "net.fabricmc:intermediary",
+    "load_type": "always",
+    "entrypoints": {
+      "init": [
+        "org.quiltmc.qsl.worldgen.dimension.QuiltDimensionTest"
+      ],
+      "events": [
+        "org.quiltmc.qsl.worldgen.dimension.QuiltDimensionTest"
+      ]
+    },
+    "depends": [
+      "quilt_loader",
+      "quilt_command",
+      "quilt_dimension",
+      "quilt_lifecycle_events",
+      "quilt_resource_loader"
+    ]
+  }
+}

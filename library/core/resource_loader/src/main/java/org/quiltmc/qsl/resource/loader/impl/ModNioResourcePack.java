@@ -20,55 +20,55 @@ package org.quiltmc.qsl.resource.loader.impl;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
 import com.mojang.logging.LogUtils;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.metadata.ModMetadata;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.AbstractFileResourcePack;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
 
+import org.quiltmc.loader.api.ModMetadata;
+import org.quiltmc.loader.impl.filesystem.QuiltJoinedFileSystem;
+import org.quiltmc.qsl.base.api.util.TriState;
+import org.quiltmc.qsl.resource.loader.api.QuiltResourcePack;
 import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
+import org.quiltmc.qsl.resource.loader.impl.cache.EntryType;
+import org.quiltmc.qsl.resource.loader.impl.cache.ResourceAccess;
+import org.quiltmc.qsl.resource.loader.impl.cache.ResourceTreeCache;
 
 /**
  * A NIO implementation of a mod resource pack.
  */
 @ApiStatus.Internal
-public class ModNioResourcePack extends AbstractFileResourcePack {
+public class ModNioResourcePack extends AbstractFileResourcePack implements QuiltResourcePack {
 	private static final Logger LOGGER = LogUtils.getLogger();
-	private static final Pattern RESOURCE_PACK_PATH = Pattern.compile("[a-z0-9-_]+");
+	private static final FileSystem DEFAULT_FILESYSTEM = FileSystems.getDefault();
+	private static final boolean DISABLE_CACHING = TriState.fromProperty("quilt.resource_loader.disable_caching").toBooleanOrElse(false);
 	/* Metadata */
 	private final String name;
 	private final Text displayName;
 	final ModMetadata modInfo;
 	private final ResourcePackActivationType activationType;
 	/* Resource Stuff */
-	private final Path basePath;
+	private final ModIoOps io;
 	final ResourceType type;
 	private final @Nullable AutoCloseable closer;
-	private final String separator;
 	/* Caches */
-	private final boolean cacheable;
-	private final Map<ResourceType, Set<String>> namespaces = new EnumMap<>(ResourceType.class);
+	private final ResourceAccess cache;
 
 	static ModNioResourcePack ofMod(ModMetadata modInfo, Path path, ResourceType type, @Nullable String name) {
 		return new ModNioResourcePack(
@@ -77,43 +77,47 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 		);
 	}
 
-	public ModNioResourcePack(@Nullable String name, ModMetadata modInfo, @Nullable Text displayName,
-	                          ResourcePackActivationType activationType, Path path,
-	                          ResourceType type, @Nullable AutoCloseable closer) {
+	public ModNioResourcePack(@Nullable String name, ModMetadata modInfo, @Nullable Text displayName, ResourcePackActivationType activationType,
+			Path path, ResourceType type, @Nullable AutoCloseable closer) {
 		super(null);
+
+		/* Metadata */
 		this.name = name == null ? ModResourcePackUtil.getName(modInfo) : name;
-		this.displayName = displayName == null ? new LiteralText(name) : displayName;
+		this.displayName = displayName == null ? Text.of(name) : displayName;
 		this.modInfo = modInfo;
-		this.basePath = path.toAbsolutePath().normalize();
-		this.type = type;
-		// Cache ModNioResourcePacks if not in dev environment because it's not supposed to be mutable in production.
-		this.cacheable = modInfo.getId().equals("minecraft") || !FabricLoader.getInstance().isDevelopmentEnvironment();
-		this.closer = closer;
-		this.separator = basePath.getFileSystem().getSeparator();
 		this.activationType = activationType;
-	}
 
-	private Path getPath(String filename) {
-		Path childPath = this.basePath.resolve(filename.replace("/", separator)).toAbsolutePath().normalize();
+		/* Resource Stuff */
+		this.type = type;
+		this.closer = closer;
 
-		if (childPath.startsWith(basePath) && Files.exists(childPath)) {
-			return childPath;
+		if (path.getFileSystem() == DEFAULT_FILESYSTEM) {
+			this.io = new ModFileOps(path.toAbsolutePath().normalize(), modInfo);
 		} else {
-			return null;
+			this.io = new ModNioOps(path.toAbsolutePath().normalize(), modInfo);
+		}
+
+		/* Cache */
+		if (DISABLE_CACHING || path.getFileSystem() == DEFAULT_FILESYSTEM || path.getFileSystem() instanceof QuiltJoinedFileSystem) {
+			// The default file system means it's on-disk files that may change, and QuiltJoinedFileSystem is usually used for dev envs too.
+			this.cache = new ResourceAccess(this.io);
+		} else {
+			// Allows caching for mods that don't have mutable resources.
+			this.cache = new ResourceTreeCache(this.io);
 		}
 	}
 
 	@Override
-	protected InputStream openFile(String filename) throws IOException {
+	protected InputStream openFile(String filePath) throws IOException {
 		InputStream stream;
 
-		Path path = this.getPath(filename);
+		ResourceAccess.Entry entry = this.cache.getEntry(filePath);
 
-		if (path != null && Files.isRegularFile(path)) {
-			return Files.newInputStream(path);
+		if (entry != null && entry.type() == EntryType.FILE) {
+			return Files.newInputStream(entry.path());
 		}
 
-		stream = ModResourcePackUtil.openDefault(this.modInfo, this.type, filename);
+		stream = ModResourcePackUtil.openDefault(this.modInfo, this.type, filePath);
 
 		if (stream != null) {
 			return stream;
@@ -121,50 +125,54 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 
 		// FileNotFoundException is an IOException, which is properly handled by the Vanilla resource loader and
 		// prints to the logs.
-		throw new FileNotFoundException("\"" + filename + "\" in Quilt mod \"" + modInfo.getId() + "\"");
+		throw new FileNotFoundException("\"" + filePath + "\" in Quilt mod \"" + modInfo.id() + "\"");
 	}
 
 	@Override
-	protected boolean containsFile(String filename) {
-		if (ModResourcePackUtil.containsDefault(modInfo, filename)) {
+	protected boolean containsFile(String filePath) {
+		if (ModResourcePackUtil.containsDefault(modInfo, filePath)) {
 			return true;
 		}
 
-		Path path = this.getPath(filename);
-		return path != null && Files.isRegularFile(path);
+		return this.cache.getEntryType(filePath) == EntryType.FILE;
 	}
 
 	@Override
-	public Collection<Identifier> findResources(ResourceType type, String namespace, String path, int depth,
-	                                            Predicate<String> pathFilter) {
+	public Collection<Identifier> findResources(ResourceType type, String namespace, String startingPath,
+			Predicate<Identifier> pathFilter) {
 		var ids = new ArrayList<Identifier>();
-		String nioPath = path.replace("/", separator);
+		String namespacePath = type.getDirectory() + '/' + namespace;
+		String nioPath = startingPath.replace("/", this.io.getSeparator());
 
-		Path namespacePath = this.getPath(type.getDirectory() + "/" + namespace);
+		ResourceAccess.Entry namespaceEntry = this.cache.getEntry(namespacePath);
 
-		if (namespacePath != null) {
-			Path searchPath = namespacePath.resolve(nioPath).toAbsolutePath().normalize();
+		if (namespaceEntry != null) {
+			ResourceAccess.Entry searchEntry = this.cache.getEntry(namespacePath + '/' + nioPath);
 
-			if (Files.exists(searchPath)) {
+			if (searchEntry != null) {
 				try {
-					Files.walk(searchPath, depth)
-							.filter(Files::isRegularFile)
-							.filter((p) -> {
-								String filename = p.getFileName().toString();
-								return !filename.endsWith(".mcmeta") && pathFilter.test(filename);
-							})
-							.map(namespacePath::relativize)
-							.map((p) -> p.toString().replace(separator, "/"))
-							.forEach((s) -> {
+					Files.walk(searchEntry.path())
+							.filter(p -> Files.isRegularFile(p) && !p.getFileName().endsWith(".mcmeta"))
+							.map(p -> {
 								try {
-									ids.add(new Identifier(namespace, s));
+									var id = new Identifier(namespace,
+											namespaceEntry.path().relativize(p).toString().replace(this.io.getSeparator(), "/")
+									);
+
+									if (pathFilter.test(id)) {
+										return id;
+									}
 								} catch (InvalidIdentifierException e) {
 									LOGGER.error(e.getMessage());
 								}
-							});
+
+								return null;
+							})
+							.filter(Objects::nonNull)
+							.forEach(ids::add);
 				} catch (IOException e) {
-					LOGGER.warn("findResources at " + path + " in namespace " + namespace
-							+ ", mod " + this.modInfo.getId() + " failed!", e);
+					LOGGER.warn("findResources at " + startingPath + " in namespace " + namespace
+							+ ", mod " + this.modInfo.id() + " failed!", e);
 				}
 			}
 		}
@@ -172,53 +180,9 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 		return ids;
 	}
 
-	protected void warnInvalidNamespace(String s) {
-		LOGGER.warn("Quilt NioResourcePack: ignored invalid namespace: {} in mod ID {}",
-				s, this.modInfo.getId());
-	}
-
 	@Override
 	public Set<String> getNamespaces(ResourceType type) {
-		if (this.cacheable) {
-			var namespaces = this.namespaces.get(type);
-
-			if (namespaces != null) {
-				return namespaces;
-			}
-		}
-
-		try {
-			Path typePath = this.getPath(type.getDirectory());
-
-			if (typePath == null || !(Files.isDirectory(typePath))) {
-				return Collections.emptySet();
-			}
-
-			var namespaces = new HashSet<String>();
-
-			try (DirectoryStream<Path> stream = Files.newDirectoryStream(typePath, Files::isDirectory)) {
-				for (Path path : stream) {
-					String s = path.getFileName().toString();
-					// s may contain trailing slashes, remove them
-					s = s.replace(separator, "");
-
-					if (RESOURCE_PACK_PATH.matcher(s).matches()) {
-						namespaces.add(s);
-					} else {
-						this.warnInvalidNamespace(s);
-					}
-				}
-			}
-
-			if (this.cacheable) {
-				this.namespaces.put(type, namespaces);
-			}
-
-			return namespaces;
-		} catch (IOException e) {
-			LOGGER.warn("getNamespaces in mod " + modInfo.getId() + " failed!", e);
-			return Collections.emptySet();
-		}
+		return this.cache.getNamespaces(type);
 	}
 
 	@Override
@@ -238,10 +202,12 @@ public class ModNioResourcePack extends AbstractFileResourcePack {
 		return this.name;
 	}
 
+	@Override
 	public Text getDisplayName() {
 		return this.displayName;
 	}
 
+	@Override
 	public ResourcePackActivationType getActivationType() {
 		return this.activationType;
 	}

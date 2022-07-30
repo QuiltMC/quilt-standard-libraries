@@ -4,16 +4,22 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "DefaultResourcePackMixin",
+    "IdentifierAccessor",
     "KeyedResourceReloaderMixin",
     "MinecraftServerMixin",
+    "MultiPackResourceManagerMixin",
     "NamespaceResourceManagerAccessor",
     "NamespaceResourceManagerMixin",
+    "NamespaceResourceManagerMixin$ResourceEntryAccessor",
     "ReloadableResourceManagerMixin",
+    "ResourcePackMixin",
     "ServerReloadableResourcesMixin",
+    "TestServerMixin",
     "VanillaDataPackProviderMixin",
     "server.MainMixin"
   ],
   "client": [
+    "client.CphqvxqunMixin",
     "client.ClientBuiltinResourcePackProviderMixin",
     "client.CreateWorldScreenMixin",
     "client.EntryListWidgetAccessor",

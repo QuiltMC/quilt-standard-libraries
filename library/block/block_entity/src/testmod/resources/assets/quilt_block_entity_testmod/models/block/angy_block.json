@@ -1,0 +1,34 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "particle": "quilt_block_entity_testmod:item/angy_block",
+    "background": "quilt_block_entity_testmod:block/angy_block",
+    "overlay": "quilt_block_entity_testmod:block/angy_block_overlay"
+  },
+  "elements": [
+    {
+      "from": [ 0, 0, 0 ],
+      "to": [ 16, 16, 16 ],
+      "faces": {
+        "down":  { "uv": [ 0, 0, 16, 16 ], "texture": "#background", "cullface": "down" },
+        "up":    { "uv": [ 0, 0, 16, 16 ], "texture": "#background", "cullface": "up" },
+        "north": { "uv": [ 0, 0, 16, 16 ], "texture": "#background", "cullface": "north" },
+        "south": { "uv": [ 0, 0, 16, 16 ], "texture": "#background", "cullface": "south" },
+        "west":  { "uv": [ 0, 0, 16, 16 ], "texture": "#background", "cullface": "west" },
+        "east":  { "uv": [ 0, 0, 16, 16 ], "texture": "#background", "cullface": "east" }
+      }
+    },
+    {
+      "from": [ 0, 0, 0 ],
+      "to": [ 16, 16, 16 ],
+      "faces": {
+        "down":  { "uv": [ 0, 0, 16, 16 ], "texture": "#overlay", "tintindex": 0, "cullface": "down" },
+        "up":    { "uv": [ 0, 0, 16, 16 ], "texture": "#overlay", "tintindex": 0, "cullface": "up" },
+        "north": { "uv": [ 0, 0, 16, 16 ], "texture": "#overlay", "tintindex": 0, "cullface": "north" },
+        "south": { "uv": [ 0, 0, 16, 16 ], "texture": "#overlay", "tintindex": 0, "cullface": "south" },
+        "west":  { "uv": [ 0, 0, 16, 16 ], "texture": "#overlay", "tintindex": 0, "cullface": "west" },
+        "east":  { "uv": [ 0, 0, 16, 16 ], "texture": "#overlay", "tintindex": 0, "cullface": "east" }
+      }
+    }
+  ]
+}

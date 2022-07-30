@@ -22,17 +22,18 @@ import java.util.function.Consumer;
 
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientLoginNetworkHandler;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.listener.PacketListener;
 import net.minecraft.util.Identifier;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.quiltmc.qsl.networking.api.ServerLoginNetworking;
 import org.quiltmc.qsl.networking.impl.client.ClientNetworkingImpl;
 
@@ -53,7 +54,7 @@ public final class ClientLoginNetworking {
 	 * If a handler is already registered to the {@code channel}, this method will return {@code false}, and no change will be made.
 	 * Use {@link #unregisterGlobalReceiver(Identifier)} to unregister the existing handler.
 	 *
-	 * @param channelName the identifier of the channel
+	 * @param channelName  the identifier of the channel
 	 * @param queryHandler the handler
 	 * @return {@code false} if a handler is already registered to the channel, otherwise {@code true}
 	 * @see ClientLoginNetworking#unregisterGlobalReceiver(Identifier)
@@ -95,7 +96,7 @@ public final class ClientLoginNetworking {
 	 * If a handler is already registered to the {@code channelName}, this method will return {@code false}, and no change will be made.
 	 * Use {@link #unregisterReceiver(Identifier)} to unregister the existing handler.
 	 *
-	 * @param channelName the identifier of the channel
+	 * @param channelName  the identifier of the channel
 	 * @param queryHandler the handler
 	 * @return {@code false} if a handler is already registered to the channel name, otherwise {@code true}
 	 * @throws IllegalStateException if the client is not logging in
@@ -154,13 +155,13 @@ public final class ClientLoginNetworking {
 		 * The future should complete in reasonably time to prevent disconnection by the server.
 		 * If your request processes instantly, you may use {@link CompletableFuture#completedFuture(Object)} to wrap your response for immediate sending.
 		 *
-		 * @param client the client
-		 * @param handler the network handler that received this packet
-		 * @param buf the payload of the packet
+		 * @param client        the client
+		 * @param handler       the network handler that received this packet
+		 * @param buf           the payload of the packet
 		 * @param listenerAdder listeners to be called when the response packet is sent to the server
 		 * @return a completable future which contains the payload to respond to the server with.
 		 * If the future contains {@code null}, then the server will be notified that the client did not understand the query.
 		 */
-		CompletableFuture<@Nullable PacketByteBuf> receive(MinecraftClient client, ClientLoginNetworkHandler handler, PacketByteBuf buf, Consumer<GenericFutureListener<? extends Future<? super Void>>> listenerAdder);
+		CompletableFuture<@Nullable PacketByteBuf> receive(MinecraftClient client, ClientLoginNetworkHandler handler, PacketByteBuf buf, Consumer<PacketSendListener> listenerAdder);
 	}
 }

@@ -66,8 +66,8 @@ public final class FutureListeners {
 	 *
 	 * @param first  the first future listener
 	 * @param second the second future listener
-	 * @param <A> the future type of the first listener, used for casting
-	 * @param <B> the future type of the second listener, used for casting
+	 * @param <A>    the future type of the first listener, used for casting
+	 * @param <B>    the future type of the second listener, used for casting
 	 * @return the combined future listener.
 	 */
 	// A, B exist just to allow casting
@@ -75,7 +75,8 @@ public final class FutureListeners {
 	public static <A extends Future<? super Void>, B extends Future<? super Void>> GenericFutureListener<? extends Future<? super Void>> union(GenericFutureListener<A> first, GenericFutureListener<B> second) {
 		// Return an empty future listener in the case of both parameters somehow being null
 		if (first == null && second == null) {
-			return future -> { };
+			return future -> {
+			};
 		}
 
 		if (first == null) {

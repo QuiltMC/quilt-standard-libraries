@@ -4,20 +4,13 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "DynamicRegistryManagerAccessor",
-    "MinecraftServerMixin",
-    "RegistryOpsMixin",
-    "RequiredTagListMixin",
-    "RequiredTagListMixin$TagWrapperMixin",
-    "RequiredTagListRegistryAccessor",
-    "RequiredTagListRegistryMixin",
-    "TagBuilderMixin",
-    "TagImplMixin",
-    "TagManagerLoaderMixin",
-    "TagManagerMixin",
-    "TagMixin"
+    "SimpleRegistryMixin",
+    "TagKeyAccessor",
+    "TagKeyMixin"
   ],
   "client": [
     "client.ClientPlayNetworkHandlerMixin",
+    "client.HolderReferenceMixin",
     "client.TagGroupLoaderAccessor"
   ],
   "injectors": {

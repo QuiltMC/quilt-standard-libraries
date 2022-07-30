@@ -26,13 +26,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 
-import io.netty.util.concurrent.GenericFutureListener;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.packet.c2s.login.LoginQueryResponseC2SPacket;
 import net.minecraft.network.packet.s2c.login.LoginCompressionS2CPacket;
 import net.minecraft.network.packet.s2c.login.LoginQueryRequestS2CPacket;
@@ -115,9 +115,9 @@ public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLo
 	private void sendCompressionPacket() {
 		// Compression is not needed for local transport
 		if (this.server.getNetworkCompressionThreshold() >= 0 && !this.connection.isLocal()) {
-			this.connection.send(new LoginCompressionS2CPacket(this.server.getNetworkCompressionThreshold()), (channelFuture) ->
+			this.connection.send(new LoginCompressionS2CPacket(this.server.getNetworkCompressionThreshold()), PacketSendListener.alwaysRun(() ->
 					this.connection.setCompressionThreshold(this.server.getNetworkCompressionThreshold(), true)
-			);
+			));
 		}
 	}
 
@@ -129,7 +129,7 @@ public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLo
 	 */
 	public boolean handle(LoginQueryResponseC2SPacket packet) {
 		var access = (LoginQueryResponseC2SPacketAccessor) packet;
-		return handle(access.getQueryId(), access.getResponse());
+		return this.handle(access.getQueryId(), access.getResponse());
 	}
 
 	private boolean handle(int queryId, @Nullable PacketByteBuf originalBuf) {
@@ -175,10 +175,10 @@ public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLo
 	}
 
 	@Override
-	public void sendPacket(Packet<?> packet, GenericFutureListener<? extends io.netty.util.concurrent.Future<? super Void>> callback) {
+	public void sendPacket(Packet<?> packet, PacketSendListener listener) {
 		Objects.requireNonNull(packet, "Packet cannot be null");
 
-		this.connection.send(packet, callback);
+		this.connection.send(packet, listener);
 	}
 
 	public void registerOutgoingPacket(LoginQueryRequestS2CPacket packet) {

@@ -1,0 +1,21 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Dimension API"
+	moduleName = "dimension"
+	id = "quilt_dimension"
+	library = "worldgen"
+	description = "An API for managing custom dimensions."
+	moduleDependencies {
+		core {
+			api("qsl_base")
+			testmodOnly("lifecycle_events")
+			testmodOnly("resource_loader")
+		}
+		management {
+			testmodOnly("command")
+		}
+	}
+}

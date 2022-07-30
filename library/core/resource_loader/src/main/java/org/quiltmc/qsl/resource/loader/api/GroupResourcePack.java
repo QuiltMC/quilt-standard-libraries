@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.Nullable;
@@ -35,6 +36,7 @@ import net.minecraft.resource.ResourceNotFoundException;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.metadata.ResourceMetadataReader;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 /**
@@ -60,8 +62,39 @@ public abstract class GroupResourcePack implements ResourcePack {
 						.add(pack)));
 	}
 
+	/**
+	 * Gets an unmodifiable list of the resource packs stored in this group resourced pack.
+	 *
+	 * @return the resource packs
+	 */
+	public List<? extends ResourcePack> getPacks() {
+		return Collections.unmodifiableList(this.packs);
+	}
+
+	/**
+	 * Gets an unmodifiable list of the resource packs stored in this group resource pack
+	 * which contain the given {@code namespace}.
+	 *
+	 * @param namespace the namespace the packs must contain
+	 * @return the list of the matching resource packs
+	 */
 	public List<? extends ResourcePack> getPacks(String namespace) {
-		return this.namespacedPacks.get(namespace);
+		return Collections.unmodifiableList(this.namespacedPacks.get(namespace));
+	}
+
+	/**
+	 * Gets a flattened stream of resource packs in this group resource pack.
+	 *
+	 * @return the flattened stream of resource packs
+	 */
+	public Stream<? extends ResourcePack> streamPacks() {
+		return this.packs.stream().mapMulti((pack, consumer) -> {
+			if (pack instanceof GroupResourcePack grouped) {
+				grouped.streamPacks().forEach(consumer);
+			} else {
+				consumer.accept(pack);
+			}
+		});
 	}
 
 	@Override
@@ -84,7 +117,8 @@ public abstract class GroupResourcePack implements ResourcePack {
 	}
 
 	@Override
-	public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, int maxDepth, Predicate<String> pathFilter) {
+	public Collection<Identifier> findResources(ResourceType type, String namespace, String startingPath,
+			Predicate<Identifier> pathFilter) {
 		var packs = this.namespacedPacks.get(namespace);
 
 		if (packs == null) {
@@ -96,7 +130,7 @@ public abstract class GroupResourcePack implements ResourcePack {
 		// Iterating backwards as higher-priority packs are placed at the end.
 		for (int i = packs.size() - 1; i >= 0; i--) {
 			ResourcePack pack = packs.get(i);
-			Collection<Identifier> modResources = pack.findResources(type, namespace, prefix, maxDepth, pathFilter);
+			Collection<Identifier> modResources = pack.findResources(type, namespace, startingPath, pathFilter);
 
 			resources.addAll(modResources);
 		}
@@ -150,7 +184,7 @@ public abstract class GroupResourcePack implements ResourcePack {
 		 * @param type         the resource type of this resource pack
 		 * @param basePack     the base resource pack
 		 * @param packs        the additional packs
-		 * @param basePriority {@code true} if the base resource pack has priority over the additional packs, otherwise {@code false}.
+		 * @param basePriority {@code true} if the base resource pack has priority over the additional packs, or {@code false} otherwise.
 		 *                     Ignored if the base resource pack is already present in the list
 		 */
 		public Wrapped(ResourceType type, ResourcePack basePack, List<ResourcePack> packs, boolean basePriority) {
@@ -159,7 +193,7 @@ public abstract class GroupResourcePack implements ResourcePack {
 		}
 
 		private static List<ResourcePack> addToPacksIfNeeded(ResourcePack basePack, List<ResourcePack> packs,
-															 boolean basePriority) {
+				boolean basePriority) {
 			if (!packs.contains(basePack)) {
 				if (basePriority) {
 					packs.add(basePack);
@@ -184,6 +218,11 @@ public abstract class GroupResourcePack implements ResourcePack {
 		@Override
 		public String getName() {
 			return this.basePack.getName();
+		}
+
+		@Override
+		public Text getDisplayName() {
+			return this.basePack.getDisplayName();
 		}
 
 		@Override

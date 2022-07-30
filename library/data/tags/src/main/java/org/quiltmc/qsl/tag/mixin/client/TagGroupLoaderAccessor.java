@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 QuiltMC
+ * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.tag.mixin.client;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -26,21 +27,20 @@ import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-import net.minecraft.tag.Tag;
 import net.minecraft.tag.TagGroupLoader;
 import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 @Mixin(TagGroupLoader.class)
 public interface TagGroupLoaderAccessor {
-	@Invoker("method_32839")
-	static void invokeVisitDependenciesAndElement(Map<Identifier, Tag.Builder> map,
-	                                              Multimap<Identifier, Identifier> tagEntries, Set<Identifier> set,
-	                                              Identifier identifier, BiConsumer<Identifier, Tag.Builder> consumer) {
+	@Invoker
+	static void invokeVisitDependenciesAndEntry(Map<Identifier, List<TagGroupLoader.EntryWithSource>> map,
+			Multimap<Identifier, Identifier> tagEntries, Set<Identifier> set,
+			Identifier identifier, BiConsumer<Identifier, List<TagGroupLoader.EntryWithSource>> consumer) {
 		throw new IllegalStateException("Invoker injection failed.");
 	}
 
-	@Invoker("method_32844")
+	@Invoker
 	static void invokeAddDependencyIfNotCyclic(Multimap<Identifier, Identifier> tagEntries, Identifier tagId, Identifier entryId) {
 		throw new IllegalStateException("Invoker injection failed.");
 	}

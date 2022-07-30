@@ -23,6 +23,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Rarity;
+
 import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
 
 /**
@@ -56,9 +57,10 @@ public class QuiltItemSettings extends Item.Settings {
 	/**
 	 * Sets the {@link CustomDamageHandler} of the item.
 	 * Note that this is only called on an ItemStack if {@link ItemStack#isDamageable()} returns true.
-	 * @see CustomDamageHandler
+	 *
 	 * @param handler the {@link CustomDamageHandler}
 	 * @return this
+	 * @see CustomDamageHandler
 	 */
 	public QuiltItemSettings customDamage(CustomDamageHandler handler) {
 		return this.customSetting(QuiltCustomItemSettings.CUSTOM_DAMAGE_HANDLER, handler);
@@ -115,8 +117,9 @@ public class QuiltItemSettings extends Item.Settings {
 
 	/**
 	 * Sets a custom setting of the item.
+	 *
 	 * @param setting the unique type for this setting
-	 * @param value the object containing the setting itself
+	 * @param value   the object containing the setting itself
 	 * @return this builder
 	 */
 	public <T> QuiltItemSettings customSetting(CustomItemSetting<T> setting, T value) {
