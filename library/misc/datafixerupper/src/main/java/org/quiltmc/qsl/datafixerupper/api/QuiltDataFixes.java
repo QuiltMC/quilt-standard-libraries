@@ -115,6 +115,7 @@ public final class QuiltDataFixes {
 	 * @param modId    the mod identifier
 	 * @return the mod's data version, or {@code 0} if the compound has no data for that mod
 	 */
+	@Contract(pure = true)
 	public static int getModDataVersion(@NotNull NbtCompound compound, @NotNull String modId) {
 		checkNotNull(compound, "compound cannot be null");
 		checkNotNull(modId, "modId cannot be null");

@@ -25,8 +25,7 @@ import com.mojang.datafixers.schemas.Schema;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Dynamic;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.*;
 import org.slf4j.Logger;
 
 import net.minecraft.SharedConstants;
@@ -44,7 +43,9 @@ public final class QuiltDataFixesInternals {
 	private static Map<String, DataFixerEntry> modDataFixers = new Object2ReferenceOpenHashMap<>();
 	private static boolean frozen = false;
 
-	public static void registerFixer(String modId, int currentVersion, DataFixer dataFixer) {
+	public static void registerFixer(@NotNull String modId,
+									 @Range(from = 0, to = Integer.MAX_VALUE) int currentVersion,
+									 @NotNull DataFixer dataFixer) {
 		if (modDataFixers.containsKey(modId)) {
 			throw new IllegalArgumentException("Mod '" + modId + "' already has a registered data fixer");
 		}
@@ -52,18 +53,20 @@ public final class QuiltDataFixesInternals {
 		modDataFixers.put(modId, new DataFixerEntry(dataFixer, currentVersion));
 	}
 
-	public static @Nullable DataFixerEntry getFixerEntry(String modId) {
+	public static @Nullable DataFixerEntry getFixerEntry(@NotNull String modId) {
 		return modDataFixers.get(modId);
 	}
 
 	public static final Schema VANILLA_SCHEMA = Schemas.getFixer()
 			.getSchema(DataFixUtils.makeKey(SharedConstants.getGameVersion().getWorldVersionData().getDataVersion()));
 
-	public static Schema createBaseSchema() {
+	@Contract(value = "-> new", pure = true)
+	public static @NotNull Schema createBaseSchema() {
 		return new Schema(0, VANILLA_SCHEMA);
 	}
 
-	public static NbtCompound updateWithAllFixers(DataFixTypes dataFixTypes, NbtCompound compound) {
+	public static @NotNull NbtCompound updateWithAllFixers(@NotNull DataFixTypes dataFixTypes,
+														   @NotNull NbtCompound compound) {
 		NbtCompound current = compound;
 
 		for (Map.Entry<String, DataFixerEntry> entry : modDataFixers.entrySet()) {
@@ -81,7 +84,7 @@ public final class QuiltDataFixesInternals {
 		return current;
 	}
 
-	public static NbtCompound addModDataVersions(NbtCompound compound) {
+	public static @NotNull NbtCompound addModDataVersions(@NotNull NbtCompound compound) {
 		for (Map.Entry<String, DataFixerEntry> entry : modDataFixers.entrySet()) {
 			compound.putInt(entry.getKey() + "_DataVersion", entry.getValue().currentVersion);
 		}
@@ -89,7 +92,8 @@ public final class QuiltDataFixesInternals {
 		return compound;
 	}
 
-	public static int getModDataVersion(NbtCompound compound, String modId) {
+	@Contract(pure = true)
+	public static int getModDataVersion(@NotNull NbtCompound compound, @NotNull String modId) {
 		return compound.getInt(modId + "_DataVersion");
 	}
 
@@ -101,6 +105,7 @@ public final class QuiltDataFixesInternals {
 		frozen = true;
 	}
 
+	@Contract(pure = true)
 	public static boolean isFrozen() {
 		return frozen;
 	}
