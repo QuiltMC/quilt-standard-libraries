@@ -16,11 +16,9 @@
 
 package org.quiltmc.qsl.registry.attachment.impl;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.mojang.serialization.Codec;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashBigSet;
