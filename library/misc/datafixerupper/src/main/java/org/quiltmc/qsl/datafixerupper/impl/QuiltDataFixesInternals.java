@@ -93,6 +93,7 @@ public final class QuiltDataFixesInternals {
 	}
 
 	@Contract(pure = true)
+	@Range(from = 0, to = Integer.MAX_VALUE)
 	public static int getModDataVersion(@NotNull NbtCompound compound, @NotNull String modId) {
 		return compound.getInt(modId + "_DataVersion");
 	}
