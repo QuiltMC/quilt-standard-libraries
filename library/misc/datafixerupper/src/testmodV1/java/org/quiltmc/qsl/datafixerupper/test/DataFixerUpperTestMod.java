@@ -55,7 +55,7 @@ public final class DataFixerUpperTestMod implements ModInitializer, ServerLifecy
 		QuiltDataFixerBuilder builder = new QuiltDataFixerBuilder(DATA_VERSION);
 		builder.addSchema(0, QuiltDataFixes.BASE_SCHEMA);
 
-		QuiltDataFixes.registerFixer(NAMESPACE, DATA_VERSION, builder.build(Util::getBootstrapExecutor));
+		QuiltDataFixes.registerFixer(mod, DATA_VERSION, builder.build(Util::getBootstrapExecutor));
 	}
 
 	@Override

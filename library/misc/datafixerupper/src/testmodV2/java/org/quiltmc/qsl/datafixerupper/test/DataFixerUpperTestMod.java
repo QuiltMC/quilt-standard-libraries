@@ -59,9 +59,9 @@ public final class DataFixerUpperTestMod implements ModInitializer, ServerLifecy
 		builder.addSchema(0, QuiltDataFixes.BASE_SCHEMA);
 		Schema schemaV1 = builder.addSchema(1, IdentifierNormalizingSchema::new);
 		SimpleFixes.addItemRenameFix(builder, "Rename old_item to new_item",
-				NAMESPACE + ":old_item", NAMESPACE + ":new_item", schemaV1);
+				new Identifier(NAMESPACE, "old_item"), new Identifier(NAMESPACE, "new_item"), schemaV1);
 
-		QuiltDataFixes.registerFixer(NAMESPACE, DATA_VERSION, builder.build(Util::getBootstrapExecutor));
+		QuiltDataFixes.registerFixer(mod, DATA_VERSION, builder.build(Util::getBootstrapExecutor));
 	}
 
 	@Override
