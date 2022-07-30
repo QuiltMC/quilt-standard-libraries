@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "quilt_block_entity_testmod:item/angy_block"
+  }
+}

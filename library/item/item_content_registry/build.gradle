@@ -1,0 +1,31 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Item Content Registry API"
+	moduleName = "item_content_registry"
+	id = "quilt_item_content_registry"
+	description = "An API for adding to different content registries in Minecraft"
+	library = "item"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+		}
+		data {
+			api("registry_entry_attachments")
+		}
+		gui {
+			compileOnly("tooltip")
+			testmodOnly("tooltip")
+		}
+	}
+	entrypoints {
+		init {
+			values = ["org.quiltmc.qsl.item.content.registry.impl.ItemContentRegistriesInitializer"]
+		}
+		client_init {
+			values = ["org.quiltmc.qsl.item.content.registry.impl.ItemContentRegistriesClientInitializer"]
+		}
+	}
+}

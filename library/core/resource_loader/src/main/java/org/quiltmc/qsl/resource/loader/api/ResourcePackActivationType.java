@@ -36,7 +36,7 @@ public enum ResourcePackActivationType {
 	/**
 	 * Returns whether this resource pack will be enabled by default or not.
 	 *
-	 * @return {@code true} if enabled by default, otherwise {@code false}
+	 * @return {@code true} if enabled by default, or {@code false} otherwise
 	 */
 	public boolean isEnabledByDefault() {
 		return this == DEFAULT_ENABLED || this == ALWAYS_ENABLED;

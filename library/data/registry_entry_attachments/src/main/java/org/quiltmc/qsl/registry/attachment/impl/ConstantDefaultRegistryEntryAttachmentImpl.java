@@ -16,24 +16,37 @@
 
 package org.quiltmc.qsl.registry.attachment.impl;
 
-import java.util.Optional;
-
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 public final class ConstantDefaultRegistryEntryAttachmentImpl<R, V> extends RegistryEntryAttachmentImpl<R, V> {
-	private final V defaultValue;
+	private final @Nullable V defaultValue;
 
 	public ConstantDefaultRegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass,
-			Codec<V> codec, Side side, V defaultValue) {
+			Codec<V> codec, Side side, @Nullable V defaultValue) {
 		super(registry, id, valueClass, codec, side);
+
+		if (defaultValue != null) {
+			var encoded = this.codec.encodeStart(JsonOps.INSTANCE, defaultValue);
+
+			if (encoded.result().isEmpty()) {
+				if (encoded.error().isPresent()) {
+					throw new IllegalArgumentException("Default value is invalid: " + encoded.error().get().message());
+				} else {
+					throw new IllegalArgumentException("Default value is invalid: unknown error");
+				}
+			}
+		}
+
 		this.defaultValue = defaultValue;
 	}
 
 	@Override
-	protected Optional<V> getDefaultValue(R entry) {
-		return Optional.ofNullable(this.defaultValue);
+	protected @Nullable V getDefaultValue(R entry) {
+		return this.defaultValue;
 	}
 }

@@ -49,17 +49,8 @@ public interface BiomeSelectionContext {
 
 	/**
 	 * {@return the biome holder}
-	 * @deprecated use {@link #getBiomeHolder()} instead
 	 */
-	@Deprecated(forRemoval = true)
-	Holder<Biome> getBiomeRegistryEntry();
-
-	/**
-	 * {@return the biome holder}
-	 */
-	default Holder<Biome> getBiomeHolder() {
-		return this.getBiomeRegistryEntry();
-	}
+	Holder<Biome> getBiomeHolder();
 
 	/**
 	 * {@return {@code true} if this biome has the given configured feature, which must be registered

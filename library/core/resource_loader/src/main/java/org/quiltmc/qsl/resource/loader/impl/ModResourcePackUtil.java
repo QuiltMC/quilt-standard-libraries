@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import com.google.common.base.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.resource.ResourceType;
@@ -43,22 +44,26 @@ public final class ModResourcePackUtil {
 		return "pack.mcmeta".equals(filename);
 	}
 
+	public static String getPackMeta(@Nullable String description, ResourceType type) {
+		if (description == null) {
+			description = "";
+		} else {
+			description = description.replace("\\", "\\u005C");
+			description = description.replace("\"", "\\u0022");
+		}
+
+		return String.format("""
+						{"pack":{"pack_format":%d,"description":"%s"}}
+						""",
+				type.getPackVersion(SharedConstants.getGameVersion()), description);
+	}
+
 	public static InputStream openDefault(ModMetadata info, ResourceType type, String filename) {
 		if ("pack.mcmeta".equals(filename)) {
-			String description = info.name();
-
-			if (description == null) {
-				description = "";
-			} else {
-				description = description.replaceAll("\"", "\\\"");
-			}
-
-			var pack = String.format("""
-							{"pack":{"pack_format":%d,"description":"%s"}}
-							""",
-					type.getPackVersion(SharedConstants.getGameVersion()), description);
+			var pack = getPackMeta(info.name(), type);
 			return IOUtils.toInputStream(pack, Charsets.UTF_8);
 		}
+
 		return null;
 	}
 

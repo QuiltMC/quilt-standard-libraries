@@ -146,8 +146,8 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	}
 
 	@Override
-	public Holder<T> method_44298(RegistryKey<T> registryKey) {
-		return this.wrapped.method_44298(registryKey);
+	public Holder<T> m_pselvvxn(RegistryKey<T> registryKey) {
+		return this.wrapped.m_pselvvxn(registryKey);
 	}
 
 	@Override
