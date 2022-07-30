@@ -17,7 +17,6 @@
 package org.quiltmc.qsl.rendering.entity_models.mixin;
 
 import org.quiltmc.qsl.rendering.entity_models.api.AnimationManager;
-import org.quiltmc.qsl.rendering.entity_models.api.HasAnimationManager;
 import org.quiltmc.qsl.rendering.entity_models.impl.DynamicEntityModelLoader;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.spongepowered.asm.mixin.Mixin;
@@ -25,30 +24,30 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.render.block.BlockRenderManager;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.model.ModelPart;
+import net.minecraft.client.model.TexturedModelData;
+import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.client.render.entity.model.EntityModelLoader;
-import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.texture.TextureManager;
 import net.minecraft.resource.ResourceType;
 
-@Mixin(EntityRenderDispatcher.class)
-public class EntityRenderDispatcherMixin implements HasAnimationManager {
-	@Unique
-	private AnimationManager quilt$animationManager;
+@Mixin(EntityModelLoader.class)
+public class EntityModelLoaderMixin {
+    @Unique
+    private DynamicEntityModelLoader quilt$dynamicEntityModelLoader;
 
-	@Inject(method = "<init>", at = @At("TAIL"))
-	private void createAnimationManager(MinecraftClient minecraftClient, TextureManager textureManager, ItemRenderer itemRenderer, BlockRenderManager blockRenderManager, TextRenderer textRenderer, GameOptions gameOptions, EntityModelLoader entityModelLoader, CallbackInfo ci) {
-		this.quilt$animationManager = new AnimationManager();
-		ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerReloader(this.quilt$animationManager);
-	}
+    @Inject(method = "<init>", at = @At("TAIL"))
+    private void createAnimationManager(CallbackInfo ci) {
+        this.quilt$dynamicEntityModelLoader = new DynamicEntityModelLoader();
+        ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerReloader(this.quilt$dynamicEntityModelLoader);
+    }
 
-	@Override
-	public AnimationManager getAnimationManager() {
-		return quilt$animationManager;
-	}
+    @Inject(method = "getModelPart", at = @At("HEAD"), cancellable = true)
+    public void returnDynamicModel(EntityModelLayer layer, CallbackInfoReturnable<ModelPart> cir) {
+        TexturedModelData modelData = quilt$dynamicEntityModelLoader.getModelData(layer);
+        if (modelData != null) {
+            cir.setReturnValue(modelData.createModel());
+        }
+    }
 }
