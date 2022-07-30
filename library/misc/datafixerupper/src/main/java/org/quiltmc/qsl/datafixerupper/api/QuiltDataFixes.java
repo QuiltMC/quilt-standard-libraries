@@ -120,6 +120,7 @@ public final class QuiltDataFixes {
 	 *
 	 * @return {@code true} if frozen, or {@code false} otherwise.
 	 */
+	@Contract(pure = true)
 	public static boolean isFrozen() {
 		return QuiltDataFixesInternals.isFrozen();
 	}
