@@ -27,21 +27,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import net.minecraft.class_7196;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
 import net.minecraft.resource.pack.ResourcePackManager;
 import net.minecraft.server.WorldStem;
 import net.minecraft.unmapped.C_kjxfcecs;
+import net.minecraft.unmapped.C_phqvxqun;
 import net.minecraft.world.SaveProperties;
 import net.minecraft.world.level.storage.LevelStorage;
 
 import org.quiltmc.qsl.base.api.util.TriState;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 
-@Mixin(class_7196.class)
-public abstract class Class7196Mixin {
+@Mixin(C_phqvxqun.class)
+public abstract class CphqvxqunMixin {
 	@Shadow
 	private static void method_41888(LevelStorage.Session session, String string) {
 		throw new IllegalStateException("Mixin injection failed.");
@@ -54,12 +54,12 @@ public abstract class Class7196Mixin {
 	private static final TriState EXPERIMENTAL_SCREEN_OVERRIDE = TriState.fromProperty("quilt.resource_loader.experimental_screen_override");
 
 	@Inject(method = "method_41900", at = @At("HEAD"))
-	private void onStartDataPackLoad(C_kjxfcecs.C_nrmvgbka c_nrmvgbka, C_kjxfcecs.class_6907<SaveProperties> arg, CallbackInfoReturnable<WorldStem> cir) {
+	private void onStartDataPackLoad(C_kjxfcecs.C_nrmvgbka c_nrmvgbka, C_kjxfcecs.C_ueybpquh<SaveProperties> arg, CallbackInfoReturnable<WorldStem> cir) {
 		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null);
 	}
 
 	@Inject(method = "method_41900", at = @At("RETURN"))
-	private void onEndDataPackLoad(C_kjxfcecs.C_nrmvgbka c_nrmvgbka, C_kjxfcecs.class_6907<SaveProperties> arg, CallbackInfoReturnable<WorldStem> cir) {
+	private void onEndDataPackLoad(C_kjxfcecs.C_nrmvgbka c_nrmvgbka, C_kjxfcecs.C_ueybpquh<SaveProperties> arg, CallbackInfoReturnable<WorldStem> cir) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, cir.getReturnValue().resourceManager(), null);
 	}
 
@@ -77,7 +77,7 @@ public abstract class Class7196Mixin {
 			method = "method_41899",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/class_7196;method_41898(Lnet/minecraft/client/gui/screen/Screen;Ljava/lang/String;ZLjava/lang/Runnable;)V"
+					target = "Lnet/minecraft/unmapped/C_phqvxqun;method_41898(Lnet/minecraft/client/gui/screen/Screen;Ljava/lang/String;ZLjava/lang/Runnable;)V"
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD,
 			cancellable = true
@@ -94,7 +94,7 @@ public abstract class Class7196Mixin {
 	}
 
 	@Inject(
-			method = "method_41892",
+			method = "m_mxzmxaxb",
 			at = @At(value = "CONSTANT", args = "stringValue=selectWorld.import_worldgen_settings.experimental.title"),
 			cancellable = true
 	)
