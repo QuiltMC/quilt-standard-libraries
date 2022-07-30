@@ -22,7 +22,9 @@ import java.util.function.BiFunction;
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.DataFixerBuilder;
 import com.mojang.datafixers.schemas.Schema;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 
 import net.minecraft.nbt.NbtCompound;
 
@@ -60,8 +62,11 @@ public final class QuiltDataFixes {
 	 * @param currentVersion the current version of the mod's data
 	 * @param dataFixer      the data fixer
 	 */
-	public static void registerFixer(@NotNull String modId, int currentVersion, @NotNull DataFixer dataFixer) {
+	public static void registerFixer(@NotNull String modId,
+									 @Range(from = 0, to = Integer.MAX_VALUE) int currentVersion,
+									 @NotNull DataFixer dataFixer) {
 		checkNotNull(modId, "modId cannot be null");
+		//noinspection ConstantConditions
 		checkArgument(currentVersion >= 0, "currentVersion must be positive");
 		checkNotNull(dataFixer, "dataFixer cannot be null");
 
@@ -79,7 +84,9 @@ public final class QuiltDataFixes {
 	 * @param currentVersion the current version of the mod's data
 	 * @param dataFixer      the data fixer
 	 */
-	public static void registerFixer(@NotNull ModContainer mod, int currentVersion, @NotNull DataFixer dataFixer) {
+	public static void registerFixer(@NotNull ModContainer mod,
+									 @Range(from = 0, to = Integer.MAX_VALUE) int currentVersion,
+									 @NotNull DataFixer dataFixer) {
 		checkNotNull(mod, "mod cannot be null");
 
 		registerFixer(mod.metadata().id(), currentVersion, dataFixer);
