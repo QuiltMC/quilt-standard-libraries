@@ -30,11 +30,11 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 public class BlockContentRegistryTest implements ModInitializer {
-	public static final String ID = "quilt_block_content_registry_testmod";
+	public static final String MOD_ID = "quilt_block_content_registry_testmod";
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		RegistryExtensions.register(Registry.BLOCK, new Identifier(ID, "oxidizable_iron_block"),
+		RegistryExtensions.register(Registry.BLOCK, new Identifier(MOD_ID, "oxidizable_iron_block"),
 				new OxidizableBlock(Oxidizable.OxidizationLevel.UNAFFECTED, AbstractBlock.Settings.copy(Blocks.IRON_BLOCK)),
 				BlockContentRegistries.OXIDIZABLE_BLOCK, new ReversibleBlockEntry(Blocks.IRON_BLOCK, false));
 	}

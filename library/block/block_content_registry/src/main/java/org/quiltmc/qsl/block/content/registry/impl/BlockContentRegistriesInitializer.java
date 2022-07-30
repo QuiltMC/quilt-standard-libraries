@@ -91,7 +91,7 @@ public class BlockContentRegistriesInitializer implements ModInitializer {
 				entry -> new ReversibleBlockEntry(entry.getValue(), true)
 		)), BlockContentRegistries.OXIDIZABLE_BLOCK);
 		setMapFromAttachment((entry, value) -> OXIDATION_INCREASE_BLOCKS.put(entry, value.block()), BlockContentRegistries.OXIDIZABLE_BLOCK);
-		setMapFromAttachment((entry, value) -> value.reversible() ? OXIDATION_INCREASE_BLOCKS.put(value.block(), entry) : null, BlockContentRegistries.OXIDIZABLE_BLOCK);
+		setMapFromAttachment((entry, value) -> value.reversible() ? OXIDATION_DECREASE_BLOCKS.put(value.block(), entry) : null, BlockContentRegistries.OXIDIZABLE_BLOCK);
 
 		UNWAXED_WAXED_BLOCKS.clear();
 		WAXED_UNWAXED_BLOCKS.clear();

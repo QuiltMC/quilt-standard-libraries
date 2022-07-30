@@ -62,11 +62,11 @@ public class BlockContentRegistries {
 	/**
 	 * A {@link RegistryEntryAttachment} for oxidizable blocks.
 	 * <p>
-	 * Values can be set via code and through a datapack with the file {@code data/quilt_block_content_registry/attachments/minecraft/block/oxdizable_block.json}
+	 * Values can be set via code and through a datapack with the file {@code data/quilt_block_content_registry/attachments/minecraft/block/oxidizable_block.json}
 	 */
 	public static final RegistryEntryAttachment<Block, ReversibleBlockEntry> OXIDIZABLE_BLOCK = RegistryEntryAttachment
 			.builder(Registry.BLOCK,
-					new Identifier(NAMESPACE, "oxdizable_block"),
+					new Identifier(NAMESPACE, "oxidizable_block"),
 					ReversibleBlockEntry.class,
 					ReversibleBlockEntry.CODEC)
 			.build();

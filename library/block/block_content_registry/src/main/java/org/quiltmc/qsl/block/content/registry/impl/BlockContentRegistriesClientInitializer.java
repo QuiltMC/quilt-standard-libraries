@@ -30,25 +30,26 @@ import net.minecraft.text.Text;
 
 
 public class BlockContentRegistriesClientInitializer implements ClientModInitializer {
-	public static final Logger LOGGER = LoggerFactory.getLogger("BlockContentRegistriesClientInitializer");
+    public static final Logger LOGGER = LoggerFactory.getLogger("BlockContentRegistriesClientInitializer");
 
-	public static final String ENABLE_TOOLTIP_DEBUG = "quilt.block.block_content_registry.enable_tooltip_debug";
+    public static final String ENABLE_TOOLTIP_DEBUG = "quilt.block.block_content_registry.enable_tooltip_debug";
 
-	@Override
-	public void onInitializeClient(ModContainer mod) {
-		if (Boolean.getBoolean(ENABLE_TOOLTIP_DEBUG) && QuiltLoader.isModLoaded("quilt_tooltip")) {
-			ItemTooltipCallback.EVENT.register((stack, player, context, lines) -> {
-				Item item = stack.getItem();
+    @Override
+    public void onInitializeClient(ModContainer mod) {
+        if (Boolean.getBoolean(ENABLE_TOOLTIP_DEBUG)) {
+            if (QuiltLoader.isModLoaded("quilt_tooltip")) {
+                ItemTooltipCallback.EVENT.register((stack, player, context, lines) -> {
+					Block block = Block.getBlockFromItem(stack.getItem());
 
-				Block block = Block.getBlockFromItem(item);
-				BlockContentRegistries.FLATTENABLE_BLOCK.getValue(block).ifPresent(state -> lines.add(Text.literal("Flattenable block: " + state)));
-				BlockContentRegistries.OXIDIZABLE_BLOCK.getValue(block).ifPresent(_block -> lines.add(Text.literal("Oxidizes to: " + _block.block())));
-				BlockContentRegistries.WAXABLE_BLOCK.getValue(block).ifPresent(_block -> lines.add(Text.literal("Waxes to: " + _block.block())));
-				BlockContentRegistries.STRIPPABLE_BLOCK.getValue(block).ifPresent(_block -> lines.add(Text.literal("Strips to: " + _block)));
-				BlockContentRegistries.FLAMMABLE_BLOCK.getValue(block).ifPresent(entry -> lines.add(Text.literal("Flammable: " + entry.burn() + " burn chance, " + entry.spread() + " spread chance")));
-			});
-		} else if (Boolean.getBoolean(ENABLE_TOOLTIP_DEBUG)) {
-			LOGGER.warn("Tooltip debug was enabled, but the QSL module `quilt_tooltip` was missing.");
-		}
-	}
+                    BlockContentRegistries.FLATTENABLE_BLOCK.getValue(block).ifPresent(state -> lines.add(Text.literal("Flattenable block: " + state)));
+                    BlockContentRegistries.OXIDIZABLE_BLOCK.getValue(block).ifPresent(_block -> lines.add(Text.literal("Oxidizes to: " + _block.block())));
+                    BlockContentRegistries.WAXABLE_BLOCK.getValue(block).ifPresent(_block -> lines.add(Text.literal("Waxes to: " + _block.block())));
+                    BlockContentRegistries.STRIPPABLE_BLOCK.getValue(block).ifPresent(_block -> lines.add(Text.literal("Strips to: " + _block)));
+                    BlockContentRegistries.FLAMMABLE_BLOCK.getValue(block).ifPresent(entry -> lines.add(Text.literal("Flammable: " + entry.burn() + " burn chance, " + entry.spread() + " spread chance")));
+                });
+            } else {
+                LOGGER.warn("Tooltip debug was enabled, but the QSL module `quilt_tooltip` was missing.");
+            }
+        }
+    }
 }
