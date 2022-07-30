@@ -1,0 +1,7 @@
+accessWidener v2 named
+
+accessible field net/minecraft/item/ShovelItem PATH_STATES Ljava/util/Map;
+accessible field net/minecraft/item/AxeItem STRIPPED_BLOCKS Ljava/util/Map;
+
+accessible field net/minecraft/block/FireBlock burnChances Lit/unimi/dsi/fastutil/objects/Object2IntMap;
+accessible field net/minecraft/block/FireBlock spreadChances Lit/unimi/dsi/fastutil/objects/Object2IntMap;
