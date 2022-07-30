@@ -8,7 +8,8 @@
  * <pre><code>
  * // the latest version of the mod's data
  * // this should match the version of the last schema added!
- * // note that the default data version is 0, meaning that you can upgrade from a version that did not have a fixer
+ * // note that the default data version is 0, meaning that you can upgrade
+ * //  from a version that did not have a fixer
  * //  (by registering a schema for upgrading from version 0 to version 1)
  * public static final int CURRENT_DATA_VERSION = 1;
  *
@@ -21,11 +22,13 @@
  *     Schema schemaV1 = builder.addSchema(1, IdentifierNormalizingSchema::new)
  *     // add fixes to the schema - for example, an item rename (identifier change)
  *     SimpleFixes.addItemRenameFix(builder, "Rename cool_item to awesome_item",
- *         new Identifier("mymod", "cool_item"), new Identifier("mymod", "awesome_item"), schemaV1);
+ *         new Identifier("mymod", "cool_item"),
+ *         new Identifier("mymod", "awesome_item"),
+ *         schemaV1);
  *
  *     // register the fixer!
- *     // QuiltDataFixerBuilder.build creates either an unoptimized fixer or an optimized fixer, depending
- *     //  on the game configuration
+ *     // QuiltDataFixerBuilder.build creates either an unoptimized fixer or an optimized fixer,
+ *     //  depending on the game configuration
  *     QuiltDataFixes.registerFixer(mod, CURRENT_DATA_VERSION, builder.build(Util::getBootstrapExecutor));
  * }
  * </code></pre>
