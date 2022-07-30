@@ -34,7 +34,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Provides methods to register custom {@link DataFixer}s.
  */
 public final class QuiltDataFixes {
-	private QuiltDataFixes() { }
+	private QuiltDataFixes() {
+		throw new RuntimeException("QuiltDataFixes only contains static declarations.");
+	}
 
 	/**
 	 * A "base" version {@code 0} schema, for use by all mods.

@@ -28,57 +28,66 @@ import net.minecraft.datafixer.fix.BiomeRenameFix;
 import net.minecraft.datafixer.fix.BlockNameFix;
 import net.minecraft.datafixer.fix.ItemNameFix;
 import net.minecraft.datafixer.schema.IdentifierNormalizingSchema;
+import net.minecraft.util.Identifier;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Provides methods to add {@link DataFix}es to {@link DataFixerBuilder}s.
+ * Provides methods to add common {@link DataFix}es to {@link DataFixerBuilder}s.
  */
 public final class SimpleFixes {
-	private SimpleFixes() { }
+	private SimpleFixes() {
+		throw new RuntimeException("SimpleFixes contains only static declarations.");
+	}
 
 	/**
-	 * Adds a block rename fix to the builder.
+	 * Adds a block rename fix to the builder, in case a block's identifier is changed.
 	 *
 	 * @param builder the builder
 	 * @param name the fix's name
 	 * @param oldId the block's old identifier
 	 * @param newId the block's new identifier
-	 * @param schema the schema
+	 * @param schema the schema this fixer should be a part of
 	 * @see BlockNameFix
 	 */
-	public static void addBlockRenameFix(DataFixerBuilder builder, String name, String oldId, String newId, Schema schema) {
+	public static void addBlockRenameFix(DataFixerBuilder builder, String name,
+										 Identifier oldId, Identifier newId, Schema schema) {
 		checkNotNull(builder, "DataFixerBuilder cannot be null");
 		checkNotNull(name, "Fix name cannot be null");
-		checkNotNull(oldId, "Old ID cannot be null");
-		checkNotNull(newId, "New ID cannot be null");
+		checkNotNull(oldId, "Old identifier cannot be null");
+		checkNotNull(newId, "New identifier cannot be null");
 		checkNotNull(schema, "Schema cannot be null");
+
+		final String oldIdStr = oldId.toString(), newIdStr = newId.toString();
 		builder.addFixer(BlockNameFix.create(schema, name, (inputName) ->
-				Objects.equals(IdentifierNormalizingSchema.normalize(inputName), oldId) ? newId : inputName));
+				Objects.equals(IdentifierNormalizingSchema.normalize(inputName), oldIdStr) ? newIdStr : inputName));
 	}
 
 	/**
-	 * Adds an item rename fix to the builder.
+	 * Adds an item rename fix to the builder, in case an item's identifier is changed.
 	 *
 	 * @param builder the builder
 	 * @param name the fix's name
 	 * @param oldId the item's old identifier
 	 * @param newId the item's new identifier
-	 * @param schema the schema
+	 * @param schema the schema this fix should be a part of
 	 * @see ItemNameFix
 	 */
-	public static void addItemRenameFix(DataFixerBuilder builder, String name, String oldId, String newId, Schema schema) {
+	public static void addItemRenameFix(DataFixerBuilder builder, String name,
+										Identifier oldId, Identifier newId, Schema schema) {
 		checkNotNull(builder, "DataFixerBuilder cannot be null");
 		checkNotNull(name, "Fix name cannot be null");
-		checkNotNull(oldId, "Old ID cannot be null");
-		checkNotNull(newId, "New ID cannot be null");
+		checkNotNull(oldId, "Old identifier cannot be null");
+		checkNotNull(newId, "New identifier cannot be null");
 		checkNotNull(schema, "Schema cannot be null");
+
+		final String oldIdStr = oldId.toString(), newIdStr = newId.toString();
 		builder.addFixer(ItemNameFix.create(schema, name, (inputName) ->
-				Objects.equals(IdentifierNormalizingSchema.normalize(inputName), oldId) ? newId : inputName));
+				Objects.equals(IdentifierNormalizingSchema.normalize(inputName), oldIdStr) ? newIdStr : inputName));
 	}
 
 	/**
-	 * Adds a biome rename fix to the builder.
+	 * Adds a biome rename fix to the builder, in case biome identifiers are changed.
 	 *
 	 * @param builder the builder
 	 * @param name the fix's name
@@ -86,11 +95,17 @@ public final class SimpleFixes {
 	 * @param schema the schema
 	 * @see BiomeRenameFix
 	 */
-	public static void addBiomeRenameFix(DataFixerBuilder builder, String name, Map<String, String> changes, Schema schema) {
+	public static void addBiomeRenameFix(DataFixerBuilder builder, String name,
+										 Map<Identifier, Identifier> changes, Schema schema) {
 		checkNotNull(builder, "DataFixerBuilder cannot be null");
 		checkNotNull(name, "Fix name cannot be null");
 		checkNotNull(changes, "Changes cannot be null");
 		checkNotNull(schema, "Schema cannot be null");
-		builder.addFixer(new BiomeRenameFix(schema, false, name, ImmutableMap.copyOf(changes)));
+
+		var mapBuilder = ImmutableMap.<String, String>builder();
+		for (var entry : changes.entrySet()) {
+			mapBuilder.put(entry.getKey().toString(), entry.getValue().toString());
+		}
+		builder.addFixer(new BiomeRenameFix(schema, false, name, mapBuilder.build()));
 	}
 }
