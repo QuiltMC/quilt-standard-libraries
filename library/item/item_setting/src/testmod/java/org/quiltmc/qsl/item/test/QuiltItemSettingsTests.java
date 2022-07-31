@@ -58,6 +58,16 @@ public class QuiltItemSettingsTests implements ModInitializer {
 		}));
 		Registry.register(Registry.ITEM, new Identifier(NAMESPACE, "weird_ore"), furnaceInputRemainder);
 
+		Item furnaceInputSelfRemainder = new Item(new QuiltItemSettings().group(ItemGroup.MISC).recipeRemainder((original, recipe) -> {
+			if (recipe != null && recipe.getType() == RecipeType.SMELTING) {
+				var remainder = original.copy();
+				remainder.setCount(2);
+				return remainder;
+			}
+			return ItemStack.EMPTY;
+		}));
+		Registry.register(Registry.ITEM, new Identifier(NAMESPACE, "infinite_ore"), furnaceInputSelfRemainder);
+
 		Item smithingInputRemainder = new Item(new QuiltItemSettings().group(ItemGroup.MISC).recipeRemainder((original, recipe) -> {
 			if (recipe != null && recipe.getType() == RecipeType.SMITHING) {
 				return Items.NETHERITE_INGOT.getDefaultStack();
@@ -66,10 +76,7 @@ public class QuiltItemSettingsTests implements ModInitializer {
 		}));
 		Registry.register(Registry.ITEM, new Identifier(NAMESPACE, "infinite_netherite"), smithingInputRemainder);
 
-		Item loomInputRemainder = new DyeItem(DyeColor.RED, new QuiltItemSettings().group(ItemGroup.MISC).maxDamage(100).recipeRemainder((original, recipe) -> {
-			original.setDamage(original.getDamage() + 1);
-			return original.getDamage() == original.getMaxDamage() ? Items.RED_DYE.getDefaultStack() : original;
-		}));
+		Item loomInputRemainder = new DyeItem(DyeColor.RED, new QuiltItemSettings().group(ItemGroup.MISC).maxDamage(100).damageIfUsedInCrafting());
 		Registry.register(Registry.ITEM, new Identifier(NAMESPACE, "infinite_dye"), loomInputRemainder);
 
 		Item cuttingInputRemainder = new Item(new QuiltItemSettings().group(ItemGroup.MISC).recipeRemainder((original, recipe) -> {

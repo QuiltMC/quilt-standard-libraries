@@ -33,16 +33,14 @@ public class LoomOutputSlotMixin extends Slot {
 		super(inventory, i, j, k);
 	}
 
-	@Redirect(method= "onTakeItem(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;takeStack(I)Lnet/minecraft/item/ItemStack;", ordinal = 1))
+	@Redirect(method= "onTakeItem(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;takeStack(I)Lnet/minecraft/item/ItemStack;"))
 	public ItemStack getRecipeRemainder(Slot slot, int amount, PlayerEntity player, ItemStack stack) {
-		ItemStack input = slot.takeStack(amount);
-
 		RecipeRemainderLogicHandler.handleRemainderForPlayerCraft(
-				input,
-				null,
+				RecipeRemainderLogicHandler.getRemainder(slot.takeStack(amount), null),
 				((SimpleInventoryMixin) slot.inventory).getStacks(),
-				slot.id,
-				player);
+				slot.getIndex(),
+				player
+		);
 
 		// Value not used, returning null is fine
 		return null;

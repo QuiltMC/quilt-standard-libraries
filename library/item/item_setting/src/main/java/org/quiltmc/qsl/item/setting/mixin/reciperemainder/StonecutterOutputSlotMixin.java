@@ -52,12 +52,15 @@ public class StonecutterOutputSlotMixin extends Slot {
 
 		int selectedRecipe = field_17639.getSelectedRecipe();
 		Recipe<?> recipe = selectedRecipe != -1 ? field_17639.getAvailableRecipes().get(selectedRecipe) : previousRecipe;
+
+		ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(input, recipe);
+
 		RecipeRemainderLogicHandler.handleRemainderForPlayerCraft(
-				input,
-				recipe,
+				remainder,
 				((SimpleInventoryMixin) slot.inventory).getStacks(),
 				slot.id,
-				player);
+				player
+		);
 
 		previousRecipe = recipe;
 

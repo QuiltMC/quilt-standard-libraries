@@ -54,17 +54,21 @@ public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
 	@Redirect(method = "onTakeOutput", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/SmithingScreenHandler;decrementStack(I)V"))
 	private void applyRecipeRemainder(SmithingScreenHandler instance, int slot, PlayerEntity player, ItemStack stack) {
 		ItemStack inputStack = this.input.getStack(slot);
-
-		RecipeRemainderLogicHandler.handleRemainderForPlayerCraft(
+		ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(
 				inputStack,
-				currentRecipe == null ? pastRecipe : currentRecipe,
-				((SimpleInventoryMixin) this.input).getStacks(),
-				slot,
-				player);
+				this.currentRecipe == null ? this.pastRecipe : this.currentRecipe
+		);
 
 		inputStack.decrement(1);
 
-		pastRecipe = currentRecipe;
+		RecipeRemainderLogicHandler.handleRemainderForPlayerCraft(
+				remainder,
+				((SimpleInventoryMixin) this.input).getStacks(),
+				slot,
+				player
+		);
+
+		this.pastRecipe = this.currentRecipe;
 	}
 
 	@Inject(method = "onTakeOutput", at = @At("RETURN"))

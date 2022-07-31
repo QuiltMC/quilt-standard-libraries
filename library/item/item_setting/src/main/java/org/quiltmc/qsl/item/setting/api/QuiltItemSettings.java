@@ -94,7 +94,7 @@ public class QuiltItemSettings extends Item.Settings {
 	 */
 	public QuiltItemSettings damageIfUsedInCrafting(int by) {
 		if (by == 0) {
-			return this.recipeRemainder((original, recipe) -> original);
+			return this.recipeRemainder((original, recipe) -> original.copy());
 		}
 
 		return this.recipeRemainder((original, recipe) -> {

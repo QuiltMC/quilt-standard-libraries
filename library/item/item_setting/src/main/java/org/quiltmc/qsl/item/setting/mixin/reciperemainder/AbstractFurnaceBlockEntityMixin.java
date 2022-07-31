@@ -63,8 +63,7 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 	private static void setFuelRemainder(World world, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity, CallbackInfo ci, boolean burning, boolean dirty, ItemStack fuelStack, boolean hasInput, boolean hasFuel, Recipe<?> recipe, int maxCount, Item fuel) {
 		// TODO: test
 		RecipeRemainderLogicHandler.handleRemainderForNonPlayerCraft(
-				fuelStack,
-				recipe,
+				RecipeRemainderLogicHandler.getRemainder(fuelStack, recipe),
 				((AbstractFurnaceBlockEntityMixin) (BlockEntity) blockEntity).inventory,
 				1,
 				blockEntity.getWorld(),
@@ -78,15 +77,17 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 	}
 
 	@Redirect(method = "craftRecipe", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"))
-	private static void setInputRemainder(ItemStack inputStack, int amount, Recipe<?> recipe, DefaultedList<ItemStack> slots, int count) {
+	private static void setInputRemainder(ItemStack inputStack, int amount, Recipe<?> recipe, DefaultedList<ItemStack> inventory, int count) {
+		ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(inputStack, recipe);
+
+		inputStack.decrement(amount);
+
 		RecipeRemainderLogicHandler.handleRemainderForNonPlayerCraft(
-				inputStack,
-				recipe,
-				slots,
+				remainder,
+				inventory,
 				0,
 				quilt$threadLocalBlockEntity.get().getWorld(),
 				quilt$threadLocalBlockEntity.get().getPos()
 		);
-		inputStack.decrement(amount);
 	}
 }

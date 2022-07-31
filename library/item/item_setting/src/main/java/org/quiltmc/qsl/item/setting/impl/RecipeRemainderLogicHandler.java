@@ -25,45 +25,44 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class RecipeRemainderLogicHandler {
-	private static boolean tryReturnItemToInventory(ItemStack item, DefaultedList<ItemStack> inventory, int slot) {
-		if (inventory.get(slot).isEmpty() || ItemStack.canCombine(item, inventory.get(slot))) {
-			inventory.set(slot, item);
+	private static boolean tryReturnItemToInventory(ItemStack remainder, DefaultedList<ItemStack> inventory, int slot) {
+		ItemStack leftovers = inventory.get(slot);
+		if (leftovers.isEmpty()) {
+			inventory.set(slot, remainder);
+			return false;
+		} else if (ItemStack.canCombine(remainder, leftovers) && leftovers.getCount() + remainder.getCount() < leftovers.getMaxCount()) {
+			leftovers.setCount(leftovers.getCount() + remainder.getCount());
 			return false;
 		}
 		return true;
 	}
 
-	public static ItemStack handleRemainderForNonPlayerCraft(ItemStack usedItem, Recipe<?> recipe, DefaultedList<ItemStack> inventory, int slot, World world, BlockPos location) {
+	public static ItemStack getRemainder(ItemStack usedItem, Recipe<?> recipe) {
 		ItemStack remainder = CustomItemSettingImpl.RECIPE_REMAINDER_PROVIDER.get(usedItem.getItem()).getRecipeRemainder(
 				usedItem,
 				recipe
 		);
 
-		if (remainder == ItemStack.EMPTY) {
-			return ItemStack.EMPTY;
+		return remainder.isEmpty() ? ItemStack.EMPTY : remainder;
+	}
+
+	public static void handleRemainderForNonPlayerCraft(ItemStack remainder, DefaultedList<ItemStack> inventory, int slot, World world, BlockPos location) {
+		if (remainder.isEmpty()) {
+			return;
 		}
 
 		if (tryReturnItemToInventory(remainder, inventory, slot)) {
 			ItemScatterer.spawn(world, location.getX(), location.getY(), location.getZ(), remainder);
 		}
-
-		return remainder;
 	}
 
-	public static ItemStack handleRemainderForPlayerCraft(ItemStack usedItem, Recipe<?> recipe, DefaultedList<ItemStack> inventory, int slot, PlayerEntity player) {
-		ItemStack remainder = CustomItemSettingImpl.RECIPE_REMAINDER_PROVIDER.get(usedItem.getItem()).getRecipeRemainder(
-				usedItem,
-				recipe
-		);
-
-		if (remainder == ItemStack.EMPTY) {
-			return ItemStack.EMPTY;
+	public static void handleRemainderForPlayerCraft(ItemStack remainder, DefaultedList<ItemStack> inventory, int slot, PlayerEntity player) {
+		if (remainder.isEmpty()) {
+			return;
 		}
 
 		if (tryReturnItemToInventory(remainder, inventory, slot)) {
 			player.getInventory().offerOrDrop(remainder);
 		}
-
-		return remainder;
 	}
 }

@@ -31,17 +31,21 @@ import net.minecraft.world.World;
 @Mixin(BrewingStandBlockEntity.class)
 public class BrewingStandBlockEntityMixin {
 	@Inject(method = "craft", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"), cancellable = true)
-	private static void applyRecipeRemainder(World world, BlockPos pos, DefaultedList<ItemStack> slots, CallbackInfo ci) {
-		ItemStack ingredient = slots.get(3);
-		ingredient.decrement(1);
+	private static void applyRecipeRemainder(World world, BlockPos pos, DefaultedList<ItemStack> inventory, CallbackInfo ci) {
+		ItemStack ingredient = inventory.get(3);
+
 		// TODO: test
-		ItemStack remainder = RecipeRemainderLogicHandler.handleRemainderForNonPlayerCraft(
-				ingredient,
-				null,
-				slots,
+		ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(ingredient, null);
+
+		ingredient.decrement(1);
+
+		RecipeRemainderLogicHandler.handleRemainderForNonPlayerCraft(
+				remainder,
+				inventory,
 				3,
 				world,
-				pos);
+				pos
+		);
 
 		if (!remainder.isEmpty()) {
 			world.syncWorldEvent(1035, pos, 0);

@@ -22,6 +22,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.util.collection.DefaultedList;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
 
@@ -42,6 +43,7 @@ public interface RecipeRemainderProvider {
 	 * @param recipe the recipe being used
 	 * @return the recipe remainder
 	 */
+	@Contract(value = "_, _ -> new")
 	ItemStack getRecipeRemainder(ItemStack original, @Nullable Recipe<?> recipe);
 
 	static DefaultedList<ItemStack> getRemainingStacks(Inventory inventory, Recipe<?> recipe, DefaultedList<ItemStack> defaultedList) {
