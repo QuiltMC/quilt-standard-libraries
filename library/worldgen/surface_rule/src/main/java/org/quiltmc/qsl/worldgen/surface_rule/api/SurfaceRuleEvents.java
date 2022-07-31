@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.worldgen.surface_rule.api;
 
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.base.api.event.Event;
@@ -69,7 +71,7 @@ public final class SurfaceRuleEvents {
 		 *
 		 * @param context the modification context
 		 */
-		void modifyOverworldRules(SurfaceRuleContext.Overworld context);
+		void modifyOverworldRules(@NotNull SurfaceRuleContext.Overworld context);
 	}
 
 	@FunctionalInterface
@@ -79,7 +81,7 @@ public final class SurfaceRuleEvents {
 		 *
 		 * @param context the modification context
 		 */
-		void modifyNetherRules(SurfaceRuleContext.Nether context);
+		void modifyNetherRules(@NotNull SurfaceRuleContext.Nether context);
 	}
 
 	@FunctionalInterface
@@ -89,7 +91,7 @@ public final class SurfaceRuleEvents {
 		 *
 		 * @param context the modification context
 		 */
-		void modifyTheEndRules(SurfaceRuleContext.TheEnd context);
+		void modifyTheEndRules(@NotNull SurfaceRuleContext.TheEnd context);
 	}
 
 	private SurfaceRuleEvents() {

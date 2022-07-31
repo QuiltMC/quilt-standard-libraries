@@ -18,6 +18,9 @@ package org.quiltmc.qsl.worldgen.surface_rule.api;
 
 import java.util.List;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.world.gen.surfacebuilder.SurfaceRules;
 
 /**
@@ -31,7 +34,7 @@ public interface SurfaceRuleContext {
 	 * <p>
 	 * The list is mutable.
 	 */
-	List<SurfaceRules.MaterialRule> materialRules();
+	@NotNull List<SurfaceRules.MaterialRule> materialRules();
 
 	/**
 	 * Represents the Overworld-specific context.
@@ -40,16 +43,19 @@ public interface SurfaceRuleContext {
 		/**
 		 * {@return {@code true} if this overworld dimension should have a surface exposed to the sky, or {@code false} otherwise}
 		 */
+		@Contract(pure = true)
 		boolean hasSurface();
 
 		/**
 		 * {@return {@code true} if this overworld dimension should have a bedrock roof, or {@code false} otherwise}
 		 */
+		@Contract(pure = true)
 		boolean hasBedrockRoof();
 
 		/**
 		 * {@return {@code true} if this overworld dimension should have a bedrock floor, or {@code false} otherwise}
 		 */
+		@Contract(pure = true)
 		boolean hasBedrockFloor();
 	}
 

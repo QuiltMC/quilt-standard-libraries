@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.world.gen.surfacebuilder.SurfaceRules;
 
@@ -35,7 +36,7 @@ public class SurfaceRuleContextImpl implements SurfaceRuleContext, SurfaceRuleCo
 	}
 
 	@Override
-	public List<SurfaceRules.MaterialRule> materialRules() {
+	public @NotNull List<SurfaceRules.MaterialRule> materialRules() {
 		return this.sequenceRule.sequence();
 	}
 
