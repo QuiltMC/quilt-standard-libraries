@@ -28,6 +28,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
@@ -45,25 +46,30 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 	protected DefaultedList<ItemStack> inventory;
 
 	@Unique
-	private static final ThreadLocal<AbstractFurnaceBlockEntity> threadLocalBlockEntity = new ThreadLocal<>();
+	private static final ThreadLocal<AbstractFurnaceBlockEntity> quilt$threadLocalBlockEntity = new ThreadLocal<>();
 
 	public AbstractFurnaceBlockEntityMixin(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
 	}
 
+	// Needed some place to store the furnace entity before any remainders are checked
+	@Inject(method = "isBurning", at = @At("HEAD"))
+	private void setThreadLocalBlockEntity(CallbackInfoReturnable<Boolean> cir) {
+		quilt$threadLocalBlockEntity.set((AbstractFurnaceBlockEntity) (BlockEntity) this);
+	}
+
 	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"), locals = LocalCapture.CAPTURE_FAILHARD)
-	private static void setFuelRemainder(World world, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity, CallbackInfo ci, boolean bl, boolean bl2, ItemStack itemStack, Recipe<?> recipe, int i, Item item) {
-		threadLocalBlockEntity.set(blockEntity);
-		AbstractFurnaceBlockEntityMixin furnaceBlockEntity = (AbstractFurnaceBlockEntityMixin) (BlockEntity) blockEntity;
+	private static void setFuelRemainder(World world, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity, CallbackInfo ci, boolean burning, boolean dirty, ItemStack fuelStack, boolean hasInput, boolean hasFuel, Recipe<?> recipe, int maxCount, Item fuel) {
 		// TODO: test
 		RecipeRemainderLogicHandler.handleRemainderForNonPlayerCraft(
-				itemStack,
+				fuelStack,
 				recipe,
-				furnaceBlockEntity.inventory,
+				((AbstractFurnaceBlockEntityMixin) (BlockEntity) blockEntity).inventory,
 				1,
-				threadLocalBlockEntity.get().getWorld(),
-				threadLocalBlockEntity.get().getPos());
+				blockEntity.getWorld(),
+				blockEntity.getPos()
+		);
 	}
 
 	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/collection/DefaultedList;set(ILjava/lang/Object;)Ljava/lang/Object;"))
@@ -78,8 +84,8 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 				recipe,
 				slots,
 				0,
-				threadLocalBlockEntity.get().getWorld(),
-				threadLocalBlockEntity.get().getPos()
+				quilt$threadLocalBlockEntity.get().getWorld(),
+				quilt$threadLocalBlockEntity.get().getPos()
 		);
 		inputStack.decrement(amount);
 	}
