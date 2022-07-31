@@ -30,9 +30,11 @@ public class RecipeRemainderLogicHandler {
 		if (leftovers.isEmpty()) {
 			inventory.set(slot, remainder);
 			return false;
-		} else if (ItemStack.canCombine(remainder, leftovers) && leftovers.getCount() + remainder.getCount() < leftovers.getMaxCount()) {
-			leftovers.setCount(leftovers.getCount() + remainder.getCount());
-			return false;
+		} else if (ItemStack.canCombine(remainder, leftovers)) {
+			int toTake = Math.min(leftovers.getMaxCount() - leftovers.getCount(), remainder.getCount());
+			remainder.decrement(toTake);
+			leftovers.increment(toTake);
+			return !remainder.isEmpty();
 		}
 		return true;
 	}
