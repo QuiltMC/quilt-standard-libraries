@@ -151,8 +151,8 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	public Iterator<Entry<R, V>> iterator() {
 		return RegistryEntryAttachmentImpl.this.registry.stream()
 				.map(r -> {
-					Optional<V> value = RegistryEntryAttachmentImpl.this.get(r);
-					return value.map(v -> new Entry<>(r, v)).orElse(null);
+					V value = RegistryEntryAttachmentImpl.this.getNullable(r);
+					return value == null ? null : new Entry<>(r, value);
 				})
 				.filter(Objects::nonNull)
 				.iterator();

@@ -230,7 +230,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	Iterator<Entry<R, V>> entryIterator();
 
 	/**
-	 * {@return an iterator over all the tag value with a direct entry}
+	 * {@return an iterator over all the tag values with a direct entry}
 	 */
 	Iterator<TagEntry<R, V>> tagEntryIterator();
 
