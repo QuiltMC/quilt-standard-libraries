@@ -61,7 +61,6 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"), locals = LocalCapture.CAPTURE_FAILHARD)
 	private static void setFuelRemainder(World world, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity, CallbackInfo ci, boolean burning, boolean dirty, ItemStack fuelStack, boolean hasInput, boolean hasFuel, Recipe<?> recipe, int maxCount, Item fuel) {
-		// TODO: test
 		RecipeRemainderLogicHandler.handleRemainderForNonPlayerCraft(
 				RecipeRemainderLogicHandler.getRemainder(fuelStack, recipe),
 				((AbstractFurnaceBlockEntityMixin) (BlockEntity) blockEntity).inventory,

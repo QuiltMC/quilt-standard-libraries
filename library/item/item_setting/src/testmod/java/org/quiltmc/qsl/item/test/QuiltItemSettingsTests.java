@@ -68,6 +68,22 @@ public class QuiltItemSettingsTests implements ModInitializer {
 		}));
 		Registry.register(Registry.ITEM, new Identifier(NAMESPACE, "infinite_ore"), furnaceInputSelfRemainder);
 
+		Item furnaceFuelSelfRemainder = new Item(new QuiltItemSettings().group(ItemGroup.MISC).recipeRemainder((original, recipe) -> {
+			var remainder = original.copy();
+			if (recipe != null) {
+				if (recipe.getType() == RecipeType.SMELTING) {
+					remainder.setCount(1);
+				} else if (recipe.getType() == RecipeType.SMOKING) {
+					remainder.setCount(2);
+				} else if (recipe.getType() == RecipeType.BLASTING) {
+					remainder.setCount(3);
+				}
+				return remainder;
+			}
+			return ItemStack.EMPTY;
+		}));
+		Registry.register(Registry.ITEM, new Identifier(NAMESPACE, "infinite_fuel"), furnaceFuelSelfRemainder);
+
 		Item smithingInputRemainder = new Item(new QuiltItemSettings().group(ItemGroup.MISC).recipeRemainder((original, recipe) -> {
 			if (recipe != null && recipe.getType() == RecipeType.SMITHING) {
 				return Items.NETHERITE_INGOT.getDefaultStack();
