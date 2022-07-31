@@ -99,7 +99,7 @@ public class QuiltItemSettings extends Item.Settings {
 
 		return this.recipeRemainder((original, recipe) -> {
 			if (!original.isDamageable()) {
-				return ItemStack.EMPTY;
+				throw new IllegalArgumentException("Cannot apply damageIfUsedInCrafting to " + original + " as it cannot be damaged");
 			}
 
 			ItemStack copy = original.copy();
