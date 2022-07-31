@@ -2,7 +2,7 @@
   "schema_version": 1,
   "quilt_loader": {
     "group": "org.quiltmc.qsl.item",
-    "id": "quilt_extension_testmod",
+    "id": "quilt_item_extension_testmod",
     "version": "1.0.0",
     "metadata": {
       "name": "Quilt Item Extension API Test Mod",
@@ -17,7 +17,7 @@
     },
     "depends": [
       "quilt_loader",
-      "quilt_extension"
+      "quilt_item_extension"
     ]
   }
 }
