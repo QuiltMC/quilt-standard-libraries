@@ -26,8 +26,8 @@ import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-import org.quiltmc.qsl.item.extension.api.ProjectileModifyingBowItem;
-import org.quiltmc.qsl.item.extension.api.ProjectileModifyingCrossbowItem;
+import org.quiltmc.qsl.item.extension.api.bow.ProjectileModifyingBowItem;
+import org.quiltmc.qsl.item.extension.api.crossbow.ProjectileModifyingCrossbowItem;
 
 public class BowsTest implements ModInitializer {
 	public static final Item TEST_BOW = new ProjectileModifyingBowItem(new Item.Settings().group(ItemGroup.COMBAT)) {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.item.extension.mixin;
+package org.quiltmc.qsl.item.extension.mixin.bow;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -28,7 +28,7 @@ import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.world.World;
-import org.quiltmc.qsl.item.extension.api.ShotProjectileEvents;
+import org.quiltmc.qsl.item.extension.api.bow.BowShotProjectileEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -45,8 +45,8 @@ public abstract class BowAttackMixin extends MobEntity implements RangedAttackMo
 		ItemStack bowStack = this.getStackInHand(ProjectileUtil.getHandPossiblyHolding(this, Items.BOW));
 		ItemStack arrowStack = this.getArrowType(bowStack);
 
-		PersistentProjectileEntity replacedPersistentProjectileEntity = ShotProjectileEvents.BOW_REPLACE_SHOT_PROJECTILE.invoker().replaceProjectileShot(bowStack, arrowStack, this, pullProgress, (PersistentProjectileEntity) persistentProjectileEntity);
-		ShotProjectileEvents.BOW_MODIFY_SHOT_PROJECTILE.invoker().modifyProjectileShot(bowStack, arrowStack, this, pullProgress, replacedPersistentProjectileEntity);
+		PersistentProjectileEntity replacedPersistentProjectileEntity = BowShotProjectileEvents.BOW_REPLACE_SHOT_PROJECTILE.invoker().replaceProjectileShot(bowStack, arrowStack, this, pullProgress, (PersistentProjectileEntity) persistentProjectileEntity);
+		BowShotProjectileEvents.BOW_MODIFY_SHOT_PROJECTILE.invoker().modifyProjectileShot(bowStack, arrowStack, this, pullProgress, replacedPersistentProjectileEntity);
 
 		return world.spawnEntity(replacedPersistentProjectileEntity);
 	}

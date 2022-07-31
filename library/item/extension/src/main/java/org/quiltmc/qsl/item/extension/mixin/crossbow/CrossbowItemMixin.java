@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.item.extension.mixin;
+package org.quiltmc.qsl.item.extension.mixin.crossbow;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
@@ -23,8 +23,8 @@ import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
-import org.quiltmc.qsl.item.extension.api.ShotProjectileEvents;
-import org.quiltmc.qsl.item.extension.impl.CrossbowExtensions;
+import org.quiltmc.qsl.item.extension.api.crossbow.CrossbowExtensions;
+import org.quiltmc.qsl.item.extension.api.crossbow.CrossbowShotProjectileEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -36,8 +36,8 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 public class CrossbowItemMixin implements CrossbowExtensions {
 	@Inject(method = "createArrow", at = @At(value = "RETURN"), locals = LocalCapture.CAPTURE_FAILSOFT, cancellable = true)
 	private static void createArrow(World world, LivingEntity entity, ItemStack crossbow, ItemStack projectileStack, CallbackInfoReturnable<PersistentProjectileEntity> cir, ArrowItem arrowItem, PersistentProjectileEntity persistentProjectileEntity) {
-		persistentProjectileEntity = ShotProjectileEvents.CROSSBOW_REPLACE_SHOT_PROJECTILE.invoker().replaceProjectileShot(crossbow, projectileStack, entity, persistentProjectileEntity);
-		ShotProjectileEvents.CROSSBOW_MODIFY_SHOT_PROJECTILE.invoker().modifyProjectileShot(crossbow, projectileStack, entity, persistentProjectileEntity);
+		persistentProjectileEntity = CrossbowShotProjectileEvents.CROSSBOW_REPLACE_SHOT_PROJECTILE.invoker().replaceProjectileShot(crossbow, projectileStack, entity, persistentProjectileEntity);
+		CrossbowShotProjectileEvents.CROSSBOW_MODIFY_SHOT_PROJECTILE.invoker().modifyProjectileShot(crossbow, projectileStack, entity, persistentProjectileEntity);
 		cir.setReturnValue(persistentProjectileEntity);
 	}
 

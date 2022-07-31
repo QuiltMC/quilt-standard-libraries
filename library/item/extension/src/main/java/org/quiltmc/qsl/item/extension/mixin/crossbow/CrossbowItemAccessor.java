@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.item.extension.mixin;
+package org.quiltmc.qsl.item.extension.mixin.crossbow;
 
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;

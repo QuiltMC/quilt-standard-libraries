@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.item.extension.mixin;
+package org.quiltmc.qsl.item.extension.mixin.crossbow;
 
 import net.minecraft.entity.mob.PiglinEntity;
 import net.minecraft.entity.mob.PillagerEntity;
 import net.minecraft.item.RangedWeaponItem;
-import org.quiltmc.qsl.item.extension.impl.CrossbowExtensions;
+import org.quiltmc.qsl.item.extension.api.crossbow.CrossbowExtensions;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

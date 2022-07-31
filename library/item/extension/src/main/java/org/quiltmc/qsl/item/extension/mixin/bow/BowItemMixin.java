@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.item.extension.mixin;
+package org.quiltmc.qsl.item.extension.mixin.bow;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -23,8 +23,8 @@ import net.minecraft.item.ArrowItem;
 import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import org.quiltmc.qsl.item.extension.api.ShotProjectileEvents;
-import org.quiltmc.qsl.item.extension.impl.BowExtensions;
+import org.quiltmc.qsl.item.extension.api.bow.BowShotProjectileEvents;
+import org.quiltmc.qsl.item.extension.api.bow.BowExtensions;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -43,8 +43,8 @@ public class BowItemMixin implements BowExtensions {
 	// Two mixins are needed for this in order to capture the locals
 	@Inject(method = "onStoppedUsing(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"), locals = LocalCapture.CAPTURE_FAILHARD)
 	public void onStoppedUsing_modifyArrow(ItemStack bowStack, World world, LivingEntity user, int remainingUseTicks, CallbackInfo info, PlayerEntity playerEntity, boolean bl, ItemStack arrowStack, int i, float pullProgress, boolean bl2, ArrowItem arrowItem, PersistentProjectileEntity persistentProjectileEntity) {
-		quilt$onStoppedUsing$shotProjectile.set(ShotProjectileEvents.BOW_REPLACE_SHOT_PROJECTILE.invoker().replaceProjectileShot(bowStack, arrowStack, user, pullProgress, persistentProjectileEntity));
-		ShotProjectileEvents.BOW_MODIFY_SHOT_PROJECTILE.invoker().modifyProjectileShot(bowStack, arrowStack, user, pullProgress, quilt$onStoppedUsing$shotProjectile.get());
+		quilt$onStoppedUsing$shotProjectile.set(BowShotProjectileEvents.BOW_REPLACE_SHOT_PROJECTILE.invoker().replaceProjectileShot(bowStack, arrowStack, user, pullProgress, persistentProjectileEntity));
+		BowShotProjectileEvents.BOW_MODIFY_SHOT_PROJECTILE.invoker().modifyProjectileShot(bowStack, arrowStack, user, pullProgress, quilt$onStoppedUsing$shotProjectile.get());
 	}
 
 	// Actually modifies the projectile

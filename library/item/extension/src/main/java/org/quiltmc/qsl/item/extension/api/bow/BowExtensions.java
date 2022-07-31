@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.item.extension.impl;
+package org.quiltmc.qsl.item.extension.api.bow;
 
 import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
-import org.quiltmc.qsl.item.extension.api.ProjectileModifyingBowItem;
-import org.quiltmc.qsl.item.extension.api.ShotProjectileEvents;
 
 /**
  * An interface to implement for all custom bows in Quilt.
  * <p>
  * This is meant to be used on a {@link net.minecraft.item.BowItem} class. Unless similar functionality is implemented on your custom item, most functionality will not work.</p>
  * <p>
- * In order to modify the projectile shot from your bow, implementing and registering {@link ShotProjectileEvents.ModifyProjectileFromBow} is recommended.</p>
+ * In order to modify the projectile shot from your bow, implementing and registering {@link BowShotProjectileEvents.ModifyProjectileFromBow} is recommended.</p>
  *
  * @see ProjectileModifyingBowItem
  */

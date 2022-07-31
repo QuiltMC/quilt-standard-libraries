@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.item.extension.api;
+package org.quiltmc.qsl.item.extension.api.bow;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;
-import org.quiltmc.qsl.item.extension.impl.BowExtensions;
 
 /**
  * This is the default implementation for {@link BowExtensions}, allowing for the easy creation of new bows with no new modded functionality.
  * <p>
  * This bow automatically registers itself to modify its arrows with {@link ProjectileModifyingBowItem#onProjectileShot(ItemStack, ItemStack, LivingEntity, float, PersistentProjectileEntity)}</p>
  */
-public class ProjectileModifyingBowItem extends BowItem implements ShotProjectileEvents.ModifyProjectileFromBow {
+public class ProjectileModifyingBowItem extends BowItem implements BowShotProjectileEvents.ModifyProjectileFromBow {
 	public ProjectileModifyingBowItem(Settings settings) {
 		super(settings);
-		ShotProjectileEvents.BOW_MODIFY_SHOT_PROJECTILE.register(this);
+		BowShotProjectileEvents.BOW_MODIFY_SHOT_PROJECTILE.register(this);
 	}
 
 	@Override

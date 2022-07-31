@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.item.extension.mixin;
+package org.quiltmc.qsl.item.extension.mixin.bow;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.RangedAttackMob;
@@ -23,7 +23,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import org.quiltmc.qsl.item.extension.impl.BowExtensions;
+import org.quiltmc.qsl.item.extension.api.bow.BowExtensions;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
