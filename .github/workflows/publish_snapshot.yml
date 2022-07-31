@@ -9,11 +9,13 @@ jobs:
         java: [17]
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/setup-java@v2
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v3
         with:
           distribution: "temurin"
           java-version: ${{ matrix.java }}
-      - uses: actions/checkout@v2
       - run: ./gradlew checkLicenses generateQmj --parallel --stacktrace
       - run: ./gradlew build publish --stacktrace --parallel
         env:
