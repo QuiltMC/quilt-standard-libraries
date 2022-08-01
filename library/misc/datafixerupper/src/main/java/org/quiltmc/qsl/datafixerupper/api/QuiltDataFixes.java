@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.Util;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.datafixerupper.impl.QuiltDataFixesInternals;
@@ -90,6 +91,21 @@ public final class QuiltDataFixes {
 		checkNotNull(mod, "mod cannot be null");
 
 		registerFixer(mod.metadata().id(), currentVersion, dataFixer);
+	}
+
+	/**
+	 * Builds and registers a new data fixer.
+	 *
+	 * @param mod              the mod container
+	 * @param dataFixerBuilder the data fixer builder
+	 */
+	public static void registerFixer(@NotNull ModContainer mod,
+									 @NotNull QuiltDataFixerBuilder dataFixerBuilder) {
+		checkNotNull(mod, "mod cannot be null");
+		checkNotNull(dataFixerBuilder, "data fixer builder cannot be null");
+
+		registerFixer(mod.metadata().id(), dataFixerBuilder.getDataVersion(),
+				dataFixerBuilder.build(Util::getBootstrapExecutor));
 	}
 
 	/**
