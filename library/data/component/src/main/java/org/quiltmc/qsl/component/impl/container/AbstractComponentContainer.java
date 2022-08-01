@@ -65,8 +65,7 @@ public abstract class AbstractComponentContainer implements ComponentContainer {
 		var rootQslNbt = providerRootNbt.getCompound(StringConstants.COMPONENT_ROOT);
 		this.nbtComponents.forEach(type -> this.expose(type)
 				.map(it -> ((NbtSerializable<?>) it))
-				.ifJust(nbtComponent -> NbtSerializable.writeTo(
-						rootQslNbt, nbtComponent, type.id()))
+				.ifJust(nbtComponent -> NbtSerializable.writeTo(rootQslNbt, nbtComponent, type.id()))
 		);
 
 		if (!rootQslNbt.isEmpty()) {

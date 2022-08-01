@@ -16,33 +16,33 @@
 
 package org.quiltmc.qsl.component.impl.container;
 
-import com.mojang.datafixers.util.Either;
-import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.base.api.util.Maybe;
-import org.quiltmc.qsl.component.api.ComponentType;
-import org.quiltmc.qsl.component.api.provider.ComponentProvider;
-import org.quiltmc.qsl.component.api.sync.SyncChannel;
-import org.quiltmc.qsl.component.impl.ComponentsImpl;
-import org.quiltmc.qsl.component.api.injection.ComponentEntry;
-
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+import com.mojang.datafixers.util.Either;
+import org.jetbrains.annotations.Nullable;
+
+import org.quiltmc.qsl.base.api.util.Maybe;
+import org.quiltmc.qsl.component.api.ComponentType;
+import org.quiltmc.qsl.component.api.injection.ComponentEntry;
+import org.quiltmc.qsl.component.api.provider.ComponentProvider;
+import org.quiltmc.qsl.component.api.sync.SyncChannel;
+
 // Suggestion from Technici4n from fabric. May help improve performance and memory footprint once done.
 public class OnAccessComponentContainer extends AbstractComponentContainer {
-	public static final Factory<OnAccessComponentContainer> FACTORY =
-			(provider, injections, saveOperation, ticking, syncChannel) ->
-					new OnAccessComponentContainer(provider, saveOperation, ticking, syncChannel);
+	public static final Factory<OnAccessComponentContainer> FACTORY = OnAccessComponentContainer::new;
+
 	private final Map<ComponentType<?>, Either<ComponentEntry<?>, Object>> components;
 
 	protected OnAccessComponentContainer(ComponentProvider provider,
+			List<ComponentEntry<?>> entries,
 			@Nullable Runnable saveOperation,
 			boolean ticking,
 			@Nullable SyncChannel<?, ?> syncChannel) {
 		super(saveOperation, ticking, syncChannel);
-		this.components = this.createComponents(provider);
+		this.components = this.createComponents(entries, provider);
 	}
 
 	@Override
@@ -64,10 +64,9 @@ public class OnAccessComponentContainer extends AbstractComponentContainer {
 		this.components.put(type, Either.right(component));
 	}
 
-	private Map<ComponentType<?>, Either<ComponentEntry<?>, Object>> createComponents(ComponentProvider provider) {
-		List<ComponentEntry<?>> injections = ComponentsImpl.getInjections(provider);
+	private Map<ComponentType<?>, Either<ComponentEntry<?>, Object>> createComponents(List<ComponentEntry<?>> entries, ComponentProvider ignoredProvider) {
 		var map = new IdentityHashMap<ComponentType<?>, Either<ComponentEntry<?>, Object>>();
-		injections.forEach(entry -> {
+		entries.forEach(entry -> {
 			ComponentType<?> type = entry.type();
 			if (type.isStatic() || type.isInstant()) {
 				this.initializeComponent(entry);

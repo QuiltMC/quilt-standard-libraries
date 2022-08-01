@@ -46,7 +46,8 @@ public abstract class EntityMixin implements ComponentProvider {
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onEntityInit(EntityType<?> entityType, World world, CallbackInfo ci) {
-		var builder = ComponentContainer.builder(this);
+		var builder = ComponentContainer.builder(this)
+				.acceptsInjections();
 
 		if (!world.isClient) {
 			builder.syncing(SyncChannel.ENTITY).ticking();

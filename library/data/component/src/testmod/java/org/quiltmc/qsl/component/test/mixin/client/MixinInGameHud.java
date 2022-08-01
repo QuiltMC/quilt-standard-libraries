@@ -16,25 +16,24 @@
 
 package org.quiltmc.qsl.component.test.mixin.client;
 
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.Vec3d;
-import org.quiltmc.qsl.component.test.ComponentTestMod;
-import org.quiltmc.qsl.component.test.component.DefaultIntegerSerializable;
-import org.quiltmc.qsl.component.test.component.SaveFloatSerializable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.hud.InGameHud;
+import net.minecraft.client.render.item.ItemRenderer;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.math.ChunkPos;
+
+import org.quiltmc.qsl.component.test.ComponentTestMod;
+import org.quiltmc.qsl.component.test.component.DefaultIntegerSerializable;
+import org.quiltmc.qsl.component.test.component.SaveFloatSerializable;
 
 @Mixin(InGameHud.class)
 public abstract class MixinInGameHud {
@@ -74,12 +73,13 @@ public abstract class MixinInGameHud {
 			MinecraftClient.getInstance().textRenderer.draw(matrices, uuidString, 10, 30, 0xFAFAFA);
 		});
 
-		Vec3d pos = MinecraftClient.getInstance().crosshairTarget.getPos();
-		BlockPos lookAt = new BlockPos(pos);
-		BlockEntity blockEntity = MinecraftClient.getInstance().world.getBlockEntity(lookAt);
-		if (blockEntity != null) {
-			blockEntity.expose(ComponentTestMod.CHEST_NUMBER)
-					   .ifJust(defaultIntegerSerializable -> System.out.println(defaultIntegerSerializable.getValue()));
-		}
+		// Vec3d pos = MinecraftClient.getInstance().crosshairTarget.getPos();
+		// BlockPos lookAt = new BlockPos(pos);
+		// BlockEntity blockEntity = MinecraftClient.getInstance().world.getBlockEntity(lookAt);
+//		if (blockEntity != null) {
+//			blockEntity.expose(ComponentTestMod.CHEST_NUMBER)
+//					   .ifJust(defaultIntegerSerializable -> System.out.println(defaultIntegerSerializable.getValue
+//					   ()));
+//		}
 	}
 }

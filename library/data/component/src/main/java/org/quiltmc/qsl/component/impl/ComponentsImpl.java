@@ -61,7 +61,7 @@ public class ComponentsImpl {
 		var result = new ArrayList<ComponentEntry<?>>();
 		result.addAll(CACHED_MANAGER.getInjections(provider));
 		result.addAll(DYNAMIC_MANAGER.getInjections(provider));
-		return result;
+		return List.copyOf(result);
 	}
 
 	public static <C> ComponentType<C> register(Identifier id, ComponentType<C> type) {

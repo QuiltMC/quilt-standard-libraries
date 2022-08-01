@@ -296,14 +296,7 @@ public class SyncChannel<P extends ComponentProvider, U> {
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
 		if (!(obj instanceof SyncChannel<?, ?> that)) return false;
-		return Stream.of(
-				Objects.equals(this.channelId, that.channelId),
-				Objects.equals(this.codec, that.codec),
-				Objects.equals(this.identifyingDataTransformer, that.identifyingDataTransformer),
-				Objects.equals(this.clientLocator, that.clientLocator),
-				Objects.equals(this.serverLocator, that.serverLocator),
-				Objects.equals(this.playerProvider, that.playerProvider)
-		).reduce(Boolean::logicalAnd).orElse(false);
+		return this.channelId.equals(that.channelId);
 	}
 
 	@Override

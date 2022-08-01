@@ -16,24 +16,25 @@
 
 package org.quiltmc.qsl.component.impl.container;
 
-import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.base.api.util.Maybe;
-import org.quiltmc.qsl.component.api.ComponentType;
-import org.quiltmc.qsl.component.api.container.ComponentContainer;
-import org.quiltmc.qsl.component.api.sync.SyncChannel;
-import org.quiltmc.qsl.component.api.injection.ComponentEntry;
-import org.quiltmc.qsl.component.impl.util.ErrorUtil;
-
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
+import org.jetbrains.annotations.Nullable;
+
+import org.quiltmc.qsl.base.api.util.Maybe;
+import org.quiltmc.qsl.component.api.ComponentType;
+import org.quiltmc.qsl.component.api.container.ComponentContainer;
+import org.quiltmc.qsl.component.api.injection.ComponentEntry;
+import org.quiltmc.qsl.component.api.sync.SyncChannel;
+import org.quiltmc.qsl.component.impl.util.ErrorUtil;
+
 public class SimpleComponentContainer extends AbstractComponentContainer {
 	public static final ComponentContainer.Factory<SimpleComponentContainer> FACTORY =
-			(provider, injections, saveOperation, ticking, syncChannel) -> new SimpleComponentContainer(
-					saveOperation, ticking, syncChannel, injections.get().stream()
-			);
+			(provider, entries, saveOperation, ticking, syncChannel) ->
+					new SimpleComponentContainer(saveOperation, ticking, syncChannel, entries.stream());
+
 	private final Map<ComponentType<?>, Object> components;
 
 	protected SimpleComponentContainer(@Nullable Runnable saveOperation,

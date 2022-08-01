@@ -49,7 +49,7 @@ import org.quiltmc.qsl.block.entity.api.QuiltBlockEntityTypeBuilder;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.Components;
 import org.quiltmc.qsl.component.api.component.Tickable;
-import org.quiltmc.qsl.component.api.component.field.SyncedGenericSerializableField;
+import org.quiltmc.qsl.component.api.component.field.SyncedSavedField;
 import org.quiltmc.qsl.component.api.injection.ComponentInjector;
 import org.quiltmc.qsl.component.api.sync.codec.NetworkCodec;
 import org.quiltmc.qsl.component.test.component.ChunkInventorySerializable;
@@ -76,9 +76,9 @@ public class ComponentTestMod implements ModInitializer {
 			new Identifier(MOD_ID, "hostile_explode_time"),
 			DefaultIntegerSerializable::new
 	);
-	public static final ComponentType<SyncedGenericSerializableField<Integer>> CHEST_NUMBER = Components.register(
+	public static final ComponentType<SyncedSavedField<Integer>> CHEST_NUMBER = Components.register(
 			new Identifier(MOD_ID, "chest_number"),
-			operations -> new SyncedGenericSerializableField<>(operations, Codec.INT, NetworkCodec.VAR_INT, 200)
+			operations -> new SyncedSavedField<>(operations, Codec.INT, NetworkCodec.VAR_INT, 200)
 	);
 	public static final ComponentType<ChunkInventorySerializable> CHUNK_INVENTORY = Components.register(
 			new Identifier(MOD_ID, "chunk_inventory"),
@@ -93,9 +93,9 @@ public class ComponentTestMod implements ModInitializer {
 			new Identifier(ComponentTestMod.MOD_ID, "test_be_int"),
 			DefaultIntegerSerializable::new
 	);
-	public static final ComponentType<SyncedGenericSerializableField<UUID>> UUID_THING = Components.register(
+	public static final ComponentType<SyncedSavedField<UUID>> UUID_THING = Components.register(
 			new Identifier(MOD_ID, "uuid_thing"),
-			(ops) -> new SyncedGenericSerializableField<>(ops, Codecs.UUID, NetworkCodec.UUID)
+			(ops) -> new SyncedSavedField<>(ops, Codecs.UUID, NetworkCodec.UUID)
 	);
 	public static final ComponentType<Tickable> PLAYER_TICK = Components.registerInstant(
 			new Identifier(MOD_ID, "player_tick"),
@@ -164,9 +164,6 @@ public class ComponentTestMod implements ModInitializer {
 		ComponentInjector.injector(Chunk.class)
 					 .entry(CHUNK_INVENTORY).factory(ChunkInventorySerializable::new).add()
 					 .inherited()
-					 .inject();
-		ComponentInjector.injector(CreeperEntity.class)
-					 .entry(CREEPER_EXPLODE_TIME).add()
 					 .inject();
 		ComponentInjector.injector(HostileEntity.class)
 					 .entry(HOSTILE_EXPLODE_TIME).add()

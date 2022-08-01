@@ -16,9 +16,16 @@
 
 package org.quiltmc.qsl.component.api.container;
 
-import net.minecraft.nbt.NbtCompound;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
+import java.util.function.BiConsumer;
+
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.nbt.NbtCompound;
+
 import org.quiltmc.qsl.base.api.util.Lazy;
 import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.ComponentFactory;
@@ -26,15 +33,16 @@ import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.component.NbtSerializable;
 import org.quiltmc.qsl.component.api.component.Syncable;
 import org.quiltmc.qsl.component.api.component.Tickable;
+import org.quiltmc.qsl.component.api.injection.ComponentEntry;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.api.sync.SyncChannel;
-import org.quiltmc.qsl.component.impl.container.*;
-import org.quiltmc.qsl.component.api.injection.ComponentEntry;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
-import java.util.function.BiConsumer;
+import org.quiltmc.qsl.component.impl.ComponentsImpl;
+import org.quiltmc.qsl.component.impl.container.CompositeComponentContainer;
+import org.quiltmc.qsl.component.impl.container.EmptyComponentContainer;
+import org.quiltmc.qsl.component.impl.container.LazyComponentContainer;
+import org.quiltmc.qsl.component.impl.container.OnAccessComponentContainer;
+import org.quiltmc.qsl.component.impl.container.SimpleComponentContainer;
+import org.quiltmc.qsl.component.impl.container.SingleComponentContainer;
 
 /**
  * A base container for all components that a {@link ComponentProvider} contains.
@@ -249,7 +257,7 @@ public interface ComponentContainer {
 		 * @return A {@link ComponentContainer} created using the specified parameters.
 		 */
 		T generate(ComponentProvider provider,
-				Lazy<List<ComponentEntry<?>>> entries,
+				List<ComponentEntry<?>> entries,
 				@Nullable Runnable saveOperation,
 				boolean ticking,
 				@Nullable SyncChannel<?, ?> syncChannel
@@ -263,16 +271,18 @@ public interface ComponentContainer {
 	 */
 	class Builder {
 		private final ComponentProvider provider;
-		private final Lazy<List<ComponentEntry<?>>> injections;
+		private final List<ComponentEntry<?>> entries;
 		private boolean ticking;
 		@Nullable
 		private Runnable saveOperation;
 		@Nullable
 		private SyncChannel<?, ?> syncChannel;
+		private boolean acceptsInjections;
 
 		private Builder(ComponentProvider provider) {
 			this.provider = provider;
-			this.injections = Lazy.of(ArrayList::new);
+			this.entries = new ArrayList<>();
+			this.acceptsInjections = false;
 			this.saveOperation = null;
 			this.syncChannel = null;
 		}
@@ -293,7 +303,7 @@ public interface ComponentContainer {
 		}
 
 		public <C> Builder add(ComponentEntry<C> componentEntry) {
-			this.injections.get().add(componentEntry);
+			this.entries.add(componentEntry);
 			return this;
 		}
 
@@ -315,9 +325,18 @@ public interface ComponentContainer {
 			return this;
 		}
 
+		public Builder acceptsInjections() {
+			this.acceptsInjections = true;
+			return this;
+		}
+
 		public <T extends ComponentContainer> T build(ComponentContainer.Factory<T> factory) {
 			// TODO: See if we can cache the builder at some stage to reduce object creation.
-			return factory.generate(this.provider, this.injections, this.saveOperation, this.ticking, this.syncChannel);
+			if (this.acceptsInjections) {
+				this.entries.addAll(ComponentsImpl.getInjections(this.provider));
+			}
+
+			return factory.generate(this.provider, this.entries, this.saveOperation, this.ticking, this.syncChannel);
 		}
 	}
 }

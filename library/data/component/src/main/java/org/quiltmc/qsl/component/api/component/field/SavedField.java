@@ -25,17 +25,17 @@ import org.quiltmc.qsl.component.api.ComponentCreationContext;
 import org.quiltmc.qsl.component.api.component.NbtSerializable;
 import org.quiltmc.qsl.component.impl.ComponentsImpl;
 
-public class GenericSerializableField<T> implements GenericField<T>, NbtSerializable<NbtCompound> {
+public class SavedField<T> implements GenericField<T>, NbtSerializable<NbtCompound> {
 	protected final Codec<T> codec;
 	@Nullable
 	private final Runnable saveOperation;
 	protected T value;
 
-	public GenericSerializableField(ComponentCreationContext ctx, Codec<T> codec) {
+	public SavedField(ComponentCreationContext ctx, Codec<T> codec) {
 		this(ctx, codec, null);
 	}
 
-	public GenericSerializableField(ComponentCreationContext ops, Codec<T> codec, T defaultValue) {
+	public SavedField(ComponentCreationContext ops, Codec<T> codec, T defaultValue) {
 		this.saveOperation = ops.saveOperation();
 		this.codec = codec;
 		this.value = defaultValue;
@@ -68,8 +68,8 @@ public class GenericSerializableField<T> implements GenericField<T>, NbtSerializ
 		var ret = new NbtCompound();
 		if (this.value != null) {
 			this.codec.encodeStart(NbtOps.INSTANCE, this.value)
-					  .resultOrPartial(ComponentsImpl.LOGGER::error)
-					  .ifPresent(nbtElement -> ret.put("Value", nbtElement));
+					.resultOrPartial(ComponentsImpl.LOGGER::error)
+					.ifPresent(nbtElement -> ret.put("Value", nbtElement));
 		}
 
 		return ret;

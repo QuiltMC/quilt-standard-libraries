@@ -56,6 +56,7 @@ public abstract class BlockEntityMixin implements ComponentProvider {
 				.saving(this::markDirty)
 				.ticking()
 				.syncing(SyncChannel.BLOCK_ENTITY)
+				.acceptsInjections()
 				.build(ComponentContainer.LAZY_FACTORY);
 	}
 

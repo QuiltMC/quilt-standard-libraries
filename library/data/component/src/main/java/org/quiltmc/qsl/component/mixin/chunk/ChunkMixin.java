@@ -52,7 +52,8 @@ public abstract class ChunkMixin implements ComponentProvider {
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onInit(ChunkPos chunkPos, UpgradeData upgradeData, HeightLimitView heightLimitView, Registry<?> registry, long l, ChunkSection[] chunkSections, BlendingData blendingData, CallbackInfo ci) {
 		LazyComponentContainer.Builder builder = ComponentContainer.builder(this)
-				.saving(() -> this.setNeedsSaving(true));
+				.saving(() -> this.setNeedsSaving(true))
+				.acceptsInjections();
 
 		if ((Chunk) (Object) this instanceof WorldChunk) {
 			builder.syncing(SyncChannel.CHUNK).ticking();

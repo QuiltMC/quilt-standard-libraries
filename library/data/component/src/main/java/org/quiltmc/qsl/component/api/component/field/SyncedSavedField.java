@@ -25,18 +25,18 @@ import org.quiltmc.qsl.component.api.ComponentCreationContext;
 import org.quiltmc.qsl.component.api.component.Syncable;
 import org.quiltmc.qsl.component.api.sync.codec.NetworkCodec;
 
-public class SyncedGenericSerializableField<T> extends GenericSerializableField<T> implements Syncable {
+public class SyncedSavedField<T> extends SavedField<T> implements Syncable {
 	private final NetworkCodec<T> networkCodec;
 	@Nullable
 	private final Runnable syncOperation;
 
-	public SyncedGenericSerializableField(ComponentCreationContext ctx, Codec<T> codec, NetworkCodec<T> networkCodec) {
+	public SyncedSavedField(ComponentCreationContext ctx, Codec<T> codec, NetworkCodec<T> networkCodec) {
 		super(ctx, codec);
 		this.networkCodec = networkCodec;
 		this.syncOperation = ctx.syncOperation();
 	}
 
-	public SyncedGenericSerializableField(ComponentCreationContext ops, Codec<T> codec, NetworkCodec<T> networkCodec, T defaultValue) {
+	public SyncedSavedField(ComponentCreationContext ops, Codec<T> codec, NetworkCodec<T> networkCodec, T defaultValue) {
 		super(ops, codec, defaultValue);
 		this.syncOperation = ops.syncOperation();
 		this.networkCodec = networkCodec;

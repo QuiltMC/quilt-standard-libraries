@@ -80,6 +80,7 @@ public class ComponentProviderState extends PersistentState implements Component
 				.saving(this::markDirty)
 				.syncing(SyncChannel.LEVEL)
 				.ticking()
+				.acceptsInjections()
 				.build(ComponentContainer.LAZY_FACTORY);
 	}
 
@@ -88,6 +89,7 @@ public class ComponentProviderState extends PersistentState implements Component
 				.saving(this::markDirty)
 				.syncing(SyncChannel.WORLD)
 				.ticking()
+				.acceptsInjections()
 				.build(ComponentContainer.LAZY_FACTORY);
 	}
 
