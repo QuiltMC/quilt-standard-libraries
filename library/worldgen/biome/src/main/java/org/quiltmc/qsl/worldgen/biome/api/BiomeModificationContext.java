@@ -357,7 +357,7 @@ public interface BiomeModificationContext {
 		/**
 		 * Removes all carvers with the given key from all of this biomes generation steps.
 		 *
-		 * @return {@code true} if any carvers were removed, otherwise {@code false}
+		 * @return {@code true} if any carvers were removed, or {@code false} otherwise
 		 */
 		default boolean removeCarver(RegistryKey<ConfiguredCarver<?>> configuredCarverKey) {
 			boolean anyFound = false;

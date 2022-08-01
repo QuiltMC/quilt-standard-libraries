@@ -16,60 +16,13 @@
 
 package org.quiltmc.qsl.registry.attachment.api;
 
-import java.util.function.Consumer;
-
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-
-import org.quiltmc.qsl.registry.attachment.impl.BuiltinAttachmentBuilderImpl;
 
 /**
  * Extensions for working with {@link Registry}s.
  */
 public final class RegistryExtensions {
-	/**
-	 * Registers an entry into a registry, also setting built-in attachment values for it.
-	 *
-	 * @param registry        target registry
-	 * @param id              entry identifier
-	 * @param toRegister      entry to register
-	 * @param builderConsumer builder consumer
-	 * @param <R>             type of the entries in the registry
-	 * @param <T>             type of the entry we're currently registering (may be a subclass of {@code R})
-	 * @return the newly registered entry
-	 * @deprecated use {@link RegistryEntryAttachment#put(Object, Object)} directly,
-	 * or use one of the other methods in this class
-	 */
-	@Deprecated(forRemoval = true)
-	public static <R, T extends R> T register(Registry<R> registry, Identifier id, T toRegister,
-			Consumer<BuiltinAttachmentBuilder<R>> builderConsumer) {
-		Registry.register(registry, id, toRegister);
-		builderConsumer.accept(new BuiltinAttachmentBuilderImpl<>(toRegister));
-		return toRegister;
-	}
-
-	/**
-	 * Used to set built-in attachment values in a builder-like fashion.
-	 *
-	 * @param <R> type of the entries in the registry
-	 * @deprecated use {@link RegistryEntryAttachment#put(Object, Object)} directly,
-	 * or use one of the other methods in this class
-	 */
-	@SuppressWarnings("DeprecatedIsStillUsed")
-	@Deprecated(forRemoval = true)
-	@FunctionalInterface
-	public interface BuiltinAttachmentBuilder<R> {
-		/**
-		 * Sets a built-in attachment value.
-		 *
-		 * @param attach attachment
-		 * @param value  value to attach
-		 * @param <V>    attached value type
-		 * @return this setter
-		 */
-		<V> BuiltinAttachmentBuilder<R> put(RegistryEntryAttachment<R, V> attach, V value);
-	}
-
 	/**
 	 * Utility method to register an entry and associate a value to it in an attachment.
 	 *
@@ -114,6 +67,7 @@ public final class RegistryExtensions {
 		attach2.put(entry, value2);
 		return entry;
 	}
+
 	/**
 	 * Utility method to register an entry and associate values to it in multiple attachments.
 	 *
