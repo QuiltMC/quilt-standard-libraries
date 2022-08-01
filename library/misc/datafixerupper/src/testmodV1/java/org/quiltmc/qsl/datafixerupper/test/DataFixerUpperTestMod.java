@@ -36,13 +36,10 @@ import net.minecraft.world.World;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-import org.quiltmc.qsl.datafixerupper.api.QuiltDataFixerBuilder;
-import org.quiltmc.qsl.datafixerupper.api.QuiltDataFixes;
 import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 
 public final class DataFixerUpperTestMod implements ModInitializer, ServerLifecycleEvents.Ready {
 	private static final String NAMESPACE = "quilt_datafixerupper_testmod";
-	private static final int DATA_VERSION = 0;
 
 	private static final Logger LOGGER = LogUtils.getLogger();
 
@@ -50,12 +47,7 @@ public final class DataFixerUpperTestMod implements ModInitializer, ServerLifecy
 			Registry.ITEM, new Identifier(NAMESPACE, "old_item"), new Item(new Item.Settings()));
 
 	@Override
-	public void onInitialize(ModContainer mod) {
-		QuiltDataFixerBuilder builder = new QuiltDataFixerBuilder(DATA_VERSION);
-		builder.addSchema(0, QuiltDataFixes.BASE_SCHEMA);
-
-		QuiltDataFixes.registerFixer(mod, builder);
-	}
+	public void onInitialize(ModContainer mod) {}
 
 	@Override
 	public void readyServer(MinecraftServer server) {
