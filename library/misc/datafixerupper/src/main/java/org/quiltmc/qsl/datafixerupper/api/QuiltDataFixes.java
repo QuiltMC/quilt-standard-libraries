@@ -99,8 +99,8 @@ public final class QuiltDataFixes {
 	 * @param mod              the mod container
 	 * @param dataFixerBuilder the data fixer builder
 	 */
-	public static void registerFixer(@NotNull ModContainer mod,
-									 @NotNull QuiltDataFixerBuilder dataFixerBuilder) {
+	public static void buildAndRegisterFixer(@NotNull ModContainer mod,
+											 @NotNull QuiltDataFixerBuilder dataFixerBuilder) {
 		checkNotNull(mod, "mod cannot be null");
 		checkNotNull(dataFixerBuilder, "data fixer builder cannot be null");
 

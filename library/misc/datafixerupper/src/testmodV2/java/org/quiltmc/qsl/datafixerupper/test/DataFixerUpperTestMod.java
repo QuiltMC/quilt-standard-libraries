@@ -65,7 +65,7 @@ public final class DataFixerUpperTestMod implements ModInitializer, ServerLifecy
 		SimpleFixes.addItemRenameFix(builder, "Rename old_item to new_item",
 				new Identifier(NAMESPACE, "old_item"), new Identifier(NAMESPACE, "new_item"), schemaV1);
 
-		QuiltDataFixes.registerFixer(mod, builder);
+		QuiltDataFixes.buildAndRegisterFixer(mod, builder);
 	}
 
 	@Override

@@ -27,9 +27,9 @@
  *         schemaV1);
  *
  *     // register the fixer!
- *     // QuiltDataFixerBuilder.build creates either an unoptimized fixer or an optimized fixer,
+ *     // this will create either an unoptimized fixer or an optimized fixer,
  *     //  depending on the game configuration
- *     QuiltDataFixes.registerFixer(mod, CURRENT_DATA_VERSION, builder.build(Util::getBootstrapExecutor));
+ *     QuiltDataFixes.buildAndRegisterFixer(mod, builder);
  * }
  * </code></pre>
  *
