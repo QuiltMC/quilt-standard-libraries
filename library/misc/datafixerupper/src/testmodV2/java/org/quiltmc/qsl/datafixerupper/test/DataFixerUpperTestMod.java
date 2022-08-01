@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.datafixerupper.test;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -23,6 +24,8 @@ import com.mojang.datafixers.schemas.Schema;
 import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.datafixer.schema.IdentifierNormalizingSchema;
 import net.minecraft.item.Item;
@@ -47,6 +50,8 @@ public final class DataFixerUpperTestMod implements ModInitializer, ServerLifecy
 
 	private static final Item ITEM = Registry.register(
 			Registry.ITEM, new Identifier(NAMESPACE, "new_item"), new Item(new Item.Settings()));
+	private static final Block BLOCK = Registry.register(
+			Registry.BLOCK, new Identifier(NAMESPACE, "old_block"), new Block(Block.Settings.of(Material.STONE)));
 
 	@Override
 	public void onInitialize(ModContainer mod) {
@@ -78,5 +83,15 @@ public final class DataFixerUpperTestMod implements ModInitializer, ServerLifecy
 		}
 
 		LOGGER.info("[v2] TEST SUCCEEDED - Item was upgraded!");
+
+		world.setBlockState(BlockPos.ORIGIN.add(1, 0, 0), BLOCK.getDefaultState());
+
+		try (var writer = Files.newBufferedWriter(Paths.get("dfu-testmod-v2.txt"))) {
+			writer.write("DataFixerUpper testmod v2 was run!");
+		} catch (IOException e) {
+			throw new RuntimeException("Failed to write marker file", e);
+		}
+
+		LOGGER.info("[v2] Prepared for v3 test!");
 	}
 }
