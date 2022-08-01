@@ -32,11 +32,16 @@ sourceSets {
 		compileClasspath += main.compileClasspath
 		runtimeClasspath += main.runtimeClasspath
 	}
+	testmodV3 {
+		compileClasspath += main.compileClasspath
+		runtimeClasspath += main.runtimeClasspath
+	}
 }
 
 dependencies {
 	testmodV1Implementation sourceSets.main.output
 	testmodV2Implementation sourceSets.main.output
+	testmodV3Implementation sourceSets.main.output
 }
 
 task prepareDfuTestmod {
@@ -65,12 +70,21 @@ loom {
 			property("quilt.auto_test")
 			programArg("--nogui")
 		}
+
+		autoTestServerDfuTestmodV3 {
+			server()
+			configName = "Auto test server - DFU testmod v3"
+			source(project.sourceSets.testmodV3)
+			property("quilt.auto_test")
+			programArg("--nogui")
+		}
 	}
 }
 
 runAutoTestServerDfuTestmodV1.dependsOn prepareDfuTestmod
 runAutoTestServerDfuTestmodV2.dependsOn runAutoTestServerDfuTestmodV1
+runAutoTestServerDfuTestmodV3.dependsOn runAutoTestServerDfuTestmodV2
 
 rootProject.afterEvaluate {
-    rootProject.tasks.runAutoTestServer.finalizedBy runAutoTestServerDfuTestmodV2
+    rootProject.tasks.runAutoTestServer.finalizedBy runAutoTestServerDfuTestmodV3
 }
