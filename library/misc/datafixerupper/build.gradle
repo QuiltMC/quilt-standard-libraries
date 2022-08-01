@@ -85,6 +85,4 @@ runAutoTestServerDfuTestmodV1.dependsOn prepareDfuTestmod
 runAutoTestServerDfuTestmodV2.dependsOn runAutoTestServerDfuTestmodV1
 runAutoTestServerDfuTestmodV3.dependsOn runAutoTestServerDfuTestmodV2
 
-rootProject.afterEvaluate {
-    rootProject.tasks.runAutoTestServer.finalizedBy runAutoTestServerDfuTestmodV2
-}
+// TODO run DFU testmods after runAutoTestServer is done
