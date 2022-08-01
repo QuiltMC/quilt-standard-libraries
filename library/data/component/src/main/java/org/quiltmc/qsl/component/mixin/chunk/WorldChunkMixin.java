@@ -40,13 +40,19 @@ import org.quiltmc.qsl.component.impl.container.LazyComponentContainer;
 
 @Mixin(WorldChunk.class)
 public abstract class WorldChunkMixin extends Chunk implements ComponentProvider {
-	public WorldChunkMixin(ChunkPos chunkPos, UpgradeData upgradeData, HeightLimitView heightLimitView, Registry<Biome> registry, long l, @Nullable ChunkSection[] chunkSections, @Nullable BlendingData blendingData) {
+	public WorldChunkMixin(ChunkPos chunkPos, UpgradeData upgradeData, HeightLimitView heightLimitView,
+            Registry<Biome> registry, long l, @Nullable ChunkSection[] chunkSections,
+            @Nullable BlendingData blendingData) {
 		super(chunkPos, upgradeData, heightLimitView, registry, l, chunkSections, blendingData);
 	}
 
-	@Inject(method = "<init>(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/world/chunk/ProtoChunk;Lnet/minecraft/world/chunk/WorldChunk$PostLoadProcessor;)V", at = @At("TAIL"))
+	@Inject(
+			method = "<init>(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/world/chunk/ProtoChunk;Lnet/minecraft/world/chunk/WorldChunk$PostLoadProcessor;)V",
+			at = @At("TAIL")
+	)
 	private void copyComponentData(ServerWorld serverWorld, ProtoChunk protoChunk, WorldChunk.PostLoadProcessor postLoadProcessor, CallbackInfo ci) {
 		var target = protoChunk instanceof ReadOnlyChunk readOnly ? readOnly.getWrappedChunk() : protoChunk;
+		// FIXME: Does not work and I have no idea why it did up to this point! it still captures the old reference
 		LazyComponentContainer.move(
 				(LazyComponentContainer) target.getComponentContainer(),
 				(LazyComponentContainer) this.getComponentContainer()

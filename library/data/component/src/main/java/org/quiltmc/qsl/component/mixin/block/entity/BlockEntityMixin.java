@@ -32,6 +32,7 @@ import net.minecraft.util.math.BlockPos;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.api.sync.SyncChannel;
+import org.quiltmc.qsl.component.impl.ComponentsImpl;
 
 @Mixin(BlockEntity.class)
 public abstract class BlockEntityMixin implements ComponentProvider {
@@ -57,7 +58,7 @@ public abstract class BlockEntityMixin implements ComponentProvider {
 				.ticking()
 				.syncing(SyncChannel.BLOCK_ENTITY)
 				.acceptsInjections()
-				.build(ComponentContainer.LAZY_FACTORY);
+				.build(ComponentsImpl.DEFAULT_FACTORY);
 	}
 
 	@Inject(method = "toNbt", at = @At("TAIL"))

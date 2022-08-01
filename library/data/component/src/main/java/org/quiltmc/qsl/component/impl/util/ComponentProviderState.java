@@ -29,7 +29,7 @@ import net.minecraft.world.World;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.api.sync.SyncChannel;
-import org.quiltmc.qsl.component.impl.container.LazyComponentContainer;
+import org.quiltmc.qsl.component.impl.ComponentsImpl;
 
 // TODO: Fix this
 public class ComponentProviderState extends PersistentState implements ComponentProvider {
@@ -75,22 +75,22 @@ public class ComponentProviderState extends PersistentState implements Component
 		return this.container;
 	}
 
-	private LazyComponentContainer initLevelContainer(MinecraftServer server) {
+	private ComponentContainer initLevelContainer(MinecraftServer server) {
 		return ComponentContainer.builder(server)
 				.saving(this::markDirty)
 				.syncing(SyncChannel.LEVEL)
 				.ticking()
 				.acceptsInjections()
-				.build(ComponentContainer.LAZY_FACTORY);
+				.build(ComponentsImpl.DEFAULT_FACTORY);
 	}
 
-	private LazyComponentContainer initWorldContainer(ServerWorld world) {
+	private ComponentContainer initWorldContainer(ServerWorld world) {
 		return ComponentContainer.builder(world)
 				.saving(this::markDirty)
 				.syncing(SyncChannel.WORLD)
 				.ticking()
 				.acceptsInjections()
-				.build(ComponentContainer.LAZY_FACTORY);
+				.build(ComponentsImpl.DEFAULT_FACTORY);
 	}
 
 	public static class ClientComponentProviderState implements ComponentProvider {

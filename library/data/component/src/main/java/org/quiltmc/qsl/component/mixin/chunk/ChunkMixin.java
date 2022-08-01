@@ -34,6 +34,7 @@ import net.minecraft.world.gen.chunk.BlendingData;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.api.sync.SyncChannel;
+import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.container.LazyComponentContainer;
 
 @Mixin(Chunk.class)
@@ -59,6 +60,6 @@ public abstract class ChunkMixin implements ComponentProvider {
 			builder.syncing(SyncChannel.CHUNK).ticking();
 		}
 
-		this.qsl$container = builder.build(ComponentContainer.LAZY_FACTORY);
+		this.qsl$container = builder.build(ComponentsImpl.DEFAULT_FACTORY);
 	}
 }

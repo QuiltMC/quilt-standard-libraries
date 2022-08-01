@@ -169,6 +169,7 @@ public interface ComponentContainer {
 	 * @throws UnsupportedOperationException If the provided object does not implement {@link ComponentProvider}.
 	 */
 	static Builder builder(Object obj) {
+		// TODO: Is there a way to avoid this instanceof check?
 		if (!(obj instanceof ComponentProvider provider)) {
 			throw new UnsupportedOperationException("Cannot create a container for a non-provider object");
 		}

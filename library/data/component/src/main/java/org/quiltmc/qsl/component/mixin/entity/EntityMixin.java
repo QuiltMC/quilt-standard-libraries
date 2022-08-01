@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.component.mixin.entity;
 
+import org.quiltmc.qsl.component.impl.ComponentsImpl;
 import org.quiltmc.qsl.component.impl.container.LazyComponentContainer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -53,7 +54,7 @@ public abstract class EntityMixin implements ComponentProvider {
 			builder.syncing(SyncChannel.ENTITY).ticking();
 		}
 
-		this.qsl$container = builder.build(LazyComponentContainer.FACTORY);
+		this.qsl$container = builder.build(ComponentsImpl.DEFAULT_FACTORY);
 	}
 
 	@Inject(method = "writeNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;writeCustomDataToNbt(Lnet/minecraft/nbt/NbtCompound;)V"))
