@@ -66,7 +66,7 @@ public final class DataFixerUpperTestMod implements ModInitializer, ServerLifecy
 				new Identifier(NAMESPACE, "old_item"), new Identifier(NAMESPACE, "new_item"), schemaV1);
 		Schema schemaV2 = builder.addSchema(2, IdentifierNormalizingSchema::new);
 		SimpleFixes.addItemRenameFix(builder, "Rename new_item to fine_item",
-				new Identifier(NAMESPACE, "fine_item"), new Identifier(NAMESPACE, "new_item"), schemaV2);
+				new Identifier(NAMESPACE, "new_item"), new Identifier(NAMESPACE, "fine_item"), schemaV2);
 		SimpleFixes.addBlockRenameFix(builder, "Rename old_block to cool_block",
 				new Identifier(NAMESPACE, "old_block"), new Identifier(NAMESPACE, "cool_block"), schemaV2);
 
