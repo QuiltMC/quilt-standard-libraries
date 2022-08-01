@@ -18,7 +18,6 @@ package org.quiltmc.qsl.datafixerupper.test;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
@@ -35,6 +34,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 
@@ -64,7 +64,7 @@ public final class DataFixerUpperTestMod implements ModInitializer, ServerLifecy
 
 		chest.setStack(0, new ItemStack(ITEM, 1));
 
-		try (var writer = Files.newBufferedWriter(Paths.get("dfu-testmod-v1.txt"))) {
+		try (var writer = Files.newBufferedWriter(QuiltLoader.getGameDir().resolve("dfu-testmod-v1.txt"))) {
 			writer.write("DataFixerUpper testmod v1 was run!");
 		} catch (IOException e) {
 			throw new RuntimeException("Failed to write marker file", e);

@@ -18,7 +18,6 @@ package org.quiltmc.qsl.datafixerupper.test;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import com.mojang.datafixers.schemas.Schema;
 import com.mojang.logging.LogUtils;
@@ -36,6 +35,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.datafixerupper.api.QuiltDataFixerBuilder;
 import org.quiltmc.qsl.datafixerupper.api.QuiltDataFixes;
@@ -55,7 +55,7 @@ public final class DataFixerUpperTestMod implements ModInitializer, ServerLifecy
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		if (!Files.exists(Paths.get("dfu-testmod-v1.txt"))) {
+		if (!Files.exists(QuiltLoader.getGameDir().resolve("dfu-testmod-v1.txt"))) {
 			throw new IllegalStateException("DataFixer testmod v1 must be run before v2!");
 		}
 
@@ -86,7 +86,7 @@ public final class DataFixerUpperTestMod implements ModInitializer, ServerLifecy
 
 		world.setBlockState(BlockPos.ORIGIN.add(1, 0, 0), BLOCK.getDefaultState());
 
-		try (var writer = Files.newBufferedWriter(Paths.get("dfu-testmod-v2.txt"))) {
+		try (var writer = Files.newBufferedWriter(QuiltLoader.getGameDir().resolve("dfu-testmod-v2.txt"))) {
 			writer.write("DataFixerUpper testmod v2 was run!");
 		} catch (IOException e) {
 			throw new RuntimeException("Failed to write marker file", e);
