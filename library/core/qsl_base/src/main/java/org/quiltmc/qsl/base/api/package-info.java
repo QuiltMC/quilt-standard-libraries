@@ -1,6 +1,5 @@
 /**
- * <h2>Quilt Base API</h2>
- *
+ * <h2>The Quilt Base APIs.</h2>
  * <p>
  * The Quilt Base API contains most of the founding stones for the Quilt Standard Libraries.
  * This module does not depend on other modules.
@@ -18,6 +17,7 @@
  *     <li>{@link org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer the client initializer}</li>
  *     <li>{@link org.quiltmc.qsl.base.api.entrypoint.server.DedicatedServerModInitializer the dedicated server initializer}</li>
  * </ul>
+ * More information can be found in {@link org.quiltmc.qsl.base.api.entrypoint the package itself}.
  *
  * <p>
  * <h3>Phase Sorting APIs</h3>
