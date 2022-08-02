@@ -1,5 +1,5 @@
 /**
- * <h2>The Networking API, version 1.</h2>
+ * <h2>The Networking API.</h2>
  * <p>
  * For login stage networking see {@link org.quiltmc.qsl.networking.api.ServerLoginNetworking}.
  * For play stage networking see {@link org.quiltmc.qsl.networking.api.ServerPlayNetworking}.
