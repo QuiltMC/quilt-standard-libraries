@@ -1,2 +1,0 @@
-accessWidener	v1	named
-accessible    method    net/minecraft/block/FluidBlock    <init>    (Lnet/minecraft/fluid/FlowableFluid;Lnet/minecraft/block/AbstractBlock$Settings;)V
