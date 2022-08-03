@@ -29,19 +29,19 @@ public class QslLibraryDependency implements Named, Serializable {
 	}
 
 	public void api(String module) {
-		add(module, ConfigurationType.API);
+		this.add(module, ConfigurationType.API);
 	}
 
 	public void impl(String module) {
-		add(module, ConfigurationType.IMPLEMENTATION);
+		this.add(module, ConfigurationType.IMPLEMENTATION);
 	}
 
 	public void testmodOnly(String module) {
-		add(module, ConfigurationType.TESTMOD);
+		this.add(module, ConfigurationType.TESTMOD);
 	}
 
 	public void compileOnly(String module) {
-		add(module, ConfigurationType.COMPILE_ONLY);
+		this.add(module, ConfigurationType.COMPILE_ONLY);
 	}
 
 	public ListProperty<ModuleDependencyInfo> getDependencyInfo() {
@@ -81,11 +81,11 @@ public class QslLibraryDependency implements Named, Serializable {
 		}
 
 		public String getConfigurationName() {
-			return configurationName;
+			return this.configurationName;
 		}
 
 		public boolean isTransitive() {
-			return isTransitive;
+			return this.isTransitive;
 		}
 	}
 }

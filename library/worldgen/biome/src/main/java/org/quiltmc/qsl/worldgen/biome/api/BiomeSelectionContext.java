@@ -54,7 +54,7 @@ public interface BiomeSelectionContext {
 
 	/**
 	 * {@return {@code true} if this biome has the given configured feature, which must be registered
-	 * in the {@link net.minecraft.util.registry.BuiltinRegistries}, otherwise {@code false}}
+	 * in the {@link net.minecraft.util.registry.BuiltinRegistries}, or {@code false} otherwise}
 	 * <p>
 	 * This method is intended for use with the Vanilla configured features found in
 	 * classes such as {@link net.minecraft.world.gen.feature.OreConfiguredFeatures}.
@@ -76,7 +76,7 @@ public interface BiomeSelectionContext {
 	}
 
 	/**
-	 * {@return {@code true} if this biome contains a placed feature referencing a configured feature with the given key, otherwise {@code false}}
+	 * {@return {@code true} if this biome contains a placed feature referencing a configured feature with the given key, or {@code false} otherwise}
 	 */
 	default boolean hasFeature(RegistryKey<ConfiguredFeature<?, ?>> key) {
 		List<HolderSet<PlacedFeature>> featureSteps = this.getBiome().getGenerationSettings().getFeatures();
@@ -93,7 +93,7 @@ public interface BiomeSelectionContext {
 	}
 
 	/**
-	 * {@return {@code true} if this biome contains a placed feature with the given key, otherwise {@code false}}
+	 * {@return {@code true} if this biome contains a placed feature with the given key, or {@code false} otherwise}
 	 */
 	default boolean hasPlacedFeature(RegistryKey<PlacedFeature> key) {
 		List<HolderSet<PlacedFeature>> featureSteps = this.getBiome().getGenerationSettings().getFeatures();
@@ -136,7 +136,7 @@ public interface BiomeSelectionContext {
 
 	/**
 	 * {@return {@code true} if the configured structure with the given key can start in this biome in any chunk generator
-	 * used by the current world-save, otherwise {@code false}}
+	 * used by the current world-save, or {@code false} otherwise}
 	 */
 	boolean validForStructure(RegistryKey<StructureFeature> key);
 
@@ -156,7 +156,7 @@ public interface BiomeSelectionContext {
 	boolean canGenerateIn(RegistryKey<DimensionOptions> dimensionKey);
 
 	/**
-	 * {@return true if this biome is in the given {@link TagKey}, otherwise {@code false}}
+	 * {@return true if this biome is in the given {@link TagKey}, or {@code false} otherwise}
 	 */
 	boolean isIn(TagKey<Biome> tag);
 
@@ -166,12 +166,12 @@ public interface BiomeSelectionContext {
 	 * @param registryKey the key of the registry to check in
 	 * @param entryKey    the key of the registry entry to check the existence for
 	 * @param <T>         the type of the registry entry
-	 * @return {@code true if the registry entry exists, otherwise {@code false}}
+	 * @return {@code true} if the registry entry exists, or {@code false} otherwise
 	 */
 	<T> boolean doesRegistryEntryExist(RegistryKey<? extends Registry<? extends T>> registryKey, RegistryKey<T> entryKey);
 
 	/**
-	 * {@return {@code true} if the given placed feature key exists in the registry, otherwise {@code false}}
+	 * {@return {@code true} if the given placed feature key exists in the registry, or {@code false} otherwise}
 	 *
 	 * @param key the key of the placed feature
 	 * @see #doesRegistryEntryExist(RegistryKey, RegistryKey)

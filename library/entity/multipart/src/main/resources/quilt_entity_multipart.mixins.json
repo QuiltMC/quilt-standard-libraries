@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.entity.multipart.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "EnderDragonEntityMixin",
+    "EnderDragonPartMixin",
+    "PlayerEntityMixin",
+    "ServerEntityHandlerMixin",
+    "ServerWorldMixin",
+    "ThreadedAnvilChunkStorageMixin",
+    "WorldMixin"
+  ],
+  "client": [
+    "client.ClientEntityHandlerMixin",
+    "client.EntityRenderDispatcherMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

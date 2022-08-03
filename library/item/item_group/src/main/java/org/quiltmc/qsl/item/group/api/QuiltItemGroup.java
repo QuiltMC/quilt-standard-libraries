@@ -36,7 +36,9 @@ import net.minecraft.util.collection.DefaultedList;
 import org.quiltmc.qsl.item.group.impl.ItemGroupExtensions;
 
 /**
- * Extensions for the {@link ItemGroup} class. Currently, the only extension is setting the icon with either an {@link ItemConvertible} or {@link ItemStack} after the item has been created ({@link QuiltItemGroup#setIcon(ItemConvertible)}, {@link QuiltItemGroup#setIcon(ItemStack)}).<br>
+ * Extensions for the {@link ItemGroup} class.
+ * Currently, the only extension is setting the icon with either an {@link ItemConvertible} or {@link ItemStack}
+ * after the item has been created ({@link QuiltItemGroup#setIcon(ItemConvertible)}, {@link QuiltItemGroup#setIcon(ItemStack)}).
  * <p>
  * A {@link QuiltItemGroup} can be directly created with {@link QuiltItemGroup#create(Identifier)} or {@link QuiltItemGroup#createWithIcon(Identifier, Supplier)}.<br>
  * A {@link Builder}, which is used to add specific {@link ItemStack}s, especially with {@link net.minecraft.nbt.NbtElement}s, can be obtained with {@link QuiltItemGroup#builder(Identifier)}.
