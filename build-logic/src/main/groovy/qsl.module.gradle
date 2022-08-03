@@ -71,7 +71,6 @@ rootProject.afterEvaluate {
 					}
 				}
 			}
-
 		}
 	}
 
@@ -126,12 +125,6 @@ dependencies {
 	testmodImplementation sourceSets.main.output
 }
 
-configurations {
-	// The reason for this `dev` configuration has been lost to time.
-	// If you happen to figure out why extension is needed, or a way to eliminate it, please tell us.
-	dev
-}
-
 loom {
 	runs {
 		testmodClient {
@@ -144,15 +137,14 @@ loom {
 			source(sourceSets.testmod)
 		}
 	}
-}
 
-afterEvaluate {
-	artifacts {
-		dev file: file("$buildDir/devlibs/$archivesBaseName-$version-dev.jar"), type: "jar", builtBy: jar
+	mods.register(project.name) {
+		sourceSet sourceSets.main
 	}
 
-	// This is inside the afterEvaluate block because the version is set by the qslModule extension, which is not
-	// complete until project evaluation has finished.
+	mods.register(project.name + "_testmod") {
+		sourceSet sourceSets.testmod
+	}
 }
 
 java {
