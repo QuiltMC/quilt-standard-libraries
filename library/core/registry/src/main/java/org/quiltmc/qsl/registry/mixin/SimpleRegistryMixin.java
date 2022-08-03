@@ -197,6 +197,10 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 			}
 		}
 
+		while (this.rawIdToEntry.size() <= currentId + holders.size()) {
+			this.rawIdToEntry.add(null);
+		}
+
 		for (var holder : holders) {
 			var id = ++currentId;
 			this.entryToRawId.put(holder.value(), id);
