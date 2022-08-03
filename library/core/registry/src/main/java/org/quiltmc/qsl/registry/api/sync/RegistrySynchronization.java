@@ -77,6 +77,7 @@ public final class RegistrySynchronization {
 	/**
 	 * {@return {@code true} if the registry entry is marked as optional, or {@code false} otherwise}
 	 */
+	@Contract(pure = true)
 	public static <T> boolean isEntryOptional(@NotNull SimpleRegistry<T> registry, T entry) {
 		return RegistryFlag.isOptional(SynchronizedRegistry.as(registry).quilt$getEntryFlag(entry));
 	}
@@ -98,6 +99,7 @@ public final class RegistrySynchronization {
 	/**
 	 * {@return {@code true} if the given registry entry is skipped in synchronization, or {@code false} otherwise}
 	 */
+	@Contract(pure = true)
 	public static <T> boolean isEntrySkipped(@NotNull SimpleRegistry<T> registry, T entry) {
 		return RegistryFlag.isSkipped(SynchronizedRegistry.as(registry).quilt$getEntryFlag(entry));
 	}
