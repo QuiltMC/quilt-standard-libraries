@@ -168,7 +168,7 @@ public final class ClientRegistrySync {
 
 		if (!disconnect) {
 			if (reg == Registry.BLOCK) {
-				rebuildBlockStates();
+				rebuildBlocks(client);
 			} else if (reg == Registry.FLUID) {
 				rebuildFluidStates();
 			} else if (reg == Registry.ITEM) {
@@ -198,7 +198,9 @@ public final class ClientRegistrySync {
 		((RebuildableIdModelHolder) client.particleManager).quilt$rebuildIds();
 	}
 
-	public static void rebuildBlockStates() {
+	public static void rebuildBlocks(MinecraftClient client) {
+		((RebuildableIdModelHolder) client.getBlockColors()).quilt$rebuildIds();
+
 		SynchronizedIdList.clear(Block.STATE_IDS);
 
 		for (var block : Registry.BLOCK) {
@@ -212,6 +214,13 @@ public final class ClientRegistrySync {
 		for (var fluid : Registry.FLUID) {
 			fluid.getStateManager().getStates().forEach(Fluid.STATE_IDS::add);
 		}
+	}
+
+	public static void rebuildEverything(MinecraftClient client) {
+		rebuildBlocks(client);
+		rebuildFluidStates();
+		rebuildItems(client);
+		rebuildParticles(client);
 	}
 
 	static Text getMessage(String type, String fallback) {
@@ -270,9 +279,7 @@ public final class ClientRegistrySync {
 				registry.quilt$restoreIdSnapshot();
 			}
 		}
-		rebuildBlockStates();
-		rebuildFluidStates();
-		rebuildItems(client);
-		rebuildParticles(client);
+
+		rebuildEverything(client);
 	}
 }
