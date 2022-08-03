@@ -18,6 +18,7 @@ package org.quiltmc.qsl.entity.multipart.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Group;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.server.world.ThreadedAnvilChunkStorage;
@@ -26,8 +27,21 @@ import org.quiltmc.qsl.entity.multipart.api.EntityPart;
 
 @Mixin(ThreadedAnvilChunkStorage.class)
 public class ThreadedAnvilChunkStorageMixin {
-	@Redirect(method = "loadEntity", at = @At(value = "CONSTANT", args = "classValue=net/minecraft/entity/boss/dragon/EnderDragonPart", ordinal = 0))
+	@Group(name = "CancelEnderDragonCheck", min = 1, max = 1)
+	@Redirect(
+			method = "loadEntity",
+			at = @At(value = "CONSTANT", args = "classValue=net/minecraft/entity/boss/dragon/EnderDragonPart", ordinal = 0)
+	)
 	private static Class<?> cancelEnderDragonCheck(Object targetObject, Class<?> classValue) {
+		return EntityPart.class;
+	}
+
+	@Group(name = "CancelEnderDragonCheck", min = 1, max = 1)
+	@Redirect(
+			method = "loadEntity",
+			at = @At(value = "CONSTANT", args = "classValue=net/minecraft/class_1508", ordinal = 0)
+	)
+	private static Class<?> cancelEnderDragonCheckProd(Object targetObject, Class<?> classValue) {
 		return EntityPart.class;
 	}
 }
