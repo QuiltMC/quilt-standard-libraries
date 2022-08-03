@@ -166,10 +166,16 @@ public final class ClientRegistrySync {
 		}
 
 
-		if (!disconnect && reg == Registry.BLOCK) {
-			rebuildBlockStates();
-		} else if (!disconnect && reg == Registry.FLUID) {
-			rebuildFluidStates();
+		if (!disconnect) {
+			if (reg == Registry.BLOCK) {
+				rebuildBlockStates();
+			} else if (reg == Registry.FLUID) {
+				rebuildFluidStates();
+			} else if (reg == Registry.ITEM) {
+				rebuildItems(client);
+			} else if (reg == Registry.PARTICLE_TYPE) {
+				rebuildParticles(client);
+			}
 		}
 
 		currentRegistry = null;
@@ -179,6 +185,17 @@ public final class ClientRegistrySync {
 		optionalRegistry = false;
 
 		syncMap = null;
+	}
+
+	private static void rebuildItems(MinecraftClient client) {
+		var models = client.getItemRenderer().getModels();
+
+		((RebuildableIdModelHolder) models).quilt$rebuildIds();
+		models.reloadModels();
+	}
+
+	private static void rebuildParticles(MinecraftClient client) {
+		((RebuildableIdModelHolder) client.particleManager).quilt$rebuildIds();
 	}
 
 	public static void rebuildBlockStates() {
@@ -235,7 +252,7 @@ public final class ClientRegistrySync {
 	}
 
 	private static void handleRestorePacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
-		restoreSnapshot();
+		restoreSnapshot(client);
 		createSnapshot();
 	}
 
@@ -247,7 +264,7 @@ public final class ClientRegistrySync {
 		}
 	}
 
-	public static void restoreSnapshot() {
+	public static void restoreSnapshot(MinecraftClient client) {
 		for (var reg : Registry.REGISTRIES) {
 			if (reg instanceof SynchronizedRegistry registry && registry.quilt$requiresSyncing()) {
 				registry.quilt$restoreIdSnapshot();
@@ -255,5 +272,7 @@ public final class ClientRegistrySync {
 		}
 		rebuildBlockStates();
 		rebuildFluidStates();
+		rebuildItems(client);
+		rebuildParticles(client);
 	}
 }

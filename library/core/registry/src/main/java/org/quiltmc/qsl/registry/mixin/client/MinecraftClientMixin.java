@@ -29,6 +29,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MinecraftClientMixin {
 	@Inject(method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V", at = @At("TAIL"))
 	private void quilt$restoreRegistries(CallbackInfo ci) {
-		ClientRegistrySync.restoreSnapshot();
+		ClientRegistrySync.restoreSnapshot((MinecraftClient) (Object) this);
 	}
 }

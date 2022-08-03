@@ -17,7 +17,9 @@
   ],
   "client": [
     "client.ConnectScreenMixin",
-    "client.MinecraftClientMixin"
+    "client.ItemModelsMixin",
+    "client.MinecraftClientMixin",
+    "client.ParticleManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
