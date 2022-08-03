@@ -17,25 +17,31 @@
 
 package org.quiltmc.qsl.worldgen.biome.impl.modification;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+
 import com.google.common.base.Stopwatch;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.TestOnly;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.level.LevelProperties;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.TestOnly;
+
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModificationContext;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 import org.quiltmc.qsl.worldgen.biome.api.ModificationPhase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 @ApiStatus.Internal
 public class BiomeModificationImpl {

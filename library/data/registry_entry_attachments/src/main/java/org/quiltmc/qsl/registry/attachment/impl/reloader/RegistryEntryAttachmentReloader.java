@@ -38,7 +38,7 @@ import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
-import org.quiltmc.qsl.registry.attachment.impl.AssetsHolderGuard;
+import org.quiltmc.qsl.registry.attachment.impl.ClientSideGuard;
 import org.quiltmc.qsl.registry.attachment.impl.Initializer;
 import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentHolder;
 import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentSync;
@@ -62,7 +62,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 
 	private RegistryEntryAttachmentReloader(ResourceType source) {
 		if (source == ResourceType.CLIENT_RESOURCES) {
-			AssetsHolderGuard.assertAccessAllowed();
+			ClientSideGuard.assertAccessAllowed();
 		}
 
 		this.source = source;
@@ -72,7 +72,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 		};
 		this.deps = switch (source) {
 			case SERVER_DATA -> Set.of(ResourceReloaderKeys.Server.TAGS);
-			case CLIENT_RESOURCES -> Set.of(new Identifier("quilt_tags", "client_only_tags"));
+			case CLIENT_RESOURCES -> Set.of();
 		};
 	}
 
@@ -166,13 +166,6 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 		return new Identifier(jsonId.getNamespace(), path);
 	}
 
-	private <R> RegistryEntryAttachmentHolder<R> getHolder(Registry<R> registry) {
-		return switch (this.source) {
-			case CLIENT_RESOURCES -> RegistryEntryAttachmentHolder.getAssets(registry);
-			case SERVER_DATA -> RegistryEntryAttachmentHolder.getData(registry);
-		};
-	}
-
 	protected final class LoadedData {
 		private final Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> attachmentMaps;
 
@@ -182,15 +175,16 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 
 		@SuppressWarnings("unchecked")
 		public void apply(Profiler profiler) {
-			profiler.push(id + "/clear_attachments");
+			profiler.push(id + "/prepare_attachments");
 
 			for (var entry : Registry.REGISTRIES.getEntries()) {
-				getHolder(entry.getValue()).clear();
+				RegistryEntryAttachmentHolder.getData(entry.getValue())
+						.prepareReloadSource(RegistryEntryAttachmentReloader.this.source);
 			}
 
 			for (var entry : this.attachmentMaps.entrySet()) {
 				profiler.swap(id + "/apply_attachment{" + entry.getKey().id() + "}");
-				applyOne((RegistryEntryAttachment<Object, Object>) entry.getKey(), (AttachmentDictionary<Object, Object>) entry.getValue());
+				this.applyOne((RegistryEntryAttachment<Object, Object>) entry.getKey(), (AttachmentDictionary<Object, Object>) entry.getValue());
 			}
 
 			profiler.pop();
@@ -201,14 +195,14 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 			var registry = attachment.registry();
 			Objects.requireNonNull(registry, "registry");
 
-			RegistryEntryAttachmentHolder<R> holder = getHolder(registry);
+			RegistryEntryAttachmentHolder<R> holder = RegistryEntryAttachmentHolder.getData(registry);
 			for (Map.Entry<AttachmentDictionary.ValueTarget, Object> attachmentEntry : attachAttachment.getMap().entrySet()) {
 				V value = (V) attachmentEntry.getValue();
 				AttachmentDictionary.ValueTarget target = attachmentEntry.getKey();
 				switch (target.type()) {
-				case ENTRY -> holder.putValue(attachment, attachment.registry().get(target.id()), value);
-				case TAG -> holder.putValue(attachment, TagKey.of(attachment.registry().getKey(), target.id()), value);
-				default -> throw new IllegalStateException("Unexpected value: " + target.type());
+					case ENTRY -> holder.putValue(attachment, attachment.registry().get(target.id()), value);
+					case TAG -> holder.putValue(attachment, TagKey.of(attachment.registry().getKey(), target.id()), value);
+					default -> throw new IllegalStateException("Unexpected value: " + target.type());
 				}
 			}
 		}

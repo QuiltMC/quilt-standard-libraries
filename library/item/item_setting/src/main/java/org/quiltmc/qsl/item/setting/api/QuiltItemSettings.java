@@ -27,11 +27,10 @@ import net.minecraft.util.Rarity;
 import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
 
 /**
- * Quilt's version of {@link Item.Settings}. Adds additional methods and hooks
- * not found in the original class.
+ * Quilt's version of {@link Item.Settings}.
+ * Adds additional methods and hooks not found in the original class.
  * <p>
- * To use it, simply replace {@code new Item.Settings()} with
- * {@code new QuiltItemSettings()}.
+ * To use it, simply replace {@code new Item.Settings()} with {@code new QuiltItemSettings()}.
  */
 public class QuiltItemSettings extends Item.Settings {
 	/**
