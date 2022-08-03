@@ -26,12 +26,13 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Group;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
@@ -45,23 +46,13 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 	@Unique
 	private final Int2ObjectMap<Entity> quilt$entityParts = new Int2ObjectOpenHashMap<>();
 
-	@Group(name = "CancelEnderDragonCheck", min = 2, max = 2)
-	@Redirect(
-			method = {"m_mbvohlyp", "m_dpwyfaqh"},
-			at = @At(value = "CONSTANT", args = "classValue=net/minecraft/entity/boss/dragon/EnderDragonEntity", ordinal = 0),
+	@ModifyConstant(
+			method = {"m_mbvohlyp", "m_dpwyfaqh", "method_31596", "method_31593"},
+			constant = @Constant(classValue = EnderDragonEntity.class, ordinal = 0),
+			require = 2,
 			remap = false
 	)
 	private static boolean cancelEnderDragonCheck(Object targetObject, Class<?> classValue) {
-		return false;
-	}
-
-	@Group(name = "CancelEnderDragonCheck", min = 2, max = 2)
-	@Redirect(
-			method = {"method_31596", "method_31593"},
-			at = @At(value = "CONSTANT", args = "classValue=net/minecraft/class_1510", ordinal = 0),
-			remap = false
-	)
-	private static boolean cancelEnderDragonCheckProd(Object targetObject, Class<?> classValue) {
 		return false;
 	}
 

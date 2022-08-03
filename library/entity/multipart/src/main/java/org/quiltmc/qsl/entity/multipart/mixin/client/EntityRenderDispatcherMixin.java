@@ -20,8 +20,10 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Group;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -31,6 +33,7 @@ import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.util.math.MathHelper;
 
 import org.quiltmc.qsl.entity.multipart.api.EntityPart;
@@ -39,24 +42,10 @@ import org.quiltmc.qsl.entity.multipart.api.MultipartEntity;
 @Environment(EnvType.CLIENT)
 @Mixin(EntityRenderDispatcher.class)
 public class EntityRenderDispatcherMixin {
-	@Group(name = "CancelEnderDragonCheck", min = 1, max = 1)
-	@Redirect(
-			method = "renderHitbox",
-			at = @At(value = "CONSTANT", args = "classValue=net/minecraft/entity/boss/dragon/EnderDragonEntity", ordinal = 0)
-	)
+	@ModifyConstant(method = "renderHitbox", constant = @Constant(classValue = EnderDragonEntity.class, ordinal = 0))
 	private static boolean cancelEnderDragonCheck(Object targetObject, Class<?> classValue) {
 		return false;
 	}
-
-	@Group(name = "CancelEnderDragonCheck", min = 1, max = 1)
-	@Redirect(
-			method = "renderHitbox",
-			at = @At(value = "CONSTANT", args = "classValue=net/minecraft/class_1510", ordinal = 0)
-	)
-	private static boolean cancelEnderDragonCheckProd(Object targetObject, Class<?> classValue) {
-		return false;
-	}
-
 
 	@Inject(
 			method = "renderHitbox",
