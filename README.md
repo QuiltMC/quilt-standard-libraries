@@ -110,12 +110,12 @@ The charts are organized by QSL libraries.
 
 ### GUI Library
 
-| Feature                                | QSL | Fabric API |
-|:---------------------------------------|:---:|:----------:|
-| Screen API                             |  ✔  |     ✔      |
-| Item Tooltip Event                     |  ✔  |     ✔      |
-| Tooltip Component - Event              |  ✔  |     ✔      |
-| Tooltip Component - TooltipData helper |  ✔  |     ❌      |
+| Feature                   |      QSL       | Fabric API |
+|:--------------------------|:--------------:|:----------:|
+| Screen API                |       ✔        |     ✔      |
+| Item Tooltip Event        |       ✔        |     ✔      |
+| Tooltip Component - Event |       ✔        |     ✔      |
+| Key Binds API             | :construction: |     ✔      |
 
 ### Item Library
 
@@ -135,6 +135,7 @@ The charts are organized by QSL libraries.
 |:----------------|:---:|:----------:|
 | Commands        |  ✔  |     ✔      |
 | Client Commands |  ✔  |     ✔      |
+| Game Rules      |  ❌  |     ✔      |
 
 ### Worldgen Library
 
