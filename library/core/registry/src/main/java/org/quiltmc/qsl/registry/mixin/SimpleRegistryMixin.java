@@ -182,7 +182,7 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 		}
 		var missingEntries = new ArrayList<MissingEntry>();
 
-		var holders = new ObjectOpenHashSet<>(this.byId.values());
+		var holders = new ArrayList<>(this.rawIdToEntry);
 		int currentId = 0;
 
 		this.entryToRawId.clear();
