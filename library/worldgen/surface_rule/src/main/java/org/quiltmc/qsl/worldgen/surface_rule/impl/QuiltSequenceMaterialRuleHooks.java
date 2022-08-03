@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,11 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.registry.attachment.impl;
+package org.quiltmc.qsl.worldgen.surface_rule.impl;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
-import org.quiltmc.qsl.registry.attachment.api.RegistryExtensions;
-
-@SuppressWarnings("removal")
 @ApiStatus.Internal
-public final class BuiltinAttachmentBuilderImpl<R> implements RegistryExtensions.BuiltinAttachmentBuilder<R> {
-	private final R entry;
-
-	public BuiltinAttachmentBuilderImpl(R entry) {
-		this.entry = entry;
-	}
-
-	@Override
-	public <V> RegistryExtensions.BuiltinAttachmentBuilder<R> put(RegistryEntryAttachment<R, V> attach, V value) {
-		attach.put(entry, value);
-		return this;
-	}
+public interface QuiltSequenceMaterialRuleHooks {
+	void quilt$freeze();
 }

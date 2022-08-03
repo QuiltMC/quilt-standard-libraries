@@ -42,7 +42,7 @@ public class ItemContentRegistries {
 	/**
 	 * A {@link RegistryEntryAttachment} for how long different items burn in a furnace. The value is stored in ticks.
 	 * <p>
-	 * Values can be set via code and through a datapack with the file {@code data/quilt_item_content_registry/attachments/minecraft/item/fuel_time.json}
+	 * Values can be set via code and through a data-pack with the file {@code data/quilt_item_content_registry/attachments/minecraft/item/fuel_time.json}
 	 */
 	public static final RegistryEntryAttachment<Item, Integer> FUEL_TIME = RegistryEntryAttachment
 			.builder(Registry.ITEM,
@@ -54,7 +54,7 @@ public class ItemContentRegistries {
 	/**
 	 * A {@link RegistryEntryAttachment} for the chance that the composter level increases when compositing an item. The value is stored as a value 0 to 1.
 	 * <p>
-	 * Values can be set via code and through a datapack with the file {@code data/quilt_item_content_registry/attachments/minecraft/item/compost_chance.json}
+	 * Values can be set via code and through a data-pack with the file {@code data/quilt_item_content_registry/attachments/minecraft/item/compost_chance.json}
 	 */
 	public static final RegistryEntryAttachment<Item, Float> COMPOST_CHANCE = RegistryEntryAttachment
 			.builder(Registry.ITEM,
