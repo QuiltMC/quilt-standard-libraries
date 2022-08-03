@@ -42,7 +42,7 @@ public class ParticleManagerMixin implements RebuildableIdModelHolder {
 	@Final
 	private Int2ObjectMap<ParticleFactory<?>> factories;
 	@Unique
-	private Map<ParticleType<?>, ParticleFactory<?>> quilt$factoryMap = new Object2ObjectOpenHashMap<>();
+	private final Map<ParticleType<?>, ParticleFactory<?>> quilt$factoryMap = new Object2ObjectOpenHashMap<>();
 
 	@Coerce
 	@Inject(method = "registerFactory(Lnet/minecraft/particle/ParticleType;Lnet/minecraft/client/particle/ParticleManager$SpriteAwareFactory;)V", at = @At("TAIL"))

@@ -34,14 +34,14 @@ import java.util.Map;
 
 @Mixin(ItemModels.class)
 public abstract class ItemModelsMixin implements RebuildableIdModelHolder {
-	@Shadow
 	@Final
+	@Shadow
 	public Int2ObjectMap<ModelIdentifier> modelIds;
 
 	@Unique
-	private Map<Item, ModelIdentifier> quilt$models = new Object2ObjectOpenHashMap<>();
+	private final Map<Item, ModelIdentifier> quilt$models = new Object2ObjectOpenHashMap<>();
 
-	@Inject(method = "putModel", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "putModel", at = @At("HEAD"))
 	private void quilt$storeItem(Item item, ModelIdentifier modelId, CallbackInfo ci) {
 		this.quilt$models.put(item, modelId);
 	}

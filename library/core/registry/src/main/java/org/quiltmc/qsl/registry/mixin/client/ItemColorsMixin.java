@@ -16,14 +16,9 @@
 
 package org.quiltmc.qsl.registry.mixin.client;
 
+import java.util.Map;
+
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.client.color.item.ItemColorProvider;
-import net.minecraft.client.color.item.ItemColors;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemConvertible;
-import net.minecraft.util.collection.IdList;
-import org.quiltmc.qsl.registry.impl.sync.SynchronizedIdList;
-import org.quiltmc.qsl.registry.impl.sync.client.RebuildableIdModelHolder;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -32,12 +27,19 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Map;
+import net.minecraft.client.color.item.ItemColorProvider;
+import net.minecraft.client.color.item.ItemColors;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemConvertible;
+import net.minecraft.util.collection.IdList;
+
+import org.quiltmc.qsl.registry.impl.sync.SynchronizedIdList;
+import org.quiltmc.qsl.registry.impl.sync.client.RebuildableIdModelHolder;
 
 @Mixin(ItemColors.class)
 public class ItemColorsMixin implements RebuildableIdModelHolder {
-	@Shadow
 	@Final
+	@Shadow
 	private IdList<ItemColorProvider> providers;
 
 	@Unique

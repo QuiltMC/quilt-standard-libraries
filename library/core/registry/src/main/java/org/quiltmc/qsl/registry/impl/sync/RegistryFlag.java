@@ -16,9 +16,10 @@
 
 package org.quiltmc.qsl.registry.impl.sync;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.SimpleRegistry;
-import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Registry flags used to determine how registry (entries) should be handled by sync.
@@ -40,6 +41,7 @@ public enum RegistryFlag {
 		SynchronizedRegistry.as(registry).quilt$setRegistryFlag(flag);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void setEntry(SimpleRegistry<?> registry, Identifier identifier, RegistryFlag flag) {
 		SynchronizedRegistry.as((SimpleRegistry<Object>) registry).quilt$setEntryFlag(registry.get(identifier), flag);
 	}

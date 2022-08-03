@@ -16,6 +16,9 @@
 
 package org.quiltmc.qsl.registry.impl.sync.client;
 
+import org.jetbrains.annotations.ApiStatus;
+
+@ApiStatus.Internal
 public interface RebuildableIdModelHolder {
 	void quilt$rebuildIds();
 }

@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import java.util.List;
 
 @Mixin(IdList.class)
-public class IdListMixin<T> implements SynchronizedIdList {
+public class IdListMixin<T> implements SynchronizedIdList<T> {
 	@Shadow
 	private int nextId;
 

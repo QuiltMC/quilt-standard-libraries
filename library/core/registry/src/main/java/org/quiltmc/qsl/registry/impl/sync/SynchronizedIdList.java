@@ -23,11 +23,12 @@ import org.jetbrains.annotations.ApiStatus;
 public interface SynchronizedIdList<T> {
 	void quilt$clear();
 
+	@SuppressWarnings("unchecked")
 	static <T> SynchronizedIdList<T> as(IdList<T> idList) {
 		return (SynchronizedIdList<T>) idList;
 	}
 
 	static void clear(IdList<?> idList) {
-		((SynchronizedIdList<?>) idList).quilt$clear();
+		as(idList).quilt$clear();
 	}
 }

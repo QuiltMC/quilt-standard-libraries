@@ -16,18 +16,19 @@
 
 package org.quiltmc.qsl.registry.mixin;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.mojang.serialization.Lifecycle;
-import it.unimi.dsi.fastutil.objects.*;
-import net.minecraft.util.Holder;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.util.registry.SimpleRegistry;
+import it.unimi.dsi.fastutil.objects.Object2ByteMap;
+import it.unimi.dsi.fastutil.objects.Object2ByteOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectList;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.registry.impl.sync.RegistryFlag;
-import org.quiltmc.qsl.registry.impl.event.MutableRegistryEntryContextImpl;
-import org.quiltmc.qsl.registry.impl.event.RegistryEventStorage;
-import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -36,7 +37,16 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.*;
+import net.minecraft.util.Holder;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.util.registry.SimpleRegistry;
+
+import org.quiltmc.qsl.registry.impl.event.MutableRegistryEntryContextImpl;
+import org.quiltmc.qsl.registry.impl.event.RegistryEventStorage;
+import org.quiltmc.qsl.registry.impl.sync.RegistryFlag;
+import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
 
 /**
  * Stores and invokes registry events.
@@ -60,7 +70,8 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 	private Map<Identifier, Holder.Reference<V>> byId;
 
 	@Shadow
-	private @Nullable List<Holder.Reference<V>> holdersInOrder;
+	@Nullable
+	private List<Holder.Reference<V>> holdersInOrder;
 
 	@Unique
 	private boolean quilt$shouldSync = false;
@@ -81,7 +92,7 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 	private Status quilt$syncStatus = null;
 
 	@Unique
-	private Object2ByteMap<V> quilt$entryToFlag = new Object2ByteOpenHashMap<>();
+	private final Object2ByteMap<V> quilt$entryToFlag = new Object2ByteOpenHashMap<>();
 
 	protected SimpleRegistryMixin(RegistryKey<? extends Registry<V>> key, Lifecycle lifecycle) {
 		super(key, lifecycle);

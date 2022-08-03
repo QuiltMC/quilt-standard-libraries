@@ -16,13 +16,14 @@
 
 package org.quiltmc.qsl.registry.impl.sync;
 
+import java.util.Collection;
+import java.util.Map;
+
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
-import org.jetbrains.annotations.ApiStatus;
-
-import java.util.Collection;
-import java.util.Map;
 
 @ApiStatus.Internal
 public interface SynchronizedRegistry<T> {
@@ -42,8 +43,9 @@ public interface SynchronizedRegistry<T> {
 
 	Collection<MissingEntry> quilt$applySyncMap(Map<String, Collection<SyncEntry>> map);
 
+	@SuppressWarnings("unchecked")
 	static <T> SynchronizedRegistry<T> as(SimpleRegistry<T> registry) {
-		return (SynchronizedRegistry) registry;
+		return (SynchronizedRegistry<T>) registry;
 	}
 
 	static void markForSync(Registry<?>... registries) {
@@ -62,8 +64,9 @@ public interface SynchronizedRegistry<T> {
 
 	byte quilt$getEntryFlag(T o);
 
-	record SyncEntry(String path, int rawId, byte flags) {};
-	record MissingEntry(Identifier identifier, int rawId, byte flags) {};
+	record SyncEntry(String path, int rawId, byte flags) {}
+
+	record MissingEntry(Identifier identifier, int rawId, byte flags) {}
 
 	enum Status {
 		VANILLA,

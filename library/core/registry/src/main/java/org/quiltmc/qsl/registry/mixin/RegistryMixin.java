@@ -63,25 +63,4 @@ public abstract class RegistryMixin<V> implements RegistryEventStorage<V> {
 		DebugChunkGeneratorAccessor.setZSideLength(zLength);
 		//endregion
 	}
-
-	@Inject(method = "<clinit>", at = @At("TAIL"))
-	private static void quilt$markRegistriesForSync(CallbackInfo ci) {
-		SynchronizedRegistry.markForSync(
-				Registry.BLOCK,
-				Registry.ITEM,
-				Registry.FLUID,
-				Registry.SOUND_EVENT,
-				Registry.STATUS_EFFECT,
-				Registry.PARTICLE_TYPE,
-				Registry.PAINTING_MOTIVE,
-				Registry.SCREEN_HANDLER,
-				Registry.STAT_TYPE,
-				Registry.ENCHANTMENT,
-				Registry.ENTITY_TYPE,
-				Registry.BLOCK_ENTITY_TYPE,
-				Registry.VILLAGER_TYPE,
-				Registry.VILLAGER_PROFESSION,
-				Registry.GAME_EVENT
-		);
-	}
 }

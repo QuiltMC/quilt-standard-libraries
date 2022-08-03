@@ -17,6 +17,9 @@
 package org.quiltmc.qsl.registry.impl.sync;
 
 import org.jetbrains.annotations.ApiStatus;
+
+import net.minecraft.util.registry.Registry;
+
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 
@@ -25,5 +28,23 @@ public class RegistrySyncInitializer implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		ServerRegistrySync.readConfig();
+
+		SynchronizedRegistry.markForSync(
+				Registry.BLOCK,
+				Registry.ITEM,
+				Registry.FLUID,
+				Registry.SOUND_EVENT,
+				Registry.STATUS_EFFECT,
+				Registry.PARTICLE_TYPE,
+				Registry.PAINTING_MOTIVE,
+				Registry.SCREEN_HANDLER,
+				Registry.STAT_TYPE,
+				Registry.ENCHANTMENT,
+				Registry.ENTITY_TYPE,
+				Registry.BLOCK_ENTITY_TYPE,
+				Registry.VILLAGER_TYPE,
+				Registry.VILLAGER_PROFESSION,
+				Registry.GAME_EVENT
+		);
 	}
 }
