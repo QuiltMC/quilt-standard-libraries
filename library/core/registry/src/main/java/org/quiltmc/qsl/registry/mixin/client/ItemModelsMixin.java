@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.quiltmc.qsl.registry.mixin.client;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
