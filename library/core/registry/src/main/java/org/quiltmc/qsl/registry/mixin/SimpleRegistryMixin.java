@@ -170,8 +170,13 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 		}
 		var list = new ArrayList<MissingEntry>();
 
-		for (var key : entries.keySet()) {
+		var holders = new ObjectOpenHashSet<>(this.byId.values());
+		int currentId = 0;
 
+		this.entryToRawId.clear();
+		this.rawIdToEntry.clear();
+
+		for (var key : entries.keySet()) {
 			for (var idEntry : entries.get(key)) {
 				var identifier = new Identifier(key, idEntry.path());
 				var holder = this.byId.get(identifier);
@@ -183,11 +188,22 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 						this.rawIdToEntry.add(null);
 					}
 					this.rawIdToEntry.set(idEntry.rawId(), holder);
+
+					holders.remove(holder);
+					currentId = Math.max(currentId, idEntry.rawId());
 				} else {
 					list.add(new MissingEntry(identifier, idEntry.rawId(), idEntry.flags()));
 				}
 			}
 		}
+
+		for (var holder : holders) {
+			var id = ++currentId;
+			this.entryToRawId.put(holder.value(), id);
+			this.rawIdToEntry.set(id, holder);
+		}
+
+
 
 		this.holdersInOrder = null;
 
