@@ -41,7 +41,7 @@ public abstract class BlocksMixin {
 				} else {
 					quilt$LOGGER.warn("BlockState " + state.toString() + " has been added twice!");
 				}
-			})
+			});
 		});
 	}
 }
