@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.fluid.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "BackgroundRendererMixin",
+    "BoatEntityMixin",
+    "CameraMixin",
+    "EntityMixin",
+    "FishingBobberEntityMixin",
+    "LavaMixin",
+    "LivingEntityMixin",
+    "WaterMixin"
+  ],
+  "client": [
+    "ClientPlayerEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

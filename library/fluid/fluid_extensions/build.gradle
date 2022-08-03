@@ -1,0 +1,25 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Fluid API"
+	moduleName = "fluid"
+	id = "quilt_fluid_extensions"
+	library = "fluid"
+	description = "An API to ease making fluids"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+		}
+
+		item {
+			api("item_group")
+		}
+
+		block {
+			api("block_extensions")
+		}
+	}
+	accessWidener()
+}
