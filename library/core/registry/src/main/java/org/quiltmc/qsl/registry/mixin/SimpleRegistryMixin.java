@@ -28,6 +28,7 @@ import it.unimi.dsi.fastutil.objects.Object2ByteOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -179,10 +180,15 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 		if (this.quilt$idSnapshot == null) {
 			this.quilt$createIdSnapshot();
 		}
-		var list = new ArrayList<MissingEntry>();
+		var missingEntries = new ArrayList<MissingEntry>();
+
+		var holders = new ObjectOpenHashSet<>(this.byId.values());
+		int currentId = 0;
+
+		this.entryToRawId.clear();
+		this.rawIdToEntry.clear();
 
 		for (var key : entries.keySet()) {
-
 			for (var idEntry : entries.get(key)) {
 				var identifier = new Identifier(key, idEntry.path());
 				var holder = this.byId.get(identifier);
@@ -194,15 +200,28 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 						this.rawIdToEntry.add(null);
 					}
 					this.rawIdToEntry.set(idEntry.rawId(), holder);
+
+					holders.remove(holder);
+					currentId = Math.max(currentId, idEntry.rawId());
 				} else {
-					list.add(new MissingEntry(identifier, idEntry.rawId(), idEntry.flags()));
+					missingEntries.add(new MissingEntry(identifier, idEntry.rawId(), idEntry.flags()));
 				}
 			}
 		}
 
+		while (this.rawIdToEntry.size() <= currentId + holders.size()) {
+			this.rawIdToEntry.add(null);
+		}
+
+		for (var holder : holders) {
+			var id = ++currentId;
+			this.entryToRawId.put(holder.value(), id);
+			this.rawIdToEntry.set(id, holder);
+		}
+
 		this.holdersInOrder = null;
 
-		return list;
+		return missingEntries;
 	}
 
 	@Override
