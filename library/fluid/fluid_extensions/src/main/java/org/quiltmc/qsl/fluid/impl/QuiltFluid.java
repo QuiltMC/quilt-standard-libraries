@@ -99,5 +99,7 @@ public abstract class QuiltFluid extends FlowableFluid {
 		return 100.0F;
 	}
 
-	public boolean canFishIn() {return true;}
+	public boolean canFishIn() {
+		return true;
+	}
 }

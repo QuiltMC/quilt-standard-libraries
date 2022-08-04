@@ -1,7 +1,6 @@
 {
   "replace": false,
-  "values":
-  [
+  "values": [
     "quilt_fluid_api:oil",
     "quilt_fluid_api:flowing_oil"
   ]

@@ -24,5 +24,5 @@ import net.minecraft.util.registry.Registry;
 public class QuiltFluidApiConstants {
 
 	public static final TagKey<Fluid> QUILT_FLUIDS =
-			TagKey.of(Registry.FLUID_KEY,new Identifier("quilt_fluid_api", "quilt_fluid"));
+			TagKey.of(Registry.FLUID_KEY, new Identifier("quilt_fluid_api", "quilt_fluid"));
 }

@@ -37,7 +37,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
-import org.apache.commons.compress.compressors.lz77support.LZ77Compressor;
 
 import javax.annotation.Nullable;
 
@@ -70,6 +69,7 @@ public interface FlowableFluidExtensions {
 	/**
 	 * 0.8F is the default for water
 	 * 0.5F is the default for lava
+	 *
 	 * @see FlowableFluidExtensions#WATER_VISCOSITY
 	 * @see FlowableFluidExtensions#LAVA_VISCOSITY
 	 */
@@ -79,6 +79,7 @@ public interface FlowableFluidExtensions {
 
 	/**
 	 * Default for water and lava is 0.8F
+	 *
 	 * @see FlowableFluidExtensions#WATER_VISCOSITY
 	 */
 	default float getVerticalViscosity(FluidState state, Entity affected) {
@@ -89,6 +90,7 @@ public interface FlowableFluidExtensions {
 	 * 0.014F is the default for water
 	 * 7 / 3000 is the default for lava in the overworld
 	 * 0.007F is the default for lava in the nether
+	 *
 	 * @see FlowableFluidExtensions#WATER_PUSH_STRENGTH
 	 * @see FlowableFluidExtensions#LAVA_PUSH_STRENGTH_OVERWORLD
 	 * @see FlowableFluidExtensions#LAVA_PUSH_STRENGTH_ULTRAWARM
@@ -139,6 +141,7 @@ public interface FlowableFluidExtensions {
 	 * Density in kilograms per cubic meter
 	 * 1000 is the default for water
 	 * 3100 is the default for lava
+	 *
 	 * @see FlowableFluidExtensions#WATER_DENSITY
 	 * @see FlowableFluidExtensions#LAVA_DENSITY
 	 */
@@ -150,9 +153,9 @@ public interface FlowableFluidExtensions {
 	 * Temperature in Kelvin
 	 * 300 is the default for water
 	 * 1500 is the default for lava
+	 *
 	 * @see FlowableFluidExtensions#WATER_TEMPERATURE
 	 * @see FlowableFluidExtensions#LAVA_TEMPERATURE
-	 *
 	 */
 	default float defaultTemperature(World world, BlockPos blockpos) {
 		return WATER_TEMPERATURE;
@@ -162,6 +165,7 @@ public interface FlowableFluidExtensions {
 	 * 0 waters default equals complete fall damage reduction
 	 * 0.5 lavas default equals half fall damage reduction
 	 * 1 is no fall damage reduction whatsoever
+	 *
 	 * @see FlowableFluidExtensions#FULL_FALL_DAMAGE_REDUCTION
 	 * @see FlowableFluidExtensions#HALF_FALL_DAMAGE_REDUCTION
 	 * @see FlowableFluidExtensions#NO_FALL_DAMAGE_REDUCTION
@@ -227,7 +231,9 @@ public interface FlowableFluidExtensions {
 		return GameEvent.SPLASH;
 	}
 
-	default Identifier getLootTable() {return WATER_FISHING_LOOT_TABLE;}
+	default Identifier getLootTable() {
+		return WATER_FISHING_LOOT_TABLE;
+	}
 
 	// Overriding of any methods below this comment is generally unnecessary,
 	// and only made available to cover as many cases as possible.
@@ -302,6 +308,7 @@ public interface FlowableFluidExtensions {
 
 	/**
 	 * Here you can modify viscosity and speed based on enchantments.
+	 *
 	 * @return a float array where [0] holds updated horizontal viscosity, and [1] holds updated speed.
 	 */
 	default float[] customEnchantmentEffects(Vec3d movementInput, LivingEntity entity, float horizontalViscosity, float speed) {

@@ -24,7 +24,6 @@ import net.minecraft.fluid.FluidState;
 import net.minecraft.tag.FluidTags;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.world.World;
 import org.quiltmc.qsl.fluid.api.CustomFluidInteracting;
 import org.quiltmc.qsl.fluid.api.FlowableFluidExtensions;
@@ -55,11 +54,14 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 	@Shadow
 	public abstract Vec3d method_26317(double d, boolean bl, Vec3d vec3d);
 
-	@Shadow protected abstract void swimUpward(TagKey<Fluid> fluid);
+	@Shadow
+	protected abstract void swimUpward(TagKey<Fluid> fluid);
 
-	@Shadow public abstract void updateLimbs(LivingEntity entity, boolean flutter);
+	@Shadow
+	public abstract void updateLimbs(LivingEntity entity, boolean flutter);
 
-	@Shadow public abstract boolean canWalkOnFluid(FluidState fluidState);
+	@Shadow
+	public abstract boolean canWalkOnFluid(FluidState fluidState);
 
 	@Redirect(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isFallFlying()Z"))
 	private boolean redirectFallFlyingToAddCase(LivingEntity instance, Vec3d movementInput) {
@@ -145,7 +147,7 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 		if (isSubmergedInCustomFluid(QuiltFluidApiConstants.QUILT_FLUIDS)) {
 			FluidState fluidState = this.world.getFluidState(getBlockPos());
 			if (fluidState.getFluid() instanceof FlowableFluidExtensions fluid) {
-				fluid.drownEffects(fluidState, instance,random);
+				fluid.drownEffects(fluidState, instance, random);
 				return getMaxAir(); // false
 			}
 		}

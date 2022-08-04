@@ -21,6 +21,8 @@ import net.minecraft.tag.TagKey;
 
 public interface CustomFluidInteracting {
 	boolean isInCustomFluid();
+
 	boolean isSubmergedInCustomFluid();
+
 	boolean isSubmergedInCustomFluid(TagKey<Fluid> fluidTag);
 }

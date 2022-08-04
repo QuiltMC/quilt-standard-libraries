@@ -95,7 +95,8 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 	@Shadow
 	public abstract double getY();
 
-	@Shadow public abstract void setOnFireFromLava();
+	@Shadow
+	public abstract void setOnFireFromLava();
 
 	@Inject(method = "baseTick", at = @At("TAIL"))
 	public void baseTick(CallbackInfo ci) {

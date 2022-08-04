@@ -30,7 +30,6 @@ import net.minecraft.world.World;
 import org.quiltmc.qsl.fluid.api.CustomFluidInteracting;
 import org.quiltmc.qsl.fluid.impl.QuiltFluidApiConstants;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -39,27 +38,27 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(BoatEntity.class)
-public abstract class BoatEntityMixin extends Entity implements CustomFluidInteracting{
+public abstract class BoatEntityMixin extends Entity implements CustomFluidInteracting {
 
-	private double d = 0;
+	private final double d = 0;
 
 	public BoatEntityMixin(EntityType<?> entityType, World world) {
 		super(entityType, world);
 	}
 
-	@Redirect(method = "getWaterLevelAbove", at = @At( value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/tag/TagKey;)Z"))
+	@Redirect(method = "getWaterLevelAbove", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/tag/TagKey;)Z"))
 	public boolean tick(FluidState instance, TagKey<Fluid> tag) {
 		return instance.isIn(FluidTags.WATER) || instance.isIn(QuiltFluidApiConstants.QUILT_FLUIDS);
 	}
 
-	@Redirect(method = "checkBoatInWater", at = @At( value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/tag/TagKey;)Z"))
+	@Redirect(method = "checkBoatInWater", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/tag/TagKey;)Z"))
 	public boolean tick2(FluidState instance, TagKey<Fluid> tag) {
 		return instance.isIn(FluidTags.WATER) || instance.isIn(QuiltFluidApiConstants.QUILT_FLUIDS);
 	}
 
-	@Inject(method = "getUnderWaterLocation", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/tag/TagKey;)Z"),locals = LocalCapture.CAPTURE_FAILSOFT,cancellable = true)
-	private void getUnderWaterLocation(CallbackInfoReturnable<BoatEntity.Location> cir,Box box,double d,int i,int j,int k,int l,int m,int n,boolean bl,BlockPos.Mutable mutable,int o,int p,int q,FluidState fluidState) {
-		if (fluidState.isIn(QuiltFluidApiConstants.QUILT_FLUIDS) && d < (double)((float)mutable.getY() + fluidState.getHeight(this.world, mutable))) {
+	@Inject(method = "getUnderWaterLocation", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/tag/TagKey;)Z"), locals = LocalCapture.CAPTURE_FAILSOFT, cancellable = true)
+	private void getUnderWaterLocation(CallbackInfoReturnable<BoatEntity.Location> cir, Box box, double d, int i, int j, int k, int l, int m, int n, boolean bl, BlockPos.Mutable mutable, int o, int p, int q, FluidState fluidState) {
+		if (fluidState.isIn(QuiltFluidApiConstants.QUILT_FLUIDS) && d < (double) ((float) mutable.getY() + fluidState.getHeight(this.world, mutable))) {
 			if (!fluidState.isSource()) {
 				cir.setReturnValue(BoatEntity.Location.UNDER_FLOWING_WATER);
 				cir.cancel();
@@ -71,7 +70,7 @@ public abstract class BoatEntityMixin extends Entity implements CustomFluidInter
 	@Inject(method = "fall", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/tag/TagKey;)Z"))
 	public void fall(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition, CallbackInfo ci) {
 		if (!this.world.getFluidState(this.getBlockPos().down()).isIn(QuiltFluidApiConstants.QUILT_FLUIDS) && heightDifference < 0.0) {
-			this.fallDistance -= (float)heightDifference;
+			this.fallDistance -= (float) heightDifference;
 		}
 	}
 }

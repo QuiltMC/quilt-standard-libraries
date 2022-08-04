@@ -11,9 +11,9 @@
     "WaterMixin"
   ],
   "client": [
-    "ClientPlayerEntityMixin",
     "BackgroundRendererMixin",
-    "CameraMixin"
+    "CameraMixin",
+    "ClientPlayerEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
