@@ -24,6 +24,7 @@ import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.LavaFluid;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.random.RandomGenerator;

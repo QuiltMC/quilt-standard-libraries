@@ -25,10 +25,12 @@ import net.minecraft.entity.effect.StatusEffectUtil;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
+import net.minecraft.loot.LootTables;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -55,6 +57,8 @@ public interface FlowableFluidExtensions {
 	float HALF_FALL_DAMAGE_REDUCTION = 0.5f;
 	float NO_FALL_DAMAGE_REDUCTION = 0f;
 	int WATER_FOG_COLOR = -1;
+
+	Identifier WATER_FISHING_LOOT_TABLE = LootTables.FISHING_GAMEPLAY;
 
 	/**
 	 * The color of this fluid.
@@ -222,6 +226,8 @@ public interface FlowableFluidExtensions {
 	default GameEvent splashGameEvent(Entity splashing, Vec3d splashPos, RandomGenerator random) {
 		return GameEvent.SPLASH;
 	}
+
+	default Identifier getLootTable() {return WATER_FISHING_LOOT_TABLE;}
 
 	// Overriding of any methods below this comment is generally unnecessary,
 	// and only made available to cover as many cases as possible.
