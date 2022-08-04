@@ -22,6 +22,7 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.fluid.FlowableFluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.LavaFluid;
+import net.minecraft.loot.LootTables;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
@@ -163,5 +164,10 @@ public abstract class LavaMixin extends FlowableFluid implements FlowableFluidEx
 	@Override
 	public float[] customEnchantmentEffects(Vec3d movementInput, LivingEntity entity, float horizontalViscosity, float speed) {
 		return new float[]{horizontalViscosity, speed};
+	}
+
+	@Override
+	public Identifier getLootTable() {
+		return LootTables.EMPTY;
 	}
 }
