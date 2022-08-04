@@ -31,7 +31,8 @@ import org.quiltmc.qsl.entity.multipart.test.SecretCreeperPart;
 
 @Mixin(CreeperEntity.class)
 public abstract class CreeperEntityMixin extends HostileEntity implements MultipartEntity {
-	private final SecretCreeperPart secretHitbox = new SecretCreeperPart((CreeperEntity) (Object) this, 0.65f, 0.65f, new Vec3d(0.0d, 1.1d, 0.325d), new Vec3d(0.0d, 1.1d, 0.0d));
+	private final SecretCreeperPart secretHitbox = new SecretCreeperPart((CreeperEntity) (Object) this, 0.65f, 0.65f,
+			new Vec3d(0.0d, 1.1d, 0.325d), new Vec3d(0.0d, 1.1d, 0.0d));
 
 	protected CreeperEntityMixin(EntityType<? extends HostileEntity> entityType, World world) {
 		super(entityType, world);
