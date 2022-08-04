@@ -49,6 +49,7 @@ public interface ResourceLoader {
 	 * Register a resource reloader for a given resource manager type.
 	 *
 	 * @param resourceReloader the resource reloader
+	 * @see #addReloaderOrdering(Identifier, Identifier) add an ordering rule for resource reloaders
 	 */
 	void registerReloader(@NotNull IdentifiableResourceReloader resourceReloader);
 
@@ -63,6 +64,7 @@ public interface ResourceLoader {
 	 * @param firstReloader  the identifier of the resource reloader that should run before the other
 	 * @param secondReloader the identifier of the resource reloader that should run after the other
 	 * @see org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys identifiers of Vanilla resource reloaders
+	 * @see #registerReloader(IdentifiableResourceReloader) register a new resource reloader
 	 */
 	void addReloaderOrdering(@NotNull Identifier firstReloader, @NotNull Identifier secondReloader);
 
