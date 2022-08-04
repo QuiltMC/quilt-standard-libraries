@@ -17,17 +17,18 @@
 package org.quiltmc.qsl.entity.multipart.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Constant;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
+import net.minecraft.entity.boss.dragon.EnderDragonPart;
 import net.minecraft.server.world.ThreadedAnvilChunkStorage;
 
 import org.quiltmc.qsl.entity.multipart.api.EntityPart;
 
 @Mixin(ThreadedAnvilChunkStorage.class)
 public class ThreadedAnvilChunkStorageMixin {
-	@Redirect(method = "loadEntity", at = @At(value = "CONSTANT", args = "classValue=net/minecraft/entity/boss/dragon/EnderDragonPart", ordinal = 0))
-	private static Class<?> cancelEnderDragonCheck(Object targetObject, Class<?> classValue) {
-		return EntityPart.class;
+	@ModifyConstant(method = "loadEntity", constant = @Constant(classValue = EnderDragonPart.class, ordinal = 0))
+	private static boolean cancelEnderDragonCheck(Object targetRef, Class<?> classValue) {
+		return targetRef instanceof EntityPart;
 	}
 }

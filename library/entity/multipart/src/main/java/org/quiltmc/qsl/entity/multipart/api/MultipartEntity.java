@@ -25,9 +25,9 @@ import org.quiltmc.qsl.base.api.util.InjectedInterface;
  * Represents an entity that contains multiple {@link EntityPart}s.
  * <p>
  * The natural uses for multipart entities is for entities to have specific hitboxes with damage multipliers
- * or for large {@link Entity entities} to have more accurate hitboxes.</p>
+ * or for large {@link Entity entities} to have more accurate hitboxes.
  * <p>
- * NOTE: When instantiating {@link EntityPart}s, on the client, make sure to call {@link Entity#setId(int)}.</p>
+ * NOTE: When instantiating {@link EntityPart}s, on the client, make sure to call {@link Entity#setId(int)}.
  *
  * <pre>{@code
  * @Override
@@ -46,7 +46,7 @@ import org.quiltmc.qsl.base.api.util.InjectedInterface;
  * <p>
  * When moving this {@link Entity}, do note that you should also change the position of the child {@link EntityPart}s too.
  * This also includes updating their {@link Entity#prevX prevX}, {@link Entity#prevY prevY}, {@link Entity#prevZ prevZ},
- * {@link Entity#lastRenderX lastRenderX}, {@link Entity#lastRenderY lastRenderY}, and {@link Entity#lastRenderZ lastRenderZ}.</p>
+ * {@link Entity#lastRenderX lastRenderX}, {@link Entity#lastRenderY lastRenderY}, and {@link Entity#lastRenderZ lastRenderZ}.
  *
  * @see EnderDragonEntity
  */

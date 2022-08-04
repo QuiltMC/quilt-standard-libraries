@@ -26,11 +26,13 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
@@ -44,7 +46,12 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 	@Unique
 	private final Int2ObjectMap<Entity> quilt$entityParts = new Int2ObjectOpenHashMap<>();
 
-	@Redirect(method = {"m_mbvohlyp", "m_dpwyfaqh"}, at = @At(value = "CONSTANT", args = "classValue=net/minecraft/entity/boss/dragon/EnderDragonEntity", ordinal = 0))
+	@ModifyConstant(
+			method = {"m_mbvohlyp", "m_dpwyfaqh", "method_31596", "method_31593"},
+			constant = @Constant(classValue = EnderDragonEntity.class, ordinal = 0),
+			require = 2,
+			remap = false
+	)
 	private static boolean cancelEnderDragonCheck(Object targetObject, Class<?> classValue) {
 		return false;
 	}
@@ -56,8 +63,9 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 
 	/**
 	 * Fixes <a href="https://bugs.mojang.com/browse/MC-158205">MC-158205</a>
-	 * <p>Allows collecting {@link EntityPart}s that are within the targeted {@link Box}
-	 * but are part of {@link Entity entities} in unchecked chunks.</p>
+	 * <p>
+	 * Allows collecting {@link EntityPart}s that are within the targeted {@link Box}
+	 * but are part of {@link Entity entities} in unchecked chunks.
 	 */
 	@Inject(method = "getOtherEntities", at = @At("RETURN"))
 	private void getOtherEntityParts(Entity except, Box box, Predicate<? super Entity> predicate, CallbackInfoReturnable<List<Entity>> cir) {
@@ -81,11 +89,13 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 
 	/**
 	 * Fixes <a href="https://bugs.mojang.com/browse/MC-158205">MC-158205</a>
-	 * <p>Allows collecting {@link EntityPart}s that are within the targeted {@link Box}
-	 * but are part of {@link Entity entities} in unchecked chunks.</p>
+	 * <p>
+	 * Allows collecting {@link EntityPart}s that are within the targeted {@link Box}
+	 * but are part of {@link Entity entities} in unchecked chunks.
 	 */
 	@Inject(method = "getEntitiesByType", at = @At("RETURN"))
-	private <T extends Entity> void getEntityPartsByType(TypeFilter<Entity, T> filter, Box box, Predicate<? super T> predicate, CallbackInfoReturnable<List<T>> cir) {
+	private <T extends Entity> void getEntityPartsByType(TypeFilter<Entity, T> filter, Box box, Predicate<? super T> predicate,
+			CallbackInfoReturnable<List<T>> cir) {
 		List<T> list = cir.getReturnValue();
 
 		// We don't want to check the parts of entities that we already know are invalid

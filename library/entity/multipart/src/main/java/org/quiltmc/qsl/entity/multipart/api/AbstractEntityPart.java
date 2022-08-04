@@ -200,7 +200,8 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	public void rotate(float pitch, float yaw, float roll) {
 		Vec3f relativePos = new Vec3f(this.getAbsolutePosition().subtract(this.getAbsolutePivot()));
 		relativePos.rotate(new Quaternion(-roll, -yaw, -pitch, true));
-		var transformedPos = this.getAbsolutePivot().subtract(this.getAbsolutePosition()).add(relativePos.getX(), relativePos.getY(), relativePos.getZ());
+		var transformedPos = this.getAbsolutePivot().subtract(this.getAbsolutePosition())
+				.add(relativePos.getX(), relativePos.getY(), relativePos.getZ());
 
 		this.move(transformedPos);
 	}
