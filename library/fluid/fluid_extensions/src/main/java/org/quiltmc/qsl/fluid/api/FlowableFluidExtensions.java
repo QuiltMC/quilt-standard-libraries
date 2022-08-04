@@ -61,6 +61,8 @@ public interface FlowableFluidExtensions {
 
 	Identifier WATER_FISHING_LOOT_TABLE = LootTables.FISHING_GAMEPLAY;
 
+	int DROWNING_THRESHOLD = -20;
+
 	/**
 	 * The color of this fluid.
 	 */
@@ -339,10 +341,7 @@ public interface FlowableFluidExtensions {
 		boolean invincible = isPlayer && ((PlayerEntity) drowning).getAbilities().invulnerable;
 		if (!drowning.canBreatheInWater() && !StatusEffectUtil.hasWaterBreathing(drowning) && !invincible) {
 			drowning.setAir(getNextAirSubmerged(drowning.getAir(), drowning, random));
-			/**
-			 * Magic Value, take from vanilla LivingEntity Line 263 as of 1.19
-			 */
-			if (drowning.getAir() == -20) {
+			if (drowning.getAir() == DROWNING_THRESHOLD) {
 				drowning.setAir(0);
 				Vec3d vec3d = drowning.getVelocity();
 
