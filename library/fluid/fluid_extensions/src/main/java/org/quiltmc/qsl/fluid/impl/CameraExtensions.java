@@ -16,8 +16,11 @@
 
 package org.quiltmc.qsl.fluid.impl;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.fluid.FluidState;
 
+@ApiStatus.Internal
 public interface CameraExtensions {
 	FluidState quilt$getSubmergedFluidState();
 }

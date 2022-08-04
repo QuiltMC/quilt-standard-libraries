@@ -16,12 +16,15 @@
 
 package org.quiltmc.qsl.fluid.impl;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.fluid.Fluid;
 import net.minecraft.loot.LootTables;
 import net.minecraft.tag.FluidTags;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 
+@ApiStatus.Internal
 public interface FishingBobberEntityExtensions {
 
 	default TagKey<Fluid> quilt$canFishingbobberSwimOn() {
