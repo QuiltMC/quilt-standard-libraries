@@ -27,6 +27,13 @@ Here are multiple charts of features available in QSL which also serves as a com
 
 The charts are organized by QSL libraries.
 
+Quick legend:
+
+ - ✔ = Included
+ - ❌ = Not Included/Not Yet
+ - 🙅 = No plans
+ - 🚧 = Work In Progress
+
 ### Core Library
 
 | Feature                           | QSL |  Fabric API   |
@@ -82,7 +89,7 @@ The charts are organized by QSL libraries.
 | Resource Loader Events                |       ✔        | ✔ (in lifecycle, non equivalent) |
 | Built-in resource pack API            |       ✔        |                ✔                 |
 | Programmer Art API                    |       ✔        |                ✔                 |
-| Group resource pack API               |       ✔        |                ❌                 |
+| Group resource pack API               |       ✔        |                🙅                |
 | Resource Pack Provider API            |       ✔        |                ❌                 |
 | Resource Reloaders                    |       ✔        |                ✔                 |
 | Resource Reloaders - Advanced Sorting | :construction: |                ❌                 |
@@ -97,32 +104,32 @@ The charts are organized by QSL libraries.
 | Block Render Layers API                                 |       ✔        |     ✔      |
 | All Block Constructors Are Public                       |       ✔        |     ✔      |
 | Block Entity Type registration helper                   |       ✔        |     ✔      |
-| Block Entity Type post-creation supported block editing |       ✔        |     ❌      |
+| Block Entity Type post-creation supported block editing |       ✔        |     🙅     |
 | Block Entity Syncing Helper                             |       ✔        |     ❌      |
 | Block Content Registry - Flammable                      | :construction: |     ✔      |
-| Block Content Registry - Flammable (data-driven)        | :construction: |     ❌      |
+| Block Content Registry - Flammable (data-driven)        | :construction: |     🙅     |
 | Block Content Registry - Flattenable                    | :construction: |     ✔      |
-| Block Content Registry - Flattenable (data-driven)      | :construction: |     ❌      |
+| Block Content Registry - Flattenable (data-driven)      | :construction: |     🙅     |
 | Block Content Registry - Oxidation                      | :construction: |     ✔      |
-| Block Content Registry - Oxidation (data-driven)        | :construction: |     ❌      |
+| Block Content Registry - Oxidation (data-driven)        | :construction: |     🙅     |
 | Block Content Registry - Sculk Frequency                | :construction: |     ✔      |
-| Block Content Registry - Sculk Frequency (data-driven)  | :construction: |     ❌      |
+| Block Content Registry - Sculk Frequency (data-driven)  | :construction: |     🙅     |
 | Block Content Registry - Strippable                     | :construction: |     ✔      |
-| Block Content Registry - Strippable (data-driven)       | :construction: |     ❌      |
+| Block Content Registry - Strippable (data-driven)       | :construction: |     🙅     |
 | Block Content Registry - Tileable                       |       ❌        |     ✔      |
-| Block Content Registry - Tileable (data-driven)         |       ❌        |     ❌      |
+| Block Content Registry - Tileable (data-driven)         |       ❌        |     🙅     |
 | Block Content Registry - Waxing                         | :construction: |     ✔      |
-| Block Content Registry - Waxing (data-driven)           | :construction: |     ❌      |
+| Block Content Registry - Waxing (data-driven)           | :construction: |     🙅     |
 
 ### Data Library
 
 | Feature                                                               |                                      QSL                                       |   Fabric API   |
 |:----------------------------------------------------------------------|:------------------------------------------------------------------------------:|:--------------:|
 | Advancement Criterion Registration Helper                             |                                       ✔                                        |       ✔        |
-| Recipe API                                                            |                                       ✔                                        |       ❌        |
-| Registry Entry Attachments                                            |                                       ✔                                        |       ❌        |
+| Recipe API                                                            |                                       ✔                                        |       🙅       |
+| Registry Entry Attachments                                            |                                       ✔                                        |       🙅       |
 | Client-fallback/Client-only tags                                      |                                       ✔                                        | :construction: |
-| Client-fallback/Client-only tags - integration within Vanilla methods |                                       ✔                                        |       ❌        |
+| Client-fallback/Client-only tags - integration within Vanilla methods |                                       ✔                                        |       🙅       |
 | Convention Tags                                                       |                                       ❌                                        |       ✔        |
 | Data Generation                                                       |                                 :construction:                                 |       ✔        |
 | Loot Table API                                                        |                                       ❌                                        |       ✔        |
@@ -155,9 +162,9 @@ The charts are organized by QSL libraries.
 | Item Settings                                   |  ✔  |     ✔      |
 | Item Settings - Custom Item Setting             |  ✔  |     ❌      |
 | Item Content Registry - Composter               |  ✔  |     ✔      |
-| Item Content Registry - Composter (data-driven) |  ✔  |     ❌      |
+| Item Content Registry - Composter (data-driven) |  ✔  |     🙅     |
 | Item Content Registry - Fuel                    |  ✔  |     ✔      |
-| Item Content Registry - Fuel (data-driven)      |  ✔  |     ❌      |
+| Item Content Registry - Fuel (data-driven)      |  ✔  |     🙅     |
 
 ### Management Library
 
@@ -182,8 +189,8 @@ The charts are organized by QSL libraries.
 | Entity Renderer Registry                          |       ❌        |         ✔         |
 | Entity Model Layer Registry                       |       ❌        |         ✔         |
 | Living Entity Feature Renderer Registration Event |       ❌        |         ✔         |
-| Data-driven Entity Models                         | :construction: |         ❌         |
-| Data-driven Animations                            | :construction: |         ❌         |
+| Data-driven Entity Models                         | :construction: |        🙅         |
+| Data-driven Animations                            | :construction: |        🙅         |
 | World Render Events                               |       ❌        |         ✔         |
 | Fluid Rendering                                   |       ❌        |         ✔         |
 
