@@ -167,7 +167,7 @@ public abstract class LavaFluidMixin extends FlowableFluid implements FlowableFl
 	}
 
 	@Override
-	public Identifier getLootTable() {
+	public Identifier getFishingLootTable() {
 		return LootTables.EMPTY;
 	}
 }

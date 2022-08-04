@@ -31,6 +31,7 @@ import org.quiltmc.qsl.fluid.impl.CustomFluidInteracting;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -49,8 +50,11 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 	@Shadow
 	@Final
 	protected RandomGenerator random;
+	@Unique
 	protected boolean inCustomFluid;
+	@Unique
 	protected boolean submergedInCustomFluid;
+	@Unique
 	protected Fluid submergedCustomFluid;
 	@Shadow
 	private BlockPos blockPos;
@@ -116,9 +120,22 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 
 	void checkCustomFluidState() {
 		FluidState fluidState = this.world.getFluidState(this.getBlockPos());
+		/**
+		 * Check if Player is completly submerged in the custom fluid.
+		 */
 		this.submergedInCustomFluid = this.quilt$isSubmergedInCustomFluid(fluidState.getFluid());
+
+		/**
+		 * Check if Player is swimming in custom Fluid
+		 * Check if player is not in a Boat
+		 */
 		if (fluidState.getFluid() instanceof FlowableFluidExtensions fluid &&
 				!(getVehicle() instanceof BoatEntity)) {
+
+			/**
+			 * We update the Movement in the fluid,by getting the TagKey of the fluid, via the Identifier.
+			 * The rest is nearly identical to vanilla.
+			 */
 			updateMovementInFluid(TagKey.of(Registry.FLUID_KEY,fluidState.getBuiltInRegistryHolder().getKey().get().getRegistry()), fluid.getPushStrength(fluidState, (Entity) (Object) this));
 			if (!inCustomFluid && !firstUpdate) {
 				customSplashEffects();

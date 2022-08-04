@@ -237,7 +237,7 @@ public interface FlowableFluidExtensions {
 		return GameEvent.SPLASH;
 	}
 
-	default Identifier getLootTable() {
+	default Identifier getFishingLootTable() {
 		return WATER_FISHING_LOOT_TABLE;
 	}
 
@@ -339,7 +339,9 @@ public interface FlowableFluidExtensions {
 		boolean invincible = isPlayer && ((PlayerEntity) drowning).getAbilities().invulnerable;
 		if (!drowning.canBreatheInWater() && !StatusEffectUtil.hasWaterBreathing(drowning) && !invincible) {
 			drowning.setAir(getNextAirSubmerged(drowning.getAir(), drowning, random));
-			// if out of air
+			/**
+			 * Magic Value, take from vanilla LivingEntity Line 263 as of 1.19
+			 */
 			if (drowning.getAir() == -20) {
 				drowning.setAir(0);
 				Vec3d vec3d = drowning.getVelocity();

@@ -56,16 +56,10 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 	public abstract Vec3d method_26317(double d, boolean bl, Vec3d vec3d);
 
 	@Shadow
-	protected abstract void swimUpward(TagKey<Fluid> fluid);
-
-	@Shadow
 	public abstract void updateLimbs(LivingEntity entity, boolean flutter);
 
 	@Shadow
 	public abstract boolean canWalkOnFluid(FluidState fluidState);
-
-	@Shadow
-	public abstract void heal(float amount);
 
 	@Shadow
 	protected abstract void initDataTracker();
