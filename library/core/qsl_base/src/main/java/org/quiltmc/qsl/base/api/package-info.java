@@ -5,12 +5,12 @@
  * This module does not depend on other modules.
  *
  * <p>
- * <h3>Event APIs</h3>
+ * <h3>{@link org.quiltmc.qsl.base.api.event Event APIs}</h3>
  * This module offers an event framework used in most of the Quilt Standard Libraries.
  * An event is created through the {@link org.quiltmc.qsl.base.api.event.Event} class.
  *
  * <p>
- * <h3>Entrypoints</h3>
+ * <h3>{@link org.quiltmc.qsl.base.api.entrypoint Entrypoints}</h3>
  * This module provides the most basic entrypoints:
  * <ul>
  *     <li>{@link org.quiltmc.qsl.base.api.entrypoint.ModInitializer the common initializer}</li>
@@ -20,8 +20,8 @@
  * More information can be found in {@link org.quiltmc.qsl.base.api.entrypoint the package itself}.
  *
  * <p>
- * <h3>Phase Sorting APIs</h3>
- * This module offers a phase sorter, which is a very simple non-cyclic graph resolver.
+ * <h3>{@link org.quiltmc.qsl.base.api.phase Phase Sorting APIs}</h3>
+ * This module offers a phase sorter, which is a very simple non-cyclic graph solver.
  * This is used for ordering event phases and may be used for other stuff.
  * To sort phases {@linkplain org.quiltmc.qsl.base.api.phase.PhaseSorting#sortPhases(java.util.List) a sort method is provided}.
  *

@@ -92,7 +92,7 @@ Quick legend:
 | Group resource pack API               |       ✔        |                🙅                |
 | Resource Pack Provider API            |       ✔        |                ❌                 |
 | Resource Reloaders                    |       ✔        |                ✔                 |
-| Resource Reloaders - Advanced Sorting | :construction: |                ❌                 |
+| Resource Reloaders - Advanced Sorting |       ✔        |                ❌                 |
 | Virtual Resource Packs                | :construction: |                ❌                 |
 
 ### Block Library
