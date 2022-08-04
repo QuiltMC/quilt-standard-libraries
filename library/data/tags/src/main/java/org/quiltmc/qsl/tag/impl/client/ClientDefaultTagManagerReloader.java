@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.resource.MultiPackResourceManager;
 import net.minecraft.resource.ResourceManager;
@@ -37,7 +38,7 @@ final class ClientDefaultTagManagerReloader extends ClientOnlyTagManagerReloader
 	private static final Identifier ID = new Identifier(ClientQuiltTagsMod.NAMESPACE, "client_default_tags");
 
 	@Override
-	public Identifier getQuiltId() {
+	public @NotNull Identifier getQuiltId() {
 		return ID;
 	}
 

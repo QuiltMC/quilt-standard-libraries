@@ -31,6 +31,7 @@ import java.util.function.Predicate;
 
 import com.mojang.logging.LogUtils;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -199,12 +200,12 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 	}
 
 	@Override
-	public Text getDisplayName() {
+	public @NotNull Text getDisplayName() {
 		return this.displayName;
 	}
 
 	@Override
-	public ResourcePackActivationType getActivationType() {
+	public @NotNull ResourcePackActivationType getActivationType() {
 		return this.activationType;
 	}
 	//endregion

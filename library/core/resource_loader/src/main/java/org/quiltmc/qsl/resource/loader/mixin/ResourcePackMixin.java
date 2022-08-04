@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.resource.loader.mixin;
 
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -31,7 +32,7 @@ public interface ResourcePackMixin extends QuiltResourcePack {
 	String getName();
 
 	@Override
-	default Text getDisplayName() {
-		return new LiteralText(this.getName());
+	default @NotNull Text getDisplayName() {
+		return Text.of(this.getName());
 	}
 }
