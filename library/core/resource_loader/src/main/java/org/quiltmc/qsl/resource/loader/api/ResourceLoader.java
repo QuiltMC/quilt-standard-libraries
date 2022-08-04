@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.resource.loader.api;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePackProvider;
@@ -40,7 +41,7 @@ public interface ResourceLoader {
 	 * @param type the given resource type
 	 * @return the resource loader instance
 	 */
-	static ResourceLoader get(ResourceType type) {
+	static @NotNull ResourceLoader get(@NotNull ResourceType type) {
 		return ResourceLoaderImpl.get(type);
 	}
 
@@ -49,7 +50,21 @@ public interface ResourceLoader {
 	 *
 	 * @param resourceReloader the resource reloader
 	 */
-	void registerReloader(IdentifiableResourceReloader resourceReloader);
+	void registerReloader(@NotNull IdentifiableResourceReloader resourceReloader);
+
+	/**
+	 * Requests that resource reloaders registered as the first identifier is applied before the other referenced resource reloader.
+	 * <p>
+	 * Incompatible ordering constraints such as cycles will lead to inconsistent behavior:
+	 * some constraints will be respected and some will be ignored. If this happens, a warning will be logged.
+	 * <p>
+	 * Please keep in mind that this only takes effect during the application stage!
+	 *
+	 * @param firstReloader  the identifier of the resource reloader that should run before the other
+	 * @param secondReloader the identifier of the resource reloader that should run after the other
+	 * @see org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys identifiers of Vanilla resource reloaders
+	 */
+	void addReloaderOrdering(@NotNull Identifier firstReloader, @NotNull Identifier secondReloader);
 
 	/**
 	 * Registers a resource pack profile provider.
@@ -59,7 +74,7 @@ public interface ResourceLoader {
 	 *
 	 * @param provider the provider
 	 */
-	void registerResourcePackProfileProvider(ResourcePackProvider provider);
+	void registerResourcePackProfileProvider(@NotNull ResourcePackProvider provider);
 
 	/**
 	 * Registers a built-in resource pack.
@@ -83,7 +98,7 @@ public interface ResourceLoader {
 	 * @see #registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType)
 	 * @see #registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType, Text)
 	 */
-	static boolean registerBuiltinResourcePack(Identifier id, ResourcePackActivationType activationType) {
+	static boolean registerBuiltinResourcePack(@NotNull Identifier id, @NotNull ResourcePackActivationType activationType) {
 		return registerBuiltinResourcePack(id, activationType, ResourceLoaderImpl.getBuiltinPackDisplayNameFromId(id));
 	}
 
@@ -110,7 +125,7 @@ public interface ResourceLoader {
 	 * @see #registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType)
 	 * @see #registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType, Text)
 	 */
-	static boolean registerBuiltinResourcePack(Identifier id, ResourcePackActivationType activationType, Text displayName) {
+	static boolean registerBuiltinResourcePack(@NotNull Identifier id, @NotNull ResourcePackActivationType activationType, Text displayName) {
 		var container = QuiltLoader.getModContainer(id.getNamespace())
 				.orElseThrow(() ->
 						new IllegalArgumentException("No mod with mod id " + id.getNamespace() + " could be found"));
@@ -137,8 +152,8 @@ public interface ResourceLoader {
 	 * @see #registerBuiltinResourcePack(Identifier, ResourcePackActivationType, Text)
 	 * @see #registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType, Text)
 	 */
-	static boolean registerBuiltinResourcePack(Identifier id, ModContainer container,
-			ResourcePackActivationType activationType) {
+	static boolean registerBuiltinResourcePack(@NotNull Identifier id, @NotNull ModContainer container,
+			@NotNull ResourcePackActivationType activationType) {
 		return registerBuiltinResourcePack(id, container, activationType, ResourceLoaderImpl.getBuiltinPackDisplayNameFromId(id));
 	}
 
@@ -163,8 +178,8 @@ public interface ResourceLoader {
 	 * @see #registerBuiltinResourcePack(Identifier, ResourcePackActivationType, Text)
 	 * @see #registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType)
 	 */
-	static boolean registerBuiltinResourcePack(Identifier id, ModContainer container,
-			ResourcePackActivationType activationType, Text displayName) {
+	static boolean registerBuiltinResourcePack(@NotNull Identifier id, @NotNull ModContainer container,
+			@NotNull ResourcePackActivationType activationType, Text displayName) {
 		return ResourceLoaderImpl.registerBuiltinResourcePack(id, "resourcepacks/" + id.getPath(), container,
 				activationType, displayName);
 	}

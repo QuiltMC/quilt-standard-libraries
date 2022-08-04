@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.resource.loader.api;
 
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.text.Text;
 
@@ -29,7 +31,7 @@ public interface QuiltResourcePack {
 	/**
 	 * {@return a display name for this resource pack}
 	 */
-	default Text getDisplayName() {
+	default @NotNull Text getDisplayName() {
 		// To avoid javac complaining, the actual default implementation is mixin-ed into ResourcePack.
 		return Text.empty();
 	}
@@ -42,7 +44,7 @@ public interface QuiltResourcePack {
 	 *
 	 * @return the activation type of this resource pack
 	 */
-	default ResourcePackActivationType getActivationType() {
+	default @NotNull ResourcePackActivationType getActivationType() {
 		return ResourcePackActivationType.NORMAL;
 	}
 }
