@@ -120,19 +120,19 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 
 	void checkCustomFluidState() {
 		FluidState fluidState = this.world.getFluidState(this.getBlockPos());
-		/**
+		/*
 		 * Check if Player is completly submerged in the custom fluid.
 		 */
 		this.submergedInCustomFluid = this.quilt$isSubmergedInCustomFluid(fluidState.getFluid());
 
-		/**
+		/*
 		 * Check if Player is swimming in custom Fluid
 		 * Check if player is not in a Boat
 		 */
 		if (fluidState.getFluid() instanceof FlowableFluidExtensions fluid &&
 				!(getVehicle() instanceof BoatEntity)) {
 
-			/**
+			/*
 			 * We update the Movement in the fluid,by getting the TagKey of the fluid, via the Identifier.
 			 * The rest is nearly identical to vanilla.
 			 */
