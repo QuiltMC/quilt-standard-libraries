@@ -98,8 +98,4 @@ public abstract class QuiltFluid extends FlowableFluid {
 	protected float getBlastResistance() {
 		return 100.0F;
 	}
-
-	public boolean canFishIn() {
-		return true;
-	}
 }

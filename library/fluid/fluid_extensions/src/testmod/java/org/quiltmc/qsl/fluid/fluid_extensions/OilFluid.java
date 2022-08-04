@@ -125,11 +125,6 @@ public abstract class OilFluid extends QuiltFluid implements FlowableFluidExtens
 		public boolean isSource(FluidState state) {
 			return false;
 		}
-
-		@Override
-		public boolean canFishIn() {
-			return false;
-		}
 	}
 
 	public static class Still extends OilFluid {
@@ -140,11 +135,6 @@ public abstract class OilFluid extends QuiltFluid implements FlowableFluidExtens
 
 		@Override
 		public boolean isSource(FluidState state) {
-			return true;
-		}
-
-		@Override
-		public boolean canFishIn() {
 			return true;
 		}
 	}
