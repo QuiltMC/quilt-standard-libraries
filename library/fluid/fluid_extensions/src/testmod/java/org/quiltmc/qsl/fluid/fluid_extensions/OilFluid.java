@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.fluid.fluid_extensions;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -29,10 +31,9 @@ import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.quiltmc.qsl.fluid.api.FlowableFluidExtensions;
-import org.quiltmc.qsl.fluid.impl.QuiltFluid;
 
-import javax.annotation.Nullable;
+import org.quiltmc.qsl.fluid.api.FlowableFluidExtensions;
+import org.quiltmc.qsl.fluid.api.QuiltFluid;
 
 public abstract class OilFluid extends QuiltFluid implements FlowableFluidExtensions {
 	@Override

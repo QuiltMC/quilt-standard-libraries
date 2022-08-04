@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.fluid.impl;
+package org.quiltmc.qsl.fluid.api;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -27,7 +27,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
-import org.quiltmc.qsl.fluid.api.FlowableFluidExtensions;
 
 public abstract class QuiltFluid extends FlowableFluid implements FlowableFluidExtensions {
 	/**
