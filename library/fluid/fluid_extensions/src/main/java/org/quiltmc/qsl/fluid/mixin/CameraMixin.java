@@ -20,7 +20,7 @@ import net.minecraft.client.render.Camera;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
-import org.quiltmc.qsl.fluid.api.CameraExtensions;
+import org.quiltmc.qsl.fluid.impl.CameraExtensions;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -37,7 +37,7 @@ public class CameraMixin implements CameraExtensions {
 	 * Returns the fluid in which the camera is submerged.
 	 */
 	@Override
-	public FluidState getSubmergedFluidState() {
+	public FluidState quilt$getSubmergedFluidState() {
 		return this.area.getFluidState(this.blockPos);
 	}
 }

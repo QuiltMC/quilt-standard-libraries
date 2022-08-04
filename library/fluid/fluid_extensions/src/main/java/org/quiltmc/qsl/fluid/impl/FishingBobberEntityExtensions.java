@@ -14,15 +14,25 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.fluid.api;
+package org.quiltmc.qsl.fluid.impl;
 
 import net.minecraft.fluid.Fluid;
+import net.minecraft.loot.LootTables;
+import net.minecraft.tag.FluidTags;
 import net.minecraft.tag.TagKey;
+import net.minecraft.util.Identifier;
 
-public interface CustomFluidInteracting {
-	boolean isInCustomFluid();
+public interface FishingBobberEntityExtensions {
 
-	boolean isSubmergedInCustomFluid();
+	default TagKey<Fluid> quilt$canFishingbobberSwimOn() {
+		return FluidTags.WATER;
+	}
 
-	boolean isSubmergedInCustomFluid(TagKey<Fluid> fluidTag);
+	default TagKey<Fluid> quilt$canFishingbobberCatchIn() {
+		return FluidTags.WATER;
+	}
+
+	default Identifier quilt$fishingLootTable() {
+		return LootTables.FISHING_GAMEPLAY;
+	}
 }

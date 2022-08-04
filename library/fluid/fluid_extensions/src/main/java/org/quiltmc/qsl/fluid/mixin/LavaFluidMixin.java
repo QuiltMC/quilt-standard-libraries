@@ -32,19 +32,19 @@ import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import org.quiltmc.qsl.fluid.api.FlowableFluidExtensions;
+import org.quiltmc.qsl.fluid.api.FluidEnchantmentHelper;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(LavaFluid.class)
-public abstract class LavaMixin extends FlowableFluid implements FlowableFluidExtensions {
-	private static final int lavaColor = 0x991900;
+public abstract class LavaFluidMixin extends FlowableFluid implements FlowableFluidExtensions {
 
 	@Override
-	public float defaultTemperature(World world, BlockPos blockPos) {
+	public float getDefaultTemperature(World world, BlockPos blockPos) {
 		return LAVA_TEMPERATURE;
 	}
 
 	@Override
-	public float defaultDensity(World world, BlockPos blockPos) {
+	public float getDefaultDensity(World world, BlockPos blockPos) {
 		return LAVA_DENSITY;
 	}
 
@@ -64,7 +64,7 @@ public abstract class LavaMixin extends FlowableFluid implements FlowableFluidEx
 	}
 
 	@Override
-	public float fallDamageReduction(Entity entity) {
+	public float getFallDamageReduction(Entity entity) {
 		return HALF_FALL_DAMAGE_REDUCTION;
 	}
 
@@ -97,11 +97,11 @@ public abstract class LavaMixin extends FlowableFluid implements FlowableFluidEx
 
 	@Override
 	public int getColor(FluidState state, World world, BlockPos pos) {
-		return lavaColor;
+		return LAVA_FOG_COLOR;
 	}
 
 	@Override
-	public boolean canSprintSwim(FluidState state, Entity affected) {
+	public boolean allowSprintSwimming(FluidState state, Entity affected) {
 		return false;
 	}
 
@@ -111,41 +111,41 @@ public abstract class LavaMixin extends FlowableFluid implements FlowableFluidEx
 	}
 
 	@Override
-	public boolean enableSpacebarSwimming(FluidState state, Entity affected) {
+	public boolean enableDoubleTapSpacebarSwimming(FluidState state, Entity affected) {
 		return true;
 	}
 
 	@Override
-	public void drownEffects(FluidState state, LivingEntity drowning, RandomGenerator random) {
+	public void doDrownEffects(FluidState state, LivingEntity drowning, RandomGenerator random) {
 	}
 
 	@Override
 	public int getFogColor(FluidState state, Entity affected) {
-		return lavaColor;
+		return LAVA_FOG_COLOR;
 	}
 
 	@Override
-	public SoundEvent splashSound(Entity splashing, Vec3d splashPos, RandomGenerator random) {
+	public SoundEvent getSplashSound(Entity splashing, Vec3d splashPos, RandomGenerator random) {
 		return null;
 	}
 
 	@Override
-	public SoundEvent highSpeedSplashSound(Entity splashing, Vec3d splashPos, RandomGenerator random) {
+	public SoundEvent getHighSpeedSplashSound(Entity splashing, Vec3d splashPos, RandomGenerator random) {
 		return null;
 	}
 
 	@Override
-	public ParticleEffect splashParticle(Entity splashing, Vec3d splashPos, RandomGenerator random) {
+	public ParticleEffect getSplashParticle(Entity splashing, Vec3d splashPos, RandomGenerator random) {
 		return null;
 	}
 
 	@Override
-	public ParticleEffect bubbleParticle(Entity splashing, Vec3d splashPos, RandomGenerator random) {
+	public ParticleEffect getBubbleParticle(Entity splashing, Vec3d splashPos, RandomGenerator random) {
 		return null;
 	}
 
 	@Override
-	public GameEvent splashGameEvent(Entity splashing, Vec3d splashPos, RandomGenerator random) {
+	public GameEvent getSplashGameEvent(Entity splashing, Vec3d splashPos, RandomGenerator random) {
 		return null;
 	}
 
@@ -162,8 +162,8 @@ public abstract class LavaMixin extends FlowableFluid implements FlowableFluidEx
 	}
 
 	@Override
-	public float[] customEnchantmentEffects(Vec3d movementInput, LivingEntity entity, float horizontalViscosity, float speed) {
-		return new float[]{horizontalViscosity, speed};
+	public FluidEnchantmentHelper customEnchantmentEffects(Vec3d movementInput, LivingEntity entity, float horizontalViscosity, float speed) {
+		return new FluidEnchantmentHelper(horizontalViscosity, speed);
 	}
 
 	@Override

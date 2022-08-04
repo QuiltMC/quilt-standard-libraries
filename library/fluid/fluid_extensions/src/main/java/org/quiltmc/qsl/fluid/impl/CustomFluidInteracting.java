@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.fluid.api;
+package org.quiltmc.qsl.fluid.impl;
 
-import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluid;
 
-public interface CameraExtensions {
-	FluidState getSubmergedFluidState();
+public interface CustomFluidInteracting {
+	boolean quilt$isInCustomFluid();
+
+	boolean quilt$isSubmergedInCustomFluid();
+
+	boolean quilt$isSubmergedInCustomFluid(Fluid fluid);
 }

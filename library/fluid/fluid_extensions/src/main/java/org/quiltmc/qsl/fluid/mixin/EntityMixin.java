@@ -24,10 +24,10 @@ import net.minecraft.tag.TagKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.random.RandomGenerator;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import org.quiltmc.qsl.fluid.api.CustomFluidInteracting;
 import org.quiltmc.qsl.fluid.api.FlowableFluidExtensions;
-import org.quiltmc.qsl.fluid.impl.QuiltFluidApiConstants;
+import org.quiltmc.qsl.fluid.impl.CustomFluidInteracting;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -51,7 +51,7 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 	protected RandomGenerator random;
 	protected boolean inCustomFluid;
 	protected boolean submergedInCustomFluid;
-	protected TagKey<Fluid> submergedCustomFluidTag;
+	protected Fluid submergedCustomFluid;
 	@Shadow
 	private BlockPos blockPos;
 
@@ -105,24 +105,25 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 	}
 
 	@Override
-	public boolean isInCustomFluid() {
+	public boolean quilt$isInCustomFluid() {
 		return this.inCustomFluid;
 	}
 
 	@Override
-	public boolean isSubmergedInCustomFluid() {
-		return this.submergedInCustomFluid && this.isInCustomFluid();
+	public boolean quilt$isSubmergedInCustomFluid() {
+		return this.submergedInCustomFluid && this.quilt$isInCustomFluid();
 	}
 
 	void checkCustomFluidState() {
 		FluidState fluidState = this.world.getFluidState(this.getBlockPos());
+		this.submergedInCustomFluid = this.quilt$isSubmergedInCustomFluid(fluidState.getFluid());
 		if (fluidState.getFluid() instanceof FlowableFluidExtensions fluid &&
 				!(getVehicle() instanceof BoatEntity)) {
-			updateMovementInFluid(QuiltFluidApiConstants.QUILT_FLUIDS, fluid.getPushStrength(fluidState, (Entity) (Object) this));
+			updateMovementInFluid(TagKey.of(Registry.FLUID_KEY,fluidState.getBuiltInRegistryHolder().getKey().get().getRegistry()), fluid.getPushStrength(fluidState, (Entity) (Object) this));
 			if (!inCustomFluid && !firstUpdate) {
 				customSplashEffects();
 			}
-			fallDistance = fluid.fallDamageReduction(((Entity) (Object) this));
+			fallDistance = fluid.getFallDamageReduction(((Entity) (Object) this));
 			inCustomFluid = true;
 
 			if (fluid.canExtinguish(fluidState, (Entity) (Object) this)) {
@@ -136,9 +137,12 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 		this.inCustomFluid = false;
 	}
 
+	public boolean quilt$isSubmergedInCustomFluid(Fluid fluid) {
+		return this.submergedCustomFluid == fluid;
+	}
+
 	private void updateSubmergedInCustomFluidState() {
-		this.submergedInCustomFluid = this.isSubmergedInCustomFluid(QuiltFluidApiConstants.QUILT_FLUIDS);
-		this.submergedCustomFluidTag = null;
+		this.submergedCustomFluid = null;
 		double d = this.getEyeY() - 0.1111111119389534D;
 		Entity entity = this.getVehicle();
 		if (entity instanceof BoatEntity boatEntity) {
@@ -146,35 +150,28 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 				return;
 			}
 		}
-
 		BlockPos blockPos = new BlockPos(this.getX(), d, this.getZ());
 		FluidState fluidState = this.world.getFluidState(blockPos);
 
-
 		double e = (float) blockPos.getY() + fluidState.getHeight(this.world, blockPos);
 		if (e > d) {
-			this.submergedCustomFluidTag = QuiltFluidApiConstants.QUILT_FLUIDS;
+			this.submergedCustomFluid = fluidState.getFluid();
 		}
 
 	}
 
-	public boolean isSubmergedInCustomFluid(TagKey<Fluid> fluidTag) {
-		return this.submergedCustomFluidTag == fluidTag;
-	}
-
-
 	@Inject(method = "updateSwimming", at = @At("TAIL"))
 	public void updateSwimming(CallbackInfo ci) {
 		boolean canSwimIn = false;
-		if (this.isInCustomFluid()) {
+		if (this.quilt$isInCustomFluid()) {
 			FluidState fluidState = this.world.getFluidState(this.getBlockPos());
 			if (fluidState.getFluid() instanceof FlowableFluidExtensions fluid) {
-				canSwimIn = fluid.canSprintSwim(fluidState, (Entity) (Object) this);
+				canSwimIn = fluid.allowSprintSwimming(fluidState, (Entity) (Object) this);
 			}
 			if (this.isSwimming()) {
-				this.setSwimming(this.isSprinting() && canSwimIn && this.isInCustomFluid() && !this.hasVehicle());
+				this.setSwimming(this.isSprinting() && canSwimIn && this.quilt$isInCustomFluid() && !this.hasVehicle());
 			} else {
-				this.setSwimming(this.isSprinting() && this.isSubmergedInCustomFluid() && canSwimIn && !this.hasVehicle() && this.world.getFluidState(this.blockPos).isIn(QuiltFluidApiConstants.QUILT_FLUIDS));
+				this.setSwimming(this.isSprinting() && this.quilt$isSubmergedInCustomFluid() && canSwimIn && !this.hasVehicle() && this.world.getFluidState(this.blockPos).getFluid() instanceof FlowableFluidExtensions);
 			}
 
 		}

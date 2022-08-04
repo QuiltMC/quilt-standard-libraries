@@ -16,10 +16,7 @@
 
 package org.quiltmc.qsl.fluid.fluid_extensions;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.FluidBlock;
-import net.minecraft.fluid.FlowableFluid;
 import net.minecraft.item.BucketItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
@@ -28,13 +25,14 @@ import net.minecraft.util.registry.Registry;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.block.extensions.api.QuiltBlockSettings;
+import org.quiltmc.qsl.fluid.impl.QuiltFluid;
+import org.quiltmc.qsl.fluid.api.QuiltFluidBlock;
 
 public class QuiltFluidTest implements ModInitializer {
-
-	public static FlowableFluid STILL_OIL;
-	public static FlowableFluid FLOWING_OIL;
+	public static QuiltFluid STILL_OIL;
+	public static QuiltFluid FLOWING_OIL;
 	public static Item OIL_BUCKET;
-	public static Block OIL;
+	public static QuiltFluidBlock OIL;
 
 	@Override
 	public void onInitialize(ModContainer mod) {
@@ -43,7 +41,6 @@ public class QuiltFluidTest implements ModInitializer {
 		OIL_BUCKET = Registry.register(Registry.ITEM, new Identifier("quilt_fluid_api", "oil_bucket"),
 				new BucketItem(STILL_OIL, new Item.Settings().recipeRemainder(Items.BUCKET).maxCount(1)));
 
-		OIL = Registry.register(Registry.BLOCK, new Identifier("quilt_fluid_api", "oil"), new FluidBlock(STILL_OIL, QuiltBlockSettings.copy(Blocks.WATER)) {
-		});
+		OIL = Registry.register(Registry.BLOCK, new Identifier("quilt_fluid_api", "oil"), new QuiltFluidBlock(STILL_OIL, QuiltBlockSettings.copy(Blocks.WATER)));
 	}
 }

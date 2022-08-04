@@ -22,7 +22,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.encryption.PlayerPublicKey;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.fluid.api.CustomFluidInteracting;
+import org.quiltmc.qsl.fluid.impl.CustomFluidInteracting;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -30,18 +30,18 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(ClientPlayerEntity.class)
 public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity implements CustomFluidInteracting {
 
-	public ClientPlayerEntityMixin(ClientWorld clientWorld, GameProfile gameProfile, @Nullable PlayerPublicKey playerPublicKey) {
+	protected ClientPlayerEntityMixin(ClientWorld clientWorld, GameProfile gameProfile, @Nullable PlayerPublicKey playerPublicKey) {
 		super(clientWorld, gameProfile, playerPublicKey);
 	}
 
 	@Redirect(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isSubmergedInWater()Z"))
 	private boolean redirectSubmergedInWater(ClientPlayerEntity instance) {
-		return this.isSubmergedInWater() || this.isSubmergedInCustomFluid();
+		return this.isSubmergedInWater() || this.quilt$isSubmergedInCustomFluid();
 	}
 
 	@Redirect(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isTouchingWater()Z"))
 	private boolean redirectTouchingWater(ClientPlayerEntity instance) {
-		return this.isTouchingWater() || this.isInCustomFluid();
+		return this.isTouchingWater() || this.quilt$isInCustomFluid();
 	}
 
 }

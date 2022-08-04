@@ -27,8 +27,9 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
+import org.quiltmc.qsl.fluid.api.FlowableFluidExtensions;
 
-public abstract class QuiltFluid extends FlowableFluid {
+public abstract class QuiltFluid extends FlowableFluid implements FlowableFluidExtensions {
 	/**
 	 * @return whether the given fluid an instance of this fluid
 	 */

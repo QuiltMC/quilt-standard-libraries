@@ -16,13 +16,8 @@
 
 package org.quiltmc.qsl.fluid.impl;
 
-import net.minecraft.fluid.Fluid;
-import net.minecraft.tag.TagKey;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.fluid.FluidState;
 
-public class QuiltFluidApiConstants {
-
-	public static final TagKey<Fluid> QUILT_FLUIDS =
-			TagKey.of(Registry.FLUID_KEY, new Identifier("quilt_fluid_api", "quilt_fluid"));
+public interface CameraExtensions {
+	FluidState quilt$getSubmergedFluidState();
 }

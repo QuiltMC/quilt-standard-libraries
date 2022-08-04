@@ -14,25 +14,13 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.fluid.api;
+package org.quiltmc.qsl.fluid.mixin;
 
-import net.minecraft.fluid.Fluid;
-import net.minecraft.loot.LootTables;
-import net.minecraft.tag.FluidTags;
-import net.minecraft.tag.TagKey;
-import net.minecraft.util.Identifier;
+import net.minecraft.fluid.FlowableFluid;
+import net.minecraft.fluid.WaterFluid;
+import org.quiltmc.qsl.fluid.api.FlowableFluidExtensions;
+import org.spongepowered.asm.mixin.Mixin;
 
-public interface FishingBobberEntityExtensions {
-
-	default TagKey<Fluid> canFishingbobberSwimOn() {
-		return FluidTags.WATER;
-	}
-
-	default TagKey<Fluid> canFishingbobberCatchIn() {
-		return FluidTags.WATER;
-	}
-
-	default Identifier fishingLootTable() {
-		return LootTables.FISHING_GAMEPLAY;
-	}
+@Mixin(WaterFluid.class)
+public abstract class WaterFluidMixin extends FlowableFluid implements FlowableFluidExtensions {
 }

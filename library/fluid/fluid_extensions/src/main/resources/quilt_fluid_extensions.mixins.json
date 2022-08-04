@@ -6,9 +6,9 @@
     "BoatEntityMixin",
     "EntityMixin",
     "FishingBobberEntityMixin",
-    "LavaMixin",
+    "LavaFluidMixin",
     "LivingEntityMixin",
-    "WaterMixin"
+    "WaterFluidMixin"
   ],
   "client": [
     "BackgroundRendererMixin",

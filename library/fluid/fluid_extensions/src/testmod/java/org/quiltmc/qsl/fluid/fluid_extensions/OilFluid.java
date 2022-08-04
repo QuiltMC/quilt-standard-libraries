@@ -76,7 +76,7 @@ public abstract class OilFluid extends QuiltFluid implements FlowableFluidExtens
 	}
 
 	@Override
-	public boolean canSprintSwim(FluidState state, Entity effected) {
+	public boolean allowSprintSwimming(FluidState state, Entity effected) {
 		return true;
 	}
 

@@ -57,6 +57,8 @@ public interface FlowableFluidExtensions {
 	float NO_FALL_DAMAGE_REDUCTION = 0f;
 	int WATER_FOG_COLOR = -1;
 
+	int LAVA_FOG_COLOR = 0x991900;
+
 	Identifier WATER_FISHING_LOOT_TABLE = LootTables.FISHING_GAMEPLAY;
 
 	/**
@@ -102,7 +104,7 @@ public interface FlowableFluidExtensions {
 	/**
 	 * Toggles weather or not a player can sprint swim in your fluid
 	 */
-	default boolean canSprintSwim(FluidState state, Entity affected) {
+	default boolean allowSprintSwimming(FluidState state, Entity affected) {
 		return true;
 	}
 
@@ -116,11 +118,15 @@ public interface FlowableFluidExtensions {
 		return horizontalViscosity;
 	}
 
-	default boolean enableSpacebarSwimming(FluidState state, Entity affected) {
+	default boolean enableDoubleTapSpacebarSwimming(FluidState state, Entity affected) {
 		return true;
 	}
 
 	default boolean bobberFloats(FluidState state, Entity affected) {
+		return true;
+	}
+
+	default boolean canFish(FluidState state, Entity affected) {
 		return true;
 	}
 
@@ -145,7 +151,7 @@ public interface FlowableFluidExtensions {
 	 * @see FlowableFluidExtensions#WATER_DENSITY
 	 * @see FlowableFluidExtensions#LAVA_DENSITY
 	 */
-	default float defaultDensity(World world, BlockPos blockpos) {
+	default float getDefaultDensity(World world, BlockPos blockpos) {
 		return WATER_DENSITY;
 	}
 
@@ -157,7 +163,7 @@ public interface FlowableFluidExtensions {
 	 * @see FlowableFluidExtensions#WATER_TEMPERATURE
 	 * @see FlowableFluidExtensions#LAVA_TEMPERATURE
 	 */
-	default float defaultTemperature(World world, BlockPos blockpos) {
+	default float getDefaultTemperature(World world, BlockPos blockpos) {
 		return WATER_TEMPERATURE;
 	}
 
@@ -170,7 +176,7 @@ public interface FlowableFluidExtensions {
 	 * @see FlowableFluidExtensions#HALF_FALL_DAMAGE_REDUCTION
 	 * @see FlowableFluidExtensions#NO_FALL_DAMAGE_REDUCTION
 	 */
-	default float fallDamageReduction(Entity entity) {
+	default float getFallDamageReduction(Entity entity) {
 		return FULL_FALL_DAMAGE_REDUCTION;
 	}
 
@@ -207,27 +213,27 @@ public interface FlowableFluidExtensions {
 	}
 
 	@Nullable
-	default SoundEvent splashSound(Entity splashing, Vec3d splashPos, RandomGenerator random) {
+	default SoundEvent getSplashSound(Entity splashing, Vec3d splashPos, RandomGenerator random) {
 		return SoundEvents.ENTITY_PLAYER_SPLASH;
 	}
 
 	@Nullable
-	default SoundEvent highSpeedSplashSound(Entity splashing, Vec3d splashPos, RandomGenerator random) {
+	default SoundEvent getHighSpeedSplashSound(Entity splashing, Vec3d splashPos, RandomGenerator random) {
 		return SoundEvents.ENTITY_PLAYER_SPLASH_HIGH_SPEED;
 	}
 
 	@Nullable
-	default ParticleEffect splashParticle(Entity splashing, Vec3d splashPos, RandomGenerator random) {
+	default ParticleEffect getSplashParticle(Entity splashing, Vec3d splashPos, RandomGenerator random) {
 		return ParticleTypes.ASH;
 	}
 
 	@Nullable
-	default ParticleEffect bubbleParticle(Entity splashing, Vec3d splashPos, RandomGenerator random) {
+	default ParticleEffect getBubbleParticle(Entity splashing, Vec3d splashPos, RandomGenerator random) {
 		return ParticleTypes.BUBBLE;
 	}
 
 	@Nullable
-	default GameEvent splashGameEvent(Entity splashing, Vec3d splashPos, RandomGenerator random) {
+	default GameEvent getSplashGameEvent(Entity splashing, Vec3d splashPos, RandomGenerator random) {
 		return GameEvent.SPLASH;
 	}
 
@@ -243,7 +249,7 @@ public interface FlowableFluidExtensions {
 			double xOffset = (random.nextDouble() * 2.0 - 1.0) * (double) splashing.getDimensions(splashing.getPose()).width;
 			double zOffset = (random.nextDouble() * 2.0 - 1.0) * (double) splashing.getDimensions(splashing.getPose()).width;
 			int yFloor = MathHelper.floor(splashing.getY());
-			ParticleEffect particle = splashParticle(splashing, splashPos, random);
+			ParticleEffect particle = getSplashParticle(splashing, splashPos, random);
 			if (particle != null) {
 				splashing.world.addParticle(
 						particle,
@@ -263,7 +269,7 @@ public interface FlowableFluidExtensions {
 			double xOffset = (random.nextDouble() * 2.0 - 1.0) * (double) splashing.getDimensions(splashing.getPose()).width;
 			double zOffset = (random.nextDouble() * 2.0 - 1.0) * (double) splashing.getDimensions(splashing.getPose()).width;
 			int yFloor = MathHelper.floor(splashing.getY());
-			ParticleEffect particle = bubbleParticle(splashing, splashPos, random);
+			ParticleEffect particle = getBubbleParticle(splashing, splashPos, random);
 			if (particle != null) {
 				splashing.world.addParticle(
 						particle,
@@ -288,7 +294,7 @@ public interface FlowableFluidExtensions {
 				Math.sqrt(velocity.x * velocity.x * 0.2 + velocity.y * velocity.y + velocity.z * velocity.z * 0.2D) * volumeMultiplier
 		);
 
-		SoundEvent sound = volume < 0.25f ? splashSound(splashing, pos, random) : highSpeedSplashSound(splashing, pos, random);
+		SoundEvent sound = volume < 0.25f ? getSplashSound(splashing, pos, random) : getHighSpeedSplashSound(splashing, pos, random);
 		if (sound != null) {
 			splashing.playSound(
 					sound,
@@ -300,7 +306,7 @@ public interface FlowableFluidExtensions {
 		spawnBubbleParticles(splashing, pos, random);
 		spawnSplashParticles(splashing, pos, random);
 
-		GameEvent splash = splashGameEvent(splashing, pos, random);
+		GameEvent splash = getSplashGameEvent(splashing, pos, random);
 		if (splash != null) {
 			splashing.emitGameEvent(splash);
 		}
@@ -311,9 +317,7 @@ public interface FlowableFluidExtensions {
 	 *
 	 * @return a float array where [0] holds updated horizontal viscosity, and [1] holds updated speed.
 	 */
-	default float[] customEnchantmentEffects(Vec3d movementInput, LivingEntity entity, float horizontalViscosity, float speed) {
-		float[] values = new float[2];
-
+	default FluidEnchantmentHelper customEnchantmentEffects(Vec3d movementInput, LivingEntity entity, float horizontalViscosity, float speed) {
 		float depthStriderLevel = EnchantmentHelper.getDepthStrider(entity);
 		if (depthStriderLevel > 3.0f) {
 			depthStriderLevel = 3.0f;
@@ -327,14 +331,10 @@ public interface FlowableFluidExtensions {
 			horizontalViscosity += (0.546f - horizontalViscosity) * depthStriderLevel / 3.0f;
 			speed += (entity.getMovementSpeed() - speed) * depthStriderLevel / 3.0f;
 		}
-
-		values[0] = horizontalViscosity;
-		values[1] = speed;
-
-		return values;
+		return new FluidEnchantmentHelper(horizontalViscosity, speed);
 	}
 
-	default void drownEffects(FluidState state, LivingEntity drowning, RandomGenerator random) {
+	default void doDrownEffects(FluidState state, LivingEntity drowning, RandomGenerator random) {
 		boolean isPlayer = drowning instanceof PlayerEntity;
 		boolean invincible = isPlayer && ((PlayerEntity) drowning).getAbilities().invulnerable;
 		if (!drowning.canBreatheInWater() && !StatusEffectUtil.hasWaterBreathing(drowning) && !invincible) {
@@ -348,7 +348,7 @@ public interface FlowableFluidExtensions {
 					double f = random.nextDouble() - random.nextDouble();
 					double g = random.nextDouble() - random.nextDouble();
 					double h = random.nextDouble() - random.nextDouble();
-					ParticleEffect particle = bubbleParticle(drowning, drowning.getPos(), random);
+					ParticleEffect particle = getBubbleParticle(drowning, drowning.getPos(), random);
 					if (particle != null) {
 						drowning.world.addParticle(
 								particle,
