@@ -74,7 +74,7 @@ public abstract class CreateWorldScreenMixin {
 	}
 
 	@Redirect(
-			method = "create",
+			method = "open",
 			at = @At(value = "FIELD", target = "Lnet/minecraft/resource/pack/DataPackSettings;SAFE_MODE:Lnet/minecraft/resource/pack/DataPackSettings;")
 	)
 	private static DataPackSettings replaceDefaultSettings() {
@@ -82,7 +82,7 @@ public abstract class CreateWorldScreenMixin {
 	}
 
 	@Redirect(
-			method = "create",
+			method = "open",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/unmapped/C_kjxfcecs;method_42098(Lnet/minecraft/unmapped/C_kjxfcecs$C_kculhjuh;Lnet/minecraft/unmapped/C_kjxfcecs$C_ueybpquh;Lnet/minecraft/unmapped/C_kjxfcecs$C_cknyxhnl;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
@@ -119,7 +119,7 @@ public abstract class CreateWorldScreenMixin {
 	}
 
 	@Inject(
-			method = "create",
+			method = "open",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/unmapped/C_kjxfcecs;method_42098(Lnet/minecraft/unmapped/C_kjxfcecs$C_kculhjuh;Lnet/minecraft/unmapped/C_kjxfcecs$C_ueybpquh;Lnet/minecraft/unmapped/C_kjxfcecs$C_cknyxhnl;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
@@ -161,15 +161,16 @@ public abstract class CreateWorldScreenMixin {
 
 	// Lambda method in CreateWorldScreen#applyDataPacks, at CompletableFuture#handle.
 	// Take Void and Throwable parameters.
-	@SuppressWarnings("target")
 	@Inject(
-			method = "method_37089(Ljava/lang/Void;Ljava/lang/Throwable;)Ljava/lang/Object;",
+			method = {"method_37089", "m_kltndaqc"},
 			at = @At(
 					value = "INVOKE",
 					target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Throwable;)V",
 					shift = At.Shift.AFTER,
 					remap = false
-			)
+			),
+			require = 1,
+			remap = false
 	)
 	private void onFailDataPackLoading(Void unused, Throwable throwable, CallbackInfoReturnable<Object> cir) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, null, throwable);
