@@ -22,7 +22,7 @@ import net.minecraft.client.render.Camera;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.fluid.FluidState;
-import org.quiltmc.qsl.fluid.api.FlowableFluidExtensions;
+import org.quiltmc.qsl.fluid.api.QuiltFlowableFluidExtensions;
 import org.quiltmc.qsl.fluid.impl.CameraExtensions;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -49,8 +49,8 @@ public class BackgroundRendererMixin {
 		//Get the fluid that submerged the camera
 		FluidState fluidState = ((CameraExtensions) camera).quilt$getSubmergedFluidState();
 
-		//If this is an instance of FabricFlowableFluid interface...
-		if (fluidState.getFluid() instanceof FlowableFluidExtensions fluid) {
+		//If this is an instance of QuiltFlowableFluidExtensions interface...
+		if (fluidState.getFluid() instanceof QuiltFlowableFluidExtensions fluid) {
 			//Get the color of the fog...
 			int fogColor = fluid.getFogColor(fluidState, camera.getFocusedEntity());
 			if (fogColor != -1) { // water color special casing, -1 marks water color
@@ -77,8 +77,8 @@ public class BackgroundRendererMixin {
 		//Get the fluid that submerged the camera
 		FluidState fluidState = ((CameraExtensions) camera).quilt$getSubmergedFluidState();
 
-		//If this is an instance of FabricFlowableFluid interface...
-		if (fluidState.getFluid() instanceof FlowableFluidExtensions fluid) {
+		//If this is an instance of QuiltFlowableFluidExtensions interface...
+		if (fluidState.getFluid() instanceof QuiltFlowableFluidExtensions fluid) {
 
 			//Get the start and end parameters and apply them, then return.
 			Entity entity = camera.getFocusedEntity();

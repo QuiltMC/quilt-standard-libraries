@@ -26,7 +26,7 @@ import net.minecraft.tag.TagKey;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import org.quiltmc.qsl.fluid.api.FlowableFluidExtensions;
+import org.quiltmc.qsl.fluid.api.QuiltFlowableFluidExtensions;
 import org.quiltmc.qsl.fluid.api.FluidEnchantmentHelper;
 import org.quiltmc.qsl.fluid.impl.CustomFluidInteracting;
 import org.spongepowered.asm.mixin.Mixin;
@@ -80,7 +80,7 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 			float vertVisc = 0.8f;
 			float speed = 0.02F;
 
-			if ((fluidState.getFluid() instanceof FlowableFluidExtensions fluid)) {
+			if ((fluidState.getFluid() instanceof QuiltFlowableFluidExtensions fluid)) {
 				horizVisc = this.isSprinting() ? 0.9f : fluid.getHorizontalViscosity(fluidState, this);
 				vertVisc = fluid.getVerticalViscosity(fluidState, this);
 
@@ -88,7 +88,7 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 				horizVisc = helper.getHorizontalViscosity();
 				speed = helper.getSpeed();
 
-				horizVisc = fluid.modifyHorizontalViscosity(((LivingEntity) (Object) this), horizVisc);
+				horizVisc = fluid.modifyEntityHorizontalViscosity(((LivingEntity) (Object) this), horizVisc);
 			}
 			//
 			this.updateVelocity(speed, movementInput);
@@ -131,7 +131,7 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 	private boolean redirectTouchingWaterToCheckIfSwim(LivingEntity instance) {
 		if (quilt$isInCustomFluid()) {
 			FluidState fluidState = this.world.getFluidState(getBlockPos());
-			if (fluidState.getFluid() instanceof FlowableFluidExtensions fluid) {
+			if (fluidState.getFluid() instanceof QuiltFlowableFluidExtensions fluid) {
 				return fluid.enableDoubleTapSpacebarSwimming(fluidState, instance);
 			}
 		}
@@ -148,9 +148,9 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 	private int baseTick(LivingEntity instance) {
 		if (quilt$isSubmergedInCustomFluid()) {
 			FluidState fluidState = this.world.getFluidState(getBlockPos());
-			if (fluidState.getFluid() instanceof FlowableFluidExtensions fluid) {
+			if (fluidState.getFluid() instanceof QuiltFlowableFluidExtensions fluid) {
 				fluid.doDrownEffects(fluidState, instance, random);
-				return getMaxAir(); // false
+				return getMaxAir();
 			}
 		}
 

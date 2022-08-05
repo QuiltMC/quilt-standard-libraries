@@ -24,12 +24,15 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectUtil;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.FishingBobberEntity;
+import net.minecraft.fluid.FlowableFluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.loot.LootTables;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.tag.FluidTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -37,10 +40,11 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 import javax.annotation.Nullable;
-
-public interface FlowableFluidExtensions {
+@InjectedInterface(FlowableFluid.class)
+public interface QuiltFlowableFluidExtensions {
 
 	float WATER_VISCOSITY = 0.8f;
 	float LAVA_VISCOSITY = 0.5f;
@@ -74,19 +78,21 @@ public interface FlowableFluidExtensions {
 	 * 0.8F is the default for water
 	 * 0.5F is the default for lava
 	 *
-	 * @see FlowableFluidExtensions#WATER_VISCOSITY
-	 * @see FlowableFluidExtensions#LAVA_VISCOSITY
+	 * @see QuiltFlowableFluidExtensions#WATER_VISCOSITY
+	 * @see QuiltFlowableFluidExtensions#LAVA_VISCOSITY
 	 */
 	default float getHorizontalViscosity(FluidState state, Entity affected) {
+		if(state.isIn(FluidTags.LAVA)) return LAVA_VISCOSITY;
 		return WATER_VISCOSITY;
 	}
 
 	/**
 	 * Default for water and lava is 0.8F
 	 *
-	 * @see FlowableFluidExtensions#WATER_VISCOSITY
+	 * @see QuiltFlowableFluidExtensions#WATER_VISCOSITY
 	 */
 	default float getVerticalViscosity(FluidState state, Entity affected) {
+		if(state.isIn(FluidTags.LAVA)) return LAVA_VISCOSITY;
 		return WATER_VISCOSITY;
 	}
 
@@ -95,11 +101,14 @@ public interface FlowableFluidExtensions {
 	 * 7 / 3000 is the default for lava in the overworld
 	 * 0.007F is the default for lava in the nether
 	 *
-	 * @see FlowableFluidExtensions#WATER_PUSH_STRENGTH
-	 * @see FlowableFluidExtensions#LAVA_PUSH_STRENGTH_OVERWORLD
-	 * @see FlowableFluidExtensions#LAVA_PUSH_STRENGTH_ULTRAWARM
+	 * @see QuiltFlowableFluidExtensions#WATER_PUSH_STRENGTH
+	 * @see QuiltFlowableFluidExtensions#LAVA_PUSH_STRENGTH_OVERWORLD
+	 * @see QuiltFlowableFluidExtensions#LAVA_PUSH_STRENGTH_ULTRAWARM
 	 */
 	default float getPushStrength(FluidState state, Entity affected) {
+		if(state.isIn(FluidTags.LAVA)) {
+			return affected.world.getDimension().ultraWarm() ? LAVA_PUSH_STRENGTH_ULTRAWARM : LAVA_PUSH_STRENGTH_OVERWORLD;
+		}
 		return WATER_PUSH_STRENGTH;
 	}
 
@@ -113,7 +122,7 @@ public interface FlowableFluidExtensions {
 	/**
 	 * @return an updated horizontalViscosity, specifically regarding potion effects
 	 */
-	default float modifyHorizontalViscosity(LivingEntity affected, float horizontalViscosity) {
+	default float modifyEntityHorizontalViscosity(LivingEntity affected, float horizontalViscosity) {
 		if (affected.hasStatusEffect(StatusEffects.DOLPHINS_GRACE)) {
 			horizontalViscosity = 0.96f;
 		}
@@ -124,11 +133,11 @@ public interface FlowableFluidExtensions {
 		return true;
 	}
 
-	default boolean bobberFloats(FluidState state, Entity affected) {
+	default boolean bobberFloats(FluidState state, FishingBobberEntity affected) {
 		return true;
 	}
 
-	default boolean canFish(FluidState state, Entity affected) {
+	default boolean canFish(FluidState state, FishingBobberEntity affected) {
 		return true;
 	}
 
@@ -150,10 +159,11 @@ public interface FlowableFluidExtensions {
 	 * 1000 is the default for water
 	 * 3100 is the default for lava
 	 *
-	 * @see FlowableFluidExtensions#WATER_DENSITY
-	 * @see FlowableFluidExtensions#LAVA_DENSITY
+	 * @see QuiltFlowableFluidExtensions#WATER_DENSITY
+	 * @see QuiltFlowableFluidExtensions#LAVA_DENSITY
 	 */
 	default float getDefaultDensity(World world, BlockPos blockpos) {
+		if(world.getFluidState(blockpos).isIn(FluidTags.LAVA)) return LAVA_DENSITY;
 		return WATER_DENSITY;
 	}
 
@@ -162,10 +172,11 @@ public interface FlowableFluidExtensions {
 	 * 300 is the default for water
 	 * 1500 is the default for lava
 	 *
-	 * @see FlowableFluidExtensions#WATER_TEMPERATURE
-	 * @see FlowableFluidExtensions#LAVA_TEMPERATURE
+	 * @see QuiltFlowableFluidExtensions#WATER_TEMPERATURE
+	 * @see QuiltFlowableFluidExtensions#LAVA_TEMPERATURE
 	 */
 	default float getDefaultTemperature(World world, BlockPos blockpos) {
+		if(world.getFluidState(blockpos).isIn(FluidTags.LAVA)) return LAVA_TEMPERATURE;
 		return WATER_TEMPERATURE;
 	}
 
@@ -174,11 +185,15 @@ public interface FlowableFluidExtensions {
 	 * 0.5 lavas default equals half fall damage reduction
 	 * 1 is no fall damage reduction whatsoever
 	 *
-	 * @see FlowableFluidExtensions#FULL_FALL_DAMAGE_REDUCTION
-	 * @see FlowableFluidExtensions#HALF_FALL_DAMAGE_REDUCTION
-	 * @see FlowableFluidExtensions#NO_FALL_DAMAGE_REDUCTION
+	 * @see QuiltFlowableFluidExtensions#FULL_FALL_DAMAGE_REDUCTION
+	 * @see QuiltFlowableFluidExtensions#HALF_FALL_DAMAGE_REDUCTION
+	 * @see QuiltFlowableFluidExtensions#NO_FALL_DAMAGE_REDUCTION
 	 */
 	default float getFallDamageReduction(Entity entity) {
+		BlockPos entityPos = entity.getBlockPos();
+
+		if(entity.world.getFluidState(entityPos).isIn(FluidTags.LAVA)) return HALF_FALL_DAMAGE_REDUCTION;
+
 		return FULL_FALL_DAMAGE_REDUCTION;
 	}
 
@@ -187,11 +202,12 @@ public interface FlowableFluidExtensions {
 	 * value returned will be treated as a normal color.
 	 */
 	default int getFogColor(FluidState state, Entity affected) {
+		if(state.isIn(FluidTags.LAVA)) return LAVA_FOG_COLOR;
 		return WATER_FOG_COLOR;
 	}
 
 	/**
-	 * @see FlowableFluidExtensions#WATER_FOG_START
+	 * @see QuiltFlowableFluidExtensions#WATER_FOG_START
 	 */
 	default float getFogStart(FluidState state, Entity affected, float viewDistance) {
 		return WATER_FOG_START;
@@ -219,6 +235,10 @@ public interface FlowableFluidExtensions {
 		return SoundEvents.ENTITY_PLAYER_SPLASH;
 	}
 
+	/**
+	 *	This method is used, when the sound emitted from falling into the fluid is greated than 0.25f.
+	 *	Logic found in FlowableFluidExtensions.onSplash
+	 */
 	@Nullable
 	default SoundEvent getHighSpeedSplashSound(Entity splashing, Vec3d splashPos, RandomGenerator random) {
 		return SoundEvents.ENTITY_PLAYER_SPLASH_HIGH_SPEED;
@@ -242,6 +262,8 @@ public interface FlowableFluidExtensions {
 	default Identifier getFishingLootTable() {
 		return WATER_FISHING_LOOT_TABLE;
 	}
+
+	default boolean canBoatSwimOn() {return true;}
 
 	// Overriding of any methods below this comment is generally unnecessary,
 	// and only made available to cover as many cases as possible.
@@ -317,7 +339,7 @@ public interface FlowableFluidExtensions {
 	/**
 	 * Here you can modify viscosity and speed based on enchantments.
 	 *
-	 * @return a float array where [0] holds updated horizontal viscosity, and [1] holds updated speed.
+	 * @return a Helperclass which contains the calculated horizontalViscosity and speed. The class contains two fields, which are both floats.
 	 */
 	default FluidEnchantmentHelper customEnchantmentEffects(Vec3d movementInput, LivingEntity entity, float horizontalViscosity, float speed) {
 		float depthStriderLevel = EnchantmentHelper.getDepthStrider(entity);

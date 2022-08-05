@@ -16,6 +16,7 @@
       ]
     },
     "depends": [
+      "quilt_fluid_extensions"
     ]
   }
 }

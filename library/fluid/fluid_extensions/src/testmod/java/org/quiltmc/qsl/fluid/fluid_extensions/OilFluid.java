@@ -31,11 +31,9 @@ import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import org.quiltmc.qsl.fluid.api.FlowableFluidExtensions;
 import org.quiltmc.qsl.fluid.api.QuiltFluid;
 
-public abstract class OilFluid extends QuiltFluid implements FlowableFluidExtensions {
+public abstract class OilFluid extends QuiltFluid{
 	@Override
 	public Fluid getStill() {
 		return QuiltFluidTest.STILL_OIL;
@@ -98,7 +96,7 @@ public abstract class OilFluid extends QuiltFluid implements FlowableFluidExtens
 	}
 
 	@Override
-	public float modifyHorizontalViscosity(LivingEntity entity, float horizVisc) {
+	public float modifyEntityHorizontalViscosity(LivingEntity entity, float horizVisc) {
 		if (entity.hasStatusEffect(StatusEffects.DOLPHINS_GRACE)) {
 			horizVisc = 0.96F;
 		}

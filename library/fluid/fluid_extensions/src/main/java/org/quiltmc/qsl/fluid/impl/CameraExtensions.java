@@ -16,11 +16,13 @@
 
 package org.quiltmc.qsl.fluid.impl;
 
+import net.minecraft.client.render.Camera;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.fluid.FluidState;
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
-@ApiStatus.Internal
+@InjectedInterface(Camera.class)
 public interface CameraExtensions {
 	FluidState quilt$getSubmergedFluidState();
 }

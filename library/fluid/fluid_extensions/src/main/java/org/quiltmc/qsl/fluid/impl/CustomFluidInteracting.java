@@ -16,11 +16,13 @@
 
 package org.quiltmc.qsl.fluid.impl;
 
+import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.fluid.Fluid;
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
-@ApiStatus.Internal
+@InjectedInterface(Entity.class)
 public interface CustomFluidInteracting {
 	boolean quilt$isInCustomFluid();
 

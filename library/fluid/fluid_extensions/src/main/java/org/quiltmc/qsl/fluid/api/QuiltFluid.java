@@ -28,7 +28,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 
-public abstract class QuiltFluid extends FlowableFluid implements FlowableFluidExtensions {
+public abstract class QuiltFluid extends FlowableFluid implements QuiltFlowableFluidExtensions {
 	/**
 	 * @return whether the given fluid an instance of this fluid
 	 */
@@ -67,7 +67,7 @@ public abstract class QuiltFluid extends FlowableFluid implements FlowableFluidE
 	}
 
 	/**
-	 * Possibly related to the distance checks for flowing into nearby holes?
+	 * The speed at which Fluids flow.
 	 * Water returns 4. Lava returns 2 in the Overworld and 4 in the Nether.
 	 */
 	@Override

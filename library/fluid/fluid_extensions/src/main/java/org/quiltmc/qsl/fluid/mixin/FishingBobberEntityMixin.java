@@ -27,6 +27,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import org.quiltmc.qsl.fluid.api.QuiltFluid;
 import org.quiltmc.qsl.fluid.impl.CustomFluidInteracting;
 import org.quiltmc.qsl.fluid.impl.FishingBobberEntityExtensions;
 import org.spongepowered.asm.mixin.Mixin;
@@ -46,13 +47,15 @@ public abstract class FishingBobberEntityMixin implements CustomFluidInteracting
 
 	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/tag/TagKey;)Z", ordinal = 1))
 	public boolean tick2(FluidState instance, TagKey<Fluid> tag) {
-		return instance.isIn(this.quilt$canFishingbobberSwimOn());
+		QuiltFluid fluid = (QuiltFluid) instance.getFluid();
+		return instance.isIn(this.quilt$canFishingbobberSwimOn()) && fluid.bobberFloats(instance,(FishingBobberEntity) (Object)this);
 	}
 
-	@Inject(method = "tickFishingLogic", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/BlockPos;up()Lnet/minecraft/util/math/BlockPos;"), locals = LocalCapture.CAPTURE_FAILSOFT)
+	@Inject(method = "tickFishingLogic", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/BlockPos;up()Lnet/minecraft/util/math/BlockPos;"), locals = LocalCapture.CAPTURE_FAILHARD)
 	public void canFish(BlockPos pos, CallbackInfo ci, ServerWorld serverWorld, int i) {
-		Fluid fluid = serverWorld.getBlockState(pos).getFluidState().getFluid();
-		if (!fluid.isIn(this.quilt$canFishingbobberCatchIn())) {
+		FluidState state = serverWorld.getBlockState(pos).getFluidState();
+		QuiltFluid fluid = (QuiltFluid) state.getFluid();
+		if (!state.isIn(this.quilt$canFishingbobberCatchIn()) || !fluid.canFish(state,(FishingBobberEntity) (Object)this)) {
 			ci.cancel();
 		}
 	}

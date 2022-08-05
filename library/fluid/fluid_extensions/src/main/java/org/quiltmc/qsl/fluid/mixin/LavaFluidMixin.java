@@ -19,6 +19,7 @@ package org.quiltmc.qsl.fluid.mixin;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.fluid.FlowableFluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.LavaFluid;
@@ -31,42 +32,12 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
-import org.quiltmc.qsl.fluid.api.FlowableFluidExtensions;
+import org.quiltmc.qsl.fluid.api.QuiltFlowableFluidExtensions;
 import org.quiltmc.qsl.fluid.api.FluidEnchantmentHelper;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(LavaFluid.class)
-public abstract class LavaFluidMixin extends FlowableFluid implements FlowableFluidExtensions {
-
-	@Override
-	public float getDefaultTemperature(World world, BlockPos blockPos) {
-		return LAVA_TEMPERATURE;
-	}
-
-	@Override
-	public float getDefaultDensity(World world, BlockPos blockPos) {
-		return LAVA_DENSITY;
-	}
-
-	@Override
-	public float getHorizontalViscosity(FluidState state, Entity effected) {
-		return LAVA_VISCOSITY;
-	}
-
-	@Override
-	public float getVerticalViscosity(FluidState state, Entity effected) {
-		return WATER_VISCOSITY;
-	}
-
-	@Override
-	public float getPushStrength(FluidState state, Entity effected) {
-		return effected.world.getDimension().ultraWarm() ? LAVA_PUSH_STRENGTH_ULTRAWARM : LAVA_PUSH_STRENGTH_OVERWORLD;
-	}
-
-	@Override
-	public float getFallDamageReduction(Entity entity) {
-		return HALF_FALL_DAMAGE_REDUCTION;
-	}
+public abstract class LavaFluidMixin extends FlowableFluid implements QuiltFlowableFluidExtensions {
 
 	@Override
 	public float getFogStart(FluidState state, Entity affected, float viewDistance) {
@@ -106,7 +77,7 @@ public abstract class LavaFluidMixin extends FlowableFluid implements FlowableFl
 	}
 
 	@Override
-	public float modifyHorizontalViscosity(LivingEntity affected, float horizontalViscosity) {
+	public float modifyEntityHorizontalViscosity(LivingEntity affected, float horizontalViscosity) {
 		return horizontalViscosity;
 	}
 
@@ -117,11 +88,6 @@ public abstract class LavaFluidMixin extends FlowableFluid implements FlowableFl
 
 	@Override
 	public void doDrownEffects(FluidState state, LivingEntity drowning, RandomGenerator random) {
-	}
-
-	@Override
-	public int getFogColor(FluidState state, Entity affected) {
-		return LAVA_FOG_COLOR;
 	}
 
 	@Override
@@ -164,6 +130,20 @@ public abstract class LavaFluidMixin extends FlowableFluid implements FlowableFl
 	@Override
 	public FluidEnchantmentHelper customEnchantmentEffects(Vec3d movementInput, LivingEntity entity, float horizontalViscosity, float speed) {
 		return new FluidEnchantmentHelper(horizontalViscosity, speed);
+	}
+	@Override
+	public boolean canBoatSwimOn() {
+		return false;
+	}
+
+	@Override
+	public boolean bobberFloats(FluidState state, FishingBobberEntity affected) {
+		return false;
+	}
+
+	@Override
+	public boolean canFish(FluidState state, FishingBobberEntity affected) {
+		return false;
 	}
 
 	@Override
