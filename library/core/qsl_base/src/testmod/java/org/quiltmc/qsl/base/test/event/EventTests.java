@@ -29,7 +29,7 @@ import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.impl.QuiltBaseImpl;
-import org.quiltmc.qsl.base.impl.event.PhaseSorting;
+import org.quiltmc.qsl.base.api.phase.PhaseSorting;
 
 public final class EventTests implements Runnable {
 	private static final Logger LOGGER = QuiltBaseImpl.LOGGER;
