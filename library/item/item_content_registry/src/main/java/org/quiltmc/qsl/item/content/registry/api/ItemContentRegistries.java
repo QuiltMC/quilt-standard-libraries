@@ -62,5 +62,16 @@ public class ItemContentRegistries {
 					Float.class,
 					Codec.floatRange(0, 1))
 			.build();
-}
 
+	/**
+	 * A {@link RegistryEntryAttachment} for how long different items burn in a brewing stand. The value is the number of brews it can make.
+	 * <p>
+	 * Values can be set via code and through a data-pack with the file {@code data/quilt_item_content_registry/attachments/minecraft/item/brewing_fuel_time.json}
+	 */
+	public static final RegistryEntryAttachment<Item, Integer> BREWING_FUEL_TIME = RegistryEntryAttachment
+			.builder(Registry.ITEM,
+					new Identifier(NAMESPACE, "brewing_fuel_time"),
+					Integer.class,
+					Codec.intRange(0, Byte.MAX_VALUE))
+			.build();
+}
