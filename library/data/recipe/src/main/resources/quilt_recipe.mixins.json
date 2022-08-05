@@ -5,15 +5,16 @@
   "mixins": [
     "BrewingRecipeRegistryMixin",
     "BrewingStandBlockEntityMixin",
-    "PotionSlotMixin",
     "CookingRecipeSerializerMixin",
     "CuttingRecipeSerializerMixin",
+    "PotionSlotMixin",
     "RecipeManagerMixin",
     "ShapedRecipeSerializerMixin",
     "ShapelessRecipeSerializerMixin",
     "SmithingRecipeAccessor",
     "SmithingRecipeSerializerMixin",
-    "SpecialRecipeSerializerMixin"
+    "SpecialRecipeSerializerMixin",
+    "SynchronizeRecipesS2CPacketMixin"
   ],
   "injectors": {
     "defaultRequire": 1
