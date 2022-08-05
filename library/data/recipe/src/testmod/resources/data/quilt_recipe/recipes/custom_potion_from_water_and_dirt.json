@@ -1,0 +1,17 @@
+{
+  "type": "quilt_recipe:custom_potion_brewing",
+  "ingredient": {
+    "item": "minecraft:dirt"
+  },
+  "input": "minecraft:water",
+  "output": "minecraft:mundane",
+  "fuel": 20,
+  "effects": [
+    "minecraft:jump_boost",
+    {
+      "type": "minecraft:strength",
+      "amplifier": 123,
+      "duration": 10
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "type": "quilt_recipe:potion_item_brewing",
+  "ingredient": {
+    "tag": "minecraft:logs"
+  },
+  "input": "minecraft:potion",
+  "output": "minecraft:lingering_potion"
+}

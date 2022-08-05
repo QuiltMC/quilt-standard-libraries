@@ -3,6 +3,9 @@
   "package": "org.quiltmc.qsl.recipe.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "BrewingRecipeRegistryMixin",
+    "BrewingStandBlockEntityMixin",
+    "PotionSlotMixin",
     "CookingRecipeSerializerMixin",
     "CuttingRecipeSerializerMixin",
     "RecipeManagerMixin",

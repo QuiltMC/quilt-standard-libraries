@@ -15,5 +15,10 @@ qslModule {
 			testmodOnly("resource_loader")
 		}
 	}
+	entrypoints {
+		init {
+			values = ["org.quiltmc.qsl.recipe.impl.RecipeImpl"]
+		}
+	}
 	accessWidener()
 }
