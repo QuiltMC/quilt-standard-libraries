@@ -192,8 +192,8 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 				);
 
 				if (DEBUG_RELOADERS_IDENTITY) {
-					LOGGER.warn("The resource reloader at " + currentReloader.getClass().getName() + " does not implement IdentifiableResourceReloader " +
-							"making ordering support more difficult for other modders.");
+					LOGGER.warn("The resource reloader at {} does not implement IdentifiableResourceReloader " +
+							"making ordering support more difficult for other modders.", currentReloader.getClass().getName());
 				}
 			}
 
