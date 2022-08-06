@@ -18,6 +18,7 @@ package org.quiltmc.qsl.recipe.impl;
 
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.block.entity.BrewingStandBlockEntity;
 import net.minecraft.item.Item;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.tag.TagKey;
@@ -26,24 +27,23 @@ import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-import org.quiltmc.qsl.recipe.api.AbstractBrewingRecipe;
-import org.quiltmc.qsl.recipe.api.CustomPotionBrewingRecipe;
-import org.quiltmc.qsl.recipe.api.PotionBrewingRecipe;
-import org.quiltmc.qsl.recipe.api.PotionItemBrewingRecipe;
+import org.quiltmc.qsl.recipe.api.brewing.AbstractBrewingRecipe;
+import org.quiltmc.qsl.recipe.api.brewing.CustomPotionBrewingRecipe;
+import org.quiltmc.qsl.recipe.api.brewing.PotionBrewingRecipe;
+import org.quiltmc.qsl.recipe.api.brewing.PotionItemBrewingRecipe;
 
 @ApiStatus.Internal
 public class RecipeImpl implements ModInitializer {
-	public static final Identifier BREWING_ID = new Identifier("quilt_recipe", "brewing");
-	public static final RecipeType<AbstractBrewingRecipe<?>> BREWING = RecipeType.register(RecipeImpl.BREWING_ID.toString());
-	public static final PotionBrewingRecipe.Serializer<PotionBrewingRecipe> POTION_SERIALIZER = new PotionBrewingRecipe.Serializer<>(PotionBrewingRecipe::new);
-	public static final CustomPotionBrewingRecipe.Serializer CUSTOM_POTION_SERIALIZER = new CustomPotionBrewingRecipe.Serializer(CustomPotionBrewingRecipe::new);
-	public static final PotionItemBrewingRecipe.Serializer POTION_ITEM_SERIALIZER = new PotionItemBrewingRecipe.Serializer(PotionItemBrewingRecipe::new);
-	public static final TagKey<Item> POTIONS = TagKey.of(Registry.ITEM_KEY, new Identifier("quilt", "potions"));
+	public static final String NAMESPACE = "quilt_recipe";
+	public static final RecipeType<AbstractBrewingRecipe<?>> BREWING = RecipeType.register(NAMESPACE + ":brewing");
+	public static final PotionBrewingRecipe.Serializer<PotionBrewingRecipe> POTION_SERIALIZER = Registry.register(Registry.RECIPE_SERIALIZER, new Identifier(NAMESPACE, "potion_brewing"), new PotionBrewingRecipe.Serializer<>(PotionBrewingRecipe::new));
+	public static final CustomPotionBrewingRecipe.Serializer CUSTOM_POTION_SERIALIZER = Registry.register(Registry.RECIPE_SERIALIZER, new Identifier(NAMESPACE, "custom_potion_brewing"), new CustomPotionBrewingRecipe.Serializer(CustomPotionBrewingRecipe::new));
+	public static final PotionItemBrewingRecipe.Serializer POTION_ITEM_SERIALIZER = Registry.register(Registry.RECIPE_SERIALIZER, new Identifier(NAMESPACE, "potion_item_brewing"), new PotionItemBrewingRecipe.Serializer(PotionItemBrewingRecipe::new));
+	/**
+	 * Represents what items can be put into the potion slots of a {@link BrewingStandBlockEntity}.
+	 */
+	public static final TagKey<Item> VALID_INPUTS = TagKey.of(Registry.ITEM_KEY, new Identifier("quilt", "brewing_stand/inputs"));
 
 	@Override
-	public void onInitialize(ModContainer mod) {
-		Registry.register(Registry.RECIPE_SERIALIZER, new Identifier("quilt_recipe", "potion_brewing"), POTION_SERIALIZER);
-		Registry.register(Registry.RECIPE_SERIALIZER, new Identifier("quilt_recipe", "custom_potion_brewing"), CUSTOM_POTION_SERIALIZER);
-		Registry.register(Registry.RECIPE_SERIALIZER, new Identifier("quilt_recipe", "potion_item_brewing"), POTION_ITEM_SERIALIZER);
-	}
+	public void onInitialize(ModContainer mod) {}
 }

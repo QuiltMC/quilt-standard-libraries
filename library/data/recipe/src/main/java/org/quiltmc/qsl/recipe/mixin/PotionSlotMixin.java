@@ -29,11 +29,11 @@ import org.quiltmc.qsl.recipe.impl.RecipeImpl;
 public class PotionSlotMixin {
 	/**
 	 * @author QuiltMC, Platymemo
-	 * @reason Replaces the functionality with a {@link ItemStack#isIn(TagKey)} check for {@link RecipeImpl#POTIONS},
+	 * @reason Replaces the functionality with a {@link ItemStack#isIn(TagKey)} check for {@link RecipeImpl#VALID_INPUTS},
 	 * and an {@link Overwrite} is more explicit than an {@link Inject} at {@code HEAD} and cancel.
 	 */
 	@Overwrite
 	public static boolean matches(ItemStack stack) {
-		return stack.isIn(RecipeImpl.POTIONS);
+		return stack.isIn(RecipeImpl.VALID_INPUTS);
 	}
 }

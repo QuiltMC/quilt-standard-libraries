@@ -19,13 +19,12 @@ package org.quiltmc.qsl.recipe.api.builder;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.Identifier;
 
-import org.quiltmc.qsl.recipe.api.PotionBrewingRecipe;
-import org.quiltmc.qsl.recipe.impl.AbstractPotionBrewingRecipeBuilder;
+import org.quiltmc.qsl.recipe.api.brewing.PotionBrewingRecipe;
 
 /**
  * Builder to build potion recipes
  */
-public class PotionBrewingRecipeBuilder extends AbstractPotionBrewingRecipeBuilder<PotionBrewingRecipeBuilder, Potion, PotionBrewingRecipe> {
+public class PotionBrewingRecipeBuilder extends BrewingRecipeBuilder<PotionBrewingRecipeBuilder, Potion, PotionBrewingRecipe> {
 
 	/**
 	 * Creates a new potion brewing recipe builder.

@@ -18,6 +18,7 @@ package org.quiltmc.qsl.recipe.api;
 
 import net.minecraft.recipe.RecipeType;
 
+import org.quiltmc.qsl.recipe.api.brewing.AbstractBrewingRecipe;
 import org.quiltmc.qsl.recipe.impl.RecipeImpl;
 
 public class Recipes {

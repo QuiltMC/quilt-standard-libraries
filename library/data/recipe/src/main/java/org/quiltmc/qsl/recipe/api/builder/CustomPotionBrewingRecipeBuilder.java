@@ -24,12 +24,12 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.Identifier;
 
-import org.quiltmc.qsl.recipe.api.CustomPotionBrewingRecipe;
+import org.quiltmc.qsl.recipe.api.brewing.CustomPotionBrewingRecipe;
 
 /**
  * Builder to build custom potion recipes
  */
-public class CustomPotionBrewingRecipeBuilder extends PotionBrewingRecipeBuilder {
+public class CustomPotionBrewingRecipeBuilder extends BrewingRecipeBuilder<CustomPotionBrewingRecipeBuilder, Potion, CustomPotionBrewingRecipe> {
 	private final List<StatusEffectInstance> effects = new ArrayList<>();
 
 	/**

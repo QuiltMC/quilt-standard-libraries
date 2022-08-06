@@ -39,7 +39,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import org.quiltmc.qsl.recipe.api.Recipes;
-import org.quiltmc.qsl.recipe.api.AbstractBrewingRecipe;
+import org.quiltmc.qsl.recipe.api.brewing.AbstractBrewingRecipe;
 import org.quiltmc.qsl.recipe.impl.RecipeImpl;
 
 @Mixin(BrewingStandBlockEntity.class)
@@ -137,6 +137,6 @@ public abstract class BrewingStandBlockEntityMixin extends LockableContainerBloc
 
 	@Inject(method = "isValid", at = @At(value = "RETURN", ordinal = 2), cancellable = true)
 	private void isValidPotionItem(int slot, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-		cir.setReturnValue(stack.isIn(RecipeImpl.POTIONS) && this.getStack(slot).isEmpty());
+		cir.setReturnValue(stack.isIn(RecipeImpl.VALID_INPUTS) && this.getStack(slot).isEmpty());
 	}
 }

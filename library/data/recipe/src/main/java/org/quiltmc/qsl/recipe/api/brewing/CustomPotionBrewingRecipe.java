@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.recipe.api;
+package org.quiltmc.qsl.recipe.api.brewing;
 
 import java.util.ArrayList;
 import java.util.Collection;

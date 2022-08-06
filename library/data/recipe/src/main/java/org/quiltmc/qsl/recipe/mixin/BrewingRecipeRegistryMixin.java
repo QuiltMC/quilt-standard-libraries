@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.BrewingRecipeRegistry;
 
-import org.quiltmc.qsl.recipe.api.AbstractBrewingRecipe;
+import org.quiltmc.qsl.recipe.api.brewing.AbstractBrewingRecipe;
 
 @Mixin(BrewingRecipeRegistry.class)
 public class BrewingRecipeRegistryMixin {

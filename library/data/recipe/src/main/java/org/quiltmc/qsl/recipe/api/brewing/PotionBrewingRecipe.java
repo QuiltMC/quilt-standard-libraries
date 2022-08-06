@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.recipe.api;
+package org.quiltmc.qsl.recipe.api.brewing;
 
 import com.google.gson.JsonObject;
 
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.PotionItem;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtil;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeSerializer;
@@ -32,81 +31,81 @@ import net.minecraft.util.registry.Registry;
 import org.quiltmc.qsl.recipe.impl.RecipeImpl;
 
 /**
- * A {@link PotionItem} brewing recipe.
+ * A {@link Potion} brewing recipe.
  *
  * <p>
  *     The recipe has six arguments:
  * </p>
  * <ul>
- * 		<li>type: "quilt_recipe:potion_item_brewing"</li>
+ * 		<li>type: "quilt_recipe:potion_brewing"</li>
  * 		<li>group: A string representing the group of the recipe</li>
  * 		<li>ingredient: A valid ingredient json object.</li>
- * 		<li>input: A valid identifier for an {@link Item item}.</li>
- * 		<li>output: A valid identifier for an {@link Item item}.</li>
+ * 		<li>input: A valid identifier for a {@link Potion potion}.</li>
+ * 		<li>output: A valid identifier for a {@link Potion potion}.</li>
  * 		<li>fuel: An integer representing how much fuel this craft will take.
  * 			In vanilla, blaze powder supplies 20 fuel.</li>
  * 		<li>time: An integer representing how much time this craft will take, in ticks.
  * 			In vanilla, the default is 400 ticks.</li>
  * </ul>
  *
- * Here is an example recipe for transforming a regular potion into a lingering potion using a log, 20 fuel units, and 100 ticks.
+ * Here is an example recipe for a potion of luck that takes a water potion, a trapdoor of some kind, 5 fuel units, and 123 ticks.
  * <pre><code>
  * {
- *   "type": "quilt_recipe:potion_item_brewing",
+ *   "type": "quilt_recipe:potion_brewing",
  *   "ingredient": {
- *     "tag": "minecraft:logs"
+ *     "tag": "minecraft:trapdoors"
  *   },
- *   "input": "minecraft:potion",
- *   "output": "minecraft:lingering_potion",
- *   "fuel": 20,
- *   "time": 100
+ *   "input": "minecraft:water",
+ *   "output": "minecraft:luck",
+ *   "fuel": 5,
+ *   "time": 123
  * }
  * </code></pre>
  */
-public class PotionItemBrewingRecipe extends AbstractBrewingRecipe<Item> {
-	public PotionItemBrewingRecipe(Identifier id, String group, Item input, Ingredient ingredient, Item output, int fuel, int brewTime) {
+public class PotionBrewingRecipe extends AbstractBrewingRecipe<Potion> {
+	public PotionBrewingRecipe(Identifier id, String group, Potion input, Ingredient ingredient, Potion output, int fuel, int brewTime) {
 		super(id, group, input, ingredient, output, fuel, brewTime);
-		this.ghostOutput = new ItemStack(this.output);
+		PotionUtil.setPotion(this.ghostOutput, this.output);
 	}
 
 	@Override
 	protected ItemStack craft(int slot, ItemStack input) {
-		return PotionUtil.setPotion(new ItemStack(this.output), PotionUtil.getPotion(input));
+		return PotionUtil.setPotion(input.copy(), this.output);
 	}
 
 	@Override
 	public boolean matches(int slot, ItemStack input) {
-		return input.isOf(this.input);
+		return !input.isEmpty() && PotionUtil.getPotion(input).equals(this.input);
 	}
 
 	@Override
-	public RecipeSerializer<?> getSerializer() {
-		return RecipeImpl.POTION_ITEM_SERIALIZER;
+	public RecipeSerializer<? extends PotionBrewingRecipe> getSerializer() {
+		return RecipeImpl.POTION_SERIALIZER;
 	}
 
-	public static class Serializer extends AbstractBrewingSerializer<Item, PotionItemBrewingRecipe> {
-		public Serializer(RecipeFactory<Item, PotionItemBrewingRecipe> recipeFactory) {
+	public static class Serializer<R extends PotionBrewingRecipe> extends AbstractBrewingSerializer<Potion, R> {
+		public Serializer(RecipeFactory<Potion, R> recipeFactory) {
 			super(recipeFactory);
 		}
 
 		@Override
-		public Item deserialize(String element, JsonObject json) {
-			return JsonHelper.getItem(json, element);
+		public Potion deserialize(String element, JsonObject json) {
+			return Potion.byId(JsonHelper.getString(json, element, "empty"));
 		}
 
 		@Override
-		public Item deserialize(PacketByteBuf buf) {
-			return buf.readById(Registry.ITEM);
+		public Potion deserialize(PacketByteBuf buf) {
+			return Potion.byId(buf.readString());
 		}
 
 		@Override
-		public void serialize(Item item, String element, JsonObject json) {
-			json.addProperty(element, Registry.ITEM.getId(item).toString());
+		public void serialize(Potion value, String element, JsonObject json) {
+			json.addProperty(element, Registry.POTION.getId(value).toString());
 		}
 
 		@Override
-		public void serialize(Item item, PacketByteBuf buf) {
-			buf.writeId(Registry.ITEM, item);
+		public void serialize(Potion value, PacketByteBuf buf) {
+			buf.writeString(Registry.POTION.getId(value).toString());
 		}
 	}
 }

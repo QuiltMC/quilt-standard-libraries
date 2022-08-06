@@ -14,16 +14,24 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.recipe.impl;
+package org.quiltmc.qsl.recipe.api.builder;
 
-import org.jetbrains.annotations.ApiStatus;
-
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemConvertible;
+import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 
-@ApiStatus.Internal
-public abstract class AbstractPotionBrewingRecipeBuilder<SELF extends AbstractPotionBrewingRecipeBuilder<SELF, TYPE, RESULT>, TYPE, RESULT extends Recipe<?>> {
+/**
+ * Represents the basis of a recipe builder.
+ *
+ * @param <SELF>   the type of the recipe builder
+ * @param <TYPE>   the type of the recipe's input and output
+ * @param <RESULT> the type of the recipe
+ */
+public abstract class BrewingRecipeBuilder<SELF extends BrewingRecipeBuilder<SELF, TYPE, RESULT>, TYPE, RESULT extends Recipe<?>> {
 	protected TYPE input;
 	protected Ingredient ingredient = Ingredient.EMPTY;
 	protected TYPE output;
@@ -36,15 +44,13 @@ public abstract class AbstractPotionBrewingRecipeBuilder<SELF extends AbstractPo
 	 * @param input the input {@link TYPE}
 	 * @param output the resulting {@link TYPE}
 	 */
-	public AbstractPotionBrewingRecipeBuilder(TYPE input, TYPE output) {
+	public BrewingRecipeBuilder(TYPE input, TYPE output) {
 		this.input = input;
 		this.output = output;
 	}
 
 	/**
 	 * Sets the required ingredient for the recipe.
-	 * <p>
-	 * By default, no ingredient is necessary.</p>
 	 *
 	 * @param ingredient the {@link Ingredient}
 	 */
@@ -52,6 +58,42 @@ public abstract class AbstractPotionBrewingRecipeBuilder<SELF extends AbstractPo
 	public SELF ingredient(Ingredient ingredient) {
 		this.ingredient = ingredient;
 		return (SELF) this;
+	}
+
+	/**
+	 * Sets items as the ingredient.
+	 *
+	 * @param items the items as ingredient
+	 * @return this builder
+	 * @see #ingredient(Ingredient)
+	 * @see Ingredient#ofItems(ItemConvertible...)
+	 */
+	public SELF ingredient(ItemConvertible... items) {
+		return this.ingredient(Ingredient.ofItems(items));
+	}
+
+	/**
+	 * Sets the specified item tag as the ingredient.
+	 *
+	 * @param tag the item tag as ingredient
+	 * @return this builder
+	 * @see #ingredient(Ingredient)
+	 * @see Ingredient#ofTag(TagKey) (TagKey)
+	 */
+	public SELF ingredient(TagKey<Item> tag) {
+		return this.ingredient(Ingredient.ofTag(tag));
+	}
+
+	/**
+	 * Sets item stacks as the ingredient.
+	 *
+	 * @param stacks the item stacks as ingredient
+	 * @return this builder
+	 * @see #ingredient(Ingredient)
+	 * @see Ingredient#ofStacks(ItemStack...)
+	 */
+	public SELF ingredient(ItemStack... stacks) {
+		return this.ingredient(Ingredient.ofStacks(stacks));
 	}
 
 	/**

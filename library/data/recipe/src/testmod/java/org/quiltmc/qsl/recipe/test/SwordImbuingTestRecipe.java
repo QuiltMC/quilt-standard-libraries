@@ -34,7 +34,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.registry.Registry;
 
-import org.quiltmc.qsl.recipe.api.AbstractBrewingRecipe;
+import org.quiltmc.qsl.recipe.api.brewing.AbstractBrewingRecipe;
 
 public class SwordImbuingTestRecipe extends AbstractBrewingRecipe<Item> {
 	public SwordImbuingTestRecipe(Identifier id, String group, Item input, Ingredient ingredient, Item output, int fuel, int brewTime) {

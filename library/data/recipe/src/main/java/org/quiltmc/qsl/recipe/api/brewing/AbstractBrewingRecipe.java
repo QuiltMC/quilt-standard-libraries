@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.recipe.api;
+package org.quiltmc.qsl.recipe.api.brewing;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +38,7 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
+import org.quiltmc.qsl.recipe.api.Recipes;
 import org.quiltmc.qsl.recipe.api.serializer.QuiltRecipeSerializer;
 
 /**

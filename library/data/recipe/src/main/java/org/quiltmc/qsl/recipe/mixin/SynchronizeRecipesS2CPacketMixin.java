@@ -35,7 +35,7 @@ import org.quiltmc.qsl.recipe.impl.RecipeImpl;
 /**
  * Removes the quilt brewing recipes from client sync packet.
  * <p>
- * This is fine because they are only used serverside.</p>
+ * This is fine because they are only used serverside.
  */
 @Mixin(SynchronizeRecipesS2CPacket.class)
 public class SynchronizeRecipesS2CPacketMixin {
