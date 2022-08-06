@@ -1,5 +1,5 @@
 /**
- * <h2>The Resource Loader.</h2>
+ * <h2>The Resource Loader and its APIs.</h2>
  *
  * <p>
  * <h3>Quick note about vocabulary in Resource Loader and Minecraft:</h3>
@@ -20,8 +20,8 @@
  * <p>
  * <h4>Built-in Mod Resource Pack</h4>
  * The Resource Loader adds manually registered mod resource packs. Those resource packs are registered with
- * {@link org.quiltmc.qsl.resource.loader.api.ResourceLoader#registerBuiltinResourcePack(net.minecraft.util.Identifier, org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType)}, or
- * {@link org.quiltmc.qsl.resource.loader.api.ResourceLoader#registerBuiltinResourcePack(net.minecraft.util.Identifier, org.quiltmc.loader.api.ModContainer, ResourcePackActivationType)}
+ * {@link org.quiltmc.qsl.resource.loader.api.ResourceLoader#registerBuiltinResourcePack(Identifier, ResourcePackActivationType)}, or
+ * {@link org.quiltmc.qsl.resource.loader.api.ResourceLoader#registerBuiltinResourcePack(Identifier, org.quiltmc.loader.api.ModContainer, ResourcePackActivationType)}
  *
  * <p>
  * <h4>Programmer Art Resource Pack</h4>
@@ -34,9 +34,13 @@
  * The Resource Loader allows mods to register resource reloaders through
  * {@link org.quiltmc.qsl.resource.loader.api.ResourceLoader#registerReloader(IdentifiableResourceReloader)},
  * which are triggered when resources are reloaded.
- * A resource reloader can depend on another and vanilla resource reloader identifiers may be found in {@link org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys}.
+ * Resource reloaders can define a specific ordering through
+ * {@link org.quiltmc.qsl.resource.loader.api.ResourceLoader#addReloaderOrdering(Identifier, Identifier)},
+ * vanilla resource reloader identifiers may be found in {@link org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys}.
  */
 
 package org.quiltmc.qsl.resource.loader.api;
+
+import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;

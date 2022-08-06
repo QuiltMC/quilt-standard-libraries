@@ -28,13 +28,17 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.qsl.base.api.phase.PhaseData;
+import org.quiltmc.qsl.base.api.phase.PhaseSorting;
 import org.quiltmc.qsl.base.api.util.QuiltAssertions;
 import org.quiltmc.qsl.base.impl.QuiltBaseImpl;
 import org.quiltmc.qsl.base.impl.event.EventPhaseData;
 import org.quiltmc.qsl.base.impl.event.EventRegistry;
-import org.quiltmc.qsl.base.impl.event.PhaseSorting;
 
 /**
  * An object which stores event callbacks.
@@ -126,7 +130,7 @@ public final class Event<T> {
 	 * @param <T>            the type of the invoker executed by the event
 	 * @return a new event instance
 	 */
-	public static <T> Event<T> create(Class<? super T> type, Function<T[], T> implementation) {
+	public static <T> @NotNull Event<T> create(@NotNull Class<? super T> type, @NotNull Function<T[], T> implementation) {
 		return new Event<>(type, implementation);
 	}
 
@@ -144,7 +148,7 @@ public final class Event<T> {
 	 * @param <T>                 the type of the invoker executed by the event
 	 * @return a new event instance
 	 */
-	public static <T> Event<T> create(Class<? super T> type, T emptyImplementation, Function<T[], T> implementation) {
+	public static <T> @NotNull Event<T> create(@NotNull Class<? super T> type, @NotNull T emptyImplementation, @NotNull Function<T[], T> implementation) {
 		return create(type, callbacks -> switch (callbacks.length) {
 			case 0 -> emptyImplementation;
 			case 1 -> callbacks[0];
@@ -174,7 +178,8 @@ public final class Event<T> {
 	 * @param <T>            the type of the invoker executed by the event
 	 * @return a new event instance
 	 */
-	public static <T> Event<T> createWithPhases(Class<? super T> type, Function<T[], T> implementation, Identifier... defaultPhases) {
+	public static <T> @NotNull Event<T> createWithPhases(@NotNull Class<? super T> type, @NotNull Function<T[], T> implementation,
+			@NotNull Identifier... defaultPhases) {
 		QuiltBaseImpl.ensureContainsDefaultPhase(defaultPhases);
 		QuiltAssertions.ensureNoDuplicates(defaultPhases, id -> new IllegalArgumentException("Duplicate event phase: " + id));
 
@@ -200,7 +205,7 @@ public final class Event<T> {
 	 * @see #register(Object)
 	 * @see #register(Identifier, Object)
 	 */
-	public static void listenAll(Object listener, Event<?>... events) {
+	public static void listenAll(@NotNull Object listener, @NotNull Event<?>... events) {
 		if (events.length == 0) {
 			throw new IllegalArgumentException("Tried to register a listener for an empty event list.");
 		}
@@ -247,7 +252,8 @@ public final class Event<T> {
 	/**
 	 * {@return the class of the type of the invoker used to execute an event and the class of the type of the callback}
 	 */
-	public Class<? super T> getType() {
+	@Contract(pure = true)
+	public @NotNull Class<? super T> getType() {
 		return this.type;
 	}
 
@@ -257,7 +263,7 @@ public final class Event<T> {
 	 * @param callback the callback
 	 * @see #register(Identifier, Object)
 	 */
-	public void register(T callback) {
+	public void register(@NotNull T callback) {
 		this.register(DEFAULT_PHASE, callback);
 	}
 
@@ -267,7 +273,7 @@ public final class Event<T> {
 	 * @param phaseIdentifier the phase identifier
 	 * @param callback        the callback
 	 */
-	public void register(Identifier phaseIdentifier, T callback) {
+	public void register(@NotNull Identifier phaseIdentifier, @NotNull T callback) {
 		Objects.requireNonNull(phaseIdentifier, "Tried to register a callback for a null phase!");
 		Objects.requireNonNull(callback, "Tried to register a null callback!");
 
@@ -288,7 +294,8 @@ public final class Event<T> {
 	 *
 	 * @return the invoker instance
 	 */
-	public T invoker() {
+	@Contract(pure = true)
+	public @NotNull T invoker() {
 		return this.invoker;
 	}
 
@@ -303,9 +310,10 @@ public final class Event<T> {
 	 * @param firstPhase  the identifier of the phase that should run before the other. It will be created if it didn't exist yet
 	 * @param secondPhase the identifier of the phase that should run after the other. It will be created if it didn't exist yet
 	 */
-	public void addPhaseOrdering(Identifier firstPhase, Identifier secondPhase) {
+	public void addPhaseOrdering(@NotNull Identifier firstPhase, @NotNull Identifier secondPhase) {
 		Objects.requireNonNull(firstPhase, "Tried to add an ordering for a null phase.");
 		Objects.requireNonNull(secondPhase, "Tried to add an ordering for a null phase.");
+
 		if (firstPhase.equals(secondPhase)) {
 			throw new IllegalArgumentException("Tried to add a phase that depends on itself.");
 		}
@@ -313,9 +321,9 @@ public final class Event<T> {
 		synchronized (this.lock) {
 			var first = this.getOrCreatePhase(firstPhase, false);
 			var second = this.getOrCreatePhase(secondPhase, false);
-			EventPhaseData.link(first, second);
+			PhaseData.link(first, second);
 			PhaseSorting.sortPhases(this.sortedPhases);
-			rebuildInvoker(this.callbacks.length);
+			this.rebuildInvoker(this.callbacks.length);
 		}
 	}
 
@@ -341,15 +349,15 @@ public final class Event<T> {
 		// Rebuild handlers.
 		if (this.sortedPhases.size() == 1) {
 			// Special case with a single phase: use the array of the phase directly.
-			this.callbacks = this.sortedPhases.get(0).getListeners();
+			this.callbacks = this.sortedPhases.get(0).getData();
 		} else {
 			@SuppressWarnings("unchecked")
 			var newCallbacks = (T[]) Array.newInstance(this.callbacks.getClass().getComponentType(), newLength);
 			int newHandlersIndex = 0;
 
 			for (var existingPhase : this.sortedPhases) {
-				int length = existingPhase.getListeners().length;
-				System.arraycopy(existingPhase.getListeners(), 0, newCallbacks, newHandlersIndex, length);
+				int length = existingPhase.getData().length;
+				System.arraycopy(existingPhase.getData(), 0, newCallbacks, newHandlersIndex, length);
 				newHandlersIndex += length;
 			}
 
