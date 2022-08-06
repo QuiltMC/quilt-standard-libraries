@@ -1,4 +1,20 @@
-package org.quiltmc.qsl.recipe.impl;
+/*
+ * Copyright 2022 QuiltMC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.quiltmc.qsl.recipe.api;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,9 +23,11 @@ import com.google.gson.JsonObject;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BrewingStandBlockEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.potion.Potion;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
@@ -20,26 +38,38 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
-import org.quiltmc.qsl.recipe.api.Recipes;
 import org.quiltmc.qsl.recipe.api.serializer.QuiltRecipeSerializer;
 
+/**
+ * The base for all Quilt brewing recipes.
+ *
+ * @param <T> what type the input and output represents.
+ *           Vanilla would be {@link Potion} and {@link Item}
+ * @see PotionBrewingRecipe
+ * @see CustomPotionBrewingRecipe
+ * @see PotionItemBrewingRecipe
+ */
 public abstract class AbstractBrewingRecipe<T> implements Recipe<BrewingStandBlockEntity> {
 	public static final List<Ingredient> VALID_INGREDIENTS = new ArrayList<>();
 	protected final T input;
 	protected final Ingredient ingredient;
 	protected final T output;
 	protected final int fuel;
+	protected final int brewTime;
 	protected ItemStack ghostOutput;
+	protected final String group;
 	private final Identifier id;
 
-	public AbstractBrewingRecipe(Identifier id, T input, Ingredient ingredient, T output, int fuel) {
+	public AbstractBrewingRecipe(Identifier id, String group, T input, Ingredient ingredient, T output, int fuel, int brewTime) {
 		this.id = id;
+		this.group = group;
 		this.input = input;
 		this.ingredient = ingredient;
 		VALID_INGREDIENTS.add(ingredient);
 		this.output = output;
 		this.ghostOutput = new ItemStack(Items.POTION);
 		this.fuel = fuel;
+		this.brewTime = brewTime;
 	}
 
 	@Override
@@ -74,8 +104,7 @@ public abstract class AbstractBrewingRecipe<T> implements Recipe<BrewingStandBlo
 		ItemStack ingredient = inventory.getStack(3);
 		if (this.ingredient.test(ingredient)) {
 			for (int i = 0; i < 3; ++i) {
-				ItemStack stack = inventory.getStack(i);
-				if (matches(i, stack)) {
+				if (matches(i, inventory.getStack(i))) {
 					return true;
 				}
 			}
@@ -96,7 +125,14 @@ public abstract class AbstractBrewingRecipe<T> implements Recipe<BrewingStandBlo
 	 * @return how much fuel this recipe takes to craft
 	 */
 	public int getFuelUse() {
-		return fuel;
+		return this.fuel;
+	}
+
+	/**
+	 * @return how long this recipe takes to craft
+	 */
+	public int getBrewTime() {
+		return this.brewTime;
 	}
 
 	@Override
@@ -130,7 +166,13 @@ public abstract class AbstractBrewingRecipe<T> implements Recipe<BrewingStandBlo
 		return this.id;
 	}
 
-	protected static abstract class AbstractBrewingSerializer<T, R extends AbstractBrewingRecipe<T>> implements RecipeSerializer<R>, QuiltRecipeSerializer<R> {
+	/**
+	 * The base serializer for all Quilt brewing recipe serializers to extend.
+	 *
+	 * @param <T> the type of the recipe's input and output
+	 * @param <R> the recipe
+	 */
+	public static abstract class AbstractBrewingSerializer<T, R extends AbstractBrewingRecipe<T>> implements RecipeSerializer<R>, QuiltRecipeSerializer<R> {
 		private final RecipeFactory<T, ? extends R> recipeFactory;
 
 		protected AbstractBrewingSerializer(RecipeFactory<T, ? extends R> recipeFactory) {
@@ -139,52 +181,86 @@ public abstract class AbstractBrewingRecipe<T> implements Recipe<BrewingStandBlo
 
 		@Override
 		public R read(Identifier id, JsonObject json) {
+			String group = JsonHelper.getString(json, "group", "");
 			Ingredient ingredient = Ingredient.fromJson(JsonHelper.getObject(json, "ingredient"));
 			T input = this.deserialize("input", json);
 			T output = this.deserialize("output", json);
 			int fuel = JsonHelper.getInt(json, "fuel", 1);
-			return this.recipeFactory.create(id, input, ingredient, output, fuel);
+			int brewTime = JsonHelper.getInt(json, "time", 400);
+			return this.recipeFactory.create(id, group, input, ingredient, output, fuel, brewTime);
 		}
 
 		@Override
 		public R read(Identifier id, PacketByteBuf buf) {
+			String group = buf.readString();
 			Ingredient ingredient = Ingredient.fromPacket(buf);
 			T input = this.deserialize(buf);
 			T output = this.deserialize(buf);
 			int fuel = buf.readInt();
-			return this.recipeFactory.create(id, input, ingredient, output, fuel);
+			int brewTime = buf.readInt();
+			return this.recipeFactory.create(id, group, input, ingredient, output, fuel, brewTime);
 		}
 
 		@Override
 		public void write(PacketByteBuf buf, R recipe) {
+			buf.writeString(recipe.group);
 			recipe.ingredient.write(buf);
 			this.serialize(recipe.input, buf);
 			this.serialize(recipe.output, buf);
 			buf.writeInt(recipe.fuel);
+			buf.writeInt(recipe.brewTime);
 		}
 
 		@Override
 		public JsonObject toJson(R recipe) {
 			JsonObject json = new JsonObject();
+			json.addProperty("group", recipe.group);
 			json.add("ingredient", recipe.ingredient.toJson());
 			json.addProperty("type", Registry.RECIPE_SERIALIZER.getId(recipe.getSerializer()).toString());
 			this.serialize(recipe.input, "input", json);
 			this.serialize(recipe.output, "output", json);
 			json.addProperty("fuel", recipe.fuel);
+			json.addProperty("time", recipe.brewTime);
 			return json;
 		}
 
+		/**
+		 * Deserializes the object from json.
+		 *
+		 * @param element the json element to read
+		 * @param json the json object
+		 * @return the deserialized object
+		 */
 		public abstract T deserialize(String element, JsonObject json);
 
+		/**
+		 * Deserializes the object from the buffer.
+		 *
+		 * @param buf the buffer
+		 * @return the deserialized object
+		 */
 		public abstract T deserialize(PacketByteBuf buf);
 
+		/**
+		 * Serializes the value to the json under the provided element key.
+		 *
+		 * @param value the value to serialize
+		 * @param element the key to serialize it under
+		 * @param json the json object
+		 */
 		public abstract void serialize(T value, String element, JsonObject json);
 
+		/**
+		 * Serializes the value to the buffer.
+		 *
+		 * @param value the value to serialize
+		 * @param buf the buffer
+		 */
 		public abstract void serialize(T value, PacketByteBuf buf);
 
 		@FunctionalInterface
 		public interface RecipeFactory<T, R extends AbstractBrewingRecipe<T>> {
-			R create(Identifier id, T input, Ingredient ingredient, T output, int fuel);
+			R create(Identifier id, String group, T input, Ingredient ingredient, T output, int fuel, int brewTime);
 		}
 	}
 }

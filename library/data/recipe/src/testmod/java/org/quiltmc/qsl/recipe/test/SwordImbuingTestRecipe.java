@@ -1,3 +1,19 @@
+/*
+ * Copyright 2022 QuiltMC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.quiltmc.qsl.recipe.test;
 
 import com.google.common.collect.Multimap;
@@ -18,11 +34,11 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.registry.Registry;
 
-import org.quiltmc.qsl.recipe.impl.AbstractBrewingRecipe;
+import org.quiltmc.qsl.recipe.api.AbstractBrewingRecipe;
 
 public class SwordImbuingTestRecipe extends AbstractBrewingRecipe<Item> {
-	public SwordImbuingTestRecipe(Identifier id, Item input, Ingredient ingredient, Item output, int fuel) {
-		super(id, input, ingredient, output, fuel);
+	public SwordImbuingTestRecipe(Identifier id, String group, Item input, Ingredient ingredient, Item output, int fuel, int brewTime) {
+		super(id, group, input, ingredient, output, fuel, brewTime);
 	}
 
 	@Override
@@ -33,19 +49,23 @@ public class SwordImbuingTestRecipe extends AbstractBrewingRecipe<Item> {
 		NbtCompound nbt = output.getOrCreateNbt();
 		if (input.hasNbt()) {
 			nbt.copyFrom(input.getNbt());
+			nbt.remove("AttributeModifiers");
 		}
 
 		for (var entry : multimap.entries()) {
+			EntityAttribute attribute = entry.getKey();
 			EntityAttributeModifier modifier = entry.getValue();
-			if (entry.getKey().equals(EntityAttributes.GENERIC_ATTACK_DAMAGE)) {
+			if (attribute.equals(EntityAttributes.GENERIC_ATTACK_DAMAGE)) {
+				// Add 3 to the attack damage
 				modifier = new EntityAttributeModifier(
 						modifier.getId(),
 						modifier.getName(),
-						modifier.getValue() + 5.0D,
+						modifier.getValue() + 3.0D,
 						modifier.getOperation()
 				);
 			}
-			output.addAttributeModifier(entry.getKey(), modifier, EquipmentSlot.MAINHAND);
+
+			output.addAttributeModifier(attribute, modifier, EquipmentSlot.MAINHAND);
 		}
 
 		return output;
