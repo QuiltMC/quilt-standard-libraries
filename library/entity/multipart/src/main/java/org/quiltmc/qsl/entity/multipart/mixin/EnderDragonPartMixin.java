@@ -14,14 +14,25 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.block.entity.mixin;
+package org.quiltmc.qsl.entity.multipart.mixin;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.boss.dragon.EnderDragonEntity;
+import net.minecraft.entity.boss.dragon.EnderDragonPart;
 
-import org.quiltmc.qsl.block.entity.api.QuiltBlockEntity;
+import org.quiltmc.qsl.entity.multipart.api.EntityPart;
 
-@Mixin(BlockEntity.class)
-public abstract class BlockEntityMixin implements QuiltBlockEntity {
+@Mixin(EnderDragonPart.class)
+public class EnderDragonPartMixin implements EntityPart<EnderDragonEntity> {
+	@Shadow
+	@Final
+	public EnderDragonEntity owner;
+
+	@Override
+	public EnderDragonEntity getOwner() {
+		return this.owner;
+	}
 }
