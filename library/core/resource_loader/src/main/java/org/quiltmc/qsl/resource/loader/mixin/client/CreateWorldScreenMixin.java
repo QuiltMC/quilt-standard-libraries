@@ -74,7 +74,7 @@ public abstract class CreateWorldScreenMixin {
 	}
 
 	@Redirect(
-			method = "method_31130",
+			method = "open",
 			at = @At(value = "FIELD", target = "Lnet/minecraft/resource/pack/DataPackSettings;SAFE_MODE:Lnet/minecraft/resource/pack/DataPackSettings;")
 	)
 	private static DataPackSettings replaceDefaultSettings() {
@@ -82,14 +82,14 @@ public abstract class CreateWorldScreenMixin {
 	}
 
 	@Redirect(
-			method = "method_31130",
+			method = "open",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/unmapped/C_kjxfcecs;method_42098(Lnet/minecraft/unmapped/C_kjxfcecs$C_kculhjuh;Lnet/minecraft/unmapped/C_kjxfcecs$class_6907;Lnet/minecraft/unmapped/C_kjxfcecs$class_7239;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
+					target = "Lnet/minecraft/unmapped/C_kjxfcecs;method_42098(Lnet/minecraft/unmapped/C_kjxfcecs$C_kculhjuh;Lnet/minecraft/unmapped/C_kjxfcecs$C_ueybpquh;Lnet/minecraft/unmapped/C_kjxfcecs$C_cknyxhnl;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
 			)
 	)
 	private static <D> CompletableFuture<C_njsjipmy> loadDynamicRegistry(C_kjxfcecs.C_kculhjuh initConfig,
-			C_kjxfcecs.class_6907<D> arg, C_kjxfcecs.class_7239<D, C_njsjipmy> arg2, Executor executor, Executor executor2) {
+			C_kjxfcecs.C_ueybpquh<D> arg, C_kjxfcecs.C_cknyxhnl<D, C_njsjipmy> arg2, Executor executor, Executor executor2) {
 		return quilt$applyDefaultDataPacks(() -> {
 			ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null);
 			return C_kjxfcecs.method_42098(initConfig, (resourceManager, dataPackSettings) -> {
@@ -111,7 +111,7 @@ public abstract class CreateWorldScreenMixin {
 			method = "applyDataPacks",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/unmapped/C_kjxfcecs;method_42098(Lnet/minecraft/unmapped/C_kjxfcecs$C_kculhjuh;Lnet/minecraft/unmapped/C_kjxfcecs$class_6907;Lnet/minecraft/unmapped/C_kjxfcecs$class_7239;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
+					target = "Lnet/minecraft/unmapped/C_kjxfcecs;method_42098(Lnet/minecraft/unmapped/C_kjxfcecs$C_kculhjuh;Lnet/minecraft/unmapped/C_kjxfcecs$C_ueybpquh;Lnet/minecraft/unmapped/C_kjxfcecs$C_cknyxhnl;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
 			)
 	)
 	private void onDataPackLoadStart(ResourcePackManager dataPackManager, CallbackInfo ci) {
@@ -119,22 +119,23 @@ public abstract class CreateWorldScreenMixin {
 	}
 
 	@Inject(
-			method = "method_31130",
+			method = "open",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/unmapped/C_kjxfcecs;method_42098(Lnet/minecraft/unmapped/C_kjxfcecs$C_kculhjuh;Lnet/minecraft/unmapped/C_kjxfcecs$class_6907;Lnet/minecraft/unmapped/C_kjxfcecs$class_7239;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
+					target = "Lnet/minecraft/unmapped/C_kjxfcecs;method_42098(Lnet/minecraft/unmapped/C_kjxfcecs$C_kculhjuh;Lnet/minecraft/unmapped/C_kjxfcecs$C_ueybpquh;Lnet/minecraft/unmapped/C_kjxfcecs$C_cknyxhnl;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
 			)
 	)
 	private static void onDataPackLoadStart(MinecraftClient minecraftClient, Screen screen, CallbackInfo ci) {
 		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null);
 	}
 
-	// Lambda method in CreateWorldScreen#applyDataPacks, at class_7237#method_42098.
+	// Lambda method in CreateWorldScreen#applyDataPacks, at C_kjxfcecs#method_42098.
 	// Inject before closing the resource manager.
 	@Inject(
-			method = "method_41850",
+			method = {"method_41850", "m_paskjwcu"},
 			at = @At("HEAD"),
-			remap = false // Very bad
+			require = 1,
+			remap = false // Very bad, someone please fix the Mixin annotation processor already.
 	)
 	private static void onDataPackLoadEnd(AutoCloseableResourceManager resourceManager,
 			ServerReloadableResources serverReloadableResources,
@@ -143,12 +144,13 @@ public abstract class CreateWorldScreenMixin {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resourceManager, null);
 	}
 
-	// Lambda method in CreateWorldScreen#applyDataPacks, at class_7237#method_42098.
+	// Lambda method in CreateWorldScreen#create, at C_kjxfcecs#method_42098.
 	// Inject before closing the resource manager.
 	@Inject(
-			method = "method_41851",
+			method = {"method_41851", "m_tlckpqyc"},
 			at = @At("HEAD"),
-			remap = false // Very bad
+			require = 1,
+			remap = false // Very bad, someone please fix the Mixin annotation processor already.
 	)
 	private static void onCreateDataPackLoadEnd(AutoCloseableResourceManager resourceManager,
 			ServerReloadableResources serverReloadableResources,
@@ -159,15 +161,16 @@ public abstract class CreateWorldScreenMixin {
 
 	// Lambda method in CreateWorldScreen#applyDataPacks, at CompletableFuture#handle.
 	// Take Void and Throwable parameters.
-	@SuppressWarnings("target")
 	@Inject(
-			method = "method_37089(Ljava/lang/Void;Ljava/lang/Throwable;)Ljava/lang/Object;",
+			method = {"method_37089", "m_kltndaqc"},
 			at = @At(
 					value = "INVOKE",
 					target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Throwable;)V",
 					shift = At.Shift.AFTER,
 					remap = false
-			)
+			),
+			require = 1,
+			remap = false
 	)
 	private void onFailDataPackLoading(Void unused, Throwable throwable, CallbackInfoReturnable<Object> cir) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, null, throwable);

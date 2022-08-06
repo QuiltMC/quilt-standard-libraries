@@ -22,6 +22,7 @@ import net.minecraft.command.CommandBuildContext;
 import net.minecraft.command.argument.BlockStateArgument;
 import net.minecraft.command.argument.BlockStateArgumentType;
 import net.minecraft.server.command.CommandManager;
+import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -36,7 +37,11 @@ public class ClientCommandApiTest implements ClientCommandRegistrationCallback {
 		dispatcher.register(
 				ClientCommandManager.literal("test_client_command")
 						.executes(ctx -> {
-							ctx.getSource().sendFeedback(Text.of("It works!"));
+							ctx.getSource().sendFeedback(Text.literal("It works!")
+									.styled(style -> style.withClickEvent(
+											new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/test_client_command with_arg minecraft:dirt")
+									))
+							);
 							return 0;
 						})
 						.then(ClientCommandManager.literal("with_arg")
