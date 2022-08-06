@@ -4,8 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "BootstrapMixin",
-    "MinecraftServerMixin",
-    "SharedConstantsMixin"
+    "MinecraftServerMixin"
   ],
   "client": [
     "client.MinecraftClientMixin"
