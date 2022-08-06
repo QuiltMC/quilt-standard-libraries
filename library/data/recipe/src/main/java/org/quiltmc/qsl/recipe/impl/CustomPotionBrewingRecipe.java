@@ -32,7 +32,7 @@ public class CustomPotionBrewingRecipe extends PotionBrewingRecipe {
 	protected ItemStack craft(int slot, ItemStack input) {
 		ItemStack output = super.craft(slot, input);
 
-		var statusEffects = this.statusEffects;
+		var statusEffects = new ArrayList<>(this.statusEffects);
 		if (input.getOrCreateNbt().contains("CustomPotionEffects")) {
 			statusEffects.addAll(PotionUtil.getCustomPotionEffects(input));
 			PotionUtil.setCustomPotionEffects(output, statusEffects);

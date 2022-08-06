@@ -25,9 +25,11 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.tag.ItemTags;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -35,6 +37,7 @@ import org.quiltmc.qsl.recipe.api.RecipeManagerHelper;
 import org.quiltmc.qsl.recipe.api.builder.VanillaRecipeBuilders;
 
 public class RecipeTestMod implements ModInitializer {
+	public static final RecipeSerializer<SwordImbuingTestRecipe> TEST_SERIALIZER = new SwordImbuingTestRecipe.SwordImbuingTestSerializer(SwordImbuingTestRecipe::new);
 	public static final String NAMESPACE = "quilt_recipe_testmod";
 	private static final Random RANDOM = new Random();
 	private static final List<Item> RANDOM_ITEMS_POOL = Arrays.asList(
@@ -47,6 +50,8 @@ public class RecipeTestMod implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
+		Registry.register(Registry.RECIPE_SERIALIZER, new Identifier(NAMESPACE, "sword_imbuing"), TEST_SERIALIZER);
+
 		// Recipe with stick -> diamond
 		RecipeManagerHelper.registerStaticRecipe(
 				VanillaRecipeBuilders.shapelessRecipe(new ItemStack(Items.DIAMOND))

@@ -1,0 +1,8 @@
+{
+  "type": "quilt_recipe_testmod:sword_imbuing",
+  "ingredient": {
+    "item": "minecraft:diamond"
+  },
+  "input": "minecraft:diamond_sword",
+  "output": "minecraft:diamond_sword"
+}

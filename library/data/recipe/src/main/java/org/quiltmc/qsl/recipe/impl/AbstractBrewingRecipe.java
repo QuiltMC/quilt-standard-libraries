@@ -25,11 +25,11 @@ import org.quiltmc.qsl.recipe.api.serializer.QuiltRecipeSerializer;
 
 public abstract class AbstractBrewingRecipe<T> implements Recipe<BrewingStandBlockEntity> {
 	public static final List<Ingredient> VALID_INGREDIENTS = new ArrayList<>();
-	final T input;
-	final Ingredient ingredient;
-	final T output;
-	final int fuel;
-	ItemStack ghostOutput;
+	protected final T input;
+	protected final Ingredient ingredient;
+	protected final T output;
+	protected final int fuel;
+	protected ItemStack ghostOutput;
 	private final Identifier id;
 
 	public AbstractBrewingRecipe(Identifier id, T input, Ingredient ingredient, T output, int fuel) {
@@ -60,6 +60,8 @@ public abstract class AbstractBrewingRecipe<T> implements Recipe<BrewingStandBlo
 
 	/**
 	 * Transforms the input {@link ItemStack} to the output {@link ItemStack}.
+	 * <p>
+	 * The input is guaranteed to match the required input, as defined by {@link #matches(int, ItemStack)}.</p>
 	 *
 	 * @param slot the index of the slot
 	 * @param input the {@link ItemStack} in the provided slot
@@ -128,10 +130,10 @@ public abstract class AbstractBrewingRecipe<T> implements Recipe<BrewingStandBlo
 		return this.id;
 	}
 
-	static abstract class AbstractBrewingSerializer<T, R extends AbstractBrewingRecipe<T>> implements RecipeSerializer<R>, QuiltRecipeSerializer<R> {
+	protected static abstract class AbstractBrewingSerializer<T, R extends AbstractBrewingRecipe<T>> implements RecipeSerializer<R>, QuiltRecipeSerializer<R> {
 		private final RecipeFactory<T, ? extends R> recipeFactory;
 
-		AbstractBrewingSerializer(RecipeFactory<T, ? extends R> recipeFactory) {
+		protected AbstractBrewingSerializer(RecipeFactory<T, ? extends R> recipeFactory) {
 			this.recipeFactory = recipeFactory;
 		}
 
@@ -181,7 +183,7 @@ public abstract class AbstractBrewingRecipe<T> implements Recipe<BrewingStandBlo
 		public abstract void serialize(T value, PacketByteBuf buf);
 
 		@FunctionalInterface
-		interface RecipeFactory<T, R extends AbstractBrewingRecipe<T>> {
+		public interface RecipeFactory<T, R extends AbstractBrewingRecipe<T>> {
 			R create(Identifier id, T input, Ingredient ingredient, T output, int fuel);
 		}
 	}
