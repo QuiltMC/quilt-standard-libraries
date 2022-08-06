@@ -23,12 +23,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Queue;
-import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Lifecycle;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -37,6 +37,7 @@ import net.minecraft.tag.TagKey;
 import net.minecraft.util.Holder;
 import net.minecraft.util.HolderSet;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
@@ -119,7 +120,12 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	}
 
 	@Override
-	public Optional<Holder<T>> getRandom(Random random) {
+	public Set<RegistryKey<T>> method_42021() {
+		return this.wrapped.method_42021();
+	}
+
+	@Override
+	public Optional<Holder<T>> getRandom(RandomGenerator random) {
 		return this.wrapped.getRandom(random);
 	}
 
@@ -140,7 +146,12 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	}
 
 	@Override
-	public Holder<T> getOrCreateHolder(RegistryKey<T> key) {
+	public Holder<T> m_pselvvxn(RegistryKey<T> registryKey) {
+		return this.wrapped.m_pselvvxn(registryKey);
+	}
+
+	@Override
+	public DataResult<Holder<T>> getOrCreateHolder(RegistryKey<T> key) {
 		return this.wrapped.getOrCreateHolder(key);
 	}
 

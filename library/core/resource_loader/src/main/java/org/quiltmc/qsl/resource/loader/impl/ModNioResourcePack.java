@@ -26,17 +26,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
 import com.mojang.logging.LogUtils;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.AbstractFileResourcePack;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
@@ -83,7 +84,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 
 		/* Metadata */
 		this.name = name == null ? ModResourcePackUtil.getName(modInfo) : name;
-		this.displayName = displayName == null ? new LiteralText(name) : displayName;
+		this.displayName = displayName == null ? Text.of(name) : displayName;
 		this.modInfo = modInfo;
 		this.activationType = activationType;
 
@@ -138,8 +139,8 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 	}
 
 	@Override
-	public Collection<Identifier> findResources(ResourceType type, String namespace, String startingPath, int depth,
-			Predicate<String> pathFilter) {
+	public Collection<Identifier> findResources(ResourceType type, String namespace, String startingPath,
+			Predicate<Identifier> pathFilter) {
 		var ids = new ArrayList<Identifier>();
 		String namespacePath = type.getDirectory() + '/' + namespace;
 		String nioPath = startingPath.replace("/", this.io.getSeparator());
@@ -151,21 +152,25 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 
 			if (searchEntry != null) {
 				try {
-					Files.walk(searchEntry.path(), depth)
-							.filter(Files::isRegularFile)
-							.filter((p) -> {
-								String filename = p.getFileName().toString();
-								return !filename.endsWith(".mcmeta") && pathFilter.test(filename);
-							})
-							.map(namespaceEntry.path()::relativize)
-							.map((p) -> p.toString().replace(this.io.getSeparator(), "/"))
-							.forEach((s) -> {
+					Files.walk(searchEntry.path())
+							.filter(p -> Files.isRegularFile(p) && !p.getFileName().endsWith(".mcmeta"))
+							.map(p -> {
 								try {
-									ids.add(new Identifier(namespace, s));
+									var id = new Identifier(namespace,
+											namespaceEntry.path().relativize(p).toString().replace(this.io.getSeparator(), "/")
+									);
+
+									if (pathFilter.test(id)) {
+										return id;
+									}
 								} catch (InvalidIdentifierException e) {
 									LOGGER.error(e.getMessage());
 								}
-							});
+
+								return null;
+							})
+							.filter(Objects::nonNull)
+							.forEach(ids::add);
 				} catch (IOException e) {
 					LOGGER.warn("findResources at " + startingPath + " in namespace " + namespace
 							+ ", mod " + this.modInfo.id() + " failed!", e);
@@ -199,12 +204,12 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 	}
 
 	@Override
-	public Text getDisplayName() {
+	public @NotNull Text getDisplayName() {
 		return this.displayName;
 	}
 
 	@Override
-	public ResourcePackActivationType getActivationType() {
+	public @NotNull ResourcePackActivationType getActivationType() {
 		return this.activationType;
 	}
 	//endregion

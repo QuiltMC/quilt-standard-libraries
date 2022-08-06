@@ -26,6 +26,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.structure.StructureManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryOps;
@@ -36,22 +37,24 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeKeys;
 import net.minecraft.world.biome.source.BiomeAccess;
 import net.minecraft.world.biome.source.FixedBiomeSource;
-import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.GenerationStep;
-import net.minecraft.world.gen.StructureAccessor;
+import net.minecraft.world.gen.RandomState;
 import net.minecraft.world.gen.chunk.Blender;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.VerticalBlockSample;
 import net.minecraft.world.gen.structure.StructureSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EmptyChunkGenerator extends ChunkGenerator {
+	private static final Logger EMPTY_CHUNK_GENERATOR_LOGGER = LoggerFactory.getLogger("QuiltDimensionTest|EmptyChunkGenerator");
 	public static final Codec<EmptyChunkGenerator> CODEC = RecordCodecBuilder.create((instance) -> method_41042(instance).and(RegistryOps.getRegistry(Registry.BIOME_KEY).forGetter((generator) -> generator.biomeRegistry)).apply(instance, instance.stable(EmptyChunkGenerator::new)));
 
 	private final Registry<Biome> biomeRegistry;
 
 	public EmptyChunkGenerator(Registry<StructureSet> registry, Registry<Biome> biomeRegistry) {
-		super(registry, Optional.empty(), new FixedBiomeSource(biomeRegistry.getOrCreateHolder(BiomeKeys.PLAINS)));
+		super(registry, Optional.empty(), new FixedBiomeSource(biomeRegistry.getOrCreateHolder(BiomeKeys.PLAINS).getOrThrow(false, EMPTY_CHUNK_GENERATOR_LOGGER::error)));
 		this.biomeRegistry = biomeRegistry;
 	}
 
@@ -61,21 +64,11 @@ public class EmptyChunkGenerator extends ChunkGenerator {
 	}
 
 	@Override
-	public ChunkGenerator withSeed(long seed) {
-		return this;
+	public void carve(ChunkRegion chunkRegion, long seed, RandomState randomState, BiomeAccess biomeAccess, StructureManager structureManager, Chunk chunk, GenerationStep.Carver generationStep) {
 	}
 
 	@Override
-	public MultiNoiseUtil.MultiNoiseSampler getMultiNoiseSampler() {
-		return MultiNoiseUtil.createEmptySampler();
-	}
-
-	@Override
-	public void carve(ChunkRegion chunkRegion, long l, BiomeAccess biomeAccess, StructureAccessor structureAccessor, Chunk chunk, GenerationStep.Carver carver) {
-	}
-
-	@Override
-	public void buildSurface(ChunkRegion region, StructureAccessor structureAccessor, Chunk chunk) {
+	public void buildSurface(ChunkRegion region, StructureManager structureManager, RandomState randomState, Chunk chunk) {
 	}
 
 	@Override
@@ -88,7 +81,7 @@ public class EmptyChunkGenerator extends ChunkGenerator {
 	}
 
 	@Override
-	public CompletableFuture<Chunk> populateNoise(Executor executor, Blender blender, StructureAccessor structureAccessor, Chunk chunk) {
+	public CompletableFuture<Chunk> populateNoise(Executor executor, Blender blender, RandomState randomState, StructureManager structureManager, Chunk chunk) {
 		return CompletableFuture.completedFuture(chunk);
 	}
 
@@ -103,16 +96,16 @@ public class EmptyChunkGenerator extends ChunkGenerator {
 	}
 
 	@Override
-	public int getHeight(int x, int z, Heightmap.Type heightmapType, HeightLimitView heightLimitView) {
+	public int getHeight(int x, int z, Heightmap.Type heightmap, HeightLimitView world, RandomState randomState) {
 		return 0;
 	}
 
 	@Override
-	public VerticalBlockSample getColumnSample(int x, int z, HeightLimitView heightLimitView) {
+	public VerticalBlockSample getColumnSample(int x, int z, HeightLimitView world, RandomState randomState) {
 		return new VerticalBlockSample(0, new BlockState[0]);
 	}
 
 	@Override
-	public void method_40450(List<String> list, BlockPos blockPos) {
+	public void m_hfetlfug(List<String> list, RandomState randomState, BlockPos blockPos) {
 	}
 }

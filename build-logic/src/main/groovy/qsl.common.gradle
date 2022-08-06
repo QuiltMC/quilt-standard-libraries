@@ -4,7 +4,7 @@
 
 
 import net.fabricmc.loom.task.RemapJarTask
-import qsl.internal.Versions;
+import qsl.internal.Versions
 
 plugins {
 	id("maven-publish")
@@ -60,12 +60,14 @@ sourceSets {
 }
 
 task testmodJar(type: Jar) {
+	group "build"
 	from sourceSets.testmod.output
 	archiveClassifier = "testmod-dev"
 	destinationDirectory = project.file("build/devlibs")
 }
 
 task testmodRemapJar(type: RemapJarTask, dependsOn: testmodJar) {
+	group "build"
 	inputFile = testmodJar.archiveFile
 	classpath.from sourceSets.testmod.compileClasspath
 	archiveClassifier = "testmod"

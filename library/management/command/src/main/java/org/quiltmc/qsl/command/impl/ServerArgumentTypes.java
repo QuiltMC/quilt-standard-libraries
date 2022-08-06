@@ -26,6 +26,7 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.command.argument.ArgumentTypeInfo;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
@@ -37,15 +38,15 @@ public final class ServerArgumentTypes {
 	private ServerArgumentTypes() {
 	}
 
-	private static final Map<Class<?>, ServerArgumentType<?>> BY_TYPE = new Reference2ObjectOpenHashMap<>();
-	private static final Map<Identifier, ServerArgumentType<?>> BY_ID = new ConcurrentHashMap<>();
+	private static final Map<Class<?>, ServerArgumentType<?, ?>> BY_TYPE = new Reference2ObjectOpenHashMap<>();
+	private static final Map<Identifier, ServerArgumentType<?, ?>> BY_ID = new ConcurrentHashMap<>();
 
 	@SuppressWarnings("unchecked")
-	public static <T extends ArgumentType<?>> ServerArgumentType<T> byClass(Class<T> clazz) {
-		return (ServerArgumentType<T>) BY_TYPE.get(clazz);
+	public static <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> ServerArgumentType<A, T> byClass(Class<A> clazz) {
+		return (ServerArgumentType<A, T>) BY_TYPE.get(clazz);
 	}
 
-	public static void register(ServerArgumentType<?> type) {
+	public static void register(ServerArgumentType<?, ?> type) {
 		BY_TYPE.put(type.type(), type);
 		BY_ID.put(type.id(), type);
 	}

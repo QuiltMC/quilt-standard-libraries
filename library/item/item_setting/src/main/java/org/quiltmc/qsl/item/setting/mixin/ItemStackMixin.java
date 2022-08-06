@@ -51,7 +51,14 @@ public abstract class ItemStackMixin {
 		this.breakCallback = breakCallback;
 	}
 
-	@ModifyArg(method = "damage(ILnet/minecraft/entity/LivingEntity;Ljava/util/function/Consumer;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;damage(ILjava/util/Random;Lnet/minecraft/server/network/ServerPlayerEntity;)Z"), index = 0)
+	@ModifyArg(
+			method = "damage(ILnet/minecraft/entity/LivingEntity;Ljava/util/function/Consumer;)V",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/item/ItemStack;damage(ILnet/minecraft/util/random/RandomGenerator;Lnet/minecraft/server/network/ServerPlayerEntity;)Z"
+			),
+			index = 0
+	)
 	private int hookDamage(int amount) {
 		CustomDamageHandler handler = CustomItemSettingImpl.CUSTOM_DAMAGE_HANDLER.get(this.getItem());
 

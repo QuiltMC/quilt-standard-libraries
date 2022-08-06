@@ -91,7 +91,7 @@ public final class NetherBiomeData {
 
 		for (Map.Entry<RegistryKey<Biome>, MultiNoiseUtil.NoiseHypercube> entry : NETHER_BIOME_NOISE_POINTS.entrySet()) {
 			if (biomeRegistry.contains(entry.getKey())) {
-				entries.add(Pair.of(entry.getValue(), biomeRegistry.getHolderOrThrow(entry.getKey())));
+				entries.add(Pair.of(entry.getValue(), biomeRegistry.m_pselvvxn(entry.getKey())));
 			} else {
 				LOGGER.warn("Nether biome {} not loaded", entry.getKey().getValue());
 			}

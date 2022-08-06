@@ -30,15 +30,12 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.util.Holder;
-import net.minecraft.util.math.noise.PerlinNoiseSampler;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeKeys;
 import net.minecraft.world.biome.source.TheEndBiomeSource;
 import net.minecraft.world.biome.source.util.MultiNoiseUtil;
-import net.minecraft.world.gen.ChunkRandom;
-import net.minecraft.world.gen.LegacySimpleRandom;
 
 /**
  * Internal data for modding Vanilla's {@link TheEndBiomeSource}.
@@ -91,8 +88,8 @@ public final class TheEndBiomeData {
 		BIOMES.add(barrens);
 	}
 
-	public static Overrides createOverrides(Registry<Biome> biomeRegistry, long seed) {
-		return new Overrides(biomeRegistry, seed);
+	public static Overrides createOverrides(Registry<Biome> biomeRegistry) {
+		return new Overrides(biomeRegistry);
 	}
 
 	public static Collection<Holder<Biome>> getAddedBiomes(Registry<Biome> registry) {
@@ -106,8 +103,6 @@ public final class TheEndBiomeData {
 		// Biome holders to add on the biome list
 		private final Collection<Holder<Biome>> addedBiomes;
 
-		private final PerlinNoiseSampler sampler;
-
 		// Vanilla holder to compare against
 		private final Holder<Biome> endMidlands;
 		private final Holder<Biome> endBarrens;
@@ -118,8 +113,7 @@ public final class TheEndBiomeData {
 		private final Map<Holder<Biome>, WeightedPicker<Holder<Biome>>> endMidlandsMap;
 		private final Map<Holder<Biome>, WeightedPicker<Holder<Biome>>> endBarrensMap;
 
-		public Overrides(Registry<Biome> biomeRegistry, long seed) {
-			this.sampler = new PerlinNoiseSampler(new ChunkRandom(new LegacySimpleRandom(seed)));
+		public Overrides(Registry<Biome> biomeRegistry) {
 			this.addedBiomes = TheEndBiomeData.getAddedBiomes(biomeRegistry);
 			this.endMidlands = biomeRegistry.getHolderOrThrow(BiomeKeys.END_MIDLANDS);
 			this.endBarrens = biomeRegistry.getHolderOrThrow(BiomeKeys.END_BARRENS);
@@ -146,35 +140,36 @@ public final class TheEndBiomeData {
 		}
 
 		public Holder<Biome> pick(int x, int y, int z, MultiNoiseUtil.MultiNoiseSampler noise, Holder<Biome> vanillaBiome) {
+			var sampler = ((MultiNoiseSamplerExtensions) (Object) noise).quilt$getTheEndBiomesSampler();
 			Holder<Biome> replacementKey;
 
 			// The x and z of the entry are divided by 64 to ensure custom biomes are large enough; going larger than this]
 			// seems to make custom biomes too hard to find.
-			if (vanillaBiome.method_40224(endMidlands::isRegistryKey) || vanillaBiome.method_40224(endBarrens::isRegistryKey)) {
+			if (vanillaBiome.matches(endMidlands::isRegistryKey) || vanillaBiome.matches(endBarrens::isRegistryKey)) {
 				// Since the highlands picker is statically populated by InternalBiomeData, picker will never be null.
 				WeightedPicker<Holder<Biome>> highlandsPicker = this.endBiomesMap.get(this.endHighlands);
-				Holder<Biome> highlandsKey = highlandsPicker.pickFromNoise(this.sampler, x / 64.0, 0, z / 64.0);
+				Holder<Biome> highlandsKey = highlandsPicker.pickFromNoise(sampler, x / 64.0, 0, z / 64.0);
 
-				if (vanillaBiome.method_40224(endMidlands::isRegistryKey)) {
+				if (vanillaBiome.matches(endMidlands::isRegistryKey)) {
 					WeightedPicker<Holder<Biome>> midlandsPicker = this.endMidlandsMap.get(highlandsKey);
 					if (midlandsPicker == null) return vanillaBiome;
 					int count = midlandsPicker.getEntryCount();
-					boolean useVanilla = count == 0 || (count == 1 && vanillaBiome.method_40224(endMidlands::isRegistryKey));
-					replacementKey = useVanilla ? vanillaBiome : midlandsPicker.pickFromNoise(this.sampler, x / 64.0, 0, z / 64.0);
+					boolean useVanilla = count == 0 || (count == 1 && vanillaBiome.matches(endMidlands::isRegistryKey));
+					replacementKey = useVanilla ? vanillaBiome : midlandsPicker.pickFromNoise(sampler, x / 64.0, 0, z / 64.0);
 				} else {
 					WeightedPicker<Holder<Biome>> barrensPicker = this.endBarrensMap.get(highlandsKey);
 					if (barrensPicker == null) return vanillaBiome;
 					int count = barrensPicker.getEntryCount();
-					boolean useVanilla = count == 0 || (count == 1 && vanillaBiome.method_40224(endBarrens::isRegistryKey));
-					replacementKey = useVanilla ? vanillaBiome : barrensPicker.pickFromNoise(this.sampler, x / 64.0, 0, z / 64.0);
+					boolean useVanilla = count == 0 || (count == 1 && vanillaBiome.matches(endBarrens::isRegistryKey));
+					replacementKey = useVanilla ? vanillaBiome : barrensPicker.pickFromNoise(sampler, x / 64.0, 0, z / 64.0);
 				}
 			} else {
 				// Since the main island and small islands pickers are statically populated by InternalBiomeData, picker will never be null.
 				WeightedPicker<Holder<Biome>> picker = this.endBiomesMap.get(vanillaBiome);
 				if (picker == null) return vanillaBiome;
 				int count = picker.getEntryCount();
-				boolean useVanilla = count == 0 || (count == 1 && vanillaBiome.method_40224(endHighlands::isRegistryKey));
-				replacementKey = useVanilla ? vanillaBiome : picker.pickFromNoise(this.sampler, x / 64.0, 0, z / 64.0);
+				boolean useVanilla = count == 0 || (count == 1 && vanillaBiome.matches(endHighlands::isRegistryKey));
+				replacementKey = useVanilla ? vanillaBiome : picker.pickFromNoise(sampler, x / 64.0, 0, z / 64.0);
 			}
 
 			return replacementKey;
@@ -196,7 +191,7 @@ public final class TheEndBiomeData {
 			// This Optional#get is safe - if a has key, b should also have key
 			// given a.getType() != b.getType() check above
 			// noinspection OptionalGetWithoutIsPresent
-			return a.unwrap().map(key -> b.method_40230().get() == key, b.value()::equals);
+			return a.unwrap().map(key -> b.getKey().get() == key, b.value()::equals);
 		}
 
 		@Override

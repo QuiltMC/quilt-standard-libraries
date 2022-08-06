@@ -2,7 +2,6 @@
   "temperature": 0.6,
   "downfall": 1.0,
   "precipitation": "rain",
-  "category": "plains",
   "effects": {
     "sky_color": 16100281,
     "fog_color": 6017018,

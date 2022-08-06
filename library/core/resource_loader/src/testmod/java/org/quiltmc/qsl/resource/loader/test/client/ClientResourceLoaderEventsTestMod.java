@@ -24,6 +24,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.ResourceManager;
 
 import org.quiltmc.qsl.resource.loader.api.client.ClientResourceLoaderEvents;
+import org.quiltmc.qsl.resource.loader.test.ResourceLoaderTestMod;
 
 public class ClientResourceLoaderEventsTestMod implements ClientResourceLoaderEvents.StartResourcePackReload,
 		ClientResourceLoaderEvents.EndResourcePackReload {
@@ -34,6 +35,8 @@ public class ClientResourceLoaderEventsTestMod implements ClientResourceLoaderEv
 	public void onStartResourcePackReload(MinecraftClient client, ResourceManager resourceManager, boolean first) {
 		LOGGER.info("Preparing for resource pack reload, resource manager: {}. Is it the first time?: {}",
 				resourceManager, first);
+
+		ResourceLoaderTestMod.loadingClientResources = true;
 		this.start = System.currentTimeMillis();
 	}
 

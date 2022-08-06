@@ -1,15 +1,16 @@
 package qsl.internal.json;
 
-import org.gradle.api.Project;
-import org.quiltmc.json5.JsonWriter;
+import java.io.IOException;
+import java.nio.file.Path;
 
+import org.gradle.api.Project;
 import qsl.internal.MinecraftVersion;
+import qsl.internal.Versions;
 import qsl.internal.dependency.QslLibraryDependency;
 import qsl.internal.extension.QslModuleExtension;
 import qsl.internal.extension.QslModuleExtensionImpl;
 
-import java.io.IOException;
-import java.nio.file.Path;
+import org.quiltmc.json5.JsonWriter;
 
 public final class QmjBuilder {
 	public static void buildQmj(Project project, String version, String loaderVersion, MinecraftVersion minecraftVersion, QslModuleExtensionImpl ext, Path path) throws IOException {
@@ -45,8 +46,22 @@ public final class QmjBuilder {
 				.endObject()
 				.beginObject()
 				.name("id").value("minecraft")
-					.name("versions").value("=" + minecraftVersion.getSemVer())
-					.endObject();
+				.name("versions");
+		// Write Minecraft versions.
+		if (Versions.COMPATIBLE_VERSIONS.isEmpty()) {
+			writer.value("=" + minecraftVersion.getSemVer());
+		} else {
+			writer.beginArray()
+					.value(minecraftVersion.getSemVer());
+
+			for (var v : Versions.COMPATIBLE_VERSIONS) {
+				writer.value(v.getSemVer());
+			}
+
+			writer.endArray();
+		}
+		writer.endObject();
+
 		for (QslLibraryDependency depend : ext.getModuleDependencyDefinitions()) {
 			for (QslLibraryDependency.ModuleDependencyInfo moduleDependencyInfo : depend.getDependencyInfo().get()) {
 				if (moduleDependencyInfo.type() == QslLibraryDependency.ConfigurationType.TESTMOD) {
@@ -59,7 +74,7 @@ public final class QmjBuilder {
 						.name("id").value(depExt.getId().get())
 						.name("versions").value(">=" + depProject.getVersion());
 
-				if (moduleDependencyInfo.type() == QslLibraryDependency.ConfigurationType.COMPILE_ONLY)  {
+				if (moduleDependencyInfo.type() == QslLibraryDependency.ConfigurationType.COMPILE_ONLY) {
 					writer.name("optional").value(true);
 				}
 				writer.endObject();

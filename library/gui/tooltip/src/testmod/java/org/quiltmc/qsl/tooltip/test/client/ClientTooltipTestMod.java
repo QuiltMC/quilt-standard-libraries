@@ -26,7 +26,6 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -38,7 +37,7 @@ public final class ClientTooltipTestMod implements ItemTooltipCallback, TooltipC
 	@Override
 	public @Nullable TooltipComponent getComponent(TooltipData data) {
 		if (data instanceof TooltipTestMod.Data customData) {
-			return TooltipComponent.of(new LiteralText(customData.message()).formatted(Formatting.GREEN).asOrderedText());
+			return TooltipComponent.of(Text.literal(customData.message()).formatted(Formatting.GREEN).asOrderedText());
 		}
 
 		return null;
@@ -46,6 +45,6 @@ public final class ClientTooltipTestMod implements ItemTooltipCallback, TooltipC
 
 	@Override
 	public void onTooltipRequest(ItemStack stack, @Nullable PlayerEntity player, TooltipContext context, List<Text> lines) {
-		lines.add(new LiteralText("Fancy tooltips").formatted(Formatting.LIGHT_PURPLE));
+		lines.add(Text.literal("Fancy tooltips").formatted(Formatting.LIGHT_PURPLE));
 	}
 }

@@ -54,18 +54,21 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectors;
 import org.quiltmc.qsl.worldgen.biome.api.ModificationPhase;
 import org.quiltmc.qsl.worldgen.biome.api.NetherBiomes;
 import org.quiltmc.qsl.worldgen.biome.api.TheEndBiomes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <b>NOTES FOR TESTING:</b>
  * When running with this test-mod, also test this when running a dedicated server since there
  * are significant differences between server + client and how they sync biomes.
  * <p>
- * Ingame, you can use {@code /locatebiome} since we use nether- and end-biomes in the overworld,
+ * Ingame, you can use {@code /locate biome} since we use nether- and end-biomes in the overworld,
  * and vice-versa, making them easy to find to verify the injection worked.
  * <p>
  * If you don't find a biome right away, teleport far away (~10000 blocks) from spawn and try again.
  */
 public class QuiltBiomeTest implements ModInitializer {
+	private static final Logger BIOME_TEST_LOGGER = LoggerFactory.getLogger("QuiltBiome|QuiltBiomeTest");
 	public static final String NAMESPACE = "quilt_biome_testmod";
 
 	private static final RegistryKey<Biome> TEST_CRIMSON_FOREST = RegistryKey.of(Registry.BIOME_KEY, id("test_crimson_forest"));
@@ -100,7 +103,7 @@ public class QuiltBiomeTest implements ModInitializer {
 
 		ConfiguredFeature<?, ?> COMMON_DESERT_WELL = new ConfiguredFeature<>(Feature.DESERT_WELL, DefaultFeatureConfig.INSTANCE);
 		Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, id("quilt_desert_well"), COMMON_DESERT_WELL);
-		Holder<ConfiguredFeature<?, ?>> featureEntry = BuiltinRegistries.CONFIGURED_FEATURE.getOrCreateHolder(BuiltinRegistries.CONFIGURED_FEATURE.getKey(COMMON_DESERT_WELL).orElseThrow());
+		Holder<ConfiguredFeature<?, ?>> featureEntry = BuiltinRegistries.CONFIGURED_FEATURE.getOrCreateHolder(BuiltinRegistries.CONFIGURED_FEATURE.getKey(COMMON_DESERT_WELL).orElseThrow()).getOrThrow(false, BIOME_TEST_LOGGER::error);
 
 		// The placement config is taken from the vanilla desert well, but no randomness
 		PlacedFeature PLACED_COMMON_DESERT_WELL = new PlacedFeature(featureEntry, List.of(InSquarePlacementModifier.getInstance(), PlacedFeatureUtil.MOTION_BLOCKING_HEIGHTMAP, BiomePlacementModifier.getInstance()));
@@ -112,7 +115,7 @@ public class QuiltBiomeTest implements ModInitializer {
 						modification -> modification.getWeather().setDownfall(100))
 				// Check for an excess of desert wells.
 				.add(ModificationPhase.ADDITIONS,
-						BiomeSelectors.categories(Biome.Category.DESERT),
+						BiomeSelectors.includeByKey(BiomeKeys.DESERT),
 						context -> context.getGenerationSettings().addFeature(GenerationStep.Feature.TOP_LAYER_MODIFICATION,
 								BuiltinRegistries.PLACED_FEATURE.getKey(PLACED_COMMON_DESERT_WELL).orElseThrow()
 						))
@@ -134,13 +137,6 @@ public class QuiltBiomeTest implements ModInitializer {
 				RegistryKey.of(Registry.PLACED_FEATURE_KEY, id("concrete_pile"))
 		);
 
-		// Will show results if the included data-pack is enabled.
-		BiomeModifications.addFeature(
-				BiomeSelectors.foundInOverworld().and(context -> context.doesPlacedFeatureExist(MOSS_PILE_PLACED_FEATURE)),
-				GenerationStep.Feature.VEGETAL_DECORATION,
-				MOSS_PILE_PLACED_FEATURE
-		);
-
 		// Make sure data packs can define biomes
 		NetherBiomes.addNetherBiome(
 				RegistryKey.of(Registry.BIOME_KEY, id("example_biome")),
@@ -149,6 +145,13 @@ public class QuiltBiomeTest implements ModInitializer {
 		TheEndBiomes.addHighlandsBiome(
 				RegistryKey.of(Registry.BIOME_KEY, id("example_biome")),
 				10.0
+		);
+
+		// Will show results if the included data-pack is enabled.
+		BiomeModifications.addFeature(
+				BiomeSelectors.foundInOverworld().and(context -> context.doesPlacedFeatureExist(MOSS_PILE_PLACED_FEATURE)),
+				GenerationStep.Feature.VEGETAL_DECORATION,
+				MOSS_PILE_PLACED_FEATURE
 		);
 	}
 
@@ -172,7 +175,7 @@ public class QuiltBiomeTest implements ModInitializer {
 	private static Biome composeEndSpawnSettings(GenerationSettings.Builder builder) {
 		SpawnSettings.Builder builder2 = new SpawnSettings.Builder();
 		DefaultBiomeFeatures.addPlainsMobs(builder2);
-		return (new Biome.Builder()).precipitation(Biome.Precipitation.NONE).category(Biome.Category.THEEND).temperature(0.5F).downfall(0.5F).effects((new BiomeEffects.Builder()).waterColor(0x129900).waterFogColor(0x121212).fogColor(0x990000).skyColor(0).moodSound(BiomeMoodSound.CAVE).build()).spawnSettings(builder2.build()).generationSettings(builder.build()).build();
+		return (new Biome.Builder()).precipitation(Biome.Precipitation.NONE).temperature(0.5F).downfall(0.5F).effects((new BiomeEffects.Builder()).waterColor(0x129900).waterFogColor(0x121212).fogColor(0x990000).skyColor(0).moodSound(BiomeMoodSound.CAVE).build()).spawnSettings(builder2.build()).generationSettings(builder.build()).build();
 	}
 
 	private static Identifier id(String path) {

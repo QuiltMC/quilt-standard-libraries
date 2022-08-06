@@ -44,7 +44,7 @@ abstract class MouseMixin {
 	private Double quilt$scrollDistanceX;
 
 	// Synthetic method method_1611([ZDDI)V -> lambda in Screen.wrapScreenError in Mouse.onMouseButton
-	@Inject(method = "method_1611([ZLnet/minecraft/client/gui/screen/Screen;DDI)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z"), cancellable = true)
+	@Inject(method = "method_1611", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z"), cancellable = true)
 	private static void beforeMouseClickedEvent(boolean[] resultHack, Screen screen, double mouseX, double mouseY, int button, CallbackInfo ci) {
 		@SuppressWarnings("resource")
 		var thisRef = (MouseMixin) (Object) MinecraftClient.getInstance().mouse;
@@ -67,7 +67,7 @@ abstract class MouseMixin {
 	}
 
 	// Synthetic method method_1611([ZDDI)V -> lambda in Screen.wrapScreenError in Mouse.onMouseButton
-	@Inject(method = "method_1611([ZLnet/minecraft/client/gui/screen/Screen;DDI)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z", shift = At.Shift.AFTER))
+	@Inject(method = "method_1611", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z", shift = At.Shift.AFTER))
 	private static void afterMouseClickedEvent(boolean[] resultHack, Screen screen, double mouseX, double mouseY, int button, CallbackInfo ci) {
 		@SuppressWarnings("resource")
 		var thisRef = (MouseMixin) (Object) MinecraftClient.getInstance().mouse;
@@ -81,7 +81,7 @@ abstract class MouseMixin {
 	}
 
 	// Synthetic method method_1605([ZDDI)V -> lambda in Screen.wrapScreenError in Mouse.onMouseButton
-	@Inject(method = "method_1605([ZLnet/minecraft/client/gui/screen/Screen;DDI)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z"), cancellable = true)
+	@Inject(method = "method_1605", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z"), cancellable = true)
 	private static void beforeMouseReleasedEvent(boolean[] resultHack, Screen screen, double mouseX, double mouseY, int button, CallbackInfo ci) {
 		@SuppressWarnings("resource")
 		var thisRef = (MouseMixin) (Object) MinecraftClient.getInstance().mouse;
@@ -105,7 +105,7 @@ abstract class MouseMixin {
 	}
 
 	// Synthetic method method_1605([ZDDI)V -> lambda in Screen.wrapScreenError in Mouse.onMouseButton
-	@Inject(method = "method_1605([ZLnet/minecraft/client/gui/screen/Screen;DDI)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z", shift = At.Shift.AFTER))
+	@Inject(method = "method_1605", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z", shift = At.Shift.AFTER))
 	private static void afterMouseReleasedEvent(boolean[] resultHack, Screen screen, double mouseX, double mouseY, int button, CallbackInfo ci) {
 		@SuppressWarnings("resource")
 		var thisRef = (MouseMixin) (Object) MinecraftClient.getInstance().mouse;
@@ -128,8 +128,10 @@ abstract class MouseMixin {
 			return;
 		}
 
-		// Apply same calculations to horizontal scroll as vertical scroll distance has
-		this.quilt$scrollDistanceX = this.client.options.discreteMouseScroll ? Math.signum(scrollDeltaX) : scrollDeltaX * this.client.options.mouseWheelSensitivity;
+		// Apply same calculations to horizontal scroll as vertical scroll amount has
+		this.quilt$scrollDistanceX = this.client.options.getDiscreteMouseScroll().get()
+				? Math.signum(scrollDeltaX)
+				: scrollDeltaX * this.client.options.getMouseWheelSensitivity().get();
 
 		if (ScreenMouseEvents.ALLOW_MOUSE_SCROLL.invoker().allowMouseScroll(this.quilt$currentScreen, mouseX, mouseY, this.quilt$scrollDistanceX, scrollDistanceY) == TriState.FALSE) {
 			this.quilt$currentScreen = null;

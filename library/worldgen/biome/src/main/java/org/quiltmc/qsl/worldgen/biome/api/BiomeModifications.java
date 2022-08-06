@@ -73,7 +73,7 @@ public final class BiomeModifications {
 		Preconditions.checkArgument(entityType.getSpawnGroup() != SpawnGroup.MISC,
 				"Cannot add spawns for entities with spawnGroup=MISC since they'd be replaced by pigs.");
 
-		// We need the entity type to be registered or we cannot deduce an ID otherwisea
+		// We need the entity type to be registered, or we cannot deduce an identifier otherwise
 		Identifier id = Registry.ENTITY_TYPE.getId(entityType);
 		Preconditions.checkState(id != Registry.ENTITY_TYPE.getDefaultId(), "Unregistered entity type: %s", entityType);
 

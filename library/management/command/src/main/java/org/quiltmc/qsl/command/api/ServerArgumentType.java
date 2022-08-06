@@ -22,21 +22,22 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.command.argument.ArgumentTypes;
-import net.minecraft.command.argument.serialize.ArgumentSerializer;
+import net.minecraft.command.argument.ArgumentTypeInfo;
 import net.minecraft.command.suggestion.SuggestionProviders;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.command.impl.ServerArgumentTypeImpl;
 import org.quiltmc.qsl.command.impl.ServerArgumentTypes;
+import org.quiltmc.qsl.command.mixin.ArgumentTypeInfosAccessor;
 
 /**
  * Represents an argument type that only needs to be known server-side.
  *
- * @param <T> the argument type
+ * @param <A> the argument type
  */
 @ApiStatus.NonExtendable
-public interface ServerArgumentType<T extends ArgumentType<?>> {
+public interface ServerArgumentType<A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> {
 	/**
 	 * Gets the identifier of this argument type.
 	 *
@@ -49,23 +50,23 @@ public interface ServerArgumentType<T extends ArgumentType<?>> {
 	 *
 	 * @return argument type class
 	 */
-	Class<? extends T> type();
+	Class<? extends A> type();
 
 	/**
-	 * Gets the serializer of this argument type.
+	 * Gets the information of this argument type.
 	 * <p>
 	 * This will only be used on clients who recognize this argument.
 	 *
-	 * @return argument serializer
+	 * @return argument type information
 	 */
-	ArgumentSerializer<T> serializer();
+	ArgumentTypeInfo<A, T> typeInfo();
 
 	/**
 	 * Gets the fallback provider of this argument type.
 	 *
 	 * @return argument fallback provider
 	 */
-	ArgumentTypeFallbackProvider<T> fallbackProvider();
+	ArgumentTypeFallbackProvider<A> fallbackProvider();
 
 	/**
 	 * Gets the fallback suggestion provider of this argument type.
@@ -79,18 +80,17 @@ public interface ServerArgumentType<T extends ArgumentType<?>> {
 	 *
 	 * @param id                  the argument type's identifier
 	 * @param type                the argument type class
-	 * @param serializer          the argument serializer
+	 * @param typeInfo            the argument type info
 	 * @param fallbackProvider    the fallback provider
 	 * @param fallbackSuggestions the fallback suggestion provider
-	 * @param <T>                 the argument type
+	 * @param <A>                 the argument type
 	 * @return a newly-created server-side argument type
 	 */
-	@SuppressWarnings("unchecked")
-	static <T extends ArgumentType<?>> ServerArgumentType<T> register(Identifier id, Class<? extends T> type,
-			ArgumentSerializer<T> serializer,
-			ArgumentTypeFallbackProvider<T> fallbackProvider, @Nullable SuggestionProvider<?> fallbackSuggestions) {
-		var value = new ServerArgumentTypeImpl<>(id, type, serializer, fallbackProvider, fallbackSuggestions);
-		ArgumentTypes.register(id.toString(), (Class<T>) type, serializer);
+	static <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> ServerArgumentType<A, T> register(
+			Identifier id, Class<? extends A> type, ArgumentTypeInfo<A, T> typeInfo,
+			ArgumentTypeFallbackProvider<A> fallbackProvider, @Nullable SuggestionProvider<?> fallbackSuggestions) {
+		var value = new ServerArgumentTypeImpl<>(id, type, typeInfo, fallbackProvider, fallbackSuggestions);
+		ArgumentTypeInfosAccessor.callRegister(Registry.COMMAND_ARGUMENT_TYPE, id.toString(), type, typeInfo);
 		ServerArgumentTypes.register(value);
 		return value;
 	}
@@ -99,15 +99,16 @@ public interface ServerArgumentType<T extends ArgumentType<?>> {
 	 * Creates and registers a new server-side argument type.
 	 *
 	 * @param id               the argument type's identifier
-	 * @param type             the argument type class
-	 * @param serializer       the argument serializer
+	 * @param type             the argument type info
+	 * @param typeInfo         the argument serializer
 	 * @param fallbackProvider the fallback provider
-	 * @param <T>              the argument type
+	 * @param <A>              the argument type
 	 * @return a newly-created server-side argument type
 	 */
-	static <T extends ArgumentType<?>> ServerArgumentType<T> register(Identifier id, Class<? extends T> type,
-			ArgumentSerializer<T> serializer,
-			ArgumentTypeFallbackProvider<T> fallbackProvider) {
-		return register(id, type, serializer, fallbackProvider, SuggestionProviders.ASK_SERVER);
+	static <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> ServerArgumentType<A, T> register(
+			Identifier id, Class<? extends A> type, ArgumentTypeInfo<A, T> typeInfo,
+			ArgumentTypeFallbackProvider<A> fallbackProvider
+	) {
+		return register(id, type, typeInfo, fallbackProvider, SuggestionProviders.ASK_SERVER);
 	}
 }

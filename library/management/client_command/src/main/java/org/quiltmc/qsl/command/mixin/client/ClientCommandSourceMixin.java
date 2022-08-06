@@ -29,11 +29,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientCommandSource;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.network.MessageType;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Util;
 
 import org.quiltmc.qsl.command.api.client.QuiltClientCommandSource;
 
@@ -48,12 +45,13 @@ abstract class ClientCommandSourceMixin implements QuiltClientCommandSource {
 
 	@Override
 	public void sendFeedback(Text message) {
-		this.client.inGameHud.addChatMessage(MessageType.SYSTEM, message, Util.NIL_UUID);
+		this.client.inGameHud.getChatHud().addMessage(message);
+		this.client.getChatNarratorManager().narrate(message);
 	}
 
 	@Override
 	public void sendError(Text message) {
-		this.client.inGameHud.addChatMessage(MessageType.SYSTEM, new LiteralText("").append(message).formatted(Formatting.RED), Util.NIL_UUID);
+		this.sendFeedback(message.copy().formatted(Formatting.RED));
 	}
 
 	@Override

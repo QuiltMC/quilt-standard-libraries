@@ -51,11 +51,11 @@ public abstract class TheEndBiomeSourceMixin extends BiomeSource {
 	}
 
 	@Inject(method = "<init>", at = @At("RETURN"))
-	private void init(Registry<Biome> biomeRegistry, long seed, CallbackInfo ci) {
-		this.overrides = Suppliers.memoize(() -> TheEndBiomeData.createOverrides(biomeRegistry, seed));
+	private void init(Registry<Biome> biomeRegistry, CallbackInfo ci) {
+		this.overrides = Suppliers.memoize(() -> TheEndBiomeData.createOverrides(biomeRegistry));
 	}
 
-	@Inject(method = "method_38109", at = @At("RETURN"), cancellable = true)
+	@Inject(method = "getNoiseBiome", at = @At("RETURN"), cancellable = true)
 	private void getWeightedEndBiome(int biomeX, int biomeY, int biomeZ, MultiNoiseUtil.MultiNoiseSampler noise, CallbackInfoReturnable<Holder<Biome>> cir) {
 		cir.setReturnValue(this.overrides.get().pick(biomeX, biomeY, biomeZ, noise, cir.getReturnValue()));
 	}

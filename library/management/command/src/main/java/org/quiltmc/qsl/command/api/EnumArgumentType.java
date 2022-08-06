@@ -36,11 +36,11 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
 
+import net.minecraft.command.CommandBuildContext;
 import net.minecraft.command.CommandSource;
-import net.minecraft.command.argument.serialize.ArgumentSerializer;
+import net.minecraft.command.argument.ArgumentTypeInfo;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 /**
  * An {@link ArgumentType} that allows an arbitrary set of (case-insensitive) strings.
@@ -49,7 +49,7 @@ import net.minecraft.text.TranslatableText;
  */
 public final class EnumArgumentType implements ArgumentType<String> {
 	public static final DynamicCommandExceptionType UNKNOWN_VALUE_EXCEPTION =
-			new DynamicCommandExceptionType(o -> new TranslatableText("quilt.argument.enum.unknown_value", o));
+			new DynamicCommandExceptionType(o -> Text.translatable("quilt.argument.enum.unknown_value", o));
 
 	private final Set<String> values;
 
@@ -82,8 +82,7 @@ public final class EnumArgumentType implements ArgumentType<String> {
 	 * @param argumentName the argument name
 	 * @return the argument value
 	 */
-	public static String getEnum(CommandContext<ServerCommandSource> context,
-			String argumentName) {
+	public static String getEnum(CommandContext<?> context, String argumentName) {
 		return context.getArgument(argumentName, String.class);
 	}
 
@@ -139,7 +138,7 @@ public final class EnumArgumentType implements ArgumentType<String> {
 	 * @return the argument as an {@code enum} constant
 	 * @throws CommandSyntaxException if the argument doesn't match a known enum constant
 	 */
-	public static <E extends Enum<E>> E getEnumConstant(CommandContext<ServerCommandSource> context,
+	public static <E extends Enum<E>> E getEnumConstant(CommandContext<?> context,
 			String argumentName, Class<? extends E> enumClass)
 			throws CommandSyntaxException {
 		if (enumConstantTypes == null) {
@@ -216,20 +215,20 @@ public final class EnumArgumentType implements ArgumentType<String> {
 		return StringArgumentType.StringType.SINGLE_WORD.getExamples();
 	}
 
-	public static final class Serializer implements ArgumentSerializer<EnumArgumentType> {
+	public static final class Info implements ArgumentTypeInfo<EnumArgumentType, Info.Template> {
 		@Override
-		public void toPacket(EnumArgumentType type, PacketByteBuf buf) {
+		public void serializeToNetwork(Template type, PacketByteBuf buf) {
 			buf.writeCollection(type.values, PacketByteBuf::writeString);
 		}
 
 		@Override
-		public EnumArgumentType fromPacket(PacketByteBuf buf) {
+		public Template deserializeFromNetwork(PacketByteBuf buf) {
 			Set<String> values = buf.readCollection(LinkedHashSet::new, PacketByteBuf::readString);
-			return new EnumArgumentType(values);
+			return new Template(values);
 		}
 
 		@Override
-		public void toJson(EnumArgumentType type, JsonObject json) {
+		public void serializeToJson(Template type, JsonObject json) {
 			var valuesArr = new JsonArray();
 
 			for (var value : type.values) {
@@ -237,6 +236,29 @@ public final class EnumArgumentType implements ArgumentType<String> {
 			}
 
 			json.add("values", valuesArr);
+		}
+
+		@Override
+		public Template unpack(EnumArgumentType type) {
+			return new Template(type.values);
+		}
+
+		public final class Template implements ArgumentTypeInfo.Template<EnumArgumentType> {
+			private final Set<String> values;
+
+			public Template(Set<String> values) {
+				this.values = values;
+			}
+
+			@Override
+			public EnumArgumentType instantiate(CommandBuildContext context) {
+				return new EnumArgumentType(this.values);
+			}
+
+			@Override
+			public ArgumentTypeInfo<EnumArgumentType, ?> type() {
+				return Info.this;
+			}
 		}
 	}
 }

@@ -18,6 +18,7 @@ if (version.contains("beta") && !ENV.MAVEN_URL) {
 
 version = version + "+" + Versions.MINECRAFT_VERSION.version() + (System.getenv("SNAPSHOTS_URL") ? "-SNAPSHOT" : "")
 println("QSL: " + version)
+
 sourceSets {
 	testmod {
 		compileClasspath += main.compileClasspath
@@ -40,6 +41,8 @@ jar {
 }
 
 task fatJavadoc(type: Javadoc) {
+	group "documentation"
+
 	options {
 		source = String.valueOf(Versions.JAVA_VERSION)
 		encoding = "UTF-8"
@@ -73,6 +76,13 @@ task fatJavadoc(type: Javadoc) {
 			subproject.tasks.withType(Javadoc).each { javadocTask ->
 				source += javadocTask.source
 				classpath += javadocTask.classpath
+				// TODO: find a proper fix for this
+				// What does this do? Well, turns out transitive access wideners aren't applied properly,
+				// which fails the fat javadoc task! Since Quilt Block Entity adds a transitive access widener to a private interface.
+				// So what do we do? We simply removed the Vanilla JAR and hope that the correct transformed JAR shows up first.
+				// The proper fix is to get the root project to generate a new MC JAR that contains all the transitive transformations of the modules
+				// applied and pass that to the fat javadoc task instead.
+						.filter { !it.name.startsWith("minecraft-merged-named") }
 			}
 		}
 	}
@@ -81,6 +91,8 @@ task fatJavadoc(type: Javadoc) {
 
 
 task fatJavadocJar(type: Jar) {
+	group "build"
+
 	classifier "fat-javadoc"
 	dependsOn fatJavadoc
 	from fatJavadoc.destinationDir
@@ -128,6 +140,7 @@ loom {
 			client()
 			configName = "Testmod Client"
 			source(project.sourceSets.testmod)
+			programArg("--uuid=1")
 		}
 
 		testmodServer {

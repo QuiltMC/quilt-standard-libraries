@@ -29,8 +29,8 @@ import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
 import net.minecraft.world.gen.feature.PlacedFeature;
+import net.minecraft.world.gen.feature.StructureFeature;
 import net.minecraft.world.level.LevelProperties;
 
 import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
@@ -61,9 +61,8 @@ public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 		return this.biome;
 	}
 
-	@SuppressWarnings("removal")
 	@Override
-	public Holder<Biome> getBiomeRegistryEntry() {
+	public Holder<Biome> getBiomeHolder() {
 		return this.entry;
 	}
 
@@ -80,8 +79,8 @@ public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 	}
 
 	@Override
-	public boolean validForStructure(RegistryKey<ConfiguredStructureFeature<?, ?>> key) {
-		ConfiguredStructureFeature<?, ?> instance = this.dynamicRegistries.get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY).get(key);
+	public boolean validForStructure(RegistryKey<StructureFeature> key) {
+		StructureFeature instance = this.dynamicRegistries.get(Registry.STRUCTURE_WORLDGEN).get(key);
 
 		if (instance == null) {
 			return false;
@@ -91,8 +90,8 @@ public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 	}
 
 	@Override
-	public Optional<RegistryKey<ConfiguredStructureFeature<?, ?>>> getStructureKey(ConfiguredStructureFeature<?, ?> configuredStructure) {
-		Registry<ConfiguredStructureFeature<?, ?>> registry = this.dynamicRegistries.get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY);
+	public Optional<RegistryKey<StructureFeature>> getStructureKey(StructureFeature configuredStructure) {
+		Registry<StructureFeature> registry = this.dynamicRegistries.get(Registry.STRUCTURE_WORLDGEN);
 		return registry.getKey(configuredStructure);
 	}
 

@@ -68,12 +68,12 @@ final class AttachmentDictionary<R, V> {
 		return this.map;
 	}
 
-	public void processResource(Resource resource) {
+	public void processResource(Identifier resourceId, Resource resource) {
 		try {
 			boolean replace;
 			JsonElement values;
 
-			try (var reader = new InputStreamReader(resource.getInputStream())) {
+			try (var reader = new InputStreamReader(resource.open())) {
 				JsonObject obj = JsonHelper.deserialize(reader);
 				replace = JsonHelper.getBoolean(obj, "replace", false);
 				values = obj.get("values");
@@ -85,7 +85,7 @@ final class AttachmentDictionary<R, V> {
 							"was " + JsonHelper.getType(values));
 				}
 			} catch (JsonSyntaxException e) {
-				LOGGER.error("Invalid JSON file " + resource.getId() + ", ignoring", e);
+				LOGGER.error("Invalid JSON file " + resourceId + ", ignoring", e);
 				return;
 			}
 
@@ -95,22 +95,22 @@ final class AttachmentDictionary<R, V> {
 			}
 
 			if (values.isJsonArray()) {
-				this.handleArray(resource, values.getAsJsonArray());
+				this.handleArray(resourceId, resource, values.getAsJsonArray());
 			} else if (values.isJsonObject()) {
-				this.handleObject(resource, values.getAsJsonObject());
+				this.handleObject(resourceId, resource, values.getAsJsonObject());
 			}
 		} catch (Exception e) {
-			LOGGER.error("Exception occurred while parsing " + resource.getId() + "!", e);
+			LOGGER.error("Exception occurred while parsing " + resourceId + "!", e);
 		}
 	}
 
-	private void handleArray(Resource resource, JsonArray values) {
+	private void handleArray(Identifier resourceId, Resource resource, JsonArray values) {
 		for (int i = 0; i < values.size(); i++) {
 			JsonElement entry = values.get(i);
 
 			if (!entry.isJsonObject()) {
 				LOGGER.error("Invalid element at index {} in values of {}: expected a JsonObject, was {}",
-						i, resource.getId(), JsonHelper.getType(entry));
+						i, resourceId, JsonHelper.getType(entry));
 				continue;
 			}
 
@@ -135,12 +135,12 @@ final class AttachmentDictionary<R, V> {
 				id = new Identifier(idStr);
 			} catch (JsonSyntaxException e) {
 				LOGGER.error("Invalid element at index {} in values of {}: syntax error",
-						i, resource.getId());
+						i, resourceId);
 				LOGGER.error("", e);
 				continue;
 			} catch (InvalidIdentifierException e) {
 				LOGGER.error("Invalid element at index {} in values of {}: invalid identifier",
-						i, resource.getId());
+						i, resourceId);
 				LOGGER.error("", e);
 				continue;
 			}
@@ -152,7 +152,7 @@ final class AttachmentDictionary<R, V> {
 				}
 			} catch (JsonSyntaxException e) {
 				LOGGER.error("Failed to parse value for registry entry {} in values of {}: syntax error",
-						id, resource.getId());
+						id, resourceId);
 				LOGGER.error("", e);
 				continue;
 			}
@@ -160,7 +160,7 @@ final class AttachmentDictionary<R, V> {
 			required = JsonHelper.getBoolean(entryO, "required", true);
 
 			if (!tagId && required && !registry.containsId(id)) {
-				LOGGER.error("Unregistered identifier in values of {}: '{}', ignoring", resource.getId(), id);
+				LOGGER.error("Unregistered identifier in values of {}: '{}', ignoring", resourceId, id);
 				continue;
 			}
 
@@ -177,7 +177,7 @@ final class AttachmentDictionary<R, V> {
 		}
 	}
 
-	private void handleObject(Resource resource, JsonObject values) {
+	private void handleObject(Identifier resourceId, Resource resource, JsonObject values) {
 		for (Map.Entry<String, JsonElement> entry : values.entrySet()) {
 			Identifier id;
 			boolean tagId = false;
@@ -193,13 +193,13 @@ final class AttachmentDictionary<R, V> {
 				id = new Identifier(idStr);
 			} catch (InvalidIdentifierException e) {
 				LOGGER.error("Invalid identifier in values of {}: '{}', ignoring",
-						resource.getId(), entry.getKey());
+						resourceId, entry.getKey());
 				LOGGER.error("", e);
 				continue;
 			}
 
 			if (!tagId && !registry.containsId(id)) {
-				LOGGER.error("Unregistered identifier in values of {}: '{}', ignoring", resource.getId(), id);
+				LOGGER.error("Unregistered identifier in values of {}: '{}', ignoring", resourceId, id);
 				continue;
 			}
 
@@ -228,7 +228,7 @@ final class AttachmentDictionary<R, V> {
 						this.attachment.id(), id);
 			}
 
-			LOGGER.error("Ignoring attachment value for '{}' in {} since it's invalid", id, resource.getId());
+			LOGGER.error("Ignoring attachment value for '{}' in {} since it's invalid", id, resource.getSourceName());
 			return null;
 		}
 

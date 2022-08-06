@@ -45,12 +45,6 @@ import org.quiltmc.qsl.worldgen.biome.impl.modification.BuiltInRegistryKeys;
  */
 public interface BiomeModificationContext {
 	/**
-	 * @see Biome#getCategory()
-	 * @see Biome.Builder#category(Biome.Category)
-	 */
-	void setCategory(Biome.Category category);
-
-	/**
 	 * {@return the modification context for the biomes weather properties}
 	 */
 	WeatherContext getWeather();
@@ -363,7 +357,7 @@ public interface BiomeModificationContext {
 		/**
 		 * Removes all carvers with the given key from all of this biomes generation steps.
 		 *
-		 * @return {@code true} if any carvers were removed, otherwise {@code false}
+		 * @return {@code true} if any carvers were removed, or {@code false} otherwise
 		 */
 		default boolean removeCarver(RegistryKey<ConfiguredCarver<?>> configuredCarverKey) {
 			boolean anyFound = false;

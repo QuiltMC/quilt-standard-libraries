@@ -18,38 +18,52 @@
 package org.quiltmc.qsl.resource.loader.impl;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import com.google.common.base.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.pack.DataPackSettings;
+import net.minecraft.resource.pack.ResourcePack;
+import net.minecraft.resource.pack.ResourcePackProfile;
 
 import org.quiltmc.loader.api.ModMetadata;
 
 @ApiStatus.Internal
 public final class ModResourcePackUtil {
+	/**
+	 * Represents the default data-pack settings, including the default-enabled built-in data-packs.
+	 */
+	public static final DataPackSettings DEFAULT_SETTINGS = createDefaultDataPackSettings();
+
 	public static boolean containsDefault(ModMetadata info, String filename) {
 		return "pack.mcmeta".equals(filename);
 	}
 
+	public static String getPackMeta(@Nullable String description, ResourceType type) {
+		if (description == null) {
+			description = "";
+		} else {
+			description = description.replace("\\", "\\u005C");
+			description = description.replace("\"", "\\u0022");
+		}
+
+		return String.format("""
+						{"pack":{"pack_format":%d,"description":"%s"}}
+						""",
+				type.getPackVersion(SharedConstants.getGameVersion()), description);
+	}
+
 	public static InputStream openDefault(ModMetadata info, ResourceType type, String filename) {
 		if ("pack.mcmeta".equals(filename)) {
-			String description = info.name();
-
-			if (description == null) {
-				description = "";
-			} else {
-				description = description.replaceAll("\"", "\\\"");
-			}
-
-			var pack = String.format("""
-							{"pack":{"pack_format":%d,"description":"%s"}}
-							""",
-					type.getPackVersion(SharedConstants.getGameVersion()), description);
+			var pack = getPackMeta(info.name(), type);
 			return IOUtils.toInputStream(pack, Charsets.UTF_8);
 		}
+
 		return null;
 	}
 
@@ -59,5 +73,27 @@ public final class ModResourcePackUtil {
 		} else {
 			return "Quilt Mod \"" + info.id() + "\"";
 		}
+	}
+
+	private static DataPackSettings createDefaultDataPackSettings() {
+		var moddedResourcePacks = new ArrayList<ResourcePackProfile>();
+		ModResourcePackProvider.SERVER_RESOURCE_PACK_PROVIDER.register(moddedResourcePacks::add);
+
+		var enabled = new ArrayList<>(DataPackSettings.SAFE_MODE.getEnabled());
+		var disabled = new ArrayList<>(DataPackSettings.SAFE_MODE.getDisabled());
+
+		// This ensure that any built-in registered data packs by mods which needs to be enabled by default are
+		// as the data pack screen automatically put any data pack as disabled except the Default data pack.
+		for (var profile : moddedResourcePacks) {
+			ResourcePack pack = profile.createResourcePack();
+
+			if (pack.getActivationType().isEnabledByDefault()) {
+				enabled.add(profile.getName());
+			} else {
+				disabled.add(profile.getName());
+			}
+		}
+
+		return new DataPackSettings(enabled, disabled);
 	}
 }

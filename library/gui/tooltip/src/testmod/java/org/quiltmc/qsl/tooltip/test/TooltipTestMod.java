@@ -27,7 +27,7 @@ import net.minecraft.client.item.TooltipData;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -77,7 +77,7 @@ public final class TooltipTestMod implements ModInitializer {
 		@Environment(EnvType.CLIENT)
 		@Override
 		public TooltipComponent toComponent() {
-			return TooltipComponent.of(new LiteralText("Converted Tooltip Data").formatted(Formatting.GOLD).asOrderedText());
+			return TooltipComponent.of(Text.literal("Converted Tooltip Data").formatted(Formatting.GOLD).asOrderedText());
 		}
 	}
 }

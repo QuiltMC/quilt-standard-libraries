@@ -25,9 +25,10 @@ import java.util.concurrent.Executor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.tag.Tag;
+import net.minecraft.tag.TagGroupLoader;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 
@@ -39,7 +40,7 @@ class ClientOnlyTagManagerReloader implements SimpleResourceReloader<List<Client
 	private static final Identifier ID = new Identifier(ClientQuiltTagsMod.NAMESPACE, "client_only_tags");
 
 	@Override
-	public Identifier getQuiltId() {
+	public @NotNull Identifier getQuiltId() {
 		return ID;
 	}
 
@@ -63,6 +64,7 @@ class ClientOnlyTagManagerReloader implements SimpleResourceReloader<List<Client
 		}, executor);
 	}
 
-	protected static record Entry(ClientTagRegistryManager<?> manager, Map<Identifier, Tag.Builder> serializedTags) {
+	protected record Entry(ClientTagRegistryManager<?> manager,
+	                       Map<Identifier, List<TagGroupLoader.EntryWithSource>> serializedTags) {
 	}
 }

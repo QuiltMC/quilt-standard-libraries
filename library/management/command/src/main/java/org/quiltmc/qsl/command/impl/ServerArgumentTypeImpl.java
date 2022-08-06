@@ -22,20 +22,20 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.command.argument.serialize.ArgumentSerializer;
+import net.minecraft.command.argument.ArgumentTypeInfo;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.command.api.ArgumentTypeFallbackProvider;
 import org.quiltmc.qsl.command.api.ServerArgumentType;
 
 @ApiStatus.Internal
-public record ServerArgumentTypeImpl<T extends ArgumentType<?>>(
+public record ServerArgumentTypeImpl<A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>>(
 		Identifier id,
-		Class<? extends T> type,
-		ArgumentSerializer<T> serializer,
-		ArgumentTypeFallbackProvider<T> fallbackProvider,
+		Class<? extends A> type,
+		ArgumentTypeInfo<A, T> typeInfo,
+		ArgumentTypeFallbackProvider<A> fallbackProvider,
 		@Nullable SuggestionProvider<?> fallbackSuggestions
-) implements ServerArgumentType<T> {
+) implements ServerArgumentType<A, T> {
 	@Override
 	public String toString() {
 		return "ServerArgumentType{" +
