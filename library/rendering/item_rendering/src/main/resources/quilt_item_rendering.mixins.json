@@ -3,6 +3,7 @@
   "package": "org.quiltmc.qsl.rendering.item.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "client.BufferBuilderAccessor",
     "client.ItemRendererMixin"
   ],
   "injectors": {
