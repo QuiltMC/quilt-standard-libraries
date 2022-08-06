@@ -192,6 +192,7 @@ javadoc {
 license {
 	rule rootProject.file("codeformat/COLONEL_MODIFIED_HEADER")
 	rule rootProject.file("codeformat/FABRIC_MODIFIED_HEADER")
+	rule rootProject.file("codeformat/FOUNDATION_GAMES_MODIFIED_HEADER")
 	rule rootProject.file("codeformat/HEADER")
 
 	include "**/*.java"

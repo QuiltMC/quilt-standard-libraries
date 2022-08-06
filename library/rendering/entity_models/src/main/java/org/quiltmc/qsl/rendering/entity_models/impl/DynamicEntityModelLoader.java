@@ -69,7 +69,7 @@ public class DynamicEntityModelLoader implements SimpleResourceReloader<DynamicE
 	}
 
 	public static class ModelLoader {
-		private static final Pattern PATH_AND_NAME_PATTERN = Pattern.compile("entity/model/(\\w*)/(\\w*)\\.json");
+		private static final Pattern PATH_AND_NAME_PATTERN = Pattern.compile("model/entity/(\\w*)/(\\w*)\\.json");
 
 		private final ResourceManager manager;
 		private final Profiler profiler;

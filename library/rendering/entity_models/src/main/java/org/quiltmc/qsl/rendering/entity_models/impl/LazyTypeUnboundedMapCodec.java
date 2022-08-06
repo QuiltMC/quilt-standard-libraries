@@ -23,44 +23,54 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.rendering.entity_models.mixin;
+package org.quiltmc.qsl.rendering.entity_models.impl;
 
-import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
-import org.spongepowered.asm.mixin.gen.Invoker;
+import java.util.Map;
+import java.util.function.Supplier;
 
-import net.minecraft.client.model.Dilation;
-import net.minecraft.client.model.ModelCuboidData;
-import net.minecraft.client.util.math.Vector2f;
-import net.minecraft.util.math.Vec3f;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.Lifecycle;
+import com.mojang.serialization.codecs.BaseMapCodec;
 
-@Mixin(ModelCuboidData.class)
-public interface ModelCuboidDataAccessor {
+public class LazyTypeUnboundedMapCodec<K, V> implements BaseMapCodec<K, V>, Codec<Map<K, V>> {
+    private final Codec<K> keyCodec;
+    private final Supplier<Codec<V>> elementCodecProvider;
 
-    @Accessor("name")
-    String name();
+    private Codec<V> elementCodec;
 
-    @Accessor("offset")
-    Vec3f offset();
+    public LazyTypeUnboundedMapCodec(Codec<K> keyCodec, Supplier<Codec<V>> elementCodecProvider) {
+        this.keyCodec = keyCodec;
+        this.elementCodecProvider = elementCodecProvider;
+    }
 
-    @Accessor("dimensions")
-    Vec3f dimensions();
+    public static <K, V> LazyTypeUnboundedMapCodec<K, V> of(Codec<K> keyCodec, Supplier<Codec<V>> elementCodecProvider) {
+        return new LazyTypeUnboundedMapCodec<>(keyCodec, elementCodecProvider);
+    }
 
-    @Accessor("extraSize")
-    Dilation dilation();
+    @Override
+    public <T> DataResult<Pair<Map<K, V>, T>> decode(DynamicOps<T> ops, T input) {
+        return ops.getMap(input).setLifecycle(Lifecycle.stable()).flatMap(map -> decode(ops, map)).map(r -> Pair.of(r, input));
+    }
 
-    @Accessor("mirror")
-    boolean mirror();
+    @Override
+    public <T> DataResult<T> encode(Map<K, V> input, DynamicOps<T> ops, T prefix) {
+        return encode(input, ops, ops.mapBuilder()).build(prefix);
+    }
 
-    @Accessor("textureUV")
-    Vector2f uv();
+    @Override
+    public Codec<K> keyCodec() {
+        return keyCodec;
+    }
 
-    @Accessor("textureScale")
-    Vector2f uvScale();
+    @Override
+    public Codec<V> elementCodec() {
+        if (elementCodec == null) {
+            elementCodec = elementCodecProvider.get();
+        }
 
-    @Invoker("<init>")
-    static ModelCuboidData create(@Nullable String string, float f, float g, float h, float i, float j, float k, float l, float m, Dilation dilation, boolean bl, float n, float o){
-        throw new AssertionError("Unreachable");
+        return elementCodec;
     }
 }
