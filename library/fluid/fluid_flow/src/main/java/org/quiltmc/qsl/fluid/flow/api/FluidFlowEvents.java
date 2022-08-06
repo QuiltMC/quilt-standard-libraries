@@ -73,7 +73,6 @@ public final class FluidFlowEvents {
 	}
 
 	public interface FluidFlowInteractionCallback {
-
 		/**
 		 * An event run when a fluid flows next to a block.
 		 *
