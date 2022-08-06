@@ -30,8 +30,7 @@ import net.minecraft.world.World;
 
 
 public final class FluidFlowEvents {
-	private FluidFlowEvents() {
-	}
+	private FluidFlowEvents() {}
 
 	// Flowing Block to Interacting Block to Event
 	private static final Map<Block, Map<Block, Event<FluidFlowInteractionCallback>>> EVENT_MAP = new Object2ObjectOpenHashMap<>();
