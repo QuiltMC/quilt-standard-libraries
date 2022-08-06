@@ -30,9 +30,9 @@ public final class CrossbowShotProjectileEvents {
 	 * This event modifies the projectile entity shot from a crossbow.
 	 */
 	@ParameterInvokingEvent
-	public static final Event<ModifyProjectileFromCrossbow> CROSSBOW_MODIFY_SHOT_PROJECTILE = Event.create(ModifyProjectileFromCrossbow.class, callbacks -> (bowStack, projectileStack, user, persistentProjectileEntity) -> {
+	public static final Event<ModifyProjectileFromCrossbow> CROSSBOW_MODIFY_SHOT_PROJECTILE = Event.create(ModifyProjectileFromCrossbow.class, callbacks -> (bowStack, projectileStack, user, projectile) -> {
 		for (ModifyProjectileFromCrossbow callback : callbacks) {
-			callback.modifyProjectileShot(bowStack, projectileStack, user, persistentProjectileEntity);
+			callback.modifyProjectileShot(bowStack, projectileStack, user, projectile);
 		}
 	});
 
@@ -40,20 +40,19 @@ public final class CrossbowShotProjectileEvents {
 	 * This event replaces the projectile entity shot from a crossbow. Any modifications done in this step without returning a new entity can be erased.
 	 * Do not use this event to only modify the arrow entity, as {@link CrossbowShotProjectileEvents#CROSSBOW_MODIFY_SHOT_PROJECTILE} is the proper event.
 	 */
-	public static final Event<ReplaceProjectileFromCrossbow> CROSSBOW_REPLACE_SHOT_PROJECTILE = Event.create(ReplaceProjectileFromCrossbow.class, callbacks -> (bowStack, projectileStack, user, persistentProjectileEntity) -> {
+	public static final Event<ReplaceProjectileFromCrossbow> CROSSBOW_REPLACE_SHOT_PROJECTILE = Event.create(ReplaceProjectileFromCrossbow.class, callbacks -> (bowStack, projectileStack, user, projectile) -> {
 		for (ReplaceProjectileFromCrossbow callback : callbacks) {
-			PersistentProjectileEntity replacedEntity = callback.replaceProjectileShot(bowStack, projectileStack, user, persistentProjectileEntity);
+			PersistentProjectileEntity replacedEntity = callback.replaceProjectileShot(bowStack, projectileStack, user, projectile);
 
 			if (replacedEntity != null) {
 				return replacedEntity;
 			}
 		}
 
-		return persistentProjectileEntity;
+		return projectile;
 	});
 
-	private CrossbowShotProjectileEvents() {
-	}
+	private CrossbowShotProjectileEvents() {}
 
 	public interface ReplaceProjectileFromCrossbow {
 		/**
@@ -62,10 +61,10 @@ public final class CrossbowShotProjectileEvents {
 		 * @param crossbowStack              the ItemStack for the Crossbow Item
 		 * @param projectileStack            the ItemStack for the projectile currently being shot
 		 * @param user                       the user of the crossbow
-		 * @param persistentProjectileEntity the arrow entity to be spawned
+		 * @param projectile the arrow entity to be spawned
 		 * @return the new projectile entity. Return {@code null} if you do not change the entity.
 		 */
-		PersistentProjectileEntity replaceProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity user, @NotNull PersistentProjectileEntity persistentProjectileEntity);
+		PersistentProjectileEntity replaceProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity user, @NotNull PersistentProjectileEntity projectile);
 	}
 
 	public interface ModifyProjectileFromCrossbow {
@@ -75,8 +74,8 @@ public final class CrossbowShotProjectileEvents {
 		 * @param crossbowStack              the ItemStack for the Crossbow Item
 		 * @param projectileStack            the ItemStack for the projectile currently being shot
 		 * @param user                       the user of the crossbow
-		 * @param persistentProjectileEntity the arrow entity to be spawned
+		 * @param projectile the arrow entity to be spawned
 		 */
-		void modifyProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity user, @NotNull PersistentProjectileEntity persistentProjectileEntity);
+		void modifyProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity user, @NotNull PersistentProjectileEntity projectile);
 	}
 }

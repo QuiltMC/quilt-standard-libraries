@@ -32,10 +32,11 @@ public abstract class HeldItemRendererMixin {
 	@Redirect(method = "getHandRenderType",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z"))
 	private static boolean renderItem(ItemStack heldItem, Item item) {
-		if (item == Items.BOW)
+		if (item == Items.BOW) {
 			return heldItem.getItem() instanceof BowExtensions; // Return bow for rendering
-		if (item == Items.CROSSBOW)
+		} else if (item == Items.CROSSBOW) {
 			return heldItem.getItem() instanceof CrossbowExtensions; // Return crossbow for rendering
+		}
 		return heldItem.isOf(item); // Default behavior
 	}
 

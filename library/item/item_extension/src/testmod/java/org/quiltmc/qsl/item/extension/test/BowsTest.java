@@ -48,7 +48,7 @@ public class BowsTest implements ModInitializer {
 			return 10f;
 		}
 	};
-	public static final String MOD_ID = "quilt_extension_testmod";
+	public static final String MOD_ID = "quilt_item_extension_testmod";
 
 	@Override
 	public void onInitialize(ModContainer container) {

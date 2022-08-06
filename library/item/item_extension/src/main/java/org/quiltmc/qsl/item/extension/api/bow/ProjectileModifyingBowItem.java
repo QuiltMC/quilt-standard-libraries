@@ -39,6 +39,5 @@ public class ProjectileModifyingBowItem extends BowItem implements BowShotProjec
 		}
 	}
 
-	public void onProjectileShot(ItemStack bowStack, ItemStack arrowStack, LivingEntity user, float pullProgress, PersistentProjectileEntity projectile) {
-	}
+	public void onProjectileShot(ItemStack bowStack, ItemStack arrowStack, LivingEntity user, float pullProgress, PersistentProjectileEntity projectile) {}
 }
