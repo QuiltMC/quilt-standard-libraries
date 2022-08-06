@@ -136,7 +136,7 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 			 * We update the Movement in the fluid,by getting the TagKey of the fluid, via the Identifier.
 			 * The rest is nearly identical to vanilla.
 			 */
-			updateMovementInFluid(TagKey.of(Registry.FLUID_KEY,fluidState.getBuiltInRegistryHolder().getKey().get().getRegistry()), fluid.getPushStrength(fluidState, (Entity) (Object) this));
+			updateMovementInFluid(TagKey.of(Registry.FLUID_KEY, fluidState.getBuiltInRegistryHolder().getKey().get().getRegistry()), fluid.getPushStrength(fluidState, (Entity) (Object) this));
 			if (!quilt$inCustomFluid && !firstUpdate) {
 				customSplashEffects();
 			}
@@ -145,7 +145,7 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 
 			if (fluid.canExtinguish(fluidState, (Entity) (Object) this)) {
 				extinguish();
-			}else if(fluid.canIgnite(fluidState, (Entity) (Object)this)) {
+			} else if (fluid.canIgnite(fluidState, (Entity) (Object) this)) {
 				setOnFireFromLava();
 			}
 			return;

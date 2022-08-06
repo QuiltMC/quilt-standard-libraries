@@ -32,8 +32,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
-import org.quiltmc.qsl.fluid.api.QuiltFlowableFluidExtensions;
 import org.quiltmc.qsl.fluid.api.FluidEnchantmentHelper;
+import org.quiltmc.qsl.fluid.api.QuiltFlowableFluidExtensions;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(LavaFluid.class)
@@ -131,6 +131,7 @@ public abstract class LavaFluidMixin extends FlowableFluid implements QuiltFlowa
 	public FluidEnchantmentHelper customEnchantmentEffects(Vec3d movementInput, LivingEntity entity, float horizontalViscosity, float speed) {
 		return new FluidEnchantmentHelper(horizontalViscosity, speed);
 	}
+
 	@Override
 	public boolean canBoatSwimOn() {
 		return false;

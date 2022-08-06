@@ -43,6 +43,7 @@ import net.minecraft.world.event.GameEvent;
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 import javax.annotation.Nullable;
+
 @InjectedInterface(FlowableFluid.class)
 public interface QuiltFlowableFluidExtensions {
 
@@ -72,8 +73,7 @@ public interface QuiltFlowableFluidExtensions {
 	 *
 	 * @param state - FluidState of the fluid the color is requested from.
 	 * @param world - World the wanted fluid is in (used for the Biome).
-	 * @param pos - Position where the fluid is located.
-	 *
+	 * @param pos   - Position where the fluid is located.
 	 * @return - color as a int, based on in which biome it is in.
 	 */
 	default int getColor(FluidState state, World world, BlockPos pos) {
@@ -84,31 +84,27 @@ public interface QuiltFlowableFluidExtensions {
 	 * 0.8F is the default for water
 	 * 0.5F is the default for lava
 	 *
+	 * @param state    - FluidState of the viscosity the color is requested from.
+	 * @param affected - Entity which is in the fluid.
+	 * @return - Viscosity of the fluidstate as a float.
 	 * @see QuiltFlowableFluidExtensions#WATER_VISCOSITY
 	 * @see QuiltFlowableFluidExtensions#LAVA_VISCOSITY
-	 *
-	 * @param state - FluidState of the viscosity the color is requested from.
-	 * @param affected - Entity which is in the fluid.
-	 *
-	 * @return - Viscosity of the fluidstate as a float.
 	 */
 	default float getHorizontalViscosity(FluidState state, Entity affected) {
-		if(state.isIn(FluidTags.LAVA)) return LAVA_VISCOSITY;
+		if (state.isIn(FluidTags.LAVA)) return LAVA_VISCOSITY;
 		return WATER_VISCOSITY;
 	}
 
 	/**
 	 * Default for water and lava is 0.8F
 	 *
-	 * @see QuiltFlowableFluidExtensions#WATER_VISCOSITY
-	 *
-	 * @param state - FluidState of the fluid the viscosity is requested from.
+	 * @param state    - FluidState of the fluid the viscosity is requested from.
 	 * @param affected - Entity which is in the fluid.
-	 *
 	 * @return - Viscosity of the fluidstate as a float.
+	 * @see QuiltFlowableFluidExtensions#WATER_VISCOSITY
 	 */
 	default float getVerticalViscosity(FluidState state, Entity affected) {
-		if(state.isIn(FluidTags.LAVA)) return LAVA_VISCOSITY;
+		if (state.isIn(FluidTags.LAVA)) return LAVA_VISCOSITY;
 		return WATER_VISCOSITY;
 	}
 
@@ -117,17 +113,15 @@ public interface QuiltFlowableFluidExtensions {
 	 * 7 / 3000 is the default for lava in the overworld
 	 * 0.007F is the default for lava in the nether
 	 *
+	 * @param state    - FluidState of the fluid the PushStrength is requested from.
+	 * @param affected - Entity which is in the fluid.
+	 * @return - PushStrength of the fluidstate.
 	 * @see QuiltFlowableFluidExtensions#WATER_PUSH_STRENGTH
 	 * @see QuiltFlowableFluidExtensions#LAVA_PUSH_STRENGTH_OVERWORLD
 	 * @see QuiltFlowableFluidExtensions#LAVA_PUSH_STRENGTH_ULTRAWARM
-	 *
-	 * @param state - FluidState of the fluid the PushStrength is requested from.
-	 * @param affected - Entity which is in the fluid.
-	 *
-	 * @return - PushStrength of the fluidstate.
 	 */
 	default float getPushStrength(FluidState state, Entity affected) {
-		if(state.isIn(FluidTags.LAVA)) {
+		if (state.isIn(FluidTags.LAVA)) {
 			return affected.world.getDimension().ultraWarm() ? LAVA_PUSH_STRENGTH_ULTRAWARM : LAVA_PUSH_STRENGTH_OVERWORLD;
 		}
 		return WATER_PUSH_STRENGTH;
@@ -136,9 +130,8 @@ public interface QuiltFlowableFluidExtensions {
 	/**
 	 * Toggles weather or not a player can sprint swim in your fluid
 	 *
-	 * @param state - Fluidstate of the fluid the boolean is requested from.
+	 * @param state    - Fluidstate of the fluid the boolean is requested from.
 	 * @param affected - Entity which is in the fluid
-	 *
 	 * @return - A boolean, which tells if sprint swimming is allowed or not
 	 */
 	default boolean allowSprintSwimming(FluidState state, Entity affected) {
@@ -148,9 +141,8 @@ public interface QuiltFlowableFluidExtensions {
 	/**
 	 * Modifies the horizontal viscosity, taking Dolphins Grace into the mix.
 	 *
-	 * @param affected - LivingEntity which horizontalViscosity should be modified.
+	 * @param affected            - LivingEntity which horizontalViscosity should be modified.
 	 * @param horizontalViscosity - Unmodified horizontalViscosity of the fluid.
-	 *
 	 * @return an updated horizontalViscosity, specifically regarding potion effects
 	 */
 	default float modifyEntityHorizontalViscosity(LivingEntity affected, float horizontalViscosity) {
@@ -163,7 +155,7 @@ public interface QuiltFlowableFluidExtensions {
 	/**
 	 * Weather an Entity can swim when quickly double pressing the space bar inside a fluid.
 	 *
-	 * @param state - The fluidstate of the fluid the entity wants to swim in.
+	 * @param state    - The fluidstate of the fluid the entity wants to swim in.
 	 * @param affected - The entity which is in the fluid.
 	 * @return - A boolean of weather the entity can double tap sprint swim or not.
 	 */
@@ -174,7 +166,7 @@ public interface QuiltFlowableFluidExtensions {
 	/**
 	 * Weather a fishing bobber floats on top of a fluid or not.
 	 *
-	 * @param state - The fluidstate of the fluid the bobber wants to float on.
+	 * @param state    - The fluidstate of the fluid the bobber wants to float on.
 	 * @param affected - The FishingBobberEntity instance, which wants to float on the fluid.
 	 * @return - A boolean if the bobber can float on the fluid.
 	 */
@@ -185,7 +177,7 @@ public interface QuiltFlowableFluidExtensions {
 	/**
 	 * Weather a fishing bobber can fish in a fluid or not.
 	 *
-	 * @param state - The fluidstate of the fluid the bobber wants to fish in.
+	 * @param state    - The fluidstate of the fluid the bobber wants to fish in.
 	 * @param affected - The FishingBobberEntity instance, which wants to fish in the fluid.
 	 * @return - A boolean if the bobber can fish in the fluid.
 	 */
@@ -196,7 +188,7 @@ public interface QuiltFlowableFluidExtensions {
 	/**
 	 * If the fluid can extinguish burning entities.
 	 *
-	 * @param state - The fluidstate of the fluid the entity is in.
+	 * @param state    - The fluidstate of the fluid the entity is in.
 	 * @param affected - The entity which is in the fluid.
 	 * @return - A boolean weather the entity can be extinguished or not.
 	 */
@@ -207,7 +199,7 @@ public interface QuiltFlowableFluidExtensions {
 	/**
 	 * If the fluid can ignite entities.
 	 *
-	 * @param state - The fluidstate of the fluid the entity is in.
+	 * @param state    - The fluidstate of the fluid the entity is in.
 	 * @param affected - The entity which is in the fluid.
 	 * @return - A boolean weather the entity can be ignited by the fluid or not.
 	 */
@@ -218,7 +210,7 @@ public interface QuiltFlowableFluidExtensions {
 	/**
 	 * Returns the remaining air the entity has.
 	 *
-	 * @param air - The air the entity currently has.
+	 * @param air    - The air the entity currently has.
 	 * @param entity - The entity which is currently drowning.
 	 * @param random - A random Generator
 	 * @return - The remaining air for the next tick
@@ -233,16 +225,14 @@ public interface QuiltFlowableFluidExtensions {
 	 * 1000 is the default for water
 	 * 3100 is the default for lava
 	 *
+	 * @param world    - The world the fluid is located in.
+	 * @param blockpos - The position of the fluid.
+	 * @return - The density of the fluid.
 	 * @see QuiltFlowableFluidExtensions#WATER_DENSITY
 	 * @see QuiltFlowableFluidExtensions#LAVA_DENSITY
-	 *
-	 * @param world - The world the fluid is located in.
-	 * @param blockpos - The position of the fluid.
-	 *
-	 * @return - The density of the fluid.
 	 */
 	default float getDefaultDensity(World world, BlockPos blockpos) {
-		if(world.getFluidState(blockpos).isIn(FluidTags.LAVA)) return LAVA_DENSITY;
+		if (world.getFluidState(blockpos).isIn(FluidTags.LAVA)) return LAVA_DENSITY;
 		return WATER_DENSITY;
 	}
 
@@ -251,16 +241,14 @@ public interface QuiltFlowableFluidExtensions {
 	 * 300 is the default for water
 	 * 1500 is the default for lava
 	 *
+	 * @param world    - The world the fluid is located in.
+	 * @param blockpos - The position of the fluid.
+	 * @return - The temperature of the fluid.
 	 * @see QuiltFlowableFluidExtensions#WATER_TEMPERATURE
 	 * @see QuiltFlowableFluidExtensions#LAVA_TEMPERATURE
-	 *
-	 * @param world - The world the fluid is located in.
-	 * @param blockpos - The position of the fluid.
-	 *
-	 * @return - The temperature of the fluid.
 	 */
 	default float getDefaultTemperature(World world, BlockPos blockpos) {
-		if(world.getFluidState(blockpos).isIn(FluidTags.LAVA)) return LAVA_TEMPERATURE;
+		if (world.getFluidState(blockpos).isIn(FluidTags.LAVA)) return LAVA_TEMPERATURE;
 		return WATER_TEMPERATURE;
 	}
 
@@ -269,18 +257,16 @@ public interface QuiltFlowableFluidExtensions {
 	 * 0.5 lavas default equals half fall damage reduction
 	 * 1 is no fall damage reduction whatsoever
 	 *
+	 * @param entity - The entity for which the fall damage reduction shall be calculated.
+	 * @return - The fall damage reduction ranging from 1.0f to 0.0f.
 	 * @see QuiltFlowableFluidExtensions#FULL_FALL_DAMAGE_REDUCTION
 	 * @see QuiltFlowableFluidExtensions#HALF_FALL_DAMAGE_REDUCTION
 	 * @see QuiltFlowableFluidExtensions#NO_FALL_DAMAGE_REDUCTION
-	 *
-	 * @param entity - The entity for which the fall damage reduction shall be calculated.
-	 *
-	 * @return - The fall damage reduction ranging from 1.0f to 0.0f.
 	 */
 	default float getFallDamageReduction(Entity entity) {
 		BlockPos entityPos = entity.getBlockPos();
 
-		if(entity.world.getFluidState(entityPos).isIn(FluidTags.LAVA)) return HALF_FALL_DAMAGE_REDUCTION;
+		if (entity.world.getFluidState(entityPos).isIn(FluidTags.LAVA)) return HALF_FALL_DAMAGE_REDUCTION;
 
 		return FULL_FALL_DAMAGE_REDUCTION;
 	}
@@ -289,24 +275,21 @@ public interface QuiltFlowableFluidExtensions {
 	 * Water fog color is special cased to be -1. Any other
 	 * value returned will be treated as a normal color.
 	 *
-	 * @param state - State of the fluid the fog color is requested for.
+	 * @param state    - State of the fluid the fog color is requested for.
 	 * @param affected - The entity which is in the fluid.
-	 *
 	 * @return - The fog color as an int.
 	 */
 	default int getFogColor(FluidState state, Entity affected) {
-		if(state.isIn(FluidTags.LAVA)) return LAVA_FOG_COLOR;
+		if (state.isIn(FluidTags.LAVA)) return LAVA_FOG_COLOR;
 		return WATER_FOG_COLOR;
 	}
 
 	/**
-	 * @see QuiltFlowableFluidExtensions#WATER_FOG_START
-	 *
-	 * @param state - State of the fluid the fog start distance is requested for.
-	 * @param affected - The entity which is in the fluid and looking through it.
+	 * @param state        - State of the fluid the fog start distance is requested for.
+	 * @param affected     - The entity which is in the fluid and looking through it.
 	 * @param viewDistance - The view distance of the entity.
-	 *
 	 * @return - The distance for the fog to start.
+	 * @see QuiltFlowableFluidExtensions#WATER_FOG_START
 	 */
 	default float getFogStart(FluidState state, Entity affected, float viewDistance) {
 		return WATER_FOG_START;
@@ -317,10 +300,9 @@ public interface QuiltFlowableFluidExtensions {
 	 * water has a fade-in effect. Feel free to disregard
 	 * it and simply return a value.
 	 *
-	 * @param state - State of the fluid the fog end distance is requested for.
-	 * @param affected - The entity which is in the fluid and looking through it.
+	 * @param state        - State of the fluid the fog end distance is requested for.
+	 * @param affected     - The entity which is in the fluid and looking through it.
 	 * @param viewDistance - The view distance of the entity.
-	 *
 	 * @return - The distance for the fog to end.
 	 */
 	default float getFogEnd(FluidState state, Entity affected, float viewDistance) {
@@ -336,7 +318,7 @@ public interface QuiltFlowableFluidExtensions {
 	 *
 	 * @param splashing - The entity which splashed into the fluid.
 	 * @param splashPos - The position where the entity fell into the fluid.
-	 * @param random - A random generator.
+	 * @param random    - A random generator.
 	 * @return - The SoundEvent which shall be played when falling into it.
 	 */
 
@@ -347,13 +329,12 @@ public interface QuiltFlowableFluidExtensions {
 
 	/**
 	 * This method is used, when the sound emitted from falling into the fluid is greated than 0.25f.
-	 * @see QuiltFlowableFluidExtensions#onSplash
 	 *
 	 * @param splashing - The entity which splashed into the fluid.
 	 * @param splashPos - The position where the entity fell into the fluid.
-	 * @param random - A random generator.
-	 *
+	 * @param random    - A random generator.
 	 * @return - The SoundEvent which shall be played when fast falling into it.
+	 * @see QuiltFlowableFluidExtensions#onSplash
 	 */
 	@Nullable
 	default SoundEvent getHighSpeedSplashSound(Entity splashing, Vec3d splashPos, RandomGenerator random) {
@@ -365,8 +346,7 @@ public interface QuiltFlowableFluidExtensions {
 	 *
 	 * @param splashing - The entity which fell into the fluid.
 	 * @param splashPos - The position where the entity fell into the fluid.
-	 * @param random - A random generator.
-	 *
+	 * @param random    - A random generator.
 	 * @return - A ParticleEffect which shall be played when falling into it.
 	 */
 	@Nullable
@@ -379,8 +359,7 @@ public interface QuiltFlowableFluidExtensions {
 	 *
 	 * @param splashing - The entity which fell into the fluid.
 	 * @param splashPos - The position where the entity fell into the fluid.
-	 * @param random - A random generator.
-	 *
+	 * @param random    - A random generator.
 	 * @return - A ParticleEffect which shall be played when bubbles form.
 	 */
 	@Nullable
@@ -393,8 +372,7 @@ public interface QuiltFlowableFluidExtensions {
 	 *
 	 * @param splashing - The entity which fell into the fluid.
 	 * @param splashPos - The position where the entity fell into the fluid.
-	 * @param random - A random generator.
-	 *
+	 * @param random    - A random generator.
 	 * @return - A GameEvent when the entity falls into the fluid.
 	 */
 	@Nullable
@@ -416,7 +394,9 @@ public interface QuiltFlowableFluidExtensions {
 	 *
 	 * @return - A boolean if a boat can swim on this fluid. true = swims, false = sinks
 	 */
-	default boolean canBoatSwimOn() {return true;}
+	default boolean canBoatSwimOn() {
+		return true;
+	}
 
 	// Overriding of any methods below this comment is generally unnecessary,
 	// and only made available to cover as many cases as possible. Thus no javadoc is provided.

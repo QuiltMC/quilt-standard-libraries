@@ -31,7 +31,6 @@ import net.minecraft.world.WorldView;
 public abstract class QuiltFluid extends FlowableFluid implements QuiltFlowableFluidExtensions {
 	/**
 	 * @param fluid - The fluid which tries to mix.
-	 *
 	 * @return whether the given fluid an instance of this fluid.
 	 */
 	@Override
@@ -52,7 +51,7 @@ public abstract class QuiltFluid extends FlowableFluid implements QuiltFlowableF
 	 * the block's loot table. Lava plays the "block.lava.extinguish" sound.
 	 *
 	 * @param world - The world access used to modify the world.
-	 * @param pos - The position of the block.
+	 * @param pos   - The position of the block.
 	 * @param state - The blockstate of the block.
 	 */
 	@Override
@@ -77,7 +76,6 @@ public abstract class QuiltFluid extends FlowableFluid implements QuiltFlowableF
 	 * Water returns 4. Lava returns 2 in the Overworld and 4 in the Nether.
 	 *
 	 * @param worldView - The worldview to access and modify the world.
-	 *
 	 * @return - An integer which corresponds to the flow speed.
 	 */
 	@Override
@@ -97,7 +95,6 @@ public abstract class QuiltFluid extends FlowableFluid implements QuiltFlowableF
 	 * Water returns 5. Lava returns 30 in the Overworld and 10 in the Nether.
 	 *
 	 * @param worldView - The worldview to access and modify the world.
-	 *
 	 * @return - The rate at which the fluid ticks.
 	 */
 	@Override

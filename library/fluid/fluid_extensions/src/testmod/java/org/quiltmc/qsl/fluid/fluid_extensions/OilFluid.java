@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.fluid.fluid_extensions;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -33,7 +31,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.quiltmc.qsl.fluid.api.QuiltFluid;
 
-public abstract class OilFluid extends QuiltFluid{
+import javax.annotation.Nullable;
+
+public abstract class OilFluid extends QuiltFluid {
 	@Override
 	public Fluid getStill() {
 		return QuiltFluidTest.STILL_OIL;

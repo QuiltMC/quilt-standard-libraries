@@ -26,8 +26,8 @@ import net.minecraft.tag.TagKey;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import org.quiltmc.qsl.fluid.api.QuiltFlowableFluidExtensions;
 import org.quiltmc.qsl.fluid.api.FluidEnchantmentHelper;
+import org.quiltmc.qsl.fluid.api.QuiltFlowableFluidExtensions;
 import org.quiltmc.qsl.fluid.impl.CustomFluidInteracting;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -121,7 +121,7 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getFluidHeight(Lnet/minecraft/tag/TagKey;)D", ordinal = 1))
 	private double redirectGetFluidHeight(LivingEntity instance, TagKey<Fluid> tag) {
 		if (quilt$isInCustomFluid()) {
-			return getFluidHeight(TagKey.of(Registry.FLUID_KEY,this.world.getFluidState(instance.getBlockPos()).getFluid().getBuiltInRegistryHolder().getRegistryKey().getRegistry()));
+			return getFluidHeight(TagKey.of(Registry.FLUID_KEY, this.world.getFluidState(instance.getBlockPos()).getFluid().getBuiltInRegistryHolder().getRegistryKey().getRegistry()));
 		}
 		return getFluidHeight(FluidTags.WATER);
 	}
