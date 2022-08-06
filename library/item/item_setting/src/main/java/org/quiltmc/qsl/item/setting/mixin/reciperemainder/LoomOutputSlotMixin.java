@@ -17,7 +17,7 @@
 package org.quiltmc.qsl.item.setting.mixin.reciperemainder;
 
 import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLogicHandler;
-import org.quiltmc.qsl.item.setting.mixin.SimpleInventoryMixin;
+import org.quiltmc.qsl.item.setting.mixin.SimpleInventoryAccessor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -37,7 +37,7 @@ public class LoomOutputSlotMixin extends Slot {
 	public ItemStack getRecipeRemainder(Slot slot, int amount, PlayerEntity player, ItemStack stack) {
 		RecipeRemainderLogicHandler.handleRemainderForPlayerCraft(
 				RecipeRemainderLogicHandler.getRemainder(slot.takeStack(amount), null),
-				((SimpleInventoryMixin) slot.inventory).getStacks(),
+				((SimpleInventoryAccessor) slot.inventory).getStacks(),
 				slot.getIndex(),
 				player
 		);

@@ -24,7 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
 
 @Mixin(SimpleInventory.class)
-public interface SimpleInventoryMixin {
+public interface SimpleInventoryAccessor {
 	@Accessor
 	DefaultedList<ItemStack> getStacks();
 }

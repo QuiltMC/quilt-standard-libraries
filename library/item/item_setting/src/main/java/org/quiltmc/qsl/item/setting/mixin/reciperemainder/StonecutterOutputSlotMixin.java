@@ -17,7 +17,7 @@
 package org.quiltmc.qsl.item.setting.mixin.reciperemainder;
 
 import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLogicHandler;
-import org.quiltmc.qsl.item.setting.mixin.SimpleInventoryMixin;
+import org.quiltmc.qsl.item.setting.mixin.SimpleInventoryAccessor;
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -56,7 +56,7 @@ public class StonecutterOutputSlotMixin extends Slot {
 
 		RecipeRemainderLogicHandler.handleRemainderForPlayerCraft(
 				remainder,
-				((SimpleInventoryMixin) slot.inventory).getStacks(),
+				((SimpleInventoryAccessor) slot.inventory).getStacks(),
 				slot.id,
 				player
 		);

@@ -18,7 +18,7 @@ package org.quiltmc.qsl.item.setting.mixin.reciperemainder;
 
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLogicHandler;
-import org.quiltmc.qsl.item.setting.mixin.SimpleInventoryMixin;
+import org.quiltmc.qsl.item.setting.mixin.SimpleInventoryAccessor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -63,7 +63,7 @@ public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
 
 		RecipeRemainderLogicHandler.handleRemainderForPlayerCraft(
 				remainder,
-				((SimpleInventoryMixin) this.input).getStacks(),
+				((SimpleInventoryAccessor) this.input).getStacks(),
 				slot,
 				player
 		);

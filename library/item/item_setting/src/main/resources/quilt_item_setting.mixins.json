@@ -6,7 +6,7 @@
     "ItemMixin",
     "ItemStackMixin",
     "LivingEntityMixin",
-    "SimpleInventoryMixin",
+    "SimpleInventoryAccessor",
     "reciperemainder.AbstractFurnaceBlockEntityMixin",
     "reciperemainder.BrewingStandBlockEntityMixin",
     "reciperemainder.LoomOutputSlotMixin",
