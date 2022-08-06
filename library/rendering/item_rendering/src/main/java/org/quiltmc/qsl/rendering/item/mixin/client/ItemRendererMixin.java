@@ -24,7 +24,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.item.ItemRenderer;
@@ -81,20 +80,17 @@ public abstract class ItemRendererMixin {
 
 	@Inject(method = "renderGuiItemOverlay(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/VertexConsumerProvider$Immediate;draw()V",
-					shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
+					shift = At.Shift.AFTER))
 	private void quilt$renderCountLabel_popMatrixStack(TextRenderer renderer, ItemStack stack, int x, int y, String countLabel,
-													   CallbackInfo ci, MatrixStack matrices) {
-		matrices.pop();
+													   CallbackInfo ci) {
+		quilt$matrices.get().pop();
 	}
 
 	@Inject(method = "renderGuiItemOverlay(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V",
-			at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
+			at = @At("TAIL"))
 	private void quilt$invokePostRenderOverlay(TextRenderer renderer, ItemStack stack, int x, int y, String countLabel,
-											   CallbackInfo ci, MatrixStack matrices) {
-		if (stack.isEmpty()) {
-			return;
-		}
-
+											   CallbackInfo ci) {
+		var matrices = quilt$matrices.get();
 		matrices.push();
 		matrices.translate(x, y, 0);
 		stack.getItem().postRenderOverlay(matrices, renderer, this.zOffset, stack);
