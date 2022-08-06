@@ -17,7 +17,6 @@
 package org.quiltmc.qsl.fluid.impl;
 
 import net.minecraft.entity.projectile.FishingBobberEntity;
-import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.fluid.Fluid;
 import net.minecraft.loot.LootTables;

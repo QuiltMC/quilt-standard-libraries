@@ -17,10 +17,16 @@
 package org.quiltmc.qsl.fluid.api;
 
 public record FluidEnchantmentHelper(float horizontalViscosity, float speed) {
+	/**
+	 * @see org.quiltmc.qsl.fluid.mixin.LivingEntityMixin
+	 */
 	public float getHorizontalViscosity() {
 		return horizontalViscosity;
 	}
 
+	/**
+	 * @see org.quiltmc.qsl.fluid.mixin.LivingEntityMixin
+	 */
 	public float getSpeed() {
 		return speed;
 	}

@@ -30,7 +30,9 @@ import net.minecraft.world.WorldView;
 
 public abstract class QuiltFluid extends FlowableFluid implements QuiltFlowableFluidExtensions {
 	/**
-	 * @return whether the given fluid an instance of this fluid
+	 * @param fluid - The fluid which tries to mix.
+	 *
+	 * @return whether the given fluid an instance of this fluid.
 	 */
 	@Override
 	public boolean matchesType(Fluid fluid) {
@@ -38,7 +40,7 @@ public abstract class QuiltFluid extends FlowableFluid implements QuiltFlowableF
 	}
 
 	/**
-	 * @return whether the fluid infinite like water
+	 * @return A boolean weather the fluid is infinite like water.
 	 */
 	@Override
 	protected boolean isInfinite() {
@@ -48,6 +50,10 @@ public abstract class QuiltFluid extends FlowableFluid implements QuiltFlowableF
 	/**
 	 * Perform actions when fluid flows into a replaceable block. Water drops
 	 * the block's loot table. Lava plays the "block.lava.extinguish" sound.
+	 *
+	 * @param world - The world access used to modify the world.
+	 * @param pos - The position of the block.
+	 * @param state - The blockstate of the block.
 	 */
 	@Override
 	protected void beforeBreakingBlock(WorldAccess world, BlockPos pos, BlockState state) {
@@ -69,6 +75,10 @@ public abstract class QuiltFluid extends FlowableFluid implements QuiltFlowableF
 	/**
 	 * The speed at which Fluids flow.
 	 * Water returns 4. Lava returns 2 in the Overworld and 4 in the Nether.
+	 *
+	 * @param worldView - The worldview to access and modify the world.
+	 *
+	 * @return - An integer which corresponds to the flow speed.
 	 */
 	@Override
 	protected int getFlowSpeed(WorldView worldView) {
@@ -85,6 +95,10 @@ public abstract class QuiltFluid extends FlowableFluid implements QuiltFlowableF
 
 	/**
 	 * Water returns 5. Lava returns 30 in the Overworld and 10 in the Nether.
+	 *
+	 * @param worldView - The worldview to access and modify the world.
+	 *
+	 * @return - The rate at which the fluid ticks.
 	 */
 	@Override
 	public int getTickRate(WorldView worldView) {
@@ -93,6 +107,8 @@ public abstract class QuiltFluid extends FlowableFluid implements QuiltFlowableF
 
 	/**
 	 * Water and Lava both return 100.0F.
+	 *
+	 * @return - A float which represents the blast resistance of the fluid. Usually 100.0F and higher.
 	 */
 	@Override
 	protected float getBlastResistance() {
