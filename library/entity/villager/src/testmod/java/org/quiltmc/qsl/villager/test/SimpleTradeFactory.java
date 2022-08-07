@@ -17,15 +17,14 @@
 
 package org.quiltmc.qsl.villager.test;
 
-import java.util.Random;
-
 import net.minecraft.entity.Entity;
+import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOffers;
 
 record SimpleTradeFactory(TradeOffer offer) implements TradeOffers.Factory {
 	@Override
-	public TradeOffer create(Entity entity, Random random) {
+	public TradeOffer create(Entity entity, RandomGenerator random) {
 		// ALWAYS supply a copy of the offer.
 		return new TradeOffer(this.offer.toNbt());
 	}

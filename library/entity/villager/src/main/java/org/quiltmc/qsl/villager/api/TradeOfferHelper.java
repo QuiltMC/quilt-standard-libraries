@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.villager.api.trade;
+package org.quiltmc.qsl.villager.api;
 
 import java.util.List;
 import java.util.function.Consumer;

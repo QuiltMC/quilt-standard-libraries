@@ -3,9 +3,7 @@
   "package": "org.quiltmc.qsl.villager.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "TypeAwareTradeMixin",
-    "VillagerProfessionAccessor",
-    "VillagerTypeAccessor"
+    "TypeAwareTradeMixin"
   ],
   "client": [
   ],

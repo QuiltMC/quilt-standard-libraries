@@ -24,10 +24,9 @@ import net.minecraft.village.VillagerProfession;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-import org.quiltmc.qsl.villager.api.trade.TradeOfferHelper;
+import org.quiltmc.qsl.villager.api.TradeOfferHelper;
 
 public class VillagerTypeTest1 implements ModInitializer {
-
 	@Override
 	public void onInitialize(ModContainer mod) {
 		TradeOfferHelper.registerVillagerOffers(VillagerProfession.ARMORER, 1, factories -> {
