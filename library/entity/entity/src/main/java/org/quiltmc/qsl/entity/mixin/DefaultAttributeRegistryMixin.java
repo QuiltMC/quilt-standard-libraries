@@ -20,6 +20,7 @@ package org.quiltmc.qsl.entity.mixin;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -42,7 +43,7 @@ public abstract class DefaultAttributeRegistryMixin {
 
 	/**
 	 * Convert the {@link DefaultAttributeRegistryMixin#DEFAULT_ATTRIBUTE_REGISTRY} into a {@link HashMap}
-	 * from a {@link com.google.common.collect.ImmutableMap} so it can be added to.
+	 * from a {@link ImmutableMap} so it can be added to.
 	 */
 	@Inject(method = "<clinit>*", at = @At("TAIL"))
 	private static void injectAttributes(CallbackInfo ci) {

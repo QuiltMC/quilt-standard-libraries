@@ -21,14 +21,13 @@ import com.google.common.collect.ImmutableSet;
 import net.minecraft.block.Block;
 import net.minecraft.entity.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
+import net.minecraft.entity.attribute.DefaultAttributeRegistry;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import org.quiltmc.qsl.entity.impl.QuiltEntityType;
-import org.quiltmc.qsl.entity.mixin.SpawnRestrictionAccessor;
 
 import java.util.Objects;
-import java.util.function.Supplier;
 
 /**
  * Extended version of {@link EntityType.Builder} with added registration for
@@ -246,7 +245,7 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	 * @param <T> Entity class
 	 */
 	public static class Living<T extends LivingEntity> extends QuiltEntityTypeBuilder<T> {
-		private Supplier<DefaultAttributeContainer.Builder> defaultAttributeBuilder;
+		private DefaultAttributeContainer.Builder defaultAttributeBuilder;
 
 		protected Living(SpawnGroup spawnGroup, EntityType.EntityFactory<T> function) {
 			super(spawnGroup, function);
@@ -340,7 +339,7 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 		 * @param defaultAttributeBuilder a function to generate the default attribute builder from the entity type
 		 * @return this builder for chaining
 		 */
-		public QuiltEntityTypeBuilder.Living<T> defaultAttributes(Supplier<DefaultAttributeContainer.Builder> defaultAttributeBuilder) {
+		public QuiltEntityTypeBuilder.Living<T> defaultAttributes(DefaultAttributeContainer.Builder defaultAttributeBuilder) {
 			Objects.requireNonNull(defaultAttributeBuilder, "Cannot set null attribute builder");
 			this.defaultAttributeBuilder = defaultAttributeBuilder;
 			return this;
@@ -351,7 +350,7 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 			final EntityType<T> type = super.build();
 
 			if (this.defaultAttributeBuilder != null) {
-				QuiltDefaultAttributeRegistry.register(type, this.defaultAttributeBuilder.get());
+				DefaultAttributeRegistry.DEFAULT_ATTRIBUTE_REGISTRY.put(type, this.defaultAttributeBuilder.build());
 			}
 
 			return type;
@@ -445,7 +444,7 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 		}
 
 		@Override
-		public QuiltEntityTypeBuilder.Mob<T> defaultAttributes(Supplier<DefaultAttributeContainer.Builder> defaultAttributeBuilder) {
+		public QuiltEntityTypeBuilder.Mob<T> defaultAttributes(DefaultAttributeContainer.Builder defaultAttributeBuilder) {
 			super.defaultAttributes(defaultAttributeBuilder);
 			return this;
 		}
@@ -469,7 +468,7 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 			EntityType<T> type = super.build();
 
 			if (this.spawnPredicate != null) {
-				SpawnRestrictionAccessor.callRegister(type, this.restrictionLocation, this.restrictionHeightmap, this.spawnPredicate);
+				SpawnRestriction.register(type, this.restrictionLocation, this.restrictionHeightmap, this.spawnPredicate);
 			}
 
 			return type;

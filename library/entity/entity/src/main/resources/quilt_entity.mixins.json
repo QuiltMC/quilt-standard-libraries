@@ -3,9 +3,7 @@
   "package": "org.quiltmc.qsl.entity.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "DefaultAttributeRegistryAccessor",
-    "DefaultAttributeRegistryMixin",
-    "SpawnRestrictionAccessor"
+    "DefaultAttributeRegistryMixin"
   ],
   "client": [
   ],
