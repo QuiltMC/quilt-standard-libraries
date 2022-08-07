@@ -1,3 +1,19 @@
+/*
+ * Copyright 2022 QuiltMC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.quiltmc.qsl.rendering.item.impl.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -12,11 +28,11 @@ import org.slf4j.Logger;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.util.Identifier;
 
-import org.quiltmc.qsl.rendering.item.api.client.QuadHelper;
+import org.quiltmc.qsl.rendering.item.api.client.QuadBatchManager;
 import org.quiltmc.qsl.rendering.item.mixin.client.BufferBuilderAccessor;
 
 @Environment(EnvType.CLIENT)
-public final class QuadHelperImpl implements QuadHelper {
+public final class QuadBatchManagerImpl implements QuadBatchManager {
 	private static final Logger LOGGER = LogUtils.getLogger();
 
 	public enum State {
@@ -27,7 +43,7 @@ public final class QuadHelperImpl implements QuadHelper {
 	private State state;
 	private @Nullable Identifier texture;
 
-	public QuadHelperImpl() {
+	public QuadBatchManagerImpl() {
 		this.bufferBuilder = Tessellator.getInstance().getBufferBuilder();
 		this.state = State.NONE;
 		this.texture = null;
@@ -63,7 +79,7 @@ public final class QuadHelperImpl implements QuadHelper {
 
 	@Override
 	public @NotNull BufferBuilder getBufferBuilder() {
-		flush();
+		endCurrentBatch();
 		initState(State.NONE); // untrack current state, so we can properly reset it
 		return bufferBuilder;
 	}
@@ -78,7 +94,7 @@ public final class QuadHelperImpl implements QuadHelper {
 	}
 
 	@Override
-	public void flush() {
+	public void endCurrentBatch() {
 		if (bufferBuilder.isBuilding()) {
 			var buffer = bufferBuilder.endOrDiscard();
 			if (buffer != null) {
@@ -88,9 +104,9 @@ public final class QuadHelperImpl implements QuadHelper {
 	}
 
 	@Override
-	public @NotNull BufferBuilder beginQuad() {
+	public @NotNull BufferBuilder beginQuads() {
 		if (texture != null) {
-			flush();
+			endCurrentBatch();
 			texture = null;
 		}
 		reinitialize();
@@ -98,9 +114,9 @@ public final class QuadHelperImpl implements QuadHelper {
 	}
 
 	@Override
-	public @NotNull BufferBuilder beginTexturedQuad(@NotNull Identifier texture) {
+	public @NotNull BufferBuilder beginTexturedQuads(@NotNull Identifier texture) {
 		if (!texture.equals(this.texture)) {
-			flush();
+			endCurrentBatch();
 			this.texture = texture;
 		}
 		reinitialize();
