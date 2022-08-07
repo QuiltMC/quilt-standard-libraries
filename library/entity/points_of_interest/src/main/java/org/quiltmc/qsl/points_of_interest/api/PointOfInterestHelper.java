@@ -17,21 +17,24 @@
 
 package org.quiltmc.qsl.points_of_interest.api;
 
+import static net.minecraft.world.poi.PointOfInterestTypes.STATE_TO_TYPE;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.util.Holder;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.poi.PointOfInterest;
 import net.minecraft.world.poi.PointOfInterestType;
-import org.quiltmc.qsl.points_of_interest.impl.PointOfInterestTypeExtensions;
-import org.quiltmc.qsl.points_of_interest.mixin.PointOfInterestTypeAccessor;
+import net.minecraft.world.poi.PointOfInterestTypes;
 
 /**
  * This class provides utilities to create a {@link PointOfInterestType}.
@@ -47,38 +50,32 @@ public final class PointOfInterestHelper {
 	 * @param id The id of this {@link PointOfInterestType}
 	 * @param ticketCount the max amount of tickets available to be checked out from searches
 	 * @param searchDistance the distance in blocks from the {@link PointOfInterest} a {@link net.minecraft.entity.mob.MobEntity} can be before considering it reached
-	 * @param blocks all blocks where a {@link PointOfInterest} of this type will be present, will apply to all of the {@link Block}'s {@link BlockState}s
-	 * @return a new {@link PointOfInterestType}
+	 * @param blocks all blocks where a {@link PointOfInterest} of this type will be present. Will apply to all of the {@link Block}'s {@link BlockState}s
+	 * @return a new {@link RegistryKey} for the {@link PointOfInterestType}
 	 */
-	public static PointOfInterestType register(Identifier id, int ticketCount, int searchDistance, Block... blocks) {
+	public static RegistryKey<PointOfInterestType> register(Identifier id, int ticketCount, int searchDistance, Block... blocks) {
 		final ImmutableSet.Builder<BlockState> builder = ImmutableSet.builder();
 
 		for (Block block : blocks) {
 			builder.addAll(block.getStateManager().getStates());
 		}
 
-		return register(id, create(id, ticketCount, searchDistance, builder.build()));
+		return register(id, ticketCount, searchDistance, builder);
 	}
 
 	/**
 	 * Creates and registers a {@link PointOfInterestType}.
 	 *
-	 * @param id The id of this {@link PointOfInterestType}
+	 * @param id the id of this {@link PointOfInterestType}
 	 * @param ticketCount the max amount of tickets available to be checked out from searches
-	 * @param completionCondition determines what {@link PointOfInterestType}s to find when searching using this one
-	 *                            {@link PointOfInterestType#UNEMPLOYED} uses this to find villager workstations
 	 * @param searchDistance the distance in blocks from the {@link PointOfInterest} a {@link net.minecraft.entity.mob.MobEntity} can be before considering it reached
-	 * @param blocks all blocks where a {@link PointOfInterest} of this type will be present, will apply to all of the {@link Block}'s {@link BlockState}s
-	 * @return a new {@link PointOfInterestType}
+	 * @param states all {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
+	 * @return a new {@link RegistryKey} for the {@link PointOfInterestType}
 	 */
-	public static PointOfInterestType register(Identifier id, int ticketCount, Predicate<PointOfInterestType> completionCondition, int searchDistance, Block... blocks) {
+	public static RegistryKey<PointOfInterestType> register(Identifier id, int ticketCount, int searchDistance, Iterable<BlockState> states) {
 		final ImmutableSet.Builder<BlockState> builder = ImmutableSet.builder();
 
-		for (Block block : blocks) {
-			builder.addAll(block.getStateManager().getStates());
-		}
-
-		return register(id, create(id, ticketCount, completionCondition, searchDistance, builder.build()));
+		return register(id, ticketCount, searchDistance, builder.addAll(states));
 	}
 
 	/**
@@ -88,29 +85,10 @@ public final class PointOfInterestHelper {
 	 * @param ticketCount the max amount of tickets available to be checked out from searches
 	 * @param searchDistance the distance in blocks from the {@link PointOfInterest} a {@link net.minecraft.entity.mob.MobEntity} can be before considering it reached
 	 * @param states all {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
-	 * @return a new {@link PointOfInterestType}
+	 * @return a new {@link RegistryKey} for the {@link PointOfInterestType}
 	 */
-	public static PointOfInterestType register(Identifier id, int ticketCount, int searchDistance, Iterable<BlockState> states) {
-		final ImmutableSet.Builder<BlockState> builder = ImmutableSet.builder();
-
-		return register(id, create(id, ticketCount, searchDistance, builder.addAll(states).build()));
-	}
-
-	/**
-	 * Creates and registers a {@link PointOfInterestType}.
-	 *
-	 * @param id the id of this {@link PointOfInterestType}
-	 * @param ticketCount the max amount of tickets available to be checked out from searches
-	 * @param completionCondition determines what {@link PointOfInterestType}s to find when searching using this one
-	 *                            {@link PointOfInterestType#UNEMPLOYED} uses this to find villager workstations
-	 * @param searchDistance the distance in blocks from the {@link PointOfInterest} a {@link net.minecraft.entity.mob.MobEntity} can be before considering it reached
-	 * @param states all {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
-	 * @return a new {@link PointOfInterestType}
-	 */
-	public static PointOfInterestType register(Identifier id, int ticketCount, Predicate<PointOfInterestType> completionCondition, int searchDistance, Iterable<BlockState> states) {
-		final ImmutableSet.Builder<BlockState> builder = ImmutableSet.builder();
-
-		return register(id, create(id, ticketCount, completionCondition, searchDistance, builder.addAll(states).build()));
+	public static RegistryKey<PointOfInterestType> register(Identifier id, int ticketCount, int searchDistance, Set<BlockState> states) {
+		return register(id, new PointOfInterestType(ImmutableSet.copyOf(states), ticketCount, searchDistance));
 	}
 
 	/**
@@ -120,25 +98,10 @@ public final class PointOfInterestHelper {
 	 * @param ticketCount the max amount of tickets available to be checked out from searches
 	 * @param searchDistance the distance in blocks from the {@link PointOfInterest} a {@link net.minecraft.entity.mob.MobEntity} can be before considering it reached
 	 * @param states all {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
-	 * @return a new {@link PointOfInterestType}
+	 * @return a new {@link RegistryKey} for the {@link PointOfInterestType}
 	 */
-	public static PointOfInterestType register(Identifier id, int ticketCount, int searchDistance, Set<BlockState> states) {
-		return register(id, create(id, ticketCount, searchDistance, ImmutableSet.copyOf(states)));
-	}
-
-	/**
-	 * Creates and registers a {@link PointOfInterestType}.
-	 *
-	 * @param id the id of this {@link PointOfInterestType}
-	 * @param ticketCount the max amount of tickets available to be checked out from searches
-	 * @param completionCondition determines what {@link PointOfInterestType}s to find when searching using this one
-	 *                            {@link PointOfInterestType#UNEMPLOYED} uses this to find villager workstations
-	 * @param searchDistance the distance in blocks from the {@link PointOfInterest} a {@link net.minecraft.entity.mob.MobEntity} can be before considering it reached
-	 * @param states all {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
-	 * @return a new {@link PointOfInterestType}
-	 */
-	public static PointOfInterestType register(Identifier id, int ticketCount, Predicate<PointOfInterestType> completionCondition, int searchDistance, Set<BlockState> states) {
-		return register(id, create(id, ticketCount, completionCondition, searchDistance, ImmutableSet.copyOf(states)));
+	public static RegistryKey<PointOfInterestType> register(Identifier id, int ticketCount, int searchDistance, ImmutableSet.Builder<BlockState> states) {
+		return register(id, new PointOfInterestType(states.build(), ticketCount, searchDistance));
 	}
 
 	/**
@@ -146,85 +109,100 @@ public final class PointOfInterestHelper {
 	 *
 	 * @param id the {@link Identifier} to register this {@link PointOfInterestType} under
 	 * @param poiType the {@link PointOfInterestType} to register
-	 * @return the given {@link PointOfInterestType}
+	 * @return the {@link RegistryKey} for the {@link PointOfInterestType}
 	 */
-	public static PointOfInterestType register(Identifier id, PointOfInterestType poiType) {
-		return Registry.register(Registry.POINT_OF_INTEREST_TYPE, id, poiType);
-	}
-
-	/**
-	 * Creates a {@link PointOfInterestType}.
-	 *
-	 * <p>You usually want to register a {@link PointOfInterestType} instead.</p>
-	 *
-	 * @param id the id of this {@link PointOfInterestType}
-	 * @param ticketCount the max amount of tickets available to be checked out from searches
-	 * @param searchDistance the distance in blocks from the {@link PointOfInterest} a {@link net.minecraft.entity.mob.MobEntity} can be before considering it reached
-	 * @param states all {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
-	 * @return a new {@link PointOfInterestType}
-	 * @see PointOfInterestHelper#register(Identifier, int, int, Set)
-	 */
-	public static PointOfInterestType create(Identifier id, int ticketCount, int searchDistance, Set<BlockState> states) {
-		return PointOfInterestTypeAccessor.callSetup(
-				PointOfInterestTypeAccessor.callCreate(id.toString(), states, ticketCount, searchDistance));
-	}
-
-	/**
-	 * Creates a {@link PointOfInterestType}.
-	 *
-	 * <p>You usually want to register a {@link PointOfInterestType} instead.</p>
-	 *
-	 * @param id the id of this {@link PointOfInterestType}
-	 * @param ticketCount the max amount of tickets available to be checked out from searches
-	 * @param completionCondition determines what {@link PointOfInterestType}s to find when searching using this one
-	 *                            {@link PointOfInterestType#UNEMPLOYED} uses this to find villager workstations
-	 * @param searchDistance the distance in blocks from the {@link PointOfInterest} a {@link net.minecraft.entity.mob.MobEntity} can be before considering it reached
-	 * @param states all {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
-	 * @return a new {@link PointOfInterestType}
-	 * @see PointOfInterestHelper#register(Identifier, int, Predicate, int, Set)
-	 */
-	public static PointOfInterestType create(Identifier id, int ticketCount, Predicate<PointOfInterestType> completionCondition, int searchDistance, Set<BlockState> states) {
-		return PointOfInterestTypeAccessor.callSetup(
-				PointOfInterestTypeAccessor.callCreate(id.toString(), states, ticketCount, completionCondition, searchDistance));
+	public static RegistryKey<PointOfInterestType> register(Identifier id, PointOfInterestType poiType) {
+		PointOfInterestTypes.ALL_STATES.addAll(poiType.blockStates());
+		var key = RegistryKey.of(Registry.POINT_OF_INTEREST_TYPE_KEY, id);
+		Registry.register(Registry.POINT_OF_INTEREST_TYPE, key, poiType);
+		poiType.blockStates().forEach(state -> {
+			Holder<PointOfInterestType> replaced = STATE_TO_TYPE.put(state, Registry.POINT_OF_INTEREST_TYPE.getHolderOrThrow(key));
+			if (replaced != null) {
+				throw Util.throwOrPause(new IllegalStateException(String.format("%s is defined in too many tags", state)));
+			}
+		});
+		return key;
 	}
 
 	/**
 	 * Allows adding {@link Block}s to a {@link PointOfInterestType} after construction.
 	 *
-	 * @param poiType the {@link PointOfInterestType} to add these blocks to
-	 * @param blocks all blocks where a {@link PointOfInterest} of this type will be present, will apply to all of the {@link Block}'s {@link BlockState}s
+	 * @param key the {@link RegistryKey<PointOfInterestType>} of the {@link PointOfInterestType} to add these blocks to
+	 * @param blocks all additional {@link Block}s where a {@link PointOfInterest} of this type will be present. Will apply to all of the {@link Block}'s {@link BlockState}s
 	 */
-	public static void addBlocks(PointOfInterestType poiType, Block... blocks) {
-		((PointOfInterestTypeExtensions) poiType).addBlocks(Arrays.asList(blocks));
+	public static void addBlocks(RegistryKey<PointOfInterestType> key, Block... blocks) {
+		Registry.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type -> type.addBlocks(key, Arrays.asList(blocks)));
 	}
 
 	/**
 	 * Allows adding {@link Block}s to a {@link PointOfInterestType} after construction.
 	 *
-	 * @param poiType the {@link PointOfInterestType} to add these blocks to
-	 * @param blocks all blocks where a {@link PointOfInterest} of this type will be present, will apply to all of the {@link Block}'s {@link BlockState}s
+	 * @param key the {@link RegistryKey<PointOfInterestType>} of the {@link PointOfInterestType} to add these blocks to
+	 * @param blocks all additional {@link Block}s where a {@link PointOfInterest} of this type will be present. Will apply to all of the {@link Block}'s {@link BlockState}s
 	 */
-	public static void addBlocks(PointOfInterestType poiType, Collection<Block> blocks) {
-		((PointOfInterestTypeExtensions) poiType).addBlocks(blocks);
+	public static void addBlocks(RegistryKey<PointOfInterestType> key, Collection<Block> blocks) {
+		Registry.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type -> type.addBlocks(key, blocks));
 	}
 
 	/**
 	 * Allows adding {@link Block}s to a {@link PointOfInterestType} after construction.
 	 *
-	 * @param poiType the {@link PointOfInterestType} to add these blocks to
+	 * @param key the {@link RegistryKey<PointOfInterestType>} of the {@link PointOfInterestType} to add these blocks to
+	 * @param states all additional {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
+	 */
+	public static void addBlockStates(RegistryKey<PointOfInterestType> key, BlockState... states) {
+		Registry.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type -> type.addBlockStates(key, Arrays.asList(states)));
+	}
+
+	/**
+	 * Allows adding {@link Block}s to a {@link PointOfInterestType} after construction.
+	 *
+	 * @param key the {@link RegistryKey<PointOfInterestType>} of the {@link PointOfInterestType} to add these blocks to
+	 * @param states all additional {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
+	 */
+	public static void addBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states) {
+		Registry.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type -> type.addBlockStates(key, states));
+	}
+
+	/**
+	 * Allows replacing the {@link PointOfInterestType}s {@link Block}s after construction.
+	 *
+	 * @param key the {@link RegistryKey<PointOfInterestType>} of the {@link PointOfInterestType} to add these blocks to
+	 * @param blocks all blocks where a {@link PointOfInterest} of this type will be present.
+	 *               Will apply to all of the {@link Block}'s {@link BlockState}s
+	 */
+	public static void setBlocks(RegistryKey<PointOfInterestType> key, Block... blocks) {
+		PointOfInterestHelper.setBlocks(key, Arrays.asList(blocks));
+	}
+
+	/**
+	 * Allows replacing the {@link PointOfInterestType}s {@link Block}s after construction.
+	 *
+	 * @param key the {@link RegistryKey<PointOfInterestType>} of the {@link PointOfInterestType} to add these blocks to
+	 * @param blocks all blocks where a {@link PointOfInterest} of this type will be present.
+	 *               Will apply to all of the {@link Block}'s {@link BlockState}s
+	 */
+	public static void setBlocks(RegistryKey<PointOfInterestType> key, Collection<Block> blocks) {
+		Registry.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type -> type.setBlocks(key, blocks));
+	}
+
+	/**
+	 * Allows replacing the {@link PointOfInterestType}s {@link BlockState}s after construction.
+	 *
+	 * @param key the {@link RegistryKey<PointOfInterestType>} of the {@link PointOfInterestType} to add these blocks to
 	 * @param states all {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
 	 */
-	public static void addBlockStates(PointOfInterestType poiType, BlockState... states) {
-		((PointOfInterestTypeExtensions) poiType).addBlockStates(Arrays.asList(states));
+	public static void setBlockStates(RegistryKey<PointOfInterestType> key, BlockState... states) {
+		PointOfInterestHelper.setBlockStates(key, Arrays.asList(states));
 	}
 
 	/**
-	 * Allows adding {@link Block}s to a {@link PointOfInterestType} after construction.
+	 * Allows replacing the {@link PointOfInterestType}s {@link BlockState}s after construction.
 	 *
-	 * @param poiType the {@link PointOfInterestType} to add these blocks to
+	 * @param key the {@link RegistryKey<PointOfInterestType>} of the {@link PointOfInterestType} to add these blocks to
 	 * @param states all {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
 	 */
-	public static void addBlockStates(PointOfInterestType poiType, Collection<BlockState> states) {
-		((PointOfInterestTypeExtensions) poiType).addBlockStates(states);
+	public static void setBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states) {
+		Registry.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type -> type.setBlockStates(key, states));
 	}
 }

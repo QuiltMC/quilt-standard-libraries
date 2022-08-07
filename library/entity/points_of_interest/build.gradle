@@ -14,4 +14,8 @@ qslModule {
 			testmodOnly("qsl_base")
 		}
 	}
+	injectedInterface("net/minecraft/class_4158") {
+		values = ["org/quiltmc/qsl/points_of_interest/impl/PointOfInterestTypeExtensions"]
+	}
+	accessWidener()
 }

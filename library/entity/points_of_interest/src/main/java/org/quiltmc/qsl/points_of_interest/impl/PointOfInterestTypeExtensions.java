@@ -18,13 +18,55 @@ package org.quiltmc.qsl.points_of_interest.impl;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.poi.PointOfInterest;
+import net.minecraft.world.poi.PointOfInterestType;
+
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Collection;
 
 @ApiStatus.Internal
 public interface PointOfInterestTypeExtensions {
-	void addBlocks(Collection<Block> blocks);
+	/**
+	 * Allows adding {@link Block}s after construction.
+	 *
+	 * @param key The {@link RegistryKey} associated with this {@link PointOfInterestType}
+	 * @param blocks all additional blocks where a {@link PointOfInterest} of this type will be present.
+	 *               Will apply to all of the {@link Block}'s {@link BlockState}s
+	 */
+	default void addBlocks(RegistryKey<PointOfInterestType> key, Collection<Block> blocks) {
+		throw new UnsupportedOperationException();
+	}
 
-	void addBlockStates(Collection<BlockState> states);
+	/**
+	 * Allows adding {@link BlockState}s after construction.
+	 *
+	 * @param key The {@link RegistryKey} associated with this {@link PointOfInterestType}
+	 * @param states all additional {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
+	 */
+	default void addBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Replaces the existing {@link PointOfInterestType#blockStates} after construction.
+	 *
+	 * @param key The {@link RegistryKey} associated with this {@link PointOfInterestType}
+	 * @param blocks all blocks where a {@link PointOfInterest} of this type will be present.
+	 *               Will apply to all of the {@link Block}'s {@link BlockState}s
+	 */
+	default void setBlocks(RegistryKey<PointOfInterestType> key, Collection<Block> blocks) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Allows replacing {@link BlockState}s after construction.
+	 *
+	 * @param key The {@link RegistryKey} associated with this {@link PointOfInterestType}
+	 * @param states all {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
+	 */
+	default void setBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states) {
+		throw new UnsupportedOperationException();
+	}
 }
