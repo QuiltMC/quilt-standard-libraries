@@ -51,6 +51,17 @@ public final class QuadBatchManagerImpl implements QuadBatchManager {
 		this.texture = null;
 	}
 
+	public void enter() {
+		RenderSystem.disableDepthTest();
+		RenderSystem.enableBlend();
+		RenderSystem.defaultBlendFunc();
+	}
+
+	public void exit() {
+		RenderSystem.enableDepthTest();
+		RenderSystem.enableTexture();
+	}
+
 	private void initState(State targetState) {
 		if (state == targetState) {
 			return;
@@ -63,6 +74,7 @@ public final class QuadBatchManagerImpl implements QuadBatchManager {
 
 		switch (targetState) {
 		case COLORED -> {
+			RenderSystem.disableTexture();
 			RenderSystem.setShader(GameRenderer::getPositionColorShader);
 			bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 		}
@@ -70,6 +82,7 @@ public final class QuadBatchManagerImpl implements QuadBatchManager {
 			if (texture == null) {
 				throw new IllegalStateException("tried to set TEXTURED state with no texture");
 			}
+			RenderSystem.enableTexture();
 			RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
 			RenderSystem.setShaderTexture(0, texture);
 			bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
@@ -88,6 +101,7 @@ public final class QuadBatchManagerImpl implements QuadBatchManager {
 
 	@Override
 	public void reinitialize() {
+		enter();
 		if (texture == null) {
 			initState(State.TEXTURED);
 		} else {
@@ -112,7 +126,7 @@ public final class QuadBatchManagerImpl implements QuadBatchManager {
 			endCurrentBatch();
 			texture = null;
 		}
-		reinitialize();
+		initState(State.COLORED);
 		return bufferBuilder;
 	}
 
@@ -122,7 +136,7 @@ public final class QuadBatchManagerImpl implements QuadBatchManager {
 			endCurrentBatch();
 			this.texture = texture;
 		}
-		reinitialize();
+		initState(State.TEXTURED);
 		return bufferBuilder;
 	}
 }

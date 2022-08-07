@@ -31,9 +31,9 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 
 import org.quiltmc.qsl.rendering.item.api.client.ItemBarRenderer;
-import org.quiltmc.qsl.rendering.item.api.client.QuadBatchManager;
 import org.quiltmc.qsl.rendering.item.api.client.QuiltItemRendering;
 import org.quiltmc.qsl.rendering.item.impl.client.ItemRendererThreadData;
+import org.quiltmc.qsl.rendering.item.impl.client.QuadBatchManagerImpl;
 
 @Mixin(ItemRenderer.class)
 public abstract class ItemRendererMixin {
@@ -59,6 +59,7 @@ public abstract class ItemRendererMixin {
 		matrices.translate(x, y, 0);
 
 		var quadBatchManager = threadData.quadBatchManager();
+		quadBatchManager.enter();
 
 		if (item.preRenderOverlay(matrices, quadBatchManager, renderer, this.zOffset, stack)) {
 			if (QuiltItemRendering.areOverlayComponentsCustomized(item)) {
@@ -101,16 +102,19 @@ public abstract class ItemRendererMixin {
 		var matrices = threadData.matrices();
 		var quadBatchManager = threadData.quadBatchManager();
 
+		quadBatchManager.enter();
+
 		matrices.push();
 		matrices.translate(x, y, 0);
 		stack.getItem().postRenderOverlay(matrices, quadBatchManager, renderer, this.zOffset, stack);
 		matrices.pop();
 
 		quadBatchManager.endCurrentBatch();
+		quadBatchManager.exit();
 	}
 
 	@Unique
-	private void renderCustomGuiItemOverlay(MatrixStack matrices, QuadBatchManager quadBatchManager,
+	private void renderCustomGuiItemOverlay(MatrixStack matrices, QuadBatchManagerImpl quadBatchManager,
 											TextRenderer textRenderer, ItemStack stack, @Nullable String countLabel) {
 		if (stack.isEmpty()) {
 			return;
@@ -163,5 +167,6 @@ public abstract class ItemRendererMixin {
 		item.postRenderOverlay(matrices, quadBatchManager, textRenderer, this.zOffset, stack);
 
 		quadBatchManager.endCurrentBatch();
+		quadBatchManager.exit();
 	}
 }
