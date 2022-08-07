@@ -16,10 +16,6 @@
 
 package org.quiltmc.qsl.rendering.item.api.client;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.Tessellator;
-
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
@@ -44,15 +40,8 @@ public abstract class SolidColorCooldownOverlayRenderer implements CooldownOverl
 		int step = getCooldownOverlayStep(stack);
 		int color = getCooldownOverlayColor(stack);
 
-		RenderSystem.disableDepthTest();
-		RenderSystem.disableTexture();
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder buffer = tessellator.getBufferBuilder();
-		GuiRendererHelper.renderQuad(matrices, buffer, 0, 16 - step, 16, step, color);
-		RenderSystem.enableTexture();
-		RenderSystem.enableDepthTest();
+		var buffer = quadBatchManager.beginQuads();
+		QuadBuilder.add(matrices, buffer, 0, 16 - step, 16, step, color);
 	}
 
 	/**

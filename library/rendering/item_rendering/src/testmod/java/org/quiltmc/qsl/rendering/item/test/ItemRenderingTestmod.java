@@ -33,6 +33,7 @@ import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.rendering.item.api.client.CooldownOverlayRenderer;
 import org.quiltmc.qsl.rendering.item.api.client.CountLabelRenderer;
 import org.quiltmc.qsl.rendering.item.api.client.ItemBarRenderer;
+import org.quiltmc.qsl.rendering.item.api.client.QuadBatchManager;
 import org.quiltmc.qsl.rendering.item.test.client.ItemDecorations;
 import org.quiltmc.qsl.rendering.item.test.client.cooldown.FlashingCooldownOverlayRenderer;
 import org.quiltmc.qsl.rendering.item.test.client.cooldown.HiddenCooldownOverlayRenderer;
@@ -115,22 +116,25 @@ public class ItemRenderingTestmod implements ModInitializer {
 
 	public static final Item TUNISIAN_DIAMOND = new Item(itemSettings()) {
 		@Override
-		public boolean preRenderOverlay(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack) {
-			ItemDecorations.renderStackBorder(matrices, Formatting.GOLD);
+		public boolean preRenderOverlay(MatrixStack matrices, QuadBatchManager quadBatchManager, TextRenderer textRenderer,
+										float zOffset, ItemStack stack) {
+			ItemDecorations.renderStackBorder(matrices, quadBatchManager, Formatting.GOLD);
 			return true;
 		}
 	};
 
 	public static final Item MYSTERIOUS_BOOK = new Item(itemSettings()) {
 		@Override
-		public boolean preRenderOverlay(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack) {
-			ItemDecorations.renderStackBorder(matrices, Formatting.DARK_PURPLE);
+		public boolean preRenderOverlay(MatrixStack matrices, QuadBatchManager quadBatchManager, TextRenderer textRenderer,
+										float zOffset, ItemStack stack) {
+			ItemDecorations.renderStackBorder(matrices, quadBatchManager, Formatting.DARK_PURPLE);
 			return true;
 		}
 
 		@Override
-		public void postRenderOverlay(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack) {
-			ItemDecorations.renderWarningIcon(matrices);
+		public void postRenderOverlay(MatrixStack matrices, QuadBatchManager quadBatchManager, TextRenderer textRenderer,
+									  float zOffset, ItemStack stack) {
+			ItemDecorations.renderWarningIcon(matrices, quadBatchManager);
 		}
 	};
 
