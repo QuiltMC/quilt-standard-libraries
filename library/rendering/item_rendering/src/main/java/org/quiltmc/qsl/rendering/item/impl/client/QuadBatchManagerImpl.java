@@ -100,6 +100,7 @@ public final class QuadBatchManagerImpl implements QuadBatchManager {
 			if (buffer != null) {
 				BufferRenderer.drawWithShader(buffer);
 			}
+			initState(State.NONE); // untrack current state, so we can properly reset it
 		}
 	}
 
