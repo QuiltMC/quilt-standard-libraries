@@ -21,6 +21,7 @@ import com.mojang.blaze3d.vertex.*;
 import com.mojang.logging.LogUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -31,6 +32,7 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.rendering.item.api.client.QuadBatchManager;
 import org.quiltmc.qsl.rendering.item.mixin.client.BufferBuilderAccessor;
 
+@ApiStatus.Internal
 @Environment(EnvType.CLIENT)
 public final class QuadBatchManagerImpl implements QuadBatchManager {
 	private static final Logger LOGGER = LogUtils.getLogger();

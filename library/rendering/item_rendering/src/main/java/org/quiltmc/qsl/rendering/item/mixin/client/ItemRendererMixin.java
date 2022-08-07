@@ -31,11 +31,14 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 
 import org.quiltmc.qsl.rendering.item.api.client.ItemBarRenderer;
+import org.quiltmc.qsl.rendering.item.api.client.QuadBatchManager;
 import org.quiltmc.qsl.rendering.item.api.client.QuiltItemRendering;
+import org.quiltmc.qsl.rendering.item.impl.client.ItemRendererThreadData;
 
 @Mixin(ItemRenderer.class)
 public abstract class ItemRendererMixin {
-	@Unique private final ThreadLocal<MatrixStack> quilt$matrices = ThreadLocal.withInitial(MatrixStack::new);
+	@Unique private final ThreadLocal<ItemRendererThreadData> quilt$threadData
+			= ThreadLocal.withInitial(ItemRendererThreadData::new);
 
 	@Shadow public float zOffset;
 
@@ -49,14 +52,18 @@ public abstract class ItemRendererMixin {
 
 		var item = stack.getItem();
 
-		var matrices = quilt$matrices.get();
+		var threadData = quilt$threadData.get();
+
+		var matrices = threadData.matrices();
 		matrices.push();
 		matrices.translate(x, y, 0);
 
-		if (item.preRenderOverlay(matrices, renderer, this.zOffset, stack)) {
+		var quadBatchManager = threadData.quadBatchManager();
+
+		if (item.preRenderOverlay(matrices, quadBatchManager, renderer, this.zOffset, stack)) {
 			if (QuiltItemRendering.areOverlayComponentsCustomized(item)) {
 				ci.cancel();
-				renderCustomGuiItemOverlay(matrices, renderer, stack, countLabel);
+				renderCustomGuiItemOverlay(matrices, quadBatchManager, renderer, stack, countLabel);
 			}
 		} else {
 			ci.cancel();
@@ -68,7 +75,7 @@ public abstract class ItemRendererMixin {
 	@Redirect(method = "renderGuiItemOverlay(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V",
 			at = @At(value = "NEW", target = "net/minecraft/client/util/math/MatrixStack"))
 	private MatrixStack quilt$avoidMatrixStackAllocation() {
-		return quilt$matrices.get(); // no need to push now, matrices are only modified when count label is rendered
+		return quilt$threadData.get().matrices(); // no need to push now, matrices are only modified when count label is rendered
 	}
 
 	@Redirect(method = "renderGuiItemOverlay(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V",
@@ -83,30 +90,35 @@ public abstract class ItemRendererMixin {
 					shift = At.Shift.AFTER))
 	private void quilt$renderCountLabel_popMatrixStack(TextRenderer renderer, ItemStack stack, int x, int y, String countLabel,
 													   CallbackInfo ci) {
-		quilt$matrices.get().pop();
+		quilt$threadData.get().matrices().pop();
 	}
 
 	@Inject(method = "renderGuiItemOverlay(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V",
 			at = @At("TAIL"))
 	private void quilt$invokePostRenderOverlay(TextRenderer renderer, ItemStack stack, int x, int y, String countLabel,
 											   CallbackInfo ci) {
-		var matrices = quilt$matrices.get();
+		var threadData = quilt$threadData.get();
+		var matrices = threadData.matrices();
+		var quadBatchManager = threadData.quadBatchManager();
+
 		matrices.push();
 		matrices.translate(x, y, 0);
-		stack.getItem().postRenderOverlay(matrices, renderer, this.zOffset, stack);
+		stack.getItem().postRenderOverlay(matrices, quadBatchManager, renderer, this.zOffset, stack);
 		matrices.pop();
+
+		quadBatchManager.endCurrentBatch();
 	}
 
 	@Unique
-	private void renderCustomGuiItemOverlay(MatrixStack matrices,
-										   TextRenderer renderer, ItemStack stack, @Nullable String countLabel) {
+	private void renderCustomGuiItemOverlay(MatrixStack matrices, QuadBatchManager quadBatchManager,
+											TextRenderer textRenderer, ItemStack stack, @Nullable String countLabel) {
 		if (stack.isEmpty()) {
 			return;
 		}
 
 		var item = stack.getItem();
 
-		item.getCountLabelRenderer().renderCountLabel(matrices, renderer, this.zOffset, stack, countLabel);
+		item.getCountLabelRenderer().renderCountLabel(matrices, quadBatchManager, textRenderer, this.zOffset, stack, countLabel);
 
 		var itemBarRenderers = item.getItemBarRenderers();
 
@@ -120,7 +132,7 @@ public abstract class ItemRendererMixin {
 			if (itemBar.isItemBarVisible(stack)) {
 				matrices.push();
 				matrices.translate(0, itemBarY, 0);
-				itemBar.renderItemBar(matrices, renderer, this.zOffset, stack);
+				itemBar.renderItemBar(matrices, quadBatchManager, textRenderer, this.zOffset, stack);
 				matrices.pop();
 			}
 		} else if (itemBarRenderers.length > 0) {
@@ -133,22 +145,23 @@ public abstract class ItemRendererMixin {
 			}
 
 			if (anyItemBarsVisible) {
-				// TODO figure out if we can NOT render immediately here
 				for (var itemBar : itemBarRenderers) {
 					if (itemBar.isItemBarVisible(stack)) {
 						itemBarY += 2;
 
 						matrices.push();
 						matrices.translate(0, itemBarY, 0);
-						itemBar.renderItemBar(matrices, renderer, this.zOffset, stack);
+						itemBar.renderItemBar(matrices, quadBatchManager, textRenderer, this.zOffset, stack);
 						matrices.pop();
 					}
 				}
 			}
 		}
 
-		item.getCooldownOverlayRenderer().renderCooldownOverlay(matrices, renderer, this.zOffset, stack);
+		item.getCooldownOverlayRenderer().renderCooldownOverlay(matrices, quadBatchManager, textRenderer, this.zOffset, stack);
 
-		item.postRenderOverlay(matrices, renderer, this.zOffset, stack);
+		item.postRenderOverlay(matrices, quadBatchManager, textRenderer, this.zOffset, stack);
+
+		quadBatchManager.endCurrentBatch();
 	}
 }

@@ -37,11 +37,13 @@ public interface CooldownOverlayRenderer {
 	/**
 	 * Renders the cooldown overlay for the given {@code ItemStack}.
 	 *
-	 * @param matrices the matrices
-	 * @param renderer the text renderer
-	 * @param zOffset the Z offset
-	 * @param stack the item stack
+	 * @param matrices         the matrices
+	 * @param quadBatchManager the quad batch manager
+	 * @param textRenderer     the text renderer
+	 * @param zOffset          the Z offset
+	 * @param stack            the item stack
 	 */
 	@Environment(EnvType.CLIENT)
-	void renderCooldownOverlay(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack);
+	void renderCooldownOverlay(MatrixStack matrices, QuadBatchManager quadBatchManager, TextRenderer textRenderer,
+							   float zOffset, ItemStack stack);
 }

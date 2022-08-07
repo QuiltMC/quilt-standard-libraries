@@ -47,11 +47,13 @@ public interface ItemBarRenderer {
 	/**
 	 * Renders the item bar for the given {@code ItemStack}.
 	 *
-	 * @param matrices the matrices
-	 * @param renderer the text renderer
-	 * @param zOffset the Z offset
-	 * @param stack the item stack
+	 * @param matrices         the matrices
+	 * @param quadBatchManager the quad batch manager
+	 * @param textRenderer     the text renderer
+	 * @param zOffset          the Z offset
+	 * @param stack            the item stack
 	 */
 	@Environment(EnvType.CLIENT)
-	void renderItemBar(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack);
+	void renderItemBar(MatrixStack matrices, QuadBatchManager quadBatchManager, TextRenderer textRenderer,
+					   float zOffset, ItemStack stack);
 }

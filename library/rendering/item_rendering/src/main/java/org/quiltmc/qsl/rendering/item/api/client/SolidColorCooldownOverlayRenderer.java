@@ -36,7 +36,7 @@ public abstract class SolidColorCooldownOverlayRenderer implements CooldownOverl
 	public static final int MAX_STEP = 16;
 
 	@Override
-	public void renderCooldownOverlay(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack) {
+	public void renderCooldownOverlay(MatrixStack matrices, QuadBatchManager quadBatchManager, TextRenderer textRenderer, float zOffset, ItemStack stack) {
 		if (!isCooldownOverlayVisible(stack)) {
 			return;
 		}

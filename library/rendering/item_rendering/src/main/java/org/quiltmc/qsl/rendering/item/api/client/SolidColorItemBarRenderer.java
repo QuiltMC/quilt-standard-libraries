@@ -44,7 +44,7 @@ public abstract class SolidColorItemBarRenderer implements ItemBarRenderer {
 	}
 
 	@Override
-	public void renderItemBar(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack) {
+	public void renderItemBar(MatrixStack matrices, QuadBatchManager quadBatchManager, TextRenderer textRenderer, float zOffset, ItemStack stack) {
 		RenderSystem.disableDepthTest();
 		RenderSystem.disableTexture();
 		RenderSystem.disableBlend();

@@ -35,14 +35,16 @@ public interface QuiltItemRenderingExtensions {
 	/**
 	 * Called before the item's overlay is rendered.
 	 *
-	 * @param matrices the matrices
-	 * @param renderer the text renderer
-	 * @param zOffset the Z offset
-	 * @param stack the item stack
+	 * @param matrices         the matrices
+	 * @param quadBatchManager the quad batch manager
+	 * @param textRenderer     the text renderer
+	 * @param zOffset          the Z offset
+	 * @param stack            the item stack
 	 * @return {@code true} to render the rest of the overlay, {@code false} otherwise.
 	 */
 	@Environment(EnvType.CLIENT)
-	default boolean preRenderOverlay(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack) {
+	default boolean preRenderOverlay(MatrixStack matrices, QuadBatchManager quadBatchManager, TextRenderer textRenderer,
+									 float zOffset, ItemStack stack) {
 		return true;
 	}
 
@@ -75,11 +77,13 @@ public interface QuiltItemRenderingExtensions {
 	/**
 	 * Called after an item's overlay is rendered.
 	 *
-	 * @param matrices the matrices
-	 * @param renderer the text renderer
-	 * @param zOffset the Z offset
-	 * @param stack the item stack
+	 * @param matrices         the matrices
+	 * @param quadBatchManager the quad batch manager
+	 * @param textRenderer     the text renderer
+	 * @param zOffset          the Z offset
+	 * @param stack            the item stack
 	 */
 	@Environment(EnvType.CLIENT)
-	default void postRenderOverlay(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack) { }
+	default void postRenderOverlay(MatrixStack matrices, QuadBatchManager quadBatchManager, TextRenderer textRenderer,
+								   float zOffset, ItemStack stack) { }
 }

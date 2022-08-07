@@ -38,13 +38,14 @@ public interface CountLabelRenderer {
 	/**
 	 * Renders the count label for the given {@code ItemStack}.
 	 *
-	 * @param matrices the matrices
-	 * @param renderer the text renderer
-	 * @param zOffset the Z offset
-	 * @param stack the item stack
-	 * @param override the label contents, or {@code null} to use the default contents
+	 * @param matrices         the matrices
+	 * @param quadBatchManager the quad batch manager
+	 * @param textRenderer     the text renderer
+	 * @param zOffset          the Z offset
+	 * @param stack            the item stack
+	 * @param override         the label contents, or {@code null} to use the default contents
 	 */
 	@Environment(EnvType.CLIENT)
-	void renderCountLabel(MatrixStack matrices, TextRenderer renderer, float zOffset, ItemStack stack,
-						  @Nullable String override);
+	void renderCountLabel(MatrixStack matrices, QuadBatchManager quadBatchManager, TextRenderer textRenderer,
+						  float zOffset, ItemStack stack, @Nullable String override);
 }
