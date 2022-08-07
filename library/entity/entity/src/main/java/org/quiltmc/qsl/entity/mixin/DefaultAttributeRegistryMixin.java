@@ -39,7 +39,7 @@ public abstract class DefaultAttributeRegistryMixin {
 	@Shadow
 	@Final
 	@Mutable
-	private static Map<EntityType<? extends LivingEntity>, DefaultAttributeContainer> DEFAULT_ATTRIBUTE_REGISTRY;
+	public static Map<EntityType<? extends LivingEntity>, DefaultAttributeContainer> DEFAULT_ATTRIBUTE_REGISTRY;
 
 	/**
 	 * Convert the {@link DefaultAttributeRegistryMixin#DEFAULT_ATTRIBUTE_REGISTRY} into a {@link HashMap}
