@@ -12,7 +12,7 @@
     "load_type": "always",
     "entrypoints": {
       "init": [
-        "org.quiltmc.qsl.points_of_interest.test.MainInitializer"
+        "org.quiltmc.qsl.points_of_interest.test.PoiTestMod"
       ]
     },
     "depends": [
