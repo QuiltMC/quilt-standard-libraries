@@ -67,8 +67,7 @@ final class EntityTypeBuilderGenericsTest {
 		}
 
 		@Override
-		public void equipStack(EquipmentSlot slot, ItemStack stack) {
-		}
+		public void equipStack(EquipmentSlot slot, ItemStack stack) {}
 
 		@Override
 		public Arm getMainArm() {

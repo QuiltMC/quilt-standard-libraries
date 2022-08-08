@@ -48,7 +48,7 @@ public final class TradeOfferHelper {
 	}
 
 	/**
-	 * Registers trade offer factories for use by wandering trades.
+	 * Registers trade offer factories for use by wandering traders.
 	 *
 	 * @param level the level of the trades
 	 * @param factories a consumer to provide the factories

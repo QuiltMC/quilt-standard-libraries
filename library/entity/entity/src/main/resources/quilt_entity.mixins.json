@@ -5,8 +5,6 @@
   "mixins": [
     "DefaultAttributeRegistryMixin"
   ],
-  "client": [
-  ],
   "injectors": {
     "defaultRequire": 1
   }

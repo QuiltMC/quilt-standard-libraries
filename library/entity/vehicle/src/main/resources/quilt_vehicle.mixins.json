@@ -5,8 +5,6 @@
   "mixins": [
     "DetectorRailBlockMixin"
   ],
-  "client": [
-  ],
   "injectors": {
     "defaultRequire": 1
   }
