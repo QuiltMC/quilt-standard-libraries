@@ -26,7 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.nbt.NbtCompound;
 
 import org.quiltmc.qsl.base.api.util.Lazy;
-import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.component.NbtSerializable;
 import org.quiltmc.qsl.component.api.component.Tickable;
@@ -37,15 +36,17 @@ import org.quiltmc.qsl.component.api.sync.SyncChannel;
 
 public class SingleComponentContainer<T> implements ComponentContainer {
 	private final ComponentType<T> type;
-	private final Maybe<SyncChannel<?, ?>> syncChannel;
+	@Nullable
+	private final SyncChannel<?, ?> syncChannel;
 	private final boolean ticking;
 	private Lazy<? extends T> entry;
 	private boolean shouldSync = false;
 
-	protected SingleComponentContainer(ComponentType<T> type, boolean ticking, @Nullable SyncChannel<?, ?> syncChannel) {
+	protected SingleComponentContainer(ComponentType<T> type, boolean ticking,
+			@Nullable SyncChannel<?, ?> syncChannel) {
 		this.type = type;
 		this.ticking = ticking;
-		this.syncChannel = Maybe.wrap(syncChannel);
+		this.syncChannel = syncChannel;
 	}
 
 	public static <C> ComponentContainer.Factory<SingleComponentContainer<C>> createFactory(ComponentEntry<C> entry) {
@@ -58,9 +59,11 @@ public class SingleComponentContainer<T> implements ComponentContainer {
 		};
 	}
 
+	@SuppressWarnings("unchecked")
+	@Nullable
 	@Override
-	public <C> Maybe<C> expose(ComponentType<C> type) {
-		return (type == this.type ? Maybe.just(this.entry.get()) : Maybe.nothing()).castUnchecked();
+	public <C> C expose(ComponentType<C> type) {
+		return type == this.type ? (C) this.entry.get() : null;
 	}
 
 	@Override
@@ -76,25 +79,34 @@ public class SingleComponentContainer<T> implements ComponentContainer {
 	public void readNbt(NbtCompound providerRootNbt) {
 		String idString = this.type.id().toString();
 		if (providerRootNbt.getKeys().contains(idString)) {
-			this.expose(this.type)
-					.map(it -> ((NbtSerializable<?>) it))
-					.ifJust(nbtComponent -> NbtSerializable.readFrom(nbtComponent, this.type.id(), providerRootNbt));
+			T component = this.expose(this.type);
+			if (component instanceof NbtSerializable<?> nbtComponent) {
+				NbtSerializable.readFrom(providerRootNbt, nbtComponent, this.type.id());
+			}
 		}
 	}
 
 	@Override
 	public void tick(ComponentProvider provider) {
 		if (this.ticking) {
-			this.expose(this.type)
-					.map(it -> ((Tickable) it))
-					.ifJust(tickingComponent -> tickingComponent.tick(provider));
+			T obj = this.expose(this.type);
+			if (obj == null) {
+				throw new UnsupportedOperationException("Attempted to tick a non-tickable container!");
+			}
+
+			((Tickable) obj).tick(provider);
 		}
 	}
 
 	@Override
 	public void sync(ComponentProvider provider) {
-		if (this.shouldSync) {
-			this.syncChannel.ifJust(channel -> channel.syncFromQueue(new ArrayDeque<>(List.of(this.type)), provider));
+		if (this.syncChannel != null) {
+			if (this.shouldSync) {
+				this.entry.ifFilled(
+						t -> this.syncChannel.syncFromQueue(new ArrayDeque<>(List.of(this.type)), provider));
+			}
+		} else {
+			throw new UnsupportedOperationException("Attempted to sync a non-syncable container!");
 		}
 	}
 

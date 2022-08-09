@@ -20,6 +20,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * Represents a value that is only initialized once it's needed.<br/>
  * Similar to {@link com.google.common.base.Suppliers#memoize}.
@@ -249,14 +251,15 @@ public abstract sealed class Lazy<T> implements Supplier<T> permits Lazy.Filled,
 	public static final class OfSupplier<T> extends Lazy<T> {
 		private Supplier<? extends T> supplier;
 		// There is no overhead to using a Maybe here since Maybe has statically evaluated returns for Nothing instances..
-		private Maybe<T> value;
+		@Nullable
+		private T value;
 
 		/**
 		 * @param supplier The {@link Supplier} used to initialize the value.
 		 */
 		private OfSupplier(Supplier<? extends T> supplier) {
 			this.supplier = supplier;
-			this.value = Maybe.nothing();
+			this.value = null;
 		}
 
 		/**
@@ -264,12 +267,12 @@ public abstract sealed class Lazy<T> implements Supplier<T> permits Lazy.Filled,
 		 */
 		@Override
 		public T get() {
-			if (this.value.isNothing()) {
-				this.value = Maybe.just(this.supplier.get());
+			if (this.value == null) {
+				this.value = this.supplier.get();
 				this.supplier = null;
 			}
 
-			return this.value.unwrap();
+			return this.value;
 		}
 
 		/**
@@ -277,7 +280,7 @@ public abstract sealed class Lazy<T> implements Supplier<T> permits Lazy.Filled,
 		 */
 		@Override
 		public <U> Lazy<U> map(Function<T, ? extends U> mapper) {
-			return this.value.isJust() ? filled(mapper.apply(this.get())) : of(() -> mapper.apply(this.supplier.get()));
+			return this.value != null ? filled(mapper.apply(this.get())) : of(() -> mapper.apply(this.supplier.get()));
 		}
 
 		/**
@@ -285,7 +288,7 @@ public abstract sealed class Lazy<T> implements Supplier<T> permits Lazy.Filled,
 		 */
 		@Override
 		public <U> Lazy<U> flatMap(Function<T, ? extends Lazy<U>> mapper) {
-			return this.value.isJust() ? mapper.apply(this.get()) : of(() -> mapper.apply(this.get()).get());
+			return this.value != null ? mapper.apply(this.get()) : of(() -> mapper.apply(this.get()).get());
 		}
 
 		/**
@@ -293,7 +296,7 @@ public abstract sealed class Lazy<T> implements Supplier<T> permits Lazy.Filled,
 		 */
 		@Override
 		public boolean isFilled() {
-			return this.value.isJust();
+			return this.value != null;
 		}
 
 		/**
@@ -301,7 +304,10 @@ public abstract sealed class Lazy<T> implements Supplier<T> permits Lazy.Filled,
 		 */
 		@Override
 		public Lazy<T> ifFilled(Consumer<? super T> action) {
-			this.value.ifJust(action);
+			if (this.value != null) {
+				action.accept(this.value);
+			}
+
 			return this;
 		}
 
@@ -310,7 +316,10 @@ public abstract sealed class Lazy<T> implements Supplier<T> permits Lazy.Filled,
 		 */
 		@Override
 		public Lazy<T> ifEmpty(Runnable action) {
-			this.value.ifNothing(action);
+			if (this.value == null) {
+				action.run();
+			}
+
 			return this;
 		}
 
@@ -319,7 +328,7 @@ public abstract sealed class Lazy<T> implements Supplier<T> permits Lazy.Filled,
 		 */
 		@Override
 		public boolean isEmpty() {
-			return this.value.isNothing();
+			return this.value == null;
 		}
 
 		/**
@@ -327,7 +336,7 @@ public abstract sealed class Lazy<T> implements Supplier<T> permits Lazy.Filled,
 		 */
 		@Override
 		public T unwrapOr(T defaultValue) {
-			return this.value.unwrapOr(defaultValue);
+			return this.value != null ? this.value : defaultValue;
 		}
 
 		/**
@@ -335,7 +344,7 @@ public abstract sealed class Lazy<T> implements Supplier<T> permits Lazy.Filled,
 		 */
 		@Override
 		public T unwrapOrGet(Supplier<? extends T> defaultSupplier) {
-			return this.value.unwrapOrGet(defaultSupplier);
+			return this.value != null ? this.value : defaultSupplier.get();
 		}
 	}
 }

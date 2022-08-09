@@ -20,7 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import org.quiltmc.qsl.base.api.util.Maybe;
+import org.jetbrains.annotations.Nullable;
+
 import org.quiltmc.qsl.component.api.ComponentFactory;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.injection.predicate.InjectionPredicate;
@@ -44,27 +45,32 @@ public class ComponentInjector<T extends ComponentProvider> {
 	}
 
 	public static <T extends ComponentProvider> ComponentInjector<T> injector(Class<?> clazz) {
-		Class<T> properClass = ComponentInjector.<T>asProvider(clazz).unwrapOrThrow(
-				ErrorUtil.illegalArgument("Class %s is not a ComponentProvider implementor!", clazz)
-		);
+		Class<T> properClass = ComponentInjector.asProvider(clazz);
+
+		if (properClass == null) {
+			throw ErrorUtil.illegalArgument("Class %s is not a ComponentProvider implementor!", clazz).get();
+		}
+
 		return new ComponentInjector<>(properClass);
 	}
 
-	public static <T extends ComponentProvider> Maybe<Class<T>> asProvider(Class<?> clazz) {
+	@SuppressWarnings("unchecked")
+	@Nullable
+	public static <T extends ComponentProvider> Class<T> asProvider(Class<?> clazz) {
 		var currClass = clazz;
 
 		while (currClass != null) {
 			for (Class<?> currInterface : currClass.getInterfaces()) {
 				if (currInterface == ComponentProvider.class) {
 					// we can safely cast, since the class implements ComponentProvider
-					return Maybe.just(clazz).castUnchecked();
+					return (Class<T>) clazz;
 				}
 			}
 
 			currClass = currClass.getSuperclass();
 		}
 
-		return Maybe.nothing();
+		return null;
 	}
 
 	public ComponentInjector<T> inherited() {

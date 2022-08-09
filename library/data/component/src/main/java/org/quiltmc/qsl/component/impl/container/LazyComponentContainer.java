@@ -19,13 +19,11 @@ package org.quiltmc.qsl.component.impl.container;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.function.BiConsumer;
 
 import org.jetbrains.annotations.Nullable;
 
 import org.quiltmc.qsl.base.api.util.Lazy;
-import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.injection.ComponentEntry;
@@ -35,7 +33,7 @@ import org.quiltmc.qsl.component.api.sync.SyncChannel;
 public class LazyComponentContainer extends AbstractComponentContainer {
 	public static final ComponentContainer.Factory<LazyComponentContainer> FACTORY = LazyComponentContainer::new;
 
-	private final Map<ComponentType<?>, Lazy<Maybe<? super Object>>> components;
+	private final Map<ComponentType<?>, Lazy<Object>> components;
 
 	protected LazyComponentContainer(
 			ComponentProvider provider,
@@ -54,26 +52,32 @@ public class LazyComponentContainer extends AbstractComponentContainer {
 		}));
 
 		into.nbtComponents.addAll(from.nbtComponents);
-		into.pendingSync.ifJust(intoPending -> from.pendingSync.ifJust(intoPending::addAll));
-		into.ticking.ifJust(intoTicking -> from.ticking.ifJust(intoTicking::addAll));
+
+		if (into.pendingSync != null && from.pendingSync != null) {
+			into.pendingSync.addAll(from.pendingSync);
+		}
+
+		if (into.ticking != null && from.ticking != null) {
+			into.ticking.addAll(from.ticking);
+		}
 
 		from.components.clear();
 		from.nbtComponents.clear();
-		from.ticking.ifJust(List::clear);
-		from.pendingSync.ifJust(Queue::clear);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public <C> Maybe<C> expose(ComponentType<C> type) {
-		return this.components.containsKey(type) ? this.components.get(type).unwrap().castUnchecked() :
-			   Maybe.nothing();
+	public <C> C expose(ComponentType<C> type) {
+		// the cast to C should never fail since the only way the ComponentType<C> instance can be a key is if the
+        // component is a C instance
+		return this.components.containsKey(type) ? (C) this.components.get(type) : null;
 	}
 
 	@Override
 	public void forEach(BiConsumer<ComponentType<?>, ? super Object> action) {
 		// unwrap will work here since all Lazies are Just instances for this.
 		this.components.forEach(
-				(type, componentLazy) -> componentLazy.ifFilled(component -> action.accept(type, component.unwrap()))
+				(type, componentLazy) -> componentLazy.ifFilled(component -> action.accept(type, component))
 		);
 	}
 
@@ -81,20 +85,21 @@ public class LazyComponentContainer extends AbstractComponentContainer {
 	protected <COMP> void addComponent(ComponentType<COMP> type, COMP component) { }
 
 	// TODO: Add provider as a parameter for the ComponentFactory create method.
-	private Map<ComponentType<?>, Lazy<Maybe<? super Object>>> createLazyMap(List<ComponentEntry<?>> entries, ComponentProvider ignoredProvider) {
-		var map = new IdentityHashMap<ComponentType<?>, Lazy<Maybe<? super Object>>>();
+	private Map<ComponentType<?>, Lazy<Object>> createLazyMap(List<ComponentEntry<?>> entries,
+            ComponentProvider ignoredProvider) {
+		var map = new IdentityHashMap<ComponentType<?>, Lazy<Object>>();
 		entries.forEach(componentEntry -> map.put(componentEntry.type(), this.createLazy(componentEntry)));
 		return map;
 	}
 
-	private Lazy<Maybe<? super Object>> createLazy(ComponentEntry<?> componentEntry) {
+	private Lazy<Object> createLazy(ComponentEntry<?> componentEntry) {
 		ComponentType<?> type = componentEntry.type();
 
 		if (type.isStatic() || type.isInstant()) {
 			var component = this.initializeComponent(componentEntry);
-			return Lazy.filled(Maybe.just(component)); // this cast will obviously never fail
+			return Lazy.filled(component); // this cast will obviously never fail
 		}
 
-		return Lazy.of(() -> (Maybe.just(this.initializeComponent(componentEntry)))); // same here
+		return Lazy.of(() -> this.initializeComponent(componentEntry)); // same here
 	}
 }

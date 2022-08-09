@@ -72,14 +72,5 @@ public abstract class MixinInGameHud {
 			var uuidString = uuidField.getValue().toString();
 			MinecraftClient.getInstance().textRenderer.draw(matrices, uuidString, 10, 30, 0xFAFAFA);
 		});
-
-		// Vec3d pos = MinecraftClient.getInstance().crosshairTarget.getPos();
-		// BlockPos lookAt = new BlockPos(pos);
-		// BlockEntity blockEntity = MinecraftClient.getInstance().world.getBlockEntity(lookAt);
-//		if (blockEntity != null) {
-//			blockEntity.expose(ComponentTestMod.CHEST_NUMBER)
-//					   .ifJust(defaultIntegerSerializable -> System.out.println(defaultIntegerSerializable.getValue
-//					   ()));
-//		}
 	}
 }

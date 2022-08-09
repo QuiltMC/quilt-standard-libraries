@@ -19,7 +19,6 @@ package org.quiltmc.qsl.component.impl.container;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Queue;
 import java.util.function.Function;
 
@@ -28,7 +27,6 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
 
-import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.Components;
 import org.quiltmc.qsl.component.api.component.NbtSerializable;
@@ -37,36 +35,43 @@ import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.injection.ComponentEntry;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.api.sync.SyncChannel;
-import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 import org.quiltmc.qsl.component.impl.util.StringConstants;
 
 public abstract class AbstractComponentContainer implements ComponentContainer {
 	protected final ContainerOperations operations;
 	protected final List<ComponentType<?>> nbtComponents;
-	protected final Maybe<List<ComponentType<?>>> ticking;
-	protected final Maybe<Queue<ComponentType<?>>> pendingSync;
-	protected final Maybe<SyncChannel<?, ?>> syncContext;
+	@Nullable
+	protected final List<ComponentType<?>> ticking;
+	@Nullable
+	protected final Queue<ComponentType<?>> pendingSync;
+	@Nullable
+	protected final SyncChannel<?, ?> syncContext;
 
 	public AbstractComponentContainer(@Nullable Runnable saveOperation,
-									boolean ticking,
-									@Nullable SyncChannel<?, ?> syncChannel) {
-		this.ticking = ticking ? Maybe.just(new ArrayList<>()) : Maybe.nothing();
+			boolean ticking,
+			@Nullable SyncChannel<?, ?> syncChannel) {
+		this.ticking = ticking ? new ArrayList<>() : null;
 		this.nbtComponents = new ArrayList<>();
-		this.syncContext = Maybe.wrap(syncChannel);
-		this.pendingSync = this.syncContext.map(it -> new ArrayDeque<>());
+		this.syncContext = syncChannel;
+		this.pendingSync = this.syncContext != null ? new ArrayDeque<>() : null;
 		this.operations = new ContainerOperations(
 				saveOperation,
-				type -> () -> this.pendingSync.ifJust(pending -> pending.add(type))
+				type -> () -> {
+					if (this.pendingSync != null) {
+						this.pendingSync.add(type);
+					}
+				}
 		);
 	}
 
 	@Override
 	public void writeNbt(NbtCompound providerRootNbt) {
 		var rootQslNbt = providerRootNbt.getCompound(StringConstants.COMPONENT_ROOT);
-		this.nbtComponents.forEach(type -> this.expose(type)
-				.map(it -> ((NbtSerializable<?>) it))
-				.ifJust(nbtComponent -> NbtSerializable.writeTo(rootQslNbt, nbtComponent, type.id()))
-		);
+
+		for (ComponentType<?> type : this.nbtComponents) {
+			Object current = this.expose(type);
+			NbtSerializable.writeTo(rootQslNbt, (NbtSerializable<?>) current, type.id());
+		}
 
 		if (!rootQslNbt.isEmpty()) {
 			providerRootNbt.put(StringConstants.COMPONENT_ROOT, rootQslNbt);
@@ -77,34 +82,36 @@ public abstract class AbstractComponentContainer implements ComponentContainer {
 	public void readNbt(NbtCompound providerRootNbt) {
 		var rootQslNbt = providerRootNbt.getCompound(StringConstants.COMPONENT_ROOT);
 
-		rootQslNbt.getKeys().stream()
-				.map(Identifier::new) // All encoded component types *must* strictly be identifiers
-				.map(Components.REGISTRY::get)
-				.filter(Objects::nonNull)
-				.forEach(type -> this.expose(type)
-						.map(component -> ((NbtSerializable<?>) component))
-						.ifJust(component -> NbtSerializable.readFrom(component, type.id(), rootQslNbt)));
+		for (String nbtKey : rootQslNbt.getKeys()) {
+			var id = new Identifier(nbtKey); // All keys *must* be identifiers
+			var type = Components.REGISTRY.get(id);
+
+			if (type != null) {
+				Object current = this.expose(type);
+				NbtSerializable.readFrom(rootQslNbt, (NbtSerializable<?>) current, id);
+			}
+		}
 	}
 
 	@Override
 	public void tick(ComponentProvider provider) {
-		this.ticking.ifJust(componentTypes -> componentTypes.forEach(type -> this.expose(type)
-				.map(it -> ((Tickable) it))
-				.ifJust(tickingComponent -> tickingComponent.tick(
-						provider)))
-		).ifNothing(() -> {
-			throw ErrorUtil.illegalState("Attempted to tick a non-ticking container").get();
-		});
+		if (this.ticking != null) {
+			for (ComponentType<?> type : this.ticking) {
+				Object current = this.expose(type);
+				((Tickable) current).tick(provider);
+			}
 
-		this.sync(provider);
+			this.sync(provider);
+		}
 	}
 
 	@Override
 	public void sync(ComponentProvider provider) {
-		this.syncContext.ifJust(channel -> channel.syncFromQueue(this.pendingSync.unwrap(), provider))
-				.ifNothing(() -> {
-					throw ErrorUtil.illegalState("Attempted to sync a non-syncable container!").get();
-				});
+		if (this.syncContext != null) {
+			this.syncContext.syncFromQueue(this.pendingSync, provider);
+		} else {
+			throw new UnsupportedOperationException("Attempted to sync a non-syncable container!");
+		}
 	}
 
 	protected abstract <COMP> void addComponent(ComponentType<COMP> type, COMP component);
@@ -121,16 +128,15 @@ public abstract class AbstractComponentContainer implements ComponentContainer {
 			this.nbtComponents.add(type);
 		}
 
-		this.ticking.ifJust(componentTypes -> {
-			if (component instanceof Tickable) {
-				componentTypes.add(type);
-			}
-		});
+		if (this.ticking != null) {
+			this.ticking.add(type);
+		}
 
 		this.addComponent(type, component);
 
 		return component;
 	}
 
-	public record ContainerOperations(@Nullable Runnable saveOperation, @Nullable Function<ComponentType<?>, Runnable> syncOperationFactory) { }
+	public record ContainerOperations(@Nullable Runnable saveOperation,
+									  @Nullable Function<ComponentType<?>, Runnable> syncOperationFactory) { }
 }

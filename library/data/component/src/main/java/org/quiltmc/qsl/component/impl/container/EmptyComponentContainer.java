@@ -16,13 +16,15 @@
 
 package org.quiltmc.qsl.component.impl.container;
 
+import java.util.function.BiConsumer;
+
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.nbt.NbtCompound;
-import org.quiltmc.qsl.base.api.util.Maybe;
+
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
-
-import java.util.function.BiConsumer;
 
 public final class EmptyComponentContainer implements ComponentContainer {
 	public static final EmptyComponentContainer INSTANCE = new EmptyComponentContainer();
@@ -32,9 +34,10 @@ public final class EmptyComponentContainer implements ComponentContainer {
 
 	private EmptyComponentContainer() { }
 
+	@Nullable
 	@Override
-	public <C> Maybe<C> expose(ComponentType<C> type) {
-		return Maybe.nothing();
+	public <C> C expose(ComponentType<C> type) {
+		return null;
 	}
 
 	@Override

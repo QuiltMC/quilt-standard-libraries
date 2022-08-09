@@ -24,7 +24,6 @@ import java.util.function.BiConsumer;
 import com.mojang.datafixers.util.Either;
 import org.jetbrains.annotations.Nullable;
 
-import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.injection.ComponentEntry;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
@@ -34,7 +33,8 @@ import org.quiltmc.qsl.component.api.sync.SyncChannel;
 public class OnAccessComponentContainer extends AbstractComponentContainer {
 	public static final Factory<OnAccessComponentContainer> FACTORY = OnAccessComponentContainer::new;
 
-	private final Map<ComponentType<?>, Either<ComponentEntry<?>, Object>> components;
+	private final Map<ComponentType<?>, ComponentEntry<?>> supported;
+	private final Map<ComponentType<?>, Object> components;
 
 	protected OnAccessComponentContainer(ComponentProvider provider,
 			List<ComponentEntry<?>> entries,
@@ -42,21 +42,31 @@ public class OnAccessComponentContainer extends AbstractComponentContainer {
 			boolean ticking,
 			@Nullable SyncChannel<?, ?> syncChannel) {
 		super(saveOperation, ticking, syncChannel);
+		this.supported = new IdentityHashMap<>();
 		this.components = this.createComponents(entries, provider);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Nullable
 	@Override
-	public <C> Maybe<C> expose(ComponentType<C> type) {
-		return Maybe.fromOptional(this.components.get(type).right())
-					.or(() -> this.supports(type) ?
-							  Maybe.just(this.initializeComponent(this.components.get(type).left().orElseThrow())) :
-							  Maybe.nothing())
-					.castUnchecked();
+	public <C> C expose(ComponentType<C> type) {
+		return (C) this.components.computeIfAbsent(type, innerType -> {
+			if (this.supported.containsKey(innerType)) {
+				ComponentEntry<?> entry = this.supported.get(innerType);
+
+				if (entry != null) {
+					this.supported.remove(innerType);
+					return this.initializeComponent(entry);
+				}
+			}
+
+			return null;
+		});
 	}
 
 	@Override
 	public void forEach(BiConsumer<ComponentType<?>, ? super Object> action) {
-		this.components.forEach((type, either) -> either.ifRight(component -> action.accept(type, component)));
+		this.components.forEach(action);
 	}
 
 	@Override
@@ -64,21 +74,24 @@ public class OnAccessComponentContainer extends AbstractComponentContainer {
 		this.components.put(type, Either.right(component));
 	}
 
-	private Map<ComponentType<?>, Either<ComponentEntry<?>, Object>> createComponents(List<ComponentEntry<?>> entries, ComponentProvider ignoredProvider) {
-		var map = new IdentityHashMap<ComponentType<?>, Either<ComponentEntry<?>, Object>>();
-		entries.forEach(entry -> {
+	private Map<ComponentType<?>, Object> createComponents(List<ComponentEntry<?>> entries,
+			ComponentProvider ignoredProvider) {
+		var ret = new IdentityHashMap<ComponentType<?>, Object>();
+
+		for (ComponentEntry<?> entry : entries) {
 			ComponentType<?> type = entry.type();
-			if (type.isStatic() || type.isInstant()) {
-				this.initializeComponent(entry);
-			} else {
-				map.put(type, Either.left(entry));
+
+			// If the type can be instantly initialized we initialize it!
+			if (type.isInstant() || type.isStatic()) {
+				ret.computeIfAbsent(type, innerType -> this.initializeComponent(entry));
+				this.supported.remove(type);
+				continue;
 			}
-		});
 
-		return map;
-	}
+			// Otherwise we just mark it as supported
+			this.supported.putIfAbsent(type, entry);
+		}
 
-	private boolean supports(ComponentType<?> type) {
-		return this.components.containsKey(type);
+		return ret;
 	}
 }

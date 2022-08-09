@@ -28,7 +28,7 @@ import org.quiltmc.qsl.component.api.component.Syncable;
  *
  * @author 0xJoeMama
  */
-@SuppressWarnings("ClassCanBeRecord")// we want the class to be extendable to people can create their own Contexes
+@SuppressWarnings("ClassCanBeRecord") // we want the class to be extendable to people can create their own Contexts
 public class ComponentCreationContext {
 	private final @Nullable Runnable saveOperation;
 	private final @Nullable Runnable syncOperation;

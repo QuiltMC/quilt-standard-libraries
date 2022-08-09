@@ -16,13 +16,15 @@
 
 package org.quiltmc.qsl.component.api;
 
+import java.util.function.Consumer;
+
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 
-import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.component.Tickable;
 import org.quiltmc.qsl.component.api.injection.ComponentEntry;
 import org.quiltmc.qsl.component.api.injection.predicate.InjectionPredicate;
@@ -50,12 +52,14 @@ public final class Components {
 	// end registry
 
 	// begin injection methods
+
 	/**
 	 * The most manual method of injection.<br/>
 	 * Callers can provide custom {@link InjectionPredicate}s and also custom {@linkplain ComponentEntry entries}.
 	 *
 	 * <p>
-	 * For users who wish to use an easier method of injection, see {@link org.quiltmc.qsl.component.api.injection.ComponentInjector}.
+	 * For users who wish to use an easier method of injection, see
+	 * {@link org.quiltmc.qsl.component.api.injection.ComponentInjector}.
 	 *
 	 * @param predicate The {@linkplain InjectionPredicate predicate} used for the injection
 	 * @param entries   The {@linkplain ComponentEntry entries} that will be injected.
@@ -68,32 +72,42 @@ public final class Components {
 
 	// end injection methods
 
-	// begin registration methods
 	/**
 	 * The proper way to expose component instances.<br/>
 	 * This does type-checking and also makes sure a {@link ComponentProvider} is given.<br/>
 	 * This should be used where interface injection cannot apply(in other words custom implementations of
 	 * {@link ComponentProvider}).<br/>
 	 *
-	 * @param id  The {@link ComponentType} to expose.
-	 * @param obj Any object will work. If it does not implement {@link ComponentProvider} an empty will be instantly
-	 *            returned.
-	 * @param <C> The type of component held by the {@link ComponentType}.
-	 * @param <S> The object to attempt to expose the component on.
-	 * @return Either {@link org.quiltmc.qsl.base.api.util.Maybe.Just} the result of expose called on the provider's
-	 * container
-	 * or {@link org.quiltmc.qsl.base.api.util.Maybe.Nothing} if the provided object is not a
+	 * @param type The {@link ComponentType} to expose.
+	 * @param obj  Any object will work. If it does not implement {@link ComponentProvider} an empty will be instantly
+	 *             returned.
+	 * @param <C>  The type of component held by the {@link ComponentType}.
+	 * @param <S>  The object to attempt to expose the component on.
+	 * @return Either the result of expose called on the provider's container
+	 * or null if the provided object is not a
 	 * {@link ComponentProvider}.
 	 * @see ComponentProvider#expose
 	 * @see org.quiltmc.qsl.component.api.container.ComponentContainer#expose
 	 */
-	public static <C, S> Maybe<C> expose(ComponentType<C> id, S obj) {
+	@Nullable
+	public static <C, S> C expose(ComponentType<C> type, S obj) {
 		if (obj instanceof ComponentProvider provider) {
-			return provider.getComponentContainer().expose(id);
+			return provider.getComponentContainer().expose(type);
 		}
 
-		return Maybe.nothing();
+		return null;
 	}
+
+	@Nullable
+	public static <C, S> C ifPresent(S obj, ComponentType<C> type, Consumer<? super C> action) {
+		if (obj instanceof ComponentProvider provider) {
+			return provider.ifPresent(type, action);
+		}
+
+		return null;
+	}
+
+	// begin registration methods
 
 	/**
 	 * Register a manually created {@link ComponentType}.
@@ -118,7 +132,7 @@ public final class Components {
 	public static <C> ComponentType<C> register(Identifier id, ComponentFactory<C> factory) {
 		if (factory instanceof ComponentType<C>) {
 			throw ErrorUtil.illegalArgument("Do NOT register ComponentTypes as factories, use the correct method")
-						.get();
+						   .get();
 		}
 
 		return ComponentsImpl.register(id, new ComponentType<>(id, factory, false, false));

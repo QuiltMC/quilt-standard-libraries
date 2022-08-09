@@ -18,9 +18,10 @@ package org.quiltmc.qsl.component.impl.container;
 
 import java.util.function.BiConsumer;
 
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.nbt.NbtCompound;
 
-import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
@@ -34,9 +35,11 @@ public class CompositeComponentContainer implements ComponentContainer {
 		this.fallback = fallback;
 	}
 
+	@Nullable
 	@Override
-	public <C> Maybe<C> expose(ComponentType<C> type) {
-		return this.main.expose(type).or(() -> this.fallback.expose(type));
+	public <C> C expose(ComponentType<C> type) {
+		C mainC = this.main.expose(type);
+		return mainC != null ? mainC : this.fallback.expose(type);
 	}
 
 	@Override

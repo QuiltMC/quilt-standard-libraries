@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.component.impl.client.sync;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -28,7 +29,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.IdList;
 import net.minecraft.util.registry.Registry;
 
-import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 
 @Environment(EnvType.CLIENT)
@@ -53,12 +53,12 @@ public final class ClientRegistryPacket {
 			Identifier id = buf.readIdentifier(); // consume identifier
 			int rawId = buf.readVarInt(); // consumer rawId
 
-			Maybe<T> type = Maybe.fromOptional(targetRegistry.getOrEmpty(id));
-			if (type.isNothing()) {
+			Optional<T> type = targetRegistry.getOrEmpty(id);
+			if (type.isEmpty()) {
 				return Either.right(id);
 			}
 
-			ret.set(type.unwrap(), rawId);
+			ret.set(type.get(), rawId);
 		}
 
 		return Either.left(ret);

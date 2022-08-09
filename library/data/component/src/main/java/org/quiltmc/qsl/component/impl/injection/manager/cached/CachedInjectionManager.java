@@ -28,7 +28,7 @@ public class CachedInjectionManager extends InjectionManager<InjectionPredicate,
 	@Override
 	public List<ComponentEntry<?>> getInjections(ComponentProvider provider) {
 		Class<? extends ComponentProvider> providerClass = provider.getClass();
-		return this.getCache(providerClass).unwrapOrGet(() -> {
+		return this.getCache(providerClass).orElseGet(() -> {
 			List<ComponentEntry<?>> componentEntries = this.initInjections(providerClass);
 			this.record(providerClass, componentEntries);
 			return componentEntries;

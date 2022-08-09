@@ -30,7 +30,7 @@ import org.quiltmc.qsl.component.api.sync.SyncChannel;
 
 @Mixin(WorldChunk.class)
 public class WorldChunkMixin {
-	@Inject(method = "method_31716", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/entity/BlockEntity;readNbt(Lnet/minecraft/nbt/NbtCompound;)V"))
+	@Inject(method = "m_pptwysxt", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/entity/BlockEntity;readNbt(Lnet/minecraft/nbt/NbtCompound;)V"))
 	private void initialBlockEntitySync(BlockPos blockPos, BlockEntityType<?> blockEntityType, NbtCompound nbtCompound, CallbackInfo ci) {
 		SyncChannel.BLOCK_ENTITY.requestSync(blockPos);
 	}

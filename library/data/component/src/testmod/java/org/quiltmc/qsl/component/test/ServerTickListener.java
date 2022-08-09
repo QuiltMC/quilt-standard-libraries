@@ -32,7 +32,6 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.explosion.Explosion;
 
 import org.quiltmc.qsl.base.api.event.ListenerPhase;
-import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.Components;
 import org.quiltmc.qsl.lifecycle.api.event.ServerWorldTickEvents;
 
@@ -58,7 +57,7 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 	}
 
 	private void currentChunkTick(ServerPlayerEntity player, Chunk chunk) {
-		chunk.expose(ComponentTestMod.CHUNK_INVENTORY).ifJust(inventory -> {
+		chunk.ifPresent(ComponentTestMod.CHUNK_INVENTORY, inventory -> {
 			ItemStack playerStack = player.getInventory().getStack(9);
 			ItemStack stack = inventory.getStack(0);
 			if (!playerStack.isEmpty()) {
@@ -80,10 +79,6 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 				}
 			}
 
-			Components.expose(ComponentTestMod.CREEPER_EXPLODE_TIME, player).ifJust(defaultIntegerSerializable -> {
-
-			});
-
 			player.sendMessage(Text.literal(inventory.getStack(0).toString()), true);
 		});
 	}
@@ -92,7 +87,7 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 		chunk.getBlockEntityPositions().stream()
 				.map(chunk::getBlockEntity)
 				.filter(Objects::nonNull)
-				.forEach(blockEntity -> blockEntity.expose(ComponentTestMod.CHEST_NUMBER).ifJust(integerComponent -> {
+				.forEach(blockEntity -> blockEntity.ifPresent(ComponentTestMod.CHEST_NUMBER, integerComponent -> {
 					integerComponent.setValue(integerComponent.getValue() - 1);
 					integerComponent.save();
 					integerComponent.sync();
@@ -105,7 +100,7 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 
 	private void hostileTick(ServerWorld world) {
 		world.getEntitiesByType(TypeFilter.instanceOf(HostileEntity.class), hostile -> true)
-				.forEach(hostile -> hostile.expose(ComponentTestMod.HOSTILE_EXPLODE_TIME).ifJust(explodeTime -> {
+				.forEach(hostile -> hostile.ifPresent(ComponentTestMod.HOSTILE_EXPLODE_TIME, explodeTime -> {
 					if (explodeTime.get() <= 200) {
 						explodeTime.increment();
 						explodeTime.save();
@@ -123,7 +118,7 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 
 	private void creeperTick(ServerWorld world) {
 		world.getEntitiesByType(EntityType.CREEPER, creeper -> true)
-				.forEach(creeper -> Components.expose(ComponentTestMod.CREEPER_EXPLODE_TIME, creeper).ifJust(explodeTime -> {
+				.forEach(creeper -> Components.ifPresent(creeper, ComponentTestMod.CREEPER_EXPLODE_TIME, explodeTime -> {
 					if (explodeTime.get() > 0) {
 						explodeTime.decrement();
 						explodeTime.save();
@@ -135,7 +130,7 @@ public class ServerTickListener implements ServerWorldTickEvents.End {
 
 	private void cowTick(ServerWorld world) {
 		world.getEntitiesByType(TypeFilter.instanceOf(CowEntity.class), cowEntity -> true).forEach(entity ->
-				entity.expose(ComponentTestMod.COW_INVENTORY).ifJust(inventoryComponent -> {
+				entity.ifPresent(ComponentTestMod.COW_INVENTORY, inventoryComponent -> {
 					if (inventoryComponent.isEmpty()) {
 						world.createExplosion(
 								entity,

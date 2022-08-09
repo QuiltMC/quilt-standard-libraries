@@ -27,7 +27,6 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.nbt.NbtCompound;
 
 import org.quiltmc.qsl.base.api.util.Lazy;
-import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.ComponentFactory;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.component.NbtSerializable;
@@ -186,12 +185,12 @@ public interface ComponentContainer {
 	 * This method is called <i>really</i> often, so it is advised you make it have a really fast runtime.
 	 *
 	 * @param type The type to expose.
-	 * @return Should return {@link org.quiltmc.qsl.base.api.util.Maybe.Nothing} if the provided {@link ComponentType}
+	 * @return Should return null if the provided {@link ComponentType}
 	 * is not contained in the current container.
-	 * Otherwise, should always return {@link org.quiltmc.qsl.base.api.util.Maybe.Just} the contained
+	 * Otherwise, should always return the contained instance of {@link C}
 	 * {@link C} instance.
 	 */
-	<C> Maybe<C> expose(ComponentType<C> type);
+	<C> C expose(ComponentType<C> type);
 
 	/**
 	 * Serializes the {@link NbtSerializable}s this {@linkplain ComponentContainer container} contains, into the

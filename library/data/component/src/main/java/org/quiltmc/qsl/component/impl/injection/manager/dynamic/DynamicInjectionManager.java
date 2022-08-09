@@ -18,10 +18,10 @@ package org.quiltmc.qsl.component.impl.injection.manager.dynamic;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.injection.predicate.DynamicInjectionPredicate;
 import org.quiltmc.qsl.component.api.provider.ComponentProvider;
 import org.quiltmc.qsl.component.api.injection.ComponentEntry;
@@ -35,8 +35,8 @@ public class DynamicInjectionManager extends InjectionManager<DynamicInjectionPr
 		return this.getCache(providerClass).or(() -> {
 			var injections = this.initInjections(providerClass);
 			this.record(providerClass, injections);
-			return Maybe.just(injections);
-		}).unwrap().stream()
+			return Optional.of(injections);
+		}).orElseGet(List::of).stream()
 				.map(dynamicInjection -> dynamicInjection.test(provider) ? dynamicInjection.componentEntries() : null) // After check the dynamic side
 				.filter(Objects::nonNull)
 				.flatMap(List::stream)

@@ -58,7 +58,7 @@ public class TestBlockEntity extends BlockEntity {
 		}
 
 		if (blockEntity.expose(ComponentTestMod.CHUNK_INVENTORY).map(InventorySerializable::isEmpty).unwrapOr(true)) {
-			blockEntity.expose(ComponentTestMod.TEST_BE_INT).ifJust(integerComponent -> {
+			blockEntity.ifPresent(ComponentTestMod.TEST_BE_INT, integerComponent -> {
 				if (integerComponent.get() % 40 == 0) {
 					HashSet<BlockPos> set = new HashSet<>(List.of(pos));
 					expand(pos, pos, world, set);

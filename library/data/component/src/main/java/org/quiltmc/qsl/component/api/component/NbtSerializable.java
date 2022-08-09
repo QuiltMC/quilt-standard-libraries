@@ -23,7 +23,7 @@ import org.quiltmc.qsl.component.impl.util.ErrorUtil;
 
 public interface NbtSerializable<T extends NbtElement> {
 	@SuppressWarnings("unchecked")
-	static void readFrom(NbtSerializable<?> nbtSerializable, Identifier id, NbtCompound root) {
+	static void readFrom(NbtCompound root, NbtSerializable<?> nbtSerializable, Identifier id) {
 		NbtElement nbtTarget = root.get(id.toString());
 		switch (nbtSerializable.nbtType()) {
 			case NbtElement.BYTE_TYPE -> ((NbtSerializable<NbtByte>) nbtSerializable).read((NbtByte) nbtTarget);

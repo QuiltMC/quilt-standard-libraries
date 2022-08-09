@@ -23,7 +23,6 @@ import java.util.stream.Stream;
 
 import org.jetbrains.annotations.Nullable;
 
-import org.quiltmc.qsl.base.api.util.Maybe;
 import org.quiltmc.qsl.component.api.ComponentType;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.injection.ComponentEntry;
@@ -47,9 +46,11 @@ public class SimpleComponentContainer extends AbstractComponentContainer {
 		types.close();
 	}
 
+	@Nullable
+	@SuppressWarnings("unchecked")
 	@Override
-	public <C> Maybe<C> expose(ComponentType<C> type) {
-		return Maybe.wrap(this.components.get(type)).castUnchecked();
+	public <C> C expose(ComponentType<C> type) {
+		return (C) this.components.get(type);
 	}
 
 	@Override
