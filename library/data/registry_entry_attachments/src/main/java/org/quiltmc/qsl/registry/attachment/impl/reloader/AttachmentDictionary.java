@@ -177,6 +177,11 @@ final class AttachmentDictionary<R, V> {
 					idStr = idStr.substring(1);
 				}
 
+				if (idStr.endsWith("?")) {
+					required = false;
+					idStr = idStr.substring(0, idStr.length() - 1);
+				}
+
 				id = new Identifier(idStr);
 			} catch (InvalidIdentifierException e) {
 				LOGGER.error("Invalid identifier in values of '{}': '{}', ignoring",
