@@ -142,12 +142,12 @@ public abstract class BrewingStandBlockEntityMixin extends LockableContainerBloc
 	}
 
 	@Inject(method = "readNbt", at = @At("TAIL"))
-	private void readBurnTimeAsInt(NbtCompound nbt, CallbackInfo info) {
+	private void readBrewTimeAsInt(NbtCompound nbt, CallbackInfo info) {
 		this.brewTime = nbt.getInt("BrewTime");
 	}
 
 	@Inject(method = "writeNbt", at = @At("TAIL"))
-	private void writeBurnTimeAsInt(NbtCompound nbt, CallbackInfo info) {
+	private void writeBrewTimeAsInt(NbtCompound nbt, CallbackInfo info) {
 		nbt.putInt("BrewTime", this.brewTime);
 	}
 }

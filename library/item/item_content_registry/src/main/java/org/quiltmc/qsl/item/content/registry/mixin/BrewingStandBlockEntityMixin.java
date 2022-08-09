@@ -95,12 +95,12 @@ public abstract class BrewingStandBlockEntityMixin extends BlockEntity {
 	}
 
 	@Inject(method = "readNbt", at = @At("TAIL"))
-	private void readBurnTimeAsInt(NbtCompound nbt, CallbackInfo info) {
+	private void readFuelAsInt(NbtCompound nbt, CallbackInfo info) {
 		this.fuel = nbt.getInt("Fuel");
 	}
 
 	@Inject(method = "writeNbt", at = @At("TAIL"))
-	private void writeBurnTimeAsInt(NbtCompound nbt, CallbackInfo info) {
+	private void writeFuelAsInt(NbtCompound nbt, CallbackInfo info) {
 		nbt.putInt("Fuel", this.fuel);
 	}
 }
