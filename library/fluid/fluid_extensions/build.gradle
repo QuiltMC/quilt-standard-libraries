@@ -26,23 +26,23 @@ qslModule {
 	}
 
 	injectedInterface("net/minecraft/class_1690") {
-		values = ["org/quiltmc/qsl/fluid/impl/CustomFluidInteraction"]
+		values = ["org/quiltmc/qsl/fluid/impl/CustomFluidInteracting"]
 	}
 
 	injectedInterface("net/minecraft/class_746") {
-		values = ["org/quiltmc/qsl/fluid/impl/CustomFluidInteraction"]
+		values = ["org/quiltmc/qsl/fluid/impl/CustomFluidInteracting"]
 	}
 
 	injectedInterface("net/minecraft/class_1297") {
-		values = ["org/quiltmc/qsl/fluid/impl/CustomFluidInteraction"]
+		values = ["org/quiltmc/qsl/fluid/impl/CustomFluidInteracting"]
 	}
 
 	injectedInterface("net/minecraft/class_1536") {
-		values = ["org/quiltmc/qsl/fluid/impl/CustomFluidInteraction", "org/quiltmc/qsl/fluid/impl/FishingBobberEntityExtensions"]
+		values = ["org/quiltmc/qsl/fluid/impl/CustomFluidInteracting", "org/quiltmc/qsl/fluid/impl/FishingBobberEntityExtensions"]
 	}
 
 	injectedInterface("net/minecraft/class_1309") {
-		values = ["org/quiltmc/qsl/fluid/impl/CustomFluidInteraction"]
+		values = ["org/quiltmc/qsl/fluid/impl/CustomFluidInteracting"]
 	}
 
 	injectedInterface("net/minecraft/class_4184") {
