@@ -81,8 +81,8 @@ final class AttachmentDictionary<R, V> {
 				if (values == null) {
 					throw new JsonSyntaxException("Missing values, expected to find an array or object");
 				} else if (!values.isJsonArray() && !values.isJsonObject()) {
-					throw new JsonSyntaxException("Expected values to be an or object," +
-							"was " + JsonHelper.getType(values));
+					throw new JsonSyntaxException("Expected values to be an array or object, was "
+							+ JsonHelper.getType(values));
 				}
 			} catch (JsonSyntaxException e) {
 				LOGGER.error("Invalid JSON file '" + resource.getSourceName() + "', ignoring", e);
@@ -195,7 +195,12 @@ final class AttachmentDictionary<R, V> {
 	}
 
 	private void handleEntry(Resource resource, Identifier id, boolean isTag, boolean required, JsonElement value) {
-		if (!isTag && !registry.containsId(id)) {
+		if (isTag) {
+			if (!required) {
+				LOGGER.warn("Tag entry {} in '{}' is redundantly marked as optional (all tag entries are optional)",
+						id, resource.getSourceName());
+			}
+		} else if (!registry.containsId(id)) {
 			if (required) {
 				// log an error
 				// vanilla tags throw but that causes way more breakage
