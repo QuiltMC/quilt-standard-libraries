@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": {
-    "quilt:simple_attachment_test_item": 1
+    "quilt:simple_attachment_test_item": 1,
+    "lolno:i_dont_exist": 2
   }
 }
