@@ -123,7 +123,7 @@ public abstract class AbstractBrewingRecipe<T> implements Recipe<BrewingStandBlo
 	public abstract boolean matches(int slot, ItemStack input);
 
 	/**
-	 * @return how much fuel this recipe takes to craft
+	 * {@return how much fuel this recipe takes to craft}
 	 */
 	public int getFuelUse() {
 		return this.fuel;
