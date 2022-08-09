@@ -130,7 +130,7 @@ public abstract class AbstractBrewingRecipe<T> implements Recipe<BrewingStandBlo
 	}
 
 	/**
-	 * @return how long this recipe takes to craft
+	 * {@return how long this recipe takes to craft}
 	 */
 	public int getBrewTime() {
 		return this.brewTime;
@@ -226,24 +226,24 @@ public abstract class AbstractBrewingRecipe<T> implements Recipe<BrewingStandBlo
 		}
 
 		/**
-		 * Deserializes the object from json.
+		 * Deserializes the value from JSON.
 		 *
-		 * @param element the json element to read
-		 * @param json the json object
-		 * @return the deserialized object
+		 * @param element the key of the element to read
+		 * @param json the JSON object
+		 * @return the deserialized value
 		 */
 		public abstract T deserialize(String element, JsonObject json);
 
 		/**
-		 * Deserializes the object from the buffer.
+		 * Deserializes the value from a buffer.
 		 *
 		 * @param buf the buffer
-		 * @return the deserialized object
+		 * @return the deserialized value
 		 */
 		public abstract T deserialize(PacketByteBuf buf);
 
 		/**
-		 * Serializes the value to the json under the provided element key.
+		 * Serializes the value to JSON, under the specified element key.
 		 *
 		 * @param value the value to serialize
 		 * @param element the key to serialize it under
@@ -252,7 +252,7 @@ public abstract class AbstractBrewingRecipe<T> implements Recipe<BrewingStandBlo
 		public abstract void serialize(T value, String element, JsonObject json);
 
 		/**
-		 * Serializes the value to the buffer.
+		 * Serializes the value to a buffer.
 		 *
 		 * @param value the value to serialize
 		 * @param buf the buffer
