@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.datafixerupper.api;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Map;
 import java.util.Objects;
 
@@ -30,8 +32,6 @@ import net.minecraft.datafixer.fix.BlockNameFix;
 import net.minecraft.datafixer.fix.ItemNameFix;
 import net.minecraft.datafixer.schema.IdentifierNormalizingSchema;
 import net.minecraft.util.Identifier;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Provides methods to add common {@link DataFix}es to {@link DataFixerBuilder}s.
@@ -52,13 +52,13 @@ public final class SimpleFixes {
 	 * @see BlockNameFix
 	 */
 	public static void addBlockRenameFix(@NotNull DataFixerBuilder builder, @NotNull String name,
-										 @NotNull Identifier oldId, @NotNull Identifier newId,
-										 @NotNull Schema schema) {
-		checkNotNull(builder, "DataFixerBuilder cannot be null");
-		checkNotNull(name, "Fix name cannot be null");
-		checkNotNull(oldId, "Old identifier cannot be null");
-		checkNotNull(newId, "New identifier cannot be null");
-		checkNotNull(schema, "Schema cannot be null");
+			@NotNull Identifier oldId, @NotNull Identifier newId,
+			@NotNull Schema schema) {
+		requireNonNull(builder, "DataFixerBuilder cannot be null");
+		requireNonNull(name, "Fix name cannot be null");
+		requireNonNull(oldId, "Old identifier cannot be null");
+		requireNonNull(newId, "New identifier cannot be null");
+		requireNonNull(schema, "Schema cannot be null");
 
 		final String oldIdStr = oldId.toString(), newIdStr = newId.toString();
 		builder.addFixer(BlockNameFix.create(schema, name, (inputName) ->
@@ -76,13 +76,13 @@ public final class SimpleFixes {
 	 * @see ItemNameFix
 	 */
 	public static void addItemRenameFix(@NotNull DataFixerBuilder builder, @NotNull String name,
-										@NotNull Identifier oldId, @NotNull Identifier newId,
-										@NotNull Schema schema) {
-		checkNotNull(builder, "DataFixerBuilder cannot be null");
-		checkNotNull(name, "Fix name cannot be null");
-		checkNotNull(oldId, "Old identifier cannot be null");
-		checkNotNull(newId, "New identifier cannot be null");
-		checkNotNull(schema, "Schema cannot be null");
+			@NotNull Identifier oldId, @NotNull Identifier newId,
+			@NotNull Schema schema) {
+		requireNonNull(builder, "DataFixerBuilder cannot be null");
+		requireNonNull(name, "Fix name cannot be null");
+		requireNonNull(oldId, "Old identifier cannot be null");
+		requireNonNull(newId, "New identifier cannot be null");
+		requireNonNull(schema, "Schema cannot be null");
 
 		final String oldIdStr = oldId.toString(), newIdStr = newId.toString();
 		builder.addFixer(ItemNameFix.create(schema, name, (inputName) ->
@@ -99,12 +99,12 @@ public final class SimpleFixes {
 	 * @see BiomeRenameFix
 	 */
 	public static void addBiomeRenameFix(@NotNull DataFixerBuilder builder, @NotNull String name,
-										 @NotNull Map<Identifier, Identifier> changes,
-										 @NotNull Schema schema) {
-		checkNotNull(builder, "DataFixerBuilder cannot be null");
-		checkNotNull(name, "Fix name cannot be null");
-		checkNotNull(changes, "Changes cannot be null");
-		checkNotNull(schema, "Schema cannot be null");
+			@NotNull Map<Identifier, Identifier> changes,
+			@NotNull Schema schema) {
+		requireNonNull(builder, "DataFixerBuilder cannot be null");
+		requireNonNull(name, "Fix name cannot be null");
+		requireNonNull(changes, "Changes cannot be null");
+		requireNonNull(schema, "Schema cannot be null");
 
 		var mapBuilder = ImmutableMap.<String, String>builder();
 		for (var entry : changes.entrySet()) {

@@ -35,6 +35,7 @@ public class QuiltDataFixerBuilder extends DataFixerBuilder {
 
 	/**
 	 * Creates a new {@code QuiltDataFixerBuilder}.
+	 *
 	 * @param dataVersion the current data version
 	 */
 	public QuiltDataFixerBuilder(@Range(from = 0, to = Integer.MAX_VALUE) int dataVersion) {
@@ -47,7 +48,7 @@ public class QuiltDataFixerBuilder extends DataFixerBuilder {
 	 */
 	@Range(from = 0, to = Integer.MAX_VALUE)
 	public int getDataVersion() {
-		return dataVersion;
+		return this.dataVersion;
 	}
 
 	/**

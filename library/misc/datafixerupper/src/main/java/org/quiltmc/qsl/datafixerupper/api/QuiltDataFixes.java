@@ -16,6 +16,9 @@
 
 package org.quiltmc.qsl.datafixerupper.api;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Optional;
 import java.util.function.BiFunction;
 
@@ -31,9 +34,6 @@ import net.minecraft.util.Util;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.datafixerupper.impl.QuiltDataFixesInternals;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Provides methods to register custom {@link DataFixer}s.
@@ -64,12 +64,12 @@ public final class QuiltDataFixes {
 	 * @param dataFixer      the data fixer
 	 */
 	public static void registerFixer(@NotNull String modId,
-									 @Range(from = 0, to = Integer.MAX_VALUE) int currentVersion,
-									 @NotNull DataFixer dataFixer) {
-		checkNotNull(modId, "modId cannot be null");
+			@Range(from = 0, to = Integer.MAX_VALUE) int currentVersion,
+			@NotNull DataFixer dataFixer) {
+		requireNonNull(modId, "modId cannot be null");
 		//noinspection ConstantConditions
 		checkArgument(currentVersion >= 0, "currentVersion must be positive");
-		checkNotNull(dataFixer, "dataFixer cannot be null");
+		requireNonNull(dataFixer, "dataFixer cannot be null");
 
 		if (isFrozen()) {
 			throw new IllegalStateException("Can't register data fixer after registry is frozen");
@@ -86,9 +86,9 @@ public final class QuiltDataFixes {
 	 * @param dataFixer      the data fixer
 	 */
 	public static void registerFixer(@NotNull ModContainer mod,
-									 @Range(from = 0, to = Integer.MAX_VALUE) int currentVersion,
-									 @NotNull DataFixer dataFixer) {
-		checkNotNull(mod, "mod cannot be null");
+			@Range(from = 0, to = Integer.MAX_VALUE) int currentVersion,
+			@NotNull DataFixer dataFixer) {
+		requireNonNull(mod, "mod cannot be null");
 
 		registerFixer(mod.metadata().id(), currentVersion, dataFixer);
 	}
@@ -100,9 +100,9 @@ public final class QuiltDataFixes {
 	 * @param dataFixerBuilder the data fixer builder
 	 */
 	public static void buildAndRegisterFixer(@NotNull ModContainer mod,
-											 @NotNull QuiltDataFixerBuilder dataFixerBuilder) {
-		checkNotNull(mod, "mod cannot be null");
-		checkNotNull(dataFixerBuilder, "data fixer builder cannot be null");
+			@NotNull QuiltDataFixerBuilder dataFixerBuilder) {
+		requireNonNull(mod, "mod cannot be null");
+		requireNonNull(dataFixerBuilder, "data fixer builder cannot be null");
 
 		registerFixer(mod.metadata().id(), dataFixerBuilder.getDataVersion(),
 				dataFixerBuilder.build(Util::getBootstrapExecutor));
@@ -115,7 +115,7 @@ public final class QuiltDataFixes {
 	 * @return the mod's data fixer, or empty if the mod hasn't registered one
 	 */
 	public static @NotNull Optional<DataFixer> getFixer(@NotNull String modId) {
-		checkNotNull(modId, "modId cannot be null");
+		requireNonNull(modId, "modId cannot be null");
 
 		QuiltDataFixesInternals.DataFixerEntry entry = QuiltDataFixesInternals.getFixerEntry(modId);
 		if (entry == null) {
@@ -134,8 +134,8 @@ public final class QuiltDataFixes {
 	@Contract(pure = true)
 	@Range(from = 0, to = Integer.MAX_VALUE)
 	public static int getModDataVersion(@NotNull NbtCompound compound, @NotNull String modId) {
-		checkNotNull(compound, "compound cannot be null");
-		checkNotNull(modId, "modId cannot be null");
+		requireNonNull(compound, "compound cannot be null");
+		requireNonNull(modId, "modId cannot be null");
 
 		return QuiltDataFixesInternals.getModDataVersion(compound, modId);
 	}

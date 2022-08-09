@@ -1,6 +1,6 @@
 /**
  * <h2>Custom DataFixerUpper API</h2>
- *
+ * <p>
  * This API lets you register a {@code DataFixer} for your own mod, letting you use Minecraft's built-in
  * "old save compatibility" system without bodges!
  * <p>
