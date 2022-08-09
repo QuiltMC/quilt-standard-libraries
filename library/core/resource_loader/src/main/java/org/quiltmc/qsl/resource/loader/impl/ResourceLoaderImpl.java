@@ -88,6 +88,8 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	private static final Map<String, ModNioResourcePack> SERVER_BUILTIN_RESOURCE_PACKS = new Object2ObjectOpenHashMap<>();
 	private static final Logger LOGGER = LoggerFactory.getLogger("ResourceLoader");
 
+	private static final boolean DEBUG_RELOADERS_IDENTITY = TriState.fromProperty("quilt.resource_loader.debug.reloaders_identity")
+			.toBooleanOrElse(QuiltLoader.isDevelopmentEnvironment());
 	private static final boolean DEBUG_RELOADERS_ORDER = TriState.fromProperty("quilt.resource_loader.debug.reloaders_order")
 			.toBooleanOrElse(false);
 
@@ -181,7 +183,18 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 			if (currentReloader instanceof IdentifiableResourceReloader identifiable) {
 				id = identifiable.getQuiltId();
 			} else {
-				id = new Identifier("unknown", "private/" + currentReloader.getClass().getName().replace(".", "/").toLowerCase(Locale.ROOT));
+				id = new Identifier("unknown",
+						"private/"
+								+ currentReloader.getClass().getName()
+								.replace(".", "/")
+								.replace("$", "_")
+								.toLowerCase(Locale.ROOT)
+				);
+
+				if (DEBUG_RELOADERS_IDENTITY) {
+					LOGGER.warn("The resource reloader at {} does not implement IdentifiableResourceReloader " +
+							"making ordering support more difficult for other modders.", currentReloader.getClass().getName());
+				}
 			}
 
 			var current = new ResourceReloaderPhaseData(id, currentReloader);
