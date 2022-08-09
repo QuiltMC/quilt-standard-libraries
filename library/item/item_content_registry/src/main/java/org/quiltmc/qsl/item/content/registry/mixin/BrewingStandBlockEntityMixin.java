@@ -30,6 +30,7 @@ import net.minecraft.block.entity.BrewingStandBlockEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -63,7 +64,7 @@ public abstract class BrewingStandBlockEntityMixin extends BlockEntity {
 	 */
 	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "tick", at = @At("HEAD"))
-	private static void yes(World world, BlockPos pos, BlockState state, BrewingStandBlockEntity brewingStand, CallbackInfo ci) {
+	private static void partialFuelRefilling(World world, BlockPos pos, BlockState state, BrewingStandBlockEntity brewingStand, CallbackInfo ci) {
 		var accessor = ((BrewingStandBlockEntityMixin) (Object) brewingStand);
 		ItemStack fuel = accessor.inventory.get(4);
 		int addedFuel = ItemContentRegistriesInitializer.BREWING_FUEL_MAP.getOrDefault(accessor.inventory.get(4).getItem(), 0);
@@ -87,9 +88,19 @@ public abstract class BrewingStandBlockEntityMixin extends BlockEntity {
 	/**
 	 * Whether the item is in {@link ItemContentRegistries#BREWING_FUEL_TIME} and has a value greater than 0.
 	 * <p>
-	 * This allows a datapack to set the value of an item to 0 to remove an entry from {@link ItemContentRegistries#BREWING_FUEL_TIME}.</p>
+	 * This allows a datapack to set the value of an item to 0 to remove an entry from {@link ItemContentRegistries#BREWING_FUEL_TIME}.
 	 */
 	private static boolean isPresent(Item item) {
 		return ItemContentRegistriesInitializer.BREWING_FUEL_MAP.getOrDefault(item, 0) > 0;
+	}
+
+	@Inject(method = "readNbt", at = @At("TAIL"))
+	private void readBurnTimeAsInt(NbtCompound nbt, CallbackInfo info) {
+		this.fuel = nbt.getInt("Fuel");
+	}
+
+	@Inject(method = "writeNbt", at = @At("TAIL"))
+	private void writeBurnTimeAsInt(NbtCompound nbt, CallbackInfo info) {
+		nbt.putInt("Fuel", this.fuel);
 	}
 }

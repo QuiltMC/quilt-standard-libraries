@@ -33,6 +33,7 @@ import net.minecraft.block.entity.BrewingStandBlockEntity;
 import net.minecraft.block.entity.LockableContainerBlockEntity;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
@@ -138,5 +139,15 @@ public abstract class BrewingStandBlockEntityMixin extends LockableContainerBloc
 	@Inject(method = "isValid", at = @At(value = "RETURN", ordinal = 2), cancellable = true)
 	private void isValidPotionItem(int slot, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
 		cir.setReturnValue(stack.isIn(RecipeImpl.VALID_INPUTS) && this.getStack(slot).isEmpty());
+	}
+
+	@Inject(method = "readNbt", at = @At("TAIL"))
+	private void readBurnTimeAsInt(NbtCompound nbt, CallbackInfo info) {
+		this.brewTime = nbt.getInt("BrewTime");
+	}
+
+	@Inject(method = "writeNbt", at = @At("TAIL"))
+	private void writeBurnTimeAsInt(NbtCompound nbt, CallbackInfo info) {
+		nbt.putInt("BrewTime", this.brewTime);
 	}
 }

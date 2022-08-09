@@ -49,7 +49,7 @@ import org.quiltmc.qsl.recipe.impl.RecipeImpl;
  * <ul>
  * 		<li>type: "quilt_recipe:custom_potion_brewing"</li>
  * 		<li>group: A string representing the group of the recipe</li>
- * 		<li>ingredient: A valid ingredient json object.</li>
+ * 		<li>ingredient: A valid ingredient JSON object.</li>
  * 		<li>input: A valid identifier for a {@link Potion potion}.</li>
  * 		<li>output: A valid identifier for a {@link Potion potion}.</li>
  * 		<li>fuel: An integer representing how much fuel this craft will take.
@@ -57,7 +57,7 @@ import org.quiltmc.qsl.recipe.impl.RecipeImpl;
  * 		<li>time: An integer representing how much time this craft will take, in ticks.
  * 			In vanilla, the default is 400 ticks.</li>
  * 		<li>effects: An array holding all of the custom effects to add to the potion.
- * 			Each entry is either a valid identifier for a {@link StatusEffect status effect} or a json object of the form:</li>
+ * 			Each entry is either a valid identifier for a {@link StatusEffect status effect} or a JSON object of the form:</li>
  * 		<ul>
  * 		    <li>type: A valid identifier for a {@link StatusEffect status effect}.</li>
  * 		    <li>duration: An integer representing how long this effect lasts, in ticks.</li>

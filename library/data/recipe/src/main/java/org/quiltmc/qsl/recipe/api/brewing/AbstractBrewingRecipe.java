@@ -247,7 +247,7 @@ public abstract class AbstractBrewingRecipe<T> implements Recipe<BrewingStandBlo
 		 *
 		 * @param value the value to serialize
 		 * @param element the key to serialize it under
-		 * @param json the json object
+		 * @param json the JSON object
 		 */
 		public abstract void serialize(T value, String element, JsonObject json);
 

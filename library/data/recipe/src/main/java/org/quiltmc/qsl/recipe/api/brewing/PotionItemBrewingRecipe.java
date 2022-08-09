@@ -40,7 +40,7 @@ import org.quiltmc.qsl.recipe.impl.RecipeImpl;
  * <ul>
  * 		<li>type: "quilt_recipe:potion_item_brewing"</li>
  * 		<li>group: A string representing the group of the recipe</li>
- * 		<li>ingredient: A valid ingredient json object.</li>
+ * 		<li>ingredient: A valid ingredient JSON object.</li>
  * 		<li>input: A valid identifier for an {@link Item item}.</li>
  * 		<li>output: A valid identifier for an {@link Item item}.</li>
  * 		<li>fuel: An integer representing how much fuel this craft will take.

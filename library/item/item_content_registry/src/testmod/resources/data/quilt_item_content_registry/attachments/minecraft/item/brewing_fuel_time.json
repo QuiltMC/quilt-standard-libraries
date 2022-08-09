@@ -3,6 +3,7 @@
   "values": {
     "minecraft:coal": 3,
     "minecraft:charcoal": 3,
-    "minecraft:blaze_rod": 60
+    "minecraft:blaze_rod": 60,
+    "minecraft:bedrock": 20000000
   }
 }

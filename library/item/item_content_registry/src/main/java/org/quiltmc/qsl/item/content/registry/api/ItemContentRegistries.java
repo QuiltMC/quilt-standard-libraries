@@ -72,6 +72,6 @@ public class ItemContentRegistries {
 			.builder(Registry.ITEM,
 					new Identifier(NAMESPACE, "brewing_fuel_time"),
 					Integer.class,
-					Codec.intRange(0, Byte.MAX_VALUE))
+					Codec.intRange(0, Integer.MAX_VALUE))
 			.build();
 }

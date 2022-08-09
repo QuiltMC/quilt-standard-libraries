@@ -1,0 +1,9 @@
+{
+  "type": "quilt_recipe_testmod:sword_imbuing",
+  "ingredient": {
+    "item": "minecraft:netherite_ingot"
+  },
+  "input": "minecraft:netherite_sword",
+  "output": "minecraft:netherite_sword",
+  "time": 4200000
+}
