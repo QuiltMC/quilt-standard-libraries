@@ -127,7 +127,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 
 			AttachmentDictionary<?, ?> attachDict = attachDicts.computeIfAbsent(attachment, this::createAttachmentMap);
 			for (var resource : entry.getValue()) {
-				attachDict.processResource(resource);
+				attachDict.processResource(entry.getKey(), resource);
 			}
 		}
 	}
