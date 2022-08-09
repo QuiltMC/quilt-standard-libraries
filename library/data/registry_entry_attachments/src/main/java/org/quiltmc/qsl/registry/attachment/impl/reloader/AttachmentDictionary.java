@@ -79,9 +79,9 @@ final class AttachmentDictionary<R, V> {
 				values = obj.get("values");
 
 				if (values == null) {
-					throw new JsonSyntaxException("Missing values, expected to find a JsonArray or JsonObject");
+					throw new JsonSyntaxException("Missing values, expected to find an array or object");
 				} else if (!values.isJsonArray() && !values.isJsonObject()) {
-					throw new JsonSyntaxException("Expected values to be a JsonArray or JsonObject," +
+					throw new JsonSyntaxException("Expected values to be an or object," +
 							"was " + JsonHelper.getType(values));
 				}
 			} catch (JsonSyntaxException e) {
@@ -159,7 +159,7 @@ final class AttachmentDictionary<R, V> {
 
 			required = JsonHelper.getBoolean(entryO, "required", true);
 
-			handleValue(resource, id, isTag, required, value);
+			handleEntry(resource, id, isTag, required, value);
 		}
 	}
 
@@ -185,18 +185,18 @@ final class AttachmentDictionary<R, V> {
 				continue;
 			}
 
-			handleValue(resource, id, isTag, required, entry.getValue());
+			handleEntry(resource, id, isTag, required, entry.getValue());
 		}
 	}
 
-	private void handleValue(Resource resource, Identifier id, boolean isTag, boolean required, JsonElement value) {
+	private void handleEntry(Resource resource, Identifier id, boolean isTag, boolean required, JsonElement value) {
 		if (!isTag && !registry.containsId(id)) {
 			if (required) {
 				// log an error
 				// vanilla tags throw but that causes way more breakage
 				LOGGER.error("Unregistered identifier in values of '{}': '{}', ignoring", resource.getSourceName(), id);
 			}
-			// either way, drop the mapping
+			// either way, drop the entry
 			return;
 		}
 
