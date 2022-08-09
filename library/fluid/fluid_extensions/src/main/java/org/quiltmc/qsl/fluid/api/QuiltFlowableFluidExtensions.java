@@ -25,8 +25,9 @@ import net.minecraft.entity.effect.StatusEffectUtil;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.FishingBobberEntity;
-import net.minecraft.fluid.FlowableFluid;
 import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.LavaFluid;
+import net.minecraft.fluid.WaterFluid;
 import net.minecraft.loot.LootTables;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
@@ -44,7 +45,7 @@ import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 import javax.annotation.Nullable;
 
-@InjectedInterface(FlowableFluid.class)
+@InjectedInterface({WaterFluid.class, LavaFluid.class})
 public interface QuiltFlowableFluidExtensions {
 
 	float WATER_VISCOSITY = 0.8f;

@@ -16,4 +16,36 @@ qslModule {
 			api("block_extensions")
 		}
 	}
+
+	injectedInterface("net/minecraft/class_3616") {
+		values = ["org/quiltmc/qsl/fluid/api/QuiltFlowableFluidExtensions"]
+	}
+
+	injectedInterface("net/minecraft/class_3621") {
+		values = ["org/quiltmc/qsl/fluid/api/QuiltFlowableFluidExtensions"]
+	}
+
+	injectedInterface("net/minecraft/class_1690") {
+		values = ["org/quiltmc/qsl/fluid/impl/CustomFluidInteraction"]
+	}
+
+	injectedInterface("net/minecraft/class_746") {
+		values = ["org/quiltmc/qsl/fluid/impl/CustomFluidInteraction"]
+	}
+
+	injectedInterface("net/minecraft/class_1297") {
+		values = ["org/quiltmc/qsl/fluid/impl/CustomFluidInteraction"]
+	}
+
+	injectedInterface("net/minecraft/class_1536") {
+		values = ["org/quiltmc/qsl/fluid/impl/CustomFluidInteraction", "org/quiltmc/qsl/fluid/impl/FishingBobberEntityExtensions"]
+	}
+
+	injectedInterface("net/minecraft/class_1309") {
+		values = ["org/quiltmc/qsl/fluid/impl/CustomFluidInteraction"]
+	}
+
+	injectedInterface("net/minecraft/class_4184") {
+		values = ["org/quiltmc/qsl/fluid/impl/CameraExtensions"]
+	}
 }
