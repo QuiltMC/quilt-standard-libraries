@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.registry.attachment.impl.reloader;
 
-import static org.quiltmc.qsl.registry.attachment.impl.reloader.RegistryEntryAttachmentReloader.LOGGER;
-
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +34,8 @@ import net.minecraft.util.JsonHelper;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
+
+import static org.quiltmc.qsl.registry.attachment.impl.reloader.RegistryEntryAttachmentReloader.LOGGER;
 
 final class AttachmentDictionary<R, V> {
 	private final Registry<R> registry;
@@ -68,7 +68,7 @@ final class AttachmentDictionary<R, V> {
 		return this.map;
 	}
 
-	public void processResource(Identifier resourceId, Resource resource) {
+	public void processResource(Resource resource) {
 		try {
 			boolean replace;
 			JsonElement values;
@@ -85,7 +85,7 @@ final class AttachmentDictionary<R, V> {
 							"was " + JsonHelper.getType(values));
 				}
 			} catch (JsonSyntaxException e) {
-				LOGGER.error("Invalid JSON file " + resourceId + ", ignoring", e);
+				LOGGER.error("Invalid JSON file '" + resource.getSourceName() + "', ignoring", e);
 				return;
 			}
 
@@ -95,28 +95,28 @@ final class AttachmentDictionary<R, V> {
 			}
 
 			if (values.isJsonArray()) {
-				this.handleArray(resourceId, resource, values.getAsJsonArray());
+				this.handleArray(resource, values.getAsJsonArray());
 			} else if (values.isJsonObject()) {
-				this.handleObject(resourceId, resource, values.getAsJsonObject());
+				this.handleObject(resource, values.getAsJsonObject());
 			}
 		} catch (Exception e) {
-			LOGGER.error("Exception occurred while parsing " + resourceId + "!", e);
+			LOGGER.error("Exception occurred while parsing '" + resource.getSourceName() + "'!", e);
 		}
 	}
 
-	private void handleArray(Identifier resourceId, Resource resource, JsonArray values) {
+	private void handleArray(Resource resource, JsonArray values) {
 		for (int i = 0; i < values.size(); i++) {
 			JsonElement entry = values.get(i);
 
 			if (!entry.isJsonObject()) {
-				LOGGER.error("Invalid element at index {} in values of {}: expected a JsonObject, was {}",
-						i, resourceId, JsonHelper.getType(entry));
+				LOGGER.error("Invalid element at index {} in values of '{}': expected an object, was {}",
+						i, resource.getSourceName(), JsonHelper.getType(entry));
 				continue;
 			}
 
 			JsonObject entryO = entry.getAsJsonObject();
 			Identifier id;
-			boolean tagId = false;
+			boolean isTag = false;
 			JsonElement value;
 			boolean required;
 
@@ -126,7 +126,7 @@ final class AttachmentDictionary<R, V> {
 				if (entryO.has("id")) {
 					idStr = JsonHelper.getString(entryO, "id");
 				} else if (entryO.has("tag")) {
-					tagId = true;
+					isTag = true;
 					idStr = JsonHelper.getString(entryO, "tag");
 				} else {
 					throw new JsonSyntaxException("Expected id or tag, got neither");
@@ -134,13 +134,13 @@ final class AttachmentDictionary<R, V> {
 
 				id = new Identifier(idStr);
 			} catch (JsonSyntaxException e) {
-				LOGGER.error("Invalid element at index {} in values of {}: syntax error",
-						i, resourceId);
+				LOGGER.error("Invalid element at index {} in values of '{}': syntax error",
+						i, resource.getSourceName());
 				LOGGER.error("", e);
 				continue;
 			} catch (InvalidIdentifierException e) {
-				LOGGER.error("Invalid element at index {} in values of {}: invalid identifier",
-						i, resourceId);
+				LOGGER.error("Invalid element at index {} in values of '{}': invalid identifier",
+						i, resource.getSourceName());
 				LOGGER.error("", e);
 				continue;
 			}
@@ -151,88 +151,76 @@ final class AttachmentDictionary<R, V> {
 					throw new JsonSyntaxException("Missing value");
 				}
 			} catch (JsonSyntaxException e) {
-				LOGGER.error("Failed to parse value for registry entry {} in values of {}: syntax error",
-						id, resourceId);
+				LOGGER.error("Failed to parse value for registry entry {} in values of '{}': syntax error",
+						id, resource.getSourceName());
 				LOGGER.error("", e);
 				continue;
 			}
 
 			required = JsonHelper.getBoolean(entryO, "required", true);
 
-			if (!tagId && required && !registry.containsId(id)) {
-				LOGGER.error("Unregistered identifier in values of {}: '{}', ignoring", resourceId, id);
-				continue;
-			}
-
-			Object parsedValue = this.parseValue(resource, id, value);
-			if (parsedValue == null) {
-				continue;
-			}
-
-			if (tagId) {
-				this.putTag(id, parsedValue);
-			} else {
-				this.put(id, parsedValue);
-			}
+			handleValue(resource, id, isTag, required, value);
 		}
 	}
 
-	private void handleObject(Identifier resourceId, Resource resource, JsonObject values) {
+	private void handleObject(Resource resource, JsonObject values) {
 		for (Map.Entry<String, JsonElement> entry : values.entrySet()) {
 			Identifier id;
-			boolean tagId = false;
+			boolean isTag = false;
+			boolean required = true;
 
 			try {
 				String idStr = entry.getKey();
 
 				if (idStr.startsWith("#")) {
-					tagId = true;
+					isTag = true;
 					idStr = idStr.substring(1);
 				}
 
 				id = new Identifier(idStr);
 			} catch (InvalidIdentifierException e) {
-				LOGGER.error("Invalid identifier in values of {}: '{}', ignoring",
-						resourceId, entry.getKey());
+				LOGGER.error("Invalid identifier in values of '{}': '{}', ignoring",
+						resource.getSourceName(), entry.getKey());
 				LOGGER.error("", e);
 				continue;
 			}
 
-			if (!tagId && !registry.containsId(id)) {
-				LOGGER.error("Unregistered identifier in values of {}: '{}', ignoring", resourceId, id);
-				continue;
-			}
-
-			Object parsedValue = this.parseValue(resource, id, entry.getValue());
-			if (parsedValue == null) {
-				continue;
-			}
-
-			if (tagId) {
-				this.putTag(id, parsedValue);
-			} else {
-				this.put(id, parsedValue);
-			}
+			handleValue(resource, id, isTag, required, entry.getValue());
 		}
 	}
 
-	private Object parseValue(Resource resource, Identifier id, JsonElement value) {
-		DataResult<?> parsedValue = this.attachment.codec().parse(JsonOps.INSTANCE, value);
+	private void handleValue(Resource resource, Identifier id, boolean isTag, boolean required, JsonElement value) {
+		if (!isTag && !registry.containsId(id)) {
+			if (required) {
+				// log an error
+				// vanilla tags throw but that causes way more breakage
+				LOGGER.error("Unregistered identifier in values of '{}': '{}', ignoring", resource.getSourceName(), id);
+			}
+			// either way, drop the mapping
+			return;
+		}
 
-		if (parsedValue.result().isEmpty()) {
-			if (parsedValue.error().isPresent()) {
+		DataResult<?> parseResult = this.attachment.codec().parse(JsonOps.INSTANCE, value);
+
+		if (parseResult.result().isEmpty()) {
+			if (parseResult.error().isPresent()) {
 				LOGGER.error("Failed to parse value for attachment {} of registry entry {}: {}",
-						this.attachment.id(), id, parsedValue.error().get().message());
+						this.attachment.id(), id, parseResult.error().get().message());
 			} else {
 				LOGGER.error("Failed to parse value for attachment {} of registry entry {}: unknown error",
 						this.attachment.id(), id);
 			}
 
-			LOGGER.error("Ignoring attachment value for '{}' in {} since it's invalid", id, resource.getSourceName());
-			return null;
+			LOGGER.error("Ignoring attachment value for {} in '{}' since it's invalid", id, resource.getSourceName());
+			return;
 		}
 
-		return parsedValue.result().get();
+		Object parsedValue = parseResult.result().get();
+		if (isTag) {
+			this.putTag(id, parsedValue);
+		} else {
+			this.put(id, parsedValue);
+		}
 	}
 
 	public record ValueTarget(Identifier id, Type type) {
