@@ -74,16 +74,16 @@ Quick legend:
 
 ### Core - Resource Loader
 
-| Feature                               |      QSL       |            Fabric API            |
-|:--------------------------------------|:--------------:|:--------------------------------:|
-| Load mod resources.                   |       ✔        |                ✔                 |
-| Resource Loader Events                |       ✔        | ✔ (in lifecycle, non equivalent) |
-| Built-in resource pack API            |       ✔        |                ✔                 |
-| Programmer Art API                    |       ✔        |                ✔                 |
-| Group resource pack API               |       ✔        |                🙅                |
-| Resource Pack Provider API            |       ✔        |                ❌                 |
-| Resource Reloaders                    |       ✔        |                ✔                 |
-| Resource Reloaders - Advanced Sorting |       ✔        |                ❌                 |
+| Feature                               |   QSL    |            Fabric API            |
+|:--------------------------------------|:--------:|:--------------------------------:|
+| Load mod resources.                   |    ✔     |                ✔                 |
+| Resource Loader Events                |    ✔     | ✔ (in lifecycle, non equivalent) |
+| Built-in resource pack API            |    ✔     |                ✔                 |
+| Programmer Art API                    |    ✔     |                ✔                 |
+| Group resource pack API               |    ✔     |                🙅                |
+| Resource Pack Provider API            |    ✔     |                ❌                 |
+| Resource Reloaders                    |    ✔     |                ✔                 |
+| Resource Reloaders - Advanced Sorting |    ✔     |                ❌                 |
 | Virtual Resource Packs                | ❌ (1.18) |                ❌                 |
 
 ### Block Library
@@ -204,7 +204,7 @@ Quick legend:
 
 | Feature        |   QSL    | Fabric API |
 |:---------------|:--------:|:----------:|
-| Modded DFU API | ❌ (1.18) |     ❌      |
+| Modded DFU API |    ✔     |     ❌      |
 | API Lookup API | ❌ (1.18) |     ✔      |
 
 [quilt]: https://quiltmc.org
