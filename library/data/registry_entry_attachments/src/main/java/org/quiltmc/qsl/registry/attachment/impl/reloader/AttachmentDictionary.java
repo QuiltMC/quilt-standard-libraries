@@ -159,7 +159,7 @@ final class AttachmentDictionary<R, V> {
 
 			required = JsonHelper.getBoolean(entryO, "required", true);
 
-			handleEntry(resourceId, id, isTag, required, value);
+			this.handleEntry(resourceId, id, isTag, required, value);
 		}
 	}
 
@@ -190,7 +190,7 @@ final class AttachmentDictionary<R, V> {
 				continue;
 			}
 
-			handleEntry(resourceId, id, isTag, required, entry.getValue());
+			this.handleEntry(resourceId, id, isTag, required, entry.getValue());
 		}
 	}
 
