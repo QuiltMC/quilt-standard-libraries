@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.block.content.registry.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "AxeItemMixin",
+    "HoneycombItemMixin",
+    "OxidizableMixin",
+    "SculkSensorBlockMixin",
+    "ShovelItemMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
