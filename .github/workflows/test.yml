@@ -16,10 +16,11 @@ jobs:
         with:
           distribution: "temurin"
           java-version: ${{ matrix.java }}
+          cache: 'gradle'
       - run: ./gradlew checkLicenses generateQmj --parallel --stacktrace
       - run: ./gradlew check build publishToMavenLocal --stacktrace --parallel
       - run: mkdir run && echo "eula=true" >> run/eula.txt
-      - run: ./gradlew :runAutoTestServer --stacktrace
+      - run: ./gradlew :runAutoAllTestServer --stacktrace
       - uses: actions/upload-artifact@v3
         with:
           name: Production Mods
