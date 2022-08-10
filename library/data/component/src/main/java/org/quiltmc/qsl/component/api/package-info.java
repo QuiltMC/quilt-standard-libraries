@@ -1,3 +1,4 @@
+// TODO: Rewrite docs to suit the newest changes!
 /**
  * <h1>Quilt Component API</h1>
  * An QSL library module, allowing the attachment/querying of arbitrary data and/or behaviour to various game objects.

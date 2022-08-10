@@ -116,8 +116,6 @@ public interface ComponentContainer {
 	 *
 	 * <p>
 	 * May be used as the default container for our implementations in the future.
-	 *
-	 * @deprecated Experimental
 	 */
 	@ApiStatus.Experimental
 	ComponentContainer.Factory<OnAccessComponentContainer> ON_ACCESS_FACTORY = OnAccessComponentContainer.FACTORY;

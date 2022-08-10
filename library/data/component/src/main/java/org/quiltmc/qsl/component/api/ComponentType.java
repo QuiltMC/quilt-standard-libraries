@@ -16,14 +16,15 @@
 
 package org.quiltmc.qsl.component.api;
 
+import java.util.IdentityHashMap;
+import java.util.Map;
+
 import net.minecraft.util.Identifier;
+
 import org.quiltmc.qsl.component.api.component.Tickable;
 import org.quiltmc.qsl.component.api.injection.ComponentEntry;
 import org.quiltmc.qsl.component.api.sync.codec.NetworkCodec;
 import org.quiltmc.qsl.component.impl.client.sync.ClientSyncHandler;
-
-import java.util.IdentityHashMap;
-import java.util.Map;
 
 /**
  * A global identifier for a specific type of component.<br/>
@@ -108,11 +109,11 @@ public record ComponentType<T>(Identifier id, ComponentFactory<T> defaultFactory
 		public <C> C getOrCreate(ComponentType<C> type, ComponentCreationContext operations) {
 			if (this.staticInstances.containsKey(type)) {
 				return (C) this.staticInstances.get(type);
-			} else {
-				C singleton = type.defaultFactory.create(operations);
-				this.staticInstances.put(type, singleton);
-				return singleton;
 			}
+
+			C singleton = type.defaultFactory.create(operations);
+			this.staticInstances.put(type, singleton);
+			return singleton;
 		}
 	}
 }

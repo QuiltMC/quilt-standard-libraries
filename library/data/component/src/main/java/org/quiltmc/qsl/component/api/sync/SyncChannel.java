@@ -208,6 +208,7 @@ public class SyncChannel<P extends ComponentProvider, U> {
 
 	public void handleClientSyncRequest(MinecraftServer server, ServerPlayerEntity sender, PacketByteBuf buf) {
 		buf.retain();
+
 		server.execute(() -> {
 			Queue<U> queued = this.queueCodec.decode(buf); // we retrieve the queue of identifying data
 

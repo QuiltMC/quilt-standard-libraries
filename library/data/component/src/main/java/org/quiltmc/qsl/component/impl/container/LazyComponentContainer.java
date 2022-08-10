@@ -70,7 +70,7 @@ public class LazyComponentContainer extends AbstractComponentContainer {
 	public <C> C expose(ComponentType<C> type) {
 		// the cast to C should never fail since the only way the ComponentType<C> instance can be a key is if the
         // component is a C instance
-		return this.components.containsKey(type) ? (C) this.components.get(type) : null;
+		return this.components.containsKey(type) ? (C) this.components.get(type).get() : null;
 	}
 
 	@Override

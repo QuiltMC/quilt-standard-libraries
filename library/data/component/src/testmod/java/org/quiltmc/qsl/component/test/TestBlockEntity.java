@@ -37,51 +37,55 @@ import net.minecraft.world.World;
 import org.quiltmc.qsl.component.api.container.ComponentContainer;
 import org.quiltmc.qsl.component.api.sync.SyncChannel;
 import org.quiltmc.qsl.component.impl.container.SimpleComponentContainer;
-import org.quiltmc.qsl.component.test.component.InventorySerializable;
 
 public class TestBlockEntity extends BlockEntity {
 	private final ComponentContainer container = ComponentContainer.builder(this)
-			.saving(this::markDirty)
-			.ticking()
-			.add(ComponentTestMod.TEST_BE_INT, ComponentTestMod.CHUNK_INVENTORY)
-			.syncing(SyncChannel.BLOCK_ENTITY)
-			.build(SimpleComponentContainer.FACTORY);
-	private final ComponentContainer composite = ComponentContainer.createComposite(this.container, super.getComponentContainer());
+	   .saving(this::markDirty)
+	   .ticking()
+	   .add(ComponentTestMod.TEST_BE_INT, ComponentTestMod.CHUNK_INVENTORY)
+	   .syncing(SyncChannel.BLOCK_ENTITY)
+	   .build(SimpleComponentContainer.FACTORY);
+
+	private final ComponentContainer composite = ComponentContainer.createComposite(
+			this.container, super.getComponentContainer());
 
 	public TestBlockEntity(BlockPos blockPos, BlockState blockState) {
 		super(ComponentTestMod.TEST_BE_TYPE, blockPos, blockState);
 	}
 
-	public static <T extends BlockEntity> void tick(World world, BlockPos pos, BlockState ignoredState, T blockEntity) {
+	public static <T extends BlockEntity> void tick(World world, BlockPos pos, BlockState ignoredState,
+			T blockEntity) {
 		if (world.isClient) {
 			return;
 		}
 
-		if (blockEntity.expose(ComponentTestMod.CHUNK_INVENTORY).map(InventorySerializable::isEmpty).unwrapOr(true)) {
-			blockEntity.ifPresent(ComponentTestMod.TEST_BE_INT, integerComponent -> {
-				if (integerComponent.get() % 40 == 0) {
-					HashSet<BlockPos> set = new HashSet<>(List.of(pos));
-					expand(pos, pos, world, set);
-				}
+		blockEntity.ifPresent(ComponentTestMod.CHUNK_INVENTORY, chunkInventorySerializable -> {
+			if (!chunkInventorySerializable.isEmpty()) {
+				blockEntity.ifPresent(ComponentTestMod.TEST_BE_INT, integerComponent -> {
+					if (integerComponent.get() % 40 == 0) {
+						HashSet<BlockPos> set = new HashSet<>(List.of(pos));
+						expand(pos, pos, world, set);
+					}
 
-				integerComponent.increment();
-				integerComponent.save();
-			});
-		}
+					integerComponent.increment();
+					integerComponent.save();
+				});
+			}
+		});
 	}
 
 	private static void expand(BlockPos initialPos, BlockPos pos, World world, Set<BlockPos> visited) {
 		Arrays.stream(Direction.values())
-				.map(pos::offset)
-				.filter(visited::add)
-				.forEach(offsetPos -> {
-					BlockState stateAt = world.getBlockState(offsetPos);
-					if (stateAt.isAir()) {
-						world.setBlockState(offsetPos, Blocks.DIAMOND_BLOCK.getDefaultState());
-					} else if (stateAt.isOf(Blocks.DIAMOND_BLOCK) && initialPos.isWithinDistance(offsetPos, 5)) {
-						expand(initialPos, offsetPos, world, visited);
-					}
-				});
+			  .map(pos::offset)
+			  .filter(visited::add)
+			  .forEach(offsetPos -> {
+				  BlockState stateAt = world.getBlockState(offsetPos);
+				  if (stateAt.isAir()) {
+					  world.setBlockState(offsetPos, Blocks.DIAMOND_BLOCK.getDefaultState());
+				  } else if (stateAt.isOf(Blocks.DIAMOND_BLOCK) && initialPos.isWithinDistance(offsetPos, 5)) {
+					  expand(initialPos, offsetPos, world, visited);
+				  }
+			  });
 	}
 
 	@Override

@@ -128,7 +128,7 @@ public abstract class AbstractComponentContainer implements ComponentContainer {
 			this.nbtComponents.add(type);
 		}
 
-		if (this.ticking != null) {
+		if (this.ticking != null && component instanceof Tickable) {
 			this.ticking.add(type);
 		}
 
