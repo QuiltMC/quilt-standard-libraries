@@ -38,7 +38,7 @@ public final class ModResourcePackUtil {
 	/**
 	 * Represents the default data-pack settings, including the default-enabled built-in data-packs.
 	 */
-	public static final DataPackSettings DEFAULT_SETTINGS = createDefaultDataPackSettings();
+	public static final DataPackSettings DEFAULT_SETTINGS = createDefaultDataPackSettings(DataPackSettings.SAFE_MODE);
 
 	public static boolean containsDefault(ModMetadata info, String filename) {
 		return "pack.mcmeta".equals(filename);
@@ -75,12 +75,12 @@ public final class ModResourcePackUtil {
 		}
 	}
 
-	private static DataPackSettings createDefaultDataPackSettings() {
+	public static DataPackSettings createDefaultDataPackSettings(DataPackSettings source) {
 		var moddedResourcePacks = new ArrayList<ResourcePackProfile>();
 		ModResourcePackProvider.SERVER_RESOURCE_PACK_PROVIDER.register(moddedResourcePacks::add);
 
-		var enabled = new ArrayList<>(DataPackSettings.SAFE_MODE.getEnabled());
-		var disabled = new ArrayList<>(DataPackSettings.SAFE_MODE.getDisabled());
+		var enabled = new ArrayList<>(source.getEnabled());
+		var disabled = new ArrayList<>(source.getDisabled());
 
 		// This ensure that any built-in registered data packs by mods which needs to be enabled by default are
 		// as the data pack screen automatically put any data pack as disabled except the Default data pack.

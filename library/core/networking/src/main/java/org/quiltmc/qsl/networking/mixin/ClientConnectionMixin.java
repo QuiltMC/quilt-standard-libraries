@@ -21,8 +21,6 @@ import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -71,11 +69,18 @@ abstract class ClientConnectionMixin implements ChannelInfoHolder {
 					target = "Lnet/minecraft/network/ClientConnection;send(Lnet/minecraft/network/Packet;Lnet/minecraft/network/PacketSendListener;)V"
 			)
 	)
-	private void resendOnExceptionCaught(ClientConnection self, Packet<?> packet, PacketSendListener listener) {
+	private void resendOnExceptionCaught(ClientConnection self, Packet<?> packet, PacketSendListener listener,
+			ChannelHandlerContext channelHandlerContext, Throwable throwable) {
 		if (this.packetListener instanceof DisconnectPacketSource dcSource) {
-			this.send(dcSource.createDisconnectPacket(Text.translatable("disconnect.genericReason")), listener);
+			this.send(
+					dcSource.createDisconnectPacket(
+							Text.translatable("disconnect.genericReason", "Internal Exception: " + throwable)
+					),
+					listener
+			);
 		} else {
-			this.disconnect(Text.translatable("disconnect.genericReason")); // Don't send packet if we cannot send proper packets
+			// Don't send packet if we cannot send proper packets
+			this.disconnect(Text.translatable("disconnect.genericReason", "Internal Exception: " + throwable));
 		}
 	}
 

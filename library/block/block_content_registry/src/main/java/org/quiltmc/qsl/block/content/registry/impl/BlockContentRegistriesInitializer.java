@@ -88,6 +88,7 @@ public class BlockContentRegistriesInitializer implements ModInitializer {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, error) -> resetMaps());
 	}
 
+	@SuppressWarnings("deprecation")
 	private static void resetMaps() {
 		ShovelItem.PATH_STATES.clear();
 		setMapFromAttachment(ShovelItem.PATH_STATES::put, BlockContentRegistries.FLATTENABLE_BLOCK);

@@ -188,4 +188,3 @@ license {
 
 	include "**/*.java"
 }
-
