@@ -66,13 +66,13 @@ abstract class ClientConnectionMixin implements ChannelInfoHolder {
 	// Must be fully qualified due to mixin not working in production without it
 	@SuppressWarnings("UnnecessaryQualifiedMemberReference")
 	@Redirect(method = "Lnet/minecraft/network/ClientConnection;exceptionCaught(Lio/netty/channel/ChannelHandlerContext;Ljava/lang/Throwable;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/ClientConnection;send(Lnet/minecraft/network/Packet;Lio/netty/util/concurrent/GenericFutureListener;)V"))
-	private void resendOnExceptionCaught(ClientConnection self, Packet<?> packet, GenericFutureListener<? extends Future<? super Void>> futureListener) {
+	private void resendOnExceptionCaught(ClientConnection self, Packet<?> packet, GenericFutureListener<? extends Future<? super Void>> futureListener, ChannelHandlerContext channelHandlerContext, Throwable throwable) {
 		PacketListener packetListener = this.packetListener;
 
 		if (packetListener instanceof DisconnectPacketSource dcSource) {
-			this.send(dcSource.createDisconnectPacket(new TranslatableText("disconnect.genericReason")), futureListener);
+			this.send(dcSource.createDisconnectPacket(new TranslatableText("disconnect.genericReason", "Internal Exception: " + throwable)), futureListener);
 		} else {
-			this.disconnect(new TranslatableText("disconnect.genericReason")); // Don't send packet if we cannot send proper packets
+			this.disconnect(new TranslatableText("disconnect.genericReason", "Internal Exception: " + throwable)); // Don't send packet if we cannot send proper packets
 		}
 	}
 
