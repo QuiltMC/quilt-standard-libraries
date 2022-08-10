@@ -148,6 +148,7 @@ public final class ClientRegistrySync {
 		}
 	}
 
+	@SuppressWarnings("EqualsBetweenInconvertibleTypes")
 	private static void handleApplyPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
 		if (currentRegistry == null || syncMap == null) {
 			if (!optionalRegistry) {

@@ -25,6 +25,7 @@ import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 @ApiStatus.Internal
 @Environment(EnvType.CLIENT)
 public class RegistrySyncClientInitializer implements ClientModInitializer {
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onInitializeClient(ModContainer mod) {
 		ClientRegistrySync.registerHandlers();

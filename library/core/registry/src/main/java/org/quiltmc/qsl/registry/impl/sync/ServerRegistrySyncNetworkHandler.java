@@ -68,6 +68,7 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 		connection.send(new PlayPingS2CPacket(HELLO_PING));
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onPong(PlayPongC2SPacket packet) {
 		switch (packet.getParameter()) {

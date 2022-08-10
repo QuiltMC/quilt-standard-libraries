@@ -27,7 +27,7 @@ public class RegistryConfig extends WrappedConfig {
 
 	public final RegistrySync registry_sync = new RegistrySync();
 
-	public class RegistrySync implements Section {
+	public static class RegistrySync implements Section {
 		@Comment("Message displayed for players joining with incompatible clients. Support strings and Minecraft's json text format")
 		public final String missing_registry_sync_message = "Unsupported (vanilla?) client!\nThis server requires modded client to join!";
 		@Comment("Allows players with Fabric API to connect, as long as they have all required mods")

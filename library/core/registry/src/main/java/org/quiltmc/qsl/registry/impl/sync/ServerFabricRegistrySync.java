@@ -38,7 +38,6 @@ import java.util.stream.Collectors;
 @Deprecated
 @ApiStatus.Internal
 public class ServerFabricRegistrySync {
-	@SuppressWarnings("JavadocReference")
 	private static final int MAX_PAYLOAD_SIZE = 1048576;
 	public static final Identifier ID = new Identifier("fabric", "registry/sync/direct");
 
@@ -131,6 +130,7 @@ public class ServerFabricRegistrySync {
 		sendPacket(connection, PacketByteBufs.empty());
 	}
 
+	@SuppressWarnings("rawtypes")
 	private static Map<Identifier, Object2IntMap<Identifier>> createRegistryMap() {
 		var map = new HashMap<Identifier, Object2IntMap<Identifier>>();
 

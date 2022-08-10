@@ -152,6 +152,7 @@ public class ClientFabricRegistrySync {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private static void applyRegistry(ClientPlayNetworkHandler handler) {
 		Preconditions.checkState(isPacketFinished);
 		Map<Identifier, Object2IntMap<Identifier>> map = syncedRegistryMap;

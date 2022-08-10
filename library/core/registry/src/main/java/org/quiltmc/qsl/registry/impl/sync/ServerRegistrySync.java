@@ -16,26 +16,24 @@
 
 package org.quiltmc.qsl.registry.impl.sync;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.registry.Registry;
-import org.jetbrains.annotations.ApiStatus;
+
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.registry.impl.RegistryConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 @ApiStatus.Internal
 public final class ServerRegistrySync {
-	private static final Logger LOGGER = LoggerFactory.getLogger("quilt_registry_sync");
-
 	public static Text noRegistrySyncMessage = LiteralText.EMPTY;
 	public static boolean supportFabric = false;
 
@@ -75,7 +73,7 @@ public final class ServerRegistrySync {
 	public static void sendSyncPackets(ClientConnection connection, ServerPlayerEntity player) {
 		for (var registry : Registry.REGISTRIES) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
-				&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
+					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
 
 				var map = synchronizedRegistry.quilt$getSyncMap();
 
@@ -121,6 +119,7 @@ public final class ServerRegistrySync {
 		connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.HANDSHAKE, buf));
 	}
 
+	@SuppressWarnings("unchecked")
 	private static <T extends Registry<?>> void sendStartPacket(ClientConnection connection, T registry) {
 		var buf = PacketByteBufs.create();
 
