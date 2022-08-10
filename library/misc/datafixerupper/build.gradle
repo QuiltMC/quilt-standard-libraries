@@ -87,26 +87,14 @@ loom {
 			programArg("--nogui")
 		}
 	}
-
-	mods.register(project.name + "_testmod_v1") {
-		sourceSet project.sourceSets.testmodV1
-	}
-
-	mods.register(project.name + "_testmod_v2") {
-		sourceSet project.sourceSets.testmodV2
-	}
-
-	mods.register(project.name + "_testmod_v3") {
-		sourceSet project.sourceSets.testmodV3
-	}
 }
 
 afterEvaluate {
 	// Apparently we need an after evaluate to not mess up source set dependencies.
 
-	//runAutoTestServerDfuTestmodV1.dependsOn prepareDfuTestmod
-	//runAutoTestServerDfuTestmodV2.dependsOn runAutoTestServerDfuTestmodV1
-	//runAutoTestServerDfuTestmodV3.dependsOn runAutoTestServerDfuTestmodV2
+	runAutoTestServerDfuTestmodV1.dependsOn prepareDfuTestmod
+	runAutoTestServerDfuTestmodV2.dependsOn runAutoTestServerDfuTestmodV1
+	runAutoTestServerDfuTestmodV3.dependsOn runAutoTestServerDfuTestmodV2
 
-	//rootProject.tasks.runAutoAllTestServer.dependsOn runAutoTestServerDfuTestmodV3
+	rootProject.tasks.runAutoAllTestServer.dependsOn runAutoTestServerDfuTestmodV3
 }
