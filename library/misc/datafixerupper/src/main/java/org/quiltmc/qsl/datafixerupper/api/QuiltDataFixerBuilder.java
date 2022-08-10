@@ -25,8 +25,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
-import net.minecraft.SharedConstants;
-
 /**
  * An extended variant of the {@link DataFixerBuilder} class, which provides an extra method.
  */
@@ -53,18 +51,13 @@ public class QuiltDataFixerBuilder extends DataFixerBuilder {
 
 	/**
 	 * Builds the final {@code DataFixer}.
-	 * <p>
-	 * This will build either an {@linkplain #buildUnoptimized() unoptimized fixer} or an
-	 * {@linkplain #buildOptimized(Executor) optimized fixer}, depending on the vanilla game's settings.
 	 *
-	 * @param executorGetter the executor supplier, only invoked if the game is using optimized data fixers
+	 * @param executorGetter the executor supplier, always invoked
 	 * @return the newly built data fixer
+	 * @see #build(Executor)
 	 */
 	@Contract(value = "_ -> new")
 	public @NotNull DataFixer build(@NotNull Supplier<Executor> executorGetter) {
-		return switch (SharedConstants.DATA_FIXER_MODE) {
-			case UNINITIALIZED_UNOPTIMIZED, INITIALIZED_UNOPTIMIZED -> buildUnoptimized();
-			case UNINITIALIZED_OPTIMIZED, INITIALIZED_OPTIMIZED -> buildOptimized(executorGetter.get());
-		};
+		return this.build(executorGetter.get());
 	}
 }
