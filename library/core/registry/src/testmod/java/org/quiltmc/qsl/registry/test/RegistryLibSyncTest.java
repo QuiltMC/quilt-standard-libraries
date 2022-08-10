@@ -16,8 +16,13 @@
 
 package org.quiltmc.qsl.registry.test;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+
 import com.mojang.serialization.Lifecycle;
 import net.fabricmc.api.EnvType;
+
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.MapColor;
@@ -29,6 +34,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
+
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader;
@@ -38,10 +44,6 @@ import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-
 /**
  * Items/Blocks are registered in different order on client/server to make sure sync works correctly
  * Server also gets its own entry that shouldn't block client from joining
@@ -49,6 +51,7 @@ import java.nio.file.StandardOpenOption;
 public class RegistryLibSyncTest implements ModInitializer {
 	private static final String NAMESPACE = "quilt_registry_test_sync";
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onInitialize(ModContainer mod) {
 
@@ -76,12 +79,13 @@ public class RegistryLibSyncTest implements ModInitializer {
 		RegistrySynchronization.markForSync(customRequiredRegistry);
 	}
 
+	@SuppressWarnings({"unchecked", "RedundantCast"})
 	private void printReg() {
 		try {
 			var writer = Files.newBufferedWriter(
 					QuiltLoader.getGameDir().resolve("reg-" + MinecraftQuiltLoader.getEnvironmentType() + ".txt"),
 					StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE
-					);
+			);
 
 			for (var reg : Registry.REGISTRIES) {
 				writer.write("\n=== Registry: " + ((Registry<Registry<?>>) Registry.REGISTRIES).getId(reg) + "\n");
@@ -91,7 +95,7 @@ public class RegistryLibSyncTest implements ModInitializer {
 				}
 
 				for (var entry : reg) {
-					writer.write("" + ((Registry<Object>)reg).getRawId(entry) + ": " + ((Registry<Object>)reg).getId(entry));
+					writer.write("" + ((Registry<Object>) reg).getRawId(entry) + ": " + ((Registry<Object>) reg).getId(entry));
 					writer.write("\n");
 				}
 			}
