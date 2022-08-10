@@ -70,10 +70,6 @@ public final class ArmorRenderingRegistry {
 		@NotNull Identifier getArmorTexture(@NotNull Identifier texture,
 				@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot,
 				boolean secondLayer, @Nullable String suffix);
-
-		static @NotNull String getArmorTextureSuffix(boolean secondLayer, @Nullable String suffix) {
-			return "_" + (secondLayer ? "1" : "0") + (suffix == null ? "" : "_" + suffix);
-		}
 	}
 
 	@Environment(EnvType.CLIENT)
