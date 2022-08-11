@@ -12,12 +12,13 @@
  * `gradle LIBRARY_NAME:MODULE_NAME:TASK_NAME`.
  */
 
+
 import qsl.internal.Git
-import qsl.internal.GroovyXml
 import qsl.internal.Versions
 import qsl.internal.extension.QslModuleExtension
 import qsl.internal.extension.QslModuleExtensionImpl
-import qsl.internal.dependency.QslLibraryDependency
+
+import java.nio.file.Files
 
 plugins {
 	id("java-library")
@@ -30,7 +31,7 @@ plugins {
 def extension = project.extensions.create(QslModuleExtension, "qslModule", QslModuleExtensionImpl, project)
 
 // We need to wait until project evaluation has finished to peek into a complete QSL module extension.
-afterEvaluate {
+rootProject.afterEvaluate {
 	// Make sure to call get on any properties
 
 	// Module name should also be the name of artifacts.
@@ -70,7 +71,6 @@ afterEvaluate {
 					}
 				}
 			}
-
 		}
 	}
 
@@ -103,15 +103,26 @@ sourceSets {
 	}
 }
 
+processTestmodResources {
+	filesMatching("quilt.mod.json") {
+		boolean found = false
+
+		Files.readAllLines(it.file.toPath()).stream().forEach {
+			// Look for load_type of "always"
+			if (it.contains("\"load_type\": \"always\"")) {
+				found = true
+			}
+		}
+
+		if (!found) {
+			throw new GradleException("Testmod resource $it does not contain a load_type of \"always\"")
+		}
+	}
+}
+
 dependencies {
 	// testmod sourceSet should depend on everything in the main source set.
 	testmodImplementation sourceSets.main.output
-}
-
-configurations {
-	// The reason for this `dev` configuration has been lost to time.
-	// If you happen to figure out why extension is needed, or a way to eliminate it, please tell us.
-	dev
 }
 
 loom {
@@ -126,15 +137,6 @@ loom {
 			source(sourceSets.testmod)
 		}
 	}
-}
-
-afterEvaluate {
-	artifacts {
-		dev file: file("$buildDir/devlibs/$archivesBaseName-$version-dev.jar"), type: "jar", builtBy: jar
-	}
-
-	// This is inside the afterEvaluate block because the version is set by the qslModule extension, which is not
-	// complete until project evaluation has finished.
 }
 
 java {
@@ -160,17 +162,20 @@ javadoc {
 				"https://asm.ow2.io/javadoc/",
 				"https://docs.oracle.com/en/java/javase/16/docs/api/",
 				"https://jenkins.liteloader.com/job/Mixin/javadoc/",
-				"https://logging.apache.org/log4j/2.x/log4j-api/apidocs/"
-				// TODO: Javadoc for mappings
+				"https://logging.apache.org/log4j/2.x/log4j-api/apidocs/",
+				"https://maven.quiltmc.org/repository/release/org/quiltmc/quilt-mappings/${Versions.MINECRAFT_VERSION.version()}+build.${Versions.MAPPINGS_BUILD}/quilt-mappings-${Versions.MINECRAFT_VERSION.version()}+build.${Versions.MAPPINGS_BUILD}-javadoc.jar/"
 		)
 
-		// TODO: Restrict this to api packages only.
 		// Disable the overzealous doclint tool in Java 8
 		addStringOption("Xdoclint:none", "-quiet")
 		tags(
 				"author:a",
 				'reason:m:"Reason:"'
 		)
+	}
+
+	exclude {
+		it.file.absolutePath.contains("mixin") || it.file.absolutePath.contains("impl")
 	}
 
 	failOnError false
@@ -183,4 +188,3 @@ license {
 
 	include "**/*.java"
 }
-

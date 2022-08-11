@@ -2,7 +2,9 @@
  * Common buildscript for QSL in projects which depend on Minecraft, whether for the API or for running the game.
  */
 
-import qsl.internal.Versions;
+
+import net.fabricmc.loom.task.RemapJarTask
+import qsl.internal.Versions
 
 plugins {
 	id("maven-publish")
@@ -40,9 +42,9 @@ publishing {
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:${Versions.MINECRAFT_VERSION}"
+	minecraft "com.mojang:minecraft:${Versions.MINECRAFT_VERSION.version()}"
 	mappings(loom.layered {
-		addLayer(quiltMappings.mappings("org.quiltmc:quilt-mappings:${Versions.MINECRAFT_VERSION}+build.${Versions.MAPPINGS_BUILD}:v2"))
+		addLayer(quiltMappings.mappings("org.quiltmc:quilt-mappings:${Versions.MINECRAFT_VERSION.version()}+build.${Versions.MAPPINGS_BUILD}:v2"))
 	})
 
 	modImplementation "org.quiltmc:quilt-loader:${Versions.LOADER_VERSION}"
@@ -53,9 +55,33 @@ tasks.withType(JavaCompile).configureEach {
 	it.options.release.set(Versions.JAVA_VERSION)
 }
 
+sourceSets {
+	testmod
+}
+
+task testmodJar(type: Jar) {
+	group "build"
+	from sourceSets.testmod.output
+	archiveClassifier = "testmod-dev"
+	destinationDirectory = project.file("build/devlibs")
+}
+
+task testmodRemapJar(type: RemapJarTask, dependsOn: testmodJar) {
+	group "build"
+	inputFile = testmodJar.archiveFile
+	classpath.from sourceSets.testmod.compileClasspath
+	archiveClassifier = "testmod"
+}
+build.dependsOn testmodRemapJar
+
 loom {
 	// Upstream Loom breaks this so we can't have nice things until the quilt-gradle replacement
 	//shareRemapCaches = true
 	// Enable runtime only log4j, forces mods to use SLF4J for logging.
 	runtimeOnlyLog4j = true
+
+	mixin {
+		add(sourceSets.main, project.name + ".refmap.json")
+		add(sourceSets.testmod, project.name + '_testmod.refmap.json')
+	}
 }

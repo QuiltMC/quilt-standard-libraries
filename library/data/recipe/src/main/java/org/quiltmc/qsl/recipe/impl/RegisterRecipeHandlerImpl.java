@@ -31,24 +31,32 @@ import org.quiltmc.qsl.recipe.api.RecipeLoadingEvents;
 final class RegisterRecipeHandlerImpl implements RecipeLoadingEvents.AddRecipesCallback.RecipeHandler {
 	private final Map<Identifier, JsonElement> resourceMap;
 	private final Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap;
+	private final ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder;
 	int registered = 0;
 
 	RegisterRecipeHandlerImpl(Map<Identifier, JsonElement> resourceMap,
-									  Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap) {
+			Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap,
+			ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder) {
 		this.resourceMap = resourceMap;
 		this.builderMap = builderMap;
+		this.globalRecipeMapBuilder = globalRecipeMapBuilder;
 	}
 
-	void register(Recipe<?> recipe) {
-		if (!this.resourceMap.containsKey(recipe.getId())) {
-			ImmutableMap.Builder<Identifier, Recipe<?>> recipeBuilder =
-					this.builderMap.computeIfAbsent(recipe.getType(), o -> ImmutableMap.builder());
-			recipeBuilder.put(recipe.getId(), recipe);
-			this.registered++;
+	private void register(Recipe<?> recipe) {
+		ImmutableMap.Builder<Identifier, Recipe<?>> recipeBuilder =
+				this.builderMap.computeIfAbsent(recipe.getType(), o -> ImmutableMap.builder());
+		recipeBuilder.put(recipe.getId(), recipe);
+		this.globalRecipeMapBuilder.put(recipe.getId(), recipe);
+		this.registered++;
 
-			if (RecipeManagerImpl.DEBUG_MODE) {
-				RecipeManagerImpl.LOGGER.info("Added recipe {} with type {} in register phase.", recipe.getId(), recipe.getType());
-			}
+		if (RecipeManagerImpl.DEBUG_MODE) {
+			RecipeManagerImpl.LOGGER.info("Added recipe {} with type {} in register phase.", recipe.getId(), recipe.getType());
+		}
+	}
+
+	void tryRegister(Recipe<?> recipe) {
+		if (!this.resourceMap.containsKey(recipe.getId())) {
+			this.register(recipe);
 		}
 	}
 
@@ -62,14 +70,7 @@ final class RegisterRecipeHandlerImpl implements RecipeLoadingEvents.AddRecipesC
 				throw new IllegalStateException("The recipe " + recipe.getId() + " tried to be registered as " + id);
 			}
 
-			ImmutableMap.Builder<Identifier, Recipe<?>> recipeBuilder =
-					this.builderMap.computeIfAbsent(recipe.getType(), o -> ImmutableMap.builder());
-			recipeBuilder.put(recipe.getId(), recipe);
-			this.registered++;
-
-			if (RecipeManagerImpl.DEBUG_MODE) {
-				RecipeManagerImpl.LOGGER.info("Added recipe {} with type {} in register phase.", id, recipe.getType());
-			}
+			this.register(recipe);
 		}
 	}
 }

@@ -1,5 +1,9 @@
 package qsl.internal;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Version constants used across the convention build scripts.
  * <p>
@@ -17,12 +21,17 @@ public final class Versions {
 	/**
 	 * The QSL version
 	 */
-	public static final String QSL_VERSION = "1.1.0-beta.4";
+	public static final String QSL_VERSION = "1.1.0-beta.23";
 
 	/**
 	 * The target Minecraft version.
 	 */
-	public static final String MINECRAFT_VERSION = "1.18.2";
+	public static final MinecraftVersion MINECRAFT_VERSION = new MinecraftVersion("1.18.2");
+
+	/**
+	 * The Minecraft versions this version of QSL is compatible with.
+	 */
+	public static final List<MinecraftVersion> COMPATIBLE_VERSIONS = versions();
 
 	/**
 	 * The target Quilt Mappings build.
@@ -32,32 +41,29 @@ public final class Versions {
 	/**
 	 * The version of Quilt Loader to use.
 	 */
-	public static final String LOADER_VERSION = "0.16.0-beta.7";
+	public static final String LOADER_VERSION = "0.17.1";
 
 	/**
 	 * The target Java version.
 	 */
 	public static final int JAVA_VERSION = 17; // Minecraft is Java 17
 
-	public static boolean isMinecraftVersionNonRelease() {
-		return MINECRAFT_VERSION.matches("^\\d\\dw\\d\\d[a-z]$");
-	}
-
-	public static String getMinecraftVersionFancyString() {
-		if (isMinecraftVersionNonRelease()) {
-			return MINECRAFT_VERSION;
-		}
-
-		String[] version = MINECRAFT_VERSION.split("\\.");
-
-		int index;
-		if ((index = version[1].indexOf("-pre")) != -1 || (index = version[1].indexOf("-rc")) != -1) {
-			version[1] = version[1].substring(0, index);
-		}
-
-		return version[0] + '.' + version[1];
-	}
-
 	private Versions() {
+	}
+
+	private static List<MinecraftVersion> versions(Object... versions) {
+		var list = new ArrayList<MinecraftVersion>();
+
+		for (var version : versions) {
+			if (version instanceof String name) {
+				list.add(new MinecraftVersion(name, MINECRAFT_VERSION.versionEdition()));
+			} else if (version instanceof MinecraftVersion mcVersion) {
+				list.add(mcVersion);
+			} else {
+				throw new IllegalArgumentException("Unexpected version \"" + version + "\", only String and MinecraftVersion are accepted.");
+			}
+		}
+
+		return Collections.unmodifiableList(list);
 	}
 }

@@ -19,7 +19,12 @@ package org.quiltmc.qsl.networking.impl.client;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,13 +38,11 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.util.Identifier;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.client.ClientLoginNetworking;
 import org.quiltmc.qsl.networking.api.client.ClientPlayConnectionEvents;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
-import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
 import org.quiltmc.qsl.networking.impl.GlobalReceiverRegistry;
 import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
@@ -117,27 +120,30 @@ public final class ClientNetworkingImpl {
 		});
 
 		// Register a login query handler for early channel registration.
-		ClientLoginNetworking.registerGlobalReceiver(NetworkingImpl.EARLY_REGISTRATION_CHANNEL, (client, handler, buf, listenerAdder) -> {
-			int n = buf.readVarInt();
-			var ids = new ArrayList<Identifier>(n);
+		ClientLoginNetworking.registerGlobalReceiver(NetworkingImpl.EARLY_REGISTRATION_CHANNEL, ClientNetworkingImpl::receiveEarlyRegistration);
+		ClientLoginNetworking.registerGlobalReceiver(NetworkingImpl.EARLY_REGISTRATION_CHANNEL_FABRIC, ClientNetworkingImpl::receiveEarlyRegistration);
+	}
 
-			for (int i = 0; i < n; i++) {
-				ids.add(buf.readIdentifier());
-			}
+	private static CompletableFuture<PacketByteBuf> receiveEarlyRegistration(MinecraftClient client, ClientLoginNetworkHandler handler, PacketByteBuf buf, Consumer<GenericFutureListener<? extends Future<? super Void>>> genericFutureListenerConsumer) {
+		int n = buf.readVarInt();
+		var ids = new ArrayList<Identifier>(n);
 
-			((ChannelInfoHolder) handler.getConnection()).getPendingChannelsNames().addAll(ids);
-			NetworkingImpl.LOGGER.debug("Received accepted channels from the server");
+		for (int i = 0; i < n; i++) {
+			ids.add(buf.readIdentifier());
+		}
 
-			PacketByteBuf response = PacketByteBufs.create();
-			Collection<Identifier> channels = ClientPlayNetworking.getGlobalReceivers();
-			response.writeVarInt(channels.size());
+		((ChannelInfoHolder) handler.getConnection()).getPendingChannelsNames().addAll(ids);
+		NetworkingImpl.LOGGER.debug("Received accepted channels from the server");
 
-			for (Identifier id : channels) {
-				response.writeIdentifier(id);
-			}
+		PacketByteBuf response = PacketByteBufs.create();
+		Collection<Identifier> channels = ClientPlayNetworking.getGlobalReceivers();
+		response.writeVarInt(channels.size());
 
-			NetworkingImpl.LOGGER.debug("Sent accepted channels to the server");
-			return CompletableFuture.completedFuture(response);
-		});
+		for (Identifier id : channels) {
+			response.writeIdentifier(id);
+		}
+
+		NetworkingImpl.LOGGER.debug("Sent accepted channels to the server");
+		return CompletableFuture.completedFuture(response);
 	}
 }

@@ -47,7 +47,7 @@ public final class ServerLoginNetworking {
 	 * If a handler is already registered to the {@code channel}, this method will return {@code false}, and no change will be made.
 	 * Use {@link #unregisterGlobalReceiver(Identifier)} to unregister the existing handler.
 	 *
-	 * @param channelName the identifier of the channel
+	 * @param channelName    the identifier of the channel
 	 * @param channelHandler the handler
 	 * @return {@code false} if a handler is already registered to the channel, otherwise {@code true}
 	 * @see ServerLoginNetworking#unregisterGlobalReceiver(Identifier)
@@ -89,8 +89,8 @@ public final class ServerLoginNetworking {
 	 * If a handler is already registered to the {@code channelName}, this method will return {@code false}, and no change will be made.
 	 * Use {@link #unregisterReceiver(ServerLoginNetworkHandler, Identifier)} to unregister the existing handler.
 	 *
-	 * @param networkHandler the handler
-	 * @param channelName the identifier of the channel
+	 * @param networkHandler  the handler
+	 * @param channelName     the identifier of the channel
 	 * @param responseHandler the handler
 	 * @return {@code false} if a handler is already registered to the channel name, otherwise {@code true}
 	 */
@@ -141,11 +141,11 @@ public final class ServerLoginNetworking {
 		 * <p>
 		 * <b>Whether the client understood the query should be checked before reading from the payload of the packet.</b>
 		 *
-		 * @param server the server
-		 * @param handler the network handler that received this packet, representing the player/client who sent the response
-		 * @param understood whether the client understood the packet
-		 * @param buf the payload of the packet
-		 * @param synchronizer the synchronizer which may be used to delay log-in till a {@link Future} is completed.
+		 * @param server         the server
+		 * @param handler        the network handler that received this packet, representing the player/client who sent the response
+		 * @param understood     whether the client understood the packet
+		 * @param buf            the payload of the packet
+		 * @param synchronizer   the synchronizer which may be used to delay log-in till a {@link Future} is completed.
 		 * @param responseSender the packet sender
 		 */
 		void receive(MinecraftServer server, ServerLoginNetworkHandler handler, boolean understood, PacketByteBuf buf, LoginSynchronizer synchronizer, PacketSender responseSender);
@@ -173,7 +173,7 @@ public final class ServerLoginNetworking {
 		 * 	if (!understood) {
 		 * 		handler.disconnect(new LiteralText("Only accept clients that can check!"));
 		 * 		return;
-		 * 	}
+		 *    }
 		 *
 		 * 	String checkMessage = buf.readString(32767);
 		 *
@@ -184,10 +184,10 @@ public final class ServerLoginNetworking {
 		 * 		if (!checker.check(handler.getConnectionInfo(), checkMessage)) {
 		 * 			handler.disconnect(new LiteralText("Invalid credentials!"));
 		 * 			return;
-		 * 		}
+		 *        }
 		 *
 		 * 		responseSender.send(UPCOMING_CHECK, checker.buildSecondQueryPacket(handler, checkMessage));
-		 * 	}));
+		 *    }));
 		 * });
 		 * }</pre>
 		 * Usually it is enough to pass the return value for {@link net.minecraft.util.thread.ThreadExecutor#submit(Runnable)} for {@code future}.</p>

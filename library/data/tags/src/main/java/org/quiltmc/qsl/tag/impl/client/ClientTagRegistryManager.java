@@ -92,7 +92,7 @@ public final class ClientTagRegistryManager<T> {
 	public void setSerializedTags(Map<Identifier, Tag.Builder> serializedTags) {
 		this.serializedTags = serializedTags;
 		this.clientOnlyValues = this.buildDynamicGroup(this.serializedTags, TagType.CLIENT_ONLY);
-		this.bindTags(this.clientOnlyValues, (ref, tags) -> ((QuiltRegistryEntryReferenceHooks<T>) ref).quilt$setClientTags(tags));
+		this.bindTags(this.clientOnlyValues, (ref, tags) -> ((QuiltHolderReferenceHooks<T>) ref).quilt$setClientTags(tags));
 	}
 
 	public Tag<Holder<T>> getFallbackTag(TagKey<T> key) {
@@ -114,7 +114,7 @@ public final class ClientTagRegistryManager<T> {
 	public void setFallbackSerializedTags(Map<Identifier, Tag.Builder> serializedTags) {
 		this.fallbackSerializedTags = serializedTags;
 		this.fallbackValues = this.buildDynamicGroup(this.fallbackSerializedTags, TagType.CLIENT_FALLBACK);
-		this.bindTags(this.fallbackValues, (ref, tags) -> ((QuiltRegistryEntryReferenceHooks<T>) ref).quilt$setFallbackTags(tags));
+		this.bindTags(this.fallbackValues, (ref, tags) -> ((QuiltHolderReferenceHooks<T>) ref).quilt$setFallbackTags(tags));
 	}
 
 	@Environment(EnvType.CLIENT)
@@ -163,7 +163,7 @@ public final class ClientTagRegistryManager<T> {
 
 	@Environment(EnvType.CLIENT)
 	private Tag<Holder<T>> buildLenientTag(Tag.Builder tagBuilder,
-	                                       Function<Identifier, Tag<Holder<T>>> tagGetter, Function<Identifier, Holder<T>> objectGetter) {
+			Function<Identifier, Tag<Holder<T>>> tagGetter, Function<Identifier, Holder<T>> objectGetter) {
 		ImmutableSet.Builder<Holder<T>> builder = ImmutableSet.builder();
 
 		tagBuilder.streamEntries().forEach(trackedEntry -> trackedEntry.entry().resolve(tagGetter, objectGetter, builder::add));
@@ -191,11 +191,11 @@ public final class ClientTagRegistryManager<T> {
 					);
 				}
 
-				if (!(holder instanceof Holder.Reference)) {
+				if (!(holder instanceof Holder.Reference<T> reference)) {
 					throw new IllegalStateException("Found direct holder " + holder + " value in tag " + tagKey);
 				}
 
-				boundTags.get(holder).add(tagKey);
+				boundTags.computeIfAbsent(reference, h -> new ArrayList<>()).add(tagKey);
 			}
 		});
 

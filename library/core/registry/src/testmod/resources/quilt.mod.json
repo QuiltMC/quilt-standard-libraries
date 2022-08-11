@@ -9,11 +9,13 @@
       "license": "Apache-2.0"
     },
     "intermediate_mappings": "net.fabricmc:intermediary",
+    "load_type": "always",
     "entrypoints": {
       "init": [
         "org.quiltmc.qsl.registry.test.RegistryLibEventsTest",
         "org.quiltmc.qsl.registry.test.RegistryLibMonitorRegistrationTest",
-        "org.quiltmc.qsl.registry.test.RegistryLibMonitorTest"
+        "org.quiltmc.qsl.registry.test.RegistryLibMonitorTest",
+        "org.quiltmc.qsl.registry.test.RegistryLibSyncTest"
       ]
     },
     "depends": [

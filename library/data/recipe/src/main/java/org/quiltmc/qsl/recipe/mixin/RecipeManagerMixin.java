@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.recipe.mixin;
 
+import java.util.Collections;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
@@ -25,6 +26,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
@@ -43,14 +45,19 @@ public class RecipeManagerMixin {
 	@Shadow
 	private Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes;
 
+	@Shadow
+	private Map<Identifier, Recipe<?>> field_36308;
+
 	@Inject(
 			method = "apply",
-			at = @At(value = "INVOKE", target = "Ljava/util/Map;entrySet()Ljava/util/Set;", ordinal = 1),
+			at = @At(value = "INVOKE", target = "Ljava/util/Map;entrySet()Ljava/util/Set;", remap = false, ordinal = 0),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private void onReload(Map<Identifier, JsonElement> map, ResourceManager resourceManager, Profiler profiler,
-	                      CallbackInfo ci, Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap) {
-		RecipeManagerImpl.apply(map, builderMap);
+			CallbackInfo ci,
+			Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap,
+			ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder) {
+		RecipeManagerImpl.apply(map, builderMap, globalRecipeMapBuilder);
 	}
 
 	/**
@@ -65,12 +72,31 @@ public class RecipeManagerMixin {
 		return ImmutableMapBuilderUtil.specialBuild(entry.getValue());
 	}
 
+	@Redirect(
+			method = "apply",
+			at = @At(
+					value = "INVOKE",
+					target = "Lcom/google/common/collect/ImmutableMap$Builder;build()Lcom/google/common/collect/ImmutableMap;",
+					remap = false
+			)
+	)
+	private ImmutableMap<Identifier, Recipe<?>> onCreateGlobalRecipeMap(ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder) {
+		return null; // The original method bounds us to return an immutable map, but we do not want that!
+	}
+
 	@Inject(
 			method = "apply",
-			at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;info(Ljava/lang/String;Ljava/lang/Object;)V", remap = false)
+			at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;info(Ljava/lang/String;Ljava/lang/Object;)V", remap = false),
+			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private void onReloadEnd(Map<Identifier, JsonElement> map, ResourceManager resourceManager, Profiler profiler,
-	                         CallbackInfo ci) {
-		RecipeManagerImpl.applyModifications((RecipeManager) (Object) this, this.recipes);
+			CallbackInfo ci,
+			Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap,
+			ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder) {
+		Map<Identifier, Recipe<?>> globalRecipes = ImmutableMapBuilderUtil.specialBuild(globalRecipeMapBuilder);
+
+		RecipeManagerImpl.applyModifications((RecipeManager) (Object) this, this.recipes, globalRecipes);
+
+		this.field_36308 = Collections.unmodifiableMap(globalRecipes);
 	}
 }

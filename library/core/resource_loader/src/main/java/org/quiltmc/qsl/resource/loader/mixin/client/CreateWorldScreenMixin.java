@@ -16,31 +16,35 @@
 
 package org.quiltmc.qsl.resource.loader.mixin.client;
 
-import java.util.ArrayList;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
 import net.minecraft.resource.pack.DataPackSettings;
-import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.ResourcePackManager;
-import net.minecraft.resource.pack.ResourcePackProfile;
 import net.minecraft.server.WorldStem;
 
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
-import org.quiltmc.qsl.resource.loader.impl.ModNioResourcePack;
-import org.quiltmc.qsl.resource.loader.impl.ModResourcePackProvider;
+import org.quiltmc.qsl.resource.loader.impl.ModResourcePackUtil;
 
 @Environment(EnvType.CLIENT)
 @Mixin(CreateWorldScreen.class)
 public class CreateWorldScreenMixin {
+	@Redirect(
+			method = "create",
+			at = @At(value = "FIELD", target = "Lnet/minecraft/resource/pack/DataPackSettings;SAFE_MODE:Lnet/minecraft/resource/pack/DataPackSettings;")
+	)
+	private static DataPackSettings replaceDefaultSettings() {
+		return ModResourcePackUtil.DEFAULT_SETTINGS;
+	}
+
 	@ModifyArg(
 			method = "createFromExisting",
 			at = @At(
@@ -50,25 +54,7 @@ public class CreateWorldScreenMixin {
 			index = 1
 	)
 	private static DataPackSettings onNew(DataPackSettings settings) {
-		var moddedResourcePacks = new ArrayList<ResourcePackProfile>();
-		ModResourcePackProvider.SERVER_RESOURCE_PACK_PROVIDER.register(moddedResourcePacks::add);
-
-		var enabled = new ArrayList<>(settings.getEnabled());
-		var disabled = new ArrayList<>(settings.getDisabled());
-
-		// This ensure that any built-in registered data packs by mods which needs to be enabled by default are
-		// as the data pack screen automatically put any data pack as disabled except the Default data pack.
-		for (var profile : moddedResourcePacks) {
-			ResourcePack pack = profile.createResourcePack();
-
-			if (pack instanceof ModNioResourcePack modResourcePack && modResourcePack.getActivationType().isEnabledByDefault()) {
-				enabled.add(profile.getName());
-			} else {
-				disabled.add(profile.getName());
-			}
-		}
-
-		return new DataPackSettings(enabled, disabled);
+		return ModResourcePackUtil.createDefaultDataPackSettings(settings);
 	}
 
 	@Inject(

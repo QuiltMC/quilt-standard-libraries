@@ -1,0 +1,20 @@
+{
+  "replace": false,
+  "values": {
+    "quilt:modular_item_2": {
+      "type": "quilt:give_stack",
+      "stack": {
+        "id": "minecraft:diamond",
+        "Count": 1
+      }
+    },
+    "quilt:modular_item_3": {
+      "type": "quilt:send_message",
+      "message": "Data-driven value!"
+    },
+    "#quilt:modular_tag_2": {
+      "type": "quilt:send_message",
+      "message": "Data-driven value via tag!"
+    }
+  }
+}

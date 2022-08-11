@@ -1,6 +1,11 @@
 package qsl.internal.extension;
 
-import groovy.util.Node;
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+
+import javax.inject.Inject;
+
 import net.fabricmc.loom.api.LoomGradleExtensionAPI;
 import org.gradle.api.Action;
 import org.gradle.api.Named;
@@ -10,22 +15,11 @@ import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
-import org.gradle.api.publish.PublicationContainer;
-import org.gradle.api.publish.PublishingExtension;
-import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Nested;
-import qsl.internal.GroovyXml;
+import org.jetbrains.annotations.NotNull;
 import qsl.internal.dependency.QslLibraryDependency;
 import qsl.internal.json.Environment;
-
-import javax.inject.Inject;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 public class QslModuleExtensionImpl extends QslExtension implements QslModuleExtension, Serializable {
 	@Serial
@@ -82,10 +76,12 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 	public Property<String> getName() {
 		return this.name;
 	}
+
 	@Input
 	public Property<String> getId() {
 		return this.id;
 	}
+
 	@Input
 	public Property<String> getDescription() {
 		return this.description;
@@ -93,15 +89,17 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 
 	@Input
 	public Property<Boolean> getHasAccessWidener() {
-		return hasAccessWidener;
+		return this.hasAccessWidener;
 	}
 
 	public void accessWidener() {
-		hasAccessWidener.set(true);
-		project.getExtensions()
+		this.hasAccessWidener.set(true);
+		this.project.getExtensions()
 				.getByType(LoomGradleExtensionAPI.class)
 				.getAccessWidenerPath()
-				.fileValue(project.file("src/main/resources/" + id.get() + ".accesswidener"));
+				.fileValue(this.project.file("src/main/resources/" + this.id.get() + ".accesswidener"));
+
+		this.allowGenTasks();
 	}
 
 	@Input
@@ -115,20 +113,20 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 
 	@Nested
 	public NamedDomainObjectContainer<QslLibraryDependency> getModuleDependencyDefinitions() {
-		return moduleDependencyDefinitions;
+		return this.moduleDependencyDefinitions;
 	}
 
 	public void moduleDependencies(Action<NamedDomainObjectContainer<QslLibraryDependency>> configure) {
-		configure.execute(moduleDependencyDefinitions);
+		configure.execute(this.moduleDependencyDefinitions);
 	}
 
 	@Nested
 	public NamedDomainObjectContainer<NamedWriteOnlyList> getEntrypoints() {
-		return entrypoints;
+		return this.entrypoints;
 	}
 
 	public void entrypoints(Action<NamedDomainObjectContainer<NamedWriteOnlyList>> configure) {
-		configure.execute(entrypoints);
+		configure.execute(this.entrypoints);
 	}
 
 	@Override
@@ -155,36 +153,50 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 	}
 
 	public void setupModuleDependencies() {
-		List<Dependency> deps = new ArrayList<>();
-
 		for (QslLibraryDependency library : this.getModuleDependencyDefinitions()) {
 			for (QslLibraryDependency.ModuleDependencyInfo info : library.getDependencyInfo().get()) {
-				Map<String, String> map = new LinkedHashMap<>(2);
+				var map = new LinkedHashMap<String, String>(2);
 				map.put("path", ":" + library.getName() + ":" + info.module());
-				map.put("configuration", "dev");
+				map.put("configuration", "namedElements");
 
-				Dependency dep = project.getDependencies().project(map);
-				deps.add(dep);
-				project.getDependencies().add(info.type().getConfigurationName(), dep);
-			}
+				Dependency dep = this.project.getDependencies().project(map);
+				this.project.getDependencies().add(info.type().getConfigurationName(), dep);
 
-		}
-
-		PublicationContainer publications = this.project.getExtensions().getByType(PublishingExtension.class).getPublications();
-
-		publications.named("mavenJava", MavenPublication.class, publication -> {
-			publication.pom(pom -> pom.withXml(xml -> {
-				Node pomDeps = GroovyXml.getOrCreateNode(xml.asNode(), "dependencies");
-
-				for (Dependency dependency : deps) {
-					Node pomDep = pomDeps.appendNode("dependency");
-					pomDep.appendNode("groupId", dependency.getGroup());
-					pomDep.appendNode("artifactId", dependency.getName());
-					pomDep.appendNode("version", dependency.getVersion());
-					pomDep.appendNode("scope", "compile");
+				if (info.type().isTransitive()) {
+					this.addTransitiveImplementations(library, info);
 				}
-			}));
-		});
+			}
+		}
+	}
+
+	/**
+	 * This method traverses up the internal QSL module dependency tree, adding the different modules as either runtime or implementation only based on the dependency type for the module.
+	 *
+	 * @param library The library that the module is in
+	 * @param info    The module info to add transitive dependecies from
+	 */
+	private void addTransitiveImplementations(QslLibraryDependency library, QslLibraryDependency.ModuleDependencyInfo info) {
+		Project depProject = this.project.getRootProject().project(":" + library.getName() + ":" + info.module());
+		QslModuleExtensionImpl qslModuleExtension = (QslModuleExtensionImpl) depProject.getExtensions().getByType(QslModuleExtension.class);
+
+		for (QslLibraryDependency depLibrary : qslModuleExtension.getModuleDependencyDefinitions()) {
+			for (QslLibraryDependency.ModuleDependencyInfo depInfo : depLibrary.getDependencyInfo().get()) {
+				if (depInfo.type().isTransitive()) {
+					var depMap = new LinkedHashMap<String, String>(2);
+					depMap.put("path", ":" + depLibrary.getName() + ":" + depInfo.module());
+					depMap.put("configuration", "namedElements");
+
+					Dependency depDep = this.project.getDependencies().project(depMap);
+					QslLibraryDependency.ConfigurationType type = switch (depInfo.type()) {
+						case API -> QslLibraryDependency.ConfigurationType.IMPLEMENTATION;
+						default -> QslLibraryDependency.ConfigurationType.RUNTIME_ONLY;
+					};
+					this.project.getDependencies().add(type.getConfigurationName(), depDep);
+
+					this.addTransitiveImplementations(depLibrary, depInfo);
+				}
+			}
+		}
 	}
 
 	public static class NamedWriteOnlyList implements Named {
@@ -198,13 +210,13 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 
 		@Override
 		@Input
-		public String getName() {
-			return name;
+		public @NotNull String getName() {
+			return this.name;
 		}
 
 		@Input
 		public ListProperty<String> getValues() {
-			return values;
+			return this.values;
 		}
 
 		public void setValues(Iterable<String> list) {

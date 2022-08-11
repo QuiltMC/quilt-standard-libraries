@@ -17,27 +17,15 @@
 package org.quiltmc.qsl.recipe.api.builder;
 
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
-import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.chars.CharArraySet;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.BlastingRecipe;
 import net.minecraft.recipe.CampfireCookingRecipe;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.ShapedRecipe;
-import net.minecraft.recipe.ShapelessRecipe;
 import net.minecraft.recipe.SmeltingRecipe;
 import net.minecraft.recipe.SmokingRecipe;
 import net.minecraft.recipe.StonecuttingRecipe;
-import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 
@@ -71,7 +59,7 @@ public final class VanillaRecipeBuilders {
 	 * @param pattern the pattern of the shaped crafting recipe
 	 * @return the builder
 	 */
-	public static ShapedRecipeBuilder shapedRecipe(String[] pattern) {
+	public static ShapedRecipeBuilder shapedRecipe(String... pattern) {
 		return new ShapedRecipeBuilder(pattern);
 	}
 
@@ -155,7 +143,7 @@ public final class VanillaRecipeBuilders {
 	 * @return the campfire cooking recipe
 	 */
 	public static CampfireCookingRecipe campfireCookingRecipe(Identifier id, String group, Ingredient input,
-	                                                          ItemStack output, float experience, int cookTime) {
+			ItemStack output, float experience, int cookTime) {
 		return VanillaRecipeBuildersImpl.campfireCookingRecipe(id, group, input, output, experience, cookTime);
 	}
 }

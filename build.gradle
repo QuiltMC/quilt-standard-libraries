@@ -9,15 +9,16 @@ def ENV = System.getenv()
 group = "org.quiltmc"
 version = Versions.QSL_VERSION
 
-// Takes "1.0.0-beta.1" and changes it to "1.0.0-beta.2, unless we are releasing.
+// Takes "1.0.0-beta.1" and changes it to "1.0.0-beta.2", unless we are releasing.
 // TODO: there is no way to semantically identify if a release is a snapshot or not right now
 if (version.contains("beta") && !ENV.MAVEN_URL) {
 	int beta = Integer.parseInt(version.substring(version.indexOf("beta.") + 5))
 	version = version.replace(version.substring(version.indexOf("beta.")), "beta." + (beta + 1))
 }
 
-version = version + "+" + Versions.MINECRAFT_VERSION + (System.getenv("SNAPSHOTS_URL") ? "-SNAPSHOT" : "")
+version = version + "+" + Versions.MINECRAFT_VERSION.version() + (System.getenv("SNAPSHOTS_URL") ? "-SNAPSHOT" : "")
 println("QSL: " + version)
+
 sourceSets {
 	testmod {
 		compileClasspath += main.compileClasspath
@@ -39,9 +40,70 @@ jar {
 	enabled = false
 }
 
+task fatJavadoc(type: Javadoc) {
+	group "documentation"
+
+	options {
+		source = String.valueOf(Versions.JAVA_VERSION)
+		encoding = "UTF-8"
+		charSet = "UTF-8"
+		memberLevel = JavadocMemberLevel.PACKAGE
+		links(
+				"https://guava.dev/releases/21.0/api/docs/",
+				"https://asm.ow2.io/javadoc/",
+				"https://docs.oracle.com/en/java/javase/16/docs/api/",
+				"https://jenkins.liteloader.com/job/Mixin/javadoc/",
+				"https://logging.apache.org/log4j/2.x/log4j-api/apidocs/",
+				"https://maven.quiltmc.org/repository/release/org/quiltmc/quilt-mappings/${Versions.MINECRAFT_VERSION.version()}+build.${Versions.MAPPINGS_BUILD}/quilt-mappings-${Versions.MINECRAFT_VERSION.version()}+build.${Versions.MAPPINGS_BUILD}-javadoc.jar/"
+		)
+
+		// Disable the overzealous doclint tool in Java 8
+		addStringOption("Xdoclint:none", "-quiet")
+		tags(
+				"author:a",
+				'reason:m:"Reason:"'
+		)
+	}
+
+	failOnError false
+
+	exclude {
+		it.file.absolutePath.contains("mixin") || it.file.absolutePath.contains("impl")
+	}
+
+	afterEvaluate {
+		subprojects.stream().filter { it.path.count(':') == 2 }.each { subproject ->
+			subproject.tasks.withType(Javadoc).each { javadocTask ->
+				source += javadocTask.source
+				classpath += javadocTask.classpath
+				// TODO: find a proper fix for this
+				// What does this do? Well, turns out transitive access wideners aren't applied properly,
+				// which fails the fat javadoc task! Since Quilt Block Entity adds a transitive access widener to a private interface.
+				// So what do we do? We simply removed the Vanilla JAR and hope that the correct transformed JAR shows up first.
+				// The proper fix is to get the root project to generate a new MC JAR that contains all the transitive transformations of the modules
+				// applied and pass that to the fat javadoc task instead.
+						.filter { !it.name.startsWith("minecraft-merged-named") }
+						.filter { !it.name.startsWith("minecraft-project-@block@block_content_registry") }
+			}
+		}
+	}
+	destinationDir = file("${buildDir}/docs/fat-javadoc")
+}
+
+
+task fatJavadocJar(type: Jar) {
+	group "build"
+
+	classifier "fat-javadoc"
+	dependsOn fatJavadoc
+	from fatJavadoc.destinationDir
+}
+
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
+			artifact fatJavadocJar
+
 			pom.withXml {
 				def depsNode = asNode().appendNode("dependencies")
 
@@ -89,7 +151,6 @@ loom {
 
 		// Auto test server, a server is ran for a few seconds and testmods run to verify things such as mixin
 		// application function properly.
-		// This task is typically ran by the CI server.
 		autoTestServer {
 			server()
 			configName = "Auto test server"
@@ -99,6 +160,12 @@ loom {
 		}
 	}
 }
+
+task runAutoAllTestServer {
+	group "verification"
+	description "Runs all the server-sided tests automatically.\nTypically ran by the CI server."
+}
+
 afterEvaluate {
 	def generateQmjForIdea = tasks.create("generateQmjForIdea")
 	project.subprojects.each {
@@ -116,6 +183,18 @@ afterEvaluate {
 			}
 		}
 	}
+
+	testmodRemapJar { tsk ->
+		nestedJars.setFrom(Collections.emptySet())
+
+		rootProject.subprojects.stream().filter {
+			it.path.count(':') == 1
+		}.forEach {
+			tsk.nestedJars.from it.tasks.getByName("testmodRemapJar")
+		}
+	}
+
+	tasks.runAutoAllTestServer.dependsOn tasks.runAutoTestServer
 }
 
 task checkVersion {
