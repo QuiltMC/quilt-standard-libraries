@@ -49,8 +49,10 @@ public class BeaconBlockEntityMixin {
 	@Shadow
 	@Final
 	private static Set<StatusEffect> EFFECTS;
+
 	@Shadow
 	@Nullable StatusEffect primary;
+
 	@Shadow
 	@Nullable StatusEffect secondary;
 
