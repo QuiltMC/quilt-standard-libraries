@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 @Environment(EnvType.CLIENT)
 public final class ArmorTextureUtils {
 	private ArmorTextureUtils() {
-		throw new RuntimeException("ArmorTextureUtils only contains static declarations.");
+		throw new UnsupportedOperationException("ArmorTextureUtils only contains static declarations.");
 	}
 
 	public static @NotNull String getArmorTextureSuffix(boolean useSecondTexture, @Nullable String suffix) {
