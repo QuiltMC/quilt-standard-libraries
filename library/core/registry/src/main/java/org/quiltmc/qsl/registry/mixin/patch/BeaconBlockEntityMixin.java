@@ -16,12 +16,8 @@
 
 package org.quiltmc.qsl.registry.mixin.patch;
 
-import net.minecraft.block.entity.BeaconBlockEntity;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import java.util.Set;
+
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -31,10 +27,17 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Set;
+import net.minecraft.block.entity.BeaconBlockEntity;
+import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
+
+import org.quiltmc.qsl.registry.api.StatusEffectsSerializationConstants;
 
 /**
- * Modify storing of status effect to make it more mod friendly
+ * Modifies storing of status effect to make it more mod friendly.
  * <p>
  * Minecraft by default serializes status effects as raw registry value limited to a byte!
  * Which isn't great mod compatibility wise (raw ids shouldn't be considered stable)
@@ -47,31 +50,28 @@ public class BeaconBlockEntityMixin {
 	@Final
 	private static Set<StatusEffect> EFFECTS;
 	@Shadow
-	@Nullable
-	private StatusEffect primary;
+	@Nullable StatusEffect primary;
 	@Shadow
-	@Nullable
-	private StatusEffect secondary;
+	@Nullable StatusEffect secondary;
 
 	@Inject(method = "writeNbt", at = @At("TAIL"))
 	private void quilt$storeIdentifiers(NbtCompound nbt, CallbackInfo ci) {
 		if (this.primary != null) {
-			nbt.putString("quilt:primary_status", Registry.STATUS_EFFECT.getId(this.primary).toString());
+			nbt.putString(StatusEffectsSerializationConstants.BEACON_PRIMARY_EFFECT_KEY, Registry.STATUS_EFFECT.getId(this.primary).toString());
 		}
 		if (this.secondary != null) {
-			nbt.putString("quilt:secondary_status", Registry.STATUS_EFFECT.getId(this.secondary).toString());
+			nbt.putString(StatusEffectsSerializationConstants.BEACON_SECONDARY_EFFECT_KEY, Registry.STATUS_EFFECT.getId(this.secondary).toString());
 		}
 	}
 
 	@Inject(method = "readNbt", at = @At("TAIL"))
 	private void quilt$readIdentifiers(NbtCompound compound, CallbackInfo ci) {
-		this.primary = this.quilt$readId("quilt:primary_status", compound, this.primary);
-		this.secondary = this.quilt$readId("quilt:secondary_status", compound, this.secondary);
+		this.primary = this.quilt$readId(StatusEffectsSerializationConstants.BEACON_PRIMARY_EFFECT_KEY, compound, this.primary);
+		this.secondary = this.quilt$readId(StatusEffectsSerializationConstants.BEACON_SECONDARY_EFFECT_KEY, compound, this.secondary);
 	}
 
-	@Nullable
 	@Unique
-	private StatusEffect quilt$readId(String nbtKey, NbtCompound compound, StatusEffect defaultEffect) {
+	private @Nullable StatusEffect quilt$readId(String nbtKey, NbtCompound compound, StatusEffect defaultEffect) {
 		if (compound.contains(nbtKey, NbtElement.STRING_TYPE)) {
 			var identifier = Identifier.tryParse(compound.getString(nbtKey));
 
@@ -81,6 +81,7 @@ public class BeaconBlockEntityMixin {
 				return quiltEffectStatus;
 			}
 		}
+
 		return defaultEffect;
 	}
 }

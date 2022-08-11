@@ -16,12 +16,6 @@
 
 package org.quiltmc.qsl.registry.mixin.patch;
 
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.passive.MooshroomEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -29,8 +23,17 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.passive.MooshroomEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
+
+import org.quiltmc.qsl.registry.api.StatusEffectsSerializationConstants;
+
 /**
- * Modify storing of status effect to make it more mod friendly
+ * Modifies storing of status effect to make it more mod friendly.
  * <p>
  * Minecraft by default serializes status effects as raw registry value limited to a byte!
  * Which isn't great mod compatibility wise (raw ids shouldn't be considered stable)
@@ -42,15 +45,18 @@ public class MooshroomEntityMixin {
 	@Nullable
 	private StatusEffect stewEffect;
 
-	@Inject(method = "writeCustomDataToNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/effect/StatusEffect;getRawId(Lnet/minecraft/entity/effect/StatusEffect;)I"))
+	@Inject(
+			method = "writeCustomDataToNbt",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/effect/StatusEffect;getRawId(Lnet/minecraft/entity/effect/StatusEffect;)I")
+	)
 	private void quilt$storeIdentifier(NbtCompound nbt, CallbackInfo ci) {
-		nbt.putString("quilt:effect_id", Registry.STATUS_EFFECT.getId(this.stewEffect).toString());
+		nbt.putString(StatusEffectsSerializationConstants.EFFECT_ID_KEY, Registry.STATUS_EFFECT.getId(this.stewEffect).toString());
 	}
 
 	@Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
 	private void quilt$readIdentifier(NbtCompound nbt, CallbackInfo ci) {
-		if (nbt.contains("quilt:effect_id", NbtElement.STRING_TYPE)) {
-			var identifier = Identifier.tryParse(nbt.getString("quilt:effect_id"));
+		if (nbt.contains(StatusEffectsSerializationConstants.EFFECT_ID_KEY, NbtElement.STRING_TYPE)) {
+			var identifier = Identifier.tryParse(nbt.getString(StatusEffectsSerializationConstants.EFFECT_ID_KEY));
 
 			if (identifier != null && Registry.STATUS_EFFECT.containsId(identifier)) {
 				this.stewEffect = Registry.STATUS_EFFECT.get(identifier);
