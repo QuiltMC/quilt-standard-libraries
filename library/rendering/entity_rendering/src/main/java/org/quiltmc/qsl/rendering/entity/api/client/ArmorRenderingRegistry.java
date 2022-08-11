@@ -41,11 +41,11 @@ public final class ArmorRenderingRegistry {
 
 	public static void registerTextureProvider(@NotNull Identifier phaseIdentifier,
 			@NotNull TextureProvider provider, @NotNull ItemConvertible... items) {
-		ArmorRenderingRegistryImpl.TEXTURE_PROVIDER_MANAGER.addProvider(phaseIdentifier, provider, items);
+		ArmorRenderingRegistryImpl.TEXTURE_PROVIDERS.addProvider(phaseIdentifier, provider, items);
 	}
 
 	public static void addTextureProviderPhaseOrdering(@NotNull Identifier firstPhase, @NotNull Identifier secondPhase) {
-		ArmorRenderingRegistryImpl.TEXTURE_PROVIDER_MANAGER.addPhaseOrdering(firstPhase, secondPhase);
+		ArmorRenderingRegistryImpl.TEXTURE_PROVIDERS.addPhaseOrdering(firstPhase, secondPhase);
 	}
 
 	public static void registerTextureProvider(@NotNull TextureProvider provider, @NotNull ItemConvertible... items) {
@@ -54,11 +54,11 @@ public final class ArmorRenderingRegistry {
 
 	public static void registerModelProvider(@NotNull Identifier phaseIdentifier,
 			@NotNull ModelProvider provider, @NotNull ItemConvertible... items) {
-		ArmorRenderingRegistryImpl.MODEL_PROVIDER_MANAGER.addProvider(phaseIdentifier, provider, items);
+		ArmorRenderingRegistryImpl.MODEL_PROVIDERS.addProvider(phaseIdentifier, provider, items);
 	}
 
 	public static void addModelProviderPhaseOrdering(@NotNull Identifier firstPhase, @NotNull Identifier secondPhase) {
-		ArmorRenderingRegistryImpl.MODEL_PROVIDER_MANAGER.addPhaseOrdering(firstPhase, secondPhase);
+		ArmorRenderingRegistryImpl.MODEL_PROVIDERS.addPhaseOrdering(firstPhase, secondPhase);
 	}
 
 	public static void registerModelProvider(@NotNull ModelProvider provider, @NotNull ItemConvertible... items) {

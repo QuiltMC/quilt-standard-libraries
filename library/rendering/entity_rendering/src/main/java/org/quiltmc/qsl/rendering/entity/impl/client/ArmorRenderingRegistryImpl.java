@@ -26,9 +26,9 @@ import org.quiltmc.qsl.rendering.entity.api.client.ArmorRenderingRegistry;
 @Environment(EnvType.CLIENT)
 public final class ArmorRenderingRegistryImpl {
 	public static final ArmorProviderManager<ArmorRenderingRegistry.TextureProvider>
-			TEXTURE_PROVIDER_MANAGER = new ArmorProviderManager<>();
+			TEXTURE_PROVIDERS = new ArmorProviderManager<>();
 	public static final ArmorProviderManager<ArmorRenderingRegistry.ModelProvider>
-			MODEL_PROVIDER_MANAGER = new ArmorProviderManager<>();
+			MODEL_PROVIDERS = new ArmorProviderManager<>();
 
 	private ArmorRenderingRegistryImpl() {
 		throw new RuntimeException("ArmorRenderingRegistryImpl only contains static declarations.");

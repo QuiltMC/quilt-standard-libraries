@@ -27,13 +27,13 @@ import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.base.api.phase.PhaseData;
 
-public final class ArmorProviderPhaseData<T> extends PhaseData<ArmorProviderPhaseData.Inner<T>[], ArmorProviderPhaseData<T>> {
+public final class ArmorProviderPhaseData<T> extends PhaseData<ArmorProviderPhaseData.Provider<T>[], ArmorProviderPhaseData<T>> {
 	@SuppressWarnings("unchecked")
 	public ArmorProviderPhaseData(@NotNull Identifier id) {
-		super(id, (Inner<T>[]) Array.newInstance(Inner.class, 0));
+		super(id, (Provider<T>[]) Array.newInstance(Provider.class, 0));
 	}
 
-	public void addProvider(@NotNull T provider, @NotNull ItemConvertible... applicableItems) {
+	public void addProvider(@NotNull T callback, @NotNull ItemConvertible... applicableItems) {
 		Item[] convertedItems = new Item[applicableItems.length];
 		for (int i = 0; i < applicableItems.length; i++) {
 			convertedItems[i] = applicableItems[i].asItem();
@@ -41,8 +41,8 @@ public final class ArmorProviderPhaseData<T> extends PhaseData<ArmorProviderPhas
 
 		int oldLength = this.data.length;
 		this.data = Arrays.copyOf(data, oldLength + 1);
-		this.data[oldLength] = new Inner<>(provider, convertedItems);
+		this.data[oldLength] = new Provider<>(callback, convertedItems);
 	}
 
-	public record Inner<T>(@NotNull T provider, @NotNull Item @NotNull [] applicableItems) {}
+	public record Provider<T>(@NotNull T callback, @NotNull Item @NotNull [] applicableItems) {}
 }

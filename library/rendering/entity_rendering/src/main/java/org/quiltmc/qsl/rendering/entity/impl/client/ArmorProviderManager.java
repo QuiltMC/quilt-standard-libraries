@@ -67,9 +67,9 @@ public final class ArmorProviderManager<T> {
 	private void rebuildProvidersMap() {
 		this.providersMap.clear();
 		for (var phase : this.sortedPhases) {
-			for (var data : phase.getData()) {
-				for (var item : data.applicableItems()) {
-					this.providersMap.put(item, data.provider());
+			for (var provider : phase.getData()) {
+				for (var item : provider.applicableItems()) {
+					this.providersMap.put(item, provider.callback());
 				}
 			}
 		}

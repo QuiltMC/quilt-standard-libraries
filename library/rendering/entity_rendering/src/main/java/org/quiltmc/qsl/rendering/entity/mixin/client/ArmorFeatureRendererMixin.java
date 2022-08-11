@@ -75,7 +75,7 @@ public abstract class ArmorFeatureRendererMixin {
 		ItemStack stack = this.capturedEntity.getEquippedStack(slot);
 
 		BipedEntityModel<LivingEntity> model = cir.getReturnValue();
-		for (var provider : ArmorRenderingRegistryImpl.MODEL_PROVIDER_MANAGER.getProviders(stack.getItem())) {
+		for (var provider : ArmorRenderingRegistryImpl.MODEL_PROVIDERS.getProviders(stack.getItem())) {
 			model = provider.getArmorModel(model, this.capturedEntity, stack, slot);
 		}
 		cir.setReturnValue(model);
@@ -90,7 +90,7 @@ public abstract class ArmorFeatureRendererMixin {
 		Identifier texture = ARMOR_TEXTURE_CACHE.computeIfAbsent(
 				armorItem.getMaterial().getTexture() + ArmorTextureUtils.getArmorTextureSuffix(useSecondTexture, suffix),
 				Identifier::new);
-		for (var provider : ArmorRenderingRegistryImpl.TEXTURE_PROVIDER_MANAGER.getProviders(stack.getItem())) {
+		for (var provider : ArmorRenderingRegistryImpl.TEXTURE_PROVIDERS.getProviders(stack.getItem())) {
 			texture = provider.getArmorTexture(texture, this.capturedEntity, stack, this.capturedSlot, useSecondTexture, suffix);
 		}
 		cir.setReturnValue(ARMOR_TEXTURE_CACHE.computeIfAbsent(texture.toString(), Identifier::new));
