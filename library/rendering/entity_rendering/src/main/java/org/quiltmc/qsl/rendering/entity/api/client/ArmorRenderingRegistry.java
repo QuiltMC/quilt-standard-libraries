@@ -41,11 +41,16 @@ public final class ArmorRenderingRegistry {
 
 	public static void registerTextureProvider(@NotNull Identifier phaseIdentifier,
 			@NotNull TextureProvider provider, @NotNull ItemConvertible... items) {
-		ArmorRenderingRegistryImpl.TEXTURE_PROVIDERS.addProvider(phaseIdentifier, provider, items);
+		for (var itemC : items) {
+			ArmorRenderingRegistryImpl.registerTextureProvider(itemC.asItem(), phaseIdentifier, provider);
+		}
 	}
 
-	public static void addTextureProviderPhaseOrdering(@NotNull Identifier firstPhase, @NotNull Identifier secondPhase) {
-		ArmorRenderingRegistryImpl.TEXTURE_PROVIDERS.addPhaseOrdering(firstPhase, secondPhase);
+	public static void addTextureProviderPhaseOrdering(@NotNull Identifier firstPhase, @NotNull Identifier secondPhase,
+			@NotNull ItemConvertible... items) {
+		for (var itemC : items) {
+			ArmorRenderingRegistryImpl.addTextureProviderPhaseOrdering(itemC.asItem(), firstPhase, secondPhase);
+		}
 	}
 
 	public static void registerTextureProvider(@NotNull TextureProvider provider, @NotNull ItemConvertible... items) {
@@ -54,11 +59,16 @@ public final class ArmorRenderingRegistry {
 
 	public static void registerModelProvider(@NotNull Identifier phaseIdentifier,
 			@NotNull ModelProvider provider, @NotNull ItemConvertible... items) {
-		ArmorRenderingRegistryImpl.MODEL_PROVIDERS.addProvider(phaseIdentifier, provider, items);
+		for (var itemC : items) {
+			ArmorRenderingRegistryImpl.registerModelProvider(itemC.asItem(), phaseIdentifier, provider);
+		}
 	}
 
-	public static void addModelProviderPhaseOrdering(@NotNull Identifier firstPhase, @NotNull Identifier secondPhase) {
-		ArmorRenderingRegistryImpl.MODEL_PROVIDERS.addPhaseOrdering(firstPhase, secondPhase);
+	public static void addModelProviderPhaseOrdering(@NotNull Identifier firstPhase, @NotNull Identifier secondPhase,
+			@NotNull ItemConvertible... items) {
+		for (var itemC : items) {
+			ArmorRenderingRegistryImpl.addModelProviderPhaseOrdering(itemC.asItem(), firstPhase, secondPhase);
+		}
 	}
 
 	public static void registerModelProvider(@NotNull ModelProvider provider, @NotNull ItemConvertible... items) {
