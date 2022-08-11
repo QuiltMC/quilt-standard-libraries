@@ -31,12 +31,14 @@ public final class StatusEffectsSerializationConstants {
 	 * and of {@link net.minecraft.entity.passive.MooshroomEntity mooshroom entities}.
 	 */
 	public static final String EFFECT_ID_KEY = "quilt:effect_id";
+
 	/**
 	 * Represents the status effect instance identifier NBT key whose value is {@value}.
 	 * <p>
 	 * Used in the serialization of {@linkplain net.minecraft.entity.effect.StatusEffectInstance}.
 	 */
 	public static final String STATUS_EFFECT_INSTANCE_ID_KEY = "quilt:id";
+
 	/**
 	 * Represents the beacon primary effect key whose value is {@value}.
 	 * <p>
@@ -45,6 +47,7 @@ public final class StatusEffectsSerializationConstants {
 	 * @see #BEACON_SECONDARY_EFFECT_KEY
 	 */
 	public static final String BEACON_PRIMARY_EFFECT_KEY = "quilt:primary_effect";
+
 	/**
 	 * Represents the beacon secondary effect key whose value is {@value}.
 	 * <p>
