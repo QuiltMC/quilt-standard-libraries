@@ -34,7 +34,7 @@ import org.quiltmc.qsl.rendering.entity.impl.client.ArmorRenderingRegistryImpl;
 @Environment(EnvType.CLIENT)
 public final class ArmorRenderingRegistry {
 	private ArmorRenderingRegistry() {
-		throw new RuntimeException("ArmorRenderingRegistry only contains static declarations.");
+		throw new UnsupportedOperationException("ArmorRenderingRegistry only contains static declarations.");
 	}
 
 	public static final Identifier DEFAULT_PHASE = Event.DEFAULT_PHASE;
