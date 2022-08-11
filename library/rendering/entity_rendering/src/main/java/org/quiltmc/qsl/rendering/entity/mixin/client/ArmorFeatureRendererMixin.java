@@ -43,7 +43,7 @@ import org.quiltmc.qsl.rendering.entity.impl.client.ArmorRenderingRegistryImpl;
 
 @SuppressWarnings("rawtypes")
 @Mixin(ArmorFeatureRenderer.class)
-public class ArmorFeatureRendererMixin {
+public abstract class ArmorFeatureRendererMixin {
 	@Shadow @Final
 	private static Map<String, Identifier> ARMOR_TEXTURE_CACHE;
 

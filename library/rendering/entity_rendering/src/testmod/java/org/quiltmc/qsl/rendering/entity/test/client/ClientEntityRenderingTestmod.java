@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.rendering.entity.test.client;
+package org.quiltmc.qsl.rendering.entity.test.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -29,7 +29,7 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.rendering.entity.api.client.ArmorRenderingRegistry;
-import org.quiltmc.rendering.entity.test.EntityRenderingTestmod;
+import org.quiltmc.qsl.rendering.entity.test.EntityRenderingTestmod;
 
 @Environment(EnvType.CLIENT)
 public final class ClientEntityRenderingTestmod implements ClientModInitializer,

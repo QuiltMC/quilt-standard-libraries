@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.rendering.entity.test;
+package org.quiltmc.qsl.rendering.entity.test;
 
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ArmorItem;

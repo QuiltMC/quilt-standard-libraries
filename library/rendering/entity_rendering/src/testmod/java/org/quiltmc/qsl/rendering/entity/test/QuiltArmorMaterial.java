@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.rendering.entity.test;
+package org.quiltmc.qsl.rendering.entity.test;
 
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ArmorMaterial;
@@ -67,6 +67,6 @@ public enum QuiltArmorMaterial implements ArmorMaterial {
 
 	@Override
 	public float getKnockbackResistance() {
-		return 0.5F;
+		return 0.15F;
 	}
 }
