@@ -31,6 +31,6 @@ public final class ArmorRenderingRegistryImpl {
 			MODEL_PROVIDERS = new ArmorProviderManager<>();
 
 	private ArmorRenderingRegistryImpl() {
-		throw new RuntimeException("ArmorRenderingRegistryImpl only contains static declarations.");
+		throw new UnsupportedOperationException("ArmorRenderingRegistryImpl only contains static declarations.");
 	}
 }
