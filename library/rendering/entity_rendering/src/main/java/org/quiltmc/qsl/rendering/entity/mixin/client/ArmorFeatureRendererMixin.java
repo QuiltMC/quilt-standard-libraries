@@ -27,7 +27,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
@@ -39,6 +38,7 @@ import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.qsl.rendering.entity.api.client.ArmorTextureUtils;
 import org.quiltmc.qsl.rendering.entity.impl.client.ArmorRenderingRegistryImpl;
 
 @SuppressWarnings("rawtypes")
@@ -83,16 +83,16 @@ public abstract class ArmorFeatureRendererMixin {
 
 	@Inject(method = "getArmorTexture",
 			at = @At(value = "INVOKE", target = "Ljava/util/Map;computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;"),
-			cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
-	private void getArmorTexture(ArmorItem armorItem, boolean secondLayer, /* @Nullable */ String suffix, CallbackInfoReturnable<Identifier> cir, String vanillaIdentifier) {
+			cancellable = true)
+	private void getArmorTexture(ArmorItem armorItem, boolean useSecondTexture, /* @Nullable */ String suffix, CallbackInfoReturnable<Identifier> cir) {
 		ItemStack stack = this.capturedEntity.getEquippedStack(this.capturedSlot);
 
-		Identifier texture = ARMOR_TEXTURE_CACHE.computeIfAbsent(vanillaIdentifier, Identifier::new);
+		Identifier texture = ARMOR_TEXTURE_CACHE.computeIfAbsent(
+				armorItem.getMaterial().getTexture() + ArmorTextureUtils.getArmorTextureSuffix(useSecondTexture, suffix),
+				Identifier::new);
 		for (var provider : ArmorRenderingRegistryImpl.TEXTURE_PROVIDER_MANAGER.getProviders(stack.getItem())) {
-			texture = provider.getArmorTexture(texture, this.capturedEntity, stack, this.capturedSlot, secondLayer, suffix);
+			texture = provider.getArmorTexture(texture, this.capturedEntity, stack, this.capturedSlot, useSecondTexture, suffix);
 		}
-
-		// deduplicate it, like Vanilla
 		cir.setReturnValue(ARMOR_TEXTURE_CACHE.computeIfAbsent(texture.toString(), Identifier::new));
 	}
 }

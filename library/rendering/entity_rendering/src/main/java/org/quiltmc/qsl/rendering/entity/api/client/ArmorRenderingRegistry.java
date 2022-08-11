@@ -67,9 +67,13 @@ public final class ArmorRenderingRegistry {
 
 	@Environment(EnvType.CLIENT)
 	public interface TextureProvider {
+		/**
+		 * @param useSecondTexture {@code false} to use helmet/chestplate texture, {@code true} to use leggings/boots texture
+		 * @param suffix           suffix to append to the end of the texture name
+		 */
 		@NotNull Identifier getArmorTexture(@NotNull Identifier texture,
 				@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot,
-				boolean secondLayer, @Nullable String suffix);
+				boolean useSecondTexture, @Nullable String suffix);
 	}
 
 	@Environment(EnvType.CLIENT)

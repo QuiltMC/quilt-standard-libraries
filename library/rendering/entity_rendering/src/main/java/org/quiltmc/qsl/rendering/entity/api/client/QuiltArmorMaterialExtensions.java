@@ -19,15 +19,14 @@ package org.quiltmc.qsl.rendering.entity.api.client;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-@Environment(EnvType.CLIENT)
-public final class ArmorTextureUtils {
-	private ArmorTextureUtils() {
-		throw new RuntimeException("ArmorTextureUtils only contains static declarations.");
-	}
+import net.minecraft.item.ArmorMaterial;
+import net.minecraft.util.Identifier;
 
-	public static @NotNull String getArmorTextureSuffix(boolean useSecondTexture, @Nullable String suffix) {
-		return "_layer_" + (useSecondTexture ? 2 : 1) + (suffix == null ? "" : "_" + suffix) + ".png";
-	}
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
+
+@InjectedInterface(ArmorMaterial.class)
+public interface QuiltArmorMaterialExtensions {
+	@Environment(EnvType.CLIENT)
+	@NotNull Identifier getTexture();
 }

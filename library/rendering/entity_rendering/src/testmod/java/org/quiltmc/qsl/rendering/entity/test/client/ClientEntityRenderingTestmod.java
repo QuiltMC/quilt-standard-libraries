@@ -36,15 +36,17 @@ public final class ClientEntityRenderingTestmod implements ClientModInitializer,
 		ArmorRenderingRegistry.TextureProvider {
 	@Override
 	public void onInitializeClient(ModContainer mod) {
+		// TEMP DISABLED TO TEST getTexture() METHOD
+		/*
 		ArmorRenderingRegistry.registerTextureProvider(this,
 				EntityRenderingTestmod.QUILT_HELMET, EntityRenderingTestmod.QUILT_CHESTPLATE,
-				EntityRenderingTestmod.QUILT_LEGGINGS, EntityRenderingTestmod.QUILT_BOOTS);
+				EntityRenderingTestmod.QUILT_LEGGINGS, EntityRenderingTestmod.QUILT_BOOTS);*/
 	}
 
 	@Override
 	public @NotNull Identifier getArmorTexture(@NotNull Identifier texture, @NotNull LivingEntity entity,
-			@NotNull ItemStack stack, @NotNull EquipmentSlot slot, boolean secondLayer, @Nullable String suffix) {
-		// simply redirect the texture so it isn't in Minecraft's texture folder
+			@NotNull ItemStack stack, @NotNull EquipmentSlot slot, boolean useSecondTexture, @Nullable String suffix) {
+		// simply redirect the texture, so it isn't in Minecraft's texture folder
 		return EntityRenderingTestmod.id(texture.getPath());
 	}
 }

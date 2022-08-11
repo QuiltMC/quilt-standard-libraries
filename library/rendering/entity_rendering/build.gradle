@@ -14,4 +14,7 @@ qslModule {
 			testmodOnly("resource_loader")
 		}
 	}
+	injectedInterface("net/minecraft/class_1741") {
+		values = ["org/quiltmc/qsl/rendering/entity/api/client/QuiltArmorMaterialExtensions"]
+	}
 }

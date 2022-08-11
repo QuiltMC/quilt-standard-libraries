@@ -3,7 +3,8 @@
   "package": "org.quiltmc.qsl.rendering.entity.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "client.ArmorFeatureRendererMixin"
+    "client.ArmorFeatureRendererMixin",
+    "client.ArmorMaterialsMixin"
   ],
   "injectors": {
     "defaultRequire": 1
