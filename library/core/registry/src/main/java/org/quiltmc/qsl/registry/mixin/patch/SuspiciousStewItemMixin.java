@@ -80,7 +80,7 @@ public class SuspiciousStewItemMixin {
 		}
 	}
 
-	@SuppressWarnings({"InvalidInjectorMethodSignature"})
+	@SuppressWarnings("InvalidInjectorMethodSignature")
 	@ModifyVariable(method = "finishUsing", at = @At("STORE"), ordinal = 0)
 	private StatusEffect quilt$setEffect(StatusEffect effect) {
 		var quiltEffect = this.quilt$effect.get();
