@@ -46,6 +46,11 @@ public class StatusEffectInstanceMixin {
 	@Final
 	private StatusEffect type;
 
+	@Inject(method = "writeNbt", at = @At("TAIL"))
+	private void quilt$storeIdentifier(NbtCompound nbt, CallbackInfoReturnable<NbtCompound> cir) {
+		nbt.putString(StatusEffectsSerializationConstants.STATUS_EFFECT_INSTANCE_ID_KEY, Registry.STATUS_EFFECT.getId(this.type).toString());
+	}
+
 	@SuppressWarnings({"InvalidInjectorMethodSignature"})
 	@ModifyVariable(
 			method = "fromNbt(Lnet/minecraft/nbt/NbtCompound;)Lnet/minecraft/entity/effect/StatusEffectInstance;",
@@ -62,10 +67,5 @@ public class StatusEffectInstanceMixin {
 		}
 
 		return effect;
-	}
-
-	@Inject(method = "writeNbt", at = @At("TAIL"))
-	private void quilt$storeIdentifier(NbtCompound nbt, CallbackInfoReturnable<NbtCompound> cir) {
-		nbt.putString(StatusEffectsSerializationConstants.STATUS_EFFECT_INSTANCE_ID_KEY, Registry.STATUS_EFFECT.getId(this.type).toString());
 	}
 }

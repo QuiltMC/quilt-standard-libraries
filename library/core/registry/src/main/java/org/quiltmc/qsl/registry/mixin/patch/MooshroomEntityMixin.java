@@ -42,8 +42,7 @@ import org.quiltmc.qsl.registry.api.StatusEffectsSerializationConstants;
 @Mixin(MooshroomEntity.class)
 public class MooshroomEntityMixin {
 	@Shadow
-	@Nullable
-	private StatusEffect stewEffect;
+	private @Nullable StatusEffect stewEffect;
 
 	@Inject(
 			method = "writeCustomDataToNbt",

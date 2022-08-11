@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.registry.mixin.patch;
 
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -49,8 +48,7 @@ import org.quiltmc.qsl.registry.api.StatusEffectsSerializationConstants;
 @Mixin(SuspiciousStewItem.class)
 public class SuspiciousStewItemMixin {
 	@Unique
-	@Nullable
-	private StatusEffect quilt$effect = null;
+	private final ThreadLocal<StatusEffect> quilt$effect = new ThreadLocal<>();
 
 	@Inject(
 			method = "addEffectToStew",
@@ -73,18 +71,20 @@ public class SuspiciousStewItemMixin {
 			var identifier = Identifier.tryParse(effectCompound.getString(StatusEffectsSerializationConstants.EFFECT_ID_KEY));
 
 			if (identifier != null && Registry.STATUS_EFFECT.containsId(identifier)) {
-				this.quilt$effect = Registry.STATUS_EFFECT.get(identifier);
+				this.quilt$effect.set(Registry.STATUS_EFFECT.get(identifier));
 			} else {
-				this.quilt$effect = null;
+				this.quilt$effect.remove();
 			}
 		} else {
-			this.quilt$effect = null;
+			this.quilt$effect.remove();
 		}
 	}
 
 	@SuppressWarnings({"InvalidInjectorMethodSignature"})
 	@ModifyVariable(method = "finishUsing", at = @At("STORE"), ordinal = 0)
 	private StatusEffect quilt$setEffect(StatusEffect effect) {
-		return this.quilt$effect != null ? this.quilt$effect : effect;
+		var quiltEffect = this.quilt$effect.get();
+
+		return quiltEffect != null ? quiltEffect : effect;
 	}
 }
