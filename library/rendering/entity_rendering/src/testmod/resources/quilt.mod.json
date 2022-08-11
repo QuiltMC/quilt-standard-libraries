@@ -23,5 +23,6 @@
       "quilt_resource_loader",
       "quilt_entity_rendering"
     ]
-  }
+  },
+  "mixin": "quilt_entity_rendering_testmod.mixins.json"
 }
