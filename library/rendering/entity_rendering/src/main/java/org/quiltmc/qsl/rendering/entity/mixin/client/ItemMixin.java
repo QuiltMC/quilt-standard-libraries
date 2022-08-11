@@ -46,7 +46,7 @@ public abstract class ItemMixin implements ItemExtensions {
 	}
 
 	@Override
-	public @NotNull Event<ArmorRenderingRegistry.TextureProvider> quilt$getOrCreateTextureProviderEvent() {
+	public synchronized @NotNull Event<ArmorRenderingRegistry.TextureProvider> quilt$getOrCreateTextureProviderEvent() {
 		if (textureProviderEvent == null) {
 			textureProviderEvent = ArmorRenderingRegistryImpl.createTextureProviderEvent();
 		}
@@ -54,7 +54,7 @@ public abstract class ItemMixin implements ItemExtensions {
 	}
 
 	@Override
-	public @NotNull Event<ArmorRenderingRegistry.ModelProvider> quilt$getOrCreateModelProviderEvent() {
+	public synchronized @NotNull Event<ArmorRenderingRegistry.ModelProvider> quilt$getOrCreateModelProviderEvent() {
 		if (modelProviderEvent == null) {
 			modelProviderEvent = ArmorRenderingRegistryImpl.createModelProviderEvent();
 		}
