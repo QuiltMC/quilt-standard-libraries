@@ -41,5 +41,5 @@ public class ProjectileModifyingCrossbowItem extends CrossbowItem implements Cro
 		}
 	}
 
-	public void onProjectileShot(ItemStack crossbowStack, ItemStack arrowStack, LivingEntity user, PersistentProjectileEntity persistentProjectileEntity) {}
+	public void onProjectileShot(ItemStack crossbowStack, ItemStack arrowStack, LivingEntity user, PersistentProjectileEntity projectile) {}
 }
