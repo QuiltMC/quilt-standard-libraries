@@ -11,7 +11,7 @@ qslModule {
 	moduleDependencies {
 		core {
 			api("qsl_base")
-			testmodOnly("resource_loader")
+			api("resource_loader")
 		}
 	}
 	injectedInterface("net/minecraft/class_1741") {
