@@ -44,7 +44,7 @@ public interface SynchronizedRegistry<T> {
 	Collection<MissingEntry> quilt$applySyncMap(Map<String, Collection<SyncEntry>> map);
 
 	@SuppressWarnings("unchecked")
-	static <T> SynchronizedRegistry<T> as(SimpleRegistry<T> registry) {
+	static <T> SynchronizedRegistry<T> as(Registry<T> registry) {
 		return (SynchronizedRegistry<T>) registry;
 	}
 
