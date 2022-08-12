@@ -35,9 +35,9 @@ public class ProjectileModifyingCrossbowItem extends CrossbowItem implements Cro
 	}
 
 	@Override
-	public final void modifyProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity user, @NotNull PersistentProjectileEntity persistentProjectileEntity) {
+	public final void modifyProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity user, @NotNull PersistentProjectileEntity projectile) {
 		if (crossbowStack.getItem() == this) {
-			this.onProjectileShot(crossbowStack, projectileStack, user, persistentProjectileEntity);
+			this.onProjectileShot(crossbowStack, projectileStack, user, projectile);
 		}
 	}
 

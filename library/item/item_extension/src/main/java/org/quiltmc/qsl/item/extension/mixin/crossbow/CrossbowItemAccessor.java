@@ -25,6 +25,6 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface CrossbowItemAccessor {
 	@Invoker("getSpeed")
 	static float quilt$getSpeed(ItemStack stack) {
-		throw new IllegalStateException("Mixin injection failed.");
+		throw new IllegalStateException("Invoker injection failed.");
 	}
 }

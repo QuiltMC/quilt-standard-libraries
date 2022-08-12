@@ -32,8 +32,8 @@ import org.quiltmc.qsl.item.extension.api.crossbow.ProjectileModifyingCrossbowIt
 public class BowsTest implements ModInitializer {
 	public static final Item TEST_BOW = new ProjectileModifyingBowItem(new Item.Settings().group(ItemGroup.COMBAT)) {
 		@Override
-		public void onProjectileShot(ItemStack bowStack, ItemStack arrowStack, LivingEntity user, float pullProgress, PersistentProjectileEntity persistentProjectileEntity) {
-			persistentProjectileEntity.setPunch(100);
+		public void onProjectileShot(ItemStack bowStack, ItemStack arrowStack, LivingEntity user, float pullProgress, PersistentProjectileEntity projectile) {
+			projectile.setPunch(100);
 		}
 	};
 
