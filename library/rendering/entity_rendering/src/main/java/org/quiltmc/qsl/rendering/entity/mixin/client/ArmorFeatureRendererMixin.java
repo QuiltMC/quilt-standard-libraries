@@ -41,6 +41,8 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.rendering.entity.api.client.ArmorTextureUtils;
 import org.quiltmc.qsl.rendering.entity.impl.client.ArmorRenderingRegistryImpl;
 
+import static org.quiltmc.qsl.rendering.entity.impl.client.ArmorRenderingRegistryImpl.LOGGER;
+
 @SuppressWarnings("rawtypes")
 @Mixin(ArmorFeatureRenderer.class)
 public abstract class ArmorFeatureRendererMixin {
@@ -90,6 +92,12 @@ public abstract class ArmorFeatureRendererMixin {
 				Identifier::new);
 		texture = ArmorRenderingRegistryImpl.getArmorTexture(texture, this.capturedEntity, stack, this.capturedSlot,
 				useSecondTexture, suffix);
+
+		if (!texture.getPath().contains(".")) {
+			LOGGER.warn("Armor texture identifier '" + texture + "' is missing file extension, automatically appending '.png'");
+			texture = new Identifier(texture.getNamespace(), texture.getPath() + ".png");
+		}
+
 		cir.setReturnValue(ARMOR_TEXTURE_CACHE.computeIfAbsent(texture.toString(), Identifier::new));
 	}
 }

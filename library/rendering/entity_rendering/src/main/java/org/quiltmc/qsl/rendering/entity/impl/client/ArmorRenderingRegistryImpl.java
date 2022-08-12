@@ -16,12 +16,14 @@
 
 package org.quiltmc.qsl.rendering.entity.impl.client;
 
+import com.mojang.logging.LogUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.entity.EquipmentSlot;
@@ -36,6 +38,8 @@ import org.quiltmc.qsl.rendering.entity.api.client.ArmorRenderingRegistry;
 @ApiStatus.Internal
 @Environment(EnvType.CLIENT)
 public final class ArmorRenderingRegistryImpl {
+	public static final Logger LOGGER = LogUtils.getLogger();
+
 	private ArmorRenderingRegistryImpl() {
 		throw new UnsupportedOperationException("ArmorRenderingRegistryImpl only contains static declarations.");
 	}
