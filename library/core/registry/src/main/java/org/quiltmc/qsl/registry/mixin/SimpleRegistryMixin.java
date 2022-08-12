@@ -28,7 +28,6 @@ import it.unimi.dsi.fastutil.objects.Object2ByteOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -214,6 +213,8 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 		}
 
 		for (var holder : holders) {
+			if (holder == null) continue;
+
 			var id = ++currentId;
 			this.entryToRawId.put(holder.value(), id);
 			this.rawIdToEntry.set(id, holder);

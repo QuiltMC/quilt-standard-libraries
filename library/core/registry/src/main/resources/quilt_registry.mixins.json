@@ -13,7 +13,11 @@
     "ServerLoginNetworkHandlerMixin",
     "ServerPlayerEntityMixin",
     "SimpleRegistryAccessor",
-    "SimpleRegistryMixin"
+    "SimpleRegistryMixin",
+    "patch.BeaconBlockEntityMixin",
+    "patch.MooshroomEntityMixin",
+    "patch.StatusEffectInstanceMixin",
+    "patch.SuspiciousStewItemMixin"
   ],
   "client": [
     "client.BlockColorMapMixin",
