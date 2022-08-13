@@ -32,7 +32,7 @@ import net.minecraft.util.registry.Registry;
 /**
  * Represents a map which uses raw registry identifiers as its key.
  * <p>
- * This class wraps an under-laying map and make sure to keep it in sync with any registry remapping.
+ * This class wraps an underlying map and make sure to keep it in sync with any registry remapping.
  *
  * @param <V> the value of the map
  * @param <K> the direct registry entry value
