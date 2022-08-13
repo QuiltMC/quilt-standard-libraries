@@ -16,9 +16,12 @@
 
 package org.quiltmc.qsl.registry.impl.sync.client;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
+@Environment(EnvType.CLIENT)
 public interface RebuildableIdModelHolder {
 	void quilt$rebuildIds();
 }
