@@ -19,6 +19,8 @@ package org.quiltmc.qsl.registry.mixin.client;
 import java.util.Map;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -36,6 +38,7 @@ import net.minecraft.util.collection.IdList;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedIdList;
 import org.quiltmc.qsl.registry.impl.sync.client.RebuildableIdModelHolder;
 
+@Environment(EnvType.CLIENT)
 @Mixin(ItemColors.class)
 public class ItemColorsMixin implements RebuildableIdModelHolder {
 	@Final
@@ -48,8 +51,8 @@ public class ItemColorsMixin implements RebuildableIdModelHolder {
 
 	@Inject(method = "register", at = @At("TAIL"))
 	private void quilt$storeProviders(ItemColorProvider provider, ItemConvertible[] items, CallbackInfo ci) {
-		for (var block : items) {
-			this.quilt$providers.put(block.asItem(), provider);
+		for (var item : items) {
+			this.quilt$providers.put(item.asItem(), provider);
 		}
 	}
 

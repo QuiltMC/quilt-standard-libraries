@@ -16,17 +16,20 @@
 
 package org.quiltmc.qsl.registry.mixin.client;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ConnectScreen;
-import net.minecraft.client.network.ServerAddress;
-import net.minecraft.util.registry.Registry;
-import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
-import org.quiltmc.qsl.registry.impl.sync.client.ClientRegistrySync;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ConnectScreen;
+import net.minecraft.client.network.ServerAddress;
+
+import org.quiltmc.qsl.registry.impl.sync.client.ClientRegistrySync;
+
+@Environment(EnvType.CLIENT)
 @Mixin(ConnectScreen.class)
 public class ConnectScreenMixin {
 	@Inject(method = "connect(Lnet/minecraft/client/MinecraftClient;Lnet/minecraft/client/network/ServerAddress;)V", at = @At("HEAD"))

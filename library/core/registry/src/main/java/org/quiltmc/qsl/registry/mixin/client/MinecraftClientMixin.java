@@ -16,15 +16,18 @@
 
 package org.quiltmc.qsl.registry.mixin.client;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.registry.Registry;
-import org.quiltmc.qsl.registry.impl.sync.client.ClientRegistrySync;
-import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.minecraft.client.MinecraftClient;
+
+import org.quiltmc.qsl.registry.impl.sync.client.ClientRegistrySync;
+
+@Environment(EnvType.CLIENT)
 @Mixin(MinecraftClient.class)
 public class MinecraftClientMixin {
 	@Inject(method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V", at = @At("TAIL"))

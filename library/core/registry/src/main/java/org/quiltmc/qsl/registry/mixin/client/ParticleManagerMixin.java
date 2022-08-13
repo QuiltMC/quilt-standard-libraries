@@ -17,50 +17,41 @@
 package org.quiltmc.qsl.registry.mixin.client;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.client.particle.ParticleFactory;
-import net.minecraft.client.particle.ParticleManager;
-import net.minecraft.item.Item;
-import net.minecraft.particle.ParticleType;
-import net.minecraft.util.registry.Registry;
-import org.quiltmc.qsl.registry.impl.sync.client.RebuildableIdModelHolder;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Map;
+import net.minecraft.client.particle.ParticleFactory;
+import net.minecraft.client.particle.ParticleManager;
+import net.minecraft.client.texture.TextureManager;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.qsl.registry.impl.sync.SynchronizedInt2ObjectMap;
+import org.quiltmc.qsl.registry.impl.sync.client.RebuildableIdModelHolder;
+
+@Environment(EnvType.CLIENT)
 @Mixin(ParticleManager.class)
 public class ParticleManagerMixin implements RebuildableIdModelHolder {
 
-	@Shadow
+	@Mutable
 	@Final
+	@Shadow
 	private Int2ObjectMap<ParticleFactory<?>> factories;
-	@Unique
-	private final Map<ParticleType<?>, ParticleFactory<?>> quilt$factoryMap = new Object2ObjectOpenHashMap<>();
 
-	@Coerce
-	@Inject(method = "registerFactory(Lnet/minecraft/particle/ParticleType;Lnet/minecraft/client/particle/ParticleManager$SpriteAwareFactory;)V", at = @At("TAIL"))
-	private void quilt$storeFactory(ParticleType<?> type, @Coerce Object factory, CallbackInfo ci) {
-		this.quilt$factoryMap.put(type, this.factories.get(Registry.PARTICLE_TYPE.getRawId(type)));
-	}
-
-	@Inject(method = "registerFactory(Lnet/minecraft/particle/ParticleType;Lnet/minecraft/client/particle/ParticleFactory;)V", at = @At("TAIL"))
-	private void quilt$storeFactory(ParticleType<?> type, ParticleFactory<?> factory, CallbackInfo ci) {
-		this.quilt$factoryMap.put(type, factory);
+	@Inject(method = "<init>", at = @At("RETURN"))
+	private void quilt$onInit(ClientWorld clientWorld, TextureManager textureManager, CallbackInfo ci) {
+		this.factories = new SynchronizedInt2ObjectMap<>(Registry.PARTICLE_TYPE, this.factories);
 	}
 
 	@Override
 	public void quilt$rebuildIds() {
-		this.factories.clear();
-
-		for (var entry : this.quilt$factoryMap.entrySet()) {
-			this.factories.put(Registry.PARTICLE_TYPE.getRawId(entry.getKey()), entry.getValue());
-		}
+		SynchronizedInt2ObjectMap.attemptRebuildIds(this.factories);
 	}
 }
