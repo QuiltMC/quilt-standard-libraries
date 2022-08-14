@@ -13,4 +13,5 @@ qslModule {
 			api("qsl_base")
 		}
 	}
+	clientOnly()
 }
