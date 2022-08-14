@@ -14,6 +14,8 @@ qslModule {
 			testmodOnly("resource_loader")
 		}
 	}
+	clientOnly()
+
 	injectedInterface("net/minecraft/class_1792") {
 		values = ["org/quiltmc/qsl/rendering/item/api/client/QuiltItemRenderingExtensions"]
 	}
