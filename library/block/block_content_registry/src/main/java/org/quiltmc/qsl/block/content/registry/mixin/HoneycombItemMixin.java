@@ -17,7 +17,6 @@
 package org.quiltmc.qsl.block.content.registry.mixin;
 
 import com.google.common.collect.BiMap;
-import org.quiltmc.qsl.block.content.registry.impl.BlockContentRegistriesInitializer;
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,6 +25,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.HoneycombItem;
+
+import org.quiltmc.qsl.block.content.registry.impl.BlockContentRegistriesInitializer;
 
 @Mixin(HoneycombItem.class)
 public class HoneycombItemMixin {

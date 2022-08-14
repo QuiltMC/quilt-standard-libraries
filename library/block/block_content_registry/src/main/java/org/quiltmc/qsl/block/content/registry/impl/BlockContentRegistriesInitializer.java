@@ -23,13 +23,6 @@ import java.util.stream.Collectors;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
-import org.quiltmc.loader.api.ModContainer;
-import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
-import org.quiltmc.qsl.block.content.registry.api.FlammableBlockEntry;
-import org.quiltmc.qsl.block.content.registry.api.ReversibleBlockEntry;
-import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
-import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -41,6 +34,14 @@ import net.minecraft.item.AxeItem;
 import net.minecraft.item.HoneycombItem;
 import net.minecraft.item.ShovelItem;
 import net.minecraft.world.event.GameEvent;
+
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
+import org.quiltmc.qsl.block.content.registry.api.FlammableBlockEntry;
+import org.quiltmc.qsl.block.content.registry.api.ReversibleBlockEntry;
+import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
+import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 
 public class BlockContentRegistriesInitializer implements ModInitializer {
 	private static final Map<Block, BlockState> INITIAL_PATH_STATES = ImmutableMap.copyOf(ShovelItem.PATH_STATES);
@@ -59,7 +60,9 @@ public class BlockContentRegistriesInitializer implements ModInitializer {
 	static {
 		var builder = ImmutableMap.<Block, FlammableBlockEntry>builder();
 		FireBlock fireBlock = ((FireBlock) Blocks.FIRE);
-		fireBlock.spreadChances.keySet().forEach(block -> builder.put(block, new FlammableBlockEntry(fireBlock.burnChances.getInt(block), fireBlock.spreadChances.getInt(block))));
+		fireBlock.spreadChances.keySet().forEach(block ->
+				builder.put(block, new FlammableBlockEntry(fireBlock.burnChances.getInt(block), fireBlock.spreadChances.getInt(block)))
+		);
 		INITIAL_FLAMMABLE_BLOCKS = builder.build();
 	}
 
@@ -96,15 +99,9 @@ public class BlockContentRegistriesInitializer implements ModInitializer {
 		AxeItem.STRIPPED_BLOCKS.clear();
 		setMapFromAttachment(AxeItem.STRIPPED_BLOCKS::put, BlockContentRegistries.STRIPPABLE_BLOCK);
 
-		OXIDATION_INCREASE_BLOCKS.clear();
-		OXIDATION_DECREASE_BLOCKS.clear();
-		setMapFromAttachment((entry, value) -> OXIDATION_INCREASE_BLOCKS.put(entry, value.block()), BlockContentRegistries.OXIDIZABLE_BLOCK);
-		setMapFromAttachment((entry, value) -> value.reversible() ? OXIDATION_DECREASE_BLOCKS.put(value.block(), entry) : null, BlockContentRegistries.OXIDIZABLE_BLOCK);
+		resetSimpleReversibleMap(OXIDATION_INCREASE_BLOCKS, OXIDATION_DECREASE_BLOCKS, BlockContentRegistries.OXIDIZABLE_BLOCK);
 
-		UNWAXED_WAXED_BLOCKS.clear();
-		WAXED_UNWAXED_BLOCKS.clear();
-		setMapFromAttachment((entry, value) -> UNWAXED_WAXED_BLOCKS.put(entry, value.block()), BlockContentRegistries.WAXABLE_BLOCK);
-		setMapFromAttachment((entry, value) -> value.reversible() ? WAXED_UNWAXED_BLOCKS.put(value.block(), entry) : null, BlockContentRegistries.OXIDIZABLE_BLOCK);
+		resetSimpleReversibleMap(UNWAXED_WAXED_BLOCKS, WAXED_UNWAXED_BLOCKS, BlockContentRegistries.WAXABLE_BLOCK);
 
 		FireBlock fireBlock = ((FireBlock) Blocks.FIRE);
 		fireBlock.burnChances.clear();
@@ -124,5 +121,13 @@ public class BlockContentRegistriesInitializer implements ModInitializer {
 
 	private static <T, V> void addMapToAttachment(Map<T, V> map, RegistryEntryAttachment<T, V> attachment) {
 		map.forEach(attachment::put);
+	}
+
+	private static void resetSimpleReversibleMap(BiMap<Block, Block> baseWay, BiMap<Block, Block> reversed,
+			RegistryEntryAttachment<Block, ReversibleBlockEntry> rea) {
+		baseWay.clear();
+		reversed.clear();
+		setMapFromAttachment((entry, value) -> baseWay.put(entry, value.block()), rea);
+		setMapFromAttachment((entry, value) -> value.reversible() ? reversed.put(value.block(), entry) : null, rea);
 	}
 }

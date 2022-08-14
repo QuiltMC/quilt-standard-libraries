@@ -31,11 +31,13 @@ import net.minecraft.world.event.GameEvent;
 
 @Mixin(SculkSensorBlock.class)
 public class SculkSensorBlockMixin {
-    @Final @Mutable @Shadow
-    public static Object2IntMap<GameEvent> EVENTS;
+	@Final
+	@Mutable
+	@Shadow
+	public static Object2IntMap<GameEvent> EVENTS;
 
-    @Inject(method = "<clinit>", at= @At("TAIL"))
-    private static void changeMap(CallbackInfo ci) {
-        EVENTS = new Object2IntOpenHashMap<>(EVENTS);
-    }
+	@Inject(method = "<clinit>", at = @At("TAIL"))
+	private static void changeMap(CallbackInfo ci) {
+		EVENTS = new Object2IntOpenHashMap<>(EVENTS);
+	}
 }
