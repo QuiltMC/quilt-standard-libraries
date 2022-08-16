@@ -27,9 +27,9 @@ import org.quiltmc.qsl.lifecycle.api.client.event.ClientLifecycleEvents;
 
 @Environment(EnvType.CLIENT)
 @ApiStatus.Internal
-public final class ClientInitializer implements ClientLifecycleEvents.Ready {
+public final class ClientFreezer implements ClientLifecycleEvents.Ready {
 	@Override
 	public void readyClient(MinecraftClient client) {
-		QuiltDataFixesInternals.freeze();
+		QuiltDataFixesInternals.get().freeze();
 	}
 }

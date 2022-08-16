@@ -16,81 +16,19 @@
 
 package org.quiltmc.qsl.datafixerupper.impl;
 
-import java.util.Collections;
-import java.util.Map;
-
 import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.schemas.Schema;
-import com.mojang.logging.LogUtils;
-import com.mojang.serialization.Dynamic;
-import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import org.jetbrains.annotations.*;
-import org.slf4j.Logger;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.datafixer.DataFixTypes;
 import net.minecraft.datafixer.Schemas;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtOps;
 
 @ApiStatus.Internal
-public final class QuiltDataFixesInternals {
-	private QuiltDataFixesInternals() { }
-
-	public static final Logger LOGGER = LogUtils.getLogger();
-
-	private static Map<String, DataFixerEntry> modDataFixers = new Object2ReferenceOpenHashMap<>();
-	private static boolean frozen = false;
-
-	public static void registerFixer(@NotNull String modId,
-									 @Range(from = 0, to = Integer.MAX_VALUE) int currentVersion,
-									 @NotNull DataFixer dataFixer) {
-		if (modDataFixers.containsKey(modId)) {
-			throw new IllegalArgumentException("Mod '" + modId + "' already has a registered data fixer");
-		}
-
-		modDataFixers.put(modId, new DataFixerEntry(dataFixer, currentVersion));
-	}
-
-	public static @Nullable DataFixerEntry getFixerEntry(@NotNull String modId) {
-		return modDataFixers.get(modId);
-	}
-
-	public static final Schema VANILLA_SCHEMA = Schemas.getFixer()
-			.getSchema(DataFixUtils.makeKey(SharedConstants.getGameVersion().getWorldVersionData().getDataVersion()));
-
-	@Contract(value = "-> new", pure = true)
-	public static @NotNull Schema createBaseSchema() {
-		return new Schema(0, VANILLA_SCHEMA);
-	}
-
-	public static @NotNull NbtCompound updateWithAllFixers(@NotNull DataFixTypes dataFixTypes,
-														   @NotNull NbtCompound compound) {
-		NbtCompound current = compound;
-
-		for (Map.Entry<String, DataFixerEntry> entry : modDataFixers.entrySet()) {
-			String currentModId = entry.getKey();
-			int modIdCurrentDynamicVersion = getModDataVersion(compound, currentModId);
-			DataFixerEntry dataFixerEntry = entry.getValue();
-
-			current = (NbtCompound) dataFixerEntry.dataFixer()
-					.update(dataFixTypes.getTypeReference(),
-							new Dynamic<>(NbtOps.INSTANCE, current),
-							modIdCurrentDynamicVersion, dataFixerEntry.currentVersion)
-					.getValue();
-		}
-
-		return current;
-	}
-
-	public static @NotNull NbtCompound addModDataVersions(@NotNull NbtCompound compound) {
-		for (Map.Entry<String, DataFixerEntry> entry : modDataFixers.entrySet()) {
-			compound.putInt(entry.getKey() + "_DataVersion", entry.getValue().currentVersion);
-		}
-
-		return compound;
-	}
+public abstract class QuiltDataFixesInternals {
+	public record DataFixerEntry(DataFixer dataFixer, int currentVersion) {}
 
 	@Contract(pure = true)
 	@Range(from = 0, to = Integer.MAX_VALUE)
@@ -98,18 +36,47 @@ public final class QuiltDataFixesInternals {
 		return compound.getInt(modId + "_DataVersion");
 	}
 
-	public static void freeze() {
-		if (!frozen) {
-			modDataFixers = Collections.unmodifiableMap(modDataFixers);
+	private static QuiltDataFixesInternals instance;
+
+	public static @NotNull QuiltDataFixesInternals get() {
+		if (instance == null) {
+			Schema latestVanillaSchema;
+			try {
+				latestVanillaSchema = Schemas.getFixer()
+						.getSchema(DataFixUtils.makeKey(SharedConstants.getGameVersion().getWorldVersionData().getDataVersion()));
+			} catch (Exception e) {
+				latestVanillaSchema = null;
+			}
+
+			if (latestVanillaSchema == null) {
+				// either this Minecraft version is horribly broken, or someone is suppressing DFU initialization
+				// use a no-op impl
+				instance = new NopQuiltDataFixesInternals();
+			} else {
+				instance = new QuiltDataFixesInternalsImpl(latestVanillaSchema);
+			}
 		}
 
-		frozen = true;
+		return instance;
 	}
+
+	public abstract void registerFixer(@NotNull String modId,
+			@Range(from = 0, to = Integer.MAX_VALUE) int currentVersion,
+			@NotNull DataFixer dataFixer);
+
+	public abstract @Nullable DataFixerEntry getFixerEntry(@NotNull String modId);
+
+	@Contract(value = "-> new", pure = true)
+	public abstract @NotNull Schema createBaseSchema();
+
+	public abstract @NotNull NbtCompound updateWithAllFixers(@NotNull DataFixTypes dataFixTypes,
+			@NotNull NbtCompound compound);
+
+	@Contract("_ -> new")
+	public abstract @NotNull NbtCompound addModDataVersions(@NotNull NbtCompound compound);
+
+	public abstract void freeze();
 
 	@Contract(pure = true)
-	public static boolean isFrozen() {
-		return frozen;
-	}
-
-	public record DataFixerEntry(DataFixer dataFixer, int currentVersion) { }
+	public abstract boolean isFrozen();
 }

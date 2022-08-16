@@ -37,6 +37,6 @@ public abstract class NbtHelperMixin {
 	)
 	private static void updateDataWithFixers(DataFixer fixer, DataFixTypes fixTypes, NbtCompound compound,
 											 int oldVersion, int targetVersion, CallbackInfoReturnable<NbtCompound> cir) {
-		cir.setReturnValue(QuiltDataFixesInternals.updateWithAllFixers(fixTypes, cir.getReturnValue()));
+		cir.setReturnValue(QuiltDataFixesInternals.get().updateWithAllFixers(fixTypes, cir.getReturnValue()));
 	}
 }

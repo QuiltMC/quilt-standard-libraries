@@ -15,10 +15,10 @@ qslModule {
 	}
 	entrypoints {
 		events {
-			values = ["org.quiltmc.qsl.datafixerupper.impl.Initializer"]
+			values = ["org.quiltmc.qsl.datafixerupper.impl.ServerFreezer"]
 		}
 		client_events {
-			values = ["org.quiltmc.qsl.datafixerupper.impl.client.ClientInitializer"]
+			values = ["org.quiltmc.qsl.datafixerupper.impl.client.ClientFreezer"]
 		}
 	}
 }

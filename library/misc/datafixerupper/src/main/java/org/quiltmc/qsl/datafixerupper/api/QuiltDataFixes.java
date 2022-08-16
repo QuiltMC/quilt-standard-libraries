@@ -16,9 +16,6 @@
 
 package org.quiltmc.qsl.datafixerupper.api;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Objects.requireNonNull;
-
 import java.util.Optional;
 import java.util.function.BiFunction;
 
@@ -34,6 +31,9 @@ import net.minecraft.util.Util;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.datafixerupper.impl.QuiltDataFixesInternals;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Provides methods to register custom {@link DataFixer}s.
@@ -53,7 +53,7 @@ public final class QuiltDataFixes {
 	public static final BiFunction<Integer, Schema, Schema> BASE_SCHEMA = (version, parent) -> {
 		checkArgument(version == 0, "version must be 0");
 		checkArgument(parent == null, "parent must be null");
-		return QuiltDataFixesInternals.createBaseSchema();
+		return QuiltDataFixesInternals.get().createBaseSchema();
 	};
 
 	/**
@@ -75,7 +75,7 @@ public final class QuiltDataFixes {
 			throw new IllegalStateException("Can't register data fixer after registry is frozen");
 		}
 
-		QuiltDataFixesInternals.registerFixer(modId, currentVersion, dataFixer);
+		QuiltDataFixesInternals.get().registerFixer(modId, currentVersion, dataFixer);
 	}
 
 	/**
@@ -117,7 +117,7 @@ public final class QuiltDataFixes {
 	public static @NotNull Optional<DataFixer> getFixer(@NotNull String modId) {
 		requireNonNull(modId, "modId cannot be null");
 
-		QuiltDataFixesInternals.DataFixerEntry entry = QuiltDataFixesInternals.getFixerEntry(modId);
+		QuiltDataFixesInternals.DataFixerEntry entry = QuiltDataFixesInternals.get().getFixerEntry(modId);
 		if (entry == null) {
 			return Optional.empty();
 		}
@@ -147,6 +147,6 @@ public final class QuiltDataFixes {
 	 */
 	@Contract(pure = true)
 	public static boolean isFrozen() {
-		return QuiltDataFixesInternals.isFrozen();
+		return QuiltDataFixesInternals.get().isFrozen();
 	}
 }
