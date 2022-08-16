@@ -46,6 +46,7 @@ import net.minecraft.util.registry.SimpleRegistry;
 import org.quiltmc.qsl.registry.impl.event.MutableRegistryEntryContextImpl;
 import org.quiltmc.qsl.registry.impl.event.RegistryEventStorage;
 import org.quiltmc.qsl.registry.impl.sync.RegistryFlag;
+import org.quiltmc.qsl.registry.impl.sync.ServerRegistrySync;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
 
 /**
@@ -152,7 +153,10 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 			var status = Status.VANILLA;
 			var optional = RegistryFlag.isOptional(this.quilt$flags);
 			for (var entry : this.rawIdToEntry) {
-				if (entry != null && !entry.getRegistryKey().getValue().getNamespace().equals("minecraft")) {
+				if (entry == null) continue;
+
+				var namespace = entry.getRegistryKey().getValue().getNamespace();
+				if (!ServerRegistrySync.isNamespaceVanilla(namespace)) {
 					var flag = this.quilt$entryToFlag.getOrDefault(entry.value(), (byte) 0);
 					if (!RegistryFlag.isSkipped(flag)) {
 						if (RegistryFlag.isOptional(flag)) {
