@@ -31,7 +31,7 @@ public abstract class StructureMixin {
 	@Inject(method = "writeNbt", at = @At("TAIL"), cancellable = true)
 	private void addModDataVersions(NbtCompound compound, CallbackInfoReturnable<NbtCompound> cir) {
 		NbtCompound out = cir.getReturnValue();
-		QuiltDataFixesInternals.getUnsynchronized().addModDataVersions(out);
+		QuiltDataFixesInternals.get().addModDataVersions(out);
 		cir.setReturnValue(out);
 	}
 }
