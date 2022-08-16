@@ -45,7 +45,7 @@ public abstract class ItemRendererMixin {
 	@Inject(method = "renderGuiItemOverlay(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V",
 			at = @At("HEAD"), cancellable = true)
 	private void quilt$customizeItemOverlay(TextRenderer renderer, ItemStack stack, int x, int y, String countLabel,
-											CallbackInfo ci) {
+			CallbackInfo ci) {
 		if (stack.isEmpty()) {
 			return;
 		}
@@ -90,14 +90,14 @@ public abstract class ItemRendererMixin {
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/VertexConsumerProvider$Immediate;draw()V",
 					shift = At.Shift.AFTER))
 	private void quilt$renderCountLabel_popMatrixStack(TextRenderer renderer, ItemStack stack, int x, int y, String countLabel,
-													   CallbackInfo ci) {
+			CallbackInfo ci) {
 		quilt$threadData.get().matrices().pop();
 	}
 
 	@Inject(method = "renderGuiItemOverlay(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V",
 			at = @At("TAIL"))
 	private void quilt$invokePostRenderOverlay(TextRenderer renderer, ItemStack stack, int x, int y, String countLabel,
-											   CallbackInfo ci) {
+			CallbackInfo ci) {
 		var threadData = quilt$threadData.get();
 		var matrices = threadData.matrices();
 		var quadBatchManager = threadData.quadBatchManager();
@@ -115,7 +115,7 @@ public abstract class ItemRendererMixin {
 
 	@Unique
 	private void renderCustomGuiItemOverlay(MatrixStack matrices, QuadBatchManagerImpl quadBatchManager,
-											TextRenderer textRenderer, ItemStack stack, @Nullable String countLabel) {
+			TextRenderer textRenderer, ItemStack stack, @Nullable String countLabel) {
 		if (stack.isEmpty()) {
 			return;
 		}
