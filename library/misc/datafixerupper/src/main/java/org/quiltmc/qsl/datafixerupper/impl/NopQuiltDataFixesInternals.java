@@ -26,7 +26,6 @@ import org.jetbrains.annotations.Range;
 import net.minecraft.datafixer.DataFixTypes;
 import net.minecraft.nbt.NbtCompound;
 
-// used when DataBreaker is detected
 @ApiStatus.Internal
 public final class NopQuiltDataFixesInternals extends QuiltDataFixesInternals {
 	private final Schema schema;

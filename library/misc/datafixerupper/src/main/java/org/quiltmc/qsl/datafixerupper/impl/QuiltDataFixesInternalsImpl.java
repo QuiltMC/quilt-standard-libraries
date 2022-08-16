@@ -19,7 +19,6 @@ package org.quiltmc.qsl.datafixerupper.impl;
 import java.util.Collections;
 import java.util.Map;
 
-import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.schemas.Schema;
 import com.mojang.serialization.Dynamic;
@@ -29,22 +28,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
-import net.minecraft.SharedConstants;
 import net.minecraft.datafixer.DataFixTypes;
-import net.minecraft.datafixer.Schemas;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtOps;
 
 @ApiStatus.Internal
 public final class QuiltDataFixesInternalsImpl extends QuiltDataFixesInternals {
-	private final Schema vanillaSchema;
+	private final @NotNull Schema latestVanillaSchema;
 
 	private Map<String, DataFixerEntry> modDataFixers;
 	private boolean frozen;
 
-	public QuiltDataFixesInternalsImpl() {
-		this.vanillaSchema = Schemas.getFixer()
-				.getSchema(DataFixUtils.makeKey(SharedConstants.getGameVersion().getWorldVersionData().getDataVersion()));
+	public QuiltDataFixesInternalsImpl(@NotNull Schema latestVanillaSchema) {
+		this.latestVanillaSchema = latestVanillaSchema;
 
 		this.modDataFixers = new Object2ReferenceOpenHashMap<>();
 		this.frozen = false;
@@ -68,7 +64,7 @@ public final class QuiltDataFixesInternalsImpl extends QuiltDataFixesInternals {
 
 	@Override
 	public @NotNull Schema createBaseSchema() {
-		return new Schema(0, this.vanillaSchema);
+		return new Schema(0, this.latestVanillaSchema);
 	}
 
 	@Override

@@ -16,14 +16,15 @@
 
 package org.quiltmc.qsl.datafixerupper.impl;
 
+import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.schemas.Schema;
 import org.jetbrains.annotations.*;
 
+import net.minecraft.SharedConstants;
 import net.minecraft.datafixer.DataFixTypes;
+import net.minecraft.datafixer.Schemas;
 import net.minecraft.nbt.NbtCompound;
-
-import org.quiltmc.loader.api.QuiltLoader;
 
 @ApiStatus.Internal
 public abstract class QuiltDataFixesInternals {
@@ -39,10 +40,20 @@ public abstract class QuiltDataFixesInternals {
 
 	public static @NotNull QuiltDataFixesInternals get() {
 		if (instance == null) {
-			if (QuiltLoader.isModLoaded("databreaker")) {
+			Schema latestVanillaSchema;
+			try {
+				latestVanillaSchema = Schemas.getFixer()
+						.getSchema(DataFixUtils.makeKey(SharedConstants.getGameVersion().getWorldVersionData().getDataVersion()));
+			} catch (Exception e) {
+				latestVanillaSchema = null;
+			}
+
+			if (latestVanillaSchema == null) {
+				// either this Minecraft version is horribly broken, or someone is suppressing DFU initialization
+				// use a no-op impl
 				instance = new NopQuiltDataFixesInternals();
 			} else {
-				instance = new QuiltDataFixesInternalsImpl();
+				instance = new QuiltDataFixesInternalsImpl(latestVanillaSchema);
 			}
 		}
 
