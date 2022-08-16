@@ -23,9 +23,9 @@ import net.minecraft.server.MinecraftServer;
 import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 
 @ApiStatus.Internal
-public final class Initializer implements ServerLifecycleEvents.Starting {
+public final class ServerFreezer implements ServerLifecycleEvents.Starting {
 	@Override
 	public void startingServer(MinecraftServer server) {
-		QuiltDataFixesInternals.freeze();
+		QuiltDataFixesInternals.get().freeze();
 	}
 }
