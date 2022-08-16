@@ -152,7 +152,8 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 			var status = Status.VANILLA;
 			var optional = RegistryFlag.isOptional(this.quilt$flags);
 			for (var entry : this.rawIdToEntry) {
-				if (entry != null && !entry.getRegistryKey().getValue().getNamespace().equals("minecraft")) {
+				var namespace = entry.getRegistryKey().getValue().getNamespace();
+				if (entry != null && !namespace.equals("minecraft") && !namespace.equals("brigadier")) {
 					var flag = this.quilt$entryToFlag.getOrDefault(entry.value(), (byte) 0);
 					if (!RegistryFlag.isSkipped(flag)) {
 						if (RegistryFlag.isOptional(flag)) {
