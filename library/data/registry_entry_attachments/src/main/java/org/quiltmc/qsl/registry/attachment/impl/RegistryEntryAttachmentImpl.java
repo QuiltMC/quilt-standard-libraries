@@ -117,9 +117,7 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 			ClientSideGuard.assertAccessAllowed();
 		}
 
-		while (this.mirrors.containsKey(entry)) {
-			entry = this.mirrors.get(entry);
-		}
+		entry = this.unreflect(entry);
 
 		V value = RegistryEntryAttachmentHolder.getData(this.registry).getValue(this, entry);
 		if (value != null) {
@@ -140,9 +138,7 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 			ClientSideGuard.assertAccessAllowed();
 		}
 
-		while (this.tagMirrors.containsKey(key)) {
-			key = this.tagMirrors.get(key);
-		}
+		key = this.unreflect(key);
 
 		V value = (V) RegistryEntryAttachmentHolder.getData(this.registry).valueTagTable.get(this, key);
 		if (value != null) {
