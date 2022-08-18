@@ -40,6 +40,8 @@ public interface QuiltArmorMaterialExtensions {
 	 * @see ArmorTextureUtils#getArmorTextureSuffix(boolean, String)
 	 * @return the base texture identifier
 	 */
+	// has a "default" impl in ArmorMaterialMixin
+	// not actually marked as default, since people NEED to implement this
 	@Environment(EnvType.CLIENT)
 	@NotNull Identifier getTexture();
 }

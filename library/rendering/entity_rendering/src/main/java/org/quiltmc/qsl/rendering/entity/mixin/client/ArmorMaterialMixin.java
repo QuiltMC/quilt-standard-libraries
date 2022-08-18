@@ -16,18 +16,19 @@
 
 package org.quiltmc.qsl.rendering.entity.mixin.client;
 
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.qsl.rendering.entity.api.client.QuiltArmorMaterialExtensions;
 import org.quiltmc.qsl.rendering.entity.impl.client.FallbackArmorTextureProvider;
 
 @Mixin(ArmorMaterial.class)
-public abstract class ArmorMaterialMixin {
-	// @Override
-	@SuppressWarnings("unused")
-	public Identifier getTexture() {
+public abstract class ArmorMaterialMixin implements QuiltArmorMaterialExtensions {
+	@Override
+	public @NotNull Identifier getTexture() {
 		return FallbackArmorTextureProvider.getArmorTexture((ArmorMaterial) this);
 	}
 }
