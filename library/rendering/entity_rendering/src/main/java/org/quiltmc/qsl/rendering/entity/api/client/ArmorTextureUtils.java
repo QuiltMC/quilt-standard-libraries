@@ -21,12 +21,24 @@ import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Provides utility methods for managing armor textures.
+ */
 @Environment(EnvType.CLIENT)
 public final class ArmorTextureUtils {
 	private ArmorTextureUtils() {
 		throw new UnsupportedOperationException("ArmorTextureUtils only contains static declarations.");
 	}
 
+	/**
+	 * Creates a vanilla-style armor texture suffix.
+	 * <p>
+	 * Note that this method does <em>not</em> add the {@code .png} file extension, you need to do this yourself.
+	 *
+	 * @param useSecondLayer {@code true} to use inner armor (leggings) texture, or {@code false} to use outer armor texture
+	 * @param suffix         suffix to append to the end of the texture name
+	 * @return the armor texture suffix
+	 */
 	public static @NotNull String getArmorTextureSuffix(boolean useSecondLayer, @Nullable String suffix) {
 		return "_layer_" + (useSecondLayer ? 2 : 1) + (suffix == null ? "" : "_" + suffix);
 	}

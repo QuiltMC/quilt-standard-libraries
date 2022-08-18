@@ -25,8 +25,21 @@ import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
+/**
+ * Extensions of {@link ArmorMaterial}, allowing for customizing the armor texture without having to use the
+ * {@link ArmorRenderingRegistry.TextureProvider} API.
+ */
 @InjectedInterface(ArmorMaterial.class)
 public interface QuiltArmorMaterialExtensions {
+	/**
+	 * Gets the base texture identifier to use for this armor material.
+	 * <p>
+	 * This will automatically have a {@code "_layer_1/2(_overlay).png"} suffix added to it, depending on the parameters
+	 * the vanilla game decides on.
+	 *
+	 * @see ArmorTextureUtils#getArmorTextureSuffix(boolean, String)
+	 * @return the base texture identifier
+	 */
 	@Environment(EnvType.CLIENT)
 	@NotNull Identifier getTexture();
 }
