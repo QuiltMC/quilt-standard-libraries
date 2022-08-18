@@ -1,0 +1,16 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Entity Interaction API"
+	moduleName = "interaction"
+	id = "quilt_entity_interaction"
+	description = "An API to support entity interaction events."
+	library = "entity"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+		}
+	}
+}
