@@ -21,8 +21,10 @@ import java.util.Set;
 
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -86,19 +88,24 @@ public abstract class RegistryEntryAttachmentHolder<R> {
 	}
 
 	public final Table<RegistryEntryAttachment<R, ?>, R, Object> valueTable;
+	public final Table<RegistryEntryAttachment<R, ?>, R, R> mirrorTable;
 	public final Table<RegistryEntryAttachment<R, ?>, TagKey<R>, Object> valueTagTable;
+	public final Table<RegistryEntryAttachment<R, ?>, TagKey<R>, TagKey<R>> mirrorTagTable;
 
 	@SuppressWarnings("UnstableApiUsage")
 	protected RegistryEntryAttachmentHolder() {
 		this.valueTable = Tables.newCustomTable(new Object2ReferenceOpenHashMap<>(), Reference2ObjectOpenHashMap::new);
+		this.mirrorTable = Tables.newCustomTable(new Object2ReferenceOpenHashMap<>(), Reference2ReferenceOpenHashMap::new);
 		this.valueTagTable = Tables.newCustomTable(new Object2ReferenceOpenHashMap<>(), Reference2ObjectOpenHashMap::new);
+		this.mirrorTagTable = Tables.newCustomTable(new Object2ReferenceOpenHashMap<>(), Object2ObjectOpenHashMap::new);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <V> V getValue(RegistryEntryAttachment<R, V> attachment, R entry) {
-		V value = (V) this.valueTable.get(attachment, entry); // Check for a direct value in valueTable
+	public <V> V getValue(RegistryEntryAttachmentImpl<R, V> attachment, R entry) {
+		// Check for a direct value in valueTable
+		V value = (V) this.valueTable.get(attachment, attachment.unreflect(entry));
 		if (value == null) { // If there is no value, check the valueTagTable
-			Map<TagKey<R>, Object> row = valueTagTable.row(attachment);
+			Map<TagKey<R>, Object> row = this.valueTagTable.row(attachment);
 			for (Map.Entry<TagKey<R>, Object> tagValue : row.entrySet()) { // Loop over the tags
 				for (Holder<R> holder : attachment.registry().getTagOrEmpty(tagValue.getKey())) { // Loop over the holders in the tag
 					if (holder.value().equals(entry)) { // The holder matches the entry
@@ -109,7 +116,7 @@ public abstract class RegistryEntryAttachmentHolder<R> {
 									attachment.id(),
 									tagValue.getKey().id());
 						}
-						value = (V) tagValue.getValue();
+						value = (V) this.valueTagTable.get(attachment, attachment.unreflect(tagValue.getKey()));
 					}
 				}
 			}

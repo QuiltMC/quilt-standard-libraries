@@ -283,6 +283,26 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	boolean remove(TagKey<R> tag);
 
 	/**
+	 * Mirrors the value associated with the source entry to the target entry.
+	 * <p>
+	 * This mirror mapping persists across reloads and {@link #put(Object, Object)}s!
+	 *
+	 * @param target the target entry to mirror the value onto
+	 * @param source the source entry to mirror the value from
+	 */
+	void mirror(R target, R source);
+
+	/**
+	 * Mirrors the value associated with the source tag to the target tag.
+	 * <p>
+	 * This mirror mapping persists across reloads and {@link #put(TagKey, Object)}s!
+	 *
+	 * @param target the target tag to mirror the value onto
+	 * @param source the source tag to mirror the value from
+	 */
+	void mirror(TagKey<R> target, TagKey<R> source);
+
+	/**
 	 * {@return this attachment's "value associated with entry" event}
 	 */
 	Event<ValueAdded<R, V>> valueAddedEvent();

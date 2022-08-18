@@ -28,6 +28,7 @@ public final class DataRegistryEntryAttachmentHolder<R> extends RegistryEntryAtt
 	 */
 	public void prepareReloadSource(ResourceType source) {
 		this.valueTagTable.rowKeySet().removeIf(attach -> attach.side().shouldLoad(source));
+		this.mirrorTable.rowKeySet().removeIf(attach -> attach.side().shouldLoad(source));
 		this.valueTable.rowKeySet().removeIf(attach -> attach.side().shouldLoad(source));
 	}
 }

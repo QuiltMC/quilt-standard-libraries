@@ -37,10 +37,7 @@ import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
-import org.quiltmc.qsl.registry.attachment.impl.ClientSideGuard;
-import org.quiltmc.qsl.registry.attachment.impl.Initializer;
-import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentHolder;
-import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentSync;
+import org.quiltmc.qsl.registry.attachment.impl.*;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 import org.quiltmc.qsl.resource.loader.api.reloader.SimpleResourceReloader;
@@ -184,12 +181,12 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 		}
 
 		@SuppressWarnings("unchecked")
-		private <R, V> void applyOne(RegistryEntryAttachment<R, V> attachment, AttachmentDictionary<R, V> attachAttachment) {
+		private <R, V> void applyOne(RegistryEntryAttachment<R, V> attachment, AttachmentDictionary<R, V> attachDict) {
 			var registry = attachment.registry();
 			Objects.requireNonNull(registry, "registry");
 
 			RegistryEntryAttachmentHolder<R> holder = RegistryEntryAttachmentHolder.getData(registry);
-			for (Map.Entry<AttachmentDictionary.ValueTarget, Object> attachmentEntry : attachAttachment.getMap().entrySet()) {
+			for (var attachmentEntry : attachDict.getMap().entrySet()) {
 				V value = (V) attachmentEntry.getValue();
 				AttachmentDictionary.ValueTarget target = attachmentEntry.getKey();
 				switch (target.type()) {
@@ -198,6 +195,20 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 					default -> throw new IllegalStateException("Unexpected value: " + target.type());
 				}
 			}
+
+			for (var mirrorEntry : attachDict.getMirrors().entrySet()) {
+				holder.mirrorTable.put(attachment,
+						attachment.registry().get(mirrorEntry.getKey()),
+						attachment.registry().get(mirrorEntry.getValue()));
+			}
+
+			for (var mirrorEntry : attachDict.getTagMirrors().entrySet()) {
+				holder.mirrorTagTable.put(attachment,
+						TagKey.of(attachment.registry().getKey(), mirrorEntry.getKey()),
+						TagKey.of(attachment.registry().getKey(), mirrorEntry.getValue()));
+			}
+
+			((RegistryEntryAttachmentImpl<R, V>) attachment).rebuildMirrorMaps();
 		}
 	}
 }

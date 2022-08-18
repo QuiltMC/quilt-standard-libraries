@@ -16,18 +16,14 @@
 
 package org.quiltmc.qsl.registry.attachment.impl.reloader;
 
-import static org.quiltmc.qsl.registry.attachment.impl.reloader.RegistryEntryAttachmentReloader.LOGGER;
-
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.Map;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.*;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 
 import net.minecraft.resource.Resource;
 import net.minecraft.util.Identifier;
@@ -37,15 +33,20 @@ import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
+import static org.quiltmc.qsl.registry.attachment.impl.reloader.RegistryEntryAttachmentReloader.LOGGER;
+
 final class AttachmentDictionary<R, V> {
 	private final Registry<R> registry;
 	private final RegistryEntryAttachment<R, V> attachment;
 	private final Map<ValueTarget, Object> map;
+	private final Map<Identifier, Identifier> mirrors, tagMirrors;
 
 	public AttachmentDictionary(Registry<R> registry, RegistryEntryAttachment<R, V> attachment) {
 		this.registry = registry;
 		this.attachment = attachment;
-		this.map = new HashMap<>();
+		this.map = new Object2ReferenceOpenHashMap<>();
+		this.mirrors = new Object2ObjectOpenHashMap<>();
+		this.tagMirrors = new Object2ObjectOpenHashMap<>();
 	}
 
 	public void put(Identifier id, Object value) {
@@ -68,10 +69,22 @@ final class AttachmentDictionary<R, V> {
 		return this.map;
 	}
 
+	public Map<Identifier, Identifier> getMirrors() {
+		return mirrors;
+	}
+
+	public Map<Identifier, Identifier> getTagMirrors() {
+		return tagMirrors;
+	}
+
 	public void processResource(Identifier resourceId, Resource resource) {
 		try {
 			boolean replace;
 			JsonElement values;
+			boolean replaceMirrors;
+			JsonObject mirrors;
+			boolean replaceTagMirrors;
+			JsonObject tagMirrors;
 
 			try (var reader = new InputStreamReader(resource.open())) {
 				JsonObject obj = JsonHelper.deserialize(reader);
@@ -84,6 +97,11 @@ final class AttachmentDictionary<R, V> {
 					throw new JsonSyntaxException("Expected values to be a JsonArray or JsonObject," +
 							"was " + JsonHelper.getType(values));
 				}
+
+				replaceMirrors = JsonHelper.getBoolean(obj, "replace_mirrors", false);
+				mirrors = JsonHelper.getObject(obj, "mirrors", null);
+				replaceTagMirrors = JsonHelper.getBoolean(obj, "replace_tag_mirrors", false);
+				tagMirrors = JsonHelper.getObject(obj, "tag_mirrors", null);
 			} catch (JsonSyntaxException e) {
 				LOGGER.error("Invalid JSON file " + resourceId + ", ignoring", e);
 				return;
@@ -99,6 +117,22 @@ final class AttachmentDictionary<R, V> {
 			} else if (values.isJsonObject()) {
 				this.handleObject(resourceId, resource, values.getAsJsonObject());
 			}
+
+			if (mirrors != null) {
+				if (replaceMirrors) {
+					this.mirrors.clear();
+				}
+
+				this.handleMirrors(this.mirrors, resourceId, mirrors, true);
+			}
+
+			if (tagMirrors != null) {
+				if (replaceTagMirrors) {
+					this.tagMirrors.clear();
+				}
+
+				this.handleMirrors(this.tagMirrors, resourceId, tagMirrors, false);
+			}
 		} catch (Exception e) {
 			LOGGER.error("Exception occurred while parsing " + resourceId + "!", e);
 		}
@@ -109,7 +143,7 @@ final class AttachmentDictionary<R, V> {
 			JsonElement entry = values.get(i);
 
 			if (!entry.isJsonObject()) {
-				LOGGER.error("Invalid element at index {} in values of {}: expected a JsonObject, was {}",
+				LOGGER.error("Invalid element at index {} in values of {}: expected an object, was {}",
 						i, resourceId, JsonHelper.getType(entry));
 				continue;
 			}
@@ -159,7 +193,7 @@ final class AttachmentDictionary<R, V> {
 
 			required = JsonHelper.getBoolean(entryO, "required", true);
 
-			if (!tagId && required && !registry.containsId(id)) {
+			if (!tagId && required && !this.registry.containsId(id)) {
 				LOGGER.error("Unregistered identifier in values of {}: '{}', ignoring", resourceId, id);
 				continue;
 			}
@@ -212,6 +246,46 @@ final class AttachmentDictionary<R, V> {
 				this.putTag(id, parsedValue);
 			} else {
 				this.put(id, parsedValue);
+			}
+		}
+	}
+
+	private void handleMirrors(Map<Identifier, Identifier> map, Identifier resourceId, JsonObject mirrors,
+			boolean checkRegistry) {
+		for (Map.Entry<String, JsonElement> entry : mirrors.entrySet()) {
+			Identifier target;
+			try {
+				target = new Identifier(entry.getKey());
+			} catch (InvalidIdentifierException e) {
+				LOGGER.error("Invalid identifier in mirrors of {}: '{}', ignoring",
+						resourceId, entry.getKey());
+				LOGGER.error("", e);
+				continue;
+			}
+
+			if (checkRegistry && !this.registry.containsId(target)) {
+				continue;
+			}
+
+			if (entry.getValue() instanceof JsonPrimitive prim && prim.isString()) {
+				Identifier source;
+				try {
+					source = new Identifier(prim.getAsString());
+				} catch (InvalidIdentifierException e) {
+					LOGGER.error("Invalid mirror '{}' in {}: invalid source identifier, ignoring",
+							target, resourceId);
+					LOGGER.error("", e);
+					continue;
+				}
+
+				if (checkRegistry && !this.registry.containsId(source)) {
+					continue;
+				}
+
+				map.put(target, source);
+			} else {
+				LOGGER.error("Invalid mirror '{}' in {}: expected string, got {}; ignoring",
+						target, resourceId, JsonHelper.getType(entry.getValue()));
 			}
 		}
 	}
