@@ -33,6 +33,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -79,6 +80,18 @@ public abstract class CreateWorldScreenMixin {
 	)
 	private static DataPackSettings replaceDefaultSettings() {
 		return ModResourcePackUtil.DEFAULT_SETTINGS;
+	}
+
+	@ModifyArg(
+			method = "createFromExisting",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/gui/screen/world/CreateWorldScreen;<init>(Lnet/minecraft/client/gui/screen/Screen;Lnet/minecraft/resource/pack/DataPackSettings;Lnet/minecraft/client/gui/screen/world/MoreOptionsDialog;)V"
+			),
+			index = 1
+	)
+	private static DataPackSettings onNew(DataPackSettings settings) {
+		return ModResourcePackUtil.createDefaultDataPackSettings(settings);
 	}
 
 	@Redirect(

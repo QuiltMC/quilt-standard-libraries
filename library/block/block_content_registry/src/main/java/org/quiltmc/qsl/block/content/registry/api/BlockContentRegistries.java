@@ -19,7 +19,6 @@ package org.quiltmc.qsl.block.content.registry.api;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -27,6 +26,8 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.event.GameEvent;
+
+import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 /**
  * Holds {@link RegistryEntryAttachment}s for different properties that blocks can hold.
@@ -50,7 +51,7 @@ public class BlockContentRegistries {
 	/**
 	 * A {@link RegistryEntryAttachment} for when blocks are right clicked by a shovel.
 	 * <p>
-	 * Values can be set via code and through a datapack with the file {@code data/quilt_block_content_registry/attachments/minecraft/block/flattenable_block.json}
+	 * Values can be set via code and through a data-pack with the file {@code data/quilt_block_content_registry/attachments/minecraft/block/flattenable_block.json}
 	 */
 	public static final RegistryEntryAttachment<Block, BlockState> FLATTENABLE_BLOCK = RegistryEntryAttachment
 			.builder(Registry.BLOCK,
@@ -62,7 +63,7 @@ public class BlockContentRegistries {
 	/**
 	 * A {@link RegistryEntryAttachment} for oxidizable blocks.
 	 * <p>
-	 * Values can be set via code and through a datapack with the file {@code data/quilt_block_content_registry/attachments/minecraft/block/oxidizable_block.json}
+	 * Values can be set via code and through a data-pack with the file {@code data/quilt_block_content_registry/attachments/minecraft/block/oxidizable_block.json}
 	 */
 	public static final RegistryEntryAttachment<Block, ReversibleBlockEntry> OXIDIZABLE_BLOCK = RegistryEntryAttachment
 			.builder(Registry.BLOCK,
@@ -74,7 +75,7 @@ public class BlockContentRegistries {
 	/**
 	 * A {@link RegistryEntryAttachment} for waxable blocks.
 	 * <p>
-	 * Values can be set via code and through a datapack with the file {@code data/quilt_block_content_registry/attachments/minecraft/block/waxable_block.json}
+	 * Values can be set via code and through a data-pack with the file {@code data/quilt_block_content_registry/attachments/minecraft/block/waxable_block.json}
 	 */
 	public static final RegistryEntryAttachment<Block, ReversibleBlockEntry> WAXABLE_BLOCK = RegistryEntryAttachment
 			.builder(Registry.BLOCK,
@@ -86,7 +87,7 @@ public class BlockContentRegistries {
 	/**
 	 * A {@link RegistryEntryAttachment} for strippable blocks.
 	 * <p>
-	 * Values can be set via code and through a datapack with the file {@code data/quilt_block_content_registry/attachments/minecraft/block/strippable_block.json}
+	 * Values can be set via code and through a data-pack with the file {@code data/quilt_block_content_registry/attachments/minecraft/block/strippable_block.json}
 	 */
 	public static final RegistryEntryAttachment<Block, Block> STRIPPABLE_BLOCK = RegistryEntryAttachment
 			.builder(Registry.BLOCK,
@@ -108,7 +109,7 @@ public class BlockContentRegistries {
 	/**
 	 * A {@link RegistryEntryAttachment} for flammable blocks.
 	 * <p>
-	 * Values can be set via code and through a datapack with the file {@code data/quilt_block_content_registry/attachments/minecraft/block/flammable_block.json}
+	 * Values can be set via code and through a data-pack with the file {@code data/quilt_block_content_registry/attachments/minecraft/block/flammable_block.json}
 	 */
 	public static final RegistryEntryAttachment<Block, FlammableBlockEntry> FLAMMABLE_BLOCK = RegistryEntryAttachment
 			.builder(Registry.BLOCK,
@@ -120,7 +121,7 @@ public class BlockContentRegistries {
 	/**
 	 * A {@link RegistryEntryAttachment} for sculk frequencies.
 	 * <p>
-	 * Values can be set via code and through a datapack with the file {@code data/quilt_block_content_registry/attachments/minecraft/game_event/sculk_frequency.json}
+	 * Values can be set via code and through a data-pack with the file {@code data/quilt_block_content_registry/attachments/minecraft/game_event/sculk_frequency.json}
 	 */
 	public static final RegistryEntryAttachment<GameEvent, Integer> SCULK_FREQUENCY = RegistryEntryAttachment
 			.builder(Registry.GAME_EVENT,

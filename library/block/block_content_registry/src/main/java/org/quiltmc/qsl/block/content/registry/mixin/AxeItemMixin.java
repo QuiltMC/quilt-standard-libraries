@@ -30,11 +30,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.AxeItem;
-import net.minecraft.item.ShovelItem;
 
 @Mixin(AxeItem.class)
 public class AxeItemMixin {
-	@Mutable @Final @Shadow
+	@Mutable
+	@Final
+	@Shadow
 	public static Map<Block, BlockState> STRIPPED_BLOCKS;
 
 	@Inject(method = "<clinit>", at = @At("TAIL"))
