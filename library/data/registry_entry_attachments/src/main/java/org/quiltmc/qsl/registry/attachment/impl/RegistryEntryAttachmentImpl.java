@@ -277,6 +277,7 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	}
 
 	public void rebuildMirrorMaps() {
+		// TODO check for mirror loops (one -> two, two -> one)
 		this.mirrors.clear();
 		this.mirrors.putAll(RegistryEntryAttachmentHolder.getBuiltin(this.registry).mirrorTable.row(this));
 		this.mirrors.putAll(RegistryEntryAttachmentHolder.getData(this.registry).mirrorTable.row(this));

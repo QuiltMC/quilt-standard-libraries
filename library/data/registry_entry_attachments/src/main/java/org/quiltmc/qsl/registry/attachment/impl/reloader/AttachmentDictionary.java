@@ -282,6 +282,11 @@ final class AttachmentDictionary<R, V> {
 					continue;
 				}
 
+				if (source.equals(target)) {
+					LOGGER.error("Invalid mirror '{}' in {}: can't mirror self, ignoring",
+							target, resourceId);
+				}
+
 				map.put(target, source);
 			} else {
 				LOGGER.error("Invalid mirror '{}' in {}: expected string, got {}; ignoring",
