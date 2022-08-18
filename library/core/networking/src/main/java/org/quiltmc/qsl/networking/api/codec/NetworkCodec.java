@@ -8,6 +8,8 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
+import com.mojang.datafixers.util.Unit;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
@@ -20,6 +22,9 @@ import org.quiltmc.qsl.networking.impl.codec.PrimitiveNetworkCodec;
 import org.quiltmc.qsl.networking.impl.codec.SimpleNetworkCodec;
 
 public interface NetworkCodec<A> {
+	// Unit
+	NetworkCodec<Unit> UNIT = constant(Unit.INSTANCE);
+
 	// Java Primitives
 	PrimitiveNetworkCodec.Boolean BOOLEAN = new PrimitiveNetworkCodec.Boolean();
 	PrimitiveNetworkCodec.Byte BYTE = new PrimitiveNetworkCodec.Byte();
@@ -31,18 +36,18 @@ public interface NetworkCodec<A> {
 	PrimitiveNetworkCodec.VarLong VAR_LONG = new PrimitiveNetworkCodec.VarLong();
 
 	// General
-	NetworkCodec<String> STRING = of(PacketByteBuf::readString, PacketByteBuf::writeString, "String");
-	NetworkCodec<UUID> UUID = of(PacketByteBuf::readUuid, PacketByteBuf::writeUuid, "UUID");
-	NetworkCodec<BitSet> BIT_SET = of(PacketByteBuf::readBitSet, PacketByteBuf::writeBitSet, "BitSet");
-	NetworkCodec<NbtCompound> NBT = of(PacketByteBuf::readNbt, PacketByteBuf::writeNbt, "NBT");
-	NetworkCodec<ItemStack> ITEM_STACK = of(PacketByteBuf::readItemStack, PacketByteBuf::writeItemStack, "ItemStack");
+	NetworkCodec<String> STRING = of(PacketByteBuf::writeString, PacketByteBuf::readString, "String");
+	NetworkCodec<UUID> UUID = of(PacketByteBuf::writeUuid, PacketByteBuf::readUuid, "UUID");
+	NetworkCodec<BitSet> BIT_SET = of(PacketByteBuf::writeBitSet, PacketByteBuf::readBitSet, "BitSet");
+	NetworkCodec<NbtCompound> NBT = of(PacketByteBuf::writeNbt, PacketByteBuf::readNbt, "NBT");
+	NetworkCodec<ItemStack> ITEM_STACK = of(PacketByteBuf::writeItemStack, PacketByteBuf::readItemStack, "ItemStack");
 
-	static <A> NetworkCodec<A> of(PacketByteBuf.Reader<A> decoder, PacketByteBuf.Writer<A> encoder, String name) {
-		return new SimpleNetworkCodec<>(decoder, encoder, name);
+	static <A> NetworkCodec<A> of(PacketByteBuf.Writer<A> encoder, PacketByteBuf.Reader<A> decoder, String name) {
+		return new SimpleNetworkCodec<>(encoder, decoder, name);
 	}
 
-	static <A> NetworkCodec<A> of(PacketByteBuf.Reader<A> decoder, PacketByteBuf.Writer<A> encoder) {
-		return new SimpleNetworkCodec<>(decoder, encoder, null);
+	static <A> NetworkCodec<A> of(PacketByteBuf.Writer<A> encoder, PacketByteBuf.Reader<A> decoder) {
+		return new SimpleNetworkCodec<>(encoder, decoder, null);
 	}
 
 	static <A> NetworkCodec<List<A>> listOf(NetworkCodec<A> entryCodec, IntFunction<? extends List<A>> listFactory) {
@@ -50,7 +55,7 @@ public interface NetworkCodec<A> {
 	}
 
 	static <K, V> NetworkCodec<Map<K, V>> mapOf(NetworkCodec<K> keyCodec, NetworkCodec<V> valueCodec, IntFunction<? extends Map<K, V>> mapFactory) {
-		return new MapNetworkCodec<>(keyCodec, valueCodec, mapFactory);
+		return new MapNetworkCodec<>(entryOf(keyCodec, valueCodec), mapFactory);
 	}
 
 	static <K, V> NetworkCodec<Map<K, V>> mapOf(NetworkCodec<Map.Entry<K, V>> entryCodec, IntFunction<? extends Map<K, V>> mapFactory) {
@@ -69,6 +74,10 @@ public interface NetworkCodec<A> {
 		return new OptionalNetworkCodec<>(codec);
 	}
 
+	static <A> NetworkCodec<A> constant(A value) {
+		return of((buf, a) -> {}, (buf) -> value, "Constant[" + value + "]");
+	}
+
 	A decode(PacketByteBuf buf);
 
 	void encode(PacketByteBuf buf, A data);
@@ -83,8 +92,7 @@ public interface NetworkCodec<A> {
 
 	default <B> NetworkCodec<B> map(Function<? super B, ? extends A> from, Function<? super A, ? extends B> to) {
 		return new SimpleNetworkCodec<>(
-				byteBuf -> to.apply(this.decode(byteBuf)),
-				(byteBuf, data) -> this.encode(byteBuf, from.apply(data)),
+				(byteBuf, data) -> this.encode(byteBuf, from.apply(data)), byteBuf -> to.apply(this.decode(byteBuf)),
 				this + "[mapped]"
 		);
 	}

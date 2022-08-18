@@ -11,10 +11,6 @@ public class MapNetworkCodec<K, V> implements NetworkCodec<Map<K, V>> {
 	private final NetworkCodec<Map.Entry<K, V>> entryCodec;
 	private final IntFunction<? extends Map<K, V>> mapFactory;
 
-	public MapNetworkCodec(NetworkCodec<K> keyCodec, NetworkCodec<V> valueCodec, IntFunction<? extends Map<K, V>> mapFactory) {
-		this(new EntryCodec<>(keyCodec, valueCodec), mapFactory);
-	}
-
 	public MapNetworkCodec(NetworkCodec<Map.Entry<K, V> > entryCodec, IntFunction<? extends Map<K, V>> mapFactory) {
 		this.entryCodec = entryCodec;
 		this.mapFactory = mapFactory;

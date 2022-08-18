@@ -12,7 +12,7 @@ public class SimpleNetworkCodec<A> implements NetworkCodec<A> {
 	@Nullable
 	private final String name;
 
-	public SimpleNetworkCodec(PacketByteBuf.Reader<A> reader, PacketByteBuf.Writer<A> writer, @Nullable String name) {
+	public SimpleNetworkCodec(PacketByteBuf.Writer<A> writer, PacketByteBuf.Reader<A> reader, @Nullable String name) {
 		this.reader = reader;
 		this.writer = writer;
 		this.name = name;
