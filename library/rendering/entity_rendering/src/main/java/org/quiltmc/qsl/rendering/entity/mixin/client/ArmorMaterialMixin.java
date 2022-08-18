@@ -17,19 +17,17 @@
 package org.quiltmc.qsl.rendering.entity.mixin.client;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.qsl.rendering.entity.impl.client.FallbackArmorTextureProvider;
+
 @Mixin(ArmorMaterial.class)
 public abstract class ArmorMaterialMixin {
-	@Shadow
-	public abstract String getName();
-
 	// @Override
 	@SuppressWarnings("unused")
 	public Identifier getTexture() {
-		return new Identifier("textures/models/armor/" + getName());
+		return FallbackArmorTextureProvider.getArmorTexture((ArmorMaterial) this);
 	}
 }

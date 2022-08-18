@@ -45,7 +45,7 @@ public final class ClientEntityRenderingTestmod implements ClientModInitializer,
 
 	@Override
 	public @NotNull Identifier getArmorTexture(@NotNull Identifier texture, @NotNull LivingEntity entity,
-			@NotNull ItemStack stack, @NotNull EquipmentSlot slot, boolean useSecondTexture, @Nullable String suffix) {
+			@NotNull ItemStack stack, @NotNull EquipmentSlot slot, boolean useSecondLayer, @Nullable String suffix) {
 		// simply redirect the texture, so it isn't in Minecraft's texture folder
 		return EntityRenderingTestmod.id(texture.getPath());
 	}

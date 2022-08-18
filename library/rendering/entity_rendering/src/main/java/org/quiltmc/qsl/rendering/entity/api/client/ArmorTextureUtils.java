@@ -27,7 +27,7 @@ public final class ArmorTextureUtils {
 		throw new UnsupportedOperationException("ArmorTextureUtils only contains static declarations.");
 	}
 
-	public static @NotNull String getArmorTextureSuffix(boolean useSecondTexture, @Nullable String suffix) {
-		return "_layer_" + (useSecondTexture ? 2 : 1) + (suffix == null ? "" : "_" + suffix) + ".png";
+	public static @NotNull String getArmorTextureSuffix(boolean useSecondLayer, @Nullable String suffix) {
+		return "_layer_" + (useSecondLayer ? 2 : 1) + (suffix == null ? "" : "_" + suffix);
 	}
 }

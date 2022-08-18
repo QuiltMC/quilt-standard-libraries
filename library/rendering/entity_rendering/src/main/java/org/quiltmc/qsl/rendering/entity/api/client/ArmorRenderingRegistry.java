@@ -78,17 +78,21 @@ public final class ArmorRenderingRegistry {
 	@Environment(EnvType.CLIENT)
 	public interface TextureProvider {
 		/**
-		 * @param useSecondTexture {@code false} to use helmet/chestplate texture, {@code true} to use leggings/boots texture
-		 * @param suffix           suffix to append to the end of the texture name
+		 * @param useSecondLayer {@code true} to use inner armor (leggings) texture, or {@code false} to use outer armor texture
+		 * @param suffix         suffix to append to the end of the texture name
 		 */
-		@NotNull Identifier getArmorTexture(@NotNull Identifier texture,
+		@NotNull Identifier getArmorTexture(
+				@NotNull Identifier texture,
 				@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot,
-				boolean useSecondTexture, @Nullable String suffix);
+				boolean useSecondLayer, @Nullable String suffix
+		);
 	}
 
 	@Environment(EnvType.CLIENT)
 	public interface ModelProvider {
-		@NotNull BipedEntityModel<LivingEntity> getArmorModel(@NotNull BipedEntityModel<LivingEntity> model,
-				@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot);
+		@NotNull BipedEntityModel<LivingEntity> getArmorModel(
+				@NotNull BipedEntityModel<LivingEntity> model,
+				@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot
+		);
 	}
 }
