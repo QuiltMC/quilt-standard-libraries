@@ -25,6 +25,7 @@ import org.jetbrains.annotations.ApiStatus;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
@@ -45,6 +46,10 @@ public final class ServerRegistrySync {
 		}
 
 		supportFabric = RegistryConfig.INSTANCE.registry_sync.support_fabric_api_protocol;
+	}
+
+	public static boolean isNamespaceVanilla(String namespace) {
+		return namespace.equals(Identifier.DEFAULT_NAMESPACE) || namespace.equals("brigadier");
 	}
 
 	public static boolean shouldSync() {

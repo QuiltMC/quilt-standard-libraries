@@ -30,6 +30,6 @@ import org.quiltmc.qsl.datafixerupper.impl.QuiltDataFixesInternals;
 public abstract class PlayerEntityMixin {
 	@Inject(method = "writeCustomDataToNbt", at = @At("RETURN"))
 	public void addModDataVersions(NbtCompound compound, CallbackInfo ci) {
-		QuiltDataFixesInternals.addModDataVersions(compound);
+		QuiltDataFixesInternals.get().addModDataVersions(compound);
 	}
 }
