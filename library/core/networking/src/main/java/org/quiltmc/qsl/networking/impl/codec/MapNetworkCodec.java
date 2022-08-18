@@ -1,5 +1,6 @@
 package org.quiltmc.qsl.networking.impl.codec;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.IntFunction;
 
@@ -79,6 +80,14 @@ public class MapNetworkCodec<K, V> implements NetworkCodec<Map<K, V>> {
 		public void encode(PacketByteBuf buf, Map.Entry<K, V> data) {
 			this.keyCodec.encode(buf, data.getKey());
 			this.valueCodec.encode(buf, data.getValue());
+		}
+
+		public MapNetworkCodec<K, V> intoMap() {
+			return this.intoMap(HashMap::new);
+		}
+
+		public MapNetworkCodec<K, V> intoMap(IntFunction<Map<K ,V>> mapFactory) {
+			return NetworkCodec.mapOf(this, mapFactory);
 		}
 
 		@Override

@@ -6,7 +6,7 @@ import net.minecraft.network.PacketByteBuf;
 
 import org.quiltmc.qsl.networking.api.codec.NetworkCodec;
 
-public class OptionalNetworkCodec<A> implements NetworkCodec<Optional<A>> {
+public final class OptionalNetworkCodec<A> implements NetworkCodec<Optional<A>> {
 	private final NetworkCodec<A> entryCodec;
 
 	public OptionalNetworkCodec(NetworkCodec<A> entryCodec) {

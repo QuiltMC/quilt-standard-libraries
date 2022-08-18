@@ -1,7 +1,5 @@
 package org.quiltmc.qsl.networking.impl.codec;
 
-import org.jetbrains.annotations.Nullable;
-
 import net.minecraft.network.PacketByteBuf;
 
 import org.quiltmc.qsl.networking.api.codec.NetworkCodec;
@@ -9,13 +7,10 @@ import org.quiltmc.qsl.networking.api.codec.NetworkCodec;
 public class SimpleNetworkCodec<A> implements NetworkCodec<A> {
 	private final PacketByteBuf.Reader<A> reader;
 	private final PacketByteBuf.Writer<A> writer;
-	@Nullable
-	private final String name;
 
-	public SimpleNetworkCodec(PacketByteBuf.Writer<A> writer, PacketByteBuf.Reader<A> reader, @Nullable String name) {
+	public SimpleNetworkCodec(PacketByteBuf.Writer<A> writer, PacketByteBuf.Reader<A> reader) {
 		this.reader = reader;
 		this.writer = writer;
-		this.name = name;
 	}
 
 	@Override
@@ -40,6 +35,6 @@ public class SimpleNetworkCodec<A> implements NetworkCodec<A> {
 
 	@Override
 	public String toString() {
-		return this.name != null ? "SimpleNetworkCodec[" + this.name + "]" : "SimpleNetworkCodec";
+		return "SimpleNetworkCodec";
 	}
 }

@@ -1,5 +1,6 @@
 package org.quiltmc.qsl.networking.impl.codec;
 
+import java.util.function.Consumer;
 import java.util.function.IntFunction;
 
 import net.minecraft.network.PacketByteBuf;
@@ -36,8 +37,16 @@ public class ArrayNetworkCodec<A> implements NetworkCodec<A[]> {
 		}
 	}
 
+	public void forEach(PacketByteBuf buf, Consumer<? super A> action) {
+		int size = buf.readVarInt();
+
+		for (int i = 0; i < size; i++) {
+			action.accept(this.entryCodec.decode(buf));
+		}
+	}
+
 	@Override
 	public String toString() {
-		return "ArrayNetworkCodec[" + this.entryCodec + "]";
+		return "ArrayNetworkCodec[%s]".formatted(this.entryCodec);
 	}
 }

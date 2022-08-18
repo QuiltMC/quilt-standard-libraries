@@ -1,5 +1,13 @@
 package org.quiltmc.qsl.networking.impl.codec;
 
+import java.util.function.DoubleFunction;
+import java.util.function.IntFunction;
+import java.util.function.LongFunction;
+import java.util.function.Predicate;
+import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntFunction;
+import java.util.function.ToLongFunction;
+
 import net.minecraft.network.PacketByteBuf;
 
 import org.quiltmc.qsl.networking.api.codec.NetworkCodec;
@@ -24,9 +32,20 @@ public final class PrimitiveNetworkCodec {
 			buf.writeBoolean(data);
 		}
 
+		public <A> NetworkCodec<A> mapBoolean(Predicate<A> to, FromBoolean<A> from) {
+			return new SimpleNetworkCodec<>(
+					(byteBuf, a) -> this.encodeBoolean(byteBuf, to.test(a)),
+					byteBuf -> from.fromBoolean(this.decodeBoolean(byteBuf))
+			);
+		}
+
 		@Override
 		public String toString() {
 			return "Boolean";
+		}
+
+		public interface FromBoolean<A> {
+			A fromBoolean(boolean b);
 		}
 	}
 
@@ -49,9 +68,24 @@ public final class PrimitiveNetworkCodec {
 			buf.writeByte(data);
 		}
 
+		public <A> NetworkCodec<A> mapByte(ToByte<A> to, FromByte<A> from) {
+			return new SimpleNetworkCodec<>(
+					(byteBuf, a) -> this.encodeByte(byteBuf, to.toByte(a)),
+					byteBuf -> from.fromByte(this.decodeByte(byteBuf))
+			);
+		}
+
 		@Override
 		public String toString() {
 			return "Byte";
+		}
+
+		public interface ToByte<A> {
+			byte toByte(A a);
+		}
+
+		public interface FromByte<A> {
+			A fromByte(byte b);
 		}
 	}
 
@@ -74,9 +108,24 @@ public final class PrimitiveNetworkCodec {
 			buf.writeChar(data);
 		}
 
+		public <A> NetworkCodec<A> mapChar(ToChar<A> to, FromChar<A> from) {
+			return new SimpleNetworkCodec<>(
+					(byteBuf, a) -> this.encodeChar(byteBuf, to.toChar(a)),
+					byteBuf -> from.fromChar(this.decodeChar(byteBuf))
+			);
+		}
+
 		@Override
 		public String toString() {
 			return "Char";
+		}
+
+		public interface ToChar<A> {
+			char toChar(A a);
+		}
+
+		public interface FromChar<A> {
+			A fromChar(char c);
 		}
 	}
 
@@ -99,9 +148,24 @@ public final class PrimitiveNetworkCodec {
 			buf.writeShort(data);
 		}
 
+		public <A> NetworkCodec<A> mapShort(ToShort<A> to, FromShort<A> from) {
+			return new SimpleNetworkCodec<>(
+					(byteBuf, a) -> this.encodeShort(byteBuf, to.toShort(a)),
+					byteBuf -> from.fromShort(this.decodeShort(byteBuf))
+			);
+		}
+
 		@Override
 		public String toString() {
 			return "Short";
+		}
+
+		public interface ToShort<A> {
+			short toShort(A a);
+		}
+
+		public interface FromShort<A> {
+			A fromShort(short s);
 		}
 	}
 
@@ -122,6 +186,13 @@ public final class PrimitiveNetworkCodec {
 
 		public void encodeInt(PacketByteBuf buf, int data) {
 			buf.writeInt(data);
+		}
+
+		public <A> NetworkCodec<A> mapInt(ToIntFunction<A> to, IntFunction<A> from) {
+			return new SimpleNetworkCodec<>(
+					(byteBuf, a) -> this.encodeInt(byteBuf, to.applyAsInt(a)),
+					byteBuf -> from.apply(this.decodeInt(byteBuf))
+			);
 		}
 
 		@Override
@@ -147,6 +218,46 @@ public final class PrimitiveNetworkCodec {
 		}
 	}
 
+	public static final class Float implements NetworkCodec<java.lang.Float> {
+		@Override
+		public java.lang.Float decode(PacketByteBuf buf) {
+			return this.decodeFloat(buf);
+		}
+
+		@Override
+		public void encode(PacketByteBuf buf, java.lang.Float data) {
+			this.encodeFloat(buf, data);
+		}
+
+		public float decodeFloat(PacketByteBuf buf) {
+			return buf.readFloat();
+		}
+
+		public void encodeFloat(PacketByteBuf buf, float data) {
+			buf.writeFloat(data);
+		}
+
+		public <A> NetworkCodec<A> mapFloat(ToFloatFunction<A> to, FromFloatFunction<A> from) {
+			return new SimpleNetworkCodec<>(
+					(byteBuf, a) -> this.encodeFloat(byteBuf, to.toFloat(a)),
+					byteBuf -> from.fromFloat(this.decodeFloat(byteBuf))
+			);
+		}
+
+		@Override
+		public String toString() {
+			return "Float";
+		}
+
+		public interface ToFloatFunction<A> {
+			float toFloat(A a);
+		}
+
+		public interface FromFloatFunction<A> {
+			A fromFloat(float f);
+		}
+	}
+
 	public static class Long implements NetworkCodec<java.lang.Long> {
 		@Override
 		public java.lang.Long decode(PacketByteBuf buf) {
@@ -164,6 +275,13 @@ public final class PrimitiveNetworkCodec {
 
 		public void encodeLong(PacketByteBuf buf, long data) {
 			buf.writeLong(data);
+		}
+
+		public <A> NetworkCodec<A> mapLong(ToLongFunction<A> to, LongFunction<A> from) {
+			return new SimpleNetworkCodec<>(
+					(byteBuf, a) -> this.encodeLong(byteBuf, to.applyAsLong(a)),
+					byteBuf -> from.apply(this.decodeLong(byteBuf))
+			);
 		}
 
 		@Override
@@ -186,6 +304,38 @@ public final class PrimitiveNetworkCodec {
 		@Override
 		public String toString() {
 			return "VarLong";
+		}
+	}
+
+	public static final class Double implements NetworkCodec<java.lang.Double> {
+		@Override
+		public java.lang.Double decode(PacketByteBuf buf) {
+			return this.decodeDouble(buf);
+		}
+
+		@Override
+		public void encode(PacketByteBuf buf, java.lang.Double data) {
+			this.encodeDouble(buf, data);
+		}
+
+		public double decodeDouble(PacketByteBuf buf) {
+			return buf.readDouble();
+		}
+
+		public void encodeDouble(PacketByteBuf buf, double data) {
+			buf.writeDouble(data);
+		}
+
+		public <A> NetworkCodec<A> mapDouble(ToDoubleFunction<A> to, DoubleFunction<A> from) {
+			return new SimpleNetworkCodec<>(
+					(byteBuf, a) -> this.encodeDouble(byteBuf, to.applyAsDouble(a)),
+					byteBuf -> from.apply(this.decodeDouble(byteBuf))
+			).named("Double [mapped]");
+		}
+
+		@Override
+		public String toString() {
+			return "Double";
 		}
 	}
 }
