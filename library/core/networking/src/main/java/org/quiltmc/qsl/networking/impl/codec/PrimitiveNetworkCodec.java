@@ -25,7 +25,9 @@ public final class PrimitiveNetworkCodec {
 		public void encode(PacketByteBuf buf, Void data) { }
 	}
 
-	public static final class Boolean implements NetworkCodec<java.lang.Boolean> {
+	public enum Boolean implements NetworkCodec<java.lang.Boolean> {
+		INSTANCE;
+
 		@Override
 		public java.lang.Boolean decode(PacketByteBuf buf) {
 			return this.decodeBoolean(buf);
@@ -61,7 +63,9 @@ public final class PrimitiveNetworkCodec {
 		}
 	}
 
-	public static final class Byte implements NetworkCodec<java.lang.Byte> {
+	public enum Byte implements NetworkCodec<java.lang.Byte> {
+		INSTANCE;
+
 		@Override
 		public java.lang.Byte decode(PacketByteBuf buf) {
 			return this.decodeByte(buf);
@@ -101,7 +105,9 @@ public final class PrimitiveNetworkCodec {
 		}
 	}
 
-	public static final class Char implements NetworkCodec<Character> {
+	public enum Char implements NetworkCodec<Character> {
+		INSTANCE;
+
 		@Override
 		public Character decode(PacketByteBuf buf) {
 			return this.decodeChar(buf);
@@ -141,7 +147,9 @@ public final class PrimitiveNetworkCodec {
 		}
 	}
 
-	public static final class Short implements NetworkCodec<java.lang.Short> {
+	public enum Short implements NetworkCodec<java.lang.Short> {
+		INSTANCE;
+
 		@Override
 		public java.lang.Short decode(PacketByteBuf buf) {
 			return this.decodeShort(buf);
@@ -182,6 +190,10 @@ public final class PrimitiveNetworkCodec {
 	}
 
 	public static class Int implements NetworkCodec<Integer> {
+		public static final Int INSTANCE = new Int();
+
+		private Int() { }
+
 		@Override
 		public Integer decode(PacketByteBuf buf) {
 			return this.decodeInt(buf);
@@ -214,6 +226,9 @@ public final class PrimitiveNetworkCodec {
 	}
 
 	public static final class VarInt extends Int {
+		public static final VarInt INSTANCE = new VarInt();
+		private VarInt() { }
+
 		@Override
 		public int decodeInt(PacketByteBuf buf) {
 			return buf.readVarInt();
@@ -230,7 +245,9 @@ public final class PrimitiveNetworkCodec {
 		}
 	}
 
-	public static final class Float implements NetworkCodec<java.lang.Float> {
+	public enum Float implements NetworkCodec<java.lang.Float> {
+		INSTANCE;
+
 		@Override
 		public java.lang.Float decode(PacketByteBuf buf) {
 			return this.decodeFloat(buf);
@@ -271,6 +288,10 @@ public final class PrimitiveNetworkCodec {
 	}
 
 	public static class Long implements NetworkCodec<java.lang.Long> {
+		public static final Long INSTANCE = new Long();
+
+		private Long() { }
+
 		@Override
 		public java.lang.Long decode(PacketByteBuf buf) {
 			return this.decodeLong(buf);
@@ -303,6 +324,10 @@ public final class PrimitiveNetworkCodec {
 	}
 
 	public static final class VarLong extends Long {
+		public static final VarLong INSTANCE = new VarLong();
+
+		private VarLong() { }
+
 		@Override
 		public long decodeLong(PacketByteBuf buf) {
 			return buf.readVarLong();
@@ -319,7 +344,9 @@ public final class PrimitiveNetworkCodec {
 		}
 	}
 
-	public static final class Double implements NetworkCodec<java.lang.Double> {
+	public enum Double implements NetworkCodec<java.lang.Double> {
+		INSTANCE;
+
 		@Override
 		public java.lang.Double decode(PacketByteBuf buf) {
 			return this.decodeDouble(buf);

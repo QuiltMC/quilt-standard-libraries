@@ -6,8 +6,6 @@ import static org.quiltmc.qsl.networking.api.codec.NetworkCodec.NBT;
 import static org.quiltmc.qsl.networking.api.codec.NetworkCodec.constant;
 import static org.quiltmc.qsl.networking.api.codec.NetworkCodec.indexOf;
 
-import java.util.Optional;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
@@ -22,10 +20,14 @@ public class CodecTest implements ModInitializer {
 	public static final NetworkCodec<ItemStack> NON_EMPTY_ITEM_STACK = NetworkCodec.<ItemStack>builder().create(
 			indexOf(Registry.ITEM).fieldOf(ItemStack::getItem),
 			BYTE.fieldOf(stack -> (byte) stack.getCount()),
-			NBT.optional().fieldOf(stack -> Optional.ofNullable(stack.getNbt()))
+			NBT.fieldOf(ItemStack::getNbt)
 	).apply((item, count, nbt) -> {
 		var stack = new ItemStack(item, count);
-		nbt.ifPresent(stack::setNbt);
+
+		if (nbt != null) {
+			stack.setNbt(nbt);
+		}
+
 		return stack;
 	}).named("NonEmptyItemStack");
 
@@ -52,7 +54,7 @@ public class CodecTest implements ModInitializer {
 		sub.putDouble("Float", 3.14159265d);
 		acaciaStack.getOrCreateNbt().put("SubTag", sub);
 
-		var buf2 = ITEM_STACK.createBuffer(acaciaStack);
+		var buf2 = NetworkCodec.ITEM_STACK.createBuffer(acaciaStack);
 		System.out.println(buf2.readableBytes());
 
 		var res = ITEM_STACK.decode(buf2);

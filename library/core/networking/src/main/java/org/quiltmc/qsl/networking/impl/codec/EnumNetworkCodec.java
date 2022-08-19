@@ -5,12 +5,12 @@ import net.minecraft.network.PacketByteBuf;
 import org.quiltmc.qsl.networking.api.codec.NetworkCodec;
 
 public class EnumNetworkCodec<A extends Enum<A>> implements NetworkCodec<A> {
+	private final Class<A> clazz;
 	private final A[] values;
-	private final String className;
 
-	public EnumNetworkCodec(A[] values) {
-		this.values = values;
-		this.className = this.values.getClass().getComponentType().getSimpleName();
+	public EnumNetworkCodec(Class<A> clazz) {
+		this.clazz = clazz;
+		this.values = clazz.getEnumConstants();
 	}
 
 	@Override
@@ -25,6 +25,6 @@ public class EnumNetworkCodec<A extends Enum<A>> implements NetworkCodec<A> {
 
 	@Override
 	public String toString() {
-		return this.className;
+		return this.clazz.getSimpleName();
 	}
 }

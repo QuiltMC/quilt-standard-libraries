@@ -1,20 +1,28 @@
 package org.quiltmc.qsl.networking.api.codec;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
+import com.mojang.authlib.properties.Property;
 import com.mojang.datafixers.util.Unit;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.IndexedIterable;
+import net.minecraft.util.dynamic.GlobalPos;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3f;
@@ -40,24 +48,30 @@ public interface NetworkCodec<A> {
 
 	// Java Primitives
 	PrimitiveNetworkCodec.Null NULL = PrimitiveNetworkCodec.Null.INSTANCE;
-	PrimitiveNetworkCodec.Boolean BOOLEAN = new PrimitiveNetworkCodec.Boolean();
-	PrimitiveNetworkCodec.Byte BYTE = new PrimitiveNetworkCodec.Byte();
-	PrimitiveNetworkCodec.Char CHAR = new PrimitiveNetworkCodec.Char();
-	PrimitiveNetworkCodec.Short SHORT = new PrimitiveNetworkCodec.Short();
-	PrimitiveNetworkCodec.Int INT = new PrimitiveNetworkCodec.Int();
-	PrimitiveNetworkCodec.VarInt VAR_INT = new PrimitiveNetworkCodec.VarInt();
-	PrimitiveNetworkCodec.Float FLOAT = new PrimitiveNetworkCodec.Float();
-	PrimitiveNetworkCodec.Long LONG = new PrimitiveNetworkCodec.Long();
-	PrimitiveNetworkCodec.VarLong VAR_LONG = new PrimitiveNetworkCodec.VarLong();
-	PrimitiveNetworkCodec.Double DOUBLE = new PrimitiveNetworkCodec.Double();
+	PrimitiveNetworkCodec.Boolean BOOLEAN = PrimitiveNetworkCodec.Boolean.INSTANCE;
+	PrimitiveNetworkCodec.Byte BYTE = PrimitiveNetworkCodec.Byte.INSTANCE;
+	PrimitiveNetworkCodec.Short SHORT = PrimitiveNetworkCodec.Short.INSTANCE;
+	PrimitiveNetworkCodec.Int INT = PrimitiveNetworkCodec.Int.INSTANCE;
+	PrimitiveNetworkCodec.VarInt VAR_INT = PrimitiveNetworkCodec.VarInt.INSTANCE;
+	PrimitiveNetworkCodec.Long LONG = PrimitiveNetworkCodec.Long.INSTANCE;
+	PrimitiveNetworkCodec.VarLong VAR_LONG = PrimitiveNetworkCodec.VarLong.INSTANCE;
+	PrimitiveNetworkCodec.Float FLOAT = PrimitiveNetworkCodec.Float.INSTANCE;
+	PrimitiveNetworkCodec.Double DOUBLE = PrimitiveNetworkCodec.Double.INSTANCE;
 
 	// Useful Java Types
+	NetworkCodec<byte[]> BYTE_ARRAY = of(PacketByteBuf::writeByteArray, PacketByteBuf::readByteArray).named("ByteArray");
+	NetworkCodec<long[]> LONG_ARRAY = of(PacketByteBuf::writeLongArray, PacketByteBuf::readLongArray).named("LongArray");
 	NetworkCodec<String> STRING = of(PacketByteBuf::writeString, PacketByteBuf::readString).named("String");
 	NetworkCodec<UUID> UUID = of(PacketByteBuf::writeUuid, PacketByteBuf::readUuid).named("UUID");
 	NetworkCodec<BitSet> BIT_SET = of(PacketByteBuf::writeBitSet, PacketByteBuf::readBitSet).named("BitSet");
+	NetworkCodec<Date> DATE = of(PacketByteBuf::writeDate, PacketByteBuf::readDate).named("Date");
+	NetworkCodec<Instant> INSTANT = of(PacketByteBuf::writeInstant, PacketByteBuf::readInstant).named("Instant");
 
 	// Minecraft Types
-	NetworkCodec<NbtCompound> NBT = of(PacketByteBuf::writeNbt, PacketByteBuf::readNbt).named("NBT");
+	NetworkCodec<Identifier> IDENTIFIER = of(PacketByteBuf::writeIdentifier, PacketByteBuf::readIdentifier)
+			.named("Identifier");
+	NetworkCodec<NbtCompound> NBT = of(PacketByteBuf::writeNbt, PacketByteBuf::readNbt)
+			.named("NBT");
 	NetworkCodec<ItemStack> ITEM_STACK = of(PacketByteBuf::writeItemStack, PacketByteBuf::readItemStack)
 			.named("ItemStack");
 	NetworkCodec<Vec3i> VEC_3I = NetworkCodec.<Vec3i>builder().create(
@@ -65,8 +79,14 @@ public interface NetworkCodec<A> {
 			VAR_INT.fieldOf(Vec3i::getY),
 			VAR_INT.fieldOf(Vec3i::getZ)
 	).apply(Vec3i::new).named("Vec3i");
-	NetworkCodec<BlockPos> BLOCK_POS = of(PacketByteBuf::writeBlockPos, PacketByteBuf::readBlockPos).named("BlockPos");
-	NetworkCodec<Direction> DIRECTION = enumOf(Direction.values()).named("Direction");
+	NetworkCodec<Direction> DIRECTION = enumOf(Direction.class)
+			.named("Direction");
+	NetworkCodec<BlockPos> BLOCK_POS = of(PacketByteBuf::writeBlockPos, PacketByteBuf::readBlockPos)
+			.named("BlockPos");
+	NetworkCodec<ChunkPos> CHUNK_POS = of(PacketByteBuf::writeChunkPos, PacketByteBuf::readChunkPos)
+			.named("ChunkPos");
+	NetworkCodec<GlobalPos> GLOBAL_POS = of(PacketByteBuf::writeGlobalPos, PacketByteBuf::readGlobalPos)
+			.named("GlobalPos");
 	NetworkCodec<Vec3d> VEC_3D = NetworkCodec.<Vec3d>builder().create(
 			DOUBLE.fieldOf(Vec3d::getX),
 			DOUBLE.fieldOf(Vec3d::getY),
@@ -77,6 +97,13 @@ public interface NetworkCodec<A> {
 			FLOAT.fieldOf(Vec3f::getY),
 			FLOAT.fieldOf(Vec3f::getZ)
 	).apply(Vec3f::new).named("Vec3f");
+	NetworkCodec<Text> TEXT = of(PacketByteBuf::writeText, PacketByteBuf::readText)
+			.named("Text");
+	NetworkCodec<Property> PROPERTY = of(PacketByteBuf::writeProperty, PacketByteBuf::readProperty)
+			.named("Property");
+	NetworkCodec<BlockHitResult> BLOCK_HIT_RESULT = of(
+			PacketByteBuf::writeBlockHitResult, PacketByteBuf::readBlockHitResult
+	).named("BlockHitResult");
 
 	static <A> NetworkCodec<A> of(PacketByteBuf.Writer<A> encoder, PacketByteBuf.Reader<A> decoder) {
 		return new SimpleNetworkCodec<>(encoder, decoder);
@@ -104,6 +131,10 @@ public interface NetworkCodec<A> {
 		return new MapNetworkCodec.EntryCodec<>(keyCodec, valueCodec);
 	}
 
+	static <A, B> PairNetworkCodec<A, B> pairOf(NetworkCodec<A> aCodec, NetworkCodec<B> bCodec) {
+		return new PairNetworkCodec<>(aCodec, bCodec);
+	}
+
 	static <A> OptionalNetworkCodec<A> optionalOf(NetworkCodec<A> codec) {
 		return new OptionalNetworkCodec<>(codec);
 	}
@@ -120,16 +151,12 @@ public interface NetworkCodec<A> {
 		return of((buf, a) -> { }, (buf) -> value).named("Constant[%s]".formatted(value));
 	}
 
-	static <A extends Enum<A>> EnumNetworkCodec<A> enumOf(A[] values) {
-		return new EnumNetworkCodec<>(values);
+	static <A extends Enum<A>> EnumNetworkCodec<A> enumOf(Class<A> enumClass) {
+		return new EnumNetworkCodec<>(enumClass);
 	}
 
 	static <A> NetworkCodecBuilder<A> builder() {
 		return new NetworkCodecBuilder<>();
-	}
-
-	static <A, B> PairNetworkCodec<A, B> pairOf(NetworkCodec<A> aCodec, NetworkCodec<B> bCodec) {
-		return new PairNetworkCodec<>(aCodec, bCodec);
 	}
 
 	A decode(PacketByteBuf buf);
@@ -155,11 +182,19 @@ public interface NetworkCodec<A> {
 	}
 
 	default ListNetworkCodec<A> list() {
-		return listOf(this, ArrayList::new);
+		return this.list(ArrayList::new);
+	}
+
+	default ListNetworkCodec<A> list(IntFunction<? extends List<A>> listFactory) {
+		return listOf(this, listFactory);
 	}
 
 	default <V> MapNetworkCodec.EntryCodec<A, V> zip(NetworkCodec<V> valueCodec) {
 		return entryOf(this, valueCodec);
+	}
+
+	default <B> PairNetworkCodec<A, B> pairWith(NetworkCodec<B> secondCodec) {
+		return pairOf(this, secondCodec);
 	}
 
 	default <B> NetworkCodec<B> map(Function<? super B, ? extends A> from, Function<? super A, ? extends B> to) {
@@ -175,10 +210,6 @@ public interface NetworkCodec<A> {
 
 	default NamedNetworkCodec<A> named(String name) {
 		return new NamedNetworkCodec<>(name, this);
-	}
-
-	default <B> PairNetworkCodec<A, B> pairWith(NetworkCodec<B> secondCodec) {
-		return pairOf(this, secondCodec);
 	}
 
 	default <B> DispatchedNetworkCodec<B, A> dispatch(
