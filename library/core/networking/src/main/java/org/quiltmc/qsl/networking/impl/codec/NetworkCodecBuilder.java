@@ -3,6 +3,7 @@ package org.quiltmc.qsl.networking.impl.codec;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.mojang.datafixers.util.Function10;
 import com.mojang.datafixers.util.Function11;
@@ -31,10 +32,9 @@ public final class NetworkCodecBuilder<R> {
 	public static <T> String codecName(List<Field<T, ?>> fields) {
 		return "Built[%s]".formatted(fields.stream()
 			.map(tField -> tField.codec.toString())
-			.reduce(new StringBuilder(), StringBuilder::append, StringBuilder::append)
-			.toString()
-	);
-}
+		    .collect(Collectors.joining(", "))
+		);
+	}
 
 	public NetworkCodec<R> createCodecBuilder(
 			List<Field<R, ?>> fields,

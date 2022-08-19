@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
 import com.mojang.datafixers.util.Unit;
 
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
@@ -21,10 +19,10 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3f;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.impl.codec.ArrayNetworkCodec;
+import org.quiltmc.qsl.networking.impl.codec.DispatchedNetworkCodec;
 import org.quiltmc.qsl.networking.impl.codec.EitherNetworkCodec;
 import org.quiltmc.qsl.networking.impl.codec.EnumNetworkCodec;
 import org.quiltmc.qsl.networking.impl.codec.ListNetworkCodec;
@@ -41,6 +39,7 @@ public interface NetworkCodec<A> {
 	NetworkCodec<Unit> UNIT = constant(Unit.INSTANCE);
 
 	// Java Primitives
+	PrimitiveNetworkCodec.Null NULL = PrimitiveNetworkCodec.Null.INSTANCE;
 	PrimitiveNetworkCodec.Boolean BOOLEAN = new PrimitiveNetworkCodec.Boolean();
 	PrimitiveNetworkCodec.Byte BYTE = new PrimitiveNetworkCodec.Byte();
 	PrimitiveNetworkCodec.Char CHAR = new PrimitiveNetworkCodec.Char();
@@ -78,22 +77,6 @@ public interface NetworkCodec<A> {
 			FLOAT.fieldOf(Vec3f::getY),
 			FLOAT.fieldOf(Vec3f::getZ)
 	).apply(Vec3f::new).named("Vec3f");
-
-	NetworkCodec<ItemStack> ITEMSTACK_2 = NetworkCodec.<ItemStack>builder().create(
-			BOOLEAN.fieldOf(ItemStack::isEmpty),
-			indexOf(Registry.ITEM).fieldOf(ItemStack::getItem),
-			BYTE.fieldOf(stack -> (byte)stack.getCount()),
-			NBT.optional().fieldOf(stack -> Optional.ofNullable(stack.getNbt()))
-	).apply((isEmpty, item, count, nbt) -> {
-		if (isEmpty) {
-			return ItemStack.EMPTY;
-		} else {
-			var stack = new ItemStack(item, count);
-			nbt.ifPresent(stack::setNbt);
-
-			return stack;
-		}
-	}).named("ItemStack");
 
 	static <A> NetworkCodec<A> of(PacketByteBuf.Writer<A> encoder, PacketByteBuf.Reader<A> decoder) {
 		return new SimpleNetworkCodec<>(encoder, decoder);
@@ -196,5 +179,15 @@ public interface NetworkCodec<A> {
 
 	default <B> PairNetworkCodec<A, B> pairWith(NetworkCodec<B> secondCodec) {
 		return pairOf(this, secondCodec);
+	}
+
+	default <B> DispatchedNetworkCodec<B, A> dispatch(
+			Function<? super B, A> transformer,
+			Function<? super A, NetworkCodec<B>> dispatch) {
+		return new DispatchedNetworkCodec<>(this, transformer, dispatch);
+	}
+
+	default NetworkCodec<A> base() {
+		return this;
 	}
 }

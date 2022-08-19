@@ -13,6 +13,18 @@ import net.minecraft.network.PacketByteBuf;
 import org.quiltmc.qsl.networking.api.codec.NetworkCodec;
 
 public final class PrimitiveNetworkCodec {
+	public enum Null implements NetworkCodec<Void> {
+		INSTANCE;
+
+		@Override
+		public Void decode(PacketByteBuf buf) {
+			return null;
+		}
+
+		@Override
+		public void encode(PacketByteBuf buf, Void data) { }
+	}
+
 	public static final class Boolean implements NetworkCodec<java.lang.Boolean> {
 		@Override
 		public java.lang.Boolean decode(PacketByteBuf buf) {

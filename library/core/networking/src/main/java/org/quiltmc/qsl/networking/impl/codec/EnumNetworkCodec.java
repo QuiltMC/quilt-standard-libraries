@@ -10,7 +10,7 @@ public class EnumNetworkCodec<A extends Enum<A>> implements NetworkCodec<A> {
 
 	public EnumNetworkCodec(A[] values) {
 		this.values = values;
-		this.className = this.values.length > 0 ? this.values[0].getClass().getName() : "";
+		this.className = this.values.getClass().getComponentType().getSimpleName();
 	}
 
 	@Override
