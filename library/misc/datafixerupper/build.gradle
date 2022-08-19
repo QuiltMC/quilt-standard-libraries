@@ -38,7 +38,29 @@ sourceSets {
 	}
 }
 
+repositories {
+	maven {
+		name = "Gegy's Maven"
+		url = "https://maven.gegy.dev/"
+	}
+
+	maven {
+		name = "Modrinth Maven"
+		url = "https://api.modrinth.com/maven"
+		content {
+			includeGroupByRegex "maven\\.modrinth"
+		}
+	}
+}
+
 dependencies {
+	// TODO dehardcode versions
+	modLocalRuntime "maven.modrinth:lazydfu:0.1.3"
+
+	/*testmodLocalRuntime("supercoder79:databreaker:0.2.10") {
+		exclude module: "fabric-loader"
+	}*/
+
 	testmodV1Implementation sourceSets.main.output
 	testmodV2Implementation sourceSets.main.output
 	testmodV3Implementation sourceSets.main.output
