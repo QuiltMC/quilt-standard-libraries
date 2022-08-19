@@ -9,10 +9,10 @@ import net.minecraft.network.PacketByteBuf;
 import org.quiltmc.qsl.networking.api.codec.NetworkCodec;
 
 public class MapNetworkCodec<K, V> implements NetworkCodec<Map<K, V>> {
-	private final NetworkCodec<Map.Entry<K, V>> entryCodec;
+	private final EntryCodec<K, V> entryCodec;
 	private final IntFunction<? extends Map<K, V>> mapFactory;
 
-	public MapNetworkCodec(NetworkCodec<Map.Entry<K, V> > entryCodec, IntFunction<? extends Map<K, V>> mapFactory) {
+	public MapNetworkCodec(EntryCodec<K, V> entryCodec, IntFunction<? extends Map<K, V>> mapFactory) {
 		this.entryCodec = entryCodec;
 		this.mapFactory = mapFactory;
 	}
@@ -23,8 +23,7 @@ public class MapNetworkCodec<K, V> implements NetworkCodec<Map<K, V>> {
 		Map<K, V> map = this.mapFactory.apply(size);
 
 		for (int i = 0; i < size; i++) {
-			Map.Entry<K, V> entry = this.entryCodec.decode(buf);
-			map.put(entry.getKey(), entry.getValue());
+			map.put(this.entryCodec.decodeKey(buf), this.entryCodec.decodeValue(buf));
 		}
 
 		return map;
@@ -76,10 +75,23 @@ public class MapNetworkCodec<K, V> implements NetworkCodec<Map<K, V>> {
 			};
 		}
 
+		public K decodeKey(PacketByteBuf buf) {
+			return this.keyCodec.decode(buf);
+		}
+
+		public V decodeValue(PacketByteBuf buf) {
+			return this.valueCodec.decode(buf);
+		}
+
 		@Override
 		public void encode(PacketByteBuf buf, Map.Entry<K, V> data) {
 			this.keyCodec.encode(buf, data.getKey());
 			this.valueCodec.encode(buf, data.getValue());
+		}
+
+		public void encodeKeyValue(PacketByteBuf buf, K key, V value) {
+			this.keyCodec.encode(buf, key);
+			this.valueCodec.encode(buf, value);
 		}
 
 		public MapNetworkCodec<K, V> intoMap() {
@@ -90,9 +102,13 @@ public class MapNetworkCodec<K, V> implements NetworkCodec<Map<K, V>> {
 			return NetworkCodec.mapOf(this, mapFactory);
 		}
 
+		public PairNetworkCodec<K ,V> intoPair() {
+			return this.keyCodec.pairWith(this.valueCodec);
+		}
+
 		@Override
 		public String toString() {
-			return "EntryCodec{keyCodec=" + this.keyCodec + ", valueCodec=" + this.valueCodec + '}';
+			return "EntryCodec{key=%s, value=%S}".formatted(this.keyCodec, this.valueCodec);
 		}
 	}
 }

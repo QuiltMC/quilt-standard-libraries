@@ -6,9 +6,11 @@ import org.quiltmc.qsl.networking.api.codec.NetworkCodec;
 
 public class EnumNetworkCodec<A extends Enum<A>> implements NetworkCodec<A> {
 	private final A[] values;
+	private final String className;
 
 	public EnumNetworkCodec(A[] values) {
 		this.values = values;
+		this.className = this.values.length > 0 ? this.values[0].getClass().getName() : "";
 	}
 
 	@Override
@@ -19,5 +21,10 @@ public class EnumNetworkCodec<A extends Enum<A>> implements NetworkCodec<A> {
 	@Override
 	public void encode(PacketByteBuf buf, A data) {
 		buf.writeVarInt(data.ordinal());
+	}
+
+	@Override
+	public String toString() {
+		return this.className;
 	}
 }

@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
 import com.mojang.datafixers.util.Unit;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
@@ -19,7 +21,9 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3f;
 import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.impl.codec.ArrayNetworkCodec;
 import org.quiltmc.qsl.networking.impl.codec.EitherNetworkCodec;
 import org.quiltmc.qsl.networking.impl.codec.EnumNetworkCodec;
@@ -28,6 +32,7 @@ import org.quiltmc.qsl.networking.impl.codec.MapNetworkCodec;
 import org.quiltmc.qsl.networking.impl.codec.NamedNetworkCodec;
 import org.quiltmc.qsl.networking.impl.codec.NetworkCodecBuilder;
 import org.quiltmc.qsl.networking.impl.codec.OptionalNetworkCodec;
+import org.quiltmc.qsl.networking.impl.codec.PairNetworkCodec;
 import org.quiltmc.qsl.networking.impl.codec.PrimitiveNetworkCodec;
 import org.quiltmc.qsl.networking.impl.codec.SimpleNetworkCodec;
 
@@ -74,6 +79,22 @@ public interface NetworkCodec<A> {
 			FLOAT.fieldOf(Vec3f::getZ)
 	).apply(Vec3f::new).named("Vec3f");
 
+	NetworkCodec<ItemStack> ITEMSTACK_2 = NetworkCodec.<ItemStack>builder().create(
+			BOOLEAN.fieldOf(ItemStack::isEmpty),
+			indexOf(Registry.ITEM).fieldOf(ItemStack::getItem),
+			BYTE.fieldOf(stack -> (byte)stack.getCount()),
+			NBT.optional().fieldOf(stack -> Optional.ofNullable(stack.getNbt()))
+	).apply((isEmpty, item, count, nbt) -> {
+		if (isEmpty) {
+			return ItemStack.EMPTY;
+		} else {
+			var stack = new ItemStack(item, count);
+			nbt.ifPresent(stack::setNbt);
+
+			return stack;
+		}
+	}).named("ItemStack");
+
 	static <A> NetworkCodec<A> of(PacketByteBuf.Writer<A> encoder, PacketByteBuf.Reader<A> decoder) {
 		return new SimpleNetworkCodec<>(encoder, decoder);
 	}
@@ -87,7 +108,7 @@ public interface NetworkCodec<A> {
 		return mapOf(entryOf(keyCodec, valueCodec), mapFactory);
 	}
 
-	static <K, V> MapNetworkCodec<K, V> mapOf(NetworkCodec<Map.Entry<K, V>> entryCodec,
+	static <K, V> MapNetworkCodec<K, V> mapOf(MapNetworkCodec.EntryCodec<K, V> entryCodec,
 			IntFunction<? extends Map<K, V>> mapFactory) {
 		return new MapNetworkCodec<>(entryCodec, mapFactory);
 	}
@@ -124,9 +145,19 @@ public interface NetworkCodec<A> {
 		return new NetworkCodecBuilder<>();
 	}
 
+	static <A, B> PairNetworkCodec<A, B> pairOf(NetworkCodec<A> aCodec, NetworkCodec<B> bCodec) {
+		return new PairNetworkCodec<>(aCodec, bCodec);
+	}
+
 	A decode(PacketByteBuf buf);
 
 	void encode(PacketByteBuf buf, A data);
+
+	default PacketByteBuf createBuffer(A data) {
+		var buf = PacketByteBufs.create();
+		this.encode(buf, data);
+		return buf;
+	}
 
 	default PacketByteBuf.Reader<A> asReader() {
 		return this::decode;
@@ -152,7 +183,7 @@ public interface NetworkCodec<A> {
 		return new SimpleNetworkCodec<B>(
 				(byteBuf, data) -> this.encode(byteBuf, from.apply(data)),
 				byteBuf -> to.apply(this.decode(byteBuf))
-		).named(this + "[mapped]");
+		).named(this + " [mapped]");
 	}
 
 	default <T> NetworkCodecBuilder.Field<T, A> fieldOf(Function<? super T, ? extends A> fieldLocator) {
@@ -161,5 +192,9 @@ public interface NetworkCodec<A> {
 
 	default NamedNetworkCodec<A> named(String name) {
 		return new NamedNetworkCodec<>(name, this);
+	}
+
+	default <B> PairNetworkCodec<A, B> pairWith(NetworkCodec<B> secondCodec) {
+		return pairOf(this, secondCodec);
 	}
 }
