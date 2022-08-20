@@ -1,0 +1,24 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Block Enchantment Stuff" // TODO: rename
+	moduleName = "block_enchantment_stuff" // TODO: rename
+	id = "quilt_block_enchantment_stuff" // TODO: rename
+	description = "An API for adding to different content registries in Minecraft" // TODO: rename
+	library = "block"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+		}
+		data {
+			api("registry_entry_attachments")
+		}
+	}
+	entrypoints {
+		init {
+			values = ["org.quiltmc.qsl.block.enchantmentstuff.impl.BlockEnchantmentStuffInitializer"]
+		}
+	}
+}
