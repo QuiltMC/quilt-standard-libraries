@@ -1,9 +1,0 @@
-{
-  "required": true,
-  "package": "org.quiltmc.qsl.block.enchantmentstuff.mixin",
-  "compatibilityLevel": "JAVA_17",
-  "mixins": ["EnchantingTableBlockMixin", "EnchantmentScreenHandlerMixin"],
-  "injectors": {
-    "defaultRequire": 1
-  }
-}

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.block.enchantmentstuff.mixin;
+package org.quiltmc.qsl.block.content.registry.mixin;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -22,7 +22,7 @@ import net.minecraft.block.EnchantingTableBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.world.World;
-import org.quiltmc.qsl.block.enchantmentstuff.api.EnchantmentPowerAttachment;
+import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -33,7 +33,7 @@ import java.util.Optional;
 public class EnchantingTableBlockMixin {
 	@Redirect(method = "isValidForBookshelf", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;isOf(Lnet/minecraft/block/Block;)Z"))
 	private static boolean hasEnchantmentPower(BlockState blockState, Block ignored) {
-		return EnchantmentPowerAttachment.POWER_LEVEL.get(blockState.getBlock()).orElse(0f) != 0f;
+		return BlockContentRegistries.ENCHANTMENT_POWER_LEVEL.get(blockState.getBlock()).orElse(0f) != 0f;
 	}
 
 	@Redirect(method = "randomDisplayTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/random/RandomGenerator;nextInt(I)I"))
@@ -49,7 +49,7 @@ public class EnchantingTableBlockMixin {
 		}
 
 		Block block = world.getBlockState(pos.add(offset)).getBlock();
-		Optional<Float> power = EnchantmentPowerAttachment.POWER_LEVEL.get(block);
+		Optional<Float> power = BlockContentRegistries.ENCHANTMENT_POWER_LEVEL.get(block);
 
 		if (power.isPresent()) {
 			return random.nextFloat() * 16f <= power.get();

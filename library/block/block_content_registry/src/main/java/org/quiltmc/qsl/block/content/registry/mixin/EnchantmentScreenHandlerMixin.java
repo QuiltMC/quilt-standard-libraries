@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.block.enchantmentstuff.mixin;
+package org.quiltmc.qsl.block.content.registry.mixin;
 
 import it.unimi.dsi.fastutil.objects.ObjectIterators;
 import net.minecraft.block.Block;
@@ -23,7 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.EnchantmentScreenHandler;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.quiltmc.qsl.block.enchantmentstuff.api.EnchantmentPowerAttachment;
+import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -55,7 +55,7 @@ public class EnchantmentScreenHandlerMixin {
 		for (BlockPos offset : EnchantingTableBlock.POSSIBLE_BOOKSHELF_LOCATIONS) {
 			if (world.isAir(pos.add(offset.getX() / 2, offset.getY(), offset.getZ() / 2))) {
 				Block block = world.getBlockState(pos.add(offset)).getBlock();
-				count += EnchantmentPowerAttachment.POWER_LEVEL.get(block).orElse(0f);
+				count += BlockContentRegistries.ENCHANTMENT_POWER_LEVEL.get(block).orElse(0f);
 			}
 		}
 
