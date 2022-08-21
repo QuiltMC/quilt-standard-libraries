@@ -1,0 +1,10 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.entity.interaction.test.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

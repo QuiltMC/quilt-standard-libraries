@@ -1,4 +1,5 @@
 /*
+ * Copyright 2016, 2017, 2018, 2019 FabricMC
  * Copyright 2021-2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,15 +17,16 @@
 
 package org.quiltmc.qsl.entity.interaction.api.player;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import org.quiltmc.qsl.base.api.event.Event;
 
 /**
- * A callback that is invoked when a Player attacks (left clicks) an entity.
+ * Invoked when a player uses (right clicks) an item.
  *
  * <p>Upon return:
  * <ul><li>SUCCESS cancels further processing and, on the client, sends a packet to the server.
@@ -32,17 +34,18 @@ import org.quiltmc.qsl.base.api.event.Event;
  * <li>FAIL cancels further processing and does not send a packet to the server.</ul>
  */
 @FunctionalInterface
-public interface AttackEntityCallback {
+public interface UseItemCallback {
 
-	Event<AttackEntityCallback> EVENT = Event.create(AttackEntityCallback.class,
-			callbacks -> (player, world, hand, entity) -> {
-		for (AttackEntityCallback callback : callbacks) {
-			ActionResult result = callback.onAttack(player, world, hand, entity);
+	Event<UseItemCallback> EVENT = Event.create(UseItemCallback.class,
+			callbacks -> (player, world, hand) -> {
+				for (UseItemCallback callback : callbacks) {
+					TypedActionResult<ItemStack> result = callback.onUse(player, world, hand);
 
-			if (result != ActionResult.PASS) return result;
-		}
-		return ActionResult.PASS;
-	});
+					if (result.getResult() != ActionResult.PASS) return result;
+				}
+				return TypedActionResult.pass(ItemStack.EMPTY);
+			});
 
-	ActionResult onAttack(PlayerEntity player, World world, Hand hand, Entity entity);
+
+	TypedActionResult<ItemStack> onUse(PlayerEntity player, World world, Hand hand);
 }
