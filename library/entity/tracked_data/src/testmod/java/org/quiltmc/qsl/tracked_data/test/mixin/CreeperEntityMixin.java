@@ -56,15 +56,14 @@ public class CreeperEntityMixin extends HostileEntity {
 
 	@Inject(method = "interactMob", at = @At("HEAD"))
 	private void quiltTestMod$addCustomTracker(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
-		if (this.world instanceof ServerWorld serverWorld) {
+		if (this.world.isClient) {
+			this.world.addParticle(this.dataTracker.get(PARTICLE), this.getX(), this.getY() + 2, this.getZ(), 0, 0, 0);
+		} else {
 			if (player.getStackInHand(hand).getItem() == Items.STICK) {
 				this.dataTracker.set(PARTICLE, ParticleTypes.CRIT);
 			} else if (player.getStackInHand(hand).getItem() == Items.TNT) {
 				this.dataTracker.set(PARTICLE, ParticleTypes.SMOKE);
-			} else {
-				serverWorld.spawnParticles(this.dataTracker.get(PARTICLE), this.getX(), this.getY() + 2, this.getZ(), 5, 1, 1, 1, 0);
 			}
 		}
-
 	}
 }
