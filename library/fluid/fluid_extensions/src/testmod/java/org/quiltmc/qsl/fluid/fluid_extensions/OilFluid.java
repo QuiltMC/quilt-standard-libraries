@@ -28,12 +28,19 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-import org.quiltmc.qsl.fluid.api.QuiltFluid;
+import org.quiltmc.qsl.fluid.api.QuiltDirectionalFluid;
 
 import javax.annotation.Nullable;
 
-public abstract class OilFluid extends QuiltFluid {
+public abstract class OilFluid extends QuiltDirectionalFluid {
+
+	@Override
+	public Direction getFlowingDirection() {
+		return Direction.UP;
+	}
+
 	@Override
 	public Fluid getStill() {
 		return QuiltFluidTest.STILL_OIL;

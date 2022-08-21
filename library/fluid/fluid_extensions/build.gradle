@@ -17,6 +17,8 @@ qslModule {
 		}
 	}
 
+	accessWidener()
+
 	injectedInterface("net/minecraft/class_3616") {
 		values = ["org/quiltmc/qsl/fluid/api/QuiltFlowableFluidExtensions"]
 	}
