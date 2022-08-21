@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.tracked_data.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "TrackedDataHandlerRegistryMixin"
+  ],
+  "client": [
+
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,22 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Tracked Data API"
+	moduleName = "tracked_data"
+	id = "quilt_tracked_data"
+	description = "An API to support custom multipart entities."
+	library = "entity"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+			api("registry")
+		}
+	}
+	entrypoints {
+		init {
+			values = ["org.quiltmc.qsl.tracked_data.impl.QuiltTrackedDataInitializer"]
+		}
+	}
+}

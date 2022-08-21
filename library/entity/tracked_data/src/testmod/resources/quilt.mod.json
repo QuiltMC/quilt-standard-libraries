@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "org.quiltmc.qsl.entity",
+    "id": "qsl_tracked_data_testmod",
+    "version": "1.0.0",
+    "metadata": {
+      "name": "Quilt Tracked Data Handler API Test Mod",
+      "license": "Apache-2.0"
+    },
+    "intermediate_mappings": "net.fabricmc:intermediary",
+    "load_type": "always",
+    "depends": [
+      "quilt_loader",
+      "quilt_tracked_data"
+    ],
+    "entrypoints": {
+      "init": [
+        "org.quiltmc.qsl.tracked_data.test.TrackedDataTestInitializer"
+      ]
+    }
+  },
+  "mixin": "quilt_tracked_data_testmod.mixins.json"
+}
