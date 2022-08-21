@@ -21,7 +21,9 @@ import net.minecraft.entity.data.TrackedDataHandler;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import org.jetbrains.annotations.Nullable;
 import org.quiltmc.loader.api.QuiltLoader;
+import org.quiltmc.qsl.base.api.util.TriState;
 import org.quiltmc.qsl.tracked_data.impl.QuiltTrackedDataInitializer;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.*;
@@ -34,21 +36,26 @@ public class TrackedDataHandlerRegistryMixin {
 	@Unique
 	private static final Logger quilt$LOGGER = LogUtils.getLogger();
 	@Unique
+	private static final boolean quilt$PRINT_WARNING = TriState.fromProperty("quilt.unknown_tracked_data_handler_warning").toBooleanOrElse(QuiltLoader.isDevelopmentEnvironment());
+	@Unique
 	private static int quilt$currentUnknownId = 0;
 
 	/**
 	 * @author Patbox
+	 * @reason Replacing with registry
 	 */
 	@Overwrite
-	public static int getId(TrackedDataHandler handler) {
+	public static int getId(TrackedDataHandler<?> handler) {
 		return QuiltTrackedDataInitializer.HANDLER_REGISTRY.getRawId(handler);
 	}
 
 	/**
 	 * @author Patbox
+	 * @reason Replacing with registry
 	 */
+	@Nullable
 	@Overwrite
-	public static TrackedDataHandler get(int id) {
+	public static TrackedDataHandler<?> get(int id) {
 		return QuiltTrackedDataInitializer.HANDLER_REGISTRY.get(id);
 	}
 
@@ -104,7 +111,7 @@ public class TrackedDataHandlerRegistryMixin {
 			id = "painting_variant";
 		} else {
 			id = "unknown_handler/" + (quilt$currentUnknownId++);
-			if (QuiltLoader.isDevelopmentEnvironment()) {
+			if (quilt$PRINT_WARNING) {
 				quilt$LOGGER.warn("Detected registration of unknown TrackedDataHandler through vanilla method! Object: {}, Class: {}", handler.toString(), handler.getClass().getName());
 				for (StackTraceElement traceElement : Thread.currentThread().getStackTrace()) {
 					quilt$LOGGER.warn("\tat " + traceElement);

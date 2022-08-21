@@ -6,7 +6,7 @@ qslModule {
 	name = "Quilt Tracked Data API"
 	moduleName = "tracked_data"
 	id = "quilt_tracked_data"
-	description = "An API to support custom multipart entities."
+	description = "An API extending Minecraft's entity data tracking/syncing functionality."
 	library = "entity"
 	moduleDependencies {
 		core {
