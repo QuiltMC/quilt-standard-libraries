@@ -1,5 +1,6 @@
 package org.quiltmc.qsl.item.extensions.mixin;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -10,9 +11,12 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 
@@ -40,6 +44,21 @@ public abstract class ItemUsageContextMixin implements QuiltItemUsageContextExte
 	public abstract BlockPos getBlockPos();
 
 	@Override
+	public boolean isClientWorld() {
+		return this.world.isClient;
+	}
+
+	@Override
+	public @NotNull RandomGenerator getWorldRandom() {
+		return this.world.getRandom();
+	}
+
+	@Override
+	public @NotNull BlockState getBlockState() {
+		return this.world.getBlockState(this.getBlockPos());
+	}
+
+	@Override
 	public void damageStack(int amount) {
 		if (this.player != null) {
 			this.stack.damage(amount, player, playerx -> playerx.sendToolBreakStatus(hand));
@@ -47,17 +66,22 @@ public abstract class ItemUsageContextMixin implements QuiltItemUsageContextExte
 	}
 
 	@Override
-	public void replaceBlock(BlockState newState) {
+	public void replaceBlock(@NotNull BlockState newState) {
 		var pos = this.getBlockPos();
 		this.world.setBlockState(pos, newState, Block.NOTIFY_ALL | Block.REDRAW_ON_MAIN_THREAD);
 		this.world.emitGameEvent(player, GameEvent.BLOCK_CHANGE, pos);
 	}
 
 	@Override
-	public <T extends Comparable<T>> void setBlockProperty(Property<T> property, T newValue) {
+	public <T extends Comparable<T>> void setBlockProperty(@NotNull Property<T> property, @NotNull T newValue) {
 		var pos = this.getBlockPos();
 		var state = this.world.getBlockState(pos);
 		state = state.with(property, newValue);
 		this.replaceBlock(state);
+	}
+
+	@Override
+	public void playSoundAtBlock(SoundEvent sound, SoundCategory category, float volume, float pitch) {
+		this.world.playSound(this.player, this.getBlockPos(), sound, category, volume, pitch);
 	}
 }
