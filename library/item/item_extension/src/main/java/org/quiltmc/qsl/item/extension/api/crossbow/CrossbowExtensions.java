@@ -16,13 +16,14 @@
 
 package org.quiltmc.qsl.item.extension.api.crossbow;
 
+import org.jetbrains.annotations.ApiStatus;
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
+import org.quiltmc.qsl.item.extension.mixin.crossbow.CrossbowItemAccessor;
+
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import org.jetbrains.annotations.ApiStatus;
-import org.quiltmc.qsl.base.api.util.InjectedInterface;
-import org.quiltmc.qsl.item.extension.mixin.crossbow.CrossbowItemAccessor;
 
 /**
  * An interface to implement for all custom crossbows in Quilt.

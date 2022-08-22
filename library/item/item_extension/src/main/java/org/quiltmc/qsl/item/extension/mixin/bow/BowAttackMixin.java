@@ -16,6 +16,11 @@
 
 package org.quiltmc.qsl.item.extension.mixin.bow;
 
+import org.quiltmc.qsl.item.extension.api.bow.BowShotProjectileEvents;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -28,10 +33,6 @@ import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.world.World;
-import org.quiltmc.qsl.item.extension.api.bow.BowShotProjectileEvents;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 // Will need to be updated if more bow-attacking mobs are added
 @Mixin({AbstractSkeletonEntity.class, IllusionerEntity.class})

@@ -16,11 +16,12 @@
 
 package org.quiltmc.qsl.item.extension.api.bow;
 
+import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.base.api.event.Event;
+
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.base.api.event.Event;
 
 public final class BowShotProjectileEvents {
 	/**
@@ -48,7 +49,8 @@ public final class BowShotProjectileEvents {
 		return projectile;
 	});
 
-	private BowShotProjectileEvents() {}
+	private BowShotProjectileEvents() {
+	}
 
 	public interface ReplaceProjectileFromBow {
 		/**

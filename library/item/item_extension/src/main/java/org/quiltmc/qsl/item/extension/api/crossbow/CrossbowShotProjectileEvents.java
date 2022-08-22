@@ -17,7 +17,6 @@
 package org.quiltmc.qsl.item.extension.api.crossbow;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.ParameterInvokingEvent;
 
@@ -52,7 +51,8 @@ public final class CrossbowShotProjectileEvents {
 		return projectile;
 	});
 
-	private CrossbowShotProjectileEvents() {}
+	private CrossbowShotProjectileEvents() {
+	}
 
 	public interface ReplaceProjectileFromCrossbow {
 		/**
@@ -71,10 +71,10 @@ public final class CrossbowShotProjectileEvents {
 		/**
 		 * In this method you can modify the behavior of arrows shot from your custom crossbow. Applies all the vanilla arrow modifiers first.
 		 *
-		 * @param crossbowStack              the ItemStack for the Crossbow Item
-		 * @param projectileStack            the ItemStack for the projectile currently being shot
-		 * @param user                       the user of the crossbow
-		 * @param projectile the arrow entity to be spawned
+		 * @param crossbowStack   the ItemStack for the Crossbow Item
+		 * @param projectileStack the ItemStack for the projectile currently being shot
+		 * @param user            the user of the crossbow
+		 * @param projectile      the arrow entity to be spawned
 		 */
 		void modifyProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity user, @NotNull PersistentProjectileEntity projectile);
 	}

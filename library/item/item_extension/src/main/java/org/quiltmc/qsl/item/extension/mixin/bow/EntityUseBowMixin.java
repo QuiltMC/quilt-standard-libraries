@@ -16,13 +16,14 @@
 
 package org.quiltmc.qsl.item.extension.mixin.bow;
 
-import net.minecraft.entity.mob.AbstractSkeletonEntity;
-import net.minecraft.item.RangedWeaponItem;
 import org.quiltmc.qsl.item.extension.api.bow.BowExtensions;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import net.minecraft.entity.mob.AbstractSkeletonEntity;
+import net.minecraft.item.RangedWeaponItem;
 
 @Mixin(AbstractSkeletonEntity.class)
 public abstract class EntityUseBowMixin {

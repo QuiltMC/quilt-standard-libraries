@@ -16,17 +16,18 @@
 
 package org.quiltmc.qsl.item.extension.mixin;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.ProjectileUtil;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.util.Hand;
 import org.quiltmc.qsl.item.extension.api.bow.BowExtensions;
 import org.quiltmc.qsl.item.extension.api.crossbow.CrossbowExtensions;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.projectile.ProjectileUtil;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+import net.minecraft.util.Hand;
 
 @Mixin(ProjectileUtil.class)
 public abstract class ProjectileUtilMixin {

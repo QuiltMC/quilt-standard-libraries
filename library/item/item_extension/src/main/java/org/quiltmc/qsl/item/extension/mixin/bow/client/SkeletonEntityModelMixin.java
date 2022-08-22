@@ -16,13 +16,14 @@
 
 package org.quiltmc.qsl.item.extension.mixin.bow.client;
 
-import net.minecraft.client.render.entity.model.SkeletonEntityModel;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import org.quiltmc.qsl.item.extension.api.bow.BowExtensions;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
+
+import net.minecraft.client.render.entity.model.SkeletonEntityModel;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 @Mixin(SkeletonEntityModel.class)
 public abstract class SkeletonEntityModelMixin {

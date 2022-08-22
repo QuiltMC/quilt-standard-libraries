@@ -16,12 +16,12 @@
 
 package org.quiltmc.qsl.item.extension.api.crossbow;
 
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
-import org.quiltmc.qsl.item.extension.api.bow.BowShotProjectileEvents;
 
 /**
  * This is the default implementation for {@link CrossbowExtensions}, allowing for the easy creation of new crossbows with no new modded functionality.

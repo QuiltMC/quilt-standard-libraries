@@ -16,10 +16,11 @@
 
 package org.quiltmc.qsl.item.extension.api.bow;
 
-import net.minecraft.item.BowItem;
-import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
+
+import net.minecraft.item.BowItem;
+import net.minecraft.item.ItemStack;
 
 /**
  * An interface to implement for all custom bows in Quilt.

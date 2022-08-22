@@ -16,10 +16,11 @@
 
 package org.quiltmc.qsl.item.extension.mixin.crossbow;
 
-import net.minecraft.item.CrossbowItem;
-import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
+
+import net.minecraft.item.CrossbowItem;
+import net.minecraft.item.ItemStack;
 
 @Mixin(CrossbowItem.class)
 public interface CrossbowItemAccessor {
