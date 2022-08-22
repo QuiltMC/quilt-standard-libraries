@@ -29,7 +29,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.state.property.Property;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.random.RandomGenerator;
@@ -86,14 +85,6 @@ public abstract class ItemUsageContextMixin implements QuiltItemUsageContextExte
 		var pos = this.getBlockPos();
 		this.world.setBlockState(pos, newState, Block.NOTIFY_ALL | Block.REDRAW_ON_MAIN_THREAD);
 		this.world.emitGameEvent(player, GameEvent.BLOCK_CHANGE, pos);
-	}
-
-	@Override
-	public <T extends Comparable<T>> void setBlockProperty(@NotNull Property<T> property, @NotNull T newValue) {
-		var pos = this.getBlockPos();
-		var state = this.world.getBlockState(pos);
-		state = state.with(property, newValue);
-		this.replaceBlock(state);
 	}
 
 	@Override

@@ -50,12 +50,16 @@ public interface QuiltItemUsageContextExtensions {
 	}
 
 	default void damageStack(int amount) {}
+
 	default void damageStack() {
 		damageStack(1);
 	}
 
 	default void replaceBlock(@NotNull BlockState newState) {}
-	default <T extends Comparable<T>> void setBlockProperty(@NotNull Property<T> property, @NotNull T newValue) {}
+
+	default <T extends Comparable<T>> void setBlockProperty(@NotNull Property<T> property, @NotNull T newValue) {
+		replaceBlock(getBlockState().with(property, newValue));
+	}
 
 	default void playSoundAtBlock(SoundEvent sound, SoundCategory category, float volume, float pitch) {}
 }
