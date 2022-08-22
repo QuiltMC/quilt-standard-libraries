@@ -19,14 +19,14 @@ public class CustomEntitySpawnDataClientInitializer implements ClientModInitiali
 			EntitySpawnS2CPacket spawnPacket = new EntitySpawnS2CPacket(buf);
 			buf.retain(); // save to let the entity read it
 			client.execute(() -> {
-				spawnPacket.apply(handler);
-				Entity spawnedEntity = client.world.getEntityById(spawnPacket.getId());
-				if (!(spawnedEntity instanceof QuiltCustomSpawnDataEntity customDataEntity)) {
-					logger.error("[Quilt] invalid entity received for extended spawn packet; expected a QuiltCustomSpawnDataEntity, got: " +
-							(spawnedEntity == null ? "null" : Registry.ENTITY_TYPE.getId(spawnedEntity.getType()).toString()));
-					return;
-				}
 				try {
+					spawnPacket.apply(handler);
+					Entity spawnedEntity = client.world.getEntityById(spawnPacket.getId());
+					if (!(spawnedEntity instanceof QuiltCustomSpawnDataEntity customDataEntity)) {
+						logger.error("[Quilt] invalid entity received for extended spawn packet; expected a QuiltCustomSpawnDataEntity, got: " +
+								(spawnedEntity == null ? "null" : Registry.ENTITY_TYPE.getId(spawnedEntity.getType()).toString()));
+						return;
+					}
 					customDataEntity.readCustomSpawnData(buf);
 				} finally {
 					buf.release();
