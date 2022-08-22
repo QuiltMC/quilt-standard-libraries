@@ -31,9 +31,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.util.registry.DefaultedRegistry;
 import net.minecraft.village.TradeOffer;
+import net.minecraft.village.TradeOffers;
 
-@Mixin(targets = "net/minecraft/village/TradeOffers$TypeAwareBuyForOneEmeraldFactory")
-public abstract class TypeAwareTradeMixin {
+@Mixin(TradeOffers.TypeAwareBuyForOneEmeraldFactory.class)
+public abstract class TypeAwareBuyForOneEmeraldFactoryMixin {
 	/**
 	 * Vanilla will check the "VillagerType -> Item" map in the stream and throw an exception for villager types not specified in the map.
 	 * This breaks any and all custom villager types.
