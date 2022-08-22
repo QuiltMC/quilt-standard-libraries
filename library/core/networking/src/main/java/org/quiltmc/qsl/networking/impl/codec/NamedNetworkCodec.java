@@ -25,6 +25,6 @@ public class NamedNetworkCodec<A> implements NetworkCodec<A> {
 
 	@Override
 	public String toString() {
-		return "%s(%s)".formatted(this.name, this.delegate);
+		return this.name;
 	}
 }

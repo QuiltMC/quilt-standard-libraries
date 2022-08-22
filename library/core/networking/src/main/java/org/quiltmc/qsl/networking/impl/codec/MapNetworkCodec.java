@@ -98,8 +98,8 @@ public class MapNetworkCodec<K, V> implements NetworkCodec<Map<K, V>> {
 			return this.intoMap(HashMap::new);
 		}
 
-		public MapNetworkCodec<K, V> intoMap(IntFunction<Map<K ,V>> mapFactory) {
-			return NetworkCodec.mapOf(this, mapFactory);
+		public MapNetworkCodec<K, V> intoMap(IntFunction<? extends Map<K ,V>> mapFactory) {
+			return new MapNetworkCodec<>(this, mapFactory);
 		}
 
 		public PairNetworkCodec<K ,V> intoPair() {

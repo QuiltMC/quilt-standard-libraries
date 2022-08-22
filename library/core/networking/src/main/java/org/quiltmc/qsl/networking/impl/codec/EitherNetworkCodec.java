@@ -39,6 +39,6 @@ public class EitherNetworkCodec<A, B> implements NetworkCodec<Either<A, B>> {
 
 	@Override
 	public String toString() {
-		return "EitherNetworkCodec[" + this.leftCodec + ", " + this.rightCodec + "]";
+		return "EitherNetworkCodec[%s, %s]".formatted(this.leftCodec, this.rightCodec);
 	}
 }

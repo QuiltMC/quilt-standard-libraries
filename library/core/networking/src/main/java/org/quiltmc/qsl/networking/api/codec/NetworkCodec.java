@@ -4,17 +4,22 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.IntFunction;
+import java.util.function.Supplier;
 
 import com.mojang.authlib.properties.Property;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.datafixers.util.Unit;
+import com.mojang.serialization.Codec;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -74,11 +79,11 @@ public interface NetworkCodec<A> {
 			.named("NBT");
 	NetworkCodec<ItemStack> ITEM_STACK = of(PacketByteBuf::writeItemStack, PacketByteBuf::readItemStack)
 			.named("ItemStack");
-	NetworkCodec<Vec3i> VEC_3I = NetworkCodec.<Vec3i>builder().create(
+	NetworkCodec<Vec3i> VEC_3I = build(builder -> builder.create(
 			VAR_INT.fieldOf(Vec3i::getX),
 			VAR_INT.fieldOf(Vec3i::getY),
 			VAR_INT.fieldOf(Vec3i::getZ)
-	).apply(Vec3i::new).named("Vec3i");
+	).apply(Vec3i::new).named("Vec3i"));
 	NetworkCodec<Direction> DIRECTION = enumOf(Direction.class)
 			.named("Direction");
 	NetworkCodec<BlockPos> BLOCK_POS = of(PacketByteBuf::writeBlockPos, PacketByteBuf::readBlockPos)
@@ -87,16 +92,16 @@ public interface NetworkCodec<A> {
 			.named("ChunkPos");
 	NetworkCodec<GlobalPos> GLOBAL_POS = of(PacketByteBuf::writeGlobalPos, PacketByteBuf::readGlobalPos)
 			.named("GlobalPos");
-	NetworkCodec<Vec3d> VEC_3D = NetworkCodec.<Vec3d>builder().create(
+	NetworkCodec<Vec3d> VEC_3D = build(builder -> builder.create(
 			DOUBLE.fieldOf(Vec3d::getX),
 			DOUBLE.fieldOf(Vec3d::getY),
 			DOUBLE.fieldOf(Vec3d::getZ)
-	).apply(Vec3d::new).named("Vec3d");
-	NetworkCodec<Vec3f> VEC_3F = NetworkCodec.<Vec3f>builder().create(
+	).apply(Vec3d::new).named("Vec3d"));
+	NetworkCodec<Vec3f> VEC_3F = build(builder -> builder.create(
 			FLOAT.fieldOf(Vec3f::getX),
 			FLOAT.fieldOf(Vec3f::getY),
 			FLOAT.fieldOf(Vec3f::getZ)
-	).apply(Vec3f::new).named("Vec3f");
+	).apply(Vec3f::new).named("Vec3f"));
 	NetworkCodec<Text> TEXT = of(PacketByteBuf::writeText, PacketByteBuf::readText)
 			.named("Text");
 	NetworkCodec<Property> PROPERTY = of(PacketByteBuf::writeProperty, PacketByteBuf::readProperty)
@@ -109,22 +114,13 @@ public interface NetworkCodec<A> {
 		return new SimpleNetworkCodec<>(encoder, decoder);
 	}
 
-	static <A> ListNetworkCodec<A> listOf(NetworkCodec<A> entryCodec, IntFunction<? extends List<A>> listFactory) {
-		return new ListNetworkCodec<>(entryCodec, listFactory);
-	}
-
 	static <K, V> MapNetworkCodec<K, V> mapOf(NetworkCodec<K> keyCodec, NetworkCodec<V> valueCodec,
 			IntFunction<? extends Map<K, V>> mapFactory) {
-		return mapOf(entryOf(keyCodec, valueCodec), mapFactory);
+		return entryOf(keyCodec, valueCodec).intoMap(mapFactory);
 	}
 
-	static <K, V> MapNetworkCodec<K, V> mapOf(MapNetworkCodec.EntryCodec<K, V> entryCodec,
-			IntFunction<? extends Map<K, V>> mapFactory) {
-		return new MapNetworkCodec<>(entryCodec, mapFactory);
-	}
-
-	static <A> ArrayNetworkCodec<A> arrayOf(NetworkCodec<A> entryCodec, IntFunction<? extends A[]> arrayFactory) {
-		return new ArrayNetworkCodec<>(entryCodec, arrayFactory);
+	static <K, V> MapNetworkCodec<K, V> mapOf(NetworkCodec<K> keyCodec, NetworkCodec<V> valueCodec) {
+		return mapOf(keyCodec, valueCodec, HashMap::new);
 	}
 
 	static <K, V> MapNetworkCodec.EntryCodec<K, V> entryOf(NetworkCodec<K> keyCodec, NetworkCodec<V> valueCodec) {
@@ -133,10 +129,6 @@ public interface NetworkCodec<A> {
 
 	static <A, B> PairNetworkCodec<A, B> pairOf(NetworkCodec<A> aCodec, NetworkCodec<B> bCodec) {
 		return new PairNetworkCodec<>(aCodec, bCodec);
-	}
-
-	static <A> OptionalNetworkCodec<A> optionalOf(NetworkCodec<A> codec) {
-		return new OptionalNetworkCodec<>(codec);
 	}
 
 	static <A> NetworkCodec<A> indexOf(IndexedIterable<A> idxIter) {
@@ -148,15 +140,62 @@ public interface NetworkCodec<A> {
 	}
 
 	static <A> NetworkCodec<A> constant(A value) {
-		return of((buf, a) -> { }, (buf) -> value).named("Constant[%s]".formatted(value));
+		return new NetworkCodec<>() {
+			@Override
+			public A decode(PacketByteBuf buf) {
+				return value;
+			}
+
+			@Override
+			public void encode(PacketByteBuf buf, A data) { }
+
+			@Override
+			public PacketByteBuf createBuffer(A data) {
+				return PacketByteBufs.empty();
+			}
+
+			@Override
+			public String toString() {
+				return "Constant[%s]".formatted(value);
+			}
+		};
+	}
+
+	static <A> NetworkCodec<A> constant(Supplier<? extends A> aProvider) {
+		return new NetworkCodec<>() {
+			@Override
+			public A decode(PacketByteBuf buf) {
+				return aProvider.get();
+			}
+
+			@Override
+			public void encode(PacketByteBuf buf, A data) { }
+
+			@Override
+			public PacketByteBuf createBuffer(A data) {
+				return PacketByteBufs.empty();
+			}
+
+			@Override
+			public String toString() {
+				return "Constant[%s]".formatted(aProvider.get());
+			}
+		};
 	}
 
 	static <A extends Enum<A>> EnumNetworkCodec<A> enumOf(Class<A> enumClass) {
 		return new EnumNetworkCodec<>(enumClass);
 	}
 
-	static <A> NetworkCodecBuilder<A> builder() {
-		return new NetworkCodecBuilder<>();
+	static <A> NetworkCodec<A> build(Function<NetworkCodecBuilder<A>, NetworkCodec<A>> factory) {
+		return factory.apply(new NetworkCodecBuilder<>());
+	}
+
+	static <A> NetworkCodec<A> fromCodec(Codec<A> codec) {
+		return NBT.map(
+				a -> (NbtCompound) codec.encodeStart(NbtOps.INSTANCE, a).result().orElseGet(NbtCompound::new),
+				nbtCompound -> codec.decode(NbtOps.INSTANCE, nbtCompound).result().map(Pair::getFirst).orElse(null)
+		);
 	}
 
 	A decode(PacketByteBuf buf);
@@ -178,7 +217,7 @@ public interface NetworkCodec<A> {
 	}
 
 	default OptionalNetworkCodec<A> optional() {
-		return optionalOf(this);
+		return new OptionalNetworkCodec<>(this);
 	}
 
 	default ListNetworkCodec<A> list() {
@@ -186,7 +225,11 @@ public interface NetworkCodec<A> {
 	}
 
 	default ListNetworkCodec<A> list(IntFunction<? extends List<A>> listFactory) {
-		return listOf(this, listFactory);
+		return new ListNetworkCodec<>(this, listFactory);
+	}
+
+	default ArrayNetworkCodec<A> array(IntFunction<? extends A[]> arrayFactory) {
+		return new ArrayNetworkCodec<>(this, arrayFactory);
 	}
 
 	default <V> MapNetworkCodec.EntryCodec<A, V> zip(NetworkCodec<V> valueCodec) {

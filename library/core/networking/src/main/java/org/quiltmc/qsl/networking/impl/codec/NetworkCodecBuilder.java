@@ -36,7 +36,7 @@ public final class NetworkCodecBuilder<R> {
 		);
 	}
 
-	public NetworkCodec<R> createCodecBuilder(
+	private NetworkCodec<R> createCodecBuilder(
 			List<Field<R, ?>> fields,
 			PacketByteBuf.Reader<R> initializer
 	) {
