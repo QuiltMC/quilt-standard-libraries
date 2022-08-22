@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.item.extensions.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "FlintAndSteelItemMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

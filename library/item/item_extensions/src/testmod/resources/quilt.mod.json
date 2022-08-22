@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "org.quiltmc.qsl.item",
+    "id": "quilt_item_extensions_testmod",
+    "version": "1.0.0",
+    "metadata": {
+      "name": "Quilt Item Extensions Test Mod",
+      "license": "Apache-2.0"
+    },
+    "intermediate_mappings": "net.fabricmc:intermediary",
+    "load_type": "always",
+    "entrypoints": {
+      "init": [
+        "org.quiltmc.qsl.block.extensions.test.Initializer"
+      ]
+    },
+    "depends": [
+      "quilt_loader",
+      "quilt_item_extensions",
+      "quilt_resource_loader"
+    ]
+  }
+}

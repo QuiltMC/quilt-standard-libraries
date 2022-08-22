@@ -1,4 +1,4 @@
-package org.quiltmc.qsl.block.extensions.api.event;
+package org.quiltmc.qsl.item.extensions.api.event;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -8,15 +8,15 @@ import net.minecraft.util.ActionResult;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
-public final class BlockInteractionEvents {
-	private BlockInteractionEvents() {
+public final class ItemInteractionEvents {
+	private ItemInteractionEvents() {
 		throw new UnsupportedOperationException("BlockInteractionEvents only contains static declarations.");
 	}
 
-	public static final Event<IgniteBlock> IGNITE = Event.create(IgniteBlock.class, callbacks -> context -> {
+	public static final Event<IgniteBlock> IGNITE_BLOCK = Event.create(IgniteBlock.class, callbacks -> context -> {
 		var result = ActionResult.PASS;
 		for (var callback : callbacks) {
-			result = callback.onBlockIgnited(context);
+			result = callback.onIgniteBlock(context);
 			if (result != ActionResult.PASS) {
 				return result;
 			}
@@ -26,6 +26,6 @@ public final class BlockInteractionEvents {
 
 	@FunctionalInterface
 	public interface IgniteBlock extends EventAwareListener {
-		@NotNull ActionResult onBlockIgnited(@NotNull ItemUsageContext context);
+		@NotNull ActionResult onIgniteBlock(@NotNull ItemUsageContext context);
 	}
 }
