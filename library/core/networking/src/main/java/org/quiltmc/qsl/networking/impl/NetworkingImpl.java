@@ -30,14 +30,11 @@ import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.ModContainer;
-import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.ServerLoginConnectionEvents;
 import org.quiltmc.qsl.networking.api.ServerLoginNetworking;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
-import org.quiltmc.qsl.networking.api.channel.NetworkChannel;
-import org.quiltmc.qsl.networking.impl.channel.NetworkChannelImpl;
 
 @ApiStatus.Internal
 public final class NetworkingImpl {
@@ -83,9 +80,6 @@ public final class NetworkingImpl {
 
 		ServerLoginNetworking.registerGlobalReceiver(EARLY_REGISTRATION_CHANNEL, NetworkingImpl::receiveEarlyRegistration);
 		ServerLoginNetworking.registerGlobalReceiver(EARLY_REGISTRATION_CHANNEL_FABRIC, NetworkingImpl::receiveEarlyRegistration);
-
-		// Register Common Channels
-		ServerLifecycleEvents.READY.register(NetworkChannel.REGISTRATION_PHASE, NetworkChannelImpl::onServerReady);
 	}
 
 	public static boolean isReservedPlayChannel(Identifier channelName) {
