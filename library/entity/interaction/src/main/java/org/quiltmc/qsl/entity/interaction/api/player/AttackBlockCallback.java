@@ -16,43 +16,45 @@
 
 package org.quiltmc.qsl.entity.interaction.api.player;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.quiltmc.qsl.base.api.event.Event;
 
 /**
- * A callback that is invoked when a Player attacks (left clicks) an entity.
- *
- * <p>Upon return:
+ * Invoked if a player attacks (left clicks) a block.
+ * Is hooked before the spectator check, so make sure to check the player's game mode!
+ * <p>
  * <ul><li>SUCCESS cancels further processing and, on the client, sends a packet to the server.
  * <li>PASS falls back to further processing.
  * <li>FAIL cancels further processing and does not send a packet to the server.</ul>
+ * </p>
  */
-@FunctionalInterface
-public interface AttackEntityCallback {
+public interface AttackBlockCallback {
 
-	Event<AttackEntityCallback> EVENT = Event.create(AttackEntityCallback.class,
-			callbacks -> (player, world, hand, entity) -> {
-		for (AttackEntityCallback callback : callbacks) {
-			ActionResult result = callback.onAttack(player, world, hand, entity);
+	Event<AttackBlockCallback> EVENT = Event.create(AttackBlockCallback.class,
+			callbacks -> (player, world, hand, pos, direction) -> {
+				for (AttackBlockCallback callback : callbacks) {
+					ActionResult result = callback.onAttackBlock(player, world, hand, pos, direction);
 
-			if (result != ActionResult.PASS) return result;
-		}
-		return ActionResult.PASS;
-	});
+					if (result != ActionResult.PASS) return result;
+				}
+				return ActionResult.PASS;
+			});
 
 	/**
-	 * Invoked when a player attacks (left clicks) an entity.
+	 * Invoked if a player attacks (left clicks) a block.
 	 *
-	 * @param player the interacting player
-	 * @param world the world the event occurs in
+	 * @param player the player attacking the block
+	 * @param world the world the event is occurring in
 	 * @param hand the hand used
-	 * @param entity the hit entity
+	 * @param pos the block's position
+	 * @param direction the side of the block hit
 	 * @return SUCCESS to cancel processing and send a packet to the server, PASS to fall back to further processing,
 	 * and FAIL to cancel further processing entirely
 	 */
-	ActionResult onAttack(PlayerEntity player, World world, Hand hand, Entity entity);
+	ActionResult onAttackBlock(PlayerEntity player, World world, Hand hand, BlockPos pos, Direction direction);
 }
