@@ -16,14 +16,38 @@
 
 package org.quiltmc.qsl.item.extensions.test;
 
+import org.jetbrains.annotations.NotNull;
+
+import net.minecraft.block.Blocks;
+import net.minecraft.item.ItemUsageContext;
+import net.minecraft.item.Items;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.ActionResult;
+
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.item.extensions.api.event.ItemInteractionEvents;
 
-public final class Initializer implements ModInitializer {
+public final class Initializer implements ModInitializer,
+		ItemInteractionEvents.UsedOnBlock {
 	public static final Initializer INSTANCE = new Initializer();
 
 	private Initializer() {}
 
 	@Override
 	public void onInitialize(ModContainer mod) {}
+
+	@Override
+	public @NotNull ActionResult onItemUsedOnBlock(@NotNull ItemUsageContext context) {
+		if (context.canPlaceOnBlock()
+				&& context.getBlockState().isOf(Blocks.DIRT) && context.getStack().isOf(Items.WOODEN_PICKAXE)) {
+			context.playSoundAtBlock(SoundEvents.BLOCK_ANVIL_USE, SoundCategory.BLOCKS,
+					1.0F, context.getWorldRandom().nextFloat() * 0.1F + 0.9F, true);
+			context.replaceBlock(Blocks.DIAMOND_BLOCK.getDefaultState());
+			context.damageStack();
+			return context.success();
+		}
+		return ActionResult.PASS;
+	}
 }

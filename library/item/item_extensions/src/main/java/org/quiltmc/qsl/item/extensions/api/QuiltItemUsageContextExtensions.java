@@ -33,12 +33,8 @@ import org.quiltmc.qsl.base.api.util.InjectedInterface;
 public interface QuiltItemUsageContextExtensions {
 	// impls are in ItemUsageContextMixin
 
-	default boolean isClientWorld() {
-		return false;
-	}
-
 	default @NotNull ActionResult success() {
-		return ActionResult.success(this.isClientWorld());
+		return ActionResult.SUCCESS;
 	}
 
 	default @NotNull RandomGenerator getWorldRandom() {
@@ -47,6 +43,18 @@ public interface QuiltItemUsageContextExtensions {
 
 	default @NotNull BlockState getBlockState() {
 		return Blocks.AIR.getDefaultState();
+	}
+
+	default boolean canModifyWorld() {
+		return true;
+	}
+
+	default boolean canDestroyBlock() {
+		return true;
+	}
+
+	default boolean canPlaceOnBlock() {
+		return true;
 	}
 
 	default void damageStack(int amount) {}
@@ -61,5 +69,7 @@ public interface QuiltItemUsageContextExtensions {
 		replaceBlock(getBlockState().with(property, newValue));
 	}
 
-	default void playSoundAtBlock(SoundEvent sound, SoundCategory category, float volume, float pitch) {}
+	default void playSoundAtBlock(SoundEvent sound, SoundCategory category, float volume, float pitch, boolean useDistance) {}
+
+	default void playSoundAtBlockFromPlayer(SoundEvent sound, SoundCategory category, float volume, float pitch) {}
 }

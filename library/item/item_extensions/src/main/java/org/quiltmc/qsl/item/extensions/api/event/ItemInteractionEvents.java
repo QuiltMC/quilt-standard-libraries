@@ -16,8 +16,32 @@
 
 package org.quiltmc.qsl.item.extensions.api.event;
 
+import org.jetbrains.annotations.NotNull;
+
+import net.minecraft.item.ItemUsageContext;
+import net.minecraft.util.ActionResult;
+
+import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.base.api.event.EventAwareListener;
+
 public final class ItemInteractionEvents {
 	private ItemInteractionEvents() {
 		throw new UnsupportedOperationException("BlockInteractionEvents only contains static declarations.");
+	}
+
+	public static final Event<UsedOnBlock> USED_ON_BLOCK = Event.create(UsedOnBlock.class, callbacks -> context -> {
+		var result = ActionResult.PASS;
+		for (var callback : callbacks) {
+			result = callback.onItemUsedOnBlock(context);
+			if (result != ActionResult.PASS) {
+				return result;
+			}
+		}
+		return result;
+	});
+
+	@FunctionalInterface
+	public interface UsedOnBlock extends EventAwareListener {
+		@NotNull ActionResult onItemUsedOnBlock(@NotNull ItemUsageContext context);
 	}
 }
