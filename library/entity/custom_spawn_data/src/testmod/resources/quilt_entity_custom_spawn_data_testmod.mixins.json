@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.entity.custom_spawn_data.test.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "EntityRenderersAccessor",
+    "EntityModelLayersAccessor",
+    "EntityModelsMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

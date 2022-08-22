@@ -12,7 +12,7 @@
     "load_type": "always",
     "depends": [
       "quilt_loader",
-      "quilt_entity_multipart"
+      "quilt_entity_custom_spawn_data"
     ]
   },
   "mixin": "quilt_entity_multipart_testmod.mixins.json"

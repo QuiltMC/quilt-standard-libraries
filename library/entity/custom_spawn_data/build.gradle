@@ -1,0 +1,28 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Custom Entity Spawn Data API"
+	moduleName = "custom_spawn_data"
+	id = "quilt_entity_custom_spawn_data"
+	description = "An API to send extra data with spawned entities."
+	library = "entity"
+	moduleDependencies {
+		core {
+			impl("qsl_base")
+			impl("networking")
+			testmodOnly("registry")
+			testmodOnly("resource_loader")
+		}
+		management {
+			testmodOnly("command")
+		}
+	}
+	entrypoints {
+		client_init {
+			values = ["org.quiltmc.qsl.entity.custom_spawn_data.impl.CustomEntitySpawnDataClientInitializer"]
+		}
+	}
+	noMixins()
+}
