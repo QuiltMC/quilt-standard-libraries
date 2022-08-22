@@ -18,6 +18,7 @@ package org.quiltmc.qsl.registry.mixin;
 
 import java.util.List;
 
+import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
