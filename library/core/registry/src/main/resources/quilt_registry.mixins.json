@@ -3,11 +3,29 @@
   "package": "org.quiltmc.qsl.registry.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "BlocksMixin",
     "DebugChunkGeneratorAccessor",
+    "FluidsMixin",
+    "IdListMixin",
     "ItemsMixin",
+    "PlayerManagerMixin",
     "RegistryMixin",
+    "ServerLoginNetworkHandlerMixin",
+    "ServerPlayerEntityMixin",
     "SimpleRegistryAccessor",
-    "SimpleRegistryMixin"
+    "SimpleRegistryMixin",
+    "patch.BeaconBlockEntityMixin",
+    "patch.MooshroomEntityMixin",
+    "patch.StatusEffectInstanceMixin",
+    "patch.SuspiciousStewItemMixin"
+  ],
+  "client": [
+    "client.BlockColorMapMixin",
+    "client.ConnectScreenMixin",
+    "client.ItemColorsMixin",
+    "client.ItemModelsMixin",
+    "client.MinecraftClientMixin",
+    "client.ParticleManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

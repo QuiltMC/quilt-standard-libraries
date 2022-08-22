@@ -24,14 +24,14 @@ import net.minecraft.block.Block;
 import net.minecraft.util.registry.Registry;
 
 public record ReversibleBlockEntry(Block block, boolean reversible) {
-    public static final Codec<ReversibleBlockEntry> CODEC = Codec.either(
-                    RecordCodecBuilder.<ReversibleBlockEntry>create(instance ->
-                            instance.group(
-                                    Registry.BLOCK.getCodec().fieldOf("block").forGetter(ReversibleBlockEntry::block),
-                                    Codec.BOOL.fieldOf("reversible").forGetter(ReversibleBlockEntry::reversible)
-                            ).apply(instance, ReversibleBlockEntry::new)),
-                    Registry.BLOCK.getCodec())
-            .xmap(
-                    either -> either.map(entry -> entry, b -> new ReversibleBlockEntry(b, true)),
-                    entry -> entry.reversible ? Either.right(entry.block) : Either.left(entry));
+	public static final Codec<ReversibleBlockEntry> CODEC = Codec.either(
+					RecordCodecBuilder.<ReversibleBlockEntry>create(instance ->
+							instance.group(
+									Registry.BLOCK.getCodec().fieldOf("block").forGetter(ReversibleBlockEntry::block),
+									Codec.BOOL.fieldOf("reversible").forGetter(ReversibleBlockEntry::reversible)
+							).apply(instance, ReversibleBlockEntry::new)),
+					Registry.BLOCK.getCodec())
+			.xmap(
+					either -> either.map(entry -> entry, b -> new ReversibleBlockEntry(b, true)),
+					entry -> entry.reversible ? Either.right(entry.block) : Either.left(entry));
 }

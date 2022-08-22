@@ -33,7 +33,9 @@ import net.minecraft.item.ShovelItem;
 
 @Mixin(ShovelItem.class)
 public class ShovelItemMixin {
-	@Mutable @Final @Shadow
+	@Mutable
+	@Final
+	@Shadow
 	public static Map<Block, BlockState> PATH_STATES;
 
 	@Inject(method = "<clinit>", at = @At("TAIL"))
