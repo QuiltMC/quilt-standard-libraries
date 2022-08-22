@@ -23,7 +23,7 @@ import java.util.function.Function;
  */
 public final class QuiltAssertions {
 	private QuiltAssertions() {
-		throw new UnsupportedOperationException("QuiltAssertions only contains static-definitions.");
+		throw new UnsupportedOperationException("QuiltAssertions only contains static definitions.");
 	}
 
 	/**

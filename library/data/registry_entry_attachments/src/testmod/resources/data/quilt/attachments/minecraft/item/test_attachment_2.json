@@ -1,0 +1,26 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "minecraft:stone",
+      "value": 1
+    },
+    {
+      "id": "aurorasdeco:blackboard",
+      "required": false,
+      "value": 2
+    },
+    {
+      "tag": "minecraft:planks",
+      "value": 3
+    },
+    {
+      "tag": "lolno:haha_yes",
+      "value": 4
+    },
+    {
+      "id": "lolno:hi_mom_im_in_a_log",
+      "value": 5
+    }
+  ]
+}
