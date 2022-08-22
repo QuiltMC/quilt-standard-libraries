@@ -14,4 +14,8 @@ qslModule {
 			testmodOnly("resource_loader")
 		}
 	}
+
+	injectedInterface("net/minecraft/class_1838") {
+		values = ["org/quiltmc/qsl/item/extensions/api/QuiltItemUsageContextExtensions"]
+	}
 }
