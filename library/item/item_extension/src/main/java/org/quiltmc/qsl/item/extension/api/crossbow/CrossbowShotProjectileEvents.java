@@ -51,8 +51,7 @@ public final class CrossbowShotProjectileEvents {
 		return projectile;
 	});
 
-	private CrossbowShotProjectileEvents() {
-	}
+	private CrossbowShotProjectileEvents() {}
 
 	public interface ReplaceProjectileFromCrossbow {
 		/**

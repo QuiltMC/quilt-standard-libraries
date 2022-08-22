@@ -49,8 +49,7 @@ public final class BowShotProjectileEvents {
 		return projectile;
 	});
 
-	private BowShotProjectileEvents() {
-	}
+	private BowShotProjectileEvents() {}
 
 	public interface ReplaceProjectileFromBow {
 		/**
