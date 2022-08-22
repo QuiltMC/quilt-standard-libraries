@@ -1,0 +1,100 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt DataFixerUpper API"
+	moduleName = "datafixerupper"
+	id = "quilt_datafixerupper"
+	description = "Provides APIs for adding custom DataFixers."
+	library = "misc"
+	moduleDependencies {
+		core {
+			impl("lifecycle_events")
+		}
+	}
+	entrypoints {
+		events {
+			values = ["org.quiltmc.qsl.datafixerupper.impl.ServerFreezer"]
+		}
+		client_events {
+			values = ["org.quiltmc.qsl.datafixerupper.impl.client.ClientFreezer"]
+		}
+	}
+}
+
+sourceSets {
+	testmodV1 {
+		compileClasspath += main.compileClasspath
+		runtimeClasspath += main.runtimeClasspath
+	}
+	testmodV2 {
+		compileClasspath += main.compileClasspath
+		runtimeClasspath += main.runtimeClasspath
+	}
+	testmodV3 {
+		compileClasspath += main.compileClasspath
+		runtimeClasspath += main.runtimeClasspath
+	}
+}
+
+dependencies {
+	testmodV1Implementation sourceSets.main.output
+	testmodV2Implementation sourceSets.main.output
+	testmodV3Implementation sourceSets.main.output
+}
+
+task prepareDfuTestmod {
+	doLast {
+		delete "run"
+		mkdir "run"
+		logger.quiet("NOTE: By running this testmod, you automatically agree to the EULA.")
+		file("run/eula.txt").text = "eula=true"
+
+		// We want fast world generation for those tests.
+		// Change the port to another one so it doesn't conflict with the main test server in case of running in parallel.
+		file("run/server.properties").text = '''\
+level-type=flat
+allow-nether=false
+server-port=25585
+'''
+	}
+}
+
+loom {
+	runs {
+		autoTestServerDfuTestmodV1 {
+			server()
+			configName = "Auto test server - DFU testmod v1"
+			source(project.sourceSets.testmodV1)
+			property("quilt.auto_test")
+			programArg("--nogui")
+		}
+
+		autoTestServerDfuTestmodV2 {
+			server()
+			configName = "Auto test server - DFU testmod v2"
+			source(project.sourceSets.testmodV2)
+			property("quilt.auto_test")
+			programArg("--nogui")
+		}
+
+		autoTestServerDfuTestmodV3 {
+			server()
+			configName = "Auto test server - DFU testmod v3"
+			source(project.sourceSets.testmodV3)
+			property("quilt.auto_test")
+			programArg("--nogui")
+		}
+	}
+}
+
+afterEvaluate {
+	// Apparently we need an after evaluate to not mess up source set dependencies.
+
+	runAutoTestServerDfuTestmodV1.dependsOn prepareDfuTestmod
+	runAutoTestServerDfuTestmodV2.dependsOn runAutoTestServerDfuTestmodV1
+	runAutoTestServerDfuTestmodV3.dependsOn runAutoTestServerDfuTestmodV2
+
+	rootProject.tasks.runAutoAllTestServer.dependsOn runAutoTestServerDfuTestmodV3
+}
