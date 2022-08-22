@@ -26,7 +26,10 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Collection;
 
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
+
 @ApiStatus.Internal
+@InjectedInterface(PointOfInterestType.class)
 public interface PointOfInterestTypeExtensions {
 	/**
 	 * Allows adding {@link Block}s after construction.

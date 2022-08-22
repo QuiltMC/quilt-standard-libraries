@@ -18,11 +18,15 @@
 package org.quiltmc.qsl.vehicle.api;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import net.minecraft.util.math.BlockPos;
+
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 /**
  * Provides custom comparator output for minecarts resting on detector rails.
  */
+@InjectedInterface(AbstractMinecartEntity.class)
 public interface MinecartComparatorLogic {
 	/**
 	 * Compute the comparator output of a detector rail when this minecart is resting
