@@ -36,7 +36,7 @@ public class TrackedDataHandlerRegistryMixin {
 	@Unique
 	private static final Logger quilt$LOGGER = LogUtils.getLogger();
 	@Unique
-	private static final boolean quilt$PRINT_WARNING = TriState.fromProperty("quilt.unknown_tracked_data_handler_warning").toBooleanOrElse(QuiltLoader.isDevelopmentEnvironment());
+	private static final boolean quilt$PRINT_WARNING = TriState.fromProperty("quilt.debug.unknown_tracked_data_handler").toBooleanOrElse(QuiltLoader.isDevelopmentEnvironment());
 	@Unique
 	private static int quilt$currentUnknownId = 0;
 

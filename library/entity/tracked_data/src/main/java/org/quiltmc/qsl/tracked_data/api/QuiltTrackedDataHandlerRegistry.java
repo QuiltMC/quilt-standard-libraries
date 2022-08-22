@@ -26,14 +26,15 @@ public final class QuiltTrackedDataHandlerRegistry {
 	private static boolean markForSync = true;
 
 	/**
-	 * This method registers custom TrackedDataHandler in a mod compatible way
+	 * Registers custom {@linkplain TrackedDataHandler} in a mod compatible way.
 	 *
-	 * @param identifier Unique identifier
-	 * @param handler Handler you want to register
-	 * @param <T> Type of handler
-	 * @return Handler you provided
+	 * @param identifier the identifier of the tracked data handler
+	 * @param handler the handler to register
+	 * @param <T> the type the tracked data handler holds
+	 * @return the registered tracked data
 	 */
-	public static <T> TrackedDataHandler<T> register(Identifier identifier, TrackedDataHandler<T> handler) {
+	@Contract("null, _ -> fail; _, null -> fail; _, _ -> param2")
+	public static <T> TrackedDataHandler<T> register(@NotNull Identifier identifier, @NotNull TrackedDataHandler<T> handler) {
 		Registry.register(QuiltTrackedDataInitializer.HANDLER_REGISTRY, identifier, handler);
 
 		if (markForSync) {

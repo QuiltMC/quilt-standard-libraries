@@ -37,7 +37,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
- * Don't do that in actual mod!
+ * Don't add extra tracked data to existing mobs in actual mods!
  */
 
 @Mixin(CreeperEntity.class)
