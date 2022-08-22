@@ -24,9 +24,9 @@ import org.quiltmc.qsl.base.api.util.InjectedInterface;
 /**
  * An interface to implement for all custom bows in Quilt.
  * <p>
- * This is meant to be used on a {@link net.minecraft.item.BowItem} class. Unless similar functionality is implemented on your custom item, most functionality will not work.</p>
+ * This is meant to be used on a {@link net.minecraft.item.BowItem} class. Unless similar functionality is implemented on your custom item, most functionality will not work.
  * <p>
- * In order to modify the projectile shot from your bow, implementing and registering {@link BowShotProjectileEvents.ModifyProjectileFromBow} is recommended.</p>
+ * In order to modify the projectile shot from your bow, implementing and registering {@link BowShotProjectileEvents.ModifyProjectileFromBow} is recommended.
  *
  * @see ProjectileModifyingBowItem
  */
@@ -34,11 +34,10 @@ import org.quiltmc.qsl.base.api.util.InjectedInterface;
 @InjectedInterface(BowItem.class)
 public interface BowExtensions {
 	/**
-	 * Returns the draw progress of the bow between 0 and 1.
+	 * {@return the draw progress of the bow between {@code 0} and {@code 1}}
 	 *
-	 * @param useTicks the number of ticks the bow has been drawn.
+	 * @param useTicks the number of ticks the bow has been drawn
 	 * @param bowStack the ItemStack for the bow
-	 * @return the progress of the pull from {@code 0.0f} to {@code 1.0f}.
 	 */
 	default float getCustomPullProgress(int useTicks, ItemStack bowStack) {
 		return BowItem.getPullProgress(useTicks);

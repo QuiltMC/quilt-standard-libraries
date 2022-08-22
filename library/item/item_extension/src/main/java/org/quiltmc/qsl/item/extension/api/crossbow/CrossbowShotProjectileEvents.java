@@ -62,7 +62,7 @@ public final class CrossbowShotProjectileEvents {
 		 * @param projectileStack            the ItemStack for the projectile currently being shot
 		 * @param user                       the user of the crossbow
 		 * @param projectile the arrow entity to be spawned
-		 * @return the new projectile entity. Return {@code null} if you do not change the entity.
+		 * @return the new projectile entity, or {@code null} if you do not change the entity
 		 */
 		PersistentProjectileEntity replaceProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity user, @NotNull PersistentProjectileEntity projectile);
 	}

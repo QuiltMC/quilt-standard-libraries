@@ -27,9 +27,9 @@ import org.quiltmc.qsl.item.extension.mixin.crossbow.CrossbowItemAccessor;
 /**
  * An interface to implement for all custom crossbows in Quilt.
  * <p>
- * This is meant to be used on a {@link net.minecraft.item.CrossbowItem} class.</p>
+ * This is meant to be used on a {@link net.minecraft.item.CrossbowItem} class.
  * <p>
- * In order to modify the projectile shot from your crossbow, implementing and registering {@link CrossbowShotProjectileEvents.ModifyProjectileFromCrossbow} is recommended.</p>
+ * In order to modify the projectile shot from your crossbow, implementing and registering {@link CrossbowShotProjectileEvents.ModifyProjectileFromCrossbow} is recommended.
  *
  * @see ProjectileModifyingCrossbowItem
  */

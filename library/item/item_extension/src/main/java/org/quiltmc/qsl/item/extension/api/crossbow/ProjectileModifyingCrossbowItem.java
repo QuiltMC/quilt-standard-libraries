@@ -26,7 +26,7 @@ import org.quiltmc.qsl.item.extension.api.bow.BowShotProjectileEvents;
 /**
  * This is the default implementation for {@link CrossbowExtensions}, allowing for the easy creation of new crossbows with no new modded functionality.
  * <p>
- * This crossbow automatically registers itself to modify its projectiles with {@link ProjectileModifyingCrossbowItem#onProjectileShot(ItemStack, ItemStack, LivingEntity, PersistentProjectileEntity)}</p>
+ * This crossbow automatically registers itself to modify its projectiles with {@link ProjectileModifyingCrossbowItem#onProjectileShot(ItemStack, ItemStack, LivingEntity, PersistentProjectileEntity)}
  */
 public class ProjectileModifyingCrossbowItem extends CrossbowItem implements CrossbowShotProjectileEvents.ModifyProjectileFromCrossbow {
 	public ProjectileModifyingCrossbowItem(Settings settings) {
