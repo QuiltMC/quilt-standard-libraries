@@ -1,5 +1,4 @@
 /*
- * Copyright 2016, 2017, 2018, 2019 FabricMC
  * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +20,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.util.ActionResult;
 import net.minecraft.world.World;
 import org.quiltmc.qsl.entity.interaction.api.LivingEntityAttackCallback;
 import org.spongepowered.asm.mixin.Mixin;
@@ -35,9 +33,9 @@ public abstract class LivingEntityMixin extends Entity {
 	@Inject(method = "damage", at = @At("HEAD"), cancellable = true)
 	private void onTakeDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
 		if (source.getAttacker() instanceof LivingEntity attacker) {
-			ActionResult result = LivingEntityAttackCallback.EVENT.invoker().onAttack(attacker, this, source, amount);
+			boolean result = LivingEntityAttackCallback.EVENT.invoker().onAttack(attacker, this, source, amount);
 
-			if (result == ActionResult.FAIL) cir.setReturnValue(false);
+			if (!result) cir.setReturnValue(false);
 		}
 	}
 

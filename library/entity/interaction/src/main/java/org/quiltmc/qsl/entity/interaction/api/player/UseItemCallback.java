@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,13 +39,21 @@ public interface UseItemCallback {
 	Event<UseItemCallback> EVENT = Event.create(UseItemCallback.class,
 			callbacks -> (player, world, hand) -> {
 				for (UseItemCallback callback : callbacks) {
-					TypedActionResult<ItemStack> result = callback.onUse(player, world, hand);
+					TypedActionResult<ItemStack> result = callback.onUseItem(player, world, hand);
 
 					if (result.getResult() != ActionResult.PASS) return result;
 				}
 				return TypedActionResult.pass(ItemStack.EMPTY);
 			});
 
-
-	TypedActionResult<ItemStack> onUse(PlayerEntity player, World world, Hand hand);
+	/**
+	 * Invoked when a player uses (right-clicks) with an item.
+	 *
+	 * @param player the interacting player
+	 * @param world the world the event occurs in
+	 * @param hand the hand used
+	 * @return SUCCESS to cancel processing and send a packet to the server, PASS to fall back to further processing,
+	 * and FAIL to cancel further processing entirely
+	 */
+	TypedActionResult<ItemStack> onUseItem(PlayerEntity player, World world, Hand hand);
 }

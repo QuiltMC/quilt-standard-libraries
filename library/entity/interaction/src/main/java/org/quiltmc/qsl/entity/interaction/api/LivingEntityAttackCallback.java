@@ -19,29 +19,34 @@ package org.quiltmc.qsl.entity.interaction.api;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.util.ActionResult;
 import org.quiltmc.qsl.base.api.event.Event;
 
 /**
- * Invoked when an entity damages another entity.
+ * Invoked when an entity damages another entity. Is only invoked on the logical server.
  *
- * <p>Returning FAIL will cancel further processing and the entity will not take damage.</p>
+ * <p>Returning false will cancel further processing and the entity will not take damage.</p>
  */
 @FunctionalInterface
 public interface LivingEntityAttackCallback {
 
-	/**
-	 * Invoked when an entity damages another.
-	 */
 	Event<LivingEntityAttackCallback> EVENT = Event.create(LivingEntityAttackCallback.class,
 			callbacks -> (attacker, target, source, amount) -> {
 				for (LivingEntityAttackCallback callback : callbacks) {
-					ActionResult result = callback.onAttack(attacker, target, source, amount);
+					boolean result = callback.onAttack(attacker, target, source, amount);
 
-					if (result == ActionResult.FAIL) return result;
+					if (!result) return false;
 				}
-				return ActionResult.PASS;
+				return true;
 			});
 
-	ActionResult onAttack(LivingEntity attacker, Entity target, DamageSource source, float amount);
+	/**
+	 * Invoked when an entity damages another entity.
+	 *
+	 * @param attacker the attacking living entity
+	 * @param target the target entity
+	 * @param source the damage source
+	 * @param amount the damage amount
+	 * @return false to cancel the event and the attacking action, true to pass to the next listener
+	 */
+	boolean onAttack(LivingEntity attacker, Entity target, DamageSource source, float amount);
 }
