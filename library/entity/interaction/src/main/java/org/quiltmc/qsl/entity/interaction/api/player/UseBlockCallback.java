@@ -25,11 +25,13 @@ import org.quiltmc.qsl.base.api.event.Event;
 
 /**
  * Invoked whenever a player interacts (right clicks) a block.
- *
- * <p>Upon return:
- * <ul><li>SUCCESS cancels further processing and, on the client, sends a packet to the server.
- * <li>PASS falls back to further processing.
- * <li>FAIL cancels further processing and does not send a packet to the server.</ul>
+ * <p>
+ * Upon return:
+ * <ul>
+ *     <li>{@link ActionResult#SUCCESS} cancels further processing and, on the client, sends a packet to the server.</li>
+ * 	   <li>{@link ActionResult#PASS} falls back to further processing.</li>
+ *     <li>{@link ActionResult#FAIL} cancels further processing and does not send a packet to the server.</li>
+ * </ul>
  */
 @FunctionalInterface
 public interface UseBlockCallback {
@@ -51,8 +53,9 @@ public interface UseBlockCallback {
 	 * @param world the world the event occurs in
 	 * @param hand the hand used
 	 * @param hitResult the hit result of the interaction
-	 * @return SUCCESS to cancel processing and send a packet to the server, PASS to fall back to further processing,
-	 * and FAIL to cancel further processing entirely
+	 * @return {@link ActionResult#SUCCESS} to cancel processing and send a packet to the server,
+	 * {@link ActionResult#PASS} to fall back to further processing,
+	 * {@link ActionResult#FAIL} to cancel further processing.
 	 */
 	ActionResult onUseBlock(PlayerEntity player, World world, Hand hand, BlockHitResult hitResult);
 }

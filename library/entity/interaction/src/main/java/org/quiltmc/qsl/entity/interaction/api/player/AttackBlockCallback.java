@@ -25,13 +25,14 @@ import net.minecraft.world.World;
 import org.quiltmc.qsl.base.api.event.Event;
 
 /**
- * Invoked if a player attacks (left clicks) a block.
- * Is hooked before the spectator check, so make sure to check the player's game mode!
+ * A callback that is invoked if a player attacks (left-clicks) a block.
  * <p>
- * <ul><li>SUCCESS cancels further processing and, on the client, sends a packet to the server.
- * <li>PASS falls back to further processing.
- * <li>FAIL cancels further processing and does not send a packet to the server.</ul>
- * </p>
+ * Is hooked before the spectator check, so make sure to check the player's game mode!
+ * <ul>
+ *     <li>{@link ActionResult#SUCCESS} cancels further processing and, on the client, sends a packet to the server.</li>
+ * 	   <li>{@link ActionResult#PASS} falls back to further processing.</li>
+ * 	   <li>{@link ActionResult#FAIL} cancels further processing and does not send a packet to the server.</li>
+ * </ul>
  */
 public interface AttackBlockCallback {
 
@@ -46,15 +47,16 @@ public interface AttackBlockCallback {
 			});
 
 	/**
-	 * Invoked if a player attacks (left clicks) a block.
+	 * Invoked if a player attacks (left-clicks) a block.
 	 *
 	 * @param player the player attacking the block
 	 * @param world the world the event is occurring in
 	 * @param hand the hand used
 	 * @param pos the block's position
 	 * @param direction the side of the block hit
-	 * @return SUCCESS to cancel processing and send a packet to the server, PASS to fall back to further processing,
-	 * and FAIL to cancel further processing entirely
+	 * @return {@link ActionResult#SUCCESS} to cancel processing and send a packet to the server,
+	 * {@link ActionResult#PASS} to fall back to further processing,
+	 * {@link ActionResult#FAIL} to cancel further processing
 	 */
 	ActionResult onAttackBlock(PlayerEntity player, World world, Hand hand, BlockPos pos, Direction direction);
 }

@@ -87,7 +87,7 @@ public abstract class ClientPlayerInteractionManagerMixin {
 			if (result.getResult() == ActionResult.SUCCESS) {
 				this.networkHandler.sendPacket(new PlayerMoveC2SPacket.Full(player.getX(), player.getY(), player.getZ(), player.getYaw(), player.getPitch(), player.isOnGround()));
 				// method sends a packet with a sequentially assigned id to the server
-				m_vvsqjptk((ClientWorld) player.world, i -> new PlayerInteractItemC2SPacket(hand, i));
+				m_vvsqjptk((ClientWorld) player.world, id -> new PlayerInteractItemC2SPacket(hand, id));
 			}
 
 			cir.setReturnValue(result.getResult());
@@ -101,7 +101,7 @@ public abstract class ClientPlayerInteractionManagerMixin {
 		if (result != ActionResult.PASS) {
 			if (result == ActionResult.SUCCESS) {
 				// method sends a packet with a sequentially assigned id to the server
-				this.m_vvsqjptk((ClientWorld) player.world, i -> new PlayerInteractBlockC2SPacket(hand, hitResult, i));
+				this.m_vvsqjptk((ClientWorld) player.world, id -> new PlayerInteractBlockC2SPacket(hand, hitResult, id));
 			}
 
 			cir.setReturnValue(result);
@@ -115,7 +115,7 @@ public abstract class ClientPlayerInteractionManagerMixin {
 		if (result != ActionResult.PASS) {
 			if (result.isAccepted()) {
 				// method sends a packet with a sequentially assigned id to the server
-				this.m_vvsqjptk(this.client.world, i -> new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.START_DESTROY_BLOCK, pos, direction, i));
+				this.m_vvsqjptk(this.client.world, id -> new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.START_DESTROY_BLOCK, pos, direction, id));
 			}
 
 			cir.setReturnValue(result == ActionResult.SUCCESS);
