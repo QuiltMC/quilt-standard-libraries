@@ -285,7 +285,7 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		return this;
 	}
 
-	public QuiltBlockSettings isAir(boolean isAir) {
+	public QuiltBlockSettings air(boolean isAir) {
 		((AbstractBlockSettingsAccessor) this).setIsAir(isAir);
 		return this;
 	}
