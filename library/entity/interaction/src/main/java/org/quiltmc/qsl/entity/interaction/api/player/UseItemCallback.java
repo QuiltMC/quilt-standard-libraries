@@ -54,8 +54,8 @@ public interface UseItemCallback {
 	 * @param player the interacting player
 	 * @param world the world the event occurs in
 	 * @param hand the hand used
-	 * @return {@link TypedActionResult#success(Object)} to cancel processing and send a packet to the server, 
-	 * {@link TypedActionResult#pass(Object)} to fall back to further processing, 
+	 * @return {@link TypedActionResult#success(Object)} to cancel processing and send a packet to the server,
+	 * {@link TypedActionResult#pass(Object)} to fall back to further processing,
 	 * {@link TypedActionResult#fail(Object)} to cancel further processing.
 	 */
 	TypedActionResult<ItemStack> onUseItem(PlayerEntity player, World world, Hand hand);
