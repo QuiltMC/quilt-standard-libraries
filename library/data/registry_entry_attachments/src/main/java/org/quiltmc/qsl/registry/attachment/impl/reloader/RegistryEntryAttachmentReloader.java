@@ -82,7 +82,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 	@Override
 	public CompletableFuture<LoadedData> load(ResourceManager manager, Profiler profiler, Executor executor) {
 		return CompletableFuture.supplyAsync(() -> {
-			var attachmentMaps = new HashMap<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>>();
+			var attachDicts = new HashMap<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>>();
 
 			for (var entry : Registry.REGISTRIES.getEntries()) {
 				Identifier registryId = entry.getKey().getValue();
@@ -90,25 +90,24 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 				profiler.push(this.id + "/finding_resources/" + path);
 
 				Map<Identifier, List<Resource>> resources = manager.findAllResources("attachments/" + path,
-						s -> s.getPath().endsWith(".json")
-				);
+						s -> s.getPath().endsWith(".json"));
 				if (resources.isEmpty()) {
 					profiler.pop();
 					continue;
 				}
 
 				Registry<?> registry = entry.getValue();
-				this.processResources(profiler, attachmentMaps, resources, registry);
+				this.processResources(profiler, attachDicts, resources, registry);
 
 				profiler.pop();
 			}
 
-			return new LoadedData(attachmentMaps);
+			return new LoadedData(attachDicts);
 		}, executor);
 	}
 
 	private void processResources(Profiler profiler,
-			Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> attachmentMaps,
+			Map<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>> attachDicts,
 			Map<Identifier, List<Resource>> resources, Registry<?> registry) {
 		for (var entry : resources.entrySet()) {
 			Identifier attachmentId = this.getAttachmentId(entry.getKey());
@@ -126,9 +125,9 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 
 			profiler.swap(this.id + "/processing_resources{" + entry + "," + attachmentId + "}");
 
-			AttachmentDictionary<?, ?> attachAttachment = attachmentMaps.computeIfAbsent(attachment, this::createAttachmentMap);
+			AttachmentDictionary<?, ?> attachDict = attachDicts.computeIfAbsent(attachment, this::createAttachmentMap);
 			for (var resource : entry.getValue()) {
-				attachAttachment.processResource(entry.getKey(), resource);
+				attachDict.processResource(entry.getKey(), resource);
 			}
 		}
 	}
@@ -193,8 +192,8 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 				V value = (V) attachmentEntry.getValue();
 				AttachmentDictionary.ValueTarget target = attachmentEntry.getKey();
 				switch (target.type()) {
-					case ENTRY -> holder.putValue(attachment, attachment.registry().get(target.id()), value);
-					case TAG -> holder.putValue(attachment, TagKey.of(attachment.registry().getKey(), target.id()), value);
+					case ENTRY -> holder.putValue(attachment, registry.get(target.id()), value);
+					case TAG -> holder.putValue(attachment, TagKey.of(registry.getKey(), target.id()), value);
 					default -> throw new IllegalStateException("Unexpected value: " + target.type());
 				}
 			}
