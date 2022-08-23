@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.item.extensions.api.event;
+package org.quiltmc.qsl.item.events.api;
 
 import org.jetbrains.annotations.NotNull;
 

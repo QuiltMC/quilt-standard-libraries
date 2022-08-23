@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.item.extensions.test;
+package org.quiltmc.qsl.item.events.test;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +27,7 @@ import net.minecraft.util.ActionResult;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-import org.quiltmc.qsl.item.extensions.api.event.ItemInteractionEvents;
+import org.quiltmc.qsl.item.events.api.ItemInteractionEvents;
 
 public final class Initializer implements ModInitializer,
 		ItemInteractionEvents.UsedOnBlock {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.item.extensions.mixin;
+package org.quiltmc.qsl.item.events.mixin;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,7 +44,7 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 
-import org.quiltmc.qsl.item.extensions.api.QuiltItemUsageContextExtensions;
+import org.quiltmc.qsl.item.events.api.QuiltItemUsageContextExtensions;
 
 @Mixin(ItemUsageContext.class)
 public abstract class ItemUsageContextMixin implements QuiltItemUsageContextExtensions {

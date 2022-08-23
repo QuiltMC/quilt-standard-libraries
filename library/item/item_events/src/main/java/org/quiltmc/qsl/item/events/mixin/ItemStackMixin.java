@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.item.extensions.mixin;
+package org.quiltmc.qsl.item.events.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,7 +25,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.util.ActionResult;
 
-import org.quiltmc.qsl.item.extensions.api.event.ItemInteractionEvents;
+import org.quiltmc.qsl.item.events.api.ItemInteractionEvents;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
