@@ -20,10 +20,13 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 
 import org.quiltmc.qsl.item.events.api.ItemInteractionEvents;
 
@@ -34,6 +37,16 @@ public abstract class ItemStackMixin {
 		var result = ItemInteractionEvents.USED_ON_BLOCK.invoker().onItemUsedOnBlock(context);
 		if (result == ActionResult.PASS) {
 			result = instance.useOnBlock(context);
+		}
+		return result;
+	}
+
+	@Redirect(method = "useOnEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;useOnEntity(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/util/Hand;)Lnet/minecraft/util/ActionResult;"))
+	private ActionResult quilt$invokeUsedOnEntityEvent(Item instance, ItemStack stack, PlayerEntity user,
+			LivingEntity entity, Hand hand) {
+		var result = ItemInteractionEvents.USED_ON_ENTITY.invoker().onItemUsedOnEntity(stack, user, entity, hand);
+		if (result == ActionResult.PASS) {
+			result = instance.useOnEntity(stack, user, entity, hand);
 		}
 		return result;
 	}
