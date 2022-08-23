@@ -64,7 +64,7 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		this.velocityMultiplier(otherAccessor.getVelocityMultiplier());
 		this.dynamicBounds(otherAccessor.getDynamicBounds());
 		this.opaque(otherAccessor.getOpaque());
-		this.isAir(otherAccessor.getIsAir());
+		this.air(otherAccessor.getIsAir());
 		this.requiresTool(otherAccessor.isToolRequired());
 		// endregion
 
