@@ -48,7 +48,6 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	protected QuiltBlockSettings(AbstractBlock.Settings settings) {
 		super(((AbstractBlockSettingsAccessor) settings).getMaterial(), ((AbstractBlockSettingsAccessor) settings).getMapColorProvider());
 
-		var thisAccessor = (AbstractBlockSettingsAccessor) this;
 		var otherAccessor = (AbstractBlockSettingsAccessor) settings;
 
 		// region [VanillaCopy] AbstractBlock.Settings#copy(AbstractBlock.Settings)
