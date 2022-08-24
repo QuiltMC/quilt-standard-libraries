@@ -156,5 +156,4 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 
 		return getAir();
 	}
-
 }

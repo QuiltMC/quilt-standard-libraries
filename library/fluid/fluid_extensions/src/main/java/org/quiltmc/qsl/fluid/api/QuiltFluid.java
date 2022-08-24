@@ -39,7 +39,7 @@ public abstract class QuiltFluid extends FlowableFluid implements QuiltFlowableF
 	}
 
 	/**
-	 * @return A boolean weather the fluid is infinite like water.
+	 * @return Whether the fluid is infinite, like water.
 	 */
 	@Override
 	protected boolean isInfinite() {

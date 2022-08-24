@@ -129,7 +129,7 @@ public interface QuiltFlowableFluidExtensions {
 	}
 
 	/**
-	 * Toggles weather or not a player can sprint swim in your fluid
+	 * Toggles whether a player can sprint swim in your fluid
 	 *
 	 * @param state    - Fluidstate of the fluid the boolean is requested from.
 	 * @param affected - Entity which is in the fluid
@@ -140,9 +140,9 @@ public interface QuiltFlowableFluidExtensions {
 	}
 
 	/**
-	 * Modifies the horizontal viscosity, taking Dolphins Grace into the mix.
+	 * Modifies the horizontal viscosity, taking Dolphin's Grace into the mix.
 	 *
-	 * @param affected            - LivingEntity which horizontalViscosity should be modified.
+	 * @param affected            - The LivingEntity whose horizontalViscosity should be modified.
 	 * @param horizontalViscosity - Unmodified horizontalViscosity of the fluid.
 	 * @return an updated horizontalViscosity, specifically regarding potion effects
 	 */
@@ -154,55 +154,55 @@ public interface QuiltFlowableFluidExtensions {
 	}
 
 	/**
-	 * Weather an Entity can swim when quickly double pressing the space bar inside a fluid.
+	 * Whether an Entity can swim when quickly double pressing the space bar inside a fluid.
 	 *
 	 * @param state    - The fluidstate of the fluid the entity wants to swim in.
 	 * @param affected - The entity which is in the fluid.
-	 * @return - A boolean of weather the entity can double tap sprint swim or not.
+	 * @return - A boolean representing whether the entity can double tap sprint swim.
 	 */
 	default boolean enableDoubleTapSpacebarSwimming(FluidState state, Entity affected) {
 		return true;
 	}
 
 	/**
-	 * Weather a fishing bobber floats on top of a fluid or not.
+	 * Whether a fishing bobber floats on top of the fluid or not.
 	 *
 	 * @param state    - The fluidstate of the fluid the bobber wants to float on.
 	 * @param affected - The FishingBobberEntity instance, which wants to float on the fluid.
-	 * @return - A boolean if the bobber can float on the fluid.
+	 * @return - A boolean representing whether the bobber can float on the fluid.
 	 */
 	default boolean bobberFloats(FluidState state, FishingBobberEntity affected) {
 		return true;
 	}
 
 	/**
-	 * Weather a fishing bobber can fish in a fluid or not.
+	 * Whether a fishing bobber can fish in a fluid or not.
 	 *
 	 * @param state    - The fluidstate of the fluid the bobber wants to fish in.
 	 * @param affected - The FishingBobberEntity instance, which wants to fish in the fluid.
-	 * @return - A boolean if the bobber can fish in the fluid.
+	 * @return - A boolean representing if the bobber can fish in the fluid.
 	 */
 	default boolean canFish(FluidState state, FishingBobberEntity affected) {
 		return true;
 	}
 
 	/**
-	 * If the fluid can extinguish burning entities.
+	 * Whether the fluid can extinguish burning entities.
 	 *
 	 * @param state    - The fluidstate of the fluid the entity is in.
 	 * @param affected - The entity which is in the fluid.
-	 * @return - A boolean weather the entity can be extinguished or not.
+	 * @return - A boolean representing whether the entity can be extinguished.
 	 */
 	default boolean canExtinguish(FluidState state, Entity affected) {
 		return true;
 	}
 
 	/**
-	 * If the fluid can ignite entities.
+	 * Whether the fluid can ignite entities.
 	 *
 	 * @param state    - The fluidstate of the fluid the entity is in.
 	 * @param affected - The entity which is in the fluid.
-	 * @return - A boolean weather the entity can be ignited by the fluid or not.
+	 * @return - A boolean representing whether the entity can be ignited by the fluid.
 	 */
 	default boolean canIgnite(FluidState state, Entity affected) {
 		return !canExtinguish(state, affected);
@@ -213,7 +213,7 @@ public interface QuiltFlowableFluidExtensions {
 	 *
 	 * @param air    - The air the entity currently has.
 	 * @param entity - The entity which is currently drowning.
-	 * @param random - A random Generator
+	 * @param random -  A RandomGenerator
 	 * @return - The remaining air for the next tick
 	 */
 	default int getRemainingAir(int air, LivingEntity entity, RandomGenerator random) {
@@ -393,7 +393,7 @@ public interface QuiltFlowableFluidExtensions {
 	/**
 	 * Provides a way to determine if a boat can swim on a specific fluid or not.
 	 *
-	 * @return - A boolean if a boat can swim on this fluid. true = swims, false = sinks
+	 * @return - A boolean representing whether a boat can float on top of this fluid.
 	 */
 	default boolean canBoatSwimOn() {
 		return true;

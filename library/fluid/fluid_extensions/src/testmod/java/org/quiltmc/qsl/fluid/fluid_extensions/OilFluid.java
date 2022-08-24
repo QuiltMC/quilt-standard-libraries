@@ -37,7 +37,7 @@ import javax.annotation.Nullable;
 public abstract class OilFluid extends QuiltDirectionalFluid {
 
 	@Override
-	public Direction getFlowingDirection() {
+	public Direction getFlowDirection() {
 		return Direction.UP;
 	}
 
