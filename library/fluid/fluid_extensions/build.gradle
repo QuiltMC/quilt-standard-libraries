@@ -15,6 +15,9 @@ qslModule {
 		block {
 			api("block_extensions")
 		}
+		core {
+			api("registry")
+		}
 	}
 
 	accessWidener()
