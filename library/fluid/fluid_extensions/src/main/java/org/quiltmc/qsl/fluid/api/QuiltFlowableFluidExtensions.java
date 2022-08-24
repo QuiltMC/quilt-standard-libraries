@@ -136,6 +136,9 @@ public interface QuiltFlowableFluidExtensions {
 	 * @return - A boolean, which tells if sprint swimming is allowed or not
 	 */
 	default boolean allowSprintSwimming(FluidState state, Entity affected) {
+		if (state.isIn(FluidTags.LAVA)) {
+			return false;
+		}
 		return true;
 	}
 

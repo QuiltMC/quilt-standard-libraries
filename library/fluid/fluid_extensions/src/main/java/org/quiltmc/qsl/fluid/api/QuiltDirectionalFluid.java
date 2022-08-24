@@ -42,6 +42,7 @@ import java.util.Map;
 
 /**
  * @apiNote Used when specifying a custom fluid flow direction is required, otherwise use QuiltFluid.
+ * @implNote A lot of this code is refactored from the FlowableFluid Class, a long with the magic values. A lot of these values should not be touched, as there is no proper reason to yet.
  */
 public abstract class QuiltDirectionalFluid extends QuiltFluid implements QuiltFlowableFluidExtensions{
 
@@ -51,32 +52,39 @@ public abstract class QuiltDirectionalFluid extends QuiltFluid implements QuiltF
 	 */
 	public Direction getFlowDirection() {return Direction.DOWN;}
 
+	/**
+	 *
+	 * @param world - The world the fluid resides in
+	 * @param pos - The position of the fluid
+	 * @param state - The state of the fluid
+	 * @return - The velocity of the fluid
+	 */
 	@Override
 	public Vec3d getVelocity(BlockView world, BlockPos pos, FluidState state) {
-		double d = 0.0;
-		double e = 0.0;
+		double offsetX = 0.0;
+		double offsetZ = 0.0;
 		BlockPos.Mutable mutable = new BlockPos.Mutable();
-		for (Direction direction : Direction.Type.HORIZONTAL) { // TODO: Sideways fluid support
+		for (Direction direction : Direction.Type.HORIZONTAL) {
 			mutable.set(pos, direction);
 			FluidState fluidState = world.getFluidState(mutable);
 			if (!this.isEmptyOrThis(fluidState)) continue;
-			float f = fluidState.getHeight();
-			float g = 0.0f;
-			if (f == 0.0f) {
+			float fluidHeight = fluidState.getHeight();
+			float modifiedFluidHeight = 0.0f;
+			if (fluidHeight == 0.0f) {
 				FluidState fluidState2;
-				if (!world.getBlockState(mutable).getMaterial().blocksMovement() && this.isEmptyOrThis(fluidState2 = world.getFluidState(mutable.move(getFlowDirection()))) && (f = fluidState2.getHeight()) > 0.0f) {
-					g = state.getHeight() - (f - 0.8888889f);
+				if (!world.getBlockState(mutable).getMaterial().blocksMovement() && this.isEmptyOrThis(fluidState2 = world.getFluidState(mutable.move(getFlowDirection()))) && (fluidHeight = fluidState2.getHeight()) > 0.0f) {
+					modifiedFluidHeight = state.getHeight() - (fluidHeight - 0.8888889f);
 				}
-			} else if (f > 0.0f) {
-				g = state.getHeight() - f;
+			} else if (fluidHeight > 0.0f) {
+				modifiedFluidHeight = state.getHeight() - fluidHeight;
 			}
-			if (g == 0.0f) continue;
-			d += (float)direction.getOffsetX() * g;
-			e += (float)direction.getOffsetZ() * g;
+			if (modifiedFluidHeight == 0.0f) continue;
+			offsetX += (float)direction.getOffsetX() * modifiedFluidHeight;
+			offsetZ += (float)direction.getOffsetZ() * modifiedFluidHeight;
 		}
-		Vec3d vec3d = new Vec3d(d, 0.0, e);
+		Vec3d vec3d = new Vec3d(offsetX, 0.0, offsetZ);
 		if (state.get(FALLING).booleanValue()) {
-			for (Direction direction2 : Direction.Type.HORIZONTAL) { // TODO: Sideways fluid support
+			for (Direction direction2 : Direction.Type.HORIZONTAL) {
 				mutable.set(pos, direction2);
 				if (!this.m_innettlj(world, mutable, direction2) && !this.m_innettlj(world, mutable.move(getFlowDirection().getOpposite()), direction2)) continue;
 				vec3d = vec3d.normalize().add(0.0, -6.0, 0.0);
@@ -86,6 +94,13 @@ public abstract class QuiltDirectionalFluid extends QuiltFluid implements QuiltF
 		return vec3d.normalize();
 	}
 
+	/**
+	 *
+	 * @param world - The world the fluid resides in
+	 * @param pos - The position of the fluid
+	 * @param direction - The direction the fluid is flowing
+	 * @return - Whether the fluid can flow there or not.
+	 */
 	@Override
 	protected boolean m_innettlj(BlockView world, BlockPos pos, Direction direction) {
 		BlockState blockState = world.getBlockState(pos);
@@ -121,24 +136,31 @@ public abstract class QuiltDirectionalFluid extends QuiltFluid implements QuiltF
 		}
 	}
 
+	/**
+	 *
+	 * @param world - The world the fluid resides in
+	 * @param pos  - The position of the fluid
+	 * @param state - The state of the fluid
+	 * @return - The updated state for the fluid
+	 */
 	@Override
 	public FluidState getUpdatedState(WorldView world, BlockPos pos, BlockState state) {
 		BlockPos blockPos2;
 		BlockState blockState3;
 		FluidState fluidState3;
-		int i = 0;
-		int j = 0;
-		for (Direction direction : Direction.Type.HORIZONTAL) { // TODO: Sideways fluid support
+		int maxFluidLevel = 0;
+		int sourceBlocks = 0;
+		for (Direction direction : Direction.Type.HORIZONTAL) {
 			BlockPos blockPos = pos.offset(direction);
 			BlockState blockState = world.getBlockState(blockPos);
 			FluidState fluidState = blockState.getFluidState();
 			if (!fluidState.getFluid().matchesType(this) || !this.receivesFlow(direction, world, pos, state, blockPos, blockState)) continue;
 			if (fluidState.isSource()) {
-				++j;
+				++sourceBlocks;
 			}
-			i = Math.max(i, fluidState.getLevel());
+			maxFluidLevel = Math.max(maxFluidLevel, fluidState.getLevel());
 		}
-		if (this.isInfinite() && j >= 2) {
+		if (this.isInfinite() && sourceBlocks >= 2) {
 			BlockState blockState2 = world.getBlockState(pos.offset(getFlowDirection()));
 			FluidState fluidState2 = blockState2.getFluidState();
 			if (blockState2.getMaterial().isSolid() || this.isMatchingAndStill(fluidState2)) {
@@ -148,29 +170,33 @@ public abstract class QuiltDirectionalFluid extends QuiltFluid implements QuiltF
 		if (!(fluidState3 = (blockState3 = world.getBlockState(blockPos2 = pos.offset(getFlowDirection().getOpposite()))).getFluidState()).isEmpty() && fluidState3.getFluid().matchesType(this) && this.receivesFlow(getFlowDirection().getOpposite(), world, pos, state, blockPos2, blockState3)) {
 			return this.getFlowing(8, true);
 		}
-		int k = i - this.getLevelDecreasePerBlock(world);
-		if (k <= 0) {
+		int temp = maxFluidLevel - this.getLevelDecreasePerBlock(world);
+		if (temp <= 0) {
 			return Fluids.EMPTY.getDefaultState();
 		}
-		return this.getFlowing(k, false);
+		return this.getFlowing(temp, false);
 	}
 
+	/**
+	 * Shouldn't really be used, as it's quite hard to get right on your own
+	 * @return - The flow distance
+	 */
 	@Override
 	protected int m_elhudbgf(WorldView world, BlockPos blockPos, int i, Direction direction, BlockState blockState, BlockPos blockPos2, Short2ObjectMap<Pair<BlockState, FluidState>> short2ObjectMap, Short2BooleanMap short2BooleanMap) {
-		int j = 1000;
-		for (Direction direction2 : Direction.Type.HORIZONTAL) { // TODO: Sideways fluid support
-			int k;
+		int maxFlowDistance = 1000;
+		for (Direction direction2 : Direction.Type.HORIZONTAL) {
+			int temp;
 			if (direction2 == direction) continue;
 			BlockPos blockPos3 = blockPos.offset(direction2);
-			short s2 = this.getMask(blockPos2, blockPos3);
-			Pair pair = short2ObjectMap.computeIfAbsent(s2, s -> {
+			short blockPosMask = this.getMask(blockPos2, blockPos3);
+			Pair<BlockState, FluidState> pair = short2ObjectMap.computeIfAbsent(blockPosMask, s -> {
 				BlockState blockState1 = world.getBlockState(blockPos3);
 				return Pair.of(blockState1, blockState1.getFluidState());
 			});
-			BlockState blockState2 = (BlockState)pair.getFirst();
-			FluidState fluidState = (FluidState)pair.getSecond();
+			BlockState blockState2 = pair.getFirst();
+			FluidState fluidState = pair.getSecond();
 			if (!this.canFlowThrough(world, this.getFlowing(), blockPos, blockState, direction2, blockPos3, blockState2, fluidState)) continue;
-			boolean bl = short2BooleanMap.computeIfAbsent(s2, s -> {
+			boolean bl = short2BooleanMap.computeIfAbsent(blockPosMask, s -> {
 				BlockPos blockPos4 = blockPos3.offset(getFlowDirection());
 				BlockState blockState4 = world.getBlockState(blockPos4);
 				return this.canFlowAndFill(world, this.getFlowing(), blockPos3, blockState2, blockPos4, blockState4);
@@ -178,12 +204,16 @@ public abstract class QuiltDirectionalFluid extends QuiltFluid implements QuiltF
 			if (bl) {
 				return i;
 			}
-			if (i >= this.getFlowSpeed(world) || (k = this.m_elhudbgf(world, blockPos3, i + 1, direction2.getOpposite(), blockState2, blockPos2, short2ObjectMap, short2BooleanMap)) >= j) continue;
-			j = k;
+			if (i >= this.getFlowSpeed(world) || (temp = this.m_elhudbgf(world, blockPos3, i + 1, direction2.getOpposite(), blockState2, blockPos2, short2ObjectMap, short2BooleanMap)) >= maxFlowDistance) continue;
+			maxFlowDistance = temp;
 		}
-		return j;
+		return maxFlowDistance;
 	}
 
+	/**
+	 * If the fluid can flow to a position and waterlog the block
+	 * @return - Whether the fluid can flow and fill the block at a given position or not
+	 */
 	public final boolean canFlowAndFill(BlockView world, Fluid fluid, BlockPos pos, BlockState state, BlockPos fromPos, BlockState fromState) {
 		if (!this.receivesFlow(getFlowDirection(), world, pos, state, fromPos, fromState)) {
 			return false;
@@ -194,48 +224,53 @@ public abstract class QuiltDirectionalFluid extends QuiltFluid implements QuiltF
 		return this.canFill(world, fromPos, fromState, fluid);
 	}
 
+	/**
+	 * @param world - The world the fluid resides in
+	 * @param pos  - The position of the fluid
+	 * @return - The flow distance
+	 */
 	public int getFlowDist(WorldView world, BlockPos pos) {
-		int i = 0;
-		for (Direction direction : Direction.Type.HORIZONTAL) { // TODO: Sideways fluid support
+		int flowDistance = 0;
+		for (Direction direction : Direction.Type.HORIZONTAL) {
 			BlockPos blockPos = pos.offset(direction);
 			FluidState fluidState = world.getFluidState(blockPos);
 			if (!this.isMatchingAndStill(fluidState)) continue;
-			++i;
+			++flowDistance;
 		}
-		return i;
+		return flowDistance;
 	}
 
 	@Override
 	protected Map<Direction, FluidState> getSpread(WorldView world, BlockPos pos, BlockState state) {
-		int i = 1000;
-		EnumMap<Direction, FluidState> map = Maps.newEnumMap(Direction.class);
+		int maxFlowDistance = 1000;
+		EnumMap<Direction, FluidState> fluidDirectionMap = Maps.newEnumMap(Direction.class);
 		Short2ObjectOpenHashMap<Pair<BlockState, FluidState>> short2ObjectMap = new Short2ObjectOpenHashMap<Pair<BlockState, FluidState>>();
 		Short2BooleanOpenHashMap short2BooleanMap = new Short2BooleanOpenHashMap();
-		for (Direction direction : Direction.Type.HORIZONTAL) { // TODO: Sideways fluid support
+		for (Direction direction : Direction.Type.HORIZONTAL) {
 			BlockPos blockPos = pos.offset(direction);
-			short s2 = this.getMask(pos, blockPos);
-			Pair pair = short2ObjectMap.computeIfAbsent(s2, s -> {
+			short blockPosMask = this.getMask(pos, blockPos);
+			Pair<BlockState, FluidState> blockStateFluidStatePair = short2ObjectMap.computeIfAbsent(blockPosMask, s -> {
 				BlockState blockState = world.getBlockState(blockPos);
 				return Pair.of(blockState, blockState.getFluidState());
 			});
-			BlockState blockState = (BlockState)pair.getFirst();
-			FluidState fluidState = (FluidState)pair.getSecond();
+			BlockState blockState = blockStateFluidStatePair.getFirst();
+			FluidState fluidState = blockStateFluidStatePair.getSecond();
 			FluidState fluidState2 = this.getUpdatedState(world, blockPos, blockState);
 			if (!this.canFlowThrough(world, fluidState2.getFluid(), pos, state, direction, blockPos, blockState, fluidState)) continue;
 			BlockPos blockPos2 = blockPos.offset(getFlowDirection());
-			boolean bl = short2BooleanMap.computeIfAbsent(s2, s -> {
+			boolean canFlowAndFill = short2BooleanMap.computeIfAbsent(blockPosMask, s -> {
 				BlockState blockState2 = world.getBlockState(blockPos2);
 				return this.canFlowAndFill(world, this.getFlowing(), blockPos, blockState, blockPos2, blockState2);
 			});
-			int j = bl ? 0 : this.m_elhudbgf(world, blockPos, 1, direction.getOpposite(), blockState, pos, short2ObjectMap, short2BooleanMap);
-			if (j < i) {
-				map.clear();
+			int flowDistance = canFlowAndFill ? 0 : this.m_elhudbgf(world, blockPos, 1, direction.getOpposite(), blockState, pos, short2ObjectMap, short2BooleanMap);
+			if (flowDistance < maxFlowDistance) {
+				fluidDirectionMap.clear();
 			}
-			if (j > i) continue;
-			map.put(direction, fluidState2);
-			i = j;
+			if (flowDistance > maxFlowDistance) continue;
+			fluidDirectionMap.put(direction, fluidState2);
+			maxFlowDistance = flowDistance;
 		}
-		return map;
+		return fluidDirectionMap;
 	}
 
 	public static boolean isFluidInDirectionEqual(FluidState state, BlockView world, BlockPos pos) {
@@ -261,8 +296,8 @@ public abstract class QuiltDirectionalFluid extends QuiltFluid implements QuiltF
 	}
 
 	private static short getMask(BlockPos blockPos, BlockPos blockPos2) {
-		int i = blockPos2.getX() - blockPos.getX();
-		int j = blockPos2.getZ() - blockPos.getZ();
-		return (short)((i + 128 & 0xFF) << 8 | j + 128 & 0xFF);
+		int xOffset = blockPos2.getX() - blockPos.getX();
+		int zOffset = blockPos2.getZ() - blockPos.getZ();
+		return (short)((xOffset + 128 & 0xFF) << 8 | zOffset + 128 & 0xFF);
 	}
 }
