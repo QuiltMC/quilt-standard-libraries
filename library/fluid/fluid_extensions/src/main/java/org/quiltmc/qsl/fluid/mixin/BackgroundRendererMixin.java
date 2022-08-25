@@ -19,18 +19,18 @@ package org.quiltmc.qsl.fluid.mixin;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.render.BackgroundRenderer;
 import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.CameraSubmersionType;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.LavaFluid;
-import net.minecraft.fluid.WaterFluid;
 import org.quiltmc.qsl.fluid.api.QuiltFlowableFluidExtensions;
+import org.quiltmc.qsl.fluid.api.QuiltFluid;
 import org.quiltmc.qsl.fluid.impl.CameraExtensions;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(BackgroundRenderer.class)
 public class BackgroundRendererMixin {
@@ -43,7 +43,6 @@ public class BackgroundRendererMixin {
 	private static float blue;
 	@Shadow
 	private static long lastWaterFogColorUpdateTime = -1L;
-
 	@Inject(method = "render(Lnet/minecraft/client/render/Camera;FLnet/minecraft/client/world/ClientWorld;IF)V",
 			at = @At("HEAD"),
 			cancellable = true)
@@ -73,24 +72,14 @@ public class BackgroundRendererMixin {
 	}
 
 	@Inject(method = "applyFog",
-			at = @At("HEAD"),
-			cancellable = true)
-	private static void applyFog(Camera camera, BackgroundRenderer.FogType fogType, float viewDistance, boolean thickFog, float tickDelta, CallbackInfo ci) {
-		//Get the fluid that submerged the camera
-		FluidState fluidState = camera.quilt$getSubmergedFluidState();
-
-		boolean isWaterOrLava = fluidState.getFluid() instanceof WaterFluid || fluidState.getFluid() instanceof LavaFluid;
-
-		//If this is an instance of QuiltFlowableFluidExtensions interface...
-		if (fluidState.getFluid() instanceof QuiltFlowableFluidExtensions fluid && !isWaterOrLava) {
-
-			//Get the start and end parameters and apply them, then return.
-			Entity entity = camera.getFocusedEntity();
-			RenderSystem.setShaderFogStart(fluid.getFogStart(fluidState, entity, viewDistance));
-			RenderSystem.setShaderFogEnd(fluid.getFogEnd(fluidState, entity, viewDistance));
-
-			ci.cancel();
+			at = @At(value = "INVOKE", shift = At.Shift.BEFORE,target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderFogStart(F)V")
+	,locals = LocalCapture.CAPTURE_FAILHARD)
+	private static void applyFog(Camera camera, BackgroundRenderer.FogType fogType, float viewDistance, boolean thickFog, float tickDelta, CallbackInfo ci, CameraSubmersionType cameraSubmersionType, Entity entity, BackgroundRenderer.FogParameters fogParameters) {
+		CameraExtensions cameraExtensions = (CameraExtensions)camera;
+		FluidState fluidState = cameraExtensions.quilt$getSubmergedFluidState();
+		if(fluidState.getFluid() instanceof QuiltFluid quiltFluid) {
+			fogParameters.fogStart = quiltFluid.getFogStart(fluidState,entity,viewDistance);
+			fogParameters.fogEnd = quiltFluid.getFogEnd(fluidState,entity,viewDistance);
 		}
 	}
-
 }
