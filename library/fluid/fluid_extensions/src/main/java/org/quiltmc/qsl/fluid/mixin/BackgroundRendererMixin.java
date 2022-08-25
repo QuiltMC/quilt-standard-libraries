@@ -25,6 +25,7 @@ import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.LavaFluid;
 import net.minecraft.fluid.WaterFluid;
 import org.quiltmc.qsl.fluid.api.QuiltFlowableFluidExtensions;
+import org.quiltmc.qsl.fluid.impl.CameraExtensions;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -48,7 +49,7 @@ public class BackgroundRendererMixin {
 			cancellable = true)
 	private static void render(Camera camera, float tickDelta, ClientWorld world, int i, float f, CallbackInfo ci) {
 		//Get the fluid that submerged the camera
-		FluidState fluidState = camera.quilt$getSubmergedFluidState();
+		FluidState fluidState = ((CameraExtensions) camera).quilt$getSubmergedFluidState();
 
 		//If this is an instance of QuiltFlowableFluidExtensions interface...
 		if (fluidState.getFluid() instanceof QuiltFlowableFluidExtensions fluid) {
