@@ -55,7 +55,7 @@ public abstract class ItemStackMixin {
 	@Redirect(method = "useOnEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;useOnEntity(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/util/Hand;)Lnet/minecraft/util/ActionResult;"))
 	private ActionResult quilt$invokeUsedOnEntityEvent(Item instance, ItemStack stack, PlayerEntity user,
 			LivingEntity entity, Hand hand) {
-		var result = ItemInteractionEvents.USED_ON_ENTITY.invoker().onItemUsedOnEntity(stack, user, entity, hand);
+		var result = ItemInteractionEvents.USED_ON_ENTITY.invoker().onItemUsedOnEntity(stack, user.getWorld(), user, entity, hand);
 		if (result == ActionResult.PASS) {
 			result = instance.useOnEntity(stack, user, entity, hand);
 		}

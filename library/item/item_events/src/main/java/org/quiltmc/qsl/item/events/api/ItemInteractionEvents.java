@@ -57,10 +57,10 @@ public final class ItemInteractionEvents {
 		return result;
 	});
 
-	public static final Event<UsedOnEntity> USED_ON_ENTITY = Event.create(UsedOnEntity.class, callbacks -> (stack, user, entity, hand) -> {
+	public static final Event<UsedOnEntity> USED_ON_ENTITY = Event.create(UsedOnEntity.class, callbacks -> (stack, world, user, entity, hand) -> {
 		var result = ActionResult.PASS;
 		for (var callback : callbacks) {
-			result = callback.onItemUsedOnEntity(stack, user, entity, hand);
+			result = callback.onItemUsedOnEntity(stack, world, user, entity, hand);
 			if (result != ActionResult.PASS) {
 				return result;
 			}
@@ -90,7 +90,7 @@ public final class ItemInteractionEvents {
 	@FunctionalInterface
 	public interface UsedOnEntity extends EventAwareListener {
 		@NotNull ActionResult onItemUsedOnEntity(
-				@NotNull ItemStack stack, @NotNull PlayerEntity user, @NotNull LivingEntity entity, @NotNull Hand hand
+				@NotNull ItemStack stack, @NotNull World world, @NotNull PlayerEntity user, @NotNull LivingEntity entity, @NotNull Hand hand
 		);
 	}
 
