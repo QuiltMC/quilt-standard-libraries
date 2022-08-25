@@ -19,6 +19,7 @@ package org.quiltmc.qsl.entity.interaction.api;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.item.ItemStack;
 import org.quiltmc.qsl.base.api.event.Event;
 
 /**
@@ -30,9 +31,9 @@ import org.quiltmc.qsl.base.api.event.Event;
 public interface LivingEntityAttackCallback {
 
 	Event<LivingEntityAttackCallback> EVENT = Event.create(LivingEntityAttackCallback.class,
-			callbacks -> (attacker, target, source, amount) -> {
+			callbacks -> (attacker, stack, target, source, amount) -> {
 				for (LivingEntityAttackCallback callback : callbacks) {
-					boolean result = callback.onAttack(attacker, target, source, amount);
+					boolean result = callback.onAttack(attacker, stack, target, source, amount);
 
 					if (!result) return false;
 				}
@@ -49,5 +50,5 @@ public interface LivingEntityAttackCallback {
 	 * @return {@code false} to cancel the event and the attacking action,
 	 * otherwise {@code true} to pass to the next listener
 	 */
-	boolean onAttack(LivingEntity attacker, Entity target, DamageSource source, float amount);
+	boolean onAttack(LivingEntity attacker, ItemStack stack, Entity target, DamageSource source, float amount);
 }

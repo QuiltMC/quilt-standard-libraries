@@ -21,7 +21,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import org.quiltmc.qsl.base.api.event.Event;
 
@@ -39,13 +38,13 @@ import org.quiltmc.qsl.base.api.event.Event;
 public interface UseItemCallback {
 
 	Event<UseItemCallback> EVENT = Event.create(UseItemCallback.class,
-			callbacks -> (player, world, hand) -> {
+			callbacks -> (player, world, hand, stack) -> {
 				for (UseItemCallback callback : callbacks) {
-					TypedActionResult<ItemStack> result = callback.onUseItem(player, world, hand);
+					ActionResult result = callback.onUseItem(player, world, hand, stack);
 
-					if (result.getResult() != ActionResult.PASS) return result;
+					if (result != ActionResult.PASS) return result;
 				}
-				return TypedActionResult.pass(ItemStack.EMPTY);
+				return ActionResult.PASS;
 			});
 
 	/**
@@ -54,9 +53,9 @@ public interface UseItemCallback {
 	 * @param player the interacting player
 	 * @param world the world the event occurs in
 	 * @param hand the hand used
-	 * @return {@link TypedActionResult#success(Object)} to cancel processing and send a packet to the server,
-	 * {@link TypedActionResult#pass(Object)} to fall back to further processing,
-	 * {@link TypedActionResult#fail(Object)} to cancel further processing.
+	 * @return {@link ActionResult#SUCCESS} to cancel processing and send a packet to the server,
+	 * {@link ActionResult#PASS} to fall back to further processing,
+	 * {@link ActionResult#FAIL} to cancel further processing.
 	 */
-	TypedActionResult<ItemStack> onUseItem(PlayerEntity player, World world, Hand hand);
+	ActionResult onUseItem(PlayerEntity player, World world, Hand hand, ItemStack stack);
 }

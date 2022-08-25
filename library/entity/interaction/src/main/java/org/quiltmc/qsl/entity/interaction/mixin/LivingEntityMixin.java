@@ -33,7 +33,7 @@ public abstract class LivingEntityMixin extends Entity {
 	@Inject(method = "damage", at = @At("HEAD"), cancellable = true)
 	private void onTakeDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
 		if (source.getAttacker() instanceof LivingEntity attacker) {
-			boolean result = LivingEntityAttackCallback.EVENT.invoker().onAttack(attacker, this, source, amount);
+			boolean result = LivingEntityAttackCallback.EVENT.invoker().onAttack(attacker, attacker.getMainHandStack(), this, source, amount);
 
 			if (!result) cir.setReturnValue(false);
 		}

@@ -19,6 +19,7 @@ package org.quiltmc.qsl.entity.interaction.api.player;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.EntityHitResult;
@@ -40,9 +41,9 @@ import javax.annotation.Nullable;
 @FunctionalInterface
 public interface UseEntityCallback {
 	Event<UseEntityCallback> EVENT = Event.create(UseEntityCallback.class,
-			callbacks -> (player, world, hand, entity, hitResult) -> {
+			callbacks -> (player, world, hand, stack, entity, hitResult) -> {
 				for (UseEntityCallback callback : callbacks) {
-					ActionResult result = callback.onUseEntity(player, world, hand, entity, hitResult);
+					ActionResult result = callback.onUseEntity(player, world, hand, stack, entity, hitResult);
 
 					if (result != ActionResult.PASS) return result;
 				}
@@ -61,5 +62,5 @@ public interface UseEntityCallback {
 	 * {@link ActionResult#PASS} to fall back to further processing,
 	 * {@link ActionResult#FAIL} to cancel further processing.
 	 */
-	ActionResult onUseEntity(PlayerEntity player, World world, Hand hand, Entity entity, @Nullable EntityHitResult hitResult);
+	ActionResult onUseEntity(PlayerEntity player, World world, Hand hand, ItemStack stack, Entity entity, @Nullable EntityHitResult hitResult);
 }

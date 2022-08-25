@@ -24,7 +24,6 @@ import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.TypedActionResult;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.entity.interaction.api.LivingEntityAttackCallback;
@@ -41,7 +40,7 @@ public class InteractionTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		AttackEntityCallback.EVENT.register((player, world, hand, entity) -> {
+		AttackEntityCallback.EVENT.register((player, world, hand, stack, entity) -> {
 			if (player.getStackInHand(hand).isOf(Items.DIAMOND_SWORD)) {
 				return ActionResult.FAIL;
 			}
@@ -51,14 +50,14 @@ public class InteractionTest implements ModInitializer {
 			return ActionResult.PASS;
 		});
 
-		LivingEntityAttackCallback.EVENT.register((attacker, target, source, amount) -> {
+		LivingEntityAttackCallback.EVENT.register((attacker, stack, target, source, amount) -> {
 			if (attacker instanceof ZombieEntity) {
 				return false;
 			}
 			return true;
 		});
 
-		UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
+		UseEntityCallback.EVENT.register((player, world, hand, stack, entity, hitResult) -> {
 			if (entity instanceof CreeperEntity) {
 				if (world instanceof ServerWorld) {
 					System.out.println("creeper " + world);
@@ -68,23 +67,23 @@ public class InteractionTest implements ModInitializer {
 			return ActionResult.PASS;
 		});
 
-		UseItemCallback.EVENT.register((player, world, hand) -> {
+		UseItemCallback.EVENT.register((player, world, hand, stack) -> {
 			if (player.getStackInHand(hand).isOf(Items.DIAMOND_SWORD)) {
 				LightningEntity lightning = new LightningEntity(EntityType.LIGHTNING_BOLT, world);
 				lightning.setPos(player.getX(), player.getY(), player.getZ());
 				world.spawnEntity(lightning);
 			}
-			return new TypedActionResult<>(ActionResult.PASS, player.getStackInHand(hand));
+			return ActionResult.PASS;
 		});
 
-		PlayerBreakBlockEvents.BEFORE.register((player, world, pos, state, blockEntity) -> {
+		PlayerBreakBlockEvents.BEFORE.register((player, world, stack, pos, state, blockEntity) -> {
 			if (state.getBlock() == Blocks.GRASS_BLOCK) {
 				//if (world.isClient) return false;
 			}
 			return true;
 		});
 
-		PlayerBreakBlockEvents.AFTER.register((player, world, pos, state, blockEntity) -> {
+		PlayerBreakBlockEvents.AFTER.register((player, world, stack, pos, state, blockEntity) -> {
 			if (state.getBlock() == Blocks.GRASS_BLOCK) {
 				world.setBlockState(pos, Blocks.LAVA.getDefaultState());
 			}

@@ -37,7 +37,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
 	@Inject(method = "attack", at = @At("HEAD"), cancellable = true)
 	private void onPlayerAttackEntity(Entity target, CallbackInfo ci) {
-		ActionResult result = AttackEntityCallback.EVENT.invoker().onAttack(this, this.world, Hand.MAIN_HAND, target);
+		ActionResult result = AttackEntityCallback.EVENT.invoker().onAttack(this, this.world, Hand.MAIN_HAND, this.getMainHandStack(), target);
 
 		if (result != ActionResult.PASS) ci.cancel();
 	}

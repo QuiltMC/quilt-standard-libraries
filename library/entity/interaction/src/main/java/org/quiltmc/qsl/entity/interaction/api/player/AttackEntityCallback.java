@@ -19,6 +19,7 @@ package org.quiltmc.qsl.entity.interaction.api.player;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
@@ -38,9 +39,9 @@ import org.quiltmc.qsl.base.api.event.Event;
 public interface AttackEntityCallback {
 
 	Event<AttackEntityCallback> EVENT = Event.create(AttackEntityCallback.class,
-			callbacks -> (player, world, hand, entity) -> {
+			callbacks -> (player, world, hand, stack, entity) -> {
 		for (AttackEntityCallback callback : callbacks) {
-			ActionResult result = callback.onAttack(player, world, hand, entity);
+			ActionResult result = callback.onAttack(player, world, hand, stack, entity);
 
 			if (result != ActionResult.PASS) return result;
 		}
@@ -58,5 +59,5 @@ public interface AttackEntityCallback {
 	 * {@link ActionResult#PASS} to fall back to further processing,
 	 * {@link ActionResult#FAIL} to cancel further processing
 	 */
-	ActionResult onAttack(PlayerEntity player, World world, Hand hand, Entity entity);
+	ActionResult onAttack(PlayerEntity player, World world, Hand hand, ItemStack stack, Entity entity);
 }

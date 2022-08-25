@@ -20,6 +20,7 @@ package org.quiltmc.qsl.entity.interaction.api.player;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.quiltmc.qsl.base.api.event.Event;
@@ -43,9 +44,9 @@ public class PlayerBreakBlockEvents {
 	 * {@link PlayerBreakBlockEvents#AFTER} will be invoked.
 	 */
 	public static final Event<Before> BEFORE = Event.create(Before.class,
-			callbacks -> (player, world, pos, state, blockEntity) -> {
+			callbacks -> (player, world, stack, pos, state, blockEntity) -> {
 				for (Before callback : callbacks) {
-					boolean result = callback.beforePlayerBreakBlock(player, world, pos, state, blockEntity);
+					boolean result = callback.beforePlayerBreakBlock(player, world, stack, pos, state, blockEntity);
 
 					if (!result) return false;
 				}
@@ -56,9 +57,9 @@ public class PlayerBreakBlockEvents {
 	 * Invoked after a block is broken.
 	 */
 	public static final Event<After> AFTER = Event.create(After.class,
-			callbacks -> (player, world, pos, state, blockEntity) -> {
+			callbacks -> (player, world, stack, pos, state, blockEntity) -> {
 				for (After callback : callbacks) {
-					callback.afterPlayerBreakBlock(player, world, pos, state, blockEntity);
+					callback.afterPlayerBreakBlock(player, world, stack, pos, state, blockEntity);
 				}
 			});
 
@@ -66,9 +67,9 @@ public class PlayerBreakBlockEvents {
 	 * Invoked if the block breaking event is canceled.
 	 */
 	public static final Event<Cancel> CANCELED = Event.create(Cancel.class,
-			callbacks -> (player, world, pos, state, blockEntity) -> {
+			callbacks -> (player, world, stack, pos, state, blockEntity) -> {
 				for (Cancel callback : callbacks) {
-					callback.cancelPlayerBreakBlock(player, world, pos, state, blockEntity);
+					callback.cancelPlayerBreakBlock(player, world, stack, pos, state, blockEntity);
 				}
 			});
 
@@ -87,7 +88,7 @@ public class PlayerBreakBlockEvents {
 		 * @return {@code false} to cancel the event and the block breaking action,
 		 * otherwise {@code true} to pass to the next listener
 		 */
-		boolean beforePlayerBreakBlock(PlayerEntity player, World world, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity);
+		boolean beforePlayerBreakBlock(PlayerEntity player, World world, ItemStack stack, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity);
 	}
 
 	@FunctionalInterface
@@ -101,7 +102,7 @@ public class PlayerBreakBlockEvents {
 		 * @param state the block state <strong>before</strong> the block is broken
 		 * @param blockEntity the block entity <strong>before</strong> the block is broken, can be {@code null}
 		 */
-		void afterPlayerBreakBlock(PlayerEntity player, World world, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity);
+		void afterPlayerBreakBlock(PlayerEntity player, World world, ItemStack stack, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity);
 	}
 
 	@FunctionalInterface
@@ -115,6 +116,6 @@ public class PlayerBreakBlockEvents {
 		 * @param state the block state <strong>before</strong> the block is broken
 		 * @param blockEntity the block entity <strong>before</strong> the block is broken, can be {@code null}
 		 */
-		void cancelPlayerBreakBlock(PlayerEntity player, World world, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity);
+		void cancelPlayerBreakBlock(PlayerEntity player, World world, ItemStack stack, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity);
 	}
 }

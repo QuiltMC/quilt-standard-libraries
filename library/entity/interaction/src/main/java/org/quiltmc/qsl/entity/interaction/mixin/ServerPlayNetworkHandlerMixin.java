@@ -44,7 +44,7 @@ public abstract class ServerPlayNetworkHandlerMixin implements PlayerInteractEnt
 	private void onPlayerInteractEntity(Hand hand, Vec3d hitPosition, CallbackInfo ci) {
 		EntityHitResult hitResult = new EntityHitResult(field_28962, hitPosition.add(field_28962.getPos()));
 
-		ActionResult result = UseEntityCallback.EVENT.invoker().onUseEntity(field_28963.player, field_28963.player.world, hand, field_28962, hitResult);
+		ActionResult result = UseEntityCallback.EVENT.invoker().onUseEntity(field_28963.player, field_28963.player.world, hand, field_28963.player.getStackInHand(hand), field_28962, hitResult);
 
 		if (result != ActionResult.PASS) ci.cancel();
 	}

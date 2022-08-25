@@ -29,7 +29,6 @@ import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -61,14 +60,14 @@ public class ServerPlayerInteractionManagerMixin {
 	private void onPlayerInteractItem(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
 		if (player.isSpectator()) return;
 
-		TypedActionResult<ItemStack> result = UseItemCallback.EVENT.invoker().onUseItem(player, world, hand);
+		ActionResult result = UseItemCallback.EVENT.invoker().onUseItem(player, world, hand, player.getStackInHand(hand));
 
-		if (result.getResult() != ActionResult.PASS) cir.setReturnValue(result.getResult());
+		if (result != ActionResult.PASS) cir.setReturnValue(result);
 	}
 
 	@Inject(method = "interactBlock", at = @At("HEAD"), cancellable = true)
 	private void onPlayerInteractBlock(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) {
-		ActionResult result = UseBlockCallback.EVENT.invoker().onUseBlock(player, world, hand, hitResult);
+		ActionResult result = UseBlockCallback.EVENT.invoker().onUseBlock(player, world, hand, player.getStackInHand(hand), hitResult);
 
 		if (result != ActionResult.PASS) cir.setReturnValue(result);
 	}
@@ -76,7 +75,7 @@ public class ServerPlayerInteractionManagerMixin {
 	@Inject(method = "processBlockBreakingAction", at = @At("HEAD"), cancellable = true)
 	private void onPlayerAttackBlock(BlockPos pos, PlayerActionC2SPacket.Action action, Direction direction, int worldHeight, int i, CallbackInfo ci) {
 		if (action != PlayerActionC2SPacket.Action.START_DESTROY_BLOCK) return;
-		ActionResult result = AttackBlockCallback.EVENT.invoker().onAttackBlock(this.player, this.world, Hand.MAIN_HAND, pos, direction);
+		ActionResult result = AttackBlockCallback.EVENT.invoker().onAttackBlock(this.player, this.world, Hand.MAIN_HAND, this.player.getMainHandStack(), pos, direction);
 
 		if (result != ActionResult.PASS) {
 			this.player.networkHandler.sendPacket(new BlockUpdateS2CPacket(this.world, pos));
@@ -96,16 +95,16 @@ public class ServerPlayerInteractionManagerMixin {
 
 	@Inject(method = "tryBreakBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;onBreak(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/entity/player/PlayerEntity;)V"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
 	private void onPlayerBreakBlock(BlockPos pos, CallbackInfoReturnable<Boolean> cir, BlockState state, BlockEntity blockEntity) {
-		boolean result = PlayerBreakBlockEvents.BEFORE.invoker().beforePlayerBreakBlock(this.player, this.world, pos, state, blockEntity);
+		boolean result = PlayerBreakBlockEvents.BEFORE.invoker().beforePlayerBreakBlock(this.player, this.world, this.player.getMainHandStack(), pos, state, blockEntity);
 
 		if (!result) {
-			PlayerBreakBlockEvents.CANCELED.invoker().cancelPlayerBreakBlock(this.player, this.world, pos, state, blockEntity);
+			PlayerBreakBlockEvents.CANCELED.invoker().cancelPlayerBreakBlock(this.player, this.world, this.player.getMainHandStack(), pos, state, blockEntity);
 			cir.setReturnValue(false);
 		}
 	}
 
 	@Inject(method = "tryBreakBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;onBroken(Lnet/minecraft/world/WorldAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V"), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void afterPlayerBreakBlock(BlockPos pos, CallbackInfoReturnable<Boolean> cir, BlockState state, BlockEntity blockEntity) {
-		PlayerBreakBlockEvents.AFTER.invoker().afterPlayerBreakBlock(this.player, this.world, pos, state, blockEntity);
+		PlayerBreakBlockEvents.AFTER.invoker().afterPlayerBreakBlock(this.player, this.world, this.player.getMainHandStack(), pos, state, blockEntity);
 	}
 }
