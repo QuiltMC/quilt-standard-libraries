@@ -22,6 +22,8 @@ import net.minecraft.client.render.Camera;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.LavaFluid;
+import net.minecraft.fluid.WaterFluid;
 import org.quiltmc.qsl.fluid.api.QuiltFlowableFluidExtensions;
 import org.quiltmc.qsl.fluid.impl.CameraExtensions;
 import org.spongepowered.asm.mixin.Mixin;
@@ -75,10 +77,12 @@ public class BackgroundRendererMixin {
 			cancellable = true)
 	private static void applyFog(Camera camera, BackgroundRenderer.FogType fogType, float viewDistance, boolean thickFog, float tickDelta, CallbackInfo ci) {
 		//Get the fluid that submerged the camera
-		FluidState fluidState = ((CameraExtensions) camera).quilt$getSubmergedFluidState();
+		FluidState fluidState = camera.quilt$getSubmergedFluidState();
+
+		boolean isWaterOrLava = fluidState.getFluid() instanceof WaterFluid || fluidState.getFluid() instanceof LavaFluid;
 
 		//If this is an instance of QuiltFlowableFluidExtensions interface...
-		if (fluidState.getFluid() instanceof QuiltFlowableFluidExtensions fluid) {
+		if (fluidState.getFluid() instanceof QuiltFlowableFluidExtensions fluid && !isWaterOrLava) {
 
 			//Get the start and end parameters and apply them, then return.
 			Entity entity = camera.getFocusedEntity();
