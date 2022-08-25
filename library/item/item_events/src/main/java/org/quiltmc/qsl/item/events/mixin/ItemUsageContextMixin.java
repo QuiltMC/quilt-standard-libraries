@@ -18,16 +18,14 @@ package org.quiltmc.qsl.item.events.mixin;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.pattern.CachedBlockPosition;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -45,6 +43,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 
 import org.quiltmc.qsl.item.events.api.QuiltItemUsageContextExtensions;
+import org.quiltmc.qsl.item.events.impl.CachedBlockPositionExtensions;
 
 @Mixin(ItemUsageContext.class)
 public abstract class ItemUsageContextMixin implements QuiltItemUsageContextExtensions {
@@ -59,6 +58,7 @@ public abstract class ItemUsageContextMixin implements QuiltItemUsageContextExte
 	@Final
 	private Hand hand;
 
+	@Mutable
 	@Shadow
 	@Final
 	private ItemStack stack;
@@ -93,6 +93,11 @@ public abstract class ItemUsageContextMixin implements QuiltItemUsageContextExte
 	}
 
 	@Override
+	public @Nullable BlockEntity getBlockEntity() {
+		return this.quilt$cachedPos.getBlockEntity();
+	}
+
+	@Override
 	public boolean canModifyWorld() {
 		if (player == null) {
 			return this.world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING);
@@ -114,6 +119,14 @@ public abstract class ItemUsageContextMixin implements QuiltItemUsageContextExte
 	}
 
 	@Override
+	public void setStack(ItemStack stack) {
+		this.stack = stack;
+		if (this.player != null) {
+			this.player.setStackInHand(this.hand, stack);
+		}
+	}
+
+	@Override
 	public void damageStack(int amount) {
 		if (this.player != null) {
 			this.stack.damage(amount, player, playerx -> playerx.sendToolBreakStatus(hand));
@@ -121,10 +134,11 @@ public abstract class ItemUsageContextMixin implements QuiltItemUsageContextExte
 	}
 
 	@Override
-	public void replaceBlock(@NotNull BlockState newState) {
+	public void replaceBlockState(@NotNull BlockState newState) {
 		var pos = this.getBlockPos();
 		this.world.setBlockState(pos, newState, Block.NOTIFY_ALL | Block.REDRAW_ON_MAIN_THREAD);
 		this.world.emitGameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+		((CachedBlockPositionExtensions) this.quilt$cachedPos).quilt$markDirty();
 	}
 
 	@Override

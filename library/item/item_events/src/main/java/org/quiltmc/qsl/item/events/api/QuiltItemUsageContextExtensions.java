@@ -16,16 +16,27 @@
 
 package org.quiltmc.qsl.item.events.api;
 
-import org.jetbrains.annotations.NotNull;
+import java.util.Optional;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.random.RandomGenerator;
+import net.minecraft.world.event.GameEvent;
 
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
@@ -45,6 +56,16 @@ public interface QuiltItemUsageContextExtensions {
 		return Blocks.AIR.getDefaultState();
 	}
 
+	default @Nullable BlockEntity getBlockEntity() {
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	default <T extends BlockEntity> @NotNull Optional<T> getBlockEntity(@NotNull BlockEntityType<T> type) {
+		var be = this.getBlockEntity();
+		return be != null && be.getType() == type ? Optional.of((T) be) : Optional.empty();
+	}
+
 	default boolean canModifyWorld() {
 		return true;
 	}
@@ -57,16 +78,29 @@ public interface QuiltItemUsageContextExtensions {
 		return true;
 	}
 
+	default void setStack(ItemStack stack) {}
+
 	default void damageStack(int amount) {}
 
 	default void damageStack() {
 		damageStack(1);
 	}
 
-	default void replaceBlock(@NotNull BlockState newState) {}
+	/**
+	 * Replaces the block state that the item was used on.
+	 * <p>
+	 * This method uses the {@link Block#REDRAW_ON_MAIN_THREAD} flag when setting the block state,
+	 * and also fires the relevant {@linkplain net.minecraft.world.event.GameEvent#BLOCK_CHANGE game event}.
+	 *
+	 * @param newState the new block state
+	 *
+	 * @see net.minecraft.world.World#setBlockState(BlockPos, BlockState, int)
+	 * @see net.minecraft.world.World#emitGameEvent(Entity, GameEvent, Vec3d)
+	 */
+	default void replaceBlockState(@NotNull BlockState newState) {}
 
 	default <T extends Comparable<T>> void setBlockProperty(@NotNull Property<T> property, @NotNull T newValue) {
-		replaceBlock(getBlockState().with(property, newValue));
+		replaceBlockState(getBlockState().with(property, newValue));
 	}
 
 	default void playSoundAtBlock(SoundEvent sound, SoundCategory category, float volume, float pitch, boolean useDistance) {}

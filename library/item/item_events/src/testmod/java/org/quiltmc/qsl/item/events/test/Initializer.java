@@ -44,7 +44,7 @@ public final class Initializer implements ModInitializer,
 				&& context.getBlockState().isOf(Blocks.DIRT) && context.getStack().isOf(Items.WOODEN_PICKAXE)) {
 			context.playSoundAtBlock(SoundEvents.BLOCK_ANVIL_USE, SoundCategory.BLOCKS,
 					1.0F, context.getWorldRandom().nextFloat() * 0.1F + 0.9F, true);
-			context.replaceBlock(Blocks.DIAMOND_BLOCK.getDefaultState());
+			context.replaceBlockState(Blocks.DIAMOND_BLOCK.getDefaultState());
 			context.damageStack();
 			return context.success();
 		}
