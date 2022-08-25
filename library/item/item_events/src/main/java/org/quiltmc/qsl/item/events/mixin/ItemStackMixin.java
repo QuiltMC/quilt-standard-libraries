@@ -27,11 +27,22 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
+import net.minecraft.world.World;
 
 import org.quiltmc.qsl.item.events.api.ItemInteractionEvents;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
+	@Redirect(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;use(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Hand;)Lnet/minecraft/util/TypedActionResult;"))
+	private TypedActionResult<ItemStack> quilt$invokeUsedEvent(Item instance, World world, PlayerEntity user, Hand hand) {
+		var result = ItemInteractionEvents.USED.invoker().onItemUsed(user.getStackInHand(hand), world, user, hand);
+		if (result.getResult() == ActionResult.PASS) {
+			result = instance.use(world, user, hand);
+		}
+		return result;
+	}
+
 	@Redirect(method = "useOnBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;useOnBlock(Lnet/minecraft/item/ItemUsageContext;)Lnet/minecraft/util/ActionResult;"))
 	private ActionResult quilt$invokeUsedOnBlockEvent(Item instance, ItemUsageContext context) {
 		var result = ItemInteractionEvents.USED_ON_BLOCK.invoker().onItemUsedOnBlock(context);
@@ -49,5 +60,12 @@ public abstract class ItemStackMixin {
 			result = instance.useOnEntity(stack, user, entity, hand);
 		}
 		return result;
+	}
+
+	@Redirect(method = "finishUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;finishUsing(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;)Lnet/minecraft/item/ItemStack;"))
+	private ItemStack quilt$invokeFinishedUsingEvent(Item instance, ItemStack stack, World world, LivingEntity user) {
+		stack = ItemInteractionEvents.FINISHED_USING.invoker().onFinishedUsing(stack, world, user);
+		stack = instance.finishUsing(stack, world, user);
+		return stack;
 	}
 }
