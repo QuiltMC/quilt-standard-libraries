@@ -41,14 +41,13 @@ import java.util.EnumMap;
 import java.util.Map;
 
 /**
- * @apiNote Used when specifying a custom fluid flow direction is required, otherwise use QuiltFluid.
+ * Used when specifying a custom fluid flow direction is required, otherwise use QuiltFluid.
  * @implNote A lot of this code is refactored from the FlowableFluid Class, a long with the magic values. A lot of these values should not be touched, as there is no proper reason to yet.
  */
 public abstract class QuiltDirectionalFluid extends QuiltFluid implements QuiltFlowableFluidExtensions{
 
 	/**
-	 * Overwrite this when wanting to change the flowing Direction of the Fluid
-	 * @return Direction the fluid will flow to.
+	 * The {@link net.minecraft.util.math.Direction} the fluid flows in. Default is {@link net.minecraft.util.math.Direction#DOWN}
 	 */
 	public Direction getFlowDirection() {return Direction.DOWN;}
 

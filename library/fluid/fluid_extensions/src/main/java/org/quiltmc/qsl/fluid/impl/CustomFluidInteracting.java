@@ -24,7 +24,7 @@ import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.fluid.Fluid;
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
-@InjectedInterface({BoatEntity.class, ClientPlayerEntity.class, Entity.class, FishingBobberEntity.class, LivingEntity.class})
+@InjectedInterface({Entity.class})
 public interface CustomFluidInteracting {
 	boolean quilt$isInCustomFluid();
 

@@ -85,8 +85,8 @@ public abstract class LivingEntityMixin extends Entity implements CustomFluidInt
 				vertVisc = fluid.getVerticalViscosity(fluidState, this);
 
 				FluidEnchantmentHelper helper = fluid.customEnchantmentEffects(movementInput, ((LivingEntity) (Object) this), horizVisc, speed);
-				horizVisc = helper.getHorizontalViscosity();
-				speed = helper.getSpeed();
+				horizVisc = helper.horizontalViscosity();
+				speed = helper.speed();
 
 				horizVisc = fluid.modifyEntityHorizontalViscosity(((LivingEntity) (Object) this), horizVisc);
 			}

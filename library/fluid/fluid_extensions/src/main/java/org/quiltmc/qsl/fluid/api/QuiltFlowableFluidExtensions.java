@@ -17,6 +17,9 @@
 package org.quiltmc.qsl.fluid.api;
 
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.render.BackgroundRenderer;
+import net.minecraft.client.render.Camera;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -34,6 +37,7 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.tag.FluidTags;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -42,27 +46,86 @@ import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
+import org.quiltmc.qsl.fluid.mixin.EntityMixin;
 
 import javax.annotation.Nullable;
 
 @InjectedInterface({WaterFluid.class, LavaFluid.class})
 public interface QuiltFlowableFluidExtensions {
 
+	/**
+	 * {@link net.minecraft.entity.LivingEntity#travel}, line 2206
+	 */
 	float WATER_VISCOSITY = 0.8f;
+
+	/**
+	 * {@link net.minecraft.entity.LivingEntity#travel}, line 2228
+	 */
 	float LAVA_VISCOSITY = 0.5f;
+
+	/**
+	 * {@link net.minecraft.entity.Entity#updateMovementInFluid(TagKey, double)}
+	 */
 	float WATER_PUSH_STRENGTH = 0.014f;
+
+	/**
+	 * {@link net.minecraft.entity.Entity#updateMovementInFluid(TagKey, double)}
+	 */
 	float LAVA_PUSH_STRENGTH_OVERWORLD = 7 / 3000f;
+
+	/**
+	 * {@link net.minecraft.entity.Entity#updateMovementInFluid(TagKey, double)}
+	 */
 	float LAVA_PUSH_STRENGTH_ULTRAWARM = 0.007f;
+
+	/**
+	 * Currently seems to be unused
+	 */
 	float WATER_DENSITY = 1000f;
+
+	/**
+	 * Currently seems to be unused
+	 */
 	float LAVA_DENSITY = 3100f;
+
+	/**
+	 * Currently seems to be unused
+	 */
 	float WATER_TEMPERATURE = 300f;
+
+	/**
+	 * Currently seems to be unused
+	 */
 	float LAVA_TEMPERATURE = 1500f;
+
+	/**
+	 * {@link net.minecraft.client.render.BackgroundRenderer#applyFog(Camera, BackgroundRenderer.FogType, float, boolean, float)}
+	 */
 	float WATER_FOG_START = -8.0f;
+
+	/**
+	 * {@link EntityMixin checkCustomFluidState()}
+	 */
 	float FULL_FALL_DAMAGE_REDUCTION = 0f;
+
+	/**
+	 * {@link EntityMixin checkCustomFluidState()}
+	 */
 	float HALF_FALL_DAMAGE_REDUCTION = 0.5f;
+
+	/**
+	 * {@link EntityMixin checkCustomFluidState()}
+	 */
 	float NO_FALL_DAMAGE_REDUCTION = 0f;
+
+	/**
+	 * {@link net.minecraft.client.render.BackgroundRenderer#render(Camera, float, ClientWorld, int, float)}
+	 */
 	int WATER_FOG_COLOR = -1;
 
+	/**
+	 * {@link net.minecraft.client.render.BackgroundRenderer#render(Camera, float, ClientWorld, int, float)}
+	 */
 	int LAVA_FOG_COLOR = 0x991900;
 
 	Identifier WATER_FISHING_LOOT_TABLE = LootTables.FISHING_GAMEPLAY;

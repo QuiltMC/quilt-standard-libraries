@@ -17,22 +17,8 @@
 package org.quiltmc.qsl.fluid.api;
 
 /**
- * @apiNote - Helper class for organizing the horizontalViscosity and the speed, without having to deal with magic array indexes.
+ * Helper class for organizing the horizontalViscosity and the speed, without having to deal with magic array indexes.
  * @param horizontalViscosity - The horizontalViscosity of the fluid.
  * @param speed - The speed at which the Entity sinks
  */
-public record FluidEnchantmentHelper(float horizontalViscosity, float speed) {
-	/**
-	 * @see org.quiltmc.qsl.fluid.mixin.LivingEntityMixin
-	 */
-	public float getHorizontalViscosity() {
-		return horizontalViscosity;
-	}
-
-	/**
-	 * @see org.quiltmc.qsl.fluid.mixin.LivingEntityMixin
-	 */
-	public float getSpeed() {
-		return speed;
-	}
-}
+public record FluidEnchantmentHelper(float horizontalViscosity, float speed) {}
