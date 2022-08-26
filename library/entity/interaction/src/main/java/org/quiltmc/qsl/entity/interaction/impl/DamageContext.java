@@ -21,6 +21,10 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.item.ItemStack;
 
+/**
+ * An encapsulation of several arguments relevant to a damage context with a
+ *     mutable damage value and cancellation that is shared across all listeners.
+ */
 public class DamageContext {
 
 	private final LivingEntity attacker;
