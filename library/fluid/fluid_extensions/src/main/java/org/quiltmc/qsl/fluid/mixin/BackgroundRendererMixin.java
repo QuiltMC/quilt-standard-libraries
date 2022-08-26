@@ -72,8 +72,8 @@ public class BackgroundRendererMixin {
 	}
 
 	@Inject(method = "applyFog",
-			at = @At(value = "INVOKE", shift = At.Shift.BEFORE,target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderFogStart(F)V")
-	,locals = LocalCapture.CAPTURE_FAILHARD)
+			at = @At(value = "INVOKE", shift = At.Shift.BEFORE,target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderFogStart(F)V"),
+	locals = LocalCapture.CAPTURE_FAILHARD)
 	private static void applyFog(Camera camera, BackgroundRenderer.FogType fogType, float viewDistance, boolean thickFog, float tickDelta, CallbackInfo ci, CameraSubmersionType cameraSubmersionType, Entity entity, BackgroundRenderer.FogParameters fogParameters) {
 		CameraExtensions cameraExtensions = (CameraExtensions)camera;
 		FluidState fluidState = cameraExtensions.quilt$getSubmergedFluidState();
