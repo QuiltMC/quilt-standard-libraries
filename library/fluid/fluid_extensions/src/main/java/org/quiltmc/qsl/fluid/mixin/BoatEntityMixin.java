@@ -46,7 +46,6 @@ public abstract class BoatEntityMixin extends Entity implements CustomFluidInter
 
 	@Redirect(method = "getWaterLevelAbove", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;isIn(Lnet/minecraft/tag/TagKey;)Z"))
 	public boolean getFluidLevelAbove(FluidState instance, TagKey<Fluid> tag) {
-
 		if (!(instance.getFluid() instanceof QuiltFlowableFluidExtensions)) return true;
 
 		QuiltFluid fluid = (QuiltFluid) instance.getFluid();
