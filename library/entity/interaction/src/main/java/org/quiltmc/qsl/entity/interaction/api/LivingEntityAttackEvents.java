@@ -20,7 +20,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.item.ItemStack;
 import org.quiltmc.qsl.base.api.event.Event;
-import org.quiltmc.qsl.entity.interaction.impl.DamageContext;
 
 /**
  * Contains events that invoke when a {@link LivingEntity} attacks another.

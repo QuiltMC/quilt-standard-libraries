@@ -19,7 +19,7 @@ package org.quiltmc.qsl.entity.interaction.mixin;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import org.quiltmc.qsl.entity.interaction.api.LivingEntityAttackEvents;
-import org.quiltmc.qsl.entity.interaction.impl.DamageContext;
+import org.quiltmc.qsl.entity.interaction.api.DamageContext;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,14 +31,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class LivingEntityMixin {
 
 	@Unique
-	private boolean quilt$damageCancelled = false;
+	private boolean quilt$damageCanceled = false;
 
 	@ModifyVariable(method = "damage", at = @At("HEAD"), ordinal = 0, argsOnly = true)
 	private float onTakeDamageModify(float damage, DamageSource source) {
 		if (source.getAttacker() instanceof LivingEntity attacker) {
 			DamageContext context = new DamageContext(attacker, attacker.getMainHandStack(), (LivingEntity)(Object)this, source, damage);
 			LivingEntityAttackEvents.BEFORE.invoker().beforeDamage(context);
-			quilt$damageCancelled = context.isCanceled();
+			quilt$damageCanceled = context.isCanceled();
 			return context.getDamage();
 		}
 		return damage;
@@ -46,8 +46,8 @@ public abstract class LivingEntityMixin {
 
 	@Inject(method = "damage", at = @At(value = "HEAD", shift = At.Shift.AFTER), cancellable = true)
 	private void onTakeDamageCancel(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-		if (source.getAttacker() instanceof LivingEntity && quilt$damageCancelled) {
-			quilt$damageCancelled = false;
+		if (source.getAttacker() instanceof LivingEntity && quilt$damageCanceled) {
+			quilt$damageCanceled = false;
 			cir.setReturnValue(false);
 		}
 	}

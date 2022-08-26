@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.entity.interaction.impl;
+package org.quiltmc.qsl.entity.interaction.api;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
