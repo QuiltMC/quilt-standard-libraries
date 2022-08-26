@@ -33,15 +33,18 @@ import javax.annotation.Nullable;
 public class PlayerBreakBlockEvents {
 
 	/**
-	 * Invokes prior to the player breaking a block, so it is cancelable by
-	 * returning false. It is invoked on both the client and server, but the
-	 * client end result will be synced with the server.
-	 *
+	 * Invokes prior to the player breaking a block. It is invoked
+	 *     on both the client and server, but the client end result
+	 *     will be synced with the server.
 	 * <p>
-	 * If any listener cancels the breaking action, the block
-	 * breaking event will be canceled and {@link PlayerBreakBlockEvents#CANCELED}
-	 * will be invoked. If the event is completed,
-	 * {@link PlayerBreakBlockEvents#AFTER} will be invoked.
+	 * This event can be canceled by returning {@code false}. Returning {@code true}
+	 *     passes to the next listener. Implementations should not assume the action
+	 *     has been completed.
+	 * <p>
+	 * If any listener cancels the event, the block
+	 *     breaking action will be canceled and {@link PlayerBreakBlockEvents#CANCELED}
+	 *     will be invoked. If the event is completed,
+	 *     {@link PlayerBreakBlockEvents#AFTER} will be invoked.
 	 */
 	public static final Event<Before> BEFORE = Event.create(Before.class,
 			callbacks -> (player, world, stack, pos, state, blockEntity) -> {

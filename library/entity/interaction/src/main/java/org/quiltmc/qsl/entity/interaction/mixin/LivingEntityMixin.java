@@ -16,31 +16,46 @@
 
 package org.quiltmc.qsl.entity.interaction.mixin;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.world.World;
-import org.quiltmc.qsl.entity.interaction.api.LivingEntityAttackCallback;
+import org.quiltmc.qsl.entity.interaction.api.LivingEntityAttackEvents;
+import org.quiltmc.qsl.entity.interaction.impl.DamageContext;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
-public abstract class LivingEntityMixin extends Entity {
+public abstract class LivingEntityMixin {
 
-	@Inject(method = "damage", at = @At("HEAD"), cancellable = true)
-	private void onTakeDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+	@Unique
+	private boolean quilt$damageCancelled = false;
+
+	@ModifyVariable(method = "damage", at = @At("HEAD"), ordinal = 0, argsOnly = true)
+	private float onTakeDamageModify(float damage, DamageSource source) {
 		if (source.getAttacker() instanceof LivingEntity attacker) {
-			boolean result = LivingEntityAttackCallback.EVENT.invoker().onAttack(attacker, attacker.getMainHandStack(), this, source, amount);
+			DamageContext context = new DamageContext(attacker, attacker.getMainHandStack(), (LivingEntity)(Object)this, source, damage);
+			LivingEntityAttackEvents.BEFORE.invoker().beforeDamage(context);
+			quilt$damageCancelled = context.isCanceled();
+			return context.getDamage();
+		}
+		return damage;
+	}
 
-			if (!result) cir.setReturnValue(false);
+	@Inject(method = "damage", at = @At(value = "HEAD", shift = At.Shift.AFTER), cancellable = true)
+	private void onTakeDamageCancel(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+		if (source.getAttacker() instanceof LivingEntity && quilt$damageCancelled) {
+			quilt$damageCancelled = false;
+			cir.setReturnValue(false);
 		}
 	}
 
-	// Ignore
-	public LivingEntityMixin(EntityType<?> entityType, World world) {
-		super(entityType, world);
+	@Inject(method = "damage", at = @At("TAIL"))
+	private void afterTakeDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+		if (source.getAttacker() instanceof LivingEntity attacker) {
+			LivingEntityAttackEvents.AFTER.invoker().afterDamage(attacker, attacker.getMainHandStack(), (LivingEntity)(Object)this, source, amount);
+		}
 	}
 }

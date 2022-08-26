@@ -21,12 +21,13 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LightningEntity;
 import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.mob.ZombieEntity;
+import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-import org.quiltmc.qsl.entity.interaction.api.LivingEntityAttackCallback;
+import org.quiltmc.qsl.entity.interaction.api.LivingEntityAttackEvents;
 import org.quiltmc.qsl.entity.interaction.api.player.AttackEntityCallback;
 import org.quiltmc.qsl.entity.interaction.api.player.PlayerBreakBlockEvents;
 import org.quiltmc.qsl.entity.interaction.api.player.UseEntityCallback;
@@ -40,21 +41,39 @@ public class InteractionTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		AttackEntityCallback.EVENT.register((player, world, hand, stack, entity) -> {
-			if (player.getStackInHand(hand).isOf(Items.DIAMOND_SWORD)) {
+		AttackEntityCallback.EVENT.register((player, world, stack, entity) -> {
+			if (stack.isOf(Items.DIAMOND_SWORD)) {
 				return ActionResult.FAIL;
 			}
-			if (player.getStackInHand(hand).isOf(Items.DIAMOND_SHOVEL)) {
+			if (stack.isOf(Items.DIAMOND_SHOVEL)) {
 				return ActionResult.SUCCESS;
 			}
 			return ActionResult.PASS;
 		});
 
-		LivingEntityAttackCallback.EVENT.register((attacker, stack, target, source, amount) -> {
-			if (attacker instanceof ZombieEntity) {
-				return false;
+		LivingEntityAttackEvents.BEFORE.register(context -> {
+			if (context.getAttacker() instanceof IronGolemEntity) context.cancel();
+		});
+
+		LivingEntityAttackEvents.BEFORE.register(context -> {
+			if (context.getAttacker() instanceof ZombieEntity) {
+				context.setDamage(context.getDamage() + 3);
+				System.out.println(context.getDamage());
 			}
-			return true;
+		});
+
+		LivingEntityAttackEvents.BEFORE.register(context -> {
+			if (context.getAttacker() instanceof ZombieEntity) {
+				context.setDamage(context.getDamage() + 2);
+				System.out.println(context.getDamage());
+			}
+		});
+
+		LivingEntityAttackEvents.BEFORE.register(context -> {
+			if (context.getAttacker() instanceof ZombieEntity) {
+				context.setDamage(context.getDamage() + 1);
+				System.out.println(context.getDamage());
+			}
 		});
 
 		UseEntityCallback.EVENT.register((player, world, hand, stack, entity, hitResult) -> {

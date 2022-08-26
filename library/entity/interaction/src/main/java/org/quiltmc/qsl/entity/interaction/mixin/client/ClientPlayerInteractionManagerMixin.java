@@ -66,7 +66,7 @@ public abstract class ClientPlayerInteractionManagerMixin {
 
 	@Inject(method = "attackEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V", ordinal = 0), cancellable = true)
 	private void onPlayerAttackEntity(PlayerEntity player, Entity target, CallbackInfo ci) {
-		ActionResult result = AttackEntityCallback.EVENT.invoker().onAttack(player, player.world, Hand.MAIN_HAND, player.getMainHandStack(), target);
+		ActionResult result = AttackEntityCallback.EVENT.invoker().onAttack(player, player.world, player.getMainHandStack(), target);
 
 		if (result != ActionResult.PASS) {
 			if (result == ActionResult.SUCCESS) {
@@ -82,7 +82,7 @@ public abstract class ClientPlayerInteractionManagerMixin {
 		ActionResult result = UseItemCallback.EVENT.invoker().onUseItem(player, player.world, hand, player.getStackInHand(hand));
 
 		if (result != ActionResult.PASS) {
-			if (result == ActionResult.SUCCESS) {
+			if (result.isAccepted()) {
 				this.networkHandler.sendPacket(new PlayerMoveC2SPacket.Full(player.getX(), player.getY(), player.getZ(), player.getYaw(), player.getPitch(), player.isOnGround()));
 				// method sends a packet with a sequentially assigned id to the server
 				m_vvsqjptk((ClientWorld) player.world, id -> new PlayerInteractItemC2SPacket(hand, id));
@@ -94,10 +94,10 @@ public abstract class ClientPlayerInteractionManagerMixin {
 
 	@Inject(method = "interactBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;m_vvsqjptk(Lnet/minecraft/client/world/ClientWorld;Lnet/minecraft/class_7204;)V"), cancellable = true)
 	private void onPlayerInteractBlock(ClientPlayerEntity player, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) {
-		ActionResult result = UseBlockCallback.EVENT.invoker().onUseBlock(player, player.world, hand, player.getStackInHand(hand), hitResult);
+		ActionResult result = UseBlockCallback.EVENT.invoker().onUseBlock(player, player.world, hand, player.getStackInHand(hand), hitResult.getBlockPos(), hitResult);
 
 		if (result != ActionResult.PASS) {
-			if (result == ActionResult.SUCCESS) {
+			if (result.isAccepted()) {
 				// method sends a packet with a sequentially assigned id to the server
 				this.m_vvsqjptk((ClientWorld) player.world, id -> new PlayerInteractBlockC2SPacket(hand, hitResult, id));
 			}
@@ -108,7 +108,7 @@ public abstract class ClientPlayerInteractionManagerMixin {
 
 	@Inject(method = "attackBlock", at = @At("HEAD"), cancellable = true)
 	private void onPlayerAttackBlock(BlockPos pos, Direction direction, CallbackInfoReturnable<Boolean> cir) {
-		ActionResult result = AttackBlockCallback.EVENT.invoker().onAttackBlock(this.client.player, this.client.world, Hand.MAIN_HAND, this.client.player.getMainHandStack(), pos, direction);
+		ActionResult result = AttackBlockCallback.EVENT.invoker().onAttackBlock(this.client.player, this.client.world, this.client.player.getMainHandStack(), pos, direction);
 
 		if (result != ActionResult.PASS) {
 			if (result.isAccepted()) {
@@ -123,7 +123,7 @@ public abstract class ClientPlayerInteractionManagerMixin {
 	@Inject(method = "updateBlockBreakingProgress", at = @At("HEAD"), cancellable = true)
 	private void onPlayerAttackBlockProgress(BlockPos pos, Direction direction, CallbackInfoReturnable<Boolean> cir) {
 		if (!this.gameMode.isCreative()) return;
-		ActionResult result = AttackBlockCallback.EVENT.invoker().onAttackBlock(this.client.player, this.client.world, Hand.MAIN_HAND, this.client.player.getMainHandStack(), pos, direction);
+		ActionResult result = AttackBlockCallback.EVENT.invoker().onAttackBlock(this.client.player, this.client.world, this.client.player.getMainHandStack(), pos, direction);
 
 		if (result != ActionResult.PASS) {
 			cir.setReturnValue(result == ActionResult.SUCCESS);
@@ -135,7 +135,7 @@ public abstract class ClientPlayerInteractionManagerMixin {
 		ActionResult result = UseEntityCallback.EVENT.invoker().onUseEntity(player, player.world, hand, player.getStackInHand(hand), entity, hitResult);
 
 		if (result != ActionResult.PASS) {
-			if (result == ActionResult.SUCCESS) {
+			if (result.isAccepted()) {
 				Vec3d vec3d = hitResult.getPos().subtract(entity.getPos());
 				this.networkHandler.sendPacket(PlayerInteractEntityC2SPacket.interactAt(entity, player.isSneaking(), hand, vec3d));
 			}

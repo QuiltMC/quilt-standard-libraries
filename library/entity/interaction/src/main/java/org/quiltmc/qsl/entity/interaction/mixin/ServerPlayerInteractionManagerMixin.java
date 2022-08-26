@@ -67,7 +67,7 @@ public class ServerPlayerInteractionManagerMixin {
 
 	@Inject(method = "interactBlock", at = @At("HEAD"), cancellable = true)
 	private void onPlayerInteractBlock(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) {
-		ActionResult result = UseBlockCallback.EVENT.invoker().onUseBlock(player, world, hand, player.getStackInHand(hand), hitResult);
+		ActionResult result = UseBlockCallback.EVENT.invoker().onUseBlock(player, world, hand, player.getStackInHand(hand), hitResult.getBlockPos(), hitResult);
 
 		if (result != ActionResult.PASS) cir.setReturnValue(result);
 	}
@@ -75,13 +75,13 @@ public class ServerPlayerInteractionManagerMixin {
 	@Inject(method = "processBlockBreakingAction", at = @At("HEAD"), cancellable = true)
 	private void onPlayerAttackBlock(BlockPos pos, PlayerActionC2SPacket.Action action, Direction direction, int worldHeight, int i, CallbackInfo ci) {
 		if (action != PlayerActionC2SPacket.Action.START_DESTROY_BLOCK) return;
-		ActionResult result = AttackBlockCallback.EVENT.invoker().onAttackBlock(this.player, this.world, Hand.MAIN_HAND, this.player.getMainHandStack(), pos, direction);
+		ActionResult result = AttackBlockCallback.EVENT.invoker().onAttackBlock(this.player, this.world, this.player.getMainHandStack(), pos, direction);
 
 		if (result != ActionResult.PASS) {
 			this.player.networkHandler.sendPacket(new BlockUpdateS2CPacket(this.world, pos));
 
-			BlockEntity blockEntity;
-			if ((blockEntity = this.world.getBlockEntity(pos)) != null) {
+			BlockEntity blockEntity = this.world.getBlockEntity(pos);
+			if (blockEntity != null) {
 				Packet<ClientPlayPacketListener> packet = blockEntity.toUpdatePacket();
 
 				if (packet != null) {

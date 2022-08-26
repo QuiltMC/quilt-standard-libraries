@@ -22,6 +22,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.quiltmc.qsl.base.api.event.Event;
 
@@ -39,9 +40,9 @@ import org.quiltmc.qsl.base.api.event.Event;
 public interface UseBlockCallback {
 
 	Event<UseBlockCallback> EVENT = Event.create(UseBlockCallback.class,
-			callbacks -> (player, world, hand, stack, hitResult) -> {
+			callbacks -> (player, world, hand, stack, pos, hitResult) -> {
 				for (UseBlockCallback callback : callbacks) {
-					ActionResult result = callback.onUseBlock(player, world, hand, stack, hitResult);
+					ActionResult result = callback.onUseBlock(player, world, hand, stack, pos, hitResult);
 
 					if (result != ActionResult.PASS) return result;
 				}
@@ -59,5 +60,5 @@ public interface UseBlockCallback {
 	 * {@link ActionResult#PASS} to fall back to further processing,
 	 * {@link ActionResult#FAIL} to cancel further processing.
 	 */
-	ActionResult onUseBlock(PlayerEntity player, World world, Hand hand, ItemStack stack, BlockHitResult hitResult);
+	ActionResult onUseBlock(PlayerEntity player, World world, Hand hand, ItemStack stack, BlockPos pos, BlockHitResult hitResult);
 }

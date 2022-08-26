@@ -29,7 +29,8 @@ import org.quiltmc.qsl.base.api.event.Event;
  * <p>
  * Upon return:
  * <ul>
- *     <li>{@link ActionResult#SUCCESS} cancels further processing and, on the client, sends a packet to the server.</li>
+ *     <li>{@link ActionResult#SUCCESS}/{@link ActionResult#CONSUME}/{@link ActionResult#CONSUME_PARTIAL}
+ *         cancels further processing and, on the client, sends a packet to the server.</li>
  *     <li>{@link ActionResult#PASS} falls back to further processing.</li>
  *     <li>{@link ActionResult#FAIL} cancels further processing and does not send a packet to the server.</li>
  * </ul>
@@ -53,9 +54,10 @@ public interface UseItemCallback {
 	 * @param player the interacting player
 	 * @param world the world the event occurs in
 	 * @param hand the hand used
-	 * @return {@link ActionResult#SUCCESS} to cancel processing and send a packet to the server,
-	 * {@link ActionResult#PASS} to fall back to further processing,
-	 * {@link ActionResult#FAIL} to cancel further processing.
+	 * @return {@link ActionResult#SUCCESS}/{@link ActionResult#CONSUME}/{@link ActionResult#CONSUME_PARTIAL}
+	 *     to cancel processing and send a packet to the server,
+	 *     {@link ActionResult#PASS} to fall back to further processing,
+	 *     {@link ActionResult#FAIL} to cancel further processing.
 	 */
 	ActionResult onUseItem(PlayerEntity player, World world, Hand hand, ItemStack stack);
 }

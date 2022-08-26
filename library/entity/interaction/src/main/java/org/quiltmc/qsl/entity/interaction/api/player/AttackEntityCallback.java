@@ -21,12 +21,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import org.quiltmc.qsl.base.api.event.Event;
 
 /**
  * A callback that is invoked when a Player attacks (left clicks) an entity.
+ * <p>
+ * This is invoked prior to the Spectator check, so make sure you check the game mode!
  * <p>
  * Upon return:
  * <ul>
@@ -39,9 +40,9 @@ import org.quiltmc.qsl.base.api.event.Event;
 public interface AttackEntityCallback {
 
 	Event<AttackEntityCallback> EVENT = Event.create(AttackEntityCallback.class,
-			callbacks -> (player, world, hand, stack, entity) -> {
+			callbacks -> (player, world, stack, entity) -> {
 		for (AttackEntityCallback callback : callbacks) {
-			ActionResult result = callback.onAttack(player, world, hand, stack, entity);
+			ActionResult result = callback.onAttack(player, world, stack, entity);
 
 			if (result != ActionResult.PASS) return result;
 		}
@@ -53,11 +54,10 @@ public interface AttackEntityCallback {
 	 *
 	 * @param player the interacting player
 	 * @param world the world the event occurs in
-	 * @param hand the hand used
 	 * @param entity the hit entity
 	 * @return {@link ActionResult#SUCCESS} to cancel processing and send packet to the server,
 	 * {@link ActionResult#PASS} to fall back to further processing,
 	 * {@link ActionResult#FAIL} to cancel further processing
 	 */
-	ActionResult onAttack(PlayerEntity player, World world, Hand hand, ItemStack stack, Entity entity);
+	ActionResult onAttack(PlayerEntity player, World world, ItemStack stack, Entity entity);
 }
