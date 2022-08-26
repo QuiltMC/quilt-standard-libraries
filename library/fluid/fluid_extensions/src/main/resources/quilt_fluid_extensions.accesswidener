@@ -14,3 +14,4 @@ transitive-accessible field net/minecraft/fluid/FlowableFluid shapeCache Ljava/u
 transitive-accessible method net/minecraft/fluid/FlowableFluid canFlowThrough (Lnet/minecraft/world/BlockView;Lnet/minecraft/fluid/Fluid;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/Direction;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/fluid/FluidState;)Z
 transitive-accessible method net/minecraft/fluid/FlowableFluid isMatchingAndStill (Lnet/minecraft/fluid/FluidState;)Z
 transitive-accessible method net/minecraft/fluid/FlowableFluid canFill (Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/fluid/Fluid;)Z
+transitive-accessible class net/minecraft/client/render/BackgroundRenderer$FogParameters
