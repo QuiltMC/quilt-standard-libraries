@@ -29,12 +29,12 @@ import net.minecraft.nbt.NbtCompound;
 import org.quiltmc.qsl.datafixerupper.api.EmptySchema;
 
 @ApiStatus.Internal
-public final class NopQuiltDataFixesInternals extends QuiltDataFixesInternals {
+public final class NoOpQuiltDataFixesInternals extends QuiltDataFixesInternals {
 	private final Schema schema;
 
 	private boolean frozen;
 
-	public NopQuiltDataFixesInternals() {
+	public NoOpQuiltDataFixesInternals() {
 		this.schema = new EmptySchema(0);
 
 		this.frozen = false;
