@@ -77,7 +77,6 @@ public abstract class QuiltDataFixesInternals {
 	public abstract @NotNull NbtCompound updateWithAllFixers(@NotNull DataFixTypes dataFixTypes,
 			@NotNull NbtCompound compound);
 
-	@Contract("_ -> new")
 	public abstract @NotNull NbtCompound addModDataVersions(@NotNull NbtCompound compound);
 
 	public abstract void freeze();
