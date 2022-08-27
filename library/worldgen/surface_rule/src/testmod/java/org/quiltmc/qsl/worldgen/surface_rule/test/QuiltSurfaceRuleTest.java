@@ -34,7 +34,7 @@ public class QuiltSurfaceRuleTest implements SurfaceRuleEvents.OverworldModifier
 		SurfaceRuleEvents.NetherModifierCallback,
 		SurfaceRuleEvents.TheEndModifierCallback {
 	@Override
-	public void modifyOverworldRules(SurfaceRuleContext.@NotNull Overworld context) {
+	public void modifyOverworldRules(@NotNull SurfaceRuleContext.Overworld context) {
 		// When in doubt, T R A N S. Seed 7205143747332514273 is a good one for testing.
 		SurfaceRules.MaterialCondition blueNoise1 = SurfaceRules.noiseThreshold(NoiseParametersKeys.CALCITE, 0.05, 0.1);
 		SurfaceRules.MaterialCondition pinkNoise1 = SurfaceRules.noiseThreshold(NoiseParametersKeys.CALCITE, 0.1, 0.15);
@@ -64,7 +64,7 @@ public class QuiltSurfaceRuleTest implements SurfaceRuleEvents.OverworldModifier
 	}
 
 	@Override
-	public void modifyNetherRules(SurfaceRuleContext.@NotNull Nether context) {
+	public void modifyNetherRules(@NotNull SurfaceRuleContext.Nether context) {
 		SurfaceRules.MaterialCondition redNoise = SurfaceRules.noiseThreshold(NoiseParametersKeys.NETHER_STATE_SELECTOR, -0.04, -0.08);
 		SurfaceRules.MaterialCondition orangeNoise = SurfaceRules.noiseThreshold(NoiseParametersKeys.NETHER_STATE_SELECTOR, -0.8, -0.12);
 		SurfaceRules.MaterialCondition yellowNoise = SurfaceRules.noiseThreshold(NoiseParametersKeys.NETHER_STATE_SELECTOR, -0.12, -0.16);
@@ -98,7 +98,7 @@ public class QuiltSurfaceRuleTest implements SurfaceRuleEvents.OverworldModifier
 	}
 
 	@Override
-	public void modifyTheEndRules(SurfaceRuleContext.@NotNull TheEnd context) {
+	public void modifyTheEndRules(@NotNull SurfaceRuleContext.TheEnd context) {
 		RegistryKey<Biome> TEST_END_HIGHLANDS = RegistryKey.of(Registry.BIOME_KEY, new Identifier("quilt_biome_testmod", "test_end_highlands"));
 		RegistryKey<Biome> TEST_END_MIDLANDS = RegistryKey.of(Registry.BIOME_KEY, new Identifier("quilt_biome_testmod", "test_end_midlands"));
 		RegistryKey<Biome> TEST_END_BARRRENS = RegistryKey.of(Registry.BIOME_KEY, new Identifier("quilt_biome_testmod", "test_end_barrens"));
