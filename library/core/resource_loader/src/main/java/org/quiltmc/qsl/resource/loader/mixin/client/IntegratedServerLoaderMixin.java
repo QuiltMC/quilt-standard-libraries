@@ -31,40 +31,48 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
 import net.minecraft.resource.pack.ResourcePackManager;
+import net.minecraft.server.WorldLoader;
 import net.minecraft.server.WorldStem;
-import net.minecraft.unmapped.C_kjxfcecs;
-import net.minecraft.unmapped.C_phqvxqun;
+import net.minecraft.server.integrated.IntegratedServerLoader;
 import net.minecraft.world.SaveProperties;
 import net.minecraft.world.level.storage.LevelStorage;
 
 import org.quiltmc.qsl.base.api.util.TriState;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 
-@Mixin(C_phqvxqun.class)
-public abstract class CphqvxqunMixin {
+@Mixin(IntegratedServerLoader.class)
+public abstract class IntegratedServerLoaderMixin {
 	@Shadow
-	private static void method_41888(LevelStorage.Session session, String string) {
+	private static void close(LevelStorage.Session storageSession, String worlName) {
 		throw new IllegalStateException("Mixin injection failed.");
 	}
 
 	@Shadow
-	protected abstract void method_41899(Screen screen, String string, boolean bl, boolean bl2);
+	protected abstract void start(Screen parentScreen, String worldName, boolean safeMode, boolean requireBackup);
 
 	@Unique
 	private static final TriState EXPERIMENTAL_SCREEN_OVERRIDE = TriState.fromProperty("quilt.resource_loader.experimental_screen_override");
 
-	@Inject(method = "method_41900", at = @At("HEAD"))
-	private void onStartDataPackLoad(C_kjxfcecs.C_nrmvgbka c_nrmvgbka, C_kjxfcecs.C_ueybpquh<SaveProperties> arg, CallbackInfoReturnable<WorldStem> cir) {
+	@Inject(
+			method = "loadWorldStem(Lnet/minecraft/server/WorldLoader$PackConfig;Lnet/minecraft/server/WorldLoader$LoadContextSupplier;)Lnet/minecraft/server/WorldStem;",
+			at = @At("HEAD")
+	)
+	private void onStartDataPackLoad(WorldLoader.PackConfig dataPackConfig, WorldLoader.LoadContextSupplier<SaveProperties> savePropertiesSupplier,
+			CallbackInfoReturnable<WorldStem> cir) {
 		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null);
 	}
 
-	@Inject(method = "method_41900", at = @At("RETURN"))
-	private void onEndDataPackLoad(C_kjxfcecs.C_nrmvgbka c_nrmvgbka, C_kjxfcecs.C_ueybpquh<SaveProperties> arg, CallbackInfoReturnable<WorldStem> cir) {
+	@Inject(
+			method = "loadWorldStem(Lnet/minecraft/server/WorldLoader$PackConfig;Lnet/minecraft/server/WorldLoader$LoadContextSupplier;)Lnet/minecraft/server/WorldStem;",
+			at = @At("RETURN")
+	)
+	private void onEndDataPackLoad(WorldLoader.PackConfig dataPackConfig, WorldLoader.LoadContextSupplier<SaveProperties> savePropertiesSupplier,
+			CallbackInfoReturnable<WorldStem> cir) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, cir.getReturnValue().resourceManager(), null);
 	}
 
 	@ModifyArg(
-			method = {"method_41895", "method_41899"},
+			method = {"createAndStart", "start(Lnet/minecraft/client/gui/screen/Screen;Ljava/lang/String;ZZ)V"},
 			at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Throwable;)V", remap = false),
 			index = 1
 	)
@@ -74,35 +82,35 @@ public abstract class CphqvxqunMixin {
 	}
 
 	@Inject(
-			method = "method_41899",
+			method = "start(Lnet/minecraft/client/gui/screen/Screen;Ljava/lang/String;ZZ)V",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/unmapped/C_phqvxqun;method_41898(Lnet/minecraft/client/gui/screen/Screen;Ljava/lang/String;ZLjava/lang/Runnable;)V"
+					target = "Lnet/minecraft/server/integrated/IntegratedServerLoader;askForBackup(Lnet/minecraft/client/gui/screen/Screen;Ljava/lang/String;ZLjava/lang/Runnable;)V"
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD,
 			cancellable = true
 	)
-	private void onBackupExperimentalWarning(Screen screen, String levelName, boolean b, boolean requireBackup, CallbackInfo ci,
+	private void onBackupExperimentalWarning(Screen parentScreen, String worldName, boolean safeMode, boolean requireBackup, CallbackInfo ci,
 			LevelStorage.Session session, ResourcePackManager resourcePackManager, WorldStem worldStem) {
 		if (EXPERIMENTAL_SCREEN_OVERRIDE.toBooleanOrElse(true)
 				&& !worldStem.saveProperties().getGeneratorOptions().isLegacyCustomizedType()) {
 			worldStem.close();
-			method_41888(session, levelName);
-			this.method_41899(screen, levelName, b, false);
+			close(session, worldName);
+			this.start(parentScreen, worldName, safeMode, false);
 			ci.cancel();
 		}
 	}
 
 	@Inject(
-			method = "m_mxzmxaxb",
+			method = "tryLoad",
 			at = @At(value = "CONSTANT", args = "stringValue=selectWorld.import_worldgen_settings.experimental.title"),
 			cancellable = true
 	)
-	private static void onExperimentalWarning(MinecraftClient minecraftClient, CreateWorldScreen createWorldScreen,
-			Lifecycle lifecycle, Runnable runnable,
+	private static void onExperimentalWarning(MinecraftClient client, CreateWorldScreen parentScreen,
+			Lifecycle dynamicRegistryLifecycle, Runnable successCallback,
 			CallbackInfo ci) {
 		if (EXPERIMENTAL_SCREEN_OVERRIDE.toBooleanOrElse(true)) {
-			runnable.run();
+			successCallback.run();
 			ci.cancel();
 		}
 	}
