@@ -67,36 +67,44 @@ public class KeyBindMixin implements ChordedKeyBind {
 			method = "<init>(Ljava/lang/String;Lcom/mojang/blaze3d/platform/InputUtil$Type;ILjava/lang/String;)V"
 	)
 	private void initializeChordFields(String string, InputUtil.Type type, int i, String string2, CallbackInfo ci) {
-		quilt$defaultChord = null;
-		quilt$boundChord = null;
+		this.quilt$defaultChord = null;
+		this.quilt$boundChord = null;
 	}
 
-	@Inject(at = @At("HEAD"), method = "onKeyPressed")
+	@Inject(at = @At("HEAD"), method = "onKeyPressed", cancellable = true)
 	private static void detectChordsOnIncrement(InputUtil.Key startingKey, CallbackInfo ci) {
+		boolean cancel = false;
 		for (KeyChord chord : KEY_BINDS_BY_CHORD.keySet()) {
 			if (chord.keys.containsKey(startingKey) && !chord.keys.containsValue(false)) {
 				// This ensures that the chord will only be incremented once instead of N times
 				if (startingKey.equals(chord.keys.keySet().toArray()[0])) {
 					KeyBind keyBind = KEY_BINDS_BY_CHORD.get(chord);
 					((KeyBindAccessor) keyBind).setTimesPressed(((KeyBindAccessor) keyBind).getTimesPressed() + 1);
+					cancel = true;
 				}
 			}
 		}
+
+		if (cancel) ci.cancel();
 	}
 
-	@Inject(at = @At("HEAD"), method = "setKeyPressed")
+	@Inject(at = @At("HEAD"), method = "setKeyPressed", cancellable = true)
 	private static void detectChordsOnSet(InputUtil.Key startingKey, boolean pressed, CallbackInfo ci) {
+		boolean cancel = false;
 		for (KeyChord chord : KEY_BINDS_BY_CHORD.keySet()) {
 			if (chord.keys.containsKey(startingKey)) {
 				chord.keys.put(startingKey, pressed);
 
 				if (!chord.keys.containsValue(false)) {
 					KEY_BINDS_BY_CHORD.get(chord).setPressed(true);
+					cancel = true;
 				} else {
 					KEY_BINDS_BY_CHORD.get(chord).setPressed(false);
 				}
 			}
 		}
+
+		if (cancel) ci.cancel();
 	}
 
 	@Inject(

@@ -16,6 +16,9 @@
 
 package org.quiltmc.qsl.key.binds.impl;
 
+import org.jetbrains.annotations.ApiStatus;
+
+@ApiStatus.Internal
 public interface InternalQuiltKeyBind {
 	void markAsVanilla();
 }

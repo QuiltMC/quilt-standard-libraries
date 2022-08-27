@@ -18,8 +18,9 @@ package org.quiltmc.qsl.key.binds.impl.chords;
 
 import java.util.SortedMap;
 
-import com.mojang.blaze3d.platform.InputUtil;
 import it.unimi.dsi.fastutil.objects.Object2BooleanAVLTreeMap;
+
+import com.mojang.blaze3d.platform.InputUtil;
 
 public class KeyChord {
 	// TODO - Private this, add methods for getting/modifying it
@@ -44,6 +45,6 @@ public class KeyChord {
 
 	@Override
 	public int hashCode() {
-		return keys.keySet().hashCode();
+		return this.keys.keySet().hashCode();
 	}
 }

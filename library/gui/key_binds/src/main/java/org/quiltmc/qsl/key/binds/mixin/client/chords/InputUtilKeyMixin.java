@@ -16,9 +16,10 @@
 
 package org.quiltmc.qsl.key.binds.mixin.client.chords;
 
-import com.mojang.blaze3d.platform.InputUtil;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+
+import com.mojang.blaze3d.platform.InputUtil;
 
 @Mixin(InputUtil.Key.class)
 public abstract class InputUtilKeyMixin implements Comparable<InputUtil.Key> {

@@ -18,6 +18,9 @@ package org.quiltmc.qsl.key.binds.api;
 
 import com.mojang.blaze3d.platform.InputUtil;
 
+/**
+ * An injected interface for KeyBind that adds few Quilt-relevant utility methods.
+ */
 public interface QuiltKeyBind {
 	/**
 	 * Gets whenever the key bind is from Vanilla or not.

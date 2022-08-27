@@ -78,8 +78,8 @@ public abstract class KeyBindsScreenMixin extends GameOptionsScreen {
 	)
 	private void modifyMouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
 		InputUtil.Key key = InputUtil.Type.MOUSE.createFromKeyCode(button);
-		if (!quilt$focusedProtoChord.contains(key)) {
-			quilt$focusedProtoChord.add(key);
+		if (!this.quilt$focusedProtoChord.contains(key)) {
+			this.quilt$focusedProtoChord.add(key);
 		}
 
 		cir.setReturnValue(true);
@@ -101,8 +101,8 @@ public abstract class KeyBindsScreenMixin extends GameOptionsScreen {
 	)
 	private void modifyKeyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
 		InputUtil.Key key = InputUtil.fromKeyCode(keyCode, scanCode);
-		if (!quilt$focusedProtoChord.contains(key)) {
-			quilt$focusedProtoChord.add(key);
+		if (!this.quilt$focusedProtoChord.contains(key)) {
+			this.quilt$focusedProtoChord.add(key);
 		}
 
 		cir.setReturnValue(true);
@@ -111,19 +111,19 @@ public abstract class KeyBindsScreenMixin extends GameOptionsScreen {
 	@Override
 	public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
 		if (this.focusedKey != null) {
-			if (quilt$focusedProtoChord.size() == 1) {
-				this.gameOptions.setKeyCode(this.focusedKey, quilt$focusedProtoChord.get(0));
-			} else if (quilt$focusedProtoChord.size() > 1) {
+			if (this.quilt$focusedProtoChord.size() == 1) {
+				this.gameOptions.setKeyCode(this.focusedKey, this.quilt$focusedProtoChord.get(0));
+			} else if (this.quilt$focusedProtoChord.size() > 1) {
 				SortedMap<InputUtil.Key, Boolean> map = new Object2BooleanAVLTreeMap<>();
-				for (int i = 0; i < quilt$focusedProtoChord.size(); i++) {
-					map.put(quilt$focusedProtoChord.get(i), false);
+				for (int i = 0; i < this.quilt$focusedProtoChord.size(); i++) {
+					map.put(this.quilt$focusedProtoChord.get(i), false);
 				}
 
 				this.focusedKey.setBoundChord(new KeyChord(map));
 				QuiltKeyBindsConfigManager.updateConfig(false);
 			}
 
-			quilt$focusedProtoChord.clear();
+			this.quilt$focusedProtoChord.clear();
 			this.focusedKey = null;
 			this.time = Util.getMeasuringTimeMs();
 			KeyBind.updateBoundKeys();
@@ -137,19 +137,19 @@ public abstract class KeyBindsScreenMixin extends GameOptionsScreen {
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
 		// TODO - Don't duplicate code, have a common method
 		if (this.focusedKey != null && !this.quilt$initialMouseRelease) {
-			if (quilt$focusedProtoChord.size() == 1) {
-				this.gameOptions.setKeyCode(this.focusedKey, quilt$focusedProtoChord.get(0));
-			} else if (quilt$focusedProtoChord.size() > 1) {
+			if (this.quilt$focusedProtoChord.size() == 1) {
+				this.gameOptions.setKeyCode(this.focusedKey, this.quilt$focusedProtoChord.get(0));
+			} else if (this.quilt$focusedProtoChord.size() > 1) {
 				SortedMap<InputUtil.Key, Boolean> map = new Object2BooleanAVLTreeMap<>();
-				for (int i = 0; i < quilt$focusedProtoChord.size(); i++) {
-					map.put(quilt$focusedProtoChord.get(i), false);
+				for (int i = 0; i < this.quilt$focusedProtoChord.size(); i++) {
+					map.put(this.quilt$focusedProtoChord.get(i), false);
 				}
 
 				this.focusedKey.setBoundChord(new KeyChord(map));
 				QuiltKeyBindsConfigManager.updateConfig(false);
 			}
 
-			quilt$focusedProtoChord.clear();
+			this.quilt$focusedProtoChord.clear();
 			this.focusedKey = null;
 			this.time = Util.getMeasuringTimeMs();
 			KeyBind.updateBoundKeys();

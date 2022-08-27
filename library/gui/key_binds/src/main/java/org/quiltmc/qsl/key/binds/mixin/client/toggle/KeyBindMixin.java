@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.mojang.blaze3d.platform.InputUtil;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -28,6 +27,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import com.mojang.blaze3d.platform.InputUtil;
 
 import net.minecraft.client.option.KeyBind;
 
@@ -63,26 +64,31 @@ public abstract class KeyBindMixin implements ToggleableKeyBind {
 		}
 
 		KeyBindRegistryImpl.registerKeyBind((KeyBind) (Object) this);
-		quilt$disableCounter = 0;
+		this.quilt$disableCounter = 0;
 	}
 
 	@Override
 	public boolean isEnabled() {
-		return quilt$disableCounter == 0;
+		return this.quilt$disableCounter == 0;
 	}
 
 	@Override
 	public boolean isDisabled() {
-		return quilt$disableCounter > 0;
+		return this.quilt$disableCounter > 0;
+	}
+
+	@Override
+	public boolean canDisable() {
+		return true;
 	}
 
 	@Override
 	public void enable() {
 		// Hahahahaha no.
-		if (quilt$disableCounter <= 0) return;
+		if (this.quilt$disableCounter <= 0) return;
 
-		quilt$disableCounter--;
-		if (quilt$disableCounter == 0) {
+		this.quilt$disableCounter--;
+		if (this.quilt$disableCounter == 0) {
 			KeyBindRegistryImpl.updateKeyBindState((KeyBind) (Object) this);
 			KEY_BINDS.put(this.getTranslationKey(), (KeyBind) (Object) this);
 			KeyBind.updateBoundKeys();
@@ -92,8 +98,8 @@ public abstract class KeyBindMixin implements ToggleableKeyBind {
 
 	@Override
 	public void disable() {
-		quilt$disableCounter++;
-		if (quilt$disableCounter == 1) {
+		this.quilt$disableCounter++;
+		if (this.quilt$disableCounter == 1) {
 			KeyBindRegistryImpl.updateKeyBindState((KeyBind) (Object) this);
 			KEY_BINDS.remove(this.getTranslationKey(), (KeyBind) (Object) this);
 			KeyBind.updateBoundKeys();

@@ -20,8 +20,6 @@ import java.util.List;
 
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import org.jetbrains.annotations.ApiStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
@@ -30,8 +28,6 @@ import net.minecraft.client.option.KeyBind;
 @Environment(EnvType.CLIENT)
 @ApiStatus.Internal
 public class KeyBindRegistryImpl {
-	public static final Logger LOGGER = LoggerFactory.getLogger("KeyBindRegistry");
-
 	private static final List<KeyBind> ALL_KEY_BINDS = new ReferenceArrayList<>();
 	private static final List<KeyBind> ENABLED_KEYS = new ReferenceArrayList<>();
 	private static KeyBindManager keyBindManager = null;

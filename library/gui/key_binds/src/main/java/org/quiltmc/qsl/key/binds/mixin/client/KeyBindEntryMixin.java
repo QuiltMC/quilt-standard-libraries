@@ -76,9 +76,9 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void initPreviousBoundKey(KeyBindListWidget list, KeyBind key, Text text, CallbackInfo ci) {
-		quilt$previousProtoChord = null;
+		this.quilt$previousProtoChord = null;
 		quilt$changedProtoChord = null;
-		quilt$addKeyNameToTooltip = false;
+		this.quilt$addKeyNameToTooltip = false;
 	}
 
 	@Inject(
@@ -108,7 +108,7 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 				quilt$changedProtoChord = boundProtoChord;
 			}
 
-			quilt$addKeyNameToTooltip = true;
+			this.quilt$addKeyNameToTooltip = true;
 
 			if (!this.key.isUnbound()) {
 				for (KeyBind otherKey : KeyBindRegistryImpl.getKeyBinds()) {
@@ -167,9 +167,9 @@ public abstract class KeyBindEntryMixin extends KeyBindListWidget.Entry implemen
 			}
 
 			if (client.textRenderer.getWidth(protoText) > targetWidth) {
-				if (quilt$addKeyNameToTooltip) {
+				if (this.quilt$addKeyNameToTooltip) {
 					this.quilt$conflictTooltips.add(0, this.key.getKeyName());
-					quilt$addKeyNameToTooltip = false;
+					this.quilt$addKeyNameToTooltip = false;
 				}
 
 				protoText = client.textRenderer.trimToWidth(protoText, targetWidth);

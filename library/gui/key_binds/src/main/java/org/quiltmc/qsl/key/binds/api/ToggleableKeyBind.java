@@ -24,6 +24,9 @@ import net.minecraft.client.option.KeyBind;
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 // TODO - Add Javadocs; You can nab the ones from KeyBindRegistry
+/**
+ * An interface for adding toggling capabilities to key binds.
+ */
 @Environment(EnvType.CLIENT)
 @InjectedInterface(KeyBind.class)
 public interface ToggleableKeyBind {
@@ -42,6 +45,15 @@ public interface ToggleableKeyBind {
 	 * @return {@code true} if the key bind is disabled, {@code false} otherwise
 	 */
 	default boolean isDisabled() {
+		return false;
+	}
+
+	/**
+	 * Gets whenever the key bind can be disabled or not.
+	 *
+	 * @return {@code true} if the key bind can be disabled, {@code false} otherwise
+	 */
+	default boolean canDisable() {
 		return false;
 	}
 

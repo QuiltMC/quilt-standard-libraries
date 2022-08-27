@@ -26,17 +26,36 @@ import net.minecraft.client.option.KeyBind;
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 import org.quiltmc.qsl.key.binds.impl.chords.KeyChord;
 
-// TODO - Add Javadocs
+// TODO - Explain what are key chords.
+/**
+ * An interface that adds key chord support to key binds.
+ */
 @Environment(EnvType.CLIENT)
 @InjectedInterface(KeyBind.class)
 public interface ChordedKeyBind {
+	/**
+	 * Gets the bound key chord of the key bind.
+	 *
+	 * @return the key bind's bound key chord.
+	 */
 	default KeyChord getBoundChord() {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Sets the bound key chord of the key bind.
+	 */
 	default void setBoundChord(KeyChord chord) { }
 
-	// TODO - This is a temporary measure until CHASM comes. Replace it with a proper constructor or builder
+	// TODO - This is a temporary measure until Chasm arrives. Replace it with a proper constructor or builder
+	/**
+	 * Specifies the default key chord for the key bind.
+	 *
+	 * <p>This method is to be used only on creating a key bind instance.
+	 *
+	 * @param keys the keys of the default key chord
+	 * @return the original key bind instance
+	 */
 	default KeyBind withChord(InputUtil.Key... keys) {
 		throw new UnsupportedOperationException();
 	}
