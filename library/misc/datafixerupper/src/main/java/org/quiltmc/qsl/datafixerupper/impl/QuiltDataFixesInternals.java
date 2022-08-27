@@ -64,8 +64,7 @@ public abstract class QuiltDataFixesInternals {
 		return instance;
 	}
 
-	public abstract void registerFixer(@NotNull String modId,
-			@Range(from = 0, to = Integer.MAX_VALUE) int currentVersion,
+	public abstract void registerFixer(@NotNull String modId, @Range(from = 0, to = Integer.MAX_VALUE) int currentVersion,
 			@NotNull DataFixer dataFixer);
 
 	public abstract @Nullable DataFixerEntry getFixerEntry(@NotNull String modId);
@@ -73,8 +72,7 @@ public abstract class QuiltDataFixesInternals {
 	@Contract(value = "-> new", pure = true)
 	public abstract @NotNull Schema createBaseSchema();
 
-	public abstract @NotNull NbtCompound updateWithAllFixers(@NotNull DataFixTypes dataFixTypes,
-			@NotNull NbtCompound compound);
+	public abstract @NotNull NbtCompound updateWithAllFixers(@NotNull DataFixTypes dataFixTypes, @NotNull NbtCompound compound);
 
 	@Contract("_ -> new")
 	public abstract @NotNull NbtCompound addModDataVersions(@NotNull NbtCompound compound);
