@@ -19,11 +19,9 @@ package org.quiltmc.qsl.datafixerupper.impl;
 import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.schemas.Schema;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Range;
+import com.mojang.logging.LogUtils;
+import org.jetbrains.annotations.*;
+import org.slf4j.Logger;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.datafixer.DataFixTypes;
@@ -32,6 +30,8 @@ import net.minecraft.nbt.NbtCompound;
 
 @ApiStatus.Internal
 public abstract class QuiltDataFixesInternals {
+	private static final Logger LOGGER = LogUtils.getLogger();
+
 	public record DataFixerEntry(DataFixer dataFixer, int currentVersion) {}
 
 	@Contract(pure = true)
@@ -53,9 +53,10 @@ public abstract class QuiltDataFixesInternals {
 			}
 
 			if (latestVanillaSchema == null) {
-				// either this Minecraft version is horribly broken, or someone is suppressing DFU initialization
-				// use a no-op impl
-				instance = new NopQuiltDataFixesInternals();
+				LOGGER.warn("[Quilt DFU API] Failed to initialize! Either someone stopped DFU from initializing,");
+				LOGGER.warn("[Quilt DFU API]  or this Minecraft build is hosed.");
+				LOGGER.warn("[Quilt DFU API] Using no-op implementation.");
+				instance = new NoOpQuiltDataFixesInternals();
 			} else {
 				instance = new QuiltDataFixesInternalsImpl(latestVanillaSchema);
 			}
@@ -74,7 +75,6 @@ public abstract class QuiltDataFixesInternals {
 
 	public abstract @NotNull NbtCompound updateWithAllFixers(@NotNull DataFixTypes dataFixTypes, @NotNull NbtCompound compound);
 
-	@Contract("_ -> new")
 	public abstract @NotNull NbtCompound addModDataVersions(@NotNull NbtCompound compound);
 
 	public abstract void freeze();
