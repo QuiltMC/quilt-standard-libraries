@@ -29,9 +29,9 @@ import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.entity.interaction.api.LivingEntityAttackEvents;
 import org.quiltmc.qsl.entity.interaction.api.player.AttackEntityCallback;
-import org.quiltmc.qsl.entity.interaction.api.player.PlayerBreakBlockEvents;
+import org.quiltmc.qsl.entity.interaction.api.player.BreakBlockEvents;
 import org.quiltmc.qsl.entity.interaction.api.player.UseEntityCallback;
-import org.quiltmc.qsl.entity.interaction.api.player.UseItemCallback;
+import org.quiltmc.qsl.entity.interaction.api.player.UseItemEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,23 +86,22 @@ public class InteractionTest implements ModInitializer {
 			return ActionResult.PASS;
 		});
 
-		UseItemCallback.EVENT.register((player, world, hand, stack) -> {
+		UseItemEvents.AFTER.register((player, world, hand, stack) -> {
 			if (player.getStackInHand(hand).isOf(Items.DIAMOND_SWORD)) {
 				LightningEntity lightning = new LightningEntity(EntityType.LIGHTNING_BOLT, world);
 				lightning.setPos(player.getX(), player.getY(), player.getZ());
 				world.spawnEntity(lightning);
 			}
-			return ActionResult.PASS;
 		});
 
-		PlayerBreakBlockEvents.BEFORE.register((player, world, stack, pos, state, blockEntity) -> {
+		BreakBlockEvents.BEFORE.register((player, world, stack, pos, state, blockEntity) -> {
 			if (state.getBlock() == Blocks.GRASS_BLOCK) {
 				//if (world.isClient) return false;
 			}
 			return true;
 		});
 
-		PlayerBreakBlockEvents.AFTER.register((player, world, stack, pos, state, blockEntity) -> {
+		BreakBlockEvents.AFTER.register((player, world, stack, pos, state, blockEntity) -> {
 			if (state.getBlock() == Blocks.GRASS_BLOCK) {
 				world.setBlockState(pos, Blocks.LAVA.getDefaultState());
 			}

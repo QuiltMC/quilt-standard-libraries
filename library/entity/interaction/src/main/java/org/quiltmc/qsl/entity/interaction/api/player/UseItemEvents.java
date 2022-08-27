@@ -35,29 +35,53 @@ import org.quiltmc.qsl.base.api.event.Event;
  *     <li>{@link ActionResult#FAIL} cancels further processing and does not send a packet to the server.</li>
  * </ul>
  */
-@FunctionalInterface
-public interface UseItemCallback {
 
-	Event<UseItemCallback> EVENT = Event.create(UseItemCallback.class,
+public class UseItemEvents {
+
+	public static final Event<Before> BEFORE = Event.create(Before.class,
 			callbacks -> (player, world, hand, stack) -> {
-				for (UseItemCallback callback : callbacks) {
-					ActionResult result = callback.onUseItem(player, world, hand, stack);
+				for (Before callback : callbacks) {
+					ActionResult result = callback.beforeUseItem(player, world, hand, stack);
 
 					if (result != ActionResult.PASS) return result;
 				}
 				return ActionResult.PASS;
 			});
 
-	/**
-	 * Invoked when a player uses (right-clicks) with an item.
-	 *
-	 * @param player the interacting player
-	 * @param world the world the event occurs in
-	 * @param hand the hand used
-	 * @return {@link ActionResult#SUCCESS}/{@link ActionResult#CONSUME}/{@link ActionResult#CONSUME_PARTIAL}
-	 *     to cancel processing and send a packet to the server,
-	 *     {@link ActionResult#PASS} to fall back to further processing,
-	 *     {@link ActionResult#FAIL} to cancel further processing.
-	 */
-	ActionResult onUseItem(PlayerEntity player, World world, Hand hand, ItemStack stack);
+	public static final Event<After> AFTER = Event.create(After.class,
+			callbacks -> (player, world, hand, stack) -> {
+				for (After callback : callbacks) {
+					callback.afterUseItem(player, world, hand, stack);
+				}
+			});
+
+	@FunctionalInterface
+	public interface Before {
+		/**
+		 * Invoked <strong>before</strong> a player uses (right-clicks) with an item.
+		 * <p>
+		 * Implementations should not assume the action has been completed.
+		 *
+		 * @param player the interacting player
+		 * @param world  the world the event occurs in
+		 * @param hand   the hand used
+		 * @return {@link ActionResult#SUCCESS}/{@link ActionResult#CONSUME}/{@link ActionResult#CONSUME_PARTIAL}
+		 * to cancel processing and send a packet to the server,
+		 * {@link ActionResult#PASS} to fall back to further processing,
+		 * {@link ActionResult#FAIL} to cancel further processing.
+		 */
+		ActionResult beforeUseItem(PlayerEntity player, World world, Hand hand, ItemStack stack);
+	}
+
+	@FunctionalInterface
+	public interface After {
+		/**
+		 * Invoked <strong>after</strong> a player uses (right-clicks) with an item.
+		 *
+		 * @param player the interacting player
+		 * @param world  the world the event occurs in
+		 * @param hand   the hand used
+		 */
+		void afterUseItem(PlayerEntity player, World world, Hand hand, ItemStack stack);
+	}
 }

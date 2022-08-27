@@ -34,9 +34,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.quiltmc.qsl.entity.interaction.api.player.AttackBlockCallback;
-import org.quiltmc.qsl.entity.interaction.api.player.PlayerBreakBlockEvents;
+import org.quiltmc.qsl.entity.interaction.api.player.BreakBlockEvents;
 import org.quiltmc.qsl.entity.interaction.api.player.UseBlockCallback;
-import org.quiltmc.qsl.entity.interaction.api.player.UseItemCallback;
+import org.quiltmc.qsl.entity.interaction.api.player.UseItemEvents;
+import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -46,6 +47,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+@Debug(export = true)
 @Mixin(ServerPlayerInteractionManager.class)
 public class ServerPlayerInteractionManagerMixin {
 
@@ -56,13 +58,16 @@ public class ServerPlayerInteractionManagerMixin {
 	@Shadow
 	protected ServerWorld world;
 
-	@Inject(method = "interactItem", at = @At("HEAD"), cancellable = true)
-	private void onPlayerInteractItem(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
-		if (player.isSpectator()) return;
-
-		ActionResult result = UseItemCallback.EVENT.invoker().onUseItem(player, world, hand, player.getStackInHand(hand));
+	@Inject(method = "interactItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getCount()I", ordinal = 0), cancellable = true)
+	private void beforePlayerInteractItem(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
+		ActionResult result = UseItemEvents.BEFORE.invoker().beforeUseItem(player, world, hand, player.getStackInHand(hand));
 
 		if (result != ActionResult.PASS) cir.setReturnValue(result);
+	}
+
+	@Inject(method = "interactItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/TypedActionResult;getValue()Ljava/lang/Object;"))
+	private void afterPlayerInteractItem(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
+		UseItemEvents.AFTER.invoker().afterUseItem(player, world, hand, stack);
 	}
 
 	@Inject(method = "interactBlock", at = @At("HEAD"), cancellable = true)
@@ -95,16 +100,16 @@ public class ServerPlayerInteractionManagerMixin {
 
 	@Inject(method = "tryBreakBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;onBreak(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/entity/player/PlayerEntity;)V"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
 	private void onPlayerBreakBlock(BlockPos pos, CallbackInfoReturnable<Boolean> cir, BlockState state, BlockEntity blockEntity) {
-		boolean result = PlayerBreakBlockEvents.BEFORE.invoker().beforePlayerBreakBlock(this.player, this.world, this.player.getMainHandStack(), pos, state, blockEntity);
+		boolean result = BreakBlockEvents.BEFORE.invoker().beforePlayerBreakBlock(this.player, this.world, this.player.getMainHandStack(), pos, state, blockEntity);
 
 		if (!result) {
-			PlayerBreakBlockEvents.CANCELED.invoker().cancelPlayerBreakBlock(this.player, this.world, this.player.getMainHandStack(), pos, state, blockEntity);
+			BreakBlockEvents.CANCELED.invoker().cancelPlayerBreakBlock(this.player, this.world, this.player.getMainHandStack(), pos, state, blockEntity);
 			cir.setReturnValue(false);
 		}
 	}
 
 	@Inject(method = "tryBreakBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;onBroken(Lnet/minecraft/world/WorldAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V"), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void afterPlayerBreakBlock(BlockPos pos, CallbackInfoReturnable<Boolean> cir, BlockState state, BlockEntity blockEntity) {
-		PlayerBreakBlockEvents.AFTER.invoker().afterPlayerBreakBlock(this.player, this.world, this.player.getMainHandStack(), pos, state, blockEntity);
+		BreakBlockEvents.AFTER.invoker().afterPlayerBreakBlock(this.player, this.world, this.player.getMainHandStack(), pos, state, blockEntity);
 	}
 }

@@ -78,8 +78,8 @@ public abstract class ClientPlayerInteractionManagerMixin {
 	}
 
 	@Inject(method = "interactItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V"), cancellable = true)
-	private void onPlayerInteractItem(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
-		ActionResult result = UseItemCallback.EVENT.invoker().onUseItem(player, player.world, hand, player.getStackInHand(hand));
+	private void beforePlayerInteractItem(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
+		ActionResult result = UseItemEvents.BEFORE.invoker().beforeUseItem(player, player.world, hand, player.getStackInHand(hand));
 
 		if (result != ActionResult.PASS) {
 			if (result.isAccepted()) {
@@ -89,6 +89,13 @@ public abstract class ClientPlayerInteractionManagerMixin {
 			}
 
 			cir.setReturnValue(result);
+		}
+	}
+
+	@Inject(method = "interactItem", at = @At("TAIL"))
+	private void afterPlayerInteractItem(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
+		if (cir.getReturnValue() != ActionResult.FAIL) {
+			UseItemEvents.AFTER.invoker().afterUseItem(player, player.world, hand, player.getStackInHand(hand));
 		}
 	}
 
@@ -116,7 +123,7 @@ public abstract class ClientPlayerInteractionManagerMixin {
 				this.m_vvsqjptk(this.client.world, id -> new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.START_DESTROY_BLOCK, pos, direction, id));
 			}
 
-			cir.setReturnValue(result == ActionResult.SUCCESS);
+			cir.setReturnValue(result.isAccepted());
 		}
 	}
 
@@ -126,7 +133,7 @@ public abstract class ClientPlayerInteractionManagerMixin {
 		ActionResult result = AttackBlockCallback.EVENT.invoker().onAttackBlock(this.client.player, this.client.world, this.client.player.getMainHandStack(), pos, direction);
 
 		if (result != ActionResult.PASS) {
-			cir.setReturnValue(result == ActionResult.SUCCESS);
+			cir.setReturnValue(result.isAccepted());
 		}
 	}
 
@@ -147,16 +154,16 @@ public abstract class ClientPlayerInteractionManagerMixin {
 	@Inject(method = "breakBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;onBreak(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/entity/player/PlayerEntity;)V"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
 	private void onPlayerBreakBlock(BlockPos pos, CallbackInfoReturnable<Boolean> cir, World world, BlockState state) {
 		BlockEntity blockEntity = world.getBlockEntity(pos);
-		boolean result = PlayerBreakBlockEvents.BEFORE.invoker().beforePlayerBreakBlock(this.client.player, world, this.client.player.getMainHandStack(), pos, state, blockEntity);
+		boolean result = BreakBlockEvents.BEFORE.invoker().beforePlayerBreakBlock(this.client.player, world, this.client.player.getMainHandStack(), pos, state, blockEntity);
 
 		if (!result) {
-			PlayerBreakBlockEvents.CANCELED.invoker().cancelPlayerBreakBlock(this.client.player, world, this.client.player.getMainHandStack(), pos, state, blockEntity);
+			BreakBlockEvents.CANCELED.invoker().cancelPlayerBreakBlock(this.client.player, world, this.client.player.getMainHandStack(), pos, state, blockEntity);
 			cir.setReturnValue(false);
 		}
 	}
 
 	@Inject(method = "breakBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;onBroken(Lnet/minecraft/world/WorldAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V"), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void afterPlayerBreakBlock(BlockPos pos, CallbackInfoReturnable<Boolean> cir, World world, BlockState state) {
-		PlayerBreakBlockEvents.AFTER.invoker().afterPlayerBreakBlock(this.client.player, world, this.client.player.getMainHandStack(), pos, state, world.getBlockEntity(pos));
+		BreakBlockEvents.AFTER.invoker().afterPlayerBreakBlock(this.client.player, world, this.client.player.getMainHandStack(), pos, state, world.getBlockEntity(pos));
 	}
 }

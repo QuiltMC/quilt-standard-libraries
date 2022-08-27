@@ -30,7 +30,7 @@ import javax.annotation.Nullable;
 /**
  * Contains events that invoke when a player breaks a block.
  */
-public class PlayerBreakBlockEvents {
+public class BreakBlockEvents {
 
 	/**
 	 * Invokes prior to the player breaking a block. It is invoked
@@ -42,9 +42,9 @@ public class PlayerBreakBlockEvents {
 	 *     has been completed.
 	 * <p>
 	 * If any listener cancels the event, the block
-	 *     breaking action will be canceled and {@link PlayerBreakBlockEvents#CANCELED}
+	 *     breaking action will be canceled and {@link BreakBlockEvents#CANCELED}
 	 *     will be invoked. If the event is completed,
-	 *     {@link PlayerBreakBlockEvents#AFTER} will be invoked.
+	 *     {@link BreakBlockEvents#AFTER} will be invoked.
 	 */
 	public static final Event<Before> BEFORE = Event.create(Before.class,
 			callbacks -> (player, world, stack, pos, state, blockEntity) -> {
