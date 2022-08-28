@@ -31,6 +31,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Lifecycle;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.tag.TagKey;
@@ -51,7 +52,7 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 
 	private final @Nullable Function<T, Holder.Reference<T>> customHolderProvider;
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	DelayedRegistry(MutableRegistry<T> registry) {
 		super(registry.getKey(), registry.getLifecycle());
 
@@ -120,8 +121,8 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	}
 
 	@Override
-	public Set<RegistryKey<T>> method_42021() {
-		return this.wrapped.method_42021();
+	public Set<RegistryKey<T>> getKeys() {
+		return this.wrapped.getKeys();
 	}
 
 	@Override
@@ -146,8 +147,8 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	}
 
 	@Override
-	public Holder<T> m_pselvvxn(RegistryKey<T> registryKey) {
-		return this.wrapped.m_pselvvxn(registryKey);
+	public Holder<T> getOrCreateHolderOrThrow(RegistryKey<T> registryKey) {
+		return this.wrapped.getOrCreateHolderOrThrow(registryKey);
 	}
 
 	@Override
@@ -211,7 +212,7 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	}
 
 	@Override
-	public Iterator<T> iterator() {
+	public @NotNull Iterator<T> iterator() {
 		return this.wrapped.iterator();
 	}
 
