@@ -26,14 +26,16 @@ import org.jetbrains.annotations.Range;
 import net.minecraft.datafixer.DataFixTypes;
 import net.minecraft.nbt.NbtCompound;
 
+import org.quiltmc.qsl.datafixerupper.api.EmptySchema;
+
 @ApiStatus.Internal
-public final class NopQuiltDataFixesInternals extends QuiltDataFixesInternals {
+public final class NoOpQuiltDataFixesInternals extends QuiltDataFixesInternals {
 	private final Schema schema;
 
 	private boolean frozen;
 
-	public NopQuiltDataFixesInternals() {
-		this.schema = new Schema(0, null);
+	public NoOpQuiltDataFixesInternals() {
+		this.schema = new EmptySchema(0);
 
 		this.frozen = false;
 	}

@@ -1,3 +1,5 @@
+import qsl.internal.Versions
+
 plugins {
 	id("qsl.module")
 }
@@ -36,28 +38,27 @@ sourceSets {
 		compileClasspath += main.compileClasspath
 		runtimeClasspath += main.runtimeClasspath
 	}
+	testmodNoop {
+		compileClasspath += main.compileClasspath
+		runtimeClasspath += main.runtimeClasspath
+	}
 }
 
-dependencies {
-	testmodV1Implementation sourceSets.main.output
-	testmodV2Implementation sourceSets.main.output
-	testmodV3Implementation sourceSets.main.output
-}
+repositories {
+	maven {
+		name = "Gegy's Maven"
+		url = "https://maven.gegy.dev/"
+		content {
+			includeGroup "supercoder79"
+		}
+	}
 
-task prepareDfuTestmod {
-	doLast {
-		delete "run"
-		mkdir "run"
-		logger.quiet("NOTE: By running this testmod, you automatically agree to the EULA.")
-		file("run/eula.txt").text = "eula=true"
-
-		// We want fast world generation for those tests.
-		// Change the port to another one so it doesn't conflict with the main test server in case of running in parallel.
-		file("run/server.properties").text = '''\
-level-type=flat
-allow-nether=false
-server-port=25585
-'''
+	maven {
+		name = "Modrinth Maven"
+		url = "https://api.modrinth.com/maven"
+		content {
+			includeGroupByRegex "maven\\.modrinth"
+		}
 	}
 }
 
@@ -86,6 +87,62 @@ loom {
 			property("quilt.auto_test")
 			programArg("--nogui")
 		}
+
+		Versions.DATABREAKER_VERSION.ifPresent {
+			autoTestServerDfuTestmodNoop {
+				server()
+				configName = "Auto test server - DFU testmod no-op"
+				source(project.sourceSets.testmodNoop)
+				property("quilt.auto_test")
+				programArg("--nogui")
+				runDir("run/noop")
+			}
+		}
+	}
+
+	/*
+	TODO: update to loom 0.13 and use this to add databreaker and lazydfu properly
+	createRemapConfigurations(sourceSets.testmodV1)
+	createRemapConfigurations(sourceSets.testmodV2)
+	createRemapConfigurations(sourceSets.testmodV3)
+	createRemapConfigurations(sourceSets.testmodNoop)
+	 */
+}
+
+dependencies {
+	testmodV1Implementation sourceSets.main.output
+	testmodV2Implementation sourceSets.main.output
+	testmodV3Implementation sourceSets.main.output
+
+	/*
+	TODO: update to loom 0.13 and use this to add databreaker and lazydfu properly
+	Versions.DATABREAKER_VERSION.ifPresent {
+		modTestmodNoopRuntimeOnly("supercoder79:databreaker:${it}") {
+			exclude module: "fabric-loader"
+		}
+	}
+	Versions.LAZYDFU_VERSION.ifPresent {
+		modTestmodV1RuntimeOnly("maven.modrinth:lazydfu:${it}") {
+			exclude module: "fabric-loader"
+		}
+	}
+	*/
+}
+
+task prepareDfuTestmod {
+	doLast {
+		delete "run"
+		mkdir "run"
+		logger.quiet("NOTE: By running this testmod, you automatically agree to the EULA.")
+		file("run/eula.txt").text = "eula=true"
+
+		// We want fast world generation for those tests.
+		// Change the port to another one so it doesn't conflict with the main test server in case of running in parallel.
+		file("run/server.properties").text = '''\
+level-type=flat
+allow-nether=false
+server-port=25585
+'''
 	}
 }
 
@@ -97,4 +154,8 @@ afterEvaluate {
 	runAutoTestServerDfuTestmodV3.dependsOn runAutoTestServerDfuTestmodV2
 
 	rootProject.tasks.runAutoAllTestServer.dependsOn runAutoTestServerDfuTestmodV3
+
+	Versions.DATABREAKER_VERSION.ifPresent {
+		rootProject.tasks.runAutoAllTestServer.dependsOn runAutoTestServerDfuTestmodNoop
+	}
 }
