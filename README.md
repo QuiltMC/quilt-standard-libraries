@@ -74,12 +74,12 @@ Quick legend:
 
 ### Core - Registry
 
-| Feature                                     |      QSL       | Fabric API |
-|:--------------------------------------------|:--------------:|:----------:|
-| Addition Events                             |       ✔        |     ✔      |
-| Addition Events Helper                      |       ✔        |     ❌      |
-| Registry Syncing                            | :construction: |     ✔      |
-| Registry Syncing - Exclude Specific Entries | :construction: |     ❌      |
+| Feature                                     | QSL | Fabric API |
+|:--------------------------------------------|:---:|:----------:|
+| Addition Events                             |  ✔  |     ✔      |
+| Addition Events Helper                      |  ✔  |     ❌      |
+| Registry Syncing                            |  ✔  |     ✔      |
+| Registry Syncing - Exclude Specific Entries |  ✔  |     ❌      |
 
 ### Core - Resource Loader
 
@@ -97,44 +97,44 @@ Quick legend:
 
 ### Block Library
 
-| Feature                                                 |      QSL       | Fabric API |
-|:--------------------------------------------------------|:--------------:|:----------:|
-| Extended Block Settings                                 |       ✔        |     ✔      |
-| Extended Material Builder                               |       ✔        |     ✔      |
-| Block Render Layers API                                 |       ✔        |     ✔      |
-| All Block Constructors Are Public                       |       ✔        |     ✔      |
-| Block Entity Type registration helper                   |       ✔        |     ✔      |
-| Block Entity Type post-creation supported block editing |       ✔        |     🙅     |
-| Block Entity Syncing Helper                             |       ✔        |     ❌      |
-| Block Content Registry - Flammable                      | :construction: |     ✔      |
-| Block Content Registry - Flammable (data-driven)        | :construction: |     🙅     |
-| Block Content Registry - Flattenable                    | :construction: |     ✔      |
-| Block Content Registry - Flattenable (data-driven)      | :construction: |     🙅     |
-| Block Content Registry - Oxidation                      | :construction: |     ✔      |
-| Block Content Registry - Oxidation (data-driven)        | :construction: |     🙅     |
-| Block Content Registry - Sculk Frequency                | :construction: |     ✔      |
-| Block Content Registry - Sculk Frequency (data-driven)  | :construction: |     🙅     |
-| Block Content Registry - Strippable                     | :construction: |     ✔      |
-| Block Content Registry - Strippable (data-driven)       | :construction: |     🙅     |
-| Block Content Registry - Tileable                       |       ❌        |     ✔      |
-| Block Content Registry - Tileable (data-driven)         |       ❌        |     🙅     |
-| Block Content Registry - Waxing                         | :construction: |     ✔      |
-| Block Content Registry - Waxing (data-driven)           | :construction: |     🙅     |
+| Feature                                                 | QSL | Fabric API |
+|:--------------------------------------------------------|:---:|:----------:|
+| Extended Block Settings                                 |  ✔  |     ✔      |
+| Extended Material Builder                               |  ✔  |     ✔      |
+| Block Render Layers API                                 |  ✔  |     ✔      |
+| All Block Constructors Are Public                       |  ✔  |     ✔      |
+| Block Entity Type registration helper                   |  ✔  |     ✔      |
+| Block Entity Type post-creation supported block editing |  ✔  |     🙅     |
+| Block Entity Syncing Helper                             |  ✔  |     ❌      |
+| Block Content Registry - Flammable                      |  ✔  |     ✔      |
+| Block Content Registry - Flammable (data-driven)        |  ✔  |     🙅     |
+| Block Content Registry - Flattenable                    |  ✔  |     ✔      |
+| Block Content Registry - Flattenable (data-driven)      |  ✔  |     🙅     |
+| Block Content Registry - Oxidation                      |  ✔  |     ✔      |
+| Block Content Registry - Oxidation (data-driven)        |  ✔  |     🙅     |
+| Block Content Registry - Sculk Frequency                |  ✔  |     ✔      |
+| Block Content Registry - Sculk Frequency (data-driven)  |  ✔  |     🙅     |
+| Block Content Registry - Strippable                     |  ✔  |     ✔      |
+| Block Content Registry - Strippable (data-driven)       |  ✔  |     🙅     |
+| Block Content Registry - Tileable                       |  ❌  |     ✔      |
+| Block Content Registry - Tileable (data-driven)         |  ❌  |     🙅     |
+| Block Content Registry - Waxing                         |  ✔  |     ✔      |
+| Block Content Registry - Waxing (data-driven)           |  ✔  |     🙅     |
 
 ### Data Library
 
-| Feature                                                               |                                      QSL                                       |   Fabric API   |
-|:----------------------------------------------------------------------|:------------------------------------------------------------------------------:|:--------------:|
-| Advancement Criterion Registration Helper                             |                                       ✔                                        |       ✔        |
-| Recipe API                                                            |                                       ✔                                        |       🙅       |
-| Registry Entry Attachments                                            |                                       ✔                                        |       🙅       |
-| Client-fallback/Client-only tags                                      |                                       ✔                                        | :construction: |
-| Client-fallback/Client-only tags - integration within Vanilla methods |                                       ✔                                        |       🙅       |
-| Convention Tags                                                       |                                       ❌                                        |       ✔        |
-| Data Generation                                                       |                                 :construction:                                 |       ✔        |
-| Loot Table API                                                        |                                       ❌                                        |       ✔        |
-| Resource Conditions                                                   |                                       ❌                                        |       ✔        |
-| Component API (like CCA or Forge capabilities)                        | [:construction:](https://github.com/QuiltMC/quilt-standard-libraries/pull/146) |       ❌        |
+| Feature                                                               |                                      QSL                                       |    Fabric API     |
+|:----------------------------------------------------------------------|:------------------------------------------------------------------------------:|:-----------------:|
+| Advancement Criterion Registration Helper                             |                                       ✔                                        |         ✔         |
+| Recipe API                                                            |                                       ✔                                        |        🙅         |
+| Registry Entry Attachments                                            |                                       ✔                                        |        🙅         |
+| Client-fallback/Client-only tags                                      |                                       ✔                                        | ✔ (fallback only) |
+| Client-fallback/Client-only tags - integration within Vanilla methods |                                       ✔                                        |        🙅         |
+| Convention Tags                                                       |                                       ❌                                        |         ✔         |
+| Data Generation                                                       |                                 :construction:                                 |         ✔         |
+| Loot Table API                                                        |                                       ❌                                        |         ✔         |
+| Resource Conditions                                                   |                                       ❌                                        |         ✔         |
+| Component API (like CCA or Forge capabilities)                        | [:construction:](https://github.com/QuiltMC/quilt-standard-libraries/pull/146) |         ❌         |
 
 ### Entity Library
 
@@ -184,7 +184,7 @@ Quick legend:
 | Hud Render API                                    |       ❌        | ✔ (limited Event) |
 | Built-in Item Rendering                           |       ❌        |         ✔         |
 | Block Entity Renderer Registry                    |       ❌        |         ✔         |
-| Armor Rendering                                   |       ❌        |         ✔         |
+| Armor Rendering                                   | :construction: |         ✔         |
 | Color Provider Registry                           |       ❌        |         ✔         |
 | Entity Renderer Registry                          |       ❌        |         ✔         |
 | Entity Model Layer Registry                       |       ❌        |         ✔         |
@@ -214,7 +214,7 @@ Quick legend:
 
 | Feature        |                                                  QSL                                                   | Fabric API |
 |:---------------|:------------------------------------------------------------------------------------------------------:|:----------:|
-| Modded DFU API |                                             :construction:                                             |     ❌      |
+| Modded DFU API |                                                   ✔                                                    |     ❌      |
 | API Lookup API | :construction: [(through Component API)](https://github.com/QuiltMC/quilt-standard-libraries/pull/146) |     ✔      |
 
 [quilt]: https://quiltmc.org

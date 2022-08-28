@@ -38,7 +38,7 @@ public class TestServerMixin {
 			method = "create",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/unmapped/C_kjxfcecs$C_nrmvgbka;<init>(Lnet/minecraft/resource/pack/ResourcePackManager;Lnet/minecraft/resource/pack/DataPackSettings;Z)V"
+					target = "Lnet/minecraft/server/WorldLoader$PackConfig;<init>(Lnet/minecraft/resource/pack/ResourcePackManager;Lnet/minecraft/resource/pack/DataPackSettings;Z)V"
 			),
 			index = 1
 	)

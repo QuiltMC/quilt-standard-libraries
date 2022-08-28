@@ -16,6 +16,7 @@ jobs:
         with:
           distribution: "temurin"
           java-version: ${{ matrix.java }}
+          cache: 'gradle'
       - run: ./gradlew checkLicenses generateQmj --parallel --stacktrace
       - run: ./gradlew build publish --stacktrace --parallel
         env:

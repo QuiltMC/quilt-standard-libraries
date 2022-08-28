@@ -45,9 +45,7 @@ public class SimpleAttachmentTest implements ModInitializer {
 			TEST_ATTACHMENT_2, 2.0f);
 
 	@Override
-	public void onInitialize(ModContainer mod) {
-
-	}
+	public void onInitialize(ModContainer mod) {}
 
 	public static final class MyItem extends Item {
 		public MyItem(Settings settings) {

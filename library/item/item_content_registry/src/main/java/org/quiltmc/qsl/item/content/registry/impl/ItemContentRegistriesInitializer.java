@@ -22,8 +22,8 @@ import java.util.function.Supplier;
 
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
-import org.jetbrains.annotations.ApiStatus;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
+import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.block.ComposterBlock;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
@@ -66,7 +66,7 @@ public class ItemContentRegistriesInitializer implements ModInitializer {
 	}
 
 	private static <T, V> void setMapFromAttachment(BiFunction<T, V, ?> map, RegistryEntryAttachment<T, V> attachment) {
-		attachment.registry().stream().forEach(entry -> attachment.get(entry).ifPresent(v -> map.apply(entry, v)));
+		attachment.forEach(entry -> map.apply(entry.entry(), entry.value()));
 	}
 
 	public static boolean shouldCollectInitialTags() {
