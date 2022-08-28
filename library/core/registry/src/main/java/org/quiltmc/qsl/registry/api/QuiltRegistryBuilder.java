@@ -190,8 +190,8 @@ public final class QuiltRegistryBuilder<T> {
 	 * Configures this builder to create a <em>built-in</em> registry
 	 * (that is registered in the {@linkplain Registry#REGISTRIES root registry}).
 	 * <p>
-	 * Built-in registry synchronizing is handled by us, and you can customize the synchronization behavior via the
-	 * {@link #syncBehavior(SyncBehavior)}, method.
+	 * Built-in registry synchronizing is handled by us, and the synchronization behavior can be customized
+	 * via the {@link #syncBehavior(SyncBehavior)} method.
 	 * <p>
 	 * By default, this builder creates built-in registries.
 	 *
