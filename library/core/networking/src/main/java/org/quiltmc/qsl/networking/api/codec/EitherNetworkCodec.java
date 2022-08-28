@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.networking.impl.codec;
+package org.quiltmc.qsl.networking.api.codec;
 
 import com.mojang.datafixers.util.Either;
 
 import net.minecraft.network.PacketByteBuf;
-
-import org.quiltmc.qsl.networking.api.codec.NetworkCodec;
 
 public class EitherNetworkCodec<A, B> implements NetworkCodec<Either<A, B>> {
 	private final NetworkCodec<A> leftCodec;

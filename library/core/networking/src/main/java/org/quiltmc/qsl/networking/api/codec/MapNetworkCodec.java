@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.networking.impl.codec;
+package org.quiltmc.qsl.networking.api.codec;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.IntFunction;
 
 import net.minecraft.network.PacketByteBuf;
-
-import org.quiltmc.qsl.networking.api.codec.NetworkCodec;
 
 public class MapNetworkCodec<K, V> implements NetworkCodec<Map<K, V>> {
 	private final EntryCodec<K, V> entryCodec;
@@ -114,11 +112,11 @@ public class MapNetworkCodec<K, V> implements NetworkCodec<Map<K, V>> {
 			return this.intoMap(HashMap::new);
 		}
 
-		public MapNetworkCodec<K, V> intoMap(IntFunction<? extends Map<K ,V>> mapFactory) {
+		public MapNetworkCodec<K, V> intoMap(IntFunction<? extends Map<K, V>> mapFactory) {
 			return new MapNetworkCodec<>(this, mapFactory);
 		}
 
-		public PairNetworkCodec<K ,V> intoPair() {
+		public PairNetworkCodec<K, V> intoPair() {
 			return this.keyCodec.pairWith(this.valueCodec);
 		}
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.networking.impl.codec;
+package org.quiltmc.qsl.networking.api.codec;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -37,8 +37,6 @@ import com.mojang.datafixers.util.Function8;
 import com.mojang.datafixers.util.Function9;
 
 import net.minecraft.network.PacketByteBuf;
-
-import org.quiltmc.qsl.networking.api.codec.NetworkCodec;
 
 @SuppressWarnings("DuplicatedCode") // The duplicates are needed
 public final class NetworkCodecBuilder<R> {

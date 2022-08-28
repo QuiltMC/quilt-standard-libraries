@@ -50,18 +50,6 @@ import net.minecraft.util.math.Vec3f;
 import net.minecraft.util.math.Vec3i;
 
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
-import org.quiltmc.qsl.networking.impl.codec.ArrayNetworkCodec;
-import org.quiltmc.qsl.networking.impl.codec.DispatchedNetworkCodec;
-import org.quiltmc.qsl.networking.impl.codec.EitherNetworkCodec;
-import org.quiltmc.qsl.networking.impl.codec.EnumNetworkCodec;
-import org.quiltmc.qsl.networking.impl.codec.ListNetworkCodec;
-import org.quiltmc.qsl.networking.impl.codec.MapNetworkCodec;
-import org.quiltmc.qsl.networking.impl.codec.NamedNetworkCodec;
-import org.quiltmc.qsl.networking.impl.codec.NetworkCodecBuilder;
-import org.quiltmc.qsl.networking.impl.codec.OptionalNetworkCodec;
-import org.quiltmc.qsl.networking.impl.codec.PairNetworkCodec;
-import org.quiltmc.qsl.networking.impl.codec.PrimitiveNetworkCodec;
-import org.quiltmc.qsl.networking.impl.codec.SimpleNetworkCodec;
 
 public interface NetworkCodec<A> {
 	// Unit
@@ -96,9 +84,9 @@ public interface NetworkCodec<A> {
 	NetworkCodec<ItemStack> ITEM_STACK = of(PacketByteBuf::writeItemStack, PacketByteBuf::readItemStack)
 			.named("ItemStack");
 	NetworkCodec<Vec3i> VEC_3I = build(builder -> builder.create(
-			VAR_INT.fieldOf(Vec3i::getX),
-			VAR_INT.fieldOf(Vec3i::getY),
-			VAR_INT.fieldOf(Vec3i::getZ)
+			INT.fieldOf(Vec3i::getX),
+			INT.fieldOf(Vec3i::getY),
+			INT.fieldOf(Vec3i::getZ)
 	).apply(Vec3i::new).named("Vec3i"));
 	NetworkCodec<Direction> DIRECTION = enumOf(Direction.class)
 			.named("Direction");

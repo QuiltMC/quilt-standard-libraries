@@ -14,62 +14,53 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.networking.impl.codec;
+package org.quiltmc.qsl.networking.api.codec;
 
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
 
 import net.minecraft.network.PacketByteBuf;
 
-import org.quiltmc.qsl.networking.api.codec.NetworkCodec;
-
-public class ListNetworkCodec<A> implements CollectionNetworkCodec<A, List<A>> {
+public final class ArrayNetworkCodec<A> implements NetworkCodec<A[]> {
 	private final NetworkCodec<A> entryCodec;
-	private final IntFunction<? extends List<A>> listFactory;
+	private final IntFunction<? extends A[]> arrayFactory;
 
-	public ListNetworkCodec(NetworkCodec<A> entryCodec, IntFunction<? extends List<A>> listFactory) {
+	public ArrayNetworkCodec(NetworkCodec<A> entryCodec, IntFunction<? extends A[]> arrayFactory) {
 		this.entryCodec = entryCodec;
-		this.listFactory = listFactory;
+		this.arrayFactory = arrayFactory;
 	}
 
 	@Override
-	public List<A> decode(PacketByteBuf buf) {
+	public A[] decode(PacketByteBuf buf) {
 		int size = buf.readVarInt();
-		List<A> list = this.listFactory.apply(size);
+		A[] array = this.arrayFactory.apply(size);
 
 		for (int i = 0; i < size; i++) {
-			list.add(this.entryCodec.decode(buf));
+			array[i] = this.entryCodec.decode(buf);
 		}
 
-		return list;
+		return array;
 	}
 
 	@Override
-	public void encode(PacketByteBuf buf, List<A> data) {
-		buf.writeVarInt(data.size());
+	public void encode(PacketByteBuf buf, A[] data) {
+		buf.writeVarInt(data.length);
 
 		for (A entry : data) {
 			this.entryCodec.encode(buf, entry);
 		}
 	}
 
-	@Override
-	public String toString() {
-		return "ListNetworkCodec[%s]".formatted(this.entryCodec);
-	}
-
-	@Override
-	public NetworkCodec<A> getEntryCodec() {
-		return this.entryCodec;
-	}
-
-	@Override
 	public void forEach(PacketByteBuf buf, Consumer<? super A> action) {
 		int size = buf.readVarInt();
 
 		for (int i = 0; i < size; i++) {
 			action.accept(this.entryCodec.decode(buf));
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "ArrayNetworkCodec[%s]".formatted(this.entryCodec);
 	}
 }

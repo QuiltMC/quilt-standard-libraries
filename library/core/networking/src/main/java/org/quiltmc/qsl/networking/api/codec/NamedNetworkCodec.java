@@ -14,43 +14,31 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.networking.impl.codec;
+package org.quiltmc.qsl.networking.api.codec;
 
 import net.minecraft.network.PacketByteBuf;
 
-import org.quiltmc.qsl.networking.api.codec.NetworkCodec;
+public class NamedNetworkCodec<A> implements NetworkCodec<A> {
+	private final String name;
+	private final NetworkCodec<A> delegate;
 
-public class SimpleNetworkCodec<A> implements NetworkCodec<A> {
-	private final PacketByteBuf.Reader<A> reader;
-	private final PacketByteBuf.Writer<A> writer;
-
-	public SimpleNetworkCodec(PacketByteBuf.Writer<A> writer, PacketByteBuf.Reader<A> reader) {
-		this.reader = reader;
-		this.writer = writer;
+	public NamedNetworkCodec(String name, NetworkCodec<A> delegate) {
+		this.name = name;
+		this.delegate = delegate;
 	}
 
 	@Override
 	public A decode(PacketByteBuf buf) {
-		return this.reader.apply(buf);
+		return this.delegate.decode(buf);
 	}
 
 	@Override
 	public void encode(PacketByteBuf buf, A data) {
-		this.writer.accept(buf, data);
-	}
-
-	@Override
-	public PacketByteBuf.Reader<A> asReader() {
-		return this.reader;
-	}
-
-	@Override
-	public PacketByteBuf.Writer<A> asWriter() {
-		return this.writer;
+		this.delegate.encode(buf, data);
 	}
 
 	@Override
 	public String toString() {
-		return "SimpleNetworkCodec";
+		return this.name;
 	}
 }

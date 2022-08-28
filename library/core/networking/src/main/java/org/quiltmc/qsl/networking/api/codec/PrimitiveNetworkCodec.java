@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.networking.impl.codec;
+package org.quiltmc.qsl.networking.api.codec;
 
 import java.util.function.DoubleFunction;
 import java.util.function.IntFunction;
@@ -25,8 +25,6 @@ import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 
 import net.minecraft.network.PacketByteBuf;
-
-import org.quiltmc.qsl.networking.api.codec.NetworkCodec;
 
 public final class PrimitiveNetworkCodec {
 	public enum Null implements NetworkCodec<Void> {

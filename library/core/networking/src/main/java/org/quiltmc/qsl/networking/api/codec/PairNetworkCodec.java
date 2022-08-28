@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.networking.impl.codec;
+package org.quiltmc.qsl.networking.api.codec;
 
 import oshi.util.tuples.Pair;
 
 import net.minecraft.network.PacketByteBuf;
 
-import org.quiltmc.qsl.networking.api.codec.NetworkCodec;
-
-public class PairNetworkCodec<A, B> implements NetworkCodec<Pair<A, B>> {
+public final class PairNetworkCodec<A, B> implements NetworkCodec<Pair<A, B>> {
 	private final NetworkCodec<A> aCodec;
 	private final NetworkCodec<B> bCodec;
 

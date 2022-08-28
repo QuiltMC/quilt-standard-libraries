@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.networking.impl.codec;
+package org.quiltmc.qsl.networking.api.codec;
 
 import java.util.Optional;
 
 import net.minecraft.network.PacketByteBuf;
-
-import org.quiltmc.qsl.networking.api.codec.NetworkCodec;
 
 public final class OptionalNetworkCodec<A> implements NetworkCodec<Optional<A>> {
 	private final NetworkCodec<A> entryCodec;

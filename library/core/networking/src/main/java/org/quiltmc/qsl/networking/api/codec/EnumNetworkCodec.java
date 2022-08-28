@@ -14,17 +14,31 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.networking.impl.codec;
-
-import java.util.Collection;
-import java.util.function.Consumer;
+package org.quiltmc.qsl.networking.api.codec;
 
 import net.minecraft.network.PacketByteBuf;
 
-import org.quiltmc.qsl.networking.api.codec.NetworkCodec;
+public final class EnumNetworkCodec<A extends Enum<A>> implements NetworkCodec<A> {
+	private final Class<A> clazz;
+	private final A[] values;
 
-public interface CollectionNetworkCodec<A, C extends Collection<A>> extends NetworkCodec<C> {
-	NetworkCodec<A> getEntryCodec();
+	public EnumNetworkCodec(Class<A> clazz) {
+		this.clazz = clazz;
+		this.values = clazz.getEnumConstants();
+	}
 
-	void forEach(PacketByteBuf buf, Consumer<? super A> action);
+	@Override
+	public A decode(PacketByteBuf buf) {
+		return this.values[buf.readVarInt()];
+	}
+
+	@Override
+	public void encode(PacketByteBuf buf, A data) {
+		buf.writeVarInt(data.ordinal());
+	}
+
+	@Override
+	public String toString() {
+		return this.clazz.getSimpleName();
+	}
 }

@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.networking.impl.codec;
+package org.quiltmc.qsl.networking.api.codec;
 
 import java.util.function.Function;
 
 import net.minecraft.network.PacketByteBuf;
-
-import org.quiltmc.qsl.networking.api.codec.NetworkCodec;
 
 public class DispatchedNetworkCodec<T, P> implements NetworkCodec<T> {
 	private final NetworkCodec<P> parent;
