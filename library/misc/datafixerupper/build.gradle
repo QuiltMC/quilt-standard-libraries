@@ -100,13 +100,10 @@ loom {
 		}
 	}
 
-	/*
-	TODO: update to loom 0.13 and use this to add databreaker and lazydfu properly
 	createRemapConfigurations(sourceSets.testmodV1)
 	createRemapConfigurations(sourceSets.testmodV2)
 	createRemapConfigurations(sourceSets.testmodV3)
 	createRemapConfigurations(sourceSets.testmodNoop)
-	 */
 }
 
 dependencies {
@@ -114,35 +111,37 @@ dependencies {
 	testmodV2Implementation sourceSets.main.output
 	testmodV3Implementation sourceSets.main.output
 
-	/*
-	TODO: update to loom 0.13 and use this to add databreaker and lazydfu properly
+	// TODO: wait for loom to actually work and not infect unrelated source sets
 	Versions.DATABREAKER_VERSION.ifPresent {
 		modTestmodNoopRuntimeOnly("supercoder79:databreaker:${it}") {
-			exclude module: "fabric-loader"
+			transitive = false
 		}
 	}
 	Versions.LAZYDFU_VERSION.ifPresent {
 		modTestmodV1RuntimeOnly("maven.modrinth:lazydfu:${it}") {
-			exclude module: "fabric-loader"
+			transitive = false
 		}
 	}
-	*/
 }
 
 task prepareDfuTestmod {
 	doLast {
 		delete "run"
 		mkdir "run"
+		mkdir "run/noop"
 		logger.quiet("NOTE: By running this testmod, you automatically agree to the EULA.")
 		file("run/eula.txt").text = "eula=true"
+		file("run/noop/eula.txt").text = "eula=true"
 
 		// We want fast world generation for those tests.
 		// Change the port to another one so it doesn't conflict with the main test server in case of running in parallel.
-		file("run/server.properties").text = '''\
+		String properties = '''\
 level-type=flat
 allow-nether=false
 server-port=25585
 '''
+		file("run/server.properties").text = properties
+		file("run/noop/server.properties").text = properties
 	}
 }
 
@@ -156,6 +155,7 @@ afterEvaluate {
 	rootProject.tasks.runAutoAllTestServer.dependsOn runAutoTestServerDfuTestmodV3
 
 	Versions.DATABREAKER_VERSION.ifPresent {
+		runAutoTestServerDfuTestmodNoop.dependsOn prepareDfuTestmod
 		rootProject.tasks.runAutoAllTestServer.dependsOn runAutoTestServerDfuTestmodNoop
 	}
 }
