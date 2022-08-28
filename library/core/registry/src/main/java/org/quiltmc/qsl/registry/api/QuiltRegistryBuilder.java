@@ -171,8 +171,6 @@ public final class QuiltRegistryBuilder<T> {
 	 *
 	 * @param defaultId the new default identifier
 	 * @return this builder
-	 *
-	 * @apiNote The API does <em>not</em> check if {@code defaultId} is an existing entry in this registry!
 	 */
 	@Contract("_ -> this")
 	public @NotNull QuiltRegistryBuilder<T> defaultId(@Nullable Identifier defaultId) {
