@@ -190,8 +190,8 @@ public final class QuiltRegistryBuilder<T> {
 	 * Configures this builder to create a <em>built-in</em> registry
 	 * (that is registered in the {@linkplain Registry#REGISTRIES root registry}).
 	 * <p>
-	 * Built-in registries can be {@linkplain #syncBehavior(SyncBehavior) synchronized}, but contain the same entries
-	 * for all worlds.
+	 * Built-in registry synchronizing is handled by us, and you can customize the synchronization behavior via the
+	 * {@link #syncBehavior(SyncBehavior)}, method.
 	 * <p>
 	 * By default, this builder creates built-in registries.
 	 *
@@ -207,10 +207,15 @@ public final class QuiltRegistryBuilder<T> {
 	 * Configures this builder to create a <em>dynamic</em> registry
 	 * (that is <em>not</em> registered in the {@linkplain Registry#REGISTRIES root registry}).
 	 * <p>
-	 * Built-in registries can contain different entries per world,
-	 * but <em>cannot</em> be {@linkplain #syncBehavior(SyncBehavior) synchronized}.
+	 * Dynamic registry synchronizing is <em>not</em> handled by us.
+	 * <p>
+	 * Note that this method does <em>not</em> handle registering the registry into the
+	 * {@link net.minecraft.util.registry.DynamicRegistryManager DynamicRegistryManager}.
+	 * You will have to do this manually.
 	 *
 	 * @return this builder
+	 *
+	 * @throws IllegalArgumentException if this builder is configured with a {@linkplain #syncBehavior(SyncBehavior) synchronization behavior} that is not {@link SyncBehavior#SKIPPED}
 	 */
 	@Contract("-> this")
 	public @NotNull QuiltRegistryBuilder<T> dynamic() {
@@ -226,6 +231,8 @@ public final class QuiltRegistryBuilder<T> {
 	 *
 	 * @param syncBehavior the new synchronization behavior
 	 * @return this builder
+	 *
+	 * @throws IllegalArgumentException if this builder is configured to create {@linkplain #dynamic() dynamic registries}, and the new behavior is not {@link SyncBehavior#SKIPPED}
 	 */
 	@Contract("_ -> this")
 	public @NotNull QuiltRegistryBuilder<T> syncBehavior(@NotNull SyncBehavior syncBehavior) {
