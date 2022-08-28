@@ -62,6 +62,7 @@ public final class QuiltRegistryBuilder<T> {
 	private Lifecycle lifecycle;
 	private Function<T, Holder.Reference<T>> customHolderProvider;
 	private Identifier defaultId;
+	private boolean builtin;
 	private SyncBehavior syncBehavior;
 
 	/**
@@ -73,7 +74,14 @@ public final class QuiltRegistryBuilder<T> {
 		this.key = RegistryKey.ofRegistry(id);
 
 		this.lifecycle = Lifecycle.stable();
+		this.builtin = true;
 		this.syncBehavior = SyncBehavior.SKIPPED;
+	}
+
+	private void assertSyncBehaviorPossible(boolean builtin, SyncBehavior syncBehavior) {
+		if (syncBehavior != SyncBehavior.SKIPPED && !builtin) {
+			throw new IllegalArgumentException("Dynamic registries cannot be synchronized!");
+		}
 	}
 
 	/**
@@ -179,6 +187,39 @@ public final class QuiltRegistryBuilder<T> {
 	}
 
 	/**
+	 * Configures this builder to create a <em>built-in</em> registry
+	 * (that is registered in the {@linkplain Registry#REGISTRIES root registry}).
+	 * <p>
+	 * Built-in registries can be {@linkplain #syncBehavior(SyncBehavior) synchronized}, but contain the same entries
+	 * for all worlds.
+	 * <p>
+	 * By default, this builder creates built-in registries.
+	 *
+	 * @return this builder
+	 */
+	@Contract("-> this")
+	public @NotNull QuiltRegistryBuilder<T> builtin() {
+		this.builtin = true;
+		return this;
+	}
+
+	/**
+	 * Configures this builder to create a <em>dynamic</em> registry
+	 * (that is <em>not</em> registered in the {@linkplain Registry#REGISTRIES root registry}).
+	 * <p>
+	 * Built-in registries can contain different entries per world,
+	 * but <em>cannot</em> be {@linkplain #syncBehavior(SyncBehavior) synchronized}.
+	 *
+	 * @return this builder
+	 */
+	@Contract("-> this")
+	public @NotNull QuiltRegistryBuilder<T> dynamic() {
+		this.assertSyncBehaviorPossible(false, this.syncBehavior);
+		this.builtin = false;
+		return this;
+	}
+
+	/**
 	 * Sets the synchronization behavior of this registry.
 	 * <p>
 	 * By default, this is {@link SyncBehavior#SKIPPED}.
@@ -188,6 +229,7 @@ public final class QuiltRegistryBuilder<T> {
 	 */
 	@Contract("_ -> this")
 	public @NotNull QuiltRegistryBuilder<T> syncBehavior(@NotNull SyncBehavior syncBehavior) {
+		this.assertSyncBehaviorPossible(this.builtin, syncBehavior);
 		this.syncBehavior = syncBehavior;
 		return this;
 	}
@@ -245,12 +287,15 @@ public final class QuiltRegistryBuilder<T> {
 			// this takes the identifier as a string, to guarantee that it's unique
 			registry = new DefaultedRegistry<>(this.defaultId.toString(), this.key, this.lifecycle, this.customHolderProvider);
 		}
-		Registry.register((Registry<Registry<Object>>) Registry.REGISTRIES, this.key.getValue(), (Registry<Object>) registry);
 
-		if (this.syncBehavior == SyncBehavior.REQUIRED || this.syncBehavior == SyncBehavior.OPTIONAL) {
-			RegistrySynchronization.markForSync(registry);
-			if (this.syncBehavior == SyncBehavior.OPTIONAL) {
-				RegistrySynchronization.setRegistryOptional(registry);
+		if (this.builtin) {
+			Registry.register((Registry<Registry<Object>>) Registry.REGISTRIES, this.key.getValue(), (Registry<Object>) registry);
+
+			if (this.syncBehavior == SyncBehavior.REQUIRED || this.syncBehavior == SyncBehavior.OPTIONAL) {
+				RegistrySynchronization.markForSync(registry);
+				if (this.syncBehavior == SyncBehavior.OPTIONAL) {
+					RegistrySynchronization.setRegistryOptional(registry);
+				}
 			}
 		}
 
