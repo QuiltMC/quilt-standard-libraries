@@ -19,6 +19,7 @@ package org.quiltmc.qsl.registry.api;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -54,6 +55,46 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	@Contract("_ -> new")
 	public static <T> QuiltBuiltinRegistryBuilder<T> builtin(@NotNull Identifier id) {
 		return new QuiltBuiltinRegistryBuilder<>(id);
+	}
+
+	/**
+	 * Creates a new dynamic {@code Registry} builder.
+	 *
+	 * @param id                the identifier of the registry
+	 * @param entryCodec        the codec to use to (de)serialize the registry's entries
+	 * @param networkEntryCodec the codec to use to synchronize the registry's entries
+	 * @return the newly created builder
+	 * @param <T> the entry type tracked by this registry
+	 */
+	@Contract("_, _, _ -> new")
+	public static <T> QuiltDynamicRegistryBuilder<T> dynamic(@NotNull Identifier id, @NotNull Codec<T> entryCodec, @NotNull Codec<T> networkEntryCodec) {
+		return new QuiltDynamicRegistryBuilder<>(id, entryCodec, networkEntryCodec);
+	}
+
+	/**
+	 * Creates a new dynamic {@code Registry} builder.
+	 *
+	 * @param id         the identifier of the registry
+	 * @param entryCodec the codec to use to (de)serialize and synchronize the registry's entries
+	 * @return the newly created builder
+	 * @param <T> the entry type tracked by this registry
+	 */
+	@Contract("_, _ -> new")
+	public static <T> QuiltDynamicRegistryBuilder<T> dynamic(@NotNull Identifier id, @NotNull Codec<T> entryCodec) {
+		return dynamic(id, entryCodec, entryCodec);
+	}
+
+	/**
+	 * Creates a new, <em>unsynchronized</em> dynamic {@code Registry} builder.
+	 *
+	 * @param id         the identifier of the registry
+	 * @param entryCodec the codec to use to (de)serialize the registry's entries
+	 * @return the newly created builder
+	 * @param <T> the entry type tracked by this registry
+	 */
+	@Contract("_, _ -> new")
+	public static <T> QuiltDynamicRegistryBuilder<T> dynamicUnsynced(@NotNull Identifier id, @NotNull Codec<T> entryCodec) {
+		return new QuiltDynamicRegistryBuilder<>(id, entryCodec, null);
 	}
 
 	/**
