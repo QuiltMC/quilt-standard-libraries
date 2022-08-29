@@ -37,8 +37,8 @@ public class RegistryLibBuilderTest implements ModInitializer {
 	public static final Logger LOGGER = LogUtils.getLogger();
 
 	public static final SimpleRegistry<RegistryEntry> REGISTRY =
-			new QuiltRegistryBuilder<RegistryEntry>(new Identifier(NAMESPACE, "registry"))
-					.customHolderProvider(RegistryEntry::getRegistryHolder)
+			QuiltRegistryBuilder.<RegistryEntry>builtin(new Identifier(NAMESPACE, "registry"))
+					.withCustomHolderProvider(RegistryEntry::getRegistryHolder)
 					.syncOptional()
 					.build();
 

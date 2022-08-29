@@ -30,58 +30,39 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
 
-import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
-
 /**
  * Utility class to build a new {@link Registry}.
  *
- * @param <T> the entry type tracked by this registry
+ * @param <T>    the entry type tracked by this registry
+ * @param <SELF> the type of the builder
  */
-public final class QuiltRegistryBuilder<T> {
-	/**
-	 * Specifies the behavior for synchronizing the registry and its contents.
-	 */
-	public enum SyncBehavior {
-		/**
-		 * The registry <em>will not</em> be synchronized to the client.
-		 */
-		SKIPPED,
-		/**
-		 * The registry <em>will</em> be synchronized to the client,
-		 * and clients who do not have this registry on their side <em>will</em> be kicked.
-		 */
-		REQUIRED,
-		/**
-		 * The registry <em>will</em> be synchronized to the client,
-		 * and clients who do not have this registry on their side <em>will not</em> be kicked.
-		 */
-		OPTIONAL
-	}
+public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<T, SELF>> {
+	protected final RegistryKey<Registry<T>> key;
+	protected Lifecycle lifecycle;
+	protected Function<T, Holder.Reference<T>> customHolderProvider;
+	protected Identifier defaultId;
 
-	private final RegistryKey<Registry<T>> key;
-	private Lifecycle lifecycle;
-	private Function<T, Holder.Reference<T>> customHolderProvider;
-	private Identifier defaultId;
-	private boolean builtin;
-	private SyncBehavior syncBehavior;
+	/**
+	 * Creates a new built-in {@code Registry} builder.
+	 *
+	 * @param id the identifier of the registry
+	 * @return the newly created builder
+	 * @param <T> the entry type tracked by this registry
+	 */
+	@Contract("_ -> new")
+	public static <T> QuiltBuiltinRegistryBuilder<T> builtin(@NotNull Identifier id) {
+		return new QuiltBuiltinRegistryBuilder<>(id);
+	}
 
 	/**
 	 * Creates a new {@code QuiltRegistryBuilder}.
 	 *
 	 * @param id the identifier of the registry
 	 */
-	public QuiltRegistryBuilder(@NotNull Identifier id) {
+	protected QuiltRegistryBuilder(@NotNull Identifier id) {
 		this.key = RegistryKey.ofRegistry(id);
 
 		this.lifecycle = Lifecycle.stable();
-		this.builtin = true;
-		this.syncBehavior = SyncBehavior.SKIPPED;
-	}
-
-	private void assertSyncBehaviorPossible(boolean builtin, SyncBehavior syncBehavior) {
-		if (syncBehavior != SyncBehavior.SKIPPED && !builtin) {
-			throw new IllegalArgumentException("Dynamic registries cannot be synchronized!");
-		}
 	}
 
 	/**
@@ -92,34 +73,35 @@ public final class QuiltRegistryBuilder<T> {
 	 * @param lifecycle the new lifecycle
 	 * @return this builder
 	 */
+	@SuppressWarnings("unchecked")
 	@Contract("_ -> this")
-	public @NotNull QuiltRegistryBuilder<T> lifecycle(@NotNull Lifecycle lifecycle) {
+	public @NotNull SELF withLifecycle(@NotNull Lifecycle lifecycle) {
 		this.lifecycle = lifecycle;
-		return this;
+		return (SELF) this;
 	}
 
 	/**
 	 * Sets the lifecycle of this registry to be stable.
 	 *
 	 * @return this builder
-	 * @see #lifecycle(Lifecycle)
+	 * @see #withLifecycle(Lifecycle)
 	 * @see Lifecycle#stable()
 	 */
 	@Contract("-> this")
-	public @NotNull QuiltRegistryBuilder<T> stable() {
-		return this.lifecycle(Lifecycle.stable());
+	public @NotNull SELF stable() {
+		return this.withLifecycle(Lifecycle.stable());
 	}
 
 	/**
 	 * Sets the lifecycle of this registry to be experimental.
 	 *
 	 * @return this builder
-	 * @see #lifecycle(Lifecycle)
+	 * @see #withLifecycle(Lifecycle)
 	 * @see Lifecycle#experimental()
 	 */
 	@Contract("-> this")
-	public @NotNull QuiltRegistryBuilder<T> experimental() {
-		return this.lifecycle(Lifecycle.experimental());
+	public @NotNull SELF experimental() {
+		return this.withLifecycle(Lifecycle.experimental());
 	}
 
 	/**
@@ -127,12 +109,12 @@ public final class QuiltRegistryBuilder<T> {
 	 *
 	 * @param since the data version this registry has been deprecated since
 	 * @return this builder
-	 * @see #lifecycle(Lifecycle)
+	 * @see #withLifecycle(Lifecycle)
 	 * @see Lifecycle#deprecated(int)
 	 */
 	@Contract("_ -> this")
-	public @NotNull QuiltRegistryBuilder<T> deprecated(int since) {
-		return this.lifecycle(Lifecycle.deprecated(since));
+	public @NotNull SELF deprecated(int since) {
+		return this.withLifecycle(Lifecycle.deprecated(since));
 	}
 
 	/**
@@ -163,10 +145,11 @@ public final class QuiltRegistryBuilder<T> {
 	 * @param customHolderProvider the new custom holder provider
 	 * @return this builder
 	 */
+	@SuppressWarnings("unchecked")
 	@Contract("_ -> this")
-	public @NotNull QuiltRegistryBuilder<T> customHolderProvider(@Nullable Function<T, Holder.Reference<T>> customHolderProvider) {
+	public @NotNull SELF withCustomHolderProvider(@Nullable Function<T, Holder.Reference<T>> customHolderProvider) {
 		this.customHolderProvider = customHolderProvider;
-		return this;
+		return (SELF) this;
 	}
 
 	/**
@@ -180,103 +163,20 @@ public final class QuiltRegistryBuilder<T> {
 	 * @param defaultId the new default identifier
 	 * @return this builder
 	 */
+	@SuppressWarnings("unchecked")
 	@Contract("_ -> this")
-	public @NotNull QuiltRegistryBuilder<T> defaultId(@Nullable Identifier defaultId) {
+	public @NotNull SELF withDefaultId(@Nullable Identifier defaultId) {
 		this.defaultId = defaultId;
-		return this;
+		return (SELF) this;
 	}
 
 	/**
-	 * Configures this builder to create a <em>built-in</em> registry
-	 * (that is registered in the {@linkplain Registry#REGISTRIES root registry}).
-	 * <p>
-	 * Built-in registry synchronizing is handled by us, and the synchronization behavior can be customized
-	 * via the {@link #syncBehavior(SyncBehavior)} method.
-	 * <p>
-	 * By default, this builder creates built-in registries.
+	 * Called when a registry is built via {@link #build()}.
 	 *
-	 * @return this builder
+	 * @param registry the newly built registry
 	 */
-	@Contract("-> this")
-	public @NotNull QuiltRegistryBuilder<T> builtin() {
-		this.builtin = true;
-		return this;
-	}
-
-	/**
-	 * Configures this builder to create a <em>dynamic</em> registry
-	 * (that is <em>not</em> registered in the {@linkplain Registry#REGISTRIES root registry}).
-	 * <p>
-	 * Dynamic registry synchronizing is <em>not</em> handled by us.
-	 * <p>
-	 * Note that this method does <em>not</em> handle registering the registry into the
-	 * {@link net.minecraft.util.registry.DynamicRegistryManager DynamicRegistryManager}.
-	 * You will have to do this manually.
-	 *
-	 * @return this builder
-	 *
-	 * @throws IllegalArgumentException if this builder is configured with a {@linkplain #syncBehavior(SyncBehavior) synchronization behavior} that is not {@link SyncBehavior#SKIPPED}
-	 */
-	@Contract("-> this")
-	public @NotNull QuiltRegistryBuilder<T> dynamic() {
-		this.assertSyncBehaviorPossible(false, this.syncBehavior);
-		this.builtin = false;
-		return this;
-	}
-
-	/**
-	 * Sets the synchronization behavior of this registry.
-	 * <p>
-	 * By default, this is {@link SyncBehavior#SKIPPED}.
-	 *
-	 * @param syncBehavior the new synchronization behavior
-	 * @return this builder
-	 *
-	 * @throws IllegalArgumentException if this builder is configured to create {@linkplain #dynamic() dynamic registries}, and the new behavior is not {@link SyncBehavior#SKIPPED}
-	 */
-	@Contract("_ -> this")
-	public @NotNull QuiltRegistryBuilder<T> syncBehavior(@NotNull SyncBehavior syncBehavior) {
-		this.assertSyncBehaviorPossible(this.builtin, syncBehavior);
-		this.syncBehavior = syncBehavior;
-		return this;
-	}
-
-	/**
-	 * Sets the registry to <em>not</em> be synchronized at all.
-	 *
-	 * @return this builder
-	 * @see #syncBehavior(SyncBehavior)
-	 * @see SyncBehavior#SKIPPED
-	 */
-	@Contract("-> this")
-	public @NotNull QuiltRegistryBuilder<T> syncSkipped() {
-		return this.syncBehavior(SyncBehavior.SKIPPED);
-	}
-
-	/**
-	 * Sets the registry to be synchronized, and to be required - clients who do not have this registry on their side
-	 * <em>will</em> be kicked.
-	 *
-	 * @return this builder
-	 * @see #syncBehavior(SyncBehavior)
-	 * @see SyncBehavior#REQUIRED
-	 */
-	@Contract("-> this")
-	public @NotNull QuiltRegistryBuilder<T> syncRequired() {
-		return this.syncBehavior(SyncBehavior.REQUIRED);
-	}
-
-	/**
-	 * Sets the registry to be synchronized, and to be optional - clients who do not have this registry on their side
-	 * <em>will not</em> be kicked.
-	 *
-	 * @return this builder.
-	 * @see #syncBehavior(SyncBehavior)
-	 * @see SyncBehavior#OPTIONAL
-	 */
-	@Contract("-> this")
-	public @NotNull QuiltRegistryBuilder<T> syncOptional() {
-		return this.syncBehavior(SyncBehavior.OPTIONAL);
+	protected void onRegistryBuilt(SimpleRegistry<T> registry) {
+		// TODO boostrap
 	}
 
 	/**
@@ -285,7 +185,6 @@ public final class QuiltRegistryBuilder<T> {
 	 * @return the newly constructed registry
 	 */
 	@Contract("-> new")
-	@SuppressWarnings("unchecked")
 	public @NotNull SimpleRegistry<T> build() {
 		SimpleRegistry<T> registry;
 		if (this.defaultId == null) {
@@ -295,16 +194,7 @@ public final class QuiltRegistryBuilder<T> {
 			registry = new DefaultedRegistry<>(this.defaultId.toString(), this.key, this.lifecycle, this.customHolderProvider);
 		}
 
-		if (this.builtin) {
-			Registry.register((Registry<Registry<Object>>) Registry.REGISTRIES, this.key.getValue(), (Registry<Object>) registry);
-
-			if (this.syncBehavior == SyncBehavior.REQUIRED || this.syncBehavior == SyncBehavior.OPTIONAL) {
-				RegistrySynchronization.markForSync(registry);
-				if (this.syncBehavior == SyncBehavior.OPTIONAL) {
-					RegistrySynchronization.setRegistryOptional(registry);
-				}
-			}
-		}
+		this.onRegistryBuilt(registry);
 
 		return registry;
 	}
