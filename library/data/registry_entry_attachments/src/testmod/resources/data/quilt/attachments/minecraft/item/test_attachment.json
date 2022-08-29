@@ -1,6 +1,9 @@
 {
   "replace": false,
   "values": {
-    "quilt:simple_attachment_test_item": 1
+    "quilt:simple_attachment_test_item": 1,
+    "aurorasdeco:amethyst_lantern?": 2,
+    "lolno:i_dont_exist": 3,
+    "#lolno:redundancy?": 4
   }
 }

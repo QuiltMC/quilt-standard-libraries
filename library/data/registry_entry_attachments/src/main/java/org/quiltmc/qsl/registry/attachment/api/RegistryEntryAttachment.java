@@ -42,7 +42,7 @@ import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentHolder;
  * @param <V> attached value type
  */
 @ApiStatus.NonExtendable
-public interface RegistryEntryAttachment<R, V> {
+public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAttachment.Entry<R, V>> {
 	/**
 	 * Retrieves an already-registered attachment.
 	 *
@@ -225,12 +225,12 @@ public interface RegistryEntryAttachment<R, V> {
 	Set<TagKey<R>> tagKeySet();
 
 	/**
-	 * {@return an iterator over all the value association entries}
+	 * {@return an iterator over all the values with a direct entry}
 	 */
 	Iterator<Entry<R, V>> entryIterator();
 
 	/**
-	 * {@return an iterator over all the tag value association entries}
+	 * {@return an iterator over all the tag values with a direct entry}
 	 */
 	Iterator<TagEntry<R, V>> tagEntryIterator();
 

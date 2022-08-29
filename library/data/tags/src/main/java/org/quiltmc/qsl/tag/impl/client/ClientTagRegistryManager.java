@@ -186,11 +186,11 @@ public final class ClientTagRegistryManager<T> {
 					);
 				}
 
-				if (!(holder instanceof Holder.Reference)) {
+				if (!(holder instanceof Holder.Reference<T> reference)) {
 					throw new IllegalStateException("Found direct holder " + holder + " value in tag " + tagKey);
 				}
 
-				boundTags.get(holder).add(tagKey);
+				boundTags.computeIfAbsent(reference, h -> new ArrayList<>()).add(tagKey);
 			}
 		});
 
