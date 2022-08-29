@@ -53,11 +53,6 @@ public final class QuiltBuiltinRegistryBuilder<T> extends QuiltRegistryBuilder<T
 
 	private SyncBehavior syncBehavior;
 
-	/**
-	 * Creates a new {@code QuiltRegistryBuilder}.
-	 *
-	 * @param id the identifier of the registry
-	 */
 	QuiltBuiltinRegistryBuilder(@NotNull Identifier id) {
 		super(id);
 
