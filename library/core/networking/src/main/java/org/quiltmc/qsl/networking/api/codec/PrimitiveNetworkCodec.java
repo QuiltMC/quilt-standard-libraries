@@ -61,7 +61,7 @@ public final class PrimitiveNetworkCodec {
 		}
 
 		public <A> NetworkCodec<A> mapBoolean(Predicate<A> to, FromBoolean<A> from) {
-			return new SimpleNetworkCodec<>(
+			return NetworkCodec.of(
 					(byteBuf, a) -> this.encodeBoolean(byteBuf, to.test(a)),
 					byteBuf -> from.fromBoolean(this.decodeBoolean(byteBuf))
 			);
@@ -99,7 +99,7 @@ public final class PrimitiveNetworkCodec {
 		}
 
 		public <A> NetworkCodec<A> mapByte(ToByte<A> to, FromByte<A> from) {
-			return new SimpleNetworkCodec<>(
+			return NetworkCodec.of(
 					(byteBuf, a) -> this.encodeByte(byteBuf, to.toByte(a)),
 					byteBuf -> from.fromByte(this.decodeByte(byteBuf))
 			);
@@ -141,7 +141,7 @@ public final class PrimitiveNetworkCodec {
 		}
 
 		public <A> NetworkCodec<A> mapChar(ToChar<A> to, FromChar<A> from) {
-			return new SimpleNetworkCodec<>(
+			return NetworkCodec.of(
 					(byteBuf, a) -> this.encodeChar(byteBuf, to.toChar(a)),
 					byteBuf -> from.fromChar(this.decodeChar(byteBuf))
 			);
@@ -183,7 +183,7 @@ public final class PrimitiveNetworkCodec {
 		}
 
 		public <A> NetworkCodec<A> mapShort(ToShort<A> to, FromShort<A> from) {
-			return new SimpleNetworkCodec<>(
+			return NetworkCodec.of(
 					(byteBuf, a) -> this.encodeShort(byteBuf, to.toShort(a)),
 					byteBuf -> from.fromShort(this.decodeShort(byteBuf))
 			);
@@ -227,7 +227,7 @@ public final class PrimitiveNetworkCodec {
 		}
 
 		public <A> NetworkCodec<A> mapInt(ToIntFunction<A> to, IntFunction<A> from) {
-			return new SimpleNetworkCodec<>(
+			return NetworkCodec.of(
 					(byteBuf, a) -> this.encodeInt(byteBuf, to.applyAsInt(a)),
 					byteBuf -> from.apply(this.decodeInt(byteBuf))
 			);
@@ -280,8 +280,8 @@ public final class PrimitiveNetworkCodec {
 			buf.writeFloat(data);
 		}
 
-		public <A> NetworkCodec<A> mapFloat(ToFloatFunction<A> to, FromFloatFunction<A> from) {
-			return new SimpleNetworkCodec<>(
+		public <A> NetworkCodec<A> mapFloat(ToFloat<A> to, FromFloat<A> from) {
+			return NetworkCodec.of(
 					(byteBuf, a) -> this.encodeFloat(byteBuf, to.toFloat(a)),
 					byteBuf -> from.fromFloat(this.decodeFloat(byteBuf))
 			);
@@ -292,11 +292,11 @@ public final class PrimitiveNetworkCodec {
 			return "Float";
 		}
 
-		public interface ToFloatFunction<A> {
+		public interface ToFloat<A> {
 			float toFloat(A a);
 		}
 
-		public interface FromFloatFunction<A> {
+		public interface FromFloat<A> {
 			A fromFloat(float f);
 		}
 	}
@@ -325,7 +325,7 @@ public final class PrimitiveNetworkCodec {
 		}
 
 		public <A> NetworkCodec<A> mapLong(ToLongFunction<A> to, LongFunction<A> from) {
-			return new SimpleNetworkCodec<>(
+			return NetworkCodec.of(
 					(byteBuf, a) -> this.encodeLong(byteBuf, to.applyAsLong(a)),
 					byteBuf -> from.apply(this.decodeLong(byteBuf))
 			);
@@ -380,7 +380,7 @@ public final class PrimitiveNetworkCodec {
 		}
 
 		public <A> NetworkCodec<A> mapDouble(ToDoubleFunction<A> to, DoubleFunction<A> from) {
-			return new SimpleNetworkCodec<>(
+			return NetworkCodec.of(
 					(byteBuf, a) -> this.encodeDouble(byteBuf, to.applyAsDouble(a)),
 					byteBuf -> from.apply(this.decodeDouble(byteBuf))
 			).named("Double [mapped]");

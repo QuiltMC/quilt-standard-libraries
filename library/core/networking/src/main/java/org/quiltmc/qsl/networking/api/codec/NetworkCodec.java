@@ -59,6 +59,7 @@ public interface NetworkCodec<A> {
 	PrimitiveNetworkCodec.Null NULL = PrimitiveNetworkCodec.Null.INSTANCE;
 	PrimitiveNetworkCodec.Boolean BOOLEAN = PrimitiveNetworkCodec.Boolean.INSTANCE;
 	PrimitiveNetworkCodec.Byte BYTE = PrimitiveNetworkCodec.Byte.INSTANCE;
+	PrimitiveNetworkCodec.Char CHAR = PrimitiveNetworkCodec.Char.INSTANCE;
 	PrimitiveNetworkCodec.Short SHORT = PrimitiveNetworkCodec.Short.INSTANCE;
 	PrimitiveNetworkCodec.Int INT = PrimitiveNetworkCodec.Int.INSTANCE;
 	PrimitiveNetworkCodec.VarInt VAR_INT = PrimitiveNetworkCodec.VarInt.INSTANCE;
@@ -68,34 +69,29 @@ public interface NetworkCodec<A> {
 	PrimitiveNetworkCodec.Double DOUBLE = PrimitiveNetworkCodec.Double.INSTANCE;
 
 	// Useful Java Types
-	NetworkCodec<byte[]> BYTE_ARRAY = of(PacketByteBuf::writeByteArray, PacketByteBuf::readByteArray).named("ByteArray");
-	NetworkCodec<long[]> LONG_ARRAY = of(PacketByteBuf::writeLongArray, PacketByteBuf::readLongArray).named("LongArray");
-	NetworkCodec<String> STRING = of(PacketByteBuf::writeString, PacketByteBuf::readString).named("String");
-	NetworkCodec<UUID> UUID = of(PacketByteBuf::writeUuid, PacketByteBuf::readUuid).named("UUID");
-	NetworkCodec<BitSet> BIT_SET = of(PacketByteBuf::writeBitSet, PacketByteBuf::readBitSet).named("BitSet");
-	NetworkCodec<Date> DATE = of(PacketByteBuf::writeDate, PacketByteBuf::readDate).named("Date");
-	NetworkCodec<Instant> INSTANT = of(PacketByteBuf::writeInstant, PacketByteBuf::readInstant).named("Instant");
+	NetworkCodec<byte[]> BYTE_ARRAY = of(PacketByteBuf::writeByteArray, PacketByteBuf::readByteArray).named(
+			"ByteArray");
+	NetworkCodec<long[]> LONG_ARRAY = of(PacketByteBuf::writeLongArray, PacketByteBuf::readLongArray).named(
+			"LongArray");
+	NetworkCodec<String> STRING = of(PacketByteBuf::writeString, PacketByteBuf::readString, "String");
+	NetworkCodec<UUID> UUID = of(PacketByteBuf::writeUuid, PacketByteBuf::readUuid, "UUID");
+	NetworkCodec<BitSet> BIT_SET = of(PacketByteBuf::writeBitSet, PacketByteBuf::readBitSet, "BitSet");
+	NetworkCodec<Date> DATE = of(PacketByteBuf::writeDate, PacketByteBuf::readDate, "Date");
+	NetworkCodec<Instant> INSTANT = of(PacketByteBuf::writeInstant, PacketByteBuf::readInstant, "Instant");
 
 	// Minecraft Types
-	NetworkCodec<Identifier> IDENTIFIER = of(PacketByteBuf::writeIdentifier, PacketByteBuf::readIdentifier)
-			.named("Identifier");
-	NetworkCodec<NbtCompound> NBT = of(PacketByteBuf::writeNbt, PacketByteBuf::readNbt)
-			.named("NBT");
-	NetworkCodec<ItemStack> ITEM_STACK = of(PacketByteBuf::writeItemStack, PacketByteBuf::readItemStack)
-			.named("ItemStack");
+	NetworkCodec<Identifier> IDENTIFIER = of(PacketByteBuf::writeIdentifier, PacketByteBuf::readIdentifier, "Identifier");
+	NetworkCodec<NbtCompound> NBT = of(PacketByteBuf::writeNbt, PacketByteBuf::readNbt, "NBT");
+	NetworkCodec<ItemStack> ITEM_STACK = of(PacketByteBuf::writeItemStack, PacketByteBuf::readItemStack, "ItemStack");
 	NetworkCodec<Vec3i> VEC_3I = build(builder -> builder.create(
 			INT.fieldOf(Vec3i::getX),
 			INT.fieldOf(Vec3i::getY),
 			INT.fieldOf(Vec3i::getZ)
 	).apply(Vec3i::new).named("Vec3i"));
-	NetworkCodec<Direction> DIRECTION = enumOf(Direction.class)
-			.named("Direction");
-	NetworkCodec<BlockPos> BLOCK_POS = of(PacketByteBuf::writeBlockPos, PacketByteBuf::readBlockPos)
-			.named("BlockPos");
-	NetworkCodec<ChunkPos> CHUNK_POS = of(PacketByteBuf::writeChunkPos, PacketByteBuf::readChunkPos)
-			.named("ChunkPos");
-	NetworkCodec<GlobalPos> GLOBAL_POS = of(PacketByteBuf::writeGlobalPos, PacketByteBuf::readGlobalPos)
-			.named("GlobalPos");
+	NetworkCodec<Direction> DIRECTION = enumOf(Direction.class).named("Direction");
+	NetworkCodec<BlockPos> BLOCK_POS = of(PacketByteBuf::writeBlockPos, PacketByteBuf::readBlockPos, "BlockPos");
+	NetworkCodec<ChunkPos> CHUNK_POS = of(PacketByteBuf::writeChunkPos, PacketByteBuf::readChunkPos, "ChunkPos");
+	NetworkCodec<GlobalPos> GLOBAL_POS = of(PacketByteBuf::writeGlobalPos, PacketByteBuf::readGlobalPos, "GlobalPos");
 	NetworkCodec<Vec3d> VEC_3D = build(builder -> builder.create(
 			DOUBLE.fieldOf(Vec3d::getX),
 			DOUBLE.fieldOf(Vec3d::getY),
@@ -108,14 +104,32 @@ public interface NetworkCodec<A> {
 	).apply(Vec3f::new).named("Vec3f"));
 	NetworkCodec<Text> TEXT = of(PacketByteBuf::writeText, PacketByteBuf::readText)
 			.named("Text");
-	NetworkCodec<Property> PROPERTY = of(PacketByteBuf::writeProperty, PacketByteBuf::readProperty)
-			.named("Property");
+	NetworkCodec<Property> PROPERTY = of(PacketByteBuf::writeProperty, PacketByteBuf::readProperty, "Property");
 	NetworkCodec<BlockHitResult> BLOCK_HIT_RESULT = of(
-			PacketByteBuf::writeBlockHitResult, PacketByteBuf::readBlockHitResult
-	).named("BlockHitResult");
+			PacketByteBuf::writeBlockHitResult, PacketByteBuf::readBlockHitResult, "BlockHitResult"
+	);
+
+	static <A> NetworkCodec<A> of(PacketByteBuf.Writer<A> encoder, PacketByteBuf.Reader<A> decoder, String name) {
+		return new NetworkCodec<>() {
+			@Override
+			public A decode(PacketByteBuf buf) {
+				return decoder.apply(buf);
+			}
+
+			@Override
+			public void encode(PacketByteBuf buf, A data) {
+				encoder.accept(buf, data);
+			}
+
+			@Override
+			public String toString() {
+				return name;
+			}
+		};
+	}
 
 	static <A> NetworkCodec<A> of(PacketByteBuf.Writer<A> encoder, PacketByteBuf.Reader<A> decoder) {
-		return new SimpleNetworkCodec<>(encoder, decoder);
+		return of(encoder, decoder, "NetworkCodec[%s, %s]".formatted(encoder, decoder));
 	}
 
 	static <K, V> MapNetworkCodec<K, V> mapOf(NetworkCodec<K> keyCodec, NetworkCodec<V> valueCodec,
@@ -245,10 +259,11 @@ public interface NetworkCodec<A> {
 	}
 
 	default <B> NetworkCodec<B> map(Function<? super B, ? extends A> from, Function<? super A, ? extends B> to) {
-		return new SimpleNetworkCodec<B>(
+		return NetworkCodec.<B>of(
 				(byteBuf, data) -> this.encode(byteBuf, from.apply(data)),
-				byteBuf -> to.apply(this.decode(byteBuf))
-		).named(this + " [mapped]");
+				byteBuf -> to.apply(this.decode(byteBuf)),
+				this + "[mapped]"
+		);
 	}
 
 	default <T> NetworkCodecBuilder.Field<T, A> fieldOf(Function<? super T, ? extends A> fieldLocator) {

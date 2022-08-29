@@ -20,7 +20,7 @@ import com.mojang.datafixers.util.Either;
 
 import net.minecraft.network.PacketByteBuf;
 
-public class EitherNetworkCodec<A, B> implements NetworkCodec<Either<A, B>> {
+public final class EitherNetworkCodec<A, B> implements NetworkCodec<Either<A, B>> {
 	private final NetworkCodec<A> leftCodec;
 	private final NetworkCodec<B> rightCodec;
 
