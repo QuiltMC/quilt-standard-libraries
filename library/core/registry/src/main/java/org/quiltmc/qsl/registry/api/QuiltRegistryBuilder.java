@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.registry.api;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.mojang.serialization.Lifecycle;
@@ -40,6 +41,7 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	protected final RegistryKey<Registry<T>> key;
 	protected Lifecycle lifecycle;
 	protected Function<T, Holder.Reference<T>> customHolderProvider;
+	protected Consumer<SimpleRegistry<T>> bootstrap;
 	protected Identifier defaultId;
 
 	/**
@@ -153,6 +155,22 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	}
 
 	/**
+	 * Sets this method's <em>bootstrap method</em>, that will be called with the registry instance
+	 * once it is {@linkplain #build() built}.
+	 * <p>
+	 * By default, this is {@code null}.
+	 *
+	 * @param bootstrap the new bootstrap method
+	 * @return this builder
+	 */
+	@SuppressWarnings("unchecked")
+	@Contract("_ -> this")
+	public @NotNull SELF withBootstrap(@Nullable Consumer<SimpleRegistry<T>> bootstrap) {
+		this.bootstrap = bootstrap;
+		return (SELF) this;
+	}
+
+	/**
 	 * Sets the default identifier of this registry.
 	 * <p>
 	 * Should a nonexistent entry be referenced in some way, the registry will instead reference the entry identified
@@ -176,7 +194,9 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	 * @param registry the newly built registry
 	 */
 	protected void onRegistryBuilt(SimpleRegistry<T> registry) {
-		// TODO boostrap
+		if (this.bootstrap != null) {
+			this.bootstrap.accept(registry);
+		}
 	}
 
 	/**

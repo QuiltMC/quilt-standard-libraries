@@ -119,8 +119,6 @@ public final class QuiltBuiltinRegistryBuilder<T> extends QuiltRegistryBuilder<T
 	@Override
 	@SuppressWarnings("unchecked")
 	protected void onRegistryBuilt(SimpleRegistry<T> registry) {
-		super.onRegistryBuilt(registry);
-
 		Registry.register((Registry<Registry<Object>>) Registry.REGISTRIES, this.key.getValue(), (Registry<Object>) registry);
 
 		if (this.syncBehavior == SyncBehavior.REQUIRED || this.syncBehavior == SyncBehavior.OPTIONAL) {
@@ -129,5 +127,7 @@ public final class QuiltBuiltinRegistryBuilder<T> extends QuiltRegistryBuilder<T
 				RegistrySynchronization.setRegistryOptional(registry);
 			}
 		}
+
+		super.onRegistryBuilt(registry);
 	}
 }
