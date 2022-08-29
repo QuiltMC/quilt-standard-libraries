@@ -16,18 +16,17 @@
 
 package org.quiltmc.qsl.registry.api;
 
-import java.util.LinkedHashMap;
-
-import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Codec;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.*;
+import net.minecraft.util.registry.BuiltinRegistries;
+import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.SimpleRegistry;
 
 import org.quiltmc.qsl.registry.impl.SignalingMemoizingSupplier;
-import org.quiltmc.qsl.registry.mixin.DynamicRegistryManagerAccessor;
 
 /**
  * Utility class to build a new dynamic {@link Registry}.
@@ -59,10 +58,6 @@ public final class QuiltDynamicRegistryBuilder<T> extends QuiltRegistryBuilder<T
 		BuiltinRegistries.register((Registry<Registry<Object>>) BuiltinRegistries.REGISTRIES, this.key.getValue(), (Registry<Object>) registry);
 
 		var infos = DynamicRegistryManager.INFOS;
-		if (infos instanceof ImmutableMap<RegistryKey<? extends Registry<?>>, DynamicRegistryManager.Info<?>>) {
-			infos = new LinkedHashMap<>(infos);
-			DynamicRegistryManagerAccessor.setInfos(infos);
-		}
 
 		infos.put(this.key, new DynamicRegistryManager.Info<>(this.key, this.entryCodec, this.networkEntryCodec));
 

@@ -16,7 +16,10 @@
 
 package org.quiltmc.qsl.registry.mixin;
 
+import java.util.LinkedHashMap;
+
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -26,10 +29,21 @@ import net.minecraft.util.registry.DynamicRegistryManager;
 import org.quiltmc.qsl.registry.impl.SignalingMemoizingSupplier;
 
 @Mixin(DynamicRegistryManager.class)
-public abstract class DynamicRegistryManagerMixin {
+public interface DynamicRegistryManagerMixin {
+	@Redirect(method = "<clinit>", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Util;make(Ljava/util/function/Supplier;)Ljava/lang/Object;"))
+	private static Object quilt$makeInfosMutable(java.util.function.Supplier<Object> factory) {
+		var obj = factory.get();
+		if (obj instanceof ImmutableMap<?,?> map) {
+			return new LinkedHashMap<>(map);
+		} else {
+			throw new AssertionError("Util.make for DynamicRegistryManager.INFOS didn't return an ImmutableMap. This should never happen!!!");
+		}
+	}
+
 	@SuppressWarnings("Guava")
-	@Redirect(method = "<clinit>", at = @At(value = "INVOKE", target = "Lcom/google/common/base/Suppliers;memoize(Lcom/google/common/base/Supplier;)Lcom/google/common/base/Supplier;"))
-	private static Supplier<DynamicRegistryManager.Frozen> quilt$replaceBuiltinSupplier(Supplier<DynamicRegistryManager.Frozen> delegate) {
+	@Redirect(method = "<clinit>", at = @At(value = "INVOKE", target = "Lcom/google/common/base/Suppliers;memoize(Lcom/google/common/base/Supplier;)Lcom/google/common/base/Supplier;",
+			remap = false))
+	private static Supplier<Object> quilt$replaceBuiltinSupplier(Supplier<Object> delegate) {
 		return new SignalingMemoizingSupplier<>(delegate);
 	}
 }
