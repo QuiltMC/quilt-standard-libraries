@@ -16,14 +16,7 @@
 
 package org.quiltmc.qsl.registry.attachment.impl;
 
-import static org.quiltmc.qsl.registry.attachment.impl.Initializer.id;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import net.fabricmc.api.EnvType;
@@ -50,6 +43,10 @@ import org.quiltmc.qsl.networking.api.ServerPlayConnectionEvents;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
+import org.quiltmc.qsl.registry.attachment.impl.client.ClientInitializer;
+
+import static org.quiltmc.qsl.registry.attachment.impl.Initializer.LOGGER;
+import static org.quiltmc.qsl.registry.attachment.impl.Initializer.id;
 
 @ApiStatus.Internal
 public final class RegistryEntryAttachmentSync {
@@ -130,6 +127,7 @@ public final class RegistryEntryAttachmentSync {
 			return;
 		}
 
+		LOGGER.info("[REAS] Sending packet - reload");
 		for (var player : server.getPlayerManager().getPlayerList()) {
 			if (!canSyncToPlay(player)) continue;
 
@@ -216,6 +214,7 @@ public final class RegistryEntryAttachmentSync {
 	}
 
 	private static void syncAttachmentsToPlayer(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server) {
+		LOGGER.info("[REAS] Sending packet - first join");
 		for (var buf : RegistryEntryAttachmentSync.createSyncPackets()) {
 			sender.sendPacket(RegistryEntryAttachmentSync.PACKET_ID, buf);
 		}
@@ -224,6 +223,8 @@ public final class RegistryEntryAttachmentSync {
 	@Environment(EnvType.CLIENT)
 	@SuppressWarnings("unchecked")
 	private static void receiveSyncPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
+		ClientInitializer.LOGGER.info("[REAS] Client received sync packet");
+
 		var packetVersion = buf.readByte();
 		if (packetVersion != PACKET_VERSION) {
 			throw new UnsupportedOperationException("Unable to read RegistryEntryAttachmentSync packet. Please install the same version of QSL as the server you play on");
