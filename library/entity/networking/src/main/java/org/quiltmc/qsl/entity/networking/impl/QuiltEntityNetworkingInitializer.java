@@ -25,12 +25,25 @@ import net.minecraft.util.registry.SimpleRegistry;
 import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
 
 @ApiStatus.Internal
 public class QuiltEntityNetworkingInitializer implements ModInitializer {
 	public static final SimpleRegistry<TrackedDataHandler<?>> TRACKED_DATA_HANDLER_REGISTRY = new SimpleRegistry<>(
 			RegistryKey.ofRegistry(new Identifier("quilt", "tracked_data_handlers")), Lifecycle.stable(), null
 	);
+
+	private static boolean markForSync = true;
+
+	public static <T> TrackedDataHandler<T> register(Identifier identifier, TrackedDataHandler<T> handler) {
+		Registry.register(QuiltEntityNetworkingInitializer.TRACKED_DATA_HANDLER_REGISTRY, identifier, handler);
+
+		if (markForSync) {
+			RegistrySynchronization.markForSync(QuiltEntityNetworkingInitializer.TRACKED_DATA_HANDLER_REGISTRY);
+			markForSync = false;
+		}
+		return handler;
+	}
 
 	@Override
 	public void onInitialize(ModContainer mod) {
