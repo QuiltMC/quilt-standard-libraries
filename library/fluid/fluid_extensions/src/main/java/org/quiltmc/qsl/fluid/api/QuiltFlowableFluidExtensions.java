@@ -48,18 +48,16 @@ import net.minecraft.world.event.GameEvent;
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 import org.quiltmc.qsl.fluid.mixin.EntityMixin;
 
-import javax.annotation.Nullable;
-
 @InjectedInterface({WaterFluid.class, LavaFluid.class})
 public interface QuiltFlowableFluidExtensions {
 
 	/**
-	 * {@link net.minecraft.entity.LivingEntity#travel}, line 2206
+	 * {@link net.minecraft.entity.LivingEntity#travel}
 	 */
 	float WATER_VISCOSITY = 0.8f;
 
 	/**
-	 * {@link net.minecraft.entity.LivingEntity#travel}, line 2228
+	 * {@link net.minecraft.entity.LivingEntity#travel}
 	 */
 	float LAVA_VISCOSITY = 0.5f;
 
@@ -389,7 +387,7 @@ public interface QuiltFlowableFluidExtensions {
 	 * @return - The SoundEvent which shall be played when falling into it.
 	 */
 
-	@Nullable
+
 	default SoundEvent getSplashSound(Entity splashing, Vec3d splashPos, RandomGenerator random) {
 		return SoundEvents.ENTITY_PLAYER_SPLASH;
 	}
@@ -403,7 +401,7 @@ public interface QuiltFlowableFluidExtensions {
 	 * @return - The SoundEvent which shall be played when fast falling into it.
 	 * @see QuiltFlowableFluidExtensions#onSplash
 	 */
-	@Nullable
+
 	default SoundEvent getHighSpeedSplashSound(Entity splashing, Vec3d splashPos, RandomGenerator random) {
 		return SoundEvents.ENTITY_PLAYER_SPLASH_HIGH_SPEED;
 	}
@@ -416,7 +414,7 @@ public interface QuiltFlowableFluidExtensions {
 	 * @param random    - A random generator.
 	 * @return - A ParticleEffect which shall be played when falling into it.
 	 */
-	@Nullable
+
 	default ParticleEffect getSplashParticle(Entity splashing, Vec3d splashPos, RandomGenerator random) {
 		return ParticleTypes.ASH;
 	}
@@ -429,7 +427,7 @@ public interface QuiltFlowableFluidExtensions {
 	 * @param random    - A random generator.
 	 * @return - A ParticleEffect which shall be played when bubbles form.
 	 */
-	@Nullable
+
 	default ParticleEffect getBubbleParticle(Entity splashing, Vec3d splashPos, RandomGenerator random) {
 		return ParticleTypes.BUBBLE;
 	}
@@ -442,7 +440,7 @@ public interface QuiltFlowableFluidExtensions {
 	 * @param random    - A random generator.
 	 * @return - A GameEvent when the entity falls into the fluid.
 	 */
-	@Nullable
+
 	default GameEvent getSplashGameEvent(Entity splashing, Vec3d splashPos, RandomGenerator random) {
 		return GameEvent.SPLASH;
 	}

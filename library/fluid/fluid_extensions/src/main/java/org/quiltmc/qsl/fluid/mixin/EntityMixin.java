@@ -36,8 +36,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import javax.annotation.Nullable;
-
 
 @Mixin(Entity.class)
 public abstract class EntityMixin implements CustomFluidInteracting {
@@ -63,7 +61,6 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 	public abstract boolean equals(Object o);
 
 	@Shadow
-	@Nullable
 	public abstract Entity getVehicle();
 
 	@Shadow
