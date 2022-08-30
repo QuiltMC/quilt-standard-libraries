@@ -17,10 +17,6 @@
 package org.quiltmc.qsl.item.extension.test;
 
 import org.jetbrains.annotations.NotNull;
-import org.quiltmc.loader.api.ModContainer;
-import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-import org.quiltmc.qsl.item.extension.api.bow.ProjectileModifyingBowItem;
-import org.quiltmc.qsl.item.extension.api.crossbow.ProjectileModifyingCrossbowItem;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
@@ -29,6 +25,11 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.item.extension.api.bow.ProjectileModifyingBowItem;
+import org.quiltmc.qsl.item.extension.api.crossbow.ProjectileModifyingCrossbowItem;
 
 public class BowsTest implements ModInitializer {
 	public static final Item TEST_BOW = new ProjectileModifyingBowItem(new Item.Settings().group(ItemGroup.COMBAT)) {
@@ -45,7 +46,7 @@ public class BowsTest implements ModInitializer {
 		}
 
 		@Override
-		public float getProjectileSpeed(ItemStack stack, LivingEntity entity) {
+		public float getProjectileSpeed(@NotNull ItemStack stack, @NotNull LivingEntity entity) {
 			return 10f;
 		}
 	};

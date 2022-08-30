@@ -25,7 +25,7 @@ import net.minecraft.item.ItemStack;
 @Mixin(CrossbowItem.class)
 public interface CrossbowItemAccessor {
 	@Invoker("getSpeed")
-	static float quilt$getSpeed(ItemStack stack) {
+	static float invokeGetSpeed(ItemStack stack) {
 		throw new IllegalStateException("Invoker injection failed.");
 	}
 }

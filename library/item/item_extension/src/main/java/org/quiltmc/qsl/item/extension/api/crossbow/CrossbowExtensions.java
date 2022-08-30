@@ -16,14 +16,15 @@
 
 package org.quiltmc.qsl.item.extension.api.crossbow;
 
-import org.jetbrains.annotations.ApiStatus;
-import org.quiltmc.qsl.base.api.util.InjectedInterface;
-import org.quiltmc.qsl.item.extension.mixin.crossbow.CrossbowItemAccessor;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
+import org.quiltmc.qsl.item.extension.mixin.crossbow.CrossbowItemAccessor;
 
 /**
  * An interface to implement for all custom crossbows in Quilt.
@@ -34,19 +35,20 @@ import net.minecraft.item.ItemStack;
  *
  * @see ProjectileModifyingCrossbowItem
  */
-@ApiStatus.Internal
 @InjectedInterface(CrossbowItem.class)
 public interface CrossbowExtensions {
 	/**
-	 * Allows modifying the speed of the crossbow projectile. <p>
-	 * To get the projectile from the crossbow, call {@link CrossbowItem#hasProjectile(ItemStack, Item)} passing in {@code stack} and the {@link Item} for the projectile. <p>
+	 * Allows modifying the speed of the crossbow projectile.
+	 * <p>
+	 * To get the projectile from the crossbow, call {@link CrossbowItem#hasProjectile(ItemStack, Item)} passing in {@code stack} and the {@link Item} for the projectile.
+	 * <p>
 	 * The default implementation follows the vanilla values for projectiles
 	 *
-	 * @param stack  the ItemStack for the crossbow
-	 * @param entity the Entity shooting the crossbow
+	 * @param stack  the item stack for the crossbow
+	 * @param entity the entity shooting the crossbow
 	 * @return the speed of the projectile
 	 */
-	default float getProjectileSpeed(ItemStack stack, LivingEntity entity) {
-		return CrossbowItemAccessor.quilt$getSpeed(stack);
+	default float getProjectileSpeed(@NotNull ItemStack stack, @NotNull LivingEntity entity) {
+		return CrossbowItemAccessor.invokeGetSpeed(stack);
 	}
 }

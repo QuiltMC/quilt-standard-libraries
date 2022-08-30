@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.item.extension.mixin.bow.client;
 
-import org.quiltmc.qsl.item.extension.api.bow.BowExtensions;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -25,16 +24,24 @@ import net.minecraft.client.render.entity.model.SkeletonEntityModel;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
+import org.quiltmc.qsl.item.extension.api.bow.BowExtensions;
+
 @Mixin(SkeletonEntityModel.class)
 public abstract class SkeletonEntityModelMixin {
 	// Allows Skeletons to visually shoot custom bows by returning true
-	@Redirect(method = "animateModel(Lnet/minecraft/entity/mob/MobEntity;FFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z"))
+	@Redirect(
+			method = "animateModel(Lnet/minecraft/entity/mob/MobEntity;FFF)V",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z")
+	)
 	private boolean animateModel(ItemStack heldItemStack, Item item) {
 		return heldItemStack.getItem() instanceof BowExtensions;
 	}
 
 	// Allows Skeletons to visually shoot custom bows by returning true
-	@Redirect(method = "setAngles(Lnet/minecraft/entity/mob/MobEntity;FFFFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z"))
+	@Redirect(
+			method = "setAngles(Lnet/minecraft/entity/mob/MobEntity;FFFFF)V",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z")
+	)
 	private boolean setAngles(ItemStack heldItemStack, Item item) {
 		return heldItemStack.getItem() instanceof BowExtensions;
 	}

@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.item.extension.mixin.client;
 
-import org.quiltmc.qsl.item.extension.api.bow.BowExtensions;
-import org.quiltmc.qsl.item.extension.api.crossbow.CrossbowExtensions;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -27,11 +25,16 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 
+import org.quiltmc.qsl.item.extension.api.bow.BowExtensions;
+import org.quiltmc.qsl.item.extension.api.crossbow.CrossbowExtensions;
+
 @Mixin(HeldItemRenderer.class)
 public abstract class HeldItemRendererMixin {
 	// Make sure that the custom items are rendered in the correct place based on the current swing progress of the hand
-	@Redirect(method = "getHandRenderType",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z"))
+	@Redirect(
+			method = "getHandRenderType",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z")
+	)
 	private static boolean renderItem(ItemStack heldItem, Item item) {
 		if (item == Items.BOW) {
 			return heldItem.getItem() instanceof BowExtensions; // Return bow for rendering

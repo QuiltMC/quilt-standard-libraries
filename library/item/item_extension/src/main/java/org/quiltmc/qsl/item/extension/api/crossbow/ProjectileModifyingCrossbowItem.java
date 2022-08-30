@@ -31,11 +31,11 @@ import net.minecraft.item.ItemStack;
 public class ProjectileModifyingCrossbowItem extends CrossbowItem implements CrossbowShotProjectileEvents.ModifyProjectileFromCrossbow {
 	public ProjectileModifyingCrossbowItem(Settings settings) {
 		super(settings);
-		CrossbowShotProjectileEvents.CROSSBOW_MODIFY_SHOT_PROJECTILE.register(this);
 	}
 
 	@Override
-	public final void modifyProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity user, @NotNull PersistentProjectileEntity projectile) {
+	public final void modifyProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity user,
+			@NotNull PersistentProjectileEntity projectile) {
 		if (crossbowStack.getItem() == this) {
 			this.onProjectileShot(crossbowStack, projectileStack, user, projectile);
 		}

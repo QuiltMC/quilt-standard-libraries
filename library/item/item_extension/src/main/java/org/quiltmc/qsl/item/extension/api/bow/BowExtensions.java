@@ -16,31 +16,33 @@
 
 package org.quiltmc.qsl.item.extension.api.bow;
 
-import org.jetbrains.annotations.ApiStatus;
-import org.quiltmc.qsl.base.api.util.InjectedInterface;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 
 import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;
 
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
+
 /**
  * An interface to implement for all custom bows in Quilt.
  * <p>
- * This is meant to be used on a {@link net.minecraft.item.BowItem} class. Unless similar functionality is implemented on your custom item, most functionality will not work.
+ * This is meant to be used on a {@link net.minecraft.item.BowItem} class.
+ * Unless similar functionality is implemented on your custom item, most functionality will not work.
  * <p>
  * In order to modify the projectile shot from your bow, implementing and registering {@link BowShotProjectileEvents.ModifyProjectileFromBow} is recommended.
  *
  * @see ProjectileModifyingBowItem
  */
-@ApiStatus.Internal
 @InjectedInterface(BowItem.class)
 public interface BowExtensions {
 	/**
 	 * {@return the draw progress of the bow between {@code 0} and {@code 1}}
 	 *
 	 * @param useTicks the number of ticks the bow has been drawn
-	 * @param bowStack the ItemStack for the bow
+	 * @param bowStack the item stack for the bow
 	 */
-	default float getCustomPullProgress(int useTicks, ItemStack bowStack) {
+	default @Range(from = 0, to = 1) float getCustomPullProgress(int useTicks, @NotNull ItemStack bowStack) {
 		return BowItem.getPullProgress(useTicks);
 	}
 }

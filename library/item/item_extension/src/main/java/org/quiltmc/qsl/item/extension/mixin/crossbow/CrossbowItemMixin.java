@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.item.extension.mixin.crossbow;
 
-import org.quiltmc.qsl.item.extension.api.crossbow.CrossbowExtensions;
-import org.quiltmc.qsl.item.extension.api.crossbow.CrossbowShotProjectileEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -33,6 +31,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 
+import org.quiltmc.qsl.item.extension.api.crossbow.CrossbowExtensions;
+import org.quiltmc.qsl.item.extension.api.crossbow.CrossbowShotProjectileEvents;
+
 @Mixin(CrossbowItem.class)
 public class CrossbowItemMixin implements CrossbowExtensions {
 	@Inject(method = "createArrow", at = @At(value = "RETURN"), locals = LocalCapture.CAPTURE_FAILSOFT, cancellable = true)
@@ -43,9 +44,15 @@ public class CrossbowItemMixin implements CrossbowExtensions {
 	}
 
 	// Redirecting this method in order to get the item stack and shooting entity
-	@Redirect(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/CrossbowItem;shootAll(Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/util/Hand;Lnet/minecraft/item/ItemStack;FF)V"))
+	@Redirect(
+			method = "use",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/item/CrossbowItem;shootAll(Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/util/Hand;Lnet/minecraft/item/ItemStack;FF)V"
+			)
+	)
 	private void shootAll(World world, LivingEntity entity, Hand hand, ItemStack stack, float speed, float divergence) {
 		float newSpeed = stack.getItem() instanceof CrossbowExtensions crossbowItem ? crossbowItem.getProjectileSpeed(stack, entity) : speed;
-		CrossbowItem.shootAll(world, entity, hand, stack, newSpeed, 1.0F);
+		CrossbowItem.shootAll(world, entity, hand, stack, newSpeed, 1.f);
 	}
 }

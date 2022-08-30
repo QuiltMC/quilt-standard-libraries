@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.item.extension.api.bow;
 
+import org.jetbrains.annotations.Range;
+
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.BowItem;
@@ -29,15 +31,16 @@ import net.minecraft.item.ItemStack;
 public class ProjectileModifyingBowItem extends BowItem implements BowShotProjectileEvents.ModifyProjectileFromBow {
 	public ProjectileModifyingBowItem(Settings settings) {
 		super(settings);
-		BowShotProjectileEvents.BOW_MODIFY_SHOT_PROJECTILE.register(this);
 	}
 
 	@Override
-	public final void modifyProjectileShot(ItemStack bowStack, ItemStack arrowStack, LivingEntity user, float pullProgress, PersistentProjectileEntity projectile) {
+	public final void modifyProjectileShot(ItemStack bowStack, ItemStack arrowStack, LivingEntity user, @Range(from = 0, to = 1) float pullProgress,
+			PersistentProjectileEntity projectile) {
 		if (bowStack.getItem() == this) {
 			this.onProjectileShot(bowStack, arrowStack, user, pullProgress, projectile);
 		}
 	}
 
-	public void onProjectileShot(ItemStack bowStack, ItemStack arrowStack, LivingEntity user, float pullProgress, PersistentProjectileEntity projectile) {}
+	public void onProjectileShot(ItemStack bowStack, ItemStack arrowStack, LivingEntity user, @Range(from = 0, to = 1) float pullProgress,
+			PersistentProjectileEntity projectile) {}
 }

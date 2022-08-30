@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.item.extension.mixin.crossbow.client;
 
-import org.quiltmc.qsl.item.extension.api.crossbow.CrossbowExtensions;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -28,6 +27,8 @@ import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
+
+import org.quiltmc.qsl.item.extension.api.crossbow.CrossbowExtensions;
 
 @Mixin(PlayerEntityRenderer.class)
 public class PlayerEntityRendererMixin {
