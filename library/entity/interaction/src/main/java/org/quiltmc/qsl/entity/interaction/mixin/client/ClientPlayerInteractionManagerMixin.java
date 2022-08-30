@@ -65,8 +65,8 @@ public abstract class ClientPlayerInteractionManagerMixin {
 	private GameMode gameMode;
 
 	@Inject(method = "attackEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V", ordinal = 0), cancellable = true)
-	private void onPlayerAttackEntity(PlayerEntity player, Entity target, CallbackInfo ci) {
-		ActionResult result = AttackEntityCallback.EVENT.invoker().onAttack(player, player.world, player.getMainHandStack(), target);
+	private void beforePlayerAttackEntity(PlayerEntity player, Entity target, CallbackInfo ci) {
+		ActionResult result = AttackEntityEvents.BEFORE.invoker().beforeAttackEntity(player, player.world, player.getMainHandStack(), target);
 
 		if (result != ActionResult.PASS) {
 			if (result == ActionResult.SUCCESS) {
@@ -75,6 +75,11 @@ public abstract class ClientPlayerInteractionManagerMixin {
 
 			ci.cancel();
 		}
+	}
+
+	@Inject(method = "attackEntity", at = @At("TAIL"))
+	private void afterPlayerAttackEntity(PlayerEntity player, Entity target, CallbackInfo ci) {
+		AttackEntityEvents.AFTER.invoker().afterAttackEntity(player, player.world, player.getMainHandStack(), target);
 	}
 
 	@Inject(method = "interactItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V"), cancellable = true)
@@ -100,8 +105,8 @@ public abstract class ClientPlayerInteractionManagerMixin {
 	}
 
 	@Inject(method = "interactBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;m_vvsqjptk(Lnet/minecraft/client/world/ClientWorld;Lnet/minecraft/class_7204;)V"), cancellable = true)
-	private void onPlayerInteractBlock(ClientPlayerEntity player, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) {
-		ActionResult result = UseBlockCallback.EVENT.invoker().onUseBlock(player, player.world, hand, player.getStackInHand(hand), hitResult.getBlockPos(), hitResult);
+	private void beforePlayerInteractBlock(ClientPlayerEntity player, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) {
+		ActionResult result = UseBlockEvents.BEFORE.invoker().beforeUseBlock(player, player.world, hand, player.getStackInHand(hand), hitResult.getBlockPos(), hitResult);
 
 		if (result != ActionResult.PASS) {
 			if (result.isAccepted()) {
@@ -110,6 +115,34 @@ public abstract class ClientPlayerInteractionManagerMixin {
 			}
 
 			cir.setReturnValue(result);
+		}
+	}
+
+	@Inject(method = "interactBlock", at = @At("TAIL"))
+	private void afterPlayerInteractBlock(ClientPlayerEntity player, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) {
+		if (cir.getReturnValue() != ActionResult.FAIL) {
+			UseBlockEvents.AFTER.invoker().afterUseBlock(player, player.world, hand, player.getStackInHand(hand), hitResult.getBlockPos(), hitResult);
+		}
+	}
+
+	@Inject(method = "interactEntityAtLocation", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/hit/EntityHitResult;getPos()Lnet/minecraft/util/math/Vec3d;"), cancellable = true)
+	private void beforePlayerInteractEntity(PlayerEntity player, Entity entity, EntityHitResult hitResult, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
+		ActionResult result = UseEntityEvents.BEFORE.invoker().beforeUseEntity(player, player.world, hand, player.getStackInHand(hand), entity, hitResult);
+
+		if (result != ActionResult.PASS) {
+			if (result.isAccepted()) {
+				Vec3d vec3d = hitResult.getPos().subtract(entity.getPos());
+				this.networkHandler.sendPacket(PlayerInteractEntityC2SPacket.interactAt(entity, player.isSneaking(), hand, vec3d));
+			}
+
+			cir.setReturnValue(result);
+		}
+	}
+
+	@Inject(method = "interactEntityAtLocation", at = @At("TAIL"))
+	private void afterPlayerInteractEntity(PlayerEntity player, Entity entity, EntityHitResult hitResult, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
+		if (cir.getReturnValue() != ActionResult.FAIL) {
+			UseEntityEvents.AFTER.invoker().afterUseEntity(player, player.world, hand, player.getStackInHand(hand), entity, hitResult);
 		}
 	}
 
@@ -137,33 +170,19 @@ public abstract class ClientPlayerInteractionManagerMixin {
 		}
 	}
 
-	@Inject(method = "interactEntityAtLocation", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/hit/EntityHitResult;getPos()Lnet/minecraft/util/math/Vec3d;"), cancellable = true)
-	private void onPlayerInteractEntity(PlayerEntity player, Entity entity, EntityHitResult hitResult, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
-		ActionResult result = UseEntityCallback.EVENT.invoker().onUseEntity(player, player.world, hand, player.getStackInHand(hand), entity, hitResult);
-
-		if (result != ActionResult.PASS) {
-			if (result.isAccepted()) {
-				Vec3d vec3d = hitResult.getPos().subtract(entity.getPos());
-				this.networkHandler.sendPacket(PlayerInteractEntityC2SPacket.interactAt(entity, player.isSneaking(), hand, vec3d));
-			}
-
-			cir.setReturnValue(result);
-		}
-	}
-
 	@Inject(method = "breakBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;onBreak(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/entity/player/PlayerEntity;)V"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
 	private void onPlayerBreakBlock(BlockPos pos, CallbackInfoReturnable<Boolean> cir, World world, BlockState state) {
 		BlockEntity blockEntity = world.getBlockEntity(pos);
-		boolean result = BreakBlockEvents.BEFORE.invoker().beforePlayerBreakBlock(this.client.player, world, this.client.player.getMainHandStack(), pos, state, blockEntity);
+		boolean result = BreakBlockEvents.BEFORE.invoker().beforePlayerBreaksBlock(this.client.player, world, this.client.player.getMainHandStack(), pos, state, blockEntity);
 
 		if (!result) {
-			BreakBlockEvents.CANCELED.invoker().cancelPlayerBreakBlock(this.client.player, world, this.client.player.getMainHandStack(), pos, state, blockEntity);
+			BreakBlockEvents.CANCELED.invoker().onCancelPlayerBreaksBlock(this.client.player, world, this.client.player.getMainHandStack(), pos, state, blockEntity);
 			cir.setReturnValue(false);
 		}
 	}
 
 	@Inject(method = "breakBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;onBroken(Lnet/minecraft/world/WorldAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V"), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void afterPlayerBreakBlock(BlockPos pos, CallbackInfoReturnable<Boolean> cir, World world, BlockState state) {
-		BreakBlockEvents.AFTER.invoker().afterPlayerBreakBlock(this.client.player, world, this.client.player.getMainHandStack(), pos, state, world.getBlockEntity(pos));
+		BreakBlockEvents.AFTER.invoker().afterPlayerBreaksBlock(this.client.player, world, this.client.player.getMainHandStack(), pos, state, world.getBlockEntity(pos));
 	}
 }

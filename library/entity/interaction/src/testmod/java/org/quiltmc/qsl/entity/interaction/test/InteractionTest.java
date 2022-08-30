@@ -28,9 +28,9 @@ import net.minecraft.util.ActionResult;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.entity.interaction.api.LivingEntityAttackEvents;
-import org.quiltmc.qsl.entity.interaction.api.player.AttackEntityCallback;
+import org.quiltmc.qsl.entity.interaction.api.player.AttackEntityEvents;
 import org.quiltmc.qsl.entity.interaction.api.player.BreakBlockEvents;
-import org.quiltmc.qsl.entity.interaction.api.player.UseEntityCallback;
+import org.quiltmc.qsl.entity.interaction.api.player.UseEntityEvents;
 import org.quiltmc.qsl.entity.interaction.api.player.UseItemEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +41,7 @@ public class InteractionTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		AttackEntityCallback.EVENT.register((player, world, stack, entity) -> {
+		AttackEntityEvents.BEFORE.register((player, world, stack, entity) -> {
 			if (stack.isOf(Items.DIAMOND_SWORD)) {
 				return ActionResult.FAIL;
 			}
@@ -76,7 +76,7 @@ public class InteractionTest implements ModInitializer {
 			}
 		});
 
-		UseEntityCallback.EVENT.register((player, world, hand, stack, entity, hitResult) -> {
+		UseEntityEvents.BEFORE.register((player, world, hand, stack, entity, hitResult) -> {
 			if (entity instanceof CreeperEntity) {
 				if (world instanceof ServerWorld) {
 					System.out.println("creeper " + world);

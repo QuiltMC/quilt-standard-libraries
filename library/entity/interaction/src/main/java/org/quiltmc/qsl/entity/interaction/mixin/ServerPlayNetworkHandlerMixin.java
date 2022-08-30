@@ -24,7 +24,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Vec3d;
-import org.quiltmc.qsl.entity.interaction.api.player.UseEntityCallback;
+import org.quiltmc.qsl.entity.interaction.api.player.UseEntityEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -41,11 +41,18 @@ public abstract class ServerPlayNetworkHandlerMixin implements PlayerInteractEnt
 	public Entity field_28962;
 
 	@Inject(method = "interactAt(Lnet/minecraft/util/Hand;Lnet/minecraft/util/math/Vec3d;)V", at = @At("HEAD"), cancellable = true)
-	private void onPlayerInteractEntity(Hand hand, Vec3d hitPosition, CallbackInfo ci) {
+	private void beforePlayerInteractEntity(Hand hand, Vec3d hitPosition, CallbackInfo ci) {
 		EntityHitResult hitResult = new EntityHitResult(field_28962, hitPosition.add(field_28962.getPos()));
 
-		ActionResult result = UseEntityCallback.EVENT.invoker().onUseEntity(field_28963.player, field_28963.player.world, hand, field_28963.player.getStackInHand(hand), field_28962, hitResult);
+		ActionResult result = UseEntityEvents.BEFORE.invoker().beforeUseEntity(field_28963.player, field_28963.player.world, hand, field_28963.player.getStackInHand(hand), field_28962, hitResult);
 
 		if (result != ActionResult.PASS) ci.cancel();
+	}
+
+	@Inject(method = "interactAt(Lnet/minecraft/util/Hand;Lnet/minecraft/util/math/Vec3d;)V", at = @At("TAIL"))
+	private void afterPlayerInteractEntity(Hand hand, Vec3d hitPosition, CallbackInfo ci) {
+		EntityHitResult hitResult = new EntityHitResult(field_28962, hitPosition.add(field_28962.getPos()));
+
+		UseEntityEvents.AFTER.invoker().afterUseEntity(field_28963.player, field_28963.player.world, hand, field_28963.player.getStackInHand(hand), field_28962, hitResult);
 	}
 }

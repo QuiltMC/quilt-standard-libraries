@@ -33,9 +33,9 @@ import javax.annotation.Nullable;
 public class BreakBlockEvents {
 
 	/**
-	 * Invokes prior to the player breaking a block. It is invoked
-	 *     on both the client and server, but the client end result
-	 *     will be synced with the server.
+	 * A callback that is invoked <strong>before</strong> the {@link PlayerEntity} breaks a block.
+	 *     It is invoked on both the client and server, but the client end result will
+	 *     be synced with the server.
 	 * <p>
 	 * This event can be canceled by returning {@code false}. Returning {@code true}
 	 *     passes to the next listener. Implementations should not assume the action
@@ -48,8 +48,8 @@ public class BreakBlockEvents {
 	 */
 	public static final Event<Before> BEFORE = Event.create(Before.class,
 			callbacks -> (player, world, stack, pos, state, blockEntity) -> {
-				for (Before callback : callbacks) {
-					boolean result = callback.beforePlayerBreakBlock(player, world, stack, pos, state, blockEntity);
+				for (var callback : callbacks) {
+					boolean result = callback.beforePlayerBreaksBlock(player, world, stack, pos, state, blockEntity);
 
 					if (!result) return false;
 				}
@@ -57,68 +57,68 @@ public class BreakBlockEvents {
 			});
 
 	/**
-	 * Invoked after a block is broken.
+	 * A callback that is invoked <strong>after</strong> a block is broken by a {@link PlayerEntity}.
 	 */
 	public static final Event<After> AFTER = Event.create(After.class,
 			callbacks -> (player, world, stack, pos, state, blockEntity) -> {
-				for (After callback : callbacks) {
-					callback.afterPlayerBreakBlock(player, world, stack, pos, state, blockEntity);
+				for (var callback : callbacks) {
+					callback.afterPlayerBreaksBlock(player, world, stack, pos, state, blockEntity);
 				}
 			});
 
 	/**
-	 * Invoked if the block breaking event is canceled.
+	 * A callback that is invoked if the block breaking event is canceled.
 	 */
-	public static final Event<Cancel> CANCELED = Event.create(Cancel.class,
+	public static final Event<Canceled> CANCELED = Event.create(Canceled.class,
 			callbacks -> (player, world, stack, pos, state, blockEntity) -> {
-				for (Cancel callback : callbacks) {
-					callback.cancelPlayerBreakBlock(player, world, stack, pos, state, blockEntity);
+				for (var callback : callbacks) {
+					callback.onCancelPlayerBreaksBlock(player, world, stack, pos, state, blockEntity);
 				}
 			});
 
 	@FunctionalInterface
 	public interface Before {
 		/**
-		 * Invoked before a block is broken by a player and allows canceling of the action.
+		 * Invoked before a block is broken by a {@link PlayerEntity} and allows cancellation of the action.
 		 * <p>
-		 * Implementations should not assume the block break has succeeded or failed.
+		 * Implementations should not assume the event has completed.
 		 *
-		 * @param player the player breaking the block
-		 * @param world the world the block in broken in
-		 * @param pos the position of the block
-		 * @param state the block state <strong>before</strong> the block is broken
-		 * @param blockEntity the block entity <strong>before</strong> the block is broken, can be {@code null}
+		 * @param player the {@link PlayerEntity} breaking the block
+		 * @param world the {@link World} the block in broken in
+		 * @param pos the {@link BlockPos} of the block
+		 * @param state the {@link BlockState} <strong>before</strong> the block is broken
+		 * @param blockEntity the {@link BlockEntity} <strong>before</strong> the block is broken, can be {@code null}
 		 * @return {@code false} to cancel the event and the block breaking action,
-		 * otherwise {@code true} to pass to the next listener
+		 *     otherwise {@code true} to pass to the next listener
 		 */
-		boolean beforePlayerBreakBlock(PlayerEntity player, World world, ItemStack stack, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity);
+		boolean beforePlayerBreaksBlock(PlayerEntity player, World world, ItemStack stack, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity);
 	}
 
 	@FunctionalInterface
 	public interface After {
 		/**
-		 * Invoked after a block has been broken by a player.
+		 * Invoked after a block has been broken by a {@link PlayerEntity}.
 		 *
-		 * @param player the player breaking the block
-		 * @param world the world the block in broken in
-		 * @param pos the position of the block
-		 * @param state the block state <strong>before</strong> the block is broken
-		 * @param blockEntity the block entity <strong>before</strong> the block is broken, can be {@code null}
+		 * @param player the {@link PlayerEntity} breaking the block
+		 * @param world the {@link World} the block in broken in
+		 * @param pos the {@link BlockPos} of the block
+		 * @param state the {@link BlockState} <strong>before</strong> the block is broken
+		 * @param blockEntity the {@link BlockEntity} <strong>before</strong> the block is broken, can be {@code null}
 		 */
-		void afterPlayerBreakBlock(PlayerEntity player, World world, ItemStack stack, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity);
+		void afterPlayerBreaksBlock(PlayerEntity player, World world, ItemStack stack, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity);
 	}
 
 	@FunctionalInterface
-	public interface Cancel {
+	public interface Canceled {
 		/**
 		 * Invoked if the block breaking event has been canceled.
 		 *
-		 * @param player the player breaking the block
-		 * @param world the world the block in broken in
-		 * @param pos the position of the block
-		 * @param state the block state <strong>before</strong> the block is broken
-		 * @param blockEntity the block entity <strong>before</strong> the block is broken, can be {@code null}
+		 * @param player the {@link PlayerEntity} breaking the block
+		 * @param world the {@link World} the block in broken in
+		 * @param pos the {@link BlockPos} of the block
+		 * @param state the {@link BlockState} <strong>before</strong> the block is broken
+		 * @param blockEntity the {@link BlockEntity} <strong>before</strong> the block is broken, can be {@code null}
 		 */
-		void cancelPlayerBreakBlock(PlayerEntity player, World world, ItemStack stack, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity);
+		void onCancelPlayerBreaksBlock(PlayerEntity player, World world, ItemStack stack, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity);
 	}
 }

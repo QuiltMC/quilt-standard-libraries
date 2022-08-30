@@ -17,19 +17,23 @@
 
 package org.quiltmc.qsl.entity.interaction.api.player;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.world.World;
 import org.quiltmc.qsl.base.api.event.Event;
 
-public class UseItemEvents {
+import javax.annotation.Nullable;
+
+public class UseEntityEvents {
 
 	/**
-	 * A callback that is invoked <strong>before</strong> a {@link PlayerEntity} right-clicks with an item.
+	 * A callback that is invoked <strong>before</strong> a {@link PlayerEntity} right-clicks an {@link Entity}.
 	 * <p>
-	 * Implementations should not assume the action has been completed.
+	 * Implementations should not assume the action was completed.
 	 * <p>
 	 * Upon return:
 	 * <ul>
@@ -40,9 +44,9 @@ public class UseItemEvents {
 	 * </ul>
 	 */
 	public static final Event<Before> BEFORE = Event.create(Before.class,
-			callbacks -> (player, world, hand, stack) -> {
+			callbacks -> (player, world, hand, stack, entity, hitResult) -> {
 				for (var callback : callbacks) {
-					ActionResult result = callback.beforeUseItem(player, world, hand, stack);
+					ActionResult result = callback.beforeUseEntity(player, world, hand, stack, entity, hitResult);
 
 					if (result != ActionResult.PASS) return result;
 				}
@@ -50,40 +54,44 @@ public class UseItemEvents {
 			});
 
 	/**
-	 * A callback that is invoked <strong>after</strong> a {@link PlayerEntity} right-clicks with an item.
+	 * A callback that is invoked <strong>after</strong> a {@link PlayerEntity} right-clicks an {@link Entity}.
 	 */
 	public static final Event<After> AFTER = Event.create(After.class,
-			callbacks -> (player, world, hand, stack) -> {
+			callbacks -> (player, world, hand, stack, entity, hitResult) -> {
 				for (var callback : callbacks) {
-					callback.afterUseItem(player, world, hand, stack);
+					callback.afterUseEntity(player, world, hand, stack, entity, hitResult);
 				}
 			});
 
-	@FunctionalInterface
 	public interface Before {
 		/**
-		 * Invoked <strong>before</strong> a {@link PlayerEntity} right-clicks with an item.
+		 * Invoked <strong>before</strong> a player uses (right-clicks) an entity.
 		 *
 		 * @param player the interacting {@link PlayerEntity}
-		 * @param world  the {@link World} the event occurs in
-		 * @param hand   the {@link Hand} used
+		 * @param world the {@link World} the event occurs in
+		 * @param hand the {@link Hand} used
+		 * @param stack the {@link ItemStack} used by the player
+		 * @param entity the right-clicked {@link Entity}
+		 * @param hitResult the {@link EntityHitResult} of the interaction
 		 * @return {@link ActionResult#SUCCESS}/{@link ActionResult#CONSUME}/{@link ActionResult#CONSUME_PARTIAL}
 		 *     to cancel processing and send a packet to the server,
 		 *     {@link ActionResult#PASS} to fall back to further processing,
 		 *     {@link ActionResult#FAIL} to cancel further processing.
 		 */
-		ActionResult beforeUseItem(PlayerEntity player, World world, Hand hand, ItemStack stack);
+		ActionResult beforeUseEntity(PlayerEntity player, World world, Hand hand, ItemStack stack, Entity entity, @Nullable EntityHitResult hitResult);
 	}
 
-	@FunctionalInterface
 	public interface After {
 		/**
-		 * Invoked <strong>after</strong> a {@link PlayerEntity} right-clicks with an item.
+		 * Invoked <strong>before</strong> a player uses (right-clicks) an entity.
 		 *
 		 * @param player the interacting {@link PlayerEntity}
-		 * @param world  the {@link World} the event occurs in
-		 * @param hand   the {@link Hand} used
+		 * @param world the {@link World} the event occurs in
+		 * @param hand the {@link Hand} used
+		 * @param stack the {@link ItemStack} used by the player
+		 * @param entity the right-clicked {@link Entity}
+		 * @param hitResult the {@link EntityHitResult} of the interaction
 		 */
-		void afterUseItem(PlayerEntity player, World world, Hand hand, ItemStack stack);
+		void afterUseEntity(PlayerEntity player, World world, Hand hand, ItemStack stack, Entity entity, @Nullable EntityHitResult hitResult);
 	}
 }

@@ -27,17 +27,17 @@ import org.quiltmc.qsl.base.api.event.Event;
 public class LivingEntityAttackEvents {
 
 	/**
-	 * This event is invoked when a {@link LivingEntity} attacks another
+	 * A callback that is invoked when a {@link LivingEntity} attacks another
 	 *     <strong>before</strong> the damage is dealt.
 	 * <p>
 	 * This event is cancellable by calling {@link DamageContext#cancel()}.
 	 * <p>
 	 * Implementations should not assume the hit will go through. Ideally, this
-	 * event is used for conditionally cancelling or altering the damage value.
+	 *     event is used for conditionally cancelling or altering the damage value.
 	 */
 	public static final Event<Before> BEFORE = Event.create(Before.class,
 			callbacks -> context -> {
-				for (Before callback : callbacks) {
+				for (var callback : callbacks) {
 					callback.beforeDamage(context);
 
 					if (context.isCanceled()) return;
@@ -45,12 +45,12 @@ public class LivingEntityAttackEvents {
 			});
 
 	/**
-	 * This event is invoked when a {@link LivingEntity} attacks another
+	 * A callback that is invoked when a {@link LivingEntity} attacks another
 	 *     <strong>after</strong> the damage is dealt.
 	 */
 	public static final Event<After> AFTER = Event.create(After.class,
 			callbacks -> (attacker, stack, target, source, damage) -> {
-				for (After callback : callbacks) {
+				for (var callback : callbacks) {
 					callback.afterDamage(attacker, stack, target, source, damage);
 				}
 			});

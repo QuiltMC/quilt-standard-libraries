@@ -35,19 +35,18 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.quiltmc.qsl.entity.interaction.api.player.AttackBlockCallback;
 import org.quiltmc.qsl.entity.interaction.api.player.BreakBlockEvents;
-import org.quiltmc.qsl.entity.interaction.api.player.UseBlockCallback;
+import org.quiltmc.qsl.entity.interaction.api.player.UseBlockEvents;
 import org.quiltmc.qsl.entity.interaction.api.player.UseItemEvents;
-import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-@Debug(export = true)
 @Mixin(ServerPlayerInteractionManager.class)
 public class ServerPlayerInteractionManagerMixin {
 
@@ -65,16 +64,25 @@ public class ServerPlayerInteractionManagerMixin {
 		if (result != ActionResult.PASS) cir.setReturnValue(result);
 	}
 
-	@Inject(method = "interactItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/TypedActionResult;getValue()Ljava/lang/Object;"))
+	@Inject(method = "interactItem", at = @At(value = "RETURN", target = "Lnet/minecraft/util/TypedActionResult;getValue()Ljava/lang/Object;"), slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/util/TypedActionResult;getValue()Ljava/lang/Object;")))
 	private void afterPlayerInteractItem(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
-		UseItemEvents.AFTER.invoker().afterUseItem(player, world, hand, stack);
+		if (cir.getReturnValue() != ActionResult.FAIL) {
+			UseItemEvents.AFTER.invoker().afterUseItem(player, world, hand, stack);
+		}
 	}
 
 	@Inject(method = "interactBlock", at = @At("HEAD"), cancellable = true)
-	private void onPlayerInteractBlock(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) {
-		ActionResult result = UseBlockCallback.EVENT.invoker().onUseBlock(player, world, hand, player.getStackInHand(hand), hitResult.getBlockPos(), hitResult);
+	private void beforePlayerInteractBlock(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) {
+		ActionResult result = UseBlockEvents.BEFORE.invoker().beforeUseBlock(player, world, hand, stack, hitResult.getBlockPos(), hitResult);
 
 		if (result != ActionResult.PASS) cir.setReturnValue(result);
+	}
+
+	@Inject(method = "interactBlock", at = @At("RETURN"))
+	private void afterPlayerInteractBlock(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) {
+		if (cir.getReturnValue() != ActionResult.FAIL) {
+			UseBlockEvents.AFTER.invoker().afterUseBlock(player, world, hand, stack, hitResult.getBlockPos(), hitResult);
+		}
 	}
 
 	@Inject(method = "processBlockBreakingAction", at = @At("HEAD"), cancellable = true)
@@ -100,16 +108,16 @@ public class ServerPlayerInteractionManagerMixin {
 
 	@Inject(method = "tryBreakBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;onBreak(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/entity/player/PlayerEntity;)V"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
 	private void onPlayerBreakBlock(BlockPos pos, CallbackInfoReturnable<Boolean> cir, BlockState state, BlockEntity blockEntity) {
-		boolean result = BreakBlockEvents.BEFORE.invoker().beforePlayerBreakBlock(this.player, this.world, this.player.getMainHandStack(), pos, state, blockEntity);
+		boolean result = BreakBlockEvents.BEFORE.invoker().beforePlayerBreaksBlock(this.player, this.world, this.player.getMainHandStack(), pos, state, blockEntity);
 
 		if (!result) {
-			BreakBlockEvents.CANCELED.invoker().cancelPlayerBreakBlock(this.player, this.world, this.player.getMainHandStack(), pos, state, blockEntity);
+			BreakBlockEvents.CANCELED.invoker().onCancelPlayerBreaksBlock(this.player, this.world, this.player.getMainHandStack(), pos, state, blockEntity);
 			cir.setReturnValue(false);
 		}
 	}
 
 	@Inject(method = "tryBreakBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;onBroken(Lnet/minecraft/world/WorldAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V"), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void afterPlayerBreakBlock(BlockPos pos, CallbackInfoReturnable<Boolean> cir, BlockState state, BlockEntity blockEntity) {
-		BreakBlockEvents.AFTER.invoker().afterPlayerBreakBlock(this.player, this.world, this.player.getMainHandStack(), pos, state, blockEntity);
+		BreakBlockEvents.AFTER.invoker().afterPlayerBreaksBlock(this.player, this.world, this.player.getMainHandStack(), pos, state, blockEntity);
 	}
 }

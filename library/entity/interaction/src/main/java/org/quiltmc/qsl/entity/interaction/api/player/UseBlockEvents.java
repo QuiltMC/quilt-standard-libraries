@@ -21,13 +21,18 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.quiltmc.qsl.base.api.event.Event;
 
-public class UseItemEvents {
+/**
+ * Contains events related to a Player right-clicking a block.
+ */
+public class UseBlockEvents {
 
 	/**
-	 * A callback that is invoked <strong>before</strong> a {@link PlayerEntity} right-clicks with an item.
+	 * A callback that is invoked <strong>before</strong> a {@link PlayerEntity} right-clicks a block.
 	 * <p>
 	 * Implementations should not assume the action has been completed.
 	 * <p>
@@ -40,9 +45,9 @@ public class UseItemEvents {
 	 * </ul>
 	 */
 	public static final Event<Before> BEFORE = Event.create(Before.class,
-			callbacks -> (player, world, hand, stack) -> {
+			callbacks -> (player, world, hand, stack, pos, hitResult) -> {
 				for (var callback : callbacks) {
-					ActionResult result = callback.beforeUseItem(player, world, hand, stack);
+					ActionResult result = callback.beforeUseBlock(player, world, hand, stack, pos, hitResult);
 
 					if (result != ActionResult.PASS) return result;
 				}
@@ -50,40 +55,42 @@ public class UseItemEvents {
 			});
 
 	/**
-	 * A callback that is invoked <strong>after</strong> a {@link PlayerEntity} right-clicks with an item.
+	 * Invoked <strong>after</strong> a {@link PlayerEntity} right-clicks a block.
 	 */
 	public static final Event<After> AFTER = Event.create(After.class,
-			callbacks -> (player, world, hand, stack) -> {
+			callbacks -> (player, world, hand, stack, pos, hitResult) -> {
 				for (var callback : callbacks) {
-					callback.afterUseItem(player, world, hand, stack);
+					callback.afterUseBlock(player, world, hand, stack, pos, hitResult);
 				}
 			});
 
 	@FunctionalInterface
 	public interface Before {
 		/**
-		 * Invoked <strong>before</strong> a {@link PlayerEntity} right-clicks with an item.
+		 * Invoked <strong>before</strong> a {@link PlayerEntity} right-clicks a block.
 		 *
 		 * @param player the interacting {@link PlayerEntity}
-		 * @param world  the {@link World} the event occurs in
-		 * @param hand   the {@link Hand} used
+		 * @param world the {@link World} the event occurs in
+		 * @param hand the {@link Hand} used
+		 * @param hitResult the {@link BlockHitResult} of the interaction
 		 * @return {@link ActionResult#SUCCESS}/{@link ActionResult#CONSUME}/{@link ActionResult#CONSUME_PARTIAL}
 		 *     to cancel processing and send a packet to the server,
 		 *     {@link ActionResult#PASS} to fall back to further processing,
 		 *     {@link ActionResult#FAIL} to cancel further processing.
 		 */
-		ActionResult beforeUseItem(PlayerEntity player, World world, Hand hand, ItemStack stack);
+		ActionResult beforeUseBlock(PlayerEntity player, World world, Hand hand, ItemStack stack, BlockPos pos, BlockHitResult hitResult);
 	}
 
 	@FunctionalInterface
 	public interface After {
 		/**
-		 * Invoked <strong>after</strong> a {@link PlayerEntity} right-clicks with an item.
+		 * Invoked <strong>after</strong> a {@link PlayerEntity} right-clicks a block.
 		 *
 		 * @param player the interacting {@link PlayerEntity}
-		 * @param world  the {@link World} the event occurs in
-		 * @param hand   the {@link Hand} used
+		 * @param world the {@link World} the event occurs in
+		 * @param hand the {@link Hand} used
+		 * @param hitResult the {@link BlockHitResult} of the interaction
 		 */
-		void afterUseItem(PlayerEntity player, World world, Hand hand, ItemStack stack);
+		void afterUseBlock(PlayerEntity player, World world, Hand hand, ItemStack stack, BlockPos pos, BlockHitResult hitResult);
 	}
 }
