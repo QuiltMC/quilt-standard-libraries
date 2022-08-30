@@ -1,0 +1,22 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Item Extension API"
+	moduleName = "item_extension"
+	id = "quilt_item_extension"
+	description = "An API for extending various vanilla items and providing relevant events for such items."
+	library = "item"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+		}
+	}
+	injectedInterface("net/minecraft/class_1753") {
+		values = ["org/quiltmc/qsl/item/extension/api/bow/BowExtensions"]
+	}
+	injectedInterface("net/minecraft/class_1764") {
+		values = ["org/quiltmc/qsl/item/extension/api/crossbow/CrossbowExtensions"]
+	}
+}
