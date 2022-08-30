@@ -3,12 +3,14 @@ package qsl.internal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Version constants used across the convention build scripts.
  * <p>
  * To use inside of convention build scripts, simply import this class and refer to the public static final fields.
  */
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public final class Versions {
 	/*
 	 * These must be in a Java class file due to issues with keeping this data in the groovy source set, since the
@@ -36,17 +38,29 @@ public final class Versions {
 	/**
 	 * The target Quilt Mappings build.
 	 */
-	public static final int MAPPINGS_BUILD = 3;
+	public static final int MAPPINGS_BUILD = 10;
 
 	/**
 	 * The version of Quilt Loader to use.
 	 */
-	public static final String LOADER_VERSION = "0.17.3";
+	public static final String LOADER_VERSION = "0.17.4";
 
 	/**
 	 * The target Java version.
 	 */
 	public static final int JAVA_VERSION = 17; // Minecraft is Java 17
+
+	//region 3rd-parties libraries/mods to test
+	/**
+	 * The version of Databreaker to use in the no-op DFU testmod.
+	 */
+	public static Optional<String> DATABREAKER_VERSION = Optional.empty();//of("0.2.10");
+
+	/**
+	 * The version of LazyDFU to use in the DFU testmods.
+	 */
+	public static Optional<String> LAZYDFU_VERSION = Optional.empty();//of("0.1.3");
+	//endregion
 
 	private Versions() {
 	}
