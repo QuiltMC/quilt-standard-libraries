@@ -1,0 +1,22 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Status Effects API"
+	moduleName = "status_effects"
+	id = "quilt_status_effects"
+	description = "Provides extensions for dealing with status effects."
+	library = "entity"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+		}
+	}
+	injectedInterface("net/minecraft/class_1309") {
+		values = ["org/quiltmc/qsl/entity/effect/api/QuiltLivingEntityExtensions"]
+	}
+	injectedInterface("net/minecraft/class_1291") {
+		values = ["org/quiltmc/qsl/entity/effect/api/QuiltStatusEffectExtensions"]
+	}
+}
