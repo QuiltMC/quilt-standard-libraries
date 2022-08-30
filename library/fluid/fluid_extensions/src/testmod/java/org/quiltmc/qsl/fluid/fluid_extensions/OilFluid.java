@@ -32,8 +32,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.quiltmc.qsl.fluid.api.QuiltDirectionalFluid;
 
-import javax.annotation.Nullable;
-
 public abstract class OilFluid extends QuiltDirectionalFluid {
 
 	@Override
@@ -110,7 +108,6 @@ public abstract class OilFluid extends QuiltDirectionalFluid {
 		return horizVisc;
 	}
 
-	@Nullable
 	public ParticleEffect getParticle() {
 		return ParticleTypes.DRIPPING_HONEY;
 	}
