@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.registry.attachment.impl.reloader;
 
-import static org.quiltmc.qsl.registry.attachment.impl.reloader.RegistryEntryAttachmentReloader.LOGGER;
-
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +34,8 @@ import net.minecraft.util.JsonHelper;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
+
+import static org.quiltmc.qsl.registry.attachment.impl.reloader.RegistryEntryAttachmentReloader.LOGGER;
 
 final class AttachmentDictionary<R, V> {
 	private final Registry<R> registry;
@@ -79,13 +79,13 @@ final class AttachmentDictionary<R, V> {
 				values = obj.get("values");
 
 				if (values == null) {
-					throw new JsonSyntaxException("Missing values, expected to find a JsonArray or JsonObject");
+					throw new JsonSyntaxException("Missing values, expected to find an array or object");
 				} else if (!values.isJsonArray() && !values.isJsonObject()) {
-					throw new JsonSyntaxException("Expected values to be a JsonArray or JsonObject," +
-							"was " + JsonHelper.getType(values));
+					throw new JsonSyntaxException("Expected values to be an array or object, was "
+							+ JsonHelper.getType(values));
 				}
 			} catch (JsonSyntaxException e) {
-				LOGGER.error("Invalid JSON file " + resourceId + ", ignoring", e);
+				LOGGER.error("Invalid JSON file '" + resourceId + "', ignoring", e);
 				return;
 			}
 
@@ -95,28 +95,28 @@ final class AttachmentDictionary<R, V> {
 			}
 
 			if (values.isJsonArray()) {
-				this.handleArray(resourceId, resource, values.getAsJsonArray());
+				this.handleArray(resourceId, values.getAsJsonArray());
 			} else if (values.isJsonObject()) {
-				this.handleObject(resourceId, resource, values.getAsJsonObject());
+				this.handleObject(resourceId, values.getAsJsonObject());
 			}
 		} catch (Exception e) {
-			LOGGER.error("Exception occurred while parsing " + resourceId + "!", e);
+			LOGGER.error("Exception occurred while parsing '" + resourceId + "'!", e);
 		}
 	}
 
-	private void handleArray(Identifier resourceId, Resource resource, JsonArray values) {
+	private void handleArray(Identifier resourceId, JsonArray values) {
 		for (int i = 0; i < values.size(); i++) {
 			JsonElement entry = values.get(i);
 
 			if (!entry.isJsonObject()) {
-				LOGGER.error("Invalid element at index {} in values of {}: expected a JsonObject, was {}",
+				LOGGER.error("Invalid element at index {} in values of '{}': expected an object, was {}",
 						i, resourceId, JsonHelper.getType(entry));
 				continue;
 			}
 
 			JsonObject entryO = entry.getAsJsonObject();
 			Identifier id;
-			boolean tagId = false;
+			boolean isTag = false;
 			JsonElement value;
 			boolean required;
 
@@ -126,7 +126,7 @@ final class AttachmentDictionary<R, V> {
 				if (entryO.has("id")) {
 					idStr = JsonHelper.getString(entryO, "id");
 				} else if (entryO.has("tag")) {
-					tagId = true;
+					isTag = true;
 					idStr = JsonHelper.getString(entryO, "tag");
 				} else {
 					throw new JsonSyntaxException("Expected id or tag, got neither");
@@ -134,12 +134,12 @@ final class AttachmentDictionary<R, V> {
 
 				id = new Identifier(idStr);
 			} catch (JsonSyntaxException e) {
-				LOGGER.error("Invalid element at index {} in values of {}: syntax error",
+				LOGGER.error("Invalid element at index {} in values of '{}': syntax error",
 						i, resourceId);
 				LOGGER.error("", e);
 				continue;
 			} catch (InvalidIdentifierException e) {
-				LOGGER.error("Invalid element at index {} in values of {}: invalid identifier",
+				LOGGER.error("Invalid element at index {} in values of '{}': invalid identifier",
 						i, resourceId);
 				LOGGER.error("", e);
 				continue;
@@ -151,7 +151,7 @@ final class AttachmentDictionary<R, V> {
 					throw new JsonSyntaxException("Missing value");
 				}
 			} catch (JsonSyntaxException e) {
-				LOGGER.error("Failed to parse value for registry entry {} in values of {}: syntax error",
+				LOGGER.error("Failed to parse value for registry entry {} in values of '{}': syntax error",
 						id, resourceId);
 				LOGGER.error("", e);
 				continue;
@@ -159,80 +159,78 @@ final class AttachmentDictionary<R, V> {
 
 			required = JsonHelper.getBoolean(entryO, "required", true);
 
-			if (!tagId && required && !registry.containsId(id)) {
-				LOGGER.error("Unregistered identifier in values of {}: '{}', ignoring", resourceId, id);
-				continue;
-			}
-
-			Object parsedValue = this.parseValue(resource, id, value);
-			if (parsedValue == null) {
-				continue;
-			}
-
-			if (tagId) {
-				this.putTag(id, parsedValue);
-			} else {
-				this.put(id, parsedValue);
-			}
+			this.handleEntry(resourceId, id, isTag, required, value);
 		}
 	}
 
-	private void handleObject(Identifier resourceId, Resource resource, JsonObject values) {
+	private void handleObject(Identifier resourceId, JsonObject values) {
 		for (Map.Entry<String, JsonElement> entry : values.entrySet()) {
 			Identifier id;
-			boolean tagId = false;
+			boolean isTag = false;
+			boolean required = true;
 
 			try {
 				String idStr = entry.getKey();
 
 				if (idStr.startsWith("#")) {
-					tagId = true;
+					isTag = true;
 					idStr = idStr.substring(1);
+				}
+
+				if (idStr.endsWith("?")) {
+					required = false;
+					idStr = idStr.substring(0, idStr.length() - 1);
 				}
 
 				id = new Identifier(idStr);
 			} catch (InvalidIdentifierException e) {
-				LOGGER.error("Invalid identifier in values of {}: '{}', ignoring",
+				LOGGER.error("Invalid identifier in values of '{}': '{}', ignoring",
 						resourceId, entry.getKey());
 				LOGGER.error("", e);
 				continue;
 			}
 
-			if (!tagId && !registry.containsId(id)) {
-				LOGGER.error("Unregistered identifier in values of {}: '{}', ignoring", resourceId, id);
-				continue;
-			}
-
-			Object parsedValue = this.parseValue(resource, id, entry.getValue());
-			if (parsedValue == null) {
-				continue;
-			}
-
-			if (tagId) {
-				this.putTag(id, parsedValue);
-			} else {
-				this.put(id, parsedValue);
-			}
+			this.handleEntry(resourceId, id, isTag, required, entry.getValue());
 		}
 	}
 
-	private Object parseValue(Resource resource, Identifier id, JsonElement value) {
-		DataResult<?> parsedValue = this.attachment.codec().parse(JsonOps.INSTANCE, value);
-
-		if (parsedValue.result().isEmpty()) {
-			if (parsedValue.error().isPresent()) {
-				LOGGER.error("Failed to parse value for attachment {} of registry entry {}: {}",
-						this.attachment.id(), id, parsedValue.error().get().message());
-			} else {
-				LOGGER.error("Failed to parse value for attachment {} of registry entry {}: unknown error",
-						this.attachment.id(), id);
+	private void handleEntry(Identifier resourceId, Identifier keyId, boolean isTag, boolean required, JsonElement value) {
+		if (isTag) {
+			if (!required) {
+				LOGGER.warn("Tag entry {} in '{}' is redundantly marked as optional (all tag entries are optional)",
+						keyId, resourceId);
 			}
-
-			LOGGER.error("Ignoring attachment value for '{}' in {} since it's invalid", id, resource.getSourceName());
-			return null;
+		} else if (!registry.containsId(keyId)) {
+			if (required) {
+				// log an error
+				// vanilla tags throw but that causes way more breakage
+				LOGGER.error("Unregistered identifier in values of '{}': '{}', ignoring", resourceId, keyId);
+			}
+			// either way, drop the entry
+			return;
 		}
 
-		return parsedValue.result().get();
+		DataResult<?> parseResult = this.attachment.codec().parse(JsonOps.INSTANCE, value);
+
+		if (parseResult.result().isEmpty()) {
+			if (parseResult.error().isPresent()) {
+				LOGGER.error("Failed to parse value for attachment {} of registry entry {}: {}",
+						this.attachment.id(), keyId, parseResult.error().get().message());
+			} else {
+				LOGGER.error("Failed to parse value for attachment {} of registry entry {}: unknown error",
+						this.attachment.id(), keyId);
+			}
+
+			LOGGER.error("Ignoring attachment value for {} in '{}' since it's invalid", keyId, resourceId);
+			return;
+		}
+
+		Object parsedValue = parseResult.result().get();
+		if (isTag) {
+			this.putTag(keyId, parsedValue);
+		} else {
+			this.put(keyId, parsedValue);
+		}
 	}
 
 	public record ValueTarget(Identifier id, Type type) {

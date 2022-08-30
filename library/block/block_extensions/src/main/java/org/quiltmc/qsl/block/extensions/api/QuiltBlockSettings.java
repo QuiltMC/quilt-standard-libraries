@@ -48,7 +48,6 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	protected QuiltBlockSettings(AbstractBlock.Settings settings) {
 		super(((AbstractBlockSettingsAccessor) settings).getMaterial(), ((AbstractBlockSettingsAccessor) settings).getMapColorProvider());
 
-		var thisAccessor = (AbstractBlockSettingsAccessor) this;
 		var otherAccessor = (AbstractBlockSettingsAccessor) settings;
 
 		// region [VanillaCopy] AbstractBlock.Settings#copy(AbstractBlock.Settings)
@@ -56,21 +55,21 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		this.hardness(otherAccessor.getHardness());
 		this.resistance(otherAccessor.getResistance());
 		this.collidable(otherAccessor.getCollidable());
-		thisAccessor.setRandomTicks(otherAccessor.getRandomTicks());
+		this.ticksRandomly(otherAccessor.getRandomTicks());
 		this.luminance(otherAccessor.getLuminance());
-		thisAccessor.setMapColorProvider(otherAccessor.getMapColorProvider());
+		this.mapColorProvider(otherAccessor.getMapColorProvider());
 		this.sounds(otherAccessor.getSoundGroup());
 		this.slipperiness(otherAccessor.getSlipperiness());
 		this.velocityMultiplier(otherAccessor.getVelocityMultiplier());
-		thisAccessor.setDynamicBounds(otherAccessor.getDynamicBounds());
-		thisAccessor.setOpaque(otherAccessor.getOpaque());
-		thisAccessor.setIsAir(otherAccessor.getIsAir());
-		thisAccessor.setToolRequired(otherAccessor.isToolRequired());
+		this.dynamicBounds(otherAccessor.getDynamicBounds());
+		this.opaque(otherAccessor.getOpaque());
+		this.air(otherAccessor.getIsAir());
+		this.requiresTool(otherAccessor.isToolRequired());
 		// endregion
 
 		// also copy other stuff Vanilla doesn't bother with
 		this.jumpVelocityMultiplier(otherAccessor.getJumpVelocityMultiplier());
-		thisAccessor.setLootTableId(otherAccessor.getLootTableId());
+		this.drops(otherAccessor.getLootTableId());
 		this.allowsSpawning(otherAccessor.getAllowsSpawningPredicate());
 		this.solidBlock(otherAccessor.getSolidBlockPredicate());
 		this.suffocates(otherAccessor.getSuffocationPredicate());
@@ -262,6 +261,31 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 
 	public QuiltBlockSettings collidable(boolean collidable) {
 		((AbstractBlockSettingsAccessor) this).setCollidable(collidable);
+		return this;
+	}
+
+	public QuiltBlockSettings opaque(boolean opaque) {
+		((AbstractBlockSettingsAccessor) this).setOpaque(opaque);
+		return this;
+	}
+
+	public QuiltBlockSettings ticksRandomly(boolean ticksRandomly) {
+		((AbstractBlockSettingsAccessor) this).setRandomTicks(ticksRandomly);
+		return this;
+	}
+
+	public QuiltBlockSettings dynamicBounds(boolean dynamicBounds) {
+		((AbstractBlockSettingsAccessor) this).setDynamicBounds(dynamicBounds);
+		return this;
+	}
+
+	public QuiltBlockSettings requiresTool(boolean requiresTool) {
+		((AbstractBlockSettingsAccessor) this).setToolRequired(requiresTool);
+		return this;
+	}
+
+	public QuiltBlockSettings air(boolean isAir) {
+		((AbstractBlockSettingsAccessor) this).setIsAir(isAir);
 		return this;
 	}
 
