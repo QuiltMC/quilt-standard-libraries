@@ -40,7 +40,6 @@ import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 import org.quiltmc.qsl.registry.attachment.impl.ClientSideGuard;
 import org.quiltmc.qsl.registry.attachment.impl.Initializer;
 import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentHolder;
-import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentSync;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 import org.quiltmc.qsl.resource.loader.api.reloader.SimpleResourceReloader;
@@ -138,13 +137,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 
 	@Override
 	public CompletableFuture<Void> apply(LoadedData data, ResourceManager manager, Profiler profiler, Executor executor) {
-		return CompletableFuture.runAsync(() -> {
-			data.apply(profiler);
-			if (this.source == ResourceType.SERVER_DATA) {
-				RegistryEntryAttachmentSync.clearEncodedValuesCache();
-				RegistryEntryAttachmentSync.syncAttachmentsToAllPlayers();
-			}
-		}, executor);
+		return CompletableFuture.runAsync(() -> data.apply(profiler), executor);
 	}
 
 	// "<namespace>:attachments/<path>/<file_name>.json" becomes "<namespace>:<file_name>"

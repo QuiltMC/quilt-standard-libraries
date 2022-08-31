@@ -17,19 +17,17 @@
 package org.quiltmc.qsl.registry.attachment.impl;
 
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.minecraft.resource.ResourceType;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 import org.quiltmc.qsl.registry.attachment.impl.reloader.RegistryEntryAttachmentReloader;
+import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 
 @ApiStatus.Internal
 public final class Initializer implements ModInitializer {
@@ -44,17 +42,15 @@ public final class Initializer implements ModInitializer {
 		return new Identifier(NAMESPACE, path);
 	}
 
-	private static MinecraftServer server;
-
 	@Override
 	public void onInitialize(ModContainer mod) {
 		RegistryEntryAttachmentReloader.register(ResourceType.SERVER_DATA);
 		RegistryEntryAttachmentSync.register();
 
-		ServerLifecycleEvents.READY.register(server1 -> server = server1);
-		ServerLifecycleEvents.STOPPING.register(server1 -> {
-			if (server == server1) {
-				server = null;
+		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, error) -> {
+			if (server != null && error != null) {
+				RegistryEntryAttachmentSync.clearEncodedValuesCache();
+				RegistryEntryAttachmentSync.syncAttachmentsToAllPlayers(server);
 			}
 		});
 
@@ -66,9 +62,5 @@ public final class Initializer implements ModInitializer {
 						ENABLE_DUMP_BUILTIN_COMMAND_PROPERTY);
 			}
 		}
-	}
-
-	public static @Nullable MinecraftServer getServer() {
-		return server;
 	}
 }

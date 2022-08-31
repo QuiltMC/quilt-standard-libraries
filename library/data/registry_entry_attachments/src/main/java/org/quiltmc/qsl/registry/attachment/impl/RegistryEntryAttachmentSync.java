@@ -16,19 +16,13 @@
 
 package org.quiltmc.qsl.registry.attachment.impl;
 
-import static org.quiltmc.qsl.registry.attachment.impl.Initializer.id;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -50,6 +44,8 @@ import org.quiltmc.qsl.networking.api.ServerPlayConnectionEvents;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
+
+import static org.quiltmc.qsl.registry.attachment.impl.Initializer.id;
 
 @ApiStatus.Internal
 public final class RegistryEntryAttachmentSync {
@@ -123,23 +119,7 @@ public final class RegistryEntryAttachmentSync {
 		return bufs;
 	}
 
-	public static void syncAttachmentsToAllPlayers() {
-		var server = Initializer.getServer();
-
-		if (server == null) {
-			return;
-		}
-
-		for (var player : server.getPlayerManager().getPlayerList()) {
-			if (!canSyncToPlay(player)) continue;
-
-			for (var buf : createSyncPackets()) {
-				ServerPlayNetworking.send(player, PACKET_ID, buf);
-			}
-		}
-	}
-
-	private static boolean canSyncToPlay(ServerPlayerEntity player) {
+	private static boolean canSyncToPlayer(ServerPlayerEntity player) {
 		if (MinecraftQuiltLoader.getEnvironmentType() == EnvType.CLIENT) {
 			var clientPlayer = MinecraftClient.getInstance().player;
 
@@ -147,6 +127,18 @@ public final class RegistryEntryAttachmentSync {
 		}
 
 		return true;
+	}
+
+	public static void syncAttachmentsToAllPlayers(@NotNull MinecraftServer server) {
+		for (var player : server.getPlayerManager().getPlayerList()) {
+			if (!canSyncToPlayer(player)) {
+				continue;
+			}
+
+			for (var buf : createSyncPackets()) {
+				ServerPlayNetworking.send(player, PACKET_ID, buf);
+			}
+		}
 	}
 
 	public static void clearEncodedValuesCache() {
