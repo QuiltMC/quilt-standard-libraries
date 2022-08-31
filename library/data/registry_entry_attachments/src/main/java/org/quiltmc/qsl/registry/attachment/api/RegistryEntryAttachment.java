@@ -510,6 +510,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 				attachment = new ComputedDefaultRegistryEntryAttachmentImpl<>(this.registry, this.id, this.valueClass,
 						this.codec, this.side, this.defaultValueProvider);
 			}
+
 			RegistryEntryAttachmentHolder.registerAttachment(this.registry, attachment);
 			return attachment;
 		}

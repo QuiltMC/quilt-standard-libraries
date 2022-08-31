@@ -160,7 +160,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 
 		@SuppressWarnings("unchecked")
 		public void apply(Profiler profiler) {
-			profiler.push(id + "/prepare_attachments");
+			profiler.push(RegistryEntryAttachmentReloader.this.id + "/prepare_attachments");
 
 			for (var entry : Registry.REGISTRIES.getEntries()) {
 				RegistryEntryAttachmentHolder.getData(entry.getValue())
@@ -168,7 +168,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 			}
 
 			for (var entry : this.attachmentMaps.entrySet()) {
-				profiler.swap(id + "/apply_attachment{" + entry.getKey().id() + "}");
+				profiler.swap(RegistryEntryAttachmentReloader.this.id + "/apply_attachment{" + entry.getKey().id() + "}");
 				this.applyOne((RegistryEntryAttachment<Object, Object>) entry.getKey(), (AttachmentDictionary<Object, Object>) entry.getValue());
 			}
 

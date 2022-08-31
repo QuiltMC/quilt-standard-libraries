@@ -57,6 +57,7 @@ public final class ComputedDefaultRegistryEntryAttachmentImpl<R, V> extends Regi
 					COMPUTE_LOGGER.error("Computed invalid value for entry {}: unknown error",
 							this.registry.getId(entry));
 				}
+
 				return null;
 			}
 

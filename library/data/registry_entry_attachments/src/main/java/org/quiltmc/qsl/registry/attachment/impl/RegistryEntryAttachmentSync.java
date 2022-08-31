@@ -16,7 +16,14 @@
 
 package org.quiltmc.qsl.registry.attachment.impl;
 
-import java.util.*;
+import static org.quiltmc.qsl.registry.attachment.impl.Initializer.id;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import net.fabricmc.api.EnvType;
@@ -45,8 +52,6 @@ import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
-import static org.quiltmc.qsl.registry.attachment.impl.Initializer.id;
-
 @ApiStatus.Internal
 public final class RegistryEntryAttachmentSync {
 	/**
@@ -69,11 +74,11 @@ public final class RegistryEntryAttachmentSync {
 
 	private record AttachmentEntry(String path, boolean isTag, NbtElement value) {
 		public void write(PacketByteBuf buf) {
-			buf.writeString(path);
-			buf.writeBoolean(isTag);
+			buf.writeString(this.path);
+			buf.writeBoolean(this.isTag);
 
 			NbtCompound compound = new NbtCompound();
-			compound.put("value", value);
+			compound.put("value", this.value);
 			buf.writeNbt(compound);
 		}
 
@@ -112,6 +117,7 @@ public final class RegistryEntryAttachmentSync {
 				for (AttachmentEntry attachmentEntry : valueMap.entries()) {
 					attachmentEntry.write(buf);
 				}
+
 				bufs.add(buf);
 			}
 		}

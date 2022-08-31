@@ -85,12 +85,14 @@ public final class DumpBuiltinAttachmentsCommand {
 		if (registry == null) {
 			throw UNKNOWN_REGISTRY_EXCEPTION.create(registryId);
 		}
+
 		try {
 			execute0(ctx, registry);
 		} catch (RuntimeException e) {
 			LOGGER.error("Uncaught exception occurred", e);
 			throw UNCAUGHT_EXCEPTION.create();
 		}
+
 		return SINGLE_SUCCESS;
 	}
 
@@ -148,6 +150,7 @@ public final class DumpBuiltinAttachmentsCommand {
 						LOGGER.error("Failed to encode value for attachment #{} of registry entry {}: unknown error",
 								attachment.id(), entryId);
 					}
+
 					throw ENCODE_FAILURE.create();
 				}
 
@@ -164,6 +167,7 @@ public final class DumpBuiltinAttachmentsCommand {
 				if (entryId == null) {
 					throw ILLEGAL_STATE.create();
 				}
+
 				DataResult<JsonElement> encodedValue =
 						attachment.codec().encodeStart(JsonOps.INSTANCE, attachmentEntry.getValue());
 				if (encodedValue.result().isEmpty()) {
@@ -174,6 +178,7 @@ public final class DumpBuiltinAttachmentsCommand {
 						LOGGER.error("Failed to encode value for attachment {} of registry entry {}: unknown error",
 								attachment.id(), entryId);
 					}
+
 					throw ENCODE_FAILURE.create();
 				}
 
@@ -194,8 +199,8 @@ public final class DumpBuiltinAttachmentsCommand {
 			attachmentCount++;
 		}
 
-		ctx.getSource().sendFeedback(Text.literal("Done. Dumped " + attachmentCount + " attachments, " +
-						valueCount + " values."),
+		ctx.getSource().sendFeedback(Text.literal("Done. Dumped " + attachmentCount + " attachments, "
+						+ valueCount + " values."),
 				false);
 	}
 }
