@@ -38,7 +38,6 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
@@ -47,7 +46,6 @@ import net.minecraft.util.registry.Registry;
 import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.PacketSender;
-import org.quiltmc.qsl.networking.api.ServerPlayConnectionEvents;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
@@ -82,6 +80,7 @@ public final class RegistryEntryAttachmentSync {
 			buf.writeNbt(compound);
 		}
 
+		@Environment(EnvType.CLIENT)
 		public static AttachmentEntry read(PacketByteBuf buf) {
 			String path = buf.readString();
 			boolean isTag = buf.readBoolean();
@@ -92,10 +91,6 @@ public final class RegistryEntryAttachmentSync {
 	}
 
 	public static final Map<Identifier, CacheEntry> ENCODED_VALUES_CACHE = new Object2ReferenceOpenHashMap<>();
-
-	public static void register() {
-		ServerPlayConnectionEvents.JOIN.register(RegistryEntryAttachmentSync::syncAttachmentsToPlayer);
-	}
 
 	@Environment(EnvType.CLIENT)
 	public static void registerClient() {
@@ -135,15 +130,17 @@ public final class RegistryEntryAttachmentSync {
 		return true;
 	}
 
-	public static void syncAttachmentsToAllPlayers(@NotNull MinecraftServer server) {
-		for (var player : server.getPlayerManager().getPlayerList()) {
-			if (!canSyncToPlayer(player)) {
-				continue;
-			}
-
+	public static void syncAttachmentsToPlayer(ServerPlayerEntity player) {
+		if (canSyncToPlayer(player)) {
 			for (var buf : createSyncPackets()) {
 				ServerPlayNetworking.send(player, PACKET_ID, buf);
 			}
+		}
+	}
+
+	public static void syncAttachmentsToAllPlayers(@NotNull MinecraftServer server) {
+		for (var player : server.getPlayerManager().getPlayerList()) {
+			syncAttachmentsToPlayer(player);
 		}
 	}
 
@@ -213,12 +210,6 @@ public final class RegistryEntryAttachmentSync {
 		}
 	}
 
-	private static void syncAttachmentsToPlayer(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server) {
-		for (var buf : RegistryEntryAttachmentSync.createSyncPackets()) {
-			sender.sendPacket(RegistryEntryAttachmentSync.PACKET_ID, buf);
-		}
-	}
-
 	@Environment(EnvType.CLIENT)
 	@SuppressWarnings("unchecked")
 	private static void receiveSyncPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
@@ -255,7 +246,7 @@ public final class RegistryEntryAttachmentSync {
 			holder.valueTagTable.row(attachment).clear();
 
 			for (AttachmentEntry attachmentEntry : attachments) {
-				var entryId = new Identifier(namespace, attachmentEntry.path);
+				var entryId = new Identifier(namespace, attachmentEntry.path());
 
 				var registryObject = registry.get(entryId);
 				if (registryObject == null) {
@@ -263,13 +254,13 @@ public final class RegistryEntryAttachmentSync {
 				}
 
 				var parsedValue = attachment.codec()
-						.parse(NbtOps.INSTANCE, attachmentEntry.value)
+						.parse(NbtOps.INSTANCE, attachmentEntry.value())
 						.getOrThrow(false, msg -> {
 							throw new IllegalStateException("Failed to decode value for attachment %s of registry entry %s: %s"
 									.formatted(attachment.id(), entryId, msg));
 						});
 
-				if (attachmentEntry.isTag) {
+				if (attachmentEntry.isTag()) {
 					holder.putValue(attachment, TagKey.of(registry.getKey(), entryId), parsedValue);
 				} else {
 					holder.putValue(attachment, registryObject, parsedValue);

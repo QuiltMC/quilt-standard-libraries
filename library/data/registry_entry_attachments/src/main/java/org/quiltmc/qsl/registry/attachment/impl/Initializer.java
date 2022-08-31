@@ -45,7 +45,6 @@ public final class Initializer implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		RegistryEntryAttachmentReloader.register(ResourceType.SERVER_DATA);
-		RegistryEntryAttachmentSync.register();
 
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, error) -> {
 			if (server != null && error != null) {
