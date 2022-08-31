@@ -57,9 +57,7 @@ public final class QuiltDynamicRegistryBuilder<T> extends QuiltRegistryBuilder<T
 
 		BuiltinRegistries.register((Registry<Registry<Object>>) BuiltinRegistries.REGISTRIES, this.key.getValue(), (Registry<Object>) registry);
 
-		var infos = DynamicRegistryManager.INFOS;
-
-		infos.put(this.key, new DynamicRegistryManager.Info<>(this.key, this.entryCodec, this.networkEntryCodec));
+		DynamicRegistryManager.INFOS.put(this.key, new DynamicRegistryManager.Info<>(this.key, this.entryCodec, this.networkEntryCodec));
 
 		super.onRegistryBuilt(registry);
 	}
