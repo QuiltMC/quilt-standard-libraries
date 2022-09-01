@@ -54,10 +54,11 @@ public final class NetworkCodecBuilder<R> {
 			List<Field<R, ?>> fields,
 			PacketByteBuf.Reader<R> initializer
 	) {
-		return new SimpleNetworkCodec<>(
+		return NetworkCodec.of(
 				(buf, a) -> fields.forEach(field -> field.encodeFrom(buf, a)),
-				initializer
-		).named(codecName(fields));
+				initializer,
+				codecName(fields)
+		);
 	}
 
 	public <B, C> Function<BiFunction<B, C, R>, NetworkCodec<R>> create(
