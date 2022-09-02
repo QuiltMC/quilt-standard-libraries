@@ -23,6 +23,7 @@ import java.util.Set;
 import com.mojang.serialization.Codec;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashBigSet;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.tag.TagKey;
@@ -142,6 +143,17 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 		set.addAll(RegistryEntryAttachmentHolder.getData(this.registry).valueTagTable.row(this).keySet());
 		set.addAll(RegistryEntryAttachmentHolder.getBuiltin(this.registry).valueTagTable.row(this).keySet());
 		return set;
+	}
+
+	@Override
+	public @NotNull Iterator<Entry<R, V>> iterator() {
+		return RegistryEntryAttachmentImpl.this.registry.stream()
+				.map(r -> {
+					V value = RegistryEntryAttachmentImpl.this.getNullable(r);
+					return value == null ? null : new Entry<>(r, value);
+				})
+				.filter(Objects::nonNull)
+				.iterator();
 	}
 
 	@Override

@@ -19,7 +19,7 @@
     "server.MainMixin"
   ],
   "client": [
-    "client.CphqvxqunMixin",
+    "client.IntegratedServerLoaderMixin",
     "client.ClientBuiltinResourcePackProviderMixin",
     "client.CreateWorldScreenMixin",
     "client.EntryListWidgetAccessor",
