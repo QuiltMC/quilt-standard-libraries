@@ -36,6 +36,17 @@ public class QuiltItemSettingsTests implements ModInitializer {
 	public static final CustomItemSetting<String> CUSTOM_DATA_TEST = CustomItemSetting.create(() -> null);
 	public static final String NAMESPACE = "quilt_item_setting_testmod";
 
+	// Static field so we can use it in BrewingRecipeRegistryMixin
+	public static final Item POTION_INGREDIENT_REMAINDER = Registry.register(
+			Registry.ITEM,
+			new Identifier(NAMESPACE, "potion_ingredient_remainder"),
+			new Item(
+					new QuiltItemSettings().group(ItemGroup.MISC).recipeRemainder(
+							(original, recipe) -> new ItemStack(Items.BLAZE_POWDER)
+					)
+			)
+	);
+
 	@Override
 	public void onInitialize(ModContainer mod) {
 		// Registers an item with a custom equipment slot.

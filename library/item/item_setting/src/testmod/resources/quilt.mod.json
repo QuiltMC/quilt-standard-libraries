@@ -20,5 +20,6 @@
       "quilt_loader",
       "quilt_item_setting"
     ]
-  }
+  },
+  "mixin": "quilt_item_setting_testmod.mixins.json"
 }

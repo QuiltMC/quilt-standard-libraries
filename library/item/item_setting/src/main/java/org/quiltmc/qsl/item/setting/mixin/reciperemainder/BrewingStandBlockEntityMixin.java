@@ -17,7 +17,10 @@
 package org.quiltmc.qsl.item.setting.mixin.reciperemainder;
 
 import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLogicHandler;
+
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -30,24 +33,30 @@ import net.minecraft.world.World;
 
 @Mixin(BrewingStandBlockEntity.class)
 public class BrewingStandBlockEntityMixin {
-	@Inject(method = "craft", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"), cancellable = true)
-	private static void applyRecipeRemainder(World world, BlockPos pos, DefaultedList<ItemStack> inventory, CallbackInfo ci) {
-		ItemStack ingredient = inventory.get(3);
+	@Shadow
+	@Final
+	private static int INGREDIENT_SLOT;
 
-		// TODO: test
+	@Inject(method = "craft(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/collection/DefaultedList;)V",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"),
+			cancellable = true
+	)
+	private static void applyRecipeRemainder(World world, BlockPos pos, DefaultedList<ItemStack> inventory, CallbackInfo ci) {
+		ItemStack ingredient = inventory.get(INGREDIENT_SLOT);
+
 		ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(ingredient, null);
 
-		ingredient.decrement(1);
-
-		RecipeRemainderLogicHandler.handleRemainderForNonPlayerCraft(
-				remainder,
-				inventory,
-				3,
-				world,
-				pos
-		);
-
 		if (!remainder.isEmpty()) {
+			ingredient.decrement(1);
+
+			RecipeRemainderLogicHandler.handleRemainderForNonPlayerCraft(
+					remainder,
+					inventory,
+					INGREDIENT_SLOT,
+					world,
+					pos
+			);
+
 			world.syncWorldEvent(1035, pos, 0);
 			ci.cancel();
 		}
