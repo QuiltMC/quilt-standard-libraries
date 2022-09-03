@@ -45,6 +45,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
+import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 import org.quiltmc.qsl.fluid.mixin.EntityMixin;
 
@@ -218,13 +219,13 @@ public interface QuiltFlowableFluidExtensions {
 	}
 
 	/**
-	 * Whether an Entity can swim when quickly double pressing the space bar inside a fluid.
+	 * Whether an Entity can swim in the fluid.
 	 *
 	 * @param state    - The fluidstate of the fluid the entity wants to swim in.
 	 * @param affected - The entity which is in the fluid.
-	 * @return - A boolean representing whether the entity can double tap sprint swim.
+	 * @return - A boolean representing whether the entity can swim in the fluid.
 	 */
-	default boolean enableDoubleTapSpacebarSwimming(FluidState state, Entity affected) {
+	default boolean canSwimInCustomFluid(FluidState state, Entity affected) {
 		return true;
 	}
 
@@ -387,7 +388,7 @@ public interface QuiltFlowableFluidExtensions {
 	 * @return - The SoundEvent which shall be played when falling into it.
 	 */
 
-
+	@Nullable
 	default SoundEvent getSplashSound(Entity splashing, Vec3d splashPos, RandomGenerator random) {
 		return SoundEvents.ENTITY_PLAYER_SPLASH;
 	}
@@ -402,6 +403,7 @@ public interface QuiltFlowableFluidExtensions {
 	 * @see QuiltFlowableFluidExtensions#onSplash
 	 */
 
+	@Nullable
 	default SoundEvent getHighSpeedSplashSound(Entity splashing, Vec3d splashPos, RandomGenerator random) {
 		return SoundEvents.ENTITY_PLAYER_SPLASH_HIGH_SPEED;
 	}
@@ -415,6 +417,7 @@ public interface QuiltFlowableFluidExtensions {
 	 * @return - A ParticleEffect which shall be played when falling into it.
 	 */
 
+	@Nullable
 	default ParticleEffect getSplashParticle(Entity splashing, Vec3d splashPos, RandomGenerator random) {
 		return ParticleTypes.ASH;
 	}
@@ -428,6 +431,7 @@ public interface QuiltFlowableFluidExtensions {
 	 * @return - A ParticleEffect which shall be played when bubbles form.
 	 */
 
+	@Nullable
 	default ParticleEffect getBubbleParticle(Entity splashing, Vec3d splashPos, RandomGenerator random) {
 		return ParticleTypes.BUBBLE;
 	}
@@ -441,6 +445,7 @@ public interface QuiltFlowableFluidExtensions {
 	 * @return - A GameEvent when the entity falls into the fluid.
 	 */
 
+	@Nullable
 	default GameEvent getSplashGameEvent(Entity splashing, Vec3d splashPos, RandomGenerator random) {
 		return GameEvent.SPLASH;
 	}

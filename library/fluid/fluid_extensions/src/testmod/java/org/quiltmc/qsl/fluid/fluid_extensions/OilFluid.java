@@ -30,13 +30,14 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.fluid.api.QuiltDirectionalFluid;
 
 public abstract class OilFluid extends QuiltDirectionalFluid {
 
 	@Override
 	public Direction getFlowDirection() {
-		return Direction.UP;
+		return Direction.WEST;
 	}
 
 	@Override
@@ -107,7 +108,7 @@ public abstract class OilFluid extends QuiltDirectionalFluid {
 		}
 		return horizVisc;
 	}
-
+	@Nullable
 	public ParticleEffect getParticle() {
 		return ParticleTypes.DRIPPING_HONEY;
 	}

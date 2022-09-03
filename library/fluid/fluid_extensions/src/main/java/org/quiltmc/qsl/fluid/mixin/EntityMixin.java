@@ -26,6 +26,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.fluid.api.QuiltFlowableFluidExtensions;
 import org.quiltmc.qsl.fluid.impl.CustomFluidInteracting;
 import org.spongepowered.asm.mixin.Final;
@@ -35,6 +36,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 
 @Mixin(Entity.class)
@@ -61,6 +64,7 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 	public abstract boolean equals(Object o);
 
 	@Shadow
+	@Nullable
 	public abstract Entity getVehicle();
 
 	@Shadow
@@ -99,12 +103,6 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 	@Shadow
 	public abstract void setOnFireFromLava();
 
-	@Inject(method = "baseTick", at = @At("TAIL"))
-	public void baseTick(CallbackInfo ci) {
-		this.checkCustomFluidState();
-		this.updateSubmergedInCustomFluidState();
-	}
-
 	@Override
 	public boolean quilt$isInCustomFluid() {
 		return this.quilt$inCustomFluid;
@@ -114,11 +112,13 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 	public boolean quilt$isSubmergedInCustomFluid() {
 		return this.quilt$submergedInCustomFluid && this.quilt$isInCustomFluid();
 	}
+	@Inject(method = "checkWaterState", at = @At("TAIL"),locals = LocalCapture.CAPTURE_FAILHARD)
+	void checkCustomFluidState(CallbackInfo ci) {
 
-	void checkCustomFluidState() {
 		FluidState fluidState = this.world.getFluidState(this.getBlockPos());
+
 		/*
-		 * Check if Player is completly submerged in the custom fluid.
+		 * Check if Player is completely submerged in the custom fluid.
 		 */
 		this.quilt$submergedInCustomFluid = this.quilt$isSubmergedInCustomFluid(fluidState.getFluid());
 
@@ -133,16 +133,16 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 			 * We update the Movement in the fluid,by getting the TagKey of the fluid, via the Identifier.
 			 * The rest is nearly identical to vanilla.
 			 */
-			updateMovementInFluid(TagKey.of(Registry.FLUID_KEY, fluidState.getBuiltInRegistryHolder().getKey().get().getRegistry()), fluid.getPushStrength(fluidState, (Entity) (Object) this));
+			updateMovementInFluid(TagKey.of(Registry.FLUID_KEY, fluidState.getBuiltInRegistryHolder().getKey().get().getRegistry()), fluid.getPushStrength(fluidState, (Entity) (Object)this));
 			if (!quilt$inCustomFluid && !firstUpdate) {
 				customSplashEffects();
 			}
-			fallDistance = fluid.getFallDamageReduction(((Entity) (Object) this));
+			fallDistance = fluid.getFallDamageReduction(((Entity) (Object)this));
 			quilt$inCustomFluid = true;
 
-			if (fluid.canExtinguish(fluidState, (Entity) (Object) this)) {
+			if (fluid.canExtinguish(fluidState, (Entity) (Object)this)) {
 				extinguish();
-			} else if (fluid.canIgnite(fluidState, (Entity) (Object) this)) {
+			} else if (fluid.canIgnite(fluidState, (Entity) (Object)this)) {
 				setOnFireFromLava();
 			}
 			return;
@@ -154,23 +154,18 @@ public abstract class EntityMixin implements CustomFluidInteracting {
 		return this.quilt$submergedCustomFluid == fluid;
 	}
 
-	private void updateSubmergedInCustomFluidState() {
+	@Inject(method = "updateSubmergedInWaterState", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
+	private void updateSubmergedInCustomFluidState(CallbackInfo ci, double d, Entity entity, BlockPos blockPos, FluidState fluidState, double e) {
 		this.quilt$submergedCustomFluid = null;
-		double d = this.getEyeY() - 0.1111111119389534D;
-		Entity entity = this.getVehicle();
 		if (entity instanceof BoatEntity boatEntity) {
 			if (!boatEntity.isSubmergedInWater() && boatEntity.getBoundingBox().maxY >= d && boatEntity.getBoundingBox().minY <= d) {
 				return;
 			}
 		}
-		BlockPos blockPos = new BlockPos(this.getX(), d, this.getZ());
-		FluidState fluidState = this.world.getFluidState(blockPos);
 
-		double e = (float) blockPos.getY() + fluidState.getHeight(this.world, blockPos);
 		if (e > d) {
 			this.quilt$submergedCustomFluid = fluidState.getFluid();
 		}
-
 	}
 
 	@Inject(method = "updateSwimming", at = @At("TAIL"))

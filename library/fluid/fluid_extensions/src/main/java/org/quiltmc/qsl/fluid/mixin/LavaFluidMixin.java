@@ -82,7 +82,7 @@ public abstract class LavaFluidMixin extends FlowableFluid implements QuiltFlowa
 	}
 
 	@Override
-	public boolean enableDoubleTapSpacebarSwimming(FluidState state, Entity affected) {
+	public boolean canSwimInCustomFluid(FluidState state, Entity affected) {
 		return true;
 	}
 

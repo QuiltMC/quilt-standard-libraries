@@ -49,7 +49,7 @@ public abstract class QuiltDirectionalFluid extends QuiltFluid implements QuiltF
 	/**
 	 * The {@link net.minecraft.util.math.Direction} the fluid flows in. Default is {@link net.minecraft.util.math.Direction#DOWN}
 	 */
-	public Direction getFlowDirection() {return Direction.DOWN;}
+	public Direction getFlowDirection() {return Direction.UP;}
 
 	/**
 	 *
@@ -63,7 +63,7 @@ public abstract class QuiltDirectionalFluid extends QuiltFluid implements QuiltF
 		double offsetX = 0.0;
 		double offsetZ = 0.0;
 		BlockPos.Mutable mutable = new BlockPos.Mutable();
-		for (Direction direction : Direction.Type.HORIZONTAL) {
+		for (Direction direction : Direction.values()) {
 			mutable.set(pos, direction);
 			FluidState fluidState = world.getFluidState(mutable);
 			if (!this.isEmptyOrThis(fluidState)) continue;
@@ -83,7 +83,7 @@ public abstract class QuiltDirectionalFluid extends QuiltFluid implements QuiltF
 		}
 		Vec3d vec3d = new Vec3d(offsetX, 0.0, offsetZ);
 		if (state.get(FALLING).booleanValue()) {
-			for (Direction direction2 : Direction.Type.HORIZONTAL) {
+			for (Direction direction2 : Direction.values()) {
 				mutable.set(pos, direction2);
 				if (!this.m_innettlj(world, mutable, direction2) && !this.m_innettlj(world, mutable.move(getFlowDirection().getOpposite()), direction2)) continue;
 				vec3d = vec3d.normalize().add(0.0, -6.0, 0.0);
@@ -149,7 +149,7 @@ public abstract class QuiltDirectionalFluid extends QuiltFluid implements QuiltF
 		FluidState fluidState3;
 		int maxFluidLevel = 0;
 		int sourceBlocks = 0;
-		for (Direction direction : Direction.Type.HORIZONTAL) {
+		for (Direction direction : Direction.values()) {
 			BlockPos blockPos = pos.offset(direction);
 			BlockState blockState = world.getBlockState(blockPos);
 			FluidState fluidState = blockState.getFluidState();
@@ -183,7 +183,7 @@ public abstract class QuiltDirectionalFluid extends QuiltFluid implements QuiltF
 	@Override
 	protected int m_elhudbgf(WorldView world, BlockPos blockPos, int i, Direction direction, BlockState blockState, BlockPos blockPos2, Short2ObjectMap<Pair<BlockState, FluidState>> short2ObjectMap, Short2BooleanMap short2BooleanMap) {
 		int maxFlowDistance = 1000;
-		for (Direction direction2 : Direction.Type.HORIZONTAL) {
+		for (Direction direction2 : Direction.values()) {
 			int temp;
 			if (direction2 == direction) continue;
 			BlockPos blockPos3 = blockPos.offset(direction2);
@@ -230,7 +230,7 @@ public abstract class QuiltDirectionalFluid extends QuiltFluid implements QuiltF
 	 */
 	public int getFlowDist(WorldView world, BlockPos pos) {
 		int flowDistance = 0;
-		for (Direction direction : Direction.Type.HORIZONTAL) {
+		for (Direction direction : Direction.values()) {
 			BlockPos blockPos = pos.offset(direction);
 			FluidState fluidState = world.getFluidState(blockPos);
 			if (!this.isMatchingAndStill(fluidState)) continue;
@@ -245,7 +245,7 @@ public abstract class QuiltDirectionalFluid extends QuiltFluid implements QuiltF
 		EnumMap<Direction, FluidState> fluidDirectionMap = Maps.newEnumMap(Direction.class);
 		Short2ObjectOpenHashMap<Pair<BlockState, FluidState>> short2ObjectMap = new Short2ObjectOpenHashMap<Pair<BlockState, FluidState>>();
 		Short2BooleanOpenHashMap short2BooleanMap = new Short2BooleanOpenHashMap();
-		for (Direction direction : Direction.Type.HORIZONTAL) {
+		for (Direction direction : Direction.values()) {
 			BlockPos blockPos = pos.offset(direction);
 			short blockPosMask = this.getMask(pos, blockPos);
 			Pair<BlockState, FluidState> blockStateFluidStatePair = short2ObjectMap.computeIfAbsent(blockPosMask, s -> {
