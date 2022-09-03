@@ -22,8 +22,7 @@ import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
  * A list of the {@link CustomItemSetting}s that are provided by Quilt
  */
 public final class QuiltCustomItemSettings {
-	private QuiltCustomItemSettings() {
-	}
+	private QuiltCustomItemSettings() {}
 
 	/**
 	 * The {@link CustomItemSetting} in charge of handing {@link EquipmentSlotProvider}s

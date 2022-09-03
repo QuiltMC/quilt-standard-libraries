@@ -40,15 +40,15 @@ public abstract class ItemStackMixin {
 	public abstract Item getItem();
 
 	@Unique
-	private LivingEntity damagingEntity;
+	private LivingEntity quilt$damagingEntity;
 
 	@Unique
-	private Consumer<LivingEntity> breakCallback;
+	private Consumer<LivingEntity> quilt$breakCallback;
 
 	@Inject(method = "damage(ILnet/minecraft/entity/LivingEntity;Ljava/util/function/Consumer;)V", at = @At("HEAD"))
 	private void saveDamager(int amount, LivingEntity entity, Consumer<LivingEntity> breakCallback, CallbackInfo ci) {
-		this.damagingEntity = entity;
-		this.breakCallback = breakCallback;
+		this.quilt$damagingEntity = entity;
+		this.quilt$breakCallback = breakCallback;
 	}
 
 	@ModifyArg(
@@ -63,7 +63,7 @@ public abstract class ItemStackMixin {
 		CustomDamageHandler handler = CustomItemSettingImpl.CUSTOM_DAMAGE_HANDLER.get(this.getItem());
 
 		if (handler != null) {
-			return handler.damage((ItemStack) (Object) this, amount, damagingEntity, breakCallback);
+			return handler.damage((ItemStack) (Object) this, amount, quilt$damagingEntity, quilt$breakCallback);
 		}
 
 		return amount;
@@ -71,7 +71,7 @@ public abstract class ItemStackMixin {
 
 	@Inject(method = "damage(ILnet/minecraft/entity/LivingEntity;Ljava/util/function/Consumer;)V", at = @At("RETURN"))
 	private <T extends LivingEntity> void clearDamager(int amount, T entity, Consumer<T> breakCallback, CallbackInfo ci) {
-		this.damagingEntity = null;
-		this.breakCallback = null;
+		this.quilt$damagingEntity = null;
+		this.quilt$breakCallback = null;
 	}
 }

@@ -18,7 +18,6 @@ package org.quiltmc.qsl.item.setting.mixin.reciperemainder;
 
 import java.util.Optional;
 
-import org.quiltmc.qsl.item.setting.api.RecipeRemainderProvider;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -32,6 +31,8 @@ import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
+
+import org.quiltmc.qsl.item.setting.api.RecipeRemainderProvider;
 
 @Mixin(RecipeManager.class)
 public class RecipeManagerMixin {

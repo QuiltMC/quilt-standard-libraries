@@ -16,14 +16,15 @@
 
 package org.quiltmc.qsl.item.setting.api;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.util.collection.DefaultedList;
 
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
 
 /**

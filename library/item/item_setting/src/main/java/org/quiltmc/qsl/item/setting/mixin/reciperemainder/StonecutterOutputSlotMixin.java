@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.item.setting.mixin.reciperemainder;
 
-import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLogicHandler;
-import org.quiltmc.qsl.item.setting.mixin.SimpleInventoryAccessor;
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -32,6 +30,9 @@ import net.minecraft.recipe.Recipe;
 import net.minecraft.screen.StonecutterScreenHandler;
 import net.minecraft.screen.slot.Slot;
 
+import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLogicHandler;
+import org.quiltmc.qsl.item.setting.mixin.SimpleInventoryAccessor;
+
 @Mixin(targets = {"net.minecraft.screen.StonecutterScreenHandler$C_biccipxg"})
 public class StonecutterOutputSlotMixin extends Slot {
 	@Shadow
@@ -39,18 +40,18 @@ public class StonecutterOutputSlotMixin extends Slot {
 	StonecutterScreenHandler field_17639;
 
 	@Unique
-	Recipe<?> previousRecipe;
+	Recipe<?> quilt$previousRecipe;
 
 	public StonecutterOutputSlotMixin(Inventory inventory, int i, int j, int k) {
 		super(inventory, i, j, k);
 	}
 
-	@Redirect(method= "onTakeItem(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;takeStack(I)Lnet/minecraft/item/ItemStack;"))
+	@Redirect(method = "onTakeItem(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;takeStack(I)Lnet/minecraft/item/ItemStack;"))
 	public ItemStack getRecipeRemainder(Slot slot, int amount, PlayerEntity player, ItemStack stack) {
 		ItemStack input = slot.takeStack(amount);
 
 		int selectedRecipe = field_17639.getSelectedRecipe();
-		Recipe<?> recipe = selectedRecipe != -1 ? field_17639.getAvailableRecipes().get(selectedRecipe) : previousRecipe;
+		Recipe<?> recipe = selectedRecipe != -1 ? field_17639.getAvailableRecipes().get(selectedRecipe) : quilt$previousRecipe;
 
 		ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(input, recipe);
 
@@ -61,7 +62,7 @@ public class StonecutterOutputSlotMixin extends Slot {
 				player
 		);
 
-		previousRecipe = recipe;
+		quilt$previousRecipe = recipe;
 
 		return slot.getStack();
 	}

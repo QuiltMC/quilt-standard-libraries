@@ -19,6 +19,7 @@ package org.quiltmc.qsl.item.setting.api;
 import java.util.function.Supplier;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 
 import net.minecraft.item.Item;
 

@@ -17,6 +17,8 @@
 
 package org.quiltmc.qsl.item.setting.api;
 
+import org.jetbrains.annotations.Contract;
+
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
@@ -39,6 +41,7 @@ public class QuiltItemSettings extends Item.Settings {
 	 * @param equipmentSlotProvider the {@link EquipmentSlotProvider}
 	 * @return this
 	 */
+	@Contract("_->this")
 	public QuiltItemSettings equipmentSlot(EquipmentSlotProvider equipmentSlotProvider) {
 		return this.customSetting(QuiltCustomItemSettings.EQUIPMENT_SLOT_PROVIDER, equipmentSlotProvider);
 	}
@@ -49,6 +52,7 @@ public class QuiltItemSettings extends Item.Settings {
 	 * @param equipmentSlot the {@link EquipmentSlot}
 	 * @return this
 	 */
+	@Contract("_->this")
 	public QuiltItemSettings equipmentSlot(EquipmentSlot equipmentSlot) {
 		return this.customSetting(QuiltCustomItemSettings.EQUIPMENT_SLOT_PROVIDER, itemStack -> equipmentSlot);
 	}
@@ -61,6 +65,7 @@ public class QuiltItemSettings extends Item.Settings {
 	 * @return this
 	 * @see CustomDamageHandler
 	 */
+	@Contract("_->this")
 	public QuiltItemSettings customDamage(CustomDamageHandler handler) {
 		return this.customSetting(QuiltCustomItemSettings.CUSTOM_DAMAGE_HANDLER, handler);
 	}
@@ -68,6 +73,7 @@ public class QuiltItemSettings extends Item.Settings {
 	/**
 	 * Sets the stack-aware recipe remainder provider of the item.
 	 */
+	@Contract("_->this")
 	public QuiltItemSettings recipeRemainder(RecipeRemainderProvider provider) {
 		return this.customSetting(QuiltCustomItemSettings.RECIPE_REMAINDER_PROVIDER, provider);
 	}
@@ -75,6 +81,7 @@ public class QuiltItemSettings extends Item.Settings {
 	/**
 	 * Sets the stack-aware recipe remainder to damage the item by 1 every time it is used in crafting.
 	 */
+	@Contract("->this")
 	public QuiltItemSettings damageIfUsedInCrafting() {
 		return this.damageIfUsedInCrafting(1);
 	}
@@ -82,6 +89,7 @@ public class QuiltItemSettings extends Item.Settings {
 	/**
 	 * Sets the stack-aware recipe remainder to return the item itself.
 	 */
+	@Contract("->this")
 	public QuiltItemSettings returnSelfInCrafting() {
 		return this.damageIfUsedInCrafting(0);
 	}
@@ -91,6 +99,7 @@ public class QuiltItemSettings extends Item.Settings {
 	 *
 	 * @param by the amount
 	 */
+	@Contract("_->this")
 	public QuiltItemSettings damageIfUsedInCrafting(int by) {
 		if (by == 0) {
 			return this.recipeRemainder((original, recipe) -> original.copy());
@@ -105,7 +114,7 @@ public class QuiltItemSettings extends Item.Settings {
 
 			copy.setDamage(copy.getDamage() + by);
 
-			if(copy.getDamage() >= copy.getMaxDamage()) {
+			if (copy.getDamage() >= copy.getMaxDamage()) {
 				copy.setCount(0);
 				return ItemStack.EMPTY;
 			}
@@ -121,6 +130,7 @@ public class QuiltItemSettings extends Item.Settings {
 	 * @param value   the object containing the setting itself
 	 * @return this builder
 	 */
+	@Contract("_, _->this")
 	public <T> QuiltItemSettings customSetting(CustomItemSetting<T> setting, T value) {
 		if (!(setting instanceof CustomItemSettingImpl)) {
 			throw new UnsupportedOperationException("CustomItemSetting should not be custom class " + setting.getClass().getSimpleName());
@@ -133,48 +143,56 @@ public class QuiltItemSettings extends Item.Settings {
 	// Overrides of vanilla methods
 
 	@Override
+	@Contract("_->this")
 	public QuiltItemSettings food(FoodComponent foodComponent) {
 		super.food(foodComponent);
 		return this;
 	}
 
 	@Override
+	@Contract("_->this")
 	public QuiltItemSettings maxCount(int maxCount) {
 		super.maxCount(maxCount);
 		return this;
 	}
 
 	@Override
+	@Contract("_->this")
 	public QuiltItemSettings maxDamageIfAbsent(int maxDamage) {
 		super.maxDamageIfAbsent(maxDamage);
 		return this;
 	}
 
 	@Override
+	@Contract("_->this")
 	public QuiltItemSettings maxDamage(int maxDamage) {
 		super.maxDamage(maxDamage);
 		return this;
 	}
 
 	@Override
+	@Contract("_->this")
 	public QuiltItemSettings recipeRemainder(Item recipeRemainder) {
 		super.recipeRemainder(recipeRemainder);
 		return this;
 	}
 
 	@Override
+	@Contract("_->this")
 	public QuiltItemSettings group(ItemGroup group) {
 		super.group(group);
 		return this;
 	}
 
 	@Override
+	@Contract("_->this")
 	public QuiltItemSettings rarity(Rarity rarity) {
 		super.rarity(rarity);
 		return this;
 	}
 
 	@Override
+	@Contract("->this")
 	public QuiltItemSettings fireproof() {
 		super.fireproof();
 		return this;

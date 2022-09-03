@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.item.setting.mixin.reciperemainder;
 
-import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLogicHandler;
-
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -30,6 +28,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLogicHandler;
 
 @Mixin(BrewingStandBlockEntity.class)
 public class BrewingStandBlockEntityMixin {
