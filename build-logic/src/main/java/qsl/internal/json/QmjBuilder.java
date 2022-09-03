@@ -84,7 +84,7 @@ public final class QmjBuilder {
 
 		// Provides
 		var provides = ext.getProvides();
-		if (provides.isPresent()) {
+		if (provides.isPresent() && !provides.get().isEmpty()) {
 			writer.name("provides").beginArray();
 
 			for (var provide : provides.get()) {
