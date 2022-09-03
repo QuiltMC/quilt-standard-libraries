@@ -6,6 +6,8 @@
     "ArgumentTypeInfosAccessor",
     "CommandManagerMixin",
     "CommandManagerMixin$RegistrationEnvironmentMixin",
+    "EntitySelectorOptionsMixin",
+    "EntitySelectorReaderMixin",
     "RequiredArgumentBuilderAccessor",
     "ServerLoginNetworkHandlerMixin",
     "ServerPlayerEntityMixin"
