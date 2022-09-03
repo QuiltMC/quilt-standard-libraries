@@ -20,22 +20,23 @@ import com.mojang.brigadier.StringReader;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import org.quiltmc.qsl.command.api.EntitySelectorOptionRegistrationCallback;
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.command.api.EntitySelectorOptionRegistry;
 import org.quiltmc.qsl.command.api.QuiltEntitySelectorReader;
 
-public class EntitySelectorOptionsTest implements EntitySelectorOptionRegistrationCallback {
-
+public class EntitySelectorOptionsTest implements ModInitializer {
 	@Override
-	public void registerEntitySelectors(EntitySelectorOptionRegistrar registrar) {
-		registrar.register(
+	public void onInitialize(ModContainer mod) {
+		EntitySelectorOptionRegistry.register(
 				new Identifier("quilt_command_testmod", "health"),
 				optionReader -> {
 					StringReader reader = optionReader.getReader();
 					var health = reader.readFloat();
 					optionReader.setPredicate(e -> e instanceof LivingEntity l && l.getHealth() >= health);
-					((QuiltEntitySelectorReader)optionReader).setFlag("selectsHealth", true); // loom didn't like my interface injection here when building, though it shows up fine in sources?
+					optionReader.setFlag("selectsHealth", true);
 				},
-				optionReader -> !((QuiltEntitySelectorReader)optionReader).getFlag("selectsHealth"),
+				optionReader -> !optionReader.getFlag("selectsHealth"),
 				Text.literal("With health greater than given value")
 		);
 	}
