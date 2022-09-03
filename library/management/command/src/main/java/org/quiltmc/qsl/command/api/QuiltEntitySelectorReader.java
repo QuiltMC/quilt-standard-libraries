@@ -16,12 +16,15 @@
 
 package org.quiltmc.qsl.command.api;
 
+import net.minecraft.command.EntitySelectorReader;
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
+
 /**
  * An injected extension to {@link net.minecraft.command.EntitySelectorReader EntitySelectorReader}.
  *
  * <p>Allows mods to set and check arbitrary flags, useful for ensuring an entity selector option is only used once.</p>
  *
- * @see EntitySelectorOptionRegistrationCallback
+ * @see EntitySelectorOptionRegistry
  */
 @InjectedInterface(EntitySelectorReader.class)
 public interface QuiltEntitySelectorReader {
