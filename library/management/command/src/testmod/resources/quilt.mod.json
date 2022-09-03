@@ -21,7 +21,8 @@
     "load_type": "always",
     "entrypoints": {
       "events": [
-        "org.quiltmc.qsl.command.test.CommandApiTest"
+        "org.quiltmc.qsl.command.test.CommandApiTest",
+        "org.quiltmc.qsl.command.test.EntitySelectorOptionsTest"
       ]
     },
     "depends": [
