@@ -17,7 +17,7 @@ public class EntitySelectorOptionsTest implements EntitySelectorOptionRegistrati
 					StringReader reader = optionReader.getReader();
 					var health = reader.readFloat();
 					optionReader.setPredicate(e -> e instanceof LivingEntity l && l.getHealth() >= health);
-					((QuiltEntitySelectorReader)optionReader).setFlag("selectsHealth", true);
+					((QuiltEntitySelectorReader)optionReader).setFlag("selectsHealth", true); // loom didn't like my interface injection here when building, though it shows up fine in sources?
 				},
 				optionReader -> !((QuiltEntitySelectorReader)optionReader).getFlag("selectsHealth"),
 				Text.literal("With health greater than given value")
