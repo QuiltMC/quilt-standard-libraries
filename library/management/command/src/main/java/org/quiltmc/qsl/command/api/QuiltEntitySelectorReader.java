@@ -23,6 +23,7 @@ package org.quiltmc.qsl.command.api;
  *
  * @see EntitySelectorOptionRegistrationCallback
  */
+@InjectedInterface(EntitySelectorReader.class)
 public interface QuiltEntitySelectorReader {
 	/**
 	 * Gets the value for a flag.
