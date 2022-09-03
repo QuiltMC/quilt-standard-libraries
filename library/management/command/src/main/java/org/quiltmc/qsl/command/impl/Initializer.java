@@ -18,16 +18,16 @@ package org.quiltmc.qsl.command.impl;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.logging.LogUtils;
-import org.jetbrains.annotations.ApiStatus;
-import org.slf4j.Logger;
-
 import net.minecraft.util.Identifier;
-
+import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.command.api.EntitySelectorOptionRegistrationCallback;
 import org.quiltmc.qsl.command.api.EnumArgumentType;
 import org.quiltmc.qsl.command.api.ServerArgumentType;
+import org.quiltmc.qsl.command.mixin.EntitySelectorOptionsAccessor;
+import org.slf4j.Logger;
 
 @ApiStatus.Internal
 public final class Initializer implements ModInitializer {
@@ -52,5 +52,9 @@ public final class Initializer implements ModInitializer {
 				EnumArgumentType.class,
 				new EnumArgumentType.Info(),
 				arg -> StringArgumentType.word());
+
+		EntitySelectorOptionRegistrationCallback.EVENT.invoker().registerEntitySelectors((id, handler, condition, description) ->
+				EntitySelectorOptionsAccessor.callPutOption(id.getNamespace() + "_" + id.getPath(), handler, condition, description)
+		);
 	}
 }
