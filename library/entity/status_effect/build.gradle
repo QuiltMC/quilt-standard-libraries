@@ -3,9 +3,9 @@ plugins {
 }
 
 qslModule {
-	name = "Quilt Status Effects API"
-	moduleName = "status_effects"
-	id = "quilt_status_effects"
+	name = "Quilt Status Effect API"
+	moduleName = "status_effect"
+	id = "quilt_status_effect"
 	description = "Provides extensions for dealing with status effects."
 	library = "entity"
 	moduleDependencies {
