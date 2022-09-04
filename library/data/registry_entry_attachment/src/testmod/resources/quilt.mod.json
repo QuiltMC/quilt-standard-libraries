@@ -24,8 +24,8 @@
     },
     "depends": [
       "quilt_loader",
-      "quilt_registry_entry_attachments"
+      "quilt_registry_entry_attachment"
     ]
   },
-  "mixin": "quilt_registry_entry_attachments_testmod.mixins.json"
+  "mixin": "quilt_registry_entry_attachment_testmod.mixins.json"
 }
