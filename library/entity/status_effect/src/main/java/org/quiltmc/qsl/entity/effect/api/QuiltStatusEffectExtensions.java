@@ -26,6 +26,6 @@ import org.quiltmc.qsl.base.api.util.InjectedInterface;
 @InjectedInterface(QuiltLivingEntityExtensions.class)
 public interface QuiltStatusEffectExtensions {
 	default boolean shouldRemove(@NotNull LivingEntity entity, @NotNull StatusEffectInstance instance, @NotNull StatusEffectRemovalReason reason) {
-		return true;
+		return reason.removesEffectType(instance.getEffectType());
 	}
 }

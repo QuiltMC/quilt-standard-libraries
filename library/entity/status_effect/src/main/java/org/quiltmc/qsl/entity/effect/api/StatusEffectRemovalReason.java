@@ -16,42 +16,33 @@
 
 package org.quiltmc.qsl.entity.effect.api;
 
+import net.minecraft.entity.effect.StatusEffect;
+
+@FunctionalInterface
 public interface StatusEffectRemovalReason {
-	StatusEffectRemovalReason GENERIC_ALL = new StatusEffectRemovalReason() {
-		@Override
-		public String toString() {
-			return "generic.all";
-		}
-	};
+	StatusEffectRemovalReason GENERIC_ALL = () -> "generic.all";
 
-	StatusEffectRemovalReason GENERIC_SPECIFIC = new StatusEffectRemovalReason() {
-		@Override
-		public String toString() {
-			return "generic.specific";
-		}
-	};
+	StatusEffectRemovalReason GENERIC_SPECIFIC = () -> "generic.specific";
 
-	StatusEffectRemovalReason COMMAND_ALL = new StatusEffectRemovalReason() {
-		@Override
-		public String toString() {
-			return "command.all";
-		}
-	};
+	StatusEffectRemovalReason COMMAND_ALL = () -> "command.all";
 
-	StatusEffectRemovalReason COMMAND_SPECIFIC = new StatusEffectRemovalReason() {
-		@Override
-		public String toString() {
-			return "command.specific";
-		}
-	};
+	StatusEffectRemovalReason COMMAND_SPECIFIC = () -> "command.specific";
 
-	StatusEffectRemovalReason DRANK_MILK = new StatusEffectRemovalReason() {
-		@Override
-		public String toString() {
-			return "action.drank_milk";
-		}
-	};
+	StatusEffectRemovalReason DRANK_MILK = () -> "action.drank_milk";
 
-	@Override
-	String toString();
+	String getName();
+
+	/**
+	 * Checks if the removal reason should remove effects of this type. Note that the status effect ultimately
+	 * has the final say on whether it's removed or not.
+	 * <p>
+	 * Override this, for example, to make a status effect remover that only removes
+	 * {@linkplain net.minecraft.entity.effect.StatusEffectType#HARMFUL harmful effects}.
+	 *
+	 * @param type the effect type to check
+	 * @return {@code true} if effects of this type should be removed, {@code false} otherwise.
+	 */
+	default boolean removesEffectType(StatusEffect type) {
+		return true;
+	}
 }
