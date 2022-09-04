@@ -16,7 +16,6 @@ qslModule {
 			testmodOnly("networking")
 		}
 		data {
-			testmodOnly("registry_entry_attachments")
 			testmodOnly("tags")
 		}
 		item {
