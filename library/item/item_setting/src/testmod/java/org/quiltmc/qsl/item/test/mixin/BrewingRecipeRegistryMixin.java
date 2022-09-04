@@ -27,7 +27,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.Potions;
 import net.minecraft.recipe.BrewingRecipeRegistry;
 
-import org.quiltmc.qsl.item.test.QuiltItemSettingsTests;
+import org.quiltmc.qsl.item.test.RecipeRemainderTests;
 
 @Mixin(BrewingRecipeRegistry.class)
 public abstract class BrewingRecipeRegistryMixin {
@@ -38,6 +38,6 @@ public abstract class BrewingRecipeRegistryMixin {
 
 	@Inject(method = "registerDefaults", at = @At("TAIL"))
 	private static void registerRemainder(CallbackInfo ci) {
-		registerPotionRecipe(Potions.WATER, QuiltItemSettingsTests.POTION_INGREDIENT_REMAINDER, Potions.FIRE_RESISTANCE);
+		registerPotionRecipe(Potions.WATER, RecipeRemainderTests.POTION_INGREDIENT_REMAINDER, Potions.FIRE_RESISTANCE);
 	}
 }

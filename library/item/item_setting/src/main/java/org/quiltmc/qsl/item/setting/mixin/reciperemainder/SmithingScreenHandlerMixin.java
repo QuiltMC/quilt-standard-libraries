@@ -19,7 +19,6 @@ package org.quiltmc.qsl.item.setting.mixin.reciperemainder;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -42,9 +41,6 @@ public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
 	@Shadow
 	private @Nullable SmithingRecipe currentRecipe;
 
-	@Unique
-	private SmithingRecipe quilt$pastRecipe;
-
 	@Shadow
 	public abstract void updateResult();
 
@@ -55,10 +51,7 @@ public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
 	@Redirect(method = "onTakeOutput", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/SmithingScreenHandler;decrementStack(I)V"))
 	private void applyRecipeRemainder(SmithingScreenHandler instance, int slot, PlayerEntity player, ItemStack stack) {
 		ItemStack inputStack = this.input.getStack(slot);
-		ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(
-				inputStack,
-				this.currentRecipe == null ? this.quilt$pastRecipe : this.currentRecipe
-		);
+		ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(inputStack, this.currentRecipe);
 
 		inputStack.decrement(1);
 
@@ -68,8 +61,6 @@ public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
 				slot,
 				player
 		);
-
-		this.quilt$pastRecipe = this.currentRecipe;
 	}
 
 	@Inject(method = "onTakeOutput", at = @At("RETURN"))

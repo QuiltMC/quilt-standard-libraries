@@ -16,24 +16,25 @@
 
 package org.quiltmc.qsl.item.setting.mixin.reciperemainder;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SidedInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.AbstractCookingRecipe;
 import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeManager;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -44,7 +45,15 @@ import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLogicHandler;
 public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implements SidedInventory {
 	@Shadow
 	protected DefaultedList<ItemStack> inventory;
-
+	@Shadow
+	@Final
+	private RecipeManager.C_bvtkxdyi<Inventory, ? extends AbstractCookingRecipe> recipeCache;
+	@Shadow
+	@Final
+	protected static int FUEL_SLOT;
+	@Shadow
+	@Final
+	protected static int INPUT_SLOT;
 	@Unique
 	private static final ThreadLocal<AbstractFurnaceBlockEntity> quilt$threadLocalBlockEntity = new ThreadLocal<>();
 
@@ -53,25 +62,39 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 	}
 
 	// Needed some place to store the furnace entity before any remainders are checked
+	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "isBurning", at = @At("HEAD"))
 	private void setThreadLocalBlockEntity(CallbackInfoReturnable<Boolean> cir) {
 		quilt$threadLocalBlockEntity.set((AbstractFurnaceBlockEntity) (BlockEntity) this);
 	}
 
 	@SuppressWarnings("ConstantConditions")
-	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"), locals = LocalCapture.CAPTURE_FAILHARD)
-	private static void setFuelRemainder(World world, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity, CallbackInfo ci, boolean burning, boolean dirty, ItemStack fuelStack, boolean hasInput, boolean hasFuel, Recipe<?> recipe, int maxCount, Item fuel) {
+	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"))
+	private static void setFuelRemainder(ItemStack fuelStack, int count, World world, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity) {
+		AbstractFurnaceBlockEntityMixin cast = ((AbstractFurnaceBlockEntityMixin) (BlockEntity) blockEntity);
+
+		Recipe<?> recipe;
+		if (!cast.inventory.get(INPUT_SLOT).isEmpty()) {
+			recipe = cast.recipeCache.m_ltqsvwgf(blockEntity, world).orElse(null);
+		} else {
+			recipe = null;
+		}
+
+		ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(fuelStack, recipe);
+
+		fuelStack.decrement(1);
+
 		RecipeRemainderLogicHandler.handleRemainderForNonPlayerCraft(
-				RecipeRemainderLogicHandler.getRemainder(fuelStack, recipe),
-				((AbstractFurnaceBlockEntityMixin) (BlockEntity) blockEntity).inventory,
-				1,
+				remainder,
+				cast.inventory,
+				FUEL_SLOT,
 				blockEntity.getWorld(),
 				blockEntity.getPos()
 		);
 	}
 
 	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/collection/DefaultedList;set(ILjava/lang/Object;)Ljava/lang/Object;"))
-	private static <E> E setRemainder(DefaultedList<E> defaultedList, int index, E element) {
+	private static <E> E cancelVanillaRemainder(DefaultedList<E> defaultedList, int index, E element) {
 		return element;
 	}
 

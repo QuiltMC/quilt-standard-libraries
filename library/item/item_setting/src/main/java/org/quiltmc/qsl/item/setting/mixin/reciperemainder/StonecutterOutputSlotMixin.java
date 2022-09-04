@@ -19,7 +19,6 @@ package org.quiltmc.qsl.item.setting.mixin.reciperemainder;
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
@@ -39,21 +38,18 @@ public class StonecutterOutputSlotMixin extends Slot {
 	@Dynamic
 	StonecutterScreenHandler field_17639;
 
-	@Unique
-	Recipe<?> quilt$previousRecipe;
-
 	public StonecutterOutputSlotMixin(Inventory inventory, int i, int j, int k) {
 		super(inventory, i, j, k);
 	}
 
 	@Redirect(method = "onTakeItem(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;takeStack(I)Lnet/minecraft/item/ItemStack;"))
 	public ItemStack getRecipeRemainder(Slot slot, int amount, PlayerEntity player, ItemStack stack) {
-		ItemStack input = slot.takeStack(amount);
-
 		int selectedRecipe = field_17639.getSelectedRecipe();
-		Recipe<?> recipe = selectedRecipe != -1 ? field_17639.getAvailableRecipes().get(selectedRecipe) : quilt$previousRecipe;
+		Recipe<?> recipe = selectedRecipe != -1 ? field_17639.getAvailableRecipes().get(selectedRecipe) : null;
 
-		ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(input, recipe);
+		ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(slot.getStack(), recipe);
+
+		slot.takeStack(amount);
 
 		RecipeRemainderLogicHandler.handleRemainderForPlayerCraft(
 				remainder,
@@ -61,8 +57,6 @@ public class StonecutterOutputSlotMixin extends Slot {
 				slot.id,
 				player
 		);
-
-		quilt$previousRecipe = recipe;
 
 		return slot.getStack();
 	}
