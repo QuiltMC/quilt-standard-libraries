@@ -21,10 +21,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Suppliers;
 import com.mojang.logging.LogUtils;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -47,13 +46,20 @@ import net.minecraft.resource.pack.metadata.ResourceMetadataReader;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.QuiltLoader;
+import org.quiltmc.qsl.base.api.util.TriState;
 
+/**
+ * Represents an in-memory resource pack.
+ * <p>
+ * The resources of this pack are stored in memory instead of it being on-disk.
+ */
 public abstract class InMemoryResourcePack implements MutableResourcePack {
 	private static final Logger LOGGER = LogUtils.getLogger();
+	private static final boolean DUMP = TriState.fromProperty("quilt.resource_loader.debug.pack.dump_from_in_memory")
+			.toBooleanOrElse(QuiltLoader.isDevelopmentEnvironment());
 	private final Map<Identifier, Supplier<byte[]>> assets = new ConcurrentHashMap<>();
 	private final Map<Identifier, Supplier<byte[]>> data = new ConcurrentHashMap<>();
 	private final Map<String, Supplier<byte[]>> root = new ConcurrentHashMap<>();
-	protected boolean debug = QuiltLoader.isDevelopmentEnvironment();
 
 	@Override
 	public @Nullable InputStream openRoot(String fileName) {
@@ -120,11 +126,14 @@ public abstract class InMemoryResourcePack implements MutableResourcePack {
 
 	@Override
 	public void close() {
+		if (DUMP) {
+			this.dumpAll();
+		}
 	}
 
 	@Override
-	public void putResource(@NotNull String path, byte @NotNull [] resource) {
-		this.root.put(path, () -> resource);
+	public void putResource(@NotNull String fileName, byte @NotNull [] resource) {
+		this.root.put(fileName, () -> resource);
 	}
 
 	@Override
@@ -133,8 +142,8 @@ public abstract class InMemoryResourcePack implements MutableResourcePack {
 	}
 
 	@Override
-	public void putResource(@NotNull String path, @NotNull Supplier<byte[]> resource) {
-		this.root.put(path, Suppliers.memoize(resource::get));
+	public void putResource(@NotNull String fileName, @NotNull Supplier<byte[]> resource) {
+		this.root.put(fileName, Suppliers.memoize(resource::get));
 	}
 
 	@Override
@@ -142,9 +151,39 @@ public abstract class InMemoryResourcePack implements MutableResourcePack {
 		this.getResourceMap(type).put(id, Suppliers.memoize(resource::get));
 	}
 
-	protected void dumpResource(String path, byte[] resource) {
+	@Override
+	public void clearResources() {
+		this.root.clear();
+		this.assets.clear();
+		this.data.clear();
+	}
+
+	/**
+	 * Dumps the content of this resource pack into the given path.
+	 *
+	 * @param path the path to dump the resources into
+	 */
+	public void dumpTo(@NotNull Path path) {
 		try {
-			var p = Paths.get("debug", "packs", this.getName()).resolve(path);
+			Files.createDirectories(path);
+
+			this.root.forEach((p, resource) -> this.dumpResource(path, p, resource.get()));
+			this.assets.forEach((p, resource) ->
+					this.dumpResource(path, QuiltResourcePack.getResourcePath(ResourceType.CLIENT_RESOURCES, p), resource.get()));
+			this.data.forEach((p, resource) ->
+					this.dumpResource(path, QuiltResourcePack.getResourcePath(ResourceType.SERVER_DATA, p), resource.get()));
+		} catch (IOException e) {
+			LOGGER.error("Failed to write resource pack dump from pack {} to {}.", this.getName(), path, e);
+		}
+	}
+
+	protected void dumpAll() {
+		this.dumpTo(Paths.get("debug", "packs", this.getName()));
+	}
+
+	protected void dumpResource(Path parentPath, String resourcePath, byte[] resource) {
+		try {
+			var p = parentPath.resolve(resourcePath);
 			Files.createDirectories(p.getParent());
 			Files.write(p, resource, StandardOpenOption.CREATE, StandardOpenOption.WRITE,
 					StandardOpenOption.TRUNCATE_EXISTING);

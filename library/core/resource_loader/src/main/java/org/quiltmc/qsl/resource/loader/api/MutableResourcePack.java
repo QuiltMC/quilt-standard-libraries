@@ -34,24 +34,52 @@ import net.minecraft.util.Identifier;
  * Represents a resource pack whose resources are mutable.
  */
 public interface MutableResourcePack extends ResourcePack {
-	void putResource(@NotNull String path, byte @NotNull [] resource);
+	/**
+	 * Puts a resource into the resource pack's root.
+	 *
+	 * @param fileName the name of the file
+	 * @param resource the resource content
+	 */
+	void putResource(@NotNull String fileName, byte @NotNull [] resource);
 
+	/**
+	 * Puts a resource into the resource pack for the given side and path.
+	 *
+	 * @param type     the resource type
+	 * @param id       the path of the resource
+	 * @param resource the resource content
+	 */
 	void putResource(@NotNull ResourceType type, @NotNull Identifier id, byte @NotNull [] resource);
 
-	void putResource(@NotNull String path, @NotNull Supplier<byte @NotNull []> resource);
+	/**
+	 * Puts a resource into the resource pack's root.
+	 *
+	 * @param fileName the name of the file
+	 * @param resource the supplier of the resource content
+	 * @apiNote the supplier is {@link com.google.common.base.Suppliers#memoize(com.google.common.base.Supplier) memoized}
+	 */
+	void putResource(@NotNull String fileName, @NotNull Supplier<byte @NotNull []> resource);
 
+	/**
+	 * Puts a resource into the resource pack for the given side and path.
+	 *
+	 * @param type     the resource type
+	 * @param id       the path of the resource
+	 * @param resource the supplier of the resource content
+	 * @apiNote the supplier is {@link com.google.common.base.Suppliers#memoize(com.google.common.base.Supplier) memoized}
+	 */
 	void putResource(@NotNull ResourceType type, @NotNull Identifier id, @NotNull Supplier<byte @NotNull []> resource);
 
-	default void putText(String path, String text) {
-		this.putResource(path, text.getBytes(StandardCharsets.UTF_8));
+	default void putText(String fileName, String text) {
+		this.putResource(fileName, text.getBytes(StandardCharsets.UTF_8));
 	}
 
 	default void putText(ResourceType type, Identifier id, String text) {
 		this.putResource(type, id, text.getBytes(StandardCharsets.UTF_8));
 	}
 
-	default void putText(String path, Supplier<String> textSupplier) {
-		this.putResource(path, () -> textSupplier.get().getBytes(StandardCharsets.UTF_8));
+	default void putText(String fileName, Supplier<String> textSupplier) {
+		this.putResource(fileName, () -> textSupplier.get().getBytes(StandardCharsets.UTF_8));
 	}
 
 	default void putText(ResourceType type, Identifier id, Supplier<String> textSupplier) {
@@ -59,8 +87,8 @@ public interface MutableResourcePack extends ResourcePack {
 	}
 
 	@Environment(EnvType.CLIENT)
-	default void putImage(String path, NativeImage image) throws IOException {
-		this.putResource(path, image.getBytes());
+	default void putImage(String fileName, NativeImage image) throws IOException {
+		this.putResource(fileName, image.getBytes());
 	}
 
 	@Environment(EnvType.CLIENT)
@@ -69,8 +97,8 @@ public interface MutableResourcePack extends ResourcePack {
 	}
 
 	@Environment(EnvType.CLIENT)
-	default void putImage(String path, Supplier<NativeImage> imageSupplier) {
-		this.putResource(path, () -> {
+	default void putImage(String fileName, Supplier<NativeImage> imageSupplier) {
+		this.putResource(fileName, () -> {
 			try (var image = imageSupplier.get()) {
 				return image.getBytes();
 			} catch (IOException e) {
@@ -83,4 +111,9 @@ public interface MutableResourcePack extends ResourcePack {
 	default void putImage(Identifier id, Supplier<NativeImage> imageSupplier) {
 		this.putImage(QuiltResourcePack.getResourcePath(ResourceType.CLIENT_RESOURCES, id), imageSupplier);
 	}
+
+	/**
+	 * Clears all the resources from memory.
+	 */
+	void clearResources();
 }
