@@ -30,8 +30,11 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import com.google.common.base.Charsets;
+
 import com.mojang.blaze3d.texture.NativeImage;
+
 import org.apache.commons.io.IOUtils;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.resource.ResourceType;
@@ -104,11 +107,8 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 				}
 			}
 
-			var out = new ByteArrayOutputStream();
-			((NativeImageAccessor) (Object) image).callWrite(Channels.newChannel(out));
+			var in = new ByteArrayInputStream(image.getBytes());
 			image.close();
-			var in = new ByteArrayInputStream(out.toByteArray());
-			out.close();
 			return in;
 		}
 
@@ -144,7 +144,7 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 		}
 
 		@Override
-		public Text getDisplayName() {
+		public @NotNull Text getDisplayName() {
 			return Text.of(this.getName());
 		}
 	}
