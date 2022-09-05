@@ -17,11 +17,9 @@
 package org.quiltmc.qsl.resource.loader.test.client;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.channels.Channels;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -30,11 +28,10 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import com.google.common.base.Charsets;
-
-import com.mojang.blaze3d.texture.NativeImage;
-
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
+
+import com.mojang.blaze3d.texture.NativeImage;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.resource.ResourceType;
@@ -47,7 +44,6 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
-import org.quiltmc.qsl.resource.loader.test.mixin.client.NativeImageAccessor;
 
 public class ResourcePackProfileProviderTestMod implements ClientModInitializer {
 	private static final String PACK_NAME = "Visible Test Virtual Pack";
