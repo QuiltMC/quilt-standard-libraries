@@ -20,17 +20,25 @@ import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
+import com.google.common.base.Suppliers;
+import com.mojang.logging.LogUtils;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.UnmodifiableView;
+import org.jetbrains.annotations.Unmodifiable;
+import org.slf4j.Logger;
 
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.AbstractFileResourcePack;
@@ -38,21 +46,19 @@ import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.metadata.ResourceMetadataReader;
 import net.minecraft.util.Identifier;
 
-public abstract class InMemoryResourcePack implements ResourcePack {
-	private final Set<String> namespaces = new HashSet<>();
-	private final Map<String, byte[]> resources = new Object2ObjectOpenHashMap<>();
-	private final Map<String, Supplier<byte[]>> resourcesToCompute = new Object2ObjectOpenHashMap<>();
+import org.quiltmc.loader.api.QuiltLoader;
+
+public abstract class InMemoryResourcePack implements MutableResourcePack {
+	private static final Logger LOGGER = LogUtils.getLogger();
+	private final Map<Identifier, Supplier<byte[]>> assets = new ConcurrentHashMap<>();
+	private final Map<Identifier, Supplier<byte[]>> data = new ConcurrentHashMap<>();
+	private final Map<String, Supplier<byte[]>> root = new ConcurrentHashMap<>();
+	protected boolean debug = QuiltLoader.isDevelopmentEnvironment();
 
 	@Override
-	public @Nullable InputStream openRoot(String fileName) throws IOException {
+	public @Nullable InputStream openRoot(String fileName) {
 		if (!fileName.contains("/") && !fileName.contains("\\")) {
-			byte[] bytes = this.resources.get(fileName);
-
-			if (bytes == null) {
-				throw new FileNotFoundException("Could not find root resource \"" + fileName + "\" in pack " + this.getName() + ".");
-			}
-
-			return new ByteArrayInputStream(bytes);
+			return this.openResource(this.root, fileName);
 		} else {
 			throw new IllegalArgumentException("Root resources can only be filenames, not paths (no / allowed!)");
 		}
@@ -60,19 +66,26 @@ public abstract class InMemoryResourcePack implements ResourcePack {
 
 	@Override
 	public InputStream open(ResourceType type, Identifier id) throws IOException {
-		String path = this.getPath(type, id);
+		var stream = this.openResource(this.getResourceMap(type), id);
 
-		byte[] bytes = this.resources.get(path);
+		if (stream == null) {
+			throw new FileNotFoundException("Could not find resource \"" + id + "\" (" + type.getDirectory() + ") in pack " + this.getName() + ".");
+		}
+
+		return stream;
+	}
+
+	protected @Nullable <T> InputStream openResource(Map<T, Supplier<byte[]>> map, @NotNull T key) {
+		var supplier = map.get(key);
+
+		if (supplier == null) {
+			return null;
+		}
+
+		byte[] bytes = supplier.get();
 
 		if (bytes == null) {
-			var supplier = this.resourcesToCompute.remove(path);
-
-			if (supplier == null) {
-				throw new FileNotFoundException("Could not find resource \"" + path + "\" in pack " + this.getName() + ".");
-			}
-
-			bytes = supplier.get();
-			this.resources.put(path, bytes);
+			return null;
 		}
 
 		return new ByteArrayInputStream(bytes);
@@ -80,19 +93,22 @@ public abstract class InMemoryResourcePack implements ResourcePack {
 
 	@Override
 	public Collection<Identifier> findResources(ResourceType type, String namespace, String startingPath, Predicate<Identifier> pathFilter) {
-		return null;
+		return this.getResourceMap(type).keySet().stream()
+				.filter(id -> id.getNamespace().equals(namespace) && id.getPath().startsWith(startingPath))
+				.filter(pathFilter)
+				.collect(Collectors.toList());
 	}
 
 	@Override
 	public boolean contains(ResourceType type, Identifier id) {
-		String path = this.getPath(type, id);
-
-		return this.resources.containsKey(path) || this.resourcesToCompute.containsKey(path);
+		return this.getResourceMap(type).containsKey(id);
 	}
 
 	@Override
-	public @UnmodifiableView Set<String> getNamespaces(ResourceType type) {
-		return Collections.unmodifiableSet(this.namespaces);
+	public @Unmodifiable Set<String> getNamespaces(ResourceType type) {
+		return this.getResourceMap(type).keySet().stream()
+				.map(Identifier::getNamespace)
+				.collect(Collectors.toUnmodifiableSet());
 	}
 
 	@Override
@@ -106,7 +122,41 @@ public abstract class InMemoryResourcePack implements ResourcePack {
 	public void close() {
 	}
 
-	protected String getPath(ResourceType type, Identifier id) {
-		return type.getDirectory() + '/' + id.getNamespace() + '/' + id.getPath();
+	@Override
+	public void putResource(@NotNull String path, byte @NotNull [] resource) {
+		this.root.put(path, () -> resource);
+	}
+
+	@Override
+	public void putResource(@NotNull ResourceType type, @NotNull Identifier id, byte @NotNull [] resource) {
+		this.getResourceMap(type).put(id, () -> resource);
+	}
+
+	@Override
+	public void putResource(@NotNull String path, @NotNull Supplier<byte[]> resource) {
+		this.root.put(path, Suppliers.memoize(resource::get));
+	}
+
+	@Override
+	public void putResource(@NotNull ResourceType type, @NotNull Identifier id, @NotNull Supplier<byte @NotNull []> resource) {
+		this.getResourceMap(type).put(id, Suppliers.memoize(resource::get));
+	}
+
+	protected void dumpResource(String path, byte[] resource) {
+		try {
+			var p = Paths.get("debug", "packs", this.getName()).resolve(path);
+			Files.createDirectories(p.getParent());
+			Files.write(p, resource, StandardOpenOption.CREATE, StandardOpenOption.WRITE,
+					StandardOpenOption.TRUNCATE_EXISTING);
+		} catch (IOException e) {
+			LOGGER.error("Failed to write resource pack dump from pack {}.", this.getName(), e);
+		}
+	}
+
+	private Map<Identifier, Supplier<byte[]>> getResourceMap(ResourceType type) {
+		return switch (type) {
+			case CLIENT_RESOURCES -> this.assets;
+			case SERVER_DATA -> this.data;
+		};
 	}
 }
