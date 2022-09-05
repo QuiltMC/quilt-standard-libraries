@@ -109,7 +109,13 @@ public interface MutableResourcePack extends ResourcePack {
 
 	@Environment(EnvType.CLIENT)
 	default void putImage(Identifier id, Supplier<NativeImage> imageSupplier) {
-		this.putImage(QuiltResourcePack.getResourcePath(ResourceType.CLIENT_RESOURCES, id), imageSupplier);
+		this.putResource(ResourceType.CLIENT_RESOURCES, id, () -> {
+			try (var image = imageSupplier.get()) {
+				return image.getBytes();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		});
 	}
 
 	/**
