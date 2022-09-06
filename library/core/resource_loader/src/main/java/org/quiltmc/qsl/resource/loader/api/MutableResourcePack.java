@@ -18,6 +18,8 @@ package org.quiltmc.qsl.resource.loader.api;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.Future;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import net.fabricmc.api.EnvType;
@@ -70,6 +72,26 @@ public interface MutableResourcePack extends ResourcePack {
 	 */
 	void putResource(@NotNull ResourceType type, @NotNull Identifier id, @NotNull Supplier<byte @NotNull []> resource);
 
+	/**
+	 * Puts a resource into the resource pack's root asynchronously.
+	 *
+	 * @param fileName        the name of the file
+	 * @param resourceFactory the factory of the resource content
+	 * @return the future
+	 */
+	@NotNull Future<byte[]> putResourceAsync(@NotNull String fileName, @NotNull Function<@NotNull String, byte @NotNull []> resourceFactory);
+
+	/**
+	 * Puts a resource into the resource pack for the given side and path asynchronously.
+	 *
+	 * @param type            the resource type
+	 * @param id              the path of the resource
+	 * @param resourceFactory the factory of the resource content
+	 * @return the future
+	 */
+	@NotNull Future<byte[]> putResourceAsync(@NotNull ResourceType type, @NotNull Identifier id,
+			@NotNull Function<@NotNull Identifier, byte @NotNull []> resourceFactory);
+
 	default void putText(String fileName, String text) {
 		this.putResource(fileName, text.getBytes(StandardCharsets.UTF_8));
 	}
@@ -117,6 +139,13 @@ public interface MutableResourcePack extends ResourcePack {
 			}
 		});
 	}
+
+	/**
+	 * Clears the resource of a specific resource type.
+	 *
+	 * @param type the resource type
+	 */
+	void clearResources(ResourceType type);
 
 	/**
 	 * Clears all the resources from memory.

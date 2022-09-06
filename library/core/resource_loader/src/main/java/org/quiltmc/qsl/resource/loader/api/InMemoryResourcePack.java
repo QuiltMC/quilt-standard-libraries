@@ -28,11 +28,17 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Suppliers;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.mojang.logging.LogUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,6 +61,7 @@ import org.quiltmc.qsl.base.api.util.TriState;
  */
 public abstract class InMemoryResourcePack implements MutableResourcePack {
 	private static final Logger LOGGER = LogUtils.getLogger();
+	private static final ExecutorService EXECUTOR_SERVICE;
 	private static final boolean DUMP = TriState.fromProperty("quilt.resource_loader.debug.pack.dump_from_in_memory")
 			.toBooleanOrElse(QuiltLoader.isDevelopmentEnvironment());
 	private final Map<Identifier, Supplier<byte[]>> assets = new ConcurrentHashMap<>();
@@ -152,10 +159,43 @@ public abstract class InMemoryResourcePack implements MutableResourcePack {
 	}
 
 	@Override
+	public @NotNull Future<byte[]> putResourceAsync(@NotNull String fileName,
+			@NotNull Function<@NotNull String, byte @NotNull []> resourceFactory) {
+		Future<byte[]> future = EXECUTOR_SERVICE.submit(() -> resourceFactory.apply(fileName));
+		this.putResource(fileName, () -> {
+			try {
+				return future.get();
+			} catch (InterruptedException | ExecutionException e) {
+				throw new RuntimeException(e);
+			}
+		});
+		return future;
+	}
+
+	@Override
+	public @NotNull Future<byte[]> putResourceAsync(@NotNull ResourceType type, @NotNull Identifier id,
+			@NotNull Function<@NotNull Identifier, byte @NotNull []> resourceFactory) {
+		Future<byte[]> future = EXECUTOR_SERVICE.submit(() -> resourceFactory.apply(id));
+		this.putResource(type, id, () -> {
+			try {
+				return future.get();
+			} catch (InterruptedException | ExecutionException e) {
+				throw new RuntimeException(e);
+			}
+		});
+		return future;
+	}
+
+	@Override
+	public void clearResources(ResourceType type) {
+		this.getResourceMap(type).clear();
+	}
+
+	@Override
 	public void clearResources() {
 		this.root.clear();
-		this.assets.clear();
-		this.data.clear();
+		this.clearResources(ResourceType.CLIENT_RESOURCES);
+		this.clearResources(ResourceType.SERVER_DATA);
 	}
 
 	/**
@@ -197,5 +237,40 @@ public abstract class InMemoryResourcePack implements MutableResourcePack {
 			case CLIENT_RESOURCES -> this.assets;
 			case SERVER_DATA -> this.data;
 		};
+	}
+
+	static {
+		int threads = Math.max(Runtime.getRuntime().availableProcessors() / 2 - 1, 1);
+		final String property = "quilt.resource_loader.pack.virtual_async_threads";
+		String threadsOverride = System.getProperty(property);
+
+		if (threadsOverride != null) {
+			try {
+				threads = Integer.parseInt(threadsOverride);
+			} catch (NumberFormatException e) {
+				LOGGER.error("Could not use the number provided by the property \"{}\": ", property, e);
+			}
+		}
+
+		EXECUTOR_SERVICE = Executors.newFixedThreadPool(
+				threads,
+				new ThreadFactoryBuilder().setDaemon(true).setNameFormat("Quilt-Resource-Loader-Virtual-Pack-Worker-%s").build()
+		);
+	}
+
+	/**
+	 * Represents an in-memory resource pack with a static name.
+	 */
+	public static class Named extends InMemoryResourcePack {
+		private final String name;
+
+		public Named(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String getName() {
+			return this.name;
+		}
 	}
 }
