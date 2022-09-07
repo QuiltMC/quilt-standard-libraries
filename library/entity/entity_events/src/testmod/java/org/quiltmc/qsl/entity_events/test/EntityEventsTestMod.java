@@ -26,11 +26,9 @@ import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.dimension.DimensionTypes;
 import org.quiltmc.qsl.entity_events.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,14 +90,14 @@ public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTot
 	// Players going to another world are notified
 	@Override
 	public void afterChangeWorld(ServerPlayerEntity player, ServerWorld origin, ServerWorld destination) {
-		player.sendMessage(new LiteralText("Welcome to "+destination.getRegistryKey().toString()), false);
+		player.sendMessage(Text.literal("Welcome to " + destination.getRegistryKey().toString()), false);
 	}
 
 	// Entities going to the end are named 'end traveller'
 	@Override
 	public void afterChangeWorld(Entity originalEntity, Entity newEntity, ServerWorld origin, ServerWorld destination) {
-		if (destination.getDimension() == destination.getServer().getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).get(DimensionType.THE_END_REGISTRY_KEY)) {
-			newEntity.setCustomName(new LiteralText("End Traveller"));
+		if (destination.getDimension() == destination.getServer().getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).get(DimensionTypes.THE_END)) {
+			newEntity.setCustomName(Text.literal("End Traveller"));
 		}
 	}
 
