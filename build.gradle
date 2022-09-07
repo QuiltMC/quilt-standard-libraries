@@ -72,7 +72,7 @@ task fatJavadoc(type: Javadoc) {
 	}
 
 	afterEvaluate {
-		subprojects.each { subproject ->
+		subprojects.stream().filter { it.path.count(':') == 2 }.each { subproject ->
 			subproject.tasks.withType(Javadoc).each { javadocTask ->
 				source += javadocTask.source
 				classpath += javadocTask.classpath
@@ -83,6 +83,7 @@ task fatJavadoc(type: Javadoc) {
 				// The proper fix is to get the root project to generate a new MC JAR that contains all the transitive transformations of the modules
 				// applied and pass that to the fat javadoc task instead.
 						.filter { !it.name.startsWith("minecraft-merged-named") }
+						.filter { !it.name.startsWith("minecraft-project-@block@block_content_registry") }
 			}
 		}
 	}
@@ -151,7 +152,6 @@ loom {
 
 		// Auto test server, a server is ran for a few seconds and testmods run to verify things such as mixin
 		// application function properly.
-		// This task is typically ran by the CI server.
 		autoTestServer {
 			server()
 			configName = "Auto test server"
@@ -160,6 +160,11 @@ loom {
 			programArg("--nogui")
 		}
 	}
+}
+
+task runAutoAllTestServer {
+	group "verification"
+	description "Runs all the server-sided tests automatically.\nTypically ran by the CI server."
 }
 
 afterEvaluate {
@@ -189,6 +194,8 @@ afterEvaluate {
 			tsk.nestedJars.from it.tasks.getByName("testmodRemapJar")
 		}
 	}
+
+	tasks.runAutoAllTestServer.dependsOn tasks.runAutoTestServer
 }
 
 task checkVersion {

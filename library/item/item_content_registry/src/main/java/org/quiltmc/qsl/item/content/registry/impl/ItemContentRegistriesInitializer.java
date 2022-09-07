@@ -22,8 +22,8 @@ import java.util.function.Supplier;
 
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
-import org.jetbrains.annotations.ApiStatus;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
+import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.block.ComposterBlock;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;

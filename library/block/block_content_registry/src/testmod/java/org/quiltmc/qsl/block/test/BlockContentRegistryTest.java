@@ -18,16 +18,6 @@ package org.quiltmc.qsl.block.test;
 
 import java.util.Optional;
 
-import org.quiltmc.loader.api.ModContainer;
-import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
-import org.quiltmc.qsl.block.content.registry.api.FlammableBlockEntry;
-import org.quiltmc.qsl.block.content.registry.api.ReversibleBlockEntry;
-import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
-import org.quiltmc.qsl.lifecycle.api.event.ServerWorldLoadEvents;
-import org.quiltmc.qsl.lifecycle.api.event.ServerWorldTickEvents;
-import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
-import org.quiltmc.qsl.registry.attachment.api.RegistryExtensions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,10 +27,17 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.Oxidizable;
 import net.minecraft.block.OxidizableBlock;
 import net.minecraft.tag.BlockTags;
-import net.minecraft.tag.ItemTags;
-import net.minecraft.util.Holder;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
+import org.quiltmc.qsl.block.content.registry.api.FlammableBlockEntry;
+import org.quiltmc.qsl.block.content.registry.api.ReversibleBlockEntry;
+import org.quiltmc.qsl.lifecycle.api.event.ServerWorldTickEvents;
+import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
+import org.quiltmc.qsl.registry.attachment.api.RegistryExtensions;
 
 public class BlockContentRegistryTest implements ModInitializer {
 	public static final String MOD_ID = "quilt_block_content_registry_testmod";
@@ -72,7 +69,7 @@ public class BlockContentRegistryTest implements ModInitializer {
 		});
 	}
 
-	private <T> void  assertValues(Block block, RegistryEntryAttachment<Block, T> attachment, T value) {
+	private <T> void assertValues(Block block, RegistryEntryAttachment<Block, T> attachment, T value) {
 		Optional<T> entry = attachment.get(block);
 		Identifier id = Registry.BLOCK.getId(block);
 		if (entry.isEmpty()) {

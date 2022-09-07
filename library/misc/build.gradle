@@ -1,0 +1,7 @@
+plugins {
+	id("qsl.library")
+}
+
+qslLibrary {
+	libraryName = "misc"
+}

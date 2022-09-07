@@ -35,6 +35,7 @@ library("gui")
 library("item")
 library("management")
 library("worldgen")
+library("misc")
 
 def library(String library) {
 	include(library)
