@@ -19,17 +19,20 @@ package org.quiltmc.qsl.entity_events.test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.SkeletonEntity;
+import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.dimension.DimensionTypes;
 
@@ -46,7 +49,8 @@ public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTot
 		ServerEntityLoadEvents.AfterUnload,
 		EntityWorldChangeEvents.AfterPlayerWorldChange,
 		EntityWorldChangeEvents.AfterEntityWorldChange,
-		ServerPlayerEntityCopyCallback {
+		ServerPlayerEntityCopyCallback,
+		ServerEntityTickCallback {
 	public static final Logger LOGGER = LoggerFactory.getLogger("quilt_entity_events_testmod");
 
 	// When an entity is holding an allium in its main hand at death and nothing else revives it, it will be
@@ -120,6 +124,19 @@ public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTot
 			}
 		} else {
 			newPlayer.giveItemStack(Items.APPLE.getDefaultStack());
+		}
+	}
+
+	// Zombies will fly when it's raining,
+	// or place raw iron if they're riding something
+	@Override
+	public void onServerEntityTick(Entity entity, boolean isPassengerTick) {
+		if (entity.world.isRaining() && entity instanceof ZombieEntity zombie) {
+			if (isPassengerTick) {
+				entity.world.setBlockState(entity.getBlockPos().offset(Direction.UP, 3), Blocks.RAW_IRON_BLOCK.getDefaultState());
+			} else {
+				entity.setVelocity(entity.getVelocity().add(0.0, 0.05, 0.0));
+			}
 		}
 	}
 }
