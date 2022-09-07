@@ -31,7 +31,7 @@ public interface ServerEntityTickCallback extends EventAwareListener {
 	/**
 	 * Called when an entity is ticked.
 	 */
-	Event<ServerEntityTickCallback> ENTITY_TICK = Event.create(ServerEntityTickCallback.class, callbacks -> (entity, isPassengerTick) -> {
+	Event<ServerEntityTickCallback> EVENT = Event.create(ServerEntityTickCallback.class, callbacks -> (entity, isPassengerTick) -> {
 		for (ServerEntityTickCallback callback : callbacks) {
 			callback.onServerEntityTick(entity, isPassengerTick);
 		}
