@@ -16,6 +16,9 @@
 
 package org.quiltmc.qsl.recipe.api.brewing;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.google.gson.JsonObject;
 
 import net.minecraft.item.ItemStack;
@@ -63,8 +66,11 @@ import org.quiltmc.qsl.recipe.impl.RecipeImpl;
  * </code></pre>
  */
 public class PotionBrewingRecipe extends AbstractBrewingRecipe<Potion> {
+	public static final Set<Potion> BREWABLE_POTIONS = new HashSet<>();
+
 	public PotionBrewingRecipe(Identifier id, String group, Potion input, Ingredient ingredient, Potion output, int fuel, int brewTime) {
 		super(id, group, input, ingredient, output, fuel, brewTime);
+		BREWABLE_POTIONS.add(output);
 		PotionUtil.setPotion(this.ghostOutput, this.output);
 	}
 

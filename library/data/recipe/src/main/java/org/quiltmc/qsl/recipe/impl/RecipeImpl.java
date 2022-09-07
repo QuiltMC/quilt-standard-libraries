@@ -48,7 +48,10 @@ public class RecipeImpl implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		ResourceLoaderEvents.START_DATA_PACK_RELOAD.register(
-				(server, oldResourceManager) -> AbstractBrewingRecipe.VALID_INGREDIENTS.clear()
+				(server, oldResourceManager) -> {
+					AbstractBrewingRecipe.VALID_INGREDIENTS.clear();
+					PotionBrewingRecipe.BREWABLE_POTIONS.clear();
+				}
 		);
 	}
 }
