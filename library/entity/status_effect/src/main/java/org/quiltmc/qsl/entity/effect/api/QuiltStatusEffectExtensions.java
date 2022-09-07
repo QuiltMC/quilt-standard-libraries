@@ -19,11 +19,12 @@ package org.quiltmc.qsl.entity.effect.api;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
-@InjectedInterface(QuiltLivingEntityExtensions.class)
+@InjectedInterface(StatusEffect.class)
 public interface QuiltStatusEffectExtensions {
 	default boolean shouldRemove(@NotNull LivingEntity entity, @NotNull StatusEffectInstance instance, @NotNull StatusEffectRemovalReason reason) {
 		return reason.removesEffectType(instance.getEffectType());
