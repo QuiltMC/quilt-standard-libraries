@@ -258,7 +258,7 @@ public interface MutableResourcePack extends ResourcePack {
 	 * <b>Note:</b> this method is only available on the client.
 	 *
 	 * @param fileName     the name of the file
-	 * @param imageFactory the factory of    the resource content
+	 * @param imageFactory the factory of the resource content
 	 * @see #putResourceAsync(String, Function)
 	 */
 	@Environment(EnvType.CLIENT)
