@@ -168,12 +168,13 @@ Quick legend:
 
 ### Management Library
 
-| Feature         | QSL | Fabric API |
-|:----------------|:---:|:----------:|
-| Commands        |  ✔  |     ✔      |
-| Client Commands |  ✔  |     ✔      |
-| Game Rules      |  ❌  |     ✔      |
-| Message API     |  ❌  |     ✔      |
+| Feature                 | QSL | Fabric API |
+|:------------------------|:---:|:----------:|
+| Commands                |  ✔  |     ✔      |
+| Client Commands         |  ✔  |     ✔      |
+| Game Rules              |  ❌  |     ✔      |
+| Entity Selector Options |  ✔  |     ❌      |
+| Message API             |  ❌  |     ✔      |
 
 ### Rendering Library
 
