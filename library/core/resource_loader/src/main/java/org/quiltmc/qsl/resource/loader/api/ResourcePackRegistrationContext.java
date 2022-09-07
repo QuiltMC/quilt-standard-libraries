@@ -44,6 +44,10 @@ public interface ResourcePackRegistrationContext {
 	 */
 	void addResourcePack(@NotNull ResourcePack pack);
 
+	/**
+	 * Functional interface to be implemented on callbacks for {@link ResourceLoader#getRegisterDefaultResourcePackEvent()}
+	 * and {@link ResourceLoader#getRegisterTopResourcePackEvent()}.
+	 */
 	@FunctionalInterface
 	interface Callback {
 		/**

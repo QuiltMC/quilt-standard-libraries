@@ -24,6 +24,32 @@
  * {@link org.quiltmc.qsl.resource.loader.api.ResourceLoader#registerBuiltinResourcePack(Identifier, org.quiltmc.loader.api.ModContainer, ResourcePackActivationType)}
  *
  * <p>
+ * <h4>Resource Pack Injection</h4>
+ * <p>
+ * <h5>Resource Pack Profile Provider</h5>
+ * The Resource Loader gives a method to register {@link net.minecraft.resource.pack.ResourcePackProvider ResourcePackProviders},
+ * which may be used to add new resource packs that are visible to the player in the resource pack selection screens or the {@code datapack} command.
+ *
+ * <p>
+ * <h5>Virtual Resource Packs</h5>
+ * Some mods may need to rely on virtual resource packs to generate resources on the fly.
+ * The Resource Loader provides utilities to work with such kind of resource packs:
+ * <ul>
+ *     <li>
+ *         {@link org.quiltmc.qsl.resource.loader.api.ResourceLoader#getRegisterDefaultResourcePackEvent()}
+ *         - an event to register resource packs that are injected into the default resource pack.
+ *     </li>
+ *     <li>
+ *         {@link org.quiltmc.qsl.resource.loader.api.ResourceLoader#getRegisterTopResourcePackEvent()}
+ *         - an event to register resource packs that are on the top of the resource pack hierarchy, those resource packs are invisible to the player.
+ *     </li>
+ *     <li>{@link org.quiltmc.qsl.resource.loader.api.InMemoryResourcePack} - a resource pack implementation whose resources are stored in the live memory.</li>
+ *     <li>
+ *         {@link org.quiltmc.qsl.resource.loader.api.GroupResourcePack} - a resource pack implementation which can be used to group multiple resource packs into one.
+ *     </li>
+ * </ul>
+ *
+ * <p>
  * <h4>Programmer Art Resource Pack</h4>
  * The Resource Loader will inject resources into the Programmer Art resource pack for each mod that provides
  * Programmer Art resources in the {@code programmer_art} top-level directory of the mod

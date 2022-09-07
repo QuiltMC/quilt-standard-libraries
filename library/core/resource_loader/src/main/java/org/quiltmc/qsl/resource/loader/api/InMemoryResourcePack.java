@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.gson.JsonObject;
 import com.mojang.logging.LogUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,6 +51,7 @@ import net.minecraft.resource.pack.AbstractFileResourcePack;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.metadata.ResourceMetadataReader;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
 
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.util.TriState;
@@ -126,6 +128,25 @@ public abstract class InMemoryResourcePack implements MutableResourcePack {
 
 	@Override
 	public <T> @Nullable T parseMetadata(ResourceMetadataReader<T> metaReader) throws IOException {
+		if (!this.root.containsKey(ResourcePack.PACK_METADATA_NAME)) {
+			var json = new JsonObject();
+			var packJson = new JsonObject();
+			packJson.addProperty("description", "A virtual resource pack.");
+			packJson.addProperty("pack_format", 5); // This is like, not read by any significant system when invisible to users.
+			json.add("pack", packJson);
+
+			if (!json.has(metaReader.getKey())) {
+				return null;
+			} else {
+				try {
+					return metaReader.fromJson(JsonHelper.getObject(json, metaReader.getKey()));
+				} catch (Exception e) {
+					LOGGER.error("Couldn't load {} metadata from pack \"{}\":", metaReader.getKey(), this.getName(), e);
+					return null;
+				}
+			}
+		}
+
 		try (var stream = this.openRoot(ResourcePack.PACK_METADATA_NAME)) {
 			return AbstractFileResourcePack.parseMetadata(metaReader, stream);
 		}

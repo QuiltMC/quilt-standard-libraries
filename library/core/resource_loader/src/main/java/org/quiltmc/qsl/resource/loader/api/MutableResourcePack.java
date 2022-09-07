@@ -41,6 +41,9 @@ public interface MutableResourcePack extends ResourcePack {
 	 *
 	 * @param fileName the name of the file
 	 * @param resource the resource content
+	 * @see #putResource(ResourceType, Identifier, byte[])
+	 * @see #putResource(String, Supplier)
+	 * @see #putResourceAsync(String, Function)
 	 */
 	void putResource(@NotNull String fileName, byte @NotNull [] resource);
 
@@ -50,6 +53,9 @@ public interface MutableResourcePack extends ResourcePack {
 	 * @param type     the resource type
 	 * @param id       the path of the resource
 	 * @param resource the resource content
+	 * @see #putResource(String, byte[])
+	 * @see #putResource(ResourceType, Identifier, Supplier)
+	 * @see #putResourceAsync(ResourceType, Identifier, Function)
 	 */
 	void putResource(@NotNull ResourceType type, @NotNull Identifier id, byte @NotNull [] resource);
 
@@ -59,6 +65,9 @@ public interface MutableResourcePack extends ResourcePack {
 	 * @param fileName the name of the file
 	 * @param resource the supplier of the resource content
 	 * @apiNote the supplier is {@link com.google.common.base.Suppliers#memoize(com.google.common.base.Supplier) memoized}
+	 * @see #putResource(ResourceType, Identifier, Supplier)
+	 * @see #putResource(String, byte[])
+	 * @see #putResourceAsync(String, Function)
 	 */
 	void putResource(@NotNull String fileName, @NotNull Supplier<byte @NotNull []> resource);
 
@@ -69,6 +78,9 @@ public interface MutableResourcePack extends ResourcePack {
 	 * @param id       the path of the resource
 	 * @param resource the supplier of the resource content
 	 * @apiNote the supplier is {@link com.google.common.base.Suppliers#memoize(com.google.common.base.Supplier) memoized}
+	 * @see #putResource(String, Supplier)
+	 * @see #putResource(ResourceType, Identifier, byte[])
+	 * @see #putResourceAsync(ResourceType, Identifier, Function)
 	 */
 	void putResource(@NotNull ResourceType type, @NotNull Identifier id, @NotNull Supplier<byte @NotNull []> resource);
 
@@ -78,6 +90,9 @@ public interface MutableResourcePack extends ResourcePack {
 	 * @param fileName        the name of the file
 	 * @param resourceFactory the factory of the resource content
 	 * @return the future
+	 * @see #putResourceAsync(ResourceType, Identifier, Function)
+	 * @see #putResource(String, byte[])
+	 * @see #putResource(String, Supplier)
 	 */
 	@NotNull Future<byte[]> putResourceAsync(@NotNull String fileName, @NotNull Function<@NotNull String, byte @NotNull []> resourceFactory);
 
@@ -88,36 +103,124 @@ public interface MutableResourcePack extends ResourcePack {
 	 * @param id              the path of the resource
 	 * @param resourceFactory the factory of the resource content
 	 * @return the future
+	 * @see #putResourceAsync(String, Function)
+	 * @see #putResource(ResourceType, Identifier, byte[])
+	 * @see #putResource(ResourceType, Identifier, Supplier)
 	 */
 	@NotNull Future<byte[]> putResourceAsync(@NotNull ResourceType type, @NotNull Identifier id,
 			@NotNull Function<@NotNull Identifier, byte @NotNull []> resourceFactory);
 
-	default void putText(String fileName, String text) {
+	/**
+	 * Puts a text resource into the resource pack's root.
+	 *
+	 * @param fileName the name of the file
+	 * @param text     the resource content
+	 * @see #putResource(String, byte[])
+	 */
+	default void putText(@NotNull String fileName, @NotNull String text) {
 		this.putResource(fileName, text.getBytes(StandardCharsets.UTF_8));
 	}
 
-	default void putText(ResourceType type, Identifier id, String text) {
+	/**
+	 * Puts a text resource into the resource pack for the given side and path.
+	 *
+	 * @param type the resource type
+	 * @param id   the path of the resource
+	 * @param text the resource content
+	 * @see #putResource(ResourceType, Identifier, byte[])
+	 */
+	default void putText(@NotNull ResourceType type, @NotNull Identifier id, @NotNull String text) {
 		this.putResource(type, id, text.getBytes(StandardCharsets.UTF_8));
 	}
 
-	default void putText(String fileName, Supplier<String> textSupplier) {
+	/**
+	 * Puts a text resource into the resource pack's root.
+	 *
+	 * @param fileName     the name of the file
+	 * @param textSupplier the supplier of the resource content
+	 * @apiNote the supplier is {@link com.google.common.base.Suppliers#memoize(com.google.common.base.Supplier) memoized}
+	 * @see #putResource(String, Supplier)
+	 */
+	default void putText(@NotNull String fileName, @NotNull Supplier<@NotNull String> textSupplier) {
 		this.putResource(fileName, () -> textSupplier.get().getBytes(StandardCharsets.UTF_8));
 	}
 
-	default void putText(ResourceType type, Identifier id, Supplier<String> textSupplier) {
+	/**
+	 * Puts a text resource into the resource pack for the given side and path.
+	 *
+	 * @param type         the resource type
+	 * @param id           the path of the resource
+	 * @param textSupplier the supplier of the resource content
+	 * @apiNote the supplier is {@link com.google.common.base.Suppliers#memoize(com.google.common.base.Supplier) memoized}
+	 * @see #putResource(ResourceType, Identifier, Supplier)
+	 */
+	default void putText(@NotNull ResourceType type, @NotNull Identifier id, @NotNull Supplier<@NotNull String> textSupplier) {
 		this.putResource(type, id, () -> textSupplier.get().getBytes(StandardCharsets.UTF_8));
 	}
 
+	/**
+	 * Puts a resource into the resource pack's root asynchronously.
+	 *
+	 * @param fileName    the name of the file
+	 * @param textFactory the factory of the resource content
+	 * @return the future
+	 * @see #putResourceAsync(String, Function)
+	 */
+	default @NotNull Future<byte[]> putTextAsync(@NotNull String fileName, @NotNull Function<@NotNull String, @NotNull String> textFactory) {
+		return this.putResourceAsync(fileName, textFactory.andThen(text -> text.getBytes(StandardCharsets.UTF_8)));
+	}
+
+	/**
+	 * Puts a text resource into the resource pack for the given side and path asynchronously.
+	 *
+	 * @param type        the resource type
+	 * @param id          the path of the resource
+	 * @param textFactory the factory of the resource content
+	 * @return the future
+	 * @see #putResourceAsync(ResourceType, Identifier, Function)
+	 */
+	default @NotNull Future<byte[]> putTextAsync(@NotNull ResourceType type, @NotNull Identifier id,
+			@NotNull Function<@NotNull Identifier, @NotNull String> textFactory) {
+		return this.putResourceAsync(type, id, textFactory.andThen(text -> text.getBytes(StandardCharsets.UTF_8)));
+	}
+
+	/**
+	 * Puts an image resource into the resource pack's root.
+	 * <p>
+	 * <b>Note:</b> this method is only available on the client.
+	 *
+	 * @param fileName the name of the file
+	 * @param image    the resource content
+	 * @see #putResource(String, byte[])
+	 */
 	@Environment(EnvType.CLIENT)
 	default void putImage(String fileName, NativeImage image) throws IOException {
 		this.putResource(fileName, image.getBytes());
 	}
 
+	/**
+	 * Puts an image resource into the resource pack for the given path in the {@code assets} directory.
+	 * <p>
+	 * <b>Note:</b> this method is only available on the client.
+	 *
+	 * @param id    the path of the resource
+	 * @param image the resource content
+	 * @see #putResource(ResourceType, Identifier, byte[])
+	 */
 	@Environment(EnvType.CLIENT)
 	default void putImage(Identifier id, NativeImage image) throws IOException {
 		this.putResource(ResourceType.CLIENT_RESOURCES, id, image.getBytes());
 	}
 
+	/**
+	 * Puts an image resource into the resource pack's root.
+	 * <p>
+	 * <b>Note:</b> this method is only available on the client.
+	 *
+	 * @param fileName      the name of the file
+	 * @param imageSupplier the supplier of the resource content
+	 * @see #putResource(String, Supplier)
+	 */
 	@Environment(EnvType.CLIENT)
 	default void putImage(String fileName, Supplier<NativeImage> imageSupplier) {
 		this.putResource(fileName, () -> {
@@ -129,6 +232,15 @@ public interface MutableResourcePack extends ResourcePack {
 		});
 	}
 
+	/**
+	 * Puts an image resource into the resource pack for the given path in the {@code assets} directory.
+	 * <p>
+	 * <b>Note:</b> this method is only available on the client.
+	 *
+	 * @param id            the path of the resource
+	 * @param imageSupplier the supplier of the resource content
+	 * @see #putResource(ResourceType, Identifier, Supplier)
+	 */
 	@Environment(EnvType.CLIENT)
 	default void putImage(Identifier id, Supplier<NativeImage> imageSupplier) {
 		this.putResource(ResourceType.CLIENT_RESOURCES, id, () -> {
@@ -138,6 +250,47 @@ public interface MutableResourcePack extends ResourcePack {
 				throw new RuntimeException(e);
 			}
 		});
+	}
+
+	/**
+	 * Puts an image resource into the resource pack's root asynchronously.
+	 * <p>
+	 * <b>Note:</b> this method is only available on the client.
+	 *
+	 * @param fileName     the name of the file
+	 * @param imageFactory the factory of    the resource content
+	 * @see #putResourceAsync(String, Function)
+	 */
+	@Environment(EnvType.CLIENT)
+	default @NotNull Future<byte[]> putImageAsync(@NotNull String fileName, @NotNull Function<@NotNull String, @NotNull NativeImage> imageFactory) {
+		return this.putResourceAsync(fileName, imageFactory.andThen(image -> {
+			try (image) {
+				return image.getBytes();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}));
+	}
+
+	/**
+	 * Puts an image resource into the resource pack for the given path in the {@code assets} directory asynchronously.
+	 * <p>
+	 * <b>Note:</b> this method is only available on the client.
+	 *
+	 * @param id           the path of the resource
+	 * @param imageFactory the factory of the resource content
+	 * @apiNote the supplier is {@link com.google.common.base.Suppliers#memoize(com.google.common.base.Supplier) memoized}
+	 * @see #putResourceAsync(ResourceType, Identifier, Function)
+	 */
+	@Environment(EnvType.CLIENT)
+	default @NotNull Future<byte[]> putImageAsync(@NotNull Identifier id, @NotNull Function<@NotNull Identifier, @NotNull NativeImage> imageFactory) {
+		return this.putResourceAsync(ResourceType.CLIENT_RESOURCES, id, imageFactory.andThen(image -> {
+			try (image) {
+				return image.getBytes();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}));
 	}
 
 	/**
