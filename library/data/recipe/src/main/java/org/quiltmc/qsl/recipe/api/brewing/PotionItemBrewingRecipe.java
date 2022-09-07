@@ -35,21 +35,20 @@ import org.quiltmc.qsl.recipe.impl.RecipeImpl;
  * A {@link PotionItem} brewing recipe.
  *
  * <p>
- *     The recipe has six arguments:
- * </p>
+ * The recipe has six arguments:
  * <ul>
  * 		<li>type: "quilt_recipe:potion_item_brewing"</li>
  * 		<li>group: A string representing the group of the recipe</li>
- * 		<li>ingredient: A valid ingredient JSON object.</li>
- * 		<li>input: A valid identifier for an {@link Item item}.</li>
- * 		<li>output: A valid identifier for an {@link Item item}.</li>
+ * 		<li>ingredient: A valid {@link net.minecraft.recipe.Ingredient ingredient} JSON object.</li>
+ * 		<li>input: A valid {@link net.minecraft.util.Identifier identifier} for an {@link Item item}.</li>
+ * 		<li>output: A valid {@link net.minecraft.util.Identifier identifier} for an {@link Item item}.</li>
  * 		<li>fuel: An integer representing how much fuel this craft will take.
- * 			In vanilla, blaze powder supplies 20 fuel.</li>
+ * 			In vanilla, blaze powder supplies {@code 20} fuel.</li>
  * 		<li>time: An integer representing how much time this craft will take, in ticks.
- * 			In vanilla, the default is 400 ticks.</li>
+ * 			In vanilla, the default is {@code 400} ticks.</li>
  * </ul>
  *
- * Here is an example recipe for transforming a regular potion into a lingering potion using a log, 20 fuel units, and 100 ticks.
+ * Here is an example recipe for transforming a regular potion into a lingering potion using a log, {@code 20} fuel units, and {@code 100} ticks.
  * <pre><code>
  * {
  *   "type": "quilt_recipe:potion_item_brewing",

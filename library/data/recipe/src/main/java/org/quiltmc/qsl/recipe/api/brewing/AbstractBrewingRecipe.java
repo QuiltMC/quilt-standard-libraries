@@ -92,7 +92,7 @@ public abstract class AbstractBrewingRecipe<T> implements Recipe<BrewingStandBlo
 	/**
 	 * Transforms the input {@link ItemStack} to the output {@link ItemStack}.
 	 * <p>
-	 * The input is guaranteed to match the required input, as defined by {@link #matches(int, ItemStack)}.</p>
+	 * The input is guaranteed to match the required input, as defined by {@link #matches(int, ItemStack)}.
 	 *
 	 * @param slot the index of the slot
 	 * @param input the {@link ItemStack} in the provided slot

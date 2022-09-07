@@ -99,7 +99,7 @@ public abstract class BrewingRecipeBuilder<SELF extends BrewingRecipeBuilder<SEL
 	/**
 	 * Sets the required fuel for the recipe.
 	 * <p>
-	 * By default, the fuel is 1.</p>
+	 * By default, the fuel is {@code 1}.
 	 *
 	 * @param fuel the fuel to consume
 	 */
@@ -112,7 +112,7 @@ public abstract class BrewingRecipeBuilder<SELF extends BrewingRecipeBuilder<SEL
 	/**
 	 * Sets the required brew time in ticks for the recipe.
 	 * <p>
-	 * By default, the brew time is 400.</p>
+	 * By default, the brew time is {@code 400}.
 	 *
 	 * @param time the brew time
 	 */

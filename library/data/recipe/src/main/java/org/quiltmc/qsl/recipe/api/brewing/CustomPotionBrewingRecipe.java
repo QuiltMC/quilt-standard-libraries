@@ -44,22 +44,21 @@ import org.quiltmc.qsl.recipe.impl.RecipeImpl;
  * A {@link Potion} brewing recipe with extended functionality for custom potion effects.
  *
  * <p>
- *     The recipe has seven arguments:
- * </p>
+ * The recipe has seven arguments:
  * <ul>
  * 		<li>type: "quilt_recipe:custom_potion_brewing"</li>
  * 		<li>group: A string representing the group of the recipe</li>
- * 		<li>ingredient: A valid ingredient JSON object.</li>
- * 		<li>input: A valid identifier for a {@link Potion potion}.</li>
- * 		<li>output: A valid identifier for a {@link Potion potion}.</li>
+ * 		<li>ingredient: A valid {@link net.minecraft.recipe.Ingredient ingredient} JSON object.</li>
+ * 		<li>input: A valid {@link net.minecraft.util.Identifier identifier} for a {@link Potion potion}.</li>
+ * 		<li>output: A valid {@link net.minecraft.util.Identifier identifier} for a {@link Potion potion}.</li>
  * 		<li>fuel: An integer representing how much fuel this craft will take.
- * 			In vanilla, blaze powder supplies 20 fuel.</li>
+ * 			In vanilla, blaze powder supplies {@code 20} fuel.</li>
  * 		<li>time: An integer representing how much time this craft will take, in ticks.
- * 			In vanilla, the default is 400 ticks.</li>
+ * 			In vanilla, the default is {@code 400} ticks.</li>
  * 		<li>effects: An array holding all of the custom effects to add to the potion.
- * 			Each entry is either a valid identifier for a {@link StatusEffect status effect} or a JSON object of the form:</li>
+ * 			Each entry is either a valid {@link net.minecraft.util.Identifier identifier} for a {@link StatusEffect status effect} or a JSON object of the form:</li>
  * 		<ul>
- * 		    <li>type: A valid identifier for a {@link StatusEffect status effect}.</li>
+ * 		    <li>type: A valid {@link net.minecraft.util.Identifier identifier} for a {@link StatusEffect status effect}.</li>
  * 		    <li>duration: An integer representing how long this effect lasts, in ticks.</li>
  * 		    <li>amplifier: An integer representing what level this effect is. Note that this is zero-based.</li>
  * 		    <li>particles: {@code true} if the effect should produce particles, or {@code false}.</li>
@@ -67,7 +66,7 @@ import org.quiltmc.qsl.recipe.impl.RecipeImpl;
  * 		</ul>
  * </ul>
  *
- * Here is an example recipe for a mundane potion that takes a water potion, a block of dirt, 20 fuel units, and 200 ticks.
+ * Here is an example recipe for a mundane potion that takes a water potion, a block of dirt, {@code 20} fuel units, and {@code 200} ticks.
  * It additionally provides jump boost for a second, and immense strength for half a second.
  * <pre><code>
  * {

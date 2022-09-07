@@ -37,21 +37,20 @@ import org.quiltmc.qsl.recipe.impl.RecipeImpl;
  * A {@link Potion} brewing recipe.
  *
  * <p>
- *     The recipe has six arguments:
- * </p>
+ * The recipe has six arguments:
  * <ul>
  * 		<li>type: "quilt_recipe:potion_brewing"</li>
  * 		<li>group: A string representing the group of the recipe</li>
- * 		<li>ingredient: A valid ingredient JSON object.</li>
- * 		<li>input: A valid identifier for a {@link Potion potion}.</li>
- * 		<li>output: A valid identifier for a {@link Potion potion}.</li>
+ * 		<li>ingredient: A valid {@link net.minecraft.recipe.Ingredient ingredient} JSON object.</li>
+ * 		<li>input: A valid {@link net.minecraft.util.Identifier identifier} for a {@link Potion potion}.</li>
+ * 		<li>output: A valid {@link net.minecraft.util.Identifier identifier} for a {@link Potion potion}.</li>
  * 		<li>fuel: An integer representing how much fuel this craft will take.
- * 			In vanilla, blaze powder supplies 20 fuel.</li>
+ * 			In vanilla, blaze powder supplies {@code 20} fuel.</li>
  * 		<li>time: An integer representing how much time this craft will take, in ticks.
- * 			In vanilla, the default is 400 ticks.</li>
+ * 			In vanilla, the default is {@code 400} ticks.</li>
  * </ul>
  *
- * Here is an example recipe for a potion of luck that takes a water potion, a trapdoor of some kind, 5 fuel units, and 123 ticks.
+ * Here is an example recipe for a potion of luck that takes a water potion, a trapdoor of some kind, {@code 5} fuel units, and {@code 123} ticks.
  * <pre><code>
  * {
  *   "type": "quilt_recipe:potion_brewing",
