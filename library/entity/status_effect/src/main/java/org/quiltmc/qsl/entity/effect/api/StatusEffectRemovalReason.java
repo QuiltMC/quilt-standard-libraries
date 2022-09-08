@@ -20,6 +20,11 @@ import net.minecraft.entity.effect.StatusEffect;
 
 @FunctionalInterface
 public interface StatusEffectRemovalReason {
+	/**
+	 * Try to minimize use of this.
+	 */
+	StatusEffectRemovalReason UNKNOWN = () -> "unknown";
+
 	StatusEffectRemovalReason GENERIC_ALL = () -> "generic.all";
 
 	StatusEffectRemovalReason GENERIC_SPECIFIC = () -> "generic.specific";

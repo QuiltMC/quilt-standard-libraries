@@ -19,6 +19,7 @@ package org.quiltmc.qsl.entity.effect.api;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 
@@ -29,4 +30,10 @@ public interface QuiltStatusEffectExtensions {
 	default boolean shouldRemove(@NotNull LivingEntity entity, @NotNull StatusEffectInstance instance, @NotNull StatusEffectRemovalReason reason) {
 		return reason.removesEffectType(instance.getEffectType());
 	}
+
+	/**
+	 * Called <em>after</em> {@link StatusEffect#onRemoved(LivingEntity, AttributeContainer, int)}.
+	 */
+	default void onRemoved(@NotNull LivingEntity entity, @NotNull AttributeContainer attributes, int amplifier,
+			@NotNull StatusEffectRemovalReason reason) {}
 }

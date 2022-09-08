@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.effect.StatusEffectInstance;
 
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
@@ -27,4 +28,6 @@ import org.quiltmc.qsl.base.api.util.InjectedInterface;
 public interface QuiltLivingEntityStatusEffectExtensions {
 	boolean removeStatusEffect(@NotNull StatusEffect type, @NotNull StatusEffectRemovalReason reason);
 	int clearStatusEffects(@NotNull StatusEffectRemovalReason reason);
+
+	void onStatusEffectRemoved(@NotNull StatusEffectInstance effect, @NotNull StatusEffectRemovalReason reason);
 }

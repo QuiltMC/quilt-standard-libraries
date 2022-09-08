@@ -23,9 +23,14 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 
@@ -40,12 +45,13 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 		throw new IllegalStateException("Mixin ctor called??");
 	}
 
+	@SuppressWarnings("UnusedAssignment")
+	@Unique
+	private StatusEffectRemovalReason quilt$lastRemovalReason = StatusEffectRemovalReason.UNKNOWN;
+
 	@Shadow
 	@Final
 	private Map<StatusEffect, StatusEffectInstance> activeStatusEffects;
-
-	@Shadow
-	protected abstract void onStatusEffectRemoved(StatusEffectInstance effect);
 
 	@SuppressWarnings("ConstantConditions")
 	@Override
@@ -56,8 +62,9 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 		}
 
 		if (type.shouldRemove((LivingEntity) (Object) this, effect, reason)) {
+			this.quilt$lastRemovalReason = reason;
 			this.activeStatusEffects.remove(type);
-			this.onStatusEffectRemoved(effect);
+			this.onStatusEffectRemoved(effect, reason);
 			return true;
 		} else {
 			return false;
@@ -76,8 +83,9 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 		while (it.hasNext()) {
 			var effect = it.next();
 			if (effect.getEffectType().shouldRemove((LivingEntity) (Object) this, effect, reason)) {
+				this.quilt$lastRemovalReason = reason;
 				it.remove();
-				this.onStatusEffectRemoved(effect);
+				this.onStatusEffectRemoved(effect, reason);
 				removed++;
 			}
 		}
@@ -85,13 +93,31 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 		return removed;
 	}
 
+	@Override
+	public void onStatusEffectRemoved(@NotNull StatusEffectInstance effect, @NotNull StatusEffectRemovalReason reason) {
+		this.quilt$lastRemovalReason = reason;
+		this.onStatusEffectRemoved(effect);
+	}
+
+	@Shadow
+	protected abstract void onStatusEffectRemoved(StatusEffectInstance effect);
+
+	@SuppressWarnings("ConstantConditions")
+	@Inject(method = "onStatusEffectRemoved", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/effect/StatusEffect;onRemoved(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/attribute/AttributeContainer;I)V"))
+	private void quilt$callOnRemovedWithReason(StatusEffectInstance effect, CallbackInfo ci) {
+		effect.getEffectType().onRemoved((LivingEntity) (Object) this, this.getAttributes(), effect.getAmplifier(), this.quilt$lastRemovalReason);
+	}
+
+	@Shadow
+	public abstract AttributeContainer getAttributes();
+
 	/**
 	 * @author QuiltMC
 	 * @reason Adding removal reason
 	 */
 	@Overwrite
 	public boolean removeStatusEffect(StatusEffect type) {
-		return removeStatusEffect(type, StatusEffectRemovalReason.GENERIC_SPECIFIC);
+		return this.removeStatusEffect(type, StatusEffectRemovalReason.GENERIC_SPECIFIC);
 	}
 
 	/**
@@ -100,6 +126,6 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 	 */
 	@Overwrite
 	public boolean clearStatusEffects() {
-		return clearStatusEffects(StatusEffectRemovalReason.GENERIC_ALL) > 0;
+		return this.clearStatusEffects(StatusEffectRemovalReason.GENERIC_ALL) > 0;
 	}
 }
