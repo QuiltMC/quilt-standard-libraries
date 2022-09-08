@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.item.setting.api;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,6 +35,7 @@ import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLogicHandlerImpl;
  * Handles most logic for stack-aware recipe remainders.
  * This can be used by custom {@link Recipe} crafting systems.
  */
+@ApiStatus.NonExtendable
 public interface RecipeRemainderLogicHandler {
 	/**
 	 * Gets the stack-aware remainder of the provided {@link ItemStack} for the provided {@link Recipe}.

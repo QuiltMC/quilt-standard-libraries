@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.item.setting.impl;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,6 +31,7 @@ import net.minecraft.world.World;
 
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 
+@ApiStatus.Internal
 public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLogicHandler {
 	/**
 	 * @return {@code true} if returning the item was successful, or {@code false} if additional handling for the remainder is needed

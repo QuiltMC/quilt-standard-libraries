@@ -25,6 +25,8 @@ import java.util.Objects;
 import java.util.WeakHashMap;
 import java.util.function.Supplier;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -33,6 +35,7 @@ import org.quiltmc.qsl.item.setting.api.CustomItemSetting;
 import org.quiltmc.qsl.item.setting.api.EquipmentSlotProvider;
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderProvider;
 
+@ApiStatus.Internal
 public class CustomItemSettingImpl<T> implements CustomItemSetting<T> {
 	public static final CustomItemSetting<EquipmentSlotProvider> EQUIPMENT_SLOT_PROVIDER = CustomItemSetting.create(() -> null);
 	public static final CustomItemSetting<CustomDamageHandler> CUSTOM_DAMAGE_HANDLER = CustomItemSetting.create(() -> null);
