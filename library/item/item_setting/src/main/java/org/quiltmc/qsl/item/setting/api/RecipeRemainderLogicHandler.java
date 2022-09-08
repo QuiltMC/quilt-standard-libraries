@@ -71,7 +71,7 @@ public interface RecipeRemainderLogicHandler {
 
 	/**
 	 * Handles the recipe remainder logic for crafts within a {@link net.minecraft.screen.ScreenHandler screen handler}.
-	 * Excess items that cannot be returned to a slot are {@link net.minecraft.entity.player.PlayerInventory#offerOrDrop(ItemStack) offered to the player or dropped}.
+	 * Excess items that cannot be returned to a slot are {@linkplain net.minecraft.entity.player.PlayerInventory#offerOrDrop(ItemStack) offered to the player or dropped}.
 	 *
 	 * @param slot the slot of the original stack
 	 * @param recipe the recipe being used
