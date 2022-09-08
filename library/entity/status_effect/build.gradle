@@ -14,7 +14,7 @@ qslModule {
 		}
 	}
 	injectedInterface("net/minecraft/class_1309") {
-		values = ["org/quiltmc/qsl/entity/effect/api/QuiltLivingEntityExtensions"]
+		values = ["org/quiltmc/qsl/entity/effect/api/QuiltLivingEntityStatusEffectExtensions"]
 	}
 	injectedInterface("net/minecraft/class_1291") {
 		values = ["org/quiltmc/qsl/entity/effect/api/QuiltStatusEffectExtensions"]

@@ -24,7 +24,7 @@ import net.minecraft.entity.effect.StatusEffect;
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 @InjectedInterface(LivingEntity.class)
-public interface QuiltLivingEntityExtensions {
+public interface QuiltLivingEntityStatusEffectExtensions {
 	boolean removeStatusEffect(@NotNull StatusEffect type, @NotNull StatusEffectRemovalReason reason);
 	int clearStatusEffects(@NotNull StatusEffectRemovalReason reason);
 }

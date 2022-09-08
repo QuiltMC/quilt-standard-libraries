@@ -29,11 +29,11 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 
-import org.quiltmc.qsl.entity.effect.api.QuiltLivingEntityExtensions;
+import org.quiltmc.qsl.entity.effect.api.QuiltLivingEntityStatusEffectExtensions;
 import org.quiltmc.qsl.entity.effect.api.StatusEffectRemovalReason;
 
 @Mixin(LivingEntity.class)
-public abstract class LivingEntityMixin extends Entity implements QuiltLivingEntityExtensions {
+public abstract class LivingEntityMixin extends Entity implements QuiltLivingEntityStatusEffectExtensions {
 	@SuppressWarnings("ConstantConditions")
 	public LivingEntityMixin() {
 		super(null, null);
