@@ -62,7 +62,6 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 		}
 
 		if (type.shouldRemove((LivingEntity) (Object) this, effect, reason)) {
-			this.quilt$lastRemovalReason = reason;
 			this.activeStatusEffects.remove(type);
 			this.onStatusEffectRemoved(effect, reason);
 			return true;
@@ -83,7 +82,6 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 		while (it.hasNext()) {
 			var effect = it.next();
 			if (effect.getEffectType().shouldRemove((LivingEntity) (Object) this, effect, reason)) {
-				this.quilt$lastRemovalReason = reason;
 				it.remove();
 				this.onStatusEffectRemoved(effect, reason);
 				removed++;
