@@ -25,8 +25,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 
-import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLogicHandler;
-import org.quiltmc.qsl.item.setting.mixin.SimpleInventoryAccessor;
+import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 
 @Mixin(targets = {"net.minecraft.screen.LoomScreenHandler$C_ntobwfpp"})
 public class LoomOutputSlotMixin extends Slot {
@@ -36,17 +35,12 @@ public class LoomOutputSlotMixin extends Slot {
 
 	@Redirect(method = "onTakeItem(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;takeStack(I)Lnet/minecraft/item/ItemStack;"))
 	public ItemStack getRecipeRemainder(Slot slot, int amount, PlayerEntity player, ItemStack resultStack) {
-		ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(slot.getStack(), null);
-
-		slot.takeStack(amount);
-
-		RecipeRemainderLogicHandler.handleRemainderForPlayerCraft(
-				remainder,
-				((SimpleInventoryAccessor) slot.inventory).getStacks(),
-				slot.getIndex(),
+		RecipeRemainderLogicHandler.handleRemainderForScreenHandler(
+				slot,
+				null,
 				player
 		);
 
-		return remainder;
+		return ItemStack.EMPTY;
 	}
 }

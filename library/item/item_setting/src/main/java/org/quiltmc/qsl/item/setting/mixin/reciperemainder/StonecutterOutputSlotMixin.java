@@ -29,8 +29,7 @@ import net.minecraft.recipe.Recipe;
 import net.minecraft.screen.StonecutterScreenHandler;
 import net.minecraft.screen.slot.Slot;
 
-import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLogicHandler;
-import org.quiltmc.qsl.item.setting.mixin.SimpleInventoryAccessor;
+import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 
 @Mixin(targets = {"net.minecraft.screen.StonecutterScreenHandler$C_biccipxg"})
 public class StonecutterOutputSlotMixin extends Slot {
@@ -47,14 +46,9 @@ public class StonecutterOutputSlotMixin extends Slot {
 		int selectedRecipe = field_17639.getSelectedRecipe();
 		Recipe<?> recipe = selectedRecipe != -1 ? field_17639.getAvailableRecipes().get(selectedRecipe) : null;
 
-		ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(slot.getStack(), recipe);
-
-		slot.takeStack(amount);
-
-		RecipeRemainderLogicHandler.handleRemainderForPlayerCraft(
-				remainder,
-				((SimpleInventoryAccessor) slot.inventory).getStacks(),
-				slot.id,
+		RecipeRemainderLogicHandler.handleRemainderForScreenHandler(
+				slot,
+				recipe,
 				player
 		);
 

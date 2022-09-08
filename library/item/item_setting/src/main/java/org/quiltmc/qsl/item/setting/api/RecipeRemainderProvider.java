@@ -32,8 +32,8 @@ import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
  * The recipe remainder is an {@link ItemStack} instead of an {@link Item}.
  * This can be used to allow your item to get damaged instead of
  * getting removed when used in crafting.
- *
- * <p>Recipe remainder providers can be set with {@link QuiltItemSettings#recipeRemainder(RecipeRemainderProvider)}.</p>
+ * <p>
+ * Recipe remainder providers can be set with {@link QuiltItemSettings#recipeRemainder(RecipeRemainderProvider)}.
  */
 @FunctionalInterface
 public interface RecipeRemainderProvider {

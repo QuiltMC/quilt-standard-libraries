@@ -33,8 +33,7 @@ import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.SmithingScreenHandler;
 
-import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLogicHandler;
-import org.quiltmc.qsl.item.setting.mixin.SimpleInventoryAccessor;
+import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 
 @Mixin(SmithingScreenHandler.class)
 public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
@@ -50,15 +49,9 @@ public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
 
 	@Redirect(method = "onTakeOutput", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/SmithingScreenHandler;decrementStack(I)V"))
 	private void applyRecipeRemainder(SmithingScreenHandler instance, int slot, PlayerEntity player, ItemStack stack) {
-		ItemStack inputStack = this.input.getStack(slot);
-		ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(inputStack, this.currentRecipe);
-
-		inputStack.decrement(1);
-
-		RecipeRemainderLogicHandler.handleRemainderForPlayerCraft(
-				remainder,
-				((SimpleInventoryAccessor) this.input).getStacks(),
-				slot,
+		RecipeRemainderLogicHandler.handleRemainderForScreenHandler(
+				this.getSlot(slot),
+				this.currentRecipe,
 				player
 		);
 	}

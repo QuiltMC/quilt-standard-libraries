@@ -39,7 +39,7 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import org.quiltmc.qsl.item.setting.impl.RecipeRemainderLogicHandler;
+import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 
 @Mixin(AbstractFurnaceBlockEntity.class)
 public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implements SidedInventory {
@@ -80,12 +80,9 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 			recipe = null;
 		}
 
-		ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(fuelStack, recipe);
-
-		fuelStack.decrement(1);
-
 		RecipeRemainderLogicHandler.handleRemainderForNonPlayerCraft(
-				remainder,
+				fuelStack,
+				recipe,
 				cast.inventory,
 				FUEL_SLOT,
 				blockEntity.getWorld(),
@@ -100,14 +97,11 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 
 	@Redirect(method = "craftRecipe", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"))
 	private static void setInputRemainder(ItemStack inputStack, int amount, Recipe<?> recipe, DefaultedList<ItemStack> inventory, int count) {
-		ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(inputStack, recipe);
-
-		inputStack.decrement(amount);
-
 		RecipeRemainderLogicHandler.handleRemainderForNonPlayerCraft(
-				remainder,
+				inputStack,
+				recipe,
 				inventory,
-				0,
+				INPUT_SLOT,
 				quilt$threadLocalBlockEntity.get().getWorld(),
 				quilt$threadLocalBlockEntity.get().getPos()
 		);

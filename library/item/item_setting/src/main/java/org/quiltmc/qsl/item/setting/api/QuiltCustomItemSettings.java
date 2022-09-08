@@ -28,10 +28,12 @@ public final class QuiltCustomItemSettings {
 	 * The {@link CustomItemSetting} in charge of handing {@link EquipmentSlotProvider}s
 	 */
 	public static final CustomItemSetting<EquipmentSlotProvider> EQUIPMENT_SLOT_PROVIDER = CustomItemSettingImpl.EQUIPMENT_SLOT_PROVIDER;
+
 	/**
 	 * The {@link CustomItemSetting} in charge of handing {@link CustomDamageHandler}s
 	 */
 	public static final CustomItemSetting<CustomDamageHandler> CUSTOM_DAMAGE_HANDLER = CustomItemSettingImpl.CUSTOM_DAMAGE_HANDLER;
+
 	/**
 	 * The {@link CustomItemSetting} in charge of handing {@link RecipeRemainderProvider}s. This setting should be used when implementing custom crafting systems to properly handle remainders. <p>
 	 * The setting is currently used in the following places:

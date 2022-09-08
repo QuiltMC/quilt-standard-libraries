@@ -63,7 +63,7 @@ public abstract class ItemStackMixin {
 		CustomDamageHandler handler = CustomItemSettingImpl.CUSTOM_DAMAGE_HANDLER.get(this.getItem());
 
 		if (handler != null) {
-			return handler.damage((ItemStack) (Object) this, amount, quilt$damagingEntity, quilt$breakCallback);
+			return handler.damage((ItemStack) (Object) this, amount, this.quilt$damagingEntity, this.quilt$breakCallback);
 		}
 
 		return amount;
