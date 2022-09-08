@@ -82,6 +82,18 @@ public final class QmjBuilder {
 		}
 		writer.endArray(); // depends -> quilt_loader
 
+		// Provides
+		var provides = ext.getProvides();
+		if (provides.isPresent() && !provides.get().isEmpty()) {
+			writer.name("provides").beginArray();
+
+			for (var provide : provides.get()) {
+				provide.write(writer);
+			}
+
+			writer.endArray(); // provides -> quilt_loader
+		}
+
 		if (!ext.getEntrypoints().isEmpty()) {
 			writer.name("entrypoints").beginObject(); // quilt_loader -> entrypoints
 			for (QslModuleExtensionImpl.NamedWriteOnlyList entrypoint : ext.getEntrypoints()) {
