@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.command.api;
 
 import net.minecraft.command.EntitySelectorReader;
+import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 /**
@@ -33,12 +34,12 @@ public interface QuiltEntitySelectorReader {
 	 * @param key   the flag name
 	 * @return		the corresponding value
 	 */
-	boolean getFlag(String key);
+	boolean getFlag(@NotNull String key);
 
 	/**
 	 * Sets the value for a flag.
 	 * @param key	the flag name
 	 * @param value the value to set the flag to
 	 */
-	void setFlag(String key, boolean value);
+	void setFlag(@NotNull String key, boolean value);
 }

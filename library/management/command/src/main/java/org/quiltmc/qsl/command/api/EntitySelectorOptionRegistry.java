@@ -20,6 +20,7 @@ import net.minecraft.command.EntitySelectorOptions;
 import net.minecraft.command.EntitySelectorReader;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.command.mixin.EntitySelectorOptionsAccessor;
 
 import java.util.function.Predicate;
@@ -42,7 +43,7 @@ public final class EntitySelectorOptionRegistry {
 	 *
 	 * @throws IllegalArgumentException if the ID contains an illegal character
 	 */
-	public static void register(Identifier id, EntitySelectorOptions.SelectorHandler handler, Predicate<EntitySelectorReader> condition, Text description) {
+	public static void register(@NotNull Identifier id, @NotNull EntitySelectorOptions.SelectorHandler handler, @NotNull Predicate<EntitySelectorReader> condition, @NotNull Text description) {
 		if (id.toString().contains("/")) {
 			throw new IllegalArgumentException("Entity Selector Option %s has illegal character %s in ID".formatted(id, "/"));
 		}
