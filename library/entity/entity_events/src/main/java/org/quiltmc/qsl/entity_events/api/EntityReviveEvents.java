@@ -25,10 +25,12 @@ import org.quiltmc.qsl.base.api.event.EventAwareListener;
 /**
  * A pair of callbacks which are invoked when a LivingEntity takes fatal damage.
  *
- * <p>Mods can return true from a callback to keep the entity alive, like totems of undying do. This will also prevent
+ * <p>
+ * Mods can return true from a callback to keep the entity alive, like totems of undying do. This will also prevent
  * {@link LivingEntityDeathCallback} listeners from being called.
  *
- * <p>Vanilla checks for entity health {@code <= 0} each tick (with
+ * <p>
+ * Vanilla checks for entity health {@code <= 0} each tick (with
  * {@link net.minecraft.entity.LivingEntity#isDead()}), and kills the entity if this is true - so the entity will
  * still die next tick if this event is cancelled. It's assumed that the listener will do something to prevent this,
  * for example:
@@ -40,7 +42,8 @@ import org.quiltmc.qsl.base.api.event.EventAwareListener;
  *     apply</li>
  * </ul>
  *
- * <p>These events are short-circuiting - if the entity has already been revived, your callback will not fire.
+ * <p>
+ * These events are short-circuiting - if the entity has already been revived, your callback will not fire.
  */
 public final class EntityReviveEvents {
 	/**
