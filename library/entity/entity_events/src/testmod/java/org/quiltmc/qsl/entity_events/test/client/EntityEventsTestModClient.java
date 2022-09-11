@@ -16,12 +16,11 @@
 
 package org.quiltmc.qsl.entity_events.test.client;
 
-import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.SkeletonEntity;
 import net.minecraft.entity.passive.ChickenEntity;
-import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
+
 import org.quiltmc.qsl.entity_events.api.client.ClientEntityLoadEvents;
 import org.quiltmc.qsl.entity_events.test.EntityEventsTestMod;
 

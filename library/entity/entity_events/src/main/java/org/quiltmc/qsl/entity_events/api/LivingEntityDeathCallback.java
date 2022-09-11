@@ -18,6 +18,7 @@ package org.quiltmc.qsl.entity_events.api;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
@@ -34,7 +35,6 @@ public interface LivingEntityDeathCallback extends EventAwareListener {
 			callback.onDeath(killed, source);
 		}
 	});
-
 
 	/**
 	 * Called when an entity dies.

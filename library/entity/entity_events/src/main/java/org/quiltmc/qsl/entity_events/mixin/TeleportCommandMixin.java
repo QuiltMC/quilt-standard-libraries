@@ -16,14 +16,9 @@
 
 package org.quiltmc.qsl.entity_events.mixin;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.command.TeleportCommand;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
+import java.util.Set;
+
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.entity_events.api.EntityWorldChangeEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
@@ -31,7 +26,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import java.util.Set;
+import net.minecraft.entity.Entity;
+import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.command.TeleportCommand;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
+
+import org.quiltmc.qsl.entity_events.api.EntityWorldChangeEvents;
 
 @Mixin(TeleportCommand.class)
 public abstract class TeleportCommandMixin {

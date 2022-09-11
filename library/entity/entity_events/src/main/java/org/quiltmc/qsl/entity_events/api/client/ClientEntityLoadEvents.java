@@ -18,8 +18,10 @@ package org.quiltmc.qsl.entity_events.api.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
+
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 

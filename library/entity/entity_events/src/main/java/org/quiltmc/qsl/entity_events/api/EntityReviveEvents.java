@@ -18,6 +18,7 @@ package org.quiltmc.qsl.entity_events.api;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
@@ -42,7 +43,6 @@ import org.quiltmc.qsl.base.api.event.EventAwareListener;
  * <p>These events are short-circuiting - if the entity has already been revived, your callback will not fire.
  */
 public final class EntityReviveEvents {
-
 	/**
 	 * Called before totems try to revive the player.
 	 */
@@ -80,7 +80,6 @@ public final class EntityReviveEvents {
 		 */
 		boolean tryReviveBeforeTotem(LivingEntity entity, DamageSource damageSource);
 	}
-
 
 	@FunctionalInterface
 	public interface TryReviveAfterTotem extends EventAwareListener {

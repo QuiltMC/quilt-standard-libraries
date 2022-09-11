@@ -16,6 +16,9 @@
 
 package org.quiltmc.qsl.entity_events.test;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -29,9 +32,12 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.dimension.DimensionTypes;
-import org.quiltmc.qsl.entity_events.api.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.quiltmc.qsl.entity_events.api.EntityReviveEvents;
+import org.quiltmc.qsl.entity_events.api.EntityWorldChangeEvents;
+import org.quiltmc.qsl.entity_events.api.LivingEntityDeathCallback;
+import org.quiltmc.qsl.entity_events.api.ServerEntityLoadEvents;
+import org.quiltmc.qsl.entity_events.api.ServerPlayerEntityCopyCallback;
 
 public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTotem,
 		EntityReviveEvents.TryReviveBeforeTotem,
@@ -51,6 +57,7 @@ public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTot
 			entity.setHealth(10f);
 			return true;
 		}
+
 		return false;
 	}
 
@@ -62,6 +69,7 @@ public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTot
 			entity.setHealth(10f);
 			return true;
 		}
+
 		return false;
 	}
 

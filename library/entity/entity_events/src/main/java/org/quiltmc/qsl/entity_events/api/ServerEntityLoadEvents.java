@@ -19,6 +19,7 @@ package org.quiltmc.qsl.entity_events.api;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.server.world.ServerWorld;
+
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
@@ -65,7 +66,6 @@ public final class ServerEntityLoadEvents {
 		 */
 		void onUnload(Entity entity, ServerWorld world);
 	}
-
 
 	private ServerEntityLoadEvents() {}
 }
