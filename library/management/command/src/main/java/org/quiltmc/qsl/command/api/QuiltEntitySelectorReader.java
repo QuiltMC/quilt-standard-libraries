@@ -16,8 +16,10 @@
 
 package org.quiltmc.qsl.command.api;
 
-import net.minecraft.command.EntitySelectorReader;
 import org.jetbrains.annotations.NotNull;
+
+import net.minecraft.command.EntitySelectorReader;
+
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 /**

@@ -16,14 +16,16 @@
 
 package org.quiltmc.qsl.command.api;
 
+import java.util.function.Predicate;
+
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.command.EntitySelectorOptions;
 import net.minecraft.command.EntitySelectorReader;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
-import org.quiltmc.qsl.command.mixin.EntitySelectorOptionsAccessor;
 
-import java.util.function.Predicate;
+import org.quiltmc.qsl.command.mixin.EntitySelectorOptionsAccessor;
 
 /**
  * Class to allow registration of custom {@link net.minecraft.command.EntitySelectorOptions entity selector options}.

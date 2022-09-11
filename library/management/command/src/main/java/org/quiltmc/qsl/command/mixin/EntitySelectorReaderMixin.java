@@ -16,13 +16,15 @@
 
 package org.quiltmc.qsl.command.mixin;
 
-import net.minecraft.command.EntitySelectorReader;
-import org.jetbrains.annotations.NotNull;
-import org.quiltmc.qsl.command.api.QuiltEntitySelectorReader;
-import org.spongepowered.asm.mixin.Mixin;
-
 import java.util.HashSet;
 import java.util.Set;
+
+import org.jetbrains.annotations.NotNull;
+import org.spongepowered.asm.mixin.Mixin;
+
+import net.minecraft.command.EntitySelectorReader;
+
+import org.quiltmc.qsl.command.api.QuiltEntitySelectorReader;
 
 @Mixin(EntitySelectorReader.class)
 public class EntitySelectorReaderMixin implements QuiltEntitySelectorReader {
@@ -30,15 +32,15 @@ public class EntitySelectorReaderMixin implements QuiltEntitySelectorReader {
 
 	@Override
 	public boolean getFlag(@NotNull String key) {
-		return flags.contains(key);
+		return this.flags.contains(key);
 	}
 
 	@Override
 	public void setFlag(@NotNull String key, boolean value) {
 		if (value) {
-			flags.add(key);
+			this.flags.add(key);
 		} else {
-			flags.remove(key);
+			this.flags.remove(key);
 		}
 	}
 }
