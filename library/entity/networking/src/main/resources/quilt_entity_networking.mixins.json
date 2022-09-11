@@ -5,9 +5,7 @@
   "mixins": [
     "TrackedDataHandlerRegistryMixin"
   ],
-  "client": [
-
-  ],
+  "client": [],
   "injectors": {
     "defaultRequire": 1
   }

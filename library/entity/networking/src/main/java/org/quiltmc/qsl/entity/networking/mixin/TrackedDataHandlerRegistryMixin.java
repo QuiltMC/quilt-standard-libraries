@@ -59,7 +59,7 @@ public class TrackedDataHandlerRegistryMixin {
 		return QuiltEntityNetworkingInitializer.TRACKED_DATA_HANDLER_REGISTRY.get(id);
 	}
 
-	@Inject(method = "register", at = @At("HEAD"))
+	@Inject(method = "register(Lnet/minecraft/entity/data/TrackedDataHandler;)V", at = @At("HEAD"))
 	private static void quilt$register(TrackedDataHandler<?> handler, CallbackInfo ci) {
 		String id;
 

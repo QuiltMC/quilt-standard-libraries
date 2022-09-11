@@ -27,8 +27,8 @@ public final class QuiltTrackedDataHandlerRegistry {
 	 * Registers custom {@linkplain TrackedDataHandler} in a mod compatible way.
 	 *
 	 * @param identifier the identifier of the tracked data handler
-	 * @param handler the handler to register
-	 * @param <T> the type the tracked data handler holds
+	 * @param handler    the handler to register
+	 * @param <T>        the type the tracked data handler holds
 	 * @return the registered tracked data
 	 */
 	@Contract("null, _ -> fail; _, null -> fail; _, _ -> param2")
