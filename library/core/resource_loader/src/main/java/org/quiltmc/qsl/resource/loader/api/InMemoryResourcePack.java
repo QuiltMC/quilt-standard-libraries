@@ -66,6 +66,7 @@ public abstract class InMemoryResourcePack implements MutableResourcePack {
 	private static final ExecutorService EXECUTOR_SERVICE;
 	private static final boolean DUMP = TriState.fromProperty("quilt.resource_loader.debug.pack.dump_from_in_memory")
 			.toBooleanOrElse(QuiltLoader.isDevelopmentEnvironment());
+	private static final String VIRTUAL_ASYNC_THREADS_PROPERTY = "quilt.resource_loader.pack.virtual_async_threads";
 	private final Map<Identifier, Supplier<byte[]>> assets = new ConcurrentHashMap<>();
 	private final Map<Identifier, Supplier<byte[]>> data = new ConcurrentHashMap<>();
 	private final Map<String, Supplier<byte[]>> root = new ConcurrentHashMap<>();
@@ -262,14 +263,13 @@ public abstract class InMemoryResourcePack implements MutableResourcePack {
 
 	static {
 		int threads = Math.max(Runtime.getRuntime().availableProcessors() / 2 - 1, 1);
-		final String property = "quilt.resource_loader.pack.virtual_async_threads";
-		String threadsOverride = System.getProperty(property);
+		String threadsOverride = System.getProperty(VIRTUAL_ASYNC_THREADS_PROPERTY);
 
 		if (threadsOverride != null) {
 			try {
 				threads = Integer.parseInt(threadsOverride);
 			} catch (NumberFormatException e) {
-				LOGGER.error("Could not use the number provided by the property \"{}\": ", property, e);
+				LOGGER.error("Could not use the number provided by the property \"{}\": ", VIRTUAL_ASYNC_THREADS_PROPERTY, e);
 			}
 		}
 

@@ -39,7 +39,7 @@ import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.util.Unit;
 
 import org.quiltmc.qsl.resource.loader.api.GroupResourcePack;
-import org.quiltmc.qsl.resource.loader.impl.QuiltMultiResourcePackManagerHooks;
+import org.quiltmc.qsl.resource.loader.impl.QuiltMultiPackResourceManagerHooks;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
 @Mixin(ReloadableResourceManager.class)
@@ -61,7 +61,7 @@ public class ReloadableResourceManagerMixin {
 	)
 	private void reload(Executor prepareExecutor, Executor applyExecutor, CompletableFuture<Unit> initialStage,
 			List<ResourcePack> packs, CallbackInfoReturnable<ResourceReload> info) {
-		if (this.resources instanceof QuiltMultiResourcePackManagerHooks hooks) {
+		if (this.resources instanceof QuiltMultiPackResourceManagerHooks hooks) {
 			hooks.quilt$appendTopPacks();
 		}
 

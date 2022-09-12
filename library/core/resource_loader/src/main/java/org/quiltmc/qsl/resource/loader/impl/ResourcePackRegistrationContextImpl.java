@@ -51,6 +51,6 @@ final class ResourcePackRegistrationContextImpl implements ResourcePackRegistrat
 	@Override
 	public void addResourcePack(@NotNull ResourcePack pack) {
 		this.packConsumer.accept(pack);
-		((QuiltMultiResourcePackManagerHooks) this.resourceManager).quilt$recomputeNamespaces();
+		((QuiltMultiPackResourceManagerHooks) this.resourceManager).quilt$recomputeNamespaces();
 	}
 }

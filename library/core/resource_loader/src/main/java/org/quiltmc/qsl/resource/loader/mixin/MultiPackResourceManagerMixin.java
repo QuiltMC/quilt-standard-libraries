@@ -42,11 +42,11 @@ import net.minecraft.resource.pack.metadata.ResourceFilterMetadata;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.resource.loader.api.GroupResourcePack;
-import org.quiltmc.qsl.resource.loader.impl.QuiltMultiResourcePackManagerHooks;
+import org.quiltmc.qsl.resource.loader.impl.QuiltMultiPackResourceManagerHooks;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
 @Mixin(MultiPackResourceManager.class)
-public abstract class MultiPackResourceManagerMixin implements QuiltMultiResourcePackManagerHooks {
+public abstract class MultiPackResourceManagerMixin implements QuiltMultiPackResourceManagerHooks {
 	@Mutable
 	@Shadow
 	@Final

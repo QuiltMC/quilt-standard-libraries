@@ -38,7 +38,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 
 import org.quiltmc.qsl.resource.loader.impl.ModResourcePackProvider;
-import org.quiltmc.qsl.resource.loader.impl.QuiltMultiResourcePackManagerHooks;
+import org.quiltmc.qsl.resource.loader.impl.QuiltMultiPackResourceManagerHooks;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 import org.quiltmc.qsl.tag.mixin.client.ClientBuiltinResourcePackProviderAccessor;
 import org.quiltmc.qsl.tag.mixin.client.DefaultClientResourcePackAccessor;
@@ -77,7 +77,7 @@ final class ClientDefaultTagManagerReloader extends ClientOnlyTagManagerReloader
 	private AutoCloseableResourceManager getServerDataResourceManager() {
 		resourcePackManager.scanPacks();
 		var manager = new MultiPackResourceManager(ResourceType.SERVER_DATA, resourcePackManager.createResourcePacks());
-		((QuiltMultiResourcePackManagerHooks) manager).quilt$appendTopPacks();
+		((QuiltMultiPackResourceManagerHooks) manager).quilt$appendTopPacks();
 		return manager;
 	}
 

@@ -18,9 +18,20 @@ package org.quiltmc.qsl.resource.loader.impl;
 
 import org.jetbrains.annotations.ApiStatus;
 
+import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
+
+/**
+ * Internal resource loader hooks into {@link net.minecraft.resource.MultiPackResourceManager}.
+ */
 @ApiStatus.Internal
-public interface QuiltMultiResourcePackManagerHooks {
+public interface QuiltMultiPackResourceManagerHooks {
+	/**
+	 * Appends the top resource packs that have been registered from {@link ResourceLoader#getRegisterTopResourcePackEvent()}.
+	 */
 	void quilt$appendTopPacks();
 
+	/**
+	 * Makes the multi-pack resource manager recomputes the discovered namespaces when the set of resource packs change.
+	 */
 	void quilt$recomputeNamespaces();
 }

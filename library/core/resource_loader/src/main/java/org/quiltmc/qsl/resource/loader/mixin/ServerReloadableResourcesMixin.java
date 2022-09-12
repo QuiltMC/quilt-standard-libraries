@@ -33,7 +33,7 @@ import net.minecraft.server.ServerReloadableResources;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.util.registry.DynamicRegistryManager;
 
-import org.quiltmc.qsl.resource.loader.impl.QuiltMultiResourcePackManagerHooks;
+import org.quiltmc.qsl.resource.loader.impl.QuiltMultiPackResourceManagerHooks;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
 @Mixin(ServerReloadableResources.class)
@@ -52,7 +52,7 @@ public class ServerReloadableResourcesMixin {
 			CommandManager.RegistrationEnvironment environment, int level,
 			Executor prepareExecutor, Executor applyExecutor,
 			CallbackInfoReturnable<CompletableFuture<ServerReloadableResources>> cir) {
-		if (resources instanceof QuiltMultiResourcePackManagerHooks hooks) {
+		if (resources instanceof QuiltMultiPackResourceManagerHooks hooks) {
 			hooks.quilt$appendTopPacks();
 		}
 	}
