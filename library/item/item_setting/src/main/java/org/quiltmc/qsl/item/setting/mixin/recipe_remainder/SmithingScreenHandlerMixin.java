@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.item.setting.mixin.reciperemainder;
+package org.quiltmc.qsl.item.setting.mixin.recipe_remainder;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;

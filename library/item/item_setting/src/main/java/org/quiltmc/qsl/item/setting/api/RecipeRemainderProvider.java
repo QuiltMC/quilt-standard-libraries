@@ -50,7 +50,7 @@ public interface RecipeRemainderProvider {
 	static DefaultedList<ItemStack> getRemainingStacks(Inventory inventory, Recipe<?> recipe, DefaultedList<ItemStack> defaultedList) {
 		for (int i = 0; i < defaultedList.size(); ++i) {
 			ItemStack stack = inventory.getStack(i);
-			ItemStack remainder = CustomItemSettingImpl.RECIPE_REMAINDER_PROVIDER.get(stack.getItem()).getRecipeRemainder(stack, recipe);
+			ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(stack, recipe);
 
 			if (!remainder.isEmpty()) {
 				defaultedList.set(i, remainder);

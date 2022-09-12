@@ -6,15 +6,12 @@
     "ItemMixin",
     "ItemStackMixin",
     "LivingEntityMixin",
-    "SimpleInventoryAccessor",
-    "reciperemainder.AbstractFurnaceBlockEntityMixin",
-    "reciperemainder.BrewingStandBlockEntityMixin",
-    "reciperemainder.LoomOutputSlotMixin",
-    "reciperemainder.RecipeManagerMixin",
-    "reciperemainder.SmithingScreenHandlerMixin",
-    "reciperemainder.StonecutterOutputSlotMixin"
-  ],
-  "client": [
+    "recipe_remainder.AbstractFurnaceBlockEntityMixin",
+    "recipe_remainder.BrewingStandBlockEntityMixin",
+    "recipe_remainder.LoomOutputSlotMixin",
+    "recipe_remainder.RecipeManagerMixin",
+    "recipe_remainder.SmithingScreenHandlerMixin",
+    "recipe_remainder.StonecutterOutputSlotMixin"
   ],
   "injectors": {
     "defaultRequire": 1
