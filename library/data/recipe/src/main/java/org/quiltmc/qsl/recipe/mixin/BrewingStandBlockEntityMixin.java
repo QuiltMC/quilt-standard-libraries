@@ -34,7 +34,6 @@ import net.minecraft.block.entity.LockableContainerBlockEntity;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -45,20 +44,18 @@ import org.quiltmc.qsl.recipe.impl.RecipeImpl;
 
 @Mixin(BrewingStandBlockEntity.class)
 public abstract class BrewingStandBlockEntityMixin extends LockableContainerBlockEntity implements SidedInventory {
-	protected BrewingStandBlockEntityMixin(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
-		super(blockEntityType, blockPos, blockState);
-	}
-
-	@Shadow
-	private static void craft(World world, BlockPos pos, DefaultedList<ItemStack> slots) {
-		throw new IllegalArgumentException("Mixin injection failed.");
-	}
 	@Shadow
 	int fuel;
 	@Shadow
 	int brewTime;
 	@Unique
 	private AbstractBrewingRecipe<?> quilt$recipe;
+	@Unique
+	private boolean quilt$craft$interceptedCraft = false;
+
+	protected BrewingStandBlockEntityMixin(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
+		super(blockEntityType, blockPos, blockState);
+	}
 
 	@SuppressWarnings("ConstantConditions")
 	@ModifyVariable(
@@ -77,34 +74,26 @@ public abstract class BrewingStandBlockEntityMixin extends LockableContainerBloc
 	}
 
 	@SuppressWarnings("ConstantConditions")
-	@Redirect(method = "tick",
-			  at = @At(
-					   value = "INVOKE",
-					   target = "Lnet/minecraft/block/entity/BrewingStandBlockEntity;craft(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/collection/DefaultedList;)V"
-			  )
-	)
-	private static void craftBrewingRecipe(World world, BlockPos pos, DefaultedList<ItemStack> slots, World world1, BlockPos pos1, BlockState state, BrewingStandBlockEntity brewingStand) {
+	@Inject(method = "craft", at = @At("HEAD"))
+	private static void craftBrewingRecipe(World world, BlockPos pos, DefaultedList<ItemStack> slots, CallbackInfo ci) {
+		BrewingStandBlockEntity brewingStand = (BrewingStandBlockEntity) world.getBlockEntity(pos);
 		BrewingStandBlockEntityMixin recipeHolder = (BrewingStandBlockEntityMixin) (Object) brewingStand;
 		if (recipeHolder.quilt$recipe != null && recipeHolder.quilt$recipe.matches(brewingStand, world)) {
 			recipeHolder.quilt$recipe.craft(brewingStand);
-
-			ItemStack ingredient = slots.get(3);
-
-			// TODO take into account recipe remainder api
-			ingredient.decrement(1);
-			if (ingredient.getItem().hasRecipeRemainder()) {
-				ItemStack remainder = new ItemStack(ingredient.getItem().getRecipeRemainder());
-				if (ingredient.isEmpty()) {
-					ingredient = remainder;
-				} else {
-					ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), remainder);
-				}
-			}
-
-			slots.set(3, ingredient);
-			world.syncWorldEvent(1035, pos, 0);
+			recipeHolder.quilt$craft$interceptedCraft = true;
 		} else {
-			craft(world, pos, slots);
+			recipeHolder.quilt$craft$interceptedCraft = false;
+		}
+	}
+
+	@SuppressWarnings("ConstantConditions")
+	@Redirect(method = "craft", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/collection/DefaultedList;set(ILjava/lang/Object;)Ljava/lang/Object;", ordinal = 0))
+	private static <E> E cancelCraft(DefaultedList<E> defaultedList, int index, E element, World world, BlockPos pos) {
+		BrewingStandBlockEntityMixin recipeHolder = (BrewingStandBlockEntityMixin) world.getBlockEntity(pos);
+		if (recipeHolder.quilt$craft$interceptedCraft) {
+			return element;
+		} else {
+			return defaultedList.set(index, element);
 		}
 	}
 
@@ -120,10 +109,10 @@ public abstract class BrewingStandBlockEntityMixin extends LockableContainerBloc
 	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "tick",
 			at = @At(value = "FIELD",
-					 target = "Lnet/minecraft/block/entity/BrewingStandBlockEntity;brewTime:I",
-					 opcode = Opcodes.PUTFIELD,
-					 ordinal = 2,
-					 shift = At.Shift.AFTER
+					target = "Lnet/minecraft/block/entity/BrewingStandBlockEntity;brewTime:I",
+					opcode = Opcodes.PUTFIELD,
+					ordinal = 2,
+					shift = At.Shift.AFTER
 			)
 	)
 	private static void modifyBrewTime(World world, BlockPos pos, BlockState state, BrewingStandBlockEntity brewingStand, CallbackInfo ci) {

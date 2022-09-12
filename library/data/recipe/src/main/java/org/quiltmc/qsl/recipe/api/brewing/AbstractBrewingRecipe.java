@@ -82,7 +82,7 @@ public abstract class AbstractBrewingRecipe<T> implements Recipe<BrewingStandBlo
 	public ItemStack craft(BrewingStandBlockEntity inventory) {
 		for (int i = 0; i < 3; i++) {
 			if (this.matches(i, inventory.getStack(i))) {
-				inventory.setStack(i, craft(i, inventory.getStack(i)));
+				inventory.setStack(i, this.craft(i, inventory.getStack(i)));
 			}
 		}
 
