@@ -28,7 +28,7 @@ import org.quiltmc.qsl.base.api.event.EventAwareListener;
 @FunctionalInterface
 public interface LivingEntityDeathCallback extends EventAwareListener {
 	/**
-	 * Invoked when an entity dies serverside.
+	 * Invoked when an entity dies server-side.
 	 */
 	Event<LivingEntityDeathCallback> EVENT = Event.create(LivingEntityDeathCallback.class, callbacks -> (killed, source) -> {
 		for (var callback : callbacks) {
