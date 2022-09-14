@@ -36,9 +36,9 @@ public final class Initializer implements ModInitializer {
 	public static final String NAMESPACE = "quilt_registry_entry_attachments";
 
 	public static final String ENABLE_DUMP_BUILTIN_COMMAND_PROPERTY =
-			"quilt.data.registry_entry_attachments.enable_dump_builtin_command";
+			"quilt.data.registry_entry_attachment.enable_dump_builtin_command";
 
-	public static final Logger LOGGER = LoggerFactory.getLogger("QuiltRegistryEntryAttachments");
+	public static final Logger LOGGER = LoggerFactory.getLogger("QuiltRegistryEntryAttachment");
 
 	public static Identifier id(String path) {
 		return new Identifier(NAMESPACE, path);
