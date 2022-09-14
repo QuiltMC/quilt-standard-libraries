@@ -3,6 +3,7 @@ package qsl.internal.extension;
 import org.gradle.api.Action;
 import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.provider.Property;
+import org.jetbrains.annotations.Nullable;
 import qsl.internal.dependency.QslLibraryDependency;
 
 /**
@@ -13,6 +14,7 @@ public interface QslModuleExtension {
 	 * The name of this module, used for maven and moduleDependencies.
 	 */
 	Property<String> getModuleName();
+
 	Property<String> getLibrary();
 
 	/**
@@ -46,6 +48,25 @@ public interface QslModuleExtension {
 	 * See the "Gradle Conventions" section of CONTRIBUTING.MD for more information.
 	 */
 	void moduleDependencies(Action<NamedDomainObjectContainer<QslLibraryDependency>> action);
+
+	/**
+	 * Makes the module provides another mod.
+	 *
+	 * @param id the mod identifier to provide
+	 * @see #provides(String, String)
+	 */
+	default void provides(String id) {
+		this.provides(id, null);
+	}
+
+	/**
+	 * Makes the module provides another mod with a specific version.
+	 *
+	 * @param id      the mod identifier to provide
+	 * @param version the mod version to provide
+	 * @see #provides(String)
+	 */
+	void provides(String id, @Nullable String version);
 
 	/**
 	 * Configures the entrypoints for this module.
