@@ -43,6 +43,6 @@ public abstract class TeleportCommandMixin {
 	@SuppressWarnings("InvalidInjectorMethodSignature") // MinecraftDev plugin doesn't understand @Coerce'd parameters
 	@Inject(method = "teleport", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setRemoved(Lnet/minecraft/entity/Entity$RemovalReason;)V"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
 	private static void invokeAfterEntityChangeWorldEvent(ServerCommandSource source, Entity originalEntity, ServerWorld destination, double x, double y, double z, Set<PlayerPositionLookS2CPacket.Flag> movementFlags, float yaw, float pitch, @Coerce /* TeleportCommand.LookTarget */ @Nullable Object facingLocation, CallbackInfo ci, BlockPos pos, float clampedYaw, float clampedPitch, float h, Entity newEntity) {
-		EntityWorldChangeEvents.AFTER_ENTITY_CHANGE_WORLD.invoker().afterChangeWorld(originalEntity, newEntity, ((ServerWorld) originalEntity.world), destination);
+		EntityWorldChangeEvents.AFTER_ENTITY_WORLD_CHANGE.invoker().afterWorldChange(originalEntity, newEntity, ((ServerWorld) originalEntity.world), destination);
 	}
 }

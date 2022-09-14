@@ -44,8 +44,8 @@ public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTot
 		LivingEntityDeathCallback,
 		ServerEntityLoadEvents.AfterLoad,
 		ServerEntityLoadEvents.AfterUnload,
-		EntityWorldChangeEvents.AfterPlayerChange,
-		EntityWorldChangeEvents.AfterEntityChange,
+		EntityWorldChangeEvents.AfterPlayerWorldChange,
+		EntityWorldChangeEvents.AfterEntityWorldChange,
 		ServerPlayerEntityCopyCallback {
 	public static final Logger LOGGER = LoggerFactory.getLogger("quilt_entity_events_testmod");
 
@@ -97,13 +97,13 @@ public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTot
 
 	// Players going to another world are notified
 	@Override
-	public void afterChangeWorld(ServerPlayerEntity player, ServerWorld origin, ServerWorld destination) {
+	public void afterWorldChange(ServerPlayerEntity player, ServerWorld origin, ServerWorld destination) {
 		player.sendMessage(Text.literal("Welcome to " + destination.getRegistryKey().toString()), false);
 	}
 
 	// Entities going to the end are named 'end traveller'
 	@Override
-	public void afterChangeWorld(Entity originalEntity, Entity newEntity, ServerWorld origin, ServerWorld destination) {
+	public void afterWorldChange(Entity originalEntity, Entity newEntity, ServerWorld origin, ServerWorld destination) {
 		if (destination.getDimension() == destination.getServer().getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).get(DimensionTypes.THE_END)) {
 			newEntity.setCustomName(Text.literal("End Traveller"));
 		}

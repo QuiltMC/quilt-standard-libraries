@@ -39,7 +39,7 @@ public abstract class EntityMixin {
 		Entity ret = cir.getReturnValue();
 
 		if (ret != null) {
-			EntityWorldChangeEvents.AFTER_ENTITY_CHANGE_WORLD.invoker().afterChangeWorld((Entity) (Object) this, ret, (ServerWorld) this.world, (ServerWorld) ret.world);
+			EntityWorldChangeEvents.AFTER_ENTITY_WORLD_CHANGE.invoker().afterWorldChange((Entity) (Object) this, ret, (ServerWorld) this.world, (ServerWorld) ret.world);
 		}
 	}
 }

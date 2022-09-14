@@ -27,7 +27,7 @@ import org.quiltmc.qsl.base.api.event.EventAwareListener;
 /**
  * Events related to an entity being moved to another world, run on the server.
  *
- * @apiNote For a {@link ServerPlayerEntity}, please use {@link EntityWorldChangeEvents#AFTER_PLAYER_CHANGE_WORLD}.
+ * @apiNote For a {@link ServerPlayerEntity}, please use {@link EntityWorldChangeEvents#AFTER_PLAYER_WORLD_CHANGE}.
  */
 public final class EntityWorldChangeEvents {
 	/**
@@ -38,49 +38,49 @@ public final class EntityWorldChangeEvents {
 	 *
 	 * <p>A mod may use this event for reference cleanup if it is tracking an entity's current world.
 	 *
-	 * @see EntityWorldChangeEvents#AFTER_PLAYER_CHANGE_WORLD
+	 * @see EntityWorldChangeEvents#AFTER_PLAYER_WORLD_CHANGE
 	 */
-	public static final Event<AfterEntityChange> AFTER_ENTITY_CHANGE_WORLD = Event.create(AfterEntityChange.class, callbacks -> (original, copy, origin, destination) -> {
+	public static final Event<AfterEntityWorldChange> AFTER_ENTITY_WORLD_CHANGE = Event.create(AfterEntityWorldChange.class, callbacks -> (original, copy, origin, destination) -> {
 		for (var callback : callbacks) {
-			callback.afterChangeWorld(original, copy, origin, destination);
+			callback.afterWorldChange(original, copy, origin, destination);
 		}
 	});
 
 	/**
 	 * An event which is invoked server-side after a player has been moved to a different world.
 	 *
-	 * <p>This is similar to {@link EntityWorldChangeEvents#AFTER_ENTITY_CHANGE_WORLD} but is only called for players.
+	 * <p>This is similar to {@link EntityWorldChangeEvents#AFTER_ENTITY_WORLD_CHANGE} but is only called for players.
 	 * This is because the player is physically moved to the new world instead of being recreated at the destination.
 	 *
 	 * <p>Note that returning from the end via an end portal does not count as a world-change in this way.</p>
 	 *
-	 * @see EntityWorldChangeEvents#AFTER_ENTITY_CHANGE_WORLD
+	 * @see EntityWorldChangeEvents#AFTER_ENTITY_WORLD_CHANGE
 	 * @see ServerPlayerEntityCopyCallback
 	 */
-	public static final Event<AfterPlayerChange> AFTER_PLAYER_CHANGE_WORLD = Event.create(AfterPlayerChange.class, callbacks -> (player, origin, destination) -> {
+	public static final Event<AfterPlayerWorldChange> AFTER_PLAYER_WORLD_CHANGE = Event.create(AfterPlayerWorldChange.class, callbacks -> (player, origin, destination) -> {
 		for (var callback : callbacks) {
-			callback.afterChangeWorld(player, origin, destination);
+			callback.afterWorldChange(player, origin, destination);
 		}
 	});
 
 	@FunctionalInterface
-	public interface AfterEntityChange extends EventAwareListener {
+	public interface AfterEntityWorldChange extends EventAwareListener {
 		/**
 		 * Called after an entity has been recreated at the destination when being moved to a different world.
 		 *
 		 * <p>Note this event is not called if the entity is a {@link ServerPlayerEntity}.
-		 * {@link AfterPlayerChange} should be used to track when a player has changed worlds.
+		 * {@link AfterPlayerWorldChange} should be used to track when a player has changed worlds.
 		 *
 		 * @param original the original entity
 		 * @param copy the new entity at the destination
 		 * @param origin the world the original entity is in
 		 * @param destination the destination world the new entity is in
 		 */
-		void afterChangeWorld(Entity original, Entity copy, ServerWorld origin, ServerWorld destination);
+		void afterWorldChange(Entity original, Entity copy, ServerWorld origin, ServerWorld destination);
 	}
 
 	@FunctionalInterface
-	public interface AfterPlayerChange extends EventAwareListener {
+	public interface AfterPlayerWorldChange extends EventAwareListener {
 		/**
 		 * Called after a player has been moved to different world.
 		 *
@@ -88,7 +88,7 @@ public final class EntityWorldChangeEvents {
 		 * @param origin the original world the player was in
 		 * @param destination the new world the player was moved to
 		 */
-		void afterChangeWorld(ServerPlayerEntity player, ServerWorld origin, ServerWorld destination);
+		void afterWorldChange(ServerPlayerEntity player, ServerWorld origin, ServerWorld destination);
 	}
 
 	private EntityWorldChangeEvents() {}

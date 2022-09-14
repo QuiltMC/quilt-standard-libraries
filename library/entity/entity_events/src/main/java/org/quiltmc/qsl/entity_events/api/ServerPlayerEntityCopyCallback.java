@@ -30,7 +30,7 @@ import org.quiltmc.qsl.base.api.event.EventAwareListener;
  * The callback is called after vanilla has done its own copying logic.
  *
  * @see ServerPlayerEntity#copyFrom(ServerPlayerEntity, boolean)
- * @see EntityWorldChangeEvents#AFTER_PLAYER_CHANGE_WORLD
+ * @see EntityWorldChangeEvents#AFTER_PLAYER_WORLD_CHANGE
  */
 @FunctionalInterface
 public interface ServerPlayerEntityCopyCallback extends EventAwareListener {

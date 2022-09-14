@@ -46,7 +46,7 @@ abstract class ServerPlayerEntityMixin extends PlayerEntity {
 	 */
 	@Inject(method = "worldChanged(Lnet/minecraft/server/world/ServerWorld;)V", at = @At("TAIL"))
 	private void afterWorldChanged(ServerWorld origin, CallbackInfo ci) {
-		EntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.invoker().afterChangeWorld((ServerPlayerEntity) (Object) this, origin, (ServerWorld) this.world);
+		EntityWorldChangeEvents.AFTER_PLAYER_WORLD_CHANGE.invoker().afterWorldChange((ServerPlayerEntity) (Object) this, origin, (ServerWorld) this.world);
 	}
 
 	@Inject(method = "copyFrom", at = @At("TAIL"))
