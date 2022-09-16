@@ -23,7 +23,7 @@ public final class Versions {
 	/**
 	 * The QSL version
 	 */
-	public static final String QSL_VERSION = "3.0.0-beta.14";
+	public static final String QSL_VERSION = "3.0.0-beta.16";
 
 	/**
 	 * The target Minecraft version.
@@ -38,12 +38,12 @@ public final class Versions {
 	/**
 	 * The target Quilt Mappings build.
 	 */
-	public static final int MAPPINGS_BUILD = 10;
+	public static final int MAPPINGS_BUILD = 12;
 
 	/**
 	 * The version of Quilt Loader to use.
 	 */
-	public static final String LOADER_VERSION = "0.17.3";
+	public static final String LOADER_VERSION = "0.17.4";
 
 	/**
 	 * The target Java version.
@@ -52,14 +52,14 @@ public final class Versions {
 
 	//region 3rd-parties libraries/mods to test
 	/**
-	 * The version of Databreaker to use in the DFU testmod V1.
+	 * The version of Databreaker to use in the no-op DFU testmod.
 	 */
-	public static Optional<String> DATABREAKER_VERSION = Optional.empty();
+	public static Optional<String> DATABREAKER_VERSION = Optional.empty();//of("0.2.10");
 
 	/**
 	 * The version of LazyDFU to use in the DFU testmods.
 	 */
-	public static Optional<String> LAZYDFU_VERSION = Optional.of("0.1.3");
+	public static Optional<String> LAZYDFU_VERSION = Optional.empty();//of("0.1.3");
 	//endregion
 
 	private Versions() {

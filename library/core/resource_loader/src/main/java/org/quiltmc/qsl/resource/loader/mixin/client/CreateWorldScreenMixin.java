@@ -39,7 +39,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.SaveLevelScreen;
+import net.minecraft.client.gui.screen.GenericMessageScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
 import net.minecraft.client.world.GeneratorTypes;
@@ -193,7 +193,7 @@ public abstract class CreateWorldScreenMixin {
 	@Unique
 	private static CompletableFuture<WorldCreationContext> quilt$applyDefaultDataPacks(Supplier<CompletableFuture<WorldCreationContext>> base) {
 		var client = MinecraftClient.getInstance();
-		client.send(() -> client.setScreen(new SaveLevelScreen(Text.translatable("dataPack.validation.working"))));
+		client.send(() -> client.setScreen(new GenericMessageScreen(Text.translatable("dataPack.validation.working"))));
 
 		WorldLoader.InitConfig initConfig = createDefaultLoadConfig(new ResourcePackManager(ResourceType.SERVER_DATA, new VanillaDataPackProvider()),
 				ModResourcePackUtil.DEFAULT_SETTINGS);
