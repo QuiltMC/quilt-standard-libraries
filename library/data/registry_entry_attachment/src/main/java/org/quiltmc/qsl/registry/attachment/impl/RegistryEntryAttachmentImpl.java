@@ -225,12 +225,12 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 
 	@Override
 	public Event<ValueRemoved<R>> valueRemovedEvent() {
-		return valueRemovedEvent;
+		return this.valueRemovedEvent;
 	}
 
 	@Override
 	public Event<TagValueRemoved<R>> tagValueRemovedEvent() {
-		return tagValueRemovedEvent;
+		return this.tagValueRemovedEvent;
 	}
 
 	@Override
@@ -247,11 +247,11 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 
 	@Override
 	public String toString() {
-		return "RegistryAttachment{" +
-				"registry=" + this.registry +
-				", id=" + this.id +
-				", valueClass=" + this.valueClass +
-				'}';
+		return "RegistryAttachment{"
+				+ "registry=" + this.registry
+				+ ", id=" + this.id
+				+ ", valueClass=" + this.valueClass
+				+ '}';
 	}
 
 	protected class EntryIterator implements Iterator<Entry<R, V>> {
@@ -266,16 +266,16 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 
 		@Override
 		public boolean hasNext() {
-			return keyIt.hasNext();
+			return this.keyIt.hasNext();
 		}
 
 		@SuppressWarnings("unchecked")
 		@Override
 		public Entry<R, V> next() {
-			R key = keyIt.next();
-			V value = (V) dataHolder.valueTable.get(RegistryEntryAttachmentImpl.this, key);
+			R key = this.keyIt.next();
+			V value = (V) this.dataHolder.valueTable.get(RegistryEntryAttachmentImpl.this, key);
 			if (value == null) {
-				value = (V) builtinHolder.valueTable.get(RegistryEntryAttachmentImpl.this, key);
+				value = (V) this.builtinHolder.valueTable.get(RegistryEntryAttachmentImpl.this, key);
 			}
 
 			return new Entry<>(key, value);
@@ -294,16 +294,16 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 
 		@Override
 		public boolean hasNext() {
-			return keyIt.hasNext();
+			return this.keyIt.hasNext();
 		}
 
 		@SuppressWarnings("unchecked")
 		@Override
 		public TagEntry<R, V> next() {
-			TagKey<R> key = keyIt.next();
-			V value = (V) dataHolder.valueTagTable.get(RegistryEntryAttachmentImpl.this, key);
+			TagKey<R> key = this.keyIt.next();
+			V value = (V) this.dataHolder.valueTagTable.get(RegistryEntryAttachmentImpl.this, key);
 			if (value == null) {
-				value = (V) builtinHolder.valueTagTable.get(RegistryEntryAttachmentImpl.this, key);
+				value = (V) this.builtinHolder.valueTagTable.get(RegistryEntryAttachmentImpl.this, key);
 			}
 
 			return new TagEntry<>(key, value);
