@@ -16,37 +16,57 @@
 
 package org.quiltmc.qsl.worldgen.surface_rule.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.resource.ResourceManager;
 import net.minecraft.world.gen.surfacebuilder.SurfaceRules;
+import net.minecraft.world.gen.surfacebuilder.VanillaSurfaceRules;
 
 import org.quiltmc.qsl.worldgen.surface_rule.api.SurfaceRuleContext;
 
 @ApiStatus.Internal
-public class SurfaceRuleContextImpl implements SurfaceRuleContext, SurfaceRuleContext.Nether, SurfaceRuleContext.TheEnd {
-	private final SurfaceRules.SequenceMaterialRule sequenceRule;
+public abstract class SurfaceRuleContextImpl extends ReloadableSequenceMaterialRule implements SurfaceRuleContext {
+	SurfaceRules.MaterialRule vanillaRules;
+	private ResourceManager resourceManager;
 
 	public SurfaceRuleContextImpl(SurfaceRules.MaterialRule rules) {
-		this.sequenceRule = new SurfaceRules.SequenceMaterialRule(new ArrayList<>());
+		this.setup(rules);
+	}
+
+	private void setup(@NotNull SurfaceRules.MaterialRule rules) {
+		this.materialRules().clear();
+		this.vanillaRules = rules;
 		this.materialRules().add(rules);
 	}
 
 	@Override
 	public @NotNull List<SurfaceRules.MaterialRule> materialRules() {
-		return this.sequenceRule.sequence();
+		return this.sequence();
 	}
 
-	SurfaceRules.SequenceMaterialRule getSequenceRule() {
-		return this.sequenceRule;
+	@Override
+	public @NotNull ResourceManager resourceManager() {
+		return this.resourceManager;
 	}
 
-	void freeze() {
-		((QuiltSequenceMaterialRuleHooks) (Object) this.sequenceRule).quilt$freeze();
+	void reset(VanillaSurfaceRuleTracker<? extends SurfaceRuleContextImpl> tracker, ResourceManager resourceManager) {
+		tracker.pause();
+		this.setup(this.getVanillaRules());
+		tracker.unpause();
+		this.resourceManager = resourceManager;
 	}
+
+	void cleanup() {
+		// No need to keep references lying around, especially if some are susceptible to being GC-ed.
+		this.vanillaRules = null;
+		this.resourceManager = null;
+	}
+
+	@ApiStatus.OverrideOnly
+	protected abstract SurfaceRules.MaterialRule getVanillaRules();
 
 	@ApiStatus.Internal
 	public static class OverworldImpl extends SurfaceRuleContextImpl implements SurfaceRuleContext.Overworld {
@@ -75,6 +95,35 @@ public class SurfaceRuleContextImpl implements SurfaceRuleContext, SurfaceRuleCo
 		@Override
 		public boolean hasBedrockFloor() {
 			return this.bedrockFloor;
+		}
+
+		@Override
+		protected SurfaceRules.MaterialRule getVanillaRules() {
+			return VanillaSurfaceRules.getOverworldLikeRules(this.surface, this.bedrockRoof, this.bedrockFloor);
+		}
+	}
+
+	@ApiStatus.Internal
+	public static class NetherImpl extends SurfaceRuleContextImpl implements SurfaceRuleContext.Nether {
+		public NetherImpl(SurfaceRules.MaterialRule rules) {
+			super(rules);
+		}
+
+		@Override
+		protected SurfaceRules.MaterialRule getVanillaRules() {
+			return VanillaSurfaceRules.getNetherRules();
+		}
+	}
+
+	@ApiStatus.Internal
+	public static class TheEndImpl extends SurfaceRuleContextImpl implements SurfaceRuleContext.TheEnd {
+		public TheEndImpl(SurfaceRules.MaterialRule rules) {
+			super(rules);
+		}
+
+		@Override
+		protected SurfaceRules.MaterialRule getVanillaRules() {
+			return VanillaSurfaceRules.getEndRules();
 		}
 	}
 }
