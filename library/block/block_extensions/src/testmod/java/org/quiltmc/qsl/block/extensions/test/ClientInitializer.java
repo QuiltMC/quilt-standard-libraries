@@ -30,5 +30,6 @@ public final class ClientInitializer implements ClientModInitializer {
 	@Override
 	public void onInitializeClient(ModContainer mod) {
 		BlockRenderLayerMap.put(RenderLayer.getTranslucent(), Initializer.BLOCK);
+		BlockRenderLayerMap.put(RenderLayer.getCutout(), Initializer.BLOCK2);
 	}
 }
