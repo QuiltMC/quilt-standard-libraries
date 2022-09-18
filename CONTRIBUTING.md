@@ -27,6 +27,15 @@ In the event that there is no-one available on a library team to review your PR,
 ## PR Policy Definitions
 Everything within this section is the definitions for the actual PR policy followed by the QSL team, in accordance with [RFC 39](https://github.com/QuiltMC/rfcs/blob/master/structure/0039-pr-policy.md)
 
+### `T: major`
+
+**Description**: Used for pull requests whose impact means that it requires a more careful reviewing.
+
+**Required Approvals**: 3
+- At least 1 approval must come directly from each library team whose code the pull request modifies.
+
+**Final Comment Period**: 7 days
+
 ### `T: new API`
 
 **Description**: Used for pull requests that add new APIs to QSL, defined as anything in a `$modulename.api` package or subfolders.
@@ -34,11 +43,20 @@ Everything within this section is the definitions for the actual PR policy follo
 **Required Approvals**: 2
 - At least 1 approval must come directly from each library team whose code the pull request modifies.
 
-**Final Comment Period**: 7 days
+**Final Comment Period**: 5 days
 
 ### `T: refactor`
 
 **Description**: Used for pull requests that make internal refactors and do not change any API, such as bugfixes or buildscript changes.
+
+**Required Approvals**: 2
+- At least 1 approval must come directly from each library team whose code the pull request modifies.
+
+**Final Comment Period**: 3 days
+
+### `T: documentation`
+
+**Description**: Used for pull requests that make additions or revisions to the codebase's documentation.
 
 **Required Approvals**: 2
 - At least 1 approval must come directly from each library team whose code the pull request modifies.
@@ -60,7 +78,7 @@ Trivial fixes that do not require review (e.g. typos) are exempt from this polic
 
 PRs that do not fit under any of these categories but are not "trivial fixes" are merged at the consensus of the QSL Core team, using whatever criteria they determine to be appropriate. (For example, amending the PR policy may require every core member to approve, and have a 1-week FCP).
 
-In the event that a QSL subteam has less than two active members, a QSL Core team member may waive the requirement for that team to review a PR.
+In the event that a QSL subteam, excluding the PR author, has less than two active members, a QSL Core team member may waive the requirement for that team to review a PR.
 
 *This is only a summary of QSL's PR process and an explanation of QSL-specific exceptions to it. For exact definitions and more information, see [RFC 39](https://github.com/QuiltMC/rfcs/blob/master/structure/0039-pr-policy.md).*
 
@@ -231,7 +249,7 @@ Note that `.` from abbreviations, such as `i.e.`, count.
 The `$` character may be used in mixins to mark a semantic separation in the name, in other words it allows to separate
 the actual name of the variable and the namespace.
 
-`@Unique` fields must be prefixed with `quilt$`, but `@Unique` methods don't need prefixes.
+All mixin fields and methods must be prefixed with `quilt$` in order to aid with debugging.
 
 In the case of a pseudo-local variable (a field used briefly to pass around a local variable of a method between 2
 injections of said method), the field should be named with the namespace first, then the name of the injected method,
