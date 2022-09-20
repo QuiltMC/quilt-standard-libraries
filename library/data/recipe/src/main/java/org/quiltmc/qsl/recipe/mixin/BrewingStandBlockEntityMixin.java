@@ -69,7 +69,7 @@ public abstract class BrewingStandBlockEntityMixin extends LockableContainerBloc
 	private static boolean canCraftBrewingRecipe(boolean canCraft, World world, BlockPos pos, BlockState state, BrewingStandBlockEntity brewingStand) {
 		var maybeRecipe = world.getRecipeManager().getFirstMatch(Recipes.BREWING, brewingStand, world);
 		var recipeHolder = ((BrewingStandBlockEntityMixin) (Object) brewingStand);
-		recipeHolder.quilt$recipe = maybeRecipe.orElse(recipeHolder.quilt$recipe);
+		recipeHolder.quilt$recipe = maybeRecipe.orElse(null);
 		return maybeRecipe.isPresent() || canCraft;
 	}
 
@@ -78,7 +78,7 @@ public abstract class BrewingStandBlockEntityMixin extends LockableContainerBloc
 	private static void craftBrewingRecipe(World world, BlockPos pos, DefaultedList<ItemStack> slots, CallbackInfo ci) {
 		BrewingStandBlockEntity brewingStand = (BrewingStandBlockEntity) world.getBlockEntity(pos);
 		BrewingStandBlockEntityMixin recipeHolder = (BrewingStandBlockEntityMixin) (Object) brewingStand;
-		if (recipeHolder.quilt$recipe != null && recipeHolder.quilt$recipe.matches(brewingStand, world)) {
+		if (recipeHolder.quilt$recipe != null) {
 			recipeHolder.quilt$recipe.craft(brewingStand);
 			recipeHolder.quilt$craft$interceptedCraft = true;
 		} else {
@@ -101,7 +101,7 @@ public abstract class BrewingStandBlockEntityMixin extends LockableContainerBloc
 	@Inject(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/block/entity/BrewingStandBlockEntity;fuel:I", opcode = Opcodes.PUTFIELD, ordinal = 1))
 	private static void modifyFuelUse(World world, BlockPos pos, BlockState state, BrewingStandBlockEntity brewingStand, CallbackInfo ci) {
 		var recipeHolder = (BrewingStandBlockEntityMixin) (Object) brewingStand;
-		if (recipeHolder.quilt$recipe != null && recipeHolder.quilt$recipe.matches(brewingStand, world)) {
+		if (recipeHolder.quilt$recipe != null) {
 			recipeHolder.fuel -= recipeHolder.quilt$recipe.getFuelUse() - 1; // Minus 1 because the base method already subtracts one
 		}
 	}
@@ -117,7 +117,7 @@ public abstract class BrewingStandBlockEntityMixin extends LockableContainerBloc
 	)
 	private static void modifyBrewTime(World world, BlockPos pos, BlockState state, BrewingStandBlockEntity brewingStand, CallbackInfo ci) {
 		var recipeHolder = (BrewingStandBlockEntityMixin) (Object) brewingStand;
-		if (recipeHolder.quilt$recipe != null && recipeHolder.quilt$recipe.matches(brewingStand, world)) {
+		if (recipeHolder.quilt$recipe != null) {
 			// A brew time of 1 would be the equivalent of a 0 tick recipe
 			recipeHolder.brewTime = Math.max(recipeHolder.quilt$recipe.getBrewTime(), 1);
 		}
