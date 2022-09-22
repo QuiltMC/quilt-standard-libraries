@@ -67,8 +67,8 @@ public final class EntityWorldChangeEvents {
 	public interface AfterEntityWorldChange extends EventAwareListener {
 		/**
 		 * Called after an entity has been recreated at the destination when being moved to a different world.
-		 *
-		 * <p>Note this event is not called if the entity is a {@link ServerPlayerEntity}.
+		 * <p>
+		 * Note this event is not called if the entity is a {@link ServerPlayerEntity}.
 		 * {@link AfterPlayerWorldChange} should be used to track when a player has changed worlds.
 		 *
 		 * @param original the original entity
