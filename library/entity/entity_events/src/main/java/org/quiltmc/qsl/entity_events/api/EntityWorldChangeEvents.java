@@ -32,11 +32,11 @@ import org.quiltmc.qsl.base.api.event.EventAwareListener;
 public final class EntityWorldChangeEvents {
 	/**
 	 * An event which is invoked server-side after an entity has been moved to a different world.
-	 *
-	 * <p>All entities are copied to the destination and the old entity removed.
+	 * <p>
+	 * All entities are copied to the destination and the old entity removed.
 	 * This event does not apply to the {@link ServerPlayerEntity} since players are physically moved to the new world instead of being copied over.
-	 *
-	 * <p>A mod may use this event for reference cleanup if it is tracking an entity's current world.
+	 * <p>
+	 * A mod may use this event for reference cleanup if it is tracking an entity's current world.
 	 *
 	 * @see EntityWorldChangeEvents#AFTER_PLAYER_WORLD_CHANGE
 	 */
