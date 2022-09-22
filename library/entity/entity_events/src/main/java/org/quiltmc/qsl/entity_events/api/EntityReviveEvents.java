@@ -34,14 +34,12 @@ import org.quiltmc.qsl.base.api.event.EventAwareListener;
  * {@link net.minecraft.entity.LivingEntity#isDead()}), and kills the entity if this is true - so the entity will
  * still die next tick if this event is cancelled. It's assumed that the listener will do something to prevent this,
  * for example:
- *
  * <ul>
  *     <li>a totem-of-undying mod giving the player a little health + regeneration effect</li>
  *     <li>a minigame mod teleporting the player into a 'respawn room' and setting their health to 20.0</li>
  *     <li>a mod that changes death mechanics switching the player over to the mod's play-mode, where death doesn't
  *     apply</li>
  * </ul>
- *
  * <p>
  * These events are short-circuiting - if the entity has already been revived, your callback will not fire.
  */
