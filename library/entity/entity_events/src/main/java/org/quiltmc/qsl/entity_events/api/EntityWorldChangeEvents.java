@@ -48,11 +48,11 @@ public final class EntityWorldChangeEvents {
 
 	/**
 	 * An event which is invoked server-side after a player has been moved to a different world.
-	 *
-	 * <p>This is similar to {@link EntityWorldChangeEvents#AFTER_ENTITY_WORLD_CHANGE} but is only called for players.
+	 * <p>
+	 * This is similar to {@link EntityWorldChangeEvents#AFTER_ENTITY_WORLD_CHANGE} but is only called for players.
 	 * This is because the player is physically moved to the new world instead of being recreated at the destination.
-	 *
-	 * <p>Note that returning from the end via an end portal does not count as a world-change in this way.</p>
+	 * <p>
+	 * Note that returning from the end via an end portal does not count as a world-change in this way.</p>
 	 *
 	 * @see EntityWorldChangeEvents#AFTER_ENTITY_WORLD_CHANGE
 	 * @see ServerPlayerEntityCopyCallback
