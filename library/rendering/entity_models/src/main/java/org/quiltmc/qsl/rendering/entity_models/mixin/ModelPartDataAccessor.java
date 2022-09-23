@@ -48,6 +48,6 @@ public interface ModelPartDataAccessor {
 
     @Invoker("<init>")
     static ModelPartData create(List<ModelCuboidData> cuboids, ModelTransform rotation) {
-        throw new AssertionError("mixin broke");
+        throw new AssertionError("Mixin injection failed.");
     }
 }

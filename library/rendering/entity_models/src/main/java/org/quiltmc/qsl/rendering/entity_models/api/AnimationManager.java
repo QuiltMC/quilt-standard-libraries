@@ -28,22 +28,35 @@ import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.resource.loader.api.reloader.SimpleResourceReloader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.minecraft.client.render.animation.Animation;
+import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.profiler.Profiler;
 
+/**
+ * A class that loads and holds {@link Animation}s.
+ *
+ * See {@link net.minecraft.client.render.entity.model.EntityModelLoader#getModelPart(EntityModelLayer)} for a similar usage.
+ */
 public class AnimationManager implements SimpleResourceReloader<AnimationManager.AnimationLoader> {
 	private static final Logger LOGGER = LoggerFactory.getLogger("Quilt Animation Manager");
 	private Map<Identifier, Animation> animations;
 
-	public Animation getAnimation(Identifier id) {
+	/**
+	 *
+	 * @param id The animation ID
+	 * @return An animation if found, or null otherwise
+	 */
+	public @Nullable Animation getAnimation(Identifier id) {
 		return animations.get(id);
 	}
 
@@ -60,7 +73,7 @@ public class AnimationManager implements SimpleResourceReloader<AnimationManager
 	}
 
 	@Override
-	public Identifier getQuiltId() {
+	public @NotNull Identifier getQuiltId() {
 		return new Identifier("quilt_entity_models", "animation_reloader");
 	}
 

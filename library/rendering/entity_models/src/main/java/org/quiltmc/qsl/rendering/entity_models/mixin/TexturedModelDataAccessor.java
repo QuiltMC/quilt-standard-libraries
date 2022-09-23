@@ -42,6 +42,6 @@ public interface TexturedModelDataAccessor {
 
     @Invoker("<init>")
     static TexturedModelData create(ModelData data, TextureDimensions dimensions) {
-        throw new AssertionError("mixin broke");
+        throw new AssertionError("Mixin injection failed.");
     }
 }

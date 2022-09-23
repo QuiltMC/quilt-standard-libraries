@@ -61,6 +61,6 @@ public interface ModelCuboidDataAccessor {
 
     @Invoker("<init>")
     static ModelCuboidData create(@Nullable String string, float f, float g, float h, float i, float j, float k, float l, float m, Dilation dilation, boolean bl, float n, float o){
-        throw new AssertionError("Unreachable");
+        throw new AssertionError("Mixin injection failed.");
     }
 }

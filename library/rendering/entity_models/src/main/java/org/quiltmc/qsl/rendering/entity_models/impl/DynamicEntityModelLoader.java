@@ -69,7 +69,7 @@ public class DynamicEntityModelLoader implements SimpleResourceReloader<DynamicE
 	}
 
 	public static class ModelLoader {
-		private static final Pattern PATH_AND_NAME_PATTERN = Pattern.compile("model/entity/(\\w*)/(\\w*)\\.json");
+		private static final Pattern PATH_AND_NAME_PATTERN = Pattern.compile("models\\/entity\\/((\\w|\\/)*)\\/(\\w*)\\.json");
 
 		private final ResourceManager manager;
 		private final Profiler profiler;
@@ -83,7 +83,7 @@ public class DynamicEntityModelLoader implements SimpleResourceReloader<DynamicE
 
 		private void loadAnimations() {
 			profiler.push("Load Entity Models");
-			Map<Identifier, Resource> resources = manager.findResources("model/entity", id -> id.getPath().endsWith(".json"));
+			Map<Identifier, Resource> resources = manager.findResources("models/entity", id -> id.getPath().endsWith(".json"));
 			for (Map.Entry<Identifier, Resource> entry : resources.entrySet()) {
 				addModel(entry.getKey(), entry.getValue());
 			}

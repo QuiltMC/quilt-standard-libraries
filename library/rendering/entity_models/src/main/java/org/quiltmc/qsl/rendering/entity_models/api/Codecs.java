@@ -54,6 +54,9 @@ import net.minecraft.client.util.math.Vector2f;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.Vec3f;
 
+/**
+ * Codecs for loading {@link Animation}s and {@link net.minecraft.client.render.entity.model.TexturedModelData}s.
+ */
 public class Codecs {
     public static final class Animations {
         public static final Codec<AnimationKeyframe> KEYFRAME = RecordCodecBuilder.create(instance -> instance.group(
