@@ -1,5 +1,6 @@
 package qsl.internal.extension;
 
+import java.io.IOException;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -18,8 +19,11 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Nested;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import qsl.internal.dependency.QslLibraryDependency;
 import qsl.internal.json.Environment;
+
+import org.quiltmc.json5.JsonWriter;
 
 public class QslModuleExtensionImpl extends QslExtension implements QslModuleExtension, Serializable {
 	@Serial
@@ -34,6 +38,7 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 	private final Property<Boolean> hasAccessWidener;
 	private final Property<Boolean> hasMixins;
 	private final NamedDomainObjectContainer<QslLibraryDependency> moduleDependencyDefinitions;
+	private final ListProperty<ProvideEntry> provides;
 	private final NamedDomainObjectContainer<NamedWriteOnlyList> entrypoints;
 	private final NamedDomainObjectContainer<NamedWriteOnlyList> injectedInterfaces;
 
@@ -58,6 +63,7 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 		this.hasMixins.finalizeValueOnRead();
 		this.entrypoints = factory.domainObjectContainer(NamedWriteOnlyList.class, n -> new NamedWriteOnlyList(factory, n));
 		this.moduleDependencyDefinitions = factory.domainObjectContainer(QslLibraryDependency.class, name -> new QslLibraryDependency(factory, name));
+		this.provides = factory.listProperty(ProvideEntry.class);
 		this.injectedInterfaces = factory.domainObjectContainer(NamedWriteOnlyList.class, n -> new NamedWriteOnlyList(factory, n));
 		project.getTasks().findByName("check").dependsOn("checkLicenses");
 	}
@@ -121,10 +127,21 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 	}
 
 	@Nested
+	public ListProperty<ProvideEntry> getProvides() {
+		return this.provides;
+	}
+
+	@Override
+	public void provides(String id, @Nullable String version) {
+		this.provides.add(new ProvideEntry(id, version));
+	}
+
+	@Nested
 	public NamedDomainObjectContainer<NamedWriteOnlyList> getEntrypoints() {
 		return this.entrypoints;
 	}
 
+	@Override
 	public void entrypoints(Action<NamedDomainObjectContainer<NamedWriteOnlyList>> configure) {
 		configure.execute(this.entrypoints);
 	}
@@ -222,6 +239,25 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 
 		public void setValues(Iterable<String> list) {
 			this.values.set(list);
+		}
+	}
+
+	public record ProvideEntry(String id, @Nullable String version) implements Named {
+		public void write(JsonWriter writer) throws IOException {
+			if (this.version != null) {
+				writer.beginObject();
+				writer.name("id").value(this.id);
+				writer.name("version").value(this.version);
+				writer.endObject();
+			} else {
+				writer.value(this.id);
+			}
+		}
+
+		@Input
+		@Override
+		public @NotNull String getName() {
+			return this.id;
 		}
 	}
 }

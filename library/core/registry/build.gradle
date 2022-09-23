@@ -11,6 +11,16 @@ qslModule {
 	moduleDependencies {
 		core {
 			api("qsl_base")
+			api("networking")
+			api("lifecycle_events")
+		}
+	}
+	entrypoints {
+		client_init {
+			values = ["org.quiltmc.qsl.registry.impl.sync.client.RegistrySyncClientInitializer"]
+		}
+		init {
+			values = ["org.quiltmc.qsl.registry.impl.sync.RegistrySyncInitializer"]
 		}
 	}
 }

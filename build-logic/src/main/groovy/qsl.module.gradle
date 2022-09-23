@@ -137,14 +137,6 @@ loom {
 			source(sourceSets.testmod)
 		}
 	}
-
-	mods.register(project.name) {
-		sourceSet sourceSets.main
-	}
-
-	mods.register(project.name + "_testmod") {
-		sourceSet sourceSets.testmod
-	}
 }
 
 java {
@@ -197,4 +189,3 @@ license {
 
 	include "**/*.java"
 }
-
