@@ -30,7 +30,7 @@ public class AttackEntityEvents {
 	 * A callback that is invoked <strong>before</strong> a {@link PlayerEntity} attacks (left-clicks) an {@link Entity}.
 	 * <p>
 	 * This is invoked prior to the Spectator check, so make sure you check the game mode!
-	 * Implementations should not assume the action has been completed.
+	 *     Implementations should not assume the action has been completed.
 	 * <p>
 	 * Upon return:
 	 * <ul>

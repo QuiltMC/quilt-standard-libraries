@@ -20,6 +20,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * An encapsulation of several arguments relevant to a damage context with a
@@ -27,14 +28,14 @@ import net.minecraft.item.ItemStack;
  */
 public class DamageContext {
 
-	private final LivingEntity attacker;
-	private final ItemStack stack;
-	private final Entity target;
-	private final DamageSource source;
+	private final @NotNull LivingEntity attacker;
+	private final @NotNull ItemStack stack;
+	private final @NotNull Entity target;
+	private final @NotNull DamageSource source;
 	private float damage;
 	private boolean canceled = false;
 
-	public DamageContext(LivingEntity attacker, ItemStack stack, Entity target, DamageSource source, float damage) {
+	public DamageContext(@NotNull LivingEntity attacker, @NotNull ItemStack stack, @NotNull Entity target, @NotNull DamageSource source, float damage) {
 		this.attacker = attacker;
 		this.stack = stack;
 		this.target = target;
@@ -46,7 +47,7 @@ public class DamageContext {
 	 * Gets the attacking {@link LivingEntity} in the damage context.
 	 * @return the attacking {@link LivingEntity}
 	 */
-	public LivingEntity getAttacker() {
+	public @NotNull LivingEntity getAttacker() {
 		return this.attacker;
 	}
 
@@ -54,7 +55,7 @@ public class DamageContext {
 	 * Gets the {@link ItemStack} in the attacker's main-hand.
 	 * @return the {@link ItemStack} used by the attacker
 	 */
-	public ItemStack getWeapon() {
+	public @NotNull ItemStack getWeapon() {
 		return this.stack;
 	}
 
@@ -62,7 +63,7 @@ public class DamageContext {
 	 * Gets the targeted {@link Entity} in the damage context.
 	 * @return the targeted {@link Entity}
 	 */
-	public Entity getTarget() {
+	public @NotNull Entity getTarget() {
 		return this.target;
 	}
 
@@ -70,7 +71,7 @@ public class DamageContext {
 	 * Gets the {@link DamageSource} used in the damage context.
 	 * @return the damage's {@link DamageSource}
 	 */
-	public DamageSource getDamageSource() {
+	public @NotNull DamageSource getDamageSource() {
 		return source;
 	}
 

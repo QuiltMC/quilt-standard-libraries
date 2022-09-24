@@ -23,9 +23,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.base.api.event.Event;
-
-import javax.annotation.Nullable;
 
 /**
  * Contains events that invoke when a player breaks a block.

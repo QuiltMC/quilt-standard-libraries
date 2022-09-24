@@ -33,7 +33,7 @@ public class UseItemEvents {
 	 * <p>
 	 * Upon return:
 	 * <ul>
-	 *     <li>{@link ActionResult#SUCCESS}/{@link ActionResult#CONSUME}/{@link ActionResult#CONSUME_PARTIAL}
+	 *     <li>{@link ActionResult#SUCCESS}, {@link ActionResult#CONSUME}, or {@link ActionResult#CONSUME_PARTIAL}
 	 *         cancels further processing and, on the client, sends a packet to the server.</li>
 	 *     <li>{@link ActionResult#PASS} falls back to further processing.</li>
 	 *     <li>{@link ActionResult#FAIL} cancels further processing and does not send a packet to the server.</li>
