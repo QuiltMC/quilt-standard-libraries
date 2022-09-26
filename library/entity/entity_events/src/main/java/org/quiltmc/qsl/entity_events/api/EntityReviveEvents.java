@@ -43,7 +43,7 @@ import org.quiltmc.qsl.base.api.event.EventAwareListener;
  */
 public final class EntityReviveEvents {
 	/**
-	 * Called before totems try to revive the player.
+	 * Called before totems try to revive the entity.
 	 */
 	public static Event<TryReviveBeforeTotem> BEFORE_TOTEM = Event.create(TryReviveBeforeTotem.class, callbacks -> (entity, damageSource) -> {
 		for (var callback : callbacks) {
