@@ -32,7 +32,7 @@ import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
 public final class ItemInteractionEvents {
 	private ItemInteractionEvents() {
-		throw new UnsupportedOperationException("BlockInteractionEvents only contains static declarations.");
+		throw new UnsupportedOperationException("ItemInteractionEvents only contains static declarations.");
 	}
 
 	public static final Event<Used> USED = Event.create(Used.class, callbacks -> (stack, world, user, hand) -> {
