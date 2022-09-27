@@ -16,32 +16,46 @@
 
 package org.quiltmc.qsl.worldgen.surface_rule.impl;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.function.Consumer;
 
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.Unit;
 import net.minecraft.world.gen.surfacebuilder.SurfaceRules;
 
+import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 import org.quiltmc.qsl.worldgen.surface_rule.api.SurfaceRuleEvents;
 
 @ApiStatus.Internal
 public final class VanillaSurfaceRuleTracker<T extends SurfaceRuleContextImpl> {
-	public static final VanillaSurfaceRuleTracker<SurfaceRuleContextImpl.OverworldImpl> OVERWORLD =
-			new VanillaSurfaceRuleTracker<>(context -> SurfaceRuleEvents.MODIFY_OVERWORLD.invoker().modifyOverworldRules(context));
-	public static final VanillaSurfaceRuleTracker<SurfaceRuleContextImpl> NETHER = new VanillaSurfaceRuleTracker<>(
+	private static final Identifier SURFACE_RULES_APPLY_PHASE = new Identifier("quilt_surface_rule", "apply");
+	public static final VanillaSurfaceRuleTracker<SurfaceRuleContextImpl.OverworldImpl> OVERWORLD = new VanillaSurfaceRuleTracker<>(
+			context -> SurfaceRuleEvents.MODIFY_OVERWORLD.invoker().modifyOverworldRules(context)
+	);
+	public static final VanillaSurfaceRuleTracker<SurfaceRuleContextImpl.NetherImpl> NETHER = new VanillaSurfaceRuleTracker<>(
 			context -> SurfaceRuleEvents.MODIFY_NETHER.invoker().modifyNetherRules(context)
 	);
-	public static final VanillaSurfaceRuleTracker<SurfaceRuleContextImpl> THE_END = new VanillaSurfaceRuleTracker<>(
+	public static final VanillaSurfaceRuleTracker<SurfaceRuleContextImpl.TheEndImpl> THE_END = new VanillaSurfaceRuleTracker<>(
 			context -> SurfaceRuleEvents.MODIFY_THE_END.invoker().modifyTheEndRules(context)
 	);
 
 	private final Consumer<T> eventInvoker;
-	private List<T> rules = new ArrayList<>();
+	private final ThreadLocal<Unit> paused = new ThreadLocal<>();
+	private final Set<T> rules = Collections.newSetFromMap(new WeakHashMap<>());
 
 	private VanillaSurfaceRuleTracker(Consumer<T> eventInvoker) {
 		this.eventInvoker = eventInvoker;
+
+		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register(SURFACE_RULES_APPLY_PHASE, (server, resourceManager, error) -> {
+			if (error == null && server == null) {
+				this.init(resourceManager);
+			}
+		});
 	}
 
 	/**
@@ -49,9 +63,20 @@ public final class VanillaSurfaceRuleTracker<T extends SurfaceRuleContextImpl> {
 	 * <p>
 	 * This signifies we can start processing the Vanilla surface material rules.
 	 */
-	public void init() {
-		this.rules.forEach(this::apply);
-		this.rules = null;
+	public void init(ResourceManager resourceManager) {
+		this.rules.forEach(context -> this.apply(context, resourceManager));
+	}
+
+	public boolean isPaused() {
+		return this.paused.get() == Unit.INSTANCE;
+	}
+
+	void pause() {
+		this.paused.set(Unit.INSTANCE);
+	}
+
+	void unpause() {
+		this.paused.remove();
 	}
 
 	/**
@@ -60,26 +85,23 @@ public final class VanillaSurfaceRuleTracker<T extends SurfaceRuleContextImpl> {
 	 * @param context the context
 	 * @return the modded sequence material rule
 	 */
-	public SurfaceRules.SequenceMaterialRule modifyMaterialRules(T context) {
-		if (this.rules == null) {
-			// We got past the bootstrap phase, we can process directly.
-			this.apply(context);
-		} else {
-			// We are still in the bootstrap phase, keep this for later.
-			this.rules.add(context);
-		}
+	public SurfaceRules.MaterialRule modifyMaterialRules(T context) {
+		this.rules.add(context);
 
-		return context.getSequenceRule();
+		return context;
 	}
 
 	/**
 	 * Triggers the modification event for the given surface material rules.
 	 *
-	 * @param context the modification context
+	 * @param context         the modification context
+	 * @param resourceManager the resource manager
 	 */
-	private void apply(T context) {
+	private void apply(T context, ResourceManager resourceManager) {
+		context.reset(this, resourceManager);
+
 		this.eventInvoker.accept(context);
 
-		context.freeze();
+		context.cleanup();
 	}
 }

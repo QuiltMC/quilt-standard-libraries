@@ -21,6 +21,7 @@ import java.util.List;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.resource.ResourceManager;
 import net.minecraft.world.gen.surfacebuilder.SurfaceRules;
 
 /**
@@ -34,7 +35,14 @@ public interface SurfaceRuleContext {
 	 * <p>
 	 * The list is mutable.
 	 */
+	@Contract(pure = true)
 	@NotNull List<SurfaceRules.MaterialRule> materialRules();
+
+	/**
+	 * {@return the resource manager of the current set of loaded data-packs}
+	 */
+	@Contract(pure = true)
+	@NotNull ResourceManager resourceManager();
 
 	/**
 	 * Represents the Overworld-specific context.
