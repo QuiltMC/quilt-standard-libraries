@@ -95,6 +95,7 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 	public void onStatusEffectRemoved(@NotNull StatusEffectInstance effect, @NotNull StatusEffectRemovalReason reason) {
 		this.quilt$lastRemovalReason = reason;
 		this.onStatusEffectRemoved(effect);
+		this.quilt$lastRemovalReason = StatusEffectRemovalReason.UNKNOWN;
 	}
 
 	@Shadow
