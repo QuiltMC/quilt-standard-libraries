@@ -116,7 +116,7 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 	 */
 	@Overwrite
 	public boolean removeStatusEffect(StatusEffect type) {
-		return this.removeStatusEffect(type, StatusEffectRemovalReason.GENERIC_SPECIFIC);
+		return this.removeStatusEffect(type, StatusEffectRemovalReason.GENERIC_ONE);
 	}
 
 	/**
