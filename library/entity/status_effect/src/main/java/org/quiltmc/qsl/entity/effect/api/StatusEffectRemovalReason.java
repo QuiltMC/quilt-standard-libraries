@@ -78,16 +78,16 @@ public class StatusEffectRemovalReason {
 	}
 
 	/**
-	 * Checks if the removal reason should remove effects of this type. Note that the status effect ultimately
+	 * Checks if the removal reason should remove this effect. Note that the status effect ultimately
 	 * has the final say on whether it's removed or not, and this is simply used as a hint.
 	 * <p>
 	 * Override this, for example, to make a status effect remover that only removes
 	 * {@linkplain net.minecraft.entity.effect.StatusEffectType#HARMFUL harmful effects}.
 	 *
-	 * @param type the effect type to check
+	 * @param effect the effect type to check
 	 * @return {@code true} if effects of this type should be removed, {@code false} otherwise.
 	 */
-	public boolean removesEffectType(StatusEffect type) {
+	public boolean removesEffect(StatusEffectInstance effect) {
 		return true;
 	}
 }

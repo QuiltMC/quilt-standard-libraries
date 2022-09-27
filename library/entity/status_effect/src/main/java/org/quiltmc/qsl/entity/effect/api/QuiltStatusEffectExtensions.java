@@ -38,7 +38,7 @@ public interface QuiltStatusEffectExtensions {
 	 * @return {@code true} if the status effect should be removed, or {@code false} otherwise.
 	 */
 	default boolean shouldRemove(@NotNull LivingEntity entity, @NotNull StatusEffectInstance effect, @NotNull StatusEffectRemovalReason reason) {
-		return reason.removesEffectType(effect.getEffectType());
+		return reason.removesEffect(effect);
 	}
 
 	/**
