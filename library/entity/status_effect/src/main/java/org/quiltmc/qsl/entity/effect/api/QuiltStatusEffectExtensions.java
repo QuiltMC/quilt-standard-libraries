@@ -25,14 +25,30 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
+/**
+ * Provides extensions for the {@link StatusEffect} class.
+ */
 @InjectedInterface(StatusEffect.class)
 public interface QuiltStatusEffectExtensions {
-	default boolean shouldRemove(@NotNull LivingEntity entity, @NotNull StatusEffectInstance instance, @NotNull StatusEffectRemovalReason reason) {
-		return reason.removesEffectType(instance.getEffectType());
+	/**
+	 * Checks if the status effect should be removed.
+	 * @param entity the entity that has the status effect
+	 * @param effect the status effect
+	 * @param reason the reason the status effect should be removed
+	 * @return {@code true} if the status effect should be removed, or {@code false} otherwise.
+	 */
+	default boolean shouldRemove(@NotNull LivingEntity entity, @NotNull StatusEffectInstance effect, @NotNull StatusEffectRemovalReason reason) {
+		return reason.removesEffectType(effect.getEffectType());
 	}
 
 	/**
-	 * Called <em>after</em> {@link StatusEffect#onRemoved(LivingEntity, AttributeContainer, int)}.
+	 * Called after a status effect of this type is removed.
+	 * @param entity     the entity that had the status effect
+	 * @param attributes the entity's attributes
+	 * @param amplifier  the removed status effect's amplifier
+	 * @param reason     the reason the status effect was removed
+	 *
+	 * @implNote This is called <em>after</em> the vanilla {@link StatusEffect#onRemoved(LivingEntity, AttributeContainer, int)} method.
 	 */
 	default void onRemoved(@NotNull LivingEntity entity, @NotNull AttributeContainer attributes, int amplifier,
 			@NotNull StatusEffectRemovalReason reason) {}
