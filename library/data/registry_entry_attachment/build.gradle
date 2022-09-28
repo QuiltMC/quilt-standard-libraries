@@ -3,9 +3,9 @@ plugins {
 }
 
 qslModule {
-	name = "Quilt Registry Entry Attachments"
-	moduleName = "registry_entry_attachments"
-	id = "quilt_registry_entry_attachments"
+	name = "Quilt Registry Entry Attachment"
+	moduleName = "registry_entry_attachment"
+	id = "quilt_registry_entry_attachment"
 	description = "Extensible attachment system for registry entries."
 	library = "data"
 	moduleDependencies {
@@ -31,4 +31,6 @@ qslModule {
 			values = ["org.quiltmc.qsl.registry.attachment.impl.client.ClientInitializer"]
 		}
 	}
+
+	provides("quilt_registry_entry_attachments")
 }
