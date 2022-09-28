@@ -59,8 +59,7 @@ public class DynamicEntityModelLoader implements SimpleResourceReloader<DynamicE
 	@Override
 	public CompletableFuture<Void> apply(ModelLoader prepared, ResourceManager manager, Profiler profiler, Executor executor) {
 		this.modelData = prepared.getModelData();
-		return CompletableFuture.runAsync(() -> {
-		});
+		return CompletableFuture.runAsync(() -> {});
 	}
 
 	@Override
@@ -78,14 +77,14 @@ public class DynamicEntityModelLoader implements SimpleResourceReloader<DynamicE
 		public ModelLoader(ResourceManager manager, Profiler profiler) {
 			this.manager = manager;
 			this.profiler = profiler;
-			loadAnimations();
+			this.loadModels();
 		}
 
-		private void loadAnimations() {
+		private void loadModels() {
 			profiler.push("Load Entity Models");
 			Map<Identifier, Resource> resources = manager.findResources("models/entity", id -> id.getPath().endsWith(".json"));
 			for (Map.Entry<Identifier, Resource> entry : resources.entrySet()) {
-				addModel(entry.getKey(), entry.getValue());
+				this.addModel(entry.getKey(), entry.getValue());
 			}
 			profiler.pop();
 		}

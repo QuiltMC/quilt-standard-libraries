@@ -59,51 +59,57 @@ import net.minecraft.util.math.Vec3f;
  */
 public class Codecs {
     public static final class Animations {
-        public static final Codec<AnimationKeyframe> KEYFRAME = RecordCodecBuilder.create(instance -> instance.group(
-                Codec.floatRange(0, Float.MAX_VALUE).fieldOf("timestamp").forGetter(AnimationKeyframe::timestamp),
-                Vec3f.CODEC.fieldOf("transformation").forGetter(AnimationKeyframe::transformation),
-                Codec.STRING.flatXmap(
-                        s -> AnimationUtils.getInterpolatorFromName(s).map(DataResult::success).orElseGet(() -> DataResult.error("Unknown interpolator: " + s)),
-                        i -> AnimationUtils.getNameForInterpolator(i).map(DataResult::success).orElse(DataResult.error("Unknown interpolator"))
-                ).fieldOf("interpolator").forGetter(AnimationKeyframe::interpolator)
-        ).apply(instance, AnimationKeyframe::new));
+        public static final Codec<AnimationKeyframe> KEYFRAME = RecordCodecBuilder.create(instance -> 
+                instance.group(
+                        Codec.floatRange(0, Float.MAX_VALUE).fieldOf("timestamp").forGetter(AnimationKeyframe::timestamp),
+                        Vec3f.CODEC.fieldOf("transformation").forGetter(AnimationKeyframe::transformation),
+                        Codec.STRING.flatXmap(
+                                s -> AnimationUtils.getInterpolatorFromName(s).map(DataResult::success).orElseGet(() -> DataResult.error("Unknown interpolator: " + s)),
+                                i -> AnimationUtils.getNameForInterpolator(i).map(DataResult::success).orElse(DataResult.error("Unknown interpolator"))
+                        ).fieldOf("interpolator").forGetter(AnimationKeyframe::interpolator)
+                ).apply(instance, AnimationKeyframe::new)
+        );
 
-        public static final Codec<PartAnimation> PART_ANIMATION = RecordCodecBuilder.create(instance -> instance.group(
-                Codec.STRING.flatXmap(s -> switch (s) {
-                    case "TRANSLATE" -> DataResult.success(PartAnimation.AnimationTargets.TRANSLATE);
-                    case "ROTATE" -> DataResult.success(PartAnimation.AnimationTargets.ROTATE);
-                    case "SCALE" -> DataResult.success(PartAnimation.AnimationTargets.SCALE);
-                    default -> DataResult.error("Unknown transformation: " + s);
-                }, transformation -> {
-                    if (transformation == PartAnimation.AnimationTargets.TRANSLATE) {
-                        return DataResult.success("TRANSLATE");
-                    } else if (transformation == PartAnimation.AnimationTargets.ROTATE) {
-                        return DataResult.success("ROTATE");
-                    } else if (transformation == PartAnimation.AnimationTargets.SCALE) {
-                        return DataResult.success("SCALE");
-                    } else {
-                        return DataResult.error("Unknown transformation");
-                    }
-                }).fieldOf("transformation").forGetter(PartAnimation::transformation),
-                Codec.list(KEYFRAME).xmap(list -> list.toArray(AnimationKeyframe[]::new), Arrays::asList).fieldOf("keyframes").forGetter(PartAnimation::keyframes)
-        ).apply(instance, PartAnimation::new));
+        public static final Codec<PartAnimation> PART_ANIMATION = RecordCodecBuilder.create(instance -> 
+                instance.group(
+                        Codec.STRING.flatXmap(s -> switch (s) {
+                        case "TRANSLATE" -> DataResult.success(PartAnimation.AnimationTargets.TRANSLATE);
+                        case "ROTATE" -> DataResult.success(PartAnimation.AnimationTargets.ROTATE);
+                        case "SCALE" -> DataResult.success(PartAnimation.AnimationTargets.SCALE);
+                        default -> DataResult.error("Unknown transformation: " + s);
+                        }, transformation -> {
+                        if (transformation == PartAnimation.AnimationTargets.TRANSLATE) {
+                                return DataResult.success("TRANSLATE");
+                        } else if (transformation == PartAnimation.AnimationTargets.ROTATE) {
+                                return DataResult.success("ROTATE");
+                        } else if (transformation == PartAnimation.AnimationTargets.SCALE) {
+                                return DataResult.success("SCALE");
+                        } else {
+                                return DataResult.error("Unknown transformation");
+                        }
+                        }).fieldOf("transformation").forGetter(PartAnimation::transformation),
+                        Codec.list(KEYFRAME).xmap(list -> list.toArray(AnimationKeyframe[]::new), Arrays::asList).fieldOf("keyframes").forGetter(PartAnimation::keyframes)
+                ).apply(instance, PartAnimation::new)
+        );
 
-        public static final Codec<Animation> ANIMATION = RecordCodecBuilder.create(instance -> instance.group(
-                Codec.floatRange(0, Float.MAX_VALUE).fieldOf("length").forGetter(Animation::length),
-                Codec.BOOL.fieldOf("looping").forGetter(Animation::looping),
-                Codec.unboundedMap(Codec.STRING, Codec.list(PART_ANIMATION)).fieldOf("animations").forGetter(Animation::animations)
-        ).apply(instance, Animation::new));
+        public static final Codec<Animation> ANIMATION = RecordCodecBuilder.create(instance -> 
+                instance.group(
+                        Codec.floatRange(0, Float.MAX_VALUE).fieldOf("length").forGetter(Animation::length),
+                        Codec.BOOL.fieldOf("looping").forGetter(Animation::looping),
+                        Codec.unboundedMap(Codec.STRING, Codec.list(PART_ANIMATION)).fieldOf("animations").forGetter(Animation::animations)
+                ).apply(instance, Animation::new)
+        );
     }
 
     public static final class Model {
-        public static final Codec<TextureDimensions> TEXTURE_DIMENSIONS = RecordCodecBuilder.create((instance) ->
+        public static final Codec<TextureDimensions> TEXTURE_DIMENSIONS = RecordCodecBuilder.create(instance ->
                 instance.group(
                         Codec.INT.fieldOf("width").forGetter(obj -> ((TextureDimensionsAccessor) obj).width()),
                         Codec.INT.fieldOf("height").forGetter(obj -> ((TextureDimensionsAccessor) obj).height())
                 ).apply(instance, TextureDimensions::new)
         );
 
-        public static final Codec<ModelTransform> MODEL_TRANSFORM = RecordCodecBuilder.create((instance) ->
+        public static final Codec<ModelTransform> MODEL_TRANSFORM = RecordCodecBuilder.create(instance ->
                 instance.group(
                         Vec3f.CODEC.optionalFieldOf("origin", Vec3f.ZERO).forGetter(obj -> new Vec3f(obj.pivotX, obj.pivotY, obj.pivotZ)),
                         Vec3f.CODEC.optionalFieldOf("rotation", Vec3f.ZERO).forGetter(obj -> new Vec3f(obj.pitch, obj.yaw, obj.roll))
@@ -118,18 +124,25 @@ public class Codecs {
                         ((DilationAccessor) dil).radiusZ())
         );
 
-        public static final Codec<Vector2f> VECTOR2F = Codec.FLOAT.listOf().comapFlatMap((vec) ->
-                        Util.fixedSizeList(vec, 2).map((arr) -> new Vector2f(arr.get(0), arr.get(1))),
-                (vec) -> ImmutableList.of(vec.getX(), vec.getY())
+        public static final Codec<Vector2f> VECTOR2F = Codec.FLOAT.listOf().comapFlatMap(vec ->
+                Util.fixedSizeList(vec, 2).map((arr) -> new Vector2f(arr.get(0), arr.get(1))),
+                vec -> ImmutableList.of(vec.getX(), vec.getY())
         );
 
         private static ModelCuboidData createCuboidData(Optional<String> name, Vec3f offset, Vec3f dimensions, Dilation dilation, boolean mirror, Vector2f uv, Vector2f uvSize) {
-            return ModelCuboidDataAccessor.create(name.orElse(null), uv.getX(), uv.getY(), offset.getX(), offset.getY(), offset.getZ(), dimensions.getX(), dimensions.getY(), dimensions.getZ(), dilation, mirror, uvSize.getX(), uvSize.getY());
+            return ModelCuboidDataAccessor.create(
+                name.orElse(null), 
+                uv.getX(), uv.getY(), 
+                offset.getX(), offset.getY(), offset.getZ(), 
+                dimensions.getX(), dimensions.getY(), dimensions.getZ(), 
+                dilation, 
+                mirror, 
+                uvSize.getX(), uvSize.getY());
         }
 
         private static final Vector2f DEFAULT_UV_SCALE = new Vector2f(1.0f, 1.0f);
 
-        public static final Codec<ModelCuboidData> MODEL_CUBOID_DATA = RecordCodecBuilder.create((instance) ->
+        public static final Codec<ModelCuboidData> MODEL_CUBOID_DATA = RecordCodecBuilder.create(instance ->
                 instance.group(
                         Codec.STRING.optionalFieldOf("name").forGetter(obj -> Optional.ofNullable(((ModelCuboidDataAccessor) (Object) obj).name())),
                         Vec3f.CODEC.fieldOf("offset").forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).offset()),
@@ -141,7 +154,7 @@ public class Codecs {
                 ).apply(instance, Model::createCuboidData)
         );
 
-        public static final Codec<ModelPartData> MODEL_PART_DATA = RecordCodecBuilder.create((instance) ->
+        public static final Codec<ModelPartData> MODEL_PART_DATA = RecordCodecBuilder.create(instance ->
                 instance.group(
                         MODEL_TRANSFORM.optionalFieldOf("transform", ModelTransform.NONE).forGetter(obj -> ((ModelPartDataAccessor) obj).transform()),
                         Codec.list(MODEL_CUBOID_DATA).fieldOf("cuboids").forGetter(obj -> ((ModelPartDataAccessor) obj).cuboids()),
@@ -153,7 +166,7 @@ public class Codecs {
                 })
         );
 
-        public static final Codec<TexturedModelData> TEXTURED_MODEL_DATA = RecordCodecBuilder.create((instance) ->
+        public static final Codec<TexturedModelData> TEXTURED_MODEL_DATA = RecordCodecBuilder.create(instance ->
                 instance.group(
                         TEXTURE_DIMENSIONS.fieldOf("texture").forGetter(obj -> ((TexturedModelDataAccessor) obj).texture()),
                         Codec.unboundedMap(Codec.STRING, MODEL_PART_DATA).fieldOf("bones").forGetter(obj -> ((ModelPartDataAccessor) ((TexturedModelDataAccessor) obj).root().getRoot()).children())

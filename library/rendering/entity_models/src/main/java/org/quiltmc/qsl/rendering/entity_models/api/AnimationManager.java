@@ -85,14 +85,14 @@ public class AnimationManager implements SimpleResourceReloader<AnimationManager
 		public AnimationLoader(ResourceManager manager, Profiler profiler) {
 			this.manager = manager;
 			this.profiler = profiler;
-			loadAnimations();
+			this.loadAnimations();
 		}
 
 		private void loadAnimations() {
 			profiler.push("Load Animations");
 			Map<Identifier, Resource> resources = manager.findResources("animations", id -> id.getPath().endsWith(".json"));
 			for (Map.Entry<Identifier, Resource> entry : resources.entrySet()) {
-				addAnimation(entry.getKey(), entry.getValue());
+				this.addAnimation(entry.getKey(), entry.getValue());
 			}
 			profiler.pop();
 		}
@@ -114,7 +114,8 @@ public class AnimationManager implements SimpleResourceReloader<AnimationManager
 				return;
 			}
 
-			animations.put(new Identifier(id.getNamespace(), id.getPath().substring("animations/".length())), result.result().get().getFirst());
+			Identifier animationId = new Identifier(id.getNamespace(), id.getPath().substring("animations/".length()));
+			animations.put(animationId, result.result().get().getFirst());
 		}
 
 		public Map<Identifier, Animation> getAnimations() {

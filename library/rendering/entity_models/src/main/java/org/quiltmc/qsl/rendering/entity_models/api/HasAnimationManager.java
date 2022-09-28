@@ -32,7 +32,7 @@ import net.minecraft.client.render.entity.EntityRendererFactory;
 })
 public interface HasAnimationManager {
 	/**
-	 * @return The animation manager for this instance
+	 * @return The {@link AnimationManager animation manager} for this instance
 	 */
 	@NotNull AnimationManager getAnimationManager();
 }
