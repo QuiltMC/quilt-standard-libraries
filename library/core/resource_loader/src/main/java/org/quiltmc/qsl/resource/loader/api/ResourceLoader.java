@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.resource.loader.api;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.resource.ResourceType;
@@ -26,6 +27,7 @@ import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.QuiltLoader;
+import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
@@ -77,6 +79,24 @@ public interface ResourceLoader {
 	 * @param provider the provider
 	 */
 	void registerResourcePackProfileProvider(@NotNull ResourcePackProvider provider);
+
+	/**
+	 * {@return the registration of default resource packs event}
+	 * <p>
+	 * This event is triggered when the default resources are created and allow to register additional resource packs
+	 * that are displayed to the user as the {@code "Default"} resource pack.
+	 */
+	@Contract(pure = true)
+	@NotNull Event<ResourcePackRegistrationContext.Callback> getRegisterDefaultResourcePackEvent();
+
+	/**
+	 * {@return the registration of top resource packs event}
+	 * <p>
+	 * This event is triggered once all default and user resource packs are added.
+	 * It allows to add additional resource packs that can override any other resource packs.
+	 */
+	@Contract(pure = true)
+	@NotNull Event<ResourcePackRegistrationContext.Callback> getRegisterTopResourcePackEvent();
 
 	/**
 	 * Registers a built-in resource pack.
