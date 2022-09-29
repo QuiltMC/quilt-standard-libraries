@@ -30,7 +30,6 @@ import net.minecraft.util.collection.DefaultedList;
  * The recipe remainder is an {@link ItemStack} instead of an {@link Item}.
  * This can be used to allow your item to get damaged instead of
  * getting removed when used in crafting.
- *
  * <p>
  * Recipe remainder providers can be set with {@link QuiltItemSettings#recipeRemainder(RecipeRemainderProvider)}.
  */

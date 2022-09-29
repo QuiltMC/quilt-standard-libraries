@@ -31,7 +31,6 @@ import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
 /**
  * Quilt's version of {@link Item.Settings}.
  * Adds additional methods and hooks not found in the original class.
- *
  * <p>
  * To use it, simply replace {@code new Item.Settings()} with {@code new QuiltItemSettings()}.
  */

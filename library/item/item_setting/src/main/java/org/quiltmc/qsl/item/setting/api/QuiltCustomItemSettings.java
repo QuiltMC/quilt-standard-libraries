@@ -36,7 +36,6 @@ public final class QuiltCustomItemSettings {
 
 	/**
 	 * The {@link CustomItemSetting} in charge of handing {@link RecipeRemainderProvider}s. This setting should be used when implementing custom crafting systems to properly handle remainders.
-	 *
 	 * <p>
 	 * The setting is currently used in the following places:
 	 * <ul>
