@@ -24,8 +24,10 @@ import net.minecraft.item.ItemStack;
  * A provider for the {@link EquipmentSlot} that an item stack is able to be placed into.
  * This can be used to give non-armor items, such as blocks,
  * an armor slot that they can go in.
+ *
  * <p>
  * {@link EquipmentSlotProvider} can be set with {@link QuiltItemSettings#equipmentSlot(EquipmentSlotProvider)}.
+ *
  * <p>
  * Note that items extending {@link net.minecraft.item.ArmorItem} should
  * use {@link net.minecraft.item.ArmorItem#getSlotType()} instead.
@@ -34,6 +36,7 @@ import net.minecraft.item.ItemStack;
 public interface EquipmentSlotProvider {
 	/**
 	 * Gets the {@link EquipmentSlot} for an {@link ItemStack} to be placed into.
+	 *
 	 * <p>
 	 * If there is no preferred armor {@link EquipmentSlot} for the {@link ItemStack},
 	 * {@link EquipmentSlot#MAINHAND} can be returned.

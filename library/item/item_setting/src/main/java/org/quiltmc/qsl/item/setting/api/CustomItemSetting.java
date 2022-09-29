@@ -19,7 +19,6 @@ package org.quiltmc.qsl.item.setting.api;
 import java.util.function.Supplier;
 
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Contract;
 
 import net.minecraft.item.Item;
 
@@ -30,6 +29,7 @@ import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
  * This feature can be used by mods to add non-standard settings
  * to items in a way that is compatible with other mods that add
  * settings to items.
+ *
  * <p>
  * Values of this setting can be retrieved from an item using {@link CustomItemSetting#get(Item)},
  * and users that wish to expose a custom setting for use in other mods should do so by exposing
@@ -51,8 +51,10 @@ import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
  *         }
  *     }
  * }}</pre>
+ *
  * <p>
  * You should not implement this interface.
+ *
  * <p>
  * Use {@link CustomItemSetting#create(Supplier)} to retrieve an instance of QSL's implementation.
  *

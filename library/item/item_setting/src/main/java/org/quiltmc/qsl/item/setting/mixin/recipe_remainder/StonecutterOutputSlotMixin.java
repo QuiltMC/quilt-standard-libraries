@@ -43,8 +43,8 @@ public class StonecutterOutputSlotMixin extends Slot {
 
 	@Redirect(method = "onTakeItem(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;takeStack(I)Lnet/minecraft/item/ItemStack;"))
 	public ItemStack getRecipeRemainder(Slot slot, int amount, PlayerEntity player, ItemStack stack) {
-		int selectedRecipe = field_17639.getSelectedRecipe();
-		Recipe<?> recipe = selectedRecipe != -1 ? field_17639.getAvailableRecipes().get(selectedRecipe) : null;
+		int selectedRecipe = this.field_17639.getSelectedRecipe();
+		Recipe<?> recipe = selectedRecipe != -1 ? this.field_17639.getAvailableRecipes().get(selectedRecipe) : null;
 
 		RecipeRemainderLogicHandler.handleRemainderForScreenHandler(
 				slot,

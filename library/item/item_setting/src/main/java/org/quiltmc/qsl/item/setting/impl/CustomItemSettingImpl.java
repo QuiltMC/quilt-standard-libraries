@@ -47,6 +47,7 @@ public class CustomItemSettingImpl<T> implements CustomItemSetting<T> {
 			if (item.hasRecipeRemainder()) {
 				throw new IllegalArgumentException("Item cannot have a standard recipe remainder and a custom recipe remainder");
 			}
+
 			super.apply(settings, item);
 		}
 	};

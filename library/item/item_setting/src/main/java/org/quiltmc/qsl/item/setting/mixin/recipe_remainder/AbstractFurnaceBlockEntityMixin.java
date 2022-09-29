@@ -43,19 +43,19 @@ import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 
 @Mixin(AbstractFurnaceBlockEntity.class)
 public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implements SidedInventory {
-	@Shadow
-	protected DefaultedList<ItemStack> inventory;
-	@Shadow
-	@Final
-	private RecipeManager.C_bvtkxdyi<Inventory, ? extends AbstractCookingRecipe> recipeCache;
+	@Unique
+	private static final ThreadLocal<AbstractFurnaceBlockEntity> quilt$THREAD_LOCAL_BLOCK_ENTITY = new ThreadLocal<>();
 	@Shadow
 	@Final
 	protected static int FUEL_SLOT;
 	@Shadow
 	@Final
 	protected static int INPUT_SLOT;
-	@Unique
-	private static final ThreadLocal<AbstractFurnaceBlockEntity> quilt$threadLocalBlockEntity = new ThreadLocal<>();
+	@Shadow
+	protected DefaultedList<ItemStack> inventory;
+	@Shadow
+	@Final
+	private RecipeManager.C_bvtkxdyi<Inventory, ? extends AbstractCookingRecipe> recipeCache;
 
 	public AbstractFurnaceBlockEntityMixin(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
@@ -65,7 +65,7 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "isBurning", at = @At("HEAD"))
 	private void setThreadLocalBlockEntity(CallbackInfoReturnable<Boolean> cir) {
-		quilt$threadLocalBlockEntity.set((AbstractFurnaceBlockEntity) (BlockEntity) this);
+		quilt$THREAD_LOCAL_BLOCK_ENTITY.set((AbstractFurnaceBlockEntity) (BlockEntity) this);
 	}
 
 	@SuppressWarnings("ConstantConditions")
@@ -102,8 +102,8 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 				recipe,
 				inventory,
 				INPUT_SLOT,
-				quilt$threadLocalBlockEntity.get().getWorld(),
-				quilt$threadLocalBlockEntity.get().getPos()
+				quilt$THREAD_LOCAL_BLOCK_ENTITY.get().getWorld(),
+				quilt$THREAD_LOCAL_BLOCK_ENTITY.get().getPos()
 		);
 	}
 }
