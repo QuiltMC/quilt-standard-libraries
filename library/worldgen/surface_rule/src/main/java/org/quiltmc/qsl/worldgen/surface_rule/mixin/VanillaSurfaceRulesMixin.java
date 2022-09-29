@@ -36,30 +36,40 @@ public abstract class VanillaSurfaceRulesMixin {
 	@Inject(
 			method = "getOverworldLikeRules",
 			at = @At("RETURN"),
-			cancellable = true)
-	private static void quilt$injectOverworldRules(boolean abovePreliminarySurface, boolean bedrockRoof, boolean bedrockFloor, CallbackInfoReturnable<SurfaceRules.MaterialRule> cir) {
-		cir.setReturnValue(VanillaSurfaceRuleTracker.OVERWORLD.modifyMaterialRules(new SurfaceRuleContextImpl.OverworldImpl(
-				abovePreliminarySurface, bedrockRoof, bedrockFloor, cir.getReturnValue()
-		)));
+			cancellable = true
+	)
+	private static void quilt$injectOverworldRules(boolean abovePreliminarySurface, boolean bedrockRoof, boolean bedrockFloor,
+			CallbackInfoReturnable<SurfaceRules.MaterialRule> cir) {
+		if (!VanillaSurfaceRuleTracker.OVERWORLD.isPaused()) {
+			cir.setReturnValue(VanillaSurfaceRuleTracker.OVERWORLD.modifyMaterialRules(new SurfaceRuleContextImpl.OverworldImpl(
+					abovePreliminarySurface, bedrockRoof, bedrockFloor, cir.getReturnValue()
+			)));
+		}
 	}
 
 	@Inject(
 			method = "getNetherRules",
 			at = @At("RETURN"),
-			cancellable = true)
+			cancellable = true
+	)
 	private static void quilt$injectNetherRules(CallbackInfoReturnable<SurfaceRules.MaterialRule> cir) {
-		cir.setReturnValue(VanillaSurfaceRuleTracker.NETHER.modifyMaterialRules(new SurfaceRuleContextImpl(
-				cir.getReturnValue()
-		)));
+		if (!VanillaSurfaceRuleTracker.NETHER.isPaused()) {
+			cir.setReturnValue(VanillaSurfaceRuleTracker.NETHER.modifyMaterialRules(new SurfaceRuleContextImpl.NetherImpl(
+					cir.getReturnValue()
+			)));
+		}
 	}
 
 	@Inject(
 			method = "getEndRules",
 			at = @At("RETURN"),
-			cancellable = true)
+			cancellable = true
+	)
 	private static void quilt$injectEndRules(CallbackInfoReturnable<SurfaceRules.MaterialRule> cir) {
-		cir.setReturnValue(VanillaSurfaceRuleTracker.THE_END.modifyMaterialRules(new SurfaceRuleContextImpl(
-				cir.getReturnValue()
-		)));
+		if (!VanillaSurfaceRuleTracker.THE_END.isPaused()) {
+			cir.setReturnValue(VanillaSurfaceRuleTracker.THE_END.modifyMaterialRules(new SurfaceRuleContextImpl.TheEndImpl(
+					cir.getReturnValue()
+			)));
+		}
 	}
 }
