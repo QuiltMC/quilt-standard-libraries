@@ -29,7 +29,8 @@ import net.minecraft.util.Identifier;
 @SuppressWarnings("ClassCanBeRecord")
 public class StatusEffectRemovalReason {
 	/**
-	 * Used as a placeholder value. Try to minimize use of this.
+	 * Used as a placeholder value.
+	 * @deprecated Use a custom instance of {@code StatusEffectRemovalReason} instead.
 	 */
 	@SuppressWarnings("DeprecatedIsStillUsed")
 	@Deprecated
