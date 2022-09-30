@@ -42,7 +42,6 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 	@SuppressWarnings("ConstantConditions")
 	public LivingEntityMixin() {
 		super(null, null);
-		throw new IllegalStateException("Mixin ctor called??");
 	}
 
 	@SuppressWarnings("UnusedAssignment")
