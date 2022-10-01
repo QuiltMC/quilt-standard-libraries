@@ -1,3 +1,8 @@
-accessWidener   v1  named
+accessWidener   v2  named
 
-accessible  method   net/minecraft/world/gen/surfacebuilder/SurfaceRules$SequenceMaterialRule <init>  (Ljava/util/List;)V
+transitive-accessible  class   net/minecraft/world/gen/surfacebuilder/SurfaceRules$Context
+transitive-accessible  class   net/minecraft/world/gen/surfacebuilder/SurfaceRules$SurfaceRule
+transitive-accessible  class   net/minecraft/world/gen/surfacebuilder/SurfaceRules$SequenceRule
+
+transitive-accessible  method  net/minecraft/world/gen/surfacebuilder/SurfaceRules$SequenceRule <init>  (Ljava/util/List;)V
+transitive-accessible  method  net/minecraft/world/gen/surfacebuilder/SurfaceRules$SequenceMaterialRule <init>  (Ljava/util/List;)V

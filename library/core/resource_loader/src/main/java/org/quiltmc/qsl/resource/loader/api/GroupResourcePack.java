@@ -59,9 +59,7 @@ public abstract class GroupResourcePack implements ResourcePack {
 	public GroupResourcePack(@NotNull ResourceType type, @NotNull List<? extends ResourcePack> packs) {
 		this.type = type;
 		this.packs = packs;
-		this.packs.forEach(pack -> pack.getNamespaces(this.type)
-				.forEach(namespace -> this.namespacedPacks.computeIfAbsent(namespace, value -> new ArrayList<>())
-						.add(pack)));
+		this.recomputeNamespaces();
 	}
 
 	/**
@@ -97,6 +95,16 @@ public abstract class GroupResourcePack implements ResourcePack {
 				consumer.accept(pack);
 			}
 		});
+	}
+
+	/**
+	 * Recomputes the namespaces in case the resource pack list changes.
+	 */
+	public void recomputeNamespaces() {
+		this.namespacedPacks.clear();
+		this.packs.forEach(pack -> pack.getNamespaces(this.type)
+				.forEach(namespace -> this.namespacedPacks.computeIfAbsent(namespace, value -> new ArrayList<>())
+						.add(pack)));
 	}
 
 	@Override
@@ -165,7 +173,7 @@ public abstract class GroupResourcePack implements ResourcePack {
 		return this.namespacedPacks.keySet();
 	}
 
-	public String getFullName() {
+	public @NotNull String getFullName() {
 		return this.getName() + " (" + this.packs.stream().map(ResourcePack::getName).collect(Collectors.joining(", ")) + ")";
 	}
 
@@ -223,12 +231,12 @@ public abstract class GroupResourcePack implements ResourcePack {
 		}
 
 		@Override
-		public Text getDisplayName() {
+		public @NotNull Text getDisplayName() {
 			return this.basePack.getDisplayName();
 		}
 
 		@Override
-		public String getFullName() {
+		public @NotNull String getFullName() {
 			return this.getName() + " (" + this.packs.stream().filter(pack -> pack != this.basePack)
 					.map(ResourcePack::getName).collect(Collectors.joining(", ")) + ")";
 		}

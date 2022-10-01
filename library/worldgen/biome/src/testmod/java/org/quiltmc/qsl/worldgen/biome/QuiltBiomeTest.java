@@ -121,10 +121,10 @@ public class QuiltBiomeTest implements ModInitializer {
 						))
 				// It should be glaringly obvious if these three tests work or not; be sure to check forests as well.
 				.add(ModificationPhase.ADDITIONS,
-						BiomeSelectors.foundInOverworld(),
+						BiomeSelectors.isIn(BiomeTags.IS_JUNGLE),
 						context -> context.getEffects().setSkyColor(0x111111))
 				.add(ModificationPhase.ADDITIONS,
-						BiomeSelectors.foundInOverworld(),
+						BiomeSelectors.isIn(BiomeTags.IS_JUNGLE),
 						context -> context.getEffects().setFogColor(0x000099))
 				.add(ModificationPhase.ADDITIONS,
 						BiomeSelectors.isIn(BiomeTags.IS_FOREST),

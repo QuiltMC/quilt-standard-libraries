@@ -11,7 +11,12 @@ qslModule {
 	moduleDependencies {
 		core {
 			api("qsl_base")
-			testmodOnly("resource_loader")
+			api("resource_loader")
+		}
+	}
+	entrypoints {
+		init {
+			values = ["org.quiltmc.qsl.worldgen.surface_rule.impl.QuiltSurfaceRuleInitializer"]
 		}
 	}
 	accessWidener()
