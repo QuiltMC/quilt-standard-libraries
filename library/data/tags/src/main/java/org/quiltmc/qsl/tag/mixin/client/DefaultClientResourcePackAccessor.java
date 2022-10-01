@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.resource.loader.test.mixin.client;
+package org.quiltmc.qsl.tag.mixin.client;
 
-import java.nio.channels.WritableByteChannel;
-
-import com.mojang.blaze3d.texture.NativeImage;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Invoker;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(NativeImage.class)
-public interface NativeImageAccessor {
-	@Invoker
-	boolean callWrite(WritableByteChannel channel);
+import net.minecraft.client.resource.DefaultClientResourcePack;
+import net.minecraft.client.resource.ResourceIndex;
+
+@Environment(EnvType.CLIENT)
+@Mixin(DefaultClientResourcePack.class)
+public interface DefaultClientResourcePackAccessor {
+	@Accessor
+	ResourceIndex getIndex();
 }
