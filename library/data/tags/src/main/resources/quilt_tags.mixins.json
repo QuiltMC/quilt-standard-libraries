@@ -9,7 +9,9 @@
     "TagKeyMixin"
   ],
   "client": [
+    "client.ClientBuiltinResourcePackProviderAccessor",
     "client.ClientPlayNetworkHandlerMixin",
+    "client.DefaultClientResourcePackAccessor",
     "client.HolderReferenceMixin",
     "client.TagGroupLoaderAccessor"
   ],
