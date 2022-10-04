@@ -101,7 +101,14 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 	protected abstract void onStatusEffectRemoved(StatusEffectInstance effect);
 
 	@SuppressWarnings("ConstantConditions")
-	@Inject(method = "onStatusEffectRemoved", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/effect/StatusEffect;onRemoved(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/attribute/AttributeContainer;I)V"))
+	@Inject(
+		method = "onStatusEffectRemoved",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/entity/effect/StatusEffect;onRemoved(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/attribute/AttributeContainer;I)V",
+			shift = At.Shift.AFTER
+		)
+	)
 	private void quilt$callOnRemovedWithReason(StatusEffectInstance effect, CallbackInfo ci) {
 		effect.getEffectType().onRemoved((LivingEntity) (Object) this, this.getAttributes(), effect.getAmplifier(), this.quilt$lastRemovalReason);
 	}
