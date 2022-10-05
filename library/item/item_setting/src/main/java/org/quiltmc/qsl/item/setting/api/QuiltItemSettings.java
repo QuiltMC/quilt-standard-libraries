@@ -77,15 +77,15 @@ public class QuiltItemSettings extends Item.Settings {
 	/**
 	 * Sets the stack-aware recipe remainder to damage the item by 1 every time it is used in crafting.
 	 */
-	public QuiltItemSettings damageIfUsedInCrafting() {
-		return this.damageIfUsedInCrafting(1);
+	public QuiltItemSettings recipeDamageRemainder() {
+		return this.recipeDamageRemainder(1);
 	}
 
 	/**
 	 * Sets the stack-aware recipe remainder to return the item itself.
 	 */
-	public QuiltItemSettings returnSelfInCrafting() {
-		return this.damageIfUsedInCrafting(0);
+	public QuiltItemSettings recipeSelfRemainder() {
+		return this.recipeDamageRemainder(0);
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class QuiltItemSettings extends Item.Settings {
 	 *
 	 * @param by the amount
 	 */
-	public QuiltItemSettings damageIfUsedInCrafting(int by) {
+	public QuiltItemSettings recipeDamageRemainder(int by) {
 		if (by == 0) {
 			return this.recipeRemainder((original, recipe) -> original.copy());
 		}
