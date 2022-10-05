@@ -36,6 +36,7 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 
 import org.quiltmc.qsl.entity.effect.api.QuiltLivingEntityStatusEffectExtensions;
 import org.quiltmc.qsl.entity.effect.api.StatusEffectRemovalReason;
+import org.quiltmc.qsl.entity.effect.api.StatusEffectUtils;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements QuiltLivingEntityStatusEffectExtensions {
@@ -44,7 +45,6 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 		super(null, null);
 	}
 
-	@SuppressWarnings("UnusedAssignment")
 	@Unique
 	private StatusEffectRemovalReason quilt$lastRemovalReason = StatusEffectRemovalReason.UNKNOWN;
 
@@ -60,7 +60,7 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 			return false;
 		}
 
-		if (type.shouldRemove((LivingEntity) (Object) this, effect, reason)) {
+		if (StatusEffectUtils.shouldRemove((LivingEntity) (Object) this, effect, reason)) {
 			this.activeStatusEffects.remove(type);
 			this.onStatusEffectRemoved(effect, reason);
 			return true;
@@ -80,7 +80,7 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 		var it = this.activeStatusEffects.values().iterator();
 		while (it.hasNext()) {
 			var effect = it.next();
-			if (effect.getEffectType().shouldRemove((LivingEntity) (Object) this, effect, reason)) {
+			if (StatusEffectUtils.shouldRemove((LivingEntity) (Object) this, effect, reason)) {
 				it.remove();
 				this.onStatusEffectRemoved(effect, reason);
 				removed++;
@@ -102,12 +102,12 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 
 	@SuppressWarnings("ConstantConditions")
 	@Inject(
-		method = "onStatusEffectRemoved",
-		at = @At(
-			value = "INVOKE",
-			target = "Lnet/minecraft/entity/effect/StatusEffect;onRemoved(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/attribute/AttributeContainer;I)V",
-			shift = At.Shift.AFTER
-		)
+			method = "onStatusEffectRemoved",
+			at = @At(
+				value = "INVOKE",
+				target = "Lnet/minecraft/entity/effect/StatusEffect;onRemoved(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/attribute/AttributeContainer;I)V",
+				shift = At.Shift.AFTER
+			)
 	)
 	private void quilt$callOnRemovedWithReason(StatusEffectInstance effect, CallbackInfo ci) {
 		effect.getEffectType().onRemoved((LivingEntity) (Object) this, this.getAttributes(), effect.getAmplifier(), this.quilt$lastRemovalReason);
