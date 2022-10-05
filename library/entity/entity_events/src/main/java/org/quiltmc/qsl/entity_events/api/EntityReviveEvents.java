@@ -71,11 +71,10 @@ public final class EntityReviveEvents {
 	@FunctionalInterface
 	public interface TryReviveBeforeTotem extends EventAwareListener {
 		/**
-		 * Returns whether an entity which has fatal damage should be revived.
+		 * {@return {@code true} if the entity which has fatal damage should be revived, or {@code false} otherwise}
 		 *
 		 * @param entity       the entity
 		 * @param damageSource the fatal damage source
-		 * @return true if the entity should be revived, false otherwise.
 		 */
 		boolean tryReviveBeforeTotem(LivingEntity entity, DamageSource damageSource);
 	}
@@ -83,11 +82,10 @@ public final class EntityReviveEvents {
 	@FunctionalInterface
 	public interface TryReviveAfterTotem extends EventAwareListener {
 		/**
-		 * Returns whether an entity which has fatal damage and which has not been saved by a totem should be revived.
+		 * {@return {@code true} if an entity which has fatal damage and which has not been saved by a totem should be revived, {@code false} otherwise}
 		 *
 		 * @param entity       the entity
 		 * @param damageSource the fatal damage source
-		 * @return true if the entity should be revived, false otherwise.
 		 */
 		boolean tryReviveAfterTotem(LivingEntity entity, DamageSource damageSource);
 	}
