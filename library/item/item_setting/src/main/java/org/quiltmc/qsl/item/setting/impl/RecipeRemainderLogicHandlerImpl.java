@@ -34,7 +34,7 @@ import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 @ApiStatus.Internal
 public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLogicHandler {
 	/**
-	 * @return {@code true} if returning the item was successful, or {@code false} if additional handling for the remainder is needed
+	 * {@return {@code true} if returning the item to the inventory was successful, or {@code false} if additional handling for the remainder is needed}
 	 */
 	@Contract(mutates = "param1, param2")
 	private static boolean tryReturnItemToInventory(ItemStack remainder, DefaultedList<ItemStack> inventory, int index) {
@@ -48,7 +48,7 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 	}
 
 	/**
-	 * @return {@code true} if returning the item was successful, or {@code false} if additional handling for the remainder is needed
+	 * {@return {@code true} if returning the item to the slot was successful, or {@code false} if additional handling for the remainder is needed}
 	 */
 	@Contract(mutates = "param1, param2")
 	private static boolean tryReturnItemToSlot(ItemStack remainder, Slot slot) {
@@ -62,7 +62,7 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 	}
 
 	/**
-	 * @return {@code true} if the remainder stack was fully merged into the base stack, or {@code false}
+	 * {@return {@code true} if the remainder stack was fully merged into the base stack, or {@code false} otherwise}
 	 */
 	@Contract(mutates = "param1, param2")
 	private static boolean tryMergeStacks(ItemStack base, ItemStack remainder) {
