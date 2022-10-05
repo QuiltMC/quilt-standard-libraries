@@ -31,6 +31,7 @@ public interface MinecartComparatorLogic {
 	/**
 	 * Compute the comparator output of a detector rail when this minecart is resting
 	 * on top of it. Called from {@link net.minecraft.block.DetectorRailBlock#getComparatorOutput}.
+	 *
 	 * @param state Block state of the rail
 	 * @param pos Position of the rail
 	 * @return A redstone power value {@literal >=} 0 to use, else a value {@literal <} 0 to try the next minecart with

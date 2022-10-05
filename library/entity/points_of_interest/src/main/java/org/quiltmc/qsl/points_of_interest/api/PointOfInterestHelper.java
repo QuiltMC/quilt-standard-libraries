@@ -38,9 +38,9 @@ import net.minecraft.world.poi.PointOfInterestTypes;
 
 /**
  * This class provides utilities to create a {@link PointOfInterestType}.
- *
- * <p>A point of interest is typically used by villagers to specify their workstation blocks, meeting zones and homes.
- * Points of interest are also used by bees to specify where their bee hive is and nether portals to find existing portals.</p>
+ * <p>
+ * A point of interest is typically used by villagers to specify their workstation blocks, meeting zones and homes.
+ * Points of interest are also used by bees to specify where their bee hive is and nether portals to find existing portals.
  */
 public final class PointOfInterestHelper {
 

@@ -81,6 +81,7 @@ public class PointOfInterestTypeMixin implements PointOfInterestTypeExtensions {
 		this.setBlockStates(key, states, false);
 	}
 
+	@Unique
 	private void setBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states, boolean added) {
 		if (!added) {
 			PointOfInterestTypes.ALL_STATES.removeAll(this.blockStates);

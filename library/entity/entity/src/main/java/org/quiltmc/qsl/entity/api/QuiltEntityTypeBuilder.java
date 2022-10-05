@@ -60,7 +60,6 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	 * <p>This entity's spawn group will automatically be set to {@link SpawnGroup#MISC}.</p>
 	 *
 	 * @param <T> the type of entity
-	 *
 	 * @return a new entity type builder
 	 */
 	public static <T extends Entity> QuiltEntityTypeBuilder<T> create() {
@@ -72,7 +71,6 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	 *
 	 * @param spawnGroup the entity spawn group
 	 * @param <T> the type of entity
-	 *
 	 * @return a new entity type builder
 	 */
 	public static <T extends Entity> QuiltEntityTypeBuilder<T> create(SpawnGroup spawnGroup) {
@@ -85,7 +83,6 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	 * @param spawnGroup the entity spawn group
 	 * @param factory the entity factory used to create this entity
 	 * @param <T> the type of entity
-	 *
 	 * @return a new entity type builder
 	 */
 	public static <T extends Entity> QuiltEntityTypeBuilder<T> create(SpawnGroup spawnGroup, EntityType.EntityFactory<T> factory) {
@@ -94,11 +91,9 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 
 	/**
 	 * Creates an entity type builder for a living entity.
-	 *
-	 * <p>This entity's spawn group will automatically be set to {@link SpawnGroup#MISC}.</p>
-	 *
+	 * <p>
+	 * This entity's spawn group will automatically be set to {@link SpawnGroup#MISC}.
 	 * @param <T> the type of entity
-	 *
 	 * @return a new living entity type builder
 	 */
 	public static <T extends LivingEntity> QuiltEntityTypeBuilder.Living<T> createLiving() {
@@ -109,7 +104,6 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	 * Creates an entity type builder for a mob entity.
 	 *
 	 * @param <T> the type of entity
-	 *
 	 * @return a new mob entity type builder
 	 */
 	public static <T extends MobEntity> QuiltEntityTypeBuilder.Mob<T> createMob() {
@@ -133,7 +127,7 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	}
 
 	/**
-	 * Whether this entity type is summonable using the {@code /summon} command.
+	 * Sets this entity type to not be summonable using the {@code /summon} command.
 	 *
 	 * @return this builder for chaining
 	 */
@@ -171,7 +165,6 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	 * Sets the dimensions of this entity type.
 	 *
 	 * @param dimensions the dimensions representing the entity's size
-	 *
 	 * @return this builder for chaining
 	 */
 	public QuiltEntityTypeBuilder<T> dimensions(EntityDimensions dimensions) {
@@ -184,7 +177,6 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	 * Sets the maximum chunk tracking range of this entity type.
 	 *
 	 * @param range the tracking range in chunks
-	 *
 	 * @return this builder for chaining
 	 */
 	public QuiltEntityTypeBuilder<T> trackRangeChunks(int range) {
@@ -194,11 +186,10 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 
 	/**
 	 * Sets the maximum block range at which players can see this entity type.
-	 *
-	 * <p>This gets rounded up to the next integer radius in chunks</p>
+	 * <p>
+	 * This gets rounded up to the next integer radius in chunks.
 	 *
 	 * @param range the tracking range in blocks
-	 *
 	 * @return this builder for chaining
 	 */
 	public QuiltEntityTypeBuilder<T> trackRangeBlocks(int range) {
@@ -451,8 +442,8 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 
 		/**
 		 * Registers a spawn restriction for this entity.
-		 *
-		 * <p>This is used by mobs to determine whether Minecraft should spawn an entity within a certain context.</p>
+		 * <p>
+		 * This is used by mobs to determine whether Minecraft should spawn an entity within a certain context.
 		 *
 		 * @return this builder for chaining
 		 */

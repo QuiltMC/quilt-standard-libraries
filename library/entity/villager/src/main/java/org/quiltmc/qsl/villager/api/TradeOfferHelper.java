@@ -31,13 +31,13 @@ import org.quiltmc.qsl.villager.impl.TradeOfferInternals;
 public final class TradeOfferHelper {
 	/**
 	 * Registers trade offer factories for use by villagers.
-	 *
-	 * <p>Below is an example, of registering a trade offer factory to be added a blacksmith with a profession level of 3:
-	 * <blockquote><pre>
+	 * <p>
+	 * Below is an example, of registering a trade offer factory to be added a blacksmith with a profession level of 3:
+	 * <pre>{@code
 	 * TradeOfferHelper.registerVillagerOffers(VillagerProfession.BLACKSMITH, 3, factories -> {
 	 * 	factories.add(new CustomTradeFactory(...));
 	 * });
-	 * </pre></blockquote>
+	 * }</pre>
 	 *
 	 * @param profession the villager profession to assign the trades to
 	 * @param level the profession level the villager must be to offer the trades
