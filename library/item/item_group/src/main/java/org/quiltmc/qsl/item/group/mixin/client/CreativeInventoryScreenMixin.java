@@ -17,26 +17,28 @@
 
 package org.quiltmc.qsl.item.group.mixin.client;
 
-import java.util.Map;
-
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.text.Text;
-
+import org.quiltmc.qsl.item.group.api.client.ItemGroupRenderer;
+import org.quiltmc.qsl.item.group.api.client.ItemGroupRendererMap;
 import org.quiltmc.qsl.item.group.impl.CreativeGuiExtensions;
 import org.quiltmc.qsl.item.group.impl.QuiltCreativePlayerInventoryScreenWidgets;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
+
+import java.util.Map;
 
 @Mixin(CreativeInventoryScreen.class)
 public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScreen<CreativeInventoryScreen.CreativeScreenHandler> implements CreativeGuiExtensions {
@@ -164,6 +166,14 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 	private void renderTabIcon(MatrixStack matrixStack, ItemGroup itemGroup, CallbackInfo info) {
 		if (this.quilt$isGroupNotVisible(itemGroup)) {
 			info.cancel();
+		}
+	}
+
+	@ModifyArgs(method = "renderTabIcon", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/ItemRenderer;renderInGuiWithOverrides(Lnet/minecraft/item/ItemStack;II)V"))
+	private void renderCustomTabRenderer(Args args, MatrixStack matrixStack, ItemGroup itemGroup) {
+		ItemGroupRenderer renderer = ItemGroupRendererMap.get(itemGroup);
+		if (renderer != null) {
+			renderer.renderTabIcon(matrixStack, args.get(1), args.get(2));
 		}
 	}
 

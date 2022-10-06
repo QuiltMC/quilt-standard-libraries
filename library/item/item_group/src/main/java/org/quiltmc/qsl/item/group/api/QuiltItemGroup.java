@@ -17,13 +17,6 @@
 
 package org.quiltmc.qsl.item.group.api;
 
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
@@ -32,8 +25,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
-
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.item.group.impl.ItemGroupExtensions;
+
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Extensions for the {@link ItemGroup} class.
@@ -43,13 +42,13 @@ import org.quiltmc.qsl.item.group.impl.ItemGroupExtensions;
  * A {@link QuiltItemGroup} can be directly created with {@link QuiltItemGroup#create(Identifier)} or {@link QuiltItemGroup#createWithIcon(Identifier, Supplier)}.<br>
  * A {@link Builder}, which is used to add specific {@link ItemStack}s, especially with {@link net.minecraft.nbt.NbtElement}s, can be obtained with {@link QuiltItemGroup#builder(Identifier)}.
  */
-public final class QuiltItemGroup extends ItemGroup {
+public final class QuiltItemGroup extends AbstractQuiltItemGroup {
 	private final Supplier<ItemStack> iconSupplier;
 	private @Nullable ItemStack icon;
 	private final @Nullable Consumer<List<ItemStack>> stacksForDisplay;
 	private final @Nullable Text displayText;
 
-	private QuiltItemGroup(int index, String id, Supplier<ItemStack> iconSupplier, @Nullable Consumer<List<ItemStack>> stacksForDisplay, @Nullable Text displayText) {
+	private QuiltItemGroup(int index, Identifier id, Supplier<ItemStack> iconSupplier, @Nullable Consumer<List<ItemStack>> stacksForDisplay, @Nullable Text displayText) {
 		super(index, id);
 		this.iconSupplier = iconSupplier;
 		this.stacksForDisplay = stacksForDisplay;
@@ -243,12 +242,14 @@ public final class QuiltItemGroup extends ItemGroup {
 		 * @return a new {@link QuiltItemGroup}
 		 */
 		public QuiltItemGroup build() {
-			((ItemGroupExtensions) GROUPS[0]).quilt$expandArray();
-			return new QuiltItemGroup(
-					GROUPS.length - 1,
-					String.format("%s.%s", this.identifier.getNamespace(), this.identifier.getPath()),
-					this.iconSupplier, this.stacksForDisplay, this.text
-			);
+			return register(i -> new QuiltItemGroup(
+					i, identifier, this.iconSupplier, this.stacksForDisplay, this.text
+			));
 		}
+	}
+
+	public static <T extends ItemGroup> T register(Function<Integer, T> itemGroupFactory) {
+		((ItemGroupExtensions) GROUPS[0]).quilt$expandArray();
+		return itemGroupFactory.apply(GROUPS.length - 1);
 	}
 }
