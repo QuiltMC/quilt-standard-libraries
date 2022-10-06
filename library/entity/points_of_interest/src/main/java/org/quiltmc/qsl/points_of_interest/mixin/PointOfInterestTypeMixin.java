@@ -47,43 +47,43 @@ public class PointOfInterestTypeMixin implements PointOfInterestTypeExtensions {
 	private Set<BlockState> blockStates;
 
 	@Override
-	public void addBlocks(RegistryKey<PointOfInterestType> key, Collection<Block> blocks) {
+	public void quilt$addBlocks(RegistryKey<PointOfInterestType> key, Collection<Block> blocks) {
 		ImmutableSet.Builder<BlockState> builder = new ImmutableSet.Builder<>();
 
 		for (Block block : blocks) {
 			builder.addAll(block.getStateManager().getStates());
 		}
 
-		this.setBlockStates(key, builder.build(), true);
+		this.quilt$setBlockStates(key, builder.build(), true);
 	}
 
 	@Override
-	public void addBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states) {
+	public void quilt$addBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states) {
 		ImmutableSet.Builder<BlockState> builder = new ImmutableSet.Builder<>();
 
 		builder.addAll(states);
 
-		this.setBlockStates(key, builder.build(), true);
+		this.quilt$setBlockStates(key, builder.build(), true);
 	}
 
 	@Override
-	public void setBlocks(RegistryKey<PointOfInterestType> key, Collection<Block> blocks) {
+	public void quilt$setBlocks(RegistryKey<PointOfInterestType> key, Collection<Block> blocks) {
 		ImmutableSet.Builder<BlockState> builder = new ImmutableSet.Builder<>();
 
 		for (Block block : blocks) {
 			builder.addAll(block.getStateManager().getStates());
 		}
 
-		this.setBlockStates(key, builder.build(), false);
+		this.quilt$setBlockStates(key, builder.build(), false);
 	}
 
 	@Override
-	public void setBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states) {
-		this.setBlockStates(key, states, false);
+	public void quilt$setBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states) {
+		this.quilt$setBlockStates(key, states, false);
 	}
 
 	@Unique
-	private void setBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states, boolean added) {
+	private void quilt$setBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states, boolean added) {
 		if (!added) {
 			PointOfInterestTypes.ALL_STATES.removeAll(this.blockStates);
 

@@ -34,6 +34,8 @@ import net.minecraft.world.poi.PointOfInterest;
 import net.minecraft.world.poi.PointOfInterestType;
 import net.minecraft.world.poi.PointOfInterestTypes;
 
+import org.quiltmc.qsl.points_of_interest.impl.PointOfInterestTypeExtensions;
+
 /**
  * This class provides utilities to create a {@link PointOfInterestType}.
  * <p>
@@ -128,7 +130,7 @@ public final class PointOfInterestHelper {
 	 * @param blocks all additional {@link Block}s where a {@link PointOfInterest} of this type will be present. Will apply to all of the {@link Block}'s {@link BlockState}s
 	 */
 	public static void addBlocks(RegistryKey<PointOfInterestType> key, Block... blocks) {
-		Registry.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type -> type.addBlocks(key, Arrays.asList(blocks)));
+		Registry.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type -> ((PointOfInterestTypeExtensions) (Object) type).quilt$addBlocks(key, Arrays.asList(blocks)));
 	}
 
 	/**
@@ -138,7 +140,7 @@ public final class PointOfInterestHelper {
 	 * @param blocks all additional {@link Block}s where a {@link PointOfInterest} of this type will be present. Will apply to all of the {@link Block}'s {@link BlockState}s
 	 */
 	public static void addBlocks(RegistryKey<PointOfInterestType> key, Collection<Block> blocks) {
-		Registry.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type -> type.addBlocks(key, blocks));
+		Registry.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type -> ((PointOfInterestTypeExtensions) (Object) type).quilt$addBlocks(key, blocks));
 	}
 
 	/**
@@ -148,7 +150,7 @@ public final class PointOfInterestHelper {
 	 * @param states all additional {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
 	 */
 	public static void addBlockStates(RegistryKey<PointOfInterestType> key, BlockState... states) {
-		Registry.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type -> type.addBlockStates(key, Arrays.asList(states)));
+		Registry.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type -> ((PointOfInterestTypeExtensions) (Object) type).quilt$addBlockStates(key, Arrays.asList(states)));
 	}
 
 	/**
@@ -158,7 +160,7 @@ public final class PointOfInterestHelper {
 	 * @param states all additional {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
 	 */
 	public static void addBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states) {
-		Registry.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type -> type.addBlockStates(key, states));
+		Registry.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type -> ((PointOfInterestTypeExtensions) (Object) type).quilt$addBlockStates(key, states));
 	}
 
 	/**
@@ -180,7 +182,7 @@ public final class PointOfInterestHelper {
 	 *               Will apply to all of the {@link Block}'s {@link BlockState}s
 	 */
 	public static void setBlocks(RegistryKey<PointOfInterestType> key, Collection<Block> blocks) {
-		Registry.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type -> type.setBlocks(key, blocks));
+		Registry.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type -> ((PointOfInterestTypeExtensions) (Object) type).quilt$setBlocks(key, blocks));
 	}
 
 	/**
@@ -200,6 +202,6 @@ public final class PointOfInterestHelper {
 	 * @param states all {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
 	 */
 	public static void setBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states) {
-		Registry.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type -> type.setBlockStates(key, states));
+		Registry.POINT_OF_INTEREST_TYPE.getOrEmpty(key).ifPresent(type -> ((PointOfInterestTypeExtensions) (Object) type).quilt$setBlockStates(key, states));
 	}
 }
