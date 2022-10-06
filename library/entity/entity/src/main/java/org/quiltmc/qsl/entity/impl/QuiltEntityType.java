@@ -18,27 +18,28 @@
 package org.quiltmc.qsl.entity.impl;
 
 import com.google.common.collect.ImmutableSet;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 
 @ApiStatus.Internal
 public class QuiltEntityType<T extends Entity> extends EntityType<T> {
 	private final @Nullable Boolean alwaysUpdateVelocity;
 
-	public QuiltEntityType(EntityType.EntityFactory<T> factory, SpawnGroup spawnGroup, boolean bl, boolean summonable, boolean fireImmune, boolean spawnableFarFromPlayer, ImmutableSet<Block> spawnBlocks, EntityDimensions entityDimensions, int maxTrackDistance, int trackTickInterval, @Nullable Boolean alwaysUpdateVelocity) {
-		super(factory, spawnGroup, bl, summonable, fireImmune, spawnableFarFromPlayer, spawnBlocks, entityDimensions, maxTrackDistance, trackTickInterval);
+	public QuiltEntityType(EntityType.EntityFactory<T> factory, SpawnGroup spawnGroup, boolean saveable, boolean summonable, boolean fireImmune, boolean spawnableFarFromPlayer, ImmutableSet<Block> spawnBlocks, EntityDimensions entityDimensions, int maxTrackDistance, int trackTickInterval, @Nullable Boolean alwaysUpdateVelocity) {
+		super(factory, spawnGroup, saveable, summonable, fireImmune, spawnableFarFromPlayer, spawnBlocks, entityDimensions, maxTrackDistance, trackTickInterval);
 		this.alwaysUpdateVelocity = alwaysUpdateVelocity;
 	}
 
 	@Override
 	public boolean alwaysUpdateVelocity() {
-		if (alwaysUpdateVelocity != null) {
-			return alwaysUpdateVelocity;
+		if (this.alwaysUpdateVelocity != null) {
+			return this.alwaysUpdateVelocity;
 		}
 
 		return super.alwaysUpdateVelocity();

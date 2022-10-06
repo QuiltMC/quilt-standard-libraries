@@ -16,13 +16,14 @@
 
 package org.quiltmc.qsl.vehicle.test.mixin;
 
+import org.spongepowered.asm.mixin.Mixin;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import net.minecraft.entity.vehicle.TntMinecartEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(TntMinecartEntity.class)
 public abstract class TntMinecartEntityMixin extends AbstractMinecartEntity {

@@ -16,20 +16,17 @@
 
 package org.quiltmc.qsl.points_of_interest.impl;
 
+import java.util.Collection;
+
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.poi.PointOfInterest;
 import net.minecraft.world.poi.PointOfInterestType;
 
-import org.jetbrains.annotations.ApiStatus;
-
-import java.util.Collection;
-
-import org.quiltmc.qsl.base.api.util.InjectedInterface;
-
 @ApiStatus.Internal
-@InjectedInterface(PointOfInterestType.class)
 public interface PointOfInterestTypeExtensions {
 	/**
 	 * Allows adding {@link Block}s after construction.

@@ -17,8 +17,6 @@
 
 package org.quiltmc.qsl.points_of_interest.api;
 
-import static net.minecraft.world.poi.PointOfInterestTypes.STATE_TO_TYPE;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
@@ -43,7 +41,6 @@ import net.minecraft.world.poi.PointOfInterestTypes;
  * Points of interest are also used by bees to specify where their bee hive is and nether portals to find existing portals.
  */
 public final class PointOfInterestHelper {
-
 	/**
 	 * Creates and registers a {@link PointOfInterestType}.
 	 *
@@ -116,7 +113,7 @@ public final class PointOfInterestHelper {
 		var key = RegistryKey.of(Registry.POINT_OF_INTEREST_TYPE_KEY, id);
 		Registry.register(Registry.POINT_OF_INTEREST_TYPE, key, poiType);
 		poiType.blockStates().forEach(state -> {
-			Holder<PointOfInterestType> replaced = STATE_TO_TYPE.put(state, Registry.POINT_OF_INTEREST_TYPE.getHolderOrThrow(key));
+			Holder<PointOfInterestType> replaced = PointOfInterestTypes.STATE_TO_TYPE.put(state, Registry.POINT_OF_INTEREST_TYPE.getHolderOrThrow(key));
 			if (replaced != null) {
 				throw Util.throwOrPause(new IllegalStateException(String.format("%s is defined in too many tags", state)));
 			}
@@ -127,7 +124,7 @@ public final class PointOfInterestHelper {
 	/**
 	 * Allows adding {@link Block}s to a {@link PointOfInterestType} after construction.
 	 *
-	 * @param key the {@link RegistryKey<PointOfInterestType>} of the {@link PointOfInterestType} to add these blocks to
+	 * @param key the {@link RegistryKey} of the {@link PointOfInterestType} to add these blocks to
 	 * @param blocks all additional {@link Block}s where a {@link PointOfInterest} of this type will be present. Will apply to all of the {@link Block}'s {@link BlockState}s
 	 */
 	public static void addBlocks(RegistryKey<PointOfInterestType> key, Block... blocks) {
@@ -137,7 +134,7 @@ public final class PointOfInterestHelper {
 	/**
 	 * Allows adding {@link Block}s to a {@link PointOfInterestType} after construction.
 	 *
-	 * @param key the {@link RegistryKey<PointOfInterestType>} of the {@link PointOfInterestType} to add these blocks to
+	 * @param key the {@link RegistryKey} of the {@link PointOfInterestType} to add these blocks to
 	 * @param blocks all additional {@link Block}s where a {@link PointOfInterest} of this type will be present. Will apply to all of the {@link Block}'s {@link BlockState}s
 	 */
 	public static void addBlocks(RegistryKey<PointOfInterestType> key, Collection<Block> blocks) {
@@ -147,7 +144,7 @@ public final class PointOfInterestHelper {
 	/**
 	 * Allows adding {@link Block}s to a {@link PointOfInterestType} after construction.
 	 *
-	 * @param key the {@link RegistryKey<PointOfInterestType>} of the {@link PointOfInterestType} to add these blocks to
+	 * @param key the {@link RegistryKey} of the {@link PointOfInterestType} to add these blocks to
 	 * @param states all additional {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
 	 */
 	public static void addBlockStates(RegistryKey<PointOfInterestType> key, BlockState... states) {
@@ -157,7 +154,7 @@ public final class PointOfInterestHelper {
 	/**
 	 * Allows adding {@link Block}s to a {@link PointOfInterestType} after construction.
 	 *
-	 * @param key the {@link RegistryKey<PointOfInterestType>} of the {@link PointOfInterestType} to add these blocks to
+	 * @param key the {@link RegistryKey} of the {@link PointOfInterestType} to add these blocks to
 	 * @param states all additional {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
 	 */
 	public static void addBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states) {
@@ -167,7 +164,7 @@ public final class PointOfInterestHelper {
 	/**
 	 * Allows replacing the {@link PointOfInterestType}s {@link Block}s after construction.
 	 *
-	 * @param key the {@link RegistryKey<PointOfInterestType>} of the {@link PointOfInterestType} to add these blocks to
+	 * @param key the {@link RegistryKey} of the {@link PointOfInterestType} to add these blocks to
 	 * @param blocks all blocks where a {@link PointOfInterest} of this type will be present.
 	 *               Will apply to all of the {@link Block}'s {@link BlockState}s
 	 */
@@ -178,7 +175,7 @@ public final class PointOfInterestHelper {
 	/**
 	 * Allows replacing the {@link PointOfInterestType}s {@link Block}s after construction.
 	 *
-	 * @param key the {@link RegistryKey<PointOfInterestType>} of the {@link PointOfInterestType} to add these blocks to
+	 * @param key the {@link RegistryKey} of the {@link PointOfInterestType} to add these blocks to
 	 * @param blocks all blocks where a {@link PointOfInterest} of this type will be present.
 	 *               Will apply to all of the {@link Block}'s {@link BlockState}s
 	 */
@@ -189,7 +186,7 @@ public final class PointOfInterestHelper {
 	/**
 	 * Allows replacing the {@link PointOfInterestType}s {@link BlockState}s after construction.
 	 *
-	 * @param key the {@link RegistryKey<PointOfInterestType>} of the {@link PointOfInterestType} to add these blocks to
+	 * @param key the {@link RegistryKey} of the {@link PointOfInterestType} to add these blocks to
 	 * @param states all {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
 	 */
 	public static void setBlockStates(RegistryKey<PointOfInterestType> key, BlockState... states) {
@@ -199,7 +196,7 @@ public final class PointOfInterestHelper {
 	/**
 	 * Allows replacing the {@link PointOfInterestType}s {@link BlockState}s after construction.
 	 *
-	 * @param key the {@link RegistryKey<PointOfInterestType>} of the {@link PointOfInterestType} to add these blocks to
+	 * @param key the {@link RegistryKey} of the {@link PointOfInterestType} to add these blocks to
 	 * @param states all {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
 	 */
 	public static void setBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states) {

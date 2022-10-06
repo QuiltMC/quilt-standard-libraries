@@ -25,16 +25,17 @@ import java.util.function.Consumer;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.village.TradeOffers;
 import net.minecraft.village.VillagerProfession;
-import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 public final class TradeOfferInternals {
 	// synchronized guards against concurrent modifications - Vanilla does not mutate the underlying arrays,
 	// so reads will be fine without locking.
-	public static synchronized void registerVillagerOffers(VillagerProfession profession, int level, Consumer<List<TradeOffers.Factory>> factory) {
+	public static synchronized void registerVillagerOffers(@NotNull VillagerProfession profession, int level, Consumer<List<TradeOffers.Factory>> factory) {
 		Objects.requireNonNull(profession, "VillagerProfession may not be null.");
 		registerOffers(TradeOffers.PROFESSION_TO_LEVELED_TRADE.computeIfAbsent(profession, key -> new Int2ObjectOpenHashMap<>()), level, factory);
 	}

@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.vehicle.api.MinecartComparatorLogic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -35,14 +34,17 @@ import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import org.quiltmc.qsl.vehicle.api.MinecartComparatorLogic;
+
 @Mixin(DetectorRailBlock.class)
 public abstract class DetectorRailBlockMixin {
-	@Shadow protected abstract <T extends AbstractMinecartEntity> List<T> getCarts(World world, BlockPos pos, Class<T> entityClass, @Nullable Predicate<Entity> entityPredicate);
+	@Shadow
+	protected abstract <T extends AbstractMinecartEntity> List<T> getCarts(World world, BlockPos pos, Class<T> entityClass, @Nullable Predicate<Entity> entityPredicate);
 
 	@Inject(at = @At("HEAD"), method = "getComparatorOutput", cancellable = true)
 	private void getCustomComparatorOutput(BlockState state, World world, BlockPos pos, CallbackInfoReturnable<Integer> cir) {
 		if (state.get(DetectorRailBlock.POWERED)) {
-			List<AbstractMinecartEntity> carts = getCarts(world, pos, AbstractMinecartEntity.class,
+			List<AbstractMinecartEntity> carts = this.getCarts(world, pos, AbstractMinecartEntity.class,
 					cart -> ((MinecartComparatorLogic) cart).getComparatorValue(state, pos) >= 0);
 
 			if (carts.isEmpty()) return;
