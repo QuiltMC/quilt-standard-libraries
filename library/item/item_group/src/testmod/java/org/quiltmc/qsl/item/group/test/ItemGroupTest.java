@@ -51,12 +51,12 @@ public class ItemGroupTest implements ModInitializer {
 
 	private static final QuiltItemGroup[] MANY_GROUPS = IntStream.range(0, 20).mapToObj(i -> QuiltItemGroup.builder(new Identifier(NAMESPACE, "many_group_" + i)).build()).toArray(QuiltItemGroup[]::new);
 
-	private static final QuiltItemGroup RENDERER_FROM_TEXTURE = QuiltItemGroup.builder(new Identifier(NAMESPACE, "renderer_from_texture"))
+	private static final QuiltItemGroup RENDERER_FROM_TEXTURE_GROUP = QuiltItemGroup.builder(new Identifier(NAMESPACE, "renderer_from_texture"))
 			.build();
 
 	@Override
 	public void onInitialize(ModContainer mod) {
 		DELAYED_ITEM_GROUP.setIcon(Items.EMERALD);
-		ItemGroupRendererMap.put(RENDERER_FROM_TEXTURE, new TextureItemGroupRenderer(new Identifier("minecraft", "textures/mob_effect/haste.png")));
+		ItemGroupRendererMap.put(RENDERER_FROM_TEXTURE_GROUP, new TextureItemGroupRenderer(new Identifier("minecraft", "textures/mob_effect/haste.png")));
 	}
 }
