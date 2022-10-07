@@ -29,7 +29,7 @@ import org.quiltmc.qsl.base.api.util.TriState;
  */
 public final class StatusEffectUtils {
 	private StatusEffectUtils() {
-		throw new UnsupportedOperationException("StatusEffectEvents only contains static definitions.");
+		throw new UnsupportedOperationException("StatusEffectUtils only contains static definitions.");
 	}
 
 	/**
