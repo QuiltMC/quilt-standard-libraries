@@ -45,12 +45,18 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 		super(null, null);
 	}
 
-	@Unique
-	private StatusEffectRemovalReason quilt$lastRemovalReason = StatusEffectRemovalReason.UNKNOWN;
-
 	@Shadow
 	@Final
 	private Map<StatusEffect, StatusEffectInstance> activeStatusEffects;
+
+	@Shadow
+	protected abstract void onStatusEffectRemoved(StatusEffectInstance effect);
+
+	@Shadow
+	public abstract AttributeContainer getAttributes();
+
+	@Unique
+	private StatusEffectRemovalReason quilt$lastRemovalReason = StatusEffectRemovalReason.UNKNOWN;
 
 	@SuppressWarnings("ConstantConditions")
 	@Override
@@ -97,9 +103,6 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 		this.quilt$lastRemovalReason = StatusEffectRemovalReason.UNKNOWN;
 	}
 
-	@Shadow
-	protected abstract void onStatusEffectRemoved(StatusEffectInstance effect);
-
 	@SuppressWarnings("ConstantConditions")
 	@Inject(
 			method = "onStatusEffectRemoved",
@@ -112,9 +115,6 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 	private void quilt$callOnRemovedWithReason(StatusEffectInstance effect, CallbackInfo ci) {
 		effect.getEffectType().onRemoved((LivingEntity) (Object) this, this.getAttributes(), effect.getAmplifier(), this.quilt$lastRemovalReason);
 	}
-
-	@Shadow
-	public abstract AttributeContainer getAttributes();
 
 	/**
 	 * @author QuiltMC
