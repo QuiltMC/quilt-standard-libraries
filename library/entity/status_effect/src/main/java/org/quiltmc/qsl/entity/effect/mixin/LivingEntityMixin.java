@@ -36,6 +36,7 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import org.quiltmc.qsl.entity.effect.api.QuiltLivingEntityStatusEffectExtensions;
 import org.quiltmc.qsl.entity.effect.api.StatusEffectRemovalReason;
 import org.quiltmc.qsl.entity.effect.api.StatusEffectUtils;
+import org.quiltmc.qsl.entity.effect.impl.QuiltStatusEffectInternals;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements QuiltLivingEntityStatusEffectExtensions {
@@ -52,7 +53,7 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 	protected abstract void onStatusEffectRemoved(StatusEffectInstance effect);
 
 	@Unique
-	private StatusEffectRemovalReason quilt$lastRemovalReason = StatusEffectRemovalReason.UNKNOWN;
+	private StatusEffectRemovalReason quilt$lastRemovalReason = QuiltStatusEffectInternals.UNKNOWN_REASON;
 
 	@SuppressWarnings("ConstantConditions")
 	@Override
@@ -96,7 +97,7 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 	public void onStatusEffectRemoved(@NotNull StatusEffectInstance effect, @NotNull StatusEffectRemovalReason reason) {
 		this.quilt$lastRemovalReason = reason;
 		this.onStatusEffectRemoved(effect);
-		this.quilt$lastRemovalReason = StatusEffectRemovalReason.UNKNOWN;
+		this.quilt$lastRemovalReason = QuiltStatusEffectInternals.UNKNOWN_REASON;
 	}
 
 	@Redirect(

@@ -23,43 +23,36 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.qsl.entity.effect.impl.QuiltStatusEffectInternals;
+
 /**
  * Represents a reason for a {@link StatusEffectInstance} to be removed.
  */
-@SuppressWarnings("ClassCanBeRecord")
 public class StatusEffectRemovalReason {
-	/**
-	 * Used as a placeholder value.
-	 * @deprecated Use a custom instance of {@code StatusEffectRemovalReason} instead.
-	 */
-	@SuppressWarnings("DeprecatedIsStillUsed")
-	@Deprecated
-	public static final StatusEffectRemovalReason UNKNOWN = new StatusEffectRemovalReason(new Identifier("quilt_status_effect", "unknown"));
-
 	/**
 	 * Used when effects are removed via the vanilla {@link LivingEntity#clearStatusEffects()} method.
 	 */
-	public static final StatusEffectRemovalReason GENERIC_ALL = new StatusEffectRemovalReason(new Identifier("quilt_status_effect", "generic.all"));
+	public static final StatusEffectRemovalReason GENERIC_ALL = new StatusEffectRemovalReason(QuiltStatusEffectInternals.id("generic.all"));
 
 	/**
 	 * Used when an effect is removed via the vanilla {@link LivingEntity#removeStatusEffect(StatusEffect)} method.
 	 */
-	public static final StatusEffectRemovalReason GENERIC_ONE = new StatusEffectRemovalReason(new Identifier("quilt_status_effect", "generic.one"));
+	public static final StatusEffectRemovalReason GENERIC_ONE = new StatusEffectRemovalReason(QuiltStatusEffectInternals.id("generic.one"));
 
 	/**
 	 * Used when effects are removed via the {@code /effect clear} command.
 	 */
-	public static final StatusEffectRemovalReason COMMAND_ALL = new StatusEffectRemovalReason(new Identifier("quilt_status_effect", "command.all"));
+	public static final StatusEffectRemovalReason COMMAND_ALL = new StatusEffectRemovalReason(QuiltStatusEffectInternals.id("command.all"));
 
 	/**
 	 * Used when an effect is removed via the {@code /effect remove} command.
 	 */
-	public static final StatusEffectRemovalReason COMMAND_ONE = new StatusEffectRemovalReason(new Identifier("quilt_status_effect", "command.one"));
+	public static final StatusEffectRemovalReason COMMAND_ONE = new StatusEffectRemovalReason(QuiltStatusEffectInternals.id("command.one"));
 
 	/**
 	 * Used when effects are removed via drinking milk. Does <em>not</em> have to be the vanilla milk bucket.
 	 */
-	public static final StatusEffectRemovalReason DRANK_MILK = new StatusEffectRemovalReason(new Identifier("quilt_status_effect", "action.drank_milk"));
+	public static final StatusEffectRemovalReason DRANK_MILK = new StatusEffectRemovalReason(QuiltStatusEffectInternals.id("action.drank_milk"));
 
 	protected final @NotNull Identifier id;
 
