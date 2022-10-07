@@ -25,8 +25,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -51,9 +50,6 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 
 	@Shadow
 	protected abstract void onStatusEffectRemoved(StatusEffectInstance effect);
-
-	@Shadow
-	public abstract AttributeContainer getAttributes();
 
 	@Unique
 	private StatusEffectRemovalReason quilt$lastRemovalReason = StatusEffectRemovalReason.UNKNOWN;
@@ -103,17 +99,15 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 		this.quilt$lastRemovalReason = StatusEffectRemovalReason.UNKNOWN;
 	}
 
-	@SuppressWarnings("ConstantConditions")
-	@Inject(
+	@Redirect(
 			method = "onStatusEffectRemoved",
 			at = @At(
 				value = "INVOKE",
-				target = "Lnet/minecraft/entity/effect/StatusEffect;onRemoved(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/attribute/AttributeContainer;I)V",
-				shift = At.Shift.AFTER
+				target = "Lnet/minecraft/entity/effect/StatusEffect;onRemoved(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/attribute/AttributeContainer;I)V"
 			)
 	)
-	private void quilt$callOnRemovedWithReason(StatusEffectInstance effect, CallbackInfo ci) {
-		effect.getEffectType().onRemoved((LivingEntity) (Object) this, this.getAttributes(), effect.getAmplifier(), this.quilt$lastRemovalReason);
+	private void quilt$callOnRemovedWithReason(StatusEffect instance, LivingEntity entity, AttributeContainer attributes, int amplifier) {
+		instance.onRemoved(entity, attributes, amplifier, this.quilt$lastRemovalReason);
 	}
 
 	/**

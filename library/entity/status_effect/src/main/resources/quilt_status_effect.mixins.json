@@ -5,7 +5,8 @@
   "mixins": [
     "EffectCommandMixin",
     "LivingEntityMixin",
-    "MilkBucketItemMixin"
+    "MilkBucketItemMixin",
+    "StatusEffectMixin"
   ],
   "injectors": {
     "defaultRequire": 1

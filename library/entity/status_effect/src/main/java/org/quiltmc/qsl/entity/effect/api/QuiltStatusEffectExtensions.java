@@ -47,9 +47,6 @@ public interface QuiltStatusEffectExtensions {
 	 * @param attributes the entity's attributes
 	 * @param amplifier  the removed status effect's amplifier
 	 * @param reason     the reason the status effect was removed
-	 *
-	 * @implNote This is called <em>after</em> the vanilla {@link StatusEffect#onRemoved(LivingEntity, AttributeContainer, int)} method.
 	 */
-	default void onRemoved(@NotNull LivingEntity entity, @NotNull AttributeContainer attributes, int amplifier,
-			@NotNull StatusEffectRemovalReason reason) {}
+	void onRemoved(@NotNull LivingEntity entity, @NotNull AttributeContainer attributes, int amplifier, @NotNull StatusEffectRemovalReason reason);
 }
