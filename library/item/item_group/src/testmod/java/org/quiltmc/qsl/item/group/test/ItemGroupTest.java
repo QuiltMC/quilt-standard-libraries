@@ -57,6 +57,6 @@ public class ItemGroupTest implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		DELAYED_ITEM_GROUP.setIcon(Items.EMERALD);
-		ItemGroupRendererMap.put(RENDERER_FROM_TEXTURE_GROUP, new TextureItemGroupRenderer(new Identifier("minecraft", "textures/gui/icons.png")));
+		ItemGroupRendererMap.put(RENDERER_FROM_TEXTURE_GROUP, new TextureItemGroupRenderer(new Identifier("minecraft", "textures/mob_effect/haste.png")));
 	}
 }
