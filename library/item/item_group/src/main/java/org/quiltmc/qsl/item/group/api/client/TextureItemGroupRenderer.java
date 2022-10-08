@@ -17,18 +17,15 @@
 package org.quiltmc.qsl.item.group.api.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
-public class TextureItemGroupRenderer implements ItemGroupRenderer {
-
-	public final Identifier location;
-
-	public TextureItemGroupRenderer(Identifier location) {
-		this.location = location;
-	}
+@Environment(EnvType.CLIENT)
+public record TextureItemGroupRenderer(Identifier location) implements ItemGroupRenderer {
 
 	@Override
 	public void renderTabIcon(MatrixStack matrices, int x, int y) {

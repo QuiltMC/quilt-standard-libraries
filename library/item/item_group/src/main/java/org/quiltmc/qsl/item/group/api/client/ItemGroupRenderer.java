@@ -16,8 +16,11 @@
 
 package org.quiltmc.qsl.item.group.api.client;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.util.math.MatrixStack;
 
+@Environment(EnvType.CLIENT)
 public interface ItemGroupRenderer {
 	void renderTabIcon(MatrixStack matrices, int x, int y);
 }
