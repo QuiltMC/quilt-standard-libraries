@@ -17,15 +17,9 @@
 
 package org.quiltmc.qsl.item.group.mixin.client;
 
+import java.util.Map;
+
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
-import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.text.Text;
-import org.quiltmc.qsl.item.group.impl.CreativeGuiExtensions;
-import org.quiltmc.qsl.item.group.impl.QuiltCreativePlayerInventoryScreenWidgets;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -34,7 +28,15 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Map;
+import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
+import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.text.Text;
+
+import org.quiltmc.qsl.item.group.impl.CreativeGuiExtensions;
+import org.quiltmc.qsl.item.group.impl.QuiltCreativePlayerInventoryScreenWidgets;
 
 @Mixin(CreativeInventoryScreen.class)
 public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScreen<CreativeInventoryScreen.CreativeScreenHandler> implements CreativeGuiExtensions {

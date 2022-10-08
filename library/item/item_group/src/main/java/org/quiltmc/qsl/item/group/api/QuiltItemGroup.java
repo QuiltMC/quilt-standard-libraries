@@ -48,8 +48,8 @@ public final class QuiltItemGroup extends ItemGroup {
 	private final @Nullable Consumer<List<ItemStack>> stacksForDisplay;
 	private final @Nullable Text displayText;
 
-	private QuiltItemGroup(int index, Identifier id, Supplier<ItemStack> iconSupplier, @Nullable Consumer<List<ItemStack>> stacksForDisplay, @Nullable Text displayText) {
-		super(index, String.format("%s.%s", id.getNamespace(), id.getPath()));
+	private QuiltItemGroup(int index, String id, Supplier<ItemStack> iconSupplier, @Nullable Consumer<List<ItemStack>> stacksForDisplay, @Nullable Text displayText) {
+		super(index, id);
 		this.iconSupplier = iconSupplier;
 		this.stacksForDisplay = stacksForDisplay;
 		this.displayText = displayText;
@@ -243,7 +243,8 @@ public final class QuiltItemGroup extends ItemGroup {
 		 */
 		public QuiltItemGroup build() {
 			return register(index -> new QuiltItemGroup(
-					index, identifier, this.iconSupplier, this.stacksForDisplay, this.text
+					index, String.format("%s.%s", identifier.getNamespace(), identifier.getPath()),
+					this.iconSupplier, this.stacksForDisplay, this.text
 			));
 		}
 	}
