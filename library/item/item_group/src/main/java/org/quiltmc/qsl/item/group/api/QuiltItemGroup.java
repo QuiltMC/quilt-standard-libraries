@@ -42,14 +42,14 @@ import java.util.function.Supplier;
  * A {@link QuiltItemGroup} can be directly created with {@link QuiltItemGroup#create(Identifier)} or {@link QuiltItemGroup#createWithIcon(Identifier, Supplier)}.<br>
  * A {@link Builder}, which is used to add specific {@link ItemStack}s, especially with {@link net.minecraft.nbt.NbtElement}s, can be obtained with {@link QuiltItemGroup#builder(Identifier)}.
  */
-public final class QuiltItemGroup extends AbstractQuiltItemGroup {
+public final class QuiltItemGroup extends ItemGroup {
 	private final Supplier<ItemStack> iconSupplier;
 	private @Nullable ItemStack icon;
 	private final @Nullable Consumer<List<ItemStack>> stacksForDisplay;
 	private final @Nullable Text displayText;
 
 	private QuiltItemGroup(int index, Identifier id, Supplier<ItemStack> iconSupplier, @Nullable Consumer<List<ItemStack>> stacksForDisplay, @Nullable Text displayText) {
-		super(index, id);
+		super(index, String.format("%s.%s", id.getNamespace(), id.getPath()));
 		this.iconSupplier = iconSupplier;
 		this.stacksForDisplay = stacksForDisplay;
 		this.displayText = displayText;
@@ -242,12 +242,17 @@ public final class QuiltItemGroup extends AbstractQuiltItemGroup {
 		 * @return a new {@link QuiltItemGroup}
 		 */
 		public QuiltItemGroup build() {
-			return register(i -> new QuiltItemGroup(
-					i, identifier, this.iconSupplier, this.stacksForDisplay, this.text
+			return register(index -> new QuiltItemGroup(
+					index, identifier, this.iconSupplier, this.stacksForDisplay, this.text
 			));
 		}
 	}
 
+	/**
+	 * Appends a new {@link ItemGroup} to the end of the vanilla list of {@link ItemGroup}s.
+	 * @param itemGroupFactory a factory that produces a new {@link ItemGroup} from an index
+	 * @return the inserted {@link ItemGroup}
+	 */
 	public static <T extends ItemGroup> T register(Function<Integer, T> itemGroupFactory) {
 		((ItemGroupExtensions) GROUPS[0]).quilt$expandArray();
 		return itemGroupFactory.apply(GROUPS.length - 1);
