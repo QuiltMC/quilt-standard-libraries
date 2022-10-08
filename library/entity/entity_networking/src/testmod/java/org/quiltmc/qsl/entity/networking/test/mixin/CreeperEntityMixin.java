@@ -16,6 +16,12 @@
 
 package org.quiltmc.qsl.entity.networking.test.mixin;
 
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
@@ -28,21 +34,15 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
+
 import org.quiltmc.qsl.entity.networking.test.TrackedDataTestInitializer;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
  * Don't add extra tracked data to existing mobs in actual mods!
  */
-
 @Mixin(CreeperEntity.class)
 public class CreeperEntityMixin extends HostileEntity {
 	private static final TrackedData<ParticleEffect> PARTICLE = DataTracker.registerData(CreeperEntity.class, TrackedDataTestInitializer.PARTICLE_DATA_HANDLER);
-
 
 	protected CreeperEntityMixin(EntityType<? extends HostileEntity> entityType, World world) {
 		super(entityType, world);

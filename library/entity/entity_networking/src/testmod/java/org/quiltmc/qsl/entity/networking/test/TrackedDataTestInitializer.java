@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.entity.networking.test;
 
 import net.fabricmc.api.EnvType;
+
 import net.minecraft.entity.data.TrackedDataHandler;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffect;
@@ -25,6 +26,7 @@ import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -44,11 +46,8 @@ public class TrackedDataTestInitializer implements ModInitializer {
 			return type.getParametersFactory().read(type, buf);
 		}
 	};
-
 	public static final TrackedDataHandler<StatusEffect> TEST_HANDLER = TrackedDataHandler.createIndexed(Registry.STATUS_EFFECT);
-
 	public static final TrackedDataHandler<StatusEffect> BAD_EXAMPLE_HANDLER = TrackedDataHandler.createIndexed(Registry.STATUS_EFFECT);
-
 
 	@Override
 	public void onInitialize(ModContainer mod) {

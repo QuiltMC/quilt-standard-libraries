@@ -16,10 +16,12 @@
 
 package org.quiltmc.qsl.entity.networking.api.tracked_data;
 
-import net.minecraft.entity.data.TrackedDataHandler;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+
+import net.minecraft.entity.data.TrackedDataHandler;
+import net.minecraft.util.Identifier;
+
 import org.quiltmc.qsl.entity.networking.impl.QuiltEntityNetworkingInitializer;
 
 public final class QuiltTrackedDataHandlerRegistry {

@@ -17,12 +17,14 @@
 package org.quiltmc.qsl.entity.networking.impl;
 
 import com.mojang.serialization.Lifecycle;
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.entity.data.TrackedDataHandler;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
-import org.jetbrains.annotations.ApiStatus;
+
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
@@ -42,6 +44,7 @@ public class QuiltEntityNetworkingInitializer implements ModInitializer {
 			RegistrySynchronization.markForSync(QuiltEntityNetworkingInitializer.TRACKED_DATA_HANDLER_REGISTRY);
 			markForSync = false;
 		}
+
 		return handler;
 	}
 
