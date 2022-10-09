@@ -100,7 +100,7 @@ public final class QuiltItemGroup extends ItemGroup {
 	public Text getTranslationKey() {
 		return this.displayText == null ? super.getTranslationKey() : this.displayText;
 	}
-	
+
 	/**
 	 * Create a new {@link Builder}.
 	 * Using the constructor allows for the use of the {@link Builder#icon(Supplier)} and {@link Builder#appendItems(Consumer)} methods.
