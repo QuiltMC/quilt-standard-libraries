@@ -21,9 +21,9 @@ import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.SimpleRegistry;
 
-import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
+import org.quiltmc.qsl.registry.impl.sync.RegistryFlag;
+import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
 
 /**
  * Utility class to build a new built-in {@link Registry}.
@@ -113,13 +113,16 @@ public final class QuiltBuiltinRegistryBuilder<T> extends QuiltRegistryBuilder<T
 
 	@Override
 	@SuppressWarnings("unchecked")
-	protected void onRegistryBuilt(SimpleRegistry<T> registry) {
+	protected void onRegistryBuilt(Registry<T> registry) {
 		Registry.register((Registry<Registry<Object>>) Registry.REGISTRIES, this.key.getValue(), (Registry<Object>) registry);
 
 		if (this.syncBehavior == SyncBehavior.REQUIRED || this.syncBehavior == SyncBehavior.OPTIONAL) {
-			RegistrySynchronization.markForSync(registry);
+			// using SynchronizedRegistry directly instead of RegistrySynchronization/RegistryFlag,
+			//  since those require casting to SimpleRegistry
+			var syncRegistry = SynchronizedRegistry.as(registry);
+			syncRegistry.quilt$markForSync();
 			if (this.syncBehavior == SyncBehavior.OPTIONAL) {
-				RegistrySynchronization.setRegistryOptional(registry);
+				syncRegistry.quilt$setRegistryFlag(RegistryFlag.OPTIONAL);
 			}
 		}
 

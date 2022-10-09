@@ -42,7 +42,7 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	protected final RegistryKey<Registry<T>> key;
 	protected Lifecycle lifecycle;
 	protected Function<T, Holder.Reference<T>> customHolderProvider;
-	protected Consumer<SimpleRegistry<T>> bootstrap;
+	protected Consumer<Registry<T>> bootstrap;
 	protected Identifier defaultId;
 
 	/**
@@ -206,7 +206,7 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	 */
 	@SuppressWarnings("unchecked")
 	@Contract("_ -> this")
-	public @NotNull SELF withBootstrap(@Nullable Consumer<SimpleRegistry<T>> bootstrap) {
+	public @NotNull SELF withBootstrap(Consumer<Registry<T>> bootstrap) {
 		this.bootstrap = bootstrap;
 		return (SELF) this;
 	}
@@ -234,7 +234,7 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	 *
 	 * @param registry the newly built registry
 	 */
-	protected void onRegistryBuilt(SimpleRegistry<T> registry) {
+	protected void onRegistryBuilt(Registry<T> registry) {
 		if (this.bootstrap != null) {
 			this.bootstrap.accept(registry);
 		}
@@ -246,8 +246,8 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	 * @return the newly constructed registry
 	 */
 	@Contract("-> new")
-	public @NotNull SimpleRegistry<T> build() {
-		SimpleRegistry<T> registry;
+	public @NotNull Registry<T> build() {
+		Registry<T> registry;
 		if (this.defaultId == null) {
 			registry = new SimpleRegistry<>(this.key, this.lifecycle, this.customHolderProvider);
 		} else {

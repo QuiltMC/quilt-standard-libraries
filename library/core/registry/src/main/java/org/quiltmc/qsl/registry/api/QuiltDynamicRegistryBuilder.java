@@ -24,7 +24,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.SimpleRegistry;
 
 import org.quiltmc.qsl.registry.impl.SignalingMemoizingSupplier;
 
@@ -48,7 +47,7 @@ public final class QuiltDynamicRegistryBuilder<T> extends QuiltRegistryBuilder<T
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void onRegistryBuilt(SimpleRegistry<T> registry) {
+	protected void onRegistryBuilt(Registry<T> registry) {
 		if (DynamicRegistryManager.BUILTIN instanceof SignalingMemoizingSupplier<DynamicRegistryManager.Frozen> supplier) {
 			if (supplier.isInitialized()) {
 				throw new IllegalStateException("Built-in DynamicRegistryManager was already initialized!");

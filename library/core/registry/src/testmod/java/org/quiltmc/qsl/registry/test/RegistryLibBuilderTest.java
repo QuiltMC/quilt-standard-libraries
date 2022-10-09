@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import net.minecraft.util.Holder;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.SimpleRegistry;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -36,7 +35,7 @@ public class RegistryLibBuilderTest implements ModInitializer {
 
 	public static final Logger LOGGER = LogUtils.getLogger();
 
-	public static final SimpleRegistry<RegistryEntry> REGISTRY =
+	public static final Registry<RegistryEntry> REGISTRY =
 			QuiltRegistryBuilder.<RegistryEntry>builtin(new Identifier(NAMESPACE, "registry"))
 					.withCustomHolderProvider(RegistryEntry::getRegistryHolder)
 					.syncOptional()
