@@ -19,8 +19,8 @@ package org.quiltmc.qsl.registry.api;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 
 import org.quiltmc.qsl.registry.impl.sync.RegistryFlag;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
@@ -53,8 +53,8 @@ public final class QuiltBuiltinRegistryBuilder<T> extends QuiltRegistryBuilder<T
 
 	private SyncBehavior syncBehavior;
 
-	QuiltBuiltinRegistryBuilder(@NotNull Identifier id) {
-		super(id);
+	QuiltBuiltinRegistryBuilder(@NotNull RegistryKey<Registry<T>> key) {
+		super(key);
 
 		this.syncBehavior = SyncBehavior.SKIPPED;
 	}

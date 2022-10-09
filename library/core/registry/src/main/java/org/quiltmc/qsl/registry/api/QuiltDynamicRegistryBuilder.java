@@ -20,10 +20,10 @@ import com.mojang.serialization.Codec;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 
 import org.quiltmc.qsl.registry.impl.SignalingMemoizingSupplier;
 
@@ -38,8 +38,8 @@ import org.quiltmc.qsl.registry.impl.SignalingMemoizingSupplier;
 public final class QuiltDynamicRegistryBuilder<T> extends QuiltRegistryBuilder<T, QuiltDynamicRegistryBuilder<T>> {
 	private final Codec<T> entryCodec, networkEntryCodec;
 
-	QuiltDynamicRegistryBuilder(@NotNull Identifier id, @NotNull Codec<T> entryCodec, @Nullable Codec<T> networkEntryCodec) {
-		super(id);
+	QuiltDynamicRegistryBuilder(@NotNull RegistryKey<Registry<T>> key, @NotNull Codec<T> entryCodec, @Nullable Codec<T> networkEntryCodec) {
+		super(key);
 
 		this.entryCodec = entryCodec;
 		this.networkEntryCodec = networkEntryCodec;

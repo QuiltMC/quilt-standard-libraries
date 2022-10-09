@@ -48,62 +48,62 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	/**
 	 * Creates a new built-in {@code Registry} builder.
 	 *
-	 * @param id the identifier of the registry
+	 * @param key the key of the registry
 	 * @param <T> the entry type tracked by this registry
 	 * @return the newly created builder
 	 */
 	@Contract("_ -> new")
-	public static <T> QuiltBuiltinRegistryBuilder<T> builtin(@NotNull Identifier id) {
-		return new QuiltBuiltinRegistryBuilder<>(id);
+	public static <T> QuiltBuiltinRegistryBuilder<T> builtin(@NotNull RegistryKey<Registry<T>> key) {
+		return new QuiltBuiltinRegistryBuilder<>(key);
 	}
 
 	/**
 	 * Creates a new dynamic {@code Registry} builder.
 	 *
-	 * @param id                the identifier of the registry
+	 * @param key               the key of the registry
 	 * @param entryCodec        the codec to use to (de)serialize the registry's entries
 	 * @param networkEntryCodec the codec to use to synchronize the registry's entries
 	 * @param <T> the entry type tracked by this registry
 	 * @return the newly created builder
 	 */
 	@Contract("_, _, _ -> new")
-	public static <T> QuiltDynamicRegistryBuilder<T> dynamic(@NotNull Identifier id, @NotNull Codec<T> entryCodec, @NotNull Codec<T> networkEntryCodec) {
-		return new QuiltDynamicRegistryBuilder<>(id, entryCodec, networkEntryCodec);
+	public static <T> QuiltDynamicRegistryBuilder<T> dynamic(@NotNull RegistryKey<Registry<T>> key, @NotNull Codec<T> entryCodec, @NotNull Codec<T> networkEntryCodec) {
+		return new QuiltDynamicRegistryBuilder<>(key, entryCodec, networkEntryCodec);
 	}
 
 	/**
 	 * Creates a new dynamic {@code Registry} builder.
 	 *
-	 * @param id         the identifier of the registry
+	 * @param key        the key of the registry
 	 * @param entryCodec the codec to use to (de)serialize and synchronize the registry's entries
 	 * @param <T> the entry type tracked by this registry
 	 * @return the newly created builder
 	 */
 	@Contract("_, _ -> new")
-	public static <T> QuiltDynamicRegistryBuilder<T> dynamic(@NotNull Identifier id, @NotNull Codec<T> entryCodec) {
-		return dynamic(id, entryCodec, entryCodec);
+	public static <T> QuiltDynamicRegistryBuilder<T> dynamic(@NotNull RegistryKey<Registry<T>> key, @NotNull Codec<T> entryCodec) {
+		return dynamic(key, entryCodec, entryCodec);
 	}
 
 	/**
 	 * Creates a new, <em>unsynchronized</em> dynamic {@code Registry} builder.
 	 *
-	 * @param id         the identifier of the registry
+	 * @param key        the key of the registry
 	 * @param entryCodec the codec to use to (de)serialize the registry's entries
 	 * @param <T> the entry type tracked by this registry
 	 * @return the newly created builder
 	 */
 	@Contract("_, _ -> new")
-	public static <T> QuiltDynamicRegistryBuilder<T> dynamicUnsynced(@NotNull Identifier id, @NotNull Codec<T> entryCodec) {
-		return new QuiltDynamicRegistryBuilder<>(id, entryCodec, null);
+	public static <T> QuiltDynamicRegistryBuilder<T> dynamicUnsynced(@NotNull RegistryKey<Registry<T>> key, @NotNull Codec<T> entryCodec) {
+		return new QuiltDynamicRegistryBuilder<>(key, entryCodec, null);
 	}
 
 	/**
 	 * Creates a new {@code QuiltRegistryBuilder}.
 	 *
-	 * @param id the identifier of the registry
+	 * @param key the key of the registry
 	 */
-	protected QuiltRegistryBuilder(@NotNull Identifier id) {
-		this.key = RegistryKey.ofRegistry(id);
+	protected QuiltRegistryBuilder(@NotNull RegistryKey<Registry<T>> key) {
+		this.key = key;
 
 		this.lifecycle = Lifecycle.stable();
 	}
