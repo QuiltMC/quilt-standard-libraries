@@ -26,6 +26,7 @@ import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.item.group.api.ItemGroupIcon;
 import org.quiltmc.qsl.item.group.api.QuiltItemGroup;
 
 public class ItemGroupTest implements ModInitializer {
@@ -47,6 +48,9 @@ public class ItemGroupTest implements ModInitializer {
 							.map(ItemStack::new)
 							.forEach(stacks::add)
 			).build();
+
+	private static final QuiltItemGroup ITEM_GROUP_WITH_TEXTURE_ICON = QuiltItemGroup.createWithIcon(new Identifier(NAMESPACE, "test_texture_icon_group"),
+			ItemGroupIcon.texture(new Identifier("textures/block/stone.png")));
 
 	private static final QuiltItemGroup[] MANY_GROUPS = IntStream.range(0, 20).mapToObj(i -> QuiltItemGroup.builder(new Identifier(NAMESPACE, "many_group_" + i)).build()).toArray(QuiltItemGroup[]::new);
 
