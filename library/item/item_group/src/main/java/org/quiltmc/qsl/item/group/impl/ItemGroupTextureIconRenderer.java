@@ -16,11 +16,9 @@
 
 package org.quiltmc.qsl.item.group.impl;
 
-import java.util.function.Supplier;
-
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.item.group.api.ItemGroupIcon;
+import org.quiltmc.qsl.item.group.api.client.ItemGroupIconRenderer;
 import org.quiltmc.qsl.resource.loader.api.client.ClientResourceLoaderEvents;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -28,29 +26,26 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.texture.MissingSprite;
-import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 
 @ApiStatus.Internal
-public final class ItemGroupTextureIcon implements ItemGroupIcon, ClientResourceLoaderEvents.EndResourcePackReload {
-	// NB: These have to be suppliers since these objects are created before minecraft has a instance?
-	private final Supplier<TextureManager> textureManagerSupplier = () -> MinecraftClient.getInstance().getTextureManager();
-	private final Supplier<ResourceManager> resourceManagerSupplier = () -> MinecraftClient.getInstance().getResourceManager();
+public final class ItemGroupTextureIconRenderer<IG extends ItemGroup> implements ItemGroupIconRenderer<IG>, ClientResourceLoaderEvents.EndResourcePackReload {
 	private final Identifier textureId;
 	private int textureGlId = -1;
 
-	public ItemGroupTextureIcon(Identifier textureId) {
+	public ItemGroupTextureIconRenderer(Identifier textureId) {
 		this.textureId = textureId;
 		ClientResourceLoaderEvents.END_RESOURCE_PACK_RELOAD.register(this);
 	}
 
 	@Override
-	public void render(MatrixStack matrices, int x, int y) {
+	public void render(IG itemGroup, MatrixStack matrices, int x, int y, float tickDelta) {
 		if (textureGlId == -1) {
-			if (resourceManagerSupplier.get().getResource(textureId).isPresent()) {
-				textureGlId = textureManagerSupplier.get().getTexture(textureId).getGlId();
+			if (MinecraftClient.getInstance().getResourceManager().getResource(textureId).isPresent()) {
+				textureGlId = MinecraftClient.getInstance().getTextureManager().getTexture(textureId).getGlId();
 			} else {
 				textureGlId = MissingSprite.getMissingSpriteTexture().getGlId();
 			}

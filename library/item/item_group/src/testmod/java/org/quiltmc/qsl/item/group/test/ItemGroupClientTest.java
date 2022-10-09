@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.item.group.api;
+package org.quiltmc.qsl.item.group.test;
 
-import java.util.Objects;
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
+import org.quiltmc.qsl.item.group.api.client.ItemGroupIconRenderer;
 
-import org.jetbrains.annotations.NotNull;
-import org.quiltmc.qsl.item.group.impl.ItemGroupTextureIcon;
-
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
-public interface ItemGroupIcon {
-	void render(MatrixStack matrices, int x, int y);
-
-	static ItemGroupIcon texture(@NotNull Identifier textureId) {
-		Objects.requireNonNull(textureId, "textureId may not be null");
-		return new ItemGroupTextureIcon(textureId);
+public class ItemGroupClientTest implements ClientModInitializer {
+	@Override
+	public void onInitializeClient(ModContainer mod) {
+		ItemGroupIconRenderer.register(ItemGroupTest.ITEM_GROUP_WITH_TEXTURE_ICON, itemGroup -> ItemGroupIconRenderer.texture(itemGroup, new Identifier("textures/block/stone.png")));
 	}
 }

@@ -18,7 +18,6 @@
 package org.quiltmc.qsl.item.group.mixin.client;
 
 import java.util.Map;
-import java.util.Optional;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,21 +25,23 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
+import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
-import org.quiltmc.qsl.item.group.api.ItemGroupIcon;
-import org.quiltmc.qsl.item.group.api.QuiltItemGroup;
+import org.quiltmc.qsl.item.group.api.client.ItemGroupIconRenderer;
 import org.quiltmc.qsl.item.group.impl.CreativeGuiExtensions;
+import org.quiltmc.qsl.item.group.impl.ItemGroupIconRendererRegistry;
 import org.quiltmc.qsl.item.group.impl.QuiltCreativePlayerInventoryScreenWidgets;
 
 @Mixin(CreativeInventoryScreen.class)
@@ -178,12 +179,13 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 		this.quilt$renderTabIcon$itemGroup = itemGroup;
 	}
 
-	@ModifyArgs(method = "renderTabIcon", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/ItemRenderer;renderInGuiWithOverrides(Lnet/minecraft/item/ItemStack;II)V"))
-	private void renderCustomTabIcon(Args args) {
-		if (this.quilt$renderTabIcon$itemGroup instanceof QuiltItemGroup quiltItemGroup) {
-			Optional<ItemGroupIcon> customIcon = quiltItemGroup.getCustomIcon();
-			if (customIcon.isEmpty()) return;
-			customIcon.get().render(quilt$renderTabIcon$matrices, args.get(1), args.get(2));
+	@Redirect(method = "renderTabIcon", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/ItemRenderer;renderInGuiWithOverrides(Lnet/minecraft/item/ItemStack;II)V"))
+	private void renderCustomTabIcon(ItemRenderer self, ItemStack itemStack, int x, int y) {
+		ItemGroupIconRenderer<ItemGroup> iconRenderer = ItemGroupIconRendererRegistry.get(quilt$renderTabIcon$itemGroup);
+		if (iconRenderer != null) {
+			iconRenderer.render(quilt$renderTabIcon$itemGroup, quilt$renderTabIcon$matrices, x, y, MinecraftClient.getInstance().getTickDelta());
+		} else {
+			this.itemRenderer.renderInGuiWithOverrides(itemStack, x, y);
 		}
 	}
 

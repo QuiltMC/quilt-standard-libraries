@@ -18,7 +18,6 @@
 package org.quiltmc.qsl.item.group.api;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -46,15 +45,13 @@ import org.quiltmc.qsl.item.group.impl.ItemGroupExtensions;
  */
 public final class QuiltItemGroup extends ItemGroup {
 	private final Supplier<ItemStack> iconSupplier;
-	private Optional<ItemGroupIcon> customIcon;
 	private @Nullable ItemStack icon;
 	private final @Nullable Consumer<List<ItemStack>> stacksForDisplay;
 	private final @Nullable Text displayText;
 
-	private QuiltItemGroup(int index, String id, Supplier<ItemStack> iconSupplier, Optional<ItemGroupIcon> customIcon, @Nullable Consumer<List<ItemStack>> stacksForDisplay, @Nullable Text displayText) {
+	private QuiltItemGroup(int index, String id, Supplier<ItemStack> iconSupplier, @Nullable Consumer<List<ItemStack>> stacksForDisplay, @Nullable Text displayText) {
 		super(index, id);
 		this.iconSupplier = iconSupplier;
-		this.customIcon = customIcon;
 		this.stacksForDisplay = stacksForDisplay;
 		this.displayText = displayText;
 	}
@@ -75,10 +72,6 @@ public final class QuiltItemGroup extends ItemGroup {
 	 */
 	public void setIcon(ItemStack icon) {
 		this.icon = icon;
-	}
-
-	public Optional<ItemGroupIcon> getCustomIcon() {
-		return customIcon;
 	}
 
 	@Override
@@ -138,17 +131,6 @@ public final class QuiltItemGroup extends ItemGroup {
 	 */
 	public static QuiltItemGroup createWithIcon(Identifier identifier, @NotNull Supplier<ItemStack> iconSupplier) {
 		return new Builder(identifier).icon(iconSupplier).build();
-	}
-
-	/**
-	 * This is a single method that makes creating an {@link ItemGroup} with an icon one call.
-	 *
-	 * @param identifier   the identifier will become the name of the {@link ItemGroup} and will be used for the translation key
-	 * @param icon
-	 * @return an instance of the created {@link QuiltItemGroup}
-	 */
-	public static QuiltItemGroup createWithIcon(Identifier identifier, @NotNull ItemGroupIcon icon) {
-		return new Builder(identifier).icon(icon).build();
 	}
 
 	/**
@@ -217,7 +199,6 @@ public final class QuiltItemGroup extends ItemGroup {
 	public static final class Builder {
 		private final Identifier identifier;
 		private Supplier<ItemStack> iconSupplier = () -> ItemStack.EMPTY;
-		private Optional<ItemGroupIcon> customIcon = Optional.empty();
 		private Consumer<List<ItemStack>> stacksForDisplay;
 		private Text text;
 
@@ -233,18 +214,6 @@ public final class QuiltItemGroup extends ItemGroup {
 		 */
 		public Builder icon(@NotNull Supplier<ItemStack> iconSupplier) {
 			this.iconSupplier = iconSupplier;
-			return this;
-		}
-
-		/**
-		 * This is used to add an icon to the {@link ItemGroup}.
-		 *
-		 * @param icon
-		 * @return {@code this}
-		 */
-		public Builder icon(@NotNull ItemGroupIcon icon) {
-			this.iconSupplier = () -> ItemStack.EMPTY;
-			this.customIcon = Optional.of(icon);
 			return this;
 		}
 
@@ -278,7 +247,7 @@ public final class QuiltItemGroup extends ItemGroup {
 			return new QuiltItemGroup(
 					GROUPS.length - 1,
 					String.format("%s.%s", this.identifier.getNamespace(), this.identifier.getPath()),
-					this.iconSupplier, this.customIcon, this.stacksForDisplay, this.text
+					this.iconSupplier, this.stacksForDisplay, this.text
 			);
 		}
 	}
