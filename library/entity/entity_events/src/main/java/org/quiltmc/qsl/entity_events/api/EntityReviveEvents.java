@@ -24,20 +24,24 @@ import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
 /**
  * A pair of callbacks which are invoked when a LivingEntity takes fatal damage.
+ *
  * <p>
  * Mods can return true from a callback to keep the entity alive, like totems of undying do. This will also prevent
  * {@link LivingEntityDeathCallback} listeners from being called.
+ *
  * <p>
  * Vanilla checks for entity health {@code <= 0} each tick (with
  * {@link net.minecraft.entity.LivingEntity#isDead()}), and kills the entity if this is true - so the entity will
  * still die next tick if this event is cancelled. It's assumed that the listener will do something to prevent this,
  * for example:
+ *
  * <ul>
  *     <li>a totem-of-undying mod giving the player a little health + regeneration effect</li>
  *     <li>a minigame mod teleporting the player into a 'respawn room' and setting their health to 20.0</li>
  *     <li>a mod that changes death mechanics switching the player over to the mod's play-mode, where death doesn't
  *     apply</li>
  * </ul>
+ *
  * <p>
  * These events are short-circuiting - if the entity has already been revived, your callback will not fire.
  */
@@ -71,10 +75,11 @@ public final class EntityReviveEvents {
 	@FunctionalInterface
 	public interface TryReviveBeforeTotem extends EventAwareListener {
 		/**
-		 * {@return {@code true} if the entity which has fatal damage should be revived, or {@code false} otherwise}
+		 * Determines whether an entity should be revived.
 		 *
 		 * @param entity       the entity
 		 * @param damageSource the fatal damage source
+		 * @return {@code true} if the entity which has fatal damage should be revived, or {@code false} otherwise
 		 */
 		boolean tryReviveBeforeTotem(LivingEntity entity, DamageSource damageSource);
 	}
@@ -82,10 +87,11 @@ public final class EntityReviveEvents {
 	@FunctionalInterface
 	public interface TryReviveAfterTotem extends EventAwareListener {
 		/**
-		 * {@return {@code true} if an entity which has fatal damage and which has not been saved by a totem should be revived, {@code false} otherwise}
+		 * Determines whether an entity should be revived.
 		 *
 		 * @param entity       the entity
 		 * @param damageSource the fatal damage source
+		 * @return {@code true} if the entity which has fatal damage should be revived, or {@code false} otherwise
 		 */
 		boolean tryReviveAfterTotem(LivingEntity entity, DamageSource damageSource);
 	}

@@ -16,13 +16,15 @@
 
 package org.quiltmc.qsl.entity_events.mixin.client;
 
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.Entity;
-import org.quiltmc.qsl.entity_events.api.client.ClientEntityTickCallback;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.Entity;
+
+import org.quiltmc.qsl.entity_events.api.client.ClientEntityTickCallback;
 
 @Mixin(ClientWorld.class)
 public abstract class ClientWorldMixin {

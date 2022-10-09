@@ -40,6 +40,7 @@ import org.quiltmc.qsl.entity_events.api.EntityReviveEvents;
 import org.quiltmc.qsl.entity_events.api.EntityWorldChangeEvents;
 import org.quiltmc.qsl.entity_events.api.LivingEntityDeathCallback;
 import org.quiltmc.qsl.entity_events.api.ServerEntityLoadEvents;
+import org.quiltmc.qsl.entity_events.api.ServerEntityTickCallback;
 import org.quiltmc.qsl.entity_events.api.ServerPlayerEntityCopyCallback;
 
 public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTotem,
