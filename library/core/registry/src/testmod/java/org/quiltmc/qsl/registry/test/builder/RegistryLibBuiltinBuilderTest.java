@@ -25,8 +25,8 @@ import net.minecraft.util.registry.RegistryKey;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-import org.quiltmc.qsl.registry.api.QuiltBuiltinRegistryBuilder;
 import org.quiltmc.qsl.registry.api.QuiltRegistryBuilder;
+import org.quiltmc.qsl.registry.api.RegistrySyncBehavior;
 
 public class RegistryLibBuiltinBuilderTest implements ModInitializer {
 	public static final String NAMESPACE = "quilt_registry_test_builtin_builder";
@@ -40,7 +40,7 @@ public class RegistryLibBuiltinBuilderTest implements ModInitializer {
 	public static final RegistryKey<Registry<GasType>> GAS_KEY = RegistryKey.ofRegistry(id("gas"));
 
 	public static final Registry<GasType> GAS = QuiltRegistryBuilder.builtin(GAS_KEY)
-			.withSyncBehavior(QuiltBuiltinRegistryBuilder.SyncBehavior.REQUIRED)
+			.withSyncBehavior(RegistrySyncBehavior.REQUIRED)
 			.withCustomHolderProvider(GasType::getRegistryHolder)
 			.build();
 

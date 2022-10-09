@@ -31,44 +31,24 @@ import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
  * @param <T> the entry type tracked by this registry
  */
 public final class QuiltBuiltinRegistryBuilder<T> extends QuiltRegistryBuilder<T, QuiltBuiltinRegistryBuilder<T>> {
-	/**
-	 * Specifies the behavior for synchronizing the registry and its contents.
-	 */
-	public enum SyncBehavior {
-		/**
-		 * The registry <em>will not</em> be synchronized to the client.
-		 */
-		SKIPPED,
-		/**
-		 * The registry <em>will</em> be synchronized to the client,
-		 * and clients who do not have this registry on their side <em>will</em> be kicked.
-		 */
-		REQUIRED,
-		/**
-		 * The registry <em>will</em> be synchronized to the client,
-		 * and clients who do not have this registry on their side <em>will not</em> be kicked.
-		 */
-		OPTIONAL
-	}
-
-	private SyncBehavior syncBehavior;
+	private RegistrySyncBehavior syncBehavior;
 
 	QuiltBuiltinRegistryBuilder(@NotNull RegistryKey<Registry<T>> key) {
 		super(key);
 
-		this.syncBehavior = SyncBehavior.SKIPPED;
+		this.syncBehavior = RegistrySyncBehavior.SKIPPED;
 	}
 
 	/**
 	 * Sets the synchronization behavior of this registry.
 	 * <p>
-	 * By default, this is {@link SyncBehavior#SKIPPED}.
+	 * By default, this is {@link RegistrySyncBehavior#SKIPPED}.
 	 *
 	 * @param syncBehavior the new synchronization behavior
 	 * @return this builder
 	 */
 	@Contract("_ -> this")
-	public @NotNull QuiltBuiltinRegistryBuilder<T> withSyncBehavior(@NotNull SyncBehavior syncBehavior) {
+	public @NotNull QuiltBuiltinRegistryBuilder<T> withSyncBehavior(@NotNull RegistrySyncBehavior syncBehavior) {
 		this.syncBehavior = syncBehavior;
 		return this;
 	}
@@ -77,12 +57,12 @@ public final class QuiltBuiltinRegistryBuilder<T> extends QuiltRegistryBuilder<T
 	 * Sets the registry to <em>not</em> be synchronized at all.
 	 *
 	 * @return this builder
-	 * @see #withSyncBehavior(SyncBehavior)
-	 * @see SyncBehavior#SKIPPED
+	 * @see #withSyncBehavior(RegistrySyncBehavior)
+	 * @see RegistrySyncBehavior#SKIPPED
 	 */
 	@Contract("-> this")
 	public @NotNull QuiltBuiltinRegistryBuilder<T> syncSkipped() {
-		return this.withSyncBehavior(SyncBehavior.SKIPPED);
+		return this.withSyncBehavior(RegistrySyncBehavior.SKIPPED);
 	}
 
 	/**
@@ -90,12 +70,12 @@ public final class QuiltBuiltinRegistryBuilder<T> extends QuiltRegistryBuilder<T
 	 * <em>will</em> be kicked.
 	 *
 	 * @return this builder
-	 * @see #withSyncBehavior(SyncBehavior)
-	 * @see SyncBehavior#REQUIRED
+	 * @see #withSyncBehavior(RegistrySyncBehavior)
+	 * @see RegistrySyncBehavior#REQUIRED
 	 */
 	@Contract("-> this")
 	public @NotNull QuiltBuiltinRegistryBuilder<T> syncRequired() {
-		return this.withSyncBehavior(SyncBehavior.REQUIRED);
+		return this.withSyncBehavior(RegistrySyncBehavior.REQUIRED);
 	}
 
 	/**
@@ -103,12 +83,12 @@ public final class QuiltBuiltinRegistryBuilder<T> extends QuiltRegistryBuilder<T
 	 * <em>will not</em> be kicked.
 	 *
 	 * @return this builder.
-	 * @see #withSyncBehavior(SyncBehavior)
-	 * @see SyncBehavior#OPTIONAL
+	 * @see #withSyncBehavior(RegistrySyncBehavior)
+	 * @see RegistrySyncBehavior#OPTIONAL
 	 */
 	@Contract("-> this")
 	public @NotNull QuiltBuiltinRegistryBuilder<T> syncOptional() {
-		return this.withSyncBehavior(SyncBehavior.OPTIONAL);
+		return this.withSyncBehavior(RegistrySyncBehavior.OPTIONAL);
 	}
 
 	@Override
@@ -116,12 +96,12 @@ public final class QuiltBuiltinRegistryBuilder<T> extends QuiltRegistryBuilder<T
 	protected void onRegistryBuilt(Registry<T> registry) {
 		Registry.register((Registry<Registry<Object>>) Registry.REGISTRIES, this.key.getValue(), (Registry<Object>) registry);
 
-		if (this.syncBehavior == SyncBehavior.REQUIRED || this.syncBehavior == SyncBehavior.OPTIONAL) {
+		if (this.syncBehavior == RegistrySyncBehavior.REQUIRED || this.syncBehavior == RegistrySyncBehavior.OPTIONAL) {
 			// using SynchronizedRegistry directly instead of RegistrySynchronization/RegistryFlag,
 			//  since those require casting to SimpleRegistry
 			var syncRegistry = SynchronizedRegistry.as(registry);
 			syncRegistry.quilt$markForSync();
-			if (this.syncBehavior == SyncBehavior.OPTIONAL) {
+			if (this.syncBehavior == RegistrySyncBehavior.OPTIONAL) {
 				syncRegistry.quilt$setRegistryFlag(RegistryFlag.OPTIONAL);
 			}
 		}
