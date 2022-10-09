@@ -46,59 +46,15 @@ import org.quiltmc.qsl.item.group.impl.ItemGroupExtensions;
  */
 public final class QuiltItemGroup extends ItemGroup {
 	private final Supplier<ItemStack> iconSupplier;
+	private @Nullable ItemStack icon;
 	private final @Nullable Consumer<List<ItemStack>> stacksForDisplay;
 	private final @Nullable Text displayText;
-	private @Nullable ItemStack icon;
 
 	private QuiltItemGroup(int index, String id, Supplier<ItemStack> iconSupplier, @Nullable Consumer<List<ItemStack>> stacksForDisplay, @Nullable Text displayText) {
 		super(index, id);
 		this.iconSupplier = iconSupplier;
 		this.stacksForDisplay = stacksForDisplay;
 		this.displayText = displayText;
-	}
-
-	/**
-	 * Create a new {@link Builder}.
-	 * Using the constructor allows for the use of the {@link Builder#icon(Supplier)} and {@link Builder#appendItems(Consumer)} methods.
-	 * Manually setting the icon with {@link QuiltItemGroup#setIcon(ItemConvertible)} is possible after calling {@link Builder#build()}
-	 *
-	 * @param identifier the {@link Identifier} will become the name of the {@link ItemGroup} and will be used for the translation key
-	 */
-	public static Builder builder(Identifier identifier) {
-		return new Builder(identifier);
-	}
-
-	/**
-	 * This is a single method that creates an {@link ItemGroup} one call.
-	 * This method should only be used when setting the icon with {@link QuiltItemGroup#setIcon(ItemConvertible)}.
-	 *
-	 * @param identifier the identifier will become the name of the {@link ItemGroup} and will be used for the translation key
-	 * @return an instance of the created {@link ItemGroup}
-	 */
-	public static QuiltItemGroup create(Identifier identifier) {
-		return new Builder(identifier).build();
-	}
-
-	/**
-	 * This is a single method that makes creating an {@link ItemGroup} with an icon one call.
-	 *
-	 * @param identifier   the identifier will become the name of the {@link ItemGroup} and will be used for the translation key
-	 * @param iconSupplier the supplier should return the {@link ItemStack} that you wish to show on the tab
-	 * @return an instance of the created {@link QuiltItemGroup}
-	 */
-	public static QuiltItemGroup createWithIcon(Identifier identifier, @NotNull Supplier<ItemStack> iconSupplier) {
-		return new Builder(identifier).icon(iconSupplier).build();
-	}
-
-	/**
-	 * Appends a new {@link ItemGroup} to the end of the vanilla list of {@link ItemGroup}s.
-	 *
-	 * @param itemGroupFactory a factory that produces a new {@link ItemGroup} from an index
-	 * @return the inserted {@link ItemGroup}
-	 */
-	public static <T extends ItemGroup> T register(Function<Integer, T> itemGroupFactory) {
-		((ItemGroupExtensions) GROUPS[0]).quilt$expandArray();
-		return itemGroupFactory.apply(GROUPS.length - 1);
 	}
 
 	/**
@@ -143,6 +99,50 @@ public final class QuiltItemGroup extends ItemGroup {
 	@Override
 	public Text getTranslationKey() {
 		return this.displayText == null ? super.getTranslationKey() : this.displayText;
+	}
+	
+	/**
+	 * Create a new {@link Builder}.
+	 * Using the constructor allows for the use of the {@link Builder#icon(Supplier)} and {@link Builder#appendItems(Consumer)} methods.
+	 * Manually setting the icon with {@link QuiltItemGroup#setIcon(ItemConvertible)} is possible after calling {@link Builder#build()}
+	 *
+	 * @param identifier the {@link Identifier} will become the name of the {@link ItemGroup} and will be used for the translation key
+	 */
+	public static Builder builder(Identifier identifier) {
+		return new Builder(identifier);
+	}
+
+	/**
+	 * This is a single method that creates an {@link ItemGroup} one call.
+	 * This method should only be used when setting the icon with {@link QuiltItemGroup#setIcon(ItemConvertible)}.
+	 *
+	 * @param identifier the identifier will become the name of the {@link ItemGroup} and will be used for the translation key
+	 * @return an instance of the created {@link ItemGroup}
+	 */
+	public static QuiltItemGroup create(Identifier identifier) {
+		return new Builder(identifier).build();
+	}
+
+	/**
+	 * This is a single method that makes creating an {@link ItemGroup} with an icon one call.
+	 *
+	 * @param identifier   the identifier will become the name of the {@link ItemGroup} and will be used for the translation key
+	 * @param iconSupplier the supplier should return the {@link ItemStack} that you wish to show on the tab
+	 * @return an instance of the created {@link QuiltItemGroup}
+	 */
+	public static QuiltItemGroup createWithIcon(Identifier identifier, @NotNull Supplier<ItemStack> iconSupplier) {
+		return new Builder(identifier).icon(iconSupplier).build();
+	}
+
+	/**
+	 * Appends a new {@link ItemGroup} to the end of the vanilla list of {@link ItemGroup}s.
+	 *
+	 * @param itemGroupFactory a factory that produces a new {@link ItemGroup} from an index
+	 * @return the inserted {@link ItemGroup}
+	 */
+	public static <T extends ItemGroup> T register(Function<Integer, T> itemGroupFactory) {
+		((ItemGroupExtensions) GROUPS[0]).quilt$expandArray();
+		return itemGroupFactory.apply(GROUPS.length - 1);
 	}
 
 	/**
