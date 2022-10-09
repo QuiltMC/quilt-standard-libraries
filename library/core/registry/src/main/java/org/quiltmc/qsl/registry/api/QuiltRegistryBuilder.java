@@ -176,8 +176,10 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	 * Then, set this to call that {@code getRegistryHolder()} method:
 	 * <pre><code>
 	 * public class YourCoolModRegistries {
-	 *     public static final SimpleRegistry<Thing> THINGS =
-	 *         new QuiltRegistryBuilder(YourCoolMod.id("things"))
+	 *     public static final RegistryKey<Registry<Thing>> THING_KEY = RegistryKey.ofRegistry(YourCoolMod.id("thing"));
+	 *
+	 *     public static final SimpleRegistry<Thing> THING =
+	 *         new QuiltRegistryBuilder(THING_KEY)
 	 *             .customHolderProvider(Thing::getRegistryHolder)
 	 *             .build();
 	 * }
