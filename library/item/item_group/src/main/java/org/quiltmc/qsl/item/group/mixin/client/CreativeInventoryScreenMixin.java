@@ -25,14 +25,14 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
-import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemGroup;
@@ -63,9 +63,6 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 	 */
 	@Unique
 	private static int quilt$currentPage = 0;
-
-	private MatrixStack quilt$renderTabIcon$matrices;
-	private ItemGroup quilt$renderTabIcon$itemGroup;
 
 	@Unique
 	private int getPageOffset(int page) {
@@ -174,18 +171,16 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 		if (this.quilt$isGroupNotVisible(itemGroup)) {
 			info.cancel();
 		}
-
-		this.quilt$renderTabIcon$matrices = matrixStack;
-		this.quilt$renderTabIcon$itemGroup = itemGroup;
 	}
 
-	@Redirect(method = "renderTabIcon", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/ItemRenderer;renderInGuiWithOverrides(Lnet/minecraft/item/ItemStack;II)V"))
-	private void renderCustomTabIcon(ItemRenderer self, ItemStack itemStack, int x, int y) {
-		ItemGroupIconRenderer<ItemGroup> iconRenderer = ItemGroupIconRendererRegistry.get(quilt$renderTabIcon$itemGroup);
+	@ModifyArgs(method = "renderTabIcon", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/ItemRenderer;renderInGuiWithOverrides(Lnet/minecraft/item/ItemStack;II)V"))
+	private void renderCustomTabIcon(Args args, MatrixStack matrixStack, ItemGroup itemGroup) {
+		ItemGroupIconRenderer<ItemGroup> iconRenderer = ItemGroupIconRendererRegistry.get(itemGroup);
 		if (iconRenderer != null) {
-			iconRenderer.render(quilt$renderTabIcon$itemGroup, quilt$renderTabIcon$matrices, x, y, MinecraftClient.getInstance().getTickDelta());
-		} else {
-			this.itemRenderer.renderInGuiWithOverrides(itemStack, x, y);
+			args.set(0, ItemStack.EMPTY); // itemStack = ItemStack.EMPTY;
+			// args.get(1) x
+			// args.get(2) y
+			iconRenderer.render(itemGroup, matrixStack, args.get(1), args.get(2), MinecraftClient.getInstance().getTickDelta());
 		}
 	}
 

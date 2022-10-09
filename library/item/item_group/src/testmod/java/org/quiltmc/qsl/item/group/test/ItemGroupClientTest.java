@@ -20,11 +20,13 @@ import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.item.group.api.client.ItemGroupIconRenderer;
 
+import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
 
 public class ItemGroupClientTest implements ClientModInitializer {
 	@Override
 	public void onInitializeClient(ModContainer mod) {
+		ItemGroupIconRenderer.register(ItemGroup.FOOD, itemGroup -> ItemGroupIconRenderer.texture(itemGroup, new Identifier("textures/item/carrot.png")));
 		ItemGroupIconRenderer.register(ItemGroupTest.ITEM_GROUP_WITH_TEXTURE_ICON, itemGroup -> ItemGroupIconRenderer.texture(itemGroup, new Identifier("textures/block/stone.png")));
 	}
 }
