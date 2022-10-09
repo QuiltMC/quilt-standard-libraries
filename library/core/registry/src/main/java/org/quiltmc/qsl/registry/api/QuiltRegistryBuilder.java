@@ -49,8 +49,8 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	 * Creates a new built-in {@code Registry} builder.
 	 *
 	 * @param id the identifier of the registry
-	 * @return the newly created builder
 	 * @param <T> the entry type tracked by this registry
+	 * @return the newly created builder
 	 */
 	@Contract("_ -> new")
 	public static <T> QuiltBuiltinRegistryBuilder<T> builtin(@NotNull Identifier id) {
@@ -63,8 +63,8 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	 * @param id                the identifier of the registry
 	 * @param entryCodec        the codec to use to (de)serialize the registry's entries
 	 * @param networkEntryCodec the codec to use to synchronize the registry's entries
-	 * @return the newly created builder
 	 * @param <T> the entry type tracked by this registry
+	 * @return the newly created builder
 	 */
 	@Contract("_, _, _ -> new")
 	public static <T> QuiltDynamicRegistryBuilder<T> dynamic(@NotNull Identifier id, @NotNull Codec<T> entryCodec, @NotNull Codec<T> networkEntryCodec) {
@@ -76,8 +76,8 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	 *
 	 * @param id         the identifier of the registry
 	 * @param entryCodec the codec to use to (de)serialize and synchronize the registry's entries
-	 * @return the newly created builder
 	 * @param <T> the entry type tracked by this registry
+	 * @return the newly created builder
 	 */
 	@Contract("_, _ -> new")
 	public static <T> QuiltDynamicRegistryBuilder<T> dynamic(@NotNull Identifier id, @NotNull Codec<T> entryCodec) {
@@ -89,8 +89,8 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	 *
 	 * @param id         the identifier of the registry
 	 * @param entryCodec the codec to use to (de)serialize the registry's entries
-	 * @return the newly created builder
 	 * @param <T> the entry type tracked by this registry
+	 * @return the newly created builder
 	 */
 	@Contract("_, _ -> new")
 	public static <T> QuiltDynamicRegistryBuilder<T> dynamicUnsynced(@NotNull Identifier id, @NotNull Codec<T> entryCodec) {
