@@ -58,6 +58,7 @@ public class StatusEffectRemovalReason {
 
 	/**
 	 * Creates a new {@code StatusEffectRemovalReason}.
+	 *
 	 * @param id the removal reason's identifier
 	 */
 	public StatusEffectRemovalReason(@NotNull Identifier id) {
@@ -79,7 +80,7 @@ public class StatusEffectRemovalReason {
 	 * {@linkplain net.minecraft.entity.effect.StatusEffectType#HARMFUL harmful effects}.
 	 *
 	 * @param effect the effect type to check
-	 * @return {@code true} if effects of this type should be removed, {@code false} otherwise.
+	 * @return {@code true} if effects of this type should be removed, or {@code false} otherwise.
 	 */
 	public boolean removesEffect(StatusEffectInstance effect) {
 		return true;

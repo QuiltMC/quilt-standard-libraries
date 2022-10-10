@@ -34,6 +34,7 @@ public final class StatusEffectUtils {
 
 	/**
 	 * Checks if the status effect should be removed or not.
+	 *
 	 * @param entity the entity that has the status effect
 	 * @param effect the status effect
 	 * @param reason the reason the status effect should be removed

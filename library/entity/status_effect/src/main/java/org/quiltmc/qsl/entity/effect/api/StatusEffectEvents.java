@@ -49,12 +49,14 @@ public final class StatusEffectEvents {
 
 	/**
 	 * Callback interface for {@link #SHOULD_REMOVE}.
+	 *
 	 * @see #SHOULD_REMOVE
 	 */
 	@FunctionalInterface
 	public interface ShouldRemove extends EventAwareListener {
 		/**
 		 * Checks if the status effect should be removed or not.
+		 *
 		 * @param entity the entity that has the status effect
 		 * @param effect the status effect
 		 * @param reason the reason the status effect should be removed

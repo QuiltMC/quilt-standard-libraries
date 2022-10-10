@@ -32,6 +32,7 @@ import org.quiltmc.qsl.base.api.util.InjectedInterface;
 public interface QuiltStatusEffectExtensions {
 	/**
 	 * Checks if the status effect should be removed or not.
+	 *
 	 * @param entity the entity that has the status effect
 	 * @param effect the status effect
 	 * @param reason the reason the status effect should be removed
@@ -43,6 +44,7 @@ public interface QuiltStatusEffectExtensions {
 
 	/**
 	 * Called after a status effect of this type is removed.
+	 *
 	 * @param entity     the entity that had the status effect
 	 * @param attributes the entity's attributes
 	 * @param amplifier  the removed status effect's amplifier
