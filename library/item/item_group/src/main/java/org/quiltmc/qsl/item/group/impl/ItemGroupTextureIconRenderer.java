@@ -18,8 +18,6 @@ package org.quiltmc.qsl.item.group.impl;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.item.group.api.client.ItemGroupIconRenderer;
-import org.quiltmc.qsl.resource.loader.api.client.ClientResourceLoaderEvents;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
@@ -30,6 +28,9 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
+
+import org.quiltmc.qsl.item.group.api.client.ItemGroupIconRenderer;
+import org.quiltmc.qsl.resource.loader.api.client.ClientResourceLoaderEvents;
 
 @ApiStatus.Internal
 public final class ItemGroupTextureIconRenderer<IG extends ItemGroup> implements ItemGroupIconRenderer<IG>, ClientResourceLoaderEvents.EndResourcePackReload {
@@ -43,21 +44,21 @@ public final class ItemGroupTextureIconRenderer<IG extends ItemGroup> implements
 
 	@Override
 	public void render(IG itemGroup, MatrixStack matrices, int x, int y, float tickDelta) {
-		if (textureGlId == -1) {
-			if (MinecraftClient.getInstance().getResourceManager().getResource(textureId).isPresent()) {
-				textureGlId = MinecraftClient.getInstance().getTextureManager().getTexture(textureId).getGlId();
+		if (this.textureGlId == -1) {
+			if (MinecraftClient.getInstance().getResourceManager().getResource(this.textureId).isPresent()) {
+				this.textureGlId = MinecraftClient.getInstance().getTextureManager().getTexture(this.textureId).getGlId();
 			} else {
-				textureGlId = MissingSprite.getMissingSpriteTexture().getGlId();
+				this.textureGlId = MissingSprite.getMissingSpriteTexture().getGlId();
 			}
 		}
 
-		RenderSystem.setShaderTexture(0, textureGlId);
+		RenderSystem.setShaderTexture(0, this.textureGlId);
 		DrawableHelper.drawTexture(matrices, x, y, 0f, 0f, 16, 16, 16, 16);
 	}
 
 	@Override
 	public void onEndResourcePackReload(MinecraftClient client, ResourceManager resourceManager, boolean first, @Nullable Throwable error) {
 		// NB: We have to revalue the gl id because the icon texture might not exist now.
-		textureGlId = -1;
+		this.textureGlId = -1;
 	}
 }

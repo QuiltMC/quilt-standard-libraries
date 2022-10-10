@@ -16,12 +16,12 @@
 
 package org.quiltmc.qsl.item.group.test;
 
+import net.minecraft.item.ItemGroup;
+import net.minecraft.util.Identifier;
+
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.item.group.api.client.ItemGroupIconRenderer;
-
-import net.minecraft.item.ItemGroup;
-import net.minecraft.util.Identifier;
 
 public class ItemGroupClientTest implements ClientModInitializer {
 	@Override

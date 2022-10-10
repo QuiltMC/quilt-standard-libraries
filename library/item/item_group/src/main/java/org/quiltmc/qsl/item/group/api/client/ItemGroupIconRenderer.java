@@ -20,14 +20,15 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import org.jetbrains.annotations.NotNull;
-import org.quiltmc.qsl.item.group.impl.ItemGroupIconRendererRegistry;
-import org.quiltmc.qsl.item.group.impl.ItemGroupTextureIconRenderer;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
+
+import org.quiltmc.qsl.item.group.impl.ItemGroupIconRendererRegistry;
+import org.quiltmc.qsl.item.group.impl.ItemGroupTextureIconRenderer;
 
 @Environment(EnvType.CLIENT)
 public interface ItemGroupIconRenderer<IG extends ItemGroup> {

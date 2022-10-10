@@ -20,12 +20,13 @@ import java.util.Map;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.item.group.api.client.ItemGroupIconRenderer;
-
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
 import net.minecraft.item.ItemGroup;
+
+import org.quiltmc.qsl.item.group.api.client.ItemGroupIconRenderer;
 
 @ApiStatus.Internal
 @Environment(EnvType.CLIENT)
@@ -34,7 +35,7 @@ public final class ItemGroupIconRendererRegistry {
 
 	@SuppressWarnings("unchecked")
 	public static <IG extends ItemGroup> ItemGroupIconRenderer<IG> register(IG itemGroup, ItemGroupIconRenderer<IG> renderer) {
-		return (ItemGroupIconRenderer<IG>) RENDERERS.put(itemGroup, (ItemGroupIconRenderer<? extends ItemGroup>) renderer);
+		return (ItemGroupIconRenderer<IG>) RENDERERS.put(itemGroup, renderer);
 	}
 
 	@Nullable

@@ -69,6 +69,7 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 		if (page == 0) {
 			return 0;
 		}
+
 		return 12 + ((12 - QuiltCreativePlayerInventoryScreenWidgets.ALWAYS_SHOWN_GROUPS.size()) * (page - 1));
 	}
 
@@ -87,7 +88,7 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 			return;
 		}
 
-		PAGE_TO_SELECTED_INDEX.compute(quilt$currentPage, (page, pos) -> getSelectedTab());
+		this.PAGE_TO_SELECTED_INDEX.compute(quilt$currentPage, (page, pos) -> this.getSelectedTab());
 
 		quilt$currentPage++;
 		this.quilt$updateSelection();
@@ -99,7 +100,7 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 			return;
 		}
 
-		PAGE_TO_SELECTED_INDEX.compute(quilt$currentPage, (page, pos) -> this.getSelectedTab());
+		this.PAGE_TO_SELECTED_INDEX.compute(quilt$currentPage, (page, pos) -> this.getSelectedTab());
 
 		quilt$currentPage--;
 		this.quilt$updateSelection();
@@ -130,7 +131,7 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 		int selectedTab = this.getSelectedTab();
 
 		if (selectedTab < pageMaxIndex || selectedTab > pageMinIndex) {
-			this.setSelectedTab(ItemGroup.GROUPS[PAGE_TO_SELECTED_INDEX.getOrDefault(quilt$currentPage, this.getPageOffset(quilt$currentPage))]);
+			this.setSelectedTab(ItemGroup.GROUPS[this.PAGE_TO_SELECTED_INDEX.getOrDefault(quilt$currentPage, this.getPageOffset(quilt$currentPage))]);
 		}
 	}
 
