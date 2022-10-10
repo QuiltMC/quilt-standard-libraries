@@ -50,7 +50,7 @@ public class ItemGroupTest implements ModInitializer {
 
 	private static final QuiltItemGroup[] MANY_GROUPS = IntStream.range(0, 20).mapToObj(i -> QuiltItemGroup.builder(new Identifier(NAMESPACE, "many_group_" + i)).build()).toArray(QuiltItemGroup[]::new);
 
-	private static final ItemGroup NOT_QUILT_ITEM_GROUP = QuiltItemGroup.register(index -> new ItemGroup(index, NAMESPACE+".test_not_quilt_group") {
+	private static final ItemGroup NOT_QUILT_ITEM_GROUP = QuiltItemGroup.register(index -> new ItemGroup(index, NAMESPACE + ".test_not_quilt_group") {
 		@Override
 		public ItemStack createIcon() {
 			return new ItemStack(Items.PHANTOM_MEMBRANE);
