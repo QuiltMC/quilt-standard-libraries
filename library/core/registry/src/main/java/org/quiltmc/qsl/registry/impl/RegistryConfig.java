@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.registry.impl;
 
 import org.jetbrains.annotations.ApiStatus;
+
 import org.quiltmc.config.api.WrappedConfig;
 import org.quiltmc.config.api.annotations.Comment;
 import org.quiltmc.loader.api.config.QuiltConfig;
@@ -28,9 +29,10 @@ public class RegistryConfig extends WrappedConfig {
 	public final RegistrySync registry_sync = new RegistrySync();
 
 	public static class RegistrySync implements Section {
-		@Comment("Message displayed for players joining with incompatible clients. Support strings and Minecraft's json text format")
-		public final String missing_registry_sync_message = "Unsupported (vanilla?) client!\nThis server requires modded client to join!";
-		@Comment("Allows players with Fabric API to connect, as long as they have all required mods")
+		@Comment("Message displayed for players joining with incompatible clients. Support strings and Minecraft's JSON text format.")
+		public final String missing_registry_sync_message = "Unsupported (vanilla?) client!\nThis server requires a modded client to join!";
+
+		@Comment("Allows players with Fabric API to connect, as long as they have all required mods.")
 		public final boolean support_fabric_api_protocol = true;
 	}
 }

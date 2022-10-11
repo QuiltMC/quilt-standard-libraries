@@ -23,7 +23,6 @@ import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.SimpleRegistry;
 
 @ApiStatus.Internal
 public interface SynchronizedRegistry<T> {
