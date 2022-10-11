@@ -26,8 +26,8 @@ import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 
 /**
  * A callback that is invoked when an Entity is ticked on the logical client (nominally every 1/20 of a second).
- *
- * <p>There are two types of entity tick - standalone ({@link Entity#tick()}) and riding ({@link Entity#tickRiding()}).
+ * <p>
+ * There are two types of entity tick - standalone ({@link Entity#tick()}) and riding ({@link Entity#tickRiding()}).
  * This callback takes a parameter which specifies which type of tick it is.
  */
 @Environment(EnvType.CLIENT)
