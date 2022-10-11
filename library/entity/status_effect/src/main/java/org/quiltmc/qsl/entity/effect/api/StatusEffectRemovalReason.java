@@ -30,6 +30,20 @@ import org.quiltmc.qsl.entity.effect.impl.QuiltStatusEffectInternals;
  */
 public class StatusEffectRemovalReason {
 	/**
+	 * Used when an effect expires and is removed.
+	 * <p>
+	 * Cannot be cancelled ({@link StatusEffect#shouldRemove(LivingEntity, StatusEffectInstance, StatusEffectRemovalReason)} is not called for this reason).
+	 */
+	public static final StatusEffectRemovalReason EXPIRED = new StatusEffectRemovalReason(QuiltStatusEffectInternals.id("expired"));
+
+	/**
+	 * Used when an effect is removed to reapply it during an upgrade.
+	 * <p>
+	 * Cannot be cancelled ({@link StatusEffect#shouldRemove(LivingEntity, StatusEffectInstance, StatusEffectRemovalReason)} is not called for this reason).
+	 */
+	public static final StatusEffectRemovalReason UPGRADE_REAPPLYING = new StatusEffectRemovalReason(QuiltStatusEffectInternals.id("upgrade.reapplying"));
+
+	/**
 	 * Used when effects are removed via the vanilla {@link LivingEntity#clearStatusEffects()} method.
 	 */
 	public static final StatusEffectRemovalReason GENERIC_ALL = new StatusEffectRemovalReason(QuiltStatusEffectInternals.id("generic.all"));

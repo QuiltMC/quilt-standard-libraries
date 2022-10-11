@@ -128,4 +128,20 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 	public boolean clearStatusEffects() {
 		return this.clearStatusEffects(StatusEffectRemovalReason.GENERIC_ALL) > 0;
 	}
+
+	@Redirect(method = "tickStatusEffects", at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/entity/LivingEntity;onStatusEffectRemoved(Lnet/minecraft/entity/effect/StatusEffectInstance;)V")
+	)
+	private void quilt$removeWithExpiredReason(LivingEntity instance, StatusEffectInstance effect) {
+		instance.onStatusEffectRemoved(effect, StatusEffectRemovalReason.EXPIRED);
+	}
+
+	@Redirect(method = "onStatusEffectUpgraded", at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/entity/effect/StatusEffect;onRemoved(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/attribute/AttributeContainer;I)V")
+	)
+	private void quilt$removeWithUpgradeApplyingReason(StatusEffect instance, LivingEntity entity, AttributeContainer attributes, int amplifier) {
+		instance.onRemoved(entity, attributes, amplifier, StatusEffectRemovalReason.UPGRADE_REAPPLYING);
+	}
 }
