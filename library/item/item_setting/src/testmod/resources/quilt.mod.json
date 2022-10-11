@@ -13,6 +13,7 @@
     "entrypoints": {
       "init": [
         "org.quiltmc.qsl.item.test.QuiltItemSettingsTests",
+        "org.quiltmc.qsl.item.test.RecipeRemainderTests",
         "org.quiltmc.qsl.item.test.CustomDamageTest"
       ]
     },
@@ -20,5 +21,6 @@
       "quilt_loader",
       "quilt_item_setting"
     ]
-  }
+  },
+  "mixin": "quilt_item_setting_testmod.mixins.json"
 }

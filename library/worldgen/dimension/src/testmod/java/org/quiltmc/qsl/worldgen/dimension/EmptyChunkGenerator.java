@@ -24,6 +24,8 @@ import java.util.concurrent.Executor;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.structure.StructureManager;
@@ -44,8 +46,6 @@ import net.minecraft.world.gen.chunk.Blender;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.VerticalBlockSample;
 import net.minecraft.world.gen.structure.StructureSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class EmptyChunkGenerator extends ChunkGenerator {
 	private static final Logger EMPTY_CHUNK_GENERATOR_LOGGER = LoggerFactory.getLogger("QuiltDimensionTest|EmptyChunkGenerator");
@@ -64,16 +64,13 @@ public class EmptyChunkGenerator extends ChunkGenerator {
 	}
 
 	@Override
-	public void carve(ChunkRegion chunkRegion, long seed, RandomState randomState, BiomeAccess biomeAccess, StructureManager structureManager, Chunk chunk, GenerationStep.Carver generationStep) {
-	}
+	public void carve(ChunkRegion chunkRegion, long seed, RandomState randomState, BiomeAccess biomeAccess, StructureManager structureManager, Chunk chunk, GenerationStep.Carver generationStep) {}
 
 	@Override
-	public void buildSurface(ChunkRegion region, StructureManager structureManager, RandomState randomState, Chunk chunk) {
-	}
+	public void buildSurface(ChunkRegion region, StructureManager structureManager, RandomState randomState, Chunk chunk) {}
 
 	@Override
-	public void populateEntities(ChunkRegion region) {
-	}
+	public void populateEntities(ChunkRegion region) {}
 
 	@Override
 	public int getWorldHeight() {
@@ -106,6 +103,5 @@ public class EmptyChunkGenerator extends ChunkGenerator {
 	}
 
 	@Override
-	public void m_hfetlfug(List<String> list, RandomState randomState, BlockPos blockPos) {
-	}
+	public void m_hfetlfug(List<String> list, RandomState randomState, BlockPos blockPos) {}
 }

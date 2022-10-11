@@ -183,6 +183,7 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 		if (this.quilt$idSnapshot == null) {
 			this.quilt$createIdSnapshot();
 		}
+
 		var missingEntries = new ArrayList<MissingEntry>();
 
 		var holders = new ArrayList<>(this.rawIdToEntry);
@@ -202,6 +203,7 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 					while (this.rawIdToEntry.size() <= idEntry.rawId()) {
 						this.rawIdToEntry.add(null);
 					}
+
 					this.rawIdToEntry.set(idEntry.rawId(), holder);
 
 					holders.remove(holder);
@@ -260,6 +262,7 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 		if (this.quilt$idSnapshot != null) {
 			throw new RuntimeException("Registry snapshot already exists!");
 		}
+
 		this.quilt$idSnapshot = new ObjectArrayList<>(this.rawIdToEntry);
 	}
 
