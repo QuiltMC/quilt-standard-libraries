@@ -34,6 +34,15 @@ public final class StatusEffectEvents {
 	}
 
 	/**
+	 * An event that is called after a status effect is added.
+	 */
+	public static final Event<OnApplied> ON_APPLIED = Event.create(OnApplied.class, listeners -> (entity, effect, upgradeReapplying) -> {
+		for (var listener : listeners) {
+			listener.onApplied(entity, effect, upgradeReapplying);
+		}
+	});
+
+	/**
 	 * An event that is called when a status effect is about to be removed.
 	 */
 	public static final Event<ShouldRemove> SHOULD_REMOVE = Event.create(ShouldRemove.class, listeners -> (entity, effect, reason) -> {
@@ -46,6 +55,32 @@ public final class StatusEffectEvents {
 
 		return TriState.DEFAULT;
 	});
+
+	/**
+	 * An event that is called after a status effect is removed.
+	 */
+	public static final Event<OnRemoved> ON_REMOVED = Event.create(OnRemoved.class, listeners -> (entity, effect, reason) -> {
+		for (var listener : listeners) {
+			listener.onRemoved(entity, effect, reason);
+		}
+	});
+
+	/**
+	 * Callback interface for {@link #ON_APPLIED}.
+	 *
+	 * @see #ON_APPLIED
+	 */
+	@FunctionalInterface
+	public interface OnApplied extends EventAwareListener {
+		/**
+		 * Called after a status effect is added to an entity.
+		 *
+		 * @param entity            the entity that received the status effect
+		 * @param effect            the status effect
+		 * @param upgradeReapplying {@code true} if the status effect is being reapplied due to an upgrade, or {@code false} otherwise
+		 */
+		void onApplied(@NotNull LivingEntity entity, @NotNull StatusEffectInstance effect, boolean upgradeReapplying);
+	}
 
 	/**
 	 * Callback interface for {@link #SHOULD_REMOVE}.
@@ -65,5 +100,22 @@ public final class StatusEffectEvents {
 		 *         or {@link TriState#DEFAULT} to let other listeners/the effect itself determine this.
 		 */
 		@NotNull TriState shouldRemove(@NotNull LivingEntity entity, @NotNull StatusEffectInstance effect, @NotNull StatusEffectRemovalReason reason);
+	}
+
+	/**
+	 * Callback interface for {@link #ON_REMOVED}.
+	 *
+	 * @see #ON_REMOVED
+	 */
+	@FunctionalInterface
+	public interface OnRemoved extends EventAwareListener {
+		/**
+		 * Called after a status effect is removed from an entity.
+		 *
+		 * @param entity the entity that had the status effect
+		 * @param effect the status effect
+		 * @param reason the reason the status effect was removed
+		 */
+		void onRemoved(@NotNull LivingEntity entity, @NotNull StatusEffectInstance effect, @NotNull StatusEffectRemovalReason reason);
 	}
 }
