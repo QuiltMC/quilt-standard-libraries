@@ -29,10 +29,10 @@ import org.quiltmc.qsl.command.mixin.EntitySelectorOptionsAccessor;
 
 /**
  * Class to allow registration of custom {@link net.minecraft.command.EntitySelectorOptions entity selector options}.
- *
- * <p>These are registered with namespaced IDs to avoid name collisions. These are then converted to a name of the form
+ * <p>
+ * These are registered with namespaced IDs to avoid name collisions. These are then converted to a name of the form
  * "namespace_path". Due to {@link com.mojang.brigadier.StringReader#isAllowedInUnquotedString(char) limitations} in how
- * entity selectors may be named, the character "{@code /}" is replaced with "{@code _}".</p>
+ * entity selectors may be named, the character "{@code /}" is replaced with "{@code _}".
  */
 public final class EntitySelectorOptionRegistry {
 	/**
