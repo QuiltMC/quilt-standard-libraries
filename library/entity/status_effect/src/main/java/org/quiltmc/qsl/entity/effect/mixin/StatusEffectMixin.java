@@ -23,6 +23,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.effect.StatusEffectInstance;
 
 import org.quiltmc.qsl.entity.effect.api.QuiltStatusEffectExtensions;
 import org.quiltmc.qsl.entity.effect.api.StatusEffectRemovalReason;
@@ -33,7 +34,7 @@ public abstract class StatusEffectMixin implements QuiltStatusEffectExtensions {
 	public abstract void onRemoved(LivingEntity entity, AttributeContainer attributes, int amplifier);
 
 	@Override
-	public void onRemoved(@NotNull LivingEntity entity, @NotNull AttributeContainer attributes, int amplifier, @NotNull StatusEffectRemovalReason reason) {
-		this.onRemoved(entity, attributes, amplifier);
+	public void onRemoved(@NotNull LivingEntity entity, @NotNull AttributeContainer attributes, @NotNull StatusEffectInstance effect, @NotNull StatusEffectRemovalReason reason) {
+		this.onRemoved(entity, attributes, effect.getAmplifier());
 	}
 }

@@ -47,8 +47,8 @@ public interface QuiltStatusEffectExtensions {
 	 *
 	 * @param entity     the entity that had the status effect
 	 * @param attributes the entity's attributes
-	 * @param amplifier  the removed status effect's amplifier
+	 * @param effect     the removed status effect
 	 * @param reason     the reason the status effect was removed
 	 */
-	void onRemoved(@NotNull LivingEntity entity, @NotNull AttributeContainer attributes, int amplifier, @NotNull StatusEffectRemovalReason reason);
+	void onRemoved(@NotNull LivingEntity entity, @NotNull AttributeContainer attributes, @NotNull StatusEffectInstance effect, @NotNull StatusEffectRemovalReason reason);
 }
