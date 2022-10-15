@@ -30,14 +30,14 @@ import org.quiltmc.qsl.command.impl.client.ClientCommandInternals;
 
 @Mixin(ClientPlayerEntity.class)
 abstract class ClientPlayerEntityMixin {
-	@Inject(method = "method_44099", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "m_rkzxvlsn", at = @At("HEAD"), cancellable = true)
 	private void onSendCommand(String command, CallbackInfoReturnable<Boolean> cir) {
 		if (ClientCommandInternals.executeCommand(command, true)) {
 			cir.setReturnValue(true);
 		}
 	}
 
-	@Inject(method = "method_43787", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "m_bcypipmz", at = @At("HEAD"), cancellable = true)
 	private void onSendCommand(String command, Text preview, CallbackInfo ci) {
 		if (ClientCommandInternals.executeCommand(command, true)) {
 			ci.cancel();
