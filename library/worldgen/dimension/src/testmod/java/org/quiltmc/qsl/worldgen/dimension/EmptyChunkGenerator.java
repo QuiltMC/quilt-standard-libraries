@@ -49,7 +49,7 @@ import net.minecraft.world.gen.structure.StructureSet;
 
 public class EmptyChunkGenerator extends ChunkGenerator {
 	private static final Logger EMPTY_CHUNK_GENERATOR_LOGGER = LoggerFactory.getLogger("QuiltDimensionTest|EmptyChunkGenerator");
-	public static final Codec<EmptyChunkGenerator> CODEC = RecordCodecBuilder.create((instance) -> method_41042(instance).and(RegistryOps.getRegistry(Registry.BIOME_KEY).forGetter((generator) -> generator.biomeRegistry)).apply(instance, instance.stable(EmptyChunkGenerator::new)));
+	public static final Codec<EmptyChunkGenerator> CODEC = RecordCodecBuilder.create((instance) -> m_asjkihmg(instance).and(RegistryOps.getRegistry(Registry.BIOME_KEY).forGetter((generator) -> generator.biomeRegistry)).apply(instance, instance.stable(EmptyChunkGenerator::new)));
 
 	private final Registry<Biome> biomeRegistry;
 

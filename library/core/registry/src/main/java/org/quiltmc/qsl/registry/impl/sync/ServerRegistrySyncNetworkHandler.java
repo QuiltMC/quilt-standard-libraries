@@ -198,7 +198,7 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 	public void onRequestChatPreview(RequestChatPreviewC2SPacket packet) {}
 
 	@Override
-	public void method_44898(C_vtnjglse c_vtnjglse) {}
+	public void m_vuqeccvs(C_vtnjglse c_vtnjglse) {}
 
 	@Override
 	public void onClientStatus(ClientStatusC2SPacket packet) {}
