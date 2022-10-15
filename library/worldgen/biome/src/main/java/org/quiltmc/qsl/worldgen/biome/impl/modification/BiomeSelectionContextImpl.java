@@ -109,7 +109,7 @@ public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 	@Override
 	public boolean isIn(TagKey<Biome> tag) {
 		Registry<Biome> biomeRegistry = this.dynamicRegistries.get(Registry.BIOME_KEY);
-		return biomeRegistry.getHolderOrThrow(this.getBiomeKey()).hasTag(tag);
+		return biomeRegistry.getHolderOrThrow(this.getBiomeKey()).isIn(tag);
 	}
 
 	@Override

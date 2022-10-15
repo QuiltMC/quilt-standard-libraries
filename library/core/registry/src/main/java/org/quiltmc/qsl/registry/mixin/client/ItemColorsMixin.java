@@ -48,7 +48,6 @@ public class ItemColorsMixin implements RebuildableIdModelHolder {
 	@Unique
 	private final Map<Item, ItemColorProvider> quilt$providers = new Object2ObjectOpenHashMap<>();
 
-
 	@Inject(method = "register", at = @At("TAIL"))
 	private void quilt$storeProviders(ItemColorProvider provider, ItemConvertible[] items, CallbackInfo ci) {
 		for (var item : items) {
