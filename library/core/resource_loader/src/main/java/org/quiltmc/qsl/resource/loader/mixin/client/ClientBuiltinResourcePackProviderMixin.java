@@ -50,24 +50,24 @@ public class ClientBuiltinResourcePackProviderMixin {
 	// Synthetic method register(Consumer;ResourcePackProfile$Factory;)V
 	// Using an injector to wrap the previous return value.
 	@Dynamic
-	@Inject(method = "method_4635", at = @At("RETURN"), cancellable = true, remap = false)
+	@Inject(method = "m_mclyvngx()Lnet/minecraft/resource/pack/ResourcePack;", at = @At("RETURN"), cancellable = true)
 	private void onPackGet(CallbackInfoReturnable<ResourcePack> cir) {
 		cir.setReturnValue(ResourceLoaderImpl.buildMinecraftResourcePack((DefaultResourcePack) cir.getReturnValue()));
 	}
 
-	// ClientBuiltinResourcePackProvider#method_25454 first lambda.
+	// ClientBuiltinResourcePackProvider#getProgrammerArtResourcePackProfile first lambda.
 	// Using an injector to wrap the previous return value.
 	@Dynamic
-	@Inject(method = "method_25457", at = @At("RETURN"), cancellable = true, remap = false)
+	@Inject(method = "m_yhfpoaqv(Ljava/io/File;)Lnet/minecraft/resource/pack/ResourcePack;", at = @At("RETURN"), cancellable = true)
 	private static void onSupplyZipProgrammerArtPack(File file, CallbackInfoReturnable<ResourcePack> cir) {
 		var originalPack = (AbstractFileResourcePack) cir.getReturnValue();
 		cir.setReturnValue(ResourceLoaderImpl.buildProgrammerArtResourcePack(originalPack));
 	}
 
-	// ClientBuiltinResourcePackProvider#method_25454 second lambda.
+	// ClientBuiltinResourcePackProvider#getProgrammerArtResourcePackProfile second lambda.
 	// Using an injector to wrap the previous return value.
 	@Dynamic
-	@Inject(method = "method_25456", at = @At("RETURN"), cancellable = true, remap = false)
+	@Inject(method = "m_hiwhulzd(Ljava/io/File;)Lnet/minecraft/resource/pack/ResourcePack;", at = @At("RETURN"), cancellable = true)
 	private static void onSupplyDirProgrammerArtPack(File file, CallbackInfoReturnable<ResourcePack> cir) {
 		var originalPack = (AbstractFileResourcePack) cir.getReturnValue();
 		cir.setReturnValue(ResourceLoaderImpl.buildProgrammerArtResourcePack(originalPack));
