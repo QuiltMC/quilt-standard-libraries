@@ -243,9 +243,6 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 *
 	 * @param entry registry entry
 	 * @param value value
-	 *
-	 * @throws IllegalArgumentException if the given entry hasn't been registered in the {@linkplain #registry() registry},
-	 *                                  or if the given value is invalid, according to the {@linkplain #codec() codec}.
 	 */
 	void put(R entry, V value);
 
@@ -258,8 +255,6 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	 *
 	 * @param tag   tag
 	 * @param value value
-	 *
-	 * @throws IllegalArgumentException if the given value is invalid, according to the {@linkplain #codec() codec}.
 	 */
 	void put(TagKey<R> tag, V value);
 
