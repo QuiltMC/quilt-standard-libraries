@@ -1,0 +1,4 @@
+accessWidener	v1	named
+
+accessible  field  net/minecraft/world/poi/PointOfInterestTypes  ALL_STATES     Ljava/util/Set;
+accessible  field  net/minecraft/world/poi/PointOfInterestTypes  STATE_TO_TYPE  Ljava/util/Map;

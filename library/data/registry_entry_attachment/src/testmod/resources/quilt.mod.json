@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "org.quiltmc.qsl.data",
+    "id": "quilt_registry_entry_attachment_testmod",
+    "version": "1.0.0",
+    "metadata": {
+      "name": "Quilt Registry Entry Attachment Test Mod",
+      "license": "Apache-2.0"
+    },
+    "intermediate_mappings": "net.fabricmc:intermediary",
+    "load_type": "always",
+    "entrypoints": {
+      "init": [
+        "org.quiltmc.qsl.registry.attachment.test.SimpleAttachmentTest",
+        "org.quiltmc.qsl.registry.attachment.test.DispatchedAttachmentTest"
+      ],
+      "client_init": [
+        "org.quiltmc.qsl.registry.attachment.test.client.ClientAttachmentTest"
+      ],
+      "events": [
+        "org.quiltmc.qsl.registry.attachment.test.DispatchedAttachmentTest"
+      ]
+    },
+    "depends": [
+      "quilt_loader",
+      "quilt_registry_entry_attachment"
+    ]
+  },
+  "mixin": "quilt_registry_entry_attachment_testmod.mixins.json"
+}

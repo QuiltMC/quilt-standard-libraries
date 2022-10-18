@@ -45,8 +45,8 @@ import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
 
 /**
- * Items/Blocks are registered in different order on client/server to make sure sync works correctly
- * Server also gets its own entry that shouldn't block client from joining
+ * Items/Blocks are registered in different order on client/server to make sure sync works correctly.
+ * Server also gets its own entry that shouldn't block client from joining.
  */
 public class RegistryLibSyncTest implements ModInitializer {
 	private static final String NAMESPACE = "quilt_registry_test_sync";
@@ -54,21 +54,22 @@ public class RegistryLibSyncTest implements ModInitializer {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onInitialize(ModContainer mod) {
-
 		if (MinecraftQuiltLoader.getEnvironmentType() == EnvType.CLIENT) {
 			for (int i = 0; i < 10; i++) {
 				register(i);
 			}
-			ClientLifecycleEvents.READY.register((x) -> printReg());
+
+			ClientLifecycleEvents.READY.register((x) -> this.printReg());
 		} else {
 			for (int i = 9; i >= 0; i--) {
 				register(i);
 			}
+
 			var opt = register(10);
 			RegistrySynchronization.setEntryOptional(Registry.ITEM, opt);
 			RegistrySynchronization.setEntryOptional(Registry.BLOCK, opt);
 
-			ServerLifecycleEvents.READY.register((x) -> printReg());
+			ServerLifecycleEvents.READY.register((x) -> this.printReg());
 		}
 
 		var customRequiredRegistry = Registry.register((Registry<Registry<Path>>) Registry.REGISTRIES,
@@ -113,9 +114,7 @@ public class RegistryLibSyncTest implements ModInitializer {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
-
 
 	static Identifier register(int i) {
 		var id = new Identifier(NAMESPACE, "entry_" + i);

@@ -38,7 +38,6 @@ public final class ServerRegistrySync {
 	public static boolean supportFabric = false;
 
 	public static void readConfig() {
-
 		try {
 			noRegistrySyncMessage = Text.Serializer.fromJson(RegistryConfig.INSTANCE.registry_sync.missing_registry_sync_message);
 		} catch (Exception e) {
@@ -78,7 +77,6 @@ public final class ServerRegistrySync {
 		for (var registry : Registry.REGISTRIES) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
 					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
-
 				var map = synchronizedRegistry.quilt$getSyncMap();
 
 				var packetData = new HashMap<String, ArrayList<SynchronizedRegistry.SyncEntry>>();
@@ -138,6 +136,7 @@ public final class ServerRegistrySync {
 		if (((SynchronizedRegistry<T>) registry).quilt$getContentStatus() == SynchronizedRegistry.Status.OPTIONAL) {
 			flag |= (0x1 << RegistryFlag.OPTIONAL.ordinal());
 		}
+
 		buf.writeByte(flag);
 
 		connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.REGISTRY_START, buf));
