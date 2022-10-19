@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
 import net.minecraft.command.EntitySelectorReader;
 
@@ -28,19 +29,20 @@ import org.quiltmc.qsl.command.api.QuiltEntitySelectorReader;
 
 @Mixin(EntitySelectorReader.class)
 public class EntitySelectorReaderMixin implements QuiltEntitySelectorReader {
-	private final Set<String> flags = new HashSet<>();
+	@Unique
+	private final Set<String> quilt$flags = new HashSet<>();
 
 	@Override
 	public boolean getFlag(@NotNull String key) {
-		return this.flags.contains(key);
+		return this.quilt$flags.contains(key);
 	}
 
 	@Override
 	public void setFlag(@NotNull String key, boolean value) {
 		if (value) {
-			this.flags.add(key);
+			this.quilt$flags.add(key);
 		} else {
-			this.flags.remove(key);
+			this.quilt$flags.remove(key);
 		}
 	}
 }
