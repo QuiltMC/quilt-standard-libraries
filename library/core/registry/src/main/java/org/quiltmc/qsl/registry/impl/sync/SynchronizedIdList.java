@@ -16,8 +16,9 @@
 
 package org.quiltmc.qsl.registry.impl.sync;
 
-import net.minecraft.util.collection.IdList;
 import org.jetbrains.annotations.ApiStatus;
+
+import net.minecraft.util.collection.IdList;
 
 @ApiStatus.Internal
 public interface SynchronizedIdList<T> {
