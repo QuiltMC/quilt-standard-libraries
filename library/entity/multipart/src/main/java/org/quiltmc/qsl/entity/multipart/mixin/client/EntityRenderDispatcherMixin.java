@@ -21,15 +21,12 @@ import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
-import org.spongepowered.asm.mixin.injection.Group;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
-import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
@@ -63,15 +60,7 @@ public class EntityRenderDispatcherMixin {
 			double entityZ = -MathHelper.lerp(tickDelta, entity.lastRenderZ, entity.getZ());
 
 			for (EntityPart<?> part : multipartEntity.getEntityParts()) {
-				if (part instanceof Entity entityPart) {
-					matrices.push();
-					double entityPartX = entityX + MathHelper.lerp(tickDelta, entityPart.lastRenderX, entityPart.getX());
-					double entityPartY = entityY + MathHelper.lerp(tickDelta, entityPart.lastRenderY, entityPart.getY());
-					double entityPartZ = entityZ + MathHelper.lerp(tickDelta, entityPart.lastRenderZ, entityPart.getZ());
-					matrices.translate(entityPartX, entityPartY, entityPartZ);
-					WorldRenderer.drawBox(matrices, vertices, entityPart.getBoundingBox().offset(-entityPart.getX(), -entityPart.getY(), -entityPart.getZ()), 0.25F, 1.0F, 0.0F, 1.0F);
-					matrices.pop();
-				}
+				part.renderHitbox(matrices, vertices, entityX, entityY, entityZ, entity, tickDelta);
 			}
 		}
 	}

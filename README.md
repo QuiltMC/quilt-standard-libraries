@@ -184,7 +184,7 @@ Quick legend:
 | Hud Render API                                    |       ❌        | ✔ (limited Event) |
 | Built-in Item Rendering                           |       ❌        |         ✔         |
 | Block Entity Renderer Registry                    |       ❌        |         ✔         |
-| Armor Rendering                                   |       ❌        |         ✔         |
+| Armor Rendering                                   | :construction: |         ✔         |
 | Color Provider Registry                           |       ❌        |         ✔         |
 | Entity Renderer Registry                          |       ❌        |         ✔         |
 | Entity Model Layer Registry                       |       ❌        |         ✔         |

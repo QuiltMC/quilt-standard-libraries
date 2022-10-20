@@ -30,8 +30,8 @@ public final class QmjBuilder {
 				.endObject() // contributors -> metadata
 				.name("contact").beginObject() // contributors -> contact
 				.name("homepage").value("https://quiltmc.org")
-				.name("issues").value("https://github.com/quiltmc/quilt-standard-libaries/issues")
-				.name("sources").value("https://github.com/quiltmc/quilt-standard-libraries")
+				.name("issues").value("https://github.com/QuiltMC/quilt-standard-libraries/issues")
+				.name("sources").value("https://github.com/QuiltMC/quilt-standard-libraries")
 				.endObject() // contact -> metadata
 				.name("license").value("Apache-2.0")
 				.name("icon").value("assets/" + ext.getId().get() + "/icon.png")
@@ -81,6 +81,18 @@ public final class QmjBuilder {
 			}
 		}
 		writer.endArray(); // depends -> quilt_loader
+
+		// Provides
+		var provides = ext.getProvides();
+		if (provides.isPresent() && !provides.get().isEmpty()) {
+			writer.name("provides").beginArray();
+
+			for (var provide : provides.get()) {
+				provide.write(writer);
+			}
+
+			writer.endArray(); // provides -> quilt_loader
+		}
 
 		if (!ext.getEntrypoints().isEmpty()) {
 			writer.name("entrypoints").beginObject(); // quilt_loader -> entrypoints

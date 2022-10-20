@@ -17,23 +17,29 @@
 
 package org.quiltmc.qsl.registry.impl.sync;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import org.jetbrains.annotations.ApiStatus;
+
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 /**
- * Legacy (Fabric) registry sync.
- *
- * Direct port from Fabric API
+ * Legacy (Fabric) registry sync. Direct port from Fabric API.
  */
 @Deprecated
 @ApiStatus.Internal
@@ -137,7 +143,6 @@ public class ServerFabricRegistrySync {
 		for (var registry : Registry.REGISTRIES) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
 					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
-
 				var idMap = new Object2IntOpenHashMap<Identifier>();
 				var syncMap = synchronizedRegistry.quilt$getSyncMap();
 
@@ -148,6 +153,7 @@ public class ServerFabricRegistrySync {
 						}
 					}
 				}
+
 				map.put(((Registry) registry).getKey().getValue(), idMap);
 			}
 		}

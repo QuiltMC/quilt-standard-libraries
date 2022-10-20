@@ -17,15 +17,17 @@
 package org.quiltmc.qsl.registry.mixin;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.util.registry.Registry;
-import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.util.registry.Registry;
+
+import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 
 @Mixin(Fluids.class)
 public abstract class FluidsMixin {

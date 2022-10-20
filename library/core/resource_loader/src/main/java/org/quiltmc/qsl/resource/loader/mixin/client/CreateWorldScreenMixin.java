@@ -39,19 +39,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.SaveLevelScreen;
+import net.minecraft.client.gui.screen.GenericMessageScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
 import net.minecraft.client.world.GeneratorTypes;
+import net.minecraft.client.world.WorldCreationContext;
 import net.minecraft.resource.AutoCloseableResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.DataPackSettings;
 import net.minecraft.resource.pack.ResourcePackManager;
 import net.minecraft.resource.pack.VanillaDataPackProvider;
 import net.minecraft.server.ServerReloadableResources;
+import net.minecraft.server.WorldLoader;
 import net.minecraft.text.Text;
-import net.minecraft.unmapped.C_kjxfcecs;
-import net.minecraft.unmapped.C_njsjipmy;
 import net.minecraft.util.Util;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
@@ -70,7 +70,7 @@ public abstract class CreateWorldScreenMixin {
 	private static Logger LOGGER;
 
 	@Shadow
-	private static C_kjxfcecs.C_kculhjuh method_41849(ResourcePackManager resourcePackManager, DataPackSettings dataPackSettings) {
+	private static WorldLoader.InitConfig createDefaultLoadConfig(ResourcePackManager resourcePackManager, DataPackSettings dataPackSettings) {
 		throw new IllegalStateException("Mixin injection failed.");
 	}
 
@@ -98,14 +98,15 @@ public abstract class CreateWorldScreenMixin {
 			method = "open",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/unmapped/C_kjxfcecs;method_42098(Lnet/minecraft/unmapped/C_kjxfcecs$C_kculhjuh;Lnet/minecraft/unmapped/C_kjxfcecs$C_ueybpquh;Lnet/minecraft/unmapped/C_kjxfcecs$C_cknyxhnl;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
+					target = "Lnet/minecraft/server/WorldLoader;load(Lnet/minecraft/server/WorldLoader$InitConfig;Lnet/minecraft/server/WorldLoader$LoadContextSupplier;Lnet/minecraft/server/WorldLoader$ApplierFactory;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
 			)
 	)
-	private static <D> CompletableFuture<C_njsjipmy> loadDynamicRegistry(C_kjxfcecs.C_kculhjuh initConfig,
-			C_kjxfcecs.C_ueybpquh<D> arg, C_kjxfcecs.C_cknyxhnl<D, C_njsjipmy> arg2, Executor executor, Executor executor2) {
+	private static <D> CompletableFuture<WorldCreationContext> loadDynamicRegistry(WorldLoader.InitConfig initConfig,
+			WorldLoader.LoadContextSupplier<D> loadContextSupplier, WorldLoader.ApplierFactory<D, WorldCreationContext> applierFactory,
+			Executor prepareExecutor, Executor applyExecutor) {
 		return quilt$applyDefaultDataPacks(() -> {
 			ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null);
-			return C_kjxfcecs.method_42098(initConfig, (resourceManager, dataPackSettings) -> {
+			return WorldLoader.load(initConfig, (resourceManager, dataPackSettings) -> {
 				DynamicRegistryManager.Writable registryManager = DynamicRegistryManager.builtInCopy();
 				// Force-loads the dynamic registry from data-packs as some mods may define dynamic game objects via data-driven capabilities.
 				RegistryOps.createAndLoad(JsonOps.INSTANCE, registryManager, resourceManager);
@@ -115,7 +116,7 @@ public abstract class CreateWorldScreenMixin {
 			}, (resourceManager, serverReloadableResources, frozen, generatorOptions) -> {
 				ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resourceManager, null);
 				resourceManager.close();
-				return new C_njsjipmy(generatorOptions, Lifecycle.stable(), frozen, serverReloadableResources);
+				return new WorldCreationContext(generatorOptions, Lifecycle.stable(), frozen, serverReloadableResources);
 			}, Util.getMainWorkerExecutor(), MinecraftClient.getInstance());
 		});
 	}
@@ -124,7 +125,7 @@ public abstract class CreateWorldScreenMixin {
 			method = "applyDataPacks",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/unmapped/C_kjxfcecs;method_42098(Lnet/minecraft/unmapped/C_kjxfcecs$C_kculhjuh;Lnet/minecraft/unmapped/C_kjxfcecs$C_ueybpquh;Lnet/minecraft/unmapped/C_kjxfcecs$C_cknyxhnl;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
+					target = "Lnet/minecraft/server/WorldLoader;load(Lnet/minecraft/server/WorldLoader$InitConfig;Lnet/minecraft/server/WorldLoader$LoadContextSupplier;Lnet/minecraft/server/WorldLoader$ApplierFactory;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
 			)
 	)
 	private void onDataPackLoadStart(ResourcePackManager dataPackManager, CallbackInfo ci) {
@@ -135,7 +136,7 @@ public abstract class CreateWorldScreenMixin {
 			method = "open",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/unmapped/C_kjxfcecs;method_42098(Lnet/minecraft/unmapped/C_kjxfcecs$C_kculhjuh;Lnet/minecraft/unmapped/C_kjxfcecs$C_ueybpquh;Lnet/minecraft/unmapped/C_kjxfcecs$C_cknyxhnl;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
+					target = "Lnet/minecraft/server/WorldLoader;load(Lnet/minecraft/server/WorldLoader$InitConfig;Lnet/minecraft/server/WorldLoader$LoadContextSupplier;Lnet/minecraft/server/WorldLoader$ApplierFactory;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
 			)
 	)
 	private static void onDataPackLoadStart(MinecraftClient minecraftClient, Screen screen, CallbackInfo ci) {
@@ -153,7 +154,7 @@ public abstract class CreateWorldScreenMixin {
 	private static void onDataPackLoadEnd(AutoCloseableResourceManager resourceManager,
 			ServerReloadableResources serverReloadableResources,
 			DynamicRegistryManager.Frozen frozen, Pair pair,
-			CallbackInfoReturnable<C_njsjipmy> cir) {
+			CallbackInfoReturnable<WorldCreationContext> cir) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resourceManager, null);
 	}
 
@@ -168,7 +169,7 @@ public abstract class CreateWorldScreenMixin {
 	private static void onCreateDataPackLoadEnd(AutoCloseableResourceManager resourceManager,
 			ServerReloadableResources serverReloadableResources,
 			DynamicRegistryManager.Frozen frozen, GeneratorOptions generatorOptions,
-			CallbackInfoReturnable<C_njsjipmy> cir) {
+			CallbackInfoReturnable<WorldCreationContext> cir) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resourceManager, null);
 	}
 
@@ -190,13 +191,13 @@ public abstract class CreateWorldScreenMixin {
 	}
 
 	@Unique
-	private static CompletableFuture<C_njsjipmy> quilt$applyDefaultDataPacks(Supplier<CompletableFuture<C_njsjipmy>> base) {
+	private static CompletableFuture<WorldCreationContext> quilt$applyDefaultDataPacks(Supplier<CompletableFuture<WorldCreationContext>> base) {
 		var client = MinecraftClient.getInstance();
-		client.send(() -> client.setScreen(new SaveLevelScreen(Text.translatable("dataPack.validation.working"))));
+		client.send(() -> client.setScreen(new GenericMessageScreen(Text.translatable("dataPack.validation.working"))));
 
-		C_kjxfcecs.C_kculhjuh initConfig = method_41849(new ResourcePackManager(ResourceType.SERVER_DATA, new VanillaDataPackProvider()),
+		WorldLoader.InitConfig initConfig = createDefaultLoadConfig(new ResourcePackManager(ResourceType.SERVER_DATA, new VanillaDataPackProvider()),
 				ModResourcePackUtil.DEFAULT_SETTINGS);
-		return C_kjxfcecs.method_42098(
+		return WorldLoader.load(
 				initConfig,
 				(resourceManager, dataPackSettings) -> {
 					var dataPackLoadingContext = new DataPackLoadingContext(DynamicRegistryManager.builtInCopy(), resourceManager);
@@ -219,7 +220,7 @@ public abstract class CreateWorldScreenMixin {
 				(resourceManager, serverReloadableResources, registryManager, pair) -> {
 					ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resourceManager, null);
 					resourceManager.close();
-					return new C_njsjipmy(pair.getFirst(), pair.getSecond(), registryManager, serverReloadableResources);
+					return new WorldCreationContext(pair.getFirst(), pair.getSecond(), registryManager, serverReloadableResources);
 				},
 				Util.getMainWorkerExecutor(),
 				client
