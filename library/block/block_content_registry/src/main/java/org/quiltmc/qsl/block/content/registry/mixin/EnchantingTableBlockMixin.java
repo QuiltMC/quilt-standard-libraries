@@ -33,7 +33,7 @@ import java.util.Optional;
 public class EnchantingTableBlockMixin {
 	@Redirect(method = "isValidForBookshelf", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;isOf(Lnet/minecraft/block/Block;)Z"))
 	private static boolean hasEnchantmentPower(BlockState blockState, Block ignored) {
-		return BlockContentRegistries.ENCHANTMENT_POWER_LEVEL.get(blockState.getBlock()).orElse(0f) != 0f;
+		return BlockContentRegistries.ENCHANTMENT_BOOSTER.get(blockState.getBlock()).orElse(0f) != 0f;
 	}
 
 	@Redirect(method = "randomDisplayTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/random/RandomGenerator;nextInt(I)I"))
@@ -49,7 +49,7 @@ public class EnchantingTableBlockMixin {
 		}
 
 		Block block = world.getBlockState(pos.add(offset)).getBlock();
-		Optional<Float> power = BlockContentRegistries.ENCHANTMENT_POWER_LEVEL.get(block);
+		Optional<Float> power = BlockContentRegistries.ENCHANTMENT_BOOSTER.get(block);
 
 		if (power.isPresent()) {
 			return random.nextFloat() * 16f <= power.get();

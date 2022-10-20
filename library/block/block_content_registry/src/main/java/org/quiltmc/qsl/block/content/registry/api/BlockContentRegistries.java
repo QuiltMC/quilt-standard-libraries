@@ -133,11 +133,11 @@ public class BlockContentRegistries {
 	/**
 	 * A {@link RegistryEntryAttachment} for enchantment power levels in bookshelf equivalents.
 	 * <p>
-	 * Values can be set via code and through a data-pack with the file {@code data/quilt_block_content_registry/attachments/minecraft/block/enchantment_power_level.json}
+	 * Values can be set via code and through a data-pack with the file {@code data/quilt_block_content_registry/attachments/minecraft/block/enchantment_booster.json}
 	 */
-	public static final RegistryEntryAttachment<Block, Float> ENCHANTMENT_POWER_LEVEL = RegistryEntryAttachment
+	public static final RegistryEntryAttachment<Block, Float> ENCHANTMENT_BOOSTER = RegistryEntryAttachment
 			.builder(Registry.BLOCK,
-					new Identifier(NAMESPACE, "enchantment_power_level"),
+					new Identifier(NAMESPACE, "enchantment_booster"),
 					Float.class,
 					Codec.floatRange(0f, Float.MAX_VALUE))
 			.build();
