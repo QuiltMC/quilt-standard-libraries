@@ -40,6 +40,7 @@ import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
  *     <li>{@link #STRIPPABLE_BLOCK}</li>
  *     <li>{@link #FLAMMABLE_BLOCK}</li>
  *     <li>{@link #SCULK_FREQUENCY}</li>
+ *     <li>{@link #ENCHANTMENT_BOOSTER}</li>
  * </ul>
  */
 public class BlockContentRegistries {
