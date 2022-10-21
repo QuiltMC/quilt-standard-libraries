@@ -48,6 +48,7 @@ public class BlockContentRegistries {
 	 * The namespace for the content registries.
 	 */
 	public static final String NAMESPACE = "quilt_block_content_registry";
+	public static final String QUILT_NAMESPACE = "quilt";
 
 	/**
 	 * A {@link RegistryEntryAttachment} for when blocks are right clicked by a shovel.
@@ -134,11 +135,11 @@ public class BlockContentRegistries {
 	/**
 	 * A {@link RegistryEntryAttachment} for enchantment power levels in bookshelf equivalents.
 	 * <p>
-	 * Values can be set via code and through a data-pack with the file {@code data/quilt_block_content_registry/attachments/minecraft/block/enchantment_booster.json}
+	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/enchantment_booster.json}
 	 */
 	public static final RegistryEntryAttachment<Block, Float> ENCHANTMENT_BOOSTER = RegistryEntryAttachment
 			.builder(Registry.BLOCK,
-					new Identifier(NAMESPACE, "enchantment_booster"),
+					new Identifier(QUILT_NAMESPACE, "enchantment_booster"),
 					Float.class,
 					Codec.floatRange(0f, Float.MAX_VALUE))
 			.build();
