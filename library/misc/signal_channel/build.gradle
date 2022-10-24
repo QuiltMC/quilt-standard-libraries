@@ -1,0 +1,24 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Signal Channel API"
+	moduleName = "signal_channel"
+	id = "quilt_signal_channel"
+	description = "Provides an API for publishing and subscribing to localized world events"
+	library = "misc"
+	moduleDependencies {
+		core {
+			testmodOnly("qsl_base")
+			testmodOnly("resource_loader")
+			testmodOnly("registry")
+			testmodOnly("lifecycle_events")
+		}
+		block {
+			testmodOnly("block_entity")
+		}
+	}
+	accessWidener()
+	noMixins()
+}
