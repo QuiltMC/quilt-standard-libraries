@@ -1,0 +1,17 @@
+accessWidener   v2  named
+
+transitive-accessible method net/minecraft/fluid/FlowableFluid getUpdatedState (Lnet/minecraft/world/WorldView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Lnet/minecraft/fluid/FluidState;
+transitive-accessible method net/minecraft/fluid/FlowableFluid getUpdatedState (Lnet/minecraft/world/WorldView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Lnet/minecraft/fluid/FluidState;
+transitive-accessible method net/minecraft/fluid/FlowableFluid flow (Lnet/minecraft/world/WorldAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/Direction;Lnet/minecraft/fluid/FluidState;)V
+transitive-accessible method net/minecraft/fluid/FlowableFluid m_piqgrpvh (Lnet/minecraft/world/WorldView;Lnet/minecraft/util/math/BlockPos;)I
+transitive-accessible method net/minecraft/fluid/FlowableFluid m_hyyevjfk (Lnet/minecraft/world/WorldAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/fluid/FluidState;Lnet/minecraft/block/BlockState;)V
+transitive-accessible method net/minecraft/fluid/FlowableFluid m_yyzlptcq (Lnet/minecraft/world/BlockView;Lnet/minecraft/fluid/Fluid;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Z
+transitive-accessible method net/minecraft/fluid/FlowableFluid canFlow (Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/Direction;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/fluid/FluidState;Lnet/minecraft/fluid/Fluid;)Z
+transitive-accessible method net/minecraft/fluid/FlowableFluid isEmptyOrThis (Lnet/minecraft/fluid/FluidState;)Z
+transitive-accessible method net/minecraft/fluid/FlowableFluid receivesFlow (Lnet/minecraft/util/math/Direction;Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Z
+transitive-accessible method net/minecraft/fluid/FlowableFluid m_yyzlptcq (Lnet/minecraft/world/BlockView;Lnet/minecraft/fluid/Fluid;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Z
+transitive-accessible field net/minecraft/fluid/FlowableFluid shapeCache Ljava/util/Map;
+transitive-accessible method net/minecraft/fluid/FlowableFluid canFlowThrough (Lnet/minecraft/world/BlockView;Lnet/minecraft/fluid/Fluid;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/Direction;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/fluid/FluidState;)Z
+transitive-accessible method net/minecraft/fluid/FlowableFluid isMatchingAndStill (Lnet/minecraft/fluid/FluidState;)Z
+transitive-accessible method net/minecraft/fluid/FlowableFluid canFill (Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/fluid/Fluid;)Z
+transitive-accessible class net/minecraft/client/render/BackgroundRenderer$FogParameters

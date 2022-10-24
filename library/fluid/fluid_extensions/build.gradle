@@ -1,0 +1,56 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Fluid API"
+	moduleName = "fluid"
+	id = "quilt_fluid_extensions"
+	library = "fluid"
+	description = "An API to ease making fluids"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+		}
+		block {
+			api("block_extensions")
+		}
+		core {
+			api("registry")
+		}
+	}
+
+	accessWidener()
+
+	injectedInterface("net/minecraft/class_3616") {
+		values = ["org/quiltmc/qsl/fluid/api/QuiltFlowableFluidExtensions"]
+	}
+
+	injectedInterface("net/minecraft/class_3621") {
+		values = ["org/quiltmc/qsl/fluid/api/QuiltFlowableFluidExtensions"]
+	}
+
+	injectedInterface("net/minecraft/class_1690") {
+		values = ["org/quiltmc/qsl/fluid/impl/CustomFluidInteracting"]
+	}
+
+	injectedInterface("net/minecraft/class_746") {
+		values = ["org/quiltmc/qsl/fluid/impl/CustomFluidInteracting"]
+	}
+
+	injectedInterface("net/minecraft/class_1297") {
+		values = ["org/quiltmc/qsl/fluid/impl/CustomFluidInteracting"]
+	}
+
+	injectedInterface("net/minecraft/class_1536") {
+		values = ["org/quiltmc/qsl/fluid/impl/CustomFluidInteracting", "org/quiltmc/qsl/fluid/impl/FishingBobberEntityExtensions"]
+	}
+
+	injectedInterface("net/minecraft/class_1309") {
+		values = ["org/quiltmc/qsl/fluid/impl/CustomFluidInteracting"]
+	}
+
+	injectedInterface("net/minecraft/class_4184") {
+		values = ["org/quiltmc/qsl/fluid/impl/CameraExtensions"]
+	}
+}
