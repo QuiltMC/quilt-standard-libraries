@@ -18,19 +18,18 @@ package org.quiltmc.qsl.lifecycle.test.event.client;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 
 import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
 import org.quiltmc.qsl.lifecycle.api.client.event.ClientWorldTickEvents;
 import org.quiltmc.qsl.lifecycle.test.event.ServerLifecycleTests;
 
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ClientTickTests implements ClientModInitializer {
 	private final Object2IntMap<RegistryKey<World>> tickTracker = new Object2IntOpenHashMap<>();
 	private int ticks;

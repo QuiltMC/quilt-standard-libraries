@@ -16,15 +16,13 @@
 
 package org.quiltmc.qsl.lifecycle.test.event.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import net.minecraft.client.MinecraftClient;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.lifecycle.api.client.event.ClientLifecycleEvents;
 import org.quiltmc.qsl.lifecycle.test.event.ServerLifecycleTests;
 
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ClientLifecycleTests implements ClientLifecycleEvents.Ready, ClientLifecycleEvents.Stopping {
 	private boolean startCalled;
 	private boolean stopCalled;

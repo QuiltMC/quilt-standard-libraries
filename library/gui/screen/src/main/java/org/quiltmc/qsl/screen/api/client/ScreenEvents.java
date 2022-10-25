@@ -24,6 +24,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 
@@ -40,7 +41,7 @@ import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
  * @see ScreenKeyboardEvents
  * @see ScreenMouseEvents
  */
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ScreenEvents {
 	/**
 	 * An event that is called before {@link Screen#init(MinecraftClient, int, int) a screen is initialized} to its default state.

@@ -28,8 +28,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.screen.api.client.ScreenEvents;
 
+@ClientOnly
 @Mixin(MinecraftClient.class)
 abstract class MinecraftClientMixin {
 	@Shadow

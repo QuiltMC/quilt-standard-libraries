@@ -16,10 +16,9 @@
 
 package org.quiltmc.qsl.resource.loader.impl;
 
-import java.io.IOException;
-
 import com.mojang.logging.LogUtils;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import net.minecraft.resource.pack.ResourcePackCompatibility;
@@ -35,30 +34,27 @@ import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
 public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
 	private static final Logger LOGGER = LogUtils.getLogger();
 
-	static QuiltBuiltinResourcePackProfile of(ModNioResourcePack pack) {
-		try {
-			PackResourceMetadata metadata = pack.parseMetadata(PackResourceMetadata.READER);
-			if (metadata == null) {
-				LOGGER.warn("Couldn't find pack meta for pack {}", pack.getName());
-				return null;
-			}
+	static @Nullable QuiltBuiltinResourcePackProfile of(ModNioResourcePack pack) {
+		Info info = readInfoFromPack(pack.getName(), name -> pack);
 
-			return new QuiltBuiltinResourcePackProfile(pack, metadata);
-		} catch (IOException e) {
-			LOGGER.warn("Couldn't get pack info for: {}", e.toString());
+		if (info == null) {
+			LOGGER.warn("Couldn't find pack meta for pack {}.", pack.getName());
 			return null;
 		}
+
+		return new QuiltBuiltinResourcePackProfile(pack, info);
 	}
 
-	private QuiltBuiltinResourcePackProfile(ModNioResourcePack pack, PackResourceMetadata metadata) {
+	private QuiltBuiltinResourcePackProfile(ModNioResourcePack pack, Info info) {
 		super(
 				pack.getName(),
-				pack.getDisplayName(),
 				pack.getActivationType() == ResourcePackActivationType.ALWAYS_ENABLED,
-				() -> pack,
-				metadata,
-				pack.type,
+				name -> pack,
+				pack.getDisplayName(),
+				info,
+				info.getCompatibility(pack.type),
 				ResourcePackProfile.InsertionPosition.TOP,
+				false,
 				new BuiltinResourcePackSource(pack)
 		);
 	}
@@ -75,6 +71,7 @@ public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
 	 */
 	public static class BuiltinResourcePackSource implements ResourcePackSource {
 		private static final Text SOURCE_BUILTIN_TEXT = Text.translatable("pack.source.builtin");
+		private final ModNioResourcePack pack;
 		private final Text text;
 		private final Text tooltip;
 
@@ -85,6 +82,7 @@ public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
 				modName = pack.modInfo.id();
 			}
 
+			this.pack = pack;
 			this.text = SOURCE_BUILTIN_TEXT;
 			this.tooltip = Text.translatable("options.generic_value", SOURCE_BUILTIN_TEXT, modName);
 		}
@@ -92,6 +90,11 @@ public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
 		@Override
 		public Text decorate(Text description) {
 			return Text.translatable("pack.nameAndSource", description, this.text).formatted(Formatting.GRAY);
+		}
+
+		@Override
+		public boolean shouldAddAutomatically() {
+			return this.pack.getActivationType().isEnabledByDefault();
 		}
 
 		public Text getTooltip() {

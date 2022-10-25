@@ -16,13 +16,11 @@
 
 package org.quiltmc.qsl.networking.api.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 import org.quiltmc.qsl.networking.api.PacketSender;
@@ -30,7 +28,7 @@ import org.quiltmc.qsl.networking.api.PacketSender;
 /**
  * Offers access to events related to the connection to a server on a logical client.
  */
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ClientPlayConnectionEvents {
 	/**
 	 * Event indicating a connection entered the PLAY state, ready for registering channel handlers.
@@ -72,7 +70,7 @@ public final class ClientPlayConnectionEvents {
 	/**
 	 * @see #INIT
 	 */
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface Init extends ClientEventAwareListener {
 		void onPlayInit(ClientPlayNetworkHandler handler, MinecraftClient client);
@@ -81,7 +79,7 @@ public final class ClientPlayConnectionEvents {
 	/**
 	 * @see #JOIN
 	 */
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface Join extends ClientEventAwareListener {
 		void onPlayReady(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client);
@@ -90,7 +88,7 @@ public final class ClientPlayConnectionEvents {
 	/**
 	 * @see #DISCONNECT
 	 */
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface Disconnect extends ClientEventAwareListener {
 		void onPlayDisconnect(ClientPlayNetworkHandler handler, MinecraftClient client);

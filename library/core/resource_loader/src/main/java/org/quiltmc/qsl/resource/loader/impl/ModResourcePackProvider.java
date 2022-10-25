@@ -34,25 +34,13 @@ public final class ModResourcePackProvider implements ResourcePackProvider {
 	public static final ModResourcePackProvider SERVER_RESOURCE_PACK_PROVIDER = new ModResourcePackProvider(ResourceType.SERVER_DATA);
 
 	private final ResourceType type;
-	private final ResourcePackProfile.Factory factory;
 
 	public ModResourcePackProvider(ResourceType type) {
 		this.type = type;
-		this.factory = (name, displayName, alwaysEnabled, packFactory, metadata, initialPosition, source) ->
-				new ResourcePackProfile(name, displayName, alwaysEnabled, packFactory, metadata, type, initialPosition, source);
-	}
-
-	/**
-	 * Registers the resource packs.
-	 *
-	 * @param consumer the resource pack profile consumer
-	 */
-	public void register(Consumer<ResourcePackProfile> consumer) {
-		this.register(consumer, this.factory);
 	}
 
 	@Override
-	public void register(Consumer<ResourcePackProfile> profileAdder, ResourcePackProfile.Factory factory) {
+	public void register(Consumer<ResourcePackProfile> profileAdder) {
 		/*
 			Register order rule in this provider:
 			1. Mod built-in resource packs
@@ -67,7 +55,7 @@ public final class ModResourcePackProvider implements ResourcePackProvider {
 		ResourceLoaderImpl.registerBuiltinResourcePacks(this.type, profileAdder);
 
 		for (var provider : ResourceLoaderImpl.get(this.type).resourcePackProfileProviders) {
-			provider.register(profileAdder, factory);
+			provider.register(profileAdder);
 		}
 	}
 }

@@ -27,6 +27,7 @@ import net.minecraft.block.MapColor;
 import net.minecraft.block.Material;
 import net.minecraft.entity.EntityType;
 import net.minecraft.sound.BlockSoundGroup;
+import net.minecraft.unmapped.C_kksdgidr;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 
@@ -249,6 +250,30 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	@Override
 	public QuiltBlockSettings resistance(float resistance) {
 		super.resistance(resistance);
+		return this;
+	}
+
+	@Override
+	public QuiltBlockSettings offsetType(AbstractBlock.OffsetType offsetType) {
+		super.offsetType(offsetType);
+		return this;
+	}
+
+	@Override
+	public AbstractBlock.Settings offsetType(Function<BlockState, AbstractBlock.OffsetType> function) {
+		super.offsetType(function);
+		return this;
+	}
+
+	@Override
+	public AbstractBlock.Settings m_yeubaeen() {
+		super.m_yeubaeen();
+		return this;
+	}
+
+	@Override
+	public AbstractBlock.Settings m_cfcitqhx(C_kksdgidr... features) {
+		super.m_cfcitqhx(features);
 		return this;
 	}
 

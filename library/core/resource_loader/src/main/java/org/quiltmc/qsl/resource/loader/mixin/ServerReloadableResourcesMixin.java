@@ -31,6 +31,7 @@ import net.minecraft.resource.ResourceReloader;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.server.ServerReloadableResources;
 import net.minecraft.server.command.CommandManager;
+import net.minecraft.unmapped.C_czxxrbcp;
 import net.minecraft.util.registry.DynamicRegistryManager;
 
 import org.quiltmc.qsl.resource.loader.impl.QuiltMultiPackResourceManagerHooks;
@@ -48,9 +49,8 @@ public class ServerReloadableResourcesMixin {
 	}
 
 	@Inject(method = "loadResources", at = @At("HEAD"))
-	private static void onLoadResources(ResourceManager resources, DynamicRegistryManager.Frozen registry,
-			CommandManager.RegistrationEnvironment environment, int level,
-			Executor prepareExecutor, Executor applyExecutor,
+	private static void onLoadResources(ResourceManager resources, DynamicRegistryManager.Frozen registry, C_czxxrbcp c_czxxrbcp,
+			CommandManager.RegistrationEnvironment environment, int level, Executor prepareExecutor, Executor applyExecutor,
 			CallbackInfoReturnable<CompletableFuture<ServerReloadableResources>> cir) {
 		if (resources instanceof QuiltMultiPackResourceManagerHooks hooks) {
 			hooks.quilt$appendTopPacks();

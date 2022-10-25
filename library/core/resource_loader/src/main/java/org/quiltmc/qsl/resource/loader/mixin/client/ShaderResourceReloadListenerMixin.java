@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.worldgen.dimension.mixin;
+package org.quiltmc.qsl.resource.loader.mixin.client;
 
-import java.util.Set;
-
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
 
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.dimension.DimensionOptions;
+import net.minecraft.util.Identifier;
 
-@Mixin(DimensionOptions.class)
-public interface DimensionOptionsAccessor {
-	@Accessor("BASE_DIMENSIONS")
-	static Set<RegistryKey<DimensionOptions>> getBaseDimensions() {
-		throw new IllegalStateException("Mixin injection failed.");
+import org.quiltmc.loader.api.minecraft.ClientOnly;
+import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;
+import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
+
+@ClientOnly
+@Mixin(targets = "net/minecraft/client/render/GameRenderer$C_zsvjroyj")
+public abstract class ShaderResourceReloadListenerMixin implements IdentifiableResourceReloader {
+	@Override
+	public @NotNull Identifier getQuiltId() {
+		return ResourceReloaderKeys.Client.SHADERS;
 	}
 }

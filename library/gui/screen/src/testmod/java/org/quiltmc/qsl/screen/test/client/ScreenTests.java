@@ -19,9 +19,10 @@ package org.quiltmc.qsl.screen.test.client;
 
 import java.util.List;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
@@ -33,9 +34,11 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.screen.api.client.QuiltScreen;
 import org.quiltmc.qsl.screen.api.client.ScreenEvents;
 
+@ClientOnly
 public class ScreenTests implements ScreenEvents.AfterInit, ScreenEvents.AfterRender {
 	public static final Logger LOGGER = LoggerFactory.getLogger("ScreenEventsTest");
 	private Screen actualScreen;

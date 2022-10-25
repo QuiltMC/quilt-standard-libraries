@@ -16,12 +16,14 @@
 
 package org.quiltmc.qsl.block.entity.test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.MapColor;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -31,6 +33,9 @@ import org.quiltmc.qsl.block.entity.api.QuiltBlockEntityTypeBuilder;
 
 public class BlockEntityTypeTest implements ModInitializer {
 	public static final String NAMESPACE = "quilt_block_entity_testmod";
+
+	public static final List<AngyBlock> ANGY_BLOCKS = new ArrayList<>();
+
 
 	public static final AngyBlock INITIAL_ANGY_BLOCK = register(id("initial_angy_block"), new AngyBlock(MapColor.PINK));
 	public static final AngyBlock BUILDER_ADDED_ANGY_BLOCK = register(id("builder_added_angy_block"), new AngyBlock(MapColor.BLUE));
@@ -62,8 +67,12 @@ public class BlockEntityTypeTest implements ModInitializer {
 	private static <B extends Block> B register(Identifier id, B block) {
 		Registry.register(Registry.BLOCK, id, block);
 
-		var item = new BlockItem(block, new Item.Settings().group(ItemGroup.MISC));
+		var item = new BlockItem(block, new Item.Settings());
 		Registry.register(Registry.ITEM, id, item);
+
+		if (block instanceof AngyBlock angyBlock) {
+			ANGY_BLOCKS.add(angyBlock);
+		}
 
 		return block;
 	}

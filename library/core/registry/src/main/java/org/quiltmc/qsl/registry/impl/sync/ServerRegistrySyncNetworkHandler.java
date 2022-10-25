@@ -57,7 +57,6 @@ import net.minecraft.network.packet.c2s.play.QueryEntityNbtC2SPacket;
 import net.minecraft.network.packet.c2s.play.RecipeBookDataC2SPacket;
 import net.minecraft.network.packet.c2s.play.RecipeCategoryOptionsC2SPacket;
 import net.minecraft.network.packet.c2s.play.RenameItemC2SPacket;
-import net.minecraft.network.packet.c2s.play.RequestChatPreviewC2SPacket;
 import net.minecraft.network.packet.c2s.play.RequestCommandCompletionsC2SPacket;
 import net.minecraft.network.packet.c2s.play.ResourcePackStatusC2SPacket;
 import net.minecraft.network.packet.c2s.play.SelectMerchantTradeC2SPacket;
@@ -193,9 +192,6 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 
 	@Override
 	public void onChatCommand(ChatCommandC2SPacket packet) {}
-
-	@Override
-	public void onRequestChatPreview(RequestChatPreviewC2SPacket packet) {}
 
 	@Override
 	public void m_vuqeccvs(C_vtnjglse c_vtnjglse) {}

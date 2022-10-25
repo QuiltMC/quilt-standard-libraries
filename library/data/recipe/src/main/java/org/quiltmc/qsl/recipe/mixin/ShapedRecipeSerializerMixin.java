@@ -68,6 +68,7 @@ public abstract class ShapedRecipeSerializerMixin implements QuiltRecipeSerializ
 				recipe.getOutput().getItem(),
 				recipe.getOutput().getCount(),
 				recipe.getGroup(),
+				recipe.m_vqgzicyv(),
 				pattern,
 				inputs,
 				null, null

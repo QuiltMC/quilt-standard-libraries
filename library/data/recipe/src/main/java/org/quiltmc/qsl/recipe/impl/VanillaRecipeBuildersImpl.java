@@ -27,6 +27,7 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.SmeltingRecipe;
 import net.minecraft.recipe.SmokingRecipe;
 import net.minecraft.recipe.StonecuttingRecipe;
+import net.minecraft.unmapped.C_gtxamkec;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 
@@ -68,32 +69,32 @@ public final class VanillaRecipeBuildersImpl {
 		return new StonecuttingRecipe(id, group, input, output);
 	}
 
-	public static SmeltingRecipe smeltingRecipe(Identifier id, String group, Ingredient input, ItemStack output, float experience, int cookTime) {
+	public static SmeltingRecipe smeltingRecipe(Identifier id, String group, C_gtxamkec category, Ingredient input, ItemStack output, float experience, int cookTime) {
 		if (input == Ingredient.EMPTY) throw new IllegalArgumentException("Input cannot be empty.");
 		if (cookTime < 0) throw new IllegalArgumentException("Cook time must be equal or greater than 0");
 
-		return new SmeltingRecipe(id, group, input, output, experience, cookTime);
+		return new SmeltingRecipe(id, group, category, input, output, experience, cookTime);
 	}
 
-	public static BlastingRecipe blastingRecipe(Identifier id, String group, Ingredient input, ItemStack output, float experience, int cookTime) {
+	public static BlastingRecipe blastingRecipe(Identifier id, String group, C_gtxamkec category, Ingredient input, ItemStack output, float experience, int cookTime) {
 		if (input == Ingredient.EMPTY) throw new IllegalArgumentException("Input cannot be empty.");
 		if (cookTime < 0) throw new IllegalArgumentException("Cook time must be equal or greater than 0");
 
-		return new BlastingRecipe(id, group, input, output, experience, cookTime);
+		return new BlastingRecipe(id, group, category, input, output, experience, cookTime);
 	}
 
-	public static SmokingRecipe smokingRecipe(Identifier id, String group, Ingredient input, ItemStack output, float experience, int cookTime) {
+	public static SmokingRecipe smokingRecipe(Identifier id, String group, C_gtxamkec category, Ingredient input, ItemStack output, float experience, int cookTime) {
 		if (input == Ingredient.EMPTY) throw new IllegalArgumentException("Input cannot be empty.");
 		if (cookTime < 0) throw new IllegalArgumentException("Cook time must be equal or greater than 0");
 
-		return new SmokingRecipe(id, group, input, output, experience, cookTime);
+		return new SmokingRecipe(id, group, category, input, output, experience, cookTime);
 	}
 
-	public static CampfireCookingRecipe campfireCookingRecipe(Identifier id, String group, Ingredient input,
+	public static CampfireCookingRecipe campfireCookingRecipe(Identifier id, String group, C_gtxamkec category, Ingredient input,
 			ItemStack output, float experience, int cookTime) {
 		if (input == Ingredient.EMPTY) throw new IllegalArgumentException("Input cannot be empty.");
 		if (cookTime < 0) throw new IllegalArgumentException("Cook time must be equal or greater than 0");
 
-		return new CampfireCookingRecipe(id, group, input, output, experience, cookTime);
+		return new CampfireCookingRecipe(id, group, category, input, output, experience, cookTime);
 	}
 }

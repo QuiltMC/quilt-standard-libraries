@@ -16,15 +16,13 @@
 
 package org.quiltmc.qsl.networking.test.keybindreciever;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 
 // Sends a packet to the server when a keybinding was pressed
 // The server in response will send a chat message to the client.
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public class NetworkingKeyBindClientPacketTest implements ClientModInitializer {
 //	public static final KeyBinding TEST_BINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("fabric-networking-api-v1-testmod-keybind", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_RIGHT_BRACKET, "fabric-networking-api-v1-testmod"));
 

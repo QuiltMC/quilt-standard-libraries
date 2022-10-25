@@ -21,10 +21,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.OptionalInt;
 import java.util.Queue;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.mojang.datafixers.util.Pair;
@@ -43,26 +41,15 @@ import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 
-import org.quiltmc.qsl.registry.mixin.SimpleRegistryAccessor;
-
 @ApiStatus.Internal
 public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	private final MutableRegistry<T> wrapped;
 	private final Queue<DelayedEntry<T>> delayedEntries = new LinkedList<>();
 
-	private final @Nullable Function<T, Holder.Reference<T>> customHolderProvider;
-
-	@SuppressWarnings({"unchecked", "rawtypes"})
 	DelayedRegistry(MutableRegistry<T> registry) {
 		super(registry.getKey(), registry.getLifecycle());
 
 		this.wrapped = registry;
-
-		if (registry instanceof SimpleRegistryAccessor simpleRegistry) {
-			this.customHolderProvider = simpleRegistry.getCustomHolderProvider();
-		} else {
-			this.customHolderProvider = null;
-		}
 	}
 
 	@Override
@@ -101,8 +88,8 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	}
 
 	@Override
-	public Lifecycle getEntryLifecycle(T entry) {
-		return this.wrapped.getEntryLifecycle(entry);
+	public Lifecycle m_sefrrypp(T object) {
+		return this.wrapped.m_sefrrypp(object);
 	}
 
 	@Override
@@ -147,12 +134,12 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	}
 
 	@Override
-	public Holder<T> getOrCreateHolderOrThrow(RegistryKey<T> registryKey) {
+	public Holder.Reference<T> getOrCreateHolderOrThrow(RegistryKey<T> registryKey) {
 		return this.wrapped.getOrCreateHolderOrThrow(registryKey);
 	}
 
 	@Override
-	public DataResult<Holder<T>> getOrCreateHolder(RegistryKey<T> key) {
+	public DataResult<Holder.Reference<T>> getOrCreateHolder(RegistryKey<T> key) {
 		return this.wrapped.getOrCreateHolder(key);
 	}
 
@@ -162,12 +149,12 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	}
 
 	@Override
-	public Optional<Holder<T>> getHolder(int index) {
+	public Optional<Holder.Reference<T>> getHolder(int index) {
 		return this.wrapped.getHolder(index);
 	}
 
 	@Override
-	public Optional<Holder<T>> getHolder(RegistryKey<T> key) {
+	public Optional<Holder.Reference<T>> getHolder(RegistryKey<T> key) {
 		return this.wrapped.getHolder(key);
 	}
 
@@ -224,17 +211,7 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	@Override
 	public Holder<T> register(RegistryKey<T> key, T entry, Lifecycle lifecycle) {
 		this.delayedEntries.add(new DelayedEntry<>(key, entry, lifecycle));
-
-		if (this.customHolderProvider != null) {
-			return this.customHolderProvider.apply(entry);
-		}
-
 		return new Holder.Direct<>(entry);
-	}
-
-	@Override
-	public Holder<T> replace(OptionalInt rawId, RegistryKey<T> key, T newEntry, Lifecycle lifecycle) {
-		throw new UnsupportedOperationException("DelayedRegistry does not support replacement.");
 	}
 
 	@Override

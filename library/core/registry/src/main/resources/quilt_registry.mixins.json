@@ -12,7 +12,6 @@
     "RegistryMixin",
     "ServerLoginNetworkHandlerMixin",
     "ServerPlayerEntityMixin",
-    "SimpleRegistryAccessor",
     "SimpleRegistryMixin",
     "patch.BeaconBlockEntityMixin",
     "patch.MooshroomEntityMixin",

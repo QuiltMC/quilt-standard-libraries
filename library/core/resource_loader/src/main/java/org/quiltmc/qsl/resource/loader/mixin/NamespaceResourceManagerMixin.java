@@ -16,13 +16,12 @@
 
 package org.quiltmc.qsl.resource.loader.mixin;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Stream;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.gen.Accessor;
-import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -31,6 +30,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.resource.NamespaceResourceManager;
 import net.minecraft.resource.Resource;
+import net.minecraft.resource.ResourceIoSupplier;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.util.Identifier;
@@ -39,23 +39,25 @@ import org.quiltmc.qsl.resource.loader.api.GroupResourcePack;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
 @Mixin(NamespaceResourceManager.class)
-public class NamespaceResourceManagerMixin {
+public abstract class NamespaceResourceManagerMixin {
 	/**
 	 * Acts as a pseudo-local variable in {@link NamespaceResourceManager#getAllResources(Identifier)}.
 	 * Not thread-safe so a ThreadLocal is required.
 	 */
 	@Unique
-	private final ThreadLocal<List<NamespaceResourceManager.ResourceEntry>> quilt$getAllResources$resources = new ThreadLocal<>();
+	private final ThreadLocal<List<Resource>> quilt$getAllResources$resources = new ThreadLocal<>();
 
 	@Inject(
 			method = "getAllResources",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/resource/NamespaceResourceManager;getMetadataPath(Lnet/minecraft/util/Identifier;)Lnet/minecraft/util/Identifier;"
+					target = "Ljava/util/List;size()I",
+					ordinal = 0
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	private void onGetAllResources(Identifier id, CallbackInfoReturnable<List<Resource>> cir, List<NamespaceResourceManager.ResourceEntry> resources) {
+	private void onGetAllResources(Identifier id, CallbackInfoReturnable<List<Resource>> cir,
+			Identifier metadataId, List<Resource> resources) {
 		this.quilt$getAllResources$resources.set(resources);
 	}
 
@@ -63,39 +65,22 @@ public class NamespaceResourceManagerMixin {
 			method = "getAllResources",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/resource/pack/ResourcePack;contains(Lnet/minecraft/resource/ResourceType;Lnet/minecraft/util/Identifier;)Z"
+					target = "Lnet/minecraft/resource/pack/ResourcePack;open(Lnet/minecraft/resource/ResourceType;Lnet/minecraft/util/Identifier;)Lnet/minecraft/resource/ResourceIoSupplier;"
 			)
 	)
-	private boolean onResourceAdd(ResourcePack pack, ResourceType type, Identifier id) {
+	private ResourceIoSupplier<InputStream> onResourceAdd(ResourcePack pack, ResourceType type, Identifier id) {
 		if (pack instanceof GroupResourcePack groupResourcePack) {
 			ResourceLoaderImpl.appendResourcesFromGroup((NamespaceResourceManagerAccessor) this, id, groupResourcePack,
 					this.quilt$getAllResources$resources.get());
-			return false;
+			return null;
 		}
 
-		return pack.contains(type, id);
+		return pack.open(type, id);
 	}
 
-	@Redirect(
-			method = "findResourcesOf",
-			at = @At(
-					value = "INVOKE",
-					target = "Ljava/util/List;add(Ljava/lang/Object;)Z"
-			),
-			allow = 1
-	)
-	private boolean onResourceAdd(List<NamespaceResourceManager.ResourceEntry> entries, Object entryObject) {
-		// Required due to type erasure of List.add
-		ResourceEntryAccessor entry = (ResourceEntryAccessor) entryObject;
-		ResourcePack pack = entry.getSource();
-
-		if (pack instanceof GroupResourcePack groupResourcePack) {
-			ResourceLoaderImpl.appendResourcesFromGroup((NamespaceResourceManagerAccessor) this, entry.getId(),
-					groupResourcePack, entries);
-			return true;
-		}
-
-		return entries.add((NamespaceResourceManager.ResourceEntry) entry);
+	@Inject(method = "getAllResources", at = @At("RETURN"))
+	private void onExitGetAllResources(Identifier id, CallbackInfoReturnable<List<Resource>> cir) {
+		this.quilt$getAllResources$resources.remove();
 	}
 
 	@Inject(method = "streamResourcePacks", at = @At("RETURN"), cancellable = true)
@@ -109,19 +94,5 @@ public class NamespaceResourceManagerMixin {
 					}
 				})
 		);
-	}
-
-	@Mixin(NamespaceResourceManager.ResourceEntry.class)
-	public interface ResourceEntryAccessor {
-		@Invoker("<init>")
-		static NamespaceResourceManager.ResourceEntry create(NamespaceResourceManager parent, Identifier id, Identifier metadataId, ResourcePack source) {
-			throw new IllegalStateException("Mixin injection failed.");
-		}
-
-		@Accessor
-		Identifier getId();
-
-		@Accessor
-		ResourcePack getSource();
 	}
 }

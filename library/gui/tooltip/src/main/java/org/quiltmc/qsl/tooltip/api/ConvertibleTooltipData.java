@@ -16,13 +16,11 @@
 
 package org.quiltmc.qsl.tooltip.api;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.tooltip.impl.client.QuiltClientTooltipMod;
 
 /**
@@ -50,6 +48,6 @@ public interface ConvertibleTooltipData extends TooltipData {
 	 * <b>WARNING:</b> when implementing this interface,
 	 * make sure to annotate the implemented method with {@code @Environment(EnvType.CLIENT)}.
 	 */
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	TooltipComponent toComponent();
 }

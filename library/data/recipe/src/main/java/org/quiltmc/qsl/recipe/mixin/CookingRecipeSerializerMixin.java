@@ -29,7 +29,7 @@ import org.quiltmc.qsl.recipe.api.serializer.QuiltRecipeSerializer;
 public abstract class CookingRecipeSerializerMixin<T extends AbstractCookingRecipe> implements QuiltRecipeSerializer<T> {
 	@Override
 	public JsonObject toJson(T recipe) {
-		return new CookingRecipeJsonFactory.CookingRecipeJsonProvider(recipe.getId(), recipe.getGroup(),
+		return new CookingRecipeJsonFactory.CookingRecipeJsonProvider(recipe.getId(), recipe.getGroup(), recipe.m_colblqee(),
 				recipe.getIngredients().get(0), recipe.getOutput().getItem(),
 				recipe.getExperience(), recipe.getCookTime(), null, null, this)
 				.toJson();

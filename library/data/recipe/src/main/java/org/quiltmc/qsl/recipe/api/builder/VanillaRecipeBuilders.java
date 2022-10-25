@@ -26,6 +26,7 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.SmeltingRecipe;
 import net.minecraft.recipe.SmokingRecipe;
 import net.minecraft.recipe.StonecuttingRecipe;
+import net.minecraft.unmapped.C_gtxamkec;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 
@@ -91,14 +92,16 @@ public final class VanillaRecipeBuilders {
 	 *
 	 * @param id         the identifier of the recipe
 	 * @param group      the group of the recipe
+	 * @param category   the cooking book category
 	 * @param input      the input ingredient
 	 * @param output     the output item stack
 	 * @param experience the experience given
 	 * @param cookTime   the cook time in ticks
 	 * @return the smelting recipe
 	 */
-	public static SmeltingRecipe smeltingRecipe(Identifier id, String group, Ingredient input, ItemStack output, float experience, int cookTime) {
-		return VanillaRecipeBuildersImpl.smeltingRecipe(id, group, input, output, experience, cookTime);
+	public static SmeltingRecipe smeltingRecipe(Identifier id, String group, Ingredient input, C_gtxamkec category, ItemStack output,
+			float experience, int cookTime) {
+		return VanillaRecipeBuildersImpl.smeltingRecipe(id, group, category, input, output, experience, cookTime);
 	}
 
 	/**
@@ -106,14 +109,16 @@ public final class VanillaRecipeBuilders {
 	 *
 	 * @param id         the identifier of the recipe
 	 * @param group      the group of the recipe
+	 * @param category   the cooking book category
 	 * @param input      the input ingredient
 	 * @param output     the output item stack
 	 * @param experience the experience given
 	 * @param cookTime   the cook time in ticks
 	 * @return the blasting recipe
 	 */
-	public static BlastingRecipe blastingRecipe(Identifier id, String group, Ingredient input, ItemStack output, float experience, int cookTime) {
-		return VanillaRecipeBuildersImpl.blastingRecipe(id, group, input, output, experience, cookTime);
+	public static BlastingRecipe blastingRecipe(Identifier id, String group, Ingredient input, C_gtxamkec category, ItemStack output,
+			float experience, int cookTime) {
+		return VanillaRecipeBuildersImpl.blastingRecipe(id, group, category, input, output, experience, cookTime);
 	}
 
 	/**
@@ -121,14 +126,15 @@ public final class VanillaRecipeBuilders {
 	 *
 	 * @param id         the identifier of the recipe
 	 * @param group      the group of the recipe
+	 * @param category   the cooking book category
 	 * @param input      the input ingredient
 	 * @param output     the output item stack
 	 * @param experience the experience given
 	 * @param cookTime   the cook time in ticks
 	 * @return the smoking recipe
 	 */
-	public static SmokingRecipe smokingRecipe(Identifier id, String group, Ingredient input, ItemStack output, float experience, int cookTime) {
-		return VanillaRecipeBuildersImpl.smokingRecipe(id, group, input, output, experience, cookTime);
+	public static SmokingRecipe smokingRecipe(Identifier id, String group, C_gtxamkec category, Ingredient input, ItemStack output, float experience, int cookTime) {
+		return VanillaRecipeBuildersImpl.smokingRecipe(id, group, category, input, output, experience, cookTime);
 	}
 
 	/**
@@ -136,14 +142,15 @@ public final class VanillaRecipeBuilders {
 	 *
 	 * @param id         the identifier of the recipe
 	 * @param group      the group of the recipe
+	 * @param category   the cooking book category
 	 * @param input      the input ingredient
 	 * @param output     the output item stack
 	 * @param experience the experience given
 	 * @param cookTime   the cook time in ticks
 	 * @return the campfire cooking recipe
 	 */
-	public static CampfireCookingRecipe campfireCookingRecipe(Identifier id, String group, Ingredient input,
+	public static CampfireCookingRecipe campfireCookingRecipe(Identifier id, String group, C_gtxamkec category, Ingredient input,
 			ItemStack output, float experience, int cookTime) {
-		return VanillaRecipeBuildersImpl.campfireCookingRecipe(id, group, input, output, experience, cookTime);
+		return VanillaRecipeBuildersImpl.campfireCookingRecipe(id, group, category, input, output, experience, cookTime);
 	}
 }

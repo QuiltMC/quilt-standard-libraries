@@ -29,7 +29,6 @@ import net.minecraft.block.MapColor;
 import net.minecraft.block.Material;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
@@ -74,7 +73,7 @@ public class RegistryLibSyncTest implements ModInitializer {
 
 		var customRequiredRegistry = Registry.register((Registry<Registry<Path>>) Registry.REGISTRIES,
 				new Identifier(NAMESPACE, "synced_registry"),
-				new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(NAMESPACE, "synced_registry")), Lifecycle.stable(), null));
+				new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(NAMESPACE, "synced_registry")), Lifecycle.stable()));
 
 		Registry.register(customRequiredRegistry, new Identifier("quilt:game_dir"), QuiltLoader.getGameDir());
 		RegistrySynchronization.markForSync(customRequiredRegistry);
@@ -121,7 +120,7 @@ public class RegistryLibSyncTest implements ModInitializer {
 		var block = new Block(AbstractBlock.Settings.of(Material.STONE, MapColor.BLACK));
 
 		Registry.register(Registry.BLOCK, id, block);
-		Registry.register(Registry.ITEM, id, new BlockItem(block, new Item.Settings().group(ItemGroup.BUILDING_BLOCKS)));
+		Registry.register(Registry.ITEM, id, new BlockItem(block, new Item.Settings()));
 		RegistrySynchronization.setEntryOptional(Registry.ITEM, id);
 		return id;
 	}

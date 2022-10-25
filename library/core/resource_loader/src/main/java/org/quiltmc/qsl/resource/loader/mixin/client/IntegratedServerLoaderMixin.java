@@ -16,11 +16,14 @@
 
 package org.quiltmc.qsl.resource.loader.mixin.client;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Lifecycle;
+import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -30,16 +33,22 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
+import net.minecraft.resource.AutoCloseableResourceManager;
 import net.minecraft.resource.pack.ResourcePackManager;
+import net.minecraft.server.ServerReloadableResources;
 import net.minecraft.server.WorldLoader;
 import net.minecraft.server.WorldStem;
 import net.minecraft.server.integrated.IntegratedServerLoader;
-import net.minecraft.world.SaveProperties;
+import net.minecraft.unmapped.C_bcpxdrik;
+import net.minecraft.unmapped.C_ozbmlrmw;
 import net.minecraft.world.level.storage.LevelStorage;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.util.TriState;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
+import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
+@ClientOnly
 @Mixin(IntegratedServerLoader.class)
 public abstract class IntegratedServerLoaderMixin {
 	@Shadow
@@ -54,21 +63,34 @@ public abstract class IntegratedServerLoaderMixin {
 	private static final TriState EXPERIMENTAL_SCREEN_OVERRIDE = TriState.fromProperty("quilt.resource_loader.experimental_screen_override");
 
 	@Inject(
-			method = "loadWorldStem(Lnet/minecraft/server/WorldLoader$PackConfig;Lnet/minecraft/server/WorldLoader$LoadContextSupplier;)Lnet/minecraft/server/WorldStem;",
+			method = "m_ocpkzrtb",
 			at = @At("HEAD")
 	)
-	private void onStartDataPackLoad(WorldLoader.PackConfig dataPackConfig, WorldLoader.LoadContextSupplier<SaveProperties> savePropertiesSupplier,
-			CallbackInfoReturnable<WorldStem> cir) {
+	private <D, R> void onStartDataPackLoad(WorldLoader.PackConfig packConfig, WorldLoader.LoadContextSupplier<D> loadContextSupplier,
+			WorldLoader.ApplierFactory<D, R> applierFactory, CallbackInfoReturnable<R> cir) {
 		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null);
 	}
 
 	@Inject(
-			method = "loadWorldStem(Lnet/minecraft/server/WorldLoader$PackConfig;Lnet/minecraft/server/WorldLoader$LoadContextSupplier;)Lnet/minecraft/server/WorldStem;",
+			method = "m_ocpkzrtb",
 			at = @At("RETURN")
 	)
-	private void onEndDataPackLoad(WorldLoader.PackConfig dataPackConfig, WorldLoader.LoadContextSupplier<SaveProperties> savePropertiesSupplier,
-			CallbackInfoReturnable<WorldStem> cir) {
-		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, cir.getReturnValue().resourceManager(), null);
+	private <D, R> void onEndDataPackLoad(WorldLoader.PackConfig packConfig, WorldLoader.LoadContextSupplier<D> loadContextSupplier,
+			WorldLoader.ApplierFactory<D, R> applierFactory, CallbackInfoReturnable<R> cir) {
+		if (cir.getReturnValue() instanceof WorldStem worldStem) {
+			ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, worldStem.resourceManager(), null);
+		}
+	}
+
+	@Dynamic
+	@Inject(
+			method = "m_weunchkk(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/unmapped/C_bcpxdrik;Lnet/minecraft/server/integrated/IntegratedServerLoader$C_tattaqxb;)Lcom/mojang/datafixers/util/Pair;",
+			at = @At("HEAD")
+	)
+	private static void onEndDataPackLoad(AutoCloseableResourceManager resourceManager, ServerReloadableResources resources,
+			C_bcpxdrik<?> c_bcpxdrik, @Coerce Object c_tattaqxb,
+			CallbackInfoReturnable<Pair<?, ?>> cir) {
+		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resourceManager, null);
 	}
 
 	@ModifyArg(
@@ -93,7 +115,8 @@ public abstract class IntegratedServerLoaderMixin {
 	private void onBackupExperimentalWarning(Screen parentScreen, String worldName, boolean safeMode, boolean requireBackup, CallbackInfo ci,
 			LevelStorage.Session session, ResourcePackManager resourcePackManager, WorldStem worldStem) {
 		if (EXPERIMENTAL_SCREEN_OVERRIDE.toBooleanOrElse(true)
-				&& !worldStem.saveProperties().getGeneratorOptions().isLegacyCustomizedType()) {
+				&& !worldStem.saveProperties().m_ycrrmmel().m_kmrxtmbu()
+				&& !C_ozbmlrmw.m_iacybqqj(worldStem.saveProperties().m_rabnvpan().enabledFeatures())) {
 			worldStem.close();
 			close(session, worldName);
 			this.start(parentScreen, worldName, safeMode, false);
@@ -103,13 +126,13 @@ public abstract class IntegratedServerLoaderMixin {
 
 	@Inject(
 			method = "tryLoad",
-			at = @At(value = "CONSTANT", args = "stringValue=selectWorld.import_worldgen_settings.experimental.title"),
+			at = @At(value = "CONSTANT", args = "stringValue=selectWorld.warning.experimental.title"),
 			cancellable = true
 	)
 	private static void onExperimentalWarning(MinecraftClient client, CreateWorldScreen parentScreen,
 			Lifecycle dynamicRegistryLifecycle, Runnable successCallback,
 			CallbackInfo ci) {
-		if (EXPERIMENTAL_SCREEN_OVERRIDE.toBooleanOrElse(true)) {
+		if (EXPERIMENTAL_SCREEN_OVERRIDE.toBooleanOrElse(true) && ResourceLoaderImpl.EXPERIMENTAL_FEATURES_ENABLED.get() == null) {
 			successCallback.run();
 			ci.cancel();
 		}

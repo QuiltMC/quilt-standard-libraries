@@ -19,8 +19,6 @@ package org.quiltmc.qsl.networking.api.client;
 import java.util.Objects;
 import java.util.Set;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.MinecraftClient;
@@ -29,6 +27,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.networking.impl.client.ClientNetworkingImpl;
@@ -45,7 +44,7 @@ import org.quiltmc.qsl.networking.impl.client.ClientPlayNetworkAddon;
  * @see ClientLoginNetworking
  * @see ServerPlayNetworking
  */
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ClientPlayNetworking {
 	/**
 	 * Registers a handler to a channel.
@@ -230,7 +229,7 @@ public final class ClientPlayNetworking {
 	private ClientPlayNetworking() {
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface ChannelReceiver {
 		/**

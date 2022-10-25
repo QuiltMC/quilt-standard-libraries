@@ -22,6 +22,7 @@ import net.fabricmc.api.Environment;
 
 import net.minecraft.client.gui.screen.Screen;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 import org.quiltmc.qsl.base.api.util.TriState;
@@ -35,7 +36,7 @@ import org.quiltmc.qsl.base.api.util.TriState;
  *
  * @see ScreenEvents
  */
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ScreenKeyboardEvents {
 	/**
 	 * An event that checks if a key press should be allowed.

@@ -16,12 +16,17 @@
 
 package org.quiltmc.qsl.block.entity.test.client;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.color.block.BlockColorProvider;
+import net.minecraft.client.render.RenderLayer;
 
 import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.block.entity.test.BlockEntityTypeTest;
+import org.quiltmc.qsl.block.extensions.api.client.BlockRenderLayerMap;
 
+@ClientOnly
 public class BlockEntityTypeTestClient implements ClientModInitializer {
 	public static BlockColorProvider ANGY_BLOCK_COLOR_PROVIDER = (state, world, pos, tintIndex) -> {
 		if (tintIndex == 0) {
@@ -37,5 +42,6 @@ public class BlockEntityTypeTestClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient(ModContainer mod) {
+		BlockRenderLayerMap.put(RenderLayer.getCutout(), BlockEntityTypeTest.ANGY_BLOCKS.toArray(Block[]::new));
 	}
 }

@@ -22,8 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.mojang.logging.LogUtils;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -38,6 +36,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Language;
 import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
@@ -48,7 +47,7 @@ import org.quiltmc.qsl.registry.impl.sync.SynchronizedIdList;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
 
 @ApiStatus.Internal
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ClientRegistrySync {
 	private static final Logger LOGGER = LogUtils.getLogger();
 

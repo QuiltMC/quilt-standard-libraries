@@ -24,8 +24,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.server.Main;
 
 import org.quiltmc.loader.api.QuiltLoader;
+import org.quiltmc.loader.api.minecraft.DedicatedServerOnly;
 import org.quiltmc.qsl.base.api.entrypoint.server.DedicatedServerModInitializer;
 
+@DedicatedServerOnly
 @Mixin(Main.class)
 public class MainMixin {
 	@Inject(

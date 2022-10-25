@@ -17,8 +17,6 @@
 package org.quiltmc.qsl.registry.mixin.client;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -32,10 +30,11 @@ import net.minecraft.client.render.model.BakedModelManager;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedInt2ObjectMap;
 import org.quiltmc.qsl.registry.impl.sync.client.RebuildableIdModelHolder;
 
-@Environment(EnvType.CLIENT)
+@ClientOnly
 @Mixin(ItemModels.class)
 public abstract class ItemModelsMixin implements RebuildableIdModelHolder {
 	@Mutable

@@ -8,6 +8,11 @@ qslModule {
 	id = "quilt_advancement"
 	description = "Provides APIs for working with advancements."
 	library = "data"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+		}
+	}
 	accessWidener()
 	noMixins()
 }

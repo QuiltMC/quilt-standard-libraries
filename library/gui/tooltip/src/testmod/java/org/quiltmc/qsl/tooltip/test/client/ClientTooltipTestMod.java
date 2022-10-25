@@ -29,10 +29,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.tooltip.api.client.ItemTooltipCallback;
 import org.quiltmc.qsl.tooltip.api.client.TooltipComponentCallback;
 import org.quiltmc.qsl.tooltip.test.TooltipTestMod;
 
+@ClientOnly
 public final class ClientTooltipTestMod implements ItemTooltipCallback, TooltipComponentCallback {
 	@Override
 	public @Nullable TooltipComponent getComponent(TooltipData data) {

@@ -29,8 +29,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.tooltip.api.client.ItemTooltipCallback;
 
+@ClientOnly
 @Mixin(ItemStack.class)
 public final class ItemStackMixin {
 	@Inject(method = "getTooltip", at = @At("RETURN"))

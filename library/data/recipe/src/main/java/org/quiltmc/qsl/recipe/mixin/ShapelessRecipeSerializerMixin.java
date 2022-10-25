@@ -30,7 +30,7 @@ public abstract class ShapelessRecipeSerializerMixin implements QuiltRecipeSeria
 	public JsonObject toJson(ShapelessRecipe recipe) {
 		return new ShapelessRecipeJsonFactory.ShapelessRecipeJsonProvider(recipe.getId(),
 				recipe.getOutput().getItem(), recipe.getOutput().getCount(),
-				recipe.getGroup(), recipe.getIngredients(), null, null)
+				recipe.getGroup(), recipe.m_vqgzicyv(), recipe.getIngredients(), null, null)
 				.toJson();
 	}
 }

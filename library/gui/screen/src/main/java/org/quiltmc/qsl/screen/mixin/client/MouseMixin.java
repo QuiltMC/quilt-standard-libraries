@@ -30,9 +30,11 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
 import net.minecraft.client.gui.screen.Screen;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.util.TriState;
 import org.quiltmc.qsl.screen.api.client.ScreenMouseEvents;
 
+@ClientOnly
 @Mixin(Mouse.class)
 abstract class MouseMixin {
 	@Shadow
@@ -47,8 +49,8 @@ abstract class MouseMixin {
 	@Inject(
 			method = "m_jzgvmppg([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
 			at = @At(
-				value = "INVOKE",
-				target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z"
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z"
 			),
 			cancellable = true
 	)
@@ -77,9 +79,9 @@ abstract class MouseMixin {
 	@Inject(
 			method = "m_jzgvmppg([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
 			at = @At(
-				value = "INVOKE",
-				target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z",
-				shift = At.Shift.AFTER
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z",
+					shift = At.Shift.AFTER
 			),
 			cancellable = true
 	)
@@ -99,8 +101,8 @@ abstract class MouseMixin {
 	@Inject(
 			method = "m_acizjdos([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
 			at = @At(
-				value = "INVOKE",
-				target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z"
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z"
 			),
 			cancellable = true
 	)
@@ -130,9 +132,9 @@ abstract class MouseMixin {
 	@Inject(
 			method = "m_acizjdos([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
 			at = @At(
-				value = "INVOKE",
-				target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z",
-				shift = At.Shift.AFTER
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z",
+					shift = At.Shift.AFTER
 			),
 			cancellable = true
 	)

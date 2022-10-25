@@ -103,10 +103,10 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 	 * Invokes the entry add event.
 	 */
 	@Inject(
-			method = "registerMapping",
+			method = "set",
 			at = @At("RETURN")
 	)
-	private void quilt$invokeEntryAddEvent(int rawId, RegistryKey<V> key, V entry, Lifecycle lifecycle, boolean checkDuplicateKeys,
+	private void quilt$invokeEntryAddEvent(int rawId, RegistryKey<V> key, V entry, Lifecycle lifecycle,
 			CallbackInfoReturnable<Holder<V>> cir) {
 		this.quilt$entryContext.set(key.getValue(), entry, rawId);
 		RegistryEventStorage.as(this).quilt$getEntryAddedEvent().invoker().onAdded(this.quilt$entryContext);

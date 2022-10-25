@@ -23,9 +23,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.client.color.block.BlockColors;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.block.entity.test.BlockEntityTypeTest;
 import org.quiltmc.qsl.block.entity.test.client.BlockEntityTypeTestClient;
 
+@ClientOnly
 @Mixin(BlockColors.class)
 public class BlockColorsMixin {
 	@Inject(method = "create", at = @At("RETURN"))

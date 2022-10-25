@@ -17,27 +17,32 @@
 
 package org.quiltmc.qsl.registry.impl.sync.client;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.zip.Deflater;
+
 import com.google.common.base.Preconditions;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
+
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 import org.quiltmc.qsl.registry.impl.sync.ServerFabricRegistrySync;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
-
-import java.util.*;
-import java.util.zip.Deflater;
 
 /**
  * Legacy (Fabric) registry sync.
@@ -46,7 +51,7 @@ import java.util.zip.Deflater;
  */
 @ApiStatus.Internal
 @Deprecated
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public class ClientFabricRegistrySync {
 	@Nullable
 	private static PacketByteBuf combinedBuf;

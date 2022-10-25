@@ -35,7 +35,9 @@ import org.quiltmc.qsl.resource.loader.api.ResourcePackRegistrationContext;
 
 public class VirtualResourcePackTestMod implements ModInitializer, ResourcePackRegistrationContext.Callback, ServerLifecycleEvents.Ready {
 	private static final TagKey<Block> TEST_TAG = TagKey.of(Registry.BLOCK_KEY, ResourceLoaderTestMod.id("test_virtual_tag"));
+	private static final TagKey<Block> TEST_TAG2 = TagKey.of(Registry.BLOCK_KEY, ResourceLoaderTestMod.id("test_stackable_tag"));
 	private static final Identifier TAG_FILE = new Identifier(TEST_TAG.id().getNamespace(), "tags/blocks/" + TEST_TAG.id().getPath() + ".json");
+	private static final Identifier TAG_FILE2 = new Identifier(TEST_TAG2.id().getNamespace(), "tags/blocks/" + TEST_TAG2.id().getPath() + ".json");
 
 	@Override
 	public void onInitialize(ModContainer mod) {
@@ -96,6 +98,13 @@ public class VirtualResourcePackTestMod implements ModInitializer, ResourcePackR
 			pack.putTextAsync(ResourceType.SERVER_DATA, TAG_FILE, file -> """
 					{
 						"replace": true,
+						"values": [
+							"%s"
+						]
+					}""".formatted(Registry.BLOCK.getId(block)));
+			pack.putTextAsync(ResourceType.SERVER_DATA, TAG_FILE2, file -> """
+					{
+						"replace": false,
 						"values": [
 							"%s"
 						]

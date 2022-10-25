@@ -33,6 +33,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
 
@@ -50,7 +51,7 @@ public final class TooltipTestMod implements ModInitializer {
 
 	private static class SimpleCustomTooltipItem extends Item {
 		public SimpleCustomTooltipItem() {
-			super(new Settings().group(ItemGroup.MISC));
+			super(new Settings()/*.group(ItemGroup.MISC)*/);
 		}
 
 		@Override
@@ -61,7 +62,7 @@ public final class TooltipTestMod implements ModInitializer {
 
 	private static class ConvertibleTooltipItem extends Item {
 		public ConvertibleTooltipItem() {
-			super(new Settings().group(ItemGroup.MISC));
+			super(new Settings()/*.group(ItemGroup.MISC)*/);
 		}
 
 		@Override
@@ -74,7 +75,7 @@ public final class TooltipTestMod implements ModInitializer {
 	}
 
 	public record ConvertibleData(String message) implements ConvertibleTooltipData {
-		@Environment(EnvType.CLIENT)
+		@ClientOnly
 		@Override
 		public TooltipComponent toComponent() {
 			return TooltipComponent.of(Text.literal("Converted Tooltip Data").formatted(Formatting.GOLD).asOrderedText());

@@ -22,12 +22,12 @@ import com.google.gson.JsonObject;
 import org.spongepowered.asm.mixin.Mixin;
 
 import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.SpecialRecipeSerializer;
+import net.minecraft.unmapped.C_lylrgdrx;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.recipe.api.serializer.QuiltRecipeSerializer;
 
-@Mixin(SpecialRecipeSerializer.class)
+@Mixin(C_lylrgdrx.class)
 public abstract class SpecialRecipeSerializerMixin<T extends Recipe<?>> implements QuiltRecipeSerializer<T> {
 	@Override
 	public JsonObject toJson(T recipe) {

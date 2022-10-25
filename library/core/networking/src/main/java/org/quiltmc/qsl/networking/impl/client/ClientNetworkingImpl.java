@@ -21,8 +21,6 @@ import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,6 +36,7 @@ import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.client.ClientLoginNetworking;
 import org.quiltmc.qsl.networking.api.client.ClientPlayConnectionEvents;
@@ -50,7 +49,7 @@ import org.quiltmc.qsl.networking.mixin.accessor.ConnectScreenAccessor;
 import org.quiltmc.qsl.networking.mixin.accessor.MinecraftClientAccessor;
 
 @ApiStatus.Internal
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ClientNetworkingImpl {
 	public static final GlobalReceiverRegistry<ClientLoginNetworking.QueryRequestReceiver> LOGIN = new GlobalReceiverRegistry<>();
 	public static final GlobalReceiverRegistry<ClientPlayNetworking.ChannelReceiver> PLAY = new GlobalReceiverRegistry<>();

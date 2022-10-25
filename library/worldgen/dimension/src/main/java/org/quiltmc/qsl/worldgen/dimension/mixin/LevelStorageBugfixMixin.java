@@ -17,6 +17,8 @@
 
 package org.quiltmc.qsl.worldgen.dimension.mixin;
 
+import java.util.List;
+
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Dynamic;
@@ -29,6 +31,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.gen.GeneratorOptions;
 import net.minecraft.world.level.storage.LevelStorage;
 
@@ -59,6 +63,11 @@ public class LevelStorageBugfixMixin {
 		quilt$removeNonVanillaDimensionsFromNbt(worldGenSettings);
 	}
 
+	@Unique
+	private static final List<RegistryKey<DimensionOptions>> BASE_DIMENSIONS = List.of(
+			DimensionOptions.OVERWORLD, DimensionOptions.NETHER, DimensionOptions.END
+	);
+
 	/**
 	 * Removes all non-vanilla dimensions from the tag. The custom dimensions will be re-added later from the data packs.
 	 */
@@ -66,10 +75,10 @@ public class LevelStorageBugfixMixin {
 	private static void quilt$removeNonVanillaDimensionsFromNbt(NbtCompound worldGenSettings) {
 		NbtCompound dimensions = worldGenSettings.getCompound("dimensions");
 
-		if (dimensions.getSize() > DimensionOptionsAccessor.getBaseDimensions().size()) {
+		if (dimensions.getSize() > BASE_DIMENSIONS.size()) {
 			var newDimensions = new NbtCompound();
 
-			for (var dimId : DimensionOptionsAccessor.getBaseDimensions()) {
+			for (var dimId : BASE_DIMENSIONS) {
 				var strId = dimId.getValue().toString();
 
 				if (dimensions.contains(strId)) {

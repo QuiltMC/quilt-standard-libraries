@@ -16,11 +16,7 @@
 
 package org.quiltmc.qsl.resource.loader.test.client;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Random;
-import java.util.function.Predicate;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -29,6 +25,7 @@ import com.mojang.blaze3d.texture.NativeImage;
 import net.minecraft.SharedConstants;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePackProfile;
+import net.minecraft.resource.pack.ResourcePackSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -43,12 +40,22 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 
 	@Override
 	public void onInitializeClient(ModContainer mod) {
-		ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerResourcePackProfileProvider((profileAdder, factory) -> {
+		ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerResourcePackProfileProvider((profileAdder) -> {
+			var pack = new TestPack();
 			profileAdder.accept(ResourcePackProfile.of(
-					PACK_NAME, false, TestPack::new, factory,
+					PACK_NAME, pack.getDisplayName(), false, name -> pack, ResourceType.CLIENT_RESOURCES,
 					ResourcePackProfile.InsertionPosition.TOP,
-					text -> text.copy().append(Text.literal(" (Virtual Provider)").formatted(Formatting.DARK_GRAY))
-			));
+					new ResourcePackSource() {
+						@Override
+						public Text decorate(Text name) {
+							return name.copy().append(Text.literal(" (Virtual Provider)").formatted(Formatting.DARK_GRAY));
+						}
+
+						@Override
+						public boolean shouldAddAutomatically() {
+							return false;
+						}
+					}));
 		});
 	}
 

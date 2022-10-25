@@ -16,15 +16,15 @@
 
 package org.quiltmc.qsl.networking.mixin.accessor;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 import net.minecraft.client.gui.screen.ConnectScreen;
 import net.minecraft.network.ClientConnection;
 
-@Environment(EnvType.CLIENT)
+import org.quiltmc.loader.api.minecraft.ClientOnly;
+
+@ClientOnly
 @Mixin(ConnectScreen.class)
 public interface ConnectScreenAccessor {
 	@Accessor
