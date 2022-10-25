@@ -17,9 +17,6 @@
 
 package org.quiltmc.qsl.command.api.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientCommandSource;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -30,6 +27,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 /**
@@ -37,7 +35,7 @@ import org.quiltmc.qsl.base.api.util.InjectedInterface;
  * client commands - most of these methods are equivalents to methods on
  * {@link net.minecraft.server.command.ServerCommandSource ServerCommandSource}, to provide a more familiar API.
  */
-@Environment(EnvType.CLIENT)
+@ClientOnly
 @InjectedInterface(ClientCommandSource.class)
 public interface QuiltClientCommandSource extends CommandSource {
 	/**

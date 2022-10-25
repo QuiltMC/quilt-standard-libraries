@@ -26,8 +26,6 @@ import java.util.Map;
 import java.util.Set;
 
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.client.MinecraftClient;
@@ -43,6 +41,7 @@ import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.PacketSender;
@@ -50,6 +49,8 @@ import org.quiltmc.qsl.networking.api.ServerPlayConnectionEvents;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
+
+import net.fabricmc.api.EnvType;
 
 @ApiStatus.Internal
 public final class RegistryEntryAttachmentSync {
@@ -96,7 +97,7 @@ public final class RegistryEntryAttachmentSync {
 		ServerPlayConnectionEvents.JOIN.register(RegistryEntryAttachmentSync::syncAttachmentsToPlayer);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	public static void registerClient() {
 		ClientPlayNetworking.registerGlobalReceiver(PACKET_ID, RegistryEntryAttachmentSync::receiveSyncPacket);
 	}
@@ -221,7 +222,7 @@ public final class RegistryEntryAttachmentSync {
 		}
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@SuppressWarnings("unchecked")
 	private static void receiveSyncPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
 		var packetVersion = buf.readByte();

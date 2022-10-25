@@ -21,9 +21,8 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.command.impl.client.ClientCommandInternals;
 
 /**
@@ -58,7 +57,7 @@ import org.quiltmc.qsl.command.impl.client.ClientCommandInternals;
  * );
  * }</pre>
  */
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ClientCommandManager {
 	private ClientCommandManager() {
 	}

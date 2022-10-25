@@ -33,7 +33,9 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.network.packet.s2c.play.CommandTreeS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import net.minecraft.server.command.CommandManager;
-import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.unmapped.C_bcpxdrik;
+import net.minecraft.unmapped.C_czxxrbcp;
+import net.minecraft.unmapped.C_dpewjmno;
 
 import org.quiltmc.qsl.command.impl.client.ClientCommandInternals;
 
@@ -47,16 +49,19 @@ abstract class ClientPlayNetworkHandlerMixin {
 	private ClientCommandSource commandSource;
 
 	@Shadow
-	private DynamicRegistryManager.Frozen registryManager;
+	private C_bcpxdrik<C_dpewjmno> registryManager;
 
 	@Shadow
 	@Final
 	private MinecraftClient client;
 
+	@Shadow
+	private C_czxxrbcp f_bsnhfuqe;
+
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Inject(method = "onGameJoin", at = @At("RETURN"))
 	private void onGameJoin(GameJoinS2CPacket packet, CallbackInfo ci) {
-		ClientCommandInternals.updateCommands(new CommandBuildContext(this.registryManager),
+		ClientCommandInternals.updateCommands(new CommandBuildContext(this.registryManager.m_scyfieos(), this.f_bsnhfuqe),
 				(CommandDispatcher) this.commandDispatcher, this.commandSource,
 				this.client.isIntegratedServerRunning() ? CommandManager.RegistrationEnvironment.INTEGRATED : CommandManager.RegistrationEnvironment.DEDICATED
 		);
