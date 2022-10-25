@@ -15,11 +15,9 @@ qslModule {
 			testmodOnly("lifecycle_events")
 			testmodOnly("networking")
 		}
-		data {
-			testmodOnly("tags")
-		}
-		item {
-			testmodOnly("item_content_registry")
-		}
+//      TODO: Fix ICR
+//		item {
+//			testmodOnly("item_content_registry")
+//		}
 	}
 }
