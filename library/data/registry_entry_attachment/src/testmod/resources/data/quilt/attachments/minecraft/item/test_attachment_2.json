@@ -15,11 +15,13 @@
       "value": 3
     },
     {
-      "tag": "lolno:haha_yes?",
+      "tag": "lolno:haha_yes",
+      "required": false,
       "value": 4
     },
     {
-      "id": "lolno:hi_mom_im_in_a_log?",
+      "id": "lolno:hi_mom_im_in_a_log",
+      "required": false,
       "value": 5
     }
   ]
