@@ -17,7 +17,6 @@
 package org.quiltmc.qsl.block.content.registry.api;
 
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 
 import net.minecraft.block.Block;
@@ -25,7 +24,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.event.GameEvent;
 
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
@@ -34,11 +32,11 @@ import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
  * <p>
  * Current properties:
  * <ul>
- *     <li>{@link #FLATTENABLE_BLOCKS}</li>
- *     <li>{@link #OXIDIZABLE_BLOCKS}</li>
- *     <li>{@link #WAXABLE_BLOCKS}</li>
- *     <li>{@link #STRIPPABLE_BLOCKS}</li>
- *     <li>{@link #FLAMMABLE_BLOCKS}</li>
+ *     <li>{@link #FLATTENABLES}</li>
+ *     <li>{@link #OXIDIZABLES}</li>
+ *     <li>{@link #WAXABLES}</li>
+ *     <li>{@link #STRIPPABLES}</li>
+ *     <li>{@link #FLAMMABLES}</li>
  * </ul>
  */
 public class BlockContentRegistries {
@@ -50,11 +48,11 @@ public class BlockContentRegistries {
 	/**
 	 * A {@link RegistryEntryAttachment} for when blocks are right clicked by a shovel.
 	 * <p>
-	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/flattenable_blocks.json}
+	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/flattenables.json}
 	 */
-	public static final RegistryEntryAttachment<Block, BlockState> FLATTENABLE_BLOCKS = RegistryEntryAttachment
+	public static final RegistryEntryAttachment<Block, BlockState> FLATTENABLES = RegistryEntryAttachment
 			.builder(Registry.BLOCK,
-					new Identifier(NAMESPACE, "flattenable_blocks"),
+					new Identifier(NAMESPACE, "flattenables"),
 					BlockState.class,
 					BlockState.CODEC)
 			.build();
@@ -62,11 +60,11 @@ public class BlockContentRegistries {
 	/**
 	 * A {@link RegistryEntryAttachment} for oxidizable blocks.
 	 * <p>
-	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/oxidizable_blocks.json}
+	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/oxidizables.json}
 	 */
-	public static final RegistryEntryAttachment<Block, ReversibleBlockEntry> OXIDIZABLE_BLOCKS = RegistryEntryAttachment
+	public static final RegistryEntryAttachment<Block, ReversibleBlockEntry> OXIDIZABLES = RegistryEntryAttachment
 			.builder(Registry.BLOCK,
-					new Identifier(NAMESPACE, "oxidizable_blocks"),
+					new Identifier(NAMESPACE, "oxidizables"),
 					ReversibleBlockEntry.class,
 					ReversibleBlockEntry.CODEC)
 			.build();
@@ -74,11 +72,11 @@ public class BlockContentRegistries {
 	/**
 	 * A {@link RegistryEntryAttachment} for waxable blocks.
 	 * <p>
-	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/waxable_blocks.json}
+	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/waxables.json}
 	 */
-	public static final RegistryEntryAttachment<Block, ReversibleBlockEntry> WAXABLE_BLOCKS = RegistryEntryAttachment
+	public static final RegistryEntryAttachment<Block, ReversibleBlockEntry> WAXABLES = RegistryEntryAttachment
 			.builder(Registry.BLOCK,
-					new Identifier(NAMESPACE, "waxable_blocks"),
+					new Identifier(NAMESPACE, "waxables"),
 					ReversibleBlockEntry.class,
 					ReversibleBlockEntry.CODEC)
 			.build();
@@ -86,11 +84,11 @@ public class BlockContentRegistries {
 	/**
 	 * A {@link RegistryEntryAttachment} for strippable blocks.
 	 * <p>
-	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/strippable_blocks.json}
+	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/strippables.json}
 	 */
-	public static final RegistryEntryAttachment<Block, Block> STRIPPABLE_BLOCKS = RegistryEntryAttachment
+	public static final RegistryEntryAttachment<Block, Block> STRIPPABLES = RegistryEntryAttachment
 			.builder(Registry.BLOCK,
-					new Identifier(NAMESPACE, "strippable_blocks"),
+					new Identifier(NAMESPACE, "strippables"),
 					Block.class,
 					Registry.BLOCK.getCodec().flatXmap(block -> {
 						if (!block.getDefaultState().contains(Properties.AXIS)) {
@@ -108,11 +106,11 @@ public class BlockContentRegistries {
 	/**
 	 * A {@link RegistryEntryAttachment} for flammable blocks.
 	 * <p>
-	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/flammable_blocks.json}
+	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/flammables.json}
 	 */
-	public static final RegistryEntryAttachment<Block, FlammableBlockEntry> FLAMMABLE_BLOCKS = RegistryEntryAttachment
+	public static final RegistryEntryAttachment<Block, FlammableBlockEntry> FLAMMABLES = RegistryEntryAttachment
 			.builder(Registry.BLOCK,
-					new Identifier(NAMESPACE, "flammable_blocks"),
+					new Identifier(NAMESPACE, "flammables"),
 					FlammableBlockEntry.class,
 					FlammableBlockEntry.CODEC)
 			.build();

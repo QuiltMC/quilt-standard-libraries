@@ -29,11 +29,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FireBlock;
 import net.minecraft.block.Oxidizable;
-import net.minecraft.block.SculkSensorBlock;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.HoneycombItem;
 import net.minecraft.item.ShovelItem;
-import net.minecraft.world.event.GameEvent;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -72,17 +70,17 @@ public class BlockContentRegistriesInitializer implements ModInitializer {
 		Oxidizable.OXIDATION_LEVEL_INCREASES.get();
 		HoneycombItem.UNWAXED_TO_WAXED_BLOCKS.get();
 
-		addMapToAttachment(INITIAL_PATH_STATES, BlockContentRegistries.FLATTENABLE_BLOCKS);
-		addMapToAttachment(INITIAL_STRIPPED_BLOCKS, BlockContentRegistries.STRIPPABLE_BLOCKS);
+		addMapToAttachment(INITIAL_PATH_STATES, BlockContentRegistries.FLATTENABLES);
+		addMapToAttachment(INITIAL_STRIPPED_BLOCKS, BlockContentRegistries.STRIPPABLES);
 		addMapToAttachment(INITIAL_OXIDATION_BLOCKS.entrySet().stream().collect(Collectors.toMap(
 				Map.Entry::getKey,
 				entry -> new ReversibleBlockEntry(entry.getValue(), true)
-		)), BlockContentRegistries.OXIDIZABLE_BLOCKS);
+		)), BlockContentRegistries.OXIDIZABLES);
 		addMapToAttachment(INITIAL_WAXED_BLOCKS.entrySet().stream().collect(Collectors.toMap(
 				Map.Entry::getKey,
 				entry -> new ReversibleBlockEntry(entry.getValue(), true)
-		)), BlockContentRegistries.WAXABLE_BLOCKS);
-		addMapToAttachment(INITIAL_FLAMMABLE_BLOCKS, BlockContentRegistries.FLAMMABLE_BLOCKS);
+		)), BlockContentRegistries.WAXABLES);
+		addMapToAttachment(INITIAL_FLAMMABLE_BLOCKS, BlockContentRegistries.FLAMMABLES);
 
 		resetMaps();
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, error) -> resetMaps());
@@ -90,19 +88,19 @@ public class BlockContentRegistriesInitializer implements ModInitializer {
 
 	private static void resetMaps() {
 		ShovelItem.PATH_STATES.clear();
-		setMapFromAttachment(ShovelItem.PATH_STATES::put, BlockContentRegistries.FLATTENABLE_BLOCKS);
+		setMapFromAttachment(ShovelItem.PATH_STATES::put, BlockContentRegistries.FLATTENABLES);
 
 		AxeItem.STRIPPED_BLOCKS.clear();
-		setMapFromAttachment(AxeItem.STRIPPED_BLOCKS::put, BlockContentRegistries.STRIPPABLE_BLOCKS);
+		setMapFromAttachment(AxeItem.STRIPPED_BLOCKS::put, BlockContentRegistries.STRIPPABLES);
 
-		resetSimpleReversibleMap(OXIDATION_INCREASE_BLOCKS, OXIDATION_DECREASE_BLOCKS, BlockContentRegistries.OXIDIZABLE_BLOCKS);
+		resetSimpleReversibleMap(OXIDATION_INCREASE_BLOCKS, OXIDATION_DECREASE_BLOCKS, BlockContentRegistries.OXIDIZABLES);
 
-		resetSimpleReversibleMap(UNWAXED_WAXED_BLOCKS, WAXED_UNWAXED_BLOCKS, BlockContentRegistries.WAXABLE_BLOCKS);
+		resetSimpleReversibleMap(UNWAXED_WAXED_BLOCKS, WAXED_UNWAXED_BLOCKS, BlockContentRegistries.WAXABLES);
 
 		FireBlock fireBlock = ((FireBlock) Blocks.FIRE);
 		fireBlock.burnChances.clear();
 		fireBlock.spreadChances.clear();
-		BlockContentRegistries.FLAMMABLE_BLOCKS.registry().stream().forEach(entry -> BlockContentRegistries.FLAMMABLE_BLOCKS.get(entry).ifPresent(v -> {
+		BlockContentRegistries.FLAMMABLES.registry().stream().forEach(entry -> BlockContentRegistries.FLAMMABLES.get(entry).ifPresent(v -> {
 			fireBlock.burnChances.put(entry, v.burn());
 			fireBlock.spreadChances.put(entry, v.spread());
 		}));
