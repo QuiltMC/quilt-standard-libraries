@@ -50,7 +50,7 @@ public class BlockContentRegistryTest implements ModInitializer {
 	public void onInitialize(ModContainer mod) {
 		RegistryExtensions.register(Registry.BLOCK, new Identifier(MOD_ID, "oxidizable_iron_block"),
 				new OxidizableBlock(Oxidizable.OxidizationLevel.UNAFFECTED, AbstractBlock.Settings.copy(Blocks.IRON_BLOCK)),
-				BlockContentRegistries.OXIDIZABLE_BLOCK, new ReversibleBlockEntry(Blocks.IRON_BLOCK, false));
+				BlockContentRegistries.OXIDIZABLE_BLOCKS, new ReversibleBlockEntry(Blocks.IRON_BLOCK, false));
 
 		ServerWorldTickEvents.START.register((server, world) -> {
 			if (testPassed) {
@@ -58,11 +58,11 @@ public class BlockContentRegistryTest implements ModInitializer {
 			}
 
 			LOGGER.info("Starting BlockContentRegistry tests");
-			Registry.BLOCK.getOrCreateTag(BlockTags.ANVIL).forEach(holder -> assertValues(holder.value(), BlockContentRegistries.FLAMMABLE_BLOCK, new FlammableBlockEntry(100, 100)));
+			Registry.BLOCK.getOrCreateTag(BlockTags.ANVIL).forEach(holder -> assertValues(holder.value(), BlockContentRegistries.FLAMMABLE_BLOCKS, new FlammableBlockEntry(100, 100)));
 
-			assertValues(Blocks.OAK_PLANKS, BlockContentRegistries.FLATTENABLE_BLOCK, Blocks.OAK_SLAB.getDefaultState());
-			assertValues(Blocks.QUARTZ_PILLAR, BlockContentRegistries.STRIPPABLE_BLOCK, Blocks.PURPUR_PILLAR);
-			assertValues(Blocks.IRON_BLOCK, BlockContentRegistries.WAXABLE_BLOCK, new ReversibleBlockEntry(Blocks.GOLD_BLOCK, true));
+			assertValues(Blocks.OAK_PLANKS, BlockContentRegistries.FLATTENABLE_BLOCKS, Blocks.OAK_SLAB.getDefaultState());
+			assertValues(Blocks.QUARTZ_PILLAR, BlockContentRegistries.STRIPPABLE_BLOCKS, Blocks.PURPUR_PILLAR);
+			assertValues(Blocks.IRON_BLOCK, BlockContentRegistries.WAXABLE_BLOCKS, new ReversibleBlockEntry(Blocks.GOLD_BLOCK, true));
 			LOGGER.info("Finished BlockContentRegistry tests");
 
 			testPassed = true;

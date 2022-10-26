@@ -29,24 +29,24 @@ import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
  * <p>
  * Current properties:
  * <ul>
- *     <li>{@link #FUEL_TIME}</li>
- *     <li>{@link #COMPOST_CHANCE}</li>
+ *     <li>{@link #FUEL_TIMES}</li>
+ *     <li>{@link #COMPOST_CHANCES}</li>
  * </ul>
  */
 public class ItemContentRegistries {
 	/**
 	 * The namespace for the content registries.
 	 */
-	public static final String NAMESPACE = "quilt_item_content_registry";
+	public static final String NAMESPACE = "quilt";
 
 	/**
 	 * A {@link RegistryEntryAttachment} for how long different items burn in a furnace. The value is stored in ticks.
 	 * <p>
-	 * Values can be set via code and through a data-pack with the file {@code data/quilt_item_content_registry/attachments/minecraft/item/fuel_time.json}
+	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/item/fuel_times.json}
 	 */
-	public static final RegistryEntryAttachment<Item, Integer> FUEL_TIME = RegistryEntryAttachment
+	public static final RegistryEntryAttachment<Item, Integer> FUEL_TIMES = RegistryEntryAttachment
 			.builder(Registry.ITEM,
-					new Identifier(NAMESPACE, "fuel_time"),
+					new Identifier(NAMESPACE, "fuel_times"),
 					Integer.class,
 					Codec.intRange(0, Integer.MAX_VALUE))
 			.build();
@@ -54,11 +54,11 @@ public class ItemContentRegistries {
 	/**
 	 * A {@link RegistryEntryAttachment} for the chance that the composter level increases when compositing an item. The value is stored as a value 0 to 1.
 	 * <p>
-	 * Values can be set via code and through a data-pack with the file {@code data/quilt_item_content_registry/attachments/minecraft/item/compost_chance.json}
+	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/item/compost_chances.json}
 	 */
-	public static final RegistryEntryAttachment<Item, Float> COMPOST_CHANCE = RegistryEntryAttachment
+	public static final RegistryEntryAttachment<Item, Float> COMPOST_CHANCES = RegistryEntryAttachment
 			.builder(Registry.ITEM,
-					new Identifier(NAMESPACE, "compost_chance"),
+					new Identifier(NAMESPACE, "compost_chances"),
 					Float.class,
 					Codec.floatRange(0, 1))
 			.build();

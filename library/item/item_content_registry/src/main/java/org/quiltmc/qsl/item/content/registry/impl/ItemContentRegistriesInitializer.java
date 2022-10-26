@@ -50,18 +50,18 @@ public class ItemContentRegistriesInitializer implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		collectInitialTags = true;
-		INITIAL_FUEL_ITEM_MAP.get().forEach(ItemContentRegistries.FUEL_TIME::put);
-		INITIAL_FUEL_TAG_MAP.forEach(ItemContentRegistries.FUEL_TIME::put);
+		INITIAL_FUEL_ITEM_MAP.get().forEach(ItemContentRegistries.FUEL_TIMES::put);
+		INITIAL_FUEL_TAG_MAP.forEach(ItemContentRegistries.FUEL_TIMES::put);
 		collectInitialTags = false;
 
-		INITIAL_COMPOST_CHANCE.forEach((item, f) -> ItemContentRegistries.COMPOST_CHANCE.put(item.asItem(), f));
+		INITIAL_COMPOST_CHANCE.forEach((item, f) -> ItemContentRegistries.COMPOST_CHANCES.put(item.asItem(), f));
 
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, error) -> {
 			FUEL_MAP.clear();
-			setMapFromAttachment(FUEL_MAP::put, ItemContentRegistries.FUEL_TIME);
+			setMapFromAttachment(FUEL_MAP::put, ItemContentRegistries.FUEL_TIMES);
 
 			ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.clear();
-			setMapFromAttachment(ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE::put, ItemContentRegistries.COMPOST_CHANCE);
+			setMapFromAttachment(ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE::put, ItemContentRegistries.COMPOST_CHANCES);
 		});
 	}
 
