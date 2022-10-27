@@ -107,7 +107,8 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 			slice = @Slice(
 					from = @At(
 							value = "INVOKE",
-							target = "Ljava/util/Map;computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;"
+							target = "Ljava/util/Map;computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;",
+							remap = false
 					)
 			),
 			at = @At(
@@ -127,8 +128,7 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 			method = "set",
 			at = @At("RETURN")
 	)
-	private void quilt$invokeEntryAddEvent(int rawId, RegistryKey<V> key, V entry, Lifecycle lifecycle,
-										   CallbackInfoReturnable<Holder<V>> cir) {
+	private void quilt$invokeEntryAddEvent(int rawId, RegistryKey<V> key, V entry, Lifecycle lifecycle, CallbackInfoReturnable<Holder<V>> cir) {
 		this.quilt$entryContext.set(key.getValue(), entry, rawId);
 		RegistryEventStorage.as(this).quilt$getEntryAddedEvent().invoker().onAdded(this.quilt$entryContext);
 
