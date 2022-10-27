@@ -46,6 +46,7 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 	@Unique
 	private final Int2ObjectMap<Entity> quilt$entityParts = new Int2ObjectOpenHashMap<>();
 
+	@SuppressWarnings("InvalidInjectorMethodSignature")
 	@ModifyConstant(
 			method = {
 					"m_mbvohlyp(Ljava/util/function/Predicate;Ljava/util/List;Lnet/minecraft/util/TypeFilter;Lnet/minecraft/entity/Entity;)V",

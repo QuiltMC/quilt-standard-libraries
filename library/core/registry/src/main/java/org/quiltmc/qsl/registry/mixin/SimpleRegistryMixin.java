@@ -101,6 +101,7 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 		super(key, lifecycle);
 	}
 
+	@SuppressWarnings("InvalidInjectorMethodSignature")
 	@ModifyVariable(
 			method = "set",
 			slice = @Slice(

@@ -38,6 +38,7 @@ import org.quiltmc.qsl.entity.multipart.api.MultipartEntity;
 @ClientOnly
 @Mixin(EntityRenderDispatcher.class)
 public class EntityRenderDispatcherMixin {
+	@SuppressWarnings("InvalidInjectorMethodSignature")
 	@ModifyConstant(method = "renderHitbox", constant = @Constant(classValue = EnderDragonEntity.class, ordinal = 0))
 	private static boolean cancelEnderDragonCheck(Object targetObject, Class<?> classValue) {
 		return false;
