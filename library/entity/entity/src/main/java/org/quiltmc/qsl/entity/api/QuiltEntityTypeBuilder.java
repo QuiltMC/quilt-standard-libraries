@@ -20,6 +20,7 @@ package org.quiltmc.qsl.entity.api;
 import java.util.Objects;
 
 import com.google.common.collect.ImmutableSet;
+import net.minecraft.unmapped.C_czxxrbcp;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,6 +55,7 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	private boolean spawnableFarFromPlayer;
 	private int maxTrackingRange = 5;
 	private int trackingTickInterval = 3;
+	private C_czxxrbcp requiredFlags = C_czxxrbcp.m_bykvotir();
 	private Boolean alwaysUpdateVelocity = null;
 	private EntityDimensions dimensions = EntityDimensions.changing(0.6F, 1.8F);
 
@@ -265,12 +267,22 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	 *
 	 * <p>
 	 * {@code minecraft:prevent_mob_spawning_inside} tag overrides this.
-	 * With this setting, fire resistant mobs can spawn on/in fire damage dealing blocks,
+	 * With this setting, fire-resistant mobs can spawn on/in fire damage dealing blocks,
 	 * and wither skeletons can spawn in wither roses. If a block added is not in the default
 	 * blacklist, the addition has no effect.
 	 */
 	public QuiltEntityTypeBuilder<T> allowSpawningInside(Block... blocks) {
 		this.canSpawnInside = ImmutableSet.copyOf(blocks);
+		return this;
+	}
+
+	/**
+	 * Entities of this will not spawn or load, will have their spawn eggs disabled,
+	 * and will not be accessible by ID in commands, unless all feature flags
+	 * in {@code requiredFlags} are present.
+	 */
+	public QuiltEntityTypeBuilder<T> requiredFlags(C_czxxrbcp requiredFlags) {
+		this.requiredFlags = requiredFlags;
 		return this;
 	}
 
@@ -284,7 +296,7 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 			// TODO: Implement once DataFixer API is available.
 		}
 
-		return new QuiltEntityType<>(this.factory, this.spawnGroup, this.saveable, this.summonable, this.fireImmune, this.spawnableFarFromPlayer, this.canSpawnInside, this.dimensions, this.maxTrackingRange, this.trackingTickInterval, this.alwaysUpdateVelocity);
+		return new QuiltEntityType<>(this.factory, this.spawnGroup, this.saveable, this.summonable, this.fireImmune, this.spawnableFarFromPlayer, this.canSpawnInside, this.dimensions, this.maxTrackingRange, this.trackingTickInterval, this.alwaysUpdateVelocity, this.requiredFlags);
 	}
 
 	/**
@@ -375,6 +387,12 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 		@Override
 		public QuiltEntityTypeBuilder.Living<T> allowSpawningInside(Block... blocks) {
 			super.allowSpawningInside(blocks);
+			return this;
+		}
+
+		@Override
+		public QuiltEntityTypeBuilder.Living<T> requiredFlags(C_czxxrbcp requiredFlags) {
+			super.requiredFlags(requiredFlags);
 			return this;
 		}
 
@@ -496,6 +514,12 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 		@Override
 		public QuiltEntityTypeBuilder.Mob<T> allowSpawningInside(Block... blocks) {
 			super.allowSpawningInside(blocks);
+			return this;
+		}
+
+		@Override
+		public QuiltEntityTypeBuilder.Living<T> requiredFlags(C_czxxrbcp requiredFlags) {
+			super.requiredFlags(requiredFlags);
 			return this;
 		}
 

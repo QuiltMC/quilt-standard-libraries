@@ -35,6 +35,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.util.Holder;
@@ -99,6 +101,24 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 		super(key, lifecycle);
 	}
 
+	@ModifyVariable(
+			method = "set",
+			slice = @Slice(
+					from = @At(
+							value = "INVOKE",
+							target = "Ljava/util/Map;computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;"
+					)
+			),
+			at = @At(
+					value = "STORE",
+					ordinal = 0
+			)
+	)
+	private Holder.Reference<V> quilt$eagerFillReference(Holder.Reference<V> reference, int rawId, RegistryKey<V> key, V entry, Lifecycle lifecycle) {
+		reference.m_xtyteimy(entry);
+		return reference;
+	}
+
 	/**
 	 * Invokes the entry add event.
 	 */
@@ -107,7 +127,7 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 			at = @At("RETURN")
 	)
 	private void quilt$invokeEntryAddEvent(int rawId, RegistryKey<V> key, V entry, Lifecycle lifecycle,
-			CallbackInfoReturnable<Holder<V>> cir) {
+										   CallbackInfoReturnable<Holder<V>> cir) {
 		this.quilt$entryContext.set(key.getValue(), entry, rawId);
 		RegistryEventStorage.as(this).quilt$getEntryAddedEvent().invoker().onAdded(this.quilt$entryContext);
 

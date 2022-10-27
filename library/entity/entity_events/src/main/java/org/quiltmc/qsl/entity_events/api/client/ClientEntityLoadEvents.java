@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,17 @@
 
 package org.quiltmc.qsl.entity_events.api.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 
 /**
  * Events related to an entity being loaded into or unloaded from a client world.
  */
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ClientEntityLoadEvents {
 	/**
 	 * An event which is called after an entity has been loaded into a client world.

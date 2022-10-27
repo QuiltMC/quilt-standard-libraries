@@ -23,4 +23,5 @@ qslModule {
 			values = ["org.quiltmc.qsl.registry.impl.sync.RegistrySyncInitializer"]
 		}
 	}
+	accessWidener()
 }

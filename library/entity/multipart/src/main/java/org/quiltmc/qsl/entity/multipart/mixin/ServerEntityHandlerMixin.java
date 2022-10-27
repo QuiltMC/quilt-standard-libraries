@@ -37,10 +37,6 @@ import org.quiltmc.qsl.entity.multipart.impl.EntityPartTracker;
 
 @Mixin(targets = "net/minecraft/server/world/ServerWorld$ServerEntityHandler")
 public class ServerEntityHandlerMixin {
-	@Shadow
-	@Final
-	ServerWorld field_26936;
-
 	@ModifyConstant(
 			method = {"startTracking(Lnet/minecraft/entity/Entity;)V", "stopTracking(Lnet/minecraft/entity/Entity;)V"},
 			constant = @Constant(classValue = EnderDragonEntity.class, ordinal = 0)
@@ -56,7 +52,7 @@ public class ServerEntityHandlerMixin {
 	private void startTrackingEntityParts(Entity entity, CallbackInfo ci) {
 		if (entity instanceof MultipartEntity multipartEntity) {
 			for (EntityPart<?> part : multipartEntity.getEntityParts()) {
-				((EntityPartTracker) this.field_26936).quilt$getEntityParts().put(((Entity) part).getId(), (Entity) part);
+				((EntityPartTracker) entity.getWorld()).quilt$getEntityParts().put(((Entity) part).getId(), (Entity) part);
 			}
 		}
 	}
@@ -68,7 +64,7 @@ public class ServerEntityHandlerMixin {
 	private void stopTrackingEntityParts(Entity entity, CallbackInfo ci) {
 		if (entity instanceof MultipartEntity multipartEntity) {
 			for (EntityPart<?> part : multipartEntity.getEntityParts()) {
-				((EntityPartTracker) this.field_26936).quilt$getEntityParts().remove(((Entity) part).getId(), part);
+				((EntityPartTracker) entity.getWorld()).quilt$getEntityParts().remove(((Entity) part).getId(), part);
 			}
 		}
 	}

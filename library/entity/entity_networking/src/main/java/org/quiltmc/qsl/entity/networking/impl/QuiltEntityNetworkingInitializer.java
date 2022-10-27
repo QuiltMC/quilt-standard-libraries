@@ -32,7 +32,7 @@ import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
 @ApiStatus.Internal
 public class QuiltEntityNetworkingInitializer implements ModInitializer {
 	public static final SimpleRegistry<TrackedDataHandler<?>> TRACKED_DATA_HANDLER_REGISTRY = new SimpleRegistry<>(
-			RegistryKey.ofRegistry(new Identifier("quilt", "tracked_data_handlers")), Lifecycle.stable(), null
+			RegistryKey.ofRegistry(new Identifier("quilt", "tracked_data_handlers")), Lifecycle.stable(), false
 	);
 
 	private static boolean markForSync = true;

@@ -35,9 +35,7 @@ public interface PointOfInterestTypeExtensions {
 	 * @param blocks all additional blocks where a {@link PointOfInterest} of this type will be present.
 	 *               Will apply to all of the {@link Block}'s {@link BlockState}s
 	 */
-	default void quilt$addBlocks(RegistryKey<PointOfInterestType> key, Collection<Block> blocks) {
-		throw new UnsupportedOperationException();
-	}
+	void quilt$addBlocks(RegistryKey<PointOfInterestType> key, Collection<Block> blocks);
 
 	/**
 	 * Allows adding {@link BlockState}s after construction.
@@ -45,9 +43,7 @@ public interface PointOfInterestTypeExtensions {
 	 * @param key The {@link RegistryKey} associated with this {@link PointOfInterestType}
 	 * @param states all additional {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
 	 */
-	default void quilt$addBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states) {
-		throw new UnsupportedOperationException();
-	}
+	void quilt$addBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states);
 
 	/**
 	 * Replaces the existing {@link PointOfInterestType#blockStates} after construction.
@@ -56,9 +52,7 @@ public interface PointOfInterestTypeExtensions {
 	 * @param blocks all blocks where a {@link PointOfInterest} of this type will be present.
 	 *               Will apply to all of the {@link Block}'s {@link BlockState}s
 	 */
-	default void quilt$setBlocks(RegistryKey<PointOfInterestType> key, Collection<Block> blocks) {
-		throw new UnsupportedOperationException();
-	}
+	void quilt$setBlocks(RegistryKey<PointOfInterestType> key, Collection<Block> blocks);
 
 	/**
 	 * Allows replacing {@link BlockState}s after construction.
@@ -66,7 +60,5 @@ public interface PointOfInterestTypeExtensions {
 	 * @param key The {@link RegistryKey} associated with this {@link PointOfInterestType}
 	 * @param states all {@link BlockState block states} where a {@link PointOfInterest} of this type will be present
 	 */
-	default void quilt$setBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states) {
-		throw new UnsupportedOperationException();
-	}
+	void quilt$setBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states);
 }
