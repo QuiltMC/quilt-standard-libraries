@@ -70,17 +70,17 @@ public class BlockContentRegistriesInitializer implements ModInitializer {
 		Oxidizable.OXIDATION_LEVEL_INCREASES.get();
 		HoneycombItem.UNWAXED_TO_WAXED_BLOCKS.get();
 
-		addMapToAttachment(INITIAL_PATH_STATES, BlockContentRegistries.FLATTENABLES);
-		addMapToAttachment(INITIAL_STRIPPED_BLOCKS, BlockContentRegistries.STRIPPABLES);
+		addMapToAttachment(INITIAL_PATH_STATES, BlockContentRegistries.FLATTENABLE);
+		addMapToAttachment(INITIAL_STRIPPED_BLOCKS, BlockContentRegistries.STRIPPABLE);
 		addMapToAttachment(INITIAL_OXIDATION_BLOCKS.entrySet().stream().collect(Collectors.toMap(
 				Map.Entry::getKey,
 				entry -> new ReversibleBlockEntry(entry.getValue(), true)
-		)), BlockContentRegistries.OXIDIZABLES);
+		)), BlockContentRegistries.OXIDIZABLE);
 		addMapToAttachment(INITIAL_WAXED_BLOCKS.entrySet().stream().collect(Collectors.toMap(
 				Map.Entry::getKey,
 				entry -> new ReversibleBlockEntry(entry.getValue(), true)
-		)), BlockContentRegistries.WAXABLES);
-		addMapToAttachment(INITIAL_FLAMMABLE_BLOCKS, BlockContentRegistries.FLAMMABLES);
+		)), BlockContentRegistries.WAXABLE);
+		addMapToAttachment(INITIAL_FLAMMABLE_BLOCKS, BlockContentRegistries.FLAMMABLE);
 
 		resetMaps();
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, error) -> resetMaps());
@@ -88,19 +88,19 @@ public class BlockContentRegistriesInitializer implements ModInitializer {
 
 	private static void resetMaps() {
 		ShovelItem.PATH_STATES.clear();
-		setMapFromAttachment(ShovelItem.PATH_STATES::put, BlockContentRegistries.FLATTENABLES);
+		setMapFromAttachment(ShovelItem.PATH_STATES::put, BlockContentRegistries.FLATTENABLE);
 
 		AxeItem.STRIPPED_BLOCKS.clear();
-		setMapFromAttachment(AxeItem.STRIPPED_BLOCKS::put, BlockContentRegistries.STRIPPABLES);
+		setMapFromAttachment(AxeItem.STRIPPED_BLOCKS::put, BlockContentRegistries.STRIPPABLE);
 
-		resetSimpleReversibleMap(OXIDATION_INCREASE_BLOCKS, OXIDATION_DECREASE_BLOCKS, BlockContentRegistries.OXIDIZABLES);
+		resetSimpleReversibleMap(OXIDATION_INCREASE_BLOCKS, OXIDATION_DECREASE_BLOCKS, BlockContentRegistries.OXIDIZABLE);
 
-		resetSimpleReversibleMap(UNWAXED_WAXED_BLOCKS, WAXED_UNWAXED_BLOCKS, BlockContentRegistries.WAXABLES);
+		resetSimpleReversibleMap(UNWAXED_WAXED_BLOCKS, WAXED_UNWAXED_BLOCKS, BlockContentRegistries.WAXABLE);
 
 		FireBlock fireBlock = ((FireBlock) Blocks.FIRE);
 		fireBlock.burnChances.clear();
 		fireBlock.spreadChances.clear();
-		BlockContentRegistries.FLAMMABLES.registry().stream().forEach(entry -> BlockContentRegistries.FLAMMABLES.get(entry).ifPresent(v -> {
+		BlockContentRegistries.FLAMMABLE.registry().stream().forEach(entry -> BlockContentRegistries.FLAMMABLE.get(entry).ifPresent(v -> {
 			fireBlock.burnChances.put(entry, v.burn());
 			fireBlock.spreadChances.put(entry, v.spread());
 		}));
