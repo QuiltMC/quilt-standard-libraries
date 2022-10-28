@@ -18,7 +18,6 @@ package org.quiltmc.qsl.item.test;
 
 import net.minecraft.item.DyeItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.RecipeType;
@@ -36,7 +35,7 @@ public class RecipeRemainderTests implements ModInitializer {
 			Registry.ITEM,
 			new Identifier(QuiltItemSettingsTests.NAMESPACE, "potion_ingredient_remainder"),
 			new Item(
-					new QuiltItemSettings().group(ItemGroup.MISC).recipeRemainder(
+					new QuiltItemSettings().recipeRemainder(
 							(original, recipe) -> new ItemStack(Items.BLAZE_POWDER)
 					)
 			)
@@ -44,10 +43,10 @@ public class RecipeRemainderTests implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		Item hammerItem = new Item(new QuiltItemSettings().group(ItemGroup.TOOLS).maxDamage(16).recipeDamageRemainder());
+		Item hammerItem = new Item(new QuiltItemSettings().maxDamage(16).recipeDamageRemainder());
 		Registry.register(Registry.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "hammer"), hammerItem);
 
-		Item furnaceInputRemainder = new Item(new QuiltItemSettings().group(ItemGroup.MISC).recipeRemainder((original, recipe) -> {
+		Item furnaceInputRemainder = new Item(new QuiltItemSettings().recipeRemainder((original, recipe) -> {
 			if (recipe != null && recipe.getType() == RecipeType.SMELTING) {
 				return Items.DIAMOND.getDefaultStack();
 			}
@@ -56,7 +55,7 @@ public class RecipeRemainderTests implements ModInitializer {
 		}));
 		Registry.register(Registry.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "weird_ore"), furnaceInputRemainder);
 
-		Item furnaceInputSelfRemainder = new Item(new QuiltItemSettings().group(ItemGroup.MISC).recipeRemainder((original, recipe) -> {
+		Item furnaceInputSelfRemainder = new Item(new QuiltItemSettings().recipeRemainder((original, recipe) -> {
 			if (recipe != null && recipe.getType() == RecipeType.SMELTING) {
 				var remainder = original.copy();
 				remainder.setCount(2);
@@ -67,7 +66,7 @@ public class RecipeRemainderTests implements ModInitializer {
 		}));
 		Registry.register(Registry.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "infinite_ore"), furnaceInputSelfRemainder);
 
-		Item furnaceFuelSelfRemainder = new Item(new QuiltItemSettings().group(ItemGroup.MISC).recipeRemainder((original, recipe) -> {
+		Item furnaceFuelSelfRemainder = new Item(new QuiltItemSettings().recipeRemainder((original, recipe) -> {
 			var remainder = original.copy();
 			if (recipe != null) {
 				if (recipe.getType() == RecipeType.SMELTING) {
@@ -85,7 +84,7 @@ public class RecipeRemainderTests implements ModInitializer {
 		}));
 		Registry.register(Registry.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "infinite_fuel"), furnaceFuelSelfRemainder);
 
-		Item smithingInputRemainder = new Item(new QuiltItemSettings().group(ItemGroup.MISC).recipeRemainder((original, recipe) -> {
+		Item smithingInputRemainder = new Item(new QuiltItemSettings().recipeRemainder((original, recipe) -> {
 			if (recipe != null && recipe.getType() == RecipeType.SMITHING) {
 				return Items.NETHERITE_INGOT.getDefaultStack();
 			}
@@ -94,10 +93,10 @@ public class RecipeRemainderTests implements ModInitializer {
 		}));
 		Registry.register(Registry.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "infinite_netherite"), smithingInputRemainder);
 
-		Item loomInputRemainder = new DyeItem(DyeColor.RED, new QuiltItemSettings().group(ItemGroup.MISC).maxDamage(100).recipeDamageRemainder());
+		Item loomInputRemainder = new DyeItem(DyeColor.RED, new QuiltItemSettings().maxDamage(100).recipeDamageRemainder());
 		Registry.register(Registry.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "infinite_dye"), loomInputRemainder);
 
-		Item cuttingInputRemainder = new Item(new QuiltItemSettings().group(ItemGroup.MISC).recipeRemainder((original, recipe) -> {
+		Item cuttingInputRemainder = new Item(new QuiltItemSettings().recipeRemainder((original, recipe) -> {
 			if (recipe != null && recipe.getType() == RecipeType.STONECUTTING) {
 				return Items.STONE.getDefaultStack();
 			}

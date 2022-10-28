@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -32,14 +31,14 @@ import org.quiltmc.qsl.item.extension.api.bow.ProjectileModifyingBowItem;
 import org.quiltmc.qsl.item.extension.api.crossbow.ProjectileModifyingCrossbowItem;
 
 public class BowsTest implements ModInitializer {
-	public static final Item TEST_BOW = new ProjectileModifyingBowItem(new Item.Settings().group(ItemGroup.COMBAT)) {
+	public static final Item TEST_BOW = new ProjectileModifyingBowItem(new Item.Settings()) {
 		@Override
 		public void onProjectileShot(ItemStack bowStack, ItemStack arrowStack, LivingEntity user, float pullProgress, PersistentProjectileEntity projectile) {
 			projectile.setPunch(100);
 		}
 	};
 
-	public static final Item TEST_CROSSBOW = new ProjectileModifyingCrossbowItem(new Item.Settings().group(ItemGroup.COMBAT)) {
+	public static final Item TEST_CROSSBOW = new ProjectileModifyingCrossbowItem(new Item.Settings()) {
 		@Override
 		public void onProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity entity, @NotNull PersistentProjectileEntity persistentProjectileEntity) {
 			persistentProjectileEntity.setDamage(1000);

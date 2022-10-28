@@ -6,7 +6,6 @@
     "AxeItemMixin",
     "HoneycombItemMixin",
     "OxidizableMixin",
-    "SculkSensorBlockMixin",
     "ShovelItemMixin"
   ],
   "injectors": {

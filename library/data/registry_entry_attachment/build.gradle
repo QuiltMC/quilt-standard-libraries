@@ -15,9 +15,6 @@ qslModule {
 			impl("resource_loader")
 			impl("networking")
 		}
-		data {
-			impl("tags")
-		}
 		management {
 			compileOnly("command")
 			testmodOnly("command")
