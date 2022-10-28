@@ -11,6 +11,7 @@ qslModule {
 	moduleDependencies {
 		core {
 			api("qsl_base")
+			impl("resource_loader")
 		}
 		data {
 			api("registry_entry_attachment")

@@ -31,7 +31,6 @@ import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 import org.quiltmc.qsl.registry.attachment.impl.BuiltinRegistryEntryAttachmentHolder;
 import org.quiltmc.qsl.registry.attachment.impl.DataRegistryEntryAttachmentHolder;
 import org.quiltmc.qsl.registry.attachment.impl.QuiltRegistryInternals;
-import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentHolder;
 
 @Mixin(Registry.class)
 public abstract class RegistryMixin<R> implements QuiltRegistryInternals<R> {
