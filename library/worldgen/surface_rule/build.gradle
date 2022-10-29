@@ -11,11 +11,12 @@ qslModule {
 	moduleDependencies {
 		core {
 			api("qsl_base")
+			api("registry")
 			api("resource_loader")
 		}
 	}
 	entrypoints {
-		init {
+		events {
 			values = ["org.quiltmc.qsl.worldgen.surface_rule.impl.QuiltSurfaceRuleInitializer"]
 		}
 	}

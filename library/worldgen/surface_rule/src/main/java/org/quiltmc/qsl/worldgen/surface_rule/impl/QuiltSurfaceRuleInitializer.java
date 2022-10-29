@@ -17,19 +17,65 @@
 package org.quiltmc.qsl.worldgen.surface_rule.impl;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.gen.chunk.ChunkGeneratorSettings;
+import net.minecraft.world.gen.surfacebuilder.SurfaceRules;
 
-import org.quiltmc.loader.api.ModContainer;
-import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.registry.api.event.RegistryEntryContext;
+import org.quiltmc.qsl.registry.api.event.RegistryEvents;
+import org.quiltmc.qsl.registry.api.event.RegistryMonitor;
+import org.quiltmc.qsl.worldgen.surface_rule.api.SurfaceRuleEvents;
+import org.quiltmc.qsl.worldgen.surface_rule.mixin.ChunkGeneratorSettingsAccessor;
 
 @ApiStatus.Internal
-public class QuiltSurfaceRuleInitializer implements ModInitializer {
+public class QuiltSurfaceRuleInitializer implements RegistryEvents.DynamicRegistrySetupCallback {
 	@Override
-	public void onInitialize(ModContainer mod) {
-		Registry.register(Registry.MATERIAL_RULE_WORLDGEN, new Identifier(mod.metadata().id(), "reloadable_sequence"),
-				ReloadableSequenceMaterialRule.RULE_CODEC.codec()
-		);
+	public void onDynamicRegistrySetup(@NotNull ResourceManager resourceManager, @NotNull DynamicRegistryManager registryManager) {
+		registryManager.getOptional(Registry.CHUNK_GENERATOR_SETTINGS_KEY).ifPresent(registry -> {
+			RegistryMonitor.create(registry).forAll(context -> this.modifyChunkGeneratorSettings(context, resourceManager));
+		});
+	}
+
+	private void modifyChunkGeneratorSettings(RegistryEntryContext<ChunkGeneratorSettings> context, ResourceManager resourceManager) {
+		var baseSurfaceRule = context.value().surfaceRule();
+
+		SurfaceRuleContextImpl globalImpl;
+		if (context.id().equals(ChunkGeneratorSettings.OVERWORLD.getValue())
+				|| context.id().equals(ChunkGeneratorSettings.AMPLIFIED.getValue())
+				|| context.id().equals(ChunkGeneratorSettings.LARGE_BIOMES.getValue())) {
+			globalImpl = this.modifyOverworld(true, false, true,
+					baseSurfaceRule, resourceManager, context);
+		} else if (context.id().equals(ChunkGeneratorSettings.CAVES.getValue())) {
+			globalImpl = this.modifyOverworld(false, true, true,
+					baseSurfaceRule, resourceManager, context);
+		} else if (context.id().equals(ChunkGeneratorSettings.FLOATING_ISLANDS.getValue())) {
+			globalImpl = this.modifyOverworld(false, false, false,
+					baseSurfaceRule, resourceManager, context);
+		} else if (context.id().equals(ChunkGeneratorSettings.NETHER.getValue())) {
+			var impl = new SurfaceRuleContextImpl.NetherImpl(baseSurfaceRule, resourceManager, context.id());
+			SurfaceRuleEvents.MODIFY_NETHER.invoker().modifyNetherRules(impl);
+			globalImpl = impl;
+		} else if (context.id().equals(ChunkGeneratorSettings.END.getValue())) {
+			var impl = new SurfaceRuleContextImpl.TheEndImpl(baseSurfaceRule, resourceManager, context.id());
+			SurfaceRuleEvents.MODIFY_THE_END.invoker().modifyTheEndRules(impl);
+			globalImpl = impl;
+		} else {
+			globalImpl = new SurfaceRuleContextImpl(baseSurfaceRule, resourceManager, context.id());
+			SurfaceRuleEvents.MODIFY_GENERIC.invoker().modifyGenericSurfaceRules(globalImpl);
+		}
+
+		((ChunkGeneratorSettingsAccessor) (Object) context.value()).setSurfaceRule(globalImpl.freeze());
+	}
+
+	private SurfaceRuleContextImpl modifyOverworld(boolean surface, boolean bedrockRoof, boolean bedrockFloor,
+			SurfaceRules.MaterialRule baseSurfaceRule, ResourceManager resourceManager, RegistryEntryContext<ChunkGeneratorSettings> context) {
+		var impl = new SurfaceRuleContextImpl.OverworldImpl(surface, bedrockRoof, bedrockFloor,
+				baseSurfaceRule, resourceManager, context.id());
+		SurfaceRuleEvents.MODIFY_OVERWORLD.invoker().modifyOverworldRules(impl);
+		return impl;
 	}
 }
