@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "BuiltinResourcePackProviderMixin",
+    "FileResourcePackProviderMixin",
     "IdentifierAccessor",
     "KeyedResourceReloaderMixin",
     "MinecraftServerMixin",

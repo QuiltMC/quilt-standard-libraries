@@ -5,9 +5,8 @@ jobs:
   build:
     strategy:
       matrix:
-        # Keep the matrix for when jdk 17 rc come out
         java: [17, 18]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
         with:
