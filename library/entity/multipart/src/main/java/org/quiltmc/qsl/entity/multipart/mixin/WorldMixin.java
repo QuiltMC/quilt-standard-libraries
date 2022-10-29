@@ -46,11 +46,14 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 	@Unique
 	private final Int2ObjectMap<Entity> quilt$entityParts = new Int2ObjectOpenHashMap<>();
 
+	@SuppressWarnings("InvalidInjectorMethodSignature")
 	@ModifyConstant(
-			method = {"m_mbvohlyp", "m_dpwyfaqh", "method_31596", "method_31593"},
+			method = {
+					"m_mbvohlyp(Ljava/util/function/Predicate;Ljava/util/List;Lnet/minecraft/util/TypeFilter;Lnet/minecraft/entity/Entity;)V",
+					"m_dpwyfaqh(Lnet/minecraft/entity/Entity;Ljava/util/function/Predicate;Ljava/util/List;Lnet/minecraft/entity/Entity;)V"
+			},
 			constant = @Constant(classValue = EnderDragonEntity.class, ordinal = 0),
-			require = 2,
-			remap = false
+			require = 2
 	)
 	private static boolean cancelEnderDragonCheck(Object targetObject, Class<?> classValue) {
 		return false;

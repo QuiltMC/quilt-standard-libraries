@@ -16,34 +16,24 @@
 
 package org.quiltmc.qsl.entity.multipart.mixin.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import org.spongepowered.asm.mixin.Final;
+import net.minecraft.entity.Entity;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
+import org.quiltmc.qsl.entity.multipart.api.EntityPart;
+import org.quiltmc.qsl.entity.multipart.api.MultipartEntity;
+import org.quiltmc.qsl.entity.multipart.impl.EntityPartTracker;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.Entity;
-
-import org.quiltmc.qsl.entity.multipart.api.EntityPart;
-import org.quiltmc.qsl.entity.multipart.api.MultipartEntity;
-import org.quiltmc.qsl.entity.multipart.impl.EntityPartTracker;
-
-@Environment(EnvType.CLIENT)
+@ClientOnly
 @Mixin(targets = "net/minecraft/client/world/ClientWorld$ClientEntityHandler")
 public class ClientEntityHandlerMixin {
-	@Shadow
-	@Final
-	ClientWorld field_27735;
-
 	@Inject(method = "startTracking(Lnet/minecraft/entity/Entity;)V", at = @At("TAIL"))
 	private void startTrackingEntityParts(Entity entity, CallbackInfo ci) {
 		if (entity instanceof MultipartEntity multipartEntity) {
 			for (EntityPart<?> part : multipartEntity.getEntityParts()) {
-				((EntityPartTracker) this.field_27735).quilt$getEntityParts().put(((Entity) part).getId(), (Entity) part);
+				((EntityPartTracker) entity.getWorld()).quilt$getEntityParts().put(((Entity) part).getId(), (Entity) part);
 			}
 		}
 	}
@@ -52,7 +42,7 @@ public class ClientEntityHandlerMixin {
 	private void stopTrackingEntityParts(Entity entity, CallbackInfo ci) {
 		if (entity instanceof MultipartEntity multipartEntity) {
 			for (EntityPart<?> part : multipartEntity.getEntityParts()) {
-				((EntityPartTracker) this.field_27735).quilt$getEntityParts().remove(((Entity) part).getId(), part);
+				((EntityPartTracker) entity.getWorld()).quilt$getEntityParts().remove(((Entity) part).getId(), part);
 			}
 		}
 	}

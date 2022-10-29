@@ -16,8 +16,7 @@
 
 package org.quiltmc.qsl.entity.multipart.mixin.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
@@ -36,9 +35,10 @@ import net.minecraft.util.math.MathHelper;
 import org.quiltmc.qsl.entity.multipart.api.EntityPart;
 import org.quiltmc.qsl.entity.multipart.api.MultipartEntity;
 
-@Environment(EnvType.CLIENT)
+@ClientOnly
 @Mixin(EntityRenderDispatcher.class)
 public class EntityRenderDispatcherMixin {
+	@SuppressWarnings("InvalidInjectorMethodSignature")
 	@ModifyConstant(method = "renderHitbox", constant = @Constant(classValue = EnderDragonEntity.class, ordinal = 0))
 	private static boolean cancelEnderDragonCheck(Object targetObject, Class<?> classValue) {
 		return false;

@@ -16,9 +16,6 @@
 
 package org.quiltmc.qsl.entity.multipart.api;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import net.minecraft.client.render.WorldRenderer;
@@ -27,6 +24,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.dragon.EnderDragonPart;
 import net.minecraft.util.math.MathHelper;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 /**
@@ -51,7 +49,7 @@ public interface EntityPart<E extends Entity> {
 	 * @param owner the {@link #getOwner() owner}
 	 * @param tickDelta progress for linearly interpolating between the previous and current game state
 	 */
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	default void renderHitbox(MatrixStack matrices, VertexConsumer vertices, double ownerX, double ownerY, double ownerZ, Entity owner, float tickDelta) {
 		if (this instanceof Entity entityPart) {
 			matrices.push();
