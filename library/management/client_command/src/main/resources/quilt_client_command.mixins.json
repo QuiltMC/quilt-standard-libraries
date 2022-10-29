@@ -5,7 +5,6 @@
   "client": [
     "HelpCommandAccessor",
     "client.ClientCommandSourceMixin",
-    "client.ClientPlayerEntityMixin",
     "client.ClientPlayNetworkHandlerMixin",
     "client.MinecraftClientMixin"
   ],

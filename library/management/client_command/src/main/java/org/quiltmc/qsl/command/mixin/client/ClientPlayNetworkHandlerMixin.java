@@ -24,6 +24,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientCommandSource;
@@ -63,7 +64,8 @@ abstract class ClientPlayNetworkHandlerMixin {
 	private void onGameJoin(GameJoinS2CPacket packet, CallbackInfo ci) {
 		ClientCommandInternals.updateCommands(new CommandBuildContext(this.registryManager.m_scyfieos(), this.f_bsnhfuqe),
 				(CommandDispatcher) this.commandDispatcher, this.commandSource,
-				this.client.isIntegratedServerRunning() ? CommandManager.RegistrationEnvironment.INTEGRATED : CommandManager.RegistrationEnvironment.DEDICATED
+				this.client.isIntegratedServerRunning() ? CommandManager.RegistrationEnvironment.INTEGRATED
+						: CommandManager.RegistrationEnvironment.DEDICATED
 		);
 	}
 
@@ -72,7 +74,22 @@ abstract class ClientPlayNetworkHandlerMixin {
 	private void onOnCommandTree(CommandTreeS2CPacket packet, CallbackInfo info) {
 		ClientCommandInternals.updateCommands(null,
 				(CommandDispatcher) this.commandDispatcher, this.commandSource,
-				this.client.isIntegratedServerRunning() ? CommandManager.RegistrationEnvironment.INTEGRATED : CommandManager.RegistrationEnvironment.DEDICATED
+				this.client.isIntegratedServerRunning() ? CommandManager.RegistrationEnvironment.INTEGRATED
+						: CommandManager.RegistrationEnvironment.DEDICATED
 		);
+	}
+
+	@Inject(method = "m_btbbdyot", at = @At("HEAD"), cancellable = true)
+	private void onSendCommand(String command, CallbackInfoReturnable<Boolean> cir) {
+		if (ClientCommandInternals.executeCommand(command, true)) {
+			cir.setReturnValue(true);
+		}
+	}
+
+	@Inject(method = "m_gkszsvqi", at = @At("HEAD"), cancellable = true)
+	private void onSendCommand(String command, CallbackInfo ci) {
+		if (ClientCommandInternals.executeCommand(command, true)) {
+			ci.cancel();
+		}
 	}
 }
