@@ -30,7 +30,7 @@ import org.quiltmc.qsl.tooltip.impl.client.QuiltClientTooltipMod;
  * it will use the {@link org.quiltmc.qsl.tooltip.api.client.TooltipComponentCallback} event with the phase {@link #EVENT_PHASE}.
  * <p>
  * <b>WARNING:</b> when implementing this interface,
- * make sure to annotate the implemented method {@link #toComponent()} with {@code @Environment(EnvType.CLIENT)}.
+ * make sure to annotate the implemented method {@link #toComponent()} with {@code @ClientOnly}.
  */
 public interface ConvertibleTooltipData extends TooltipData {
 	/**
@@ -46,7 +46,7 @@ public interface ConvertibleTooltipData extends TooltipData {
 	 * {@return the associated component}
 	 * <p>
 	 * <b>WARNING:</b> when implementing this interface,
-	 * make sure to annotate the implemented method with {@code @Environment(EnvType.CLIENT)}.
+	 * make sure to annotate the implemented method with {@code @ClientOnly}.
 	 */
 	@ClientOnly
 	TooltipComponent toComponent();

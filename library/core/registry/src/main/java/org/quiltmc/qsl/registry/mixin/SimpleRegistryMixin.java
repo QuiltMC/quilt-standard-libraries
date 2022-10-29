@@ -117,7 +117,7 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 			)
 	)
 	private Holder.Reference<V> quilt$eagerFillReference(Holder.Reference<V> reference, int rawId, RegistryKey<V> key, V entry, Lifecycle lifecycle) {
-		reference.m_xtyteimy(entry);
+		reference.setValue(entry);
 		return reference;
 	}
 

@@ -88,8 +88,8 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	}
 
 	@Override
-	public Lifecycle m_sefrrypp(T object) {
-		return this.wrapped.m_sefrrypp(object);
+	public Lifecycle getEntryLifecycle(T object) {
+		return this.wrapped.getEntryLifecycle(object);
 	}
 
 	@Override

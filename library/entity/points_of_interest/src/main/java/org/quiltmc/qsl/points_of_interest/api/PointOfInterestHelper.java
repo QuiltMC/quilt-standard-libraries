@@ -111,7 +111,6 @@ public final class PointOfInterestHelper {
 	 * @return the {@link RegistryKey} for the {@link PointOfInterestType}
 	 */
 	public static RegistryKey<PointOfInterestType> register(Identifier id, PointOfInterestType poiType) {
-		PointOfInterestTypes.ALL_STATES.addAll(poiType.blockStates());
 		var key = RegistryKey.of(Registry.POINT_OF_INTEREST_TYPE_KEY, id);
 		Registry.register(Registry.POINT_OF_INTEREST_TYPE, key, poiType);
 		poiType.blockStates().forEach(state -> {

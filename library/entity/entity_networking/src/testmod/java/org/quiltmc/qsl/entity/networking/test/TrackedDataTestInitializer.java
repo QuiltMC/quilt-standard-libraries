@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.entity.networking.test;
 
+import java.util.Objects;
+
 import net.fabricmc.api.EnvType;
 
 import net.minecraft.entity.data.TrackedDataHandler;
@@ -40,10 +42,11 @@ public class TrackedDataTestInitializer implements ModInitializer {
 			value.write(buf);
 		}
 
+		@SuppressWarnings({"rawtypes", "unchecked"})
 		@Override
 		public ParticleEffect read(PacketByteBuf buf) {
 			ParticleType type = buf.readById(Registry.PARTICLE_TYPE);
-			return type.getParametersFactory().read(type, buf);
+			return Objects.requireNonNull(type).getParametersFactory().read(type, buf);
 		}
 	};
 	public static final TrackedDataHandler<StatusEffect> TEST_HANDLER = TrackedDataHandler.createIndexed(Registry.STATUS_EFFECT);

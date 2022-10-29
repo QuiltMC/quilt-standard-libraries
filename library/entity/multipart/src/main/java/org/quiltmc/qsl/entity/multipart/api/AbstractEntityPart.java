@@ -16,6 +16,9 @@
 
 package org.quiltmc.qsl.entity.multipart.api;
 
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
@@ -24,9 +27,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3f;
 
 /**
  * A partial implementation of an {@link EntityPart} with the most common methods implemented.
@@ -199,10 +200,11 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	 * @param roll  the rotation about x-axis in degrees
 	 */
 	public void rotate(float pitch, float yaw, float roll) {
-		Vec3f relativePos = new Vec3f(this.getAbsolutePosition().subtract(this.getAbsolutePivot()));
-		relativePos.rotate(new Quaternion(-roll, -yaw, -pitch, true));
+		var relativeToConvert = this.getAbsolutePosition().subtract(this.getAbsolutePivot());
+		var relativePos = new Vector3f((float) relativeToConvert.getX(), (float) relativeToConvert.getY(), (float) relativeToConvert.getZ());
+		relativePos.rotate(new Quaternionf(-roll, -yaw, -pitch, 0));
 		var transformedPos = this.getAbsolutePivot().subtract(this.getAbsolutePosition())
-				.add(relativePos.getX(), relativePos.getY(), relativePos.getZ());
+				.add(relativePos.x(), relativePos.y(), relativePos.z());
 
 		this.move(transformedPos);
 	}
@@ -222,7 +224,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	 * @return the pivot point
 	 */
 	public Vec3d getAbsolutePivot() {
-		return this.owner.getPos().add(pivot);
+		return this.owner.getPos().add(this.pivot);
 	}
 
 	/**

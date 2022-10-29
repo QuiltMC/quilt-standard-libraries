@@ -77,6 +77,7 @@ import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayPingS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.unmapped.C_uetbxsjn;
 import net.minecraft.unmapped.C_vtnjglse;
 
 import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
@@ -171,9 +172,9 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 				packet.getData().release();
 			}
 
-			this.connection.send(new DisconnectS2CPacket(reason), PacketSendListener.alwaysRun(() -> {
-				this.connection.disconnect(reason);
-			}));
+			this.connection.send(new DisconnectS2CPacket(reason),
+					PacketSendListener.alwaysRun(() -> this.connection.disconnect(reason))
+			);
 		} catch (Exception var3) {
 			LOGGER.error("Error whilst disconnecting player", var3);
 		}
@@ -318,4 +319,7 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 
 	@Override
 	public void onUpdateDifficultyLock(UpdateDifficultyLockC2SPacket packet) {}
+
+	@Override
+	public void m_iwwirrzo(C_uetbxsjn c_uetbxsjn) {}
 }

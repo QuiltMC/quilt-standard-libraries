@@ -48,6 +48,7 @@ public class QuiltEntityNetworkingInitializer implements ModInitializer {
 		return handler;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onInitialize(ModContainer mod) {
 		Registry.register(((Registry<Registry<TrackedDataHandler<?>>>) Registry.REGISTRIES), TRACKED_DATA_HANDLER_REGISTRY.getKey().getValue(), TRACKED_DATA_HANDLER_REGISTRY);

@@ -17,9 +17,6 @@
 
 package org.quiltmc.qsl.screen.api.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import net.minecraft.client.gui.screen.Screen;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -149,7 +146,7 @@ public final class ScreenMouseEvents {
 		}
 	});
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface AllowMouseClick extends ClientEventAwareListener {
 		/**
@@ -163,7 +160,7 @@ public final class ScreenMouseEvents {
 		TriState allowMouseClick(Screen screen, double mouseX, double mouseY, int button);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface BeforeMouseClick extends ClientEventAwareListener {
 		/**
@@ -177,7 +174,7 @@ public final class ScreenMouseEvents {
 		void beforeMouseClick(Screen screen, double mouseX, double mouseY, int button);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface AfterMouseClick extends ClientEventAwareListener {
 		/**
@@ -191,7 +188,7 @@ public final class ScreenMouseEvents {
 		void afterMouseClick(Screen screen, double mouseX, double mouseY, int button);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface AllowMouseRelease extends ClientEventAwareListener {
 		/**
@@ -205,7 +202,7 @@ public final class ScreenMouseEvents {
 		TriState allowMouseRelease(Screen screen, double mouseX, double mouseY, int button);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface BeforeMouseRelease extends ClientEventAwareListener {
 		/**
@@ -219,7 +216,7 @@ public final class ScreenMouseEvents {
 		void beforeMouseRelease(Screen screen, double mouseX, double mouseY, int button);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface AfterMouseRelease extends ClientEventAwareListener {
 		/**
@@ -233,7 +230,7 @@ public final class ScreenMouseEvents {
 		void afterMouseRelease(Screen screen, double mouseX, double mouseY, int button);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface AllowMouseScroll extends ClientEventAwareListener {
 		/**
@@ -248,7 +245,7 @@ public final class ScreenMouseEvents {
 		TriState allowMouseScroll(Screen screen, double mouseX, double mouseY, double scrollDistanceX, double scrollDistanceY);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface BeforeMouseScroll extends ClientEventAwareListener {
 		/**
@@ -262,7 +259,7 @@ public final class ScreenMouseEvents {
 		void beforeMouseScroll(Screen screen, double mouseX, double mouseY, double scrollDistanceX, double scrollDistanceY);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface AfterMouseScroll extends ClientEventAwareListener {
 		/**

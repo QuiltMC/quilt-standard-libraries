@@ -35,7 +35,6 @@ import net.minecraft.util.Util;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.poi.PointOfInterestType;
-import net.minecraft.world.poi.PointOfInterestTypes;
 
 import org.quiltmc.qsl.points_of_interest.impl.PointOfInterestTypeExtensions;
 
@@ -85,8 +84,6 @@ public class PointOfInterestTypeMixin implements PointOfInterestTypeExtensions {
 	@Unique
 	private void quilt$setBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states, boolean added) {
 		if (!added) {
-			PointOfInterestTypes.ALL_STATES.removeAll(this.blockStates);
-
 			for (BlockState state : this.blockStates) {
 				STATE_TO_TYPE.remove(state);
 			}
@@ -98,8 +95,6 @@ public class PointOfInterestTypeMixin implements PointOfInterestTypeExtensions {
 				throw Util.throwOrPause(new IllegalStateException(String.format("%s is defined in too many tags", state)));
 			}
 		}
-
-		PointOfInterestTypes.ALL_STATES.addAll(states);
 
 		this.blockStates = Set.copyOf(states);
 	}

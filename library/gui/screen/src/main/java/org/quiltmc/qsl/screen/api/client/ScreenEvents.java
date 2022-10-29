@@ -17,9 +17,6 @@
 
 package org.quiltmc.qsl.screen.api.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
@@ -140,43 +137,43 @@ public final class ScreenEvents {
 		}
 	});
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface BeforeInit extends ClientEventAwareListener {
 		void beforeInit(Screen screen, MinecraftClient client, int scaledWidth, int scaledHeight);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface AfterInit extends ClientEventAwareListener {
 		void afterInit(Screen screen, MinecraftClient client, int scaledWidth, int scaledHeight);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface Remove extends ClientEventAwareListener {
 		void onRemove(Screen screen);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface BeforeRender extends ClientEventAwareListener {
 		void beforeRender(Screen screen, MatrixStack matrices, int mouseX, int mouseY, float tickDelta);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface AfterRender extends ClientEventAwareListener {
 		void afterRender(Screen screen, MatrixStack matrices, int mouseX, int mouseY, float tickDelta);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface BeforeTick extends ClientEventAwareListener {
 		void beforeTick(Screen screen);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface AfterTick extends ClientEventAwareListener {
 		void afterTick(Screen screen);
