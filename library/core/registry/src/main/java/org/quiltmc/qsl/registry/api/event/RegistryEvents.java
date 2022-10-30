@@ -16,9 +16,14 @@
 
 package org.quiltmc.qsl.registry.api.event;
 
+import org.jetbrains.annotations.NotNull;
+
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.base.api.event.EventAwareListener;
 import org.quiltmc.qsl.registry.impl.event.RegistryEventStorage;
 
 /**
@@ -48,6 +53,44 @@ public final class RegistryEvents {
 	}
 
 	/**
+	 * This event gets triggered when a new {@link DynamicRegistryManager} gets created,
+	 * but before it gets filled.
+	 * <p>
+	 * This event can be used to register callbacks to dynamic registries, or to pre-fill some values.
+	 * <p>
+	 * <strong>Important Note</strong>: The passed dynamic registry manager might not
+	 * contain the registry, as this event is invoked for each layer of
+	 * the combined registry manager, and each layer holds different registries.
+	 * Use {@link DynamicRegistryManager#getOptional} to prevent crashes.
+	 */
+	public static final Event<DynamicRegistrySetupCallback> DYNAMIC_REGISTRY_SETUP = Event.create(DynamicRegistrySetupCallback.class,
+			callbacks -> (resourceManager, registryManager) -> {
+				for (var callback : callbacks) {
+					callback.onDynamicRegistrySetup(resourceManager, registryManager);
+				}
+			}
+	);
+
+	/**
+	 * This event gets triggered when a new {@link DynamicRegistryManager} gets created,
+	 * after it has been filled with the registry entries specified by data packs.
+	 * <p>
+	 * This event can be used to register callbacks to dynamic registries, or to inspect values.
+	 * <p>
+	 * <strong>Important Note</strong>: The passed dynamic registry manager might not
+	 * contain the registry, as this event is invoked for each layer of
+	 * the combined registry manager, and each layer holds different registries.
+	 * Use {@link DynamicRegistryManager#getOptional} to prevent crashes.
+	 */
+	public static final Event<DynamicRegistryLoadedCallback> DYNAMIC_REGISTRY_LOADED = Event.create(DynamicRegistryLoadedCallback.class,
+			callbacks -> registryManager -> {
+				for (var callback : callbacks) {
+					callback.onDynamicRegistryLoaded(registryManager);
+				}
+			}
+	);
+
+	/**
 	 * Functional interface to be implemented on callbacks for {@link #getEntryAddEvent(Registry)}.
 	 *
 	 * @param <V> the entry type of the {@link Registry} being listened for
@@ -62,5 +105,38 @@ public final class RegistryEvents {
 		 *                being registered
 		 */
 		void onAdded(RegistryEntryContext<V> context);
+	}
+
+	@FunctionalInterface
+	public interface DynamicRegistrySetupCallback extends EventAwareListener {
+		/**
+		 * Called when a new {@link DynamicRegistryManager} gets created,
+		 * but before it gets filled.
+		 * <p>
+		 * <strong>Important Note</strong>: The passed dynamic registry manager might not
+		 * contain the registry, as this event is invoked for each layer of
+		 * the combined registry manager, and each layer holds different registries.
+		 * Use {@link DynamicRegistryManager#getOptional} to prevent crashes.
+		 *
+		 * @param resourceManager the resource manager used to load the registries
+		 * @param registryManager the registry manager
+		 */
+		void onDynamicRegistrySetup(@NotNull ResourceManager resourceManager, @NotNull DynamicRegistryManager registryManager);
+	}
+
+	@FunctionalInterface
+	public interface DynamicRegistryLoadedCallback extends EventAwareListener {
+		/**
+		 * Called when a new {@link DynamicRegistryManager} gets created,
+		 * after it has been filled with the registry entries specified by data packs.
+		 * <p>
+		 * <strong>Important Note</strong>: The passed dynamic registry manager might not
+		 * contain the registry, as this event is invoked for each layer of
+		 * the combined registry manager, and each layer holds different registries.
+		 * Use {@link DynamicRegistryManager#getOptional} to prevent crashes.
+		 *
+		 * @param registryManager the registry manager
+		 */
+		void onDynamicRegistryLoaded(@NotNull DynamicRegistryManager registryManager);
 	}
 }
