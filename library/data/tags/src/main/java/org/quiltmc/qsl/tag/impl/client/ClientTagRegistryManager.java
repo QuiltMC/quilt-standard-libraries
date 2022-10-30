@@ -35,8 +35,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,6 +50,7 @@ import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.tag.api.QuiltTagKey;
 import org.quiltmc.qsl.tag.api.TagRegistry;
 import org.quiltmc.qsl.tag.api.TagType;
@@ -64,17 +63,24 @@ public final class ClientTagRegistryManager<T> {
 			new WeakHashMap<>();
 
 	private final RegistryKey<? extends Registry<T>> registryKey;
-	private final ClientRegistryFetcher registryFetcher;
+	private final RegistryFetcher registryFetcher;
 	private final TagGroupLoader<Holder<T>> loader;
-	private DynamicRegistryManager registryManager = BuiltinRegistries.MANAGER;
+	private DynamicRegistryManager registryManager = BuiltinRegistries.m_bayqaavy();
 	private Map<Identifier, List<TagGroupLoader.EntryWithSource>> serializedTags = Map.of();
 	private Map<TagKey<T>, Collection<Holder<T>>> clientOnlyValues;
 	private Map<Identifier, List<TagGroupLoader.EntryWithSource>> fallbackSerializedTags = Map.of();
 	private Map<TagKey<T>, Collection<Holder<T>>> fallbackValues;
 
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	private ClientTagRegistryManager(RegistryKey<? extends Registry<T>> registryKey, String dataType) {
 		this.registryKey = registryKey;
-		this.registryFetcher = new ClientRegistryFetcher();
+
+		if (Registry.REGISTRIES.contains((RegistryKey) registryKey)) {
+			this.registryFetcher = new StaticRegistryFetcher();
+		} else {
+			this.registryFetcher = new ClientRegistryFetcher();
+		}
+
 		this.loader = new TagGroupLoader<>(this.registryFetcher, dataType);
 	}
 
@@ -91,7 +97,7 @@ public final class ClientTagRegistryManager<T> {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	public void setSerializedTags(Map<Identifier, List<TagGroupLoader.EntryWithSource>> serializedTags) {
 		this.serializedTags = serializedTags;
 		this.clientOnlyValues = this.buildDynamicGroup(this.serializedTags, TagType.CLIENT_ONLY);
@@ -113,19 +119,19 @@ public final class ClientTagRegistryManager<T> {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	public void setFallbackSerializedTags(Map<Identifier, List<TagGroupLoader.EntryWithSource>> serializedTags) {
 		this.fallbackSerializedTags = serializedTags;
 		this.fallbackValues = this.buildDynamicGroup(this.fallbackSerializedTags, TagType.CLIENT_FALLBACK);
 		this.bindTags(this.fallbackValues, (ref, tags) -> ((QuiltHolderReferenceHooks<T>) ref).quilt$setFallbackTags(tags));
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	public Map<Identifier, List<TagGroupLoader.EntryWithSource>> load(ResourceManager resourceManager) {
 		return this.loader.loadTags(resourceManager);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	public void apply(DynamicRegistryManager registryManager) {
 		this.registryManager = registryManager;
 
@@ -133,7 +139,7 @@ public final class ClientTagRegistryManager<T> {
 		this.setFallbackSerializedTags(this.fallbackSerializedTags);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	private Map<TagKey<T>, Collection<Holder<T>>> buildDynamicGroup(Map<Identifier, List<TagGroupLoader.EntryWithSource>> tagBuilders, TagType type) {
 		if (!TagRegistryImpl.isRegistryDynamic(this.registryKey)) {
 			var tags = new Object2ObjectOpenHashMap<TagKey<T>, Collection<Holder<T>>>();
@@ -166,7 +172,7 @@ public final class ClientTagRegistryManager<T> {
 		tagBuilders.forEach((tagId, builder) -> builder.forEach(entry -> dependencyConsumer.accept(tagId, entry.entry())));
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	public void bindTags(Map<TagKey<T>, Collection<Holder<T>>> map, BiConsumer<Holder.Reference<T>, List<TagKey<T>>> consumer) {
 		var registry = this.registryManager.getOptional(this.registryKey);
 
@@ -204,7 +210,7 @@ public final class ClientTagRegistryManager<T> {
 		);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	static void init() {
 		Registry.REGISTRIES.forEach(registry -> {
 			get(registry.getKey());
@@ -218,12 +224,12 @@ public final class ClientTagRegistryManager<T> {
 		TAG_GROUP_MANAGERS.values().forEach(consumer);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	public static void applyAll(DynamicRegistryManager registryManager) {
 		TAG_GROUP_MANAGERS.forEach((registryKey, manager) -> manager.apply(registryManager));
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	private class TagResolver implements TagEntry.Lookup<Holder<T>> {
 		private final Map<TagKey<T>, Collection<Holder<T>>> tags = new Object2ObjectOpenHashMap<>();
 		private final TagType type;
@@ -262,12 +268,29 @@ public final class ClientTagRegistryManager<T> {
 		}
 	}
 
+	private abstract class RegistryFetcher implements Function<Identifier, Optional<? extends Holder<T>>> {
+	}
+
+	private class StaticRegistryFetcher extends RegistryFetcher {
+		private final Registry<T> cached;
+
+		@SuppressWarnings({"unchecked", "rawtypes"})
+		private StaticRegistryFetcher() {
+			this.cached = (Registry<T>) Registry.REGISTRIES.get((RegistryKey) ClientTagRegistryManager.this.registryKey);
+		}
+
+		@Override
+		public Optional<? extends Holder<T>> apply(Identifier id) {
+			return this.cached.getHolder(RegistryKey.of(this.cached.getKey(), id));
+		}
+	}
+
 	/**
 	 * Represents a registry content fetcher.
 	 * <p>
 	 * This fetcher will auto-update the reference to the underlying registry whenever the dynamic registry manager changes.
 	 */
-	private class ClientRegistryFetcher implements Function<Identifier, Optional<Holder<T>>> {
+	private class ClientRegistryFetcher extends RegistryFetcher {
 		private boolean firstCall = true;
 		private DynamicRegistryManager lastRegistryManager;
 		private Registry<T> cached;
@@ -276,7 +299,7 @@ public final class ClientTagRegistryManager<T> {
 		}
 
 		@Override
-		public Optional<Holder<T>> apply(Identifier id) {
+		public Optional<? extends Holder<T>> apply(Identifier id) {
 			if (firstCall || ClientTagRegistryManager.this.registryManager != this.lastRegistryManager) {
 				this.lastRegistryManager = ClientTagRegistryManager.this.registryManager;
 				this.cached = this.lastRegistryManager.getOptional(ClientTagRegistryManager.this.registryKey)

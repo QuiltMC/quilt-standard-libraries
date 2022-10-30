@@ -20,47 +20,40 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.resource.DefaultClientResourcePack;
 import net.minecraft.resource.AutoCloseableResourceManager;
 import net.minecraft.resource.MultiPackResourceManager;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.pack.DefaultResourcePack;
 import net.minecraft.resource.pack.ResourcePackManager;
 import net.minecraft.resource.pack.ResourcePackProfile;
 import net.minecraft.resource.pack.ResourcePackSource;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.resource.loader.impl.ModResourcePackProvider;
 import org.quiltmc.qsl.resource.loader.impl.QuiltMultiPackResourceManagerHooks;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
-import org.quiltmc.qsl.tag.mixin.client.ClientBuiltinResourcePackProviderAccessor;
-import org.quiltmc.qsl.tag.mixin.client.DefaultClientResourcePackAccessor;
 
-@Environment(EnvType.CLIENT)
+@ClientOnly
 @ApiStatus.Internal
 final class ClientDefaultTagManagerReloader extends ClientOnlyTagManagerReloader {
 	private static final Identifier ID = new Identifier(ClientQuiltTagsMod.NAMESPACE, "client_default_tags");
 	private final ResourcePackManager resourcePackManager;
 
 	ClientDefaultTagManagerReloader() {
-		var defaultPack = ((ClientBuiltinResourcePackProviderAccessor) MinecraftClient.getInstance().getResourcePackProvider())
-				.getPack();
+		DefaultResourcePack defaultPack = MinecraftClient.getInstance().m_iuvifafs();
 
-		var pack = ResourceLoaderImpl.buildMinecraftResourcePack(ResourceType.SERVER_DATA, new DefaultClientResourcePack(
-				ClientBuiltinResourcePackProviderAccessor.getDefaultPackMetadata(), ((DefaultClientResourcePackAccessor) defaultPack).getIndex()
-		));
-		this.resourcePackManager = new ResourcePackManager(ResourceType.SERVER_DATA, (profileAdder, factory) -> {
-			profileAdder.accept(factory.create("vanilla", pack.getDisplayName(), true, () -> pack,
-					ClientBuiltinResourcePackProviderAccessor.getDefaultPackMetadata(), ResourcePackProfile.InsertionPosition.BOTTOM,
-					ResourcePackSource.PACK_SOURCE_BUILTIN)
-			);
+		var pack = ResourceLoaderImpl.buildMinecraftResourcePack(ResourceType.SERVER_DATA, defaultPack);
+		this.resourcePackManager = new ResourcePackManager((profileAdder) -> {
+			profileAdder.accept(ResourcePackProfile.of("vanilla", pack.getDisplayName(), true, name -> pack,
+					ResourceType.SERVER_DATA, ResourcePackProfile.InsertionPosition.BOTTOM, ResourcePackSource.PACK_SOURCE_BUILTIN
+			));
 		}, ModResourcePackProvider.SERVER_RESOURCE_PACK_PROVIDER);
 	}
 
@@ -75,6 +68,7 @@ final class ClientDefaultTagManagerReloader extends ClientOnlyTagManagerReloader
 	 * @return the modified resource manager
 	 */
 	private AutoCloseableResourceManager getServerDataResourceManager() {
+		resourcePackManager.setEnabledProfiles(MinecraftClient.getInstance().getResourcePackManager().getEnabledNames());
 		resourcePackManager.scanPacks();
 		var manager = new MultiPackResourceManager(ResourceType.SERVER_DATA, resourcePackManager.createResourcePacks());
 		((QuiltMultiPackResourceManagerHooks) manager).quilt$appendTopPacks();

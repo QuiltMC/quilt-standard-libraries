@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.tag.mixin.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -31,10 +29,11 @@ import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import net.minecraft.text.Text;
 import net.minecraft.util.registry.BuiltinRegistries;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.tag.impl.TagRegistryImpl;
 import org.quiltmc.qsl.tag.impl.client.ClientTagRegistryManager;
 
-@Environment(EnvType.CLIENT)
+@ClientOnly
 @Mixin(ClientPlayNetworkHandler.class)
 public abstract class ClientPlayNetworkHandlerMixin {
 	@Shadow
@@ -55,7 +54,7 @@ public abstract class ClientPlayNetworkHandlerMixin {
 
 	@Inject(method = "onDisconnected", at = @At("TAIL"))
 	private void onDisconnected(Text reason, CallbackInfo ci) {
-		ClientTagRegistryManager.applyAll(BuiltinRegistries.MANAGER);
+		ClientTagRegistryManager.applyAll(BuiltinRegistries.m_bayqaavy());
 
 		if (!this.connection.isLocal()) {
 			TagRegistryImpl.resetTags();

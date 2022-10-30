@@ -22,6 +22,9 @@ import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.tag.TagKey;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
+
+@ClientOnly
 @ApiStatus.Internal
 public interface QuiltHolderReferenceHooks<T> {
 	void quilt$setFallbackTags(Collection<TagKey<T>> tags);

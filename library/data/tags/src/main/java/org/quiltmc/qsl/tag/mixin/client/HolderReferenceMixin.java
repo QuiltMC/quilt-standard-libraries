@@ -28,10 +28,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Holder;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.tag.api.QuiltTagKey;
 import org.quiltmc.qsl.tag.api.TagType;
 import org.quiltmc.qsl.tag.impl.client.QuiltHolderReferenceHooks;
 
+@ClientOnly
 @Mixin(Holder.Reference.class)
 public abstract class HolderReferenceMixin<T> implements Holder<T>, QuiltHolderReferenceHooks<T> {
 	@Unique
