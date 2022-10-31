@@ -31,6 +31,7 @@ import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.RegistryKey;
 
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
+import org.quiltmc.qsl.registry.impl.DynamicRegistryManagerSetupContextImpl;
 
 @Mixin(C_ratuauki.class)
 public class C_ratuaukiMixin {
@@ -42,7 +43,9 @@ public class C_ratuaukiMixin {
 	private static void onBeforeLoad(ResourceManager resourceManager, DynamicRegistryManager baseRegistryManager,
 			List<C_ratuauki.C_qpshoosu<?>> entries, CallbackInfoReturnable<DynamicRegistryManager.Frozen> cir,
 			Map<RegistryKey<?>, Exception> errors, List<?> list2, DynamicRegistryManager registryManager) {
-		RegistryEvents.DYNAMIC_REGISTRY_SETUP.invoker().onDynamicRegistrySetup(resourceManager, registryManager);
+		RegistryEvents.DYNAMIC_REGISTRY_SETUP.invoker().onDynamicRegistrySetup(
+				new DynamicRegistryManagerSetupContextImpl(resourceManager, registryManager)
+		);
 	}
 
 	@Inject(

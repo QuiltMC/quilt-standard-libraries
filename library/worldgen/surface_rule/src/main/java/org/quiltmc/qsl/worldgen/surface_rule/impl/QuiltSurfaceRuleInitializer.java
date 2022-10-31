@@ -25,6 +25,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.gen.chunk.ChunkGeneratorSettings;
 import net.minecraft.world.gen.surfacebuilder.SurfaceRules;
 
+import org.quiltmc.qsl.registry.api.event.DynamicRegistryManagerSetupContext;
 import org.quiltmc.qsl.registry.api.event.RegistryEntryContext;
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.quiltmc.qsl.registry.api.event.RegistryMonitor;
@@ -34,9 +35,9 @@ import org.quiltmc.qsl.worldgen.surface_rule.mixin.ChunkGeneratorSettingsAccesso
 @ApiStatus.Internal
 public class QuiltSurfaceRuleInitializer implements RegistryEvents.DynamicRegistrySetupCallback {
 	@Override
-	public void onDynamicRegistrySetup(@NotNull ResourceManager resourceManager, @NotNull DynamicRegistryManager registryManager) {
-		registryManager.getOptional(Registry.CHUNK_GENERATOR_SETTINGS_KEY).ifPresent(registry -> {
-			RegistryMonitor.create(registry).forAll(context -> this.modifyChunkGeneratorSettings(context, resourceManager));
+	public void onDynamicRegistrySetup(@NotNull DynamicRegistryManagerSetupContext context) {
+		context.monitor(Registry.CHUNK_GENERATOR_SETTINGS_KEY, monitor -> {
+			monitor.forAll(ctx -> this.modifyChunkGeneratorSettings(ctx, context.resourceManager()));
 		});
 	}
 

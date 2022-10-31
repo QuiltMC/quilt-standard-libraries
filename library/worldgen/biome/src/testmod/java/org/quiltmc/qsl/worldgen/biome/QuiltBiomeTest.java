@@ -18,6 +18,7 @@
 package org.quiltmc.qsl.worldgen.biome;
 
 import java.util.List;
+import java.util.Set;
 
 import com.mojang.datafixers.util.Pair;
 import org.slf4j.Logger;
@@ -91,29 +92,27 @@ public class QuiltBiomeTest implements ModInitializer {
 	public void onInitialize(ModContainer mod) {
 		ResourceLoader.registerBuiltinResourcePack(id("registry_entry_existence_test"), mod, ResourcePackActivationType.NORMAL);
 
-		RegistryEvents.DYNAMIC_REGISTRY_SETUP.register((resourceManager, registryManager) -> {
-			registryManager.getOptional(Registry.BIOME_KEY).ifPresent(registry -> {
-				Registry.register(registry, TEST_CRIMSON_FOREST.getValue(), TheNetherBiomeCreator.createCrimsonForest());
+		RegistryEvents.DYNAMIC_REGISTRY_SETUP.register(context -> {
+			context.register(Registry.BIOME_KEY, TEST_CRIMSON_FOREST.getValue(), TheNetherBiomeCreator::createCrimsonForest);
 
-				Registry.register(registry, CUSTOM_PLAINS.getValue(), OverworldBiomeCreator.createPlains(false, false, false));
+			context.register(Registry.BIOME_KEY, CUSTOM_PLAINS.getValue(), () -> OverworldBiomeCreator.createPlains(false, false, false));
 
-				Registry.register(registry, TEST_END_HIGHLANDS.getValue(), createEndHighlands());
-				Registry.register(registry, TEST_END_MIDLANDS.getValue(), createEndMidlands());
-				Registry.register(registry, TEST_END_BARRRENS.getValue(), createEndBarrens());
-			});
+			context.register(Registry.BIOME_KEY, TEST_END_HIGHLANDS.getValue(), QuiltBiomeTest::createEndHighlands);
+			context.register(Registry.BIOME_KEY, TEST_END_MIDLANDS.getValue(), QuiltBiomeTest::createEndMidlands);
+			context.register(Registry.BIOME_KEY, TEST_END_BARRRENS.getValue(), QuiltBiomeTest::createEndBarrens);
 
-			registryManager.getOptional(Registry.PLACED_FEATURE_KEY).ifPresent(registry -> {
-				var configuredRegistry = registryManager.get(Registry.CONFIGURED_FEATURE_KEY);
-				ConfiguredFeature<?, ?> COMMON_DESERT_WELL = new ConfiguredFeature<>(Feature.DESERT_WELL, DefaultFeatureConfig.INSTANCE);
-				Registry.register(configuredRegistry, QUILT_DESERT_WELL, COMMON_DESERT_WELL);
+			context.withRegistries(registries -> {
+				var configuredRegistry = registries.get(Registry.CONFIGURED_FEATURE_KEY);
+				ConfiguredFeature<?, ?> commonDesertWell = new ConfiguredFeature<>(Feature.DESERT_WELL, DefaultFeatureConfig.INSTANCE);
+				Registry.register(configuredRegistry, QUILT_DESERT_WELL, commonDesertWell);
 				Holder<ConfiguredFeature<?, ?>> featureEntry = configuredRegistry
-						.getOrCreateHolder(configuredRegistry.getKey(COMMON_DESERT_WELL).orElseThrow())
+						.getOrCreateHolder(configuredRegistry.getKey(commonDesertWell).orElseThrow())
 						.getOrThrow(false, BIOME_TEST_LOGGER::error);
 
 				// The placement config is taken from the vanilla desert well, but no randomness
-				PlacedFeature PLACED_COMMON_DESERT_WELL = new PlacedFeature(featureEntry, List.of(InSquarePlacementModifier.getInstance(), PlacedFeatureUtil.MOTION_BLOCKING_HEIGHTMAP, BiomePlacementModifier.getInstance()));
-				Registry.register(registry, QUILT_DESERT_WELL, PLACED_COMMON_DESERT_WELL);
-			});
+				PlacedFeature placedDesertWell = new PlacedFeature(featureEntry, List.of(InSquarePlacementModifier.getInstance(), PlacedFeatureUtil.MOTION_BLOCKING_HEIGHTMAP, BiomePlacementModifier.getInstance()));
+				registries.register(Registry.PLACED_FEATURE_KEY, QUILT_DESERT_WELL, placedDesertWell);
+			}, Set.of(Registry.PLACED_FEATURE_KEY, Registry.CONFIGURED_FEATURE_KEY));
 		});
 
 		NetherBiomes.addNetherBiome(BiomeKeys.PLAINS, MultiNoiseUtil.createNoiseHypercube(0.0F, 0.5F, 0.0F, 0.0F, 0.0F, 0.0F, 0.1F));
