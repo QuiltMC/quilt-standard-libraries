@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.registry.api.event;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.resource.ResourceManager;
@@ -63,6 +64,7 @@ public final class RegistryEvents {
 	 * the combined registry manager, and each layer holds different registries.
 	 * Use {@link DynamicRegistryManager#getOptional} to prevent crashes.
 	 */
+	@ApiStatus.Experimental
 	public static final Event<DynamicRegistrySetupCallback> DYNAMIC_REGISTRY_SETUP = Event.create(DynamicRegistrySetupCallback.class,
 			callbacks -> (resourceManager, registryManager) -> {
 				for (var callback : callbacks) {
@@ -107,6 +109,7 @@ public final class RegistryEvents {
 		void onAdded(RegistryEntryContext<V> context);
 	}
 
+	@ApiStatus.Experimental
 	@FunctionalInterface
 	public interface DynamicRegistrySetupCallback extends EventAwareListener {
 		/**
