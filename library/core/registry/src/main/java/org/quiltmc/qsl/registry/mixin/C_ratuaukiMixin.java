@@ -50,7 +50,7 @@ public class C_ratuaukiMixin {
 			at = @At(
 					value = "INVOKE",
 					target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V",
-					ordinal = 0,
+					ordinal = 1,
 					shift = At.Shift.AFTER
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD

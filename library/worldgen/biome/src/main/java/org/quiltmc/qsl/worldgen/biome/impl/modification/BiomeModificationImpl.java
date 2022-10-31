@@ -134,7 +134,7 @@ public class BiomeModificationImpl {
 
 			// Make a copy of the biome to allow selection contexts to see it unmodified,
 			// But do so only once it's known anything wants to modify the biome at all
-			var context = new BiomeSelectionContextImpl(impl, levelProperties, key, biome);
+			var context = new BiomeSelectionContextImpl(impl, key, biome);
 			BiomeModificationContextImpl modificationContext = null;
 
 			for (ModifierRecord modifier : sortedModifiers) {

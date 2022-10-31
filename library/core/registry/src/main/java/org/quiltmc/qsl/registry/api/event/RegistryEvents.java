@@ -73,7 +73,7 @@ public final class RegistryEvents {
 
 	/**
 	 * This event gets triggered when a new {@link DynamicRegistryManager} gets created,
-	 * after it has been filled with the registry entries specified by data packs.
+	 * after it has been filled with the registry entries specified by data packs and after the registries have been frozen.
 	 * <p>
 	 * This event can be used to register callbacks to dynamic registries, or to inspect values.
 	 * <p>
@@ -101,7 +101,7 @@ public final class RegistryEvents {
 		/**
 		 * Called when an entry in this callback's event's {@link Registry} has an entry added or assigned.
 		 *
-		 * @param context an object containing information regarding the registry, entry object, and ID of the entry
+		 * @param context an object containing information regarding the registry, entry object, and identifier of the entry
 		 *                being registered
 		 */
 		void onAdded(RegistryEntryContext<V> context);
@@ -128,7 +128,7 @@ public final class RegistryEvents {
 	public interface DynamicRegistryLoadedCallback extends EventAwareListener {
 		/**
 		 * Called when a new {@link DynamicRegistryManager} gets created,
-		 * after it has been filled with the registry entries specified by data packs.
+		 * after it has been filled with the registry entries specified by data packs and after the registries have been frozen.
 		 * <p>
 		 * <strong>Important Note</strong>: The passed dynamic registry manager might not
 		 * contain the registry, as this event is invoked for each layer of

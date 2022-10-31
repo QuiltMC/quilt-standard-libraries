@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiPredicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Suppliers;
@@ -43,6 +44,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Holder;
 import net.minecraft.util.HolderSet;
 import net.minecraft.util.collection.Pool;
+import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
@@ -60,6 +62,7 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeModificationContext;
 
 @ApiStatus.Internal
 public class BiomeModificationContextImpl implements BiomeModificationContext {
+	private static final Supplier<DynamicRegistryManager.Frozen> BUILTIN_REGISTRIES = Suppliers.memoize(BuiltinRegistries::m_bayqaavy);
 	private final DynamicRegistryManager registries;
 	private final Biome biome;
 	private final WeatherContext weather;
@@ -102,6 +105,39 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 	void freeze() {
 		this.generationSettings.freeze();
 		this.spawnSettings.freeze();
+	}
+
+	/**
+	 * Gets an entry from the given registry, assuming it's a registry loaded from data packs.
+	 * <p>
+	 * Gives more helpful error messages if an entry is missing by checking if the modder
+	 * forgot to data-gen the JSONs corresponding to their built-in objects.
+	 *
+	 * @param registry the registry
+	 * @param key      the game object to get
+	 * @param <T>      the type of game object
+	 * @return the holder of the game object
+	 */
+	private static <T> Holder.Reference<T> getHolder(Registry<T> registry, RegistryKey<T> key) {
+		Holder.Reference<T> entry = registry.getHolder(key).orElse(null);
+
+		if (entry == null) {
+			// Entry is missing. Check if it exists in the built-in registries and warn modders
+			// about the world-gen changing to JSON-only.
+			Registry<T> builtInRegistry = BUILTIN_REGISTRIES.get().get(registry.getKey());
+
+			if (builtInRegistry.contains(key)) {
+				throw new IllegalArgumentException("Entry " + key + " only exists in the built-in registry "
+						+ "but a corresponding entry couldn't be found in the dynamically loaded registries "
+						+ "(is not present in data-packs and isn't injected either). "
+						+ "Since 1.19.3+, the built-in registry for world generation objects is only used for data generation purposes.");
+			}
+
+			// The key doesn't exist in either built-in registries or data packs.
+			throw new IllegalArgumentException("Couldn't find registry entry for " + key);
+		}
+
+		return entry;
 	}
 
 	private class WeatherContextImpl implements WeatherContext {
@@ -258,19 +294,19 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 
 		@Override
 		public boolean removeFeature(GenerationStep.Feature step, RegistryKey<PlacedFeature> placedFeatureKey) {
-			PlacedFeature configuredFeature = this.features.getOrThrow(placedFeatureKey);
+			PlacedFeature placedFeature = getHolder(this.features, placedFeatureKey).value();
 
 			int stepIndex = step.ordinal();
 			List<HolderSet<PlacedFeature>> featureSteps = this.generationSettings.features;
 
 			if (stepIndex >= featureSteps.size()) {
-				return false; // The step was not populated with any features yet
+				return false; // The step was not populated with any features yet.
 			}
 
 			HolderSet<PlacedFeature> featuresInStep = featureSteps.get(stepIndex);
 			List<Holder<PlacedFeature>> features = new ArrayList<>(featuresInStep.stream().toList());
 
-			if (features.removeIf(feature -> feature.value() == configuredFeature)) {
+			if (features.removeIf(feature -> feature.value() == placedFeature)) {
 				featureSteps.set(stepIndex, HolderSet.createDirect(features));
 				this.rebuildFlowerFeatures = true;
 
@@ -285,26 +321,26 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 			List<HolderSet<PlacedFeature>> featureSteps = this.generationSettings.features;
 			int index = step.ordinal();
 
-			// Add new empty lists for the generation steps that have no features yet
+			// Add new empty lists for the generation steps that have no features yet.
 			while (index >= featureSteps.size()) {
 				featureSteps.add(HolderSet.createDirect(Collections.emptyList()));
 			}
 
-			featureSteps.set(index, this.plus(featureSteps.get(index), this.features.getHolderOrThrow(entry)));
+			featureSteps.set(index, this.plus(featureSteps.get(index), getHolder(this.features, entry)));
 
-			// Ensure the list of flower features is up to date
+			// Ensure the list of flower features is up-to-date.
 			this.rebuildFlowerFeatures = true;
 		}
 
 		@Override
 		public void addCarver(GenerationStep.Carver step, RegistryKey<ConfiguredCarver<?>> entry) {
-			// We do not need to delay evaluation of this since the registries are already fully built
-			this.generationSettings.carvers.put(step, this.plus(this.generationSettings.carvers.get(step), carvers.getHolderOrThrow(entry)));
+			// We do not need to delay evaluation of this since the registries are already fully built.
+			this.generationSettings.carvers.put(step, this.plus(this.generationSettings.carvers.get(step), getHolder(this.carvers, entry)));
 		}
 
 		@Override
 		public boolean removeCarver(GenerationStep.Carver step, RegistryKey<ConfiguredCarver<?>> configuredCarverKey) {
-			ConfiguredCarver<?> carver = this.carvers.getOrThrow(configuredCarverKey);
+			ConfiguredCarver<?> carver = getHolder(this.carvers, configuredCarverKey).value();
 			var genCarvers = new ArrayList<>(this.generationSettings.carvers.get(step).stream().toList());
 
 			if (genCarvers.removeIf(entry -> entry.value() == carver)) {

@@ -11,6 +11,7 @@ qslModule {
 	moduleDependencies {
 		core {
 			api("qsl_base")
+			testmodOnly("registry")
 			testmodOnly("resource_loader")
 			testmodOnly("lifecycle_events")
 		}

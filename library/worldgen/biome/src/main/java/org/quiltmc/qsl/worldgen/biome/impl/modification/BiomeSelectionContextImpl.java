@@ -31,21 +31,18 @@ import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.PlacedFeature;
 import net.minecraft.world.gen.feature.StructureFeature;
-import net.minecraft.world.level.LevelProperties;
 
 import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
 @ApiStatus.Internal
 public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 	private final DynamicRegistryManager dynamicRegistries;
-	private final LevelProperties levelProperties;
 	private final RegistryKey<Biome> key;
 	private final Biome biome;
 	private final Holder<Biome> entry;
 
-	public BiomeSelectionContextImpl(DynamicRegistryManager dynamicRegistries, LevelProperties levelProperties, RegistryKey<Biome> key, Biome biome) {
+	public BiomeSelectionContextImpl(DynamicRegistryManager dynamicRegistries, RegistryKey<Biome> key, Biome biome) {
 		this.dynamicRegistries = dynamicRegistries;
-		this.levelProperties = levelProperties;
 		this.key = key;
 		this.biome = biome;
 		this.entry = dynamicRegistries.get(Registry.BIOME_KEY).getHolderOrThrow(this.key);
@@ -97,7 +94,7 @@ public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 
 	@Override
 	public boolean canGenerateIn(RegistryKey<DimensionOptions> dimensionKey) {
-		DimensionOptions dimension = this.levelProperties.getGeneratorOptions().getDimensions().get(dimensionKey);
+		DimensionOptions dimension = this.dynamicRegistries.get(Registry.DIMENSION_KEY).get(dimensionKey);
 
 		if (dimension == null) {
 			return false;
