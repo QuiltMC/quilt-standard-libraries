@@ -138,11 +138,11 @@ Quick legend:
 
 ### Entity Library
 
-| Feature                         |      QSL       |   Fabric API   |
-|:--------------------------------|:--------------:|:--------------:|
-| EntityType registration helpers | :construction: |       ✔        |
-| Entity Events                   | :construction: |       ✔        |
-| Multipart Entity API            |       ✔        |       ❌        |
+| Feature                         | QSL | Fabric API |
+|:--------------------------------|:---:|:----------:|
+| EntityType registration helpers |  ✔  |     ✔      |
+| Entity Events                   |  ✔  |     ✔      |
+| Multipart Entity API            |  ✔  |     ❌      |
 
 ### GUI Library
 
