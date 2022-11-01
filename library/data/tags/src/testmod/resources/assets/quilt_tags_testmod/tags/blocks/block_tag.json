@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:light_blue_wool",
+    "minecraft:pink_wool",
+    "minecraft:white_wool"
+  ]
+}
