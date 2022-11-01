@@ -16,10 +16,13 @@
 
 package org.quiltmc.qsl.resource.loader.api;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
@@ -46,5 +49,16 @@ public interface QuiltResourcePack {
 	 */
 	default @NotNull ResourcePackActivationType getActivationType() {
 		return ResourcePackActivationType.NORMAL;
+	}
+
+	/**
+	 * {@return the path inside a resource pack of the given resource path}
+	 *
+	 * @param type the type of the resource
+	 * @param id   the identifier of the resource
+	 */
+	@Contract(value = "_, _ -> new", pure = true)
+	static @NotNull String getResourcePath(@NotNull ResourceType type, @NotNull Identifier id) {
+		return type.getDirectory() + '/' + id.getNamespace() + '/' + id.getPath();
 	}
 }

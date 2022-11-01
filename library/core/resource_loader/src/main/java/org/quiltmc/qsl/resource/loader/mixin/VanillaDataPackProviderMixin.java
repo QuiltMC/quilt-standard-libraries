@@ -45,7 +45,7 @@ public class VanillaDataPackProviderMixin {
 	// Synthetic method register(Consumer;ResourcePackProfile$Factory;)V -> lambda in ResourcePackProfile.of
 	// Using an injector to wrap the previous return value.
 	@Dynamic
-	@Inject(method = "method_14454", at = @At("RETURN"), cancellable = true, remap = false)
+	@Inject(method = "m_culkdexq()Lnet/minecraft/resource/pack/ResourcePack;", at = @At("RETURN"), cancellable = true)
 	private void onPackGet(CallbackInfoReturnable<ResourcePack> cir) {
 		cir.setReturnValue(ResourceLoaderImpl.buildMinecraftResourcePack((DefaultResourcePack) cir.getReturnValue()));
 	}

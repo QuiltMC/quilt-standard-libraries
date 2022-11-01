@@ -59,6 +59,5 @@ public final class Git {
 		}
 	}
 
-	private Git() {
-	}
+	private Git() {}
 }
