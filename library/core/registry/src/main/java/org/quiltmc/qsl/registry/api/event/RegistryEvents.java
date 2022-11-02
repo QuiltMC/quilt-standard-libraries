@@ -16,10 +16,8 @@
 
 package org.quiltmc.qsl.registry.api.event;
 
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
 
@@ -64,11 +62,10 @@ public final class RegistryEvents {
 	 * the combined registry manager, and each layer holds different registries.
 	 * Use {@link DynamicRegistryManager#getOptional} to prevent crashes.
 	 */
-	@ApiStatus.Experimental
 	public static final Event<DynamicRegistrySetupCallback> DYNAMIC_REGISTRY_SETUP = Event.create(DynamicRegistrySetupCallback.class,
-			callbacks -> (resourceManager, registryManager) -> {
+			callbacks -> context -> {
 				for (var callback : callbacks) {
-					callback.onDynamicRegistrySetup(resourceManager, registryManager);
+					callback.onDynamicRegistrySetup(context);
 				}
 			}
 	);
@@ -109,7 +106,6 @@ public final class RegistryEvents {
 		void onAdded(RegistryEntryContext<V> context);
 	}
 
-	@ApiStatus.Experimental
 	@FunctionalInterface
 	public interface DynamicRegistrySetupCallback extends EventAwareListener {
 		/**
@@ -119,12 +115,11 @@ public final class RegistryEvents {
 		 * <strong>Important Note</strong>: The passed dynamic registry manager might not
 		 * contain the registry, as this event is invoked for each layer of
 		 * the combined registry manager, and each layer holds different registries.
-		 * Use {@link DynamicRegistryManager#getOptional} to prevent crashes.
+		 * Use {@link DynamicRegistryManager#getOptional} or other utility methods provided by the context object to prevent crashes.
 		 *
-		 * @param resourceManager the resource manager used to load the registries
-		 * @param registryManager the registry manager
+		 * @param context the dynamic registry manager setup context
 		 */
-		void onDynamicRegistrySetup(@NotNull ResourceManager resourceManager, @NotNull DynamicRegistryManager registryManager);
+		void onDynamicRegistrySetup(@NotNull DynamicRegistryManagerSetupContext context);
 	}
 
 	@FunctionalInterface
