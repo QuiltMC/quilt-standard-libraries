@@ -113,7 +113,7 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 			)
 	)
 	private void quilt$callOnAppliedEvent(StatusEffectInstance effect, Entity source, CallbackInfo ci) {
-		StatusEffectEvents.ON_APPLIED.invoker().onApplied((LivingEntity) (Object) this, effect, true);
+		StatusEffectEvents.ON_APPLIED.invoker().onApplied((LivingEntity) (Object) this, effect, false);
 	}
 
 	@Redirect(
