@@ -19,13 +19,20 @@ package org.quiltmc.qsl.worldgen.biome;
 
 import java.util.List;
 
+import com.mojang.datafixers.util.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.BiomeMoodSound;
 import net.minecraft.tag.BiomeTags;
 import net.minecraft.util.Holder;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeEffects;
 import net.minecraft.world.biome.BiomeKeys;
@@ -47,6 +54,7 @@ import net.minecraft.world.gen.feature.util.PlacedFeatureUtil;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModifications;
@@ -54,8 +62,6 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectors;
 import org.quiltmc.qsl.worldgen.biome.api.ModificationPhase;
 import org.quiltmc.qsl.worldgen.biome.api.NetherBiomes;
 import org.quiltmc.qsl.worldgen.biome.api.TheEndBiomes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <b>NOTES FOR TESTING:</b>
@@ -153,6 +159,27 @@ public class QuiltBiomeTest implements ModInitializer {
 				GenerationStep.Feature.VEGETAL_DECORATION,
 				MOSS_PILE_PLACED_FEATURE
 		);
+
+		ServerLifecycleEvents.READY.register(server -> {
+			var world = server.getWorld(World.END);
+			assert world != null;
+
+			var pos = new BlockPos(0, 90, 0);
+			checkBiomeExists(world, pos, TEST_END_HIGHLANDS);
+			checkBiomeExists(world, pos, TEST_END_MIDLANDS);
+			checkBiomeExists(world, pos, TEST_END_BARRRENS);
+		});
+	}
+
+	private static void checkBiomeExists(ServerWorld world, BlockPos pos, RegistryKey<Biome> biomeKey) {
+		Pair<BlockPos, Holder<Biome>> posOfBiome = world.m_olxeedby((holder) -> holder.isRegistryKey(biomeKey), pos, 6400, 32, 64);
+
+		if (posOfBiome != null) {
+			BIOME_TEST_LOGGER.info("Biome {} has been found at {}.", posOfBiome.getSecond().getKey().orElseThrow(), posOfBiome.getFirst());
+		} else {
+			BIOME_TEST_LOGGER.error("Failed to locate biome {}. Something is probably very wrong.", biomeKey);
+			throw new AssertionError("Could not locate biome " + biomeKey);
+		}
 	}
 
 	// These are used for testing the spacing of custom end biomes.
