@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.datafixer.fix.BiomeRenameFix;
 import net.minecraft.datafixer.fix.BlockNameFix;
+import net.minecraft.datafixer.fix.EntityRenameFix;
 import net.minecraft.datafixer.fix.ItemNameFix;
 import net.minecraft.datafixer.schema.IdentifierNormalizingSchema;
 import net.minecraft.util.Identifier;
