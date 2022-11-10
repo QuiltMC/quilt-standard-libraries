@@ -166,7 +166,7 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	 * This should be used if your registry entry needs to store its own holder. Add the following to your registry entry class:
 	 * <pre><code>
 	 * public class Thing {
-	 *     private final Holder<Thing> registryHolder = YourCoolModRegistries.THINGS.createIntrusiveHolder(this);
+	 *     private final Holder<Thing> registryHolder = YourCoolModRegistries.THING.createIntrusiveHolder(this);
 	 *
 	 *     public Holder<Thing> getRegistryHolder() {
 	 *         return this.registryHolder;
