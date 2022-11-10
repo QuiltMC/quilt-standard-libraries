@@ -179,7 +179,7 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	 *     public static final RegistryKey<Registry<Thing>> THING_KEY = RegistryKey.ofRegistry(YourCoolMod.id("thing"));
 	 *
 	 *     public static final SimpleRegistry<Thing> THING =
-	 *         new QuiltRegistryBuilder(THING_KEY)
+	 *         QuiltRegistryBuilder.builtin(THING_KEY)
 	 *             .customHolderProvider(Thing::getRegistryHolder)
 	 *             .build();
 	 * }
