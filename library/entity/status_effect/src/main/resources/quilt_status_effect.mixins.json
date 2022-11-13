@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.entity.effect.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "EffectCommandMixin",
+    "LivingEntityMixin",
+    "MilkBucketItemMixin",
+    "StatusEffectMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
