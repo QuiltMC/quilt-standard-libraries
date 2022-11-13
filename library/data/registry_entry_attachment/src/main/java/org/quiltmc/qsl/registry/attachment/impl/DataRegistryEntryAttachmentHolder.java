@@ -19,7 +19,7 @@ package org.quiltmc.qsl.registry.attachment.impl;
 import net.minecraft.resource.ResourceType;
 
 public final class DataRegistryEntryAttachmentHolder<R> extends RegistryEntryAttachmentHolder<R> {
-	DataRegistryEntryAttachmentHolder() { }
+	DataRegistryEntryAttachmentHolder() {}
 
 	/**
 	 * Removes all attachment values that are loaded from the specified source.
@@ -27,7 +27,7 @@ public final class DataRegistryEntryAttachmentHolder<R> extends RegistryEntryAtt
 	 * @param source source that we're preparing to reload
 	 */
 	public void prepareReloadSource(ResourceType source) {
-		this.valueTagTable.rowKeySet().removeIf(attach -> attach.side().shouldLoad(source));
-		this.valueTable.rowKeySet().removeIf(attach -> attach.side().shouldLoad(source));
+		this.valueTagTable.rowKeySet().removeIf(attach -> !attach.side().shouldLoad(source));
+		this.valueTable.rowKeySet().removeIf(attach -> !attach.side().shouldLoad(source));
 	}
 }

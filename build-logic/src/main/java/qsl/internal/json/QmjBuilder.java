@@ -30,8 +30,8 @@ public final class QmjBuilder {
 				.endObject() // contributors -> metadata
 				.name("contact").beginObject() // contributors -> contact
 				.name("homepage").value("https://quiltmc.org")
-				.name("issues").value("https://github.com/quiltmc/quilt-standard-libaries/issues")
-				.name("sources").value("https://github.com/quiltmc/quilt-standard-libraries")
+				.name("issues").value("https://github.com/QuiltMC/quilt-standard-libraries/issues")
+				.name("sources").value("https://github.com/QuiltMC/quilt-standard-libraries")
 				.endObject() // contact -> metadata
 				.name("license").value("Apache-2.0")
 				.name("icon").value("assets/" + ext.getId().get() + "/icon.png")

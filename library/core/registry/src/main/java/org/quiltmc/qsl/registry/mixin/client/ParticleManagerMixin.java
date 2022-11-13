@@ -39,7 +39,6 @@ import org.quiltmc.qsl.registry.impl.sync.client.RebuildableIdModelHolder;
 @Environment(EnvType.CLIENT)
 @Mixin(ParticleManager.class)
 public class ParticleManagerMixin implements RebuildableIdModelHolder {
-
 	@Mutable
 	@Final
 	@Shadow
