@@ -27,7 +27,7 @@ public final class DataRegistryEntryAttachmentHolder<R> extends RegistryEntryAtt
 	 * @param source source that we're preparing to reload
 	 */
 	public void prepareReloadSource(ResourceType source) {
-		this.valueTagTable.rowKeySet().removeIf(attach -> !attach.side().shouldLoad(source));
-		this.valueTable.rowKeySet().removeIf(attach -> !attach.side().shouldLoad(source));
+		this.valueTagTable.rowKeySet().removeIf(attach -> attach.side().shouldLoad(source));
+		this.valueTable.rowKeySet().removeIf(attach -> attach.side().shouldLoad(source));
 	}
 }
