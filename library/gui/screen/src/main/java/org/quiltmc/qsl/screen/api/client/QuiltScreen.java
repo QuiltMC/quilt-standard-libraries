@@ -26,6 +26,7 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.item.ItemRenderer;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 /**
  * An interface implemented by {@link Screen} through a mixin in order to expose QSL extensions and also provide utility methods.
@@ -33,6 +34,7 @@ import org.quiltmc.loader.api.minecraft.ClientOnly;
  * @see ScreenEvents
  */
 @ClientOnly
+@InjectedInterface(Screen.class)
 public interface QuiltScreen {
 	/**
 	 * Gets all of the screen's button widgets.

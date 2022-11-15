@@ -21,8 +21,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import org.jetbrains.annotations.ApiStatus;
+
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -70,7 +71,7 @@ public final class QuiltCreativePlayerInventoryScreenWidgets {
 				this.drawTexture(matrices, this.x, this.y, u + (this.type == Type.NEXT ? 11 : 0), v, 11, 10);
 
 				if (this.hovered) {
-					gui.renderTooltip(matrices, Text.translatable(TRANSLATION_KEY, extensions.quilt$currentPage() + 1, ((ItemGroup.GROUPS.length - 12) / 9) + 2), mouseX, mouseY);
+					this.gui.renderTooltip(matrices, Text.translatable(TRANSLATION_KEY, this.extensions.quilt$currentPage() + 1, ((ItemGroup.GROUPS.length - 12) / 9) + 2), mouseX, mouseY);
 				}
 			}
 		}

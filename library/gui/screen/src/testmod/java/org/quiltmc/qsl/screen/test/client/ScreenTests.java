@@ -35,7 +35,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
-import org.quiltmc.qsl.screen.api.client.QuiltScreen;
 import org.quiltmc.qsl.screen.api.client.ScreenEvents;
 
 @ClientOnly
@@ -46,7 +45,7 @@ public class ScreenTests implements ScreenEvents.AfterInit, ScreenEvents.AfterRe
 	@Override
 	public void afterInit(Screen screen, MinecraftClient client, int scaledWidth, int scaledHeight) {
 		if (screen instanceof TitleScreen) {
-			final List<ClickableWidget> buttons = ((QuiltScreen) screen).getButtons();
+			final List<ClickableWidget> buttons = screen.getButtons();
 
 			buttons.add(
 					ButtonWidget.builder(Text.of("Hello world!!"), button -> LOGGER.info("Hello world!!"))
