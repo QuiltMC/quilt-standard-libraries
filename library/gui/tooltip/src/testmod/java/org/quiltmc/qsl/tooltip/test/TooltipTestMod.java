@@ -26,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -40,8 +41,8 @@ public final class TooltipTestMod implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		Registry.register(Registry.ITEM, new Identifier(NAMESPACE, "custom_tooltip_item"), CUSTOM_TOOLTIP_ITEM);
-		Registry.register(Registry.ITEM, new Identifier(NAMESPACE, "custom_convertible_tooltip_item"),
+		Registry.register(BuiltinRegistries.ITEM, new Identifier(NAMESPACE, "custom_tooltip_item"), CUSTOM_TOOLTIP_ITEM);
+		Registry.register(BuiltinRegistries.ITEM, new Identifier(NAMESPACE, "custom_convertible_tooltip_item"),
 				CUSTOM_CONVERTIBLE_TOOLTIP_ITEM);
 	}
 

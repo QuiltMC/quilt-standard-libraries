@@ -28,7 +28,7 @@ import net.minecraft.block.Oxidizable;
 import net.minecraft.block.OxidizableBlock;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.BuiltinRegistries;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -48,7 +48,7 @@ public class BlockContentRegistryTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		RegistryExtensions.register(Registry.BLOCK, new Identifier(MOD_ID, "oxidizable_iron_block"),
+		RegistryExtensions.register(BuiltinRegistries.BLOCK, new Identifier(MOD_ID, "oxidizable_iron_block"),
 				new OxidizableBlock(Oxidizable.OxidizationLevel.UNAFFECTED, AbstractBlock.Settings.copy(Blocks.IRON_BLOCK)),
 				BlockContentRegistries.OXIDIZABLE, new ReversibleBlockEntry(Blocks.IRON_BLOCK, false));
 
@@ -58,7 +58,7 @@ public class BlockContentRegistryTest implements ModInitializer {
 			}
 
 			LOGGER.info("Starting BlockContentRegistry tests");
-			Registry.BLOCK.getOrCreateTag(BlockTags.ANVIL).forEach(holder -> assertValues(holder.value(), BlockContentRegistries.FLAMMABLE, new FlammableBlockEntry(100, 100)));
+			BuiltinRegistries.BLOCK.getOrCreateTag(BlockTags.ANVIL).forEach(holder -> assertValues(holder.value(), BlockContentRegistries.FLAMMABLE, new FlammableBlockEntry(100, 100)));
 
 			assertValues(Blocks.OAK_PLANKS, BlockContentRegistries.FLATTENABLE, Blocks.OAK_SLAB.getDefaultState());
 			assertValues(Blocks.QUARTZ_PILLAR, BlockContentRegistries.STRIPPABLE, Blocks.PURPUR_PILLAR);
@@ -71,7 +71,7 @@ public class BlockContentRegistryTest implements ModInitializer {
 
 	private <T> void assertValues(Block block, RegistryEntryAttachment<Block, T> attachment, T value) {
 		Optional<T> entry = attachment.get(block);
-		Identifier id = Registry.BLOCK.getId(block);
+		Identifier id = BuiltinRegistries.BLOCK.getId(block);
 		if (entry.isEmpty()) {
 			throw new AssertionError("No entry present for " + id);
 		}

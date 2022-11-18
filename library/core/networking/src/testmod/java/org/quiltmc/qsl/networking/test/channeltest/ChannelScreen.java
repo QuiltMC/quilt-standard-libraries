@@ -20,6 +20,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
+import net.minecraft.unmapped.C_skehaijy;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
@@ -38,14 +39,12 @@ final class ChannelScreen extends Screen {
 	protected void init() {
 		this.s2cButton = this.addDrawableChild(ButtonWidget.builder(Text.literal("S2C"), this::toS2C)
 				.positionAndSize(this.width / 2 - 55, 5, 50, 20)
-				.tooltip((button, matrices, mouseX, mouseY) -> {
-					this.renderTooltip(matrices, Text.literal("Packets this client can receive"), mouseX, mouseY);
-				}).build());
+				.tooltip(C_skehaijy.m_yqziwvxc(Text.literal("Packets this client can receive")))
+				.build());
 		this.c2sButton = this.addDrawableChild(ButtonWidget.builder(Text.literal("C2S"), this::toC2S)
 				.positionAndSize(this.width / 2 + 5, 5, 50, 20)
-				.tooltip((button, matrices, mouseX, mouseY) -> {
-					this.renderTooltip(matrices, Text.literal("Packets the server can receive"), mouseX, mouseY);
-				}).build());
+				.tooltip(C_skehaijy.m_yqziwvxc(Text.literal("Packets the server can receive")))
+				.build());
 		this.addDrawableChild(ButtonWidget.builder(Text.literal("Close"), button -> this.closeScreen())
 				.positionAndSize(this.width / 2 - 60, this.height - 25, 120, 20)
 				.build());

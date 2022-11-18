@@ -21,6 +21,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.entity.data.TrackedDataHandler;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
@@ -51,6 +52,6 @@ public class QuiltEntityNetworkingInitializer implements ModInitializer {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onInitialize(ModContainer mod) {
-		Registry.register(((Registry<Registry<TrackedDataHandler<?>>>) Registry.REGISTRIES), TRACKED_DATA_HANDLER_REGISTRY.getKey().getValue(), TRACKED_DATA_HANDLER_REGISTRY);
+		Registry.register(((Registry<Registry<TrackedDataHandler<?>>>) BuiltinRegistries.REGISTRY), TRACKED_DATA_HANDLER_REGISTRY.getKey().getValue(), TRACKED_DATA_HANDLER_REGISTRY);
 	}
 }

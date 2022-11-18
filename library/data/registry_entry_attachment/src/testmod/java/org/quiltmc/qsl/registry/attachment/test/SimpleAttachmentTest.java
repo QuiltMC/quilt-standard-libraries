@@ -23,7 +23,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.world.World;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -33,13 +33,13 @@ import org.quiltmc.qsl.registry.attachment.api.RegistryExtensions;
 
 public class SimpleAttachmentTest implements ModInitializer {
 	public static final RegistryEntryAttachment<Item, Integer> TEST_ATTACHMENT =
-			RegistryEntryAttachment.intBuilder(Registry.ITEM,
+			RegistryEntryAttachment.intBuilder(BuiltinRegistries.ITEM,
 					new Identifier("quilt", "test_attachment")).build();
 	public static final RegistryEntryAttachment<Item, Float> TEST_ATTACHMENT_2 =
-			RegistryEntryAttachment.floatBuilder(Registry.ITEM,
+			RegistryEntryAttachment.floatBuilder(BuiltinRegistries.ITEM,
 					new Identifier("quilt", "test_attachment_2")).build();
 
-	public static final MyItem MY_ITEM = RegistryExtensions.register(Registry.ITEM,
+	public static final MyItem MY_ITEM = RegistryExtensions.register(BuiltinRegistries.ITEM,
 			new Identifier("quilt", "simple_attachment_test_item"),
 			new MyItem(new Item.Settings()),
 			TEST_ATTACHMENT_2, 2.0f);

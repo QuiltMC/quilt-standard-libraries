@@ -39,6 +39,7 @@ import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -159,7 +160,7 @@ public final class RegistryEntryAttachmentSync {
 			return;
 		}
 
-		for (var registryEntry : Registry.REGISTRIES.getEntries()) {
+		for (var registryEntry : BuiltinRegistries.REGISTRY.getEntries()) {
 			var registry = (Registry<Object>) registryEntry.getValue();
 			var dataHolder = RegistryEntryAttachmentHolder.getData(registry);
 
@@ -244,7 +245,7 @@ public final class RegistryEntryAttachmentSync {
 		}
 
 		client.execute(() -> {
-			var registry = (Registry<Object>) Registry.REGISTRIES.get(registryId);
+			var registry = (Registry<Object>) BuiltinRegistries.REGISTRY.get(registryId);
 			if (registry == null) {
 				throw new IllegalStateException("Unknown registry %s".formatted(registryId));
 			}

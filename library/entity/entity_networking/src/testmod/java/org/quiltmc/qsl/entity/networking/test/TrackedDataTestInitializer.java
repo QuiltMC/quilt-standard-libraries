@@ -27,7 +27,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleType;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.BuiltinRegistries;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader;
@@ -38,19 +38,19 @@ public class TrackedDataTestInitializer implements ModInitializer {
 	public static final TrackedDataHandler<ParticleEffect> PARTICLE_DATA_HANDLER = new TrackedDataHandler.SimpleHandler<>() {
 		@Override
 		public void write(PacketByteBuf buf, ParticleEffect value) {
-			buf.writeId(Registry.PARTICLE_TYPE, value.getType());
+			buf.writeId(BuiltinRegistries.PARTICLE_TYPE, value.getType());
 			value.write(buf);
 		}
 
 		@SuppressWarnings({"rawtypes", "unchecked"})
 		@Override
 		public ParticleEffect read(PacketByteBuf buf) {
-			ParticleType type = buf.readById(Registry.PARTICLE_TYPE);
+			ParticleType type = buf.readById(BuiltinRegistries.PARTICLE_TYPE);
 			return Objects.requireNonNull(type).getParametersFactory().read(type, buf);
 		}
 	};
-	public static final TrackedDataHandler<StatusEffect> TEST_HANDLER = TrackedDataHandler.createIndexed(Registry.STATUS_EFFECT);
-	public static final TrackedDataHandler<StatusEffect> BAD_EXAMPLE_HANDLER = TrackedDataHandler.createIndexed(Registry.STATUS_EFFECT);
+	public static final TrackedDataHandler<StatusEffect> TEST_HANDLER = TrackedDataHandler.createIndexed(BuiltinRegistries.MOB_EFFECT);
+	public static final TrackedDataHandler<StatusEffect> BAD_EXAMPLE_HANDLER = TrackedDataHandler.createIndexed(BuiltinRegistries.MOB_EFFECT);
 
 	@Override
 	public void onInitialize(ModContainer mod) {

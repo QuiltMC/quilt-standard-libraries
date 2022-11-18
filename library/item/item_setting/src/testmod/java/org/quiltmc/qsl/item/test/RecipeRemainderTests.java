@@ -23,6 +23,7 @@ import net.minecraft.item.Items;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -32,7 +33,7 @@ import org.quiltmc.qsl.item.setting.api.QuiltItemSettings;
 public class RecipeRemainderTests implements ModInitializer {
 	// Static field so we can use it in BrewingRecipeRegistryMixin
 	public static final Item POTION_INGREDIENT_REMAINDER = Registry.register(
-			Registry.ITEM,
+		BuiltinRegistries.ITEM,
 			new Identifier(QuiltItemSettingsTests.NAMESPACE, "potion_ingredient_remainder"),
 			new Item(
 					new QuiltItemSettings().recipeRemainder(
@@ -44,7 +45,7 @@ public class RecipeRemainderTests implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		Item hammerItem = new Item(new QuiltItemSettings().maxDamage(16).recipeDamageRemainder());
-		Registry.register(Registry.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "hammer"), hammerItem);
+		Registry.register(BuiltinRegistries.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "hammer"), hammerItem);
 
 		Item furnaceInputRemainder = new Item(new QuiltItemSettings().recipeRemainder((original, recipe) -> {
 			if (recipe != null && recipe.getType() == RecipeType.SMELTING) {
@@ -53,7 +54,7 @@ public class RecipeRemainderTests implements ModInitializer {
 
 			return ItemStack.EMPTY;
 		}));
-		Registry.register(Registry.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "weird_ore"), furnaceInputRemainder);
+		Registry.register(BuiltinRegistries.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "weird_ore"), furnaceInputRemainder);
 
 		Item furnaceInputSelfRemainder = new Item(new QuiltItemSettings().recipeRemainder((original, recipe) -> {
 			if (recipe != null && recipe.getType() == RecipeType.SMELTING) {
@@ -64,7 +65,7 @@ public class RecipeRemainderTests implements ModInitializer {
 
 			return ItemStack.EMPTY;
 		}));
-		Registry.register(Registry.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "infinite_ore"), furnaceInputSelfRemainder);
+		Registry.register(BuiltinRegistries.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "infinite_ore"), furnaceInputSelfRemainder);
 
 		Item furnaceFuelSelfRemainder = new Item(new QuiltItemSettings().recipeRemainder((original, recipe) -> {
 			var remainder = original.copy();
@@ -82,7 +83,7 @@ public class RecipeRemainderTests implements ModInitializer {
 
 			return ItemStack.EMPTY;
 		}));
-		Registry.register(Registry.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "infinite_fuel"), furnaceFuelSelfRemainder);
+		Registry.register(BuiltinRegistries.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "infinite_fuel"), furnaceFuelSelfRemainder);
 
 		Item smithingInputRemainder = new Item(new QuiltItemSettings().recipeRemainder((original, recipe) -> {
 			if (recipe != null && recipe.getType() == RecipeType.SMITHING) {
@@ -91,10 +92,10 @@ public class RecipeRemainderTests implements ModInitializer {
 
 			return Items.NETHERITE_SCRAP.getDefaultStack();
 		}));
-		Registry.register(Registry.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "infinite_netherite"), smithingInputRemainder);
+		Registry.register(BuiltinRegistries.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "infinite_netherite"), smithingInputRemainder);
 
 		Item loomInputRemainder = new DyeItem(DyeColor.RED, new QuiltItemSettings().maxDamage(100).recipeDamageRemainder());
-		Registry.register(Registry.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "infinite_dye"), loomInputRemainder);
+		Registry.register(BuiltinRegistries.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "infinite_dye"), loomInputRemainder);
 
 		Item cuttingInputRemainder = new Item(new QuiltItemSettings().recipeRemainder((original, recipe) -> {
 			if (recipe != null && recipe.getType() == RecipeType.STONECUTTING) {
@@ -103,6 +104,6 @@ public class RecipeRemainderTests implements ModInitializer {
 
 			return ItemStack.EMPTY;
 		}));
-		Registry.register(Registry.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "infinite_stone"), cuttingInputRemainder);
+		Registry.register(BuiltinRegistries.ITEM, new Identifier(QuiltItemSettingsTests.NAMESPACE, "infinite_stone"), cuttingInputRemainder);
 	}
 }

@@ -21,6 +21,7 @@ import net.minecraft.entity.effect.StatusEffectType;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -41,7 +42,7 @@ public final class StatusEffectTest implements ModInitializer {
 		}
 	};
 
-	public static final Item PASTEURIZED_MILK_BUCKET = Registry.register(Registry.ITEM, id("pasteurized_milk_bucket"),
+	public static final Item PASTEURIZED_MILK_BUCKET = Registry.register(BuiltinRegistries.ITEM, id("pasteurized_milk_bucket"),
 			new PasteurizedMilkBucketItem(new Item.Settings()
 					.recipeRemainder(Items.BUCKET)
 					.maxCount(1)));

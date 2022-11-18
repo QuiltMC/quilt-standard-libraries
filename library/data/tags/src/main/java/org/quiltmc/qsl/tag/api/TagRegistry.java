@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.stream.Stream;
 
 import net.minecraft.tag.TagKey;
-import net.minecraft.util.Holder;
+import net.minecraft.util.registry.Holder;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 

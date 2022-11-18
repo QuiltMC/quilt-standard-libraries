@@ -33,14 +33,14 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
+import net.minecraft.feature_flags.FeatureFlags;
 import net.minecraft.resource.AutoCloseableResourceManager;
 import net.minecraft.resource.pack.ResourcePackManager;
 import net.minecraft.server.ServerReloadableResources;
 import net.minecraft.server.WorldLoader;
 import net.minecraft.server.WorldStem;
 import net.minecraft.server.integrated.IntegratedServerLoader;
-import net.minecraft.unmapped.C_bcpxdrik;
-import net.minecraft.unmapped.C_ozbmlrmw;
+import net.minecraft.util.registry.LayeredRegistryManager;
 import net.minecraft.world.level.storage.LevelStorage;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -88,7 +88,7 @@ public abstract class IntegratedServerLoaderMixin {
 			at = @At("HEAD")
 	)
 	private static void onEndDataPackLoad(AutoCloseableResourceManager resourceManager, ServerReloadableResources resources,
-			C_bcpxdrik<?> c_bcpxdrik, @Coerce Object c_tattaqxb,
+			LayeredRegistryManager<?> layeredRegistryManager, @Coerce Object c_tattaqxb,
 			CallbackInfoReturnable<Pair<?, ?>> cir) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resourceManager, null);
 	}
@@ -116,7 +116,7 @@ public abstract class IntegratedServerLoaderMixin {
 			LevelStorage.Session session, ResourcePackManager resourcePackManager, WorldStem worldStem) {
 		if (EXPERIMENTAL_SCREEN_OVERRIDE.toBooleanOrElse(true)
 				&& !worldStem.saveProperties().m_ycrrmmel().m_kmrxtmbu()
-				&& !C_ozbmlrmw.m_iacybqqj(worldStem.saveProperties().m_rabnvpan().enabledFeatures())) {
+				&& !FeatureFlags.containsDefault(worldStem.saveProperties().getEnabledFlags())) {
 			worldStem.close();
 			close(session, worldName);
 			this.start(parentScreen, worldName, safeMode, false);

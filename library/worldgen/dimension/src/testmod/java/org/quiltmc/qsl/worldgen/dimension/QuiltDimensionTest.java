@@ -35,6 +35,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.registry.BuiltinRegistries;
+import net.minecraft.util.registry.Registries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.TeleportTarget;
@@ -48,17 +50,17 @@ import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 import org.quiltmc.qsl.worldgen.dimension.api.QuiltDimensions;
 
 public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents.Ready, CommandRegistrationCallback {
-	private static final RegistryKey<DimensionOptions> DIMENSION_KEY = RegistryKey.of(Registry.DIMENSION_KEY,
+	private static final RegistryKey<DimensionOptions> DIMENSION_KEY = RegistryKey.of(Registries.LEVEL_STEM,
 			new Identifier("quilt_dimension", "void")
 	);
 
-	private static RegistryKey<World> WORLD_KEY = RegistryKey.of(Registry.WORLD_KEY, DIMENSION_KEY.getValue());
+	private static RegistryKey<World> WORLD_KEY = RegistryKey.of(Registries.DIMENSION, DIMENSION_KEY.getValue());
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		Registry.register(Registry.CHUNK_GENERATOR, new Identifier("quilt_dimension", "void"), EmptyChunkGenerator.CODEC);
+		Registry.register(BuiltinRegistries.CHUNK_GENERATOR_WORLDGEN, new Identifier("quilt_dimension", "void"), EmptyChunkGenerator.CODEC);
 
-		WORLD_KEY = RegistryKey.of(Registry.WORLD_KEY, new Identifier("quilt_dimension", "void"));
+		WORLD_KEY = RegistryKey.of(Registries.DIMENSION, new Identifier("quilt_dimension", "void"));
 	}
 
 	@Override

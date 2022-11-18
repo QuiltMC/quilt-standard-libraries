@@ -23,6 +23,7 @@ import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -54,8 +55,8 @@ public class BowsTest implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer container) {
 		// Registers a custom bow.
-		Registry.register(Registry.ITEM, new Identifier(MOD_ID, "test_bow"), TEST_BOW);
+		Registry.register(BuiltinRegistries.ITEM, new Identifier(MOD_ID, "test_bow"), TEST_BOW);
 		// Registers a custom crossbow.
-		Registry.register(Registry.ITEM, new Identifier(MOD_ID, "test_crossbow"), TEST_CROSSBOW);
+		Registry.register(BuiltinRegistries.ITEM, new Identifier(MOD_ID, "test_crossbow"), TEST_CROSSBOW);
 	}
 }

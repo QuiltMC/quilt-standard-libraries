@@ -23,7 +23,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.BuiltinRegistries;
 
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
@@ -51,7 +51,7 @@ public class BlockContentRegistries {
 	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/flattenable.json}
 	 */
 	public static final RegistryEntryAttachment<Block, BlockState> FLATTENABLE = RegistryEntryAttachment
-			.builder(Registry.BLOCK,
+			.builder(BuiltinRegistries.BLOCK,
 					new Identifier(NAMESPACE, "flattenable"),
 					BlockState.class,
 					BlockState.CODEC)
@@ -63,7 +63,7 @@ public class BlockContentRegistries {
 	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/oxidizable.json}
 	 */
 	public static final RegistryEntryAttachment<Block, ReversibleBlockEntry> OXIDIZABLE = RegistryEntryAttachment
-			.builder(Registry.BLOCK,
+			.builder(BuiltinRegistries.BLOCK,
 					new Identifier(NAMESPACE, "oxidizable"),
 					ReversibleBlockEntry.class,
 					ReversibleBlockEntry.CODEC)
@@ -75,7 +75,7 @@ public class BlockContentRegistries {
 	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/waxable.json}
 	 */
 	public static final RegistryEntryAttachment<Block, ReversibleBlockEntry> WAXABLE = RegistryEntryAttachment
-			.builder(Registry.BLOCK,
+			.builder(BuiltinRegistries.BLOCK,
 					new Identifier(NAMESPACE, "waxable"),
 					ReversibleBlockEntry.class,
 					ReversibleBlockEntry.CODEC)
@@ -87,10 +87,10 @@ public class BlockContentRegistries {
 	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/strippable.json}
 	 */
 	public static final RegistryEntryAttachment<Block, Block> STRIPPABLE = RegistryEntryAttachment
-			.builder(Registry.BLOCK,
+			.builder(BuiltinRegistries.BLOCK,
 					new Identifier(NAMESPACE, "strippable"),
 					Block.class,
-					Registry.BLOCK.getCodec().flatXmap(block -> {
+					BuiltinRegistries.BLOCK.getCodec().flatXmap(block -> {
 						if (!block.getDefaultState().contains(Properties.AXIS)) {
 							return DataResult.error("block does not contain AXIS property");
 						}
@@ -109,7 +109,7 @@ public class BlockContentRegistries {
 	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/flammable.json}
 	 */
 	public static final RegistryEntryAttachment<Block, FlammableBlockEntry> FLAMMABLE = RegistryEntryAttachment
-			.builder(Registry.BLOCK,
+			.builder(BuiltinRegistries.BLOCK,
 					new Identifier(NAMESPACE, "flammable"),
 					FlammableBlockEntry.class,
 					FlammableBlockEntry.CODEC)

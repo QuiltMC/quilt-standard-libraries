@@ -28,8 +28,8 @@ import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tag.TagKey;
-import net.minecraft.util.Holder;
 import net.minecraft.util.registry.BuiltinRegistries;
+import net.minecraft.util.registry.Holder;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 

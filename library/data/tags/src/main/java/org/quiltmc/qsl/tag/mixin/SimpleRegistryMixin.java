@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.tag.TagKey;
-import net.minecraft.util.Holder;
+import net.minecraft.util.registry.Holder;
 import net.minecraft.util.registry.SimpleRegistry;
 
 import org.quiltmc.qsl.tag.impl.TagRegistryImpl;

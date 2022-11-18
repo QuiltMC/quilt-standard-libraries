@@ -27,8 +27,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.tag.TagKey;
-import net.minecraft.util.Holder;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Holder;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;

@@ -77,7 +77,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 
 	public ModNioResourcePack(@Nullable String name, ModMetadata modInfo, @Nullable Text displayName, ResourcePackActivationType activationType,
 			Path path, ResourceType type, @Nullable AutoCloseable closer) {
-		super(null);
+		super(null, true);
 
 		/* Metadata */
 		this.name = name == null ? ModResourcePackUtil.getName(modInfo) : name;
@@ -186,6 +186,11 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 	@Override
 	public @NotNull Text getDisplayName() {
 		return this.displayName;
+	}
+
+	@Override
+	public boolean isBuiltin() {
+		return true;
 	}
 
 	@Override

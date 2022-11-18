@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.Mixin;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.unmapped.C_lylrgdrx;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.BuiltinRegistries;
 
 import org.quiltmc.qsl.recipe.api.serializer.QuiltRecipeSerializer;
 
@@ -32,7 +32,7 @@ public abstract class SpecialRecipeSerializerMixin<T extends Recipe<?>> implemen
 	@Override
 	public JsonObject toJson(T recipe) {
 		var json = new JsonObject();
-		json.addProperty("type", Objects.requireNonNull(Registry.RECIPE_SERIALIZER.getId(this)).toString());
+		json.addProperty("type", Objects.requireNonNull(BuiltinRegistries.RECIPE_SERIALIZER.getId(this)).toString());
 		return json;
 	}
 }

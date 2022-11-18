@@ -30,7 +30,7 @@ import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.Registries;
 import net.minecraft.world.dimension.DimensionTypes;
 
 import org.quiltmc.qsl.entity_events.api.EntityReviveEvents;
@@ -104,7 +104,7 @@ public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTot
 	// Entities going to the end are named 'end traveller'
 	@Override
 	public void afterWorldChange(Entity originalEntity, Entity newEntity, ServerWorld origin, ServerWorld destination) {
-		if (destination.getDimension() == destination.getServer().getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).get(DimensionTypes.THE_END)) {
+		if (destination.getDimension() == destination.getServer().getRegistryManager().get(Registries.DIMENSION_TYPE).get(DimensionTypes.THE_END)) {
 			newEntity.setCustomName(Text.literal("End Traveller"));
 		}
 	}

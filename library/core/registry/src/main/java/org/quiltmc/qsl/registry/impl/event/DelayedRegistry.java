@@ -33,10 +33,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.tag.TagKey;
-import net.minecraft.util.Holder;
-import net.minecraft.util.HolderSet;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.random.RandomGenerator;
+import net.minecraft.util.registry.Holder;
+import net.minecraft.util.registry.HolderProvider;
+import net.minecraft.util.registry.HolderSet;
 import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
@@ -113,7 +114,7 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	}
 
 	@Override
-	public Optional<Holder<T>> getRandom(RandomGenerator random) {
+	public Optional<Holder.Reference<T>> getRandom(RandomGenerator random) {
 		return this.wrapped.getRandom(random);
 	}
 
@@ -131,16 +132,6 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	public Registry<T> freeze() {
 		// Refuse freezing.
 		return this;
-	}
-
-	@Override
-	public Holder.Reference<T> getOrCreateHolderOrThrow(RegistryKey<T> registryKey) {
-		return this.wrapped.getOrCreateHolderOrThrow(registryKey);
-	}
-
-	@Override
-	public DataResult<Holder.Reference<T>> getOrCreateHolder(RegistryKey<T> key) {
-		return this.wrapped.getOrCreateHolder(key);
 	}
 
 	@Override
@@ -209,7 +200,7 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	}
 
 	@Override
-	public Holder<T> register(RegistryKey<T> key, T entry, Lifecycle lifecycle) {
+	public Holder.Reference<T> register(RegistryKey<T> key, T entry, Lifecycle lifecycle) {
 		this.delayedEntries.add(new DelayedEntry<>(key, entry, lifecycle));
 		return new Holder.Direct<>(entry);
 	}
@@ -217,6 +208,12 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	@Override
 	public boolean isEmpty() {
 		return this.wrapped.isEmpty();
+	}
+
+	@Override
+	public HolderProvider<T> m_ulbocxwk() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	void applyDelayed() {
