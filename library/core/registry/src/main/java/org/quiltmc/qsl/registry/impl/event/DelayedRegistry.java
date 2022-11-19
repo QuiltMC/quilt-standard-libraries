@@ -23,38 +23,37 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Lifecycle;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.util.registry.Holder;
+import net.minecraft.util.registry.HolderOwner;
 import net.minecraft.util.registry.HolderProvider;
-import net.minecraft.util.registry.HolderSet;
 import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.util.registry.Holder.Reference;
+import net.minecraft.util.registry.HolderLookup.RegistryLookup;
+import net.minecraft.util.registry.HolderSet.NamedSet;
 
 @ApiStatus.Internal
-public final class DelayedRegistry<T> extends MutableRegistry<T> {
+public final class DelayedRegistry<T> implements MutableRegistry<T> {
 	private final MutableRegistry<T> wrapped;
 	private final Queue<DelayedEntry<T>> delayedEntries = new LinkedList<>();
 
 	DelayedRegistry(MutableRegistry<T> registry) {
-		super(registry.getKey(), registry.getLifecycle());
-
 		this.wrapped = registry;
 	}
 
 	@Override
-	public @Nullable Identifier getId(T entry) {
+	public Identifier getId(T entry) {
 		return this.wrapped.getId(entry);
 	}
 
@@ -64,33 +63,23 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	}
 
 	@Override
-	public int getRawId(@Nullable T entry) {
+	public int getRawId(T entry) {
 		return this.wrapped.getRawId(entry);
 	}
 
 	@Override
-	public @Nullable T get(int index) {
-		return this.wrapped.get(index);
+	public T get(RegistryKey<T> entry) {
+		return this.wrapped.get(entry);
 	}
 
 	@Override
-	public int size() {
-		return this.wrapped.size();
-	}
-
-	@Override
-	public @Nullable T get(@Nullable RegistryKey<T> key) {
-		return this.wrapped.get(key);
-	}
-
-	@Override
-	public @Nullable T get(@Nullable Identifier id) {
+	public T get(Identifier id) {
 		return this.wrapped.get(id);
 	}
 
 	@Override
-	public Lifecycle getEntryLifecycle(T object) {
-		return this.wrapped.getEntryLifecycle(object);
+	public Lifecycle getEntryLifecycle(T entry) {
+		return this.wrapped.getEntryLifecycle(entry);
 	}
 
 	@Override
@@ -104,7 +93,7 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	}
 
 	@Override
-	public Set<Map.Entry<RegistryKey<T>, T>> getEntries() {
+	public Set<Entry<RegistryKey<T>, T>> getEntries() {
 		return this.wrapped.getEntries();
 	}
 
@@ -114,7 +103,7 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	}
 
 	@Override
-	public Optional<Holder.Reference<T>> getRandom(RandomGenerator random) {
+	public Optional<Reference<T>> getRandom(RandomGenerator random) {
 		return this.wrapped.getRandom(random);
 	}
 
@@ -135,48 +124,43 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	}
 
 	@Override
-	public Holder.Reference<T> createIntrusiveHolder(T holder) {
+	public Reference<T> createIntrusiveHolder(T holder) {
 		return this.wrapped.createIntrusiveHolder(holder);
 	}
 
 	@Override
-	public Optional<Holder.Reference<T>> getHolder(int index) {
+	public Optional<Reference<T>> getHolder(int index) {
 		return this.wrapped.getHolder(index);
 	}
 
 	@Override
-	public Optional<Holder.Reference<T>> getHolder(RegistryKey<T> key) {
+	public Optional<Reference<T>> getHolder(RegistryKey<T> key) {
 		return this.wrapped.getHolder(key);
 	}
 
 	@Override
-	public Stream<Holder.Reference<T>> holders() {
+	public Stream<Reference<T>> holders() {
 		return this.wrapped.holders();
 	}
 
 	@Override
-	public Optional<HolderSet.NamedSet<T>> getTag(TagKey<T> tag) {
+	public Optional<NamedSet<T>> getTag(TagKey<T> tag) {
 		return this.wrapped.getTag(tag);
 	}
 
 	@Override
-	public HolderSet.NamedSet<T> getOrCreateTag(TagKey<T> key) {
+	public NamedSet<T> getOrCreateTag(TagKey<T> key) {
 		return this.wrapped.getOrCreateTag(key);
 	}
 
 	@Override
-	public Stream<Pair<TagKey<T>, HolderSet.NamedSet<T>>> getTags() {
+	public Stream<Pair<TagKey<T>, NamedSet<T>>> getTags() {
 		return this.wrapped.getTags();
 	}
 
 	@Override
 	public Stream<TagKey<T>> getTagKeys() {
 		return this.wrapped.getTagKeys();
-	}
-
-	@Override
-	public boolean isKnownTag(TagKey<T> tag) {
-		return this.wrapped.isKnownTag(tag);
 	}
 
 	@Override
@@ -190,8 +174,33 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	}
 
 	@Override
-	public @NotNull Iterator<T> iterator() {
+	public HolderOwner<T> asHolderOwner() {
+		return this.wrapped.asHolderOwner();
+	}
+
+	@Override
+	public RegistryLookup<T> asLookup() {
+		return this.wrapped.asLookup();
+	}
+
+	@Override
+	public Iterator<T> iterator() {
 		return this.wrapped.iterator();
+	}
+
+	@Override
+	public T get(int index) {
+		return this.wrapped.get(index);
+	}
+
+	@Override
+	public RegistryKey<? extends Registry<T>> getKey() {
+		return this.wrapped.getKey();
+	}
+
+	@Override
+	public int size() {
+		return this.wrapped.size();
 	}
 
 	@Override
@@ -200,9 +209,9 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	}
 
 	@Override
-	public Holder.Reference<T> register(RegistryKey<T> key, T entry, Lifecycle lifecycle) {
+	public Reference<T> register(RegistryKey<T> key, T entry, Lifecycle lifecycle) {
 		this.delayedEntries.add(new DelayedEntry<>(key, entry, lifecycle));
-		return new Holder.Direct<>(entry);
+		return Holder.Reference.create(this.wrapped.asHolderOwner(), key);
 	}
 
 	@Override
@@ -211,9 +220,8 @@ public final class DelayedRegistry<T> extends MutableRegistry<T> {
 	}
 
 	@Override
-	public HolderProvider<T> m_ulbocxwk() {
-		// TODO Auto-generated method stub
-		return null;
+	public HolderProvider<T> getHolderProvider() {
+		return this.wrapped.getHolderProvider();
 	}
 
 	void applyDelayed() {

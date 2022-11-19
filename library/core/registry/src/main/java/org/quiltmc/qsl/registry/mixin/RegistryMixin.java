@@ -26,6 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.base.api.event.Event;
@@ -50,7 +51,7 @@ public abstract class RegistryMixin<V> implements RegistryEventStorage<V> {
 	@Inject(method = "freezeBuiltins", at = @At("RETURN"))
 	private static void onFreezeBuiltins(CallbackInfo ci) {
 		//region Fix MC-197259
-		final List<BlockState> states = Registry.BLOCK.stream()
+		final List<BlockState> states = BuiltinRegistries.BLOCK.stream()
 				.flatMap(block -> block.getStateManager().getStates().stream())
 				.toList();
 

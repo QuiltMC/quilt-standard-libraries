@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.BuiltinRegistries;
 
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 
@@ -35,7 +35,7 @@ public abstract class BlocksMixin {
 
 	@Inject(method = "<clinit>", at = @At("RETURN"))
 	private static void onInit(CallbackInfo ci) {
-		RegistryEvents.getEntryAddEvent(Registry.BLOCK).register(context -> {
+		RegistryEvents.getEntryAddEvent(BuiltinRegistries.BLOCK).register(context -> {
 			context.value().getLootTableId();
 			context.value().getStateManager().getStates().forEach((state) -> {
 				if (Block.STATE_IDS.getRawId(state) == -1) {

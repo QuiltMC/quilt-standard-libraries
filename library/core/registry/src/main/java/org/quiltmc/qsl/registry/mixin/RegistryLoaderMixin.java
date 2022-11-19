@@ -26,22 +26,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.unmapped.C_ratuauki;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.util.registry.RegistryLoader;
 
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.quiltmc.qsl.registry.impl.DynamicRegistryManagerSetupContextImpl;
 
-@Mixin(C_ratuauki.class)
-public class C_ratuaukiMixin {
+@Mixin(RegistryLoader.class)
+public class RegistryLoaderMixin {
 	@Inject(
-			method = "m_gwtkbndr",
+			method = "loadRegistriesIntoManager",
 			at = @At(value = "INVOKE", target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V", ordinal = 0),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private static void onBeforeLoad(ResourceManager resourceManager, DynamicRegistryManager baseRegistryManager,
-			List<C_ratuauki.C_qpshoosu<?>> entries, CallbackInfoReturnable<DynamicRegistryManager.Frozen> cir,
+			List<RegistryLoader.DecodingData<?>> entries, CallbackInfoReturnable<DynamicRegistryManager.Frozen> cir,
 			Map<RegistryKey<?>, Exception> errors, List<?> list2, DynamicRegistryManager registryManager) {
 		RegistryEvents.DYNAMIC_REGISTRY_SETUP.invoker().onDynamicRegistrySetup(
 				new DynamicRegistryManagerSetupContextImpl(resourceManager, registryManager)
@@ -49,7 +49,7 @@ public class C_ratuaukiMixin {
 	}
 
 	@Inject(
-			method = "m_gwtkbndr",
+			method = "loadRegistriesIntoManager",
 			at = @At(
 					value = "INVOKE",
 					target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V",
@@ -59,7 +59,7 @@ public class C_ratuaukiMixin {
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private static void onAfterLoad(ResourceManager resourceManager, DynamicRegistryManager baseRegistryManager,
-			List<C_ratuauki.C_qpshoosu<?>> entries, CallbackInfoReturnable<DynamicRegistryManager.Frozen> cir,
+			List<RegistryLoader.DecodingData<?>> entries, CallbackInfoReturnable<DynamicRegistryManager.Frozen> cir,
 			Map<RegistryKey<?>, Exception> errors, List<?> list2, DynamicRegistryManager registryManager) {
 		RegistryEvents.DYNAMIC_REGISTRY_LOADED.invoker().onDynamicRegistryLoaded(registryManager);
 	}

@@ -33,6 +33,7 @@ import org.jetbrains.annotations.ApiStatus;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
@@ -140,7 +141,7 @@ public class ServerFabricRegistrySync {
 	private static Map<Identifier, Object2IntMap<Identifier>> createRegistryMap() {
 		var map = new HashMap<Identifier, Object2IntMap<Identifier>>();
 
-		for (var registry : Registry.REGISTRIES) {
+		for (var registry : BuiltinRegistries.REGISTRY) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
 					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
 				var idMap = new Object2IntOpenHashMap<Identifier>();

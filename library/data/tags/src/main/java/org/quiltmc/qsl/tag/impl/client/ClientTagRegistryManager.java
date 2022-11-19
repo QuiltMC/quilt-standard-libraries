@@ -43,10 +43,10 @@ import net.minecraft.tag.TagEntry;
 import net.minecraft.tag.TagGroupLoader;
 import net.minecraft.tag.TagKey;
 import net.minecraft.tag.TagManagerLoader;
-import net.minecraft.util.Holder;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.util.registry.Holder;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 

@@ -26,7 +26,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.MapColor;
 import net.minecraft.block.Material;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.BuiltinRegistries;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -47,7 +47,7 @@ public class RegistryLibMonitorRegistrationTest implements ModInitializer {
 	public void onInitialize(ModContainer mod) {
 		register(TEST_BLOCK_A_ID, new Block(AbstractBlock.Settings.of(Material.STONE, MapColor.BLACK)));
 
-		var monitor = RegistryMonitor.create(Registry.BLOCK)
+		var monitor = RegistryMonitor.create(BuiltinRegistries.BLOCK)
 				.filter(context -> context.id().getNamespace().equals("quilt_registry_test_monitors_registration"));
 
 		monitor.forAll(context -> {

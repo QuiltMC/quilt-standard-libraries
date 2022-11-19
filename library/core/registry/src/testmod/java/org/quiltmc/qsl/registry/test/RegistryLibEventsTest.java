@@ -24,6 +24,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.MapColor;
 import net.minecraft.block.Material;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -39,7 +40,7 @@ public class RegistryLibEventsTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		RegistryEvents.getEntryAddEvent(Registry.BLOCK).register(context -> {
+		RegistryEvents.getEntryAddEvent(BuiltinRegistries.BLOCK).register(context -> {
 			LOGGER.info("Block {} id={} raw={} was registered in registry {}",
 					context.value(), context.id(), context.rawId(), context.registry());
 
@@ -56,6 +57,6 @@ public class RegistryLibEventsTest implements ModInitializer {
 	}
 
 	static <T extends Block> T register(Identifier id, T block) {
-		return Registry.register(Registry.BLOCK, id, block);
+		return Registry.register(BuiltinRegistries.BLOCK, id, block);
 	}
 }

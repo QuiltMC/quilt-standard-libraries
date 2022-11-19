@@ -144,6 +144,17 @@ public abstract class GroupResourcePack implements ResourcePack {
 	}
 
 	@Override
+	public boolean isBuiltin() {
+		for (var pack : this.packs) {
+			if (!pack.isBuiltin()) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	@Override
 	public void close() {
 		this.packs.forEach(ResourcePack::close);
 	}

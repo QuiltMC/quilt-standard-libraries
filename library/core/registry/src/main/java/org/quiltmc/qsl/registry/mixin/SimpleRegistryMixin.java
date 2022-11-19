@@ -39,8 +39,8 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.util.Holder;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Holder;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
@@ -56,7 +56,7 @@ import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
  * Handles applying and creating sync data.
  */
 @Mixin(SimpleRegistry.class)
-public abstract class SimpleRegistryMixin<V> extends Registry<V> implements SynchronizedRegistry<V> {
+public abstract class SimpleRegistryMixin<V> implements Registry<V>, SynchronizedRegistry<V> {
 	@Unique
 	private final MutableRegistryEntryContextImpl<V> quilt$entryContext = new MutableRegistryEntryContextImpl<>(this);
 
@@ -96,10 +96,6 @@ public abstract class SimpleRegistryMixin<V> extends Registry<V> implements Sync
 
 	@Unique
 	private final Object2ByteMap<V> quilt$entryToFlag = new Object2ByteOpenHashMap<>();
-
-	protected SimpleRegistryMixin(RegistryKey<? extends Registry<V>> key, Lifecycle lifecycle) {
-		super(key, lifecycle);
-	}
 
 	@SuppressWarnings("InvalidInjectorMethodSignature")
 	@ModifyVariable(

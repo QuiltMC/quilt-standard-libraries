@@ -18,7 +18,7 @@ package org.quiltmc.qsl.registry.impl.sync;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.BuiltinRegistries;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -30,24 +30,24 @@ public class RegistrySyncInitializer implements ModInitializer {
 		ServerRegistrySync.readConfig();
 
 		SynchronizedRegistry.markForSync(
-				Registry.BLOCK,
-				Registry.BLOCK_ENTITY_TYPE,
-				Registry.CAT_VARIANT,
-				Registry.COMMAND_ARGUMENT_TYPE,
-				Registry.ENCHANTMENT,
-				Registry.ENTITY_TYPE,
-				Registry.FLUID,
-				Registry.FROG_VARIANT,
-				Registry.GAME_EVENT,
-				Registry.ITEM,
-				Registry.PAINTING_VARIANT,
-				Registry.PARTICLE_TYPE,
-				Registry.SCREEN_HANDLER,
-				Registry.SOUND_EVENT,
-				Registry.STAT_TYPE,
-				Registry.STATUS_EFFECT,
-				Registry.VILLAGER_TYPE,
-				Registry.VILLAGER_PROFESSION
+				BuiltinRegistries.BLOCK,
+				BuiltinRegistries.BLOCK_ENTITY_TYPE,
+				BuiltinRegistries.CAT_VARIANT,
+				BuiltinRegistries.COMMAND_ARGUMENT_TYPE,
+				BuiltinRegistries.ENCHANTMENT,
+				BuiltinRegistries.ENTITY_TYPE,
+				BuiltinRegistries.FLUID,
+				BuiltinRegistries.FROG_VARIANT,
+				BuiltinRegistries.GAME_EVENT,
+				BuiltinRegistries.ITEM,
+				BuiltinRegistries.MENU,
+				BuiltinRegistries.MOB_EFFECT,
+				BuiltinRegistries.PAINTING_VARIANT,
+				BuiltinRegistries.PARTICLE_TYPE,
+				BuiltinRegistries.SOUND_EVENT,
+				BuiltinRegistries.STAT_TYPE,
+				BuiltinRegistries.VILLAGER_TYPE,
+				BuiltinRegistries.VILLAGER_PROFESSION
 		);
 	}
 }
