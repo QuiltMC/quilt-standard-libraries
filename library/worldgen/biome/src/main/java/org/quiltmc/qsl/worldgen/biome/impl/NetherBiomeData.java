@@ -27,10 +27,10 @@ import java.util.stream.Collectors;
 import com.google.common.base.Preconditions;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
+import net.minecraft.util.registry.Holder;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
-import net.minecraft.util.Holder;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;

@@ -19,6 +19,7 @@ package org.quiltmc.qsl.registry.mixin;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.util.registry.RegistryOps;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -37,12 +38,9 @@ import org.quiltmc.qsl.registry.impl.DynamicRegistryManagerSetupContextImpl;
 public class RegistryLoaderMixin {
 	@Inject(
 			method = "loadRegistriesIntoManager",
-			at = @At(value = "INVOKE", target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V", ordinal = 0),
-			locals = LocalCapture.CAPTURE_FAILHARD
+			at = @At(value = "INVOKE", target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V", ordinal = 0)
 	)
-	private static void onBeforeLoad(ResourceManager resourceManager, DynamicRegistryManager baseRegistryManager,
-			List<RegistryLoader.DecodingData<?>> entries, CallbackInfoReturnable<DynamicRegistryManager.Frozen> cir,
-			Map<RegistryKey<?>, Exception> errors, List<?> list2, DynamicRegistryManager registryManager) {
+	private static void onBeforeLoad(ResourceManager resourceManager, DynamicRegistryManager registryManager, List<RegistryLoader.DecodingData<?>> decodingData, CallbackInfoReturnable<DynamicRegistryManager.Frozen> cir) {
 		RegistryEvents.DYNAMIC_REGISTRY_SETUP.invoker().onDynamicRegistrySetup(
 				new DynamicRegistryManagerSetupContextImpl(resourceManager, registryManager)
 		);
@@ -55,12 +53,9 @@ public class RegistryLoaderMixin {
 					target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V",
 					ordinal = 1,
 					shift = At.Shift.AFTER
-			),
-			locals = LocalCapture.CAPTURE_FAILHARD
+			)
 	)
-	private static void onAfterLoad(ResourceManager resourceManager, DynamicRegistryManager baseRegistryManager,
-			List<RegistryLoader.DecodingData<?>> entries, CallbackInfoReturnable<DynamicRegistryManager.Frozen> cir,
-			Map<RegistryKey<?>, Exception> errors, List<?> list2, DynamicRegistryManager registryManager) {
+	private static void onAfterLoad(ResourceManager resourceManager, DynamicRegistryManager registryManager, List<RegistryLoader.DecodingData<?>> decodingData, CallbackInfoReturnable<DynamicRegistryManager.Frozen> cir) {
 		RegistryEvents.DYNAMIC_REGISTRY_LOADED.invoker().onDynamicRegistryLoaded(registryManager);
 	}
 }

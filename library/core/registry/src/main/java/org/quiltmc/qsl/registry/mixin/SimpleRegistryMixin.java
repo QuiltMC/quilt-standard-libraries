@@ -29,6 +29,8 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -37,6 +39,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Slice;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.util.Identifier;
@@ -56,9 +59,9 @@ import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
  * Handles applying and creating sync data.
  */
 @Mixin(SimpleRegistry.class)
-public abstract class SimpleRegistryMixin<V> implements Registry<V>, SynchronizedRegistry<V> {
+public abstract class SimpleRegistryMixin<V> implements Registry<V>, SynchronizedRegistry<V>, RegistryEventStorage<V> {
 	@Unique
-	private final MutableRegistryEntryContextImpl<V> quilt$entryContext = new MutableRegistryEntryContextImpl<>(this);
+	private MutableRegistryEntryContextImpl<V> quilt$entryContext;
 
 	@Shadow
 	@Final
@@ -95,11 +98,31 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 	private Status quilt$syncStatus = null;
 
 	@Unique
-	private final Object2ByteMap<V> quilt$entryToFlag = new Object2ByteOpenHashMap<>();
+	private Object2ByteMap<V> quilt$entryToFlag;
+
+
+	@Unique
+	private Event<RegistryEvents.EntryAdded<V>> quilt$entryAddedEvent;
+
+
+
+	// HACK TODO for some reason initializing this like normal doesnt work. i dont care to figure out why - glitch
+	@Inject(method = "<init>(Lnet/minecraft/util/registry/RegistryKey;Lcom/mojang/serialization/Lifecycle;Z)V", at = @At("TAIL"))
+	private void hackBecauseMixinHatesMe(RegistryKey key, Lifecycle lifecycle, boolean useIntrusiveHolders, CallbackInfo ci) {
+		this.quilt$entryContext = new MutableRegistryEntryContextImpl<>(this);
+		this.quilt$entryToFlag = new Object2ByteOpenHashMap<>();
+		this.quilt$entryAddedEvent = Event.create(RegistryEvents.EntryAdded.class,
+			callbacks -> context -> {
+				for (var callback : callbacks) {
+					callback.onAdded(context);
+				}
+			});
+	}
+
 
 	@SuppressWarnings("InvalidInjectorMethodSignature")
 	@ModifyVariable(
-			method = "set",
+			method = "set(ILnet/minecraft/util/registry/RegistryKey;Ljava/lang/Object;Lcom/mojang/serialization/Lifecycle;)Lnet/minecraft/util/registry/Holder$Reference;",
 			slice = @Slice(
 					from = @At(
 							value = "INVOKE",
@@ -120,13 +143,14 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 	/**
 	 * Invokes the entry add event.
 	 */
+	@SuppressWarnings({"ConstantConditions", "unchecked"})
 	@Inject(
-			method = "set",
+			method = "set(ILnet/minecraft/util/registry/RegistryKey;Ljava/lang/Object;Lcom/mojang/serialization/Lifecycle;)Lnet/minecraft/util/registry/Holder$Reference;",
 			at = @At("RETURN")
 	)
 	private void quilt$invokeEntryAddEvent(int rawId, RegistryKey<V> key, V entry, Lifecycle lifecycle, CallbackInfoReturnable<Holder<V>> cir) {
 		this.quilt$entryContext.set(key.getValue(), entry, rawId);
-		RegistryEventStorage.as(this).quilt$getEntryAddedEvent().invoker().onAdded(this.quilt$entryContext);
+		RegistryEventStorage.as((SimpleRegistry<V>) (Object) this).quilt$getEntryAddedEvent().invoker().onAdded(this.quilt$entryContext);
 
 		this.quilt$markDirty();
 	}
@@ -299,5 +323,10 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 
 			this.quilt$idSnapshot = null;
 		}
+	}
+
+	@Override
+	public Event<RegistryEvents.EntryAdded<V>> quilt$getEntryAddedEvent() {
+		return this.quilt$entryAddedEvent;
 	}
 }

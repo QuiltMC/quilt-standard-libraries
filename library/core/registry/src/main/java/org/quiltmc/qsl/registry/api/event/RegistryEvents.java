@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.registry.api.event;
 
+import net.minecraft.util.registry.SimpleRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.util.registry.DynamicRegistryManager;
@@ -43,12 +44,13 @@ public final class RegistryEvents {
 	 * <p>
 	 * The event is invoked upon the addition or assignment of an entry in the specified registry.
 	 *
-	 * @param registry the {@link Registry} for this event to listen for
+	 * @param registry the {@link Registry} for this event to listen for. Must be an instance of {@link SimpleRegistry}.
 	 * @param <V>      the entry type of the {@link Registry} to listen for
 	 * @return the entry added event for the specified registry, which can have callbacks registered to it
+	 * @throws ClassCastException if the registry is not a {@link SimpleRegistry}
 	 */
 	public static <V> Event<EntryAdded<V>> getEntryAddEvent(Registry<V> registry) {
-		return RegistryEventStorage.as(registry).quilt$getEntryAddedEvent();
+		return RegistryEventStorage.as((SimpleRegistry<V>) registry).quilt$getEntryAddedEvent();
 	}
 
 	/**

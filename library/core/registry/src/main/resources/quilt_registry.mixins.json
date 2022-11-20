@@ -4,12 +4,12 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "BlocksMixin",
+    "BuiltinRegistriesMixin",
     "DebugChunkGeneratorAccessor",
     "FluidsMixin",
     "IdListMixin",
     "ItemsMixin",
     "PlayerManagerMixin",
-    "RegistryMixin",
     "RegistryLoaderMixin",
     "ServerLoginNetworkHandlerMixin",
     "ServerPlayerEntityMixin",
