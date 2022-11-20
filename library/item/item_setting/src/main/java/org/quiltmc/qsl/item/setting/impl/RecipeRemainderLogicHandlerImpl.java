@@ -77,21 +77,21 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 	}
 
 	@Contract(mutates = "param1")
-	private static ItemStack decrementWithRemainder(ItemStack original, @Nullable Recipe<?> recipe) {
+	private static ItemStack decrementWithRemainder(ItemStack original, int amount, @Nullable Recipe<?> recipe) {
 		if (original.isEmpty()) {
 			return ItemStack.EMPTY;
 		}
 
 		ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(original, recipe);
 
-		original.decrement(1);
+		original.decrement(amount);
 
 		return remainder;
 	}
 
-	@Contract(mutates = "param1, param3, param5")
-	public static void handleRemainderForNonPlayerCraft(ItemStack input, @Nullable Recipe<?> recipe, DefaultedList<ItemStack> inventory, int index, World world, BlockPos location) {
-		ItemStack remainder = decrementWithRemainder(input, recipe);
+	@Contract(mutates = "param1, param4, param6")
+	public static void handleRemainderForNonPlayerCraft(ItemStack input, int amount, @Nullable Recipe<?> recipe, DefaultedList<ItemStack> inventory, int index, World world, BlockPos location) {
+		ItemStack remainder = decrementWithRemainder(input, amount, recipe);
 
 		if (remainder.isEmpty()) {
 			return;
@@ -102,9 +102,9 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 		}
 	}
 
-	@Contract(mutates = "param1, param3")
-	public static void handleRemainderForScreenHandler(Slot slot, @Nullable Recipe<?> recipe, PlayerEntity player) {
-		ItemStack remainder = decrementWithRemainder(slot.getStack(), recipe);
+	@Contract(mutates = "param1, param4")
+	public static void handleRemainderForScreenHandler(Slot slot, int amount, @Nullable Recipe<?> recipe, PlayerEntity player) {
+		ItemStack remainder = decrementWithRemainder(slot.getStack(), amount, recipe);
 
 		if (remainder.isEmpty()) {
 			return;
