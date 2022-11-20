@@ -66,8 +66,8 @@ public class RegistryLibSyncTest implements ModInitializer {
 			}
 
 			var opt = register(10);
-			RegistrySynchronization.setEntryOptional(BuiltinRegistries.ITEM, opt);
-			RegistrySynchronization.setEntryOptional(BuiltinRegistries.BLOCK, opt);
+			RegistrySynchronization.setEntryOptional((SimpleRegistry<Item>) BuiltinRegistries.ITEM, opt);
+			RegistrySynchronization.setEntryOptional((SimpleRegistry<Block>) BuiltinRegistries.BLOCK, opt);
 
 			ServerLifecycleEvents.READY.register((x) -> this.printReg());
 		}
@@ -122,7 +122,7 @@ public class RegistryLibSyncTest implements ModInitializer {
 
 		Registry.register(BuiltinRegistries.BLOCK, id, block);
 		Registry.register(BuiltinRegistries.ITEM, id, new BlockItem(block, new Item.Settings()));
-		RegistrySynchronization.setEntryOptional(BuiltinRegistries.ITEM, id);
+		RegistrySynchronization.setEntryOptional((SimpleRegistry<Item>) BuiltinRegistries.ITEM, id);
 		return id;
 	}
 }
