@@ -48,6 +48,7 @@ public class StonecutterOutputSlotMixin extends Slot {
 
 		RecipeRemainderLogicHandler.handleRemainderForScreenHandler(
 				slot,
+				amount,
 				recipe,
 				player
 		);
