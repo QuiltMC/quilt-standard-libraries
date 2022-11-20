@@ -66,7 +66,9 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 	 */
 	@Contract(mutates = "param1, param2")
 	private static boolean tryMergeStacks(ItemStack base, ItemStack remainder) {
-		if (!ItemStack.canCombine(base, remainder)) {
+		if (remainder.isEmpty()) {
+			return true;
+		} else if (!ItemStack.canCombine(base, remainder)) {
 			return false;
 		}
 
@@ -93,10 +95,6 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 	public static void handleRemainderForNonPlayerCraft(ItemStack input, int amount, @Nullable Recipe<?> recipe, DefaultedList<ItemStack> inventory, int index, World world, BlockPos location) {
 		ItemStack remainder = decrementWithRemainder(input, amount, recipe);
 
-		if (remainder.isEmpty()) {
-			return;
-		}
-
 		if (!tryReturnItemToInventory(remainder, inventory, index)) {
 			ItemScatterer.spawn(world, location.getX(), location.getY(), location.getZ(), remainder);
 		}
@@ -105,10 +103,6 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 	@Contract(mutates = "param1, param4")
 	public static void handleRemainderForScreenHandler(Slot slot, int amount, @Nullable Recipe<?> recipe, PlayerEntity player) {
 		ItemStack remainder = decrementWithRemainder(slot.getStack(), amount, recipe);
-
-		if (remainder.isEmpty()) {
-			return;
-		}
 
 		if (!tryReturnItemToSlot(remainder, slot)) {
 			player.getInventory().offerOrDrop(remainder);
