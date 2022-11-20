@@ -18,6 +18,7 @@ package org.quiltmc.qsl.item.setting.mixin.recipe_remainder;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.screen.StonecutterScreenHandler;
@@ -43,6 +44,8 @@ public class StonecutterOutputSlotMixin extends Slot {
 	public ItemStack getRecipeRemainder(Slot slot, int amount, PlayerEntity player, ItemStack stack) {
 		int selectedRecipe = this.field_17639.getSelectedRecipe();
 		Recipe<?> recipe = selectedRecipe != -1 ? this.field_17639.getAvailableRecipes().get(selectedRecipe) : null;
+		Item inputItem = slot.getStack().getItem();
+		int inputCount = slot.getStack().getCount();
 
 		RecipeRemainderLogicHandler.handleRemainderForScreenHandler(
 				slot,
@@ -51,6 +54,6 @@ public class StonecutterOutputSlotMixin extends Slot {
 				player
 		);
 
-		return new ItemStack(slot.getStack().getItem(), amount);
+		return new ItemStack(inputItem, Math.min(amount, inputCount));
 	}
 }
