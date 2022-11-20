@@ -35,9 +35,8 @@ import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 @ApiStatus.Internal
 public abstract class RegistryEntryAttachmentHolder<R> {
-	@SuppressWarnings("unchecked")
 	public static <R> QuiltRegistryInternals<R> getInternals(Registry<R> registry) {
-		return (QuiltRegistryInternals<R>) registry;
+		return QuiltRegistryInternals.of(registry);
 	}
 
 	public static <R, T> void registerAttachment(Registry<R> registry, RegistryEntryAttachment<R, T> attachment) {

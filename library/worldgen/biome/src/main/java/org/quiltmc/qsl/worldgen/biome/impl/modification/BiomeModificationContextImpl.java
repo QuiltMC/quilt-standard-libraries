@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import net.minecraft.util.registry.*;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,13 +42,7 @@ import net.minecraft.sound.BiomeAdditionsSound;
 import net.minecraft.sound.BiomeMoodSound;
 import net.minecraft.sound.MusicSound;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Holder;
-import net.minecraft.util.HolderSet;
 import net.minecraft.util.collection.Pool;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeEffects;
 import net.minecraft.world.biome.BiomeParticleConfig;
@@ -229,8 +224,8 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 	}
 
 	private class GenerationSettingsContextImpl implements GenerationSettingsContext {
-		private final Registry<ConfiguredCarver<?>> carvers = registries.get(Registry.CONFIGURED_CARVER_KEY);
-		private final Registry<PlacedFeature> features = registries.get(Registry.PLACED_FEATURE_KEY);
+		private final Registry<ConfiguredCarver<?>> carvers = registries.get(Registries.CONFIGURED_CARVER_WORLDGEN);
+		private final Registry<PlacedFeature> features = registries.get(Registries.PLACED_FEATURE_WORLDGEN);
 		private final GenerationSettings generationSettings = biome.getGenerationSettings();
 
 		private boolean rebuildFlowerFeatures;

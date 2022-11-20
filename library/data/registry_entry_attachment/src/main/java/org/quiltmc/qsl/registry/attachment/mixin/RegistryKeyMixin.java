@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import net.minecraft.util.registry.RegistryKey;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -32,8 +33,8 @@ import org.quiltmc.qsl.registry.attachment.impl.BuiltinRegistryEntryAttachmentHo
 import org.quiltmc.qsl.registry.attachment.impl.DataRegistryEntryAttachmentHolder;
 import org.quiltmc.qsl.registry.attachment.impl.QuiltRegistryInternals;
 
-@Mixin(Registry.class)
-public abstract class RegistryMixin<R> implements QuiltRegistryInternals<R> {
+@Mixin(RegistryKey.class)
+public abstract class RegistryKeyMixin<R> implements QuiltRegistryInternals<R> {
 	@Unique
 	private final Map<Identifier, RegistryEntryAttachment<R, ?>> quilt$attachments = new HashMap<>();
 	@Unique

@@ -34,7 +34,7 @@ public abstract class EffectCommandMixin {
 		return instance.clearStatusEffects(StatusEffectRemovalReason.COMMAND_ALL) > 0;
 	}
 
-	@Redirect(method = "executeClear(Lnet/minecraft/server/command/ServerCommandSource;Ljava/util/Collection;Lnet/minecraft/util/Holder;)I",
+	@Redirect(method = "executeClear(Lnet/minecraft/server/command/ServerCommandSource;Ljava/util/Collection;Lnet/minecraft/util/registry/Holder;)I",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;removeStatusEffect(Lnet/minecraft/entity/effect/StatusEffect;)Z"))
 	private static boolean quilt$addRemovalReason(LivingEntity instance, StatusEffect type) {
 		return instance.removeStatusEffect(type, StatusEffectRemovalReason.COMMAND_ONE);
