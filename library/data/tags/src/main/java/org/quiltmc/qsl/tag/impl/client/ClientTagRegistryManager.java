@@ -35,6 +35,8 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.util.registry.*;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,11 +46,6 @@ import net.minecraft.tag.TagGroupLoader;
 import net.minecraft.tag.TagKey;
 import net.minecraft.tag.TagManagerLoader;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.Holder;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.tag.api.QuiltTagKey;
@@ -65,7 +62,7 @@ public final class ClientTagRegistryManager<T> {
 	private final RegistryKey<? extends Registry<T>> registryKey;
 	private final RegistryFetcher registryFetcher;
 	private final TagGroupLoader<Holder<T>> loader;
-	private DynamicRegistryManager registryManager = BuiltinRegistries.m_bayqaavy();
+	private DynamicRegistryManager registryManager = DynamicRegistryManager.fromRegistryOfRegistries(BuiltinRegistries.REGISTRY);
 	private Map<Identifier, List<TagGroupLoader.EntryWithSource>> serializedTags = Map.of();
 	private Map<TagKey<T>, Collection<Holder<T>>> clientOnlyValues;
 	private Map<Identifier, List<TagGroupLoader.EntryWithSource>> fallbackSerializedTags = Map.of();
@@ -75,7 +72,7 @@ public final class ClientTagRegistryManager<T> {
 	private ClientTagRegistryManager(RegistryKey<? extends Registry<T>> registryKey, String dataType) {
 		this.registryKey = registryKey;
 
-		if (Registry.REGISTRIES.contains((RegistryKey) registryKey)) {
+		if (BuiltinRegistries.REGISTRY.contains((RegistryKey) registryKey)) {
 			this.registryFetcher = new StaticRegistryFetcher();
 		} else {
 			this.registryFetcher = new ClientRegistryFetcher();
@@ -185,13 +182,6 @@ public final class ClientTagRegistryManager<T> {
 
 		map.forEach((tagKey, tag) -> {
 			for (var holder : tag) {
-				if (!holder.isRegistry(registry.get())) {
-					throw new IllegalStateException(
-							"Can't create named set " + tagKey + " containing value "
-									+ holder + " from outside registry " + registry.get()
-					);
-				}
-
 				if (!(holder instanceof Holder.Reference<T> reference)) {
 					throw new IllegalStateException("Found direct holder " + holder + " value in tag " + tagKey);
 				}
@@ -212,10 +202,10 @@ public final class ClientTagRegistryManager<T> {
 
 	@ClientOnly
 	static void init() {
-		Registry.REGISTRIES.forEach(registry -> {
+		BuiltinRegistries.REGISTRY.forEach(registry -> {
 			get(registry.getKey());
 		});
-		BuiltinRegistries.REGISTRIES.forEach(registry -> {
+		BuiltinRegistries.REGISTRY.forEach(registry -> {
 			get(registry.getKey());
 		});
 	}
@@ -276,7 +266,7 @@ public final class ClientTagRegistryManager<T> {
 
 		@SuppressWarnings({"unchecked", "rawtypes"})
 		private StaticRegistryFetcher() {
-			this.cached = (Registry<T>) Registry.REGISTRIES.get((RegistryKey) ClientTagRegistryManager.this.registryKey);
+			this.cached = (Registry<T>) BuiltinRegistries.REGISTRY.get((RegistryKey) ClientTagRegistryManager.this.registryKey);
 		}
 
 		@Override
