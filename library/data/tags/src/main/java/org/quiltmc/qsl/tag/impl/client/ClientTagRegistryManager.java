@@ -35,7 +35,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.registry.*;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -205,8 +204,8 @@ public final class ClientTagRegistryManager<T> {
 		BuiltinRegistries.REGISTRY.forEach(registry -> {
 			get(registry.getKey());
 		});
-		BuiltinRegistries.REGISTRY.forEach(registry -> {
-			get(registry.getKey());
+		RegistryLoader.WORLDGEN_REGISTRIES.forEach(decodingData -> {
+			get(decodingData.key());
 		});
 	}
 
