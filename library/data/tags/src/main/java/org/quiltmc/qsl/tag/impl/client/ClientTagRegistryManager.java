@@ -201,11 +201,11 @@ public final class ClientTagRegistryManager<T> {
 
 	@ClientOnly
 	static void init() {
-		RegistryLoader.WORLDGEN_REGISTRIES.forEach(decodingData -> {
-			get(decodingData.key());
-		});
 		BuiltinRegistries.REGISTRY.forEach(registry -> {
 			get(registry.getKey());
+		});
+		RegistryLoader.WORLDGEN_REGISTRIES.forEach(decodingData -> {
+			get(decodingData.key());
 		});
 	}
 
