@@ -57,7 +57,7 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeModificationContext;
 
 @ApiStatus.Internal
 public class BiomeModificationContextImpl implements BiomeModificationContext {
-	private static final Supplier<DynamicRegistryManager.Frozen> BUILTIN_REGISTRIES = Suppliers.memoize(BuiltinRegistries::m_bayqaavy);
+	private static final Supplier<DynamicRegistryManager.Frozen> BUILTIN_REGISTRIES = Suppliers.memoize(() -> DynamicRegistryManager.fromRegistryOfRegistries(BuiltinRegistries.REGISTRY));
 	private final DynamicRegistryManager registries;
 	private final Biome biome;
 	private final WeatherContext weather;

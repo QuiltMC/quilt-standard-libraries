@@ -296,19 +296,6 @@ public interface BiomeModificationContext {
 			return anyFound;
 		}
 
-		/**
-		 * {@link #removeFeature(RegistryKey)} for built-in features (see {@link #addBuiltInFeature(GenerationStep.Feature, PlacedFeature)}).
-		 */
-		default boolean removeBuiltInFeature(PlacedFeature placedFeature) {
-			return this.removeFeature(BuiltInRegistryKeys.get(placedFeature));
-		}
-
-		/**
-		 * {@link #removeFeature(GenerationStep.Feature, RegistryKey)} for built-in features (see {@link #addBuiltInFeature(GenerationStep.Feature, PlacedFeature)}).
-		 */
-		default boolean removeBuiltInFeature(GenerationStep.Feature step, PlacedFeature placedFeature) {
-			return this.removeFeature(step, BuiltInRegistryKeys.get(placedFeature));
-		}
 
 		/**
 		 * Adds a feature to one of this biomes generation steps, identified by the placed feature's registry key.
@@ -318,34 +305,9 @@ public interface BiomeModificationContext {
 		void addFeature(GenerationStep.Feature step, RegistryKey<PlacedFeature> placedFeatureKey);
 
 		/**
-		 * Adds a placed feature from {@link BuiltinRegistries#PLACED_FEATURE} to this biome.
-		 * <p>
-		 * This method is intended for use with the placed features found in
-		 * classes such as {@link net.minecraft.world.gen.feature.OrePlacedFeatures}.
-		 * <p>
-		 * <b>NOTE:</b> In case the placed feature is overridden in a datapack, the datapacks version
-		 * will be used.
-		 */
-		default void addBuiltInFeature(GenerationStep.Feature step, PlacedFeature placedFeature) {
-			this.addFeature(step, BuiltInRegistryKeys.get(placedFeature));
-		}
-
-		/**
 		 * Adds a configured carver to one of this biomes generation steps.
 		 */
 		void addCarver(GenerationStep.Carver step, RegistryKey<ConfiguredCarver<?>> carverKey);
-
-		/**
-		 * Adds a configured carver from {@link BuiltinRegistries#CONFIGURED_CARVER} to this biome.
-		 * <p>
-		 * This method is intended for use with the configured carvers found in {@link net.minecraft.world.gen.carver.ConfiguredCarvers}.
-		 * <p>
-		 * <b>NOTE:</b> In case the configured carver is overridden in a datapack, the datapacks version
-		 * will be used.
-		 */
-		default void addBuiltInCarver(GenerationStep.Carver step, ConfiguredCarver<?> configuredCarver) {
-			this.addCarver(step, BuiltInRegistryKeys.get(configuredCarver));
-		}
 
 		/**
 		 * Removes all carvers with the given key from one of this biomes generation steps.
@@ -369,20 +331,6 @@ public interface BiomeModificationContext {
 			}
 
 			return anyFound;
-		}
-
-		/**
-		 * {@link #removeCarver(RegistryKey)} for built-in carvers (see {@link #addBuiltInCarver(GenerationStep.Carver, ConfiguredCarver)}).
-		 */
-		default boolean removeBuiltInCarver(ConfiguredCarver<?> configuredCarver) {
-			return this.removeCarver(BuiltInRegistryKeys.get(configuredCarver));
-		}
-
-		/**
-		 * {@link #removeCarver(GenerationStep.Carver, RegistryKey)} for built-in carvers (see {@link #addBuiltInCarver(GenerationStep.Carver, ConfiguredCarver)}).
-		 */
-		default boolean removeBuiltInCarver(GenerationStep.Carver step, ConfiguredCarver<?> configuredCarver) {
-			return this.removeCarver(step, BuiltInRegistryKeys.get(configuredCarver));
 		}
 	}
 

@@ -193,7 +193,7 @@ public class QuiltBiomeTest implements ModInitializer {
 	// These are used for testing the spacing of custom end biomes.
 	private static Biome createEndHighlands(DynamicRegistryManagerSetupContext context) {
 		GenerationSettings.Builder builder = new GenerationSettings.Builder(context.registryManager().getLookupOrThrow(Registries.PLACED_FEATURE_WORLDGEN), context.registryManager().getLookupOrThrow(Registries.CONFIGURED_CARVER_WORLDGEN))
-				.m_qhxraujc(GenerationStep.Feature.SURFACE_STRUCTURES, EndPlacedFeatures.END_GATEWAY_RETURN);
+				.feature(GenerationStep.Feature.SURFACE_STRUCTURES, EndPlacedFeatures.END_GATEWAY_RETURN);
 		return composeEndSpawnSettings(builder);
 	}
 
@@ -210,7 +210,7 @@ public class QuiltBiomeTest implements ModInitializer {
 	private static Biome composeEndSpawnSettings(GenerationSettings.Builder builder) {
 		SpawnSettings.Builder builder2 = new SpawnSettings.Builder();
 		DefaultBiomeFeatures.addPlainsMobs(builder2);
-		return (new Biome.Builder()).precipitation(Biome.Precipitation.NONE).temperature(0.5F).downfall(0.5F).effects((new BiomeEffects.Builder()).waterColor(0x129900).waterFogColor(0x121212).fogColor(0x990000).skyColor(0).moodSound(BiomeMoodSound.CAVE).build()).spawnSettings(builder2.build()).generationSettings(builder).build();
+		return (new Biome.Builder()).precipitation(Biome.Precipitation.NONE).temperature(0.5F).downfall(0.5F).effects((new BiomeEffects.Builder()).waterColor(0x129900).waterFogColor(0x121212).fogColor(0x990000).skyColor(0).moodSound(BiomeMoodSound.CAVE).build()).spawnSettings(builder2.build()).generationSettings(builder.build()).build();
 	}
 
 	private static Identifier id(String path) {

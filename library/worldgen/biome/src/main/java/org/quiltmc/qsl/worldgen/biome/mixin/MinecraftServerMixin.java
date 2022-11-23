@@ -18,6 +18,7 @@
 package org.quiltmc.qsl.worldgen.biome.mixin;
 
 import net.minecraft.util.registry.Registries;
+import org.quiltmc.qsl.worldgen.biome.impl.modification.BuiltInRegistryKeys;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -39,6 +40,6 @@ public abstract class MinecraftServerMixin {
 	private void addNetherBiomes(WorldGenerationProgressListener worldGenerationProgressListener, CallbackInfo ci) {
 		var registry = this.getRegistryManager().get(Registries.LEVEL_STEM);
 
-		registry.forEach(dimensionOptions -> NetherBiomeData.modifyBiomeSource(this.getRegistryManager().get(Registries.BIOME_WORLDGEN), dimensionOptions.getChunkGenerator().getBiomeSource()));
+		registry.forEach(dimensionOptions -> NetherBiomeData.modifyBiomeSource(BuiltInRegistryKeys.biomeRegistryWrapper(), dimensionOptions.getChunkGenerator().getBiomeSource()));
 	}
 }
