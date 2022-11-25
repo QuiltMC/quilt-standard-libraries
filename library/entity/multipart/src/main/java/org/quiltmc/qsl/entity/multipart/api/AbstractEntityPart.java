@@ -181,28 +181,25 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	 * Rotates this {@link AbstractEntityPart} about the pivot point with the given rotation.
 	 *
 	 * @param pivot the pivot point to rotate about in relative coordinates
-	 * @param pitch the rotation about z-axis in degrees
+	 * @param pitch the rotation about x-axis in degrees
 	 * @param yaw   the rotation about y-axis in degrees
-	 * @param roll  the rotation about x-axis in degrees
 	 */
-	public void rotate(Vec3d pivot, float pitch, float yaw, float roll) {
+	public void rotate(Vec3d pivot, float pitch, float yaw) {
 		this.setPivot(pivot);
-		this.rotate(pitch, yaw, roll);
+		this.rotate(pitch, yaw, true);
 	}
 
 	/**
 	 * Rotates this {@link AbstractEntityPart} about its {@link AbstractEntityPart#pivot pivot point} with the given rotation.
 	 *
-	 * @param pitch the rotation about z-axis in degrees
-	 * @param yaw   the rotation about y-axis in degrees
-	 * @param roll  the rotation about x-axis in degrees
+	 * @param pitch the rotation about the x-axis
+	 * @param yaw   the rotation about the y-axis
+	 * @param degrees whether the rotation should be done in degrees or radians
 	 */
-	public void rotate(float pitch, float yaw, float roll) {
-		Vec3f relativePos = new Vec3f(this.getAbsolutePosition().subtract(this.getAbsolutePivot()));
-		relativePos.rotate(new Quaternion(-roll, -yaw, -pitch, true));
-		var transformedPos = this.getAbsolutePivot().subtract(this.getAbsolutePosition())
-				.add(relativePos.getX(), relativePos.getY(), relativePos.getZ());
-
+	public void rotate(float pitch, float yaw, boolean degrees) {
+		Vec3d rel = this.getAbsolutePosition().subtract(this.getAbsolutePivot());
+		rel = rel.rotateX(-pitch * (degrees ? (float)Math.PI/180f : 1)).rotateY(-yaw * (degrees ? (float)Math.PI/180f : 1));
+		Vec3d transformedPos = this.getAbsolutePivot().subtract(this.getAbsolutePosition()).add(rel);
 		this.move(transformedPos);
 	}
 
@@ -225,7 +222,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	}
 
 	/**
-	 * Sets the point to {@link AbstractEntityPart#rotate(float, float, float) rotate} about.
+	 * Sets the point to {@link AbstractEntityPart#rotate(float, float, boolean) rotate} about.
 	 *
 	 * @param pivot the pivot point
 	 */
@@ -234,7 +231,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	}
 
 	/**
-	 * Sets the point to {@link AbstractEntityPart#rotate(float, float, float) rotate} about.
+	 * Sets the point to {@link AbstractEntityPart#rotate(float, float, boolean) rotate} about.
 	 *
 	 * @param x the x coordinate of the pivot point
 	 * @param y the y coordinate of the pivot point
