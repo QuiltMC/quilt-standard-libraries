@@ -40,6 +40,7 @@ import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
  *     <li>{@link #STRIPPABLE_BLOCK}</li>
  *     <li>{@link #FLAMMABLE_BLOCK}</li>
  *     <li>{@link #SCULK_FREQUENCY}</li>
+ *     <li>{@link #ENCHANTMENT_BOOSTERS}</li>
  * </ul>
  */
 public class BlockContentRegistries {
@@ -47,6 +48,7 @@ public class BlockContentRegistries {
 	 * The namespace for the content registries.
 	 */
 	public static final String NAMESPACE = "quilt_block_content_registry";
+	public static final String QUILT_NAMESPACE = "quilt";
 
 	/**
 	 * A {@link RegistryEntryAttachment} for when blocks are right clicked by a shovel.
@@ -128,6 +130,18 @@ public class BlockContentRegistries {
 					new Identifier(NAMESPACE, "sculk_frequency"),
 					Integer.class,
 					Codec.intRange(1, 15))
+			.build();
+
+	/**
+	 * A {@link RegistryEntryAttachment} for enchantment power levels in bookshelf equivalents.
+	 * <p>
+	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/enchantment_boosters.json}
+	 */
+	public static final RegistryEntryAttachment<Block, Float> ENCHANTMENT_BOOSTERS = RegistryEntryAttachment
+			.builder(Registry.BLOCK,
+					new Identifier(QUILT_NAMESPACE, "enchantment_boosters"),
+					Float.class,
+					Codec.floatRange(0f, Float.MAX_VALUE))
 			.build();
 }
 
