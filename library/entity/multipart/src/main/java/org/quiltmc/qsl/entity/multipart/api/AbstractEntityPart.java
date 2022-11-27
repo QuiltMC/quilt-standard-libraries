@@ -202,6 +202,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 		Vec3d transformedPos = this.getAbsolutePivot().subtract(this.getAbsolutePosition()).add(rel);
 		this.move(transformedPos);
 	}
+
 	/**
 	 * @deprecated  Use {@link #rotate(float, float, boolean)} instead.
 	 */
