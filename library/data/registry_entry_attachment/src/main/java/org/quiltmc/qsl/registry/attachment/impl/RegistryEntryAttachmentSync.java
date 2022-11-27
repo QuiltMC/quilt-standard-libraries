@@ -73,11 +73,11 @@ public final class RegistryEntryAttachmentSync {
 
 	private record AttachmentEntry(String path, boolean isTag, NbtElement value) {
 		public void write(PacketByteBuf buf) {
-			buf.writeString(path);
-			buf.writeBoolean(isTag);
+			buf.writeString(this.path);
+			buf.writeBoolean(this.isTag);
 
 			NbtCompound compound = new NbtCompound();
-			compound.put("value", value);
+			compound.put("value", this.value);
 			buf.writeNbt(compound);
 		}
 
@@ -116,6 +116,7 @@ public final class RegistryEntryAttachmentSync {
 				for (AttachmentEntry attachmentEntry : valueMap.entries()) {
 					attachmentEntry.write(buf);
 				}
+
 				bufs.add(buf);
 			}
 		}
