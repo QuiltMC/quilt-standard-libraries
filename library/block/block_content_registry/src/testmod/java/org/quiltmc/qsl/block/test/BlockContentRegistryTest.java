@@ -52,6 +52,11 @@ public class BlockContentRegistryTest implements ModInitializer {
 				new OxidizableBlock(Oxidizable.OxidizationLevel.UNAFFECTED, AbstractBlock.Settings.copy(Blocks.IRON_BLOCK)),
 				BlockContentRegistries.OXIDIZABLE_BLOCK, new ReversibleBlockEntry(Blocks.IRON_BLOCK, false));
 
+		BlockContentRegistries.ENCHANTMENT_BOOSTERS.put(Blocks.IRON_BLOCK, 3f);
+		BlockContentRegistries.ENCHANTMENT_BOOSTERS.put(Blocks.DIAMOND_BLOCK, 15f);
+		BlockContentRegistries.ENCHANTMENT_BOOSTERS.put(Blocks.NETHERITE_BLOCK, 100f);
+		BlockContentRegistries.ENCHANTMENT_BOOSTERS.put(Blocks.OAK_PLANKS, 0.25f);
+
 		ServerWorldTickEvents.START.register((server, world) -> {
 			if (testPassed) {
 				return;
