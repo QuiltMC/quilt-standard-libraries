@@ -41,6 +41,7 @@ public final class ClientTagsTestMod implements ClientModInitializer {
 	public static final TagKey<Block> TEST_CLIENT_BLOCK_TAG = QuiltTagKey.of(Registry.BLOCK_KEY, TagsTestMod.id("client_block_tag"), TagType.CLIENT_ONLY);
 	public static final TagKey<Biome> TEST_CLIENT_BIOME_TAG = QuiltTagKey.of(Registry.BIOME_KEY, TagsTestMod.id("client_biome_tag"), TagType.CLIENT_ONLY);
 	public static final TagKey<Item> TEST_DEFAULT_ITEM_TAG = QuiltTagKey.of(Registry.ITEM_KEY, TagsTestMod.id("default_item_tag"), TagType.CLIENT_FALLBACK);
+	public static final TagKey<Block> TEST_CLIENT_DERIVATIVE_BLOCK_TAG = QuiltTagKey.of(TagsTestMod.TEST_BLOCK_TAG, TagType.CLIENT_ONLY);
 
 	private static final Consumer<Text> FEEDBACK_CONSUMER = msg -> MinecraftClient.getInstance().player.sendMessage(msg, false);
 
@@ -66,6 +67,11 @@ public final class ClientTagsTestMod implements ClientModInitializer {
 					).then(literal("fallback_item")
 							.executes(context -> {
 								TagsTestMod.displayTag(TEST_DEFAULT_ITEM_TAG, Registry.ITEM, FEEDBACK_CONSUMER);
+								return 0;
+							})
+					).then(literal("derivative_block")
+							.executes(context -> {
+								TagsTestMod.displayTag(TEST_CLIENT_DERIVATIVE_BLOCK_TAG, Registry.BLOCK, FEEDBACK_CONSUMER);
 								return 0;
 							})
 					)

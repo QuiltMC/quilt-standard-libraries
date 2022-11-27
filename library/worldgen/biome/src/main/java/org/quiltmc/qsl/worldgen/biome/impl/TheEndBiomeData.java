@@ -140,39 +140,35 @@ public final class TheEndBiomeData {
 		}
 
 		public Holder<Biome> pick(int x, int y, int z, MultiNoiseUtil.MultiNoiseSampler noise, Holder<Biome> vanillaBiome) {
-			var sampler = ((MultiNoiseSamplerExtensions) (Object) noise).quilt$getTheEndBiomesSampler();
-			Holder<Biome> replacementKey;
+			boolean isMidlands = vanillaBiome.matches(this.endMidlands::isRegistryKey);
 
-			// The x and z of the entry are divided by 64 to ensure custom biomes are large enough; going larger than this]
-			// seems to make custom biomes too hard to find.
-			if (vanillaBiome.matches(endMidlands::isRegistryKey) || vanillaBiome.matches(endBarrens::isRegistryKey)) {
-				// Since the highlands picker is statically populated by InternalBiomeData, picker will never be null.
-				WeightedPicker<Holder<Biome>> highlandsPicker = this.endBiomesMap.get(this.endHighlands);
-				Holder<Biome> highlandsKey = highlandsPicker.pickFromNoise(sampler, x / 64.0, 0, z / 64.0);
+			if (isMidlands || vanillaBiome.matches(this.endBarrens::isRegistryKey)) {
+				// select a random highlands biome replacement, then try to replace it with a midlands or barrens biome replacement.
+				var highlandsReplacement = this.pick(this.endHighlands, this.endHighlands, this.endBiomesMap, x, z, noise);
+				Map<Holder<Biome>, WeightedPicker<Holder<Biome>>> map = isMidlands ? this.endMidlandsMap : this.endBarrensMap;
 
-				if (vanillaBiome.matches(endMidlands::isRegistryKey)) {
-					WeightedPicker<Holder<Biome>> midlandsPicker = this.endMidlandsMap.get(highlandsKey);
-					if (midlandsPicker == null) return vanillaBiome;
-					int count = midlandsPicker.getEntryCount();
-					boolean useVanilla = count == 0 || (count == 1 && vanillaBiome.matches(endMidlands::isRegistryKey));
-					replacementKey = useVanilla ? vanillaBiome : midlandsPicker.pickFromNoise(sampler, x / 64.0, 0, z / 64.0);
-				} else {
-					WeightedPicker<Holder<Biome>> barrensPicker = this.endBarrensMap.get(highlandsKey);
-					if (barrensPicker == null) return vanillaBiome;
-					int count = barrensPicker.getEntryCount();
-					boolean useVanilla = count == 0 || (count == 1 && vanillaBiome.matches(endBarrens::isRegistryKey));
-					replacementKey = useVanilla ? vanillaBiome : barrensPicker.pickFromNoise(sampler, x / 64.0, 0, z / 64.0);
-				}
+				return this.pick(highlandsReplacement, vanillaBiome, map, x, z, noise);
 			} else {
-				// Since the main island and small islands pickers are statically populated by InternalBiomeData, picker will never be null.
-				WeightedPicker<Holder<Biome>> picker = this.endBiomesMap.get(vanillaBiome);
-				if (picker == null) return vanillaBiome;
-				int count = picker.getEntryCount();
-				boolean useVanilla = count == 0 || (count == 1 && vanillaBiome.matches(endHighlands::isRegistryKey));
-				replacementKey = useVanilla ? vanillaBiome : picker.pickFromNoise(sampler, x / 64.0, 0, z / 64.0);
-			}
+				assert END_BIOMES_MAP.containsKey(vanillaBiome.getKey().orElseThrow());
 
-			return replacementKey;
+				return this.pick(vanillaBiome, vanillaBiome, this.endBiomesMap, x, z, noise);
+			}
+		}
+
+		private <T extends Holder<Biome>> T pick(T key, T defaultValue, Map<T, WeightedPicker<T>> pickers, int x, int z, MultiNoiseUtil.MultiNoiseSampler noise) {
+			if (pickers == null) return defaultValue;
+
+			WeightedPicker<T> picker = pickers.get(key);
+			if (picker == null) return defaultValue;
+			int count = picker.getEntryCount();
+			if (count == 0 || (count == 1 && key.matches(this.endHighlands::isRegistryKey))) return defaultValue;
+
+			// The X and Z of the entry are divided by 64 to ensure custom biomes are large enough; going larger than this
+			// seems to make custom biomes too hard to find.
+			return picker.pickFromNoise(
+					((MultiNoiseSamplerExtensions) (Object) noise).quilt$getTheEndBiomesSampler(),
+					x / 64.0, 0, z / 64.0
+			);
 		}
 
 		public Collection<Holder<Biome>> getAddedBiomes() {

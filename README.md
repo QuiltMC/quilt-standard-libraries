@@ -138,11 +138,11 @@ Quick legend:
 
 ### Entity Library
 
-| Feature                         |      QSL       |   Fabric API   |
-|:--------------------------------|:--------------:|:--------------:|
-| EntityType registration helpers | :construction: |       ✔        |
-| Entity Events                   | :construction: |       ✔        |
-| Multipart Entity API            |       ✔        |       ❌        |
+| Feature                         | QSL | Fabric API |
+|:--------------------------------|:---:|:----------:|
+| EntityType registration helpers |  ✔  |     ✔      |
+| Entity Events                   |  ✔  |     ✔      |
+| Multipart Entity API            |  ✔  |     ❌      |
 
 ### GUI Library
 
@@ -168,12 +168,13 @@ Quick legend:
 
 ### Management Library
 
-| Feature         | QSL | Fabric API |
-|:----------------|:---:|:----------:|
-| Commands        |  ✔  |     ✔      |
-| Client Commands |  ✔  |     ✔      |
-| Game Rules      |  ❌  |     ✔      |
-| Message API     |  ❌  |     ✔      |
+| Feature                 | QSL | Fabric API |
+|:------------------------|:---:|:----------:|
+| Commands                |  ✔  |     ✔      |
+| Client Commands         |  ✔  |     ✔      |
+| Game Rules              |  ❌  |     ✔      |
+| Entity Selector Options |  ✔  |     ❌      |
+| Message API             |  ❌  |     ✔      |
 
 ### Rendering Library
 

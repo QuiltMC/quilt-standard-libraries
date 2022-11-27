@@ -42,7 +42,7 @@ final class AttachmentDictionary<R, V> {
 	private final RegistryEntryAttachment<R, V> attachment;
 	private final Map<ValueTarget, Object> map;
 
-	public AttachmentDictionary(Registry<R> registry, RegistryEntryAttachment<R, V> attachment) {
+	AttachmentDictionary(Registry<R> registry, RegistryEntryAttachment<R, V> attachment) {
 		this.registry = registry;
 		this.attachment = attachment;
 		this.map = new HashMap<>();
@@ -198,12 +198,13 @@ final class AttachmentDictionary<R, V> {
 				LOGGER.warn("Tag entry {} in '{}' is redundantly marked as optional (all tag entries are optional)",
 						keyId, resourceId);
 			}
-		} else if (!registry.containsId(keyId)) {
+		} else if (!this.registry.containsId(keyId)) {
 			if (required) {
 				// log an error
 				// vanilla tags throw but that causes way more breakage
 				LOGGER.error("Unregistered identifier in values of '{}': '{}', ignoring", resourceId, keyId);
 			}
+
 			// either way, drop the entry
 			return;
 		}

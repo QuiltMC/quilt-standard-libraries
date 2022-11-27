@@ -48,6 +48,8 @@ public class ItemGroupTest implements ModInitializer {
 							.forEach(stacks::add)
 			).build();
 
+	public static final QuiltItemGroup ITEM_GROUP_WITH_TEXTURE_ICON = QuiltItemGroup.create(new Identifier(NAMESPACE, "test_texture_icon_group"));
+
 	private static final QuiltItemGroup[] MANY_GROUPS = IntStream.range(0, 20).mapToObj(i -> QuiltItemGroup.builder(new Identifier(NAMESPACE, "many_group_" + i)).build()).toArray(QuiltItemGroup[]::new);
 
 	private static final ItemGroup NOT_QUILT_ITEM_GROUP = QuiltItemGroup.register(index -> new ItemGroup(index, NAMESPACE + ".test_not_quilt_group") {
