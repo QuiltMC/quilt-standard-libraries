@@ -16,24 +16,24 @@
 
 package org.quiltmc.qsl.block.content.registry.mixin;
 
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.EnchantingTableBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.world.World;
-import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
-import java.util.Optional;
+import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
 
 @Mixin(EnchantingTableBlock.class)
 public class EnchantingTableBlockMixin {
 	@Redirect(method = "isValidForBookshelf", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;isOf(Lnet/minecraft/block/Block;)Z"))
 	private static boolean hasEnchantmentPower(BlockState blockState, Block ignored) {
-		return BlockContentRegistries.ENCHANTMENT_BOOSTERS.get(blockState.getBlock()).orElse(0f) != 0f;
+		return BlockContentRegistries.ENCHANTING_BOOSTERS.get(blockState.getBlock()).orElse(0f) != 0f;
 	}
 
 	@Redirect(method = "randomDisplayTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/random/RandomGenerator;nextInt(I)I"))
@@ -41,20 +41,20 @@ public class EnchantingTableBlockMixin {
 		return 0;
 	}
 
-	// Make particles spawn rate depend on the enchantment power level of the block
+	// Make particles spawn rate depend on the block's enchanting booster
 	@Redirect(method = "randomDisplayTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/EnchantingTableBlock;isValidForBookshelf(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/BlockPos;)Z"))
 	private boolean changeParticleChance(World world, BlockPos pos, BlockPos offset, BlockState ignoredState, World ignoredWorld, BlockPos ignoredPos, RandomGenerator random) {
 		if (!world.isAir(pos.add(offset.getX() / 2, offset.getY(), offset.getZ() / 2))) {
 			return false;
 		}
 
-		Block block = world.getBlockState(pos.add(offset)).getBlock();
-		Optional<Float> power = BlockContentRegistries.ENCHANTMENT_BOOSTERS.get(block);
+		var block = world.getBlockState(pos.add(offset)).getBlock();
+		var power = BlockContentRegistries.ENCHANTING_BOOSTERS.getNullable(block);
 
-		if (power.isPresent()) {
-			return random.nextFloat() * 16f <= power.get();
+		if (power != null) {
+			return random.nextFloat() * 16f <= power;
 		}
+
 		return false;
 	}
-
 }

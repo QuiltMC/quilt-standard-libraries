@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.block.content.registry.api;
 
-
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 
@@ -40,7 +39,7 @@ import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
  *     <li>{@link #STRIPPABLE_BLOCK}</li>
  *     <li>{@link #FLAMMABLE_BLOCK}</li>
  *     <li>{@link #SCULK_FREQUENCY}</li>
- *     <li>{@link #ENCHANTMENT_BOOSTERS}</li>
+ *     <li>{@link #ENCHANTING_BOOSTERS}</li>
  * </ul>
  */
 public class BlockContentRegistries {
@@ -99,11 +98,13 @@ public class BlockContentRegistries {
 						if (!block.getDefaultState().contains(Properties.AXIS)) {
 							return DataResult.error("block does not contain AXIS property");
 						}
+
 						return DataResult.success(block);
 					}, block -> {
 						if (!block.getDefaultState().contains(Properties.AXIS)) {
 							return DataResult.error("block does not contain AXIS property");
 						}
+
 						return DataResult.success(block);
 					}))
 			.build();
@@ -133,15 +134,15 @@ public class BlockContentRegistries {
 			.build();
 
 	/**
-	 * A {@link RegistryEntryAttachment} for enchantment power levels in bookshelf equivalents.
+	 * A {@link RegistryEntryAttachment} for enchanting boosters in bookshelf equivalents.
 	 * <p>
-	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/enchantment_boosters.json}
+	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/enchanting_boosters.json}
 	 */
-	public static final RegistryEntryAttachment<Block, Float> ENCHANTMENT_BOOSTERS = RegistryEntryAttachment
+	public static final RegistryEntryAttachment<Block, Float> ENCHANTING_BOOSTERS = RegistryEntryAttachment
 			.builder(Registry.BLOCK,
-					new Identifier(QUILT_NAMESPACE, "enchantment_boosters"),
+					new Identifier(QUILT_NAMESPACE, "enchanting_boosters"),
 					Float.class,
-					Codec.floatRange(0f, Float.MAX_VALUE))
+					Codec.floatRange(0.0F, Float.MAX_VALUE))
 			.build();
 }
 
