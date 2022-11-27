@@ -184,9 +184,9 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	 * @param pitch the rotation about x-axis in degrees
 	 * @param yaw   the rotation about y-axis in degrees
 	 */
-	public void rotate(Vec3d pivot, float pitch, float yaw) {
+	public void rotate(Vec3d pivot, float pitch, float yaw, boolean degrees) {
 		this.setPivot(pivot);
-		this.rotate(pitch, yaw, true);
+		this.rotate(pitch, yaw, degrees);
 	}
 
 	/**
@@ -201,6 +201,21 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 		rel = rel.rotateX(-pitch * (degrees ? (float)Math.PI/180f : 1)).rotateY(-yaw * (degrees ? (float)Math.PI/180f : 1));
 		Vec3d transformedPos = this.getAbsolutePivot().subtract(this.getAbsolutePosition()).add(rel);
 		this.move(transformedPos);
+	}
+	/**
+	 * @deprecated  Use {@link #rotate(float, float, boolean)} instead.
+	 */
+	@Deprecated
+	public void rotate(float pitch, float yaw, float roll) {
+		rotate(pitch, yaw, false);
+	}
+	/**
+	 * @deprecated  Use {@link #rotate(Vec3d, float, float, boolean)} instead.
+	 */
+	@Deprecated
+	public void rotate(Vec3d pivot, float pitch, float yaw, float roll) {
+		this.setPivot(pivot);
+		rotate(pitch, yaw, false);
 	}
 
 	/**
