@@ -36,7 +36,9 @@ public interface QuiltLivingEntityStatusEffectExtensions {
 	 * @param reason the reason to remove the status effect
 	 * @return {@code true} if the status effect was successfully removed, or {@code false} otherwise.
 	 */
-	boolean removeStatusEffect(@NotNull StatusEffect type, @NotNull StatusEffectRemovalReason reason);
+	default boolean removeStatusEffect(@NotNull StatusEffect type, @NotNull StatusEffectRemovalReason reason) {
+		throw new UnsupportedOperationException("No implementation of removeStatusEffect could be found.");
+	}
 
 	/**
 	 * Removes all status effects.
@@ -44,7 +46,9 @@ public interface QuiltLivingEntityStatusEffectExtensions {
 	 * @param reason the reason to remove the status effects
 	 * @return the number of status effects that were successfully removed.
 	 */
-	int clearStatusEffects(@NotNull StatusEffectRemovalReason reason);
+	default int clearStatusEffects(@NotNull StatusEffectRemovalReason reason) {
+		throw new UnsupportedOperationException("No implementation of clearStatusEffects could be found.");
+	}
 
 	/**
 	 * Should be called when a status effect is removed.
@@ -52,5 +56,7 @@ public interface QuiltLivingEntityStatusEffectExtensions {
 	 * @param effect the effect that was removed
 	 * @param reason the reason the effect was removed
 	 */
-	void onStatusEffectRemoved(@NotNull StatusEffectInstance effect, @NotNull StatusEffectRemovalReason reason);
+	default void onStatusEffectRemoved(@NotNull StatusEffectInstance effect, @NotNull StatusEffectRemovalReason reason) {
+		throw new UnsupportedOperationException("No implementation of onStatusEffectRemoved could be found.");
+	}
 }

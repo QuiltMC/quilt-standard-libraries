@@ -50,5 +50,7 @@ public interface QuiltStatusEffectExtensions {
 	 * @param effect     the removed status effect
 	 * @param reason     the reason the status effect was removed
 	 */
-	void onRemoved(@NotNull LivingEntity entity, @NotNull AttributeContainer attributes, @NotNull StatusEffectInstance effect, @NotNull StatusEffectRemovalReason reason);
+	default void onRemoved(@NotNull LivingEntity entity, @NotNull AttributeContainer attributes, @NotNull StatusEffectInstance effect, @NotNull StatusEffectRemovalReason reason) {
+		throw new UnsupportedOperationException("No implementation of onRemoved could be found.");
+	}
 }
