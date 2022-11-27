@@ -209,6 +209,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	public void rotate(float pitch, float yaw, float roll) {
 		rotate(pitch, yaw, false);
 	}
+
 	/**
 	 * @deprecated  Use {@link #rotate(Vec3d, float, float, boolean)} instead.
 	 */
