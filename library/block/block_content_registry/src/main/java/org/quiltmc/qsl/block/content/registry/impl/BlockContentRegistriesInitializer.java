@@ -82,6 +82,8 @@ public class BlockContentRegistriesInitializer implements ModInitializer {
 		)), BlockContentRegistries.WAXABLE);
 		addMapToAttachment(INITIAL_FLAMMABLE_BLOCKS, BlockContentRegistries.FLAMMABLE);
 
+		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.BOOKSHELF, 1f);
+
 		resetMaps();
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, error) -> resetMaps());
 	}

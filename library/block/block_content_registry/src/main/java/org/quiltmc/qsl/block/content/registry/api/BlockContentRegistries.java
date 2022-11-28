@@ -16,7 +16,7 @@
 
 package org.quiltmc.qsl.block.content.registry.api;
 
-
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 
 import net.minecraft.block.Block;
@@ -37,6 +37,7 @@ import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
  *     <li>{@link #WAXABLE}</li>
  *     <li>{@link #STRIPPABLE}</li>
  *     <li>{@link #FLAMMABLE}</li>
+ * 	   <li>{@link #ENCHANTING_BOOSTERS}</li>
  * </ul>
  */
 public class BlockContentRegistries {
@@ -94,11 +95,13 @@ public class BlockContentRegistries {
 						if (!block.getDefaultState().contains(Properties.AXIS)) {
 							return DataResult.error("block does not contain AXIS property");
 						}
+
 						return DataResult.success(block);
 					}, block -> {
 						if (!block.getDefaultState().contains(Properties.AXIS)) {
 							return DataResult.error("block does not contain AXIS property");
 						}
+
 						return DataResult.success(block);
 					}))
 			.build();
@@ -113,6 +116,18 @@ public class BlockContentRegistries {
 					new Identifier(NAMESPACE, "flammable"),
 					FlammableBlockEntry.class,
 					FlammableBlockEntry.CODEC)
+			.build();
+
+	/**
+	 * A {@link RegistryEntryAttachment} for enchanting boosters in bookshelf equivalents.
+	 * <p>
+	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/enchanting_boosters.json}
+	 */
+	public static final RegistryEntryAttachment<Block, Float> ENCHANTING_BOOSTERS = RegistryEntryAttachment
+			.builder(BuiltinRegistries.BLOCK,
+					new Identifier(NAMESPACE, "enchanting_boosters"),
+					Float.class,
+					Codec.floatRange(0.0F, Float.MAX_VALUE))
 			.build();
 }
 

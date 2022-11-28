@@ -44,20 +44,28 @@ public interface QuiltScreen {
 	 *
 	 * @return a list of all of the screen's buttons
 	 */
-	List<ClickableWidget> getButtons();
+	default List<ClickableWidget> getButtons() {
+		throw new UnsupportedOperationException("No implementation of getButtons could be found.");
+	}
 
 	/**
 	 * {@return the screen's item renderer}
 	 */
-	ItemRenderer getItemRenderer();
+	default ItemRenderer getItemRenderer() {
+		throw new UnsupportedOperationException("No implementation of getItemRenderer could be found.");
+	}
 
 	/**
 	 * {@return the screen's text renderer}
 	 */
-	TextRenderer getTextRenderer();
+	default TextRenderer getTextRenderer() {
+		throw new UnsupportedOperationException("No implementation of getTextRenderer could be found.");
+	}
 
 	/**
 	 * {@return the Minecraft client instance}
 	 */
-	MinecraftClient getClient();
+	default MinecraftClient getClient() {
+		throw new UnsupportedOperationException("No implementation of getClient could be found.");
+	}
 }

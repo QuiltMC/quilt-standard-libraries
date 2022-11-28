@@ -14,9 +14,9 @@ qslModule {
 		}
 	}
 	injectedInterface("net/minecraft/class_1510") {
-		values = ["org/quiltmc/qsl/entity/multipart/api/MultipartEntity"]
+		values = ["org/quiltmc/qsl/entity/multipart/impl/EnderDragonMultipartEntity"]
 	}
 	injectedInterface("net/minecraft/class_1508") {
-		values = ["org/quiltmc/qsl/entity/multipart/api/EntityPart"]
+		values = ["org/quiltmc/qsl/entity/multipart/impl/EnderDragonEntityPart"]
 	}
 }

@@ -14,25 +14,18 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.entity.multipart.mixin;
-
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+package org.quiltmc.qsl.entity.multipart.impl;
 
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonPart;
 
-import org.quiltmc.qsl.entity.multipart.impl.EnderDragonEntityPart;
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
+import org.quiltmc.qsl.entity.multipart.api.EntityPart;
 
-@Mixin(EnderDragonPart.class)
-public class EnderDragonPartMixin implements EnderDragonEntityPart {
-	@Shadow
-	@Final
-	public EnderDragonEntity owner;
-
+@InjectedInterface(EnderDragonPart.class)
+public interface EnderDragonEntityPart extends EntityPart<EnderDragonEntity> {
 	@Override
-	public EnderDragonEntity getOwner() {
-		return this.owner;
+	default EnderDragonEntity getOwner() {
+		throw new UnsupportedOperationException("No implementation of getOwner could be found.");
 	}
 }

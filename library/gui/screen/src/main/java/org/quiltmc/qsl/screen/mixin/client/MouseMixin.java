@@ -82,8 +82,7 @@ abstract class MouseMixin {
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z",
 					shift = At.Shift.AFTER
-			),
-			cancellable = true
+			)
 	)
 	private static void afterMouseClickedEvent(boolean[] resultHack, Screen screen, double mouseX, double mouseY, int button, CallbackInfo ci) {
 		@SuppressWarnings("resource")
@@ -135,8 +134,7 @@ abstract class MouseMixin {
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z",
 					shift = At.Shift.AFTER
-			),
-			cancellable = true
+			)
 	)
 	private static void afterMouseReleasedEvent(boolean[] resultHack, Screen screen, double mouseX, double mouseY, int button, CallbackInfo ci) {
 		@SuppressWarnings("resource")

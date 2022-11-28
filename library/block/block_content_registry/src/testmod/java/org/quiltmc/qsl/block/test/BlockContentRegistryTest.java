@@ -43,7 +43,6 @@ public class BlockContentRegistryTest implements ModInitializer {
 	public static final String MOD_ID = "quilt_block_content_registry_testmod";
 	public static final Logger LOGGER = LoggerFactory.getLogger("BlockContentRegistryTest");
 
-
 	public static boolean testPassed = false;
 
 	@Override
@@ -52,17 +51,22 @@ public class BlockContentRegistryTest implements ModInitializer {
 				new OxidizableBlock(Oxidizable.OxidizationLevel.UNAFFECTED, AbstractBlock.Settings.copy(Blocks.IRON_BLOCK)),
 				BlockContentRegistries.OXIDIZABLE, new ReversibleBlockEntry(Blocks.IRON_BLOCK, false));
 
+		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.IRON_BLOCK, 3f);
+		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.DIAMOND_BLOCK, 15f);
+		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.NETHERITE_BLOCK, 100f);
+		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.OAK_PLANKS, 0.25f);
+
 		ServerWorldTickEvents.START.register((server, world) -> {
 			if (testPassed) {
 				return;
 			}
 
 			LOGGER.info("Starting BlockContentRegistry tests");
-			BuiltinRegistries.BLOCK.getOrCreateTag(BlockTags.ANVIL).forEach(holder -> assertValues(holder.value(), BlockContentRegistries.FLAMMABLE, new FlammableBlockEntry(100, 100)));
+			BuiltinRegistries.BLOCK.getOrCreateTag(BlockTags.ANVIL).forEach(holder -> this.assertValues(holder.value(), BlockContentRegistries.FLAMMABLE, new FlammableBlockEntry(100, 100)));
 
-			assertValues(Blocks.OAK_PLANKS, BlockContentRegistries.FLATTENABLE, Blocks.OAK_SLAB.getDefaultState());
-			assertValues(Blocks.QUARTZ_PILLAR, BlockContentRegistries.STRIPPABLE, Blocks.PURPUR_PILLAR);
-			assertValues(Blocks.IRON_BLOCK, BlockContentRegistries.WAXABLE, new ReversibleBlockEntry(Blocks.GOLD_BLOCK, true));
+			this.assertValues(Blocks.OAK_PLANKS, BlockContentRegistries.FLATTENABLE, Blocks.OAK_SLAB.getDefaultState());
+			this.assertValues(Blocks.QUARTZ_PILLAR, BlockContentRegistries.STRIPPABLE, Blocks.PURPUR_PILLAR);
+			this.assertValues(Blocks.IRON_BLOCK, BlockContentRegistries.WAXABLE, new ReversibleBlockEntry(Blocks.GOLD_BLOCK, true));
 			LOGGER.info("Finished BlockContentRegistry tests");
 
 			testPassed = true;
@@ -75,6 +79,7 @@ public class BlockContentRegistryTest implements ModInitializer {
 		if (entry.isEmpty()) {
 			throw new AssertionError("No entry present for " + id);
 		}
+
 		if (!entry.get().equals(value)) {
 			throw new AssertionError("Value incorrect for " + id);
 		}
