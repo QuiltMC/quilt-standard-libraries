@@ -85,7 +85,7 @@ public class ColorfulBlockEntity extends BlockEntity implements QuiltBlockEntity
 	}
 
 	@Override
-	public NbtCompound toInitialChunkDataNbt() {
+	public NbtCompound toSyncedNbt() {
 		return this.toNbt();
 	}
 
