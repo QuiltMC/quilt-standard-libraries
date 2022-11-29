@@ -30,11 +30,10 @@ import org.spongepowered.asm.mixin.Unique;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Util;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.Holder;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.poi.PointOfInterestType;
 
 import org.quiltmc.qsl.points_of_interest.impl.PointOfInterestTypeExtensions;

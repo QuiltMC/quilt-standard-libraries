@@ -19,8 +19,8 @@ package org.quiltmc.qsl.worldgen.surface_rule.impl;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.registry.Registries;
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.registry.Registries;
 import net.minecraft.world.gen.chunk.ChunkGeneratorSettings;
 import net.minecraft.world.gen.surfacebuilder.SurfaceRules;
 
@@ -34,7 +34,7 @@ import org.quiltmc.qsl.worldgen.surface_rule.mixin.ChunkGeneratorSettingsAccesso
 public class QuiltSurfaceRuleInitializer implements RegistryEvents.DynamicRegistrySetupCallback {
 	@Override
 	public void onDynamicRegistrySetup(@NotNull DynamicRegistryManagerSetupContext context) {
-		context.monitor(Registries.NOISE_SETTINGS_WORLDGEN, monitor -> {
+		context.monitor(Registries.CHUNK_GENERATOR_SETTINGS, monitor -> {
 			monitor.forAll(ctx -> this.modifyChunkGeneratorSettings(ctx, context.resourceManager()));
 		});
 	}

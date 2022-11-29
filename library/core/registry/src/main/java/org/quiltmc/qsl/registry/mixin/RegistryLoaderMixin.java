@@ -17,19 +17,15 @@
 package org.quiltmc.qsl.registry.mixin;
 
 import java.util.List;
-import java.util.Map;
 
-import net.minecraft.util.registry.RegistryOps;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.util.registry.RegistryLoader;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.RegistryLoader;
 
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.quiltmc.qsl.registry.impl.DynamicRegistryManagerSetupContextImpl;

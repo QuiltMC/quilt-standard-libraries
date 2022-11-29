@@ -19,10 +19,9 @@ package org.quiltmc.qsl.worldgen.surface_rule.test;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.block.Blocks;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registries;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeKeys;
 import net.minecraft.world.gen.noise.NoiseParametersKeys;
@@ -100,9 +99,9 @@ public class QuiltSurfaceRuleTest implements SurfaceRuleEvents.OverworldModifier
 
 	@Override
 	public void modifyTheEndRules(@NotNull SurfaceRuleContext.TheEnd context) {
-		RegistryKey<Biome> TEST_END_HIGHLANDS = RegistryKey.of(Registries.BIOME_WORLDGEN, new Identifier("quilt_biome_testmod", "test_end_highlands"));
-		RegistryKey<Biome> TEST_END_MIDLANDS = RegistryKey.of(Registries.BIOME_WORLDGEN, new Identifier("quilt_biome_testmod", "test_end_midlands"));
-		RegistryKey<Biome> TEST_END_BARRRENS = RegistryKey.of(Registries.BIOME_WORLDGEN, new Identifier("quilt_biome_testmod", "test_end_barrens"));
+		RegistryKey<Biome> TEST_END_HIGHLANDS = RegistryKey.of(Registries.BIOME, new Identifier("quilt_biome_testmod", "test_end_highlands"));
+		RegistryKey<Biome> TEST_END_MIDLANDS = RegistryKey.of(Registries.BIOME, new Identifier("quilt_biome_testmod", "test_end_midlands"));
+		RegistryKey<Biome> TEST_END_BARRRENS = RegistryKey.of(Registries.BIOME, new Identifier("quilt_biome_testmod", "test_end_barrens"));
 
 		SurfaceRules.MaterialCondition pinkBiome = SurfaceRules.biome(TEST_END_HIGHLANDS);
 		SurfaceRules.MaterialCondition whiteBiome = SurfaceRules.biome(TEST_END_MIDLANDS);

@@ -16,10 +16,10 @@
 
 package org.quiltmc.qsl.tag.api;
 
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 import org.quiltmc.qsl.tag.impl.QuiltTagKeyHooks;

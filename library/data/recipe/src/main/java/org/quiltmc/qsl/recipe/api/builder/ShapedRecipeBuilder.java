@@ -24,7 +24,7 @@ import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.ShapedRecipe;
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.unmapped.C_aodytokc;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;

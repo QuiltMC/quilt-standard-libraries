@@ -18,7 +18,7 @@ package org.quiltmc.qsl.registry.impl.sync;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.util.registry.BuiltinRegistries;
+import net.minecraft.registry.BuiltinRegistries;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -32,20 +32,20 @@ public class RegistrySyncInitializer implements ModInitializer {
 		SynchronizedRegistry.markForSync(
 				BuiltinRegistries.BLOCK,
 				BuiltinRegistries.BLOCK_ENTITY_TYPE,
-				BuiltinRegistries.CAT_VARIANT,
+				BuiltinRegistries.CAT_TYPE,
 				BuiltinRegistries.COMMAND_ARGUMENT_TYPE,
 				BuiltinRegistries.ENCHANTMENT,
 				BuiltinRegistries.ENTITY_TYPE,
 				BuiltinRegistries.FLUID,
-				BuiltinRegistries.FROG_VARIANT,
+				BuiltinRegistries.FROG_TYPE,
 				BuiltinRegistries.GAME_EVENT,
 				BuiltinRegistries.ITEM,
-				BuiltinRegistries.MENU,
-				BuiltinRegistries.MOB_EFFECT,
-				BuiltinRegistries.PAINTING_VARIANT,
+				BuiltinRegistries.PAINTING_TYPE,
 				BuiltinRegistries.PARTICLE_TYPE,
+				BuiltinRegistries.SCREEN_HANDLER_TYPE,
 				BuiltinRegistries.SOUND_EVENT,
 				BuiltinRegistries.STAT_TYPE,
+				BuiltinRegistries.STATUS_EFFECT,
 				BuiltinRegistries.VILLAGER_TYPE,
 				BuiltinRegistries.VILLAGER_PROFESSION
 		);

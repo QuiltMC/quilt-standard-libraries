@@ -25,7 +25,7 @@ import com.google.common.collect.Multimap;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-import net.minecraft.tag.TagGroupLoader;
+import net.minecraft.registry.tag.TagGroupLoader;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;

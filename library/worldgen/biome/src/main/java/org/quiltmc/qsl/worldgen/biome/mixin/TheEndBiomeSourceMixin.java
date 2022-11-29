@@ -17,23 +17,25 @@
 
 package org.quiltmc.qsl.worldgen.biome.mixin;
 
+import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+
 import com.google.common.base.Suppliers;
-import net.minecraft.util.registry.Holder;
-import net.minecraft.util.registry.HolderProvider;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.source.BiomeSource;
-import net.minecraft.world.biome.source.TheEndBiomeSource;
-import net.minecraft.world.biome.source.util.MultiNoiseUtil;
-import org.quiltmc.qsl.worldgen.biome.impl.TheEndBiomeData;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Set;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.HolderProvider;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.source.BiomeSource;
+import net.minecraft.world.biome.source.TheEndBiomeSource;
+import net.minecraft.world.biome.source.util.MultiNoiseUtil;
+
+import org.quiltmc.qsl.worldgen.biome.impl.TheEndBiomeData;
 
 @Mixin(TheEndBiomeSource.class)
 public abstract class TheEndBiomeSourceMixin extends BiomeSource {
@@ -47,7 +49,7 @@ public abstract class TheEndBiomeSourceMixin extends BiomeSource {
 		super(stream);
 	}
 
-	@Inject(method = "m_biyltupg(Lnet/minecraft/util/registry/HolderProvider;)Lnet/minecraft/world/biome/source/TheEndBiomeSource;", at = @At("RETURN"))
+	@Inject(method = "m_biyltupg(Lnet/minecraft/registry/HolderProvider;)Lnet/minecraft/world/biome/source/TheEndBiomeSource;", at = @At("RETURN"))
 	private static void init(HolderProvider<Biome> holderProvider, CallbackInfoReturnable<TheEndBiomeSource> cir) {
 		((TheEndBiomeSourceMixin) (Object) cir.getReturnValue()).overrides = Suppliers.memoize(() -> TheEndBiomeData.createOverrides(holderProvider));
 	}

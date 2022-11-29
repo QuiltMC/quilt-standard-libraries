@@ -18,21 +18,19 @@
 package org.quiltmc.qsl.worldgen.dimension;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.util.registry.Holder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.RegistryOps;
 import net.minecraft.structure.StructureManager;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryOps;
 import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.HeightLimitView;
 import net.minecraft.world.Heightmap;
@@ -46,10 +44,8 @@ import net.minecraft.world.gen.RandomState;
 import net.minecraft.world.gen.chunk.Blender;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.VerticalBlockSample;
-import net.minecraft.world.gen.structure.StructureSet;
 
 public class EmptyChunkGenerator extends ChunkGenerator {
-	private static final Logger EMPTY_CHUNK_GENERATOR_LOGGER = LoggerFactory.getLogger("QuiltDimensionTest|EmptyChunkGenerator");
 	public static final Codec<EmptyChunkGenerator> CODEC =
 			RecordCodecBuilder.create(instance -> instance.group(RegistryOps.retrieveElement(BiomeKeys.PLAINS)).apply(instance, instance.stable(EmptyChunkGenerator::new)));
 

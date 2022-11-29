@@ -26,9 +26,9 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.Oxidizable;
 import net.minecraft.block.OxidizableBlock;
-import net.minecraft.tag.BlockTags;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.BuiltinRegistries;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -62,7 +62,7 @@ public class BlockContentRegistryTest implements ModInitializer {
 			}
 
 			LOGGER.info("Starting BlockContentRegistry tests");
-			BuiltinRegistries.BLOCK.getOrCreateTag(BlockTags.ANVIL).forEach(holder -> this.assertValues(holder.value(), BlockContentRegistries.FLAMMABLE, new FlammableBlockEntry(100, 100)));
+			BuiltinRegistries.BLOCK.getOrCreateTag(BlockTags.ANVILS).forEach(holder -> this.assertValues(holder.value(), BlockContentRegistries.FLAMMABLE, new FlammableBlockEntry(100, 100)));
 
 			this.assertValues(Blocks.OAK_PLANKS, BlockContentRegistries.FLATTENABLE, Blocks.OAK_SLAB.getDefaultState());
 			this.assertValues(Blocks.QUARTZ_PILLAR, BlockContentRegistries.STRIPPABLE, Blocks.PURPUR_PILLAR);

@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
-import net.minecraft.util.registry.BuiltinRegistries;
+import net.minecraft.registry.BuiltinRegistries;
 
 import org.quiltmc.qsl.registry.api.event.RegistryMonitor;
 

@@ -21,9 +21,9 @@ import java.util.function.Predicate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.util.registry.MutableRegistry;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.SimpleRegistry;
+import net.minecraft.registry.MutableRegistry;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.SimpleRegistry;
 
 import org.quiltmc.qsl.registry.api.event.RegistryEntryContext;
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;

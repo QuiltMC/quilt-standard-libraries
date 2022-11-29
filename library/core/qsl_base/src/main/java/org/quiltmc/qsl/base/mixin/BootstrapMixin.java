@@ -34,7 +34,7 @@ public abstract class BootstrapMixin {
 		throw new IllegalStateException("Injection failed.");
 	}
 
-	@Inject(method = "initialize", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/registry/BuiltinRegistries;bootstrap()V"))
+	@Inject(method = "initialize", at = @At(value = "INVOKE", target = "Lnet/minecraft/registry/BuiltinRegistries;bootstrap()V"))
 	private static void onInitialize(CallbackInfo ci) {
 		setOutputStreams(); // We need to make this a bit early in case a mod uses System.out to print stuff.
 

@@ -23,4 +23,4 @@ import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import org.quiltmc.qsl.vehicle.api.MinecartComparatorLogic;
 
 @Mixin(AbstractMinecartEntity.class)
-public abstract class AbstractMinecartEntityMixin implements MinecartComparatorLogic { }
+public abstract class AbstractMinecartEntityMixin implements MinecartComparatorLogic {}

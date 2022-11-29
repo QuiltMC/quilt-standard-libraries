@@ -34,13 +34,13 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
 import net.minecraft.feature_flags.FeatureFlags;
+import net.minecraft.registry.LayeredRegistryManager;
 import net.minecraft.resource.AutoCloseableResourceManager;
 import net.minecraft.resource.pack.ResourcePackManager;
 import net.minecraft.server.ServerReloadableResources;
 import net.minecraft.server.WorldLoader;
 import net.minecraft.server.WorldStem;
 import net.minecraft.server.integrated.IntegratedServerLoader;
-import net.minecraft.util.registry.LayeredRegistryManager;
 import net.minecraft.world.level.storage.LevelStorage;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;

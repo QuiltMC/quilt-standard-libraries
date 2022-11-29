@@ -19,11 +19,11 @@ package org.quiltmc.qsl.registry.attachment.test;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.world.World;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -61,6 +61,7 @@ public class SimpleAttachmentTest implements ModInitializer {
 						.orElseThrow(() -> new RuntimeException(TEST_ATTACHMENT_2 + " not set via built-in!"));
 				user.sendMessage(Text.of("Test1 = " + one + ", Test2 = " + two), true);
 			}
+
 			return TypedActionResult.pass(user.getStackInHand(hand));
 		}
 	}

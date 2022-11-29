@@ -19,8 +19,8 @@ package org.quiltmc.qsl.item.content.registry.api;
 import com.mojang.serialization.Codec;
 
 import net.minecraft.item.Item;
+import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.BuiltinRegistries;
 
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 

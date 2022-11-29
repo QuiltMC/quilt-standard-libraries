@@ -33,12 +33,11 @@ import net.minecraft.client.gui.screen.world.MoreOptionsDialog;
 import net.minecraft.client.world.WorldCreationContext;
 import net.minecraft.feature_flags.FeatureFlags;
 import net.minecraft.resource.AutoCloseableResourceManager;
-import net.minecraft.feature_flags.FeatureFlag;
 import net.minecraft.resource.pack.ResourcePackManager;
 import net.minecraft.server.ServerReloadableResources;
 import net.minecraft.server.world.FeatureAndDataSettings;
+import net.minecraft.registry.LayeredRegistryManager;
 import net.minecraft.util.Unit;
-import net.minecraft.util.registry.LayeredRegistryManager;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
@@ -91,7 +90,7 @@ public abstract class CreateWorldScreenMixin {
 			at = @At("HEAD")
 	)
 	private static void onCreateDataPackLoadEnd(AutoCloseableResourceManager resourceManager, ServerReloadableResources resources,
-		LayeredRegistryManager<?> layeredRegistryManager, @Coerce Object c_mxqwwbun, CallbackInfoReturnable<WorldCreationContext> cir) {
+			LayeredRegistryManager<?> layeredRegistryManager, @Coerce Object c_mxqwwbun, CallbackInfoReturnable<WorldCreationContext> cir) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resourceManager, null);
 	}
 

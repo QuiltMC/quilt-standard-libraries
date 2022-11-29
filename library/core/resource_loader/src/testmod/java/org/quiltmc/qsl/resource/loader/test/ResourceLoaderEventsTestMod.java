@@ -27,7 +27,6 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.server.MinecraftServer;
 
-import org.quiltmc.qsl.resource.loader.api.GroupResourcePack;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 
 public class ResourceLoaderEventsTestMod implements ResourceLoaderEvents.StartDataPackReload,

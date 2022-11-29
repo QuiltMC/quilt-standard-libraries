@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.tag.mixin.client;
 
-import net.minecraft.client.registry.ClientRegistryLayer;
-import net.minecraft.util.registry.LayeredRegistryManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -26,8 +24,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.registry.ClientRegistryLayer;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
+import net.minecraft.registry.LayeredRegistryManager;
 import net.minecraft.text.Text;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -48,7 +48,7 @@ public abstract class ClientPlayNetworkHandlerMixin {
 			method = "onGameJoin",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/network/packet/s2c/play/GameJoinS2CPacket;registryManager()Lnet/minecraft/util/registry/DynamicRegistryManager$Frozen;",
+					target = "Lnet/minecraft/network/packet/s2c/play/GameJoinS2CPacket;registryManager()Lnet/minecraft/registry/DynamicRegistryManager$Frozen;",
 					shift = At.Shift.AFTER
 			)
 	)

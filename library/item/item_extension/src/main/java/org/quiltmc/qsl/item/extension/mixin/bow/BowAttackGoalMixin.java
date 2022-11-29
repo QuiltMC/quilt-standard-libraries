@@ -33,10 +33,10 @@ import net.minecraft.item.BowItem;
 import org.quiltmc.qsl.item.extension.api.bow.BowExtensions;
 
 @Mixin(BowAttackGoal.class)
-public abstract class BowAttackGoalMixin extends Goal {
+public abstract class BowAttackGoalMixin<T extends HostileEntity & RangedAttackMob> extends Goal {
 	@Shadow
 	@Final
-	private HostileEntity actor;
+	private T actor;
 
 	// Confirms that an entity is using a bow by returning true
 	@Inject(method = "isHoldingBow()Z", at = @At("HEAD"), cancellable = true)

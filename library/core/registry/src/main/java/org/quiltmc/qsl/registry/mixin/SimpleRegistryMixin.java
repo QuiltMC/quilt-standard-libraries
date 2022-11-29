@@ -29,8 +29,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.base.api.event.Event;
-import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -42,12 +40,14 @@ import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.SimpleRegistry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Holder;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.util.registry.SimpleRegistry;
 
+import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.quiltmc.qsl.registry.impl.event.MutableRegistryEntryContextImpl;
 import org.quiltmc.qsl.registry.impl.event.RegistryEventStorage;
 import org.quiltmc.qsl.registry.impl.sync.RegistryFlag;
@@ -100,14 +100,11 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 	@Unique
 	private Object2ByteMap<V> quilt$entryToFlag;
 
-
 	@Unique
 	private Event<RegistryEvents.EntryAdded<V>> quilt$entryAddedEvent;
 
-
-
 	// HACK TODO for some reason initializing this like normal doesnt work. i dont care to figure out why - glitch
-	@Inject(method = "<init>(Lnet/minecraft/util/registry/RegistryKey;Lcom/mojang/serialization/Lifecycle;Z)V", at = @At("TAIL"))
+	@Inject(method = "<init>(Lnet/minecraft/registry/RegistryKey;Lcom/mojang/serialization/Lifecycle;Z)V", at = @At("TAIL"))
 	private void hackBecauseMixinHatesMe(RegistryKey key, Lifecycle lifecycle, boolean useIntrusiveHolders, CallbackInfo ci) {
 		this.quilt$entryContext = new MutableRegistryEntryContextImpl<>(this);
 		this.quilt$entryToFlag = new Object2ByteOpenHashMap<>();
@@ -119,10 +116,9 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 			});
 	}
 
-
 	@SuppressWarnings("InvalidInjectorMethodSignature")
 	@ModifyVariable(
-			method = "set(ILnet/minecraft/util/registry/RegistryKey;Ljava/lang/Object;Lcom/mojang/serialization/Lifecycle;)Lnet/minecraft/util/registry/Holder$Reference;",
+			method = "set(ILnet/minecraft/registry/RegistryKey;Ljava/lang/Object;Lcom/mojang/serialization/Lifecycle;)Lnet/minecraft/registry/Holder$Reference;",
 			slice = @Slice(
 					from = @At(
 							value = "INVOKE",
@@ -145,7 +141,7 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 	 */
 	@SuppressWarnings({"ConstantConditions", "unchecked"})
 	@Inject(
-			method = "set(ILnet/minecraft/util/registry/RegistryKey;Ljava/lang/Object;Lcom/mojang/serialization/Lifecycle;)Lnet/minecraft/util/registry/Holder$Reference;",
+			method = "set(ILnet/minecraft/registry/RegistryKey;Ljava/lang/Object;Lcom/mojang/serialization/Lifecycle;)Lnet/minecraft/registry/Holder$Reference;",
 			at = @At("RETURN")
 	)
 	private void quilt$invokeEntryAddEvent(int rawId, RegistryKey<V> key, V entry, Lifecycle lifecycle, CallbackInfoReturnable<Holder<V>> cir) {

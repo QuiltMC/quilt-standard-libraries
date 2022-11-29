@@ -16,19 +16,19 @@
 
 package org.quiltmc.qsl.registry.mixin;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.registry.BuiltinRegistries;
+import java.util.List;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.List;
+import net.minecraft.block.BlockState;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.util.math.MathHelper;
 
 @Mixin(BuiltinRegistries.class)
 public class BuiltinRegistriesMixin {
-
 	@Inject(method = "freeze", at = @At("RETURN"))
 	private static void onFreezeBuiltins(CallbackInfo ci) {
 		//region Fix MC-197259

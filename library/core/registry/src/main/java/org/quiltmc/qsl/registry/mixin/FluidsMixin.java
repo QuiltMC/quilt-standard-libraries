@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.util.registry.BuiltinRegistries;
+import net.minecraft.registry.BuiltinRegistries;
 
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 

@@ -19,7 +19,7 @@ package org.quiltmc.qsl.lifecycle.test.event;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.world.World;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -42,7 +42,7 @@ public final class ServerTickTests implements ModInitializer {
 		});
 
 		ServerWorldTickEvents.START.register((server, world) -> {
-			final int worldTicks = tickTracker.computeIfAbsent(world.getRegistryKey(), k -> 0);
+			final int worldTicks = this.tickTracker.computeIfAbsent(world.getRegistryKey(), k -> 0);
 
 			if (worldTicks % 200 == 0) { // Log every 200 ticks to verify the tick callback works on the server world
 				ServerLifecycleTests.LOGGER.info("Started ticking Server World - " + worldTicks);
@@ -50,7 +50,7 @@ public final class ServerTickTests implements ModInitializer {
 		});
 
 		ServerWorldTickEvents.END.register((server, world) -> {
-			final int worldTicks = tickTracker.computeIfAbsent(world.getRegistryKey(), k -> 0);
+			final int worldTicks = this.tickTracker.computeIfAbsent(world.getRegistryKey(), k -> 0);
 
 			if (worldTicks % 200 == 0) { // Log every 200 ticks to verify the tick callback works on the server world
 				ServerLifecycleTests.LOGGER.info("Ticked Server World - " + worldTicks + " ticks:" + world.getRegistryKey().getValue());

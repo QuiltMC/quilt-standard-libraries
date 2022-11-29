@@ -35,15 +35,20 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.util.registry.*;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.tag.TagEntry;
-import net.minecraft.tag.TagGroupLoader;
-import net.minecraft.tag.TagKey;
-import net.minecraft.tag.TagManagerLoader;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryLoader;
+import net.minecraft.registry.tag.TagEntry;
+import net.minecraft.registry.tag.TagGroupLoader;
+import net.minecraft.registry.tag.TagKey;
+import net.minecraft.registry.tag.TagManagerLoader;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -239,7 +244,7 @@ public final class ClientTagRegistryManager<T> {
 
 		public BiConsumer<Identifier, List<TagGroupLoader.EntryWithSource>> getDependencyConsumer(Identifier tagId) {
 			return (currentTagId, builder) -> this.tags.put(
-					QuiltTagKey.of(ClientTagRegistryManager.this.registryKey, tagId, type),
+					QuiltTagKey.of(ClientTagRegistryManager.this.registryKey, tagId, this.type),
 					this.buildLenientTag(builder)
 			);
 		}
@@ -289,7 +294,7 @@ public final class ClientTagRegistryManager<T> {
 
 		@Override
 		public Optional<? extends Holder<T>> apply(Identifier id) {
-			if (firstCall || ClientTagRegistryManager.this.registryManager != this.lastRegistryManager) {
+			if (this.firstCall || ClientTagRegistryManager.this.registryManager != this.lastRegistryManager) {
 				this.lastRegistryManager = ClientTagRegistryManager.this.registryManager;
 				this.cached = this.lastRegistryManager.getOptional(ClientTagRegistryManager.this.registryKey)
 						.orElse(null);

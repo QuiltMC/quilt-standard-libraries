@@ -21,7 +21,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.block.Block;
-import net.minecraft.util.registry.BuiltinRegistries;
+import net.minecraft.registry.BuiltinRegistries;
 
 public record ReversibleBlockEntry(Block block, boolean reversible) {
 	public static final Codec<ReversibleBlockEntry> CODEC = Codec.either(

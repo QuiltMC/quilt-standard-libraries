@@ -21,9 +21,9 @@ import com.mojang.serialization.DataResult;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.BuiltinRegistries;
 
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 

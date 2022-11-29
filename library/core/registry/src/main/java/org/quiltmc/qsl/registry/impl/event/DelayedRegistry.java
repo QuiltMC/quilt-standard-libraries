@@ -29,19 +29,20 @@ import java.util.stream.Stream;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Lifecycle;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.random.RandomGenerator;
-import net.minecraft.util.registry.Holder;
-import net.minecraft.util.registry.HolderOwner;
-import net.minecraft.util.registry.HolderProvider;
-import net.minecraft.util.registry.MutableRegistry;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.util.registry.Holder.Reference;
-import net.minecraft.util.registry.HolderLookup.RegistryLookup;
-import net.minecraft.util.registry.HolderSet.NamedSet;
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.HolderOwner;
+import net.minecraft.registry.HolderProvider;
+import net.minecraft.registry.MutableRegistry;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.Holder.Reference;
+import net.minecraft.registry.HolderLookup.RegistryLookup;
+import net.minecraft.registry.HolderSet.NamedSet;
+import net.minecraft.registry.tag.TagKey;
 
 @ApiStatus.Internal
 public final class DelayedRegistry<T> implements MutableRegistry<T> {
@@ -53,7 +54,7 @@ public final class DelayedRegistry<T> implements MutableRegistry<T> {
 	}
 
 	@Override
-	public Identifier getId(T entry) {
+	public @Nullable Identifier getId(T entry) {
 		return this.wrapped.getId(entry);
 	}
 
@@ -63,17 +64,17 @@ public final class DelayedRegistry<T> implements MutableRegistry<T> {
 	}
 
 	@Override
-	public int getRawId(T entry) {
+	public int getRawId(@Nullable T entry) {
 		return this.wrapped.getRawId(entry);
 	}
 
 	@Override
-	public T get(RegistryKey<T> entry) {
+	public @Nullable T get(@Nullable RegistryKey<T> entry) {
 		return this.wrapped.get(entry);
 	}
 
 	@Override
-	public T get(Identifier id) {
+	public @Nullable T get(@Nullable Identifier id) {
 		return this.wrapped.get(id);
 	}
 
@@ -189,7 +190,7 @@ public final class DelayedRegistry<T> implements MutableRegistry<T> {
 	}
 
 	@Override
-	public T get(int index) {
+	public @Nullable T get(int index) {
 		return this.wrapped.get(index);
 	}
 
@@ -215,8 +216,8 @@ public final class DelayedRegistry<T> implements MutableRegistry<T> {
 	}
 
 	@Override
-	public boolean isEmpty() {
-		return this.wrapped.isEmpty();
+	public boolean empty() {
+		return this.wrapped.empty();
 	}
 
 	@Override
@@ -232,6 +233,5 @@ public final class DelayedRegistry<T> implements MutableRegistry<T> {
 		}
 	}
 
-	record DelayedEntry<T>(RegistryKey<T> key, T entry, Lifecycle lifecycle) {
-	}
+	record DelayedEntry<T>(RegistryKey<T> key, T entry, Lifecycle lifecycle) {}
 }

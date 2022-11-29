@@ -41,11 +41,11 @@ import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
 import net.minecraft.command.argument.IdentifierArgumentType;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.tag.TagKey;
 import net.minecraft.text.Text;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.command.api.CommandRegistrationCallback;

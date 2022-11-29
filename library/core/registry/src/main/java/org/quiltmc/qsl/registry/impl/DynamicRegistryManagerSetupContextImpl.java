@@ -18,8 +18,8 @@ package org.quiltmc.qsl.registry.impl;
 
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.registry.DynamicRegistryManager;
 
 import org.quiltmc.qsl.registry.api.event.DynamicRegistryManagerSetupContext;
 

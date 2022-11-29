@@ -19,7 +19,7 @@ package org.quiltmc.qsl.lifecycle.test.event.client;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.world.World;
 
 import org.quiltmc.loader.api.ModContainer;

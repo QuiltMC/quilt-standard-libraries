@@ -23,8 +23,8 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.registry.attachment.api.DefaultValueProvider;
 
@@ -57,6 +57,7 @@ public final class ComputedDefaultRegistryEntryAttachmentImpl<R, V> extends Regi
 					COMPUTE_LOGGER.error("Computed invalid value for entry {}: unknown error",
 							this.registry.getId(entry));
 				}
+
 				return null;
 			}
 

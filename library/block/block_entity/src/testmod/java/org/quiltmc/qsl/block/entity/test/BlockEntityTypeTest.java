@@ -24,9 +24,9 @@ import net.minecraft.block.MapColor;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -36,7 +36,6 @@ public class BlockEntityTypeTest implements ModInitializer {
 	public static final String NAMESPACE = "quilt_block_entity_testmod";
 
 	public static final List<AngyBlock> ANGY_BLOCKS = new ArrayList<>();
-
 
 	public static final AngyBlock INITIAL_ANGY_BLOCK = register(id("initial_angy_block"), new AngyBlock(MapColor.PINK));
 	public static final AngyBlock BUILDER_ADDED_ANGY_BLOCK = register(id("builder_added_angy_block"), new AngyBlock(MapColor.BLUE));

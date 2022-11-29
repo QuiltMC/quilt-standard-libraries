@@ -27,10 +27,10 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.SkeletonEntity;
 import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
-import net.minecraft.util.registry.Registries;
 import net.minecraft.world.dimension.DimensionTypes;
 
 import org.quiltmc.qsl.entity_events.api.EntityReviveEvents;

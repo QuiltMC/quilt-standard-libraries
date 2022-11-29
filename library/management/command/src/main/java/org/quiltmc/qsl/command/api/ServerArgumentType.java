@@ -24,9 +24,9 @@ import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.command.argument.ArgumentTypeInfo;
 import net.minecraft.command.suggestion.SuggestionProviders;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.SimpleRegistry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.SimpleRegistry;
 
 import org.quiltmc.qsl.command.impl.ServerArgumentTypeImpl;
 import org.quiltmc.qsl.command.impl.ServerArgumentTypes;

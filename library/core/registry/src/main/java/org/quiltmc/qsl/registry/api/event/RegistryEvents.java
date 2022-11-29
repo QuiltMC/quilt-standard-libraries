@@ -16,11 +16,11 @@
 
 package org.quiltmc.qsl.registry.api.event;
 
-import net.minecraft.util.registry.SimpleRegistry;
 import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.SimpleRegistry;
 
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.EventAwareListener;

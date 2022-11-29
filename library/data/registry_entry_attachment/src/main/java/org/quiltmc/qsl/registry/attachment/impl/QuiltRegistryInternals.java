@@ -19,10 +19,10 @@ package org.quiltmc.qsl.registry.attachment.impl;
 import java.util.Map;
 import java.util.Set;
 
-import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
@@ -42,7 +42,6 @@ public interface QuiltRegistryInternals<R> {
 	DataRegistryEntryAttachmentHolder<R> quilt$getDataAttachmentHolder();
 
 	void quilt$setDataAttachmentHolder(DataRegistryEntryAttachmentHolder<R> holder);
-
 
 	@SuppressWarnings("unchecked")
 	static <R> QuiltRegistryInternals<R> of(Registry<R> registry) {

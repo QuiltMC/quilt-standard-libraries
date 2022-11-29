@@ -35,8 +35,8 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.feature_flags.FeatureFlagBitSet;
 import net.minecraft.network.packet.s2c.play.CommandTreeS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
+import net.minecraft.registry.LayeredRegistryManager;
 import net.minecraft.server.command.CommandManager;
-import net.minecraft.util.registry.LayeredRegistryManager;
 
 import org.quiltmc.qsl.command.impl.client.ClientCommandInternals;
 

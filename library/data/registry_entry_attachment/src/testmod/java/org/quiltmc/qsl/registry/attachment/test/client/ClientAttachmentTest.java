@@ -17,8 +17,8 @@
 package org.quiltmc.qsl.registry.attachment.test.client;
 
 import net.minecraft.block.Block;
+import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.BuiltinRegistries;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;

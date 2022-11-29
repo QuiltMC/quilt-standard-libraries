@@ -16,25 +16,27 @@
 
 package org.quiltmc.qsl.registry.mixin.patch;
 
-import net.minecraft.entity.effect.StatusEffectInstance;
+import java.util.function.Consumer;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SuspiciousStewItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.BuiltinRegistries;
 
 import org.quiltmc.qsl.registry.api.StatusEffectsSerializationConstants;
-
-import java.util.function.Consumer;
 
 /**
  * Modifies storing of status effect to make it more mod friendly.
@@ -55,7 +57,7 @@ public class SuspiciousStewItemMixin {
 	)
 	private static void quilt$storeIdentifier(ItemStack stew, StatusEffect effect, int duration, CallbackInfo ci,
 			NbtCompound unused, NbtList unused2, NbtCompound nbt) {
-		nbt.putString(StatusEffectsSerializationConstants.EFFECT_ID_KEY, BuiltinRegistries.MOB_EFFECT.getId(effect).toString());
+		nbt.putString(StatusEffectsSerializationConstants.EFFECT_ID_KEY, BuiltinRegistries.STATUS_EFFECT.getId(effect).toString());
 	}
 
 	@Inject(
@@ -68,8 +70,8 @@ public class SuspiciousStewItemMixin {
 		if (effectCompound.contains(StatusEffectsSerializationConstants.EFFECT_ID_KEY, NbtElement.STRING_TYPE)) {
 			var identifier = Identifier.tryParse(effectCompound.getString(StatusEffectsSerializationConstants.EFFECT_ID_KEY));
 
-			if (identifier != null && BuiltinRegistries.MOB_EFFECT.containsId(identifier)) {
-				quilt$effect.set(BuiltinRegistries.MOB_EFFECT.get(identifier));
+			if (identifier != null && BuiltinRegistries.STATUS_EFFECT.containsId(identifier)) {
+				quilt$effect.set(BuiltinRegistries.STATUS_EFFECT.get(identifier));
 			} else {
 				quilt$effect.remove();
 			}

@@ -31,10 +31,10 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Language;
-import net.minecraft.util.registry.BuiltinRegistries;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
@@ -133,6 +133,7 @@ public final class ClientRegistrySync {
 			if (!optionalRegistry) {
 				LOGGER.warn("Received sync data without specifying registry!");
 			}
+
 			return;
 		}
 
@@ -157,6 +158,7 @@ public final class ClientRegistrySync {
 			if (!optionalRegistry) {
 				LOGGER.warn("Received sync data without specifying registry!");
 			}
+
 			return;
 		}
 
@@ -168,7 +170,6 @@ public final class ClientRegistrySync {
 		if (!optionalRegistry) {
 			disconnect = checkMissing(handler, currentRegistryId, missingEntries);
 		}
-
 
 		if (!disconnect) {
 			if (reg == BuiltinRegistries.BLOCK) {

@@ -37,8 +37,8 @@ import org.slf4j.Logger;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.BuiltinRegistries;
 
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.recipe.api.RecipeLoadingEvents;

@@ -22,8 +22,8 @@ import com.google.gson.JsonObject;
 import org.spongepowered.asm.mixin.Mixin;
 
 import net.minecraft.recipe.Recipe;
+import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.unmapped.C_lylrgdrx;
-import net.minecraft.util.registry.BuiltinRegistries;
 
 import org.quiltmc.qsl.recipe.api.serializer.QuiltRecipeSerializer;
 

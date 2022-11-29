@@ -23,18 +23,18 @@ import org.slf4j.Logger;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.tag.TagKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.Registries;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -64,6 +64,7 @@ public class DispatchedAttachmentTest implements ModInitializer,
 						() -> player.sendMessage(Text.literal("No function assigned!")
 								.formatted(Formatting.RED), true));
 			}
+
 			return TypedActionResult.pass(user.getStackInHand(hand));
 		}
 	}
