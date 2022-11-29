@@ -16,6 +16,12 @@ if (version.contains("beta") && !ENV.MAVEN_URL) {
 	version = version.replace(version.substring(version.indexOf("beta.")), "beta." + (beta + 1))
 }
 
+// Same thing, but with alphas
+if (version.contains("alpha") && !ENV.MAVEN_URL) {
+	int alpha = Integer.parseInt(version.substring(version.indexOf("alpha.") + 6))
+	version = version.replace(version.substring(version.indexOf("alpha.")), "alpha." + (alpha + 1))
+}
+
 version = version + "+" + Versions.MINECRAFT_VERSION.version() + (System.getenv("SNAPSHOTS_URL") ? "-SNAPSHOT" : "")
 println("QSL: " + version)
 
