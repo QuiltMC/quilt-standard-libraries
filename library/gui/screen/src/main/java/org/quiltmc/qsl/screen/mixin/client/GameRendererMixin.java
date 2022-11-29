@@ -50,7 +50,7 @@ abstract class GameRendererMixin {
 	@SuppressWarnings("InvalidInjectorMethodSignature")
 	@Inject(
 			method = "render",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Overlay;render(Lnet/minecraft/client/util/math/MatrixStack;IIF)V"),
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;renderWithTooltip(Lnet/minecraft/client/util/math/MatrixStack;IIF)V"),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private void onBeforeRenderScreen(float tickDelta, long startTime, boolean tick, CallbackInfo ci,
@@ -67,13 +67,13 @@ abstract class GameRendererMixin {
 			method = "render",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/gui/screen/Overlay;render(Lnet/minecraft/client/util/math/MatrixStack;IIF)V",
+					target = "Lnet/minecraft/client/gui/screen/Screen;renderWithTooltip(Lnet/minecraft/client/util/math/MatrixStack;IIF)V",
 					shift = At.Shift.AFTER
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private void onAfterRenderScreen(float tickDelta, long startTime, boolean tick, CallbackInfo ci,
-									  int mouseX, int mouseY, Window window, Matrix4f projectionMatrix, MatrixStack modelViewMatrices, MatrixStack matrices) {
+									 int mouseX, int mouseY, Window window, Matrix4f projectionMatrix, MatrixStack modelViewMatrices, MatrixStack matrices) {
 		ScreenEvents.AFTER_RENDER.invoker().afterRender(this.quilt$renderingScreen, matrices, mouseX, mouseY, tickDelta);
 		// Finally set the currently rendering screen to null
 		this.quilt$renderingScreen = null;
