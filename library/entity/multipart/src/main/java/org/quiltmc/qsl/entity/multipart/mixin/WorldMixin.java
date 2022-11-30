@@ -34,6 +34,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.util.TypeFilter;
+import net.minecraft.util.function.AbortableIterationConsumer;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
@@ -46,11 +47,12 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 	@Unique
 	private final Int2ObjectMap<Entity> quilt$entityParts = new Int2ObjectOpenHashMap<>();
 
+	// FIXME - Ennui Note: I'm not sure if this is correct! Production still complained about this
 	@SuppressWarnings("InvalidInjectorMethodSignature")
 	@ModifyConstant(
 			method = {
-					"m_mbvohlyp(Ljava/util/function/Predicate;Ljava/util/List;Lnet/minecraft/util/TypeFilter;Lnet/minecraft/entity/Entity;)V",
-					"m_dpwyfaqh(Lnet/minecraft/entity/Entity;Ljava/util/function/Predicate;Ljava/util/List;Lnet/minecraft/entity/Entity;)V"
+					"getOtherEntities(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/Box;Ljava/util/function/Predicate;)Ljava/util/List;",
+					"collectEntities(Lnet/minecraft/util/TypeFilter;Lnet/minecraft/util/math/Box;Ljava/util/function/Predicate;Ljava/util/List;I)V"
 			},
 			constant = @Constant(classValue = EnderDragonEntity.class, ordinal = 0),
 			require = 2
@@ -90,17 +92,16 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 		}
 	}
 
+	// FIXME - This is to be changed to fit on collectEntities' lambda function.
 	/**
 	 * Fixes <a href="https://bugs.mojang.com/browse/MC-158205">MC-158205</a>
 	 * <p>
 	 * Allows collecting {@link EntityPart}s that are within the targeted {@link Box}
 	 * but are part of {@link Entity entities} in unchecked chunks.
 	 */
-	@Inject(method = "getEntitiesByType", at = @At("RETURN"))
-	private <T extends Entity> void getEntityPartsByType(TypeFilter<Entity, T> filter, Box box, Predicate<? super T> predicate,
-			CallbackInfoReturnable<List<T>> cir) {
-		List<T> list = cir.getReturnValue();
-
+	@Inject(method = "collectEntities", at = @At("RETURN"))
+	private <T extends Entity> void collectEntityParts(TypeFilter<Entity, T> filter, Box box, Predicate<? super T> predicate, List<? super T> collection, int maxEntities,
+			CallbackInfoReturnable<T> cir) {
 		// We don't want to check the parts of entities that we already know are invalid
 		Set<Entity> skippedOwners = new HashSet<>();
 
@@ -114,7 +115,10 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 			}
 
 			if (entity.getBoundingBox().intersects(box) && predicate.test(entity)) {
-				list.add(entity);
+				collection.add(entity);
+				if (collection.size() >= maxEntities) {
+					cir.setReturnValue(AbortableIterationConsumer.IterationStatus.ABORT);
+				}
 			}
 		}
 	}
