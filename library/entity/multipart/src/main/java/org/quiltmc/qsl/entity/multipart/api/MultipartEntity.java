@@ -19,8 +19,6 @@ package org.quiltmc.qsl.entity.multipart.api;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 
-import org.quiltmc.qsl.base.api.util.InjectedInterface;
-
 /**
  * Represents an entity that contains multiple {@link EntityPart}s.
  * <p>
@@ -50,7 +48,6 @@ import org.quiltmc.qsl.base.api.util.InjectedInterface;
  *
  * @see EnderDragonEntity
  */
-@InjectedInterface({EnderDragonEntity.class})
 public interface MultipartEntity {
 	EntityPart<?>[] getEntityParts();
 }
