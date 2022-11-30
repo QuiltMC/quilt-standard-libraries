@@ -38,19 +38,18 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.resource.ResourceManager;
 import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.registry.Holder;
 import net.minecraft.registry.HolderLookup;
+import net.minecraft.registry.HolderLookup.RegistryLookup;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryLoader;
 import net.minecraft.registry.VanillaDynamicRegistries;
-import net.minecraft.registry.HolderLookup.RegistryLookup;
 import net.minecraft.registry.tag.TagEntry;
 import net.minecraft.registry.tag.TagGroupLoader;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.registry.tag.TagManagerLoader;
+import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -58,17 +57,20 @@ import org.quiltmc.qsl.tag.api.QuiltTagKey;
 import org.quiltmc.qsl.tag.api.TagRegistry;
 import org.quiltmc.qsl.tag.api.TagType;
 import org.quiltmc.qsl.tag.impl.TagRegistryImpl;
+import org.quiltmc.qsl.tag.mixin.client.C_uhbbwvgaMixin;
 import org.quiltmc.qsl.tag.mixin.client.TagGroupLoaderAccessor;
 
 @ApiStatus.Internal
 public final class ClientTagRegistryManager<T> {
 	private static final Map<RegistryKey<? extends Registry<?>>, ClientTagRegistryManager<?>> TAG_GROUP_MANAGERS =
 			new WeakHashMap<>();
+	private static final HolderLookup.Provider VANILLA_PROVIDERS = VanillaDynamicRegistries.createLookup();
 
 	private final RegistryKey<? extends Registry<T>> registryKey;
 	private final RegistryFetcher registryFetcher;
 	private final TagGroupLoader<Holder<T>> loader;
 	private HolderLookup.Provider lookupProvider;
+	private ClientRegistryStatus status;
 	private Map<Identifier, List<TagGroupLoader.EntryWithSource>> serializedTags = Map.of();
 	private Map<TagKey<T>, Collection<Holder<T>>> clientOnlyValues;
 	private Map<Identifier, List<TagGroupLoader.EntryWithSource>> fallbackSerializedTags = Map.of();
@@ -77,12 +79,14 @@ public final class ClientTagRegistryManager<T> {
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	private ClientTagRegistryManager(RegistryKey<? extends Registry<T>> registryKey, String dataType) {
 		this.registryKey = registryKey;
-		this.lookupProvider = VanillaDynamicRegistries.createLookup();
+		this.lookupProvider = VANILLA_PROVIDERS;
 
 		if (BuiltinRegistries.REGISTRY.contains((RegistryKey) registryKey)) {
 			this.registryFetcher = new StaticRegistryFetcher();
+			this.status = ClientRegistryStatus.STATIC;
 		} else {
 			this.registryFetcher = new ClientRegistryFetcher();
+			this.status = ClientRegistryStatus.LOCAL;
 		}
 
 		this.loader = new TagGroupLoader<>(this.registryFetcher, dataType);
@@ -100,11 +104,21 @@ public final class ClientTagRegistryManager<T> {
 		return this.clientOnlyValues.entrySet().stream().map(entry -> new TagRegistry.TagValues<>(entry.getKey(), entry.getValue()));
 	}
 
-	@SuppressWarnings("unchecked")
 	@ClientOnly
 	public void setSerializedTags(Map<Identifier, List<TagGroupLoader.EntryWithSource>> serializedTags) {
 		this.serializedTags = serializedTags;
-		this.clientOnlyValues = this.buildDynamicGroup(this.serializedTags, TagType.CLIENT_ONLY);
+
+		if (this.status.isReady()) {
+			this.applyTags(this.serializedTags);
+		} else {
+			this.applyTags(Collections.emptyMap());
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@ClientOnly
+	private void applyTags(Map<Identifier, List<TagGroupLoader.EntryWithSource>> serializedTags) {
+		this.clientOnlyValues = this.buildDynamicGroup(serializedTags, TagType.CLIENT_ONLY);
 		this.bindTags(this.clientOnlyValues, (ref, tags) -> ((QuiltHolderReferenceHooks<T>) ref).quilt$setClientTags(tags));
 	}
 
@@ -122,17 +136,52 @@ public final class ClientTagRegistryManager<T> {
 				.map(entry -> new TagRegistry.TagValues<>(entry.getKey(), entry.getValue()));
 	}
 
-	@SuppressWarnings("unchecked")
 	@ClientOnly
 	public void setFallbackSerializedTags(Map<Identifier, List<TagGroupLoader.EntryWithSource>> serializedTags) {
 		this.fallbackSerializedTags = serializedTags;
-		this.fallbackValues = this.buildDynamicGroup(this.fallbackSerializedTags, TagType.CLIENT_FALLBACK);
+
+		if (this.status.isReady()) {
+			this.applyFallbackTags(this.fallbackSerializedTags);
+		} else {
+			this.applyFallbackTags(Collections.emptyMap());
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@ClientOnly
+	private void applyFallbackTags(Map<Identifier, List<TagGroupLoader.EntryWithSource>> serializedTags) {
+		this.fallbackValues = this.buildDynamicGroup(serializedTags, TagType.CLIENT_FALLBACK);
 		this.bindTags(this.fallbackValues, (ref, tags) -> ((QuiltHolderReferenceHooks<T>) ref).quilt$setFallbackTags(tags));
 	}
 
 	@ClientOnly
 	public Map<Identifier, List<TagGroupLoader.EntryWithSource>> load(ResourceManager resourceManager) {
 		return this.loader.loadTags(resourceManager);
+	}
+
+	@ClientOnly
+	public void apply(HolderLookup.Provider lookupProvider, boolean remote) {
+		if ((remote && this.status == ClientRegistryStatus.REMOTE) || this.status == ClientRegistryStatus.LOCAL) {
+			this.lookupProvider = lookupProvider;
+
+			this.setSerializedTags(this.serializedTags);
+			this.setFallbackSerializedTags(this.fallbackSerializedTags);
+
+			if (remote) {
+				this.status = ClientRegistryStatus.REMOTE;
+			}
+		}
+	}
+
+	@ClientOnly
+	public void resetDynamic(boolean force) {
+		if (force || this.status == ClientRegistryStatus.LOCAL) {
+			this.apply(VANILLA_PROVIDERS, false);
+
+			if (force) {
+				this.status = ClientRegistryStatus.LOCAL;
+			}
+		}
 	}
 
 	@ClientOnly
@@ -199,22 +248,30 @@ public final class ClientTagRegistryManager<T> {
 		);
 	}
 
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	@ClientOnly
 	static void init() {
-		// FIXME - This is probably not the way to do things correctly... Replace me!
+		// Add up all known static registries.
 		BuiltinRegistries.REGISTRY.forEach(registry -> {
 			get(registry.getKey());
 		});
-		RegistryLoader.WORLDGEN_REGISTRIES.forEach(decodingData -> {
-			get(decodingData.key());
-		});
-		RegistryLoader.DIMENSION_REGISTRIES.forEach(decodingData -> {
-			get(decodingData.key());
-		});
+
+		// Add up known synced dynamic registries.
+		C_uhbbwvgaMixin.quilt$getSyncableRegistries().forEach((registry, o) -> get((RegistryKey) registry));
 	}
 
 	static void forEach(Consumer<ClientTagRegistryManager<?>> consumer) {
 		TAG_GROUP_MANAGERS.values().forEach(consumer);
+	}
+
+	@ClientOnly
+	public static void applyAll(HolderLookup.Provider lookupProvider, boolean remote) {
+		TAG_GROUP_MANAGERS.forEach((registryKey, manager) -> manager.apply(lookupProvider, remote));
+	}
+
+	@ClientOnly
+	public static void resetDynamicAll(boolean force) {
+		TAG_GROUP_MANAGERS.forEach((registryKey, manager) -> manager.resetDynamic(force));
 	}
 
 	@ClientOnly
@@ -283,16 +340,20 @@ public final class ClientTagRegistryManager<T> {
 		private HolderLookup.Provider lastLookupProvider;
 		private RegistryLookup<T> cached;
 
-		private ClientRegistryFetcher() {}
+		private ClientRegistryFetcher() {
+		}
 
 		@SuppressWarnings("unchecked")
 		@Override
 		public Optional<? extends Holder<T>> apply(Identifier id) {
 			if (this.firstCall || ClientTagRegistryManager.this.lookupProvider != this.lastLookupProvider) {
 				this.lastLookupProvider = ClientTagRegistryManager.this.lookupProvider;
-				this.cached = this.lastLookupProvider.getLookup(ClientTagRegistryManager.this.registryKey)
-						.orElse(null);
-				this.firstCall = false;
+
+				if (this.lastLookupProvider != null) {
+					this.cached = this.lastLookupProvider.getLookup(ClientTagRegistryManager.this.registryKey)
+							.orElse(null);
+					this.firstCall = false;
+				}
 			}
 
 			if (this.cached == null) {
