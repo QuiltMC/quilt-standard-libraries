@@ -31,7 +31,7 @@ public class TestServerMixin {
 			method = "create",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/unmapped/C_yknpgzdr;<init>(Lnet/minecraft/resource/pack/DataPackSettings;Lnet/minecraft/unmapped/C_czxxrbcp;)V"
+					target = "Lnet/minecraft/server/world/FeatureAndDataSettings;<init>(Lnet/minecraft/resource/pack/DataPackSettings;Lnet/minecraft/feature_flags/FeatureFlagBitSet;)V"
 			),
 			index = 0
 	)
