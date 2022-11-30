@@ -23,10 +23,11 @@ import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -40,13 +41,13 @@ public final class TooltipTestMod implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		Registry.register(Registry.ITEM, new Identifier(NAMESPACE, "custom_tooltip_item"), CUSTOM_TOOLTIP_ITEM);
-		Registry.register(Registry.ITEM, new Identifier(NAMESPACE, "custom_convertible_tooltip_item"),
+		Registry.register(BuiltinRegistries.ITEM, new Identifier(NAMESPACE, "custom_tooltip_item"), CUSTOM_TOOLTIP_ITEM);
+		Registry.register(BuiltinRegistries.ITEM, new Identifier(NAMESPACE, "custom_convertible_tooltip_item"),
 				CUSTOM_CONVERTIBLE_TOOLTIP_ITEM);
 	}
 
 	private static class SimpleCustomTooltipItem extends Item {
-		public SimpleCustomTooltipItem() {
+		SimpleCustomTooltipItem() {
 			super(new Settings()/*.group(ItemGroup.MISC)*/);
 		}
 
@@ -57,7 +58,7 @@ public final class TooltipTestMod implements ModInitializer {
 	}
 
 	private static class ConvertibleTooltipItem extends Item {
-		public ConvertibleTooltipItem() {
+		ConvertibleTooltipItem() {
 			super(new Settings()/*.group(ItemGroup.MISC)*/);
 		}
 
@@ -67,8 +68,7 @@ public final class TooltipTestMod implements ModInitializer {
 		}
 	}
 
-	public record Data(String message) implements TooltipData {
-	}
+	public record Data(String message) implements TooltipData {}
 
 	public record ConvertibleData(String message) implements ConvertibleTooltipData {
 		@ClientOnly

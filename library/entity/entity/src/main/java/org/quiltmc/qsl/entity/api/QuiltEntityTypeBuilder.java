@@ -20,7 +20,6 @@ package org.quiltmc.qsl.entity.api;
 import java.util.Objects;
 
 import com.google.common.collect.ImmutableSet;
-import net.minecraft.unmapped.C_czxxrbcp;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,6 +33,9 @@ import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.DefaultAttributeRegistry;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.feature_flags.FeatureFlag;
+import net.minecraft.feature_flags.FeatureFlagBitSet;
+import net.minecraft.feature_flags.FeatureFlags;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 
@@ -55,7 +57,7 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	private boolean spawnableFarFromPlayer;
 	private int maxTrackingRange = 5;
 	private int trackingTickInterval = 3;
-	private C_czxxrbcp requiredFlags = C_czxxrbcp.m_bykvotir();
+	private FeatureFlagBitSet requiredFlags = FeatureFlags.DEFAULT_SET;
 	private Boolean alwaysUpdateVelocity = null;
 	private EntityDimensions dimensions = EntityDimensions.changing(0.6F, 1.8F);
 
@@ -281,8 +283,8 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 	 * and will not be accessible by ID in commands, unless all feature flags
 	 * in {@code requiredFlags} are present.
 	 */
-	public QuiltEntityTypeBuilder<T> requiredFlags(C_czxxrbcp requiredFlags) {
-		this.requiredFlags = requiredFlags;
+	public QuiltEntityTypeBuilder<T> requiredFlags(FeatureFlag... flags) {
+		this.requiredFlags = FeatureFlags.MAIN_REGISTRY.bitSetOf(flags);
 		return this;
 	}
 
@@ -391,8 +393,8 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 		}
 
 		@Override
-		public QuiltEntityTypeBuilder.Living<T> requiredFlags(C_czxxrbcp requiredFlags) {
-			super.requiredFlags(requiredFlags);
+		public QuiltEntityTypeBuilder.Living<T> requiredFlags(FeatureFlag... flags) {
+			super.requiredFlags(flags);
 			return this;
 		}
 
@@ -518,8 +520,8 @@ public class QuiltEntityTypeBuilder<T extends Entity> {
 		}
 
 		@Override
-		public QuiltEntityTypeBuilder.Living<T> requiredFlags(C_czxxrbcp requiredFlags) {
-			super.requiredFlags(requiredFlags);
+		public QuiltEntityTypeBuilder.Living<T> requiredFlags(FeatureFlag... flags) {
+			super.requiredFlags(flags);
 			return this;
 		}
 

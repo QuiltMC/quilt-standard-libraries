@@ -29,10 +29,11 @@ import net.minecraft.block.MapColor;
 import net.minecraft.block.Material;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.SimpleRegistry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.util.registry.SimpleRegistry;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.QuiltLoader;
@@ -65,13 +66,13 @@ public class RegistryLibSyncTest implements ModInitializer {
 			}
 
 			var opt = register(10);
-			RegistrySynchronization.setEntryOptional(Registry.ITEM, opt);
-			RegistrySynchronization.setEntryOptional(Registry.BLOCK, opt);
+			RegistrySynchronization.setEntryOptional((SimpleRegistry<Item>) BuiltinRegistries.ITEM, opt);
+			RegistrySynchronization.setEntryOptional((SimpleRegistry<Block>) BuiltinRegistries.BLOCK, opt);
 
 			ServerLifecycleEvents.READY.register((x) -> this.printReg());
 		}
 
-		var customRequiredRegistry = Registry.register((Registry<Registry<Path>>) Registry.REGISTRIES,
+		var customRequiredRegistry = Registry.register((Registry<Registry<Path>>) BuiltinRegistries.REGISTRY,
 				new Identifier(NAMESPACE, "synced_registry"),
 				new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(NAMESPACE, "synced_registry")), Lifecycle.stable()));
 
@@ -87,8 +88,8 @@ public class RegistryLibSyncTest implements ModInitializer {
 					StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE
 			);
 
-			for (var reg : Registry.REGISTRIES) {
-				writer.write("\n=== Registry: " + ((Registry<Registry<?>>) Registry.REGISTRIES).getId(reg) + "\n");
+			for (var reg : BuiltinRegistries.REGISTRY) {
+				writer.write("\n=== Registry: " + ((Registry<Registry<?>>) BuiltinRegistries.REGISTRY).getId(reg) + "\n");
 				if (reg instanceof SynchronizedRegistry<?> sync) {
 					writer.write("== Requires Sync: " + sync.quilt$requiresSyncing() + "\n");
 					writer.write("== Status: " + sync.quilt$getContentStatus() + "\n");
@@ -105,7 +106,7 @@ public class RegistryLibSyncTest implements ModInitializer {
 			writer.write("\n");
 
 			for (var entry : Block.STATE_IDS) {
-				writer.write("" + Block.STATE_IDS.getRawId(entry) + ": " + Registry.BLOCK.getId(entry.getBlock()));
+				writer.write("" + Block.STATE_IDS.getRawId(entry) + ": " + BuiltinRegistries.BLOCK.getId(entry.getBlock()));
 				writer.write("\n");
 			}
 
@@ -119,9 +120,9 @@ public class RegistryLibSyncTest implements ModInitializer {
 		var id = new Identifier(NAMESPACE, "entry_" + i);
 		var block = new Block(AbstractBlock.Settings.of(Material.STONE, MapColor.BLACK));
 
-		Registry.register(Registry.BLOCK, id, block);
-		Registry.register(Registry.ITEM, id, new BlockItem(block, new Item.Settings()));
-		RegistrySynchronization.setEntryOptional(Registry.ITEM, id);
+		Registry.register(BuiltinRegistries.BLOCK, id, block);
+		Registry.register(BuiltinRegistries.ITEM, id, new BlockItem(block, new Item.Settings()));
+		RegistrySynchronization.setEntryOptional((SimpleRegistry<Item>) BuiltinRegistries.ITEM, id);
 		return id;
 	}
 }

@@ -16,10 +16,16 @@
 
 package org.quiltmc.qsl.block.extensions.test;
 
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.GlassBlock;
+import net.minecraft.block.MapColor;
+import net.minecraft.block.Material;
+import net.minecraft.block.VineBlock;
 import net.minecraft.block.piston.PistonBehavior;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -31,13 +37,13 @@ public final class Initializer implements ModInitializer {
 			.pistonBehavior(PistonBehavior.PUSH_ONLY)
 			.build();
 
-	public static final Block BLOCK = Registry.register(Registry.BLOCK,
+	public static final Block BLOCK = Registry.register(BuiltinRegistries.BLOCK,
 			new Identifier("quilt_block_extensions_testmod", "test_block"),
 			new GlassBlock(QuiltBlockSettings.copyOf(Blocks.GLASS)
 					.material(MATERIAL)
 					.luminance(15)));
 
-	public static final Block BLOCK2 = Registry.register(Registry.BLOCK,
+	public static final Block BLOCK2 = Registry.register(BuiltinRegistries.BLOCK,
 			new Identifier("quilt_block_extensions_testmod", "test_block2"),
 			new VineBlock(QuiltBlockSettings.copyOf(Blocks.VINE).ticksRandomly(false)));
 

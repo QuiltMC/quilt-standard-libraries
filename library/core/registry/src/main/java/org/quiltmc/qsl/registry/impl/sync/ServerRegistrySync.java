@@ -24,9 +24,10 @@ import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
@@ -52,7 +53,7 @@ public final class ServerRegistrySync {
 	}
 
 	public static boolean shouldSync() {
-		for (var registry : Registry.REGISTRIES) {
+		for (var registry : BuiltinRegistries.REGISTRY) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
 					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
 				return true;
@@ -63,7 +64,7 @@ public final class ServerRegistrySync {
 	}
 
 	public static boolean requiresSync() {
-		for (var registry : Registry.REGISTRIES) {
+		for (var registry : BuiltinRegistries.REGISTRY) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
 					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() == SynchronizedRegistry.Status.REQUIRED) {
 				return true;
@@ -74,7 +75,7 @@ public final class ServerRegistrySync {
 	}
 
 	public static void sendSyncPackets(ClientConnection connection, ServerPlayerEntity player) {
-		for (var registry : Registry.REGISTRIES) {
+		for (var registry : BuiltinRegistries.REGISTRY) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
 					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
 				var map = synchronizedRegistry.quilt$getSyncMap();
@@ -126,7 +127,7 @@ public final class ServerRegistrySync {
 		var buf = PacketByteBufs.create();
 
 		// Registry id
-		buf.writeIdentifier(((Registry<T>) Registry.REGISTRIES).getId(registry));
+		buf.writeIdentifier(((Registry<T>) BuiltinRegistries.REGISTRY).getId(registry));
 
 		// Number of entries
 		buf.writeVarInt(registry.size());

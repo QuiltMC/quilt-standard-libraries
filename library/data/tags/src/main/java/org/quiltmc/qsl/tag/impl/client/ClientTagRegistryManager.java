@@ -39,16 +39,19 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.tag.TagEntry;
-import net.minecraft.tag.TagGroupLoader;
-import net.minecraft.tag.TagKey;
-import net.minecraft.tag.TagManagerLoader;
-import net.minecraft.util.Holder;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.HolderLookup;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryLoader;
+import net.minecraft.registry.VanillaDynamicRegistries;
+import net.minecraft.registry.HolderLookup.RegistryLookup;
+import net.minecraft.registry.tag.TagEntry;
+import net.minecraft.registry.tag.TagGroupLoader;
+import net.minecraft.registry.tag.TagKey;
+import net.minecraft.registry.tag.TagManagerLoader;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.tag.api.QuiltTagKey;
@@ -65,7 +68,7 @@ public final class ClientTagRegistryManager<T> {
 	private final RegistryKey<? extends Registry<T>> registryKey;
 	private final RegistryFetcher registryFetcher;
 	private final TagGroupLoader<Holder<T>> loader;
-	private DynamicRegistryManager registryManager = BuiltinRegistries.m_bayqaavy();
+	private HolderLookup.Provider lookupProvider;
 	private Map<Identifier, List<TagGroupLoader.EntryWithSource>> serializedTags = Map.of();
 	private Map<TagKey<T>, Collection<Holder<T>>> clientOnlyValues;
 	private Map<Identifier, List<TagGroupLoader.EntryWithSource>> fallbackSerializedTags = Map.of();
@@ -74,8 +77,9 @@ public final class ClientTagRegistryManager<T> {
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	private ClientTagRegistryManager(RegistryKey<? extends Registry<T>> registryKey, String dataType) {
 		this.registryKey = registryKey;
+		this.lookupProvider = VanillaDynamicRegistries.createLookup();
 
-		if (Registry.REGISTRIES.contains((RegistryKey) registryKey)) {
+		if (BuiltinRegistries.REGISTRY.contains((RegistryKey) registryKey)) {
 			this.registryFetcher = new StaticRegistryFetcher();
 		} else {
 			this.registryFetcher = new ClientRegistryFetcher();
@@ -132,14 +136,6 @@ public final class ClientTagRegistryManager<T> {
 	}
 
 	@ClientOnly
-	public void apply(DynamicRegistryManager registryManager) {
-		this.registryManager = registryManager;
-
-		this.setSerializedTags(this.serializedTags);
-		this.setFallbackSerializedTags(this.fallbackSerializedTags);
-	}
-
-	@ClientOnly
 	private Map<TagKey<T>, Collection<Holder<T>>> buildDynamicGroup(Map<Identifier, List<TagGroupLoader.EntryWithSource>> tagBuilders, TagType type) {
 		if (!TagRegistryImpl.isRegistryDynamic(this.registryKey)) {
 			var tags = new Object2ObjectOpenHashMap<TagKey<T>, Collection<Holder<T>>>();
@@ -174,7 +170,7 @@ public final class ClientTagRegistryManager<T> {
 
 	@ClientOnly
 	public void bindTags(Map<TagKey<T>, Collection<Holder<T>>> map, BiConsumer<Holder.Reference<T>, List<TagKey<T>>> consumer) {
-		var registry = this.registryManager.getOptional(this.registryKey);
+		var registry = this.lookupProvider.getLookup(this.registryKey);
 
 		if (registry.isEmpty()) {
 			return;
@@ -185,13 +181,6 @@ public final class ClientTagRegistryManager<T> {
 
 		map.forEach((tagKey, tag) -> {
 			for (var holder : tag) {
-				if (!holder.isRegistry(registry.get())) {
-					throw new IllegalStateException(
-							"Can't create named set " + tagKey + " containing value "
-									+ holder + " from outside registry " + registry.get()
-					);
-				}
-
 				if (!(holder instanceof Holder.Reference<T> reference)) {
 					throw new IllegalStateException("Found direct holder " + holder + " value in tag " + tagKey);
 				}
@@ -212,21 +201,20 @@ public final class ClientTagRegistryManager<T> {
 
 	@ClientOnly
 	static void init() {
-		Registry.REGISTRIES.forEach(registry -> {
+		// FIXME - This is probably not the way to do things correctly... Replace me!
+		BuiltinRegistries.REGISTRY.forEach(registry -> {
 			get(registry.getKey());
 		});
-		BuiltinRegistries.REGISTRIES.forEach(registry -> {
-			get(registry.getKey());
+		RegistryLoader.WORLDGEN_REGISTRIES.forEach(decodingData -> {
+			get(decodingData.key());
+		});
+		RegistryLoader.DIMENSION_REGISTRIES.forEach(decodingData -> {
+			get(decodingData.key());
 		});
 	}
 
 	static void forEach(Consumer<ClientTagRegistryManager<?>> consumer) {
 		TAG_GROUP_MANAGERS.values().forEach(consumer);
-	}
-
-	@ClientOnly
-	public static void applyAll(DynamicRegistryManager registryManager) {
-		TAG_GROUP_MANAGERS.forEach((registryKey, manager) -> manager.apply(registryManager));
 	}
 
 	@ClientOnly
@@ -250,7 +238,7 @@ public final class ClientTagRegistryManager<T> {
 
 		public BiConsumer<Identifier, List<TagGroupLoader.EntryWithSource>> getDependencyConsumer(Identifier tagId) {
 			return (currentTagId, builder) -> this.tags.put(
-					QuiltTagKey.of(ClientTagRegistryManager.this.registryKey, tagId, type),
+					QuiltTagKey.of(ClientTagRegistryManager.this.registryKey, tagId, this.type),
 					this.buildLenientTag(builder)
 			);
 		}
@@ -272,16 +260,16 @@ public final class ClientTagRegistryManager<T> {
 	}
 
 	private class StaticRegistryFetcher extends RegistryFetcher {
-		private final Registry<T> cached;
+		private final RegistryLookup<T> cached;
 
-		@SuppressWarnings({"unchecked", "rawtypes"})
 		private StaticRegistryFetcher() {
-			this.cached = (Registry<T>) Registry.REGISTRIES.get((RegistryKey) ClientTagRegistryManager.this.registryKey);
+			this.cached = ClientTagRegistryManager.this.lookupProvider.getLookupOrThrow(ClientTagRegistryManager.this.registryKey);
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public Optional<? extends Holder<T>> apply(Identifier id) {
-			return this.cached.getHolder(RegistryKey.of(this.cached.getKey(), id));
+			return this.cached.getHolder(RegistryKey.of((RegistryKey<? extends Registry<T>>) this.cached.getKey(), id));
 		}
 	}
 
@@ -292,17 +280,17 @@ public final class ClientTagRegistryManager<T> {
 	 */
 	private class ClientRegistryFetcher extends RegistryFetcher {
 		private boolean firstCall = true;
-		private DynamicRegistryManager lastRegistryManager;
-		private Registry<T> cached;
+		private HolderLookup.Provider lastLookupProvider;
+		private RegistryLookup<T> cached;
 
-		private ClientRegistryFetcher() {
-		}
+		private ClientRegistryFetcher() {}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public Optional<? extends Holder<T>> apply(Identifier id) {
-			if (firstCall || ClientTagRegistryManager.this.registryManager != this.lastRegistryManager) {
-				this.lastRegistryManager = ClientTagRegistryManager.this.registryManager;
-				this.cached = this.lastRegistryManager.getOptional(ClientTagRegistryManager.this.registryKey)
+			if (this.firstCall || ClientTagRegistryManager.this.lookupProvider != this.lastLookupProvider) {
+				this.lastLookupProvider = ClientTagRegistryManager.this.lookupProvider;
+				this.cached = this.lastLookupProvider.getLookup(ClientTagRegistryManager.this.registryKey)
 						.orElse(null);
 				this.firstCall = false;
 			}
@@ -310,7 +298,7 @@ public final class ClientTagRegistryManager<T> {
 			if (this.cached == null) {
 				return Optional.empty();
 			} else {
-				return this.cached.getHolder(RegistryKey.of(this.cached.getKey(), id));
+				return this.cached.getHolder(RegistryKey.of((RegistryKey<? extends Registry<T>>) this.cached.getKey(), id));
 			}
 		}
 	}

@@ -26,6 +26,7 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.item.ItemRenderer;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 /**
  * An interface implemented by {@link Screen} through a mixin in order to expose QSL extensions and also provide utility methods.
@@ -33,6 +34,7 @@ import org.quiltmc.loader.api.minecraft.ClientOnly;
  * @see ScreenEvents
  */
 @ClientOnly
+@InjectedInterface(Screen.class)
 public interface QuiltScreen {
 	/**
 	 * Gets all of the screen's button widgets.
@@ -42,20 +44,28 @@ public interface QuiltScreen {
 	 *
 	 * @return a list of all of the screen's buttons
 	 */
-	List<ClickableWidget> getButtons();
+	default List<ClickableWidget> getButtons() {
+		throw new UnsupportedOperationException("No implementation of getButtons could be found.");
+	}
 
 	/**
 	 * {@return the screen's item renderer}
 	 */
-	ItemRenderer getItemRenderer();
+	default ItemRenderer getItemRenderer() {
+		throw new UnsupportedOperationException("No implementation of getItemRenderer could be found.");
+	}
 
 	/**
 	 * {@return the screen's text renderer}
 	 */
-	TextRenderer getTextRenderer();
+	default TextRenderer getTextRenderer() {
+		throw new UnsupportedOperationException("No implementation of getTextRenderer could be found.");
+	}
 
 	/**
 	 * {@return the Minecraft client instance}
 	 */
-	MinecraftClient getClient();
+	default MinecraftClient getClient() {
+		throw new UnsupportedOperationException("No implementation of getClient could be found.");
+	}
 }

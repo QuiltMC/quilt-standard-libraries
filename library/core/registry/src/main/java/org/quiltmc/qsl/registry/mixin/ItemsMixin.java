@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.BuiltinRegistries;
 
 import org.quiltmc.qsl.registry.api.event.RegistryMonitor;
 
@@ -32,7 +32,7 @@ import org.quiltmc.qsl.registry.api.event.RegistryMonitor;
 public abstract class ItemsMixin {
 	@Inject(method = "<clinit>", at = @At("RETURN"))
 	private static void onInit(CallbackInfo ci) {
-		RegistryMonitor.create(Registry.ITEM)
+		RegistryMonitor.create(BuiltinRegistries.ITEM)
 				.filter(context -> context.value() instanceof BlockItem)
 				.forUpcoming(context -> ((BlockItem) context.value()).appendBlocks(Item.BLOCK_ITEMS, context.value()));
 	}

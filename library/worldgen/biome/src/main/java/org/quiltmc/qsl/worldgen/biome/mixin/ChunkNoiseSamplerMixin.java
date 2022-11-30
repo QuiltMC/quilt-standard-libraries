@@ -56,7 +56,7 @@ public class ChunkNoiseSamplerMixin {
 			Blender blender,
 			CallbackInfo ci
 	) {
-		this.quilt$seed = randomState.getLegacyWorldSeed();
+		quilt$seed = ((MultiNoiseSamplerExtensions) (Object) randomState.getSampler()).quilt$getSeed();
 	}
 
 	@Inject(method = "createMultiNoiseSampler", at = @At("RETURN"))

@@ -19,8 +19,8 @@ package org.quiltmc.qsl.item.content.registry.api;
 import com.mojang.serialization.Codec;
 
 import net.minecraft.item.Item;
+import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
@@ -45,7 +45,7 @@ public class ItemContentRegistries {
 	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/item/fuel_times.json}
 	 */
 	public static final RegistryEntryAttachment<Item, Integer> FUEL_TIMES = RegistryEntryAttachment
-			.builder(Registry.ITEM,
+			.builder(BuiltinRegistries.ITEM,
 					new Identifier(NAMESPACE, "fuel_times"),
 					Integer.class,
 					Codec.intRange(0, Integer.MAX_VALUE))
@@ -57,7 +57,7 @@ public class ItemContentRegistries {
 	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/item/compost_chances.json}
 	 */
 	public static final RegistryEntryAttachment<Item, Float> COMPOST_CHANCES = RegistryEntryAttachment
-			.builder(Registry.ITEM,
+			.builder(BuiltinRegistries.ITEM,
 					new Identifier(NAMESPACE, "compost_chances"),
 					Float.class,
 					Codec.floatRange(0, 1))

@@ -25,9 +25,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.MapColor;
 import net.minecraft.block.Material;
+import net.minecraft.block.AbstractBlock.Settings;
 import net.minecraft.entity.EntityType;
+import net.minecraft.feature_flags.FeatureFlag;
 import net.minecraft.sound.BlockSoundGroup;
-import net.minecraft.unmapped.C_kksdgidr;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 
@@ -266,14 +267,14 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	}
 
 	@Override
-	public AbstractBlock.Settings m_yeubaeen() {
-		super.m_yeubaeen();
+	public AbstractBlock.Settings disableParticlesOnBreak() {
+		super.disableParticlesOnBreak();
 		return this;
 	}
 
 	@Override
-	public AbstractBlock.Settings m_cfcitqhx(C_kksdgidr... features) {
-		super.m_cfcitqhx(features);
+	public Settings requiredFlags(FeatureFlag... flags) {
+		super.requiredFlags(flags);
 		return this;
 	}
 

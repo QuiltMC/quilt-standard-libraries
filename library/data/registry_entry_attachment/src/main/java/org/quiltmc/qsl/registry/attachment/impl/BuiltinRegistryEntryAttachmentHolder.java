@@ -26,7 +26,7 @@ import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 public final class BuiltinRegistryEntryAttachmentHolder<R> extends RegistryEntryAttachmentHolder<R> {
-	public static final int FLAG_NONE =     0b0000_0000;
+	public static final int FLAG_NONE = 0b0000_0000;
 	public static final int FLAG_COMPUTED = 0b0000_0001;
 
 	public final Table<RegistryEntryAttachment<R, ?>, R, Integer> valueFlagTable;

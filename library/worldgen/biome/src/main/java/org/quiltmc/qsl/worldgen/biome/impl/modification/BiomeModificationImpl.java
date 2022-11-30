@@ -27,6 +27,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import com.google.common.base.Stopwatch;
+import net.minecraft.util.registry.Registries;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.TestOnly;
 import org.slf4j.Logger;
@@ -112,7 +113,7 @@ public class BiomeModificationImpl {
 		var modificationTracker = (BiomeModificationMarker) impl;
 		modificationTracker.quilt$markModified();
 
-		Registry<Biome> biomes = impl.get(Registry.BIOME_KEY);
+		Registry<Biome> biomes = impl.get(Registries.BIOME_WORLDGEN);
 
 		// Build a list of all biome keys in ascending order of their raw-id to get a consistent result in case
 		// someone does something stupid.

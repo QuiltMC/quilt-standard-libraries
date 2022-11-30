@@ -18,7 +18,8 @@ package org.quiltmc.qsl.registry.impl.event;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.SimpleRegistry;
 
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
@@ -37,7 +38,7 @@ public interface RegistryEventStorage<V> {
 	 * Casts a {@link Registry} to the duck interface.
 	 */
 	@SuppressWarnings("unchecked")
-	static <W> RegistryEventStorage<W> as(Registry<W> registry) {
+	static <W> RegistryEventStorage<W> as(SimpleRegistry<W> registry) {
 		return (RegistryEventStorage<W>) registry;
 	}
 }

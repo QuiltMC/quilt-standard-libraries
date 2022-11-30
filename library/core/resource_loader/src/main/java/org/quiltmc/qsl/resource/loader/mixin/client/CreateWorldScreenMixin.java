@@ -31,12 +31,12 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
 import net.minecraft.client.gui.screen.world.MoreOptionsDialog;
 import net.minecraft.client.world.WorldCreationContext;
+import net.minecraft.feature_flags.FeatureFlags;
 import net.minecraft.resource.AutoCloseableResourceManager;
 import net.minecraft.resource.pack.ResourcePackManager;
 import net.minecraft.server.ServerReloadableResources;
-import net.minecraft.unmapped.C_bcpxdrik;
-import net.minecraft.unmapped.C_ozbmlrmw;
-import net.minecraft.unmapped.C_yknpgzdr;
+import net.minecraft.server.world.FeatureAndDataSettings;
+import net.minecraft.registry.LayeredRegistryManager;
 import net.minecraft.util.Unit;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -56,7 +56,7 @@ public abstract class CreateWorldScreenMixin {
 			at = @At("HEAD")
 	)
 	private static void onEndDataPackLoadOnOpen(AutoCloseableResourceManager resourceManager, ServerReloadableResources resources,
-			C_bcpxdrik<?> c_bcpxdrik, @Coerce Object c_mxqwwbun, CallbackInfoReturnable<WorldCreationContext> cir) {
+			LayeredRegistryManager<?> layeredRegistryManager, @Coerce Object c_mxqwwbun, CallbackInfoReturnable<WorldCreationContext> cir) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resourceManager, null);
 	}
 
@@ -67,7 +67,7 @@ public abstract class CreateWorldScreenMixin {
 					target = "Lnet/minecraft/server/WorldLoader;load(Lnet/minecraft/server/WorldLoader$InitConfig;Lnet/minecraft/server/WorldLoader$LoadContextSupplier;Lnet/minecraft/server/WorldLoader$ApplierFactory;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
 			)
 	)
-	private void onDataPackLoadStart(ResourcePackManager resourcePackManager, C_yknpgzdr c_yknpgzdr, CallbackInfo ci) {
+	private void onDataPackLoadStart(ResourcePackManager resourcePackManager, FeatureAndDataSettings featureAndDataSettings, CallbackInfo ci) {
 		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null);
 	}
 
@@ -90,7 +90,7 @@ public abstract class CreateWorldScreenMixin {
 			at = @At("HEAD")
 	)
 	private static void onCreateDataPackLoadEnd(AutoCloseableResourceManager resourceManager, ServerReloadableResources resources,
-			C_bcpxdrik<?> c_bcpxdrik, @Coerce Object c_mxqwwbun, CallbackInfoReturnable<WorldCreationContext> cir) {
+			LayeredRegistryManager<?> layeredRegistryManager, @Coerce Object c_mxqwwbun, CallbackInfoReturnable<WorldCreationContext> cir) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resourceManager, null);
 	}
 
@@ -111,7 +111,7 @@ public abstract class CreateWorldScreenMixin {
 
 	@Inject(method = "createLevel", at = @At("HEAD"))
 	private void onCreateLevelStart(CallbackInfo ci) {
-		if (C_ozbmlrmw.m_iacybqqj(this.moreOptionsDialog.getWorldCreationContext().dataConfiguration().enabledFeatures())) {
+		if (FeatureFlags.containsDefault(this.moreOptionsDialog.getWorldCreationContext().dataConfiguration().enabledFeatures())) {
 			ResourceLoaderImpl.EXPERIMENTAL_FEATURES_ENABLED.set(Unit.INSTANCE);
 		}
 	}

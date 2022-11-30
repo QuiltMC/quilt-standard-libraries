@@ -16,8 +16,8 @@
 
 package org.quiltmc.qsl.registry.api.event;
 
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 /**
  * Represents information about a registry entry.

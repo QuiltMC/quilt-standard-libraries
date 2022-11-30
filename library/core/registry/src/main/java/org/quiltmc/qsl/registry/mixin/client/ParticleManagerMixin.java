@@ -29,7 +29,7 @@ import net.minecraft.client.particle.ParticleFactory;
 import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.BuiltinRegistries;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedInt2ObjectMap;
@@ -45,7 +45,7 @@ public class ParticleManagerMixin implements RebuildableIdModelHolder {
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void quilt$onInit(ClientWorld clientWorld, TextureManager textureManager, CallbackInfo ci) {
-		this.factories = new SynchronizedInt2ObjectMap<>(Registry.PARTICLE_TYPE, this.factories);
+		this.factories = new SynchronizedInt2ObjectMap<>(BuiltinRegistries.PARTICLE_TYPE, this.factories);
 	}
 
 	@Override

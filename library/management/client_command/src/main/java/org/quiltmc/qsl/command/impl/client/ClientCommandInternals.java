@@ -41,22 +41,21 @@ import com.mojang.brigadier.tree.CommandNode;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.registry.ClientRegistryLayer;
 import net.minecraft.command.CommandBuildContext;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
+import net.minecraft.feature_flags.FeatureFlagBitSet;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
 import net.minecraft.text.Texts;
-import net.minecraft.unmapped.C_czxxrbcp;
-import net.minecraft.unmapped.C_dpewjmno;
-import net.minecraft.util.registry.DynamicRegistryManager;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.command.api.client.ClientCommandRegistrationCallback;
 import org.quiltmc.qsl.command.api.client.QuiltClientCommandSource;
 import org.quiltmc.qsl.command.mixin.HelpCommandAccessor;
@@ -204,7 +203,7 @@ public final class ClientCommandInternals {
 			currentDispatcher = DEFAULT_DISPATCHER;
 
 			if (environment == CommandManager.RegistrationEnvironment.ALL) {
-				registerCommands(new CommandBuildContext(C_dpewjmno.m_gfqeuqpu().m_scyfieos(), C_czxxrbcp.m_bykvotir()), environment);
+				registerCommands(CommandBuildContext.m_lghonqhw(ClientRegistryLayer.createLayeredManager().getCompositeManager(), FeatureFlagBitSet.empty()), environment);
 			}
 		} else {
 			currentDispatcher = new CommandDispatcher<>();

@@ -24,16 +24,16 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 import org.quiltmc.qsl.registry.attachment.impl.BuiltinRegistryEntryAttachmentHolder;
 import org.quiltmc.qsl.registry.attachment.impl.DataRegistryEntryAttachmentHolder;
 import org.quiltmc.qsl.registry.attachment.impl.QuiltRegistryInternals;
 
-@Mixin(Registry.class)
-public abstract class RegistryMixin<R> implements QuiltRegistryInternals<R> {
+@Mixin(RegistryKey.class)
+public abstract class RegistryKeyMixin<R> implements QuiltRegistryInternals<R> {
 	@Unique
 	private final Map<Identifier, RegistryEntryAttachment<R, ?>> quilt$attachments = new HashMap<>();
 	@Unique

@@ -26,7 +26,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.tag.TagGroupLoader;
+import net.minecraft.registry.tag.TagGroupLoader;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 

@@ -26,18 +26,17 @@ import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.tag.TagKey;
-import net.minecraft.util.Holder;
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 @ApiStatus.Internal
 public abstract class RegistryEntryAttachmentHolder<R> {
-	@SuppressWarnings("unchecked")
 	public static <R> QuiltRegistryInternals<R> getInternals(Registry<R> registry) {
-		return (QuiltRegistryInternals<R>) registry;
+		return QuiltRegistryInternals.of(registry);
 	}
 
 	public static <R, T> void registerAttachment(Registry<R> registry, RegistryEntryAttachment<R, T> attachment) {
@@ -59,11 +58,13 @@ public abstract class RegistryEntryAttachmentHolder<R> {
 		if (attachment == null) {
 			return null;
 		}
+
 		if (attachment.valueClass() != valueClass) {
-			throw new IllegalArgumentException(("Found attachment with ID \"%s\" for registry \"%s\", " +
-					"but it has wrong value class (expected %s, got %s)")
+			throw new IllegalArgumentException(("Found attachment with ID \"%s\" for registry \"%s\", "
+					+ "but it has wrong value class (expected %s, got %s)")
 					.formatted(id, registry.getKey().getValue(), valueClass, attachment.valueClass()));
 		}
+
 		return (RegistryEntryAttachment<R, V>) attachment;
 	}
 
@@ -73,6 +74,7 @@ public abstract class RegistryEntryAttachmentHolder<R> {
 		if (holder == null) {
 			internals.quilt$setBuiltinAttachmentHolder(holder = new BuiltinRegistryEntryAttachmentHolder<>());
 		}
+
 		return holder;
 	}
 
@@ -82,6 +84,7 @@ public abstract class RegistryEntryAttachmentHolder<R> {
 		if (holder == null) {
 			internals.quilt$setDataAttachmentHolder(holder = new DataRegistryEntryAttachmentHolder<>());
 		}
+
 		return holder;
 	}
 
@@ -98,7 +101,7 @@ public abstract class RegistryEntryAttachmentHolder<R> {
 	public <V> V getValue(RegistryEntryAttachment<R, V> attachment, R entry) {
 		V value = (V) this.valueTable.get(attachment, entry); // Check for a direct value in valueTable
 		if (value == null) { // If there is no value, check the valueTagTable
-			Map<TagKey<R>, Object> row = valueTagTable.row(attachment);
+			Map<TagKey<R>, Object> row = this.valueTagTable.row(attachment);
 			for (Map.Entry<TagKey<R>, Object> tagValue : row.entrySet()) { // Loop over the tags
 				for (Holder<R> holder : attachment.registry().getTagOrEmpty(tagValue.getKey())) { // Loop over the holders in the tag
 					if (holder.value().equals(entry)) { // The holder matches the entry
@@ -109,11 +112,13 @@ public abstract class RegistryEntryAttachmentHolder<R> {
 									attachment.id(),
 									tagValue.getKey().id());
 						}
+
 						value = (V) tagValue.getValue();
 					}
 				}
 			}
 		}
+
 		return value;
 	}
 

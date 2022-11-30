@@ -28,13 +28,14 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 import org.quiltmc.qsl.registry.attachment.impl.ClientSideGuard;
@@ -84,7 +85,7 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 		return CompletableFuture.supplyAsync(() -> {
 			var attachDicts = new HashMap<RegistryEntryAttachment<?, ?>, AttachmentDictionary<?, ?>>();
 
-			for (var entry : Registry.REGISTRIES.getEntries()) {
+			for (var entry : BuiltinRegistries.REGISTRY.getEntries()) {
 				Identifier registryId = entry.getKey().getValue();
 				String path = registryId.getNamespace() + "/" + registryId.getPath();
 				profiler.push(this.id + "/finding_resources/" + path);
@@ -167,15 +168,15 @@ public final class RegistryEntryAttachmentReloader implements SimpleResourceRelo
 
 		@SuppressWarnings("unchecked")
 		public void apply(Profiler profiler) {
-			profiler.push(id + "/prepare_attachments");
+			profiler.push(RegistryEntryAttachmentReloader.this.id + "/prepare_attachments");
 
-			for (var entry : Registry.REGISTRIES.getEntries()) {
+			for (var entry : BuiltinRegistries.REGISTRY.getEntries()) {
 				RegistryEntryAttachmentHolder.getData(entry.getValue())
 						.prepareReloadSource(RegistryEntryAttachmentReloader.this.source);
 			}
 
 			for (var entry : this.attachmentMaps.entrySet()) {
-				profiler.swap(id + "/apply_attachment{" + entry.getKey().id() + "}");
+				profiler.swap(RegistryEntryAttachmentReloader.this.id + "/apply_attachment{" + entry.getKey().id() + "}");
 				this.applyOne((RegistryEntryAttachment<Object, Object>) entry.getKey(), (AttachmentDictionary<Object, Object>) entry.getValue());
 			}
 

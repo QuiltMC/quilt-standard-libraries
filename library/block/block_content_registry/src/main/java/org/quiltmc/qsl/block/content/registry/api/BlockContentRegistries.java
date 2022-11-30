@@ -16,14 +16,14 @@
 
 package org.quiltmc.qsl.block.content.registry.api;
 
-
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
@@ -37,6 +37,7 @@ import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
  *     <li>{@link #WAXABLE}</li>
  *     <li>{@link #STRIPPABLE}</li>
  *     <li>{@link #FLAMMABLE}</li>
+ * 	   <li>{@link #ENCHANTING_BOOSTERS}</li>
  * </ul>
  */
 public class BlockContentRegistries {
@@ -51,7 +52,7 @@ public class BlockContentRegistries {
 	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/flattenable.json}
 	 */
 	public static final RegistryEntryAttachment<Block, BlockState> FLATTENABLE = RegistryEntryAttachment
-			.builder(Registry.BLOCK,
+			.builder(BuiltinRegistries.BLOCK,
 					new Identifier(NAMESPACE, "flattenable"),
 					BlockState.class,
 					BlockState.CODEC)
@@ -63,7 +64,7 @@ public class BlockContentRegistries {
 	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/oxidizable.json}
 	 */
 	public static final RegistryEntryAttachment<Block, ReversibleBlockEntry> OXIDIZABLE = RegistryEntryAttachment
-			.builder(Registry.BLOCK,
+			.builder(BuiltinRegistries.BLOCK,
 					new Identifier(NAMESPACE, "oxidizable"),
 					ReversibleBlockEntry.class,
 					ReversibleBlockEntry.CODEC)
@@ -75,7 +76,7 @@ public class BlockContentRegistries {
 	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/waxable.json}
 	 */
 	public static final RegistryEntryAttachment<Block, ReversibleBlockEntry> WAXABLE = RegistryEntryAttachment
-			.builder(Registry.BLOCK,
+			.builder(BuiltinRegistries.BLOCK,
 					new Identifier(NAMESPACE, "waxable"),
 					ReversibleBlockEntry.class,
 					ReversibleBlockEntry.CODEC)
@@ -87,18 +88,20 @@ public class BlockContentRegistries {
 	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/strippable.json}
 	 */
 	public static final RegistryEntryAttachment<Block, Block> STRIPPABLE = RegistryEntryAttachment
-			.builder(Registry.BLOCK,
+			.builder(BuiltinRegistries.BLOCK,
 					new Identifier(NAMESPACE, "strippable"),
 					Block.class,
-					Registry.BLOCK.getCodec().flatXmap(block -> {
+					BuiltinRegistries.BLOCK.getCodec().flatXmap(block -> {
 						if (!block.getDefaultState().contains(Properties.AXIS)) {
 							return DataResult.error("block does not contain AXIS property");
 						}
+
 						return DataResult.success(block);
 					}, block -> {
 						if (!block.getDefaultState().contains(Properties.AXIS)) {
 							return DataResult.error("block does not contain AXIS property");
 						}
+
 						return DataResult.success(block);
 					}))
 			.build();
@@ -109,10 +112,22 @@ public class BlockContentRegistries {
 	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/flammable.json}
 	 */
 	public static final RegistryEntryAttachment<Block, FlammableBlockEntry> FLAMMABLE = RegistryEntryAttachment
-			.builder(Registry.BLOCK,
+			.builder(BuiltinRegistries.BLOCK,
 					new Identifier(NAMESPACE, "flammable"),
 					FlammableBlockEntry.class,
 					FlammableBlockEntry.CODEC)
+			.build();
+
+	/**
+	 * A {@link RegistryEntryAttachment} for enchanting boosters in bookshelf equivalents.
+	 * <p>
+	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/enchanting_boosters.json}
+	 */
+	public static final RegistryEntryAttachment<Block, Float> ENCHANTING_BOOSTERS = RegistryEntryAttachment
+			.builder(BuiltinRegistries.BLOCK,
+					new Identifier(NAMESPACE, "enchanting_boosters"),
+					Float.class,
+					Codec.floatRange(0.0F, Float.MAX_VALUE))
 			.build();
 }
 

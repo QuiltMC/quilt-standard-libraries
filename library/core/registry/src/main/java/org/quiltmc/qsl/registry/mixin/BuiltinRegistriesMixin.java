@@ -19,38 +19,20 @@ package org.quiltmc.qsl.registry.mixin;
 import java.util.List;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.registry.Registry;
 
-import org.quiltmc.qsl.base.api.event.Event;
-import org.quiltmc.qsl.registry.api.event.RegistryEvents;
-import org.quiltmc.qsl.registry.impl.event.RegistryEventStorage;
-
-@Mixin(Registry.class)
-public abstract class RegistryMixin<V> implements RegistryEventStorage<V> {
-	@Unique
-	private final Event<RegistryEvents.EntryAdded<V>> quilt$entryAddedEvent = Event.create(RegistryEvents.EntryAdded.class,
-			callbacks -> context -> {
-				for (var callback : callbacks) {
-					callback.onAdded(context);
-				}
-			});
-
-	@Override
-	public Event<RegistryEvents.EntryAdded<V>> quilt$getEntryAddedEvent() {
-		return this.quilt$entryAddedEvent;
-	}
-
-	@Inject(method = "freezeBuiltins", at = @At("RETURN"))
+@Mixin(BuiltinRegistries.class)
+public class BuiltinRegistriesMixin {
+	@Inject(method = "freeze", at = @At("RETURN"))
 	private static void onFreezeBuiltins(CallbackInfo ci) {
 		//region Fix MC-197259
-		final List<BlockState> states = Registry.BLOCK.stream()
+		final List<BlockState> states = BuiltinRegistries.BLOCK.stream()
 				.flatMap(block -> block.getStateManager().getStates().stream())
 				.toList();
 

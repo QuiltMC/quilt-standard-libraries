@@ -24,14 +24,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.registry.ClientRegistryLayer;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
+import net.minecraft.registry.LayeredRegistryManager;
 import net.minecraft.text.Text;
-import net.minecraft.util.registry.BuiltinRegistries;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.tag.impl.TagRegistryImpl;
-import org.quiltmc.qsl.tag.impl.client.ClientTagRegistryManager;
 
 @ClientOnly
 @Mixin(ClientPlayNetworkHandler.class)
@@ -40,22 +39,11 @@ public abstract class ClientPlayNetworkHandlerMixin {
 	@Final
 	private ClientConnection connection;
 
-	@Inject(
-			method = "onGameJoin",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/network/packet/s2c/play/GameJoinS2CPacket;registryManager()Lnet/minecraft/util/registry/DynamicRegistryManager$Frozen;",
-					shift = At.Shift.AFTER
-			)
-	)
-	private void onGameJoin(GameJoinS2CPacket packet, CallbackInfo ci) {
-		ClientTagRegistryManager.applyAll(packet.registryManager());
-	}
+	@Shadow
+	private LayeredRegistryManager<ClientRegistryLayer> clientRegistryManager;
 
 	@Inject(method = "onDisconnected", at = @At("TAIL"))
 	private void onDisconnected(Text reason, CallbackInfo ci) {
-		ClientTagRegistryManager.applyAll(BuiltinRegistries.m_bayqaavy());
-
 		if (!this.connection.isLocal()) {
 			TagRegistryImpl.resetTags();
 		}

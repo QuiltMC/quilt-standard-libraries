@@ -20,11 +20,12 @@ import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -34,8 +35,8 @@ import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.quiltmc.qsl.resource.loader.api.ResourcePackRegistrationContext;
 
 public class VirtualResourcePackTestMod implements ModInitializer, ResourcePackRegistrationContext.Callback, ServerLifecycleEvents.Ready {
-	private static final TagKey<Block> TEST_TAG = TagKey.of(Registry.BLOCK_KEY, ResourceLoaderTestMod.id("test_virtual_tag"));
-	private static final TagKey<Block> TEST_TAG2 = TagKey.of(Registry.BLOCK_KEY, ResourceLoaderTestMod.id("test_stackable_tag"));
+	private static final TagKey<Block> TEST_TAG = TagKey.of(Registries.BLOCK, ResourceLoaderTestMod.id("test_virtual_tag"));
+	private static final TagKey<Block> TEST_TAG2 = TagKey.of(Registries.BLOCK, ResourceLoaderTestMod.id("test_stackable_tag"));
 	private static final Identifier TAG_FILE = new Identifier(TEST_TAG.id().getNamespace(), "tags/blocks/" + TEST_TAG.id().getPath() + ".json");
 	private static final Identifier TAG_FILE2 = new Identifier(TEST_TAG2.id().getNamespace(), "tags/blocks/" + TEST_TAG2.id().getPath() + ".json");
 
@@ -101,14 +102,14 @@ public class VirtualResourcePackTestMod implements ModInitializer, ResourcePackR
 						"values": [
 							"%s"
 						]
-					}""".formatted(Registry.BLOCK.getId(block)));
+					}""".formatted(BuiltinRegistries.BLOCK.getId(block)));
 			pack.putTextAsync(ResourceType.SERVER_DATA, TAG_FILE2, file -> """
 					{
 						"replace": false,
 						"values": [
 							"%s"
 						]
-					}""".formatted(Registry.BLOCK.getId(block)));
+					}""".formatted(BuiltinRegistries.BLOCK.getId(block)));
 			context.addResourcePack(pack);
 		};
 	}

@@ -41,10 +41,11 @@ import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
 import net.minecraft.command.argument.IdentifierArgumentType;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.tag.TagKey;
 import net.minecraft.text.Text;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
@@ -81,16 +82,18 @@ public final class DumpBuiltinAttachmentsCommand {
 
 	private static int execute(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
 		var registryId = IdentifierArgumentType.getIdentifier(ctx, "registry");
-		var registry = Registry.REGISTRIES.get(registryId);
+		var registry = BuiltinRegistries.REGISTRY.get(registryId);
 		if (registry == null) {
 			throw UNKNOWN_REGISTRY_EXCEPTION.create(registryId);
 		}
+
 		try {
 			execute0(ctx, registry);
 		} catch (RuntimeException e) {
 			LOGGER.error("Uncaught exception occurred", e);
 			throw UNCAUGHT_EXCEPTION.create();
 		}
+
 		return SINGLE_SUCCESS;
 	}
 
@@ -148,6 +151,7 @@ public final class DumpBuiltinAttachmentsCommand {
 						LOGGER.error("Failed to encode value for attachment #{} of registry entry {}: unknown error",
 								attachment.id(), entryId);
 					}
+
 					throw ENCODE_FAILURE.create();
 				}
 
@@ -164,6 +168,7 @@ public final class DumpBuiltinAttachmentsCommand {
 				if (entryId == null) {
 					throw ILLEGAL_STATE.create();
 				}
+
 				DataResult<JsonElement> encodedValue =
 						attachment.codec().encodeStart(JsonOps.INSTANCE, attachmentEntry.getValue());
 				if (encodedValue.result().isEmpty()) {
@@ -174,6 +179,7 @@ public final class DumpBuiltinAttachmentsCommand {
 						LOGGER.error("Failed to encode value for attachment {} of registry entry {}: unknown error",
 								attachment.id(), entryId);
 					}
+
 					throw ENCODE_FAILURE.create();
 				}
 
@@ -194,8 +200,8 @@ public final class DumpBuiltinAttachmentsCommand {
 			attachmentCount++;
 		}
 
-		ctx.getSource().sendFeedback(Text.literal("Done. Dumped " + attachmentCount + " attachments, " +
-						valueCount + " values."),
+		ctx.getSource().sendFeedback(Text.literal("Done. Dumped " + attachmentCount + " attachments, "
+					+ valueCount + " values."),
 				false);
 	}
 }

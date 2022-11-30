@@ -29,14 +29,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientCommandSource;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.registry.ClientRegistryLayer;
 import net.minecraft.command.CommandBuildContext;
 import net.minecraft.command.CommandSource;
+import net.minecraft.feature_flags.FeatureFlagBitSet;
 import net.minecraft.network.packet.s2c.play.CommandTreeS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
+import net.minecraft.registry.LayeredRegistryManager;
 import net.minecraft.server.command.CommandManager;
-import net.minecraft.unmapped.C_bcpxdrik;
-import net.minecraft.unmapped.C_czxxrbcp;
-import net.minecraft.unmapped.C_dpewjmno;
 
 import org.quiltmc.qsl.command.impl.client.ClientCommandInternals;
 
@@ -50,19 +50,19 @@ abstract class ClientPlayNetworkHandlerMixin {
 	private ClientCommandSource commandSource;
 
 	@Shadow
-	private C_bcpxdrik<C_dpewjmno> registryManager;
+	private LayeredRegistryManager<ClientRegistryLayer> clientRegistryManager;
 
 	@Shadow
 	@Final
 	private MinecraftClient client;
 
 	@Shadow
-	private C_czxxrbcp f_bsnhfuqe;
+	private FeatureFlagBitSet enabledFlags;
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Inject(method = "onGameJoin", at = @At("RETURN"))
 	private void onGameJoin(GameJoinS2CPacket packet, CallbackInfo ci) {
-		ClientCommandInternals.updateCommands(new CommandBuildContext(this.registryManager.m_scyfieos(), this.f_bsnhfuqe),
+		ClientCommandInternals.updateCommands(CommandBuildContext.m_lghonqhw(this.clientRegistryManager.getCompositeManager(), this.enabledFlags),
 				(CommandDispatcher) this.commandDispatcher, this.commandSource,
 				this.client.isIntegratedServerRunning() ? CommandManager.RegistrationEnvironment.INTEGRATED
 						: CommandManager.RegistrationEnvironment.DEDICATED

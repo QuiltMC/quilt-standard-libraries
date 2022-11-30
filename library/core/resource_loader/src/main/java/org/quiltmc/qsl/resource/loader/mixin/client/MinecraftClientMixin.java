@@ -80,7 +80,7 @@ public class MinecraftClientMixin {
 	// Lambda method in MinecraftClient#reloadResources, at MinecraftClient#setOverlay.
 	// Take an Optional<Throwable> parameter.
 	@SuppressWarnings("target")
-	@Inject(method = "m_ejxapxhy(Ljava/util/concurrent/CompletableFuture;Ljava/util/Optional;)V", at = @At(value = "HEAD"))
+	@Inject(method = "m_fweiciji(Ljava/util/concurrent/CompletableFuture;Ljava/util/Optional;)V", at = @At(value = "HEAD"))
 	private void onEndReloadResources(CompletableFuture<Void> completableFuture, Optional<Throwable> error, CallbackInfo ci) {
 		ClientResourceLoaderEvents.END_RESOURCE_PACK_RELOAD.invoker().onEndResourcePackReload(
 				(MinecraftClient) (Object) this, this.resourceManager, false, error.orElse(null)

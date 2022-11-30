@@ -21,17 +21,16 @@ import java.util.List;
 import java.util.Set;
 
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.util.registry.*;
+import org.quiltmc.qsl.registry.api.event.DynamicRegistryManagerSetupContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.BiomeMoodSound;
 import net.minecraft.tag.BiomeTags;
-import net.minecraft.util.Holder;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeEffects;
@@ -78,41 +77,40 @@ public class QuiltBiomeTest implements ModInitializer {
 	private static final Logger BIOME_TEST_LOGGER = LoggerFactory.getLogger("QuiltBiome|QuiltBiomeTest");
 	public static final String NAMESPACE = "quilt_biome_testmod";
 
-	private static final RegistryKey<Biome> TEST_CRIMSON_FOREST = RegistryKey.of(Registry.BIOME_KEY, id("test_crimson_forest"));
-	private static final RegistryKey<Biome> CUSTOM_PLAINS = RegistryKey.of(Registry.BIOME_KEY, id("custom_plains"));
-	private static final RegistryKey<Biome> TEST_END_HIGHLANDS = RegistryKey.of(Registry.BIOME_KEY, id("test_end_highlands"));
-	private static final RegistryKey<Biome> TEST_END_MIDLANDS = RegistryKey.of(Registry.BIOME_KEY, id("test_end_midlands"));
-	private static final RegistryKey<Biome> TEST_END_BARRRENS = RegistryKey.of(Registry.BIOME_KEY, id("test_end_barrens"));
+	private static final RegistryKey<Biome> TEST_CRIMSON_FOREST = RegistryKey.of(Registries.BIOME_WORLDGEN, id("test_crimson_forest"));
+	private static final RegistryKey<Biome> CUSTOM_PLAINS = RegistryKey.of(Registries.BIOME_WORLDGEN, id("custom_plains"));
+	private static final RegistryKey<Biome> TEST_END_HIGHLANDS = RegistryKey.of(Registries.BIOME_WORLDGEN, id("test_end_highlands"));
+	private static final RegistryKey<Biome> TEST_END_MIDLANDS = RegistryKey.of(Registries.BIOME_WORLDGEN, id("test_end_midlands"));
+	private static final RegistryKey<Biome> TEST_END_BARRRENS = RegistryKey.of(Registries.BIOME_WORLDGEN, id("test_end_barrens"));
 
 	private static final Identifier QUILT_DESERT_WELL = id("quilt_desert_well");
-	private static final RegistryKey<PlacedFeature> QUILT_DESERT_WELL_FEATURE = RegistryKey.of(Registry.PLACED_FEATURE_KEY, QUILT_DESERT_WELL);
-	private static final RegistryKey<PlacedFeature> MOSS_PILE_PLACED_FEATURE = RegistryKey.of(Registry.PLACED_FEATURE_KEY, id("moss_pile"));
+	private static final RegistryKey<PlacedFeature> QUILT_DESERT_WELL_FEATURE = RegistryKey.of(Registries.PLACED_FEATURE_WORLDGEN, QUILT_DESERT_WELL);
+	private static final RegistryKey<PlacedFeature> MOSS_PILE_PLACED_FEATURE = RegistryKey.of(Registries.PLACED_FEATURE_WORLDGEN, id("moss_pile"));
 
 	@Override
 	public void onInitialize(ModContainer mod) {
 		ResourceLoader.registerBuiltinResourcePack(id("registry_entry_existence_test"), mod, ResourcePackActivationType.NORMAL);
 
 		RegistryEvents.DYNAMIC_REGISTRY_SETUP.register(context -> {
-			context.register(Registry.BIOME_KEY, TEST_CRIMSON_FOREST.getValue(), TheNetherBiomeCreator::createCrimsonForest);
+			//context.register(Registries.BIOME_WORLDGEN, TEST_CRIMSON_FOREST.getValue(), TheNetherBiomeCreator::createCrimsonForest);
 
-			context.register(Registry.BIOME_KEY, CUSTOM_PLAINS.getValue(), () -> OverworldBiomeCreator.createPlains(false, false, false));
+			context.register(Registries.BIOME_WORLDGEN, CUSTOM_PLAINS.getValue(), () -> OverworldBiomeCreator.createPlains(context.registryManager().getLookupOrThrow(Registries.PLACED_FEATURE_WORLDGEN), context.registryManager().getLookupOrThrow(Registries.CONFIGURED_CARVER_WORLDGEN), false, false, false));
 
-			context.register(Registry.BIOME_KEY, TEST_END_HIGHLANDS.getValue(), QuiltBiomeTest::createEndHighlands);
-			context.register(Registry.BIOME_KEY, TEST_END_MIDLANDS.getValue(), QuiltBiomeTest::createEndMidlands);
-			context.register(Registry.BIOME_KEY, TEST_END_BARRRENS.getValue(), QuiltBiomeTest::createEndBarrens);
+			context.register(Registries.BIOME_WORLDGEN, TEST_END_HIGHLANDS.getValue(), () -> createEndHighlands(context));
+			context.register(Registries.BIOME_WORLDGEN, TEST_END_MIDLANDS.getValue(), () -> createEndMidlands(context));
+			context.register(Registries.BIOME_WORLDGEN, TEST_END_BARRRENS.getValue(), () -> createEndBarrens(context));
 
 			context.withRegistries(registries -> {
-				var configuredRegistry = registries.get(Registry.CONFIGURED_FEATURE_KEY);
+				var configuredRegistry = registries.get(Registries.CONFIGURED_FEATURE_WORLDGEN);
 				ConfiguredFeature<?, ?> commonDesertWell = new ConfiguredFeature<>(Feature.DESERT_WELL, DefaultFeatureConfig.INSTANCE);
 				Registry.register(configuredRegistry, QUILT_DESERT_WELL, commonDesertWell);
 				Holder<ConfiguredFeature<?, ?>> featureEntry = configuredRegistry
-						.getOrCreateHolder(configuredRegistry.getKey(commonDesertWell).orElseThrow())
-						.getOrThrow(false, BIOME_TEST_LOGGER::error);
+						.getHolder(configuredRegistry.getKey(commonDesertWell).orElseThrow()).orElseThrow();
 
 				// The placement config is taken from the vanilla desert well, but no randomness
 				PlacedFeature placedDesertWell = new PlacedFeature(featureEntry, List.of(InSquarePlacementModifier.getInstance(), PlacedFeatureUtil.MOTION_BLOCKING_HEIGHTMAP, BiomePlacementModifier.getInstance()));
-				registries.register(Registry.PLACED_FEATURE_KEY, QUILT_DESERT_WELL, placedDesertWell);
-			}, Set.of(Registry.PLACED_FEATURE_KEY, Registry.CONFIGURED_FEATURE_KEY));
+				registries.register(Registries.PLACED_FEATURE_WORLDGEN, QUILT_DESERT_WELL, placedDesertWell);
+			}, Set.of(Registries.PLACED_FEATURE_WORLDGEN, Registries.CONFIGURED_FEATURE_WORLDGEN));
 		});
 
 		NetherBiomes.addNetherBiome(BiomeKeys.PLAINS, MultiNoiseUtil.createNoiseHypercube(0.0F, 0.5F, 0.0F, 0.0F, 0.0F, 0.0F, 0.1F));
@@ -150,16 +148,16 @@ public class QuiltBiomeTest implements ModInitializer {
 		BiomeModifications.addFeature(
 				BiomeSelectors.foundInOverworld(),
 				GenerationStep.Feature.VEGETAL_DECORATION,
-				RegistryKey.of(Registry.PLACED_FEATURE_KEY, id("concrete_pile"))
+				RegistryKey.of(Registries.PLACED_FEATURE_WORLDGEN, id("concrete_pile"))
 		);
 
 		// Make sure data packs can define biomes
 		NetherBiomes.addNetherBiome(
-				RegistryKey.of(Registry.BIOME_KEY, id("example_biome")),
+				RegistryKey.of(Registries.BIOME_WORLDGEN, id("example_biome")),
 				MultiNoiseUtil.createNoiseHypercube(1.0f, 0.0f, 0.0f, 0.0f, 0.2f, 0.5f, 0.3f)
 		);
 		TheEndBiomes.addHighlandsBiome(
-				RegistryKey.of(Registry.BIOME_KEY, id("example_biome")),
+				RegistryKey.of(Registries.BIOME_WORLDGEN, id("example_biome")),
 				5.0
 		);
 
@@ -193,19 +191,19 @@ public class QuiltBiomeTest implements ModInitializer {
 	}
 
 	// These are used for testing the spacing of custom end biomes.
-	private static Biome createEndHighlands() {
-		GenerationSettings.Builder builder = new GenerationSettings.Builder()
+	private static Biome createEndHighlands(DynamicRegistryManagerSetupContext context) {
+		GenerationSettings.Builder builder = new GenerationSettings.Builder(context.registryManager().getLookupOrThrow(Registries.PLACED_FEATURE_WORLDGEN), context.registryManager().getLookupOrThrow(Registries.CONFIGURED_CARVER_WORLDGEN))
 				.feature(GenerationStep.Feature.SURFACE_STRUCTURES, EndPlacedFeatures.END_GATEWAY_RETURN);
 		return composeEndSpawnSettings(builder);
 	}
 
-	public static Biome createEndMidlands() {
-		GenerationSettings.Builder builder = (new GenerationSettings.Builder());
+	public static Biome createEndMidlands(DynamicRegistryManagerSetupContext context) {
+		GenerationSettings.Builder builder = new GenerationSettings.Builder(context.registryManager().getLookupOrThrow(Registries.PLACED_FEATURE_WORLDGEN), context.registryManager().getLookupOrThrow(Registries.CONFIGURED_CARVER_WORLDGEN));
 		return composeEndSpawnSettings(builder);
 	}
 
-	public static Biome createEndBarrens() {
-		GenerationSettings.Builder builder = (new GenerationSettings.Builder());
+	public static Biome createEndBarrens(DynamicRegistryManagerSetupContext context) {
+		GenerationSettings.Builder builder = new GenerationSettings.Builder(context.registryManager().getLookupOrThrow(Registries.PLACED_FEATURE_WORLDGEN), context.registryManager().getLookupOrThrow(Registries.CONFIGURED_CARVER_WORLDGEN));
 		return composeEndSpawnSettings(builder);
 	}
 

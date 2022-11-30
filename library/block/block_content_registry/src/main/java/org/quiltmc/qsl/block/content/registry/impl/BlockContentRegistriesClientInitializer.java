@@ -28,7 +28,6 @@ import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
 import org.quiltmc.qsl.tooltip.api.client.ItemTooltipCallback;
 
-
 public class BlockContentRegistriesClientInitializer implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("BlockContentRegistriesClientInitializer");
 
@@ -46,6 +45,7 @@ public class BlockContentRegistriesClientInitializer implements ClientModInitial
 					BlockContentRegistries.WAXABLE.get(block).ifPresent(_block -> lines.add(Text.literal("Waxes to: " + _block.block())));
 					BlockContentRegistries.STRIPPABLE.get(block).ifPresent(_block -> lines.add(Text.literal("Strips to: " + _block)));
 					BlockContentRegistries.FLAMMABLE.get(block).ifPresent(entry -> lines.add(Text.literal("Flammable: " + entry.burn() + " burn chance, " + entry.spread() + " spread chance")));
+					BlockContentRegistries.ENCHANTING_BOOSTERS.get(block).ifPresent(value -> lines.add(Text.literal("Enchanting booster: " + value)));
 				});
 			} else {
 				LOGGER.warn("Tooltip debug was enabled, but the QSL module `quilt_tooltip` was missing.");

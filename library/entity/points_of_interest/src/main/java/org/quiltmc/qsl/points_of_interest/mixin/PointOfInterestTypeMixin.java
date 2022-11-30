@@ -30,10 +30,10 @@ import org.spongepowered.asm.mixin.Unique;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.util.Holder;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Util;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.poi.PointOfInterestType;
 
 import org.quiltmc.qsl.points_of_interest.impl.PointOfInterestTypeExtensions;
@@ -90,7 +90,7 @@ public class PointOfInterestTypeMixin implements PointOfInterestTypeExtensions {
 		}
 
 		for (BlockState state : states) {
-			Holder<PointOfInterestType> replaced = STATE_TO_TYPE.put(state, Registry.POINT_OF_INTEREST_TYPE.getHolderOrThrow(key));
+			Holder<PointOfInterestType> replaced = STATE_TO_TYPE.put(state, BuiltinRegistries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(key));
 			if (replaced != null) {
 				throw Util.throwOrPause(new IllegalStateException(String.format("%s is defined in too many tags", state)));
 			}

@@ -16,10 +16,10 @@
 
 package org.quiltmc.qsl.tag.api;
 
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 import org.quiltmc.qsl.tag.impl.QuiltTagKeyHooks;
@@ -37,6 +37,17 @@ public interface QuiltTagKey<T> {
 	 * {@return the type of tag of this key}
 	 */
 	TagType type();
+
+	/**
+	 * Creates a new tag key based on another key but with a different type.
+	 *
+	 * @param tag  the tag key to base the new one on
+	 * @param type the type of the tag
+	 * @return the new tag key
+	 */
+	static <T> TagKey<T> of(TagKey<T> key, TagType type) {
+		return QuiltTagKey.of(key.registry(), key.id(), type);
+	}
 
 	/**
 	 * Creates a new tag key.

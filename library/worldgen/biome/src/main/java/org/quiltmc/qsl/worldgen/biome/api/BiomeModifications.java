@@ -24,7 +24,7 @@ import com.google.common.base.Preconditions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.SpawnSettings;
 import net.minecraft.world.gen.GenerationStep;
@@ -74,8 +74,8 @@ public final class BiomeModifications {
 				"Cannot add spawns for entities with spawnGroup=MISC since they'd be replaced by pigs.");
 
 		// We need the entity type to be registered, or we cannot deduce an identifier otherwise
-		Identifier id = Registry.ENTITY_TYPE.getId(entityType);
-		Preconditions.checkState(id != Registry.ENTITY_TYPE.getDefaultId(), "Unregistered entity type: %s", entityType);
+		Identifier id = BuiltinRegistries.ENTITY_TYPE.getId(entityType);
+		Preconditions.checkState(id != BuiltinRegistries.ENTITY_TYPE.getDefaultId(), "Unregistered entity type: %s", entityType);
 
 		create(id).add(ModificationPhase.ADDITIONS, biomeSelector, context -> {
 			context.getSpawnSettings().addSpawn(spawnGroup, new SpawnSettings.SpawnEntry(entityType, weight, minGroupSize, maxGroupSize));

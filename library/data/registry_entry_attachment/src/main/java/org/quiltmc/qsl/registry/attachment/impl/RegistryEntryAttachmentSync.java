@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
+import net.fabricmc.api.EnvType;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.client.MinecraftClient;
@@ -34,12 +35,13 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader;
@@ -49,8 +51,6 @@ import org.quiltmc.qsl.networking.api.ServerPlayConnectionEvents;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
-
-import net.fabricmc.api.EnvType;
 
 @ApiStatus.Internal
 public final class RegistryEntryAttachmentSync {
@@ -74,11 +74,11 @@ public final class RegistryEntryAttachmentSync {
 
 	private record AttachmentEntry(String path, boolean isTag, NbtElement value) {
 		public void write(PacketByteBuf buf) {
-			buf.writeString(path);
-			buf.writeBoolean(isTag);
+			buf.writeString(this.path);
+			buf.writeBoolean(this.isTag);
 
 			NbtCompound compound = new NbtCompound();
-			compound.put("value", value);
+			compound.put("value", this.value);
 			buf.writeNbt(compound);
 		}
 
@@ -117,6 +117,7 @@ public final class RegistryEntryAttachmentSync {
 				for (AttachmentEntry attachmentEntry : valueMap.entries()) {
 					attachmentEntry.write(buf);
 				}
+
 				bufs.add(buf);
 			}
 		}
@@ -158,7 +159,7 @@ public final class RegistryEntryAttachmentSync {
 			return;
 		}
 
-		for (var registryEntry : Registry.REGISTRIES.getEntries()) {
+		for (var registryEntry : BuiltinRegistries.REGISTRY.getEntries()) {
 			var registry = (Registry<Object>) registryEntry.getValue();
 			var dataHolder = RegistryEntryAttachmentHolder.getData(registry);
 
@@ -243,7 +244,7 @@ public final class RegistryEntryAttachmentSync {
 		}
 
 		client.execute(() -> {
-			var registry = (Registry<Object>) Registry.REGISTRIES.get(registryId);
+			var registry = (Registry<Object>) BuiltinRegistries.REGISTRY.get(registryId);
 			if (registry == null) {
 				throw new IllegalStateException("Unknown registry %s".formatted(registryId));
 			}

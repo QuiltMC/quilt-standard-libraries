@@ -18,8 +18,8 @@ package org.quiltmc.qsl.crash.test;
 
 import java.util.Random;
 
+import net.minecraft.registry.Registries;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -40,7 +40,7 @@ public class CrashReportApiTestMod implements ModInitializer {
 		});
 
 		CrashReportEvents.WORLD_DETAILS.register((world, section) -> {
-			section.add("Biome at 0,0,0", world.m_zmumzdjx().get(Registry.BIOME_KEY).getId(world.getBiome(BlockPos.ORIGIN).value()));
+			section.add("Biome at 0,0,0", world.getRegistryManager().get(Registries.BIOME).getId(world.getBiome(BlockPos.ORIGIN).value()));
 		});
 
 		CrashReportEvents.BLOCK_DETAILS.register((world, pos, state, section) -> {
