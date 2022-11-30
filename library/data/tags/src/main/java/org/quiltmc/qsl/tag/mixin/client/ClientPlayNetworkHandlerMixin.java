@@ -32,6 +32,7 @@ import net.minecraft.text.Text;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.tag.impl.TagRegistryImpl;
+import org.quiltmc.qsl.tag.impl.client.ClientRegistryStatus;
 import org.quiltmc.qsl.tag.impl.client.ClientTagRegistryManager;
 
 @ClientOnly
@@ -48,12 +49,12 @@ public abstract class ClientPlayNetworkHandlerMixin {
 			method = "onGameJoin",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/registry/LayeredRegistryManager;getCompositeManager()Lnet/minecraft/registry/DynamicRegistryManager$Frozen;",
-					shift = At.Shift.AFTER
+					target = "Lnet/minecraft/network/ClientConnection;isLocal()Z",
+					shift = At.Shift.BEFORE
 			)
 	)
 	private void onGameJoin(GameJoinS2CPacket packet, CallbackInfo ci) {
-		ClientTagRegistryManager.applyAll(this.clientRegistryManager.getManager(ClientRegistryLayer.REMOTE), true);
+		ClientTagRegistryManager.applyAll(this.clientRegistryManager.getManager(ClientRegistryLayer.REMOTE), ClientRegistryStatus.REMOTE);
 	}
 
 	@Inject(method = "onDisconnected", at = @At("TAIL"))

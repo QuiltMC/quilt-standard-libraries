@@ -29,7 +29,7 @@ import org.quiltmc.loader.api.minecraft.ClientOnly;
 
 @ClientOnly
 @Mixin(C_uhbbwvga.class)
-public interface C_uhbbwvgaMixin {
+public interface C_uhbbwvgaAccessor {
 	@Accessor("f_hmxjhwjb")
 	static Map<RegistryKey<? extends Registry<?>>, ?> quilt$getSyncableRegistries() {
 		throw new IllegalStateException("Mixin injection failed.");

@@ -8,7 +8,7 @@
     "TagKeyMixin"
   ],
   "client": [
-    "client.C_uhbbwvgaMixin",
+    "client.C_uhbbwvgaAccessor",
     "client.ClientPlayNetworkHandlerMixin",
     "client.HolderReferenceMixin",
     "client.TagGroupLoaderAccessor",

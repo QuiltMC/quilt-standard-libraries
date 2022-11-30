@@ -20,9 +20,10 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
 @ApiStatus.Internal
-enum ClientRegistryStatus {
+public enum ClientRegistryStatus {
 	STATIC(true),
-	LOCAL(false),
+	WAITING(false),
+	LOCAL(true),
 	REMOTE(true);
 
 	private final boolean ready;

@@ -57,9 +57,16 @@ import org.quiltmc.qsl.tag.api.QuiltTagKey;
 import org.quiltmc.qsl.tag.api.TagRegistry;
 import org.quiltmc.qsl.tag.api.TagType;
 import org.quiltmc.qsl.tag.impl.TagRegistryImpl;
-import org.quiltmc.qsl.tag.mixin.client.C_uhbbwvgaMixin;
+import org.quiltmc.qsl.tag.mixin.client.C_uhbbwvgaAccessor;
 import org.quiltmc.qsl.tag.mixin.client.TagGroupLoaderAccessor;
 
+/**
+ * Represents the manager of client-only and fallback tags.
+ * <p>
+ * This holds the current client tags and the logic to update and re-apply tags to the current in-game context.
+ *
+ * @param <T> the type of game object the tag holds
+ */
 @ApiStatus.Internal
 public final class ClientTagRegistryManager<T> {
 	private static final Map<RegistryKey<? extends Registry<?>>, ClientTagRegistryManager<?>> TAG_GROUP_MANAGERS =
@@ -67,13 +74,37 @@ public final class ClientTagRegistryManager<T> {
 	private static final HolderLookup.Provider VANILLA_PROVIDERS = VanillaDynamicRegistries.createLookup();
 
 	private final RegistryKey<? extends Registry<T>> registryKey;
+	/**
+	 * Represents a useful object to fetch game objects for the tag group loader.
+	 */
 	private final RegistryFetcher registryFetcher;
+	/**
+	 * The Vanilla tag group loader.
+	 */
 	private final TagGroupLoader<Holder<T>> loader;
+	/**
+	 * The registry lookup.
+	 */
 	private HolderLookup.Provider lookupProvider;
+	/**
+	 * Status of this tag registry manager. Useful state tracking to prevent too early tag application.
+	 */
 	private ClientRegistryStatus status;
+	/**
+	 * Represents the serialized client-only tags, stored because the client-only values may change depending on the server's registries.
+	 */
 	private Map<Identifier, List<TagGroupLoader.EntryWithSource>> serializedTags = Map.of();
+	/**
+	 * Represents the actual resolved client-only tags, which are only valid for the current in-game context.
+	 */
 	private Map<TagKey<T>, Collection<Holder<T>>> clientOnlyValues;
+	/**
+	 * Represents the serialized fallback tags, stored because the fallback values may change depending on the server's registries.
+	 */
 	private Map<Identifier, List<TagGroupLoader.EntryWithSource>> fallbackSerializedTags = Map.of();
+	/**
+	 * Represents the actual resolved fallback tags, which are only for the current in-game context.
+	 */
 	private Map<TagKey<T>, Collection<Holder<T>>> fallbackValues;
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
@@ -82,11 +113,13 @@ public final class ClientTagRegistryManager<T> {
 		this.lookupProvider = VANILLA_PROVIDERS;
 
 		if (BuiltinRegistries.REGISTRY.contains((RegistryKey) registryKey)) {
+			// The registry is static, this means we have only one source of truth that is not updated after starting the game.
 			this.registryFetcher = new StaticRegistryFetcher();
 			this.status = ClientRegistryStatus.STATIC;
 		} else {
+			// The registry is dynamic, the values may change throughout the lifecycle of the game.
 			this.registryFetcher = new ClientRegistryFetcher();
-			this.status = ClientRegistryStatus.LOCAL;
+			this.status = ClientRegistryStatus.WAITING;
 		}
 
 		this.loader = new TagGroupLoader<>(this.registryFetcher, dataType);
@@ -109,6 +142,7 @@ public final class ClientTagRegistryManager<T> {
 		this.serializedTags = serializedTags;
 
 		if (this.status.isReady()) {
+			// Actually apply if the values are ready to be fetched.
 			this.applyTags(this.serializedTags);
 		} else {
 			this.applyTags(Collections.emptyMap());
@@ -141,6 +175,7 @@ public final class ClientTagRegistryManager<T> {
 		this.fallbackSerializedTags = serializedTags;
 
 		if (this.status.isReady()) {
+			// Actually apply if the values are ready to be fetched.
 			this.applyFallbackTags(this.fallbackSerializedTags);
 		} else {
 			this.applyFallbackTags(Collections.emptyMap());
@@ -159,27 +194,34 @@ public final class ClientTagRegistryManager<T> {
 		return this.loader.loadTags(resourceManager);
 	}
 
+	/**
+	 * Called when the source of truth for dynamic registries change.
+	 *
+	 * @param lookupProvider the lookup for dynamic game objects
+	 * @param status         the source of change ({@link ClientRegistryStatus#REMOTE} if triggered by server-provided registries through network,
+	 *                       or {@link ClientRegistryStatus#LOCAL} if triggered by data-pack loading to create a new world)
+	 */
 	@ClientOnly
-	public void apply(HolderLookup.Provider lookupProvider, boolean remote) {
-		if ((remote && this.status == ClientRegistryStatus.REMOTE) || this.status == ClientRegistryStatus.LOCAL) {
+	public void apply(HolderLookup.Provider lookupProvider, ClientRegistryStatus status) {
+		// Prevent overriding the tags if the internal server decides to change registries for some reason,
+		// what's sent to the client has higher priority.
+		if ((status == ClientRegistryStatus.REMOTE && this.status == status) || this.status != ClientRegistryStatus.REMOTE) {
 			this.lookupProvider = lookupProvider;
 
 			this.setSerializedTags(this.serializedTags);
 			this.setFallbackSerializedTags(this.fallbackSerializedTags);
 
-			if (remote) {
-				this.status = ClientRegistryStatus.REMOTE;
-			}
+			this.status = status;
 		}
 	}
 
 	@ClientOnly
 	public void resetDynamic(boolean force) {
 		if (force || this.status == ClientRegistryStatus.LOCAL) {
-			this.apply(VANILLA_PROVIDERS, false);
+			this.apply(VANILLA_PROVIDERS, force ? ClientRegistryStatus.REMOTE : ClientRegistryStatus.LOCAL);
 
 			if (force) {
-				this.status = ClientRegistryStatus.LOCAL;
+				this.status = ClientRegistryStatus.WAITING;
 			}
 		}
 	}
@@ -257,7 +299,7 @@ public final class ClientTagRegistryManager<T> {
 		});
 
 		// Add up known synced dynamic registries.
-		C_uhbbwvgaMixin.quilt$getSyncableRegistries().forEach((registry, o) -> get((RegistryKey) registry));
+		C_uhbbwvgaAccessor.quilt$getSyncableRegistries().forEach((registry, o) -> get((RegistryKey) registry));
 	}
 
 	static void forEach(Consumer<ClientTagRegistryManager<?>> consumer) {
@@ -265,8 +307,8 @@ public final class ClientTagRegistryManager<T> {
 	}
 
 	@ClientOnly
-	public static void applyAll(HolderLookup.Provider lookupProvider, boolean remote) {
-		TAG_GROUP_MANAGERS.forEach((registryKey, manager) -> manager.apply(lookupProvider, remote));
+	public static void applyAll(HolderLookup.Provider lookupProvider, ClientRegistryStatus status) {
+		TAG_GROUP_MANAGERS.forEach((registryKey, manager) -> manager.apply(lookupProvider, status));
 	}
 
 	@ClientOnly

@@ -29,6 +29,7 @@ import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.server.WorldLoader;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
+import org.quiltmc.qsl.tag.impl.client.ClientRegistryStatus;
 import org.quiltmc.qsl.tag.impl.client.ClientTagRegistryManager;
 
 @ClientOnly
@@ -43,7 +44,7 @@ public class WorldLoaderMixin {
 			index = 1
 	)
 	private static DynamicRegistryManager.Frozen onLoad(DynamicRegistryManager.Frozen registry) {
-		ClientTagRegistryManager.applyAll(registry, false);
+		ClientTagRegistryManager.applyAll(registry, ClientRegistryStatus.LOCAL);
 		return registry;
 	}
 
