@@ -28,14 +28,21 @@ import org.quiltmc.qsl.entity.effect.api.StatusEffectRemovalReason;
 
 @Mixin(EffectCommand.class)
 public abstract class EffectCommandMixin {
-	@Redirect(method = "executeClear(Lnet/minecraft/server/command/ServerCommandSource;Ljava/util/Collection;)I",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;clearStatusEffects()Z"))
+	@Redirect(
+			method = "executeClear(Lnet/minecraft/server/command/ServerCommandSource;Ljava/util/Collection;)I",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;clearStatusEffects()Z")
+	)
 	private static boolean quilt$addRemovalReason(LivingEntity instance) {
 		return instance.clearStatusEffects(StatusEffectRemovalReason.COMMAND_ALL) > 0;
 	}
 
-	@Redirect(method = "executeClear(Lnet/minecraft/server/command/ServerCommandSource;Ljava/util/Collection;Lnet/minecraft/registry/Holder;)I",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;removeStatusEffect(Lnet/minecraft/entity/effect/StatusEffect;)Z"))
+	@Redirect(
+			method = "executeClear(Lnet/minecraft/server/command/ServerCommandSource;Ljava/util/Collection;Lnet/minecraft/registry/Holder;)I",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/entity/LivingEntity;removeStatusEffect(Lnet/minecraft/entity/effect/StatusEffect;)Z"
+			)
+	)
 	private static boolean quilt$addRemovalReason(LivingEntity instance, StatusEffect type) {
 		return instance.removeStatusEffect(type, StatusEffectRemovalReason.COMMAND_ONE);
 	}

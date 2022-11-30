@@ -19,12 +19,15 @@ package org.quiltmc.qsl.networking.api.client;
 import java.util.Objects;
 import java.util.Set;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.listener.ServerPlayPacketListener;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -35,11 +38,11 @@ import org.quiltmc.qsl.networking.impl.client.ClientPlayNetworkAddon;
 
 /**
  * Offers access to play stage client-side networking functionalities.
- *
- * <p>Client-side networking functionalities include receiving clientbound packets,
- * sending serverbound packets, and events related to client-side network handlers.
- *
- * <p>This class should be only used on the physical client and for the logical client.
+ * <p>
+ * Client-side networking functionalities include receiving client-bound packets,
+ * sending server-bound packets, and events related to client-side network handlers.
+ * <p>
+ * This class should be only used on the physical client and for the logical client.
  *
  * @see ClientLoginNetworking
  * @see ServerPlayNetworking
@@ -74,8 +77,7 @@ public final class ClientPlayNetworking {
 	 * @see ClientPlayNetworking#registerGlobalReceiver(Identifier, ChannelReceiver)
 	 * @see ClientPlayNetworking#unregisterReceiver(Identifier)
 	 */
-	@Nullable
-	public static ClientPlayNetworking.ChannelReceiver unregisterGlobalReceiver(Identifier channelName) {
+	public static @Nullable ChannelReceiver unregisterGlobalReceiver(Identifier channelName) {
 		return ClientNetworkingImpl.PLAY.unregisterGlobalReceiver(channelName);
 	}
 
@@ -122,8 +124,7 @@ public final class ClientPlayNetworking {
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel
 	 * @throws IllegalStateException if the client is not connected to a server
 	 */
-	@Nullable
-	public static ClientPlayNetworking.ChannelReceiver unregisterReceiver(Identifier channelName) throws IllegalStateException {
+	public static @Nullable ChannelReceiver unregisterReceiver(Identifier channelName) throws IllegalStateException {
 		final ClientPlayNetworkAddon addon = ClientNetworkingImpl.getClientPlayAddon();
 
 		if (addon != null) {
@@ -181,13 +182,14 @@ public final class ClientPlayNetworking {
 	}
 
 	/**
-	 * Creates a packet which may be sent to a the connected server.
+	 * Creates a packet which may be sent to the connected server.
 	 *
 	 * @param channelName the channel name
 	 * @param buf         the packet byte buf which represents the payload of the packet
 	 * @return a new packet
 	 */
-	public static Packet<?> createC2SPacket(Identifier channelName, PacketByteBuf buf) {
+	@Contract(value = "_, _ -> new", pure = true)
+	public static Packet<ServerPlayPacketListener> createC2SPacket(@NotNull Identifier channelName, @NotNull PacketByteBuf buf) {
 		Objects.requireNonNull(channelName, "Channel name cannot be null");
 		Objects.requireNonNull(buf, "Buf cannot be null");
 
