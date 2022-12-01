@@ -28,7 +28,7 @@ public final class Versions {
 	/**
 	 * The target Minecraft version.
 	 */
-	public static final MinecraftVersion MINECRAFT_VERSION = new MinecraftVersion("1.19.3-pre3", "1.19.3");
+	public static final MinecraftVersion MINECRAFT_VERSION = new MinecraftVersion("1.19.3-rc1", "1.19.3");
 
 	/**
 	 * The Minecraft versions this version of QSL is compatible with.

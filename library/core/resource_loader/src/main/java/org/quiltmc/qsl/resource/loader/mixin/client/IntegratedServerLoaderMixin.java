@@ -41,7 +41,7 @@ import net.minecraft.server.ServerReloadableResources;
 import net.minecraft.server.WorldLoader;
 import net.minecraft.server.WorldStem;
 import net.minecraft.server.integrated.IntegratedServerLoader;
-import net.minecraft.world.level.storage.LevelStorage;
+import net.minecraft.world.storage.WorldSaveStorage;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.util.TriState;
@@ -52,7 +52,7 @@ import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 @Mixin(IntegratedServerLoader.class)
 public abstract class IntegratedServerLoaderMixin {
 	@Shadow
-	private static void close(LevelStorage.Session storageSession, String worlName) {
+	private static void close(WorldSaveStorage.Session storageSession, String worlName) {
 		throw new IllegalStateException("Mixin injection failed.");
 	}
 
@@ -113,7 +113,7 @@ public abstract class IntegratedServerLoaderMixin {
 			cancellable = true
 	)
 	private void onBackupExperimentalWarning(Screen parentScreen, String worldName, boolean safeMode, boolean requireBackup, CallbackInfo ci,
-			LevelStorage.Session session, ResourcePackManager resourcePackManager, WorldStem worldStem) {
+			WorldSaveStorage.Session session, ResourcePackManager resourcePackManager, WorldStem worldStem) {
 		if (EXPERIMENTAL_SCREEN_OVERRIDE.toBooleanOrElse(true)
 				&& !worldStem.saveProperties().m_ycrrmmel().m_kmrxtmbu()
 				&& !FeatureFlags.containsDefault(worldStem.saveProperties().getEnabledFlags())) {

@@ -2,7 +2,7 @@
  * <h2>Registry Entry Attachments</h2>
  *
  * <p>
- * A simple API for adding arbitrary values to any instances managed by a {@link net.minecraft.util.registry.Registry Registry}.
+ * A simple API for adding arbitrary values to any instances managed by a {@link net.minecraft.registry.Registry Registry}.
  * <p>
  * {@link org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment RegistryEntryAttachment} contains a number of methods for building
  * new attachments.

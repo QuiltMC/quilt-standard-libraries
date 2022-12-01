@@ -34,7 +34,7 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.gen.GeneratorOptions;
-import net.minecraft.world.level.storage.LevelStorage;
+import net.minecraft.world.storage.WorldSaveStorage;
 
 /**
  * After removing a dimension mod or a dimension data pack, Minecraft may fail to enter
@@ -48,8 +48,8 @@ import net.minecraft.world.level.storage.LevelStorage;
  * This makes custom dimensions non-removable. Most players don't want this behavior.
  * With this Mixin, custom dimensions will be removed when its data pack is removed.
  */
-@Mixin(LevelStorage.class)
-public class LevelStorageBugfixMixin {
+@Mixin(WorldSaveStorage.class)
+public class WorldSaveStorageBugfixMixin {
 	@SuppressWarnings("unchecked")
 	@Inject(method = "readGeneratorProperties", at = @At("HEAD"))
 	private static <T> void onReadGeneratorProperties(

@@ -26,7 +26,7 @@ import org.quiltmc.qsl.tag.impl.QuiltTagKeyHooks;
 import org.quiltmc.qsl.tag.mixin.TagKeyAccessor;
 
 /**
- * Interface implemented by {@link net.minecraft.tag.TagKey} instances when QSL is present.
+ * Interface implemented by {@link net.minecraft.registry.tag.TagKey} instances when QSL is present.
  *
  * @param <T> the type of the values held by the tag
  * @see #of(RegistryKey, Identifier, TagType)
@@ -41,7 +41,7 @@ public interface QuiltTagKey<T> {
 	/**
 	 * Creates a new tag key based on another key but with a different type.
 	 *
-	 * @param tag  the tag key to base the new one on
+	 * @param key  the tag key to base the new one on
 	 * @param type the type of the tag
 	 * @return the new tag key
 	 */
