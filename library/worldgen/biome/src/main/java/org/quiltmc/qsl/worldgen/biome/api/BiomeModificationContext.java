@@ -24,12 +24,13 @@ import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.sound.BiomeAdditionsSound;
 import net.minecraft.sound.BiomeMoodSound;
 import net.minecraft.sound.MusicSound;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeEffects;
 import net.minecraft.world.biome.BiomeParticleConfig;
@@ -37,8 +38,6 @@ import net.minecraft.world.biome.SpawnSettings;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.carver.ConfiguredCarver;
 import net.minecraft.world.gen.feature.PlacedFeature;
-
-import org.quiltmc.qsl.worldgen.biome.impl.modification.BuiltInRegistryKeys;
 
 /**
  * Allows {@link Biome} properties to be modified.
@@ -89,6 +88,7 @@ public interface BiomeModificationContext {
 		void setDownfall(float downfall);
 	}
 
+	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 	interface EffectsContext {
 		/**
 		 * @see BiomeEffects#getFogColor()
@@ -188,15 +188,15 @@ public interface BiomeModificationContext {
 
 		/**
 		 * @see BiomeEffects#getLoopSound()
-		 * @see BiomeEffects.Builder#loopSound(SoundEvent)
+		 * @see BiomeEffects.Builder#loopSound(Holder)
 		 */
-		void setAmbientSound(Optional<SoundEvent> sound);
+		void setAmbientSound(Optional<Holder<SoundEvent>> sound);
 
 		/**
 		 * @see BiomeEffects#getLoopSound()
-		 * @see BiomeEffects.Builder#loopSound(SoundEvent)
+		 * @see BiomeEffects.Builder#loopSound(Holder)
 		 */
-		default void setAmbientSound(@NotNull SoundEvent sound) {
+		default void setAmbientSound(@NotNull Holder<SoundEvent> sound) {
 			this.setAmbientSound(Optional.of(sound));
 		}
 

@@ -17,9 +17,13 @@
 
 package org.quiltmc.qsl.worldgen.biome.impl.modification;
 
-import net.minecraft.util.registry.*;
-import net.minecraft.world.biome.Biome;
 import org.jetbrains.annotations.ApiStatus;
+
+import net.minecraft.registry.HolderLookup;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.VanillaDynamicRegistries;
+import net.minecraft.world.biome.Biome;
 
 /**
  * Utility class for getting the registry keys of built-in worldgen objects and throwing proper exceptions if they
@@ -37,7 +41,6 @@ public final class BuiltInRegistryKeys {
 	}
 
 	public static HolderLookup<Biome> biomeRegistryWrapper() {
-		return vanillaRegistries.getLookupOrThrow(Registries.BIOME_WORLDGEN);
+		return vanillaRegistries.getLookupOrThrow(Registries.BIOME);
 	}
-
 }

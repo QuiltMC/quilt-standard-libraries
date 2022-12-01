@@ -17,17 +17,16 @@
 
 package org.quiltmc.qsl.worldgen.biome.mixin;
 
-import net.minecraft.util.registry.Registries;
-import org.quiltmc.qsl.worldgen.biome.impl.modification.BuiltInRegistryKeys;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldGenerationProgressListener;
-import net.minecraft.util.registry.DynamicRegistryManager;
 
 import org.quiltmc.qsl.worldgen.biome.impl.NetherBiomeData;
 
@@ -38,8 +37,11 @@ public abstract class MinecraftServerMixin {
 
 	@Inject(method = "createWorlds", at = @At("HEAD"))
 	private void addNetherBiomes(WorldGenerationProgressListener worldGenerationProgressListener, CallbackInfo ci) {
-		var registry = this.getRegistryManager().get(Registries.LEVEL_STEM);
+		var registry = this.getRegistryManager().get(Registries.DIMENSION);
 
-		registry.forEach(dimensionOptions -> NetherBiomeData.modifyBiomeSource(BuiltInRegistryKeys.biomeRegistryWrapper(), dimensionOptions.getChunkGenerator().getBiomeSource()));
+		registry.forEach(dimensionOptions -> NetherBiomeData.modifyBiomeSource(
+				this.getRegistryManager().getLookupOrThrow(Registries.BIOME),
+				dimensionOptions.getChunkGenerator().getBiomeSource()
+		));
 	}
 }

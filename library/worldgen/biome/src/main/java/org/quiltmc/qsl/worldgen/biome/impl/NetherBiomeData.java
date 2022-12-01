@@ -27,15 +27,18 @@ import java.util.stream.Collectors;
 import com.google.common.base.Preconditions;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
-import net.minecraft.util.registry.*;
 import org.jetbrains.annotations.ApiStatus;
-import org.quiltmc.qsl.worldgen.biome.impl.modification.BuiltInRegistryKeys;
 import org.slf4j.Logger;
 
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.HolderProvider;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.biome.source.MultiNoiseBiomeSource;
 import net.minecraft.world.biome.source.util.MultiNoiseUtil;
+
+import org.quiltmc.qsl.worldgen.biome.impl.modification.BuiltInRegistryKeys;
 
 /**
  * Internal data for modding Vanilla's {@link MultiNoiseBiomeSource.Preset#NETHER}.
@@ -80,7 +83,8 @@ public final class NetherBiomeData {
 		NETHER_BIOMES.clear(); // Clear cached biome source data
 	}
 
-	private static MultiNoiseUtil.ParameterRangeList<Holder<Biome>> withModdedBiomePoints(MultiNoiseUtil.ParameterRangeList<Holder<Biome>> defaultEntries, HolderProvider<Biome> biomeRegistry) {
+	private static MultiNoiseUtil.ParameterRangeList<Holder<Biome>> withModdedBiomePoints(MultiNoiseUtil.ParameterRangeList<Holder<Biome>> defaultEntries,
+			HolderProvider<Biome> biomeRegistry) {
 		if (NETHER_BIOME_NOISE_POINTS.isEmpty()) {
 			return defaultEntries;
 		}

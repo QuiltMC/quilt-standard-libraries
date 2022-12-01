@@ -20,19 +20,17 @@ package org.quiltmc.qsl.worldgen.biome.api;
 import java.util.List;
 import java.util.Optional;
 
-import net.minecraft.tag.TagKey;
-import net.minecraft.util.registry.Holder;
-import net.minecraft.util.registry.HolderSet;
-import net.minecraft.util.registry.Registries;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.HolderSet;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.PlacedFeature;
 import net.minecraft.world.gen.feature.StructureFeature;
-
-import org.quiltmc.qsl.worldgen.biome.impl.modification.BuiltInRegistryKeys;
 
 /**
  * Context given to a biome selector for deciding whether it applies to a biome or not.
@@ -144,6 +142,6 @@ public interface BiomeSelectionContext {
 	 * @see #doesRegistryEntryExist(RegistryKey, RegistryKey)
 	 */
 	default boolean doesPlacedFeatureExist(RegistryKey<PlacedFeature> key) {
-		return this.doesRegistryEntryExist(Registries.PLACED_FEATURE_WORLDGEN, key);
+		return this.doesRegistryEntryExist(Registries.PLACED_FEATURE, key);
 	}
 }

@@ -27,18 +27,18 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import com.google.common.base.Stopwatch;
-import net.minecraft.util.registry.Registries;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.TestOnly;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.WorldSaveProperties;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.level.LevelProperties;
 
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModificationContext;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
@@ -104,7 +104,7 @@ public class BiomeModificationImpl {
 		return this.modifiers;
 	}
 
-	public void finalizeWorldGen(DynamicRegistryManager impl, LevelProperties levelProperties) {
+	public void finalizeWorldGen(DynamicRegistryManager impl, WorldSaveProperties levelProperties) {
 		Stopwatch sw = Stopwatch.createStarted();
 
 		// Now that we apply biome modifications inside the MinecraftServer constructor, we should only ever do
@@ -113,7 +113,7 @@ public class BiomeModificationImpl {
 		var modificationTracker = (BiomeModificationMarker) impl;
 		modificationTracker.quilt$markModified();
 
-		Registry<Biome> biomes = impl.get(Registries.BIOME_WORLDGEN);
+		Registry<Biome> biomes = impl.get(Registries.BIOME);
 
 		// Build a list of all biome keys in ascending order of their raw-id to get a consistent result in case
 		// someone does something stupid.

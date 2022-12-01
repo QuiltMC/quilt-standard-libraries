@@ -32,12 +32,18 @@ import java.util.stream.Collectors;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import net.minecraft.util.registry.*;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.HolderSet;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.sound.BiomeAdditionsSound;
 import net.minecraft.sound.BiomeMoodSound;
 import net.minecraft.sound.MusicSound;
@@ -57,7 +63,8 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeModificationContext;
 
 @ApiStatus.Internal
 public class BiomeModificationContextImpl implements BiomeModificationContext {
-	private static final Supplier<DynamicRegistryManager.Frozen> BUILTIN_REGISTRIES = Suppliers.memoize(() -> DynamicRegistryManager.fromRegistryOfRegistries(BuiltinRegistries.REGISTRY));
+	private static final Supplier<DynamicRegistryManager.Frozen> BUILTIN_REGISTRIES =
+			Suppliers.memoize(() -> DynamicRegistryManager.fromRegistryOfRegistries(BuiltinRegistries.REGISTRY));
 	private final DynamicRegistryManager registries;
 	private final Biome biome;
 	private final WeatherContext weather;
@@ -203,7 +210,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 		}
 
 		@Override
-		public void setAmbientSound(Optional<SoundEvent> sound) {
+		public void setAmbientSound(Optional<Holder<SoundEvent>> sound) {
 			this.effects.loopSound = Objects.requireNonNull(sound);
 		}
 
@@ -224,8 +231,8 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 	}
 
 	private class GenerationSettingsContextImpl implements GenerationSettingsContext {
-		private final Registry<ConfiguredCarver<?>> carvers = registries.get(Registries.CONFIGURED_CARVER_WORLDGEN);
-		private final Registry<PlacedFeature> features = registries.get(Registries.PLACED_FEATURE_WORLDGEN);
+		private final Registry<ConfiguredCarver<?>> carvers = registries.get(Registries.CONFIGURED_CARVER);
+		private final Registry<PlacedFeature> features = registries.get(Registries.PLACED_FEATURE);
 		private final GenerationSettings generationSettings = biome.getGenerationSettings();
 
 		private boolean rebuildFlowerFeatures;

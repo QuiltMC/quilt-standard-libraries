@@ -20,7 +20,7 @@ package org.quiltmc.qsl.worldgen.biome.mixin.modification;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
-import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.registry.DynamicRegistryManager;
 
 import org.quiltmc.qsl.worldgen.biome.impl.modification.BiomeModificationImpl;
 import org.quiltmc.qsl.worldgen.biome.impl.modification.BiomeModificationMarker;

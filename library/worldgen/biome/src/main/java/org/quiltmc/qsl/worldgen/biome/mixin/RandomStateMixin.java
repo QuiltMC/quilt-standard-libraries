@@ -23,8 +23,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.minecraft.registry.HolderProvider;
 import net.minecraft.util.math.noise.DoublePerlinNoiseSampler;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 import net.minecraft.world.gen.RandomState;
 import net.minecraft.world.gen.chunk.ChunkGeneratorSettings;
@@ -38,7 +38,7 @@ public class RandomStateMixin {
 	private MultiNoiseUtil.MultiNoiseSampler sampler;
 
 	@Inject(method = "<init>", at = @At("RETURN"))
-	private void quilt$onInit(ChunkGeneratorSettings chunkGeneratorSettings, Registry<DoublePerlinNoiseSampler.NoiseParameters> registry, long seed,
+	private void quilt$onInit(ChunkGeneratorSettings chunkGeneratorSettings, HolderProvider<DoublePerlinNoiseSampler.NoiseParameters> registry, long seed,
 			CallbackInfo ci) {
 		((MultiNoiseSamplerExtensions) (Object) this.sampler).quilt$setSeed(seed);
 	}
