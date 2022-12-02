@@ -44,10 +44,10 @@ public class EntityEventsTestModClient implements ClientEntityLoadEvents.AfterLo
 		}
 	}
 
-	// Slimes will emit explosion particles, unless they're riding something
+	// Slimes will emit explosion particles if they're riding something
 	@Override
 	public void onClientEntityTick(Entity entity, boolean isPassengerTick) {
-		if (entity instanceof SlimeEntity && !isPassengerTick) {
+		if (entity instanceof SlimeEntity && isPassengerTick) {
 			entity.world.addParticle(ParticleTypes.EXPLOSION_EMITTER, entity.getX(), entity.getY(), entity.getZ(), 0.0, 0.0, 0.0);
 		}
 	}
