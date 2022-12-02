@@ -25,17 +25,23 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
+import org.quiltmc.qsl.item.group.api.client.ItemGroupIconRenderer;
 import org.quiltmc.qsl.item.group.impl.CreativeGuiExtensions;
+import org.quiltmc.qsl.item.group.impl.ItemGroupIconRendererRegistry;
 import org.quiltmc.qsl.item.group.impl.QuiltCreativePlayerInventoryScreenWidgets;
 
 @Mixin(CreativeInventoryScreen.class)
@@ -63,6 +69,7 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 		if (page == 0) {
 			return 0;
 		}
+
 		return 12 + ((12 - QuiltCreativePlayerInventoryScreenWidgets.ALWAYS_SHOWN_GROUPS.size()) * (page - 1));
 	}
 
@@ -81,7 +88,7 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 			return;
 		}
 
-		PAGE_TO_SELECTED_INDEX.compute(quilt$currentPage, (page, pos) -> getSelectedTab());
+		this.PAGE_TO_SELECTED_INDEX.compute(quilt$currentPage, (page, pos) -> this.getSelectedTab());
 
 		quilt$currentPage++;
 		this.quilt$updateSelection();
@@ -93,7 +100,7 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 			return;
 		}
 
-		PAGE_TO_SELECTED_INDEX.compute(quilt$currentPage, (page, pos) -> this.getSelectedTab());
+		this.PAGE_TO_SELECTED_INDEX.compute(quilt$currentPage, (page, pos) -> this.getSelectedTab());
 
 		quilt$currentPage--;
 		this.quilt$updateSelection();
@@ -124,7 +131,7 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 		int selectedTab = this.getSelectedTab();
 
 		if (selectedTab < pageMaxIndex || selectedTab > pageMinIndex) {
-			this.setSelectedTab(ItemGroup.GROUPS[PAGE_TO_SELECTED_INDEX.getOrDefault(quilt$currentPage, this.getPageOffset(quilt$currentPage))]);
+			this.setSelectedTab(ItemGroup.GROUPS[this.PAGE_TO_SELECTED_INDEX.getOrDefault(quilt$currentPage, this.getPageOffset(quilt$currentPage))]);
 		}
 	}
 
@@ -164,6 +171,17 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 	private void renderTabIcon(MatrixStack matrixStack, ItemGroup itemGroup, CallbackInfo info) {
 		if (this.quilt$isGroupNotVisible(itemGroup)) {
 			info.cancel();
+		}
+	}
+
+	@ModifyArgs(method = "renderTabIcon", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/ItemRenderer;renderInGuiWithOverrides(Lnet/minecraft/item/ItemStack;II)V"))
+	private void renderCustomTabIcon(Args args, MatrixStack matrixStack, ItemGroup itemGroup) {
+		ItemGroupIconRenderer<ItemGroup> iconRenderer = ItemGroupIconRendererRegistry.get(itemGroup);
+		if (iconRenderer != null) {
+			args.set(0, ItemStack.EMPTY); // itemStack = ItemStack.EMPTY;
+			// args.get(1) x
+			// args.get(2) y
+			iconRenderer.render(itemGroup, matrixStack, args.get(1), args.get(2), MinecraftClient.getInstance().getTickDelta());
 		}
 	}
 

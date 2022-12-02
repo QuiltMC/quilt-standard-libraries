@@ -114,7 +114,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	 * @return the absolute position
 	 */
 	public Vec3d getAbsolutePosition() {
-		return this.owner.getPos().add(relativePosition);
+		return this.owner.getPos().add(this.relativePosition);
 	}
 
 	/**
@@ -212,7 +212,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	 * @return the pivot point
 	 */
 	public Vec3d getPivot() {
-		return pivot;
+		return this.pivot;
 	}
 
 	/**
@@ -221,7 +221,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	 * @return the pivot point
 	 */
 	public Vec3d getAbsolutePivot() {
-		return this.owner.getPos().add(pivot);
+		return this.owner.getPos().add(this.pivot);
 	}
 
 	/**
@@ -261,9 +261,10 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 
 	@Override
 	public EntityDimensions getDimensions(EntityPose pose) {
-		if (widthRatio != 1.0f || heightRatio != 1.0f) {
-			return this.partDimensions.scaled(widthRatio, heightRatio);
+		if (this.widthRatio != 1.0f || this.heightRatio != 1.0f) {
+			return this.partDimensions.scaled(this.widthRatio, this.heightRatio);
 		}
+
 		return this.partDimensions;
 	}
 
