@@ -128,7 +128,7 @@ public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTot
 		}
 	}
 
-	// Zombies will fly when it's raining,
+	// Zombies will jump higher in a floaty way when it's raining,
 	// or place raw iron if they're riding something
 	@Override
 	public void onServerEntityTick(Entity entity, boolean isPassengerTick) {
