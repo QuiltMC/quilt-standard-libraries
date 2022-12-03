@@ -181,8 +181,9 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	 * Rotates this {@link AbstractEntityPart} about the pivot point with the given rotation.
 	 *
 	 * @param pivot the pivot point to rotate about in relative coordinates
-	 * @param pitch the rotation about x-axis in degrees
-	 * @param yaw   the rotation about y-axis in degrees
+	 * @param pitch   the rotation about x-axis
+	 * @param yaw     the rotation about y-axis
+	 * @param degrees whether the rotation should be done in degrees or radians
 	 */
 	public void rotate(Vec3d pivot, float pitch, float yaw, boolean degrees) {
 		this.setPivot(pivot);
