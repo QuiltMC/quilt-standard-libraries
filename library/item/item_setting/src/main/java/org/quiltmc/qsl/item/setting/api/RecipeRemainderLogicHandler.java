@@ -58,15 +58,24 @@ public interface RecipeRemainderLogicHandler {
 	 * Excess items that cannot be returned to a slot are dropped in the world.
 	 *
 	 * @param input the original item stack
+	 * @param amount the amount by which to decrease the stack
 	 * @param recipe the recipe being used
 	 * @param inventory the inventory
 	 * @param index the index of the original stack in the inventory
 	 * @param world the world
 	 * @param location the location to drop excess remainders
 	 */
+	@Contract(mutates = "param1, param4, param6")
+	static void handleRemainderForNonPlayerCraft(ItemStack input, int amount, @Nullable Recipe<?> recipe, DefaultedList<ItemStack> inventory, int index, World world, BlockPos location) {
+		RecipeRemainderLogicHandlerImpl.handleRemainderForNonPlayerCraft(input, amount, recipe, inventory, index, world, location);
+	}
+
+	/**
+	 * @see RecipeRemainderLogicHandler#handleRemainderForNonPlayerCraft(ItemStack, int, Recipe, DefaultedList, int, World, BlockPos)
+	 */
 	@Contract(mutates = "param1, param3, param5")
 	static void handleRemainderForNonPlayerCraft(ItemStack input, @Nullable Recipe<?> recipe, DefaultedList<ItemStack> inventory, int index, World world, BlockPos location) {
-		RecipeRemainderLogicHandlerImpl.handleRemainderForNonPlayerCraft(input, recipe, inventory, index, world, location);
+		handleRemainderForNonPlayerCraft(input, 1, recipe, inventory, index, world, location);
 	}
 
 	/**
@@ -74,11 +83,20 @@ public interface RecipeRemainderLogicHandler {
 	 * Excess items that cannot be returned to a slot are {@linkplain net.minecraft.entity.player.PlayerInventory#offerOrDrop(ItemStack) offered to the player or dropped}.
 	 *
 	 * @param slot the slot of the original stack
+	 * @param amount the amount by which to decrease the stack
 	 * @param recipe the recipe being used
 	 * @param player the player performing the craft
 	 */
+	@Contract(mutates = "param1, param4")
+	static void handleRemainderForScreenHandler(Slot slot, int amount, @Nullable Recipe<?> recipe, PlayerEntity player) {
+		RecipeRemainderLogicHandlerImpl.handleRemainderForScreenHandler(slot, amount, recipe, player);
+	}
+
+	/**
+	 * @see RecipeRemainderLogicHandler#handleRemainderForScreenHandler(Slot, int, Recipe, PlayerEntity)
+	 */
 	@Contract(mutates = "param1, param3")
 	static void handleRemainderForScreenHandler(Slot slot, @Nullable Recipe<?> recipe, PlayerEntity player) {
-		RecipeRemainderLogicHandlerImpl.handleRemainderForScreenHandler(slot, recipe, player);
+		handleRemainderForScreenHandler(slot, 1, recipe, player);
 	}
 }

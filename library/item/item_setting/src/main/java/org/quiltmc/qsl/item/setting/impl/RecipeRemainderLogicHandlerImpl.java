@@ -66,7 +66,9 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 	 */
 	@Contract(mutates = "param1, param2")
 	private static boolean tryMergeStacks(ItemStack base, ItemStack remainder) {
-		if (!ItemStack.canCombine(base, remainder)) {
+		if (remainder.isEmpty()) {
+			return true;
+		} else if (!ItemStack.canCombine(base, remainder)) {
 			return false;
 		}
 
@@ -77,38 +79,30 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 	}
 
 	@Contract(mutates = "param1")
-	private static ItemStack decrementWithRemainder(ItemStack original, @Nullable Recipe<?> recipe) {
+	private static ItemStack decrementWithRemainder(ItemStack original, int amount, @Nullable Recipe<?> recipe) {
 		if (original.isEmpty()) {
 			return ItemStack.EMPTY;
 		}
 
 		ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(original, recipe);
 
-		original.decrement(1);
+		original.decrement(amount);
 
 		return remainder;
 	}
 
-	@Contract(mutates = "param1, param3, param5")
-	public static void handleRemainderForNonPlayerCraft(ItemStack input, @Nullable Recipe<?> recipe, DefaultedList<ItemStack> inventory, int index, World world, BlockPos location) {
-		ItemStack remainder = decrementWithRemainder(input, recipe);
-
-		if (remainder.isEmpty()) {
-			return;
-		}
+	@Contract(mutates = "param1, param4, param6")
+	public static void handleRemainderForNonPlayerCraft(ItemStack input, int amount, @Nullable Recipe<?> recipe, DefaultedList<ItemStack> inventory, int index, World world, BlockPos location) {
+		ItemStack remainder = decrementWithRemainder(input, amount, recipe);
 
 		if (!tryReturnItemToInventory(remainder, inventory, index)) {
 			ItemScatterer.spawn(world, location.getX(), location.getY(), location.getZ(), remainder);
 		}
 	}
 
-	@Contract(mutates = "param1, param3")
-	public static void handleRemainderForScreenHandler(Slot slot, @Nullable Recipe<?> recipe, PlayerEntity player) {
-		ItemStack remainder = decrementWithRemainder(slot.getStack(), recipe);
-
-		if (remainder.isEmpty()) {
-			return;
-		}
+	@Contract(mutates = "param1, param4")
+	public static void handleRemainderForScreenHandler(Slot slot, int amount, @Nullable Recipe<?> recipe, PlayerEntity player) {
+		ItemStack remainder = decrementWithRemainder(slot.getStack(), amount, recipe);
 
 		if (!tryReturnItemToSlot(remainder, slot)) {
 			player.getInventory().offerOrDrop(remainder);
