@@ -70,7 +70,7 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 
 	@SuppressWarnings("ConstantConditions")
 	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"))
-	private static void setFuelRemainder(ItemStack fuelStack, int count, World world, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity) {
+	private static void setFuelRemainder(ItemStack fuelStack, int amount, World world, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity) {
 		AbstractFurnaceBlockEntityMixin cast = ((AbstractFurnaceBlockEntityMixin) (BlockEntity) blockEntity);
 
 		Recipe<?> recipe;
@@ -82,6 +82,7 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 
 		RecipeRemainderLogicHandler.handleRemainderForNonPlayerCraft(
 				fuelStack,
+				amount,
 				recipe,
 				cast.inventory,
 				FUEL_SLOT,
@@ -99,6 +100,7 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 	private static void setInputRemainder(ItemStack inputStack, int amount, Recipe<?> recipe, DefaultedList<ItemStack> inventory, int count) {
 		RecipeRemainderLogicHandler.handleRemainderForNonPlayerCraft(
 				inputStack,
+				amount,
 				recipe,
 				inventory,
 				INPUT_SLOT,

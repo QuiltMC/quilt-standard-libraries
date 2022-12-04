@@ -30,7 +30,7 @@ import org.quiltmc.qsl.item.extension.api.bow.BowExtensions;
 public abstract class SkeletonEntityModelMixin {
 	// Allows Skeletons to visually shoot custom bows by returning true
 	@Redirect(
-			method = "animateModel(Ljava/lang/Object;FFF)V",
+			method = "animateModel(Lnet/minecraft/entity/mob/MobEntity;FFF)V",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z")
 	)
 	private boolean animateModel(ItemStack heldItemStack, Item item) {
@@ -39,7 +39,7 @@ public abstract class SkeletonEntityModelMixin {
 
 	// Allows Skeletons to visually shoot custom bows by returning true
 	@Redirect(
-			method = "setAngles(Ljava/lang/Object;FFFFF)V",
+			method = "setAngles(Lnet/minecraft/entity/mob/MobEntity;FFFFF)V",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z")
 	)
 	private boolean setAngles(ItemStack heldItemStack, Item item) {
