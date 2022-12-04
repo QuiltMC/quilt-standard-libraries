@@ -74,7 +74,7 @@ public final class ServerRegistrySync {
 		return false;
 	}
 
-	public static void sendSyncPackets(ClientConnection connection, ServerPlayerEntity player) {
+	public static void sendSyncPackets(ClientConnection connection, ServerPlayerEntity player, int syncVersion) {
 		for (var registry : BuiltinRegistries.REGISTRY) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
 					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
@@ -103,7 +103,7 @@ public final class ServerRegistrySync {
 					}
 				}
 
-				connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.REGISTRY_RESTORE, PacketByteBufs.empty()));
+				connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.REGISTRY_APPLY, PacketByteBufs.empty()));
 			}
 		}
 

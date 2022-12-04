@@ -124,7 +124,7 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 		switch (packet.getParameter()) {
 			case HELLO_PING -> {
 				if (this.syncVersion != -1) {
-					ServerRegistrySync.sendSyncPackets(this.connection, this.player);
+					ServerRegistrySync.sendSyncPackets(this.connection, this.player, this.syncVersion);
 				} else if (ServerRegistrySync.supportFabric && ((ChannelInfoHolder) this.connection).getPendingChannelsNames().contains(ServerFabricRegistrySync.ID)) {
 					ServerFabricRegistrySync.sendSyncPackets(this.connection);
 					this.syncVersion = -2;

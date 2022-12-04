@@ -26,7 +26,7 @@ import net.minecraft.util.Identifier;
  */
 @ApiStatus.Internal
 public final class ServerPackets {
-	public static final IntSet SUPPORTED_VERSIONS = IntSet.of(1);
+	public static final IntSet SUPPORTED_VERSIONS = IntSet.of(2);
 
 	/**
 	 * Starts registry sync.

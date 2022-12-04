@@ -45,6 +45,7 @@ import org.quiltmc.qsl.registry.impl.sync.RegistryFlag;
 import org.quiltmc.qsl.registry.impl.sync.ServerPackets;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedIdList;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
+import org.quiltmc.qsl.registry.mixin.client.ItemRendererAccessor;
 
 @ApiStatus.Internal
 @ClientOnly
@@ -60,7 +61,11 @@ public final class ClientRegistrySync {
 	@Nullable
 	private static Map<String, Collection<SynchronizedRegistry.SyncEntry>> syncMap;
 
+	@SuppressWarnings({"FieldCanBeLocal", "unused"})
+	private static int syncVersion;
+	@SuppressWarnings("unused")
 	private static int currentCount;
+	@SuppressWarnings("unused")
 	private static byte currentFlags;
 	private static boolean optionalRegistry;
 
@@ -68,7 +73,7 @@ public final class ClientRegistrySync {
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.HANDSHAKE, ClientRegistrySync::handleHelloPacket);
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_START, ClientRegistrySync::handleStartPacket);
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_DATA, ClientRegistrySync::handleDataPacket);
-		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_RESTORE, ClientRegistrySync::handleApplyPacket);
+		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_APPLY, ClientRegistrySync::handleApplyPacket);
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.END, ClientRegistrySync::handleGoodbyePacket);
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_RESTORE, ClientRegistrySync::handleRestorePacket);
 	}
@@ -85,6 +90,10 @@ public final class ClientRegistrySync {
 				highestSupported = version;
 			}
 		}
+
+		// Capture the highest supported version for detecting what the server is sending.
+		// This is required as older versions of registry sync erroneously sent RESTORE in place of APPLY.
+		syncVersion = highestSupported;
 
 		sendHelloPacket(sender, highestSupported);
 	}
@@ -197,6 +206,9 @@ public final class ClientRegistrySync {
 
 		((RebuildableIdModelHolder) models).quilt$rebuildIds();
 		models.reloadModels();
+
+		var itemColors = ((ItemRendererAccessor) client.getItemRenderer()).getColors();
+		((RebuildableIdModelHolder) itemColors).quilt$rebuildIds();
 	}
 
 	private static void rebuildParticles(MinecraftClient client) {
