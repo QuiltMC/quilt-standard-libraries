@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.game_test.api;
 
-import net.minecraft.test.TestContext;
-
 /**
  * This interface can be optionally implemented on your test class.
  */
@@ -26,6 +24,11 @@ public interface QuiltGameTest {
 	 * Use in {@link net.minecraft.test.GameTest} structureName to use an empty 8x8 structure for the test.
 	 */
 	String EMPTY_STRUCTURE = "quilt:empty";
+
+	/**
+	 * Represents the key of the game tests entrypoint to use in the {@code quilt.mod.json} file, whose value is {@value}.
+	 */
+	String ENTRYPOINT_KEY = "quilt:game_test";
 
 	/**
 	 * Override this method to implement custom logic to invoke the test method.
@@ -37,7 +40,7 @@ public interface QuiltGameTest {
 	 * @param context the vanilla test context
 	 * @param method  the test method to invoke
 	 */
-	default void invokeTestMethod(TestContext context, TestMethod method) {
+	default void invokeTestMethod(QuiltTestContext context, TestMethod method) {
 		method.invoke(this, context);
 	}
 

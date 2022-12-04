@@ -60,7 +60,6 @@ import org.quiltmc.qsl.game_test.mixin.TestContextAccessor;
 @ApiStatus.Internal
 public final class QuiltGameTestImpl implements ModInitializer {
 	public static final boolean ENABLED = TriState.fromProperty("quilt.game_test").toBooleanOrElse(false);
-	private static final String ENTRYPOINT_KEY = "quilt:game_test";
 	private static final Map<Class<?>, String> GAME_TEST_IDS = new Reference2ObjectOpenHashMap<>();
 	public static final Logger LOGGER = LogUtils.getLogger();
 
@@ -133,10 +132,10 @@ public final class QuiltGameTestImpl implements ModInitializer {
 		final boolean isQuilted = testClass.isAssignableFrom(QuiltGameTest.class);
 
 		return testContext -> {
-			testContext = new QuiltTestContext(((TestContextAccessor) testContext).getTest());
+			var quiltTestContext = new QuiltTestContext(((TestContextAccessor) testContext).getTest());
 
 			if (testMethod.isStatic() && !isQuilted) {
-				runTest(testMethod, testContext, null);
+				runTest(testMethod, quiltTestContext, null);
 			} else {
 				Constructor<?> constructor;
 
@@ -157,9 +156,9 @@ public final class QuiltGameTestImpl implements ModInitializer {
 				}
 
 				if (testObject instanceof QuiltGameTest quiltGameTest) {
-					quiltGameTest.invokeTestMethod(testContext, testMethod);
+					quiltGameTest.invokeTestMethod(quiltTestContext, testMethod);
 				} else {
-					runTest(testMethod, testContext, testObject);
+					runTest(testMethod, quiltTestContext, testObject);
 				}
 			}
 		};
@@ -196,7 +195,9 @@ public final class QuiltGameTestImpl implements ModInitializer {
 			}
 		}
 
-		var entrypointContainers = QuiltLoader.getEntrypointContainers(ENTRYPOINT_KEY, QuiltGameTest.class);
+		var entrypointContainers = QuiltLoader.getEntrypointContainers(
+				QuiltGameTest.ENTRYPOINT_KEY, QuiltGameTest.class
+		);
 
 		for (var container : entrypointContainers) {
 			Class<?> testClass = container.getEntrypoint().getClass();
