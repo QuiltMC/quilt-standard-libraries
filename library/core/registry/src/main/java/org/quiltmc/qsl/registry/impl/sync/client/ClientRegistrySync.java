@@ -46,6 +46,8 @@ import org.quiltmc.qsl.registry.impl.sync.RegistryFlag;
 import org.quiltmc.qsl.registry.impl.sync.ServerPackets;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedIdList;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
+import org.quiltmc.qsl.registry.mixin.client.ItemRendererAccessor;
+
 
 @ApiStatus.Internal
 @Environment(EnvType.CLIENT)
@@ -197,6 +199,9 @@ public final class ClientRegistrySync {
 
 		((RebuildableIdModelHolder) models).quilt$rebuildIds();
 		models.reloadModels();
+
+		var itemColors = ((ItemRendererAccessor) client.getItemRenderer()).getColors();
+		((RebuildableIdModelHolder) itemColors).quilt$rebuildIds();
 	}
 
 	private static void rebuildParticles(MinecraftClient client) {
