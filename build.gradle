@@ -154,25 +154,26 @@ loom {
 			server()
 			configName = "Testmod Server"
 			source(project.sourceSets.testmod)
+
+			programArg("--nogui")
 		}
 
 		// Auto test server, a server is ran for a few seconds and testmods run to verify things such as mixin
 		// application function properly.
 		autoTestServer {
-			server()
+			inherit testmodServer
 			configName = "Auto test server"
-			source(project.sourceSets.testmod)
 			property("quilt.auto_test")
-			programArg("--nogui")
 		}
 
 		// Game test server, a server is executes tests using Minecraft's test framework.
 		gameTestServer {
-			server()
+			inherit testmodServer
+
 			configName = "Game test server"
-			source(project.sourceSets.testmod)
 			property("quilt.game_test", "true")
-			programArg("--nogui")
+			property("quilt.game_test.report_file", "${project.buildDir}/game_test/report.xml")
+			runDir("build/game_test")
 		}
 	}
 }
@@ -217,6 +218,7 @@ afterEvaluate {
 
 	tasks.runAutoAllTestServer.dependsOn tasks.runAutoTestServer
 	tasks.runGameAllTestServer.dependsOn tasks.runGameTestServer
+	tasks.test.dependsOn tasks.runGameAllTestServer
 }
 
 task checkVersion {
