@@ -12,7 +12,6 @@ qslModule {
 		core {
 			api("qsl_base")
 			impl("resource_loader")
-			compileOnly("game_test")
 			testmodOnly("game_test")
 		}
 		data {
