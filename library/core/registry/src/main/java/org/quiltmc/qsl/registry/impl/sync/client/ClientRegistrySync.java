@@ -61,6 +61,7 @@ public final class ClientRegistrySync {
 	@Nullable
 	private static Map<String, Collection<SynchronizedRegistry.SyncEntry>> syncMap;
 
+	private static int syncVersion;
 	private static int currentCount;
 	private static byte currentFlags;
 	private static boolean optionalRegistry;
@@ -69,7 +70,7 @@ public final class ClientRegistrySync {
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.HANDSHAKE, ClientRegistrySync::handleHelloPacket);
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_START, ClientRegistrySync::handleStartPacket);
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_DATA, ClientRegistrySync::handleDataPacket);
-		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_RESTORE, ClientRegistrySync::handleApplyPacket);
+		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_APPLY, ClientRegistrySync::handleApplyPacket);
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.END, ClientRegistrySync::handleGoodbyePacket);
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_RESTORE, ClientRegistrySync::handleRestorePacket);
 	}
@@ -86,6 +87,10 @@ public final class ClientRegistrySync {
 				highestSupported = version;
 			}
 		}
+
+		// Capture the highest supported version for detecting what the server is sending.
+		// This is required as older versions of registry sync erroneously sent RESTORE in place of APPLY.
+		syncVersion = highestSupported;
 
 		sendHelloPacket(sender, highestSupported);
 	}
@@ -266,6 +271,17 @@ public final class ClientRegistrySync {
 	}
 
 	private static void handleRestorePacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
+		// Older versions of QSL erroneously sent the restore packet in place of apply.
+		// This is to catch the server's use of it and forward it to the right place.
+		if (syncVersion <= 1) {
+			if (currentRegistry != null) {
+				handleApplyPacket(client, handler, buf, sender);
+				return;
+			} else {
+				LOGGER.info("Server with registry sync v{} sent a restore packet without an active registry, assuming sent by proxy.", syncVersion);
+			}
+		}
+
 		restoreSnapshot(client);
 		createSnapshot();
 	}
