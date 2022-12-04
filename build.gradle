@@ -148,16 +148,16 @@ loom {
 			server()
 			configName = "Testmod Server"
 			source(project.sourceSets.testmod)
+
+			programArg("--nogui")
 		}
 
 		// Auto test server, a server is ran for a few seconds and testmods run to verify things such as mixin
 		// application function properly.
 		autoTestServer {
-			server()
+			inherit testmodServer
 			configName = "Auto test server"
-			source(project.sourceSets.testmod)
 			property("quilt.auto_test")
-			programArg("--nogui")
 		}
 	}
 }
