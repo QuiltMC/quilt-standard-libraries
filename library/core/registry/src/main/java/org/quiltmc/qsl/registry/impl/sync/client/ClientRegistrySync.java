@@ -200,7 +200,7 @@ public final class ClientRegistrySync {
 		((RebuildableIdModelHolder) models).quilt$rebuildIds();
 		models.reloadModels();
 
-		var itemColors = ((ItemRendererAccessor) client.getItemRenderer()).getItemColors();
+		var itemColors = ((ItemRendererAccessor) client.getItemRenderer()).getColors();
 		((RebuildableIdModelHolder) itemColors).quilt$rebuildIds();
 	}
 
