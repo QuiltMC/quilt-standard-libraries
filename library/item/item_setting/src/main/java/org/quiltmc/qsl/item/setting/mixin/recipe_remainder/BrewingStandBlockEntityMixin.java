@@ -42,6 +42,7 @@ public class BrewingStandBlockEntityMixin {
 	private static void applyRecipeRemainder(ItemStack ingredient, int amount, World world, BlockPos pos, DefaultedList<ItemStack> inventory) {
 		RecipeRemainderLogicHandler.handleRemainderForNonPlayerCraft(
 				ingredient,
+				amount,
 				null,
 				inventory,
 				INGREDIENT_SLOT,

@@ -37,6 +37,7 @@ public class LoomOutputSlotMixin extends Slot {
 	public ItemStack getRecipeRemainder(Slot slot, int amount, PlayerEntity player, ItemStack resultStack) {
 		RecipeRemainderLogicHandler.handleRemainderForScreenHandler(
 				slot,
+				amount,
 				null,
 				player
 		);
