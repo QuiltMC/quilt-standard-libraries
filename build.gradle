@@ -165,12 +165,26 @@ loom {
 			property("quilt.auto_test")
 			programArg("--nogui")
 		}
+
+		// Game test server, a server is executes tests using Minecraft's test framework.
+		gameTestServer {
+			server()
+			configName = "Game test server"
+			source(project.sourceSets.testmod)
+			property("quilt.game_test", "true")
+			programArg("--nogui")
+		}
 	}
 }
 
 task runAutoAllTestServer {
 	group "verification"
 	description "Runs all the server-sided tests automatically.\nTypically ran by the CI server."
+}
+
+task runGameAllTestServer {
+	group "verification"
+	description "Runs all the server-sided game tests automatically.\nTypically ran by the CI server."
 }
 
 afterEvaluate {
@@ -202,6 +216,7 @@ afterEvaluate {
 	}
 
 	tasks.runAutoAllTestServer.dependsOn tasks.runAutoTestServer
+	tasks.runGameAllTestServer.dependsOn tasks.runGameTestServer
 }
 
 task checkVersion {

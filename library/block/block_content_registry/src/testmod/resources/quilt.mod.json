@@ -12,10 +12,14 @@
     "intermediate_mappings": "net.fabricmc:intermediary",
     "depends": [
       "quilt_loader",
-      "quilt_block_content_registry"
+      "quilt_block_content_registry",
+      "quilt_game_test"
     ],
     "entrypoints": {
       "init": [
+        "org.quiltmc.qsl.block.test.BlockContentRegistryTest"
+      ],
+      "quilt:game_test": [
         "org.quiltmc.qsl.block.test.BlockContentRegistryTest"
       ]
     }

@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.block.test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -23,23 +25,32 @@ import org.slf4j.LoggerFactory;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.Oxidizable;
 import net.minecraft.block.OxidizableBlock;
+import net.minecraft.block.PillarBlock;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.test.GameTest;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
 import org.quiltmc.qsl.block.content.registry.api.FlammableBlockEntry;
 import org.quiltmc.qsl.block.content.registry.api.ReversibleBlockEntry;
+import org.quiltmc.qsl.game_test.api.QuiltGameTest;
+import org.quiltmc.qsl.game_test.api.QuiltTestContext;
 import org.quiltmc.qsl.lifecycle.api.event.ServerWorldTickEvents;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 import org.quiltmc.qsl.registry.attachment.api.RegistryExtensions;
 
-public class BlockContentRegistryTest implements ModInitializer {
+public class BlockContentRegistryTest implements ModInitializer, QuiltGameTest {
 	public static final String MOD_ID = "quilt_block_content_registry_testmod";
 	public static final Logger LOGGER = LoggerFactory.getLogger("BlockContentRegistryTest");
 
@@ -73,6 +84,35 @@ public class BlockContentRegistryTest implements ModInitializer {
 		});
 	}
 
+	@GameTest(structureName = QuiltGameTest.EMPTY_STRUCTURE)
+	public void flatten(QuiltTestContext context) {
+		var tester = new TestHelper(new BlockPos(1, 1, 1), new ItemStack(Items.IRON_SHOVEL));
+
+		tester.push(Blocks.DIRT.getDefaultState(), Blocks.DIRT_PATH.getDefaultState());
+		tester.push(Blocks.GRASS_BLOCK.getDefaultState(), Blocks.DIRT_PATH.getDefaultState());
+		tester.push(Blocks.OAK_PLANKS.getDefaultState(), Blocks.OAK_SLAB.getDefaultState());
+
+		tester.run(context);
+	}
+
+	@GameTest(structureName = QuiltGameTest.EMPTY_STRUCTURE)
+	public void strip(QuiltTestContext context) {
+		var tester = new TestHelper(new BlockPos(1, 1, 1), new ItemStack(Items.IRON_AXE));
+
+		tester.push(Blocks.OAK_LOG.getDefaultState(), Blocks.STRIPPED_OAK_LOG.getDefaultState());
+		tester.push(
+				Blocks.OAK_LOG.getDefaultState().with(PillarBlock.AXIS, Direction.Axis.Z),
+				Blocks.STRIPPED_OAK_LOG.getDefaultState().with(PillarBlock.AXIS, Direction.Axis.Z)
+		);
+		tester.push(Blocks.QUARTZ_PILLAR.getDefaultState(), Blocks.PURPUR_PILLAR.getDefaultState());
+		tester.push(
+				Blocks.QUARTZ_PILLAR.getDefaultState().with(PillarBlock.AXIS, Direction.Axis.Z),
+				Blocks.PURPUR_PILLAR.getDefaultState().with(PillarBlock.AXIS, Direction.Axis.Z)
+		);
+
+		tester.run(context);
+	}
+
 	private <T> void assertValues(Block block, RegistryEntryAttachment<Block, T> attachment, T value) {
 		Optional<T> entry = attachment.get(block);
 		Identifier id = BuiltinRegistries.BLOCK.getId(block);
@@ -85,5 +125,45 @@ public class BlockContentRegistryTest implements ModInitializer {
 		}
 
 		LOGGER.info("Test for block " + id + " passed for REA " + attachment.id());
+	}
+
+	static class TestHelper {
+		private final List<Entry> entries = new ArrayList<>();
+		private final ItemStack tool;
+		private BlockPos nextPos;
+
+		TestHelper(BlockPos startPos, ItemStack tool) {
+			this.tool = tool;
+			this.nextPos = startPos;
+		}
+
+		void push(BlockState baseState, BlockState targetState) {
+			this.entries.add(new Entry(this.nextPos, baseState, targetState));
+
+			this.nextPos = this.nextPos.east();
+			if (this.nextPos.getX() > 7) {
+				this.nextPos = new BlockPos(1, 1, this.nextPos.getZ() + 1);
+			}
+		}
+
+		void run(QuiltTestContext context) {
+			this.entries.forEach(entry -> context.setBlockState(entry.pos(), entry.baseState()));
+
+			var player = context.createMockPlayer();
+			this.entries.forEach(entry -> {
+				context.useStackOnBlockAt(player, this.tool, entry.pos(), Direction.UP);
+			});
+
+			context.addInstantFinalTask(() ->
+					this.entries.forEach(entry ->
+							context.checkBlockState(entry.pos(), state -> state.equals(entry.targetState()),
+									() -> "Could not find state " + entry.targetState()
+							)
+					)
+			);
+		}
+
+		record Entry(BlockPos pos, BlockState baseState, BlockState targetState) {
+		}
 	}
 }
