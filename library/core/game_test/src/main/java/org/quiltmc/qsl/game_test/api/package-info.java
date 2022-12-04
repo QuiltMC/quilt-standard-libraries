@@ -41,7 +41,7 @@
  * 		context.addInstantFinalTask(() ->
  * 				context.checkBlock(new BlockPos(0, 2, 0), (block) -> block == Blocks.DIAMOND_BLOCK, "Expect block to be diamond")
  * 		);
- *    }
+ * 	}
  * }
  * </code></pre>
  * <p>
@@ -62,12 +62,12 @@
  * 		testmodClient {
  * 			client()
  * 			source(sourceSets.testmod)
- *        }
+ * 		}
  *
  * 		testmodServer {
  * 			server()
  * 			source(sourceSets.testmod)
- *        }
+ * 		}
  *
  * 		gameTestServer {
  * 			inherit testmodServer
@@ -77,8 +77,8 @@
  * 			property("quilt.game_test", "true")
  * 			property("quilt.game_test.report_file", "${project.buildDir}/game_test/report.xml")
  * 			runDir("build/game_test")
- *        }
- *    }
+ * 		}
+ * 	}
  * }
  *
  * afterEvaluate {
