@@ -34,8 +34,8 @@ public class LanguageMixin {
 			method = "create",
 			at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMap$Builder;build()Lcom/google/common/collect/ImmutableMap;")
 	)
-	private static ImmutableMap<String, String> create(ImmutableMap.Builder<String, String> cir) {
-		var map = new Object2ObjectOpenHashMap<>(cir.buildOrThrow());
+	private static ImmutableMap<String, String> create(ImmutableMap.Builder<String, String> builder) {
+		var map = new Object2ObjectOpenHashMap<>(builder.buildOrThrow());
 		ResourceLoaderImpl.appendLanguageEntries(map);
 		return ImmutableMap.copyOf(map);
 	}
