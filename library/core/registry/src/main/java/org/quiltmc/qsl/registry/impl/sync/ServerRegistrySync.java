@@ -73,7 +73,7 @@ public final class ServerRegistrySync {
 		return false;
 	}
 
-	public static void sendSyncPackets(ClientConnection connection, ServerPlayerEntity player) {
+	public static void sendSyncPackets(ClientConnection connection, ServerPlayerEntity player, int syncVersion) {
 		for (var registry : Registry.REGISTRIES) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
 					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
@@ -102,7 +102,13 @@ public final class ServerRegistrySync {
 					}
 				}
 
-				connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.REGISTRY_RESTORE, PacketByteBufs.empty()));
+				// As QSL historically sent REGISTRY_RESTORE instead of REGISTRY_APPLY for applying the registry sync,
+				// the server must send REGISTRY_RESTORE to older clients that may have not updated QSL yet.
+				if (syncVersion <= 1) {
+					connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.REGISTRY_RESTORE, PacketByteBufs.empty()));
+				} else {
+					connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.REGISTRY_APPLY, PacketByteBufs.empty()));
+				}
 			}
 		}
 
