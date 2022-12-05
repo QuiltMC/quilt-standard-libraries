@@ -38,10 +38,10 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.registry.Holder;
 import net.minecraft.registry.HolderLookup;
 import net.minecraft.registry.HolderLookup.RegistryLookup;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.VanillaDynamicRegistries;
@@ -112,7 +112,7 @@ public final class ClientTagRegistryManager<T> {
 		this.registryKey = registryKey;
 		this.lookupProvider = VANILLA_PROVIDERS;
 
-		if (BuiltinRegistries.REGISTRY.contains((RegistryKey) registryKey)) {
+		if (Registries.REGISTRY.contains((RegistryKey) registryKey)) {
 			// The registry is static, this means we have only one source of truth that is not updated after starting the game.
 			this.registryFetcher = new StaticRegistryFetcher();
 			this.status = ClientRegistryStatus.STATIC;
@@ -228,7 +228,7 @@ public final class ClientTagRegistryManager<T> {
 
 	@ClientOnly
 	private Map<TagKey<T>, Collection<Holder<T>>> buildDynamicGroup(Map<Identifier, List<TagGroupLoader.EntryWithSource>> tagBuilders, TagType type) {
-		if (!TagRegistryImpl.isRegistryDynamic(this.registryKey)) {
+		if (TagRegistryImpl.isRegistryDynamic(this.registryKey)) {
 			var tags = new Object2ObjectOpenHashMap<TagKey<T>, Collection<Holder<T>>>();
 			var built = this.loader.build(tagBuilders);
 			built.forEach((id, tag) -> tags.put(QuiltTagKey.of(this.registryKey, id, type), tag));
@@ -294,7 +294,7 @@ public final class ClientTagRegistryManager<T> {
 	@ClientOnly
 	static void init() {
 		// Add up all known static registries.
-		BuiltinRegistries.REGISTRY.forEach(registry -> {
+		Registries.REGISTRY.forEach(registry -> {
 			get(registry.getKey());
 		});
 

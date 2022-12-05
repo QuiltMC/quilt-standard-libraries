@@ -20,8 +20,8 @@ package org.quiltmc.qsl.worldgen.biome.impl.modification;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.registry.HolderLookup;
-import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.VanillaDynamicRegistries;
 import net.minecraft.world.biome.Biome;
 
@@ -41,6 +41,6 @@ public final class BuiltInRegistryKeys {
 	}
 
 	public static HolderLookup<Biome> biomeRegistryWrapper() {
-		return vanillaRegistries.getLookupOrThrow(Registries.BIOME);
+		return vanillaRegistries.getLookupOrThrow(RegistryKeys.BIOME);
 	}
 }

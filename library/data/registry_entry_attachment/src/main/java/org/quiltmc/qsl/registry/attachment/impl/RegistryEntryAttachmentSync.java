@@ -35,7 +35,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.MinecraftServer;
@@ -159,7 +159,7 @@ public final class RegistryEntryAttachmentSync {
 			return;
 		}
 
-		for (var registryEntry : BuiltinRegistries.REGISTRY.getEntries()) {
+		for (var registryEntry : Registries.REGISTRY.getEntries()) {
 			var registry = (Registry<Object>) registryEntry.getValue();
 			var dataHolder = RegistryEntryAttachmentHolder.getData(registry);
 
@@ -244,7 +244,7 @@ public final class RegistryEntryAttachmentSync {
 		}
 
 		client.execute(() -> {
-			var registry = (Registry<Object>) BuiltinRegistries.REGISTRY.get(registryId);
+			var registry = (Registry<Object>) Registries.REGISTRY.get(registryId);
 			if (registry == null) {
 				throw new IllegalStateException("Unknown registry %s".formatted(registryId));
 			}

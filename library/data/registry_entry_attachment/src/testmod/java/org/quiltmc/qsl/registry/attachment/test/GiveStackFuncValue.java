@@ -20,7 +20,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
@@ -44,6 +44,6 @@ public final class GiveStackFuncValue extends FuncValue {
 
 	@Override
 	public String toString() {
-		return "give_stack{" + BuiltinRegistries.ITEM.getId(this.stack.getItem()) + " x" + this.stack.getCount() + "}";
+		return "give_stack{" + Registries.ITEM.getId(this.stack.getItem()) + " x" + this.stack.getCount() + "}";
 	}
 }

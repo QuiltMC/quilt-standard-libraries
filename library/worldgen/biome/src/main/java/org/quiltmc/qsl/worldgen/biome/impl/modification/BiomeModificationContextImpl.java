@@ -37,13 +37,13 @@ import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
-import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Holder;
 import net.minecraft.registry.HolderSet;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.sound.BiomeAdditionsSound;
 import net.minecraft.sound.BiomeMoodSound;
 import net.minecraft.sound.MusicSound;
@@ -64,7 +64,7 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeModificationContext;
 @ApiStatus.Internal
 public class BiomeModificationContextImpl implements BiomeModificationContext {
 	private static final Supplier<DynamicRegistryManager.Frozen> BUILTIN_REGISTRIES =
-			Suppliers.memoize(() -> DynamicRegistryManager.fromRegistryOfRegistries(BuiltinRegistries.REGISTRY));
+			Suppliers.memoize(() -> DynamicRegistryManager.fromRegistryOfRegistries(Registries.REGISTRY));
 	private final DynamicRegistryManager registries;
 	private final Biome biome;
 	private final WeatherContext weather;
@@ -231,8 +231,8 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 	}
 
 	private class GenerationSettingsContextImpl implements GenerationSettingsContext {
-		private final Registry<ConfiguredCarver<?>> carvers = registries.get(Registries.CONFIGURED_CARVER);
-		private final Registry<PlacedFeature> features = registries.get(Registries.PLACED_FEATURE);
+		private final Registry<ConfiguredCarver<?>> carvers = registries.get(RegistryKeys.CONFIGURED_CARVER);
+		private final Registry<PlacedFeature> features = registries.get(RegistryKeys.PLACED_FEATURE);
 		private final GenerationSettings generationSettings = biome.getGenerationSettings();
 
 		private boolean rebuildFlowerFeatures;

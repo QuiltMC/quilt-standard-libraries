@@ -23,9 +23,9 @@ import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Holder;
-import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionOptions;
@@ -46,7 +46,7 @@ public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 		this.dynamicRegistries = dynamicRegistries;
 		this.key = key;
 		this.biome = biome;
-		this.entry = dynamicRegistries.get(Registries.BIOME).getHolderOrThrow(this.key);
+		this.entry = dynamicRegistries.get(RegistryKeys.BIOME).getHolderOrThrow(this.key);
 	}
 
 	@Override
@@ -66,19 +66,19 @@ public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 
 	@Override
 	public Optional<RegistryKey<ConfiguredFeature<?, ?>>> getFeatureKey(ConfiguredFeature<?, ?> configuredFeature) {
-		Registry<ConfiguredFeature<?, ?>> registry = this.dynamicRegistries.get(Registries.CONFIGURED_FEATURE);
+		Registry<ConfiguredFeature<?, ?>> registry = this.dynamicRegistries.get(RegistryKeys.CONFIGURED_FEATURE);
 		return registry.getKey(configuredFeature);
 	}
 
 	@Override
 	public Optional<RegistryKey<PlacedFeature>> getPlacedFeatureKey(PlacedFeature placedFeature) {
-		Registry<PlacedFeature> registry = this.dynamicRegistries.get(Registries.PLACED_FEATURE);
+		Registry<PlacedFeature> registry = this.dynamicRegistries.get(RegistryKeys.PLACED_FEATURE);
 		return registry.getKey(placedFeature);
 	}
 
 	@Override
 	public boolean validForStructure(RegistryKey<StructureFeature> key) {
-		StructureFeature instance = this.dynamicRegistries.get(Registries.STRUCTURE_FEATURE).get(key);
+		StructureFeature instance = this.dynamicRegistries.get(RegistryKeys.STRUCTURE_FEATURE).get(key);
 
 		if (instance == null) {
 			return false;
@@ -89,13 +89,13 @@ public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 
 	@Override
 	public Optional<RegistryKey<StructureFeature>> getStructureKey(StructureFeature configuredStructure) {
-		Registry<StructureFeature> registry = this.dynamicRegistries.get(Registries.STRUCTURE_FEATURE);
+		Registry<StructureFeature> registry = this.dynamicRegistries.get(RegistryKeys.STRUCTURE_FEATURE);
 		return registry.getKey(configuredStructure);
 	}
 
 	@Override
 	public boolean canGenerateIn(RegistryKey<DimensionOptions> dimensionKey) {
-		DimensionOptions dimension = this.dynamicRegistries.get(Registries.DIMENSION).get(dimensionKey);
+		DimensionOptions dimension = this.dynamicRegistries.get(RegistryKeys.DIMENSION).get(dimensionKey);
 
 		if (dimension == null) {
 			return false;
@@ -106,7 +106,7 @@ public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 
 	@Override
 	public boolean isIn(TagKey<Biome> tag) {
-		Registry<Biome> biomeRegistry = this.dynamicRegistries.get(Registries.BIOME);
+		Registry<Biome> biomeRegistry = this.dynamicRegistries.get(RegistryKeys.BIOME);
 		return biomeRegistry.getHolderOrThrow(this.getBiomeKey()).isIn(tag);
 	}
 

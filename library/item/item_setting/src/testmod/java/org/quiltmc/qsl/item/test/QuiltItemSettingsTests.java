@@ -18,7 +18,7 @@ package org.quiltmc.qsl.item.test;
 
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;
-import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
@@ -35,10 +35,10 @@ public class QuiltItemSettingsTests implements ModInitializer {
 	public void onInitialize(ModContainer mod) {
 		// Registers an item with a custom equipment slot.
 		var testItem = new Item(new QuiltItemSettings().equipmentSlot(EquipmentSlot.CHEST));
-		Registry.register(BuiltinRegistries.ITEM, new Identifier(NAMESPACE, "test_item"), testItem);
+		Registry.register(Registries.ITEM, new Identifier(NAMESPACE, "test_item"), testItem);
 
 		// Registers an item with a custom item setting that adds some tooltip.
 		var testItem2 = new Item(new QuiltItemSettings().customSetting(CUSTOM_DATA_TEST, "Look at me! I have a custom setting!"));
-		Registry.register(BuiltinRegistries.ITEM, new Identifier(NAMESPACE, "test_item2"), testItem2);
+		Registry.register(Registries.ITEM, new Identifier(NAMESPACE, "test_item2"), testItem2);
 	}
 }

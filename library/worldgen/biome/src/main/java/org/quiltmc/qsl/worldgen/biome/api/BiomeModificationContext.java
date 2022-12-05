@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
-import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.Holder;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.sound.BiomeAdditionsSound;
@@ -300,7 +300,7 @@ public interface BiomeModificationContext {
 		/**
 		 * Adds a feature to one of this biomes generation steps, identified by the placed feature's registry key.
 		 *
-		 * @see BuiltinRegistries#PLACED_FEATURE
+		 * @see Registries#PLACED_FEATURE
 		 */
 		void addFeature(GenerationStep.Feature step, RegistryKey<PlacedFeature> placedFeatureKey);
 

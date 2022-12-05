@@ -24,7 +24,7 @@ import net.minecraft.block.MapColor;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
@@ -54,7 +54,7 @@ public class BlockEntityTypeTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		Registry.register(BuiltinRegistries.BLOCK_ENTITY_TYPE, id("colorful"), COLORFUL_BLOCK_ENTITY_TYPE);
+		Registry.register(Registries.BLOCK_ENTITY_TYPE, id("colorful"), COLORFUL_BLOCK_ENTITY_TYPE);
 
 		COLORFUL_BLOCK_ENTITY_TYPE.addSupportedBlock(POST_ADDED_ANGY_BLOCK);
 		COLORFUL_BLOCK_ENTITY_TYPE.addSupportedBlocks(POST_MULTI_1_ANGY_BLOCK, POST_MULTI_2_ANGY_BLOCK);
@@ -65,10 +65,10 @@ public class BlockEntityTypeTest implements ModInitializer {
 	}
 
 	private static <B extends Block> B register(Identifier id, B block) {
-		Registry.register(BuiltinRegistries.BLOCK, id, block);
+		Registry.register(Registries.BLOCK, id, block);
 
 		var item = new BlockItem(block, new Item.Settings());
-		Registry.register(BuiltinRegistries.ITEM, id, item);
+		Registry.register(Registries.ITEM, id, item);
 
 		if (block instanceof AngyBlock angyBlock) {
 			ANGY_BLOCKS.add(angyBlock);

@@ -22,9 +22,9 @@ import java.util.Optional;
 
 import net.minecraft.registry.Holder;
 import net.minecraft.registry.HolderSet;
-import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionOptions;
@@ -142,6 +142,6 @@ public interface BiomeSelectionContext {
 	 * @see #doesRegistryEntryExist(RegistryKey, RegistryKey)
 	 */
 	default boolean doesPlacedFeatureExist(RegistryKey<PlacedFeature> key) {
-		return this.doesRegistryEntryExist(Registries.PLACED_FEATURE, key);
+		return this.doesRegistryEntryExist(RegistryKeys.PLACED_FEATURE, key);
 	}
 }

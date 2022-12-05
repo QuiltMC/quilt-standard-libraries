@@ -28,7 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.client.render.item.ItemModels;
 import net.minecraft.client.render.model.BakedModelManager;
 import net.minecraft.client.util.ModelIdentifier;
-import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registries;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedInt2ObjectMap;
@@ -44,7 +44,7 @@ public abstract class ItemModelsMixin implements RebuildableIdModelHolder {
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void quilt$onInit(BakedModelManager bakedModelManager, CallbackInfo ci) {
-		this.modelIds = new SynchronizedInt2ObjectMap<>(BuiltinRegistries.ITEM, this.modelIds);
+		this.modelIds = new SynchronizedInt2ObjectMap<>(Registries.ITEM, this.modelIds);
 	}
 
 	@Override

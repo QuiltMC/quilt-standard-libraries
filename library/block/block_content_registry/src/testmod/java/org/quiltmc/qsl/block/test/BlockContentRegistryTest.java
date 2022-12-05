@@ -26,7 +26,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.Oxidizable;
 import net.minecraft.block.OxidizableBlock;
-import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.Identifier;
 
@@ -47,7 +47,7 @@ public class BlockContentRegistryTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		RegistryExtensions.register(BuiltinRegistries.BLOCK, new Identifier(MOD_ID, "oxidizable_iron_block"),
+		RegistryExtensions.register(Registries.BLOCK, new Identifier(MOD_ID, "oxidizable_iron_block"),
 				new OxidizableBlock(Oxidizable.OxidizationLevel.UNAFFECTED, AbstractBlock.Settings.copy(Blocks.IRON_BLOCK)),
 				BlockContentRegistries.OXIDIZABLE, new ReversibleBlockEntry(Blocks.IRON_BLOCK, false));
 
@@ -62,7 +62,7 @@ public class BlockContentRegistryTest implements ModInitializer {
 			}
 
 			LOGGER.info("Starting BlockContentRegistry tests");
-			BuiltinRegistries.BLOCK.getOrCreateTag(BlockTags.ANVILS).forEach(holder -> this.assertValues(holder.value(), BlockContentRegistries.FLAMMABLE, new FlammableBlockEntry(100, 100)));
+			Registries.BLOCK.getOrCreateTag(BlockTags.ANVILS).forEach(holder -> this.assertValues(holder.value(), BlockContentRegistries.FLAMMABLE, new FlammableBlockEntry(100, 100)));
 
 			this.assertValues(Blocks.OAK_PLANKS, BlockContentRegistries.FLATTENABLE, Blocks.OAK_SLAB.getDefaultState());
 			this.assertValues(Blocks.QUARTZ_PILLAR, BlockContentRegistries.STRIPPABLE, Blocks.PURPUR_PILLAR);
@@ -75,7 +75,7 @@ public class BlockContentRegistryTest implements ModInitializer {
 
 	private <T> void assertValues(Block block, RegistryEntryAttachment<Block, T> attachment, T value) {
 		Optional<T> entry = attachment.get(block);
-		Identifier id = BuiltinRegistries.BLOCK.getId(block);
+		Identifier id = Registries.BLOCK.getId(block);
 		if (entry.isEmpty()) {
 			throw new AssertionError("No entry present for " + id);
 		}

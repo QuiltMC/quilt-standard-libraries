@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
-import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.QuiltLoader;
@@ -91,7 +91,7 @@ public final class RecipeManagerImpl {
 		}
 
 		if (DEBUG_MODE || QuiltLoader.isDevelopmentEnvironment()) {
-			for (var serializerEntry : BuiltinRegistries.RECIPE_SERIALIZER.getEntries()) {
+			for (var serializerEntry : Registries.RECIPE_SERIALIZER.getEntries()) {
 				if (!(serializerEntry.getValue() instanceof QuiltRecipeSerializer)) {
 					LOGGER.warn(
 							"Recipe serializer {} doesn't implement QuiltRecipeSerializer. For full compatibility, the interface should be implemented.",
