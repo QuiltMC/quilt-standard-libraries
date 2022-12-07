@@ -33,7 +33,7 @@ import net.minecraft.item.SuspiciousStewItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.registry.api.StatusEffectsSerializationConstants;
@@ -57,7 +57,7 @@ public class SuspiciousStewItemMixin {
 	)
 	private static void quilt$storeIdentifier(ItemStack stew, StatusEffect effect, int duration, CallbackInfo ci,
 			NbtCompound unused, NbtList unused2, NbtCompound nbt) {
-		nbt.putString(StatusEffectsSerializationConstants.EFFECT_ID_KEY, BuiltinRegistries.STATUS_EFFECT.getId(effect).toString());
+		nbt.putString(StatusEffectsSerializationConstants.EFFECT_ID_KEY, Registries.STATUS_EFFECT.getId(effect).toString());
 	}
 
 	@Inject(
@@ -66,12 +66,12 @@ public class SuspiciousStewItemMixin {
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private static void quilt$readCustomEffect(ItemStack stack, Consumer<StatusEffectInstance> consumer, CallbackInfo ci,
-											   NbtCompound nbtCompound, NbtList nbtList, int i, NbtCompound effectCompound, int j) {
+			NbtCompound nbtCompound, NbtList nbtList, int i, NbtCompound effectCompound, int j) {
 		if (effectCompound.contains(StatusEffectsSerializationConstants.EFFECT_ID_KEY, NbtElement.STRING_TYPE)) {
 			var identifier = Identifier.tryParse(effectCompound.getString(StatusEffectsSerializationConstants.EFFECT_ID_KEY));
 
-			if (identifier != null && BuiltinRegistries.STATUS_EFFECT.containsId(identifier)) {
-				quilt$effect.set(BuiltinRegistries.STATUS_EFFECT.get(identifier));
+			if (identifier != null && Registries.STATUS_EFFECT.containsId(identifier)) {
+				quilt$effect.set(Registries.STATUS_EFFECT.get(identifier));
 			} else {
 				quilt$effect.remove();
 			}

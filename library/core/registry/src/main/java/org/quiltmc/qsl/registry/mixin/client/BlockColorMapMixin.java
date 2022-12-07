@@ -30,7 +30,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.block.Block;
 import net.minecraft.client.color.block.BlockColorProvider;
 import net.minecraft.client.color.block.BlockColors;
-import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.collection.IdList;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -59,7 +59,7 @@ public class BlockColorMapMixin implements RebuildableIdModelHolder {
 		SynchronizedIdList.clear(this.providers);
 
 		for (var entry : this.quilt$providers.entrySet()) {
-			this.providers.set(entry.getValue(), BuiltinRegistries.BLOCK.getRawId(entry.getKey()));
+			this.providers.set(entry.getValue(), Registries.BLOCK.getRawId(entry.getKey()));
 		}
 	}
 }

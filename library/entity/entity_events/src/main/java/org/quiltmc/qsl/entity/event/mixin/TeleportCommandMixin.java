@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.entity_events.mixin;
+package org.quiltmc.qsl.entity.event.mixin;
 
 import java.util.Set;
 
@@ -33,7 +33,7 @@ import net.minecraft.server.command.TeleportCommand;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 
-import org.quiltmc.qsl.entity_events.api.EntityWorldChangeEvents;
+import org.quiltmc.qsl.entity.event.api.EntityWorldChangeEvents;
 
 @Mixin(TeleportCommand.class)
 public abstract class TeleportCommandMixin {

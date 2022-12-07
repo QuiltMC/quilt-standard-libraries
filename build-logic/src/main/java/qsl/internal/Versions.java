@@ -23,12 +23,12 @@ public final class Versions {
 	/**
 	 * The QSL version
 	 */
-	public static final String QSL_VERSION = "4.0.0-alpha.7";
+	public static final String QSL_VERSION = "4.0.0-beta.1";
 
 	/**
 	 * The target Minecraft version.
 	 */
-	public static final MinecraftVersion MINECRAFT_VERSION = new MinecraftVersion("1.19.3-rc1", "1.19.3");
+	public static final MinecraftVersion MINECRAFT_VERSION = new MinecraftVersion("1.19.3");
 
 	/**
 	 * The Minecraft versions this version of QSL is compatible with.

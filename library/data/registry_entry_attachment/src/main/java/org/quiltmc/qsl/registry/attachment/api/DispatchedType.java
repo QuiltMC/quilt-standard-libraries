@@ -36,7 +36,7 @@ import net.minecraft.util.Identifier;
  * <pre><code>
  * public static final SimpleRegistry&lt;Codec&lt;? extends Behavior&gt;&gt; REGISTRY = new SimpleRegistry&lt;&gt;();
  * public static final RegistryEntryAttachment&lt;Item, Behavior&gt; ATTACHMENT =
- *     RegistryEntryAttachment.&lt;Item, Behavior&gt;dispatchedBuilder(BuiltinRegistries.ITEM, id("behavior"),
+ *     RegistryEntryAttachment.&lt;Item, Behavior&gt;dispatchedBuilder(Registries.ITEM, id("behavior"),
  *         Behavior.class, REGISTRY::get).build();
  *
  * public static void onItemUsed(ServerPlayerEntity player, ItemStack stack) {

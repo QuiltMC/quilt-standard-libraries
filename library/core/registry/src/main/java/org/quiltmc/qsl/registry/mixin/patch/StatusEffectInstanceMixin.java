@@ -28,7 +28,7 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.registry.api.StatusEffectsSerializationConstants;
@@ -48,7 +48,7 @@ public class StatusEffectInstanceMixin {
 
 	@Inject(method = "writeNbt", at = @At("TAIL"))
 	private void quilt$storeIdentifier(NbtCompound nbt, CallbackInfoReturnable<NbtCompound> cir) {
-		nbt.putString(StatusEffectsSerializationConstants.STATUS_EFFECT_INSTANCE_ID_KEY, BuiltinRegistries.STATUS_EFFECT.getId(this.type).toString());
+		nbt.putString(StatusEffectsSerializationConstants.STATUS_EFFECT_INSTANCE_ID_KEY, Registries.STATUS_EFFECT.getId(this.type).toString());
 	}
 
 	@SuppressWarnings({"InvalidInjectorMethodSignature"})
@@ -61,8 +61,8 @@ public class StatusEffectInstanceMixin {
 		if (compound.contains(StatusEffectsSerializationConstants.STATUS_EFFECT_INSTANCE_ID_KEY, NbtElement.STRING_TYPE)) {
 			var identifier = Identifier.tryParse(compound.getString(StatusEffectsSerializationConstants.STATUS_EFFECT_INSTANCE_ID_KEY));
 
-			if (identifier != null && BuiltinRegistries.STATUS_EFFECT.containsId(identifier)) {
-				return BuiltinRegistries.STATUS_EFFECT.get(identifier);
+			if (identifier != null && Registries.STATUS_EFFECT.containsId(identifier)) {
+				return Registries.STATUS_EFFECT.get(identifier);
 			}
 		}
 

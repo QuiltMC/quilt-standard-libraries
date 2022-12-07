@@ -26,12 +26,12 @@ import java.util.stream.Stream;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.registry.Holder;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.tag.TagKey;
+import net.minecraft.server.MinecraftServer;
 
 import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 import org.quiltmc.qsl.tag.api.QuiltTagKey;
@@ -51,7 +51,7 @@ public final class TagRegistryImpl implements ServerLifecycleEvents.Stopped {
 	 */
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public static boolean isRegistryDynamic(RegistryKey<? extends Registry<?>> registryKey) {
-		return BuiltinRegistries.REGISTRY.contains((RegistryKey) registryKey);
+		return !Registries.REGISTRY.contains((RegistryKey) registryKey);
 	}
 
 	public static void populateTags(Map<TagKey<?>, List<Holder<?>>> tags) {

@@ -28,10 +28,10 @@ import org.slf4j.LoggerFactory;
 
 import net.minecraft.block.Block;
 import net.minecraft.command.CommandBuildContext;
-import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.registry.Holder;
-import net.minecraft.registry.Registry;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
@@ -49,8 +49,8 @@ public final class TagsTestMod implements ServerLifecycleEvents.Ready, CommandRe
 	public static final String NAMESPACE = "quilt_tags_testmod";
 	public static final Logger LOGGER = LoggerFactory.getLogger(TagsTestMod.class);
 
-	public static final TagKey<Block> TEST_BLOCK_TAG = TagKey.of(Registries.BLOCK, id("block_tag"));
-	public static final TagKey<Biome> TEST_BIOME_TAG = TagKey.of(Registries.BIOME, id("registry_test"));
+	public static final TagKey<Block> TEST_BLOCK_TAG = TagKey.of(RegistryKeys.BLOCK, id("block_tag"));
+	public static final TagKey<Biome> TEST_BIOME_TAG = TagKey.of(RegistryKeys.BIOME, id("registry_test"));
 
 	public static Identifier id(String path) {
 		return new Identifier(NAMESPACE, path);
@@ -60,16 +60,16 @@ public final class TagsTestMod implements ServerLifecycleEvents.Ready, CommandRe
 	public void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, CommandBuildContext buildContext, CommandManager.RegistrationEnvironment environment) {
 		dispatcher.register(literal("biome_tag_test")
 				.then(literal("registry").executes(context -> {
-					displayTag(TEST_BIOME_TAG, context.getSource().getRegistryManager().get(Registries.BIOME),
+					displayTag(TEST_BIOME_TAG, context.getSource().getRegistryManager().get(RegistryKeys.BIOME),
 							context.getSource());
 
 					return 1;
 				}))
 				.then(literal("list_all").executes(context -> {
-					TagRegistry.stream(Registries.BIOME).forEach((entry) -> {
+					TagRegistry.stream(RegistryKeys.BIOME).forEach((entry) -> {
 						displayTag(
 								entry.key(), entry.values(),
-								context.getSource().getRegistryManager().get(Registries.BIOME),
+								context.getSource().getRegistryManager().get(RegistryKeys.BIOME),
 								msg -> context.getSource().sendFeedback(msg, false)
 						);
 					});
@@ -84,7 +84,7 @@ public final class TagsTestMod implements ServerLifecycleEvents.Ready, CommandRe
 		// Asserts the existence of the tag.
 		LOGGER.info("Tag content: {}", TagRegistry.getTag(TEST_BLOCK_TAG).stream()
 				.map(Holder::value)
-				.map(BuiltinRegistries.BLOCK::getId)
+				.map(Registries.BLOCK::getId)
 				.map(Identifier::toString)
 				.collect(Collectors.joining(", "))
 		);

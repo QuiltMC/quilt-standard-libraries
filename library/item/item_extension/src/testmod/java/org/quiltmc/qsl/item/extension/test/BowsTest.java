@@ -22,7 +22,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
@@ -55,8 +55,8 @@ public class BowsTest implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer container) {
 		// Registers a custom bow.
-		Registry.register(BuiltinRegistries.ITEM, new Identifier(MOD_ID, "test_bow"), TEST_BOW);
+		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "test_bow"), TEST_BOW);
 		// Registers a custom crossbow.
-		Registry.register(BuiltinRegistries.ITEM, new Identifier(MOD_ID, "test_crossbow"), TEST_CROSSBOW);
+		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "test_crossbow"), TEST_CROSSBOW);
 	}
 }

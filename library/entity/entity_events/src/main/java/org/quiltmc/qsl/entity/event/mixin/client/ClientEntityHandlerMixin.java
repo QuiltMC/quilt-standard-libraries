@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.entity_events.mixin.client;
+package org.quiltmc.qsl.entity.event.mixin.client;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,8 +26,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 
-import org.quiltmc.qsl.entity_events.api.client.ClientEntityLoadEvents;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
+import org.quiltmc.qsl.entity.event.api.client.ClientEntityLoadEvents;
 
+@ClientOnly
 @Mixin(targets = "net/minecraft/client/world/ClientWorld$ClientEntityHandler")
 public abstract class ClientEntityHandlerMixin {
 	@Shadow

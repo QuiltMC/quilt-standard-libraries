@@ -20,7 +20,7 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffectType;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
-import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
@@ -42,7 +42,7 @@ public final class StatusEffectTest implements ModInitializer {
 		}
 	};
 
-	public static final Item PASTEURIZED_MILK_BUCKET = Registry.register(BuiltinRegistries.ITEM, id("pasteurized_milk_bucket"),
+	public static final Item PASTEURIZED_MILK_BUCKET = Registry.register(Registries.ITEM, id("pasteurized_milk_bucket"),
 			new PasteurizedMilkBucketItem(new Item.Settings()
 					.recipeRemainder(Items.BUCKET)
 					.maxCount(1)));

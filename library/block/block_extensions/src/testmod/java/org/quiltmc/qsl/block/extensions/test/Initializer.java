@@ -23,7 +23,7 @@ import net.minecraft.block.MapColor;
 import net.minecraft.block.Material;
 import net.minecraft.block.VineBlock;
 import net.minecraft.block.piston.PistonBehavior;
-import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
@@ -37,13 +37,13 @@ public final class Initializer implements ModInitializer {
 			.pistonBehavior(PistonBehavior.PUSH_ONLY)
 			.build();
 
-	public static final Block BLOCK = Registry.register(BuiltinRegistries.BLOCK,
+	public static final Block BLOCK = Registry.register(Registries.BLOCK,
 			new Identifier("quilt_block_extensions_testmod", "test_block"),
 			new GlassBlock(QuiltBlockSettings.copyOf(Blocks.GLASS)
 					.material(MATERIAL)
 					.luminance(15)));
 
-	public static final Block BLOCK2 = Registry.register(BuiltinRegistries.BLOCK,
+	public static final Block BLOCK2 = Registry.register(Registries.BLOCK,
 			new Identifier("quilt_block_extensions_testmod", "test_block2"),
 			new VineBlock(QuiltBlockSettings.copyOf(Blocks.VINE).ticksRandomly(false)));
 

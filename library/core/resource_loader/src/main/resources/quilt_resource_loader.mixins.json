@@ -14,6 +14,7 @@
     "ResourcePackMixin",
     "ServerReloadableResourcesMixin",
     "TestServerMixin",
+    "VanillaDataPackProviderAccessor",
     "VanillaDataPackProviderMixin",
     "server.MainMixin"
   ],
@@ -30,6 +31,9 @@
     "client.PackScreenMixin",
     "client.ResourcePackEntryAccessor",
     "client.ShaderResourceReloadListenerMixin"
+  ],
+  "server": [
+    "server.LanguageMixin"
   ],
   "injectors": {
     "defaultRequire": 1

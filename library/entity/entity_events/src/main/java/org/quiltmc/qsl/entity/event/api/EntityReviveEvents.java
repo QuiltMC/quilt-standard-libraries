@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.entity_events.api;
+package org.quiltmc.qsl.entity.event.api;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -71,10 +71,11 @@ public final class EntityReviveEvents {
 	@FunctionalInterface
 	public interface TryReviveBeforeTotem extends EventAwareListener {
 		/**
-		 * {@return {@code true} if the entity which has fatal damage should be revived, or {@code false} otherwise}
+		 * Determines whether an entity should be revived.
 		 *
 		 * @param entity       the entity
 		 * @param damageSource the fatal damage source
+		 * @return {@code true} if the entity which has fatal damage should be revived, or {@code false} otherwise
 		 */
 		boolean tryReviveBeforeTotem(LivingEntity entity, DamageSource damageSource);
 	}
@@ -82,10 +83,11 @@ public final class EntityReviveEvents {
 	@FunctionalInterface
 	public interface TryReviveAfterTotem extends EventAwareListener {
 		/**
-		 * {@return {@code true} if an entity which has fatal damage and which has not been saved by a totem should be revived, {@code false} otherwise}
+		 * Determines whether an entity should be revived.
 		 *
 		 * @param entity       the entity
 		 * @param damageSource the fatal damage source
+		 * @return {@code true} if the entity which has fatal damage should be revived, or {@code false} otherwise
 		 */
 		boolean tryReviveAfterTotem(LivingEntity entity, DamageSource damageSource);
 	}

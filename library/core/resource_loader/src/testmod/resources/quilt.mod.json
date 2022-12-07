@@ -19,6 +19,9 @@
       "client_init": [
         "org.quiltmc.qsl.resource.loader.test.client.ResourcePackProfileProviderTestMod"
       ],
+      "server_init": [
+        "org.quiltmc.qsl.resource.loader.test.server.ServerLanguageTestMod"
+      ],
       "events": [
         "org.quiltmc.qsl.resource.loader.test.ResourceLoaderEventsTestMod"
       ],

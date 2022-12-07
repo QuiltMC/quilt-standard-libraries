@@ -19,7 +19,7 @@ package org.quiltmc.qsl.registry.attachment.test;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
@@ -33,19 +33,20 @@ import org.quiltmc.qsl.registry.attachment.api.RegistryExtensions;
 
 public class SimpleAttachmentTest implements ModInitializer {
 	public static final RegistryEntryAttachment<Item, Integer> TEST_ATTACHMENT =
-			RegistryEntryAttachment.intBuilder(BuiltinRegistries.ITEM,
+			RegistryEntryAttachment.intBuilder(Registries.ITEM,
 					new Identifier("quilt", "test_attachment")).build();
 	public static final RegistryEntryAttachment<Item, Float> TEST_ATTACHMENT_2 =
-			RegistryEntryAttachment.floatBuilder(BuiltinRegistries.ITEM,
+			RegistryEntryAttachment.floatBuilder(Registries.ITEM,
 					new Identifier("quilt", "test_attachment_2")).build();
 
-	public static final MyItem MY_ITEM = RegistryExtensions.register(BuiltinRegistries.ITEM,
+	public static final MyItem MY_ITEM = RegistryExtensions.register(Registries.ITEM,
 			new Identifier("quilt", "simple_attachment_test_item"),
 			new MyItem(new Item.Settings()),
 			TEST_ATTACHMENT_2, 2.0f);
 
 	@Override
-	public void onInitialize(ModContainer mod) {}
+	public void onInitialize(ModContainer mod) {
+	}
 
 	public static final class MyItem extends Item {
 		public MyItem(Settings settings) {

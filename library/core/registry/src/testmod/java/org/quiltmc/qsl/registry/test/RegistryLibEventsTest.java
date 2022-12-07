@@ -23,7 +23,7 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.MapColor;
 import net.minecraft.block.Material;
-import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
@@ -40,7 +40,7 @@ public class RegistryLibEventsTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		RegistryEvents.getEntryAddEvent(BuiltinRegistries.BLOCK).register(context -> {
+		RegistryEvents.getEntryAddEvent(Registries.BLOCK).register(context -> {
 			LOGGER.info("Block {} id={} raw={} was registered in registry {}",
 					context.value(), context.id(), context.rawId(), context.registry());
 
@@ -57,6 +57,6 @@ public class RegistryLibEventsTest implements ModInitializer {
 	}
 
 	static <T extends Block> T register(Identifier id, T block) {
-		return Registry.register(BuiltinRegistries.BLOCK, id, block);
+		return Registry.register(Registries.BLOCK, id, block);
 	}
 }

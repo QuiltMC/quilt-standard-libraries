@@ -20,7 +20,7 @@ import com.mojang.serialization.Lifecycle;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.entity.data.TrackedDataHandler;
-import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.SimpleRegistry;
@@ -52,6 +52,6 @@ public class QuiltEntityNetworkingInitializer implements ModInitializer {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onInitialize(ModContainer mod) {
-		Registry.register(((Registry<Registry<TrackedDataHandler<?>>>) BuiltinRegistries.REGISTRY), TRACKED_DATA_HANDLER_REGISTRY.getKey().getValue(), TRACKED_DATA_HANDLER_REGISTRY);
+		Registry.register(((Registry<Registry<TrackedDataHandler<?>>>) Registries.REGISTRY), TRACKED_DATA_HANDLER_REGISTRY.getKey().getValue(), TRACKED_DATA_HANDLER_REGISTRY);
 	}
 }
