@@ -31,7 +31,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Language;
@@ -120,7 +120,7 @@ public final class ClientRegistrySync {
 		int count = buf.readVarInt();
 		byte flags = buf.readByte();
 
-		var registry = BuiltinRegistries.REGISTRY.get(identifier);
+		var registry = Registries.REGISTRY.get(identifier);
 
 		if (registry instanceof SynchronizedRegistry synchronizedRegistry) {
 			currentRegistry = synchronizedRegistry;
@@ -181,13 +181,13 @@ public final class ClientRegistrySync {
 		}
 
 		if (!disconnect) {
-			if (reg == BuiltinRegistries.BLOCK) {
+			if (reg == Registries.BLOCK) {
 				rebuildBlocks(client);
-			} else if (reg == BuiltinRegistries.FLUID) {
+			} else if (reg == Registries.FLUID) {
 				rebuildFluidStates();
-			} else if (reg == BuiltinRegistries.ITEM) {
+			} else if (reg == Registries.ITEM) {
 				rebuildItems(client);
-			} else if (reg == BuiltinRegistries.PARTICLE_TYPE) {
+			} else if (reg == Registries.PARTICLE_TYPE) {
 				rebuildParticles(client);
 			}
 		}
@@ -220,7 +220,7 @@ public final class ClientRegistrySync {
 
 		SynchronizedIdList.clear(Block.STATE_IDS);
 
-		for (var block : BuiltinRegistries.BLOCK) {
+		for (var block : Registries.BLOCK) {
 			block.getStateManager().getStates().forEach(Block.STATE_IDS::add);
 		}
 	}
@@ -228,7 +228,7 @@ public final class ClientRegistrySync {
 	public static void rebuildFluidStates() {
 		SynchronizedIdList.clear(Fluid.STATE_IDS);
 
-		for (var fluid : BuiltinRegistries.FLUID) {
+		for (var fluid : Registries.FLUID) {
 			fluid.getStateManager().getStates().forEach(Fluid.STATE_IDS::add);
 		}
 	}
@@ -283,7 +283,7 @@ public final class ClientRegistrySync {
 	}
 
 	public static void createSnapshot() {
-		for (var reg : BuiltinRegistries.REGISTRY) {
+		for (var reg : Registries.REGISTRY) {
 			if (reg instanceof SynchronizedRegistry registry && registry.quilt$requiresSyncing()) {
 				registry.quilt$createIdSnapshot();
 			}
@@ -291,7 +291,7 @@ public final class ClientRegistrySync {
 	}
 
 	public static void restoreSnapshot(MinecraftClient client) {
-		for (var reg : BuiltinRegistries.REGISTRY) {
+		for (var reg : Registries.REGISTRY) {
 			if (reg instanceof SynchronizedRegistry registry && registry.quilt$requiresSyncing()) {
 				registry.quilt$restoreIdSnapshot();
 			}

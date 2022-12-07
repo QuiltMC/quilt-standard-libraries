@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -165,7 +165,7 @@ public class ClientFabricRegistrySync {
 		syncedRegistryMap = null;
 
 		for (var entry : map.entrySet()) {
-			var registry = BuiltinRegistries.REGISTRY.get(entry.getKey());
+			var registry = Registries.REGISTRY.get(entry.getKey());
 
 			if (registry instanceof SynchronizedRegistry currentRegistry) {
 				var syncMap = new HashMap<String, Collection<SynchronizedRegistry.SyncEntry>>();

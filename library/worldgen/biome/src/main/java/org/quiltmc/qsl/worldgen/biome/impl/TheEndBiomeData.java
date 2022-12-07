@@ -33,8 +33,8 @@ import org.jetbrains.annotations.NotNull;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Holder;
 import net.minecraft.registry.HolderProvider;
-import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeKeys;
@@ -108,7 +108,7 @@ public final class TheEndBiomeData implements RegistryEvents.DynamicRegistryLoad
 
 	@Override
 	public void onDynamicRegistryLoaded(@NotNull DynamicRegistryManager registryManager) {
-		registryManager.getOptional(Registries.BIOME).ifPresent(registry -> biomeRegistry = registry.asLookup());
+		registryManager.getOptional(RegistryKeys.BIOME).ifPresent(registry -> biomeRegistry = registry.asLookup());
 	}
 
 	/**

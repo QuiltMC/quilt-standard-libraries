@@ -41,7 +41,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
 import net.minecraft.command.argument.IdentifierArgumentType;
-import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.command.ServerCommandSource;
@@ -82,7 +82,7 @@ public final class DumpBuiltinAttachmentsCommand {
 
 	private static int execute(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
 		var registryId = IdentifierArgumentType.getIdentifier(ctx, "registry");
-		var registry = BuiltinRegistries.REGISTRY.get(registryId);
+		var registry = Registries.REGISTRY.get(registryId);
 		if (registry == null) {
 			throw UNKNOWN_REGISTRY_EXCEPTION.create(registryId);
 		}

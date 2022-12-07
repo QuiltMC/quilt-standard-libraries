@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldGenerationProgressListener;
 
@@ -37,10 +37,10 @@ public abstract class MinecraftServerMixin {
 
 	@Inject(method = "createWorlds", at = @At("HEAD"))
 	private void addNetherBiomes(WorldGenerationProgressListener worldGenerationProgressListener, CallbackInfo ci) {
-		var registry = this.getRegistryManager().get(Registries.DIMENSION);
+		var registry = this.getRegistryManager().get(RegistryKeys.DIMENSION);
 
 		registry.forEach(dimensionOptions -> NetherBiomeData.modifyBiomeSource(
-				this.getRegistryManager().getLookupOrThrow(Registries.BIOME),
+				this.getRegistryManager().getLookupOrThrow(RegistryKeys.BIOME),
 				dimensionOptions.getChunkGenerator().getBiomeSource()
 		));
 	}

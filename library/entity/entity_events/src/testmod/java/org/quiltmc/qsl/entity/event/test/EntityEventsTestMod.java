@@ -29,7 +29,7 @@ import net.minecraft.entity.mob.SkeletonEntity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
@@ -109,7 +109,7 @@ public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTot
 	// Entities going to the end are named 'end traveller'
 	@Override
 	public void afterWorldChange(Entity originalEntity, Entity newEntity, ServerWorld origin, ServerWorld destination) {
-		if (destination.getDimension() == destination.getServer().getRegistryManager().get(Registries.DIMENSION_TYPE)
+		if (destination.getDimension() == destination.getServer().getRegistryManager().get(RegistryKeys.DIMENSION_TYPE)
 				.get(DimensionTypes.THE_END)) {
 			newEntity.setCustomName(Text.literal("End Traveller"));
 		}
@@ -133,7 +133,7 @@ public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTot
 	// or place raw iron if they're riding something
 	@Override
 	public void onServerEntityTick(Entity entity, boolean isPassengerTick) {
-		if (entity.world.isRaining() && entity instanceof ZombieEntity zombie) {
+		if (entity.world.isRaining() && entity instanceof ZombieEntity) {
 			if (isPassengerTick) {
 				entity.world.setBlockState(entity.getBlockPos().offset(Direction.UP, 3), Blocks.RAW_IRON_BLOCK.getDefaultState());
 			} else {

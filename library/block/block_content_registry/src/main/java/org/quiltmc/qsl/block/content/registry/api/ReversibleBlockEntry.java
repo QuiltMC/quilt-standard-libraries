@@ -21,16 +21,16 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.block.Block;
-import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registries;
 
 public record ReversibleBlockEntry(Block block, boolean reversible) {
 	public static final Codec<ReversibleBlockEntry> CODEC = Codec.either(
 					RecordCodecBuilder.<ReversibleBlockEntry>create(instance ->
 							instance.group(
-									BuiltinRegistries.BLOCK.getCodec().fieldOf("block").forGetter(ReversibleBlockEntry::block),
+									Registries.BLOCK.getCodec().fieldOf("block").forGetter(ReversibleBlockEntry::block),
 									Codec.BOOL.fieldOf("reversible").forGetter(ReversibleBlockEntry::reversible)
 							).apply(instance, ReversibleBlockEntry::new)),
-					BuiltinRegistries.BLOCK.getCodec())
+					Registries.BLOCK.getCodec())
 			.xmap(
 					either -> either.map(entry -> entry, b -> new ReversibleBlockEntry(b, true)),
 					entry -> entry.reversible ? Either.right(entry.block) : Either.left(entry));

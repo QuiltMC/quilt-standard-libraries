@@ -26,10 +26,10 @@ import net.minecraft.command.CommandBuildContext;
 import net.minecraft.command.CommandException;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.CowEntity;
-import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -50,17 +50,17 @@ import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 import org.quiltmc.qsl.worldgen.dimension.api.QuiltDimensions;
 
 public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents.Ready, CommandRegistrationCallback {
-	private static final RegistryKey<DimensionOptions> DIMENSION_KEY = RegistryKey.of(Registries.DIMENSION,
+	private static final RegistryKey<DimensionOptions> DIMENSION_KEY = RegistryKey.of(RegistryKeys.DIMENSION,
 			new Identifier("quilt_dimension", "void")
 	);
 
-	private static RegistryKey<World> WORLD_KEY = RegistryKey.of(Registries.WORLD, DIMENSION_KEY.getValue());
+	private static RegistryKey<World> WORLD_KEY = RegistryKey.of(RegistryKeys.WORLD, DIMENSION_KEY.getValue());
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		Registry.register(BuiltinRegistries.CHUNK_GENERATOR, new Identifier("quilt_dimension", "void"), EmptyChunkGenerator.CODEC);
+		Registry.register(Registries.CHUNK_GENERATOR, new Identifier("quilt_dimension", "void"), EmptyChunkGenerator.CODEC);
 
-		WORLD_KEY = RegistryKey.of(Registries.WORLD, new Identifier("quilt_dimension", "void"));
+		WORLD_KEY = RegistryKey.of(RegistryKeys.WORLD, new Identifier("quilt_dimension", "void"));
 	}
 
 	@Override

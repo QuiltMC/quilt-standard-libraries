@@ -24,15 +24,15 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.math.MathHelper;
 
-@Mixin(BuiltinRegistries.class)
-public class BuiltinRegistriesMixin {
+@Mixin(Registries.class)
+public class RegistriesMixin {
 	@Inject(method = "freeze", at = @At("RETURN"))
 	private static void onFreezeBuiltins(CallbackInfo ci) {
 		//region Fix MC-197259
-		final List<BlockState> states = BuiltinRegistries.BLOCK.stream()
+		final List<BlockState> states = Registries.BLOCK.stream()
 				.flatMap(block -> block.getStateManager().getStates().stream())
 				.toList();
 
