@@ -140,8 +140,8 @@ public final class DelayedRegistry<T> implements MutableRegistry<T> {
 	}
 
 	@Override
-	public Holder<T> m_bpoptgww(T object) {
-		return this.wrapped.m_bpoptgww(object);
+	public Holder<T> wrapAsHolder(T object) {
+		return this.wrapped.wrapAsHolder(object);
 	}
 
 	@Override
