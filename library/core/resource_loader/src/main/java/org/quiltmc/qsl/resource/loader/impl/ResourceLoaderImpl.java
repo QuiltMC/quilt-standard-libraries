@@ -17,6 +17,7 @@
 
 package org.quiltmc.qsl.resource.loader.impl;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -53,6 +54,7 @@ import net.minecraft.resource.pack.ResourcePackProfile;
 import net.minecraft.resource.pack.ResourcePackProvider;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Language;
 import net.minecraft.util.Pair;
 import net.minecraft.util.Unit;
 
@@ -72,6 +74,7 @@ import org.quiltmc.qsl.resource.loader.api.ResourcePackRegistrationContext;
 import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;
 import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 import org.quiltmc.qsl.resource.loader.mixin.NamespaceResourceManagerAccessor;
+import org.quiltmc.qsl.resource.loader.mixin.VanillaDataPackProviderAccessor;
 
 /**
  * Represents the implementation of the resource loader.
@@ -387,7 +390,8 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 
 		Identifier metadataId = NamespaceResourceManagerAccessor.invokeGetMetadataPath(id);
 
-		for (var pack : packs) {
+		for (int i = packs.size() - 1; i >= 0; i--) {
+			ResourcePack pack = packs.get(i);
 			var readSupplier = pack.open(manager.getType(), id);
 
 			if (readSupplier != null) {
@@ -471,6 +475,33 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 
 				if (profile != null) {
 					profileAdder.accept(profile);
+				}
+			}
+		}
+	}
+
+	/* Language stuff */
+
+	/**
+	 * Appends to the given map all the default language entries.
+	 *
+	 * @param map the language map
+	 */
+	public static void appendLanguageEntries(@NotNull Map<String, String> map) {
+		var pack = ResourceLoaderImpl.buildMinecraftResourcePack(ResourceType.CLIENT_RESOURCES,
+				VanillaDataPackProviderAccessor.invokeCreateVanillaResourcePack()
+		);
+
+		try (var manager = new MultiPackResourceManager(ResourceType.CLIENT_RESOURCES, List.of(pack))) {
+			for (var namespace : manager.getAllNamespaces()) {
+				var langId = new Identifier(namespace, "lang/" + Language.DEFAULT_LANGUAGE + ".json");
+
+				for (var resource : manager.getAllResources(langId)) {
+					try (var stream = resource.open()) {
+						Language.load(stream, map::put);
+					} catch (IOException e) {
+						LOGGER.error("Couldn't load language file {} from pack {}.", langId, resource.getSourceName());
+					}
 				}
 			}
 		}
