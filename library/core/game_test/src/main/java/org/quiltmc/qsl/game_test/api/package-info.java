@@ -3,12 +3,12 @@
  *
  * <p>
  * <h3>What is the Game Test API?</h3>
- * The Game Test API is the test automation framework used by Minecraft as most test frameworks are not adapted to a game that's so dynamic.
- * Unit testing presents very quickly its issues: you will quickly find out that testing while in a tick loop is very difficult.
- * Thus Mojang made their own testing framework, watching the <a href="https://www.youtube.com/watch?v=TNkPE6NTNHQ">keynote by Henrik Kniberg</a>
- * is highly recommended to grasp the why, and how it works.
+ * The Game Test API is the custom automated test framework used by Minecraft.
+ * Minecraft uses a custom framework because most pre-existing ones do not adapt well to such a dynamic environment as Minecraft. 
+ * Thus Mojang made their own testing framework. Watching the <a href="https://www.youtube.com/watch?v=TNkPE6NTNHQ">keynote by Henrik Kniberg</a>
+ * is highly recommended to grasp how it works and why it was designed that way.
  * <p>
- * The Game Test API exposed by this module is a bit different, the framework has been adapted to work better with mods, with some extensions.
+ * The Game Test API exposed by this module is a bit different to what Vanilla provides. The framework has been adapted to work better with mods, with some extensions.
  *
  * <p>
  * <h3>Get Started</h3>
@@ -20,15 +20,15 @@
  * and annotating them with {@link net.minecraft.test.GameTest} will make them a test to run.
  * <p>
  * One of the special parts of game tests is that they have a structure associated to them, as the goal is to test inside a game world with running
- * game logic. Structures are located in the mod resources as follow {@code data/<id namespace>/game_test/structures/<id path>.snbt}.
- * If we take the provided empty structure {@link org.quiltmc.qsl.game_test.api.QuiltGameTest#EMPTY_STRUCTURE {@code quilt:empty}}, it is located in
+ * game logic. Structures are located in the mod resources as follows: {@code data/<id namespace>/game_test/structures/<id path>.snbt}.
+ * For example, the provided empty structure {@link org.quiltmc.qsl.game_test.api.QuiltGameTest#EMPTY_STRUCTURE {@code quilt:empty}} is located at
  * {@code data/quilt/game_test/structures/empty.snbt}.
  * <p>
- * When running the game with this module a new command will be available: {@code /test}. It allows to create new test structures,
- * export test structures, run a specific test, or run every tests.
+ * When running the game with this module a new command will be available: {@code /test}. It allows you to create new test structures,
+ * export test structures, run a specific test, or run every test.
  * <p>
- * To run the dedicated server in game test mode (as-in runs, execute the tests, then shutdown), you can pass the argument
- * {@code -Dquilt.game_test=true} to the JVM, you also can pass the argument {@code -Dquilt.game_test.report_file=<path>} to store the test results
+ * To run the dedicated server in game test mode (which runs the server, executes the tests, then shuts down), you can pass the argument
+ * {@code -Dquilt.game_test=true} to the JVM. You also can pass the argument {@code -Dquilt.game_test.report_file=<path>} to store the test results
  * into the file at the given path.
  * <p>
  * <h4>Example</h4>
@@ -39,14 +39,14 @@
  * 		context.setBlockState(0, 2, 0, Blocks.DIAMOND_BLOCK);
  *
  * 		context.addInstantFinalTask(() ->
- * 				context.checkBlock(new BlockPos(0, 2, 0), (block) -> block == Blocks.DIAMOND_BLOCK, "Expect block to be diamond")
+ * 				context.checkBlock(new BlockPos(0, 2, 0), (block) -> block == Blocks.DIAMOND_BLOCK, "Expected block to be diamond")
  * 		);
  * 	}
  * }
  * </code></pre>
  * <p>
  * <h4>Gradle Setup Example</h4>
- * Here's an example of Gradle setup to handle tests in a separate sourceSet, with a special task to run the tests:
+ * Here's an example of a Gradle setup to handle tests in a separate sourceSet, with a special task to run the tests:
  * <pre><code>
  * sourceSets {
  * 	testmod
@@ -105,12 +105,12 @@
  *
  * <p>
  * <h3>Custom Test Method Invocation</h3>
- * Test methods are gathered using the {@link net.minecraft.test.GameTest} annotation, but for methods which the class implements
+ * Test methods are gathered using the {@link net.minecraft.test.GameTest} annotation, but if the class implements
  * {@link org.quiltmc.qsl.game_test.api.QuiltGameTest} you can override the method
  * {@link org.quiltmc.qsl.game_test.api.QuiltGameTest#invokeTestMethod(QuiltTestContext, org.quiltmc.qsl.game_test.api.TestMethod)}
- * which override entirely how the test is invoked, the default invocation is done using
+ * which entirely overrides how the test is invoked; the default invocation is done using
  * {@link org.quiltmc.qsl.game_test.api.TestMethod#invoke(java.lang.Object, java.lang.Object...)} with the instance of the class (if the method isn't
- * {@code static}), and as first parameter the test context.
+ * {@code static}), and the test context as the first parameter.
  */
 
 package org.quiltmc.qsl.game_test.api;
