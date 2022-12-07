@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.entity_events.test.client;
+package org.quiltmc.qsl.entity.event.test.client;
 
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
@@ -23,10 +23,12 @@ import net.minecraft.entity.mob.SlimeEntity;
 import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.particle.ParticleTypes;
 
-import org.quiltmc.qsl.entity_events.api.client.ClientEntityLoadEvents;
-import org.quiltmc.qsl.entity_events.api.client.ClientEntityTickCallback;
-import org.quiltmc.qsl.entity_events.test.EntityEventsTestMod;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
+import org.quiltmc.qsl.entity.event.api.client.ClientEntityLoadEvents;
+import org.quiltmc.qsl.entity.event.api.client.ClientEntityTickCallback;
+import org.quiltmc.qsl.entity.event.test.EntityEventsTestMod;
 
+@ClientOnly
 public class EntityEventsTestModClient implements ClientEntityLoadEvents.AfterLoad, ClientEntityLoadEvents.AfterUnload, ClientEntityTickCallback {
 	// Chicken Loading is logged.
 	@Override

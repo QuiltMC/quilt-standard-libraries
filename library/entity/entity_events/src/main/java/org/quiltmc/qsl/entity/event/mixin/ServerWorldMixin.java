@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.entity_events.mixin.client;
+package org.quiltmc.qsl.entity.event.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
+import net.minecraft.server.world.ServerWorld;
 
-import org.quiltmc.qsl.entity_events.api.client.ClientEntityTickCallback;
+import org.quiltmc.qsl.entity.event.api.ServerEntityTickCallback;
 
-@Mixin(ClientWorld.class)
-public abstract class ClientWorldMixin {
+@Mixin(ServerWorld.class)
+public abstract class ServerWorldMixin {
 	@Inject(method = "tickEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;tick()V"))
 	void invokeEntityTickEvent(Entity entity, CallbackInfo ci) {
-		ClientEntityTickCallback.EVENT.invoker().onClientEntityTick(entity, false);
+		ServerEntityTickCallback.EVENT.invoker().onServerEntityTick(entity, false);
 	}
 
 	@Inject(method = "tickPassenger", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;tickRiding()V"))
 	void invokePassengerEntityTickEvent(Entity vehicle, Entity passenger, CallbackInfo ci) {
-		ClientEntityTickCallback.EVENT.invoker().onClientEntityTick(passenger, true);
+		ServerEntityTickCallback.EVENT.invoker().onServerEntityTick(passenger, true);
 	}
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.entity_events.test;
+package org.quiltmc.qsl.entity.event.test;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,12 +36,12 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.dimension.DimensionTypes;
 
-import org.quiltmc.qsl.entity_events.api.EntityReviveEvents;
-import org.quiltmc.qsl.entity_events.api.EntityWorldChangeEvents;
-import org.quiltmc.qsl.entity_events.api.LivingEntityDeathCallback;
-import org.quiltmc.qsl.entity_events.api.ServerEntityLoadEvents;
-import org.quiltmc.qsl.entity_events.api.ServerEntityTickCallback;
-import org.quiltmc.qsl.entity_events.api.ServerPlayerEntityCopyCallback;
+import org.quiltmc.qsl.entity.event.api.EntityReviveEvents;
+import org.quiltmc.qsl.entity.event.api.EntityWorldChangeEvents;
+import org.quiltmc.qsl.entity.event.api.LivingEntityDeathCallback;
+import org.quiltmc.qsl.entity.event.api.ServerEntityLoadEvents;
+import org.quiltmc.qsl.entity.event.api.ServerEntityTickCallback;
+import org.quiltmc.qsl.entity.event.api.ServerPlayerEntityCopyCallback;
 
 public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTotem,
 		EntityReviveEvents.TryReviveBeforeTotem,

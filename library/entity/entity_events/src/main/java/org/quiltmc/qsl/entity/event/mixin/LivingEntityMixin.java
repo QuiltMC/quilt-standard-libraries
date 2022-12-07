@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.entity_events.mixin;
+package org.quiltmc.qsl.entity.event.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 
-import org.quiltmc.qsl.entity_events.api.EntityReviveEvents;
+import org.quiltmc.qsl.entity.event.api.EntityReviveEvents;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {

@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.entity_events.api.client;
+package org.quiltmc.qsl.entity.event.api.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import net.minecraft.entity.Entity;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 
@@ -30,7 +31,7 @@ import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
  * There are two types of entity tick - standalone ({@link Entity#tick()}) and riding ({@link Entity#tickRiding()}).
  * This callback takes a parameter which specifies which type of tick it is.
  */
-@Environment(EnvType.CLIENT)
+@ClientOnly
 @FunctionalInterface
 public interface ClientEntityTickCallback extends ClientEventAwareListener {
 	/**

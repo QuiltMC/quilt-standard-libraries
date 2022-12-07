@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.entity_events.mixin;
+package org.quiltmc.qsl.entity.event.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,7 +28,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
 
-import org.quiltmc.qsl.entity_events.api.LivingEntityDeathCallback;
+import org.quiltmc.qsl.entity.event.api.LivingEntityDeathCallback;
 
 @Mixin(value = { LivingEntity.class, ServerPlayerEntity.class })
 public abstract class LivingEntityDeathEventMixin extends Entity {
