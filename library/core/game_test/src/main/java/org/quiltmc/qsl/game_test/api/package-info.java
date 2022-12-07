@@ -19,7 +19,7 @@
  * they take as argument {@link org.quiltmc.qsl.game_test.api.QuiltTestContext} which is an extension of {@link net.minecraft.test.TestContext},
  * and annotating them with {@link net.minecraft.test.GameTest} will make them a test to run.
  * <p>
- * One of the special parts of game tests is they have a structure associated to them, as the goal is to test inside a game world with running
+ * One of the special parts of game tests is that they have a structure associated to them, as the goal is to test inside a game world with running
  * game logic. Structures are located in the mod resources as follow {@code data/<id namespace>/game_test/structures/<id path>.snbt}.
  * If we take the provided empty structure {@link org.quiltmc.qsl.game_test.api.QuiltGameTest#EMPTY_STRUCTURE {@code quilt:empty}}, it is located in
  * {@code data/quilt/game_test/structures/empty.snbt}.

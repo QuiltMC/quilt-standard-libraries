@@ -166,7 +166,7 @@ loom {
 			property("quilt.auto_test")
 		}
 
-		// Game test server, a server is executes tests using Minecraft's test framework.
+		// Game test server, a server that executes tests using Minecraft's test framework.
 		gameTestServer {
 			inherit testmodServer
 

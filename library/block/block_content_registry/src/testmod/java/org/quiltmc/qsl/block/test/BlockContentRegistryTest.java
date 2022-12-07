@@ -163,7 +163,6 @@ public class BlockContentRegistryTest implements ModInitializer, QuiltGameTest {
 			);
 		}
 
-		record Entry(BlockPos pos, BlockState baseState, BlockState targetState) {
-		}
+		record Entry(BlockPos pos, BlockState baseState, BlockState targetState) {}
 	}
 }
