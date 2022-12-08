@@ -54,5 +54,7 @@ public final class Initializer implements ModInitializer {
 		} else {
 			LOGGER.info("[Quilt Debug Renderers] Command support is disabled");
 		}
+
+		VanillaDebugFeatures.init();
 	}
 }
