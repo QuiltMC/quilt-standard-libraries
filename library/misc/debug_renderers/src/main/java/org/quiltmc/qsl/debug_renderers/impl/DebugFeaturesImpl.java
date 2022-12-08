@@ -12,7 +12,7 @@ import java.util.*;
 @ApiStatus.Internal
 public class DebugFeaturesImpl {
 	private static final Map<Identifier, DebugFeature> DEBUG_FEATURES = new HashMap<>();
-	private static final Set<Identifier> ENABLED_FEATURES = new HashSet<>();
+	private static final Set<DebugFeature> ENABLED_FEATURES = new HashSet<>();
 	private static final WeakHashMap<ServerPlayerEntity, Set<Identifier>> ENABLED_FEATURES_PER_PLAYER = new WeakHashMap<>();
 	@ClientOnly
 	private static final Set<Identifier> ENABLED_FEATURES_ON_SERVER = new HashSet<>();
@@ -31,15 +31,19 @@ public class DebugFeaturesImpl {
 	}
 
 	public static boolean isEnabled(DebugFeature feature) {
-		return ENABLED_FEATURES.contains(feature.id());
+		return ENABLED_FEATURES.contains(feature);
 	}
 
 	public static void setEnabled(DebugFeature feature, boolean value) {
 		if (value) {
-			ENABLED_FEATURES.add(feature.id());
+			ENABLED_FEATURES.add(feature);
 		} else {
-			ENABLED_FEATURES.remove(feature.id());
+			ENABLED_FEATURES.remove(feature);
 		}
+	}
+
+	public static Set<DebugFeature> getEnabledFeatures() {
+		return new HashSet<>(ENABLED_FEATURES);
 	}
 
 	public static boolean isEnabledForPlayer(ServerPlayerEntity player, DebugFeature feature) {

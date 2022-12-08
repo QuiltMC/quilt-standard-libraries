@@ -1,18 +1,13 @@
 {
   "required": true,
-  "package": "org.quiltmc.qsl.command.mixin",
+  "package": "org.quiltmc.qsl.debug_renderers.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "ArgumentTypeInfosAccessor",
-    "CommandManagerMixin",
-    "CommandManagerMixin$RegistrationEnvironmentMixin",
-    "EntitySelectorOptionsAccessor",
-    "EntitySelectorReaderMixin",
-    "RequiredArgumentBuilderAccessor",
-    "ServerLoginNetworkHandlerMixin",
-    "ServerPlayerEntityMixin"
+    "MinecraftClientMixin"
   ],
-  "client": [],
+  "client": [
+    "DebugRendererMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

@@ -26,12 +26,12 @@ public final class DebugFeature {
 	}
 
 	@ClientOnly
-	boolean isEnabledOnServerAndClient() {
+	public boolean isEnabledOnServerAndClient() {
 		return DebugFeaturesImpl.isEnabledOnServer(this) && DebugFeaturesImpl.isEnabledOnServer(this);
 	}
 
 	@ClientOnly
-	boolean shouldRender() {
+	public boolean shouldRender() {
 		return this.isEnabled() && !this.needsServer() || this.isEnabledOnServerAndClient();
 	}
 

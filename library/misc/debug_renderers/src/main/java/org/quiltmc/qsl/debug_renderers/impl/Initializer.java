@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.debug_renderers.impl;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.quiltmc.qsl.debug_renderers.api.DebugFeature;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.slf4j.Logger;
 import com.mojang.brigadier.arguments.StringArgumentType;

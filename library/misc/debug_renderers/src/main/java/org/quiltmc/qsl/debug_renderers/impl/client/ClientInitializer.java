@@ -18,9 +18,12 @@
 package org.quiltmc.qsl.debug_renderers.impl.client;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.client.MinecraftClient;
 import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.loader.api.minecraft.ClientOnly;
+import org.quiltmc.qsl.debug_renderers.api.client.DebugRendererRegistrationCallback;
 import org.quiltmc.qsl.debug_renderers.impl.DebugFeatureSync;
+import org.quiltmc.qsl.debug_renderers.impl.Initializer;
 import org.slf4j.Logger;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -46,6 +49,5 @@ public final class ClientInitializer implements ClientModInitializer {
 		} else {
 			LOGGER.info("[Quilt Debug Renderers|Client] Client Command support is disabled");
 		}
-
 	}
 }
