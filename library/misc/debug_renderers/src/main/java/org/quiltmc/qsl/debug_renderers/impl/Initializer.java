@@ -17,10 +17,10 @@
 package org.quiltmc.qsl.debug_renderers.impl;
 
 import org.jetbrains.annotations.ApiStatus;
-import org.quiltmc.qsl.debug_renderers.api.DebugFeature;
-import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
+
+import org.quiltmc.qsl.debug_renderers.api.VanillaDebugFeatures;
+
 import org.slf4j.Logger;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.util.Identifier;
@@ -28,8 +28,6 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-import org.quiltmc.qsl.command.api.EnumArgumentType;
-import org.quiltmc.qsl.command.api.ServerArgumentType;
 
 @ApiStatus.Internal
 public final class Initializer implements ModInitializer {

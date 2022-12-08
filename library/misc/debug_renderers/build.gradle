@@ -23,6 +23,9 @@ qslModule {
 		init {
 			values = ["org.quiltmc.qsl.debug_renderers.impl.Initializer"]
 		}
+		client_events {
+			values = ["org.quiltmc.qsl.debug_renderers.impl.client.VanillaDebugRenderers"]
+		}
 		client_init {
 			values = ["org.quiltmc.qsl.debug_renderers.impl.client.ClientInitializer"]
 		}

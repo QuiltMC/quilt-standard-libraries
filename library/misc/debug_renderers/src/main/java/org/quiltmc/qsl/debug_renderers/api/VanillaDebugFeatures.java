@@ -1,4 +1,4 @@
-package org.quiltmc.qsl.debug_renderers.impl;
+package org.quiltmc.qsl.debug_renderers.api;
 
 import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.debug_renderers.api.DebugFeature;
