@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "org.quiltmc.qsl.debug_renderers",
+    "id": "quilt_debug_renderers_testmod",
+    "version": "1.0.0",
+    "metadata": {
+      "name": "Quilt Debug Renderers API Test Mod",
+      "description": "Testmod for Quilt Debug Renderers API.",
+      "license": "Apache-2.0",
+      "contact": {
+        "homepage": "https://quiltmc.org",
+        "issues": "https://github.com/QuiltMC/quilt-standard-libraries/issues",
+        "sources": "https://github.com/QuiltMC/quilt-standard-libraries"
+      },
+      "contributors": {
+        "QuiltMC: QSL Team": "Author"
+      }
+    },
+    "intermediate_mappings": "net.fabricmc:intermediary",
+    "load_type": "always",
+    "entrypoints": {
+    },
+    "depends": [
+      "quilt_loader",
+      "quilt_debug_renderers"
+    ]
+  }
+}
