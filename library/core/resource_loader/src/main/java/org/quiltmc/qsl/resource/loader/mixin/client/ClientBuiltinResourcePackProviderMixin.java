@@ -69,12 +69,16 @@ public class ClientBuiltinResourcePackProviderMixin {
 		cir.setReturnValue(ResourceLoaderImpl.buildMinecraftResourcePack(ResourceType.CLIENT_RESOURCES, cir.getReturnValue()));
 	}
 
+	@ClientOnly
 	@Mixin(BuiltinResourcePackProvider.class)
 	public static class Parent {
+		@SuppressWarnings("ConstantConditions")
 		@Inject(method = "registerAdditionalPacks", at = @At("RETURN"))
 		private void addBuiltinResourcePacks(Consumer<ResourcePackProfile> profileAdder, CallbackInfo ci) {
 			// Register built-in resource packs after vanilla built-in resource packs are registered.
-			ModResourcePackProvider.CLIENT_RESOURCE_PACK_PROVIDER.register(profileAdder);
+			if (((Object) this) instanceof ClientBuiltinResourcePackProvider) {
+				ModResourcePackProvider.CLIENT_RESOURCE_PACK_PROVIDER.register(profileAdder);
+			}
 		}
 	}
 }
