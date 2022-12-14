@@ -17,6 +17,7 @@
 
 package org.quiltmc.qsl.resource.loader.impl;
 
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,6 +44,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.minecraft.resource.MultiPackResourceManager;
 import net.minecraft.resource.NamespaceResourceManager;
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.resource.ResourceType;
@@ -51,20 +53,24 @@ import net.minecraft.resource.pack.DefaultResourcePack;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.ResourcePackProfile;
 import net.minecraft.resource.pack.ResourcePackProvider;
+import net.minecraft.resource.pack.VanillaDataPackProvider;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Language;
 import net.minecraft.util.Pair;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.ModMetadata;
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader;
+import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.phase.PhaseData;
 import org.quiltmc.qsl.base.api.phase.PhaseSorting;
 import org.quiltmc.qsl.base.api.util.TriState;
 import org.quiltmc.qsl.resource.loader.api.GroupResourcePack;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
+import org.quiltmc.qsl.resource.loader.api.ResourcePackRegistrationContext;
 import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;
 import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 import org.quiltmc.qsl.resource.loader.mixin.NamespaceResourceManagerAccessor;
@@ -98,6 +104,17 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	private final Set<IdentifiableResourceReloader> addedReloaders = new LinkedHashSet<>();
 	private final Set<Pair<Identifier, Identifier>> reloadersOrdering = new LinkedHashSet<>();
 	final Set<ResourcePackProvider> resourcePackProfileProviders = new ObjectOpenHashSet<>();
+
+	private final Event<ResourcePackRegistrationContext.Callback> defaultResourcePackRegistrationEvent = createResourcePackRegistrationEvent();
+	private final Event<ResourcePackRegistrationContext.Callback> topResourcePackRegistrationEvent = createResourcePackRegistrationEvent();
+
+	private static Event<ResourcePackRegistrationContext.Callback> createResourcePackRegistrationEvent() {
+		return Event.create(ResourcePackRegistrationContext.Callback.class, callbacks -> context -> {
+			for (var callback : callbacks) {
+				callback.onRegisterPack(context);
+			}
+		});
+	}
 
 	public static ResourceLoaderImpl get(ResourceType type) {
 		return IMPL_MAP.computeIfAbsent(type, t -> new ResourceLoaderImpl());
@@ -150,6 +167,20 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 					"Tried to register a resource pack profile provider twice!"
 			);
 		}
+	}
+
+	@Override
+	public @NotNull Event<ResourcePackRegistrationContext.Callback> getRegisterDefaultResourcePackEvent() {
+		return this.defaultResourcePackRegistrationEvent;
+	}
+
+	@Override
+	public @NotNull Event<ResourcePackRegistrationContext.Callback> getRegisterTopResourcePackEvent() {
+		return this.topResourcePackRegistrationEvent;
+	}
+
+	public void appendTopPacks(MultiPackResourceManager resourceManager, Consumer<ResourcePack> resourcePackAdder) {
+		this.topResourcePackRegistrationEvent.invoker().onRegisterPack(new ResourcePackRegistrationContextImpl(resourceManager, resourcePackAdder));
 	}
 
 	/**
@@ -343,15 +374,30 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		packs.addAll(packList);
 	}
 
-	public static GroupResourcePack.Wrapped buildMinecraftResourcePack(DefaultResourcePack vanillaPack) {
-		var type = vanillaPack.getClass().equals(DefaultResourcePack.class)
-				? ResourceType.SERVER_DATA : ResourceType.CLIENT_RESOURCES;
-
+	public static GroupResourcePack.Wrapped buildMinecraftResourcePack(ResourceType type, DefaultResourcePack vanillaPack) {
 		// Build a list of mod resource packs.
 		var packs = new ArrayList<ResourcePack>();
 		appendModResourcePacks(packs, type, null);
 
-		return new GroupResourcePack.Wrapped(type, vanillaPack, packs, false);
+		var pack = new GroupResourcePack.Wrapped(type, vanillaPack, packs, false);
+		int[] lastExtraPackIndex = new int[] {1};
+
+		var context = new ResourcePackRegistrationContextImpl(type, List.of(pack), p -> {
+			packs.add(lastExtraPackIndex[0]++, p);
+			pack.recomputeNamespaces();
+		});
+
+		get(type).getRegisterDefaultResourcePackEvent().invoker().onRegisterPack(context);
+
+		return pack;
+	}
+
+	public static GroupResourcePack.Wrapped buildMinecraftResourcePack(DefaultResourcePack vanillaPack) {
+		return buildMinecraftResourcePack(
+				vanillaPack.getClass().equals(DefaultResourcePack.class)
+						? ResourceType.SERVER_DATA : ResourceType.CLIENT_RESOURCES,
+				vanillaPack
+		);
 	}
 
 	public static GroupResourcePack.Wrapped buildProgrammerArtResourcePack(AbstractFileResourcePack vanillaPack) {
@@ -452,6 +498,33 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 
 				if (profile != null) {
 					profileAdder.accept(profile);
+				}
+			}
+		}
+	}
+
+	/* Language stuff */
+
+	/**
+	 * Appends to the given map all the default language entries.
+	 *
+	 * @param map the language map
+	 */
+	public static void appendLanguageEntries(@NotNull Map<String, String> map) {
+		var pack = ResourceLoaderImpl.buildMinecraftResourcePack(ResourceType.CLIENT_RESOURCES,
+				new DefaultResourcePack(VanillaDataPackProvider.DEFAULT_PACK_METADATA, "minecraft")
+		);
+
+		try (var manager = new MultiPackResourceManager(ResourceType.CLIENT_RESOURCES, List.of(pack))) {
+			for (var namespace : manager.getAllNamespaces()) {
+				var langId = new Identifier(namespace, "lang/" + Language.DEFAULT_LANGUAGE + ".json");
+
+				for (var resource : manager.getAllResources(langId)) {
+					try (var stream = resource.open()) {
+						Language.load(stream, map::put);
+					} catch (IOException e) {
+						LOGGER.error("Couldn't load language file {} from pack {}.", langId, resource.getSourceName());
+					}
 				}
 			}
 		}

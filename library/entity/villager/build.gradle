@@ -1,0 +1,18 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Villager API"
+	moduleName = "villager"
+	id = "quilt_villager"
+	description = "Helpers for creating villager types and trades."
+	library = "entity"
+	moduleDependencies {
+		core {
+			api("resource_loader")
+			testmodOnly("qsl_base")
+		}
+	}
+	accessWidener()
+}

@@ -19,9 +19,10 @@ package org.quiltmc.qsl.screen.test.client;
 
 import java.util.List;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
@@ -33,7 +34,6 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
-import org.quiltmc.qsl.screen.api.client.QuiltScreen;
 import org.quiltmc.qsl.screen.api.client.ScreenEvents;
 
 public class ScreenTests implements ScreenEvents.AfterInit, ScreenEvents.AfterRender {
@@ -43,7 +43,7 @@ public class ScreenTests implements ScreenEvents.AfterInit, ScreenEvents.AfterRe
 	@Override
 	public void afterInit(Screen screen, MinecraftClient client, int scaledWidth, int scaledHeight) {
 		if (screen instanceof TitleScreen) {
-			final List<ClickableWidget> buttons = ((QuiltScreen) screen).getButtons();
+			final List<ClickableWidget> buttons = screen.getButtons();
 
 			buttons.add(
 					new ButtonWidget((screen.width / 2) + 120, ((screen.height / 4) + 95), 70, 20, Text.of("Hello world!!"),

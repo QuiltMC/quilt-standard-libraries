@@ -30,8 +30,8 @@ public final class QmjBuilder {
 				.endObject() // contributors -> metadata
 				.name("contact").beginObject() // contributors -> contact
 				.name("homepage").value("https://quiltmc.org")
-				.name("issues").value("https://github.com/quiltmc/quilt-standard-libaries/issues")
-				.name("sources").value("https://github.com/quiltmc/quilt-standard-libraries")
+				.name("issues").value("https://github.com/QuiltMC/quilt-standard-libraries/issues")
+				.name("sources").value("https://github.com/QuiltMC/quilt-standard-libraries")
 				.endObject() // contact -> metadata
 				.name("license").value("Apache-2.0")
 				.name("icon").value("assets/" + ext.getId().get() + "/icon.png")
@@ -60,6 +60,7 @@ public final class QmjBuilder {
 
 			writer.endArray();
 		}
+
 		writer.endObject();
 
 		for (QslLibraryDependency depend : ext.getModuleDependencyDefinitions()) {
@@ -77,10 +78,24 @@ public final class QmjBuilder {
 				if (moduleDependencyInfo.type() == QslLibraryDependency.ConfigurationType.COMPILE_ONLY) {
 					writer.name("optional").value(true);
 				}
+
 				writer.endObject();
 			}
 		}
+
 		writer.endArray(); // depends -> quilt_loader
+
+		// Provides
+		var provides = ext.getProvides();
+		if (provides.isPresent() && !provides.get().isEmpty()) {
+			writer.name("provides").beginArray();
+
+			for (var provide : provides.get()) {
+				provide.write(writer);
+			}
+
+			writer.endArray(); // provides -> quilt_loader
+		}
 
 		if (!ext.getEntrypoints().isEmpty()) {
 			writer.name("entrypoints").beginObject(); // quilt_loader -> entrypoints
@@ -90,10 +105,13 @@ public final class QmjBuilder {
 				for (String clazz : entrypoint.getValues().get()) {
 					writer.value(clazz);
 				}
+
 				writer.endArray();
 			}
+
 			writer.endObject(); // entrypoints -> quilt_loader
 		}
+
 		writer.endObject(); // quilt_loader -> root object
 
 		if (ext.getHasMixins().get()) {
@@ -110,6 +128,7 @@ public final class QmjBuilder {
 					.name("environment").value(ext.getEnvironment().get().qmj)
 					.endObject(); // minecraft -> root object
 		}
+
 		writer.name("modmenu").beginObject() // root object -> modmenu
 				.name("badges").beginArray().value("library").endArray()
 				.name("parent").beginObject() // modmenu -> parent

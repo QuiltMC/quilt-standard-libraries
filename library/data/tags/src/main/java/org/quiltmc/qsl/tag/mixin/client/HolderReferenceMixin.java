@@ -40,16 +40,16 @@ public abstract class HolderReferenceMixin<T> implements Holder<T>, QuiltHolderR
 	private Set<TagKey<T>> quilt$clientTags = Set.of();
 
 	@SuppressWarnings({"unchecked", "RedundantCast"})
-	@Inject(method = "hasTag", at = @At("HEAD"), cancellable = true)
-	private void onHasTagStart(TagKey<T> tag, CallbackInfoReturnable<Boolean> cir) {
+	@Inject(method = "isIn", at = @At("HEAD"), cancellable = true)
+	private void onIsInStart(TagKey<T> tag, CallbackInfoReturnable<Boolean> cir) {
 		if (((QuiltTagKey<T>) (Object) tag).type() == TagType.CLIENT_ONLY) {
 			cir.setReturnValue(this.quilt$clientTags.contains(tag));
 		}
 	}
 
 	@SuppressWarnings({"unchecked", "RedundantCast"})
-	@Inject(method = "hasTag", at = @At("RETURN"), cancellable = true)
-	private void onHasTagEnd(TagKey<T> tag, CallbackInfoReturnable<Boolean> cir) {
+	@Inject(method = "isIn", at = @At("RETURN"), cancellable = true)
+	private void onIsInEnd(TagKey<T> tag, CallbackInfoReturnable<Boolean> cir) {
 		if (((QuiltTagKey<T>) (Object) tag).type() == TagType.CLIENT_FALLBACK && !cir.getReturnValueZ()) {
 			cir.setReturnValue(this.quilt$fallbackTags.contains(tag));
 		}

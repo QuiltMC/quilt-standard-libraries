@@ -45,7 +45,6 @@ import org.quiltmc.qsl.registry.api.StatusEffectsSerializationConstants;
  */
 @Mixin(BeaconBlockEntity.class)
 public class BeaconBlockEntityMixin {
-
 	@Shadow
 	@Final
 	private static Set<StatusEffect> EFFECTS;
@@ -61,6 +60,7 @@ public class BeaconBlockEntityMixin {
 		if (this.primary != null) {
 			nbt.putString(StatusEffectsSerializationConstants.BEACON_PRIMARY_EFFECT_KEY, Registry.STATUS_EFFECT.getId(this.primary).toString());
 		}
+
 		if (this.secondary != null) {
 			nbt.putString(StatusEffectsSerializationConstants.BEACON_SECONDARY_EFFECT_KEY, Registry.STATUS_EFFECT.getId(this.secondary).toString());
 		}

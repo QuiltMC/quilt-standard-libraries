@@ -13,7 +13,7 @@ qslModule {
 			api("qsl_base")
 		}
 		data {
-			api("registry_entry_attachments")
+			api("registry_entry_attachment")
 		}
 		gui {
 			compileOnly("tooltip")
