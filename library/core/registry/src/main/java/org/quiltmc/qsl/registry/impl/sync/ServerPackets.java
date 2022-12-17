@@ -17,17 +17,20 @@
 package org.quiltmc.qsl.registry.impl.sync;
 
 import it.unimi.dsi.fastutil.ints.IntSet;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.util.Identifier;
+
 /**
- * Identifiers of packets sent by server
+ * Identifiers of packets sent by server.
  */
 @ApiStatus.Internal
 public final class ServerPackets {
-	public static final IntSet SUPPORTED_VERSIONS = IntSet.of(1);
+	public static final IntSet SUPPORTED_VERSIONS = IntSet.of(1, 2);
+
 	/**
-	 * Starts registry sync
+	 * Starts registry sync.
+	 *
 	 * <pre><code>
 	 * {
 	 *   Count: VarInt
@@ -45,7 +48,8 @@ public final class ServerPackets {
 	public static final Identifier END = id("registry_sync/end");
 
 	/**
-	 * Sets current registry for next {@link ServerPackets#REGISTRY_DATA} and {@link ServerPackets#REGISTRY_RESTORE} packets
+	 * Sets current registry for next {@link ServerPackets#REGISTRY_DATA} and {@link ServerPackets#REGISTRY_RESTORE} packets.
+	 *
 	 * <pre><code>
 	 * {
 	 *   Registry identifier: Identifier
@@ -57,7 +61,8 @@ public final class ServerPackets {
 	public static final Identifier REGISTRY_START = id("registry_sync/registry_start");
 
 	/**
-	 * This packet transmits registry data required for sync
+	 * This packet transmits registry data required for sync.
+	 *
 	 * <pre><code>
 	 * {
 	 *   Count of Namespaces: VarInt
@@ -84,7 +89,6 @@ public final class ServerPackets {
 	 * Applies changes to current registry, doesn't have any data.
 	 */
 	public static final Identifier REGISTRY_RESTORE = id("registry_sync/registry_restore");
-
 
 	private static Identifier id(String path) {
 		return new Identifier("qsl", path);

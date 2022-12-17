@@ -39,6 +39,17 @@ public interface QuiltTagKey<T> {
 	TagType type();
 
 	/**
+	 * Creates a new tag key based on another key but with a different type.
+	 *
+	 * @param tag  the tag key to base the new one on
+	 * @param type the type of the tag
+	 * @return the new tag key
+	 */
+	static <T> TagKey<T> of(TagKey<T> key, TagType type) {
+		return QuiltTagKey.of(key.registry(), key.id(), type);
+	}
+
+	/**
 	 * Creates a new tag key.
 	 *
 	 * @param registry the registry for which this tag key is valid

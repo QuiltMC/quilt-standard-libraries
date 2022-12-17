@@ -16,10 +16,10 @@
 
 package org.quiltmc.qsl.command.impl;
 
-import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.logging.LogUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.logging.LogUtils;
 
 import net.minecraft.util.Identifier;
 

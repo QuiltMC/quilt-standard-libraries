@@ -73,11 +73,11 @@ public final class RegistryEntryAttachmentSync {
 
 	private record AttachmentEntry(String path, boolean isTag, NbtElement value) {
 		public void write(PacketByteBuf buf) {
-			buf.writeString(path);
-			buf.writeBoolean(isTag);
+			buf.writeString(this.path);
+			buf.writeBoolean(this.isTag);
 
 			NbtCompound compound = new NbtCompound();
-			compound.put("value", value);
+			compound.put("value", this.value);
 			buf.writeNbt(compound);
 		}
 
@@ -116,6 +116,7 @@ public final class RegistryEntryAttachmentSync {
 				for (AttachmentEntry attachmentEntry : valueMap.entries()) {
 					attachmentEntry.write(buf);
 				}
+
 				bufs.add(buf);
 			}
 		}
@@ -131,7 +132,7 @@ public final class RegistryEntryAttachmentSync {
 		}
 
 		for (var player : server.getPlayerManager().getPlayerList()) {
-			if (!canSyncToPlay(player)) continue;
+			if (isPlayerLocal(player)) continue;
 
 			for (var buf : createSyncPackets()) {
 				ServerPlayNetworking.send(player, PACKET_ID, buf);
@@ -139,14 +140,12 @@ public final class RegistryEntryAttachmentSync {
 		}
 	}
 
-	private static boolean canSyncToPlay(ServerPlayerEntity player) {
+	private static boolean isPlayerLocal(ServerPlayerEntity player) {
 		if (MinecraftQuiltLoader.getEnvironmentType() == EnvType.CLIENT) {
-			var clientPlayer = MinecraftClient.getInstance().player;
-
-			return clientPlayer == null || !player.getUuid().equals(MinecraftClient.getInstance().player.getUuid());
+			return player.getUuid().equals(MinecraftClient.getInstance().getSession().getPlayerUuid());
 		}
 
-		return true;
+		return false;
 	}
 
 	public static void clearEncodedValuesCache() {
@@ -216,6 +215,8 @@ public final class RegistryEntryAttachmentSync {
 	}
 
 	private static void syncAttachmentsToPlayer(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server) {
+		if (isPlayerLocal(handler.getPlayer())) return;
+
 		for (var buf : RegistryEntryAttachmentSync.createSyncPackets()) {
 			sender.sendPacket(RegistryEntryAttachmentSync.PACKET_ID, buf);
 		}

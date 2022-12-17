@@ -124,12 +124,13 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 		switch (packet.getParameter()) {
 			case HELLO_PING -> {
 				if (this.syncVersion != -1) {
-					ServerRegistrySync.sendSyncPackets(this.connection, this.player);
+					ServerRegistrySync.sendSyncPackets(this.connection, this.player, this.syncVersion);
 				} else if (ServerRegistrySync.supportFabric && ((ChannelInfoHolder) this.connection).getPendingChannelsNames().contains(ServerFabricRegistrySync.ID)) {
 					ServerFabricRegistrySync.sendSyncPackets(this.connection);
 					this.syncVersion = -2;
 				}
-				connection.send(new PlayPingS2CPacket(GOODBYE_PING));
+
+				this.connection.send(new PlayPingS2CPacket(GOODBYE_PING));
 			}
 			case GOODBYE_PING -> {
 				if (this.syncVersion == -1 && ServerRegistrySync.requiresSync()) {
@@ -150,12 +151,11 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 		if (packet.getChannel().equals(ClientPackets.HANDSHAKE)) {
 			this.syncVersion = packet.getData().readVarInt();
 		} else if (packet.getChannel().equals(ClientPackets.SYNC_FAILED)) {
-			LOGGER.info("Disconnecting {} due to sync failure of {} registry", player.getGameProfile().getName(), packet.getData().readIdentifier());
+			LOGGER.info("Disconnecting {} due to sync failure of {} registry", this.player.getGameProfile().getName(), packet.getData().readIdentifier());
 		} else {
 			this.delayedPackets.add(new CustomPayloadC2SPacket(packet.getChannel(), new PacketByteBuf(packet.getData().copy())));
 		}
 	}
-
 
 	@Override
 	public void onDisconnected(Text reason) {
@@ -171,6 +171,7 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 			for (var packet : this.delayedPackets) {
 				packet.getData().release();
 			}
+
 			this.connection.send(new DisconnectS2CPacket(reason), PacketSendListener.alwaysRun(() -> {
 				this.connection.disconnect(reason);
 			}));
@@ -197,7 +198,7 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 	public void onRequestChatPreview(RequestChatPreviewC2SPacket packet) {}
 
 	@Override
-	public void method_44898(C_vtnjglse c_vtnjglse) {}
+	public void m_vuqeccvs(C_vtnjglse c_vtnjglse) {}
 
 	@Override
 	public void onClientStatus(ClientStatusC2SPacket packet) {}

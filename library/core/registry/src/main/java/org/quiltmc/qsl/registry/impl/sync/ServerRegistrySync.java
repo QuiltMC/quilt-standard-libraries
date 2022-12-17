@@ -38,7 +38,6 @@ public final class ServerRegistrySync {
 	public static boolean supportFabric = false;
 
 	public static void readConfig() {
-
 		try {
 			noRegistrySyncMessage = Text.Serializer.fromJson(RegistryConfig.INSTANCE.registry_sync.missing_registry_sync_message);
 		} catch (Exception e) {
@@ -74,11 +73,10 @@ public final class ServerRegistrySync {
 		return false;
 	}
 
-	public static void sendSyncPackets(ClientConnection connection, ServerPlayerEntity player) {
+	public static void sendSyncPackets(ClientConnection connection, ServerPlayerEntity player, int syncVersion) {
 		for (var registry : Registry.REGISTRIES) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
 					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
-
 				var map = synchronizedRegistry.quilt$getSyncMap();
 
 				var packetData = new HashMap<String, ArrayList<SynchronizedRegistry.SyncEntry>>();
@@ -104,7 +102,13 @@ public final class ServerRegistrySync {
 					}
 				}
 
-				connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.REGISTRY_RESTORE, PacketByteBufs.empty()));
+				// As QSL historically sent REGISTRY_RESTORE instead of REGISTRY_APPLY for applying the registry sync,
+				// the server must send REGISTRY_RESTORE to older clients that may have not updated QSL yet.
+				if (syncVersion <= 1) {
+					connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.REGISTRY_RESTORE, PacketByteBufs.empty()));
+				} else {
+					connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.REGISTRY_APPLY, PacketByteBufs.empty()));
+				}
 			}
 		}
 
@@ -138,6 +142,7 @@ public final class ServerRegistrySync {
 		if (((SynchronizedRegistry<T>) registry).quilt$getContentStatus() == SynchronizedRegistry.Status.OPTIONAL) {
 			flag |= (0x1 << RegistryFlag.OPTIONAL.ordinal());
 		}
+
 		buf.writeByte(flag);
 
 		connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.REGISTRY_START, buf));

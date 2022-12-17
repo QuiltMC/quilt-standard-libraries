@@ -11,8 +11,8 @@ qslModule {
 	moduleDependencies {
 		core {
 			api("qsl_base")
-			impl("registry")
-			impl("resource_loader")
+			api("registry")
+			api("resource_loader")
 			compileOnly("networking")
 
 			testmodOnly("lifecycle_events")
@@ -30,5 +30,9 @@ qslModule {
 
 	injectedInterface("net/minecraft/class_2170\u0024class_5364") {
 		values = ["org/quiltmc/qsl/command/api/QuiltCommandRegistrationEnvironment"]
+	}
+
+	injectedInterface("net/minecraft/class_2303") {
+		values = ["org/quiltmc/qsl/command/api/QuiltEntitySelectorReader"]
 	}
 }
