@@ -60,6 +60,7 @@ public final class QmjBuilder {
 
 			writer.endArray();
 		}
+
 		writer.endObject();
 
 		for (QslLibraryDependency depend : ext.getModuleDependencyDefinitions()) {
@@ -77,9 +78,11 @@ public final class QmjBuilder {
 				if (moduleDependencyInfo.type() == QslLibraryDependency.ConfigurationType.COMPILE_ONLY) {
 					writer.name("optional").value(true);
 				}
+
 				writer.endObject();
 			}
 		}
+
 		writer.endArray(); // depends -> quilt_loader
 
 		// Provides
@@ -102,10 +105,13 @@ public final class QmjBuilder {
 				for (String clazz : entrypoint.getValues().get()) {
 					writer.value(clazz);
 				}
+
 				writer.endArray();
 			}
+
 			writer.endObject(); // entrypoints -> quilt_loader
 		}
+
 		writer.endObject(); // quilt_loader -> root object
 
 		if (ext.getHasMixins().get()) {
@@ -122,6 +128,7 @@ public final class QmjBuilder {
 					.name("environment").value(ext.getEnvironment().get().qmj)
 					.endObject(); // minecraft -> root object
 		}
+
 		writer.name("modmenu").beginObject() // root object -> modmenu
 				.name("badges").beginArray().value("library").endArray()
 				.name("parent").beginObject() // modmenu -> parent

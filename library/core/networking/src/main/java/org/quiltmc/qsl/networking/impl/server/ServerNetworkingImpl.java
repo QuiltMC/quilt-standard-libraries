@@ -20,6 +20,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -43,7 +44,7 @@ public final class ServerNetworkingImpl {
 		return (ServerLoginNetworkAddon) ((NetworkHandlerExtensions) handler).getAddon();
 	}
 
-	public static Packet<?> createPlayC2SPacket(Identifier channel, PacketByteBuf buf) {
+	public static Packet<ClientPlayPacketListener> createPlayC2SPacket(Identifier channel, PacketByteBuf buf) {
 		return new CustomPayloadS2CPacket(channel, buf);
 	}
 }

@@ -83,17 +83,17 @@ Quick legend:
 
 ### Core - Resource Loader
 
-| Feature                               |      QSL       |            Fabric API            |
-|:--------------------------------------|:--------------:|:--------------------------------:|
-| Load mod resources.                   |       ✔        |                ✔                 |
-| Resource Loader Events                |       ✔        | ✔ (in lifecycle, non equivalent) |
-| Built-in resource pack API            |       ✔        |                ✔                 |
-| Programmer Art API                    |       ✔        |                ✔                 |
-| Group resource pack API               |       ✔        |                🙅                |
-| Resource Pack Provider API            |       ✔        |                ❌                 |
-| Resource Reloaders                    |       ✔        |                ✔                 |
-| Resource Reloaders - Advanced Sorting |       ✔        |                ❌                 |
-| Virtual Resource Packs                | :construction: |                ❌                 |
+| Feature                               | QSL |            Fabric API            |
+|:--------------------------------------|:---:|:--------------------------------:|
+| Load mod resources.                   |  ✔  |                ✔                 |
+| Resource Loader Events                |  ✔  | ✔ (in lifecycle, non equivalent) |
+| Built-in resource pack API            |  ✔  |                ✔                 |
+| Programmer Art API                    |  ✔  |                ✔                 |
+| Group resource pack API               |  ✔  |                🙅                |
+| Resource Pack Provider API            |  ✔  |                ❌                 |
+| Resource Reloaders                    |  ✔  |                ✔                 |
+| Resource Reloaders - Advanced Sorting |  ✔  |                ❌                 |
+| Virtual Resource Packs                |  ✔  |                ❌                 |
 
 ### Block Library
 
@@ -138,11 +138,11 @@ Quick legend:
 
 ### Entity Library
 
-| Feature                         |      QSL       |   Fabric API   |
-|:--------------------------------|:--------------:|:--------------:|
-| EntityType registration helpers | :construction: |       ✔        |
-| Entity Events                   | :construction: |       ✔        |
-| Multipart Entity API            |       ✔        |       ❌        |
+| Feature                         | QSL | Fabric API |
+|:--------------------------------|:---:|:----------:|
+| EntityType registration helpers |  ✔  |     ✔      |
+| Entity Events                   |  ✔  |     ✔      |
+| Multipart Entity API            |  ✔  |     ❌      |
 
 ### GUI Library
 
@@ -168,12 +168,13 @@ Quick legend:
 
 ### Management Library
 
-| Feature         | QSL | Fabric API |
-|:----------------|:---:|:----------:|
-| Commands        |  ✔  |     ✔      |
-| Client Commands |  ✔  |     ✔      |
-| Game Rules      |  ❌  |     ✔      |
-| Message API     |  ❌  |     ✔      |
+| Feature                 | QSL | Fabric API |
+|:------------------------|:---:|:----------:|
+| Commands                |  ✔  |     ✔      |
+| Client Commands         |  ✔  |     ✔      |
+| Game Rules              |  ❌  |     ✔      |
+| Entity Selector Options |  ✔  |     ❌      |
+| Message API             |  ❌  |     ✔      |
 
 ### Rendering Library
 

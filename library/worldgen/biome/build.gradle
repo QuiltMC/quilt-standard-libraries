@@ -12,6 +12,7 @@ qslModule {
 		core {
 			api("qsl_base")
 			testmodOnly("resource_loader")
+			testmodOnly("lifecycle_events")
 		}
 	}
 	accessWidener()

@@ -19,7 +19,7 @@ package org.quiltmc.qsl.registry.attachment.impl;
 import net.minecraft.resource.ResourceType;
 
 public final class DataRegistryEntryAttachmentHolder<R> extends RegistryEntryAttachmentHolder<R> {
-	DataRegistryEntryAttachmentHolder() { }
+	DataRegistryEntryAttachmentHolder() {}
 
 	/**
 	 * Removes all attachment values that are loaded from the specified source.

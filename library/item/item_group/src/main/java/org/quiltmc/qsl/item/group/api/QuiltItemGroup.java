@@ -19,6 +19,7 @@ package org.quiltmc.qsl.item.group.api;
 
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.jetbrains.annotations.NotNull;
@@ -134,6 +135,17 @@ public final class QuiltItemGroup extends ItemGroup {
 	}
 
 	/**
+	 * Appends a new {@link ItemGroup} to the end of the vanilla list of {@link ItemGroup}s.
+	 *
+	 * @param itemGroupFactory a factory that produces a new {@link ItemGroup} from an index
+	 * @return the inserted {@link ItemGroup}
+	 */
+	public static <T extends ItemGroup> T register(Function<Integer, T> itemGroupFactory) {
+		((ItemGroupExtensions) GROUPS[0]).quilt$expandArray();
+		return itemGroupFactory.apply(GROUPS.length - 1);
+	}
+
+	/**
 	 * A builder class that helps with creating and adding {@link ItemGroup}s to the {@link CreativeInventoryScreen}.
 	 * <p>
 	 * Potential uses:
@@ -243,12 +255,10 @@ public final class QuiltItemGroup extends ItemGroup {
 		 * @return a new {@link QuiltItemGroup}
 		 */
 		public QuiltItemGroup build() {
-			((ItemGroupExtensions) GROUPS[0]).quilt$expandArray();
-			return new QuiltItemGroup(
-					GROUPS.length - 1,
-					String.format("%s.%s", this.identifier.getNamespace(), this.identifier.getPath()),
+			return register(index -> new QuiltItemGroup(
+					index, String.format("%s.%s", this.identifier.getNamespace(), this.identifier.getPath()),
 					this.iconSupplier, this.stacksForDisplay, this.text
-			);
+			));
 		}
 	}
 }

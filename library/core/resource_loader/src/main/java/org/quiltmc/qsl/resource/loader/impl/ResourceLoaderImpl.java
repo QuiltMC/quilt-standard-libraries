@@ -17,6 +17,7 @@
 
 package org.quiltmc.qsl.resource.loader.impl;
 
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -52,8 +53,10 @@ import net.minecraft.resource.pack.DefaultResourcePack;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.ResourcePackProfile;
 import net.minecraft.resource.pack.ResourcePackProvider;
+import net.minecraft.resource.pack.VanillaDataPackProvider;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Language;
 import net.minecraft.util.Pair;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -495,6 +498,33 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 
 				if (profile != null) {
 					profileAdder.accept(profile);
+				}
+			}
+		}
+	}
+
+	/* Language stuff */
+
+	/**
+	 * Appends to the given map all the default language entries.
+	 *
+	 * @param map the language map
+	 */
+	public static void appendLanguageEntries(@NotNull Map<String, String> map) {
+		var pack = ResourceLoaderImpl.buildMinecraftResourcePack(ResourceType.CLIENT_RESOURCES,
+				new DefaultResourcePack(VanillaDataPackProvider.DEFAULT_PACK_METADATA, "minecraft")
+		);
+
+		try (var manager = new MultiPackResourceManager(ResourceType.CLIENT_RESOURCES, List.of(pack))) {
+			for (var namespace : manager.getAllNamespaces()) {
+				var langId = new Identifier(namespace, "lang/" + Language.DEFAULT_LANGUAGE + ".json");
+
+				for (var resource : manager.getAllResources(langId)) {
+					try (var stream = resource.open()) {
+						Language.load(stream, map::put);
+					} catch (IOException e) {
+						LOGGER.error("Couldn't load language file {} from pack {}.", langId, resource.getSourceName());
+					}
 				}
 			}
 		}
