@@ -34,8 +34,10 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.screen.api.client.ScreenEvents;
 
+@ClientOnly
 public class ScreenTests implements ScreenEvents.AfterInit, ScreenEvents.AfterRender {
 	public static final Logger LOGGER = LoggerFactory.getLogger("ScreenEventsTest");
 	private Screen actualScreen;
@@ -46,10 +48,9 @@ public class ScreenTests implements ScreenEvents.AfterInit, ScreenEvents.AfterRe
 			final List<ClickableWidget> buttons = screen.getButtons();
 
 			buttons.add(
-					new ButtonWidget((screen.width / 2) + 120, ((screen.height / 4) + 95), 70, 20, Text.of("Hello world!!"),
-							button -> {
-								LOGGER.info("Hello world!!");
-							})
+					ButtonWidget.builder(Text.of("Hello world!!"), button -> LOGGER.info("Hello world!!"))
+							.positionAndSize((screen.width / 2) + 120, ((screen.height / 4) + 95), 70, 20)
+							.build()
 			);
 
 			this.actualScreen = screen;

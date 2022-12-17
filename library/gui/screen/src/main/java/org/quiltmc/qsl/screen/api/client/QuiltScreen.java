@@ -19,15 +19,13 @@ package org.quiltmc.qsl.screen.api.client;
 
 import java.util.List;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.item.ItemRenderer;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 /**
@@ -35,7 +33,7 @@ import org.quiltmc.qsl.base.api.util.InjectedInterface;
  *
  * @see ScreenEvents
  */
-@Environment(EnvType.CLIENT)
+@ClientOnly
 @InjectedInterface(Screen.class)
 public interface QuiltScreen {
 	/**

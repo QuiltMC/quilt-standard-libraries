@@ -27,9 +27,9 @@ import net.minecraft.loot.LootManager;
 import net.minecraft.loot.condition.LootConditionManager;
 import net.minecraft.loot.function.LootFunctionManager;
 import net.minecraft.recipe.RecipeManager;
+import net.minecraft.registry.tag.TagManagerLoader;
 import net.minecraft.server.ServerAdvancementLoader;
 import net.minecraft.server.function.FunctionLoader;
-import net.minecraft.tag.TagManagerLoader;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;

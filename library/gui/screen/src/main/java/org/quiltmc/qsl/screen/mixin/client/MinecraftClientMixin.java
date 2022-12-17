@@ -28,8 +28,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.screen.api.client.ScreenEvents;
 
+@ClientOnly
 @Mixin(MinecraftClient.class)
 abstract class MinecraftClientMixin {
 	@Shadow
@@ -48,9 +50,9 @@ abstract class MinecraftClientMixin {
 		ScreenEvents.REMOVE.invoker().onRemove(this.currentScreen);
 	}
 
-	// Synthetic method m_powsydyo()V -> lambda in Screen.wrapScreenError in MinecraftClient.tick
+	// Synthetic method m_tmkuxvdl()V -> lambda in Screen.wrapScreenError in MinecraftClient.tick
 	// These two injections should be caught by "Screen#wrapScreenError" if anything fails in an event and then rethrown in the crash report
-	@Inject(method = "m_powsydyo()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;tick()V"))
+	@Inject(method = "m_tmkuxvdl()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;tick()V"))
 	private void beforeScreenTick(CallbackInfo ci) {
 		// Store the screen in a variable in case someone tries to change the screen during this before tick event.
 		// If someone changes the screen, the after tick event will likely have class cast exceptions or an NPE.
@@ -58,8 +60,8 @@ abstract class MinecraftClientMixin {
 		ScreenEvents.BEFORE_TICK.invoker().beforeTick(this.quilt$tickingScreen);
 	}
 
-	// Synthetic method m_powsydyo()V -> lambda in Screen.wrapScreenError in MinecraftClient.tick
-	@Inject(method = "m_powsydyo()V", at = @At("TAIL"))
+	// Synthetic method m_tmkuxvdl()V -> lambda in Screen.wrapScreenError in MinecraftClient.tick
+	@Inject(method = "m_tmkuxvdl()V", at = @At("TAIL"))
 	private void afterScreenTick(CallbackInfo ci) {
 		ScreenEvents.AFTER_TICK.invoker().afterTick(this.quilt$tickingScreen);
 		// Finally set the currently ticking screen to null
@@ -68,7 +70,7 @@ abstract class MinecraftClientMixin {
 
 	// The LevelLoadingScreen is the odd screen that isn't ticked by the main tick loop, so we fire events for this screen.
 	// We Coerce the package-private inner class representing the world load action so we don't need an access widener.
-	@Inject(method = "startIntegratedServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/LevelLoadingScreen;tick()V"))
+	@Inject(method = "startIntegratedServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/WorldLoadingScreen;tick()V"))
 	private void beforeLoadingScreenTick(CallbackInfo ci) {
 		// Store the screen in a variable in case someone tries to change the screen during this before tick event.
 		// If someone changes the screen, the after tick event will likely have class cast exceptions or throw a NPE.

@@ -16,8 +16,7 @@
 
 package org.quiltmc.qsl.networking.mixin.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -31,14 +30,16 @@ import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import net.minecraft.text.Text;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
 import org.quiltmc.qsl.networking.impl.client.ClientNetworkingImpl;
 import org.quiltmc.qsl.networking.impl.client.ClientPlayNetworkAddon;
 
 // We want to apply a bit earlier than other mods which may not use us in order to prevent refCount issues
-@Environment(EnvType.CLIENT)
+@ClientOnly
 @Mixin(value = ClientPlayNetworkHandler.class, priority = 999)
 abstract class ClientPlayNetworkHandlerMixin implements NetworkHandlerExtensions {
+	@Final
 	@Shadow
 	private MinecraftClient client;
 

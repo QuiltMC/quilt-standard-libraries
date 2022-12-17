@@ -41,10 +41,11 @@ import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
 import net.minecraft.command.argument.IdentifierArgumentType;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.tag.TagKey;
 import net.minecraft.text.Text;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
@@ -81,7 +82,7 @@ public final class DumpBuiltinAttachmentsCommand {
 
 	private static int execute(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
 		var registryId = IdentifierArgumentType.getIdentifier(ctx, "registry");
-		var registry = Registry.REGISTRIES.get(registryId);
+		var registry = Registries.REGISTRY.get(registryId);
 		if (registry == null) {
 			throw UNKNOWN_REGISTRY_EXCEPTION.create(registryId);
 		}

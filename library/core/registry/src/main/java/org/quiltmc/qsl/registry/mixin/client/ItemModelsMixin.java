@@ -17,8 +17,6 @@
 package org.quiltmc.qsl.registry.mixin.client;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -30,12 +28,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.client.render.item.ItemModels;
 import net.minecraft.client.render.model.BakedModelManager;
 import net.minecraft.client.util.ModelIdentifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedInt2ObjectMap;
 import org.quiltmc.qsl.registry.impl.sync.client.RebuildableIdModelHolder;
 
-@Environment(EnvType.CLIENT)
+@ClientOnly
 @Mixin(ItemModels.class)
 public abstract class ItemModelsMixin implements RebuildableIdModelHolder {
 	@Mutable
@@ -45,7 +44,7 @@ public abstract class ItemModelsMixin implements RebuildableIdModelHolder {
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void quilt$onInit(BakedModelManager bakedModelManager, CallbackInfo ci) {
-		this.modelIds = new SynchronizedInt2ObjectMap<>(Registry.ITEM, this.modelIds);
+		this.modelIds = new SynchronizedInt2ObjectMap<>(Registries.ITEM, this.modelIds);
 	}
 
 	@Override

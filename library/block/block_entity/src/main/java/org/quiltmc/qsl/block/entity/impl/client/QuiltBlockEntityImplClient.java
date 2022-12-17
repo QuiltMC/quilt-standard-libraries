@@ -16,13 +16,12 @@
 
 package org.quiltmc.qsl.block.entity.impl.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.client.MinecraftClient;
 
 import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.ListenerPhase;
@@ -34,7 +33,7 @@ import org.quiltmc.qsl.lifecycle.api.client.event.ClientLifecycleEvents;
 		namespace = QuiltBlockEntityImpl.NAMESPACE, path = QuiltBlockEntityImpl.BLOCK_ENTITY_FREEZING_PHASE,
 		callbackTarget = ClientLifecycleEvents.Ready.class
 )
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class QuiltBlockEntityImplClient implements ClientModInitializer, ClientLifecycleEvents.Ready {
 	public static final QuiltBlockEntityImplClient INSTANCE = new QuiltBlockEntityImplClient();
 

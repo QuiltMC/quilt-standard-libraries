@@ -28,24 +28,32 @@ import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.util.Holder;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.HolderProvider;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeKeys;
 import net.minecraft.world.biome.source.TheEndBiomeSource;
 import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 
+import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
+import org.quiltmc.qsl.registry.api.event.RegistryEvents;
+
 /**
  * Internal data for modding Vanilla's {@link TheEndBiomeSource}.
  */
 @ApiStatus.Internal
-public final class TheEndBiomeData {
+public final class TheEndBiomeData implements RegistryEvents.DynamicRegistryLoadedCallback, ServerLifecycleEvents.Stopped {
 	private static final Set<RegistryKey<Biome>> BIOMES = new HashSet<>();
 	private static final Map<RegistryKey<Biome>, WeightedPicker<RegistryKey<Biome>>> END_BIOMES_MAP = new IdentityHashMap<>();
 	private static final Map<RegistryKey<Biome>, WeightedPicker<RegistryKey<Biome>>> END_MIDLANDS_MAP = new IdentityHashMap<>();
 	private static final Map<RegistryKey<Biome>, WeightedPicker<RegistryKey<Biome>>> END_BARRENS_MAP = new IdentityHashMap<>();
+	private static HolderProvider<Biome> biomeRegistry;
 
 	static {
 		END_BIOMES_MAP.computeIfAbsent(BiomeKeys.THE_END, key -> new WeightedPicker<>())
@@ -59,9 +67,6 @@ public final class TheEndBiomeData {
 				.add(BiomeKeys.END_MIDLANDS, 1.0);
 		END_BARRENS_MAP.computeIfAbsent(BiomeKeys.END_HIGHLANDS, key -> new WeightedPicker<>())
 				.add(BiomeKeys.END_BARRENS, 1.0);
-	}
-
-	private TheEndBiomeData() {
 	}
 
 	public static void addEndBiomeReplacement(RegistryKey<Biome> replaced, RegistryKey<Biome> variant, double weight) {
@@ -88,12 +93,22 @@ public final class TheEndBiomeData {
 		BIOMES.add(barrens);
 	}
 
-	public static Overrides createOverrides(Registry<Biome> biomeRegistry) {
+	public static Overrides createOverrides() {
 		return new Overrides(biomeRegistry);
 	}
 
-	public static Collection<Holder<Biome>> getAddedBiomes(Registry<Biome> registry) {
+	public static Collection<Holder<Biome>> getAddedBiomes(HolderProvider<Biome> registry) {
 		return BIOMES.stream().map(registry::getHolderOrThrow).collect(Collectors.toSet());
+	}
+
+	@Override
+	public void exitServer(MinecraftServer server) {
+		biomeRegistry = null;
+	}
+
+	@Override
+	public void onDynamicRegistryLoaded(@NotNull DynamicRegistryManager registryManager) {
+		registryManager.getOptional(RegistryKeys.BIOME).ifPresent(registry -> biomeRegistry = registry.asLookup());
 	}
 
 	/**
@@ -113,7 +128,7 @@ public final class TheEndBiomeData {
 		private final Map<Holder<Biome>, WeightedPicker<Holder<Biome>>> endMidlandsMap;
 		private final Map<Holder<Biome>, WeightedPicker<Holder<Biome>>> endBarrensMap;
 
-		public Overrides(Registry<Biome> biomeRegistry) {
+		public Overrides(HolderProvider<Biome> biomeRegistry) {
 			this.addedBiomes = TheEndBiomeData.getAddedBiomes(biomeRegistry);
 			this.endMidlands = biomeRegistry.getHolderOrThrow(BiomeKeys.END_MIDLANDS);
 			this.endBarrens = biomeRegistry.getHolderOrThrow(BiomeKeys.END_BARRENS);
@@ -125,7 +140,7 @@ public final class TheEndBiomeData {
 		}
 
 		// Resolves all RegistryKey instances to Holders
-		private Map<Holder<Biome>, WeightedPicker<Holder<Biome>>> resolveOverrides(Registry<Biome> biomeRegistry, Map<RegistryKey<Biome>, WeightedPicker<RegistryKey<Biome>>> overrides, RegistryKey<Biome> vanillaKey) {
+		private Map<Holder<Biome>, WeightedPicker<Holder<Biome>>> resolveOverrides(HolderProvider<Biome> biomeRegistry, Map<RegistryKey<Biome>, WeightedPicker<RegistryKey<Biome>>> overrides, RegistryKey<Biome> vanillaKey) {
 			Map<Holder<Biome>, WeightedPicker<Holder<Biome>>> result = new Object2ObjectOpenCustomHashMap<>(overrides.size(), HolderHashStrategy.INSTANCE);
 
 			for (Map.Entry<RegistryKey<Biome>, WeightedPicker<RegistryKey<Biome>>> entry : overrides.entrySet()) {

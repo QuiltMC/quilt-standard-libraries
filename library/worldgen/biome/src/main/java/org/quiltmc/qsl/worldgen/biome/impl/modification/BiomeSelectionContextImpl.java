@@ -21,34 +21,32 @@ import java.util.Optional;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.tag.TagKey;
-import net.minecraft.util.Holder;
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.PlacedFeature;
 import net.minecraft.world.gen.feature.StructureFeature;
-import net.minecraft.world.level.LevelProperties;
 
 import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
 @ApiStatus.Internal
 public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 	private final DynamicRegistryManager dynamicRegistries;
-	private final LevelProperties levelProperties;
 	private final RegistryKey<Biome> key;
 	private final Biome biome;
 	private final Holder<Biome> entry;
 
-	public BiomeSelectionContextImpl(DynamicRegistryManager dynamicRegistries, LevelProperties levelProperties, RegistryKey<Biome> key, Biome biome) {
+	public BiomeSelectionContextImpl(DynamicRegistryManager dynamicRegistries, RegistryKey<Biome> key, Biome biome) {
 		this.dynamicRegistries = dynamicRegistries;
-		this.levelProperties = levelProperties;
 		this.key = key;
 		this.biome = biome;
-		this.entry = dynamicRegistries.get(Registry.BIOME_KEY).getHolderOrThrow(this.key);
+		this.entry = dynamicRegistries.get(RegistryKeys.BIOME).getHolderOrThrow(this.key);
 	}
 
 	@Override
@@ -68,19 +66,19 @@ public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 
 	@Override
 	public Optional<RegistryKey<ConfiguredFeature<?, ?>>> getFeatureKey(ConfiguredFeature<?, ?> configuredFeature) {
-		Registry<ConfiguredFeature<?, ?>> registry = this.dynamicRegistries.get(Registry.CONFIGURED_FEATURE_KEY);
+		Registry<ConfiguredFeature<?, ?>> registry = this.dynamicRegistries.get(RegistryKeys.CONFIGURED_FEATURE);
 		return registry.getKey(configuredFeature);
 	}
 
 	@Override
 	public Optional<RegistryKey<PlacedFeature>> getPlacedFeatureKey(PlacedFeature placedFeature) {
-		Registry<PlacedFeature> registry = this.dynamicRegistries.get(Registry.PLACED_FEATURE_KEY);
+		Registry<PlacedFeature> registry = this.dynamicRegistries.get(RegistryKeys.PLACED_FEATURE);
 		return registry.getKey(placedFeature);
 	}
 
 	@Override
 	public boolean validForStructure(RegistryKey<StructureFeature> key) {
-		StructureFeature instance = this.dynamicRegistries.get(Registry.STRUCTURE_WORLDGEN).get(key);
+		StructureFeature instance = this.dynamicRegistries.get(RegistryKeys.STRUCTURE_FEATURE).get(key);
 
 		if (instance == null) {
 			return false;
@@ -91,13 +89,13 @@ public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 
 	@Override
 	public Optional<RegistryKey<StructureFeature>> getStructureKey(StructureFeature configuredStructure) {
-		Registry<StructureFeature> registry = this.dynamicRegistries.get(Registry.STRUCTURE_WORLDGEN);
+		Registry<StructureFeature> registry = this.dynamicRegistries.get(RegistryKeys.STRUCTURE_FEATURE);
 		return registry.getKey(configuredStructure);
 	}
 
 	@Override
 	public boolean canGenerateIn(RegistryKey<DimensionOptions> dimensionKey) {
-		DimensionOptions dimension = this.levelProperties.getGeneratorOptions().getDimensions().get(dimensionKey);
+		DimensionOptions dimension = this.dynamicRegistries.get(RegistryKeys.DIMENSION).get(dimensionKey);
 
 		if (dimension == null) {
 			return false;
@@ -108,7 +106,7 @@ public class BiomeSelectionContextImpl implements BiomeSelectionContext {
 
 	@Override
 	public boolean isIn(TagKey<Biome> tag) {
-		Registry<Biome> biomeRegistry = this.dynamicRegistries.get(Registry.BIOME_KEY);
+		Registry<Biome> biomeRegistry = this.dynamicRegistries.get(RegistryKeys.BIOME);
 		return biomeRegistry.getHolderOrThrow(this.getBiomeKey()).isIn(tag);
 	}
 

@@ -28,7 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.tag.TagKey;
 
 import org.quiltmc.qsl.item.content.registry.impl.ItemContentRegistriesInitializer;
 
@@ -44,7 +44,7 @@ public abstract class AbstractFurnaceBlockEntityMixin {
 		}
 	}
 
-	@Inject(method = "addFuel(Ljava/util/Map;Lnet/minecraft/tag/TagKey;I)V", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "addFuel(Ljava/util/Map;Lnet/minecraft/registry/tag/TagKey;I)V", at = @At("HEAD"), cancellable = true)
 	private static void collectInitialTags(Map<Item, Integer> fuelTimes, TagKey<Item> tag, int fuelTime, CallbackInfo ci) {
 		if (ItemContentRegistriesInitializer.shouldCollectInitialTags()) {
 			ItemContentRegistriesInitializer.INITIAL_FUEL_TAG_MAP.put(tag, fuelTime);

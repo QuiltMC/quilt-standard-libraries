@@ -16,31 +16,22 @@
 
 package org.quiltmc.qsl.entity.multipart.mixin;
 
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
-import org.spongepowered.asm.mixin.injection.Group;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
-import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
-import net.minecraft.server.world.ServerWorld;
-
 import org.quiltmc.qsl.entity.multipart.api.EntityPart;
 import org.quiltmc.qsl.entity.multipart.api.MultipartEntity;
 import org.quiltmc.qsl.entity.multipart.impl.EntityPartTracker;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(targets = "net/minecraft/server/world/ServerWorld$ServerEntityHandler")
 public class ServerEntityHandlerMixin {
-	@Shadow
-	@Final
-	ServerWorld field_26936;
 
+	@SuppressWarnings("InvalidInjectorMethodSignature")
 	@ModifyConstant(
 			method = {"startTracking(Lnet/minecraft/entity/Entity;)V", "stopTracking(Lnet/minecraft/entity/Entity;)V"},
 			constant = @Constant(classValue = EnderDragonEntity.class, ordinal = 0)
@@ -56,7 +47,7 @@ public class ServerEntityHandlerMixin {
 	private void startTrackingEntityParts(Entity entity, CallbackInfo ci) {
 		if (entity instanceof MultipartEntity multipartEntity) {
 			for (EntityPart<?> part : multipartEntity.getEntityParts()) {
-				((EntityPartTracker) this.field_26936).quilt$getEntityParts().put(((Entity) part).getId(), (Entity) part);
+				((EntityPartTracker) entity.getWorld()).quilt$getEntityParts().put(((Entity) part).getId(), (Entity) part);
 			}
 		}
 	}
@@ -68,7 +59,7 @@ public class ServerEntityHandlerMixin {
 	private void stopTrackingEntityParts(Entity entity, CallbackInfo ci) {
 		if (entity instanceof MultipartEntity multipartEntity) {
 			for (EntityPart<?> part : multipartEntity.getEntityParts()) {
-				((EntityPartTracker) this.field_26936).quilt$getEntityParts().remove(((Entity) part).getId(), part);
+				((EntityPartTracker) entity.getWorld()).quilt$getEntityParts().remove(((Entity) part).getId(), part);
 			}
 		}
 	}

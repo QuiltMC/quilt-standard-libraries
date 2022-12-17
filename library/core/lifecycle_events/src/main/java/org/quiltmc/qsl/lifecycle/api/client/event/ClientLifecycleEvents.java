@@ -16,11 +16,9 @@
 
 package org.quiltmc.qsl.lifecycle.api.client.event;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import net.minecraft.client.MinecraftClient;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 
@@ -30,7 +28,7 @@ import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
  * The lifecycle of a Minecraft client, starts when the client is ready. The client will tick the client and then the
  * integrated server if in single player.
  */
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ClientLifecycleEvents {
 	// There is no STARTING event because there is no way to allow mods to register callbacks that early without possibly
 	// initializing the game's registries improperly in preLaunch.
@@ -87,7 +85,7 @@ public final class ClientLifecycleEvents {
 	 * @see #READY
 	 */
 	@FunctionalInterface
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	public interface Ready extends ClientEventAwareListener {
 		/**
 		 * Called when a majority of client facilities have been initialized.
@@ -105,7 +103,7 @@ public final class ClientLifecycleEvents {
 	 * @see #STOPPING
 	 */
 	@FunctionalInterface
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	public interface Stopping extends ClientEventAwareListener {
 		/**
 		 * Called when a Minecraft client has finished its last tick and is shutting down.
@@ -121,7 +119,7 @@ public final class ClientLifecycleEvents {
 	 * @see #STOPPED
 	 */
 	@FunctionalInterface
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	public interface Stopped extends ClientEventAwareListener {
 		/**
 		 * Called when a Minecraft client has finished shutdown and the client will be exited.

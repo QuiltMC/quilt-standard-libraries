@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 import net.minecraft.command.argument.ArgumentTypeInfo;
 import net.minecraft.command.argument.ArgumentTypeInfos;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registry;
 
 @Mixin(ArgumentTypeInfos.class)
 public interface ArgumentTypeInfosAccessor {

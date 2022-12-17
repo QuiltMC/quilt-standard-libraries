@@ -8,7 +8,6 @@
     "EnchantmentScreenHandlerMixin",
     "HoneycombItemMixin",
     "OxidizableMixin",
-    "SculkSensorBlockMixin",
     "ShovelItemMixin"
   ],
   "injectors": {

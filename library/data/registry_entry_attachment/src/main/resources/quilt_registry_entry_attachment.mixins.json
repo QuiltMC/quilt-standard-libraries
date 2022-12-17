@@ -3,7 +3,7 @@
   "package": "org.quiltmc.qsl.registry.attachment.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "RegistryMixin"
+    "RegistryKeyMixin"
   ],
   "injectors": {
     "defaultRequire": 1

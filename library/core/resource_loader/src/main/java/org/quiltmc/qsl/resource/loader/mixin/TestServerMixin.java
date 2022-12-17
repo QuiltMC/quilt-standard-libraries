@@ -16,19 +16,12 @@
 
 package org.quiltmc.qsl.resource.loader.mixin;
 
-import java.util.function.Supplier;
-
-import com.mojang.serialization.JsonOps;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
-import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.pack.DataPackSettings;
 import net.minecraft.test.TestServer;
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.RegistryOps;
 
 import org.quiltmc.qsl.resource.loader.impl.ModResourcePackUtil;
 
@@ -38,24 +31,11 @@ public class TestServerMixin {
 			method = "create",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/server/WorldLoader$PackConfig;<init>(Lnet/minecraft/resource/pack/ResourcePackManager;Lnet/minecraft/resource/pack/DataPackSettings;Z)V"
+					target = "Lnet/minecraft/server/world/FeatureAndDataSettings;<init>(Lnet/minecraft/resource/pack/DataPackSettings;Lnet/minecraft/feature_flags/FeatureFlagBitSet;)V"
 			),
-			index = 1
+			index = 0
 	)
 	private static DataPackSettings replaceDefaultDataPackSettings(DataPackSettings initialDataPacks) {
 		return ModResourcePackUtil.DEFAULT_SETTINGS;
-	}
-
-	@Redirect(
-			method = {"method_40377", "m_pckcekot"},
-			at = @At(value = "INVOKE", target = "Ljava/util/function/Supplier;get()Ljava/lang/Object;", remap = false),
-			require = 1,
-			remap = false
-	)
-	private static Object loadRegistry(Supplier<Object> unused, ResourceManager resourceManager) {
-		DynamicRegistryManager.Writable registryManager = DynamicRegistryManager.builtInCopy();
-		// Force-loads the dynamic registry from data-packs as some mods may define dynamic game objects via data-driven capabilities.
-		RegistryOps.createAndLoad(JsonOps.INSTANCE, registryManager, resourceManager);
-		return registryManager.freeze();
 	}
 }

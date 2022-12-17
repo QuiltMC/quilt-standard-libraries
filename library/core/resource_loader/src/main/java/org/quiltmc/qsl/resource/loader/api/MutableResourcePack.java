@@ -22,8 +22,6 @@ import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.NotNull;
 
 import com.mojang.blaze3d.texture.NativeImage;
@@ -31,6 +29,8 @@ import com.mojang.blaze3d.texture.NativeImage;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.util.Identifier;
+
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 
 /**
  * Represents a resource pack whose resources are mutable.
@@ -193,7 +193,7 @@ public interface MutableResourcePack extends ResourcePack {
 	 * @param image    the resource content
 	 * @see #putResource(String, byte[])
 	 */
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	default void putImage(String fileName, NativeImage image) throws IOException {
 		this.putResource(fileName, image.getBytes());
 	}
@@ -207,7 +207,7 @@ public interface MutableResourcePack extends ResourcePack {
 	 * @param image the resource content
 	 * @see #putResource(ResourceType, Identifier, byte[])
 	 */
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	default void putImage(Identifier id, NativeImage image) throws IOException {
 		this.putResource(ResourceType.CLIENT_RESOURCES, id, image.getBytes());
 	}
@@ -221,7 +221,7 @@ public interface MutableResourcePack extends ResourcePack {
 	 * @param imageSupplier the supplier of the resource content
 	 * @see #putResource(String, Supplier)
 	 */
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	default void putImage(String fileName, Supplier<NativeImage> imageSupplier) {
 		this.putResource(fileName, () -> {
 			try (var image = imageSupplier.get()) {
@@ -241,7 +241,7 @@ public interface MutableResourcePack extends ResourcePack {
 	 * @param imageSupplier the supplier of the resource content
 	 * @see #putResource(ResourceType, Identifier, Supplier)
 	 */
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	default void putImage(Identifier id, Supplier<NativeImage> imageSupplier) {
 		this.putResource(ResourceType.CLIENT_RESOURCES, id, () -> {
 			try (var image = imageSupplier.get()) {
@@ -261,7 +261,7 @@ public interface MutableResourcePack extends ResourcePack {
 	 * @param imageFactory the factory of the resource content
 	 * @see #putResourceAsync(String, Function)
 	 */
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	default @NotNull Future<byte[]> putImageAsync(@NotNull String fileName, @NotNull Function<@NotNull String, @NotNull NativeImage> imageFactory) {
 		return this.putResourceAsync(fileName, imageFactory.andThen(image -> {
 			try (image) {
@@ -282,7 +282,7 @@ public interface MutableResourcePack extends ResourcePack {
 	 * @apiNote the supplier is {@link com.google.common.base.Suppliers#memoize(com.google.common.base.Supplier) memoized}
 	 * @see #putResourceAsync(ResourceType, Identifier, Function)
 	 */
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	default @NotNull Future<byte[]> putImageAsync(@NotNull Identifier id, @NotNull Function<@NotNull Identifier, @NotNull NativeImage> imageFactory) {
 		return this.putResourceAsync(ResourceType.CLIENT_RESOURCES, id, imageFactory.andThen(image -> {
 			try (image) {

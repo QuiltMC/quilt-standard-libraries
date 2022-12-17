@@ -17,14 +17,13 @@
 
 package org.quiltmc.qsl.tooltip.api.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.item.Item;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 
@@ -39,7 +38,7 @@ import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
  * @see org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData ConvertibleTooltipData: for custom tooltip data implementations, avoid the event for those
  */
 @FunctionalInterface
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public interface TooltipComponentCallback extends ClientEventAwareListener {
 	Event<TooltipComponentCallback> EVENT = Event.create(TooltipComponentCallback.class, callbacks -> data -> {
 		for (var callback : callbacks) {

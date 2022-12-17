@@ -22,15 +22,15 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 
 import com.google.common.collect.Multimap;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-import net.minecraft.tag.TagGroupLoader;
+import net.minecraft.registry.tag.TagGroupLoader;
 import net.minecraft.util.Identifier;
 
-@Environment(EnvType.CLIENT)
+import org.quiltmc.loader.api.minecraft.ClientOnly;
+
+@ClientOnly
 @Mixin(TagGroupLoader.class)
 public interface TagGroupLoaderAccessor {
 	@Invoker

@@ -16,20 +16,18 @@
 
 package org.quiltmc.qsl.networking.api.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientLoginNetworkHandler;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 
 /**
  * Offers access to events related to the connection to a server on the client while the server is processing the client's login request.
  */
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ClientLoginConnectionEvents {
 	/**
 	 * Event indicating a connection entered the LOGIN state, ready for registering query request handlers.
@@ -81,7 +79,7 @@ public final class ClientLoginConnectionEvents {
 	/**
 	 * @see ClientLoginConnectionEvents#INIT
 	 */
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface Init extends ClientEventAwareListener {
 		void onLoginStart(ClientLoginNetworkHandler handler, MinecraftClient client);
@@ -90,7 +88,7 @@ public final class ClientLoginConnectionEvents {
 	/**
 	 * @see ClientLoginConnectionEvents#QUERY_START
 	 */
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface QueryStart extends ClientEventAwareListener {
 		void onLoginQueryStart(ClientLoginNetworkHandler handler, MinecraftClient client);
@@ -99,7 +97,7 @@ public final class ClientLoginConnectionEvents {
 	/**
 	 * @see ClientLoginConnectionEvents#DISCONNECT
 	 */
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface Disconnect extends ClientEventAwareListener {
 		void onLoginDisconnect(ClientLoginNetworkHandler handler, MinecraftClient client);

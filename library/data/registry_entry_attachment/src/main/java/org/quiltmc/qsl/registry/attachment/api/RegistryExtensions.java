@@ -16,8 +16,8 @@
 
 package org.quiltmc.qsl.registry.attachment.api;
 
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 /**
  * Extensions for working with {@link Registry}s.

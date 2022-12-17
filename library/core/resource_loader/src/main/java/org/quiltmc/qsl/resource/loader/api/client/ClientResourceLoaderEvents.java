@@ -16,13 +16,12 @@
 
 package org.quiltmc.qsl.resource.loader.api.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.ResourceManager;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
@@ -31,7 +30,7 @@ import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader
 /**
  * Events related to the resource loader of the Minecraft client.
  */
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ClientResourceLoaderEvents {
 	private ClientResourceLoaderEvents() {
 		throw new UnsupportedOperationException("ClientResourceLoaderEvents only contains static definitions.");

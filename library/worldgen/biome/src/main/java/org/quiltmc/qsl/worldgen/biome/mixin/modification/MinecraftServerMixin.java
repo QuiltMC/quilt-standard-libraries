@@ -25,9 +25,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.world.SaveProperties;
-import net.minecraft.world.level.LevelProperties;
+import net.minecraft.world.WorldSaveProperties;
 
 import org.quiltmc.qsl.worldgen.biome.impl.modification.BiomeModificationImpl;
 
@@ -42,7 +42,7 @@ public abstract class MinecraftServerMixin {
 
 	@Inject(method = "<init>", at = @At(value = "RETURN"))
 	private void finalizeWorldGen(CallbackInfo ci) {
-		if (!(this.saveProperties instanceof LevelProperties levelProperties)) {
+		if (!(this.saveProperties instanceof WorldSaveProperties levelProperties)) {
 			throw new RuntimeException("Incompatible SaveProperties passed to MinecraftServer: " + saveProperties);
 		}
 

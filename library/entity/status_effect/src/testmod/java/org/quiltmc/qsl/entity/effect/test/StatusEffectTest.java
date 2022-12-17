@@ -19,10 +19,10 @@ package org.quiltmc.qsl.entity.effect.test;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffectType;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -42,11 +42,10 @@ public final class StatusEffectTest implements ModInitializer {
 		}
 	};
 
-	public static final Item PASTEURIZED_MILK_BUCKET = Registry.register(Registry.ITEM, id("pasteurized_milk_bucket"),
+	public static final Item PASTEURIZED_MILK_BUCKET = Registry.register(Registries.ITEM, id("pasteurized_milk_bucket"),
 			new PasteurizedMilkBucketItem(new Item.Settings()
 					.recipeRemainder(Items.BUCKET)
-					.maxCount(1)
-					.group(ItemGroup.MISC)));
+					.maxCount(1)));
 
 	@Override
 	public void onInitialize(ModContainer mod) {}

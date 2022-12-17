@@ -27,8 +27,8 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.passive.MooshroomEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.registry.api.StatusEffectsSerializationConstants;
 
@@ -49,7 +49,7 @@ public class MooshroomEntityMixin {
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/effect/StatusEffect;getRawId(Lnet/minecraft/entity/effect/StatusEffect;)I")
 	)
 	private void quilt$storeIdentifier(NbtCompound nbt, CallbackInfo ci) {
-		nbt.putString(StatusEffectsSerializationConstants.EFFECT_ID_KEY, Registry.STATUS_EFFECT.getId(this.stewEffect).toString());
+		nbt.putString(StatusEffectsSerializationConstants.EFFECT_ID_KEY, Registries.STATUS_EFFECT.getId(this.stewEffect).toString());
 	}
 
 	@Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
@@ -57,8 +57,8 @@ public class MooshroomEntityMixin {
 		if (nbt.contains(StatusEffectsSerializationConstants.EFFECT_ID_KEY, NbtElement.STRING_TYPE)) {
 			var identifier = Identifier.tryParse(nbt.getString(StatusEffectsSerializationConstants.EFFECT_ID_KEY));
 
-			if (identifier != null && Registry.STATUS_EFFECT.containsId(identifier)) {
-				this.stewEffect = Registry.STATUS_EFFECT.get(identifier);
+			if (identifier != null && Registries.STATUS_EFFECT.containsId(identifier)) {
+				this.stewEffect = Registries.STATUS_EFFECT.get(identifier);
 			}
 		}
 	}

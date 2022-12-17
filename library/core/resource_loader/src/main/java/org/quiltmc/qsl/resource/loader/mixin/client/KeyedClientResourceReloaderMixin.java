@@ -19,8 +19,6 @@ package org.quiltmc.qsl.resource.loader.mixin.client;
 
 import java.util.Locale;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -48,10 +46,11 @@ import net.minecraft.client.texture.StatusEffectSpriteManager;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;
 import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 
-@Environment(EnvType.CLIENT)
+@ClientOnly
 @Mixin({
 		/* public */
 		BakedModelManager.class, BlockEntityRenderDispatcher.class, BlockRenderManager.class, BuiltinModelItemRenderer.class,

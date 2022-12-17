@@ -26,9 +26,9 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.Oxidizable;
 import net.minecraft.block.OxidizableBlock;
-import net.minecraft.tag.BlockTags;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -47,9 +47,9 @@ public class BlockContentRegistryTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		RegistryExtensions.register(Registry.BLOCK, new Identifier(MOD_ID, "oxidizable_iron_block"),
+		RegistryExtensions.register(Registries.BLOCK, new Identifier(MOD_ID, "oxidizable_iron_block"),
 				new OxidizableBlock(Oxidizable.OxidizationLevel.UNAFFECTED, AbstractBlock.Settings.copy(Blocks.IRON_BLOCK)),
-				BlockContentRegistries.OXIDIZABLE_BLOCK, new ReversibleBlockEntry(Blocks.IRON_BLOCK, false));
+				BlockContentRegistries.OXIDIZABLE, new ReversibleBlockEntry(Blocks.IRON_BLOCK, false));
 
 		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.IRON_BLOCK, 3f);
 		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.DIAMOND_BLOCK, 15f);
@@ -62,11 +62,11 @@ public class BlockContentRegistryTest implements ModInitializer {
 			}
 
 			LOGGER.info("Starting BlockContentRegistry tests");
-			Registry.BLOCK.getOrCreateTag(BlockTags.ANVIL).forEach(holder -> this.assertValues(holder.value(), BlockContentRegistries.FLAMMABLE_BLOCK, new FlammableBlockEntry(100, 100)));
+			Registries.BLOCK.getOrCreateTag(BlockTags.ANVILS).forEach(holder -> this.assertValues(holder.value(), BlockContentRegistries.FLAMMABLE, new FlammableBlockEntry(100, 100)));
 
-			this.assertValues(Blocks.OAK_PLANKS, BlockContentRegistries.FLATTENABLE_BLOCK, Blocks.OAK_SLAB.getDefaultState());
-			this.assertValues(Blocks.QUARTZ_PILLAR, BlockContentRegistries.STRIPPABLE_BLOCK, Blocks.PURPUR_PILLAR);
-			this.assertValues(Blocks.IRON_BLOCK, BlockContentRegistries.WAXABLE_BLOCK, new ReversibleBlockEntry(Blocks.GOLD_BLOCK, true));
+			this.assertValues(Blocks.OAK_PLANKS, BlockContentRegistries.FLATTENABLE, Blocks.OAK_SLAB.getDefaultState());
+			this.assertValues(Blocks.QUARTZ_PILLAR, BlockContentRegistries.STRIPPABLE, Blocks.PURPUR_PILLAR);
+			this.assertValues(Blocks.IRON_BLOCK, BlockContentRegistries.WAXABLE, new ReversibleBlockEntry(Blocks.GOLD_BLOCK, true));
 			LOGGER.info("Finished BlockContentRegistry tests");
 
 			testPassed = true;
@@ -75,7 +75,7 @@ public class BlockContentRegistryTest implements ModInitializer {
 
 	private <T> void assertValues(Block block, RegistryEntryAttachment<Block, T> attachment, T value) {
 		Optional<T> entry = attachment.get(block);
-		Identifier id = Registry.BLOCK.getId(block);
+		Identifier id = Registries.BLOCK.getId(block);
 		if (entry.isEmpty()) {
 			throw new AssertionError("No entry present for " + id);
 		}

@@ -38,7 +38,8 @@ public final class SurfaceRuleEvents {
 	public static final Identifier REMOVE_PHASE = new Identifier("quilt", "remove");
 
 	/**
-	 * An event indicating that the surface rules for the Overworld dimension may get modified by mods, allowing the injection of modded surface rules.
+	 * An event indicating that the surface rules for the Overworld dimension may get modified by mods,
+	 * allowing the injection of modded surface rules.
 	 */
 	public static final Event<OverworldModifierCallback> MODIFY_OVERWORLD = Event.create(OverworldModifierCallback.class, callbacks -> context -> {
 		for (var callback : callbacks) {
@@ -47,7 +48,8 @@ public final class SurfaceRuleEvents {
 	});
 
 	/**
-	 * An event indicating that the surface rules for the Nether dimension may get modified by mods, allowing the injection of modded surface rules.
+	 * An event indicating that the surface rules for the Nether dimension may get modified by mods,
+	 * allowing the injection of modded surface rules.
 	 */
 	public static final Event<NetherModifierCallback> MODIFY_NETHER = Event.create(NetherModifierCallback.class, callbacks -> context -> {
 		for (var callback : callbacks) {
@@ -56,13 +58,25 @@ public final class SurfaceRuleEvents {
 	});
 
 	/**
-	 * An event indicating that the surface rules for the End dimension may get modified by mods, allowing the injection of modded surface rules.
+	 * An event indicating that the surface rules for the End dimension may get modified by mods,
+	 * allowing the injection of modded surface rules.
 	 */
 	public static final Event<TheEndModifierCallback> MODIFY_THE_END = Event.create(TheEndModifierCallback.class, callbacks -> context -> {
 		for (var callback : callbacks) {
 			callback.modifyTheEndRules(context);
 		}
 	});
+
+	/**
+	 * An event indicating that the surface rules for a non-Vanilla dimension may get modified by mods,
+	 * allowing the injection of modded surface rules.
+	 */
+	public static final Event<GenericModifierCallback> MODIFY_GENERIC = Event.create(GenericModifierCallback.class,
+			callbacks -> context -> {
+				for (var callback : callbacks) {
+					callback.modifyGenericSurfaceRules(context);
+				}
+			});
 
 	@FunctionalInterface
 	public interface OverworldModifierCallback extends EventAwareListener {
@@ -92,6 +106,16 @@ public final class SurfaceRuleEvents {
 		 * @param context the modification context
 		 */
 		void modifyTheEndRules(@NotNull SurfaceRuleContext.TheEnd context);
+	}
+
+	@FunctionalInterface
+	public interface GenericModifierCallback extends EventAwareListener {
+		/**
+		 * Called to modify the given generic surface rules.
+		 *
+		 * @param context the modification context
+		 */
+		void modifyGenericSurfaceRules(@NotNull SurfaceRuleContext context);
 	}
 
 	private SurfaceRuleEvents() {

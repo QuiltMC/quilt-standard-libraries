@@ -22,19 +22,18 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.tag.TagGroupLoader;
+import net.minecraft.registry.tag.TagGroupLoader;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.resource.loader.api.reloader.SimpleResourceReloader;
 
-@Environment(EnvType.CLIENT)
+@ClientOnly
 @ApiStatus.Internal
 class ClientOnlyTagManagerReloader implements SimpleResourceReloader<List<ClientOnlyTagManagerReloader.Entry>> {
 	private static final Identifier ID = new Identifier(ClientQuiltTagsMod.NAMESPACE, "client_only_tags");

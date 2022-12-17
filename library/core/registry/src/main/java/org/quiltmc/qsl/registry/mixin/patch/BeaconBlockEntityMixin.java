@@ -31,8 +31,8 @@ import net.minecraft.block.entity.BeaconBlockEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.registry.api.StatusEffectsSerializationConstants;
 
@@ -58,11 +58,11 @@ public class BeaconBlockEntityMixin {
 	@Inject(method = "writeNbt", at = @At("TAIL"))
 	private void quilt$storeIdentifiers(NbtCompound nbt, CallbackInfo ci) {
 		if (this.primary != null) {
-			nbt.putString(StatusEffectsSerializationConstants.BEACON_PRIMARY_EFFECT_KEY, Registry.STATUS_EFFECT.getId(this.primary).toString());
+			nbt.putString(StatusEffectsSerializationConstants.BEACON_PRIMARY_EFFECT_KEY, Registries.STATUS_EFFECT.getId(this.primary).toString());
 		}
 
 		if (this.secondary != null) {
-			nbt.putString(StatusEffectsSerializationConstants.BEACON_SECONDARY_EFFECT_KEY, Registry.STATUS_EFFECT.getId(this.secondary).toString());
+			nbt.putString(StatusEffectsSerializationConstants.BEACON_SECONDARY_EFFECT_KEY, Registries.STATUS_EFFECT.getId(this.secondary).toString());
 		}
 	}
 
@@ -77,7 +77,7 @@ public class BeaconBlockEntityMixin {
 		if (compound.contains(nbtKey, NbtElement.STRING_TYPE)) {
 			var identifier = Identifier.tryParse(compound.getString(nbtKey));
 
-			var quiltEffectStatus = Registry.STATUS_EFFECT.get(identifier);
+			var quiltEffectStatus = Registries.STATUS_EFFECT.get(identifier);
 
 			if (identifier != null && quiltEffectStatus != null && EFFECTS.contains(quiltEffectStatus)) {
 				return quiltEffectStatus;

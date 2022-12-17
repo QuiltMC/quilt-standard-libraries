@@ -20,10 +20,11 @@ import com.mojang.serialization.Lifecycle;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.entity.data.TrackedDataHandler;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.SimpleRegistry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.util.registry.SimpleRegistry;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -32,7 +33,7 @@ import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
 @ApiStatus.Internal
 public class QuiltEntityNetworkingInitializer implements ModInitializer {
 	public static final SimpleRegistry<TrackedDataHandler<?>> TRACKED_DATA_HANDLER_REGISTRY = new SimpleRegistry<>(
-			RegistryKey.ofRegistry(new Identifier("quilt", "tracked_data_handlers")), Lifecycle.stable(), null
+			RegistryKey.ofRegistry(new Identifier("quilt", "tracked_data_handlers")), Lifecycle.stable(), false
 	);
 
 	private static boolean markForSync = true;
@@ -48,8 +49,9 @@ public class QuiltEntityNetworkingInitializer implements ModInitializer {
 		return handler;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onInitialize(ModContainer mod) {
-		Registry.register(((Registry<Registry<TrackedDataHandler<?>>>) Registry.REGISTRIES), TRACKED_DATA_HANDLER_REGISTRY.getKey().getValue(), TRACKED_DATA_HANDLER_REGISTRY);
+		Registry.register(((Registry<Registry<TrackedDataHandler<?>>>) Registries.REGISTRY), TRACKED_DATA_HANDLER_REGISTRY.getKey().getValue(), TRACKED_DATA_HANDLER_REGISTRY);
 	}
 }

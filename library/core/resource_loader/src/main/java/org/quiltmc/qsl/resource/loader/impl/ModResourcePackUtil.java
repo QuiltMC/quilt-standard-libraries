@@ -26,6 +26,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.SharedConstants;
+import net.minecraft.resource.ResourceIoSupplier;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.DataPackSettings;
 import net.minecraft.resource.pack.ResourcePack;
@@ -39,10 +40,6 @@ public final class ModResourcePackUtil {
 	 * Represents the default data-pack settings, including the default-enabled built-in data-packs.
 	 */
 	public static final DataPackSettings DEFAULT_SETTINGS = createDefaultDataPackSettings(DataPackSettings.SAFE_MODE);
-
-	public static boolean containsDefault(ModMetadata info, String filename) {
-		return "pack.mcmeta".equals(filename);
-	}
 
 	public static String getPackMeta(@Nullable String description, ResourceType type) {
 		if (description == null) {
@@ -58,10 +55,10 @@ public final class ModResourcePackUtil {
 				type.getPackVersion(SharedConstants.getGameVersion()), description);
 	}
 
-	public static InputStream openDefault(ModMetadata info, ResourceType type, String filename) {
+	public static @Nullable ResourceIoSupplier<InputStream> openDefault(ModMetadata info, ResourceType type, String filename) {
 		if ("pack.mcmeta".equals(filename)) {
 			var pack = getPackMeta(info.name(), type);
-			return IOUtils.toInputStream(pack, Charsets.UTF_8);
+			return () -> IOUtils.toInputStream(pack, Charsets.UTF_8);
 		}
 
 		return null;

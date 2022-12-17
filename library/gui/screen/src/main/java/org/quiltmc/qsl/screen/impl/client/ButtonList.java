@@ -20,8 +20,6 @@ package org.quiltmc.qsl.screen.impl.client;
 import java.util.AbstractList;
 import java.util.List;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.client.gui.Drawable;
@@ -29,9 +27,11 @@ import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.widget.ClickableWidget;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
+
 // TODO: When events for listening to addition of child elements are added, fire events from this list.
 @ApiStatus.Internal
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ButtonList extends AbstractList<ClickableWidget> {
 	private final List<Drawable> drawables;
 	private final List<Selectable> selectables;

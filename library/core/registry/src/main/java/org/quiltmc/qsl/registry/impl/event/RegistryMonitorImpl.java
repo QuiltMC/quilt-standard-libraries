@@ -21,13 +21,13 @@ import java.util.function.Predicate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.SimpleRegistry;
+import net.minecraft.registry.MutableRegistry;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.SimpleRegistry;
 
 import org.quiltmc.qsl.registry.api.event.RegistryEntryContext;
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.quiltmc.qsl.registry.api.event.RegistryMonitor;
-import org.quiltmc.qsl.registry.mixin.SimpleRegistryAccessor;
 
 /**
  * The default implementation of {@link RegistryMonitor}.
@@ -51,7 +51,7 @@ public class RegistryMonitorImpl<V> implements RegistryMonitor<V> {
 
 	@Override
 	public void forAll(RegistryEvents.EntryAdded<V> callback) {
-		if (!(this.registry instanceof SimpleRegistryAccessor)) {
+		if (!(this.registry instanceof MutableRegistry<V>)) {
 			throw new UnsupportedOperationException("Registry " + this.registry + " is not supported!");
 		}
 

@@ -3,23 +3,24 @@
   "package": "org.quiltmc.qsl.resource.loader.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "DefaultResourcePackMixin",
+    "BuiltinResourcePackProviderMixin",
     "IdentifierAccessor",
     "KeyedResourceReloaderMixin",
     "MinecraftServerMixin",
     "MultiPackResourceManagerMixin",
     "NamespaceResourceManagerAccessor",
     "NamespaceResourceManagerMixin",
-    "NamespaceResourceManagerMixin$ResourceEntryAccessor",
     "ReloadableResourceManagerMixin",
     "ResourcePackMixin",
     "ServerReloadableResourcesMixin",
     "TestServerMixin",
+    "VanillaDataPackProviderAccessor",
     "VanillaDataPackProviderMixin",
     "server.MainMixin"
   ],
   "client": [
     "client.ClientBuiltinResourcePackProviderMixin",
+    "client.ClientBuiltinResourcePackProviderMixin$Parent",
     "client.CreateWorldScreenMixin",
     "client.EntryListWidgetAccessor",
     "client.FontManagerResourceReloadListenerMixin",
@@ -28,7 +29,8 @@
     "client.KeyedClientResourceReloaderMixin",
     "client.MinecraftClientMixin",
     "client.PackScreenMixin",
-    "client.ResourcePackEntryAccessor"
+    "client.ResourcePackEntryAccessor",
+    "client.ShaderResourceReloadListenerMixin"
   ],
   "server": [
     "server.LanguageMixin"

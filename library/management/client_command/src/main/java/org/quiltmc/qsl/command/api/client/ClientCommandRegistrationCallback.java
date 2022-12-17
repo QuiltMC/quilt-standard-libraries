@@ -17,12 +17,11 @@
 package org.quiltmc.qsl.command.api.client;
 
 import com.mojang.brigadier.CommandDispatcher;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 
 import net.minecraft.command.CommandBuildContext;
 import net.minecraft.server.command.CommandManager;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 
@@ -32,7 +31,7 @@ import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
  * @see ClientCommandManager
  */
 @FunctionalInterface
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public interface ClientCommandRegistrationCallback extends ClientEventAwareListener {
 	/**
 	 * Event invoked when client-sided commands are registered.

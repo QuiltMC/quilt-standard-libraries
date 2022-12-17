@@ -21,10 +21,10 @@ import org.jetbrains.annotations.NotNull;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -32,14 +32,14 @@ import org.quiltmc.qsl.item.extension.api.bow.ProjectileModifyingBowItem;
 import org.quiltmc.qsl.item.extension.api.crossbow.ProjectileModifyingCrossbowItem;
 
 public class BowsTest implements ModInitializer {
-	public static final Item TEST_BOW = new ProjectileModifyingBowItem(new Item.Settings().group(ItemGroup.COMBAT)) {
+	public static final Item TEST_BOW = new ProjectileModifyingBowItem(new Item.Settings()) {
 		@Override
 		public void onProjectileShot(ItemStack bowStack, ItemStack arrowStack, LivingEntity user, float pullProgress, PersistentProjectileEntity projectile) {
 			projectile.setPunch(100);
 		}
 	};
 
-	public static final Item TEST_CROSSBOW = new ProjectileModifyingCrossbowItem(new Item.Settings().group(ItemGroup.COMBAT)) {
+	public static final Item TEST_CROSSBOW = new ProjectileModifyingCrossbowItem(new Item.Settings()) {
 		@Override
 		public void onProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity entity, @NotNull PersistentProjectileEntity persistentProjectileEntity) {
 			persistentProjectileEntity.setDamage(1000);
@@ -55,8 +55,8 @@ public class BowsTest implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer container) {
 		// Registers a custom bow.
-		Registry.register(Registry.ITEM, new Identifier(MOD_ID, "test_bow"), TEST_BOW);
+		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "test_bow"), TEST_BOW);
 		// Registers a custom crossbow.
-		Registry.register(Registry.ITEM, new Identifier(MOD_ID, "test_crossbow"), TEST_CROSSBOW);
+		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "test_crossbow"), TEST_CROSSBOW);
 	}
 }

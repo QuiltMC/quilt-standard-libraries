@@ -25,8 +25,10 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
 
 import org.quiltmc.loader.api.QuiltLoader;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 
+@ClientOnly
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin {
 	@Inject(

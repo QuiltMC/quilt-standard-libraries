@@ -19,8 +19,6 @@ package org.quiltmc.qsl.resource.loader.mixin.client;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -33,9 +31,10 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
 import net.minecraft.resource.ReloadableResourceManager;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.resource.loader.api.client.ClientResourceLoaderEvents;
 
-@Environment(EnvType.CLIENT)
+@ClientOnly
 @Mixin(MinecraftClient.class)
 public class MinecraftClientMixin {
 	@Shadow
@@ -81,7 +80,7 @@ public class MinecraftClientMixin {
 	// Lambda method in MinecraftClient#reloadResources, at MinecraftClient#setOverlay.
 	// Take an Optional<Throwable> parameter.
 	@SuppressWarnings("target")
-	@Inject(method = "m_ejxapxhy(Ljava/util/concurrent/CompletableFuture;Ljava/util/Optional;)V", at = @At(value = "HEAD"))
+	@Inject(method = "m_fweiciji(Ljava/util/concurrent/CompletableFuture;Ljava/util/Optional;)V", at = @At(value = "HEAD"))
 	private void onEndReloadResources(CompletableFuture<Void> completableFuture, Optional<Throwable> error, CallbackInfo ci) {
 		ClientResourceLoaderEvents.END_RESOURCE_PACK_RELOAD.invoker().onEndResourcePackReload(
 				(MinecraftClient) (Object) this, this.resourceManager, false, error.orElse(null)

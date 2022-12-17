@@ -30,12 +30,11 @@ import org.spongepowered.asm.mixin.Unique;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.util.Holder;
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Util;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.poi.PointOfInterestType;
-import net.minecraft.world.poi.PointOfInterestTypes;
 
 import org.quiltmc.qsl.points_of_interest.impl.PointOfInterestTypeExtensions;
 
@@ -85,21 +84,17 @@ public class PointOfInterestTypeMixin implements PointOfInterestTypeExtensions {
 	@Unique
 	private void quilt$setBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states, boolean added) {
 		if (!added) {
-			PointOfInterestTypes.ALL_STATES.removeAll(this.blockStates);
-
 			for (BlockState state : this.blockStates) {
 				STATE_TO_TYPE.remove(state);
 			}
 		}
 
 		for (BlockState state : states) {
-			Holder<PointOfInterestType> replaced = STATE_TO_TYPE.put(state, Registry.POINT_OF_INTEREST_TYPE.getHolderOrThrow(key));
+			Holder<PointOfInterestType> replaced = STATE_TO_TYPE.put(state, Registries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(key));
 			if (replaced != null) {
 				throw Util.throwOrPause(new IllegalStateException(String.format("%s is defined in too many tags", state)));
 			}
 		}
-
-		PointOfInterestTypes.ALL_STATES.addAll(states);
 
 		this.blockStates = Set.copyOf(states);
 	}

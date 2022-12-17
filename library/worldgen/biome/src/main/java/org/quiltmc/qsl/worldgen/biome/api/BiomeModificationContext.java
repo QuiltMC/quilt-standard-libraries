@@ -24,12 +24,13 @@ import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.sound.BiomeAdditionsSound;
 import net.minecraft.sound.BiomeMoodSound;
 import net.minecraft.sound.MusicSound;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeEffects;
 import net.minecraft.world.biome.BiomeParticleConfig;
@@ -37,8 +38,6 @@ import net.minecraft.world.biome.SpawnSettings;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.carver.ConfiguredCarver;
 import net.minecraft.world.gen.feature.PlacedFeature;
-
-import org.quiltmc.qsl.worldgen.biome.impl.modification.BuiltInRegistryKeys;
 
 /**
  * Allows {@link Biome} properties to be modified.
@@ -89,6 +88,7 @@ public interface BiomeModificationContext {
 		void setDownfall(float downfall);
 	}
 
+	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 	interface EffectsContext {
 		/**
 		 * @see BiomeEffects#getFogColor()
@@ -188,15 +188,15 @@ public interface BiomeModificationContext {
 
 		/**
 		 * @see BiomeEffects#getLoopSound()
-		 * @see BiomeEffects.Builder#loopSound(SoundEvent)
+		 * @see BiomeEffects.Builder#loopSound(Holder)
 		 */
-		void setAmbientSound(Optional<SoundEvent> sound);
+		void setAmbientSound(Optional<Holder<SoundEvent>> sound);
 
 		/**
 		 * @see BiomeEffects#getLoopSound()
-		 * @see BiomeEffects.Builder#loopSound(SoundEvent)
+		 * @see BiomeEffects.Builder#loopSound(Holder)
 		 */
-		default void setAmbientSound(@NotNull SoundEvent sound) {
+		default void setAmbientSound(@NotNull Holder<SoundEvent> sound) {
 			this.setAmbientSound(Optional.of(sound));
 		}
 
@@ -296,56 +296,18 @@ public interface BiomeModificationContext {
 			return anyFound;
 		}
 
-		/**
-		 * {@link #removeFeature(RegistryKey)} for built-in features (see {@link #addBuiltInFeature(GenerationStep.Feature, PlacedFeature)}).
-		 */
-		default boolean removeBuiltInFeature(PlacedFeature placedFeature) {
-			return this.removeFeature(BuiltInRegistryKeys.get(placedFeature));
-		}
-
-		/**
-		 * {@link #removeFeature(GenerationStep.Feature, RegistryKey)} for built-in features (see {@link #addBuiltInFeature(GenerationStep.Feature, PlacedFeature)}).
-		 */
-		default boolean removeBuiltInFeature(GenerationStep.Feature step, PlacedFeature placedFeature) {
-			return this.removeFeature(step, BuiltInRegistryKeys.get(placedFeature));
-		}
 
 		/**
 		 * Adds a feature to one of this biomes generation steps, identified by the placed feature's registry key.
 		 *
-		 * @see BuiltinRegistries#PLACED_FEATURE
+		 * @see Registries#PLACED_FEATURE
 		 */
 		void addFeature(GenerationStep.Feature step, RegistryKey<PlacedFeature> placedFeatureKey);
-
-		/**
-		 * Adds a placed feature from {@link BuiltinRegistries#PLACED_FEATURE} to this biome.
-		 * <p>
-		 * This method is intended for use with the placed features found in
-		 * classes such as {@link net.minecraft.world.gen.feature.OrePlacedFeatures}.
-		 * <p>
-		 * <b>NOTE:</b> In case the placed feature is overridden in a datapack, the datapacks version
-		 * will be used.
-		 */
-		default void addBuiltInFeature(GenerationStep.Feature step, PlacedFeature placedFeature) {
-			this.addFeature(step, BuiltInRegistryKeys.get(placedFeature));
-		}
 
 		/**
 		 * Adds a configured carver to one of this biomes generation steps.
 		 */
 		void addCarver(GenerationStep.Carver step, RegistryKey<ConfiguredCarver<?>> carverKey);
-
-		/**
-		 * Adds a configured carver from {@link BuiltinRegistries#CONFIGURED_CARVER} to this biome.
-		 * <p>
-		 * This method is intended for use with the configured carvers found in {@link net.minecraft.world.gen.carver.ConfiguredCarvers}.
-		 * <p>
-		 * <b>NOTE:</b> In case the configured carver is overridden in a datapack, the datapacks version
-		 * will be used.
-		 */
-		default void addBuiltInCarver(GenerationStep.Carver step, ConfiguredCarver<?> configuredCarver) {
-			this.addCarver(step, BuiltInRegistryKeys.get(configuredCarver));
-		}
 
 		/**
 		 * Removes all carvers with the given key from one of this biomes generation steps.
@@ -369,20 +331,6 @@ public interface BiomeModificationContext {
 			}
 
 			return anyFound;
-		}
-
-		/**
-		 * {@link #removeCarver(RegistryKey)} for built-in carvers (see {@link #addBuiltInCarver(GenerationStep.Carver, ConfiguredCarver)}).
-		 */
-		default boolean removeBuiltInCarver(ConfiguredCarver<?> configuredCarver) {
-			return this.removeCarver(BuiltInRegistryKeys.get(configuredCarver));
-		}
-
-		/**
-		 * {@link #removeCarver(GenerationStep.Carver, RegistryKey)} for built-in carvers (see {@link #addBuiltInCarver(GenerationStep.Carver, ConfiguredCarver)}).
-		 */
-		default boolean removeBuiltInCarver(GenerationStep.Carver step, ConfiguredCarver<?> configuredCarver) {
-			return this.removeCarver(step, BuiltInRegistryKeys.get(configuredCarver));
 		}
 	}
 

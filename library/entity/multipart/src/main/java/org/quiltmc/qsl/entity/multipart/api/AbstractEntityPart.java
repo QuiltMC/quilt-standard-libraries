@@ -23,9 +23,8 @@ import net.minecraft.entity.boss.dragon.EnderDragonPart;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.Packet;
-import net.minecraft.util.math.Quaternion;
+import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3f;
 
 /**
  * A partial implementation of an {@link EntityPart} with the most common methods implemented.
@@ -198,27 +197,10 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	 * @param degrees whether the rotation should be done in degrees or radians
 	 */
 	public void rotate(float pitch, float yaw, boolean degrees) {
-		Vec3d rel = this.getAbsolutePosition().subtract(this.getAbsolutePivot());
+		var rel = this.getAbsolutePosition().subtract(this.getAbsolutePivot());
 		rel = rel.rotateX(-pitch * (degrees ? (float)Math.PI/180f : 1)).rotateY(-yaw * (degrees ? (float)Math.PI/180f : 1));
-		Vec3d transformedPos = this.getAbsolutePivot().subtract(this.getAbsolutePosition()).add(rel);
+		var transformedPos = this.getAbsolutePivot().subtract(this.getAbsolutePosition()).add(rel);
 		this.move(transformedPos);
-	}
-
-	/**
-	 * @deprecated  Use {@link #rotate(float, float, boolean)} instead.
-	 */
-	@Deprecated
-	public void rotate(float pitch, float yaw, float roll) {
-		rotate(pitch, yaw, false);
-	}
-
-	/**
-	 * @deprecated  Use {@link #rotate(Vec3d, float, float, boolean)} instead.
-	 */
-	@Deprecated
-	public void rotate(Vec3d pivot, float pitch, float yaw, float roll) {
-		this.setPivot(pivot);
-		rotate(pitch, yaw, false);
 	}
 
 	/**
@@ -270,7 +252,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	}
 
 	@Override
-	public Packet<?> createSpawnPacket() {
+	public Packet<ClientPlayPacketListener> createSpawnPacket() {
 		throw new UnsupportedOperationException();
 	}
 

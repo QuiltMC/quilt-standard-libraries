@@ -17,13 +17,11 @@
 
 package org.quiltmc.qsl.screen.api.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 
@@ -40,7 +38,7 @@ import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
  * @see ScreenKeyboardEvents
  * @see ScreenMouseEvents
  */
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ScreenEvents {
 	/**
 	 * An event that is called before {@link Screen#init(MinecraftClient, int, int) a screen is initialized} to its default state.
@@ -93,8 +91,7 @@ public final class ScreenEvents {
 	 * This event signifies that the screen is now closed.
 	 * <p>
 	 * This event is typically used to undo any screen specific state changes such as
-	 * setting the keyboard to receive {@link net.minecraft.client.Keyboard#setRepeatEvents(boolean) repeat events}
-	 * or terminate threads spawned by a screen.
+	 * terminate threads spawned by a screen.
 	 * This event may precede initialization events {@link ScreenEvents#BEFORE_INIT} but there is no guarantee that event will be called immediately afterwards.
 	 */
 	public static final Event<Remove> REMOVE = Event.create(Remove.class, callbacks -> screen -> {
@@ -139,43 +136,43 @@ public final class ScreenEvents {
 		}
 	});
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface BeforeInit extends ClientEventAwareListener {
 		void beforeInit(Screen screen, MinecraftClient client, int scaledWidth, int scaledHeight);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface AfterInit extends ClientEventAwareListener {
 		void afterInit(Screen screen, MinecraftClient client, int scaledWidth, int scaledHeight);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface Remove extends ClientEventAwareListener {
 		void onRemove(Screen screen);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface BeforeRender extends ClientEventAwareListener {
 		void beforeRender(Screen screen, MatrixStack matrices, int mouseX, int mouseY, float tickDelta);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface AfterRender extends ClientEventAwareListener {
 		void afterRender(Screen screen, MatrixStack matrices, int mouseX, int mouseY, float tickDelta);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface BeforeTick extends ClientEventAwareListener {
 		void beforeTick(Screen screen);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface AfterTick extends ClientEventAwareListener {
 		void afterTick(Screen screen);

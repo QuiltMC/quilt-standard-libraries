@@ -16,11 +16,15 @@
 
 package org.quiltmc.qsl.resource.loader.test;
 
+import java.util.stream.Collectors;
+
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.minecraft.resource.MultiPackResourceManager;
 import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.server.MinecraftServer;
 
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
@@ -40,6 +44,12 @@ public class ResourceLoaderEventsTestMod implements ResourceLoaderEvents.StartDa
 	public void onEndDataPackReload(@Nullable MinecraftServer server, ResourceManager resourceManager, @Nullable Throwable error) {
 		if (error == null) {
 			LOGGER.info("Finished data pack reloading successfully on {}.", Thread.currentThread());
+
+			if (resourceManager instanceof MultiPackResourceManager multiPackResourceManager) {
+				LOGGER.info("Data packs: {}", multiPackResourceManager.streamResourcePacks()
+						.map(ResourcePack::getName)
+						.collect(Collectors.joining(", ")));
+			}
 		} else {
 			LOGGER.error("Failed to reload on {} because {}.", Thread.currentThread(), error);
 		}

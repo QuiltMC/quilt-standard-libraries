@@ -36,10 +36,12 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.item.ItemRenderer;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.screen.api.client.QuiltScreen;
 import org.quiltmc.qsl.screen.api.client.ScreenEvents;
 import org.quiltmc.qsl.screen.impl.client.ButtonList;
 
+@ClientOnly
 @Mixin(Screen.class)
 abstract class ScreenMixin implements QuiltScreen {
 	@Shadow

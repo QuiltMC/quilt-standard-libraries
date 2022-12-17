@@ -18,8 +18,8 @@
  *
  * <p>
  * <h3>Use the new tag types</h3>
- * To use one of the new tag types, use {@link org.quiltmc.qsl.tag.api.QuiltTagKey#of(net.minecraft.util.registry.RegistryKey, net.minecraft.util.Identifier, org.quiltmc.qsl.tag.api.TagType)}.
- * This lets you create a new {@link net.minecraft.tag.TagKey} but with a specific {@link org.quiltmc.qsl.tag.api.TagType} instead of the default one.
+ * To use one of the new tag types, use {@link org.quiltmc.qsl.tag.api.QuiltTagKey#of(net.minecraft.registry.RegistryKey, net.minecraft.util.Identifier, org.quiltmc.qsl.tag.api.TagType)}.
+ * This lets you create a new {@link net.minecraft.registry.tag.TagKey} but with a specific {@link org.quiltmc.qsl.tag.api.TagType} instead of the default one.
  * The key can be used normally afterwards.
  *
  * <p>

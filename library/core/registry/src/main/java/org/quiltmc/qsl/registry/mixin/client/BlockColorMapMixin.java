@@ -19,8 +19,6 @@ package org.quiltmc.qsl.registry.mixin.client;
 import java.util.Map;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -32,13 +30,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.block.Block;
 import net.minecraft.client.color.block.BlockColorProvider;
 import net.minecraft.client.color.block.BlockColors;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.collection.IdList;
-import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedIdList;
 import org.quiltmc.qsl.registry.impl.sync.client.RebuildableIdModelHolder;
 
-@Environment(EnvType.CLIENT)
+@ClientOnly
 @Mixin(BlockColors.class)
 public class BlockColorMapMixin implements RebuildableIdModelHolder {
 	@Final
@@ -60,7 +59,7 @@ public class BlockColorMapMixin implements RebuildableIdModelHolder {
 		SynchronizedIdList.clear(this.providers);
 
 		for (var entry : this.quilt$providers.entrySet()) {
-			this.providers.set(entry.getValue(), Registry.BLOCK.getRawId(entry.getKey()));
+			this.providers.set(entry.getValue(), Registries.BLOCK.getRawId(entry.getKey()));
 		}
 	}
 }

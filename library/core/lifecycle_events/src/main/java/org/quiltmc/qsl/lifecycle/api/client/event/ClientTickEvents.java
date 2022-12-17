@@ -16,11 +16,9 @@
 
 package org.quiltmc.qsl.lifecycle.api.client.event;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import net.minecraft.client.MinecraftClient;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 
@@ -32,7 +30,7 @@ import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
  * Callbacks registered to any of these events should ensure as little time as possible is spent executing, since the tick
  * loop is a very hot code path.
  */
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ClientTickEvents {
 	/**
 	 * An event indicating an iteration of the client's tick loop will start.
@@ -64,7 +62,7 @@ public final class ClientTickEvents {
 	 * @see #START
 	 */
 	@FunctionalInterface
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	public interface Start extends ClientEventAwareListener {
 		/**
 		 * Called before the client has started an iteration of the tick loop.
@@ -80,7 +78,7 @@ public final class ClientTickEvents {
 	 * @see #END
 	 */
 	@FunctionalInterface
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	public interface End extends ClientEventAwareListener {
 		/**
 		 * Called at the end of an iteration of the client's tick loop.

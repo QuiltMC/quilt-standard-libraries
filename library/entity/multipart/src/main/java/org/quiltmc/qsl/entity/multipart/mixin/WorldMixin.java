@@ -24,6 +24,8 @@ import java.util.function.Predicate;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
@@ -34,9 +36,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.util.TypeFilter;
+import net.minecraft.util.function.AbortableIterationConsumer;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
+import net.minecraft.world.entity.EntityLookup;
 
 import org.quiltmc.qsl.entity.multipart.api.EntityPart;
 import org.quiltmc.qsl.entity.multipart.impl.EntityPartTracker;
@@ -46,11 +51,24 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 	@Unique
 	private final Int2ObjectMap<Entity> quilt$entityParts = new Int2ObjectOpenHashMap<>();
 
+	@Shadow
+	public abstract Profiler getProfiler();
+
+	@Shadow
+	protected abstract EntityLookup<Entity> getEntityLookup();
+
+	/**
+	 * Cancels the Vanilla entity multipart checks in the {@link World#getOtherEntities(Entity, Box, Predicate)} method,
+	 * which is an instanceof with the {@link EnderDragonEntity ender dragon}.
+	 *
+	 * @param targetObject the entity object we're performing the instanceof on
+	 * @param classValue   the class the entity is supposed to match
+	 * @return {@code false}
+	 */
+	@SuppressWarnings("InvalidInjectorMethodSignature")
 	@ModifyConstant(
-			method = {"m_mbvohlyp", "m_dpwyfaqh", "method_31596", "method_31593"},
-			constant = @Constant(classValue = EnderDragonEntity.class, ordinal = 0),
-			require = 2,
-			remap = false
+			method = "m_dpwyfaqh(Lnet/minecraft/entity/Entity;Ljava/util/function/Predicate;Ljava/util/List;Lnet/minecraft/entity/Entity;)V",
+			constant = @Constant(classValue = EnderDragonEntity.class, ordinal = 0)
 	)
 	private static boolean cancelEnderDragonCheck(Object targetObject, Class<?> classValue) {
 		return false;
@@ -92,27 +110,47 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 	 * <p>
 	 * Allows collecting {@link EntityPart}s that are within the targeted {@link Box}
 	 * but are part of {@link Entity entities} in unchecked chunks.
+	 *
+	 * @author QuiltMC, Whangd00dle, LambdAurora (to blame for Overwrite)
+	 * @reason Fixes <a href="https://bugs.mojang.com/browse/MC-158205">MC-158205</a>, bare injections require a thread local.
 	 */
-	@Inject(method = "getEntitiesByType", at = @At("RETURN"))
-	private <T extends Entity> void getEntityPartsByType(TypeFilter<Entity, T> filter, Box box, Predicate<? super T> predicate,
-			CallbackInfoReturnable<List<T>> cir) {
-		List<T> list = cir.getReturnValue();
+	@Overwrite
+	public <T extends Entity> void collectEntities(TypeFilter<Entity, T> filter, Box box, Predicate<? super T> predicate,
+			List<? super T> collection, int maxEntities) {
+		this.getProfiler().visit("getEntities");
+		this.getEntityLookup().forEachIntersecting(filter, box, entity -> {
+			if (predicate.test(entity)) {
+				collection.add(entity);
 
-		// We don't want to check the parts of entities that we already know are invalid
-		Set<Entity> skippedOwners = new HashSet<>();
-
-		for (Entity part : this.quilt$getEntityParts().values()) {
-			var owner = ((EntityPart<?>) part).getOwner();
-			T entity = filter.downcast(part);
-
-			if (skippedOwners.contains(owner) || filter.downcast(owner) == null || entity == null) {
-				skippedOwners.add(owner);
-				continue;
+				if (collection.size() >= maxEntities) {
+					return AbortableIterationConsumer.IterationStatus.ABORT;
+				}
 			}
 
-			if (entity.getBoundingBox().intersects(box) && predicate.test(entity)) {
-				list.add(entity);
+			/* QUILT START */
+			// We don't want to check the parts of entities that we already know are invalid
+			Set<Entity> skippedOwners = new HashSet<>();
+
+			for (Entity part : this.quilt$getEntityParts().values()) {
+				var owner = ((EntityPart<?>) part).getOwner();
+				T downcastPart = filter.downcast(part);
+
+				if (skippedOwners.contains(owner) || filter.downcast(owner) == null || downcastPart == null) {
+					skippedOwners.add(owner);
+					continue;
+				}
+
+				if (downcastPart.getBoundingBox().intersects(box) && predicate.test(downcastPart)) {
+					collection.add(downcastPart);
+
+					if (collection.size() >= maxEntities) {
+						return AbortableIterationConsumer.IterationStatus.ABORT;
+					}
+				}
 			}
-		}
+			/* QUILT END */
+
+			return AbortableIterationConsumer.IterationStatus.CONTINUE;
+		});
 	}
 }
