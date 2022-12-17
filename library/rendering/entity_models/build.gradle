@@ -15,10 +15,16 @@ qslModule {
 		}
 	}
 	injectedInterface("net/minecraft/class_898") {
-		values = ["org/quiltmc/qsl/rendering/entity_models/api/HasAnimationManager"]
+		values = ["org/quiltmc/qsl/rendering/entity_models/api/animation/AnimationManagerContainer"]
 	}
 	injectedInterface("net/minecraft/class_5617\$class_5618") {
-		values = ["org/quiltmc/qsl/rendering/entity_models/api/HasAnimationManager"]
+		values = ["org/quiltmc/qsl/rendering/entity_models/api/animation/AnimationManagerContainer"]
+	}
+	injectedInterface("net/minecraft/class_7184"){
+		values = ["org/quiltmc/qsl/rendering/entity_models/api/animation/TypedAnimation"]
+	}
+	injectedInterface("net/minecraft/class_5607"){
+		values = ["org/quiltmc/qsl/rendering/entity_models/api/model/TypedModel"]
 	}
 	clientOnly()
 }

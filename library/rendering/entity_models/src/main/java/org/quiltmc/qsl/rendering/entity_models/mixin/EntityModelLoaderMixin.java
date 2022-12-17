@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.rendering.entity_models.mixin;
 
-import org.quiltmc.qsl.rendering.entity_models.api.AnimationManager;
 import org.quiltmc.qsl.rendering.entity_models.impl.DynamicEntityModelLoader;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;

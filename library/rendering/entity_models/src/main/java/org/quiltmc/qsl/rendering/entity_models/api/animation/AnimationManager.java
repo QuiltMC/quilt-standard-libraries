@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.rendering.entity_models.api;
+package org.quiltmc.qsl.rendering.entity_models.api.animation;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -107,7 +107,7 @@ public class AnimationManager implements SimpleResourceReloader<AnimationManager
 			}
 
 			JsonObject json = JsonHelper.deserialize(reader);
-			DataResult<Pair<Animation, JsonElement>> result = Codecs.Animations.ANIMATION.decode(JsonOps.INSTANCE, json);
+			DataResult<Pair<Animation, JsonElement>> result = AnimationTypes.CODEC.decode(JsonOps.INSTANCE, json);
 
 			if (result.error().isPresent()) {
 				LOGGER.error(String.format("Unable to parse animation file %s.\nReason: %s", id, result.error().get().message()));

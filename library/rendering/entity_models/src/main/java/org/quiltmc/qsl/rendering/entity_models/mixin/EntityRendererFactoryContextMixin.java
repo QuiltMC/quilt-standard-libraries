@@ -16,8 +16,9 @@
 
 package org.quiltmc.qsl.rendering.entity_models.mixin;
 
-import org.quiltmc.qsl.rendering.entity_models.api.AnimationManager;
-import org.quiltmc.qsl.rendering.entity_models.api.HasAnimationManager;
+import org.jetbrains.annotations.NotNull;
+import org.quiltmc.qsl.rendering.entity_models.api.animation.AnimationManager;
+import org.quiltmc.qsl.rendering.entity_models.api.animation.AnimationManagerContainer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -34,15 +35,16 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.resource.ResourceManager;
 
 @Mixin(EntityRendererFactory.Context.class)
-public class EntityRendererFactoryContextMixin implements HasAnimationManager {
+public class EntityRendererFactoryContextMixin implements AnimationManagerContainer {
 	@Unique
 	private AnimationManager quilt$animationManager;
 
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void createAnimationManager(EntityRenderDispatcher entityRenderDispatcher, ItemRenderer itemRenderer, BlockRenderManager blockRenderManager, HeldItemRenderer heldItemRenderer, ResourceManager resourceManager, EntityModelLoader entityModelLoader, TextRenderer textRenderer, CallbackInfo ci) {
-		this.quilt$animationManager = ((HasAnimationManager) entityRenderDispatcher).getAnimationManager();
+		this.quilt$animationManager = ((AnimationManagerContainer) entityRenderDispatcher).getAnimationManager();
 	}
 
+	@NotNull
 	@Override
 	public AnimationManager getAnimationManager() {
 		return quilt$animationManager;

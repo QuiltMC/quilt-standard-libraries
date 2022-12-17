@@ -30,7 +30,8 @@ import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
-import org.quiltmc.qsl.rendering.entity_models.api.Codecs;
+import org.quiltmc.qsl.rendering.entity_models.api.model.ModelCodecs;
+import org.quiltmc.qsl.rendering.entity_models.api.model.ModelTypes;
 import org.quiltmc.qsl.resource.loader.api.reloader.SimpleResourceReloader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,7 +100,7 @@ public class DynamicEntityModelLoader implements SimpleResourceReloader<DynamicE
 			}
 
 			JsonObject json = JsonHelper.deserialize(reader);
-			DataResult<Pair<TexturedModelData, JsonElement>> result = Codecs.Model.TEXTURED_MODEL_DATA.decode(JsonOps.INSTANCE, json);
+			DataResult<Pair<TexturedModelData, JsonElement>> result = ModelTypes.CODEC.decode(JsonOps.INSTANCE, json);
 
 			if (result.error().isPresent()) {
 				LOGGER.error(String.format("Unable to parse entity model file %s.\nReason: %s", id, result.error().get().message()));

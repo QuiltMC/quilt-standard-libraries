@@ -26,6 +26,7 @@
 package org.quiltmc.qsl.rendering.entity_models.mixin;
 
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
@@ -33,7 +34,6 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 import net.minecraft.client.model.Dilation;
 import net.minecraft.client.model.ModelCuboidData;
 import net.minecraft.client.util.math.Vector2f;
-import net.minecraft.util.math.Vec3f;
 
 @Mixin(ModelCuboidData.class)
 public interface ModelCuboidDataAccessor {
@@ -42,10 +42,10 @@ public interface ModelCuboidDataAccessor {
     String name();
 
     @Accessor("offset")
-    Vec3f offset();
+	Vector3f offset();
 
     @Accessor("dimensions")
-    Vec3f dimensions();
+	Vector3f dimensions();
 
     @Accessor("extraSize")
     Dilation dilation();
