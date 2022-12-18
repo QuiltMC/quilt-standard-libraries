@@ -36,6 +36,7 @@ import net.minecraft.item.ShovelItem;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
+import org.quiltmc.qsl.block.content.registry.api.EnchantingBoosters;
 import org.quiltmc.qsl.block.content.registry.api.FlammableBlockEntry;
 import org.quiltmc.qsl.block.content.registry.api.ReversibleBlockEntry;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
@@ -82,7 +83,7 @@ public class BlockContentRegistriesInitializer implements ModInitializer {
 		)), BlockContentRegistries.WAXABLE);
 		addMapToAttachment(INITIAL_FLAMMABLE_BLOCKS, BlockContentRegistries.FLAMMABLE);
 
-		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.BOOKSHELF, 1f);
+		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.BOOKSHELF, new EnchantingBoosters.ConstantBooster(1f));
 
 		resetMaps();
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, error) -> resetMaps());

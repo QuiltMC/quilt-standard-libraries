@@ -123,11 +123,11 @@ public class BlockContentRegistries {
 	 * <p>
 	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/enchanting_boosters.json}
 	 */
-	public static final RegistryEntryAttachment<Block, Float> ENCHANTING_BOOSTERS = RegistryEntryAttachment
+	public static final RegistryEntryAttachment<Block, EnchantingBoosters.EnchantingBooster> ENCHANTING_BOOSTERS = RegistryEntryAttachment
 			.builder(Registries.BLOCK,
 					new Identifier(NAMESPACE, "enchanting_boosters"),
-					Float.class,
-					Codec.floatRange(0.0F, Float.MAX_VALUE))
+					EnchantingBoosters.EnchantingBooster.class,
+					EnchantingBoosters.CODEC)
 			.build();
 }
 
