@@ -40,25 +40,28 @@ public class EnchantingBoosters {
 	 * The codec for an {@link EnchantingBooster}
 	 */
 	public static final Codec<EnchantingBooster> CODEC = EITHER_CODEC
-			.flatXmap(either -> {
-				EnchantingBooster booster = either.map(floatId ->
-								floatId.map(ConstantBooster::new, id -> {
-									EnchantingBoosterType type = TYPES.get(id);
-									return type != null && type.isSimple() ? type.simple() : null;
-								}),
-						Function.identity());
-				return booster != null ? DataResult.success(booster) : DataResult.error("Unknown or incomplete type " + either);
-			}, enchantingBooster -> {
-				if (enchantingBooster instanceof ConstantBooster constant) {
-					return DataResult.success(Either.left(Either.left(constant.value())));
-				}
+			.flatXmap(either ->
+						either.<DataResult<EnchantingBooster>>map(floatId ->
+							floatId.map(f -> DataResult.success(new ConstantBooster(f)), id -> {
+								EnchantingBoosterType type = TYPES.get(id);
+								if (type == null) {
+									return DataResult.error("Unknown Booster Type: " + id);
+								}
 
-				if (enchantingBooster.getType().isSimple() && enchantingBooster.getType().simple() == enchantingBooster) {
-					return DataResult.success(Either.left(Either.right(TYPES.inverse().get(enchantingBooster.getType()))));
-				}
+								return type.isSimple() ? DataResult.success(type.simple()) : DataResult.<EnchantingBooster>error("Booster Type: " + id + " is not simple. Please fully specify it.");
+							}),
+							DataResult::success),
+					enchantingBooster -> {
+						if (enchantingBooster instanceof ConstantBooster constant) {
+							return DataResult.success(Either.left(Either.left(constant.value())));
+						}
 
-				return DataResult.success(Either.right(enchantingBooster));
-			});
+						if (enchantingBooster.getType().isSimple() && enchantingBooster.getType().simple() == enchantingBooster) {
+							return DataResult.success(Either.left(Either.right(TYPES.inverse().get(enchantingBooster.getType()))));
+						}
+
+						return DataResult.success(Either.right(enchantingBooster));
+					});
 
 
 	/**
