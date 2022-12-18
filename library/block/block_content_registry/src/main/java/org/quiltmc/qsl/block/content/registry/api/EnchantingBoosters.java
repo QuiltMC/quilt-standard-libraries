@@ -33,7 +33,7 @@ public class EnchantingBoosters {
 	});
 
 	private static final Codec<Either<Either<Float, Identifier>, EnchantingBooster>> EITHER_CODEC = Codec.either(
-			Codec.either(Codec.floatRange(0, Float.MAX_VALUE), Identifier.CODEC),
+			Codec.either(Codec.FLOAT, Identifier.CODEC),
 			TYPE_CODEC.dispatch(EnchantingBooster::getType, EnchantingBoosterType::codec)
 	);
 	/**
