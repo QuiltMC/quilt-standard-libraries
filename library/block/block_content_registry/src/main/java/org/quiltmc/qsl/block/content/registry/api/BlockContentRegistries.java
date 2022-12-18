@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.block.content.registry.api;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 
 import net.minecraft.block.Block;
