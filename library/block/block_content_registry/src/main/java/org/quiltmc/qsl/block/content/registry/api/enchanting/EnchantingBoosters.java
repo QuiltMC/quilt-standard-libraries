@@ -78,9 +78,9 @@ public class EnchantingBoosters {
 	/**
 	 * Registers a non-simple booster type.
 	 *
-	 * @param id    The booster type id
-	 * @param codec The codec for the booster
-	 * @return The type for the booster
+	 * @param id    the booster type id
+	 * @param codec the codec for the booster
+	 * @return the type for the booster
 	 */
 	public static EnchantingBoosterType register(Identifier id, Codec<? extends EnchantingBooster> codec) {
 		EnchantingBoosterType type = new EnchantingBoosterType(codec, Optional.empty());
@@ -90,8 +90,8 @@ public class EnchantingBoosters {
 	/**
 	 * Registers a booster type.
 	 *
-	 * @param id   The booster type id
-	 * @param type The type for the booster
+	 * @param id   the booster type id
+	 * @param type the type for the booster
 	 * @return {@code type}
 	 */
 	public static EnchantingBoosterType register(Identifier id, EnchantingBoosterType type) {

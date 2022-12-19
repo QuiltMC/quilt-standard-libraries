@@ -11,7 +11,7 @@ import net.minecraft.world.World;
 /**
  * A constant booster.
  *
- * @param value The boost level
+ * @param value the boost level
  */
 public record ConstantBooster(float value) implements EnchantingBooster {
 	public static final Codec<ConstantBooster> CODEC = RecordCodecBuilder.create(instance ->
