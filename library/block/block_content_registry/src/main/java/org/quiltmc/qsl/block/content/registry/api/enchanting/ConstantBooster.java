@@ -44,6 +44,6 @@ public record ConstantBooster(float value) implements EnchantingBooster {
 
 	@Override
 	public EnchantingBoosterType getType() {
-		return CONSTANT;
+		return TYPE;
 	}
 }
