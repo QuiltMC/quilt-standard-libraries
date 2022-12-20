@@ -19,7 +19,7 @@ public record ConstantBooster(float value) implements EnchantingBooster {
 					Codec.FLOAT.fieldOf("value").forGetter(ConstantBooster::value)
 			).apply(instance, ConstantBooster::new)
 	);
-	public static EnchantingBoosterType CONSTANT = EnchantingBoosters.register(new Identifier("quilt", "constant"), ConstantBooster.CODEC);
+	public static EnchantingBoosterType TYPE = EnchantingBoosters.register(new Identifier("quilt", "constant"), CODEC);
 
 	@Override
 	public float getEnchantingBoost(World world, BlockState state, BlockPos pos) {
