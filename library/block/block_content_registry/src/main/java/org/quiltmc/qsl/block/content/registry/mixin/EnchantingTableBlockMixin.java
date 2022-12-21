@@ -34,10 +34,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class EnchantingTableBlockMixin {
 	@Inject(method = "isValidForBookshelf", at = @At("HEAD"), cancellable = true)
 	private static void hasEnchantmentPower(World world, BlockPos pos, BlockPos offset, CallbackInfoReturnable<Boolean> cir) {
-		BlockPos blockPos = pos.add(offset);
-		BlockState state = world.getBlockState(blockPos);
-		float power = BlockContentRegistries.ENCHANTING_BOOSTERS.get(state.getBlock()).map(booster -> booster.getEnchantingBoost(world, state, blockPos)).orElse(0f);
-		boolean hasPower = power >= 0f && world.isAir(pos.add(offset.getX() / 2, offset.getY(), offset.getZ() / 2));
+		var blockPos = pos.add(offset);
+		var state = world.getBlockState(blockPos);
+		var power = BlockContentRegistries.ENCHANTING_BOOSTERS.get(state.getBlock()).map(booster -> booster.getEnchantingBoost(world, state, blockPos)).orElse(0f);
+		var hasPower = power >= 0f && world.isAir(pos.add(offset.getX() / 2, offset.getY(), offset.getZ() / 2));
 
 		if (hasPower) {
 			cir.setReturnValue(true);
@@ -56,8 +56,8 @@ public class EnchantingTableBlockMixin {
 			return false;
 		}
 
-		BlockPos blockPos = pos.add(offset);
-		BlockState blockState = world.getBlockState(blockPos);
+		var blockPos = pos.add(offset);
+		var blockState = world.getBlockState(blockPos);
 		var block = blockState.getBlock();
 		var booster = BlockContentRegistries.ENCHANTING_BOOSTERS.getNullable(block);
 

@@ -25,7 +25,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 /**
- * A constant booster.
+ * A constant enchanting booster.
  *
  * @param value the boost level
  */

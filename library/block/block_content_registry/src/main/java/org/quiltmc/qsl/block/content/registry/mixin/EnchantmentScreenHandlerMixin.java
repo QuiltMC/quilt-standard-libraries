@@ -56,9 +56,9 @@ public class EnchantmentScreenHandlerMixin {
 
 		for (BlockPos offset : EnchantingTableBlock.POSSIBLE_BOOKSHELF_LOCATIONS) {
 			if (world.isAir(pos.add(offset.getX() / 2, offset.getY(), offset.getZ() / 2))) {
-				BlockPos blockPos = pos.add(offset);
-				BlockState state = world.getBlockState(blockPos);
-				Block block = state.getBlock();
+				var blockPos = pos.add(offset);
+				var state = world.getBlockState(blockPos);
+				var block = state.getBlock();
 				count += BlockContentRegistries.ENCHANTING_BOOSTERS.get(block).map(booster -> booster.getEnchantingBoost(world, state, blockPos)).orElse(0.0F);
 			}
 		}
