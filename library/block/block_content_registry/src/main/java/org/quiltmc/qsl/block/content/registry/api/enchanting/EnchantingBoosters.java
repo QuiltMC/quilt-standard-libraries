@@ -83,7 +83,7 @@ public class EnchantingBoosters {
 	 * @return the type for the booster
 	 */
 	public static EnchantingBoosterType register(Identifier id, Codec<? extends EnchantingBooster> codec) {
-		EnchantingBoosterType type = new EnchantingBoosterType(codec, Optional.empty());
+		var type = new EnchantingBoosterType(codec, Optional.empty());
 		return register(id, type);
 	}
 
