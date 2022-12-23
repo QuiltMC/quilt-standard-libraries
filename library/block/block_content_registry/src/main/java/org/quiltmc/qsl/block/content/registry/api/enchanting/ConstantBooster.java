@@ -39,7 +39,7 @@ public record ConstantBooster(float value) implements EnchantingBooster {
 
 	@Override
 	public float getEnchantingBoost(World world, BlockState state, BlockPos pos) {
-		return value;
+		return this.value;
 	}
 
 	@Override
