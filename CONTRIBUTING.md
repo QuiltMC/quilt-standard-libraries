@@ -65,7 +65,7 @@ Everything within this section is the definitions for the actual PR policy follo
 
 ### Other
 
-If the determined FCP length is judged to be inadequate for one or more PRs, a member of the QSL Core team may either shorten or extend their FCPs, provided that no other member objects it. This applies to both PRs that are yet to begin its FCP and to PRs whose FCP is already in motion.
+If the determined FCP length is judged to be inadequate for one or more PRs, a member of the QSL Core team may either shorten, extend, or skip their FCPs, provided that no other member objects it. This applies to both PRs that are yet to begin its FCP and to PRs whose FCP is already in motion.
 
 Trivial fixes that do not require review (e.g. typos) are exempt from this policy. QSL team members should double check with other members of the team on Discord before pushing a commit or merging a PR without going through this process.
 
