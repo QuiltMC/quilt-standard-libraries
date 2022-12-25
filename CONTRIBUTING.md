@@ -27,15 +27,6 @@ In the event that there is no-one available on a library team to review your PR,
 ## PR Policy Definitions
 Everything within this section is the definitions for the actual PR policy followed by the QSL team, in accordance with [RFC 39](https://github.com/QuiltMC/rfcs/blob/master/structure/0039-pr-policy.md)
 
-### `T: major`
-
-**Description**: Used for pull requests whose impact means that it requires a more careful reviewing.
-
-**Required Approvals**: 3
-- At least 1 approval must come directly from each library team whose code the pull request modifies.
-
-**Final Comment Period**: 7 days
-
 ### `T: new API`
 
 **Description**: Used for pull requests that add new APIs to QSL, defined as anything in a `$modulename.api` package or subfolders.
@@ -73,6 +64,8 @@ Everything within this section is the definitions for the actual PR policy follo
 **Final Comment Period**: N/A
 
 ### Other
+
+If the determined FCP length is judged to be inadequate for one or more PRs, a member of the QSL Core team may either shorten or extend their FCPs, provided that no other member objects it. This applies to both PRs that are yet to begin its FCP and to PRs whose FCP is already in motion.
 
 Trivial fixes that do not require review (e.g. typos) are exempt from this policy. QSL team members should double check with other members of the team on Discord before pushing a commit or merging a PR without going through this process.
 
