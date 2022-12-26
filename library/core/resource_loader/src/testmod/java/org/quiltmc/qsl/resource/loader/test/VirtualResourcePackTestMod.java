@@ -16,11 +16,16 @@
 
 package org.quiltmc.qsl.resource.loader.test;
 
+import java.util.function.Consumer;
+
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.SharedConstants;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.pack.ResourcePackProfile;
+import net.minecraft.resource.pack.ResourcePackSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
@@ -31,11 +36,16 @@ import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 import org.quiltmc.qsl.resource.loader.api.InMemoryResourcePack;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
+import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
 import org.quiltmc.qsl.resource.loader.api.ResourcePackRegistrationContext;
 
 public class VirtualResourcePackTestMod implements ModInitializer, ResourcePackRegistrationContext.Callback, ServerLifecycleEvents.Ready {
 	private static final TagKey<Block> TEST_TAG = TagKey.of(Registry.BLOCK_KEY, ResourceLoaderTestMod.id("test_virtual_tag"));
+	private static final TagKey<Block> TEST_TAG2 = TagKey.of(Registry.BLOCK_KEY, ResourceLoaderTestMod.id("test_stackable_tag"));
 	private static final Identifier TAG_FILE = new Identifier(TEST_TAG.id().getNamespace(), "tags/blocks/" + TEST_TAG.id().getPath() + ".json");
+	private static final Identifier TAG_FILE2 = new Identifier(
+			TEST_TAG2.id().getNamespace(), "tags/blocks/" + TEST_TAG2.id().getPath() + ".json"
+	);
 
 	@Override
 	public void onInitialize(ModContainer mod) {
@@ -47,7 +57,56 @@ public class VirtualResourcePackTestMod implements ModInitializer, ResourcePackR
 		ResourceLoader.get(ResourceType.SERVER_DATA).getRegisterTopResourcePackEvent()
 				.register(this.createBasicTagBasedResourcePack("Virtual Tag Top", Blocks.MOSS_BLOCK));
 
+		ResourceLoader.get(ResourceType.CLIENT_RESOURCES)
+				.registerResourcePackProfileProvider((profileAdder, factory) -> this.providePacks(profileAdder, factory, ResourceType.CLIENT_RESOURCES));
+		ResourceLoader.get(ResourceType.SERVER_DATA)
+				.registerResourcePackProfileProvider((profileAdder, factory) -> this.providePacks(profileAdder, factory, ResourceType.SERVER_DATA));
+
 		ServerLifecycleEvents.READY.register(this);
+	}
+
+	private void providePacks(Consumer<ResourcePackProfile> profileAdder, ResourcePackProfile.Factory packFactory, ResourceType type) {
+		var pack = new InMemoryResourcePack.Named("activation_test") {
+			@Override
+			public @NotNull ResourcePackActivationType getActivationType() {
+				return ResourcePackActivationType.DEFAULT_ENABLED;
+			}
+		};
+
+		pack.putText("pack.mcmeta", String.format("""
+				{"pack":{"pack_format":%d,"description":"Provided pack activation test."}}
+					""", type.getPackVersion(SharedConstants.getGameVersion())));
+		pack.putText(ResourceType.CLIENT_RESOURCES, new Identifier("models/block/dandelion.json"), """
+				{
+				  "parent": "minecraft:block/cube_all",
+				  "textures": {
+				    "all": "minecraft:block/dandelion"
+				  }
+				}""");
+		pack.putText(ResourceType.SERVER_DATA, new Identifier("loot_tables/blocks/dandelion.json"), """
+				{
+				  "type": "minecraft:block",
+				  "pools": [
+				    {
+				      "bonus_rolls": 0.0,
+				      "conditions": [
+				        {
+				          "condition": "minecraft:survives_explosion"
+				        }
+				      ],
+				      "entries": [
+				        {
+				          "type": "minecraft:item",
+				          "name": "minecraft:diamond"
+				        }
+				      ],
+				      "rolls": 1.0
+				    }
+				  ]
+				}""");
+
+		profileAdder.accept(ResourcePackProfile.of("activation_test", false, () -> pack, packFactory,
+				ResourcePackProfile.InsertionPosition.BOTTOM, ResourcePackSource.PACK_SOURCE_BUILTIN));
 	}
 
 	@Override
@@ -96,6 +155,13 @@ public class VirtualResourcePackTestMod implements ModInitializer, ResourcePackR
 			pack.putTextAsync(ResourceType.SERVER_DATA, TAG_FILE, file -> """
 					{
 						"replace": true,
+						"values": [
+							"%s"
+						]
+					}""".formatted(Registry.BLOCK.getId(block)));
+			pack.putTextAsync(ResourceType.SERVER_DATA, TAG_FILE2, file -> """
+					{
+						"replace": false,
 						"values": [
 							"%s"
 						]
