@@ -52,7 +52,7 @@ public class ResourcePackProfileMixin implements QuiltResourcePackProfile {
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	private static void onProfileCreation(String name, boolean alwaysEnabled, Supplier<ResourcePack> packFactory,
+	private static void quilt$onProfileCreation(String name, boolean alwaysEnabled, Supplier<ResourcePack> packFactory,
 			ResourcePackProfile.Factory profileFactory, ResourcePackProfile.InsertionPosition insertionPosition, ResourcePackSource packSource,
 			CallbackInfoReturnable<ResourcePackProfile> cir, ResourcePack pack) {
 		quilt$KNOWN_ACTIVATION_TYPE.set(alwaysEnabled ? ResourcePackActivationType.ALWAYS_ENABLED : pack.getActivationType());
@@ -62,7 +62,7 @@ public class ResourcePackProfileMixin implements QuiltResourcePackProfile {
 			method = "<init>(Ljava/lang/String;ZLjava/util/function/Supplier;Lnet/minecraft/text/Text;Lnet/minecraft/text/Text;Lnet/minecraft/resource/pack/ResourcePackCompatibility;Lnet/minecraft/resource/pack/ResourcePackProfile$InsertionPosition;ZLnet/minecraft/resource/pack/ResourcePackSource;)V",
 			at = @At("RETURN")
 	)
-	private void onInit(String name, boolean alwaysEnabled, Supplier<ResourcePack> packFactory, Text displayName, Text description,
+	private void quilt$onInit(String name, boolean alwaysEnabled, Supplier<ResourcePack> packFactory, Text displayName, Text description,
 			ResourcePackCompatibility compatibility, ResourcePackProfile.InsertionPosition direction, boolean pinned, ResourcePackSource source,
 			CallbackInfo ci) {
 		var activationType = quilt$KNOWN_ACTIVATION_TYPE.get();
