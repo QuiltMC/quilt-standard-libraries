@@ -106,7 +106,7 @@ public class VirtualResourcePackTestMod implements ModInitializer, ResourcePackR
 				}""");
 
 		profileAdder.accept(ResourcePackProfile.of("activation_test", false, () -> pack, packFactory,
-				ResourcePackProfile.InsertionPosition.BOTTOM, ResourcePackSource.PACK_SOURCE_BUILTIN));
+				ResourcePackProfile.InsertionPosition.TOP, ResourcePackSource.PACK_SOURCE_BUILTIN));
 	}
 
 	@Override

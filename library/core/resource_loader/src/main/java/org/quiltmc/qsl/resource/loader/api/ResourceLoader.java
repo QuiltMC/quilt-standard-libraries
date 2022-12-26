@@ -16,11 +16,14 @@
 
 package org.quiltmc.qsl.resource.loader.api;
 
+import java.nio.file.Path;
+
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.ResourcePackProvider;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -85,6 +88,7 @@ public interface ResourceLoader {
 	 * <p>
 	 * This event is triggered when the default resources are created and allow to register additional resource packs
 	 * that are displayed to the user as the {@code "Default"} resource pack.
+	 * Added packs are added before mod resource packs, meaning mod resources will override added packs' resources.
 	 */
 	@Contract(pure = true)
 	@NotNull Event<ResourcePackRegistrationContext.Callback> getRegisterDefaultResourcePackEvent();
@@ -97,6 +101,83 @@ public interface ResourceLoader {
 	 */
 	@Contract(pure = true)
 	@NotNull Event<ResourcePackRegistrationContext.Callback> getRegisterTopResourcePackEvent();
+
+	/**
+	 * Creates a new resource pack based on a {@link Path} as its root.
+	 * <p>
+	 * If the file system of the given {@link Path} is not the operating system's file system then the pack resources will be cached.
+	 *
+	 * @param id             the identifier of the resource pack; its namespace must be the same as the mod id
+	 * @param rootPath       the root path of this resource pack
+	 * @param activationType the activation type hint of this resource pack
+	 * @return a new resource pack instance
+	 * @see #newFileSystemResourcePack(Identifier, Path, ResourcePackActivationType, Text)
+	 * @see #newFileSystemResourcePack(Identifier, ModContainer, Path, ResourcePackActivationType)
+	 * @see #newFileSystemResourcePack(Identifier, ModContainer, Path, ResourcePackActivationType, Text)
+	 */
+	default @NotNull ResourcePack newFileSystemResourcePack(@NotNull Identifier id, @NotNull Path rootPath,
+			ResourcePackActivationType activationType) {
+		return this.newFileSystemResourcePack(id, rootPath, activationType, ResourceLoaderImpl.getBuiltinPackDisplayNameFromId(id));
+	}
+
+	/**
+	 * Creates a new resource pack based on a {@link Path} as its root.
+	 * <p>
+	 * If the file system of the given {@link Path} is not the operating system's file system then the pack resources will be cached.
+	 *
+	 * @param id             the identifier of the resource pack; its namespace must be the same as the mod id
+	 * @param rootPath       the root path of this resource pack
+	 * @param activationType the activation type hint of this resource pack
+	 * @param displayName    the display name of the resource pack
+	 * @return a new resource pack instance
+	 * @see #newFileSystemResourcePack(Identifier, Path, ResourcePackActivationType)
+	 * @see #newFileSystemResourcePack(Identifier, ModContainer, Path, ResourcePackActivationType)
+	 * @see #newFileSystemResourcePack(Identifier, ModContainer, Path, ResourcePackActivationType, Text)
+	 */
+	default @NotNull ResourcePack newFileSystemResourcePack(@NotNull Identifier id, @NotNull Path rootPath,
+			ResourcePackActivationType activationType, @NotNull Text displayName) {
+		var container = QuiltLoader.getModContainer(id.getNamespace())
+				.orElseThrow(() ->
+						new IllegalArgumentException("No mod with mod id " + id.getNamespace() + " could be found"));
+		return this.newFileSystemResourcePack(id, container, rootPath, activationType, displayName);
+	}
+
+	/**
+	 * Creates a new resource pack based on a {@link Path} as its root.
+	 * <p>
+	 * If the file system of the given {@link Path} is not the operating system's file system then the pack resources will be cached.
+	 *
+	 * @param id             the identifier of the resource pack
+	 * @param owner          the mod which owns this resource pack
+	 * @param rootPath       the root path of this resource pack
+	 * @param activationType the activation type hint of this resource pack
+	 * @return a new resource pack instance
+	 * @see #newFileSystemResourcePack(Identifier, Path, ResourcePackActivationType)
+	 * @see #newFileSystemResourcePack(Identifier, Path, ResourcePackActivationType, Text)
+	 * @see #newFileSystemResourcePack(Identifier, ModContainer, Path, ResourcePackActivationType, Text)
+	 */
+	default @NotNull ResourcePack newFileSystemResourcePack(@NotNull Identifier id, @NotNull ModContainer owner, @NotNull Path rootPath,
+			ResourcePackActivationType activationType) {
+		return this.newFileSystemResourcePack(id, owner, rootPath, activationType, ResourceLoaderImpl.getBuiltinPackDisplayNameFromId(id));
+	}
+
+	/**
+	 * Creates a new resource pack based on a {@link Path} as its root.
+	 * <p>
+	 * If the file system of the given {@link Path} is not the operating system's file system then the pack resources will be cached.
+	 *
+	 * @param id             the identifier of the resource pack
+	 * @param owner          the mod which owns this resource pack
+	 * @param rootPath       the root path of this resource pack
+	 * @param activationType the activation type hint of this resource pack
+	 * @param displayName    the display name of the resource pack
+	 * @return a new resource pack instance
+	 * @see #newFileSystemResourcePack(Identifier, Path, ResourcePackActivationType)
+	 * @see #newFileSystemResourcePack(Identifier, Path, ResourcePackActivationType, Text)
+	 * @see #newFileSystemResourcePack(Identifier, ModContainer, Path, ResourcePackActivationType)
+	 */
+	@NotNull ResourcePack newFileSystemResourcePack(@NotNull Identifier id, @NotNull ModContainer owner, @NotNull Path rootPath,
+			ResourcePackActivationType activationType, @NotNull Text displayName);
 
 	/**
 	 * Registers a built-in resource pack.
