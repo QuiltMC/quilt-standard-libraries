@@ -46,6 +46,7 @@ public final class ClientInitializer implements ClientModInitializer {
 
 		if (QuiltLoader.isModLoaded("quilt_client_command")) {
 			LOGGER.info("[Quilt Debug Renderers|Client] Client Command support is enabled");
+			DebugFeatureClientCommands.init();
 		} else {
 			LOGGER.info("[Quilt Debug Renderers|Client] Client Command support is disabled");
 		}

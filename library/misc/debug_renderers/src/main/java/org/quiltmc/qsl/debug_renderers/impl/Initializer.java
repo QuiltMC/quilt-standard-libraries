@@ -49,6 +49,7 @@ public final class Initializer implements ModInitializer {
 
 		if (QuiltLoader.isModLoaded("quilt_command")) {
 			LOGGER.info("[Quilt Debug Renderers] Command support is enabled");
+			DebugFeatureCommands.init();
 		} else {
 			LOGGER.info("[Quilt Debug Renderers] Command support is disabled");
 		}

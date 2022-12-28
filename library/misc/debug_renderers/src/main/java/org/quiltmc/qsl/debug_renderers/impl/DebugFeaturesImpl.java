@@ -1,11 +1,13 @@
 package org.quiltmc.qsl.debug_renderers.impl;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.debug_renderers.api.DebugFeature;
+import org.quiltmc.qsl.networking.api.PlayerLookup;
 
 import java.util.*;
 
@@ -40,6 +42,17 @@ public class DebugFeaturesImpl {
 		} else {
 			ENABLED_FEATURES.remove(feature);
 		}
+	}
+
+	public static void setEnabledNotifyClients(DebugFeature feature, boolean value, MinecraftServer server) {
+		setEnabled(feature, value);
+		DebugFeatureSync.syncFeaturesToClient(PlayerLookup.all(server), feature);
+	}
+
+	@ClientOnly
+	public static void setEnabledNotifyServer(DebugFeature feature, boolean value) {
+		setEnabled(feature, value);
+		DebugFeatureSync.syncFeaturesToServer(feature);
 	}
 
 	public static Set<DebugFeature> getEnabledFeatures() {

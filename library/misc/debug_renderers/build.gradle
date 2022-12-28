@@ -13,10 +13,13 @@ qslModule {
 			api("qsl_base")
 
 			compileOnly("networking")
+			testmodOnly("networking")
 		}
 		management {
 			compileOnly("client_command")
 			compileOnly("command")
+			testmodOnly("client_command")
+			testmodOnly("command")
 		}
 	}
 	entrypoints {

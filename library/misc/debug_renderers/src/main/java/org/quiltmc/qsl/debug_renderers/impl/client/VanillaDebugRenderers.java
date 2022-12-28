@@ -1,10 +1,15 @@
 package org.quiltmc.qsl.debug_renderers.impl.client;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.client.MinecraftClient;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.debug_renderers.api.client.DebugRendererRegistrationCallback;
 import org.quiltmc.qsl.debug_renderers.api.VanillaDebugFeatures;
 
+@ApiStatus.Internal
+@ClientOnly
 public class VanillaDebugRenderers implements DebugRendererRegistrationCallback {
 	@Override
 	public void registerDebugRenderers(DebugRendererRegistrar registrar) {

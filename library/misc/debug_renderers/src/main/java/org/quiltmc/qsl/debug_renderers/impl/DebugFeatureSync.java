@@ -1,19 +1,25 @@
 package org.quiltmc.qsl.debug_renderers.impl;
 
-import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
+import static org.quiltmc.qsl.debug_renderers.impl.Initializer.id;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.debug_renderers.api.DebugFeature;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 
-import java.util.*;
-
-import static org.quiltmc.qsl.debug_renderers.impl.Initializer.id;
-
+@ApiStatus.Internal
 public final class DebugFeatureSync {
 	public static final Identifier SYNC_MESSAGE_ID = id("feature_sync");
 
@@ -29,7 +35,7 @@ public final class DebugFeatureSync {
 	}
 
 	public static void syncFeaturesToClient(ServerPlayerEntity... players) {
-		var features = DebugFeaturesImpl.getFeatures();
+		var features = DebugFeaturesImpl.getEnabledFeatures();
 		ServerPlayNetworking.send(List.of(players), SYNC_MESSAGE_ID, writeStatuses(features));
 	}
 
@@ -79,6 +85,7 @@ public final class DebugFeatureSync {
 			var statuses = readStatuses(buf);
 			client.execute(() -> {
 				DebugFeaturesImpl.setEnabledOnServer(statuses);
+				DebugFeatureSync.syncFeaturesToServer();
 			});
 		});
 	}

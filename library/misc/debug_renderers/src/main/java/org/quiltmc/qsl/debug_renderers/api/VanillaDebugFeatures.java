@@ -1,7 +1,8 @@
 package org.quiltmc.qsl.debug_renderers.api;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.util.Identifier;
-import org.quiltmc.qsl.debug_renderers.api.DebugFeature;
 
 /**
  * In this class are {@link DebugFeature DebugFeatures} for the vanilla Debug Renderers which do not have other means
@@ -86,5 +87,6 @@ public final class VanillaDebugFeatures {
 
 	private VanillaDebugFeatures() {}
 
-	static void init() {}
+	@ApiStatus.Internal
+	public static void init() {}
 }
