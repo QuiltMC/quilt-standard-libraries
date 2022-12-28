@@ -1,13 +1,19 @@
 package org.quiltmc.qsl.debug_renderers.mixin;
 
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.pathing.Path;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.mob.PathAwareEntity;
+import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.server.network.DebugInfoSender;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.StructureStart;
 import net.minecraft.structure.piece.StructurePiece;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.village.VillagerDataContainer;
 import net.minecraft.world.StructureWorldAccess;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -17,12 +23,22 @@ import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.Objects;
 
 @Mixin(DebugInfoSender.class)
-public class DebugInfoSenderMixin {
+public abstract class DebugInfoSenderMixin {
 	//TODO re-implement the empty methods in DebugInfoSender
+
+	@Shadow
+	private static String format(ServerWorld world, @Nullable Object object) {
+		throw new UnsupportedOperationException("mixin");
+	}
+
+	@Shadow
+	private static void writeBrain(LivingEntity entity, PacketByteBuf buf) {}
+
 	/**
 	 * @author QuiltMC, Will BL
 	 * @reason Re-implementation of method with missing body
@@ -99,6 +115,35 @@ public class DebugInfoSenderMixin {
 		ServerPlayNetworking.send(
 				VanillaDebugFeatures.STRUCTURE.getPlayersWithFeatureEnabled(world.getServer()),
 				CustomPayloadS2CPacket.DEBUG_STRUCTURES,
+				buf
+		);
+	}
+
+	/**
+	 * @author QuiltMC, Will BL
+	 * @reason Re-implementation of method with missing body
+	 */
+	@Overwrite
+	public static void sendBrainDebugData(LivingEntity living) {
+		if (living.world.isClient() || !Initializer.HAS_NETWORKING) {
+			return;
+		}
+
+		var buf = PacketByteBufs.create();
+		buf.writeDouble(living.getX());
+		buf.writeDouble(living.getY());
+		buf.writeDouble(living.getZ());
+		buf.writeUuid(living.getUuid());
+		buf.writeInt(living.getId());
+		buf.writeString(format((ServerWorld) living.world, living));
+		buf.writeString(living instanceof VillagerDataContainer villager ? villager.getVillagerData().getProfession().name() : "none");
+		buf.writeInt(living instanceof VillagerEntity villager ? villager.getExperience() : 0);
+		buf.writeFloat(living.getHealth());
+		buf.writeFloat(living.getMaxHealth());
+		writeBrain(living, buf);
+		ServerPlayNetworking.send(
+				VanillaDebugFeatures.BRAIN.getPlayersWithFeatureEnabled(living.getServer()),
+				CustomPayloadS2CPacket.DEBUG_BRAIN,
 				buf
 		);
 	}

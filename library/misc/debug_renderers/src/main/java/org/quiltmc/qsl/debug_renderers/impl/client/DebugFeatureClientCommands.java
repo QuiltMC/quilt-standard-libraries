@@ -52,7 +52,7 @@ final class DebugFeatureClientCommands {
 						Text.empty()
 								.append(Text.literal("[Debug|Client]: ").formatted(Formatting.LIGHT_PURPLE, Formatting.BOLD))
 								.append(Text.literal("Debug Feature " + id + " must be enabled on the server, but it is not - enable it with [")).formatted(Formatting.YELLOW)
-								.append(Text.literal(suggestedCommand).styled(s -> s.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, suggestedCommand))))
+								.append(Text.literal(suggestedCommand).styled(s -> s.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, suggestedCommand)).withColor(Formatting.WHITE)))
 								.append(Text.literal("]")).formatted(Formatting.YELLOW)
 				);
 			}
