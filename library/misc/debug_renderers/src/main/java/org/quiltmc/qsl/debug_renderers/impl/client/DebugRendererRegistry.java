@@ -6,7 +6,10 @@ import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.debug_renderers.api.DebugFeature;
 import org.quiltmc.qsl.debug_renderers.impl.DebugFeaturesImpl;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @ApiStatus.Internal

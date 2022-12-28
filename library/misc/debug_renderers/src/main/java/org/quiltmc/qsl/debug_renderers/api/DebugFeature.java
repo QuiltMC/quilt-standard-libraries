@@ -1,11 +1,14 @@
 package org.quiltmc.qsl.debug_renderers.api;
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.debug_renderers.impl.DebugFeaturesImpl;
+import org.quiltmc.qsl.networking.api.PlayerLookup;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 public final class DebugFeature {
@@ -19,6 +22,12 @@ public final class DebugFeature {
 
 	public boolean isEnabled() {
 		return DebugFeaturesImpl.isEnabled(this);
+	}
+
+	public Collection<ServerPlayerEntity> getPlayersWithFeatureEnabled(MinecraftServer server) {
+		return DebugFeaturesImpl.isEnabled(this) ?
+				PlayerLookup.all(server).stream().filter(p -> DebugFeaturesImpl.isEnabledForPlayer(p, this)).toList() :
+				List.of();
 	}
 
 	public boolean isEnabledOnServerAndClient(ServerPlayerEntity player) {
