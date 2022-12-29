@@ -107,7 +107,7 @@ public interface ResourceLoader {
 	 * <p>
 	 * If the file system of the given {@link Path} is not the operating system's file system then the pack resources will be cached.
 	 *
-	 * @param id             the identifier of the resource pack; its namespace must be the same as the mod id
+	 * @param id             the identifier of the resource pack; its namespace must be the same as the mod ID
 	 * @param rootPath       the root path of this resource pack
 	 * @param activationType the activation type hint of this resource pack
 	 * @return a new resource pack instance
@@ -125,7 +125,7 @@ public interface ResourceLoader {
 	 * <p>
 	 * If the file system of the given {@link Path} is not the operating system's file system then the pack resources will be cached.
 	 *
-	 * @param id             the identifier of the resource pack; its namespace must be the same as the mod id
+	 * @param id             the identifier of the resource pack; its namespace must be the same as the mod ID
 	 * @param rootPath       the root path of this resource pack
 	 * @param activationType the activation type hint of this resource pack
 	 * @param displayName    the display name of the resource pack
@@ -138,7 +138,7 @@ public interface ResourceLoader {
 			ResourcePackActivationType activationType, @NotNull Text displayName) {
 		var container = QuiltLoader.getModContainer(id.getNamespace())
 				.orElseThrow(() ->
-						new IllegalArgumentException("No mod with mod id " + id.getNamespace() + " could be found"));
+						new IllegalArgumentException("No mod with ID '" + id.getNamespace() + "' could be found"));
 		return this.newFileSystemResourcePack(id, container, rootPath, activationType, displayName);
 	}
 
