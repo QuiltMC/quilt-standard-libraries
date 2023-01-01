@@ -44,9 +44,9 @@ public class BlockColorMapMixin implements RebuildableIdModelHolder {
 	@Final
 	@Shadow
 	private IdList<BlockColorProvider> providers;
+
 	@Unique
 	private final Map<Block, BlockColorProvider> quilt$providers = new Object2ObjectOpenHashMap<>();
-
 
 	@Inject(method = "registerColorProvider", at = @At("TAIL"))
 	private void quilt$storeProviders(BlockColorProvider provider, Block[] blocks, CallbackInfo ci) {

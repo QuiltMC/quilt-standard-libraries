@@ -1,0 +1,16 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Entity Events"
+	moduleName = "entity_events"
+	id = "quilt_entity_events"
+	description = "Provides various events to do with entities"
+	library = "entity"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+		}
+	}
+}

@@ -43,8 +43,15 @@ abstract class MouseMixin {
 	@Unique
 	private Double quilt$scrollDistanceX;
 
-	// Synthetic method method_1611([ZDDI)V -> lambda in Screen.wrapScreenError in Mouse.onMouseButton
-	@Inject(method = "method_1611", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z"), cancellable = true)
+	// Synthetic method m_jzgvmppg([ZDDI)V -> lambda in Screen.wrapScreenError in Mouse.onMouseButton
+	@Inject(
+			method = "m_jzgvmppg([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
+			at = @At(
+				value = "INVOKE",
+				target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z"
+			),
+			cancellable = true
+	)
 	private static void beforeMouseClickedEvent(boolean[] resultHack, Screen screen, double mouseX, double mouseY, int button, CallbackInfo ci) {
 		@SuppressWarnings("resource")
 		var thisRef = (MouseMixin) (Object) MinecraftClient.getInstance().mouse;
@@ -66,8 +73,15 @@ abstract class MouseMixin {
 		ScreenMouseEvents.BEFORE_MOUSE_CLICK.invoker().beforeMouseClick(thisRef.quilt$currentScreen, mouseX, mouseY, button);
 	}
 
-	// Synthetic method method_1611([ZDDI)V -> lambda in Screen.wrapScreenError in Mouse.onMouseButton
-	@Inject(method = "method_1611", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z", shift = At.Shift.AFTER))
+	// Synthetic method m_jzgvmppg([ZDDI)V -> lambda in Screen.wrapScreenError in Mouse.onMouseButton
+	@Inject(
+			method = "m_jzgvmppg([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
+			at = @At(
+				value = "INVOKE",
+				target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z",
+				shift = At.Shift.AFTER
+			)
+	)
 	private static void afterMouseClickedEvent(boolean[] resultHack, Screen screen, double mouseX, double mouseY, int button, CallbackInfo ci) {
 		@SuppressWarnings("resource")
 		var thisRef = (MouseMixin) (Object) MinecraftClient.getInstance().mouse;
@@ -80,8 +94,15 @@ abstract class MouseMixin {
 		thisRef.quilt$currentScreen = null;
 	}
 
-	// Synthetic method method_1605([ZDDI)V -> lambda in Screen.wrapScreenError in Mouse.onMouseButton
-	@Inject(method = "method_1605", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z"), cancellable = true)
+	// Synthetic method m_acizjdos([ZDDI)V -> lambda in Screen.wrapScreenError in Mouse.onMouseButton
+	@Inject(
+			method = "m_acizjdos([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
+			at = @At(
+				value = "INVOKE",
+				target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z"
+			),
+			cancellable = true
+	)
 	private static void beforeMouseReleasedEvent(boolean[] resultHack, Screen screen, double mouseX, double mouseY, int button, CallbackInfo ci) {
 		@SuppressWarnings("resource")
 		var thisRef = (MouseMixin) (Object) MinecraftClient.getInstance().mouse;
@@ -104,8 +125,15 @@ abstract class MouseMixin {
 		ScreenMouseEvents.BEFORE_MOUSE_RELEASE.invoker().beforeMouseRelease(thisRef.quilt$currentScreen, mouseX, mouseY, button);
 	}
 
-	// Synthetic method method_1605([ZDDI)V -> lambda in Screen.wrapScreenError in Mouse.onMouseButton
-	@Inject(method = "method_1605", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z", shift = At.Shift.AFTER))
+	// Synthetic method m_acizjdos([ZDDI)V -> lambda in Screen.wrapScreenError in Mouse.onMouseButton
+	@Inject(
+			method = "m_acizjdos([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
+			at = @At(
+				value = "INVOKE",
+				target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z",
+				shift = At.Shift.AFTER
+			)
+	)
 	private static void afterMouseReleasedEvent(boolean[] resultHack, Screen screen, double mouseX, double mouseY, int button, CallbackInfo ci) {
 		@SuppressWarnings("resource")
 		var thisRef = (MouseMixin) (Object) MinecraftClient.getInstance().mouse;

@@ -31,14 +31,22 @@ import org.quiltmc.qsl.block.content.registry.impl.BlockContentRegistriesInitial
 @Mixin(Oxidizable.class)
 public interface OxidizableMixin {
 	@Dynamic("Replace old map with one updated by Registry Attachments")
-	@Inject(method = "method_34740", at = @At("RETURN"), cancellable = true, remap = false)
+	@Inject(
+			method = "m_eumqzdew()Lcom/google/common/collect/BiMap;",
+			at = @At("RETURN"),
+			cancellable = true
+	)
 	private static void createOxidationLevelIncreasesMap(CallbackInfoReturnable<BiMap<Block, Block>> cir) {
 		BlockContentRegistriesInitializer.INITIAL_OXIDATION_BLOCKS.putAll(cir.getReturnValue());
 		cir.setReturnValue(BlockContentRegistriesInitializer.OXIDATION_INCREASE_BLOCKS);
 	}
 
 	@Dynamic("Replace old map with one updated by Registry Attachments")
-	@Inject(method = "method_34739", at = @At("RETURN"), cancellable = true, remap = false)
+	@Inject(
+			method = "m_pasrgfdf()Lcom/google/common/collect/BiMap;",
+			at = @At("RETURN"),
+			cancellable = true
+	)
 	private static void createOxidationLevelDecreasesMap(CallbackInfoReturnable<BiMap<Block, Block>> cir) {
 		cir.setReturnValue(BlockContentRegistriesInitializer.OXIDATION_DECREASE_BLOCKS);
 	}

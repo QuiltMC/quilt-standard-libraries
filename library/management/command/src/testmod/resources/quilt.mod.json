@@ -20,6 +20,9 @@
     "intermediate_mappings": "net.fabricmc:intermediary",
     "load_type": "always",
     "entrypoints": {
+      "init": [
+        "org.quiltmc.qsl.command.test.EntitySelectorOptionsTest"
+      ],
       "events": [
         "org.quiltmc.qsl.command.test.CommandApiTest"
       ]

@@ -59,11 +59,13 @@ public abstract class RegistryEntryAttachmentHolder<R> {
 		if (attachment == null) {
 			return null;
 		}
+
 		if (attachment.valueClass() != valueClass) {
-			throw new IllegalArgumentException(("Found attachment with ID \"%s\" for registry \"%s\", " +
-					"but it has wrong value class (expected %s, got %s)")
+			throw new IllegalArgumentException(("Found attachment with ID \"%s\" for registry \"%s\", "
+					+ "but it has wrong value class (expected %s, got %s)")
 					.formatted(id, registry.getKey().getValue(), valueClass, attachment.valueClass()));
 		}
+
 		return (RegistryEntryAttachment<R, V>) attachment;
 	}
 
@@ -73,6 +75,7 @@ public abstract class RegistryEntryAttachmentHolder<R> {
 		if (holder == null) {
 			internals.quilt$setBuiltinAttachmentHolder(holder = new BuiltinRegistryEntryAttachmentHolder<>());
 		}
+
 		return holder;
 	}
 
@@ -82,6 +85,7 @@ public abstract class RegistryEntryAttachmentHolder<R> {
 		if (holder == null) {
 			internals.quilt$setDataAttachmentHolder(holder = new DataRegistryEntryAttachmentHolder<>());
 		}
+
 		return holder;
 	}
 
@@ -98,7 +102,7 @@ public abstract class RegistryEntryAttachmentHolder<R> {
 	public <V> V getValue(RegistryEntryAttachment<R, V> attachment, R entry) {
 		V value = (V) this.valueTable.get(attachment, entry); // Check for a direct value in valueTable
 		if (value == null) { // If there is no value, check the valueTagTable
-			Map<TagKey<R>, Object> row = valueTagTable.row(attachment);
+			Map<TagKey<R>, Object> row = this.valueTagTable.row(attachment);
 			for (Map.Entry<TagKey<R>, Object> tagValue : row.entrySet()) { // Loop over the tags
 				for (Holder<R> holder : attachment.registry().getTagOrEmpty(tagValue.getKey())) { // Loop over the holders in the tag
 					if (holder.value().equals(entry)) { // The holder matches the entry
@@ -109,11 +113,13 @@ public abstract class RegistryEntryAttachmentHolder<R> {
 									attachment.id(),
 									tagValue.getKey().id());
 						}
+
 						value = (V) tagValue.getValue();
 					}
 				}
 			}
 		}
+
 		return value;
 	}
 
