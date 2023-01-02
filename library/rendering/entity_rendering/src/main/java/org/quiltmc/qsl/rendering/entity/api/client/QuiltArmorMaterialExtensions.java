@@ -23,6 +23,7 @@ import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
+import org.quiltmc.qsl.rendering.entity.impl.client.FallbackArmorTextureProvider;
 
 /**
  * Extensions of {@link ArmorMaterial}, allowing for customizing the armor texture without having to use the
@@ -39,8 +40,8 @@ public interface QuiltArmorMaterialExtensions {
 	 * @see ArmorTextureUtils#getArmorTextureSuffix(boolean, String)
 	 * @return the base texture identifier
 	 */
-	// has a "default" impl in ArmorMaterialMixin
-	// not actually marked as default, since people NEED to implement this
 	@ClientOnly
-	@NotNull Identifier getTexture();
+	default @NotNull Identifier getTexture() {
+		return FallbackArmorTextureProvider.getArmorTexture((ArmorMaterial) this);
+	}
 }
