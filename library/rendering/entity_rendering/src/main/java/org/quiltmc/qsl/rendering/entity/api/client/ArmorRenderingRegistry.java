@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.rendering.entity.api.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,13 +26,14 @@ import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.rendering.entity.impl.client.ArmorRenderingRegistryImpl;
 
 /**
  * Provides methods for modifying the rendering of worn armor on entities.
  */
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ArmorRenderingRegistry {
 	private ArmorRenderingRegistry() {
 		throw new UnsupportedOperationException("ArmorRenderingRegistry only contains static declarations.");
@@ -126,7 +125,7 @@ public final class ArmorRenderingRegistry {
 	/**
 	 * The callback for customizing an armor's texture.
 	 */
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	public interface TextureProvider {
 		/**
 		 * Modifies the armor texture.
@@ -149,7 +148,7 @@ public final class ArmorRenderingRegistry {
 	/**
 	 * The callback for modifying an armor's model.
 	 */
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	public interface ModelProvider {
 		/**
 		 * Modifies the armor model.

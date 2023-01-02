@@ -20,8 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.mojang.logging.LogUtils;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -29,8 +27,10 @@ import org.slf4j.Logger;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
+
 @ApiStatus.Internal
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class FallbackArmorTextureProvider {
 	private FallbackArmorTextureProvider() {
 		throw new UnsupportedOperationException("FallbackArmorTextureProvider only contains static declarations.");

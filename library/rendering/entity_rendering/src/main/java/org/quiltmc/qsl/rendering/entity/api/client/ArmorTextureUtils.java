@@ -16,15 +16,15 @@
 
 package org.quiltmc.qsl.rendering.entity.api.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 
 /**
  * Provides utility methods for managing armor textures.
  */
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ArmorTextureUtils {
 	private ArmorTextureUtils() {
 		throw new UnsupportedOperationException("ArmorTextureUtils only contains static declarations.");

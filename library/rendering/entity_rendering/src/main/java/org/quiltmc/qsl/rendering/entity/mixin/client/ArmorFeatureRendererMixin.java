@@ -17,6 +17,8 @@
 
 package org.quiltmc.qsl.rendering.entity.mixin.client;
 
+import static org.quiltmc.qsl.rendering.entity.impl.client.ArmorRenderingRegistryImpl.LOGGER;
+
 import java.util.Map;
 
 import org.spongepowered.asm.mixin.Final;
@@ -41,12 +43,11 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.rendering.entity.api.client.ArmorTextureUtils;
 import org.quiltmc.qsl.rendering.entity.impl.client.ArmorRenderingRegistryImpl;
 
-import static org.quiltmc.qsl.rendering.entity.impl.client.ArmorRenderingRegistryImpl.LOGGER;
-
 @SuppressWarnings("rawtypes")
 @Mixin(ArmorFeatureRenderer.class)
 public abstract class ArmorFeatureRendererMixin {
-	@Shadow @Final
+	@Shadow
+	@Final
 	private static Map<String, Identifier> ARMOR_TEXTURE_CACHE;
 
 	@Unique

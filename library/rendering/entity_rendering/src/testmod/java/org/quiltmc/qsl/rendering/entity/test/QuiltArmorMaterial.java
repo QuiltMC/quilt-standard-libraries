@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.rendering.entity.test;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.entity.EquipmentSlot;
@@ -28,6 +26,8 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.tag.ItemTags;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
+
 public enum QuiltArmorMaterial implements ArmorMaterial {
 	INSTANCE;
 
@@ -35,7 +35,7 @@ public enum QuiltArmorMaterial implements ArmorMaterial {
 	private static final int[] BASE_DURABILITY = new int[] { 13, 15, 16, 11 };
 	private static final int[] PROTECTION_AMOUNTS = new int[] { 3, 6, 8, 3 };
 	private static final Ingredient REPAIR_INGREDIENT = Ingredient.ofTag(ItemTags.WOOL);
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	private static final Identifier TEXTURE = EntityRenderingTestmod.id("textures/models/armor/" + NAME);
 
 	@Override
@@ -78,8 +78,7 @@ public enum QuiltArmorMaterial implements ArmorMaterial {
 		return 0.15F;
 	}
 
-	@Override
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	public @NotNull Identifier getTexture() {
 		return TEXTURE;
 	}

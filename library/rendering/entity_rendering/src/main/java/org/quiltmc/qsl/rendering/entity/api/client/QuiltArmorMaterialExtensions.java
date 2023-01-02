@@ -16,13 +16,12 @@
 
 package org.quiltmc.qsl.rendering.entity.api.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 /**
@@ -42,6 +41,6 @@ public interface QuiltArmorMaterialExtensions {
 	 */
 	// has a "default" impl in ArmorMaterialMixin
 	// not actually marked as default, since people NEED to implement this
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@NotNull Identifier getTexture();
 }

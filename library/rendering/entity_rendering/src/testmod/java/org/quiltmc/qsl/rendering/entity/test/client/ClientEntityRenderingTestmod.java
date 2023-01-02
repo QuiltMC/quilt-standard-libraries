@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.rendering.entity.test.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,11 +25,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.rendering.entity.api.client.ArmorRenderingRegistry;
 import org.quiltmc.qsl.rendering.entity.test.EntityRenderingTestmod;
 
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ClientEntityRenderingTestmod implements ClientModInitializer,
 		ArmorRenderingRegistry.TextureProvider {
 	@Override
