@@ -69,28 +69,28 @@ public final class ArmorRenderingRegistryImpl {
 
 	public static void registerTextureProvider(@NotNull Item item, @NotNull Identifier phaseIdentifier,
 			@NotNull ArmorRenderingRegistry.TextureProvider provider) {
-		((ItemExtensions) item).quilt$getOrCreateTextureProviderEvent().register(phaseIdentifier, provider);
+		((ItemArmorRenderingExtensions) item).quilt$getOrCreateTextureProviderEvent().register(phaseIdentifier, provider);
 	}
 
 	public static void addTextureProviderPhaseOrdering(@NotNull Item item,
 			@NotNull Identifier firstPhase, @NotNull Identifier secondPhase) {
-		((ItemExtensions) item).quilt$getOrCreateTextureProviderEvent().addPhaseOrdering(firstPhase, secondPhase);
+		((ItemArmorRenderingExtensions) item).quilt$getOrCreateTextureProviderEvent().addPhaseOrdering(firstPhase, secondPhase);
 	}
 
 	public static void registerModelProvider(@NotNull Item item, @NotNull Identifier phaseIdentifier,
 			@NotNull ArmorRenderingRegistry.ModelProvider provider) {
-		((ItemExtensions) item).quilt$getOrCreateModelProviderEvent().register(phaseIdentifier, provider);
+		((ItemArmorRenderingExtensions) item).quilt$getOrCreateModelProviderEvent().register(phaseIdentifier, provider);
 	}
 
 	public static void addModelProviderPhaseOrdering(@NotNull Item item,
 			@NotNull Identifier firstPhase, @NotNull Identifier secondPhase) {
-		((ItemExtensions) item).quilt$getOrCreateModelProviderEvent().addPhaseOrdering(firstPhase, secondPhase);
+		((ItemArmorRenderingExtensions) item).quilt$getOrCreateModelProviderEvent().addPhaseOrdering(firstPhase, secondPhase);
 	}
 
 	public static @NotNull Identifier getArmorTexture(@NotNull Identifier texture,
 			@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot,
 			boolean useSecondTexture, @Nullable String suffix) {
-		var e = ((ItemExtensions) stack.getItem()).quilt$getTextureProviderEvent();
+		var e = ((ItemArmorRenderingExtensions) stack.getItem()).quilt$getTextureProviderEvent();
 		if (e == null) {
 			return texture;
 		}
@@ -100,7 +100,7 @@ public final class ArmorRenderingRegistryImpl {
 
 	public static @NotNull BipedEntityModel<LivingEntity> getArmorModel(@NotNull BipedEntityModel<LivingEntity> model,
 			@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot) {
-		var e = ((ItemExtensions) stack.getItem()).quilt$getModelProviderEvent();
+		var e = ((ItemArmorRenderingExtensions) stack.getItem()).quilt$getModelProviderEvent();
 		if (e == null) {
 			return model;
 		}

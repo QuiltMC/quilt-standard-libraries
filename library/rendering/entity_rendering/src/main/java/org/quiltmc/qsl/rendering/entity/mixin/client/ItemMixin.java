@@ -26,10 +26,10 @@ import net.minecraft.item.Item;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.rendering.entity.api.client.ArmorRenderingRegistry;
 import org.quiltmc.qsl.rendering.entity.impl.client.ArmorRenderingRegistryImpl;
-import org.quiltmc.qsl.rendering.entity.impl.client.ItemExtensions;
+import org.quiltmc.qsl.rendering.entity.impl.client.ItemArmorRenderingExtensions;
 
 @Mixin(Item.class)
-public abstract class ItemMixin implements ItemExtensions {
+public abstract class ItemMixin implements ItemArmorRenderingExtensions {
 	@Unique
 	private @Nullable Event<ArmorRenderingRegistry.TextureProvider> textureProviderEvent;
 	@Unique

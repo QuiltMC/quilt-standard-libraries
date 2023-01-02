@@ -26,7 +26,7 @@ import org.quiltmc.qsl.rendering.entity.api.client.ArmorRenderingRegistry;
 
 @ApiStatus.Internal
 @ClientOnly
-public interface ItemExtensions {
+public interface ItemArmorRenderingExtensions {
 	@Nullable Event<ArmorRenderingRegistry.TextureProvider> quilt$getTextureProviderEvent();
 	@Nullable Event<ArmorRenderingRegistry.ModelProvider> quilt$getModelProviderEvent();
 
