@@ -18,9 +18,9 @@ package org.quiltmc.qsl.block.content.registry.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.EnchantingTableBlock;
 import net.minecraft.util.math.BlockPos;
@@ -28,12 +28,20 @@ import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.world.World;
 
 import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(EnchantingTableBlock.class)
 public class EnchantingTableBlockMixin {
-	@Redirect(method = "isValidForBookshelf", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;isOf(Lnet/minecraft/block/Block;)Z"))
-	private static boolean hasEnchantmentPower(BlockState blockState, Block ignored) {
-		return BlockContentRegistries.ENCHANTING_BOOSTERS.get(blockState.getBlock()).orElse(0f) != 0f;
+	@Inject(method = "isValidForBookshelf", at = @At("HEAD"), cancellable = true)
+	private static void hasEnchantmentPower(World world, BlockPos pos, BlockPos offset, CallbackInfoReturnable<Boolean> cir) {
+		var blockPos = pos.add(offset);
+		var state = world.getBlockState(blockPos);
+		var power = BlockContentRegistries.ENCHANTING_BOOSTERS.get(state.getBlock()).map(booster -> booster.getEnchantingBoost(world, state, blockPos)).orElse(0f);
+		var hasPower = power >= 0f && world.isAir(pos.add(offset.getX() / 2, offset.getY(), offset.getZ() / 2));
+
+		if (hasPower) {
+			cir.setReturnValue(true);
+		}
 	}
 
 	@Redirect(method = "randomDisplayTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/random/RandomGenerator;nextInt(I)I"))
@@ -48,10 +56,13 @@ public class EnchantingTableBlockMixin {
 			return false;
 		}
 
-		var block = world.getBlockState(pos.add(offset)).getBlock();
-		var power = BlockContentRegistries.ENCHANTING_BOOSTERS.getNullable(block);
+		var blockPos = pos.add(offset);
+		var blockState = world.getBlockState(blockPos);
+		var block = blockState.getBlock();
+		var booster = BlockContentRegistries.ENCHANTING_BOOSTERS.getNullable(block);
 
-		if (power != null) {
+		if (booster != null) {
+			var power = booster.getEnchantingBoost(world, blockState, blockPos);
 			return random.nextFloat() * 16f <= power;
 		}
 

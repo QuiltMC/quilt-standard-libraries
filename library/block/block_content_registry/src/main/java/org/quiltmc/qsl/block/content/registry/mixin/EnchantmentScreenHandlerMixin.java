@@ -27,6 +27,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.EnchantingTableBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.EnchantmentScreenHandler;
@@ -55,8 +56,10 @@ public class EnchantmentScreenHandlerMixin {
 
 		for (BlockPos offset : EnchantingTableBlock.POSSIBLE_BOOKSHELF_LOCATIONS) {
 			if (world.isAir(pos.add(offset.getX() / 2, offset.getY(), offset.getZ() / 2))) {
-				Block block = world.getBlockState(pos.add(offset)).getBlock();
-				count += BlockContentRegistries.ENCHANTING_BOOSTERS.get(block).orElse(0.0F);
+				var blockPos = pos.add(offset);
+				var state = world.getBlockState(blockPos);
+				var block = state.getBlock();
+				count += BlockContentRegistries.ENCHANTING_BOOSTERS.get(block).map(booster -> booster.getEnchantingBoost(world, state, blockPos)).orElse(0.0F);
 			}
 		}
 
