@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.block.content.registry.api;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 
 import net.minecraft.block.Block;
@@ -25,6 +24,8 @@ import net.minecraft.registry.Registries;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.qsl.block.content.registry.api.enchanting.EnchantingBooster;
+import org.quiltmc.qsl.block.content.registry.api.enchanting.EnchantingBoosters;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 /**
@@ -123,11 +124,11 @@ public class BlockContentRegistries {
 	 * <p>
 	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/enchanting_boosters.json}
 	 */
-	public static final RegistryEntryAttachment<Block, Float> ENCHANTING_BOOSTERS = RegistryEntryAttachment
+	public static final RegistryEntryAttachment<Block, EnchantingBooster> ENCHANTING_BOOSTERS = RegistryEntryAttachment
 			.builder(Registries.BLOCK,
 					new Identifier(NAMESPACE, "enchanting_boosters"),
-					Float.class,
-					Codec.floatRange(0.0F, Float.MAX_VALUE))
+					EnchantingBooster.class,
+					EnchantingBoosters.CODEC)
 			.build();
 }
 

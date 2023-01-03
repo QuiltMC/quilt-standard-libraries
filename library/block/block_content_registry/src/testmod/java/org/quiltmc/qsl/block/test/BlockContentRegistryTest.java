@@ -18,17 +18,26 @@ package org.quiltmc.qsl.block.test;
 
 import java.util.Optional;
 
+import com.mojang.serialization.Codec;
+import org.quiltmc.qsl.block.content.registry.api.enchanting.ConstantBooster;
+import org.quiltmc.qsl.block.content.registry.api.enchanting.EnchantingBooster;
+import org.quiltmc.qsl.block.content.registry.api.enchanting.EnchantingBoosterType;
+import org.quiltmc.qsl.block.content.registry.api.enchanting.EnchantingBoosters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.Oxidizable;
 import net.minecraft.block.OxidizableBlock;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -51,10 +60,11 @@ public class BlockContentRegistryTest implements ModInitializer {
 				new OxidizableBlock(Oxidizable.OxidizationLevel.UNAFFECTED, AbstractBlock.Settings.copy(Blocks.IRON_BLOCK)),
 				BlockContentRegistries.OXIDIZABLE, new ReversibleBlockEntry(Blocks.IRON_BLOCK, false));
 
-		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.IRON_BLOCK, 3f);
-		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.DIAMOND_BLOCK, 15f);
-		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.NETHERITE_BLOCK, 100f);
-		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.OAK_PLANKS, 0.25f);
+		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.IRON_BLOCK, new ConstantBooster(3f));
+		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.DIAMOND_BLOCK, new ConstantBooster(15f));
+		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.NETHERITE_BLOCK, new ConstantBooster(100f));
+		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.OAK_PLANKS, new ConstantBooster(0.25f));
+		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.REDSTONE_WIRE, new EnchantingBlockStateBooster());
 
 		ServerWorldTickEvents.START.register((server, world) -> {
 			if (testPassed) {
@@ -71,6 +81,24 @@ public class BlockContentRegistryTest implements ModInitializer {
 
 			testPassed = true;
 		});
+	}
+
+	private record EnchantingBlockStateBooster() implements EnchantingBooster {
+		public static EnchantingBoosterType TYPE = EnchantingBoosters.register(new Identifier(MOD_ID, "block_state_booster"),
+				new EnchantingBoosterType(Codec.unit(EnchantingBlockStateBooster::new), Optional.of(new EnchantingBlockStateBooster())));
+		@Override
+		public float getEnchantingBoost(World world, BlockState state, BlockPos pos) {
+			if (!state.contains(Properties.POWER)) {
+				return 0;
+			}
+
+			return state.get(Properties.POWER) / 15f;
+		}
+
+		@Override
+		public EnchantingBoosterType getType() {
+			return TYPE;
+		}
 	}
 
 	private <T> void assertValues(Block block, RegistryEntryAttachment<Block, T> attachment, T value) {
