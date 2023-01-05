@@ -78,6 +78,5 @@ public class ArmorKnockbackTest implements ModInitializer {
 	});
 
 	@Override
-	public void onInitialize(ModContainer mod) {
-	}
+	public void onInitialize(ModContainer mod) { }
 }
