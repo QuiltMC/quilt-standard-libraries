@@ -38,6 +38,10 @@ public record DataPackLoadingContext(DynamicRegistryManager.Writable registryMan
 	 * @return the dynamic ops
 	 */
 	public DynamicOps<JsonElement> loadRegistries() {
+		if (this.resourceManager instanceof QuiltMultiPackResourceManagerHooks hooks) {
+			hooks.quilt$appendTopPacks();
+		}
+
 		return RegistryOps.createAndLoad(JsonOps.INSTANCE, this.registryManager, this.resourceManager);
 	}
 
