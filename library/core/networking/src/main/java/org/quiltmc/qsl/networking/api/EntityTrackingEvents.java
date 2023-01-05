@@ -48,7 +48,7 @@ public final class EntityTrackingEvents {
 	 * @apiNote Since the client will not know about the entity at this point, you probably don't want to send packets
 	 * referencing the entity here. Do that in {@link #AFTER_START_TRACKING} instead.
 	 *
-	 * @deprecated Use {@link #BEFORE_START_TRACKING} instead. It's the same event with a more descriptive name.
+	 * @deprecated Renamed to {@link #BEFORE_START_TRACKING}.
 	 */
 	@Deprecated(since = "4.0.0-beta.4")
 	public static final Event<StartTracking> START_TRACKING = BEFORE_START_TRACKING;
