@@ -12,6 +12,7 @@
     "NamespaceResourceManagerMixin",
     "ReloadableResourceManagerMixin",
     "ResourcePackMixin",
+    "ResourcePackProfileMixin",
     "ServerReloadableResourcesMixin",
     "TestServerMixin",
     "VanillaDataPackProviderAccessor",

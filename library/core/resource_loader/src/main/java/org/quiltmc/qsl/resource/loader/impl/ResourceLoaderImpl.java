@@ -103,6 +103,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	public static final ThreadLocal<Unit> EXPERIMENTAL_FEATURES_ENABLED = new ThreadLocal<>();
 
 
+	private final ResourceType type;
 	private final Set<Identifier> addedReloaderIds = new ObjectOpenHashSet<>();
 	private final Set<IdentifiableResourceReloader> addedReloaders = new LinkedHashSet<>();
 	private final Set<Pair<Identifier, Identifier>> reloadersOrdering = new LinkedHashSet<>();
@@ -119,8 +120,12 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		});
 	}
 
+	public ResourceLoaderImpl(ResourceType type) {
+		this.type = type;
+	}
+
 	public static ResourceLoaderImpl get(ResourceType type) {
-		return IMPL_MAP.computeIfAbsent(type, t -> new ResourceLoaderImpl());
+		return IMPL_MAP.computeIfAbsent(type, ResourceLoaderImpl::new);
 	}
 
 	/* Resource reloaders stuff */
@@ -180,6 +185,13 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	@Override
 	public @NotNull Event<ResourcePackRegistrationContext.Callback> getRegisterTopResourcePackEvent() {
 		return this.topResourcePackRegistrationEvent;
+	}
+
+	@Override
+	public @NotNull ResourcePack newFileSystemResourcePack(@NotNull Identifier id, @NotNull ModContainer owner, @NotNull Path rootPath,
+			ResourcePackActivationType activationType, @NotNull Text displayName) {
+		String name = id.getNamespace() + '/' + id.getPath();
+		return new ModNioResourcePack(name, owner.metadata(), displayName, activationType, rootPath, this.type, null);
 	}
 
 	public void appendTopPacks(MultiPackResourceManager resourceManager, Consumer<ResourcePack> resourcePackAdder) {

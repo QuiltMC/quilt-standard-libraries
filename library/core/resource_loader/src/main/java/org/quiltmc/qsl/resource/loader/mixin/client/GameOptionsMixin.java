@@ -71,7 +71,7 @@ public abstract class GameOptionsMixin {
 		// Update available resource packs.
 		for (var profile : manager.getProfiles()) {
 			if (!this.quilt$availableResourcePacks.contains(profile.getName())) {
-				if (profile.getSource().shouldAddAutomatically()) {
+				if (profile.getActivationType().isEnabledByDefault()) {
 					toEnable.add(profile.getName());
 				}
 
