@@ -40,11 +40,23 @@ public final class FallbackArmorTextureProvider {
 	private static final Map<ArmorMaterial, Identifier> CACHE = new HashMap<>();
 
 	public static @NotNull Identifier getArmorTexture(@NotNull ArmorMaterial material) {
-		return CACHE.computeIfAbsent(material, FallbackArmorTextureProvider::createArmorTexture);
+		return CACHE.computeIfAbsent(material, materialx -> {
+			LOGGER.warn(materialx.getName() + " (" + getArmorClassName(materialx) + ") did not implement getTexture()! Using fallback implementation");
+			return new Identifier("textures/model/armor/" + materialx.getName());
+		});
 	}
 
-	private static @NotNull Identifier createArmorTexture(@NotNull ArmorMaterial material) {
-		LOGGER.warn(material.getName() + " (" + material + ") did not implement getTexture()! Using fallback implementation");
-		return new Identifier("textures/model/armor/" + material.getName());
+	private static @NotNull String getArmorClassName(@NotNull ArmorMaterial material) {
+		var clazz = material.getClass();
+
+		if (material instanceof Enum<?> enumConst) {
+			return clazz.getName() + "." + enumConst.name();
+		} else if (clazz.isHidden()) {
+			return "hidden class " + clazz.getName();
+		} else if (clazz.isAnonymousClass()) {
+			return "anonymous class " + clazz.getName();
+		} else {
+			return clazz.getCanonicalName();
+		}
 	}
 }
