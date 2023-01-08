@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 import net.minecraft.server.world.EntityTrackingListener;
 
-@Mixin(targets = "net/minecraft/server/world/ThreadedAnvilChunkStorage$EntityTracker")
+@Mixin(targets = "net/minecraft/server/world/ThreadedChunkManager$EntityTracker")
 public interface EntityTrackerAccessor {
 	@Accessor("listeners")
 	Set<EntityTrackingListener> getPlayersTracking();
