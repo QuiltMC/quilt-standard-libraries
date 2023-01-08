@@ -1,11 +1,11 @@
 package org.quiltmc.qsl.chat.impl.client;
 
-import net.minecraft.network.MessageType;
-import net.minecraft.network.chat.MessageSignature;
+import net.minecraft.network.message.FilterMask;
+import net.minecraft.network.message.MessageBody;
+import net.minecraft.network.message.MessageSignature;
+import net.minecraft.network.message.MessageType;
 import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
 import net.minecraft.text.Text;
-import net.minecraft.unmapped.C_bowvajrs;
-import net.minecraft.unmapped.C_ogacucnf;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 
@@ -16,10 +16,10 @@ public class ChatMessageWrapper {
 	private UUID sender;
 	private int index;
 	private MessageSignature signature;
-	private C_ogacucnf.C_zneglxow body;
+	private MessageBody.Serialized body;
 	private Text unsignedContent;
-	private C_bowvajrs filterMask;
-	private MessageType.C_xfxprdln chatType;
+	private FilterMask filterMask;
+	private MessageType.Serialized chatType;
 
 	public ChatMessageWrapper(ChatMessageS2CPacket packet) {
 		this(
@@ -29,17 +29,17 @@ public class ChatMessageWrapper {
 				packet.body(),
 				packet.unsignedContent(),
 				packet.filterMask(),
-				packet.chatType()
+				packet.messageType()
 		);
 	}
 	private ChatMessageWrapper(
 			UUID sender,
 			int index,
 			@Nullable MessageSignature signature,
-			C_ogacucnf.C_zneglxow body,
+			MessageBody.Serialized body,
 			@Nullable Text unsignedContent,
-			C_bowvajrs filterMask,
-			MessageType.C_xfxprdln chatType
+			FilterMask filterMask,
+			MessageType.Serialized chatType
 	) {
 
 		this.sender = sender;
@@ -87,11 +87,11 @@ public class ChatMessageWrapper {
 		this.signature = signature;
 	}
 
-	public C_ogacucnf.C_zneglxow getBody() {
+	public MessageBody.Serialized getBody() {
 		return body;
 	}
 
-	public void setBody(C_ogacucnf.C_zneglxow body) {
+	public void setBody(MessageBody.Serialized body) {
 		this.body = body;
 	}
 
@@ -103,19 +103,19 @@ public class ChatMessageWrapper {
 		this.unsignedContent = unsignedContent;
 	}
 
-	public C_bowvajrs getFilterMask() {
+	public FilterMask getFilterMask() {
 		return filterMask;
 	}
 
-	public void setFilterMask(C_bowvajrs filterMask) {
+	public void setFilterMask(FilterMask filterMask) {
 		this.filterMask = filterMask;
 	}
 
-	public MessageType.C_xfxprdln getChatType() {
+	public MessageType.Serialized getChatType() {
 		return chatType;
 	}
 
-	public void setChatType(MessageType.C_xfxprdln chatType) {
+	public void setChatType(MessageType.Serialized chatType) {
 		this.chatType = chatType;
 	}
 }
