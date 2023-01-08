@@ -1,0 +1,16 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Chat API"
+	moduleName = "chat"
+	id = "quilt_chat"
+	description = "Quilt APIs for modifying chat."
+	library = "management"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+		}
+	}
+}
