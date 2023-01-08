@@ -19,8 +19,8 @@ public class ServerPlayNetworkHandlerMixin {
 		return wrapper.asPacket();
 	}
 
-	@Inject(method = "onChatMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;hasInvalidCharacters(Ljava/lang/String;)Z"), cancellable = true)
-	public void quilt$cancelReceiveInboundChatMessage(ChatMessageC2SPacket packet, CallbackInfo ci) {
+	@Inject(method = "onChatMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/c2s/play/ChatMessageC2SPacket;message()Ljava/lang/String;"), cancellable = true)
+	public void quilt$cancelInboundChatMessage(ChatMessageC2SPacket packet, CallbackInfo ci) {
 		ChatMessageWrapper wrapper = new ChatMessageWrapper(packet);
 		if (ServerInboundChatMessageEvents.CANCEL.invoker().cancelChatMessage(wrapper)) {
 			ci.cancel();

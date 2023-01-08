@@ -25,7 +25,7 @@ public class PlayerManagerMixin {
 	}
 
 	@Redirect(method = "sendChatMessage(Lnet/minecraft/network/message/SignedChatMessage;Ljava/util/function/Predicate;Lnet/minecraft/server/network/ServerPlayerEntity;Lnet/minecraft/network/message/MessageType$Parameters;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;sendSystemMessage(Lnet/minecraft/text/Text;)V"))
-	public void quilt$cancelAndModifyOutboundChatMessage(ServerPlayerEntity target, Text originalMessage) {
+	public void quilt$cancelAndModifyOutboundSystemMessage(ServerPlayerEntity target, Text originalMessage) {
 		Text message = ServerOutboundSystemMessageEvents.MODIFY.invoker().beforeChatMessageSent(originalMessage);
 
 		if (!ServerOutboundSystemMessageEvents.CANCEL.invoker().cancelChatMessage(target, message)) {
