@@ -1,22 +1,18 @@
 package org.quiltmc.qsl.chat.api.server;
 
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.chat.impl.server.SystemMessageWrapper;
 
 public class ServerOutboundSystemMessageEvents {
-	public static Event<ModifyChatMessageCallback> MODIFY = Event.create(ModifyChatMessageCallback.class, callbacks -> (message) -> {
-		Text result = message;
+	public static Event<ModifyChatMessageCallback> MODIFY = Event.create(ModifyChatMessageCallback.class, callbacks -> (wrapper) -> {
 		for (var callback : callbacks) {
-			result = callback.beforeChatMessageSent(result);
+			callback.beforeSystemMessageSent(wrapper);
 		}
-
-		return result;
 	});
 
-	public static Event<CancelChatMessageCallback> CANCEL = Event.create(CancelChatMessageCallback.class, callbacks -> (target, message) -> {
+	public static Event<CancelChatMessageCallback> CANCEL = Event.create(CancelChatMessageCallback.class, callbacks -> (wrapper) -> {
 		for (var callback : callbacks) {
-			if (callback.cancelChatMessage(target, message)) {
+			if (callback.cancelSystemMessage(wrapper)) {
 				return true;
 			}
 		}
@@ -26,11 +22,11 @@ public class ServerOutboundSystemMessageEvents {
 
 	@FunctionalInterface
 	public interface ModifyChatMessageCallback {
-		Text beforeChatMessageSent(Text message);
+		void beforeSystemMessageSent(SystemMessageWrapper message);
 	}
 
 	@FunctionalInterface
 	public interface CancelChatMessageCallback {
-		boolean cancelChatMessage(ServerPlayerEntity target, Text message);
+		boolean cancelSystemMessage(SystemMessageWrapper wrapper);
 	}
 }

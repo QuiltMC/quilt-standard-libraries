@@ -6,7 +6,7 @@ import org.quiltmc.qsl.chat.impl.client.SystemMessageWrapper;
 public class ClientInboundSystemMessageEvents {
 	public static Event<ModifyChatMessageCallback> MODIFY = Event.create(ModifyChatMessageCallback.class, callbacks -> (wrapper) -> {
 		for (var callback : callbacks) {
-			callback.modifyReceivedSystemMessage(wrapper);
+			callback.onReceivedSystemMessage(wrapper);
 		}
 	});
 
@@ -22,7 +22,7 @@ public class ClientInboundSystemMessageEvents {
 
 	@FunctionalInterface
 	public interface ModifyChatMessageCallback {
-		void modifyReceivedSystemMessage(SystemMessageWrapper wrapper);
+		void onReceivedSystemMessage(SystemMessageWrapper wrapper);
 	}
 
 	@FunctionalInterface

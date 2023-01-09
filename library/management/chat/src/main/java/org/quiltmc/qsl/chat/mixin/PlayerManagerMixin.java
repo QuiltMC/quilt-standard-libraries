@@ -8,6 +8,7 @@ import net.minecraft.text.Text;
 import org.quiltmc.qsl.chat.api.server.ServerOutboundChatMessageEvents;
 import org.quiltmc.qsl.chat.api.server.ServerOutboundSystemMessageEvents;
 import org.quiltmc.qsl.chat.impl.server.SendMessageWrapper;
+import org.quiltmc.qsl.chat.impl.server.SystemMessageWrapper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -26,10 +27,21 @@ public class PlayerManagerMixin {
 
 	@Redirect(method = "sendChatMessage(Lnet/minecraft/network/message/SignedChatMessage;Ljava/util/function/Predicate;Lnet/minecraft/server/network/ServerPlayerEntity;Lnet/minecraft/network/message/MessageType$Parameters;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;sendSystemMessage(Lnet/minecraft/text/Text;)V"))
 	public void quilt$cancelAndModifyOutboundSystemMessage(ServerPlayerEntity target, Text originalMessage) {
-		Text message = ServerOutboundSystemMessageEvents.MODIFY.invoker().beforeChatMessageSent(originalMessage);
+		SystemMessageWrapper wrapper = new SystemMessageWrapper(target, originalMessage, false);
+		ServerOutboundSystemMessageEvents.MODIFY.invoker().beforeSystemMessageSent(wrapper);
 
-		if (!ServerOutboundSystemMessageEvents.CANCEL.invoker().cancelChatMessage(target, message)) {
-			target.sendSystemMessage(message);
+		if (!ServerOutboundSystemMessageEvents.CANCEL.invoker().cancelSystemMessage(wrapper)) {
+			target.sendSystemMessage(wrapper.getContext(), wrapper.isOverlay());
+		}
+	}
+
+	@Redirect(method = "broadcastSystemMessage(Lnet/minecraft/text/Text;Ljava/util/function/Function;Z)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;sendSystemMessage(Lnet/minecraft/text/Text;Z)V"))
+	public void quilt$cancelAndModifyOutboundSystemMessage(ServerPlayerEntity target, Text originalMessage, boolean overlay) {
+		SystemMessageWrapper wrapper = new SystemMessageWrapper(target, originalMessage, false);
+		ServerOutboundSystemMessageEvents.MODIFY.invoker().beforeSystemMessageSent(wrapper);
+
+		if (!ServerOutboundSystemMessageEvents.CANCEL.invoker().cancelSystemMessage(wrapper)) {
+			target.sendSystemMessage(wrapper.getContext(), wrapper.isOverlay());
 		}
 	}
 }

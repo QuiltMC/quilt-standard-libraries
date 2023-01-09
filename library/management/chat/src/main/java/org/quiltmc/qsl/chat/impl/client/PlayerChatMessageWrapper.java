@@ -12,16 +12,20 @@ import org.quiltmc.loader.api.minecraft.ClientOnly;
 import java.util.UUID;
 
 @ClientOnly
-public class ChatMessageWrapper {
+public class PlayerChatMessageWrapper {
 	private UUID sender;
 	private int index;
+
+	@Nullable
 	private MessageSignature signature;
 	private MessageBody.Serialized body;
+
+	@Nullable
 	private Text unsignedContent;
 	private FilterMask filterMask;
 	private MessageType.Serialized chatType;
 
-	public ChatMessageWrapper(ChatMessageS2CPacket packet) {
+	public PlayerChatMessageWrapper(ChatMessageS2CPacket packet) {
 		this(
 				packet.sender(),
 				packet.index(),
@@ -32,7 +36,7 @@ public class ChatMessageWrapper {
 				packet.messageType()
 		);
 	}
-	private ChatMessageWrapper(
+	private PlayerChatMessageWrapper(
 			UUID sender,
 			int index,
 			@Nullable MessageSignature signature,
@@ -41,7 +45,6 @@ public class ChatMessageWrapper {
 			FilterMask filterMask,
 			MessageType.Serialized chatType
 	) {
-
 		this.sender = sender;
 		this.index = index;
 		this.signature = signature;
@@ -79,11 +82,11 @@ public class ChatMessageWrapper {
 		this.index = index;
 	}
 
-	public MessageSignature getSignature() {
+	public @Nullable MessageSignature getSignature() {
 		return signature;
 	}
 
-	public void setSignature(MessageSignature signature) {
+	public void setSignature(@Nullable MessageSignature signature) {
 		this.signature = signature;
 	}
 
@@ -95,11 +98,11 @@ public class ChatMessageWrapper {
 		this.body = body;
 	}
 
-	public Text getUnsignedContent() {
+	public @Nullable Text getUnsignedContent() {
 		return unsignedContent;
 	}
 
-	public void setUnsignedContent(Text unsignedContent) {
+	public void setUnsignedContent(@Nullable Text unsignedContent) {
 		this.unsignedContent = unsignedContent;
 	}
 

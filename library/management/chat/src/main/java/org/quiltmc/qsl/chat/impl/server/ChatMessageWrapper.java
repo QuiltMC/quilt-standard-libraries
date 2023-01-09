@@ -3,6 +3,7 @@ package org.quiltmc.qsl.chat.impl.server;
 import net.minecraft.network.message.MessageSignature;
 import net.minecraft.network.message.MessageSignatureList;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
 
@@ -10,6 +11,8 @@ public class ChatMessageWrapper {
 	private String message;
 	private Instant timestamp;
 	private long salt;
+
+	@Nullable
 	private MessageSignature signature;
 	private MessageSignatureList.Acknowledgment messageAcknowledgments;
 
@@ -27,7 +30,7 @@ public class ChatMessageWrapper {
 			String message,
 			Instant timestamp,
 			long salt,
-			MessageSignature signature,
+			@Nullable MessageSignature signature,
 			MessageSignatureList.Acknowledgment messageAcknowledgments
 	) {
 		this.message = message;
@@ -65,11 +68,11 @@ public class ChatMessageWrapper {
 		this.salt = salt;
 	}
 
-	public MessageSignature getSignature() {
+	public @Nullable MessageSignature getSignature() {
 		return signature;
 	}
 
-	public void setSignature(MessageSignature signature) {
+	public void setSignature(@Nullable MessageSignature signature) {
 		this.signature = signature;
 	}
 

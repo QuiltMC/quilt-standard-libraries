@@ -1,12 +1,12 @@
 package org.quiltmc.qsl.chat.api.client;
 
 import org.quiltmc.qsl.base.api.event.Event;
-import org.quiltmc.qsl.chat.impl.client.ChatMessageWrapper;
+import org.quiltmc.qsl.chat.impl.client.PlayerChatMessageWrapper;
 
 public class ClientInboundChatMessageEvents {
 	public static Event<ModifyChatMessageCallback> MODIFY = Event.create(ModifyChatMessageCallback.class, callbacks -> (wrapper) -> {
 		for (var callback : callbacks) {
-			callback.modifyReceivedChatMessage(wrapper);
+			callback.onReceivedChatMessage(wrapper);
 		}
 	});
 
@@ -22,11 +22,11 @@ public class ClientInboundChatMessageEvents {
 
 	@FunctionalInterface
 	public interface ModifyChatMessageCallback {
-		void modifyReceivedChatMessage(ChatMessageWrapper wrapper);
+		void onReceivedChatMessage(PlayerChatMessageWrapper wrapper);
 	}
 
 	@FunctionalInterface
 	public interface CancelChatMessageCallback {
-		boolean cancelChatMessage(ChatMessageWrapper wrapper);
+		boolean cancelChatMessage(PlayerChatMessageWrapper wrapper);
 	}
 }

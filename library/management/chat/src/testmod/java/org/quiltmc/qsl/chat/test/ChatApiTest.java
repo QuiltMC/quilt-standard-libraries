@@ -1,6 +1,5 @@
 package org.quiltmc.qsl.chat.test;
 
-import net.minecraft.text.Text;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.chat.api.client.ClientInboundSystemMessageEvents;
@@ -48,7 +47,7 @@ public class ChatApiTest implements ModInitializer {
 			}
 		});
 
-		ServerOutboundSystemMessageEvents.MODIFY.register(message -> message.copy().append(Text.literal(" owo")));
+		ServerOutboundSystemMessageEvents.MODIFY.register(wrapper -> wrapper.setContent(wrapper.getContext().copy().append(" owo")));
 		ClientInboundSystemMessageEvents.MODIFY.register(wrapper -> wrapper.setContent(wrapper.getContext().copy().append(", uwu")));
 	}
 }

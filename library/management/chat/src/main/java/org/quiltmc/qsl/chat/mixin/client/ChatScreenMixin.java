@@ -1,6 +1,7 @@
 package org.quiltmc.qsl.chat.mixin.client;
 
 import net.minecraft.client.gui.screen.ChatScreen;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import org.objectweb.asm.Opcodes;
 import org.quiltmc.qsl.chat.api.client.ClientOutboundChatMessageEvents;
 import org.spongepowered.asm.mixin.Mixin;
@@ -9,10 +10,15 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-// If we don't inject into the screen, the client sees the original message even if it was modified!
-// McDev hates this injection for some reason though, works fine anyways!
-// Offsets are weird but it makes it work somehow
-// - Silver
+/**
+ * We inject "outbound chat message" here instead of in {@link ClientPlayNetworkHandler} because this is also where messages are added to chat history.
+ * So if we didnt add our events here, than users would end up petty confused, and mods would have to patch it themselves.
+ * If a mod is sending chat messages for a player, its up to them to call and use these events (same with block break events).
+ * <p>
+ * Mixin injection points are kind of cursed but it worked fine for me,
+ * might be worth making an automated test to detect if {@link ClientOutboundChatMessageEvents#CANCEL} is invoked before {@link ClientOutboundChatMessageEvents#MODIFY}?
+ * @author Silver
+ */
 @Mixin(ChatScreen.class)
 public class ChatScreenMixin {
 	@ModifyVariable(method = "handleChatInput",
@@ -39,7 +45,7 @@ public class ChatScreenMixin {
 	)
 	public void quilt$cancelOutboundChatMessage(String text, boolean addToHistory, CallbackInfoReturnable<Boolean> cir) {
 		if (ClientOutboundChatMessageEvents.CANCEL.invoker().cancelChatMessage(text)) {
-			// yes we totally sent that, trust trust
+			// TODO: Should this be configurable? `false` makes the screen stay open instead which might be good. Kind of tricky as return value is already used for "should cancel", maybe use enum instead?
 			cir.setReturnValue(true);
 		}
 	}
