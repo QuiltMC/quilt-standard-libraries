@@ -9,13 +9,22 @@ import org.quiltmc.qsl.chat.api.types.ImmutableAbstractMessage;
 
 import java.util.EnumSet;
 
-public class ImmutableSystemMessage extends ImmutableAbstractMessage<ImmutableSystemMessage, SystemMessageS2CPacket> {
+public class ImmutableS2CSystemMessage extends ImmutableAbstractMessage<ImmutableS2CSystemMessage, SystemMessageS2CPacket> {
 	private final PlayerEntity player;
 	private final Text content;
 	private final boolean overlay;
 
-	public ImmutableSystemMessage(PlayerEntity player, Text content, boolean overlay) {
-		this.player = player;
+	public ImmutableS2CSystemMessage(PlayerEntity player, SystemMessageS2CPacket packet) {
+		this(
+				player,
+				packet.content(),
+				packet.overlay()
+		);
+	}
+
+	public ImmutableS2CSystemMessage(PlayerEntity player, Text content, boolean overlay) {
+        super(player);
+        this.player = player;
 		this.content = content;
 		this.overlay = overlay;
 	}
@@ -25,18 +34,13 @@ public class ImmutableSystemMessage extends ImmutableAbstractMessage<ImmutableSy
 	}
 
 	@Override
-	public @NotNull ImmutableSystemMessage immutableCopy() {
-		return new ImmutableSystemMessage(player, content, overlay);
+	public @NotNull ImmutableS2CSystemMessage immutableCopy() {
+		return new ImmutableS2CSystemMessage(player, content, overlay);
 	}
 
 	@Override
-	public @NotNull SystemMessageS2CPacket packet() {
+	public @NotNull SystemMessageS2CPacket asPacket() {
 		return new SystemMessageS2CPacket(content, overlay);
-	}
-
-
-	public PlayerEntity getPlayer() {
-		return player;
 	}
 
 	public Text getContent() {

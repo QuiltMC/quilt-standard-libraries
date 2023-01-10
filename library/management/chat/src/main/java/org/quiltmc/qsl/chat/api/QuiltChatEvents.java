@@ -1,6 +1,6 @@
 package org.quiltmc.qsl.chat.api;
 
-public final class ChatEvents {
+public final class QuiltChatEvents {
 	public static final ChatApiEvent<Void> MODIFY = new ChatApiEvent<>();
 	public static final ChatApiEvent<Boolean> CANCEL = new ChatApiEvent<>();
 	public static final ChatApiEvent<Void> BEFORE_IO = new ChatApiEvent<>();

@@ -11,12 +11,11 @@ import org.quiltmc.qsl.chat.api.types.MutableAbstractMessage;
 
 import java.util.EnumSet;
 
-public class ImmutableProfileIndependentMessage extends MutableAbstractMessage<ImmutableProfileIndependentMessage, ProfileIndependentMessageS2CPacket> {
-	private final PlayerEntity player;
+public class ImmutableS2CProfileIndependentMessage extends MutableAbstractMessage<ImmutableS2CProfileIndependentMessage, ProfileIndependentMessageS2CPacket> {
 	private final Text message;
 	private final MessageType.Parameters messageType;
 
-	public ImmutableProfileIndependentMessage(PlayerEntity player, ProfileIndependentMessageS2CPacket packet) {
+	public ImmutableS2CProfileIndependentMessage(PlayerEntity player, ProfileIndependentMessageS2CPacket packet) {
 		this(
 				player,
 				packet.message(),
@@ -28,8 +27,8 @@ public class ImmutableProfileIndependentMessage extends MutableAbstractMessage<I
 				})
 		);
 	}
-	public ImmutableProfileIndependentMessage(PlayerEntity player, Text message, MessageType.Parameters messageType) {
-		this.player = player;
+	public ImmutableS2CProfileIndependentMessage(PlayerEntity player, Text message, MessageType.Parameters messageType) {
+		super(player);
 		this.message = message;
 		this.messageType = messageType;
 	}
@@ -40,17 +39,13 @@ public class ImmutableProfileIndependentMessage extends MutableAbstractMessage<I
 	}
 
 	@Override
-	public @NotNull ImmutableProfileIndependentMessage immutableCopy() {
-		return new ImmutableProfileIndependentMessage(player, message, messageType);
+	public @NotNull ImmutableS2CProfileIndependentMessage immutableCopy() {
+		return new ImmutableS2CProfileIndependentMessage(player, message, messageType);
 	}
 
 	@Override
-	public @NotNull ProfileIndependentMessageS2CPacket packet() {
+	public @NotNull ProfileIndependentMessageS2CPacket asPacket() {
 		return new ProfileIndependentMessageS2CPacket(message, messageType.serialize(player.world.getRegistryManager()));
-	}
-
-	public PlayerEntity getPlayer() {
-		return player;
 	}
 
 	public Text getMessage() {

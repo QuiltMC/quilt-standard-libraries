@@ -11,12 +11,11 @@ import org.quiltmc.qsl.chat.api.types.MutableAbstractMessage;
 
 import java.util.EnumSet;
 
-public class MutableProfileIndependentMessage extends MutableAbstractMessage<ImmutableProfileIndependentMessage, ProfileIndependentMessageS2CPacket> {
-	private final PlayerEntity player;
+public class MutableS2CProfileIndependentMessage extends MutableAbstractMessage<ImmutableS2CProfileIndependentMessage, ProfileIndependentMessageS2CPacket> {
 	private Text message;
 	private MessageType.Parameters messageType;
 
-	public MutableProfileIndependentMessage(PlayerEntity player, ProfileIndependentMessageS2CPacket packet) {
+	public MutableS2CProfileIndependentMessage(PlayerEntity player, ProfileIndependentMessageS2CPacket packet) {
 		this(
 				player,
 				packet.message(),
@@ -29,8 +28,8 @@ public class MutableProfileIndependentMessage extends MutableAbstractMessage<Imm
 		);
 	}
 
-	public MutableProfileIndependentMessage(PlayerEntity player, Text message, MessageType.Parameters messageType) {
-		this.player = player;
+	public MutableS2CProfileIndependentMessage(PlayerEntity player, Text message, MessageType.Parameters messageType) {
+		super(player);
 		this.message = message;
 		this.messageType = messageType;
 	}
@@ -41,17 +40,13 @@ public class MutableProfileIndependentMessage extends MutableAbstractMessage<Imm
 	}
 
 	@Override
-	public @NotNull ImmutableProfileIndependentMessage immutableCopy() {
-		return new ImmutableProfileIndependentMessage(player, message, messageType);
+	public @NotNull ImmutableS2CProfileIndependentMessage immutableCopy() {
+		return new ImmutableS2CProfileIndependentMessage(player, message, messageType);
 	}
 
 	@Override
-	public @NotNull ProfileIndependentMessageS2CPacket packet() {
+	public @NotNull ProfileIndependentMessageS2CPacket asPacket() {
 		return new ProfileIndependentMessageS2CPacket(message, messageType.serialize(player.world.getRegistryManager()));
-	}
-
-	public PlayerEntity getPlayer() {
-		return player;
 	}
 
 	public Text getMessage() {

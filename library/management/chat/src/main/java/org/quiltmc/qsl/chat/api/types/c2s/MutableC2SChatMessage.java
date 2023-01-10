@@ -1,9 +1,9 @@
-package org.quiltmc.qsl.chat.api.types.s2c;
+package org.quiltmc.qsl.chat.api.types.c2s;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.message.MessageSignature;
 import net.minecraft.network.message.MessageSignatureList;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
@@ -12,17 +12,16 @@ import org.quiltmc.qsl.chat.api.types.MutableAbstractMessage;
 import java.time.Instant;
 import java.util.EnumSet;
 
-public class MutableChatMessage extends MutableAbstractMessage<ImmutableChatMessage, ChatMessageC2SPacket> {
-	private final ServerPlayNetworkHandler networkHandler;
+public class MutableC2SChatMessage extends MutableAbstractMessage<ImmutableC2SChatMessage, ChatMessageC2SPacket> {
 	private String message;
 	private Instant timestamp;
 	private long salt;
 	private @Nullable MessageSignature signature;
 	private MessageSignatureList.Acknowledgment messageAcknowledgments;
 
-	public MutableChatMessage(ServerPlayNetworkHandler networkHandler, ChatMessageC2SPacket packet) {
+	public MutableC2SChatMessage(PlayerEntity player, ChatMessageC2SPacket packet) {
 		this(
-				networkHandler,
+				player,
 				packet.message(),
 				packet.timestamp(),
 				packet.salt(),
@@ -30,8 +29,8 @@ public class MutableChatMessage extends MutableAbstractMessage<ImmutableChatMess
 				packet.messageAcknowledgments()
 		);
 	}
-	public MutableChatMessage(ServerPlayNetworkHandler networkHandler, String message, Instant timestamp, long salt, @Nullable MessageSignature signature, MessageSignatureList.Acknowledgment messageAcknowledgments) {
-		this.networkHandler = networkHandler;
+	public MutableC2SChatMessage(PlayerEntity player, String message, Instant timestamp, long salt, @Nullable MessageSignature signature, MessageSignatureList.Acknowledgment messageAcknowledgments) {
+		super(player);
 		this.message = message;
 		this.timestamp = timestamp;
 		this.salt = salt;
@@ -41,21 +40,17 @@ public class MutableChatMessage extends MutableAbstractMessage<ImmutableChatMess
 
 	@Override
 	public @NotNull EnumSet<QuiltMessageType> getTypes() {
-		return EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.SERVER, QuiltMessageType.INBOUND);
+		return EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.CLIENT, QuiltMessageType.OUTBOUND);
 	}
 
 	@Override
-	public @NotNull ImmutableChatMessage immutableCopy() {
-		return new ImmutableChatMessage(networkHandler, message, timestamp, salt, signature, messageAcknowledgments);
+	public @NotNull ImmutableC2SChatMessage immutableCopy() {
+		return new ImmutableC2SChatMessage(player, message, timestamp, salt, signature, messageAcknowledgments);
 	}
 
 	@Override
-	public @NotNull ChatMessageC2SPacket packet() {
+	public @NotNull ChatMessageC2SPacket asPacket() {
 		return new ChatMessageC2SPacket(message, timestamp, salt, signature, messageAcknowledgments);
-	}
-
-	public ServerPlayNetworkHandler getNetworkHandler() {
-		return networkHandler;
 	}
 
 	public String getMessage() {

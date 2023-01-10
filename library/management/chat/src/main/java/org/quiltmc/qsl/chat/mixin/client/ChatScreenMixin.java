@@ -3,6 +3,7 @@ package org.quiltmc.qsl.chat.mixin.client;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import org.objectweb.asm.Opcodes;
+import org.quiltmc.qsl.chat.api.QuiltChatEvents;
 import org.quiltmc.qsl.chat.api.client.ClientOutboundChatMessageEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * If a mod is sending chat messages for a player, its up to them to call and use these events (same with block break events).
  * <p>
  * Mixin injection points are kind of cursed but it worked fine for me,
- * might be worth making an automated test to detect if {@link org.quiltmc.qsl.chat.api.ChatEvents#CANCEL} is invoked before {@link org.quiltmc.qsl.chat.api.ChatEvents#MODIFY}?
+ * might be worth making an automated test to detect if {@link QuiltChatEvents#CANCEL} is invoked before {@link QuiltChatEvents#MODIFY}?
  * @author Silver
  */
 @Mixin(ChatScreen.class)

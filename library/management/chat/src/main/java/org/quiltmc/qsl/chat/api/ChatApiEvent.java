@@ -62,11 +62,14 @@ public class ChatApiEvent<R> {
 		return true;
 	}
 
-	public R invoke(ImmutableAbstractMessage<?, ?> message) {
+	/**
+	 * @return The result of invoking this event, or null if there are no listeners
+	 */
+	public @Nullable R invoke(ImmutableAbstractMessage<?, ?> message) {
 		return backingEvent.invoker().handleMessage(message);
 	}
 
-	public void register(EnumSet<QuiltMessageType> types, Function<ImmutableAbstractMessage<?, ?>, R> handler) {
+	public void register(EnumSet<QuiltMessageType> types, Function<ImmutableAbstractMessage<?, ?>, @NotNull R> handler) {
 		backingEvent.register(new ChatApiHook<R>() {
 			@Override
 			public EnumSet<QuiltMessageType> getMessageTypes() {
@@ -80,7 +83,7 @@ public class ChatApiEvent<R> {
 		});
 	}
 
-	public void register(@NotNull Identifier phaseIdentifier, EnumSet<QuiltMessageType> types, Function<ImmutableAbstractMessage<?, ?>, R> handler) {
+	public void register(@NotNull Identifier phaseIdentifier, EnumSet<QuiltMessageType> types, Function<ImmutableAbstractMessage<?, ?>, @NotNull R> handler) {
 		backingEvent.register(phaseIdentifier, new ChatApiHook<R>() {
 			@Override
 			public EnumSet<QuiltMessageType> getMessageTypes() {
