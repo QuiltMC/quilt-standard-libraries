@@ -203,7 +203,7 @@ public final class ClientCommandInternals {
 			currentDispatcher = DEFAULT_DISPATCHER;
 
 			if (environment == CommandManager.RegistrationEnvironment.ALL) {
-				registerCommands(CommandBuildContext.m_lghonqhw(ClientRegistryLayer.createLayeredManager().getCompositeManager(), FeatureFlagBitSet.empty()), environment);
+				registerCommands(CommandBuildContext.createConfigurable(ClientRegistryLayer.createLayeredManager().getCompositeManager(), FeatureFlagBitSet.empty()), environment);
 			}
 		} else {
 			currentDispatcher = new CommandDispatcher<>();
