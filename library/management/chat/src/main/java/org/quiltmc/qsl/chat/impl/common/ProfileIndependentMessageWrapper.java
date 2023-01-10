@@ -1,15 +1,15 @@
-package org.quiltmc.qsl.chat.impl.client;
+package org.quiltmc.qsl.chat.impl.common;
 
 import net.minecraft.network.message.MessageType;
 import net.minecraft.network.packet.s2c.play.ProfileIndependentMessageS2CPacket;
 import net.minecraft.text.Text;
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 
-@ClientOnly
 public class ProfileIndependentMessageWrapper {
 	private Text message;
 	private MessageType.Serialized messageType;
 
+	@ClientOnly
 	public ProfileIndependentMessageWrapper(ProfileIndependentMessageS2CPacket packet) {
 		this(
 				packet.message(),

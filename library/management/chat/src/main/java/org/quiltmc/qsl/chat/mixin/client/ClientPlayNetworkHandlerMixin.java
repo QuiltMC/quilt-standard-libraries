@@ -8,9 +8,9 @@ import org.objectweb.asm.Opcodes;
 import org.quiltmc.qsl.chat.api.client.ClientInboundChatMessageEvents;
 import org.quiltmc.qsl.chat.api.client.ClientInboundProfileIndependentMessageEvents;
 import org.quiltmc.qsl.chat.api.client.ClientInboundSystemMessageEvents;
-import org.quiltmc.qsl.chat.impl.client.PlayerChatMessageWrapper;
-import org.quiltmc.qsl.chat.impl.client.ProfileIndependentMessageWrapper;
+import org.quiltmc.qsl.chat.impl.client.ChatMessageWrapper;
 import org.quiltmc.qsl.chat.impl.client.SystemMessageWrapper;
+import org.quiltmc.qsl.chat.impl.common.ProfileIndependentMessageWrapper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,14 +21,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ClientPlayNetworkHandlerMixin {
 	@ModifyVariable(method = "onChatMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/NetworkThreadUtils;forceMainThread(Lnet/minecraft/network/Packet;Lnet/minecraft/network/listener/PacketListener;Lnet/minecraft/util/thread/ThreadExecutor;)V", shift = At.Shift.AFTER), argsOnly = true)
 	public ChatMessageS2CPacket quilt$modifyInboundChatMessage(ChatMessageS2CPacket packet) {
-		PlayerChatMessageWrapper wrapper = new PlayerChatMessageWrapper(packet);
+		ChatMessageWrapper wrapper = new ChatMessageWrapper(packet);
 		ClientInboundChatMessageEvents.MODIFY.invoker().onReceivedChatMessage(wrapper);
 		return wrapper.asPacket();
 	}
 
 	@Inject(method = "onChatMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/s2c/play/ChatMessageS2CPacket;body()Lnet/minecraft/network/message/MessageBody$Serialized;", shift = At.Shift.BEFORE), cancellable = true)
 	public void quilt$cancelInboundChatMessage(ChatMessageS2CPacket packet, CallbackInfo ci) {
-		PlayerChatMessageWrapper wrapper = new PlayerChatMessageWrapper(packet);
+		ChatMessageWrapper wrapper = new ChatMessageWrapper(packet);
 		if (ClientInboundChatMessageEvents.CANCEL.invoker().cancelChatMessage(wrapper)) {
 			ci.cancel();
 		}

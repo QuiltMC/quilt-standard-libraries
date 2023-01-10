@@ -12,7 +12,7 @@ import org.quiltmc.loader.api.minecraft.ClientOnly;
 import java.util.UUID;
 
 @ClientOnly
-public class PlayerChatMessageWrapper {
+public class ChatMessageWrapper {
 	private UUID sender;
 	private int index;
 
@@ -25,7 +25,7 @@ public class PlayerChatMessageWrapper {
 	private FilterMask filterMask;
 	private MessageType.Serialized chatType;
 
-	public PlayerChatMessageWrapper(ChatMessageS2CPacket packet) {
+	public ChatMessageWrapper(ChatMessageS2CPacket packet) {
 		this(
 				packet.sender(),
 				packet.index(),
@@ -36,7 +36,7 @@ public class PlayerChatMessageWrapper {
 				packet.messageType()
 		);
 	}
-	private PlayerChatMessageWrapper(
+	private ChatMessageWrapper(
 			UUID sender,
 			int index,
 			@Nullable MessageSignature signature,

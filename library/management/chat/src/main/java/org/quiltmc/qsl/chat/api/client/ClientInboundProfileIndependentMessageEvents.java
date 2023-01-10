@@ -1,7 +1,7 @@
 package org.quiltmc.qsl.chat.api.client;
 
 import org.quiltmc.qsl.base.api.event.Event;
-import org.quiltmc.qsl.chat.impl.client.ProfileIndependentMessageWrapper;
+import org.quiltmc.qsl.chat.impl.common.ProfileIndependentMessageWrapper;
 
 public class ClientInboundProfileIndependentMessageEvents {
 	public static Event<ModifyChatMessageCallback> MODIFY = Event.create(ModifyChatMessageCallback.class, callbacks -> (wrapper) -> {
