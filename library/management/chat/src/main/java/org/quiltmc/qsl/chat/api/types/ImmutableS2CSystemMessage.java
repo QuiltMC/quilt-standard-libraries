@@ -1,15 +1,14 @@
-package org.quiltmc.qsl.chat.api.types.s2c;
+package org.quiltmc.qsl.chat.api.types;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.s2c.play.SystemMessageS2CPacket;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
-import org.quiltmc.qsl.chat.api.types.ImmutableAbstractMessage;
 
 import java.util.EnumSet;
 
-public class ImmutableS2CSystemMessage extends ImmutableAbstractMessage<ImmutableS2CSystemMessage, SystemMessageS2CPacket> {
+public final class ImmutableS2CSystemMessage extends ImmutableAbstractMessage<ImmutableS2CSystemMessage, SystemMessageS2CPacket> {
 	private final PlayerEntity player;
 	private final Text content;
 	private final boolean overlay;

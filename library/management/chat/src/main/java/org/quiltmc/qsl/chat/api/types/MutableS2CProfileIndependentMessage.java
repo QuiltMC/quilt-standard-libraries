@@ -1,4 +1,4 @@
-package org.quiltmc.qsl.chat.api.types.s2c;
+package org.quiltmc.qsl.chat.api.types;
 
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -7,11 +7,10 @@ import net.minecraft.network.packet.s2c.play.ProfileIndependentMessageS2CPacket;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
-import org.quiltmc.qsl.chat.api.types.MutableAbstractMessage;
 
 import java.util.EnumSet;
 
-public class MutableS2CProfileIndependentMessage extends MutableAbstractMessage<ImmutableS2CProfileIndependentMessage, ProfileIndependentMessageS2CPacket> {
+public final class MutableS2CProfileIndependentMessage extends MutableAbstractMessage<ImmutableS2CProfileIndependentMessage, ProfileIndependentMessageS2CPacket> {
 	private Text message;
 	private MessageType.Parameters messageType;
 

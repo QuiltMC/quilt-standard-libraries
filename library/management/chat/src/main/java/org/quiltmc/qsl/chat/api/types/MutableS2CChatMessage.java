@@ -1,4 +1,4 @@
-package org.quiltmc.qsl.chat.api.types.s2c;
+package org.quiltmc.qsl.chat.api.types;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.message.FilterMask;
@@ -9,12 +9,11 @@ import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
-import org.quiltmc.qsl.chat.api.types.MutableAbstractMessage;
 
 import java.util.EnumSet;
 import java.util.UUID;
 
-public class MutableS2CChatMessage extends MutableAbstractMessage<ImmutableS2CChatMessage, ChatMessageS2CPacket> {
+public final class MutableS2CChatMessage extends MutableAbstractMessage<ImmutableS2CChatMessage, ChatMessageS2CPacket> {
 	private UUID sender;
 	private int index;
 	private MessageSignature signature;
