@@ -1,28 +1,46 @@
 package org.quiltmc.qsl.chat.mixin;
 
+import net.minecraft.network.message.MessageType;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
-import org.quiltmc.qsl.chat.api.server.ServerInboundChatMessageEvents;
-import org.quiltmc.qsl.chat.impl.server.ChatMessageWrapper;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
+import org.quiltmc.qsl.chat.api.ChatEvents;
+import org.quiltmc.qsl.chat.api.types.s2c.ImmutableChatMessage;
+import org.quiltmc.qsl.chat.api.types.s2c.ImmutableProfileIndependentMessage;
+import org.quiltmc.qsl.chat.api.types.s2c.MutableChatMessage;
+import org.quiltmc.qsl.chat.api.types.s2c.MutableProfileIndependentMessage;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayNetworkHandler.class)
 public class ServerPlayNetworkHandlerMixin {
-	@ModifyVariable(method = "onChatMessage", at = @At("HEAD"), argsOnly = true)
-	public ChatMessageC2SPacket quilt$modifyInboundChatMessage(ChatMessageC2SPacket packet) {
-		ChatMessageWrapper wrapper = new ChatMessageWrapper(packet);
-		ServerInboundChatMessageEvents.MODIFY.invoker().modifyReceivedChatMessage(wrapper);
-		return wrapper.asPacket();
+	@Shadow
+	public ServerPlayerEntity player;
+
+	@Inject(method = "onChatMessage", at = @At("HEAD"), cancellable = true)
+	public void quilt$modifyAndCancelInboundChatMessage(ChatMessageC2SPacket packet, CallbackInfo ci) {
+		MutableChatMessage message = new MutableChatMessage((ServerPlayNetworkHandler)(Object)this, packet);
+
+		ChatEvents.MODIFY.invoke(message);
+
+		ImmutableChatMessage immutableMessage = message.immutableCopy();
+		if (ChatEvents.CANCEL.invoke(immutableMessage)) {
+			ci.cancel();
+		}
 	}
 
-	@Inject(method = "onChatMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/c2s/play/ChatMessageC2SPacket;message()Ljava/lang/String;"), cancellable = true)
-	public void quilt$cancelInboundChatMessage(ChatMessageC2SPacket packet, CallbackInfo ci) {
-		ChatMessageWrapper wrapper = new ChatMessageWrapper(packet);
-		if (ServerInboundChatMessageEvents.CANCEL.invoker().cancelChatMessage(wrapper)) {
+	@Inject(method = "sendProfileIndependentMessage", at = @At("HEAD"), cancellable = true)
+	public void quilt$modifyAndCancelOutboundProfileIndependentMessage(Text message, MessageType.Parameters parameters, CallbackInfo ci) {
+		MutableProfileIndependentMessage independentMessage = new MutableProfileIndependentMessage((player, message, parameters);
+
+		ChatEvents.MODIFY.invoke(independentMessage);
+
+		ImmutableProfileIndependentMessage immutableIndependentMessage = independentMessage.immutableCopy();
+		if (ChatEvents.CANCEL.invoke(immutableIndependentMessage)) {
 			ci.cancel();
 		}
 	}

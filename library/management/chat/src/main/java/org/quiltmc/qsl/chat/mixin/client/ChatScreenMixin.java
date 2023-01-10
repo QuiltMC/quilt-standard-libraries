@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * If a mod is sending chat messages for a player, its up to them to call and use these events (same with block break events).
  * <p>
  * Mixin injection points are kind of cursed but it worked fine for me,
- * might be worth making an automated test to detect if {@link ClientOutboundChatMessageEvents#CANCEL} is invoked before {@link ClientOutboundChatMessageEvents#MODIFY}?
+ * might be worth making an automated test to detect if {@link org.quiltmc.qsl.chat.api.ChatEvents#CANCEL} is invoked before {@link org.quiltmc.qsl.chat.api.ChatEvents#MODIFY}?
  * @author Silver
  */
 @Mixin(ChatScreen.class)
@@ -30,6 +30,7 @@ public class ChatScreenMixin {
 					by = -5
 			), argsOnly = true, ordinal = 0)
 	public String quilt$modifyOutboundChatMessage(String message) {
+
 		return ClientOutboundChatMessageEvents.MODIFY.invoker().beforeChatMessageSent(message);
 	}
 
@@ -45,7 +46,6 @@ public class ChatScreenMixin {
 	)
 	public void quilt$cancelOutboundChatMessage(String text, boolean addToHistory, CallbackInfoReturnable<Boolean> cir) {
 		if (ClientOutboundChatMessageEvents.CANCEL.invoker().cancelChatMessage(text)) {
-			// TODO: Should this be configurable? `false` makes the screen stay open instead which might be good. Kind of tricky as return value is already used for "should cancel", maybe use enum instead?
 			cir.setReturnValue(true);
 		}
 	}
