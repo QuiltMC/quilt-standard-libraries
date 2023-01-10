@@ -20,10 +20,10 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import net.minecraft.server.world.ThreadedAnvilChunkStorage;
+import net.minecraft.server.world.ThreadedChunkManager;
 
-@Mixin(ThreadedAnvilChunkStorage.class)
-public interface ThreadedAnvilChunkStorageAccessor {
+@Mixin(ThreadedChunkManager.class)
+public interface ThreadedChunkManagerAccessor {
 	@Accessor
 	Int2ObjectMap<EntityTrackerAccessor> getEntityTrackers();
 }
