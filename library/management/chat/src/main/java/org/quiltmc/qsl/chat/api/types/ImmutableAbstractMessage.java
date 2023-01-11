@@ -2,7 +2,6 @@ package org.quiltmc.qsl.chat.api.types;
 
 import net.minecraft.entity.player.PlayerEntity;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 
 import java.util.EnumSet;

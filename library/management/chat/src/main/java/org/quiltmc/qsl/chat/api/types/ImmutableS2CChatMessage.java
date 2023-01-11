@@ -92,4 +92,20 @@ public final class ImmutableS2CChatMessage extends ImmutableAbstractMessage<Immu
 	public MessageType.Serialized getMessageType() {
 		return messageType;
 	}
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("ImmutableS2CChatMessage{");
+		sb.append("sender=").append(sender);
+		sb.append(", index=").append(index);
+		sb.append(", signature=").append(signature);
+		sb.append(", body=").append(body);
+		sb.append(", unsignedContent=").append(unsignedContent);
+		sb.append(", filterMask=").append(filterMask);
+		sb.append(", messageType=").append(messageType);
+		sb.append(", player=").append(player);
+		sb.append(", isOnClientSide=").append(isOnClientSide);
+		sb.append('}');
+		return sb.toString();
+	}
 }

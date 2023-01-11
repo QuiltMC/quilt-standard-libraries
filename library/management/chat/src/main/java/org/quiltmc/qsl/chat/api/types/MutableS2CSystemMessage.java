@@ -58,4 +58,15 @@ public final class MutableS2CSystemMessage extends MutableAbstractMessage<Immuta
 	public void setOverlay(boolean overlay) {
 		this.overlay = overlay;
 	}
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("MutableS2CSystemMessage{");
+		sb.append("content=").append(content);
+		sb.append(", overlay=").append(overlay);
+		sb.append(", player=").append(player);
+		sb.append(", isOnClientSide=").append(isOnClientSide);
+		sb.append('}');
+		return sb.toString();
+	}
 }

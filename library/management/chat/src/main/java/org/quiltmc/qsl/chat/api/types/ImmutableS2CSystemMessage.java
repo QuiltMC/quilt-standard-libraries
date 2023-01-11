@@ -51,4 +51,16 @@ public final class ImmutableS2CSystemMessage extends ImmutableAbstractMessage<Im
 	public boolean isOverlay() {
 		return overlay;
 	}
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("ImmutableS2CSystemMessage{");
+		sb.append("player=").append(player);
+		sb.append(", content=").append(content);
+		sb.append(", overlay=").append(overlay);
+		sb.append(", player=").append(player);
+		sb.append(", isOnClientSide=").append(isOnClientSide);
+		sb.append('}');
+		return sb.toString();
+	}
 }

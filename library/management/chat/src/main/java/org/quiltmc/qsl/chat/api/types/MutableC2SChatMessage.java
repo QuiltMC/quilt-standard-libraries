@@ -92,4 +92,18 @@ public final class MutableC2SChatMessage extends MutableAbstractMessage<Immutabl
 	public void setMessageAcknowledgments(MessageSignatureList.Acknowledgment messageAcknowledgments) {
 		this.messageAcknowledgments = messageAcknowledgments;
 	}
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("MutableC2SChatMessage{");
+		sb.append("message='").append(message).append('\'');
+		sb.append(", timestamp=").append(timestamp);
+		sb.append(", salt=").append(salt);
+		sb.append(", signature=").append(signature);
+		sb.append(", messageAcknowledgments=").append(messageAcknowledgments);
+		sb.append(", player=").append(player);
+		sb.append(", isOnClientSide=").append(isOnClientSide);
+		sb.append('}');
+		return sb.toString();
+	}
 }

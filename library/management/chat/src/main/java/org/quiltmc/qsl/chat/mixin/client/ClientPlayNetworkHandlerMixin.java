@@ -2,23 +2,21 @@ package org.quiltmc.qsl.chat.mixin.client;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.network.Packet;
+import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.ProfileIndependentMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.SystemMessageS2CPacket;
 import org.objectweb.asm.Opcodes;
 import org.quiltmc.qsl.chat.api.QuiltChatEvents;
-import org.quiltmc.qsl.chat.api.types.ImmutableS2CChatMessage;
-import org.quiltmc.qsl.chat.api.types.ImmutableS2CProfileIndependentMessage;
-import org.quiltmc.qsl.chat.api.types.ImmutableS2CSystemMessage;
-import org.quiltmc.qsl.chat.api.types.MutableS2CChatMessage;
-import org.quiltmc.qsl.chat.api.types.MutableS2CProfileIndependentMessage;
-import org.quiltmc.qsl.chat.api.types.MutableS2CSystemMessage;
+import org.quiltmc.qsl.chat.api.types.*;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayNetworkHandler.class)
@@ -102,5 +100,23 @@ public class ClientPlayNetworkHandlerMixin {
 	public void quilt$afterInboundProfileIndependentMessage(ProfileIndependentMessageS2CPacket packet, CallbackInfo ci) {
 		ImmutableS2CProfileIndependentMessage message = new ImmutableS2CProfileIndependentMessage(client.player, true, packet);
 		QuiltChatEvents.AFTER_IO.invoke(message);
+	}
+
+	@Redirect(method = "m_fzlgisyq", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V"))
+	public void quilt$modifyAndCancelAndBeforeAndAfterOutboundChatMessage(ClientPlayNetworkHandler instance, Packet<?> packet) {
+		// TODO: Chat screen on cancel
+		if (packet instanceof ChatMessageC2SPacket chatMessageC2SPacket) {
+			MutableC2SChatMessage message = new MutableC2SChatMessage(client.player, true, chatMessageC2SPacket);
+			QuiltChatEvents.MODIFY.invoke(message);
+
+			ImmutableC2SChatMessage immutableMessage = message.immutableCopy();
+			if (QuiltChatEvents.CANCEL.invoke(immutableMessage) != Boolean.TRUE) {
+				QuiltChatEvents.BEFORE_IO.invoke(immutableMessage);
+				instance.sendPacket(immutableMessage.asPacket());
+				QuiltChatEvents.AFTER_IO.invoke(immutableMessage);
+			}
+		} else {
+			throw new IllegalArgumentException("Received non-ChatMessageC2SPacket for argument to ClientPlayNetworkHandler.sendPacket in ClientPlayNetworkHandler.m_fzlgisyq (sendChatMessage? mapping missing at time of writing)");
+		}
 	}
 }

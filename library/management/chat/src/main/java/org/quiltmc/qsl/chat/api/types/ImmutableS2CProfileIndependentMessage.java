@@ -55,4 +55,15 @@ public final class ImmutableS2CProfileIndependentMessage extends MutableAbstract
 	public MessageType.Parameters getMessageType() {
 		return messageType;
 	}
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("ImmutableS2CProfileIndependentMessage{");
+		sb.append("message=").append(message);
+		sb.append(", messageType=").append(messageType);
+		sb.append(", player=").append(player);
+		sb.append(", isOnClientSide=").append(isOnClientSide);
+		sb.append('}');
+		return sb.toString();
+	}
 }

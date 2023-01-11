@@ -20,7 +20,7 @@ public enum QuiltMessageType {
 		this.metaType = metaType;
 	}
 
-	enum QuiltMetaMessageType {
+	public enum QuiltMetaMessageType {
 		MESSAGE_TYPE,
 		SIDE,
 		DIRECTION

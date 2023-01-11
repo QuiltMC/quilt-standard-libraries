@@ -64,4 +64,15 @@ public final class MutableS2CProfileIndependentMessage extends MutableAbstractMe
 	public void setMessageType(MessageType.Parameters messageType) {
 		this.messageType = messageType;
 	}
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("MutableS2CProfileIndependentMessage{");
+		sb.append("message=").append(message);
+		sb.append(", messageType=").append(messageType);
+		sb.append(", player=").append(player);
+		sb.append(", isOnClientSide=").append(isOnClientSide);
+		sb.append('}');
+		return sb.toString();
+	}
 }
