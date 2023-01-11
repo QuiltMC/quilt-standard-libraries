@@ -5,6 +5,7 @@ import net.minecraft.network.packet.s2c.play.SystemMessageS2CPacket;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
+import org.quiltmc.qsl.chat.impl.InternalQuiltChatApiUtil;
 
 import java.util.EnumSet;
 
@@ -12,28 +13,29 @@ public final class MutableS2CSystemMessage extends MutableAbstractMessage<Immuta
 	private Text content;
 	private boolean overlay;
 
-	public MutableS2CSystemMessage(PlayerEntity player, SystemMessageS2CPacket packet) {
+	public MutableS2CSystemMessage(PlayerEntity player, boolean isOnClientSide, SystemMessageS2CPacket packet) {
 		this(
 				player,
+				isOnClientSide,
 				packet.content(),
 				packet.overlay()
 		);
 	}
 
-	public MutableS2CSystemMessage(PlayerEntity player, Text content, boolean overlay) {
-		super(player);
+	public MutableS2CSystemMessage(PlayerEntity player, boolean isOnClientSide, Text content, boolean overlay) {
+		super(player, isOnClientSide);
 		this.content = content;
 		this.overlay = overlay;
 	}
 
 	@Override
 	public @NotNull EnumSet<QuiltMessageType> getTypes() {
-		return EnumSet.of(QuiltMessageType.SYSTEM, QuiltMessageType.SERVER, QuiltMessageType.OUTBOUND);
+		return InternalQuiltChatApiUtil.s2cType(QuiltMessageType.SYSTEM, isOnClientSide);
 	}
 
 	@Override
 	public @NotNull ImmutableS2CSystemMessage immutableCopy() {
-		return new ImmutableS2CSystemMessage(player, content, overlay);
+		return new ImmutableS2CSystemMessage(player, isOnClientSide, content, overlay);
 	}
 
 	@Override

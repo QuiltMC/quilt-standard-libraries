@@ -14,9 +14,10 @@ public final class MutableS2CProfileIndependentMessage extends MutableAbstractMe
 	private Text message;
 	private MessageType.Parameters messageType;
 
-	public MutableS2CProfileIndependentMessage(PlayerEntity player, ProfileIndependentMessageS2CPacket packet) {
+	public MutableS2CProfileIndependentMessage(PlayerEntity player, boolean isOnClient, ProfileIndependentMessageS2CPacket packet) {
 		this(
 				player,
+				isOnClient,
 				packet.message(),
 				packet.messageType().createParameters(player.world.getRegistryManager()).orElseGet(() -> {
 					if (player instanceof ClientPlayerEntity clientPlayerEntity) {
@@ -27,8 +28,8 @@ public final class MutableS2CProfileIndependentMessage extends MutableAbstractMe
 		);
 	}
 
-	public MutableS2CProfileIndependentMessage(PlayerEntity player, Text message, MessageType.Parameters messageType) {
-		super(player);
+	public MutableS2CProfileIndependentMessage(PlayerEntity player, boolean isOnClient, Text message, MessageType.Parameters messageType) {
+		super(player, isOnClient);
 		this.message = message;
 		this.messageType = messageType;
 	}
@@ -40,7 +41,7 @@ public final class MutableS2CProfileIndependentMessage extends MutableAbstractMe
 
 	@Override
 	public @NotNull ImmutableS2CProfileIndependentMessage immutableCopy() {
-		return new ImmutableS2CProfileIndependentMessage(player, message, messageType);
+		return new ImmutableS2CProfileIndependentMessage(player, isOnClientSide, message, messageType);
 	}
 
 	@Override

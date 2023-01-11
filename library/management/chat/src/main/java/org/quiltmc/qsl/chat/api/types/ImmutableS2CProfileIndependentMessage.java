@@ -14,9 +14,10 @@ public final class ImmutableS2CProfileIndependentMessage extends MutableAbstract
 	private final Text message;
 	private final MessageType.Parameters messageType;
 
-	public ImmutableS2CProfileIndependentMessage(PlayerEntity player, ProfileIndependentMessageS2CPacket packet) {
+	public ImmutableS2CProfileIndependentMessage(PlayerEntity player, boolean isOnClientSide, ProfileIndependentMessageS2CPacket packet) {
 		this(
 				player,
+				isOnClientSide,
 				packet.message(),
 				packet.messageType().createParameters(player.world.getRegistryManager()).orElseGet(() -> {
 					if (player instanceof ClientPlayerEntity clientPlayerEntity) {
@@ -26,8 +27,8 @@ public final class ImmutableS2CProfileIndependentMessage extends MutableAbstract
 				})
 		);
 	}
-	public ImmutableS2CProfileIndependentMessage(PlayerEntity player, Text message, MessageType.Parameters messageType) {
-		super(player);
+	public ImmutableS2CProfileIndependentMessage(PlayerEntity player, boolean isOnClientSide, Text message, MessageType.Parameters messageType) {
+		super(player, isOnClientSide);
 		this.message = message;
 		this.messageType = messageType;
 	}
@@ -39,7 +40,7 @@ public final class ImmutableS2CProfileIndependentMessage extends MutableAbstract
 
 	@Override
 	public @NotNull ImmutableS2CProfileIndependentMessage immutableCopy() {
-		return new ImmutableS2CProfileIndependentMessage(player, message, messageType);
+		return new ImmutableS2CProfileIndependentMessage(player, isOnClientSide, message, messageType);
 	}
 
 	@Override

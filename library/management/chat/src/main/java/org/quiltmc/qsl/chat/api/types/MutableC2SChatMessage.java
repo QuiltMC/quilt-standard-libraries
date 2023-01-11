@@ -18,9 +18,10 @@ public final class MutableC2SChatMessage extends MutableAbstractMessage<Immutabl
 	private @Nullable MessageSignature signature;
 	private MessageSignatureList.Acknowledgment messageAcknowledgments;
 
-	public MutableC2SChatMessage(PlayerEntity player, ChatMessageC2SPacket packet) {
+	public MutableC2SChatMessage(PlayerEntity player, boolean isOnClientSide, ChatMessageC2SPacket packet) {
 		this(
 				player,
+				isOnClientSide,
 				packet.message(),
 				packet.timestamp(),
 				packet.salt(),
@@ -28,8 +29,8 @@ public final class MutableC2SChatMessage extends MutableAbstractMessage<Immutabl
 				packet.messageAcknowledgments()
 		);
 	}
-	public MutableC2SChatMessage(PlayerEntity player, String message, Instant timestamp, long salt, @Nullable MessageSignature signature, MessageSignatureList.Acknowledgment messageAcknowledgments) {
-		super(player);
+	public MutableC2SChatMessage(PlayerEntity player, boolean isOnClientSide, String message, Instant timestamp, long salt, @Nullable MessageSignature signature, MessageSignatureList.Acknowledgment messageAcknowledgments) {
+		super(player, isOnClientSide);
 		this.message = message;
 		this.timestamp = timestamp;
 		this.salt = salt;
@@ -44,7 +45,7 @@ public final class MutableC2SChatMessage extends MutableAbstractMessage<Immutabl
 
 	@Override
 	public @NotNull ImmutableC2SChatMessage immutableCopy() {
-		return new ImmutableC2SChatMessage(player, message, timestamp, salt, signature, messageAcknowledgments);
+		return new ImmutableC2SChatMessage(player, isOnClientSide, message, timestamp, salt, signature, messageAcknowledgments);
 	}
 
 	@Override

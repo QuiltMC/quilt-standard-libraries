@@ -4,7 +4,6 @@ import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import org.objectweb.asm.Opcodes;
 import org.quiltmc.qsl.chat.api.QuiltChatEvents;
-import org.quiltmc.qsl.chat.api.client.ClientOutboundChatMessageEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -31,8 +30,7 @@ public class ChatScreenMixin {
 					by = -5
 			), argsOnly = true, ordinal = 0)
 	public String quilt$modifyOutboundChatMessage(String message) {
-
-		return ClientOutboundChatMessageEvents.MODIFY.invoker().beforeChatMessageSent(message);
+		return message;
 	}
 
 	@Inject(method = "handleChatInput",
@@ -46,8 +44,6 @@ public class ChatScreenMixin {
 			cancellable = true
 	)
 	public void quilt$cancelOutboundChatMessage(String text, boolean addToHistory, CallbackInfoReturnable<Boolean> cir) {
-		if (ClientOutboundChatMessageEvents.CANCEL.invoker().cancelChatMessage(text)) {
-			cir.setReturnValue(true);
-		}
+
 	}
 }

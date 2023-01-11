@@ -9,6 +9,7 @@ import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
+import org.quiltmc.qsl.chat.impl.InternalQuiltChatApiUtil;
 
 import java.util.EnumSet;
 import java.util.UUID;
@@ -48,11 +49,7 @@ public final class MutableS2CChatMessage extends MutableAbstractMessage<Immutabl
 
 	@Override
 	public @NotNull EnumSet<QuiltMessageType> getTypes() {
-		if (isOnClientSide) {
-			return EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.CLIENT, QuiltMessageType.OUTBOUND);
-		} else {
-			return EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.SERVER, QuiltMessageType.INBOUND);
-		}
+		return InternalQuiltChatApiUtil.s2cType(QuiltMessageType.CHAT, isOnClientSide);
 	}
 
 	@Override

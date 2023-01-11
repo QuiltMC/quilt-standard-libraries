@@ -20,7 +20,7 @@ public class ServerPlayerEntityMixin {
 
 	@Inject(method = "sendSystemMessage(Lnet/minecraft/text/Text;Z)V", at = @At("HEAD"))
 	public void quilt$captureAndModifyOutboundSystemMessage(Text originalMessage, boolean overlay, CallbackInfo ci) {
-		MutableS2CSystemMessage message = new MutableS2CSystemMessage((ServerPlayerEntity)(Object)this, originalMessage, overlay);
+		MutableS2CSystemMessage message = new MutableS2CSystemMessage((ServerPlayerEntity)(Object)this, false, originalMessage, overlay);
 
 		QuiltChatEvents.MODIFY.invoke(message);
 

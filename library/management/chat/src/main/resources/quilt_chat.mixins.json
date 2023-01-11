@@ -7,7 +7,6 @@
     "client.ClientPlayNetworkHandlerMixin"
   ],
   "mixins": [
-    "PlayerManagerMixin",
     "ServerPlayerEntityMixin",
     "ServerPlayNetworkHandlerMixin"
   ],
