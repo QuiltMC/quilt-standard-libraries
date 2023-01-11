@@ -45,6 +45,7 @@ public final class MutableC2SChatMessage extends MutableAbstractMessage<Immutabl
 				packet.messageAcknowledgments()
 		);
 	}
+
 	public MutableC2SChatMessage(PlayerEntity player, boolean isOnClientSide, String message, Instant timestamp, long salt, @Nullable MessageSignature signature, MessageSignatureList.Acknowledgment messageAcknowledgments) {
 		super(player, isOnClientSide);
 		this.message = message;

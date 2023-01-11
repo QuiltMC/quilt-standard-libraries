@@ -18,33 +18,28 @@ package org.quiltmc.qsl.chat.impl;
 
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import org.quiltmc.qsl.chat.api.types.ImmutableAbstractMessage;
 
 import java.util.EnumSet;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 // Cant extend event because the constructor is private, gotta reproduce some of the API surface
-public class ChatApiEvent<R> {
-	private final Event<ChatApiHook<@Nullable R>> backingEvent = Event.create(ChatApiHook.class, hooks -> new ChatApiHook<>() {
+public class ChatVoidEvent {
+	private final Event<ChatApiHook> backingEvent = Event.create(ChatApiHook.class, hooks -> new ChatApiHook() {
 		@Override
 		public EnumSet<QuiltMessageType> getMessageTypes() {
 			return EnumSet.allOf(QuiltMessageType.class);
 		}
 
 		@Override
-		public R handleMessage(ImmutableAbstractMessage<?, ?> message) {
-			R result = null;
-
+		public void handleMessage(ImmutableAbstractMessage<?, ?> message) {
 			for (var hook : hooks) {
 				if (shouldPassOnMessageToHook(message.getTypes(), hook.getMessageTypes())) {
-					result = hook.handleMessage(message);
+					hook.handleMessage(message);
 				}
 			}
-
-			return result;
 		}
 	});
 
@@ -82,34 +77,34 @@ public class ChatApiEvent<R> {
 	/**
 	 * @return The result of invoking this event, or null if there are no listeners
 	 */
-	public @Nullable R invoke(ImmutableAbstractMessage<?, ?> message) {
-		return backingEvent.invoker().handleMessage(message);
+	public void invoke(ImmutableAbstractMessage<?, ?> message) {
+		backingEvent.invoker().handleMessage(message);
 	}
 
-	public void register(EnumSet<QuiltMessageType> types, Function<ImmutableAbstractMessage<?, ?>, R> handler) {
-		backingEvent.register(new ChatApiHook<>() {
+	public void register(EnumSet<QuiltMessageType> types, Consumer<ImmutableAbstractMessage<?, ?>> handler) {
+		backingEvent.register(new ChatApiHook() {
 			@Override
 			public EnumSet<QuiltMessageType> getMessageTypes() {
 				return types;
 			}
 
 			@Override
-			public R handleMessage(ImmutableAbstractMessage<?, ?> message) {
-				return handler.apply(message);
+			public void handleMessage(ImmutableAbstractMessage<?, ?> message) {
+				handler.accept(message);
 			}
 		});
 	}
 
-	public void register(@NotNull Identifier phaseIdentifier, EnumSet<QuiltMessageType> types, Function<ImmutableAbstractMessage<?, ?>, @NotNull R> handler) {
-		backingEvent.register(phaseIdentifier, new ChatApiHook<R>() {
+	public void register(@NotNull Identifier phaseIdentifier, EnumSet<QuiltMessageType> types, Consumer<ImmutableAbstractMessage<?, ?>> handler) {
+		backingEvent.register(phaseIdentifier, new ChatApiHook() {
 			@Override
 			public EnumSet<QuiltMessageType> getMessageTypes() {
 				return types;
 			}
 
 			@Override
-			public R handleMessage(ImmutableAbstractMessage<?, ?> message) {
-				return handler.apply(message);
+			public void handleMessage(ImmutableAbstractMessage<?, ?> message) {
+				handler.accept(message);
 			}
 		});
 	}
@@ -118,8 +113,8 @@ public class ChatApiEvent<R> {
 		backingEvent.addPhaseOrdering(firstPhase, secondPhase);
 	}
 
-	private interface ChatApiHook<R> {
+	private interface ChatApiHook {
 		EnumSet<QuiltMessageType> getMessageTypes();
-		R handleMessage(ImmutableAbstractMessage<?, ?> message);
+		void handleMessage(ImmutableAbstractMessage<?, ?> message);
 	}
 }

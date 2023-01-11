@@ -45,6 +45,7 @@ public final class ImmutableS2CSystemMessage extends ImmutableAbstractMessage<Im
 		this.content = content;
 		this.overlay = overlay;
 	}
+
 	@Override
 	public @NotNull EnumSet<QuiltMessageType> getTypes() {
 		return InternalQuiltChatApiUtil.s2cType(QuiltMessageType.SYSTEM, isOnClientSide);

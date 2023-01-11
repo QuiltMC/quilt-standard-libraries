@@ -16,12 +16,16 @@
 
 package org.quiltmc.qsl.chat.api;
 
-import org.quiltmc.qsl.chat.impl.ChatApiEvent;
-import org.quiltmc.qsl.chat.impl.ChatApiVoidEvent;
+import org.quiltmc.qsl.chat.impl.ChatEvent;
+import org.quiltmc.qsl.chat.impl.ChatVoidEvent;
 
+/**
+ * Events for modifying, canceling, and listening for various chat messages.
+ * Events are always executed in the order {@link #MODIFY} -> {@link #CANCEL} -> {@link #BEFORE_IO} -> {@link #AFTER_IO}
+ */
 public final class QuiltChatEvents {
-	public static final ChatApiVoidEvent MODIFY = new ChatApiVoidEvent();
-	public static final ChatApiEvent<Boolean> CANCEL = new ChatApiEvent<>();
-	public static final ChatApiVoidEvent BEFORE_IO = new ChatApiVoidEvent();
-	public static final ChatApiVoidEvent AFTER_IO = new ChatApiVoidEvent();
+	public static final ChatVoidEvent MODIFY = new ChatVoidEvent();
+	public static final ChatEvent<Boolean> CANCEL = new ChatEvent<>();
+	public static final ChatVoidEvent BEFORE_IO = new ChatVoidEvent();
+	public static final ChatVoidEvent AFTER_IO = new ChatVoidEvent();
 }

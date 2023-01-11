@@ -26,7 +26,7 @@ import java.util.EnumSet;
  * @param <T> The type of the immutable type
  * @param <S> The type of the packet form of this class
  */
-sealed public abstract class ImmutableAbstractMessage<T extends ImmutableAbstractMessage<T, S>, S>
+public abstract sealed class ImmutableAbstractMessage<T extends ImmutableAbstractMessage<T, S>, S>
 		permits ImmutableC2SChatMessage, ImmutableS2CChatMessage, ImmutableS2CSystemMessage, MutableAbstractMessage {
 	protected final @NotNull PlayerEntity player;
 	protected final boolean isOnClientSide;
@@ -38,11 +38,11 @@ sealed public abstract class ImmutableAbstractMessage<T extends ImmutableAbstrac
 
 	// These are mostly annotated as @NotNull for dev productivity, I get nice warnings about
 	// What parts of the subclasses I need to implement still
-	abstract public @NotNull EnumSet<QuiltMessageType> getTypes();
+	public abstract @NotNull EnumSet<QuiltMessageType> getTypes();
 
-	abstract public @NotNull T immutableCopy();
+	public abstract @NotNull T immutableCopy();
 
-	abstract public @NotNull S asPacket();
+	public abstract @NotNull S asPacket();
 
 	/**
 	 * Returns the player associated with this packet, which changes meaning based on the sidedness and direction.

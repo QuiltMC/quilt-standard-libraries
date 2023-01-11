@@ -43,6 +43,7 @@ public final class ImmutableS2CProfileIndependentMessage extends MutableAbstract
 				})
 		);
 	}
+
 	public ImmutableS2CProfileIndependentMessage(PlayerEntity player, boolean isOnClientSide, Text message, MessageType.Parameters messageType) {
 		super(player, isOnClientSide);
 		this.message = message;
