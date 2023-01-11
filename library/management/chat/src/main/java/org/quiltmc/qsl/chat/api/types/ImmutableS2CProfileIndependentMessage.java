@@ -26,7 +26,7 @@ import org.quiltmc.qsl.chat.api.QuiltMessageType;
 
 import java.util.EnumSet;
 
-public final class ImmutableS2CProfileIndependentMessage extends MutableAbstractMessage<ImmutableS2CProfileIndependentMessage, ProfileIndependentMessageS2CPacket> {
+public class ImmutableS2CProfileIndependentMessage extends MutableAbstractMessage<ImmutableS2CProfileIndependentMessage, ProfileIndependentMessageS2CPacket> {
 	private final Text message;
 	private final MessageType.Parameters messageType;
 

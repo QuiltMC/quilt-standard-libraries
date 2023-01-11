@@ -27,7 +27,7 @@ import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import java.time.Instant;
 import java.util.EnumSet;
 
-public final class MutableC2SChatMessage extends MutableAbstractMessage<ImmutableC2SChatMessage, ChatMessageC2SPacket> {
+public class MutableC2SChatMessage extends MutableAbstractMessage<ImmutableC2SChatMessage, ChatMessageC2SPacket> {
 	private String message;
 	private Instant timestamp;
 	private long salt;

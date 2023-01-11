@@ -26,8 +26,7 @@ import java.util.EnumSet;
  * @param <T> The type of the immutable type
  * @param <S> The type of the packet form of this class
  */
-public abstract sealed class ImmutableAbstractMessage<T extends ImmutableAbstractMessage<T, S>, S>
-		permits ImmutableC2SChatMessage, ImmutableS2CChatMessage, ImmutableS2CSystemMessage, MutableAbstractMessage {
+public abstract class ImmutableAbstractMessage<T extends ImmutableAbstractMessage<T, S>, S> {
 	protected final @NotNull PlayerEntity player;
 	protected final boolean isOnClientSide;
 

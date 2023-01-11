@@ -24,6 +24,8 @@ import org.quiltmc.qsl.chat.impl.ChatVoidEvent;
  * Events are always executed in the order {@link #MODIFY} -> {@link #CANCEL} -> {@link #BEFORE_IO} -> {@link #AFTER_IO}
  */
 public final class QuiltChatEvents {
+	private QuiltChatEvents() {}
+
 	public static final ChatVoidEvent MODIFY = new ChatVoidEvent();
 	public static final ChatEvent<Boolean> CANCEL = new ChatEvent<>();
 	public static final ChatVoidEvent BEFORE_IO = new ChatVoidEvent();

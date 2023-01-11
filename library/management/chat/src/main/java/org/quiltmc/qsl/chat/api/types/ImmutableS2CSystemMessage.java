@@ -25,7 +25,7 @@ import org.quiltmc.qsl.chat.impl.InternalQuiltChatApiUtil;
 
 import java.util.EnumSet;
 
-public final class ImmutableS2CSystemMessage extends ImmutableAbstractMessage<ImmutableS2CSystemMessage, SystemMessageS2CPacket> {
+public class ImmutableS2CSystemMessage extends ImmutableAbstractMessage<ImmutableS2CSystemMessage, SystemMessageS2CPacket> {
 	private final PlayerEntity player;
 	private final Text content;
 	private final boolean overlay;

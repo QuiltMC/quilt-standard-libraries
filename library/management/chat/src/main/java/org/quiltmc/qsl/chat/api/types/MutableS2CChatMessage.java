@@ -30,7 +30,7 @@ import org.quiltmc.qsl.chat.impl.InternalQuiltChatApiUtil;
 import java.util.EnumSet;
 import java.util.UUID;
 
-public final class MutableS2CChatMessage extends MutableAbstractMessage<ImmutableS2CChatMessage, ChatMessageS2CPacket> {
+public class MutableS2CChatMessage extends MutableAbstractMessage<ImmutableS2CChatMessage, ChatMessageS2CPacket> {
 	private UUID sender;
 	private int index;
 	private MessageSignature signature;
