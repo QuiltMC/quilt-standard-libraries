@@ -20,9 +20,7 @@
     "intermediate_mappings": "net.fabricmc:intermediary",
     "load_type": "always",
     "entrypoints": {
-      "init": [
-        "org.quiltmc.qsl.chat.test.ChatApiTest"
-      ]
+      "init": "org.quiltmc.qsl.chat.test.ChatApiTest"
     },
     "depends": [
       "quilt_loader",
