@@ -104,7 +104,6 @@ public class ClientPlayNetworkHandlerMixin {
 
 	@Redirect(method = "m_fzlgisyq", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V"))
 	public void quilt$modifyAndCancelAndBeforeAndAfterOutboundChatMessage(ClientPlayNetworkHandler instance, Packet<?> packet) {
-		// TODO: Chat screen on cancel
 		if (packet instanceof ChatMessageC2SPacket chatMessageC2SPacket) {
 			MutableC2SChatMessage message = new MutableC2SChatMessage(client.player, true, chatMessageC2SPacket);
 			QuiltChatEvents.MODIFY.invoke(message);
