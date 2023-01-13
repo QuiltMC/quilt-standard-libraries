@@ -21,7 +21,8 @@ import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.chat.api.QuiltChatEvents;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
-import org.quiltmc.qsl.chat.api.types.MutableS2CSystemMessage;
+import org.quiltmc.qsl.chat.api.types.ChatC2SMessage;
+import org.quiltmc.qsl.chat.api.types.SystemS2CMessage;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
 import java.util.EnumSet;
@@ -36,12 +37,40 @@ public class ChatApiTest implements ModInitializer {
 		QuiltChatEvents.AFTER_IO.register(EnumSet.allOf(QuiltMessageType.class), System.out::println);
 
 		QuiltChatEvents.MODIFY.register(EnumSet.of(QuiltMessageType.SYSTEM, QuiltMessageType.SERVER, QuiltMessageType.OUTBOUND), abstractMessage -> {
-			if (abstractMessage instanceof MutableS2CSystemMessage mutableS2CSystemMessage) {
-				Text content = mutableS2CSystemMessage.getContent();
+			if (abstractMessage instanceof SystemS2CMessage systemS2CMessage) {
+				Text content = systemS2CMessage.getContent();
 				if (new Random().nextBoolean()) {
-					mutableS2CSystemMessage.setContent(content.copy().append(Text.literal(", uwu")));
+					return systemS2CMessage.withContent(content.copy().append(Text.literal(", uwu")));
+				} else {
+					return abstractMessage;
 				}
+			} else {
+				return abstractMessage;
 			}
 		});
+
+		final boolean[] didEnableBad = {false};
+		QuiltChatEvents.CANCEL.register(EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.CLIENT, QuiltMessageType.OUTBOUND), abstractMessage -> {
+			if (abstractMessage instanceof ChatC2SMessage chatC2SMessage) {
+				if (chatC2SMessage.getMessage().equals("!register-bad")) {
+					if (!didEnableBad[0]) {
+						didEnableBad[0] = true;
+						registerBadEvents();
+						return true;
+					} else {
+						return false;
+					}
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		});
+	}
+
+	private void registerBadEvents() {
+		QuiltChatEvents.MODIFY.register(EnumSet.allOf(QuiltMessageType.class), abstractMessage -> new SystemS2CMessage(abstractMessage.getPlayer(), abstractMessage.isOnClientSide(), Text.literal("im an evil event, muhahah"), false));
+		QuiltChatEvents.MODIFY.register(EnumSet.allOf(QuiltMessageType.class), abstractMessage -> new Random().nextInt(3) == 0 ? null : abstractMessage );
 	}
 }

@@ -25,12 +25,11 @@ import org.quiltmc.qsl.chat.impl.InternalQuiltChatApiUtil;
 
 import java.util.EnumSet;
 
-public class ImmutableS2CSystemMessage extends ImmutableAbstractMessage<ImmutableS2CSystemMessage, SystemMessageS2CPacket> {
-	private final PlayerEntity player;
+public class SystemS2CMessage extends AbstractChatMessage<SystemMessageS2CPacket> {
 	private final Text content;
 	private final boolean overlay;
 
-	public ImmutableS2CSystemMessage(PlayerEntity player, boolean isOnClientSide, SystemMessageS2CPacket packet) {
+	public SystemS2CMessage(PlayerEntity player, boolean isOnClientSide, SystemMessageS2CPacket packet) {
 		this(
 				player,
 				isOnClientSide,
@@ -39,9 +38,8 @@ public class ImmutableS2CSystemMessage extends ImmutableAbstractMessage<Immutabl
 		);
 	}
 
-	public ImmutableS2CSystemMessage(PlayerEntity player, boolean isOnClientSide, Text content, boolean overlay) {
+	public SystemS2CMessage(PlayerEntity player, boolean isOnClientSide, Text content, boolean overlay) {
         super(player, isOnClientSide);
-        this.player = player;
 		this.content = content;
 		this.overlay = overlay;
 	}
@@ -49,11 +47,6 @@ public class ImmutableS2CSystemMessage extends ImmutableAbstractMessage<Immutabl
 	@Override
 	public @NotNull EnumSet<QuiltMessageType> getTypes() {
 		return InternalQuiltChatApiUtil.s2cType(QuiltMessageType.SYSTEM, isOnClientSide);
-	}
-
-	@Override
-	public @NotNull ImmutableS2CSystemMessage immutableCopy() {
-		return new ImmutableS2CSystemMessage(player, isOnClientSide, content, overlay);
 	}
 
 	@Override
@@ -67,6 +60,14 @@ public class ImmutableS2CSystemMessage extends ImmutableAbstractMessage<Immutabl
 
 	public boolean isOverlay() {
 		return overlay;
+	}
+
+	public SystemS2CMessage withContent(Text content) {
+		return new SystemS2CMessage(player, isOnClientSide, content, overlay);
+	}
+
+	public SystemS2CMessage withOverlay(boolean overlay) {
+		return new SystemS2CMessage(player, isOnClientSide, content, overlay);
 	}
 
 	@Override

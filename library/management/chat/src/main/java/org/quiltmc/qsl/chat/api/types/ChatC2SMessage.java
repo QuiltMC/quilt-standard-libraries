@@ -27,14 +27,14 @@ import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import java.time.Instant;
 import java.util.EnumSet;
 
-public class MutableC2SChatMessage extends MutableAbstractMessage<ImmutableC2SChatMessage, ChatMessageC2SPacket> {
-	private String message;
-	private Instant timestamp;
-	private long salt;
-	private @Nullable MessageSignature signature;
-	private MessageSignatureList.Acknowledgment messageAcknowledgments;
+public class ChatC2SMessage extends AbstractChatMessage<ChatMessageC2SPacket> {
+	private final String message;
+	private final Instant timestamp;
+	private final long salt;
+	private final @Nullable MessageSignature signature;
+	private final MessageSignatureList.Acknowledgment messageAcknowledgments;
 
-	public MutableC2SChatMessage(PlayerEntity player, boolean isOnClientSide, ChatMessageC2SPacket packet) {
+	public ChatC2SMessage(PlayerEntity player, boolean isOnClientSide, ChatMessageC2SPacket packet) {
 		this(
 				player,
 				isOnClientSide,
@@ -46,7 +46,7 @@ public class MutableC2SChatMessage extends MutableAbstractMessage<ImmutableC2SCh
 		);
 	}
 
-	public MutableC2SChatMessage(PlayerEntity player, boolean isOnClientSide, String message, Instant timestamp, long salt, @Nullable MessageSignature signature, MessageSignatureList.Acknowledgment messageAcknowledgments) {
+	public ChatC2SMessage(PlayerEntity player, boolean isOnClientSide, String message, Instant timestamp, long salt, @Nullable MessageSignature signature, MessageSignatureList.Acknowledgment messageAcknowledgments) {
 		super(player, isOnClientSide);
 		this.message = message;
 		this.timestamp = timestamp;
@@ -61,11 +61,6 @@ public class MutableC2SChatMessage extends MutableAbstractMessage<ImmutableC2SCh
 	}
 
 	@Override
-	public @NotNull ImmutableC2SChatMessage immutableCopy() {
-		return new ImmutableC2SChatMessage(player, isOnClientSide, message, timestamp, salt, signature, messageAcknowledgments);
-	}
-
-	@Override
 	public @NotNull ChatMessageC2SPacket asPacket() {
 		return new ChatMessageC2SPacket(message, timestamp, salt, signature, messageAcknowledgments);
 	}
@@ -74,45 +69,45 @@ public class MutableC2SChatMessage extends MutableAbstractMessage<ImmutableC2SCh
 		return message;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
 	public Instant getTimestamp() {
 		return timestamp;
-	}
-
-	public void setTimestamp(Instant timestamp) {
-		this.timestamp = timestamp;
 	}
 
 	public long getSalt() {
 		return salt;
 	}
 
-	public void setSalt(long salt) {
-		this.salt = salt;
-	}
-
 	public @Nullable MessageSignature getSignature() {
 		return signature;
-	}
-
-	public void setSignature(@Nullable MessageSignature signature) {
-		this.signature = signature;
 	}
 
 	public MessageSignatureList.Acknowledgment getMessageAcknowledgments() {
 		return messageAcknowledgments;
 	}
 
-	public void setMessageAcknowledgments(MessageSignatureList.Acknowledgment messageAcknowledgments) {
-		this.messageAcknowledgments = messageAcknowledgments;
+	public ChatC2SMessage withMessage(String message) {
+		return new ChatC2SMessage(player, isOnClientSide, message, timestamp, salt, signature, messageAcknowledgments);
+	}
+
+	public ChatC2SMessage withTimestamp(Instant timestamp) {
+		return new ChatC2SMessage(player, isOnClientSide, message, timestamp, salt, signature, messageAcknowledgments);
+	}
+
+	public ChatC2SMessage withSalt(long salt) {
+		return new ChatC2SMessage(player, isOnClientSide, message, timestamp, salt, signature, messageAcknowledgments);
+	}
+
+	public ChatC2SMessage withSignature(@Nullable MessageSignature signature) {
+		return new ChatC2SMessage(player, isOnClientSide, message, timestamp, salt, signature, messageAcknowledgments);
+	}
+
+	public ChatC2SMessage withMessageAcknowledgments(MessageSignatureList.Acknowledgment messageAcknowledgments) {
+		return new ChatC2SMessage(player, isOnClientSide, message, timestamp, salt, signature, messageAcknowledgments);
 	}
 
 	@Override
 	public String toString() {
-		final StringBuilder sb = new StringBuilder("MutableC2SChatMessage{");
+		final StringBuilder sb = new StringBuilder("ImmutableC2SChatMessage{");
 		sb.append("message='").append(message).append('\'');
 		sb.append(", timestamp=").append(timestamp);
 		sb.append(", salt=").append(salt);

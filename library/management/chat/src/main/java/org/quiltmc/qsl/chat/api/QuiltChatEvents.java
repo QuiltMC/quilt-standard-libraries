@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.chat.api;
 
+import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
 import org.quiltmc.qsl.chat.impl.ChatEvent;
 import org.quiltmc.qsl.chat.impl.ChatVoidEvent;
 
@@ -26,8 +27,8 @@ import org.quiltmc.qsl.chat.impl.ChatVoidEvent;
 public final class QuiltChatEvents {
 	private QuiltChatEvents() {}
 
-	public static final ChatVoidEvent MODIFY = new ChatVoidEvent();
-	public static final ChatEvent<Boolean> CANCEL = new ChatEvent<>();
+	public static final ChatEvent<AbstractChatMessage<?>> MODIFY = new ChatEvent<>(true);
+	public static final ChatEvent<Boolean> CANCEL = new ChatEvent<>(false);
 	public static final ChatVoidEvent BEFORE_IO = new ChatVoidEvent();
 	public static final ChatVoidEvent AFTER_IO = new ChatVoidEvent();
 }

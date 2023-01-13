@@ -21,13 +21,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
-import org.quiltmc.qsl.chat.api.types.ImmutableAbstractMessage;
+import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
 
 import java.util.EnumSet;
 import java.util.function.Function;
 
 // Cant extend event because the constructor is private, gotta reproduce some of the API surface
 public class ChatEvent<R> {
+	private final boolean shouldPreformAssignableCheck;
+
+	public ChatEvent(boolean shouldPreformAssignableCheck) {
+		this.shouldPreformAssignableCheck = shouldPreformAssignableCheck;
+	}
+
 	private final Event<ChatApiHook<@Nullable R>> backingEvent = Event.create(ChatApiHook.class, hooks -> new ChatApiHook<>() {
 		@Override
 		public EnumSet<QuiltMessageType> getMessageTypes() {
@@ -35,12 +41,24 @@ public class ChatEvent<R> {
 		}
 
 		@Override
-		public R handleMessage(ImmutableAbstractMessage<?, ?> message) {
+		public R handleMessage(AbstractChatMessage<?> message) {
 			R result = null;
 
 			for (var hook : hooks) {
 				if (shouldPassOnMessageToHook(message.getTypes(), hook.getMessageTypes())) {
-					result = hook.handleMessage(message);
+					R tmpResult = hook.handleMessage(message);
+					if (tmpResult != null) {
+						if (shouldPreformAssignableCheck && !message.getClass().isAssignableFrom(tmpResult.getClass())) {
+							throw new IllegalArgumentException(
+									"Handler attached to a ChatEvent returned a non-similar value! " +
+									"Expected a subclass or instance of " + message.getClass().getName() + " but got a " + tmpResult.getClass().getName() + "!"
+							);
+						} else {
+							result = tmpResult;
+						}
+					} else {
+						throw new NullPointerException("Handler attached to a ChatEvent returned a null result!");
+					}
 				}
 			}
 
@@ -82,11 +100,23 @@ public class ChatEvent<R> {
 	/**
 	 * @return The result of invoking this event, or null if there are no listeners
 	 */
-	public @Nullable R invoke(ImmutableAbstractMessage<?, ?> message) {
+	public @Nullable R invoke(AbstractChatMessage<?> message) {
 		return backingEvent.invoker().handleMessage(message);
 	}
 
-	public void register(EnumSet<QuiltMessageType> types, Function<ImmutableAbstractMessage<?, ?>, R> handler) {
+	/**
+	 * @return The result of invoking this event, or ifNull if there are no listeners
+	 */
+	public R invoke(AbstractChatMessage<?> message, R ifNull) {
+		R result = backingEvent.invoker().handleMessage(message);
+		if (result == null) {
+			return ifNull;
+		} else {
+			return result;
+		}
+	}
+
+	public void register(EnumSet<QuiltMessageType> types, Function<AbstractChatMessage<?>, R> handler) {
 		backingEvent.register(new ChatApiHook<>() {
 			@Override
 			public EnumSet<QuiltMessageType> getMessageTypes() {
@@ -94,21 +124,21 @@ public class ChatEvent<R> {
 			}
 
 			@Override
-			public R handleMessage(ImmutableAbstractMessage<?, ?> message) {
+			public R handleMessage(AbstractChatMessage<?> message) {
 				return handler.apply(message);
 			}
 		});
 	}
 
-	public void register(@NotNull Identifier phaseIdentifier, EnumSet<QuiltMessageType> types, Function<ImmutableAbstractMessage<?, ?>, @NotNull R> handler) {
-		backingEvent.register(phaseIdentifier, new ChatApiHook<R>() {
+	public void register(@NotNull Identifier phaseIdentifier, EnumSet<QuiltMessageType> types, Function<AbstractChatMessage<?>, @NotNull R> handler) {
+		backingEvent.register(phaseIdentifier, new ChatApiHook<>() {
 			@Override
 			public EnumSet<QuiltMessageType> getMessageTypes() {
 				return types;
 			}
 
 			@Override
-			public R handleMessage(ImmutableAbstractMessage<?, ?> message) {
+			public R handleMessage(AbstractChatMessage<?> message) {
 				return handler.apply(message);
 			}
 		});
@@ -120,6 +150,6 @@ public class ChatEvent<R> {
 
 	private interface ChatApiHook<R> {
 		EnumSet<QuiltMessageType> getMessageTypes();
-		R handleMessage(ImmutableAbstractMessage<?, ?> message);
+		R handleMessage(AbstractChatMessage<?> message);
 	}
 }

@@ -23,14 +23,13 @@ import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import java.util.EnumSet;
 
 /**
- * @param <T> The type of the immutable type
- * @param <S> The type of the packet form of this class
+ * @param <P> The type of the packet form of this class
  */
-public abstract class ImmutableAbstractMessage<T extends ImmutableAbstractMessage<T, S>, S> {
+public abstract class AbstractChatMessage<P> {
 	protected final @NotNull PlayerEntity player;
 	protected final boolean isOnClientSide;
 
-	protected ImmutableAbstractMessage(@NotNull PlayerEntity player, boolean isOnClientSide) {
+	protected AbstractChatMessage(@NotNull PlayerEntity player, boolean isOnClientSide) {
 		this.player = player;
 		this.isOnClientSide = isOnClientSide;
 	}
@@ -39,9 +38,7 @@ public abstract class ImmutableAbstractMessage<T extends ImmutableAbstractMessag
 	// What parts of the subclasses I need to implement still
 	public abstract @NotNull EnumSet<QuiltMessageType> getTypes();
 
-	public abstract @NotNull T immutableCopy();
-
-	public abstract @NotNull S asPacket();
+	public abstract @NotNull P asPacket();
 
 	/**
 	 * Returns the player associated with this packet, which changes meaning based on the sidedness and direction.
@@ -54,5 +51,9 @@ public abstract class ImmutableAbstractMessage<T extends ImmutableAbstractMessag
 	 */
 	public final @NotNull PlayerEntity getPlayer() {
 		return player;
+	}
+
+	public boolean isOnClientSide() {
+		return isOnClientSide;
 	}
 }

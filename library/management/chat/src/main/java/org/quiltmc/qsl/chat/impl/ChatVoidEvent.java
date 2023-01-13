@@ -20,7 +20,7 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
-import org.quiltmc.qsl.chat.api.types.ImmutableAbstractMessage;
+import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
 
 import java.util.EnumSet;
 import java.util.function.Consumer;
@@ -34,7 +34,7 @@ public class ChatVoidEvent {
 		}
 
 		@Override
-		public void handleMessage(ImmutableAbstractMessage<?, ?> message) {
+		public void handleMessage(AbstractChatMessage<?> message) {
 			for (var hook : hooks) {
 				if (shouldPassOnMessageToHook(message.getTypes(), hook.getMessageTypes())) {
 					hook.handleMessage(message);
@@ -74,14 +74,11 @@ public class ChatVoidEvent {
 		return true;
 	}
 
-	/**
-	 * @return The result of invoking this event, or null if there are no listeners
-	 */
-	public void invoke(ImmutableAbstractMessage<?, ?> message) {
+	public void invoke(AbstractChatMessage<?> message) {
 		backingEvent.invoker().handleMessage(message);
 	}
 
-	public void register(EnumSet<QuiltMessageType> types, Consumer<ImmutableAbstractMessage<?, ?>> handler) {
+	public void register(EnumSet<QuiltMessageType> types, Consumer<AbstractChatMessage<?>> handler) {
 		backingEvent.register(new ChatApiHook() {
 			@Override
 			public EnumSet<QuiltMessageType> getMessageTypes() {
@@ -89,13 +86,13 @@ public class ChatVoidEvent {
 			}
 
 			@Override
-			public void handleMessage(ImmutableAbstractMessage<?, ?> message) {
+			public void handleMessage(AbstractChatMessage<?> message) {
 				handler.accept(message);
 			}
 		});
 	}
 
-	public void register(@NotNull Identifier phaseIdentifier, EnumSet<QuiltMessageType> types, Consumer<ImmutableAbstractMessage<?, ?>> handler) {
+	public void register(@NotNull Identifier phaseIdentifier, EnumSet<QuiltMessageType> types, Consumer<AbstractChatMessage<?>> handler) {
 		backingEvent.register(phaseIdentifier, new ChatApiHook() {
 			@Override
 			public EnumSet<QuiltMessageType> getMessageTypes() {
@@ -103,7 +100,7 @@ public class ChatVoidEvent {
 			}
 
 			@Override
-			public void handleMessage(ImmutableAbstractMessage<?, ?> message) {
+			public void handleMessage(AbstractChatMessage<?> message) {
 				handler.accept(message);
 			}
 		});
@@ -115,6 +112,6 @@ public class ChatVoidEvent {
 
 	private interface ChatApiHook {
 		EnumSet<QuiltMessageType> getMessageTypes();
-		void handleMessage(ImmutableAbstractMessage<?, ?> message);
+		void handleMessage(AbstractChatMessage<?> message);
 	}
 }

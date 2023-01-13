@@ -26,11 +26,11 @@ import org.quiltmc.qsl.chat.api.QuiltMessageType;
 
 import java.util.EnumSet;
 
-public class ImmutableS2CProfileIndependentMessage extends MutableAbstractMessage<ImmutableS2CProfileIndependentMessage, ProfileIndependentMessageS2CPacket> {
+public class ProfileIndependentS2CMessage extends AbstractChatMessage<ProfileIndependentMessageS2CPacket> {
 	private final Text message;
 	private final MessageType.Parameters messageType;
 
-	public ImmutableS2CProfileIndependentMessage(PlayerEntity player, boolean isOnClientSide, ProfileIndependentMessageS2CPacket packet) {
+	public ProfileIndependentS2CMessage(PlayerEntity player, boolean isOnClientSide, ProfileIndependentMessageS2CPacket packet) {
 		this(
 				player,
 				isOnClientSide,
@@ -44,7 +44,7 @@ public class ImmutableS2CProfileIndependentMessage extends MutableAbstractMessag
 		);
 	}
 
-	public ImmutableS2CProfileIndependentMessage(PlayerEntity player, boolean isOnClientSide, Text message, MessageType.Parameters messageType) {
+	public ProfileIndependentS2CMessage(PlayerEntity player, boolean isOnClientSide, Text message, MessageType.Parameters messageType) {
 		super(player, isOnClientSide);
 		this.message = message;
 		this.messageType = messageType;
@@ -53,11 +53,6 @@ public class ImmutableS2CProfileIndependentMessage extends MutableAbstractMessag
 	@Override
 	public @NotNull EnumSet<QuiltMessageType> getTypes() {
 		return EnumSet.of(QuiltMessageType.PROFILE_INDEPENDENT, QuiltMessageType.SERVER, QuiltMessageType.OUTBOUND);
-	}
-
-	@Override
-	public @NotNull ImmutableS2CProfileIndependentMessage immutableCopy() {
-		return new ImmutableS2CProfileIndependentMessage(player, isOnClientSide, message, messageType);
 	}
 
 	@Override
@@ -71,6 +66,14 @@ public class ImmutableS2CProfileIndependentMessage extends MutableAbstractMessag
 
 	public MessageType.Parameters getMessageType() {
 		return messageType;
+	}
+
+	public ProfileIndependentS2CMessage withMessage(Text message) {
+		return new ProfileIndependentS2CMessage(player, isOnClientSide, message, messageType);
+	}
+
+	public ProfileIndependentS2CMessage withMessageType(MessageType.Parameters messageType) {
+		return new ProfileIndependentS2CMessage(player, isOnClientSide, message, messageType);
 	}
 
 	@Override

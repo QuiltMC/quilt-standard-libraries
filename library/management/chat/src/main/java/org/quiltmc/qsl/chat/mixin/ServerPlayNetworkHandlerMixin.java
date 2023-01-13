@@ -24,7 +24,9 @@ import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import org.quiltmc.qsl.chat.api.QuiltChatEvents;
-import org.quiltmc.qsl.chat.api.types.*;
+import org.quiltmc.qsl.chat.api.types.ChatC2SMessage;
+import org.quiltmc.qsl.chat.api.types.ChatS2CMessage;
+import org.quiltmc.qsl.chat.api.types.ProfileIndependentS2CMessage;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -39,61 +41,58 @@ public class ServerPlayNetworkHandlerMixin {
 
 	@Inject(method = "onChatMessage", at = @At("HEAD"), cancellable = true)
 	public void quilt$modifyAndCancelInboundChatMessage(ChatMessageC2SPacket packet, CallbackInfo ci) {
-		MutableC2SChatMessage message = new MutableC2SChatMessage(player, false, packet);
+		ChatC2SMessage message = new ChatC2SMessage(player, false, packet);
 
-		QuiltChatEvents.MODIFY.invoke(message);
+		message = (ChatC2SMessage)QuiltChatEvents.MODIFY.invoke(message, message);
 
-		ImmutableC2SChatMessage immutableMessage = message.immutableCopy();
-		if (QuiltChatEvents.CANCEL.invoke(immutableMessage) == Boolean.TRUE) {
+		if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) {
 			ci.cancel();
 		}
 	}
 
 	@Inject(method = "onChatMessage", at = @At(value = "FIELD", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;server:Lnet/minecraft/server/MinecraftServer;"))
 	public void quilt$beforeInboundChatMessage(ChatMessageC2SPacket packet, CallbackInfo ci) {
-		ImmutableC2SChatMessage immutableMessage = new ImmutableC2SChatMessage(player, false, packet);
+		ChatC2SMessage immutableMessage = new ChatC2SMessage(player, false, packet);
 		QuiltChatEvents.BEFORE_IO.invoke(immutableMessage);
 	}
 
 	@Inject(method = "onChatMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;submit(Ljava/lang/Runnable;)Ljava/util/concurrent/CompletableFuture;", shift = At.Shift.AFTER))
 	public void quilt$afterInboundChatMessage(ChatMessageC2SPacket packet, CallbackInfo ci) {
-		ImmutableC2SChatMessage immutableMessage = new ImmutableC2SChatMessage(player, false, packet);
+		ChatC2SMessage immutableMessage = new ChatC2SMessage(player, false, packet);
 		QuiltChatEvents.AFTER_IO.invoke(immutableMessage);
 	}
 
 	@Inject(method = "sendProfileIndependentMessage", at = @At("HEAD"), cancellable = true)
 	public void quilt$modifyAndCancelAndBeforeOutboundProfileIndependentMessage(Text message, MessageType.Parameters parameters, CallbackInfo ci) {
-		MutableS2CProfileIndependentMessage independentMessage = new MutableS2CProfileIndependentMessage(player, false, message, parameters);
+		ProfileIndependentS2CMessage independentMessage = new ProfileIndependentS2CMessage(player, false, message, parameters);
 
-		QuiltChatEvents.MODIFY.invoke(independentMessage);
+		independentMessage = (ProfileIndependentS2CMessage)QuiltChatEvents.MODIFY.invoke(independentMessage, independentMessage);
 
-		ImmutableS2CProfileIndependentMessage immutableIndependentMessage = independentMessage.immutableCopy();
-		if (QuiltChatEvents.CANCEL.invoke(immutableIndependentMessage) == Boolean.TRUE) {
+		if (QuiltChatEvents.CANCEL.invoke(independentMessage) == Boolean.TRUE) {
 			ci.cancel();
 		} else {
-			QuiltChatEvents.BEFORE_IO.invoke(immutableIndependentMessage);
+			QuiltChatEvents.BEFORE_IO.invoke(independentMessage);
 		}
 	}
 
 	@Inject(method = "sendProfileIndependentMessage", at = @At("TAIL"))
 	public void quilt$afterProfileIndependentMessage(Text message, MessageType.Parameters parameters, CallbackInfo ci) {
-		ImmutableS2CProfileIndependentMessage immutableMessage = new ImmutableS2CProfileIndependentMessage(player, false, message, parameters);
+		ProfileIndependentS2CMessage immutableMessage = new ProfileIndependentS2CMessage(player, false, message, parameters);
 		QuiltChatEvents.AFTER_IO.invoke(immutableMessage);
 	}
 
 	@Redirect(method = "sendChatMessage(Lnet/minecraft/network/message/SignedChatMessage;Lnet/minecraft/network/message/MessageType$Parameters;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V"))
 	public void quilt$modifyAndCancelOutboundChatMessage(ServerPlayNetworkHandler instance, Packet<?> packet) {
 		if (packet instanceof ChatMessageS2CPacket chatMessageS2CPacket) {
-			MutableS2CChatMessage message = new MutableS2CChatMessage(instance.player, false, chatMessageS2CPacket);
-			QuiltChatEvents.MODIFY.invoke(message);
+			ChatS2CMessage message = new ChatS2CMessage(instance.player, false, chatMessageS2CPacket);
+			message = (ChatS2CMessage)QuiltChatEvents.MODIFY.invoke(message, message);
 
-			ImmutableS2CChatMessage immutableMessage = message.immutableCopy();
-			if (QuiltChatEvents.CANCEL.invoke(immutableMessage) == Boolean.TRUE) {
+			if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) {
 				return;
 			}
-			QuiltChatEvents.BEFORE_IO.invoke(immutableMessage);
-			instance.sendPacket(immutableMessage.asPacket());
-			QuiltChatEvents.AFTER_IO.invoke(immutableMessage);
+			QuiltChatEvents.BEFORE_IO.invoke(message);
+			instance.sendPacket(message.asPacket());
+			QuiltChatEvents.AFTER_IO.invoke(message);
 		} else {
 			throw new IllegalArgumentException("Received non-ChatMessageS2CPacket for argument to ServerPlayNetworkHandler.sendPacket in ServerPlayNetworkHandler.sendChatMessage");
 		}
