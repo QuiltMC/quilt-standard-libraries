@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.chat.impl;
+package org.quiltmc.qsl.chat.api;
 
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.base.api.event.Event;
-import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
 
 import java.util.EnumSet;

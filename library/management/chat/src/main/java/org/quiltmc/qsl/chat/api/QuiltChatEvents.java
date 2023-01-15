@@ -17,8 +17,6 @@
 package org.quiltmc.qsl.chat.api;
 
 import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
-import org.quiltmc.qsl.chat.impl.ChatBooleanEvent;
-import org.quiltmc.qsl.chat.impl.ChatEvent;
 
 import java.util.EnumSet;
 
@@ -28,7 +26,7 @@ import java.util.EnumSet;
  * the message, in which case {@link #BEFORE_PROCESS} and {@link #AFTER_PROCESS} do not run.
  * <p>
  * When listening, you will only receive messages that match the types of your listener. If you do not provide any of a meta type, then any
- * messages will be passed along as long as they match your other types.
+ * messages for that meta type will be passed along as long as they match your other types.
  */
 public final class QuiltChatEvents {
 	private QuiltChatEvents() {}

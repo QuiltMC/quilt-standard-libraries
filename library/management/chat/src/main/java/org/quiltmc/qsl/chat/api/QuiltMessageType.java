@@ -16,6 +16,9 @@
 
 package org.quiltmc.qsl.chat.api;
 
+/**
+ * Enums that are used to identify the type, side, and direction of various messages.
+ */
 public enum QuiltMessageType {
 	// Actual types
 	CHAT(QuiltMetaMessageType.MESSAGE_TYPE),
@@ -36,6 +39,9 @@ public enum QuiltMessageType {
 		this.metaType = metaType;
 	}
 
+	/**
+	 * The various meta-types of the {@link QuiltMessageType} enums. Used for categorizing the different types.
+	 */
 	public enum QuiltMetaMessageType {
 		MESSAGE_TYPE,
 		SIDE,

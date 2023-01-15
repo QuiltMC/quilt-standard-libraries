@@ -23,7 +23,8 @@ import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import java.util.EnumSet;
 
 /**
- * @param <S> The type of the serialized form of this class, usually a Packet<?>
+ * An abstract message, extended for the various types of messages.
+ * @param <S> The type of the serialized form of this class, usually a Packet<?> but not required
  */
 public abstract class AbstractChatMessage<S> {
 	protected final @NotNull PlayerEntity player;
@@ -36,8 +37,15 @@ public abstract class AbstractChatMessage<S> {
 
 	// These are mostly annotated as @NotNull for dev productivity, I get nice warnings about
 	// What parts of the subclasses I need to implement still
+
+	/**
+	 * @return the set of {@link QuiltMessageType}s associated with this message
+	 */
 	public abstract @NotNull EnumSet<QuiltMessageType> getTypes();
 
+	/**
+	 * @return this message in its serialized form
+	 */
 	public abstract @NotNull S serialized();
 
 	/**
@@ -53,6 +61,9 @@ public abstract class AbstractChatMessage<S> {
 		return player;
 	}
 
+	/**
+	 * @return if this message is on the client side or not. This can also be determined through checking for {@link QuiltMessageType#CLIENT}
+	 */
 	public boolean isOnClientSide() {
 		return isOnClientSide;
 	}

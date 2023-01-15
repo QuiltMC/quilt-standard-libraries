@@ -20,6 +20,9 @@ import org.quiltmc.qsl.chat.api.QuiltMessageType;
 
 import java.util.EnumSet;
 
+/**
+ * Provides some shortcuts for common code in the chat api
+ */
 public final class InternalQuiltChatApiUtil {
 	private InternalQuiltChatApiUtil() {}
 
