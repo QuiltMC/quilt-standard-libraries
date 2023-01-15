@@ -23,6 +23,7 @@ import net.minecraft.network.packet.s2c.play.ProfileIndependentMessageS2CPacket;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
+import org.quiltmc.qsl.chat.impl.InternalQuiltChatApiUtil;
 
 import java.util.EnumSet;
 
@@ -52,11 +53,11 @@ public class ProfileIndependentS2CMessage extends AbstractChatMessage<ProfileInd
 
 	@Override
 	public @NotNull EnumSet<QuiltMessageType> getTypes() {
-		return EnumSet.of(QuiltMessageType.PROFILE_INDEPENDENT, QuiltMessageType.SERVER, QuiltMessageType.OUTBOUND);
+		return InternalQuiltChatApiUtil.s2cType(QuiltMessageType.PROFILE_INDEPENDENT, isOnClientSide);
 	}
 
 	@Override
-	public @NotNull ProfileIndependentMessageS2CPacket asPacket() {
+	public @NotNull ProfileIndependentMessageS2CPacket serialized() {
 		return new ProfileIndependentMessageS2CPacket(message, messageType.serialize(player.world.getRegistryManager()));
 	}
 
@@ -78,7 +79,7 @@ public class ProfileIndependentS2CMessage extends AbstractChatMessage<ProfileInd
 
 	@Override
 	public String toString() {
-		final StringBuilder sb = new StringBuilder("ImmutableS2CProfileIndependentMessage{");
+		final StringBuilder sb = new StringBuilder("ProfileIndependentS2CMessage{");
 		sb.append("message=").append(message);
 		sb.append(", messageType=").append(messageType);
 		sb.append(", player=").append(player);

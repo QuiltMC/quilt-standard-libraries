@@ -23,6 +23,7 @@ import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
+import org.quiltmc.qsl.chat.impl.InternalQuiltChatApiUtil;
 
 import java.time.Instant;
 import java.util.EnumSet;
@@ -57,11 +58,11 @@ public class ChatC2SMessage extends AbstractChatMessage<ChatMessageC2SPacket> {
 
 	@Override
 	public @NotNull EnumSet<QuiltMessageType> getTypes() {
-		return EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.CLIENT, QuiltMessageType.OUTBOUND);
+		return InternalQuiltChatApiUtil.c2sType(QuiltMessageType.CHAT, true);
 	}
 
 	@Override
-	public @NotNull ChatMessageC2SPacket asPacket() {
+	public @NotNull ChatMessageC2SPacket serialized() {
 		return new ChatMessageC2SPacket(message, timestamp, salt, signature, messageAcknowledgments);
 	}
 
@@ -107,7 +108,7 @@ public class ChatC2SMessage extends AbstractChatMessage<ChatMessageC2SPacket> {
 
 	@Override
 	public String toString() {
-		final StringBuilder sb = new StringBuilder("ImmutableC2SChatMessage{");
+		final StringBuilder sb = new StringBuilder("ChatC2SMessage{");
 		sb.append("message='").append(message).append('\'');
 		sb.append(", timestamp=").append(timestamp);
 		sb.append(", salt=").append(salt);

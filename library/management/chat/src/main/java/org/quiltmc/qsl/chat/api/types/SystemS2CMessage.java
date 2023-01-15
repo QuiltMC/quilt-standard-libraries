@@ -50,7 +50,7 @@ public class SystemS2CMessage extends AbstractChatMessage<SystemMessageS2CPacket
 	}
 
 	@Override
-	public @NotNull SystemMessageS2CPacket asPacket() {
+	public @NotNull SystemMessageS2CPacket serialized() {
 		return new SystemMessageS2CPacket(content, overlay);
 	}
 
@@ -72,7 +72,7 @@ public class SystemS2CMessage extends AbstractChatMessage<SystemMessageS2CPacket
 
 	@Override
 	public String toString() {
-		final StringBuilder sb = new StringBuilder("ImmutableS2CSystemMessage{");
+		final StringBuilder sb = new StringBuilder("SystemS2CMessage{");
 		sb.append("player=").append(player);
 		sb.append(", content=").append(content);
 		sb.append(", overlay=").append(overlay);

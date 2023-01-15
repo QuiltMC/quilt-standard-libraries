@@ -23,9 +23,9 @@ import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import java.util.EnumSet;
 
 /**
- * @param <P> The type of the packet form of this class
+ * @param <S> The type of the serialized form of this class, usually a Packet<?>
  */
-public abstract class AbstractChatMessage<P> {
+public abstract class AbstractChatMessage<S> {
 	protected final @NotNull PlayerEntity player;
 	protected final boolean isOnClientSide;
 
@@ -38,7 +38,7 @@ public abstract class AbstractChatMessage<P> {
 	// What parts of the subclasses I need to implement still
 	public abstract @NotNull EnumSet<QuiltMessageType> getTypes();
 
-	public abstract @NotNull P asPacket();
+	public abstract @NotNull S serialized();
 
 	/**
 	 * Returns the player associated with this packet, which changes meaning based on the sidedness and direction.

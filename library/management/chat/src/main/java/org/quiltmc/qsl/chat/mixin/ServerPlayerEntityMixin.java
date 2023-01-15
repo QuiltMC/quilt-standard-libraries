@@ -42,10 +42,10 @@ public class ServerPlayerEntityMixin {
 
 	@Redirect(method = "sendSystemMessage(Lnet/minecraft/text/Text;Z)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;Lnet/minecraft/network/PacketSendListener;)V"))
 	public void quilt$cancelOutboundSystemMessage(ServerPlayNetworkHandler instance, Packet<?> packet, PacketSendListener listener) {
-		if (QuiltChatEvents.CANCEL.invoke(quilt$sendSystemMessage$storedSystemMessage) != Boolean.TRUE) {
-			QuiltChatEvents.BEFORE_IO.invoke(quilt$sendSystemMessage$storedSystemMessage);
-			instance.sendPacket(quilt$sendSystemMessage$storedSystemMessage.asPacket(), listener);
-			QuiltChatEvents.AFTER_IO.invoke(quilt$sendSystemMessage$storedSystemMessage);
+		if (!QuiltChatEvents.CANCEL.invoke(quilt$sendSystemMessage$storedSystemMessage)) {
+			QuiltChatEvents.BEFORE_PROCESS.invoke(quilt$sendSystemMessage$storedSystemMessage);
+			instance.sendPacket(quilt$sendSystemMessage$storedSystemMessage.serialized(), listener);
+			QuiltChatEvents.AFTER_PROCESS.invoke(quilt$sendSystemMessage$storedSystemMessage);
 		}
 	}
 }

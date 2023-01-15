@@ -53,13 +53,13 @@ public class ServerPlayNetworkHandlerMixin {
 	@Inject(method = "onChatMessage", at = @At(value = "FIELD", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;server:Lnet/minecraft/server/MinecraftServer;"))
 	public void quilt$beforeInboundChatMessage(ChatMessageC2SPacket packet, CallbackInfo ci) {
 		ChatC2SMessage immutableMessage = new ChatC2SMessage(player, false, packet);
-		QuiltChatEvents.BEFORE_IO.invoke(immutableMessage);
+		QuiltChatEvents.BEFORE_PROCESS.invoke(immutableMessage);
 	}
 
 	@Inject(method = "onChatMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;submit(Ljava/lang/Runnable;)Ljava/util/concurrent/CompletableFuture;", shift = At.Shift.AFTER))
 	public void quilt$afterInboundChatMessage(ChatMessageC2SPacket packet, CallbackInfo ci) {
 		ChatC2SMessage immutableMessage = new ChatC2SMessage(player, false, packet);
-		QuiltChatEvents.AFTER_IO.invoke(immutableMessage);
+		QuiltChatEvents.AFTER_PROCESS.invoke(immutableMessage);
 	}
 
 	@Inject(method = "sendProfileIndependentMessage", at = @At("HEAD"), cancellable = true)
@@ -71,14 +71,14 @@ public class ServerPlayNetworkHandlerMixin {
 		if (QuiltChatEvents.CANCEL.invoke(independentMessage) == Boolean.TRUE) {
 			ci.cancel();
 		} else {
-			QuiltChatEvents.BEFORE_IO.invoke(independentMessage);
+			QuiltChatEvents.BEFORE_PROCESS.invoke(independentMessage);
 		}
 	}
 
 	@Inject(method = "sendProfileIndependentMessage", at = @At("TAIL"))
 	public void quilt$afterProfileIndependentMessage(Text message, MessageType.Parameters parameters, CallbackInfo ci) {
 		ProfileIndependentS2CMessage immutableMessage = new ProfileIndependentS2CMessage(player, false, message, parameters);
-		QuiltChatEvents.AFTER_IO.invoke(immutableMessage);
+		QuiltChatEvents.AFTER_PROCESS.invoke(immutableMessage);
 	}
 
 	@Redirect(method = "sendChatMessage(Lnet/minecraft/network/message/SignedChatMessage;Lnet/minecraft/network/message/MessageType$Parameters;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V"))
@@ -90,9 +90,9 @@ public class ServerPlayNetworkHandlerMixin {
 			if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) {
 				return;
 			}
-			QuiltChatEvents.BEFORE_IO.invoke(message);
-			instance.sendPacket(message.asPacket());
-			QuiltChatEvents.AFTER_IO.invoke(message);
+			QuiltChatEvents.BEFORE_PROCESS.invoke(message);
+			instance.sendPacket(message.serialized());
+			QuiltChatEvents.AFTER_PROCESS.invoke(message);
 		} else {
 			throw new IllegalArgumentException("Received non-ChatMessageS2CPacket for argument to ServerPlayNetworkHandler.sendPacket in ServerPlayNetworkHandler.sendChatMessage");
 		}

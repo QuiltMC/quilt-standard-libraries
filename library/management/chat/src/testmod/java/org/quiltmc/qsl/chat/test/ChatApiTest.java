@@ -34,7 +34,10 @@ public class ChatApiTest implements ModInitializer {
 		MixinEnvironment.getCurrentEnvironment().setOption(MixinEnvironment.Option.DEBUG_ALL, true);
 		MixinEnvironment.getCurrentEnvironment().setOption(MixinEnvironment.Option.DEBUG_EXPORT, true);
 
-		QuiltChatEvents.AFTER_IO.register(EnumSet.allOf(QuiltMessageType.class), System.out::println);
+		QuiltChatEvents.AFTER_PROCESS.register(EnumSet.allOf(QuiltMessageType.class), System.out::println);
+		QuiltChatEvents.BEFORE_PROCESS.register(EnumSet.allOf(QuiltMessageType.class), message -> {
+			System.out.println(message.getTypes());
+		});
 
 		QuiltChatEvents.MODIFY.register(EnumSet.of(QuiltMessageType.SYSTEM, QuiltMessageType.SERVER, QuiltMessageType.OUTBOUND), abstractMessage -> {
 			if (abstractMessage instanceof SystemS2CMessage systemS2CMessage) {

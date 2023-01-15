@@ -17,18 +17,79 @@
 package org.quiltmc.qsl.chat.api;
 
 import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
+import org.quiltmc.qsl.chat.impl.ChatBooleanEvent;
 import org.quiltmc.qsl.chat.impl.ChatEvent;
-import org.quiltmc.qsl.chat.impl.ChatVoidEvent;
+
+import java.util.EnumSet;
 
 /**
  * Events for modifying, canceling, and listening for various chat messages.
- * Events are always executed in the order {@link #MODIFY} -> {@link #CANCEL} -> {@link #BEFORE_IO} -> {@link #AFTER_IO}
+ * Events are always executed in the order {@link #MODIFY} -> {@link #CANCEL} -> {@link #BEFORE_PROCESS} -> {@link #AFTER_PROCESS}, unless a mod cancels
+ * the message, in which case {@link #BEFORE_PROCESS} and {@link #AFTER_PROCESS} do not run.
+ * <p>
+ * When listening, you will only receive messages that match the types of your listener. If you do not provide any of a meta type, then any
+ * messages will be passed along as long as they match your other types.
  */
 public final class QuiltChatEvents {
 	private QuiltChatEvents() {}
 
-	public static final ChatEvent<AbstractChatMessage<?>> MODIFY = new ChatEvent<>(true);
-	public static final ChatEvent<Boolean> CANCEL = new ChatEvent<>(false);
-	public static final ChatVoidEvent BEFORE_IO = new ChatVoidEvent();
-	public static final ChatVoidEvent AFTER_IO = new ChatVoidEvent();
+	/**
+	 * An event that allows you to modify a message before further processing by returning a new one to replace it. The usage of `withX` methods
+	 * is recommended.
+	 */
+	public static final ChatEvent<Modify, AbstractChatMessage<?>> MODIFY = new ChatEvent<>(true, (modify, quiltMessageTypes) -> modifyToHook(quiltMessageTypes, modify));
+
+	/**
+	 * An event that allows you to cancel a message by returning true, or false to allow it to continue through.
+	 */
+	public static final ChatBooleanEvent CANCEL = new ChatBooleanEvent();
+
+	/**
+	 * Before (usually) vanilla does any standard processing with this message. Mods may execute other behavior before or after this event.
+	 */
+	public static final ChatEvent<Listen, Void> BEFORE_PROCESS = new ChatEvent<>(false, (listen, quiltMessageTypes) -> listenToHook(quiltMessageTypes, listen));
+
+	/**
+	 * After (usually) vanilla does any standard processing with this message. Mods may execute other behavior before or after this event.
+	 */
+	public static final ChatEvent<Listen, Void> AFTER_PROCESS = new ChatEvent<>(false, (listen, quiltMessageTypes) -> listenToHook(quiltMessageTypes, listen));
+
+	@FunctionalInterface
+	public interface Modify {
+		AbstractChatMessage<?> handleMessage(AbstractChatMessage<?> abstractMessage);
+	}
+
+	@FunctionalInterface
+	public interface Listen {
+		void handleMessage(AbstractChatMessage<?> abstractMessage);
+	}
+
+	private static ChatEvent.TypedChatApiHook<AbstractChatMessage<?>> modifyToHook(EnumSet<QuiltMessageType> types, Modify modify) {
+		return new ChatEvent.TypedChatApiHook<>() {
+			@Override
+			public EnumSet<QuiltMessageType> getMessageTypes() {
+				return types;
+			}
+
+			@Override
+			public AbstractChatMessage<?> handleMessage(AbstractChatMessage<?> message) {
+				return modify.handleMessage(message);
+			}
+		};
+	}
+
+	private static ChatEvent.TypedChatApiHook<Void> listenToHook(EnumSet<QuiltMessageType> types, Listen modify) {
+		return new ChatEvent.TypedChatApiHook<>() {
+			@Override
+			public EnumSet<QuiltMessageType> getMessageTypes() {
+				return types;
+			}
+
+			@Override
+			public Void handleMessage(AbstractChatMessage<?> message) {
+				modify.handleMessage(message);
+				return null;
+			}
+		};
+	}
 }

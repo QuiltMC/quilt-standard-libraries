@@ -25,6 +25,7 @@ import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
+import org.quiltmc.qsl.chat.impl.InternalQuiltChatApiUtil;
 
 import java.util.EnumSet;
 import java.util.UUID;
@@ -64,15 +65,11 @@ public class ChatS2CMessage extends AbstractChatMessage<ChatMessageS2CPacket> {
 
 	@Override
 	public @NotNull EnumSet<QuiltMessageType> getTypes() {
-		if (isOnClientSide) {
-			return EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.CLIENT, QuiltMessageType.OUTBOUND);
-		} else {
-			return EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.SERVER, QuiltMessageType.INBOUND);
-		}
+		return InternalQuiltChatApiUtil.s2cType(QuiltMessageType.CHAT, isOnClientSide);
 	}
 
 	@Override
-	public @NotNull ChatMessageS2CPacket asPacket() {
+	public @NotNull ChatMessageS2CPacket serialized() {
 		return new ChatMessageS2CPacket(sender, index, signature, body, unsignedContent, filterMask, messageType);
 	}
 
@@ -134,7 +131,7 @@ public class ChatS2CMessage extends AbstractChatMessage<ChatMessageS2CPacket> {
 
 	@Override
 	public String toString() {
-		final StringBuilder sb = new StringBuilder("ImmutableS2CChatMessage{");
+		final StringBuilder sb = new StringBuilder("ChatS2CMessage{");
 		sb.append("sender=").append(sender);
 		sb.append(", index=").append(index);
 		sb.append(", signature=").append(signature);
