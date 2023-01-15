@@ -28,6 +28,7 @@ import org.quiltmc.qsl.chat.api.QuiltChatEvents;
 import org.quiltmc.qsl.chat.api.types.ChatC2SMessage;
 import org.quiltmc.qsl.chat.api.types.ChatS2CMessage;
 import org.quiltmc.qsl.chat.api.types.ProfileIndependentS2CMessage;
+import org.quiltmc.qsl.chat.api.types.RawChatC2SMessage;
 import org.quiltmc.qsl.chat.api.types.SystemS2CMessage;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -115,6 +116,41 @@ public class ClientPlayNetworkHandlerMixin {
 	@Inject(method = "onProfileIndependentMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/ClientChatListener;m_jytgvbam(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageType$Parameters;)V", shift = At.Shift.AFTER))
 	public void quilt$afterInboundProfileIndependentMessage(ProfileIndependentMessageS2CPacket packet, CallbackInfo ci) {
 		ProfileIndependentS2CMessage message = new ProfileIndependentS2CMessage(client.player, true, packet);
+		QuiltChatEvents.AFTER_PROCESS.invoke(message);
+	}
+
+	@ModifyVariable(method = "m_fzlgisyq", at = @At("HEAD"), argsOnly = true)
+	public String quilt$modifyOutboundRawChatMessage(String string) {
+		// Not sure *why* this would be null but IDEA is complaining, so, safety first?
+		if (client.player == null) {
+			return string;
+		}
+
+		RawChatC2SMessage message = new RawChatC2SMessage(client.player, true, string);
+		return ((RawChatC2SMessage)QuiltChatEvents.MODIFY.invoke(message, message)).serialized();
+	}
+
+	@Inject(method = "m_fzlgisyq", at = @At(value = "HEAD"), cancellable = true)
+	public void quilt$cancelAndBeforeOutboundRawChatMessage(String string, CallbackInfo ci) {
+		if (client.player == null) {
+			return;
+		}
+
+		RawChatC2SMessage message = new RawChatC2SMessage(client.player, true, string);
+		if (QuiltChatEvents.CANCEL.invoke(message)) {
+			ci.cancel();
+		} else {
+			QuiltChatEvents.BEFORE_PROCESS.invoke(message);
+		}
+	}
+
+	@Inject(method = "m_fzlgisyq", at = @At(value = "TAIL"))
+	public void quilt$afterOutboundRawChatMessage(String string, CallbackInfo ci) {
+		if (client.player == null) {
+			return;
+		}
+
+		RawChatC2SMessage message = new RawChatC2SMessage(client.player, true, string);
 		QuiltChatEvents.AFTER_PROCESS.invoke(message);
 	}
 

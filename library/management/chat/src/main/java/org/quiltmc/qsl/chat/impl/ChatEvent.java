@@ -49,18 +49,17 @@ public class ChatEvent<H, R> {
 			for (var hook : hooks) {
 				if (shouldPassOnMessageToHook(message.getTypes(), hook.getMessageTypes())) {
 					R tmpResult = hook.handleMessage(message);
-					if (tmpResult != null) {
-						if (shouldPreformAssignableCheck && !message.getClass().isAssignableFrom(tmpResult.getClass())) {
+					if (shouldPreformAssignableCheck) {
+						if (tmpResult == null) {
+							throw new NullPointerException("Handler attached to a ChatEvent returned a null result!");
+						} else if (!message.getClass().isAssignableFrom(tmpResult.getClass())) {
 							throw new IllegalArgumentException(
 									"Handler attached to a ChatEvent returned a non-similar value! " +
-									"Expected a subclass or instance of " + message.getClass().getName() + " but got a " + tmpResult.getClass().getName() + "!"
+											"Expected a subclass or instance of " + message.getClass().getName() + " but got a " + tmpResult.getClass().getName() + "!"
 							);
-						} else {
-							result = tmpResult;
 						}
-					} else {
-						throw new NullPointerException("Handler attached to a ChatEvent returned a null result!");
 					}
+					result = tmpResult;
 				}
 			}
 
