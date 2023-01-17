@@ -50,9 +50,7 @@ public class RawChatC2SMessage extends AbstractChatMessage<String> {
 
 	@Override
 	public String toString() {
-		final StringBuilder sb = new StringBuilder("RawChatC2SMessage{");
-		sb.append("message='").append(message).append('\'');
-		sb.append('}');
-		return sb.toString();
+		return "RawChatC2SMessage{" + "message='" + message + '\'' +
+				'}';
 	}
 }

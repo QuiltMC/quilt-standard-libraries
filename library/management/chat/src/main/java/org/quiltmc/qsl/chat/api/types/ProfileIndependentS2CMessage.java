@@ -79,12 +79,10 @@ public class ProfileIndependentS2CMessage extends AbstractChatMessage<ProfileInd
 
 	@Override
 	public String toString() {
-		final StringBuilder sb = new StringBuilder("ProfileIndependentS2CMessage{");
-		sb.append("message=").append(message);
-		sb.append(", messageType=").append(messageType);
-		sb.append(", player=").append(player);
-		sb.append(", isOnClientSide=").append(isOnClientSide);
-		sb.append('}');
-		return sb.toString();
+		return "ProfileIndependentS2CMessage{" + "message=" + message +
+				", messageType=" + messageType +
+				", player=" + player +
+				", isOnClientSide=" + isOnClientSide +
+				'}';
 	}
 }

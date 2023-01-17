@@ -72,13 +72,11 @@ public class SystemS2CMessage extends AbstractChatMessage<SystemMessageS2CPacket
 
 	@Override
 	public String toString() {
-		final StringBuilder sb = new StringBuilder("SystemS2CMessage{");
-		sb.append("player=").append(player);
-		sb.append(", content=").append(content);
-		sb.append(", overlay=").append(overlay);
-		sb.append(", player=").append(player);
-		sb.append(", isOnClientSide=").append(isOnClientSide);
-		sb.append('}');
-		return sb.toString();
+		return "SystemS2CMessage{" + "player=" + player +
+				", content=" + content +
+				", overlay=" + overlay +
+				", player=" + player +
+				", isOnClientSide=" + isOnClientSide +
+				'}';
 	}
 }
