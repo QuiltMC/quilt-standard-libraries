@@ -26,6 +26,10 @@ import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
 import java.util.EnumSet;
 import java.util.function.BiFunction;
 
+/**
+ * An implementation of {@link ChatEvent} that always returns a {@link Boolean} and has special short circuiting logic for if a handler returns true.
+ * This implementation is intended be used for any cancellation events.
+ */
 public class ChatEventBooleanImpl<H> implements ChatEvent<H, Boolean> {
 	private final BiFunction<H, EnumSet<QuiltMessageType>, TypedChatApiHook<Boolean>> converter;
 	private final Event<TypedChatApiHook<Boolean>> backingEvent = Event.create(TypedChatApiHook.class, hooks -> new TypedChatApiHook<>() {

@@ -28,12 +28,12 @@ public enum QuiltMessageType {
 	CHAT(QuiltMetaMessageType.MESSAGE_TYPE),
 
 	/**
-	 * Identifies a system message. Used command results, actionbar messages, and more.
+	 * Identifies a system message. Used for command results, actionbar messages, and more.
 	 */
 	SYSTEM(QuiltMetaMessageType.MESSAGE_TYPE),
 
 	/**
-	 * Identifies a profile independent message. Usually from /msg commands.
+	 * Identifies a profile independent message. Usually from /msg and similar commands.
 	 */
 	PROFILE_INDEPENDENT(QuiltMetaMessageType.MESSAGE_TYPE),
 
@@ -52,11 +52,11 @@ public enum QuiltMessageType {
 	// Directionality
 
 	/**
-	 * Identifies a message that is arriving on the side it is on.
+	 * Identifies a message that is arriving on the side it is on currently.
 	 */
 	INBOUND(QuiltMetaMessageType.DIRECTION),
 	/**
-	 * Identifies a message that is leaving the side it is on.
+	 * Identifies a message that is leaving the side it is on currently.
 	 */
 	OUTBOUND(QuiltMetaMessageType.DIRECTION);
 

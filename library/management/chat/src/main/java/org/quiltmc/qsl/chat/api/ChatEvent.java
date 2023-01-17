@@ -19,10 +19,17 @@ package org.quiltmc.qsl.chat.api;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
 
 import java.util.EnumSet;
 
+/**
+ * An interface for chat events. This copies much of its behavior from {@link Event}, but in its own interface.
+ *
+ * @param <H> the type of the handler/functional interface for this event to accept in registration
+ * @param <R> the return type of invoking this event
+ */
 public interface ChatEvent<H, R> {
 	/**
 	 * {@return the result of invoking this event, or null if there are no listeners}

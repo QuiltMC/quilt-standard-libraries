@@ -27,6 +27,10 @@ import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
 import java.util.EnumSet;
 import java.util.function.BiFunction;
 
+/**
+ * The common implementation of {@link ChatEvent}. If this event is set to preform assignable checks, then it will require that any return values are both
+ * non-null and assignable to the original class passed to {@link ChatEvent#invoke(AbstractChatMessage)}, throwing if not.
+ */
 public class ChatEventImpl<H, R> implements ChatEvent<H, R> {
 	private final boolean shouldPreformAssignableCheck;
 	private final BiFunction<H, EnumSet<QuiltMessageType>, TypedChatApiHook<R>> converter;
