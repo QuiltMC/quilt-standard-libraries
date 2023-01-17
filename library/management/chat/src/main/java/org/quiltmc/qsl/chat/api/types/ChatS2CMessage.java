@@ -25,7 +25,7 @@ import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
-import org.quiltmc.qsl.chat.impl.InternalMessageTypesSupplier;
+import org.quiltmc.qsl.chat.impl.InternalMessageTypesFactory;
 
 import java.util.EnumSet;
 import java.util.UUID;
@@ -65,7 +65,7 @@ public class ChatS2CMessage extends AbstractChatMessage<ChatMessageS2CPacket> {
 
 	@Override
 	public @NotNull EnumSet<QuiltMessageType> getTypes() {
-		return InternalMessageTypesSupplier.s2cType(QuiltMessageType.CHAT, isClient);
+		return InternalMessageTypesFactory.s2cType(QuiltMessageType.CHAT, isClient);
 	}
 
 	@Override

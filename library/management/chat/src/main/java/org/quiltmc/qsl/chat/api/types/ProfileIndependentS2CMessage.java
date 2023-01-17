@@ -23,7 +23,7 @@ import net.minecraft.network.packet.s2c.play.ProfileIndependentMessageS2CPacket;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
-import org.quiltmc.qsl.chat.impl.InternalMessageTypesSupplier;
+import org.quiltmc.qsl.chat.impl.InternalMessageTypesFactory;
 
 import java.util.EnumSet;
 
@@ -53,7 +53,7 @@ public class ProfileIndependentS2CMessage extends AbstractChatMessage<ProfileInd
 
 	@Override
 	public @NotNull EnumSet<QuiltMessageType> getTypes() {
-		return InternalMessageTypesSupplier.s2cType(QuiltMessageType.PROFILE_INDEPENDENT, isClient);
+		return InternalMessageTypesFactory.s2cType(QuiltMessageType.PROFILE_INDEPENDENT, isClient);
 	}
 
 	@Override

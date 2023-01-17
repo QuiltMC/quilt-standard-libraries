@@ -23,8 +23,8 @@ import java.util.EnumSet;
 /**
  * Provides some shortcuts for common code in the chat api
  */
-public final class InternalMessageTypesSupplier {
-	private InternalMessageTypesSupplier() {}
+public final class InternalMessageTypesFactory {
+	private InternalMessageTypesFactory() {}
 
 	public static EnumSet<QuiltMessageType> s2cType(QuiltMessageType type, boolean isClient) {
 		if (isClient) {

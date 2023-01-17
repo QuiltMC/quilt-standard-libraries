@@ -23,7 +23,7 @@ import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
-import org.quiltmc.qsl.chat.impl.InternalMessageTypesSupplier;
+import org.quiltmc.qsl.chat.impl.InternalMessageTypesFactory;
 
 import java.time.Instant;
 import java.util.EnumSet;
@@ -58,7 +58,7 @@ public class ChatC2SMessage extends AbstractChatMessage<ChatMessageC2SPacket> {
 
 	@Override
 	public @NotNull EnumSet<QuiltMessageType> getTypes() {
-		return InternalMessageTypesSupplier.c2sType(QuiltMessageType.CHAT, true);
+		return InternalMessageTypesFactory.c2sType(QuiltMessageType.CHAT, true);
 	}
 
 	@Override
