@@ -43,7 +43,7 @@ public class ServerPlayNetworkHandlerMixin {
 	public void quilt$modifyAndCancelInboundChatMessage(ChatMessageC2SPacket packet, CallbackInfo ci) {
 		var message = new ChatC2SMessage(player, false, packet);
 
-		message = (ChatC2SMessage) QuiltChatEvents.MODIFY.invoke(message, message);
+		message = (ChatC2SMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message);
 
 		if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) {
 			ci.cancel();
@@ -66,7 +66,7 @@ public class ServerPlayNetworkHandlerMixin {
 	public void quilt$modifyAndCancelAndBeforeOutboundProfileIndependentMessage(Text message, MessageType.Parameters parameters, CallbackInfo ci) {
 		var independentMessage = new ProfileIndependentS2CMessage(player, false, message, parameters);
 
-		independentMessage = (ProfileIndependentS2CMessage) QuiltChatEvents.MODIFY.invoke(independentMessage, independentMessage);
+		independentMessage = (ProfileIndependentS2CMessage) QuiltChatEvents.MODIFY.invokeOrElse(independentMessage, independentMessage);
 
 		if (QuiltChatEvents.CANCEL.invoke(independentMessage) == Boolean.TRUE) {
 			ci.cancel();
@@ -86,7 +86,7 @@ public class ServerPlayNetworkHandlerMixin {
 	public void quilt$modifyAndCancelOutboundChatMessage(ServerPlayNetworkHandler instance, Packet<?> packet) {
 		if (packet instanceof ChatMessageS2CPacket chatMessageS2CPacket) {
 			var message = new ChatS2CMessage(instance.player, false, chatMessageS2CPacket);
-			message = (ChatS2CMessage) QuiltChatEvents.MODIFY.invoke(message, message);
+			message = (ChatS2CMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message);
 
 			if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) return;
 

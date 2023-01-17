@@ -21,7 +21,7 @@ import net.minecraft.network.packet.s2c.play.SystemMessageS2CPacket;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
-import org.quiltmc.qsl.chat.impl.InternalQuiltChatApiUtil;
+import org.quiltmc.qsl.chat.impl.InternalMessageTypesSupplier;
 
 import java.util.EnumSet;
 
@@ -29,24 +29,24 @@ public class SystemS2CMessage extends AbstractChatMessage<SystemMessageS2CPacket
 	private final Text content;
 	private final boolean overlay;
 
-	public SystemS2CMessage(PlayerEntity player, boolean isOnClientSide, SystemMessageS2CPacket packet) {
+	public SystemS2CMessage(PlayerEntity player, boolean isClient, SystemMessageS2CPacket packet) {
 		this(
 				player,
-				isOnClientSide,
+				isClient,
 				packet.content(),
 				packet.overlay()
 		);
 	}
 
-	public SystemS2CMessage(PlayerEntity player, boolean isOnClientSide, Text content, boolean overlay) {
-		super(player, isOnClientSide);
+	public SystemS2CMessage(PlayerEntity player, boolean isClient, Text content, boolean overlay) {
+		super(player, isClient);
 		this.content = content;
 		this.overlay = overlay;
 	}
 
 	@Override
 	public @NotNull EnumSet<QuiltMessageType> getTypes() {
-		return InternalQuiltChatApiUtil.s2cType(QuiltMessageType.SYSTEM, isOnClientSide);
+		return InternalMessageTypesSupplier.s2cType(QuiltMessageType.SYSTEM, isClient);
 	}
 
 	@Override
@@ -63,11 +63,11 @@ public class SystemS2CMessage extends AbstractChatMessage<SystemMessageS2CPacket
 	}
 
 	public SystemS2CMessage withContent(Text content) {
-		return new SystemS2CMessage(player, isOnClientSide, content, overlay);
+		return new SystemS2CMessage(player, isClient, content, overlay);
 	}
 
 	public SystemS2CMessage withOverlay(boolean overlay) {
-		return new SystemS2CMessage(player, isOnClientSide, content, overlay);
+		return new SystemS2CMessage(player, isClient, content, overlay);
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class SystemS2CMessage extends AbstractChatMessage<SystemMessageS2CPacket
 				", content=" + content +
 				", overlay=" + overlay +
 				", player=" + player +
-				", isOnClientSide=" + isOnClientSide +
+				", isClient=" + isClient +
 				'}';
 	}
 }

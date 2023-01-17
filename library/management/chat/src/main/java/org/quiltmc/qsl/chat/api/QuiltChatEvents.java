@@ -17,8 +17,9 @@
 package org.quiltmc.qsl.chat.api;
 
 import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
-
-import java.util.EnumSet;
+import org.quiltmc.qsl.chat.impl.ChatEventBooleanImpl;
+import org.quiltmc.qsl.chat.impl.InternalChatEventHandlerConverters;
+import org.quiltmc.qsl.chat.impl.ChatEventImpl;
 
 /**
  * Events for modifying, canceling, and listening for various chat messages.
@@ -35,59 +36,34 @@ public final class QuiltChatEvents {
 	 * An event that allows you to modify a message before further processing by returning a new one to replace it. The usage of `withX` methods
 	 * is recommended.
 	 */
-	public static final ChatEvent<Modify, AbstractChatMessage<?>> MODIFY = new ChatEvent<>(true, (modify, quiltMessageTypes) -> modifyToHook(quiltMessageTypes, modify));
+	public static final ChatEventImpl<Modify, AbstractChatMessage<?>> MODIFY = new ChatEventImpl<>(true, InternalChatEventHandlerConverters::modifyToHook);
 
 	/**
 	 * An event that allows you to cancel a message by returning true, or false to allow it to continue through.
 	 */
-	public static final ChatBooleanEvent CANCEL = new ChatBooleanEvent();
+	public static final ChatEventBooleanImpl<Cancel> CANCEL = new ChatEventBooleanImpl<>(InternalChatEventHandlerConverters::cancelToHook);
 
 	/**
 	 * Before (usually) vanilla does any standard processing with this message. Mods may execute other behavior before or after this event.
 	 */
-	public static final ChatEvent<Listen, Void> BEFORE_PROCESS = new ChatEvent<>(false, (listen, quiltMessageTypes) -> listenToHook(quiltMessageTypes, listen));
+	public static final ChatEventImpl<Listen, Void> BEFORE_PROCESS = new ChatEventImpl<>(false, InternalChatEventHandlerConverters::listenToHook);
 
 	/**
 	 * After (usually) vanilla does any standard processing with this message. Mods may execute other behavior before or after this event.
 	 */
-	public static final ChatEvent<Listen, Void> AFTER_PROCESS = new ChatEvent<>(false, (listen, quiltMessageTypes) -> listenToHook(quiltMessageTypes, listen));
+	public static final ChatEventImpl<Listen, Void> AFTER_PROCESS = new ChatEventImpl<>(false, InternalChatEventHandlerConverters::listenToHook);
 
 	@FunctionalInterface
 	public interface Modify {
 		AbstractChatMessage<?> handleMessage(AbstractChatMessage<?> abstractMessage);
 	}
 
+	public interface Cancel {
+		boolean shouldCancel(AbstractChatMessage<?> abstractMessage);
+	}
+
 	@FunctionalInterface
 	public interface Listen {
 		void handleMessage(AbstractChatMessage<?> abstractMessage);
-	}
-
-	private static ChatEvent.TypedChatApiHook<AbstractChatMessage<?>> modifyToHook(EnumSet<QuiltMessageType> types, Modify modify) {
-		return new ChatEvent.TypedChatApiHook<>() {
-			@Override
-			public EnumSet<QuiltMessageType> getMessageTypes() {
-				return types;
-			}
-
-			@Override
-			public AbstractChatMessage<?> handleMessage(AbstractChatMessage<?> message) {
-				return modify.handleMessage(message);
-			}
-		};
-	}
-
-	private static ChatEvent.TypedChatApiHook<Void> listenToHook(EnumSet<QuiltMessageType> types, Listen modify) {
-		return new ChatEvent.TypedChatApiHook<>() {
-			@Override
-			public EnumSet<QuiltMessageType> getMessageTypes() {
-				return types;
-			}
-
-			@Override
-			public Void handleMessage(AbstractChatMessage<?> message) {
-				modify.handleMessage(message);
-				return null;
-			}
-		};
 	}
 }

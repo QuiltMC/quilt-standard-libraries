@@ -48,7 +48,7 @@ public class ClientPlayNetworkHandlerMixin {
 	@ModifyVariable(method = "onChatMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/NetworkThreadUtils;forceMainThread(Lnet/minecraft/network/Packet;Lnet/minecraft/network/listener/PacketListener;Lnet/minecraft/util/thread/ThreadExecutor;)V", shift = At.Shift.AFTER), argsOnly = true)
 	public ChatMessageS2CPacket quilt$modifyInboundChatMessage(ChatMessageS2CPacket packet) {
 		var message = new ChatS2CMessage(client.player, true, packet);
-		return (ChatMessageS2CPacket) QuiltChatEvents.MODIFY.invoke(message, message).serialized();
+		return (ChatMessageS2CPacket) QuiltChatEvents.MODIFY.invokeOrElse(message, message).serialized();
 	}
 
 	@Inject(method = "onChatMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/s2c/play/ChatMessageS2CPacket;body()Lnet/minecraft/network/message/MessageBody$Serialized;", shift = At.Shift.BEFORE), cancellable = true)
@@ -74,7 +74,7 @@ public class ClientPlayNetworkHandlerMixin {
 	@ModifyVariable(method = "onSystemMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/NetworkThreadUtils;forceMainThread(Lnet/minecraft/network/Packet;Lnet/minecraft/network/listener/PacketListener;Lnet/minecraft/util/thread/ThreadExecutor;)V", shift = At.Shift.AFTER), argsOnly = true)
 	public SystemMessageS2CPacket quilt$modifyInboundSystemMessage(SystemMessageS2CPacket packet) {
 		var message = new SystemS2CMessage(client.player, true, packet);
-		return (SystemMessageS2CPacket) QuiltChatEvents.MODIFY.invoke(message, message).serialized();
+		return (SystemMessageS2CPacket) QuiltChatEvents.MODIFY.invokeOrElse(message, message).serialized();
 	}
 
 	@Inject(method = "onSystemMessage", at = @At(value = "FIELD", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;client:Lnet/minecraft/client/MinecraftClient;", opcode = Opcodes.GETFIELD, ordinal = 1, shift = At.Shift.BEFORE), cancellable = true)
@@ -97,7 +97,7 @@ public class ClientPlayNetworkHandlerMixin {
 	@ModifyVariable(method = "onProfileIndependentMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/NetworkThreadUtils;forceMainThread(Lnet/minecraft/network/Packet;Lnet/minecraft/network/listener/PacketListener;Lnet/minecraft/util/thread/ThreadExecutor;)V", shift = At.Shift.AFTER), argsOnly = true)
 	public ProfileIndependentMessageS2CPacket quilt$modifyInboundProfileIndependentMessage(ProfileIndependentMessageS2CPacket packet) {
 		var message = new ProfileIndependentS2CMessage(client.player, true, packet);
-		return (ProfileIndependentMessageS2CPacket) QuiltChatEvents.MODIFY.invoke(message, message).serialized();
+		return (ProfileIndependentMessageS2CPacket) QuiltChatEvents.MODIFY.invokeOrElse(message, message).serialized();
 	}
 
 	@Inject(method = "onProfileIndependentMessage", at = @At(value = "FIELD", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;client:Lnet/minecraft/client/MinecraftClient;", shift = At.Shift.BEFORE, ordinal = 1), cancellable = true)
@@ -128,7 +128,7 @@ public class ClientPlayNetworkHandlerMixin {
 		}
 
 		var message = new RawChatC2SMessage(client.player, true, string);
-		return ((RawChatC2SMessage) QuiltChatEvents.MODIFY.invoke(message, message)).serialized();
+		return ((RawChatC2SMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message)).serialized();
 	}
 
 	@Inject(method = "m_fzlgisyq", at = @At(value = "HEAD"), cancellable = true)
@@ -156,7 +156,7 @@ public class ClientPlayNetworkHandlerMixin {
 	public void quilt$modifyAndCancelAndBeforeAndAfterOutboundChatMessage(ClientPlayNetworkHandler instance, Packet<?> packet) {
 		if (packet instanceof ChatMessageC2SPacket chatMessageC2SPacket) {
 			var message = new ChatC2SMessage(client.player, true, chatMessageC2SPacket);
-			message = (ChatC2SMessage) QuiltChatEvents.MODIFY.invoke(message, message);
+			message = (ChatC2SMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message);
 
 			if (QuiltChatEvents.CANCEL.invoke(message) != Boolean.TRUE) {
 				QuiltChatEvents.BEFORE_PROCESS.invoke(message);

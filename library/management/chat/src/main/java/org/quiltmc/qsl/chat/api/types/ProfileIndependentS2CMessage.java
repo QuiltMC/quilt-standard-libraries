@@ -23,7 +23,7 @@ import net.minecraft.network.packet.s2c.play.ProfileIndependentMessageS2CPacket;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
-import org.quiltmc.qsl.chat.impl.InternalQuiltChatApiUtil;
+import org.quiltmc.qsl.chat.impl.InternalMessageTypesSupplier;
 
 import java.util.EnumSet;
 
@@ -31,10 +31,10 @@ public class ProfileIndependentS2CMessage extends AbstractChatMessage<ProfileInd
 	private final Text message;
 	private final MessageType.Parameters messageType;
 
-	public ProfileIndependentS2CMessage(PlayerEntity player, boolean isOnClientSide, ProfileIndependentMessageS2CPacket packet) {
+	public ProfileIndependentS2CMessage(PlayerEntity player, boolean isClient, ProfileIndependentMessageS2CPacket packet) {
 		this(
 				player,
-				isOnClientSide,
+				isClient,
 				packet.message(),
 				packet.messageType().createParameters(player.world.getRegistryManager()).orElseGet(() -> {
 					if (player instanceof ClientPlayerEntity clientPlayerEntity) {
@@ -45,15 +45,15 @@ public class ProfileIndependentS2CMessage extends AbstractChatMessage<ProfileInd
 		);
 	}
 
-	public ProfileIndependentS2CMessage(PlayerEntity player, boolean isOnClientSide, Text message, MessageType.Parameters messageType) {
-		super(player, isOnClientSide);
+	public ProfileIndependentS2CMessage(PlayerEntity player, boolean isClient, Text message, MessageType.Parameters messageType) {
+		super(player, isClient);
 		this.message = message;
 		this.messageType = messageType;
 	}
 
 	@Override
 	public @NotNull EnumSet<QuiltMessageType> getTypes() {
-		return InternalQuiltChatApiUtil.s2cType(QuiltMessageType.PROFILE_INDEPENDENT, isOnClientSide);
+		return InternalMessageTypesSupplier.s2cType(QuiltMessageType.PROFILE_INDEPENDENT, isClient);
 	}
 
 	@Override
@@ -70,11 +70,11 @@ public class ProfileIndependentS2CMessage extends AbstractChatMessage<ProfileInd
 	}
 
 	public ProfileIndependentS2CMessage withMessage(Text message) {
-		return new ProfileIndependentS2CMessage(player, isOnClientSide, message, messageType);
+		return new ProfileIndependentS2CMessage(player, isClient, message, messageType);
 	}
 
 	public ProfileIndependentS2CMessage withMessageType(MessageType.Parameters messageType) {
-		return new ProfileIndependentS2CMessage(player, isOnClientSide, message, messageType);
+		return new ProfileIndependentS2CMessage(player, isClient, message, messageType);
 	}
 
 	@Override
@@ -82,7 +82,7 @@ public class ProfileIndependentS2CMessage extends AbstractChatMessage<ProfileInd
 		return "ProfileIndependentS2CMessage{" + "message=" + message +
 				", messageType=" + messageType +
 				", player=" + player +
-				", isOnClientSide=" + isOnClientSide +
+				", isClient=" + isClient +
 				'}';
 	}
 }

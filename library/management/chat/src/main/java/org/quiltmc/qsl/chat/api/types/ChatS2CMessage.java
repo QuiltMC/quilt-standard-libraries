@@ -25,7 +25,7 @@ import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
-import org.quiltmc.qsl.chat.impl.InternalQuiltChatApiUtil;
+import org.quiltmc.qsl.chat.impl.InternalMessageTypesSupplier;
 
 import java.util.EnumSet;
 import java.util.UUID;
@@ -39,9 +39,9 @@ public class ChatS2CMessage extends AbstractChatMessage<ChatMessageS2CPacket> {
 	private final FilterMask filterMask;
 	private final MessageType.Serialized messageType;
 
-	public ChatS2CMessage(PlayerEntity player, boolean isOnClientSide, ChatMessageS2CPacket packet) {
+	public ChatS2CMessage(PlayerEntity player, boolean isClient, ChatMessageS2CPacket packet) {
 		this(
-				player, isOnClientSide,
+				player, isClient,
 				packet.sender(),
 				packet.index(),
 				packet.signature(),
@@ -52,8 +52,8 @@ public class ChatS2CMessage extends AbstractChatMessage<ChatMessageS2CPacket> {
 		);
 	}
 
-	public ChatS2CMessage(PlayerEntity player, boolean isOnClientSide, UUID sender, int index, MessageSignature signature, MessageBody.Serialized body, Text unsignedContent, FilterMask filterMask, MessageType.Serialized messageType) {
-		super(player, isOnClientSide);
+	public ChatS2CMessage(PlayerEntity player, boolean isClient, UUID sender, int index, MessageSignature signature, MessageBody.Serialized body, Text unsignedContent, FilterMask filterMask, MessageType.Serialized messageType) {
+		super(player, isClient);
 		this.sender = sender;
 		this.index = index;
 		this.signature = signature;
@@ -65,7 +65,7 @@ public class ChatS2CMessage extends AbstractChatMessage<ChatMessageS2CPacket> {
 
 	@Override
 	public @NotNull EnumSet<QuiltMessageType> getTypes() {
-		return InternalQuiltChatApiUtil.s2cType(QuiltMessageType.CHAT, isOnClientSide);
+		return InternalMessageTypesSupplier.s2cType(QuiltMessageType.CHAT, isClient);
 	}
 
 	@Override
@@ -102,31 +102,31 @@ public class ChatS2CMessage extends AbstractChatMessage<ChatMessageS2CPacket> {
 	}
 
 	public ChatS2CMessage withSender(UUID sender) {
-		return new ChatS2CMessage(player, isOnClientSide, sender, index, signature, body, unsignedContent, filterMask, messageType);
+		return new ChatS2CMessage(player, isClient, sender, index, signature, body, unsignedContent, filterMask, messageType);
 	}
 
 	public ChatS2CMessage withIndex(int index) {
-		return new ChatS2CMessage(player, isOnClientSide, sender, index, signature, body, unsignedContent, filterMask, messageType);
+		return new ChatS2CMessage(player, isClient, sender, index, signature, body, unsignedContent, filterMask, messageType);
 	}
 
 	public ChatS2CMessage withSignature(MessageSignature signature) {
-		return new ChatS2CMessage(player, isOnClientSide, sender, index, signature, body, unsignedContent, filterMask, messageType);
+		return new ChatS2CMessage(player, isClient, sender, index, signature, body, unsignedContent, filterMask, messageType);
 	}
 
 	public ChatS2CMessage withBody(MessageBody.Serialized body) {
-		return new ChatS2CMessage(player, isOnClientSide, sender, index, signature, body, unsignedContent, filterMask, messageType);
+		return new ChatS2CMessage(player, isClient, sender, index, signature, body, unsignedContent, filterMask, messageType);
 	}
 
 	public ChatS2CMessage withUnsignedContent(Text unsignedContent) {
-		return new ChatS2CMessage(player, isOnClientSide, sender, index, signature, body, unsignedContent, filterMask, messageType);
+		return new ChatS2CMessage(player, isClient, sender, index, signature, body, unsignedContent, filterMask, messageType);
 	}
 
 	public ChatS2CMessage withFilterMask(FilterMask filterMask) {
-		return new ChatS2CMessage(player, isOnClientSide, sender, index, signature, body, unsignedContent, filterMask, messageType);
+		return new ChatS2CMessage(player, isClient, sender, index, signature, body, unsignedContent, filterMask, messageType);
 	}
 
 	public ChatS2CMessage withMessageType(MessageType.Serialized messageType) {
-		return new ChatS2CMessage(player, isOnClientSide, sender, index, signature, body, unsignedContent, filterMask, messageType);
+		return new ChatS2CMessage(player, isClient, sender, index, signature, body, unsignedContent, filterMask, messageType);
 	}
 
 	@Override
@@ -139,7 +139,7 @@ public class ChatS2CMessage extends AbstractChatMessage<ChatMessageS2CPacket> {
 				", filterMask=" + filterMask +
 				", messageType=" + messageType +
 				", player=" + player +
-				", isOnClientSide=" + isOnClientSide +
+				", isClient=" + isClient +
 				'}';
 	}
 }

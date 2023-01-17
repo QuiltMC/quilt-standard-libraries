@@ -29,11 +29,11 @@ import java.util.EnumSet;
  */
 public abstract class AbstractChatMessage<S> {
 	protected final @NotNull PlayerEntity player;
-	protected final boolean isOnClientSide;
+	protected final boolean isClient;
 
-	protected AbstractChatMessage(@NotNull PlayerEntity player, boolean isOnClientSide) {
+	protected AbstractChatMessage(@NotNull PlayerEntity player, boolean isClient) {
 		this.player = player;
-		this.isOnClientSide = isOnClientSide;
+		this.isClient = isClient;
 	}
 
 	// These are mostly annotated as @NotNull for dev productivity, I get nice warnings about
@@ -68,7 +68,7 @@ public abstract class AbstractChatMessage<S> {
 	 * <p>
 	 * This can also be determined through checking for {@link QuiltMessageType#CLIENT}.
 	 */
-	public boolean isOnClientSide() {
-		return isOnClientSide;
+	public boolean isClient() {
+		return isClient;
 	}
 }

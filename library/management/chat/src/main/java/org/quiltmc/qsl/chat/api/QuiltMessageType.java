@@ -21,16 +21,42 @@ package org.quiltmc.qsl.chat.api;
  */
 public enum QuiltMessageType {
 	// Actual types
+
+	/**
+	 * Identifies a chat message. Usually from a player.
+	 */
 	CHAT(QuiltMetaMessageType.MESSAGE_TYPE),
+
+	/**
+	 * Identifies a system message. Used command results, actionbar messages, and more.
+	 */
 	SYSTEM(QuiltMetaMessageType.MESSAGE_TYPE),
+
+	/**
+	 * Identifies a profile independent message. Usually from /msg commands.
+	 */
 	PROFILE_INDEPENDENT(QuiltMetaMessageType.MESSAGE_TYPE),
 
 	// Sidedness
+
+	/**
+	 * Identifies a message that is on the server currently.
+	 */
 	SERVER(QuiltMetaMessageType.SIDE),
+
+	/**
+	 * Identifies a message that is on the client currently.
+	 */
 	CLIENT(QuiltMetaMessageType.SIDE),
 
 	// Directionality
+	/**
+	 * Identifies a message that is leaving the side it is on.
+	 */
 	INBOUND(QuiltMetaMessageType.DIRECTION),
+	/**
+	 * Identifies a message that is arriving on the side it is on.
+	 */
 	OUTBOUND(QuiltMetaMessageType.DIRECTION);
 
 	public final QuiltMetaMessageType metaType;
@@ -43,8 +69,19 @@ public enum QuiltMessageType {
 	 * The various meta-types of the {@link QuiltMessageType} enums. Used for categorizing the different types.
 	 */
 	public enum QuiltMetaMessageType {
+		/**
+		 * Identifies the message type of a message.
+		 */
 		MESSAGE_TYPE,
+
+		/**
+		 * Identifies the side a message is currently on.
+		 */
 		SIDE,
+
+		/**
+		 * Identifies if the message is inbound or outbound from the current side.
+		 */
 		DIRECTION
 	}
 }

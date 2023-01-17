@@ -23,7 +23,7 @@ import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
-import org.quiltmc.qsl.chat.impl.InternalQuiltChatApiUtil;
+import org.quiltmc.qsl.chat.impl.InternalMessageTypesSupplier;
 
 import java.time.Instant;
 import java.util.EnumSet;
@@ -35,10 +35,10 @@ public class ChatC2SMessage extends AbstractChatMessage<ChatMessageC2SPacket> {
 	private final @Nullable MessageSignature signature;
 	private final MessageSignatureList.Acknowledgment messageAcknowledgments;
 
-	public ChatC2SMessage(PlayerEntity player, boolean isOnClientSide, ChatMessageC2SPacket packet) {
+	public ChatC2SMessage(PlayerEntity player, boolean isClient, ChatMessageC2SPacket packet) {
 		this(
 				player,
-				isOnClientSide,
+				isClient,
 				packet.message(),
 				packet.timestamp(),
 				packet.salt(),
@@ -47,8 +47,8 @@ public class ChatC2SMessage extends AbstractChatMessage<ChatMessageC2SPacket> {
 		);
 	}
 
-	public ChatC2SMessage(PlayerEntity player, boolean isOnClientSide, String message, Instant timestamp, long salt, @Nullable MessageSignature signature, MessageSignatureList.Acknowledgment messageAcknowledgments) {
-		super(player, isOnClientSide);
+	public ChatC2SMessage(PlayerEntity player, boolean isClient, String message, Instant timestamp, long salt, @Nullable MessageSignature signature, MessageSignatureList.Acknowledgment messageAcknowledgments) {
+		super(player, isClient);
 		this.message = message;
 		this.timestamp = timestamp;
 		this.salt = salt;
@@ -58,7 +58,7 @@ public class ChatC2SMessage extends AbstractChatMessage<ChatMessageC2SPacket> {
 
 	@Override
 	public @NotNull EnumSet<QuiltMessageType> getTypes() {
-		return InternalQuiltChatApiUtil.c2sType(QuiltMessageType.CHAT, true);
+		return InternalMessageTypesSupplier.c2sType(QuiltMessageType.CHAT, true);
 	}
 
 	@Override
@@ -87,23 +87,23 @@ public class ChatC2SMessage extends AbstractChatMessage<ChatMessageC2SPacket> {
 	}
 
 	public ChatC2SMessage withMessage(String message) {
-		return new ChatC2SMessage(player, isOnClientSide, message, timestamp, salt, signature, messageAcknowledgments);
+		return new ChatC2SMessage(player, isClient, message, timestamp, salt, signature, messageAcknowledgments);
 	}
 
 	public ChatC2SMessage withTimestamp(Instant timestamp) {
-		return new ChatC2SMessage(player, isOnClientSide, message, timestamp, salt, signature, messageAcknowledgments);
+		return new ChatC2SMessage(player, isClient, message, timestamp, salt, signature, messageAcknowledgments);
 	}
 
 	public ChatC2SMessage withSalt(long salt) {
-		return new ChatC2SMessage(player, isOnClientSide, message, timestamp, salt, signature, messageAcknowledgments);
+		return new ChatC2SMessage(player, isClient, message, timestamp, salt, signature, messageAcknowledgments);
 	}
 
 	public ChatC2SMessage withSignature(@Nullable MessageSignature signature) {
-		return new ChatC2SMessage(player, isOnClientSide, message, timestamp, salt, signature, messageAcknowledgments);
+		return new ChatC2SMessage(player, isClient, message, timestamp, salt, signature, messageAcknowledgments);
 	}
 
 	public ChatC2SMessage withMessageAcknowledgments(MessageSignatureList.Acknowledgment messageAcknowledgments) {
-		return new ChatC2SMessage(player, isOnClientSide, message, timestamp, salt, signature, messageAcknowledgments);
+		return new ChatC2SMessage(player, isClient, message, timestamp, salt, signature, messageAcknowledgments);
 	}
 
 	@Override
@@ -114,7 +114,7 @@ public class ChatC2SMessage extends AbstractChatMessage<ChatMessageC2SPacket> {
 				", signature=" + signature +
 				", messageAcknowledgments=" + messageAcknowledgments +
 				", player=" + player +
-				", isOnClientSide=" + isOnClientSide +
+				", isClient=" + isClient +
 				'}';
 	}
 }

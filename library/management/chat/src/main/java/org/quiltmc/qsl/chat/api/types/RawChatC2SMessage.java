@@ -25,8 +25,8 @@ import java.util.EnumSet;
 public class RawChatC2SMessage extends AbstractChatMessage<String> {
 	private final String message;
 
-	public RawChatC2SMessage(@NotNull PlayerEntity player, boolean isOnClientSide, String message) {
-		super(player, isOnClientSide);
+	public RawChatC2SMessage(@NotNull PlayerEntity player, boolean isClient, String message) {
+		super(player, isClient);
 		this.message = message;
 	}
 
@@ -40,7 +40,7 @@ public class RawChatC2SMessage extends AbstractChatMessage<String> {
 	}
 
 	public RawChatC2SMessage withMessage(String message) {
-		return new RawChatC2SMessage(player, isOnClientSide, message);
+		return new RawChatC2SMessage(player, isClient, message);
 	}
 
 	@Override

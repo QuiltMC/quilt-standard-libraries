@@ -23,19 +23,19 @@ import java.util.EnumSet;
 /**
  * Provides some shortcuts for common code in the chat api
  */
-public final class InternalQuiltChatApiUtil {
-	private InternalQuiltChatApiUtil() {}
+public final class InternalMessageTypesSupplier {
+	private InternalMessageTypesSupplier() {}
 
-	public static EnumSet<QuiltMessageType> s2cType(QuiltMessageType type, boolean isOnClientSide) {
-		if (isOnClientSide) {
+	public static EnumSet<QuiltMessageType> s2cType(QuiltMessageType type, boolean isClient) {
+		if (isClient) {
 			return EnumSet.of(type, QuiltMessageType.CLIENT, QuiltMessageType.INBOUND);
 		} else {
 			return EnumSet.of(type, QuiltMessageType.SERVER, QuiltMessageType.OUTBOUND);
 		}
 	}
 
-	public static EnumSet<QuiltMessageType> c2sType(QuiltMessageType type, boolean isOnClientSide) {
-		if (isOnClientSide) {
+	public static EnumSet<QuiltMessageType> c2sType(QuiltMessageType type, boolean isClient) {
+		if (isClient) {
 			return EnumSet.of(type, QuiltMessageType.CLIENT, QuiltMessageType.OUTBOUND);
 		} else {
 			return EnumSet.of(type, QuiltMessageType.SERVER, QuiltMessageType.INBOUND);

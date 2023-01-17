@@ -14,34 +14,56 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.chat.api;
+package org.quiltmc.qsl.chat.impl;
 
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.chat.api.ChatEvent;
+import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
 
 import java.util.EnumSet;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
-// Cant extend event because the constructor is private, gotta reproduce some of the API surface
-public class ChatBooleanEvent {
-	private final Event<ChatApiHook> backingEvent = Event.create(ChatApiHook.class, hooks -> new ChatApiHook() {
+public class ChatEventImpl<H, R> implements ChatEvent<H, R> {
+	private final boolean shouldPreformAssignableCheck;
+	private final BiFunction<H, EnumSet<QuiltMessageType>, TypedChatApiHook<R>> converter;
+
+	public ChatEventImpl(boolean shouldPreformAssignableCheck, BiFunction<H, EnumSet<QuiltMessageType>, TypedChatApiHook<R>> converter) {
+		this.shouldPreformAssignableCheck = shouldPreformAssignableCheck;
+		this.converter = converter;
+	}
+
+	private final Event<TypedChatApiHook<@Nullable R>> backingEvent = Event.create(TypedChatApiHook.class, hooks -> new TypedChatApiHook<>() {
 		@Override
 		public EnumSet<QuiltMessageType> getMessageTypes() {
 			return EnumSet.allOf(QuiltMessageType.class);
 		}
 
 		@Override
-		public boolean handleMessage(AbstractChatMessage<?> message) {
+		public R handleMessage(AbstractChatMessage<?> message) {
+			R result = null;
+
 			for (var hook : hooks) {
 				if (shouldPassOnMessageToHook(message.getTypes(), hook.getMessageTypes())) {
-					if (hook.handleMessage(message)) {
-						return true;
+					R tmpResult = hook.handleMessage(message);
+					if (shouldPreformAssignableCheck) {
+						if (tmpResult == null) {
+							throw new NullPointerException("Handler attached to a ChatEvent returned a null result!");
+						} else if (!message.getClass().isAssignableFrom(tmpResult.getClass())) {
+							throw new IllegalArgumentException(
+									"Handler attached to a ChatEvent returned a non-similar value! " +
+											"Expected a subclass or instance of " + message.getClass().getName() + " but got a " + tmpResult.getClass().getName() + "!"
+							);
+						}
 					}
+					result = tmpResult;
 				}
 			}
-			return false;
+
+			return result;
 		}
 	});
 
@@ -76,44 +98,33 @@ public class ChatBooleanEvent {
 		return true;
 	}
 
-	public boolean invoke(AbstractChatMessage<?> message) {
+	@Override
+	public @Nullable R invoke(AbstractChatMessage<?> message) {
 		return backingEvent.invoker().handleMessage(message);
 	}
 
-	public void register(EnumSet<QuiltMessageType> types, Function<AbstractChatMessage<?>, Boolean> handler) {
-		backingEvent.register(new ChatApiHook() {
-			@Override
-			public EnumSet<QuiltMessageType> getMessageTypes() {
-				return types;
-			}
-
-			@Override
-			public boolean handleMessage(AbstractChatMessage<?> message) {
-				return handler.apply(message);
-			}
-		});
+	@Override
+	public R invokeOrElse(AbstractChatMessage<?> message, R ifNull) {
+		R result = backingEvent.invoker().handleMessage(message);
+		if (result == null) {
+			return ifNull;
+		} else {
+			return result;
+		}
 	}
 
-	public void register(@NotNull Identifier phaseIdentifier, EnumSet<QuiltMessageType> types, Function<AbstractChatMessage<?>, Boolean> handler) {
-		backingEvent.register(phaseIdentifier, new ChatApiHook() {
-			@Override
-			public EnumSet<QuiltMessageType> getMessageTypes() {
-				return types;
-			}
-
-			@Override
-			public boolean handleMessage(AbstractChatMessage<?> message) {
-				return handler.apply(message);
-			}
-		});
+	@Override
+	public void register(EnumSet<QuiltMessageType> types, H handler) {
+		backingEvent.register(converter.apply(handler, types));
 	}
 
+	@Override
+	public void register(@NotNull Identifier phaseIdentifier, EnumSet<QuiltMessageType> types, H handler) {
+		backingEvent.register(phaseIdentifier, converter.apply(handler, types));
+	}
+
+	@Override
 	public void addPhaseOrdering(@NotNull Identifier firstPhase, @NotNull Identifier secondPhase) {
 		backingEvent.addPhaseOrdering(firstPhase, secondPhase);
-	}
-
-	private interface ChatApiHook {
-		EnumSet<QuiltMessageType> getMessageTypes();
-		boolean handleMessage(AbstractChatMessage<?> message);
 	}
 }

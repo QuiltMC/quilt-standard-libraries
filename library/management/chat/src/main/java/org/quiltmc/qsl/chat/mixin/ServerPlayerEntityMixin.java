@@ -37,12 +37,12 @@ public class ServerPlayerEntityMixin {
 	public void quilt$captureAndModifyOutboundSystemMessage(Text originalMessage, boolean overlay, CallbackInfo ci) {
 		var message = new SystemS2CMessage((ServerPlayerEntity)(Object)this, false, originalMessage, overlay);
 
-		quilt$sendSystemMessage$storedSystemMessage = (SystemS2CMessage) QuiltChatEvents.MODIFY.invoke(message, message);
+		quilt$sendSystemMessage$storedSystemMessage = (SystemS2CMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message);
 	}
 
 	@Redirect(method = "sendSystemMessage(Lnet/minecraft/text/Text;Z)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;Lnet/minecraft/network/PacketSendListener;)V"))
 	public void quilt$cancelOutboundSystemMessage(ServerPlayNetworkHandler instance, Packet<?> packet, PacketSendListener listener) {
-		if (!QuiltChatEvents.CANCEL.invoke(quilt$sendSystemMessage$storedSystemMessage)) {
+		if (QuiltChatEvents.CANCEL.invoke(quilt$sendSystemMessage$storedSystemMessage) != Boolean.TRUE) {
 			QuiltChatEvents.BEFORE_PROCESS.invoke(quilt$sendSystemMessage$storedSystemMessage);
 			instance.sendPacket(quilt$sendSystemMessage$storedSystemMessage.serialized(), listener);
 			QuiltChatEvents.AFTER_PROCESS.invoke(quilt$sendSystemMessage$storedSystemMessage);

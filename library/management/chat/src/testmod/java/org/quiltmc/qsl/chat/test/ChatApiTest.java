@@ -23,7 +23,6 @@ import org.quiltmc.qsl.chat.api.QuiltChatEvents;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import org.quiltmc.qsl.chat.api.types.ChatC2SMessage;
 import org.quiltmc.qsl.chat.api.types.SystemS2CMessage;
-import org.spongepowered.asm.mixin.MixinEnvironment;
 
 import java.util.EnumSet;
 import java.util.Random;
@@ -64,7 +63,7 @@ public class ChatApiTest implements ModInitializer {
 	}
 
 	private void registerBadEvents() {
-		QuiltChatEvents.MODIFY.register(EnumSet.allOf(QuiltMessageType.class), abstractMessage -> new SystemS2CMessage(abstractMessage.getPlayer(), abstractMessage.isOnClientSide(), Text.literal("im an evil event, muhahah"), false));
+		QuiltChatEvents.MODIFY.register(EnumSet.allOf(QuiltMessageType.class), abstractMessage -> new SystemS2CMessage(abstractMessage.getPlayer(), abstractMessage.isClient(), Text.literal("im an evil event, muhahah"), false));
 		QuiltChatEvents.MODIFY.register(EnumSet.allOf(QuiltMessageType.class), abstractMessage -> new Random().nextInt(3) == 0 ? null : abstractMessage );
 	}
 }
