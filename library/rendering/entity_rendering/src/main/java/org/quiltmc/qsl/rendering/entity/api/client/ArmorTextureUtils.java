@@ -40,6 +40,6 @@ public final class ArmorTextureUtils {
 	 * @return the armor texture suffix
 	 */
 	public static @NotNull String getArmorTextureSuffix(boolean useSecondLayer, @Nullable String suffix) {
-		return "_layer_" + (useSecondLayer ? 2 : 1) + (suffix == null ? "" : "_" + suffix);
+		return "_layer_" + (useSecondLayer ? "2" : "1") + (suffix == null ? "" : "_" + suffix);
 	}
 }
