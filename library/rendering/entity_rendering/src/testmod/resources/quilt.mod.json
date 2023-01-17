@@ -11,12 +11,8 @@
     "intermediate_mappings": "net.fabricmc:intermediary",
     "load_type": "always",
     "entrypoints": {
-      "init": [
-        "org.quiltmc.qsl.rendering.entity.test.EntityRenderingTestmod"
-      ],
-      "client_init": [
-        "org.quiltmc.qsl.rendering.entity.test.client.ClientEntityRenderingTestmod"
-      ]
+      "init": "org.quiltmc.qsl.rendering.entity.test.EntityRenderingTestmod",
+      "client_init": "org.quiltmc.qsl.rendering.entity.test.client.ClientEntityRenderingTestmod"
     },
     "depends": [
       "quilt_loader",
