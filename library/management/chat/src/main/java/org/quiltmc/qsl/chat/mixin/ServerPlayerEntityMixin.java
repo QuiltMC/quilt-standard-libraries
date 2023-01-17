@@ -35,9 +35,9 @@ public class ServerPlayerEntityMixin {
 
 	@Inject(method = "sendSystemMessage(Lnet/minecraft/text/Text;Z)V", at = @At("HEAD"))
 	public void quilt$captureAndModifyOutboundSystemMessage(Text originalMessage, boolean overlay, CallbackInfo ci) {
-		SystemS2CMessage message = new SystemS2CMessage((ServerPlayerEntity)(Object)this, false, originalMessage, overlay);
+		var message = new SystemS2CMessage((ServerPlayerEntity)(Object)this, false, originalMessage, overlay);
 
-		quilt$sendSystemMessage$storedSystemMessage = (SystemS2CMessage)QuiltChatEvents.MODIFY.invoke(message, message);
+		quilt$sendSystemMessage$storedSystemMessage = (SystemS2CMessage) QuiltChatEvents.MODIFY.invoke(message, message);
 	}
 
 	@Redirect(method = "sendSystemMessage(Lnet/minecraft/text/Text;Z)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;Lnet/minecraft/network/PacketSendListener;)V"))

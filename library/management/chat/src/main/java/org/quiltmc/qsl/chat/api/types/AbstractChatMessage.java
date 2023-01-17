@@ -24,6 +24,7 @@ import java.util.EnumSet;
 
 /**
  * An abstract message, extended for the various types of messages.
+ *
  * @param <S> The type of the serialized form of this class, usually a Packet<?> but not required
  */
 public abstract class AbstractChatMessage<S> {
@@ -55,6 +56,7 @@ public abstract class AbstractChatMessage<S> {
 	 * <p>
 	 * For Chat messages, on the server inbound, it is the sender of the chat message, while outbound it is the player the message will be sent to.
 	 * Chat messages on the client return the client player.
+	 *
 	 * @return the {@link PlayerEntity} associated with this packet
 	 */
 	public final @NotNull PlayerEntity getPlayer() {
@@ -62,7 +64,9 @@ public abstract class AbstractChatMessage<S> {
 	}
 
 	/**
-	 * @return if this message is on the client side or not. This can also be determined through checking for {@link QuiltMessageType#CLIENT}
+	 * @return if this message is on the client side or not
+	 * <p>
+	 * This can also be determined through checking for {@link QuiltMessageType#CLIENT}.
 	 */
 	public boolean isOnClientSide() {
 		return isOnClientSide;
