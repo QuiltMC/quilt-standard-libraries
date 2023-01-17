@@ -50,7 +50,7 @@ public class ChatApiTest implements ModInitializer {
 		final boolean[] didEnableBad = {false};
 		QuiltChatEvents.CANCEL.register(EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.CLIENT, QuiltMessageType.OUTBOUND), abstractMessage -> {
 			if (abstractMessage instanceof ChatC2SMessage chatC2SMessage) {
-				if (chatC2SMessage.getMessage().equals("!register-bad")) {
+				if (chatC2SMessage.getMessage().equals("!register_bad")) {
 					if (!didEnableBad[0]) {
 						didEnableBad[0] = true;
 						registerBadEvents();
