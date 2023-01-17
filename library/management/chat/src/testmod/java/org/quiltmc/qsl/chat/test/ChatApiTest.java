@@ -44,12 +44,10 @@ public class ChatApiTest implements ModInitializer {
 				Text content = systemS2CMessage.getContent();
 				if (new Random().nextBoolean()) {
 					return systemS2CMessage.withContent(content.copy().append(Text.literal(", uwu")));
-				} else {
-					return abstractMessage;
 				}
-			} else {
-				return abstractMessage;
 			}
+
+			return abstractMessage;
 		});
 
 		final boolean[] didEnableBad = {false};
