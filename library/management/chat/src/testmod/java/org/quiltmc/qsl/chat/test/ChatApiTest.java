@@ -31,9 +31,6 @@ import java.util.Random;
 public class ChatApiTest implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
-		MixinEnvironment.getCurrentEnvironment().setOption(MixinEnvironment.Option.DEBUG_ALL, true);
-		MixinEnvironment.getCurrentEnvironment().setOption(MixinEnvironment.Option.DEBUG_EXPORT, true);
-
 		QuiltChatEvents.AFTER_PROCESS.register(EnumSet.allOf(QuiltMessageType.class), System.out::println);
 		QuiltChatEvents.BEFORE_PROCESS.register(EnumSet.allOf(QuiltMessageType.class), message -> {
 			System.out.println(message.getTypes());
