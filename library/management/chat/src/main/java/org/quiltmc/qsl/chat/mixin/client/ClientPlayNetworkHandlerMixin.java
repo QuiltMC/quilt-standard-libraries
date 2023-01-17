@@ -82,9 +82,10 @@ public class ClientPlayNetworkHandlerMixin {
 		var message = new SystemS2CMessage(client.player, true, packet);
 		if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) {
 			ci.cancel();
-		} else {
-			QuiltChatEvents.BEFORE_PROCESS.invoke(message);
+			return;
 		}
+
+		QuiltChatEvents.BEFORE_PROCESS.invoke(message);
 	}
 
 	@Inject(method = "onSystemMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/ClientChatListener;m_tvzofpwk(Lnet/minecraft/text/Text;Z)V", shift = At.Shift.AFTER))
@@ -132,23 +133,20 @@ public class ClientPlayNetworkHandlerMixin {
 
 	@Inject(method = "m_fzlgisyq", at = @At(value = "HEAD"), cancellable = true)
 	public void quilt$cancelAndBeforeOutboundRawChatMessage(String string, CallbackInfo ci) {
-		if (client.player == null) {
-			return;
-		}
+		if (client.player == null) return;
 
 		var message = new RawChatC2SMessage(client.player, true, string);
 		if (QuiltChatEvents.CANCEL.invoke(message)) {
 			ci.cancel();
-		} else {
-			QuiltChatEvents.BEFORE_PROCESS.invoke(message);
+			return;
 		}
+
+		QuiltChatEvents.BEFORE_PROCESS.invoke(message);
 	}
 
 	@Inject(method = "m_fzlgisyq", at = @At(value = "TAIL"))
 	public void quilt$afterOutboundRawChatMessage(String string, CallbackInfo ci) {
-		if (client.player == null) {
-			return;
-		}
+		if (client.player == null) return;
 
 		var message = new RawChatC2SMessage(client.player, true, string);
 		QuiltChatEvents.AFTER_PROCESS.invoke(message);
