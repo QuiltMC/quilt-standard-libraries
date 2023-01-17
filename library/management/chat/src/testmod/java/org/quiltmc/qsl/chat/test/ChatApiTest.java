@@ -60,15 +60,11 @@ public class ChatApiTest implements ModInitializer {
 						didEnableBad[0] = true;
 						registerBadEvents();
 						return true;
-					} else {
-						return false;
 					}
-				} else {
-					return false;
 				}
-			} else {
-				return false;
 			}
+
+			return false
 		});
 	}
 
