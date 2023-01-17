@@ -39,7 +39,7 @@ public class SystemS2CMessage extends AbstractChatMessage<SystemMessageS2CPacket
 	}
 
 	public SystemS2CMessage(PlayerEntity player, boolean isOnClientSide, Text content, boolean overlay) {
-        super(player, isOnClientSide);
+		super(player, isOnClientSide);
 		this.content = content;
 		this.overlay = overlay;
 	}

@@ -50,7 +50,6 @@ public class RawChatC2SMessage extends AbstractChatMessage<String> {
 
 	@Override
 	public String toString() {
-		return "RawChatC2SMessage{" + "message='" + message + '\'' +
-				'}';
+		return "RawChatC2SMessage{" + "message='" + message + '\'' + '}';
 	}
 }
