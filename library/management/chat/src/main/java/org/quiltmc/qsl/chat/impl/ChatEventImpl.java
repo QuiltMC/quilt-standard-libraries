@@ -106,11 +106,7 @@ public class ChatEventImpl<H, R> implements ChatEvent<H, R> {
 	@Override
 	public R invokeOrElse(AbstractChatMessage<?> message, R ifNull) {
 		R result = backingEvent.invoker().handleMessage(message);
-		if (result == null) {
-			return ifNull;
-		} else {
-			return result;
-		}
+		return result != null ? result : ifNull;
 	}
 
 	@Override

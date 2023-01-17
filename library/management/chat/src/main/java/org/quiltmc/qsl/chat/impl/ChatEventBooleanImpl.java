@@ -89,11 +89,7 @@ public class ChatEventBooleanImpl<H> implements ChatEvent<H, Boolean> {
 	@Override
 	public Boolean invokeOrElse(AbstractChatMessage<?> message, Boolean ifNull) {
 		Boolean result = backingEvent.invoker().handleMessage(message);
-		if (result == null) {
-			return ifNull;
-		} else {
-			return result;
-		}
+		return result != null ? result : ifNull;
 	}
 
 	@Override
