@@ -50,12 +50,13 @@ public enum QuiltMessageType {
 	CLIENT(QuiltMetaMessageType.SIDE),
 
 	// Directionality
+
 	/**
-	 * Identifies a message that is leaving the side it is on.
+	 * Identifies a message that is arriving on the side it is on.
 	 */
 	INBOUND(QuiltMetaMessageType.DIRECTION),
 	/**
-	 * Identifies a message that is arriving on the side it is on.
+	 * Identifies a message that is leaving the side it is on.
 	 */
 	OUTBOUND(QuiltMetaMessageType.DIRECTION);
 

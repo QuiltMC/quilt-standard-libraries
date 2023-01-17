@@ -102,6 +102,7 @@ public class ChatEventBooleanImpl<H> implements ChatEvent<H, Boolean> {
 		backingEvent.register(converter.apply(handler, types));
 	}
 
+	@Override
 	public void addPhaseOrdering(@NotNull Identifier firstPhase, @NotNull Identifier secondPhase) {
 		backingEvent.addPhaseOrdering(firstPhase, secondPhase);
 	}

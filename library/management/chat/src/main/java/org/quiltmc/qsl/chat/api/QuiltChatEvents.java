@@ -33,31 +33,32 @@ public final class QuiltChatEvents {
 	private QuiltChatEvents() {}
 
 	/**
-	 * An event that allows you to modify a message before further processing by returning a new one to replace it. The usage of `withX` methods
-	 * is recommended.
+	 * An event that allows you to modify a message before further processing by returning a new one to replace it.
+	 * The usage of `withX` methods is recommended.
 	 */
-	public static final ChatEventImpl<Modify, AbstractChatMessage<?>> MODIFY = new ChatEventImpl<>(true, InternalChatEventHandlerConverters::modifyToHook);
+	public static final ChatEvent<Modify, AbstractChatMessage<?>> MODIFY = new ChatEventImpl<>(true, InternalChatEventHandlerConverters::modifyToHook);
 
 	/**
 	 * An event that allows you to cancel a message by returning true, or false to allow it to continue through.
 	 */
-	public static final ChatEventBooleanImpl<Cancel> CANCEL = new ChatEventBooleanImpl<>(InternalChatEventHandlerConverters::cancelToHook);
+	public static final ChatEvent<Cancel, Boolean> CANCEL = new ChatEventBooleanImpl<>(InternalChatEventHandlerConverters::cancelToHook);
 
 	/**
 	 * Before (usually) vanilla does any standard processing with this message. Mods may execute other behavior before or after this event.
 	 */
-	public static final ChatEventImpl<Listen, Void> BEFORE_PROCESS = new ChatEventImpl<>(false, InternalChatEventHandlerConverters::listenToHook);
+	public static final ChatEvent<Listen, Void> BEFORE_PROCESS = new ChatEventImpl<>(false, InternalChatEventHandlerConverters::listenToHook);
 
 	/**
 	 * After (usually) vanilla does any standard processing with this message. Mods may execute other behavior before or after this event.
 	 */
-	public static final ChatEventImpl<Listen, Void> AFTER_PROCESS = new ChatEventImpl<>(false, InternalChatEventHandlerConverters::listenToHook);
+	public static final ChatEvent<Listen, Void> AFTER_PROCESS = new ChatEventImpl<>(false, InternalChatEventHandlerConverters::listenToHook);
 
 	@FunctionalInterface
 	public interface Modify {
 		AbstractChatMessage<?> handleMessage(AbstractChatMessage<?> abstractMessage);
 	}
 
+	@FunctionalInterface
 	public interface Cancel {
 		boolean shouldCancel(AbstractChatMessage<?> abstractMessage);
 	}
