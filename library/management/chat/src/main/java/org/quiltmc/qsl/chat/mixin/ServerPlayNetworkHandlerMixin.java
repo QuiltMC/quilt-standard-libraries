@@ -78,7 +78,7 @@ public class ServerPlayNetworkHandlerMixin {
 
 	@Inject(method = "sendProfileIndependentMessage", at = @At("TAIL"))
 	public void quilt$afterProfileIndependentMessage(Text message, MessageType.Parameters parameters, CallbackInfo ci) {
-		ProfileIndependentS2CMessage immutableMessage = new ProfileIndependentS2CMessage(player, false, message, parameters);
+		var immutableMessage = new ProfileIndependentS2CMessage(player, false, message, parameters);
 		QuiltChatEvents.AFTER_PROCESS.invoke(immutableMessage);
 	}
 
