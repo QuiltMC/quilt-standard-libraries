@@ -62,7 +62,7 @@ public class ChatApiTest implements ModInitializer {
 				}
 			}
 
-			return false
+			return false;
 		});
 	}
 
