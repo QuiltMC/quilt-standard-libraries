@@ -88,9 +88,8 @@ public class ServerPlayNetworkHandlerMixin {
 			var message = new ChatS2CMessage(instance.player, false, chatMessageS2CPacket);
 			message = (ChatS2CMessage) QuiltChatEvents.MODIFY.invoke(message, message);
 
-			if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) {
-				return;
-			}
+			if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) return;
+
 			QuiltChatEvents.BEFORE_PROCESS.invoke(message);
 			instance.sendPacket(message.serialized());
 			QuiltChatEvents.AFTER_PROCESS.invoke(message);
