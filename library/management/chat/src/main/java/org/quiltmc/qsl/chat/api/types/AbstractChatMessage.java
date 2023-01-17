@@ -40,12 +40,12 @@ public abstract class AbstractChatMessage<S> {
 	// What parts of the subclasses I need to implement still
 
 	/**
-	 * @return the set of {@link QuiltMessageType}s associated with this message
+	 * {@return the set of {@link QuiltMessageType}s associated with this message}
 	 */
 	public abstract @NotNull EnumSet<QuiltMessageType> getTypes();
 
 	/**
-	 * @return this message in its serialized form
+	 * {@return this message in its serialized form}
 	 */
 	public abstract @NotNull S serialized();
 
@@ -57,14 +57,14 @@ public abstract class AbstractChatMessage<S> {
 	 * For Chat messages, on the server inbound, it is the sender of the chat message, while outbound it is the player the message will be sent to.
 	 * Chat messages on the client return the client player.
 	 *
-	 * @return the {@link PlayerEntity} associated with this packet
+	 * {@return the {@link PlayerEntity} associated with this packet}
 	 */
 	public final @NotNull PlayerEntity getPlayer() {
 		return player;
 	}
 
 	/**
-	 * @return if this message is on the client side or not
+	 * {@return if this message is on the client side or not}
 	 * <p>
 	 * This can also be determined through checking for {@link QuiltMessageType#CLIENT}.
 	 */

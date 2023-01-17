@@ -98,14 +98,14 @@ public class ChatEvent<H, R> {
 	}
 
 	/**
-	 * @return The result of invoking this event, or null if there are no listeners
+	 * {@return The result of invoking this event, or null if there are no listeners}
 	 */
 	public @Nullable R invoke(AbstractChatMessage<?> message) {
 		return backingEvent.invoker().handleMessage(message);
 	}
 
 	/**
-	 * @return The result of invoking this event, or ifNull if there are no listeners
+	 * {@return The result of invoking this event, or ifNull if there are no listeners}
 	 */
 	public R invoke(AbstractChatMessage<?> message, R ifNull) {
 		R result = backingEvent.invoker().handleMessage(message);
