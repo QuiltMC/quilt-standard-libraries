@@ -22,6 +22,11 @@ import org.quiltmc.qsl.chat.api.QuiltMessageType;
 
 import java.util.EnumSet;
 
+/**
+ * A raw C2S chat message. This is a message before it has been signed by the client.
+ *
+ * @see ChatC2SMessage
+ */
 public class RawChatC2SMessage extends AbstractChatMessage<String> {
 	private final String message;
 

@@ -25,6 +25,9 @@ import org.quiltmc.qsl.chat.impl.InternalMessageTypesFactory;
 
 import java.util.EnumSet;
 
+/**
+ * A wrapper around a system message. This will not display in chat if {@link #isOverlay()} is true, instead displaying over the actionbar.
+ */
 public class SystemS2CMessage extends AbstractChatMessage<SystemMessageS2CPacket> {
 	private final Text content;
 	private final boolean overlay;

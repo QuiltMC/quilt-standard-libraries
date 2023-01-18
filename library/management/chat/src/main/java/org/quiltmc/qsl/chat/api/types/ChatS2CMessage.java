@@ -30,6 +30,9 @@ import org.quiltmc.qsl.chat.impl.InternalMessageTypesFactory;
 import java.util.EnumSet;
 import java.util.UUID;
 
+/**
+ * A wrapper around an S2C chat message. These are chat messages from players being relayed from the server.
+ */
 public class ChatS2CMessage extends AbstractChatMessage<ChatMessageS2CPacket> {
 	private final UUID sender;
 	private final int index;

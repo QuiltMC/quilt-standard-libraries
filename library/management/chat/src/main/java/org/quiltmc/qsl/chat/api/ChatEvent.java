@@ -79,7 +79,7 @@ public interface ChatEvent<H, R> {
 	void addPhaseOrdering(@NotNull Identifier firstPhase, @NotNull Identifier secondPhase);
 
 	/**
-	 * The common interface describing a chat message hook. These should almost never be inherited manually, instead
+	 * The common interface describing a chat message hook. This should almost never be implemented manually, instead
 	 * relying on various converters for each event to convert a {@link FunctionalInterface} into one of these.
 	 *
 	 * @param <R> the return type of handling a message with this hook

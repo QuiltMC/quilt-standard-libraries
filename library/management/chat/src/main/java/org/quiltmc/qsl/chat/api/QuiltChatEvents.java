@@ -53,16 +53,25 @@ public final class QuiltChatEvents {
 	 */
 	public static final ChatEvent<Listen, Void> AFTER_PROCESS = new ChatEventImpl<>(false, InternalChatEventHandlerConverters::listenToHook);
 
+	/**
+	 * A {@link FunctionalInterface} that is used with {@link #MODIFY} to modify messages.
+	 */
 	@FunctionalInterface
 	public interface Modify {
 		AbstractChatMessage<?> modifyMessage(AbstractChatMessage<?> abstractMessage);
 	}
 
+	/**
+	 * A {@link FunctionalInterface} that is used with {@link #CANCEL} to cancel messages.
+	 */
 	@FunctionalInterface
 	public interface Cancel {
 		boolean shouldCancel(AbstractChatMessage<?> abstractMessage);
 	}
 
+	/**
+	 * A {@link FunctionalInterface} that is used with both {@link #BEFORE_PROCESS} and {@link #AFTER_PROCESS} to listen for messages.
+	 */
 	@FunctionalInterface
 	public interface Listen {
 		void onMessage(AbstractChatMessage<?> abstractMessage);

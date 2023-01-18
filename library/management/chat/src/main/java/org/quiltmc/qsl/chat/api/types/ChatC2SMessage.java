@@ -28,6 +28,11 @@ import org.quiltmc.qsl.chat.impl.InternalMessageTypesFactory;
 import java.time.Instant;
 import java.util.EnumSet;
 
+/**
+ * A wrapper around a C2S chat message after it has been signed.
+ *
+ * @see RawChatC2SMessage
+ */
 public class ChatC2SMessage extends AbstractChatMessage<ChatMessageC2SPacket> {
 	private final String message;
 	private final Instant timestamp;

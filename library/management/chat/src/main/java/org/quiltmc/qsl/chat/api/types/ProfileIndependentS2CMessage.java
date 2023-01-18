@@ -27,6 +27,9 @@ import org.quiltmc.qsl.chat.impl.InternalMessageTypesFactory;
 
 import java.util.EnumSet;
 
+/**
+ * A wrapper around a "profile independent" message. These are usually created as a result of commands like {@link net.minecraft.server.command.MessageCommand}.
+ */
 public class ProfileIndependentS2CMessage extends AbstractChatMessage<ProfileIndependentMessageS2CPacket> {
 	private final Text message;
 	private final MessageType.Parameters messageType;
