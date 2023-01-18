@@ -136,7 +136,7 @@ public class ClientPlayNetworkHandlerMixin {
 		if (client.player == null) return;
 
 		var message = new RawChatC2SMessage(client.player, true, string);
-		if (QuiltChatEvents.CANCEL.invoke(message)) {
+		if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) {
 			ci.cancel();
 			return;
 		}

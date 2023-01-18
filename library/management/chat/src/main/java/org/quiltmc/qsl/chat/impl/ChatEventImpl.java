@@ -47,7 +47,7 @@ public class ChatEventImpl<H, R> implements ChatEvent<H, R> {
 		}
 
 		@Override
-		public R handleMessage(AbstractChatMessage<?> message) {
+		public R handleMessage(@NotNull AbstractChatMessage<?> message) {
 			R result = null;
 
 			for (var hook : hooks) {
@@ -103,23 +103,23 @@ public class ChatEventImpl<H, R> implements ChatEvent<H, R> {
 	}
 
 	@Override
-	public @Nullable R invoke(AbstractChatMessage<?> message) {
+	public @Nullable R invoke(@NotNull AbstractChatMessage<?> message) {
 		return backingEvent.invoker().handleMessage(message);
 	}
 
 	@Override
-	public R invokeOrElse(AbstractChatMessage<?> message, R ifNull) {
+	public R invokeOrElse(@NotNull AbstractChatMessage<?> message, @NotNull R ifNull) {
 		R result = backingEvent.invoker().handleMessage(message);
 		return result != null ? result : ifNull;
 	}
 
 	@Override
-	public void register(EnumSet<QuiltMessageType> types, H handler) {
+	public void register(@NotNull EnumSet<QuiltMessageType> types, @NotNull H handler) {
 		backingEvent.register(converter.apply(handler, types));
 	}
 
 	@Override
-	public void register(@NotNull Identifier phaseIdentifier, EnumSet<QuiltMessageType> types, H handler) {
+	public void register(@NotNull Identifier phaseIdentifier, @NotNull EnumSet<QuiltMessageType> types, @NotNull H handler) {
 		backingEvent.register(phaseIdentifier, converter.apply(handler, types));
 	}
 

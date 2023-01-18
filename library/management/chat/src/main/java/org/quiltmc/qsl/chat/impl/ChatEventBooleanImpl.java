@@ -39,7 +39,7 @@ public class ChatEventBooleanImpl<H> implements ChatEvent<H, Boolean> {
 		}
 
 		@Override
-		public Boolean handleMessage(AbstractChatMessage<?> message) {
+		public Boolean handleMessage(@NotNull AbstractChatMessage<?> message) {
 			for (var hook : hooks) {
 				if (shouldPassOnMessageToHook(message.getTypes(), hook.getMessageTypes())) {
 					if (hook.handleMessage(message)) {
@@ -86,23 +86,23 @@ public class ChatEventBooleanImpl<H> implements ChatEvent<H, Boolean> {
 		return true;
 	}
 
-	public Boolean invoke(AbstractChatMessage<?> message) {
+	public Boolean invoke(@NotNull AbstractChatMessage<?> message) {
 		return backingEvent.invoker().handleMessage(message);
 	}
 
 	@Override
-	public Boolean invokeOrElse(AbstractChatMessage<?> message, Boolean ifNull) {
+	public Boolean invokeOrElse(@NotNull AbstractChatMessage<?> message, @NotNull Boolean ifNull) {
 		Boolean result = backingEvent.invoker().handleMessage(message);
 		return result != null ? result : ifNull;
 	}
 
 	@Override
-	public void register(EnumSet<QuiltMessageType> types, H handler) {
+	public void register(@NotNull EnumSet<QuiltMessageType> types, @NotNull H handler) {
 		backingEvent.register(converter.apply(handler, types));
 	}
 
 	@Override
-	public void register(@NotNull Identifier phaseIdentifier, EnumSet<QuiltMessageType> types, H handler) {
+	public void register(@NotNull Identifier phaseIdentifier, @NotNull EnumSet<QuiltMessageType> types, @NotNull H handler) {
 		backingEvent.register(converter.apply(handler, types));
 	}
 

@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.chat.impl;
 
+import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.chat.api.ChatEvent;
 import org.quiltmc.qsl.chat.api.QuiltChatEvents;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
@@ -37,8 +38,8 @@ public class InternalChatEventHandlerConverters {
 			}
 
 			@Override
-			public AbstractChatMessage<?> handleMessage(AbstractChatMessage<?> message) {
-				return modify.handleMessage(message);
+			public AbstractChatMessage<?> handleMessage(@NotNull AbstractChatMessage<?> message) {
+				return modify.modifyMessage(message);
 			}
 		};
 	}
@@ -51,7 +52,7 @@ public class InternalChatEventHandlerConverters {
 			}
 
 			@Override
-			public Boolean handleMessage(AbstractChatMessage<?> message) {
+			public Boolean handleMessage(@NotNull AbstractChatMessage<?> message) {
 				return cancel.shouldCancel(message);
 			}
 		};
@@ -65,8 +66,8 @@ public class InternalChatEventHandlerConverters {
 			}
 
 			@Override
-			public Void handleMessage(AbstractChatMessage<?> message) {
-				listen.handleMessage(message);
+			public Void handleMessage(@NotNull AbstractChatMessage<?> message) {
+				listen.onMessage(message);
 				return null;
 			}
 		};

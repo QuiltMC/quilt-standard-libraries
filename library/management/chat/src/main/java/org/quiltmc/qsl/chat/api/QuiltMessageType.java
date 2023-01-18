@@ -55,6 +55,7 @@ public enum QuiltMessageType {
 	 * Identifies a message that is arriving on the side it is on currently.
 	 */
 	INBOUND(QuiltMetaMessageType.DIRECTION),
+
 	/**
 	 * Identifies a message that is leaving the side it is on currently.
 	 */

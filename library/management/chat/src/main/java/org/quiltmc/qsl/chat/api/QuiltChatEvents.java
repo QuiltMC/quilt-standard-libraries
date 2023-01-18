@@ -55,7 +55,7 @@ public final class QuiltChatEvents {
 
 	@FunctionalInterface
 	public interface Modify {
-		AbstractChatMessage<?> handleMessage(AbstractChatMessage<?> abstractMessage);
+		AbstractChatMessage<?> modifyMessage(AbstractChatMessage<?> abstractMessage);
 	}
 
 	@FunctionalInterface
@@ -65,6 +65,6 @@ public final class QuiltChatEvents {
 
 	@FunctionalInterface
 	public interface Listen {
-		void handleMessage(AbstractChatMessage<?> abstractMessage);
+		void onMessage(AbstractChatMessage<?> abstractMessage);
 	}
 }

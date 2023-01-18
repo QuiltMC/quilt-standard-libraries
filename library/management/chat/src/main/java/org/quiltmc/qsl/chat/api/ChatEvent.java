@@ -27,28 +27,65 @@ import java.util.EnumSet;
 /**
  * An interface for chat events. This copies much of its behavior from {@link Event}, but in its own interface.
  *
- * @param <H> the type of the handler/functional interface for this event to accept in registration
+ * @param <H> the type of the handler/{@link FunctionalInterface} for this event to accept in registration
  * @param <R> the return type of invoking this event
  */
 public interface ChatEvent<H, R> {
 	/**
-	 * {@return the result of invoking this event, or null if there are no listeners}
+	 * Invokes the event with the provided message and returns the result or null. A null result is usually the result of no handlers
+	 * being attached to this event, but may occur for any other reason depending on the implementation.
+	 *
+	 * @param message the message for the event to process
+	 * @return the result of invoking this event, or null
 	 */
-	@Nullable R invoke(AbstractChatMessage<?> message);
+	@Nullable R invoke(@NotNull AbstractChatMessage<?> message);
 
 	/**
-	 * {@return the result of invoking this event, or ifNull if the result is null}
+	 * Invokes the event with the provided message, but replaces the result with {@code ifNull} if the result would have been null.
+	 *
+	 * @param message the message for the event to process
+	 * @param ifNull a value that should be returned instead of null
+	 * @return the result of invoking this event, or {@code ifNull} if the result would be null
 	 */
-	R invokeOrElse(AbstractChatMessage<?> message, R ifNull);
+	R invokeOrElse(@NotNull AbstractChatMessage<?> message, @NotNull R ifNull);
 
-	void register(EnumSet<QuiltMessageType> types, H handler);
+	/**
+	 * Register a handler for the event.
+	 *
+	 * @param types an {@link EnumSet} of {@link QuiltMessageType} to determine what chat events to receive
+	 * @param handler the handler to register
+	 * @see #register(Identifier, EnumSet, Object)
+	 */
+	void register(@NotNull EnumSet<QuiltMessageType> types, @NotNull H handler);
 
-	void register(@NotNull Identifier phaseIdentifier, EnumSet<QuiltMessageType> types, H handler);
 
+	/**
+	 * Registers a callback to a specific phase of the event.
+	 *
+	 * @param phaseIdentifier the phase identifier
+	 * @param handler the handler to register
+	 */
+	void register(@NotNull Identifier phaseIdentifier, @NotNull EnumSet<QuiltMessageType> types, @NotNull H handler);
+
+	/**
+	 * Request that callbacks registered for one phase be executed before callbacks registered for another phase.
+	 * <p>
+	 * Incompatible ordering constraints such as cycles will lead to inconsistent behavior:
+	 * some constraints will be respected and some will be ignored. If this happens, a warning will be logged.
+	 *
+	 * @param firstPhase  the identifier of the phase that should run before the other. It will be created if it didn't exist yet
+	 * @param secondPhase the identifier of the phase that should run after the other. It will be created if it didn't exist yet
+	 */
 	void addPhaseOrdering(@NotNull Identifier firstPhase, @NotNull Identifier secondPhase);
 
+	/**
+	 * The common interface describing a chat message hook. These should almost never be inherited manually, instead
+	 * relying on various converters for each event to convert a {@link FunctionalInterface} into one of these.
+	 *
+	 * @param <R> the return type of handling a message with this hook
+	 */
 	interface TypedChatApiHook<R> {
 		EnumSet<QuiltMessageType> getMessageTypes();
-		R handleMessage(AbstractChatMessage<?> message);
+		R handleMessage(@NotNull AbstractChatMessage<?> message);
 	}
 }
