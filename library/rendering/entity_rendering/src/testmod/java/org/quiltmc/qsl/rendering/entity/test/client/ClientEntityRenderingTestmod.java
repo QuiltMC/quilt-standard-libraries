@@ -35,17 +35,18 @@ public final class ClientEntityRenderingTestmod implements ClientModInitializer,
 		ArmorRenderingRegistry.TextureProvider {
 	@Override
 	public void onInitializeClient(ModContainer mod) {
-		// TEMP DISABLED TO TEST getTexture() METHOD
-		/*
-		ArmorRenderingRegistry.registerTextureProvider(this,
-				EntityRenderingTestmod.QUILT_HELMET, EntityRenderingTestmod.QUILT_CHESTPLATE,
-				EntityRenderingTestmod.QUILT_LEGGINGS, EntityRenderingTestmod.QUILT_BOOTS);*/
+		ArmorRenderingRegistry.registerTextureProvider(this, EntityRenderingTestmod.QUILT_LEGGINGS);
 	}
+
+	private static final Identifier LEGGINGS_TEXTURE_ID = EntityRenderingTestmod.id("candypants.png");
 
 	@Override
 	public @NotNull Identifier getArmorTexture(@NotNull Identifier texture, @NotNull LivingEntity entity,
 			@NotNull ItemStack stack, @NotNull EquipmentSlot slot, boolean useSecondLayer, @Nullable String suffix) {
-		// simply redirect the texture, so it isn't in Minecraft's texture folder
-		return EntityRenderingTestmod.id(texture.getPath());
+		if (slot == EquipmentSlot.LEGS) {
+			return LEGGINGS_TEXTURE_ID;
+		}
+
+		return texture;
 	}
 }
