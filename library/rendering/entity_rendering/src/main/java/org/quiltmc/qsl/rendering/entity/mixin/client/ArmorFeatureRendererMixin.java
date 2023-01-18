@@ -51,49 +51,49 @@ public abstract class ArmorFeatureRendererMixin {
 	private static Map<String, Identifier> ARMOR_TEXTURE_CACHE;
 
 	@Unique
-	private LivingEntity capturedEntity;
+	private LivingEntity quilt$capturedEntity;
 	@Unique
-	private EquipmentSlot capturedSlot;
+	private EquipmentSlot quilt$capturedSlot;
 
 	@Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
 			at = @At("HEAD"))
-	private void captureEntity(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, LivingEntity livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-		this.capturedEntity = livingEntity;
+	private void quilt$captureEntity(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, LivingEntity livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
+		this.quilt$capturedEntity = livingEntity;
 	}
 
 	@Inject(method = "renderArmor", at = @At("HEAD"))
-	private void captureSlot(MatrixStack matrices, VertexConsumerProvider vertexConsumers, LivingEntity livingEntity, EquipmentSlot slot, int i, BipedEntityModel bipedEntityModel, CallbackInfo ci) {
-		this.capturedSlot = slot;
+	private void quilt$captureSlot(MatrixStack matrices, VertexConsumerProvider vertexConsumers, LivingEntity livingEntity, EquipmentSlot slot, int i, BipedEntityModel bipedEntityModel, CallbackInfo ci) {
+		this.quilt$capturedSlot = slot;
 	}
 
 	@Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
 			at = @At("RETURN"))
-	private void uncapture(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, LivingEntity livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-		this.capturedEntity = null;
-		this.capturedSlot = null;
+	private void quilt$uncapture(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, LivingEntity livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
+		this.quilt$capturedEntity = null;
+		this.quilt$capturedSlot = null;
 	}
 
 	@Inject(method = "getArmor", at = @At("RETURN"), cancellable = true)
-	private void getArmorModel(EquipmentSlot slot, CallbackInfoReturnable<BipedEntityModel<LivingEntity>> cir) {
-		ItemStack stack = this.capturedEntity.getEquippedStack(slot);
+	private void quilt$getArmorModel(EquipmentSlot slot, CallbackInfoReturnable<BipedEntityModel<LivingEntity>> cir) {
+		ItemStack stack = this.quilt$capturedEntity.getEquippedStack(slot);
 
 		BipedEntityModel<LivingEntity> model = cir.getReturnValue();
-		model = ArmorRenderingRegistryImpl.getArmorModel(model, this.capturedEntity, stack, this.capturedSlot);
+		model = ArmorRenderingRegistryImpl.getArmorModel(model, this.quilt$capturedEntity, stack, this.quilt$capturedSlot);
 		cir.setReturnValue(model);
 	}
 
 	@Inject(method = "getArmorTexture",
 			at = @At(value = "INVOKE", target = "Ljava/util/Map;computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;"),
 			cancellable = true)
-	private void getArmorTexture(ArmorItem armorItem, boolean useSecondTexture, /* @Nullable */ String suffix, CallbackInfoReturnable<Identifier> cir) {
-		ItemStack stack = this.capturedEntity.getEquippedStack(this.capturedSlot);
+	private void quilt$getArmorTexture(ArmorItem armorItem, boolean useSecondTexture, /* @Nullable */ String suffix, CallbackInfoReturnable<Identifier> cir) {
+		ItemStack stack = this.quilt$capturedEntity.getEquippedStack(this.quilt$capturedSlot);
 
 		Identifier texture = ARMOR_TEXTURE_CACHE.computeIfAbsent(
 				armorItem.getMaterial().getTexture()
 						+ ArmorTextureUtils.getArmorTextureSuffix(useSecondTexture, suffix)
 						+ ".png",
 				Identifier::new);
-		texture = ArmorRenderingRegistryImpl.getArmorTexture(texture, this.capturedEntity, stack, this.capturedSlot,
+		texture = ArmorRenderingRegistryImpl.getArmorTexture(texture, this.quilt$capturedEntity, stack, this.quilt$capturedSlot,
 				useSecondTexture, suffix);
 
 		if (!texture.getPath().contains(".")) {

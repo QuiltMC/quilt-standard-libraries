@@ -33,18 +33,18 @@ import net.minecraft.util.Identifier;
 @Mixin(ArmorMaterials.class)
 public abstract class ArmorMaterialsMixin implements ArmorMaterial {
 	@Unique
-	private /* final */ Identifier texture;
+	private /* final */ Identifier quilt$texture;
 
 	@SuppressWarnings("rawtypes")
 	@Inject(method = "<init>", at = @At("TAIL"))
-	private void initTexture(String constantName, int ordinal,
+	private void quilt$initTexture(String constantName, int ordinal,
 			String name, int j, int[] is, int k, SoundEvent soundEvent,
 			float f, float g, Supplier supplier, CallbackInfo ci) {
-		this.texture = new Identifier("textures/models/armor/" + name);
+		this.quilt$texture = new Identifier("textures/models/armor/" + name);
 	}
 
 	@Override
 	public @NotNull Identifier getTexture() {
-		return this.texture;
+		return this.quilt$texture;
 	}
 }

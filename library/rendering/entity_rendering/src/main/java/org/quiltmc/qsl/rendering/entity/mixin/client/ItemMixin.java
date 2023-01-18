@@ -31,35 +31,35 @@ import org.quiltmc.qsl.rendering.entity.impl.client.ItemArmorRenderingExtensions
 @Mixin(Item.class)
 public abstract class ItemMixin implements ItemArmorRenderingExtensions {
 	@Unique
-	private @Nullable Event<ArmorRenderingRegistry.TextureProvider> textureProviderEvent;
+	private @Nullable Event<ArmorRenderingRegistry.TextureProvider> quilt$textureProviderEvent;
 	@Unique
-	private @Nullable Event<ArmorRenderingRegistry.ModelProvider> modelProviderEvent;
+	private @Nullable Event<ArmorRenderingRegistry.ModelProvider> quilt$modelProviderEvent;
 
 	@Override
 	public @Nullable Event<ArmorRenderingRegistry.TextureProvider> quilt$getTextureProviderEvent() {
-		return this.textureProviderEvent;
+		return this.quilt$textureProviderEvent;
 	}
 
 	@Override
 	public @Nullable Event<ArmorRenderingRegistry.ModelProvider> quilt$getModelProviderEvent() {
-		return this.modelProviderEvent;
+		return this.quilt$modelProviderEvent;
 	}
 
 	@Override
 	public synchronized @NotNull Event<ArmorRenderingRegistry.TextureProvider> quilt$getOrCreateTextureProviderEvent() {
-		if (this.textureProviderEvent == null) {
-			this.textureProviderEvent = ArmorRenderingRegistryImpl.createTextureProviderEvent();
+		if (this.quilt$textureProviderEvent == null) {
+			this.quilt$textureProviderEvent = ArmorRenderingRegistryImpl.createTextureProviderEvent();
 		}
 
-		return this.textureProviderEvent;
+		return this.quilt$textureProviderEvent;
 	}
 
 	@Override
 	public synchronized @NotNull Event<ArmorRenderingRegistry.ModelProvider> quilt$getOrCreateModelProviderEvent() {
-		if (this.modelProviderEvent == null) {
-			this.modelProviderEvent = ArmorRenderingRegistryImpl.createModelProviderEvent();
+		if (this.quilt$modelProviderEvent == null) {
+			this.quilt$modelProviderEvent = ArmorRenderingRegistryImpl.createModelProviderEvent();
 		}
 
-		return this.modelProviderEvent;
+		return this.quilt$modelProviderEvent;
 	}
 }
