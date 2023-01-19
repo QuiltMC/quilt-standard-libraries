@@ -24,7 +24,7 @@ import org.quiltmc.qsl.chat.impl.ChatEventImpl;
 /**
  * Events for modifying, canceling, and listening for various chat messages.
  * Events are always executed in the order {@link #MODIFY} -> {@link #CANCEL} -> {@link #BEFORE_PROCESS} -> {@link #AFTER_PROCESS}, unless a mod cancels
- * the message, in which case {@link #BEFORE_PROCESS} and {@link #AFTER_PROCESS} do not run.
+ * the message, in which case {@link #CANCELED} is invoked instead of {@link #BEFORE_PROCESS} and {@link #AFTER_PROCESS}.
  * <p>
  * When listening, you will only receive messages that match the provided types of your listener. If you do not provide any of a certain meta message type,
  * then any messages for that meta type will be passed along as long as they match your other specified types.
@@ -40,11 +40,15 @@ public final class QuiltChatEvents {
 
 	/**
 	 * An event that allows you to cancel a message by returning true, or false to allow it to continue through.
+	 *
+	 * @see #CANCELED
 	 */
 	public static final ChatEvent<Cancel, Boolean> CANCEL = new ChatEventBooleanImpl<>(InternalChatEventCallbackConverters::cancelToHook);
 
 	/**
 	 * An event that allows you to listen for messages that have been canceled.
+	 *
+	 * @see #CANCEL
 	 */
 	public static final ChatEvent<Listen, Void> CANCELED = new ChatEventImpl<>(false, InternalChatEventCallbackConverters::listenToHook);
 
