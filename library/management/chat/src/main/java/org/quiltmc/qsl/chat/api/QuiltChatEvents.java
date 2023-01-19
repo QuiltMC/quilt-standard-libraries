@@ -44,6 +44,11 @@ public final class QuiltChatEvents {
 	public static final ChatEvent<Cancel, Boolean> CANCEL = new ChatEventBooleanImpl<>(InternalChatEventCallbackConverters::cancelToHook);
 
 	/**
+	 * An event that allows you to listen for messages that have been canceled.
+	 */
+	public static final ChatEvent<Listen, Void> CANCELED = new ChatEventImpl<>(false, InternalChatEventCallbackConverters::listenToHook);
+
+	/**
 	 * Before (usually) vanilla does any standard processing with this message. Mods may execute other behavior before or after this event.
 	 */
 	public static final ChatEvent<Listen, Void> BEFORE_PROCESS = new ChatEventImpl<>(false, InternalChatEventCallbackConverters::listenToHook);
@@ -70,7 +75,7 @@ public final class QuiltChatEvents {
 	}
 
 	/**
-	 * A {@link FunctionalInterface} that is used with both {@link #BEFORE_PROCESS} and {@link #AFTER_PROCESS} to listen for messages.
+	 * A {@link FunctionalInterface} that is used with {@link #CANCELED}, {@link #BEFORE_PROCESS}, and {@link #AFTER_PROCESS} to listen for messages.
 	 */
 	@FunctionalInterface
 	public interface Listen {
