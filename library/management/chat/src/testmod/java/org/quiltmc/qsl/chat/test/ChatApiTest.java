@@ -22,6 +22,7 @@ import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.chat.api.QuiltChatEvents;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import org.quiltmc.qsl.chat.api.types.ChatC2SMessage;
+import org.quiltmc.qsl.chat.api.types.RawChatC2SMessage;
 import org.quiltmc.qsl.chat.api.types.SystemS2CMessage;
 
 import java.util.EnumSet;
@@ -33,6 +34,13 @@ public class ChatApiTest implements ModInitializer {
 		QuiltChatEvents.AFTER_PROCESS.register(EnumSet.allOf(QuiltMessageType.class), System.out::println);
 		QuiltChatEvents.BEFORE_PROCESS.register(EnumSet.allOf(QuiltMessageType.class), message -> {
 			System.out.println(message.getTypes());
+		});
+
+		QuiltChatEvents.MODIFY.register(EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.CLIENT, QuiltMessageType.OUTBOUND), abstractMessage -> {
+			if (abstractMessage instanceof RawChatC2SMessage raw) {
+				return raw.withMessage(raw.getMessage() + ", wow!");
+			}
+			return abstractMessage;
 		});
 
 		QuiltChatEvents.MODIFY.register(EnumSet.of(QuiltMessageType.SYSTEM, QuiltMessageType.SERVER, QuiltMessageType.OUTBOUND), abstractMessage -> {
