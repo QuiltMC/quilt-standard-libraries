@@ -27,11 +27,11 @@ import java.util.EnumSet;
 import java.util.function.BiFunction;
 
 /**
- * An implementation of {@link ChatEvent} that always returns a {@link Boolean} and has special short circuiting logic for if a handler returns true.
+ * An implementation of {@link ChatEvent} that always returns a {@link Boolean} and has special short circuiting logic for if a callback returns true.
  * This implementation is intended be used for any cancellation events.
  */
-public class ChatEventBooleanImpl<H> implements ChatEvent<H, Boolean> {
-	private final BiFunction<H, EnumSet<QuiltMessageType>, TypedChatApiHook<Boolean>> converter;
+public class ChatEventBooleanImpl<C> implements ChatEvent<C, Boolean> {
+	private final BiFunction<C, EnumSet<QuiltMessageType>, TypedChatApiHook<Boolean>> converter;
 	private final Event<TypedChatApiHook<Boolean>> backingEvent = Event.create(TypedChatApiHook.class, hooks -> new TypedChatApiHook<>() {
 		@Override
 		public EnumSet<QuiltMessageType> getMessageTypes() {
@@ -51,7 +51,7 @@ public class ChatEventBooleanImpl<H> implements ChatEvent<H, Boolean> {
 		}
 	});
 
-	public ChatEventBooleanImpl(BiFunction<H, EnumSet<QuiltMessageType>, TypedChatApiHook<Boolean>> converter) {
+	public ChatEventBooleanImpl(BiFunction<C, EnumSet<QuiltMessageType>, TypedChatApiHook<Boolean>> converter) {
 		this.converter = converter;
 	}
 
@@ -97,13 +97,13 @@ public class ChatEventBooleanImpl<H> implements ChatEvent<H, Boolean> {
 	}
 
 	@Override
-	public void register(@NotNull EnumSet<QuiltMessageType> types, @NotNull H handler) {
-		backingEvent.register(converter.apply(handler, types));
+	public void register(@NotNull EnumSet<QuiltMessageType> types, @NotNull C callback) {
+		backingEvent.register(converter.apply(callback, types));
 	}
 
 	@Override
-	public void register(@NotNull Identifier phaseIdentifier, @NotNull EnumSet<QuiltMessageType> types, @NotNull H handler) {
-		backingEvent.register(converter.apply(handler, types));
+	public void register(@NotNull Identifier phaseIdentifier, @NotNull EnumSet<QuiltMessageType> types, @NotNull C callback) {
+		backingEvent.register(converter.apply(callback, types));
 	}
 
 	@Override

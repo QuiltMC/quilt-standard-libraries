@@ -18,7 +18,7 @@ package org.quiltmc.qsl.chat.api;
 
 import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
 import org.quiltmc.qsl.chat.impl.ChatEventBooleanImpl;
-import org.quiltmc.qsl.chat.impl.InternalChatEventHandlerConverters;
+import org.quiltmc.qsl.chat.impl.InternalChatEventCallbackConverters;
 import org.quiltmc.qsl.chat.impl.ChatEventImpl;
 
 /**
@@ -36,22 +36,22 @@ public final class QuiltChatEvents {
 	 * An event that allows you to modify a message before further processing by returning a new one to replace it.
 	 * The usage of `withX` methods is recommended.
 	 */
-	public static final ChatEvent<Modify, AbstractChatMessage<?>> MODIFY = new ChatEventImpl<>(true, InternalChatEventHandlerConverters::modifyToHook);
+	public static final ChatEvent<Modify, AbstractChatMessage<?>> MODIFY = new ChatEventImpl<>(true, InternalChatEventCallbackConverters::modifyToHook);
 
 	/**
 	 * An event that allows you to cancel a message by returning true, or false to allow it to continue through.
 	 */
-	public static final ChatEvent<Cancel, Boolean> CANCEL = new ChatEventBooleanImpl<>(InternalChatEventHandlerConverters::cancelToHook);
+	public static final ChatEvent<Cancel, Boolean> CANCEL = new ChatEventBooleanImpl<>(InternalChatEventCallbackConverters::cancelToHook);
 
 	/**
 	 * Before (usually) vanilla does any standard processing with this message. Mods may execute other behavior before or after this event.
 	 */
-	public static final ChatEvent<Listen, Void> BEFORE_PROCESS = new ChatEventImpl<>(false, InternalChatEventHandlerConverters::listenToHook);
+	public static final ChatEvent<Listen, Void> BEFORE_PROCESS = new ChatEventImpl<>(false, InternalChatEventCallbackConverters::listenToHook);
 
 	/**
 	 * After (usually) vanilla does any standard processing with this message. Mods may execute other behavior before or after this event.
 	 */
-	public static final ChatEvent<Listen, Void> AFTER_PROCESS = new ChatEventImpl<>(false, InternalChatEventHandlerConverters::listenToHook);
+	public static final ChatEvent<Listen, Void> AFTER_PROCESS = new ChatEventImpl<>(false, InternalChatEventCallbackConverters::listenToHook);
 
 	/**
 	 * A {@link FunctionalInterface} that is used with {@link #MODIFY} to modify messages.

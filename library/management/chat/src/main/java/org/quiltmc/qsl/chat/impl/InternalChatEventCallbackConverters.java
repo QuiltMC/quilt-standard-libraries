@@ -25,10 +25,10 @@ import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
 import java.util.EnumSet;
 
 /**
- * Converts various handlers from {@link QuiltChatEvents} into {@link ChatEvent.TypedChatApiHook}s
+ * Converts various callbacks from {@link QuiltChatEvents} into {@link ChatEvent.TypedChatApiHook}s
  */
-public class InternalChatEventHandlerConverters {
-	private InternalChatEventHandlerConverters() { }
+public class InternalChatEventCallbackConverters {
+	private InternalChatEventCallbackConverters() { }
 
 	public static ChatEvent.TypedChatApiHook<AbstractChatMessage<?>> modifyToHook(QuiltChatEvents.Modify modify, EnumSet<QuiltMessageType> types) {
 		return new ChatEvent.TypedChatApiHook<>() {

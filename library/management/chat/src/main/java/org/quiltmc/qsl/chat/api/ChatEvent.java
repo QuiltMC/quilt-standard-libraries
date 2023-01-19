@@ -27,12 +27,12 @@ import java.util.EnumSet;
 /**
  * An interface for chat events. This copies much of its behavior from {@link Event}, but in its own interface.
  *
- * @param <H> the type of the handler/{@link FunctionalInterface} for this event to accept in registration
+ * @param <C> the type of the callback for this event to accept in registration
  * @param <R> the return type of invoking this event
  */
-public interface ChatEvent<H, R> {
+public interface ChatEvent<C, R> {
 	/**
-	 * Invokes the event with the provided message and returns the result or null. A null result is usually the result of no handlers
+	 * Invokes the event with the provided message and returns the result or null. A null result is usually the result of no callbacks
 	 * being attached to this event, but may occur for any other reason depending on the implementation.
 	 *
 	 * @param message the message for the event to process
@@ -50,22 +50,22 @@ public interface ChatEvent<H, R> {
 	R invokeOrElse(@NotNull AbstractChatMessage<?> message, @NotNull R ifNull);
 
 	/**
-	 * Register a handler for the event.
+	 * Register a callback for the event.
 	 *
 	 * @param types an {@link EnumSet} of {@link QuiltMessageType} to determine what chat events to receive
-	 * @param handler the handler to register
+	 * @param callback the callback to register
 	 * @see #register(Identifier, EnumSet, Object)
 	 */
-	void register(@NotNull EnumSet<QuiltMessageType> types, @NotNull H handler);
+	void register(@NotNull EnumSet<QuiltMessageType> types, @NotNull C callback);
 
 
 	/**
 	 * Registers a callback to a specific phase of the event.
 	 *
 	 * @param phaseIdentifier the phase identifier
-	 * @param handler the handler to register
+	 * @param callback the callback to register
 	 */
-	void register(@NotNull Identifier phaseIdentifier, @NotNull EnumSet<QuiltMessageType> types, @NotNull H handler);
+	void register(@NotNull Identifier phaseIdentifier, @NotNull EnumSet<QuiltMessageType> types, @NotNull C callback);
 
 	/**
 	 * Request that callbacks registered for one phase be executed before callbacks registered for another phase.

@@ -31,11 +31,11 @@ import java.util.function.BiFunction;
  * The common implementation of {@link ChatEvent}. If this event is set to preform assignable checks, then it will require that any return values are both
  * non-null and assignable to the original class passed to {@link ChatEvent#invoke(AbstractChatMessage)}, throwing if not.
  */
-public class ChatEventImpl<H, R> implements ChatEvent<H, R> {
+public class ChatEventImpl<C, R> implements ChatEvent<C, R> {
 	private final boolean shouldPreformAssignableCheck;
-	private final BiFunction<H, EnumSet<QuiltMessageType>, TypedChatApiHook<R>> converter;
+	private final BiFunction<C, EnumSet<QuiltMessageType>, TypedChatApiHook<R>> converter;
 
-	public ChatEventImpl(boolean shouldPreformAssignableCheck, BiFunction<H, EnumSet<QuiltMessageType>, TypedChatApiHook<R>> converter) {
+	public ChatEventImpl(boolean shouldPreformAssignableCheck, BiFunction<C, EnumSet<QuiltMessageType>, TypedChatApiHook<R>> converter) {
 		this.shouldPreformAssignableCheck = shouldPreformAssignableCheck;
 		this.converter = converter;
 	}
@@ -55,10 +55,10 @@ public class ChatEventImpl<H, R> implements ChatEvent<H, R> {
 					R tmpResult = hook.handleMessage(message);
 					if (shouldPreformAssignableCheck) {
 						if (tmpResult == null) {
-							throw new NullPointerException("Handler attached to a ChatEvent returned a null result!");
+							throw new NullPointerException("Callback attached to a ChatEvent returned a null result!");
 						} else if (!message.getClass().isAssignableFrom(tmpResult.getClass())) {
 							throw new IllegalArgumentException(
-									"Handler attached to a ChatEvent returned a non-similar value! " +
+									"Callback attached to a ChatEvent returned a non-similar value! " +
 											"Expected a subclass or instance of " + message.getClass().getName() + " but got a " + tmpResult.getClass().getName() + "!"
 							);
 						}
@@ -114,13 +114,13 @@ public class ChatEventImpl<H, R> implements ChatEvent<H, R> {
 	}
 
 	@Override
-	public void register(@NotNull EnumSet<QuiltMessageType> types, @NotNull H handler) {
-		backingEvent.register(converter.apply(handler, types));
+	public void register(@NotNull EnumSet<QuiltMessageType> types, @NotNull C callback) {
+		backingEvent.register(converter.apply(callback, types));
 	}
 
 	@Override
-	public void register(@NotNull Identifier phaseIdentifier, @NotNull EnumSet<QuiltMessageType> types, @NotNull H handler) {
-		backingEvent.register(phaseIdentifier, converter.apply(handler, types));
+	public void register(@NotNull Identifier phaseIdentifier, @NotNull EnumSet<QuiltMessageType> types, @NotNull C callback) {
+		backingEvent.register(phaseIdentifier, converter.apply(callback, types));
 	}
 
 	@Override
