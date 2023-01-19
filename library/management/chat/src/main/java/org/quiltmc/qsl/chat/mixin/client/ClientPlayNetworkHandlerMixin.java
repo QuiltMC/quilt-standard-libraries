@@ -55,7 +55,7 @@ public class ClientPlayNetworkHandlerMixin {
 	public void quilt$cancelInboundChatMessage(ChatMessageS2CPacket packet, CallbackInfo ci) {
 		var message = new ChatS2CMessage(client.player, true, packet);
 		if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) {
-			QuiltChatEvents.CANCELED.invoke(message);
+			QuiltChatEvents.CANCELLED.invoke(message);
 			ci.cancel();
 		}
 	}
@@ -82,7 +82,7 @@ public class ClientPlayNetworkHandlerMixin {
 	public void quilt$cancelAndBeforeInboundSystemMessage(SystemMessageS2CPacket packet, CallbackInfo ci) {
 		var message = new SystemS2CMessage(client.player, true, packet);
 		if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) {
-			QuiltChatEvents.CANCELED.invoke(message);
+			QuiltChatEvents.CANCELLED.invoke(message);
 			ci.cancel();
 			return;
 		}
@@ -106,7 +106,7 @@ public class ClientPlayNetworkHandlerMixin {
 	public void quilt$cancelInboundProfileIndependentMessage(ProfileIndependentMessageS2CPacket packet, CallbackInfo ci) {
 		var message = new ProfileIndependentS2CMessage(client.player, true, packet);
 		if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) {
-			QuiltChatEvents.CANCELED.invoke(message);
+			QuiltChatEvents.CANCELLED.invoke(message);
 			ci.cancel();
 		}
 	}
@@ -140,7 +140,7 @@ public class ClientPlayNetworkHandlerMixin {
 
 		var message = new RawChatC2SMessage(client.player, true, string);
 		if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) {
-			QuiltChatEvents.CANCELED.invoke(message);
+			QuiltChatEvents.CANCELLED.invoke(message);
 			ci.cancel();
 			return;
 		}
@@ -167,7 +167,7 @@ public class ClientPlayNetworkHandlerMixin {
 				instance.sendPacket(message.serialized());
 				QuiltChatEvents.AFTER_PROCESS.invoke(message);
 			} else {
-				QuiltChatEvents.CANCELED.invoke(message);
+				QuiltChatEvents.CANCELLED.invoke(message);
 			}
 		} else {
 			throw new IllegalArgumentException("Received non-ChatMessageC2SPacket for argument to ClientPlayNetworkHandler.sendPacket in ClientPlayNetworkHandler.m_fzlgisyq (sendChatMessage? mapping missing at time of writing)");

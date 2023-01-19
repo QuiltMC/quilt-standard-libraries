@@ -24,7 +24,7 @@ import org.quiltmc.qsl.chat.impl.ChatEventImpl;
 /**
  * Events for modifying, canceling, and listening for various chat messages.
  * Events are always executed in the order {@link #MODIFY} -> {@link #CANCEL} -> {@link #BEFORE_PROCESS} -> {@link #AFTER_PROCESS}, unless a mod cancels
- * the message, in which case {@link #CANCELED} is invoked instead of {@link #BEFORE_PROCESS} and {@link #AFTER_PROCESS}.
+ * the message, in which case {@link #CANCELLED} is invoked instead of {@link #BEFORE_PROCESS} and {@link #AFTER_PROCESS}.
  * <p>
  * When listening, you will only receive messages that match the provided types of your listener. If you do not provide any of a certain meta message type,
  * then any messages for that meta type will be passed along as long as they match your other specified types.
@@ -41,7 +41,7 @@ public final class QuiltChatEvents {
 	/**
 	 * An event that allows you to cancel a message by returning true, or false to allow it to continue through.
 	 *
-	 * @see #CANCELED
+	 * @see #CANCELLED
 	 */
 	public static final ChatEvent<Cancel, Boolean> CANCEL = new ChatEventBooleanImpl<>(InternalChatEventCallbackConverters::cancelToHook);
 
@@ -50,7 +50,7 @@ public final class QuiltChatEvents {
 	 *
 	 * @see #CANCEL
 	 */
-	public static final ChatEvent<Listen, Void> CANCELED = new ChatEventImpl<>(false, InternalChatEventCallbackConverters::listenToHook);
+	public static final ChatEvent<Listen, Void> CANCELLED = new ChatEventImpl<>(false, InternalChatEventCallbackConverters::listenToHook);
 
 	/**
 	 * Before (usually) vanilla does any standard processing with this message. Mods may execute other behavior before or after this event.
@@ -79,7 +79,7 @@ public final class QuiltChatEvents {
 	}
 
 	/**
-	 * A {@link FunctionalInterface} that is used with {@link #CANCELED}, {@link #BEFORE_PROCESS}, and {@link #AFTER_PROCESS} to listen for messages.
+	 * A {@link FunctionalInterface} that is used with {@link #CANCELLED}, {@link #BEFORE_PROCESS}, and {@link #AFTER_PROCESS} to listen for messages.
 	 */
 	@FunctionalInterface
 	public interface Listen {

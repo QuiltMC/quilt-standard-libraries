@@ -46,7 +46,7 @@ public class ServerPlayNetworkHandlerMixin {
 		message = (ChatC2SMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message);
 
 		if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) {
-			QuiltChatEvents.CANCELED.invoke(message);
+			QuiltChatEvents.CANCELLED.invoke(message);
 			ci.cancel();
 		}
 	}
@@ -70,7 +70,7 @@ public class ServerPlayNetworkHandlerMixin {
 		independentMessage = (ProfileIndependentS2CMessage) QuiltChatEvents.MODIFY.invokeOrElse(independentMessage, independentMessage);
 
 		if (QuiltChatEvents.CANCEL.invoke(independentMessage) == Boolean.TRUE) {
-			QuiltChatEvents.CANCELED.invoke(independentMessage);
+			QuiltChatEvents.CANCELLED.invoke(independentMessage);
 			ci.cancel();
 			return;
 		}
@@ -91,7 +91,7 @@ public class ServerPlayNetworkHandlerMixin {
 			message = (ChatS2CMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message);
 
 			if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) {
-				QuiltChatEvents.CANCELED.invoke(message);
+				QuiltChatEvents.CANCELLED.invoke(message);
 				return;
 			};
 

@@ -47,7 +47,7 @@ public class ServerPlayerEntityMixin {
 			instance.sendPacket(quilt$sendSystemMessage$storedSystemMessage.serialized(), listener);
 			QuiltChatEvents.AFTER_PROCESS.invoke(quilt$sendSystemMessage$storedSystemMessage);
 		} else {
-			QuiltChatEvents.CANCELED.invoke(quilt$sendSystemMessage$storedSystemMessage);
+			QuiltChatEvents.CANCELLED.invoke(quilt$sendSystemMessage$storedSystemMessage);
 		}
 	}
 }
