@@ -40,11 +40,6 @@ public final class ArmorRenderingRegistry {
 	}
 
 	/**
-	 * The identifier of the default phase for texture/model providers.
-	 */
-	public static final Identifier DEFAULT_PHASE = Event.DEFAULT_PHASE;
-
-	/**
 	 * Registers a texture provider for the specified items.
 	 *
 	 * @param phaseIdentifier the phase identifier
@@ -80,7 +75,7 @@ public final class ArmorRenderingRegistry {
 	 * @param items    the items to register for
 	 */
 	public static void registerTextureProvider(@NotNull TextureProvider provider, @NotNull ItemConvertible... items) {
-		registerTextureProvider(DEFAULT_PHASE, provider, items);
+		registerTextureProvider(Event.DEFAULT_PHASE, provider, items);
 	}
 
 	/**
@@ -119,7 +114,7 @@ public final class ArmorRenderingRegistry {
 	 * @param items    the items to register for
 	 */
 	public static void registerModelProvider(@NotNull ModelProvider provider, @NotNull ItemConvertible... items) {
-		registerModelProvider(DEFAULT_PHASE, provider, items);
+		registerModelProvider(Event.DEFAULT_PHASE, provider, items);
 	}
 
 	/**
