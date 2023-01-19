@@ -38,12 +38,13 @@ public final class ClientEntityRenderingTestmod implements ClientModInitializer,
 		ArmorRenderingRegistry.registerTextureProvider(this, EntityRenderingTestmod.QUILT_LEGGINGS);
 	}
 
-	private static final Identifier LEGGINGS_TEXTURE_ID = EntityRenderingTestmod.id("pants_made_out_of_candied_quilts.png");
+	private static final Identifier LEGGINGS_TEXTURE_ID = EntityRenderingTestmod.id("overpowered_pants_of_queerness.png");
 
 	@Override
 	public @NotNull Identifier getArmorTexture(@NotNull Identifier texture, @NotNull LivingEntity entity,
 			@NotNull ItemStack stack, @NotNull EquipmentSlot slot, boolean useSecondLayer, @Nullable String suffix) {
 		if (slot == EquipmentSlot.LEGS) {
+			// redirect leggings texture, because it has a non-standard name
 			return LEGGINGS_TEXTURE_ID;
 		}
 
