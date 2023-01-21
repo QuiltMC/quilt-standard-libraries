@@ -53,12 +53,12 @@ public class InternalChatEventCallbackConverters {
 
 			@Override
 			public Boolean handleMessage(@NotNull AbstractChatMessage<?> message) {
-				return cancel.shouldCancel(message);
+				return cancel.shouldCancelMessage(message);
 			}
 		};
 	}
 
-	public static ChatEvent.TypedChatApiHook<Void> listenToHook(QuiltChatEvents.Listen listen, EnumSet<QuiltMessageType> types) {
+	public static ChatEvent.TypedChatApiHook<Void> cancelledToHook(QuiltChatEvents.Cancelled cancelled, EnumSet<QuiltMessageType> types) {
 		return new ChatEvent.TypedChatApiHook<>() {
 			@Override
 			public EnumSet<QuiltMessageType> getMessageTypes() {
@@ -67,7 +67,37 @@ public class InternalChatEventCallbackConverters {
 
 			@Override
 			public Void handleMessage(@NotNull AbstractChatMessage<?> message) {
-				listen.onMessage(message);
+				cancelled.onMessageCancelled(message);
+				return null;
+			}
+		};
+	}
+
+	public static ChatEvent.TypedChatApiHook<Void> beforeToHook(QuiltChatEvents.Before before, EnumSet<QuiltMessageType> types) {
+		return new ChatEvent.TypedChatApiHook<>() {
+			@Override
+			public EnumSet<QuiltMessageType> getMessageTypes() {
+				return types;
+			}
+
+			@Override
+			public Void handleMessage(@NotNull AbstractChatMessage<?> message) {
+				before.beforeMessage(message);
+				return null;
+			}
+		};
+	}
+
+	public static ChatEvent.TypedChatApiHook<Void> afterToHook(QuiltChatEvents.After after, EnumSet<QuiltMessageType> types) {
+		return new ChatEvent.TypedChatApiHook<>() {
+			@Override
+			public EnumSet<QuiltMessageType> getMessageTypes() {
+				return types;
+			}
+
+			@Override
+			public Void handleMessage(@NotNull AbstractChatMessage<?> message) {
+				after.afterMessage(message);
 				return null;
 			}
 		};

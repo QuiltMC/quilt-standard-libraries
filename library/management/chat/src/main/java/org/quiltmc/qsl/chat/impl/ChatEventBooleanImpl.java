@@ -61,7 +61,7 @@ public class ChatEventBooleanImpl<C> implements ChatEvent<C, Boolean> {
 			// If the hook isn't looking for it
 			if (!hookTypes.contains(messageType)) {
 				// If it doesn't match the complex rule
-				if (!matchesMetaTypeRule(messageType.metaType, hookTypes)) {
+				if (!this.matchesMetaTypeRule(messageType.metaType, hookTypes)) {
 					// Not a match
 					return false;
 				}

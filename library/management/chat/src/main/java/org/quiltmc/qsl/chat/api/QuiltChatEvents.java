@@ -50,17 +50,17 @@ public final class QuiltChatEvents {
 	 *
 	 * @see #CANCEL
 	 */
-	public static final ChatEvent<Listen, Void> CANCELLED = new ChatEventImpl<>(false, InternalChatEventCallbackConverters::listenToHook);
+	public static final ChatEvent<Cancelled, Void> CANCELLED = new ChatEventImpl<>(false, InternalChatEventCallbackConverters::cancelledToHook);
 
 	/**
 	 * Before (usually) vanilla does any standard processing with this message. Mods may execute other behavior before or after this event.
 	 */
-	public static final ChatEvent<Listen, Void> BEFORE_PROCESS = new ChatEventImpl<>(false, InternalChatEventCallbackConverters::listenToHook);
+	public static final ChatEvent<Before, Void> BEFORE_PROCESS = new ChatEventImpl<>(false, InternalChatEventCallbackConverters::beforeToHook);
 
 	/**
 	 * After (usually) vanilla does any standard processing with this message. Mods may execute other behavior before or after this event.
 	 */
-	public static final ChatEvent<Listen, Void> AFTER_PROCESS = new ChatEventImpl<>(false, InternalChatEventCallbackConverters::listenToHook);
+	public static final ChatEvent<After, Void> AFTER_PROCESS = new ChatEventImpl<>(false, InternalChatEventCallbackConverters::afterToHook);
 
 	/**
 	 * A {@link FunctionalInterface} that is used with {@link #MODIFY} to modify messages.
@@ -75,14 +75,30 @@ public final class QuiltChatEvents {
 	 */
 	@FunctionalInterface
 	public interface Cancel {
-		boolean shouldCancel(AbstractChatMessage<?> abstractMessage);
+		boolean shouldCancelMessage(AbstractChatMessage<?> abstractMessage);
 	}
 
 	/**
-	 * A {@link FunctionalInterface} that is used with {@link #CANCELLED}, {@link #BEFORE_PROCESS}, and {@link #AFTER_PROCESS} to listen for messages.
+	 * A {@link FunctionalInterface} that is used with {@link #CANCELLED}to listen for cancelled messages.
 	 */
 	@FunctionalInterface
-	public interface Listen {
-		void onMessage(AbstractChatMessage<?> abstractMessage);
+	public interface Cancelled {
+		void onMessageCancelled(AbstractChatMessage<?> abstractMessage);
+	}
+
+	/**
+	 * A {@link FunctionalInterface} that is used with {@link #BEFORE_PROCESS} to listen for before messages.
+	 */
+	@FunctionalInterface
+	public interface Before {
+		void beforeMessage(AbstractChatMessage<?> abstractMessage);
+	}
+
+	/**
+	 * A {@link FunctionalInterface} that is used with {@link #AFTER_PROCESS} to listen for after messages.
+	 */
+	@FunctionalInterface
+	public interface After {
+		void afterMessage(AbstractChatMessage<?> abstractMessage);
 	}
 }
