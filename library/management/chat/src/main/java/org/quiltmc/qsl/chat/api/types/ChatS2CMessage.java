@@ -69,95 +69,95 @@ public class ChatS2CMessage extends AbstractChatMessage<ChatMessageS2CPacket> {
 
 	@Override
 	public @NotNull EnumSet<QuiltMessageType> getTypes() {
-		return InternalMessageTypesFactory.s2cType(QuiltMessageType.CHAT, isClient);
+		return InternalMessageTypesFactory.s2cType(QuiltMessageType.CHAT, this.isClient);
 	}
 
 	@Override
 	public @NotNull ChatMessageS2CPacket serialized() {
-		return new ChatMessageS2CPacket(sender, index, signature, body, unsignedContent, filterMask, messageType);
+		return new ChatMessageS2CPacket(this.sender, this.index, this.signature, this.body, this.unsignedContent, this.filterMask, this.messageType);
 	}
 
 	@Contract(pure = true)
 	public UUID getSender() {
-		return sender;
+		return this.sender;
 	}
 
 	@Contract(pure = true)
 	public int getIndex() {
-		return index;
+		return this.index;
 	}
 
 	@Contract(pure = true)
 	public MessageSignature getSignature() {
-		return signature;
+		return this.signature;
 	}
 
 	@Contract(pure = true)
 	public MessageBody.Serialized getBody() {
-		return body;
+		return this.body;
 	}
 
 	@Contract(pure = true)
 	public Text getUnsignedContent() {
-		return unsignedContent;
+		return this.unsignedContent;
 	}
 
 	@Contract(pure = true)
 	public FilterMask getFilterMask() {
-		return filterMask;
+		return this.filterMask;
 	}
 
 	@Contract(pure = true)
 	public MessageType.Serialized getMessageType() {
-		return messageType;
+		return this.messageType;
 	}
 
 	@Contract(value = "_ -> new", pure = true)
 	public ChatS2CMessage withSender(UUID sender) {
-		return new ChatS2CMessage(player, isClient, sender, index, signature, body, unsignedContent, filterMask, messageType);
+		return new ChatS2CMessage(this.player, this.isClient, sender, this.index, this.signature, this.body, this.unsignedContent, this.filterMask, this.messageType);
 	}
 
 	@Contract(value = "_ -> new", pure = true)
 	public ChatS2CMessage withIndex(int index) {
-		return new ChatS2CMessage(player, isClient, sender, index, signature, body, unsignedContent, filterMask, messageType);
+		return new ChatS2CMessage(this.player, this.isClient, this.sender, index, this.signature, this.body, this.unsignedContent, this.filterMask, this.messageType);
 	}
 
 	@Contract(value = "_ -> new", pure = true)
 	public ChatS2CMessage withSignature(MessageSignature signature) {
-		return new ChatS2CMessage(player, isClient, sender, index, signature, body, unsignedContent, filterMask, messageType);
+		return new ChatS2CMessage(this.player, this.isClient, this.sender, this.index, signature, this.body, this.unsignedContent, this.filterMask, this.messageType);
 	}
 
 	@Contract(value = "_ -> new", pure = true)
 	public ChatS2CMessage withBody(MessageBody.Serialized body) {
-		return new ChatS2CMessage(player, isClient, sender, index, signature, body, unsignedContent, filterMask, messageType);
+		return new ChatS2CMessage(this.player, this.isClient, this.sender, this.index, this.signature, body, this.unsignedContent, this.filterMask, this.messageType);
 	}
 
 	@Contract(value = "_ -> new", pure = true)
 	public ChatS2CMessage withUnsignedContent(Text unsignedContent) {
-		return new ChatS2CMessage(player, isClient, sender, index, signature, body, unsignedContent, filterMask, messageType);
+		return new ChatS2CMessage(this.player, this.isClient, this.sender, this.index, this.signature, this.body, unsignedContent, this.filterMask, this.messageType);
 	}
 
 	@Contract(value = "_ -> new", pure = true)
 	public ChatS2CMessage withFilterMask(FilterMask filterMask) {
-		return new ChatS2CMessage(player, isClient, sender, index, signature, body, unsignedContent, filterMask, messageType);
+		return new ChatS2CMessage(this.player, this.isClient, this.sender, this.index, this.signature, this.body, this.unsignedContent, filterMask, this.messageType);
 	}
 
 	@Contract(value = "_ -> new", pure = true)
 	public ChatS2CMessage withMessageType(MessageType.Serialized messageType) {
-		return new ChatS2CMessage(player, isClient, sender, index, signature, body, unsignedContent, filterMask, messageType);
+		return new ChatS2CMessage(this.player, this.isClient, this.sender, this.index, this.signature, this.body, this.unsignedContent, this.filterMask, messageType);
 	}
 
 	@Override
 	public String toString() {
-		return "ChatS2CMessage{" + "sender=" + sender +
-				", index=" + index +
-				", signature=" + signature +
-				", body=" + body +
-				", unsignedContent=" + unsignedContent +
-				", filterMask=" + filterMask +
-				", messageType=" + messageType +
-				", player=" + player +
-				", isClient=" + isClient +
+		return "ChatS2CMessage{" + "sender=" + this.sender +
+				", index=" + this.index +
+				", signature=" + this.signature +
+				", body=" + this.body +
+				", unsignedContent=" + this.unsignedContent +
+				", filterMask=" + this.filterMask +
+				", messageType=" + this.messageType +
+				", player=" + this.player +
+				", isClient=" + this.isClient +
 				'}';
 	}
 }

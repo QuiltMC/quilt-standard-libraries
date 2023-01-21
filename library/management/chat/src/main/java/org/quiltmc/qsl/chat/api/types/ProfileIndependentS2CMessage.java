@@ -57,40 +57,40 @@ public class ProfileIndependentS2CMessage extends AbstractChatMessage<ProfileInd
 
 	@Override
 	public @NotNull EnumSet<QuiltMessageType> getTypes() {
-		return InternalMessageTypesFactory.s2cType(QuiltMessageType.PROFILE_INDEPENDENT, isClient);
+		return InternalMessageTypesFactory.s2cType(QuiltMessageType.PROFILE_INDEPENDENT, this.isClient);
 	}
 
 	@Override
 	public @NotNull ProfileIndependentMessageS2CPacket serialized() {
-		return new ProfileIndependentMessageS2CPacket(message, messageType.serialize(player.world.getRegistryManager()));
+		return new ProfileIndependentMessageS2CPacket(this.message, this.messageType.serialize(this.player.world.getRegistryManager()));
 	}
 
 	@Contract(pure = true)
 	public Text getMessage() {
-		return message;
+		return this.message;
 	}
 
 	@Contract(pure = true)
 	public MessageType.Parameters getMessageType() {
-		return messageType;
+		return this.messageType;
 	}
 
 	@Contract(value = "_ -> new", pure = true)
 	public ProfileIndependentS2CMessage withMessage(Text message) {
-		return new ProfileIndependentS2CMessage(player, isClient, message, messageType);
+		return new ProfileIndependentS2CMessage(this.player, this.isClient, message, this.messageType);
 	}
 
 	@Contract(value = "_ -> new", pure = true)
 	public ProfileIndependentS2CMessage withMessageType(MessageType.Parameters messageType) {
-		return new ProfileIndependentS2CMessage(player, isClient, message, messageType);
+		return new ProfileIndependentS2CMessage(this.player, this.isClient, this.message, messageType);
 	}
 
 	@Override
 	public String toString() {
-		return "ProfileIndependentS2CMessage{" + "message=" + message +
-				", messageType=" + messageType +
-				", player=" + player +
-				", isClient=" + isClient +
+		return "ProfileIndependentS2CMessage{" + "message=" + this.message +
+				", messageType=" + this.messageType +
+				", player=" + this.player +
+				", isClient=" + this.isClient +
 				'}';
 	}
 }

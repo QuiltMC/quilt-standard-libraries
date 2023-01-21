@@ -64,7 +64,7 @@ public abstract class AbstractChatMessage<S> {
 	 */
 	@Contract(pure = true)
 	public final @NotNull PlayerEntity getPlayer() {
-		return player;
+		return this.player;
 	}
 
 	/**
@@ -74,6 +74,6 @@ public abstract class AbstractChatMessage<S> {
 	 */
 	@Contract(pure = true)
 	public boolean isClient() {
-		return isClient;
+		return this.isClient;
 	}
 }

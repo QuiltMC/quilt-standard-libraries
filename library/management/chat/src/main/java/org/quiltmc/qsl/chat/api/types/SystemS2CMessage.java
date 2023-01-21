@@ -50,41 +50,41 @@ public class SystemS2CMessage extends AbstractChatMessage<SystemMessageS2CPacket
 
 	@Override
 	public @NotNull EnumSet<QuiltMessageType> getTypes() {
-		return InternalMessageTypesFactory.s2cType(QuiltMessageType.SYSTEM, isClient);
+		return InternalMessageTypesFactory.s2cType(QuiltMessageType.SYSTEM, this.isClient);
 	}
 
 	@Override
 	public @NotNull SystemMessageS2CPacket serialized() {
-		return new SystemMessageS2CPacket(content, overlay);
+		return new SystemMessageS2CPacket(this.content, this.overlay);
 	}
 
 	@Contract(pure = true)
 	public Text getContent() {
-		return content;
+		return this.content;
 	}
 
 	@Contract(pure = true)
 	public boolean isOverlay() {
-		return overlay;
+		return this.overlay;
 	}
 
 	@Contract(value = "_ -> new", pure = true)
 	public SystemS2CMessage withContent(Text content) {
-		return new SystemS2CMessage(player, isClient, content, overlay);
+		return new SystemS2CMessage(this.player, this.isClient, content, this.overlay);
 	}
 
 	@Contract(value = "_ -> new", pure = true)
 	public SystemS2CMessage withOverlay(boolean overlay) {
-		return new SystemS2CMessage(player, isClient, content, overlay);
+		return new SystemS2CMessage(this.player, this.isClient, this.content, overlay);
 	}
 
 	@Override
 	public String toString() {
-		return "SystemS2CMessage{" + "player=" + player +
-				", content=" + content +
-				", overlay=" + overlay +
-				", player=" + player +
-				", isClient=" + isClient +
+		return "SystemS2CMessage{" + "player=" + this.player +
+				", content=" + this.content +
+				", overlay=" + this.overlay +
+				", player=" + this.player +
+				", isClient=" + this.isClient +
 				'}';
 	}
 }

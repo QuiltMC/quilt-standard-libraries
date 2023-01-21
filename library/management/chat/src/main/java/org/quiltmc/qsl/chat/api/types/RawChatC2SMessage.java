@@ -43,21 +43,21 @@ public class RawChatC2SMessage extends AbstractChatMessage<String> {
 
 	@Contract(pure = true)
 	public String getMessage() {
-		return message;
+		return this.message;
 	}
 
 	@Contract(value = "_ -> new", pure = true)
 	public RawChatC2SMessage withMessage(String message) {
-		return new RawChatC2SMessage(player, isClient, message);
+		return new RawChatC2SMessage(this.player, this.isClient, message);
 	}
 
 	@Override
 	public @NotNull String serialized() {
-		return message;
+		return this.message;
 	}
 
 	@Override
 	public String toString() {
-		return "RawChatC2SMessage{" + "message='" + message + '\'' + '}';
+		return "RawChatC2SMessage{" + "message='" + this.message + '\'' + '}';
 	}
 }
