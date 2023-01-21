@@ -85,7 +85,7 @@ public abstract class ArmorFeatureRendererMixin {
 	@Inject(method = "getArmorTexture",
 			at = @At(value = "INVOKE", target = "Ljava/util/Map;computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;"),
 			cancellable = true)
-	private void quilt$getArmorTexture(ArmorItem armorItem, boolean useSecondTexture, /* @Nullable */ String suffix, CallbackInfoReturnable<Identifier> cir) {
+	private void quilt$getArmorTexture(ArmorItem armorItem, boolean useSecondTexture, String suffix, CallbackInfoReturnable<Identifier> cir) {
 		ItemStack stack = this.quilt$capturedEntity.getEquippedStack(this.quilt$capturedSlot);
 
 		Identifier texture = ARMOR_TEXTURE_CACHE.computeIfAbsent(
