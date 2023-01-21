@@ -36,7 +36,7 @@ public interface ChatEvent<C, R> {
 	 * being attached to this event, but may occur for any other reason depending on the implementation.
 	 *
 	 * @param message the message for the event to process
-	 * @return the result of invoking this event, or null
+	 * @return the result of invoking this event, or {@code null}
 	 */
 	@Nullable R invoke(@NotNull AbstractChatMessage<?> message);
 
