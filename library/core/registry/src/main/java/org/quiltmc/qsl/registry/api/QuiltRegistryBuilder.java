@@ -93,7 +93,7 @@ public abstract class QuiltRegistryBuilder<T, SELF extends QuiltRegistryBuilder<
 	 * @return the newly created builder
 	 */
 	@Contract("_, _ -> new")
-	public static <T> QuiltDynamicRegistryBuilder<T> dynamicUnsynced(@NotNull RegistryKey<Registry<T>> key, @NotNull Codec<T> entryCodec) {
+	public static <T> QuiltDynamicRegistryBuilder<T> dynamicUnsynchronized(@NotNull RegistryKey<Registry<T>> key, @NotNull Codec<T> entryCodec) {
 		return new QuiltDynamicRegistryBuilder<>(key, entryCodec, null);
 	}
 
