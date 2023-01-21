@@ -21,6 +21,7 @@ import static org.quiltmc.qsl.rendering.entity.impl.client.ArmorRenderingRegistr
 
 import java.util.Map;
 
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -43,7 +44,6 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.rendering.entity.api.client.ArmorTextureUtils;
 import org.quiltmc.qsl.rendering.entity.impl.client.ArmorRenderingRegistryImpl;
 
-@SuppressWarnings("rawtypes")
 @Mixin(ArmorFeatureRenderer.class)
 public abstract class ArmorFeatureRendererMixin {
 	@Shadow
@@ -62,7 +62,7 @@ public abstract class ArmorFeatureRendererMixin {
 	}
 
 	@Inject(method = "renderArmor", at = @At("HEAD"))
-	private void quilt$captureSlot(MatrixStack matrices, VertexConsumerProvider vertexConsumers, LivingEntity livingEntity, EquipmentSlot slot, int i, BipedEntityModel bipedEntityModel, CallbackInfo ci) {
+	private void quilt$captureSlot(MatrixStack matrices, VertexConsumerProvider vertexConsumers, LivingEntity livingEntity, EquipmentSlot slot, int i, BipedEntityModel<?> bipedEntityModel, CallbackInfo ci) {
 		this.quilt$capturedSlot = slot;
 	}
 
@@ -85,7 +85,7 @@ public abstract class ArmorFeatureRendererMixin {
 	@Inject(method = "getArmorTexture",
 			at = @At(value = "INVOKE", target = "Ljava/util/Map;computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;"),
 			cancellable = true)
-	private void quilt$getArmorTexture(ArmorItem armorItem, boolean useSecondTexture, String suffix, CallbackInfoReturnable<Identifier> cir) {
+	private void quilt$getArmorTexture(ArmorItem armorItem, boolean useSecondTexture, @Nullable String suffix, CallbackInfoReturnable<Identifier> cir) {
 		ItemStack stack = this.quilt$capturedEntity.getEquippedStack(this.quilt$capturedSlot);
 
 		Identifier texture = ARMOR_TEXTURE_CACHE.computeIfAbsent(
