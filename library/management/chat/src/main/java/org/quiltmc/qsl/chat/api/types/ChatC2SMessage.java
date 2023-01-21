@@ -20,6 +20,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.message.MessageSignature;
 import net.minecraft.network.message.MessageSignatureList;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
@@ -71,42 +72,52 @@ public class ChatC2SMessage extends AbstractChatMessage<ChatMessageC2SPacket> {
 		return new ChatMessageC2SPacket(message, timestamp, salt, signature, messageAcknowledgments);
 	}
 
+	@Contract(pure = true)
 	public String getMessage() {
 		return message;
 	}
 
+	@Contract(pure = true)
 	public Instant getTimestamp() {
 		return timestamp;
 	}
 
+	@Contract(pure = true)
 	public long getSalt() {
 		return salt;
 	}
 
+	@Contract(pure = true)
 	public @Nullable MessageSignature getSignature() {
 		return signature;
 	}
 
+	@Contract(pure = true)
 	public MessageSignatureList.Acknowledgment getMessageAcknowledgments() {
 		return messageAcknowledgments;
 	}
 
+	@Contract(value = "_ -> new", pure = true)
 	public ChatC2SMessage withMessage(String message) {
 		return new ChatC2SMessage(player, isClient, message, timestamp, salt, signature, messageAcknowledgments);
 	}
 
+	@Contract(value = "_ -> new", pure = true)
 	public ChatC2SMessage withTimestamp(Instant timestamp) {
 		return new ChatC2SMessage(player, isClient, message, timestamp, salt, signature, messageAcknowledgments);
 	}
 
+	@Contract(value = "_ -> new", pure = true)
 	public ChatC2SMessage withSalt(long salt) {
 		return new ChatC2SMessage(player, isClient, message, timestamp, salt, signature, messageAcknowledgments);
 	}
 
+	@Contract(value = "_ -> new", pure = true)
 	public ChatC2SMessage withSignature(@Nullable MessageSignature signature) {
 		return new ChatC2SMessage(player, isClient, message, timestamp, salt, signature, messageAcknowledgments);
 	}
 
+	@Contract(value = "_ -> new", pure = true)
 	public ChatC2SMessage withMessageAcknowledgments(MessageSignatureList.Acknowledgment messageAcknowledgments) {
 		return new ChatC2SMessage(player, isClient, message, timestamp, salt, signature, messageAcknowledgments);
 	}

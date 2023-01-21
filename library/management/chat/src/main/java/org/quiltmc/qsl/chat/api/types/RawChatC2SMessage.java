@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.chat.api.types;
 
 import net.minecraft.entity.player.PlayerEntity;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 
@@ -40,10 +41,12 @@ public class RawChatC2SMessage extends AbstractChatMessage<String> {
 		return EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.CLIENT, QuiltMessageType.OUTBOUND);
 	}
 
+	@Contract(pure = true)
 	public String getMessage() {
 		return message;
 	}
 
+	@Contract(value = "_ -> new", pure = true)
 	public RawChatC2SMessage withMessage(String message) {
 		return new RawChatC2SMessage(player, isClient, message);
 	}

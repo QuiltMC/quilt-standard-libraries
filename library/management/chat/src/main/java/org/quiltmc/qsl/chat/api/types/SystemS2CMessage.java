@@ -19,6 +19,7 @@ package org.quiltmc.qsl.chat.api.types;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.s2c.play.SystemMessageS2CPacket;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import org.quiltmc.qsl.chat.impl.InternalMessageTypesFactory;
@@ -57,18 +58,22 @@ public class SystemS2CMessage extends AbstractChatMessage<SystemMessageS2CPacket
 		return new SystemMessageS2CPacket(content, overlay);
 	}
 
+	@Contract(pure = true)
 	public Text getContent() {
 		return content;
 	}
 
+	@Contract(pure = true)
 	public boolean isOverlay() {
 		return overlay;
 	}
 
+	@Contract(value = "_ -> new", pure = true)
 	public SystemS2CMessage withContent(Text content) {
 		return new SystemS2CMessage(player, isClient, content, overlay);
 	}
 
+	@Contract(value = "_ -> new", pure = true)
 	public SystemS2CMessage withOverlay(boolean overlay) {
 		return new SystemS2CMessage(player, isClient, content, overlay);
 	}

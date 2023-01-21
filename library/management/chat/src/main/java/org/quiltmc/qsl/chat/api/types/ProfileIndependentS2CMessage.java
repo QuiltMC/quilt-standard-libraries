@@ -21,6 +21,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.message.MessageType;
 import net.minecraft.network.packet.s2c.play.ProfileIndependentMessageS2CPacket;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import org.quiltmc.qsl.chat.impl.InternalMessageTypesFactory;
@@ -64,18 +65,22 @@ public class ProfileIndependentS2CMessage extends AbstractChatMessage<ProfileInd
 		return new ProfileIndependentMessageS2CPacket(message, messageType.serialize(player.world.getRegistryManager()));
 	}
 
+	@Contract(pure = true)
 	public Text getMessage() {
 		return message;
 	}
 
+	@Contract(pure = true)
 	public MessageType.Parameters getMessageType() {
 		return messageType;
 	}
 
+	@Contract(value = "_ -> new", pure = true)
 	public ProfileIndependentS2CMessage withMessage(Text message) {
 		return new ProfileIndependentS2CMessage(player, isClient, message, messageType);
 	}
 
+	@Contract(value = "_ -> new", pure = true)
 	public ProfileIndependentS2CMessage withMessageType(MessageType.Parameters messageType) {
 		return new ProfileIndependentS2CMessage(player, isClient, message, messageType);
 	}

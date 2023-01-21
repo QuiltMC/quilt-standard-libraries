@@ -39,7 +39,7 @@ public final class QuiltChatEvents {
 	public static final ChatEvent<Modify, AbstractChatMessage<?>> MODIFY = new ChatEventImpl<>(true, InternalChatEventCallbackConverters::modifyToHook);
 
 	/**
-	 * An event that allows you to cancel a message by returning true, or false to allow it to continue through.
+	 * An event that allows you to cancel a message by returning {@code true}, or {@code false} to allow it to continue through.
 	 *
 	 * @see #CANCELLED
 	 */

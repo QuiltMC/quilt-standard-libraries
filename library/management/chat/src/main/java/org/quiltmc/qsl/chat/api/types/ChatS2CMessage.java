@@ -23,6 +23,7 @@ import net.minecraft.network.message.MessageSignature;
 import net.minecraft.network.message.MessageType;
 import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import org.quiltmc.qsl.chat.impl.InternalMessageTypesFactory;
@@ -76,58 +77,72 @@ public class ChatS2CMessage extends AbstractChatMessage<ChatMessageS2CPacket> {
 		return new ChatMessageS2CPacket(sender, index, signature, body, unsignedContent, filterMask, messageType);
 	}
 
+	@Contract(pure = true)
 	public UUID getSender() {
 		return sender;
 	}
 
+	@Contract(pure = true)
 	public int getIndex() {
 		return index;
 	}
 
+	@Contract(pure = true)
 	public MessageSignature getSignature() {
 		return signature;
 	}
 
+	@Contract(pure = true)
 	public MessageBody.Serialized getBody() {
 		return body;
 	}
 
+	@Contract(pure = true)
 	public Text getUnsignedContent() {
 		return unsignedContent;
 	}
 
+	@Contract(pure = true)
 	public FilterMask getFilterMask() {
 		return filterMask;
 	}
 
+	@Contract(pure = true)
 	public MessageType.Serialized getMessageType() {
 		return messageType;
 	}
 
+	@Contract(value = "_ -> new", pure = true)
 	public ChatS2CMessage withSender(UUID sender) {
 		return new ChatS2CMessage(player, isClient, sender, index, signature, body, unsignedContent, filterMask, messageType);
 	}
 
+	@Contract(value = "_ -> new", pure = true)
 	public ChatS2CMessage withIndex(int index) {
 		return new ChatS2CMessage(player, isClient, sender, index, signature, body, unsignedContent, filterMask, messageType);
 	}
 
+	@Contract(value = "_ -> new", pure = true)
 	public ChatS2CMessage withSignature(MessageSignature signature) {
 		return new ChatS2CMessage(player, isClient, sender, index, signature, body, unsignedContent, filterMask, messageType);
 	}
 
+	@Contract(value = "_ -> new", pure = true)
 	public ChatS2CMessage withBody(MessageBody.Serialized body) {
 		return new ChatS2CMessage(player, isClient, sender, index, signature, body, unsignedContent, filterMask, messageType);
 	}
 
+	@Contract(value = "_ -> new", pure = true)
 	public ChatS2CMessage withUnsignedContent(Text unsignedContent) {
 		return new ChatS2CMessage(player, isClient, sender, index, signature, body, unsignedContent, filterMask, messageType);
 	}
 
+	@Contract(value = "_ -> new", pure = true)
 	public ChatS2CMessage withFilterMask(FilterMask filterMask) {
 		return new ChatS2CMessage(player, isClient, sender, index, signature, body, unsignedContent, filterMask, messageType);
 	}
 
+	@Contract(value = "_ -> new", pure = true)
 	public ChatS2CMessage withMessageType(MessageType.Serialized messageType) {
 		return new ChatS2CMessage(player, isClient, sender, index, signature, body, unsignedContent, filterMask, messageType);
 	}

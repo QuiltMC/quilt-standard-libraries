@@ -32,7 +32,7 @@ import java.util.EnumSet;
  */
 public interface ChatEvent<C, R> {
 	/**
-	 * Invokes the event with the provided message and returns the result or null. A null result is usually the result of no callbacks
+	 * Invokes the event with the provided message and returns the result or {@code null}. A {@code null} result is usually the result of no callbacks
 	 * being attached to this event, but may occur for any other reason depending on the implementation.
 	 *
 	 * @param message the message for the event to process
@@ -41,11 +41,11 @@ public interface ChatEvent<C, R> {
 	@Nullable R invoke(@NotNull AbstractChatMessage<?> message);
 
 	/**
-	 * Invokes the event with the provided message, but replaces the result with {@code ifNull} if the result would have been null.
+	 * Invokes the event with the provided message, but replaces the result with {@code ifNull} if the result would have been {@code null}.
 	 *
 	 * @param message the message for the event to process
-	 * @param ifNull a value that should be returned instead of null
-	 * @return the result of invoking this event, or {@code ifNull} if the result would be null
+	 * @param ifNull a value that should be returned instead of {@code null}
+	 * @return the result of invoking this event, or {@code ifNull} if the result would be {@code null}
 	 */
 	R invokeOrElse(@NotNull AbstractChatMessage<?> message, @NotNull R ifNull);
 

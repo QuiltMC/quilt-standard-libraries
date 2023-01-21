@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.chat.api.types;
 
 import net.minecraft.entity.player.PlayerEntity;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 
@@ -42,11 +43,13 @@ public abstract class AbstractChatMessage<S> {
 	/**
 	 * {@return the set of {@link QuiltMessageType}s associated with this message}
 	 */
+	@Contract(pure = true)
 	public abstract @NotNull EnumSet<QuiltMessageType> getTypes();
 
 	/**
 	 * {@return this message in its serialized form}
 	 */
+	@Contract(value = " -> new", pure = true)
 	public abstract @NotNull S serialized();
 
 	/**
@@ -59,6 +62,7 @@ public abstract class AbstractChatMessage<S> {
 	 *
 	 * {@return the {@link PlayerEntity} associated with this packet}
 	 */
+	@Contract(pure = true)
 	public final @NotNull PlayerEntity getPlayer() {
 		return player;
 	}
@@ -68,6 +72,7 @@ public abstract class AbstractChatMessage<S> {
 	 * <p>
 	 * This can also be determined through checking for {@link QuiltMessageType#CLIENT}.
 	 */
+	@Contract(pure = true)
 	public boolean isClient() {
 		return isClient;
 	}
