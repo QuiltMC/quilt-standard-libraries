@@ -79,13 +79,13 @@ public class ServerPlayNetworkHandlerMixin {
 	}
 
 	@Inject(method = "sendProfileIndependentMessage", at = @At("TAIL"))
-	public void quilt$afterProfileIndependentMessage(Text message, MessageType.Parameters parameters, CallbackInfo ci) {
+	public void quilt$afterOutboundProfileIndependentMessage(Text message, MessageType.Parameters parameters, CallbackInfo ci) {
 		var immutableMessage = new ProfileIndependentS2CMessage(player, false, message, parameters);
 		QuiltChatEvents.AFTER_PROCESS.invoke(immutableMessage);
 	}
 
 	@Redirect(method = "sendChatMessage(Lnet/minecraft/network/message/SignedChatMessage;Lnet/minecraft/network/message/MessageType$Parameters;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V"))
-	public void quilt$modifyAndCancelOutboundChatMessage(ServerPlayNetworkHandler instance, Packet<?> packet) {
+	public void quilt$modifyAndCancelAndBeforeAndAfterOutboundChatMessage(ServerPlayNetworkHandler instance, Packet<?> packet) {
 		if (packet instanceof ChatMessageS2CPacket chatMessageS2CPacket) {
 			var message = new ChatS2CMessage(instance.player, false, chatMessageS2CPacket);
 			message = (ChatS2CMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message);
