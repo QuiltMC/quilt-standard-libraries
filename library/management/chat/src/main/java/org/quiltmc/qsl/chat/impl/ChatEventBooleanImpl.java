@@ -87,27 +87,27 @@ public class ChatEventBooleanImpl<C> implements ChatEvent<C, Boolean> {
 	}
 
 	public Boolean invoke(@NotNull AbstractChatMessage<?> message) {
-		return backingEvent.invoker().handleMessage(message);
+		return this.backingEvent.invoker().handleMessage(message);
 	}
 
 	@Override
 	public Boolean invokeOrElse(@NotNull AbstractChatMessage<?> message, @NotNull Boolean ifNull) {
-		Boolean result = backingEvent.invoker().handleMessage(message);
+		Boolean result = this.backingEvent.invoker().handleMessage(message);
 		return result != null ? result : ifNull;
 	}
 
 	@Override
 	public void register(@NotNull EnumSet<QuiltMessageType> types, @NotNull C callback) {
-		backingEvent.register(converter.apply(callback, types));
+		this.backingEvent.register(this.converter.apply(callback, types));
 	}
 
 	@Override
 	public void register(@NotNull Identifier phaseIdentifier, @NotNull EnumSet<QuiltMessageType> types, @NotNull C callback) {
-		backingEvent.register(converter.apply(callback, types));
+		this.backingEvent.register(this.converter.apply(callback, types));
 	}
 
 	@Override
 	public void addPhaseOrdering(@NotNull Identifier firstPhase, @NotNull Identifier secondPhase) {
-		backingEvent.addPhaseOrdering(firstPhase, secondPhase);
+		this.backingEvent.addPhaseOrdering(firstPhase, secondPhase);
 	}
 }

@@ -104,27 +104,27 @@ public class ChatEventImpl<C, R> implements ChatEvent<C, R> {
 
 	@Override
 	public @Nullable R invoke(@NotNull AbstractChatMessage<?> message) {
-		return backingEvent.invoker().handleMessage(message);
+		return this.backingEvent.invoker().handleMessage(message);
 	}
 
 	@Override
 	public R invokeOrElse(@NotNull AbstractChatMessage<?> message, @NotNull R ifNull) {
-		R result = backingEvent.invoker().handleMessage(message);
+		R result = this.backingEvent.invoker().handleMessage(message);
 		return result != null ? result : ifNull;
 	}
 
 	@Override
 	public void register(@NotNull EnumSet<QuiltMessageType> types, @NotNull C callback) {
-		backingEvent.register(converter.apply(callback, types));
+		this.backingEvent.register(this.converter.apply(callback, types));
 	}
 
 	@Override
 	public void register(@NotNull Identifier phaseIdentifier, @NotNull EnumSet<QuiltMessageType> types, @NotNull C callback) {
-		backingEvent.register(phaseIdentifier, converter.apply(callback, types));
+		this.backingEvent.register(phaseIdentifier, this.converter.apply(callback, types));
 	}
 
 	@Override
 	public void addPhaseOrdering(@NotNull Identifier firstPhase, @NotNull Identifier secondPhase) {
-		backingEvent.addPhaseOrdering(firstPhase, secondPhase);
+		this.backingEvent.addPhaseOrdering(firstPhase, secondPhase);
 	}
 }
