@@ -25,6 +25,7 @@
     "client.ConnectScreenMixin",
     "client.ItemColorsMixin",
     "client.ItemModelsMixin",
+    "client.ItemRendererAccessor",
     "client.MinecraftClientMixin",
     "client.ParticleManagerMixin"
   ],

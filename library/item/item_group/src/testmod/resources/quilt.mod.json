@@ -13,6 +13,9 @@
     "entrypoints": {
       "init": [
         "org.quiltmc.qsl.item.group.test.ItemGroupTest"
+      ],
+      "client_init": [
+        "org.quiltmc.qsl.item.group.test.ItemGroupClientTest"
       ]
     },
     "depends": [

@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.block.content.registry.api;
 
-
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 
@@ -27,6 +26,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.event.GameEvent;
 
+import org.quiltmc.qsl.block.content.registry.api.enchanting.EnchantingBooster;
+import org.quiltmc.qsl.block.content.registry.api.enchanting.EnchantingBoosters;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 /**
@@ -40,6 +41,7 @@ import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
  *     <li>{@link #STRIPPABLE_BLOCK}</li>
  *     <li>{@link #FLAMMABLE_BLOCK}</li>
  *     <li>{@link #SCULK_FREQUENCY}</li>
+ *     <li>{@link #ENCHANTING_BOOSTERS}</li>
  * </ul>
  */
 public class BlockContentRegistries {
@@ -47,6 +49,7 @@ public class BlockContentRegistries {
 	 * The namespace for the content registries.
 	 */
 	public static final String NAMESPACE = "quilt_block_content_registry";
+	public static final String QUILT_NAMESPACE = "quilt";
 
 	/**
 	 * A {@link RegistryEntryAttachment} for when blocks are right clicked by a shovel.
@@ -97,11 +100,13 @@ public class BlockContentRegistries {
 						if (!block.getDefaultState().contains(Properties.AXIS)) {
 							return DataResult.error("block does not contain AXIS property");
 						}
+
 						return DataResult.success(block);
 					}, block -> {
 						if (!block.getDefaultState().contains(Properties.AXIS)) {
 							return DataResult.error("block does not contain AXIS property");
 						}
+
 						return DataResult.success(block);
 					}))
 			.build();
@@ -128,6 +133,18 @@ public class BlockContentRegistries {
 					new Identifier(NAMESPACE, "sculk_frequency"),
 					Integer.class,
 					Codec.intRange(1, 15))
+			.build();
+
+	/**
+	 * A {@link RegistryEntryAttachment} for enchanting boosters in bookshelf equivalents.
+	 * <p>
+	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/block/enchanting_boosters.json}
+	 */
+	public static final RegistryEntryAttachment<Block, EnchantingBooster> ENCHANTING_BOOSTERS = RegistryEntryAttachment
+			.builder(Registry.BLOCK,
+					new Identifier(QUILT_NAMESPACE, "enchanting_boosters"),
+					EnchantingBooster.class,
+					EnchantingBoosters.CODEC)
 			.build();
 }
 

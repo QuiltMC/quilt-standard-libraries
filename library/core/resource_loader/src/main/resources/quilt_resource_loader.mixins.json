@@ -13,22 +13,26 @@
     "NamespaceResourceManagerMixin$ResourceEntryAccessor",
     "ReloadableResourceManagerMixin",
     "ResourcePackMixin",
+    "ResourcePackProfileMixin",
     "ServerReloadableResourcesMixin",
     "TestServerMixin",
     "VanillaDataPackProviderMixin",
     "server.MainMixin"
   ],
   "client": [
-    "client.IntegratedServerLoaderMixin",
     "client.ClientBuiltinResourcePackProviderMixin",
     "client.CreateWorldScreenMixin",
     "client.EntryListWidgetAccessor",
     "client.FontManagerResourceReloadListenerMixin",
     "client.GameOptionsMixin",
+    "client.IntegratedServerLoaderMixin",
     "client.KeyedClientResourceReloaderMixin",
     "client.MinecraftClientMixin",
     "client.PackScreenMixin",
     "client.ResourcePackEntryAccessor"
+  ],
+  "server": [
+    "server.LanguageMixin"
   ],
   "injectors": {
     "defaultRequire": 1

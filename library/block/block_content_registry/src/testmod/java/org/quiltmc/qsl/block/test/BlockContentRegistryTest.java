@@ -18,11 +18,20 @@ package org.quiltmc.qsl.block.test;
 
 import java.util.Optional;
 
+import com.mojang.serialization.Codec;
+import net.minecraft.state.property.Properties;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import org.quiltmc.qsl.block.content.registry.api.enchanting.ConstantBooster;
+import org.quiltmc.qsl.block.content.registry.api.enchanting.EnchantingBooster;
+import org.quiltmc.qsl.block.content.registry.api.enchanting.EnchantingBoosterType;
+import org.quiltmc.qsl.block.content.registry.api.enchanting.EnchantingBoosters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.Oxidizable;
 import net.minecraft.block.OxidizableBlock;
@@ -43,7 +52,6 @@ public class BlockContentRegistryTest implements ModInitializer {
 	public static final String MOD_ID = "quilt_block_content_registry_testmod";
 	public static final Logger LOGGER = LoggerFactory.getLogger("BlockContentRegistryTest");
 
-
 	public static boolean testPassed = false;
 
 	@Override
@@ -52,21 +60,45 @@ public class BlockContentRegistryTest implements ModInitializer {
 				new OxidizableBlock(Oxidizable.OxidizationLevel.UNAFFECTED, AbstractBlock.Settings.copy(Blocks.IRON_BLOCK)),
 				BlockContentRegistries.OXIDIZABLE_BLOCK, new ReversibleBlockEntry(Blocks.IRON_BLOCK, false));
 
+		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.IRON_BLOCK, new ConstantBooster(3f));
+		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.DIAMOND_BLOCK, new ConstantBooster(15f));
+		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.NETHERITE_BLOCK, new ConstantBooster(100f));
+		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.OAK_PLANKS, new ConstantBooster(0.25f));
+		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.REDSTONE_WIRE, new EnchantingBlockStateBooster());
+
 		ServerWorldTickEvents.START.register((server, world) -> {
 			if (testPassed) {
 				return;
 			}
 
 			LOGGER.info("Starting BlockContentRegistry tests");
-			Registry.BLOCK.getOrCreateTag(BlockTags.ANVIL).forEach(holder -> assertValues(holder.value(), BlockContentRegistries.FLAMMABLE_BLOCK, new FlammableBlockEntry(100, 100)));
+			Registry.BLOCK.getOrCreateTag(BlockTags.ANVIL).forEach(holder -> this.assertValues(holder.value(), BlockContentRegistries.FLAMMABLE_BLOCK, new FlammableBlockEntry(100, 100)));
 
-			assertValues(Blocks.OAK_PLANKS, BlockContentRegistries.FLATTENABLE_BLOCK, Blocks.OAK_SLAB.getDefaultState());
-			assertValues(Blocks.QUARTZ_PILLAR, BlockContentRegistries.STRIPPABLE_BLOCK, Blocks.PURPUR_PILLAR);
-			assertValues(Blocks.IRON_BLOCK, BlockContentRegistries.WAXABLE_BLOCK, new ReversibleBlockEntry(Blocks.GOLD_BLOCK, true));
+			this.assertValues(Blocks.OAK_PLANKS, BlockContentRegistries.FLATTENABLE_BLOCK, Blocks.OAK_SLAB.getDefaultState());
+			this.assertValues(Blocks.QUARTZ_PILLAR, BlockContentRegistries.STRIPPABLE_BLOCK, Blocks.PURPUR_PILLAR);
+			this.assertValues(Blocks.IRON_BLOCK, BlockContentRegistries.WAXABLE_BLOCK, new ReversibleBlockEntry(Blocks.GOLD_BLOCK, true));
 			LOGGER.info("Finished BlockContentRegistry tests");
 
 			testPassed = true;
 		});
+	}
+
+	private record EnchantingBlockStateBooster() implements EnchantingBooster {
+		public static EnchantingBoosterType TYPE = EnchantingBoosters.register(new Identifier(MOD_ID, "block_state_booster"),
+				new EnchantingBoosterType(Codec.unit(EnchantingBlockStateBooster::new), Optional.of(new EnchantingBlockStateBooster())));
+		@Override
+		public float getEnchantingBoost(World world, BlockState state, BlockPos pos) {
+			if (!state.contains(Properties.POWER)) {
+				return 0;
+			}
+
+			return state.get(Properties.POWER) / 15f;
+		}
+
+		@Override
+		public EnchantingBoosterType getType() {
+			return TYPE;
+		}
 	}
 
 	private <T> void assertValues(Block block, RegistryEntryAttachment<Block, T> attachment, T value) {
@@ -75,6 +107,7 @@ public class BlockContentRegistryTest implements ModInitializer {
 		if (entry.isEmpty()) {
 			throw new AssertionError("No entry present for " + id);
 		}
+
 		if (!entry.get().equals(value)) {
 			throw new AssertionError("Value incorrect for " + id);
 		}
