@@ -43,12 +43,12 @@ public class TrackedDataHandlerRegistryMixin {
 	private static final boolean quilt$PRINT_WARNING = TriState.fromProperty("quilt.debug.unknown_tracked_data_handler").toBooleanOrElse(QuiltLoader.isDevelopmentEnvironment());
 
 	// WARNING: These fields aren't set until just before RETURN in <clinit>. Until then they are 0.
-	// I (OroArmor) am abusing that fact for the pastStaticInit field. Do what you wish to me, this is a good way of solving the problem.
+	// I (OroArmor) am abusing that fact for the quilt$pastStaticInit field. Do what you wish to me, this is a good way of solving the problem.
 	// Why the two above fields work, my guess is that they are final.
 	@Unique
 	private static int quilt$currentUnknownId = 0;
 	@Unique
-	private static boolean pastStaticInit = true;
+	private static boolean quilt$pastStaticInit = true;
 
 	/**
 	 * @author Patbox
@@ -122,7 +122,7 @@ public class TrackedDataHandlerRegistryMixin {
 		} else if (handler == TrackedDataHandlerRegistry.PAINTING_VARIANT) {
 			id = "painting_variant";
 		} else {
-			if (!pastStaticInit && QuiltLoader.isDevelopmentEnvironment()) {
+			if (!quilt$pastStaticInit && QuiltLoader.isDevelopmentEnvironment()) {
 				throw new RuntimeException("Unnamed TrackedDataHandler added before static initialize completed. This either means that a new TrackedDataHandler was added by Minecraft, or a mod injected into a poor place.");
 			}
 			id = "unknown_handler/" + (quilt$currentUnknownId++);
