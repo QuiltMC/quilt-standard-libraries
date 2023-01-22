@@ -46,7 +46,7 @@ public final class QuiltChatEvents {
 	public static final ChatEvent<Cancel, Boolean> CANCEL = new ChatEventBooleanImpl<>(InternalChatEventCallbackConverters::cancelToHook);
 
 	/**
-	 * An event that allows you to listen for messages that have been canceled.
+	 * An event that allows you to listen for messages that have been cancelled.
 	 *
 	 * @see #CANCEL
 	 */
