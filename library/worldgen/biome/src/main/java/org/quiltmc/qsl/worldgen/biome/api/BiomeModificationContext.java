@@ -24,9 +24,9 @@ import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
-import net.minecraft.registry.Registries;
 import net.minecraft.registry.Holder;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.sound.BiomeAdditionsSound;
 import net.minecraft.sound.BiomeMoodSound;
 import net.minecraft.sound.MusicSound;
@@ -202,7 +202,7 @@ public interface BiomeModificationContext {
 
 		/**
 		 * @see BiomeEffects#getLoopSound()
-		 * @see BiomeEffects.Builder#loopSound(SoundEvent)
+		 * @see BiomeEffects.Builder#loopSound(Holder)
 		 */
 		default void clearAmbientSound() {
 			this.setAmbientSound(Optional.empty());
@@ -300,7 +300,7 @@ public interface BiomeModificationContext {
 		/**
 		 * Adds a feature to one of this biomes generation steps, identified by the placed feature's registry key.
 		 *
-		 * @see Registries#PLACED_FEATURE
+		 * @see RegistryKeys#PLACED_FEATURE
 		 */
 		void addFeature(GenerationStep.Feature step, RegistryKey<PlacedFeature> placedFeatureKey);
 
