@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,14 @@ package org.quiltmc.qsl.resource.loader.impl;
 
 import com.mojang.logging.LogUtils;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
+import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.ResourcePackCompatibility;
 import net.minecraft.resource.pack.ResourcePackProfile;
 import net.minecraft.resource.pack.ResourcePackSource;
-import net.minecraft.resource.pack.metadata.PackResourceMetadata;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -33,6 +34,7 @@ import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
 @ApiStatus.Internal
 public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
 	private static final Logger LOGGER = LogUtils.getLogger();
+	private final ResourcePack pack;
 
 	static @Nullable QuiltBuiltinResourcePackProfile of(ModNioResourcePack pack) {
 		Info info = readInfoFromPack(pack.getName(), name -> pack);
@@ -57,12 +59,18 @@ public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
 				false,
 				new BuiltinResourcePackSource(pack)
 		);
+		this.pack = pack;
 	}
 
 	@Override
 	public ResourcePackCompatibility getCompatibility() {
 		// This is to ease multi-version mods whose built-in packs actually work across versions.
 		return ResourcePackCompatibility.COMPATIBLE;
+	}
+
+	@Override
+	public @NotNull ResourcePackActivationType getActivationType() {
+		return this.pack.getActivationType();
 	}
 
 	/**

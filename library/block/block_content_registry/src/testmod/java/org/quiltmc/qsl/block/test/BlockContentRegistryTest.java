@@ -19,10 +19,6 @@ package org.quiltmc.qsl.block.test;
 import java.util.Optional;
 
 import com.mojang.serialization.Codec;
-import org.quiltmc.qsl.block.content.registry.api.enchanting.ConstantBooster;
-import org.quiltmc.qsl.block.content.registry.api.enchanting.EnchantingBooster;
-import org.quiltmc.qsl.block.content.registry.api.enchanting.EnchantingBoosterType;
-import org.quiltmc.qsl.block.content.registry.api.enchanting.EnchantingBoosters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +40,10 @@ import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
 import org.quiltmc.qsl.block.content.registry.api.FlammableBlockEntry;
 import org.quiltmc.qsl.block.content.registry.api.ReversibleBlockEntry;
+import org.quiltmc.qsl.block.content.registry.api.enchanting.ConstantBooster;
+import org.quiltmc.qsl.block.content.registry.api.enchanting.EnchantingBooster;
+import org.quiltmc.qsl.block.content.registry.api.enchanting.EnchantingBoosterType;
+import org.quiltmc.qsl.block.content.registry.api.enchanting.EnchantingBoosters;
 import org.quiltmc.qsl.lifecycle.api.event.ServerWorldTickEvents;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 import org.quiltmc.qsl.registry.attachment.api.RegistryExtensions;
@@ -86,6 +86,7 @@ public class BlockContentRegistryTest implements ModInitializer {
 	private record EnchantingBlockStateBooster() implements EnchantingBooster {
 		public static EnchantingBoosterType TYPE = EnchantingBoosters.register(new Identifier(MOD_ID, "block_state_booster"),
 				new EnchantingBoosterType(Codec.unit(EnchantingBlockStateBooster::new), Optional.of(new EnchantingBlockStateBooster())));
+
 		@Override
 		public float getEnchantingBoost(World world, BlockState state, BlockPos pos) {
 			if (!state.contains(Properties.POWER)) {

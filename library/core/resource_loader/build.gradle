@@ -18,4 +18,7 @@ qslModule {
 	injectedInterface("net/minecraft/class_3262") {
 		values = ["org/quiltmc/qsl/resource/loader/api/QuiltResourcePack"]
 	}
+	injectedInterface("net/minecraft/class_3288") {
+		values = ["org/quiltmc/qsl/resource/loader/api/QuiltResourcePackProfile"]
+	}
 }
