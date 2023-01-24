@@ -77,8 +77,6 @@ public class TrackedDataHandlerRegistryMixin {
 			id = "byte";
 		} else if (handler == TrackedDataHandlerRegistry.INTEGER) {
 			id = "integer";
-		} else if (handler == TrackedDataHandlerRegistry.LONG) {
-			id = "long";
 		} else if (handler == TrackedDataHandlerRegistry.FLOAT) {
 			id = "float";
 		} else if (handler == TrackedDataHandlerRegistry.STRING) {
