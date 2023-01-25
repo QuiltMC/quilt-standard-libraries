@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,10 @@ import java.io.IOException;
 
 import com.mojang.logging.LogUtils;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
+import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.ResourcePackCompatibility;
 import net.minecraft.resource.pack.ResourcePackProfile;
 import net.minecraft.resource.pack.ResourcePackSource;
@@ -34,6 +36,7 @@ import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
 @ApiStatus.Internal
 public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
 	private static final Logger LOGGER = LogUtils.getLogger();
+	private final ResourcePack pack;
 
 	static QuiltBuiltinResourcePackProfile of(ModNioResourcePack pack) {
 		try {
@@ -61,12 +64,18 @@ public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
 				ResourcePackProfile.InsertionPosition.TOP,
 				new BuiltinResourcePackSource(pack)
 		);
+		this.pack = pack;
 	}
 
 	@Override
 	public ResourcePackCompatibility getCompatibility() {
 		// This is to ease multi-version mods whose built-in packs actually work across versions.
 		return ResourcePackCompatibility.COMPATIBLE;
+	}
+
+	@Override
+	public @NotNull ResourcePackActivationType getActivationType() {
+		return this.pack.getActivationType();
 	}
 
 	/**

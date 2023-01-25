@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,6 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.Lifecycle;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -58,11 +56,12 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryOps;
 import net.minecraft.world.gen.GeneratorOptions;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 import org.quiltmc.qsl.resource.loader.impl.DataPackLoadingContext;
 import org.quiltmc.qsl.resource.loader.impl.ModResourcePackUtil;
 
-@Environment(EnvType.CLIENT)
+@ClientOnly
 @Mixin(CreateWorldScreen.class)
 public abstract class CreateWorldScreenMixin {
 	@Shadow
