@@ -19,7 +19,7 @@ qslModule {
 	}
 	entrypoints {
 		init {
-			values = ["org.quiltmc.qsl.testing.impl.QuiltGameTestImpl"]
+			values = ["org.quiltmc.qsl.testing.impl.game.QuiltGameTestImpl"]
 		}
 	}
 }

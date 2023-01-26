@@ -2,22 +2,22 @@
   "schema_version": 1,
   "quilt_loader": {
     "group": "org.quiltmc.qsl.core",
-    "id": "quilt_game_test_testmod",
+    "id": "quilt_testing_testmod",
     "version": "1.0.0",
     "metadata": {
-      "name": "Quilt Game Test test mod",
+      "name": "Quilt Testing test mod",
       "license": "Apache-2.0"
     },
     "intermediate_mappings": "net.fabricmc:intermediary",
     "load_type": "always",
     "entrypoints": {
       "quilt:game_test": [
-        "org.quiltmc.qsl.game_test.test.ExampleTestSuite"
+        "org.quiltmc.qsl.testing.test.ExampleTestSuite"
       ]
     },
     "depends": [
       "quilt_loader",
-      "quilt_game_test"
+      "quilt_testing"
     ]
   }
 }

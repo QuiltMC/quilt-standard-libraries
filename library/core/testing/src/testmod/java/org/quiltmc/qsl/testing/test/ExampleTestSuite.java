@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.game_test.test;
+package org.quiltmc.qsl.testing.test;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.test.GameTest;
@@ -31,7 +31,7 @@ public class ExampleTestSuite implements QuiltGameTest {
 	public void noStructure(QuiltTestContext context) {
 		context.setBlockState(0, 2, 0, Blocks.DIAMOND_BLOCK);
 
-		context.addInstantFinalTask(() ->
+		context.succeedWhen(() ->
 				context.checkBlock(
 						new BlockPos(0, 2, 0),
 						(block) -> block == Blocks.DIAMOND_BLOCK,

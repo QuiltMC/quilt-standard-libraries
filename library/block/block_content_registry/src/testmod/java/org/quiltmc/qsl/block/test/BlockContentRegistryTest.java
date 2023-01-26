@@ -180,7 +180,7 @@ public class BlockContentRegistryTest implements ModInitializer, QuiltGameTest {
 				context.useStackOnBlockAt(player, this.tool, entry.pos(), Direction.UP);
 			});
 
-			context.addInstantFinalTask(() ->
+			context.succeedWhen(() ->
 					this.entries.forEach(entry ->
 							context.checkBlockState(entry.pos(), state -> state.equals(entry.targetState()),
 									() -> "Could not find state " + entry.targetState()
