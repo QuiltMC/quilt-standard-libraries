@@ -38,7 +38,7 @@ public final class ClientEntityRenderingTestmod implements ClientModInitializer,
 		ArmorRenderingRegistry.registerTextureProvider(this, EntityRenderingTestmod.QUILT_LEGGINGS);
 	}
 
-	private static final Identifier LEGGINGS_TEXTURE_ID = EntityRenderingTestmod.id("overpowered_pants_of_queerness.png");
+	private static final Identifier LEGGINGS_TEXTURE_ID = EntityRenderingTestmod.id("textures/models/armor/" + "overpowered_pants_of_queerness.png");
 
 	@Override
 	public @NotNull Identifier getArmorTexture(@NotNull Identifier texture, @NotNull LivingEntity entity,
