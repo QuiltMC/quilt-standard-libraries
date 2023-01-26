@@ -21,12 +21,12 @@ import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
 import net.minecraft.entity.boss.dragon.EnderDragonPart;
-import net.minecraft.server.world.ThreadedAnvilChunkStorage;
+import net.minecraft.server.world.ThreadedChunkManager;
 
 import org.quiltmc.qsl.entity.multipart.api.EntityPart;
 
-@Mixin(ThreadedAnvilChunkStorage.class)
-public class ThreadedAnvilChunkStorageMixin {
+@Mixin(ThreadedChunkManager.class)
+public class ThreadedChunkManagerMixin {
 	@ModifyConstant(method = "loadEntity", constant = @Constant(classValue = EnderDragonPart.class, ordinal = 0))
 	private static boolean cancelEnderDragonCheck(Object targetRef, Class<?> classValue) {
 		return targetRef instanceof EntityPart;

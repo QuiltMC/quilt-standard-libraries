@@ -12,6 +12,7 @@
     "NamespaceResourceManagerMixin",
     "ReloadableResourceManagerMixin",
     "ResourcePackMixin",
+    "ResourcePackProfileMixin",
     "ServerReloadableResourcesMixin",
     "TestServerMixin",
     "VanillaDataPackProviderAccessor",
@@ -29,6 +30,7 @@
     "client.KeyedClientResourceReloaderMixin",
     "client.MinecraftClientMixin",
     "client.PackScreenMixin",
+    "client.ReloadableResourceManagerMixin",
     "client.ResourcePackEntryAccessor",
     "client.ShaderResourceReloadListenerMixin"
   ],

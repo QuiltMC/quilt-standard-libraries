@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "quilt_entity_rendering_testmod:item/quilt_chestplate"
+  }
+}

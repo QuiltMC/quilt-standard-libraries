@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import net.minecraft.client.option.GameOptions;
 import net.minecraft.resource.pack.ResourcePackManager;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
-import org.quiltmc.qsl.resource.loader.impl.QuiltBuiltinResourcePackProfile;
 
 @ClientOnly
 @Mixin(GameOptions.class)
@@ -72,13 +71,8 @@ public abstract class GameOptionsMixin {
 		// Update available resource packs.
 		for (var profile : manager.getProfiles()) {
 			if (!this.quilt$availableResourcePacks.contains(profile.getName())) {
-				if (profile instanceof QuiltBuiltinResourcePackProfile) {
-					// A built-in resource pack provided by a mod.
-
-					var pack = profile.createResourcePack();
-					if (pack.getActivationType().isEnabledByDefault()) {
-						toEnable.add(profile.getName());
-					}
+				if (profile.getActivationType().isEnabledByDefault()) {
+					toEnable.add(profile.getName());
 				}
 
 				this.quilt$availableResourcePacks.add(profile.getName());

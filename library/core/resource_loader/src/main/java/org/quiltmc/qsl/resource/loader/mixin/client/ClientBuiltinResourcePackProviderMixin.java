@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,12 +69,16 @@ public class ClientBuiltinResourcePackProviderMixin {
 		cir.setReturnValue(ResourceLoaderImpl.buildMinecraftResourcePack(ResourceType.CLIENT_RESOURCES, cir.getReturnValue()));
 	}
 
+	@ClientOnly
 	@Mixin(BuiltinResourcePackProvider.class)
 	public static class Parent {
+		@SuppressWarnings("ConstantConditions")
 		@Inject(method = "registerAdditionalPacks", at = @At("RETURN"))
 		private void addBuiltinResourcePacks(Consumer<ResourcePackProfile> profileAdder, CallbackInfo ci) {
 			// Register built-in resource packs after vanilla built-in resource packs are registered.
-			ModResourcePackProvider.CLIENT_RESOURCE_PACK_PROVIDER.register(profileAdder);
+			if (((Object) this) instanceof ClientBuiltinResourcePackProvider) {
+				ModResourcePackProvider.CLIENT_RESOURCE_PACK_PROVIDER.register(profileAdder);
+			}
 		}
 	}
 }

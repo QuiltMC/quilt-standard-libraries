@@ -36,6 +36,7 @@ import net.minecraft.item.ShovelItem;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
+import org.quiltmc.qsl.block.content.registry.api.enchanting.ConstantBooster;
 import org.quiltmc.qsl.block.content.registry.api.FlammableBlockEntry;
 import org.quiltmc.qsl.block.content.registry.api.ReversibleBlockEntry;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
@@ -53,19 +54,16 @@ public class BlockContentRegistriesInitializer implements ModInitializer {
 	public static final BiMap<Block, Block> WAXED_UNWAXED_BLOCKS = HashBiMap.create();
 	public static final BiMap<Block, Block> UNWAXED_WAXED_BLOCKS = HashBiMap.create();
 
-	private static final Map<Block, FlammableBlockEntry> INITIAL_FLAMMABLE_BLOCKS;
-
-	static {
+	@Override
+	public void onInitialize(ModContainer mod) {
+		// Fill the initial flammable blocks map
 		var builder = ImmutableMap.<Block, FlammableBlockEntry>builder();
 		FireBlock fireBlock = ((FireBlock) Blocks.FIRE);
 		fireBlock.spreadChances.keySet().forEach(block ->
 				builder.put(block, new FlammableBlockEntry(fireBlock.burnChances.getInt(block), fireBlock.spreadChances.getInt(block)))
 		);
-		INITIAL_FLAMMABLE_BLOCKS = builder.build();
-	}
+		var initialFlammableBlocks = builder.build();
 
-	@Override
-	public void onInitialize(ModContainer mod) {
 		// Force load the maps
 		Oxidizable.OXIDATION_LEVEL_INCREASES.get();
 		HoneycombItem.UNWAXED_TO_WAXED_BLOCKS.get();
@@ -80,9 +78,9 @@ public class BlockContentRegistriesInitializer implements ModInitializer {
 				Map.Entry::getKey,
 				entry -> new ReversibleBlockEntry(entry.getValue(), true)
 		)), BlockContentRegistries.WAXABLE);
-		addMapToAttachment(INITIAL_FLAMMABLE_BLOCKS, BlockContentRegistries.FLAMMABLE);
+		addMapToAttachment(initialFlammableBlocks, BlockContentRegistries.FLAMMABLE);
 
-		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.BOOKSHELF, 1f);
+		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.BOOKSHELF, new ConstantBooster(1f));
 
 		resetMaps();
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, error) -> resetMaps());

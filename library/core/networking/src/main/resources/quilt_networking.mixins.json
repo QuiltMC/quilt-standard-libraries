@@ -12,7 +12,7 @@
     "accessor.EntityTrackerAccessor",
     "accessor.LoginQueryResponseC2SPacketAccessor",
     "accessor.ServerLoginNetworkHandlerAccessor",
-    "accessor.ThreadedAnvilChunkStorageAccessor"
+    "accessor.ThreadedChunkManagerAccessor"
   ],
   "client": [
     "accessor.ConnectScreenAccessor",

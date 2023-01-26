@@ -62,7 +62,7 @@ abstract class ClientPlayNetworkHandlerMixin {
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Inject(method = "onGameJoin", at = @At("RETURN"))
 	private void onGameJoin(GameJoinS2CPacket packet, CallbackInfo ci) {
-		ClientCommandInternals.updateCommands(CommandBuildContext.m_lghonqhw(this.clientRegistryManager.getCompositeManager(), this.enabledFlags),
+		ClientCommandInternals.updateCommands(CommandBuildContext.createConfigurable(this.clientRegistryManager.getCompositeManager(), this.enabledFlags),
 				(CommandDispatcher) this.commandDispatcher, this.commandSource,
 				this.client.isIntegratedServerRunning() ? CommandManager.RegistrationEnvironment.INTEGRATED
 						: CommandManager.RegistrationEnvironment.DEDICATED
