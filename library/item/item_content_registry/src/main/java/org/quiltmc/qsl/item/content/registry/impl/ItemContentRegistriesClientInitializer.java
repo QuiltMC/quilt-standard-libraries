@@ -37,7 +37,7 @@ public class ItemContentRegistriesClientInitializer implements ClientModInitiali
 
 	@Override
 	public void onInitializeClient(ModContainer mod) {
-		if (Boolean.getBoolean(ENABLE_TOOLTIP_DEBUG)) {
+		if (Boolean.getBoolean(ENABLE_TOOLTIP_DEBUG) || QuiltLoader.isModLoaded("quilt_item_content_registry_testmod")) {
 			if (QuiltLoader.isModLoaded("quilt_tooltip")) {
 				ItemTooltipCallback.EVENT.register((stack, player, context, lines) -> {
 					Item item = stack.getItem();

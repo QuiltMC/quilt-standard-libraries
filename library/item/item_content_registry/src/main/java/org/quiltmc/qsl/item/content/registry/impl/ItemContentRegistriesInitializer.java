@@ -30,6 +30,8 @@ import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.tag.TagKey;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -45,6 +47,7 @@ public class ItemContentRegistriesInitializer implements ModInitializer {
 
 	public static final Map<ItemConvertible, Float> INITIAL_COMPOST_CHANCE = ImmutableMap.copyOf(ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE);
 
+	public static final TagKey<Item> FUEL_FILTERS = TagKey.of(Registry.ITEM_KEY, new Identifier("quilt", "fuel_filters"));
 	private static boolean collectInitialTags = false;
 
 	@Override
@@ -58,7 +61,12 @@ public class ItemContentRegistriesInitializer implements ModInitializer {
 
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, error) -> {
 			FUEL_MAP.clear();
-			setMapFromAttachment(FUEL_MAP::put, ItemContentRegistries.FUEL_TIME);
+			// Fill the fuel map with all entries on the FUEL_TIME registry attachment but filter using the #quilt:fuel_filters tag
+			for (var entry : ItemContentRegistries.FUEL_TIME) {
+				if (!entry.entry().getBuiltInRegistryHolder().isIn(FUEL_FILTERS)) {
+					FUEL_MAP.put(entry.entry(), entry.value());
+				}
+			}
 
 			ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.clear();
 			setMapFromAttachment(ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE::put, ItemContentRegistries.COMPOST_CHANCE);
