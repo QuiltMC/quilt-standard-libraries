@@ -13,7 +13,7 @@
     "depends": [
       "quilt_loader",
       "quilt_block_content_registry",
-      "quilt_game_test"
+      "quilt_testing"
     ],
     "entrypoints": {
       "init": [
