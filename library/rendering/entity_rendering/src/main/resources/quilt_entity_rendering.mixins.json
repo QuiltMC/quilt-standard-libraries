@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "client": [
     "client.ArmorFeatureRendererMixin",
+    "client.ArmorMaterialMixin",
     "client.ArmorMaterialsMixin",
     "client.ItemMixin"
   ],
