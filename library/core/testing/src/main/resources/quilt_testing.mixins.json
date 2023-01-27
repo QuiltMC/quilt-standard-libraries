@@ -6,7 +6,7 @@
     "ArgumentTypeInfosMixin",
     "CommandManagerMixin",
     "MinecraftServerMixin",
-    "StructureTestUtilMixin",
+    "StructureTemplateManagerMixin",
     "TestCommandMixin",
     "TestContextAccessor",
     "TestFunctionsMixin",

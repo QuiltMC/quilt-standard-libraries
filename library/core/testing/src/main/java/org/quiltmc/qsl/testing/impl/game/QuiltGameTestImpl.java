@@ -132,6 +132,12 @@ public final class QuiltGameTestImpl implements ModInitializer {
 		);
 	}
 
+	/**
+	 * Returns the test method invoker from the given method.
+	 *
+	 * @param method the method
+	 * @return the test method invoker
+	 */
 	public static Consumer<TestContext> getTestMethodInvoker(Method method) {
 		final var testMethod = new TestMethod(method);
 
@@ -175,6 +181,12 @@ public final class QuiltGameTestImpl implements ModInitializer {
 		testMethod.invoke(instance, context);
 	}
 
+	/**
+	 * Registers a test class from a mod.
+	 *
+	 * @param mod       the mod associated with the test class
+	 * @param testClass the test class
+	 */
 	public static void registerTestClass(ModContainer mod, Class<?> testClass) {
 		String modId = mod.metadata().id();
 
