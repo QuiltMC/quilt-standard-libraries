@@ -87,23 +87,24 @@ public abstract class ArmorFeatureRendererMixin {
 	@Inject(method = "getArmorTexture",
 			at = @At(value = "INVOKE", target = "Ljava/util/Map;computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;"),
 			cancellable = true)
-	private void quilt$getArmorTexture(ArmorItem armorItem, boolean useSecondTexture, @Nullable String suffix, CallbackInfoReturnable<Identifier> cir) {
+	private void quilt$getArmorTexture(ArmorItem armorItem, boolean useSecondLayer, @Nullable String suffix, CallbackInfoReturnable<Identifier> cir) {
 		ItemStack stack = this.quilt$capturedEntity.getEquippedStack(this.quilt$capturedSlot);
 
 		Identifier texture = ARMOR_TEXTURE_CACHE.computeIfAbsent(
 				armorItem.getMaterial().getTexture()
-						+ ArmorTextureUtils.getArmorTextureSuffix(useSecondTexture, suffix)
+						+ ArmorTextureUtils.getArmorTextureSuffix(useSecondLayer, suffix)
 						+ ".png",
 				Identifier::new);
 		texture = ArmorRenderingRegistryImpl.getArmorTexture(texture, this.quilt$capturedEntity, stack, this.quilt$capturedSlot,
-				useSecondTexture, suffix);
+				useSecondLayer, suffix);
 
-		if (!texture.getPath().contains(".")) {
+		String textureString = texture.toString();
+		if (!textureString.contains(".")) {
 			LOGGER.warn("Armor texture identifier '" + texture + "' is missing file extension, automatically appending '.png'");
-			texture = new Identifier(texture.getNamespace(), texture.getPath() + ".png");
+			textureString += ".png";
 		}
 
-		cir.setReturnValue(ARMOR_TEXTURE_CACHE.computeIfAbsent(texture.toString(), Identifier::new));
+		cir.setReturnValue(ARMOR_TEXTURE_CACHE.computeIfAbsent(textureString, Identifier::new));
 	}
 
 	@Redirect(
