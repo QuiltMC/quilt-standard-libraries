@@ -68,8 +68,10 @@ public abstract class ArmorFeatureRendererMixin {
 		this.quilt$capturedSlot = slot;
 	}
 
-	@Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
-			at = @At("RETURN"))
+	@Inject(
+			method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
+			at = @At("RETURN")
+	)
 	private void quilt$uncapture(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, LivingEntity livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
 		this.quilt$capturedEntity = null;
 		this.quilt$capturedSlot = null;
@@ -84,9 +86,14 @@ public abstract class ArmorFeatureRendererMixin {
 		cir.setReturnValue(model);
 	}
 
-	@Inject(method = "getArmorTexture",
-			at = @At(value = "INVOKE", target = "Ljava/util/Map;computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;"),
-			cancellable = true)
+	@Inject(
+			method = "getArmorTexture",
+			at = @At(
+					value = "INVOKE",
+					target = "Ljava/util/Map;computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;"
+			),
+			cancellable = true
+	)
 	private void quilt$getArmorTexture(ArmorItem armorItem, boolean useSecondLayer, @Nullable String suffix, CallbackInfoReturnable<Identifier> cir) {
 		ItemStack stack = this.quilt$capturedEntity.getEquippedStack(this.quilt$capturedSlot);
 
