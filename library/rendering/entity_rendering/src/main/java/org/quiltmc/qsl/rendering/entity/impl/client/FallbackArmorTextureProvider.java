@@ -42,7 +42,7 @@ public final class FallbackArmorTextureProvider {
 	public static @NotNull Identifier getArmorTexture(@NotNull ArmorMaterial material) {
 		return CACHE.computeIfAbsent(material, materialx -> {
 			LOGGER.warn(materialx.getName() + " (" + getArmorClassName(materialx) + ") did not implement getTexture()! Using fallback implementation");
-			return new Identifier("textures/model/armor/" + materialx.getName());
+			return new Identifier("textures/models/armor/" + materialx.getName());
 		});
 	}
 
