@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "org.quiltmc.qsl",
+    "id": "quilt_signal_channel_testmod",
+    "version": "1.0.0",
+    "metadata": {
+      "name": "Quilt Signal Channel API Test Mod",
+      "license": "Apache-2.0"
+    },
+    "intermediate_mappings": "net.fabricmc:intermediary",
+    "load_type": "always",
+    "entrypoints": {
+      "init": [
+        "org.quiltmc.qsl.signal_channel.test.SignalChannelTest"
+      ]
+    },
+    "depends": [
+      "quilt_loader",
+      "quilt_block_entity",
+      "quilt_resource_loader",
+      "quilt_signal_channel"
+    ]
+  },
+  "mixin": "quilt_signal_channel_testmod.mixins.json"
+}

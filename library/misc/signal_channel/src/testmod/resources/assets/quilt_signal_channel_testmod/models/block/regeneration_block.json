@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "quilt_signal_channel_testmod:block/regeneration_block"
+  }
+}
