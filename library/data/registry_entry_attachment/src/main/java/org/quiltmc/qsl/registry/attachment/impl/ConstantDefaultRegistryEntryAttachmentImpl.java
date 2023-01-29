@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.registry.attachment.impl;
 
+import java.util.function.Predicate;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import org.jetbrains.annotations.Nullable;
@@ -27,8 +29,8 @@ public final class ConstantDefaultRegistryEntryAttachmentImpl<R, V> extends Regi
 	private final @Nullable V defaultValue;
 
 	public ConstantDefaultRegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass,
-			Codec<V> codec, Side side, @Nullable V defaultValue) {
-		super(registry, id, valueClass, codec, side);
+													  Codec<V> codec, Side side, @Nullable V defaultValue, Predicate<R> filter) {
+		super(registry, id, valueClass, codec, side, filter);
 
 		if (defaultValue != null) {
 			var encoded = this.codec.encodeStart(JsonOps.INSTANCE, defaultValue);

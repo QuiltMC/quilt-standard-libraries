@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import com.mojang.serialization.Codec;
 import org.jetbrains.annotations.ApiStatus;
@@ -288,6 +289,15 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	boolean remove(TagKey<R> tag);
 
 	/**
+	 * The entry filter can prevent entries from being shown in the attachment.
+	 * This can be used to prevent values from tags leaking into the registry entry attachment when not intended,
+	 * such as nether wood in furnace fuels.
+	 *
+	 * @return the associated entry filter.
+	 */
+	Predicate<R> entryFilter();
+
+	/**
 	 * {@return this attachment's "value associated with entry" event}
 	 */
 	Event<ValueAdded<R, V>> valueAddedEvent();
@@ -444,6 +454,8 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 		private @Nullable V defaultValue;
 		private @Nullable DefaultValueProvider<R, V> defaultValueProvider;
 
+		private Predicate<R> filter = o -> true;
+
 		private Builder(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec) {
 			this.registry = registry;
 			this.id = id;
@@ -502,6 +514,17 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 		}
 
 		/**
+		 * Sets the filter for the attachment.
+		 *
+		 * @param filter the entry filter
+		 * @return this builder
+		 */
+		public Builder<R, V> filter(Predicate<R> filter) {
+			this.filter = filter;
+			return this;
+		}
+
+		/**
 		 * Builds a new attachment.
 		 *
 		 * @return new attachment
@@ -510,10 +533,10 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 			RegistryEntryAttachment<R, V> attachment;
 			if (this.defaultValueProvider == null) {
 				attachment = new ConstantDefaultRegistryEntryAttachmentImpl<>(this.registry, this.id, this.valueClass,
-						this.codec, this.side, this.defaultValue);
+						this.codec, this.side, this.defaultValue, this.filter);
 			} else {
 				attachment = new ComputedDefaultRegistryEntryAttachmentImpl<>(this.registry, this.id, this.valueClass,
-						this.codec, this.side, this.defaultValueProvider);
+						this.codec, this.side, this.defaultValueProvider, this.filter);
 			}
 			RegistryEntryAttachmentHolder.registerAttachment(this.registry, attachment);
 			return attachment;

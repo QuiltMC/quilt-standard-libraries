@@ -19,6 +19,7 @@ package org.quiltmc.qsl.registry.attachment.impl;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import com.mojang.serialization.Codec;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashBigSet;
@@ -44,14 +45,16 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	protected final Event<TagValueAdded<R, V>> tagValueAddedEvent;
 	protected final Event<ValueRemoved<R>> valueRemovedEvent;
 	protected final Event<TagValueRemoved<R>> tagValueRemovedEvent;
+	protected final Predicate<R> filter;
 
 	public RegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec,
-			Side side) {
+			Side side, Predicate<R> filter) {
 		this.registry = registry;
 		this.id = id;
 		this.valueClass = valueClass;
 		this.codec = codec;
 		this.side = side;
+		this.filter = filter;
 
 		this.valueAddedEvent = Event.create(ValueAdded.class, listeners -> (entry, value) -> {
 			for (var listener : listeners) {
@@ -108,6 +111,10 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 			ClientSideGuard.assertAccessAllowed();
 		}
 
+		if (this.filter.test(entry)) {
+			return null;
+		}
+
 		V value = RegistryEntryAttachmentHolder.getData(this.registry).getValue(this, entry);
 		if (value != null) {
 			return value;
@@ -130,6 +137,7 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 		Set<R> set = new ReferenceOpenHashBigSet<>();
 		set.addAll(RegistryEntryAttachmentHolder.getData(this.registry).valueTable.row(this).keySet());
 		set.addAll(RegistryEntryAttachmentHolder.getBuiltin(this.registry).valueTable.row(this).keySet());
+		set.removeIf(this.filter);
 		return set;
 	}
 
@@ -211,6 +219,11 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 		}
 
 		return false;
+	}
+
+	@Override
+	public Predicate<R> entryFilter() {
+		return this.filter;
 	}
 
 	@Override

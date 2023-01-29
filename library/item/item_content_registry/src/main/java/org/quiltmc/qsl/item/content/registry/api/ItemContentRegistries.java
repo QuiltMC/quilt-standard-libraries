@@ -20,6 +20,8 @@ import com.mojang.serialization.Codec;
 
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
@@ -40,6 +42,11 @@ public class ItemContentRegistries {
 	public static final String NAMESPACE = "quilt";
 
 	/**
+	 * A tag that filters out values from being included as furnace fuels.
+	 */
+	public static final TagKey<Item> FUEL_FILTERS = TagKey.of(RegistryKeys.ITEM, new Identifier("quilt", "fuel_filters"));
+
+	/**
 	 * A {@link RegistryEntryAttachment} for how long different items burn in a furnace. The value is stored in ticks.
 	 * <p>
 	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/item/fuel_times.json}
@@ -49,6 +56,7 @@ public class ItemContentRegistries {
 					new Identifier(NAMESPACE, "fuel_times"),
 					Integer.class,
 					Codec.intRange(0, Integer.MAX_VALUE))
+			.filter(item -> item.getBuiltInRegistryHolder().isIn(FUEL_FILTERS))
 			.build();
 
 	/**
