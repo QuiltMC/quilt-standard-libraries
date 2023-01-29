@@ -31,13 +31,14 @@ import org.objectweb.asm.tree.ClassNode
 import java.nio.file.FileSystem
 import java.nio.file.FileSystems
 import java.nio.file.Files
+import java.nio.file.Path
 import java.util.stream.Collectors
 
 task generateAccessWidener {
 	group = "generation"
 	doLast {
 		List<String> lines = file("template.accesswidener").text.lines().collect(Collectors.toCollection { [] })
-		java.nio.file.Path inputJar = loom.namedMinecraftProvider.parentMinecraftProvider.mergedJar
+		Path inputJar = loom.namedMinecraftProvider.parentMinecraftProvider.mergedJar
 
 		try (def fs = FileSystems.newFileSystem(URI.create("jar:${inputJar.toUri()}"), [create: false])) {
 			generateItemConstructors(lines, fs)
@@ -73,7 +74,7 @@ def generateItemConstructors(List<String> lines, FileSystem fs) {
 			}
 }
 
-ClassNode loadClass(java.nio.file.Path path) {
+ClassNode loadClass(Path path) {
 	def node = new ClassNode()
 
 	try (def is = Files.newInputStream(path)) {
