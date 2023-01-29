@@ -56,7 +56,7 @@ public class ItemContentRegistries {
 					new Identifier(NAMESPACE, "fuel_times"),
 					Integer.class,
 					Codec.intRange(0, Integer.MAX_VALUE))
-			.filter(item -> item.getBuiltInRegistryHolder().isIn(FUEL_FILTERS))
+			.filter(item -> !item.getBuiltInRegistryHolder().isIn(FUEL_FILTERS))
 			.build();
 
 	/**

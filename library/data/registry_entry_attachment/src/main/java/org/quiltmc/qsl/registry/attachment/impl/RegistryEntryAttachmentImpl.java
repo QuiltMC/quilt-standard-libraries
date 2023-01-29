@@ -111,7 +111,7 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 			ClientSideGuard.assertAccessAllowed();
 		}
 
-		if (this.filter.test(entry)) {
+		if (!this.filter.test(entry)) {
 			return null;
 		}
 
@@ -137,7 +137,7 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 		Set<R> set = new ReferenceOpenHashBigSet<>();
 		set.addAll(RegistryEntryAttachmentHolder.getData(this.registry).valueTable.row(this).keySet());
 		set.addAll(RegistryEntryAttachmentHolder.getBuiltin(this.registry).valueTable.row(this).keySet());
-		set.removeIf(this.filter);
+		set.removeIf(Predicate.not(this.filter));
 		return set;
 	}
 
