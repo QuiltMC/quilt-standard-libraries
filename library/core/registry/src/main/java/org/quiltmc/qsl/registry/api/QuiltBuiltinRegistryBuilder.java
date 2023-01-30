@@ -1,0 +1,111 @@
+/*
+ * Copyright 2022 QuiltMC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.quiltmc.qsl.registry.api;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
+
+import org.quiltmc.qsl.registry.impl.sync.RegistryFlag;
+import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
+
+/**
+ * Utility class to build a new built-in {@link Registry}.
+ *
+ * @param <T> the entry type tracked by this registry
+ */
+public final class QuiltBuiltinRegistryBuilder<T> extends QuiltRegistryBuilder<T, QuiltBuiltinRegistryBuilder<T>> {
+	private RegistrySyncBehavior syncBehavior;
+
+	QuiltBuiltinRegistryBuilder(@NotNull RegistryKey<Registry<T>> key) {
+		super(key);
+
+		this.syncBehavior = RegistrySyncBehavior.SKIPPED;
+	}
+
+	/**
+	 * Sets the synchronization behavior of this registry.
+	 * <p>
+	 * By default, this is {@link RegistrySyncBehavior#SKIPPED}.
+	 *
+	 * @param syncBehavior the new synchronization behavior
+	 * @return this builder
+	 */
+	@Contract("_ -> this")
+	public @NotNull QuiltBuiltinRegistryBuilder<T> withSyncBehavior(@NotNull RegistrySyncBehavior syncBehavior) {
+		this.syncBehavior = syncBehavior;
+		return this;
+	}
+
+	/**
+	 * Sets the registry to <em>not</em> be synchronized at all.
+	 *
+	 * @return this builder
+	 * @see #withSyncBehavior(RegistrySyncBehavior)
+	 * @see RegistrySyncBehavior#SKIPPED
+	 */
+	@Contract("-> this")
+	public @NotNull QuiltBuiltinRegistryBuilder<T> syncSkipped() {
+		return this.withSyncBehavior(RegistrySyncBehavior.SKIPPED);
+	}
+
+	/**
+	 * Sets the registry to be synchronized, and to be required - clients who do not have this registry on their side
+	 * <em>will</em> be kicked.
+	 *
+	 * @return this builder
+	 * @see #withSyncBehavior(RegistrySyncBehavior)
+	 * @see RegistrySyncBehavior#REQUIRED
+	 */
+	@Contract("-> this")
+	public @NotNull QuiltBuiltinRegistryBuilder<T> syncRequired() {
+		return this.withSyncBehavior(RegistrySyncBehavior.REQUIRED);
+	}
+
+	/**
+	 * Sets the registry to be synchronized, and to be optional - clients who do not have this registry on their side
+	 * <em>will not</em> be kicked.
+	 *
+	 * @return this builder.
+	 * @see #withSyncBehavior(RegistrySyncBehavior)
+	 * @see RegistrySyncBehavior#OPTIONAL
+	 */
+	@Contract("-> this")
+	public @NotNull QuiltBuiltinRegistryBuilder<T> syncOptional() {
+		return this.withSyncBehavior(RegistrySyncBehavior.OPTIONAL);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	protected void onRegistryBuilt(Registry<T> registry) {
+		Registry.register((Registry<Registry<Object>>) Registry.REGISTRIES, this.key.getValue(), (Registry<Object>) registry);
+
+		if (this.syncBehavior == RegistrySyncBehavior.REQUIRED || this.syncBehavior == RegistrySyncBehavior.OPTIONAL) {
+			// using SynchronizedRegistry directly instead of RegistrySynchronization/RegistryFlag,
+			//  since those require casting to SimpleRegistry
+			var syncRegistry = SynchronizedRegistry.as(registry);
+			syncRegistry.quilt$markForSync();
+			if (this.syncBehavior == RegistrySyncBehavior.OPTIONAL) {
+				syncRegistry.quilt$setRegistryFlag(RegistryFlag.OPTIONAL);
+			}
+		}
+
+		super.onRegistryBuilt(registry);
+	}
+}

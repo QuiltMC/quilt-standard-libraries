@@ -5,6 +5,7 @@
   "mixins": [
     "BlocksMixin",
     "DebugChunkGeneratorAccessor",
+    "DynamicRegistryManagerMixin",
     "FluidsMixin",
     "IdListMixin",
     "ItemsMixin",
