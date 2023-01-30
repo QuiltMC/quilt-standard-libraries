@@ -119,6 +119,16 @@ public final class ArmorRenderingRegistry {
 	}
 
 	/**
+	 * Registers a static model for the specified items.
+	 *
+	 * @param model the model
+	 * @param items the items to register for
+	 */
+	public static void registerModel(@NotNull BipedEntityModel<LivingEntity> model, @NotNull ItemConvertible... items) {
+		registerModelProvider(Event.DEFAULT_PHASE, (modelx, entity, stack, slot) -> model, items);
+	}
+
+	/**
 	 * Registers a render layer provider for the specified items.
 	 *
 	 * @param phaseIdentifier the phase identifier
@@ -155,6 +165,16 @@ public final class ArmorRenderingRegistry {
 	 */
 	public static void registerRenderLayerProvider(@NotNull RenderLayerProvider provider, @NotNull ItemConvertible... items) {
 		registerRenderLayerProvider(Event.DEFAULT_PHASE, provider, items);
+	}
+
+	/**
+	 * Registers a static render layer for the specified items.
+	 *
+	 * @param layer the render layer
+	 * @param items the items to register for
+	 */
+	public static void registerRenderLayer(@NotNull RenderLayer layer, @NotNull ItemConvertible... items) {
+		registerRenderLayerProvider(Event.DEFAULT_PHASE, (layerx, entity, stack, slot, texture) -> layer, items);
 	}
 
 	/**
