@@ -11,12 +11,16 @@
     "bow.EntityUseBowMixin",
     "crossbow.CrossbowItemAccessor",
     "crossbow.CrossbowItemMixin",
-    "crossbow.EntityUseCrossbowMixin"
+    "crossbow.EntityUseCrossbowMixin",
+    "trident.TridentEntityAccessor",
+    "trident.TridentEntityMixin"
   ],
   "client": [
     "bow.client.SkeletonEntityModelMixin",
     "client.HeldItemRendererMixin",
-    "crossbow.client.PlayerEntityRendererMixin"
+    "crossbow.client.PlayerEntityRendererMixin",
+    "trident.client.ClientPlayNetworkHandlerMixin",
+    "trident.client.TridentEntityRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
