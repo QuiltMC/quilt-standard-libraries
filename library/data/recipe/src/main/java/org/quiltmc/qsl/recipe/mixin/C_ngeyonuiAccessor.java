@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 QuiltMC
+ * Copyright 2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.networking.mixin.accessor;
+package org.quiltmc.qsl.recipe.mixin;
 
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.unmapped.C_ngeyonui;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import net.minecraft.network.ClientConnection;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerLoginNetworkHandler;
+@Mixin(C_ngeyonui.class)
+public interface C_ngeyonuiAccessor {
+	@Accessor(value = "f_nflteanq")
+	Ingredient getTemplate();
 
-@Mixin(ServerLoginNetworkHandler.class)
-public interface ServerLoginNetworkHandlerAccessor {
-	@Accessor
-	MinecraftServer getServer();
+	@Accessor("f_wnvjvqod")
+	Ingredient getBase();
 
-	@Accessor
-	ClientConnection getConnection();
+	@Accessor("f_ibbkkedr")
+	Ingredient getAddition();
 }

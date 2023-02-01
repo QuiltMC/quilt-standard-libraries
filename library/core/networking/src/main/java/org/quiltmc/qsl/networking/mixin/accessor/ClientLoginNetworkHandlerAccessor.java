@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 QuiltMC
+ * Copyright 2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,14 @@ package org.quiltmc.qsl.networking.mixin.accessor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
+import net.minecraft.client.network.ClientLoginNetworkHandler;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerLoginNetworkHandler;
 
-@Mixin(ServerLoginNetworkHandler.class)
-public interface ServerLoginNetworkHandlerAccessor {
-	@Accessor
-	MinecraftServer getServer();
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 
+@ClientOnly
+@Mixin(ClientLoginNetworkHandler.class)
+public interface ClientLoginNetworkHandlerAccessor {
 	@Accessor
 	ClientConnection getConnection();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,16 @@
 
 package org.quiltmc.qsl.recipe.api.builder;
 
-
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.BlastingRecipe;
 import net.minecraft.recipe.CampfireCookingRecipe;
+import net.minecraft.recipe.CookingCategory;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.SmeltingRecipe;
 import net.minecraft.recipe.SmokingRecipe;
 import net.minecraft.recipe.StonecuttingRecipe;
-import net.minecraft.recipe.book.CookingRecipeCategory;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 
@@ -99,7 +98,7 @@ public final class VanillaRecipeBuilders {
 	 * @param cookTime   the cook time in ticks
 	 * @return the smelting recipe
 	 */
-	public static SmeltingRecipe smeltingRecipe(Identifier id, String group, Ingredient input, CookingRecipeCategory category, ItemStack output,
+	public static SmeltingRecipe smeltingRecipe(Identifier id, String group, Ingredient input, CookingCategory category, ItemStack output,
 			float experience, int cookTime) {
 		return VanillaRecipeBuildersImpl.smeltingRecipe(id, group, category, input, output, experience, cookTime);
 	}
@@ -116,7 +115,7 @@ public final class VanillaRecipeBuilders {
 	 * @param cookTime   the cook time in ticks
 	 * @return the blasting recipe
 	 */
-	public static BlastingRecipe blastingRecipe(Identifier id, String group, Ingredient input, CookingRecipeCategory category, ItemStack output,
+	public static BlastingRecipe blastingRecipe(Identifier id, String group, Ingredient input, CookingCategory category, ItemStack output,
 			float experience, int cookTime) {
 		return VanillaRecipeBuildersImpl.blastingRecipe(id, group, category, input, output, experience, cookTime);
 	}
@@ -133,7 +132,7 @@ public final class VanillaRecipeBuilders {
 	 * @param cookTime   the cook time in ticks
 	 * @return the smoking recipe
 	 */
-	public static SmokingRecipe smokingRecipe(Identifier id, String group, CookingRecipeCategory category, Ingredient input, ItemStack output, float experience, int cookTime) {
+	public static SmokingRecipe smokingRecipe(Identifier id, String group, CookingCategory category, Ingredient input, ItemStack output, float experience, int cookTime) {
 		return VanillaRecipeBuildersImpl.smokingRecipe(id, group, category, input, output, experience, cookTime);
 	}
 
@@ -149,7 +148,7 @@ public final class VanillaRecipeBuilders {
 	 * @param cookTime   the cook time in ticks
 	 * @return the campfire cooking recipe
 	 */
-	public static CampfireCookingRecipe campfireCookingRecipe(Identifier id, String group, CookingRecipeCategory category, Ingredient input,
+	public static CampfireCookingRecipe campfireCookingRecipe(Identifier id, String group, CookingCategory category, Ingredient input,
 			ItemStack output, float experience, int cookTime) {
 		return VanillaRecipeBuildersImpl.campfireCookingRecipe(id, group, category, input, output, experience, cookTime);
 	}

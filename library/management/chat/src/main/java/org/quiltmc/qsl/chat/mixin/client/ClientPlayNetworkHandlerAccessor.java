@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.recipe.mixin;
+package org.quiltmc.qsl.chat.mixin.client;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.SmithingRecipe;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.network.ClientConnection;
 
-@Mixin(SmithingRecipe.class)
-public interface SmithingRecipeAccessor {
-	@Accessor
-	Ingredient getBase();
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 
+@ClientOnly
+@Mixin(ClientPlayNetworkHandler.class)
+public interface ClientPlayNetworkHandlerAccessor {
 	@Accessor
-	Ingredient getAddition();
+	ClientConnection getConnection();
 }

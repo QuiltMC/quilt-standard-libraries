@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.resource.loader.mixin.client;
+package org.quiltmc.qsl.recipe.mixin;
 
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.unmapped.C_lsbkbfik;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Invoker;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-import net.minecraft.client.gui.widget.EntryListWidget;
+/* a.k.a. TransformingSmithingRecipeAccessor...? */
+@Mixin(C_lsbkbfik.class)
+public interface C_lsbkbfikAccessor {
+	@Accessor(value = "f_fivqxkjv")
+	Ingredient getTemplate();
 
-import org.quiltmc.loader.api.minecraft.ClientOnly;
+	@Accessor("f_lnthvorh")
+	Ingredient getBase();
 
-@ClientOnly
-@Mixin(EntryListWidget.class)
-public interface EntryListWidgetAccessor<E extends EntryListWidget.Entry<E>> {
-	@Invoker
-	E invokeGetHoveredEntry();
+	@Accessor("f_scgureqv")
+	Ingredient getAddition();
 }

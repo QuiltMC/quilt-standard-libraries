@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -234,7 +234,7 @@ public class QuiltBiomeTest implements ModInitializer {
 		SpawnSettings.Builder builder2 = new SpawnSettings.Builder();
 		DefaultBiomeFeatures.addPlainsMobs(builder2);
 		return (new Biome.Builder())
-				.precipitation(Biome.Precipitation.NONE).temperature(0.5F).downfall(0.5F)
+				.m_ummwpslu(false).temperature(0.5F).downfall(0.5F)
 				.effects((new BiomeEffects.Builder())
 						.waterColor(0x129900)
 						.waterFogColor(0x121212).fogColor(0x990000).skyColor(0).moodSound(BiomeMoodSound.CAVE)

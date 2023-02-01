@@ -19,18 +19,24 @@ package org.quiltmc.qsl.recipe.mixin;
 import com.google.gson.JsonObject;
 import org.spongepowered.asm.mixin.Mixin;
 
-import net.minecraft.data.server.recipe.ShapelessRecipeJsonFactory;
-import net.minecraft.recipe.ShapelessRecipe;
+import net.minecraft.unmapped.C_xrtznmeb;
+import net.minecraft.unmapped.C_zvuygmwb;
 
 import org.quiltmc.qsl.recipe.api.serializer.QuiltRecipeSerializer;
 
-@Mixin(ShapelessRecipe.Serializer.class)
-public abstract class ShapelessRecipeSerializerMixin implements QuiltRecipeSerializer<ShapelessRecipe> {
+/* a.k.a. LegacySmithingRecipeSerializerMixin */
+@SuppressWarnings({"deprecated", "removal"})
+@Mixin(C_xrtznmeb.C_exsoxfpi.class)
+public abstract class C_exsoxfpiMixin implements QuiltRecipeSerializer<C_xrtznmeb> {
 	@Override
-	public JsonObject toJson(ShapelessRecipe recipe) {
-		return new ShapelessRecipeJsonFactory.ShapelessRecipeJsonProvider(recipe.getId(),
-				recipe.getOutput(null).getItem(), recipe.getOutput(null).getCount(),
-				recipe.getGroup(), recipe.getCategory(), recipe.getIngredients(), null, null)
-				.toJson();
+	public JsonObject toJson(C_xrtznmeb recipe) {
+		var accessor = (C_xrtznmebAccessor) recipe;
+
+		return new C_zvuygmwb.C_zxdmndti(
+				recipe.getId(),
+				this,
+				accessor.getBase(), accessor.getAddition(), recipe.getOutput(null).getItem(),
+				null, null
+		).toJson();
 	}
 }

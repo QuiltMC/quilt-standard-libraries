@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.networking.mixin.accessor;
+package org.quiltmc.qsl.recipe.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import net.minecraft.network.ClientConnection;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerLoginNetworkHandler;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.unmapped.C_xrtznmeb;
 
-@Mixin(ServerLoginNetworkHandler.class)
-public interface ServerLoginNetworkHandlerAccessor {
-	@Accessor
-	MinecraftServer getServer();
+/* a.k.a. LegacySmithingRecipeAccessor */
+@SuppressWarnings({"deprecated", "removal"})
+@Mixin(C_xrtznmeb.class)
+public interface C_xrtznmebAccessor {
+	// Gets base
+	@Accessor("f_mihfbkri")
+	Ingredient getBase();
 
-	@Accessor
-	ClientConnection getConnection();
+	// Gets addition
+	@Accessor("f_cilfmlnk")
+	Ingredient getAddition();
 }

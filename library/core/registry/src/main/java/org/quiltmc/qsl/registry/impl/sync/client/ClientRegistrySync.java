@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,6 +45,7 @@ import org.quiltmc.qsl.registry.impl.sync.RegistryFlag;
 import org.quiltmc.qsl.registry.impl.sync.ServerPackets;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedIdList;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
+import org.quiltmc.qsl.registry.mixin.client.ClientLoginNetworkHandlerAccessor;
 import org.quiltmc.qsl.registry.mixin.client.ItemRendererAccessor;
 
 @ApiStatus.Internal
@@ -109,7 +110,7 @@ public final class ClientRegistrySync {
 		var buf = PacketByteBufs.create();
 		buf.writeIdentifier(identifier);
 
-		handler.getConnection().send(ClientPlayNetworking.createC2SPacket(ClientPackets.SYNC_FAILED, buf));
+		((ClientLoginNetworkHandlerAccessor) handler).getConnection().send(ClientPlayNetworking.createC2SPacket(ClientPackets.SYNC_FAILED, buf));
 	}
 
 	private static void handleGoodbyePacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
@@ -133,7 +134,7 @@ public final class ClientRegistrySync {
 		} else {
 			LOGGER.warn("Trying to sync registry " + identifier + " which doesn't " + (registry != null ? "support it!" : "exist!"));
 			sendSyncFailedPacket(handler, identifier);
-			handler.getConnection().disconnect(getMessage("missing_registry", "Client is missing required registry! Mismatched mods?"));
+			((ClientLoginNetworkHandlerAccessor) handler).getConnection().disconnect(getMessage("missing_registry", "Client is missing required registry! Mismatched mods?"));
 		}
 	}
 
@@ -260,7 +261,7 @@ public final class ClientRegistrySync {
 
 		if (disconnect) {
 			sendSyncFailedPacket(handler, registry);
-			handler.getConnection().disconnect(getMessage("missing_entries", "Client registry is missing entries! Mismatched mods?"));
+			((ClientLoginNetworkHandlerAccessor) handler).getConnection().disconnect(getMessage("missing_entries", "Client registry is missing entries! Mismatched mods?"));
 			var builder = new StringBuilder("Missing entries for registry \"" + registry + "\":\n");
 
 			for (var entry : missingEntries) {
@@ -268,6 +269,7 @@ public final class ClientRegistrySync {
 				if (RegistryFlag.isOptional(entry.flags())) {
 					builder.append(" (Optional)");
 				}
+
 				builder.append("\n");
 			}
 

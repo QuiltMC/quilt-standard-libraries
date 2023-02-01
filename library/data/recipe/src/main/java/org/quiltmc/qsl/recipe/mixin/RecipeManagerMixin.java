@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ public class RecipeManagerMixin {
 	 * @reason Replaces immutable maps for mutable maps instead.
 	 */
 	@Overwrite
-	private static Map<Identifier, Recipe<?>> method_20703(Map.Entry<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> entry) {
+	private static Map<Identifier, Recipe<?>> m_npnaebpp(Map.Entry<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> entry) {
 		// This is cursed. Do not look.
 		return ImmutableMapBuilderUtil.specialBuild(entry.getValue());
 	}

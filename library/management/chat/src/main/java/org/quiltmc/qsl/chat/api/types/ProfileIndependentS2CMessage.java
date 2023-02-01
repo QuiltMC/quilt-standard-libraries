@@ -16,17 +16,20 @@
 
 package org.quiltmc.qsl.chat.api.types;
 
+import java.util.EnumSet;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.message.MessageType;
 import net.minecraft.network.packet.s2c.play.ProfileIndependentMessageS2CPacket;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import org.quiltmc.qsl.chat.impl.InternalMessageTypesFactory;
-
-import java.util.EnumSet;
+import org.quiltmc.qsl.chat.mixin.client.ClientPlayNetworkHandlerAccessor;
 
 /**
  * A wrapper around a "profile independent" message. These are usually created as a result of commands like {@link net.minecraft.server.command.MessageCommand}.
@@ -42,7 +45,7 @@ public class ProfileIndependentS2CMessage extends AbstractChatMessage<ProfileInd
 				packet.message(),
 				packet.messageType().createParameters(player.world.getRegistryManager()).orElseGet(() -> {
 					if (player instanceof ClientPlayerEntity clientPlayerEntity) {
-						clientPlayerEntity.networkHandler.getConnection().disconnect(Text.translatable("multiplayer.disconnect.invalid_packet"));
+						((ClientPlayNetworkHandlerAccessor) clientPlayerEntity.networkHandler).getConnection().disconnect(Text.translatable("multiplayer.disconnect.invalid_packet"));
 					}
 					return null;
 				})

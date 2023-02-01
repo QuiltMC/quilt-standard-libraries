@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,21 +19,22 @@ package org.quiltmc.qsl.recipe.mixin;
 import com.google.gson.JsonObject;
 import org.spongepowered.asm.mixin.Mixin;
 
-import net.minecraft.data.server.recipe.SmithingRecipeJsonFactory;
-import net.minecraft.recipe.SmithingRecipe;
+import net.minecraft.unmapped.C_lsbkbfik;
+import net.minecraft.unmapped.C_vcelfxlx;
 
 import org.quiltmc.qsl.recipe.api.serializer.QuiltRecipeSerializer;
 
-@Mixin(SmithingRecipe.Serializer.class)
-public abstract class SmithingRecipeSerializerMixin implements QuiltRecipeSerializer<SmithingRecipe> {
+/* a.k.a. TransformingSmithingRecipeSerializerMixin...? */
+@Mixin(C_lsbkbfik.C_nuqohuov.class)
+public abstract class C_nuqohuovMixin implements QuiltRecipeSerializer<C_lsbkbfik> {
 	@Override
-	public JsonObject toJson(SmithingRecipe recipe) {
-		var accessor = (SmithingRecipeAccessor) recipe;
-
-		return new SmithingRecipeJsonFactory.SmithingRecipeJsonProvider(
+	public JsonObject toJson(C_lsbkbfik recipe) {
+		var accessor = (C_lsbkbfikAccessor) recipe;
+		return new C_vcelfxlx.C_bdbxjrda(
 				recipe.getId(),
 				this,
-				accessor.getBase(), accessor.getAddition(), recipe.getOutput().getItem(),
+				accessor.getTemplate(), accessor.getBase(), accessor.getAddition(),
+				recipe.getOutput(null).getItem(),
 				null, null
 		).toJson();
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 import org.quiltmc.qsl.networking.impl.AbstractChanneledNetworkAddon;
 import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
 import org.quiltmc.qsl.networking.impl.NetworkingImpl;
+import org.quiltmc.qsl.networking.mixin.accessor.ClientPlayNetworkHandlerAccessor;
 
 @ApiStatus.Internal
 @ClientOnly
@@ -45,7 +46,7 @@ public final class ClientPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 	private boolean sentInitialRegisterPacket;
 
 	public ClientPlayNetworkAddon(ClientPlayNetworkHandler handler, MinecraftClient client) {
-		super(ClientNetworkingImpl.PLAY, handler.getConnection(), "ClientPlayNetworkAddon for " + handler.getProfile().getName());
+		super(ClientNetworkingImpl.PLAY, ((ClientPlayNetworkHandlerAccessor) handler).getConnection(), "ClientPlayNetworkAddon for " + handler.getProfile().getName());
 		this.handler = handler;
 		this.client = client;
 

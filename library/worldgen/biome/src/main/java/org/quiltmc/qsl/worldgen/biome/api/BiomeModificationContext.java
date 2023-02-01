@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,10 +65,10 @@ public interface BiomeModificationContext {
 
 	interface WeatherContext {
 		/**
-		 * @see Biome#getPrecipitation()
-		 * @see Biome.Builder#precipitation(Biome.Precipitation)
+		 * @see Biome#m_cgvmxqgd()
+		 * @see Biome.Builder#m_ummwpslu(boolean)
 		 */
-		void setPrecipitation(Biome.Precipitation precipitation);
+		void setHasPrecipitation(boolean hasPrecipitation);
 
 		/**
 		 * @see Biome#getTemperature()
@@ -82,7 +82,7 @@ public interface BiomeModificationContext {
 		void setTemperatureModifier(Biome.TemperatureModifier temperatureModifier);
 
 		/**
-		 * @see Biome#getDownfall()
+		 * @see Biome.Weather#downfall()
 		 * @see Biome.Builder#downfall(float)
 		 */
 		void setDownfall(float downfall);

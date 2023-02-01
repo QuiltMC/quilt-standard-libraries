@@ -30,29 +30,30 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ForgingScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.screen.SmithingScreenHandler;
-import net.minecraft.unmapped.C_cjflvspo;
+import net.minecraft.unmapped.C_pzubrkmc;
+import net.minecraft.unmapped.C_xrtznmeb;
 
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 
-@Mixin(SmithingScreenHandler.class)
-public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
+@SuppressWarnings({"deprecated", "removal"})
+@Mixin(C_pzubrkmc.class)
+public abstract class C_pzubrkmcMixin extends ForgingScreenHandler {
 	@Shadow
-	private @Nullable C_cjflvspo currentRecipe;
+	private @Nullable C_xrtznmeb f_xqlemijg;
 
 	@Shadow
 	public abstract void updateResult();
 
-	public SmithingScreenHandlerMixin(@Nullable ScreenHandlerType<?> screenHandlerType, int i, PlayerInventory playerInventory, ScreenHandlerContext screenHandlerContext) {
+	public C_pzubrkmcMixin(@Nullable ScreenHandlerType<?> screenHandlerType, int i, PlayerInventory playerInventory, ScreenHandlerContext screenHandlerContext) {
 		super(screenHandlerType, i, playerInventory, screenHandlerContext);
 	}
 
-	@Redirect(method = "decrementStack", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"))
+	@Redirect(method = "m_yukwcfqb", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"))
 	private void applyRecipeRemainder(ItemStack instance, int amount, int slot) {
 		RecipeRemainderLogicHandler.handleRemainderForScreenHandler(
 				this.getSlot(slot),
 				amount,
-				this.currentRecipe,
+				this.f_xqlemijg,
 				this.player
 		);
 	}

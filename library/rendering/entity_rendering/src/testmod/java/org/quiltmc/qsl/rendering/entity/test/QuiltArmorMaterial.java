@@ -18,7 +18,7 @@ package org.quiltmc.qsl.rendering.entity.test;
 
 import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.registry.tag.ItemTags;
@@ -28,6 +28,7 @@ import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 
+// TODO - Properly adapt the ArmorItem.Type method implementations to 1.19.4 instead of "get this working"
 public enum QuiltArmorMaterial implements ArmorMaterial {
 	INSTANCE;
 
@@ -39,13 +40,13 @@ public enum QuiltArmorMaterial implements ArmorMaterial {
 	private static final Identifier TEXTURE = EntityRenderingTestmod.id("textures/models/armor/" + NAME);
 
 	@Override
-	public int getDurability(EquipmentSlot slot) {
-		return BASE_DURABILITY[slot.getEntitySlotId()] * 50;
+	public int m_qppofnim(ArmorItem.C_rhnguwzk c_rhnguwzk) {
+		return BASE_DURABILITY[c_rhnguwzk.m_mslqofbv().getEntitySlotId()] * 50;
 	}
 
 	@Override
-	public int getProtectionAmount(EquipmentSlot slot) {
-		return PROTECTION_AMOUNTS[slot.getEntitySlotId()];
+	public int m_eomgzgon(ArmorItem.C_rhnguwzk c_rhnguwzk) {
+		return PROTECTION_AMOUNTS[c_rhnguwzk.m_mslqofbv().getEntitySlotId()];
 	}
 
 	@Override
@@ -76,6 +77,11 @@ public enum QuiltArmorMaterial implements ArmorMaterial {
 	@Override
 	public float getKnockbackResistance() {
 		return 0.15F;
+	}
+
+	@Override
+	public boolean m_usaqkthb() {
+		return false;
 	}
 
 	@ClientOnly

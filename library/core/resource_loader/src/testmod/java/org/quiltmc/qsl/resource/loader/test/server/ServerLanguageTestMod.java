@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,6 @@ public class ServerLanguageTestMod implements DedicatedServerModInitializer {
 	@Override
 	public void onInitializeServer(ModContainer mod) {
 		// Check whether the dedicated server properly loaded the default language with modded entries.
-		assert Language.getInstance().get("menu.singleplayer").equals("Let's test!");
+		assert Language.getInstance().m_rnmxhvcv("menu.singleplayer").equals("Let's test!");
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 QuiltMC
+ * Copyright 2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,18 +19,23 @@ package org.quiltmc.qsl.recipe.mixin;
 import com.google.gson.JsonObject;
 import org.spongepowered.asm.mixin.Mixin;
 
-import net.minecraft.data.server.recipe.ShapelessRecipeJsonFactory;
-import net.minecraft.recipe.ShapelessRecipe;
+import net.minecraft.unmapped.C_ngeyonui;
+import net.minecraft.unmapped.C_ywfnzhyw;
 
 import org.quiltmc.qsl.recipe.api.serializer.QuiltRecipeSerializer;
 
-@Mixin(ShapelessRecipe.Serializer.class)
-public abstract class ShapelessRecipeSerializerMixin implements QuiltRecipeSerializer<ShapelessRecipe> {
+@Mixin(C_ngeyonui.C_whzzarxp.class)
+public abstract class C_whzzarxpMixin implements QuiltRecipeSerializer<C_ngeyonui> {
 	@Override
-	public JsonObject toJson(ShapelessRecipe recipe) {
-		return new ShapelessRecipeJsonFactory.ShapelessRecipeJsonProvider(recipe.getId(),
-				recipe.getOutput(null).getItem(), recipe.getOutput(null).getCount(),
-				recipe.getGroup(), recipe.getCategory(), recipe.getIngredients(), null, null)
-				.toJson();
+	public JsonObject toJson(C_ngeyonui recipe) {
+		var accessor = (C_ngeyonuiAccessor) recipe;
+
+		return new C_ywfnzhyw.C_esuzwjjm(
+				recipe.getId(),
+				null,
+				accessor.getTemplate(), accessor.getBase(), accessor.getAddition(),
+				null,
+				null
+		).toJson();
 	}
 }

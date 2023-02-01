@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import org.quiltmc.qsl.networking.impl.AbstractChanneledNetworkAddon;
 import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
 import org.quiltmc.qsl.networking.impl.NetworkingImpl;
 import org.quiltmc.qsl.networking.mixin.accessor.CustomPayloadC2SPacketAccessor;
+import org.quiltmc.qsl.networking.mixin.accessor.ServerPlayNetworkHandlerAccessor;
 
 @ApiStatus.Internal
 public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<ServerPlayNetworking.ChannelReceiver> {
@@ -44,7 +45,7 @@ public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 	private boolean sentInitialRegisterPacket;
 
 	public ServerPlayNetworkAddon(ServerPlayNetworkHandler handler, MinecraftServer server) {
-		super(ServerNetworkingImpl.PLAY, handler.getConnection(), "ServerPlayNetworkAddon for " + handler.player.getEntityName());
+		super(ServerNetworkingImpl.PLAY, ((ServerPlayNetworkHandlerAccessor) handler).getConnection(), "ServerPlayNetworkAddon for " + handler.player.getEntityName());
 		this.handler = handler;
 		this.server = server;
 

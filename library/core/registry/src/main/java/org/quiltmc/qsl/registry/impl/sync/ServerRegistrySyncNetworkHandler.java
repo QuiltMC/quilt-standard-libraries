@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -181,8 +181,8 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 	}
 
 	@Override
-	public ClientConnection getConnection() {
-		return this.connection;
+	public boolean m_rpvfniop() {
+		return this.connection.isOpen();
 	}
 
 	@Override

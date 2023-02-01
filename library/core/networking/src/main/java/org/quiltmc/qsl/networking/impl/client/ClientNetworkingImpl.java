@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
 import org.quiltmc.qsl.networking.impl.GlobalReceiverRegistry;
 import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
 import org.quiltmc.qsl.networking.impl.NetworkingImpl;
+import org.quiltmc.qsl.networking.mixin.accessor.ClientLoginNetworkHandlerAccessor;
 import org.quiltmc.qsl.networking.mixin.accessor.ConnectScreenAccessor;
 import org.quiltmc.qsl.networking.mixin.accessor.MinecraftClientAccessor;
 
@@ -130,7 +131,7 @@ public final class ClientNetworkingImpl {
 			ids.add(buf.readIdentifier());
 		}
 
-		((ChannelInfoHolder) handler.getConnection()).getPendingChannelsNames().addAll(ids);
+		((ChannelInfoHolder) ((ClientLoginNetworkHandlerAccessor) handler).getConnection()).getPendingChannelsNames().addAll(ids);
 		NetworkingImpl.LOGGER.debug("Received accepted channels from the server");
 
 		PacketByteBuf response = PacketByteBufs.create();

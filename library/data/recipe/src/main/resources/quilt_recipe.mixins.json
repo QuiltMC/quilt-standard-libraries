@@ -3,13 +3,17 @@
   "package": "org.quiltmc.qsl.recipe.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "C_exsoxfpiMixin",
+    "C_lsbkbfikAccessor",
+    "C_ngeyonuiAccessor",
+    "C_nuqohuovMixin",
+    "C_whzzarxpMixin",
+    "C_xrtznmebAccessor",
     "CookingRecipeSerializerMixin",
     "CuttingRecipeSerializerMixin",
     "RecipeManagerMixin",
     "ShapedRecipeSerializerMixin",
     "ShapelessRecipeSerializerMixin",
-    "SmithingRecipeAccessor",
-    "SmithingRecipeSerializerMixin",
     "SpecialRecipeSerializerMixin"
   ],
   "injectors": {

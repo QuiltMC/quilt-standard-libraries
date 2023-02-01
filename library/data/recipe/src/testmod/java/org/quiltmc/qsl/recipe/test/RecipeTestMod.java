@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ public class RecipeTestMod implements ModInitializer {
 
 		RecipeManagerHelper.removeRecipes(handler -> {
 			handler.removeIf(RecipeType.CRAFTING, craftingRecipe -> {
-				return craftingRecipe.getOutput().getItem() instanceof BlockItem blockItem
+				return craftingRecipe.getOutput(null).getItem() instanceof BlockItem blockItem
 						&& blockItem.getBlock() instanceof PressurePlateBlock;
 			});
 		});
