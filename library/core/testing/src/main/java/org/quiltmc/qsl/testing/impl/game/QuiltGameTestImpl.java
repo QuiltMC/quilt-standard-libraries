@@ -72,6 +72,7 @@ public final class QuiltGameTestImpl implements ModInitializer {
 	 */
 	public static void runHeadlessServer(WorldSaveStorage.Session storageSession, ResourcePackManager resourcePackManager) {
 		LOGGER.info("Starting test server...");
+		LOGGER.info("By starting a Minecraft server you agree to its EULA.");
 
 		try (var server = TestServer.startServer(
 				thread -> TestServer.create(thread, storageSession, resourcePackManager, getBatches(), BlockPos.ORIGIN)
