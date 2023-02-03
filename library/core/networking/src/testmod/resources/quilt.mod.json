@@ -14,7 +14,8 @@
       "init": [
         "org.quiltmc.qsl.networking.test.keybindreciever.NetworkingKeyBindPacketTest",
         "org.quiltmc.qsl.networking.test.login.NetworkingLoginQueryTest",
-        "org.quiltmc.qsl.networking.test.play.NetworkingPlayPacketTest"
+        "org.quiltmc.qsl.networking.test.play.NetworkingPlayPacketTest",
+        "org.quiltmc.qsl.networking.test.codec.CodecTest"
       ],
       "events": [
         "org.quiltmc.qsl.networking.test.channeltest.NetworkingChannelTest"
