@@ -10,7 +10,7 @@ public class CallbackCodecSource<T extends CodecAwareCallback<T>> {
 	private final BiMap<Identifier, Codec<? extends T>> codecs = HashBiMap.create();
 
 	public CallbackCodecSource(T nullOperation) {
-		codecs.put(new Identifier("quilt","nothing"), nullOperation.getCodec());
+		codecs.put(new Identifier("quilt","nothing"), Codec.unit(nullOperation));
 	}
 
 	public CallbackCodecSource() {
