@@ -18,10 +18,14 @@ package org.quiltmc.qsl.worldgen.surface_rule.api;
 
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.EventAwareListener;
+import org.quiltmc.qsl.resource.loader.api.event.CallbackCodecSource;
+import org.quiltmc.qsl.resource.loader.api.event.CodecAwareCallback;
+import org.quiltmc.qsl.resource.loader.api.event.EventCallbackSource;
 
 /**
  * Events relating to {@link net.minecraft.world.gen.surfacebuilder.SurfaceRules surface rules}.
@@ -46,6 +50,19 @@ public final class SurfaceRuleEvents {
 			callback.modifyOverworldRules(context);
 		}
 	});
+	public static final CallbackCodecSource<OverworldModifierCallback> MODIFY_OVERWORLD_CODECS = new CallbackCodecSource<>(context -> {});
+	public static final EventCallbackSource<OverworldModifierCallback> MODIFY_OVERWORLD_IDENTIFIER = EventCallbackSource.of(
+			new Identifier("quilt", "overworld_surface_rules"),
+			MODIFY_OVERWORLD_CODECS,
+			OverworldModifierCallback.class,
+			MODIFY_OVERWORLD,
+			callbacks -> context -> {
+				for (var callback : callbacks.get()) {
+					callback.modifyOverworldRules(context);
+				}
+			},
+			ResourceType.SERVER_DATA
+	);
 
 	/**
 	 * An event indicating that the surface rules for the Nether dimension may get modified by mods,
@@ -79,7 +96,7 @@ public final class SurfaceRuleEvents {
 			});
 
 	@FunctionalInterface
-	public interface OverworldModifierCallback extends EventAwareListener {
+	public interface OverworldModifierCallback extends EventAwareListener, CodecAwareCallback<OverworldModifierCallback> {
 		/**
 		 * Called to modify the given Overworld surface rules.
 		 *
