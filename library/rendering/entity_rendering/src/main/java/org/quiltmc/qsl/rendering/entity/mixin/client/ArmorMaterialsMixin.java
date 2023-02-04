@@ -40,7 +40,7 @@ public abstract class ArmorMaterialsMixin implements ArmorMaterial {
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void quilt$initTexture(String constantName, int ordinal, String name, int j,
 								   EnumMap enumMap, int k, SoundEvent soundEvent, float f,
-								   float g, Supplier supplier, boolean bl, CallbackInfo ci) {
+								   float g, Supplier supplier, CallbackInfo ci) {
 		this.quilt$texture = new Identifier("textures/models/armor/" + name);
 	}
 

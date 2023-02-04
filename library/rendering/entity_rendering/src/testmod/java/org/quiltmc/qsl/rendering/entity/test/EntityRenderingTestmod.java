@@ -33,13 +33,13 @@ public final class EntityRenderingTestmod implements ModInitializer {
 	}
 
 	public static final ArmorItem QUILT_HELMET = Registry.register(Registries.ITEM, id("quilt_helmet"),
-			new ArmorItem(QuiltArmorMaterial.INSTANCE, ArmorItem.C_rhnguwzk.HELMET, new Item.Settings()));
+			new ArmorItem(QuiltArmorMaterial.INSTANCE, ArmorItem.ArmorSlot.HELMET, new Item.Settings()));
 	public static final ArmorItem QUILT_CHESTPLATE = Registry.register(Registries.ITEM, id("quilt_chestplate"),
-			new ArmorItem(QuiltArmorMaterial.INSTANCE, ArmorItem.C_rhnguwzk.CHESTPLATE, new Item.Settings()));
+			new ArmorItem(QuiltArmorMaterial.INSTANCE, ArmorItem.ArmorSlot.CHESTPLATE, new Item.Settings()));
 	public static final ArmorItem QUILT_LEGGINGS = Registry.register(Registries.ITEM, id("quilt_leggings"),
-			new ArmorItem(QuiltArmorMaterial.INSTANCE, ArmorItem.C_rhnguwzk.LEGGINGS, new Item.Settings()));
+			new ArmorItem(QuiltArmorMaterial.INSTANCE, ArmorItem.ArmorSlot.LEGGINGS, new Item.Settings()));
 	public static final ArmorItem QUILT_BOOTS = Registry.register(Registries.ITEM, id("quilt_boots"),
-			new ArmorItem(QuiltArmorMaterial.INSTANCE, ArmorItem.C_rhnguwzk.BOOTS, new Item.Settings()));
+			new ArmorItem(QuiltArmorMaterial.INSTANCE, ArmorItem.ArmorSlot.BOOTS, new Item.Settings()));
 
 	@Override
 	public void onInitialize(ModContainer mod) {}

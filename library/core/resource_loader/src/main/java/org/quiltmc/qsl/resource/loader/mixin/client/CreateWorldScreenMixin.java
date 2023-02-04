@@ -29,7 +29,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
-import net.minecraft.client.gui.screen.world.MoreOptionsDialog;
 import net.minecraft.client.world.WorldCreationContext;
 import net.minecraft.feature_flags.FeatureFlags;
 import net.minecraft.resource.AutoCloseableResourceManager;
@@ -37,6 +36,7 @@ import net.minecraft.resource.pack.ResourcePackManager;
 import net.minecraft.server.ServerReloadableResources;
 import net.minecraft.server.world.FeatureAndDataSettings;
 import net.minecraft.registry.LayeredRegistryManager;
+import net.minecraft.unmapped.C_hypraqfe;
 import net.minecraft.util.Unit;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -48,11 +48,11 @@ import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 public abstract class CreateWorldScreenMixin {
 	@Shadow
 	@Final
-	public MoreOptionsDialog moreOptionsDialog;
+	C_hypraqfe f_rsmdhran;
 
 	@Dynamic
 	@Inject(
-			method = "m_tlckpqyc(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/registry/LayeredRegistryManager;Lnet/minecraft/client/gui/screen/world/CreateWorldScreen$C_mxqwwbun;)Lnet/minecraft/client/world/WorldCreationContext;",
+			method = "m_qcsfhvrb(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/registry/LayeredRegistryManager;Lnet/minecraft/client/gui/screen/world/CreateWorldScreen$C_mxqwwbun;)Lnet/minecraft/client/world/WorldCreationContext;",
 			at = @At("HEAD")
 	)
 	private static void onEndDataPackLoadOnOpen(AutoCloseableResourceManager resourceManager, ServerReloadableResources resources,
@@ -61,7 +61,7 @@ public abstract class CreateWorldScreenMixin {
 	}
 
 	@Inject(
-			method = "m_btwtdkmu",
+				method = "m_btwtdkmu",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/server/WorldLoader;load(Lnet/minecraft/server/WorldLoader$InitConfig;Lnet/minecraft/server/WorldLoader$LoadContextSupplier;Lnet/minecraft/server/WorldLoader$ApplierFactory;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
@@ -86,7 +86,7 @@ public abstract class CreateWorldScreenMixin {
 	// Inject before closing the resource manager.
 	@Dynamic
 	@Inject(
-			method = "m_zqrlbkty(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/registry/LayeredRegistryManager;Lnet/minecraft/client/gui/screen/world/CreateWorldScreen$C_mxqwwbun;)Lnet/minecraft/client/world/WorldCreationContext;",
+			method = "m_fiszvdug(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/registry/LayeredRegistryManager;Lnet/minecraft/client/gui/screen/world/CreateWorldScreen$C_mxqwwbun;)Lnet/minecraft/client/world/WorldCreationContext;",
 			at = @At("HEAD")
 	)
 	private static void onCreateDataPackLoadEnd(AutoCloseableResourceManager resourceManager, ServerReloadableResources resources,
@@ -97,7 +97,7 @@ public abstract class CreateWorldScreenMixin {
 	// Lambda method in CreateWorldScreen#m_btwtdkmu, at CompletableFuture#handle.
 	// Take Void and Throwable parameters.
 	@Inject(
-			method = "m_sxbkwuzy(Ljava/lang/Void;Ljava/lang/Throwable;)Ljava/lang/Object;",
+			method = "m_lgnmfmry(Ljava/lang/Void;Ljava/lang/Throwable;)Ljava/lang/Object;",
 			at = @At(
 					value = "INVOKE",
 					target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Throwable;)V",
@@ -111,7 +111,7 @@ public abstract class CreateWorldScreenMixin {
 
 	@Inject(method = "createLevel", at = @At("HEAD"))
 	private void onCreateLevelStart(CallbackInfo ci) {
-		if (FeatureFlags.containsDefault(this.moreOptionsDialog.getWorldCreationContext().dataConfiguration().enabledFeatures())) {
+		if (FeatureFlags.containsDefault(this.f_rsmdhran.m_xkfzagsg().dataConfiguration().enabledFeatures())) {
 			ResourceLoaderImpl.EXPERIMENTAL_FEATURES_ENABLED.set(Unit.INSTANCE);
 		}
 	}
