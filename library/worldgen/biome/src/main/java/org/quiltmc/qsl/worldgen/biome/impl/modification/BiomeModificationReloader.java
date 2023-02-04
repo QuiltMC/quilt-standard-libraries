@@ -51,12 +51,18 @@ public class BiomeModificationReloader {
 			var resource = entry.getValue();
 			try (var reader = resource.openBufferedReader()) {
 				var json = GSON.fromJson(reader, JsonElement.class);
-				DataResult<Pair<ModificationPhase, BiomeModifier>> result = CODEC.parse(ops, json);
-				if (result.result().isPresent()) {
-					var pair = result.result().get();
-					dynamicListeners.computeIfAbsent(pair.getFirst(), k -> new LinkedHashMap<>()).put(unwrappedIdentifier, pair.getSecond());
-				} else {
-					LOGGER.error("Couldn't parse data file {} from {}: {}", unwrappedIdentifier, identifier, result.error().get().message());
+				try {
+					DataResult<Pair<ModificationPhase, BiomeModifier>> result = CODEC.parse(ops, json);
+					if (result.result().isPresent()) {
+						var pair = result.result().get();
+						dynamicListeners.computeIfAbsent(pair.getFirst(), k -> new LinkedHashMap<>()).put(unwrappedIdentifier, pair.getSecond());
+					} else {
+						LOGGER.error("Couldn't parse data file {} from {}: {}", unwrappedIdentifier, identifier, result.error().get().message());
+					}
+				} catch (IllegalStateException e) {
+					// We have to catch the 'java.lang.IllegalStateException: Missing tag TagKey[minecraft:worldgen/biome / minecraft:increased_fire_burnout]'
+					// that can be thrown by the biome holder list codec...
+					LOGGER.error("Couldn't parse data file {} from {}", unwrappedIdentifier, identifier, e);
 				}
 			} catch (IOException e) {
 				LOGGER.error("Couldn't parse data file {} from {}", unwrappedIdentifier, identifier, e);

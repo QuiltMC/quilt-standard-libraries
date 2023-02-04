@@ -11,7 +11,7 @@ import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.base.api.event.Event;
 
-public class CodecMap<T extends CodecAwareCallback> {
+public class CodecMap<T extends CodecAware> {
 	private final BiMap<Identifier, Codec<? extends T>> codecs = HashBiMap.create();
 
 	public CodecMap(T nullOperation) {
@@ -21,20 +21,24 @@ public class CodecMap<T extends CodecAwareCallback> {
 	public CodecMap() {
 	}
 
-	public static <R extends CodecAwareCallback> @NotNull Codec<Pair<Identifier,R>> createDelegatingCodecPhased(@NotNull CodecMap<R> map, @NotNull Class<R> callbackClass) {
+	public static <R extends CodecAware> @NotNull Codec<Pair<Identifier,R>> createDelegatingCodecPhased(@NotNull CodecMap<R> map, @NotNull Class<R> callbackClass) {
 		return Codec.pair(Identifier.CODEC.optionalFieldOf("phase", Event.DEFAULT_PHASE).codec(), createDelegatingCodec(map, callbackClass));
 	}
 
-	public static <R extends CodecAwareCallback> @NotNull Codec<R> createDelegatingCodec(@NotNull CodecMap<R> map, @NotNull Class<R> callbackClass) {
+	public static <R extends CodecAware> @NotNull Codec<R> createDelegatingCodec(@NotNull CodecMap<R> map, @NotNull Class<R> callbackClass) {
+		return createDelegatingCodec(map, callbackClass.getSimpleName());
+	}
+
+	public static <R extends CodecAware> @NotNull Codec<R> createDelegatingCodec(@NotNull CodecMap<R> map, String descriptor) {
 		return Identifier.CODEC.flatXmap(
 				identifier ->
 						map.lookup(identifier) == null
-								? DataResult.<Codec<R>>error("Unregistered "+callbackClass.getSimpleName()+" type: " + identifier)
+								? DataResult.<Codec<R>>error("Unregistered "+descriptor+" type: " + identifier)
 								: DataResult.success(map.lookup(identifier)),
 				codec -> {
 					Identifier key = map.lookup(codec);
 					if (key == null) {
-						return DataResult.error("Unregistered "+callbackClass.getSimpleName()+" type: " + codec);
+						return DataResult.error("Unregistered "+descriptor+" type: " + codec);
 					}
 					return DataResult.success(key);
 				}
@@ -42,7 +46,7 @@ public class CodecMap<T extends CodecAwareCallback> {
 			var codecIdentifier = callback.getCodecIdentifier();
 			var codec = codecIdentifier == null ? null : map.lookup(codecIdentifier);
 			if (codec == null)
-				return DataResult.error("Codec not provided for "+callbackClass.getSimpleName()+": " + callback);
+				return DataResult.error("Codec not provided for "+descriptor+": " + callback);
 			return DataResult.success(codec);
 		}, DataResult::success);
 	}

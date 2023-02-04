@@ -30,7 +30,7 @@ import net.minecraft.util.dynamic.Codecs;
 
 import org.quiltmc.qsl.base.api.event.Event;
 
-public class DynamicEventCallbackSource<T extends CodecAwareCallback> {
+public class DynamicEventCallbackSource<T extends CodecAware> {
 	private static final Logger LOGGER = LogUtils.getLogger();
 
 	private static final Gson GSON = new GsonBuilder().setLenient().create();

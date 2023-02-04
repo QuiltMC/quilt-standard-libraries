@@ -22,7 +22,7 @@ import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.EventAwareListener;
-import org.quiltmc.qsl.base.api.event.data.CodecAwareCallback;
+import org.quiltmc.qsl.base.api.event.data.CodecAware;
 import org.quiltmc.qsl.base.api.event.data.CodecMap;
 import org.quiltmc.qsl.base.api.event.data.DynamicEventCallbackSource;
 
@@ -130,7 +130,7 @@ public final class SurfaceRuleEvents {
 	);
 
 	@FunctionalInterface
-	public interface OverworldModifierCallback extends EventAwareListener, CodecAwareCallback {
+	public interface OverworldModifierCallback extends EventAwareListener, CodecAware {
 		/**
 		 * Called to modify the given Overworld surface rules.
 		 *
@@ -140,7 +140,7 @@ public final class SurfaceRuleEvents {
 	}
 
 	@FunctionalInterface
-	public interface NetherModifierCallback extends EventAwareListener, CodecAwareCallback {
+	public interface NetherModifierCallback extends EventAwareListener, CodecAware {
 		/**
 		 * Called to modify the given Nether surface rules.
 		 *
@@ -150,7 +150,7 @@ public final class SurfaceRuleEvents {
 	}
 
 	@FunctionalInterface
-	public interface TheEndModifierCallback extends EventAwareListener, CodecAwareCallback {
+	public interface TheEndModifierCallback extends EventAwareListener, CodecAware {
 		/**
 		 * Called to modify the given End surface rules.
 		 *
@@ -160,7 +160,7 @@ public final class SurfaceRuleEvents {
 	}
 
 	@FunctionalInterface
-	public interface GenericModifierCallback extends EventAwareListener, CodecAwareCallback {
+	public interface GenericModifierCallback extends EventAwareListener, CodecAware {
 		/**
 		 * Called to modify the given generic surface rules.
 		 *
