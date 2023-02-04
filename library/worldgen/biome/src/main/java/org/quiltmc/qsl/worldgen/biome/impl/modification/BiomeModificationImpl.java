@@ -19,12 +19,14 @@ package org.quiltmc.qsl.worldgen.biome.impl.modification;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import com.google.common.base.Stopwatch;
 import org.jetbrains.annotations.ApiStatus;
@@ -36,11 +38,13 @@ import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.WorldSaveProperties;
 import net.minecraft.world.biome.Biome;
 
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModificationContext;
+import org.quiltmc.qsl.worldgen.biome.api.BiomeModifier;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 import org.quiltmc.qsl.worldgen.biome.api.ModificationPhase;
 
@@ -55,6 +59,8 @@ public class BiomeModificationImpl {
 	private final List<ModifierRecord> modifiers = new ArrayList<>();
 
 	private boolean modifiersUnsorted = true;
+
+	final BiomeModificationReloader reloader = new BiomeModificationReloader();
 
 	private BiomeModificationImpl() {
 	}
@@ -73,6 +79,50 @@ public class BiomeModificationImpl {
 
 		this.modifiers.add(new ModifierRecord(phase, id, selector, modifier));
 		this.modifiersUnsorted = true;
+	}
+
+	public void addModifier(Identifier id, ModificationPhase phase, BiomeModifier modifier) {
+		Objects.requireNonNull(modifier);
+
+		this.reloader.addModifier(phase, id, modifier);
+		var modifierRecord = new ModifierRecord(phase, id, () -> reloader.getCombinedMap(phase).get(id));
+		this.modifiers.add(modifierRecord);
+		this.identifiedModifiers.computeIfAbsent(phase, p -> new HashMap<>()).put(id, modifierRecord);
+		this.modifiersUnsorted = true;
+	}
+
+	private void addLazyModifier(Identifier id, ModificationPhase phase) {
+		var modifierRecord = new ModifierRecord(phase, id, () -> reloader.getCombinedMap(phase).get(id));
+		this.modifiers.add(modifierRecord);
+		this.identifiedModifiers.computeIfAbsent(phase, p -> new HashMap<>()).put(id, modifierRecord);
+		this.modifiersUnsorted = true;
+	}
+
+	public void updateIdentifiedModifiers() {
+		for (var phase : this.identifiedModifiers.entrySet()) {
+			List<Identifier> drop = new ArrayList<>();
+			var map = this.reloader.getCombinedMap(phase.getKey());
+			for (var entry : phase.getValue().entrySet()) {
+				if (!map.containsKey(entry.getKey())) {
+					entry.getValue().canBeDropped = true;
+					drop.add(entry.getKey());
+				}
+			}
+			drop.forEach(phase.getValue()::remove);
+		}
+	}
+
+	public void addMissingModifiers() {
+		for (ModificationPhase phase : ModificationPhase.values()) {
+			var map = this.reloader.getCombinedMap(phase);
+			var phaseMap = this.identifiedModifiers.computeIfAbsent(phase, p -> new HashMap<>());
+			for (Map.Entry<Identifier, BiomeModifier> entry : map.entrySet()) {
+				if (!phaseMap.containsKey(entry.getKey())) {
+					this.addLazyModifier(entry.getKey(), phase);
+					this.modifiersUnsorted = true;
+				}
+			}
+		}
 	}
 
 	/**
@@ -94,17 +144,24 @@ public class BiomeModificationImpl {
 		this.modifiersUnsorted = true;
 	}
 
+	private final Map<ModificationPhase, Map<Identifier, ModifierRecord>> identifiedModifiers = new HashMap<>();
+
 	private List<ModifierRecord> getSortedModifiers() {
 		if (this.modifiersUnsorted) {
 			// Resort modifiers
 			this.modifiers.sort(MODIFIER_ORDER_COMPARATOR);
+			this.modifiers.removeIf(r -> r.canBeDropped);
 			this.modifiersUnsorted = false;
 		}
 
 		return this.modifiers;
 	}
 
-	public void finalizeWorldGen(DynamicRegistryManager impl, WorldSaveProperties levelProperties) {
+	public void finalizeWorldGen(DynamicRegistryManager impl, WorldSaveProperties levelProperties, ResourceManager resourceManager) {
+		this.reloader.apply(resourceManager, impl);
+		this.addMissingModifiers();
+		this.updateIdentifiedModifiers();
+
 		Stopwatch sw = Stopwatch.createStarted();
 
 		// Now that we apply biome modifications inside the MinecraftServer constructor, we should only ever do
@@ -139,6 +196,9 @@ public class BiomeModificationImpl {
 			BiomeModificationContextImpl modificationContext = null;
 
 			for (ModifierRecord modifier : sortedModifiers) {
+				if (modifier.canBeDropped) {
+					continue;
+				}
 				if (modifier.selector.test(context)) {
 					LOGGER.trace("Applying modifier {} to {}", modifier, key.getValue());
 
@@ -179,6 +239,9 @@ public class BiomeModificationImpl {
 		// Whenever this is modified, the modifiers need to be resorted
 		private int order;
 
+		// Whenever this is true, the modifier will be dropped from the list on the next reorder
+		private boolean canBeDropped = false;
+
 		ModifierRecord(ModificationPhase phase, Identifier id, Predicate<BiomeSelectionContext> selector, Consumer<BiomeModificationContext> modifier) {
 			this.phase = phase;
 			this.id = id;
@@ -192,6 +255,25 @@ public class BiomeModificationImpl {
 			this.id = id;
 			this.selector = selector;
 			this.contextSensitiveModifier = modifier;
+			this.modifier = null;
+		}
+
+		ModifierRecord(ModificationPhase phase, Identifier id, Supplier<BiomeModifier> modifierFunction) {
+			this.phase = phase;
+			this.id = id;
+			this.selector = ctx -> {
+				var modifier = modifierFunction.get();
+				if (modifier != null) {
+					return modifier.shouldModify(ctx);
+				}
+				return false;
+			};
+			this.contextSensitiveModifier = (selectionCtx, modificationCtx) -> {
+				var modifier = modifierFunction.get();
+				if (modifier != null) {
+					modifier.modify(selectionCtx, modificationCtx);
+				}
+			};
 			this.modifier = null;
 		}
 

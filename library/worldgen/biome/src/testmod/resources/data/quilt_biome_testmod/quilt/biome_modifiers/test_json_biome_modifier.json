@@ -1,0 +1,7 @@
+{
+  "type": "quilt:add_features",
+  "phase": "additions",
+  "biomes": "#minecraft:is_overworld",
+  "step": "vegetal_decoration",
+  "features": "quilt_biome_testmod:iron_pile"
+}

@@ -18,14 +18,13 @@ package org.quiltmc.qsl.worldgen.surface_rule.api;
 
 import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.EventAwareListener;
-import org.quiltmc.qsl.base.api.event.data.CallbackCodecSource;
 import org.quiltmc.qsl.base.api.event.data.CodecAwareCallback;
-import org.quiltmc.qsl.registry.api.ResourceBasedEventCallbackSource;
+import org.quiltmc.qsl.base.api.event.data.CodecMap;
+import org.quiltmc.qsl.base.api.event.data.DynamicEventCallbackSource;
 
 /**
  * Events relating to {@link net.minecraft.world.gen.surfacebuilder.SurfaceRules surface rules}.
@@ -50,8 +49,8 @@ public final class SurfaceRuleEvents {
 			callback.modifyOverworldRules(context);
 		}
 	});
-	public static final CallbackCodecSource<OverworldModifierCallback> MODIFY_OVERWORLD_CODECS = new CallbackCodecSource<>(context -> {});
-	public static final ResourceBasedEventCallbackSource<OverworldModifierCallback> MODIFY_OVERWORLD_IDENTIFIER = ResourceBasedEventCallbackSource.of(
+	public static final CodecMap<OverworldModifierCallback> MODIFY_OVERWORLD_CODECS = new CodecMap<>(context -> {});
+	public static final DynamicEventCallbackSource<OverworldModifierCallback> MODIFY_OVERWORLD_IDENTIFIER = new DynamicEventCallbackSource<>(
 			new Identifier("quilt", "overworld_surface_rules"),
 			MODIFY_OVERWORLD_CODECS,
 			OverworldModifierCallback.class,
@@ -60,8 +59,7 @@ public final class SurfaceRuleEvents {
 				for (var callback : callbacks.get()) {
 					callback.modifyOverworldRules(context);
 				}
-			},
-			ResourceType.SERVER_DATA
+			}
 	);
 
 	/**
@@ -73,8 +71,8 @@ public final class SurfaceRuleEvents {
 			callback.modifyNetherRules(context);
 		}
 	});
-	public static final CallbackCodecSource<NetherModifierCallback> MODIFY_NETHER_CODECS = new CallbackCodecSource<>(context -> {});
-	public static final ResourceBasedEventCallbackSource<NetherModifierCallback> MODIFY_NETHER_IDENTIFIER = ResourceBasedEventCallbackSource.of(
+	public static final CodecMap<NetherModifierCallback> MODIFY_NETHER_CODECS = new CodecMap<>(context -> {});
+	public static final DynamicEventCallbackSource<NetherModifierCallback> MODIFY_NETHER_IDENTIFIER = new DynamicEventCallbackSource<>(
 			new Identifier("quilt", "nether_surface_rules"),
 			MODIFY_NETHER_CODECS,
 			NetherModifierCallback.class,
@@ -83,8 +81,7 @@ public final class SurfaceRuleEvents {
 				for (var callback : callbacks.get()) {
 					callback.modifyNetherRules(context);
 				}
-			},
-			ResourceType.SERVER_DATA
+			}
 	);
 
 	/**
@@ -96,8 +93,8 @@ public final class SurfaceRuleEvents {
 			callback.modifyTheEndRules(context);
 		}
 	});
-	public static final CallbackCodecSource<TheEndModifierCallback> MODIFY_THE_END_CODECS = new CallbackCodecSource<>(context -> {});
-	public static final ResourceBasedEventCallbackSource<TheEndModifierCallback> MODIFY_THE_END_IDENTIFIER = ResourceBasedEventCallbackSource.of(
+	public static final CodecMap<TheEndModifierCallback> MODIFY_THE_END_CODECS = new CodecMap<>(context -> {});
+	public static final DynamicEventCallbackSource<TheEndModifierCallback> MODIFY_THE_END_IDENTIFIER = new DynamicEventCallbackSource<>(
 			new Identifier("quilt", "the_end_surface_rules"),
 			MODIFY_THE_END_CODECS,
 			TheEndModifierCallback.class,
@@ -106,8 +103,7 @@ public final class SurfaceRuleEvents {
 				for (var callback : callbacks.get()) {
 					callback.modifyTheEndRules(context);
 				}
-			},
-			ResourceType.SERVER_DATA
+			}
 	);
 
 	/**
@@ -120,8 +116,8 @@ public final class SurfaceRuleEvents {
 					callback.modifyGenericSurfaceRules(context);
 				}
 			});
-	public static final CallbackCodecSource<GenericModifierCallback> MODIFY_GENERIC_CODECS = new CallbackCodecSource<>(context -> {});
-	public static final ResourceBasedEventCallbackSource<GenericModifierCallback> MODIFY_GENERIC_IDENTIFIER = ResourceBasedEventCallbackSource.of(
+	public static final CodecMap<GenericModifierCallback> MODIFY_GENERIC_CODECS = new CodecMap<>(context -> {});
+	public static final DynamicEventCallbackSource<GenericModifierCallback> MODIFY_GENERIC_IDENTIFIER = new DynamicEventCallbackSource<>(
 			new Identifier("quilt", "generic_surface_rules"),
 			MODIFY_GENERIC_CODECS,
 			GenericModifierCallback.class,
@@ -130,8 +126,7 @@ public final class SurfaceRuleEvents {
 				for (var callback : callbacks.get()) {
 					callback.modifyGenericSurfaceRules(context);
 				}
-			},
-			ResourceType.SERVER_DATA
+			}
 	);
 
 	@FunctionalInterface
