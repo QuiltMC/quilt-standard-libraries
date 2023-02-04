@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.worldgen.surface_rule.impl;
 
+import java.util.Set;
+
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,6 +36,12 @@ import org.quiltmc.qsl.worldgen.surface_rule.mixin.ChunkGeneratorSettingsAccesso
 public class QuiltSurfaceRuleInitializer implements RegistryEvents.DynamicRegistrySetupCallback {
 	@Override
 	public void onDynamicRegistrySetup(@NotNull DynamicRegistryManagerSetupContext context) {
+		context.withRegistries(registryMap -> {
+			SurfaceRuleEvents.MODIFY_OVERWORLD_IDENTIFIER.apply(context.resourceManager());
+			SurfaceRuleEvents.MODIFY_NETHER_IDENTIFIER.apply(context.resourceManager());
+			SurfaceRuleEvents.MODIFY_THE_END_IDENTIFIER.apply(context.resourceManager());
+			SurfaceRuleEvents.MODIFY_GENERIC_IDENTIFIER.apply(context.resourceManager());
+		}, Set.of(RegistryKeys.CHUNK_GENERATOR_SETTINGS));
 		context.monitor(RegistryKeys.CHUNK_GENERATOR_SETTINGS, monitor -> {
 			monitor.forAll(ctx -> this.modifyChunkGeneratorSettings(ctx, context.resourceManager()));
 		});

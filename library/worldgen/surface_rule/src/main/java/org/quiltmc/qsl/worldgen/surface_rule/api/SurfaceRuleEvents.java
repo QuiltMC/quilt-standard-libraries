@@ -23,9 +23,9 @@ import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.EventAwareListener;
-import org.quiltmc.qsl.resource.loader.api.event.CallbackCodecSource;
-import org.quiltmc.qsl.resource.loader.api.event.CodecAwareCallback;
-import org.quiltmc.qsl.resource.loader.api.event.EventCallbackSource;
+import org.quiltmc.qsl.base.api.event.data.CallbackCodecSource;
+import org.quiltmc.qsl.base.api.event.data.CodecAwareCallback;
+import org.quiltmc.qsl.registry.api.ResourceBasedEventCallbackSource;
 
 /**
  * Events relating to {@link net.minecraft.world.gen.surfacebuilder.SurfaceRules surface rules}.
@@ -51,7 +51,7 @@ public final class SurfaceRuleEvents {
 		}
 	});
 	public static final CallbackCodecSource<OverworldModifierCallback> MODIFY_OVERWORLD_CODECS = new CallbackCodecSource<>(context -> {});
-	public static final EventCallbackSource<OverworldModifierCallback> MODIFY_OVERWORLD_IDENTIFIER = EventCallbackSource.of(
+	public static final ResourceBasedEventCallbackSource<OverworldModifierCallback> MODIFY_OVERWORLD_IDENTIFIER = ResourceBasedEventCallbackSource.of(
 			new Identifier("quilt", "overworld_surface_rules"),
 			MODIFY_OVERWORLD_CODECS,
 			OverworldModifierCallback.class,
@@ -73,6 +73,19 @@ public final class SurfaceRuleEvents {
 			callback.modifyNetherRules(context);
 		}
 	});
+	public static final CallbackCodecSource<NetherModifierCallback> MODIFY_NETHER_CODECS = new CallbackCodecSource<>(context -> {});
+	public static final ResourceBasedEventCallbackSource<NetherModifierCallback> MODIFY_NETHER_IDENTIFIER = ResourceBasedEventCallbackSource.of(
+			new Identifier("quilt", "nether_surface_rules"),
+			MODIFY_NETHER_CODECS,
+			NetherModifierCallback.class,
+			MODIFY_NETHER,
+			callbacks -> context -> {
+				for (var callback : callbacks.get()) {
+					callback.modifyNetherRules(context);
+				}
+			},
+			ResourceType.SERVER_DATA
+	);
 
 	/**
 	 * An event indicating that the surface rules for the End dimension may get modified by mods,
@@ -83,6 +96,19 @@ public final class SurfaceRuleEvents {
 			callback.modifyTheEndRules(context);
 		}
 	});
+	public static final CallbackCodecSource<TheEndModifierCallback> MODIFY_THE_END_CODECS = new CallbackCodecSource<>(context -> {});
+	public static final ResourceBasedEventCallbackSource<TheEndModifierCallback> MODIFY_THE_END_IDENTIFIER = ResourceBasedEventCallbackSource.of(
+			new Identifier("quilt", "the_end_surface_rules"),
+			MODIFY_THE_END_CODECS,
+			TheEndModifierCallback.class,
+			MODIFY_THE_END,
+			callbacks -> context -> {
+				for (var callback : callbacks.get()) {
+					callback.modifyTheEndRules(context);
+				}
+			},
+			ResourceType.SERVER_DATA
+	);
 
 	/**
 	 * An event indicating that the surface rules for a non-Vanilla dimension may get modified by mods,
@@ -94,9 +120,22 @@ public final class SurfaceRuleEvents {
 					callback.modifyGenericSurfaceRules(context);
 				}
 			});
+	public static final CallbackCodecSource<GenericModifierCallback> MODIFY_GENERIC_CODECS = new CallbackCodecSource<>(context -> {});
+	public static final ResourceBasedEventCallbackSource<GenericModifierCallback> MODIFY_GENERIC_IDENTIFIER = ResourceBasedEventCallbackSource.of(
+			new Identifier("quilt", "generic_surface_rules"),
+			MODIFY_GENERIC_CODECS,
+			GenericModifierCallback.class,
+			MODIFY_GENERIC,
+			callbacks -> context -> {
+				for (var callback : callbacks.get()) {
+					callback.modifyGenericSurfaceRules(context);
+				}
+			},
+			ResourceType.SERVER_DATA
+	);
 
 	@FunctionalInterface
-	public interface OverworldModifierCallback extends EventAwareListener, CodecAwareCallback<OverworldModifierCallback> {
+	public interface OverworldModifierCallback extends EventAwareListener, CodecAwareCallback {
 		/**
 		 * Called to modify the given Overworld surface rules.
 		 *
@@ -106,7 +145,7 @@ public final class SurfaceRuleEvents {
 	}
 
 	@FunctionalInterface
-	public interface NetherModifierCallback extends EventAwareListener {
+	public interface NetherModifierCallback extends EventAwareListener, CodecAwareCallback {
 		/**
 		 * Called to modify the given Nether surface rules.
 		 *
@@ -116,7 +155,7 @@ public final class SurfaceRuleEvents {
 	}
 
 	@FunctionalInterface
-	public interface TheEndModifierCallback extends EventAwareListener {
+	public interface TheEndModifierCallback extends EventAwareListener, CodecAwareCallback {
 		/**
 		 * Called to modify the given End surface rules.
 		 *
@@ -126,7 +165,7 @@ public final class SurfaceRuleEvents {
 	}
 
 	@FunctionalInterface
-	public interface GenericModifierCallback extends EventAwareListener {
+	public interface GenericModifierCallback extends EventAwareListener, CodecAwareCallback {
 		/**
 		 * Called to modify the given generic surface rules.
 		 *

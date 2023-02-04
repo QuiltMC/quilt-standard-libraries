@@ -1,4 +1,4 @@
-package org.quiltmc.qsl.resource.loader.impl.event;
+package org.quiltmc.qsl.resource.loader.api.event;
 
 import java.lang.reflect.Array;
 import java.util.HashMap;
@@ -16,23 +16,24 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.resource.JsonDataLoader;
 import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 
 import org.quiltmc.qsl.base.api.event.Event;
-import org.quiltmc.qsl.resource.loader.api.event.CallbackCodecSource;
-import org.quiltmc.qsl.resource.loader.api.event.CodecAwareCallback;
-import org.quiltmc.qsl.resource.loader.api.event.EventCallbackSource;
+import org.quiltmc.qsl.base.api.event.data.CallbackCodecSource;
+import org.quiltmc.qsl.base.api.event.data.CodecAwareCallback;
+import org.quiltmc.qsl.base.api.event.data.EventCallbackSource;
+import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;
 
-@ApiStatus.Internal
-public class IdentifiedEventCallbackSource<T extends CodecAwareCallback<T>> extends JsonDataLoader implements IdentifiableResourceReloader, EventCallbackSource<T> {
-	public static final Gson GSON = new GsonBuilder().setLenient().create();
+
+public class EventCallbackSourceReloadListener<T extends CodecAwareCallback> extends JsonDataLoader implements IdentifiableResourceReloader, EventCallbackSource<T> {
+	private static final Gson GSON = new GsonBuilder().setLenient().create();
 
 	final @NotNull Identifier resourcePath;
 
@@ -42,7 +43,7 @@ public class IdentifiedEventCallbackSource<T extends CodecAwareCallback<T>> exte
 	final @NotNull Codec<Pair<Identifier, T>> codec;
 	final Map<Identifier, Map<Identifier, T>> listeners = new LinkedHashMap<>();
 	final Map<Identifier, Map<Identifier, T>> dynamicListeners = new LinkedHashMap<>();
-	Map<Identifier, T[]> listenerArrays;
+	Map<Identifier, T[]> listenerArrays = new HashMap<>();
 
 	final Event<T> event;
 
@@ -50,14 +51,26 @@ public class IdentifiedEventCallbackSource<T extends CodecAwareCallback<T>> exte
 	final Function<Supplier<T[]>, T> combiner;
 	final T[] emptyArray;
 
-	public IdentifiedEventCallbackSource(@NotNull Identifier resourcePath, @NotNull CallbackCodecSource<T> codecs, @NotNull Class<T> callbackClass, Event<T> event, Function<Supplier<T[]>, T> combiner) {
+	public static <T extends CodecAwareCallback> EventCallbackSourceReloadListener<T> of(
+			@NotNull Identifier resourcePath,
+			@NotNull CallbackCodecSource<T> codecs,
+			@NotNull Class<T> callbackClass,
+			@NotNull Event<T> event,
+			@NotNull Function<Supplier<T[]>, T> combiner,
+			@NotNull ResourceType type) {
+		var source = new EventCallbackSourceReloadListener<>(resourcePath, codecs, callbackClass, event, combiner);
+		ResourceLoader.get(type).registerReloader(source);
+		return source;
+	}
+
+	protected EventCallbackSourceReloadListener(@NotNull Identifier resourcePath, @NotNull CallbackCodecSource<T> codecs, @NotNull Class<T> callbackClass, Event<T> event, Function<Supplier<T[]>, T> combiner) {
 		super(GSON, resourcePath.getNamespace()+"/"+resourcePath.getPath());
 		this.resourcePath = resourcePath;
 		this.codecs = codecs;
 		this.callbackClass = callbackClass;
 		this.event = event;
 		this.combiner = combiner;
-		this.codec = createDelegatingCodec(codecs, callbackClass);
+		this.codec = EventCallbackSource.createDelegatingCodec(codecs, callbackClass);
 
 		@SuppressWarnings("unchecked")
 		var emptyArray = (T[]) Array.newInstance(callbackClass, 0);
@@ -73,7 +86,7 @@ public class IdentifiedEventCallbackSource<T extends CodecAwareCallback<T>> exte
 		register(id, listener, Event.DEFAULT_PHASE);
 	}
 
-	void updateListeners(Identifier phase) {
+	private void updateListeners(Identifier phase) {
 		var combinedMap = new HashMap<Identifier, T>();
 		combinedMap.putAll(listeners.getOrDefault(phase, Map.of()));
 		combinedMap.putAll(dynamicListeners.getOrDefault(phase, Map.of()));
@@ -89,7 +102,7 @@ public class IdentifiedEventCallbackSource<T extends CodecAwareCallback<T>> exte
 		}
 	}
 
-	void updateDynamicListeners(Map<Identifier, Map<Identifier, T>> dynamicListeners) {
+	private void updateDynamicListeners(Map<Identifier, Map<Identifier, T>> dynamicListeners) {
 		this.dynamicListeners.clear();
 		for (Map.Entry<Identifier, Map<Identifier, T>> entry : dynamicListeners.entrySet()) {
 			this.dynamicListeners.put(entry.getKey(), new LinkedHashMap<>(entry.getValue()));
@@ -99,7 +112,7 @@ public class IdentifiedEventCallbackSource<T extends CodecAwareCallback<T>> exte
 		}
 	}
 
-	T[] getListeners(Identifier phase) {
+	private T[] getListeners(Identifier phase) {
 		return listenerArrays.getOrDefault(phase, emptyArray);
 	}
 
@@ -120,31 +133,10 @@ public class IdentifiedEventCallbackSource<T extends CodecAwareCallback<T>> exte
 				Pair<Identifier, T> pair = result.result().get();
 				map.computeIfAbsent(pair.getFirst(), k -> new LinkedHashMap<>()).put(id, pair.getSecond());
 			}
+
+			// TODO: proper error handling
 		}
 
 		updateDynamicListeners(map);
-	}
-
-	static <R extends CodecAwareCallback<R>> @NotNull Codec<Pair<Identifier,R>> createDelegatingCodec(@NotNull CallbackCodecSource<R> map, @NotNull Class<R> callbackClass) {
-		Codec<R> callbackCodec = Identifier.CODEC.flatXmap(
-				identifier ->
-						map.lookup(identifier) == null
-								? DataResult.<Codec<R>>error("Unregistered "+callbackClass.getSimpleName()+" callback type: " + identifier)
-								: DataResult.success(map.lookup(identifier)),
-				codec -> {
-					Identifier key = map.lookup(codec);
-					if (key == null) {
-						return DataResult.error("Unregistered "+callbackClass.getSimpleName()+" callback type: " + codec);
-					}
-					return DataResult.success(key);
-				}
-		).partialDispatch("type", callback -> {
-			var codec = callback.getCodec();
-			if (codec == null)
-				return DataResult.error("Codec not provided for callback");
-			return DataResult.success(codec);
-		}, DataResult::success);
-
-		return Codec.pair(Identifier.CODEC.optionalFieldOf("phase", Event.DEFAULT_PHASE).codec(), callbackCodec);
 	}
 }

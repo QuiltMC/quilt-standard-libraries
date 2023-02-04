@@ -19,6 +19,9 @@ qslModule {
 		events {
 			values = ["org.quiltmc.qsl.worldgen.surface_rule.impl.QuiltSurfaceRuleInitializer"]
 		}
+		init {
+			values = ["org.quiltmc.qsl.worldgen.surface_rule.impl.SurfaceRuleDataInitializer"]
+		}
 	}
 	accessWidener()
 }

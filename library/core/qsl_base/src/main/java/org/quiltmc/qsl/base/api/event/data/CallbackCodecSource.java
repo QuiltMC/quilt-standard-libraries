@@ -1,4 +1,4 @@
-package org.quiltmc.qsl.resource.loader.api.event;
+package org.quiltmc.qsl.base.api.event.data;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -6,7 +6,7 @@ import com.mojang.serialization.Codec;
 
 import net.minecraft.util.Identifier;
 
-public class CallbackCodecSource<T extends CodecAwareCallback<T>> {
+public class CallbackCodecSource<T extends CodecAwareCallback> {
 	private final BiMap<Identifier, Codec<? extends T>> codecs = HashBiMap.create();
 
 	public CallbackCodecSource(T nullOperation) {
