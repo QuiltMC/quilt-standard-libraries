@@ -4,6 +4,9 @@ import com.mojang.serialization.Codec;
 
 import net.minecraft.util.Identifier;
 
+/**
+ * A predicate that is never true.
+ */
 public final class NonePredicate<T> implements CodecAwarePredicate<T> {
 
 	public static final Identifier IDENTIFIER = new Identifier("quilt", "none");

@@ -7,6 +7,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.util.Identifier;
 
+/**
+ * A predicate that is true if any of its referenced predicates of the same type are true.
+ */
 public final class OrPredicate<T> implements CodecAwarePredicate<T> {
 
 	public static final Identifier IDENTIFIER = new Identifier("quilt", "or");

@@ -4,6 +4,9 @@ import com.mojang.serialization.Codec;
 
 import net.minecraft.util.Identifier;
 
+/**
+ * A predicate that is always true.
+ */
 public final class AllPredicate<T> implements CodecAwarePredicate<T> {
 
 	public static final Identifier IDENTIFIER = new Identifier("quilt", "all");

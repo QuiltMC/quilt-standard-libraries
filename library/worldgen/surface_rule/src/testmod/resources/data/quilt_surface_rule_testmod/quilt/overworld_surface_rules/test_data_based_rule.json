@@ -1,5 +1,5 @@
 {
-  "type": "quilt:prepend_material_rule",
+  "type": "quilt:add_material_rule",
   "rule": {
     "type": "minecraft:condition",
     "if_true": {

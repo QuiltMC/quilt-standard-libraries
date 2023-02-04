@@ -18,6 +18,10 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeModificationContext;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModifier;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
+/**
+ * A biome modifier that removes features from a biome. If no steps are specified when decoding, features will be removed from all steps.
+ * @param steps the feature generation steps to remove the features from
+ */
 public record RemoveFeaturesModifier(CodecAwarePredicate<BiomeSelectionContext> selector, List<RegistryKey<PlacedFeature>> features, List<GenerationStep.Feature> steps) implements BiomeModifier {
 	public static final Identifier IDENTIFIER = new Identifier("quilt", "remove_features");
 	public static final Codec<RemoveFeaturesModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(

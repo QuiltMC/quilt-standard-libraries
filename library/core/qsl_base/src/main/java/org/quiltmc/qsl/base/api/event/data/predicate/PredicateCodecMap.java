@@ -1,16 +1,31 @@
 package org.quiltmc.qsl.base.api.event.data.predicate;
 
 import java.util.Map;
+import java.util.function.Supplier;
 
 import com.google.common.collect.HashBiMap;
 import com.mojang.serialization.Codec;
 
 import net.minecraft.util.Identifier;
+import net.minecraft.util.dynamic.Codecs;
 
 import org.quiltmc.qsl.base.api.event.data.CodecMap;
 
+/**
+ * A CodecMap for {@link CodecAwarePredicate}s that bundles a set of codices created by shared providers. This class
+ * also handles registering shared providers for predicate codecs.
+ * @param <T> the type of the input tested by the predicates this map can help encode
+ */
 public class PredicateCodecMap<T> extends CodecMap<CodecAwarePredicate<T>> {
 	private static final Map<Identifier, PredicateCodecProvider> providers = HashBiMap.create();
+
+	/**
+	 * Register a general predicate codec provider. This provider will be used in every predicate codec map to generate
+	 * a specifically parameterized codec.
+	 * @param id the identifier to delegate to this provider on
+	 * @param provider the provider to register
+	 * @throws IllegalArgumentException if a provider with the same id has already been registered
+	 */
 	public static void registerProvider(Identifier id, PredicateCodecProvider provider) {
 		if (providers.containsKey(id)) {
 			throw new IllegalArgumentException("Duplicate provider id: " + id);
@@ -18,6 +33,10 @@ public class PredicateCodecMap<T> extends CodecMap<CodecAwarePredicate<T>> {
 		providers.put(id, provider);
 	}
 
+	/**
+	 * {@return the provider registered to the given id, or null if no provider has been registered}
+	 * @param id the id to look up
+	 */
 	public static PredicateCodecProvider lookupProvider(Identifier id) {
 		return providers.get(id);
 	}
@@ -32,6 +51,11 @@ public class PredicateCodecMap<T> extends CodecMap<CodecAwarePredicate<T>> {
 
 	private final Codec<CodecAwarePredicate<T>> predicateCodec;
 
+	/**
+	 * Create a new predicate codec map based off of the provided general predicate codec. The provided codec should
+	 * likely be created with {@link Codecs#createLazy(Supplier)} so that it can itself delegate to the constructed map.
+	 * @param predicateCodec a general codec that can encode any predicate for the specific type T
+	 */
 	public PredicateCodecMap(Codec<CodecAwarePredicate<T>> predicateCodec) {
 		super();
 		this.predicateCodec = predicateCodec;

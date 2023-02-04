@@ -5,6 +5,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.util.Identifier;
 
+/**
+ * A predicate that is true only if its referenced predicate of the same type is false.
+ */
 public final class NotPredicate<T> implements CodecAwarePredicate<T> {
 
 	public static final Identifier IDENTIFIER = new Identifier("quilt", "not");

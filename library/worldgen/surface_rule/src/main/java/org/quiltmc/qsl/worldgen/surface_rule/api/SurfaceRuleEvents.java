@@ -49,7 +49,14 @@ public final class SurfaceRuleEvents {
 			callback.modifyOverworldRules(context);
 		}
 	});
+	/**
+	 * A {@link CodecMap} for the {@link OverworldModifierCallback} event. Can be used to register codecs for loading event callbacks from datapacks.
+	 */
 	public static final CodecMap<OverworldModifierCallback> MODIFY_OVERWORLD_CODECS = new CodecMap<>(context -> {});
+	/**
+	 * A {@link DynamicEventCallbackSource} for the {@link OverworldModifierCallback} event. Can be used to register
+	 * event callbacks alongside an identifier, allowing them to be overridden with datapacks.
+	 */
 	public static final DynamicEventCallbackSource<OverworldModifierCallback> MODIFY_OVERWORLD_IDENTIFIER = new DynamicEventCallbackSource<>(
 			new Identifier("quilt", "overworld_surface_rules"),
 			MODIFY_OVERWORLD_CODECS,
@@ -71,7 +78,14 @@ public final class SurfaceRuleEvents {
 			callback.modifyNetherRules(context);
 		}
 	});
+	/**
+	 * A {@link CodecMap} for the {@link NetherModifierCallback} event. Can be used to register codecs for loading event callbacks from datapacks.
+	 */
 	public static final CodecMap<NetherModifierCallback> MODIFY_NETHER_CODECS = new CodecMap<>(context -> {});
+	/**
+	 * A {@link DynamicEventCallbackSource} for the {@link NetherModifierCallback} event. Can be used to register
+	 * event callbacks alongside an identifier, allowing them to be overridden with datapacks.
+	 */
 	public static final DynamicEventCallbackSource<NetherModifierCallback> MODIFY_NETHER_IDENTIFIER = new DynamicEventCallbackSource<>(
 			new Identifier("quilt", "nether_surface_rules"),
 			MODIFY_NETHER_CODECS,
@@ -93,7 +107,14 @@ public final class SurfaceRuleEvents {
 			callback.modifyTheEndRules(context);
 		}
 	});
+	/**
+	 * A {@link CodecMap} for the {@link TheEndModifierCallback} event. Can be used to register codecs for loading event callbacks from datapacks.
+	 */
 	public static final CodecMap<TheEndModifierCallback> MODIFY_THE_END_CODECS = new CodecMap<>(context -> {});
+	/**
+	 * A {@link DynamicEventCallbackSource} for the {@link TheEndModifierCallback} event. Can be used to register
+	 * event callbacks alongside an identifier, allowing them to be overridden with datapacks.
+	 */
 	public static final DynamicEventCallbackSource<TheEndModifierCallback> MODIFY_THE_END_IDENTIFIER = new DynamicEventCallbackSource<>(
 			new Identifier("quilt", "the_end_surface_rules"),
 			MODIFY_THE_END_CODECS,
@@ -116,7 +137,14 @@ public final class SurfaceRuleEvents {
 					callback.modifyGenericSurfaceRules(context);
 				}
 			});
+	/**
+	 * A {@link CodecMap} for the {@link GenericModifierCallback} event. Can be used to register codecs for loading event callbacks from datapacks.
+	 */
 	public static final CodecMap<GenericModifierCallback> MODIFY_GENERIC_CODECS = new CodecMap<>(context -> {});
+	/**
+	 * A {@link DynamicEventCallbackSource} for the {@link GenericModifierCallback} event. Can be used to register
+	 * event callbacks alongside an identifier, allowing them to be overridden with datapacks.
+	 */
 	public static final DynamicEventCallbackSource<GenericModifierCallback> MODIFY_GENERIC_IDENTIFIER = new DynamicEventCallbackSource<>(
 			new Identifier("quilt", "generic_surface_rules"),
 			MODIFY_GENERIC_CODECS,
