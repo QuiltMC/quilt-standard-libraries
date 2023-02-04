@@ -15,7 +15,6 @@ import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import net.minecraft.resource.JsonDataLoader;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.util.profiler.Profiler;
 
 import org.quiltmc.qsl.base.api.event.Event;
@@ -128,23 +126,19 @@ public class IdentifiedEventCallbackSource<T extends CodecAwareCallback<T>> exte
 	}
 
 	static <R extends CodecAwareCallback<R>> @NotNull Codec<Pair<Identifier,R>> createDelegatingCodec(@NotNull CallbackCodecSource<R> map, @NotNull Class<R> callbackClass) {
-		Codec<R> callbackCodec = Codecs.createLazy(() -> new Codec<Codec<? extends R>>() {
-			@Override
-			public <T> DataResult<com.mojang.datafixers.util.Pair<Codec<? extends R>, T>> decode(DynamicOps<T> ops, T input) {
-				return Identifier.CODEC.decode(ops, input).flatMap(keyValuePair -> map.lookup(keyValuePair.getFirst()) == null
-						? DataResult.error("Unregistered "+callbackClass.getSimpleName()+" callback type: " + keyValuePair.getFirst())
-						: DataResult.success(keyValuePair.mapFirst(map::lookup)));
-			}
-
-			@Override
-			public <T> DataResult<T> encode(Codec<? extends R> input, DynamicOps<T> ops, T prefix) {
-				Identifier key = map.lookup(input);
-				if (key == null) {
-					return DataResult.error("Unregistered "+callbackClass.getSimpleName()+" callback type: " + input);
+		Codec<R> callbackCodec = Identifier.CODEC.flatXmap(
+				identifier ->
+						map.lookup(identifier) == null
+								? DataResult.<Codec<R>>error("Unregistered "+callbackClass.getSimpleName()+" callback type: " + identifier)
+								: DataResult.success(map.lookup(identifier)),
+				codec -> {
+					Identifier key = map.lookup(codec);
+					if (key == null) {
+						return DataResult.error("Unregistered "+callbackClass.getSimpleName()+" callback type: " + codec);
+					}
+					return DataResult.success(key);
 				}
-				return ops.mergeToPrimitive(prefix, ops.createString(key.toString()));
-			}
-		}).partialDispatch("type", callback -> {
+		).partialDispatch("type", callback -> {
 			var codec = callback.getCodec();
 			if (codec == null)
 				return DataResult.error("Codec not provided for callback");
