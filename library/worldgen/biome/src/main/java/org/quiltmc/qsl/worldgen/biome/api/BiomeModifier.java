@@ -40,7 +40,7 @@ public interface BiomeModifier extends CodecAware {
 	CodecMap<BiomeModifier> BIOME_MODIFIER_CODECS = new CodecMap<>();
 	Codec<CodecAwarePredicate<BiomeSelectionContext>> BIOME_SELECTOR_CODEC = Codecs.createLazy(() ->
 			Codec.either(
-					BiomeModifier.BIOME_SELECTOR_CODECS.createDelegatingCodec("biome selection predicate"),
+					BiomeModifier.BIOME_SELECTOR_CODECS.createDelegatingCodec("biome selector"),
 					Biome.LIST_CODEC).xmap(either -> either.map(Function.identity(), ValueBiomeSelector::new),
 					predicate -> predicate instanceof ValueBiomeSelector valueSelector ? Either.right(valueSelector.value()) : Either.left(predicate)));
 	/**
