@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.datafixer.fix.BiomeRenameFix;
 import net.minecraft.datafixer.fix.BlockNameFix;
+import net.minecraft.datafixer.fix.EntityRenameFix;
 import net.minecraft.datafixer.fix.ItemNameFix;
 import net.minecraft.datafixer.schema.IdentifierNormalizingSchema;
 import net.minecraft.util.Identifier;
@@ -111,5 +112,33 @@ public final class SimpleFixes {
 			mapBuilder.put(entry.getKey().toString(), entry.getValue().toString());
 		}
 		builder.addFixer(new BiomeRenameFix(schema, false, name, mapBuilder.build()));
+	}
+
+	/**
+	 * Adds an entity rename fix to the builder, in case an entity's identifier is changed.
+	 *
+	 * @param builder the builder
+	 * @param name    the fix's name
+	 * @param oldId   the entity's old identifier
+	 * @param newId   the entity's new identifier
+	 * @param schema  the schema this fix should be a part of
+	 * @see EntityRenameFix
+	 */
+	public static void addEntityRenameFix(@NotNull DataFixerBuilder builder, @NotNull String name,
+			@NotNull Identifier oldId, @NotNull Identifier newId,
+			@NotNull Schema schema) {
+		requireNonNull(builder, "DataFixerBuilder cannot be null");
+		requireNonNull(name, "Fix name cannot be null");
+		requireNonNull(oldId, "Old identifier cannot be null");
+		requireNonNull(newId, "New identifier cannot be null");
+		requireNonNull(schema, "Schema cannot be null");
+
+		final String oldIdStr = oldId.toString(), newIdStr = newId.toString();
+		builder.addFixer(new EntityRenameFix(name, schema, false) {
+            @Override
+            protected String rename(String inputName) {
+                return Objects.equals(IdentifierNormalizingSchema.normalize(inputName), oldIdStr) ? newIdStr : inputName;
+            }
+        });
 	}
 }
