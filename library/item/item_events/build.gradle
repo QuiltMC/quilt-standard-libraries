@@ -1,0 +1,21 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Item Events API"
+	moduleName = "item_events"
+	id = "quilt_item_events"
+	description = "Provides events related to items."
+	library = "item"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+			testmodOnly("resource_loader")
+		}
+	}
+
+	injectedInterface("net/minecraft/class_1838") {
+		values = ["org/quiltmc/qsl/item/events/api/QuiltItemUsageContextExtensions"]
+	}
+}

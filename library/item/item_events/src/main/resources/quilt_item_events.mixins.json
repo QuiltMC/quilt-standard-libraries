@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.item.events.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "CachedBlockPositionMixin",
+    "ItemStackMixin",
+    "ItemUsageContextMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
