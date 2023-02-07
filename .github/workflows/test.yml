@@ -17,7 +17,7 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: 'gradle'
       - run: ./gradlew checkLicenses generateQmj --parallel --stacktrace
-      - run: ./gradlew check build publishToMavenLocal --stacktrace --parallel
+      - run: ./gradlew build publishToMavenLocal --stacktrace --parallel -Porg.gradle.parallel.threads=4
       - run: mkdir run && echo "eula=true" >> run/eula.txt
       - run: ./gradlew :runAutoAllTestServer --stacktrace
       - uses: actions/upload-artifact@v3
