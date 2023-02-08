@@ -32,6 +32,7 @@ import com.mojang.logging.LogUtils;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import net.minecraft.resource.pack.ResourcePackManager;
@@ -54,6 +55,7 @@ import org.quiltmc.qsl.base.api.util.TriState;
 import org.quiltmc.qsl.testing.api.game.QuiltGameTest;
 import org.quiltmc.qsl.testing.api.game.QuiltTestContext;
 import org.quiltmc.qsl.testing.api.game.TestMethod;
+import org.quiltmc.qsl.testing.api.game.TestRegistrationContext;
 import org.quiltmc.qsl.testing.api.game.TestStructureNamePrefix;
 import org.quiltmc.qsl.testing.mixin.TestContextAccessor;
 
@@ -61,7 +63,7 @@ import org.quiltmc.qsl.testing.mixin.TestContextAccessor;
 public final class QuiltGameTestImpl implements ModInitializer {
 	public static final boolean ENABLED = TriState.fromProperty("quilt.game_test").toBooleanOrElse(false);
 	public static final boolean COMMAND_ENABLED = TriState.fromProperty("quilt.game_test.command").toBooleanOrElse(ENABLED);
-	private static final Map<Class<?>, String> GAME_TEST_IDS = new Reference2ObjectOpenHashMap<>();
+	private static final Map<Class<?>, GameTestData> GAME_TESTS = new Reference2ObjectOpenHashMap<>();
 	public static final Logger LOGGER = LogUtils.getLogger();
 
 	/**
@@ -92,8 +94,8 @@ public final class QuiltGameTestImpl implements ModInitializer {
 		return TestFunctions.getTestFunctions();
 	}
 
-	public static String getModIdForTestClass(Class<?> declaringClass) {
-		return GAME_TEST_IDS.get(declaringClass);
+	public static GameTestData getDataForTestClass(Class<?> declaringClass) {
+		return GAME_TESTS.get(declaringClass);
 	}
 
 	/**
@@ -103,11 +105,11 @@ public final class QuiltGameTestImpl implements ModInitializer {
 	 * @return the test function
 	 */
 	public static @NotNull TestFunction getTestFunction(@NotNull Method method) {
-		String modId = QuiltGameTestImpl.getModIdForTestClass(method.getDeclaringClass());
+		var data = QuiltGameTestImpl.getDataForTestClass(method.getDeclaringClass());
 
 		var gameTest = method.getAnnotation(GameTest.class);
 		String testSuiteName = method.getDeclaringClass().getSimpleName().toLowerCase(Locale.ROOT);
-		var testCaseName = modId + ':' + testSuiteName + '/' + method.getName().toLowerCase(Locale.ROOT);
+		var testCaseName = data.namespace() + ':' + testSuiteName + '/' + method.getName().toLowerCase(Locale.ROOT);
 
 		var structureName = testCaseName;
 
@@ -129,7 +131,7 @@ public final class QuiltGameTestImpl implements ModInitializer {
 				gameTest.required(),
 				gameTest.requiredSuccesses(),
 				gameTest.maxAttempts(),
-				QuiltGameTestImpl.getTestMethodInvoker(method)
+				QuiltGameTestImpl.getTestMethodInvoker(data, method)
 		);
 	}
 
@@ -139,7 +141,7 @@ public final class QuiltGameTestImpl implements ModInitializer {
 	 * @param method the method
 	 * @return the test method invoker
 	 */
-	public static Consumer<TestContext> getTestMethodInvoker(Method method) {
+	private static Consumer<TestContext> getTestMethodInvoker(GameTestData data, Method method) {
 		final var testMethod = new TestMethod(method);
 
 		final Class<?> testClass = testMethod.getDeclaringClass();
@@ -151,28 +153,30 @@ public final class QuiltGameTestImpl implements ModInitializer {
 			if (testMethod.isStatic() && !isQuilted) {
 				runTest(testMethod, quiltTestContext, null);
 			} else {
-				Constructor<?> constructor;
+				QuiltGameTest instance = data.instance();
 
-				try {
-					constructor = testClass.getConstructor();
-				} catch (NoSuchMethodException e) {
-					throw new RuntimeException("Test class (%s) provided by (%s) must have a public default or no args constructor"
-							.formatted(testClass.getSimpleName(), getModIdForTestClass(testClass))
-					);
-				}
+				if (instance == null) {
+					Constructor<?> constructor;
 
-				Object testObject;
+					try {
+						constructor = testClass.getConstructor();
+					} catch (NoSuchMethodException e) {
+						throw new RuntimeException("Test class (%s) provided by (%s) must have a public default or no args constructor"
+								.formatted(testClass.getSimpleName(), data.namespace())
+						);
+					}
 
-				try {
-					testObject = constructor.newInstance();
-				} catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
-					throw new RuntimeException("Failed to create instance of test class (%s)".formatted(testClass.getCanonicalName()), e);
-				}
+					Object testObject;
 
-				if (testObject instanceof QuiltGameTest quiltGameTest) {
-					quiltGameTest.invokeTestMethod(quiltTestContext, testMethod);
-				} else {
+					try {
+						testObject = constructor.newInstance();
+					} catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
+						throw new RuntimeException("Failed to create instance of test class (%s)".formatted(testClass.getCanonicalName()), e);
+					}
+
 					runTest(testMethod, quiltTestContext, testObject);
+				} else {
+					instance.invokeTestMethod(quiltTestContext, testMethod);
 				}
 			}
 		};
@@ -187,20 +191,25 @@ public final class QuiltGameTestImpl implements ModInitializer {
 	 *
 	 * @param mod       the mod associated with the test class
 	 * @param testClass the test class
+	 * @param instance  the quilt game test instance if it exists, or {@code null} otherwise
 	 */
-	public static void registerTestClass(ModContainer mod, Class<?> testClass) {
+	public static void registerTestClass(ModContainer mod, Class<?> testClass, @Nullable QuiltGameTest instance) {
 		String modId = mod.metadata().id();
 
-		if (GAME_TEST_IDS.containsKey(testClass)) {
+		if (GAME_TESTS.containsKey(testClass)) {
 			throw new UnsupportedOperationException("Test class (%s) has already been registered with mod (%s)"
 					.formatted(testClass.getCanonicalName(), modId)
 			);
 		}
 
-		GAME_TEST_IDS.put(testClass, modId);
+		GAME_TESTS.put(testClass, new GameTestData(modId, instance));
 		TestFunctions.register(testClass);
 
 		LOGGER.debug("Registered test class {} for mod {}", testClass.getCanonicalName(), modId);
+
+		if (instance != null) {
+			instance.registerTests(new TestRegistrationContext(mod));
+		}
 	}
 
 	@Override
@@ -216,12 +225,14 @@ public final class QuiltGameTestImpl implements ModInitializer {
 		}
 
 		var entrypointContainers = QuiltLoader.getEntrypointContainers(
-				QuiltGameTest.ENTRYPOINT_KEY, QuiltGameTest.class
+				QuiltGameTest.ENTRYPOINT_KEY, Object.class
 		);
 
 		for (var container : entrypointContainers) {
-			Class<?> testClass = container.getEntrypoint().getClass();
-			registerTestClass(container.getProvider(), testClass);
+			var entrypoint = container.getEntrypoint();
+			Class<?> testClass = entrypoint.getClass();
+
+			registerTestClass(container.getProvider(), testClass, entrypoint instanceof QuiltGameTest gameTest ? gameTest : null);
 		}
 	}
 }

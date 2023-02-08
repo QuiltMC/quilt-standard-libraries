@@ -16,6 +16,9 @@
 
 package org.quiltmc.qsl.testing.api.game;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.testing.impl.game.QuiltGameTestImpl;
 
@@ -30,7 +33,29 @@ public record TestRegistrationContext(ModContainer mod) {
 	 *
 	 * @param testClass the test class to register
 	 */
-	public void register(Class<? extends QuiltGameTest> testClass) {
-		QuiltGameTestImpl.registerTestClass(this.mod, testClass);
+	public void register(Class<?> testClass) {
+		if (testClass.isAssignableFrom(QuiltGameTest.class)) {
+			Constructor<?> constructor;
+
+			try {
+				constructor = testClass.getConstructor();
+			} catch (NoSuchMethodException e) {
+				throw new RuntimeException("Test class (%s) provided by (%s) must have a public default or no args constructor"
+						.formatted(testClass.getSimpleName(), QuiltGameTestImpl.getDataForTestClass(testClass).namespace())
+				);
+			}
+
+			QuiltGameTest testObject;
+
+			try {
+				testObject = (QuiltGameTest) constructor.newInstance();
+			} catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
+				throw new RuntimeException("Failed to create instance of test class (%s)".formatted(testClass.getCanonicalName()), e);
+			}
+
+			QuiltGameTestImpl.registerTestClass(this.mod, testClass, testObject);
+		} else {
+			QuiltGameTestImpl.registerTestClass(this.mod, testClass, null);
+		}
 	}
 }
