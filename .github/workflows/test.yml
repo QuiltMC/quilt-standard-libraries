@@ -15,11 +15,21 @@ jobs:
         with:
           distribution: "temurin"
           java-version: ${{ matrix.java }}
-          cache: 'gradle'
-      - run: ./gradlew checkLicenses generateQmj --parallel --stacktrace
-      - run: ./gradlew build publishToMavenLocal --stacktrace --parallel -Porg.gradle.parallel.threads=4
+      - name: Check Licenses and Generate QMJs
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: checkLicenses generateQmj --parallel --stacktrace
+          cache-read-only: ${{ startsWith(github.ref, 'refs/head/1.') }}
+      - name: Build
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build publishToMavenLocal --stacktrace --parallel -Porg.gradle.parallel.threads=4
+          cache-read-only: ${{ startsWith(github.ref, 'refs/head/1.') }}
       - run: mkdir run && echo "eula=true" >> run/eula.txt
-      - run: ./gradlew :runAutoAllTestServer --stacktrace
+      - name: Run auto-test server
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: :runAutoAllTestServer --stacktrace
       - uses: actions/upload-artifact@v3
         with:
           name: Production Mods
