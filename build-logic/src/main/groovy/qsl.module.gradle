@@ -136,6 +136,16 @@ loom {
 			server()
 			source(sourceSets.testmod)
 		}
+
+		gameTestServer {
+			inherit testmodServer
+			configName = "Game test server"
+
+			// Enable the game test runner.
+			property("quilt.game_test", "true")
+			property("quilt.game_test.report_file", "${project.buildDir}/game_test/report.xml")
+			runDir("build/game_test")
+		}
 	}
 }
 
