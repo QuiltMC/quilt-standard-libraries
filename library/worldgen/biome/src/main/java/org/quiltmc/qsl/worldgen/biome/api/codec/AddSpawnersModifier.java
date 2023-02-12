@@ -19,7 +19,6 @@ package org.quiltmc.qsl.worldgen.biome.api.codec;
 import java.util.List;
 import java.util.Optional;
 
-import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -27,6 +26,7 @@ import net.minecraft.entity.SpawnGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.biome.SpawnSettings;
 
+import org.quiltmc.qsl.base.api.event.data.CodecHelpers;
 import org.quiltmc.qsl.base.api.event.data.predicate.CodecAwarePredicate;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModificationContext;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModifier;
@@ -35,14 +35,12 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 public record AddSpawnersModifier(CodecAwarePredicate<BiomeSelectionContext> selector,
 								  List<SpawnSettings.SpawnEntry> spawners,
 								  Optional<SpawnGroup> group) implements BiomeModifier {
+	public static final Identifier IDENTIFIER = new Identifier("quilt", "add_spawners");
 	public static final Codec<AddSpawnersModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(AddSpawnersModifier::selector),
-			Codec.either(SpawnSettings.SpawnEntry.CODEC, SpawnSettings.SpawnEntry.CODEC.listOf())
-					.xmap(either -> either.map(List::of, list -> list), list -> list.size() == 1 ? Either.left(list.get(0)) : Either.right(list))
-					.fieldOf("spawners").forGetter(AddSpawnersModifier::spawners),
+			CodecHelpers.listOrValue(SpawnSettings.SpawnEntry.CODEC).fieldOf("spawners").forGetter(AddSpawnersModifier::spawners),
 			SpawnGroup.CODEC.optionalFieldOf("group").forGetter(AddSpawnersModifier::group)
 	).apply(instance, AddSpawnersModifier::new));
-	public static final Identifier IDENTIFIER = new Identifier("quilt", "add_spawners");
 
 	@Override
 	public boolean shouldModify(BiomeSelectionContext context) {

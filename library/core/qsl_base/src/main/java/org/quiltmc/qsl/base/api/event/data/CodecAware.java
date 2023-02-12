@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.base.api.event.data;
 
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.util.Identifier;
 
 /**
@@ -29,7 +31,7 @@ public interface CodecAware {
 	/**
 	 * {@return the identifier of the codec that can be used to encode this object, or {@code null} if this object is not encodable}
 	 */
-	default Identifier getCodecIdentifier() {
+	default @Nullable Identifier getCodecIdentifier() {
 		return null;
 	}
 }

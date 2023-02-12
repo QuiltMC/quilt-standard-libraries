@@ -19,7 +19,6 @@ package org.quiltmc.qsl.worldgen.biome.api.codec;
 import java.util.Arrays;
 import java.util.List;
 
-import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -29,6 +28,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.feature.PlacedFeature;
 
+import org.quiltmc.qsl.base.api.event.data.CodecHelpers;
 import org.quiltmc.qsl.base.api.event.data.predicate.CodecAwarePredicate;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModificationContext;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModifier;
@@ -42,12 +42,8 @@ public record RemoveFeaturesModifier(CodecAwarePredicate<BiomeSelectionContext> 
 	public static final Identifier IDENTIFIER = new Identifier("quilt", "remove_features");
 	public static final Codec<RemoveFeaturesModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(RemoveFeaturesModifier::selector),
-			Codec.either(RegistryKey.codec(RegistryKeys.PLACED_FEATURE), RegistryKey.codec(RegistryKeys.PLACED_FEATURE).listOf()).xmap(
-					either -> either.map(List::of, list -> list),
-					list -> list.size() == 1 ? Either.left(list.get(0)) : Either.right(list)).fieldOf("features").forGetter(RemoveFeaturesModifier::features),
-			Codec.either(GenerationStep.Feature.CODEC, GenerationStep.Feature.CODEC.listOf()).xmap(
-					either -> either.map(List::of, list -> list),
-					list -> list.size() == 1 ? Either.left(list.get(0)) : Either.right(list)).optionalFieldOf("steps", Arrays.asList(GenerationStep.Feature.values())).forGetter(RemoveFeaturesModifier::steps)
+			CodecHelpers.listOrValue(RegistryKey.codec(RegistryKeys.PLACED_FEATURE)).fieldOf("features").forGetter(RemoveFeaturesModifier::features),
+			CodecHelpers.listOrValue(GenerationStep.Feature.CODEC).optionalFieldOf("steps", Arrays.asList(GenerationStep.Feature.values())).forGetter(RemoveFeaturesModifier::steps)
 	).apply(instance, RemoveFeaturesModifier::new));
 
 	@Override

@@ -23,20 +23,20 @@ import net.minecraft.util.Identifier;
 /**
  * A predicate that is never true.
  */
-public final class NonePredicate<T> implements CodecAwarePredicate<T> {
+public final class NeverPredicate<T> implements CodecAwarePredicate<T> {
 
-	public static final Identifier IDENTIFIER = new Identifier("quilt", "none");
-	public static final PredicateCodecProvider PROVIDER = NonePredicate::makeCodec;
+	public static final Identifier IDENTIFIER = new Identifier("quilt", "never");
+	public static final PredicateCodecProvider PROVIDER = NeverPredicate::makeCodec;
 
 	@Override
 	public boolean test(T t) {
 		return false;
 	}
 
-	private NonePredicate() {}
+	private NeverPredicate() {}
 
-	private static <T> Codec<NonePredicate<T>> makeCodec(Codec<CodecAwarePredicate<T>> predicateCodec) {
-		return Codec.unit(new NonePredicate<>());
+	private static <T> Codec<NeverPredicate<T>> makeCodec(Codec<CodecAwarePredicate<T>> predicateCodec) {
+		return Codec.unit(new NeverPredicate<>());
 	}
 
 	@Override

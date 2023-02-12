@@ -34,12 +34,10 @@ public record RemoveMaterialRulesCallback(SurfaceRules.MaterialRule rule) implem
 		SurfaceRuleEvents.NetherModifierCallback,
 		SurfaceRuleEvents.TheEndModifierCallback,
 		SurfaceRuleEvents.GenericModifierCallback {
-
+	public static final Identifier IDENTIFIER = new Identifier("quilt", "remove_material_rule");
 	public static final Codec<RemoveMaterialRulesCallback> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			SurfaceRules.MaterialRule.CODEC.fieldOf("rule").forGetter(RemoveMaterialRulesCallback::rule)
 	).apply(instance, RemoveMaterialRulesCallback::new));
-
-	public static final Identifier IDENTIFIER = new Identifier("quilt", "remove_material_rule");
 
 	@Override
 	public void modifyOverworldRules(SurfaceRuleContext.@NotNull Overworld context) {

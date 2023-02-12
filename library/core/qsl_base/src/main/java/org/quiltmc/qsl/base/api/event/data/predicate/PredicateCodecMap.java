@@ -28,7 +28,7 @@ import net.minecraft.util.dynamic.Codecs;
 import org.quiltmc.qsl.base.api.event.data.CodecMap;
 
 /**
- * A CodecMap for {@link CodecAwarePredicate}s that bundles a set of codices created by shared providers. This class
+ * A CodecMap for {@link CodecAwarePredicate}s that bundles a set of codecs created by shared providers. This class
  * also handles registering shared providers for predicate codecs.
  * @param <T> the type of the input tested by the predicates this map can help encode
  */
@@ -58,8 +58,8 @@ public class PredicateCodecMap<T> extends CodecMap<CodecAwarePredicate<T>> {
 	}
 
 	static {
-		registerProvider(AllPredicate.IDENTIFIER, AllPredicate.PROVIDER);
-		registerProvider(NonePredicate.IDENTIFIER, NonePredicate.PROVIDER);
+		registerProvider(AlwaysPredicate.IDENTIFIER, AlwaysPredicate.PROVIDER);
+		registerProvider(NeverPredicate.IDENTIFIER, NeverPredicate.PROVIDER);
 		registerProvider(AndPredicate.IDENTIFIER, AndPredicate.PROVIDER);
 		registerProvider(OrPredicate.IDENTIFIER, OrPredicate.PROVIDER);
 		registerProvider(NotPredicate.IDENTIFIER, NotPredicate.PROVIDER);

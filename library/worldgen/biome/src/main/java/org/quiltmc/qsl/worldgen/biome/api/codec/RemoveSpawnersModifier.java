@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -28,6 +27,7 @@ import net.minecraft.entity.SpawnGroup;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.qsl.base.api.event.data.CodecHelpers;
 import org.quiltmc.qsl.base.api.event.data.predicate.CodecAwarePredicate;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModificationContext;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModifier;
@@ -36,19 +36,14 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 public record RemoveSpawnersModifier(CodecAwarePredicate<BiomeSelectionContext> selector,
 								  Set<Identifier> entityTypes,
 								  Set<SpawnGroup> groups) implements BiomeModifier {
+	public static final Identifier IDENTIFIER = new Identifier("quilt", "add_spawners");
 	public static final Codec<RemoveSpawnersModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(RemoveSpawnersModifier::selector),
-			Codec.either(Identifier.CODEC, Identifier.CODEC.listOf())
-					.xmap(either -> either.map(List::of, list -> list), list -> list.size() == 1 ? Either.left(list.get(0)) : Either.right(list))
-					.xmap(Set::copyOf, List::copyOf)
-					.fieldOf("entity_types").forGetter(RemoveSpawnersModifier::entityTypes),
-			Codec.either(SpawnGroup.CODEC, SpawnGroup.CODEC.listOf())
-					.xmap(either -> either.map(List::of, list -> list), list -> list.size() == 1 ? Either.left(list.get(0)) : Either.right(list))
-					.optionalFieldOf("groups", Arrays.asList(SpawnGroup.values()))
+			CodecHelpers.listOrValue(Identifier.CODEC).xmap(Set::copyOf, List::copyOf).fieldOf("entity_types").forGetter(RemoveSpawnersModifier::entityTypes),
+			CodecHelpers.listOrValue(SpawnGroup.CODEC).optionalFieldOf("groups", Arrays.asList(SpawnGroup.values()))
 					.xmap(Set::copyOf, List::copyOf)
 					.forGetter(RemoveSpawnersModifier::groups)
 	).apply(instance, RemoveSpawnersModifier::new));
-	public static final Identifier IDENTIFIER = new Identifier("quilt", "add_spawners");
 
 	@Override
 	public boolean shouldModify(BiomeSelectionContext context) {

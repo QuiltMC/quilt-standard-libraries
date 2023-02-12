@@ -23,20 +23,20 @@ import net.minecraft.util.Identifier;
 /**
  * A predicate that is always true.
  */
-public final class AllPredicate<T> implements CodecAwarePredicate<T> {
+public final class AlwaysPredicate<T> implements CodecAwarePredicate<T> {
 
-	public static final Identifier IDENTIFIER = new Identifier("quilt", "all");
-	public static final PredicateCodecProvider PROVIDER = AllPredicate::makeCodec;
+	public static final Identifier IDENTIFIER = new Identifier("quilt", "always");
+	public static final PredicateCodecProvider PROVIDER = AlwaysPredicate::makeCodec;
 
 	@Override
 	public boolean test(T t) {
 		return true;
 	}
 
-	private AllPredicate() {}
+	private AlwaysPredicate() {}
 
-	private static <T> Codec<AllPredicate<T>> makeCodec(Codec<CodecAwarePredicate<T>> predicateCodec) {
-		return Codec.unit(new AllPredicate<>());
+	private static <T> Codec<AlwaysPredicate<T>> makeCodec(Codec<CodecAwarePredicate<T>> predicateCodec) {
+		return Codec.unit(new AlwaysPredicate<>());
 	}
 
 	@Override

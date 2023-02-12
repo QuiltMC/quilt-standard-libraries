@@ -34,12 +34,11 @@ public record AddMaterialRuleCallback(SurfaceRules.MaterialRule rule, boolean ap
 		SurfaceRuleEvents.NetherModifierCallback,
 		SurfaceRuleEvents.TheEndModifierCallback,
 		SurfaceRuleEvents.GenericModifierCallback {
+	public static final Identifier IDENTIFIER = new Identifier("quilt", "add_material_rule");
 	public static final Codec<AddMaterialRuleCallback> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			SurfaceRules.MaterialRule.CODEC.fieldOf("rule").forGetter(AddMaterialRuleCallback::rule),
 			Codec.BOOL.optionalFieldOf("append", false).forGetter(AddMaterialRuleCallback::append)
 	).apply(instance, AddMaterialRuleCallback::new));
-
-	public static final Identifier IDENTIFIER = new Identifier("quilt", "add_material_rule");
 
 	@Override
 	public Identifier getCodecIdentifier() {

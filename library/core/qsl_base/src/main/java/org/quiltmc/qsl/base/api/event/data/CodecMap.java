@@ -20,7 +20,6 @@ import java.util.List;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -59,16 +58,13 @@ public class CodecMap<T extends CodecAware> {
 	 * @return a delegating codec based off this map
 	 */
 	public @NotNull Codec<Pair<List<Identifier>,T>> createDelegatingCodecPhased(String descriptor) {
-		return Codec.pair(Codec.either(Identifier.CODEC, Identifier.CODEC.listOf())
-				.xmap(either -> either.map(List::of, list -> list), list -> list.size() == 1
-						? Either.left(list.get(0))
-						: Either.right(list))
+		return Codec.pair(CodecHelpers.listOrValue(Identifier.CODEC)
 				.optionalFieldOf("phase", List.of(Event.DEFAULT_PHASE)).codec(), this.createDelegatingCodec(descriptor));
 	}
 
 	/**
 	 * Creates a delegating codec based off this map that decodes or encodes objects, storing the codec identifier in
-	 * the "type" field
+	 * the "type" field.
 	 * @param descriptor A string describing the parameterized type of the codec, to be used in error messages.
 	 * @return a delegating codec based off this map
 	 */
