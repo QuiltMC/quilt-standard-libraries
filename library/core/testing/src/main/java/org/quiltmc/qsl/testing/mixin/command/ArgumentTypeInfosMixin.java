@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.testing.mixin;
+package org.quiltmc.qsl.testing.mixin.command;
 
 import com.mojang.brigadier.arguments.ArgumentType;
 import org.spongepowered.asm.mixin.Mixin;
@@ -33,6 +33,7 @@ import net.minecraft.command.argument.TestFunctionArgumentType;
 import net.minecraft.registry.Registry;
 
 import org.quiltmc.qsl.testing.impl.game.QuiltGameTestImpl;
+import org.quiltmc.qsl.testing.impl.game.command.TestNameArgumentType;
 
 @Mixin(ArgumentTypeInfos.class)
 public abstract class ArgumentTypeInfosMixin {
@@ -45,12 +46,18 @@ public abstract class ArgumentTypeInfosMixin {
 	@Inject(method = "bootstrap", at = @At("RETURN"))
 	private static void register(Registry<ArgumentTypeInfo<?, ?>> registry, CallbackInfoReturnable<ArgumentTypeInfo<?, ?>> ci) {
 		// Registered by vanilla when isDevelopment is enabled.
-		if (!SharedConstants.isDevelopment && QuiltGameTestImpl.COMMAND_ENABLED) {
-			register(registry, "test_argument", TestFunctionArgumentType.class,
-					SingletonArgumentInfo.contextFree(TestFunctionArgumentType::testFunction)
-			);
-			register(registry, "test_class", TestClassArgumentType.class,
-					SingletonArgumentInfo.contextFree(TestClassArgumentType::testClass)
+		if (QuiltGameTestImpl.COMMAND_ENABLED) {
+			if (!SharedConstants.isDevelopment) {
+				register(registry, "test_argument", TestFunctionArgumentType.class,
+						SingletonArgumentInfo.contextFree(TestFunctionArgumentType::testFunction)
+				);
+				register(registry, "test_class", TestClassArgumentType.class,
+						SingletonArgumentInfo.contextFree(TestClassArgumentType::testClass)
+				);
+			}
+
+			register(registry, "quilt_game_test:test_name", TestNameArgumentType.class,
+					SingletonArgumentInfo.contextFree(TestNameArgumentType::new)
 			);
 		}
 	}

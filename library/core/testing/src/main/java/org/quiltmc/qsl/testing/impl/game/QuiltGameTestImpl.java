@@ -122,7 +122,8 @@ public final class QuiltGameTestImpl implements ModInitializer {
 			}
 		}
 
-		return new TestFunction(gameTest.batchId(),
+		return new TestFunction(
+				gameTest.batchId(),
 				testCaseName,
 				structureName,
 				StructureTestUtil.getRotation(gameTest.rotation()),
