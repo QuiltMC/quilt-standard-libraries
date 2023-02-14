@@ -19,7 +19,9 @@ package org.quiltmc.qsl.testing.mixin.command;
 import com.mojang.brigadier.arguments.ArgumentType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
 
@@ -100,5 +102,17 @@ public class TestCommandMixin {
 	)
 	private static String quiltGameTest$fixImportPath(String structure) {
 		return structure.replace(':', '/');
+	}
+
+	@ModifyConstant(
+			method = "onCompletion",
+			constant = @Constant(stringValue = "All required tests passed :)")
+	)
+	private static String quiltGameTest$replaceSuccessMessage(String original) {
+		// You may ask why, it's simple.
+		// The original emoticon is a bit... weird.
+		// And QSL members expressed some kind of interest into replace it.
+		// So here it is. I assure you this is a really necessary injection.
+		return "All required tests passed :3c";
 	}
 }
