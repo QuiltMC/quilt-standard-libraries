@@ -18,7 +18,6 @@
 package org.quiltmc.qsl.resource.loader.impl;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -44,9 +43,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.minecraft.resource.MultiPackResourceManager;
-import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourceIoSupplier;
-import net.minecraft.resource.ResourceMetadata;
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePack;
@@ -73,7 +69,6 @@ import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
 import org.quiltmc.qsl.resource.loader.api.ResourcePackRegistrationContext;
 import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;
 import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
-import org.quiltmc.qsl.resource.loader.mixin.NamespaceResourceManagerAccessor;
 import org.quiltmc.qsl.resource.loader.mixin.VanillaDataPackProviderAccessor;
 
 /**
@@ -192,6 +187,22 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 			ResourcePackActivationType activationType, @NotNull Text displayName) {
 		String name = id.getNamespace() + '/' + id.getPath();
 		return new ModNioResourcePack(name, owner.metadata(), displayName, activationType, rootPath, this.type, null);
+	}
+
+	/**
+	 * Flattens the given resource pack if it's a group resource pack.
+	 * <p>
+	 * This is useful to flatten the resource pack list once the runtime list is figured out.
+	 *
+	 * @param pack     the given resource pack
+	 * @param consumer the resource pack consumer
+	 */
+	public static void flattenPacks(ResourcePack pack, Consumer<ResourcePack> consumer) {
+		if (pack instanceof GroupResourcePack grouped) {
+			grouped.streamPacks().forEach(p -> flattenPacks(p, consumer));
+		} else {
+			consumer.accept(pack);
+		}
 	}
 
 	public void appendTopPacks(MultiPackResourceManager resourceManager, Consumer<ResourcePack> resourcePackAdder) {
@@ -376,7 +387,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 
 		var context = new ResourcePackRegistrationContextImpl(type, List.of(pack), p -> {
 			packs.add(lastExtraPackIndex[0]++, p);
-			pack.recomputeNamespaces();
+			pack.recompute();
 		});
 
 		get(type).getRegisterDefaultResourcePackEvent().invoker().onRegisterPack(context);
@@ -390,30 +401,6 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		appendModResourcePacks(packs, ResourceType.CLIENT_RESOURCES, "programmer_art");
 
 		return new GroupResourcePack.Wrapped(ResourceType.CLIENT_RESOURCES, vanillaPack, packs, true);
-	}
-
-	public static void appendResourcesFromGroup(NamespaceResourceManagerAccessor manager, Identifier id,
-			GroupResourcePack groupResourcePack, List<Resource> resources) {
-		var packs = groupResourcePack.getPacks(id.getNamespace());
-
-		if (packs == null) {
-			return;
-		}
-
-		Identifier metadataId = NamespaceResourceManagerAccessor.invokeGetMetadataPath(id);
-
-		for (int i = packs.size() - 1; i >= 0; i--) {
-			ResourcePack pack = packs.get(i);
-			var readSupplier = pack.open(manager.getType(), id);
-
-			if (readSupplier != null) {
-				resources.add(new Resource(pack, readSupplier, () -> {
-					ResourceIoSupplier<InputStream> supplier = pack.open(manager.getType(), metadataId);
-					return supplier != null ? NamespaceResourceManagerAccessor.invokeGetResourceMetadataFromInputStream(supplier)
-							: ResourceMetadata.EMPTY;
-				}));
-			}
-		}
 	}
 
 	/* Built-in resource packs */
