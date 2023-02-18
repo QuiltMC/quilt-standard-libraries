@@ -3,14 +3,15 @@
   "package": "org.quiltmc.qsl.testing.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "ArgumentTypeInfosMixin",
-    "CommandManagerMixin",
     "MinecraftServerMixin",
     "StructureTemplateManagerMixin",
-    "TestCommandMixin",
     "TestContextAccessor",
     "TestFunctionsMixin",
-    "TestServerMixin"
+    "TestServerMixin",
+    "command.ArgumentTypeInfosMixin",
+    "command.CommandManagerMixin",
+    "command.TestCommandMixin",
+    "command.TestFunctionArgumentTypeMixin"
   ],
   "server": [
     "server.MainMixin"
