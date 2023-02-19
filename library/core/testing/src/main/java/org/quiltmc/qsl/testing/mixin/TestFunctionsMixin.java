@@ -26,6 +26,7 @@ import net.minecraft.test.TestFunction;
 import net.minecraft.test.TestFunctions;
 
 import org.quiltmc.qsl.testing.impl.game.QuiltGameTestImpl;
+import org.quiltmc.qsl.testing.impl.game.QuiltTestFunction;
 
 @Mixin(TestFunctions.class)
 public class TestFunctionsMixin {
@@ -40,5 +41,27 @@ public class TestFunctionsMixin {
 	@Overwrite
 	private static TestFunction getTestFunction(Method method) {
 		return QuiltGameTestImpl.getTestFunction(method);
+	}
+
+	/**
+	 * {@return {@code true} if the given test function is in the given class, or {@code false} otherwise}
+	 *
+	 * @param testFunction the test function to check
+	 * @param testClass    the class that should match
+	 * @reason Replace the default implementation that only checks against structure name, which is unreliable.
+	 * @author QuiltMC, LambdAurora
+	 */
+	@Overwrite
+	private static boolean isInClass(TestFunction testFunction, String testClass) {
+		if (testFunction instanceof QuiltTestFunction quilted) {
+			if (testClass.contains(".")) {
+				return quilted.getSourceClass().getName().equals(testClass);
+			} else {
+				return quilted.getSourceClass().getSimpleName().equals(testClass);
+			}
+		} else {
+			// We can't really guess anything since we don't have enough data, so we fallback to Vanilla's default implementation.
+			return testFunction.getStructurePath().toLowerCase().startsWith(testClass.toLowerCase() + ".");
+		}
 	}
 }
