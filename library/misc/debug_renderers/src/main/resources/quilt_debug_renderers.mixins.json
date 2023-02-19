@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.debug_renderers.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "DebugInfoSenderMixin",
+    "MinecraftClientMixin",
+    "PlayerManagerMixin"
+  ],
+  "client": [
+    "DebugRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

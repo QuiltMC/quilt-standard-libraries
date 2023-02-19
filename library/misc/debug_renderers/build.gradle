@@ -1,0 +1,36 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Debug Renderers API"
+	moduleName = "debug_renderers"
+	id = "quilt_debug_renderers"
+	description = "Quilt APIs for creating and using debug renderers."
+	library = "misc"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+
+			compileOnly("networking")
+			testmodOnly("networking")
+		}
+		management {
+			compileOnly("client_command")
+			compileOnly("command")
+			testmodOnly("client_command")
+			testmodOnly("command")
+		}
+	}
+	entrypoints {
+		init {
+			values = ["org.quiltmc.qsl.debug_renderers.impl.Initializer"]
+		}
+		client_events {
+			values = ["org.quiltmc.qsl.debug_renderers.impl.client.VanillaDebugRenderers"]
+		}
+		client_init {
+			values = ["org.quiltmc.qsl.debug_renderers.impl.client.ClientInitializer"]
+		}
+	}
+}
