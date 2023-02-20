@@ -37,10 +37,10 @@ public class QuiltSurfaceRuleInitializer implements RegistryEvents.DynamicRegist
 	@Override
 	public void onDynamicRegistrySetup(@NotNull DynamicRegistryManagerSetupContext context) {
 		context.withRegistries(registryMap -> {
-			SurfaceRuleEvents.MODIFY_OVERWORLD_IDENTIFIER.update(context.resourceManager());
-			SurfaceRuleEvents.MODIFY_NETHER_IDENTIFIER.update(context.resourceManager());
-			SurfaceRuleEvents.MODIFY_THE_END_IDENTIFIER.update(context.resourceManager());
-			SurfaceRuleEvents.MODIFY_GENERIC_IDENTIFIER.update(context.resourceManager());
+			SurfaceRuleEvents.MODIFY_OVERWORLD_DATA.update(context.resourceManager());
+			SurfaceRuleEvents.MODIFY_NETHER_DATA.update(context.resourceManager());
+			SurfaceRuleEvents.MODIFY_THE_END_DATA.update(context.resourceManager());
+			SurfaceRuleEvents.MODIFY_GENERIC_DATA.update(context.resourceManager());
 		}, Set.of(RegistryKeys.CHUNK_GENERATOR_SETTINGS));
 		context.monitor(RegistryKeys.CHUNK_GENERATOR_SETTINGS, monitor -> {
 			monitor.forAll(ctx -> this.modifyChunkGeneratorSettings(ctx, context.resourceManager()));

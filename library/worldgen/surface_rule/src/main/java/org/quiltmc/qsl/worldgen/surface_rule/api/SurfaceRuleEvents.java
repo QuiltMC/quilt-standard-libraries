@@ -57,7 +57,7 @@ public final class SurfaceRuleEvents {
 	 * A {@link DynamicEventCallbackSource} for the {@link OverworldModifierCallback} event. Can be used to register
 	 * event callbacks alongside an identifier, allowing them to be overridden with datapacks.
 	 */
-	public static final DynamicEventCallbackSource<OverworldModifierCallback> MODIFY_OVERWORLD_IDENTIFIER = new DynamicEventCallbackSource<>(
+	public static final DynamicEventCallbackSource<OverworldModifierCallback> MODIFY_OVERWORLD_DATA = new DynamicEventCallbackSource<>(
 			new Identifier("quilt", "overworld_surface_rules"),
 			MODIFY_OVERWORLD_CODECS,
 			OverworldModifierCallback.class,
@@ -86,7 +86,7 @@ public final class SurfaceRuleEvents {
 	 * A {@link DynamicEventCallbackSource} for the {@link NetherModifierCallback} event. Can be used to register
 	 * event callbacks alongside an identifier, allowing them to be overridden with datapacks.
 	 */
-	public static final DynamicEventCallbackSource<NetherModifierCallback> MODIFY_NETHER_IDENTIFIER = new DynamicEventCallbackSource<>(
+	public static final DynamicEventCallbackSource<NetherModifierCallback> MODIFY_NETHER_DATA = new DynamicEventCallbackSource<>(
 			new Identifier("quilt", "nether_surface_rules"),
 			MODIFY_NETHER_CODECS,
 			NetherModifierCallback.class,
@@ -115,7 +115,7 @@ public final class SurfaceRuleEvents {
 	 * A {@link DynamicEventCallbackSource} for the {@link TheEndModifierCallback} event. Can be used to register
 	 * event callbacks alongside an identifier, allowing them to be overridden with datapacks.
 	 */
-	public static final DynamicEventCallbackSource<TheEndModifierCallback> MODIFY_THE_END_IDENTIFIER = new DynamicEventCallbackSource<>(
+	public static final DynamicEventCallbackSource<TheEndModifierCallback> MODIFY_THE_END_DATA = new DynamicEventCallbackSource<>(
 			new Identifier("quilt", "the_end_surface_rules"),
 			MODIFY_THE_END_CODECS,
 			TheEndModifierCallback.class,
@@ -145,7 +145,7 @@ public final class SurfaceRuleEvents {
 	 * A {@link DynamicEventCallbackSource} for the {@link GenericModifierCallback} event. Can be used to register
 	 * event callbacks alongside an identifier, allowing them to be overridden with datapacks.
 	 */
-	public static final DynamicEventCallbackSource<GenericModifierCallback> MODIFY_GENERIC_IDENTIFIER = new DynamicEventCallbackSource<>(
+	public static final DynamicEventCallbackSource<GenericModifierCallback> MODIFY_GENERIC_DATA = new DynamicEventCallbackSource<>(
 			new Identifier("quilt", "generic_surface_rules"),
 			MODIFY_GENERIC_CODECS,
 			GenericModifierCallback.class,
