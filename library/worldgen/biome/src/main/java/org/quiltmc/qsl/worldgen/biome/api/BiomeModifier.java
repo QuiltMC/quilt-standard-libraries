@@ -24,10 +24,10 @@ import com.mojang.serialization.Codec;
 import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.world.biome.Biome;
 
-import org.quiltmc.qsl.base.api.event.data.CodecAware;
-import org.quiltmc.qsl.base.api.event.data.CodecMap;
-import org.quiltmc.qsl.base.api.event.data.predicate.CodecAwarePredicate;
-import org.quiltmc.qsl.base.api.event.data.predicate.PredicateCodecMap;
+import org.quiltmc.qsl.data.callbacks.CodecAware;
+import org.quiltmc.qsl.data.callbacks.CodecMap;
+import org.quiltmc.qsl.data.callbacks.predicate.CodecAwarePredicate;
+import org.quiltmc.qsl.data.callbacks.predicate.PredicateCodecMap;
 import org.quiltmc.qsl.worldgen.biome.api.codec.selector.ValueBiomeSelector;
 
 /**

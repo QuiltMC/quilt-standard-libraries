@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.base.api.event.data.predicate;
+package org.quiltmc.qsl.data.callbacks.predicate;
+
+import java.util.List;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -22,28 +24,33 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
 
 /**
- * A predicate that is true only if its referenced predicate of the same type is false.
+ * A predicate that is true if all of its referenced predicates of the same type are true.
  */
-public final class NotPredicate<T> implements CodecAwarePredicate<T> {
+public final class AndPredicate<T> implements CodecAwarePredicate<T> {
 
-	public static final Identifier IDENTIFIER = new Identifier("quilt", "not");
-	public static final PredicateCodecProvider PROVIDER = NotPredicate::makeCodec;
+	public static final Identifier IDENTIFIER = new Identifier("quilt", "and");
+	public static final PredicateCodecProvider PROVIDER = AndPredicate::makeCodec;
 
 	@Override
 	public boolean test(T t) {
-		return !value.test(t);
+		for (CodecAwarePredicate<T> predicate : values) {
+			if (!predicate.test(t)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
-	public final CodecAwarePredicate<T> value;
+	public final List<CodecAwarePredicate<T>> values;
 
-	private NotPredicate(CodecAwarePredicate<T> value) {
-		this.value = value;
+	private AndPredicate(List<CodecAwarePredicate<T>> values) {
+		this.values = values;
 	}
 
-	private static <T> Codec<NotPredicate<T>> makeCodec(Codec<CodecAwarePredicate<T>> predicateCodec) {
+	private static <T> Codec<AndPredicate<T>> makeCodec(Codec<CodecAwarePredicate<T>> predicateCodec) {
 		return RecordCodecBuilder.create(instance -> instance.group(
-				predicateCodec.fieldOf("value").forGetter(predicate -> predicate.value)
-		).apply(instance, NotPredicate::new));
+				predicateCodec.listOf().fieldOf("values").forGetter(predicate -> predicate.values)
+		).apply(instance, AndPredicate::new));
 	}
 
 	@Override

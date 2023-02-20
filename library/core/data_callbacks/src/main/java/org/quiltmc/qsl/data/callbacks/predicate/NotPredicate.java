@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.base.api.event.data.predicate;
-
-import java.util.List;
+package org.quiltmc.qsl.data.callbacks.predicate;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -24,33 +22,28 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
 
 /**
- * A predicate that is true if any of its referenced predicates of the same type are true.
+ * A predicate that is true only if its referenced predicate of the same type is false.
  */
-public final class OrPredicate<T> implements CodecAwarePredicate<T> {
+public final class NotPredicate<T> implements CodecAwarePredicate<T> {
 
-	public static final Identifier IDENTIFIER = new Identifier("quilt", "or");
-	public static final PredicateCodecProvider PROVIDER = OrPredicate::makeCodec;
+	public static final Identifier IDENTIFIER = new Identifier("quilt", "not");
+	public static final PredicateCodecProvider PROVIDER = NotPredicate::makeCodec;
 
 	@Override
 	public boolean test(T t) {
-		for (CodecAwarePredicate<T> predicate : values) {
-			if (predicate.test(t)) {
-				return true;
-			}
-		}
-		return false;
+		return !value.test(t);
 	}
 
-	public final List<CodecAwarePredicate<T>> values;
+	public final CodecAwarePredicate<T> value;
 
-	private OrPredicate(List<CodecAwarePredicate<T>> values) {
-		this.values = values;
+	private NotPredicate(CodecAwarePredicate<T> value) {
+		this.value = value;
 	}
 
-	private static <T> Codec<OrPredicate<T>> makeCodec(Codec<CodecAwarePredicate<T>> predicateCodec) {
+	private static <T> Codec<NotPredicate<T>> makeCodec(Codec<CodecAwarePredicate<T>> predicateCodec) {
 		return RecordCodecBuilder.create(instance -> instance.group(
-				predicateCodec.listOf().fieldOf("values").forGetter(predicate -> predicate.values)
-		).apply(instance, OrPredicate::new));
+				predicateCodec.fieldOf("value").forGetter(predicate -> predicate.value)
+		).apply(instance, NotPredicate::new));
 	}
 
 	@Override

@@ -23,7 +23,7 @@ import net.minecraft.registry.HolderSet;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.biome.Biome;
 
-import org.quiltmc.qsl.base.api.event.data.predicate.CodecAwarePredicate;
+import org.quiltmc.qsl.data.callbacks.predicate.CodecAwarePredicate;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
 /**

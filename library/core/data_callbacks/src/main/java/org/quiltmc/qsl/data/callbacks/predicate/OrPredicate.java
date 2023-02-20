@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.base.api.event.data.predicate;
+package org.quiltmc.qsl.data.callbacks.predicate;
 
 import java.util.List;
 
@@ -24,33 +24,33 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
 
 /**
- * A predicate that is true if all of its referenced predicates of the same type are true.
+ * A predicate that is true if any of its referenced predicates of the same type are true.
  */
-public final class AndPredicate<T> implements CodecAwarePredicate<T> {
+public final class OrPredicate<T> implements CodecAwarePredicate<T> {
 
-	public static final Identifier IDENTIFIER = new Identifier("quilt", "and");
-	public static final PredicateCodecProvider PROVIDER = AndPredicate::makeCodec;
+	public static final Identifier IDENTIFIER = new Identifier("quilt", "or");
+	public static final PredicateCodecProvider PROVIDER = OrPredicate::makeCodec;
 
 	@Override
 	public boolean test(T t) {
 		for (CodecAwarePredicate<T> predicate : values) {
-			if (!predicate.test(t)) {
-				return false;
+			if (predicate.test(t)) {
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	public final List<CodecAwarePredicate<T>> values;
 
-	private AndPredicate(List<CodecAwarePredicate<T>> values) {
+	private OrPredicate(List<CodecAwarePredicate<T>> values) {
 		this.values = values;
 	}
 
-	private static <T> Codec<AndPredicate<T>> makeCodec(Codec<CodecAwarePredicate<T>> predicateCodec) {
+	private static <T> Codec<OrPredicate<T>> makeCodec(Codec<CodecAwarePredicate<T>> predicateCodec) {
 		return RecordCodecBuilder.create(instance -> instance.group(
 				predicateCodec.listOf().fieldOf("values").forGetter(predicate -> predicate.values)
-		).apply(instance, AndPredicate::new));
+		).apply(instance, OrPredicate::new));
 	}
 
 	@Override

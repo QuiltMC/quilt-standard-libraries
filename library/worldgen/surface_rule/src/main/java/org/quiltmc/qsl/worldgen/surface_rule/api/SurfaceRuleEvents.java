@@ -22,9 +22,9 @@ import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.EventAwareListener;
-import org.quiltmc.qsl.base.api.event.data.CodecAware;
-import org.quiltmc.qsl.base.api.event.data.CodecMap;
-import org.quiltmc.qsl.base.api.event.data.DynamicEventCallbackSource;
+import org.quiltmc.qsl.data.callbacks.CodecAware;
+import org.quiltmc.qsl.data.callbacks.CodecMap;
+import org.quiltmc.qsl.data.callbacks.DynamicEventCallbackSource;
 
 /**
  * Events relating to {@link net.minecraft.world.gen.surfacebuilder.SurfaceRules surface rules}.

@@ -13,6 +13,7 @@ qslModule {
 			api("qsl_base")
 			api("registry")
 			api("resource_loader")
+			api("data_callbacks")
 		}
 	}
 	entrypoints {
