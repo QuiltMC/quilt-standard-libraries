@@ -1,0 +1,27 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Testing API"
+	moduleName = "testing"
+	id = "quilt_testing"
+	description = "Utilites to assist in testing the game and mods."
+	library = "core"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+			api("lifecycle_events")
+			api("registry")
+		}
+		management {
+			testmodOnly("command")
+		}
+	}
+	entrypoints {
+		init {
+			values = ["org.quiltmc.qsl.testing.impl.game.QuiltGameTestImpl"]
+		}
+	}
+	accessWidener()
+}
