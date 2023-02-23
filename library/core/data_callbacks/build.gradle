@@ -5,6 +5,7 @@ plugins {
 qslModule {
 	name = "Quilt Data Callbacks API"
 	moduleName = "data_callbacks"
+	hasMixins = false
 	id = "quilt_data_callbacks"
 	description = "APIs for making events or APIs data-driven"
 	library = "core"
