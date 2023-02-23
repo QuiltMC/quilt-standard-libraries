@@ -17,11 +17,12 @@
 package org.quiltmc.qsl.resource.loader.mixin;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -31,8 +32,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.resource.MultiPackResourceManager;
 import net.minecraft.resource.NamespaceResourceManager;
@@ -41,7 +42,6 @@ import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.metadata.ResourceFilterMetadata;
 import net.minecraft.util.Identifier;
 
-import org.quiltmc.qsl.resource.loader.api.GroupResourcePack;
 import org.quiltmc.qsl.resource.loader.impl.QuiltMultiPackResourceManagerHooks;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
@@ -63,26 +63,16 @@ public abstract class MultiPackResourceManagerMixin implements QuiltMultiPackRes
 	@Unique
 	private /*final*/ ResourceType quilt$type;
 
-	@Inject(method = "<init>", at = @At("RETURN"))
-	private void onInit(ResourceType type, List<ResourcePack> packs, CallbackInfo ci) {
+	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Ljava/util/List;copyOf(Ljava/util/Collection;)Ljava/util/List;"))
+	private List<ResourcePack> quilt$createPackList(Collection<ResourcePack> packs, ResourceType type) {
 		this.quilt$type = type;
 
-		if (packs instanceof ArrayList<ResourcePack>) {
-			this.packs = packs; // Make the list mutable.
-		}
+		return packs.stream().mapMulti(ResourceLoaderImpl::flattenPacks).collect(Collectors.toCollection(ArrayList::new));
 	}
 
-	@Inject(method = "streamResourcePacks", at = @At("RETURN"), cancellable = true)
-	private void onStreamResourcePacks(CallbackInfoReturnable<Stream<ResourcePack>> cir) {
-		cir.setReturnValue(cir.getReturnValue()
-				.mapMulti((pack, consumer) -> {
-					if (pack instanceof GroupResourcePack grouped) {
-						grouped.streamPacks().forEach(consumer);
-					} else {
-						consumer.accept(pack);
-					}
-				})
-		);
+	@Inject(method = "<init>", at = @At("RETURN"))
+	private void quilt$onInit(ResourceType type, List<ResourcePack> packs, CallbackInfo ci) {
+		this.quilt$recomputeNamespaces(); // I can't modify the local.
 	}
 
 	@SuppressWarnings("ConstantConditions")

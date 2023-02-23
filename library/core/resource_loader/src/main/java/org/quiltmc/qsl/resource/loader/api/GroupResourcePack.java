@@ -52,11 +52,12 @@ public abstract class GroupResourcePack implements ResourcePack {
 	protected final ResourceType type;
 	protected final List<? extends ResourcePack> packs;
 	protected final Map<String, List<ResourcePack>> namespacedPacks = new Object2ObjectOpenHashMap<>();
+	private boolean builtin;
 
 	public GroupResourcePack(@NotNull ResourceType type, @NotNull List<? extends ResourcePack> packs) {
 		this.type = type;
 		this.packs = packs;
-		this.recomputeNamespaces();
+		this.recompute();
 	}
 
 	/**
@@ -95,13 +96,15 @@ public abstract class GroupResourcePack implements ResourcePack {
 	}
 
 	/**
-	 * Recomputes the namespaces in case the resource pack list changes.
+	 * Recomputes some cached data in case the resource pack list changes.
 	 */
-	public void recomputeNamespaces() {
+	public void recompute() {
 		this.namespacedPacks.clear();
 		this.packs.forEach(pack -> pack.getNamespaces(this.type)
 				.forEach(namespace -> this.namespacedPacks.computeIfAbsent(namespace, value -> new ArrayList<>())
 						.add(pack)));
+
+		this.builtin = this.packs.stream().allMatch(ResourcePack::isBuiltin);
 	}
 
 	@Override
@@ -145,13 +148,7 @@ public abstract class GroupResourcePack implements ResourcePack {
 
 	@Override
 	public boolean isBuiltin() {
-		for (var pack : this.packs) {
-			if (!pack.isBuiltin()) {
-				return false;
-			}
-		}
-
-		return true;
+		return this.builtin;
 	}
 
 	@Override
