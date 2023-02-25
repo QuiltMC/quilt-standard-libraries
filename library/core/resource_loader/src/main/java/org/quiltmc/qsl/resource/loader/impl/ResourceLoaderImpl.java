@@ -149,11 +149,6 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 							+ " already in resource reloader set!"
 			);
 		}
-
-		// Keep this for compatibility.
-		for (var dependency : resourceReloader.getQuiltDependencies()) {
-			this.addReloaderOrdering(dependency, resourceReloader.getQuiltId());
-		}
 	}
 
 	@Override
