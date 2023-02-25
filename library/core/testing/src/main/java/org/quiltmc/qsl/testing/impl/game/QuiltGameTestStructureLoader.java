@@ -32,7 +32,7 @@ import net.minecraft.util.Identifier;
 
 @ApiStatus.Internal
 public final class QuiltGameTestStructureLoader {
-	private static final String GAME_TEST_STRUCTURE_PATH = "game_test/structures/";
+	private static final String GAME_TEST_STRUCTURE_PATH = "game_test/structures";
 	private static final ResourceFileNamespace GAME_TEST_STRUCTURE_NAMESPACE = new ResourceFileNamespace(GAME_TEST_STRUCTURE_PATH, ".snbt");
 
 	public static Stream<Identifier> streamTemplatesFromResource(ResourceManager resourceManager) {

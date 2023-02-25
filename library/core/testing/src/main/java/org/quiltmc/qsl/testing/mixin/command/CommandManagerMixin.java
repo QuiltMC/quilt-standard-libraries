@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.testing.mixin;
+package org.quiltmc.qsl.testing.mixin.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import org.spongepowered.asm.mixin.Final;

@@ -122,7 +122,8 @@ public final class QuiltGameTestImpl implements ModInitializer {
 			}
 		}
 
-		return new TestFunction(gameTest.batchId(),
+		return new QuiltTestFunction(
+				gameTest.batchId(),
 				testCaseName,
 				structureName,
 				StructureTestUtil.getRotation(gameTest.rotation()),
@@ -131,7 +132,8 @@ public final class QuiltGameTestImpl implements ModInitializer {
 				gameTest.required(),
 				gameTest.requiredSuccesses(),
 				gameTest.maxAttempts(),
-				QuiltGameTestImpl.getTestMethodInvoker(data, method)
+				QuiltGameTestImpl.getTestMethodInvoker(data, method),
+				method.getDeclaringClass()
 		);
 	}
 

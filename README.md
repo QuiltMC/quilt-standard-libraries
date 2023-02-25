@@ -178,7 +178,7 @@ Quick legend:
 | Commands                |  ✔  |     ✔      |
 | Client Commands         |  ✔  |     ✔      |
 | Game Rules              |  ❌  |     ✔      |
-| Entity Selector Options |  ✔  |     ❌      |
+| Entity Selector Options |  ✔  |     ✔      |
 | Message API             |  ✔  |     ✔      |
 
 ### Rendering Library
