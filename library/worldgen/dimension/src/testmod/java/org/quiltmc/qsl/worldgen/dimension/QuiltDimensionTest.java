@@ -35,6 +35,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.test.TestServer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -65,6 +66,8 @@ public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents
 
 	@Override
 	public void readyServer(MinecraftServer server) {
+		if (server instanceof TestServer) return; // Game Test server does not support custom dimensions.
+
 		ServerWorld overworld = server.getWorld(World.OVERWORLD);
 		ServerWorld targetWorld = server.getWorld(WORLD_KEY);
 

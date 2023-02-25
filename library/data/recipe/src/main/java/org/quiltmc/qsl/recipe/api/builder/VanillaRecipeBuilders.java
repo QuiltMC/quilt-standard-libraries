@@ -132,7 +132,8 @@ public final class VanillaRecipeBuilders {
 	 * @param cookTime   the cook time in ticks
 	 * @return the smoking recipe
 	 */
-	public static SmokingRecipe smokingRecipe(Identifier id, String group, CookingCategory category, Ingredient input, ItemStack output, float experience, int cookTime) {
+	public static SmokingRecipe smokingRecipe(Identifier id, String group, CookingCategory category, Ingredient input,
+			ItemStack output, float experience, int cookTime) {
 		return VanillaRecipeBuildersImpl.smokingRecipe(id, group, category, input, output, experience, cookTime);
 	}
 
