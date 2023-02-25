@@ -17,27 +17,34 @@
 package org.quiltmc.qsl.networking.test.trackingevents;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
 import org.quiltmc.qsl.networking.api.EntityTrackingEvents;
 
 public final class NetworkingEntityTrackingEventsTest implements EntityTrackingEvents.AfterStartTracking, EntityTrackingEvents.StartTracking, EntityTrackingEvents.StopTracking {
-	// Sends a message to the player when they're about to start tracking an entity.
+	// Sends a message to the player when they're about to start tracking an armour stand.
 	@Override
 	public void onStartTracking(Entity trackedEntity, ServerPlayerEntity player) {
-		player.sendMessage(Text.literal("About to be tracking ").append(trackedEntity.getDisplayName()), false);
+		if (trackedEntity instanceof ArmorStandEntity) {
+			player.sendMessage(Text.literal("About to be tracking ").append(trackedEntity.getEntityName()), false);
+		}
 	}
 
-	// Sends a message to the player when they're newly tracking an entity.
+	// Sends a message to the player when they're newly tracking an armour stand.
 	@Override
 	public void afterStartTracking(Entity trackedEntity, ServerPlayerEntity player) {
-		player.sendMessage(Text.literal("Tracking ").append(trackedEntity.getDisplayName()), false);
+		if (trackedEntity instanceof ArmorStandEntity) {
+			player.sendMessage(Text.literal("Tracking ").append(trackedEntity.getEntityName()), false);
+		}
 	}
 
-	// Sends a message to the player when they're no longer tracking an entity.
+	// Sends a message to the player when they're no longer tracking an armour stand.
 	@Override
 	public void onStopTracking(Entity trackedEntity, ServerPlayerEntity player) {
-		player.sendMessage(Text.literal("No longer tracking ").append(trackedEntity.getDisplayName()), false);
+		if (trackedEntity instanceof ArmorStandEntity) {
+			player.sendMessage(Text.literal("No longer tracking ").append(trackedEntity.getEntityName()), false);
+		}
 	}
 }
