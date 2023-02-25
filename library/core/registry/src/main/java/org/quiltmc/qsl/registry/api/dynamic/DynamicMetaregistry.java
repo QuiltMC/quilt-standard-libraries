@@ -64,9 +64,31 @@ public final class DynamicMetaregistry {
 	 *
 	 * @param <E>        the type of elements in the dynamic registry
 	 * @param key        a {@link RegistryKey#ofRegistry(Identifier) key for the new dynamic registry}
+	 * @param entryCodec the codec used to both deserialize entries from datapacks and (de)serialize entries to and from packets
+	 * @throws IllegalStateException if this registry of registries already got frozen
+	 * @see #registerSynced(RegistryKey, Codec, Codec)
+	 */
+	public static <E> void registerSynced(RegistryKey<? extends Registry<E>> key, Codec<E> entryCodec) {
+		DynamicMetaregistryImpl.registerSynced(key, entryCodec, entryCodec);
+	}
+
+	/**
+	 * Registers a dynamic registry which contents get synced between the server and connected clients.
+	 *
+	 * <p>Entries will be loaded from {@code "data/<namespace>/<registry_path>"} for every datapack {@code namespace},
+	 * where {@code registry_path}'s value is {@code key.getLocation().getPath()}.
+	 * The registry's own namespace is essentially ignored when loading values,
+	 * meaning <strong>the registry {@code key}'s path must be unique by itself</strong>
+	 * (e.g. {@code RegistryKey.ofRegistry(new Identifier("<mod_id>", "<mod_id>_<resource_name>))}).
+	 *
+	 * <p>Synced dynamic registries do not have to be explicitly registered clientside to be usable.
+	 *
+	 * @param <E>        the type of elements in the dynamic registry
+	 * @param key        a {@link RegistryKey#ofRegistry(Identifier) key for the new dynamic registry}
 	 * @param entryCodec the codec used to deserialize entries from datapacks
 	 * @param syncCodec  the codec used to (de)serialize entries to and from packets - may be the same as {@code entryCodec}
 	 * @throws IllegalStateException if this registry of registries already got frozen
+	 * @see #registerSynced(RegistryKey, Codec)
 	 */
 	public static <E> void registerSynced(RegistryKey<? extends Registry<E>> key, Codec<E> entryCodec, Codec<E> syncCodec) {
 		DynamicMetaregistryImpl.registerSynced(key, entryCodec, syncCodec);

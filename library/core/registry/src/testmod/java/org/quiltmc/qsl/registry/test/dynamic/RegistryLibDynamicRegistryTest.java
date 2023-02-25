@@ -41,7 +41,7 @@ public class RegistryLibDynamicRegistryTest implements QuiltGameTest, ModInitial
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		DynamicMetaregistry.registerSynced(Greetings.REGISTRY_KEY, Greetings.CODEC, Greetings.CODEC);
+		DynamicMetaregistry.registerSynced(Greetings.REGISTRY_KEY, Greetings.CODEC);
 		RegistryEvents.DYNAMIC_REGISTRY_SETUP.register(context -> context.register(Greetings.REGISTRY_KEY, GREETING_B_ID, () -> GREETING_B));
 	}
 
