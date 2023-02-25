@@ -50,7 +50,7 @@ public final class EntityTrackingEvents {
 	 *
 	 * @deprecated Renamed to {@link #BEFORE_START_TRACKING}.
 	 */
-	@Deprecated(since = "4.0.0-beta.4")
+	@Deprecated(since = "4.0.0-beta.12")
 	public static final Event<StartTracking> START_TRACKING = BEFORE_START_TRACKING;
 
 	/**
