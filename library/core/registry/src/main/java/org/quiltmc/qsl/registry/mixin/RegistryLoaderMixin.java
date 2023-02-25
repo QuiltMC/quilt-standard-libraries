@@ -16,29 +16,37 @@
 
 package org.quiltmc.qsl.registry.mixin;
 
-import java.util.List;
-import java.util.Map;
-
 import com.mojang.datafixers.util.Pair;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.MutableRegistry;
+import net.minecraft.registry.RegistryLoader;
+import net.minecraft.resource.ResourceManager;
+import org.quiltmc.qsl.registry.api.event.RegistryEvents;
+import org.quiltmc.qsl.registry.impl.DynamicRegistryManagerSetupContextImpl;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import net.minecraft.registry.MutableRegistry;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.RegistryLoader;
-
-import org.quiltmc.qsl.registry.api.event.RegistryEvents;
-import org.quiltmc.qsl.registry.impl.DynamicRegistryManagerSetupContextImpl;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Mixin(RegistryLoader.class)
 public class RegistryLoaderMixin {
+	@Shadow
+	@Final
+	@Mutable
+	public static List<RegistryLoader.DecodingData<?>> WORLDGEN_REGISTRIES;
+
+	static {
+		WORLDGEN_REGISTRIES = new ArrayList<>(WORLDGEN_REGISTRIES);
+	}
+
 	@Inject(
 			method = "loadRegistriesIntoManager",
 			at = @At(value = "INVOKE", target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V", ordinal = 0, shift = At.Shift.AFTER),

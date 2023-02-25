@@ -16,16 +16,16 @@
 
 package org.quiltmc.qsl.registry.mixin;
 
-import java.util.List;
-
+import net.minecraft.block.BlockState;
+import net.minecraft.registry.Registries;
+import net.minecraft.util.math.MathHelper;
+import org.quiltmc.qsl.registry.impl.dynamic.DynamicMetaregistryImpl;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.math.MathHelper;
+import java.util.List;
 
 @Mixin(Registries.class)
 public class RegistriesMixin {
@@ -43,5 +43,7 @@ public class RegistriesMixin {
 		DebugChunkGeneratorAccessor.setXSideLength(xLength);
 		DebugChunkGeneratorAccessor.setZSideLength(zLength);
 		//endregion
+
+		DynamicMetaregistryImpl.freeze();
 	}
 }
