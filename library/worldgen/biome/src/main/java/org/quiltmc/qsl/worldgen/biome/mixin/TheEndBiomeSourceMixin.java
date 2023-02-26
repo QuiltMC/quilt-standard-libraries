@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 
 package org.quiltmc.qsl.worldgen.biome.mixin;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
@@ -58,10 +58,6 @@ public abstract class TheEndBiomeSourceMixin extends BiomeSource {
 	@Unique
 	private boolean quilt$hasAddedBiomes = false;
 
-	protected TheEndBiomeSourceMixin(Stream<Holder<Biome>> stream) {
-		super(stream);
-	}
-
 	/**
 	 * Modifies the codec, so it calls the static factory method that gives us access to the
 	 * full biome registry instead of just the pre-defined biomes that vanilla uses.
@@ -85,11 +81,14 @@ public abstract class TheEndBiomeSourceMixin extends BiomeSource {
 
 	@Override
 	public Set<Holder<Biome>> getBiomes() {
+		var biomes = super.getBiomes();
+
 		if (!this.quilt$hasAddedBiomes) {
 			this.quilt$hasAddedBiomes = true;
-			super.getBiomes().addAll(this.overrides.get().getAddedBiomes());
+			biomes = new HashSet<>(biomes);
+			biomes.addAll(this.overrides.get().getAddedBiomes());
 		}
 
-		return super.getBiomes();
+		return biomes;
 	}
 }

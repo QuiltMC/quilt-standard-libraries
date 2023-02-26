@@ -129,9 +129,10 @@ public abstract class IntegratedServerLoaderMixin {
 			at = @At(value = "CONSTANT", args = "stringValue=selectWorld.warning.experimental.title"),
 			cancellable = true
 	)
-	private static void onExperimentalWarning(MinecraftClient client, CreateWorldScreen parentScreen,
-			Lifecycle dynamicRegistryLifecycle, Runnable successCallback,
-			CallbackInfo ci) {
+	private static void onExperimentalWarning(
+			MinecraftClient client, CreateWorldScreen parentScreen, Lifecycle dynamicRegistryLifecycle, Runnable successCallback, boolean bl,
+			CallbackInfo ci
+	) {
 		if (EXPERIMENTAL_SCREEN_OVERRIDE.toBooleanOrElse(true) && ResourceLoaderImpl.EXPERIMENTAL_FEATURES_ENABLED.get() == null) {
 			successCallback.run();
 			ci.cancel();

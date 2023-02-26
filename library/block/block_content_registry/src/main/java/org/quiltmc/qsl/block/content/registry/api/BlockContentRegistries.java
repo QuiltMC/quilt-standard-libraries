@@ -94,13 +94,13 @@ public class BlockContentRegistries {
 					Block.class,
 					Registries.BLOCK.getCodec().flatXmap(block -> {
 						if (!block.getDefaultState().contains(Properties.AXIS)) {
-							return DataResult.error("block does not contain AXIS property");
+							return DataResult.error(() -> "block does not contain AXIS property");
 						}
 
 						return DataResult.success(block);
 					}, block -> {
 						if (!block.getDefaultState().contains(Properties.AXIS)) {
-							return DataResult.error("block does not contain AXIS property");
+							return DataResult.error(() -> "block does not contain AXIS property");
 						}
 
 						return DataResult.success(block);

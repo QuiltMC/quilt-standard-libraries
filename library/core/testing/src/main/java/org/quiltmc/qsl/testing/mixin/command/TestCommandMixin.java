@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
 
 import net.minecraft.block.entity.StructureBlockBlockEntity;
-import net.minecraft.server.command.TestCommand;
+import net.minecraft.server.command.dev.TestCommand;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.testing.impl.game.command.TestNameArgumentType;
@@ -96,7 +96,7 @@ public class TestCommandMixin {
 			method = "executeExport(Lnet/minecraft/server/command/ServerCommandSource;Ljava/lang/String;)I",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/data/dev/NbtProvider;convertNbtToSnbt(Lnet/minecraft/unmapped/C_temnquoh;Ljava/nio/file/Path;Ljava/lang/String;Ljava/nio/file/Path;)Ljava/nio/file/Path;"
+					target = "Lnet/minecraft/data/dev/NbtProvider;convertNbtToSnbt(Lnet/minecraft/data/DataWriter;Ljava/nio/file/Path;Ljava/lang/String;Ljava/nio/file/Path;)Ljava/nio/file/Path;"
 			),
 			index = 2
 	)

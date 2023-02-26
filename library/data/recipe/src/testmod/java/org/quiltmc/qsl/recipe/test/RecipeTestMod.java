@@ -77,7 +77,7 @@ public class RecipeTestMod implements ModInitializer {
 
 		RecipeManagerHelper.removeRecipes(handler -> {
 			handler.removeIf(RecipeType.CRAFTING, craftingRecipe -> {
-				return craftingRecipe.getOutput(null).getItem() instanceof BlockItem blockItem
+				return craftingRecipe.getResult(null).getItem() instanceof BlockItem blockItem
 						&& blockItem.getBlock() instanceof PressurePlateBlock;
 			});
 		});

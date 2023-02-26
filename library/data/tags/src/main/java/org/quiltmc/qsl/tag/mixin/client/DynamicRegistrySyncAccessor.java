@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 QuiltMC
+ * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.recipe.mixin;
+package org.quiltmc.qsl.tag.mixin.client;
 
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.unmapped.C_ngeyonui;
+import java.util.Map;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(C_ngeyonui.class)
-public interface C_ngeyonuiAccessor {
-	@Accessor(value = "f_nflteanq")
-	Ingredient getTemplate();
+import net.minecraft.registry.DynamicRegistrySync;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 
-	@Accessor("f_wnvjvqod")
-	Ingredient getBase();
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 
-	@Accessor("f_ibbkkedr")
-	Ingredient getAddition();
+@ClientOnly
+@Mixin(DynamicRegistrySync.class)
+public interface DynamicRegistrySyncAccessor {
+	@Accessor("SYNCED_CODECS")
+	static Map<RegistryKey<? extends Registry<?>>, ?> quilt$getSyncableRegistries() {
+		throw new IllegalStateException("Mixin injection failed.");
+	}
 }

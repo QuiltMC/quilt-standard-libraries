@@ -16,20 +16,20 @@
 
 package org.quiltmc.qsl.recipe.mixin;
 
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.unmapped.C_lsbkbfik;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-/* a.k.a. TransformingSmithingRecipeAccessor...? */
-@Mixin(C_lsbkbfik.class)
-public interface C_lsbkbfikAccessor {
-	@Accessor(value = "f_fivqxkjv")
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.TransformSmithingRecipe;
+
+@Mixin(TransformSmithingRecipe.class)
+public interface TransformSmithingRecipeAccessor {
+	@Accessor
 	Ingredient getTemplate();
 
-	@Accessor("f_lnthvorh")
+	@Accessor
 	Ingredient getBase();
 
-	@Accessor("f_scgureqv")
+	@Accessor
 	Ingredient getAddition();
 }

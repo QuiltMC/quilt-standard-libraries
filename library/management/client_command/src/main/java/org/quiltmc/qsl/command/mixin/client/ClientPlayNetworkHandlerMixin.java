@@ -33,7 +33,7 @@ import net.minecraft.client.registry.ClientRegistryLayer;
 import net.minecraft.command.CommandBuildContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.feature_flags.FeatureFlagBitSet;
-import net.minecraft.network.packet.s2c.play.CommandTreeS2CPacket;
+import net.minecraft.network.packet.s2c.play.CommandTreeUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import net.minecraft.registry.LayeredRegistryManager;
 import net.minecraft.server.command.CommandManager;
@@ -70,8 +70,8 @@ abstract class ClientPlayNetworkHandlerMixin {
 	}
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
-	@Inject(method = "onCommandTree", at = @At("RETURN"))
-	private void onOnCommandTree(CommandTreeS2CPacket packet, CallbackInfo info) {
+	@Inject(method = "onCommandTreeUpdate", at = @At("RETURN"))
+	private void onOnCommandTree(CommandTreeUpdateS2CPacket packet, CallbackInfo info) {
 		ClientCommandInternals.updateCommands(null,
 				(CommandDispatcher) this.commandDispatcher, this.commandSource,
 				this.client.isIntegratedServerRunning() ? CommandManager.RegistrationEnvironment.INTEGRATED

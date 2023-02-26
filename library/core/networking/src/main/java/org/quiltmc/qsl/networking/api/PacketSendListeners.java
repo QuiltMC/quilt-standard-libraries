@@ -19,8 +19,8 @@ package org.quiltmc.qsl.networking.api;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.network.Packet;
 import net.minecraft.network.PacketSendListener;
+import net.minecraft.network.packet.Packet;
 
 /**
  * Utilities for working with {@link PacketSendListener}s.

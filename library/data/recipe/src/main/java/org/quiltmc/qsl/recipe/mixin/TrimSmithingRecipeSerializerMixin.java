@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 QuiltMC
+ * Copyright 2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,20 +19,23 @@ package org.quiltmc.qsl.recipe.mixin;
 import com.google.gson.JsonObject;
 import org.spongepowered.asm.mixin.Mixin;
 
-import net.minecraft.data.server.recipe.SingleItemRecipeJsonFactory;
-import net.minecraft.recipe.CuttingRecipe;
+import net.minecraft.data.server.recipe.TrimSmithingRecipeJsonFactory;
+import net.minecraft.recipe.TrimSmithingRecipe;
 
 import org.quiltmc.qsl.recipe.api.serializer.QuiltRecipeSerializer;
 
-@Mixin(CuttingRecipe.Serializer.class)
-public abstract class CuttingRecipeSerializerMixin<T extends CuttingRecipe> implements QuiltRecipeSerializer<T> {
+@Mixin(TrimSmithingRecipe.Serializer.class)
+public abstract class TrimSmithingRecipeSerializerMixin implements QuiltRecipeSerializer<TrimSmithingRecipe> {
 	@Override
-	public JsonObject toJson(T recipe) {
-		var result = recipe.getResult(null);
+	public JsonObject toJson(TrimSmithingRecipe recipe) {
+		var accessor = (TrimSmithingRecipeAccessor) recipe;
 
-		return new SingleItemRecipeJsonFactory.SingleItemRecipeJsonProvider(recipe.getId(), this, recipe.getGroup(),
-				recipe.getIngredients().get(0), result.getItem(), result.getCount(),
-				null, null)
-				.toJson();
+		return new TrimSmithingRecipeJsonFactory.TrimSmithingRecipeJsonProvider(
+				recipe.getId(),
+				null,
+				accessor.getTemplate(), accessor.getBase(), accessor.getAddition(),
+				null,
+				null
+		).toJson();
 	}
 }

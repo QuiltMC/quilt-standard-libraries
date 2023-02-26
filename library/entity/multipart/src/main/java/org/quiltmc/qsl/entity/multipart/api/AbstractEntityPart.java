@@ -22,8 +22,8 @@ import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.boss.dragon.EnderDragonPart;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.Packet;
 import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.util.math.Vec3d;
 
 /**
@@ -179,7 +179,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	/**
 	 * Rotates this {@link AbstractEntityPart} about the pivot point with the given rotation.
 	 *
-	 * @param pivot the pivot point to rotate about in relative coordinates
+	 * @param pivot   the pivot point to rotate about in relative coordinates
 	 * @param pitch   the rotation about x-axis
 	 * @param yaw     the rotation about y-axis
 	 * @param degrees whether the rotation should be done in degrees or radians
@@ -192,13 +192,13 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	/**
 	 * Rotates this {@link AbstractEntityPart} about its {@link AbstractEntityPart#pivot pivot point} with the given rotation.
 	 *
-	 * @param pitch the rotation about the x-axis
-	 * @param yaw   the rotation about the y-axis
+	 * @param pitch   the rotation about the x-axis
+	 * @param yaw     the rotation about the y-axis
 	 * @param degrees whether the rotation should be done in degrees or radians
 	 */
 	public void rotate(float pitch, float yaw, boolean degrees) {
 		var rel = this.getAbsolutePosition().subtract(this.getAbsolutePivot());
-		rel = rel.rotateX(-pitch * (degrees ? (float)Math.PI/180f : 1)).rotateY(-yaw * (degrees ? (float)Math.PI/180f : 1));
+		rel = rel.rotateX(-pitch * (degrees ? (float) Math.PI / 180f : 1)).rotateY(-yaw * (degrees ? (float) Math.PI / 180f : 1));
 		var transformedPos = this.getAbsolutePivot().subtract(this.getAbsolutePosition()).add(rel);
 		this.move(transformedPos);
 	}

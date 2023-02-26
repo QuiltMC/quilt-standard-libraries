@@ -57,7 +57,7 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 	protected DefaultedList<ItemStack> inventory;
 	@Shadow
 	@Final
-	private RecipeManager.C_bvtkxdyi<Inventory, ? extends AbstractCookingRecipe> recipeCache;
+	private RecipeManager.CachedCheck<Inventory, ? extends AbstractCookingRecipe> recipeCache;
 
 	public AbstractFurnaceBlockEntityMixin(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
@@ -77,7 +77,7 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 
 		Recipe<?> recipe;
 		if (!cast.inventory.get(INPUT_SLOT).isEmpty()) {
-			recipe = cast.recipeCache.m_ltqsvwgf(blockEntity, world).orElse(null);
+			recipe = cast.recipeCache.getRecipeFor(blockEntity, world).orElse(null);
 		} else {
 			recipe = null;
 		}
