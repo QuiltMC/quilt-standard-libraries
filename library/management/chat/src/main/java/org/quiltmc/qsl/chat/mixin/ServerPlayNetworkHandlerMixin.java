@@ -89,13 +89,25 @@ public class ServerPlayNetworkHandlerMixin {
 		}
 	}
 
-	@Redirect(method = "sendProfileIndependentMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V"))
+	@Redirect(
+			method = "sendProfileIndependentMessage",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V"
+			)
+	)
 	public void quilt$afterOutboundProfileIndependentMessage(ServerPlayNetworkHandler instance, Packet<?> packet) {
 		instance.sendPacket(quilt$sendProfileIndependentMessage$storedProfileIndependentMessage.serialized());
 		QuiltChatEvents.AFTER_PROCESS.invoke(quilt$sendProfileIndependentMessage$storedProfileIndependentMessage);
 	}
 
-	@Redirect(method = "sendChatMessage(Lnet/minecraft/network/message/SignedChatMessage;Lnet/minecraft/network/message/MessageType$Parameters;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V"))
+	@Redirect(
+			method = "sendChatMessage(Lnet/minecraft/network/message/SignedChatMessage;Lnet/minecraft/network/message/MessageType$Parameters;)V",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V"
+			)
+	)
 	public void quilt$modifyAndCancelAndBeforeAndAfterOutboundChatMessage(ServerPlayNetworkHandler instance, Packet<?> packet) {
 		if (packet instanceof ChatMessageS2CPacket chatMessageS2CPacket) {
 			var message = new ChatS2CMessage(instance.player, false, chatMessageS2CPacket);
