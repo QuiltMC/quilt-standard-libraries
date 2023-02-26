@@ -60,8 +60,6 @@ public final class DynamicMetaregistry {
 	 * meaning <strong>the registry {@code key}'s path must be unique by itself</strong>
 	 * (e.g. {@code RegistryKey.ofRegistry(new Identifier("<mod_id>", "<mod_id>_<resource_name>))}).
 	 *
-	 * <p>Synced dynamic registries do not have to be explicitly registered clientside to be usable.
-	 *
 	 * @param <E>        the type of elements in the dynamic registry
 	 * @param key        a {@link RegistryKey#ofRegistry(Identifier) key for the new dynamic registry}
 	 * @param entryCodec the codec used to both deserialize entries from datapacks and (de)serialize entries to and from packets
@@ -80,8 +78,6 @@ public final class DynamicMetaregistry {
 	 * The registry's own namespace is essentially ignored when loading values,
 	 * meaning <strong>the registry {@code key}'s path must be unique by itself</strong>
 	 * (e.g. {@code RegistryKey.ofRegistry(new Identifier("<mod_id>", "<mod_id>_<resource_name>))}).
-	 *
-	 * <p>Synced dynamic registries do not have to be explicitly registered clientside to be usable.
 	 *
 	 * @param <E>        the type of elements in the dynamic registry
 	 * @param key        a {@link RegistryKey#ofRegistry(Identifier) key for the new dynamic registry}
