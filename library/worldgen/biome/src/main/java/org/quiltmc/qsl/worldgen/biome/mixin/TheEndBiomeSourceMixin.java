@@ -58,6 +58,9 @@ public abstract class TheEndBiomeSourceMixin extends BiomeSource {
 	@Unique
 	private boolean quilt$hasAddedBiomes = false;
 
+	@Unique
+	private boolean quilt$checkedAddedBiomes = false;
+
 	/**
 	 * Modifies the codec, so it calls the static factory method that gives us access to the
 	 * full biome registry instead of just the pre-defined biomes that vanilla uses.
@@ -83,8 +86,12 @@ public abstract class TheEndBiomeSourceMixin extends BiomeSource {
 	public Set<Holder<Biome>> getBiomes() {
 		var biomes = super.getBiomes();
 
-		if (!this.quilt$hasAddedBiomes) {
-			this.quilt$hasAddedBiomes = true;
+		if (!this.quilt$checkedAddedBiomes) {
+			this.quilt$checkedAddedBiomes = true;
+			this.quilt$hasAddedBiomes = !this.overrides.get().getAddedBiomes().isEmpty();
+		}
+
+		if (this.quilt$hasAddedBiomes) {
 			biomes = new HashSet<>(biomes);
 			biomes.addAll(this.overrides.get().getAddedBiomes());
 		}
