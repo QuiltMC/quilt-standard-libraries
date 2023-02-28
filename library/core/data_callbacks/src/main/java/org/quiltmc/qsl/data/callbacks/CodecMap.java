@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.data.callbacks;
 
-import java.util.List;
-
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.mojang.datafixers.util.Pair;
@@ -57,9 +55,9 @@ public class CodecMap<T extends CodecAware> {
 	 * @param descriptor a string describing the parameterized type of the codec, to be used in error messages
 	 * @return a delegating codec based off this map
 	 */
-	public @NotNull Codec<Pair<List<Identifier>,T>> createDelegatingCodecPhased(String descriptor) {
-		return Codec.pair(CodecHelpers.listOrValue(Identifier.CODEC)
-				.optionalFieldOf("phase", List.of(Event.DEFAULT_PHASE)).codec(), this.createDelegatingCodec(descriptor));
+	public @NotNull Codec<Pair<Identifier,T>> createDelegatingCodecPhased(String descriptor) {
+		return Codec.pair(Identifier.CODEC
+				.optionalFieldOf("phase", Event.DEFAULT_PHASE).codec(), this.createDelegatingCodec(descriptor));
 	}
 
 	/**

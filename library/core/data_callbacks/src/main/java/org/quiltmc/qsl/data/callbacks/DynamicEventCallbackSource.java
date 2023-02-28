@@ -21,7 +21,6 @@ import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -65,9 +64,9 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 	protected final @NotNull CodecMap<T> codecs;
 	protected final @NotNull Class<T> callbackClass;
 
-	private final @NotNull Codec<Pair<List<Identifier>, T>> codec;
-	private final Map<Identifier, Map<Identifier, T>> listeners = new HashMap<>();
-	private final Map<Identifier, Map<Identifier, T>> dynamicListeners = new HashMap<>();
+	private final @NotNull Codec<Pair<Identifier, T>> codec;
+	private final Map<Identifier, Pair<Identifier,T>> listeners = new LinkedHashMap<>();
+	private final Map<Identifier, Pair<Identifier,T>> dynamicListeners = new LinkedHashMap<>();
 	private final Map<Identifier, T[]> listenerArrays = new HashMap<>();
 
 	protected final Event<T> event;
@@ -100,13 +99,14 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 	}
 
 	/**
-	 * Listens to the event in a way that data can replace.
+	 * Listens to the event in a way that data can replace. A given identifier can only have one callback associated
+	 * with it for any given callback source.
 	 * @param id the identifier of the callback, to be used when replacing it in data
 	 * @param listener the callback to listen with
 	 * @param phase the phase to register the callback in
 	 */
 	public void register(Identifier id, T listener, Identifier phase) {
-		listeners.computeIfAbsent(phase, k -> new LinkedHashMap<>()).put(id, listener);
+		listeners.put(id, Pair.of(phase, listener));
 		updateListeners(phase);
 	}
 
@@ -121,8 +121,16 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 
 	private void updateListeners(Identifier phase) {
 		var combinedMap = new TreeMap<Identifier, T>();
-		combinedMap.putAll(listeners.getOrDefault(phase, Map.of()));
-		combinedMap.putAll(dynamicListeners.getOrDefault(phase, Map.of()));
+		for (var entry : listeners.entrySet()) {
+			if (entry.getValue().getFirst().equals(phase)) {
+				combinedMap.put(entry.getKey(), entry.getValue().getSecond());
+			}
+		}
+		for (var entry : dynamicListeners.entrySet()) {
+			if (entry.getValue().getFirst().equals(phase)) {
+				combinedMap.put(entry.getKey(), entry.getValue().getSecond());
+			}
+		}
 
 		@SuppressWarnings("unchecked")
 		var array = (T[]) Array.newInstance(callbackClass, combinedMap.size());
@@ -141,14 +149,10 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 		}
 	}
 
-	private void updateDynamicListeners(Map<Identifier, Map<Identifier, T>> dynamicListeners) {
+	private void updateDynamicListeners(Map<Identifier, Pair<Identifier,T>> dynamicListeners) {
 		this.dynamicListeners.clear();
-		for (Map.Entry<Identifier, Map<Identifier, T>> entry : dynamicListeners.entrySet()) {
-			this.dynamicListeners.put(entry.getKey(), new LinkedHashMap<>(entry.getValue()));
-		}
-		for (Identifier phase : dynamicListeners.keySet()) {
-			updateListeners(phase);
-		}
+		this.dynamicListeners.putAll(dynamicListeners);
+		dynamicListeners.values().stream().map(Pair::getFirst).distinct().forEach(this::updateListeners);
 	}
 
 	private T[] getListeners(Identifier phase) {
@@ -170,7 +174,7 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 	 * @param ops the dynamic ops to use to decode data
 	 */
 	public void update(ResourceManager resourceManager, DynamicOps<JsonElement> ops) {
-		Map<Identifier, Map<Identifier, T>> dynamicListeners = new LinkedHashMap<>();
+		Map<Identifier, Pair<Identifier,T>> dynamicListeners = new LinkedHashMap<>();
 		ResourceFileNamespace resourceFileNamespace = ResourceFileNamespace.json(this.resourcePath.getNamespace()+"/"+this.resourcePath.getPath());
 		var resources = resourceFileNamespace.findMatchingResources(resourceManager).entrySet();
 		for (Map.Entry<Identifier, Resource> entry : resources) {
@@ -179,12 +183,10 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 			var resource = entry.getValue();
 			try (var reader = resource.openBufferedReader()) {
 				var json = GSON.fromJson(reader, JsonElement.class);
-				DataResult<Pair<List<Identifier>, T>> result = codec.parse(ops, json);
+				DataResult<Pair<Identifier, T>> result = codec.parse(ops, json);
 				if (result.result().isPresent()) {
 					var pair = result.result().get();
-					for (Identifier phase : pair.getFirst()) {
-						dynamicListeners.computeIfAbsent(phase, k -> new LinkedHashMap<>()).put(unwrappedIdentifier, pair.getSecond());
-					}
+					dynamicListeners.put(unwrappedIdentifier, pair);
 				} else {
 					LOGGER.error("Couldn't parse data file {} from {}: {}", unwrappedIdentifier, identifier, result.error().get().message());
 				}
@@ -199,7 +201,7 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 	/**
 	 * {@return the codec used to decode resources; can be used to re-encode callbacks}
 	 */
-	public @NotNull Codec<Pair<List<Identifier>, T>> getCodec() {
+	public @NotNull Codec<Pair<Identifier, T>> getCodec() {
 		return codec;
 	}
 }

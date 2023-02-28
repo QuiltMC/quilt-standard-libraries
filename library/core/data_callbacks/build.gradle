@@ -12,6 +12,8 @@ qslModule {
 	moduleDependencies {
 		core {
 			api("qsl_base")
+			testmodOnly("networking")
+			testmodOnly("resource_loader")
 		}
 	}
 }

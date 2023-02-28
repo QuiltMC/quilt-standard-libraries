@@ -1,0 +1,7 @@
+{
+  "type": "quilt_data_callbacks_testmod:chat",
+  "text": "Registered in the default phase from data!",
+  "style": {
+    "color": "red"
+  }
+}
