@@ -48,7 +48,11 @@ abstract class ClientLoginNetworkHandlerMixin implements NetworkHandlerExtension
 		this.addon = new ClientLoginNetworkAddon((ClientLoginNetworkHandler) (Object) this, this.client);
 	}
 
-	@Inject(method = "onQueryRequest", at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V", remap = false, shift = At.Shift.AFTER), cancellable = true)
+	@Inject(
+			method = "onLoginQueryRequest",
+			at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V", remap = false, shift = At.Shift.AFTER),
+			cancellable = true
+	)
 	private void handleQueryRequest(LoginQueryRequestS2CPacket packet, CallbackInfo ci) {
 		if (this.addon.handlePacket(packet)) {
 			ci.cancel();

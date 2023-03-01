@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,20 @@
 
 package org.quiltmc.qsl.recipe.mixin;
 
-import com.google.gson.JsonObject;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-import net.minecraft.unmapped.C_ngeyonui;
-import net.minecraft.unmapped.C_ywfnzhyw;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.LegacySmithingRecipe;
 
-import org.quiltmc.qsl.recipe.api.serializer.QuiltRecipeSerializer;
+@SuppressWarnings({"deprecated", "removal"})
+@Mixin(LegacySmithingRecipe.class)
+public interface LegacySmithingRecipeAccessor {
+	// Gets base
+	@Accessor
+	Ingredient getBase();
 
-@Mixin(C_ngeyonui.C_whzzarxp.class)
-public abstract class C_whzzarxpMixin implements QuiltRecipeSerializer<C_ngeyonui> {
-	@Override
-	public JsonObject toJson(C_ngeyonui recipe) {
-		var accessor = (C_ngeyonuiAccessor) recipe;
-
-		return new C_ywfnzhyw.C_esuzwjjm(
-				recipe.getId(),
-				null,
-				accessor.getTemplate(), accessor.getBase(), accessor.getAddition(),
-				null,
-				null
-		).toJson();
-	}
+	// Gets addition
+	@Accessor
+	Ingredient getAddition();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.tag.mixin.client;
-
-import java.util.Map;
+package org.quiltmc.qsl.recipe.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.unmapped.C_uhbbwvga;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.TrimSmithingRecipe;
 
-import org.quiltmc.loader.api.minecraft.ClientOnly;
+@Mixin(TrimSmithingRecipe.class)
+public interface TrimSmithingRecipeAccessor {
+	@Accessor
+	Ingredient getTemplate();
 
-@ClientOnly
-@Mixin(C_uhbbwvga.class)
-public interface C_uhbbwvgaAccessor {
-	@Accessor("f_hmxjhwjb")
-	static Map<RegistryKey<? extends Registry<?>>, ?> quilt$getSyncableRegistries() {
-		throw new IllegalStateException("Mixin injection failed.");
-	}
+	@Accessor
+	Ingredient getBase();
+
+	@Accessor
+	Ingredient getAddition();
 }

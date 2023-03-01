@@ -29,10 +29,10 @@ import net.minecraft.client.gui.screen.ConnectScreen;
 import net.minecraft.client.network.ClientLoginNetworkHandler;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.listener.ServerPlayPacketListener;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.util.Identifier;
 
@@ -122,8 +122,9 @@ public final class ClientNetworkingImpl {
 		ClientLoginNetworking.registerGlobalReceiver(NetworkingImpl.EARLY_REGISTRATION_CHANNEL_FABRIC, ClientNetworkingImpl::receiveEarlyRegistration);
 	}
 
-	private static CompletableFuture<PacketByteBuf> receiveEarlyRegistration(MinecraftClient client, ClientLoginNetworkHandler handler, PacketByteBuf buf,
-			Consumer<PacketSendListener> listenerAdder) {
+	private static CompletableFuture<PacketByteBuf> receiveEarlyRegistration(
+			MinecraftClient client, ClientLoginNetworkHandler handler, PacketByteBuf buf, Consumer<PacketSendListener> listenerAdder
+	) {
 		int n = buf.readVarInt();
 		var ids = new ArrayList<Identifier>(n);
 

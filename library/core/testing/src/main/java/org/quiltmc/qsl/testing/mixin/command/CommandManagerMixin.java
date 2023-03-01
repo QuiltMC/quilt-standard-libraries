@@ -29,7 +29,7 @@ import net.minecraft.SharedConstants;
 import net.minecraft.command.CommandBuildContext;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.command.TestCommand;
+import net.minecraft.server.command.dev.TestCommand;
 
 import org.quiltmc.qsl.testing.impl.game.QuiltGameTestImpl;
 

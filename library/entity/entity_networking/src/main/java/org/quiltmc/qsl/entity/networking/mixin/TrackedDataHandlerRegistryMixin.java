@@ -102,6 +102,8 @@ public class TrackedDataHandlerRegistryMixin {
 		} else if (handler == TrackedDataHandlerRegistry.OPTIONAL_UUID) {
 			id = "optional_uuid";
 		} else if (handler == TrackedDataHandlerRegistry.OPTIONAL_BLOCK_STATE) {
+			id = "block_state";
+		} else if (handler == TrackedDataHandlerRegistry.f_huqcfqmn) {
 			id = "optional_block_state";
 		} else if (handler == TrackedDataHandlerRegistry.TAG_COMPOUND) {
 			id = "tag_compound";
@@ -121,6 +123,12 @@ public class TrackedDataHandlerRegistryMixin {
 			id = "optional_global_position";
 		} else if (handler == TrackedDataHandlerRegistry.PAINTING_VARIANT) {
 			id = "painting_variant";
+		} else if (handler == TrackedDataHandlerRegistry.f_abgbckne) {
+			id = "sniffer_state";
+		} else if (handler == TrackedDataHandlerRegistry.f_teokfohv) {
+			id = "vector3";
+		} else if (handler == TrackedDataHandlerRegistry.f_kyenxrse) {
+			id = "quaternion";
 		} else {
 			if (!quilt$pastStaticInit && QuiltLoader.isDevelopmentEnvironment()) {
 				throw new RuntimeException("Unnamed TrackedDataHandler added before static initialize completed. This either means that a new TrackedDataHandler was added by Minecraft, or a mod injected into a poor place.");

@@ -27,11 +27,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.LegacySmithingRecipe;
 import net.minecraft.screen.ForgingScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.unmapped.C_pzubrkmc;
-import net.minecraft.unmapped.C_xrtznmeb;
 
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 
@@ -39,7 +39,7 @@ import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 @Mixin(C_pzubrkmc.class)
 public abstract class C_pzubrkmcMixin extends ForgingScreenHandler {
 	@Shadow
-	private @Nullable C_xrtznmeb f_xqlemijg;
+	private @Nullable LegacySmithingRecipe f_xqlemijg;
 
 	@Shadow
 	public abstract void updateResult();

@@ -61,7 +61,7 @@ public class SuspiciousStewItemMixin {
 	}
 
 	@Inject(
-			method = "m_cryeecjp", // moj: "listPotionEffects" 22w46a
+			method = "consumeStatusEffects",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/effect/StatusEffect;byRawId(I)Lnet/minecraft/entity/effect/StatusEffect;"),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
@@ -80,7 +80,11 @@ public class SuspiciousStewItemMixin {
 		}
 	}
 
-	@ModifyArg(method = "m_cryeecjp", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/effect/StatusEffectInstance;<init>(Lnet/minecraft/entity/effect/StatusEffect;I)V"), index = 0)
+	@ModifyArg(
+			method = "consumeStatusEffects",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/effect/StatusEffectInstance;<init>(Lnet/minecraft/entity/effect/StatusEffect;I)V"),
+			index = 0
+	)
 	private static StatusEffect quilt$setEffect(StatusEffect effect) {
 		var quiltEffect = quilt$effect.get();
 

@@ -30,7 +30,7 @@ public abstract class CookingRecipeSerializerMixin<T extends AbstractCookingReci
 	@Override
 	public JsonObject toJson(T recipe) {
 		return new CookingRecipeJsonFactory.CookingRecipeJsonProvider(recipe.getId(), recipe.getGroup(), recipe.getCategory(),
-				recipe.getIngredients().get(0), recipe.getOutput(null).getItem(),
+				recipe.getIngredients().get(0), recipe.getResult(null).getItem(),
 				recipe.getExperience(), recipe.getCookTime(), null, null, this)
 				.toJson();
 	}

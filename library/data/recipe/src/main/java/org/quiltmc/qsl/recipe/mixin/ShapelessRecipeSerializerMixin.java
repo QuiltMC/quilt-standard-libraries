@@ -28,8 +28,10 @@ import org.quiltmc.qsl.recipe.api.serializer.QuiltRecipeSerializer;
 public abstract class ShapelessRecipeSerializerMixin implements QuiltRecipeSerializer<ShapelessRecipe> {
 	@Override
 	public JsonObject toJson(ShapelessRecipe recipe) {
+		var result = recipe.getResult(null);
+
 		return new ShapelessRecipeJsonFactory.ShapelessRecipeJsonProvider(recipe.getId(),
-				recipe.getOutput(null).getItem(), recipe.getOutput(null).getCount(),
+				result.getItem(), result.getCount(),
 				recipe.getGroup(), recipe.getCategory(), recipe.getIngredients(), null, null)
 				.toJson();
 	}

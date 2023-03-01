@@ -57,7 +57,7 @@ import org.quiltmc.qsl.tag.api.QuiltTagKey;
 import org.quiltmc.qsl.tag.api.TagRegistry;
 import org.quiltmc.qsl.tag.api.TagType;
 import org.quiltmc.qsl.tag.impl.TagRegistryImpl;
-import org.quiltmc.qsl.tag.mixin.client.C_uhbbwvgaAccessor;
+import org.quiltmc.qsl.tag.mixin.client.DynamicRegistrySyncAccessor;
 import org.quiltmc.qsl.tag.mixin.client.TagGroupLoaderAccessor;
 
 /**
@@ -299,7 +299,7 @@ public final class ClientTagRegistryManager<T> {
 		});
 
 		// Add up known synced dynamic registries.
-		C_uhbbwvgaAccessor.quilt$getSyncableRegistries().forEach((registry, o) -> get((RegistryKey) registry));
+		DynamicRegistrySyncAccessor.quilt$getSyncableRegistries().forEach((registry, o) -> get((RegistryKey) registry));
 	}
 
 	static void forEach(Consumer<ClientTagRegistryManager<?>> consumer) {
