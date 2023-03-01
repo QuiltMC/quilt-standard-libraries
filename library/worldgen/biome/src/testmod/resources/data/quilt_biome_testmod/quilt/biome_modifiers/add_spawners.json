@@ -1,0 +1,14 @@
+{
+  "type": "quilt:add_spawners",
+  "phase": "additions",
+  "selector": "minecraft:plains",
+  "spawners": [
+    {
+      "type": "minecraft:trader_llama",
+      "maxCount": 4,
+      "minCount": 4,
+      "weight": 12
+    }
+  ],
+  "group": "creature"
+}
