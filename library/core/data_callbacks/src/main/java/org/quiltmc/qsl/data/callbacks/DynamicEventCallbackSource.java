@@ -48,10 +48,10 @@ import net.minecraft.util.dynamic.Codecs;
 import org.quiltmc.qsl.base.api.event.Event;
 
 /**
- * Provides a single callback for an event that collects both callbacks with identifiers provided in code and callbacks
- * provided by datapacks. Additionally, contains logic to load callbacks from a resource manager. This tool keeps a
- * separate map of callbacks for each event phase, so the same identifier can be used for different callbacks in different
- * phases.
+ * Provides a single callback per phase for an event that collects both callbacks with identifiers provided in code and
+ * callbacks provided by datapacks. Additionally, contains logic to load callbacks from a resource manager. This tool
+ * keeps information about event phases alongside registered callbacks, so that a given identifier uniquely identifies
+ * a callback even across phases.
  * @param <T> the type of the event callback
  */
 public class DynamicEventCallbackSource<T extends CodecAware> {
