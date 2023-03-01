@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.feature.flag.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "FeatureFlagAccessor",
+    "FeatureFlagBitSetMixin",
+    "FeatureFlagMixin",
+    "FeatureFlagRegistryBuilderMixin",
+    "FeatureFlagRegistryMixin",
+    "FeatureFlagsMixin",
+    "GatedFeatureMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

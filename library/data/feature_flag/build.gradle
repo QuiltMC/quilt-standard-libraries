@@ -1,0 +1,23 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Feature Flag API"
+	moduleName = "feature_flag"
+	id = "quilt_feature_flag"
+	description = "Provides APIs for working with feature flags."
+	library = "data"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+			testmodOnly("resource_loader")
+		}
+	}
+	injectedInterface("net/minecraft/class_7696") {
+		values = ["org/quiltmc/qsl/feature/flag/impl/QuiltFeatureFlagExtensions"]
+	}
+	injectedInterface("net/minecraft/class_7697") {
+		values = ["org/quiltmc/qsl/feature/flag/impl/QuiltFeatureFlagRegistryExtensions"]
+	}
+}
