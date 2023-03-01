@@ -337,13 +337,21 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 		@Override
 		public void addCarver(GenerationStep.Carver step, RegistryKey<ConfiguredCarver<?>> entry) {
 			// We do not need to delay evaluation of this since the registries are already fully built.
-			this.generationSettings.carvers.put(step, this.plus(this.generationSettings.carvers.get(step), getHolder(this.carvers, entry)));
+			var oldCarvers = this.generationSettings.carvers.get(step);
+			var newCarvers = oldCarvers == null ?
+					HolderSet.createDirect(Collections.singletonList(getHolder(this.carvers, entry))) :
+					this.plus(oldCarvers, getHolder(this.carvers, entry));
+			this.generationSettings.carvers.put(step, newCarvers);
 		}
 
 		@Override
 		public boolean removeCarver(GenerationStep.Carver step, RegistryKey<ConfiguredCarver<?>> configuredCarverKey) {
 			ConfiguredCarver<?> carver = getHolder(this.carvers, configuredCarverKey).value();
-			var genCarvers = new ArrayList<>(this.generationSettings.carvers.get(step).stream().toList());
+			var oldCarvers = this.generationSettings.carvers.get(step);
+			if (oldCarvers == null) {
+				return false;
+			}
+			var genCarvers = new ArrayList<>(oldCarvers.stream().toList());
 
 			if (genCarvers.removeIf(entry -> entry.value() == carver)) {
 				this.generationSettings.carvers.put(step, HolderSet.createDirect(genCarvers));
