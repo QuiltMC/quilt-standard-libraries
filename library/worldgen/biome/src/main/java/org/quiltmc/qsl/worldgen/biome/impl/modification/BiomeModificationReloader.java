@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -53,11 +53,12 @@ public class BiomeModificationReloader {
 
 	private final Identifier resourcePath = new Identifier("quilt", "biome_modifiers");
 
-	private final Map<ModificationPhase, Map<Identifier, BiomeModifier>> listeners = new HashMap<>();
-	private final Map<ModificationPhase, Map<Identifier, BiomeModifier>> combinedListeners = new HashMap<>();
+	private final Map<Identifier, Pair<ModificationPhase, BiomeModifier>> listeners = new HashMap<>();
+
+	private final Map<Identifier, Pair<ModificationPhase, BiomeModifier>> combinedListeners = new HashMap<>();
 	public void apply(ResourceManager resourceManager, HolderLookup.Provider provider) {
 		RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, provider);
-		Map<ModificationPhase, Map<Identifier, BiomeModifier>> dynamicListeners = new LinkedHashMap<>();
+		Map<Identifier, Pair<ModificationPhase, BiomeModifier>> dynamicListeners = new LinkedHashMap<>();
 		ResourceFileNamespace resourceFileNamespace = ResourceFileNamespace.json(this.resourcePath.getNamespace()+"/"+this.resourcePath.getPath());
 		var resources = resourceFileNamespace.findMatchingResources(resourceManager).entrySet();
 		for (Map.Entry<Identifier, Resource> entry : resources) {
@@ -70,7 +71,7 @@ public class BiomeModificationReloader {
 					DataResult<Pair<ModificationPhase, BiomeModifier>> result = CODEC.parse(ops, json);
 					if (result.result().isPresent()) {
 						var pair = result.result().get();
-						dynamicListeners.computeIfAbsent(pair.getFirst(), k -> new LinkedHashMap<>()).put(unwrappedIdentifier, pair.getSecond());
+						dynamicListeners.put(unwrappedIdentifier, pair);
 					} else {
 						LOGGER.error("Couldn't parse data file {} from {}: {}", unwrappedIdentifier, identifier, result.error().get().message());
 					}
@@ -87,22 +88,17 @@ public class BiomeModificationReloader {
 		updateDynamicListeners(dynamicListeners);
 	}
 
-	private void updateDynamicListeners(Map<ModificationPhase, Map<Identifier, BiomeModifier>> dynamicListeners) {
+	private void updateDynamicListeners(Map<Identifier, Pair<ModificationPhase, BiomeModifier>> dynamicListeners) {
 		combinedListeners.clear();
-		for (ModificationPhase phase : ModificationPhase.values()) {
-			ImmutableMap.Builder<Identifier, BiomeModifier> builder = ImmutableMap.builder();
-			builder.putAll(listeners.getOrDefault(phase, Map.of()));
-			builder.putAll(dynamicListeners.getOrDefault(phase, Map.of()));
-
-			combinedListeners.put(phase, builder.buildKeepingLast());
-		}
+		combinedListeners.putAll(listeners);
+		combinedListeners.putAll(dynamicListeners);
 	}
 
 	public Map<Identifier, BiomeModifier> getCombinedMap(ModificationPhase phase) {
-		return combinedListeners.getOrDefault(phase, Map.of());
+		return combinedListeners.entrySet().stream().filter(entry -> entry.getValue().getFirst() == phase).collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getSecond()));
 	}
 
 	public void addModifier(ModificationPhase phase, Identifier identifier, BiomeModifier modifier) {
-		listeners.computeIfAbsent(phase, k -> new HashMap<>()).put(identifier, modifier);
+		listeners.put(identifier, new Pair<>(phase, modifier));
 	}
 }
