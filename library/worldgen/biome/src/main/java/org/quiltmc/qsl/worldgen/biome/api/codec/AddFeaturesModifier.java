@@ -36,6 +36,7 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 /**
  * A biome modifier that adds features to a biome.
  * @param step the feature generation step to add the features to
+ * @param features registry keys for the features to add
  */
 public record AddFeaturesModifier(CodecAwarePredicate<BiomeSelectionContext> selector, List<RegistryKey<PlacedFeature>> features, GenerationStep.Feature step) implements BiomeModifier {
 	public static final Identifier IDENTIFIER = new Identifier("quilt", "add_features");

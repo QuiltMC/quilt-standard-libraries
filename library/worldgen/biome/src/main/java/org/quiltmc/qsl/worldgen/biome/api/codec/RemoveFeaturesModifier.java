@@ -37,6 +37,7 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 /**
  * A biome modifier that removes features from a biome. If no steps are specified when decoding, features will be removed from all steps.
  * @param steps the feature generation steps to remove the features from
+ * @param features registry keys for the features to remove
  */
 public record RemoveFeaturesModifier(CodecAwarePredicate<BiomeSelectionContext> selector, List<RegistryKey<PlacedFeature>> features, List<GenerationStep.Feature> steps) implements BiomeModifier {
 	public static final Identifier IDENTIFIER = new Identifier("quilt", "remove_features");

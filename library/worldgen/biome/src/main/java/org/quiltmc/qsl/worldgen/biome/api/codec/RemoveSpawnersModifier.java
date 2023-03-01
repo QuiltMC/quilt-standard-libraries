@@ -33,6 +33,11 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeModificationContext;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModifier;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
+/**
+ * A biome modifier that removes mob spawners from biomes
+ * @param entityTypes identifiers of the entity types to remove
+ * @param groups the spawn groups to remove the spawners from; if not provided, defaults to all spawn groups
+ */
 public record RemoveSpawnersModifier(CodecAwarePredicate<BiomeSelectionContext> selector,
 								  Set<Identifier> entityTypes,
 								  Set<SpawnGroup> groups) implements BiomeModifier {

@@ -36,6 +36,7 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 /**
  * A biome modifier that adds carvers to a biome.
  * @param step the carver generation step to add the carvers to
+ * @param carvers registry keys for the carvers to add
  */
 public record AddCarversModifier(CodecAwarePredicate<BiomeSelectionContext> selector, List<RegistryKey<ConfiguredCarver<?>>> carvers, GenerationStep.Carver step) implements BiomeModifier {
 	public static final Identifier IDENTIFIER = new Identifier("quilt", "add_carvers");

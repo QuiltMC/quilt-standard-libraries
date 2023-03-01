@@ -35,6 +35,10 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeModificationContext;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModifier;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
+/**
+ * A biome modifier that modifies the effects of a biome.
+ * @see BiomeModificationContext.EffectsContext
+ */
 public record ModifyEffectsModifier(CodecAwarePredicate<BiomeSelectionContext> selector,
 									Optional<Integer> fogColor,
 									Optional<Integer> waterColor,

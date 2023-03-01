@@ -37,6 +37,7 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 /**
  * A biome modifier that removes carvers from a biome. If no steps are specified when decoding, carvers will be removed from all steps.
  * @param steps the carver generation steps to remove the carvers from
+ * @param carvers registry keys for the carvers to remove
  */
 public record RemoveCarversModifier(CodecAwarePredicate<BiomeSelectionContext> selector, List<RegistryKey<ConfiguredCarver<?>>> carvers, List<GenerationStep.Carver> steps) implements BiomeModifier {
 	public static final Identifier IDENTIFIER = new Identifier("quilt", "remove_carvers");

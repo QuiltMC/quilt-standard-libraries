@@ -29,6 +29,10 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeModificationContext;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModifier;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
+/**
+ * A biome modifier that modifies the weather of a biome.
+ * @see BiomeModificationContext.WeatherContext
+ */
 public record ModifyWeatherModifier(CodecAwarePredicate<BiomeSelectionContext> selector,
 									Optional<Float> downfall, Optional<Float> temperature,
 									Optional<Biome.Precipitation> precipitation,
