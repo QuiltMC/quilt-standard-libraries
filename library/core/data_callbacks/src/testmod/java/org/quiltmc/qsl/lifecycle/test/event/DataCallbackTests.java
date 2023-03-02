@@ -69,12 +69,10 @@ public class DataCallbackTests implements ModInitializer {
 	public void onInitialize(ModContainer mod) {
 		JOIN_SERVER_CODECS.register(ServerJoinChat.IDENTIFIER, ServerJoinChat.CODEC);
 
-		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
-				// Yeah, it's a bit boring, but so it goes...
-				SERVER_JOIN.invoker().onPlayReady(handler, sender, server));
+		ServerPlayConnectionEvents.JOIN.register(SERVER_JOIN.invoker()::onPlayReady);
 
-		// This callback is overridden by data and should not fire.
 		JOIN_SERVER_DATA.register(new Identifier(mod.metadata().id(), "after"), new ServerJoinChat("Registered in the after phase from code!", Style.EMPTY), AFTER_PHASE);
+		// This callback is overridden by data and should not fire.
 		JOIN_SERVER_DATA.register(new Identifier(mod.metadata().id(), "overridden"), (handler, sender, server) -> {
 			throw new RuntimeException("This callback should have been overridden by data!");
 		});
