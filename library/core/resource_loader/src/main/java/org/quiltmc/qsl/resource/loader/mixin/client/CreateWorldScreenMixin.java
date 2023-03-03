@@ -92,7 +92,7 @@ public abstract class CreateWorldScreenMixin {
 	// Inject before closing the resource manager.
 	@Dynamic
 	@Inject(slice = @Slice(to = @At(value = "INVOKE", target = "Lnet/minecraft/resource/AutoCloseableResourceManager;close()V")),
-			method = "m_qcsfhvrb(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/registry/LayeredRegistryManager;Lnet/minecraft/client/gui/screen/world/CreateWorldScreen$C_mxqwwbun;)Lnet/minecraft/client/world/WorldCreationContext",
+			method = "m_qcsfhvrb(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/registry/LayeredRegistryManager;Lnet/minecraft/client/gui/screen/world/CreateWorldScreen$C_mxqwwbun;)Lnet/minecraft/client/world/WorldCreationContext;",
 			at = @At("HEAD")
 	)
 	private static void onCreateDataPackLoadEnd(AutoCloseableResourceManager resourceManager, ServerReloadableResources resources,
