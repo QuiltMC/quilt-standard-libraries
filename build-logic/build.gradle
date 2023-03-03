@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-	implementation "org.quiltmc:loom:1.0.+"
+	implementation "org.quiltmc:loom:1.1.+"
 	implementation "net.kyori:indra-git:3.0.1"
 	implementation "org.quiltmc:quilt-json5:1.0.2"
 	implementation "org.quiltmc:quilt-gradle-licenser:1.+"
