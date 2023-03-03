@@ -24,19 +24,20 @@ import org.quiltmc.qsl.registry.impl.dynamic.DynamicMetaregistryImpl;
 
 /**
  * Allows registration of dynamic registries for use through {@link net.minecraft.registry.DynamicRegistryManager}.
- *
- * <p>Dynamic registries are only available in a world context. Entries must be added either:<ul>
+ * <p>
+ * Dynamic registries are only available in a world context. Entries must be added either:
+ * <ul>
  * <li>as datapack files
  * <li>through the {@link org.quiltmc.qsl.registry.api.event.RegistryEvents#DYNAMIC_REGISTRY_SETUP dynamic registry setup event}
  * </ul>
- *
- * <p>This registry will be frozen at the same time as static registries.
+ * <p>
+ * This registry will be frozen at the same time as static registries.
  */
 public final class DynamicMetaregistry {
 	/**
 	 * Registers a serverside dynamic registry.
-	 *
-	 * <p>Entries will be loaded from {@code "data/<namespace>/<registry_path>"} for every datapack {@code namespace},
+	 * <p>
+	 * Entries will be loaded from {@code "data/<namespace>/<registry_path>"} for every datapack {@code namespace},
 	 * where {@code registry_path}'s value is {@code key.getLocation().getPath()}.
 	 * The registry's own namespace is essentially ignored when loading values,
 	 * meaning <strong>the registry {@code key}'s path must be unique by itself</strong>
@@ -53,8 +54,8 @@ public final class DynamicMetaregistry {
 
 	/**
 	 * Registers a dynamic registry which contents get synced between the server and connected clients.
-	 *
-	 * <p>Entries will be loaded from {@code "data/<namespace>/<registry_path>"} for every datapack {@code namespace},
+	 * <p>
+	 * Entries will be loaded from {@code "data/<namespace>/<registry_path>"} for every datapack {@code namespace},
 	 * where {@code registry_path}'s value is {@code key.getLocation().getPath()}.
 	 * The registry's own namespace is essentially ignored when loading values,
 	 * meaning <strong>the registry {@code key}'s path must be unique by itself</strong>
@@ -72,8 +73,8 @@ public final class DynamicMetaregistry {
 
 	/**
 	 * Registers a dynamic registry which contents get synced between the server and connected clients.
-	 *
-	 * <p>Entries will be loaded from {@code "data/<namespace>/<registry_path>"} for every datapack {@code namespace},
+	 * <p>
+	 * Entries will be loaded from {@code "data/<namespace>/<registry_path>"} for every datapack {@code namespace},
 	 * where {@code registry_path}'s value is {@code key.getLocation().getPath()}.
 	 * The registry's own namespace is essentially ignored when loading values,
 	 * meaning <strong>the registry {@code key}'s path must be unique by itself</strong>
