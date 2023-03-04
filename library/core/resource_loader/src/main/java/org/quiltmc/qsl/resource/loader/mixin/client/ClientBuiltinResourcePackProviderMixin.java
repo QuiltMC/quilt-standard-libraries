@@ -16,9 +16,12 @@
 
 package org.quiltmc.qsl.resource.loader.mixin.client;
 
+import java.util.Map;
 import java.util.function.Consumer;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
@@ -40,6 +43,10 @@ import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 @ClientOnly
 @Mixin(ClientBuiltinResourcePackProvider.class)
 public class ClientBuiltinResourcePackProviderMixin {
+	@Shadow
+	@Final
+	private static Map<String, Text> BUILTIN_PACK_DISPLAY_NAMES;
+
 	@ModifyArg(
 			method = "createBuiltinResourcePackProfile(Ljava/lang/String;Lnet/minecraft/resource/pack/ResourcePackProfile$ResourcePackFactory;Lnet/minecraft/text/Text;)Lnet/minecraft/resource/pack/ResourcePackProfile;",
 			at = @At(
@@ -51,8 +58,8 @@ public class ClientBuiltinResourcePackProviderMixin {
 	private ResourcePackProfile.ResourcePackFactory onCreateBuiltinResourcePackProfile(String name, Text displayName, boolean alwaysEnabled,
 			ResourcePackProfile.ResourcePackFactory factory, ResourceType type, ResourcePackProfile.InsertionPosition insertionPosition,
 			ResourcePackSource source) {
-		if (name.equals("programmer_art")) {
-			return n -> ResourceLoaderImpl.buildProgrammerArtResourcePack(factory.open(n));
+		if (BUILTIN_PACK_DISPLAY_NAMES.containsKey(name)) {
+			return n -> ResourceLoaderImpl.buildVanillaBuiltinResourcePack(factory.open(n), name);
 		}
 
 		return factory;

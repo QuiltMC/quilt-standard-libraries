@@ -66,10 +66,22 @@
  * </ul>
  *
  * <p>
- * <h4>Programmer Art Resource Pack</h4>
- * The Resource Loader will inject resources into the Programmer Art resource pack for each mod that provides
- * Programmer Art resources in the {@code programmer_art} top-level directory of the mod
- * whose structure is similar to a normal resource pack.
+ * <h4>Extending Vanilla Built-In Resource Packs</h4>
+ * The Resource Loader will inject resources into vanilla built-in resource packs for each mod that provides
+ * the resources in a top-level directory inside the mod with the pack's raw name (for example,
+ * {@code programmer_art}), whose structure is similar to a normal resource pack.
+ * <p>
+ * The currently supported targets are:
+ * <ul>
+ *     <li>
+ *         Programmer Art ({@code programmer_art})
+ *     </li>
+ *     <li>
+ *         High Contrast ({@value net.minecraft.client.resource.ClientBuiltinResourcePackProvider#f_rlhfktwn})
+ *     </li>
+ * </ul>
+ * <p>
+ * Do note that this won't allow for overriding resources that the built-in resource packs already have.
  *
  * <p>
  * <h3>Resource Reloaders</h3>
