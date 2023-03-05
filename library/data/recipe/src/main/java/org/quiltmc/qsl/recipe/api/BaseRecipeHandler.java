@@ -20,10 +20,13 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 
 /**
@@ -89,4 +92,10 @@ public interface BaseRecipeHandler {
 	 * @return a view of all the registered recipes of the specified type
 	 */
 	<T extends Recipe<?>> Collection<T> getRecipesOfType(RecipeType<T> type);
+
+	/**
+	 * {@return the dynamic registry manager}
+	 */
+	@Contract(pure = true)
+	@NotNull DynamicRegistryManager getRegistryManager();
 }
