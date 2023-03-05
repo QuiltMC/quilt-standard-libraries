@@ -30,7 +30,7 @@ import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 
 import org.quiltmc.qsl.worldgen.biome.impl.NetherBiomeData;
 
-@Mixin(targets = "net/minecraft/unmapped/C_xmtsvelx$C_jgklgqjr$1")
+@Mixin(targets = "net/minecraft/unmapped/C_xmtsvelx$C_jgklgqjr$C_cnkaoojo")
 public class NetherBiomePresetMixin {
 	@Inject(method = "apply", at = @At("RETURN"), cancellable = true)
 	public <T> void apply(Function<RegistryKey<Biome>, T> function, CallbackInfoReturnable<MultiNoiseUtil.ParameterRangeList<T>> cir) {

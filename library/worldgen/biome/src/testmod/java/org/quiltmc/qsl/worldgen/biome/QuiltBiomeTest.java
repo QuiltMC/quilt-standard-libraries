@@ -188,13 +188,19 @@ public class QuiltBiomeTest implements ModInitializer {
 		);
 
 		ServerLifecycleEvents.READY.register(server -> {
-			var world = server.getWorld(World.END);
-			assert world != null;
+			var netherWorld = server.getWorld(World.NETHER);
+			var endWorld = server.getWorld(World.END);
+
+			assert netherWorld != null;
+			assert endWorld != null;
 
 			var pos = new BlockPos(0, 90, 0);
-			checkBiomeExists(world, pos, TEST_END_HIGHLANDS);
-			checkBiomeExists(world, pos, TEST_END_MIDLANDS);
-			checkBiomeExists(world, pos, TEST_END_BARRRENS);
+
+			checkBiomeExists(netherWorld, pos, TEST_CRIMSON_FOREST);
+
+			checkBiomeExists(endWorld, pos, TEST_END_HIGHLANDS);
+			checkBiomeExists(endWorld, pos, TEST_END_MIDLANDS);
+			checkBiomeExists(endWorld, pos, TEST_END_BARRRENS);
 		});
 	}
 
