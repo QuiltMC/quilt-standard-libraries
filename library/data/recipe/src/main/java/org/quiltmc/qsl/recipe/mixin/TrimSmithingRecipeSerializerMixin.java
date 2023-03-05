@@ -32,7 +32,7 @@ public abstract class TrimSmithingRecipeSerializerMixin implements QuiltRecipeSe
 
 		return new TrimSmithingRecipeJsonFactory.TrimSmithingRecipeJsonProvider(
 				recipe.getId(),
-				null,
+				this,
 				accessor.getTemplate(), accessor.getBase(), accessor.getAddition(),
 				null,
 				null

@@ -20,11 +20,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.recipe.api.BaseRecipeHandler;
@@ -33,12 +35,14 @@ class BasicRecipeHandlerImpl implements BaseRecipeHandler {
 	final RecipeManager recipeManager;
 	final Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes;
 	final Map<Identifier, Recipe<?>> globalRecipes;
+	private final DynamicRegistryManager registryManager;
 
 	BasicRecipeHandlerImpl(RecipeManager recipeManager, Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes,
-			Map<Identifier, Recipe<?>> globalRecipes) {
+			Map<Identifier, Recipe<?>> globalRecipes, DynamicRegistryManager registryManager) {
 		this.recipeManager = recipeManager;
 		this.recipes = recipes;
 		this.globalRecipes = globalRecipes;
+		this.registryManager = registryManager;
 	}
 
 	@Override
@@ -94,5 +98,10 @@ class BasicRecipeHandlerImpl implements BaseRecipeHandler {
 		}
 
 		return Collections.unmodifiableCollection((Collection<T>) recipes.values());
+	}
+
+	@Override
+	public @NotNull DynamicRegistryManager getRegistryManager() {
+		return this.registryManager;
 	}
 }

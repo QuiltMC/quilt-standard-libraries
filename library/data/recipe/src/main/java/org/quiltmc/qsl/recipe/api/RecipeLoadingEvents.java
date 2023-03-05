@@ -20,9 +20,12 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.base.api.event.Event;
@@ -107,6 +110,12 @@ public final class RecipeLoadingEvents {
 			 * @param factory the recipe factory
 			 */
 			void register(Identifier id, Function<Identifier, Recipe<?>> factory);
+
+			/**
+			 * {@return the dynamic registry manager}
+			 */
+			@Contract(pure = true)
+			@NotNull DynamicRegistryManager getRegistryManager();
 		}
 	}
 
