@@ -1,6 +1,5 @@
 /*
- * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022-2023 QuiltMC
+ * Copyright 2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,25 +16,45 @@
 
 package org.quiltmc.qsl.worldgen.biome.mixin;
 
+import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import net.minecraft.registry.Holder;
+import net.minecraft.unmapped.C_dbdhjhat;
+import net.minecraft.unmapped.C_xmtsvelx;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.MultiNoiseBiomeSource;
+import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 
-import org.quiltmc.qsl.worldgen.biome.impl.BiomeSourceAccess;
+import org.quiltmc.qsl.worldgen.biome.impl.C_xmtsvelxHook;
+import org.quiltmc.qsl.worldgen.biome.impl.NetherBiomeData;
 
 @Mixin(MultiNoiseBiomeSource.class)
-public class MultiNoiseBiomeSourceMixin implements BiomeSourceAccess {
+public abstract class MultiNoiseBiomeSourceMixin {
 	@Unique
-	private boolean quilt$modifyBiomePoints = true;
+	private static MultiNoiseUtil.ParameterRangeList<Holder<Biome>> quilt$CACHED_PARAMETER_RANGE_LIST = null;
 
-	@Override
-	public boolean quilt$shouldModifyBiomePoints() {
-		return this.quilt$modifyBiomePoints;
-	}
+	@Dynamic
+	@Inject(
+			method = "m_uwqbagrp(Lnet/minecraft/registry/Holder;)Lnet/minecraft/world/biome/source/util/MultiNoiseUtil$ParameterRangeList;",
+			at = @At("HEAD"),
+			cancellable = true
+	)
+	private static void quilt$overrideNetherPreset(Holder<C_xmtsvelx> holder,
+												   CallbackInfoReturnable<MultiNoiseUtil.ParameterRangeList<Holder<Biome>>> cir) {
+		if (C_dbdhjhat.NETHER.equals(holder.getKey().orElseThrow())) {
+			if (quilt$CACHED_PARAMETER_RANGE_LIST == null) {
+				MultiNoiseBiomeSourceMixin.quilt$CACHED_PARAMETER_RANGE_LIST = NetherBiomeData.withModdedBiomeEntries(
+						holder.value().m_wcmkhedg(),
+						((C_xmtsvelxHook) holder.value()).getHolderProvider()::getHolderOrThrow
+				);
+			}
 
-	@Override
-	public void quilt$setModifyBiomePoints(boolean modifyBiomePoints) {
-		this.quilt$modifyBiomePoints = modifyBiomePoints;
+			cir.setReturnValue(MultiNoiseBiomeSourceMixin.quilt$CACHED_PARAMETER_RANGE_LIST);
+		}
 	}
 }

@@ -132,8 +132,13 @@ public class QuiltBiomeTest implements ModInitializer {
 			}, Set.of(RegistryKeys.PLACED_FEATURE, RegistryKeys.CONFIGURED_FEATURE));
 		});
 
+		// Important for testing NetherBiomes.canGenerateInNether itself. Biome is already covered by auto-testing
+		Preconditions.checkArgument(!NetherBiomes.canGenerateInNether(TEST_CRIMSON_FOREST));
+
 		NetherBiomes.addNetherBiome(Biomes.PLAINS, MultiNoiseUtil.createNoiseHypercube(0.0F, 0.5F, 0.0F, 0.0F, 0.0F, 0.0F, 0.1F));
 		NetherBiomes.addNetherBiome(TEST_CRIMSON_FOREST, MultiNoiseUtil.createNoiseHypercube(0.0F, -0.15F, 0.0F, 0.0F, 0.0F, 0.0F, 0.2F));
+
+		Preconditions.checkArgument(NetherBiomes.canGenerateInNether(TEST_CRIMSON_FOREST));
 
 		// TESTING HINT: to get to the end:
 		// /execute in minecraft:the_end run tp @s 0 90 0

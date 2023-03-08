@@ -1,5 +1,4 @@
 /*
- * Copyright 2016, 2017, 2018, 2019 FabricMC
  * Copyright 2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,23 +16,30 @@
 
 package org.quiltmc.qsl.worldgen.biome.mixin;
 
-import java.util.function.Function;
-
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.HolderProvider;
+import net.minecraft.unmapped.C_xmtsvelx;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 
-import org.quiltmc.qsl.worldgen.biome.impl.NetherBiomeData;
+import org.quiltmc.qsl.worldgen.biome.impl.C_xmtsvelxHook;
 
-@Mixin(targets = "net/minecraft/unmapped/C_xmtsvelx$C_jgklgqjr$C_cnkaoojo")
-public class NetherBiomePresetMixin {
-	@Inject(method = "apply", at = @At("RETURN"), cancellable = true)
-	public <T> void apply(Function<RegistryKey<Biome>, T> function, CallbackInfoReturnable<MultiNoiseUtil.ParameterRangeList<T>> cir) {
-		cir.setReturnValue(NetherBiomeData.withModdedBiomeEntries(cir.getReturnValue(), function));
+@Mixin(C_xmtsvelx.class)
+public abstract class C_xmtsvelxMixin implements C_xmtsvelxHook {
+	@Unique
+	private HolderProvider<Biome> quilt$holderProvider;
+
+	@Inject(method = "<init>", at = @At("RETURN"))
+	private void quilt$grabHolderProvider(C_xmtsvelx.C_jgklgqjr c_jgklgqjr, HolderProvider<Biome> holderProvider, CallbackInfo ci) {
+		this.quilt$holderProvider = holderProvider;
+	}
+
+	@Override
+	public HolderProvider<Biome> getHolderProvider() {
+		return this.quilt$holderProvider;
 	}
 }

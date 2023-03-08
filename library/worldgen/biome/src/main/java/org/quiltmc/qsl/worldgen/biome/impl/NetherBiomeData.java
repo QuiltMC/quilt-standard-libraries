@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 import com.mojang.datafixers.util.Pair;
@@ -39,42 +40,49 @@ import net.minecraft.world.biome.source.util.MultiNoiseUtil;
  */
 @ApiStatus.Internal
 public final class NetherBiomeData {
-	// Cached sets of the biomes that would generate from Vanilla's default biome source without consideration
-	// for data packs (as those would be distinct biome sources).
+	// The cached sets of vanilla biomes that would generate from Vanilla's nether biome preset.
+	private static final Set<RegistryKey<Biome>> VANILLA_NETHER_BIOMES = C_xmtsvelx.C_jgklgqjr.f_kknfghtv
+			.m_vzbcawto()
+			.collect(Collectors.toSet());
+
+	// The cached sets of all biomes, included modded ones, that would generate from Vanilla's nether biome preset.
 	private static final Set<RegistryKey<Biome>> NETHER_BIOMES = new HashSet<>();
 
-	private static final Map<RegistryKey<Biome>, MultiNoiseUtil.NoiseHypercube> NETHER_BIOME_NOISE_POINTS = new HashMap<>();
+	public static final Map<RegistryKey<Biome>, MultiNoiseUtil.NoiseHypercube> NETHER_BIOME_NOISE_POINTS = new HashMap<>();
 
-
-	private NetherBiomeData() {
-	}
+	private NetherBiomeData() {}
 
 	public static void addNetherBiome(RegistryKey<Biome> biome, MultiNoiseUtil.NoiseHypercube spawnNoisePoint) {
 		Preconditions.checkArgument(biome != null, "Biome is null");
-		Preconditions.checkArgument(spawnNoisePoint != null, "MultiNoiseUtil.NoiseValuePoint is null");
+		Preconditions.checkArgument(spawnNoisePoint != null, "MultiNoiseUtil.NoiseHypercube is null");
 		NETHER_BIOME_NOISE_POINTS.put(biome, spawnNoisePoint);
-		clearBiomeSourceCache();
+		NetherBiomeData.clearBiomeSourceCache();
 	}
 
 	public static boolean canGenerateInNether(RegistryKey<Biome> biome) {
-		return C_xmtsvelx.C_jgklgqjr.f_kknfghtv.m_vzbcawto().anyMatch(input -> input.equals(biome));
+		if (NETHER_BIOMES.isEmpty()) {
+			NETHER_BIOMES.addAll(VANILLA_NETHER_BIOMES);
+			NETHER_BIOMES.addAll(NETHER_BIOME_NOISE_POINTS.keySet());
+		}
+
+		return NETHER_BIOMES.contains(biome);
 	}
 
 	private static void clearBiomeSourceCache() {
-		NETHER_BIOMES.clear(); // Clear cached biome source data
+		NETHER_BIOMES.clear();
 	}
 
 	public static <T> MultiNoiseUtil.ParameterRangeList<T> withModdedBiomeEntries(
-			MultiNoiseUtil.ParameterRangeList<T> entries, Function<RegistryKey<Biome>, T> biomes
+			MultiNoiseUtil.ParameterRangeList<T> parameterRangeList, Function<RegistryKey<Biome>, T> function
 	) {
 		if (NETHER_BIOME_NOISE_POINTS.isEmpty()) {
-			return entries;
+			return parameterRangeList;
 		}
 
-		var entryList = new ArrayList<>(entries.getEntries());
+		var entryList = new ArrayList<>(parameterRangeList.getEntries());
 
-		for (Map.Entry<RegistryKey<Biome>, MultiNoiseUtil.NoiseHypercube> entry : NETHER_BIOME_NOISE_POINTS.entrySet()) {
-			entryList.add(Pair.of(entry.getValue(), biomes.apply(entry.getKey())));
+		for (var entry : NETHER_BIOME_NOISE_POINTS.entrySet()) {
+			entryList.add(Pair.of(entry.getValue(), function.apply(entry.getKey())));
 		}
 
 		return new MultiNoiseUtil.ParameterRangeList<>(Collections.unmodifiableList(entryList));

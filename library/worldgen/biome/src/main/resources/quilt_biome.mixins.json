@@ -3,10 +3,10 @@
   "package": "org.quiltmc.qsl.worldgen.biome.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "C_xmtsvelxMixin",
     "ChunkNoiseSamplerMixin",
     "MultiNoiseBiomeSourceMixin",
     "MultiNoiseSamplerMixin",
-    "NetherBiomePresetMixin",
     "RandomStateMixin",
     "TheEndBiomeSourceMixin",
     "modification.DynamicRegistryManagerImplMixin",

@@ -1,6 +1,5 @@
 /*
- * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022-2023 QuiltMC
+ * Copyright 2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +18,15 @@ package org.quiltmc.qsl.worldgen.biome.impl;
 
 import org.jetbrains.annotations.ApiStatus;
 
-@ApiStatus.Internal
-public interface BiomeSourceAccess {
-	boolean quilt$shouldModifyBiomePoints();
+import net.minecraft.registry.HolderProvider;
+import net.minecraft.unmapped.C_xmtsvelx;
+import net.minecraft.world.biome.Biome;
 
-	void quilt$setModifyBiomePoints(boolean modifyBiomePoints);
+/**
+ * Allows for acquiring the holder provider used for initializing the {@link C_xmtsvelx} instance
+ * which would have been discarded otherwise.
+ */
+@ApiStatus.Internal
+public interface C_xmtsvelxHook {
+	HolderProvider<Biome> getHolderProvider();
 }
