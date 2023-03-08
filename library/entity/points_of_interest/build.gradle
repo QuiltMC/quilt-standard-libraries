@@ -10,7 +10,7 @@ qslModule {
 	library = "entity"
 	moduleDependencies {
 		core {
-			api("resource_loader")
+			impl("registry")
 			testmodOnly("qsl_base")
 		}
 	}
