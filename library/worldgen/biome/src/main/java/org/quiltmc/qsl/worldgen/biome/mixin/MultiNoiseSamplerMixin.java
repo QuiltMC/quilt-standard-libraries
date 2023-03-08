@@ -29,7 +29,7 @@ import net.minecraft.world.gen.ChunkRandom;
 import org.quiltmc.qsl.worldgen.biome.impl.MultiNoiseSamplerExtensions;
 
 @Mixin(MultiNoiseUtil.MultiNoiseSampler.class)
-public class MultiNoiseSamplerMixin implements MultiNoiseSamplerExtensions {
+public abstract class MultiNoiseSamplerMixin implements MultiNoiseSamplerExtensions {
 	@Unique
 	private Long quilt$seed = null;
 

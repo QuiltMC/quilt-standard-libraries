@@ -39,7 +39,7 @@ import net.minecraft.world.gen.noise.NoiseRouter;
 import org.quiltmc.qsl.worldgen.biome.impl.MultiNoiseSamplerExtensions;
 
 @Mixin(ChunkNoiseSampler.class)
-public class ChunkNoiseSamplerMixin {
+public abstract class ChunkNoiseSamplerMixin {
 	@Unique
 	private long quilt$seed;
 

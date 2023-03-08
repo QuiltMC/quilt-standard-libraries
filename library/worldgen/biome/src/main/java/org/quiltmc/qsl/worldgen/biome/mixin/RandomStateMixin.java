@@ -32,7 +32,7 @@ import net.minecraft.world.gen.chunk.ChunkGeneratorSettings;
 import org.quiltmc.qsl.worldgen.biome.impl.MultiNoiseSamplerExtensions;
 
 @Mixin(RandomState.class)
-public class RandomStateMixin {
+public abstract class RandomStateMixin {
 	@Shadow
 	@Final
 	private MultiNoiseUtil.MultiNoiseSampler sampler;
