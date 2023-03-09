@@ -31,19 +31,29 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.Optional;
 
 @Mixin(ServerPlayNetworkHandler.class)
 public class ServerPlayNetworkHandlerMixin {
 	@Shadow
 	public ServerPlayerEntity player;
 
-	@Inject(method = "onChatMessage", at = @At("HEAD"), cancellable = true)
-	public void quilt$modifyAndCancelInboundChatMessage(ChatMessageC2SPacket packet, CallbackInfo ci) {
+	private ProfileIndependentS2CMessage quilt$sendProfileIndependentMessage$storedProfileIndependentMessage;
+
+	@ModifyVariable(method = "onChatMessage", at = @At("HEAD"), argsOnly = true)
+	public ChatMessageC2SPacket quilt$modifyInboundChatMessage(ChatMessageC2SPacket packet) {
 		var message = new ChatC2SMessage(player, false, packet);
 
-		message = (ChatC2SMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message);
+		return ((ChatC2SMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message)).serialized();
+	}
+
+	@Inject(method = "onChatMessage", at = @At("HEAD"), cancellable = true)
+	public void quilt$cancelInboundChatMessage(ChatMessageC2SPacket packet, CallbackInfo ci) {
+		var message = new ChatC2SMessage(player, false, packet);
 
 		if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) {
 			QuiltChatEvents.CANCELLED.invoke(message);
@@ -51,40 +61,53 @@ public class ServerPlayNetworkHandlerMixin {
 		}
 	}
 
-	@Inject(method = "onChatMessage", at = @At(value = "FIELD", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;server:Lnet/minecraft/server/MinecraftServer;"))
-	public void quilt$beforeInboundChatMessage(ChatMessageC2SPacket packet, CallbackInfo ci) {
+	/*
+	 * Synthetic note: `m_yzfbjnlw(Lnet/minecraft/network/packet/c2s/play/ChatMessageC2SPacket;Ljava/util/Optional;)V`
+	 * is the lambda passed to `this.server.submit` in `onChatMessage`
+	 */
+	@Inject(method = "m_yzfbjnlw(Lnet/minecraft/network/packet/c2s/play/ChatMessageC2SPacket;Ljava/util/Optional;)V", at = @At(value = "HEAD"))
+	public void quilt$beforeInboundChatMessage(ChatMessageC2SPacket packet, Optional optional, CallbackInfo ci) {
 		var immutableMessage = new ChatC2SMessage(player, false, packet);
 		QuiltChatEvents.BEFORE_PROCESS.invoke(immutableMessage);
 	}
 
-	@Inject(method = "onChatMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;submit(Ljava/lang/Runnable;)Ljava/util/concurrent/CompletableFuture;", shift = At.Shift.AFTER))
-	public void quilt$afterInboundChatMessage(ChatMessageC2SPacket packet, CallbackInfo ci) {
+	@Inject(method = "m_yzfbjnlw(Lnet/minecraft/network/packet/c2s/play/ChatMessageC2SPacket;Ljava/util/Optional;)V", at = @At(value = "RETURN"))
+	public void quilt$afterInboundChatMessage(ChatMessageC2SPacket packet, Optional optional, CallbackInfo ci) {
 		var immutableMessage = new ChatC2SMessage(player, false, packet);
 		QuiltChatEvents.AFTER_PROCESS.invoke(immutableMessage);
 	}
 
 	@Inject(method = "sendProfileIndependentMessage", at = @At("HEAD"), cancellable = true)
-	public void quilt$modifyAndCancelAndBeforeOutboundProfileIndependentMessage(Text message, MessageType.Parameters parameters, CallbackInfo ci) {
+	public void quilt$captureAndModifyAndCancelAndBeforeOutboundProfileIndependentMessage(Text message, MessageType.Parameters parameters, CallbackInfo ci) {
 		var independentMessage = new ProfileIndependentS2CMessage(player, false, message, parameters);
+		quilt$sendProfileIndependentMessage$storedProfileIndependentMessage = (ProfileIndependentS2CMessage) QuiltChatEvents.MODIFY.invokeOrElse(independentMessage, independentMessage);
 
-		independentMessage = (ProfileIndependentS2CMessage) QuiltChatEvents.MODIFY.invokeOrElse(independentMessage, independentMessage);
-
-		if (QuiltChatEvents.CANCEL.invoke(independentMessage) == Boolean.TRUE) {
-			QuiltChatEvents.CANCELLED.invoke(independentMessage);
+		if (QuiltChatEvents.CANCEL.invoke(quilt$sendProfileIndependentMessage$storedProfileIndependentMessage) == Boolean.TRUE) {
 			ci.cancel();
-			return;
+		} else {
+			QuiltChatEvents.BEFORE_PROCESS.invoke(quilt$sendProfileIndependentMessage$storedProfileIndependentMessage);
 		}
-
-		QuiltChatEvents.BEFORE_PROCESS.invoke(independentMessage);
 	}
 
-	@Inject(method = "sendProfileIndependentMessage", at = @At("TAIL"))
-	public void quilt$afterOutboundProfileIndependentMessage(Text message, MessageType.Parameters parameters, CallbackInfo ci) {
-		var immutableMessage = new ProfileIndependentS2CMessage(player, false, message, parameters);
-		QuiltChatEvents.AFTER_PROCESS.invoke(immutableMessage);
+	@Redirect(
+			method = "sendProfileIndependentMessage",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V"
+			)
+	)
+	public void quilt$afterOutboundProfileIndependentMessage(ServerPlayNetworkHandler instance, Packet<?> packet) {
+		instance.sendPacket(quilt$sendProfileIndependentMessage$storedProfileIndependentMessage.serialized());
+		QuiltChatEvents.AFTER_PROCESS.invoke(quilt$sendProfileIndependentMessage$storedProfileIndependentMessage);
 	}
 
-	@Redirect(method = "sendChatMessage(Lnet/minecraft/network/message/SignedChatMessage;Lnet/minecraft/network/message/MessageType$Parameters;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V"))
+	@Redirect(
+			method = "sendChatMessage(Lnet/minecraft/network/message/SignedChatMessage;Lnet/minecraft/network/message/MessageType$Parameters;)V",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V"
+			)
+	)
 	public void quilt$modifyAndCancelAndBeforeAndAfterOutboundChatMessage(ServerPlayNetworkHandler instance, Packet<?> packet) {
 		if (packet instanceof ChatMessageS2CPacket chatMessageS2CPacket) {
 			var message = new ChatS2CMessage(instance.player, false, chatMessageS2CPacket);
@@ -93,7 +116,7 @@ public class ServerPlayNetworkHandlerMixin {
 			if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) {
 				QuiltChatEvents.CANCELLED.invoke(message);
 				return;
-			};
+			}
 
 			QuiltChatEvents.BEFORE_PROCESS.invoke(message);
 			instance.sendPacket(message.serialized());
