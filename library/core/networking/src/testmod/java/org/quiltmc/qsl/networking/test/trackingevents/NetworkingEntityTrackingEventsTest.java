@@ -23,10 +23,10 @@ import net.minecraft.text.Text;
 
 import org.quiltmc.qsl.networking.api.EntityTrackingEvents;
 
-public final class NetworkingEntityTrackingEventsTest implements EntityTrackingEvents.AfterStartTracking, EntityTrackingEvents.StartTracking, EntityTrackingEvents.StopTracking {
+public final class NetworkingEntityTrackingEventsTest implements EntityTrackingEvents.AfterStartTracking, EntityTrackingEvents.BeforeStartTracking, EntityTrackingEvents.StopTracking {
 	// Sends a message to the player when they're about to start tracking an armour stand.
 	@Override
-	public void onStartTracking(Entity trackedEntity, ServerPlayerEntity player) {
+	public void beforeStartTracking(Entity trackedEntity, ServerPlayerEntity player) {
 		if (trackedEntity instanceof ArmorStandEntity) {
 			player.sendMessage(Text.literal("About to be tracking ").append(trackedEntity.getEntityName()), false);
 		}

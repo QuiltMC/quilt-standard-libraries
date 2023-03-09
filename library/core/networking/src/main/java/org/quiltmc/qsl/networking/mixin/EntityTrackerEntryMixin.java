@@ -36,8 +36,8 @@ abstract class EntityTrackerEntryMixin {
 	private Entity entity;
 
 	@Inject(method = "startTracking", at = @At("HEAD"))
-	private void onStartTracking(ServerPlayerEntity player, CallbackInfo ci) {
-		EntityTrackingEvents.BEFORE_START_TRACKING.invoker().onStartTracking(this.entity, player);
+	private void beforeStartTracking(ServerPlayerEntity player, CallbackInfo ci) {
+		EntityTrackingEvents.BEFORE_START_TRACKING.invoker().beforeStartTracking(this.entity, player);
 	}
 
 	@Inject(method = "startTracking", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;onStartedTrackingBy(Lnet/minecraft/server/network/ServerPlayerEntity;)V"))

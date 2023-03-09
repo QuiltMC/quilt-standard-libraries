@@ -34,24 +34,11 @@ public final class EntityTrackingEvents {
 	 * @apiNote Since the client will not know about the entity at this point, you probably don't want to send packets
 	 * referencing the entity here. Do that in {@link #AFTER_START_TRACKING} instead.
 	 */
-	public static final Event<StartTracking> BEFORE_START_TRACKING = Event.create(StartTracking.class, callbacks -> (trackedEntity, player) -> {
-		for (StartTracking callback : callbacks) {
-			callback.onStartTracking(trackedEntity, player);
+	public static final Event<BeforeStartTracking> BEFORE_START_TRACKING = Event.create(BeforeStartTracking.class, callbacks -> (trackedEntity, player) -> {
+		for (BeforeStartTracking callback : callbacks) {
+			callback.beforeStartTracking(trackedEntity, player);
 		}
 	});
-
-	/**
-	 * An event that is called before player starts tracking an entity.
-	 * Typically, this occurs when an entity enters a client's view distance.
-	 * This event is called before the player's client is sent the entity's {@link Entity#createSpawnPacket() spawn packet}.
-	 *
-	 * @apiNote Since the client will not know about the entity at this point, you probably don't want to send packets
-	 * referencing the entity here. Do that in {@link #AFTER_START_TRACKING} instead.
-	 *
-	 * @deprecated Renamed to {@link #BEFORE_START_TRACKING}.
-	 */
-	@Deprecated(since = "4.0.0-beta.12")
-	public static final Event<StartTracking> START_TRACKING = BEFORE_START_TRACKING;
 
 	/**
 	 * An event that is called after a player starts tracking an entity.
@@ -79,14 +66,14 @@ public final class EntityTrackingEvents {
 	});
 
 	@FunctionalInterface
-	public interface StartTracking extends EventAwareListener {
+	public interface BeforeStartTracking extends EventAwareListener {
 		/**
 		 * Called before an entity starts getting tracked by a player.
 		 *
 		 * @param trackedEntity the entity that will be tracked
 		 * @param player        the player that will track the entity
 		 */
-		void onStartTracking(Entity trackedEntity, ServerPlayerEntity player);
+		void beforeStartTracking(Entity trackedEntity, ServerPlayerEntity player);
 	}
 
 	@FunctionalInterface
@@ -111,6 +98,5 @@ public final class EntityTrackingEvents {
 		void onStopTracking(Entity trackedEntity, ServerPlayerEntity player);
 	}
 
-	private EntityTrackingEvents() {
-	}
+	private EntityTrackingEvents() {}
 }
