@@ -289,13 +289,24 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	boolean remove(TagKey<R> tag);
 
 	/**
-	 * The entry filter can prevent entries from being shown in the attachment.
-	 * This can be used to prevent values from tags leaking into the registry entry attachment when not intended,
-	 * such as nether wood in furnace fuels.
+	 * The entry validation can prevent entries from being shown in the attachment.
+	 * This can be used to prevent values that are not supported by the attachment, such as blocks without
+	 * the AXIS property for log stripping.
 	 *
-	 * @return the associated entry filter.
+	 * @return the associated entry validator.
 	 */
-	Predicate<R> entryFilter();
+	Predicate<R> entryValidator();
+
+	/**
+	 * This tag, at "[namespace]:filter/[path]" will filter entries from being shown in the attachment.
+	 * This can be used to prevent values that are not supported by the attachment, such as items that are
+	 * not burnable from acting as furnace fuels.
+	 *
+	 * @return the {@link TagKey} that filters the entry.
+	 */
+	default TagKey<R> entryFilter() {
+		return TagKey.of(this.registry().getKey(), this.id().withPath(s -> "filter/" + s));
+	}
 
 	/**
 	 * {@return this attachment's "value associated with entry" event}
@@ -454,7 +465,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 		private @Nullable V defaultValue;
 		private @Nullable DefaultValueProvider<R, V> defaultValueProvider;
 
-		private Predicate<R> filter = o -> true;
+		private Predicate<R> validator = o -> true;
 
 		private Builder(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec) {
 			this.registry = registry;
@@ -514,13 +525,15 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 		}
 
 		/**
-		 * Sets the filter for the attachment.
+		 * Sets the registry entry validator for the attachment.
 		 *
-		 * @param filter the entry filter
+		 * @see RegistryEntryAttachment#entryValidator()
+		 *
+		 * @param validator the entry validator
 		 * @return this builder
 		 */
-		public Builder<R, V> filter(Predicate<R> filter) {
-			this.filter = filter;
+		public Builder<R, V> validator(Predicate<R> validator) {
+			this.validator = validator;
 			return this;
 		}
 
@@ -533,10 +546,10 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 			RegistryEntryAttachment<R, V> attachment;
 			if (this.defaultValueProvider == null) {
 				attachment = new ConstantDefaultRegistryEntryAttachmentImpl<>(this.registry, this.id, this.valueClass,
-						this.codec, this.side, this.defaultValue, this.filter);
+						this.codec, this.side, this.defaultValue, this.validator);
 			} else {
 				attachment = new ComputedDefaultRegistryEntryAttachmentImpl<>(this.registry, this.id, this.valueClass,
-						this.codec, this.side, this.defaultValueProvider, this.filter);
+						this.codec, this.side, this.defaultValueProvider, this.validator);
 			}
 			RegistryEntryAttachmentHolder.registerAttachment(this.registry, attachment);
 			return attachment;

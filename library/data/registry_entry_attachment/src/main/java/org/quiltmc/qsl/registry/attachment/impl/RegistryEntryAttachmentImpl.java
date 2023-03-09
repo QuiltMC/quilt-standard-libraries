@@ -33,6 +33,7 @@ import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
+import org.quiltmc.qsl.tag.api.TagRegistry;
 
 @ApiStatus.Internal
 public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntryAttachment<R, V> {
@@ -45,16 +46,16 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	protected final Event<TagValueAdded<R, V>> tagValueAddedEvent;
 	protected final Event<ValueRemoved<R>> valueRemovedEvent;
 	protected final Event<TagValueRemoved<R>> tagValueRemovedEvent;
-	protected final Predicate<R> filter;
+	protected final Predicate<R> validator;
 
 	public RegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec,
-			Side side, Predicate<R> filter) {
+			Side side, Predicate<R> validator) {
 		this.registry = registry;
 		this.id = id;
 		this.valueClass = valueClass;
 		this.codec = codec;
 		this.side = side;
-		this.filter = filter;
+		this.validator = validator;
 
 		this.valueAddedEvent = Event.create(ValueAdded.class, listeners -> (entry, value) -> {
 			for (var listener : listeners) {
@@ -111,7 +112,7 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 			ClientSideGuard.assertAccessAllowed();
 		}
 
-		if (!this.filter.test(entry)) {
+		if (!this.validator.test(entry) || TagRegistry.getTag(this.entryFilter()).stream().anyMatch(holder -> holder.value().equals(entry))) {
 			return null;
 		}
 
@@ -137,7 +138,12 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 		Set<R> set = new ReferenceOpenHashBigSet<>();
 		set.addAll(RegistryEntryAttachmentHolder.getData(this.registry).valueTable.row(this).keySet());
 		set.addAll(RegistryEntryAttachmentHolder.getBuiltin(this.registry).valueTable.row(this).keySet());
-		set.removeIf(Predicate.not(this.filter));
+		set.removeIf(Predicate.not(this.validator));
+
+		this.registry.getTagOrEmpty(this.entryFilter()).forEach(holder -> {
+			set.remove(holder.value());
+		});
+
 		return set;
 	}
 
@@ -188,6 +194,10 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 			throw new IllegalArgumentException("Entry hasn't been registered");
 		}
 
+		if (!this.validator.test(entry)) {
+			throw new IllegalArgumentException(String.format("Entry %s does not pass validation for REA %s", this.registry.getId(entry), this.id));
+		}
+
 		CodecUtils.assertValid(this.codec, value);
 		RegistryEntryAttachmentHolder.getBuiltin(this.registry).putValue(this, entry, value,
 				BuiltinRegistryEntryAttachmentHolder.FLAG_NONE);
@@ -222,8 +232,8 @@ public abstract class RegistryEntryAttachmentImpl<R, V> implements RegistryEntry
 	}
 
 	@Override
-	public Predicate<R> entryFilter() {
-		return this.filter;
+	public Predicate<R> entryValidator() {
+		return this.validator;
 	}
 
 	@Override

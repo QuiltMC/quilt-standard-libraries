@@ -29,8 +29,8 @@ public final class ConstantDefaultRegistryEntryAttachmentImpl<R, V> extends Regi
 	private final @Nullable V defaultValue;
 
 	public ConstantDefaultRegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass,
-													  Codec<V> codec, Side side, @Nullable V defaultValue, Predicate<R> filter) {
-		super(registry, id, valueClass, codec, side, filter);
+													  Codec<V> codec, Side side, @Nullable V defaultValue, Predicate<R> validator) {
+		super(registry, id, valueClass, codec, side, validator);
 
 		if (defaultValue != null) {
 			var encoded = this.codec.encodeStart(JsonOps.INSTANCE, defaultValue);

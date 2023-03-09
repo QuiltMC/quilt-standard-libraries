@@ -35,8 +35,8 @@ public final class ComputedDefaultRegistryEntryAttachmentImpl<R, V> extends Regi
 
 	private final @NotNull DefaultValueProvider<R, V> defaultValueProvider;
 
-	public ComputedDefaultRegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec, Side side, @NotNull DefaultValueProvider<R, V> defaultValueProvider, Predicate<R> filter) {
-		super(registry, id, valueClass, codec, side, filter);
+	public ComputedDefaultRegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec, Side side, @NotNull DefaultValueProvider<R, V> defaultValueProvider, Predicate<R> validator) {
+		super(registry, id, valueClass, codec, side, validator);
 		this.defaultValueProvider = defaultValueProvider;
 	}
 
