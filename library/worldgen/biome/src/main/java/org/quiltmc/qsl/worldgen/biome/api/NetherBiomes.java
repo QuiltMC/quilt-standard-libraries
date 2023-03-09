@@ -27,8 +27,7 @@ import org.quiltmc.qsl.worldgen.biome.impl.NetherBiomeData;
  * API that exposes the internals of Minecraft's nether biome code.
  */
 public final class NetherBiomes {
-	private NetherBiomes() {
-	}
+	private NetherBiomes() {}
 
 	/**
 	 * Adds a biome to the Nether generator.

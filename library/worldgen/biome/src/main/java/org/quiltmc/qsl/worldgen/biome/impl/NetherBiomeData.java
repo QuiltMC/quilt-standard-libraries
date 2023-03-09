@@ -19,7 +19,6 @@ package org.quiltmc.qsl.worldgen.biome.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +27,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 import com.mojang.datafixers.util.Pair;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.registry.RegistryKey;
@@ -48,7 +48,7 @@ public final class NetherBiomeData {
 	// The cached sets of all biomes, included modded ones, that would generate from Vanilla's nether biome preset.
 	private static final Set<RegistryKey<Biome>> NETHER_BIOMES = new HashSet<>();
 
-	public static final Map<RegistryKey<Biome>, MultiNoiseUtil.NoiseHypercube> NETHER_BIOME_NOISE_POINTS = new HashMap<>();
+	public static final Map<RegistryKey<Biome>, MultiNoiseUtil.NoiseHypercube> NETHER_BIOME_NOISE_POINTS = new Reference2ObjectOpenHashMap<>();
 
 	private NetherBiomeData() {}
 
