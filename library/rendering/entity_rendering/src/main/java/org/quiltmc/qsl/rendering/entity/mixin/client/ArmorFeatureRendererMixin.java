@@ -65,7 +65,7 @@ public abstract class ArmorFeatureRendererMixin {
 		this.quilt$capturedEntity = livingEntity;
 	}
 
-	@Inject(method = "renderArmor", at = @At("HEAD"))
+	@Inject(method = "renderArmor(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/EquipmentSlot;ILnet/minecraft/client/render/entity/model/BipedEntityModel;)V", at = @At("HEAD"))
 	private void quilt$captureSlot(MatrixStack matrices, VertexConsumerProvider vertexConsumers, LivingEntity livingEntity, EquipmentSlot slot, int i, BipedEntityModel<?> bipedEntityModel, CallbackInfo ci) {
 		this.quilt$capturedSlot = slot;
 	}
