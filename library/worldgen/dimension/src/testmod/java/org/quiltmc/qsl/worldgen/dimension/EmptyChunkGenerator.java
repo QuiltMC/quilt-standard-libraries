@@ -96,7 +96,5 @@ public class EmptyChunkGenerator extends ChunkGenerator {
 	}
 
 	@Override
-	public void method_40450(List<String> list, RandomState randomState, BlockPos pos) {
-	}
-
+	public void method_40450(List<String> list, RandomState randomState, BlockPos pos) {}
 }

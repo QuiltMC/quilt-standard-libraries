@@ -31,8 +31,8 @@ import org.quiltmc.qsl.block.content.registry.impl.BlockContentRegistriesInitial
 
 @Mixin(Oxidizable.class)
 public interface OxidizableMixin {
-	// lambda in assignment of OXIDATION_LEVEL_INCREASES
-	// replaces old map with one updated by registry attachments
+	// Lambda in assignment of OXIDATION_LEVEL_INCREASES
+	// Replaces old map with one updated by registry attachments
 	@Inject(
 			slice = @Slice(from = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableBiMap$Builder;put(Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableBiMap$Builder;")),
 			method = "method_34740()Lcom/google/common/collect/BiMap;",
@@ -44,16 +44,14 @@ public interface OxidizableMixin {
 		cir.setReturnValue(BlockContentRegistriesInitializer.OXIDATION_INCREASE_BLOCKS);
 	}
 
-
 	// Lambda in assignment of OXIDATION_LEVEL_DECREASES
-	// Replace old map with one updated by our api
+	// Replaces old map with one updated by our API
 	@Inject(
 			slice = @Slice(from = @At(value = "FIELD", target = "Lnet/minecraft/block/Oxidizable;OXIDATION_LEVEL_INCREASES:Ljava/util/function/Supplier;")),
 			method = "method_34739()Lcom/google/common/collect/BiMap;",
 			at = @At("RETURN"),
 			cancellable = true
 	)
-
 	private static void createOxidationLevelDecreasesMap(CallbackInfoReturnable<BiMap<Block, Block>> cir) {
 		cir.setReturnValue(BlockContentRegistriesInitializer.OXIDATION_DECREASE_BLOCKS);
 	}

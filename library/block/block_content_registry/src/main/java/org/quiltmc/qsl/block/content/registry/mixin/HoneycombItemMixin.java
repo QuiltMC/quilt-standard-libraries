@@ -32,7 +32,7 @@ import org.quiltmc.qsl.block.content.registry.impl.BlockContentRegistriesInitial
 @Mixin(HoneycombItem.class)
 public class HoneycombItemMixin {
 	// Lambda in assignment of UNWAXED_TO_WAXED_BLOCKS
-	// Replace old map with one updated by our api
+	// Replaces old map with one updated by our API
 	@Inject(
 			slice = @Slice(from = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableBiMap$Builder;put(Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableBiMap$Builder;")),
 			method = "method_34723()Lcom/google/common/collect/BiMap;",
@@ -45,7 +45,7 @@ public class HoneycombItemMixin {
 	}
 
 	// Lambda in assignment of WAXED_TO_UNWAXED_BLOCKS
-	// Replace old map with one updated by our api
+	// Replaces old map with one updated by our API
 	@Inject(
 			slice = @Slice(from = @At(value = "FIELD", target = "Lnet/minecraft/item/HoneycombItem;UNWAXED_TO_WAXED_BLOCKS:Ljava/util/function/Supplier;")),
 			method = "method_34722()Lcom/google/common/collect/BiMap;",

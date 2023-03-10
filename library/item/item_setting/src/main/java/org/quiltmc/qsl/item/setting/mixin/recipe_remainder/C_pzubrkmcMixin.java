@@ -48,7 +48,6 @@ public abstract class C_pzubrkmcMixin extends ForgingScreenHandler {
 		super(screenHandlerType, i, playerInventory, screenHandlerContext);
 	}
 
-	// normal unmapped method
 	@Redirect(method = "method_48383", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"))
 	private void applyRecipeRemainder(ItemStack instance, int amount, int slot) {
 		RecipeRemainderLogicHandler.handleRemainderForScreenHandler(
