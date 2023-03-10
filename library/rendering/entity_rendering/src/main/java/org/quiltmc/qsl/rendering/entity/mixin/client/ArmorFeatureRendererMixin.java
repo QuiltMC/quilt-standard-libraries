@@ -124,6 +124,35 @@ public abstract class ArmorFeatureRendererMixin {
 				this.quilt$capturedArmorTexture);
 	}
 
+	@ModifyArg(
+			method = "renderArmor(Lnet/minecraft/item/ArmorMaterial;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrimPermutation;ZLnet/minecraft/client/render/entity/model/BipedEntityModel;ZFFF)V",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/texture/SpriteAtlasTexture;getSprite(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/texture/Sprite;"
+			),
+			index = 0
+	)
+	private Identifier quilt$modifyArmorTrimTexture(Identifier texture) {
+		// TODO
+		return this.quilt$capturedArmorTexture = texture;
+	}
+
+	@ModifyArg(
+			method = "renderArmor(Lnet/minecraft/item/ArmorMaterial;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrimPermutation;ZLnet/minecraft/client/render/entity/model/BipedEntityModel;ZFFF)V",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/render/item/ItemRenderer;getDirectItemGlintConsumer(Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/render/RenderLayer;ZZ)Lcom/mojang/blaze3d/vertex/VertexConsumer;"
+			),
+			index = 1
+	)
+	private RenderLayer quilt$modifyArmorTrimRenderLayer(RenderLayer layer) {
+		return ArmorRenderingRegistryImpl.getArmorRenderLayer(layer,
+				this.quilt$capturedEntity,
+				this.quilt$capturedEntity.getEquippedStack(this.quilt$capturedSlot),
+				this.quilt$capturedSlot,
+				this.quilt$capturedArmorTexture);
+	}
+
 	@Inject(
 			method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
 			at = @At("RETURN")
