@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,10 +30,40 @@ public final class EntityTrackingEvents {
 	 * An event that is called before player starts tracking an entity.
 	 * Typically, this occurs when an entity enters a client's view distance.
 	 * This event is called before the player's client is sent the entity's {@link Entity#createSpawnPacket() spawn packet}.
+	 *
+	 * @apiNote Since the client will not know about the entity at this point, you probably don't want to send packets
+	 * referencing the entity here. Do that in {@link #AFTER_START_TRACKING} instead.
 	 */
-	public static final Event<StartTracking> START_TRACKING = Event.create(StartTracking.class, callbacks -> (trackedEntity, player) -> {
+	public static final Event<StartTracking> BEFORE_START_TRACKING = Event.create(StartTracking.class, callbacks -> (trackedEntity, player) -> {
 		for (StartTracking callback : callbacks) {
 			callback.onStartTracking(trackedEntity, player);
+		}
+	});
+
+	/**
+	 * An event that is called before player starts tracking an entity.
+	 * Typically, this occurs when an entity enters a client's view distance.
+	 * This event is called before the player's client is sent the entity's {@link Entity#createSpawnPacket() spawn packet}.
+	 *
+	 * @apiNote Since the client will not know about the entity at this point, you probably don't want to send packets
+	 * referencing the entity here. Do that in {@link #AFTER_START_TRACKING} instead.
+	 *
+	 * @deprecated Renamed to {@link #BEFORE_START_TRACKING}.
+	 */
+	@Deprecated(since = "4.0.0-beta.12")
+	public static final Event<StartTracking> START_TRACKING = BEFORE_START_TRACKING;
+
+	/**
+	 * An event that is called after a player starts tracking an entity.
+	 * Typically, this occurs when an entity enters a client's view distance.
+	 * This event is called after the player's client is sent the entity's {@link Entity#createSpawnPacket() spawn packet},
+	 * so packets may be sent referencing the entity.
+	 *
+	 * @apiNote If you're using this to tell the client information for <em>your own</em> entity, you may want to instead override {@link Entity#onStartedTrackingBy(ServerPlayerEntity)}.
+	 */
+	public static final Event<AfterStartTracking> AFTER_START_TRACKING = Event.create(AfterStartTracking.class, callbacks -> (trackedEntity, player) -> {
+		for (AfterStartTracking callback : callbacks) {
+			callback.afterStartTracking(trackedEntity, player);
 		}
 	});
 
@@ -57,6 +87,17 @@ public final class EntityTrackingEvents {
 		 * @param player        the player that will track the entity
 		 */
 		void onStartTracking(Entity trackedEntity, ServerPlayerEntity player);
+	}
+
+	@FunctionalInterface
+	public interface AfterStartTracking extends EventAwareListener {
+		/**
+		 * Called after an entity starts getting tracked by a player.
+		 *
+		 * @param trackedEntity the entity that is now being tracked
+		 * @param player        the player that is now tracking the entity
+		 */
+		void afterStartTracking(Entity trackedEntity, ServerPlayerEntity player);
 	}
 
 	@FunctionalInterface

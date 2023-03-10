@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,12 @@ abstract class EntityTrackerEntryMixin {
 
 	@Inject(method = "startTracking", at = @At("HEAD"))
 	private void onStartTracking(ServerPlayerEntity player, CallbackInfo ci) {
-		EntityTrackingEvents.START_TRACKING.invoker().onStartTracking(this.entity, player);
+		EntityTrackingEvents.BEFORE_START_TRACKING.invoker().onStartTracking(this.entity, player);
+	}
+
+	@Inject(method = "startTracking", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;onStartedTrackingBy(Lnet/minecraft/server/network/ServerPlayerEntity;)V"))
+	private void afterStartTracking(ServerPlayerEntity player, CallbackInfo ci) {
+		EntityTrackingEvents.AFTER_START_TRACKING.invoker().afterStartTracking(this.entity, player);
 	}
 
 	@Inject(method = "stopTracking", at = @At("TAIL"))

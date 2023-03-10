@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,11 @@ import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 public class LanguageMixin {
 	@Redirect(
 			method = "create",
-			at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMap$Builder;build()Lcom/google/common/collect/ImmutableMap;")
+			at = @At(
+					value = "INVOKE",
+					target = "Lcom/google/common/collect/ImmutableMap$Builder;build()Lcom/google/common/collect/ImmutableMap;",
+					remap = false
+			)
 	)
 	private static ImmutableMap<String, String> create(ImmutableMap.Builder<String, String> builder) {
 		var map = new Object2ObjectOpenHashMap<>(builder.buildOrThrow());

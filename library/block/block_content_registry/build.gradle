@@ -12,6 +12,7 @@ qslModule {
 		core {
 			api("qsl_base")
 			impl("resource_loader")
+			testmodOnly("testing")
 		}
 		data {
 			api("registry_entry_attachment")

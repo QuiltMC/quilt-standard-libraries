@@ -10,7 +10,8 @@ Essential standard libraries for [the Quilt ecosystem](https://quiltmc.org/).
 The Quilt Standard Libraries gives modders Quilt-exclusive tools to add new and exciting features to their mods.
 
 **Note: At the moment, the Quilt Standard Libraries are in beta, meaning issues may arise and should still be treated as experimental.
-Please make an issue or talk to the QSL team on [discord](https://discord.quiltmc.org/toolchain) or on [the forum](https://forum.quiltmc.org) before writing any PRs.**
+Please make an issue or talk to the QSL team on [discord](https://discord.quiltmc.org/toolchain) or on [the forum](https://forum.quiltmc.org) before
+writing any PRs.**
 
 ## Repository structure
 
@@ -29,10 +30,10 @@ The charts are organized by QSL libraries.
 
 Quick legend:
 
- - ✔ = Included
- - ❌ = Not Included/Not Yet
- - 🙅 = No plans
- - 🚧 = Work In Progress
+- ✔ = Included
+- ❌ = Not Included/Not Yet
+- 🙅 = No plans
+- 🚧 = Work In Progress
 
 ### Core Library
 
@@ -42,7 +43,7 @@ Quick legend:
 | Event API                         |  ✔  |       ✔       |
 | Event API - Phases                |  ✔  |       ✔       |
 | Event API - Events as Entrypoints |  ✔  |       ❌       |
-| Gametest API                      |  ❌  |       ✔       |
+| Gametest API                      |  ✔  |       ✔       |
 | Initializer Entrypoints           |  ✔  | ✔ (in loader) |
 | Networking API                    |  ✔  |       ✔       |
 
@@ -61,16 +62,14 @@ Quick legend:
 | Client Tick Events         |  ✔  |     ✔      |
 | Client World Tick Events   |  ✔  |     ✔      |
 | Client Block Entity Events |  ❌  |     ✔      |
-| Client Chunk Entity Events |  ❌  |     ✔      |
-| Client Entity Events       |  ❌  |     ✔      |
+| Client Chunk Events        |  ❌  |     ✔      |
 | Common Lifecycle Events    |  ❌  |     ✔      |
 | Server Lifecycle Events    |  ✔  |     ✔      |
 | Server Tick Events         |  ✔  |     ✔      |
 | Server World Load Events   |  ✔  |     ✔      |
 | Server World Tick Events   |  ✔  |     ✔      |
 | Server Block Entity Events |  ❌  |     ✔      |
-| Server Chunk Entity Events |  ❌  |     ✔      |
-| Server Entity Events       |  ❌  |     ✔      |
+| Server Chunk Events        |  ❌  |     ✔      |
 
 ### Core - Registry
 
@@ -143,6 +142,10 @@ Quick legend:
 | EntityType registration helpers |  ✔  |     ✔      |
 | Entity Events                   |  ✔  |     ✔      |
 | Multipart Entity API            |  ✔  |     ❌      |
+| Point of interest helper        |  ✔  |     ✔      |
+| Status Effects API              |  ✔  |     ❌      |
+| Tracked Data Handler Registry   |  ✔  |     ❌      |
+| Trade offer API                 |  ✔  |     ✔      |
 
 ### GUI Library
 
@@ -158,7 +161,9 @@ Quick legend:
 
 | Feature                                         | QSL | Fabric API |
 |:------------------------------------------------|:---:|:----------:|
-| Item Groups                                     |  ✔  |     ✔      |
+| Item Extension - Bow                            |  ✔  |     ❌      |
+| Item Extension - Crossbow                       |  ✔  |     ❌      |
+| Item Groups                                     |  ❌  |     ✔      |
 | Item Settings                                   |  ✔  |     ✔      |
 | Item Settings - Custom Item Setting             |  ✔  |     ❌      |
 | Item Content Registry - Composter               |  ✔  |     ✔      |
@@ -173,8 +178,8 @@ Quick legend:
 | Commands                |  ✔  |     ✔      |
 | Client Commands         |  ✔  |     ✔      |
 | Game Rules              |  ❌  |     ✔      |
-| Entity Selector Options |  ✔  |     ❌      |
-| Message API             |  ❌  |     ✔      |
+| Entity Selector Options |  ✔  |     ✔      |
+| Message API             |  ✔  |     ✔      |
 
 ### Rendering Library
 
@@ -185,7 +190,7 @@ Quick legend:
 | Hud Render API                                    |       ❌        | ✔ (limited Event) |
 | Built-in Item Rendering                           |       ❌        |         ✔         |
 | Block Entity Renderer Registry                    |       ❌        |         ✔         |
-| Armor Rendering                                   | :construction: |         ✔         |
+| Armor Rendering                                   |       ✔        |         ✔         |
 | Color Provider Registry                           |       ❌        |         ✔         |
 | Entity Renderer Registry                          |       ❌        |         ✔         |
 | Entity Model Layer Registry                       |       ❌        |         ✔         |
@@ -215,7 +220,7 @@ Quick legend:
 
 | Feature        |                                                  QSL                                                   | Fabric API |
 |:---------------|:------------------------------------------------------------------------------------------------------:|:----------:|
-| Modded DFU API |                                                   ✔                                                    |     ❌      |
+| Modded DFU API |                                                   ❌                                                    |     ❌      |
 | API Lookup API | :construction: [(through Component API)](https://github.com/QuiltMC/quilt-standard-libraries/pull/146) |     ✔      |
 
 [quilt]: https://quiltmc.org

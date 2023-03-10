@@ -8,8 +8,6 @@
     "KeyedResourceReloaderMixin",
     "MinecraftServerMixin",
     "MultiPackResourceManagerMixin",
-    "NamespaceResourceManagerAccessor",
-    "NamespaceResourceManagerMixin",
     "ReloadableResourceManagerMixin",
     "ResourcePackMixin",
     "ResourcePackProfileMixin",
