@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.points_of_interest.impl;
+package org.quiltmc.qsl.poi.impl;
 
 import java.util.Collection;
 
