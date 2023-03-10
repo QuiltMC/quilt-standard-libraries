@@ -64,7 +64,7 @@ public class ChatC2SMessage extends AbstractChatMessage<ChatMessageC2SPacket> {
 
 	@Override
 	public @NotNull EnumSet<QuiltMessageType> getTypes() {
-		return InternalMessageTypesFactory.c2sType(QuiltMessageType.CHAT, true);
+		return InternalMessageTypesFactory.c2sType(QuiltMessageType.CHAT, this.isClient);
 	}
 
 	@Override
