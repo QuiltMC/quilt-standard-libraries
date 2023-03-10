@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.points_of_interest.mixin;
+package org.quiltmc.qsl.poi.mixin;
 
 import static net.minecraft.world.poi.PointOfInterestTypes.STATE_TO_TYPE;
 
@@ -36,7 +36,7 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Util;
 import net.minecraft.world.poi.PointOfInterestType;
 
-import org.quiltmc.qsl.points_of_interest.impl.PointOfInterestTypeExtensions;
+import org.quiltmc.qsl.poi.impl.PointOfInterestTypeExtensions;
 
 @Mixin(PointOfInterestType.class)
 public class PointOfInterestTypeMixin implements PointOfInterestTypeExtensions {
