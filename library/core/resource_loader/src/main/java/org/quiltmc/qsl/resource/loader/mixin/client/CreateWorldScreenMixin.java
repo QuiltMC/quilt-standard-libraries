@@ -51,11 +51,11 @@ import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 public abstract class CreateWorldScreenMixin {
 	@Shadow
 	@Final
-	C_hypraqfe f_rsmdhran;
+	C_hypraqfe field_42172;
 
 	@Dynamic
 	@Inject(
-			method = "m_qcsfhvrb(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/registry/LayeredRegistryManager;Lnet/minecraft/client/gui/screen/world/CreateWorldScreen$C_mxqwwbun;)Lnet/minecraft/client/world/WorldCreationContext;",
+			method = "method_41851(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/registry/LayeredRegistryManager;Lnet/minecraft/client/gui/screen/world/CreateWorldScreen$C_mxqwwbun;)Lnet/minecraft/client/world/WorldCreationContext;",
 			at = @At("HEAD")
 	)
 	private static void onEndDataPackLoadOnOpen(AutoCloseableResourceManager resourceManager, ServerReloadableResources resources,
@@ -64,7 +64,7 @@ public abstract class CreateWorldScreenMixin {
 	}
 
 	@Inject(
-			method = "m_btwtdkmu",
+			method = "method_45679",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/server/WorldLoader;load(Lnet/minecraft/server/WorldLoader$InitConfig;Lnet/minecraft/server/WorldLoader$LoadContextSupplier;Lnet/minecraft/server/WorldLoader$ApplierFactory;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
@@ -88,7 +88,7 @@ public abstract class CreateWorldScreenMixin {
 		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null);
 	}
 
-	// Lambda method in CreateWorldScreen#m_btwtdkmu, search for a resource manager being closed.
+	// Lambda method in CreateWorldScreen#method_45679, search for a resource manager being closed.
 	// Inject before closing the resource manager.
 	@Dynamic
 	@Inject(slice = @Slice(to = @At(value = "INVOKE", target = "Lnet/minecraft/resource/AutoCloseableResourceManager;close()V")),
@@ -100,11 +100,11 @@ public abstract class CreateWorldScreenMixin {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resourceManager, null);
 	}
 
-	// Lambda method in CreateWorldScreen#m_btwtdkmu, passed CompletableFuture#handle.
+	// Lambda method in CreateWorldScreen#method_45679, passed CompletableFuture#handle.
 	// Take Void and Throwable parameters.
 	@Inject(
 			slice = @Slice(to = @At(value = "CONSTANT", args = "stringValue=dataPack.validation.failed")),
-			method = "m_fiszvdug(Ljava/util/function/Consumer;Ljava/lang/Void;Ljava/lang/Throwable;)Ljava/lang/Object;",
+			method = "method_49629(Ljava/util/function/Consumer;Ljava/lang/Void;Ljava/lang/Throwable;)Ljava/lang/Object;",
 			at = @At(
 					value = "INVOKE",
 					target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Throwable;)V",
@@ -120,7 +120,7 @@ public abstract class CreateWorldScreenMixin {
 
 	@Inject(method = "createLevel", at = @At("HEAD"))
 	private void onCreateLevelStart(CallbackInfo ci) {
-		if (FeatureFlags.containsDefault(this.f_rsmdhran.m_xkfzagsg().dataConfiguration().enabledFeatures())) {
+		if (FeatureFlags.containsDefault(this.field_42172.method_48728().dataConfiguration().enabledFeatures())) {
 			ResourceLoaderImpl.EXPERIMENTAL_FEATURES_ENABLED.set(Unit.INSTANCE);
 		}
 	}

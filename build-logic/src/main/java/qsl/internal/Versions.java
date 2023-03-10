@@ -28,12 +28,12 @@ public final class Versions {
 	/**
 	 * The target Minecraft version.
 	 */
-	public static final MinecraftVersion MINECRAFT_VERSION = new MinecraftVersion("1.19.4-pre3", "1.19.4");
+	public static final MinecraftVersion MINECRAFT_VERSION = new MinecraftVersion("1.19.4-rc1", "1.19.4");
 
 	/**
 	 * The Minecraft versions this version of QSL is compatible with.
 	 */
-	public static final List<MinecraftVersion> COMPATIBLE_VERSIONS = versions("1.19.4-pre4", "1.19.4-rc1");
+	public static final List<MinecraftVersion> COMPATIBLE_VERSIONS = versions(MINECRAFT_VERSION.getFancyString());
 
 	/**
 	 * The target Quilt Mappings build.

@@ -21,6 +21,7 @@ import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.block.Block;
@@ -30,9 +31,11 @@ import org.quiltmc.qsl.block.content.registry.impl.BlockContentRegistriesInitial
 
 @Mixin(HoneycombItem.class)
 public class HoneycombItemMixin {
-	@Dynamic("Replace old map with one updated by Registry Attachments")
+	// Lambda in assignment of UNWAXED_TO_WAXED_BLOCKS
+	// Replace old map with one updated by our api
 	@Inject(
-			method = "m_snbljbbo()Lcom/google/common/collect/BiMap;",
+			slice = @Slice(from = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableBiMap$Builder;put(Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableBiMap$Builder;")),
+			method = "method_34723()Lcom/google/common/collect/BiMap;",
 			at = @At("RETURN"),
 			cancellable = true
 	)
@@ -41,9 +44,11 @@ public class HoneycombItemMixin {
 		cir.setReturnValue(BlockContentRegistriesInitializer.UNWAXED_WAXED_BLOCKS);
 	}
 
-	@Dynamic("Replace old map with one updated by Registry Attachments")
+	// Lambda in assignment of WAXED_TO_UNWAXED_BLOCKS
+	// Replace old map with one updated by our api
 	@Inject(
-			method = "m_lnsonusw()Lcom/google/common/collect/BiMap;",
+			slice = @Slice(from = @At(value = "FIELD", target = "Lnet/minecraft/item/HoneycombItem;UNWAXED_TO_WAXED_BLOCKS:Ljava/util/function/Supplier;")),
+			method = "method_34722()Lcom/google/common/collect/BiMap;",
 			at = @At("RETURN"),
 			cancellable = true
 	)

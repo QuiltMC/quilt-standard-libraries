@@ -49,7 +49,7 @@ public class RecipeManagerMixin {
 	private Map<Identifier, Recipe<?>> recipeFlatMap;
 
 	@Inject(
-			method = "apply",
+			method = "apply(Ljava/util/Map;Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/util/profiler/Profiler;)V",
 			at = @At(value = "INVOKE", target = "Ljava/util/Map;entrySet()Ljava/util/Set;", remap = false, ordinal = 0),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
@@ -67,7 +67,7 @@ public class RecipeManagerMixin {
 	 * @reason Replaces immutable maps for mutable maps instead.
 	 */
 	@Overwrite
-	private static Map<Identifier, Recipe<?>> m_npnaebpp(Map.Entry<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> entry) {
+	private static Map<Identifier, Recipe<?>> method_20703(Map.Entry<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> entry) {
 		// This is cursed. Do not look.
 		return ImmutableMapBuilderUtil.specialBuild(entry.getValue());
 	}

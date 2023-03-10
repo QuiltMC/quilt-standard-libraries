@@ -45,9 +45,9 @@ abstract class MouseMixin {
 	@Unique
 	private Double quilt$scrollDistanceX;
 
-	// Synthetic method m_jzgvmppg([ZDDI)V -> lambda in Screen.wrapScreenError in Mouse.onMouseButton
+	// Synthetic lambda in Screen.wrapScreenError in Mouse.onMouseButton
 	@Inject(
-			method = "m_jzgvmppg([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
+			method = "method_1611([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z"
@@ -75,9 +75,9 @@ abstract class MouseMixin {
 		ScreenMouseEvents.BEFORE_MOUSE_CLICK.invoker().beforeMouseClick(thisRef.quilt$currentScreen, mouseX, mouseY, button);
 	}
 
-	// Synthetic method m_jzgvmppg([ZDDI)V -> lambda in Screen.wrapScreenError in Mouse.onMouseButton
+	// Synthetic lambda in Screen.wrapScreenError in Mouse.onMouseButton
 	@Inject(
-			method = "m_jzgvmppg([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
+			method = "method_1611([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z",
@@ -96,9 +96,9 @@ abstract class MouseMixin {
 		thisRef.quilt$currentScreen = null;
 	}
 
-	// Synthetic method m_acizjdos([ZDDI)V -> lambda in Screen.wrapScreenError in Mouse.onMouseButton
+	// Synthetic lambda in Screen.wrapScreenError in Mouse.onMouseButton
 	@Inject(
-			method = "m_acizjdos([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
+			method = "method_1605([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z"
@@ -127,9 +127,9 @@ abstract class MouseMixin {
 		ScreenMouseEvents.BEFORE_MOUSE_RELEASE.invoker().beforeMouseRelease(thisRef.quilt$currentScreen, mouseX, mouseY, button);
 	}
 
-	// Synthetic method m_acizjdos([ZDDI)V -> lambda in Screen.wrapScreenError in Mouse.onMouseButton
+	// Synthetic lambda in Screen.wrapScreenError in Mouse.onMouseButton
 	@Inject(
-			method = "m_acizjdos([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
+			method = "method_1605([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z",

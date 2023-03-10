@@ -63,7 +63,7 @@ public abstract class IntegratedServerLoaderMixin {
 	private static final TriState EXPERIMENTAL_SCREEN_OVERRIDE = TriState.fromProperty("quilt.resource_loader.experimental_screen_override");
 
 	@Inject(
-			method = "m_ocpkzrtb",
+			method = "method_45694",
 			at = @At("HEAD")
 	)
 	private <D, R> void onStartDataPackLoad(WorldLoader.PackConfig packConfig, WorldLoader.LoadContextSupplier<D> loadContextSupplier,
@@ -72,7 +72,7 @@ public abstract class IntegratedServerLoaderMixin {
 	}
 
 	@Inject(
-			method = "m_ocpkzrtb",
+			method = "method_45694",
 			at = @At("RETURN")
 	)
 	private <D, R> void onEndDataPackLoad(WorldLoader.PackConfig packConfig, WorldLoader.LoadContextSupplier<D> loadContextSupplier,
@@ -84,7 +84,7 @@ public abstract class IntegratedServerLoaderMixin {
 
 	@Dynamic
 	@Inject(
-			method = "m_weunchkk(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/registry/LayeredRegistryManager;Lnet/minecraft/server/integrated/IntegratedServerLoader$C_tattaqxb;)Lcom/mojang/datafixers/util/Pair;",
+			method = "method_45695(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/registry/LayeredRegistryManager;Lnet/minecraft/server/integrated/IntegratedServerLoader$C_tattaqxb;)Lcom/mojang/datafixers/util/Pair;",
 			at = @At("HEAD")
 	)
 	private static void onEndDataPackLoad(AutoCloseableResourceManager resourceManager, ServerReloadableResources resources,
@@ -115,7 +115,7 @@ public abstract class IntegratedServerLoaderMixin {
 	private void onBackupExperimentalWarning(Screen parentScreen, String worldName, boolean safeMode, boolean requireBackup, CallbackInfo ci,
 			WorldSaveStorage.Session session, ResourcePackManager resourcePackManager, WorldStem worldStem) {
 		if (EXPERIMENTAL_SCREEN_OVERRIDE.toBooleanOrElse(true)
-				&& !worldStem.saveProperties().m_ycrrmmel().m_kmrxtmbu()
+				&& !worldStem.saveProperties().method_28057().hasLegacyCustomOptions()
 				&& !FeatureFlags.containsDefault(worldStem.saveProperties().getEnabledFlags())) {
 			worldStem.close();
 			close(session, worldName);

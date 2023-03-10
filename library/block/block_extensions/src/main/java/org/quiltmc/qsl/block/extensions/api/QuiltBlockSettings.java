@@ -255,8 +255,9 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	}
 
 	@Override
-	public QuiltBlockSettings m_edlblpmg(AbstractBlock.OffsetType offsetType) {
-		super.m_edlblpmg(offsetType);
+	public QuiltBlockSettings method_49229(AbstractBlock.OffsetType offsetType) {
+		super.method_49229(offsetType);
+
 		return this;
 	}
 
