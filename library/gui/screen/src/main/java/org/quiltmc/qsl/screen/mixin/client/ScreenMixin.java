@@ -73,18 +73,7 @@ abstract class ScreenMixin implements QuiltScreen {
 	private ButtonList quilt$quiltButtons = null;
 
 	@Inject(
-			method = "init(Lnet/minecraft/client/MinecraftClient;II)V",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/client/gui/screen/Screen;init()V"
-			)
-	)
-	private void quilt$beforeInitScreen(MinecraftClient client, int width, int height, CallbackInfo ci) {
-		ScreenEvents.BEFORE_INIT.invoker().beforeInit((Screen) (Object) this, !this.field_42156);
-	}
-
-	@Inject(
-			method = "clearAndInit",
+			method = {"init(Lnet/minecraft/client/MinecraftClient;II)V", "clearAndInit"},
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/screen/Screen;init()V"
@@ -95,19 +84,7 @@ abstract class ScreenMixin implements QuiltScreen {
 	}
 
 	@Inject(
-			method = "init(Lnet/minecraft/client/MinecraftClient;II)V",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/client/gui/screen/Screen;init()V",
-					shift = At.Shift.AFTER
-			)
-	)
-	private void quilt$afterInitScreen(MinecraftClient client, int width, int height, CallbackInfo ci) {
-		ScreenEvents.AFTER_INIT.invoker().afterInit((Screen) (Object) this, !this.field_42156);
-	}
-
-	@Inject(
-			method = "clearAndInit",
+			method = {"init(Lnet/minecraft/client/MinecraftClient;II)V", "clearAndInit"},
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/screen/Screen;init()V",
