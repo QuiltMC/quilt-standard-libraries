@@ -39,7 +39,7 @@ import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 @Mixin(C_pzubrkmc.class)
 public abstract class C_pzubrkmcMixin extends ForgingScreenHandler {
 	@Shadow
-	private @Nullable LegacySmithingRecipe f_xqlemijg;
+	private @Nullable LegacySmithingRecipe field_41920;
 
 	@Shadow
 	public abstract void updateResult();
@@ -48,12 +48,12 @@ public abstract class C_pzubrkmcMixin extends ForgingScreenHandler {
 		super(screenHandlerType, i, playerInventory, screenHandlerContext);
 	}
 
-	@Redirect(method = "m_yukwcfqb", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"))
+	@Redirect(method = "method_48383", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"))
 	private void applyRecipeRemainder(ItemStack instance, int amount, int slot) {
 		RecipeRemainderLogicHandler.handleRemainderForScreenHandler(
 				this.getSlot(slot),
 				amount,
-				this.f_xqlemijg,
+				this.field_41920,
 				this.player
 		);
 	}

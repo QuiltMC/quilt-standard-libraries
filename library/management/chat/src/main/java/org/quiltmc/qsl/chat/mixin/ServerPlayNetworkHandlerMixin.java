@@ -66,16 +66,16 @@ public class ServerPlayNetworkHandlerMixin {
 	}
 
 	/*
-	 * Synthetic note: `m_yzfbjnlw(Lnet/minecraft/network/packet/c2s/play/ChatMessageC2SPacket;Ljava/util/Optional;)V`
+	 * Synthetic note: `method_44900(Lnet/minecraft/network/packet/c2s/play/ChatMessageC2SPacket;Ljava/util/Optional;)V`
 	 * is the lambda passed to `this.server.submit` in `onChatMessage`
 	 */
-	@Inject(method = "m_yzfbjnlw(Lnet/minecraft/network/packet/c2s/play/ChatMessageC2SPacket;Ljava/util/Optional;)V", at = @At(value = "HEAD"))
+	@Inject(method = "method_44900(Lnet/minecraft/network/packet/c2s/play/ChatMessageC2SPacket;Ljava/util/Optional;)V", at = @At(value = "HEAD"))
 	public void quilt$beforeInboundChatMessage(ChatMessageC2SPacket packet, Optional optional, CallbackInfo ci) {
 		var immutableMessage = new ChatC2SMessage(player, false, packet);
 		QuiltChatEvents.BEFORE_PROCESS.invoke(immutableMessage);
 	}
 
-	@Inject(method = "m_yzfbjnlw(Lnet/minecraft/network/packet/c2s/play/ChatMessageC2SPacket;Ljava/util/Optional;)V", at = @At(value = "RETURN"))
+	@Inject(method = "method_44900(Lnet/minecraft/network/packet/c2s/play/ChatMessageC2SPacket;Ljava/util/Optional;)V", at = @At(value = "RETURN"))
 	public void quilt$afterInboundChatMessage(ChatMessageC2SPacket packet, Optional optional, CallbackInfo ci) {
 		var immutableMessage = new ChatC2SMessage(player, false, packet);
 		QuiltChatEvents.AFTER_PROCESS.invoke(immutableMessage);

@@ -68,7 +68,7 @@ public class ClientBuiltinResourcePackProviderMixin {
 	// Synthetic method createBuiltinResourcePackProfile(ResourcePack)ResourcePackProfile
 	// Using an injector to wrap the previous return value.
 	@Inject(
-			method = "m_tlgeurms(Lnet/minecraft/resource/pack/ResourcePack;Ljava/lang/String;)Lnet/minecraft/resource/pack/ResourcePack;",
+			method = "method_45855(Lnet/minecraft/resource/pack/ResourcePack;Ljava/lang/String;)Lnet/minecraft/resource/pack/ResourcePack;",
 			at = @At("RETURN"),
 			cancellable = true
 	)

@@ -33,7 +33,7 @@ import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
 abstract class LivingEntityMixin {
 	@Inject(
 			method = "getPreferredEquipmentSlot",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/unmapped/C_kelbxmwg;m_obylxemf()Lnet/minecraft/entity/EquipmentSlot;"),
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/unmapped/C_kelbxmwg;method_7685()Lnet/minecraft/entity/EquipmentSlot;"),
 			cancellable = true
 	)
 	private static void onGetPreferredEquipmentSlot(ItemStack stack, CallbackInfoReturnable<EquipmentSlot> cir) {

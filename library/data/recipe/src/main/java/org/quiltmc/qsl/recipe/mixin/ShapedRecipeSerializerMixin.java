@@ -74,7 +74,7 @@ public abstract class ShapedRecipeSerializerMixin implements QuiltRecipeSerializ
 				pattern,
 				inputs,
 				null, null,
-				recipe.m_qqucltqj()
+				recipe.method_49188()
 		).toJson();
 	}
 }

@@ -54,7 +54,7 @@ public class TestServerMixin {
 			method = "create",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/util/Util;m_ccqxalmw(Ljava/util/function/Function;)Ljava/util/concurrent/CompletableFuture;"
+					target = "Lnet/minecraft/util/Util;method_43499(Ljava/util/function/Function;)Ljava/util/concurrent/CompletableFuture;"
 			)
 	)
 	private static void onStartReloadResources(Thread thread, WorldSaveStorage.Session session, ResourcePackManager packManager,

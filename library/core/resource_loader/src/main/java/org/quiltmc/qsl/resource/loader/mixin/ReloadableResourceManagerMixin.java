@@ -69,7 +69,7 @@ public class ReloadableResourceManagerMixin {
 	}
 
 	/**
-	 * private static synthetic m_qszormde(Ljava/util/List;)Ljava/lang/Object;
+	 * private static synthetic method_29491(Ljava/util/List;)Ljava/lang/Object;
 	 * Supplier lambda in beginMonitoredReload method.
 	 * <p>
 	 * This is an injector since Mixin doesn't like the Overwrite for some reason,
@@ -79,7 +79,7 @@ public class ReloadableResourceManagerMixin {
 	 * @reason To allow the printing of the full name of group resource packs.
 	 */
 	@Dynamic
-	@Inject(method = "m_qszormde(Ljava/util/List;)Ljava/lang/Object;", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "method_29491(Ljava/util/List;)Ljava/lang/Object;", at = @At("HEAD"), cancellable = true)
 	private static void getResourcePackNames(List<ResourcePack> packs, CallbackInfoReturnable<String> cir) {
 		cir.setReturnValue(packs.stream().map(pack -> {
 			if (pack instanceof GroupResourcePack groupResourcePack) {
