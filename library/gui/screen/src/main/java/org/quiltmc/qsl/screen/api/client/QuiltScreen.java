@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@
 package org.quiltmc.qsl.screen.api.client;
 
 import java.util.List;
+
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -63,8 +65,9 @@ public interface QuiltScreen {
 	}
 
 	/**
-	 * {@return the Minecraft client instance}
+	 * {@return the Minecraft client instance if it's present, or {@code null} otherwise}
 	 */
+	@Nullable
 	default MinecraftClient getClient() {
 		throw new UnsupportedOperationException("No implementation of getClient could be found.");
 	}

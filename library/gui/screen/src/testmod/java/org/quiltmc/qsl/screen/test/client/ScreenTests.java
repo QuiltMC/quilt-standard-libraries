@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.gui.screen.Screen;
@@ -43,13 +42,17 @@ public class ScreenTests implements ScreenEvents.AfterInit, ScreenEvents.AfterRe
 	private Screen actualScreen;
 
 	@Override
-	public void afterInit(Screen screen, MinecraftClient client, int scaledWidth, int scaledHeight) {
+	public void afterInit(Screen screen, boolean firstInit) {
+		if (firstInit) {
+			LOGGER.info(screen.getClass() + " has been initialized for the first time");
+		}
+
 		if (screen instanceof TitleScreen) {
 			final List<ClickableWidget> buttons = screen.getButtons();
 
 			buttons.add(
-					ButtonWidget.builder(Text.of("Hello world!!"), button -> LOGGER.info("Hello world!!"))
-							.positionAndSize((screen.width / 2) + 120, ((screen.height / 4) + 95), 70, 20)
+					ButtonWidget.builder(Text.of("Hello world!"), button -> LOGGER.info("Hello world!!"))
+							.positionAndSize((screen.width / 2) + 120, ((screen.height / 4) + 96), 70, 20)
 							.build()
 			);
 

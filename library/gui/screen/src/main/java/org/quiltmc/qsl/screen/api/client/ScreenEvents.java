@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,9 +51,9 @@ public final class ScreenEvents {
 	 *
 	 * @see ScreenEvents#AFTER_INIT
 	 */
-	public static final Event<BeforeInit> BEFORE_INIT = Event.create(BeforeInit.class, callbacks -> (client, screen, scaledWidth, scaledHeight) -> {
+	public static final Event<BeforeInit> BEFORE_INIT = Event.create(BeforeInit.class, callbacks -> (screen, firstInit) -> {
 		for (var callback : callbacks) {
-			callback.beforeInit(client, screen, scaledWidth, scaledHeight);
+			callback.beforeInit(screen, firstInit);
 		}
 	});
 
@@ -71,7 +71,7 @@ public final class ScreenEvents {
 	 * <p>
 	 * For example, to add a button to the title screen, the following code could be used:
 	 * <pre>{@code
-	 * ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
+	 * ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight, firstInit) -> {
 	 * 	if (screen instanceof TitleScreen) {
 	 * 		screen.getButtons().add(new ButtonWidget(...));
 	 *    }
@@ -80,9 +80,9 @@ public final class ScreenEvents {
 	 *
 	 * @see ScreenEvents#BEFORE_INIT
 	 */
-	public static final Event<AfterInit> AFTER_INIT = Event.create(AfterInit.class, callbacks -> (client, screen, scaledWidth, scaledHeight) -> {
+	public static final Event<AfterInit> AFTER_INIT = Event.create(AfterInit.class, callbacks -> (screen, firstInit) -> {
 		for (var callback : callbacks) {
-			callback.afterInit(client, screen, scaledWidth, scaledHeight);
+			callback.afterInit(screen, firstInit);
 		}
 	});
 
@@ -139,13 +139,13 @@ public final class ScreenEvents {
 	@ClientOnly
 	@FunctionalInterface
 	public interface BeforeInit extends ClientEventAwareListener {
-		void beforeInit(Screen screen, MinecraftClient client, int scaledWidth, int scaledHeight);
+		void beforeInit(Screen screen, boolean firstInit);
 	}
 
 	@ClientOnly
 	@FunctionalInterface
 	public interface AfterInit extends ClientEventAwareListener {
-		void afterInit(Screen screen, MinecraftClient client, int scaledWidth, int scaledHeight);
+		void afterInit(Screen screen, boolean firstInit);
 	}
 
 	@ClientOnly
@@ -178,6 +178,5 @@ public final class ScreenEvents {
 		void afterTick(Screen screen);
 	}
 
-	private ScreenEvents() {
-	}
+	private ScreenEvents() {}
 }
