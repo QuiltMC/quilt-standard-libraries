@@ -41,12 +41,10 @@ import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 @ClientOnly
 public final class ScreenEvents {
 	/**
-	 * An event that is called before {@link Screen#init(MinecraftClient, int, int) a screen is initialized} to its default state.
-	 * It should be noted that some methods in {@link QuiltScreen} such
-	 * as a screen's {@link QuiltScreen#getTextRenderer() text renderer} may not be initialized yet,
-	 * and as such their use is discouraged.
+	 * An event that is called before a screen is initialized to its default state.
 	 * <p>
-	 * This event indicates a screen has been resized, and therefore is being re-initialized.
+	 * This event indicates that a screen with no special handling of element repositioning has been resized, and therefore
+	 * is being re-initialized.
 	 * This event can also indicate that the previous screen has been changed.
 	 *
 	 * @see ScreenEvents#AFTER_INIT
@@ -58,7 +56,7 @@ public final class ScreenEvents {
 	});
 
 	/**
-	 * An event that is called after {@link Screen#init(MinecraftClient, int, int) a screen is initialized} to its default state.
+	 * An event that is called after a screen is initialized to its default state.
 	 * <p>
 	 * Typically, this event is used to modify a screen after the screen has been initialized.
 	 * Modifications such as changing sizes of buttons, removing buttons and adding/removing child elements to the screen
@@ -71,9 +69,9 @@ public final class ScreenEvents {
 	 * <p>
 	 * For example, to add a button to the title screen, the following code could be used:
 	 * <pre>{@code
-	 * ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight, firstInit) -> {
+	 * ScreenEvents.AFTER_INIT.register((screen, firstInit) -> {
 	 * 	if (screen instanceof TitleScreen) {
-	 * 		screen.getButtons().add(new ButtonWidget(...));
+	 * 		screen.getButtons().add(ButtonWidget.builder(...).build());
 	 *    }
 	 * });
 	 * }</pre>
