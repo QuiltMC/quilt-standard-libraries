@@ -67,7 +67,8 @@ public abstract class TheEndBiomeSourceMixin extends BiomeSource {
 	 */
 	@Inject(method = "<clinit>", at = @At("TAIL"))
 	private static void modifyCodec(CallbackInfo ci) {
-		CODEC = RecordCodecBuilder.create((instance) -> instance.group(RegistryOps.retrieveGetter(RegistryKeys.BIOME)).apply(instance, instance.stable(TheEndBiomeSource::method_46680)));
+		CODEC = RecordCodecBuilder.create((instance) ->
+			instance.group(RegistryOps.retrieveGetter(RegistryKeys.BIOME)).apply(instance, instance.stable(TheEndBiomeSource::method_46680)));
 	}
 
 	@Inject(method = "method_46680(Lnet/minecraft/registry/HolderProvider;)Lnet/minecraft/world/biome/source/TheEndBiomeSource;", at = @At("RETURN"))

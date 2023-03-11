@@ -36,7 +36,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 
 /**
- * Internal data for modding Vanilla's {@link C_xmtsvelx.C_jgklgqjr#f_kknfghtv}.
+ * Internal data for modding Vanilla's {@link C_xmtsvelx.C_jgklgqjr#field_24723}.
  */
 @ApiStatus.Internal
 public final class NetherBiomeData {

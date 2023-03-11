@@ -40,7 +40,7 @@ public abstract class MultiNoiseBiomeSourceMixin {
 
 	@Dynamic
 	@Inject(
-			method = "method_49503(Lnet/minecraft/registry/Holder;)Lnet/minecraft/world/biome/source/util/MultiNoiseUtil$ParameterRangeList;",
+			method = "method_49505(Lnet/minecraft/registry/Holder;)Lnet/minecraft/world/biome/source/util/MultiNoiseUtil$ParameterRangeList;",
 			at = @At("HEAD"),
 			cancellable = true
 	)

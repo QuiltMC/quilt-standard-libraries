@@ -69,7 +69,7 @@ public class ReloadableResourceManagerMixin {
 	}
 
 	/**
-	 * private static synthetic m_qszormde(Ljava/util/List;)Ljava/lang/Object;
+	 * private static synthetic method_29491(Ljava/util/List;)Ljava/lang/Object;
 	 * Supplier lambda in beginMonitoredReload method.
 	 * <p>
 	 * This is an injector since Mixin doesn't like the Overwrite for some reason,
