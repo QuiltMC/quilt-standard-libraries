@@ -51,7 +51,7 @@ public class ScreenTests implements ScreenEvents.AfterInit, ScreenEvents.AfterRe
 			final List<ClickableWidget> buttons = screen.getButtons();
 
 			buttons.add(
-					ButtonWidget.builder(Text.of("Hello world!"), button -> LOGGER.info("Hello world!!"))
+					ButtonWidget.builder(Text.of("Hello world!!"), button -> LOGGER.info("Hello world!!"))
 							.positionAndSize((screen.width / 2) + 120, ((screen.height / 4) + 96), 70, 20)
 							.build()
 			);
