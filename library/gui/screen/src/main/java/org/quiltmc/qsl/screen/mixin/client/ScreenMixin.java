@@ -63,6 +63,7 @@ abstract class ScreenMixin implements QuiltScreen {
 
 	@Shadow
 	private boolean field_42156;
+
 	@Shadow
 	protected ItemRenderer itemRenderer;
 
@@ -73,7 +74,7 @@ abstract class ScreenMixin implements QuiltScreen {
 	private ButtonList quilt$quiltButtons = null;
 
 	@Inject(
-			method = {"init(Lnet/minecraft/client/MinecraftClient;II)V", "clearAndInit"},
+			method = {"init(Lnet/minecraft/client/MinecraftClient;II)V", "clearAndInit()V"},
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/screen/Screen;init()V"
@@ -84,7 +85,7 @@ abstract class ScreenMixin implements QuiltScreen {
 	}
 
 	@Inject(
-			method = {"init(Lnet/minecraft/client/MinecraftClient;II)V", "clearAndInit"},
+			method = {"init(Lnet/minecraft/client/MinecraftClient;II)V", "clearAndInit()V"},
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/screen/Screen;init()V",
