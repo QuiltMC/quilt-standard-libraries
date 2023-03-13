@@ -80,7 +80,7 @@ abstract class ScreenMixin implements QuiltScreen {
 			)
 	)
 	private void quilt$beforeInitScreen(CallbackInfo ci) {
-		ScreenEvents.BEFORE_INIT.invoker().beforeInit((Screen) (Object) this, !this.field_42156);
+		ScreenEvents.BEFORE_INIT.invoker().beforeInit((Screen) (Object) this, this.client, !this.field_42156);
 	}
 
 	@Inject(
@@ -92,7 +92,7 @@ abstract class ScreenMixin implements QuiltScreen {
 			)
 	)
 	private void quilt$afterInitScreen(CallbackInfo ci) {
-		ScreenEvents.AFTER_INIT.invoker().afterInit((Screen) (Object) this, !this.field_42156);
+		ScreenEvents.AFTER_INIT.invoker().afterInit((Screen) (Object) this, this.client, !this.field_42156);
 	}
 
 	@Inject(method = "clearChildren", at = @At("TAIL"))
@@ -121,7 +121,6 @@ abstract class ScreenMixin implements QuiltScreen {
 	}
 
 	@Override
-	@Nullable
 	public MinecraftClient getClient() {
 		return this.client;
 	}

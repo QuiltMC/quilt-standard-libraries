@@ -19,8 +19,6 @@ package org.quiltmc.qsl.screen.api.client;
 
 import java.util.List;
 
-import org.jetbrains.annotations.Nullable;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
@@ -65,9 +63,8 @@ public interface QuiltScreen {
 	}
 
 	/**
-	 * {@return the Minecraft client instance if it's present, or {@code null} otherwise}
+	 * {@return the Minecraft client instance}
 	 */
-	@Nullable
 	default MinecraftClient getClient() {
 		throw new UnsupportedOperationException("No implementation of getClient could be found.");
 	}

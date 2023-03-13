@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.gui.screen.Screen;
@@ -42,7 +43,7 @@ public class ScreenTests implements ScreenEvents.AfterInit, ScreenEvents.AfterRe
 	private Screen actualScreen;
 
 	@Override
-	public void afterInit(Screen screen, boolean firstInit) {
+	public void afterInit(Screen screen, MinecraftClient client, boolean firstInit) {
 		if (firstInit) {
 			LOGGER.info(screen.getClass() + " has been initialized for the first time");
 		}

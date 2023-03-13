@@ -49,9 +49,9 @@ public final class ScreenEvents {
 	 *
 	 * @see ScreenEvents#AFTER_INIT
 	 */
-	public static final Event<BeforeInit> BEFORE_INIT = Event.create(BeforeInit.class, callbacks -> (screen, firstInit) -> {
+	public static final Event<BeforeInit> BEFORE_INIT = Event.create(BeforeInit.class, callbacks -> (screen, client, firstInit) -> {
 		for (var callback : callbacks) {
-			callback.beforeInit(screen, firstInit);
+			callback.beforeInit(screen, client, firstInit);
 		}
 	});
 
@@ -69,7 +69,7 @@ public final class ScreenEvents {
 	 * <p>
 	 * For example, to add a button to the title screen, the following code could be used:
 	 * <pre>{@code
-	 * ScreenEvents.AFTER_INIT.register((screen, firstInit) -> {
+	 * ScreenEvents.AFTER_INIT.register((screen, client, firstInit) -> {
 	 * 	if (screen instanceof TitleScreen) {
 	 * 		screen.getButtons().add(ButtonWidget.builder(...).build());
 	 *    }
@@ -78,9 +78,9 @@ public final class ScreenEvents {
 	 *
 	 * @see ScreenEvents#BEFORE_INIT
 	 */
-	public static final Event<AfterInit> AFTER_INIT = Event.create(AfterInit.class, callbacks -> (screen, firstInit) -> {
+	public static final Event<AfterInit> AFTER_INIT = Event.create(AfterInit.class, callbacks -> (screen, client, firstInit) -> {
 		for (var callback : callbacks) {
-			callback.afterInit(screen, firstInit);
+			callback.afterInit(screen, client, firstInit);
 		}
 	});
 
@@ -137,13 +137,13 @@ public final class ScreenEvents {
 	@ClientOnly
 	@FunctionalInterface
 	public interface BeforeInit extends ClientEventAwareListener {
-		void beforeInit(Screen screen, boolean firstInit);
+		void beforeInit(Screen screen, MinecraftClient client, boolean firstInit);
 	}
 
 	@ClientOnly
 	@FunctionalInterface
 	public interface AfterInit extends ClientEventAwareListener {
-		void afterInit(Screen screen, boolean firstInit);
+		void afterInit(Screen screen, MinecraftClient client, boolean firstInit);
 	}
 
 	@ClientOnly
