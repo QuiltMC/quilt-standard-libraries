@@ -190,7 +190,7 @@ public class ClientPlayNetworkHandlerMixin {
 			method = "onProfileIndependentMessage",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/MinecraftClient;method_44714()Lnet/minecraft/client/gui/ClientChatListener;"
+					target = "Lnet/minecraft/client/MinecraftClient;getChatListener()Lnet/minecraft/client/gui/ClientChatListener;"
 			)
 	)
 	public void quilt$beforeInboundProfileIndependentMessage(ProfileIndependentMessageS2CPacket packet, CallbackInfo ci) {

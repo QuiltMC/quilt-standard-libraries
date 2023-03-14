@@ -62,19 +62,13 @@ public abstract class IntegratedServerLoaderMixin {
 	@Unique
 	private static final TriState EXPERIMENTAL_SCREEN_OVERRIDE = TriState.fromProperty("quilt.resource_loader.experimental_screen_override");
 
-	@Inject(
-			method = "method_45694",
-			at = @At("HEAD")
-	)
+	@Inject(method = "method_45694", at = @At("HEAD"))
 	private <D, R> void onStartDataPackLoad(WorldLoader.PackConfig packConfig, WorldLoader.LoadContextSupplier<D> loadContextSupplier,
 			WorldLoader.ApplierFactory<D, R> applierFactory, CallbackInfoReturnable<R> cir) {
 		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null);
 	}
 
-	@Inject(
-			method = "method_45694",
-			at = @At("RETURN")
-	)
+	@Inject(method = "method_45694", at = @At("RETURN"))
 	private <D, R> void onEndDataPackLoad(WorldLoader.PackConfig packConfig, WorldLoader.LoadContextSupplier<D> loadContextSupplier,
 			WorldLoader.ApplierFactory<D, R> applierFactory, CallbackInfoReturnable<R> cir) {
 		if (cir.getReturnValue() instanceof WorldStem worldStem) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,7 +60,9 @@ public class EnchantmentScreenHandlerMixin {
 				var blockPos = pos.add(offset);
 				var state = world.getBlockState(blockPos);
 				var block = state.getBlock();
-				count += BlockContentRegistries.ENCHANTING_BOOSTERS.get(block).map(booster -> booster.getEnchantingBoost(world, state, blockPos)).orElse(0.0F);
+				count += BlockContentRegistries.ENCHANTING_BOOSTERS.get(block)
+						.map(booster -> booster.getEnchantingBoost(world, state, blockPos))
+						.orElse(0.0F);
 			}
 		}
 
