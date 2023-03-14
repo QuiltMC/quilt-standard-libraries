@@ -55,10 +55,7 @@ public class ReloadableResourceManagerMixin {
 	@Shadow
 	private AutoCloseableResourceManager resources;
 
-	@Inject(
-			method = "reload",
-			at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;isDebugEnabled()Z", remap = false)
-	)
+	@Inject(method = "reload", at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;isDebugEnabled()Z", remap = false))
 	private void reload(Executor prepareExecutor, Executor applyExecutor, CompletableFuture<Unit> initialStage,
 			List<ResourcePack> packs, CallbackInfoReturnable<ResourceReload> info) {
 		if (this.resources instanceof QuiltMultiPackResourceManagerHooks hooks) {
