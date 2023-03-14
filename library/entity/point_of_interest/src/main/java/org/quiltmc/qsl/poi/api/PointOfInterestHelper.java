@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.points_of_interest.api;
+package org.quiltmc.qsl.poi.api;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,7 +36,7 @@ import net.minecraft.world.poi.PointOfInterest;
 import net.minecraft.world.poi.PointOfInterestType;
 import net.minecraft.world.poi.PointOfInterestTypes;
 
-import org.quiltmc.qsl.points_of_interest.impl.PointOfInterestTypeExtensions;
+import org.quiltmc.qsl.poi.impl.PointOfInterestTypeExtensions;
 
 /**
  * This class provides utilities to create a {@link PointOfInterestType}.

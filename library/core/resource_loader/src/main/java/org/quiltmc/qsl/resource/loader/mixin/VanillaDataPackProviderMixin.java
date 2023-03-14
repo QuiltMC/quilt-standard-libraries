@@ -32,7 +32,7 @@ public class VanillaDataPackProviderMixin {
 	// Synthetic method createBuiltinResourcePackProfile(ResourcePack)ResourcePackProfile -> lambda in ResourcePackProfile.of
 	// Using an injector to wrap the previous return value.
 	@Inject(
-			method = "m_kvlgyntq(Lnet/minecraft/resource/pack/ResourcePack;Ljava/lang/String;)Lnet/minecraft/resource/pack/ResourcePack;",
+			method = "method_45284(Lnet/minecraft/resource/pack/ResourcePack;Ljava/lang/String;)Lnet/minecraft/resource/pack/ResourcePack;",
 			at = @At("RETURN"),
 			cancellable = true
 	)

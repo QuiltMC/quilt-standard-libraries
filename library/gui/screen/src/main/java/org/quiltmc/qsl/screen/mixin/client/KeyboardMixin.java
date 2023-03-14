@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ abstract class KeyboardMixin {
 	// lambda in Screen.wrapScreenError in Keyboard.onKey
 	@SuppressWarnings("target")
 	@Inject(
-			method = "m_dxwwtbqk(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V",
+			method = "method_1454(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/screen/Screen;keyPressed(III)Z"
@@ -55,7 +55,7 @@ abstract class KeyboardMixin {
 	// lambda in Screen.wrapScreenError in Keyboard.onKey
 	@SuppressWarnings("target")
 	@Inject(
-			method = "m_dxwwtbqk(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V",
+			method = "method_1454(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/screen/Screen;keyPressed(III)Z",
@@ -69,7 +69,7 @@ abstract class KeyboardMixin {
 	// lambda in Screen.wrapScreenError in Keyboard.onKey
 	@SuppressWarnings("target")
 	@Inject(
-			method = "m_dxwwtbqk(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V",
+			method = "method_1454(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/screen/Screen;keyReleased(III)Z"
@@ -89,7 +89,7 @@ abstract class KeyboardMixin {
 	// lambda in Screen.wrapScreenError in Keyboard.onKey
 	@SuppressWarnings("target")
 	@Inject(
-			method = "m_dxwwtbqk(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V",
+			method = "method_1454(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/screen/Screen;keyReleased(III)Z",

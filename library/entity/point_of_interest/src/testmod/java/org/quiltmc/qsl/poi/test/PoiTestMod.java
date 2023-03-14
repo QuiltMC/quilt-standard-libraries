@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.points_of_interest.test;
+package org.quiltmc.qsl.poi.test;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.block.LeavesBlock;
@@ -23,7 +23,7 @@ import net.minecraft.world.poi.PointOfInterestTypes;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-import org.quiltmc.qsl.points_of_interest.api.PointOfInterestHelper;
+import org.quiltmc.qsl.poi.api.PointOfInterestHelper;
 
 public class PoiTestMod implements ModInitializer {
 	@Override
@@ -34,6 +34,6 @@ public class PoiTestMod implements ModInitializer {
 		PointOfInterestHelper.setBlocks(PointOfInterestTypes.LEATHERWORKER, Blocks.OAK_TRAPDOOR);
 		PointOfInterestHelper.addBlocks(PointOfInterestTypes.FISHERMAN, Blocks.CAULDRON);
 
-		PointOfInterestHelper.register(new Identifier("quilt_points_of_interest_testmod", "test_poi"), 1, 1, Blocks.DIAMOND_BLOCK);
+		PointOfInterestHelper.register(new Identifier("quilt_point_of_interest_testmod", "test_poi"), 1, 1, Blocks.DIAMOND_BLOCK);
 	}
 }

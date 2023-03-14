@@ -36,13 +36,13 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 
 /**
- * Internal data for modding Vanilla's {@link C_xmtsvelx.C_jgklgqjr#f_kknfghtv}.
+ * Internal data for modding Vanilla's {@link C_xmtsvelx.C_jgklgqjr#field_24723}.
  */
 @ApiStatus.Internal
 public final class NetherBiomeData {
 	// The cached sets of vanilla biomes that would generate from Vanilla's nether biome preset.
-	private static final Set<RegistryKey<Biome>> VANILLA_NETHER_BIOMES = C_xmtsvelx.C_jgklgqjr.f_kknfghtv
-			.m_vzbcawto()
+	private static final Set<RegistryKey<Biome>> VANILLA_NETHER_BIOMES = C_xmtsvelx.C_jgklgqjr.field_24723
+			.method_49514()
 			.collect(Collectors.toSet());
 
 	// The cached sets of all biomes, included modded ones, that would generate from Vanilla's nether biome preset.

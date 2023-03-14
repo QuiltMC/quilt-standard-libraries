@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "org.quiltmc.qsl.points_of_interest.mixin",
+  "package": "org.quiltmc.qsl.poi.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "PointOfInterestTypeMixin"

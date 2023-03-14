@@ -42,6 +42,7 @@ import org.quiltmc.qsl.entity.networking.test.TrackedDataTestInitializer;
  */
 @Mixin(CreeperEntity.class)
 public class CreeperEntityMixin extends HostileEntity {
+	@SuppressWarnings("WrongEntityDataParameterClass")
 	private static final TrackedData<ParticleEffect> PARTICLE = DataTracker.registerData(CreeperEntity.class, TrackedDataTestInitializer.PARTICLE_DATA_HANDLER);
 
 	protected CreeperEntityMixin(EntityType<? extends HostileEntity> entityType, World world) {
@@ -59,9 +60,9 @@ public class CreeperEntityMixin extends HostileEntity {
 			this.world.addParticle(this.dataTracker.get(PARTICLE), this.getX(), this.getY() + 2, this.getZ(), 0, 0, 0);
 		} else {
 			if (player.getStackInHand(hand).getItem() == Items.STICK) {
-				this.dataTracker.set(PARTICLE, ParticleTypes.CRIT);
+				this.dataTracker.method_12778(PARTICLE, ParticleTypes.CRIT);
 			} else if (player.getStackInHand(hand).getItem() == Items.TNT) {
-				this.dataTracker.set(PARTICLE, ParticleTypes.SMOKE);
+				this.dataTracker.method_12778(PARTICLE, ParticleTypes.SMOKE);
 			}
 		}
 	}

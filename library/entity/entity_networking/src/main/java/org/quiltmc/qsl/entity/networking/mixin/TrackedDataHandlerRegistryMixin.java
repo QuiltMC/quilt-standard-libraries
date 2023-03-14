@@ -103,7 +103,7 @@ public class TrackedDataHandlerRegistryMixin {
 			id = "optional_uuid";
 		} else if (handler == TrackedDataHandlerRegistry.OPTIONAL_BLOCK_STATE) {
 			id = "block_state";
-		} else if (handler == TrackedDataHandlerRegistry.f_huqcfqmn) {
+		} else if (handler == TrackedDataHandlerRegistry.field_42236) {
 			id = "optional_block_state";
 		} else if (handler == TrackedDataHandlerRegistry.TAG_COMPOUND) {
 			id = "tag_compound";
@@ -123,11 +123,11 @@ public class TrackedDataHandlerRegistryMixin {
 			id = "optional_global_position";
 		} else if (handler == TrackedDataHandlerRegistry.PAINTING_VARIANT) {
 			id = "painting_variant";
-		} else if (handler == TrackedDataHandlerRegistry.f_abgbckne) {
+		} else if (handler == TrackedDataHandlerRegistry.field_42543) {
 			id = "sniffer_state";
-		} else if (handler == TrackedDataHandlerRegistry.f_teokfohv) {
+		} else if (handler == TrackedDataHandlerRegistry.field_42237) {
 			id = "vector3";
-		} else if (handler == TrackedDataHandlerRegistry.f_kyenxrse) {
+		} else if (handler == TrackedDataHandlerRegistry.field_42235) {
 			id = "quaternion";
 		} else {
 			if (!quilt$pastStaticInit && QuiltLoader.isDevelopmentEnvironment()) {

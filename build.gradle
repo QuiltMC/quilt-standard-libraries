@@ -87,8 +87,7 @@ task fatJavadoc(type: Javadoc) {
 				// So what do we do? We simply removed the Vanilla JAR and hope that the correct transformed JAR shows up first.
 				// The proper fix is to get the root project to generate a new MC JAR that contains all the transitive transformations of the modules
 				// applied and pass that to the fat javadoc task instead.
-						.filter { !it.name.startsWith("minecraft-merged-named") }
-						.filter { !it.name.startsWith("minecraft-project-@block@block_content_registry") }
+						.filter { !it.name.startsWith("minecraft") || it.name.contains("@block@block_entity") }
 			}
 		}
 	}

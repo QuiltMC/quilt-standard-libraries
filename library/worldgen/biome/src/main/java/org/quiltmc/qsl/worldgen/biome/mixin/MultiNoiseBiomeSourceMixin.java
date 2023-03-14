@@ -40,7 +40,7 @@ public abstract class MultiNoiseBiomeSourceMixin {
 
 	@Dynamic
 	@Inject(
-			method = "m_uwqbagrp(Lnet/minecraft/registry/Holder;)Lnet/minecraft/world/biome/source/util/MultiNoiseUtil$ParameterRangeList;",
+			method = "method_49505(Lnet/minecraft/registry/Holder;)Lnet/minecraft/world/biome/source/util/MultiNoiseUtil$ParameterRangeList;",
 			at = @At("HEAD"),
 			cancellable = true
 	)
@@ -49,7 +49,7 @@ public abstract class MultiNoiseBiomeSourceMixin {
 		if (C_dbdhjhat.NETHER.equals(holder.getKey().orElseThrow())) {
 			if (quilt$CACHED_PARAMETER_RANGE_LIST == null) {
 				MultiNoiseBiomeSourceMixin.quilt$CACHED_PARAMETER_RANGE_LIST = NetherBiomeData.withModdedBiomeEntries(
-						holder.value().m_wcmkhedg(),
+						holder.value().method_49507(),
 						((C_xmtsvelxHook) holder.value()).getHolderProvider()::getHolderOrThrow
 				);
 			}

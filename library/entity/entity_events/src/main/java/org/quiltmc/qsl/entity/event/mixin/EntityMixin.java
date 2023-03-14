@@ -47,7 +47,11 @@ public abstract class EntityMixin {
 		}
 	}
 
-	@Inject(method = "m_zzzrellt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setRemoved(Lnet/minecraft/entity/Entity$RemovalReason;)V"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
+	@Inject(
+			method = "method_48105",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setRemoved(Lnet/minecraft/entity/Entity$RemovalReason;)V"),
+			locals = LocalCapture.CAPTURE_FAILEXCEPTION
+	)
 	private void quilt$afterWorldChangedByTeleport(ServerWorld destination, double x, double y, double z, Set<C_cxxvitxd> relativeMovements, float yaw,
 												   float pitch, CallbackInfoReturnable<Boolean> ci, float i, Entity newEntity) {
 		EntityWorldChangeEvents.AFTER_ENTITY_WORLD_CHANGE.invoker().afterWorldChange((Entity) (Object) this, newEntity, ((ServerWorld) this.world), destination);

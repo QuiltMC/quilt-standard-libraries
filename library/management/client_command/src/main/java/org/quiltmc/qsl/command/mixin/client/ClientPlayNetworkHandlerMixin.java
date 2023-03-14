@@ -79,14 +79,14 @@ abstract class ClientPlayNetworkHandlerMixin {
 		);
 	}
 
-	@Inject(method = "m_btbbdyot", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "method_45731", at = @At("HEAD"), cancellable = true)
 	private void onSendCommand(String command, CallbackInfoReturnable<Boolean> cir) {
 		if (ClientCommandInternals.executeCommand(command, true)) {
 			cir.setReturnValue(true);
 		}
 	}
 
-	@Inject(method = "m_gkszsvqi", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "method_45730", at = @At("HEAD"), cancellable = true)
 	private void onSendCommand(String command, CallbackInfo ci) {
 		if (ClientCommandInternals.executeCommand(command, true)) {
 			ci.cancel();
