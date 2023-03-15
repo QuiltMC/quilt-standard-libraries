@@ -211,7 +211,7 @@ public class ClientPlayNetworkHandlerMixin {
 		QuiltChatEvents.AFTER_PROCESS.invoke(message);
 	}
 
-	@ModifyVariable(method = "method_45729", at = @At("HEAD"), argsOnly = true)
+	@ModifyVariable(method = "sendChatMessage", at = @At("HEAD"), argsOnly = true)
 	public String quilt$modifyOutboundRawChatMessage(String string) {
 		// Not sure *why* this would be null but IDEA is complaining, so, safety first?
 		if (client.player == null) {
@@ -222,7 +222,7 @@ public class ClientPlayNetworkHandlerMixin {
 		return ((RawChatC2SMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message)).serialized();
 	}
 
-	@Inject(method = "method_45729", at = @At(value = "HEAD"), cancellable = true)
+	@Inject(method = "sendChatMessage", at = @At(value = "HEAD"), cancellable = true)
 	public void quilt$cancelAndBeforeOutboundRawChatMessage(String string, CallbackInfo ci) {
 		if (client.player == null) return;
 
@@ -236,7 +236,7 @@ public class ClientPlayNetworkHandlerMixin {
 		QuiltChatEvents.BEFORE_PROCESS.invoke(message);
 	}
 
-	@Inject(method = "method_45729", at = @At(value = "TAIL"))
+	@Inject(method = "sendChatMessage", at = @At(value = "TAIL"))
 	public void quilt$afterOutboundRawChatMessage(String string, CallbackInfo ci) {
 		if (client.player == null) return;
 
@@ -245,7 +245,7 @@ public class ClientPlayNetworkHandlerMixin {
 	}
 
 	@Redirect(
-			method = "method_45729",
+			method = "sendChatMessage",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/packet/Packet;)V"

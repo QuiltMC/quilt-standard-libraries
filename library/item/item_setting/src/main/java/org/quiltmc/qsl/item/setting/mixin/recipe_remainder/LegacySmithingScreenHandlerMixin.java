@@ -29,22 +29,22 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.LegacySmithingRecipe;
 import net.minecraft.screen.ForgingScreenHandler;
+import net.minecraft.screen.LegacySmithingScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.unmapped.C_pzubrkmc;
 
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 
 @SuppressWarnings({"deprecated", "removal"})
-@Mixin(C_pzubrkmc.class)
-public abstract class C_pzubrkmcMixin extends ForgingScreenHandler {
+@Mixin(LegacySmithingScreenHandler.class)
+public abstract class LegacySmithingScreenHandlerMixin extends ForgingScreenHandler {
 	@Shadow
 	private @Nullable LegacySmithingRecipe field_41920;
 
 	@Shadow
 	public abstract void updateResult();
 
-	public C_pzubrkmcMixin(@Nullable ScreenHandlerType<?> screenHandlerType, int i, PlayerInventory playerInventory, ScreenHandlerContext screenHandlerContext) {
+	public LegacySmithingScreenHandlerMixin(@Nullable ScreenHandlerType<?> screenHandlerType, int i, PlayerInventory playerInventory, ScreenHandlerContext screenHandlerContext) {
 		super(screenHandlerType, i, playerInventory, screenHandlerContext);
 	}
 
