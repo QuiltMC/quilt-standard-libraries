@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import net.minecraft.client.registry.ClientRegistryLayer;
 import net.minecraft.command.CommandBuildContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.feature_flags.FeatureFlagBitSet;
-import net.minecraft.network.packet.s2c.play.CommandTreeS2CPacket;
+import net.minecraft.network.packet.s2c.play.CommandTreeUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import net.minecraft.registry.LayeredRegistryManager;
 import net.minecraft.server.command.CommandManager;
@@ -70,8 +70,8 @@ abstract class ClientPlayNetworkHandlerMixin {
 	}
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
-	@Inject(method = "onCommandTree", at = @At("RETURN"))
-	private void onOnCommandTree(CommandTreeS2CPacket packet, CallbackInfo info) {
+	@Inject(method = "onCommandTreeUpdate", at = @At("RETURN"))
+	private void onOnCommandTree(CommandTreeUpdateS2CPacket packet, CallbackInfo info) {
 		ClientCommandInternals.updateCommands(null,
 				(CommandDispatcher) this.commandDispatcher, this.commandSource,
 				this.client.isIntegratedServerRunning() ? CommandManager.RegistrationEnvironment.INTEGRATED
@@ -79,14 +79,14 @@ abstract class ClientPlayNetworkHandlerMixin {
 		);
 	}
 
-	@Inject(method = "m_btbbdyot", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "sendCommand", at = @At("HEAD"), cancellable = true)
 	private void onSendCommand(String command, CallbackInfoReturnable<Boolean> cir) {
 		if (ClientCommandInternals.executeCommand(command, true)) {
 			cir.setReturnValue(true);
 		}
 	}
 
-	@Inject(method = "m_gkszsvqi", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "method_45730", at = @At("HEAD"), cancellable = true)
 	private void onSendCommand(String command, CallbackInfo ci) {
 		if (ClientCommandInternals.executeCommand(command, true)) {
 			ci.cancel();

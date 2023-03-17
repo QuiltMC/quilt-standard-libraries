@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.recipe.api.builder;
 
-
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 
 import net.minecraft.item.ItemStack;

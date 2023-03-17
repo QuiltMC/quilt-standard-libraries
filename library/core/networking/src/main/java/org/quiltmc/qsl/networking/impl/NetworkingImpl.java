@@ -35,6 +35,7 @@ import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.ServerLoginConnectionEvents;
 import org.quiltmc.qsl.networking.api.ServerLoginNetworking;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
+import org.quiltmc.qsl.networking.mixin.accessor.ServerLoginNetworkHandlerAccessor;
 
 @ApiStatus.Internal
 public final class NetworkingImpl {
@@ -99,7 +100,7 @@ public final class NetworkingImpl {
 			ids.add(buf.readIdentifier());
 		}
 
-		((ChannelInfoHolder) handler.getConnection()).getPendingChannelsNames().addAll(ids);
+		((ChannelInfoHolder) ((ServerLoginNetworkHandlerAccessor) handler).getConnection()).getPendingChannelsNames().addAll(ids);
 		NetworkingImpl.LOGGER.debug("Received accepted channels from the client for \"{}\"", handler.getConnectionInfo());
 	}
 }

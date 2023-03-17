@@ -28,8 +28,10 @@ import org.quiltmc.qsl.recipe.api.serializer.QuiltRecipeSerializer;
 public abstract class CuttingRecipeSerializerMixin<T extends CuttingRecipe> implements QuiltRecipeSerializer<T> {
 	@Override
 	public JsonObject toJson(T recipe) {
+		var result = recipe.getResult(null);
+
 		return new SingleItemRecipeJsonFactory.SingleItemRecipeJsonProvider(recipe.getId(), this, recipe.getGroup(),
-				recipe.getIngredients().get(0), recipe.getOutput().getItem(), recipe.getOutput().getCount(),
+				recipe.getIngredients().get(0), result.getItem(), result.getCount(),
 				null, null)
 				.toJson();
 	}

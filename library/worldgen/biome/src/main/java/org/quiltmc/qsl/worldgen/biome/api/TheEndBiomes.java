@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package org.quiltmc.qsl.worldgen.biome.api;
 
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
+import net.minecraft.world.biome.Biomes;
 
 import org.quiltmc.qsl.worldgen.biome.impl.TheEndBiomeData;
 
@@ -27,8 +27,7 @@ import org.quiltmc.qsl.worldgen.biome.impl.TheEndBiomeData;
  * API that exposes some internals of the minecraft default biome source for The End.
  */
 public final class TheEndBiomes {
-	private TheEndBiomes() {
-	}
+	private TheEndBiomes() {}
 
 	/**
 	 * Adds the biome as a main end island biome with the specified weight; note that this includes the main island
@@ -42,7 +41,7 @@ public final class TheEndBiomes {
 	 *               Vanilla biomes have a weight of 1.0
 	 */
 	public static void addMainIslandBiome(RegistryKey<Biome> biome, double weight) {
-		TheEndBiomeData.addEndBiomeReplacement(BiomeKeys.THE_END, biome, weight);
+		TheEndBiomeData.addEndBiomeReplacement(Biomes.THE_END, biome, weight);
 	}
 
 	/**
@@ -55,7 +54,7 @@ public final class TheEndBiomes {
 	 *               The vanilla biome has a weight of 1.0.
 	 */
 	public static void addHighlandsBiome(RegistryKey<Biome> biome, double weight) {
-		TheEndBiomeData.addEndBiomeReplacement(BiomeKeys.END_HIGHLANDS, biome, weight);
+		TheEndBiomeData.addEndBiomeReplacement(Biomes.END_HIGHLANDS, biome, weight);
 	}
 
 	/**
@@ -68,7 +67,7 @@ public final class TheEndBiomes {
 	 *               The vanilla biome has a weight of 1.0.
 	 */
 	public static void addSmallIslandsBiome(RegistryKey<Biome> biome, double weight) {
-		TheEndBiomeData.addEndBiomeReplacement(BiomeKeys.SMALL_END_ISLANDS, biome, weight);
+		TheEndBiomeData.addEndBiomeReplacement(Biomes.SMALL_END_ISLANDS, biome, weight);
 	}
 
 	/**

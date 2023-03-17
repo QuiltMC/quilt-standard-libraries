@@ -24,8 +24,8 @@ import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.util.Identifier;
 
@@ -36,6 +36,7 @@ import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 import org.quiltmc.qsl.networking.impl.AbstractChanneledNetworkAddon;
 import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
 import org.quiltmc.qsl.networking.impl.NetworkingImpl;
+import org.quiltmc.qsl.networking.mixin.accessor.ClientPlayNetworkHandlerAccessor;
 
 @ApiStatus.Internal
 @ClientOnly
@@ -45,7 +46,7 @@ public final class ClientPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 	private boolean sentInitialRegisterPacket;
 
 	public ClientPlayNetworkAddon(ClientPlayNetworkHandler handler, MinecraftClient client) {
-		super(ClientNetworkingImpl.PLAY, handler.getConnection(), "ClientPlayNetworkAddon for " + handler.getProfile().getName());
+		super(ClientNetworkingImpl.PLAY, ((ClientPlayNetworkHandlerAccessor) handler).getConnection(), "ClientPlayNetworkAddon for " + handler.getProfile().getName());
 		this.handler = handler;
 		this.client = client;
 

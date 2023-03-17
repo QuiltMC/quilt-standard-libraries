@@ -49,7 +49,7 @@ public class RecipeManagerMixin {
 	private Map<Identifier, Recipe<?>> recipeFlatMap;
 
 	@Inject(
-			method = "apply",
+			method = "apply(Ljava/util/Map;Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/util/profiler/Profiler;)V",
 			at = @At(value = "INVOKE", target = "Ljava/util/Map;entrySet()Ljava/util/Set;", remap = false, ordinal = 0),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)

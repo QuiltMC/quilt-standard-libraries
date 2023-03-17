@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,10 +32,10 @@ import org.quiltmc.qsl.screen.api.client.ScreenKeyboardEvents;
 @ClientOnly
 @Mixin(Keyboard.class)
 abstract class KeyboardMixin {
-	// Synthetic method m_iajqjuwx(ILnet/minecraft/client/gui/screen/Screen;[ZIII))V -> lambda in Screen.wrapScreenError in Keyboard.onKey
+	// lambda in Screen.wrapScreenError in Keyboard.onKey
 	@SuppressWarnings("target")
 	@Inject(
-			method = "m_iajqjuwx(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V",
+			method = "method_1454(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/screen/Screen;keyPressed(III)Z"
@@ -52,10 +52,10 @@ abstract class KeyboardMixin {
 		ScreenKeyboardEvents.BEFORE_KEY_PRESS.invoker().beforeKeyPress(screen, key, scancode, modifiers);
 	}
 
-	// Synthetic method m_iajqjuwx(ILnet/minecraft/client/gui/screen/Screen;[ZIII))V -> lambda in Screen.wrapScreenError in Keyboard.onKey
+	// lambda in Screen.wrapScreenError in Keyboard.onKey
 	@SuppressWarnings("target")
 	@Inject(
-			method = "m_iajqjuwx(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V",
+			method = "method_1454(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/screen/Screen;keyPressed(III)Z",
@@ -66,10 +66,10 @@ abstract class KeyboardMixin {
 		ScreenKeyboardEvents.AFTER_KEY_PRESS.invoker().afterKeyPress(screen, key, scancode, modifiers);
 	}
 
-	// Synthetic method m_iajqjuwx(ILnet/minecraft/client/gui/screen/Screen;[ZIII))V -> lambda in Screen.wrapScreenError in Keyboard.onKey
+	// lambda in Screen.wrapScreenError in Keyboard.onKey
 	@SuppressWarnings("target")
 	@Inject(
-			method = "m_iajqjuwx(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V",
+			method = "method_1454(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/screen/Screen;keyReleased(III)Z"
@@ -86,10 +86,10 @@ abstract class KeyboardMixin {
 		ScreenKeyboardEvents.BEFORE_KEY_RELEASE.invoker().beforeKeyRelease(screen, key, scancode, modifiers);
 	}
 
-	// Synthetic method m_iajqjuwx(ILnet/minecraft/client/gui/screen/Screen;[ZIII))V -> lambda in Screen.wrapScreenError in Keyboard.onKey
+	// lambda in Screen.wrapScreenError in Keyboard.onKey
 	@SuppressWarnings("target")
 	@Inject(
-			method = "m_iajqjuwx(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V",
+			method = "method_1454(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/screen/Screen;keyReleased(III)Z",

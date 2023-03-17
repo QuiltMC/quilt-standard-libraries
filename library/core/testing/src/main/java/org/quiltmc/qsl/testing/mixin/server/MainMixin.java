@@ -62,15 +62,14 @@ public class MainMixin {
 			locals = LocalCapture.CAPTURE_FAILHARD,
 			remap = false
 	)
-	private static void onStart(String[] args, CallbackInfo ci,
+	private static void onStart(String[] strings, CallbackInfo ci,
 			OptionParser optionParser,
-			OptionSpec optionSpec, OptionSpec optionSpec2, OptionSpec optionSpec3, OptionSpec optionSpec4,
-			OptionSpec optionSpec5, OptionSpec optionSpec6, OptionSpec optionSpec7, OptionSpec optionSpec8, OptionSpec optionSpec9,
-			OptionSpec optionSpec10, OptionSpec optionSpec11, OptionSpec optionSpec12, OptionSpec optionSpec13, OptionSpec optionSpec14,
-			OptionSpec optionSpec15, OptionSet optionSet, Path serverPropertiesPath, ServerPropertiesLoader serverPropertiesLoader,
-			Path eulaPath, EulaReader eulaReader, File file, Services services,
-			String worldName, WorldSaveStorage worldSaveStorage, WorldSaveStorage.Session session,
-			WorldSaveSummary worldSaveSummary, boolean safeMode, ResourcePackManager resourcePackManager) {
+			OptionSpec optionSpec, OptionSpec optionSpec2, OptionSpec optionSpec3, OptionSpec optionSpec4, OptionSpec optionSpec5,
+			OptionSpec optionSpec6, OptionSpec optionSpec7, OptionSpec optionSpec8, OptionSpec optionSpec9, OptionSpec optionSpec10,
+			OptionSpec optionSpec11, OptionSpec optionSpec12, OptionSpec optionSpec13, OptionSpec optionSpec14, OptionSpec optionSpec15,
+			OptionSpec optionSpec16, OptionSet optionSet, Path path, Path path2, ServerPropertiesLoader serverPropertiesLoader,
+			Path path3, EulaReader eulaReader, File file, Services services, String string, WorldSaveStorage worldSaveStorage,
+			WorldSaveStorage.Session session, WorldSaveSummary worldSaveSummary, boolean bl, ResourcePackManager resourcePackManager) {
 		if (QuiltGameTestImpl.ENABLED) {
 			QuiltGameTestImpl.runHeadlessServer(session, resourcePackManager);
 			ci.cancel(); // Do not progress in starting the normal dedicated server.

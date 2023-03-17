@@ -1,0 +1,18 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Point of Interest API"
+	moduleName = "point_of_interest"
+	id = "quilt_point_of_interest"
+	description = "Builders for Points of Interest."
+	library = "entity"
+	moduleDependencies {
+		core {
+			impl("registry")
+			testmodOnly("qsl_base")
+		}
+	}
+	accessWidener()
+}

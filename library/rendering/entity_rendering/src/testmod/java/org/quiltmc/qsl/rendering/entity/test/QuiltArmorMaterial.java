@@ -18,7 +18,7 @@ package org.quiltmc.qsl.rendering.entity.test;
 
 import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.registry.tag.ItemTags;
@@ -38,14 +38,15 @@ public enum QuiltArmorMaterial implements ArmorMaterial {
 	@ClientOnly
 	private static final Identifier TEXTURE = EntityRenderingTestmod.id("textures/models/armor/" + NAME);
 
+	// TODO - Properly adapt the ArmorItem.ArmorSlot method implementations to 1.19.4 instead of "get this 1.19.3 thing working"
 	@Override
-	public int getDurability(EquipmentSlot slot) {
-		return BASE_DURABILITY[slot.getEntitySlotId()] * 50;
+	public int getDurability(ArmorItem.ArmorSlot slot) {
+		return BASE_DURABILITY[slot.getEquipmentSlot().getEntitySlotId()] * 50;
 	}
 
 	@Override
-	public int getProtectionAmount(EquipmentSlot slot) {
-		return PROTECTION_AMOUNTS[slot.getEntitySlotId()];
+	public int getProtection(ArmorItem.ArmorSlot slot) {
+		return PROTECTION_AMOUNTS[slot.getEquipmentSlot().getEntitySlotId()];
 	}
 
 	@Override

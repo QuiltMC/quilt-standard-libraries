@@ -17,7 +17,8 @@
         "org.quiltmc.qsl.networking.test.play.NetworkingPlayPacketTest"
       ],
       "events": [
-        "org.quiltmc.qsl.networking.test.channeltest.NetworkingChannelTest"
+        "org.quiltmc.qsl.networking.test.channeltest.NetworkingChannelTest",
+        "org.quiltmc.qsl.networking.test.trackingevents.NetworkingEntityTrackingEventsTest"
       ],
       "client_init": [
         "org.quiltmc.qsl.networking.test.keybindreciever.NetworkingKeyBindClientPacketTest",

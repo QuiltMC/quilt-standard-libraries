@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,7 +79,7 @@ public class VirtualResourcePackTestMod implements ModInitializer, ResourcePackR
 
 		pack.putText("pack.mcmeta", String.format("""
 				{"pack":{"pack_format":%d,"description":"Provided pack activation test."}}
-					""", type.getPackVersion(SharedConstants.getGameVersion())));
+					""", SharedConstants.getGameVersion().getResourceVersion(type)));
 		pack.putText(ResourceType.CLIENT_RESOURCES, new Identifier("models/block/dandelion.json"), """
 				{
 				  "parent": "minecraft:block/cube_all",

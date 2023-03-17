@@ -67,7 +67,7 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 	 */
 	@SuppressWarnings("InvalidInjectorMethodSignature")
 	@ModifyConstant(
-			method = "m_dpwyfaqh(Lnet/minecraft/entity/Entity;Ljava/util/function/Predicate;Ljava/util/List;Lnet/minecraft/entity/Entity;)V",
+			method = "method_31593(Lnet/minecraft/entity/Entity;Ljava/util/function/Predicate;Ljava/util/List;Lnet/minecraft/entity/Entity;)V",
 			constant = @Constant(classValue = EnderDragonEntity.class, ordinal = 0)
 	)
 	private static boolean cancelEnderDragonCheck(Object targetObject, Class<?> classValue) {

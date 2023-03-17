@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.resource.loader.mixin.client;
 
+import java.util.function.Consumer;
+
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,13 +25,13 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
-import net.minecraft.client.gui.screen.world.MoreOptionsDialog;
 import net.minecraft.client.world.WorldCreationContext;
 import net.minecraft.feature_flags.FeatureFlags;
 import net.minecraft.resource.AutoCloseableResourceManager;
@@ -37,6 +39,7 @@ import net.minecraft.resource.pack.ResourcePackManager;
 import net.minecraft.server.ServerReloadableResources;
 import net.minecraft.server.world.FeatureAndDataSettings;
 import net.minecraft.registry.LayeredRegistryManager;
+import net.minecraft.unmapped.C_hypraqfe;
 import net.minecraft.util.Unit;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -48,26 +51,29 @@ import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 public abstract class CreateWorldScreenMixin {
 	@Shadow
 	@Final
-	public MoreOptionsDialog moreOptionsDialog;
+	C_hypraqfe field_42172;
 
 	@Dynamic
 	@Inject(
-			method = "m_tlckpqyc(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/registry/LayeredRegistryManager;Lnet/minecraft/client/gui/screen/world/CreateWorldScreen$C_mxqwwbun;)Lnet/minecraft/client/world/WorldCreationContext;",
+			method = "method_41851(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/registry/LayeredRegistryManager;Lnet/minecraft/client/gui/screen/world/CreateWorldScreen$WorldCreationSettings;)Lnet/minecraft/client/world/WorldCreationContext;",
 			at = @At("HEAD")
 	)
 	private static void onEndDataPackLoadOnOpen(AutoCloseableResourceManager resourceManager, ServerReloadableResources resources,
-			LayeredRegistryManager<?> layeredRegistryManager, @Coerce Object c_mxqwwbun, CallbackInfoReturnable<WorldCreationContext> cir) {
+			LayeredRegistryManager<?> layeredRegistryManager, @Coerce Object worldCreationSettings, CallbackInfoReturnable<WorldCreationContext> cir) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resourceManager, null);
 	}
 
 	@Inject(
-			method = "m_btwtdkmu",
+			method = "method_45679",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/server/WorldLoader;load(Lnet/minecraft/server/WorldLoader$InitConfig;Lnet/minecraft/server/WorldLoader$LoadContextSupplier;Lnet/minecraft/server/WorldLoader$ApplierFactory;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
 			)
 	)
-	private void onDataPackLoadStart(ResourcePackManager resourcePackManager, FeatureAndDataSettings featureAndDataSettings, CallbackInfo ci) {
+	private void onDataPackLoadStart(
+			ResourcePackManager resourcePackManager, FeatureAndDataSettings featureAndDataSettings, Consumer<FeatureAndDataSettings> consumer,
+			CallbackInfo ci
+	) {
 		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null);
 	}
 
@@ -82,22 +88,24 @@ public abstract class CreateWorldScreenMixin {
 		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null);
 	}
 
-	// Lambda method in CreateWorldScreen#m_btwtdkmu, search for a resource manager being closed.
+	// Lambda method in CreateWorldScreen#method_45679, search for a resource manager being closed.
 	// Inject before closing the resource manager.
 	@Dynamic
 	@Inject(
-			method = "m_zqrlbkty(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/registry/LayeredRegistryManager;Lnet/minecraft/client/gui/screen/world/CreateWorldScreen$C_mxqwwbun;)Lnet/minecraft/client/world/WorldCreationContext;",
+			slice = @Slice(to = @At(value = "INVOKE", target = "Lnet/minecraft/resource/AutoCloseableResourceManager;close()V")),
+			method = "method_41851(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/registry/LayeredRegistryManager;Lnet/minecraft/client/gui/screen/world/CreateWorldScreen$WorldCreationSettings;)Lnet/minecraft/client/world/WorldCreationContext;",
 			at = @At("HEAD")
 	)
 	private static void onCreateDataPackLoadEnd(AutoCloseableResourceManager resourceManager, ServerReloadableResources resources,
-			LayeredRegistryManager<?> layeredRegistryManager, @Coerce Object c_mxqwwbun, CallbackInfoReturnable<WorldCreationContext> cir) {
+			LayeredRegistryManager<?> layeredRegistryManager, @Coerce Object worldCreationSettings, CallbackInfoReturnable<WorldCreationContext> cir) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resourceManager, null);
 	}
 
-	// Lambda method in CreateWorldScreen#m_btwtdkmu, at CompletableFuture#handle.
+	// Lambda method in CreateWorldScreen#method_45679, passed CompletableFuture#handle.
 	// Take Void and Throwable parameters.
 	@Inject(
-			method = "m_sxbkwuzy(Ljava/lang/Void;Ljava/lang/Throwable;)Ljava/lang/Object;",
+			slice = @Slice(to = @At(value = "CONSTANT", args = "stringValue=dataPack.validation.failed")),
+			method = "method_49629",
 			at = @At(
 					value = "INVOKE",
 					target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Throwable;)V",
@@ -105,13 +113,15 @@ public abstract class CreateWorldScreenMixin {
 					remap = false
 			)
 	)
-	private void onFailDataPackLoading(Void unused, Throwable throwable, CallbackInfoReturnable<Object> cir) {
+	private void onFailDataPackLoading(
+			Consumer<FeatureAndDataSettings> consumer, Void unused, Throwable throwable, CallbackInfoReturnable<Object> cir
+	) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, null, throwable);
 	}
 
 	@Inject(method = "createLevel", at = @At("HEAD"))
 	private void onCreateLevelStart(CallbackInfo ci) {
-		if (FeatureFlags.containsDefault(this.moreOptionsDialog.getWorldCreationContext().dataConfiguration().enabledFeatures())) {
+		if (FeatureFlags.containsDefault(this.field_42172.method_48728().dataConfiguration().enabledFeatures())) {
 			ResourceLoaderImpl.EXPERIMENTAL_FEATURES_ENABLED.set(Unit.INSTANCE);
 		}
 	}

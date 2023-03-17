@@ -12,9 +12,12 @@
     "accessor.EntityTrackerAccessor",
     "accessor.LoginQueryResponseC2SPacketAccessor",
     "accessor.ServerLoginNetworkHandlerAccessor",
+    "accessor.ServerPlayNetworkHandlerAccessor",
     "accessor.ThreadedChunkManagerAccessor"
   ],
   "client": [
+    "accessor.ClientLoginNetworkHandlerAccessor",
+    "accessor.ClientPlayNetworkHandlerAccessor",
     "accessor.ConnectScreenAccessor",
     "accessor.MinecraftClientAccessor",
     "client.ClientLoginNetworkHandlerMixin",

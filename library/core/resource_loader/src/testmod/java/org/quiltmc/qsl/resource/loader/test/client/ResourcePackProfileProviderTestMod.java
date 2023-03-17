@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 			this.putText("pack.mcmeta", String.format("""
 							{"pack":{"pack_format":%d,"description":"Just testing."}}
 							""",
-					ResourceType.CLIENT_RESOURCES.getPackVersion(SharedConstants.getGameVersion())));
+					SharedConstants.getGameVersion().getResourceVersion(ResourceType.CLIENT_RESOURCES)));
 			this.putImage("pack.png", this::createRandomImage);
 			this.putImage(DIRT_IDENTIFIER, this::createRandomImage);
 		}

@@ -23,6 +23,7 @@ import org.jetbrains.annotations.ApiStatus;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.recipe.api.RecipeLoadingEvents;
@@ -32,8 +33,8 @@ final class ModifyRecipeHandlerImpl extends BasicRecipeHandlerImpl implements Re
 	int counter = 0;
 
 	ModifyRecipeHandlerImpl(RecipeManager recipeManager, Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes,
-			Map<Identifier, Recipe<?>> globalRecipes) {
-		super(recipeManager, recipes, globalRecipes);
+			Map<Identifier, Recipe<?>> globalRecipes, DynamicRegistryManager registryManager) {
+		super(recipeManager, recipes, globalRecipes, registryManager);
 	}
 
 	private void add(Recipe<?> recipe) {

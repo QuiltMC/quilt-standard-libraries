@@ -48,14 +48,14 @@ public abstract class PackScreenMixin extends Screen {
 	@SuppressWarnings("unchecked")
 	@Inject(method = "render", at = @At("TAIL"))
 	private void renderTooltips(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-		ResourcePackEntry availableEntry = ((EntryListWidgetAccessor<ResourcePackEntry>) this.availablePackList).invokeGetHoveredEntry();
+		ResourcePackEntry availableEntry = this.availablePackList.getHoveredEntry();
 		if (availableEntry != null) {
 			if (((ResourcePackEntryAccessor) availableEntry).getPack().getSource() instanceof BuiltinResourcePackSource source) {
 				this.renderTooltip(matrices, source.getTooltip(), mouseX, mouseY);
 			}
 		}
 
-		ResourcePackEntry selectedEntry = ((EntryListWidgetAccessor<ResourcePackEntry>) this.selectedPackList).invokeGetHoveredEntry();
+		ResourcePackEntry selectedEntry = this.selectedPackList.getHoveredEntry();
 		if (selectedEntry != null) {
 			if (((ResourcePackEntryAccessor) selectedEntry).getPack().getSource() instanceof BuiltinResourcePackSource source) {
 				this.renderTooltip(matrices, source.getTooltip(), mouseX, mouseY);

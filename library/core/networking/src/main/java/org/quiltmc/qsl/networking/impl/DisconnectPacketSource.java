@@ -18,7 +18,7 @@ package org.quiltmc.qsl.networking.impl;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.network.Packet;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.text.Text;
 
 @ApiStatus.Internal

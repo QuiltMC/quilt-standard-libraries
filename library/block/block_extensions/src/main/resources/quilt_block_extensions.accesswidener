@@ -5,7 +5,7 @@ extendable  method    net/minecraft/block/AbstractBlock$Settings    <init>  (Lne
 
 ### Generated access wideners below
 # Constructors of non-abstract block classes
-transitive-accessible method net/minecraft/block/AbstractButtonBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;IZLnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundEvent;)V
+transitive-accessible method net/minecraft/block/AbstractButtonBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;Lnet/minecraft/block/BlockSetType;IZ)V
 transitive-accessible method net/minecraft/block/AirBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/AttachedStemBlock <init> (Lnet/minecraft/block/GourdBlock;Ljava/util/function/Supplier;Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/AzaleaBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
@@ -32,9 +32,10 @@ transitive-accessible method net/minecraft/block/DeadBushBlock <init> (Lnet/mine
 transitive-accessible method net/minecraft/block/DeadCoralBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/DeadCoralFanBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/DeadCoralWallFanBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
+transitive-accessible method net/minecraft/block/DecoratedPotBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/DirtPathBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/DispenserBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
-transitive-accessible method net/minecraft/block/DoorBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;Lnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundEvent;)V
+transitive-accessible method net/minecraft/block/DoorBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;Lnet/minecraft/block/BlockSetType;)V
 transitive-accessible method net/minecraft/block/DyedCarpetBlock <init> (Lnet/minecraft/util/DyeColor;Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/EnchantingTableBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/EndGatewayBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
@@ -64,10 +65,11 @@ transitive-accessible method net/minecraft/block/MelonBlock <init> (Lnet/minecra
 transitive-accessible method net/minecraft/block/NetherWartBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/NyliumBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/PaneBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
+transitive-accessible method net/minecraft/block/PinkPetalsBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/PlantBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/PlayerSkullBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/PoweredRailBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
-transitive-accessible method net/minecraft/block/PressurePlateBlock <init> (Lnet/minecraft/block/PressurePlateBlock$ActivationRule;Lnet/minecraft/block/AbstractBlock$Settings;Lnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundEvent;)V
+transitive-accessible method net/minecraft/block/PressurePlateBlock <init> (Lnet/minecraft/block/PressurePlateBlock$ActivationRule;Lnet/minecraft/block/AbstractBlock$Settings;Lnet/minecraft/block/BlockSetType;)V
 transitive-accessible method net/minecraft/block/PumpkinBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/RailBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/RedstoneTorchBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
@@ -92,13 +94,13 @@ transitive-accessible method net/minecraft/block/StructureVoidBlock <init> (Lnet
 transitive-accessible method net/minecraft/block/SugarCaneBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/TorchBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;Lnet/minecraft/particle/ParticleEffect;)V
 transitive-accessible method net/minecraft/block/TransparentBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
-transitive-accessible method net/minecraft/block/TrapdoorBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;Lnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundEvent;)V
+transitive-accessible method net/minecraft/block/TrapdoorBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;Lnet/minecraft/block/BlockSetType;)V
 transitive-accessible method net/minecraft/block/WallMountedBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/WallPlayerSkullBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/WallRedstoneTorchBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/WallSkullBlock <init> (Lnet/minecraft/block/SkullBlock$SkullType;Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/WallTorchBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;Lnet/minecraft/particle/ParticleEffect;)V
 transitive-accessible method net/minecraft/block/WallWitherSkullBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
-transitive-accessible method net/minecraft/block/WeightedPressurePlateBlock <init> (ILnet/minecraft/block/AbstractBlock$Settings;Lnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundEvent;)V
+transitive-accessible method net/minecraft/block/WeightedPressurePlateBlock <init> (ILnet/minecraft/block/AbstractBlock$Settings;Lnet/minecraft/block/BlockSetType;)V
 transitive-accessible method net/minecraft/block/WetSpongeBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/WitherSkullBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V

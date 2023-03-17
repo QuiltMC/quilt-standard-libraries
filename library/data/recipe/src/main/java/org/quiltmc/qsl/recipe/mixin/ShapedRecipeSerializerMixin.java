@@ -63,15 +63,18 @@ public abstract class ShapedRecipeSerializerMixin implements QuiltRecipeSerializ
 
 		pattern.add(patternLine.toString());
 
+		var result = recipe.getResult(null);
+
 		return new ShapedRecipeJsonFactory.ShapedRecipeJsonProvider(
 				recipe.getId(),
-				recipe.getOutput().getItem(),
-				recipe.getOutput().getCount(),
+				result.getItem(),
+				result.getCount(),
 				recipe.getGroup(),
 				recipe.getCategory(),
 				pattern,
 				inputs,
-				null, null
+				null, null,
+				recipe.method_49188()
 		).toJson();
 	}
 }

@@ -21,6 +21,7 @@
   ],
   "client": [
     "client.BlockColorMapMixin",
+    "client.ClientLoginNetworkHandlerAccessor",
     "client.ConnectScreenMixin",
     "client.ItemColorsMixin",
     "client.ItemModelsMixin",
