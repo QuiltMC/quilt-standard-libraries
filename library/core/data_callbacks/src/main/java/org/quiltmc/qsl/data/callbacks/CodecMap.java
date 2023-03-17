@@ -70,12 +70,12 @@ public class CodecMap<T extends CodecAware> {
 		return Identifier.CODEC.flatXmap(
 				identifier ->
 						this.lookup(identifier) == null
-								? DataResult.<Codec<T>>error("Unregistered "+descriptor+" type: " + identifier)
+								? DataResult.<Codec<T>>error(() -> "Unregistered "+descriptor+" type: " + identifier)
 								: DataResult.success(this.lookup(identifier)),
 				codec -> {
 					Identifier key = this.lookup(codec);
 					if (key == null) {
-						return DataResult.error("Unregistered "+descriptor+" type: " + codec);
+						return DataResult.error(() -> "Unregistered "+descriptor+" type: " + codec);
 					}
 					return DataResult.success(key);
 				}
@@ -83,7 +83,7 @@ public class CodecMap<T extends CodecAware> {
 			var codecIdentifier = callback.getCodecIdentifier();
 			var codec = codecIdentifier == null ? null : this.lookup(codecIdentifier);
 			if (codec == null)
-				return DataResult.error("Codec not provided for "+descriptor+": " + callback);
+				return DataResult.error(() -> "Codec not provided for "+descriptor+": " + callback);
 			return DataResult.success(codec);
 		}, DataResult::success);
 	}

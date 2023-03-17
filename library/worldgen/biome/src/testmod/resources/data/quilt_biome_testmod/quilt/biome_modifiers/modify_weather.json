@@ -3,5 +3,5 @@
   "phase": "additions",
   "selector": "minecraft:jungle",
   "temperature_modifier": "frozen",
-  "precipitation": "snow"
+  "has_precipitation": true
 }

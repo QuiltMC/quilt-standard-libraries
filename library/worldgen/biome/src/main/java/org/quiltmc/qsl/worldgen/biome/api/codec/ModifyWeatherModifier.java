@@ -35,7 +35,7 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
  */
 public record ModifyWeatherModifier(CodecAwarePredicate<BiomeSelectionContext> selector,
 									Optional<Float> downfall, Optional<Float> temperature,
-									Optional<Biome.Precipitation> precipitation,
+									Optional<Boolean> hasPrecipitation,
 									Optional<Biome.TemperatureModifier> temperatureModifier) implements BiomeModifier {
 
 	public static final Identifier IDENTIFIER = new Identifier("quilt", "modify_weather");
@@ -43,7 +43,7 @@ public record ModifyWeatherModifier(CodecAwarePredicate<BiomeSelectionContext> s
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(ModifyWeatherModifier::selector),
 			Codec.FLOAT.optionalFieldOf("downfall").forGetter(ModifyWeatherModifier::downfall),
 			Codec.FLOAT.optionalFieldOf("temperature").forGetter(ModifyWeatherModifier::temperature),
-			Biome.Precipitation.CODEC.optionalFieldOf("precipitation").forGetter(ModifyWeatherModifier::precipitation),
+			Codec.BOOL.optionalFieldOf("has_precipitation").forGetter(ModifyWeatherModifier::hasPrecipitation),
 			Biome.TemperatureModifier.CODEC.optionalFieldOf("temperature_modifier").forGetter(ModifyWeatherModifier::temperatureModifier)
 	).apply(instance, ModifyWeatherModifier::new));
 
@@ -57,7 +57,7 @@ public record ModifyWeatherModifier(CodecAwarePredicate<BiomeSelectionContext> s
 		var weatherContext = modificationContext.getWeather();
 		downfall.ifPresent(weatherContext::setDownfall);
 		temperature.ifPresent(weatherContext::setTemperature);
-		precipitation.ifPresent(weatherContext::setPrecipitation);
+		hasPrecipitation.ifPresent(weatherContext::setHasPrecipitation);
 		temperatureModifier.ifPresent(weatherContext::setTemperatureModifier);
 	}
 
