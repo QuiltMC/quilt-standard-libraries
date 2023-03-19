@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.data.callbacks.predicate;
+package org.quiltmc.qsl.data.callbacks.api.predicate;
 
 import java.util.Map;
 import java.util.function.Supplier;
@@ -25,7 +25,7 @@ import com.mojang.serialization.Codec;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.dynamic.Codecs;
 
-import org.quiltmc.qsl.data.callbacks.CodecMap;
+import org.quiltmc.qsl.data.callbacks.api.CodecMap;
 
 /**
  * A CodecMap for {@link CodecAwarePredicate}s that bundles a set of codecs created by shared providers. This class

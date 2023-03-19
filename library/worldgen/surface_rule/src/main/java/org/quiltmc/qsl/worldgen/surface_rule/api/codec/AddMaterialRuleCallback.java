@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.gen.surfacebuilder.SurfaceRules;
 
-import org.quiltmc.qsl.data.callbacks.CodecHelpers;
+import org.quiltmc.qsl.data.callbacks.api.CodecHelpers;
 import org.quiltmc.qsl.worldgen.surface_rule.api.SurfaceRuleContext;
 import org.quiltmc.qsl.worldgen.surface_rule.api.SurfaceRuleEvents;
 

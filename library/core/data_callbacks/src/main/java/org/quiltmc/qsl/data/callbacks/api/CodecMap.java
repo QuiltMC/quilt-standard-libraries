@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.data.callbacks;
+package org.quiltmc.qsl.data.callbacks.api;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
