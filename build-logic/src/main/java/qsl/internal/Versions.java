@@ -23,22 +23,22 @@ public final class Versions {
 	/**
 	 * The QSL version
 	 */
-	public static final String QSL_VERSION = "5.0.0-alpha.3";
+	public static final String QSL_VERSION = "5.0.0-beta.1";
 
 	/**
 	 * The target Minecraft version.
 	 */
-	public static final MinecraftVersion MINECRAFT_VERSION = new MinecraftVersion("1.19.4-pre3", "1.19.4");
+	public static final MinecraftVersion MINECRAFT_VERSION = new MinecraftVersion("1.19.4");
 
 	/**
 	 * The Minecraft versions this version of QSL is compatible with.
 	 */
-	public static final List<MinecraftVersion> COMPATIBLE_VERSIONS = versions("1.19.4-pre4", "1.19.4-rc1");
+	public static final List<MinecraftVersion> COMPATIBLE_VERSIONS = versions();
 
 	/**
 	 * The target Quilt Mappings build.
 	 */
-	public static final int MAPPINGS_BUILD = 1;
+	public static final int MAPPINGS_BUILD = 3;
 
 	/**
 	 * The version of Quilt Loader to use.
@@ -62,8 +62,7 @@ public final class Versions {
 	public static Optional<String> LAZYDFU_VERSION = Optional.empty(); //of("0.1.3");
 	//endregion
 
-	private Versions() {
-	}
+	private Versions() {}
 
 	private static List<MinecraftVersion> versions(Object... versions) {
 		var list = new ArrayList<MinecraftVersion>();

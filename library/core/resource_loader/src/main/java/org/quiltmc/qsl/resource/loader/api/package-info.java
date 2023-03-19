@@ -77,7 +77,7 @@
  *         Programmer Art ({@code programmer_art})
  *     </li>
  *     <li>
- *         High Contrast ({@value net.minecraft.client.resource.ClientBuiltinResourcePackProvider#f_rlhfktwn})
+ *         High Contrast ({@value net.minecraft.client.resource.ClientBuiltinResourcePackProvider#field_43088})
  *     </li>
  * </ul>
  * <p>

@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,14 +79,14 @@ abstract class ClientPlayNetworkHandlerMixin {
 		);
 	}
 
-	@Inject(method = "m_btbbdyot", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "sendCommand", at = @At("HEAD"), cancellable = true)
 	private void onSendCommand(String command, CallbackInfoReturnable<Boolean> cir) {
 		if (ClientCommandInternals.executeCommand(command, true)) {
 			cir.setReturnValue(true);
 		}
 	}
 
-	@Inject(method = "m_gkszsvqi", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "method_45730", at = @At("HEAD"), cancellable = true)
 	private void onSendCommand(String command, CallbackInfo ci) {
 		if (ClientCommandInternals.executeCommand(command, true)) {
 			ci.cancel();

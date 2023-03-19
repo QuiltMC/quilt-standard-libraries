@@ -27,8 +27,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.MovementFlag;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.unmapped.C_cxxvitxd;
 import net.minecraft.world.World;
 
 import org.quiltmc.qsl.entity.event.api.EntityWorldChangeEvents;
@@ -47,8 +47,12 @@ public abstract class EntityMixin {
 		}
 	}
 
-	@Inject(method = "m_zzzrellt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setRemoved(Lnet/minecraft/entity/Entity$RemovalReason;)V"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
-	private void quilt$afterWorldChangedByTeleport(ServerWorld destination, double x, double y, double z, Set<C_cxxvitxd> relativeMovements, float yaw,
+	@Inject(
+			method = "teleport(Lnet/minecraft/server/world/ServerWorld;DDDLjava/util/Set;FF)Z",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setRemoved(Lnet/minecraft/entity/Entity$RemovalReason;)V"),
+			locals = LocalCapture.CAPTURE_FAILEXCEPTION
+	)
+	private void quilt$afterWorldChangedByTeleport(ServerWorld destination, double x, double y, double z, Set<MovementFlag> relativeMovements, float yaw,
 												   float pitch, CallbackInfoReturnable<Boolean> ci, float i, Entity newEntity) {
 		EntityWorldChangeEvents.AFTER_ENTITY_WORLD_CHANGE.invoker().afterWorldChange((Entity) (Object) this, newEntity, ((ServerWorld) this.world), destination);
 	}

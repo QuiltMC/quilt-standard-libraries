@@ -145,7 +145,7 @@ public class ClientPlayNetworkHandlerMixin {
 			method = "onSystemMessage",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/gui/ClientChatListener;m_tvzofpwk(Lnet/minecraft/text/Text;Z)V",
+					target = "Lnet/minecraft/client/gui/ClientChatListener;method_44736(Lnet/minecraft/text/Text;Z)V",
 					shift = At.Shift.AFTER
 			)
 	)
@@ -190,7 +190,7 @@ public class ClientPlayNetworkHandlerMixin {
 			method = "onProfileIndependentMessage",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/MinecraftClient;m_xlacueca()Lnet/minecraft/client/gui/ClientChatListener;"
+					target = "Lnet/minecraft/client/MinecraftClient;getChatListener()Lnet/minecraft/client/gui/ClientChatListener;"
 			)
 	)
 	public void quilt$beforeInboundProfileIndependentMessage(ProfileIndependentMessageS2CPacket packet, CallbackInfo ci) {
@@ -202,7 +202,7 @@ public class ClientPlayNetworkHandlerMixin {
 			method = "onProfileIndependentMessage",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/gui/ClientChatListener;m_jytgvbam(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageType$Parameters;)V",
+					target = "Lnet/minecraft/client/gui/ClientChatListener;method_45746(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageType$Parameters;)V",
 					shift = At.Shift.AFTER
 			)
 	)
@@ -211,7 +211,7 @@ public class ClientPlayNetworkHandlerMixin {
 		QuiltChatEvents.AFTER_PROCESS.invoke(message);
 	}
 
-	@ModifyVariable(method = "m_fzlgisyq", at = @At("HEAD"), argsOnly = true)
+	@ModifyVariable(method = "sendChatMessage", at = @At("HEAD"), argsOnly = true)
 	public String quilt$modifyOutboundRawChatMessage(String string) {
 		// Not sure *why* this would be null but IDEA is complaining, so, safety first?
 		if (client.player == null) {
@@ -222,7 +222,7 @@ public class ClientPlayNetworkHandlerMixin {
 		return ((RawChatC2SMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message)).serialized();
 	}
 
-	@Inject(method = "m_fzlgisyq", at = @At(value = "HEAD"), cancellable = true)
+	@Inject(method = "sendChatMessage", at = @At(value = "HEAD"), cancellable = true)
 	public void quilt$cancelAndBeforeOutboundRawChatMessage(String string, CallbackInfo ci) {
 		if (client.player == null) return;
 
@@ -236,7 +236,7 @@ public class ClientPlayNetworkHandlerMixin {
 		QuiltChatEvents.BEFORE_PROCESS.invoke(message);
 	}
 
-	@Inject(method = "m_fzlgisyq", at = @At(value = "TAIL"))
+	@Inject(method = "sendChatMessage", at = @At(value = "TAIL"))
 	public void quilt$afterOutboundRawChatMessage(String string, CallbackInfo ci) {
 		if (client.player == null) return;
 
@@ -245,7 +245,7 @@ public class ClientPlayNetworkHandlerMixin {
 	}
 
 	@Redirect(
-			method = "m_fzlgisyq",
+			method = "sendChatMessage",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/packet/Packet;)V"
@@ -264,7 +264,7 @@ public class ClientPlayNetworkHandlerMixin {
 				QuiltChatEvents.CANCELLED.invoke(message);
 			}
 		} else {
-			throw new IllegalArgumentException("Received non-ChatMessageC2SPacket for argument to ClientPlayNetworkHandler.sendPacket in ClientPlayNetworkHandler.m_fzlgisyq (sendChatMessage? mapping missing at time of writing)");
+			throw new IllegalArgumentException("Received non-ChatMessageC2SPacket for argument to ClientPlayNetworkHandler.sendPacket in ClientPlayNetworkHandler.method_45729 (sendChatMessage? mapping missing at time of writing)");
 		}
 	}
 }

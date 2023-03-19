@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,24 +41,22 @@ import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 @ClientOnly
 public final class ScreenEvents {
 	/**
-	 * An event that is called before {@link Screen#init(MinecraftClient, int, int) a screen is initialized} to its default state.
-	 * It should be noted that some methods in {@link QuiltScreen} such
-	 * as a screen's {@link QuiltScreen#getTextRenderer() text renderer} may not be initialized yet,
-	 * and as such their use is discouraged.
+	 * An event that is called before a screen is initialized to its default state.
 	 * <p>
-	 * This event indicates a screen has been resized, and therefore is being re-initialized.
+	 * This event indicates that a screen with no special handling of element repositioning has been resized, and therefore
+	 * is being re-initialized.
 	 * This event can also indicate that the previous screen has been changed.
 	 *
 	 * @see ScreenEvents#AFTER_INIT
 	 */
-	public static final Event<BeforeInit> BEFORE_INIT = Event.create(BeforeInit.class, callbacks -> (client, screen, scaledWidth, scaledHeight) -> {
+	public static final Event<BeforeInit> BEFORE_INIT = Event.create(BeforeInit.class, callbacks -> (screen, client, firstInit) -> {
 		for (var callback : callbacks) {
-			callback.beforeInit(client, screen, scaledWidth, scaledHeight);
+			callback.beforeInit(screen, client, firstInit);
 		}
 	});
 
 	/**
-	 * An event that is called after {@link Screen#init(MinecraftClient, int, int) a screen is initialized} to its default state.
+	 * An event that is called after a screen is initialized to its default state.
 	 * <p>
 	 * Typically, this event is used to modify a screen after the screen has been initialized.
 	 * Modifications such as changing sizes of buttons, removing buttons and adding/removing child elements to the screen
@@ -71,18 +69,18 @@ public final class ScreenEvents {
 	 * <p>
 	 * For example, to add a button to the title screen, the following code could be used:
 	 * <pre>{@code
-	 * ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
+	 * ScreenEvents.AFTER_INIT.register((screen, client, firstInit) -> {
 	 * 	if (screen instanceof TitleScreen) {
-	 * 		screen.getButtons().add(new ButtonWidget(...));
+	 * 		screen.getButtons().add(ButtonWidget.builder(...).build());
 	 *    }
 	 * });
 	 * }</pre>
 	 *
 	 * @see ScreenEvents#BEFORE_INIT
 	 */
-	public static final Event<AfterInit> AFTER_INIT = Event.create(AfterInit.class, callbacks -> (client, screen, scaledWidth, scaledHeight) -> {
+	public static final Event<AfterInit> AFTER_INIT = Event.create(AfterInit.class, callbacks -> (screen, client, firstInit) -> {
 		for (var callback : callbacks) {
-			callback.afterInit(client, screen, scaledWidth, scaledHeight);
+			callback.afterInit(screen, client, firstInit);
 		}
 	});
 
@@ -139,13 +137,27 @@ public final class ScreenEvents {
 	@ClientOnly
 	@FunctionalInterface
 	public interface BeforeInit extends ClientEventAwareListener {
-		void beforeInit(Screen screen, MinecraftClient client, int scaledWidth, int scaledHeight);
+		/**
+		 * An event that is called before a screen is initialized to its default state.
+		 *
+		 * @param screen the screen
+		 * @param client the screen's {@link MinecraftClient client} instance
+		 * @param firstInit {@code true} if the screen has been initialized for the first time, or {@code false} otherwise
+		 */
+		void beforeInit(Screen screen, MinecraftClient client, boolean firstInit);
 	}
 
 	@ClientOnly
 	@FunctionalInterface
 	public interface AfterInit extends ClientEventAwareListener {
-		void afterInit(Screen screen, MinecraftClient client, int scaledWidth, int scaledHeight);
+		/**
+		 * An event that is called after a screen is initialized to its default state.
+		 *
+		 * @param screen the screen
+		 * @param client the screen's client instance
+		 * @param firstInit {@code true} if the screen has been initialized for the first time, or {@code false} otherwise
+		 */
+		void afterInit(Screen screen, MinecraftClient client, boolean firstInit);
 	}
 
 	@ClientOnly
@@ -178,6 +190,5 @@ public final class ScreenEvents {
 		void afterTick(Screen screen);
 	}
 
-	private ScreenEvents() {
-	}
+	private ScreenEvents() {}
 }

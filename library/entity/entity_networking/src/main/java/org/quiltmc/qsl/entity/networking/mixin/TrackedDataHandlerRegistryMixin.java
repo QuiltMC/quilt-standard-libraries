@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,13 +97,13 @@ public class TrackedDataHandlerRegistryMixin {
 			id = "block_pos";
 		} else if (handler == TrackedDataHandlerRegistry.OPTIONAL_BLOCK_POS) {
 			id = "optional_block_pos";
-		} else if (handler == TrackedDataHandlerRegistry.FACING) {
-			id = "facing";
+		} else if (handler == TrackedDataHandlerRegistry.DIRECTION) {
+			id = "direction";
 		} else if (handler == TrackedDataHandlerRegistry.OPTIONAL_UUID) {
 			id = "optional_uuid";
-		} else if (handler == TrackedDataHandlerRegistry.OPTIONAL_BLOCK_STATE) {
+		} else if (handler == TrackedDataHandlerRegistry.BLOCK_STATE) {
 			id = "block_state";
-		} else if (handler == TrackedDataHandlerRegistry.f_huqcfqmn) {
+		} else if (handler == TrackedDataHandlerRegistry.OPTIONAL_BLOCK_STATE) {
 			id = "optional_block_state";
 		} else if (handler == TrackedDataHandlerRegistry.TAG_COMPOUND) {
 			id = "tag_compound";
@@ -123,12 +123,12 @@ public class TrackedDataHandlerRegistryMixin {
 			id = "optional_global_position";
 		} else if (handler == TrackedDataHandlerRegistry.PAINTING_VARIANT) {
 			id = "painting_variant";
-		} else if (handler == TrackedDataHandlerRegistry.f_abgbckne) {
+		} else if (handler == TrackedDataHandlerRegistry.SNIFFER_STATE) {
 			id = "sniffer_state";
-		} else if (handler == TrackedDataHandlerRegistry.f_teokfohv) {
-			id = "vector3";
-		} else if (handler == TrackedDataHandlerRegistry.f_kyenxrse) {
-			id = "quaternion";
+		} else if (handler == TrackedDataHandlerRegistry.VECTOR3F) {
+			id = "vector3f";
+		} else if (handler == TrackedDataHandlerRegistry.QUATERNIONF) {
+			id = "quaternionf";
 		} else {
 			if (!quilt$pastStaticInit && QuiltLoader.isDevelopmentEnvironment()) {
 				throw new RuntimeException("Unnamed TrackedDataHandler added before static initialize completed. This either means that a new TrackedDataHandler was added by Minecraft, or a mod injected into a poor place.");

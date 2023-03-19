@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,14 +38,15 @@ import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
 
 @Mixin(EnchantmentScreenHandler.class)
 public class EnchantmentScreenHandlerMixin {
-	@Redirect(method = "m_mpsetdhw(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)V", at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
+	// Lambda in onContentChanged at this.context.run((world,pos) ->
+	@Redirect(method = "method_17411(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)V", at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
 	private Iterator<?> iterator(List<?> instance) {
 		// Cancel old loop
 		return ObjectIterators.emptyIterator();
 	}
 
-	@ModifyVariable(method = "m_mpsetdhw(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/random/RandomGenerator;setSeed(J)V"))
-	private int quilt$m_mpsetdhw$ix(int old, ItemStack itemStack, World world, BlockPos pos) {
+	@ModifyVariable(method = "method_17411(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/random/RandomGenerator;setSeed(J)V"))
+	private int quilt$method_17411$ix(int old, ItemStack itemStack, World world, BlockPos pos) {
 		// Round sum of powers to the nearest integer, x.5 is rounded down to x
 		return -Math.round(-this.calculateBookshelfCount(world, pos));
 	}
@@ -59,7 +60,9 @@ public class EnchantmentScreenHandlerMixin {
 				var blockPos = pos.add(offset);
 				var state = world.getBlockState(blockPos);
 				var block = state.getBlock();
-				count += BlockContentRegistries.ENCHANTING_BOOSTERS.get(block).map(booster -> booster.getEnchantingBoost(world, state, blockPos)).orElse(0.0F);
+				count += BlockContentRegistries.ENCHANTING_BOOSTERS.get(block)
+						.map(booster -> booster.getEnchantingBoost(world, state, blockPos))
+						.orElse(0.0F);
 			}
 		}
 

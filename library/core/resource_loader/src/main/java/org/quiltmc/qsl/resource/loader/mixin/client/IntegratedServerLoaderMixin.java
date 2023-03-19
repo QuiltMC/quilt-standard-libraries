@@ -62,19 +62,13 @@ public abstract class IntegratedServerLoaderMixin {
 	@Unique
 	private static final TriState EXPERIMENTAL_SCREEN_OVERRIDE = TriState.fromProperty("quilt.resource_loader.experimental_screen_override");
 
-	@Inject(
-			method = "m_ocpkzrtb",
-			at = @At("HEAD")
-	)
+	@Inject(method = "method_45694", at = @At("HEAD"))
 	private <D, R> void onStartDataPackLoad(WorldLoader.PackConfig packConfig, WorldLoader.LoadContextSupplier<D> loadContextSupplier,
 			WorldLoader.ApplierFactory<D, R> applierFactory, CallbackInfoReturnable<R> cir) {
 		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null);
 	}
 
-	@Inject(
-			method = "m_ocpkzrtb",
-			at = @At("RETURN")
-	)
+	@Inject(method = "method_45694", at = @At("RETURN"))
 	private <D, R> void onEndDataPackLoad(WorldLoader.PackConfig packConfig, WorldLoader.LoadContextSupplier<D> loadContextSupplier,
 			WorldLoader.ApplierFactory<D, R> applierFactory, CallbackInfoReturnable<R> cir) {
 		if (cir.getReturnValue() instanceof WorldStem worldStem) {
@@ -84,7 +78,7 @@ public abstract class IntegratedServerLoaderMixin {
 
 	@Dynamic
 	@Inject(
-			method = "m_weunchkk(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/registry/LayeredRegistryManager;Lnet/minecraft/server/integrated/IntegratedServerLoader$C_tattaqxb;)Lcom/mojang/datafixers/util/Pair;",
+			method = "method_45695(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/registry/LayeredRegistryManager;Lnet/minecraft/server/integrated/IntegratedServerLoader$C_tattaqxb;)Lcom/mojang/datafixers/util/Pair;",
 			at = @At("HEAD")
 	)
 	private static void onEndDataPackLoad(AutoCloseableResourceManager resourceManager, ServerReloadableResources resources,
@@ -115,7 +109,7 @@ public abstract class IntegratedServerLoaderMixin {
 	private void onBackupExperimentalWarning(Screen parentScreen, String worldName, boolean safeMode, boolean requireBackup, CallbackInfo ci,
 			WorldSaveStorage.Session session, ResourcePackManager resourcePackManager, WorldStem worldStem) {
 		if (EXPERIMENTAL_SCREEN_OVERRIDE.toBooleanOrElse(true)
-				&& !worldStem.saveProperties().m_ycrrmmel().m_kmrxtmbu()
+				&& !worldStem.saveProperties().method_28057().hasLegacyCustomOptions()
 				&& !FeatureFlags.containsDefault(worldStem.saveProperties().getEnabledFlags())) {
 			worldStem.close();
 			close(session, worldName);

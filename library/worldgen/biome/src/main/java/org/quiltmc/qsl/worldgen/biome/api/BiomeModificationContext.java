@@ -65,8 +65,8 @@ public interface BiomeModificationContext {
 
 	interface WeatherContext {
 		/**
-		 * @see Biome#m_cgvmxqgd()
-		 * @see Biome.Builder#m_ummwpslu(boolean)
+		 * @see Biome#hasPrecipitation()
+		 * @see Biome.Builder#hasPrecipitation(boolean)
 		 */
 		void setHasPrecipitation(boolean hasPrecipitation);
 
