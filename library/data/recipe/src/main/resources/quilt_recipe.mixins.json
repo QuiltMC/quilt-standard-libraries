@@ -3,12 +3,10 @@
   "package": "org.quiltmc.qsl.recipe.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "LegacySmithingRecipeSerializerMixin",
     "TransformSmithingRecipeAccessor",
     "TrimSmithingRecipeAccessor",
     "TransformSmithingRecipeJsonProviderMixin",
     "TrimSmithingRecipeSerializerMixin",
-    "LegacySmithingRecipeAccessor",
     "CookingRecipeSerializerMixin",
     "CuttingRecipeSerializerMixin",
     "RecipeManagerMixin",

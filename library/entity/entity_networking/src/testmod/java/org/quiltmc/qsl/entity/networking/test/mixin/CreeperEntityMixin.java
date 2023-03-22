@@ -60,9 +60,9 @@ public class CreeperEntityMixin extends HostileEntity {
 			this.world.addParticle(this.dataTracker.get(PARTICLE), this.getX(), this.getY() + 2, this.getZ(), 0, 0, 0);
 		} else {
 			if (player.getStackInHand(hand).getItem() == Items.STICK) {
-				this.dataTracker.method_12778(PARTICLE, ParticleTypes.CRIT);
+				this.dataTracker.set(PARTICLE, ParticleTypes.CRIT);
 			} else if (player.getStackInHand(hand).getItem() == Items.TNT) {
-				this.dataTracker.method_12778(PARTICLE, ParticleTypes.SMOKE);
+				this.dataTracker.set(PARTICLE, ParticleTypes.SMOKE);
 			}
 		}
 	}
