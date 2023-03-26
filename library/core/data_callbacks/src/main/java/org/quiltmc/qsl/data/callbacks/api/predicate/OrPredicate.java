@@ -28,7 +28,7 @@ import net.minecraft.util.Identifier;
  */
 public final class OrPredicate<T> implements CodecAwarePredicate<T> {
 
-	public static final Identifier IDENTIFIER = new Identifier("quilt", "or");
+	public static final Identifier ID = new Identifier("quilt", "or");
 	public static final PredicateCodecProvider PROVIDER = OrPredicate::makeCodec;
 
 	@Override
@@ -54,7 +54,7 @@ public final class OrPredicate<T> implements CodecAwarePredicate<T> {
 	}
 
 	@Override
-	public Identifier getCodecIdentifier() {
-		return IDENTIFIER;
+	public Identifier getCodecId() {
+		return ID;
 	}
 }

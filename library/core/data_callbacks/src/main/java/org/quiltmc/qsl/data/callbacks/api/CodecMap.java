@@ -80,7 +80,7 @@ public class CodecMap<T extends CodecAware> {
 					return DataResult.success(key);
 				}
 		).partialDispatch("type", callback -> {
-			var codecIdentifier = callback.getCodecIdentifier();
+			var codecIdentifier = callback.getCodecId();
 			var codec = codecIdentifier == null ? null : this.lookup(codecIdentifier);
 			if (codec == null)
 				return DataResult.error(() -> "Codec not provided for "+descriptor+": " + callback);

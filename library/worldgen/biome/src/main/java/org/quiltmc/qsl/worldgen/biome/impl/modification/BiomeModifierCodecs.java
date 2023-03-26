@@ -33,16 +33,16 @@ import org.quiltmc.qsl.worldgen.biome.api.codec.selector.ValueBiomeSelector;
 public class BiomeModifierCodecs implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
-		BiomeModifier.BIOME_MODIFIER_CODECS.register(NothingModifier.IDENTIFIER, NothingModifier.CODEC);
-		BiomeModifier.BIOME_MODIFIER_CODECS.register(AddFeaturesModifier.IDENTIFIER, AddFeaturesModifier.CODEC);
-		BiomeModifier.BIOME_MODIFIER_CODECS.register(RemoveFeaturesModifier.IDENTIFIER, RemoveFeaturesModifier.CODEC);
-		BiomeModifier.BIOME_MODIFIER_CODECS.register(AddCarversModifier.IDENTIFIER, AddCarversModifier.CODEC);
-		BiomeModifier.BIOME_MODIFIER_CODECS.register(RemoveCarversModifier.IDENTIFIER, RemoveCarversModifier.CODEC);
-		BiomeModifier.BIOME_MODIFIER_CODECS.register(ModifyWeatherModifier.IDENTIFIER, ModifyWeatherModifier.CODEC);
-		BiomeModifier.BIOME_MODIFIER_CODECS.register(ModifyEffectsModifier.IDENTIFIER, ModifyEffectsModifier.CODEC);
-		BiomeModifier.BIOME_MODIFIER_CODECS.register(AddSpawnersModifier.IDENTIFIER, AddSpawnersModifier.CODEC);
-		BiomeModifier.BIOME_MODIFIER_CODECS.register(RemoveSpawnersModifier.IDENTIFIER, RemoveSpawnersModifier.CODEC);
+		BiomeModifier.BIOME_MODIFIER_CODECS.register(NothingModifier.ID, NothingModifier.CODEC);
+		BiomeModifier.BIOME_MODIFIER_CODECS.register(AddFeaturesModifier.ID, AddFeaturesModifier.CODEC);
+		BiomeModifier.BIOME_MODIFIER_CODECS.register(RemoveFeaturesModifier.ID, RemoveFeaturesModifier.CODEC);
+		BiomeModifier.BIOME_MODIFIER_CODECS.register(AddCarversModifier.ID, AddCarversModifier.CODEC);
+		BiomeModifier.BIOME_MODIFIER_CODECS.register(RemoveCarversModifier.ID, RemoveCarversModifier.CODEC);
+		BiomeModifier.BIOME_MODIFIER_CODECS.register(ModifyWeatherModifier.ID, ModifyWeatherModifier.CODEC);
+		BiomeModifier.BIOME_MODIFIER_CODECS.register(ModifyEffectsModifier.ID, ModifyEffectsModifier.CODEC);
+		BiomeModifier.BIOME_MODIFIER_CODECS.register(AddSpawnersModifier.ID, AddSpawnersModifier.CODEC);
+		BiomeModifier.BIOME_MODIFIER_CODECS.register(RemoveSpawnersModifier.ID, RemoveSpawnersModifier.CODEC);
 
-		BiomeModifier.BIOME_SELECTOR_CODECS.register(ValueBiomeSelector.IDENTIFIER, ValueBiomeSelector.CODEC);
+		BiomeModifier.BIOME_SELECTOR_CODECS.register(ValueBiomeSelector.ID, ValueBiomeSelector.CODEC);
 	}
 }

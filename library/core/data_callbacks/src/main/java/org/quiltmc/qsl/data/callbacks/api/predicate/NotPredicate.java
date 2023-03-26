@@ -26,7 +26,7 @@ import net.minecraft.util.Identifier;
  */
 public final class NotPredicate<T> implements CodecAwarePredicate<T> {
 
-	public static final Identifier IDENTIFIER = new Identifier("quilt", "not");
+	public static final Identifier ID = new Identifier("quilt", "not");
 	public static final PredicateCodecProvider PROVIDER = NotPredicate::makeCodec;
 
 	@Override
@@ -47,7 +47,7 @@ public final class NotPredicate<T> implements CodecAwarePredicate<T> {
 	}
 
 	@Override
-	public Identifier getCodecIdentifier() {
-		return IDENTIFIER;
+	public Identifier getCodecId() {
+		return ID;
 	}
 }

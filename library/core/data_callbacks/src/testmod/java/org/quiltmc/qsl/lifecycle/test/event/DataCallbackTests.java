@@ -67,7 +67,7 @@ public class DataCallbackTests implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		JOIN_SERVER_CODECS.register(ServerJoinChat.IDENTIFIER, ServerJoinChat.CODEC);
+		JOIN_SERVER_CODECS.register(ServerJoinChat.ID, ServerJoinChat.CODEC);
 
 		ServerPlayConnectionEvents.JOIN.register(SERVER_JOIN.invoker()::onPlayReady);
 
@@ -101,11 +101,11 @@ public class DataCallbackTests implements ModInitializer {
 				Codec.STRING.fieldOf("text").forGetter(ServerJoinChat::text),
 				Style.CODEC.fieldOf("style").forGetter(ServerJoinChat::style)
 		).apply(instance, ServerJoinChat::new));
-		public static final Identifier IDENTIFIER = new Identifier("quilt_data_callbacks_testmod", "chat");
+		public static final Identifier ID = new Identifier("quilt_data_callbacks_testmod", "chat");
 
 		@Override
-		public Identifier getCodecIdentifier() {
-			return IDENTIFIER;
+		public Identifier getCodecId() {
+			return ID;
 		}
 
 		@Override

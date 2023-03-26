@@ -40,7 +40,7 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
  * @param features registry keys for the features to remove
  */
 public record RemoveFeaturesModifier(CodecAwarePredicate<BiomeSelectionContext> selector, List<RegistryKey<PlacedFeature>> features, List<GenerationStep.Feature> steps) implements BiomeModifier {
-	public static final Identifier IDENTIFIER = new Identifier("quilt", "remove_features");
+	public static final Identifier ID = new Identifier("quilt", "remove_features");
 	public static final Codec<RemoveFeaturesModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(RemoveFeaturesModifier::selector),
 			CodecHelpers.listOrValue(RegistryKey.codec(RegistryKeys.PLACED_FEATURE)).fieldOf("features").forGetter(RemoveFeaturesModifier::features),
@@ -62,7 +62,7 @@ public record RemoveFeaturesModifier(CodecAwarePredicate<BiomeSelectionContext> 
 	}
 
 	@Override
-	public Identifier getCodecIdentifier() {
-		return IDENTIFIER;
+	public Identifier getCodecId() {
+		return ID;
 	}
 }

@@ -39,7 +39,7 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
  * @param features registry keys for the features to add
  */
 public record AddFeaturesModifier(CodecAwarePredicate<BiomeSelectionContext> selector, List<RegistryKey<PlacedFeature>> features, GenerationStep.Feature step) implements BiomeModifier {
-	public static final Identifier IDENTIFIER = new Identifier("quilt", "add_features");
+	public static final Identifier ID = new Identifier("quilt", "add_features");
 	public static final Codec<AddFeaturesModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(AddFeaturesModifier::selector),
 			CodecHelpers.listOrValue(RegistryKey.codec(RegistryKeys.PLACED_FEATURE)).fieldOf("features").forGetter(AddFeaturesModifier::features),
@@ -59,7 +59,7 @@ public record AddFeaturesModifier(CodecAwarePredicate<BiomeSelectionContext> sel
 	}
 
 	@Override
-	public Identifier getCodecIdentifier() {
-		return IDENTIFIER;
+	public Identifier getCodecId() {
+		return ID;
 	}
 }

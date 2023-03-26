@@ -178,8 +178,8 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 		ResourceFileNamespace resourceFileNamespace = ResourceFileNamespace.json(this.resourcePath.getNamespace()+"/"+this.resourcePath.getPath());
 		var resources = resourceFileNamespace.findMatchingResources(resourceManager).entrySet();
 		for (Map.Entry<Identifier, Resource> entry : resources) {
-			Identifier identifier = entry.getKey();
-			Identifier unwrappedIdentifier = resourceFileNamespace.unwrapFilePath(identifier);
+			Identifier id = entry.getKey();
+			Identifier unwrappedIdentifier = resourceFileNamespace.unwrapFilePath(id);
 			var resource = entry.getValue();
 			try (var reader = resource.openBufferedReader()) {
 				var json = GSON.fromJson(reader, JsonElement.class);
@@ -188,10 +188,10 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 					var pair = result.result().get();
 					dynamicListeners.put(unwrappedIdentifier, pair);
 				} else {
-					LOGGER.error("Couldn't parse data file {} from {}: {}", unwrappedIdentifier, identifier, result.error().get().message());
+					LOGGER.error("Couldn't parse data file {} from {}: {}", unwrappedIdentifier, id, result.error().get().message());
 				}
 			} catch (IOException e) {
-				LOGGER.error("Couldn't parse data file {} from {}", unwrappedIdentifier, identifier, e);
+				LOGGER.error("Couldn't parse data file {} from {}", unwrappedIdentifier, id, e);
 			}
 		}
 

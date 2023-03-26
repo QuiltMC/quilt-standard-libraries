@@ -58,11 +58,11 @@ public class PredicateCodecMap<T> extends CodecMap<CodecAwarePredicate<T>> {
 	}
 
 	static {
-		registerProvider(AlwaysPredicate.IDENTIFIER, AlwaysPredicate.PROVIDER);
-		registerProvider(NeverPredicate.IDENTIFIER, NeverPredicate.PROVIDER);
-		registerProvider(AndPredicate.IDENTIFIER, AndPredicate.PROVIDER);
-		registerProvider(OrPredicate.IDENTIFIER, OrPredicate.PROVIDER);
-		registerProvider(NotPredicate.IDENTIFIER, NotPredicate.PROVIDER);
+		registerProvider(AlwaysPredicate.ID, AlwaysPredicate.PROVIDER);
+		registerProvider(NeverPredicate.ID, NeverPredicate.PROVIDER);
+		registerProvider(AndPredicate.ID, AndPredicate.PROVIDER);
+		registerProvider(OrPredicate.ID, OrPredicate.PROVIDER);
+		registerProvider(NotPredicate.ID, NotPredicate.PROVIDER);
 	}
 
 	private final Codec<CodecAwarePredicate<T>> predicateCodec;
