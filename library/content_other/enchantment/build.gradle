@@ -3,8 +3,15 @@ plugins {
 }
 
 qslModule {
+	name = "Quilt Enchantment API"
 	moduleName = "enchantment"
-	version = "1.0.0"
+	id = "quilt_enchantment"
+	description = "An "
 	library = "content_other"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+		}
+	}
+	accessWidener()
 }
-

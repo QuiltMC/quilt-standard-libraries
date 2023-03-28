@@ -3,12 +3,11 @@
   "package": "org.quiltmc.qsl.enchantment.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
-    "EnchantedBookItemMixin",
+    "AnvilScreenHandlerMixin",
     "EnchantmentHelperMixin",
     "EnchantmentScreenHandlerMixin",
-    "WeightedAbsentMixin"
-  ],
-  "client": [
+    "ItemGroupsMixin",
+    "WeightedAbsentAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

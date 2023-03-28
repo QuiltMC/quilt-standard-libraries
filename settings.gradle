@@ -36,6 +36,7 @@ library("item")
 library("management")
 library("worldgen")
 library("misc")
+library("content_other")
 
 def library(String library) {
 	include(library)

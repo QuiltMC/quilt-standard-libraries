@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.enchantment.impl;
+package org.quiltmc.qsl.enchantment.mixin;
 
-import org.quiltmc.qsl.enchantment.api.AnvilContext;
-import org.quiltmc.qsl.enchantment.api.EnchantmentContext;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-public class EnchantmentGodClass {
-	public static ThreadLocal<EnchantmentContext> enchantmentContext = new ThreadLocal<>();
-	public static ThreadLocal<AnvilContext> anvilContext = new ThreadLocal<>();
+import net.minecraft.util.collection.Weight;
+import net.minecraft.util.collection.Weighted;
+
+@Mixin(Weighted.Absent.class)
+public interface WeightedAbsentAccessor {
+	@Accessor
+	@Mutable
+	void setWeight(Weight weight);
 }
