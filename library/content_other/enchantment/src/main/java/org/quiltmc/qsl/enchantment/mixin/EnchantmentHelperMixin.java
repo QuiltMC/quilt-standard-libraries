@@ -29,16 +29,23 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.EnchantmentLevelEntry;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.collection.Weight;
+import net.minecraft.util.random.RandomGenerator;
 
 import org.quiltmc.qsl.enchantment.api.QuiltEnchantment;
-import org.quiltmc.qsl.enchantment.api.EnchantmentContext;
+import org.quiltmc.qsl.enchantment.api.EnchantingContext;
 import org.quiltmc.qsl.enchantment.impl.EnchantmentGodClass;
 
 @Mixin(value = EnchantmentHelper.class)
 public class EnchantmentHelperMixin {
+	@Inject(method = "generateEnchantments", at = @At("HEAD"))
+	private static void addRandomContext(RandomGenerator random, ItemStack stack, int experienceLevel, boolean treasureAllowed, CallbackInfoReturnable<ItemStack> cir) {
+		EnchantmentGodClass.context.set(EnchantmentGodClass.context.get().withCoreContext(stack, random, treasureAllowed));
+	}
+
 	@Redirect(method = "getPossibleEntries", at = @At(value = "INVOKE", target = "Lnet/minecraft/registry/Registry;iterator()Ljava/util/Iterator;"))
 	private static Iterator<Enchantment> removeCustomEnchants(Registry<Enchantment> registry) {
 		return registry.stream().filter((enchantment) -> !(enchantment instanceof QuiltEnchantment)).iterator();
@@ -47,13 +54,20 @@ public class EnchantmentHelperMixin {
 	@Inject(method = "getPossibleEntries", at = @At("RETURN"), cancellable = true)
 	private static void handleCustomEnchants(int power, ItemStack stack, boolean treasureAllowed, CallbackInfoReturnable<List<EnchantmentLevelEntry>> callback) {
 		List<EnchantmentLevelEntry> entries = callback.getReturnValue();
-		Registries.ENCHANTMENT.stream().filter((enchantment) -> enchantment instanceof QuiltEnchantment).forEach((enchantment) -> {
+		Registries.ENCHANTMENT.stream().filter((enchantment) -> enchantment instanceof QuiltEnchantment && enchantment.isAvailableForRandomSelection()).forEach((enchantment) -> {
 			for (int level = enchantment.getMinLevel(); level <= enchantment.getMaxLevel(); level++) {
-				EnchantmentContext context = EnchantmentGodClass.enchantmentContext.get().withLevel(level).withPower(power);
-				int weight = ((QuiltEnchantment) enchantment).weightFromEnchantmentContext(context);
-				if (weight > 0) {
-					EnchantmentLevelEntry entry = new EnchantmentLevelEntry(enchantment, level);
+				boolean validEntry = false;
+				EnchantmentLevelEntry entry = new EnchantmentLevelEntry(enchantment, level);
+				if (EnchantmentGodClass.context.get() != null) {
+					EnchantingContext context = EnchantmentGodClass.context.get().withLevel(level).withPower(power);
+					int weight = ((QuiltEnchantment) enchantment).isAcceptableContext(context) ? ((QuiltEnchantment) enchantment).weightFromContext(context) : 0;
 					((WeightedAbsentAccessor) entry).setWeight(Weight.of(weight));
+					validEntry = weight > 0;
+				} else if ((!enchantment.isTreasure() || treasureAllowed) && (enchantment.isAcceptableItem(stack) || stack.isOf(Items.BOOK))) {
+					validEntry = true;
+				}
+
+				if (validEntry) {
 					entries.add(entry);
 				}
 			}

@@ -6,7 +6,11 @@
     "AnvilScreenHandlerMixin",
     "EnchantmentHelperMixin",
     "EnchantmentScreenHandlerMixin",
+    "EnchantRandomlyLootFunctionMixin",
+    "EnchantWithLevelsLootFunctionMixin",
     "ItemGroupsMixin",
+    "MobEntityMixin",
+    "SkeletonHorseTrapTriggerGoalMixin",
     "WeightedAbsentAccessor"
   ],
   "injectors": {

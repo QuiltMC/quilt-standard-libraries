@@ -24,8 +24,11 @@ import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 
 public class EnchantmentTestMod implements ModInitializer {
+	public static final String MOD_ID = "quilt_enchantment_testmod";
+
 	@Override
 	public void onInitialize(ModContainer mod) {
-		Registry.register(Registries.ENCHANTMENT, new Identifier("quilt_enchantment_testmod"), new ReapingEnchantment());
+		Registry.register(Registries.ENCHANTMENT, new Identifier(MOD_ID, "reaping"), new ReapingEnchantment());
+		Registry.register(Registries.ENCHANTMENT, new Identifier(MOD_ID, "pervasive"), new PervasiveEnchantment());
 	}
 }

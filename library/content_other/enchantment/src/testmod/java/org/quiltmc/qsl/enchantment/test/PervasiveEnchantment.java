@@ -16,47 +16,65 @@
 
 package org.quiltmc.qsl.enchantment.test;
 
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.item.HoeItem;
-import net.minecraft.item.ItemGroup;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 
 import org.quiltmc.qsl.enchantment.api.EnchantingContext;
-import org.quiltmc.qsl.enchantment.api.PlayerUsingBlockEnchantingContext;
 import org.quiltmc.qsl.enchantment.api.QuiltEnchantment;
 
-public class ReapingEnchantment extends QuiltEnchantment {
-	public ReapingEnchantment() {
-		super(Rarity.COMMON, null, new EquipmentSlot[]{ EquipmentSlot.MAINHAND });
+public class PervasiveEnchantment extends QuiltEnchantment {
+	public PervasiveEnchantment() {
+		super(Rarity.COMMON, null, EquipmentSlot.values());
 	}
 
 	@Override
 	public int weightFromContext(EnchantingContext context) {
-		return context.getStack().isOf(Items.IRON_HOE) ? 20 : 10;
+		return 20;
 	}
 
 	@Override
 	public boolean isAcceptableItem(ItemStack stack) {
-		return stack.getItem() instanceof HoeItem;
+		return true;
 	}
 
 	@Override
 	public boolean isAcceptableContext(EnchantingContext context) {
-		if (context instanceof PlayerUsingBlockEnchantingContext playerUsingBlockContext) {
-			return playerUsingBlockContext.getPos().getX() % 2 == 0;
-		}
-
-		return super.isAcceptableContext(context);
-	}
-
-	@Override
-	public boolean isVisible(ItemGroup.Visibility visibility) {
-		return visibility == ItemGroup.Visibility.PARENT_AND_SEARCH_TABS;
+		return true;
 	}
 
 	@Override
 	public int getMaxLevel() {
 		return 3;
+	}
+
+	@Override
+	public void onTargetDamaged(LivingEntity user, Entity target, int level) {
+		super.onTargetDamaged(user, target, level);
+
+		this.infect(target, level);
+	}
+
+	@Override
+	public void onUserDamaged(LivingEntity user, Entity attacker, int level) {
+		super.onUserDamaged(user, attacker, level);
+
+		this.infect(attacker, level);
+	}
+
+	private void infect(Entity target, int level) {
+		target.getItemsEquipped().forEach(stack -> {
+			if (stack.getItem().isEnchantable(stack)) {
+				if (stack.hasEnchantments()) {
+					var enchantments = EnchantmentHelper.get(stack);
+					enchantments.put(this, level);
+					EnchantmentHelper.set(enchantments, stack);
+				} else {
+					stack.addEnchantment(this, level);
+				}
+			}
+		});
 	}
 }

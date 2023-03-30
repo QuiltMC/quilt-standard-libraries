@@ -34,7 +34,7 @@ import net.minecraft.screen.ForgingScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.ScreenHandlerType;
 
-import org.quiltmc.qsl.enchantment.api.AnvilContext;
+import org.quiltmc.qsl.enchantment.api.PlayerUsingBlockEnchantingContext;
 import org.quiltmc.qsl.enchantment.api.QuiltEnchantment;
 import org.quiltmc.qsl.enchantment.impl.EnchantmentGodClass;
 
@@ -62,7 +62,7 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private void setAnvilContext(CallbackInfo ci, ItemStack ignored, int i, int j, int k, ItemStack input) {
-		this.context.run((world, pos) -> EnchantmentGodClass.anvilContext.set(new AnvilContext(0, input, world, this.player, pos)));
+		this.context.run((world, pos) -> EnchantmentGodClass.context.set(new PlayerUsingBlockEnchantingContext(0, 0, input, world, world.getRandom(), true, this.player, pos)));
 	}
 
 	@ModifyVariable(
@@ -86,15 +86,16 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
 
 	@Redirect(method = "updateResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/Enchantment;isAcceptableItem(Lnet/minecraft/item/ItemStack;)Z"))
 	private boolean checkWithContext(Enchantment enchantment, ItemStack stack) {
-		if (enchantment instanceof QuiltEnchantment quiltEnchantment && EnchantmentGodClass.anvilContext.get() != null) {
-			return quiltEnchantment.isAcceptableAnvilContext(EnchantmentGodClass.anvilContext.get().withLevel(this.quilt$enchantLevel));
+		if (enchantment instanceof QuiltEnchantment quiltEnchantment && EnchantmentGodClass.context.get() != null) {
+			return quiltEnchantment.isAcceptableContext(EnchantmentGodClass.context.get().withLevel(this.quilt$enchantLevel));
 		} else {
-			return enchantment.isAcceptableItem(stack);
+			// For clients, we always return false. The server sets the stack anyway, so it doesn't affect anything
+			return false;
 		}
 	}
 
 	@Inject(method = "updateResult", at = @At("RETURN"))
 	private void resetAnvilContext(CallbackInfo ci) {
-		EnchantmentGodClass.anvilContext.remove();
+		EnchantmentGodClass.context.remove();
 	}
 }

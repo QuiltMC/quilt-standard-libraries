@@ -14,10 +14,25 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.enchantment.impl;
+package org.quiltmc.qsl.enchantment.api;
 
-import org.quiltmc.qsl.enchantment.api.EnchantingContext;
+import org.jetbrains.annotations.Nullable;
 
-public class EnchantmentGodClass {
-	public static ThreadLocal<EnchantingContext> context = new ThreadLocal<>();
+import org.quiltmc.qsl.enchantment.impl.EnchantmentGodClass;
+
+/**
+ * Allows modded systems that enchant things randomly to apply an enchanting context.
+ */
+public final class QuiltEnchantmentHelper {
+	public void setContext(EnchantingContext context) {
+		EnchantmentGodClass.context.set(context);
+	}
+
+	public @Nullable EnchantingContext getContext() {
+		return EnchantmentGodClass.context.get();
+	}
+
+	public void clearContext() {
+		EnchantmentGodClass.context.remove();
+	}
 }

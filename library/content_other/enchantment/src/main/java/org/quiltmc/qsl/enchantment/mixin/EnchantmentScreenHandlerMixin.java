@@ -27,7 +27,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.enchantment.EnchantmentLevelEntry;
 import net.minecraft.entity.player.PlayerEntity;
@@ -37,10 +36,9 @@ import net.minecraft.screen.EnchantmentScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.util.random.RandomGenerator;
 
-import org.quiltmc.qsl.enchantment.api.EnchantmentContext;
+import org.quiltmc.qsl.enchantment.api.PlayerUsingBlockEnchantingContext;
 import org.quiltmc.qsl.enchantment.impl.EnchantmentGodClass;
 
 @Mixin(EnchantmentScreenHandler.class)
@@ -48,11 +46,11 @@ public abstract class EnchantmentScreenHandlerMixin extends ScreenHandler {
 	@Shadow
 	@Final
 	private ScreenHandlerContext context;
-
+	@Shadow
+	@Final
+	private RandomGenerator random;
 	@Unique
 	private PlayerEntity quilt$player;
-	@Unique
-	private int quilt$bookcases;
 
 	protected EnchantmentScreenHandlerMixin(@Nullable ScreenHandlerType<?> type, int syncId) {
 		super(type, syncId);
@@ -63,19 +61,14 @@ public abstract class EnchantmentScreenHandlerMixin extends ScreenHandler {
 		this.quilt$player = playerInventory.player;
 	}
 
-	@Inject(method = "method_17411(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/random/RandomGenerator;setSeed(J)V"), locals = LocalCapture.CAPTURE_FAILHARD)
-	public void onContentChanged(ItemStack stack, World world, BlockPos pos, CallbackInfo ci, int i) {
-		this.quilt$bookcases = i;
-	}
-
 	@Inject(method = "generateEnchantments", at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/EnchantmentHelper;generateEnchantments(Lnet/minecraft/util/random/RandomGenerator;Lnet/minecraft/item/ItemStack;IZ)Ljava/util/List;"))
 	private void setEnchantmentContext(ItemStack stack, int slot, int level, CallbackInfoReturnable<List<EnchantmentLevelEntry>> callback) {
 		// Level and power will be set later when those values are figured out.
-		this.context.run((world, pos) -> EnchantmentGodClass.enchantmentContext.set(new EnchantmentContext(0, 0, this.quilt$bookcases, stack, world, this.quilt$player, pos)));
+		this.context.run((world, pos) -> EnchantmentGodClass.context.set(new PlayerUsingBlockEnchantingContext(0, 0, stack, world, this.random, false, this.quilt$player, pos)));
 	}
 
 	@Inject(method = "generateEnchantments", at = @At("RETURN"))
 	private void clearEnchantmentContext(ItemStack stack, int slot, int level, CallbackInfoReturnable<List<EnchantmentLevelEntry>> callback) {
-		EnchantmentGodClass.enchantmentContext.remove();
+		EnchantmentGodClass.context.remove();
 	}
 }
