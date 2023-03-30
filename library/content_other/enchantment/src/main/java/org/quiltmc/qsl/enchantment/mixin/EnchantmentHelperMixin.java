@@ -37,13 +37,15 @@ import net.minecraft.util.random.RandomGenerator;
 
 import org.quiltmc.qsl.enchantment.api.QuiltEnchantment;
 import org.quiltmc.qsl.enchantment.api.EnchantingContext;
-import org.quiltmc.qsl.enchantment.impl.EnchantmentGodClass;
+import org.quiltmc.qsl.enchantment.api.QuiltEnchantmentHelper;
 
 @Mixin(value = EnchantmentHelper.class)
 public class EnchantmentHelperMixin {
 	@Inject(method = "generateEnchantments", at = @At("HEAD"))
 	private static void addRandomContext(RandomGenerator random, ItemStack stack, int experienceLevel, boolean treasureAllowed, CallbackInfoReturnable<ItemStack> cir) {
-		EnchantmentGodClass.context.set(EnchantmentGodClass.context.get().withCoreContext(stack, random, treasureAllowed));
+		if (QuiltEnchantmentHelper.getContext() != null) {
+			QuiltEnchantmentHelper.setContext(QuiltEnchantmentHelper.getContext().withCoreContext(stack, random, treasureAllowed));
+		}
 	}
 
 	@Redirect(method = "getPossibleEntries", at = @At(value = "INVOKE", target = "Lnet/minecraft/registry/Registry;iterator()Ljava/util/Iterator;"))
@@ -58,8 +60,8 @@ public class EnchantmentHelperMixin {
 			for (int level = enchantment.getMinLevel(); level <= enchantment.getMaxLevel(); level++) {
 				boolean validEntry = false;
 				EnchantmentLevelEntry entry = new EnchantmentLevelEntry(enchantment, level);
-				if (EnchantmentGodClass.context.get() != null) {
-					EnchantingContext context = EnchantmentGodClass.context.get().withLevel(level).withPower(power);
+				if (QuiltEnchantmentHelper.getContext() != null) {
+					EnchantingContext context = QuiltEnchantmentHelper.getContext().withLevel(level).withPower(power);
 					int weight = ((QuiltEnchantment) enchantment).isAcceptableContext(context) ? ((QuiltEnchantment) enchantment).weightFromContext(context) : 0;
 					((WeightedAbsentAccessor) entry).setWeight(Weight.of(weight));
 					validEntry = weight > 0;

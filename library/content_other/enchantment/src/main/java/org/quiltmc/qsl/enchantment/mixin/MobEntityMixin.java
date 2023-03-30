@@ -31,7 +31,7 @@ import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.world.World;
 
 import org.quiltmc.qsl.enchantment.api.EntityEnchantingContext;
-import org.quiltmc.qsl.enchantment.impl.EnchantmentGodClass;
+import org.quiltmc.qsl.enchantment.api.QuiltEnchantmentHelper;
 
 @Mixin(MobEntity.class)
 public abstract class MobEntityMixin extends LivingEntity {
@@ -44,21 +44,21 @@ public abstract class MobEntityMixin extends LivingEntity {
 
 	@Inject(method = "enchantMainHandItem", at = @At("HEAD"))
 	private void setEnchantingContextForMainHand(RandomGenerator random, float power, CallbackInfo ci) {
-		EnchantmentGodClass.context.set(new EntityEnchantingContext<>(0, 0, this.getMainHandStack(), this.world, this.getRandom(), false, this));
+		QuiltEnchantmentHelper.setContext(new EntityEnchantingContext<>(0, 0, this.getMainHandStack(), this.world, this.getRandom(), false, this));
 	}
 
 	@Inject(method = "enchantMainHandItem", at = @At("RETURN"))
 	private void removeEnchantingContextForMainHand(RandomGenerator random, float power, CallbackInfo ci) {
-		EnchantmentGodClass.context.remove();
+		QuiltEnchantmentHelper.clearContext();
 	}
 
 	@Inject(method = "enchantEquipment", at = @At("HEAD"))
 	private void setEnchantingContextForEquipment(RandomGenerator random, float power, EquipmentSlot slot, CallbackInfo ci) {
-		EnchantmentGodClass.context.set(new EntityEnchantingContext<>(0, 0, this.getEquippedStack(slot), this.world, this.getRandom(), false, this));
+		QuiltEnchantmentHelper.setContext(new EntityEnchantingContext<>(0, 0, this.getEquippedStack(slot), this.world, this.getRandom(), false, this));
 	}
 
 	@Inject(method = "enchantEquipment", at = @At("RETURN"))
 	private void removeEnchantingContextForEquipment(RandomGenerator random, float power, EquipmentSlot slot, CallbackInfo ci) {
-		EnchantmentGodClass.context.remove();
+		QuiltEnchantmentHelper.clearContext();
 	}
 }

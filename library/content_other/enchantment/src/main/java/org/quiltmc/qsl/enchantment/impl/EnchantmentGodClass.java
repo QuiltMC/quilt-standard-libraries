@@ -16,8 +16,11 @@
 
 package org.quiltmc.qsl.enchantment.impl;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import org.quiltmc.qsl.enchantment.api.EnchantingContext;
 
-public class EnchantmentGodClass {
+@ApiStatus.Internal
+public final class EnchantmentGodClass {
 	public static ThreadLocal<EnchantingContext> context = new ThreadLocal<>();
 }

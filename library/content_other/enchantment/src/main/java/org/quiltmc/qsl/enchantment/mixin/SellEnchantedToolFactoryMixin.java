@@ -16,33 +16,27 @@
 
 package org.quiltmc.qsl.enchantment.mixin;
 
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.context.LootContext;
-import net.minecraft.loot.function.EnchantWithLevelsLootFunction;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.random.RandomGenerator;
+import net.minecraft.village.TradeOffer;
 
-import org.quiltmc.qsl.enchantment.api.EnchantingContext;
+import org.quiltmc.qsl.enchantment.api.EntityEnchantingContext;
 import org.quiltmc.qsl.enchantment.api.QuiltEnchantmentHelper;
 
-@Mixin(EnchantWithLevelsLootFunction.class)
-public class EnchantWithLevelsLootFunctionMixin {
-	@Shadow
-	@Final
-	boolean treasureEnchantmentsAllowed;
-
-	@Inject(method = "process", at = @At("HEAD"))
-	private void setEnchantingLootContext(ItemStack stack, LootContext context, CallbackInfoReturnable<ItemStack> cir) {
-		QuiltEnchantmentHelper.setContext(new EnchantingContext(0, 0, stack, context.getWorld(), context.getRandom(), this.treasureEnchantmentsAllowed));
+@Mixin(targets = {"net.minecraft.village.TradeOffers$SellEnchantedToolFactory"})
+public class SellEnchantedToolFactoryMixin {
+	@Inject(method = "create", at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/EnchantmentHelper;enchant(Lnet/minecraft/util/random/RandomGenerator;Lnet/minecraft/item/ItemStack;IZ)Lnet/minecraft/item/ItemStack;"))
+	private void setEnchantingContext(Entity entity, RandomGenerator random, CallbackInfoReturnable<TradeOffer> cir) {
+		QuiltEnchantmentHelper.setContext(new EntityEnchantingContext<>(0, 0, null, entity.world, random, false, entity));
 	}
 
-	@Inject(method = "process", at = @At("RETURN"))
-	private void removeEnchantingLootContext(ItemStack stack, LootContext context, CallbackInfoReturnable<ItemStack> cir) {
+	@Inject(method = "create", at = @At(value = "RETURN"))
+	private void clearEnchantingContext(Entity entity, RandomGenerator random, CallbackInfoReturnable<TradeOffer> cir) {
 		QuiltEnchantmentHelper.clearContext();
 	}
 }

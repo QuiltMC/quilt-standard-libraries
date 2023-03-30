@@ -30,5 +30,6 @@ public class EnchantmentTestMod implements ModInitializer {
 	public void onInitialize(ModContainer mod) {
 		Registry.register(Registries.ENCHANTMENT, new Identifier(MOD_ID, "reaping"), new ReapingEnchantment());
 		Registry.register(Registries.ENCHANTMENT, new Identifier(MOD_ID, "pervasive"), new PervasiveEnchantment());
+		Registry.register(Registries.ENCHANTMENT, new Identifier(MOD_ID, "merchant_greed"), new MerchantGreedEnchantment());
 	}
 }

@@ -10,6 +10,7 @@
     "EnchantWithLevelsLootFunctionMixin",
     "ItemGroupsMixin",
     "MobEntityMixin",
+    "SellEnchantedToolFactoryMixin",
     "SkeletonHorseTrapTriggerGoalMixin",
     "WeightedAbsentAccessor"
   ],

@@ -32,20 +32,20 @@ import net.minecraft.loot.function.EnchantRandomlyLootFunction;
 
 import org.quiltmc.qsl.enchantment.api.EnchantingContext;
 import org.quiltmc.qsl.enchantment.api.QuiltEnchantment;
-import org.quiltmc.qsl.enchantment.impl.EnchantmentGodClass;
+import org.quiltmc.qsl.enchantment.api.QuiltEnchantmentHelper;
 
 @Mixin(EnchantRandomlyLootFunction.class)
 public class EnchantRandomlyLootFunctionMixin {
 	@Inject(method = "process", at = @At(value = "INVOKE", target = "Lnet/minecraft/registry/Registry;stream()Ljava/util/stream/Stream;"))
 	private void setEnchantingLootContext(ItemStack stack, LootContext context, CallbackInfoReturnable<ItemStack> cir) {
-		EnchantmentGodClass.context.set(new EnchantingContext(0, 0, stack, context.getWorld(), context.getRandom(), true));
+		QuiltEnchantmentHelper.setContext(new EnchantingContext(0, 0, stack, context.getWorld(), context.getRandom(), true));
 	}
 
 	@Redirect(method = "process", at = @At(value = "INVOKE", target = "Ljava/util/stream/Stream;filter(Ljava/util/function/Predicate;)Ljava/util/stream/Stream;", ordinal = 1))
 	private Stream<Enchantment> filterWithContext(Stream<Enchantment> stream, Predicate<Enchantment> predicate) {
 		return stream.filter(enchantment -> {
 			if (enchantment instanceof QuiltEnchantment quiltEnchantment) {
-				return quiltEnchantment.isAcceptableContext(EnchantmentGodClass.context.get());
+				return quiltEnchantment.isAcceptableContext(QuiltEnchantmentHelper.getContext());
 			}
 
 			return predicate.test(enchantment);
@@ -54,6 +54,6 @@ public class EnchantRandomlyLootFunctionMixin {
 
 	@Inject(method = "process", at = @At(value = "INVOKE", target = "Ljava/util/stream/Stream;collect(Ljava/util/stream/Collector;)Ljava/lang/Object;"))
 	private void removeEnchantingLootContext(ItemStack stack, LootContext context, CallbackInfoReturnable<ItemStack> cir) {
-		EnchantmentGodClass.context.remove();
+		QuiltEnchantmentHelper.clearContext();
 	}
 }

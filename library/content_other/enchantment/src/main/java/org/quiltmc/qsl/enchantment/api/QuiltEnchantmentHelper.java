@@ -18,21 +18,42 @@ package org.quiltmc.qsl.enchantment.api;
 
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.random.RandomGenerator;
+
 import org.quiltmc.qsl.enchantment.impl.EnchantmentGodClass;
 
 /**
- * Allows modded systems that enchant things randomly to apply an enchanting context.
+ * Allows modded systems that enchant items to apply an enchanting context.
  */
 public final class QuiltEnchantmentHelper {
-	public void setContext(EnchantingContext context) {
+	/**
+	 * Set the enchanting context for enchantments to use.
+	 * <p>
+	 * Note: Almost all the base values, bar the {@link net.minecraft.world.World world}, are provided to the context
+	 * when using {@link EnchantmentHelper#enchant(RandomGenerator, ItemStack, int, boolean)} or
+	 * {@link EnchantmentHelper#generateEnchantments(RandomGenerator, ItemStack, int, boolean)}.
+	 * @param context the enchanting context
+	 */
+	public static void setContext(EnchantingContext context) {
 		EnchantmentGodClass.context.set(context);
 	}
 
-	public @Nullable EnchantingContext getContext() {
+	/**
+	 * Gets the current enchanting context.
+	 * @return the enchanting context
+	 */
+	public static @Nullable EnchantingContext getContext() {
 		return EnchantmentGodClass.context.get();
 	}
 
-	public void clearContext() {
+	/**
+	 * Clears the current enchanting context.
+	 * <p>
+	 * This should be used to ensure that no information bleeds into other contexts.
+	 */
+	public static void clearContext() {
 		EnchantmentGodClass.context.remove();
 	}
 }

@@ -39,7 +39,7 @@ import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.random.RandomGenerator;
 
 import org.quiltmc.qsl.enchantment.api.PlayerUsingBlockEnchantingContext;
-import org.quiltmc.qsl.enchantment.impl.EnchantmentGodClass;
+import org.quiltmc.qsl.enchantment.api.QuiltEnchantmentHelper;
 
 @Mixin(EnchantmentScreenHandler.class)
 public abstract class EnchantmentScreenHandlerMixin extends ScreenHandler {
@@ -64,11 +64,11 @@ public abstract class EnchantmentScreenHandlerMixin extends ScreenHandler {
 	@Inject(method = "generateEnchantments", at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/EnchantmentHelper;generateEnchantments(Lnet/minecraft/util/random/RandomGenerator;Lnet/minecraft/item/ItemStack;IZ)Ljava/util/List;"))
 	private void setEnchantmentContext(ItemStack stack, int slot, int level, CallbackInfoReturnable<List<EnchantmentLevelEntry>> callback) {
 		// Level and power will be set later when those values are figured out.
-		this.context.run((world, pos) -> EnchantmentGodClass.context.set(new PlayerUsingBlockEnchantingContext(0, 0, stack, world, this.random, false, this.quilt$player, pos)));
+		this.context.run((world, pos) -> QuiltEnchantmentHelper.setContext(new PlayerUsingBlockEnchantingContext(0, 0, stack, world, this.random, false, this.quilt$player, pos)));
 	}
 
 	@Inject(method = "generateEnchantments", at = @At("RETURN"))
 	private void clearEnchantmentContext(ItemStack stack, int slot, int level, CallbackInfoReturnable<List<EnchantmentLevelEntry>> callback) {
-		EnchantmentGodClass.context.remove();
+		QuiltEnchantmentHelper.clearContext();
 	}
 }

@@ -16,23 +16,25 @@
 
 package org.quiltmc.qsl.enchantment.test;
 
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
+import org.jetbrains.annotations.Range;
+
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.passive.MerchantEntity;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 
 import org.quiltmc.qsl.enchantment.api.EnchantingContext;
+import org.quiltmc.qsl.enchantment.api.EntityEnchantingContext;
 import org.quiltmc.qsl.enchantment.api.QuiltEnchantment;
 
-public class PervasiveEnchantment extends QuiltEnchantment {
-	public PervasiveEnchantment() {
+public class MerchantGreedEnchantment extends QuiltEnchantment {
+	public MerchantGreedEnchantment() {
 		super(Rarity.COMMON, null, EquipmentSlot.values());
 	}
 
 	@Override
-	public int weightFromContext(EnchantingContext context) {
-		return 20;
+	public @Range(from = 0, to = Integer.MAX_VALUE) int weightFromContext(EnchantingContext context) {
+		return 100;
 	}
 
 	@Override
@@ -42,39 +44,11 @@ public class PervasiveEnchantment extends QuiltEnchantment {
 
 	@Override
 	public boolean isAcceptableContext(EnchantingContext context) {
-		return true;
+		return context instanceof EntityEnchantingContext<?> entityEnchantingContext && entityEnchantingContext.getEntity() instanceof MerchantEntity;
 	}
 
 	@Override
-	public int getMaxLevel() {
-		return 3;
-	}
-
-	@Override
-	public void onTargetDamaged(LivingEntity user, Entity target, int level) {
-		super.onTargetDamaged(user, target, level);
-
-		this.infect(target, level);
-	}
-
-	@Override
-	public void onUserDamaged(LivingEntity user, Entity attacker, int level) {
-		super.onUserDamaged(user, attacker, level);
-
-		this.infect(attacker, level);
-	}
-
-	private void infect(Entity target, int level) {
-		target.getItemsEquipped().forEach(stack -> {
-			if (stack.getItem().isEnchantable(stack)) {
-				if (stack.hasEnchantments()) {
-					var enchantments = EnchantmentHelper.get(stack);
-					enchantments.put(this, level);
-					EnchantmentHelper.set(enchantments, stack);
-				} else {
-					stack.addEnchantment(this, level);
-				}
-			}
-		});
+	public boolean isVisible(ItemGroup.Visibility visibility) {
+		return false;
 	}
 }

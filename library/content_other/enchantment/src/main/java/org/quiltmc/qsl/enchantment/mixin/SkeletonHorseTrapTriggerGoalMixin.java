@@ -28,12 +28,17 @@ import net.minecraft.entity.passive.HorseBaseEntity;
 import net.minecraft.world.LocalDifficulty;
 
 import org.quiltmc.qsl.enchantment.api.EntityEnchantingContext;
-import org.quiltmc.qsl.enchantment.impl.EnchantmentGodClass;
+import org.quiltmc.qsl.enchantment.api.QuiltEnchantmentHelper;
 
 @Mixin(SkeletonHorseTrapTriggerGoal.class)
 public abstract class SkeletonHorseTrapTriggerGoalMixin {
-	@Inject(method = "getSkeleton", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/mob/SkeletonEntity;equipStack(Lnet/minecraft/entity/EquipmentSlot;Lnet/minecraft/item/ItemStack;)V"), locals = LocalCapture.CAPTURE_FAILHARD)
+	@Inject(method = "getSkeleton", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/mob/SkeletonEntity;initialize(Lnet/minecraft/world/ServerWorldAccess;Lnet/minecraft/world/LocalDifficulty;Lnet/minecraft/entity/SpawnReason;Lnet/minecraft/entity/EntityData;Lnet/minecraft/nbt/NbtCompound;)Lnet/minecraft/entity/EntityData;"), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void setEntityEnchantingContext(LocalDifficulty localDifficulty, HorseBaseEntity vehicle, CallbackInfoReturnable<SkeletonEntity> cir, SkeletonEntity skeleton) {
-		EnchantmentGodClass.context.set(new EntityEnchantingContext<>(0, 0, null, vehicle.world, skeleton.getRandom(), false, skeleton));
+		QuiltEnchantmentHelper.setContext(new EntityEnchantingContext<>(0, 0, null, vehicle.world, skeleton.getRandom(), false, skeleton));
+	}
+
+	@Inject(method = "getSkeleton", at = @At("RETURN"))
+	private void clearEntityEnchantingContext(LocalDifficulty localDifficulty, HorseBaseEntity vehicle, CallbackInfoReturnable<SkeletonEntity> cir) {
+		QuiltEnchantmentHelper.clearContext();
 	}
 }
