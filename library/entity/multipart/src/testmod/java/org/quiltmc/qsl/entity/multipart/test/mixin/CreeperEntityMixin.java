@@ -48,7 +48,7 @@ public abstract class CreeperEntityMixin extends HostileEntity implements Multip
 		super.tickMovement();
 		var cycle = 0.5f + (age % 100) / 100f;
 		this.secretHitbox.scale(cycle);
-		this.secretHitbox.rotate(this.getPitch(), this.getHeadYaw(), 0.0f);
+		this.secretHitbox.rotate(this.getPitch(), this.getHeadYaw(), true);
 	}
 
 	@Override

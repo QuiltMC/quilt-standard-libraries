@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,10 @@ import org.spongepowered.asm.mixin.Shadow;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonPart;
 
-import org.quiltmc.qsl.entity.multipart.api.EntityPart;
+import org.quiltmc.qsl.entity.multipart.impl.EnderDragonEntityPart;
 
 @Mixin(EnderDragonPart.class)
-public class EnderDragonPartMixin implements EntityPart<EnderDragonEntity> {
+public class EnderDragonPartMixin implements EnderDragonEntityPart {
 	@Shadow
 	@Final
 	public EnderDragonEntity owner;

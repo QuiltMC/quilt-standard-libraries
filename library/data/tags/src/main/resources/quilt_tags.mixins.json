@@ -3,15 +3,16 @@
   "package": "org.quiltmc.qsl.tag.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "DynamicRegistryManagerAccessor",
     "SimpleRegistryMixin",
     "TagKeyAccessor",
     "TagKeyMixin"
   ],
   "client": [
+    "client.DynamicRegistrySyncAccessor",
     "client.ClientPlayNetworkHandlerMixin",
     "client.HolderReferenceMixin",
-    "client.TagGroupLoaderAccessor"
+    "client.TagGroupLoaderAccessor",
+    "client.WorldLoaderMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,81 +16,63 @@
 
 package org.quiltmc.qsl.resource.loader.test.client;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.channels.Channels;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Random;
-import java.util.Set;
-import java.util.function.Predicate;
 
-import com.google.common.base.Charsets;
+import org.jetbrains.annotations.NotNull;
+
 import com.mojang.blaze3d.texture.NativeImage;
-import org.apache.commons.io.IOUtils;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.resource.pack.AbstractFileResourcePack;
 import net.minecraft.resource.pack.ResourcePackProfile;
+import net.minecraft.resource.pack.ResourcePackSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
+import org.quiltmc.qsl.resource.loader.api.InMemoryResourcePack;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
-import org.quiltmc.qsl.resource.loader.test.mixin.client.NativeImageAccessor;
 
 public class ResourcePackProfileProviderTestMod implements ClientModInitializer {
 	private static final String PACK_NAME = "Visible Test Virtual Pack";
 
 	@Override
 	public void onInitializeClient(ModContainer mod) {
-		ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerResourcePackProfileProvider((profileAdder, factory) -> {
+		ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerResourcePackProfileProvider((profileAdder) -> {
+			var pack = new TestPack();
 			profileAdder.accept(ResourcePackProfile.of(
-					PACK_NAME, false, TestPack::new, factory,
+					PACK_NAME, pack.getDisplayName(), false, name -> pack, ResourceType.CLIENT_RESOURCES,
 					ResourcePackProfile.InsertionPosition.TOP,
-					text -> text.copy().append(Text.literal(" (Virtual Provider)").formatted(Formatting.DARK_GRAY))
-			));
+					new ResourcePackSource() {
+						@Override
+						public Text decorate(Text name) {
+							return name.copy().append(Text.literal(" (Virtual Provider)").formatted(Formatting.DARK_GRAY));
+						}
+
+						@Override
+						public boolean shouldAddAutomatically() {
+							return false;
+						}
+					}));
 		});
 	}
 
-	static class TestPack extends AbstractFileResourcePack {
-		private static final Set<String> NAMESPACES = Set.of("minecraft");
+	static class TestPack extends InMemoryResourcePack {
 		private static final Identifier DIRT_IDENTIFIER = new Identifier("textures/block/dirt.png");
 		private final Random random = new Random();
 
 		public TestPack() {
-			super(null);
+			this.putText("pack.mcmeta", String.format("""
+							{"pack":{"pack_format":%d,"description":"Just testing."}}
+							""",
+					SharedConstants.getGameVersion().getResourceVersion(ResourceType.CLIENT_RESOURCES)));
+			this.putImage("pack.png", this::createRandomImage);
+			this.putImage(DIRT_IDENTIFIER, this::createRandomImage);
 		}
 
-		@Override
-		protected boolean containsFile(String name) {
-			return false;
-		}
-
-		@Override
-		public Collection<Identifier> findResources(ResourceType type, String namespace, String startingPath,
-				Predicate<Identifier> pathFilter) {
-			if (type == ResourceType.CLIENT_RESOURCES && namespace.equals(DIRT_IDENTIFIER.getNamespace())) {
-				if (DIRT_IDENTIFIER.getPath().startsWith(startingPath) && pathFilter.test(DIRT_IDENTIFIER)) {
-					return List.of(DIRT_IDENTIFIER);
-				}
-			}
-			return Collections.emptyList();
-		}
-
-		@Override
-		public boolean contains(ResourceType type, Identifier id) {
-			return type == ResourceType.CLIENT_RESOURCES && id.equals(DIRT_IDENTIFIER);
-		}
-
-		private InputStream createRandomImage() throws IOException {
+		private NativeImage createRandomImage() {
 			var image = new NativeImage(16, 16, true);
 
 			boolean t = this.random.nextBoolean();
@@ -104,33 +86,7 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 				}
 			}
 
-			var out = new ByteArrayOutputStream();
-			((NativeImageAccessor) (Object) image).callWrite(Channels.newChannel(out));
-			image.close();
-			var in = new ByteArrayInputStream(out.toByteArray());
-			out.close();
-			return in;
-		}
-
-		@Override
-		protected InputStream openFile(String name) throws IOException {
-			if (name.equals("pack.mcmeta")) {
-				var pack = String.format("""
-								{"pack":{"pack_format":%d,"description":"Just testing."}}
-								""",
-						ResourceType.CLIENT_RESOURCES.getPackVersion(SharedConstants.getGameVersion()));
-				return IOUtils.toInputStream(pack, Charsets.UTF_8);
-			} else if (name.equals("pack.png")
-					|| name.endsWith(DIRT_IDENTIFIER.getNamespace() + "/" + DIRT_IDENTIFIER.getPath())) {
-				return this.createRandomImage();
-			}
-
-			throw new FileNotFoundException("No file :p");
-		}
-
-		@Override
-		public Set<String> getNamespaces(ResourceType type) {
-			return NAMESPACES;
+			return image;
 		}
 
 		@Override
@@ -139,12 +95,7 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 		}
 
 		@Override
-		public void close() {
-
-		}
-
-		@Override
-		public Text getDisplayName() {
+		public @NotNull Text getDisplayName() {
 			return Text.of(this.getName());
 		}
 	}

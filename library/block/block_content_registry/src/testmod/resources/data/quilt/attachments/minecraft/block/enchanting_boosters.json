@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": {
+    "#minecraft:planks": 0.25,
+    "minecraft:iron_block": {
+      "type": "quilt:constant",
+      "value": 3.0
+    },
+    "minecraft:diamond_block": 15.0,
+    "minecraft:netherite_block": 100.0,
+    "minecraft:redstone_wire": "quilt_block_content_registry_testmod:block_state_booster"
+  }
+}

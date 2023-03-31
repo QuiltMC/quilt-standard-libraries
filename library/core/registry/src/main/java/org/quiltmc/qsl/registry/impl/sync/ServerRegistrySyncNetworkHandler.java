@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,58 +27,58 @@ import net.minecraft.network.ClientConnection;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.listener.ServerPlayPacketListener;
-import net.minecraft.network.packet.c2s.play.AdvancementTabC2SPacket;
-import net.minecraft.network.packet.c2s.play.BoatPaddleStateC2SPacket;
+import net.minecraft.network.packet.c2s.MessageAcknowledgmentC2SPacket;
+import net.minecraft.network.packet.c2s.play.AdvancementTabOpenC2SPacket;
+import net.minecraft.network.packet.c2s.play.BeaconUpdateC2SPacket;
+import net.minecraft.network.packet.c2s.play.BlockNbtQueryC2SPacket;
+import net.minecraft.network.packet.c2s.play.BoatPaddleStateUpdateC2SPacket;
 import net.minecraft.network.packet.c2s.play.BookUpdateC2SPacket;
 import net.minecraft.network.packet.c2s.play.ButtonClickC2SPacket;
 import net.minecraft.network.packet.c2s.play.ChatCommandC2SPacket;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
-import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
+import net.minecraft.network.packet.c2s.play.ChatSessionUpdateC2SPacket;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
-import net.minecraft.network.packet.c2s.play.ClientSettingsC2SPacket;
-import net.minecraft.network.packet.c2s.play.ClientStatusC2SPacket;
-import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket;
+import net.minecraft.network.packet.c2s.play.ClientSettingsUpdateC2SPacket;
+import net.minecraft.network.packet.c2s.play.ClientStatusUpdateC2SPacket;
+import net.minecraft.network.packet.c2s.play.CommandBlockMinecartUpdateC2SPacket;
+import net.minecraft.network.packet.c2s.play.CommandBlockUpdateC2SPacket;
+import net.minecraft.network.packet.c2s.play.CommandCompletionRequestC2SPacket;
 import net.minecraft.network.packet.c2s.play.CraftRequestC2SPacket;
 import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
+import net.minecraft.network.packet.c2s.play.DifficultyLockUpdateC2SPacket;
+import net.minecraft.network.packet.c2s.play.DifficultyUpdateC2SPacket;
+import net.minecraft.network.packet.c2s.play.EntityNbtQueryC2SPacket;
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket;
-import net.minecraft.network.packet.c2s.play.JigsawGeneratingC2SPacket;
-import net.minecraft.network.packet.c2s.play.KeepAliveC2SPacket;
-import net.minecraft.network.packet.c2s.play.PickFromInventoryC2SPacket;
+import net.minecraft.network.packet.c2s.play.HandledScreenCloseC2SPacket;
+import net.minecraft.network.packet.c2s.play.InventoryItemPickC2SPacket;
+import net.minecraft.network.packet.c2s.play.ItemRenameC2SPacket;
+import net.minecraft.network.packet.c2s.play.JigsawGenerationC2SPacket;
+import net.minecraft.network.packet.c2s.play.JigsawUpdateC2SPacket;
+import net.minecraft.network.packet.c2s.play.KeepConnectionAliveC2SPacket;
+import net.minecraft.network.packet.c2s.play.MerchantTradeSelectionC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayPongC2SPacket;
+import net.minecraft.network.packet.c2s.play.PlayerAbilityUpdateC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerInputC2SPacket;
-import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket;
-import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
-import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket;
+import net.minecraft.network.packet.c2s.play.PlayerInteractionWithBlockC2SPacket;
+import net.minecraft.network.packet.c2s.play.PlayerInteractionWithEntityC2SPacket;
+import net.minecraft.network.packet.c2s.play.PlayerInteractionWithItemC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.network.packet.c2s.play.QueryBlockNbtC2SPacket;
-import net.minecraft.network.packet.c2s.play.QueryEntityNbtC2SPacket;
-import net.minecraft.network.packet.c2s.play.RecipeBookDataC2SPacket;
-import net.minecraft.network.packet.c2s.play.RecipeCategoryOptionsC2SPacket;
-import net.minecraft.network.packet.c2s.play.RenameItemC2SPacket;
-import net.minecraft.network.packet.c2s.play.RequestChatPreviewC2SPacket;
-import net.minecraft.network.packet.c2s.play.RequestCommandCompletionsC2SPacket;
-import net.minecraft.network.packet.c2s.play.ResourcePackStatusC2SPacket;
-import net.minecraft.network.packet.c2s.play.SelectMerchantTradeC2SPacket;
-import net.minecraft.network.packet.c2s.play.SpectatorTeleportC2SPacket;
-import net.minecraft.network.packet.c2s.play.TeleportConfirmC2SPacket;
-import net.minecraft.network.packet.c2s.play.UpdateBeaconC2SPacket;
-import net.minecraft.network.packet.c2s.play.UpdateCommandBlockC2SPacket;
-import net.minecraft.network.packet.c2s.play.UpdateCommandBlockMinecartC2SPacket;
-import net.minecraft.network.packet.c2s.play.UpdateDifficultyC2SPacket;
-import net.minecraft.network.packet.c2s.play.UpdateDifficultyLockC2SPacket;
-import net.minecraft.network.packet.c2s.play.UpdateJigsawC2SPacket;
-import net.minecraft.network.packet.c2s.play.UpdatePlayerAbilitiesC2SPacket;
-import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
-import net.minecraft.network.packet.c2s.play.UpdateSignC2SPacket;
-import net.minecraft.network.packet.c2s.play.UpdateStructureBlockC2SPacket;
+import net.minecraft.network.packet.c2s.play.RecipeBookUpdateC2SPacket;
+import net.minecraft.network.packet.c2s.play.RecipeCategoryOptionUpdateC2SPacket;
+import net.minecraft.network.packet.c2s.play.ResourcePackStatusUpdateC2SPacket;
+import net.minecraft.network.packet.c2s.play.SelectedSlotUpdateC2SPacket;
+import net.minecraft.network.packet.c2s.play.SignUpdateC2SPacket;
+import net.minecraft.network.packet.c2s.play.SlotClickC2SPacket;
+import net.minecraft.network.packet.c2s.play.SpectatorTeleportationC2SPacket;
+import net.minecraft.network.packet.c2s.play.StructureBlockUpdateC2SPacket;
+import net.minecraft.network.packet.c2s.play.TeleportConfirmationC2SPacket;
 import net.minecraft.network.packet.c2s.play.VehicleMoveC2SPacket;
 import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayPingS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.unmapped.C_vtnjglse;
 
 import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
 
@@ -124,12 +124,13 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 		switch (packet.getParameter()) {
 			case HELLO_PING -> {
 				if (this.syncVersion != -1) {
-					ServerRegistrySync.sendSyncPackets(this.connection, this.player);
+					ServerRegistrySync.sendSyncPackets(this.connection, this.player, this.syncVersion);
 				} else if (ServerRegistrySync.supportFabric && ((ChannelInfoHolder) this.connection).getPendingChannelsNames().contains(ServerFabricRegistrySync.ID)) {
 					ServerFabricRegistrySync.sendSyncPackets(this.connection);
 					this.syncVersion = -2;
 				}
-				connection.send(new PlayPingS2CPacket(GOODBYE_PING));
+
+				this.connection.send(new PlayPingS2CPacket(GOODBYE_PING));
 			}
 			case GOODBYE_PING -> {
 				if (this.syncVersion == -1 && ServerRegistrySync.requiresSync()) {
@@ -150,12 +151,11 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 		if (packet.getChannel().equals(ClientPackets.HANDSHAKE)) {
 			this.syncVersion = packet.getData().readVarInt();
 		} else if (packet.getChannel().equals(ClientPackets.SYNC_FAILED)) {
-			LOGGER.info("Disconnecting {} due to sync failure of {} registry", player.getGameProfile().getName(), packet.getData().readIdentifier());
+			LOGGER.info("Disconnecting {} due to sync failure of {} registry", this.player.getGameProfile().getName(), packet.getData().readIdentifier());
 		} else {
 			this.delayedPackets.add(new CustomPayloadC2SPacket(packet.getChannel(), new PacketByteBuf(packet.getData().copy())));
 		}
 	}
-
 
 	@Override
 	public void onDisconnected(Text reason) {
@@ -171,17 +171,18 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 			for (var packet : this.delayedPackets) {
 				packet.getData().release();
 			}
-			this.connection.send(new DisconnectS2CPacket(reason), PacketSendListener.alwaysRun(() -> {
-				this.connection.disconnect(reason);
-			}));
+
+			this.connection.send(new DisconnectS2CPacket(reason),
+					PacketSendListener.alwaysRun(() -> this.connection.disconnect(reason))
+			);
 		} catch (Exception var3) {
 			LOGGER.error("Error whilst disconnecting player", var3);
 		}
 	}
 
 	@Override
-	public ClientConnection getConnection() {
-		return this.connection;
+	public boolean isConnected() {
+		return this.connection.isOpen();
 	}
 
 	@Override
@@ -194,40 +195,37 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 	public void onChatCommand(ChatCommandC2SPacket packet) {}
 
 	@Override
-	public void onRequestChatPreview(RequestChatPreviewC2SPacket packet) {}
+	public void onMessageAcknowledgment(MessageAcknowledgmentC2SPacket packet) {}
 
 	@Override
-	public void method_44898(C_vtnjglse c_vtnjglse) {}
+	public void onClientStatusUpdate(ClientStatusUpdateC2SPacket packet) {}
 
 	@Override
-	public void onClientStatus(ClientStatusC2SPacket packet) {}
-
-	@Override
-	public void onClientSettings(ClientSettingsC2SPacket packet) {}
+	public void onClientSettingsUpdate(ClientSettingsUpdateC2SPacket packet) {}
 
 	@Override
 	public void onButtonClick(ButtonClickC2SPacket packet) {}
 
 	@Override
-	public void onClickSlot(ClickSlotC2SPacket packet) {}
+	public void onSlotClick(SlotClickC2SPacket packet) {}
 
 	@Override
 	public void onCraftRequest(CraftRequestC2SPacket packet) {}
 
 	@Override
-	public void onCloseHandledScreen(CloseHandledScreenC2SPacket packet) {}
+	public void onHandledScreenClose(HandledScreenCloseC2SPacket packet) {}
 
 	@Override
-	public void onPlayerInteractEntity(PlayerInteractEntityC2SPacket packet) {}
+	public void onPlayerInteractionWithEntity(PlayerInteractionWithEntityC2SPacket packet) {}
 
 	@Override
-	public void onKeepAlive(KeepAliveC2SPacket packet) {}
+	public void onKeepConnectionAlive(KeepConnectionAliveC2SPacket packet) {}
 
 	@Override
 	public void onPlayerMove(PlayerMoveC2SPacket packet) {}
 
 	@Override
-	public void onPlayerAbilities(UpdatePlayerAbilitiesC2SPacket packet) {}
+	public void onPlayerAbilityUpdate(PlayerAbilityUpdateC2SPacket packet) {}
 
 	@Override
 	public void onPlayerAction(PlayerActionC2SPacket packet) {}
@@ -239,86 +237,89 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 	public void onPlayerInput(PlayerInputC2SPacket packet) {}
 
 	@Override
-	public void onUpdateSelectedSlot(UpdateSelectedSlotC2SPacket packet) {}
+	public void onSelectedSlotUpdate(SelectedSlotUpdateC2SPacket packet) {}
 
 	@Override
 	public void onCreativeInventoryAction(CreativeInventoryActionC2SPacket packet) {}
 
 	@Override
-	public void onSignUpdate(UpdateSignC2SPacket packet) {}
+	public void onSignUpdate(SignUpdateC2SPacket packet) {}
 
 	@Override
-	public void onPlayerInteractBlock(PlayerInteractBlockC2SPacket packet) {}
+	public void onPlayerInteractionWithBlock(PlayerInteractionWithBlockC2SPacket packet) {}
 
 	@Override
-	public void onPlayerInteractItem(PlayerInteractItemC2SPacket packet) {}
+	public void onPlayerInteractionWithItem(PlayerInteractionWithItemC2SPacket packet) {}
 
 	@Override
-	public void onSpectatorTeleport(SpectatorTeleportC2SPacket packet) {}
+	public void onSpectatorTeleportation(SpectatorTeleportationC2SPacket packet) {}
 
 	@Override
-	public void onResourcePackStatus(ResourcePackStatusC2SPacket packet) {}
+	public void onResourcePackStatusUpdate(ResourcePackStatusUpdateC2SPacket packet) {}
 
 	@Override
-	public void onBoatPaddleState(BoatPaddleStateC2SPacket packet) {}
+	public void onBoatPaddleStateUpdate(BoatPaddleStateUpdateC2SPacket packet) {}
 
 	@Override
 	public void onVehicleMove(VehicleMoveC2SPacket packet) {}
 
 	@Override
-	public void onTeleportConfirm(TeleportConfirmC2SPacket packet) {}
+	public void onTeleportConfirmation(TeleportConfirmationC2SPacket packet) {}
 
 	@Override
-	public void onRecipeBookData(RecipeBookDataC2SPacket packet) {}
+	public void onRecipeBookUpdate(RecipeBookUpdateC2SPacket packet) {}
 
 	@Override
-	public void onRecipeCategoryOptions(RecipeCategoryOptionsC2SPacket packet) {}
+	public void onRecipeCategoryOptionUpdate(RecipeCategoryOptionUpdateC2SPacket packet) {}
 
 	@Override
-	public void onAdvancementTab(AdvancementTabC2SPacket packet) {}
+	public void onAdvancementTabOpen(AdvancementTabOpenC2SPacket packet) {}
 
 	@Override
-	public void onRequestCommandCompletions(RequestCommandCompletionsC2SPacket packet) {}
+	public void onCommandCompletionRequest(CommandCompletionRequestC2SPacket packet) {}
 
 	@Override
-	public void onUpdateCommandBlock(UpdateCommandBlockC2SPacket packet) {}
+	public void onCommandBlockUpdate(CommandBlockUpdateC2SPacket packet) {}
 
 	@Override
-	public void onUpdateCommandBlockMinecart(UpdateCommandBlockMinecartC2SPacket packet) {}
+	public void onCommandBlockMinecartUpdate(CommandBlockMinecartUpdateC2SPacket packet) {}
 
 	@Override
-	public void onPickFromInventory(PickFromInventoryC2SPacket packet) {}
+	public void onInventoryItemPick(InventoryItemPickC2SPacket packet) {}
 
 	@Override
-	public void onRenameItem(RenameItemC2SPacket packet) {}
+	public void onItemRename(ItemRenameC2SPacket packet) {}
 
 	@Override
-	public void onUpdateBeacon(UpdateBeaconC2SPacket packet) {}
+	public void onBeaconUpdate(BeaconUpdateC2SPacket packet) {}
 
 	@Override
-	public void onStructureBlockUpdate(UpdateStructureBlockC2SPacket packet) {}
+	public void onStructureBlockUpdate(StructureBlockUpdateC2SPacket packet) {}
 
 	@Override
-	public void onMerchantTradeSelect(SelectMerchantTradeC2SPacket packet) {}
+	public void onMerchantTradeSelection(MerchantTradeSelectionC2SPacket packet) {}
 
 	@Override
 	public void onBookUpdate(BookUpdateC2SPacket packet) {}
 
 	@Override
-	public void onQueryEntityNbt(QueryEntityNbtC2SPacket packet) {}
+	public void onEntityNbtQuery(EntityNbtQueryC2SPacket packet) {}
 
 	@Override
-	public void onQueryBlockNbt(QueryBlockNbtC2SPacket packet) {}
+	public void onBlockNbtQuery(BlockNbtQueryC2SPacket packet) {}
 
 	@Override
-	public void onJigsawUpdate(UpdateJigsawC2SPacket packet) {}
+	public void onJigsawUpdate(JigsawUpdateC2SPacket packet) {}
 
 	@Override
-	public void onJigsawGenerating(JigsawGeneratingC2SPacket packet) {}
+	public void onJigsawGeneration(JigsawGenerationC2SPacket packet) {}
 
 	@Override
-	public void onUpdateDifficulty(UpdateDifficultyC2SPacket packet) {}
+	public void onDifficultyUpdate(DifficultyUpdateC2SPacket packet) {}
 
 	@Override
-	public void onUpdateDifficultyLock(UpdateDifficultyLockC2SPacket packet) {}
+	public void onDifficultyLockUpdate(DifficultyLockUpdateC2SPacket packet) {}
+
+	@Override
+	public void onChatSessionUpdate(ChatSessionUpdateC2SPacket packet) {}
 }

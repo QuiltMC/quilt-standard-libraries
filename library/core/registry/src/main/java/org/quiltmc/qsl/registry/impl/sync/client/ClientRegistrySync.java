@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.mojang.logging.LogUtils;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -33,11 +31,12 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Language;
-import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
@@ -46,9 +45,11 @@ import org.quiltmc.qsl.registry.impl.sync.RegistryFlag;
 import org.quiltmc.qsl.registry.impl.sync.ServerPackets;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedIdList;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
+import org.quiltmc.qsl.registry.mixin.client.ClientLoginNetworkHandlerAccessor;
+import org.quiltmc.qsl.registry.mixin.client.ItemRendererAccessor;
 
 @ApiStatus.Internal
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ClientRegistrySync {
 	private static final Logger LOGGER = LogUtils.getLogger();
 
@@ -61,7 +62,11 @@ public final class ClientRegistrySync {
 	@Nullable
 	private static Map<String, Collection<SynchronizedRegistry.SyncEntry>> syncMap;
 
+	@SuppressWarnings({"FieldCanBeLocal", "unused"})
+	private static int syncVersion;
+	@SuppressWarnings("unused")
 	private static int currentCount;
+	@SuppressWarnings("unused")
 	private static byte currentFlags;
 	private static boolean optionalRegistry;
 
@@ -69,7 +74,7 @@ public final class ClientRegistrySync {
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.HANDSHAKE, ClientRegistrySync::handleHelloPacket);
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_START, ClientRegistrySync::handleStartPacket);
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_DATA, ClientRegistrySync::handleDataPacket);
-		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_RESTORE, ClientRegistrySync::handleApplyPacket);
+		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_APPLY, ClientRegistrySync::handleApplyPacket);
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.END, ClientRegistrySync::handleGoodbyePacket);
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_RESTORE, ClientRegistrySync::handleRestorePacket);
 	}
@@ -87,6 +92,10 @@ public final class ClientRegistrySync {
 			}
 		}
 
+		// Capture the highest supported version for detecting what the server is sending.
+		// This is required as older versions of registry sync erroneously sent RESTORE in place of APPLY.
+		syncVersion = highestSupported;
+
 		sendHelloPacket(sender, highestSupported);
 	}
 
@@ -101,7 +110,7 @@ public final class ClientRegistrySync {
 		var buf = PacketByteBufs.create();
 		buf.writeIdentifier(identifier);
 
-		handler.getConnection().send(ClientPlayNetworking.createC2SPacket(ClientPackets.SYNC_FAILED, buf));
+		((ClientLoginNetworkHandlerAccessor) handler).getConnection().send(ClientPlayNetworking.createC2SPacket(ClientPackets.SYNC_FAILED, buf));
 	}
 
 	private static void handleGoodbyePacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
@@ -112,7 +121,7 @@ public final class ClientRegistrySync {
 		int count = buf.readVarInt();
 		byte flags = buf.readByte();
 
-		var registry = Registry.REGISTRIES.get(identifier);
+		var registry = Registries.REGISTRY.get(identifier);
 
 		if (registry instanceof SynchronizedRegistry synchronizedRegistry) {
 			currentRegistry = synchronizedRegistry;
@@ -125,7 +134,7 @@ public final class ClientRegistrySync {
 		} else {
 			LOGGER.warn("Trying to sync registry " + identifier + " which doesn't " + (registry != null ? "support it!" : "exist!"));
 			sendSyncFailedPacket(handler, identifier);
-			handler.getConnection().disconnect(getMessage("missing_registry", "Client is missing required registry! Mismatched mods?"));
+			((ClientLoginNetworkHandlerAccessor) handler).getConnection().disconnect(getMessage("missing_registry", "Client is missing required registry! Mismatched mods?"));
 		}
 	}
 
@@ -134,6 +143,7 @@ public final class ClientRegistrySync {
 			if (!optionalRegistry) {
 				LOGGER.warn("Received sync data without specifying registry!");
 			}
+
 			return;
 		}
 
@@ -158,6 +168,7 @@ public final class ClientRegistrySync {
 			if (!optionalRegistry) {
 				LOGGER.warn("Received sync data without specifying registry!");
 			}
+
 			return;
 		}
 
@@ -170,15 +181,14 @@ public final class ClientRegistrySync {
 			disconnect = checkMissing(handler, currentRegistryId, missingEntries);
 		}
 
-
 		if (!disconnect) {
-			if (reg == Registry.BLOCK) {
+			if (reg == Registries.BLOCK) {
 				rebuildBlocks(client);
-			} else if (reg == Registry.FLUID) {
+			} else if (reg == Registries.FLUID) {
 				rebuildFluidStates();
-			} else if (reg == Registry.ITEM) {
+			} else if (reg == Registries.ITEM) {
 				rebuildItems(client);
-			} else if (reg == Registry.PARTICLE_TYPE) {
+			} else if (reg == Registries.PARTICLE_TYPE) {
 				rebuildParticles(client);
 			}
 		}
@@ -197,6 +207,9 @@ public final class ClientRegistrySync {
 
 		((RebuildableIdModelHolder) models).quilt$rebuildIds();
 		models.reloadModels();
+
+		var itemColors = ((ItemRendererAccessor) client.getItemRenderer()).getColors();
+		((RebuildableIdModelHolder) itemColors).quilt$rebuildIds();
 	}
 
 	private static void rebuildParticles(MinecraftClient client) {
@@ -208,7 +221,7 @@ public final class ClientRegistrySync {
 
 		SynchronizedIdList.clear(Block.STATE_IDS);
 
-		for (var block : Registry.BLOCK) {
+		for (var block : Registries.BLOCK) {
 			block.getStateManager().getStates().forEach(Block.STATE_IDS::add);
 		}
 	}
@@ -216,7 +229,7 @@ public final class ClientRegistrySync {
 	public static void rebuildFluidStates() {
 		SynchronizedIdList.clear(Fluid.STATE_IDS);
 
-		for (var fluid : Registry.FLUID) {
+		for (var fluid : Registries.FLUID) {
 			fluid.getStateManager().getStates().forEach(Fluid.STATE_IDS::add);
 		}
 	}
@@ -248,7 +261,7 @@ public final class ClientRegistrySync {
 
 		if (disconnect) {
 			sendSyncFailedPacket(handler, registry);
-			handler.getConnection().disconnect(getMessage("missing_entries", "Client registry is missing entries! Mismatched mods?"));
+			((ClientLoginNetworkHandlerAccessor) handler).getConnection().disconnect(getMessage("missing_entries", "Client registry is missing entries! Mismatched mods?"));
 			var builder = new StringBuilder("Missing entries for registry \"" + registry + "\":\n");
 
 			for (var entry : missingEntries) {
@@ -256,6 +269,7 @@ public final class ClientRegistrySync {
 				if (RegistryFlag.isOptional(entry.flags())) {
 					builder.append(" (Optional)");
 				}
+
 				builder.append("\n");
 			}
 
@@ -271,7 +285,7 @@ public final class ClientRegistrySync {
 	}
 
 	public static void createSnapshot() {
-		for (var reg : Registry.REGISTRIES) {
+		for (var reg : Registries.REGISTRY) {
 			if (reg instanceof SynchronizedRegistry registry && registry.quilt$requiresSyncing()) {
 				registry.quilt$createIdSnapshot();
 			}
@@ -279,7 +293,7 @@ public final class ClientRegistrySync {
 	}
 
 	public static void restoreSnapshot(MinecraftClient client) {
-		for (var reg : Registry.REGISTRIES) {
+		for (var reg : Registries.REGISTRY) {
 			if (reg instanceof SynchronizedRegistry registry && registry.quilt$requiresSyncing()) {
 				registry.quilt$restoreIdSnapshot();
 			}

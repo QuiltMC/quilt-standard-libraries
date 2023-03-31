@@ -17,11 +17,9 @@
 
 package org.quiltmc.qsl.screen.api.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import net.minecraft.client.gui.screen.Screen;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 import org.quiltmc.qsl.base.api.util.TriState;
@@ -35,7 +33,7 @@ import org.quiltmc.qsl.base.api.util.TriState;
  *
  * @see ScreenEvents
  */
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ScreenKeyboardEvents {
 	/**
 	 * An event that checks if a key press should be allowed.
@@ -107,7 +105,7 @@ public final class ScreenKeyboardEvents {
 		}
 	});
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface AllowKeyPress extends ClientEventAwareListener {
 		/**
@@ -123,7 +121,7 @@ public final class ScreenKeyboardEvents {
 		TriState allowKeyPress(Screen screen, int key, int scancode, int modifiers);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface BeforeKeyPress extends ClientEventAwareListener {
 		/**
@@ -138,7 +136,7 @@ public final class ScreenKeyboardEvents {
 		void beforeKeyPress(Screen screen, int key, int scancode, int modifiers);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface AfterKeyPress extends ClientEventAwareListener {
 		/**
@@ -153,7 +151,7 @@ public final class ScreenKeyboardEvents {
 		void afterKeyPress(Screen screen, int key, int scancode, int modifiers);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface AllowKeyRelease extends ClientEventAwareListener {
 		/**
@@ -169,7 +167,7 @@ public final class ScreenKeyboardEvents {
 		TriState allowKeyRelease(Screen screen, int key, int scancode, int modifiers);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface BeforeKeyRelease extends ClientEventAwareListener {
 		/**
@@ -184,7 +182,7 @@ public final class ScreenKeyboardEvents {
 		void beforeKeyRelease(Screen screen, int key, int scancode, int modifiers);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface AfterKeyRelease extends ClientEventAwareListener {
 		/**

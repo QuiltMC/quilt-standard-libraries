@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,17 @@
 package org.quiltmc.qsl.registry.mixin;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.util.registry.Registry;
-import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.registry.Registries;
+
+import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 
 @Mixin(Blocks.class)
 public abstract class BlocksMixin {
@@ -33,7 +35,7 @@ public abstract class BlocksMixin {
 
 	@Inject(method = "<clinit>", at = @At("RETURN"))
 	private static void onInit(CallbackInfo ci) {
-		RegistryEvents.getEntryAddEvent(Registry.BLOCK).register(context -> {
+		RegistryEvents.getEntryAddEvent(Registries.BLOCK).register(context -> {
 			context.value().getLootTableId();
 			context.value().getStateManager().getStates().forEach((state) -> {
 				if (Block.STATE_IDS.getRawId(state) == -1) {

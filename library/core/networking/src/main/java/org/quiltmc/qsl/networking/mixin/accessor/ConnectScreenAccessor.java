@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@
 
 package org.quiltmc.qsl.networking.mixin.accessor;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 import net.minecraft.client.gui.screen.ConnectScreen;
 import net.minecraft.network.ClientConnection;
 
-@Environment(EnvType.CLIENT)
+import org.quiltmc.loader.api.minecraft.ClientOnly;
+
+@ClientOnly
 @Mixin(ConnectScreen.class)
 public interface ConnectScreenAccessor {
 	@Accessor

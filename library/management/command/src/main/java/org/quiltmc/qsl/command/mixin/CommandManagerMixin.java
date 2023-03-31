@@ -95,7 +95,7 @@ public abstract class CommandManagerMixin {
 	// endregion
 
 	@Mixin(CommandManager.RegistrationEnvironment.class)
-	public static abstract class RegistrationEnvironmentMixin implements QuiltCommandRegistrationEnvironment {
+	public abstract static class RegistrationEnvironmentMixin implements QuiltCommandRegistrationEnvironment {
 		@Shadow
 		@Final
 		boolean dedicated;

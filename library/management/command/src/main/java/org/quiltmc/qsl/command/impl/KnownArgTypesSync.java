@@ -21,13 +21,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import io.netty.buffer.Unpooled;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.ServerLoginConnectionEvents;
 import org.quiltmc.qsl.networking.api.ServerLoginNetworking;
@@ -53,7 +52,7 @@ public final class KnownArgTypesSync {
 		});
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	public static void registerClient() {
 		ClientLoginNetworking.registerGlobalReceiver(ID, (client, handler, buf, listenerAdder) -> client.submit(() -> {
 			var idents = ServerArgumentTypes.getIds();

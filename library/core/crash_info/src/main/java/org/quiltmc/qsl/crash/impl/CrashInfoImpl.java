@@ -29,20 +29,6 @@ import org.quiltmc.qsl.crash.api.CrashReportEvents;
 public final class CrashInfoImpl implements CrashReportEvents.SystemDetails {
 	@Override
 	public void addDetails(SystemDetails details) {
-		details.addSection("Quilt Mods", () -> {
-			var builder = new StringBuilder();
-
-			QuiltLoader.getAllMods().stream().sorted(Comparator.comparing(o -> o.metadata().id())).forEach(mod -> {
-				var metadata = mod.metadata();
-
-				builder.append("\n\t\t%s: %s %s".formatted(
-						metadata.id(),
-						metadata.name(),
-						metadata.version().raw())
-				);
-			});
-
-			return builder.toString();
-		});
+		details.addSection("Quilt Mods", () -> "\n\t\t" + QuiltLoader.createModTable().replace("\n", "\n\t\t"));
 	}
 }

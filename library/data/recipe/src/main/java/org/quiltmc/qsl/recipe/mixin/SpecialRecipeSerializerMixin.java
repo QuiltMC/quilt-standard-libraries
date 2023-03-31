@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.Mixin;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.SpecialRecipeSerializer;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 
 import org.quiltmc.qsl.recipe.api.serializer.QuiltRecipeSerializer;
 
@@ -32,7 +32,7 @@ public abstract class SpecialRecipeSerializerMixin<T extends Recipe<?>> implemen
 	@Override
 	public JsonObject toJson(T recipe) {
 		var json = new JsonObject();
-		json.addProperty("type", Objects.requireNonNull(Registry.RECIPE_SERIALIZER.getId(this)).toString());
+		json.addProperty("type", Objects.requireNonNull(Registries.RECIPE_SERIALIZER.getId(this)).toString());
 		return json;
 	}
 }

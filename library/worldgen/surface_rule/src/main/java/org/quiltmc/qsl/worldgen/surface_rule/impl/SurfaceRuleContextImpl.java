@@ -22,40 +22,53 @@ import java.util.List;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.gen.surfacebuilder.SurfaceRules;
 
 import org.quiltmc.qsl.worldgen.surface_rule.api.SurfaceRuleContext;
 
 @ApiStatus.Internal
-public class SurfaceRuleContextImpl implements SurfaceRuleContext, SurfaceRuleContext.Nether, SurfaceRuleContext.TheEnd {
-	private final SurfaceRules.SequenceMaterialRule sequenceRule;
+public class SurfaceRuleContextImpl implements SurfaceRuleContext {
+	private final SurfaceRules.SequenceMaterialRule materialRule;
+	private final ResourceManager resourceManager;
+	private final Identifier identifier;
 
-	public SurfaceRuleContextImpl(SurfaceRules.MaterialRule rules) {
-		this.sequenceRule = new SurfaceRules.SequenceMaterialRule(new ArrayList<>());
+	public SurfaceRuleContextImpl(SurfaceRules.MaterialRule rules, ResourceManager resourceManager, Identifier identifier) {
+		this.materialRule = new SurfaceRules.SequenceMaterialRule(new ArrayList<>());
 		this.materialRules().add(rules);
+		this.resourceManager = resourceManager;
+		this.identifier = identifier;
+	}
+
+	public SurfaceRules.MaterialRule freeze() {
+		((QuiltSequenceMaterialRuleHooks) (Object) this.materialRule).quilt$freeze();
+		return this.materialRule;
 	}
 
 	@Override
 	public @NotNull List<SurfaceRules.MaterialRule> materialRules() {
-		return this.sequenceRule.sequence();
+		return this.materialRule.sequence();
 	}
 
-	SurfaceRules.SequenceMaterialRule getSequenceRule() {
-		return this.sequenceRule;
+	@Override
+	public @NotNull ResourceManager resourceManager() {
+		return this.resourceManager;
 	}
 
-	void freeze() {
-		((QuiltSequenceMaterialRuleHooks) (Object) this.sequenceRule).quilt$freeze();
+	@Override
+	public @NotNull Identifier identifier() {
+		return this.identifier;
 	}
 
-	@ApiStatus.Internal
 	public static class OverworldImpl extends SurfaceRuleContextImpl implements SurfaceRuleContext.Overworld {
 		private final boolean surface;
 		private final boolean bedrockRoof;
 		private final boolean bedrockFloor;
 
-		public OverworldImpl(boolean surface, boolean bedrockRoof, boolean bedrockFloor, SurfaceRules.MaterialRule rules) {
-			super(rules);
+		public OverworldImpl(boolean surface, boolean bedrockRoof, boolean bedrockFloor,
+				SurfaceRules.MaterialRule rules, ResourceManager resourceManager, Identifier identifier) {
+			super(rules, resourceManager, identifier);
 
 			this.surface = surface;
 			this.bedrockRoof = bedrockRoof;
@@ -75,6 +88,20 @@ public class SurfaceRuleContextImpl implements SurfaceRuleContext, SurfaceRuleCo
 		@Override
 		public boolean hasBedrockFloor() {
 			return this.bedrockFloor;
+		}
+	}
+
+	@ApiStatus.Internal
+	public static class NetherImpl extends SurfaceRuleContextImpl implements SurfaceRuleContext.Nether {
+		public NetherImpl(SurfaceRules.MaterialRule rules, ResourceManager resourceManager, Identifier identifier) {
+			super(rules, resourceManager, identifier);
+		}
+	}
+
+	@ApiStatus.Internal
+	public static class TheEndImpl extends SurfaceRuleContextImpl implements SurfaceRuleContext.TheEnd {
+		public TheEndImpl(SurfaceRules.MaterialRule rules, ResourceManager resourceManager, Identifier identifier) {
+			super(rules, resourceManager, identifier);
 		}
 	}
 }

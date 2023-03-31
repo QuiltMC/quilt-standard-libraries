@@ -28,7 +28,6 @@ import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
 import org.quiltmc.qsl.tooltip.api.client.ItemTooltipCallback;
 
-
 public class BlockContentRegistriesClientInitializer implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("BlockContentRegistriesClientInitializer");
 
@@ -36,16 +35,17 @@ public class BlockContentRegistriesClientInitializer implements ClientModInitial
 
 	@Override
 	public void onInitializeClient(ModContainer mod) {
-		if (Boolean.getBoolean(ENABLE_TOOLTIP_DEBUG)) {
+		if (Boolean.getBoolean(ENABLE_TOOLTIP_DEBUG) || QuiltLoader.isModLoaded("quilt_block_content_registry_testmod")) {
 			if (QuiltLoader.isModLoaded("quilt_tooltip")) {
 				ItemTooltipCallback.EVENT.register((stack, player, context, lines) -> {
 					Block block = Block.getBlockFromItem(stack.getItem());
 
-					BlockContentRegistries.FLATTENABLE_BLOCK.get(block).ifPresent(state -> lines.add(Text.literal("Flattenable block: " + state)));
-					BlockContentRegistries.OXIDIZABLE_BLOCK.get(block).ifPresent(_block -> lines.add(Text.literal("Oxidizes to: " + _block.block())));
-					BlockContentRegistries.WAXABLE_BLOCK.get(block).ifPresent(_block -> lines.add(Text.literal("Waxes to: " + _block.block())));
-					BlockContentRegistries.STRIPPABLE_BLOCK.get(block).ifPresent(_block -> lines.add(Text.literal("Strips to: " + _block)));
-					BlockContentRegistries.FLAMMABLE_BLOCK.get(block).ifPresent(entry -> lines.add(Text.literal("Flammable: " + entry.burn() + " burn chance, " + entry.spread() + " spread chance")));
+					BlockContentRegistries.FLATTENABLE.get(block).ifPresent(state -> lines.add(Text.literal("Flattenable block: " + state)));
+					BlockContentRegistries.OXIDIZABLE.get(block).ifPresent(_block -> lines.add(Text.literal("Oxidizes to: " + _block.block())));
+					BlockContentRegistries.WAXABLE.get(block).ifPresent(_block -> lines.add(Text.literal("Waxes to: " + _block.block())));
+					BlockContentRegistries.STRIPPABLE.get(block).ifPresent(_block -> lines.add(Text.literal("Strips to: " + _block)));
+					BlockContentRegistries.FLAMMABLE.get(block).ifPresent(entry -> lines.add(Text.literal("Flammable: " + entry.burn() + " burn chance, " + entry.spread() + " spread chance")));
+					BlockContentRegistries.ENCHANTING_BOOSTERS.get(block).ifPresent(value -> lines.add(Text.literal("Enchanting booster: " + value)));
 				});
 			} else {
 				LOGGER.warn("Tooltip debug was enabled, but the QSL module `quilt_tooltip` was missing.");

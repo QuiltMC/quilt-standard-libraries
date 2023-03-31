@@ -4,9 +4,10 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "AxeItemMixin",
+    "EnchantingTableBlockMixin",
+    "EnchantmentScreenHandlerMixin",
     "HoneycombItemMixin",
     "OxidizableMixin",
-    "SculkSensorBlockMixin",
     "ShovelItemMixin"
   ],
   "injectors": {

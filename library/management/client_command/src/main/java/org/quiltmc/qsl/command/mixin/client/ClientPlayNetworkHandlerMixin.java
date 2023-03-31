@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,16 +24,19 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientCommandSource;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.registry.ClientRegistryLayer;
 import net.minecraft.command.CommandBuildContext;
 import net.minecraft.command.CommandSource;
-import net.minecraft.network.packet.s2c.play.CommandTreeS2CPacket;
+import net.minecraft.feature_flags.FeatureFlagBitSet;
+import net.minecraft.network.packet.s2c.play.CommandTreeUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
+import net.minecraft.registry.LayeredRegistryManager;
 import net.minecraft.server.command.CommandManager;
-import net.minecraft.util.registry.DynamicRegistryManager;
 
 import org.quiltmc.qsl.command.impl.client.ClientCommandInternals;
 
@@ -47,27 +50,46 @@ abstract class ClientPlayNetworkHandlerMixin {
 	private ClientCommandSource commandSource;
 
 	@Shadow
-	private DynamicRegistryManager.Frozen registryManager;
+	private LayeredRegistryManager<ClientRegistryLayer> clientRegistryManager;
 
 	@Shadow
 	@Final
 	private MinecraftClient client;
 
+	@Shadow
+	private FeatureFlagBitSet enabledFlags;
+
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Inject(method = "onGameJoin", at = @At("RETURN"))
 	private void onGameJoin(GameJoinS2CPacket packet, CallbackInfo ci) {
-		ClientCommandInternals.updateCommands(new CommandBuildContext(this.registryManager),
+		ClientCommandInternals.updateCommands(CommandBuildContext.createConfigurable(this.clientRegistryManager.getCompositeManager(), this.enabledFlags),
 				(CommandDispatcher) this.commandDispatcher, this.commandSource,
-				this.client.isIntegratedServerRunning() ? CommandManager.RegistrationEnvironment.INTEGRATED : CommandManager.RegistrationEnvironment.DEDICATED
+				this.client.isIntegratedServerRunning() ? CommandManager.RegistrationEnvironment.INTEGRATED
+						: CommandManager.RegistrationEnvironment.DEDICATED
 		);
 	}
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
-	@Inject(method = "onCommandTree", at = @At("RETURN"))
-	private void onOnCommandTree(CommandTreeS2CPacket packet, CallbackInfo info) {
+	@Inject(method = "onCommandTreeUpdate", at = @At("RETURN"))
+	private void onOnCommandTree(CommandTreeUpdateS2CPacket packet, CallbackInfo info) {
 		ClientCommandInternals.updateCommands(null,
 				(CommandDispatcher) this.commandDispatcher, this.commandSource,
-				this.client.isIntegratedServerRunning() ? CommandManager.RegistrationEnvironment.INTEGRATED : CommandManager.RegistrationEnvironment.DEDICATED
+				this.client.isIntegratedServerRunning() ? CommandManager.RegistrationEnvironment.INTEGRATED
+						: CommandManager.RegistrationEnvironment.DEDICATED
 		);
+	}
+
+	@Inject(method = "sendCommand", at = @At("HEAD"), cancellable = true)
+	private void onSendCommand(String command, CallbackInfoReturnable<Boolean> cir) {
+		if (ClientCommandInternals.executeCommand(command, true)) {
+			cir.setReturnValue(true);
+		}
+	}
+
+	@Inject(method = "method_45730", at = @At("HEAD"), cancellable = true)
+	private void onSendCommand(String command, CallbackInfo ci) {
+		if (ClientCommandInternals.executeCommand(command, true)) {
+			ci.cancel();
+		}
 	}
 }

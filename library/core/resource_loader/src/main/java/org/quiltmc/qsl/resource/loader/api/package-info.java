@@ -1,3 +1,19 @@
+/*
+ * Copyright 2023 QuiltMC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /**
  * <h2>The Resource Loader and its APIs.</h2>
  *
@@ -24,10 +40,48 @@
  * {@link org.quiltmc.qsl.resource.loader.api.ResourceLoader#registerBuiltinResourcePack(Identifier, org.quiltmc.loader.api.ModContainer, ResourcePackActivationType)}
  *
  * <p>
- * <h4>Programmer Art Resource Pack</h4>
- * The Resource Loader will inject resources into the Programmer Art resource pack for each mod that provides
- * Programmer Art resources in the {@code programmer_art} top-level directory of the mod
- * whose structure is similar to a normal resource pack.
+ * <h4>Resource Pack Injection</h4>
+ * <p>
+ * <h5>Resource Pack Profile Provider</h5>
+ * The Resource Loader gives a method to register {@link net.minecraft.resource.pack.ResourcePackProvider ResourcePackProviders},
+ * which may be used to add new resource packs that are visible to the player in the resource pack selection screens or the {@code datapack} command.
+ *
+ * <p>
+ * <h5>Virtual Resource Packs</h5>
+ * Some mods may need to rely on virtual resource packs to generate resources on the fly.
+ * The Resource Loader provides utilities to work with such kind of resource packs:
+ * <ul>
+ *     <li>
+ *         {@link org.quiltmc.qsl.resource.loader.api.ResourceLoader#getRegisterDefaultResourcePackEvent()}
+ *         - an event to register resource packs that are injected into the default resource pack.
+ *     </li>
+ *     <li>
+ *         {@link org.quiltmc.qsl.resource.loader.api.ResourceLoader#getRegisterTopResourcePackEvent()}
+ *         - an event to register resource packs that are on the top of the resource pack hierarchy, those resource packs are invisible to the player.
+ *     </li>
+ *     <li>{@link org.quiltmc.qsl.resource.loader.api.InMemoryResourcePack} - a resource pack implementation whose resources are stored in the live memory.</li>
+ *     <li>
+ *         {@link org.quiltmc.qsl.resource.loader.api.GroupResourcePack} - a resource pack implementation which can be used to group multiple resource packs into one.
+ *     </li>
+ * </ul>
+ *
+ * <p>
+ * <h4>Extending Vanilla Built-In Resource Packs</h4>
+ * The Resource Loader will inject resources into vanilla built-in resource packs for each mod that provides
+ * the resources in a top-level directory inside the mod with the pack's raw name (for example,
+ * {@code programmer_art}), whose structure is similar to a normal resource pack.
+ * <p>
+ * The currently supported targets are:
+ * <ul>
+ *     <li>
+ *         Programmer Art ({@code programmer_art})
+ *     </li>
+ *     <li>
+ *         High Contrast ({@value net.minecraft.client.resource.ClientBuiltinResourcePackProvider#field_43088})
+ *     </li>
+ * </ul>
+ * <p>
+ * Do note that this won't allow for overriding resources that the built-in resource packs already have.
  *
  * <p>
  * <h3>Resource Reloaders</h3>

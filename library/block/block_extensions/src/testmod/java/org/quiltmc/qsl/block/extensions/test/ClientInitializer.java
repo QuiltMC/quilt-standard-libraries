@@ -16,16 +16,14 @@
 
 package org.quiltmc.qsl.block.extensions.test;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import net.minecraft.client.render.RenderLayer;
 
 import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.block.extensions.api.client.BlockRenderLayerMap;
 
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ClientInitializer implements ClientModInitializer {
 	@Override
 	public void onInitializeClient(ModContainer mod) {

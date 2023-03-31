@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,6 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.MinecraftClient;
@@ -34,6 +30,7 @@ import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.listener.PacketListener;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.networking.api.ServerLoginNetworking;
 import org.quiltmc.qsl.networking.impl.client.ClientNetworkingImpl;
 
@@ -45,7 +42,7 @@ import org.quiltmc.qsl.networking.impl.client.ClientNetworkingImpl;
  * @see ClientPlayNetworking
  * @see ServerLoginNetworking
  */
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ClientLoginNetworking {
 	/**
 	 * Registers a handler to a query request channel.
@@ -142,7 +139,7 @@ public final class ClientLoginNetworking {
 	private ClientLoginNetworking() {
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface QueryRequestReceiver {
 		/**

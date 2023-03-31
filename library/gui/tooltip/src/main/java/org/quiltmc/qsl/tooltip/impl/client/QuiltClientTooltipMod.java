@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.tooltip.impl.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +23,7 @@ import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipData;
 
 import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.ListenerPhase;
@@ -36,7 +35,7 @@ import org.quiltmc.qsl.tooltip.api.client.TooltipComponentCallback;
 		namespace = QuiltClientTooltipMod.NAMESPACE, path = QuiltClientTooltipMod.CONVERTIBLE_TOOLTIP_DATA_PHASE
 )
 @ApiStatus.Internal
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class QuiltClientTooltipMod implements ClientModInitializer, TooltipComponentCallback {
 	public static final String NAMESPACE = "quilt_tooltip";
 	public static final String CONVERTIBLE_TOOLTIP_DATA_PHASE = "convertible_tooltip_data";

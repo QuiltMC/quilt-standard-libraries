@@ -21,11 +21,13 @@ import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
 import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.AbstractBlock.Settings;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.MapColor;
 import net.minecraft.block.Material;
 import net.minecraft.entity.EntityType;
+import net.minecraft.feature_flags.FeatureFlag;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
@@ -249,6 +251,25 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	@Override
 	public QuiltBlockSettings resistance(float resistance) {
 		super.resistance(resistance);
+		return this;
+	}
+
+	@Override
+	public QuiltBlockSettings method_49229(AbstractBlock.OffsetType offsetType) {
+		super.method_49229(offsetType);
+
+		return this;
+	}
+
+	@Override
+	public AbstractBlock.Settings disableParticlesOnBreak() {
+		super.disableParticlesOnBreak();
+		return this;
+	}
+
+	@Override
+	public Settings requiredFlags(FeatureFlag... flags) {
+		super.requiredFlags(flags);
 		return this;
 	}
 

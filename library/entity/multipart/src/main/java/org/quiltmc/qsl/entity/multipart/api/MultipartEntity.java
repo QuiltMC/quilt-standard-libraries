@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@ package org.quiltmc.qsl.entity.multipart.api;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
-
-import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 /**
  * Represents an entity that contains multiple {@link EntityPart}s.
@@ -50,7 +48,6 @@ import org.quiltmc.qsl.base.api.util.InjectedInterface;
  *
  * @see EnderDragonEntity
  */
-@InjectedInterface({EnderDragonEntity.class})
 public interface MultipartEntity {
 	EntityPart<?>[] getEntityParts();
 }

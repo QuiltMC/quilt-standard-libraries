@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,23 +17,30 @@
 
 package org.quiltmc.qsl.registry.impl.sync;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import org.jetbrains.annotations.ApiStatus;
+
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 /**
- * Legacy (Fabric) registry sync.
- *
- * Direct port from Fabric API
+ * Legacy (Fabric) registry sync. Direct port from Fabric API.
  */
 @Deprecated
 @ApiStatus.Internal
@@ -134,10 +141,9 @@ public class ServerFabricRegistrySync {
 	private static Map<Identifier, Object2IntMap<Identifier>> createRegistryMap() {
 		var map = new HashMap<Identifier, Object2IntMap<Identifier>>();
 
-		for (var registry : Registry.REGISTRIES) {
+		for (var registry : Registries.REGISTRY) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
 					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
-
 				var idMap = new Object2IntOpenHashMap<Identifier>();
 				var syncMap = synchronizedRegistry.quilt$getSyncMap();
 
@@ -148,6 +154,7 @@ public class ServerFabricRegistrySync {
 						}
 					}
 				}
+
 				map.put(((Registry) registry).getKey().getValue(), idMap);
 			}
 		}

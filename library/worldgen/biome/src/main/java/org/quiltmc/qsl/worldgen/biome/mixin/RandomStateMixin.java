@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.minecraft.registry.HolderProvider;
 import net.minecraft.util.math.noise.DoublePerlinNoiseSampler;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 import net.minecraft.world.gen.RandomState;
 import net.minecraft.world.gen.chunk.ChunkGeneratorSettings;
@@ -32,13 +32,13 @@ import net.minecraft.world.gen.chunk.ChunkGeneratorSettings;
 import org.quiltmc.qsl.worldgen.biome.impl.MultiNoiseSamplerExtensions;
 
 @Mixin(RandomState.class)
-public class RandomStateMixin {
+public abstract class RandomStateMixin {
 	@Shadow
 	@Final
 	private MultiNoiseUtil.MultiNoiseSampler sampler;
 
 	@Inject(method = "<init>", at = @At("RETURN"))
-	private void quilt$onInit(ChunkGeneratorSettings chunkGeneratorSettings, Registry<DoublePerlinNoiseSampler.NoiseParameters> registry, long seed,
+	private void quilt$onInit(ChunkGeneratorSettings chunkGeneratorSettings, HolderProvider<DoublePerlinNoiseSampler.NoiseParameters> registry, long seed,
 			CallbackInfo ci) {
 		((MultiNoiseSamplerExtensions) (Object) this.sampler).quilt$setSeed(seed);
 	}

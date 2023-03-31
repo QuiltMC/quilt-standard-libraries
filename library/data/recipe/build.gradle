@@ -11,6 +11,7 @@ qslModule {
 	moduleDependencies {
 		core {
 			api("qsl_base")
+			api("registry")
 			api("resource_loader")
 			testmodOnly("lifecycle_events")
 		}
@@ -18,6 +19,9 @@ qslModule {
 	entrypoints {
 		init {
 			values = ["org.quiltmc.qsl.recipe.impl.RecipeImpl"]
+		}
+		events {
+			values = ["org.quiltmc.qsl.recipe.impl.RecipeManagerImpl"]
 		}
 	}
 	accessWidener()

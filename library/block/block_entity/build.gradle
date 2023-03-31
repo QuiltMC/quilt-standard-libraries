@@ -15,6 +15,9 @@ qslModule {
 			impl("lifecycle_events")
 			testmodOnly("resource_loader")
 		}
+		block {
+			testmodOnly("block_extensions")
+		}
 	}
 	entrypoints {
 		init {

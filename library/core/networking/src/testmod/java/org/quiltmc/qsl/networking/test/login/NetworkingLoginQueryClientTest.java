@@ -18,16 +18,14 @@ package org.quiltmc.qsl.networking.test.login;
 
 import java.util.concurrent.CompletableFuture;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.client.ClientLoginNetworking;
 import org.quiltmc.qsl.networking.test.play.NetworkingPlayPacketTest;
 
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class NetworkingLoginQueryClientTest implements ClientModInitializer {
 	@Override
 	public void onInitializeClient(ModContainer mod) {

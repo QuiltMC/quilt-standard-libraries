@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 
 package org.quiltmc.qsl.worldgen.biome.api;
 
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 
@@ -27,8 +27,7 @@ import org.quiltmc.qsl.worldgen.biome.impl.NetherBiomeData;
  * API that exposes the internals of Minecraft's nether biome code.
  */
 public final class NetherBiomes {
-	private NetherBiomes() {
-	}
+	private NetherBiomes() {}
 
 	/**
 	 * Adds a biome to the Nether generator.

@@ -30,6 +30,7 @@ library("core")
 library("block")
 library("data")
 library("entity")
+library("rendering")
 library("gui")
 library("item")
 library("management")
@@ -41,6 +42,10 @@ def library(String library) {
 
 	def libraryProject = project(":$library")
 	libraryProject.projectDir = file("library/$library")
+
+	if (Files.exists(libraryProject.projectDir.toPath().resolve("DISABLE"))) {
+		return
+	}
 
 	rootProject.projectDir.toPath().resolve("library/$library/").toFile().listFiles().each {
 		// Is the module disabled?

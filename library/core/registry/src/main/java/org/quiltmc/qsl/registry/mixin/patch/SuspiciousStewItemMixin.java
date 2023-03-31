@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +16,25 @@
 
 package org.quiltmc.qsl.registry.mixin.patch;
 
+import java.util.function.Consumer;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SuspiciousStewItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.World;
 
 import org.quiltmc.qsl.registry.api.StatusEffectsSerializationConstants;
 
@@ -48,7 +48,7 @@ import org.quiltmc.qsl.registry.api.StatusEffectsSerializationConstants;
 @Mixin(SuspiciousStewItem.class)
 public class SuspiciousStewItemMixin {
 	@Unique
-	private final ThreadLocal<StatusEffect> quilt$effect = new ThreadLocal<>();
+	private static final ThreadLocal<StatusEffect> quilt$effect = new ThreadLocal<>();
 
 	@Inject(
 			method = "addEffectToStew",
@@ -57,33 +57,36 @@ public class SuspiciousStewItemMixin {
 	)
 	private static void quilt$storeIdentifier(ItemStack stew, StatusEffect effect, int duration, CallbackInfo ci,
 			NbtCompound unused, NbtList unused2, NbtCompound nbt) {
-		nbt.putString(StatusEffectsSerializationConstants.EFFECT_ID_KEY, Registry.STATUS_EFFECT.getId(effect).toString());
+		nbt.putString(StatusEffectsSerializationConstants.EFFECT_ID_KEY, Registries.STATUS_EFFECT.getId(effect).toString());
 	}
 
 	@Inject(
-			method = "finishUsing",
+			method = "consumeStatusEffects",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/effect/StatusEffect;byRawId(I)Lnet/minecraft/entity/effect/StatusEffect;"),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	private void quilt$readCustomEffect(ItemStack stack, World world, LivingEntity user, CallbackInfoReturnable<ItemStack> cir,
-			ItemStack itemStack, NbtCompound nbtCompound, NbtList nbtList, int i, int j, NbtCompound effectCompound) {
+	private static void quilt$readCustomEffect(ItemStack stack, Consumer<StatusEffectInstance> consumer, CallbackInfo ci,
+			NbtCompound nbtCompound, NbtList nbtList, int i, NbtCompound effectCompound, int j) {
 		if (effectCompound.contains(StatusEffectsSerializationConstants.EFFECT_ID_KEY, NbtElement.STRING_TYPE)) {
 			var identifier = Identifier.tryParse(effectCompound.getString(StatusEffectsSerializationConstants.EFFECT_ID_KEY));
 
-			if (identifier != null && Registry.STATUS_EFFECT.containsId(identifier)) {
-				this.quilt$effect.set(Registry.STATUS_EFFECT.get(identifier));
+			if (identifier != null && Registries.STATUS_EFFECT.containsId(identifier)) {
+				quilt$effect.set(Registries.STATUS_EFFECT.get(identifier));
 			} else {
-				this.quilt$effect.remove();
+				quilt$effect.remove();
 			}
 		} else {
-			this.quilt$effect.remove();
+			quilt$effect.remove();
 		}
 	}
 
-	@SuppressWarnings("InvalidInjectorMethodSignature")
-	@ModifyVariable(method = "finishUsing", at = @At("STORE"), ordinal = 0)
-	private StatusEffect quilt$setEffect(StatusEffect effect) {
-		var quiltEffect = this.quilt$effect.get();
+	@ModifyArg(
+			method = "consumeStatusEffects",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/effect/StatusEffectInstance;<init>(Lnet/minecraft/entity/effect/StatusEffect;I)V"),
+			index = 0
+	)
+	private static StatusEffect quilt$setEffect(StatusEffect effect) {
+		var quiltEffect = quilt$effect.get();
 
 		return quiltEffect != null ? quiltEffect : effect;
 	}

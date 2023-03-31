@@ -1,0 +1,33 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Registry Entry Attachment"
+	moduleName = "registry_entry_attachment"
+	id = "quilt_registry_entry_attachment"
+	description = "Extensible attachment system for registry entries."
+	library = "data"
+	moduleDependencies {
+		core {
+			impl("qsl_base")
+			impl("lifecycle_events")
+			impl("resource_loader")
+			impl("networking")
+		}
+		management {
+			compileOnly("command")
+			testmodOnly("command")
+		}
+	}
+	entrypoints {
+		init {
+			values = ["org.quiltmc.qsl.registry.attachment.impl.Initializer"]
+		}
+		client_init {
+			values = ["org.quiltmc.qsl.registry.attachment.impl.client.ClientInitializer"]
+		}
+	}
+
+	provides("quilt_registry_entry_attachments")
+}

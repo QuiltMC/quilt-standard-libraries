@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ package org.quiltmc.qsl.registry.mixin.client;
 import java.util.Map;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -35,10 +33,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.collection.IdList;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedIdList;
 import org.quiltmc.qsl.registry.impl.sync.client.RebuildableIdModelHolder;
 
-@Environment(EnvType.CLIENT)
+@ClientOnly
 @Mixin(ItemColors.class)
 public class ItemColorsMixin implements RebuildableIdModelHolder {
 	@Final
@@ -47,7 +46,6 @@ public class ItemColorsMixin implements RebuildableIdModelHolder {
 
 	@Unique
 	private final Map<Item, ItemColorProvider> quilt$providers = new Object2ObjectOpenHashMap<>();
-
 
 	@Inject(method = "register", at = @At("TAIL"))
 	private void quilt$storeProviders(ItemColorProvider provider, ItemConvertible[] items, CallbackInfo ci) {

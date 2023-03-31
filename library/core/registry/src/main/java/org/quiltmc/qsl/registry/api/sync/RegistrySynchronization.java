@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,12 @@
 
 package org.quiltmc.qsl.registry.api.sync;
 
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.SimpleRegistry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+
+import net.minecraft.registry.SimpleRegistry;
+import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.registry.impl.sync.RegistryFlag;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
@@ -30,7 +31,6 @@ import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
  */
 @ApiStatus.Experimental
 public final class RegistrySynchronization {
-
 	/**
 	 * Marks registry status as dirty, requiring its synchronization data to be rebuilt.
 	 */

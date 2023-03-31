@@ -24,9 +24,9 @@ import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.command.argument.ArgumentTypeInfo;
 import net.minecraft.command.suggestion.SuggestionProviders;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.SimpleRegistry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.SimpleRegistry;
 
 import org.quiltmc.qsl.command.impl.ServerArgumentTypeImpl;
 import org.quiltmc.qsl.command.impl.ServerArgumentTypes;
@@ -92,8 +92,8 @@ public interface ServerArgumentType<A extends ArgumentType<?>, T extends Argumen
 			Identifier id, Class<? extends A> type, ArgumentTypeInfo<A, T> typeInfo,
 			ArgumentTypeFallbackProvider<A> fallbackProvider, @Nullable SuggestionProvider<?> fallbackSuggestions) {
 		var value = new ServerArgumentTypeImpl<>(id, type, typeInfo, fallbackProvider, fallbackSuggestions);
-		var info = ArgumentTypeInfosAccessor.callRegister(Registry.COMMAND_ARGUMENT_TYPE, id.toString(), type, typeInfo);
-		RegistrySynchronization.setEntryOptional((SimpleRegistry<ArgumentTypeInfo<?, ?>>) Registry.COMMAND_ARGUMENT_TYPE, info);
+		var info = ArgumentTypeInfosAccessor.callRegister(Registries.COMMAND_ARGUMENT_TYPE, id.toString(), type, typeInfo);
+		RegistrySynchronization.setEntryOptional((SimpleRegistry<ArgumentTypeInfo<?, ?>>) Registries.COMMAND_ARGUMENT_TYPE, info);
 		ServerArgumentTypes.register(value);
 		return value;
 	}

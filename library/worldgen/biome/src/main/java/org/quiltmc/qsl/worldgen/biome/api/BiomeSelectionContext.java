@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,18 +20,17 @@ package org.quiltmc.qsl.worldgen.biome.api;
 import java.util.List;
 import java.util.Optional;
 
-import net.minecraft.tag.TagKey;
-import net.minecraft.util.Holder;
-import net.minecraft.util.HolderSet;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.HolderSet;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.PlacedFeature;
 import net.minecraft.world.gen.feature.StructureFeature;
-
-import org.quiltmc.qsl.worldgen.biome.impl.modification.BuiltInRegistryKeys;
 
 /**
  * Context given to a biome selector for deciding whether it applies to a biome or not.
@@ -51,29 +50,6 @@ public interface BiomeSelectionContext {
 	 * {@return the biome holder}
 	 */
 	Holder<Biome> getBiomeHolder();
-
-	/**
-	 * {@return {@code true} if this biome has the given configured feature, which must be registered
-	 * in the {@link net.minecraft.util.registry.BuiltinRegistries}, or {@code false} otherwise}
-	 * <p>
-	 * This method is intended for use with the Vanilla configured features found in
-	 * classes such as {@link net.minecraft.world.gen.feature.OreConfiguredFeatures}.
-	 */
-	default boolean hasBuiltInFeature(ConfiguredFeature<?, ?> configuredFeature) {
-		RegistryKey<ConfiguredFeature<?, ?>> key = BuiltInRegistryKeys.get(configuredFeature);
-		return this.hasFeature(key);
-	}
-
-	/**
-	 * Returns true if this biome has the given placed feature, which must be registered
-	 * in the {@link net.minecraft.util.registry.BuiltinRegistries}.
-	 * <p>
-	 * This method is intended for use with the Vanilla placed features found in
-	 * classes such as {@link net.minecraft.world.gen.feature.OrePlacedFeatures}.
-	 */
-	default boolean hasBuiltInPlacedFeature(PlacedFeature placedFeature) {
-		return this.hasPlacedFeature(BuiltInRegistryKeys.get(placedFeature));
-	}
 
 	/**
 	 * {@return {@code true} if this biome contains a placed feature referencing a configured feature with the given key, or {@code false} otherwise}
@@ -124,17 +100,6 @@ public interface BiomeSelectionContext {
 	Optional<RegistryKey<PlacedFeature>> getPlacedFeatureKey(PlacedFeature placedFeature);
 
 	/**
-	 * {@return {@code true} if the given built-in configured structure from {@link net.minecraft.util.registry.BuiltinRegistries}
-	 * can start in this biome in any of the chunk generators used by the current world-save}
-	 * <p>
-	 * This method is intended for use with the Vanilla configured structures found in {@link StructureFeature}.
-	 */
-	default boolean validForBuiltInStructure(StructureFeature structureFeature) {
-		RegistryKey<StructureFeature> key = BuiltInRegistryKeys.get(structureFeature);
-		return this.validForStructure(key);
-	}
-
-	/**
 	 * {@return {@code true} if the configured structure with the given key can start in this biome in any chunk generator
 	 * used by the current world-save, or {@code false} otherwise}
 	 */
@@ -177,6 +142,6 @@ public interface BiomeSelectionContext {
 	 * @see #doesRegistryEntryExist(RegistryKey, RegistryKey)
 	 */
 	default boolean doesPlacedFeatureExist(RegistryKey<PlacedFeature> key) {
-		return this.doesRegistryEntryExist(Registry.PLACED_FEATURE_KEY, key);
+		return this.doesRegistryEntryExist(RegistryKeys.PLACED_FEATURE, key);
 	}
 }

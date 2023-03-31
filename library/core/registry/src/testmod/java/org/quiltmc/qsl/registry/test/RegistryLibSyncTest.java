@@ -29,11 +29,11 @@ import net.minecraft.block.MapColor;
 import net.minecraft.block.Material;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.SimpleRegistry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.util.registry.SimpleRegistry;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.QuiltLoader;
@@ -45,8 +45,8 @@ import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
 
 /**
- * Items/Blocks are registered in different order on client/server to make sure sync works correctly
- * Server also gets its own entry that shouldn't block client from joining
+ * Items/Blocks are registered in different order on client/server to make sure sync works correctly.
+ * Server also gets its own entry that shouldn't block client from joining.
  */
 public class RegistryLibSyncTest implements ModInitializer {
 	private static final String NAMESPACE = "quilt_registry_test_sync";
@@ -54,26 +54,27 @@ public class RegistryLibSyncTest implements ModInitializer {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onInitialize(ModContainer mod) {
-
 		if (MinecraftQuiltLoader.getEnvironmentType() == EnvType.CLIENT) {
 			for (int i = 0; i < 10; i++) {
 				register(i);
 			}
-			ClientLifecycleEvents.READY.register((x) -> printReg());
+
+			ClientLifecycleEvents.READY.register((x) -> this.printReg());
 		} else {
 			for (int i = 9; i >= 0; i--) {
 				register(i);
 			}
-			var opt = register(10);
-			RegistrySynchronization.setEntryOptional(Registry.ITEM, opt);
-			RegistrySynchronization.setEntryOptional(Registry.BLOCK, opt);
 
-			ServerLifecycleEvents.READY.register((x) -> printReg());
+			var opt = register(10);
+			RegistrySynchronization.setEntryOptional((SimpleRegistry<Item>) Registries.ITEM, opt);
+			RegistrySynchronization.setEntryOptional((SimpleRegistry<Block>) Registries.BLOCK, opt);
+
+			ServerLifecycleEvents.READY.register((x) -> this.printReg());
 		}
 
-		var customRequiredRegistry = Registry.register((Registry<Registry<Path>>) Registry.REGISTRIES,
+		var customRequiredRegistry = Registry.register((Registry<Registry<Path>>) Registries.REGISTRY,
 				new Identifier(NAMESPACE, "synced_registry"),
-				new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(NAMESPACE, "synced_registry")), Lifecycle.stable(), null));
+				new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier(NAMESPACE, "synced_registry")), Lifecycle.stable()));
 
 		Registry.register(customRequiredRegistry, new Identifier("quilt:game_dir"), QuiltLoader.getGameDir());
 		RegistrySynchronization.markForSync(customRequiredRegistry);
@@ -87,8 +88,8 @@ public class RegistryLibSyncTest implements ModInitializer {
 					StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE
 			);
 
-			for (var reg : Registry.REGISTRIES) {
-				writer.write("\n=== Registry: " + ((Registry<Registry<?>>) Registry.REGISTRIES).getId(reg) + "\n");
+			for (var reg : Registries.REGISTRY) {
+				writer.write("\n=== Registry: " + ((Registry<Registry<?>>) Registries.REGISTRY).getId(reg) + "\n");
 				if (reg instanceof SynchronizedRegistry<?> sync) {
 					writer.write("== Requires Sync: " + sync.quilt$requiresSyncing() + "\n");
 					writer.write("== Status: " + sync.quilt$getContentStatus() + "\n");
@@ -105,7 +106,7 @@ public class RegistryLibSyncTest implements ModInitializer {
 			writer.write("\n");
 
 			for (var entry : Block.STATE_IDS) {
-				writer.write("" + Block.STATE_IDS.getRawId(entry) + ": " + Registry.BLOCK.getId(entry.getBlock()));
+				writer.write("" + Block.STATE_IDS.getRawId(entry) + ": " + Registries.BLOCK.getId(entry.getBlock()));
 				writer.write("\n");
 			}
 
@@ -113,17 +114,16 @@ public class RegistryLibSyncTest implements ModInitializer {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
-
+	@SuppressWarnings("unchecked")
 	static Identifier register(int i) {
 		var id = new Identifier(NAMESPACE, "entry_" + i);
 		var block = new Block(AbstractBlock.Settings.of(Material.STONE, MapColor.BLACK));
 
-		Registry.register(Registry.BLOCK, id, block);
-		Registry.register(Registry.ITEM, id, new BlockItem(block, new Item.Settings().group(ItemGroup.BUILDING_BLOCKS)));
-		RegistrySynchronization.setEntryOptional(Registry.ITEM, id);
+		Registry.register(Registries.BLOCK, id, block);
+		Registry.register(Registries.ITEM, id, new BlockItem(block, new Item.Settings()));
+		RegistrySynchronization.setEntryOptional((SimpleRegistry<Item>) Registries.ITEM, id);
 		return id;
 	}
 }

@@ -12,6 +12,11 @@ qslModule {
 		core {
 			api("qsl_base")
 			testmodOnly("resource_loader")
+			testmodOnly("lifecycle_events")
+			testmodOnly("networking")
+		}
+		item {
+			testmodOnly("item_content_registry")
 		}
 	}
 }

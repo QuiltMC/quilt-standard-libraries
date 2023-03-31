@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,7 @@ import net.minecraft.resource.ResourceReloader;
 import net.minecraft.util.profiler.Profiler;
 
 /**
- * A simplified version of the "resource reload listener" interface, hiding the
- * peculiarities of the API.
+ * A simplified version of the "resource reloader" interface, hiding the peculiarities of the API.
  * <p>
  * In essence, there are two stages:
  *
@@ -38,8 +37,8 @@ import net.minecraft.util.profiler.Profiler;
  * </ul>
  *
  * <p>
- * The load stage should be self-contained as it can run on any thread! However,
- * the apply stage is guaranteed to run on the game thread.
+ * The load stage should be self-contained as it can run on any thread!
+ * However, the apply stage is guaranteed to run on the game thread.
  * <p>
  * For a fully synchronous alternative, consider using {@link SimpleSynchronousResourceReloader}.
  *

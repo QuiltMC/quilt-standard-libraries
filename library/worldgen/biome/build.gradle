@@ -11,7 +11,14 @@ qslModule {
 	moduleDependencies {
 		core {
 			api("qsl_base")
+			api("registry")
+			api("lifecycle_events")
 			testmodOnly("resource_loader")
+		}
+	}
+	entrypoints {
+		events {
+			values = ["org.quiltmc.qsl.worldgen.biome.impl.TheEndBiomeData"]
 		}
 	}
 	accessWidener()

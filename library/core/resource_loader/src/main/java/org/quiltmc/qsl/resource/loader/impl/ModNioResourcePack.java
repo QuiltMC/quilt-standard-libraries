@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,14 @@
 
 package org.quiltmc.qsl.resource.loader.impl;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
+import java.util.Locale;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import com.mojang.logging.LogUtils;
 import org.jetbrains.annotations.ApiStatus;
@@ -36,14 +32,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
+import net.minecraft.resource.ResourceIoSupplier;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.AbstractFileResourcePack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.InvalidIdentifierException;
+import net.minecraft.util.Util;
 
 import org.quiltmc.loader.api.ModMetadata;
-import org.quiltmc.loader.impl.filesystem.QuiltJoinedFileSystem;
+import org.quiltmc.loader.api.CachedFileSystem;
 import org.quiltmc.qsl.base.api.util.TriState;
 import org.quiltmc.qsl.resource.loader.api.QuiltResourcePack;
 import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
@@ -80,7 +77,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 
 	public ModNioResourcePack(@Nullable String name, ModMetadata modInfo, @Nullable Text displayName, ResourcePackActivationType activationType,
 			Path path, ResourceType type, @Nullable AutoCloseable closer) {
-		super(null);
+		super(null, true);
 
 		/* Metadata */
 		this.name = name == null ? ModResourcePackUtil.getName(modInfo) : name;
@@ -99,8 +96,8 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 		}
 
 		/* Cache */
-		if (DISABLE_CACHING || path.getFileSystem() == DEFAULT_FILESYSTEM || path.getFileSystem() instanceof QuiltJoinedFileSystem) {
-			// The default file system means it's on-disk files that may change, and QuiltJoinedFileSystem is usually used for dev envs too.
+		if (DISABLE_CACHING || path.getFileSystem() == DEFAULT_FILESYSTEM || path.getFileSystem() instanceof CachedFileSystem cached && !cached.isPermanentlyReadOnly()) {
+			// The default file system means it's on-disk files that may change
 			this.cache = new ResourceAccess(this.io);
 		} else {
 			// Allows caching for mods that don't have mutable resources.
@@ -109,39 +106,29 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 	}
 
 	@Override
-	protected InputStream openFile(String filePath) throws IOException {
-		InputStream stream;
+	public @Nullable ResourceIoSupplier<InputStream> openRoot(String... path) {
+		String actualPath = String.join("/", path);
 
+		return this.open(actualPath);
+	}
+
+	@Override
+	public @Nullable ResourceIoSupplier<InputStream> open(ResourceType type, Identifier id) {
+		return this.open(QuiltResourcePack.getResourcePath(type, id));
+	}
+
+	protected ResourceIoSupplier<InputStream> open(String filePath) {
 		ResourceAccess.Entry entry = this.cache.getEntry(filePath);
 
 		if (entry != null && entry.type() == EntryType.FILE) {
-			return Files.newInputStream(entry.path());
+			return ResourceIoSupplier.create(entry.path());
 		}
 
-		stream = ModResourcePackUtil.openDefault(this.modInfo, this.type, filePath);
-
-		if (stream != null) {
-			return stream;
-		}
-
-		// FileNotFoundException is an IOException, which is properly handled by the Vanilla resource loader and
-		// prints to the logs.
-		throw new FileNotFoundException("\"" + filePath + "\" in Quilt mod \"" + modInfo.id() + "\"");
+		return ModResourcePackUtil.openDefault(this.modInfo, this.type, filePath);
 	}
 
 	@Override
-	protected boolean containsFile(String filePath) {
-		if (ModResourcePackUtil.containsDefault(modInfo, filePath)) {
-			return true;
-		}
-
-		return this.cache.getEntryType(filePath) == EntryType.FILE;
-	}
-
-	@Override
-	public Collection<Identifier> findResources(ResourceType type, String namespace, String startingPath,
-			Predicate<Identifier> pathFilter) {
-		var ids = new ArrayList<Identifier>();
+	public void listResources(ResourceType type, String namespace, String startingPath, ResourceConsumer consumer) {
 		String namespacePath = type.getDirectory() + '/' + namespace;
 		String nioPath = startingPath.replace("/", this.io.getSeparator());
 
@@ -151,34 +138,27 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 			ResourceAccess.Entry searchEntry = this.cache.getEntry(namespacePath + '/' + nioPath);
 
 			if (searchEntry != null) {
-				try {
-					Files.walk(searchEntry.path())
-							.filter(p -> Files.isRegularFile(p) && !p.getFileName().endsWith(".mcmeta"))
-							.map(p -> {
-								try {
-									var id = new Identifier(namespace,
-											namespaceEntry.path().relativize(p).toString().replace(this.io.getSeparator(), "/")
-									);
+				try (var stream = Files.walk(searchEntry.path())) {
+					stream.filter(p -> Files.isRegularFile(p) && !p.getFileName().endsWith(".mcmeta"))
+							.forEach(p -> {
+								String idPath = namespaceEntry.path().relativize(p).toString()
+										.replace(this.io.getSeparator(), "/");
+								Identifier id = Identifier.tryValidate(namespace, idPath);
 
-									if (pathFilter.test(id)) {
-										return id;
-									}
-								} catch (InvalidIdentifierException e) {
-									LOGGER.error(e.getMessage());
+								if (id == null) {
+									Util.logAndPause(String.format(Locale.ROOT, "Invalid path in pack (%s [%s]): %s:%s, ignoring",
+											this.getName(), this.modInfo.id(), namespace, idPath
+									));
+								} else {
+									consumer.accept(id, ResourceIoSupplier.create(p));
 								}
-
-								return null;
-							})
-							.filter(Objects::nonNull)
-							.forEach(ids::add);
+							});
 				} catch (IOException e) {
 					LOGGER.warn("findResources at " + startingPath + " in namespace " + namespace
 							+ ", mod " + this.modInfo.id() + " failed!", e);
 				}
 			}
 		}
-
-		return ids;
 	}
 
 	@Override
@@ -206,6 +186,11 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 	@Override
 	public @NotNull Text getDisplayName() {
 		return this.displayName;
+	}
+
+	@Override
+	public boolean isBuiltin() {
+		return true;
 	}
 
 	@Override

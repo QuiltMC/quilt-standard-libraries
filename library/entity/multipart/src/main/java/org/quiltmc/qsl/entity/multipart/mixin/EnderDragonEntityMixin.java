@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,10 +26,10 @@ import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonPart;
 
 import org.quiltmc.qsl.entity.multipart.api.EntityPart;
-import org.quiltmc.qsl.entity.multipart.api.MultipartEntity;
+import org.quiltmc.qsl.entity.multipart.impl.EnderDragonMultipartEntity;
 
 @Mixin(EnderDragonEntity.class)
-public abstract class EnderDragonEntityMixin implements MultipartEntity {
+public abstract class EnderDragonEntityMixin implements EnderDragonMultipartEntity {
 	@Shadow
 	public abstract EnderDragonPart[] getBodyParts();
 

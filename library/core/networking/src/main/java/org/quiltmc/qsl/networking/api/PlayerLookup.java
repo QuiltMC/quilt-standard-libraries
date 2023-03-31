@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.EntityTrackingListener;
 import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.server.world.ThreadedAnvilChunkStorage;
+import net.minecraft.server.world.ThreadedChunkManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
@@ -36,7 +36,7 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.chunk.ChunkManager;
 
 import org.quiltmc.qsl.networking.mixin.accessor.EntityTrackerAccessor;
-import org.quiltmc.qsl.networking.mixin.accessor.ThreadedAnvilChunkStorageAccessor;
+import org.quiltmc.qsl.networking.mixin.accessor.ThreadedChunkManagerAccessor;
 
 /**
  * For example, a block entity may use the methods in this class to send a packet to all clients which can see the block entity in order to notify clients about a change.
@@ -91,7 +91,7 @@ public final class PlayerLookup {
 		Objects.requireNonNull(world, "The world cannot be null");
 		Objects.requireNonNull(pos, "The chunk pos cannot be null");
 
-		return world.getChunkManager().threadedAnvilChunkStorage.getPlayersWatchingChunk(pos, false);
+		return world.getChunkManager().delegate.getPlayersWatchingChunk(pos, false);
 	}
 
 	/**
@@ -112,8 +112,8 @@ public final class PlayerLookup {
 		ChunkManager manager = entity.world.getChunkManager();
 
 		if (manager instanceof ServerChunkManager serverManager) {
-			ThreadedAnvilChunkStorage storage = serverManager.threadedAnvilChunkStorage;
-			EntityTrackerAccessor tracker = ((ThreadedAnvilChunkStorageAccessor) storage).getEntityTrackers().get(entity.getId());
+			ThreadedChunkManager storage = serverManager.delegate;
+			EntityTrackerAccessor tracker = ((ThreadedChunkManagerAccessor) storage).getEntityTrackers().get(entity.getId());
 
 			// return an immutable collection to guard against accidental removals.
 			if (tracker != null) {

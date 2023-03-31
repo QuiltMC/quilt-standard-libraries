@@ -19,8 +19,6 @@ package org.quiltmc.qsl.tooltip.api.client;
 
 import java.util.List;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.item.TooltipContext;
@@ -28,10 +26,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public interface ItemTooltipCallback extends ClientEventAwareListener {
 	/**
 	 * Fired after the game has appended all base tooltip lines to the list.

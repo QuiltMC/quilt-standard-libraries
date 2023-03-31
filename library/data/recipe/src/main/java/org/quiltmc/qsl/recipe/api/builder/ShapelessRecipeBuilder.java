@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,10 @@ import java.util.Set;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.CraftingCategory;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.ShapelessRecipe;
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 
@@ -33,6 +34,7 @@ import net.minecraft.util.collection.DefaultedList;
  */
 public class ShapelessRecipeBuilder extends RecipeBuilder<ShapelessRecipeBuilder, ShapelessRecipe> {
 	private final Set<Ingredient> ingredients = new HashSet<>();
+	private CraftingCategory category = CraftingCategory.MISC;
 
 	public ShapelessRecipeBuilder(ItemStack output) {
 		this.output = output;
@@ -86,6 +88,19 @@ public class ShapelessRecipeBuilder extends RecipeBuilder<ShapelessRecipeBuilder
 	}
 
 	/**
+	 * Sets the crafting book category of this recipe.
+	 * <p>
+	 * Default value is {@link CraftingCategory#MISC}.
+	 *
+	 * @param category the category
+	 * @return this builder
+	 */
+	public ShapelessRecipeBuilder category(CraftingCategory category) {
+		this.category = category;
+		return this;
+	}
+
+	/**
 	 * Builds the shapeless crafting recipe.
 	 *
 	 * @param id    the identifier of the recipe
@@ -105,6 +120,6 @@ public class ShapelessRecipeBuilder extends RecipeBuilder<ShapelessRecipeBuilder
 			i++;
 		}
 
-		return new ShapelessRecipe(id, group, this.output, ingredients);
+		return new ShapelessRecipe(id, group, this.category, this.output, ingredients);
 	}
 }

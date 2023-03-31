@@ -5,14 +5,19 @@
   "mixins": [
     "BrewingRecipeRegistryMixin",
     "BrewingStandBlockEntityMixin",
+    "LegacySmithingRecipeSerializerMixin",
+    "TransformSmithingRecipeAccessor",
+    "TrimSmithingRecipeAccessor",
+    "TransformSmithingRecipeJsonProviderMixin",
+    "TrimSmithingRecipeSerializerMixin",
+    "LegacySmithingRecipeAccessor",
     "CookingRecipeSerializerMixin",
     "CuttingRecipeSerializerMixin",
     "PotionSlotMixin",
     "RecipeManagerMixin",
     "ShapedRecipeSerializerMixin",
     "ShapelessRecipeSerializerMixin",
-    "SmithingRecipeAccessor",
-    "SmithingRecipeSerializerMixin",
+    "SpecialRecipeSerializerMixin"
     "SpecialRecipeSerializerMixin",
     "SynchronizeRecipesS2CPacketMixin"
   ],

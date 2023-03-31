@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,60 +16,76 @@
 
 package org.quiltmc.qsl.resource.loader.mixin.client;
 
-import java.io.File;
+import java.util.Map;
 import java.util.function.Consumer;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import org.spongepowered.asm.mixin.Dynamic;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.client.resource.ClientBuiltinResourcePackProvider;
-import net.minecraft.resource.pack.AbstractFileResourcePack;
-import net.minecraft.resource.pack.DefaultResourcePack;
+import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.pack.BuiltinResourcePackProvider;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.ResourcePackProfile;
+import net.minecraft.resource.pack.ResourcePackSource;
+import net.minecraft.text.Text;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.resource.loader.impl.ModResourcePackProvider;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
-@Environment(EnvType.CLIENT)
+@ClientOnly
 @Mixin(ClientBuiltinResourcePackProvider.class)
 public class ClientBuiltinResourcePackProviderMixin {
-	@Inject(method = "register", at = @At("RETURN"))
-	private void addBuiltinResourcePacks(Consumer<ResourcePackProfile> profileAdder, ResourcePackProfile.Factory factory,
-			CallbackInfo ci) {
-		// Register built-in resource packs after vanilla built-in resource packs are registered.
-		ModResourcePackProvider.CLIENT_RESOURCE_PACK_PROVIDER.register(profileAdder, factory);
+	@Shadow
+	@Final
+	private static Map<String, Text> BUILTIN_PACK_DISPLAY_NAMES;
+
+	@ModifyArg(
+			method = "createBuiltinResourcePackProfile(Ljava/lang/String;Lnet/minecraft/resource/pack/ResourcePackProfile$ResourcePackFactory;Lnet/minecraft/text/Text;)Lnet/minecraft/resource/pack/ResourcePackProfile;",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/resource/pack/ResourcePackProfile;of(Ljava/lang/String;Lnet/minecraft/text/Text;ZLnet/minecraft/resource/pack/ResourcePackProfile$ResourcePackFactory;Lnet/minecraft/resource/ResourceType;Lnet/minecraft/resource/pack/ResourcePackProfile$InsertionPosition;Lnet/minecraft/resource/pack/ResourcePackSource;)Lnet/minecraft/resource/pack/ResourcePackProfile;"
+			),
+			index = 3
+	)
+	private ResourcePackProfile.ResourcePackFactory onCreateBuiltinResourcePackProfile(String name, Text displayName, boolean alwaysEnabled,
+			ResourcePackProfile.ResourcePackFactory factory, ResourceType type, ResourcePackProfile.InsertionPosition insertionPosition,
+			ResourcePackSource source) {
+		if (BUILTIN_PACK_DISPLAY_NAMES.containsKey(name)) {
+			return n -> ResourceLoaderImpl.buildVanillaBuiltinResourcePack(factory.open(n), name);
+		}
+
+		return factory;
 	}
 
-	// Synthetic method register(Consumer;ResourcePackProfile$Factory;)V
+	// Synthetic method createBuiltinResourcePackProfile(ResourcePack)ResourcePackProfile
 	// Using an injector to wrap the previous return value.
-	@Dynamic
-	@Inject(method = "method_4635", at = @At("RETURN"), cancellable = true, remap = false)
-	private void onPackGet(CallbackInfoReturnable<ResourcePack> cir) {
-		cir.setReturnValue(ResourceLoaderImpl.buildMinecraftResourcePack((DefaultResourcePack) cir.getReturnValue()));
+	@Inject(
+			method = "method_45855(Lnet/minecraft/resource/pack/ResourcePack;Ljava/lang/String;)Lnet/minecraft/resource/pack/ResourcePack;",
+			at = @At("RETURN"),
+			cancellable = true
+	)
+	private static void onPackGet(ResourcePack pack, String name, CallbackInfoReturnable<ResourcePack> cir) {
+		cir.setReturnValue(ResourceLoaderImpl.buildMinecraftResourcePack(ResourceType.CLIENT_RESOURCES, cir.getReturnValue()));
 	}
 
-	// ClientBuiltinResourcePackProvider#method_25454 first lambda.
-	// Using an injector to wrap the previous return value.
-	@Dynamic
-	@Inject(method = "method_25457", at = @At("RETURN"), cancellable = true, remap = false)
-	private static void onSupplyZipProgrammerArtPack(File file, CallbackInfoReturnable<ResourcePack> cir) {
-		var originalPack = (AbstractFileResourcePack) cir.getReturnValue();
-		cir.setReturnValue(ResourceLoaderImpl.buildProgrammerArtResourcePack(originalPack));
-	}
-
-	// ClientBuiltinResourcePackProvider#method_25454 second lambda.
-	// Using an injector to wrap the previous return value.
-	@Dynamic
-	@Inject(method = "method_25456", at = @At("RETURN"), cancellable = true, remap = false)
-	private static void onSupplyDirProgrammerArtPack(File file, CallbackInfoReturnable<ResourcePack> cir) {
-		var originalPack = (AbstractFileResourcePack) cir.getReturnValue();
-		cir.setReturnValue(ResourceLoaderImpl.buildProgrammerArtResourcePack(originalPack));
+	@ClientOnly
+	@Mixin(BuiltinResourcePackProvider.class)
+	public static class Parent {
+		@SuppressWarnings("ConstantConditions")
+		@Inject(method = "registerAdditionalPacks", at = @At("RETURN"))
+		private void addBuiltinResourcePacks(Consumer<ResourcePackProfile> profileAdder, CallbackInfo ci) {
+			// Register built-in resource packs after vanilla built-in resource packs are registered.
+			if (((Object) this) instanceof ClientBuiltinResourcePackProvider) {
+				ModResourcePackProvider.CLIENT_RESOURCE_PACK_PROVIDER.register(profileAdder);
+			}
+		}
 	}
 }

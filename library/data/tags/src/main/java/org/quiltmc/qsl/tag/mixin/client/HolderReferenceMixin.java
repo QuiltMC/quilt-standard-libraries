@@ -25,13 +25,15 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.tag.TagKey;
-import net.minecraft.util.Holder;
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.tag.TagKey;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.tag.api.QuiltTagKey;
 import org.quiltmc.qsl.tag.api.TagType;
 import org.quiltmc.qsl.tag.impl.client.QuiltHolderReferenceHooks;
 
+@ClientOnly
 @Mixin(Holder.Reference.class)
 public abstract class HolderReferenceMixin<T> implements Holder<T>, QuiltHolderReferenceHooks<T> {
 	@Unique
@@ -40,16 +42,16 @@ public abstract class HolderReferenceMixin<T> implements Holder<T>, QuiltHolderR
 	private Set<TagKey<T>> quilt$clientTags = Set.of();
 
 	@SuppressWarnings({"unchecked", "RedundantCast"})
-	@Inject(method = "hasTag", at = @At("HEAD"), cancellable = true)
-	private void onHasTagStart(TagKey<T> tag, CallbackInfoReturnable<Boolean> cir) {
+	@Inject(method = "isIn", at = @At("HEAD"), cancellable = true)
+	private void onIsInStart(TagKey<T> tag, CallbackInfoReturnable<Boolean> cir) {
 		if (((QuiltTagKey<T>) (Object) tag).type() == TagType.CLIENT_ONLY) {
 			cir.setReturnValue(this.quilt$clientTags.contains(tag));
 		}
 	}
 
 	@SuppressWarnings({"unchecked", "RedundantCast"})
-	@Inject(method = "hasTag", at = @At("RETURN"), cancellable = true)
-	private void onHasTagEnd(TagKey<T> tag, CallbackInfoReturnable<Boolean> cir) {
+	@Inject(method = "isIn", at = @At("RETURN"), cancellable = true)
+	private void onIsInEnd(TagKey<T> tag, CallbackInfoReturnable<Boolean> cir) {
 		if (((QuiltTagKey<T>) (Object) tag).type() == TagType.CLIENT_FALLBACK && !cir.getReturnValueZ()) {
 			cir.setReturnValue(this.quilt$fallbackTags.contains(tag));
 		}

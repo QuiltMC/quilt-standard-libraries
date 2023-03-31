@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,9 @@
 
 package org.quiltmc.qsl.registry.impl.sync;
 
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
+
+import net.minecraft.util.Identifier;
 
 /**
  * Identifiers of packets sent by server.
@@ -35,9 +36,9 @@ public final class ClientPackets {
 	 */
 	public static final Identifier HANDSHAKE = id("registry_sync/handshake");
 
-
 	/**
-	 * Sent after registry sync failure before client disconnect
+	 * Sent after registry sync failure before client disconnect.
+	 *
 	 * <pre><code>
 	 * {
 	 *     Registry: Identifier
@@ -45,7 +46,6 @@ public final class ClientPackets {
 	 * </code></pre>
 	 */
 	public static final Identifier SYNC_FAILED = id("registry_sync/sync_failed");
-
 
 	private static Identifier id(String path) {
 		return new Identifier("qsl", path);

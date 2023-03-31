@@ -19,20 +19,18 @@ package org.quiltmc.qsl.tooltip.test;
 
 import java.util.Optional;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
 
@@ -43,14 +41,14 @@ public final class TooltipTestMod implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		Registry.register(Registry.ITEM, new Identifier(NAMESPACE, "custom_tooltip_item"), CUSTOM_TOOLTIP_ITEM);
-		Registry.register(Registry.ITEM, new Identifier(NAMESPACE, "custom_convertible_tooltip_item"),
+		Registry.register(Registries.ITEM, new Identifier(NAMESPACE, "custom_tooltip_item"), CUSTOM_TOOLTIP_ITEM);
+		Registry.register(Registries.ITEM, new Identifier(NAMESPACE, "custom_convertible_tooltip_item"),
 				CUSTOM_CONVERTIBLE_TOOLTIP_ITEM);
 	}
 
 	private static class SimpleCustomTooltipItem extends Item {
-		public SimpleCustomTooltipItem() {
-			super(new Settings().group(ItemGroup.MISC));
+		SimpleCustomTooltipItem() {
+			super(new Settings()/*.group(ItemGroup.MISC)*/);
 		}
 
 		@Override
@@ -60,8 +58,8 @@ public final class TooltipTestMod implements ModInitializer {
 	}
 
 	private static class ConvertibleTooltipItem extends Item {
-		public ConvertibleTooltipItem() {
-			super(new Settings().group(ItemGroup.MISC));
+		ConvertibleTooltipItem() {
+			super(new Settings()/*.group(ItemGroup.MISC)*/);
 		}
 
 		@Override
@@ -74,7 +72,7 @@ public final class TooltipTestMod implements ModInitializer {
 	}
 
 	public record ConvertibleData(String message) implements ConvertibleTooltipData {
-		@Environment(EnvType.CLIENT)
+		@ClientOnly
 		@Override
 		public TooltipComponent toComponent() {
 			return TooltipComponent.of(Text.literal("Converted Tooltip Data").formatted(Formatting.GOLD).asOrderedText());

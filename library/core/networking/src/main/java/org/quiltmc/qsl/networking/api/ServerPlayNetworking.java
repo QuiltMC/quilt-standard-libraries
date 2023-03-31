@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,13 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -34,10 +37,11 @@ import org.quiltmc.qsl.networking.impl.server.ServerNetworkingImpl;
 
 /**
  * Offers access to play stage server-side networking functionalities.
- *
- * <p>Server-side networking functionalities include receiving serverbound packets, sending clientbound packets, and events related to server-side network handlers.
- *
- * <p>This class should be only used for the logical server.
+ * <p>
+ * Server-side networking functionalities include receiving server-bound packets, sending client-bound packets,
+ * and events related to server-side network handlers.
+ * <p>
+ * This class should be only used for the logical server.
  *
  * @see ServerLoginNetworking
  * @see ClientPlayNetworking
@@ -200,13 +204,14 @@ public final class ServerPlayNetworking {
 	}
 
 	/**
-	 * Creates a packet which may be sent to a the connected client.
+	 * Creates a packet which may be sent to a connected client.
 	 *
 	 * @param channelName the channel name
 	 * @param buf         the packet byte buf which represents the payload of the packet
 	 * @return a new packet
 	 */
-	public static Packet<?> createS2CPacket(Identifier channelName, PacketByteBuf buf) {
+	@Contract(value = "_, _ -> new", pure = true)
+	public static Packet<ClientPlayPacketListener> createS2CPacket(@NotNull Identifier channelName, @NotNull PacketByteBuf buf) {
 		Objects.requireNonNull(channelName, "Channel cannot be null");
 		Objects.requireNonNull(buf, "Buf cannot be null");
 

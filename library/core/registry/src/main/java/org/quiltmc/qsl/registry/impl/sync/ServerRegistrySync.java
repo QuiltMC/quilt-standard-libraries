@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,11 @@ import java.util.Map;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.network.ClientConnection;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
@@ -38,7 +39,6 @@ public final class ServerRegistrySync {
 	public static boolean supportFabric = false;
 
 	public static void readConfig() {
-
 		try {
 			noRegistrySyncMessage = Text.Serializer.fromJson(RegistryConfig.INSTANCE.registry_sync.missing_registry_sync_message);
 		} catch (Exception e) {
@@ -53,7 +53,7 @@ public final class ServerRegistrySync {
 	}
 
 	public static boolean shouldSync() {
-		for (var registry : Registry.REGISTRIES) {
+		for (var registry : Registries.REGISTRY) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
 					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
 				return true;
@@ -64,7 +64,7 @@ public final class ServerRegistrySync {
 	}
 
 	public static boolean requiresSync() {
-		for (var registry : Registry.REGISTRIES) {
+		for (var registry : Registries.REGISTRY) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
 					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() == SynchronizedRegistry.Status.REQUIRED) {
 				return true;
@@ -74,11 +74,10 @@ public final class ServerRegistrySync {
 		return false;
 	}
 
-	public static void sendSyncPackets(ClientConnection connection, ServerPlayerEntity player) {
-		for (var registry : Registry.REGISTRIES) {
+	public static void sendSyncPackets(ClientConnection connection, ServerPlayerEntity player, int syncVersion) {
+		for (var registry : Registries.REGISTRY) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
 					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
-
 				var map = synchronizedRegistry.quilt$getSyncMap();
 
 				var packetData = new HashMap<String, ArrayList<SynchronizedRegistry.SyncEntry>>();
@@ -104,7 +103,7 @@ public final class ServerRegistrySync {
 					}
 				}
 
-				connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.REGISTRY_RESTORE, PacketByteBufs.empty()));
+				connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.REGISTRY_APPLY, PacketByteBufs.empty()));
 			}
 		}
 
@@ -128,7 +127,7 @@ public final class ServerRegistrySync {
 		var buf = PacketByteBufs.create();
 
 		// Registry id
-		buf.writeIdentifier(((Registry<T>) Registry.REGISTRIES).getId(registry));
+		buf.writeIdentifier(((Registry<T>) Registries.REGISTRY).getId(registry));
 
 		// Number of entries
 		buf.writeVarInt(registry.size());
@@ -138,6 +137,7 @@ public final class ServerRegistrySync {
 		if (((SynchronizedRegistry<T>) registry).quilt$getContentStatus() == SynchronizedRegistry.Status.OPTIONAL) {
 			flag |= (0x1 << RegistryFlag.OPTIONAL.ordinal());
 		}
+
 		buf.writeByte(flag);
 
 		connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.REGISTRY_START, buf));
