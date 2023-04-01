@@ -390,12 +390,12 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		return pack;
 	}
 
-	public static GroupResourcePack.Wrapped buildVanillaBuiltinResourcePack(ResourcePack vanillaPack, String packName) {
+	public static GroupResourcePack.Wrapped buildVanillaBuiltinResourcePack(ResourcePack vanillaPack, ResourceType type, String packName) {
 		// Build a list of mod resource packs.
 		var packs = new ArrayList<ResourcePack>();
-		appendModResourcePacks(packs, ResourceType.CLIENT_RESOURCES, packName);
+		appendModResourcePacks(packs, type, packName);
 
-		return new GroupResourcePack.Wrapped(ResourceType.CLIENT_RESOURCES, vanillaPack, packs, true);
+		return new GroupResourcePack.Wrapped(type, vanillaPack, packs, true);
 	}
 
 	/* Built-in resource packs */
