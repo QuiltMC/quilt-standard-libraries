@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ public abstract class BrewingStandBlockEntityMixin extends BlockEntity {
 	}
 
 	/**
-	 * Only needed if {@link Items#BLAZE_POWDER blaze powder} is removed from {@link ItemContentRegistries#BREWING_FUEL_TIME}.
+	 * Only needed if {@link Items#BLAZE_POWDER blaze powder} is removed from {@link ItemContentRegistries#BREWING_FUELS}.
 	 */
 	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V", ordinal = 0))
@@ -86,9 +86,9 @@ public abstract class BrewingStandBlockEntityMixin extends BlockEntity {
 	}
 
 	/**
-	 * Whether the item is in {@link ItemContentRegistries#BREWING_FUEL_TIME} and has a value greater than 0.
+	 * Whether the item is in {@link ItemContentRegistries#BREWING_FUELS} and has a value greater than 0.
 	 * <p>
-	 * This allows a datapack to set the value of an item to 0 to remove an entry from {@link ItemContentRegistries#BREWING_FUEL_TIME}.
+	 * This allows a datapack to set the value of an item to 0 to remove an entry from {@link ItemContentRegistries#BREWING_FUELS}.
 	 */
 	private static boolean isPresent(Item item) {
 		return ItemContentRegistriesInitializer.BREWING_FUEL_MAP.getOrDefault(item, 0) > 0;

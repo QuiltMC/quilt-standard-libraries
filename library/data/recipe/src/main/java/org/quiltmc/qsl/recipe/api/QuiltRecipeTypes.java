@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,6 @@ import net.minecraft.recipe.RecipeType;
 import org.quiltmc.qsl.recipe.api.brewing.AbstractBrewingRecipe;
 import org.quiltmc.qsl.recipe.impl.RecipeImpl;
 
-public class Recipes {
+public class QuiltRecipeTypes {
 	public static final RecipeType<AbstractBrewingRecipe<?>> BREWING = RecipeImpl.BREWING;
 }

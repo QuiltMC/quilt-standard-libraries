@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,9 +34,9 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtil;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeSerializer;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.recipe.impl.RecipeImpl;
 
@@ -65,7 +65,6 @@ import org.quiltmc.qsl.recipe.impl.RecipeImpl;
  * 		    <li>icon: {@code true} if the effect should show an icon in the HUD, or {@code false}.</li>
  * 		</ul>
  * </ul>
- *
  * Here is an example recipe for a mundane potion that takes a water potion, a block of dirt, {@code 20} fuel units, and {@code 200} ticks.
  * It additionally provides jump boost for a second, and immense strength for half a second.
  * <pre><code>
@@ -90,17 +89,17 @@ import org.quiltmc.qsl.recipe.impl.RecipeImpl;
  * </code></pre>
  * @see PotionUtil#getCustomPotionEffects(ItemStack)
  */
-public class CustomPotionBrewingRecipe extends PotionBrewingRecipe {
+public class CustomPotionBrewingRecipe extends SimplePotionBrewingRecipe {
 	private final List<StatusEffectInstance> statusEffects = new ArrayList<>();
 	public CustomPotionBrewingRecipe(Identifier id, String group, Potion input, Ingredient ingredient, Potion output, int fuel, int brewTime) {
 		super(id, group, input, ingredient, output, fuel, brewTime);
-		PotionUtil.setCustomPotionEffects(this.ghostOutput, this.statusEffects);
+		PotionUtil.setCustomPotionEffects(this.result, this.statusEffects);
 	}
 
 	public CustomPotionBrewingRecipe(Identifier id, String group, Potion input, Ingredient ingredient, Potion output, int fuel, int brewTime, Collection<StatusEffectInstance> effects) {
 		this(id, group, input, ingredient, output, fuel, brewTime);
 		this.statusEffects.addAll(effects);
-		PotionUtil.setCustomPotionEffects(this.ghostOutput, this.statusEffects);
+		PotionUtil.setCustomPotionEffects(this.result, this.statusEffects);
 	}
 
 	@Override
@@ -123,7 +122,7 @@ public class CustomPotionBrewingRecipe extends PotionBrewingRecipe {
 		return RecipeImpl.CUSTOM_POTION_SERIALIZER;
 	}
 
-	public static class Serializer extends PotionBrewingRecipe.Serializer<CustomPotionBrewingRecipe> {
+	public static class Serializer extends SimplePotionBrewingRecipe.Serializer<CustomPotionBrewingRecipe> {
 		public Serializer(RecipeFactory<Potion, CustomPotionBrewingRecipe> recipeFactory) {
 			super(recipeFactory);
 		}
@@ -134,9 +133,9 @@ public class CustomPotionBrewingRecipe extends PotionBrewingRecipe {
 
 			if (json.has("effects")) {
 				recipe.statusEffects.clear();
-				for(JsonElement effectJson : JsonHelper.getArray(json, "effects")) {
+				for (JsonElement effectJson : JsonHelper.getArray(json, "effects")) {
 					StatusEffectInstance instance;
-					instance = readStatusEffectInstance(effectJson);
+					instance = this.readStatusEffectInstance(effectJson);
 					recipe.statusEffects.add(instance);
 				}
 			}
@@ -147,20 +146,20 @@ public class CustomPotionBrewingRecipe extends PotionBrewingRecipe {
 		private StatusEffectInstance readStatusEffectInstance(JsonElement json) {
 			if (json instanceof JsonObject jsonObject) {
 				String string = JsonHelper.getString(jsonObject, "type");
-				StatusEffect statusEffect = Registry.STATUS_EFFECT
+				StatusEffect statusEffect = Registries.STATUS_EFFECT
 						.getOrEmpty(new Identifier(string))
 						.orElseThrow(() -> new JsonSyntaxException("Unknown status effect '" + string + "'"));
-				int duration = JsonHelper.getInt(jsonObject, "duration", 20);
+				int duration = JsonHelper.getInt(jsonObject, "duration", 3600);
 				int amplifier = JsonHelper.getInt(jsonObject, "amplifier", 0);
 				boolean showParticles = JsonHelper.getBoolean(jsonObject, "particles", true);
 				boolean showIcon = JsonHelper.getBoolean(jsonObject, "icon", true);
 				return new StatusEffectInstance(statusEffect, duration, amplifier, false, showParticles, showIcon);
-			} else { // default to a basic 20 tick 0 amplifier status effect
+			} else { // default to a basic 3600 tick 0 amplifier status effect
 				String string = json.getAsString();
-				StatusEffect statusEffect = Registry.STATUS_EFFECT
+				StatusEffect statusEffect = Registries.STATUS_EFFECT
 						.getOrEmpty(new Identifier(string))
 						.orElseThrow(() -> new JsonSyntaxException("Unknown status effect '" + string + "'"));
-				return new StatusEffectInstance(statusEffect, 20);
+				return new StatusEffectInstance(statusEffect, 3600);
 			}
 		}
 
@@ -186,6 +185,4 @@ public class CustomPotionBrewingRecipe extends PotionBrewingRecipe {
 			return recipe;
 		}
 	}
-
-
 }

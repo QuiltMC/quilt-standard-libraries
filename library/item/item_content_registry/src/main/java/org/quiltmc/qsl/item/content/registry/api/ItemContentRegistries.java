@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,11 +66,11 @@ public class ItemContentRegistries {
 	/**
 	 * A {@link RegistryEntryAttachment} for how long different items burn in a brewing stand. The value is the number of brews it can make.
 	 * <p>
-	 * Values can be set via code and through a data-pack with the file {@code data/quilt_item_content_registry/attachments/minecraft/item/brewing_fuel_time.json}
+	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/item/brewing_fuels.json}
 	 */
-	public static final RegistryEntryAttachment<Item, Integer> BREWING_FUEL_TIME = RegistryEntryAttachment
-			.builder(Registry.ITEM,
-					new Identifier(NAMESPACE, "brewing_fuel_time"),
+	public static final RegistryEntryAttachment<Item, Integer> BREWING_FUELS = RegistryEntryAttachment
+			.builder(Registries.ITEM,
+					new Identifier(NAMESPACE, "brewing_fuels"),
 					Integer.class,
 					Codec.intRange(0, Integer.MAX_VALUE))
 			.build();

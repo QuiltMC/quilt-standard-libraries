@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,9 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.recipe.api.brewing.PotionItemBrewingRecipe;
 
 /**
- * Builder to build potion recipes
+ * Builder to build potion recipes.
  */
 public class PotionItemBrewingRecipeBuilder extends BrewingRecipeBuilder<PotionItemBrewingRecipeBuilder, Item, PotionItemBrewingRecipe> {
-
 	/**
 	 * Creates a new potion brewing recipe builder.
 	 *

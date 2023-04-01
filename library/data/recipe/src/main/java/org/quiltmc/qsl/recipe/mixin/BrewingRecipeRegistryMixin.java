@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,11 +28,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionUtil;
 import net.minecraft.recipe.BrewingRecipeRegistry;
 import net.minecraft.recipe.Ingredient;
 
 import org.quiltmc.qsl.recipe.api.brewing.AbstractBrewingRecipe;
-import org.quiltmc.qsl.recipe.api.brewing.PotionBrewingRecipe;
+import org.quiltmc.qsl.recipe.api.brewing.SimplePotionBrewingRecipe;
 import org.quiltmc.qsl.recipe.impl.RecipeImpl;
 
 @Mixin(BrewingRecipeRegistry.class)
@@ -40,6 +41,14 @@ public class BrewingRecipeRegistryMixin {
 	@Shadow
 	@Final
 	private static List<Ingredient> POTION_TYPES;
+
+	@Inject(method = "craft", at = @At("RETURN"), cancellable = true)
+	private static void preserveCustomPotionEffects(ItemStack ingredient, ItemStack input, CallbackInfoReturnable<ItemStack> cir) {
+		ItemStack output = cir.getReturnValue();
+		if (output != input) {
+			cir.setReturnValue(PotionUtil.setCustomPotionEffects(output, PotionUtil.getCustomPotionEffects(input)));
+		}
+	}
 
 	@Inject(method = "isValidIngredient", at = @At("HEAD"), cancellable = true)
 	private static void isValidIngredientForRecipes(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
@@ -55,7 +64,7 @@ public class BrewingRecipeRegistryMixin {
 
 	@Inject(method = "isBrewable", at = @At("HEAD"), cancellable = true)
 	private static void isBrewableFromRecipe(Potion potion, CallbackInfoReturnable<Boolean> cir) {
-		if (PotionBrewingRecipe.BREWABLE_POTIONS.contains(potion)) {
+		if (SimplePotionBrewingRecipe.BREWABLE_POTIONS.contains(potion)) {
 			cir.setReturnValue(true);
 		}
 	}

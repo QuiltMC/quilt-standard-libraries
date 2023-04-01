@@ -17,9 +17,8 @@
     "RecipeManagerMixin",
     "ShapedRecipeSerializerMixin",
     "ShapelessRecipeSerializerMixin",
-    "SpecialRecipeSerializerMixin"
     "SpecialRecipeSerializerMixin",
-    "SynchronizeRecipesS2CPacketMixin"
+    "RecipeSynchronizationS2CPacketMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,13 +32,15 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
-import org.quiltmc.qsl.recipe.api.Recipes;
+import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
+import org.quiltmc.qsl.recipe.api.QuiltRecipeTypes;
 import org.quiltmc.qsl.recipe.api.serializer.QuiltRecipeSerializer;
 
 /**
@@ -46,7 +48,7 @@ import org.quiltmc.qsl.recipe.api.serializer.QuiltRecipeSerializer;
  *
  * @param <T> what type the input and output represents.
  *           Vanilla would be {@link Potion} and {@link Item}
- * @see PotionBrewingRecipe
+ * @see SimplePotionBrewingRecipe
  * @see CustomPotionBrewingRecipe
  * @see PotionItemBrewingRecipe
  */
@@ -57,7 +59,7 @@ public abstract class AbstractBrewingRecipe<T> implements Recipe<BrewingStandBlo
 	protected final T output;
 	protected final int fuel;
 	protected final int brewTime;
-	protected ItemStack ghostOutput;
+	protected ItemStack result;
 	protected final String group;
 	private final Identifier id;
 
@@ -68,18 +70,18 @@ public abstract class AbstractBrewingRecipe<T> implements Recipe<BrewingStandBlo
 		this.ingredient = ingredient;
 		VALID_INGREDIENTS.add(ingredient);
 		this.output = output;
-		this.ghostOutput = new ItemStack(Items.POTION);
+		this.result = new ItemStack(Items.POTION);
 		this.fuel = fuel;
 		this.brewTime = brewTime;
 	}
 
 	@Override
 	public RecipeType<AbstractBrewingRecipe<?>> getType() {
-		return Recipes.BREWING;
+		return QuiltRecipeTypes.BREWING;
 	}
 
 	@Override
-	public ItemStack craft(BrewingStandBlockEntity inventory) {
+	public ItemStack craft(BrewingStandBlockEntity inventory, DynamicRegistryManager manager) {
 		for (int i = 0; i < 3; i++) {
 			if (this.matches(i, inventory.getStack(i))) {
 				inventory.setStack(i, this.craft(i, inventory.getStack(i)));
@@ -105,11 +107,12 @@ public abstract class AbstractBrewingRecipe<T> implements Recipe<BrewingStandBlo
 		ItemStack ingredient = inventory.getStack(3);
 		if (this.ingredient.test(ingredient)) {
 			for (int i = 0; i < 3; ++i) {
-				if (matches(i, inventory.getStack(i))) {
+				if (this.matches(i, inventory.getStack(i))) {
 					return true;
 				}
 			}
 		}
+
 		return false;
 	}
 
@@ -143,8 +146,11 @@ public abstract class AbstractBrewingRecipe<T> implements Recipe<BrewingStandBlo
 
 	@Override
 	public DefaultedList<ItemStack> getRemainder(BrewingStandBlockEntity inventory) {
-		// TODO integrate with custom recipe remainders
-		return Recipe.super.getRemainder(inventory);
+		DefaultedList<ItemStack> remainders = DefaultedList.ofSize(inventory.size());
+
+		remainders.set(0, RecipeRemainderLogicHandler.getRemainder(inventory.getStack(0), this));
+
+		return remainders;
 	}
 
 	@Override
@@ -158,8 +164,8 @@ public abstract class AbstractBrewingRecipe<T> implements Recipe<BrewingStandBlo
 	}
 
 	@Override
-	public ItemStack getOutput() {
-		return this.ghostOutput;
+	public ItemStack getResult(DynamicRegistryManager manager) {
+		return this.result;
 	}
 
 	@Override
@@ -173,7 +179,7 @@ public abstract class AbstractBrewingRecipe<T> implements Recipe<BrewingStandBlo
 	 * @param <T> the type of the recipe's input and output
 	 * @param <R> the recipe
 	 */
-	public static abstract class AbstractBrewingSerializer<T, R extends AbstractBrewingRecipe<T>> implements RecipeSerializer<R>, QuiltRecipeSerializer<R> {
+	public abstract static class AbstractBrewingSerializer<T, R extends AbstractBrewingRecipe<T>> implements RecipeSerializer<R>, QuiltRecipeSerializer<R> {
 		private final RecipeFactory<T, ? extends R> recipeFactory;
 
 		protected AbstractBrewingSerializer(RecipeFactory<T, ? extends R> recipeFactory) {
@@ -217,7 +223,7 @@ public abstract class AbstractBrewingRecipe<T> implements Recipe<BrewingStandBlo
 			JsonObject json = new JsonObject();
 			json.addProperty("group", recipe.group);
 			json.add("ingredient", recipe.ingredient.toJson());
-			json.addProperty("type", Registry.RECIPE_SERIALIZER.getId(recipe.getSerializer()).toString());
+			json.addProperty("type", Registries.RECIPE_SERIALIZER.getId(recipe.getSerializer()).toString());
 			this.serialize(recipe.input, "input", json);
 			this.serialize(recipe.output, "output", json);
 			json.addProperty("fuel", recipe.fuel);

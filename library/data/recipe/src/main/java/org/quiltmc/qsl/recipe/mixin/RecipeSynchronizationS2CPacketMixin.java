@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.network.packet.s2c.play.SynchronizeRecipesS2CPacket;
+import net.minecraft.network.packet.s2c.play.RecipeSynchronizationS2CPacket;
 import net.minecraft.recipe.Recipe;
 
 import org.quiltmc.qsl.recipe.impl.RecipeImpl;
@@ -37,8 +37,8 @@ import org.quiltmc.qsl.recipe.impl.RecipeImpl;
  * <p>
  * This is fine because they are only used serverside.
  */
-@Mixin(SynchronizeRecipesS2CPacket.class)
-public class SynchronizeRecipesS2CPacketMixin {
+@Mixin(RecipeSynchronizationS2CPacket.class)
+public class RecipeSynchronizationS2CPacketMixin {
 	@Shadow
 	@Final
 	private List<Recipe<?>> recipes;

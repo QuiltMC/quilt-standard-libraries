@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,9 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.potion.PotionUtil;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeSerializer;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.recipe.impl.RecipeImpl;
 
@@ -47,7 +47,6 @@ import org.quiltmc.qsl.recipe.impl.RecipeImpl;
  * 		<li>time: An integer representing how much time this craft will take, in ticks.
  * 			In vanilla, the default is {@code 400} ticks.</li>
  * </ul>
- *
  * Here is an example recipe for transforming a regular potion into a lingering potion using a log, {@code 20} fuel units, and {@code 100} ticks.
  * <pre><code>
  * {
@@ -65,12 +64,19 @@ import org.quiltmc.qsl.recipe.impl.RecipeImpl;
 public class PotionItemBrewingRecipe extends AbstractBrewingRecipe<Item> {
 	public PotionItemBrewingRecipe(Identifier id, String group, Item input, Ingredient ingredient, Item output, int fuel, int brewTime) {
 		super(id, group, input, ingredient, output, fuel, brewTime);
-		this.ghostOutput = new ItemStack(this.output);
+		this.result = new ItemStack(this.output);
 	}
 
 	@Override
 	protected ItemStack craft(int slot, ItemStack input) {
-		return PotionUtil.setPotion(new ItemStack(this.output), PotionUtil.getPotion(input));
+		var output = new ItemStack(this.output);
+		PotionUtil.setPotion(output, PotionUtil.getPotion(input));
+
+		if (input.getOrCreateNbt().contains("CustomPotionEffects")) {
+			PotionUtil.setCustomPotionEffects(output, PotionUtil.getCustomPotionEffects(input));
+		}
+
+		return output;
 	}
 
 	@Override
@@ -95,17 +101,17 @@ public class PotionItemBrewingRecipe extends AbstractBrewingRecipe<Item> {
 
 		@Override
 		public Item deserialize(PacketByteBuf buf) {
-			return buf.readById(Registry.ITEM);
+			return buf.readFromIterable(Registries.ITEM);
 		}
 
 		@Override
 		public void serialize(Item item, String element, JsonObject json) {
-			json.addProperty(element, Registry.ITEM.getId(item).toString());
+			json.addProperty(element, Registries.ITEM.getId(item).toString());
 		}
 
 		@Override
 		public void serialize(Item item, PacketByteBuf buf) {
-			buf.writeId(Registry.ITEM, item);
+			buf.writeFromIterable(Registries.ITEM, item);
 		}
 	}
 }

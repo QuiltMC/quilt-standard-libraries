@@ -15,6 +15,9 @@ qslModule {
 			api("resource_loader")
 			testmodOnly("lifecycle_events")
 		}
+		item {
+			api("item_setting")
+		}
 	}
 	entrypoints {
 		init {

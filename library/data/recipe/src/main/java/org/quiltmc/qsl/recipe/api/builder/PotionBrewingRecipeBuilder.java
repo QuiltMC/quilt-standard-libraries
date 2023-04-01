@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,12 @@ package org.quiltmc.qsl.recipe.api.builder;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.Identifier;
 
-import org.quiltmc.qsl.recipe.api.brewing.PotionBrewingRecipe;
+import org.quiltmc.qsl.recipe.api.brewing.SimplePotionBrewingRecipe;
 
 /**
- * Builder to build potion recipes
+ * Builder to build potion recipes.
  */
-public class PotionBrewingRecipeBuilder extends BrewingRecipeBuilder<PotionBrewingRecipeBuilder, Potion, PotionBrewingRecipe> {
-
+public class PotionBrewingRecipeBuilder extends BrewingRecipeBuilder<PotionBrewingRecipeBuilder, Potion, SimplePotionBrewingRecipe> {
 	/**
 	 * Creates a new potion brewing recipe builder.
 	 *
@@ -43,7 +42,7 @@ public class PotionBrewingRecipeBuilder extends BrewingRecipeBuilder<PotionBrewi
 	 * @param group the group of the recipe
 	 * @return the potion recipe
 	 */
-	public PotionBrewingRecipe build(Identifier id, String group) {
-		return new PotionBrewingRecipe(id, group, this.input, this.ingredient, this.output, this.fuel, this.brewTime);
+	public SimplePotionBrewingRecipe build(Identifier id, String group) {
+		return new SimplePotionBrewingRecipe(id, group, this.input, this.ingredient, this.output, this.fuel, this.brewTime);
 	}
 }

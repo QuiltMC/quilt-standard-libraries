@@ -30,9 +30,10 @@ import net.minecraft.item.Items;
 import net.minecraft.potion.Potions;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -54,7 +55,7 @@ public class RecipeTestMod implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		Registry.register(Registry.RECIPE_SERIALIZER, new Identifier(NAMESPACE, "sword_imbuing"), TEST_SERIALIZER);
+		Registry.register(Registries.RECIPE_SERIALIZER, new Identifier(NAMESPACE, "sword_imbuing"), TEST_SERIALIZER);
 
 		// Recipe with stick -> diamond
 		RecipeManagerHelper.registerStaticRecipe(

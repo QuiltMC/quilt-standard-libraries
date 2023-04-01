@@ -63,7 +63,7 @@ public class ItemContentRegistriesInitializer implements ModInitializer {
 
 		INITIAL_COMPOST_CHANCE.forEach((item, f) -> ItemContentRegistries.COMPOST_CHANCES.put(item.asItem(), f));
 
-		ItemContentRegistries.BREWING_FUEL_TIMES.put(Items.BLAZE_POWDER, 20);
+		ItemContentRegistries.BREWING_FUELS.put(Items.BLAZE_POWDER, 20);
 
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, error) -> {
 			FUEL_MAP.clear();
@@ -78,7 +78,7 @@ public class ItemContentRegistriesInitializer implements ModInitializer {
 			setMapFromAttachment(ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE::put, ItemContentRegistries.COMPOST_CHANCES);
 
 			BREWING_FUEL_MAP.clear();
-			setMapFromAttachment(BREWING_FUEL_MAP::put, ItemContentRegistries.BREWING_FUEL_TIMES);
+			setMapFromAttachment(BREWING_FUEL_MAP::put, ItemContentRegistries.BREWING_FUELS);
 		});
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,9 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtil;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeSerializer;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.recipe.impl.RecipeImpl;
 
@@ -49,7 +49,6 @@ import org.quiltmc.qsl.recipe.impl.RecipeImpl;
  * 		<li>time: An integer representing how much time this craft will take, in ticks.
  * 			In vanilla, the default is {@code 400} ticks.</li>
  * </ul>
- *
  * Here is an example recipe for a potion of luck that takes a water potion, a trapdoor of some kind, {@code 5} fuel units, and {@code 123} ticks.
  * <pre><code>
  * {
@@ -64,13 +63,13 @@ import org.quiltmc.qsl.recipe.impl.RecipeImpl;
  * }
  * </code></pre>
  */
-public class PotionBrewingRecipe extends AbstractBrewingRecipe<Potion> {
+public class SimplePotionBrewingRecipe extends AbstractBrewingRecipe<Potion> {
 	public static final Set<Potion> BREWABLE_POTIONS = new HashSet<>();
 
-	public PotionBrewingRecipe(Identifier id, String group, Potion input, Ingredient ingredient, Potion output, int fuel, int brewTime) {
+	public SimplePotionBrewingRecipe(Identifier id, String group, Potion input, Ingredient ingredient, Potion output, int fuel, int brewTime) {
 		super(id, group, input, ingredient, output, fuel, brewTime);
 		BREWABLE_POTIONS.add(output);
-		PotionUtil.setPotion(this.ghostOutput, this.output);
+		PotionUtil.setPotion(this.result, this.output);
 	}
 
 	@Override
@@ -84,11 +83,11 @@ public class PotionBrewingRecipe extends AbstractBrewingRecipe<Potion> {
 	}
 
 	@Override
-	public RecipeSerializer<? extends PotionBrewingRecipe> getSerializer() {
+	public RecipeSerializer<? extends SimplePotionBrewingRecipe> getSerializer() {
 		return RecipeImpl.POTION_SERIALIZER;
 	}
 
-	public static class Serializer<R extends PotionBrewingRecipe> extends AbstractBrewingSerializer<Potion, R> {
+	public static class Serializer<R extends SimplePotionBrewingRecipe> extends AbstractBrewingSerializer<Potion, R> {
 		public Serializer(RecipeFactory<Potion, R> recipeFactory) {
 			super(recipeFactory);
 		}
@@ -105,12 +104,12 @@ public class PotionBrewingRecipe extends AbstractBrewingRecipe<Potion> {
 
 		@Override
 		public void serialize(Potion value, String element, JsonObject json) {
-			json.addProperty(element, Registry.POTION.getId(value).toString());
+			json.addProperty(element, Registries.POTION.getId(value).toString());
 		}
 
 		@Override
 		public void serialize(Potion value, PacketByteBuf buf) {
-			buf.writeString(Registry.POTION.getId(value).toString());
+			buf.writeString(Registries.POTION.getId(value).toString());
 		}
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,9 +30,9 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeSerializer;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.qsl.recipe.api.brewing.AbstractBrewingRecipe;
 
@@ -93,17 +93,17 @@ public class SwordImbuingTestRecipe extends AbstractBrewingRecipe<Item> {
 
 		@Override
 		public Item deserialize(PacketByteBuf buf) {
-			return buf.readById(Registry.ITEM);
+			return buf.readFromIterable(Registries.ITEM);
 		}
 
 		@Override
 		public void serialize(Item item, String element, JsonObject json) {
-			json.addProperty(element, Registry.ITEM.getId(item).toString());
+			json.addProperty(element, Registries.ITEM.getId(item).toString());
 		}
 
 		@Override
 		public void serialize(Item item, PacketByteBuf buf) {
-			buf.writeId(Registry.ITEM, item);
+			buf.writeFromIterable(Registries.ITEM, item);
 		}
 	}
 }

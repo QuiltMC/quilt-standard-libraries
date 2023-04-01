@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import org.quiltmc.qsl.recipe.api.Recipes;
+import org.quiltmc.qsl.recipe.api.QuiltRecipeTypes;
 import org.quiltmc.qsl.recipe.api.brewing.AbstractBrewingRecipe;
 import org.quiltmc.qsl.recipe.impl.RecipeImpl;
 
@@ -67,7 +67,7 @@ public abstract class BrewingStandBlockEntityMixin extends LockableContainerBloc
 			ordinal = 0
 	)
 	private static boolean canCraftBrewingRecipe(boolean canCraft, World world, BlockPos pos, BlockState state, BrewingStandBlockEntity brewingStand) {
-		var maybeRecipe = world.getRecipeManager().getFirstMatch(Recipes.BREWING, brewingStand, world);
+		var maybeRecipe = world.getRecipeManager().getFirstMatch(QuiltRecipeTypes.BREWING, brewingStand, world);
 		var recipeHolder = ((BrewingStandBlockEntityMixin) (Object) brewingStand);
 		recipeHolder.quilt$recipe = maybeRecipe.orElse(null);
 		return maybeRecipe.isPresent() || canCraft;
@@ -79,7 +79,7 @@ public abstract class BrewingStandBlockEntityMixin extends LockableContainerBloc
 		BrewingStandBlockEntity brewingStand = (BrewingStandBlockEntity) world.getBlockEntity(pos);
 		BrewingStandBlockEntityMixin recipeHolder = (BrewingStandBlockEntityMixin) (Object) brewingStand;
 		if (recipeHolder.quilt$recipe != null) {
-			recipeHolder.quilt$recipe.craft(brewingStand);
+			recipeHolder.quilt$recipe.craft(brewingStand, world.getRegistryManager());
 			recipeHolder.quilt$craft$interceptedCraft = true;
 		} else {
 			recipeHolder.quilt$craft$interceptedCraft = false;
