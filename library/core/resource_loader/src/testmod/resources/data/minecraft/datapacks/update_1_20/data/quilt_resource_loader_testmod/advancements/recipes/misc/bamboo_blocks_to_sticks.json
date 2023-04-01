@@ -1,0 +1,45 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "quilt_resource_loader_testmod:bamboo_blocks_to_sticks"
+    ]
+  },
+  "criteria": {
+    "has_bamboo_block": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "tag": "minecraft:bamboo_blocks"
+          }
+        ]
+      }
+    },
+    "has_self": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:stick"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "quilt_resource_loader_testmod:bamboo_blocks_to_sticks"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_bamboo_block",
+      "has_self",
+      "has_the_recipe"
+    ]
+  ]
+}

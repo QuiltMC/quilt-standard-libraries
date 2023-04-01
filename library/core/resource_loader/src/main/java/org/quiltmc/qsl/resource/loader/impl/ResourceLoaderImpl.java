@@ -144,11 +144,6 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 							+ " already in resource reloader set!"
 			);
 		}
-
-		// Keep this for compatibility.
-		for (var dependency : resourceReloader.getQuiltDependencies()) {
-			this.addReloaderOrdering(dependency, resourceReloader.getQuiltId());
-		}
 	}
 
 	@Override
@@ -395,12 +390,12 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		return pack;
 	}
 
-	public static GroupResourcePack.Wrapped buildProgrammerArtResourcePack(ResourcePack vanillaPack) {
+	public static GroupResourcePack.Wrapped buildVanillaBuiltinResourcePack(ResourcePack vanillaPack, ResourceType type, String packName) {
 		// Build a list of mod resource packs.
 		var packs = new ArrayList<ResourcePack>();
-		appendModResourcePacks(packs, ResourceType.CLIENT_RESOURCES, "programmer_art");
+		appendModResourcePacks(packs, type, packName);
 
-		return new GroupResourcePack.Wrapped(ResourceType.CLIENT_RESOURCES, vanillaPack, packs, true);
+		return new GroupResourcePack.Wrapped(type, vanillaPack, packs, true);
 	}
 
 	/* Built-in resource packs */

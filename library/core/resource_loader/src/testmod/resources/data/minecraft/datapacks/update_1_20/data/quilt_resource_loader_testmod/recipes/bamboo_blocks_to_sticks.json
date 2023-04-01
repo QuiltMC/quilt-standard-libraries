@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "b",
+    "b"
+  ],
+  "key": {
+    "b": {
+      "tag": "minecraft:bamboo_blocks"
+    }
+  },
+  "result": {
+    "item": "minecraft:stick",
+    "count": 8
+  }
+}
