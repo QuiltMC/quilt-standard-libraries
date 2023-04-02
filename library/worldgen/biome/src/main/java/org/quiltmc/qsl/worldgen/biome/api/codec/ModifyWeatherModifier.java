@@ -31,6 +31,7 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
 /**
  * A biome modifier that modifies the weather of a biome.
+ *
  * @see BiomeModificationContext.WeatherContext
  */
 public record ModifyWeatherModifier(CodecAwarePredicate<BiomeSelectionContext> selector,
@@ -49,16 +50,16 @@ public record ModifyWeatherModifier(CodecAwarePredicate<BiomeSelectionContext> s
 
 	@Override
 	public boolean shouldModify(BiomeSelectionContext context) {
-		return selector.test(context);
+		return this.selector.test(context);
 	}
 
 	@Override
 	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
 		var weatherContext = modificationContext.getWeather();
-		downfall.ifPresent(weatherContext::setDownfall);
-		temperature.ifPresent(weatherContext::setTemperature);
-		hasPrecipitation.ifPresent(weatherContext::setHasPrecipitation);
-		temperatureModifier.ifPresent(weatherContext::setTemperatureModifier);
+		this.downfall.ifPresent(weatherContext::setDownfall);
+		this.temperature.ifPresent(weatherContext::setTemperature);
+		this.hasPrecipitation.ifPresent(weatherContext::setHasPrecipitation);
+		this.temperatureModifier.ifPresent(weatherContext::setTemperatureModifier);
 	}
 
 	@Override

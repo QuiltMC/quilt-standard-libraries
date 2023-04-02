@@ -36,10 +36,13 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
 /**
  * A biome modifier that removes features from a biome. If no steps are specified when decoding, features will be removed from all steps.
- * @param steps the feature generation steps to remove the features from
+ *
+ * @param steps    the feature generation steps to remove the features from
  * @param features registry keys for the features to remove
  */
-public record RemoveFeaturesModifier(CodecAwarePredicate<BiomeSelectionContext> selector, List<RegistryKey<PlacedFeature>> features, List<GenerationStep.Feature> steps) implements BiomeModifier {
+public record RemoveFeaturesModifier(CodecAwarePredicate<BiomeSelectionContext> selector,
+									 List<RegistryKey<PlacedFeature>> features,
+									 List<GenerationStep.Feature> steps) implements BiomeModifier {
 	public static final Identifier ID = new Identifier("quilt", "remove_features");
 	public static final Codec<RemoveFeaturesModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(RemoveFeaturesModifier::selector),
@@ -49,13 +52,13 @@ public record RemoveFeaturesModifier(CodecAwarePredicate<BiomeSelectionContext> 
 
 	@Override
 	public boolean shouldModify(BiomeSelectionContext context) {
-		return selector.test(context);
+		return this.selector.test(context);
 	}
 
 	@Override
 	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
-		for (var feature : features) {
-			for (var step : steps) {
+		for (var feature : this.features) {
+			for (var step : this.steps) {
 				modificationContext.getGenerationSettings().removeFeature(step, feature);
 			}
 		}

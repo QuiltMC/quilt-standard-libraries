@@ -30,17 +30,6 @@ public final class OrPredicate<T> implements CodecAwarePredicate<T> {
 
 	public static final Identifier ID = new Identifier("quilt", "or");
 	public static final PredicateCodecProvider PROVIDER = OrPredicate::makeCodec;
-
-	@Override
-	public boolean test(T t) {
-		for (CodecAwarePredicate<T> predicate : values) {
-			if (predicate.test(t)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	public final List<CodecAwarePredicate<T>> values;
 
 	private OrPredicate(List<CodecAwarePredicate<T>> values) {
@@ -51,6 +40,16 @@ public final class OrPredicate<T> implements CodecAwarePredicate<T> {
 		return RecordCodecBuilder.create(instance -> instance.group(
 				predicateCodec.listOf().fieldOf("values").forGetter(predicate -> predicate.values)
 		).apply(instance, OrPredicate::new));
+	}
+
+	@Override
+	public boolean test(T t) {
+		for (CodecAwarePredicate<T> predicate : this.values) {
+			if (predicate.test(t)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override

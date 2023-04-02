@@ -30,17 +30,6 @@ public final class AndPredicate<T> implements CodecAwarePredicate<T> {
 
 	public static final Identifier ID = new Identifier("quilt", "and");
 	public static final PredicateCodecProvider PROVIDER = AndPredicate::makeCodec;
-
-	@Override
-	public boolean test(T t) {
-		for (CodecAwarePredicate<T> predicate : values) {
-			if (!predicate.test(t)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
 	public final List<CodecAwarePredicate<T>> values;
 
 	private AndPredicate(List<CodecAwarePredicate<T>> values) {
@@ -51,6 +40,16 @@ public final class AndPredicate<T> implements CodecAwarePredicate<T> {
 		return RecordCodecBuilder.create(instance -> instance.group(
 				predicateCodec.listOf().fieldOf("values").forGetter(predicate -> predicate.values)
 		).apply(instance, AndPredicate::new));
+	}
+
+	@Override
+	public boolean test(T t) {
+		for (CodecAwarePredicate<T> predicate : this.values) {
+			if (!predicate.test(t)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override

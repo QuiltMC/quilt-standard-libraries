@@ -28,15 +28,16 @@ public final class NeverPredicate<T> implements CodecAwarePredicate<T> {
 	public static final Identifier ID = new Identifier("quilt", "never");
 	public static final PredicateCodecProvider PROVIDER = NeverPredicate::makeCodec;
 
-	@Override
-	public boolean test(T t) {
-		return false;
+	private NeverPredicate() {
 	}
-
-	private NeverPredicate() {}
 
 	private static <T> Codec<NeverPredicate<T>> makeCodec(Codec<CodecAwarePredicate<T>> predicateCodec) {
 		return Codec.unit(new NeverPredicate<>());
+	}
+
+	@Override
+	public boolean test(T t) {
+		return false;
 	}
 
 	@Override

@@ -30,15 +30,39 @@ import org.quiltmc.qsl.data.callbacks.api.CodecMap;
 /**
  * A CodecMap for {@link CodecAwarePredicate}s that bundles a set of codecs created by shared providers. This class
  * also handles registering shared providers for predicate codecs.
+ *
  * @param <T> the type of the input tested by the predicates this map can help encode
  */
 public class PredicateCodecMap<T> extends CodecMap<CodecAwarePredicate<T>> {
 	private static final Map<Identifier, PredicateCodecProvider> providers = HashBiMap.create();
 
+	static {
+		registerProvider(AlwaysPredicate.ID, AlwaysPredicate.PROVIDER);
+		registerProvider(NeverPredicate.ID, NeverPredicate.PROVIDER);
+		registerProvider(AndPredicate.ID, AndPredicate.PROVIDER);
+		registerProvider(OrPredicate.ID, OrPredicate.PROVIDER);
+		registerProvider(NotPredicate.ID, NotPredicate.PROVIDER);
+	}
+
+	private final Codec<CodecAwarePredicate<T>> predicateCodec;
+	private volatile boolean cached = false;
+
+	/**
+	 * Create a new predicate codec map based off of the provided general predicate codec. The provided codec should
+	 * likely be created with {@link Codecs#createLazy(Supplier)} so that it can itself delegate to the constructed map.
+	 *
+	 * @param predicateCodec a general codec that can encode any predicate for the specific type T
+	 */
+	public PredicateCodecMap(Codec<CodecAwarePredicate<T>> predicateCodec) {
+		super();
+		this.predicateCodec = predicateCodec;
+	}
+
 	/**
 	 * Register a general predicate codec provider. This provider will be used in every predicate codec map to generate
 	 * a specifically parameterized codec.
-	 * @param id the identifier to delegate to this provider on
+	 *
+	 * @param id       the identifier to delegate to this provider on
 	 * @param provider the provider to register
 	 * @throws IllegalArgumentException if a provider with the same id has already been registered
 	 */
@@ -51,30 +75,11 @@ public class PredicateCodecMap<T> extends CodecMap<CodecAwarePredicate<T>> {
 
 	/**
 	 * {@return the provider registered to the given id, or null if no provider has been registered}
+	 *
 	 * @param id the id to look up
 	 */
 	public static PredicateCodecProvider lookupProvider(Identifier id) {
 		return providers.get(id);
-	}
-
-	static {
-		registerProvider(AlwaysPredicate.ID, AlwaysPredicate.PROVIDER);
-		registerProvider(NeverPredicate.ID, NeverPredicate.PROVIDER);
-		registerProvider(AndPredicate.ID, AndPredicate.PROVIDER);
-		registerProvider(OrPredicate.ID, OrPredicate.PROVIDER);
-		registerProvider(NotPredicate.ID, NotPredicate.PROVIDER);
-	}
-
-	private final Codec<CodecAwarePredicate<T>> predicateCodec;
-
-	/**
-	 * Create a new predicate codec map based off of the provided general predicate codec. The provided codec should
-	 * likely be created with {@link Codecs#createLazy(Supplier)} so that it can itself delegate to the constructed map.
-	 * @param predicateCodec a general codec that can encode any predicate for the specific type T
-	 */
-	public PredicateCodecMap(Codec<CodecAwarePredicate<T>> predicateCodec) {
-		super();
-		this.predicateCodec = predicateCodec;
 	}
 
 	@Override
@@ -94,14 +99,12 @@ public class PredicateCodecMap<T> extends CodecMap<CodecAwarePredicate<T>> {
 		return super.lookup(codec);
 	}
 
-	private volatile boolean cached = false;
-
 	private void checkCache() {
-		if (!cached) {
+		if (!this.cached) {
 			synchronized (this) {
-				if (!cached) {
+				if (!this.cached) {
 					cacheProviders();
-					cached = true;
+					this.cached = true;
 				}
 			}
 		}
@@ -109,7 +112,7 @@ public class PredicateCodecMap<T> extends CodecMap<CodecAwarePredicate<T>> {
 
 	private void cacheProviders() {
 		for (Map.Entry<Identifier, PredicateCodecProvider> entry : providers.entrySet()) {
-			this.register(entry.getKey(), entry.getValue().makeCodec(predicateCodec));
+			this.register(entry.getKey(), entry.getValue().makeCodec(this.predicateCodec));
 		}
 	}
 }

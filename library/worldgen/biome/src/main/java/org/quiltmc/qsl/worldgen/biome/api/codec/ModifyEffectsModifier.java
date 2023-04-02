@@ -37,6 +37,7 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
 /**
  * A biome modifier that modifies the effects of a biome.
+ *
  * @see BiomeModificationContext.EffectsContext
  */
 public record ModifyEffectsModifier(CodecAwarePredicate<BiomeSelectionContext> selector,
@@ -72,24 +73,24 @@ public record ModifyEffectsModifier(CodecAwarePredicate<BiomeSelectionContext> s
 
 	@Override
 	public boolean shouldModify(BiomeSelectionContext context) {
-		return selector.test(context);
+		return this.selector.test(context);
 	}
 
 	@Override
 	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
 		var effectContext = modificationContext.getEffects();
-		fogColor.ifPresent(effectContext::setFogColor);
-		waterColor.ifPresent(effectContext::setWaterColor);
-		waterFogColor.ifPresent(effectContext::setWaterFogColor);
-		skyColor.ifPresent(effectContext::setSkyColor);
-		foliageColor.ifPresent(effectContext::setFoliageColor);
-		grassColor.ifPresent(effectContext::setGrassColor);
-		grassColorModifier.ifPresent(effectContext::setGrassColorModifier);
-		particleConfig.ifPresent(effectContext::setParticleConfig);
-		ambientSound.ifPresent(effectContext::setAmbientSound);
-		moodSound.ifPresent(effectContext::setMoodSound);
-		additionsSound.ifPresent(effectContext::setAdditionsSound);
-		music.ifPresent(effectContext::setMusic);
+		this.fogColor.ifPresent(effectContext::setFogColor);
+		this.waterColor.ifPresent(effectContext::setWaterColor);
+		this.waterFogColor.ifPresent(effectContext::setWaterFogColor);
+		this.skyColor.ifPresent(effectContext::setSkyColor);
+		this.foliageColor.ifPresent(effectContext::setFoliageColor);
+		this.grassColor.ifPresent(effectContext::setGrassColor);
+		this.grassColorModifier.ifPresent(effectContext::setGrassColorModifier);
+		this.particleConfig.ifPresent(effectContext::setParticleConfig);
+		this.ambientSound.ifPresent(effectContext::setAmbientSound);
+		this.moodSound.ifPresent(effectContext::setMoodSound);
+		this.additionsSound.ifPresent(effectContext::setAdditionsSound);
+		this.music.ifPresent(effectContext::setMusic);
 	}
 
 	@Override

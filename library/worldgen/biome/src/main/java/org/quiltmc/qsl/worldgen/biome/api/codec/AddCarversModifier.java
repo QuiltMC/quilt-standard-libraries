@@ -35,10 +35,13 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
 /**
  * A biome modifier that adds carvers to a biome.
- * @param step the carver generation step to add the carvers to
+ *
+ * @param step    the carver generation step to add the carvers to
  * @param carvers registry keys for the carvers to add
  */
-public record AddCarversModifier(CodecAwarePredicate<BiomeSelectionContext> selector, List<RegistryKey<ConfiguredCarver<?>>> carvers, GenerationStep.Carver step) implements BiomeModifier {
+public record AddCarversModifier(CodecAwarePredicate<BiomeSelectionContext> selector,
+								 List<RegistryKey<ConfiguredCarver<?>>> carvers,
+								 GenerationStep.Carver step) implements BiomeModifier {
 	public static final Identifier ID = new Identifier("quilt", "add_carvers");
 	public static final Codec<AddCarversModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(AddCarversModifier::selector),
@@ -48,13 +51,13 @@ public record AddCarversModifier(CodecAwarePredicate<BiomeSelectionContext> sele
 
 	@Override
 	public boolean shouldModify(BiomeSelectionContext context) {
-		return selector.test(context);
+		return this.selector.test(context);
 	}
 
 	@Override
 	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
-		for (var carver : carvers) {
-			modificationContext.getGenerationSettings().addCarver(step, carver);
+		for (var carver : this.carvers) {
+			modificationContext.getGenerationSettings().addCarver(this.step, carver);
 		}
 	}
 

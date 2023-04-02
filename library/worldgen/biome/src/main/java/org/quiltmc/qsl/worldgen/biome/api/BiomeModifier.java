@@ -38,23 +38,21 @@ public interface BiomeModifier extends CodecAware {
 	 * Stores biome modifier codecs. Custom biome modifier codecs should be added here during mod initialization.
 	 */
 	CodecMap<BiomeModifier> BIOME_MODIFIER_CODECS = new CodecMap<>();
-	Codec<CodecAwarePredicate<BiomeSelectionContext>> BIOME_SELECTOR_CODEC = Codecs.createLazy(() ->
-			Codec.either(
-					BiomeModifier.BIOME_SELECTOR_CODECS.createDelegatingCodec("biome selector"),
-					Biome.LIST_CODEC).xmap(either -> either.map(Function.identity(), ValueBiomeSelector::new),
-					predicate -> predicate instanceof ValueBiomeSelector valueSelector ? Either.right(valueSelector.value()) : Either.left(predicate)));
-	/**
-	 * Stores biome selector codecs. Custom biome selector codecs should be added here during mod initialization.
-	 */
-	PredicateCodecMap<BiomeSelectionContext> BIOME_SELECTOR_CODECS = new PredicateCodecMap<>(BIOME_SELECTOR_CODEC);
 
 	/**
 	 * {@return whether this biome modifier should be applied to the biome}
 	 */
 	boolean shouldModify(BiomeSelectionContext context);
 
+	Codec<CodecAwarePredicate<BiomeSelectionContext>> BIOME_SELECTOR_CODEC = Codecs.createLazy(() -> Codec.either(BiomeModifier.BIOME_SELECTOR_CODECS.createDelegatingCodec("biome selector"), Biome.LIST_CODEC).xmap(either -> either.map(Function.identity(), ValueBiomeSelector::new), predicate -> predicate instanceof ValueBiomeSelector valueSelector ? Either.right(valueSelector.value()) : Either.left(predicate)));
+
 	/**
 	 * Applies this biome modifier to the biome.
 	 */
 	void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext);
+
+	/**
+	 * Stores biome selector codecs. Custom biome selector codecs should be added here during mod initialization.
+	 */
+	PredicateCodecMap<BiomeSelectionContext> BIOME_SELECTOR_CODECS = new PredicateCodecMap<>(BIOME_SELECTOR_CODEC);
 }

@@ -36,10 +36,13 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
 /**
  * A biome modifier that removes carvers from a biome. If no steps are specified when decoding, carvers will be removed from all steps.
- * @param steps the carver generation steps to remove the carvers from
+ *
+ * @param steps   the carver generation steps to remove the carvers from
  * @param carvers registry keys for the carvers to remove
  */
-public record RemoveCarversModifier(CodecAwarePredicate<BiomeSelectionContext> selector, List<RegistryKey<ConfiguredCarver<?>>> carvers, List<GenerationStep.Carver> steps) implements BiomeModifier {
+public record RemoveCarversModifier(CodecAwarePredicate<BiomeSelectionContext> selector,
+									List<RegistryKey<ConfiguredCarver<?>>> carvers,
+									List<GenerationStep.Carver> steps) implements BiomeModifier {
 	public static final Identifier ID = new Identifier("quilt", "remove_carvers");
 	public static final Codec<RemoveCarversModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(RemoveCarversModifier::selector),
@@ -49,13 +52,13 @@ public record RemoveCarversModifier(CodecAwarePredicate<BiomeSelectionContext> s
 
 	@Override
 	public boolean shouldModify(BiomeSelectionContext context) {
-		return selector.test(context);
+		return this.selector.test(context);
 	}
 
 	@Override
 	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
-		for (var carver : carvers) {
-			for (var step : steps) {
+		for (var carver : this.carvers) {
+			for (var step : this.steps) {
 				modificationContext.getGenerationSettings().removeCarver(step, carver);
 			}
 		}

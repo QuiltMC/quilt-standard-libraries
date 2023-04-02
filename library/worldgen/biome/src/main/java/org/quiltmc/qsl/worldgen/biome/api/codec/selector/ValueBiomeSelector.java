@@ -39,7 +39,7 @@ public record ValueBiomeSelector(HolderSet<Biome> value) implements CodecAwarePr
 
 	@Override
 	public boolean test(BiomeSelectionContext biomeSelectionContext) {
-		return value.contains(biomeSelectionContext.getBiomeHolder());
+		return this.value.contains(biomeSelectionContext.getBiomeHolder());
 	}
 
 	@Override

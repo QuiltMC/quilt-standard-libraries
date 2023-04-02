@@ -25,7 +25,8 @@ import com.mojang.serialization.Codec;
  * Helper methods for common codec operations.
  */
 public final class CodecHelpers {
-	private CodecHelpers() {}
+	private CodecHelpers() {
+	}
 
 	/**
 	 * {@return a codec that encodes a list of values either from a list or from a single value}

@@ -52,6 +52,7 @@ import org.quiltmc.qsl.base.api.event.Event;
  * callbacks provided by datapacks. Additionally, contains logic to load callbacks from a resource manager. This tool
  * keeps information about event phases alongside registered callbacks, so that a given identifier uniquely identifies
  * a callback even across phases.
+ *
  * @param <T> the type of the event callback
  */
 public class DynamicEventCallbackSource<T extends CodecAware> {
@@ -63,27 +64,25 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 
 	protected final @NotNull CodecMap<T> codecs;
 	protected final @NotNull Class<T> callbackClass;
-
-	private final @NotNull Codec<Pair<Identifier, T>> codec;
-	private final Map<Identifier, Pair<Identifier,T>> listeners = new LinkedHashMap<>();
-	private final Map<Identifier, Pair<Identifier,T>> dynamicListeners = new LinkedHashMap<>();
-	private final Map<Identifier, T[]> listenerArrays = new HashMap<>();
-
 	protected final Event<T> event;
-
-	private final Set<Identifier> registeredEvents = new HashSet<>();
 	protected final Function<Supplier<T[]>, T> combiner;
+	private final @NotNull Codec<Pair<Identifier, T>> codec;
+	private final Map<Identifier, Pair<Identifier, T>> listeners = new LinkedHashMap<>();
+	private final Map<Identifier, Pair<Identifier, T>> dynamicListeners = new LinkedHashMap<>();
+	private final Map<Identifier, T[]> listenerArrays = new HashMap<>();
+	private final Set<Identifier> registeredEvents = new HashSet<>();
 	private final T[] emptyArray;
 
 	/**
 	 * Creates a new callback source that listens to a given event and loads from a provided resource path. For instance,
 	 * if the resource path is {@code "quilt:my_callbacks"}, then callbacks will be loaded under the identifier
 	 * {@code "<namespace>:<path>"} from {@code "<namespace>/quilt/my_callbacks/<path>.json"}.
-	 * @param resourcePath the path to the resource directory containing callbacks
-	 * @param codecs delegates codecs to decode callbacks with
+	 *
+	 * @param resourcePath  the path to the resource directory containing callbacks
+	 * @param codecs        delegates codecs to decode callbacks with
 	 * @param callbackClass the class of the event callback
-	 * @param event the event to listen to
-	 * @param combiner a function for combining multiple callbacks registered to this and loaded from data to a single callback
+	 * @param event         the event to listen to
+	 * @param combiner      a function for combining multiple callbacks registered to this and loaded from data to a single callback
 	 */
 	public DynamicEventCallbackSource(@NotNull Identifier resourcePath, @NotNull CodecMap<T> codecs, @NotNull Class<T> callbackClass, Event<T> event, Function<Supplier<T[]>, T> combiner) {
 		this.resourcePath = resourcePath;
@@ -101,39 +100,41 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 	/**
 	 * Listens to the event in a way that data can replace. A given identifier can only have one callback associated
 	 * with it for any given callback source.
-	 * @param id the identifier of the callback, to be used when replacing it in data
+	 *
+	 * @param id       the identifier of the callback, to be used when replacing it in data
 	 * @param listener the callback to listen with
-	 * @param phase the phase to register the callback in
+	 * @param phase    the phase to register the callback in
 	 */
 	public void register(Identifier id, T listener, Identifier phase) {
-		listeners.put(id, Pair.of(phase, listener));
-		updateListeners(phase);
+		this.listeners.put(id, Pair.of(phase, listener));
+		this.updateListeners(phase);
 	}
 
 	/**
 	 * Listens to the event in a way that data can replace.
-	 * @param id the identifier of the callback, to be used when replacing it in data
+	 *
+	 * @param id       the identifier of the callback, to be used when replacing it in data
 	 * @param listener the callback to listen with
 	 */
 	public void register(Identifier id, T listener) {
-		register(id, listener, Event.DEFAULT_PHASE);
+		this.register(id, listener, Event.DEFAULT_PHASE);
 	}
 
 	private void updateListeners(Identifier phase) {
 		var combinedMap = new TreeMap<Identifier, T>();
-		for (var entry : listeners.entrySet()) {
+		for (var entry : this.listeners.entrySet()) {
 			if (entry.getValue().getFirst().equals(phase)) {
 				combinedMap.put(entry.getKey(), entry.getValue().getSecond());
 			}
 		}
-		for (var entry : dynamicListeners.entrySet()) {
+		for (var entry : this.dynamicListeners.entrySet()) {
 			if (entry.getValue().getFirst().equals(phase)) {
 				combinedMap.put(entry.getKey(), entry.getValue().getSecond());
 			}
 		}
 
 		@SuppressWarnings("unchecked")
-		var array = (T[]) Array.newInstance(callbackClass, combinedMap.size());
+		var array = (T[]) Array.newInstance(this.callbackClass, combinedMap.size());
 
 		int i = 0;
 		for (T t : combinedMap.values()) {
@@ -143,24 +144,25 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 
 		this.listenerArrays.put(phase, array);
 
-		if (!registeredEvents.contains(phase)) {
-			registeredEvents.add(phase);
-			event.register(phase, this.combiner.apply(() -> this.getListeners(phase)));
+		if (!this.registeredEvents.contains(phase)) {
+			this.registeredEvents.add(phase);
+			this.event.register(phase, this.combiner.apply(() -> this.getListeners(phase)));
 		}
 	}
 
-	private void updateDynamicListeners(Map<Identifier, Pair<Identifier,T>> dynamicListeners) {
+	private void updateDynamicListeners(Map<Identifier, Pair<Identifier, T>> dynamicListeners) {
 		this.dynamicListeners.clear();
 		this.dynamicListeners.putAll(dynamicListeners);
 		dynamicListeners.values().stream().map(Pair::getFirst).distinct().forEach(this::updateListeners);
 	}
 
 	private T[] getListeners(Identifier phase) {
-		return listenerArrays.getOrDefault(phase, emptyArray);
+		return this.listenerArrays.getOrDefault(phase, this.emptyArray);
 	}
 
 	/**
 	 * Updates the listeners with callbacks loaded from data.
+	 *
 	 * @param resourceManager the resource manager to load data from
 	 */
 	public void update(ResourceManager resourceManager) {
@@ -170,12 +172,13 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 	/**
 	 * Updates the listeners with callbacks loaded from data, using custom {@link DynamicOps}. This is useful when
 	 * loading using codecs that want a {@link net.minecraft.registry.RegistryOps} or similar.
+	 *
 	 * @param resourceManager the resource manager to load data from
-	 * @param ops the dynamic ops to use to decode data
+	 * @param ops             the dynamic ops to use to decode data
 	 */
 	public void update(ResourceManager resourceManager, DynamicOps<JsonElement> ops) {
-		Map<Identifier, Pair<Identifier,T>> dynamicListeners = new LinkedHashMap<>();
-		ResourceFileNamespace resourceFileNamespace = ResourceFileNamespace.json(this.resourcePath.getNamespace()+"/"+this.resourcePath.getPath());
+		Map<Identifier, Pair<Identifier, T>> dynamicListeners = new LinkedHashMap<>();
+		ResourceFileNamespace resourceFileNamespace = ResourceFileNamespace.json(this.resourcePath.getNamespace() + "/" + this.resourcePath.getPath());
 		var resources = resourceFileNamespace.findMatchingResources(resourceManager).entrySet();
 		for (Map.Entry<Identifier, Resource> entry : resources) {
 			Identifier id = entry.getKey();
@@ -183,7 +186,7 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 			var resource = entry.getValue();
 			try (var reader = resource.openBufferedReader()) {
 				var json = GSON.fromJson(reader, JsonElement.class);
-				DataResult<Pair<Identifier, T>> result = codec.parse(ops, json);
+				DataResult<Pair<Identifier, T>> result = this.codec.parse(ops, json);
 				if (result.result().isPresent()) {
 					var pair = result.result().get();
 					dynamicListeners.put(unwrappedIdentifier, pair);
@@ -202,6 +205,6 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 	 * {@return the codec used to decode resources; can be used to re-encode callbacks}
 	 */
 	public @NotNull Codec<Pair<Identifier, T>> getCodec() {
-		return codec;
+		return this.codec;
 	}
 }

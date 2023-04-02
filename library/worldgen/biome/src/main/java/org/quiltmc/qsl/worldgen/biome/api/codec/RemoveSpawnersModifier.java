@@ -35,12 +35,13 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
 /**
  * A biome modifier that removes mob spawners from biomes
+ *
  * @param entityTypes identifiers of the entity types to remove
- * @param groups the spawn groups to remove the spawners from; if not provided, defaults to all spawn groups
+ * @param groups      the spawn groups to remove the spawners from; if not provided, defaults to all spawn groups
  */
 public record RemoveSpawnersModifier(CodecAwarePredicate<BiomeSelectionContext> selector,
-								  Set<Identifier> entityTypes,
-								  Set<SpawnGroup> groups) implements BiomeModifier {
+									 Set<Identifier> entityTypes,
+									 Set<SpawnGroup> groups) implements BiomeModifier {
 	public static final Identifier ID = new Identifier("quilt", "remove_spawners");
 	public static final Codec<RemoveSpawnersModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(RemoveSpawnersModifier::selector),
@@ -52,13 +53,13 @@ public record RemoveSpawnersModifier(CodecAwarePredicate<BiomeSelectionContext> 
 
 	@Override
 	public boolean shouldModify(BiomeSelectionContext context) {
-		return selector.test(context);
+		return this.selector.test(context);
 	}
 
 	@Override
 	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
 		modificationContext.getSpawnSettings().removeSpawns((group, entry) ->
-				groups.contains(group) && entityTypes.contains(Registries.ENTITY_TYPE.getId(entry.type)));
+				this.groups.contains(group) && this.entityTypes.contains(Registries.ENTITY_TYPE.getId(entry.type)));
 	}
 
 	@Override
