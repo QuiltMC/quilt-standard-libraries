@@ -52,12 +52,10 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Language;
 import net.minecraft.util.Pair;
-import net.minecraft.util.Unit;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.ModMetadata;
 import org.quiltmc.loader.api.QuiltLoader;
-import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.phase.PhaseData;
@@ -93,10 +91,6 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 			.toBooleanOrElse(QuiltLoader.isDevelopmentEnvironment());
 	private static final boolean DEBUG_RELOADERS_ORDER = TriState.fromProperty("quilt.resource_loader.debug.reloaders_order")
 			.toBooleanOrElse(false);
-
-	@ClientOnly
-	public static final ThreadLocal<Unit> EXPERIMENTAL_FEATURES_ENABLED = new ThreadLocal<>();
-
 
 	private final ResourceType type;
 	private final Set<Identifier> addedReloaderIds = new ObjectOpenHashSet<>();
