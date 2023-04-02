@@ -78,17 +78,21 @@ public class CodecMap<T extends CodecAware> {
 								: DataResult.success(this.lookup(identifier)),
 				codec -> {
 					Identifier key = this.lookup(codec);
+
 					if (key == null) {
 						return DataResult.error(() -> "Unregistered " + descriptor + " type: " + codec);
 					}
+
 					return DataResult.success(key);
 				}
 		).partialDispatch("type", callback -> {
 			var codecIdentifier = callback.getCodecId();
 			var codec = codecIdentifier == null ? null : this.lookup(codecIdentifier);
+
 			if (codec == null) {
 				return DataResult.error(() -> "Codec not provided for " + descriptor + ": " + callback);
 			}
+
 			return DataResult.success(codec);
 		}, DataResult::success);
 	}

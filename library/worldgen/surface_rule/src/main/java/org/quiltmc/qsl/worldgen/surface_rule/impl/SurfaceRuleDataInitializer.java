@@ -16,11 +16,14 @@
 
 package org.quiltmc.qsl.worldgen.surface_rule.impl;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.worldgen.surface_rule.api.SurfaceRuleEvents;
 import org.quiltmc.qsl.worldgen.surface_rule.api.codec.AddMaterialRuleCallback;
 
+@ApiStatus.Internal
 public class SurfaceRuleDataInitializer implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {

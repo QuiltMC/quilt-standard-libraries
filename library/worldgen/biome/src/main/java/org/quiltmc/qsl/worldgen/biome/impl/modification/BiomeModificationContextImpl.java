@@ -348,9 +348,11 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 		public boolean removeCarver(GenerationStep.Carver step, RegistryKey<ConfiguredCarver<?>> configuredCarverKey) {
 			ConfiguredCarver<?> carver = getHolder(this.carvers, configuredCarverKey).value();
 			var oldCarvers = this.generationSettings.carvers.get(step);
+
 			if (oldCarvers == null) {
 				return false;
 			}
+
 			var genCarvers = new ArrayList<>(oldCarvers.stream().toList());
 
 			if (genCarvers.removeIf(entry -> entry.value() == carver)) {

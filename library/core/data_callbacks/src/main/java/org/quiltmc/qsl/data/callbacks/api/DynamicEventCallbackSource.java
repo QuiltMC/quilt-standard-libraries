@@ -121,12 +121,15 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 	}
 
 	private void updateListeners(Identifier phase) {
+
 		var combinedMap = new TreeMap<Identifier, T>();
+
 		for (var entry : this.listeners.entrySet()) {
 			if (entry.getValue().getFirst().equals(phase)) {
 				combinedMap.put(entry.getKey(), entry.getValue().getSecond());
 			}
 		}
+
 		for (var entry : this.dynamicListeners.entrySet()) {
 			if (entry.getValue().getFirst().equals(phase)) {
 				combinedMap.put(entry.getKey(), entry.getValue().getSecond());
@@ -179,14 +182,17 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 	public void update(ResourceManager resourceManager, DynamicOps<JsonElement> ops) {
 		Map<Identifier, Pair<Identifier, T>> dynamicListeners = new LinkedHashMap<>();
 		ResourceFileNamespace resourceFileNamespace = ResourceFileNamespace.json(this.resourcePath.getNamespace() + "/" + this.resourcePath.getPath());
+
 		var resources = resourceFileNamespace.findMatchingResources(resourceManager).entrySet();
 		for (Map.Entry<Identifier, Resource> entry : resources) {
 			Identifier id = entry.getKey();
 			Identifier unwrappedIdentifier = resourceFileNamespace.unwrapFilePath(id);
+
 			var resource = entry.getValue();
 			try (var reader = resource.openBufferedReader()) {
 				var json = GSON.fromJson(reader, JsonElement.class);
 				DataResult<Pair<Identifier, T>> result = this.codec.parse(ops, json);
+
 				if (result.result().isPresent()) {
 					var pair = result.result().get();
 					dynamicListeners.put(unwrappedIdentifier, pair);

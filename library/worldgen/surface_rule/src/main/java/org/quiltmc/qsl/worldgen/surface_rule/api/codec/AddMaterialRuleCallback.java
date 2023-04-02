@@ -72,6 +72,7 @@ public record AddMaterialRuleCallback(SurfaceRules.MaterialRule rule, boolean ap
 		if (this.ids().isPresent() && !this.ids().get().contains(context.identifier())) {
 			return;
 		}
+
 		if (this.append) {
 			context.materialRules().add(this.rule);
 		} else {

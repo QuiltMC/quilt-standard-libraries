@@ -102,12 +102,14 @@ public class BiomeModificationImpl {
 		for (var phase : this.identifiedModifiers.entrySet()) {
 			List<Identifier> drop = new ArrayList<>();
 			var map = this.reloader.getCombinedMap(phase.getKey());
+
 			for (var entry : phase.getValue().entrySet()) {
 				if (!map.containsKey(entry.getKey())) {
 					entry.getValue().canBeDropped = true;
 					drop.add(entry.getKey());
 				}
 			}
+
 			drop.forEach(phase.getValue()::remove);
 		}
 	}
@@ -116,6 +118,7 @@ public class BiomeModificationImpl {
 		for (ModificationPhase phase : ModificationPhase.values()) {
 			var map = this.reloader.getCombinedMap(phase);
 			var phaseMap = this.identifiedModifiers.computeIfAbsent(phase, p -> new HashMap<>());
+
 			for (Map.Entry<Identifier, BiomeModifier> entry : map.entrySet()) {
 				if (!phaseMap.containsKey(entry.getKey())) {
 					this.addLazyModifier(entry.getKey(), phase);

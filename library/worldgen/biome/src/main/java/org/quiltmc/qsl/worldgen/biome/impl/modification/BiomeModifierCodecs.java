@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.worldgen.biome.impl.modification;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModifier;
@@ -30,6 +32,7 @@ import org.quiltmc.qsl.worldgen.biome.api.codec.RemoveFeaturesModifier;
 import org.quiltmc.qsl.worldgen.biome.api.codec.RemoveSpawnersModifier;
 import org.quiltmc.qsl.worldgen.biome.api.codec.selector.ValueBiomeSelector;
 
+@ApiStatus.Internal
 public class BiomeModifierCodecs implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {

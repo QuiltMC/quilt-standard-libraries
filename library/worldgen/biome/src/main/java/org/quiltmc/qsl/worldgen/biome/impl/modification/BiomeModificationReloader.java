@@ -30,6 +30,7 @@ import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
+import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
 import net.minecraft.registry.HolderLookup;
@@ -43,6 +44,7 @@ import net.minecraft.util.dynamic.Codecs;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModifier;
 import org.quiltmc.qsl.worldgen.biome.api.ModificationPhase;
 
+@ApiStatus.Internal
 public class BiomeModificationReloader {
 	private static final Logger LOGGER = LogUtils.getLogger();
 
@@ -61,15 +63,18 @@ public class BiomeModificationReloader {
 		RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, provider);
 		Map<Identifier, Pair<ModificationPhase, BiomeModifier>> dynamicListeners = new LinkedHashMap<>();
 		ResourceFileNamespace resourceFileNamespace = ResourceFileNamespace.json(this.resourcePath.getNamespace() + "/" + this.resourcePath.getPath());
+
 		var resources = resourceFileNamespace.findMatchingResources(resourceManager).entrySet();
 		for (Map.Entry<Identifier, Resource> entry : resources) {
 			Identifier id = entry.getKey();
 			Identifier unwrappedIdentifier = resourceFileNamespace.unwrapFilePath(id);
+
 			var resource = entry.getValue();
 			try (var reader = resource.openBufferedReader()) {
 				var json = GSON.fromJson(reader, JsonElement.class);
 				try {
 					DataResult<Pair<ModificationPhase, BiomeModifier>> result = CODEC.parse(ops, json);
+
 					if (result.result().isPresent()) {
 						var pair = result.result().get();
 						dynamicListeners.put(unwrappedIdentifier, pair);
