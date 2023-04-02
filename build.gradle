@@ -98,7 +98,7 @@ task fatJavadoc(type: Javadoc) {
 task fatJavadocJar(type: Jar) {
 	group "build"
 
-	classifier "fat-javadoc"
+	archiveClassifier = "fat-javadoc"
 	dependsOn fatJavadoc
 	from fatJavadoc.destinationDir
 }

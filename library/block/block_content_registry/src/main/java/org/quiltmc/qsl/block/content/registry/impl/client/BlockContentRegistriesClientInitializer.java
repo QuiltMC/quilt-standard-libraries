@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.block.content.registry.impl;
+package org.quiltmc.qsl.block.content.registry.impl.client;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,10 +25,13 @@ import net.minecraft.text.Text;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.QuiltLoader;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
 import org.quiltmc.qsl.tooltip.api.client.ItemTooltipCallback;
 
+@ClientOnly
+@ApiStatus.Internal
 public class BlockContentRegistriesClientInitializer implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("BlockContentRegistriesClientInitializer");
 
