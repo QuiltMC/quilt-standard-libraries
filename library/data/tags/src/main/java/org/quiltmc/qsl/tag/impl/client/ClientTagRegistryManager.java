@@ -38,13 +38,13 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Holder;
 import net.minecraft.registry.HolderLookup;
 import net.minecraft.registry.HolderLookup.RegistryLookup;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.VanillaDynamicRegistries;
 import net.minecraft.registry.tag.TagEntry;
 import net.minecraft.registry.tag.TagGroupLoader;
 import net.minecraft.registry.tag.TagKey;
@@ -71,7 +71,7 @@ import org.quiltmc.qsl.tag.mixin.client.TagGroupLoaderAccessor;
 public final class ClientTagRegistryManager<T> {
 	private static final Map<RegistryKey<? extends Registry<?>>, ClientTagRegistryManager<?>> TAG_GROUP_MANAGERS =
 			new WeakHashMap<>();
-	private static final HolderLookup.Provider VANILLA_PROVIDERS = VanillaDynamicRegistries.createLookup();
+	private static final HolderLookup.Provider VANILLA_PROVIDERS = DynamicRegistryManager.fromRegistryOfRegistries(Registries.REGISTRY);
 
 	private final RegistryKey<? extends Registry<T>> registryKey;
 	/**
