@@ -23,26 +23,31 @@ import java.util.stream.Collectors;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
+import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.EnchantingTableBlock;
 import net.minecraft.block.FireBlock;
 import net.minecraft.block.Oxidizable;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.HoneycombItem;
 import net.minecraft.item.ShovelItem;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
-import org.quiltmc.qsl.block.content.registry.api.enchanting.ConstantBooster;
 import org.quiltmc.qsl.block.content.registry.api.FlammableBlockEntry;
 import org.quiltmc.qsl.block.content.registry.api.ReversibleBlockEntry;
+import org.quiltmc.qsl.block.content.registry.api.enchanting.ConstantBooster;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 
-public class BlockContentRegistriesInitializer implements ModInitializer {
+@ApiStatus.Internal
+public class BlockContentRegistriesImpl implements ModInitializer {
 	private static final Map<Block, BlockState> INITIAL_PATH_STATES = ImmutableMap.copyOf(ShovelItem.PATH_STATES);
 	private static final Map<Block, Block> INITIAL_STRIPPED_BLOCKS = ImmutableMap.copyOf(AxeItem.STRIPPED_BLOCKS);
 
@@ -120,5 +125,29 @@ public class BlockContentRegistriesInitializer implements ModInitializer {
 		reversed.clear();
 		setMapFromAttachment((entry, value) -> baseWay.put(entry, value.block()), rea);
 		setMapFromAttachment((entry, value) -> value.reversible() ? reversed.put(value.block(), entry) : null, rea);
+	}
+
+	/**
+	 * Calculates the bookshelf count around a given position.
+	 *
+	 * @param world the world
+	 * @param pos   the position to count around of
+	 * @return the bookshelf count around
+	 */
+	public static float calculateBookshelfCount(World world, BlockPos pos) {
+		float count = 0;
+
+		for (BlockPos offset : EnchantingTableBlock.POSSIBLE_BOOKSHELF_LOCATIONS) {
+			if (world.isAir(pos.add(offset.getX() / 2, offset.getY(), offset.getZ() / 2))) {
+				var blockPos = pos.add(offset);
+				var state = world.getBlockState(blockPos);
+				var block = state.getBlock();
+				count += BlockContentRegistries.ENCHANTING_BOOSTERS.get(block)
+						.map(booster -> booster.getEnchantingBoost(world, state, blockPos))
+						.orElse(0.0F);
+			}
+		}
+
+		return count;
 	}
 }
