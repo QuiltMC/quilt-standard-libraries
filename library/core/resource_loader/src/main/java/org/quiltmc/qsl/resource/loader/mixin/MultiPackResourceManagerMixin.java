@@ -17,7 +17,6 @@
 package org.quiltmc.qsl.resource.loader.mixin;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,9 +30,7 @@ import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import net.minecraft.resource.MultiPackResourceManager;
 import net.minecraft.resource.NamespaceResourceManager;
@@ -63,16 +60,16 @@ public abstract class MultiPackResourceManagerMixin implements QuiltMultiPackRes
 	@Unique
 	private /*final*/ ResourceType quilt$type;
 
-	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Ljava/util/List;copyOf(Ljava/util/Collection;)Ljava/util/List;"))
-	private List<ResourcePack> quilt$createPackList(Collection<ResourcePack> packs, ResourceType type) {
+	@ModifyVariable(
+			method = "<init>",
+			at = @At(value = "INVOKE", target = "Ljava/util/List;copyOf(Ljava/util/Collection;)Ljava/util/List;", shift = At.Shift.BEFORE),
+			ordinal = 0,
+			argsOnly = true
+	)
+	private List<ResourcePack> quilt$createPackList(List<ResourcePack> packs, ResourceType type) {
 		this.quilt$type = type;
 
 		return packs.stream().mapMulti(ResourceLoaderImpl::flattenPacks).collect(Collectors.toCollection(ArrayList::new));
-	}
-
-	@Inject(method = "<init>", at = @At("RETURN"))
-	private void quilt$onInit(ResourceType type, List<ResourcePack> packs, CallbackInfo ci) {
-		this.quilt$recomputeNamespaces(); // I can't modify the local.
 	}
 
 	@SuppressWarnings("ConstantConditions")
