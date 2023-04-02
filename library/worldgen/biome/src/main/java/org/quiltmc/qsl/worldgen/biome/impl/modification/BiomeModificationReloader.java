@@ -56,10 +56,11 @@ public class BiomeModificationReloader {
 	private final Map<Identifier, Pair<ModificationPhase, BiomeModifier>> listeners = new HashMap<>();
 
 	private final Map<Identifier, Pair<ModificationPhase, BiomeModifier>> combinedListeners = new HashMap<>();
+
 	public void apply(ResourceManager resourceManager, HolderLookup.Provider provider) {
 		RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, provider);
 		Map<Identifier, Pair<ModificationPhase, BiomeModifier>> dynamicListeners = new LinkedHashMap<>();
-		ResourceFileNamespace resourceFileNamespace = ResourceFileNamespace.json(this.resourcePath.getNamespace()+"/"+this.resourcePath.getPath());
+		ResourceFileNamespace resourceFileNamespace = ResourceFileNamespace.json(this.resourcePath.getNamespace() + "/" + this.resourcePath.getPath());
 		var resources = resourceFileNamespace.findMatchingResources(resourceManager).entrySet();
 		for (Map.Entry<Identifier, Resource> entry : resources) {
 			Identifier id = entry.getKey();

@@ -53,17 +53,13 @@ public class DataCallbackTests implements ModInitializer {
 		}
 	}, BEFORE_PHASE, Event.DEFAULT_PHASE, AFTER_PHASE);
 
-	public static final CodecMap<ServerJoin> JOIN_SERVER_CODECS = new CodecMap<>((handler, sender, server) -> {});
-	public static DynamicEventCallbackSource<ServerJoin> JOIN_SERVER_DATA = new DynamicEventCallbackSource<>(
-			new Identifier("quilt_data_callbacks_testmod", "server_join"),
-			JOIN_SERVER_CODECS,
-			ServerJoin.class,
-			SERVER_JOIN,
-			callbacks -> (handler, sender, server) -> {
-				for (ServerJoin callback : callbacks.get()) {
-					callback.onPlayReady(handler, sender, server);
-				}
-			});
+	public static final CodecMap<ServerJoin> JOIN_SERVER_CODECS = new CodecMap<>((handler, sender, server) -> {
+	});
+	public static DynamicEventCallbackSource<ServerJoin> JOIN_SERVER_DATA = new DynamicEventCallbackSource<>(new Identifier("quilt_data_callbacks_testmod", "server_join"), JOIN_SERVER_CODECS, ServerJoin.class, SERVER_JOIN, callbacks -> (handler, sender, server) -> {
+		for (ServerJoin callback : callbacks.get()) {
+			callback.onPlayReady(handler, sender, server);
+		}
+	});
 
 	@Override
 	public void onInitialize(ModContainer mod) {
@@ -97,10 +93,7 @@ public class DataCallbackTests implements ModInitializer {
 
 
 	public record ServerJoinChat(String text, Style style) implements ServerJoin {
-		public static final Codec<ServerJoinChat> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				Codec.STRING.fieldOf("text").forGetter(ServerJoinChat::text),
-				Style.CODEC.fieldOf("style").forGetter(ServerJoinChat::style)
-		).apply(instance, ServerJoinChat::new));
+		public static final Codec<ServerJoinChat> CODEC = RecordCodecBuilder.create(instance -> instance.group(Codec.STRING.fieldOf("text").forGetter(ServerJoinChat::text), Style.CODEC.fieldOf("style").forGetter(ServerJoinChat::style)).apply(instance, ServerJoinChat::new));
 		public static final Identifier ID = new Identifier("quilt_data_callbacks_testmod", "chat");
 
 		@Override
