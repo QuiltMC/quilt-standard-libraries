@@ -21,18 +21,11 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 import net.minecraft.block.Material;
-import net.minecraft.block.piston.PistonBehavior;
 
 @Mixin(Material.Builder.class)
 public interface MaterialBuilderAccessor {
 	@Accessor
-	void setPistonBehavior(PistonBehavior behavior);
-
-	@Accessor
 	void setBlocksMovement(boolean blocksMovement);
-
-	@Accessor
-	void setBurnable(boolean burnable);
 
 	@Accessor
 	void setLiquid(boolean liquid);

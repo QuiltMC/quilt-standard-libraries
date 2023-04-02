@@ -35,8 +35,6 @@
  *     {@link org.quiltmc.qsl.block.extensions.api.QuiltMaterialBuilder#copyOf(net.minecraft.block.Material, net.minecraft.block.MapColor)}.</li>
  *     <li>Allows specifying that light passes through materials of this block via
  *     {@link org.quiltmc.qsl.block.extensions.api.QuiltMaterialBuilder#lightPassesThrough()}.</li>
- *     <li>Allows setting default piston behavior via
- *     {@link org.quiltmc.qsl.block.extensions.api.QuiltMaterialBuilder#pistonBehavior(net.minecraft.block.piston.PistonBehavior)}.</li>
  *     <li>To use, simply replace {@code new }{@link net.minecraft.block.Material.Builder}
  *     with {@code new QuiltMaterialBuilder}.</li>
  * </ul>

@@ -33,21 +33,19 @@ import org.quiltmc.qsl.block.extensions.api.QuiltBlockSettings;
 import org.quiltmc.qsl.block.extensions.api.QuiltMaterialBuilder;
 
 public final class Initializer implements ModInitializer {
-	public static final Material MATERIAL = QuiltMaterialBuilder.copyOf(Material.GLASS, MapColor.DARK_GREEN)
-			.pistonBehavior(PistonBehavior.PUSH_ONLY)
-			.build();
+	public static final Material MATERIAL = QuiltMaterialBuilder.copyOf(Material.GLASS, MapColor.DARK_GREEN).build();
 
 	public static final Block BLOCK = Registry.register(Registries.BLOCK,
 			new Identifier("quilt_block_extensions_testmod", "test_block"),
 			new GlassBlock(QuiltBlockSettings.copyOf(Blocks.GLASS)
 					.material(MATERIAL)
-					.luminance(15)));
+					.luminance(15)
+					.method_50012(PistonBehavior.PUSH_ONLY)));
 
 	public static final Block BLOCK2 = Registry.register(Registries.BLOCK,
 			new Identifier("quilt_block_extensions_testmod", "test_block2"),
 			new VineBlock(QuiltBlockSettings.copyOf(Blocks.VINE).ticksRandomly(false)));
 
 	@Override
-	public void onInitialize(ModContainer mod) {
-	}
+	public void onInitialize(ModContainer mod) {}
 }

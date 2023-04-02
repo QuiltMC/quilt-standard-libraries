@@ -27,6 +27,7 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.MapColor;
 import net.minecraft.block.Material;
+import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.EntityType;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
@@ -76,8 +77,14 @@ public interface AbstractBlockSettingsAccessor {
 	@Accessor
 	boolean getIsAir();
 
+	@Accessor(remap = false)
+	boolean getField_43394();
+
+	@Accessor(remap = false)
+	PistonBehavior getField_43395();
+
 	@Accessor
-	boolean isToolRequired();
+	boolean getToolRequired();
 
 	@Accessor
 	AbstractBlock.TypedContextPredicate<EntityType<?>> getAllowsSpawningPredicate();
@@ -122,6 +129,9 @@ public interface AbstractBlockSettingsAccessor {
 
 	@Accessor
 	void setIsAir(boolean isAir);
+
+	@Accessor(remap = false)
+	void setField_43394(boolean field_43394);
 
 	@Accessor
 	void setToolRequired(boolean toolRequired);

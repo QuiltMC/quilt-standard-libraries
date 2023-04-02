@@ -19,7 +19,6 @@ package org.quiltmc.qsl.block.extensions.api;
 
 import net.minecraft.block.MapColor;
 import net.minecraft.block.Material;
-import net.minecraft.block.piston.PistonBehavior;
 
 import org.quiltmc.qsl.block.extensions.mixin.MaterialBuilderAccessor;
 
@@ -34,9 +33,7 @@ public class QuiltMaterialBuilder extends Material.Builder {
 	public static QuiltMaterialBuilder copyOf(Material material, MapColor color) {
 		var builder = new QuiltMaterialBuilder(color);
 		@SuppressWarnings("ConstantConditions") var accessor = (MaterialBuilderAccessor) builder;
-		accessor.setPistonBehavior(material.getPistonBehavior());
 		accessor.setBlocksMovement(material.blocksMovement());
-		accessor.setBurnable(material.isBurnable());
 		accessor.setLiquid(material.isLiquid());
 		accessor.setReplaceable(material.isReplaceable());
 		accessor.setSolid(material.isSolid());
@@ -77,37 +74,8 @@ public class QuiltMaterialBuilder extends Material.Builder {
 	}
 
 	@Override
-	public QuiltMaterialBuilder burnable() {
-		super.burnable();
-		return this;
-	}
-
-	@Override
 	public QuiltMaterialBuilder replaceable() {
 		super.replaceable();
-		return this;
-	}
-
-	@Override
-	public QuiltMaterialBuilder destroyedByPiston() {
-		super.destroyedByPiston();
-		return this;
-	}
-
-	@Override
-	public QuiltMaterialBuilder blocksPistons() {
-		super.blocksPistons();
-		return this;
-	}
-
-	/**
-	 * Sets the behavior of pistons when interacting with blocks of this material.
-	 *
-	 * @param behavior new piston behavior
-	 * @return this builder
-	 */
-	public QuiltMaterialBuilder pistonBehavior(PistonBehavior behavior) {
-		((MaterialBuilderAccessor) this).setPistonBehavior(behavior);
 		return this;
 	}
 }

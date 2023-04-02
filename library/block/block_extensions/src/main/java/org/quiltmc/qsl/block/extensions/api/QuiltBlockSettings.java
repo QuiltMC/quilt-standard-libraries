@@ -66,7 +66,8 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		this.dynamicBounds(otherAccessor.getDynamicBounds());
 		this.opaque(otherAccessor.getOpaque());
 		this.air(otherAccessor.getIsAir());
-		this.requiresTool(otherAccessor.isToolRequired());
+		((AbstractBlockSettingsAccessor) this).setField_43394(otherAccessor.getField_43394());
+		this.requiresTool(otherAccessor.getToolRequired());
 		// endregion
 
 		// also copy other stuff Vanilla doesn't bother with
@@ -187,6 +188,8 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		super.dropsLike(source);
 		return this;
 	}
+
+	// TODO - Add methods for Mojmap's ignitableByLava and pushReaction
 
 	@Override
 	public QuiltBlockSettings air() {
