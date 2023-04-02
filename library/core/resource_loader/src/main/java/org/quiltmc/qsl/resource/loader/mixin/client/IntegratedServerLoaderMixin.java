@@ -33,7 +33,6 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
-import net.minecraft.feature_flags.FeatureFlags;
 import net.minecraft.registry.LayeredRegistryManager;
 import net.minecraft.resource.AutoCloseableResourceManager;
 import net.minecraft.resource.pack.ResourcePackManager;
@@ -46,7 +45,6 @@ import net.minecraft.world.storage.WorldSaveStorage;
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.util.TriState;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
-import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
 @ClientOnly
 @Mixin(IntegratedServerLoader.class)
@@ -62,19 +60,13 @@ public abstract class IntegratedServerLoaderMixin {
 	@Unique
 	private static final TriState EXPERIMENTAL_SCREEN_OVERRIDE = TriState.fromProperty("quilt.resource_loader.experimental_screen_override");
 
-	@Inject(
-			method = "m_ocpkzrtb",
-			at = @At("HEAD")
-	)
+	@Inject(method = "m_ocpkzrtb", at = @At("HEAD"))
 	private <D, R> void onStartDataPackLoad(WorldLoader.PackConfig packConfig, WorldLoader.LoadContextSupplier<D> loadContextSupplier,
 			WorldLoader.ApplierFactory<D, R> applierFactory, CallbackInfoReturnable<R> cir) {
 		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null);
 	}
 
-	@Inject(
-			method = "m_ocpkzrtb",
-			at = @At("RETURN")
-	)
+	@Inject(method = "m_ocpkzrtb", at = @At("RETURN"))
 	private <D, R> void onEndDataPackLoad(WorldLoader.PackConfig packConfig, WorldLoader.LoadContextSupplier<D> loadContextSupplier,
 			WorldLoader.ApplierFactory<D, R> applierFactory, CallbackInfoReturnable<R> cir) {
 		if (cir.getReturnValue() instanceof WorldStem worldStem) {
@@ -115,8 +107,7 @@ public abstract class IntegratedServerLoaderMixin {
 	private void onBackupExperimentalWarning(Screen parentScreen, String worldName, boolean safeMode, boolean requireBackup, CallbackInfo ci,
 			WorldSaveStorage.Session session, ResourcePackManager resourcePackManager, WorldStem worldStem) {
 		if (EXPERIMENTAL_SCREEN_OVERRIDE.toBooleanOrElse(true)
-				&& !worldStem.saveProperties().m_ycrrmmel().m_kmrxtmbu()
-				&& !FeatureFlags.containsDefault(worldStem.saveProperties().getEnabledFlags())) {
+				&& !worldStem.saveProperties().m_ycrrmmel().m_kmrxtmbu()) {
 			worldStem.close();
 			close(session, worldName);
 			this.start(parentScreen, worldName, safeMode, false);
@@ -129,10 +120,11 @@ public abstract class IntegratedServerLoaderMixin {
 			at = @At(value = "CONSTANT", args = "stringValue=selectWorld.warning.experimental.title"),
 			cancellable = true
 	)
-	private static void onExperimentalWarning(MinecraftClient client, CreateWorldScreen parentScreen,
-			Lifecycle dynamicRegistryLifecycle, Runnable successCallback,
-			CallbackInfo ci) {
-		if (EXPERIMENTAL_SCREEN_OVERRIDE.toBooleanOrElse(true) && ResourceLoaderImpl.EXPERIMENTAL_FEATURES_ENABLED.get() == null) {
+	private static void onExperimentalWarning(
+			MinecraftClient client, CreateWorldScreen parentScreen, Lifecycle dynamicRegistryLifecycle, Runnable successCallback,
+			CallbackInfo ci
+	) {
+		if (EXPERIMENTAL_SCREEN_OVERRIDE.toBooleanOrElse(true)) {
 			successCallback.run();
 			ci.cancel();
 		}
