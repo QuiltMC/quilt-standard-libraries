@@ -121,7 +121,6 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 	}
 
 	private void updateListeners(Identifier phase) {
-
 		var combinedMap = new TreeMap<Identifier, T>();
 
 		for (var entry : this.listeners.entrySet()) {
@@ -156,7 +155,10 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 	private void updateDynamicListeners(Map<Identifier, Pair<Identifier, T>> dynamicListeners) {
 		this.dynamicListeners.clear();
 		this.dynamicListeners.putAll(dynamicListeners);
-		dynamicListeners.values().stream().map(Pair::getFirst).distinct().forEach(this::updateListeners);
+		dynamicListeners.values().stream()
+				.map(Pair::getFirst)
+				.distinct()
+				.forEach(this::updateListeners);
 	}
 
 	private T[] getListeners(Identifier phase) {
@@ -180,7 +182,7 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 	 * @param ops             the dynamic ops to use to decode data
 	 */
 	public void update(ResourceManager resourceManager, DynamicOps<JsonElement> ops) {
-		Map<Identifier, Pair<Identifier, T>> dynamicListeners = new LinkedHashMap<>();
+		var dynamicListeners = new LinkedHashMap<Identifier, Pair<Identifier, T>>();
 		ResourceFileNamespace resourceFileNamespace = ResourceFileNamespace.json(this.resourcePath.getNamespace() + "/" + this.resourcePath.getPath());
 
 		var resources = resourceFileNamespace.findMatchingResources(resourceManager).entrySet();
@@ -204,7 +206,7 @@ public class DynamicEventCallbackSource<T extends CodecAware> {
 			}
 		}
 
-		updateDynamicListeners(dynamicListeners);
+		this.updateDynamicListeners(dynamicListeners);
 	}
 
 	/**

@@ -89,13 +89,13 @@ public class PredicateCodecMap<T> extends CodecMap<CodecAwarePredicate<T>> {
 
 	@Override
 	public Codec<? extends CodecAwarePredicate<T>> lookup(Identifier id) {
-		checkCache();
+		this.checkCache();
 		return super.lookup(id);
 	}
 
 	@Override
 	public Identifier lookup(Codec<? extends CodecAwarePredicate<T>> codec) {
-		checkCache();
+		this.checkCache();
 		return super.lookup(codec);
 	}
 
@@ -103,7 +103,7 @@ public class PredicateCodecMap<T> extends CodecMap<CodecAwarePredicate<T>> {
 		if (!this.cached) {
 			synchronized (this) {
 				if (!this.cached) {
-					cacheProviders();
+					this.cacheProviders();
 					this.cached = true;
 				}
 			}

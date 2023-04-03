@@ -28,8 +28,7 @@ public final class AlwaysPredicate<T> implements CodecAwarePredicate<T> {
 	public static final Identifier ID = new Identifier("quilt", "always");
 	public static final PredicateCodecProvider PROVIDER = AlwaysPredicate::makeCodec;
 
-	private AlwaysPredicate() {
-	}
+	private AlwaysPredicate() {}
 
 	private static <T> Codec<AlwaysPredicate<T>> makeCodec(Codec<CodecAwarePredicate<T>> predicateCodec) {
 		return Codec.unit(new AlwaysPredicate<>());

@@ -22,7 +22,7 @@ qslModule {
 			values = ["org.quiltmc.qsl.worldgen.biome.impl.TheEndBiomeData"]
 		}
 		init {
-			values =["org.quiltmc.qsl.worldgen.biome.impl.modification.BiomeModifierCodecs"]
+			values = ["org.quiltmc.qsl.worldgen.biome.impl.modification.BiomeModifierCodecs"]
 		}
 	}
 	accessWidener()

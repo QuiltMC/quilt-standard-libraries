@@ -48,7 +48,7 @@ public class CodecMap<T extends CodecAware> {
 	 * @param nullOperation a value that has no effect
 	 */
 	public CodecMap(T nullOperation) {
-		codecs.put(new Identifier("quilt", "nothing"), Codec.unit(nullOperation));
+		this.codecs.put(new Identifier("quilt", "nothing"), Codec.unit(nullOperation));
 	}
 
 	/**
@@ -105,12 +105,12 @@ public class CodecMap<T extends CodecAware> {
 	 * @throws IllegalArgumentException if the identifier is already registered, or if the codec is already registered
 	 */
 	public void register(Identifier id, Codec<? extends T> codec) {
-		if (codecs.containsKey(id)) {
+		if (this.codecs.containsKey(id)) {
 			throw new IllegalArgumentException("Duplicate codec id: " + id);
 		} else if (codecs.containsValue(codec)) {
 			throw new IllegalArgumentException("Duplicate codec: " + codec);
 		}
-		codecs.put(id, codec);
+		this.codecs.put(id, codec);
 	}
 
 	/**
@@ -119,7 +119,7 @@ public class CodecMap<T extends CodecAware> {
 	 * @param id the identifier to look up
 	 */
 	public Codec<? extends T> lookup(Identifier id) {
-		return codecs.get(id);
+		return this.codecs.get(id);
 	}
 
 	/**
@@ -128,6 +128,6 @@ public class CodecMap<T extends CodecAware> {
 	 * @param codec the codec to look up
 	 */
 	public Identifier lookup(Codec<? extends T> codec) {
-		return codecs.inverse().get(codec);
+		return this.codecs.inverse().get(codec);
 	}
 }

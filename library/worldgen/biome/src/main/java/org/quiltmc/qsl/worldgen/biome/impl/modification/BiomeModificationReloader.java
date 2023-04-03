@@ -91,20 +91,22 @@ public class BiomeModificationReloader {
 			}
 		}
 
-		updateDynamicListeners(dynamicListeners);
+		this.updateDynamicListeners(dynamicListeners);
 	}
 
 	private void updateDynamicListeners(Map<Identifier, Pair<ModificationPhase, BiomeModifier>> dynamicListeners) {
-		combinedListeners.clear();
-		combinedListeners.putAll(listeners);
-		combinedListeners.putAll(dynamicListeners);
+		this.combinedListeners.clear();
+		this.combinedListeners.putAll(this.listeners);
+		this.combinedListeners.putAll(dynamicListeners);
 	}
 
 	public Map<Identifier, BiomeModifier> getCombinedMap(ModificationPhase phase) {
-		return combinedListeners.entrySet().stream().filter(entry -> entry.getValue().getFirst() == phase).collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getSecond()));
+		return this.combinedListeners.entrySet().stream()
+				.filter(entry -> entry.getValue().getFirst() == phase)
+				.collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getSecond()));
 	}
 
 	public void addModifier(ModificationPhase phase, Identifier identifier, BiomeModifier modifier) {
-		listeners.put(identifier, new Pair<>(phase, modifier));
+		this.listeners.put(identifier, new Pair<>(phase, modifier));
 	}
 }
