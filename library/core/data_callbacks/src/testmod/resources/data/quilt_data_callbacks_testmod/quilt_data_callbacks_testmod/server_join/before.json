@@ -1,8 +1,0 @@
-{
-  "type": "quilt_data_callbacks_testmod:chat",
-  "text": "Registered in the before phase from data!",
-  "style": {
-    "color": "blue"
-  },
-  "phase": "quilt_data_callbacks_testmod:before_phase"
-}

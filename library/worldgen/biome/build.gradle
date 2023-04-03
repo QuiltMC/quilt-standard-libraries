@@ -13,7 +13,7 @@ qslModule {
 			api("qsl_base")
 			api("registry")
 			api("lifecycle_events")
-			api("data_callbacks")
+			api("data_callback")
 			testmodOnly("resource_loader")
 		}
 	}

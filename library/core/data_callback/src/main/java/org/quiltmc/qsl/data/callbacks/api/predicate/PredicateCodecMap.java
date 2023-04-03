@@ -34,7 +34,7 @@ import org.quiltmc.qsl.data.callbacks.api.CodecMap;
  * @param <T> the type of the input tested by the predicates this map can help encode
  */
 public class PredicateCodecMap<T> extends CodecMap<CodecAwarePredicate<T>> {
-	private static final Map<Identifier, PredicateCodecProvider> providers = HashBiMap.create();
+	private static final Map<Identifier, PredicateCodecProvider> PROVIDERS = HashBiMap.create();
 
 	static {
 		registerProvider(AlwaysPredicate.ID, AlwaysPredicate.PROVIDER);
@@ -67,10 +67,10 @@ public class PredicateCodecMap<T> extends CodecMap<CodecAwarePredicate<T>> {
 	 * @throws IllegalArgumentException if a provider with the same id has already been registered
 	 */
 	public static void registerProvider(Identifier id, PredicateCodecProvider provider) {
-		if (providers.containsKey(id)) {
+		if (PROVIDERS.containsKey(id)) {
 			throw new IllegalArgumentException("Duplicate provider id: " + id);
 		}
-		providers.put(id, provider);
+		PROVIDERS.put(id, provider);
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class PredicateCodecMap<T> extends CodecMap<CodecAwarePredicate<T>> {
 	 * @param id the id to look up
 	 */
 	public static PredicateCodecProvider lookupProvider(Identifier id) {
-		return providers.get(id);
+		return PROVIDERS.get(id);
 	}
 
 	@Override
@@ -111,7 +111,7 @@ public class PredicateCodecMap<T> extends CodecMap<CodecAwarePredicate<T>> {
 	}
 
 	private void cacheProviders() {
-		for (Map.Entry<Identifier, PredicateCodecProvider> entry : providers.entrySet()) {
+		for (Map.Entry<Identifier, PredicateCodecProvider> entry : PROVIDERS.entrySet()) {
 			this.register(entry.getKey(), entry.getValue().makeCodec(this.predicateCodec));
 		}
 	}

@@ -41,8 +41,8 @@ import org.quiltmc.qsl.resource.loader.api.reloader.SimpleSynchronousResourceRel
 
 public class DataCallbackTests implements ModInitializer {
 
-	public static final Identifier BEFORE_PHASE = new Identifier("quilt_data_callbacks_testmod", "before_phase");
-	public static final Identifier AFTER_PHASE = new Identifier("quilt_data_callbacks_testmod", "after_phase");
+	public static final Identifier BEFORE_PHASE = new Identifier("quilt_data_callback_testmod", "before_phase");
+	public static final Identifier AFTER_PHASE = new Identifier("quilt_data_callback_testmod", "after_phase");
 
 	// We make our own event here because we want our callback to have the CodecAware interface. In an actual usage, this
 	// would be added to the base event itself instead; however, this is a test mod, and we would have to make a whole
@@ -55,7 +55,7 @@ public class DataCallbackTests implements ModInitializer {
 
 	public static final CodecMap<ServerJoin> JOIN_SERVER_CODECS = new CodecMap<>((handler, sender, server) -> {
 	});
-	public static DynamicEventCallbackSource<ServerJoin> JOIN_SERVER_DATA = new DynamicEventCallbackSource<>(new Identifier("quilt_data_callbacks_testmod", "server_join"), JOIN_SERVER_CODECS, ServerJoin.class, SERVER_JOIN, callbacks -> (handler, sender, server) -> {
+	public static DynamicEventCallbackSource<ServerJoin> JOIN_SERVER_DATA = new DynamicEventCallbackSource<>(new Identifier("quilt_data_callback_testmod", "server_join"), JOIN_SERVER_CODECS, ServerJoin.class, SERVER_JOIN, callbacks -> (handler, sender, server) -> {
 		for (ServerJoin callback : callbacks.get()) {
 			callback.onPlayReady(handler, sender, server);
 		}
@@ -81,7 +81,7 @@ public class DataCallbackTests implements ModInitializer {
 
 			@Override
 			public @NotNull Identifier getQuiltId() {
-				return new Identifier("quilt_data_callbacks_testmod", "server_join_callbacks_listener");
+				return new Identifier("quilt_data_callback_testmod", "server_join_callbacks_listener");
 			}
 		});
 	}
@@ -94,7 +94,7 @@ public class DataCallbackTests implements ModInitializer {
 
 	public record ServerJoinChat(String text, Style style) implements ServerJoin {
 		public static final Codec<ServerJoinChat> CODEC = RecordCodecBuilder.create(instance -> instance.group(Codec.STRING.fieldOf("text").forGetter(ServerJoinChat::text), Style.CODEC.fieldOf("style").forGetter(ServerJoinChat::style)).apply(instance, ServerJoinChat::new));
-		public static final Identifier ID = new Identifier("quilt_data_callbacks_testmod", "chat");
+		public static final Identifier ID = new Identifier("quilt_data_callback_testmod", "chat");
 
 		@Override
 		public Identifier getCodecId() {
