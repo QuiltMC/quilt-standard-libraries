@@ -33,18 +33,15 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
 import net.minecraft.client.world.WorldCreationContext;
-import net.minecraft.feature_flags.FeatureFlags;
+import net.minecraft.registry.LayeredRegistryManager;
 import net.minecraft.resource.AutoCloseableResourceManager;
 import net.minecraft.resource.pack.ResourcePackManager;
 import net.minecraft.server.ServerReloadableResources;
 import net.minecraft.server.world.FeatureAndDataSettings;
-import net.minecraft.registry.LayeredRegistryManager;
 import net.minecraft.unmapped.C_hypraqfe;
-import net.minecraft.util.Unit;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
-import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
 @ClientOnly
 @Mixin(CreateWorldScreen.class)
@@ -117,17 +114,5 @@ public abstract class CreateWorldScreenMixin {
 			Consumer<FeatureAndDataSettings> consumer, Void unused, Throwable throwable, CallbackInfoReturnable<Object> cir
 	) {
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, null, throwable);
-	}
-
-	@Inject(method = "createLevel", at = @At("HEAD"))
-	private void onCreateLevelStart(CallbackInfo ci) {
-		if (FeatureFlags.containsDefault(this.field_42172.method_48728().dataConfiguration().enabledFeatures())) {
-			ResourceLoaderImpl.EXPERIMENTAL_FEATURES_ENABLED.set(Unit.INSTANCE);
-		}
-	}
-
-	@Inject(method = "createLevel", at = @At("RETURN"))
-	private void onCreateLevelEnd(CallbackInfo ci) {
-		ResourceLoaderImpl.EXPERIMENTAL_FEATURES_ENABLED.remove();
 	}
 }

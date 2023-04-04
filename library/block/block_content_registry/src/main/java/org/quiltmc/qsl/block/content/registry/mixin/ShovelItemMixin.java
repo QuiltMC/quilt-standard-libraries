@@ -39,7 +39,7 @@ public class ShovelItemMixin {
 	public static Map<Block, BlockState> PATH_STATES;
 
 	@Inject(method = "<clinit>", at = @At("TAIL"))
-	private static void makeMapMutable(CallbackInfo ci) {
+	private static void quilt$makeMapMutable(CallbackInfo ci) {
 		PATH_STATES = new Reference2ObjectOpenHashMap<>(PATH_STATES);
 	}
 }

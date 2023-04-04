@@ -1,0 +1,47 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "quilt_resource_loader_testmod:cherry_leaves_to_pink_dye"
+    ]
+  },
+  "criteria": {
+    "has_cherry_leaves": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:cherry_leaves"
+            ]
+          }
+        ]
+      }
+    },
+    "has_self": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:pink_dye"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "quilt_resource_loader_testmod:cherry_leaves_to_pink_dye"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_cherry_leaves",
+      "has_self",
+      "has_the_recipe"
+    ]
+  ]
+}
