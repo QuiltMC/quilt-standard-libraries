@@ -87,12 +87,16 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
 
 	@Redirect(method = "updateResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/Enchantment;isAcceptableItem(Lnet/minecraft/item/ItemStack;)Z"))
 	private boolean checkWithContext(Enchantment enchantment, ItemStack stack) {
+		if (stack.getItem() instanceof QuiltEnchantableItem enchantableItem) {
+			return enchantableItem.canEnchant(stack, enchantment);
+		}
+
 		if (enchantment instanceof QuiltEnchantment quiltEnchantment && QuiltEnchantmentHelper.getContext() != null) {
 			return quiltEnchantment.isAcceptableContext(QuiltEnchantmentHelper.getContext().withLevel(this.quilt$enchantLevel));
-		} else {
-			// For clients, we always return false. The server sets the stack anyway, so it doesn't affect anything
-			return false;
 		}
+
+		// For clients, we always return false. The server sets the stack anyway, so it doesn't affect anything
+		return false;
 	}
 
 	@Redirect(method = "updateResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/Enchantment;canCombine(Lnet/minecraft/enchantment/Enchantment;)Z"))

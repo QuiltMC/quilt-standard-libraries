@@ -31,4 +31,14 @@ public class SuperEnchantableItem extends Item implements QuiltEnchantableItem {
 	public boolean canEnchant(ItemStack stack, Enchantment enchantment) {
 		return true;
 	}
+
+	@Override
+	public int getEnchantability() {
+		return 25;
+	}
+
+	@Override
+	public boolean isEnchantable(ItemStack stack) {
+		return true;
+	}
 }

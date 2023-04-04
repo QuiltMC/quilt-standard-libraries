@@ -98,6 +98,18 @@ public abstract class EnchantmentHelperMixin {
 		callback.setReturnValue(entries);
 	}
 
+	@Redirect(method = "removeConflicts", at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/Enchantment;canCombine(Lnet/minecraft/enchantment/Enchantment;)Z"))
+	private static boolean removeConflictsWithItemOverride(Enchantment pickedEnchantment, Enchantment possibleEnchantment) {
+		if (QuiltEnchantmentHelper.getContext() != null) {
+			ItemStack stack = QuiltEnchantmentHelper.getContext().getStack();
+			if (stack.getItem() instanceof QuiltEnchantableItem enchantableItem) {
+				return enchantableItem.canEnchant(stack, possibleEnchantment);
+			}
+		}
+
+		return pickedEnchantment.canCombine(possibleEnchantment);
+	}
+
 	/**
 	 * @return {@code true} if the item can be enchanted or the item is not a {@link QuiltEnchantableItem}, or {@code false} otherwise
 	 */

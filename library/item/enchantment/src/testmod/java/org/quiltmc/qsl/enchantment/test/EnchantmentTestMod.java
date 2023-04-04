@@ -29,7 +29,7 @@ public class EnchantmentTestMod implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "super_enchantable"), new SuperEnchantableItem(new Item.Settings()));
+		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "super_enchantable"), new SuperEnchantableItem(new Item.Settings().maxDamage(32)));
 		Registry.register(Registries.ENCHANTMENT, new Identifier(MOD_ID, "reaping"), new ReapingEnchantment());
 		Registry.register(Registries.ENCHANTMENT, new Identifier(MOD_ID, "pervasive"), new PervasiveEnchantment());
 		Registry.register(Registries.ENCHANTMENT, new Identifier(MOD_ID, "merchant_greed"), new MerchantGreedEnchantment());
