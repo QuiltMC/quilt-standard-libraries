@@ -1,7 +1,0 @@
-plugins {
-	id("qsl.library")
-}
-
-qslLibrary {
-	libraryName = "content_other"
-}
