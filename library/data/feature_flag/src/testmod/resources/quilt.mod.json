@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "org.quiltmc.qsl.data",
+    "id": "quilt_feature_flag_testmod",
+    "version": "1.0.0",
+    "metadata": {
+      "name": "Quilt Feature Flag API Test Mod",
+      "license": "Apache-2.0"
+    },
+    "intermediate_mappings": "net.fabricmc:intermediary",
+    "load_type": "always",
+    "entrypoints": {
+      "init": [
+        "org.quiltmc.qsl.feature.flag.test.FeatureFlagTest"
+      ]
+    },
+    "depends": [
+      "quilt_loader",
+      "quilt_feature_flag"
+    ]
+  }
+}
