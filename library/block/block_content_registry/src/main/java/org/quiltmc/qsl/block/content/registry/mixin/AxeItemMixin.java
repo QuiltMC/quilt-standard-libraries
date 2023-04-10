@@ -39,7 +39,7 @@ public class AxeItemMixin {
 	public static Map<Block, BlockState> STRIPPED_BLOCKS;
 
 	@Inject(method = "<clinit>", at = @At("TAIL"))
-	private static void makeMapMutable(CallbackInfo ci) {
+	private static void quilt$makeMapMutable(CallbackInfo ci) {
 		STRIPPED_BLOCKS = new Reference2ObjectOpenHashMap<>(STRIPPED_BLOCKS);
 	}
 }
