@@ -26,6 +26,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.MapColor;
 import net.minecraft.block.Material;
+import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.EntityType;
 import net.minecraft.feature_flags.FeatureFlag;
 import net.minecraft.sound.BlockSoundGroup;
@@ -66,8 +67,10 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		this.dynamicBounds(otherAccessor.getDynamicBounds());
 		this.opaque(otherAccessor.getOpaque());
 		this.air(otherAccessor.getIsAir());
-		((AbstractBlockSettingsAccessor) this).setField_43394(otherAccessor.getField_43394());
+		this.lavaIgnitable(otherAccessor.getField_43394());
+		this.method_50012(otherAccessor.getField_43395());
 		this.requiresTool(otherAccessor.getToolRequired());
+		((AbstractBlockSettingsAccessor) this).setField_42818(otherAccessor.getField_42818());
 		// endregion
 
 		// also copy other stuff Vanilla doesn't bother with
@@ -189,7 +192,17 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		return this;
 	}
 
-	// TODO - Add methods for Mojmap's ignitableByLava and pushReaction
+	@Override
+	public QuiltBlockSettings method_50013() {
+		super.method_50013();
+		return this;
+	}
+
+	@Override
+	public QuiltBlockSettings method_50012(PistonBehavior pistonBehavior) {
+		super.method_50012(pistonBehavior);
+		return this;
+	}
 
 	@Override
 	public QuiltBlockSettings air() {
@@ -260,7 +273,6 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	@Override
 	public QuiltBlockSettings method_49229(AbstractBlock.OffsetType offsetType) {
 		super.method_49229(offsetType);
-
 		return this;
 	}
 
@@ -314,10 +326,22 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	}
 
 	/**
+	 * Sets whether this block can be set on fire by neighboring lava.
+	 *
+	 * @param ignitable {@code true} if this block can be set on fire by lava, or {@code false} otherwise
+	 * @return {@code this} builder
+	 * @see #method_50013()
+	 */
+	public QuiltBlockSettings lavaIgnitable(boolean ignitable) {
+		((AbstractBlockSettingsAccessor) this).setField_43394(ignitable);
+		return this;
+	}
+
+	/**
 	 * Sets the luminance of the block. The block will have this luminance regardless of its current state.
 	 *
 	 * @param luminance new luminance
-	 * @return this builder
+	 * @return {@code this} builder
 	 * @see #luminance(ToIntFunction)
 	 */
 	public QuiltBlockSettings luminance(int luminance) {
@@ -328,7 +352,7 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	 * Sets the loot table identifier that this block will use when broken.
 	 *
 	 * @param dropTableId the new loot table identifier
-	 * @return this builder
+	 * @return {@code this} builder
 	 */
 	public QuiltBlockSettings drops(Identifier dropTableId) {
 		((AbstractBlockSettingsAccessor) this).setLootTableId(dropTableId);
@@ -343,7 +367,7 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	 * Sets the map color provider of this block.
 	 *
 	 * @param mapColorProvider new map color provider
-	 * @return this builder
+	 * @return {@code this} builder
 	 */
 	public QuiltBlockSettings mapColorProvider(Function<BlockState, MapColor> mapColorProvider) {
 		((AbstractBlockSettingsAccessor) this).setMapColorProvider(mapColorProvider);

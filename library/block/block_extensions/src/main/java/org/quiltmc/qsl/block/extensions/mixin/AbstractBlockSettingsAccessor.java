@@ -17,6 +17,7 @@
 
 package org.quiltmc.qsl.block.extensions.mixin;
 
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
@@ -77,14 +78,20 @@ public interface AbstractBlockSettingsAccessor {
 	@Accessor
 	boolean getIsAir();
 
-	@Accessor(remap = false)
+	@Accessor
 	boolean getField_43394();
 
-	@Accessor(remap = false)
+	@Accessor
 	PistonBehavior getField_43395();
 
 	@Accessor
 	boolean getToolRequired();
+
+	@Accessor
+	Optional<AbstractBlock.C_mlfsdncu> getField_42818();
+
+	@Accessor
+	void setField_42818(Optional<AbstractBlock.C_mlfsdncu> offsetType);
 
 	@Accessor
 	AbstractBlock.TypedContextPredicate<EntityType<?>> getAllowsSpawningPredicate();
@@ -130,7 +137,7 @@ public interface AbstractBlockSettingsAccessor {
 	@Accessor
 	void setIsAir(boolean isAir);
 
-	@Accessor(remap = false)
+	@Accessor
 	void setField_43394(boolean field_43394);
 
 	@Accessor

@@ -87,7 +87,7 @@ public class RecipeRemainderTests implements ModInitializer {
 
 		Item smithingInputRemainder = new Item(new QuiltItemSettings().recipeRemainder((original, recipe) -> {
 			if (recipe != null && recipe.getType() == RecipeType.SMITHING) {
-				return Items.NETHERITE_INGOT.getDefaultStack();
+				return original.getItem().getDefaultStack();
 			}
 
 			return Items.NETHERITE_SCRAP.getDefaultStack();
