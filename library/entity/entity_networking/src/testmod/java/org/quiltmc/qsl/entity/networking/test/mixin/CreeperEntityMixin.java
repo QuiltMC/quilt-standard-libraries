@@ -16,6 +16,14 @@
 
 package org.quiltmc.qsl.entity.networking.test.mixin;
 
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.registry.Registries;
+import org.quiltmc.qsl.entity.networking.api.custom_spawn_data.QuiltCustomSpawnDataEntity;
+import org.quiltmc.qsl.entity.networking.test.CreeperWithItem;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -38,10 +46,14 @@ import net.minecraft.world.World;
 import org.quiltmc.qsl.entity.networking.test.TrackedDataTestInitializer;
 
 /**
- * Don't add extra tracked data to existing mobs in actual mods!
+ * In actual mods, do not add tracked data to existing entities, and do not replace spawn packets.
+ * This is purely for testing QSL easily.
  */
 @Mixin(CreeperEntity.class)
-public class CreeperEntityMixin extends HostileEntity {
+public class CreeperEntityMixin extends HostileEntity implements QuiltCustomSpawnDataEntity, CreeperWithItem {
+
+	// Make creepers store a particle effect to test a custom tracked data handler
+
 	@SuppressWarnings("WrongEntityDataParameterClass")
 	private static final TrackedData<ParticleEffect> PARTICLE = DataTracker.registerData(CreeperEntity.class, TrackedDataTestInitializer.PARTICLE_DATA_HANDLER);
 
@@ -65,5 +77,41 @@ public class CreeperEntityMixin extends HostileEntity {
 				this.dataTracker.set(PARTICLE, ParticleTypes.SMOKE);
 			}
 		}
+	}
+
+	// make creepers drop a random item on explosion and render it over their head to test custom spawn data
+
+	private ItemStack quiltTestMod$stackToDrop;
+
+	@Inject(method = "<init>", at = @At("TAIL"))
+	private void quiltTestMod$storeRandomItem(CallbackInfo ci) {
+		Item random = Registries.ITEM.getRandom(this.random).get().value();
+		this.quiltTestMod$stackToDrop = new ItemStack(random);
+	}
+
+	@Inject(method = "explode", at = @At("TAIL"))
+	private void quiltTestMod$dropItemOnExplosion(CallbackInfo ci) {
+		if (!world.isClient)
+			dropStack(quiltTestMod$stackToDrop);
+	}
+
+	@Override
+	public Packet<ClientPlayPacketListener> createSpawnPacket() {
+		return makeCustomSpawnPacket();
+	}
+
+	@Override
+	public void writeCustomSpawnData(PacketByteBuf buffer) {
+		buffer.writeItemStack(quiltTestMod$stackToDrop);
+	}
+
+	@Override
+	public void readCustomSpawnData(PacketByteBuf buffer) {
+		this.quiltTestMod$stackToDrop = buffer.readItemStack();
+	}
+
+	@Override
+	public ItemStack getStack() {
+		return quiltTestMod$stackToDrop;
 	}
 }
