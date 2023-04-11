@@ -27,10 +27,10 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.s2c.PacketBundleS2CPacket;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.unmapped.C_trgduzfi;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -65,7 +65,7 @@ public final class NetworkingPlayPacketTest implements ModInitializer {
 					PacketByteBuf bufB = PacketByteBufs.create();
 					bufB.writeText(Text.literal("Bundled #2"));
 
-					var packet = new C_trgduzfi(List.of(
+					var packet = new PacketBundleS2CPacket(List.of(
 							ServerPlayNetworking.createS2CPacket(TEST_CHANNEL, bufA),
 							ServerPlayNetworking.createS2CPacket(TEST_CHANNEL, bufB)
 					));

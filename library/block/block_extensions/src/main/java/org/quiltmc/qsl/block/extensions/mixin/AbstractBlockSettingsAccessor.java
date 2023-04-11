@@ -79,19 +79,19 @@ public interface AbstractBlockSettingsAccessor {
 	boolean getIsAir();
 
 	@Accessor
-	boolean getField_43394();
+	boolean getLavaIgnitable();
 
 	@Accessor
-	PistonBehavior getField_43395();
+	PistonBehavior getPistonBehavior();
 
 	@Accessor
 	boolean getToolRequired();
 
 	@Accessor
-	Optional<AbstractBlock.C_mlfsdncu> getField_42818();
+	Optional<AbstractBlock.OffsetFunction> getOffsetFunction();
 
 	@Accessor
-	void setField_42818(Optional<AbstractBlock.C_mlfsdncu> offsetType);
+	void setOffsetFunction(Optional<AbstractBlock.OffsetFunction> offsetFunction);
 
 	@Accessor
 	AbstractBlock.TypedContextPredicate<EntityType<?>> getAllowsSpawningPredicate();
@@ -138,7 +138,7 @@ public interface AbstractBlockSettingsAccessor {
 	void setIsAir(boolean isAir);
 
 	@Accessor
-	void setField_43394(boolean field_43394);
+	void setLavaIgnitable(boolean lavaIgnitable);
 
 	@Accessor
 	void setToolRequired(boolean toolRequired);

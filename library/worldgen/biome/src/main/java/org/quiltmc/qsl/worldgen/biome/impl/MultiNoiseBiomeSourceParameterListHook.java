@@ -19,14 +19,14 @@ package org.quiltmc.qsl.worldgen.biome.impl;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.registry.HolderProvider;
-import net.minecraft.unmapped.C_xmtsvelx;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.util.MultiNoiseBiomeSourceParameterList;
 
 /**
- * Allows for acquiring the holder provider used for initializing the {@link C_xmtsvelx} instance
+ * Allows for acquiring the holder provider used for initializing the {@link MultiNoiseBiomeSourceParameterList} instance
  * which would have been discarded otherwise.
  */
 @ApiStatus.Internal
-public interface C_xmtsvelxHook {
+public interface MultiNoiseBiomeSourceParameterListHook {
 	HolderProvider<Biome> getHolderProvider();
 }

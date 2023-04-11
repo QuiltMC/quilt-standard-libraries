@@ -86,7 +86,7 @@ abstract class ClientPlayNetworkHandlerMixin {
 		}
 	}
 
-	@Inject(method = "method_45730", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "sendChatCommand", at = @At("HEAD"), cancellable = true)
 	private void onSendCommand(String command, CallbackInfo ci) {
 		if (ClientCommandInternals.executeCommand(command, true)) {
 			ci.cancel();

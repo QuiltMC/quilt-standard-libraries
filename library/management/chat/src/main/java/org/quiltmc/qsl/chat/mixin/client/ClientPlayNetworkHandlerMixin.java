@@ -145,7 +145,7 @@ public class ClientPlayNetworkHandlerMixin {
 			method = "onSystemMessage",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/gui/ClientChatListener;method_44736(Lnet/minecraft/text/Text;Z)V",
+					target = "Lnet/minecraft/client/network/ChatListener;handleSystemMessage(Lnet/minecraft/text/Text;Z)V",
 					shift = At.Shift.AFTER
 			)
 	)
@@ -190,7 +190,7 @@ public class ClientPlayNetworkHandlerMixin {
 			method = "onProfileIndependentMessage",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/MinecraftClient;getChatListener()Lnet/minecraft/client/gui/ClientChatListener;"
+					target = "Lnet/minecraft/client/MinecraftClient;getChatListener()Lnet/minecraft/client/network/ChatListener;"
 			)
 	)
 	public void quilt$beforeInboundProfileIndependentMessage(ProfileIndependentMessageS2CPacket packet, CallbackInfo ci) {
@@ -202,7 +202,7 @@ public class ClientPlayNetworkHandlerMixin {
 			method = "onProfileIndependentMessage",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/gui/ClientChatListener;method_45746(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageType$Parameters;)V",
+					target = "Lnet/minecraft/client/network/ChatListener;handleMessage(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageType$Parameters;)V",
 					shift = At.Shift.AFTER
 			)
 	)

@@ -34,7 +34,6 @@ public class QuiltMaterialBuilder extends Material.Builder {
 		var builder = new QuiltMaterialBuilder(color);
 		@SuppressWarnings("ConstantConditions") var accessor = (MaterialBuilderAccessor) builder;
 		accessor.setBlocksMovement(material.blocksMovement());
-		accessor.setLiquid(material.isLiquid());
 		accessor.setReplaceable(material.isReplaceable());
 		accessor.setSolid(material.isSolid());
 		accessor.setBlocksLight(material.blocksLight());
@@ -43,12 +42,6 @@ public class QuiltMaterialBuilder extends Material.Builder {
 
 	public static QuiltMaterialBuilder copyOf(Material material) {
 		return copyOf(material, material.getColor());
-	}
-
-	@Override
-	public QuiltMaterialBuilder liquid() {
-		super.liquid();
-		return this;
 	}
 
 	@Override

@@ -67,10 +67,10 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		this.dynamicBounds(otherAccessor.getDynamicBounds());
 		this.opaque(otherAccessor.getOpaque());
 		this.air(otherAccessor.getIsAir());
-		this.lavaIgnitable(otherAccessor.getField_43394());
-		this.method_50012(otherAccessor.getField_43395());
+		this.lavaIgnitable(otherAccessor.getLavaIgnitable());
+		this.pistonBehavior(otherAccessor.getPistonBehavior());
 		this.requiresTool(otherAccessor.getToolRequired());
-		((AbstractBlockSettingsAccessor) this).setField_42818(otherAccessor.getField_42818());
+		((AbstractBlockSettingsAccessor) this).setOffsetFunction(otherAccessor.getOffsetFunction());
 		// endregion
 
 		// also copy other stuff Vanilla doesn't bother with
@@ -193,14 +193,14 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	}
 
 	@Override
-	public QuiltBlockSettings method_50013() {
-		super.method_50013();
+	public QuiltBlockSettings lavaIgnitable() {
+		super.lavaIgnitable();
 		return this;
 	}
 
 	@Override
-	public QuiltBlockSettings method_50012(PistonBehavior pistonBehavior) {
-		super.method_50012(pistonBehavior);
+	public QuiltBlockSettings pistonBehavior(PistonBehavior pistonBehavior) {
+		super.pistonBehavior(pistonBehavior);
 		return this;
 	}
 
@@ -271,8 +271,8 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	}
 
 	@Override
-	public QuiltBlockSettings method_49229(AbstractBlock.OffsetType offsetType) {
-		super.method_49229(offsetType);
+	public QuiltBlockSettings offsetType(AbstractBlock.OffsetType offsetType) {
+		super.offsetType(offsetType);
 		return this;
 	}
 
@@ -333,7 +333,7 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	 * @see #method_50013()
 	 */
 	public QuiltBlockSettings lavaIgnitable(boolean ignitable) {
-		((AbstractBlockSettingsAccessor) this).setField_43394(ignitable);
+		((AbstractBlockSettingsAccessor) this).setLavaIgnitable(ignitable);
 		return this;
 	}
 

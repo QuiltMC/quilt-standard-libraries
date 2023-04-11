@@ -23,18 +23,18 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.registry.HolderProvider;
-import net.minecraft.unmapped.C_xmtsvelx;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.util.MultiNoiseBiomeSourceParameterList;
 
-import org.quiltmc.qsl.worldgen.biome.impl.C_xmtsvelxHook;
+import org.quiltmc.qsl.worldgen.biome.impl.MultiNoiseBiomeSourceParameterListHook;
 
-@Mixin(C_xmtsvelx.class)
-public abstract class C_xmtsvelxMixin implements C_xmtsvelxHook {
+@Mixin(MultiNoiseBiomeSourceParameterList.class)
+public abstract class MultiNoiseBiomeSourceParameterListMixin implements MultiNoiseBiomeSourceParameterListHook {
 	@Unique
 	private HolderProvider<Biome> quilt$holderProvider;
 
 	@Inject(method = "<init>", at = @At("RETURN"))
-	private void quilt$grabHolderProvider(C_xmtsvelx.C_jgklgqjr c_jgklgqjr, HolderProvider<Biome> holderProvider, CallbackInfo ci) {
+	private void quilt$grabHolderProvider(MultiNoiseBiomeSourceParameterList.Preset preset, HolderProvider<Biome> holderProvider, CallbackInfo ci) {
 		this.quilt$holderProvider = holderProvider;
 	}
 

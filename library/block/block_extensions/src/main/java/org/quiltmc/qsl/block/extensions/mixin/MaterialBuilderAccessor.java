@@ -28,9 +28,6 @@ public interface MaterialBuilderAccessor {
 	void setBlocksMovement(boolean blocksMovement);
 
 	@Accessor
-	void setLiquid(boolean liquid);
-
-	@Accessor
 	void setReplaceable(boolean replaceable);
 
 	@Accessor

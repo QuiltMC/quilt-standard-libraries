@@ -31,17 +31,17 @@ import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.unmapped.C_xmtsvelx;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.util.MultiNoiseUtil;
+import net.minecraft.world.biome.util.MultiNoiseBiomeSourceParameterList;
 
 /**
- * Internal data for modding Vanilla's {@link C_xmtsvelx.C_jgklgqjr#field_24723}.
+ * Internal data for modding Vanilla's {@link MultiNoiseBiomeSourceParameterList.Preset#NETHER}.
  */
 @ApiStatus.Internal
 public final class NetherBiomeData {
 	// The cached sets of vanilla biomes that would generate from Vanilla's nether biome preset.
-	private static final Set<RegistryKey<Biome>> VANILLA_NETHER_BIOMES = C_xmtsvelx.C_jgklgqjr.field_24723
+	private static final Set<RegistryKey<Biome>> VANILLA_NETHER_BIOMES = MultiNoiseBiomeSourceParameterList.Preset.NETHER
 			.method_49514()
 			.collect(Collectors.toSet());
 

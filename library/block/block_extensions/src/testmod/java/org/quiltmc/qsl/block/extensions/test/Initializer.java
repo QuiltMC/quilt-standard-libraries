@@ -40,7 +40,7 @@ public final class Initializer implements ModInitializer {
 			new GlassBlock(QuiltBlockSettings.copyOf(Blocks.GLASS)
 					.material(MATERIAL)
 					.luminance(15)
-					.method_50012(PistonBehavior.PUSH_ONLY)));
+					.pistonBehavior(PistonBehavior.PUSH_ONLY)));
 
 	public static final Block BLOCK2 = Registry.register(Registries.BLOCK,
 			new Identifier("quilt_block_extensions_testmod", "test_block2"),

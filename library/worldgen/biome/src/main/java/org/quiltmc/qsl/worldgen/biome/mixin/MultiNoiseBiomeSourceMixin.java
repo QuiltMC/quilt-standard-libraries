@@ -24,13 +24,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.registry.Holder;
-import net.minecraft.unmapped.C_dbdhjhat;
-import net.minecraft.unmapped.C_xmtsvelx;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.MultiNoiseBiomeSource;
 import net.minecraft.world.biome.source.util.MultiNoiseUtil;
+import net.minecraft.world.biome.util.MultiNoiseBiomeSourceParameterList;
+import net.minecraft.world.biome.util.MultiNoiseBiomeSourceParameterLists;
 
-import org.quiltmc.qsl.worldgen.biome.impl.C_xmtsvelxHook;
+import org.quiltmc.qsl.worldgen.biome.impl.MultiNoiseBiomeSourceParameterListHook;
 import org.quiltmc.qsl.worldgen.biome.impl.NetherBiomeData;
 
 @Mixin(MultiNoiseBiomeSource.class)
@@ -44,13 +44,15 @@ public abstract class MultiNoiseBiomeSourceMixin {
 			at = @At("HEAD"),
 			cancellable = true
 	)
-	private static void quilt$overrideNetherPreset(Holder<C_xmtsvelx> holder,
-												   CallbackInfoReturnable<MultiNoiseUtil.ParameterRangeList<Holder<Biome>>> cir) {
-		if (C_dbdhjhat.NETHER.equals(holder.getKey().orElseThrow())) {
+	private static void quilt$overrideNetherPreset(
+			Holder<MultiNoiseBiomeSourceParameterList> holder,
+			CallbackInfoReturnable<MultiNoiseUtil.ParameterRangeList<Holder<Biome>>> cir
+	) {
+		if (MultiNoiseBiomeSourceParameterLists.NETHER.equals(holder.getKey().orElseThrow())) {
 			if (quilt$CACHED_PARAMETER_RANGE_LIST == null) {
 				MultiNoiseBiomeSourceMixin.quilt$CACHED_PARAMETER_RANGE_LIST = NetherBiomeData.withModdedBiomeEntries(
 						holder.value().method_49507(),
-						((C_xmtsvelxHook) holder.value()).getHolderProvider()::getHolderOrThrow
+						((MultiNoiseBiomeSourceParameterListHook) holder.value()).getHolderProvider()::getHolderOrThrow
 				);
 			}
 
