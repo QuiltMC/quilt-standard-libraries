@@ -2,7 +2,7 @@ accessWidener	v1	named
 accessible  class   net/minecraft/world/biome/Biome$Weather
 
 # Used to set nether biomes
-accessible class net/minecraft/unmapped/C_xmtsvelx$C_jgklgqjr$C_pttrytil
+accessible class net/minecraft/world/biome/util/MultiNoiseBiomeSourceParameterList$Preset$C_pttrytil
 
 # Top-Level Biome Fields Access
 accessible field net/minecraft/world/biome/Biome weather Lnet/minecraft/world/biome/Biome$Weather;
