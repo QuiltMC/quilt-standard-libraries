@@ -16,21 +16,23 @@
 
 package org.quiltmc.qsl.registry.test.dynamic;
 
+import java.util.Objects;
+
 import com.mojang.serialization.Codec;
+
+import net.minecraft.registry.DynamicRegistrySync;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.GameTestException;
-import net.minecraft.unmapped.C_uhbbwvga;
 import net.minecraft.util.Identifier;
+
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.registry.api.dynamic.DynamicMetaregistry;
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.quiltmc.qsl.testing.api.game.QuiltGameTest;
 import org.quiltmc.qsl.testing.api.game.QuiltTestContext;
-
-import java.util.Objects;
 
 public class RegistryLibDynamicRegistryTest implements QuiltGameTest, ModInitializer {
 
@@ -59,7 +61,7 @@ public class RegistryLibDynamicRegistryTest implements QuiltGameTest, ModInitial
 	@GameTest(structureName = EMPTY_STRUCTURE)
 	public void greetingsGetSynced(QuiltTestContext ctx) {
 		ctx.succeedIf(() -> ctx.assertTrue(
-				C_uhbbwvga.m_gnuhreao(ctx.getWorld().getServer().m_blfimkeo()).anyMatch(e -> e.key().equals(Greetings.REGISTRY_KEY)),
+				DynamicRegistrySync.streamReloadableSyncedRegistries(ctx.getWorld().getServer().getLayeredRegistryManager()).anyMatch(e -> e.key().equals(Greetings.REGISTRY_KEY)),
 				"Modded registry key should appear in the list of synced dynamic registries"
 		));
 	}
@@ -70,7 +72,7 @@ public class RegistryLibDynamicRegistryTest implements QuiltGameTest, ModInitial
 			try {
 				DynamicMetaregistry.register(RegistryKey.ofRegistry(new Identifier("quilt_registry_testmod", "a")), Codec.INT);
 				throw new GameTestException("DynamicMetaregistry should not allow registration after init");
-			} catch (IllegalStateException ignored) {}
+			} catch (IllegalStateException ignored) { }
 		});
 	}
 }

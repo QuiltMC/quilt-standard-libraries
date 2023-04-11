@@ -16,18 +16,30 @@
 
 package org.quiltmc.qsl.registry.impl.dynamic;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Codec;
+
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryLoader;
+import net.minecraft.util.Identifier;
+
 import org.quiltmc.qsl.registry.mixin.DynamicRegistrySyncAccessor;
 
 public class DynamicMetaregistryImpl {
 	private static boolean frozen;
+	private static final Set<Identifier> MODDED_REGISTRY_IDS = new HashSet<>();
+
+	public static boolean isModdedRegistryId(Identifier id) {
+		return MODDED_REGISTRY_IDS.contains(id);
+	}
 
 	public static <E> void register(RegistryKey<? extends Registry<E>> ref, Codec<E> entryCodec) {
 		if (frozen) throw new IllegalStateException("Registry is already frozen");
+		MODDED_REGISTRY_IDS.add(ref.getValue());
 		RegistryLoader.WORLDGEN_REGISTRIES.add(new RegistryLoader.DecodingData<>(ref, entryCodec));
 	}
 

@@ -18,6 +18,7 @@ package org.quiltmc.qsl.registry.test.dynamic;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
@@ -29,6 +30,6 @@ public record Greetings(String text, int weight) {
 	).apply(instance, Greetings::new));
 
 	public static final RegistryKey<Registry<Greetings>> REGISTRY_KEY = RegistryKey.ofRegistry(
-			new Identifier("quilt_registry_testmod", "quilt_registry_testmod_greetings")
+			new Identifier("quilt_registry_testmod", "greetings")
 	);
 }

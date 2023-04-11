@@ -16,21 +16,22 @@
 
 package org.quiltmc.qsl.registry.mixin;
 
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.unmapped.C_uhbbwvga;
+import java.util.Map;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.Map;
+import net.minecraft.registry.DynamicRegistrySync;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 
-@Mixin(C_uhbbwvga.class)
+@Mixin(DynamicRegistrySync.class)
 public abstract class DynamicRegistrySyncMixin {
 	@SuppressWarnings("unused")	// makes the field mutable for use by the accessor
 	@Shadow
 	@Final
 	@Mutable
-	private static Map<RegistryKey<? extends Registry<?>>, ?> f_hmxjhwjb;
+	private static Map<RegistryKey<? extends Registry<?>>, ?> SYNCED_CODECS;
 }

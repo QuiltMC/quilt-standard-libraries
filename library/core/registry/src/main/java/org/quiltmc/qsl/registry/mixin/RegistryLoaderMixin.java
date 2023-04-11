@@ -34,9 +34,11 @@ import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.MutableRegistry;
 import net.minecraft.registry.RegistryLoader;
 import net.minecraft.resource.ResourceManager;
+import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.quiltmc.qsl.registry.impl.DynamicRegistryManagerSetupContextImpl;
+import org.quiltmc.qsl.registry.impl.dynamic.DynamicMetaregistryImpl;
 
 @Mixin(RegistryLoader.class)
 public class RegistryLoaderMixin {
@@ -47,6 +49,13 @@ public class RegistryLoaderMixin {
 
 	static {
 		WORLDGEN_REGISTRIES = new ArrayList<>(WORLDGEN_REGISTRIES);
+	}
+
+	@Inject(method = "getPath", at = @At("HEAD"), cancellable = true)
+	private static void replaceDynamicRegistryPath(Identifier id, CallbackInfoReturnable<String> cir) {
+		if (DynamicMetaregistryImpl.isModdedRegistryId(id)) {
+			cir.setReturnValue(id.getNamespace() + "/" + id.getPath());
+		}
 	}
 
 	@Inject(

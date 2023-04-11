@@ -17,9 +17,11 @@
 package org.quiltmc.qsl.registry.api.dynamic;
 
 import com.mojang.serialization.Codec;
+
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
+
 import org.quiltmc.qsl.registry.impl.dynamic.DynamicMetaregistryImpl;
 
 /**
@@ -37,11 +39,9 @@ public final class DynamicMetaregistry {
 	/**
 	 * Registers a serverside dynamic registry.
 	 * <p>
-	 * Entries will be loaded from {@code "data/<namespace>/<registry_path>"} for every datapack {@code namespace},
-	 * where {@code registry_path}'s value is {@code key.getLocation().getPath()}.
-	 * The registry's own namespace is essentially ignored when loading values,
-	 * meaning <strong>the registry {@code key}'s path must be unique by itself</strong>
-	 * (e.g. {@code RegistryKey.ofRegistry(new Identifier("<mod_id>", "<mod_id>_<resource_name>))}).
+	 * Entries will be loaded from {@code "data/<namespace>/<registry_namespace>/<registry_path>"} for every datapack
+	 * {@code namespace}, where {@code registry_namespace} and {@code registry_path}'s values are respectively
+	 * {@code key.getLocation().getNamespace()} and {@code key.getLocation().getPath()}.
 	 *
 	 * @param <E>        the type of elements in the dynamic registry
 	 * @param key        a {@link RegistryKey#ofRegistry(Identifier) key for the new dynamic registry}
@@ -55,11 +55,9 @@ public final class DynamicMetaregistry {
 	/**
 	 * Registers a dynamic registry which contents get synced between the server and connected clients.
 	 * <p>
-	 * Entries will be loaded from {@code "data/<namespace>/<registry_path>"} for every datapack {@code namespace},
-	 * where {@code registry_path}'s value is {@code key.getLocation().getPath()}.
-	 * The registry's own namespace is essentially ignored when loading values,
-	 * meaning <strong>the registry {@code key}'s path must be unique by itself</strong>
-	 * (e.g. {@code RegistryKey.ofRegistry(new Identifier("<mod_id>", "<mod_id>_<resource_name>))}).
+	 * Entries will be loaded from {@code "data/<namespace>/<registry_namespace>/<registry_path>"} for every datapack
+	 * {@code namespace}, where {@code registry_namespace} and {@code registry_path}'s values are respectively
+	 * {@code key.getLocation().getNamespace()} and {@code key.getLocation().getPath()}.
 	 *
 	 * @param <E>        the type of elements in the dynamic registry
 	 * @param key        a {@link RegistryKey#ofRegistry(Identifier) key for the new dynamic registry}
@@ -74,11 +72,9 @@ public final class DynamicMetaregistry {
 	/**
 	 * Registers a dynamic registry which contents get synced between the server and connected clients.
 	 * <p>
-	 * Entries will be loaded from {@code "data/<namespace>/<registry_path>"} for every datapack {@code namespace},
-	 * where {@code registry_path}'s value is {@code key.getLocation().getPath()}.
-	 * The registry's own namespace is essentially ignored when loading values,
-	 * meaning <strong>the registry {@code key}'s path must be unique by itself</strong>
-	 * (e.g. {@code RegistryKey.ofRegistry(new Identifier("<mod_id>", "<mod_id>_<resource_name>))}).
+	 * Entries will be loaded from {@code "data/<namespace>/<registry_namespace>/<registry_path>"} for every datapack
+	 * {@code namespace}, where {@code registry_namespace} and {@code registry_path}'s values are respectively
+	 * {@code key.getLocation().getNamespace()} and {@code key.getLocation().getPath()}.
 	 *
 	 * @param <E>        the type of elements in the dynamic registry
 	 * @param key        a {@link RegistryKey#ofRegistry(Identifier) key for the new dynamic registry}

@@ -16,30 +16,31 @@
 
 package org.quiltmc.qsl.registry.mixin;
 
+import java.util.Map;
+
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Codec;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.unmapped.C_uhbbwvga;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-import java.util.Map;
+import net.minecraft.registry.DynamicRegistrySync;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 
-@Mixin(C_uhbbwvga.class)
+@Mixin(DynamicRegistrySync.class)
 public interface DynamicRegistrySyncAccessor {
-	@Accessor("f_hmxjhwjb")
+	@Accessor("SYNCED_CODECS")
 	static Map<RegistryKey<? extends Registry<?>>, ?> quilt$getSyncedCodecs() {
 		throw new IllegalStateException("Mixin injection failed.");
 	}
 
-	@Accessor("f_hmxjhwjb")
+	@Accessor("SYNCED_CODECS")
 	static void quilt$setSyncedCodecs(Map<RegistryKey<? extends Registry<?>>, ?> syncedCodecs) {
 		throw new IllegalStateException("Mixin injection failed.");
 	}
 
-	@Invoker("m_dfuklmpj")
+	@Invoker("addSyncedRegistry")
 	static <E> void quilt$invokeAddSyncedRegistry(ImmutableMap.Builder<RegistryKey<? extends Registry<?>>, ?> builder, RegistryKey<? extends Registry<E>> registryKey, Codec<E> codec) {
 		throw new IllegalStateException("Mixin injection failed.");
 	}
