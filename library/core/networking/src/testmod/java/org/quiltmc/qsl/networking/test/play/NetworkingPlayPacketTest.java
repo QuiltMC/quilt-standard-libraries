@@ -53,7 +53,7 @@ public final class NetworkingPlayPacketTest implements ModInitializer {
 	public static void registerCommand(CommandDispatcher<ServerCommandSource> dispatcher) {
 		NetworkingTestMods.LOGGER.info("Registering test command");
 
-		dispatcher.register(literal("networktestcommand")
+		dispatcher.register(literal("network_test_command")
 				.then(argument("stuff", string()).executes(ctx -> {
 					String stuff = StringArgumentType.getString(ctx, "stuff");
 					sendToTestChannel(ctx.getSource().getPlayer(), stuff);
