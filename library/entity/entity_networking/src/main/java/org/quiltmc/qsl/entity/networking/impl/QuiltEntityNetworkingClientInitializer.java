@@ -35,7 +35,7 @@ public class QuiltEntityNetworkingClientInitializer implements ClientModInitiali
 			QuiltCustomSpawnDataEntity.EXTENDED_SPAWN_PACKET,
 			(client, handler, buf, sender) -> {
 				EntitySpawnS2CPacket spawnPacket = new EntitySpawnS2CPacket(buf);
-				buf.retain(); // make sure data is retained and can be read on the client thread
+				buf.retain(); // Make sure data is retained and can be read on the client thread
 				client.execute(() -> {
 					try {
 						spawnPacket.apply(handler);
