@@ -27,9 +27,12 @@ public class QuiltEntityNetworkingClientInitializer implements ClientModInitiali
 						if (spawnedEntity instanceof QuiltCustomSpawnDataEntity customDataEntity) {
 							customDataEntity.readCustomSpawnData(buf);
 						} else {
+							String id = spawnedEntity == null
+								? "null"
+								: Registries.ENTITY_TYPE.getId(spawnedEntity.getType()).toString();
 							logger.error(
-								"[Quilt] invalid entity received for extended spawn packet; expected a QuiltCustomSpawnDataEntity, got: " +
-									(spawnedEntity == null ? "null" : Registries.ENTITY_TYPE.getId(spawnedEntity.getType()).toString())
+								"[Quilt] invalid entity received for extended spawn packet: entity [" +
+									id + "] does not implement QuiltCustomSpawnDataEntity!"
 							);
 						}
 					} finally { // make sure the buffer is released after
