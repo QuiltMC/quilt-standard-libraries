@@ -78,7 +78,7 @@ public class CreeperEntityMixin extends HostileEntity implements QuiltCustomSpaw
 		}
 	}
 
-	// make creepers drop a random item on explosion and render it over their head to test custom spawn data
+	// Make creepers drop a random item on explosion and render it over their head to test custom spawn data
 
 	private ItemStack quiltTestMod$stackToDrop;
 
