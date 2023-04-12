@@ -2,17 +2,11 @@ package org.quiltmc.qsl.entity.networking.api.custom_spawn_data;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.util.Identifier;
-import org.quiltmc.qsl.networking.api.PacketByteBufs;
-import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 
 /**
- * An entity with additional data sent in its spawn packet. To use, override {@link Entity#createSpawnPacket()}
- * and return {@link QuiltCustomSpawnDataEntity#makeCustomSpawnPacket()}. Then override the read and write methods
- * to send and recieve additional spawn data.
+ * An entity with additional data sent in its spawn packet. To use, simply implement this interface on your entity.
+ * If not overridden, {@link Entity#createSpawnPacket()} will return a packet containing the written data.
  */
 public interface QuiltCustomSpawnDataEntity {
 	/**
@@ -31,17 +25,4 @@ public interface QuiltCustomSpawnDataEntity {
 	 * and deserialize it on the client after the entity is spawned.
 	 */
 	void readCustomSpawnData(PacketByteBuf buffer);
-
-	/**
-	 * Create an extended spawn packet to be sent to clients.
-	 */
-	default Packet<ClientPlayPacketListener> makeCustomSpawnPacket() {
-		if (!(this instanceof Entity self)) {
-			throw new IllegalStateException("QuiltCustomSpawnDataEntity implemented on something that isn't an entity");
-		}
-		PacketByteBuf buf = PacketByteBufs.create();
-		new EntitySpawnS2CPacket(self).write(buf);
-		writeCustomSpawnData(buf);
-		return ServerPlayNetworking.createS2CPacket(EXTENDED_SPAWN_PACKET, buf);
-	}
 }

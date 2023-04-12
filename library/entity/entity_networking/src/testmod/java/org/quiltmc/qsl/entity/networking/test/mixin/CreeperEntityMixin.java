@@ -19,8 +19,6 @@ package org.quiltmc.qsl.entity.networking.test.mixin;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.registry.Registries;
 import org.quiltmc.qsl.entity.networking.api.custom_spawn_data.QuiltCustomSpawnDataEntity;
 import org.quiltmc.qsl.entity.networking.test.CreeperWithItem;
@@ -93,11 +91,6 @@ public class CreeperEntityMixin extends HostileEntity implements QuiltCustomSpaw
 	private void quiltTestMod$dropItemOnExplosion(CallbackInfo ci) {
 		if (!world.isClient)
 			dropStack(quiltTestMod$stackToDrop);
-	}
-
-	@Override
-	public Packet<ClientPlayPacketListener> createSpawnPacket() {
-		return makeCustomSpawnPacket();
 	}
 
 	@Override
