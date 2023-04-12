@@ -51,11 +51,11 @@ import org.quiltmc.qsl.block.content.registry.api.enchanting.ConstantBooster;
 import org.quiltmc.qsl.block.content.registry.api.enchanting.EnchantingBooster;
 import org.quiltmc.qsl.block.content.registry.api.enchanting.EnchantingBoosterType;
 import org.quiltmc.qsl.block.content.registry.api.enchanting.EnchantingBoosters;
-import org.quiltmc.qsl.testing.api.game.QuiltGameTest;
-import org.quiltmc.qsl.testing.api.game.QuiltTestContext;
 import org.quiltmc.qsl.lifecycle.api.event.ServerWorldTickEvents;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 import org.quiltmc.qsl.registry.attachment.api.RegistryExtensions;
+import org.quiltmc.qsl.testing.api.game.QuiltGameTest;
+import org.quiltmc.qsl.testing.api.game.QuiltTestContext;
 
 public class BlockContentRegistryTest implements ModInitializer, QuiltGameTest {
 	public static final String MOD_ID = "quilt_block_content_registry_testmod";
@@ -120,6 +120,7 @@ public class BlockContentRegistryTest implements ModInitializer, QuiltGameTest {
 
 		tester.run(context);
 	}
+
 	private record EnchantingBlockStateBooster() implements EnchantingBooster {
 		public static EnchantingBoosterType TYPE = EnchantingBoosters.register(new Identifier(MOD_ID, "block_state_booster"),
 				new EnchantingBoosterType(Codec.unit(EnchantingBlockStateBooster::new), Optional.of(new EnchantingBlockStateBooster())));

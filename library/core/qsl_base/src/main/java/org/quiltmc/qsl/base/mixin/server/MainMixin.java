@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.server.Main;
 
-import org.quiltmc.loader.api.QuiltLoader;
+import org.quiltmc.loader.api.entrypoint.EntrypointUtil;
 import org.quiltmc.loader.api.minecraft.DedicatedServerOnly;
 import org.quiltmc.qsl.base.api.entrypoint.server.DedicatedServerModInitializer;
 
@@ -36,8 +36,8 @@ public class MainMixin {
 			remap = false
 	)
 	private static void onInit(String[] strings, CallbackInfo ci) {
-		for (var initializer : QuiltLoader.getEntrypointContainers(DedicatedServerModInitializer.ENTRYPOINT_KEY, DedicatedServerModInitializer.class)) {
-			initializer.getEntrypoint().onInitializeServer(initializer.getProvider());
-		}
+		EntrypointUtil.invoke(
+				DedicatedServerModInitializer.ENTRYPOINT_KEY, DedicatedServerModInitializer.class, DedicatedServerModInitializer::onInitializeServer
+		);
 	}
 }

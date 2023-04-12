@@ -82,6 +82,9 @@
  * </ul>
  * <p>
  * Do note that this won't allow for overriding resources that the built-in resource packs already have.
+ * <p>
+ * In the case of data-packs, Vanilla has a {@code data/minecraft/datapacks} directory in which folders for each
+ * built-in data-pack is present, using the same paths in mods will allow to extend those data-packs as well.
  *
  * <p>
  * <h3>Resource Reloaders</h3>

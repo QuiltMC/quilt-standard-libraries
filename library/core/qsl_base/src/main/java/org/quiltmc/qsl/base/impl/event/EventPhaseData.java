@@ -23,8 +23,10 @@ import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.ModInternal;
 import org.quiltmc.qsl.base.api.phase.PhaseData;
 
+@ModInternal
 @ApiStatus.Internal
 public final class EventPhaseData<T> extends PhaseData<T[], EventPhaseData<T>> {
 	@SuppressWarnings("unchecked")

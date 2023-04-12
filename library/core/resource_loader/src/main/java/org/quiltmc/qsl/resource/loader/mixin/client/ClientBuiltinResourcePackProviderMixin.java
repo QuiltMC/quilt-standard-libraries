@@ -59,7 +59,7 @@ public class ClientBuiltinResourcePackProviderMixin {
 			ResourcePackProfile.ResourcePackFactory factory, ResourceType type, ResourcePackProfile.InsertionPosition insertionPosition,
 			ResourcePackSource source) {
 		if (BUILTIN_PACK_DISPLAY_NAMES.containsKey(name)) {
-			return n -> ResourceLoaderImpl.buildVanillaBuiltinResourcePack(factory.open(n), name);
+			return n -> ResourceLoaderImpl.buildVanillaBuiltinResourcePack(factory.open(n), ResourceType.CLIENT_RESOURCES, name);
 		}
 
 		return factory;

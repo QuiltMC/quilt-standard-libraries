@@ -104,8 +104,6 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 				.getByType(LoomGradleExtensionAPI.class)
 				.getAccessWidenerPath()
 				.fileValue(this.project.file("src/main/resources/" + this.id.get() + ".accesswidener"));
-
-		this.allowGenTasks();
 	}
 
 	@Input
