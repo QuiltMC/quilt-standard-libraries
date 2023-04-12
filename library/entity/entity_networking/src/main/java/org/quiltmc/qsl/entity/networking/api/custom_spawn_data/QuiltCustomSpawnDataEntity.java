@@ -39,6 +39,7 @@ public interface QuiltCustomSpawnDataEntity {
 		if (!(this instanceof Entity self)) {
 			throw new IllegalStateException("QuiltCustomSpawnDataEntity implemented on something that isn't an entity");
 		}
+
 		PacketByteBuf buf = PacketByteBufs.create();
 		new EntitySpawnS2CPacket(self).write(buf);
 		writeCustomSpawnData(buf);
