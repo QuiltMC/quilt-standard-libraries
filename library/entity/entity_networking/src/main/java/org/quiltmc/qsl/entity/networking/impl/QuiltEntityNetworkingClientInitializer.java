@@ -22,7 +22,7 @@ import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.registry.Registries;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
-import org.quiltmc.qsl.entity.networking.api.custom_spawn_data.QuiltCustomSpawnDataEntity;
+import org.quiltmc.qsl.entity.networking.api.extended_spawn_data.QuiltExtendedSpawnDataEntity;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 import org.slf4j.Logger;
 
@@ -32,7 +32,7 @@ public class QuiltEntityNetworkingClientInitializer implements ClientModInitiali
 	@Override
 	public void onInitializeClient(ModContainer mod) {
 		ClientPlayNetworking.registerGlobalReceiver(
-			QuiltCustomSpawnDataEntity.EXTENDED_SPAWN_PACKET,
+			QuiltEntityNetworkingInitializer.EXTENDED_SPAWN_PACKET,
 			(client, handler, buf, sender) -> {
 				EntitySpawnS2CPacket spawnPacket = new EntitySpawnS2CPacket(buf);
 				buf.retain(); // Make sure data is retained and can be read on the client thread
@@ -40,8 +40,8 @@ public class QuiltEntityNetworkingClientInitializer implements ClientModInitiali
 					try {
 						spawnPacket.apply(handler);
 						Entity spawnedEntity = client.world.getEntityById(spawnPacket.getId());
-						if (spawnedEntity instanceof QuiltCustomSpawnDataEntity customDataEntity) {
-							customDataEntity.readCustomSpawnData(buf);
+						if (spawnedEntity instanceof QuiltExtendedSpawnDataEntity extended) {
+							extended.readAdditionalSpawnData(buf);
 						} else {
 							String id = spawnedEntity == null
 								? "null"

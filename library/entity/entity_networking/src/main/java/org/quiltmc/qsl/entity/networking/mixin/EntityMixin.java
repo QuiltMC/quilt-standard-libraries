@@ -21,7 +21,8 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
-import org.quiltmc.qsl.entity.networking.api.custom_spawn_data.QuiltCustomSpawnDataEntity;
+import org.quiltmc.qsl.entity.networking.api.extended_spawn_data.QuiltExtendedSpawnDataEntity;
+import org.quiltmc.qsl.entity.networking.impl.QuiltEntityNetworkingInitializer;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,13 +33,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Entity.class)
 public class EntityMixin {
 	@Inject(method = "createSpawnPacket", at = @At("HEAD"), cancellable = true)
-	private void quilt$handleCustomSpawnPacket(CallbackInfoReturnable<Packet<ClientPlayPacketListener>> cir) {
-		if (this instanceof QuiltCustomSpawnDataEntity custom) {
+	private void quilt$createExtendedSpawnPacket(CallbackInfoReturnable<Packet<ClientPlayPacketListener>> cir) {
+		if (this instanceof QuiltExtendedSpawnDataEntity extended) {
 			PacketByteBuf buf = PacketByteBufs.create();
 			new EntitySpawnS2CPacket((Entity) (Object) this).write(buf);
-			custom.writeCustomSpawnData(buf);
+			extended.writeAdditionalSpawnData(buf);
 			Packet<ClientPlayPacketListener> packet = ServerPlayNetworking.createS2CPacket(
-				QuiltCustomSpawnDataEntity.EXTENDED_SPAWN_PACKET, buf
+				QuiltEntityNetworkingInitializer.EXTENDED_SPAWN_PACKET, buf
 			);
 			cir.setReturnValue(packet);
 		}

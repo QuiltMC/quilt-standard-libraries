@@ -20,7 +20,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.Registries;
-import org.quiltmc.qsl.entity.networking.api.custom_spawn_data.QuiltCustomSpawnDataEntity;
+import org.quiltmc.qsl.entity.networking.api.extended_spawn_data.QuiltExtendedSpawnDataEntity;
 import org.quiltmc.qsl.entity.networking.test.CreeperWithItem;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -48,7 +48,7 @@ import org.quiltmc.qsl.entity.networking.test.TrackedDataTestInitializer;
  * This is purely for testing QSL easily.
  */
 @Mixin(CreeperEntity.class)
-public class CreeperEntityMixin extends HostileEntity implements QuiltCustomSpawnDataEntity, CreeperWithItem {
+public class CreeperEntityMixin extends HostileEntity implements QuiltExtendedSpawnDataEntity, CreeperWithItem {
 	// Make creepers store a particle effect to test a custom tracked data handler
 
 	@SuppressWarnings("WrongEntityDataParameterClass")
@@ -76,7 +76,7 @@ public class CreeperEntityMixin extends HostileEntity implements QuiltCustomSpaw
 		}
 	}
 
-	// Make creepers drop a random item on explosion and render it over their head to test custom spawn data
+	// Make creepers drop a random item on explosion and render it over their head to test extended spawn data
 
 	private ItemStack quiltTestMod$stackToDrop;
 
@@ -93,12 +93,12 @@ public class CreeperEntityMixin extends HostileEntity implements QuiltCustomSpaw
 	}
 
 	@Override
-	public void writeCustomSpawnData(PacketByteBuf buffer) {
+	public void writeAdditionalSpawnData(PacketByteBuf buffer) {
 		buffer.writeItemStack(quiltTestMod$stackToDrop);
 	}
 
 	@Override
-	public void readCustomSpawnData(PacketByteBuf buffer) {
+	public void readAdditionalSpawnData(PacketByteBuf buffer) {
 		this.quiltTestMod$stackToDrop = buffer.readItemStack();
 	}
 
