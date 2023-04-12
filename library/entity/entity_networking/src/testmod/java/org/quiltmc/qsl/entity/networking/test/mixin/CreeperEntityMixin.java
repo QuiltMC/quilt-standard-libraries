@@ -51,7 +51,6 @@ import org.quiltmc.qsl.entity.networking.test.TrackedDataTestInitializer;
  */
 @Mixin(CreeperEntity.class)
 public class CreeperEntityMixin extends HostileEntity implements QuiltCustomSpawnDataEntity, CreeperWithItem {
-
 	// Make creepers store a particle effect to test a custom tracked data handler
 
 	@SuppressWarnings("WrongEntityDataParameterClass")
