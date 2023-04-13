@@ -106,7 +106,7 @@ public abstract class AbstractBrewingRecipe<T> implements Recipe<BrewingStandBlo
 	public boolean matches(BrewingStandBlockEntity inventory, World world) {
 		ItemStack ingredient = inventory.getStack(3);
 		if (this.ingredient.test(ingredient)) {
-			for (int i = 0; i < 3; ++i) {
+			for (int i = 0; i < 3; i++) {
 				if (this.matches(i, inventory.getStack(i))) {
 					return true;
 				}

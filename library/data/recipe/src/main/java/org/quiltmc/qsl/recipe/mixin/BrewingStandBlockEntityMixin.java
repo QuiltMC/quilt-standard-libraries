@@ -70,6 +70,7 @@ public abstract class BrewingStandBlockEntityMixin extends LockableContainerBloc
 		var maybeRecipe = world.getRecipeManager().getFirstMatch(QuiltRecipeTypes.BREWING, brewingStand, world);
 		var recipeHolder = ((BrewingStandBlockEntityMixin) (Object) brewingStand);
 		recipeHolder.quilt$recipe = maybeRecipe.orElse(null);
+
 		return maybeRecipe.isPresent() || canCraft;
 	}
 

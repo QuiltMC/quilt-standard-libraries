@@ -42,7 +42,6 @@ import org.quiltmc.qsl.recipe.impl.RecipeImpl;
 
 /**
  * A {@link Potion} brewing recipe with extended functionality for custom potion effects.
- *
  * <p>
  * The recipe has seven arguments:
  * <ul>
@@ -153,12 +152,15 @@ public class CustomPotionBrewingRecipe extends SimplePotionBrewingRecipe {
 				int amplifier = JsonHelper.getInt(jsonObject, "amplifier", 0);
 				boolean showParticles = JsonHelper.getBoolean(jsonObject, "particles", true);
 				boolean showIcon = JsonHelper.getBoolean(jsonObject, "icon", true);
+
 				return new StatusEffectInstance(statusEffect, duration, amplifier, false, showParticles, showIcon);
-			} else { // default to a basic 3600 tick 0 amplifier status effect
+			} else {
+				// Default to a basic 3600 tick and amplifier 0 status effect
 				String string = json.getAsString();
 				StatusEffect statusEffect = Registries.STATUS_EFFECT
 						.getOrEmpty(new Identifier(string))
 						.orElseThrow(() -> new JsonSyntaxException("Unknown status effect '" + string + "'"));
+
 				return new StatusEffectInstance(statusEffect, 3600);
 			}
 		}
@@ -182,6 +184,7 @@ public class CustomPotionBrewingRecipe extends SimplePotionBrewingRecipe {
 			CustomPotionBrewingRecipe recipe = super.read(id, buf);
 			recipe.statusEffects.clear();
 			PotionUtil.getCustomPotionEffects(buf.readNbt(), recipe.statusEffects);
+
 			return recipe;
 		}
 	}
