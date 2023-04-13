@@ -59,8 +59,10 @@ public abstract class ArmorFeatureRendererMixin {
 	@Unique
 	private Identifier quilt$capturedArmorTexture;
 
-	@Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
-			at = @At("HEAD"))
+	@Inject(
+			method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
+			at = @At("HEAD")
+	)
 	private void quilt$captureEntity(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, LivingEntity livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
 		this.quilt$capturedEntity = livingEntity;
 	}
@@ -75,7 +77,7 @@ public abstract class ArmorFeatureRendererMixin {
 		ItemStack stack = this.quilt$capturedEntity.getEquippedStack(slot);
 
 		BipedEntityModel<LivingEntity> model = cir.getReturnValue();
-		model = ArmorRenderingRegistryImpl.getArmorModel(model, this.quilt$capturedEntity, stack, this.quilt$capturedSlot);
+		model = ArmorRenderingRegistryImpl.getArmorModel(model, this.quilt$capturedEntity, stack, slot);
 		cir.setReturnValue(model);
 	}
 

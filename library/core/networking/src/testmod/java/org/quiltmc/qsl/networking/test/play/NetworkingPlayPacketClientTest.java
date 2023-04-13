@@ -16,6 +16,9 @@
 
 package org.quiltmc.qsl.networking.test.play;
 
+import com.mojang.logging.LogUtils;
+import org.slf4j.Logger;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
@@ -28,6 +31,8 @@ import org.quiltmc.qsl.networking.api.client.ClientPlayConnectionEvents;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 
 public final class NetworkingPlayPacketClientTest implements ClientModInitializer {
+	private static final Logger LOGGER = LogUtils.getLogger();
+
 	@Override
 	public void onInitializeClient(ModContainer mod) {
 		//ClientPlayNetworking.registerGlobalReceiver(NetworkingPlayPacketTest.TEST_CHANNEL, this::receive);
@@ -39,6 +44,9 @@ public final class NetworkingPlayPacketClientTest implements ClientModInitialize
 
 	private void receive(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client, PacketByteBuf buf) {
 		Text text = buf.readText();
-		client.execute(() -> client.inGameHud.setOverlayMessage(text, true));
+		client.execute(() -> {
+			LOGGER.info("Received text from {} which says {}.", NetworkingPlayPacketTest.TEST_CHANNEL, text);
+			client.inGameHud.setOverlayMessage(text, true);
+		});
 	}
 }
