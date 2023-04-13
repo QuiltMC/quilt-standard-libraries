@@ -39,9 +39,9 @@ import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 public class RecipeImpl implements ModInitializer {
 	public static final String NAMESPACE = "quilt_recipe";
 	public static final RecipeType<AbstractBrewingRecipe<?>> BREWING = RecipeType.register(NAMESPACE + ":brewing");
-	public static final SimplePotionBrewingRecipe.Serializer<SimplePotionBrewingRecipe> POTION_SERIALIZER = Registry.register(Registries.RECIPE_SERIALIZER, new Identifier(NAMESPACE, "potion_brewing"), new SimplePotionBrewingRecipe.Serializer<>(SimplePotionBrewingRecipe::new));
-	public static final CustomPotionBrewingRecipe.Serializer CUSTOM_POTION_SERIALIZER = Registry.register(Registries.RECIPE_SERIALIZER, new Identifier(NAMESPACE, "custom_potion_brewing"), new CustomPotionBrewingRecipe.Serializer(CustomPotionBrewingRecipe::new));
-	public static final PotionItemBrewingRecipe.Serializer POTION_ITEM_SERIALIZER = Registry.register(Registries.RECIPE_SERIALIZER, new Identifier(NAMESPACE, "potion_item_brewing"), new PotionItemBrewingRecipe.Serializer(PotionItemBrewingRecipe::new));
+	public static final SimplePotionBrewingRecipe.Serializer<SimplePotionBrewingRecipe> POTION_SERIALIZER = new SimplePotionBrewingRecipe.Serializer<>(SimplePotionBrewingRecipe::new);
+	public static final CustomPotionBrewingRecipe.Serializer CUSTOM_POTION_SERIALIZER = new CustomPotionBrewingRecipe.Serializer(CustomPotionBrewingRecipe::new);
+	public static final PotionItemBrewingRecipe.Serializer POTION_ITEM_SERIALIZER = new PotionItemBrewingRecipe.Serializer(PotionItemBrewingRecipe::new);
 	/**
 	 * Represents what items can be put into the potion slots of a {@link BrewingStandBlockEntity}.
 	 */
@@ -49,6 +49,10 @@ public class RecipeImpl implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
+		Registry.register(Registries.RECIPE_SERIALIZER, new Identifier(NAMESPACE, "potion_brewing"), POTION_SERIALIZER);
+		Registry.register(Registries.RECIPE_SERIALIZER, new Identifier(NAMESPACE, "custom_potion_brewing"), CUSTOM_POTION_SERIALIZER);
+		Registry.register(Registries.RECIPE_SERIALIZER, new Identifier(NAMESPACE, "potion_item_brewing"), POTION_ITEM_SERIALIZER);
+
 		ResourceLoaderEvents.START_DATA_PACK_RELOAD.register(
 				(server, oldResourceManager) -> {
 					AbstractBrewingRecipe.VALID_INGREDIENTS.clear();
