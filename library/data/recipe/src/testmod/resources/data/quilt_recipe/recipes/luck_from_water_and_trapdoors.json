@@ -1,5 +1,5 @@
 {
-  "type": "quilt_recipe:potion_brewing",
+  "type": "quilt:potion_brewing",
   "ingredient": {
     "tag": "minecraft:trapdoors"
   },

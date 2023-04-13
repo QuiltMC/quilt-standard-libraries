@@ -37,7 +37,7 @@ import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 
 @ApiStatus.Internal
 public class RecipeImpl implements ModInitializer {
-	public static final String NAMESPACE = "quilt_recipe";
+	public static final String NAMESPACE = "quilt";
 	public static final RecipeType<AbstractBrewingRecipe<?>> BREWING = RecipeType.register(NAMESPACE + ":brewing");
 	public static final SimplePotionBrewingRecipe.Serializer<SimplePotionBrewingRecipe> POTION_SERIALIZER = new SimplePotionBrewingRecipe.Serializer<>(SimplePotionBrewingRecipe::new);
 	public static final CustomPotionBrewingRecipe.Serializer CUSTOM_POTION_SERIALIZER = new CustomPotionBrewingRecipe.Serializer(CustomPotionBrewingRecipe::new);

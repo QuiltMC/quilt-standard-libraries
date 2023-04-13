@@ -45,7 +45,7 @@ import org.quiltmc.qsl.recipe.impl.RecipeImpl;
  * <p>
  * The recipe has seven arguments:
  * <ul>
- * 		<li>type: "quilt_recipe:custom_potion_brewing"</li>
+ * 		<li>type: "quilt:custom_potion_brewing"</li>
  * 		<li>group: A string representing the group of the recipe</li>
  * 		<li>ingredient: A valid {@link net.minecraft.recipe.Ingredient ingredient} JSON object.</li>
  * 		<li>input: A valid {@link net.minecraft.util.Identifier identifier} for a {@link Potion potion}.</li>
@@ -68,7 +68,7 @@ import org.quiltmc.qsl.recipe.impl.RecipeImpl;
  * It additionally provides jump boost for a second, and immense strength for half a second.
  * <pre><code>
  * {
- *   "type": "quilt_recipe:custom_potion_brewing",
+ *   "type": "quilt:custom_potion_brewing",
  *   "ingredient": {
  *     "item": "minecraft:dirt"
  *   },

@@ -1,5 +1,5 @@
 {
-  "type": "quilt_recipe:potion_item_brewing",
+  "type": "quilt:potion_item_brewing",
   "ingredient": {
     "tag": "minecraft:logs"
   },

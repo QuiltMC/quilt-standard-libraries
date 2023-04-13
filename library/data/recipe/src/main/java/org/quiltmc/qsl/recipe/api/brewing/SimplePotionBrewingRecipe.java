@@ -39,7 +39,7 @@ import org.quiltmc.qsl.recipe.impl.RecipeImpl;
  * <p>
  * The recipe has six arguments:
  * <ul>
- * 		<li>type: "quilt_recipe:potion_brewing"</li>
+ * 		<li>type: "quilt:potion_brewing"</li>
  * 		<li>group: A string representing the group of the recipe</li>
  * 		<li>ingredient: A valid {@link net.minecraft.recipe.Ingredient ingredient} JSON object.</li>
  * 		<li>input: A valid {@link net.minecraft.util.Identifier identifier} for a {@link Potion potion}.</li>
@@ -52,7 +52,7 @@ import org.quiltmc.qsl.recipe.impl.RecipeImpl;
  * Here is an example recipe for a potion of luck that takes a water potion, a trapdoor of some kind, {@code 5} fuel units, and {@code 123} ticks.
  * <pre><code>
  * {
- *   "type": "quilt_recipe:potion_brewing",
+ *   "type": "quilt:potion_brewing",
  *   "ingredient": {
  *     "tag": "minecraft:trapdoors"
  *   },

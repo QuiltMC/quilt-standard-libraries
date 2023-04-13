@@ -37,7 +37,7 @@ import org.quiltmc.qsl.recipe.impl.RecipeImpl;
  * <p>
  * The recipe has six arguments:
  * <ul>
- * 		<li>type: "quilt_recipe:potion_item_brewing"</li>
+ * 		<li>type: "quilt:potion_item_brewing"</li>
  * 		<li>group: A string representing the group of the recipe</li>
  * 		<li>ingredient: A valid {@link net.minecraft.recipe.Ingredient ingredient} JSON object.</li>
  * 		<li>input: A valid {@link net.minecraft.util.Identifier identifier} for an {@link Item item}.</li>
@@ -50,7 +50,7 @@ import org.quiltmc.qsl.recipe.impl.RecipeImpl;
  * Here is an example recipe for transforming a regular potion into a lingering potion using a log, {@code 20} fuel units, and {@code 100} ticks.
  * <pre><code>
  * {
- *   "type": "quilt_recipe:potion_item_brewing",
+ *   "type": "quilt:potion_item_brewing",
  *   "ingredient": {
  *     "tag": "minecraft:logs"
  *   },
