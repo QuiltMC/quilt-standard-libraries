@@ -68,6 +68,37 @@ PRs that do not fit under any of these categories but are not "trivial fixes" ar
 
 *This is only a summary of QSL's PR process and an explanation of QSL-specific exceptions to it. For exact definitions and more information, see [RFC 39](https://github.com/QuiltMC/rfcs/blob/master/structure/0039-pr-policy.md).*
 
+## Using JetBrains Runtime (optional)
+
+The [JetBrains Runtime](https://github.com/JetBrains/JetBrainsRuntime) is JetBrains' own fork of the OpenJDK that is used for their IDEs.
+It features a number of improvements, including but not limited to [DCEVM](https://ssw.jku.at/dcevm/),
+which allows for hot-swapping code even when changing functions, fields, or lambdas.
+
+Download it from [here](https://github.com/JetBrains/JetBrainsRuntime/releases), making sure you get the latest release of JBR 17 (_not_ 11). 
+Then configure your IDE to use the JBR, and add the VM option `-XX:+EnhancedClassRedefinition` to enable the DCEVM features.
+
+Here are instructions on how to make your IDE use the JBR:
+
+<details>
+<summary>For IntelliJ IDEA</summary>
+todo
+</details>
+
+<details>
+<summary>For Eclipse</summary>
+todo
+</details>
+
+<details>
+<summary>For NetBeans</summary>
+todo
+</details>
+
+<details>
+<summary>For Visual Studio Code</summary>
+todo
+</details>
+
 ## Conventions
 
 ### General
