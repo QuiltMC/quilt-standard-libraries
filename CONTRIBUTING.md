@@ -75,8 +75,8 @@ It features a number of improvements, including but not limited to [DCEVM](https
 which allows for hot-swapping code even when changing functions, fields, or lambdas.
 
 Download it from [here](https://github.com/JetBrains/JetBrainsRuntime/releases),
- making sure you get the latest release of JBR 17 (_not_ 11) and that you download a JBRSDK. 
-Then configure your IDE to use the JBR, and add the VM option `-XX:+EnhancedClassRedefinition` to enable the DCEVM features.
+ making sure you get the latest release of JBR 17 (_not_ 11) and that you download a JBRSDK.  
+Then, configure your IDE to use the JBR, and add the VM option `-XX:+EnhancedClassRedefinition` to enable the DCEVM features.
 
 Here are instructions on how to make your IDE use the JBR:
 
