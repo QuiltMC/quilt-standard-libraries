@@ -38,6 +38,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.collection.Weight;
 import net.minecraft.util.random.RandomGenerator;
 
+import org.quiltmc.qsl.enchantment.api.EnchantmentEvents;
 import org.quiltmc.qsl.enchantment.api.QuiltEnchantableItem;
 import org.quiltmc.qsl.enchantment.api.QuiltEnchantment;
 import org.quiltmc.qsl.enchantment.api.context.EnchantingContext;
@@ -49,6 +50,8 @@ public abstract class EnchantmentHelperMixin {
 	private static void addRandomContext(RandomGenerator random, ItemStack stack, int experienceLevel, boolean treasureAllowed, CallbackInfoReturnable<ItemStack> cir) {
 		if (QuiltEnchantmentHelper.getContext() != null) {
 			QuiltEnchantmentHelper.setContext(QuiltEnchantmentHelper.getContext().withCoreContext(stack, random, treasureAllowed));
+		} else {
+			QuiltEnchantmentHelper.setContext(new EnchantingContext(0, 0, stack, random, treasureAllowed));
 		}
 	}
 
@@ -69,10 +72,12 @@ public abstract class EnchantmentHelperMixin {
 	@Inject(method = "getPossibleEntries", at = @At("RETURN"), cancellable = true)
 	private static void handleCustomEnchants(int power, ItemStack stack, boolean treasureAllowed, CallbackInfoReturnable<List<EnchantmentLevelEntry>> callback) {
 		List<EnchantmentLevelEntry> entries = callback.getReturnValue();
+
 		Registries.ENCHANTMENT.stream().filter((enchantment) -> enchantment instanceof QuiltEnchantment && enchantment.isAvailableForRandomSelection()).forEach((enchantment) -> {
-			for (int level = enchantment.getMaxLevel(); level >= enchantment.getMinLevel(); --level) {
+			for (int level = enchantment.getMaxLevel(); level >= enchantment.getMinLevel(); level--) {
 				boolean validEntry = false;
 				EnchantmentLevelEntry entry = new EnchantmentLevelEntry(enchantment, level);
+
 				if (quilt$checkItemEnchantOverride(stack, enchantment)) {
 					if (QuiltEnchantmentHelper.getContext() != null) {
 						EnchantingContext context = QuiltEnchantmentHelper.getContext().withLevel(level).withPower(power);
@@ -95,6 +100,9 @@ public abstract class EnchantmentHelperMixin {
 				}
 			}
 		});
+
+		EnchantmentEvents.MODIFY_POSSIBLE_ENCHANTMENTS.invoker().modifyPossibleEntries(entries, QuiltEnchantmentHelper.getContext());
+
 		callback.setReturnValue(entries);
 	}
 

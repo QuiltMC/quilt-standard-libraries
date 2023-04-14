@@ -52,7 +52,7 @@ public class ReapingEnchantment extends QuiltEnchantment {
 
 	@Override
 	public boolean isVisible(ItemGroup.Visibility visibility) {
-		return visibility == ItemGroup.Visibility.PARENT_AND_SEARCH_TABS;
+		return visibility == ItemGroup.Visibility.PARENT_TAB_ONLY;
 	}
 
 	@Override

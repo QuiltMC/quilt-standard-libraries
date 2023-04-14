@@ -27,8 +27,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.function.EnchantWithLevelsLootFunction;
 
-import org.quiltmc.qsl.enchantment.api.context.EnchantingContext;
 import org.quiltmc.qsl.enchantment.api.QuiltEnchantmentHelper;
+import org.quiltmc.qsl.enchantment.api.context.WorldEnchantingContext;
 
 @Mixin(EnchantWithLevelsLootFunction.class)
 public class EnchantWithLevelsLootFunctionMixin {
@@ -38,7 +38,7 @@ public class EnchantWithLevelsLootFunctionMixin {
 
 	@Inject(method = "process", at = @At("HEAD"))
 	private void setEnchantingLootContext(ItemStack stack, LootContext context, CallbackInfoReturnable<ItemStack> cir) {
-		QuiltEnchantmentHelper.setContext(new EnchantingContext(0, 0, stack, context.getWorld(), context.getRandom(), this.treasureEnchantmentsAllowed));
+		QuiltEnchantmentHelper.setContext(new WorldEnchantingContext(0, 0, stack, context.getWorld(), context.getRandom(), this.treasureEnchantmentsAllowed));
 	}
 
 	@Inject(method = "process", at = @At("RETURN"))

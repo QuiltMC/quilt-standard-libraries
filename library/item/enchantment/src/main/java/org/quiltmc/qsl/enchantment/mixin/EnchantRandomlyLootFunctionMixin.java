@@ -30,15 +30,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.function.EnchantRandomlyLootFunction;
 
-import org.quiltmc.qsl.enchantment.api.context.EnchantingContext;
 import org.quiltmc.qsl.enchantment.api.QuiltEnchantment;
 import org.quiltmc.qsl.enchantment.api.QuiltEnchantmentHelper;
+import org.quiltmc.qsl.enchantment.api.context.WorldEnchantingContext;
 
 @Mixin(EnchantRandomlyLootFunction.class)
 public class EnchantRandomlyLootFunctionMixin {
 	@Inject(method = "process", at = @At(value = "INVOKE", target = "Lnet/minecraft/registry/Registry;stream()Ljava/util/stream/Stream;"))
 	private void setEnchantingLootContext(ItemStack stack, LootContext context, CallbackInfoReturnable<ItemStack> cir) {
-		QuiltEnchantmentHelper.setContext(new EnchantingContext(0, 0, stack, context.getWorld(), context.getRandom(), true));
+		QuiltEnchantmentHelper.setContext(new WorldEnchantingContext(0, 0, stack, context.getWorld(), context.getRandom(), true));
 	}
 
 	@Redirect(method = "process", at = @At(value = "INVOKE", target = "Ljava/util/stream/Stream;filter(Ljava/util/function/Predicate;)Ljava/util/stream/Stream;", ordinal = 1))

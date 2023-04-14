@@ -20,7 +20,6 @@ import org.jetbrains.annotations.Contract;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.random.RandomGenerator;
-import net.minecraft.world.World;
 
 /**
  * A class that contains contextual information about the enchantment process.
@@ -29,32 +28,30 @@ public class EnchantingContext {
 	protected final int level;
 	protected final int power;
 	protected final ItemStack stack;
-	protected final World world;
 	protected final RandomGenerator random;
 	protected final boolean treasureAllowed;
 
-	public EnchantingContext(int level, int power, ItemStack stack, World world, RandomGenerator random, boolean treasureAllowed) {
+	public EnchantingContext(int level, int power, ItemStack stack, RandomGenerator random, boolean treasureAllowed) {
 		this.level = level;
 		this.power = power;
 		this.stack = stack;
-		this.world = world;
 		this.random = random;
 		this.treasureAllowed = treasureAllowed;
 	}
 
 	@Contract("_->new")
 	public EnchantingContext withLevel(int level) {
-		return new EnchantingContext(level, this.power, this.stack, this.world, this.random, this.treasureAllowed);
+		return new EnchantingContext(level, this.power, this.stack, this.random, this.treasureAllowed);
 	}
 
 	@Contract("_->new")
 	public EnchantingContext withPower(int power) {
-		return new EnchantingContext(this.level, power, this.stack, this.world, this.random, this.treasureAllowed);
+		return new EnchantingContext(this.level, power, this.stack, this.random, this.treasureAllowed);
 	}
 
 	@Contract("_,_,_->new")
 	public EnchantingContext withCoreContext(ItemStack stack, RandomGenerator random, boolean treasureAllowed) {
-		return new EnchantingContext(this.level, this.power, stack, this.world, random, treasureAllowed);
+		return new EnchantingContext(this.level, this.power, stack, random, treasureAllowed);
 	}
 
 	/**
@@ -76,13 +73,6 @@ public class EnchantingContext {
 	 */
 	public ItemStack getStack() {
 		return this.stack;
-	}
-
-	/**
-	 * @return the world in which the item is being enchanted
-	 */
-	public World getWorld() {
-		return this.world;
 	}
 
 	/**

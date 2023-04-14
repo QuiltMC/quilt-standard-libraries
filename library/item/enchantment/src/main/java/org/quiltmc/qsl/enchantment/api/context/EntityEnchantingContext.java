@@ -28,7 +28,7 @@ import net.minecraft.world.World;
  * <p>
  * Contains further information about the entity performing the enchanting.
  */
-public class EntityEnchantingContext<E extends Entity> extends EnchantingContext {
+public class EntityEnchantingContext<E extends Entity> extends WorldEnchantingContext {
 	protected final E entity;
 
 	public EntityEnchantingContext(int level, int power, ItemStack stack, World world, RandomGenerator random, boolean treasureAllowed, E entity) {
