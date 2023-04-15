@@ -33,7 +33,7 @@ import org.quiltmc.qsl.enchantment.api.context.EnchantingContext;
 
 public final class EnchantmentEvents {
 	/**
-	 * An event that is called after random enchantments are generated, but before they are selected to be applied on an item.
+	 * An event that is called after random enchantments are generated (e.g. for an enchantment table), but before they are selected to be applied on an item.
 	 * @see EnchantmentHelper#getPossibleEntries(int, ItemStack, boolean)
 	 */
 	public static final Event<ModifyPossibleEnchantments> MODIFY_POSSIBLE_ENCHANTMENTS = Event.create(ModifyPossibleEnchantments.class, callbacks -> (possibleEnchantments, context) -> {
