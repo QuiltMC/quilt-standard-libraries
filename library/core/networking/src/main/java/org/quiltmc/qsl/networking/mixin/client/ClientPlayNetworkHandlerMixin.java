@@ -35,9 +35,10 @@ import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
 import org.quiltmc.qsl.networking.impl.client.ClientNetworkingImpl;
 import org.quiltmc.qsl.networking.impl.client.ClientPlayNetworkAddon;
 
-// We want to apply a bit earlier than other mods which may not use us in order to prevent refCount issues
+// We want to apply a bit earlier than other mods which may not use us in order to prevent refCount issues.
+// Technically this is the default priority in QSL, but we'll leave this here just in case.
 @ClientOnly
-@Mixin(value = ClientPlayNetworkHandler.class, priority = 999)
+@Mixin(value = ClientPlayNetworkHandler.class, priority = 500)
 abstract class ClientPlayNetworkHandlerMixin implements NetworkHandlerExtensions {
 	@Final
 	@Shadow

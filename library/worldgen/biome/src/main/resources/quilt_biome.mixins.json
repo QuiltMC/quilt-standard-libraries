@@ -2,6 +2,7 @@
   "required": true,
   "package": "org.quiltmc.qsl.worldgen.biome.mixin",
   "compatibilityLevel": "JAVA_17",
+  "mixinPriority": 500,
   "mixins": [
     "C_xmtsvelxMixin",
     "ChunkNoiseSamplerMixin",

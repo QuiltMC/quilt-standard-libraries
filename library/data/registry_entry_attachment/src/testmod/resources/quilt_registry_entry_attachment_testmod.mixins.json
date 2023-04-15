@@ -2,6 +2,7 @@
   "required": true,
   "package": "org.quiltmc.qsl.registry.attachment.test.mixin",
   "compatibilityLevel": "JAVA_17",
+  "mixinPriority": 500,
   "client": [
     "client.DebugHudMixin"
   ],

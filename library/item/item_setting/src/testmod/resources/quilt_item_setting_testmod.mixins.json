@@ -1,6 +1,7 @@
 {
   "package": "org.quiltmc.qsl.item.test.mixin",
   "compatibilityLevel": "JAVA_17",
+  "mixinPriority": 500,
   "injectors": {
     "defaultRequire": 1
   },

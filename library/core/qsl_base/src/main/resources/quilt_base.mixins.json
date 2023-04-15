@@ -2,6 +2,7 @@
   "required": true,
   "package": "org.quiltmc.qsl.base.mixin",
   "compatibilityLevel": "JAVA_17",
+  "mixinPriority": 500,
   "mixins": [
     "BootstrapAccessor",
     "MinecraftServerMixin",

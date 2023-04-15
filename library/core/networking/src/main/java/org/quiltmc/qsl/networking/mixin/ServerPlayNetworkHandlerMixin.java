@@ -36,8 +36,9 @@ import org.quiltmc.qsl.networking.impl.DisconnectPacketSource;
 import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
 import org.quiltmc.qsl.networking.impl.server.ServerPlayNetworkAddon;
 
-// We want to apply a bit earlier than other mods which may not use us in order to prevent refCount issues
-@Mixin(value = ServerPlayNetworkHandler.class, priority = 999)
+// We want to apply a bit earlier than other mods which may not use us in order to prevent refCount issues.
+// Technically this is the default priority in QSL, but we'll leave this here just in case.
+@Mixin(value = ServerPlayNetworkHandler.class, priority = 500)
 abstract class ServerPlayNetworkHandlerMixin implements NetworkHandlerExtensions, DisconnectPacketSource {
 	@Shadow
 	@Final
