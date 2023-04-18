@@ -37,11 +37,11 @@ public class PredicateCodecMap<T> extends CodecMap<CodecAwarePredicate<T>> {
 	private static final Map<Identifier, PredicateCodecProvider> PROVIDERS = HashBiMap.create();
 
 	static {
-		registerProvider(AlwaysPredicate.ID, AlwaysPredicate.PROVIDER);
-		registerProvider(NeverPredicate.ID, NeverPredicate.PROVIDER);
-		registerProvider(AndPredicate.ID, AndPredicate.PROVIDER);
-		registerProvider(OrPredicate.ID, OrPredicate.PROVIDER);
-		registerProvider(NotPredicate.ID, NotPredicate.PROVIDER);
+		registerProvider(AlwaysPredicate.CODEC_ID, AlwaysPredicate.PROVIDER);
+		registerProvider(NeverPredicate.CODEC_ID, NeverPredicate.PROVIDER);
+		registerProvider(AndPredicate.CODEC_ID, AndPredicate.PROVIDER);
+		registerProvider(OrPredicate.CODEC_ID, OrPredicate.PROVIDER);
+		registerProvider(NotPredicate.CODEC_ID, NotPredicate.PROVIDER);
 	}
 
 	private final Codec<CodecAwarePredicate<T>> predicateCodec;

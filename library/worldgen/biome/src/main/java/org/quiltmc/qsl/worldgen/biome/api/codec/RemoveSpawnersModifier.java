@@ -42,7 +42,7 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 public record RemoveSpawnersModifier(CodecAwarePredicate<BiomeSelectionContext> selector,
 									 Set<Identifier> entityTypes,
 									 Set<SpawnGroup> groups) implements BiomeModifier {
-	public static final Identifier ID = new Identifier("quilt", "remove_spawners");
+	public static final Identifier CODEC_ID = new Identifier("quilt", "remove_spawners");
 	public static final Codec<RemoveSpawnersModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(RemoveSpawnersModifier::selector),
 			CodecHelpers.listOrValue(Identifier.CODEC).xmap(Set::copyOf, List::copyOf).fieldOf("entity_types").forGetter(RemoveSpawnersModifier::entityTypes),
@@ -64,6 +64,6 @@ public record RemoveSpawnersModifier(CodecAwarePredicate<BiomeSelectionContext> 
 
 	@Override
 	public Identifier getCodecId() {
-		return ID;
+		return CODEC_ID;
 	}
 }

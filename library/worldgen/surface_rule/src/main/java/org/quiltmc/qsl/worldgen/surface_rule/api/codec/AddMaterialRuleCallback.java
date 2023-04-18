@@ -40,12 +40,12 @@ import org.quiltmc.qsl.worldgen.surface_rule.api.SurfaceRuleEvents;
  */
 public record AddMaterialRuleCallback(SurfaceRules.MaterialRule rule, boolean append,
 									  Optional<List<Identifier>> ids) implements SurfaceRuleEvents.OverworldModifierCallback, SurfaceRuleEvents.NetherModifierCallback, SurfaceRuleEvents.TheEndModifierCallback, SurfaceRuleEvents.GenericModifierCallback {
-	public static final Identifier ID = new Identifier("quilt", "add_material_rule");
+	public static final Identifier CODEC_ID = new Identifier("quilt", "add_material_rule");
 	public static final Codec<AddMaterialRuleCallback> CODEC = RecordCodecBuilder.create(instance -> instance.group(SurfaceRules.MaterialRule.CODEC.fieldOf("rule").forGetter(AddMaterialRuleCallback::rule), Codec.BOOL.optionalFieldOf("append", false).forGetter(AddMaterialRuleCallback::append), CodecHelpers.listOrValue(Identifier.CODEC).optionalFieldOf("ids").forGetter(AddMaterialRuleCallback::ids)).apply(instance, AddMaterialRuleCallback::new));
 
 	@Override
 	public Identifier getCodecId() {
-		return ID;
+		return CODEC_ID;
 	}
 
 	@Override

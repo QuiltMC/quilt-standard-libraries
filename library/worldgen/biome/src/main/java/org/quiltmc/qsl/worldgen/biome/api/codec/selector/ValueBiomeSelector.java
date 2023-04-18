@@ -31,7 +31,7 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
  * lists of biomes, or biome tags.
  */
 public record ValueBiomeSelector(HolderSet<Biome> value) implements CodecAwarePredicate<BiomeSelectionContext> {
-	public static final Identifier ID = new Identifier("quilt", "value");
+	public static final Identifier CODEC_ID = new Identifier("quilt", "value");
 	public static final Codec<ValueBiomeSelector> CODEC = RecordCodecBuilder.create(i -> i.group(
 			Biome.LIST_CODEC.fieldOf("value").forGetter(ValueBiomeSelector::value)
 	).apply(i, ValueBiomeSelector::new));
@@ -44,6 +44,6 @@ public record ValueBiomeSelector(HolderSet<Biome> value) implements CodecAwarePr
 
 	@Override
 	public Identifier getCodecId() {
-		return ID;
+		return CODEC_ID;
 	}
 }

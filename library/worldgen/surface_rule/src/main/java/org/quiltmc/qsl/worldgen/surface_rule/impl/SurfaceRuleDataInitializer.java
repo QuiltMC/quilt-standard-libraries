@@ -27,9 +27,9 @@ import org.quiltmc.qsl.worldgen.surface_rule.api.codec.AddMaterialRuleCallback;
 public class SurfaceRuleDataInitializer implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
-		SurfaceRuleEvents.MODIFY_OVERWORLD_CODECS.register(AddMaterialRuleCallback.ID, AddMaterialRuleCallback.CODEC);
-		SurfaceRuleEvents.MODIFY_NETHER_CODECS.register(AddMaterialRuleCallback.ID, AddMaterialRuleCallback.CODEC);
-		SurfaceRuleEvents.MODIFY_THE_END_CODECS.register(AddMaterialRuleCallback.ID, AddMaterialRuleCallback.CODEC);
-		SurfaceRuleEvents.MODIFY_GENERIC_CODECS.register(AddMaterialRuleCallback.ID, AddMaterialRuleCallback.CODEC);
+		SurfaceRuleEvents.MODIFY_OVERWORLD_CODECS.register(AddMaterialRuleCallback.CODEC_ID, AddMaterialRuleCallback.CODEC);
+		SurfaceRuleEvents.MODIFY_NETHER_CODECS.register(AddMaterialRuleCallback.CODEC_ID, AddMaterialRuleCallback.CODEC);
+		SurfaceRuleEvents.MODIFY_THE_END_CODECS.register(AddMaterialRuleCallback.CODEC_ID, AddMaterialRuleCallback.CODEC);
+		SurfaceRuleEvents.MODIFY_GENERIC_CODECS.register(AddMaterialRuleCallback.CODEC_ID, AddMaterialRuleCallback.CODEC);
 	}
 }

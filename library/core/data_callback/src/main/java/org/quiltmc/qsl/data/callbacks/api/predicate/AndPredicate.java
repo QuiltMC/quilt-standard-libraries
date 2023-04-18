@@ -28,7 +28,7 @@ import net.minecraft.util.Identifier;
  */
 public final class AndPredicate<T> implements CodecAwarePredicate<T> {
 
-	public static final Identifier ID = new Identifier("quilt", "and");
+	public static final Identifier CODEC_ID = new Identifier("quilt", "and");
 	public static final PredicateCodecProvider PROVIDER = AndPredicate::makeCodec;
 	public final List<CodecAwarePredicate<T>> values;
 
@@ -54,6 +54,6 @@ public final class AndPredicate<T> implements CodecAwarePredicate<T> {
 
 	@Override
 	public Identifier getCodecId() {
-		return ID;
+		return CODEC_ID;
 	}
 }

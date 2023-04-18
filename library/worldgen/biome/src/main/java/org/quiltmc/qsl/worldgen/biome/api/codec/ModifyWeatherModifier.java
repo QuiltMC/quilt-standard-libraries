@@ -39,7 +39,7 @@ public record ModifyWeatherModifier(CodecAwarePredicate<BiomeSelectionContext> s
 									Optional<Boolean> hasPrecipitation,
 									Optional<Biome.TemperatureModifier> temperatureModifier) implements BiomeModifier {
 
-	public static final Identifier ID = new Identifier("quilt", "modify_weather");
+	public static final Identifier CODEC_ID = new Identifier("quilt", "modify_weather");
 	public static final Codec<ModifyWeatherModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(ModifyWeatherModifier::selector),
 			Codec.FLOAT.optionalFieldOf("downfall").forGetter(ModifyWeatherModifier::downfall),
@@ -64,6 +64,6 @@ public record ModifyWeatherModifier(CodecAwarePredicate<BiomeSelectionContext> s
 
 	@Override
 	public Identifier getCodecId() {
-		return ID;
+		return CODEC_ID;
 	}
 }

@@ -54,7 +54,7 @@ public record ModifyEffectsModifier(CodecAwarePredicate<BiomeSelectionContext> s
 									Optional<BiomeAdditionsSound> additionsSound,
 									Optional<MusicSound> music) implements BiomeModifier {
 
-	public static final Identifier ID = new Identifier("quilt", "modify_effects");
+	public static final Identifier CODEC_ID = new Identifier("quilt", "modify_effects");
 	public static final Codec<ModifyEffectsModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(ModifyEffectsModifier::selector),
 			Codec.INT.optionalFieldOf("fog_color").forGetter(ModifyEffectsModifier::fogColor),
@@ -95,6 +95,6 @@ public record ModifyEffectsModifier(CodecAwarePredicate<BiomeSelectionContext> s
 
 	@Override
 	public Identifier getCodecId() {
-		return ID;
+		return CODEC_ID;
 	}
 }

@@ -43,7 +43,7 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 public record RemoveCarversModifier(CodecAwarePredicate<BiomeSelectionContext> selector,
 									List<RegistryKey<ConfiguredCarver<?>>> carvers,
 									List<GenerationStep.Carver> steps) implements BiomeModifier {
-	public static final Identifier ID = new Identifier("quilt", "remove_carvers");
+	public static final Identifier CODEC_ID = new Identifier("quilt", "remove_carvers");
 	public static final Codec<RemoveCarversModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(RemoveCarversModifier::selector),
 			CodecHelpers.listOrValue(RegistryKey.codec(RegistryKeys.CONFIGURED_CARVER)).fieldOf("carvers").forGetter(RemoveCarversModifier::carvers),
@@ -66,6 +66,6 @@ public record RemoveCarversModifier(CodecAwarePredicate<BiomeSelectionContext> s
 
 	@Override
 	public Identifier getCodecId() {
-		return ID;
+		return CODEC_ID;
 	}
 }
