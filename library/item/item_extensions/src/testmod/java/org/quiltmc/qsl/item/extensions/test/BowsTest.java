@@ -50,13 +50,12 @@ public class BowsTest implements ModInitializer {
 			return 10f;
 		}
 	};
-	public static final String MOD_ID = "quilt_item_extensions_testmod";
 
 	@Override
-	public void onInitialize(ModContainer container) {
+	public void onInitialize(ModContainer mod) {
 		// Registers a custom bow.
-		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "test_bow"), TEST_BOW);
+		Registry.register(Registries.ITEM, new Identifier(mod.metadata().id(), "test_bow"), TEST_BOW);
 		// Registers a custom crossbow.
-		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "test_crossbow"), TEST_CROSSBOW);
+		Registry.register(Registries.ITEM, new Identifier(mod.metadata().id(), "test_crossbow"), TEST_CROSSBOW);
 	}
 }

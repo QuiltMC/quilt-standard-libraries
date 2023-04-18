@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.item.extension.test;
-
-import static org.quiltmc.qsl.item.extension.test.BowsTest.MOD_ID;
+package org.quiltmc.qsl.item.extensions.test;
 
 import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ArmorItem.ArmorSlot;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -42,14 +40,14 @@ import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 
 public class ArmorKnockbackTest implements ModInitializer {
-	private static final ArmorMaterial KNOCKBACK_RES_ARMOR = new ArmorMaterial() {
+	private static final ArmorMaterial KNOCKBACK_RESISTANCE_ARMOR = new ArmorMaterial() {
 		@Override
-		public int getDurability(EquipmentSlot slot) {
+		public int getDurability(ArmorSlot slot) {
 			return 1;
 		}
 
 		@Override
-		public int getProtectionAmount(EquipmentSlot slot) {
+		public int getProtection(ArmorSlot slot) {
 			return 0;
 		}
 
@@ -70,7 +68,7 @@ public class ArmorKnockbackTest implements ModInitializer {
 
 		@Override
 		public String getName() {
-			return "Knockback Res";
+			return "knockback_resistance";
 		}
 
 		@Override
@@ -84,14 +82,20 @@ public class ArmorKnockbackTest implements ModInitializer {
 		}
 	};
 
-	private static final ArmorItem KNOCKBACK_RES_CHESTPLATE = Registry.register(Registries.ITEM, new Identifier(MOD_ID, "knockback_res_chestplate"), new ArmorItem(KNOCKBACK_RES_ARMOR, EquipmentSlot.CHEST, new Item.Settings().maxCount(1).rarity(Rarity.RARE)) {
+	private static final ArmorItem KNOCKBACK_RESISTANCE_CHESTPLATE = new ArmorItem(
+		KNOCKBACK_RESISTANCE_ARMOR,
+		ArmorSlot.CHESTPLATE,
+		new Item.Settings().maxCount(1).rarity(Rarity.RARE)
+	) {
 		@Override
 		public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
 			tooltip.add(Text.of("This tooltip should mention the knockback resistance."));
 			super.appendTooltip(stack, world, tooltip, context);
 		}
-	});
+	};
 
 	@Override
-	public void onInitialize(ModContainer mod) { }
+	public void onInitialize(ModContainer mod) {
+		Registry.register(Registries.ITEM, new Identifier(mod.metadata().id(), "knockback_resistance_chestplate"), KNOCKBACK_RESISTANCE_CHESTPLATE);
+	}
 }
