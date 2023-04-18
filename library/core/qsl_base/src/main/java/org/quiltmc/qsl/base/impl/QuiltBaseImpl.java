@@ -22,8 +22,10 @@ import org.slf4j.LoggerFactory;
 
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.ModInternal;
 import org.quiltmc.qsl.base.api.event.Event;
 
+@ModInternal
 @ApiStatus.Internal
 public final class QuiltBaseImpl {
 	public static final Logger LOGGER = LoggerFactory.getLogger("quilt_base");
