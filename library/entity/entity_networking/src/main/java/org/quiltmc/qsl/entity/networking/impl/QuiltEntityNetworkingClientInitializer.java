@@ -17,14 +17,15 @@
 package org.quiltmc.qsl.entity.networking.impl;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.entity.Entity;
+import org.slf4j.Logger;
+
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.registry.Registries;
+
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.entity.networking.api.extended_spawn_data.QuiltExtendedSpawnDataEntity;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
-import org.slf4j.Logger;
 
 public class QuiltEntityNetworkingClientInitializer implements ClientModInitializer {
 	private static final Logger logger = LogUtils.getLogger();
@@ -34,16 +35,16 @@ public class QuiltEntityNetworkingClientInitializer implements ClientModInitiali
 		ClientPlayNetworking.registerGlobalReceiver(
 			QuiltEntityNetworkingInitializer.EXTENDED_SPAWN_PACKET,
 			(client, handler, buf, sender) -> {
-				EntitySpawnS2CPacket spawnPacket = new EntitySpawnS2CPacket(buf);
+				var spawnPacket = new EntitySpawnS2CPacket(buf);
 				buf.retain(); // Make sure data is retained and can be read on the client thread
 				client.execute(() -> {
 					try {
 						spawnPacket.apply(handler);
-						Entity spawnedEntity = client.world.getEntityById(spawnPacket.getId());
+						var spawnedEntity = client.world.getEntityById(spawnPacket.getId());
 						if (spawnedEntity instanceof QuiltExtendedSpawnDataEntity extended) {
 							extended.readAdditionalSpawnData(buf);
 						} else {
-							String id = spawnedEntity == null
+							var id = spawnedEntity == null
 								? "null"
 								: Registries.ENTITY_TYPE.getId(spawnedEntity.getType()).toString();
 							logger.error(

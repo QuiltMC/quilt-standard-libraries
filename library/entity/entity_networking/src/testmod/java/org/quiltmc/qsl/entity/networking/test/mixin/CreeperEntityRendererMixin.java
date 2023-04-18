@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.entity.networking.test.mixin;
 
+import org.spongepowered.asm.mixin.Mixin;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -29,8 +31,8 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Axis;
+
 import org.quiltmc.qsl.entity.networking.test.CreeperWithItem;
-import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(CreeperEntityRenderer.class)
 public abstract class CreeperEntityRendererMixin extends MobEntityRenderer<CreeperEntity, CreeperEntityModel<CreeperEntity>> {

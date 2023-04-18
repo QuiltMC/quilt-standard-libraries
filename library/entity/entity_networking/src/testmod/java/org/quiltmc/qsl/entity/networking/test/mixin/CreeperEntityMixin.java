@@ -16,12 +16,6 @@
 
 package org.quiltmc.qsl.entity.networking.test.mixin;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.registry.Registries;
-import org.quiltmc.qsl.entity.networking.api.extended_spawn_data.QuiltExtendedSpawnDataEntity;
-import org.quiltmc.qsl.entity.networking.test.CreeperWithItem;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -34,13 +28,18 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 
+import org.quiltmc.qsl.entity.networking.api.extended_spawn_data.QuiltExtendedSpawnDataEntity;
+import org.quiltmc.qsl.entity.networking.test.CreeperWithItem;
 import org.quiltmc.qsl.entity.networking.test.TrackedDataTestInitializer;
 
 /**
@@ -82,7 +81,7 @@ public class CreeperEntityMixin extends HostileEntity implements QuiltExtendedSp
 
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void quiltTestMod$storeRandomItem(CallbackInfo ci) {
-		Item random = Registries.ITEM.getRandom(this.random).get().value();
+		var random = Registries.ITEM.getRandom(this.random).get().value();
 		this.quiltTestMod$stackToDrop = new ItemStack(random);
 	}
 
