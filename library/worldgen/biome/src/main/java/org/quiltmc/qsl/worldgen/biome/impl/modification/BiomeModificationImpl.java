@@ -62,8 +62,7 @@ public class BiomeModificationImpl {
 
 	final BiomeModificationReloader reloader = new BiomeModificationReloader();
 
-	private BiomeModificationImpl() {
-	}
+	private BiomeModificationImpl() {}
 
 	public void addModifier(Identifier id, ModificationPhase phase, Predicate<BiomeSelectionContext> selector, BiConsumer<BiomeSelectionContext, BiomeModificationContext> modifier) {
 		Objects.requireNonNull(selector);

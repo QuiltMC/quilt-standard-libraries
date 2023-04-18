@@ -37,8 +37,7 @@ import org.quiltmc.qsl.base.api.event.Event;
 public class CodecMap<T extends CodecAware> {
 	private final BiMap<Identifier, Codec<? extends T>> codecs = HashBiMap.create();
 
-	public CodecMap() {
-	}
+	public CodecMap() {}
 
 	/**
 	 * Creates a codec map pre-filled with an operation representing a value that has no effect. For instance, this can

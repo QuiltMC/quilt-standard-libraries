@@ -53,8 +53,7 @@ public class DataCallbackTests implements ModInitializer {
 		}
 	}, BEFORE_PHASE, Event.DEFAULT_PHASE, AFTER_PHASE);
 
-	public static final CodecMap<ServerJoin> JOIN_SERVER_CODECS = new CodecMap<>((handler, sender, server) -> {
-	});
+	public static final CodecMap<ServerJoin> JOIN_SERVER_CODECS = new CodecMap<>((handler, sender, server) -> {});
 	public static DynamicEventCallbackSource<ServerJoin> JOIN_SERVER_DATA = new DynamicEventCallbackSource<>(new Identifier("quilt_data_callback_testmod", "server_join"), JOIN_SERVER_CODECS, ServerJoin.class, SERVER_JOIN, callbacks -> (handler, sender, server) -> {
 		for (ServerJoin callback : callbacks.get()) {
 			callback.onPlayReady(handler, sender, server);

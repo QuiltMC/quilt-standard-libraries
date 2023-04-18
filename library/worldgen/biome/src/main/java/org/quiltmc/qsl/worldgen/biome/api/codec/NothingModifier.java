@@ -32,8 +32,7 @@ public final class NothingModifier implements BiomeModifier {
 	public static final NothingModifier INSTANCE = new NothingModifier();
 	public static final Codec<NothingModifier> CODEC = Codec.unit(INSTANCE);
 
-	private NothingModifier() {
-	}
+	private NothingModifier() {}
 
 	@Override
 	public Identifier getCodecId() {
@@ -46,7 +45,5 @@ public final class NothingModifier implements BiomeModifier {
 	}
 
 	@Override
-	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {
-
-	}
+	public void modify(BiomeSelectionContext selectionContext, BiomeModificationContext modificationContext) {}
 }
