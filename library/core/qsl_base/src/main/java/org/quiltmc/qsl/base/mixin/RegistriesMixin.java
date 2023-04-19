@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.registry.Registries;
 
-import org.quiltmc.loader.api.QuiltLoader;
+import org.quiltmc.loader.api.entrypoint.EntrypointUtil;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 
 @Mixin(Registries.class)
@@ -32,8 +32,6 @@ public abstract class RegistriesMixin {
 	private static void onInitialize(CallbackInfo ci) {
 		BootstrapAccessor.invokeSetOutputStreams(); // We need to make this a bit early in case a mod uses System.out to print stuff.
 
-		for (var initializer : QuiltLoader.getEntrypointContainers(ModInitializer.ENTRYPOINT_KEY, ModInitializer.class)) {
-			initializer.getEntrypoint().onInitialize(initializer.getProvider());
-		}
+		EntrypointUtil.invoke(ModInitializer.ENTRYPOINT_KEY, ModInitializer.class, ModInitializer::onInitialize);
 	}
 }
