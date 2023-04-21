@@ -32,14 +32,14 @@ import org.quiltmc.qsl.item.extensions.api.bow.ProjectileModifyingBowItem;
 import org.quiltmc.qsl.item.extensions.api.crossbow.ProjectileModifyingCrossbowItem;
 
 public class BowsTest implements ModInitializer {
-	public static final Item TEST_BOW = new ProjectileModifyingBowItem(new Item.Settings()) {
+	public static final Item TEST_BOW = new ProjectileModifyingBowItem(new Item.Settings().maxCount(1)) {
 		@Override
 		public void onProjectileShot(ItemStack bowStack, ItemStack arrowStack, LivingEntity user, float pullProgress, PersistentProjectileEntity projectile) {
 			projectile.setPunch(100);
 		}
 	};
 
-	public static final Item TEST_CROSSBOW = new ProjectileModifyingCrossbowItem(new Item.Settings()) {
+	public static final Item TEST_CROSSBOW = new ProjectileModifyingCrossbowItem(new Item.Settings().maxCount(1)) {
 		@Override
 		public void onProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity entity, @NotNull PersistentProjectileEntity persistentProjectileEntity) {
 			persistentProjectileEntity.setDamage(1000);
