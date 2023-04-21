@@ -29,13 +29,12 @@ import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-import org.quiltmc.qsl.registry.api.dynamic.DynamicMetaregistry;
+import org.quiltmc.qsl.registry.api.dynamic.DynamicMetaRegistry;
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.quiltmc.qsl.testing.api.game.QuiltGameTest;
 import org.quiltmc.qsl.testing.api.game.QuiltTestContext;
 
 public class RegistryLibDynamicRegistryTest implements QuiltGameTest, ModInitializer {
-
 	private static final Identifier GREETING_A_ID = new Identifier("quilt_registry_testmod", "greeting_a");
 	private static final Greetings GREETING_A = new Greetings("Welcome to Quilt!", 5);
 	private static final Identifier GREETING_B_ID = new Identifier("quilt_registry_testmod", "greeting_b");
@@ -43,7 +42,7 @@ public class RegistryLibDynamicRegistryTest implements QuiltGameTest, ModInitial
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		DynamicMetaregistry.registerSynced(Greetings.REGISTRY_KEY, Greetings.CODEC);
+		DynamicMetaRegistry.registerSynced(Greetings.REGISTRY_KEY, Greetings.CODEC);
 		RegistryEvents.DYNAMIC_REGISTRY_SETUP.register(context -> context.register(Greetings.REGISTRY_KEY, GREETING_B_ID, () -> GREETING_B));
 	}
 
@@ -70,7 +69,7 @@ public class RegistryLibDynamicRegistryTest implements QuiltGameTest, ModInitial
 	public void dynamicMetaregistryFreezes(QuiltTestContext ctx) {
 		ctx.succeedIf(() -> {
 			try {
-				DynamicMetaregistry.register(RegistryKey.ofRegistry(new Identifier("quilt_registry_testmod", "a")), Codec.INT);
+				DynamicMetaRegistry.register(RegistryKey.ofRegistry(new Identifier("quilt_registry_testmod", "a")), Codec.INT);
 				throw new GameTestException("DynamicMetaregistry should not allow registration after init");
 			} catch (IllegalStateException ignored) { }
 		});

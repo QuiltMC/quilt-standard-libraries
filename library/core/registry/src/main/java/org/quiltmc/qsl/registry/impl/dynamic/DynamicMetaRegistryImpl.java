@@ -21,6 +21,7 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Codec;
+import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -29,7 +30,8 @@ import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.registry.mixin.DynamicRegistrySyncAccessor;
 
-public class DynamicMetaregistryImpl {
+@ApiStatus.Internal
+public class DynamicMetaRegistryImpl {
 	private static boolean frozen;
 	private static final Set<Identifier> MODDED_REGISTRY_IDS = new HashSet<>();
 

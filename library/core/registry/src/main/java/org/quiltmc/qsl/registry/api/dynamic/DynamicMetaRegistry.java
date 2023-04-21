@@ -22,7 +22,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 
-import org.quiltmc.qsl.registry.impl.dynamic.DynamicMetaregistryImpl;
+import org.quiltmc.qsl.registry.impl.dynamic.DynamicMetaRegistryImpl;
 
 /**
  * Allows registration of dynamic registries for use through {@link net.minecraft.registry.DynamicRegistryManager}.
@@ -35,9 +35,9 @@ import org.quiltmc.qsl.registry.impl.dynamic.DynamicMetaregistryImpl;
  * <p>
  * This registry will be frozen at the same time as static registries.
  */
-public final class DynamicMetaregistry {
+public final class DynamicMetaRegistry {
 	/**
-	 * Registers a serverside dynamic registry.
+	 * Registers a server-side dynamic registry.
 	 * <p>
 	 * Entries will be loaded from {@code "data/<namespace>/<registry_namespace>/<registry_path>"} for every datapack
 	 * {@code namespace}, where {@code registry_namespace} and {@code registry_path}'s values are respectively
@@ -49,7 +49,7 @@ public final class DynamicMetaregistry {
 	 * @throws IllegalStateException if this registry of registries already got frozen
 	 */
 	public static <E> void register(RegistryKey<? extends Registry<E>> key, Codec<E> entryCodec) {
-		DynamicMetaregistryImpl.register(key, entryCodec);
+		DynamicMetaRegistryImpl.register(key, entryCodec);
 	}
 
 	/**
@@ -66,7 +66,7 @@ public final class DynamicMetaregistry {
 	 * @see #registerSynced(RegistryKey, Codec, Codec)
 	 */
 	public static <E> void registerSynced(RegistryKey<? extends Registry<E>> key, Codec<E> entryCodec) {
-		DynamicMetaregistryImpl.registerSynced(key, entryCodec, entryCodec);
+		DynamicMetaRegistryImpl.registerSynced(key, entryCodec, entryCodec);
 	}
 
 	/**
@@ -84,6 +84,6 @@ public final class DynamicMetaregistry {
 	 * @see #registerSynced(RegistryKey, Codec)
 	 */
 	public static <E> void registerSynced(RegistryKey<? extends Registry<E>> key, Codec<E> entryCodec, Codec<E> syncCodec) {
-		DynamicMetaregistryImpl.registerSynced(key, entryCodec, syncCodec);
+		DynamicMetaRegistryImpl.registerSynced(key, entryCodec, syncCodec);
 	}
 }
