@@ -13,6 +13,9 @@ qslModule {
 			api("qsl_base")
 			api("resource_loader")
 		}
+		item {
+			testmodOnly("item_extensions")
+		}
 	}
 	clientOnly()
 

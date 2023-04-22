@@ -12,11 +12,13 @@
     "load_type": "always",
     "entrypoints": {
       "init": [
+        "org.quiltmc.qsl.item.extensions.test.ArmorKnockbackTest",
         "org.quiltmc.qsl.item.extensions.test.BowsTest"
       ]
     },
     "depends": [
       "quilt_loader",
+      "quilt_resource_loader",
       "quilt_item_extensions"
     ]
   }

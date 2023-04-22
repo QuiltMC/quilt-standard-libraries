@@ -38,15 +38,14 @@ public enum QuiltArmorMaterial implements ArmorMaterial {
 	@ClientOnly
 	private static final Identifier TEXTURE = EntityRenderingTestmod.id("textures/models/armor/" + NAME);
 
-	// TODO - Properly adapt the ArmorItem.ArmorSlot method implementations to 1.19.4 instead of "get this 1.19.3 thing working"
 	@Override
 	public int getDurability(ArmorItem.ArmorSlot slot) {
-		return BASE_DURABILITY[slot.getEquipmentSlot().getEntitySlotId()] * 50;
+		return BASE_DURABILITY[slot.ordinal()] * 50;
 	}
 
 	@Override
 	public int getProtection(ArmorItem.ArmorSlot slot) {
-		return PROTECTION_AMOUNTS[slot.getEquipmentSlot().getEntitySlotId()];
+		return PROTECTION_AMOUNTS[slot.ordinal()];
 	}
 
 	@Override
