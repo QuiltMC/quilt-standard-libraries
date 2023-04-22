@@ -28,9 +28,11 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
@@ -54,6 +56,8 @@ public abstract class ArmorFeatureRendererMixin {
 	private LivingEntity quilt$capturedEntity;
 	@Unique
 	private EquipmentSlot quilt$capturedSlot;
+	@Unique
+	private Identifier quilt$capturedArmorTexture;
 
 	@Inject(
 			method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
@@ -63,18 +67,9 @@ public abstract class ArmorFeatureRendererMixin {
 		this.quilt$capturedEntity = livingEntity;
 	}
 
-	@Inject(method = "renderArmor", at = @At("HEAD"))
+	@Inject(method = "renderArmor(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/EquipmentSlot;ILnet/minecraft/client/render/entity/model/BipedEntityModel;)V", at = @At("HEAD"))
 	private void quilt$captureSlot(MatrixStack matrices, VertexConsumerProvider vertexConsumers, LivingEntity livingEntity, EquipmentSlot slot, int i, BipedEntityModel<?> bipedEntityModel, CallbackInfo ci) {
 		this.quilt$capturedSlot = slot;
-	}
-
-	@Inject(
-			method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
-			at = @At("RETURN")
-	)
-	private void quilt$uncapture(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, LivingEntity livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-		this.quilt$capturedEntity = null;
-		this.quilt$capturedSlot = null;
 	}
 
 	@Inject(method = "getArmor", at = @At("RETURN"), cancellable = true)
@@ -88,25 +83,85 @@ public abstract class ArmorFeatureRendererMixin {
 
 	@Inject(
 			method = "getArmorTexture",
-			at = @At(value = "INVOKE", target = "Ljava/util/Map;computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;"),
+			at = @At(
+					value = "INVOKE",
+					target = "Ljava/util/Map;computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;"
+			),
 			cancellable = true
 	)
-	private void quilt$getArmorTexture(ArmorItem armorItem, boolean useSecondTexture, @Nullable String suffix, CallbackInfoReturnable<Identifier> cir) {
+	private void quilt$getArmorTexture(ArmorItem item, boolean useSecondLayer, @Nullable String suffix, CallbackInfoReturnable<Identifier> cir) {
 		ItemStack stack = this.quilt$capturedEntity.getEquippedStack(this.quilt$capturedSlot);
 
 		Identifier texture = ARMOR_TEXTURE_CACHE.computeIfAbsent(
-				armorItem.getMaterial().getTexture()
-						+ ArmorTextureUtils.getArmorTextureSuffix(useSecondTexture, suffix)
+				item.getMaterial().getTexture()
+						+ ArmorTextureUtils.getArmorTextureSuffix(useSecondLayer, suffix)
 						+ ".png",
 				Identifier::new);
 		texture = ArmorRenderingRegistryImpl.getArmorTexture(texture, this.quilt$capturedEntity, stack, this.quilt$capturedSlot,
-				useSecondTexture, suffix);
+				useSecondLayer, suffix);
 
-		if (!texture.getPath().contains(".")) {
+		String textureString = texture.toString();
+		if (!textureString.contains(".")) {
 			LOGGER.warn("Armor texture identifier '" + texture + "' is missing file extension, automatically appending '.png'");
-			texture = new Identifier(texture.getNamespace(), texture.getPath() + ".png");
+			textureString += ".png";
 		}
 
-		cir.setReturnValue(ARMOR_TEXTURE_CACHE.computeIfAbsent(texture.toString(), Identifier::new));
+		// save armor texture for modifyArmorRenderLayer
+		cir.setReturnValue(this.quilt$capturedArmorTexture = ARMOR_TEXTURE_CACHE.computeIfAbsent(textureString, Identifier::new));
+	}
+
+	@ModifyArg(
+			method = "renderArmorParts",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/render/item/ItemRenderer;getArmorGlintConsumer(Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/render/RenderLayer;ZZ)Lcom/mojang/blaze3d/vertex/VertexConsumer;"
+			),
+			index = 1
+	)
+	private RenderLayer quilt$modifyArmorRenderLayer(RenderLayer layer) {
+		return ArmorRenderingRegistryImpl.getArmorRenderLayer(layer,
+				this.quilt$capturedEntity,
+				this.quilt$capturedEntity.getEquippedStack(this.quilt$capturedSlot),
+				this.quilt$capturedSlot,
+				this.quilt$capturedArmorTexture);
+	}
+
+	@ModifyArg(
+			method = "renderArmor(Lnet/minecraft/item/ArmorMaterial;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrimPermutation;ZLnet/minecraft/client/render/entity/model/BipedEntityModel;ZFFF)V",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/texture/SpriteAtlasTexture;getSprite(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/texture/Sprite;"
+			),
+			index = 0
+	)
+	private Identifier quilt$modifyArmorTrimTexture(Identifier texture) {
+		// TODO
+		return this.quilt$capturedArmorTexture = texture;
+	}
+
+	@ModifyArg(
+			method = "renderArmor(Lnet/minecraft/item/ArmorMaterial;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrimPermutation;ZLnet/minecraft/client/render/entity/model/BipedEntityModel;ZFFF)V",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/render/item/ItemRenderer;getDirectItemGlintConsumer(Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/render/RenderLayer;ZZ)Lcom/mojang/blaze3d/vertex/VertexConsumer;"
+			),
+			index = 1
+	)
+	private RenderLayer quilt$modifyArmorTrimRenderLayer(RenderLayer layer) {
+		return ArmorRenderingRegistryImpl.getArmorRenderLayer(layer,
+				this.quilt$capturedEntity,
+				this.quilt$capturedEntity.getEquippedStack(this.quilt$capturedSlot),
+				this.quilt$capturedSlot,
+				this.quilt$capturedArmorTexture);
+	}
+
+	@Inject(
+			method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
+			at = @At("RETURN")
+	)
+	private void quilt$uncapture(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, LivingEntity livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
+		this.quilt$capturedEntity = null;
+		this.quilt$capturedSlot = null;
+		this.quilt$capturedArmorTexture = null;
 	}
 }

@@ -29,7 +29,9 @@ import org.quiltmc.qsl.rendering.entity.api.client.ArmorRenderingRegistry;
 public interface ItemArmorRenderingExtensions {
 	@Nullable Event<ArmorRenderingRegistry.TextureProvider> quilt$getTextureProviderEvent();
 	@Nullable Event<ArmorRenderingRegistry.ModelProvider> quilt$getModelProviderEvent();
+	@Nullable Event<ArmorRenderingRegistry.RenderLayerProvider> quilt$getRenderLayerProviderEvent();
 
 	@NotNull Event<ArmorRenderingRegistry.TextureProvider> quilt$getOrCreateTextureProviderEvent();
 	@NotNull Event<ArmorRenderingRegistry.ModelProvider> quilt$getOrCreateModelProviderEvent();
+	@NotNull Event<ArmorRenderingRegistry.RenderLayerProvider> quilt$getOrCreateRenderLayerProviderEvent();
 }
