@@ -40,7 +40,7 @@ public class EntityMixin {
 			new EntitySpawnS2CPacket((Entity) (Object) this).write(buf);
 			extended.writeAdditionalSpawnData(buf);
 			var packet = ServerPlayNetworking.createS2CPacket(
-				QuiltEntityNetworkingInitializer.EXTENDED_SPAWN_PACKET, buf
+				QuiltEntityNetworkingInitializer.EXTENDED_SPAWN_PACKET_ID, buf
 			);
 			cir.setReturnValue(packet);
 		}

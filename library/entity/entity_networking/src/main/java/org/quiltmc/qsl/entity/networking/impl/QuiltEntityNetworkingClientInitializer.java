@@ -33,7 +33,7 @@ public class QuiltEntityNetworkingClientInitializer implements ClientModInitiali
 	@Override
 	public void onInitializeClient(ModContainer mod) {
 		ClientPlayNetworking.registerGlobalReceiver(
-			QuiltEntityNetworkingInitializer.EXTENDED_SPAWN_PACKET,
+			QuiltEntityNetworkingInitializer.EXTENDED_SPAWN_PACKET_ID,
 			(client, handler, buf, sender) -> {
 				var spawnPacket = new EntitySpawnS2CPacket(buf);
 				buf.retain(); // Make sure data is retained and can be read on the client thread

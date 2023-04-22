@@ -46,8 +46,8 @@ public abstract class CreeperEntityRendererMixin extends MobEntityRenderer<Creep
 		super.render(creeper, yaw, tickDelta, matrixStack, vertexConsumerProvider, light);
 
 		float rotation = (creeper.age + tickDelta) / 20;
-		ItemStack stack = ((CreeperWithItem) creeper).getStack();
-		ItemRenderer itemRenderer = MinecraftClient.getInstance().getItemRenderer();
+		var stack = ((CreeperWithItem) creeper).getStack();
+		var itemRenderer = MinecraftClient.getInstance().getItemRenderer();
 
 		matrixStack.push();
 		matrixStack.translate(0, 2, 0);

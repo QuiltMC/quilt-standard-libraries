@@ -77,7 +77,8 @@ public class CreeperEntityMixin extends HostileEntity implements QuiltExtendedSp
 
 	// Make creepers drop a random item on explosion and render it over their head to test extended spawn data
 
-	private ItemStack quiltTestMod$stackToDrop;
+	@Unique
+	private ItemStack quilt$stackToDrop;
 
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void quiltTestMod$storeRandomItem(CallbackInfo ci) {
