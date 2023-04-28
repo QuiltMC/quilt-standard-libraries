@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.data.callbacks.api.predicate;
+package org.quiltmc.qsl.data.callback.api.predicate;
+
+import java.util.List;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -22,27 +24,32 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
 
 /**
- * A predicate that is true only if its referenced predicate of the same type is false.
+ * A predicate that is true if any of its referenced predicates of the same type are true.
  */
-public final class NotPredicate<T> implements CodecAwarePredicate<T> {
+public final class OrPredicate<T> implements CodecAwarePredicate<T> {
 
-	public static final Identifier CODEC_ID = new Identifier("quilt", "not");
-	public static final PredicateCodecProvider PROVIDER = NotPredicate::makeCodec;
-	public final CodecAwarePredicate<T> value;
+	public static final Identifier CODEC_ID = new Identifier("quilt", "or");
+	public static final PredicateCodecProvider PROVIDER = OrPredicate::makeCodec;
+	public final List<CodecAwarePredicate<T>> values;
 
-	private NotPredicate(CodecAwarePredicate<T> value) {
-		this.value = value;
+	private OrPredicate(List<CodecAwarePredicate<T>> values) {
+		this.values = values;
 	}
 
-	private static <T> Codec<NotPredicate<T>> makeCodec(Codec<CodecAwarePredicate<T>> predicateCodec) {
+	private static <T> Codec<OrPredicate<T>> makeCodec(Codec<CodecAwarePredicate<T>> predicateCodec) {
 		return RecordCodecBuilder.create(instance -> instance.group(
-				predicateCodec.fieldOf("value").forGetter(predicate -> predicate.value)
-		).apply(instance, NotPredicate::new));
+				predicateCodec.listOf().fieldOf("values").forGetter(predicate -> predicate.values)
+		).apply(instance, OrPredicate::new));
 	}
 
 	@Override
 	public boolean test(T t) {
-		return !this.value.test(t);
+		for (CodecAwarePredicate<T> predicate : this.values) {
+			if (predicate.test(t)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override

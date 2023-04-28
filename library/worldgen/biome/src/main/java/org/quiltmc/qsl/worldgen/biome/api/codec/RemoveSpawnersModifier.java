@@ -27,8 +27,8 @@ import net.minecraft.entity.SpawnGroup;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
-import org.quiltmc.qsl.data.callbacks.api.CodecHelpers;
-import org.quiltmc.qsl.data.callbacks.api.predicate.CodecAwarePredicate;
+import org.quiltmc.qsl.data.callback.api.CodecHelpers;
+import org.quiltmc.qsl.data.callback.api.predicate.CodecAwarePredicate;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModificationContext;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModifier;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;

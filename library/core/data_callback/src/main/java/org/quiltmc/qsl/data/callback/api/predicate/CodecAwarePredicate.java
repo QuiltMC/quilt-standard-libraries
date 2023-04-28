@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.data.callbacks.api.predicate;
+package org.quiltmc.qsl.data.callback.api.predicate;
 
 import java.util.function.Predicate;
 
-import org.quiltmc.qsl.data.callbacks.api.CodecAware;
+import org.quiltmc.qsl.data.callback.api.CodecAware;
 
 /**
  * A predicate which may be aware of a codec that can be used to encode it.

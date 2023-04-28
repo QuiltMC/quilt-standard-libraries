@@ -11,7 +11,7 @@
     "intermediate_mappings": "net.fabricmc:intermediary",
     "load_type": "always",
     "entrypoints": {
-      "init": "org.quiltmc.qsl.lifecycle.test.event.DataCallbackTests"
+      "init": "org.quiltmc.qsl.data.callback.test.DataCallbackTests"
     },
     "depends": [
       "quilt_loader",

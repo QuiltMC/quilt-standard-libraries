@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.data.callbacks.api;
+package org.quiltmc.qsl.data.callback.api;
 
 import org.jetbrains.annotations.Nullable;
 

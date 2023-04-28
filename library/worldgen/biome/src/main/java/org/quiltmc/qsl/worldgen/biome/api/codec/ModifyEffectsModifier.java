@@ -30,7 +30,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.world.biome.BiomeEffects;
 import net.minecraft.world.biome.BiomeParticleConfig;
 
-import org.quiltmc.qsl.data.callbacks.api.predicate.CodecAwarePredicate;
+import org.quiltmc.qsl.data.callback.api.predicate.CodecAwarePredicate;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModificationContext;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModifier;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;

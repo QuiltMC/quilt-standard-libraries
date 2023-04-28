@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.lifecycle.test.event;
+package org.quiltmc.qsl.data.callback.test;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -31,9 +31,9 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.base.api.event.Event;
-import org.quiltmc.qsl.data.callbacks.api.CodecAware;
-import org.quiltmc.qsl.data.callbacks.api.CodecMap;
-import org.quiltmc.qsl.data.callbacks.api.DynamicEventCallbackSource;
+import org.quiltmc.qsl.data.callback.api.CodecAware;
+import org.quiltmc.qsl.data.callback.api.CodecMap;
+import org.quiltmc.qsl.data.callback.api.DynamicEventCallbackSource;
 import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.ServerPlayConnectionEvents;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
@@ -64,7 +64,8 @@ public class DataCallbackTests implements ModInitializer {
 	public void onInitialize(ModContainer mod) {
 		JOIN_SERVER_CODECS.register(ServerJoinChat.CODEC_ID, ServerJoinChat.CODEC);
 
-		ServerPlayConnectionEvents.JOIN.register(SERVER_JOIN.invoker()::onPlayReady);
+		ServerPlayConnectionEvents.JOIN.register(((handler, sender, server) ->
+			SERVER_JOIN.invoker().onPlayReady(handler, sender, server)));
 
 		JOIN_SERVER_DATA.register(new Identifier(mod.metadata().id(), "after"), new ServerJoinChat("Registered in the after phase from code!", Style.EMPTY), AFTER_PHASE);
 		// This callback is overridden by data and should not fire.

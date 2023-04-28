@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.data.callbacks.api.predicate;
+package org.quiltmc.qsl.data.callback.api;
 
+import java.util.List;
+
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 
 /**
- * A provider of codecs for {@link CodecAwarePredicate}s. A single provider can provide codecs for predicates parameterized
- * by any type.
+ * Helper methods for common codec operations.
  */
-@FunctionalInterface
-public interface PredicateCodecProvider {
+public final class CodecHelpers {
+	private CodecHelpers() {}
+
 	/**
-	 * {@return a specific codec for a predicate parameterized by type R}
-	 *
-	 * @param predicateCodec a general codec that can encode any predicate for the specific type R
-	 * @param <R>            the type of the input tested by the predicate
+	 * {@return a codec that encodes a list of values either from a list or from a single value}
 	 */
-	<R> Codec<? extends CodecAwarePredicate<R>> makeCodec(Codec<CodecAwarePredicate<R>> predicateCodec);
+	public static <A> Codec<List<A>> listOrValue(Codec<A> codec) {
+		return Codec.either(codec, codec.listOf()).xmap(
+				either -> either.map(List::of, list -> list),
+				list -> list.size() == 1 ? Either.left(list.get(0)) : Either.right(list));
+	}
 }

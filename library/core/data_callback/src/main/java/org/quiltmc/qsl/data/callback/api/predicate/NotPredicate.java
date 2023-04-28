@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.data.callbacks.api.predicate;
-
-import java.util.List;
+package org.quiltmc.qsl.data.callback.api.predicate;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -24,32 +22,27 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
 
 /**
- * A predicate that is true if all of its referenced predicates of the same type are true.
+ * A predicate that is true only if its referenced predicate of the same type is false.
  */
-public final class AndPredicate<T> implements CodecAwarePredicate<T> {
+public final class NotPredicate<T> implements CodecAwarePredicate<T> {
 
-	public static final Identifier CODEC_ID = new Identifier("quilt", "and");
-	public static final PredicateCodecProvider PROVIDER = AndPredicate::makeCodec;
-	public final List<CodecAwarePredicate<T>> values;
+	public static final Identifier CODEC_ID = new Identifier("quilt", "not");
+	public static final PredicateCodecProvider PROVIDER = NotPredicate::makeCodec;
+	public final CodecAwarePredicate<T> value;
 
-	private AndPredicate(List<CodecAwarePredicate<T>> values) {
-		this.values = values;
+	private NotPredicate(CodecAwarePredicate<T> value) {
+		this.value = value;
 	}
 
-	private static <T> Codec<AndPredicate<T>> makeCodec(Codec<CodecAwarePredicate<T>> predicateCodec) {
+	private static <T> Codec<NotPredicate<T>> makeCodec(Codec<CodecAwarePredicate<T>> predicateCodec) {
 		return RecordCodecBuilder.create(instance -> instance.group(
-				predicateCodec.listOf().fieldOf("values").forGetter(predicate -> predicate.values)
-		).apply(instance, AndPredicate::new));
+				predicateCodec.fieldOf("value").forGetter(predicate -> predicate.value)
+		).apply(instance, NotPredicate::new));
 	}
 
 	@Override
 	public boolean test(T t) {
-		for (CodecAwarePredicate<T> predicate : this.values) {
-			if (!predicate.test(t)) {
-				return false;
-			}
-		}
-		return true;
+		return !this.value.test(t);
 	}
 
 	@Override

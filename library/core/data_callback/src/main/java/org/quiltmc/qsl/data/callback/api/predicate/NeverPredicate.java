@@ -14,29 +14,29 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.data.callbacks.api.predicate;
+package org.quiltmc.qsl.data.callback.api.predicate;
 
 import com.mojang.serialization.Codec;
 
 import net.minecraft.util.Identifier;
 
 /**
- * A predicate that is always true.
+ * A predicate that is never true.
  */
-public final class AlwaysPredicate<T> implements CodecAwarePredicate<T> {
+public final class NeverPredicate<T> implements CodecAwarePredicate<T> {
 
-	public static final Identifier CODEC_ID = new Identifier("quilt", "always");
-	public static final PredicateCodecProvider PROVIDER = AlwaysPredicate::makeCodec;
+	public static final Identifier CODEC_ID = new Identifier("quilt", "never");
+	public static final PredicateCodecProvider PROVIDER = NeverPredicate::makeCodec;
 
-	private AlwaysPredicate() {}
+	private NeverPredicate() {}
 
-	private static <T> Codec<AlwaysPredicate<T>> makeCodec(Codec<CodecAwarePredicate<T>> predicateCodec) {
-		return Codec.unit(new AlwaysPredicate<>());
+	private static <T> Codec<NeverPredicate<T>> makeCodec(Codec<CodecAwarePredicate<T>> predicateCodec) {
+		return Codec.unit(new NeverPredicate<>());
 	}
 
 	@Override
 	public boolean test(T t) {
-		return true;
+		return false;
 	}
 
 	@Override
