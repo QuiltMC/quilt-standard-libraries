@@ -146,7 +146,7 @@ public final class SurfaceRuleEvents {
 	 * Can be used to register event callbacks alongside an identifier, allowing them to be overridden with data-packs.
 	 */
 	public static final DynamicEventCallbackSource<GenericModifierCallback> MODIFY_GENERIC_DATA = new DynamicEventCallbackSource<>(
-			new Identifier("quilt", "generic_surface_rules"),
+			new Identifier("quilt", "surface_rules/generic"),
 			MODIFY_GENERIC_CODECS,
 			GenericModifierCallback.class,
 			MODIFY_GENERIC,
