@@ -31,13 +31,17 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
 /**
  * A biome modifier that modifies the weather of a biome.
+ * <p>
+ * The biome modifier identifier is {@code quilt:modify_weather}.
  *
  * @see BiomeModificationContext.WeatherContext
  */
-public record ModifyWeatherModifier(CodecAwarePredicate<BiomeSelectionContext> selector,
-									Optional<Float> downfall, Optional<Float> temperature,
-									Optional<Boolean> hasPrecipitation,
-									Optional<Biome.TemperatureModifier> temperatureModifier) implements BiomeModifier {
+public record ModifyWeatherModifier(
+		CodecAwarePredicate<BiomeSelectionContext> selector,
+		Optional<Float> downfall, Optional<Float> temperature,
+		Optional<Boolean> hasPrecipitation,
+		Optional<Biome.TemperatureModifier> temperatureModifier
+) implements BiomeModifier {
 
 	public static final Identifier CODEC_ID = new Identifier("quilt", "modify_weather");
 	public static final Codec<ModifyWeatherModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(

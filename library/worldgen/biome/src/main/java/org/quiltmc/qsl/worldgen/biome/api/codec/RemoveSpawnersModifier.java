@@ -34,14 +34,18 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeModifier;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
 /**
- * A biome modifier that removes mob spawners from biomes
+ * A biome modifier that removes mob spawners from biomes.
+ * <p>
+ * The biome modifier identifier is {@code quilt:remove_spawners}.
  *
  * @param entityTypes identifiers of the entity types to remove
  * @param groups      the spawn groups to remove the spawners from; if not provided, defaults to all spawn groups
  */
-public record RemoveSpawnersModifier(CodecAwarePredicate<BiomeSelectionContext> selector,
-									 Set<Identifier> entityTypes,
-									 Set<SpawnGroup> groups) implements BiomeModifier {
+public record RemoveSpawnersModifier(
+		CodecAwarePredicate<BiomeSelectionContext> selector,
+		Set<Identifier> entityTypes,
+		Set<SpawnGroup> groups
+) implements BiomeModifier {
 	public static final Identifier CODEC_ID = new Identifier("quilt", "remove_spawners");
 	public static final Codec<RemoveSpawnersModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(RemoveSpawnersModifier::selector),

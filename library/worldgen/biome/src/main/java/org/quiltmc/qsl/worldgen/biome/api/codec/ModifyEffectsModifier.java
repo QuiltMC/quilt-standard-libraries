@@ -37,22 +37,26 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
 /**
  * A biome modifier that modifies the effects of a biome.
+ * <p>
+ * The biome modifier identifier is {@code quilt:modify_effects}.
  *
  * @see BiomeModificationContext.EffectsContext
  */
-public record ModifyEffectsModifier(CodecAwarePredicate<BiomeSelectionContext> selector,
-									Optional<Integer> fogColor,
-									Optional<Integer> waterColor,
-									Optional<Integer> waterFogColor,
-									Optional<Integer> skyColor,
-									Optional<Integer> foliageColor,
-									Optional<Integer> grassColor,
-									Optional<BiomeEffects.GrassColorModifier> grassColorModifier,
-									Optional<BiomeParticleConfig> particleConfig,
-									Optional<Holder<SoundEvent>> ambientSound,
-									Optional<BiomeMoodSound> moodSound,
-									Optional<BiomeAdditionsSound> additionsSound,
-									Optional<MusicSound> music) implements BiomeModifier {
+public record ModifyEffectsModifier(
+		CodecAwarePredicate<BiomeSelectionContext> selector,
+		Optional<Integer> fogColor,
+		Optional<Integer> waterColor,
+		Optional<Integer> waterFogColor,
+		Optional<Integer> skyColor,
+		Optional<Integer> foliageColor,
+		Optional<Integer> grassColor,
+		Optional<BiomeEffects.GrassColorModifier> grassColorModifier,
+		Optional<BiomeParticleConfig> particleConfig,
+		Optional<Holder<SoundEvent>> ambientSound,
+		Optional<BiomeMoodSound> moodSound,
+		Optional<BiomeAdditionsSound> additionsSound,
+		Optional<MusicSound> music
+) implements BiomeModifier {
 
 	public static final Identifier CODEC_ID = new Identifier("quilt", "modify_effects");
 	public static final Codec<ModifyEffectsModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(

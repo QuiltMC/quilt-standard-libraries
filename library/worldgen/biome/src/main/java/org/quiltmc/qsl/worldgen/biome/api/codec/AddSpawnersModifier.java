@@ -33,15 +33,19 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeModifier;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
 /**
- * A biome modifier that adds mob spawners to biomes
+ * A biome modifier that adds mob spawners to biomes.
+ * <p>
+ * The biome modifier identifier is {@code quilt:add_spawners}.
  *
  * @param spawners the spawners to add
  * @param group    the spawn group to add the spawners to; if not provided, this is determined by the spawner's entity
  *                 type's spawn group
  */
-public record AddSpawnersModifier(CodecAwarePredicate<BiomeSelectionContext> selector,
-								  List<SpawnSettings.SpawnEntry> spawners,
-								  Optional<SpawnGroup> group) implements BiomeModifier {
+public record AddSpawnersModifier(
+		CodecAwarePredicate<BiomeSelectionContext> selector,
+		List<SpawnSettings.SpawnEntry> spawners,
+		Optional<SpawnGroup> group
+) implements BiomeModifier {
 	public static final Identifier CODEC_ID = new Identifier("quilt", "add_spawners");
 	public static final Codec<AddSpawnersModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(AddSpawnersModifier::selector),

@@ -35,13 +35,17 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
 /**
  * A biome modifier that adds features to a biome.
+ * <p>
+ * The biome modifier identifier is {@code quilt:add_features}.
  *
  * @param step     the feature generation step to add the features to
  * @param features registry keys for the features to add
  */
-public record AddFeaturesModifier(CodecAwarePredicate<BiomeSelectionContext> selector,
-								  List<RegistryKey<PlacedFeature>> features,
-								  GenerationStep.Feature step) implements BiomeModifier {
+public record AddFeaturesModifier(
+		CodecAwarePredicate<BiomeSelectionContext> selector,
+		List<RegistryKey<PlacedFeature>> features,
+		GenerationStep.Feature step
+) implements BiomeModifier {
 	public static final Identifier CODEC_ID = new Identifier("quilt", "add_features");
 	public static final Codec<AddFeaturesModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(AddFeaturesModifier::selector),

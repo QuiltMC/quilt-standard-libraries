@@ -34,14 +34,20 @@ import org.quiltmc.qsl.worldgen.surface_rule.api.SurfaceRuleEvents;
  * A surface rule callback that adds a material rule to a surface rule's list of material rules.
  *
  * @param rule   the material rule to add
- * @param append if true, the rule will be added to the end of the list of material rules. If false, the rule will be added to the beginning.
+ * @param append if {@code true}, the rule will be added to the end of the list of material rules. If {@code false}, the rule will be added to the beginning.
  * @param ids    one or more chunk generator settings identifiers which this callback should be applied to. If not present,
  *               the callback will be applied to all chunk generator settings.
  */
-public record AddMaterialRuleCallback(SurfaceRules.MaterialRule rule, boolean append,
-									  Optional<List<Identifier>> ids) implements SurfaceRuleEvents.OverworldModifierCallback, SurfaceRuleEvents.NetherModifierCallback, SurfaceRuleEvents.TheEndModifierCallback, SurfaceRuleEvents.GenericModifierCallback {
+public record AddMaterialRuleCallback(
+		SurfaceRules.MaterialRule rule, boolean append, Optional<List<Identifier>> ids
+) implements SurfaceRuleEvents.OverworldModifierCallback, SurfaceRuleEvents.NetherModifierCallback, SurfaceRuleEvents.TheEndModifierCallback,
+		SurfaceRuleEvents.GenericModifierCallback {
 	public static final Identifier CODEC_ID = new Identifier("quilt", "add_material_rule");
-	public static final Codec<AddMaterialRuleCallback> CODEC = RecordCodecBuilder.create(instance -> instance.group(SurfaceRules.MaterialRule.CODEC.fieldOf("rule").forGetter(AddMaterialRuleCallback::rule), Codec.BOOL.optionalFieldOf("append", false).forGetter(AddMaterialRuleCallback::append), CodecHelpers.listOrValue(Identifier.CODEC).optionalFieldOf("ids").forGetter(AddMaterialRuleCallback::ids)).apply(instance, AddMaterialRuleCallback::new));
+	public static final Codec<AddMaterialRuleCallback> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+			SurfaceRules.MaterialRule.CODEC.fieldOf("rule").forGetter(AddMaterialRuleCallback::rule),
+			Codec.BOOL.optionalFieldOf("append", false).forGetter(AddMaterialRuleCallback::append),
+			CodecHelpers.listOrValue(Identifier.CODEC).optionalFieldOf("ids").forGetter(AddMaterialRuleCallback::ids)
+	).apply(instance, AddMaterialRuleCallback::new));
 
 	@Override
 	public Identifier getCodecId() {

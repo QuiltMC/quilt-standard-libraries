@@ -26,6 +26,13 @@ import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectionContext;
 
 /**
  * A biome modifier that does nothing; useful to override existing biome modifiers with a datapack.
+ * <p>
+ * The biome modifier identifier is {@code quilt:nothing}.
+ * <p>
+ * Example:
+ * <pre><code>{
+ *     "type": "quilt:nothing"
+ * }</code></pre>
  */
 public final class NothingModifier implements BiomeModifier {
 	public static final Identifier CODEC_ID = new Identifier("quilt", "nothing");
