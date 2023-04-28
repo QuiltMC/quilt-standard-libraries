@@ -125,7 +125,7 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 			case HELLO_PING -> {
 				if (this.syncVersion != -1) {
 					ServerRegistrySync.sendSyncPackets(this.connection, this.player, this.syncVersion);
-				} else if (ServerRegistrySync.supportFabric && ((ChannelInfoHolder) this.connection).getPendingChannelsNames().contains(ServerFabricRegistrySync.ID)) {
+				} else if (ServerRegistrySync.forceFabricFallback || (ServerRegistrySync.supportFabric && ((ChannelInfoHolder) this.connection).getPendingChannelsNames().contains(ServerFabricRegistrySync.ID))) {
 					ServerFabricRegistrySync.sendSyncPackets(this.connection);
 					this.syncVersion = -2;
 				}
@@ -152,6 +152,12 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 			this.syncVersion = packet.getData().readVarInt();
 		} else if (packet.getChannel().equals(ClientPackets.SYNC_FAILED)) {
 			LOGGER.info("Disconnecting {} due to sync failure of {} registry", this.player.getGameProfile().getName(), packet.getData().readIdentifier());
+		} else if (packet.getChannel().equals(ClientPackets.UNKNOWN_ENTRY)) {
+			var data = packet.getData();
+			var registry = data.readIdentifier();
+			var entries = data.readIntList();
+
+			// todo: Store this somewhere and expose as an api
 		} else {
 			this.delayedPackets.add(new CustomPayloadC2SPacket(packet.getChannel(), new PacketByteBuf(packet.getData().copy())));
 		}
@@ -162,14 +168,18 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 		LOGGER.info("{} lost connection: {}", this.player.getName().getString(), reason.getString());
 
 		for (var packet : this.delayedPackets) {
-			packet.getData().release();
+			if (packet.getData().refCnt() != 0) {
+				packet.getData().release(packet.getData().refCnt());
+			}
 		}
 	}
 
 	public void disconnect(Text reason) {
 		try {
 			for (var packet : this.delayedPackets) {
-				packet.getData().release();
+				if (packet.getData().refCnt() != 0) {
+					packet.getData().release(packet.getData().refCnt());
+				}
 			}
 
 			this.connection.send(new DisconnectS2CPacket(reason),

@@ -47,6 +47,24 @@ public final class ClientPackets {
 	 */
 	public static final Identifier SYNC_FAILED = id("registry_sync/sync_failed");
 
+	/**
+	 * Sent after synchronization of selected registry.
+	 * Contains list of (optional) unknown entries.
+	 * It's sent after successful validation of {@link ServerPackets#REGISTRY_APPLY}
+	 * Requires protocol version 3 or higher.
+	 *
+	 * <pre><code>
+	 * {
+	 *     Registry: Identifier
+	 *     Count of Entries: VarInt
+	 * 	   [
+	 * 	      Server Id: VarInt
+	 *     ]
+	 * }
+	 * </code></pre>
+	 */
+	public static final Identifier UNKNOWN_ENTRY = id("registry_sync/unknown_entry");
+
 	private static Identifier id(String path) {
 		return new Identifier("qsl", path);
 	}

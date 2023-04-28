@@ -34,5 +34,11 @@ public class RegistryConfig extends WrappedConfig {
 
 		@Comment("Allows players with Fabric API to connect, as long as they have all required mods.")
 		public final boolean support_fabric_api_protocol = true;
+
+		@Comment("Forces unknown clients to use fabric registry sync fallback, disabling vanilla client joining prevention.")
+		public final boolean force_fabric_api_protocol_fallback = false;
+
+		@Comment("Disables registry sync requirement. USE ON YOUR OWN RISK!")
+		public final boolean disable_registry_sync = false;
 	}
 }

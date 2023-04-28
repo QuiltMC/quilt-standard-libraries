@@ -26,7 +26,7 @@ import net.minecraft.util.Identifier;
  */
 @ApiStatus.Internal
 public final class ServerPackets {
-	public static final IntSet SUPPORTED_VERSIONS = IntSet.of(2);
+	public static final IntSet SUPPORTED_VERSIONS = IntSet.of(2, 3);
 
 	/**
 	 * Starts registry sync.
@@ -84,6 +84,29 @@ public final class ServerPackets {
 	 * Applies changes to current registry, doesn't have any data.
 	 */
 	public static final Identifier REGISTRY_APPLY = id("registry_sync/registry_apply");
+
+	/**
+	 * This packet requests client to validate ids of {@link net.minecraft.block.Block#STATE_IDS} to prevent id mismatch.
+	 * It might not send all states in single packet! It needs to be verified as is (aka, ids matter, count doesn't).
+	 *
+	 * <pre><code>
+	 * {
+	 *   Count of Entries: VarInt
+	 *   [
+	 *     Block Id: VarInt
+	 *     Count of Entries: VarInt
+	 *     [
+	 *       BlockState Id: VarInt
+	 *     ]
+	 *   ]
+	 * }
+	 * </code></pre>
+	 */
+	public static final Identifier VALIDATE_BLOCK_STATES = id("registry_sync/validate/block_states");
+	/**
+	 * Same structure as {@link ServerPackets#VALIDATE_BLOCK_STATES}, but for FluidStates
+	 */
+	public static final Identifier VALIDATE_FLUID_STATES = id("registry_sync/validate/fluid_states");
 
 	/**
 	 * Applies changes to current registry, doesn't have any data.

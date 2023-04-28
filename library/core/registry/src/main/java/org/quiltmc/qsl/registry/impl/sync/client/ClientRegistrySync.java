@@ -20,8 +20,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiPredicate;
 
 import com.mojang.logging.LogUtils;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+import net.minecraft.block.BlockState;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.registry.Registry;
+import net.minecraft.util.collection.IdList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -63,7 +70,7 @@ public final class ClientRegistrySync {
 	private static Map<String, Collection<SynchronizedRegistry.SyncEntry>> syncMap;
 
 	@SuppressWarnings({"FieldCanBeLocal", "unused"})
-	private static int syncVersion;
+	private static int syncVersion = -1;
 	@SuppressWarnings("unused")
 	private static int currentCount;
 	@SuppressWarnings("unused")
@@ -77,6 +84,8 @@ public final class ClientRegistrySync {
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_APPLY, ClientRegistrySync::handleApplyPacket);
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.END, ClientRegistrySync::handleGoodbyePacket);
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_RESTORE, ClientRegistrySync::handleRestorePacket);
+		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.VALIDATE_BLOCK_STATES, handleStateValidation(Registries.BLOCK, Block.STATE_IDS, BlockState::isOf));
+		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.VALIDATE_FLUID_STATES, handleStateValidation(Registries.FLUID, Fluid.STATE_IDS, FluidState::isOf));
 	}
 
 	private static void handleHelloPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
@@ -110,10 +119,19 @@ public final class ClientRegistrySync {
 		var buf = PacketByteBufs.create();
 		buf.writeIdentifier(identifier);
 
-		((ClientLoginNetworkHandlerAccessor) handler).getConnection().send(ClientPlayNetworking.createC2SPacket(ClientPackets.SYNC_FAILED, buf));
+		handler.sendPacket(ClientPlayNetworking.createC2SPacket(ClientPackets.SYNC_FAILED, buf));
+	}
+
+	private static void sendSyncUnknownEntriesPacket(ClientPlayNetworkHandler handler, Identifier identifier, IntList entries) {
+		var buf = PacketByteBufs.create();
+		buf.writeIdentifier(identifier);
+		buf.writeIntList(entries);
+
+		handler.sendPacket(ClientPlayNetworking.createC2SPacket(ClientPackets.UNKNOWN_ENTRY, buf));
 	}
 
 	private static void handleGoodbyePacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
+		syncVersion = -1;
 	}
 
 	private static void handleStartPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
@@ -140,7 +158,19 @@ public final class ClientRegistrySync {
 
 	private static void handleDataPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
 		if (currentRegistry == null || syncMap == null) {
-			if (!optionalRegistry) {
+			if (optionalRegistry) {
+				if (syncMap != null && !syncMap.isEmpty()) {
+					var optionalMissing = new IntArrayList(Math.max(currentCount, 0));
+
+					for (var entry : syncMap.values()) {
+						for (var value : entry) {
+							optionalMissing.add(value.rawId());
+						}
+					}
+
+					sendSyncUnknownEntriesPacket(handler, currentRegistryId, optionalMissing);
+				}
+			} else {
 				LOGGER.warn("Received sync data without specifying registry!");
 			}
 
@@ -175,24 +205,59 @@ public final class ClientRegistrySync {
 		var reg = currentRegistry;
 		var missingEntries = currentRegistry.quilt$applySyncMap(syncMap);
 
-		boolean disconnect = false;
-
-		if (!optionalRegistry) {
-			disconnect = checkMissing(handler, currentRegistryId, missingEntries);
+		if (!optionalRegistry && checkMissingAndDisconnect(handler, currentRegistryId, missingEntries)) {
+			clear();
+			return;
 		}
 
-		if (!disconnect) {
-			if (reg == Registries.BLOCK) {
-				rebuildBlocks(client);
-			} else if (reg == Registries.FLUID) {
-				rebuildFluidStates();
-			} else if (reg == Registries.ITEM) {
-				rebuildItems(client);
-			} else if (reg == Registries.PARTICLE_TYPE) {
-				rebuildParticles(client);
+		if (reg == Registries.BLOCK) {
+			rebuildBlocks(client);
+		} else if (reg == Registries.FLUID) {
+			rebuildFluidStates();
+		} else if (reg == Registries.ITEM) {
+			rebuildItems(client);
+		} else if (reg == Registries.PARTICLE_TYPE) {
+			rebuildParticles(client);
+		}
+
+		if (syncVersion >= 3) {
+			var optionalMissing = new IntArrayList();
+			for (var entry : missingEntries) {
+				if (RegistryFlag.isOptional(entry.flags())) {
+					optionalMissing.add(entry.rawId());
+				}
+			}
+
+			if (!optionalMissing.isEmpty()){
+				sendSyncUnknownEntriesPacket(handler, currentRegistryId, optionalMissing);
 			}
 		}
 
+		clear();
+	}
+
+
+	private static <T, S> ClientPlayNetworking.ChannelReceiver handleStateValidation(Registry<T> registry, IdList<S> stateList, BiPredicate<S, T> isOf) {
+		return (MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) -> {
+			var count = buf.readVarInt();
+
+			while (count-- > 0) {
+				var block = registry.get(buf.readVarInt());
+
+				var stateCount = buf.readVarInt();
+
+				while (stateCount-- > 0) {
+					var state = stateList.get(buf.readVarInt());
+					if (state == null || !isOf.test(state, block)) {
+						disconnect(handler, getMessage("missing_entries", "Client is missing required states! Mismatched mods?"));
+						LOGGER.warn("Failed to match state of " + registry.getId(block));
+					}
+				}
+			}
+		};
+	}
+
+	private static void clear() {
 		currentRegistry = null;
 		currentRegistryId = null;
 		currentCount = 0;
@@ -249,7 +314,7 @@ public final class ClientRegistrySync {
 		}
 	}
 
-	public static boolean checkMissing(ClientPlayNetworkHandler handler, Identifier registry, Collection<SynchronizedRegistry.MissingEntry> missingEntries) {
+	public static boolean checkMissingAndDisconnect(ClientPlayNetworkHandler handler, Identifier registry, Collection<SynchronizedRegistry.MissingEntry> missingEntries) {
 		boolean disconnect = false;
 
 		for (var entry : missingEntries) {
@@ -260,8 +325,11 @@ public final class ClientRegistrySync {
 		}
 
 		if (disconnect) {
-			sendSyncFailedPacket(handler, registry);
-			((ClientLoginNetworkHandlerAccessor) handler).getConnection().disconnect(getMessage("missing_entries", "Client registry is missing entries! Mismatched mods?"));
+			if (syncVersion != -1) {
+				sendSyncFailedPacket(handler, registry);
+			}
+
+			disconnect(handler, getMessage("missing_entries", "Client registry is missing entries! Mismatched mods?"));
 			var builder = new StringBuilder("Missing entries for registry \"" + registry + "\":\n");
 
 			for (var entry : missingEntries) {
@@ -277,6 +345,10 @@ public final class ClientRegistrySync {
 		}
 
 		return disconnect;
+	}
+
+	private static void disconnect(ClientPlayNetworkHandler handler, Text reason) {
+		handler.getConnection().disconnect(reason);
 	}
 
 	private static void handleRestorePacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {

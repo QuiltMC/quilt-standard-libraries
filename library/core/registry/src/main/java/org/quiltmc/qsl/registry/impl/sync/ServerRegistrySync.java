@@ -17,9 +17,24 @@
 package org.quiltmc.qsl.registry.impl.sync;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.IntFunction;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.objects.Object2IntFunction;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+import net.minecraft.registry.SimpleRegistry;
+import net.minecraft.util.collection.IdList;
+import net.minecraft.util.collection.IndexedIterable;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.network.ClientConnection;
@@ -31,12 +46,17 @@ import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
+import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
 import org.quiltmc.qsl.registry.impl.RegistryConfig;
 
 @ApiStatus.Internal
 public final class ServerRegistrySync {
+	private static final int MAX_SAFE_PACKET_SIZE = 734003;
+
 	public static Text noRegistrySyncMessage = Text.empty();
 	public static boolean supportFabric = false;
+	public static boolean forceFabricFallback = false;
+	public static boolean forceDisable = false;
 
 	public static void readConfig() {
 		try {
@@ -46,6 +66,8 @@ public final class ServerRegistrySync {
 		}
 
 		supportFabric = RegistryConfig.INSTANCE.registry_sync.support_fabric_api_protocol;
+		forceFabricFallback = RegistryConfig.INSTANCE.registry_sync.force_fabric_api_protocol_fallback;
+		forceDisable = RegistryConfig.INSTANCE.registry_sync.disable_registry_sync;
 	}
 
 	public static boolean isNamespaceVanilla(String namespace) {
@@ -53,6 +75,10 @@ public final class ServerRegistrySync {
 	}
 
 	public static boolean shouldSync() {
+		if (forceDisable) {
+			return false;
+		}
+
 		for (var registry : Registries.REGISTRY) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
 					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
@@ -92,7 +118,7 @@ public final class ServerRegistrySync {
 						packetData.computeIfAbsent(key, (k) -> new ArrayList<>()).add(entry);
 						dataLength += entry.path().length() + 4 + 1;
 
-						if (dataLength > 524288) {
+						if (dataLength > MAX_SAFE_PACKET_SIZE) {
 							sendDataPacket(connection, packetData);
 							dataLength = 0;
 						}
@@ -107,8 +133,63 @@ public final class ServerRegistrySync {
 			}
 		}
 
+		if (syncVersion >= 3) {
+			sendStateValidationRequest(connection, ServerPackets.VALIDATE_BLOCK_STATES, Registries.BLOCK, Block.STATE_IDS, block -> block.getStateManager().getStates());
+			sendStateValidationRequest(connection, ServerPackets.VALIDATE_FLUID_STATES, Registries.FLUID, Fluid.STATE_IDS, fluid -> fluid.getStateManager().getStates());
+		}
+
 		connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.END, PacketByteBufs.empty()));
 	}
+
+	private static <T, B> void sendStateValidationRequest(ClientConnection connection, Identifier packetId, Registry<T> registry, IdList<B> stateList, Function<T, Collection<B>> toStates) {
+		int dataLength = 0;
+		var packetData = new Int2ObjectArrayMap<IntList>();
+
+		for (var key : registry) {
+			if (RegistrySynchronization.isEntryOptional((SimpleRegistry<? super T>) registry, key)) {
+				continue;
+			}
+
+			var blockId = registry.getRawId(key);
+			dataLength += PacketByteBuf.getVarIntLength(blockId);
+			var states = toStates.apply(key);
+			var ids = new IntArrayList(states.size());
+			packetData.put(blockId, ids);
+			dataLength += PacketByteBuf.getVarIntLength(states.size());
+
+			for (var entry : states) {
+				var stateId = stateList.getRawId(entry);
+				dataLength += PacketByteBuf.getVarIntLength(stateId);
+				ids.add(stateId);
+
+				if (dataLength > MAX_SAFE_PACKET_SIZE) {
+					sendStateValidationPacket(connection, packetId, packetData);
+					dataLength = PacketByteBuf.getVarIntLength(states.size()) + PacketByteBuf.getVarIntLength(blockId);
+					ids = new IntArrayList(states.size());
+					packetData.put(blockId, ids);
+				}
+			}
+		}
+
+		if (packetData.size() > 0) {
+			sendStateValidationPacket(connection, packetId, packetData);
+		}
+	}
+
+	private static void sendStateValidationPacket(ClientConnection connection, Identifier packetId, Int2ObjectArrayMap<IntList> packetData) {
+		var buf = PacketByteBufs.create();
+
+		// Number of namespaces
+		buf.writeVarInt(packetData.size());
+		for (var entry : packetData.int2ObjectEntrySet()) {
+			buf.writeVarInt(entry.getIntKey());
+			buf.writeIntList(entry.getValue());
+		}
+
+		connection.send(ServerPlayNetworking.createS2CPacket(packetId, buf));
+
+		packetData.clear();	}
+
 
 	public static void sendHelloPacket(ClientConnection connection) {
 		var buf = PacketByteBufs.create();

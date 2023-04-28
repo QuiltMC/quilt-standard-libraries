@@ -177,7 +177,7 @@ public class ClientFabricRegistrySync {
 
 				var missingEntries = currentRegistry.quilt$applySyncMap(syncMap);
 
-				if (ClientRegistrySync.checkMissing(handler, registry.getKey().getValue(), missingEntries)) {
+				if (ClientRegistrySync.checkMissingAndDisconnect(handler, registry.getKey().getValue(), missingEntries)) {
 					break;
 				}
 			}

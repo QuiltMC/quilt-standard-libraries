@@ -23,10 +23,7 @@ import java.nio.file.StandardOpenOption;
 import com.mojang.serialization.Lifecycle;
 import net.fabricmc.api.EnvType;
 
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.MapColor;
-import net.minecraft.block.Material;
+import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
