@@ -1,4 +1,9 @@
 {
   "quilt.core.registry_sync.missing_registry": "Client is missing required registry! Mismatched mods?",
-  "quilt.core.registry_sync.missing_entries": "Client registry is missing entries! Mismatched mods?"
+  "quilt.core.registry_sync.unsupported_registry": "Tried to sync '%s' registry, which is unsupported!",
+  "quilt.core.registry_sync.missing_registry": "Tried to sync '%s' registry, which is missing!",
+  "quilt.core.registry_sync.incorrect_state": "State validation failed.\nExpected object owner '%s' ('%s'), found '%s'",
+  "quilt.core.registry_sync.missing_entries": "Missing required entries in registry '%s' for namespaces:\n%s",
+  "quilt.core.registry_sync.more": "%s more...",
+  "quilt.core.registry_sync.and": " and "
 }

@@ -44,13 +44,11 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Language;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
-import org.quiltmc.qsl.registry.mixin.client.ClientLoginNetworkHandlerAccessor;
 import org.quiltmc.qsl.registry.mixin.client.ItemRendererAccessor;
 
 @ApiStatus.Internal
@@ -161,7 +159,7 @@ public final class ClientRegistrySync {
 		} else {
 			LOGGER.warn("Trying to sync registry " + identifier + " which doesn't " + (registry != null ? "support it!" : "exist!"));
 			sendSyncFailedPacket(handler, identifier);
-			((ClientLoginNetworkHandlerAccessor) handler).getConnection().disconnect(getMessage("missing_registry", "Client is missing required registry! Mismatched mods?"));
+			disconnect(handler, RegistrySyncText.missingRegistry(identifier, registry != null));
 		}
 	}
 
@@ -313,14 +311,6 @@ public final class ClientRegistrySync {
 		rebuildFluidStates();
 		rebuildItems(client);
 		rebuildParticles(client);
-	}
-
-	static Text getMessage(String type, String fallback) {
-		if (Language.getInstance().hasTranslation("quilt.core.registry_sync." + type)) {
-			return Text.translatable("quilt.core.registry_sync." + type);
-		} else {
-			return Text.literal(fallback);
-		}
 	}
 
 	public static boolean checkMissingAndDisconnect(ClientPlayNetworkHandler handler, Identifier registry, Collection<SynchronizedRegistry.MissingEntry> missingEntries) {

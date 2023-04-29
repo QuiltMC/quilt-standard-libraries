@@ -38,7 +38,7 @@ public class RegistrySyncText {
 				if (!namespacesList.isEmpty()) {
 					var alt = (lines + namespacesList.get(0).length() < max && lines == 1);
 					if (namespacesList.size() == 1 || alt) {
-						namespaceText.append(Text.translatable("qsl.registry_sync.and", " and ").formatted(alt ? Formatting.GRAY : Formatting.DARK_GRAY));
+						namespaceText.append(Text.translatable("quilt.core.registry_sync.and", " and ").formatted(alt ? Formatting.GRAY : Formatting.DARK_GRAY));
 						textLength += 6;
 					} else {
 						namespaceText.append(Text.literal(", ").formatted(Formatting.DARK_GRAY));
@@ -55,19 +55,23 @@ public class RegistrySyncText {
 		}
 
 		if (!namespacesList.isEmpty()) {
-			namespaceText.append(Text.translatable("qsl.registry_sync.more",  "%s more...", namespacesList.size()));
+			namespaceText.append(Text.translatable("quilt.core.registry_sync.more",  "%s more...", namespacesList.size()));
 		}
 
-		return Text.translatable("qsl.registry_sync.missing_entries", "Missing required entries in registry '%s' for namespaces:\n%s",
+		return Text.translatable("quilt.core.registry_sync.missing_entries", "Missing required entries in registry '%s' for namespaces:\n%s",
 				Text.literal(registryId.toString()).formatted(Formatting.YELLOW),
 				namespaceText
 		);
 	}
 
 	public static Text mismatchedStateIds(Identifier registryId, Identifier expectedBlockId, @Nullable Object state) {
-		return Text.translatable("qsl.registry_sync.incorrect_state", "State validation failed.\nExpected object owner '%s' ('%s'), found '%s'",
+		return Text.translatable("quilt.core.registry_sync.incorrect_state", "State validation failed.\nExpected object owner '%s' ('%s'), found '%s'",
 				Text.literal(expectedBlockId.toString()).formatted(Formatting.YELLOW),
 				Text.literal(registryId.toString()).formatted(Formatting.GRAY),
 				state == null ? Text.literal("null").formatted(Formatting.RED) : Text.literal(state.toString())
 		);	}
+
+	public static Text missingRegistry(Identifier identifier, boolean exists) {
+		return Text.translatable("quilt.core.registry_sync." + (exists ? "unsupported" : "missing") + "_registry", "Tried to sync '%s' registry, which is "  + (exists ? "unsupported" : "missing" + "!"), identifier.toString());
+	}
 }
