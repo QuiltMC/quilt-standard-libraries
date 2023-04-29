@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.entity.networking.test.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -83,27 +84,27 @@ public class CreeperEntityMixin extends HostileEntity implements QuiltExtendedSp
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void quiltTestMod$storeRandomItem(CallbackInfo ci) {
 		var random = Registries.ITEM.getRandom(this.random).get().value();
-		this.quiltTestMod$stackToDrop = new ItemStack(random);
+		this.quilt$stackToDrop = new ItemStack(random);
 	}
 
 	@Inject(method = "explode", at = @At("TAIL"))
 	private void quiltTestMod$dropItemOnExplosion(CallbackInfo ci) {
 		if (!world.isClient)
-			dropStack(quiltTestMod$stackToDrop);
+			dropStack(quilt$stackToDrop);
 	}
 
 	@Override
 	public void writeAdditionalSpawnData(PacketByteBuf buffer) {
-		buffer.writeItemStack(quiltTestMod$stackToDrop);
+		buffer.writeItemStack(quilt$stackToDrop);
 	}
 
 	@Override
 	public void readAdditionalSpawnData(PacketByteBuf buffer) {
-		this.quiltTestMod$stackToDrop = buffer.readItemStack();
+		this.quilt$stackToDrop = buffer.readItemStack();
 	}
 
 	@Override
 	public ItemStack getStack() {
-		return quiltTestMod$stackToDrop;
+		return quilt$stackToDrop;
 	}
 }
