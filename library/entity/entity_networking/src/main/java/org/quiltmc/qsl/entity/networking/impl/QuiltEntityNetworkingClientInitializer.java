@@ -35,18 +35,17 @@ public class QuiltEntityNetworkingClientInitializer implements ClientModInitiali
 		ClientPlayNetworking.registerGlobalReceiver(
 			QuiltEntityNetworkingInitializer.EXTENDED_SPAWN_PACKET_ID,
 			(client, handler, buf, sender) -> {
-				var spawnPacket = new EntitySpawnS2CPacket(buf);
+				int entityId = buf.readVarInt();
 				buf.retain(); // Make sure data is retained and can be read on the client thread
 				client.execute(() -> {
 					try {
-						spawnPacket.apply(handler);
-						var spawnedEntity = client.world.getEntityById(spawnPacket.getId());
-						if (spawnedEntity instanceof QuiltExtendedSpawnDataEntity extended) {
+						var entity = client.world.getEntityById(entityId);
+						if (entity instanceof QuiltExtendedSpawnDataEntity extended) {
 							extended.readAdditionalSpawnData(buf);
 						} else {
-							var id = spawnedEntity == null
+							var id = entity == null
 								? "null"
-								: Registries.ENTITY_TYPE.getId(spawnedEntity.getType()).toString();
+								: Registries.ENTITY_TYPE.getId(entity.getType()).toString();
 							logger.error(
 								"[Quilt] invalid entity received for extended spawn packet: entity [" +
 									id + "] does not implement QuiltCustomSpawnDataEntity!"
