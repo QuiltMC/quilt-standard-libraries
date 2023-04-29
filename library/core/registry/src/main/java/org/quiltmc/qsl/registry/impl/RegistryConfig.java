@@ -16,8 +16,9 @@
 
 package org.quiltmc.qsl.registry.impl;
 
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.ApiStatus;
-
 import org.quiltmc.config.api.WrappedConfig;
 import org.quiltmc.config.api.annotations.Comment;
 import org.quiltmc.loader.api.config.QuiltConfig;
@@ -29,8 +30,24 @@ public class RegistryConfig extends WrappedConfig {
 	public final RegistrySync registry_sync = new RegistrySync();
 
 	public static class RegistrySync implements Section {
-		@Comment("Message displayed for players joining with incompatible clients. Support strings and Minecraft's JSON text format.")
-		public final String missing_registry_sync_message = "Unsupported (vanilla?) client!\nThis server requires a modded client to join!";
+		@Comment("Message displayed for players joining with clients incompatible with Registry Sync. Support strings and Minecraft's JSON text format.")
+		public final String missing_registry_sync_message = Text.Serializer.toJson(Text.translatable("qsl.registry_sync.unsupported_client", """
+				Unsupported (vanilla?) client!
+				This server requires modded client to join!"""));
+
+		@Comment("Top part of the message displayed for players joining with incompatible clients. Support strings and Minecraft's JSON text format.")
+		public final String mismatched_entries_top_message = Text.Serializer.toJson(Text.translatable("qsl.registry_sync.failed_sync", """
+				Failed to synchronize client with the server!
+				This can happen when client's and server's mods don't match.
+				"""));
+
+		@Comment("Bottom part of the message displayed for players joining with incompatible clients. Support strings and Minecraft's JSON text format.")
+		public final String mismatched_entries_bottom_message = Text.Serializer.toJson(Text.translatable("qsl.registry_sync.check_logs", """
+
+				Check logs for more details!""").formatted(Formatting.GOLD));
+
+		@Comment("Shows some details about why client couldn't connect.")
+		public final boolean mismatched_entries_show_details = true;
 
 		@Comment("Allows players with Fabric API to connect, as long as they have all required mods.")
 		public final boolean support_fabric_api_protocol = true;
@@ -38,7 +55,7 @@ public class RegistryConfig extends WrappedConfig {
 		@Comment("Forces unknown clients to use fabric registry sync fallback, disabling vanilla client joining prevention.")
 		public final boolean force_fabric_api_protocol_fallback = false;
 
-		@Comment("Disables registry sync requirement. USE ON YOUR OWN RISK!")
+		@Comment("Disables registry sync requirement. USE AT YOUR OWN RISK!")
 		public final boolean disable_registry_sync = false;
 	}
 }

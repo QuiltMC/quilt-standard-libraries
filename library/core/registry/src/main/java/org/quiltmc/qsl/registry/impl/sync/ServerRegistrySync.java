@@ -21,20 +21,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.function.IntFunction;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import it.unimi.dsi.fastutil.objects.Object2IntFunction;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.registry.SimpleRegistry;
 import net.minecraft.util.collection.IdList;
-import net.minecraft.util.collection.IndexedIterable;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.network.ClientConnection;
@@ -54,20 +49,32 @@ public final class ServerRegistrySync {
 	private static final int MAX_SAFE_PACKET_SIZE = 734003;
 
 	public static Text noRegistrySyncMessage = Text.empty();
+	public static Text errorStyleHeader = Text.empty();
+	public static Text errorStyleFooter = Text.empty();
 	public static boolean supportFabric = false;
 	public static boolean forceFabricFallback = false;
 	public static boolean forceDisable = false;
+	public static boolean showErrorDetails = false;
 
 	public static void readConfig() {
-		try {
-			noRegistrySyncMessage = Text.Serializer.fromJson(RegistryConfig.INSTANCE.registry_sync.missing_registry_sync_message);
-		} catch (Exception e) {
-			noRegistrySyncMessage = Text.of(RegistryConfig.INSTANCE.registry_sync.missing_registry_sync_message);
-		}
+		var config = RegistryConfig.INSTANCE.registry_sync;
 
-		supportFabric = RegistryConfig.INSTANCE.registry_sync.support_fabric_api_protocol;
-		forceFabricFallback = RegistryConfig.INSTANCE.registry_sync.force_fabric_api_protocol_fallback;
-		forceDisable = RegistryConfig.INSTANCE.registry_sync.disable_registry_sync;
+		noRegistrySyncMessage = text(config.missing_registry_sync_message);
+		errorStyleHeader = text(config.mismatched_entries_top_message);
+		errorStyleFooter = text(config.mismatched_entries_bottom_message);
+
+		supportFabric = config.support_fabric_api_protocol;
+		forceFabricFallback = config.force_fabric_api_protocol_fallback;
+		forceDisable = config.disable_registry_sync;
+		showErrorDetails = config.mismatched_entries_show_details;
+	}
+
+	private static Text text(String string) {
+		try {
+			return Text.Serializer.fromJson(string);
+		} catch (Exception e) {
+			return Text.of(string);
+		}
 	}
 
 	public static boolean isNamespaceVanilla(String namespace) {
@@ -90,6 +97,10 @@ public final class ServerRegistrySync {
 	}
 
 	public static boolean requiresSync() {
+		if (forceDisable) {
+			return false;
+		}
+
 		for (var registry : Registries.REGISTRY) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
 					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() == SynchronizedRegistry.Status.REQUIRED) {
@@ -101,6 +112,10 @@ public final class ServerRegistrySync {
 	}
 
 	public static void sendSyncPackets(ClientConnection connection, ServerPlayerEntity player, int syncVersion) {
+		if (syncVersion >= 3) {
+			sendErrorStylePacket(connection);
+		}
+
 		for (var registry : Registries.REGISTRY) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
 					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
@@ -201,6 +216,16 @@ public final class ServerRegistrySync {
 		}
 
 		connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.HANDSHAKE, buf));
+	}
+
+	private static void sendErrorStylePacket(ClientConnection connection) {
+		var buf = PacketByteBufs.create();
+
+		buf.writeText(ServerRegistrySync.errorStyleHeader);
+		buf.writeText(ServerRegistrySync.errorStyleFooter);
+		buf.writeBoolean(ServerRegistrySync.showErrorDetails);
+
+		connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.ERROR_STYLE, buf));
 	}
 
 	@SuppressWarnings("unchecked")

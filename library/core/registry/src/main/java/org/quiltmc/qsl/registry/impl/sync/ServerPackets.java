@@ -113,6 +113,21 @@ public final class ServerPackets {
 	 */
 	public static final Identifier REGISTRY_RESTORE = id("registry_sync/registry_restore");
 
+	/**
+	 * This packet sets failure text look/properties.
+	 * Requires protocol version 3 or newer.
+	 *
+	 * <pre><code>
+	 * {
+	 *   Text Header: Text (String)
+	 *   Text Footer: Text (String)
+	 *   Show Details: bool
+	 *
+	 * }
+	 * </code></pre>
+	 */
+	public static final Identifier ERROR_STYLE = id("registry_sync/error_style");
+
 	private static Identifier id(String path) {
 		return new Identifier("qsl", path);
 	}

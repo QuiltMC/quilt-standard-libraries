@@ -31,6 +31,6 @@ import org.quiltmc.qsl.registry.impl.sync.client.ClientRegistrySync;
 public class MinecraftClientMixin {
 	@Inject(method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V", at = @At("TAIL"))
 	private void quilt$restoreRegistries(CallbackInfo ci) {
-		ClientRegistrySync.restoreSnapshot((MinecraftClient) (Object) this);
+		ClientRegistrySync.disconnectCleanup((MinecraftClient) (Object) this);
 	}
 }
