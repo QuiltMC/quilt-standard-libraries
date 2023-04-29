@@ -22,6 +22,8 @@ import net.minecraft.registry.Registries;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
+import org.quiltmc.qsl.registry.impl.sync.server.ServerRegistrySync;
 
 @ApiStatus.Internal
 public class RegistrySyncInitializer implements ModInitializer {

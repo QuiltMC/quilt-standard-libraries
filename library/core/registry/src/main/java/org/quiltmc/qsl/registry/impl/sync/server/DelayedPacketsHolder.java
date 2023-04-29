@@ -14,30 +14,16 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.registry.mixin;
+package org.quiltmc.qsl.registry.impl.sync.server;
 
 import java.util.List;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
+import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
-import net.minecraft.server.network.ServerPlayerEntity;
 
-import org.quiltmc.qsl.registry.impl.sync.server.DelayedPacketsHolder;
-
-@Mixin(ServerPlayerEntity.class)
-public class ServerPlayerEntityMixin implements DelayedPacketsHolder {
-	@Unique
-	private List<CustomPayloadC2SPacket> quilt$delayedPackets;
-
-	@Override
-	public void quilt$setPacketList(List<CustomPayloadC2SPacket> packetList) {
-		this.quilt$delayedPackets = packetList;
-	}
-
-	@Override
-	public List<CustomPayloadC2SPacket> quilt$getPacketList() {
-		return this.quilt$delayedPackets;
-	}
+@ApiStatus.Internal
+public interface DelayedPacketsHolder {
+	void quilt$setPacketList(List<CustomPayloadC2SPacket> packetList);
+	List<CustomPayloadC2SPacket> quilt$getPacketList();
 }

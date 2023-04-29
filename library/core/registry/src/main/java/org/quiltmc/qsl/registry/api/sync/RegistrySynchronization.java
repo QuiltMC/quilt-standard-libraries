@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.registry.api.sync;
 
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -23,8 +25,10 @@ import org.jetbrains.annotations.NotNull;
 import net.minecraft.registry.SimpleRegistry;
 import net.minecraft.util.Identifier;
 
-import org.quiltmc.qsl.registry.impl.sync.RegistryFlag;
-import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
+import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;
+import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
+import org.quiltmc.qsl.registry.impl.sync.server.SyncAwareConnectionClient;
+import org.quiltmc.qsl.registry.mixin.ServerPlayNetworkHandlerAccessor;
 
 /**
  * Methods for manipulation of registry synchronization.
@@ -102,5 +106,33 @@ public final class RegistrySynchronization {
 	@Contract(pure = true)
 	public static <T> boolean isEntrySkipped(@NotNull SimpleRegistry<T> registry, T entry) {
 		return RegistryFlag.isSkipped(SynchronizedRegistry.as(registry).quilt$getEntryFlag(entry));
+	}
+
+	/**
+	 * {@return {@code true} if the given entry is known to player, or {@code false} otherwise}
+	 */
+	@Contract(pure = true)
+	public static <T> boolean isEntryPresent(@NotNull ServerPlayerEntity player, @NotNull SimpleRegistry<T> registry, T entry) {
+		return player.networkHandler != null && isEntryPresent(player.networkHandler, registry, entry);
+	}
+
+	/**
+	 * {@return {@code true} if the given entry is known to player, or {@code false} otherwise}
+	 */
+	@Contract(pure = true)
+	public static <T> boolean isEntryPresent(@NotNull ServerPlayNetworkHandler handler, @NotNull SimpleRegistry<T> registry, T entry) {
+		var connection = ((SyncAwareConnectionClient) ((ServerPlayNetworkHandlerAccessor) handler).getConnection());
+		var regFlags = SynchronizedRegistry.as(registry).quilt$getRegistryFlag();
+		var flags = SynchronizedRegistry.as(registry).quilt$getEntryFlag(entry);
+
+		if (RegistryFlag.isSkipped(flags) || RegistryFlag.isSkipped(regFlags)) {
+			return false;
+		}
+
+		if (connection.quilt$understandsOptional()) {
+			return !connection.quilt$isUnknownEntry(registry, entry);
+		} else {
+			return !RegistryFlag.isOptional(flags) && !RegistryFlag.isOptional(regFlags);
+		}
 	}
 }

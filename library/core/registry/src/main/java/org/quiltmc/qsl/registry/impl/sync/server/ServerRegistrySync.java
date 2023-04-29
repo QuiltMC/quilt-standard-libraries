@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.registry.impl.sync;
+package org.quiltmc.qsl.registry.impl.sync.server;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,6 +43,9 @@ import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
 import org.quiltmc.qsl.registry.impl.RegistryConfig;
+import org.quiltmc.qsl.registry.impl.sync.ServerPackets;
+import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
+import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;
 
 @ApiStatus.Internal
 public final class ServerRegistrySync {

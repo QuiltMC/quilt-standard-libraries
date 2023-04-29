@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.registry.impl.sync;
+package org.quiltmc.qsl.registry.impl.sync.server;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.registry.Registries;
 import org.jetbrains.annotations.ApiStatus;
+import org.quiltmc.qsl.registry.impl.sync.ClientPackets;
 import org.slf4j.Logger;
 
 import net.minecraft.network.ClientConnection;
@@ -88,10 +90,12 @@ import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
  * This is special PacketListener for handling registry sync.
  * Why does it exist? Wouldn't usage of login packets be better?
  * <p>
- * And well, yes it would, but sadly these aren't compatible with proxy
+ * And well, yes it would, but sadly these can't be made compatible with proxy
  * software like Velocity (see Forge). Thankfully emulating them on PLAY
  * protocol isn't too hard and gives equal results. And doing them on PLAY
- * is needed for Fabric compatibility anyway
+ * is needed for Fabric compatibility anyway.
+ * It still doesn't work with Velocity out of the box (they don't care much about this
+ * being valid), getting support is still simple.
  */
 @ApiStatus.Internal
 public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketListener {
@@ -124,6 +128,7 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 		switch (packet.getParameter()) {
 			case HELLO_PING -> {
 				if (this.syncVersion != -1) {
+					((SyncAwareConnectionClient) this.connection).quilt$setUnderstandsOptional();
 					ServerRegistrySync.sendSyncPackets(this.connection, this.player, this.syncVersion);
 				} else if (ServerRegistrySync.forceFabricFallback || (ServerRegistrySync.supportFabric && ((ChannelInfoHolder) this.connection).getPendingChannelsNames().contains(ServerFabricRegistrySync.ID))) {
 					ServerFabricRegistrySync.sendSyncPackets(this.connection);
@@ -154,10 +159,16 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 			LOGGER.info("Disconnecting {} due to sync failure of {} registry", this.player.getGameProfile().getName(), packet.getData().readIdentifier());
 		} else if (packet.getChannel().equals(ClientPackets.UNKNOWN_ENTRY)) {
 			var data = packet.getData();
-			var registry = data.readIdentifier();
-			var entries = data.readIntList();
+			var registry = Registries.REGISTRY.get(data.readIdentifier());
+			var length = data.readVarInt();
 
-			// todo: Store this somewhere and expose as an api
+			while (length-- > 0) {
+				var object = registry.get(data.readVarInt());
+
+				if (object != null) {
+					((SyncAwareConnectionClient) this.connection).quilt$addUnknownEntry(registry, object);
+				}
+			}
 		} else {
 			this.delayedPackets.add(new CustomPayloadC2SPacket(packet.getChannel(), new PacketByteBuf(packet.getData().copy())));
 		}

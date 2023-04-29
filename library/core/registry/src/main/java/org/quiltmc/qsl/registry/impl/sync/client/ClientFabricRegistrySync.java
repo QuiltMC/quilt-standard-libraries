@@ -41,8 +41,8 @@ import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
-import org.quiltmc.qsl.registry.impl.sync.ServerFabricRegistrySync;
-import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
+import org.quiltmc.qsl.registry.impl.sync.server.ServerFabricRegistrySync;
+import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
 
 /**
  * Legacy (Fabric) registry sync.

@@ -34,6 +34,10 @@ import net.minecraft.util.collection.IdList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.registry.impl.sync.*;
+import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;
+import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedIdList;
+import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
+import org.quiltmc.qsl.registry.impl.sync.server.ServerRegistrySync;
 import org.slf4j.Logger;
 
 import net.minecraft.block.Block;

@@ -34,7 +34,7 @@ import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.collection.IdList;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
-import org.quiltmc.qsl.registry.impl.sync.SynchronizedIdList;
+import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedIdList;
 import org.quiltmc.qsl.registry.impl.sync.client.RebuildableIdModelHolder;
 
 @ClientOnly
