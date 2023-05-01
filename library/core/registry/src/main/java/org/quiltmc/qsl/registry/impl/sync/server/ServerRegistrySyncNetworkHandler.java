@@ -23,6 +23,7 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.registry.Registries;
 import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.qsl.registry.impl.sync.ClientPackets;
+import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
 import org.slf4j.Logger;
 
 import net.minecraft.network.ClientConnection;
@@ -109,7 +110,7 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 	private final Runnable continueLoginRunnable;
 
 	private final List<CustomPayloadC2SPacket> delayedPackets = new ArrayList<>();
-	private int syncVersion = -1;
+	private int syncVersion = ProtocolVersions.NO_PROTOCOL;
 
 	public ServerRegistrySyncNetworkHandler(ServerPlayerEntity player, ClientConnection connection, Runnable continueLogin) {
 		this.connection = connection;
@@ -127,18 +128,18 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 	public void onPong(PlayPongC2SPacket packet) {
 		switch (packet.getParameter()) {
 			case HELLO_PING -> {
-				if (this.syncVersion != -1) {
+				if (ServerRegistrySync.SERVER_SUPPORTED_PROTOCOL.contains(this.syncVersion)) {
 					((SyncAwareConnectionClient) this.connection).quilt$setUnderstandsOptional();
 					ServerRegistrySync.sendSyncPackets(this.connection, this.player, this.syncVersion);
-				} else if (ServerRegistrySync.forceFabricFallback || (ServerRegistrySync.supportFabric && ((ChannelInfoHolder) this.connection).getPendingChannelsNames().contains(ServerFabricRegistrySync.ID))) {
+				} else if (ServerRegistrySync.SERVER_SUPPORTED_PROTOCOL.contains(ProtocolVersions.FAPI_PROTOCOL) && (ServerRegistrySync.forceFabricFallback || (ServerRegistrySync.supportFabric && ((ChannelInfoHolder) this.connection).getPendingChannelsNames().contains(ServerFabricRegistrySync.ID)))) {
 					ServerFabricRegistrySync.sendSyncPackets(this.connection);
-					this.syncVersion = -2;
+					this.syncVersion = ProtocolVersions.FAPI_PROTOCOL;
 				}
 
 				this.connection.send(new PlayPingS2CPacket(GOODBYE_PING));
 			}
 			case GOODBYE_PING -> {
-				if (this.syncVersion == -1 && ServerRegistrySync.requiresSync()) {
+				if (this.syncVersion == ProtocolVersions.NO_PROTOCOL && ServerRegistrySync.requiresSync()) {
 					this.disconnect(ServerRegistrySync.noRegistrySyncMessage);
 				} else {
 					this.continueLogin();

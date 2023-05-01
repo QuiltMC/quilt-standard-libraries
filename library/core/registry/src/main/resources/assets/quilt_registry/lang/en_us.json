@@ -5,5 +5,8 @@
   "quilt.core.registry_sync.incorrect_state": "State validation failed.\nExpected object owner '%s' ('%s'), found '%s'",
   "quilt.core.registry_sync.missing_entries": "Missing required entries in registry '%s' for namespaces:\n%s",
   "quilt.core.registry_sync.more": "%s more...",
-  "quilt.core.registry_sync.and": " and "
+  "quilt.core.registry_sync.and": " and ",
+  "quilt.core.registry_sync.unsupported_mod_protocol": "Unsupported mod protocol versions for:\n%s",
+  "quilt.core.registry_sync.require_main_mod_protocol": "This server requires %s with protocol version of %s",
+  "quilt.core.registry_sync.main_mod_protocol" : "You are on %s with protocol version of %s."
 }

@@ -6,7 +6,10 @@
     "version": "1.0.0",
     "metadata": {
       "name": "Quilt Registry Library Test Mod",
-      "license": "Apache-2.0"
+      "license": "Apache-2.0",
+      "custom": {
+        "quilt:mod_protocol": 2
+      }
     },
     "intermediate_mappings": "net.fabricmc:intermediary",
     "load_type": "always",

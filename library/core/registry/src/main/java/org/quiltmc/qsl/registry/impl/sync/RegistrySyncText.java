@@ -16,21 +16,23 @@
 
 package org.quiltmc.qsl.registry.impl.sync;
 
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.text.Texts;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolDef;
+import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolImpl;
 import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;
 import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
+import java.util.*;
+import java.util.function.Function;
 
 public class RegistrySyncText {
 	public static Text missingRegistryEntries(Identifier registryId, Collection<SynchronizedRegistry.MissingEntry> missingEntries) {
-		var namespaceText = Text.empty().formatted(Formatting.GRAY);
 		var namespacesSet = new HashSet<String>(missingEntries.size());
 		for (var entry : missingEntries) {
 			if (!RegistryFlag.isOptional(entry.flags())) {
@@ -38,8 +40,18 @@ public class RegistrySyncText {
 			}
 		}
 		var namespacesList = new ArrayList<>(namespacesSet);
-
 		namespacesList.sort(Comparator.naturalOrder());
+
+		var namespaceText = entryList(namespacesList, Text::literal).formatted(Formatting.GRAY);
+
+		return Text.translatable("quilt.core.registry_sync.missing_entries", "Missing required entries in registry '%s' for namespaces:\n%s",
+				Text.literal(registryId.toString()).formatted(Formatting.YELLOW),
+				namespaceText
+		);
+	}
+
+	private static <T> MutableText entryList(List<T> namespacesList, Function<T, Text> toText) {
+		var namespaceText = Text.empty();
 
 		var textLength = 0;
 		var lines = 0;
@@ -47,13 +59,13 @@ public class RegistrySyncText {
 		while (lines < 2 && !namespacesList.isEmpty()) {
 			var max = lines == 0 ? 38 : 30;
 			while (textLength < max && !namespacesList.isEmpty()) {
-				var t = namespacesList.remove(0);
+				var t = toText.apply(namespacesList.remove(0));
 				namespaceText.append(t);
 
-				textLength += t.length();
+				textLength += t.getString().length();
 
 				if (!namespacesList.isEmpty()) {
-					var alt = (lines + namespacesList.get(0).length() < max && lines == 1);
+					var alt = (lines + toText.apply(namespacesList.get(0)).getString().length() < max && lines == 1);
 					if (namespacesList.size() == 1 || alt) {
 						namespaceText.append(Text.translatable("quilt.core.registry_sync.and", " and ").formatted(alt ? Formatting.GRAY : Formatting.DARK_GRAY));
 						textLength += 6;
@@ -75,10 +87,7 @@ public class RegistrySyncText {
 			namespaceText.append(Text.translatable("quilt.core.registry_sync.more",  "%s more...", namespacesList.size()));
 		}
 
-		return Text.translatable("quilt.core.registry_sync.missing_entries", "Missing required entries in registry '%s' for namespaces:\n%s",
-				Text.literal(registryId.toString()).formatted(Formatting.YELLOW),
-				namespaceText
-		);
+		return namespaceText;
 	}
 
 	public static Text mismatchedStateIds(Identifier registryId, Identifier expectedBlockId, @Nullable Object state) {
@@ -90,5 +99,51 @@ public class RegistrySyncText {
 
 	public static Text missingRegistry(Identifier identifier, boolean exists) {
 		return Text.translatable("quilt.core.registry_sync." + (exists ? "unsupported" : "missing") + "_registry", "Tried to sync '%s' registry, which is "  + (exists ? "unsupported" : "missing" + "!"), identifier.toString());
+	}
+
+	public static Text unsupportedModVersion(List<ModProtocolDef> unsupported, ModProtocolDef missingPrioritized) {
+		if (missingPrioritized != null && !missingPrioritized.versions().isEmpty()) {
+
+			var x = Text.translatable("quilt.core.registry_sync.require_main_mod_protocol", "This server requires %s with protocol version of %s!",
+					Text.literal(missingPrioritized.displayName()).formatted(Formatting.YELLOW),
+					missingPrioritized.versions().getInt(0)
+			);
+
+			if (ModProtocolImpl.enabled && ModProtocolImpl.prioritizedEntry != null) {
+				x.append("\n").append(
+						Text.translatable("quilt.core.registry_sync.main_mod_protocol", "You are on %s with protocol version of %s.",
+								Text.literal(ModProtocolImpl.prioritizedEntry.displayName()).formatted(Formatting.GOLD), ModProtocolImpl.prioritizedEntry.versions().getInt(0)
+						)
+				);
+			}
+
+			return x;
+		} else {
+			var namespacesList = new ArrayList<>(unsupported);
+			namespacesList.sort(Comparator.comparing(ModProtocolDef::displayName));
+			var namespaceText = entryList(namespacesList, RegistrySyncText::protocolDefEntryText);
+
+			return Text.translatable("quilt.core.registry_sync.unsupported_mod_protocol", "Unsupported mod protocol versions for:\n%s",
+					namespaceText,
+					namespaceText
+			);
+		}
+	}
+
+	private static Text protocolDefEntryText(ModProtocolDef def) {
+		MutableText version;
+		var x = def.versions();
+		if (x.size() == 0) {
+			version = Text.literal("WHAT??? HOW???");
+		} else if (x.size() == 1) {
+			version = Text.literal("" + x.getInt(0));
+		} else {
+			version = (MutableText) Texts.join(x.subList(0, Math.min(x.size(), 4)), n -> Text.literal(n.toString()));
+			if (x.size() > 4) {
+				version = version.append(Texts.GRAY_DEFAULT_SEPARATOR_TEXT).append("...");
+			}
+		}
+
+		return Text.translatable("quilt.core.registry_sync.protocol_entry", "%s (%s)", def.displayName(), version);
 	}
 }

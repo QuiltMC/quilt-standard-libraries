@@ -22,9 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.ints.*;
 import net.minecraft.block.Block;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.network.PacketByteBuf;
@@ -43,7 +41,10 @@ import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
 import org.quiltmc.qsl.registry.impl.RegistryConfig;
+import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
 import org.quiltmc.qsl.registry.impl.sync.ServerPackets;
+import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolDef;
+import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolImpl;
 import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
 import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;
 
@@ -59,6 +60,8 @@ public final class ServerRegistrySync {
 	public static boolean forceDisable = false;
 	public static boolean showErrorDetails = false;
 
+	public static IntList SERVER_SUPPORTED_PROTOCOL = new IntArrayList(ProtocolVersions.IMPL_SUPPORTED_VERSIONS);
+
 	public static void readConfig() {
 		var config = RegistryConfig.INSTANCE.registry_sync;
 
@@ -70,6 +73,18 @@ public final class ServerRegistrySync {
 		forceFabricFallback = config.force_fabric_api_protocol_fallback;
 		forceDisable = config.disable_registry_sync;
 		showErrorDetails = config.mismatched_entries_show_details;
+
+		if (supportFabric) {
+			SERVER_SUPPORTED_PROTOCOL.add(ProtocolVersions.FAPI_PROTOCOL);
+		}
+
+		if (forceDisable) {
+			SERVER_SUPPORTED_PROTOCOL.clear();
+		}
+	}
+
+	public static void requireMinimumVersion(int version) {
+		SERVER_SUPPORTED_PROTOCOL.removeIf(x -> x < version);
 	}
 
 	private static Text text(String string) {
@@ -115,8 +130,12 @@ public final class ServerRegistrySync {
 	}
 
 	public static void sendSyncPackets(ClientConnection connection, ServerPlayerEntity player, int syncVersion) {
-		if (syncVersion >= 3) {
+		if (syncVersion >= ProtocolVersions.EXT_3) {
 			sendErrorStylePacket(connection);
+		}
+
+		if (ModProtocolImpl.enabled) {
+			sendModProtocol(connection);
 		}
 
 		for (var registry : Registries.REGISTRY) {
@@ -151,7 +170,7 @@ public final class ServerRegistrySync {
 			}
 		}
 
-		if (syncVersion >= 3) {
+		if (syncVersion >= ProtocolVersions.EXT_3) {
 			sendStateValidationRequest(connection, ServerPackets.VALIDATE_BLOCK_STATES, Registries.BLOCK, Block.STATE_IDS, block -> block.getStateManager().getStates());
 			sendStateValidationRequest(connection, ServerPackets.VALIDATE_FLUID_STATES, Registries.FLUID, Fluid.STATE_IDS, fluid -> fluid.getStateManager().getStates());
 		}
@@ -212,13 +231,16 @@ public final class ServerRegistrySync {
 	public static void sendHelloPacket(ClientConnection connection) {
 		var buf = PacketByteBufs.create();
 
-		buf.writeVarInt(ServerPackets.SUPPORTED_VERSIONS.size());
-
-		for (var version : ServerPackets.SUPPORTED_VERSIONS) {
-			buf.writeVarInt(version);
-		}
+		buf.writeIntList(SERVER_SUPPORTED_PROTOCOL);
 
 		connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.HANDSHAKE, buf));
+	}
+
+	public static void sendModProtocol(ClientConnection connection) {
+		var buf = PacketByteBufs.create();
+		buf.writeString(ModProtocolImpl.prioritizedId);
+		buf.writeCollection(ModProtocolImpl.ALL, ModProtocolDef::write);
+		connection.send(ServerPlayNetworking.createS2CPacket(ServerPackets.MOD_PROTOCOL, buf));
 	}
 
 	private static void sendErrorStylePacket(ClientConnection connection) {

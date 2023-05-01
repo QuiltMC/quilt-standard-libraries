@@ -56,14 +56,27 @@ public final class ClientPackets {
 	 * <pre><code>
 	 * {
 	 *     Registry: Identifier
-	 *     Count of Entries: VarInt
-	 * 	   [
-	 * 	      Server Id: VarInt
-	 *     ]
+	 *     Raw Registry Ids: IntList
 	 * }
 	 * </code></pre>
 	 */
 	public static final Identifier UNKNOWN_ENTRY = id("registry_sync/unknown_entry");
+
+	/**
+	 * Sent after receiving Mod Protocol request packet from server.
+	 * Returns all latest supported by client version of requested Mod Protocols see {@link ServerPackets#MOD_PROTOCOL}
+	 *
+	 * <pre><code>
+	 * {
+	 *   Count of Entries: VarInt
+	 *   [
+	 *     Id: String
+	 *     Highest Supported Version: VarInt
+	 *   ]
+	 * }
+	 * </code></pre>
+	 */
+	public static final Identifier MOD_PROTOCOL = id("registry_sync/mod_protocol");
 
 	private static Identifier id(String path) {
 		return new Identifier("qsl", path);

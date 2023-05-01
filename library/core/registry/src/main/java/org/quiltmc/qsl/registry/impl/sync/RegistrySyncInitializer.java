@@ -22,6 +22,7 @@ import net.minecraft.registry.Registries;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolImpl;
 import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
 import org.quiltmc.qsl.registry.impl.sync.server.ServerRegistrySync;
 
@@ -30,6 +31,7 @@ public class RegistrySyncInitializer implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		ServerRegistrySync.readConfig();
+		ModProtocolImpl.loadVersions();
 
 		SynchronizedRegistry.markForSync(
 				Registries.BLOCK,

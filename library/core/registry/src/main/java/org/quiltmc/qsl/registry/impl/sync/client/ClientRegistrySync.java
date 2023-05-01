@@ -16,15 +16,13 @@
 
 package org.quiltmc.qsl.registry.impl.sync.client;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiPredicate;
 
 import com.mojang.logging.LogUtils;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.block.BlockState;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.registry.Registry;
@@ -34,6 +32,8 @@ import net.minecraft.util.collection.IdList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.registry.impl.sync.*;
+import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolDef;
+import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolImpl;
 import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;
 import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedIdList;
 import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
@@ -91,6 +91,89 @@ public final class ClientRegistrySync {
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.VALIDATE_BLOCK_STATES, handleStateValidation(Registries.BLOCK, Block.STATE_IDS, BlockState::isOf));
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.VALIDATE_FLUID_STATES, handleStateValidation(Registries.FLUID, Fluid.STATE_IDS, FluidState::isOf));
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.ERROR_STYLE, ClientRegistrySync::handleErrorStylePacket);
+		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.MOD_PROTOCOL, ClientRegistrySync::handleModProtocol);
+	}
+
+	private static void handleModProtocol(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
+		var prioritizedId = buf.readString();
+		var protocols = buf.readList(ModProtocolDef::read);
+
+		var values = new Object2IntOpenHashMap<String>(protocols.size());
+		var unsupportedList = new ArrayList<ModProtocolDef>();
+		ModProtocolDef missingPrioritized = null;
+
+		boolean disconnect = false;
+
+		for (var protocol : protocols) {
+			var local = ModProtocolImpl.getVersion(protocol.id());
+
+			if (local != null) {
+				var latest = protocol.latestMatchingVersion(local);
+				if (latest != ProtocolVersions.NO_PROTOCOL) {
+					values.put(protocol.id(), latest);
+				} else if (!protocol.optional()) {
+					if (prioritizedId.equals(protocol.id())) {
+						missingPrioritized = protocol;
+					}
+					disconnect = true;
+				}
+
+			} else if (!protocol.optional()) {
+				if (prioritizedId.equals(protocol.id())) {
+					missingPrioritized = protocol;
+				}
+				disconnect = true;
+				unsupportedList.add(protocol);
+			}
+		}
+
+		if (disconnect) {
+			disconnect(handler, RegistrySyncText.unsupportedModVersion(unsupportedList, missingPrioritized));
+
+			var builder = new StringBuilder("Required Mod Protocol versions are missing:\n");
+
+			for (var entry : unsupportedList) {
+				builder.append("\t- ").append(entry.displayName()).append(" (").append(entry.id())
+						.append("), Server:  ").append(stringifyVersions(entry.versions()))
+						.append(", Client:  ").append(stringifyVersions(ModProtocolImpl.getVersion(entry.id())));
+				builder.append("\n");
+			}
+
+			LOGGER.warn(builder.toString());
+		} else {
+			sendSupportedModProtocol(sender, values);
+		}
+	}
+
+	private static String stringifyVersions(IntList versions) {
+		if (versions == null) {
+			return "Missing!";
+		}
+
+		var b = new StringBuilder();
+
+		var iter = versions.iterator();
+
+		while (iter.hasNext()) {
+			b.append(iter.nextInt());
+
+			if (iter.hasNext()) {
+				b.append(", ");
+			}
+		}
+
+		return b.toString();
+	}
+
+	private static void sendSupportedModProtocol(PacketSender sender, Object2IntOpenHashMap<String> values) {
+		var buf = PacketByteBufs.create();
+		buf.writeVarInt(values.size());
+		for (var entry : values.object2IntEntrySet()) {
+			buf.writeString(entry.getKey());
+			buf.writeVarInt(entry.getIntValue());
+		}
+
+		sender.sendPacket(ClientPackets.MOD_PROTOCOL, buf);
 	}
 
 	private static void handleErrorStylePacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
@@ -100,23 +183,8 @@ public final class ClientRegistrySync {
 	}
 
 	private static void handleHelloPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
-		int count = buf.readVarInt();
-
-		int highestSupported = -1;
-
-		while (count-- > 0) {
-			int version = buf.readVarInt();
-
-			if (version > highestSupported && ServerPackets.SUPPORTED_VERSIONS.contains(version)) {
-				highestSupported = version;
-			}
-		}
-
-		// Capture the highest supported version for detecting what the server is sending.
-		// This is required as older versions of registry sync erroneously sent RESTORE in place of APPLY.
-		syncVersion = highestSupported;
-
-		sendHelloPacket(sender, highestSupported);
+		syncVersion = ProtocolVersions.getHighestSupportedLocal(buf.readIntList());
+		sendHelloPacket(sender, syncVersion);
 	}
 
 	private static void sendHelloPacket(PacketSender sender, int version) {
@@ -231,7 +299,7 @@ public final class ClientRegistrySync {
 			rebuildParticles(client);
 		}
 
-		if (syncVersion >= 3) {
+		if (syncVersion >= ProtocolVersions.EXT_3) {
 			var optionalMissing = new IntArrayList();
 			for (var entry : missingEntries) {
 				if (RegistryFlag.isOptional(entry.flags())) {

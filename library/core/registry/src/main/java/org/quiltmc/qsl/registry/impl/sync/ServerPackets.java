@@ -26,17 +26,12 @@ import net.minecraft.util.Identifier;
  */
 @ApiStatus.Internal
 public final class ServerPackets {
-	public static final IntSet SUPPORTED_VERSIONS = IntSet.of(2, 3);
-
 	/**
 	 * Starts registry sync.
 	 *
 	 * <pre><code>
 	 * {
-	 *   Count: VarInt
-	 *   [
-	 *     Supported Version: VarInt
-	 *   ]
+	 *   Supported Versions: IntList
 	 * }
 	 * </code></pre>
 	 */
@@ -127,6 +122,24 @@ public final class ServerPackets {
 	 * </code></pre>
 	 */
 	public static final Identifier ERROR_STYLE = id("registry_sync/error_style");
+
+	/**
+	 * This packet requests client to validate and return supported Mod Protocol versions.
+	 *
+	 * <pre><code>
+	 * {
+	 *   Prioritized Id: String
+	 *   Count of Entries: VarInt
+	 *   [
+	 *     Id: String
+	 *     Name: String
+	 *     Supported Versions: IntList
+	 *     Optional: boolean
+	 *   ]
+	 * }
+	 * </code></pre>
+	 */
+	public static final Identifier MOD_PROTOCOL = id("registry_sync/mod_protocol");
 
 	private static Identifier id(String path) {
 		return new Identifier("qsl", path);
