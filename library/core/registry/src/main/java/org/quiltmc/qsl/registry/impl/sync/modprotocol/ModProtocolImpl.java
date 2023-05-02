@@ -34,6 +34,7 @@ import java.util.Map;
 
 public class ModProtocolImpl {
 	public static boolean enabled = false;
+	public static boolean disableQuery = false;
 	public static String prioritizedId = "";
 	public static ModProtocolDef prioritizedEntry;
 	private static final Logger LOGGER = LogUtils.getLogger();
@@ -45,6 +46,8 @@ public class ModProtocolImpl {
 	@SuppressWarnings("ConstantConditions")
 	public static void loadVersions() {
 		var modProto = RegistryConfig.INSTANCE.registry_sync;
+
+		disableQuery = modProto.disable_mod_protocol_ping;
 
 		if (modProto.mod_protocol_version >= 0) {
 			prioritizedEntry = new ModProtocolDef("global:" + modProto.mod_protocol_id, modProto.mod_protocol_name, IntList.of(modProto.mod_protocol_version), false);

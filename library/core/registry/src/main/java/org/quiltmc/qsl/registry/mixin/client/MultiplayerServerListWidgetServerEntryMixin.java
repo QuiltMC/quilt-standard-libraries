@@ -18,9 +18,8 @@ package org.quiltmc.qsl.registry.mixin.client;
 
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerServerListWidget;
 import net.minecraft.client.network.ServerInfo;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
-import org.quiltmc.qsl.registry.impl.sync.RegistrySyncText;
-import org.quiltmc.qsl.registry.impl.sync.client.ClientRegistrySync;
 import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolContainer;
 import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolImpl;
 import org.spongepowered.asm.mixin.Final;
@@ -30,8 +29,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.stream.Collectors;
 
+@ClientOnly
 @Mixin(MultiplayerServerListWidget.ServerEntry.class)
 public class MultiplayerServerListWidgetServerEntryMixin {
 	@Shadow

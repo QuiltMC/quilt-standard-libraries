@@ -88,11 +88,21 @@ public final class ServerRegistrySync {
 	}
 
 	private static Text text(String string) {
-		try {
-			return Text.Serializer.fromJson(string);
-		} catch (Exception e) {
-			return Text.of(string);
+		if (string == null) {
+			return Text.empty();
 		}
+
+		Text text = null;
+		try {
+			text = Text.Serializer.fromJson(string);
+		} catch (Exception e) {
+		}
+
+		if (text == null) {
+			text = Text.literal(string);
+		}
+
+		return text != null ? text : Text.empty();
 	}
 
 	public static boolean isNamespaceVanilla(String namespace) {

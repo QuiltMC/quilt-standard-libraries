@@ -18,6 +18,7 @@ package org.quiltmc.qsl.registry.impl.sync.client;
 
 import java.util.*;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
 
 import com.mojang.logging.LogUtils;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -28,6 +29,7 @@ import net.minecraft.fluid.FluidState;
 import net.minecraft.registry.Registry;
 import net.minecraft.text.component.LiteralComponent;
 import net.minecraft.text.component.TextComponent;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.collection.IdList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -80,6 +82,18 @@ public final class ClientRegistrySync {
 	private static Text errorStyleHeader = ServerRegistrySync.errorStyleHeader;
 	private static Text errorStyleFooter = ServerRegistrySync.errorStyleFooter;
 	private static boolean showErrorDetails = ServerRegistrySync.showErrorDetails;
+	private static String currentSyncErrorLogs;
+
+	private static Text disconnectMainReason = null;
+
+	private static LogBuilder builder = new LogBuilder();
+	private static boolean mustDisconnect;
+
+
+	@Nullable
+	public static List<LogBuilder.Section> getAndClearCurrentSyncLogs() {
+		return builder.finish();
+	}
 
 	public static void registerHandlers() {
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.HANDSHAKE, ClientRegistrySync::handleHelloPacket);
@@ -88,8 +102,8 @@ public final class ClientRegistrySync {
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_APPLY, ClientRegistrySync::handleApplyPacket);
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.END, ClientRegistrySync::handleGoodbyePacket);
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_RESTORE, ClientRegistrySync::handleRestorePacket);
-		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.VALIDATE_BLOCK_STATES, handleStateValidation(Registries.BLOCK, Block.STATE_IDS, BlockState::isOf));
-		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.VALIDATE_FLUID_STATES, handleStateValidation(Registries.FLUID, Fluid.STATE_IDS, FluidState::isOf));
+		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.VALIDATE_BLOCK_STATES, handleStateValidation(Registries.BLOCK, Block.STATE_IDS, BlockState::getBlock));
+		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.VALIDATE_FLUID_STATES, handleStateValidation(Registries.FLUID, Fluid.STATE_IDS, FluidState::getFluid));
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.ERROR_STYLE, ClientRegistrySync::handleErrorStylePacket);
 		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.MOD_PROTOCOL, ClientRegistrySync::handleModProtocol);
 	}
@@ -120,29 +134,25 @@ public final class ClientRegistrySync {
 		}
 
 		if (disconnect) {
-			disconnect(handler, RegistrySyncText.unsupportedModVersion(unsupportedList, missingPrioritized));
+			markDisconnected(handler, RegistrySyncText.unsupportedModVersion(unsupportedList, missingPrioritized));
 
-			var builder = new StringBuilder("Required Mod Protocol versions are missing:\n");
+			builder.pushT("unsupported_protocol", "Unsupported Mod Protocol");
 
 			for (var entry : unsupportedList) {
-				builder.append("\t- ").append(entry.displayName()).append(" (").append(entry.id())
-						.append("), Server:  ").append(stringifyVersions(entry.versions()))
-						.append(", Client:  ").append(stringifyVersions(ModProtocolImpl.getVersion(entry.id())));
-				builder.append("\n");
+				builder.textEntry(Text.literal(entry.displayName()).append(Text.literal(" (" + entry.id() + ")").formatted(Formatting.DARK_GRAY)).append(" | Server: ").append(stringifyVersions(entry.versions())).append(", Client: ").append(stringifyVersions(ModProtocolImpl.getVersion(entry.id()))));
 			}
-
-			LOGGER.warn(builder.toString());
 		} else {
 			sendSupportedModProtocol(sender, values);
 		}
 	}
 
+
 	private static String stringifyVersions(IntList versions) {
-		if (versions == null) {
+		if (versions == null || versions.isEmpty()) {
 			return "Missing!";
 		}
 
-		var b = new StringBuilder();
+		var b = new StringBuilder().append('[');
 
 		var iter = versions.iterator();
 
@@ -154,7 +164,7 @@ public final class ClientRegistrySync {
 			}
 		}
 
-		return b.toString();
+		return b.append(']').toString();
 	}
 
 	private static void sendSupportedModProtocol(PacketSender sender, Object2IntOpenHashMap<String> values) {
@@ -177,6 +187,7 @@ public final class ClientRegistrySync {
 	private static void handleHelloPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
 		syncVersion = ProtocolVersions.getHighestSupportedLocal(buf.readIntList());
 		sendHelloPacket(sender, syncVersion);
+		builder.clear();
 	}
 
 	private static void sendHelloPacket(PacketSender sender, int version) {
@@ -203,6 +214,25 @@ public final class ClientRegistrySync {
 
 	private static void handleGoodbyePacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
 		syncVersion = -1;
+
+		if (mustDisconnect) {
+			var entry = Text.empty();
+			entry.append(errorStyleHeader);
+
+			if (disconnectMainReason != null && showErrorDetails && !isTextEmpty(disconnectMainReason)) {
+				entry.append("\n");
+				entry.append(disconnectMainReason);
+			}
+
+			if (!isTextEmpty(errorStyleFooter)) {
+				entry.append("\n");
+				entry.append(errorStyleFooter);
+			}
+
+			handler.getConnection().disconnect(entry);
+
+			LOGGER.warn(builder.asString());
+		}
 	}
 
 	private static void handleStartPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
@@ -221,9 +251,10 @@ public final class ClientRegistrySync {
 		} else if (RegistryFlag.isOptional(flags)) {
 			optionalRegistry = true;
 		} else {
-			LOGGER.warn("Trying to sync registry " + identifier + " which doesn't " + (registry != null ? "support it!" : "exist!"));
 			sendSyncFailedPacket(handler, identifier);
-			disconnect(handler, RegistrySyncText.missingRegistry(identifier, registry != null));
+			var x = RegistrySyncText.missingRegistry(identifier, registry != null);
+			markDisconnected(handler, x);
+			builder.push(x);
 		}
 	}
 
@@ -308,9 +339,11 @@ public final class ClientRegistrySync {
 	}
 
 
-	private static <T, S> ClientPlayNetworking.ChannelReceiver handleStateValidation(Registry<T> registry, IdList<S> stateList, BiPredicate<S, T> isOf) {
+	private static <T, S> ClientPlayNetworking.ChannelReceiver handleStateValidation(Registry<T> registry, IdList<S> stateList, Function<S, T> converter) {
 		return (MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) -> {
 			var count = buf.readVarInt();
+
+			boolean firstMismatch = true;
 
 			while (count-- > 0) {
 				var block = registry.get(buf.readVarInt());
@@ -319,9 +352,17 @@ public final class ClientRegistrySync {
 
 				while (stateCount-- > 0) {
 					var state = stateList.get(buf.readVarInt());
-					if (state == null || !isOf.test(state, block)) {
-						disconnect(handler, RegistrySyncText.mismatchedStateIds(registry.getKey().getValue(), registry.getId(block), state));
-						LOGGER.warn("Failed to match state of " + registry.getId(block));
+					if (state == null || converter.apply(state) != block) {
+						var conv = state == null ? null : converter.apply(state);
+						markDisconnected(handler, RegistrySyncText.mismatchedStateIds(registry.getKey().getValue(), block == null ? null : registry.getId(block), conv == null ? null : registry.getId(conv)));
+						if (firstMismatch) {
+							builder.pushT("state_mismatch", "Mismatched states for entries of '%s'", registry.getKey().getValue().toString());
+							firstMismatch = false;
+						}
+
+						builder.textEntry(Text.translatable("quilt.core.registry_sync.found_expected", "Found '%s', expected '%s'",
+								block == null ? Text.literal("null").formatted(Formatting.RED) : registry.getId(block),
+								conv == null ? Text.literal("null").formatted(Formatting.RED) : registry.getId(conv)));
 					}
 				}
 			}
@@ -392,40 +433,26 @@ public final class ClientRegistrySync {
 				sendSyncFailedPacket(handler, registry);
 			}
 
-			disconnect(handler, RegistrySyncText.missingRegistryEntries(registry, missingEntries));
-			var builder = new StringBuilder("Missing entries for registry \"" + registry + "\":\n");
+			markDisconnected(handler, RegistrySyncText.missingRegistryEntries(registry, missingEntries));
+			builder.pushT("missing_entries", "Missing entries for registry '%s'", registry);
 
 			for (var entry : missingEntries) {
-				builder.append("\t- ").append(entry.identifier());
+				var x = Text.literal(entry.identifier().toString());
 				if (RegistryFlag.isOptional(entry.flags())) {
-					builder.append(" (Optional)");
+					x.append(" ").append(Text.translatable("quilt.core.registry_sync.optional", "(Optional)").formatted(Formatting.DARK_GRAY));
 				}
-
-				builder.append("\n");
+				builder.textEntry(x);
 			}
-
-			LOGGER.warn(builder.toString());
 		}
 
 		return disconnect;
 	}
 
-	private static void disconnect(ClientPlayNetworkHandler handler, Text reason) {
-		var entry = Text.empty();
-		entry.append(errorStyleHeader);
-
-		if (showErrorDetails && !isTextEmpty(reason)) {
-			entry.append("\n");
-			entry.append(reason);
+	private static void markDisconnected(ClientPlayNetworkHandler handler, Text reason) {
+		if (disconnectMainReason == null) {
+			disconnectMainReason = reason;
 		}
-
-		if (!isTextEmpty(errorStyleFooter)) {
-			entry.append("\n");
-			entry.append(errorStyleFooter);
-		}
-
-
-		handler.getConnection().disconnect(entry);
+		mustDisconnect = true;
 	}
 
 	private static boolean isTextEmpty(Text text) {
@@ -461,5 +488,6 @@ public final class ClientRegistrySync {
 		errorStyleHeader = ServerRegistrySync.errorStyleHeader;
 		errorStyleFooter = ServerRegistrySync.errorStyleFooter;
 		showErrorDetails = ServerRegistrySync.showErrorDetails;
+		disconnectMainReason = null;
 	}
 }

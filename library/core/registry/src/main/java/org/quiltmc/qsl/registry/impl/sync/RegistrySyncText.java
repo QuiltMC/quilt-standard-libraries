@@ -89,11 +89,11 @@ public class RegistrySyncText {
 		return namespaceText;
 	}
 
-	public static Text mismatchedStateIds(Identifier registryId, Identifier expectedBlockId, @Nullable Object state) {
+	public static Text mismatchedStateIds(Identifier registryId, @Nullable Identifier expectedBlockId, @Nullable Identifier foundBlockId) {
 		return Text.translatable("quilt.core.registry_sync.incorrect_state", "State validation failed.\nExpected object owner '%s' ('%s'), found '%s'",
-				Text.literal(expectedBlockId.toString()).formatted(Formatting.YELLOW),
+				expectedBlockId == null ? Text.literal("null").formatted(Formatting.RED) : Text.literal(expectedBlockId.toString()).formatted(Formatting.YELLOW),
 				Text.literal(registryId.toString()).formatted(Formatting.GRAY),
-				state == null ? Text.literal("null").formatted(Formatting.RED) : Text.literal(state.toString())
+				foundBlockId == null ? Text.literal("null").formatted(Formatting.RED) : Text.literal(foundBlockId.toString())
 		);	}
 
 	public static Text missingRegistry(Identifier identifier, boolean exists) {

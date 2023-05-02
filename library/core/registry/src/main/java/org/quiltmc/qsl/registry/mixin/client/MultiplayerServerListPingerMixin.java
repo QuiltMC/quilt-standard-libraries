@@ -17,19 +17,19 @@
 package org.quiltmc.qsl.registry.mixin.client;
 
 import net.minecraft.client.network.MultiplayerServerListPinger;
-import net.minecraft.client.network.ServerAddress;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.network.listener.ClientQueryPacketListener;
-import net.minecraft.network.listener.PacketListener;
 import net.minecraft.network.packet.s2c.query.QueryPongS2CPacket;
 import net.minecraft.network.packet.s2c.query.ServerMetadataS2CPacket;
 import net.minecraft.text.Text;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolContainer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
+@ClientOnly
 @Mixin(MultiplayerServerListPinger.class)
 public class MultiplayerServerListPingerMixin {
 	@ModifyArgs(method = "add", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/ClientConnection;setPacketListener(Lnet/minecraft/network/listener/PacketListener;)V"))

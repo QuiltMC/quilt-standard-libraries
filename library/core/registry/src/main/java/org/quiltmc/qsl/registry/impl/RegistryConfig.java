@@ -53,9 +53,7 @@ public class RegistryConfig extends WrappedConfig {
 				"""));
 
 		@Comment("Bottom part of the message displayed for players joining with incompatible clients. Supports strings and Minecraft's JSON text format.")
-		public final String mismatched_entries_bottom_message = Text.Serializer.toJson(Text.translatable("qsl.registry_sync.check_logs", """
-
-				Check logs for more details!""").formatted(Formatting.GOLD));
+		public final String mismatched_entries_bottom_message = "";
 
 		@Comment("Shows some details about why client couldn't connect.")
 		public final boolean mismatched_entries_show_details = true;
@@ -65,6 +63,9 @@ public class RegistryConfig extends WrappedConfig {
 
 		@Comment("Forces unknown clients to use the Fabric Registry Sync protocol fallback. Disables preventing Vanilla clients from joining.")
 		public final boolean force_fabric_api_protocol_fallback = false;
+
+		@Comment("Disables the Mod Protocol sync on server list/initial query.")
+		public final boolean disable_mod_protocol_ping = false;
 
 		@Comment("Disables the Registry Sync requirement. USE AT YOUR OWN RISK!")
 		public final boolean disable_registry_sync = false;

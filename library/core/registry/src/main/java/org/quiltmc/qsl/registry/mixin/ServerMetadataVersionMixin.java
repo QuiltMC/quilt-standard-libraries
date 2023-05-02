@@ -41,6 +41,10 @@ public class ServerMetadataVersionMixin implements ModProtocolContainer {
 
 	@Inject(method = "createCurrent", at = @At("RETURN"))
 	private static void quilt$addProtocolVersions(CallbackInfoReturnable<ServerMetadata.Version> cir) {
+		if (ModProtocolImpl.disableQuery) {
+			return;
+		}
+
 		var map = new HashMap<String, IntList>();
 		for (var protocol : ModProtocolImpl.REQUIRED) {
 			map.put(protocol.id(), protocol.versions());
