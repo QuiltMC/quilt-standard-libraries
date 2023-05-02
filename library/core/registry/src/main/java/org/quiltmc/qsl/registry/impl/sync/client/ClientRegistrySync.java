@@ -17,7 +17,6 @@
 package org.quiltmc.qsl.registry.impl.sync.client;
 
 import java.util.*;
-import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 import com.mojang.logging.LogUtils;
@@ -82,7 +81,6 @@ public final class ClientRegistrySync {
 	private static Text errorStyleHeader = ServerRegistrySync.errorStyleHeader;
 	private static Text errorStyleFooter = ServerRegistrySync.errorStyleFooter;
 	private static boolean showErrorDetails = ServerRegistrySync.showErrorDetails;
-	private static String currentSyncErrorLogs;
 
 	private static Text disconnectMainReason = null;
 
@@ -120,16 +118,16 @@ public final class ClientRegistrySync {
 
 		for (var protocol : protocols) {
 			var local = ModProtocolImpl.getVersion(protocol.id());
-
 			var latest = protocol.latestMatchingVersion(local);
+			System.out.println(latest);
 			if (latest != ProtocolVersions.NO_PROTOCOL) {
 				values.put(protocol.id(), latest);
 			} else if (!protocol.optional()) {
+				unsupportedList.add(protocol);
+				disconnect = true;
 				if (prioritizedId.equals(protocol.id())) {
 					missingPrioritized = protocol;
 				}
-				unsupportedList.add(protocol);
-				disconnect = true;
 			}
 		}
 

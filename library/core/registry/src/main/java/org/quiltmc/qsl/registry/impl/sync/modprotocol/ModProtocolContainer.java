@@ -33,7 +33,6 @@ public interface ModProtocolContainer {
 		return new Codec<>() {
 			@Override
 			public <T> DataResult<Pair<E, T>> decode(DynamicOps<T> ops, T input) {
-				System.out.println(input);
 				var value = codec.decode(ops, input);
 				if (value.get().right().isPresent()) {
 					return value;

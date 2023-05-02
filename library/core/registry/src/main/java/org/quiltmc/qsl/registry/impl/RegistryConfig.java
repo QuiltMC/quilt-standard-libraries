@@ -16,18 +16,29 @@
 
 package org.quiltmc.qsl.registry.impl;
 
+import net.minecraft.entity.data.TrackedData;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.quiltmc.config.api.WrappedConfig;
 import org.quiltmc.config.api.annotations.Comment;
 import org.quiltmc.loader.api.config.QuiltConfig;
+
+import java.util.Iterator;
+import java.util.List;
 
 @ApiStatus.Internal
 public class RegistryConfig extends WrappedConfig {
 	public static final RegistryConfig INSTANCE = QuiltConfig.create("quilt/qsl", "registry", RegistryConfig.class);
 
 	public final RegistrySync registry_sync = new RegistrySync();
+
+	// This is just workaround for direct values from INSTANCE not being correct.
+	@Deprecated
+	public static Object getSync(String key) {
+		return RegistryConfig.INSTANCE.getValue(List.of("registry_sync", key)).value();
+	}
 
 	public static class RegistrySync implements Section {
 		@Comment("Mod protocol is a feature allowing you to prevent clients with mismatched settings to join.")

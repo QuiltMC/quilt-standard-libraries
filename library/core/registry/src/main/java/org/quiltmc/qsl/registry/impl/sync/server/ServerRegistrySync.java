@@ -63,16 +63,23 @@ public final class ServerRegistrySync {
 	public static IntList SERVER_SUPPORTED_PROTOCOL = new IntArrayList(ProtocolVersions.IMPL_SUPPORTED_VERSIONS);
 
 	public static void readConfig() {
-		var config = RegistryConfig.INSTANCE.registry_sync;
+		//var config = RegistryConfig.INSTANCE.registry_sync;
 
-		noRegistrySyncMessage = text(config.missing_registry_sync_message);
-		errorStyleHeader = text(config.mismatched_entries_top_message);
-		errorStyleFooter = text(config.mismatched_entries_bottom_message);
+		//noRegistrySyncMessage = text(config.missing_registry_sync_message);
+		noRegistrySyncMessage = text((String) RegistryConfig.getSync("missing_registry_sync_message"));
+		//errorStyleHeader = text(config.mismatched_entries_top_message);
+		errorStyleHeader = text((String) RegistryConfig.getSync("mismatched_entries_top_message"));
+		//errorStyleFooter = text(config.mismatched_entries_bottom_message);
+		errorStyleFooter = text((String) RegistryConfig.getSync("mismatched_entries_bottom_message"));
 
-		supportFabric = config.support_fabric_api_protocol;
-		forceFabricFallback = config.force_fabric_api_protocol_fallback;
-		forceDisable = config.disable_registry_sync;
-		showErrorDetails = config.mismatched_entries_show_details;
+		//supportFabric = config.support_fabric_api_protocol;
+		supportFabric = (Boolean) RegistryConfig.getSync("support_fabric_api_protocol");
+		//forceFabricFallback = config.force_fabric_api_protocol_fallback;
+		forceFabricFallback = (Boolean) RegistryConfig.getSync("force_fabric_api_protocol_fallback");
+		//forceDisable = config.disable_registry_sync;
+		forceDisable = (Boolean) RegistryConfig.getSync("disable_registry_sync");
+		//showErrorDetails = config.mismatched_entries_show_details;
+		showErrorDetails = (Boolean) RegistryConfig.getSync("mismatched_entries_show_details");
 
 		if (supportFabric) {
 			SERVER_SUPPORTED_PROTOCOL.add(ProtocolVersions.FAPI_PROTOCOL);
@@ -112,6 +119,10 @@ public final class ServerRegistrySync {
 	public static boolean shouldSync() {
 		if (forceDisable) {
 			return false;
+		}
+
+		if (ModProtocolImpl.enabled) {
+			return true;
 		}
 
 		for (var registry : Registries.REGISTRY) {

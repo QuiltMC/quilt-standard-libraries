@@ -48,6 +48,9 @@ public class LogBuilder {
 	}
 
 	public List<Section> finish() {
+		if (this.title != null) {
+			sections.add(new Section(this.title, this.entriesCurrent));
+		}
 		var x = this.sections;
 		this.clear();
 		return x;
@@ -60,7 +63,11 @@ public class LogBuilder {
 	}
 
 	public String asString() {
-		return stringify(this.sections);
+		var sections = new ArrayList<>(this.sections);
+		if (this.title != null) {
+			sections.add(new Section(this.title, this.entriesCurrent));
+		}
+		return stringify(sections);
 	}
 
 
