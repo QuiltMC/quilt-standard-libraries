@@ -27,8 +27,7 @@ import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;
 import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
-import org.quiltmc.qsl.registry.impl.sync.server.SyncAwareConnectionClient;
-import org.quiltmc.qsl.registry.mixin.ServerPlayNetworkHandlerAccessor;
+import org.quiltmc.qsl.registry.impl.sync.server.ExtendedConnectionClient;
 
 /**
  * Methods for manipulation of registry synchronization.
@@ -121,7 +120,7 @@ public final class RegistrySynchronization {
 	 */
 	@Contract(pure = true)
 	public static <T> boolean isEntryPresent(@NotNull ServerPlayNetworkHandler handler, @NotNull SimpleRegistry<T> registry, T entry) {
-		var connection = ((SyncAwareConnectionClient) ((ServerPlayNetworkHandlerAccessor) handler).getConnection());
+		var connection = ExtendedConnectionClient.from(handler);
 		var regFlags = SynchronizedRegistry.as(registry).quilt$getRegistryFlag();
 		var flags = SynchronizedRegistry.as(registry).quilt$getEntryFlag(entry);
 

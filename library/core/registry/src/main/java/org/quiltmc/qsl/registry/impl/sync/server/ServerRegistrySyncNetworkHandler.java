@@ -106,6 +106,7 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 	private static final int GOODBYE_PING = 1;
 
 	private final ClientConnection connection;
+	private final ExtendedConnectionClient extendedConnection;
 	private final ServerPlayerEntity player;
 	private final Runnable continueLoginRunnable;
 
@@ -116,6 +117,7 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 		this.connection = connection;
 		this.player = player;
 		this.continueLoginRunnable = continueLogin;
+		this.extendedConnection = (ExtendedConnectionClient) connection;
 
 		((DelayedPacketsHolder) this.player).quilt$setPacketList(this.delayedPackets);
 
@@ -129,7 +131,7 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 		switch (packet.getParameter()) {
 			case HELLO_PING -> {
 				if (ServerRegistrySync.SERVER_SUPPORTED_PROTOCOL.contains(this.syncVersion)) {
-					((SyncAwareConnectionClient) this.connection).quilt$setUnderstandsOptional();
+					this.extendedConnection.quilt$setUnderstandsOptional();
 					ServerRegistrySync.sendSyncPackets(this.connection, this.player, this.syncVersion);
 				} else if (ServerRegistrySync.SERVER_SUPPORTED_PROTOCOL.contains(ProtocolVersions.FAPI_PROTOCOL) && (ServerRegistrySync.forceFabricFallback || (ServerRegistrySync.supportFabric && ((ChannelInfoHolder) this.connection).getPendingChannelsNames().contains(ServerFabricRegistrySync.ID)))) {
 					ServerFabricRegistrySync.sendSyncPackets(this.connection);
@@ -159,19 +161,33 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 		} else if (packet.getChannel().equals(ClientPackets.SYNC_FAILED)) {
 			LOGGER.info("Disconnecting {} due to sync failure of {} registry", this.player.getGameProfile().getName(), packet.getData().readIdentifier());
 		} else if (packet.getChannel().equals(ClientPackets.UNKNOWN_ENTRY)) {
-			var data = packet.getData();
-			var registry = Registries.REGISTRY.get(data.readIdentifier());
-			var length = data.readVarInt();
-
-			while (length-- > 0) {
-				var object = registry.get(data.readVarInt());
-
-				if (object != null) {
-					((SyncAwareConnectionClient) this.connection).quilt$addUnknownEntry(registry, object);
-				}
-			}
+			handleUnknownEntry(packet.getData());
+		} else if (packet.getChannel().equals(ClientPackets.MOD_PROTOCOL)) {
+			handleModProtocol(packet.getData());
 		} else {
 			this.delayedPackets.add(new CustomPayloadC2SPacket(packet.getChannel(), new PacketByteBuf(packet.getData().copy())));
+		}
+	}
+
+	private void handleModProtocol(PacketByteBuf data) {
+		var count = data.readVarInt();
+		while (count-- > 0) {
+			var id = data.readString();
+			var version = data.readVarInt();
+			this.extendedConnection.quilt$setModProtocol(id, version);
+		}
+	}
+
+	private void handleUnknownEntry(PacketByteBuf data) {
+		var registry = Registries.REGISTRY.get(data.readIdentifier());
+		var length = data.readVarInt();
+
+		while (length-- > 0) {
+			var object = registry.get(data.readVarInt());
+
+			if (object != null) {
+				this.extendedConnection.quilt$addUnknownEntry(registry, object);
+			}
 		}
 	}
 

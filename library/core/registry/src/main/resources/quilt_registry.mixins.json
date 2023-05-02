@@ -15,6 +15,7 @@
     "RegistriesMixin",
     "RegistryLoaderMixin",
     "ServerLoginNetworkHandlerMixin",
+    "ServerMetadataVersionMixin",
     "ServerPlayerEntityMixin",
     "ServerPlayNetworkHandlerAccessor",
     "SimpleRegistryMixin",
@@ -30,7 +31,10 @@
     "client.ItemModelsMixin",
     "client.ItemRendererAccessor",
     "client.MinecraftClientMixin",
-    "client.ParticleManagerMixin"
+    "client.MultiplayerServerListPingerMixin",
+    "client.MultiplayerServerListWidgetServerEntryMixin",
+    "client.ParticleManagerMixin",
+    "client.ServerInfoMixin"
   ],
   "injectors": {
     "defaultRequire": 1

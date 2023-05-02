@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.registry.impl.sync;
 
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.Texts;
@@ -103,7 +102,6 @@ public class RegistrySyncText {
 
 	public static Text unsupportedModVersion(List<ModProtocolDef> unsupported, ModProtocolDef missingPrioritized) {
 		if (missingPrioritized != null && !missingPrioritized.versions().isEmpty()) {
-
 			var x = Text.translatable("quilt.core.registry_sync.require_main_mod_protocol", "This server requires %s with protocol version of %s!",
 					Text.literal(missingPrioritized.displayName()).formatted(Formatting.YELLOW),
 					missingPrioritized.versions().getInt(0)
@@ -119,12 +117,12 @@ public class RegistrySyncText {
 
 			return x;
 		} else {
+			System.out.println(unsupported.size());
 			var namespacesList = new ArrayList<>(unsupported);
 			namespacesList.sort(Comparator.comparing(ModProtocolDef::displayName));
-			var namespaceText = entryList(namespacesList, RegistrySyncText::protocolDefEntryText);
+			var namespaceText = entryList(namespacesList, RegistrySyncText::protocolDefEntryText).formatted(Formatting.GRAY);
 
 			return Text.translatable("quilt.core.registry_sync.unsupported_mod_protocol", "Unsupported mod protocol versions for:\n%s",
-					namespaceText,
 					namespaceText
 			);
 		}

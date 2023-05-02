@@ -16,22 +16,36 @@
 
 package org.quiltmc.qsl.registry.mixin;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import net.minecraft.network.ClientConnection;
+import net.minecraft.network.NetworkSide;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Util;
-import org.quiltmc.qsl.registry.impl.sync.server.SyncAwareConnectionClient;
+import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
+import org.quiltmc.qsl.registry.impl.sync.server.ExtendedConnectionClient;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.IdentityHashMap;
 
 @Mixin(ClientConnection.class)
-public class ClientConnectionMixin implements SyncAwareConnectionClient {
+public class ClientConnectionMixin implements ExtendedConnectionClient {
 	@Unique
 	private IdentityHashMap<Registry<?>, ObjectOpenCustomHashSet<Object>> quilt$unknownEntries = new IdentityHashMap<>();
 	@Unique
+	private Object2IntMap<String> quilt$modProtocol = new Object2IntOpenHashMap<>();
+	@Unique
 	private boolean quilt$understandsOptional;
+
+	@Inject(method = "<init>", at = @At("TAIL"))
+	private void quilt$setDefault(NetworkSide side, CallbackInfo ci) {
+		this.quilt$modProtocol.defaultReturnValue(ProtocolVersions.NO_PROTOCOL);
+	}
 
 	@Override
 	public void quilt$addUnknownEntry(Registry<?> registry, Object entry) {
@@ -53,11 +67,6 @@ public class ClientConnectionMixin implements SyncAwareConnectionClient {
 	}
 
 	@Override
-	public void quilt$clearUnknown() {
-		this.quilt$unknownEntries.clear();
-	}
-
-	@Override
 	public boolean quilt$understandsOptional() {
 		return this.quilt$understandsOptional;
 	}
@@ -65,5 +74,15 @@ public class ClientConnectionMixin implements SyncAwareConnectionClient {
 	@Override
 	public void quilt$setUnderstandsOptional() {
 		this.quilt$understandsOptional = true;
+	}
+
+	@Override
+	public void quilt$setModProtocol(String id, int version) {
+		this.quilt$modProtocol.put(id, version);
+	}
+
+	@Override
+	public int quilt$getModProtocol(String id) {
+		return this.quilt$modProtocol.getInt(id);
 	}
 }

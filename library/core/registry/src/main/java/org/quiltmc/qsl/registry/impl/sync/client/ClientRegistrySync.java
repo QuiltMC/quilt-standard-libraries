@@ -107,23 +107,15 @@ public final class ClientRegistrySync {
 		for (var protocol : protocols) {
 			var local = ModProtocolImpl.getVersion(protocol.id());
 
-			if (local != null) {
-				var latest = protocol.latestMatchingVersion(local);
-				if (latest != ProtocolVersions.NO_PROTOCOL) {
-					values.put(protocol.id(), latest);
-				} else if (!protocol.optional()) {
-					if (prioritizedId.equals(protocol.id())) {
-						missingPrioritized = protocol;
-					}
-					disconnect = true;
-				}
-
+			var latest = protocol.latestMatchingVersion(local);
+			if (latest != ProtocolVersions.NO_PROTOCOL) {
+				values.put(protocol.id(), latest);
 			} else if (!protocol.optional()) {
 				if (prioritizedId.equals(protocol.id())) {
 					missingPrioritized = protocol;
 				}
-				disconnect = true;
 				unsupportedList.add(protocol);
+				disconnect = true;
 			}
 		}
 
@@ -307,7 +299,7 @@ public final class ClientRegistrySync {
 				}
 			}
 
-			if (!optionalMissing.isEmpty()){
+			if (!optionalMissing.isEmpty()) {
 				sendSyncUnknownEntriesPacket(handler, currentRegistryId, optionalMissing);
 			}
 		}
