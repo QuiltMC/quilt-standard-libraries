@@ -114,7 +114,5 @@ public class ScrollableMultiTextWidget extends ScrollableWidget {
 	}
 
 	@Override
-	protected void updateNarration(NarrationMessageBuilder builder) {
-
-	}
+	protected void updateNarration(NarrationMessageBuilder builder) {}
 }

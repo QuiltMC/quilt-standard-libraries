@@ -42,7 +42,6 @@ public class MultiplayerServerListWidgetServerEntryMixin {
 		var map = ModProtocolContainer.of(this.server).quilt$getModProtocol();
 
 		if (map != null) {
-
 			for (var entry : map.entrySet()) {
 				var c = ModProtocolImpl.getVersion(entry.getKey());
 				if (ProtocolVersions.getHighestSupported(c, entry.getValue()) == ProtocolVersions.NO_PROTOCOL) {
