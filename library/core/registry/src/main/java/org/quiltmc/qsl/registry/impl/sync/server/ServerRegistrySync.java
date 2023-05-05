@@ -137,6 +137,10 @@ public final class ServerRegistrySync {
 			return false;
 		}
 
+		if (!ModProtocolImpl.REQUIRED.isEmpty()) {
+			return true;
+		}
+
 		for (var registry : Registries.REGISTRY) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
 					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() == SynchronizedRegistry.Status.REQUIRED) {
