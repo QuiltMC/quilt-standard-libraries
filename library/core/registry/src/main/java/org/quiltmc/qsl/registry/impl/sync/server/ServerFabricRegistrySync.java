@@ -39,7 +39,7 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;
-import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
+import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
 
 /**
  * Legacy (Fabric) registry sync. Direct port from Fabric API.

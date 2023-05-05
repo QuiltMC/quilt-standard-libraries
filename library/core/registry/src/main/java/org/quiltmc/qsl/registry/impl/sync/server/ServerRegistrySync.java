@@ -45,7 +45,7 @@ import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
 import org.quiltmc.qsl.registry.impl.sync.ServerPackets;
 import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolDef;
 import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolImpl;
-import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
+import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
 import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;
 
 @ApiStatus.Internal

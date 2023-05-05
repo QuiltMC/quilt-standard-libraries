@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.registry.impl.sync.registry;
+package org.quiltmc.qsl.registry.impl.sync;
 
 import java.util.Collection;
 import java.util.Map;
@@ -23,7 +23,9 @@ import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
+import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;
 
+// TODO - Move to registry package once qfapi is fixed
 @ApiStatus.Internal
 public interface SynchronizedRegistry<T> {
 	void quilt$markForSync();
