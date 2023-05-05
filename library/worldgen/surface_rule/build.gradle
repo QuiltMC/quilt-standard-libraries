@@ -13,11 +13,15 @@ qslModule {
 			api("qsl_base")
 			api("registry")
 			api("resource_loader")
+			api("data_callback")
 		}
 	}
 	entrypoints {
 		events {
 			values = ["org.quiltmc.qsl.worldgen.surface_rule.impl.QuiltSurfaceRuleInitializer"]
+		}
+		init {
+			values = ["org.quiltmc.qsl.worldgen.surface_rule.impl.SurfaceRuleDataInitializer"]
 		}
 	}
 	accessWidener()

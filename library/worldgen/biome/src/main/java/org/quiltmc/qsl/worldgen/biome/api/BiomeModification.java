@@ -60,4 +60,13 @@ public class BiomeModification {
 		BiomeModificationImpl.INSTANCE.addModifier(this.id, phase, selector, modifier);
 		return this;
 	}
+
+	/**
+	 * Adds a modifier that can be overridden by datapacks. Note that only a single such modifier can be added with any
+	 * given identifier, and subsequent calls to this method will override the previous one.
+	 */
+	public BiomeModification add(ModificationPhase phase, BiomeModifier modifier) {
+		BiomeModificationImpl.INSTANCE.addModifier(this.id, phase, modifier);
+		return this;
+	}
 }

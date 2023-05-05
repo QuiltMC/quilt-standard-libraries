@@ -22,6 +22,9 @@ import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.EventAwareListener;
+import org.quiltmc.qsl.data.callback.api.CodecAware;
+import org.quiltmc.qsl.data.callback.api.CodecMap;
+import org.quiltmc.qsl.data.callback.api.DynamicEventCallbackSource;
 
 /**
  * Events relating to {@link net.minecraft.world.gen.surfacebuilder.SurfaceRules surface rules}.
@@ -46,6 +49,25 @@ public final class SurfaceRuleEvents {
 			callback.modifyOverworldRules(context);
 		}
 	});
+	/**
+	 * A {@link CodecMap} for the {@link OverworldModifierCallback} event. Can be used to register codecs for loading event callbacks from data-packs.
+	 */
+	public static final CodecMap<OverworldModifierCallback> MODIFY_OVERWORLD_CODECS = new CodecMap<>(context -> {});
+	/**
+	 * A {@link DynamicEventCallbackSource} for the {@link OverworldModifierCallback} event.
+	 * Can be used to register event callbacks alongside an identifier, allowing them to be overridden with data-packs.
+	 */
+	public static final DynamicEventCallbackSource<OverworldModifierCallback> MODIFY_OVERWORLD_DATA = new DynamicEventCallbackSource<>(
+			new Identifier("quilt", "surface_rules/overworld"),
+			MODIFY_OVERWORLD_CODECS,
+			OverworldModifierCallback.class,
+			MODIFY_OVERWORLD,
+			callbacks -> context -> {
+				for (var callback : callbacks.get()) {
+					callback.modifyOverworldRules(context);
+				}
+			}
+	);
 
 	/**
 	 * An event indicating that the surface rules for the Nether dimension may get modified by mods,
@@ -56,6 +78,25 @@ public final class SurfaceRuleEvents {
 			callback.modifyNetherRules(context);
 		}
 	});
+	/**
+	 * A {@link CodecMap} for the {@link NetherModifierCallback} event. Can be used to register codecs for loading event callbacks from data-packs.
+	 */
+	public static final CodecMap<NetherModifierCallback> MODIFY_NETHER_CODECS = new CodecMap<>(context -> {});
+	/**
+	 * A {@link DynamicEventCallbackSource} for the {@link NetherModifierCallback} event.
+	 * Can be used to register event callbacks alongside an identifier, allowing them to be overridden with data-packs.
+	 */
+	public static final DynamicEventCallbackSource<NetherModifierCallback> MODIFY_NETHER_DATA = new DynamicEventCallbackSource<>(
+			new Identifier("quilt", "surface_rules/nether"),
+			MODIFY_NETHER_CODECS,
+			NetherModifierCallback.class,
+			MODIFY_NETHER,
+			callbacks -> context -> {
+				for (var callback : callbacks.get()) {
+					callback.modifyNetherRules(context);
+				}
+			}
+	);
 
 	/**
 	 * An event indicating that the surface rules for the End dimension may get modified by mods,
@@ -66,6 +107,25 @@ public final class SurfaceRuleEvents {
 			callback.modifyTheEndRules(context);
 		}
 	});
+	/**
+	 * A {@link CodecMap} for the {@link TheEndModifierCallback} event. Can be used to register codecs for loading event callbacks from data-packs.
+	 */
+	public static final CodecMap<TheEndModifierCallback> MODIFY_THE_END_CODECS = new CodecMap<>(context -> {});
+	/**
+	 * A {@link DynamicEventCallbackSource} for the {@link TheEndModifierCallback} event.
+	 * Can be used to register event callbacks alongside an identifier, allowing them to be overridden with data-packs.
+	 */
+	public static final DynamicEventCallbackSource<TheEndModifierCallback> MODIFY_THE_END_DATA = new DynamicEventCallbackSource<>(
+			new Identifier("quilt", "surface_rules/the_end"),
+			MODIFY_THE_END_CODECS,
+			TheEndModifierCallback.class,
+			MODIFY_THE_END,
+			callbacks -> context -> {
+				for (var callback : callbacks.get()) {
+					callback.modifyTheEndRules(context);
+				}
+			}
+	);
 
 	/**
 	 * An event indicating that the surface rules for a non-Vanilla dimension may get modified by mods,
@@ -77,9 +137,28 @@ public final class SurfaceRuleEvents {
 					callback.modifyGenericSurfaceRules(context);
 				}
 			});
+	/**
+	 * A {@link CodecMap} for the {@link GenericModifierCallback} event. Can be used to register codecs for loading event callbacks from data-packs.
+	 */
+	public static final CodecMap<GenericModifierCallback> MODIFY_GENERIC_CODECS = new CodecMap<>(context -> {});
+	/**
+	 * A {@link DynamicEventCallbackSource} for the {@link GenericModifierCallback} event.
+	 * Can be used to register event callbacks alongside an identifier, allowing them to be overridden with data-packs.
+	 */
+	public static final DynamicEventCallbackSource<GenericModifierCallback> MODIFY_GENERIC_DATA = new DynamicEventCallbackSource<>(
+			new Identifier("quilt", "surface_rules/generic"),
+			MODIFY_GENERIC_CODECS,
+			GenericModifierCallback.class,
+			MODIFY_GENERIC,
+			callbacks -> context -> {
+				for (var callback : callbacks.get()) {
+					callback.modifyGenericSurfaceRules(context);
+				}
+			}
+	);
 
 	@FunctionalInterface
-	public interface OverworldModifierCallback extends EventAwareListener {
+	public interface OverworldModifierCallback extends EventAwareListener, CodecAware {
 		/**
 		 * Called to modify the given Overworld surface rules.
 		 *
@@ -89,7 +168,7 @@ public final class SurfaceRuleEvents {
 	}
 
 	@FunctionalInterface
-	public interface NetherModifierCallback extends EventAwareListener {
+	public interface NetherModifierCallback extends EventAwareListener, CodecAware {
 		/**
 		 * Called to modify the given Nether surface rules.
 		 *
@@ -99,7 +178,7 @@ public final class SurfaceRuleEvents {
 	}
 
 	@FunctionalInterface
-	public interface TheEndModifierCallback extends EventAwareListener {
+	public interface TheEndModifierCallback extends EventAwareListener, CodecAware {
 		/**
 		 * Called to modify the given End surface rules.
 		 *
@@ -109,7 +188,7 @@ public final class SurfaceRuleEvents {
 	}
 
 	@FunctionalInterface
-	public interface GenericModifierCallback extends EventAwareListener {
+	public interface GenericModifierCallback extends EventAwareListener, CodecAware {
 		/**
 		 * Called to modify the given generic surface rules.
 		 *
