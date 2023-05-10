@@ -32,14 +32,14 @@ import org.quiltmc.qsl.item.extensions.api.bow.ProjectileModifyingBowItem;
 import org.quiltmc.qsl.item.extensions.api.crossbow.ProjectileModifyingCrossbowItem;
 
 public class BowsTest implements ModInitializer {
-	public static final Item TEST_BOW = new ProjectileModifyingBowItem(new Item.Settings()) {
+	public static final Item TEST_BOW = new ProjectileModifyingBowItem(new Item.Settings().maxCount(1)) {
 		@Override
 		public void onProjectileShot(ItemStack bowStack, ItemStack arrowStack, LivingEntity user, float pullProgress, PersistentProjectileEntity projectile) {
 			projectile.setPunch(100);
 		}
 	};
 
-	public static final Item TEST_CROSSBOW = new ProjectileModifyingCrossbowItem(new Item.Settings()) {
+	public static final Item TEST_CROSSBOW = new ProjectileModifyingCrossbowItem(new Item.Settings().maxCount(1)) {
 		@Override
 		public void onProjectileShot(ItemStack crossbowStack, ItemStack projectileStack, LivingEntity entity, @NotNull PersistentProjectileEntity persistentProjectileEntity) {
 			persistentProjectileEntity.setDamage(1000);
@@ -50,13 +50,12 @@ public class BowsTest implements ModInitializer {
 			return 10f;
 		}
 	};
-	public static final String MOD_ID = "quilt_item_extensions_testmod";
 
 	@Override
-	public void onInitialize(ModContainer container) {
+	public void onInitialize(ModContainer mod) {
 		// Registers a custom bow.
-		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "test_bow"), TEST_BOW);
+		Registry.register(Registries.ITEM, new Identifier(mod.metadata().id(), "test_bow"), TEST_BOW);
 		// Registers a custom crossbow.
-		Registry.register(Registries.ITEM, new Identifier(MOD_ID, "test_crossbow"), TEST_CROSSBOW);
+		Registry.register(Registries.ITEM, new Identifier(mod.metadata().id(), "test_crossbow"), TEST_CROSSBOW);
 	}
 }

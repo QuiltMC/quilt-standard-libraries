@@ -17,8 +17,8 @@
     "depends": [
       "quilt_loader",
       "quilt_resource_loader",
+      "quilt_item_extensions",
       "quilt_entity_rendering"
     ]
-  },
-  "mixin": "quilt_entity_rendering_testmod.mixins.json"
+  }
 }

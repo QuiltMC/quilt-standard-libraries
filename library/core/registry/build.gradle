@@ -13,6 +13,8 @@ qslModule {
 			api("qsl_base")
 			api("networking")
 			api("lifecycle_events")
+			testmodOnly("resource_loader")
+			testmodOnly("testing")
 		}
 	}
 	entrypoints {

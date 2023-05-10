@@ -36,7 +36,8 @@ public class HoneycombItemMixin {
 			slice = @Slice(
 					from = @At(
 							value = "INVOKE",
-							target = "Lcom/google/common/collect/ImmutableBiMap$Builder;put(Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableBiMap$Builder;"
+							target = "Lcom/google/common/collect/ImmutableBiMap$Builder;put(Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableBiMap$Builder;",
+							remap = false
 					)
 			),
 			method = "method_34723()Lcom/google/common/collect/BiMap;",

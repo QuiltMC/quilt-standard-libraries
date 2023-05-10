@@ -15,12 +15,17 @@
         "org.quiltmc.qsl.registry.test.RegistryLibEventsTest",
         "org.quiltmc.qsl.registry.test.RegistryLibMonitorRegistrationTest",
         "org.quiltmc.qsl.registry.test.RegistryLibMonitorTest",
-        "org.quiltmc.qsl.registry.test.RegistryLibSyncTest"
+        "org.quiltmc.qsl.registry.test.RegistryLibSyncTest",
+        "org.quiltmc.qsl.registry.test.dynamic.RegistryLibDynamicRegistryTest"
+      ],
+      "quilt:game_test": [
+        "org.quiltmc.qsl.registry.test.dynamic.RegistryLibDynamicRegistryTest"
       ]
     },
     "depends": [
       "quilt_loader",
-      "quilt_registry"
+      "quilt_registry",
+      "quilt_testing"
     ]
   }
 }
