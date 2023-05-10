@@ -43,7 +43,7 @@ public abstract class EntityMixin {
 		Entity ret = cir.getReturnValue();
 
 		if (ret != null) {
-			EntityWorldChangeEvents.AFTER_ENTITY_WORLD_CHANGE.invoker().afterWorldChange((Entity) (Object) this, ret, (ServerWorld) this.world, (ServerWorld) ret.world);
+			EntityWorldChangeEvents.AFTER_ENTITY_WORLD_CHANGE.invoker().afterWorldChange((Entity) (Object) this, ret, (ServerWorld) this.world, (ServerWorld) ret.getWorld());
 		}
 	}
 
@@ -53,7 +53,7 @@ public abstract class EntityMixin {
 			locals = LocalCapture.CAPTURE_FAILEXCEPTION
 	)
 	private void quilt$afterWorldChangedByTeleport(ServerWorld destination, double x, double y, double z, Set<MovementFlag> relativeMovements, float yaw,
-												   float pitch, CallbackInfoReturnable<Boolean> ci, float i, Entity newEntity) {
+												   float pitch, CallbackInfoReturnable<Boolean> ci, float f, Entity newEntity) {
 		EntityWorldChangeEvents.AFTER_ENTITY_WORLD_CHANGE.invoker().afterWorldChange((Entity) (Object) this, newEntity, ((ServerWorld) this.world), destination);
 	}
 }

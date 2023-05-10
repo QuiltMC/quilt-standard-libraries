@@ -25,8 +25,8 @@ import net.fabricmc.api.EnvType;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.MapColor;
-import net.minecraft.block.Material;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -119,7 +119,7 @@ public class RegistryLibSyncTest implements ModInitializer {
 	@SuppressWarnings("unchecked")
 	static Identifier register(int i) {
 		var id = new Identifier(NAMESPACE, "entry_" + i);
-		var block = new Block(AbstractBlock.Settings.of(Material.STONE, MapColor.BLACK));
+		var block = new Block(AbstractBlock.Settings.copy(Blocks.STONE).method_31710(MapColor.BLACK));
 
 		Registry.register(Registries.BLOCK, id, block);
 		Registry.register(Registries.ITEM, id, new BlockItem(block, new Item.Settings()));

@@ -41,7 +41,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	private Vec3d pivot = Vec3d.ZERO;
 
 	public AbstractEntityPart(E owner, float width, float height) {
-		super(owner.getType(), owner.world);
+		super(owner.getType(), owner.getWorld());
 		this.partDimensions = EntityDimensions.changing(width, height);
 		this.calculateDimensions();
 		this.owner = owner;

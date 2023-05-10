@@ -16,25 +16,20 @@
 
 package org.quiltmc.qsl.tag.impl.client;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.WeakHashMap;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
+import com.mojang.datafixers.util.Either;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.class_8523;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -238,6 +233,20 @@ public final class ClientTagRegistryManager<T> {
 		var resolver = new TagResolver(type);
 		Multimap<Identifier, Identifier> tagEntries = HashMultimap.create();
 
+		class_8523<Identifier, TagGroupLoader.C_kgkcribd> lv = new class_8523<>();
+		tagBuilders.forEach((identifier, list) -> lv.method_51486(identifier, new TagGroupLoader.C_kgkcribd(list)));
+		lv.method_51487(
+			(dependencyId, c_kgkcribd) -> this.build(lookup, c_kgkcribd.entries)
+				.ifLeft(
+					collection -> LOGGER.error(
+						"Couldn't load tag {} as it is missing following references: {}",
+						dependencyId,
+						collection.stream().map(Objects::toString).collect(Collectors.joining(", "))
+					)
+				)
+				.ifRight(collection -> map2.put(dependencyId, collection))
+		);
+
 		this.visitDependencies(tagBuilders, (tagId, entry) -> entry.visitRequiredDependencies(
 				tagEntryId -> TagGroupLoaderAccessor.invokeAddDependencyIfNotCyclic(tagEntries, tagId, tagEntryId)
 		));
@@ -306,6 +315,20 @@ public final class ClientTagRegistryManager<T> {
 		TAG_GROUP_MANAGERS.values().forEach(consumer);
 	}
 
+	// TODO - Midnight Ennui copied this, this might be bad!
+	private Either<Collection<TagGroupLoader.EntryWithSource>, Collection<T>> build(TagEntry.Lookup<T> lookup, List<TagGroupLoader.EntryWithSource> entries) {
+		ImmutableSet.Builder<T> builder = ImmutableSet.builder();
+		List<TagGroupLoader.EntryWithSource> list = new ArrayList();
+
+		for(TagGroupLoader.EntryWithSource entryWithSource : entries) {
+			if (!entryWithSource.entry().build(lookup, builder::add)) {
+				list.add(entryWithSource);
+			}
+		}
+
+		return list.isEmpty() ? Either.right(builder.build()) : Either.left(list);
+	}
+
 	@ClientOnly
 	public static void applyAll(HolderLookup.Provider lookupProvider, ClientRegistryStatus status) {
 		TAG_GROUP_MANAGERS.forEach((registryKey, manager) -> manager.apply(lookupProvider, status));
@@ -355,8 +378,7 @@ public final class ClientTagRegistryManager<T> {
 		}
 	}
 
-	private abstract class RegistryFetcher implements Function<Identifier, Optional<? extends Holder<T>>> {
-	}
+	private abstract class RegistryFetcher implements Function<Identifier, Optional<? extends Holder<T>>> {}
 
 	private class StaticRegistryFetcher extends RegistryFetcher {
 		private final RegistryLookup<T> cached;

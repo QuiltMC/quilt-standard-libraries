@@ -65,9 +65,6 @@ abstract class ScreenMixin implements QuiltScreen {
 	private boolean initialized;
 
 	@Shadow
-	protected ItemRenderer itemRenderer;
-
-	@Shadow
 	protected TextRenderer textRenderer;
 
 	@Unique
@@ -109,11 +106,6 @@ abstract class ScreenMixin implements QuiltScreen {
 		}
 
 		return this.quilt$quiltButtons;
-	}
-
-	@Override
-	public ItemRenderer getItemRenderer() {
-		return this.itemRenderer;
 	}
 
 	@Override

@@ -133,9 +133,9 @@ public class EntityEventsTestMod implements EntityReviveEvents.TryReviveAfterTot
 	// or place raw iron if they're riding something
 	@Override
 	public void onServerEntityTick(Entity entity, boolean isPassengerTick) {
-		if (entity.world.isRaining() && entity instanceof ZombieEntity) {
+		if (entity.getWorld().isRaining() && entity instanceof ZombieEntity) {
 			if (isPassengerTick) {
-				entity.world.setBlockState(entity.getBlockPos().offset(Direction.UP, 3), Blocks.RAW_IRON_BLOCK.getDefaultState());
+				entity.getWorld().setBlockState(entity.getBlockPos().offset(Direction.UP, 3), Blocks.RAW_IRON_BLOCK.getDefaultState());
 			} else {
 				entity.setVelocity(entity.getVelocity().add(0.0, 0.05, 0.0));
 			}

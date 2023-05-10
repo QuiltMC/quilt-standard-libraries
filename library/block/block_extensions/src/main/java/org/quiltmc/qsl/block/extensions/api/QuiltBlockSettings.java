@@ -25,10 +25,10 @@ import net.minecraft.block.AbstractBlock.Settings;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.MapColor;
-import net.minecraft.block.Material;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.EntityType;
 import net.minecraft.feature_flags.FeatureFlag;
+import net.minecraft.feature_flags.FeatureFlagBitSet;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
@@ -40,21 +40,12 @@ import org.quiltmc.qsl.block.extensions.mixin.AbstractBlockSettingsAccessor;
  * An extended variant of the {@link AbstractBlock.Settings} class, which provides extra methods for customization.
  */
 public class QuiltBlockSettings extends AbstractBlock.Settings {
-	protected QuiltBlockSettings(Material material, Function<BlockState, MapColor> mapColorProvider) {
-		super(material, mapColorProvider);
-	}
-
-	protected QuiltBlockSettings(Material material, MapColor mapColor) {
-		super(material, mapColor);
-	}
-
 	protected QuiltBlockSettings(AbstractBlock.Settings settings) {
-		super(((AbstractBlockSettingsAccessor) settings).getMaterial(), ((AbstractBlockSettingsAccessor) settings).getMapColorProvider());
+		super();
 
 		var otherAccessor = (AbstractBlockSettingsAccessor) settings;
 
 		// region [VanillaCopy] AbstractBlock.Settings#copy(AbstractBlock.Settings)
-		this.material(otherAccessor.getMaterial());
 		this.hardness(otherAccessor.getHardness());
 		this.resistance(otherAccessor.getResistance());
 		this.collidable(otherAccessor.getCollidable());
@@ -68,9 +59,17 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		this.opaque(otherAccessor.getOpaque());
 		this.air(otherAccessor.getIsAir());
 		this.lavaIgnitable(otherAccessor.getLavaIgnitable());
+		this.liquid(otherAccessor.getLiquid());
+		this.nonSolid(otherAccessor.getNonSolid());
+		this.solid(otherAccessor.getSolid());
 		this.pistonBehavior(otherAccessor.getPistonBehavior());
 		this.requiresTool(otherAccessor.getToolRequired());
 		((AbstractBlockSettingsAccessor) this).setOffsetFunction(otherAccessor.getOffsetFunction());
+		this.spawnsParticlesOnBreak(otherAccessor.getSpawnsParticlesOnBreak());
+		this.requiredFlags(otherAccessor.getRequiredFlags());
+		this.emissiveLighting(otherAccessor.getEmissiveLightingPredicate());
+		this.instrument(otherAccessor.getInstrument());
+		this.replaceable(otherAccessor.getReplaceable());
 		// endregion
 
 		// also copy other stuff Vanilla doesn't bother with
@@ -82,22 +81,6 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		this.blockVision(otherAccessor.getBlockVisionPredicate());
 		this.postProcess(otherAccessor.getPostProcessPredicate());
 		this.emissiveLighting(otherAccessor.getEmissiveLightingPredicate());
-	}
-
-	public static QuiltBlockSettings of(Material material) {
-		return of(material, material.getColor());
-	}
-
-	public static QuiltBlockSettings of(Material material, Function<BlockState, MapColor> mapColorProvider) {
-		return new QuiltBlockSettings(material, mapColorProvider);
-	}
-
-	public static QuiltBlockSettings of(Material material, MapColor color) {
-		return new QuiltBlockSettings(material, color);
-	}
-
-	public static QuiltBlockSettings of(Material material, DyeColor color) {
-		return new QuiltBlockSettings(material, color.getMapColor());
 	}
 
 	public static QuiltBlockSettings copyOf(AbstractBlock block) {
@@ -198,6 +181,11 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		return this;
 	}
 
+	public QuiltBlockSettings liquid() {
+		super.liquid();
+		return this;
+	}
+
 	@Override
 	public QuiltBlockSettings pistonBehavior(PistonBehavior pistonBehavior) {
 		super.pistonBehavior(pistonBehavior);
@@ -253,8 +241,8 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	}
 
 	@Override
-	public QuiltBlockSettings mapColor(MapColor color) {
-		super.mapColor(color);
+	public QuiltBlockSettings method_31710(MapColor color) {
+		super.method_31710(color);
 		return this;
 	}
 
@@ -289,11 +277,6 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	}
 
 	// region Added by Quilt
-
-	public QuiltBlockSettings material(Material material) {
-		((AbstractBlockSettingsAccessor) this).setMaterial(material);
-		return this;
-	}
 
 	public QuiltBlockSettings collidable(boolean collidable) {
 		((AbstractBlockSettingsAccessor) this).setCollidable(collidable);
@@ -330,10 +313,25 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	 *
 	 * @param ignitable {@code true} if this block can be set on fire by lava, or {@code false} otherwise
 	 * @return {@code this} builder
-	 * @see #method_50013()
+	 * @see #lavaIgnitable()
 	 */
 	public QuiltBlockSettings lavaIgnitable(boolean ignitable) {
 		((AbstractBlockSettingsAccessor) this).setLavaIgnitable(ignitable);
+		return this;
+	}
+
+	public QuiltBlockSettings liquid(boolean liquid) {
+		((AbstractBlockSettingsAccessor) this).setLiquid(liquid);
+		return this;
+	}
+
+	public QuiltBlockSettings nonSolid(boolean nonSolid) {
+		((AbstractBlockSettingsAccessor) this).setNonSolid(nonSolid);
+		return this;
+	}
+
+	public QuiltBlockSettings solid(boolean solid) {
+		((AbstractBlockSettingsAccessor) this).setSolid(solid);
 		return this;
 	}
 
@@ -360,7 +358,7 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	}
 
 	public QuiltBlockSettings mapColor(DyeColor color) {
-		return this.mapColor(color.getMapColor());
+		return this.method_31710(color.method_7794());
 	}
 
 	/**
@@ -371,6 +369,21 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	 */
 	public QuiltBlockSettings mapColorProvider(Function<BlockState, MapColor> mapColorProvider) {
 		((AbstractBlockSettingsAccessor) this).setMapColorProvider(mapColorProvider);
+		return this;
+	}
+
+	public QuiltBlockSettings spawnsParticlesOnBreak(boolean spawnsParticlesOnBreak) {
+		((AbstractBlockSettingsAccessor) this).setSpawnsParticlesOnBreak(spawnsParticlesOnBreak);
+		return this;
+	}
+
+	public Settings requiredFlags(FeatureFlagBitSet flags) {
+		((AbstractBlockSettingsAccessor) this).setRequiredFlags(flags);
+		return this;
+	}
+
+	public QuiltBlockSettings replaceable(boolean replaceable) {
+		((AbstractBlockSettingsAccessor) this).setReplaceable(replaceable);
 		return this;
 	}
 

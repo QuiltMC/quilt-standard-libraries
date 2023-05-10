@@ -19,13 +19,14 @@ package org.quiltmc.qsl.screen.test.client;
 
 import java.util.List;
 
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
@@ -40,6 +41,7 @@ import org.quiltmc.qsl.screen.api.client.ScreenEvents;
 @ClientOnly
 public class ScreenTests implements ScreenEvents.AfterInit, ScreenEvents.AfterRender {
 	public static final Logger LOGGER = LoggerFactory.getLogger("ScreenEventsTest");
+	private static final Identifier HUD_ICONS = new Identifier("textures/gui/icons.png");
 	private Screen actualScreen;
 
 	@Override
@@ -64,10 +66,9 @@ public class ScreenTests implements ScreenEvents.AfterInit, ScreenEvents.AfterRe
 	}
 
 	@Override
-	public void afterRender(Screen screen, MatrixStack matrices, int mouseX, int mouseY, float tickDelta) {
+	public void afterRender(Screen screen, GuiGraphics graphics, int mouseX, int mouseY, float tickDelta) {
 		if (screen == this.actualScreen) {
-			RenderSystem.setShaderTexture(0, InGameHud.GUI_ICONS_TEXTURE);
-			DrawableHelper.drawTexture(matrices, (screen.width / 2) - 124, (screen.height / 4) + 96, 20, 20, 34, 9, 9, 9, 256, 256);
+			graphics.drawTexture(HUD_ICONS, (screen.width / 2) - 124, (screen.height / 4) + 96, 20, 20, 34, 9, 9, 9, 256, 256);
 		}
 	}
 }

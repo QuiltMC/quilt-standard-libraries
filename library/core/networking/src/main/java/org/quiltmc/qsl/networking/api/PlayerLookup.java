@@ -109,7 +109,7 @@ public final class PlayerLookup {
 	 */
 	public static Collection<ServerPlayerEntity> tracking(Entity entity) {
 		Objects.requireNonNull(entity, "Entity cannot be null");
-		ChunkManager manager = entity.world.getChunkManager();
+		ChunkManager manager = entity.getWorld().getChunkManager();
 
 		if (manager instanceof ServerChunkManager serverManager) {
 			ThreadedChunkManager storage = serverManager.delegate;

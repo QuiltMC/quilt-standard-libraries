@@ -23,11 +23,11 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
+import net.minecraft.loot.LootManager;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.registry.tag.TagManagerLoader;
 import net.minecraft.server.ServerAdvancementLoader;
 import net.minecraft.server.function.FunctionLoader;
-import net.minecraft.unmapped.C_uxsnhxlb;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;
@@ -35,7 +35,7 @@ import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 
 @Mixin({
 		RecipeManager.class, ServerAdvancementLoader.class, FunctionLoader.class,
-		C_uxsnhxlb.class, TagManagerLoader.class
+		LootManager.class, TagManagerLoader.class
 })
 public abstract class KeyedResourceReloaderMixin implements IdentifiableResourceReloader {
 	@Unique
@@ -53,7 +53,7 @@ public abstract class KeyedResourceReloaderMixin implements IdentifiableResource
 				this.quilt$id = ResourceReloaderKeys.Server.ADVANCEMENTS;
 			} else if (self instanceof FunctionLoader) {
 				this.quilt$id = ResourceReloaderKeys.Server.FUNCTIONS;
-			} else if (self instanceof C_uxsnhxlb) {
+			} else if (self instanceof LootManager) {
 				this.quilt$id = ResourceReloaderKeys.Server.LOOT_TABLES;
 			} else if (self instanceof TagManagerLoader) {
 				this.quilt$id = ResourceReloaderKeys.Server.TAGS;

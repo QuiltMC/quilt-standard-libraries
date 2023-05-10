@@ -28,8 +28,7 @@ import org.quiltmc.qsl.block.extensions.impl.client.BlockRenderLayerMapImpl;
  */
 @ClientOnly
 public final class BlockRenderLayerMap {
-	private BlockRenderLayerMap() {
-	}
+	private BlockRenderLayerMap() {}
 
 	/**
 	 * Sets the render layer of the specified blocks.

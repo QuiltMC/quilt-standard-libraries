@@ -38,7 +38,7 @@ public abstract class LivingEntityDeathEventMixin extends Entity {
 
 	@Inject(method = "onDeath", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/damage/DamageTracker;update()V"))
 	void quilt$invokeLivingEntityDeathEvent(DamageSource source, CallbackInfo ci) {
-		if (!this.world.isClient()) {
+		if (!this.getWorld().isClient()) {
 			LivingEntityDeathCallback.EVENT.invoker().onDeath((LivingEntity) (Object) this, source);
 		}
 	}

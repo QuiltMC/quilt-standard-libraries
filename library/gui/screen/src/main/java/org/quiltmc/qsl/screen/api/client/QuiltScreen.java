@@ -49,13 +49,6 @@ public interface QuiltScreen {
 	}
 
 	/**
-	 * {@return the screen's item renderer}
-	 */
-	default ItemRenderer getItemRenderer() {
-		throw new UnsupportedOperationException("No implementation of getItemRenderer could be found.");
-	}
-
-	/**
 	 * {@return the screen's text renderer}
 	 */
 	default TextRenderer getTextRenderer() {

@@ -25,8 +25,8 @@ import org.slf4j.LoggerFactory;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.MapColor;
-import net.minecraft.block.Material;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
@@ -42,7 +42,7 @@ public class RegistryLibMonitorTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		Block blockA = register(TEST_BLOCK_A_ID, new Block(AbstractBlock.Settings.of(Material.STONE, MapColor.BLACK)));
+		Block blockA = register(TEST_BLOCK_A_ID, new Block(AbstractBlock.Settings.copy(Blocks.STONE).method_31710(MapColor.BLACK)));
 
 		var monitor = RegistryMonitor.create(Registries.BLOCK)
 				.filter(context -> context.id().getNamespace().equals("quilt_registry_test_monitors"));
@@ -61,7 +61,7 @@ public class RegistryLibMonitorTest implements ModInitializer {
 			upcomingSet.add(context.value());
 		});
 
-		Block blockB = register(TEST_BLOCK_B_ID, new Block(AbstractBlock.Settings.of(Material.STONE, MapColor.BLACK)));
+		Block blockB = register(TEST_BLOCK_B_ID, new Block(AbstractBlock.Settings.copy(Blocks.STONE).method_31710(MapColor.BLACK)));
 
 		if (!allSet.contains(blockA) || !allSet.contains(blockB)) {
 			throw new AssertionError("Entries " + allSet + " found by RegistryMonitor via forAll were not as expected");

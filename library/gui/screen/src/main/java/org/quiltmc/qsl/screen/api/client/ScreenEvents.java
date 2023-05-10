@@ -18,6 +18,7 @@
 package org.quiltmc.qsl.screen.api.client;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 
@@ -65,7 +66,7 @@ public final class ScreenEvents {
 	 * This event can also indicate that the previous screen has been closed.
 	 * <p>
 	 * Note that by adding an element to a screen, the element is not automatically {@link net.minecraft.client.gui.screen.Screen ticked} or {@link net.minecraft.client.gui.Drawable drawn}.
-	 * Unless the element is a button, you need to call the specific {@link Screen#tick() tick} and {@link net.minecraft.client.gui.Drawable#render(MatrixStack, int, int, float) render} methods in the corresponding screen events.
+	 * Unless the element is a button, you need to call the specific {@link Screen#tick() tick} and {@link net.minecraft.client.gui.Drawable#render(GuiGraphics, int, int, float) render} methods in the corresponding screen events.
 	 * <p>
 	 * For example, to add a button to the title screen, the following code could be used:
 	 * <pre>{@code
@@ -101,18 +102,18 @@ public final class ScreenEvents {
 	/**
 	 * An event that is called before a screen is rendered.
 	 */
-	public static final Event<BeforeRender> BEFORE_RENDER = Event.create(BeforeRender.class, callbacks -> (screen, matrices, mouseX, mouseY, tickDelta) -> {
+	public static final Event<BeforeRender> BEFORE_RENDER = Event.create(BeforeRender.class, callbacks -> (screen, graphics, mouseX, mouseY, tickDelta) -> {
 		for (var callback : callbacks) {
-			callback.beforeRender(screen, matrices, mouseX, mouseY, tickDelta);
+			callback.beforeRender(screen, graphics, mouseX, mouseY, tickDelta);
 		}
 	});
 
 	/**
 	 * An event that is called after a screen is rendered.
 	 */
-	public static final Event<AfterRender> AFTER_RENDER = Event.create(AfterRender.class, callbacks -> (screen, matrices, mouseX, mouseY, tickDelta) -> {
+	public static final Event<AfterRender> AFTER_RENDER = Event.create(AfterRender.class, callbacks -> (screen, graphics, mouseX, mouseY, tickDelta) -> {
 		for (var callback : callbacks) {
-			callback.afterRender(screen, matrices, mouseX, mouseY, tickDelta);
+			callback.afterRender(screen, graphics, mouseX, mouseY, tickDelta);
 		}
 	});
 
@@ -169,13 +170,13 @@ public final class ScreenEvents {
 	@ClientOnly
 	@FunctionalInterface
 	public interface BeforeRender extends ClientEventAwareListener {
-		void beforeRender(Screen screen, MatrixStack matrices, int mouseX, int mouseY, float tickDelta);
+		void beforeRender(Screen screen, GuiGraphics graphics, int mouseX, int mouseY, float tickDelta);
 	}
 
 	@ClientOnly
 	@FunctionalInterface
 	public interface AfterRender extends ClientEventAwareListener {
-		void afterRender(Screen screen, MatrixStack matrices, int mouseX, int mouseY, float tickDelta);
+		void afterRender(Screen screen, GuiGraphics graphics, int mouseX, int mouseY, float tickDelta);
 	}
 
 	@ClientOnly

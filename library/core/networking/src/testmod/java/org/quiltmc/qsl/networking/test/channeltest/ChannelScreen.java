@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.networking.test.channeltest;
 
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -52,22 +53,23 @@ final class ChannelScreen extends Screen {
 	}
 
 	@Override
-	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-		this.renderBackgroundTexture(matrices);
-		this.channelList.render(matrices, mouseX, mouseY, delta);
-		super.render(matrices, mouseX, mouseY, delta);
+	public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+		this.renderBackgroundTexture(graphics);
+		this.channelList.render(graphics, mouseX, mouseY, delta);
+		super.render(graphics, mouseX, mouseY, delta);
 
 		if (this.s2cButton.active && this.c2sButton.active) {
 			final var clickMe = Text.of("Click S2C or C2S to view supported channels");
 
 			final int textWidth = this.textRenderer.getWidth(clickMe);
 			//noinspection ConstantConditions
-			this.textRenderer.draw(
-					matrices,
+			graphics.drawText(
+					this.textRenderer,
 					clickMe,
-					this.width / 2.0F - (textWidth / 2.0F),
+					(int) (this.width / 2.0F - (textWidth / 2.0F)),
 					60,
-					Formatting.YELLOW.getColorValue()
+					Formatting.YELLOW.getColorValue(),
+					false
 			);
 		}
 	}
