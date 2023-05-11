@@ -79,15 +79,4 @@ public interface ChatEvent<C, R> {
 	 * @param secondPhase the identifier of the phase that should run after the other. It will be created if it didn't exist yet
 	 */
 	void addPhaseOrdering(@NotNull Identifier firstPhase, @NotNull Identifier secondPhase);
-
-	/**
-	 * The common interface describing a chat message hook. This should almost never be implemented manually, instead
-	 * relying on various converters for each event to convert a {@link FunctionalInterface} into one of these.
-	 *
-	 * @param <R> the return type of handling a message with this hook
-	 */
-	interface TypedChatApiHook<R> {
-		EnumSet<QuiltMessageType> getMessageTypes();
-		R handleMessage(@NotNull AbstractChatMessage<?> message);
-	}
 }

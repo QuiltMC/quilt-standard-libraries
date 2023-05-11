@@ -26,7 +26,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 
 /**
- * A raw C2S chat message. This is a message before it has been signed by the client.
+ * A raw C2S chat message. This is a message before it has been processed by the client or separated into commands.
  *
  * @see ChatC2SMessage
  */

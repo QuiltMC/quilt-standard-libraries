@@ -16,18 +16,16 @@
 
 package org.quiltmc.qsl.chat.impl;
 
-import java.util.EnumSet;
-import java.util.function.BiFunction;
-
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import net.minecraft.util.Identifier;
-
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.chat.api.ChatEvent;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
+
+import java.util.EnumSet;
+import java.util.function.BiFunction;
 
 /**
  * The common implementation of {@link ChatEvent}. If this event is set to preform assignable checks, then it will require that any return values are both
@@ -53,24 +51,33 @@ public class ChatEventImpl<C, R> implements ChatEvent<C, R> {
 			R result = null;
 
 			for (var hook : hooks) {
-				if (ChatEventImpl.this.shouldPassOnMessageToHook(message.getTypes(), hook.getMessageTypes())) {
-					R tmpResult = hook.handleMessage(message);
-					if (ChatEventImpl.this.shouldPreformAssignableCheck) {
-						if (tmpResult == null) {
-							throw new NullPointerException("Callback attached to a ChatEvent returned a null result!");
-						} else if (!message.getClass().isAssignableFrom(tmpResult.getClass())) {
-							throw new IllegalArgumentException(
-									"Callback attached to a ChatEvent returned a non-similar value! " +
-											"Expected a subclass or instance of " + message.getClass().getName() + " but got a " + tmpResult.getClass().getName() + "!"
-							);
+				try {
+					if (shouldPassOnMessageToHook(message.getTypes(), hook.getMessageTypes())) {
+						R tmpResult = hook.handleMessage(message);
+						if (shouldPreformAssignableCheck) {
+							if (tmpResult == null) {
+								throw new NullPointerException("Callback attached to a ChatEvent returned a null result!");
+							} else if (!message.getClass().isAssignableFrom(tmpResult.getClass())) {
+								throw new IllegalArgumentException(
+										"Callback attached to a ChatEvent returned a non-similar value! " +
+												"Expected a subclass or instance of " + message.getClass().getName() + " but got a "
+												+ tmpResult.getClass().getName() + "!"
+								);
+							}
 						}
+						result = tmpResult;
 					}
-
-					result = tmpResult;
+				} catch (Exception exception) {
+					throw new RuntimeException("Error encountered in chat-api hook (Hook Origin: " + hook.getOriginName() + ")", exception);
 				}
 			}
 
 			return result;
+		}
+
+		@Override
+		public @NotNull String getOriginName() {
+			return "Chat Event Implementation";
 		}
 	});
 

@@ -16,7 +16,26 @@
 
 package org.quiltmc.qsl.chat.mixin.client;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.client.registry.ClientRegistryLayer;
+import net.minecraft.network.ClientConnection;
+import net.minecraft.network.encryption.PublicChatSession;
+import net.minecraft.network.message.*;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
+import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
+import net.minecraft.network.packet.s2c.play.MessageRemovalS2CPacket;
+import net.minecraft.network.packet.s2c.play.ProfileIndependentMessageS2CPacket;
+import net.minecraft.network.packet.s2c.play.SystemMessageS2CPacket;
+import net.minecraft.registry.LayeredRegistryManager;
+import net.minecraft.text.Text;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
+import org.quiltmc.qsl.chat.api.QuiltChatEvents;
+import org.quiltmc.qsl.chat.api.types.*;
+import org.quiltmc.qsl.chat.impl.mixin.LastSeenMessageTrackerRollbackSupport;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -26,26 +45,38 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
-import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
-import net.minecraft.network.packet.s2c.play.ProfileIndependentMessageS2CPacket;
-import net.minecraft.network.packet.s2c.play.SystemMessageS2CPacket;
-
-import org.quiltmc.qsl.chat.api.QuiltChatEvents;
-import org.quiltmc.qsl.chat.api.types.ChatC2SMessage;
-import org.quiltmc.qsl.chat.api.types.ChatS2CMessage;
-import org.quiltmc.qsl.chat.api.types.ProfileIndependentS2CMessage;
-import org.quiltmc.qsl.chat.api.types.RawChatC2SMessage;
-import org.quiltmc.qsl.chat.api.types.SystemS2CMessage;
+import java.util.Optional;
+import java.util.UUID;
 
 @Mixin(ClientPlayNetworkHandler.class)
-public class ClientPlayNetworkHandlerMixin {
+public abstract class ClientPlayNetworkHandlerMixin {
 	@Shadow
 	@Final
 	private MinecraftClient client;
+
+	@Shadow
+	public abstract @Nullable PlayerListEntry getPlayerListEntry(UUID uuid);
+
+	@Shadow
+	@Final
+	private ClientConnection connection;
+
+	@Shadow
+	@Final
+	private static Text CHAT_VALIDATION_FAILED_DISCONNECT;
+
+	@Shadow
+	private MessageSignatureStorage messageSignatureStorage;
+
+	@Shadow
+	private LayeredRegistryManager<ClientRegistryLayer> clientRegistryManager;
+
+	@Shadow
+	@Final
+	private static Text INVALID_PACKET_DISCONNECT;
+
+	@Shadow
+	private LastSeenMessageTracker lastSeenMessageTracker;
 
 	@ModifyVariable(
 			method = "onChatMessage",
@@ -75,6 +106,44 @@ public class ClientPlayNetworkHandlerMixin {
 		if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) {
 			QuiltChatEvents.CANCELLED.invoke(message);
 			ci.cancel();
+			UUID uuid = message.serialized().sender();
+			var playerListEntry = getPlayerListEntry(uuid);
+			if (playerListEntry == null) {
+				connection.disconnect(CHAT_VALIDATION_FAILED_DISCONNECT);
+			} else {
+				// This is a LOT but we need to extract and track the signatures
+				Optional<MessageBody> body = packet.body().createBody(messageSignatureStorage);
+				Optional<MessageType.Parameters> parameters = packet.messageType()
+					.createParameters(clientRegistryManager.getCompositeManager());
+				if (body.isPresent() && parameters.isPresent()) {
+					PublicChatSession publicChatSession = playerListEntry.getChatSession();
+					MessageLink messageLink;
+					if (publicChatSession != null) {
+						messageLink = new MessageLink(packet.index(), uuid, publicChatSession.sessionId());
+					} else {
+						messageLink = MessageLink.create(uuid);
+					}
+
+					SignedChatMessage signedChatMessage = new SignedChatMessage(
+							messageLink, packet.signature(), body.get(), packet.unsignedContent(), packet.filterMask()
+					);
+					if (!playerListEntry.getMessageVerifier().updateAndValidate(signedChatMessage)) {
+						connection.disconnect(CHAT_VALIDATION_FAILED_DISCONNECT);
+					} else {
+						((ClientChatListenerInvoker) client.getChatListener()).invokeMethod44818(signedChatMessage.signature(), () -> {
+							var clientPlayNetworkHandler = client.getNetworkHandler();
+							if (clientPlayNetworkHandler != null) {
+								clientPlayNetworkHandler.method_44940(signedChatMessage, true);
+							}
+
+							return false;
+						});
+						messageSignatureStorage.addMessageSignatures(signedChatMessage);
+					}
+				} else {
+					connection.disconnect(INVALID_PACKET_DISCONNECT);
+				}
+			}
 		}
 	}
 
@@ -222,7 +291,11 @@ public class ClientPlayNetworkHandlerMixin {
 		return ((RawChatC2SMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message)).serialized();
 	}
 
-	@Inject(method = "sendChatMessage", at = @At(value = "HEAD"), cancellable = true)
+	@Inject(
+		method = "sendChatMessage",
+		at = @At(value = "INVOKE", target = "Ljava/time/Instant;now()Ljava/time/Instant;"),
+		cancellable = true
+	)
 	public void quilt$cancelAndBeforeOutboundRawChatMessage(String string, CallbackInfo ci) {
 		if (this.client.player == null) return;
 
@@ -244,6 +317,18 @@ public class ClientPlayNetworkHandlerMixin {
 		QuiltChatEvents.AFTER_PROCESS.invoke(message);
 	}
 
+	@Inject(
+		method = "sendChatMessage",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/network/message/LastSeenMessageTracker;update()Lnet/minecraft/network/message/LastSeenMessageTracker$Update;",
+			shift = At.Shift.BEFORE
+		)
+	)
+	public void quilt$saveChatMessageTrackerState(String string, CallbackInfo ci) {
+		((LastSeenMessageTrackerRollbackSupport)lastSeenMessageTracker).saveState();
+	}
+
 	@Redirect(
 			method = "sendChatMessage",
 			at = @At(
@@ -257,14 +342,64 @@ public class ClientPlayNetworkHandlerMixin {
 			message = (ChatC2SMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message);
 
 			if (QuiltChatEvents.CANCEL.invoke(message) != Boolean.TRUE) {
+				((LastSeenMessageTrackerRollbackSupport)lastSeenMessageTracker).dropSavedState();
 				QuiltChatEvents.BEFORE_PROCESS.invoke(message);
 				instance.sendPacket(message.serialized());
 				QuiltChatEvents.AFTER_PROCESS.invoke(message);
 			} else {
+				((LastSeenMessageTrackerRollbackSupport)lastSeenMessageTracker).rollbackState();
 				QuiltChatEvents.CANCELLED.invoke(message);
 			}
 		} else {
-			throw new IllegalArgumentException("Received non-ChatMessageC2SPacket for argument to ClientPlayNetworkHandler.sendPacket in ClientPlayNetworkHandler.method_45729 (sendChatMessage? mapping missing at time of writing)");
+			throw new IllegalArgumentException(
+				"Received non-ChatMessageC2SPacket for argument to ClientPlayNetworkHandler.sendPacket in ClientPlayNetworkHandler.sendChatMessage"
+			);
 		}
+	}
+
+	@ModifyVariable(
+		method = "onMessageRemoval",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/network/NetworkThreadUtils;forceMainThread(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/listener/PacketListener;Lnet/minecraft/util/thread/ThreadExecutor;)V",
+			shift = At.Shift.AFTER
+		),
+		argsOnly = true
+	)
+	public MessageRemovalS2CPacket quilt$modifyInboundMessageRemoval(MessageRemovalS2CPacket packet) {
+		var message = new RemovalS2CMessage(client.player, true, packet);
+		return (MessageRemovalS2CPacket) QuiltChatEvents.MODIFY.invokeOrElse(message, message).serialized();
+	}
+
+	@Inject(
+		method = "onMessageRemoval",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/network/packet/s2c/play/MessageRemovalS2CPacket;signature()Lnet/minecraft/network/message/MessageSignature$Indexed;",
+			shift = At.Shift.BEFORE
+		),
+		cancellable = true
+	)
+	public void quilt$cancelAndBeforeInboundMessageRemoval(MessageRemovalS2CPacket packet, CallbackInfo ci) {
+		var message = new RemovalS2CMessage(client.player, true, packet);
+		if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) {
+			QuiltChatEvents.CANCELLED.invoke(message);
+			ci.cancel();
+
+			Optional<MessageSignature> optional = packet.signature().get(this.messageSignatureStorage);
+			if (optional.isPresent()) {
+				lastSeenMessageTracker.removePending(optional.get());
+			} else {
+				this.connection.disconnect(INVALID_PACKET_DISCONNECT);
+			}
+		} else {
+			QuiltChatEvents.BEFORE_PROCESS.invoke(message);
+		}
+	}
+
+	@Inject(method = "onMessageRemoval", at = @At("TAIL"))
+	public void quilt$afterInboundMessageRemoval(MessageRemovalS2CPacket packet, CallbackInfo ci) {
+		var message = new RemovalS2CMessage(client.player, true, packet);
+		QuiltChatEvents.AFTER_PROCESS.invoke(message);
 	}
 }

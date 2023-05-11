@@ -18,8 +18,8 @@ package org.quiltmc.qsl.chat.api;
 
 import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
 import org.quiltmc.qsl.chat.impl.ChatEventBooleanImpl;
-import org.quiltmc.qsl.chat.impl.InternalChatEventCallbackConverters;
 import org.quiltmc.qsl.chat.impl.ChatEventImpl;
+import org.quiltmc.qsl.chat.impl.InternalChatEventCallbackConverters;
 
 /**
  * Events for modifying, canceling, and listening for various chat messages.
@@ -40,6 +40,7 @@ public final class QuiltChatEvents {
 
 	/**
 	 * An event that allows you to cancel a message by returning {@code true}, or {@code false} to allow it to continue through.
+	 * Note that cancelling a message will still result in signatures and similar verification being tracked where required.
 	 *
 	 * @see #CANCELLED
 	 */
