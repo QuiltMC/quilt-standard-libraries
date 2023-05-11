@@ -16,7 +16,7 @@
 
 package org.quiltmc.qsl.chat.mixin.client;
 
-import net.minecraft.client.gui.ClientChatListener;
+import net.minecraft.client.network.ChatListener;
 import net.minecraft.network.message.MessageSignature;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,10 +24,8 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 import java.util.function.BooleanSupplier;
 
-// https://github.com/QuiltMC/quilt-mappings/pull/398 will rename this to `ChatListener` and `handleMessage`
-// make sure to rename the invoker and invoker method as well thanku - silver
-@Mixin(ClientChatListener.class)
+@Mixin(ChatListener.class)
 public interface ClientChatListenerInvoker {
-	@Invoker(value = "method_44818")
-	void invokeMethod44818(@Nullable MessageSignature messageSignature, BooleanSupplier booleanSupplier);
+	@Invoker(value = "handleMessage")
+	void invokeHandleMessage(@Nullable MessageSignature messageSignature, BooleanSupplier booleanSupplier);
 }
