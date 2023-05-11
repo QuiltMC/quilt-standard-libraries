@@ -80,5 +80,8 @@ public class RegistryConfig extends WrappedConfig {
 
 		@Comment("Disables the Registry Sync requirement. USE AT YOUR OWN RISK!")
 		public final boolean disable_registry_sync = false;
+
+		@Comment("Disables validation of (block/fluid) states. USE AT YOUR OWN RISK!")
+		public final boolean disable_state_validation = false;
 	}
 }

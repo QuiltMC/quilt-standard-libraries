@@ -37,6 +37,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.LoaderValue;
+import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
@@ -59,6 +61,7 @@ public final class ServerRegistrySync {
 	public static boolean forceFabricFallback = false;
 	public static boolean forceDisable = false;
 	public static boolean showErrorDetails = false;
+	public static boolean stateValidation = true;
 
 	public static IntList SERVER_SUPPORTED_PROTOCOL = new IntArrayList(ProtocolVersions.IMPL_SUPPORTED_VERSIONS);
 
@@ -82,6 +85,25 @@ public final class ServerRegistrySync {
 		forceFabricFallback = (Boolean) RegistryConfig.getSync("force_fabric_api_protocol_fallback");
 		forceDisable = (Boolean) RegistryConfig.getSync("disable_registry_sync");
 		showErrorDetails = (Boolean) RegistryConfig.getSync("mismatched_entries_show_details");
+		stateValidation = !(Boolean) RegistryConfig.getSync("disable_state_validation");
+
+		if (stateValidation) {
+			for (var container : QuiltLoader.getAllMods()) {
+				var data = container.metadata();
+				var quiltRegistry = data.value("quilt_registry");
+
+				if (quiltRegistry == null || quiltRegistry.type() != LoaderValue.LType.OBJECT) {
+					continue;
+				}
+
+				var value = quiltRegistry.asObject().get("disable_state_validation");
+
+				if (value != null && value.type() == LoaderValue.LType.BOOLEAN && value.asBoolean()) {
+					stateValidation = false;
+					break;
+				}
+			}
+		}
 
 		if (supportFabric) {
 			SERVER_SUPPORTED_PROTOCOL.add(ProtocolVersions.FAPI_PROTOCOL);
@@ -192,7 +214,7 @@ public final class ServerRegistrySync {
 			}
 		}
 
-		if (syncVersion >= ProtocolVersions.EXT_3) {
+		if (syncVersion >= ProtocolVersions.EXT_3 && stateValidation) {
 			sendStateValidationRequest(connection, ServerPackets.VALIDATE_BLOCK_STATES, Registries.BLOCK, Block.STATE_IDS, block -> block.getStateManager().getStates());
 			sendStateValidationRequest(connection, ServerPackets.VALIDATE_FLUID_STATES, Registries.FLUID, Fluid.STATE_IDS, fluid -> fluid.getStateManager().getStates());
 		}

@@ -26,6 +26,8 @@ public class LogBuilder {
 	private Text title;
 	private List<Text> entriesCurrent;
 	private List<Section> sections = new ArrayList<>();
+	private Text currentText = null;
+	private int duplicateCount = 0;
 
 
 	public void pushT(String id, String lang, Object... args) {
@@ -44,16 +46,34 @@ public class LogBuilder {
 		text(Text.literal("- ").append(Text.empty().append(text)).formatted(Formatting.GRAY));
 	}
 	public void text(Text text) {
-		this.entriesCurrent.add(text);
+		if (this.currentText != null && !text.equals(this.currentText)) {
+			this.entriesCurrent.add(duplicatedText(this.currentText, this.duplicateCount));
+			this.duplicateCount = 1;
+		} else {
+			this.duplicateCount++;
+		}
+		this.currentText = text;
 	}
 
 	public List<Section> finish() {
 		if (this.title != null) {
-			sections.add(new Section(this.title, this.entriesCurrent));
+			var y = new ArrayList<>(this.entriesCurrent);
+			if (this.currentText != null) {
+				y.add(duplicatedText(this.currentText, this.duplicateCount));
+			}
+			sections.add(new Section(this.title, y));
 		}
 		var x = this.sections;
 		this.clear();
 		return x;
+	}
+
+	private static Text duplicatedText(Text currentText, int duplicateCount) {
+		if (duplicateCount < 2) {
+			return currentText;
+		} else {
+			return Text.empty().append(currentText).append(Text.literal(" (" + duplicateCount + ")").formatted(Formatting.BLUE));
+		}
 	}
 
 	public void clear() {

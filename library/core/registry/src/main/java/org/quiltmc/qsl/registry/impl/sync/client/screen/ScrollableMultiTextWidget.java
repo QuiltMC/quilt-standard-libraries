@@ -105,10 +105,15 @@ public class ScrollableMultiTextWidget extends ScrollableWidget {
 	protected void renderContents(MatrixStack matrices, int mouseX, int mouseY, float delta) {
 		int x = this.getY() + this.getInnerPadding();
 		int y = this.getX() + this.getInnerPadding();
+		int scrollPixels = (int) this.getScrollAmount();
+		int higherBound = scrollPixels + this.getHeight() + 10;
+		int lowerBound = scrollPixels - 10 ;
 		matrices.push();
 		matrices.translate(y, x, 0.0D);
 		this.grid.visitWidgets((clickableWidget) -> {
-			clickableWidget.render(matrices, mouseX, mouseY, delta);
+			if (clickableWidget.getY() < higherBound && clickableWidget.getY() + clickableWidget.getHeight() > lowerBound) {
+				clickableWidget.render(matrices, mouseX, mouseY, delta);
+			}
 		});
 		matrices.pop();
 	}
