@@ -27,7 +27,8 @@ import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.entity.networking.api.extended_spawn_data.QuiltExtendedSpawnDataEntity;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 
-public class QuiltEntityNetworkingClientInitializer implements ClientModInitializer {
+@ApiStatus.Internal
+public final class QuiltEntityNetworkingClientInitializer implements ClientModInitializer {
 	private static final Logger logger = LogUtils.getLogger();
 
 	@Override

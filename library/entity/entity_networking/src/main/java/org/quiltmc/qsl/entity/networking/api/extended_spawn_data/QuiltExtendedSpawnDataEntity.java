@@ -26,12 +26,12 @@ import net.minecraft.network.PacketByteBuf;
 public interface QuiltExtendedSpawnDataEntity {
 	/**
 	 * Write additional data to be sent when this entity spawns. Will be deserialized on the client by
-	 * {@link QuiltExtendedSpawnDataEntity#readAdditionalSpawnData(PacketByteBuf)}
+	 * {@link #readAdditionalSpawnData(PacketByteBuf)}
 	 */
 	void writeAdditionalSpawnData(PacketByteBuf buffer);
 
 	/**
-	 * Read additional data written on the server by {@link QuiltExtendedSpawnDataEntity#writeAdditionalSpawnData},
+	 * Read additional data written on the server by {@link #writeAdditionalSpawnData(PacketByteBuf)},
 	 * and deserialize it on the client after the entity is spawned.
 	 */
 	void readAdditionalSpawnData(PacketByteBuf buffer);
