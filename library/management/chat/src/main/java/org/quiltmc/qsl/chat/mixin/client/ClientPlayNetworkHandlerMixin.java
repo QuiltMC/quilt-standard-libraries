@@ -24,6 +24,7 @@ import net.minecraft.network.ClientConnection;
 import net.minecraft.network.encryption.PublicChatSession;
 import net.minecraft.network.message.*;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.c2s.play.ChatCommandC2SPacket;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.MessageRemovalS2CPacket;
@@ -44,6 +45,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -130,10 +132,10 @@ public abstract class ClientPlayNetworkHandlerMixin {
 					if (!playerListEntry.getMessageVerifier().updateAndValidate(signedChatMessage)) {
 						connection.disconnect(CHAT_VALIDATION_FAILED_DISCONNECT);
 					} else {
-						((ClientChatListenerInvoker) client.getChatListener()).invokeMethod44818(signedChatMessage.signature(), () -> {
+						((ClientChatListenerInvoker) client.getChatListener()).invokeHandleMessage(signedChatMessage.signature(), () -> {
 							var clientPlayNetworkHandler = client.getNetworkHandler();
 							if (clientPlayNetworkHandler != null) {
-								clientPlayNetworkHandler.method_44940(signedChatMessage, true);
+								clientPlayNetworkHandler.acknowledge(signedChatMessage, true);
 							}
 
 							return false;
@@ -352,7 +354,7 @@ public abstract class ClientPlayNetworkHandlerMixin {
 			}
 		} else {
 			throw new IllegalArgumentException(
-				"Received non-ChatMessageC2SPacket for argument to ClientPlayNetworkHandler.sendPacket in ClientPlayNetworkHandler.sendChatMessage"
+				"Received non-ChatMessageC2SPacket for argument to ClientPlayNetworkHandler.sendPacket"
 			);
 		}
 	}
@@ -401,5 +403,55 @@ public abstract class ClientPlayNetworkHandlerMixin {
 	public void quilt$afterInboundMessageRemoval(MessageRemovalS2CPacket packet, CallbackInfo ci) {
 		var message = new RemovalS2CMessage(client.player, true, packet);
 		QuiltChatEvents.AFTER_PROCESS.invoke(message);
+	}
+
+	@Inject(
+		method = "sendChatCommand",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/network/message/LastSeenMessageTracker;update()Lnet/minecraft/network/message/LastSeenMessageTracker$Update;"
+		)
+	)
+	public void quilt$saveCommandMessageState(String command, CallbackInfo ci) {
+		((LastSeenMessageTrackerRollbackSupport)lastSeenMessageTracker).saveState();
+	}
+
+	@Inject(
+		method = "sendCommand",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/network/message/LastSeenMessageTracker;update()Lnet/minecraft/network/message/LastSeenMessageTracker$Update;"
+		)
+	)
+	public void quilt$saveCommandMessageState(String command, CallbackInfoReturnable<Boolean> cir) {
+		((LastSeenMessageTrackerRollbackSupport)lastSeenMessageTracker).saveState();
+	}
+
+	@Redirect(
+		method = {"sendCommand", "sendChatCommand"},
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/packet/Packet;)V"
+		)
+	)
+	private void quilt$modifyAndCancelAndBeforeAndAfterOutboundCommand(ClientPlayNetworkHandler instance, Packet<?> packet) {
+		if (packet instanceof ChatCommandC2SPacket chatCommandC2SPacket) {
+			var message = new CommandC2SMessage(client.player, true, chatCommandC2SPacket);
+			message = (CommandC2SMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message);
+
+			if (QuiltChatEvents.CANCEL.invoke(message) != Boolean.TRUE) {
+				((LastSeenMessageTrackerRollbackSupport)lastSeenMessageTracker).dropSavedState();
+				QuiltChatEvents.BEFORE_PROCESS.invoke(message);
+				instance.sendPacket(message.serialized());
+				QuiltChatEvents.AFTER_PROCESS.invoke(message);
+			} else {
+				((LastSeenMessageTrackerRollbackSupport)lastSeenMessageTracker).rollbackState();
+				QuiltChatEvents.CANCELLED.invoke(message);
+			}
+		} else {
+			throw new IllegalArgumentException(
+				"Received non-ChatCommandC2SPacket for argument to ClientPlayNetworkHandler.sendPacket"
+			);
+		}
 	}
 }
