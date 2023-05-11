@@ -24,7 +24,7 @@ import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import java.util.EnumSet;
 
 /**
- * A raw C2S chat message. This is a message before it has been signed by the client.
+ * A raw C2S chat message. This is a message before it has been processed by the client or separated into commands.
  *
  * @see ChatC2SMessage
  */

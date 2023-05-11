@@ -12,5 +12,8 @@ qslModule {
 		core {
 			api("qsl_base")
 		}
+		management {
+			testmodOnly("command")
+		}
 	}
 }
