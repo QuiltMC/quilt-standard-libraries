@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.block.content.registry.mixin;
 
+import net.minecraft.registry.tag.BlockTags;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -38,7 +39,7 @@ public class EnchantingTableBlockMixin {
 		var state = world.getBlockState(blockPos);
 		var power = BlockContentRegistries.ENCHANTING_BOOSTERS.get(state.getBlock())
 				.map(booster -> booster.getEnchantingBoost(world, state, blockPos)).orElse(0f);
-		var hasPower = power >= 0f && world.isAir(pos.add(offset.getX() / 2, offset.getY(), offset.getZ() / 2));
+		var hasPower = power >= 0.0f && world.getBlockState(pos.add(offset.getX() / 2, offset.getY(), offset.getZ() / 2)).isIn(BlockTags.ENCHANTMENT_POWER_TRANSMITTER);
 
 		if (hasPower) {
 			cir.setReturnValue(true);
@@ -61,7 +62,7 @@ public class EnchantingTableBlockMixin {
 	private boolean quilt$changeParticleChance(
 			World world, BlockPos pos, BlockPos offset, BlockState ignoredState, World ignoredWorld, BlockPos ignoredPos, RandomGenerator random
 	) {
-		if (!world.isAir(pos.add(offset.getX() / 2, offset.getY(), offset.getZ() / 2))) {
+		if (!world.getBlockState(pos.add(offset.getX() / 2, offset.getY(), offset.getZ() / 2)).isIn(BlockTags.ENCHANTMENT_POWER_TRANSMITTER)) {
 			return false;
 		}
 

@@ -62,6 +62,7 @@ public final class ResourceReloaderKeys {
 		public static final Identifier SHADERS = id("shaders");
 		public static final Identifier SOUNDS = id("sounds");
 		public static final Identifier SPLASH_TEXTS = id("splash_texts");
+		public static final Identifier SPRITE_ATLASES = id("sprite_atlases");
 		public static final Identifier STATUS_EFFECTS = id("status_effects");
 		public static final Identifier TEXTURES = id("textures");
 

@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
+import net.minecraft.registry.tag.BlockTags;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.block.Block;
@@ -85,7 +86,7 @@ public class BlockContentRegistriesImpl implements ModInitializer {
 		)), BlockContentRegistries.WAXABLE);
 		addMapToAttachment(initialFlammableBlocks, BlockContentRegistries.FLAMMABLE);
 
-		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.BOOKSHELF, new ConstantBooster(1f));
+		BlockContentRegistries.ENCHANTING_BOOSTERS.put(BlockTags.ENCHANTMENT_POWER_PROVIDER, new ConstantBooster(1.0f));
 
 		resetMaps();
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, error) -> resetMaps());
