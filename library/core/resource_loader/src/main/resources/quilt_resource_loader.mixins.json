@@ -21,7 +21,6 @@
     "client.ClientBuiltinResourcePackProviderMixin",
     "client.ClientBuiltinResourcePackProviderMixin$Parent",
     "client.CreateWorldScreenMixin",
-    "client.FontManagerResourceReloadListenerMixin",
     "client.GameOptionsMixin",
     "client.IntegratedServerLoaderMixin",
     "client.KeyedClientResourceReloaderMixin",
