@@ -16,8 +16,18 @@
 
 package org.quiltmc.qsl.entity.networking.api.extended_spawn_data;
 
+import java.util.List;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
+import net.minecraft.unmapped.C_trgduzfi;
+
+import org.quiltmc.qsl.entity.networking.impl.QuiltEntityNetworkingInitializer;
+import org.quiltmc.qsl.networking.api.PacketByteBufs;
+import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 
 /**
  * An entity with additional data sent in its spawn packet. To use, simply implement this interface on your entity.
@@ -35,4 +45,24 @@ public interface QuiltExtendedSpawnDataEntity {
 	 * and deserialize it on the client after the entity is spawned.
 	 */
 	void readAdditionalSpawnData(PacketByteBuf buffer);
+
+	/**
+	 * Given an entity with extra spawn data and a base spawn packet, create an extended spawn packet.
+	 * By default, a mod does not need to touch this, as packet creation is handled by QSL.
+	 * However, a mod may want to use a different base packet, such as a different constructor of {@link EntitySpawnS2CPacket}.
+	 * In that case, override {@link Entity#createSpawnPacket()} and call this method.
+	 */
+	static Packet<ClientPlayPacketListener> createExtendedPacket(QuiltExtendedSpawnDataEntity extended,
+																 Packet<ClientPlayPacketListener> basePacket) {
+		if (!(extended instanceof Entity entity))
+			throw new IllegalArgumentException(extended.getClass() + " does not extend Entity!");
+		var buf = PacketByteBufs.create();
+		buf.writeVarInt(entity.getId());
+		extended.writeAdditionalSpawnData(buf);
+		var additionalPacket = ServerPlayNetworking.createS2CPacket(
+			QuiltEntityNetworkingInitializer.EXTENDED_SPAWN_PACKET_ID, buf
+		);
+		// PacketBundleS2CPacket
+		return new C_trgduzfi(List.of(basePacket, additionalPacket));
+	}
 }
