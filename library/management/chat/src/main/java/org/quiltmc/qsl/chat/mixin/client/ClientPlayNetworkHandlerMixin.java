@@ -331,6 +331,7 @@ public abstract class ClientPlayNetworkHandlerMixin {
 		((LastSeenMessageTrackerRollbackSupport)lastSeenMessageTracker).saveState();
 	}
 
+	// TODO: Possible bug, modification before signing?
 	@Redirect(
 			method = "sendChatMessage",
 			at = @At(

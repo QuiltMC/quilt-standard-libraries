@@ -16,95 +16,103 @@
 
 package org.quiltmc.qsl.chat.test;
 
+import net.minecraft.network.packet.s2c.play.MessageRemovalS2CPacket;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.chat.api.QuiltChatEvents;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import org.quiltmc.qsl.chat.api.types.ChatC2SMessage;
-import org.quiltmc.qsl.chat.api.types.ChatS2CMessage;
 import org.quiltmc.qsl.chat.api.types.RawChatC2SMessage;
+import org.quiltmc.qsl.chat.api.types.RemovalS2CMessage;
 import org.quiltmc.qsl.chat.api.types.SystemS2CMessage;
+import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
 import java.util.EnumSet;
 import java.util.Random;
 
 public class ChatApiTest implements ModInitializer {
+	private static final Logger MODIFY_LOGGER = LoggerFactory.getLogger("QuiltChat|MODIFY");
+	private static final Logger CANCEL_LOGGER = LoggerFactory.getLogger("QuiltChat|CANCEL");
+	private static final Logger CANCELLED_LOGGER = LoggerFactory.getLogger("QuiltChat|CANCELLED");
+	private static final Logger BEFORE_LOGGER = LoggerFactory.getLogger("QuiltChat|BEFORE_PROCESS");
+	private static final Logger AFTER_LOGGER = LoggerFactory.getLogger("QuiltChat|AFTER_PROCESS");
+
 	@Override
 	public void onInitialize(ModContainer mod) {
 		MixinEnvironment.getCurrentEnvironment().setOption(MixinEnvironment.Option.DEBUG_EXPORT, true);
 
-		//QuiltChatEvents.AFTER_PROCESS.register(EnumSet.allOf(QuiltMessageType.class), System.out::println);
-		//QuiltChatEvents.BEFORE_PROCESS.register(EnumSet.allOf(QuiltMessageType.class), message -> {
-		//	System.out.println(message.getTypes());
-		//});
-
-		QuiltChatEvents.BEFORE_PROCESS.register(EnumSet.of(QuiltMessageType.CHAT), abstractMessage -> {
-			if (abstractMessage instanceof ChatC2SMessage chat) {
-				System.out.println(chat.getTypes() + " " + chat.getMessageAcknowledgments());
-			} else if (abstractMessage instanceof ChatS2CMessage chat) {
-				System.out.println(chat.getTypes() + " " + chat.getBody().lastSeen());
-			}
-		});
-
-		QuiltChatEvents.MODIFY.register(EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.CLIENT, QuiltMessageType.OUTBOUND), abstractMessage -> {
-			if (abstractMessage instanceof RawChatC2SMessage raw) {
-				return raw.withMessage(raw.getMessage() + ", wow!");
-			}
-			return abstractMessage;
-		});
-
-		QuiltChatEvents.MODIFY.register(EnumSet.of(QuiltMessageType.SYSTEM, QuiltMessageType.SERVER, QuiltMessageType.OUTBOUND), abstractMessage -> {
-			if (abstractMessage instanceof SystemS2CMessage systemS2CMessage) {
-				Text content = systemS2CMessage.getContent();
-				if (new Random().nextBoolean()) {
-					return systemS2CMessage.withContent(content.copy().append(Text.literal(", uwu")));
-				}
-			}
-
-			return abstractMessage;
-		});
-
-		final boolean[] didEnableCrashing = {false};
-		QuiltChatEvents.CANCEL.register(EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.CLIENT, QuiltMessageType.OUTBOUND), abstractMessage -> {
-			if (abstractMessage instanceof RawChatC2SMessage chatC2SMessage) {
-				if (chatC2SMessage.getMessage().startsWith("!register_crashing")) {
-					if (!didEnableCrashing[0]) {
-						didEnableCrashing[0] = true;
-						registerBadEvents();
-						return true;
-					}
-				}
-			}
-
-			return false;
-		});
-
-		final boolean[] didEnableStress = {false};
-		QuiltChatEvents.CANCEL.register(EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.CLIENT, QuiltMessageType.OUTBOUND), abstractMessage -> {
-			if (abstractMessage instanceof RawChatC2SMessage chatC2SMessage) {
-				if (chatC2SMessage.getMessage().startsWith("!register_stress")) {
-					if (!didEnableStress[0]) {
-						didEnableStress[0] = true;
-						registerStressEvents();
-						return true;
-					}
-				}
-			}
-
-			return false;
-		});
-	}
-
-	private void registerBadEvents() {
-		QuiltChatEvents.MODIFY.register(EnumSet.allOf(QuiltMessageType.class), abstractMessage -> new SystemS2CMessage(abstractMessage.getPlayer(), abstractMessage.isClient(), Text.literal("im an evil event, muhahah"), false));
-		QuiltChatEvents.MODIFY.register(EnumSet.allOf(QuiltMessageType.class), abstractMessage -> new Random().nextInt(3) == 0 ? null : abstractMessage );
-	}
-
-	private void registerStressEvents() {
-		QuiltChatEvents.CANCEL.register(EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.INBOUND), abstractMessage -> {
-			return new Random().nextBoolean();
+		CommandRegistrationCallback.EVENT.register((dispatcher, buildContext, environment) -> {
+			dispatcher.register(CommandManager.literal("quilt_chat_api_testmod")
+				.then(CommandManager.literal("log_events")
+					.executes(context -> {
+						QuiltChatEvents.MODIFY.register(EnumSet.noneOf(QuiltMessageType.class), abstractMessage -> {
+							MODIFY_LOGGER.info(abstractMessage.toString());
+							return abstractMessage;
+						});
+						QuiltChatEvents.CANCEL.register(EnumSet.noneOf(QuiltMessageType.class), abstractMessage -> {
+							CANCEL_LOGGER.info(abstractMessage.toString());
+							return false;
+						});
+						QuiltChatEvents.CANCELLED.register(EnumSet.noneOf(QuiltMessageType.class), abstractMessage -> {
+							CANCELLED_LOGGER.info(abstractMessage.toString());
+						});
+						QuiltChatEvents.BEFORE_PROCESS.register(EnumSet.noneOf(QuiltMessageType.class), abstractMessage -> {
+							BEFORE_LOGGER.info(abstractMessage.toString());
+						});
+						QuiltChatEvents.AFTER_PROCESS.register(EnumSet.noneOf(QuiltMessageType.class), abstractMessage -> {
+							AFTER_LOGGER.info(abstractMessage.toString());
+						});
+						return 0;
+					}))
+					.then(CommandManager.literal("random_signed_chat_cancel")
+						.then(CommandManager.literal("inbound")).executes(context -> {
+							QuiltChatEvents.CANCEL.register(EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.INBOUND), abstractMessage -> {
+								if (!(abstractMessage instanceof ChatC2SMessage)) return false;
+								if (new Random().nextBoolean()) {
+									System.out.println("QC|TEST Cancelling inbound message " +
+										((ChatC2SMessage) abstractMessage).getMessage() + " " +
+										(((ChatC2SMessage) abstractMessage).getSignature() != null ? ((ChatC2SMessage) abstractMessage).getSignature().hashCode() : 0));
+									return true;
+								} else {
+									return false;
+								}
+							});
+							return 0;
+						})
+						.then(CommandManager.literal("outbound").executes(context -> {
+							QuiltChatEvents.CANCEL.register(EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.OUTBOUND), abstractMessage -> {
+								if (!(abstractMessage instanceof ChatC2SMessage)) return false;
+								if (new Random().nextBoolean()) {
+									System.out.println("QC|TEST Cancelling outbound message " +
+										((ChatC2SMessage) abstractMessage).getMessage() + " " +
+										(((ChatC2SMessage) abstractMessage).getSignature() != null ? ((ChatC2SMessage) abstractMessage).getSignature().hashCode() : 0));
+									return true;
+								} else {
+									return false;
+								}
+							});
+							return 0;
+						})))
+				.then(CommandManager.literal("register_crashing_events")
+					.then(CommandManager.literal("null_return").executes(context -> {
+						QuiltChatEvents.MODIFY.register(EnumSet.noneOf(QuiltMessageType.class), abstractMessage -> null);
+						return 0;
+					}))
+					.then(CommandManager.literal("bad_type_return").executes(context -> {
+						QuiltChatEvents.MODIFY.register(EnumSet.noneOf(QuiltMessageType.class), abstractMessage -> {
+							if (abstractMessage instanceof RawChatC2SMessage) {
+								return new SystemS2CMessage(null, true, Text.empty(), false);
+							} else {
+								return new RemovalS2CMessage(null, true, (MessageRemovalS2CPacket) null);
+							}
+						});
+						return 0;
+					}))));
 		});
 	}
 }
