@@ -13,6 +13,7 @@ qslModule {
 		}
 		management {
 			testmodOnly("command")
+			testmodOnly("client_command")
 		}
 	}
 }
