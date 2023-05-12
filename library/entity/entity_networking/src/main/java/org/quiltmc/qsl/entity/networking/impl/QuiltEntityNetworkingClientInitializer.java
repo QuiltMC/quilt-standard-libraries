@@ -17,9 +17,9 @@
 package org.quiltmc.qsl.entity.networking.impl;
 
 import com.mojang.logging.LogUtils;
+import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
-import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.registry.Registries;
 
 import org.quiltmc.loader.api.ModContainer;
