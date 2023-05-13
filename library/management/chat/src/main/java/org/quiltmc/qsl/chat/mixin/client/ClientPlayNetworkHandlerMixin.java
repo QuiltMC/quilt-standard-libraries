@@ -36,7 +36,8 @@ import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.quiltmc.qsl.chat.api.QuiltChatEvents;
 import org.quiltmc.qsl.chat.api.types.*;
-import org.quiltmc.qsl.chat.impl.mixin.LastSeenMessageTrackerRollbackSupport;
+import org.quiltmc.qsl.chat.impl.MessageChainReverseLookup;
+import org.quiltmc.qsl.chat.impl.mixin.ChatSecurityRollbackSupport;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -79,6 +80,9 @@ public abstract class ClientPlayNetworkHandlerMixin {
 
 	@Shadow
 	private LastSeenMessageTracker lastSeenMessageTracker;
+
+	@Shadow
+	private MessageChain.Packer messageChainPacker;
 
 	@ModifyVariable(
 			method = "onChatMessage",
@@ -327,11 +331,11 @@ public abstract class ClientPlayNetworkHandlerMixin {
 			shift = At.Shift.BEFORE
 		)
 	)
-	public void quilt$saveChatMessageTrackerState(String string, CallbackInfo ci) {
-		((LastSeenMessageTrackerRollbackSupport)lastSeenMessageTracker).saveState();
+	public void quilt$saveChatSecurityState(String string, CallbackInfo ci) {
+		((ChatSecurityRollbackSupport)lastSeenMessageTracker).saveState();
+		((ChatSecurityRollbackSupport)MessageChainReverseLookup.getChainFromPacker(messageChainPacker)).saveState();
 	}
 
-	// TODO: Possible bug, modification before signing?
 	@Redirect(
 			method = "sendChatMessage",
 			at = @At(
@@ -345,12 +349,14 @@ public abstract class ClientPlayNetworkHandlerMixin {
 			message = (ChatC2SMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message);
 
 			if (QuiltChatEvents.CANCEL.invoke(message) != Boolean.TRUE) {
-				((LastSeenMessageTrackerRollbackSupport)lastSeenMessageTracker).dropSavedState();
+				((ChatSecurityRollbackSupport)lastSeenMessageTracker).dropSavedState();
+				((ChatSecurityRollbackSupport)MessageChainReverseLookup.getChainFromPacker(messageChainPacker)).dropSavedState();
 				QuiltChatEvents.BEFORE_PROCESS.invoke(message);
 				instance.sendPacket(message.serialized());
 				QuiltChatEvents.AFTER_PROCESS.invoke(message);
 			} else {
-				((LastSeenMessageTrackerRollbackSupport)lastSeenMessageTracker).rollbackState();
+				((ChatSecurityRollbackSupport)lastSeenMessageTracker).rollbackState();
+				((ChatSecurityRollbackSupport)MessageChainReverseLookup.getChainFromPacker(messageChainPacker)).rollbackState();
 				QuiltChatEvents.CANCELLED.invoke(message);
 			}
 		} else {
@@ -413,8 +419,9 @@ public abstract class ClientPlayNetworkHandlerMixin {
 			target = "Lnet/minecraft/network/message/LastSeenMessageTracker;update()Lnet/minecraft/network/message/LastSeenMessageTracker$Update;"
 		)
 	)
-	public void quilt$saveCommandMessageState(String command, CallbackInfo ci) {
-		((LastSeenMessageTrackerRollbackSupport)lastSeenMessageTracker).saveState();
+	public void quilt$saveCommandSecurityState(String command, CallbackInfo ci) {
+		((ChatSecurityRollbackSupport)lastSeenMessageTracker).saveState();
+		((ChatSecurityRollbackSupport)MessageChainReverseLookup.getChainFromPacker(messageChainPacker)).saveState();
 	}
 
 	@Inject(
@@ -424,8 +431,9 @@ public abstract class ClientPlayNetworkHandlerMixin {
 			target = "Lnet/minecraft/network/message/LastSeenMessageTracker;update()Lnet/minecraft/network/message/LastSeenMessageTracker$Update;"
 		)
 	)
-	public void quilt$saveCommandMessageState(String command, CallbackInfoReturnable<Boolean> cir) {
-		((LastSeenMessageTrackerRollbackSupport)lastSeenMessageTracker).saveState();
+	public void quilt$saveCommandSecurityState(String command, CallbackInfoReturnable<Boolean> cir) {
+		((ChatSecurityRollbackSupport)lastSeenMessageTracker).saveState();
+		((ChatSecurityRollbackSupport)MessageChainReverseLookup.getChainFromPacker(messageChainPacker)).saveState();
 	}
 
 	@Redirect(
@@ -441,12 +449,14 @@ public abstract class ClientPlayNetworkHandlerMixin {
 			message = (CommandC2SMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message);
 
 			if (QuiltChatEvents.CANCEL.invoke(message) != Boolean.TRUE) {
-				((LastSeenMessageTrackerRollbackSupport)lastSeenMessageTracker).dropSavedState();
+				((ChatSecurityRollbackSupport)lastSeenMessageTracker).dropSavedState();
+				((ChatSecurityRollbackSupport)MessageChainReverseLookup.getChainFromPacker(messageChainPacker)).dropSavedState();
 				QuiltChatEvents.BEFORE_PROCESS.invoke(message);
 				instance.sendPacket(message.serialized());
 				QuiltChatEvents.AFTER_PROCESS.invoke(message);
 			} else {
-				((LastSeenMessageTrackerRollbackSupport)lastSeenMessageTracker).rollbackState();
+				((ChatSecurityRollbackSupport)lastSeenMessageTracker).rollbackState();
+				((ChatSecurityRollbackSupport)MessageChainReverseLookup.getChainFromPacker(messageChainPacker)).rollbackState();
 				QuiltChatEvents.CANCELLED.invoke(message);
 			}
 		} else {

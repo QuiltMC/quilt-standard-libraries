@@ -34,7 +34,7 @@ public class ClientChatApiTest implements ClientModInitializer {
 			// TODO: Something is messing up the signature that *ISNT* LSMT, message chain packer maybe?
 			dispatcher.register(ClientCommandManager.literal("quilt_chat_api_testmod_client")
 				.then(ClientCommandManager.literal("random_signed_chat_cancel")
-					.then(ClientCommandManager.literal("inbound")).executes(context -> {
+					.then(ClientCommandManager.literal("inbound").executes(context -> {
 						QuiltChatEvents.CANCEL.register(EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.INBOUND), abstractMessage -> {
 							if (!(abstractMessage instanceof ChatC2SMessage)) return false;
 							if (new Random().nextBoolean()) {
@@ -47,7 +47,7 @@ public class ClientChatApiTest implements ClientModInitializer {
 							}
 						});
 						return 0;
-					})
+					}))
 					.then(ClientCommandManager.literal("outbound").executes(context -> {
 						QuiltChatEvents.CANCEL.register(EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.OUTBOUND), abstractMessage -> {
 							if (!(abstractMessage instanceof ChatC2SMessage)) return false;

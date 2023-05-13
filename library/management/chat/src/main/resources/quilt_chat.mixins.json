@@ -9,6 +9,7 @@
   ],
   "mixins": [
     "LastSeenMessageTrackerMixin",
+    "MessageChainMixin",
     "ServerPlayerEntityMixin",
     "ServerPlayNetworkHandlerMixin"
   ],
