@@ -19,6 +19,7 @@ package org.quiltmc.qsl.rendering.entity.api.client;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -118,6 +119,65 @@ public final class ArmorRenderingRegistry {
 	}
 
 	/**
+	 * Registers a static model for the specified items.
+	 *
+	 * @param model the model
+	 * @param items the items to register for
+	 */
+	public static void registerModel(@NotNull BipedEntityModel<LivingEntity> model, @NotNull ItemConvertible... items) {
+		registerModelProvider(Event.DEFAULT_PHASE, (modelx, entity, stack, slot) -> model, items);
+	}
+
+	/**
+	 * Registers a render layer provider for the specified items.
+	 *
+	 * @param phaseIdentifier the phase identifier
+	 * @param provider        the provider
+	 * @param items           the items to register for
+	 */
+	public static void registerRenderLayerProvider(@NotNull Identifier phaseIdentifier,
+			@NotNull RenderLayerProvider provider, @NotNull ItemConvertible... items) {
+		for (var item : items) {
+			ArmorRenderingRegistryImpl.registerRenderLayerProvider(item.asItem(), phaseIdentifier, provider);
+		}
+	}
+
+	/**
+	 * Request that render layer providers registered for the specified items for one phase
+	 * be executed before providers registered for another phase.
+	 *
+	 * @param firstPhase  the identifier of the phase that should run before the other. It will be created if it didn't exist yet
+	 * @param secondPhase the identifier of the phase that should run after the other. It will be created if it didn't exist yet
+	 * @param items       the items to request the phase ordering for
+	 */
+	public static void addRenderLayerProviderPhaseOrdering(@NotNull Identifier firstPhase, @NotNull Identifier secondPhase,
+			@NotNull ItemConvertible... items) {
+		for (var item : items) {
+			ArmorRenderingRegistryImpl.addRenderLayerProviderPhaseOrdering(item.asItem(), firstPhase, secondPhase);
+		}
+	}
+
+	/**
+	 * Registers a render layer provider for the specified items.
+	 *
+	 * @param provider the provider
+	 * @param items    the items to register for
+	 */
+	public static void registerRenderLayerProvider(@NotNull RenderLayerProvider provider, @NotNull ItemConvertible... items) {
+		registerRenderLayerProvider(Event.DEFAULT_PHASE, provider, items);
+	}
+
+	/**
+	 * Registers a static render layer for the specified items.
+	 *
+	 * @param layer the render layer
+	 * @param items the items to register for
+	 */
+	public static void registerRenderLayer(@NotNull RenderLayer layer, @NotNull ItemConvertible... items) {
+		registerRenderLayerProvider(Event.DEFAULT_PHASE, (layerx, entity, stack, slot, texture) -> layer, items);
+	}
+
+	/**
 	 * The callback for customizing an armor's texture.
 	 */
 	@ClientOnly
@@ -157,6 +217,28 @@ public final class ArmorRenderingRegistry {
 		@NotNull BipedEntityModel<LivingEntity> getArmorModel(
 				@NotNull BipedEntityModel<LivingEntity> model,
 				@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot
+		);
+	}
+
+	/**
+	 * The callback for modifying an armor's render layer.
+	 */
+	@ClientOnly
+	public interface RenderLayerProvider {
+		/**
+		 * Modifies the armor render layer.
+		 *
+		 * @param layer   the <em>current</em> render layer
+		 * @param entity  the entity wearing the armor
+		 * @param stack   the item stack representing the worn armor
+		 * @param slot    the equipment slot the armor is being worn in
+		 * @param texture the texture used to render the armor
+		 * @return the new armor render layer, or {@code layer} if the layer should not be changed
+		 */
+		@NotNull RenderLayer getArmorRenderLayer(
+				@NotNull RenderLayer layer,
+				@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot,
+				@NotNull Identifier texture
 		);
 	}
 }

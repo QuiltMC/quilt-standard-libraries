@@ -13,12 +13,16 @@ qslModule {
 			api("qsl_base")
 			api("registry")
 			api("lifecycle_events")
+			api("data_callback")
 			testmodOnly("resource_loader")
 		}
 	}
 	entrypoints {
 		events {
 			values = ["org.quiltmc.qsl.worldgen.biome.impl.TheEndBiomeData"]
+		}
+		init {
+			values = ["org.quiltmc.qsl.worldgen.biome.impl.modification.BiomeModifierCodecs"]
 		}
 	}
 	accessWidener()

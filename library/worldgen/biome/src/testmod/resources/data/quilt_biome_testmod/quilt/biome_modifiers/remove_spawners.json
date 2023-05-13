@@ -1,0 +1,6 @@
+{
+  "type": "quilt:remove_spawners",
+  "phase": "removals",
+  "selector": "minecraft:plains",
+  "entity_types": "minecraft:sheep"
+}

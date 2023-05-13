@@ -27,6 +27,8 @@ import net.minecraft.block.BlockState;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.math.MathHelper;
 
+import org.quiltmc.qsl.registry.impl.dynamic.DynamicMetaRegistryImpl;
+
 @Mixin(Registries.class)
 public class RegistriesMixin {
 	@Inject(method = "freeze", at = @At("RETURN"))
@@ -43,5 +45,7 @@ public class RegistriesMixin {
 		DebugChunkGeneratorAccessor.setXSideLength(xLength);
 		DebugChunkGeneratorAccessor.setZSideLength(zLength);
 		//endregion
+
+		DynamicMetaRegistryImpl.freeze();
 	}
 }

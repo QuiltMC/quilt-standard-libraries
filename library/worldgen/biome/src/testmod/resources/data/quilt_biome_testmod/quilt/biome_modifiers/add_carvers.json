@@ -1,0 +1,9 @@
+{
+  "type": "quilt:add_carvers",
+  "phase": "additions",
+  "selector": "#minecraft:is_nether",
+  "carvers": [
+    "quilt_biome_testmod:nether_canyon"
+  ],
+  "step": "air"
+}
