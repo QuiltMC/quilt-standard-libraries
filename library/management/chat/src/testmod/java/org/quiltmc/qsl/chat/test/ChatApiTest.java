@@ -70,7 +70,7 @@ public class ChatApiTest implements ModInitializer {
 						return 0;
 					}))
 					.then(CommandManager.literal("random_signed_chat_cancel")
-						.then(CommandManager.literal("inbound")).executes(context -> {
+						.then(CommandManager.literal("inbound").executes(context -> {
 							QuiltChatEvents.CANCEL.register(EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.INBOUND), abstractMessage -> {
 								if (!(abstractMessage instanceof ChatC2SMessage)) return false;
 								if (new Random().nextBoolean()) {
@@ -83,7 +83,7 @@ public class ChatApiTest implements ModInitializer {
 								}
 							});
 							return 0;
-						})
+						}))
 						.then(CommandManager.literal("outbound").executes(context -> {
 							QuiltChatEvents.CANCEL.register(EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.OUTBOUND), abstractMessage -> {
 								if (!(abstractMessage instanceof ChatC2SMessage)) return false;

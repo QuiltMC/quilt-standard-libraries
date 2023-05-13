@@ -16,15 +16,11 @@
 
 package org.quiltmc.qsl.chat.impl.mixin;
 
-import net.minecraft.network.message.LastSeenMessageTracker;
-
 /**
- * Implements rollback support for {@link LastSeenMessageTracker#update()} so that we can "unsign" outbound messages
- * <p>
- * Signatures don't become invalid, but they are removed from the message tracker so that future ones can
- * be properly signed. Mostly used for message cancellation.
+ * Implements rollback support for various classes relating to chat security, so that we can drop messages
+ * without breaking stuff.
  */
-public interface LastSeenMessageTrackerRollbackSupport {
+public interface ChatSecurityRollbackSupport {
 	void saveState();
 	void rollbackState();
 	void dropSavedState();

@@ -21,7 +21,7 @@ import net.minecraft.network.message.LastSeenMessageTracker;
 import net.minecraft.network.message.MessageSignature;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
-import org.quiltmc.qsl.chat.impl.mixin.LastSeenMessageTrackerRollbackSupport;
+import org.quiltmc.qsl.chat.impl.mixin.ChatSecurityRollbackSupport;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -34,7 +34,7 @@ import java.util.Arrays;
 import java.util.logging.Logger;
 
 @Mixin(LastSeenMessageTracker.class)
-public class LastSeenMessageTrackerMixin implements LastSeenMessageTrackerRollbackSupport {
+public class LastSeenMessageTrackerMixin implements ChatSecurityRollbackSupport {
 	private static final Logger quilt$rollbackSupport$logger = Logger.getLogger("QuiltChat|Message Tracker Rollback");
 	private boolean quilt$rollbackSupport$hasSavedState = false;
 
@@ -49,10 +49,10 @@ public class LastSeenMessageTrackerMixin implements LastSeenMessageTrackerRollba
 	@Shadow
 	private @Nullable MessageSignature signature;
 
-	// Fields from LastSeenMessageTracker
 	private AcknowledgedMessage[] quilt$rollbackSupport$messages;
 	private int quilt$rollbackSupport$nextIndex;
 	private int quilt$rollbackSupport$messageCount;
+	private MessageSignature quilt$rollbackSupport$signature;
 
 	@Override
 	public void saveState() {
@@ -63,6 +63,7 @@ public class LastSeenMessageTrackerMixin implements LastSeenMessageTrackerRollba
 		this.quilt$rollbackSupport$messages = messages;
 		this.quilt$rollbackSupport$nextIndex = nextIndex;
 		this.quilt$rollbackSupport$messageCount = messageCount;
+		this.quilt$rollbackSupport$signature = signature;
 
 		this.quilt$rollbackSupport$hasSavedState = true;
 	}
@@ -76,6 +77,7 @@ public class LastSeenMessageTrackerMixin implements LastSeenMessageTrackerRollba
 		messages = this.quilt$rollbackSupport$messages;
 		nextIndex = this.quilt$rollbackSupport$nextIndex;
 		messageCount = this.quilt$rollbackSupport$messageCount;
+		signature = this.quilt$rollbackSupport$signature;
 
 		quilt$rollbackSupport$hasSavedState = false;
 	}
