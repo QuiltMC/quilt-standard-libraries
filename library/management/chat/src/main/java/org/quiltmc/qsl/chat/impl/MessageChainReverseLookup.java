@@ -22,10 +22,10 @@ import java.util.WeakHashMap;
 
 // This is the WORST hack i have ever written in a minecraft mod
 // we *need* access to the `MessageLink link` field on `MessageChain` if we want to rollback signing
-// you cant access it from just lambda, but thats all we have access to
+// but you cant access it from just a lambda, and thats all we have access to
 // (MessageChain references are just lost outside of these lambdas)
 // so, we create a weak map from packers/unpackers to the message chain that originated them
-// and do lookups through that
+// and do lookups through that.
 // - silver
 public final class MessageChainReverseLookup {
 	private static final WeakHashMap<MessageChain.Packer, MessageChain> packerToChain = new WeakHashMap<>();
