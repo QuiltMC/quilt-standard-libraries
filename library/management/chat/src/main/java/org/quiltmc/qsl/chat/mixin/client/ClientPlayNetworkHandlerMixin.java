@@ -333,7 +333,10 @@ public abstract class ClientPlayNetworkHandlerMixin {
 	)
 	public void quilt$saveChatSecurityState(String string, CallbackInfo ci) {
 		((ChatSecurityRollbackSupport)lastSeenMessageTracker).saveState();
-		((ChatSecurityRollbackSupport)MessageChainReverseLookup.getChainFromPacker(messageChainPacker)).saveState();
+		var chain = MessageChainReverseLookup.getChainFromPacker(messageChainPacker);
+		if (chain != null) {
+			((ChatSecurityRollbackSupport) chain).saveState();
+		}
 	}
 
 	@Redirect(
@@ -350,13 +353,19 @@ public abstract class ClientPlayNetworkHandlerMixin {
 
 			if (QuiltChatEvents.CANCEL.invoke(message) != Boolean.TRUE) {
 				((ChatSecurityRollbackSupport)lastSeenMessageTracker).dropSavedState();
-				((ChatSecurityRollbackSupport)MessageChainReverseLookup.getChainFromPacker(messageChainPacker)).dropSavedState();
+				var chain = MessageChainReverseLookup.getChainFromPacker(messageChainPacker);
+				if (chain != null) {
+					((ChatSecurityRollbackSupport) chain).dropSavedState();
+				}
 				QuiltChatEvents.BEFORE_PROCESS.invoke(message);
 				instance.sendPacket(message.serialized());
 				QuiltChatEvents.AFTER_PROCESS.invoke(message);
 			} else {
 				((ChatSecurityRollbackSupport)lastSeenMessageTracker).rollbackState();
-				((ChatSecurityRollbackSupport)MessageChainReverseLookup.getChainFromPacker(messageChainPacker)).rollbackState();
+				var chain = MessageChainReverseLookup.getChainFromPacker(messageChainPacker);
+				if (chain != null) {
+					((ChatSecurityRollbackSupport) chain).rollbackState();
+				}
 				QuiltChatEvents.CANCELLED.invoke(message);
 			}
 		} else {
@@ -421,7 +430,10 @@ public abstract class ClientPlayNetworkHandlerMixin {
 	)
 	public void quilt$saveCommandSecurityState(String command, CallbackInfo ci) {
 		((ChatSecurityRollbackSupport)lastSeenMessageTracker).saveState();
-		((ChatSecurityRollbackSupport)MessageChainReverseLookup.getChainFromPacker(messageChainPacker)).saveState();
+		var chain = MessageChainReverseLookup.getChainFromPacker(messageChainPacker);
+		if (chain != null) {
+			((ChatSecurityRollbackSupport) chain).saveState();
+		}
 	}
 
 	@Inject(
@@ -433,7 +445,10 @@ public abstract class ClientPlayNetworkHandlerMixin {
 	)
 	public void quilt$saveCommandSecurityState(String command, CallbackInfoReturnable<Boolean> cir) {
 		((ChatSecurityRollbackSupport)lastSeenMessageTracker).saveState();
-		((ChatSecurityRollbackSupport)MessageChainReverseLookup.getChainFromPacker(messageChainPacker)).saveState();
+		var chain = MessageChainReverseLookup.getChainFromPacker(messageChainPacker);
+		if (chain != null) {
+			((ChatSecurityRollbackSupport) chain).saveState();
+		}
 	}
 
 	@Redirect(
@@ -450,13 +465,19 @@ public abstract class ClientPlayNetworkHandlerMixin {
 
 			if (QuiltChatEvents.CANCEL.invoke(message) != Boolean.TRUE) {
 				((ChatSecurityRollbackSupport)lastSeenMessageTracker).dropSavedState();
-				((ChatSecurityRollbackSupport)MessageChainReverseLookup.getChainFromPacker(messageChainPacker)).dropSavedState();
+				var chain = MessageChainReverseLookup.getChainFromPacker(messageChainPacker);
+				if (chain != null) {
+					((ChatSecurityRollbackSupport) chain).dropSavedState();
+				}
 				QuiltChatEvents.BEFORE_PROCESS.invoke(message);
 				instance.sendPacket(message.serialized());
 				QuiltChatEvents.AFTER_PROCESS.invoke(message);
 			} else {
 				((ChatSecurityRollbackSupport)lastSeenMessageTracker).rollbackState();
-				((ChatSecurityRollbackSupport)MessageChainReverseLookup.getChainFromPacker(messageChainPacker)).rollbackState();
+				var chain = MessageChainReverseLookup.getChainFromPacker(messageChainPacker);
+				if (chain != null) {
+					((ChatSecurityRollbackSupport) chain).rollbackState();
+				}
 				QuiltChatEvents.CANCELLED.invoke(message);
 			}
 		} else {
