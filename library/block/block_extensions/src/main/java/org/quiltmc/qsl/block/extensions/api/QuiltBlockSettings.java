@@ -20,11 +20,14 @@ package org.quiltmc.qsl.block.extensions.api;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
+import org.jetbrains.annotations.Contract;
+
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.AbstractBlock.Settings;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.MapColor;
+import net.minecraft.block.enums.NoteBlockInstrument;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.EntityType;
 import net.minecraft.feature_flags.FeatureFlag;
@@ -187,6 +190,19 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	}
 
 	@Override
+	@Contract("->this")
+	public QuiltBlockSettings solid() {
+		return this.solid(true);
+	}
+
+	@Override
+	@Contract("->this")
+	@Deprecated
+	public QuiltBlockSettings nonSolid() {
+		return this.nonSolid(true);
+	}
+
+	@Override
 	public QuiltBlockSettings pistonBehavior(PistonBehavior pistonBehavior) {
 		super.pistonBehavior(pistonBehavior);
 		return this;
@@ -241,8 +257,22 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	}
 
 	@Override
+	@Contract("_->this")
+	public QuiltBlockSettings method_51517(DyeColor dyeColor) {
+		super.method_51517(dyeColor);
+		return this;
+	}
+
+	@Override
 	public QuiltBlockSettings method_31710(MapColor color) {
 		super.method_31710(color);
+		return this;
+	}
+
+	@Override
+	@Contract("_->this")
+	public QuiltBlockSettings method_51520(Function<BlockState, MapColor> function) {
+		super.method_51520(function);
 		return this;
 	}
 
@@ -273,6 +303,20 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	@Override
 	public QuiltBlockSettings requiredFlags(FeatureFlag... flags) {
 		super.requiredFlags(flags);
+		return this;
+	}
+
+	@Override
+	@Contract("_->this")
+	public QuiltBlockSettings instrument(NoteBlockInstrument instrument) {
+		super.instrument(instrument);
+		return this;
+	}
+
+	@Override
+	@Contract("->this")
+	public QuiltBlockSettings replaceable() {
+		super.replaceable();
 		return this;
 	}
 
