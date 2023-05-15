@@ -56,13 +56,19 @@ public class ClassAnalysisUtils {
 				.getNamedMinecraftProvider();
 
 		if (namedMinecraftProvider instanceof ProcessedNamedMinecraftProvider<?, ?> processed) {
-			var provider = (NamedMinecraftProvider.MergedImpl) (Object) processed.getParentMinecraftProvider();
-			Path inputJar = provider.getMergedJar().getPath();
-
-			return FileSystems.newFileSystem(URI.create("jar:" + inputJar.toUri()), Map.of("create", false));
+			var provider = (NamedMinecraftProvider.MergedImpl) processed.getParentMinecraftProvider();
+			return loadMinecraftJar(provider);
+		} else if (namedMinecraftProvider instanceof NamedMinecraftProvider.MergedImpl provider) {
+			return loadMinecraftJar(provider);
 		}
 
 		throw new IOException("Could not locate Minecraft merged JAR.");
+	}
+
+	private static FileSystem loadMinecraftJar(NamedMinecraftProvider.MergedImpl provider) throws IOException {
+		Path inputJar = provider.getMergedJar().getPath();
+
+		return FileSystems.newFileSystem(URI.create("jar:" + inputJar.toUri()), Map.of("create", false));
 	}
 
 	public static Map<String, MethodNode> buildMethodLookup(ClassNode classNode) {
