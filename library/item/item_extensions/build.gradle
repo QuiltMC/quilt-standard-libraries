@@ -14,13 +14,13 @@ qslModule {
 			testmodOnly("resource_loader")
 		}
 	}
+	accessWidener()
 	injectedInterface("net/minecraft/class_1753") {
 		values = ["org/quiltmc/qsl/item/extensions/api/bow/BowExtensions"]
 	}
 	injectedInterface("net/minecraft/class_1764") {
 		values = ["org/quiltmc/qsl/item/extensions/api/crossbow/CrossbowExtensions"]
 	}
-	accessWidener()
 }
 
 import org.objectweb.asm.Opcodes
