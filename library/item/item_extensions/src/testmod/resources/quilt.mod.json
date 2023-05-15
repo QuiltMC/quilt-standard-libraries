@@ -13,7 +13,8 @@
     "entrypoints": {
       "init": [
         "org.quiltmc.qsl.item.extensions.test.ArmorKnockbackTest",
-        "org.quiltmc.qsl.item.extensions.test.BowsTest"
+        "org.quiltmc.qsl.item.extensions.test.BowsTest",
+        "org.quiltmc.qsl.item.extensions.test.TransitiveAccessWidenerTest"
       ]
     },
     "depends": [
