@@ -42,13 +42,13 @@ def generateItemConstructors(List<String> lines, FileSystem fs) {
 		.filter { (it.access & Opcodes.ACC_ABSTRACT) == 0 }
 		.forEach { node ->
 			for (def method : node.methods) {
-				// Checklist for finding block constructors as of 1.20:
+				// Checklist for finding item constructors as of 1.20:
 				//  - class directly in net.minecraft.item (excluding subpackages)
 				//  - method name == <init> (by definition)
 				//  - contains an Item$Settings parameter
 				//  - only taking into account non-abstract classes and non-public constructors
 
-				// Block constructor...
+				// Item constructor...
 				if (method.name == "<init>" && Type.getArgumentTypes(method.desc).any { it.internalName == 'net/minecraft/item/Item$Settings' }) {
 					// ...and non-public
 					if ((method.access & Opcodes.ACC_PUBLIC) == 0) {
