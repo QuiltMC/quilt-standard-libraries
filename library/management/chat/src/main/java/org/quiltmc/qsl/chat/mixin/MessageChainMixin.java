@@ -21,8 +21,8 @@ import net.minecraft.network.encryption.Signer;
 import net.minecraft.network.message.MessageChain;
 import net.minecraft.network.message.MessageLink;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.chat.impl.MessageChainReverseLookup;
-import org.quiltmc.qsl.chat.impl.mixin.ChatSecurityRollbackSupport;
+import org.quiltmc.qsl.chat.api.ChatSecurityRollbackSupport;
+import org.quiltmc.qsl.chat.api.MessageChainLookup;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -78,7 +78,7 @@ public class MessageChainMixin implements ChatSecurityRollbackSupport {
 		at = @At("TAIL")
 	)
 	public void quilt$captureGeneratedPacker(Signer signer, CallbackInfoReturnable<MessageChain.Packer> cir) {
-		MessageChainReverseLookup.registerPacker(cir.getReturnValue(), (MessageChain)(Object)this);
+		MessageChainLookup.registerPacker(cir.getReturnValue(), this);
 	}
 
 	@Inject(
@@ -86,6 +86,6 @@ public class MessageChainMixin implements ChatSecurityRollbackSupport {
 		at = @At("TAIL")
 	)
 	public void quilt$captureGeneratedUnpacker(PlayerPublicKey key, CallbackInfoReturnable<MessageChain.Unpacker> cir) {
-		MessageChainReverseLookup.registerUnpacker(cir.getReturnValue(), (MessageChain)(Object)this);
+		MessageChainLookup.registerUnpacker(cir.getReturnValue(), this);
 	}
 }
