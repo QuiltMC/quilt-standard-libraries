@@ -34,10 +34,10 @@ import net.minecraft.registry.LayeredRegistryManager;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
+import org.quiltmc.qsl.chat.api.ChatSecurityRollbackSupport;
+import org.quiltmc.qsl.chat.api.MessageChainLookup;
 import org.quiltmc.qsl.chat.api.QuiltChatEvents;
 import org.quiltmc.qsl.chat.api.types.*;
-import org.quiltmc.qsl.chat.impl.MessageChainReverseLookup;
-import org.quiltmc.qsl.chat.impl.mixin.ChatSecurityRollbackSupport;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -333,9 +333,9 @@ public abstract class ClientPlayNetworkHandlerMixin {
 	)
 	public void quilt$saveChatSecurityState(String string, CallbackInfo ci) {
 		((ChatSecurityRollbackSupport)lastSeenMessageTracker).saveState();
-		var chain = MessageChainReverseLookup.getChainFromPacker(messageChainPacker);
+		var chain = MessageChainLookup.getFromPacker(messageChainPacker);
 		if (chain != null) {
-			((ChatSecurityRollbackSupport) chain).saveState();
+			chain.saveState();
 		}
 	}
 
@@ -353,18 +353,18 @@ public abstract class ClientPlayNetworkHandlerMixin {
 
 			if (QuiltChatEvents.CANCEL.invoke(message) != Boolean.TRUE) {
 				((ChatSecurityRollbackSupport)lastSeenMessageTracker).dropSavedState();
-				var chain = MessageChainReverseLookup.getChainFromPacker(messageChainPacker);
+				var chain = MessageChainLookup.getFromPacker(messageChainPacker);
 				if (chain != null) {
-					((ChatSecurityRollbackSupport) chain).dropSavedState();
+					chain.dropSavedState();
 				}
 				QuiltChatEvents.BEFORE_PROCESS.invoke(message);
 				instance.sendPacket(message.serialized());
 				QuiltChatEvents.AFTER_PROCESS.invoke(message);
 			} else {
 				((ChatSecurityRollbackSupport)lastSeenMessageTracker).rollbackState();
-				var chain = MessageChainReverseLookup.getChainFromPacker(messageChainPacker);
+				var chain = MessageChainLookup.getFromPacker(messageChainPacker);
 				if (chain != null) {
-					((ChatSecurityRollbackSupport) chain).rollbackState();
+					chain.rollbackState();
 				}
 				QuiltChatEvents.CANCELLED.invoke(message);
 			}
@@ -430,9 +430,9 @@ public abstract class ClientPlayNetworkHandlerMixin {
 	)
 	public void quilt$saveCommandSecurityState(String command, CallbackInfo ci) {
 		((ChatSecurityRollbackSupport)lastSeenMessageTracker).saveState();
-		var chain = MessageChainReverseLookup.getChainFromPacker(messageChainPacker);
+		var chain = MessageChainLookup.getFromPacker(messageChainPacker);
 		if (chain != null) {
-			((ChatSecurityRollbackSupport) chain).saveState();
+			chain.saveState();
 		}
 	}
 
@@ -445,9 +445,9 @@ public abstract class ClientPlayNetworkHandlerMixin {
 	)
 	public void quilt$saveCommandSecurityState(String command, CallbackInfoReturnable<Boolean> cir) {
 		((ChatSecurityRollbackSupport)lastSeenMessageTracker).saveState();
-		var chain = MessageChainReverseLookup.getChainFromPacker(messageChainPacker);
+		var chain = MessageChainLookup.getFromPacker(messageChainPacker);
 		if (chain != null) {
-			((ChatSecurityRollbackSupport) chain).saveState();
+			chain.saveState();
 		}
 	}
 
@@ -465,18 +465,18 @@ public abstract class ClientPlayNetworkHandlerMixin {
 
 			if (QuiltChatEvents.CANCEL.invoke(message) != Boolean.TRUE) {
 				((ChatSecurityRollbackSupport)lastSeenMessageTracker).dropSavedState();
-				var chain = MessageChainReverseLookup.getChainFromPacker(messageChainPacker);
+				var chain = MessageChainLookup.getFromPacker(messageChainPacker);
 				if (chain != null) {
-					((ChatSecurityRollbackSupport) chain).dropSavedState();
+					chain.dropSavedState();
 				}
 				QuiltChatEvents.BEFORE_PROCESS.invoke(message);
 				instance.sendPacket(message.serialized());
 				QuiltChatEvents.AFTER_PROCESS.invoke(message);
 			} else {
 				((ChatSecurityRollbackSupport)lastSeenMessageTracker).rollbackState();
-				var chain = MessageChainReverseLookup.getChainFromPacker(messageChainPacker);
+				var chain = MessageChainLookup.getFromPacker(messageChainPacker);
 				if (chain != null) {
-					((ChatSecurityRollbackSupport) chain).rollbackState();
+					chain.rollbackState();
 				}
 				QuiltChatEvents.CANCELLED.invoke(message);
 			}

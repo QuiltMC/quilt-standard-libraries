@@ -21,7 +21,7 @@ import net.minecraft.network.message.LastSeenMessageTracker;
 import net.minecraft.network.message.MessageSignature;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
-import org.quiltmc.qsl.chat.impl.mixin.ChatSecurityRollbackSupport;
+import org.quiltmc.qsl.chat.api.ChatSecurityRollbackSupport;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
