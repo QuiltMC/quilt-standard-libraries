@@ -200,8 +200,6 @@ public final class DumpBuiltinAttachmentsCommand {
 			attachmentCount++;
 		}
 
-		ctx.getSource().sendFeedback(Text.literal("Done. Dumped " + attachmentCount + " attachments, "
-					+ valueCount + " values."),
-				false);
+		ctx.getSource().sendSystemMessage(Text.literal("Done. Dumped " + attachmentCount + " attachments, " + valueCount + " values."));
 	}
 }

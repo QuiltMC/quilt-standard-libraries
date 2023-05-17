@@ -35,7 +35,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.class_8523;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Holder;
 import net.minecraft.registry.HolderLookup;
@@ -48,6 +47,7 @@ import net.minecraft.registry.tag.TagGroupLoader;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.registry.tag.TagManagerLoader;
 import net.minecraft.resource.ResourceManager;
+import net.minecraft.util.DependencySorter;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -233,9 +233,9 @@ public final class ClientTagRegistryManager<T> {
 		}
 
 		var resolver = new TagResolver(type);
-		var sorter = new class_8523<Identifier, TagGroupLoader.C_kgkcribd>();
-		tagBuilders.forEach((key, values) -> sorter.method_51486(key, new TagGroupLoader.C_kgkcribd(values)));
-		sorter.method_51487(resolver.getCollector());
+		var sorter = new DependencySorter<Identifier, TagGroupLoader.SortingEntry>();
+		tagBuilders.forEach((key, values) -> sorter.addEntry(key, new TagGroupLoader.SortingEntry(values)));
+		sorter.buildOrdered(resolver.getCollector());
 		return resolver.getTags();
 	}
 
@@ -315,7 +315,7 @@ public final class ClientTagRegistryManager<T> {
 			return this.tags.get(QuiltTagKey.of(ClientTagRegistryManager.this.registryKey, id, this.type));
 		}
 
-		public BiConsumer<Identifier, TagGroupLoader.C_kgkcribd> getCollector() {
+		public BiConsumer<Identifier, TagGroupLoader.SortingEntry> getCollector() {
 			return (tagId, builder) -> this.tags.put(
 					QuiltTagKey.of(ClientTagRegistryManager.this.registryKey, tagId, this.type),
 					this.buildLenientTag(builder.entries())

@@ -70,7 +70,7 @@ public final class TagsTestMod implements ServerLifecycleEvents.Ready, CommandRe
 						displayTag(
 								entry.key(), entry.values(),
 								context.getSource().getRegistryManager().get(RegistryKeys.BIOME),
-								msg -> context.getSource().sendFeedback(msg, false)
+								msg -> context.getSource().sendSystemMessage(msg)
 						);
 					});
 
@@ -91,7 +91,7 @@ public final class TagsTestMod implements ServerLifecycleEvents.Ready, CommandRe
 	}
 
 	public static <T> void displayTag(TagKey<T> tag, Registry<T> registry, ServerCommandSource source) {
-		displayTag(tag, registry, text -> source.sendFeedback(text, false));
+		displayTag(tag, registry, source::sendSystemMessage);
 	}
 
 	public static <T> void displayTag(TagKey<T> tag, Registry<T> registry, Consumer<Text> feedbackConsumer) {
