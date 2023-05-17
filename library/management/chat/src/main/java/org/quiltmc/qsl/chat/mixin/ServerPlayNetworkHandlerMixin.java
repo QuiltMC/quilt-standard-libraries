@@ -16,14 +16,16 @@
 
 package org.quiltmc.qsl.chat.mixin;
 
+import com.mojang.brigadier.ParseResults;
+import net.minecraft.command.SignedArgument;
 import net.minecraft.network.PacketSendListener;
-import net.minecraft.network.message.MessageSignatureList;
-import net.minecraft.network.message.MessageType;
+import net.minecraft.network.message.*;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.play.ChatCommandC2SPacket;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.MessageRemovalS2CPacket;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -39,6 +41,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.time.Instant;
+import java.util.Map;
 import java.util.Optional;
 
 @Mixin(ServerPlayNetworkHandler.class)
@@ -50,6 +53,15 @@ public abstract class ServerPlayNetworkHandlerMixin {
 	protected abstract Optional<MessageSignatureList> method_44337(
 		String string, Instant instant, MessageSignatureList.Acknowledgment acknowledgment
 	);
+
+	@Shadow
+	private MessageChain.Unpacker messageChainUnpacker;
+
+	@Shadow
+	protected abstract Map<String, SignedChatMessage> method_45006(ChatCommandC2SPacket commandPacket, SignedArgument<?> signedArgument, MessageSignatureList signatures) throws MessageChain.DecodingException;
+
+	@Shadow
+	protected abstract ParseResults<ServerCommandSource> method_45003(String string);
 
 	@Unique
 	private ProfileIndependentS2CMessage quilt$sendProfileIndependentMessage$storedProfileIndependentMessage;
@@ -66,13 +78,17 @@ public abstract class ServerPlayNetworkHandlerMixin {
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/c2s/play/ChatMessageC2SPacket;message()Ljava/lang/String;"),
 			cancellable = true
 	)
-	public void quilt$cancelInboundChatMessage(ChatMessageC2SPacket packet, CallbackInfo ci) {
+	public void quilt$cancelInboundChatMessage(ChatMessageC2SPacket packet, CallbackInfo ci) throws MessageChain.DecodingException {
 		var message = new ChatC2SMessage(player, false, packet);
 
 		if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) {
 			QuiltChatEvents.CANCELLED.invoke(message);
 			ci.cancel();
-			method_44337(packet.message(), packet.timestamp(), packet.messageAcknowledgments());
+			var result = method_44337(packet.message(), packet.timestamp(), packet.messageAcknowledgments());
+			if (result.isPresent()) {
+				MessageBody messageBody = new MessageBody(packet.message(), packet.timestamp(), packet.salt(), result.get());
+				messageChainUnpacker.unpack(packet.signature(), messageBody);
+			}
 		}
 	}
 
@@ -167,12 +183,16 @@ public abstract class ServerPlayNetworkHandlerMixin {
 			),
 			cancellable = true
 	)
-	public void quilt$cancelInboundCommand(ChatCommandC2SPacket packet, CallbackInfo ci) {
+	public void quilt$cancelInboundCommand(ChatCommandC2SPacket packet, CallbackInfo ci) throws MessageChain.DecodingException {
 		var message = new CommandC2SMessage(player, false, packet);
 		if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) {
 			ci.cancel();
 			QuiltChatEvents.CANCELLED.invoke(message);
-			method_44337(packet.command(), packet.timestamp(), packet.messageAcknowledgements());
+			var result = method_44337(packet.command(), packet.timestamp(), packet.messageAcknowledgements());
+			if (result.isPresent()) {
+				var parseResults = method_45003(packet.command());
+				method_45006(packet, SignedArgument.method_45043(parseResults), result.get());
+			}
 		}
 	}
 

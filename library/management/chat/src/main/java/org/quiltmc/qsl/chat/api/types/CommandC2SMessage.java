@@ -110,4 +110,17 @@ public class CommandC2SMessage extends AbstractChatMessage<ChatCommandC2SPacket>
 	public @NotNull ChatCommandC2SPacket serialized() {
 		return new ChatCommandC2SPacket(command, timestamp, salt, argumentSignatures, messageAcknowledgements);
 	}
+
+	@Override
+	public String toString() {
+		return "CommandC2SMessage{" +
+			"command='" + command + '\'' +
+			", timestamp=" + timestamp +
+			", salt=" + salt +
+			", argumentSignatures=" + argumentSignatures +
+			", messageAcknowledgements=" + messageAcknowledgements +
+			", player=" + player +
+			", isClient=" + isClient +
+			'}';
+	}
 }
