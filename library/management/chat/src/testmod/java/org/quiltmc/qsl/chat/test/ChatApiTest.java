@@ -23,10 +23,7 @@ import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.chat.api.QuiltChatEvents;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
-import org.quiltmc.qsl.chat.api.types.ChatC2SMessage;
-import org.quiltmc.qsl.chat.api.types.RawChatC2SMessage;
-import org.quiltmc.qsl.chat.api.types.RemovalS2CMessage;
-import org.quiltmc.qsl.chat.api.types.SystemS2CMessage;
+import org.quiltmc.qsl.chat.api.types.*;
 import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,11 +69,9 @@ public class ChatApiTest implements ModInitializer {
 					.then(CommandManager.literal("random_signed_chat_cancel")
 						.then(CommandManager.literal("inbound").executes(context -> {
 							QuiltChatEvents.CANCEL.register(EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.INBOUND), abstractMessage -> {
-								if (!(abstractMessage instanceof ChatC2SMessage)) return false;
+								if (!(abstractMessage instanceof ChatC2SMessage) && !(abstractMessage instanceof CommandC2SMessage)) return false;
 								if (new Random().nextBoolean()) {
-									System.out.println("QC|TEST Cancelling inbound message " +
-										((ChatC2SMessage) abstractMessage).getMessage() + " " +
-										(((ChatC2SMessage) abstractMessage).getSignature() != null ? ((ChatC2SMessage) abstractMessage).getSignature().hashCode() : 0));
+									System.out.println("QC|TEST Cancelling inbound message");
 									return true;
 								} else {
 									return false;
@@ -86,11 +81,9 @@ public class ChatApiTest implements ModInitializer {
 						}))
 						.then(CommandManager.literal("outbound").executes(context -> {
 							QuiltChatEvents.CANCEL.register(EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.OUTBOUND), abstractMessage -> {
-								if (!(abstractMessage instanceof ChatC2SMessage)) return false;
+								if (!(abstractMessage instanceof ChatC2SMessage) && !(abstractMessage instanceof CommandC2SMessage)) return false;
 								if (new Random().nextBoolean()) {
-									System.out.println("QC|TEST Cancelling outbound message " +
-										((ChatC2SMessage) abstractMessage).getMessage() + " " +
-										(((ChatC2SMessage) abstractMessage).getSignature() != null ? ((ChatC2SMessage) abstractMessage).getSignature().hashCode() : 0));
+									System.out.println("QC|TEST Cancelling outbound message");
 									return true;
 								} else {
 									return false;
