@@ -8,10 +8,10 @@
     "client.ClientPlayNetworkHandlerMixin"
   ],
   "mixins": [
-    "LastSeenMessageTrackerMixin",
-    "MessageChainMixin",
     "ServerPlayerEntityMixin",
-    "ServerPlayNetworkHandlerMixin"
+    "ServerPlayNetworkHandlerMixin",
+    "rollback_support.LastSeenMessageTrackerMixin",
+    "rollback_support.MessageChainMixin"
   ],
   "injectors": {
     "defaultRequire": 1
