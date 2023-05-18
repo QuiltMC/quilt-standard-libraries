@@ -58,7 +58,9 @@ public abstract class ServerPlayNetworkHandlerMixin {
 	private MessageChain.Unpacker messageChainUnpacker;
 
 	@Shadow
-	protected abstract Map<String, SignedChatMessage> method_45006(ChatCommandC2SPacket commandPacket, SignedArgument<?> signedArgument, MessageSignatureList signatures) throws MessageChain.DecodingException;
+	protected abstract Map<String, SignedChatMessage> method_45006(
+		ChatCommandC2SPacket commandPacket, SignedArgument<?> signedArgument, MessageSignatureList signatures
+	) throws MessageChain.DecodingException;
 
 	@Shadow
 	protected abstract ParseResults<ServerCommandSource> method_45003(String string);
