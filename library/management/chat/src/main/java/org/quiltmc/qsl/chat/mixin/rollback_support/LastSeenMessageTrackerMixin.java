@@ -14,33 +14,40 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.chat.mixin;
+package org.quiltmc.qsl.chat.mixin.rollback_support;
 
-import net.minecraft.network.encryption.PlayerPublicKey;
-import net.minecraft.network.encryption.Signer;
-import net.minecraft.network.message.MessageChain;
-import net.minecraft.network.message.MessageLink;
+import net.minecraft.network.message.AcknowledgedMessage;
+import net.minecraft.network.message.LastSeenMessageTracker;
+import net.minecraft.network.message.MessageSignature;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.chat.api.ChatSecurityRollbackSupport;
-import org.quiltmc.qsl.chat.api.MessageChainLookup;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.logging.Logger;
 
-@Mixin(MessageChain.class)
-public class MessageChainMixin implements ChatSecurityRollbackSupport {
-	private static final Logger quilt$rollbackSupport$logger = Logger.getLogger("QuiltChat|Message Chain Rollback");
+@Mixin(LastSeenMessageTracker.class)
+public class LastSeenMessageTrackerMixin implements ChatSecurityRollbackSupport {
+	private static final Logger quilt$rollbackSupport$logger = Logger.getLogger("QuiltChat|Message Tracker Rollback");
 	private boolean quilt$rollbackSupport$hasSavedState = false;
 
+	@Mutable
 	@Shadow
-	private @Nullable MessageLink link;
+	@Final
+	private AcknowledgedMessage[] messages;
+	@Shadow
+	private int nextIndex;
+	@Shadow
+	private int messageCount;
+	@Shadow
+	private @Nullable MessageSignature signature;
 
-	private MessageLink quilt$rollbackSupport$link;
-
+	private AcknowledgedMessage[] quilt$rollbackSupport$messages;
+	private int quilt$rollbackSupport$nextIndex;
+	private int quilt$rollbackSupport$messageCount;
+	private MessageSignature quilt$rollbackSupport$signature;
 
 	@Override
 	public void saveState() {
@@ -48,9 +55,12 @@ public class MessageChainMixin implements ChatSecurityRollbackSupport {
 			quilt$rollbackSupport$logger.warning("Saving a rollback state without dropping or using a previous rollback state!");
 		}
 
-		this.quilt$rollbackSupport$link = link;
+		this.quilt$rollbackSupport$messages = messages;
+		this.quilt$rollbackSupport$nextIndex = nextIndex;
+		this.quilt$rollbackSupport$messageCount = messageCount;
+		this.quilt$rollbackSupport$signature = signature;
 
-		quilt$rollbackSupport$hasSavedState = true;
+		this.quilt$rollbackSupport$hasSavedState = true;
 	}
 
 	@Override
@@ -59,7 +69,10 @@ public class MessageChainMixin implements ChatSecurityRollbackSupport {
 			throw new IllegalStateException("No rollback state is available!");
 		}
 
-		link = quilt$rollbackSupport$link;
+		messages = this.quilt$rollbackSupport$messages;
+		nextIndex = this.quilt$rollbackSupport$nextIndex;
+		messageCount = this.quilt$rollbackSupport$messageCount;
+		signature = this.quilt$rollbackSupport$signature;
 
 		quilt$rollbackSupport$hasSavedState = false;
 	}
@@ -71,21 +84,5 @@ public class MessageChainMixin implements ChatSecurityRollbackSupport {
 		}
 
 		quilt$rollbackSupport$hasSavedState = false;
-	}
-
-	@Inject(
-		method = "createPacker",
-		at = @At("TAIL")
-	)
-	public void quilt$captureGeneratedPacker(Signer signer, CallbackInfoReturnable<MessageChain.Packer> cir) {
-		MessageChainLookup.registerPacker(cir.getReturnValue(), this);
-	}
-
-	@Inject(
-		method = "createUnpacker",
-		at = @At("TAIL")
-	)
-	public void quilt$captureGeneratedUnpacker(PlayerPublicKey key, CallbackInfoReturnable<MessageChain.Unpacker> cir) {
-		MessageChainLookup.registerUnpacker(cir.getReturnValue(), this);
 	}
 }

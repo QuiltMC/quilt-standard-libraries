@@ -32,7 +32,6 @@ public class ClientChatApiTest implements ClientModInitializer {
 	@Override
 	public void onInitializeClient(ModContainer mod) {
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, buildContext, environment) -> {
-			// TODO: Something is messing up the signature that *ISNT* LSMT, message chain packer maybe?
 			dispatcher.register(ClientCommandManager.literal("quilt_chat_api_testmod_client")
 				.then(ClientCommandManager.literal("random_signed_chat_cancel")
 					.then(ClientCommandManager.literal("inbound").executes(context -> {

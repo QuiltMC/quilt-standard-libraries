@@ -223,10 +223,10 @@ public abstract class ServerPlayNetworkHandlerMixin {
 		at = @At("HEAD"),
 		argsOnly = true
 	)
-	public Packet quilt$modifyOutboundMessageRemoval(Packet packet) {
+	public Packet<?> quilt$modifyOutboundMessageRemoval(Packet<?> packet) {
 		if (packet instanceof MessageRemovalS2CPacket removalPacket) {
 			var message = new RemovalS2CMessage(player, false, removalPacket);
-			return (Packet) QuiltChatEvents.MODIFY.invokeOrElse(message, message).serialized();
+			return (Packet<?>) QuiltChatEvents.MODIFY.invokeOrElse(message, message).serialized();
 		} else {
 			return packet;
 		}
