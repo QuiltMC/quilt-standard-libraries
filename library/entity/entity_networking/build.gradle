@@ -12,11 +12,15 @@ qslModule {
 		core {
 			api("qsl_base")
 			api("registry")
+			api("networking")
 		}
 	}
 	entrypoints {
 		init {
 			values = ["org.quiltmc.qsl.entity.networking.impl.QuiltEntityNetworkingInitializer"]
+		}
+		client_init {
+			values = ["org.quiltmc.qsl.entity.networking.impl.QuiltEntityNetworkingClientInitializer"]
 		}
 	}
 }

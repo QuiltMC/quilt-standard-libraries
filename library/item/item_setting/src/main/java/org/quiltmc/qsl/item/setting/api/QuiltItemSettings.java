@@ -20,6 +20,7 @@ package org.quiltmc.qsl.item.setting.api;
 import org.jetbrains.annotations.Contract;
 
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.feature_flags.FeatureFlag;
 import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -177,6 +178,13 @@ public class QuiltItemSettings extends Item.Settings {
 	@Contract("->this")
 	public QuiltItemSettings fireproof() {
 		super.fireproof();
+		return this;
+	}
+
+	@Override
+	@Contract("_->this")
+	public QuiltItemSettings requiredFlags(FeatureFlag... flags) {
+		super.requiredFlags(flags);
 		return this;
 	}
 }
