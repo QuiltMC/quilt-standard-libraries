@@ -262,13 +262,13 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	}
 
 	@Override
-	public AbstractBlock.Settings disableParticlesOnBreak() {
+	public QuiltBlockSettings disableParticlesOnBreak() {
 		super.disableParticlesOnBreak();
 		return this;
 	}
 
 	@Override
-	public Settings requiredFlags(FeatureFlag... flags) {
+	public QuiltBlockSettings requiredFlags(FeatureFlag... flags) {
 		super.requiredFlags(flags);
 		return this;
 	}
