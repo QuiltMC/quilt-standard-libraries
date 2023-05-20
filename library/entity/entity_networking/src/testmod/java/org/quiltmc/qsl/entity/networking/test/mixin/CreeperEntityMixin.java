@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.entity.networking.test.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -28,20 +29,28 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 
+import org.quiltmc.qsl.entity.networking.api.extended_spawn_data.QuiltExtendedSpawnDataEntity;
+import org.quiltmc.qsl.entity.networking.test.CreeperWithItem;
 import org.quiltmc.qsl.entity.networking.test.TrackedDataTestInitializer;
 
 /**
- * Don't add extra tracked data to existing mobs in actual mods!
+ * In actual mods, do not add tracked data to existing entities, and do not replace spawn packets.
+ * This is purely for testing QSL easily.
  */
 @Mixin(CreeperEntity.class)
-public class CreeperEntityMixin extends HostileEntity {
+public class CreeperEntityMixin extends HostileEntity implements QuiltExtendedSpawnDataEntity, CreeperWithItem {
+	// Make creepers store a particle effect to test a custom tracked data handler
+
 	@SuppressWarnings("WrongEntityDataParameterClass")
 	private static final TrackedData<ParticleEffect> PARTICLE = DataTracker.registerData(CreeperEntity.class, TrackedDataTestInitializer.PARTICLE_DATA_HANDLER);
 
@@ -65,5 +74,37 @@ public class CreeperEntityMixin extends HostileEntity {
 				this.dataTracker.set(PARTICLE, ParticleTypes.SMOKE);
 			}
 		}
+	}
+
+	// Make creepers drop a random item on explosion and render it over their head to test extended spawn data
+
+	@Unique
+	private ItemStack quilt$stackToDrop;
+
+	@Inject(method = "<init>", at = @At("TAIL"))
+	private void quiltTestMod$storeRandomItem(CallbackInfo ci) {
+		var random = Registries.ITEM.getRandom(this.random).get().value();
+		this.quilt$stackToDrop = new ItemStack(random);
+	}
+
+	@Inject(method = "explode", at = @At("TAIL"))
+	private void quiltTestMod$dropItemOnExplosion(CallbackInfo ci) {
+		if (!world.isClient)
+			dropStack(quilt$stackToDrop);
+	}
+
+	@Override
+	public void writeAdditionalSpawnData(PacketByteBuf buffer) {
+		buffer.writeItemStack(quilt$stackToDrop);
+	}
+
+	@Override
+	public void readAdditionalSpawnData(PacketByteBuf buffer) {
+		this.quilt$stackToDrop = buffer.readItemStack();
+	}
+
+	@Override
+	public ItemStack getStack() {
+		return quilt$stackToDrop;
 	}
 }
