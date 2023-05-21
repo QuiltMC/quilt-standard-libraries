@@ -36,7 +36,7 @@ public final class ModProtocol {
 	private ModProtocol() {}
 
 	/**
-	 * @return {@code true} if Self Mod Protocol is enabled, otherwise {@code false}
+	 * {@return {@code true} if Self Mod Protocol is enabled, otherwise {@code false}}
 	 */
 	@Contract(pure = true)
 	public static boolean isSelfEnabled() {
@@ -44,7 +44,7 @@ public final class ModProtocol {
 	}
 
 	/**
-	 * @return a {@code String} representing Self Mod Protocol id, otherwise {@code null}
+	 * {@return a {@code String} representing Self Mod Protocol id, otherwise {@code null}}
 	 */
 	@Contract(pure = true)
 	@Nullable
@@ -53,7 +53,7 @@ public final class ModProtocol {
 	}
 
 	/**
-	 * @return a {@code String} representing Self Mod Protocol display name, otherwise {@code null}
+	 * {@return a {@code String} representing Self Mod Protocol display name, otherwise {@code null}}
 	 */
 	@Contract(pure = true)
 	@Nullable
@@ -62,7 +62,11 @@ public final class ModProtocol {
 	}
 
 	/**
-	 * {@return Latest supported bt player protocol for mod. -1 if not supported}
+	 * This method allows checking mod protocol version supported by player.
+	 *
+	 * @param player Player to check against
+	 * @param modContainer ModContainer defining protocol version
+	 * @return latest supported by player protocol for mod. -1 if not supported
 	 */
 	@Contract(pure = true)
 	public static int getSupported(@NotNull ServerPlayerEntity player, @NotNull ModContainer modContainer) {
@@ -70,7 +74,11 @@ public final class ModProtocol {
 	}
 
 	/**
-	 * {@return Latest supported bt player protocol for mod. -1 if not supported}
+	 * This method allows checking mod protocol version supported by player.
+	 *
+	 * @param handler player's network handler to check against
+	 * @param modContainer ModContainer defining protocol version
+	 * @return latest supported by player protocol for mod. -1 if not supported
 	 */
 	@Contract(pure = true)
 	public static int getSupported(@NotNull ServerPlayNetworkHandler handler, @NotNull ModContainer modContainer) {

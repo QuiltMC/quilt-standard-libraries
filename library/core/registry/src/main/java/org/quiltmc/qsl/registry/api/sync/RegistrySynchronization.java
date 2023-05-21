@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 QuiltMC
+ * Copyright 2022 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,7 +108,12 @@ public final class RegistrySynchronization {
 	}
 
 	/**
-	 * {@return {@code true} if the given entry is known to player, or {@code false} otherwise}
+	 * Checks if player supports provided optional registry entry.
+	 *
+	 * @param player target player's entity
+	 * @param registry registry entry is part of
+	 * @param entry target entry
+	 * @return {@code true} if the given entry is known to player, or {@code false} otherwise
 	 */
 	@Contract(pure = true)
 	public static <T> boolean isEntryPresent(@NotNull ServerPlayerEntity player, @NotNull SimpleRegistry<T> registry, T entry) {
@@ -116,7 +121,12 @@ public final class RegistrySynchronization {
 	}
 
 	/**
-	 * {@return {@code true} if the given entry is known to player, or {@code false} otherwise}
+	 * Checks if player supports provided optional registry entry.
+	 *
+	 * @param handler target player's network handler
+	 * @param registry registry entry is part of
+	 * @param entry target entry
+	 * @return {@code true} if the given entry is known to player, or {@code false} otherwise
 	 */
 	@Contract(pure = true)
 	public static <T> boolean isEntryPresent(@NotNull ServerPlayNetworkHandler handler, @NotNull SimpleRegistry<T> registry, T entry) {
