@@ -62,7 +62,7 @@ public final class ModProtocol {
 	}
 
 	/**
-	 * This method allows checking mod protocol version supported by player.
+	 * Checks the mod protocol version supported by a given player.
 	 *
 	 * @param player Player to check against
 	 * @param modContainer ModContainer defining protocol version
@@ -74,7 +74,7 @@ public final class ModProtocol {
 	}
 
 	/**
-	 * This method allows checking mod protocol version supported by player.
+	 * Checks the mod protocol version supported by a given player.
 	 *
 	 * @param handler player's network handler to check against
 	 * @param modContainer ModContainer defining protocol version
