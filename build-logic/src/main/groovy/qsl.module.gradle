@@ -165,7 +165,6 @@ javadoc {
 	options {
 		source = String.valueOf(Versions.JAVA_VERSION)
 		encoding = "UTF-8"
-		charSet = "UTF-8"
 		memberLevel = JavadocMemberLevel.PACKAGE
 		links(
 				"https://guava.dev/releases/31.0.1-jre/api/docs/",
