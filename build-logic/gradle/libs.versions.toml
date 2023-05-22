@@ -1,6 +1,6 @@
 [versions]
 asm = "9.5"
-indra_git = "3.0.1"
+indra_git = "3.1.1"
 quilt_gradle_licenser = "2.+"
 quilt_json5 = "1.0.2"
 quilt_loom = "1.1.+"
