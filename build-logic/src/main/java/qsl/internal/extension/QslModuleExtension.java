@@ -3,6 +3,7 @@ package qsl.internal.extension;
 import org.gradle.api.Action;
 import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.Internal;
 import org.jetbrains.annotations.Nullable;
 import qsl.internal.dependency.QslLibraryDependency;
 
@@ -15,7 +16,8 @@ public interface QslModuleExtension {
 	 */
 	Property<String> getModuleName();
 
-	Property<String> getLibrary();
+	@Internal
+	String getLibrary();
 
 	/**
 	 * The display name of this module, e.g. "Quilt Block Extensions API"

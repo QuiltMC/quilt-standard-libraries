@@ -8,7 +8,6 @@ qslModule {
 	hasMixins = false
 	id = "quilt_data_callback"
 	description = "APIs for making events or APIs data-driven"
-	library = "core"
 	moduleDependencies {
 		core {
 			api("qsl_base")

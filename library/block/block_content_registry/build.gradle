@@ -7,7 +7,6 @@ qslModule {
 	moduleName = "block_content_registry"
 	id = "quilt_block_content_registry"
 	description = "An API for adding to different content registries in Minecraft"
-	library = "block"
 	moduleDependencies {
 		core {
 			api("qsl_base")
