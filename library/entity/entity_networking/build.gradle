@@ -7,7 +7,6 @@ qslModule {
 	moduleName = "entity_networking"
 	id = "quilt_entity_networking"
 	description = "An API extending Minecraft's entity data tracking/syncing functionality."
-	library = "entity"
 	moduleDependencies {
 		core {
 			api("qsl_base")

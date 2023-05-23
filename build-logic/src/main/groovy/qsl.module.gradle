@@ -15,6 +15,7 @@
 
 import qsl.internal.Git
 import qsl.internal.Versions
+import qsl.internal.extension.QslLibraryExtension
 import qsl.internal.extension.QslModuleExtension
 import qsl.internal.extension.QslModuleExtensionImpl
 
@@ -37,17 +38,17 @@ rootProject.afterEvaluate {
 	// Module name should also be the name of artifacts.
 	archivesBaseName = extension.moduleName.get()
 
-	if (extension.library.get() == null) {
-		throw new GradleException("Module $extension.moduleName needs the `library` field set in the qslModule extension")
+	if (extension.library == null) {
+		throw new GradleException("Module $extension.moduleName has an invalid parent project that doesn't define its `libraryName` field.")
 	}
 
-	group = "org.quiltmc.qsl.${extension.library.get()}"
+	group = "org.quiltmc.qsl.${extension.library}"
 
 
 	publishing {
 		publications {
 			def moduleName = extension.moduleName.get()
-			def library = extension.library.get()
+			def library = extension.library
 			boolean publish = true
 
 			try {

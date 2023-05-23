@@ -7,7 +7,6 @@ qslModule {
 	moduleName = "villager"
 	id = "quilt_villager"
 	description = "Helpers for creating villager types and trades."
-	library = "entity"
 	moduleDependencies {
 		core {
 			api("resource_loader")

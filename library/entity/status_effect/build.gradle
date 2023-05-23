@@ -7,7 +7,6 @@ qslModule {
 	moduleName = "status_effect"
 	id = "quilt_status_effect"
 	description = "Provides extensions for dealing with status effects."
-	library = "entity"
 	moduleDependencies {
 		core {
 			api("qsl_base")

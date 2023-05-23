@@ -7,7 +7,6 @@ qslModule {
 	moduleName = "item_extensions"
 	id = "quilt_item_extensions"
 	description = "An API for extending various vanilla items and providing relevant events for such items."
-	library = "item"
 	moduleDependencies {
 		core {
 			api("qsl_base")
