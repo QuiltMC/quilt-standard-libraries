@@ -114,9 +114,9 @@ public abstract class ArmorFeatureRendererMixin {
 			method = "renderArmorParts",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/render/item/ItemRenderer;getArmorGlintConsumer(Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/render/RenderLayer;ZZ)Lcom/mojang/blaze3d/vertex/VertexConsumer;"
+					target = "Lnet/minecraft/client/render/VertexConsumerProvider;getBuffer(Lnet/minecraft/client/render/RenderLayer;)Lcom/mojang/blaze3d/vertex/VertexConsumer;"
 			),
-			index = 1
+			index = 0
 	)
 	private RenderLayer quilt$modifyArmorRenderLayer(RenderLayer layer) {
 		return ArmorRenderingRegistryImpl.getArmorRenderLayer(layer,
@@ -127,7 +127,7 @@ public abstract class ArmorFeatureRendererMixin {
 	}
 
 	@ModifyArg(
-			method = "renderArmor(Lnet/minecraft/item/ArmorMaterial;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrimPermutation;ZLnet/minecraft/client/render/entity/model/BipedEntityModel;ZFFF)V",
+			method = "renderArmor(Lnet/minecraft/item/ArmorMaterial;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrimPermutation;Lnet/minecraft/client/render/entity/model/BipedEntityModel;Z)V",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/texture/SpriteAtlasTexture;getSprite(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/texture/Sprite;"
@@ -140,12 +140,12 @@ public abstract class ArmorFeatureRendererMixin {
 	}
 
 	@ModifyArg(
-			method = "renderArmor(Lnet/minecraft/item/ArmorMaterial;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrimPermutation;ZLnet/minecraft/client/render/entity/model/BipedEntityModel;ZFFF)V",
+			method = "renderArmor(Lnet/minecraft/item/ArmorMaterial;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrimPermutation;Lnet/minecraft/client/render/entity/model/BipedEntityModel;Z)V",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/render/item/ItemRenderer;getDirectItemGlintConsumer(Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/render/RenderLayer;ZZ)Lcom/mojang/blaze3d/vertex/VertexConsumer;"
+					target = "Lnet/minecraft/client/render/VertexConsumerProvider;getBuffer(Lnet/minecraft/client/render/RenderLayer;)Lcom/mojang/blaze3d/vertex/VertexConsumer;"
 			),
-			index = 1
+			index = 0
 	)
 	private RenderLayer quilt$modifyArmorTrimRenderLayer(RenderLayer layer) {
 		return ArmorRenderingRegistryImpl.getArmorRenderLayer(layer,

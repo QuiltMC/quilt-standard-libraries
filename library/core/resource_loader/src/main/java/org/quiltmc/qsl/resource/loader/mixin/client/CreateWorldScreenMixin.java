@@ -19,9 +19,7 @@ package org.quiltmc.qsl.resource.loader.mixin.client;
 import java.util.function.Consumer;
 
 import org.spongepowered.asm.mixin.Dynamic;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -38,7 +36,6 @@ import net.minecraft.resource.AutoCloseableResourceManager;
 import net.minecraft.resource.pack.ResourcePackManager;
 import net.minecraft.server.ServerReloadableResources;
 import net.minecraft.server.world.FeatureAndDataSettings;
-import net.minecraft.unmapped.C_hypraqfe;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
@@ -46,10 +43,6 @@ import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 @ClientOnly
 @Mixin(CreateWorldScreen.class)
 public abstract class CreateWorldScreenMixin {
-	@Shadow
-	@Final
-	C_hypraqfe field_42172;
-
 	@Dynamic
 	@Inject(
 			method = "method_41851(Lnet/minecraft/resource/AutoCloseableResourceManager;Lnet/minecraft/server/ServerReloadableResources;Lnet/minecraft/registry/LayeredRegistryManager;Lnet/minecraft/client/gui/screen/world/CreateWorldScreen$WorldCreationSettings;)Lnet/minecraft/client/world/WorldCreationContext;",

@@ -49,7 +49,7 @@ public class RegistryLibEventsTest implements ModInitializer {
 			}
 		});
 
-		register(TEST_BLOCK_ID, new Block(AbstractBlock.Settings.copy(Blocks.STONE).method_31710(MapColor.BLACK)));
+		register(TEST_BLOCK_ID, new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.BLACK)));
 
 		if (!entryAddEventFoundBlock) {
 			throw new AssertionError("Registry entry add event was not invoked on the registration of block with id " + TEST_BLOCK_ID);

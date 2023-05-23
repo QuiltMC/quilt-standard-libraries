@@ -54,7 +54,7 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		this.collidable(otherAccessor.getCollidable());
 		this.ticksRandomly(otherAccessor.getRandomTicks());
 		this.luminance(otherAccessor.getLuminance());
-		this.mapColorProvider(otherAccessor.getMapColorProvider());
+		this.mapColor(otherAccessor.getMapColorGetter());
 		this.sounds(otherAccessor.getSoundGroup());
 		this.slipperiness(otherAccessor.getSlipperiness());
 		this.velocityMultiplier(otherAccessor.getVelocityMultiplier());
@@ -258,21 +258,21 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 
 	@Override
 	@Contract("_->this")
-	public QuiltBlockSettings method_51517(DyeColor dyeColor) {
-		super.method_51517(dyeColor);
+	public QuiltBlockSettings mapColor(DyeColor dyeColor) {
+		super.mapColor(dyeColor);
 		return this;
 	}
 
 	@Override
-	public QuiltBlockSettings method_31710(MapColor color) {
-		super.method_31710(color);
+	public QuiltBlockSettings mapColor(MapColor color) {
+		super.mapColor(color);
 		return this;
 	}
 
 	@Override
 	@Contract("_->this")
-	public QuiltBlockSettings method_51520(Function<BlockState, MapColor> function) {
-		super.method_51520(function);
+	public QuiltBlockSettings mapColor(Function<BlockState, MapColor> function) {
+		super.mapColor(function);
 		return this;
 	}
 
@@ -398,21 +398,6 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	 */
 	public QuiltBlockSettings drops(Identifier dropTableId) {
 		((AbstractBlockSettingsAccessor) this).setLootTableId(dropTableId);
-		return this;
-	}
-
-	public QuiltBlockSettings mapColor(DyeColor color) {
-		return this.method_31710(color.method_7794());
-	}
-
-	/**
-	 * Sets the map color provider of this block.
-	 *
-	 * @param mapColorProvider new map color provider
-	 * @return {@code this} builder
-	 */
-	public QuiltBlockSettings mapColorProvider(Function<BlockState, MapColor> mapColorProvider) {
-		((AbstractBlockSettingsAccessor) this).setMapColorProvider(mapColorProvider);
 		return this;
 	}
 

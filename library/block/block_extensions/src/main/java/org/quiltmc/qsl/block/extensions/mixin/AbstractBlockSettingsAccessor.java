@@ -52,8 +52,8 @@ public interface AbstractBlockSettingsAccessor {
 	@Accessor
 	ToIntFunction<BlockState> getLuminance();
 
-	@Accessor("field_10662")
-	Function<BlockState, MapColor> getMapColorProvider();
+	@Accessor
+	Function<BlockState, MapColor> getMapColorGetter();
 
 	@Accessor
 	BlockSoundGroup getSoundGroup();
@@ -100,10 +100,6 @@ public interface AbstractBlockSettingsAccessor {
 	@Accessor
 	Optional<AbstractBlock.OffsetFunction> getOffsetFunction();
 
-	// TODO - Move me to the setters section!
-	@Accessor
-	void setOffsetFunction(Optional<AbstractBlock.OffsetFunction> offsetFunction);
-
 	@Accessor
 	boolean getSpawnsParticlesOnBreak();
 
@@ -143,9 +139,6 @@ public interface AbstractBlockSettingsAccessor {
 	@Accessor
 	void setRandomTicks(boolean ticksRandomly);
 
-	@Accessor("field_10662")
-	void setMapColorProvider(Function<BlockState, MapColor> mapColorProvider);
-
 	@Accessor
 	void setLootTableId(Identifier lootTableId);
 
@@ -169,6 +162,9 @@ public interface AbstractBlockSettingsAccessor {
 
 	@Accessor
 	void setToolRequired(boolean toolRequired);
+
+	@Accessor
+	void setOffsetFunction(Optional<AbstractBlock.OffsetFunction> offsetFunction);
 
 	@Accessor
 	void setDynamicBounds(boolean dynamicBounds);
