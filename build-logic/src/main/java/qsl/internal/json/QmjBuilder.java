@@ -19,7 +19,7 @@ public final class QmjBuilder {
 		writer.beginObject()
 				.name("schema_version").value(1)
 				.name("quilt_loader").beginObject() // root object -> quilt_loader
-				.name("group").value("org.quiltmc.qsl." + ext.getLibrary().get())
+				.name("group").value("org.quiltmc.qsl." + ext.getLibrary())
 				.name("id").value(ext.getId().get())
 				.name("version").value(version)
 				.name("metadata").beginObject() // quilt_loader -> metadata

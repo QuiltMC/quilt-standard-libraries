@@ -9,7 +9,6 @@ qslModule {
 	moduleName = "datafixerupper"
 	id = "quilt_datafixerupper"
 	description = "Provides APIs for adding custom DataFixers."
-	library = "misc"
 	moduleDependencies {
 		core {
 			impl("lifecycle_events")

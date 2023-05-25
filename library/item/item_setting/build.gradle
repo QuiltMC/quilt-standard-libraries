@@ -13,7 +13,6 @@ qslModule {
 	moduleName = "item_setting"
 	id = "quilt_item_setting"
 	description = "An API for extended functionality in Item Settings"
-	library = "item"
 	moduleDependencies {
 		core {
 			api("qsl_base")
