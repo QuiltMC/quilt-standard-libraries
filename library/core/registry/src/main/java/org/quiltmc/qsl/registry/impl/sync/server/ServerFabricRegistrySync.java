@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.registry.impl.sync;
+package org.quiltmc.qsl.registry.impl.sync.server;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -38,6 +38,8 @@ import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
+import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;
+import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
 
 /**
  * Legacy (Fabric) registry sync. Direct port from Fabric API.

@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.Unique;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-import org.quiltmc.qsl.registry.impl.sync.DelayedPacketsHolder;
+import org.quiltmc.qsl.registry.impl.sync.server.DelayedPacketsHolder;
 
 @Mixin(ServerPlayerEntity.class)
 public class ServerPlayerEntityMixin implements DelayedPacketsHolder {

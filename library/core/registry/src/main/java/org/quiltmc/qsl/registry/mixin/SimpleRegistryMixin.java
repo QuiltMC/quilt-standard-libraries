@@ -50,8 +50,8 @@ import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.quiltmc.qsl.registry.impl.event.MutableRegistryEntryContextImpl;
 import org.quiltmc.qsl.registry.impl.event.RegistryEventStorage;
-import org.quiltmc.qsl.registry.impl.sync.RegistryFlag;
-import org.quiltmc.qsl.registry.impl.sync.ServerRegistrySync;
+import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;
+import org.quiltmc.qsl.registry.impl.sync.server.ServerRegistrySync;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
 
 /**

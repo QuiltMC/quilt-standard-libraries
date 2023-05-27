@@ -25,7 +25,7 @@ import net.minecraft.network.ClientConnection;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-import org.quiltmc.qsl.registry.impl.sync.DelayedPacketsHolder;
+import org.quiltmc.qsl.registry.impl.sync.server.DelayedPacketsHolder;
 
 @Mixin(PlayerManager.class)
 public class PlayerManagerMixin {
