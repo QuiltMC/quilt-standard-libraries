@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.registry.mixin.client;
+package org.quiltmc.qsl.registry.impl.sync.server;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
+import java.util.List;
 
-import net.minecraft.client.network.ClientLoginNetworkHandler;
-import net.minecraft.network.ClientConnection;
+import org.jetbrains.annotations.ApiStatus;
 
-import org.quiltmc.loader.api.minecraft.ClientOnly;
+import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 
-@ClientOnly
-@Mixin(ClientLoginNetworkHandler.class)
-public interface ClientLoginNetworkHandlerAccessor {
-	@Accessor
-	ClientConnection getConnection();
+@ApiStatus.Internal
+public interface DelayedPacketsHolder {
+	void quilt$setPacketList(List<CustomPayloadC2SPacket> packetList);
+	List<CustomPayloadC2SPacket> quilt$getPacketList();
 }

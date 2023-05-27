@@ -32,7 +32,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.registry.Registries;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
-import org.quiltmc.qsl.registry.impl.sync.SynchronizedInt2ObjectMap;
+import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedInt2ObjectMap;
 import org.quiltmc.qsl.registry.impl.sync.client.RebuildableIdModelHolder;
 
 @ClientOnly

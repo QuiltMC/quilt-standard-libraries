@@ -41,7 +41,7 @@ import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
-import org.quiltmc.qsl.registry.impl.sync.ServerFabricRegistrySync;
+import org.quiltmc.qsl.registry.impl.sync.server.ServerFabricRegistrySync;
 import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
 
 /**
@@ -177,7 +177,7 @@ public class ClientFabricRegistrySync {
 
 				var missingEntries = currentRegistry.quilt$applySyncMap(syncMap);
 
-				if (ClientRegistrySync.checkMissing(handler, registry.getKey().getValue(), missingEntries)) {
+				if (ClientRegistrySync.checkMissingAndDisconnect(handler, registry.getKey().getValue(), missingEntries)) {
 					break;
 				}
 			}

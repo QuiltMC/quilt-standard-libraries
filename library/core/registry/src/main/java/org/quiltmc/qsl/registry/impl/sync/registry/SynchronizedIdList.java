@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.registry.impl.sync;
-
-import java.util.List;
+package org.quiltmc.qsl.registry.impl.sync.registry;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
+import net.minecraft.util.collection.IdList;
 
 @ApiStatus.Internal
-public interface DelayedPacketsHolder {
-	void quilt$setPacketList(List<CustomPayloadC2SPacket> packetList);
-	List<CustomPayloadC2SPacket> quilt$getPacketList();
+public interface SynchronizedIdList<T> {
+	void quilt$clear();
+
+	@SuppressWarnings("unchecked")
+	static <T> SynchronizedIdList<T> as(IdList<T> idList) {
+		return (SynchronizedIdList<T>) idList;
+	}
+
+	static void clear(IdList<?> idList) {
+		as(idList).quilt$clear();
+	}
 }

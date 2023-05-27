@@ -27,5 +27,8 @@
       "quilt_registry",
       "quilt_testing"
     ]
+  },
+  "quilt_registry": {
+    "mod_protocol": 2
   }
 }

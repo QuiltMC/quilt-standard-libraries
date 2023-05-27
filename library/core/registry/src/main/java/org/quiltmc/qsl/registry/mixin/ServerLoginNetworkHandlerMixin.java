@@ -29,8 +29,8 @@ import net.minecraft.network.listener.PacketListener;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-import org.quiltmc.qsl.registry.impl.sync.ServerRegistrySync;
-import org.quiltmc.qsl.registry.impl.sync.ServerRegistrySyncNetworkHandler;
+import org.quiltmc.qsl.registry.impl.sync.server.ServerRegistrySync;
+import org.quiltmc.qsl.registry.impl.sync.server.ServerRegistrySyncNetworkHandler;
 
 @Mixin(ServerLoginNetworkHandler.class)
 public abstract class ServerLoginNetworkHandlerMixin {

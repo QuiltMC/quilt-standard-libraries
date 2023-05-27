@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.registry.impl.sync;
+package org.quiltmc.qsl.registry.impl.sync.server;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.registry.Registries;
 import org.jetbrains.annotations.ApiStatus;
+import org.quiltmc.qsl.registry.impl.sync.ClientPackets;
+import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
 import org.slf4j.Logger;
 
 import net.minecraft.network.ClientConnection;
@@ -88,10 +91,12 @@ import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
  * This is special PacketListener for handling registry sync.
  * Why does it exist? Wouldn't usage of login packets be better?
  * <p>
- * And well, yes it would, but sadly these aren't compatible with proxy
+ * And well, yes it would, but sadly these can't be made compatible with proxy
  * software like Velocity (see Forge). Thankfully emulating them on PLAY
  * protocol isn't too hard and gives equal results. And doing them on PLAY
- * is needed for Fabric compatibility anyway
+ * is needed for Fabric compatibility anyway.
+ * It still doesn't work with Velocity out of the box (they don't care much about this
+ * being valid), getting support is still simple.
  */
 @ApiStatus.Internal
 public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketListener {
@@ -101,16 +106,18 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 	private static final int GOODBYE_PING = 1;
 
 	private final ClientConnection connection;
+	private final ExtendedConnectionClient extendedConnection;
 	private final ServerPlayerEntity player;
 	private final Runnable continueLoginRunnable;
 
 	private final List<CustomPayloadC2SPacket> delayedPackets = new ArrayList<>();
-	private int syncVersion = -1;
+	private int syncVersion = ProtocolVersions.NO_PROTOCOL;
 
 	public ServerRegistrySyncNetworkHandler(ServerPlayerEntity player, ClientConnection connection, Runnable continueLogin) {
 		this.connection = connection;
 		this.player = player;
 		this.continueLoginRunnable = continueLogin;
+		this.extendedConnection = (ExtendedConnectionClient) connection;
 
 		((DelayedPacketsHolder) this.player).quilt$setPacketList(this.delayedPackets);
 
@@ -123,17 +130,18 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 	public void onPong(PlayPongC2SPacket packet) {
 		switch (packet.getParameter()) {
 			case HELLO_PING -> {
-				if (this.syncVersion != -1) {
+				if (ServerRegistrySync.SERVER_SUPPORTED_PROTOCOL.contains(this.syncVersion)) {
+					this.extendedConnection.quilt$setUnderstandsOptional();
 					ServerRegistrySync.sendSyncPackets(this.connection, this.player, this.syncVersion);
-				} else if (ServerRegistrySync.supportFabric && ((ChannelInfoHolder) this.connection).getPendingChannelsNames().contains(ServerFabricRegistrySync.ID)) {
+				} else if (ServerRegistrySync.SERVER_SUPPORTED_PROTOCOL.contains(ProtocolVersions.FAPI_PROTOCOL) && (ServerRegistrySync.forceFabricFallback || (ServerRegistrySync.supportFabric && ((ChannelInfoHolder) this.connection).getPendingChannelsNames().contains(ServerFabricRegistrySync.ID)))) {
 					ServerFabricRegistrySync.sendSyncPackets(this.connection);
-					this.syncVersion = -2;
+					this.syncVersion = ProtocolVersions.FAPI_PROTOCOL;
 				}
 
 				this.connection.send(new PlayPingS2CPacket(GOODBYE_PING));
 			}
 			case GOODBYE_PING -> {
-				if (this.syncVersion == -1 && ServerRegistrySync.requiresSync()) {
+				if (this.syncVersion == ProtocolVersions.NO_PROTOCOL && ServerRegistrySync.requiresSync()) {
 					this.disconnect(ServerRegistrySync.noRegistrySyncMessage);
 				} else {
 					this.continueLogin();
@@ -152,8 +160,34 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 			this.syncVersion = packet.getData().readVarInt();
 		} else if (packet.getChannel().equals(ClientPackets.SYNC_FAILED)) {
 			LOGGER.info("Disconnecting {} due to sync failure of {} registry", this.player.getGameProfile().getName(), packet.getData().readIdentifier());
+		} else if (packet.getChannel().equals(ClientPackets.UNKNOWN_ENTRY)) {
+			handleUnknownEntry(packet.getData());
+		} else if (packet.getChannel().equals(ClientPackets.MOD_PROTOCOL)) {
+			handleModProtocol(packet.getData());
 		} else {
 			this.delayedPackets.add(new CustomPayloadC2SPacket(packet.getChannel(), new PacketByteBuf(packet.getData().copy())));
+		}
+	}
+
+	private void handleModProtocol(PacketByteBuf data) {
+		var count = data.readVarInt();
+		while (count-- > 0) {
+			var id = data.readString();
+			var version = data.readVarInt();
+			this.extendedConnection.quilt$setModProtocol(id, version);
+		}
+	}
+
+	private void handleUnknownEntry(PacketByteBuf data) {
+		var registry = Registries.REGISTRY.get(data.readIdentifier());
+		var length = data.readVarInt();
+
+		while (length-- > 0) {
+			var object = registry.get(data.readVarInt());
+
+			if (object != null) {
+				this.extendedConnection.quilt$addUnknownEntry(registry, object);
+			}
 		}
 	}
 
@@ -162,14 +196,18 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 		LOGGER.info("{} lost connection: {}", this.player.getName().getString(), reason.getString());
 
 		for (var packet : this.delayedPackets) {
-			packet.getData().release();
+			if (packet.getData().refCnt() != 0) {
+				packet.getData().release(packet.getData().refCnt());
+			}
 		}
 	}
 
 	public void disconnect(Text reason) {
 		try {
 			for (var packet : this.delayedPackets) {
-				packet.getData().release();
+				if (packet.getData().refCnt() != 0) {
+					packet.getData().release(packet.getData().refCnt());
+				}
 			}
 
 			this.connection.send(new DisconnectS2CPacket(reason),
