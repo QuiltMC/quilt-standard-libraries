@@ -7,7 +7,6 @@ qslModule {
 	moduleName = "registry_entry_attachment"
 	id = "quilt_registry_entry_attachment"
 	description = "Extensible attachment system for registry entries."
-	library = "data"
 	moduleDependencies {
 		core {
 			impl("qsl_base")

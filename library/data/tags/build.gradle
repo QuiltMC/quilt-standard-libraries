@@ -7,7 +7,6 @@ qslModule {
 	moduleName = "tags"
 	id = "quilt_tags"
 	description = "Tag loading and management."
-	library = "data"
 	moduleDependencies {
 		core {
 			api("resource_loader")

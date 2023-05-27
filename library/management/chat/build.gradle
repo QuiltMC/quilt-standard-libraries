@@ -7,7 +7,6 @@ qslModule {
 	moduleName = "chat"
 	id = "quilt_chat"
 	description = "Quilt APIs for modifying chat."
-	library = "management"
 	moduleDependencies {
 		core {
 			api("qsl_base")

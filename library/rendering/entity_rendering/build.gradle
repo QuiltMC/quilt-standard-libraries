@@ -7,7 +7,6 @@ qslModule {
 	moduleName = "entity_rendering"
 	id = "quilt_entity_rendering"
 	description = "Quilt APIs relating to the rendering of entities."
-	library = "entity_rendering"
 	moduleDependencies {
 		core {
 			api("qsl_base")
