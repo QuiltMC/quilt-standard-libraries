@@ -37,7 +37,7 @@ import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolDef;
 import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolImpl;
 import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;
 import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedIdList;
-import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
+import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
 import org.quiltmc.qsl.registry.impl.sync.server.ServerRegistrySync;
 import org.slf4j.Logger;
 
@@ -320,17 +320,15 @@ public final class ClientRegistrySync {
 			rebuildParticles(client);
 		}
 
-		if (syncVersion >= ProtocolVersions.EXT_3) {
-			var optionalMissing = new IntArrayList();
-			for (var entry : missingEntries) {
-				if (RegistryFlag.isOptional(entry.flags())) {
-					optionalMissing.add(entry.rawId());
-				}
+		var optionalMissing = new IntArrayList();
+		for (var entry : missingEntries) {
+			if (RegistryFlag.isOptional(entry.flags())) {
+				optionalMissing.add(entry.rawId());
 			}
+		}
 
-			if (!optionalMissing.isEmpty()) {
-				sendSyncUnknownEntriesPacket(handler, currentRegistryId, optionalMissing);
-			}
+		if (!optionalMissing.isEmpty()) {
+			sendSyncUnknownEntriesPacket(handler, currentRegistryId, optionalMissing);
 		}
 
 		clearState();

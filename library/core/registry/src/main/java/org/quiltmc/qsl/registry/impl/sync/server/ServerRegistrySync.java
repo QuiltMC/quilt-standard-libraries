@@ -47,7 +47,7 @@ import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
 import org.quiltmc.qsl.registry.impl.sync.ServerPackets;
 import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolDef;
 import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolImpl;
-import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
+import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
 import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;
 
 @ApiStatus.Internal
@@ -174,9 +174,7 @@ public final class ServerRegistrySync {
 	}
 
 	public static void sendSyncPackets(ClientConnection connection, ServerPlayerEntity player, int syncVersion) {
-		if (syncVersion >= ProtocolVersions.EXT_3) {
-			sendErrorStylePacket(connection);
-		}
+		sendErrorStylePacket(connection);
 
 		if (ModProtocolImpl.enabled) {
 			sendModProtocol(connection);
@@ -214,7 +212,7 @@ public final class ServerRegistrySync {
 			}
 		}
 
-		if (syncVersion >= ProtocolVersions.EXT_3 && stateValidation) {
+		if (stateValidation) {
 			sendStateValidationRequest(connection, ServerPackets.VALIDATE_BLOCK_STATES, Registries.BLOCK, Block.STATE_IDS, block -> block.getStateManager().getStates());
 			sendStateValidationRequest(connection, ServerPackets.VALIDATE_FLUID_STATES, Registries.FLUID, Fluid.STATE_IDS, fluid -> fluid.getStateManager().getStates());
 		}

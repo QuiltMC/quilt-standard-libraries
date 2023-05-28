@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolDef;
 import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolImpl;
 import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;
+import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
 
 import java.util.*;
 import java.util.function.Function;

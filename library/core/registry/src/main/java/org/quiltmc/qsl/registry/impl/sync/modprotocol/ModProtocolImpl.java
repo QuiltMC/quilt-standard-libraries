@@ -159,7 +159,6 @@ public class ModProtocolImpl {
 
 		if (!def.optional()) {
 			REQUIRED.add(def);
-			ServerRegistrySync.requireMinimumVersion(ProtocolVersions.EXT_3);
 		}
 		ALL.add(def);
 		enabled = true;
