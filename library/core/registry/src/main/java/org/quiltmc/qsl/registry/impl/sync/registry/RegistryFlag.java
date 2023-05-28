@@ -20,7 +20,6 @@ import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.registry.SimpleRegistry;
 import net.minecraft.util.Identifier;
-import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
 
 /**
  * Registry flags used to determine how registry (entries) should be handled by sync.
