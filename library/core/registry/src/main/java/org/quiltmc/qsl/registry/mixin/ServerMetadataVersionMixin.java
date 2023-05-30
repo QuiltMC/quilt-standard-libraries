@@ -16,19 +16,25 @@
 
 package org.quiltmc.qsl.registry.mixin;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.mojang.serialization.Codec;
 import it.unimi.dsi.fastutil.ints.IntList;
-import net.minecraft.server.ServerMetadata;
-import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolContainer;
-import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolImpl;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.HashMap;
-import java.util.Map;
+import net.minecraft.server.ServerMetadata;
+
+import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolContainer;
+import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolImpl;
 
 @Mixin(ServerMetadata.Version.class)
 public class ServerMetadataVersionMixin implements ModProtocolContainer {

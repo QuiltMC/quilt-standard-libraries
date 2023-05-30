@@ -16,16 +16,21 @@
 
 package org.quiltmc.qsl.registry.impl.sync.client.screen;
 
+import java.util.List;
+
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.ScreenTexts;
 import net.minecraft.text.Text;
+
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.registry.impl.sync.client.LogBuilder;
 
-import java.util.List;
-
+@ApiStatus.Internal
+@ClientOnly
 public class SyncLogScreen extends Screen {
 	private final Screen parent;
 	private final List<LogBuilder.Section> text;

@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.registry.impl.sync;
 
-import it.unimi.dsi.fastutil.ints.IntSet;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.util.Identifier;

@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.registry.impl.sync.modprotocol;
+package org.quiltmc.qsl.registry.impl.sync.mod_protocol;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
@@ -22,9 +25,6 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-
-import java.util.ArrayList;
-import java.util.Map;
 
 public interface ModProtocolContainer {
 	Codec<Map<String, IntList>> MAP_CODEC = Codec.unboundedMap(Codec.STRING, Codec.list(Codec.INT).xmap(IntArrayList::new, ArrayList::new));

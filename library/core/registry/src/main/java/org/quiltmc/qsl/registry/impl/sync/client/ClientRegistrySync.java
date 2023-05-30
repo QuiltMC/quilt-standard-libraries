@@ -16,44 +16,51 @@
 
 package org.quiltmc.qsl.registry.impl.sync.client;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 import com.mojang.logging.LogUtils;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.block.BlockState;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.registry.Registry;
-import net.minecraft.text.component.LiteralComponent;
-import net.minecraft.text.component.TextComponent;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.collection.IdList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.registry.impl.sync.*;
-import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolDef;
-import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolImpl;
-import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;
-import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedIdList;
-import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
-import org.quiltmc.qsl.registry.impl.sync.server.ServerRegistrySync;
 import org.slf4j.Logger;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
+import net.minecraft.text.component.LiteralComponent;
+import net.minecraft.text.component.TextComponent;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.collection.IdList;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
+import org.quiltmc.qsl.registry.impl.sync.ClientPackets;
+import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
+import org.quiltmc.qsl.registry.impl.sync.RegistrySyncText;
+import org.quiltmc.qsl.registry.impl.sync.ServerPackets;
+import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolDef;
+import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolImpl;
+import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;
+import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedIdList;
+import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
+import org.quiltmc.qsl.registry.impl.sync.server.ServerRegistrySync;
 import org.quiltmc.qsl.registry.mixin.client.ItemRendererAccessor;
 
 @ApiStatus.Internal

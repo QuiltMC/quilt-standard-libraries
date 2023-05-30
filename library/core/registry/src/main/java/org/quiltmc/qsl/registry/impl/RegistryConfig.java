@@ -16,17 +16,15 @@
 
 package org.quiltmc.qsl.registry.impl;
 
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import java.util.List;
+
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
+
+import net.minecraft.text.Text;
+
 import org.quiltmc.config.api.WrappedConfig;
 import org.quiltmc.config.api.annotations.Comment;
 import org.quiltmc.loader.api.config.QuiltConfig;
-
-import java.util.Iterator;
-import java.util.List;
 
 @ApiStatus.Internal
 public class RegistryConfig extends WrappedConfig {

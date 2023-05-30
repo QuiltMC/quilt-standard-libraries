@@ -31,8 +31,8 @@ import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.registry.Registries;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
-import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedInt2ObjectMap;
 import org.quiltmc.qsl.registry.impl.sync.client.RebuildableIdModelHolder;
+import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedInt2ObjectMap;
 
 @ClientOnly
 @Mixin(ItemModels.class)

@@ -22,20 +22,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import it.unimi.dsi.fastutil.ints.*;
-import net.minecraft.block.Block;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.registry.SimpleRegistry;
-import net.minecraft.util.collection.IdList;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.block.Block;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.network.ClientConnection;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.SimpleRegistry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.collection.IdList;
 
 import org.quiltmc.loader.api.LoaderValue;
 import org.quiltmc.loader.api.QuiltLoader;
@@ -45,10 +47,10 @@ import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
 import org.quiltmc.qsl.registry.impl.RegistryConfig;
 import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
 import org.quiltmc.qsl.registry.impl.sync.ServerPackets;
-import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolDef;
-import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolImpl;
-import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
+import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolDef;
+import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolImpl;
 import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;
+import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
 
 @ApiStatus.Internal
 public final class ServerRegistrySync {

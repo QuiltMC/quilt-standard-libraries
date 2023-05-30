@@ -34,8 +34,8 @@ import net.minecraft.registry.Registries;
 import net.minecraft.util.collection.IdList;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
-import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedIdList;
 import org.quiltmc.qsl.registry.impl.sync.client.RebuildableIdModelHolder;
+import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedIdList;
 
 @ClientOnly
 @Mixin(BlockColors.class)
