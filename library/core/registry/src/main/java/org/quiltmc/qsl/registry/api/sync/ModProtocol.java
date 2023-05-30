@@ -16,15 +16,16 @@
 
 package org.quiltmc.qsl.registry.api.sync;
 
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-
 import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
+
 import org.quiltmc.loader.api.ModContainer;
-import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolImpl;
+import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolImpl;
 import org.quiltmc.qsl.registry.impl.sync.server.ExtendedConnectionClient;
 
 /**

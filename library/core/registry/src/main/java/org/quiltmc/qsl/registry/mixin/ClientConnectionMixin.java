@@ -16,22 +16,24 @@
 
 package org.quiltmc.qsl.registry.mixin;
 
+import java.util.IdentityHashMap;
+
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
-import net.minecraft.network.ClientConnection;
-import net.minecraft.network.NetworkSide;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Util;
-import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
-import org.quiltmc.qsl.registry.impl.sync.server.ExtendedConnectionClient;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.IdentityHashMap;
+import net.minecraft.network.ClientConnection;
+import net.minecraft.network.NetworkSide;
+import net.minecraft.registry.Registry;
+import net.minecraft.util.Util;
+
+import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
+import org.quiltmc.qsl.registry.impl.sync.server.ExtendedConnectionClient;
 
 @Mixin(ClientConnection.class)
 public class ClientConnectionMixin implements ExtendedConnectionClient {

@@ -16,6 +16,11 @@
 
 package org.quiltmc.qsl.registry.impl.sync.client.screen;
 
+import java.util.List;
+import java.util.function.DoubleConsumer;
+
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.GuiGraphics;
@@ -28,12 +33,8 @@ import net.minecraft.client.gui.widget.container.LayoutSettings;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
-import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.registry.impl.sync.client.LogBuilder;
-
-import java.util.List;
-import java.util.function.DoubleConsumer;
 
 // TODO - Keep a watch on {@code C_qnehaoor}, it is almost equivalent to this widget
 @ApiStatus.Internal

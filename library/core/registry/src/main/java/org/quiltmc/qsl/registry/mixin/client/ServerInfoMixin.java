@@ -16,14 +16,16 @@
 
 package org.quiltmc.qsl.registry.mixin.client;
 
+import java.util.Map;
+
 import it.unimi.dsi.fastutil.ints.IntList;
-import net.minecraft.client.network.ServerInfo;
-import org.quiltmc.loader.api.minecraft.ClientOnly;
-import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolContainer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
-import java.util.Map;
+import net.minecraft.client.network.ServerInfo;
+
+import org.quiltmc.loader.api.minecraft.ClientOnly;
+import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolContainer;
 
 @ClientOnly
 @Mixin(ServerInfo.class)

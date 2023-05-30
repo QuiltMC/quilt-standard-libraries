@@ -18,6 +18,7 @@ package org.quiltmc.qsl.registry.impl.sync.server;
 
 import net.minecraft.registry.Registry;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
+
 import org.quiltmc.qsl.registry.mixin.ServerPlayNetworkHandlerAccessor;
 
 public interface ExtendedConnectionClient {

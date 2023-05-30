@@ -20,10 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.registry.Registries;
 import org.jetbrains.annotations.ApiStatus;
-import org.quiltmc.qsl.registry.impl.sync.ClientPackets;
-import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
 import org.slf4j.Logger;
 
 import net.minecraft.network.ClientConnection;
@@ -80,10 +77,13 @@ import net.minecraft.network.packet.c2s.play.TeleportConfirmationC2SPacket;
 import net.minecraft.network.packet.c2s.play.VehicleMoveC2SPacket;
 import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayPingS2CPacket;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
 import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
+import org.quiltmc.qsl.registry.impl.sync.ClientPackets;
+import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
 
 /**
  * All the magic happens here!

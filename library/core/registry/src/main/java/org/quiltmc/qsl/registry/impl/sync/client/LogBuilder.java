@@ -16,13 +16,14 @@
 
 package org.quiltmc.qsl.registry.impl.sync.client;
 
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jetbrains.annotations.ApiStatus;
+
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 
 @ApiStatus.Internal

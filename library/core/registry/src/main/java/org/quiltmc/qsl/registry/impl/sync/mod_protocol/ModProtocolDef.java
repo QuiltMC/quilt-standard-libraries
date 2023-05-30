@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.registry.impl.sync.modprotocol;
+package org.quiltmc.qsl.registry.impl.sync.mod_protocol;
 
 import it.unimi.dsi.fastutil.ints.IntCollection;
 import it.unimi.dsi.fastutil.ints.IntList;
+
 import net.minecraft.network.PacketByteBuf;
+
 import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
 
 public record ModProtocolDef(String id, String displayName, IntList versions, boolean optional) {

@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.registry.impl.sync.modprotocol;
-
-import com.mojang.logging.LogUtils;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
-import org.quiltmc.loader.api.LoaderValue;
-import org.quiltmc.loader.api.ModContainer;
-import org.quiltmc.loader.api.QuiltLoader;
-import org.quiltmc.qsl.registry.impl.RegistryConfig;
-import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
-import org.quiltmc.qsl.registry.impl.sync.server.ServerRegistrySync;
-import org.slf4j.Logger;
+package org.quiltmc.qsl.registry.impl.sync.mod_protocol;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.mojang.logging.LogUtils;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+import org.slf4j.Logger;
+
+import org.quiltmc.loader.api.LoaderValue;
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.QuiltLoader;
+import org.quiltmc.qsl.registry.impl.RegistryConfig;
 
 public class ModProtocolImpl {
 	public static boolean enabled = false;

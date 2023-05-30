@@ -16,19 +16,25 @@
 
 package org.quiltmc.qsl.registry.impl.sync;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.function.Function;
+
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.Texts;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolDef;
-import org.quiltmc.qsl.registry.impl.sync.modprotocol.ModProtocolImpl;
+
+import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolDef;
+import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolImpl;
 import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;
 import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
-
-import java.util.*;
-import java.util.function.Function;
 
 public class RegistrySyncText {
 	public static Text missingRegistryEntries(Identifier registryId, Collection<SynchronizedRegistry.MissingEntry> missingEntries) {

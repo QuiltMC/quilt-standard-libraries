@@ -16,13 +16,13 @@
 
 package org.quiltmc.qsl.registry.api.sync;
 
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.registry.SimpleRegistry;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;

@@ -16,15 +16,8 @@
 
 package org.quiltmc.qsl.registry.mixin.client;
 
-import net.minecraft.client.gui.screen.DisconnectedScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.GridWidget;
-import net.minecraft.text.Text;
-import org.quiltmc.loader.api.minecraft.ClientOnly;
-import org.quiltmc.qsl.registry.impl.sync.client.ClientRegistrySync;
-import org.quiltmc.qsl.registry.impl.sync.client.LogBuilder;
-import org.quiltmc.qsl.registry.impl.sync.client.screen.SyncLogScreen;
+import java.util.List;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -33,7 +26,16 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import java.util.List;
+import net.minecraft.client.gui.screen.DisconnectedScreen;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.GridWidget;
+import net.minecraft.text.Text;
+
+import org.quiltmc.loader.api.minecraft.ClientOnly;
+import org.quiltmc.qsl.registry.impl.sync.client.ClientRegistrySync;
+import org.quiltmc.qsl.registry.impl.sync.client.LogBuilder;
+import org.quiltmc.qsl.registry.impl.sync.client.screen.SyncLogScreen;
 
 @ClientOnly
 @Mixin(DisconnectedScreen.class)
