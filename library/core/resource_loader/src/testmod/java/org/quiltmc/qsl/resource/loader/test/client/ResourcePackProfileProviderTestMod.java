@@ -78,9 +78,9 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 			boolean t = this.random.nextBoolean();
 			for (int y = 0; y < 16; y++) {
 				int color = 0xff << 24;
-				color |= random.nextInt(256) << 16;
-				color |= random.nextInt(256) << 8;
-				color |= random.nextInt(256);
+				color |= this.random.nextInt(256) << 16;
+				color |= this.random.nextInt(256) << 8;
+				color |= this.random.nextInt(256);
 				for (int x = 0; x < 16; x++) {
 					image.setPixelColor(t ? x : y, t ? y : x, color);
 				}

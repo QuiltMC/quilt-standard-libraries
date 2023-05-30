@@ -20,9 +20,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.world.World;
-
-import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 @ApiStatus.Internal
 public interface EntityPartTracker {

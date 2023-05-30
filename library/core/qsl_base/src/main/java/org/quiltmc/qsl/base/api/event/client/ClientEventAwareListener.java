@@ -29,5 +29,4 @@ import org.quiltmc.qsl.base.api.event.server.DedicatedServerEventAwareListener;
  * @see EventAwareListener
  * @see DedicatedServerEventAwareListener
  */
-public interface ClientEventAwareListener {
-}
+public interface ClientEventAwareListener {}

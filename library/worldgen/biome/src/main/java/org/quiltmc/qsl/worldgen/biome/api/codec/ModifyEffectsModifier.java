@@ -57,7 +57,6 @@ public record ModifyEffectsModifier(
 		Optional<BiomeAdditionsSound> additionsSound,
 		Optional<MusicSound> music
 ) implements BiomeModifier {
-
 	public static final Identifier CODEC_ID = new Identifier("quilt", "modify_effects");
 	public static final Codec<ModifyEffectsModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(ModifyEffectsModifier::selector),

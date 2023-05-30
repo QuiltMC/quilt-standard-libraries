@@ -25,11 +25,9 @@ import net.minecraft.client.render.entity.CreeperEntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory.Context;
 import net.minecraft.client.render.entity.MobEntityRenderer;
 import net.minecraft.client.render.entity.model.CreeperEntityModel;
-import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.mob.CreeperEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Axis;
 
 import org.quiltmc.qsl.entity.networking.test.CreeperWithItem;
@@ -54,8 +52,8 @@ public abstract class CreeperEntityRendererMixin extends MobEntityRenderer<Creep
 		matrixStack.scale(0.25f, 0.25f, 0.25f);
 		matrixStack.multiply(Axis.Y_POSITIVE.rotation(rotation));
 		itemRenderer.renderItem(
-			stack, ModelTransformationMode.NONE, light, OverlayTexture.DEFAULT_UV,
-			matrixStack, vertexConsumerProvider, creeper.world, 0
+				stack, ModelTransformationMode.NONE, light, OverlayTexture.DEFAULT_UV,
+				matrixStack, vertexConsumerProvider, creeper.world, 0
 		);
 		matrixStack.pop();
 	}

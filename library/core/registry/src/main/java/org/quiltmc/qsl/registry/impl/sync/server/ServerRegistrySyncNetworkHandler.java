@@ -161,9 +161,9 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 		} else if (packet.getChannel().equals(ClientPackets.SYNC_FAILED)) {
 			LOGGER.info("Disconnecting {} due to sync failure of {} registry", this.player.getGameProfile().getName(), packet.getData().readIdentifier());
 		} else if (packet.getChannel().equals(ClientPackets.UNKNOWN_ENTRY)) {
-			handleUnknownEntry(packet.getData());
+			this.handleUnknownEntry(packet.getData());
 		} else if (packet.getChannel().equals(ClientPackets.MOD_PROTOCOL)) {
-			handleModProtocol(packet.getData());
+			this.handleModProtocol(packet.getData());
 		} else {
 			this.delayedPackets.add(new CustomPayloadC2SPacket(packet.getChannel(), new PacketByteBuf(packet.getData().copy())));
 		}

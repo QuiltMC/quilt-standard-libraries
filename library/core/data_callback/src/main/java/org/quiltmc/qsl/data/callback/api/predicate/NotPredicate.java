@@ -25,7 +25,6 @@ import net.minecraft.util.Identifier;
  * A predicate that is true only if its referenced predicate of the same type is false.
  */
 public final class NotPredicate<T> implements CodecAwarePredicate<T> {
-
 	public static final Identifier CODEC_ID = new Identifier("quilt", "not");
 	public static final PredicateCodecProvider PROVIDER = NotPredicate::makeCodec;
 	public final CodecAwarePredicate<T> value;

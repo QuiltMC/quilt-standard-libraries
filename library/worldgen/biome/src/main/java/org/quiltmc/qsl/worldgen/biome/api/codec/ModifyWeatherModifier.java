@@ -42,7 +42,6 @@ public record ModifyWeatherModifier(
 		Optional<Boolean> hasPrecipitation,
 		Optional<Biome.TemperatureModifier> temperatureModifier
 ) implements BiomeModifier {
-
 	public static final Identifier CODEC_ID = new Identifier("quilt", "modify_weather");
 	public static final Codec<ModifyWeatherModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BiomeModifier.BIOME_SELECTOR_CODEC.fieldOf("selector").forGetter(ModifyWeatherModifier::selector),

@@ -42,6 +42,7 @@ import net.minecraft.client.resource.language.LanguageManager;
 import net.minecraft.client.search.SearchManager;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.client.texture.PaintingManager;
+import net.minecraft.client.texture.SpriteAtlasHolder;
 import net.minecraft.client.texture.StatusEffectSpriteManager;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.util.Identifier;

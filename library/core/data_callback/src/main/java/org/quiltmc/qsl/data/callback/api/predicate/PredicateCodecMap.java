@@ -70,6 +70,7 @@ public class PredicateCodecMap<T> extends CodecMap<CodecAwarePredicate<T>> {
 		if (PROVIDERS.containsKey(id)) {
 			throw new IllegalArgumentException("Duplicate provider id: " + id);
 		}
+
 		PROVIDERS.put(id, provider);
 	}
 

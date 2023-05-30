@@ -47,6 +47,7 @@ public class ProfileIndependentS2CMessage extends AbstractChatMessage<ProfileInd
 					if (player instanceof ClientPlayerEntity clientPlayerEntity) {
 						((ClientPlayNetworkHandlerAccessor) clientPlayerEntity.networkHandler).getConnection().disconnect(Text.translatable("multiplayer.disconnect.invalid_packet"));
 					}
+
 					return null;
 				})
 		);

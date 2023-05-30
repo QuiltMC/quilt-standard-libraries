@@ -36,7 +36,6 @@ public record ValueBiomeSelector(HolderSet<Biome> value) implements CodecAwarePr
 			Biome.LIST_CODEC.fieldOf("value").forGetter(ValueBiomeSelector::value)
 	).apply(i, ValueBiomeSelector::new));
 
-
 	@Override
 	public boolean test(BiomeSelectionContext biomeSelectionContext) {
 		return this.value.contains(biomeSelectionContext.getBiomeHolder());

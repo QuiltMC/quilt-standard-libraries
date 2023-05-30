@@ -133,6 +133,7 @@ public class TrackedDataHandlerRegistryMixin {
 			if (!quilt$pastStaticInit && QuiltLoader.isDevelopmentEnvironment()) {
 				throw new RuntimeException("Unnamed TrackedDataHandler added before static initialize completed. This either means that a new TrackedDataHandler was added by Minecraft, or a mod injected into a poor place.");
 			}
+
 			id = "unknown_handler/" + (quilt$currentUnknownId++);
 			if (quilt$PRINT_WARNING) {
 				quilt$LOGGER.warn("Detected registration of unknown TrackedDataHandler through vanilla method! If using QSL, please call QuiltTrackedDataHandlerRegistry.register. Object: {}, Class: {}", handler.toString(), handler.getClass().getName());

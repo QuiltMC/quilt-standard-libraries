@@ -129,8 +129,8 @@ public abstract class AbstractNetworkAddon<H> {
 	protected abstract void handleUnregistration(Identifier channelName);
 
 	public final void handleDisconnect() {
-		if (disconnected.compareAndSet(false, true)) {
-			invokeDisconnectEvent();
+		if (this.disconnected.compareAndSet(false, true)) {
+			this.invokeDisconnectEvent();
 		}
 	}
 

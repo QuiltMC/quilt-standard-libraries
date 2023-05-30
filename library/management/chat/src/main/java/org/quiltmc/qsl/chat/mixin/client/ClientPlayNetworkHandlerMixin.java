@@ -57,7 +57,7 @@ public class ClientPlayNetworkHandlerMixin {
 			argsOnly = true
 	)
 	public ChatMessageS2CPacket quilt$modifyInboundChatMessage(ChatMessageS2CPacket packet) {
-		var message = new ChatS2CMessage(client.player, true, packet);
+		var message = new ChatS2CMessage(this.client.player, true, packet);
 		return (ChatMessageS2CPacket) QuiltChatEvents.MODIFY.invokeOrElse(message, message).serialized();
 	}
 
@@ -71,7 +71,7 @@ public class ClientPlayNetworkHandlerMixin {
 			cancellable = true
 	)
 	public void quilt$cancelInboundChatMessage(ChatMessageS2CPacket packet, CallbackInfo ci) {
-		var message = new ChatS2CMessage(client.player, true, packet);
+		var message = new ChatS2CMessage(this.client.player, true, packet);
 		if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) {
 			QuiltChatEvents.CANCELLED.invoke(message);
 			ci.cancel();
@@ -88,7 +88,7 @@ public class ClientPlayNetworkHandlerMixin {
 			)
 	)
 	public void quilt$beforeInboundChatMessage(ChatMessageS2CPacket packet, CallbackInfo ci) {
-		var message = new ChatS2CMessage(client.player, true, packet);
+		var message = new ChatS2CMessage(this.client.player, true, packet);
 		QuiltChatEvents.BEFORE_PROCESS.invoke(message);
 	}
 
@@ -101,7 +101,7 @@ public class ClientPlayNetworkHandlerMixin {
 			)
 	)
 	public void quilt$afterInboundChatMessage(ChatMessageS2CPacket packet, CallbackInfo ci) {
-		var message = new ChatS2CMessage(client.player, true, packet);
+		var message = new ChatS2CMessage(this.client.player, true, packet);
 		QuiltChatEvents.AFTER_PROCESS.invoke(message);
 	}
 
@@ -115,7 +115,7 @@ public class ClientPlayNetworkHandlerMixin {
 			argsOnly = true
 	)
 	public SystemMessageS2CPacket quilt$modifyInboundSystemMessage(SystemMessageS2CPacket packet) {
-		var message = new SystemS2CMessage(client.player, true, packet);
+		var message = new SystemS2CMessage(this.client.player, true, packet);
 		return (SystemMessageS2CPacket) QuiltChatEvents.MODIFY.invokeOrElse(message, message).serialized();
 	}
 
@@ -131,7 +131,7 @@ public class ClientPlayNetworkHandlerMixin {
 			cancellable = true
 	)
 	public void quilt$cancelAndBeforeInboundSystemMessage(SystemMessageS2CPacket packet, CallbackInfo ci) {
-		var message = new SystemS2CMessage(client.player, true, packet);
+		var message = new SystemS2CMessage(this.client.player, true, packet);
 		if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) {
 			QuiltChatEvents.CANCELLED.invoke(message);
 			ci.cancel();
@@ -150,7 +150,7 @@ public class ClientPlayNetworkHandlerMixin {
 			)
 	)
 	public void quilt$afterInboundSystemMessage(SystemMessageS2CPacket packet, CallbackInfo ci) {
-		var message = new SystemS2CMessage(client.player, true, packet);
+		var message = new SystemS2CMessage(this.client.player, true, packet);
 		QuiltChatEvents.AFTER_PROCESS.invoke(message);
 	}
 
@@ -164,7 +164,7 @@ public class ClientPlayNetworkHandlerMixin {
 			argsOnly = true
 	)
 	public ProfileIndependentMessageS2CPacket quilt$modifyInboundProfileIndependentMessage(ProfileIndependentMessageS2CPacket packet) {
-		var message = new ProfileIndependentS2CMessage(client.player, true, packet);
+		var message = new ProfileIndependentS2CMessage(this.client.player, true, packet);
 		return (ProfileIndependentMessageS2CPacket) QuiltChatEvents.MODIFY.invokeOrElse(message, message).serialized();
 	}
 
@@ -179,7 +179,7 @@ public class ClientPlayNetworkHandlerMixin {
 			cancellable = true
 	)
 	public void quilt$cancelInboundProfileIndependentMessage(ProfileIndependentMessageS2CPacket packet, CallbackInfo ci) {
-		var message = new ProfileIndependentS2CMessage(client.player, true, packet);
+		var message = new ProfileIndependentS2CMessage(this.client.player, true, packet);
 		if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) {
 			QuiltChatEvents.CANCELLED.invoke(message);
 			ci.cancel();
@@ -194,7 +194,7 @@ public class ClientPlayNetworkHandlerMixin {
 			)
 	)
 	public void quilt$beforeInboundProfileIndependentMessage(ProfileIndependentMessageS2CPacket packet, CallbackInfo ci) {
-		var message = new ProfileIndependentS2CMessage(client.player, true, packet);
+		var message = new ProfileIndependentS2CMessage(this.client.player, true, packet);
 		QuiltChatEvents.BEFORE_PROCESS.invoke(message);
 	}
 
@@ -207,26 +207,26 @@ public class ClientPlayNetworkHandlerMixin {
 			)
 	)
 	public void quilt$afterInboundProfileIndependentMessage(ProfileIndependentMessageS2CPacket packet, CallbackInfo ci) {
-		var message = new ProfileIndependentS2CMessage(client.player, true, packet);
+		var message = new ProfileIndependentS2CMessage(this.client.player, true, packet);
 		QuiltChatEvents.AFTER_PROCESS.invoke(message);
 	}
 
 	@ModifyVariable(method = "sendChatMessage", at = @At("HEAD"), argsOnly = true)
 	public String quilt$modifyOutboundRawChatMessage(String string) {
 		// Not sure *why* this would be null but IDEA is complaining, so, safety first?
-		if (client.player == null) {
+		if (this.client.player == null) {
 			return string;
 		}
 
-		var message = new RawChatC2SMessage(client.player, true, string);
+		var message = new RawChatC2SMessage(this.client.player, true, string);
 		return ((RawChatC2SMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message)).serialized();
 	}
 
 	@Inject(method = "sendChatMessage", at = @At(value = "HEAD"), cancellable = true)
 	public void quilt$cancelAndBeforeOutboundRawChatMessage(String string, CallbackInfo ci) {
-		if (client.player == null) return;
+		if (this.client.player == null) return;
 
-		var message = new RawChatC2SMessage(client.player, true, string);
+		var message = new RawChatC2SMessage(this.client.player, true, string);
 		if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) {
 			QuiltChatEvents.CANCELLED.invoke(message);
 			ci.cancel();
@@ -238,9 +238,9 @@ public class ClientPlayNetworkHandlerMixin {
 
 	@Inject(method = "sendChatMessage", at = @At(value = "TAIL"))
 	public void quilt$afterOutboundRawChatMessage(String string, CallbackInfo ci) {
-		if (client.player == null) return;
+		if (this.client.player == null) return;
 
-		var message = new RawChatC2SMessage(client.player, true, string);
+		var message = new RawChatC2SMessage(this.client.player, true, string);
 		QuiltChatEvents.AFTER_PROCESS.invoke(message);
 	}
 
@@ -253,7 +253,7 @@ public class ClientPlayNetworkHandlerMixin {
 	)
 	public void quilt$modifyAndCancelAndBeforeAndAfterOutboundChatMessage(ClientPlayNetworkHandler instance, Packet<?> packet) {
 		if (packet instanceof ChatMessageC2SPacket chatMessageC2SPacket) {
-			var message = new ChatC2SMessage(client.player, true, chatMessageC2SPacket);
+			var message = new ChatC2SMessage(this.client.player, true, chatMessageC2SPacket);
 			message = (ChatC2SMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message);
 
 			if (QuiltChatEvents.CANCEL.invoke(message) != Boolean.TRUE) {

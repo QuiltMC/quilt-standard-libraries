@@ -35,13 +35,13 @@ public class LogBuilder {
 	private Text currentText = null;
 	private int duplicateCount = 0;
 
-
 	public void pushT(String id, String lang, Object... args) {
-		push(Text.translatable("quilt.core.registry_sync.log." + id, lang, args));
+		this.push(Text.translatable("quilt.core.registry_sync.log." + id, lang, args));
 	}
+
 	public void push(Text title) {
 		if (this.title != null) {
-			sections.add(new Section(this.title, entriesCurrent));
+			this.sections.add(new Section(this.title, this.entriesCurrent));
 		}
 
 		this.title = title;
@@ -49,8 +49,9 @@ public class LogBuilder {
 	}
 
 	public void textEntry(Text text) {
-		text(Text.literal("- ").append(Text.empty().append(text)).formatted(Formatting.GRAY));
+		this.text(Text.literal("- ").append(Text.empty().append(text)).formatted(Formatting.GRAY));
 	}
+
 	public void text(Text text) {
 		if (this.currentText != null && !text.equals(this.currentText)) {
 			this.entriesCurrent.add(duplicatedText(this.currentText, this.duplicateCount));
@@ -58,6 +59,7 @@ public class LogBuilder {
 		} else {
 			this.duplicateCount++;
 		}
+
 		this.currentText = text;
 	}
 
@@ -67,8 +69,10 @@ public class LogBuilder {
 			if (this.currentText != null) {
 				y.add(duplicatedText(this.currentText, this.duplicateCount));
 			}
-			sections.add(new Section(this.title, y));
+
+			this.sections.add(new Section(this.title, y));
 		}
+
 		var x = this.sections;
 		this.clear();
 		return x;
@@ -93,9 +97,9 @@ public class LogBuilder {
 		if (this.title != null) {
 			sections.add(new Section(this.title, this.entriesCurrent));
 		}
+
 		return stringify(sections);
 	}
-
 
 	public record Section(Text title, List<Text> entries) {};
 

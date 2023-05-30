@@ -51,11 +51,11 @@ public class ClientConnectionMixin implements ExtendedConnectionClient {
 
 	@Override
 	public void quilt$addUnknownEntry(Registry<?> registry, Object entry) {
-		var set = quilt$unknownEntries.get(registry);
+		var set = this.quilt$unknownEntries.get(registry);
 
 		if (set == null) {
 			set = new ObjectOpenCustomHashSet<>(Util.identityHashStrategy());
-			quilt$unknownEntries.put(registry, set);
+			this.quilt$unknownEntries.put(registry, set);
 		}
 
 		set.add(entry);
@@ -63,7 +63,7 @@ public class ClientConnectionMixin implements ExtendedConnectionClient {
 
 	@Override
 	public boolean quilt$isUnknownEntry(Registry<?> registry, Object entry) {
-		var set = quilt$unknownEntries.get(registry);
+		var set = this.quilt$unknownEntries.get(registry);
 
 		return set != null && set.contains(entry);
 	}

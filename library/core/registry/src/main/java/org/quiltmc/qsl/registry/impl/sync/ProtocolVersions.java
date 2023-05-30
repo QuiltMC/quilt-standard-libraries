@@ -33,7 +33,6 @@ public class ProtocolVersions {
 	public static final int NO_PROTOCOL = -1;
 	public static final int FAPI_PROTOCOL = -2;
 
-
 	public static int getHighestSupportedLocal(IntList supportedRemote) {
 		return getHighestSupported(IMPL_SUPPORTED_VERSIONS, supportedRemote);
 	}

@@ -25,5 +25,4 @@ import org.quiltmc.qsl.data.callback.api.CodecAware;
  *
  * @param <T> the type of the input to the test
  */
-public interface CodecAwarePredicate<T> extends CodecAware, Predicate<T> {
-}
+public interface CodecAwarePredicate<T> extends CodecAware, Predicate<T> {}

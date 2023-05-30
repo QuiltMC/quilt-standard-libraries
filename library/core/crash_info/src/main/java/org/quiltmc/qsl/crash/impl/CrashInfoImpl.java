@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.crash.impl;
 
-import java.util.Comparator;
-
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.util.SystemDetails;

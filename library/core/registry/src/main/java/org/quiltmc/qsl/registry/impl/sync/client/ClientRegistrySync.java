@@ -94,7 +94,6 @@ public final class ClientRegistrySync {
 	private static LogBuilder builder = new LogBuilder();
 	private static boolean mustDisconnect;
 
-
 	@Nullable
 	public static List<LogBuilder.Section> getAndClearCurrentSyncLogs() {
 		return builder.finish();
@@ -150,7 +149,6 @@ public final class ClientRegistrySync {
 			sendSupportedModProtocol(sender, values);
 		}
 	}
-
 
 	private static String stringifyVersions(IntList versions) {
 		if (versions == null || versions.isEmpty()) {
@@ -343,7 +341,6 @@ public final class ClientRegistrySync {
 		clearState();
 	}
 
-
 	private static <T, S> ClientPlayNetworking.ChannelReceiver handleStateValidation(Registry<T> registry, IdList<S> stateList, Function<S, T> converter) {
 		return (MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) -> {
 			var count = buf.readVarInt();
@@ -446,6 +443,7 @@ public final class ClientRegistrySync {
 				if (RegistryFlag.isOptional(entry.flags())) {
 					x.append(" ").append(Text.translatable("quilt.core.registry_sync.optional", "(Optional)").formatted(Formatting.DARK_GRAY));
 				}
+
 				builder.textEntry(x);
 			}
 		}
@@ -457,6 +455,7 @@ public final class ClientRegistrySync {
 		if (disconnectMainReason == null) {
 			disconnectMainReason = reason;
 		}
+
 		mustDisconnect = true;
 	}
 

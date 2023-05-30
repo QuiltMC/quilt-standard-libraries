@@ -296,7 +296,6 @@ public interface BiomeModificationContext {
 			return anyFound;
 		}
 
-
 		/**
 		 * Adds a feature to one of this biomes generation steps, identified by the placed feature's registry key.
 		 *

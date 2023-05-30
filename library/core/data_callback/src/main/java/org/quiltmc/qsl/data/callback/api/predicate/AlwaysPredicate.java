@@ -24,7 +24,6 @@ import net.minecraft.util.Identifier;
  * A predicate that is always true.
  */
 public final class AlwaysPredicate<T> implements CodecAwarePredicate<T> {
-
 	public static final Identifier CODEC_ID = new Identifier("quilt", "always");
 	public static final PredicateCodecProvider PROVIDER = AlwaysPredicate::makeCodec;
 

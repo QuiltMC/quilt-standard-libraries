@@ -27,7 +27,6 @@ import net.minecraft.util.Identifier;
  * A predicate that is true if any of its referenced predicates of the same type are true.
  */
 public final class OrPredicate<T> implements CodecAwarePredicate<T> {
-
 	public static final Identifier CODEC_ID = new Identifier("quilt", "or");
 	public static final PredicateCodecProvider PROVIDER = OrPredicate::makeCodec;
 	public final List<CodecAwarePredicate<T>> values;
@@ -49,6 +48,7 @@ public final class OrPredicate<T> implements CodecAwarePredicate<T> {
 				return true;
 			}
 		}
+
 		return false;
 	}
 

@@ -44,6 +44,7 @@ public class RegistrySyncText {
 				namespacesSet.add(entry.identifier().getNamespace());
 			}
 		}
+
 		var namespacesList = new ArrayList<>(namespacesSet);
 		namespacesList.sort(Comparator.naturalOrder());
 
@@ -84,6 +85,7 @@ public class RegistrySyncText {
 			if (!namespacesList.isEmpty() && lines != 1) {
 				namespaceText.append("\n");
 			}
+
 			textLength = 0;
 			lines++;
 		}
@@ -100,7 +102,8 @@ public class RegistrySyncText {
 				expectedBlockId == null ? Text.literal("null").formatted(Formatting.RED) : Text.literal(expectedBlockId.toString()).formatted(Formatting.YELLOW),
 				Text.literal(registryId.toString()).formatted(Formatting.GRAY),
 				foundBlockId == null ? Text.literal("null").formatted(Formatting.RED) : Text.literal(foundBlockId.toString())
-		);	}
+		);
+	}
 
 	public static Text missingRegistry(Identifier identifier, boolean exists) {
 		return Text.translatable("quilt.core.registry_sync." + (exists ? "unsupported" : "missing") + "_registry", "Tried to sync '%s' registry, which is "  + (exists ? "unsupported" : "missing" + "!"), identifier.toString());

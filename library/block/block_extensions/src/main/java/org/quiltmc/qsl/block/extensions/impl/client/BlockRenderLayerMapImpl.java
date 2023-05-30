@@ -45,6 +45,7 @@ public final class BlockRenderLayerMapImpl {
 		if (blockMap != null) {
 			blockMap.forEach(blockHandlerIn);
 		}
+
 		if (fluidMap != null) {
 			fluidMap.forEach(fluidHandlerIn);
 		}

@@ -106,9 +106,10 @@ public class CodecMap<T extends CodecAware> {
 	public void register(Identifier id, Codec<? extends T> codec) {
 		if (this.codecs.containsKey(id)) {
 			throw new IllegalArgumentException("Duplicate codec id: " + id);
-		} else if (codecs.containsValue(codec)) {
+		} else if (this.codecs.containsValue(codec)) {
 			throw new IllegalArgumentException("Duplicate codec: " + codec);
 		}
+
 		this.codecs.put(id, codec);
 	}
 

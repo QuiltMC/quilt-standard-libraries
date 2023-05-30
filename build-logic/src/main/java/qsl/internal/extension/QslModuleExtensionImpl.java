@@ -105,7 +105,7 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 
 	@Input
 	public Property<Boolean> getHasMixins() {
-		return hasMixins;
+		return this.hasMixins;
 	}
 
 	public void noMixins() {

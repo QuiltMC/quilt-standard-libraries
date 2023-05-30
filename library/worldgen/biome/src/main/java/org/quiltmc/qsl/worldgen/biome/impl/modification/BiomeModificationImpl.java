@@ -84,14 +84,14 @@ public class BiomeModificationImpl {
 		Objects.requireNonNull(modifier);
 
 		this.reloader.addModifier(phase, id, modifier);
-		var modifierRecord = new ModifierRecord(phase, id, () -> reloader.getCombinedMap(phase).get(id));
+		var modifierRecord = new ModifierRecord(phase, id, () -> this.reloader.getCombinedMap(phase).get(id));
 		this.modifiers.add(modifierRecord);
 		this.identifiedModifiers.computeIfAbsent(phase, p -> new HashMap<>()).put(id, modifierRecord);
 		this.modifiersUnsorted = true;
 	}
 
 	private void addLazyModifier(Identifier id, ModificationPhase phase) {
-		var modifierRecord = new ModifierRecord(phase, id, () -> reloader.getCombinedMap(phase).get(id));
+		var modifierRecord = new ModifierRecord(phase, id, () -> this.reloader.getCombinedMap(phase).get(id));
 		this.modifiers.add(modifierRecord);
 		this.identifiedModifiers.computeIfAbsent(phase, p -> new HashMap<>()).put(id, modifierRecord);
 		this.modifiersUnsorted = true;
@@ -201,6 +201,7 @@ public class BiomeModificationImpl {
 				if (modifier.canBeDropped) {
 					continue;
 				}
+
 				if (modifier.selector.test(context)) {
 					LOGGER.trace("Applying modifier {} to {}", modifier, key.getValue());
 
@@ -268,6 +269,7 @@ public class BiomeModificationImpl {
 				if (modifier != null) {
 					return modifier.shouldModify(ctx);
 				}
+
 				return false;
 			};
 			this.contextSensitiveModifier = (selectionCtx, modificationCtx) -> {
@@ -289,7 +291,7 @@ public class BiomeModificationImpl {
 		}
 
 		public void apply(BiomeSelectionContext context, BiomeModificationContextImpl modificationContext) {
-			if (contextSensitiveModifier != null) {
+			if (this.contextSensitiveModifier != null) {
 				this.contextSensitiveModifier.accept(context, modificationContext);
 			} else {
 				this.modifier.accept(modificationContext);

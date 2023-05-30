@@ -50,14 +50,14 @@ public class ServerPlayNetworkHandlerMixin {
 
 	@ModifyVariable(method = "onChatMessage", at = @At("HEAD"), argsOnly = true)
 	public ChatMessageC2SPacket quilt$modifyInboundChatMessage(ChatMessageC2SPacket packet) {
-		var message = new ChatC2SMessage(player, false, packet);
+		var message = new ChatC2SMessage(this.player, false, packet);
 
 		return ((ChatC2SMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message)).serialized();
 	}
 
 	@Inject(method = "onChatMessage", at = @At("HEAD"), cancellable = true)
 	public void quilt$cancelInboundChatMessage(ChatMessageC2SPacket packet, CallbackInfo ci) {
-		var message = new ChatC2SMessage(player, false, packet);
+		var message = new ChatC2SMessage(this.player, false, packet);
 
 		if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) {
 			QuiltChatEvents.CANCELLED.invoke(message);
@@ -71,27 +71,27 @@ public class ServerPlayNetworkHandlerMixin {
 	 */
 	@Inject(method = "method_44900(Lnet/minecraft/network/packet/c2s/play/ChatMessageC2SPacket;Ljava/util/Optional;)V", at = @At(value = "HEAD"))
 	public void quilt$beforeInboundChatMessage(ChatMessageC2SPacket packet, Optional optional, CallbackInfo ci) {
-		var immutableMessage = new ChatC2SMessage(player, false, packet);
+		var immutableMessage = new ChatC2SMessage(this.player, false, packet);
 		QuiltChatEvents.BEFORE_PROCESS.invoke(immutableMessage);
 	}
 
 	@Inject(method = "method_44900(Lnet/minecraft/network/packet/c2s/play/ChatMessageC2SPacket;Ljava/util/Optional;)V", at = @At(value = "RETURN"))
 	public void quilt$afterInboundChatMessage(ChatMessageC2SPacket packet, Optional optional, CallbackInfo ci) {
-		var immutableMessage = new ChatC2SMessage(player, false, packet);
+		var immutableMessage = new ChatC2SMessage(this.player, false, packet);
 		QuiltChatEvents.AFTER_PROCESS.invoke(immutableMessage);
 	}
 
 	@Inject(method = "sendProfileIndependentMessage", at = @At("HEAD"), cancellable = true)
 	public void quilt$captureAndModifyAndCancelAndBeforeOutboundProfileIndependentMessage(Text message, MessageType.Parameters parameters, CallbackInfo ci) {
-		var independentMessage = new ProfileIndependentS2CMessage(player, false, message, parameters);
-		quilt$sendProfileIndependentMessage$storedProfileIndependentMessage = (ProfileIndependentS2CMessage) QuiltChatEvents.MODIFY.invokeOrElse(independentMessage, independentMessage);
+		var independentMessage = new ProfileIndependentS2CMessage(this.player, false, message, parameters);
+		this.quilt$sendProfileIndependentMessage$storedProfileIndependentMessage = (ProfileIndependentS2CMessage) QuiltChatEvents.MODIFY.invokeOrElse(independentMessage, independentMessage);
 
-		if (QuiltChatEvents.CANCEL.invoke(quilt$sendProfileIndependentMessage$storedProfileIndependentMessage) == Boolean.TRUE) {
+		if (QuiltChatEvents.CANCEL.invoke(this.quilt$sendProfileIndependentMessage$storedProfileIndependentMessage) == Boolean.TRUE) {
 			ci.cancel();
 			return;
 		}
 
-		QuiltChatEvents.BEFORE_PROCESS.invoke(quilt$sendProfileIndependentMessage$storedProfileIndependentMessage);
+		QuiltChatEvents.BEFORE_PROCESS.invoke(this.quilt$sendProfileIndependentMessage$storedProfileIndependentMessage);
 	}
 
 	@Redirect(
@@ -102,8 +102,8 @@ public class ServerPlayNetworkHandlerMixin {
 			)
 	)
 	public void quilt$afterOutboundProfileIndependentMessage(ServerPlayNetworkHandler instance, Packet<?> packet) {
-		instance.sendPacket(quilt$sendProfileIndependentMessage$storedProfileIndependentMessage.serialized());
-		QuiltChatEvents.AFTER_PROCESS.invoke(quilt$sendProfileIndependentMessage$storedProfileIndependentMessage);
+		instance.sendPacket(this.quilt$sendProfileIndependentMessage$storedProfileIndependentMessage.serialized());
+		QuiltChatEvents.AFTER_PROCESS.invoke(this.quilt$sendProfileIndependentMessage$storedProfileIndependentMessage);
 	}
 
 	@Redirect(

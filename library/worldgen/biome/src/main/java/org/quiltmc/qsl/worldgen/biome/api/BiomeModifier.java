@@ -42,9 +42,9 @@ public interface BiomeModifier extends CodecAware {
 	Codec<CodecAwarePredicate<BiomeSelectionContext>> BIOME_SELECTOR_CODEC = Codecs.createLazy(() ->
 			Codec.either(BiomeModifier.BIOME_SELECTOR_CODECS.createDelegatingCodec("biome selector"), Biome.LIST_CODEC)
 					.xmap(either -> either.map(Function.identity(), ValueBiomeSelector::new),
-							predicate -> predicate instanceof ValueBiomeSelector valueSelector ?
-									Either.right(valueSelector.value()) :
-									Either.left(predicate)));
+							predicate -> predicate instanceof ValueBiomeSelector valueSelector
+									? Either.right(valueSelector.value())
+									: Either.left(predicate)));
 
 	/**
 	 * Stores biome selector codecs. Custom biome selector codecs should be added here during mod initialization.

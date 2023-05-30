@@ -71,7 +71,7 @@ public class RegistryLibDynamicRegistryTest implements QuiltGameTest, ModInitial
 			try {
 				DynamicMetaRegistry.register(RegistryKey.ofRegistry(new Identifier("quilt_registry_testmod", "a")), Codec.INT);
 				throw new GameTestException("DynamicMetaregistry should not allow registration after init");
-			} catch (IllegalStateException ignored) { }
+			} catch (IllegalStateException ignored) {}
 		});
 	}
 }

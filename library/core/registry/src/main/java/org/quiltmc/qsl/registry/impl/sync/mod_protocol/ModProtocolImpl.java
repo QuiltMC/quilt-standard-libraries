@@ -30,6 +30,8 @@ import org.quiltmc.loader.api.LoaderValue;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.registry.impl.RegistryConfig;
+import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
+import org.quiltmc.qsl.registry.impl.sync.server.ServerRegistrySync;
 
 public class ModProtocolImpl {
 	public static boolean enabled = false;
@@ -47,7 +49,6 @@ public class ModProtocolImpl {
 		//var modProto = RegistryConfig.INSTANCE.registry_sync;
 		//disableQuery = modProto.disable_mod_protocol_ping;
 		disableQuery = (Boolean) RegistryConfig.getSync("disable_mod_protocol_ping");
-
 
 		//if (modProto.mod_protocol_version >= 0) {
 		if (((Number) RegistryConfig.getSync("mod_protocol_version")).intValue() >= 0) {
@@ -87,8 +88,10 @@ public class ModProtocolImpl {
 						invalidEntryType(".optional", container, LoaderValue.LType.BOOLEAN, optVal.type());
 						continue;
 					}
+
 					optional = optVal.asBoolean();
 				}
+
 				var version = decodeVersion(".value", container, object.get("value"));
 
 				if (version != null) {
@@ -133,6 +136,7 @@ public class ModProtocolImpl {
 					return null;
 				}
 			}
+
 			return versions;
 		} else {
 			invalidEntryType(path + ".optional", container, LoaderValue.LType.NUMBER, value.type());
@@ -160,6 +164,7 @@ public class ModProtocolImpl {
 			REQUIRED.add(def);
 			ServerRegistrySync.requireMinimumVersion(ProtocolVersions.EXT_3);
 		}
+
 		ALL.add(def);
 		enabled = true;
 	}

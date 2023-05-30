@@ -41,6 +41,7 @@ public abstract class HeldItemRendererMixin {
 		} else if (item == Items.CROSSBOW) {
 			return heldItem.getItem() instanceof CrossbowExtensions; // Return crossbow for rendering
 		}
+
 		return heldItem.isOf(item); // Default behavior
 	}
 

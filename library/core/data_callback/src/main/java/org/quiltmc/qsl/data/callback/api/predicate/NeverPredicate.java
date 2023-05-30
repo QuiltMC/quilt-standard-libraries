@@ -24,7 +24,6 @@ import net.minecraft.util.Identifier;
  * A predicate that is never true.
  */
 public final class NeverPredicate<T> implements CodecAwarePredicate<T> {
-
 	public static final Identifier CODEC_ID = new Identifier("quilt", "never");
 	public static final PredicateCodecProvider PROVIDER = NeverPredicate::makeCodec;
 

@@ -16,18 +16,20 @@
 
 package org.quiltmc.qsl.chat.api.types;
 
+import java.time.Instant;
+import java.util.EnumSet;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.message.MessageSignature;
 import net.minecraft.network.message.MessageSignatureList;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import org.quiltmc.qsl.chat.impl.InternalMessageTypesFactory;
-
-import java.time.Instant;
-import java.util.EnumSet;
 
 /**
  * A wrapper around a C2S chat message after it has been signed.
