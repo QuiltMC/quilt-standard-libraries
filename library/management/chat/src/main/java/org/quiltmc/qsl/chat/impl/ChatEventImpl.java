@@ -16,16 +16,18 @@
 
 package org.quiltmc.qsl.chat.impl;
 
-import net.minecraft.util.Identifier;
+import java.util.EnumSet;
+import java.util.function.BiFunction;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.util.Identifier;
+
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.chat.api.ChatEvent;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
-
-import java.util.EnumSet;
-import java.util.function.BiFunction;
 
 /**
  * The common implementation of {@link ChatEvent}. If this event is set to preform assignable checks, then it will require that any return values are both
@@ -51,9 +53,9 @@ public class ChatEventImpl<C, R> implements ChatEvent<C, R> {
 			R result = null;
 
 			for (var hook : hooks) {
-				if (shouldPassOnMessageToHook(message.getTypes(), hook.getMessageTypes())) {
+				if (ChatEventImpl.this.shouldPassOnMessageToHook(message.getTypes(), hook.getMessageTypes())) {
 					R tmpResult = hook.handleMessage(message);
-					if (shouldPreformAssignableCheck) {
+					if (ChatEventImpl.this.shouldPreformAssignableCheck) {
 						if (tmpResult == null) {
 							throw new NullPointerException("Callback attached to a ChatEvent returned a null result!");
 						} else if (!message.getClass().isAssignableFrom(tmpResult.getClass())) {
@@ -63,6 +65,7 @@ public class ChatEventImpl<C, R> implements ChatEvent<C, R> {
 							);
 						}
 					}
+
 					result = tmpResult;
 				}
 			}

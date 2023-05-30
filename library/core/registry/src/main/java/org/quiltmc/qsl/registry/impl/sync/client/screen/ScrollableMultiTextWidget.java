@@ -57,11 +57,12 @@ public class ScrollableMultiTextWidget extends ScrollableWidget {
 		this.headerSettings = this.helper.copyDefaultSettings().alignHorizontallyCenter().setHorizontalPadding(32);
 
 		for (var section : sectionList) {
-			appendHeader(client.textRenderer, section.title());
+			this.appendHeader(client.textRenderer, section.title());
 			for (var text : section.entries()) {
-				appendLine(client.textRenderer, text);
+				this.appendLine(client.textRenderer, text);
 			}
-			appendSpacer(10);
+
+			this.appendSpacer(10);
 		}
 
 		this.grid.arrangeElements();
@@ -100,7 +101,7 @@ public class ScrollableMultiTextWidget extends ScrollableWidget {
 
 	@Override
 	protected boolean isOverflowing() {
-		return getContentHeight() > this.height;
+		return this.getContentHeight() > this.height;
 	}
 
 	@Override
@@ -114,7 +115,7 @@ public class ScrollableMultiTextWidget extends ScrollableWidget {
 		int y = this.getY() + this.getInnerPadding();
 		int scrollPixels = (int) this.getScrollAmount();
 		int higherBound = scrollPixels + this.getHeight() + 10;
-		int lowerBound = scrollPixels - 10 ;
+		int lowerBound = scrollPixels - 10;
 		graphics.getMatrices().push();
 		graphics.getMatrices().translate(x, y, 0.0D);
 		this.grid.visitWidgets((clickableWidget) -> {

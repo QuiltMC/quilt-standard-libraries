@@ -16,9 +16,9 @@
 
 package org.quiltmc.qsl.chat.impl;
 
-import org.quiltmc.qsl.chat.api.QuiltMessageType;
-
 import java.util.EnumSet;
+
+import org.quiltmc.qsl.chat.api.QuiltMessageType;
 
 /**
  * Provides some common shortcuts for message type generation

@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
-import net.minecraft.registry.tag.BlockTags;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.block.Block;
@@ -35,6 +34,7 @@ import net.minecraft.block.Oxidizable;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.HoneycombItem;
 import net.minecraft.item.ShovelItem;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 

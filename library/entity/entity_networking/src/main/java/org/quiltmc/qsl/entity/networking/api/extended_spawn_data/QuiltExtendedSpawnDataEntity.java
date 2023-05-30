@@ -54,13 +54,15 @@ public interface QuiltExtendedSpawnDataEntity {
 	 */
 	static Packet<ClientPlayPacketListener> createExtendedPacket(QuiltExtendedSpawnDataEntity extended,
 																 Packet<ClientPlayPacketListener> basePacket) {
-		if (!(extended instanceof Entity entity))
+		if (!(extended instanceof Entity entity)) {
 			throw new IllegalArgumentException(extended.getClass() + " does not extend Entity!");
+		}
+
 		var buf = PacketByteBufs.create();
 		buf.writeVarInt(entity.getId());
 		extended.writeAdditionalSpawnData(buf);
 		var additionalPacket = ServerPlayNetworking.createS2CPacket(
-			QuiltEntityNetworkingInitializer.EXTENDED_SPAWN_PACKET_ID, buf
+				QuiltEntityNetworkingInitializer.EXTENDED_SPAWN_PACKET_ID, buf
 		);
 
 		return new PacketBundleS2CPacket(List.of(basePacket, additionalPacket));

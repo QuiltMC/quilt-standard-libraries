@@ -55,6 +55,7 @@ public class ServerMetadataVersionMixin implements ModProtocolContainer {
 		for (var protocol : ModProtocolImpl.REQUIRED) {
 			map.put(protocol.id(), protocol.versions());
 		}
+
 		((ServerMetadataVersionMixin) (Object) cir.getReturnValue()).quilt$modProtocol = map;
 	}
 

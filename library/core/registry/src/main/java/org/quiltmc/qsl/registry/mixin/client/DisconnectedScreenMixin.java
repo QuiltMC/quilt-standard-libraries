@@ -56,12 +56,12 @@ public class DisconnectedScreenMixin extends Screen {
 	}
 
 	@Inject(
-		method = "init",
-		at = @At(
-			value = "INVOKE",
-			target = "Lnet/minecraft/client/MinecraftClient;isMultiplayerEnabled()Z"
-		),
-		locals = LocalCapture.CAPTURE_FAILHARD
+			method = "init",
+			at = @At(
+				value = "INVOKE",
+				target = "Lnet/minecraft/client/MinecraftClient;isMultiplayerEnabled()Z"
+			),
+			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private void quilt$addLogsButton(CallbackInfo ci, GridWidget.AdditionHelper additionHelper) {
 		if (!this.quilt$extraLogs.isEmpty()) {

@@ -39,37 +39,37 @@ public abstract class ArmorItemMixin {
 	private ArmorMaterial quilt$originalArmorMaterial;
 
 	@Inject(
-		method = "<init>",
-		at = @At(
-			value = "FIELD",
-			target = "Lnet/minecraft/item/ArmorMaterials;NETHERITE:Lnet/minecraft/item/ArmorMaterials;",
-			shift = At.Shift.BEFORE
-		)
+			method = "<init>",
+			at = @At(
+				value = "FIELD",
+				target = "Lnet/minecraft/item/ArmorMaterials;NETHERITE:Lnet/minecraft/item/ArmorMaterials;",
+				shift = At.Shift.BEFORE
+			)
 	)
 	private void quilt$captureOriginalMaterial(ArmorMaterial material, ArmorItem.ArmorSlot slot, Item.Settings settings, CallbackInfo ci) {
 		this.quilt$originalArmorMaterial = material;
 	}
 
 	@ModifyVariable(
-		method = "<init>",
-		at = @At(
-			value = "FIELD",
-			target = "Lnet/minecraft/item/ArmorMaterials;NETHERITE:Lnet/minecraft/item/ArmorMaterials;",
-			shift = At.Shift.BEFORE
-		),
-		argsOnly = true
+			method = "<init>",
+			at = @At(
+				value = "FIELD",
+				target = "Lnet/minecraft/item/ArmorMaterials;NETHERITE:Lnet/minecraft/item/ArmorMaterials;",
+				shift = At.Shift.BEFORE
+			),
+			argsOnly = true
 	)
 	private ArmorMaterial quilt$applyKnockbackResistanceUnconditionally(ArmorMaterial material) {
 		return material.getKnockbackResistance() != 0 ? ArmorMaterials.NETHERITE : this.quilt$originalArmorMaterial;
 	}
 
 	@ModifyVariable(
-		method = "<init>",
-		at = @At(
-			value = "FIELD",
-			target = "Lnet/minecraft/item/ArmorItem;attributeModifiers:Lcom/google/common/collect/Multimap;"
-		),
-		argsOnly = true
+			method = "<init>",
+			at = @At(
+				value = "FIELD",
+				target = "Lnet/minecraft/item/ArmorItem;attributeModifiers:Lcom/google/common/collect/Multimap;"
+			),
+			argsOnly = true
 	)
 	private ArmorMaterial quilt$revertMaterialChange(ArmorMaterial material) {
 		return this.quilt$originalArmorMaterial;

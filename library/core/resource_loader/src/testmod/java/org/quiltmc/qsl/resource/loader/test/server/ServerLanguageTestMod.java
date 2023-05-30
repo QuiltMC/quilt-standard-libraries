@@ -24,7 +24,6 @@ import org.quiltmc.qsl.base.api.entrypoint.server.DedicatedServerModInitializer;
 
 @DedicatedServerOnly
 public class ServerLanguageTestMod implements DedicatedServerModInitializer {
-
 	@Override
 	public void onInitializeServer(ModContainer mod) {
 		// Check whether the dedicated server properly loaded the default language with modded entries.

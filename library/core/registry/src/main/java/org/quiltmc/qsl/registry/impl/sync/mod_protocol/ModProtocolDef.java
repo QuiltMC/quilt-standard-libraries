@@ -28,7 +28,8 @@ public record ModProtocolDef(String id, String displayName, IntList versions, bo
 		buf.writeString(def.id);
 		buf.writeString(def.displayName);
 		buf.writeIntList(def.versions);
-		buf.writeBoolean(def.optional);	}
+		buf.writeBoolean(def.optional);
+	}
 
 	public static ModProtocolDef read(PacketByteBuf buf) {
 		var id = buf.readString();

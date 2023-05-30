@@ -269,8 +269,8 @@ public final class ServerRegistrySync {
 
 		connection.send(ServerPlayNetworking.createS2CPacket(packetId, buf));
 
-		packetData.clear();	}
-
+		packetData.clear();
+	}
 
 	public static void sendHelloPacket(ClientConnection connection) {
 		var buf = PacketByteBufs.create();

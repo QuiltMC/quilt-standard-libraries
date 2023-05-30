@@ -76,7 +76,6 @@ public class EnchantingBoosters {
 						return DataResult.success(Either.right(enchantingBooster));
 					});
 
-
 	/**
 	 * Registers a non-simple booster type.
 	 *

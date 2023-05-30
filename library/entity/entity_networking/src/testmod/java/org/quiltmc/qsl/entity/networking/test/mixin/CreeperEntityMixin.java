@@ -89,13 +89,14 @@ public class CreeperEntityMixin extends HostileEntity implements QuiltExtendedSp
 
 	@Inject(method = "explode", at = @At("TAIL"))
 	private void quiltTestMod$dropItemOnExplosion(CallbackInfo ci) {
-		if (!this.getWorld().isClient)
-			dropStack(quilt$stackToDrop);
+		if (!this.getWorld().isClient) {
+			dropStack(this.quilt$stackToDrop);
+		}
 	}
 
 	@Override
 	public void writeAdditionalSpawnData(PacketByteBuf buffer) {
-		buffer.writeItemStack(quilt$stackToDrop);
+		buffer.writeItemStack(this.quilt$stackToDrop);
 	}
 
 	@Override
@@ -105,6 +106,6 @@ public class CreeperEntityMixin extends HostileEntity implements QuiltExtendedSp
 
 	@Override
 	public ItemStack getStack() {
-		return quilt$stackToDrop;
+		return this.quilt$stackToDrop;
 	}
 }

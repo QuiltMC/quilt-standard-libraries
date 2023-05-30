@@ -16,6 +16,12 @@
 
 package org.quiltmc.qsl.chat.api.types;
 
+import java.util.EnumSet;
+import java.util.UUID;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.message.FilterMask;
 import net.minecraft.network.message.MessageBody;
@@ -23,13 +29,9 @@ import net.minecraft.network.message.MessageSignature;
 import net.minecraft.network.message.MessageType;
 import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import org.quiltmc.qsl.chat.impl.InternalMessageTypesFactory;
-
-import java.util.EnumSet;
-import java.util.UUID;
 
 /**
  * A wrapper around an S2C chat message. These are chat messages from players being relayed from the server.

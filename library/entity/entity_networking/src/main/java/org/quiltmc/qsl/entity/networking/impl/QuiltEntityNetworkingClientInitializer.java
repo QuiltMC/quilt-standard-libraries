@@ -34,29 +34,29 @@ public final class QuiltEntityNetworkingClientInitializer implements ClientModIn
 	@Override
 	public void onInitializeClient(ModContainer mod) {
 		ClientPlayNetworking.registerGlobalReceiver(
-			QuiltEntityNetworkingInitializer.EXTENDED_SPAWN_PACKET_ID,
-			(client, handler, buf, sender) -> {
-				int entityId = buf.readVarInt();
-				buf.retain(); // Make sure data is retained and can be read on the client thread
-				client.execute(() -> {
-					try {
-						var entity = client.world.getEntityById(entityId);
-						if (entity instanceof QuiltExtendedSpawnDataEntity extended) {
-							extended.readAdditionalSpawnData(buf);
-						} else {
-							var id = entity == null
-								? "null"
-								: Registries.ENTITY_TYPE.getId(entity.getType()).toString();
-							logger.error(
-								"[Quilt] invalid entity received for extended spawn packet: entity [" +
-									id + "] does not implement QuiltCustomSpawnDataEntity!"
-							);
+				QuiltEntityNetworkingInitializer.EXTENDED_SPAWN_PACKET_ID,
+				(client, handler, buf, sender) -> {
+					int entityId = buf.readVarInt();
+					buf.retain(); // Make sure data is retained and can be read on the client thread
+					client.execute(() -> {
+						try {
+							var entity = client.world.getEntityById(entityId);
+							if (entity instanceof QuiltExtendedSpawnDataEntity extended) {
+								extended.readAdditionalSpawnData(buf);
+							} else {
+								var id = entity == null
+										? "null"
+										: Registries.ENTITY_TYPE.getId(entity.getType()).toString();
+								logger.error(
+										"[Quilt] invalid entity received for extended spawn packet: entity [" +
+											id + "] does not implement QuiltCustomSpawnDataEntity!"
+								);
+							}
+						} finally { // make sure the buffer is released after
+							buf.release();
 						}
-					} finally { // make sure the buffer is released after
-						buf.release();
-					}
-				});
-			}
+					});
+				}
 		);
 	}
 }

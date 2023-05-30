@@ -69,7 +69,7 @@ public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAd
 		final Collection<Identifier> pending = holder.getPendingChannelsNames();
 
 		if (!pending.isEmpty()) {
-			register(new ArrayList<>(pending));
+			this.register(new ArrayList<>(pending));
 			pending.clear();
 		}
 	}
@@ -156,7 +156,7 @@ public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAd
 		}
 
 		this.addId(ids, active);
-		this.schedule(register ? () -> register(ids) : () -> unregister(ids));
+		this.schedule(register ? () -> this.register(ids) : () -> this.unregister(ids));
 	}
 
 	void register(List<Identifier> ids) {

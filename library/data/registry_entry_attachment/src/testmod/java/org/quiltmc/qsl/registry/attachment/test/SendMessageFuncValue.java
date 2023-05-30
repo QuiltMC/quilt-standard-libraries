@@ -43,6 +43,6 @@ public final class SendMessageFuncValue extends FuncValue {
 
 	@Override
 	public String toString() {
-		return "send_message{'" + message + "'}";
+		return "send_message{'" + this.message + "'}";
 	}
 }

@@ -16,5 +16,4 @@ public enum Environment implements Serializable {
 	Environment(String qmj) {
 		this.qmj = qmj;
 	}
-
 }

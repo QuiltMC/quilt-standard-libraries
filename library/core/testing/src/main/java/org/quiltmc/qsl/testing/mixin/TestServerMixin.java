@@ -35,8 +35,8 @@ public class TestServerMixin {
 	}
 
 	@ModifyConstant(
-		method = "tick",
-		constant = @Constant(stringValue = "All {} required tests passed :)")
+			method = "tick",
+			constant = @Constant(stringValue = "All {} required tests passed :)")
 	)
 	private static String replaceSuccessMessage(String original) {
 		// You may ask why, it's simple.

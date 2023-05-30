@@ -247,6 +247,7 @@ public final class ClientCommandInternals {
 		for (CommandNode<QuiltClientCommandSource> node : currentDispatcher.getRoot().getChildren()) {
 			runCommand.then(node);
 		}
+
 		return runCommand;
 	}
 

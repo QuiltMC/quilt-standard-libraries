@@ -45,6 +45,7 @@ public abstract class ProjectileUtilMixin {
 					return;
 				}
 			}
+
 			if (item == Items.CROSSBOW) { // Make sure we only check for crossbows when searching for crossbows
 				if (entity.getStackInHand(hand).getItem() instanceof CrossbowExtensions) {
 					cir.setReturnValue(hand);

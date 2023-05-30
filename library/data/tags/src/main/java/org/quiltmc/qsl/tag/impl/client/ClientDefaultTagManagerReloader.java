@@ -68,9 +68,9 @@ final class ClientDefaultTagManagerReloader extends ClientOnlyTagManagerReloader
 	 * @return the modified resource manager
 	 */
 	private AutoCloseableResourceManager getServerDataResourceManager() {
-		resourcePackManager.setEnabledProfiles(MinecraftClient.getInstance().getResourcePackManager().getEnabledNames());
-		resourcePackManager.scanPacks();
-		var manager = new MultiPackResourceManager(ResourceType.SERVER_DATA, resourcePackManager.createResourcePacks());
+		this.resourcePackManager.setEnabledProfiles(MinecraftClient.getInstance().getResourcePackManager().getEnabledNames());
+		this.resourcePackManager.scanPacks();
+		var manager = new MultiPackResourceManager(ResourceType.SERVER_DATA, this.resourcePackManager.createResourcePacks());
 		((QuiltMultiPackResourceManagerHooks) manager).quilt$appendTopPacks();
 		return manager;
 	}

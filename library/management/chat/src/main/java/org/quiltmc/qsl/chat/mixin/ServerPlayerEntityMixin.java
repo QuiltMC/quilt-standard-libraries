@@ -39,7 +39,7 @@ public class ServerPlayerEntityMixin {
 	public void quilt$captureAndModifyOutboundSystemMessage(Text originalMessage, boolean overlay, CallbackInfo ci) {
 		var message = new SystemS2CMessage((ServerPlayerEntity) (Object) this, false, originalMessage, overlay);
 
-		quilt$sendSystemMessage$storedSystemMessage = (SystemS2CMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message);
+		this.quilt$sendSystemMessage$storedSystemMessage = (SystemS2CMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message);
 	}
 
 	@Redirect(
@@ -50,12 +50,12 @@ public class ServerPlayerEntityMixin {
 			)
 	)
 	public void quilt$cancelAndBeforeAndAfterOutboundSystemMessage(ServerPlayNetworkHandler instance, Packet<?> packet, PacketSendListener listener) {
-		if (QuiltChatEvents.CANCEL.invoke(quilt$sendSystemMessage$storedSystemMessage) != Boolean.TRUE) {
-			QuiltChatEvents.BEFORE_PROCESS.invoke(quilt$sendSystemMessage$storedSystemMessage);
-			instance.sendPacket(quilt$sendSystemMessage$storedSystemMessage.serialized(), listener);
-			QuiltChatEvents.AFTER_PROCESS.invoke(quilt$sendSystemMessage$storedSystemMessage);
+		if (QuiltChatEvents.CANCEL.invoke(this.quilt$sendSystemMessage$storedSystemMessage) != Boolean.TRUE) {
+			QuiltChatEvents.BEFORE_PROCESS.invoke(this.quilt$sendSystemMessage$storedSystemMessage);
+			instance.sendPacket(this.quilt$sendSystemMessage$storedSystemMessage.serialized(), listener);
+			QuiltChatEvents.AFTER_PROCESS.invoke(this.quilt$sendSystemMessage$storedSystemMessage);
 		} else {
-			QuiltChatEvents.CANCELLED.invoke(quilt$sendSystemMessage$storedSystemMessage);
+			QuiltChatEvents.CANCELLED.invoke(this.quilt$sendSystemMessage$storedSystemMessage);
 		}
 	}
 }

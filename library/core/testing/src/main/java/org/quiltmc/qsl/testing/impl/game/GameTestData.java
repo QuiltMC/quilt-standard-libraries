@@ -22,5 +22,4 @@ import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.testing.api.game.QuiltGameTest;
 
 @ApiStatus.Internal
-public record GameTestData(String namespace, @Nullable QuiltGameTest instance) {
-}
+public record GameTestData(String namespace, @Nullable QuiltGameTest instance) {}

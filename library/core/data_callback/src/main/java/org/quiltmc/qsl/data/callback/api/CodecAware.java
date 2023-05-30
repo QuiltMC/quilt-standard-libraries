@@ -27,7 +27,6 @@ import net.minecraft.util.Identifier;
  * some {@link CodecMap}.
  */
 public interface CodecAware {
-
 	/**
 	 * {@return the identifier of the codec that can be used to encode this object, or {@code null} if this object is not encodable}
 	 */

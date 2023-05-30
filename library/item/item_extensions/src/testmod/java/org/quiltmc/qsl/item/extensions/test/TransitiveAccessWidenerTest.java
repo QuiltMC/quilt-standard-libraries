@@ -29,7 +29,7 @@ import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 
 public class TransitiveAccessWidenerTest implements ModInitializer {
 	public static final Item MODDED_MUSIC_DISC = new MusicDiscItem(
-		5, SoundEvents.BLOCK_COMPOSTER_READY, new Item.Settings().maxCount(1).rarity(Rarity.RARE), 4
+			5, SoundEvents.BLOCK_COMPOSTER_READY, new Item.Settings().maxCount(1).rarity(Rarity.RARE), 4
 	);
 
 	@Override

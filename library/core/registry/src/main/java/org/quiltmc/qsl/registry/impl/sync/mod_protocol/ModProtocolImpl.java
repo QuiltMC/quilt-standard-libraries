@@ -48,7 +48,6 @@ public class ModProtocolImpl {
 		//disableQuery = modProto.disable_mod_protocol_ping;
 		disableQuery = (Boolean) RegistryConfig.getSync("disable_mod_protocol_ping");
 
-
 		//if (modProto.mod_protocol_version >= 0) {
 		if (((Number) RegistryConfig.getSync("mod_protocol_version")).intValue() >= 0) {
 			//prioritizedEntry = new ModProtocolDef("global:" + modProto.mod_protocol_id, modProto.mod_protocol_name, IntList.of(modProto.mod_protocol_version), false);
@@ -87,8 +86,10 @@ public class ModProtocolImpl {
 						invalidEntryType(".optional", container, LoaderValue.LType.BOOLEAN, optVal.type());
 						continue;
 					}
+
 					optional = optVal.asBoolean();
 				}
+
 				var version = decodeVersion(".value", container, object.get("value"));
 
 				if (version != null) {
@@ -133,6 +134,7 @@ public class ModProtocolImpl {
 					return null;
 				}
 			}
+
 			return versions;
 		} else {
 			invalidEntryType(path + ".optional", container, LoaderValue.LType.NUMBER, value.type());
@@ -159,6 +161,7 @@ public class ModProtocolImpl {
 		if (!def.optional()) {
 			REQUIRED.add(def);
 		}
+
 		ALL.add(def);
 		enabled = true;
 	}

@@ -66,7 +66,7 @@ abstract class ClientLoginNetworkHandlerMixin implements NetworkHandlerExtension
 
 	@Inject(method = "onLoginSuccess", at = @At("HEAD"))
 	private void handlePlayTransition(CallbackInfo ci) {
-		addon.handlePlayTransition();
+		this.addon.handlePlayTransition();
 	}
 
 	@Override

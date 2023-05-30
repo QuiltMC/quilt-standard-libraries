@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.registry.attachment.impl;
 
 import org.jetbrains.annotations.ApiStatus;
+
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 
 /**

@@ -21,16 +21,16 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
-import net.minecraft.block.enums.NoteBlockInstrument;
-import net.minecraft.feature_flags.FeatureFlagBitSet;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.MapColor;
+import net.minecraft.block.enums.NoteBlockInstrument;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.EntityType;
+import net.minecraft.feature_flags.FeatureFlagBitSet;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 

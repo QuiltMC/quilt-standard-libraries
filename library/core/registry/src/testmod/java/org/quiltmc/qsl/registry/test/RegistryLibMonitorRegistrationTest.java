@@ -18,12 +18,12 @@ package org.quiltmc.qsl.registry.test;
 
 import static org.quiltmc.qsl.registry.test.RegistryLibEventsTest.register;
 
-import net.minecraft.block.Blocks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.MapColor;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;

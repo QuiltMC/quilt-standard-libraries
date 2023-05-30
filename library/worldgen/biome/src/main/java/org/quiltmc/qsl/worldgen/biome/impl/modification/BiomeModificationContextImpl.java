@@ -143,7 +143,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 	}
 
 	private class WeatherContextImpl implements WeatherContext {
-		private final Biome.Weather weather = biome.weather;
+		private final Biome.Weather weather = BiomeModificationContextImpl.this.biome.weather;
 
 		@Override
 		public void setHasPrecipitation(boolean hasPrecipitation) {
@@ -167,7 +167,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 	}
 
 	private class EffectsContextImpl implements EffectsContext {
-		private final BiomeEffects effects = biome.getEffects();
+		private final BiomeEffects effects = BiomeModificationContextImpl.this.biome.getEffects();
 
 		@Override
 		public void setFogColor(int color) {
@@ -231,9 +231,9 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 	}
 
 	private class GenerationSettingsContextImpl implements GenerationSettingsContext {
-		private final Registry<ConfiguredCarver<?>> carvers = registries.get(RegistryKeys.CONFIGURED_CARVER);
-		private final Registry<PlacedFeature> features = registries.get(RegistryKeys.PLACED_FEATURE);
-		private final GenerationSettings generationSettings = biome.getGenerationSettings();
+		private final Registry<ConfiguredCarver<?>> carvers = BiomeModificationContextImpl.this.registries.get(RegistryKeys.CONFIGURED_CARVER);
+		private final Registry<PlacedFeature> features = BiomeModificationContextImpl.this.registries.get(RegistryKeys.PLACED_FEATURE);
+		private final GenerationSettings generationSettings = BiomeModificationContextImpl.this.biome.getGenerationSettings();
 
 		private boolean rebuildFlowerFeatures;
 
@@ -338,9 +338,9 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 		public void addCarver(GenerationStep.Carver step, RegistryKey<ConfiguredCarver<?>> entry) {
 			// We do not need to delay evaluation of this since the registries are already fully built.
 			var oldCarvers = this.generationSettings.carvers.get(step);
-			var newCarvers = oldCarvers == null ?
-					HolderSet.createDirect(Collections.singletonList(getHolder(this.carvers, entry))) :
-					this.plus(oldCarvers, getHolder(this.carvers, entry));
+			var newCarvers = oldCarvers == null
+					? HolderSet.createDirect(Collections.singletonList(getHolder(this.carvers, entry)))
+					: this.plus(oldCarvers, getHolder(this.carvers, entry));
 			this.generationSettings.carvers.put(step, newCarvers);
 		}
 
@@ -371,7 +371,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 	}
 
 	private class SpawnSettingsContextImpl implements SpawnSettingsContext {
-		private final SpawnSettings spawnSettings = biome.getSpawnSettings();
+		private final SpawnSettings spawnSettings = BiomeModificationContextImpl.this.biome.getSpawnSettings();
 		private final EnumMap<SpawnGroup, List<SpawnSettings.SpawnEntry>> quiltSpawners = new EnumMap<>(SpawnGroup.class);
 
 		SpawnSettingsContextImpl() {

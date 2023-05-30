@@ -16,15 +16,17 @@
 
 package org.quiltmc.qsl.entity.multipart.mixin.client;
 
-import net.minecraft.entity.Entity;
-import org.quiltmc.loader.api.minecraft.ClientOnly;
-import org.quiltmc.qsl.entity.multipart.api.EntityPart;
-import org.quiltmc.qsl.entity.multipart.api.MultipartEntity;
-import org.quiltmc.qsl.entity.multipart.impl.EntityPartTracker;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import net.minecraft.entity.Entity;
+
+import org.quiltmc.loader.api.minecraft.ClientOnly;
+import org.quiltmc.qsl.entity.multipart.api.EntityPart;
+import org.quiltmc.qsl.entity.multipart.api.MultipartEntity;
+import org.quiltmc.qsl.entity.multipart.impl.EntityPartTracker;
 
 @ClientOnly
 @Mixin(targets = "net/minecraft/client/world/ClientWorld$ClientEntityHandler")

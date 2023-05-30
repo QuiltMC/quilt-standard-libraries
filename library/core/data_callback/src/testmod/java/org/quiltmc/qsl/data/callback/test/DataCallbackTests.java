@@ -40,7 +40,6 @@ import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.quiltmc.qsl.resource.loader.api.reloader.SimpleSynchronousResourceReloader;
 
 public class DataCallbackTests implements ModInitializer {
-
 	public static final Identifier BEFORE_PHASE = new Identifier("quilt_data_callback_testmod", "before_phase");
 	public static final Identifier AFTER_PHASE = new Identifier("quilt_data_callback_testmod", "after_phase");
 
@@ -65,7 +64,7 @@ public class DataCallbackTests implements ModInitializer {
 		JOIN_SERVER_CODECS.register(ServerJoinChat.CODEC_ID, ServerJoinChat.CODEC);
 
 		ServerPlayConnectionEvents.JOIN.register(((handler, sender, server) ->
-			SERVER_JOIN.invoker().onPlayReady(handler, sender, server)));
+				SERVER_JOIN.invoker().onPlayReady(handler, sender, server)));
 
 		JOIN_SERVER_DATA.register(new Identifier(mod.metadata().id(), "after"), new ServerJoinChat("Registered in the after phase from code!", Style.EMPTY), AFTER_PHASE);
 		// This callback is overridden by data and should not fire.
@@ -90,7 +89,6 @@ public class DataCallbackTests implements ModInitializer {
 	public interface ServerJoin extends CodecAware {
 		void onPlayReady(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server);
 	}
-
 
 	public record ServerJoinChat(String text, Style style) implements ServerJoin {
 		public static final Codec<ServerJoinChat> CODEC = RecordCodecBuilder.create(instance -> instance.group(Codec.STRING.fieldOf("text").forGetter(ServerJoinChat::text), Style.CODEC.fieldOf("style").forGetter(ServerJoinChat::style)).apply(instance, ServerJoinChat::new));

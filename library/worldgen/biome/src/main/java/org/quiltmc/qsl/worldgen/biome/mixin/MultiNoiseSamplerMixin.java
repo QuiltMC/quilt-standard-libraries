@@ -49,7 +49,7 @@ public abstract class MultiNoiseSamplerMixin implements MultiNoiseSamplerExtensi
 	@Override
 	public PerlinNoiseSampler quilt$getTheEndBiomesSampler() {
 		if (this.quilt$theEndBiomesSampler == null) {
-			Preconditions.checkState(quilt$seed != null, "MultiNoiseSampler doesn't have a seed set, created using different method?");
+			Preconditions.checkState(this.quilt$seed != null, "MultiNoiseSampler doesn't have a seed set, created using different method?");
 			this.quilt$theEndBiomesSampler = new PerlinNoiseSampler(new ChunkRandom(new LegacySimpleRandom((this.quilt$seed))));
 		}
 

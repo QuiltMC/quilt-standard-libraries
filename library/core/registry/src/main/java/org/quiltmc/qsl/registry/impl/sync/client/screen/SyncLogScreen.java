@@ -75,6 +75,6 @@ public class SyncLogScreen extends Screen {
 
 	@Override
 	public void closeScreen() {
-		this.client.setScreen(parent);
+		this.client.setScreen(this.parent);
 	}
 }

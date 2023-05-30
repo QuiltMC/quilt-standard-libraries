@@ -83,9 +83,9 @@ public class ArmorKnockbackTest implements ModInitializer {
 	};
 
 	private static final ArmorItem KNOCKBACK_RESISTANCE_CHESTPLATE = new ArmorItem(
-		KNOCKBACK_RESISTANCE_ARMOR,
-		ArmorSlot.CHESTPLATE,
-		new Item.Settings().rarity(Rarity.RARE)
+			KNOCKBACK_RESISTANCE_ARMOR,
+			ArmorSlot.CHESTPLATE,
+			new Item.Settings().rarity(Rarity.RARE)
 	) {
 		@Override
 		public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
@@ -97,9 +97,9 @@ public class ArmorKnockbackTest implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		Registry.register(
-			Registries.ITEM,
-			new Identifier(mod.metadata().id(), "knockback_resistance_chestplate"),
-			KNOCKBACK_RESISTANCE_CHESTPLATE
+				Registries.ITEM,
+				new Identifier(mod.metadata().id(), "knockback_resistance_chestplate"),
+				KNOCKBACK_RESISTANCE_CHESTPLATE
 		);
 	}
 }

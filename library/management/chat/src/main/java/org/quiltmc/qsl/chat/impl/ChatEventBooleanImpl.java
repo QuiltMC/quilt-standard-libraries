@@ -16,15 +16,17 @@
 
 package org.quiltmc.qsl.chat.impl;
 
-import net.minecraft.util.Identifier;
+import java.util.EnumSet;
+import java.util.function.BiFunction;
+
 import org.jetbrains.annotations.NotNull;
+
+import net.minecraft.util.Identifier;
+
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.chat.api.ChatEvent;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
-
-import java.util.EnumSet;
-import java.util.function.BiFunction;
 
 /**
  * An implementation of {@link ChatEvent} that always returns a {@link Boolean} and has special short circuiting logic for if a callback returns true.
@@ -41,12 +43,13 @@ public class ChatEventBooleanImpl<C> implements ChatEvent<C, Boolean> {
 		@Override
 		public Boolean handleMessage(@NotNull AbstractChatMessage<?> message) {
 			for (var hook : hooks) {
-				if (shouldPassOnMessageToHook(message.getTypes(), hook.getMessageTypes())) {
+				if (ChatEventBooleanImpl.this.shouldPassOnMessageToHook(message.getTypes(), hook.getMessageTypes())) {
 					if (hook.handleMessage(message)) {
 						return true;
 					}
 				}
 			}
+
 			return false;
 		}
 	});

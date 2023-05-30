@@ -45,7 +45,6 @@ public interface ModProtocolContainer {
 					});
 				});
 
-
 				return value;
 			}
 

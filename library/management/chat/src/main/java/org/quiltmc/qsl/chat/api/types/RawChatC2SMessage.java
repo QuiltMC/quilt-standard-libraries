@@ -16,12 +16,14 @@
 
 package org.quiltmc.qsl.chat.api.types;
 
-import net.minecraft.entity.player.PlayerEntity;
+import java.util.EnumSet;
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.quiltmc.qsl.chat.api.QuiltMessageType;
 
-import java.util.EnumSet;
+import net.minecraft.entity.player.PlayerEntity;
+
+import org.quiltmc.qsl.chat.api.QuiltMessageType;
 
 /**
  * A raw C2S chat message. This is a message before it has been signed by the client.
