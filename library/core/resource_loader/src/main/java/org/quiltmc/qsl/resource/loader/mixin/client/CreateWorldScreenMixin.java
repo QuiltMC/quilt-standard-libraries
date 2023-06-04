@@ -54,7 +54,7 @@ public abstract class CreateWorldScreenMixin {
 	}
 
 	@Inject(
-			method = "method_45679",
+			method = "validateDataPacks",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/server/WorldLoader;load(Lnet/minecraft/server/WorldLoader$InitConfig;Lnet/minecraft/server/WorldLoader$LoadContextSupplier;Lnet/minecraft/server/WorldLoader$ApplierFactory;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"
