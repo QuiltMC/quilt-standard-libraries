@@ -16,20 +16,19 @@
 
 package org.quiltmc.qsl.chat.api.types;
 
-import java.util.EnumSet;
-
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.message.MessageType;
 import net.minecraft.network.packet.s2c.play.ProfileIndependentMessageS2CPacket;
 import net.minecraft.text.Text;
-
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import org.quiltmc.qsl.chat.impl.InternalMessageTypesFactory;
 import org.quiltmc.qsl.chat.mixin.client.ClientPlayNetworkHandlerAccessor;
+import org.slf4j.LoggerFactory;
+
+import java.util.EnumSet;
 
 /**
  * A wrapper around a "profile independent" message. These are usually created as a result of commands like {@link net.minecraft.server.command.MessageCommand}.
@@ -45,7 +44,10 @@ public class ProfileIndependentS2CMessage extends AbstractChatMessage<ProfileInd
 				packet.message(),
 				packet.messageType().createParameters(player.getWorld().getRegistryManager()).orElseGet(() -> {
 					if (player instanceof ClientPlayerEntity clientPlayerEntity) {
-						((ClientPlayNetworkHandlerAccessor) clientPlayerEntity.networkHandler).getConnection().disconnect(Text.translatable("multiplayer.disconnect.invalid_packet"));
+						LoggerFactory.getLogger("Quilt Chat API ProfileIndependentS2CMessage")
+							.error("Failed to create message type parameters");
+						((ClientPlayNetworkHandlerAccessor) clientPlayerEntity.networkHandler).getConnection()
+							.disconnect(Text.translatable("multiplayer.disconnect.invalid_packet"));
 					}
 
 					return null;

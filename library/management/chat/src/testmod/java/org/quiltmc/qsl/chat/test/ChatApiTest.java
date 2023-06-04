@@ -27,7 +27,6 @@ import org.quiltmc.qsl.chat.api.types.*;
 import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spongepowered.asm.mixin.MixinEnvironment;
 
 import java.util.EnumSet;
 import java.util.Random;
@@ -41,7 +40,12 @@ public class ChatApiTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		MixinEnvironment.getCurrentEnvironment().setOption(MixinEnvironment.Option.DEBUG_EXPORT, true);
+		QuiltChatEvents.MODIFY.register(EnumSet.of(QuiltMessageType.SYSTEM, QuiltMessageType.INBOUND), abstractMessage -> {
+			if (abstractMessage instanceof SystemS2CMessage systemMessage && new Random().nextBoolean()) {
+				return systemMessage.withContent(systemMessage.getContent().copy().append(Text.of(", uwu")));
+			}
+			return abstractMessage;
+		});
 
 		CommandRegistrationCallback.EVENT.register((dispatcher, buildContext, environment) -> {
 			dispatcher.register(CommandManager.literal("quilt_chat_api_testmod")
@@ -68,7 +72,7 @@ public class ChatApiTest implements ModInitializer {
 					}))
 					.then(CommandManager.literal("random_signed_chat_cancel")
 						.then(CommandManager.literal("inbound").executes(context -> {
-							QuiltChatEvents.CANCEL.register(EnumSet.of(QuiltMessageType.CLIENT, QuiltMessageType.INBOUND), abstractMessage -> {
+							QuiltChatEvents.CANCEL.register(EnumSet.of(QuiltMessageType.SERVER, QuiltMessageType.INBOUND), abstractMessage -> {
 								if (!(abstractMessage instanceof ChatC2SMessage) && !(abstractMessage instanceof CommandC2SMessage)) return false;
 								if (new Random().nextBoolean()) {
 									System.out.println("QC|TEST Cancelling inbound message");
@@ -80,8 +84,8 @@ public class ChatApiTest implements ModInitializer {
 							return 0;
 						}))
 						.then(CommandManager.literal("outbound").executes(context -> {
-							QuiltChatEvents.CANCEL.register(EnumSet.of(QuiltMessageType.CLIENT, QuiltMessageType.OUTBOUND), abstractMessage -> {
-								if (!(abstractMessage instanceof ChatC2SMessage) && !(abstractMessage instanceof CommandC2SMessage)) return false;
+							QuiltChatEvents.CANCEL.register(EnumSet.of(QuiltMessageType.SERVER, QuiltMessageType.OUTBOUND), abstractMessage -> {
+								if (!(abstractMessage instanceof ChatS2CMessage)) return false;
 								if (new Random().nextBoolean()) {
 									System.out.println("QC|TEST Cancelling outbound message");
 									return true;
