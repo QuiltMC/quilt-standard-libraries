@@ -31,6 +31,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import org.quiltmc.qsl.chat.api.QuiltChatEvents;
 import org.quiltmc.qsl.chat.api.types.*;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -65,8 +66,15 @@ public abstract class ServerPlayNetworkHandlerMixin {
 	@Shadow
 	protected abstract ParseResults<ServerCommandSource> method_45003(String string);
 
+	@Shadow
+	@Final
+	private MessageSignatureStorage messageSignatureStorage;
+
 	@Unique
 	private ProfileIndependentS2CMessage quilt$sendProfileIndependentMessage$storedProfileIndependentMessage;
+
+	@Unique
+	private SignedChatMessage quilt$sendChatMessage$storedSignedChatMessage;
 
 	@ModifyVariable(method = "onChatMessage", at = @At("HEAD"), argsOnly = true)
 	public ChatMessageC2SPacket quilt$modifyInboundChatMessage(ChatMessageC2SPacket packet) {
@@ -144,6 +152,14 @@ public abstract class ServerPlayNetworkHandlerMixin {
 		QuiltChatEvents.AFTER_PROCESS.invoke(quilt$sendProfileIndependentMessage$storedProfileIndependentMessage);
 	}
 
+	@Inject(
+		method = "sendChatMessage(Lnet/minecraft/network/message/SignedChatMessage;Lnet/minecraft/network/message/MessageType$Parameters;)V",
+		at = @At("HEAD")
+	)
+	public void quilt$captureSignedChatMessage(SignedChatMessage message, MessageType.Parameters parameters, CallbackInfo ci) {
+		quilt$sendChatMessage$storedSignedChatMessage = message;
+	}
+
 	@Redirect(
 			method = "sendChatMessage(Lnet/minecraft/network/message/SignedChatMessage;Lnet/minecraft/network/message/MessageType$Parameters;)V",
 			at = @At(
@@ -158,6 +174,14 @@ public abstract class ServerPlayNetworkHandlerMixin {
 
 			if (QuiltChatEvents.CANCEL.invoke(message) == Boolean.TRUE) {
 				QuiltChatEvents.CANCELLED.invoke(message);
+
+				// This is, technically, wrong!
+				// We need the SignedChatMessage, but we cant construct one once we decompose it
+				// Anyone messing with signatures should be able to fix this mod side though luckily
+				// (and probably should even if it doesn't break, since cancellation is always after modification)
+				// - silver
+				messageSignatureStorage.addMessageSignatures(quilt$sendChatMessage$storedSignedChatMessage);
+
 				return;
 			}
 
