@@ -16,9 +16,8 @@
 
 package org.quiltmc.qsl.chat.mixin.rollback_support;
 
-import net.minecraft.network.message.AcknowledgedMessage;
-import net.minecraft.network.message.LastSeenMessageTracker;
-import net.minecraft.network.message.MessageSignature;
+import java.util.logging.Logger;
+
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.chat.api.ChatSecurityRollbackSupport;
 import org.spongepowered.asm.mixin.Final;
@@ -26,7 +25,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.logging.Logger;
+import net.minecraft.network.message.AcknowledgedMessage;
+import net.minecraft.network.message.LastSeenMessageTracker;
+import net.minecraft.network.message.MessageSignature;
 
 @Mixin(LastSeenMessageTracker.class)
 public class LastSeenMessageTrackerMixin implements ChatSecurityRollbackSupport {

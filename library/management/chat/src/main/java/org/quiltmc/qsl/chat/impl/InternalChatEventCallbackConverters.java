@@ -16,15 +16,15 @@
 
 package org.quiltmc.qsl.chat.impl;
 
+import java.util.EnumSet;
+
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.chat.api.QuiltChatEvents;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
 
-import java.util.EnumSet;
-
 /**
- * Converts various callbacks from {@link QuiltChatEvents} into {@link TypedChatApiHook}s
+ * Converts various callbacks from {@link QuiltChatEvents} into {@link TypedChatApiHook}s.
  */
 public class InternalChatEventCallbackConverters {
 	private InternalChatEventCallbackConverters() { }

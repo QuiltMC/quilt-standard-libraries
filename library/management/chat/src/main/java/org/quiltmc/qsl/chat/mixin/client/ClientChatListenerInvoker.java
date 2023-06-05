@@ -16,13 +16,14 @@
 
 package org.quiltmc.qsl.chat.mixin.client;
 
-import net.minecraft.client.network.ChatListener;
-import net.minecraft.network.message.MessageSignature;
+import java.util.function.BooleanSupplier;
+
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-import java.util.function.BooleanSupplier;
+import net.minecraft.client.network.ChatListener;
+import net.minecraft.network.message.MessageSignature;
 
 @Mixin(ChatListener.class)
 public interface ClientChatListenerInvoker {

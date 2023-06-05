@@ -16,10 +16,11 @@
 
 package org.quiltmc.qsl.chat.api;
 
-import net.minecraft.network.message.MessageChain;
+import java.util.WeakHashMap;
+
 import org.jetbrains.annotations.Nullable;
 
-import java.util.WeakHashMap;
+import net.minecraft.network.message.MessageChain;
 
 /**
  * Provides a method to get a {@link ChatSecurityRollbackSupport} from a {@link MessageChain.Packer} or {@link MessageChain.Unpacker}.

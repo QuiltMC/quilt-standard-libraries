@@ -16,28 +16,21 @@
 
 package org.quiltmc.qsl.chat.mixin.client;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.client.registry.ClientRegistryLayer;
-import net.minecraft.network.ClientConnection;
-import net.minecraft.network.encryption.PublicChatSession;
-import net.minecraft.network.message.*;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.c2s.play.ChatCommandC2SPacket;
-import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
-import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
-import net.minecraft.network.packet.s2c.play.MessageRemovalS2CPacket;
-import net.minecraft.network.packet.s2c.play.ProfileIndependentMessageS2CPacket;
-import net.minecraft.network.packet.s2c.play.SystemMessageS2CPacket;
-import net.minecraft.registry.LayeredRegistryManager;
-import net.minecraft.text.Text;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.quiltmc.qsl.chat.api.ChatSecurityRollbackSupport;
 import org.quiltmc.qsl.chat.api.MessageChainLookup;
 import org.quiltmc.qsl.chat.api.QuiltChatEvents;
-import org.quiltmc.qsl.chat.api.types.*;
+import org.quiltmc.qsl.chat.api.types.ChatC2SMessage;
+import org.quiltmc.qsl.chat.api.types.ChatS2CMessage;
+import org.quiltmc.qsl.chat.api.types.CommandC2SMessage;
+import org.quiltmc.qsl.chat.api.types.ProfileIndependentS2CMessage;
+import org.quiltmc.qsl.chat.api.types.RawChatC2SMessage;
+import org.quiltmc.qsl.chat.api.types.RemovalS2CMessage;
+import org.quiltmc.qsl.chat.api.types.SystemS2CMessage;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -48,8 +41,29 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Optional;
-import java.util.UUID;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.client.registry.ClientRegistryLayer;
+import net.minecraft.network.ClientConnection;
+import net.minecraft.network.encryption.PublicChatSession;
+import net.minecraft.network.message.LastSeenMessageTracker;
+import net.minecraft.network.message.MessageBody;
+import net.minecraft.network.message.MessageChain;
+import net.minecraft.network.message.MessageLink;
+import net.minecraft.network.message.MessageSignature;
+import net.minecraft.network.message.MessageSignatureStorage;
+import net.minecraft.network.message.MessageType;
+import net.minecraft.network.message.SignedChatMessage;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.c2s.play.ChatCommandC2SPacket;
+import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
+import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
+import net.minecraft.network.packet.s2c.play.MessageRemovalS2CPacket;
+import net.minecraft.network.packet.s2c.play.ProfileIndependentMessageS2CPacket;
+import net.minecraft.network.packet.s2c.play.SystemMessageS2CPacket;
+import net.minecraft.registry.LayeredRegistryManager;
+import net.minecraft.text.Text;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public abstract class ClientPlayNetworkHandlerMixin {
@@ -369,7 +383,7 @@ public abstract class ClientPlayNetworkHandlerMixin {
 			message = (ChatC2SMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message);
 
 			if (QuiltChatEvents.CANCEL.invoke(message) != Boolean.TRUE) {
-				((ChatSecurityRollbackSupport)lastSeenMessageTracker).dropSavedState();
+				((ChatSecurityRollbackSupport) lastSeenMessageTracker).dropSavedState();
 				var chain = MessageChainLookup.getFromPacker(messageChainPacker);
 				if (chain != null) {
 					chain.dropSavedState();

@@ -16,21 +16,17 @@
 
 package org.quiltmc.qsl.chat.mixin;
 
+import java.time.Instant;
+import java.util.Map;
+import java.util.Optional;
+
 import com.mojang.brigadier.ParseResults;
-import net.minecraft.command.SignedArgument;
-import net.minecraft.network.PacketSendListener;
-import net.minecraft.network.message.*;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.c2s.play.ChatCommandC2SPacket;
-import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
-import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
-import net.minecraft.network.packet.s2c.play.MessageRemovalS2CPacket;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 import org.quiltmc.qsl.chat.api.QuiltChatEvents;
-import org.quiltmc.qsl.chat.api.types.*;
+import org.quiltmc.qsl.chat.api.types.ChatC2SMessage;
+import org.quiltmc.qsl.chat.api.types.ChatS2CMessage;
+import org.quiltmc.qsl.chat.api.types.CommandC2SMessage;
+import org.quiltmc.qsl.chat.api.types.ProfileIndependentS2CMessage;
+import org.quiltmc.qsl.chat.api.types.RemovalS2CMessage;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -41,9 +37,23 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.time.Instant;
-import java.util.Map;
-import java.util.Optional;
+import net.minecraft.command.SignedArgument;
+import net.minecraft.network.PacketSendListener;
+import net.minecraft.network.message.MessageBody;
+import net.minecraft.network.message.MessageChain;
+import net.minecraft.network.message.MessageSignatureList;
+import net.minecraft.network.message.MessageSignatureStorage;
+import net.minecraft.network.message.MessageType;
+import net.minecraft.network.message.SignedChatMessage;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.c2s.play.ChatCommandC2SPacket;
+import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
+import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
+import net.minecraft.network.packet.s2c.play.MessageRemovalS2CPacket;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 
 @Mixin(ServerPlayNetworkHandler.class)
 public abstract class ServerPlayNetworkHandlerMixin {

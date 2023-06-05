@@ -16,11 +16,11 @@
 
 package org.quiltmc.qsl.chat.impl;
 
+import java.util.EnumSet;
+
 import org.jetbrains.annotations.NotNull;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
-
-import java.util.EnumSet;
 
 /**
  * The common interface describing a chat message hook. This should almost never be implemented manually, instead

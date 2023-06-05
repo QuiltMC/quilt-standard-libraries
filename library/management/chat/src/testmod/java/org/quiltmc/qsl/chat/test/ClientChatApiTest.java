@@ -16,20 +16,29 @@
 
 package org.quiltmc.qsl.chat.test;
 
-import net.minecraft.network.packet.s2c.play.MessageRemovalS2CPacket;
-import net.minecraft.text.Text;
-import org.quiltmc.loader.api.ModContainer;
-import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
-import org.quiltmc.qsl.chat.api.QuiltChatEvents;
-import org.quiltmc.qsl.chat.api.QuiltMessageType;
-import org.quiltmc.qsl.chat.api.types.*;
-import org.quiltmc.qsl.command.api.client.ClientCommandManager;
-import org.quiltmc.qsl.command.api.client.ClientCommandRegistrationCallback;
+import static org.quiltmc.qsl.chat.test.ChatApiTest.AFTER_LOGGER;
+import static org.quiltmc.qsl.chat.test.ChatApiTest.BEFORE_LOGGER;
+import static org.quiltmc.qsl.chat.test.ChatApiTest.CANCELLED_LOGGER;
+import static org.quiltmc.qsl.chat.test.ChatApiTest.CANCEL_LOGGER;
+import static org.quiltmc.qsl.chat.test.ChatApiTest.MODIFY_LOGGER;
 
 import java.util.EnumSet;
 import java.util.Random;
 
-import static org.quiltmc.qsl.chat.test.ChatApiTest.*;
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
+import org.quiltmc.qsl.chat.api.QuiltChatEvents;
+import org.quiltmc.qsl.chat.api.QuiltMessageType;
+import org.quiltmc.qsl.chat.api.types.ChatC2SMessage;
+import org.quiltmc.qsl.chat.api.types.CommandC2SMessage;
+import org.quiltmc.qsl.chat.api.types.RawChatC2SMessage;
+import org.quiltmc.qsl.chat.api.types.RemovalS2CMessage;
+import org.quiltmc.qsl.chat.api.types.SystemS2CMessage;
+import org.quiltmc.qsl.command.api.client.ClientCommandManager;
+import org.quiltmc.qsl.command.api.client.ClientCommandRegistrationCallback;
+
+import net.minecraft.network.packet.s2c.play.MessageRemovalS2CPacket;
+import net.minecraft.text.Text;
 
 public class ClientChatApiTest implements ClientModInitializer {
 	@Override

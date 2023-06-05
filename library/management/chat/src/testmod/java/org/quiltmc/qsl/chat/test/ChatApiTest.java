@@ -16,20 +16,26 @@
 
 package org.quiltmc.qsl.chat.test;
 
-import net.minecraft.network.packet.s2c.play.MessageRemovalS2CPacket;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.text.Text;
+import java.util.EnumSet;
+import java.util.Random;
+
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.chat.api.QuiltChatEvents;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
-import org.quiltmc.qsl.chat.api.types.*;
+import org.quiltmc.qsl.chat.api.types.ChatC2SMessage;
+import org.quiltmc.qsl.chat.api.types.ChatS2CMessage;
+import org.quiltmc.qsl.chat.api.types.CommandC2SMessage;
+import org.quiltmc.qsl.chat.api.types.RawChatC2SMessage;
+import org.quiltmc.qsl.chat.api.types.RemovalS2CMessage;
+import org.quiltmc.qsl.chat.api.types.SystemS2CMessage;
 import org.quiltmc.qsl.command.api.CommandRegistrationCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.EnumSet;
-import java.util.Random;
+import net.minecraft.network.packet.s2c.play.MessageRemovalS2CPacket;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.text.Text;
 
 public class ChatApiTest implements ModInitializer {
 	static final Logger MODIFY_LOGGER = LoggerFactory.getLogger("QuiltChat|MODIFY");

@@ -20,10 +20,9 @@ import java.util.EnumSet;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.quiltmc.qsl.chat.api.QuiltMessageType;
 
 import net.minecraft.entity.player.PlayerEntity;
-
-import org.quiltmc.qsl.chat.api.QuiltMessageType;
 
 /**
  * An abstract message, extended for the various types of messages.
