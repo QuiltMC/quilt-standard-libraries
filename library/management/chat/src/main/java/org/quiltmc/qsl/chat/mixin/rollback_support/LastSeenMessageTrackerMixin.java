@@ -74,7 +74,7 @@ public class LastSeenMessageTrackerMixin implements ChatSecurityRollbackSupport 
 		messageCount = this.quilt$rollbackSupport$messageCount;
 		signature = this.quilt$rollbackSupport$signature;
 
-		quilt$rollbackSupport$hasSavedState = false;
+		dropSavedState();
 	}
 
 	@Override

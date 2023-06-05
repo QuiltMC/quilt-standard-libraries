@@ -84,6 +84,7 @@ public abstract class ClientPlayNetworkHandlerMixin {
 	@Shadow
 	private MessageChain.Packer messageChainPacker;
 
+	//region Inbound Chat Messages
 	@ModifyVariable(
 			method = "onChatMessage",
 			at = @At(
@@ -117,11 +118,18 @@ public abstract class ClientPlayNetworkHandlerMixin {
 			if (playerListEntry == null) {
 				connection.disconnect(CHAT_VALIDATION_FAILED_DISCONNECT);
 			} else {
-				// This is a LOT but we need to extract and track the signatures
+				// This is a LOT but we need to extract and track the signatures without triggering further processing
+				// its is also probably one of the more likely areas to break, sorry any future people here!
+				// - silver
+
+				// Try and extract some info from the packet
 				Optional<MessageBody> body = packet.body().createBody(messageSignatureStorage);
 				Optional<MessageType.Parameters> parameters = packet.messageType()
 					.createParameters(clientRegistryManager.getCompositeManager());
+				// If neither failed
 				if (body.isPresent() && parameters.isPresent()) {
+					// Create a link between the old message and the new one, generating one from scratch
+					// if we dont have one yet
 					PublicChatSession publicChatSession = playerListEntry.getChatSession();
 					MessageLink messageLink;
 					if (publicChatSession != null) {
@@ -130,6 +138,7 @@ public abstract class ClientPlayNetworkHandlerMixin {
 						messageLink = MessageLink.create(uuid);
 					}
 
+					// Try to put our signed message and link into the chain, fails if unsuccessful
 					SignedChatMessage signedChatMessage = new SignedChatMessage(
 							messageLink, packet.signature(), body.get(), packet.unsignedContent(), packet.filterMask()
 					);
@@ -179,7 +188,9 @@ public abstract class ClientPlayNetworkHandlerMixin {
 		var message = new ChatS2CMessage(this.client.player, true, packet);
 		QuiltChatEvents.AFTER_PROCESS.invoke(message);
 	}
+	//endregion
 
+	//region Inbound System Messages
 	@ModifyVariable(
 			method = "onSystemMessage",
 			at = @At(
@@ -228,7 +239,9 @@ public abstract class ClientPlayNetworkHandlerMixin {
 		var message = new SystemS2CMessage(this.client.player, true, packet);
 		QuiltChatEvents.AFTER_PROCESS.invoke(message);
 	}
+	//endregion
 
+	//region Inbound Profile Independent Message
 	@ModifyVariable(
 			method = "onProfileIndependentMessage",
 			at = @At(
@@ -285,7 +298,9 @@ public abstract class ClientPlayNetworkHandlerMixin {
 		var message = new ProfileIndependentS2CMessage(this.client.player, true, packet);
 		QuiltChatEvents.AFTER_PROCESS.invoke(message);
 	}
+	//endregion
 
+	//region Outbound Raw Chat Messages
 	@ModifyVariable(method = "sendChatMessage", at = @At("HEAD"), argsOnly = true)
 	public String quilt$modifyOutboundRawChatMessage(String string) {
 		// Not sure *why* this would be null but IDEA is complaining, so, safety first?
@@ -322,7 +337,9 @@ public abstract class ClientPlayNetworkHandlerMixin {
 		var message = new RawChatC2SMessage(this.client.player, true, string);
 		QuiltChatEvents.AFTER_PROCESS.invoke(message);
 	}
+	//endregion
 
+	//region Outbound Chat Messages
 	@Inject(
 		method = "sendChatMessage",
 		at = @At(
@@ -374,7 +391,9 @@ public abstract class ClientPlayNetworkHandlerMixin {
 			);
 		}
 	}
+	//endregion
 
+	//region Inbound Message Removal
 	@ModifyVariable(
 		method = "onMessageRemoval",
 		at = @At(
@@ -420,7 +439,9 @@ public abstract class ClientPlayNetworkHandlerMixin {
 		var message = new RemovalS2CMessage(client.player, true, packet);
 		QuiltChatEvents.AFTER_PROCESS.invoke(message);
 	}
+	//endregion
 
+	//region Outbound Commands
 	@Inject(
 		method = "sendChatCommand",
 		at = @At(
@@ -486,4 +507,5 @@ public abstract class ClientPlayNetworkHandlerMixin {
 			);
 		}
 	}
+	//endregion
 }

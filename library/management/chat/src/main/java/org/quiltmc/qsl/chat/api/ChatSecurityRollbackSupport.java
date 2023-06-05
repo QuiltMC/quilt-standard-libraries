@@ -22,22 +22,20 @@ package org.quiltmc.qsl.chat.api;
  */
 public interface ChatSecurityRollbackSupport {
 	/**
-	 * Save the current state of the system. If a state is already saved and wasn't removed
-	 * (either by rolling back or dropping it), this should log a warning.
+	 * Save the current state of the system. If a state is already saved without being dropped, this logs a warning.
 	 */
 	void saveState();
 
 	/**
 	 * Rollback the state of the system to the last time that {@link ChatSecurityRollbackSupport#saveState} was called.
-	 * If no state has been saved (either from never calling {@link ChatSecurityRollbackSupport#saveState()} or
-	 * {@link ChatSecurityRollbackSupport#dropSavedState()} was called last), this should throw to make the likely error
-	 * state more obvious than getting disconnected later. This method should additionally drop the current saved state
+	 * If no state has been saved (either from never saving it or having dropped it), this throws to make the likely
+	 * error state more obvious than getting disconnected later. This method additionally drops the current saved state
 	 * of the system.
 	 */
 	void rollbackState();
 
 	/**
-	 * Drop the current saved state of the system. If no state has been saved, this should log a warning.
+	 * Drop the current saved state of the system. If no state has been saved, this logs a warning.
 	 */
 	void dropSavedState();
 }

@@ -61,7 +61,7 @@ public class MessageChainMixin implements ChatSecurityRollbackSupport {
 
 		link = quilt$rollbackSupport$link;
 
-		quilt$rollbackSupport$hasSavedState = false;
+		dropSavedState();
 	}
 
 	@Override
