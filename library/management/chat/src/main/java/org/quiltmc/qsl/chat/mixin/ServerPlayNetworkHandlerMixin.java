@@ -76,17 +76,41 @@ public abstract class ServerPlayNetworkHandlerMixin {
 	@Unique
 	private SignedChatMessage quilt$sendChatMessage$storedSignedChatMessage;
 
-	@ModifyVariable(method = "onChatMessage", at = @At("HEAD"), argsOnly = true)
-	public ChatMessageC2SPacket quilt$modifyInboundChatMessage(ChatMessageC2SPacket packet) {
-		var message = new ChatC2SMessage(player, false, packet);
+	//region Outbound Profile Independent Messages
+	@Inject(method = "sendProfileIndependentMessage", at = @At("HEAD"), cancellable = true)
+	public void quilt$captureAndModifyAndCancelAndBeforeOutboundProfileIndependentMessage(
+		Text message, MessageType.Parameters parameters, CallbackInfo ci
+	) {
+		var independentMessage = new ProfileIndependentS2CMessage(player, false, message, parameters);
+		quilt$sendProfileIndependentMessage$storedProfileIndependentMessage =
+			(ProfileIndependentS2CMessage) QuiltChatEvents.MODIFY.invokeOrElse(independentMessage, independentMessage);
 
-		return ((ChatC2SMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message)).serialized();
+		if (QuiltChatEvents.CANCEL.invoke(quilt$sendProfileIndependentMessage$storedProfileIndependentMessage) == Boolean.TRUE) {
+			ci.cancel();
+			return;
+		}
+
+		QuiltChatEvents.BEFORE_PROCESS.invoke(quilt$sendProfileIndependentMessage$storedProfileIndependentMessage);
 	}
 
+	@Redirect(
+		method = "sendProfileIndependentMessage",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/packet/Packet;)V"
+		)
+	)
+	public void quilt$afterOutboundProfileIndependentMessage(ServerPlayNetworkHandler instance, Packet<?> packet) {
+		instance.sendPacket(quilt$sendProfileIndependentMessage$storedProfileIndependentMessage.serialized());
+		QuiltChatEvents.AFTER_PROCESS.invoke(quilt$sendProfileIndependentMessage$storedProfileIndependentMessage);
+	}
+	//endregion
+
+	//region Inbound Chat Messages
 	@Inject(
-			method = "onChatMessage",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/c2s/play/ChatMessageC2SPacket;message()Ljava/lang/String;"),
-			cancellable = true
+		method = "onChatMessage",
+		at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/c2s/play/ChatMessageC2SPacket;message()Ljava/lang/String;"),
+		cancellable = true
 	)
 	public void quilt$cancelInboundChatMessage(ChatMessageC2SPacket packet, CallbackInfo ci) throws MessageChain.DecodingException {
 		var message = new ChatC2SMessage(player, false, packet);
@@ -100,6 +124,13 @@ public abstract class ServerPlayNetworkHandlerMixin {
 				messageChainUnpacker.unpack(packet.signature(), messageBody);
 			}
 		}
+	}
+
+	@ModifyVariable(method = "onChatMessage", at = @At("HEAD"), argsOnly = true)
+	public ChatMessageC2SPacket quilt$modifyInboundChatMessage(ChatMessageC2SPacket packet) {
+		var message = new ChatC2SMessage(player, false, packet);
+
+		return ((ChatC2SMessage) QuiltChatEvents.MODIFY.invokeOrElse(message, message)).serialized();
 	}
 
 	/*
@@ -123,40 +154,14 @@ public abstract class ServerPlayNetworkHandlerMixin {
 		var immutableMessage = new ChatC2SMessage(player, false, packet);
 		QuiltChatEvents.AFTER_PROCESS.invoke(immutableMessage);
 	}
+	//endregion
 
-	@Inject(method = "sendProfileIndependentMessage", at = @At("HEAD"), cancellable = true)
-	public void quilt$captureAndModifyAndCancelAndBeforeOutboundProfileIndependentMessage(
-		Text message, MessageType.Parameters parameters, CallbackInfo ci
-	) {
-		var independentMessage = new ProfileIndependentS2CMessage(player, false, message, parameters);
-		quilt$sendProfileIndependentMessage$storedProfileIndependentMessage =
-			(ProfileIndependentS2CMessage) QuiltChatEvents.MODIFY.invokeOrElse(independentMessage, independentMessage);
-
-		if (QuiltChatEvents.CANCEL.invoke(quilt$sendProfileIndependentMessage$storedProfileIndependentMessage) == Boolean.TRUE) {
-			ci.cancel();
-			return;
-		}
-
-		QuiltChatEvents.BEFORE_PROCESS.invoke(quilt$sendProfileIndependentMessage$storedProfileIndependentMessage);
-	}
-
-	@Redirect(
-			method = "sendProfileIndependentMessage",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/packet/Packet;)V"
-			)
-	)
-	public void quilt$afterOutboundProfileIndependentMessage(ServerPlayNetworkHandler instance, Packet<?> packet) {
-		instance.sendPacket(quilt$sendProfileIndependentMessage$storedProfileIndependentMessage.serialized());
-		QuiltChatEvents.AFTER_PROCESS.invoke(quilt$sendProfileIndependentMessage$storedProfileIndependentMessage);
-	}
-
+	//region Outbound Chat Messages
 	@Inject(
 		method = "sendChatMessage(Lnet/minecraft/network/message/SignedChatMessage;Lnet/minecraft/network/message/MessageType$Parameters;)V",
 		at = @At("HEAD")
 	)
-	public void quilt$captureSignedChatMessage(SignedChatMessage message, MessageType.Parameters parameters, CallbackInfo ci) {
+	public void quilt$captureOutboundSignedChatMessage(SignedChatMessage message, MessageType.Parameters parameters, CallbackInfo ci) {
 		quilt$sendChatMessage$storedSignedChatMessage = message;
 	}
 
@@ -179,6 +184,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
 				// We need the SignedChatMessage, but we cant construct one once we decompose it
 				// Anyone messing with signatures should be able to fix this mod side though luckily
 				// (and probably should even if it doesn't break, since cancellation is always after modification)
+				// TODO: Maybe use some other mixin or expand the method calls manually to fix this?
 				// - silver
 				messageSignatureStorage.addMessageSignatures(quilt$sendChatMessage$storedSignedChatMessage);
 
@@ -194,7 +200,9 @@ public abstract class ServerPlayNetworkHandlerMixin {
 			);
 		}
 	}
+	//endregion
 
+	//region Inbound Commands
 	@ModifyVariable(method = "onChatCommand", at = @At("HEAD"), argsOnly = true)
 	public ChatCommandC2SPacket quilt$modifyInboundCommand(ChatCommandC2SPacket packet) {
 		var message = new CommandC2SMessage(player, false, packet);
@@ -230,7 +238,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
 			method = "method_44356(Lnet/minecraft/network/packet/c2s/play/ChatCommandC2SPacket;Ljava/util/Optional;)V",
 			at = @At("HEAD")
 	)
-	public void quilt$beforeInboundCommand(ChatCommandC2SPacket packet, Optional optional, CallbackInfo ci) {
+	public void quilt$beforeInboundCommand(ChatCommandC2SPacket packet, Optional<MessageSignatureList> optional, CallbackInfo ci) {
 		var message = new CommandC2SMessage(player, false, packet);
 		QuiltChatEvents.BEFORE_PROCESS.invoke(message);
 	}
@@ -239,11 +247,13 @@ public abstract class ServerPlayNetworkHandlerMixin {
 			method = "method_44356(Lnet/minecraft/network/packet/c2s/play/ChatCommandC2SPacket;Ljava/util/Optional;)V",
 			at = @At("TAIL")
 	)
-	public void quilt$afterInboundCommand(ChatCommandC2SPacket packet, Optional optional, CallbackInfo ci) {
+	public void quilt$afterInboundCommand(ChatCommandC2SPacket packet, Optional<MessageSignatureList> optional, CallbackInfo ci) {
 		var message = new CommandC2SMessage(player, false, packet);
 		QuiltChatEvents.AFTER_PROCESS.invoke(message);
 	}
+	//endregion
 
+	//region Outbound Message Removal
 	@ModifyVariable(
 		method = "sendPacket(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/PacketSendListener;)V",
 		at = @At("HEAD"),
@@ -292,4 +302,5 @@ public abstract class ServerPlayNetworkHandlerMixin {
 			QuiltChatEvents.AFTER_PROCESS.invoke(message);
 		}
 	}
+	//endregion
 }
