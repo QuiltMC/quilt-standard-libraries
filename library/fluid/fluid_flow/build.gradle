@@ -7,7 +7,6 @@ qslModule {
 	moduleName = "fluid_flow"
 	id = "quilt_fluid_flow"
 	description = "Adds events for when fluids flow around other blocks."
-	library = "fluid"
 	moduleDependencies {
 		core {
 			api("qsl_base")

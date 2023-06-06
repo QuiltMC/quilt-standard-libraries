@@ -16,15 +16,14 @@
 
 package org.quiltmc.qsl.fluid.flow;
 
-import org.quiltmc.loader.api.ModContainer;
-import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-import org.quiltmc.qsl.fluid.flow.api.FluidFlowEvents;
-
 import net.minecraft.block.Blocks;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Direction;
 
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.fluid.flow.api.FluidFlowEvents;
 
 public class FluidFlowEventTests implements ModInitializer {
 	@Override

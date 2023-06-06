@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.fluid.flow.mixin;
 
-import org.quiltmc.qsl.base.api.event.Event;
-import org.quiltmc.qsl.fluid.flow.api.FluidFlowEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -30,6 +28,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
+import org.quiltmc.qsl.fluid.flow.api.FluidFlowEvents;
 
 @Mixin(FluidBlock.class)
 public class FluidBlockMixin extends Block {
