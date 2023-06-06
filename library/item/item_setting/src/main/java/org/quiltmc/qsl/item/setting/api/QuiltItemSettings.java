@@ -20,9 +20,9 @@ package org.quiltmc.qsl.item.setting.api;
 import org.jetbrains.annotations.Contract;
 
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.feature_flags.FeatureFlag;
 import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Rarity;
 
@@ -169,13 +169,6 @@ public class QuiltItemSettings extends Item.Settings {
 
 	@Override
 	@Contract("_->this")
-	public QuiltItemSettings group(ItemGroup group) {
-		super.group(group);
-		return this;
-	}
-
-	@Override
-	@Contract("_->this")
 	public QuiltItemSettings rarity(Rarity rarity) {
 		super.rarity(rarity);
 		return this;
@@ -185,6 +178,13 @@ public class QuiltItemSettings extends Item.Settings {
 	@Contract("->this")
 	public QuiltItemSettings fireproof() {
 		super.fireproof();
+		return this;
+	}
+
+	@Override
+	@Contract("_->this")
+	public QuiltItemSettings requiredFlags(FeatureFlag... flags) {
+		super.requiredFlags(flags);
 		return this;
 	}
 }

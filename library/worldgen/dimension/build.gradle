@@ -6,7 +6,6 @@ qslModule {
 	name = "Quilt Dimension API"
 	moduleName = "dimension"
 	id = "quilt_dimension"
-	library = "worldgen"
 	description = "An API for managing custom dimensions."
 	moduleDependencies {
 		core {

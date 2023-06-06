@@ -3,9 +3,8 @@
   "package": "org.quiltmc.qsl.worldgen.dimension.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "DimensionOptionsAccessor",
     "EntityMixin",
-    "LevelStorageBugfixMixin",
+    "WorldSaveStorageBugfixMixin",
     "ServerPlayerEntityMixin"
   ],
   "injectors": {

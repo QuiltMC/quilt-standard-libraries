@@ -1,3 +1,9 @@
+import org.objectweb.asm.Opcodes
+import qsl.internal.analysis.ClassAnalysisUtils
+
+import java.nio.file.FileSystem
+import java.nio.file.FileSystems
+
 plugins {
 	id("qsl.module")
 }
@@ -7,7 +13,6 @@ qslModule {
 	moduleName = "item_setting"
 	id = "quilt_item_setting"
 	description = "An API for extended functionality in Item Settings"
-	library = "item"
 	moduleDependencies {
 		core {
 			api("qsl_base")
@@ -15,11 +20,52 @@ qslModule {
 			testmodOnly("lifecycle_events")
 			testmodOnly("networking")
 		}
-		data {
-			testmodOnly("tags")
-		}
 		item {
 			testmodOnly("item_content_registry")
+		}
+	}
+}
+
+// Check that the QuiltItemSettings class has all required methods.
+tasks.register('checkItemSettings') {
+	group "verification"
+	dependsOn jar
+
+	doLast {
+		def moduleJar = project.buildDir.toPath().resolve("devlibs/${qslModule.moduleName.get()}-${version}-dev.jar")
+
+		try (def moduleFs = FileSystems.newFileSystem(URI.create("jar:${moduleJar.toUri()}"), [create: false])) {
+			try (def mcFs = ClassAnalysisUtils.loadMinecraftJar(project)) {
+				checkItemSettings(moduleFs, mcFs)
+			}
+		}
+	}
+}
+
+check.dependsOn checkItemSettings
+
+static def checkItemSettings(FileSystem moduleFs, FileSystem mcFs) {
+	def quiltClassName = "org/quiltmc/qsl/item/setting/api/QuiltItemSettings"
+	def mcClassName = 'net/minecraft/item/Item$Settings'
+	def quiltClass = ClassAnalysisUtils.readClass(
+			ClassAnalysisUtils.getClassPath(moduleFs, quiltClassName)
+	)
+	def mcClass = ClassAnalysisUtils.readClass(
+			ClassAnalysisUtils.getClassPath(mcFs, mcClassName)
+	)
+	def mcSettingsClassDesc = "L${mcClassName};"
+	def quiltClassDesc = "L${quiltClassName};"
+	def quiltClassMethods = ClassAnalysisUtils.buildMethodLookup(quiltClass)
+
+	mcClass.methods.stream().filter {
+		// Only get the methods that are part of the builder pattern.
+		((it.access & Opcodes.ACC_PUBLIC) != 0) && ((it.access & Opcodes.ACC_STATIC) == 0)
+				&& it.desc.endsWith(mcSettingsClassDesc)
+	}.forEach {
+		String desc = it.desc.substring(0, it.desc.length() - mcSettingsClassDesc.length()) + quiltClassDesc
+
+		if (!quiltClassMethods.containsKey(it.name + desc)) {
+			throw new GradleException("Missing QuiltItemSettings builder method ${it.name}${desc}.")
 		}
 	}
 }

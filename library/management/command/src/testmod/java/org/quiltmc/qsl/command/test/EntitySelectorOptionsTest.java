@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.command.test;
 
-import com.mojang.brigadier.StringReader;
-
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;

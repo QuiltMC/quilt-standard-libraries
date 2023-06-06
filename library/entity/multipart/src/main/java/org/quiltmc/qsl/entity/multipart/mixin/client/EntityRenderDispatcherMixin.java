@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.entity.multipart.mixin.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
@@ -33,12 +31,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.util.math.MathHelper;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.entity.multipart.api.EntityPart;
 import org.quiltmc.qsl.entity.multipart.api.MultipartEntity;
 
-@Environment(EnvType.CLIENT)
+@ClientOnly
 @Mixin(EntityRenderDispatcher.class)
 public class EntityRenderDispatcherMixin {
+	@SuppressWarnings("InvalidInjectorMethodSignature")
 	@ModifyConstant(method = "renderHitbox", constant = @Constant(classValue = EnderDragonEntity.class, ordinal = 0))
 	private static boolean cancelEnderDragonCheck(Object targetObject, Class<?> classValue) {
 		return false;

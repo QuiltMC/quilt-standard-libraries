@@ -16,20 +16,19 @@
 
 package org.quiltmc.qsl.registry.attachment.impl.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.resource.ResourceType;
 
 import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.registry.attachment.impl.ClientSideGuard;
 import org.quiltmc.qsl.registry.attachment.impl.RegistryEntryAttachmentSync;
 import org.quiltmc.qsl.registry.attachment.impl.reloader.RegistryEntryAttachmentReloader;
 
 @ApiStatus.Internal
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ClientInitializer implements ClientModInitializer {
 	@Override
 	public void onInitializeClient(ModContainer mod) {

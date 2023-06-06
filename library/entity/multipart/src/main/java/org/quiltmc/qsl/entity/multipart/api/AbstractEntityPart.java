@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,9 @@ import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.boss.dragon.EnderDragonPart;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.Packet;
-import net.minecraft.util.math.Quaternion;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3f;
 
 /**
  * A partial implementation of an {@link EntityPart} with the most common methods implemented.
@@ -42,7 +41,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	private Vec3d pivot = Vec3d.ZERO;
 
 	public AbstractEntityPart(E owner, float width, float height) {
-		super(owner.getType(), owner.world);
+		super(owner.getType(), owner.getWorld());
 		this.partDimensions = EntityDimensions.changing(width, height);
 		this.calculateDimensions();
 		this.owner = owner;
@@ -180,7 +179,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	/**
 	 * Rotates this {@link AbstractEntityPart} about the pivot point with the given rotation.
 	 *
-	 * @param pivot the pivot point to rotate about in relative coordinates
+	 * @param pivot   the pivot point to rotate about in relative coordinates
 	 * @param pitch   the rotation about x-axis
 	 * @param yaw     the rotation about y-axis
 	 * @param degrees whether the rotation should be done in degrees or radians
@@ -193,32 +192,15 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	/**
 	 * Rotates this {@link AbstractEntityPart} about its {@link AbstractEntityPart#pivot pivot point} with the given rotation.
 	 *
-	 * @param pitch the rotation about the x-axis
-	 * @param yaw   the rotation about the y-axis
+	 * @param pitch   the rotation about the x-axis
+	 * @param yaw     the rotation about the y-axis
 	 * @param degrees whether the rotation should be done in degrees or radians
 	 */
 	public void rotate(float pitch, float yaw, boolean degrees) {
-		Vec3d rel = this.getAbsolutePosition().subtract(this.getAbsolutePivot());
-		rel = rel.rotateX(-pitch * (degrees ? (float)Math.PI/180f : 1)).rotateY(-yaw * (degrees ? (float)Math.PI/180f : 1));
-		Vec3d transformedPos = this.getAbsolutePivot().subtract(this.getAbsolutePosition()).add(rel);
+		var rel = this.getAbsolutePosition().subtract(this.getAbsolutePivot());
+		rel = rel.rotateX(-pitch * (degrees ? (float) Math.PI / 180f : 1)).rotateY(-yaw * (degrees ? (float) Math.PI / 180f : 1));
+		var transformedPos = this.getAbsolutePivot().subtract(this.getAbsolutePosition()).add(rel);
 		this.move(transformedPos);
-	}
-
-	/**
-	 * @deprecated  Use {@link #rotate(float, float, boolean)} instead.
-	 */
-	@Deprecated
-	public void rotate(float pitch, float yaw, float roll) {
-		rotate(pitch, yaw, false);
-	}
-
-	/**
-	 * @deprecated  Use {@link #rotate(Vec3d, float, float, boolean)} instead.
-	 */
-	@Deprecated
-	public void rotate(Vec3d pivot, float pitch, float yaw, float roll) {
-		this.setPivot(pivot);
-		rotate(pitch, yaw, false);
 	}
 
 	/**
@@ -270,7 +252,7 @@ public abstract class AbstractEntityPart<E extends Entity> extends Entity implem
 	}
 
 	@Override
-	public Packet<?> createSpawnPacket() {
+	public Packet<ClientPlayPacketListener> createSpawnPacket() {
 		throw new UnsupportedOperationException();
 	}
 

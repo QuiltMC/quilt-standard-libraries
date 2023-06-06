@@ -19,7 +19,6 @@ package org.quiltmc.qsl.tag.impl.client;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,50 +30,95 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Multimap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.HolderLookup;
+import net.minecraft.registry.HolderLookup.RegistryLookup;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.tag.TagEntry;
+import net.minecraft.registry.tag.TagGroupLoader;
+import net.minecraft.registry.tag.TagKey;
+import net.minecraft.registry.tag.TagManagerLoader;
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.tag.TagEntry;
-import net.minecraft.tag.TagGroupLoader;
-import net.minecraft.tag.TagKey;
-import net.minecraft.tag.TagManagerLoader;
-import net.minecraft.util.Holder;
+import net.minecraft.util.DependencySorter;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.tag.api.QuiltTagKey;
 import org.quiltmc.qsl.tag.api.TagRegistry;
 import org.quiltmc.qsl.tag.api.TagType;
 import org.quiltmc.qsl.tag.impl.TagRegistryImpl;
-import org.quiltmc.qsl.tag.mixin.client.TagGroupLoaderAccessor;
+import org.quiltmc.qsl.tag.mixin.client.DynamicRegistrySyncAccessor;
 
+/**
+ * Represents the manager of client-only and fallback tags.
+ * <p>
+ * This holds the current client tags and the logic to update and re-apply tags to the current in-game context.
+ *
+ * @param <T> the type of game object the tag holds
+ */
 @ApiStatus.Internal
 public final class ClientTagRegistryManager<T> {
 	private static final Map<RegistryKey<? extends Registry<?>>, ClientTagRegistryManager<?>> TAG_GROUP_MANAGERS =
 			new WeakHashMap<>();
+	private static final HolderLookup.Provider VANILLA_PROVIDERS = DynamicRegistryManager.fromRegistryOfRegistries(Registries.REGISTRY);
 
 	private final RegistryKey<? extends Registry<T>> registryKey;
-	private final ClientRegistryFetcher registryFetcher;
+	/**
+	 * Represents a useful object to fetch game objects for the tag group loader.
+	 */
+	private final RegistryFetcher registryFetcher;
+	/**
+	 * The Vanilla tag group loader.
+	 */
 	private final TagGroupLoader<Holder<T>> loader;
-	private DynamicRegistryManager registryManager = BuiltinRegistries.MANAGER;
+	/**
+	 * The registry lookup.
+	 */
+	private HolderLookup.Provider lookupProvider;
+	/**
+	 * Status of this tag registry manager. Useful state tracking to prevent too early tag application.
+	 */
+	private ClientRegistryStatus status;
+	/**
+	 * Represents the serialized client-only tags, stored because the client-only values may change depending on the server's registries.
+	 */
 	private Map<Identifier, List<TagGroupLoader.EntryWithSource>> serializedTags = Map.of();
+	/**
+	 * Represents the actual resolved client-only tags, which are only valid for the current in-game context.
+	 */
 	private Map<TagKey<T>, Collection<Holder<T>>> clientOnlyValues;
+	/**
+	 * Represents the serialized fallback tags, stored because the fallback values may change depending on the server's registries.
+	 */
 	private Map<Identifier, List<TagGroupLoader.EntryWithSource>> fallbackSerializedTags = Map.of();
+	/**
+	 * Represents the actual resolved fallback tags, which are only for the current in-game context.
+	 */
 	private Map<TagKey<T>, Collection<Holder<T>>> fallbackValues;
 
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	private ClientTagRegistryManager(RegistryKey<? extends Registry<T>> registryKey, String dataType) {
 		this.registryKey = registryKey;
-		this.registryFetcher = new ClientRegistryFetcher();
+		this.lookupProvider = VANILLA_PROVIDERS;
+
+		if (Registries.REGISTRY.contains((RegistryKey) registryKey)) {
+			// The registry is static, this means we have only one source of truth that is not updated after starting the game.
+			this.registryFetcher = new StaticRegistryFetcher();
+			this.status = ClientRegistryStatus.STATIC;
+		} else {
+			// The registry is dynamic, the values may change throughout the lifecycle of the game.
+			this.registryFetcher = new ClientRegistryFetcher();
+			this.status = ClientRegistryStatus.WAITING;
+		}
+
 		this.loader = new TagGroupLoader<>(this.registryFetcher, dataType);
 	}
 
@@ -90,11 +134,22 @@ public final class ClientTagRegistryManager<T> {
 		return this.clientOnlyValues.entrySet().stream().map(entry -> new TagRegistry.TagValues<>(entry.getKey(), entry.getValue()));
 	}
 
-	@SuppressWarnings("unchecked")
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	public void setSerializedTags(Map<Identifier, List<TagGroupLoader.EntryWithSource>> serializedTags) {
 		this.serializedTags = serializedTags;
-		this.clientOnlyValues = this.buildDynamicGroup(this.serializedTags, TagType.CLIENT_ONLY);
+
+		if (this.status.isReady()) {
+			// Actually apply if the values are ready to be fetched.
+			this.applyTags(this.serializedTags);
+		} else {
+			this.applyTags(Collections.emptyMap());
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@ClientOnly
+	private void applyTags(Map<Identifier, List<TagGroupLoader.EntryWithSource>> serializedTags) {
+		this.clientOnlyValues = this.buildDynamicGroup(serializedTags, TagType.CLIENT_ONLY);
 		this.bindTags(this.clientOnlyValues, (ref, tags) -> ((QuiltHolderReferenceHooks<T>) ref).quilt$setClientTags(tags));
 	}
 
@@ -112,30 +167,65 @@ public final class ClientTagRegistryManager<T> {
 				.map(entry -> new TagRegistry.TagValues<>(entry.getKey(), entry.getValue()));
 	}
 
-	@SuppressWarnings("unchecked")
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	public void setFallbackSerializedTags(Map<Identifier, List<TagGroupLoader.EntryWithSource>> serializedTags) {
 		this.fallbackSerializedTags = serializedTags;
-		this.fallbackValues = this.buildDynamicGroup(this.fallbackSerializedTags, TagType.CLIENT_FALLBACK);
+
+		if (this.status.isReady()) {
+			// Actually apply if the values are ready to be fetched.
+			this.applyFallbackTags(this.fallbackSerializedTags);
+		} else {
+			this.applyFallbackTags(Collections.emptyMap());
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@ClientOnly
+	private void applyFallbackTags(Map<Identifier, List<TagGroupLoader.EntryWithSource>> serializedTags) {
+		this.fallbackValues = this.buildDynamicGroup(serializedTags, TagType.CLIENT_FALLBACK);
 		this.bindTags(this.fallbackValues, (ref, tags) -> ((QuiltHolderReferenceHooks<T>) ref).quilt$setFallbackTags(tags));
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	public Map<Identifier, List<TagGroupLoader.EntryWithSource>> load(ResourceManager resourceManager) {
 		return this.loader.loadTags(resourceManager);
 	}
 
-	@Environment(EnvType.CLIENT)
-	public void apply(DynamicRegistryManager registryManager) {
-		this.registryManager = registryManager;
+	/**
+	 * Called when the source of truth for dynamic registries change.
+	 *
+	 * @param lookupProvider the lookup for dynamic game objects
+	 * @param status         the source of change ({@link ClientRegistryStatus#REMOTE} if triggered by server-provided registries through network,
+	 *                       or {@link ClientRegistryStatus#LOCAL} if triggered by data-pack loading to create a new world)
+	 */
+	@ClientOnly
+	public void apply(HolderLookup.Provider lookupProvider, ClientRegistryStatus status) {
+		// Prevent overriding the tags if the internal server decides to change registries for some reason,
+		// what's sent to the client has higher priority.
+		if ((status == ClientRegistryStatus.REMOTE && this.status == status) || this.status != ClientRegistryStatus.REMOTE) {
+			this.lookupProvider = lookupProvider;
 
-		this.setSerializedTags(this.serializedTags);
-		this.setFallbackSerializedTags(this.fallbackSerializedTags);
+			this.setSerializedTags(this.serializedTags);
+			this.setFallbackSerializedTags(this.fallbackSerializedTags);
+
+			this.status = status;
+		}
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
+	public void resetDynamic(boolean force) {
+		if (force || this.status == ClientRegistryStatus.LOCAL) {
+			this.apply(VANILLA_PROVIDERS, force ? ClientRegistryStatus.REMOTE : ClientRegistryStatus.LOCAL);
+
+			if (force) {
+				this.status = ClientRegistryStatus.WAITING;
+			}
+		}
+	}
+
+	@ClientOnly
 	private Map<TagKey<T>, Collection<Holder<T>>> buildDynamicGroup(Map<Identifier, List<TagGroupLoader.EntryWithSource>> tagBuilders, TagType type) {
-		if (!TagRegistryImpl.isRegistryDynamic(this.registryKey)) {
+		if (TagRegistryImpl.isRegistryDynamic(this.registryKey)) {
 			var tags = new Object2ObjectOpenHashMap<TagKey<T>, Collection<Holder<T>>>();
 			var built = this.loader.build(tagBuilders);
 			built.forEach((id, tag) -> tags.put(QuiltTagKey.of(this.registryKey, id, type), tag));
@@ -143,32 +233,15 @@ public final class ClientTagRegistryManager<T> {
 		}
 
 		var resolver = new TagResolver(type);
-		Multimap<Identifier, Identifier> tagEntries = HashMultimap.create();
-
-		this.visitDependencies(tagBuilders, (tagId, entry) -> entry.visitRequiredDependencies(
-				tagEntryId -> TagGroupLoaderAccessor.invokeAddDependencyIfNotCyclic(tagEntries, tagId, tagEntryId)
-		));
-		this.visitDependencies(tagBuilders, (tagId, entry) -> entry.visitOptionalDependencies(
-				tagEntryId -> TagGroupLoaderAccessor.invokeAddDependencyIfNotCyclic(tagEntries, tagId, tagEntryId)
-		));
-
-		var set = new HashSet<Identifier>();
-		tagBuilders.keySet().forEach(tagId ->
-				TagGroupLoaderAccessor.invokeVisitDependenciesAndEntry(tagBuilders, tagEntries, set, tagId,
-						resolver.getDependencyConsumer(tagId)
-				)
-		);
+		var sorter = new DependencySorter<Identifier, TagGroupLoader.SortingEntry>();
+		tagBuilders.forEach((key, values) -> sorter.addEntry(key, new TagGroupLoader.SortingEntry(values)));
+		sorter.buildOrdered(resolver.getCollector());
 		return resolver.getTags();
 	}
 
-	private void visitDependencies(Map<Identifier, List<TagGroupLoader.EntryWithSource>> tagBuilders,
-			BiConsumer<Identifier, TagEntry> dependencyConsumer) {
-		tagBuilders.forEach((tagId, builder) -> builder.forEach(entry -> dependencyConsumer.accept(tagId, entry.entry())));
-	}
-
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	public void bindTags(Map<TagKey<T>, Collection<Holder<T>>> map, BiConsumer<Holder.Reference<T>, List<TagKey<T>>> consumer) {
-		var registry = this.registryManager.getOptional(this.registryKey);
+		var registry = this.lookupProvider.getLookup(this.registryKey);
 
 		if (registry.isEmpty()) {
 			return;
@@ -179,13 +252,6 @@ public final class ClientTagRegistryManager<T> {
 
 		map.forEach((tagKey, tag) -> {
 			for (var holder : tag) {
-				if (!holder.isRegistry(registry.get())) {
-					throw new IllegalStateException(
-							"Can't create named set " + tagKey + " containing value "
-									+ holder + " from outside registry " + registry.get()
-					);
-				}
-
 				if (!(holder instanceof Holder.Reference<T> reference)) {
 					throw new IllegalStateException("Found direct holder " + holder + " value in tag " + tagKey);
 				}
@@ -204,26 +270,33 @@ public final class ClientTagRegistryManager<T> {
 		);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	@ClientOnly
 	static void init() {
-		Registry.REGISTRIES.forEach(registry -> {
+		// Add up all known static registries.
+		Registries.REGISTRY.forEach(registry -> {
 			get(registry.getKey());
 		});
-		BuiltinRegistries.REGISTRIES.forEach(registry -> {
-			get(registry.getKey());
-		});
+
+		// Add up known synced dynamic registries.
+		DynamicRegistrySyncAccessor.quilt$getSyncableRegistries().forEach((registry, o) -> get((RegistryKey) registry));
 	}
 
 	static void forEach(Consumer<ClientTagRegistryManager<?>> consumer) {
 		TAG_GROUP_MANAGERS.values().forEach(consumer);
 	}
 
-	@Environment(EnvType.CLIENT)
-	public static void applyAll(DynamicRegistryManager registryManager) {
-		TAG_GROUP_MANAGERS.forEach((registryKey, manager) -> manager.apply(registryManager));
+	@ClientOnly
+	public static void applyAll(HolderLookup.Provider lookupProvider, ClientRegistryStatus status) {
+		TAG_GROUP_MANAGERS.forEach((registryKey, manager) -> manager.apply(lookupProvider, status));
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
+	public static void resetDynamicAll(boolean force) {
+		TAG_GROUP_MANAGERS.forEach((registryKey, manager) -> manager.resetDynamic(force));
+	}
+
+	@ClientOnly
 	private class TagResolver implements TagEntry.Lookup<Holder<T>> {
 		private final Map<TagKey<T>, Collection<Holder<T>>> tags = new Object2ObjectOpenHashMap<>();
 		private final TagType type;
@@ -242,10 +315,10 @@ public final class ClientTagRegistryManager<T> {
 			return this.tags.get(QuiltTagKey.of(ClientTagRegistryManager.this.registryKey, id, this.type));
 		}
 
-		public BiConsumer<Identifier, List<TagGroupLoader.EntryWithSource>> getDependencyConsumer(Identifier tagId) {
-			return (currentTagId, builder) -> this.tags.put(
-					QuiltTagKey.of(ClientTagRegistryManager.this.registryKey, tagId, type),
-					this.buildLenientTag(builder)
+		public BiConsumer<Identifier, TagGroupLoader.SortingEntry> getCollector() {
+			return (tagId, builder) -> this.tags.put(
+					QuiltTagKey.of(ClientTagRegistryManager.this.registryKey, tagId, this.type),
+					this.buildLenientTag(builder.entries())
 			);
 		}
 
@@ -262,32 +335,52 @@ public final class ClientTagRegistryManager<T> {
 		}
 	}
 
+	private abstract class RegistryFetcher implements Function<Identifier, Optional<? extends Holder<T>>> {}
+
+	private class StaticRegistryFetcher extends RegistryFetcher {
+		private final RegistryLookup<T> cached;
+
+		private StaticRegistryFetcher() {
+			this.cached = ClientTagRegistryManager.this.lookupProvider.getLookupOrThrow(ClientTagRegistryManager.this.registryKey);
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public Optional<? extends Holder<T>> apply(Identifier id) {
+			return this.cached.getHolder(RegistryKey.of((RegistryKey<? extends Registry<T>>) this.cached.getKey(), id));
+		}
+	}
+
 	/**
 	 * Represents a registry content fetcher.
 	 * <p>
 	 * This fetcher will auto-update the reference to the underlying registry whenever the dynamic registry manager changes.
 	 */
-	private class ClientRegistryFetcher implements Function<Identifier, Optional<Holder<T>>> {
+	private class ClientRegistryFetcher extends RegistryFetcher {
 		private boolean firstCall = true;
-		private DynamicRegistryManager lastRegistryManager;
-		private Registry<T> cached;
+		private HolderLookup.Provider lastLookupProvider;
+		private RegistryLookup<T> cached;
 
 		private ClientRegistryFetcher() {
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
-		public Optional<Holder<T>> apply(Identifier id) {
-			if (firstCall || ClientTagRegistryManager.this.registryManager != this.lastRegistryManager) {
-				this.lastRegistryManager = ClientTagRegistryManager.this.registryManager;
-				this.cached = this.lastRegistryManager.getOptional(ClientTagRegistryManager.this.registryKey)
-						.orElse(null);
-				this.firstCall = false;
+		public Optional<? extends Holder<T>> apply(Identifier id) {
+			if (this.firstCall || ClientTagRegistryManager.this.lookupProvider != this.lastLookupProvider) {
+				this.lastLookupProvider = ClientTagRegistryManager.this.lookupProvider;
+
+				if (this.lastLookupProvider != null) {
+					this.cached = this.lastLookupProvider.getLookup(ClientTagRegistryManager.this.registryKey)
+							.orElse(null);
+					this.firstCall = false;
+				}
 			}
 
 			if (this.cached == null) {
 				return Optional.empty();
 			} else {
-				return this.cached.getHolder(RegistryKey.of(this.cached.getKey(), id));
+				return this.cached.getHolder(RegistryKey.of((RegistryKey<? extends Registry<T>>) this.cached.getKey(), id));
 			}
 		}
 	}

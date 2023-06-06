@@ -26,17 +26,20 @@ import net.minecraft.command.CommandBuildContext;
 import net.minecraft.command.CommandException;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.CowEntity;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.test.TestServer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionOptions;
@@ -48,21 +51,23 @@ import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 import org.quiltmc.qsl.worldgen.dimension.api.QuiltDimensions;
 
 public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents.Ready, CommandRegistrationCallback {
-	private static final RegistryKey<DimensionOptions> DIMENSION_KEY = RegistryKey.of(Registry.DIMENSION_KEY,
+	private static final RegistryKey<DimensionOptions> DIMENSION_KEY = RegistryKey.of(RegistryKeys.DIMENSION,
 			new Identifier("quilt_dimension", "void")
 	);
 
-	private static RegistryKey<World> WORLD_KEY = RegistryKey.of(Registry.WORLD_KEY, DIMENSION_KEY.getValue());
+	private static RegistryKey<World> WORLD_KEY = RegistryKey.of(RegistryKeys.WORLD, DIMENSION_KEY.getValue());
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		Registry.register(Registry.CHUNK_GENERATOR, new Identifier("quilt_dimension", "void"), EmptyChunkGenerator.CODEC);
+		Registry.register(Registries.CHUNK_GENERATOR, new Identifier("quilt_dimension", "void"), EmptyChunkGenerator.CODEC);
 
-		WORLD_KEY = RegistryKey.of(Registry.WORLD_KEY, new Identifier("quilt_dimension", "void"));
+		WORLD_KEY = RegistryKey.of(RegistryKeys.WORLD, new Identifier("quilt_dimension", "void"));
 	}
 
 	@Override
 	public void readyServer(MinecraftServer server) {
+		if (server instanceof TestServer) return; // Game Test server does not support custom dimensions.
+
 		ServerWorld overworld = server.getWorld(World.OVERWORLD);
 		ServerWorld targetWorld = server.getWorld(WORLD_KEY);
 
@@ -72,14 +77,14 @@ public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents
 
 		CowEntity cow = EntityType.COW.create(overworld);
 
-		if (!cow.world.getRegistryKey().equals(World.OVERWORLD)) {
+		if (!cow.getWorld().getRegistryKey().equals(World.OVERWORLD)) {
 			throw new AssertionError("Cow was spawned but isn't in the overworld.");
 		}
 
 		var target = new TeleportTarget(Vec3d.ZERO, new Vec3d(1, 1, 1), 45f, 60f);
 		CowEntity teleportedEntity = QuiltDimensions.teleport(cow, targetWorld, target);
 
-		if (teleportedEntity == null || !teleportedEntity.world.getRegistryKey().equals(WORLD_KEY)) {
+		if (teleportedEntity == null || !teleportedEntity.getWorld().getRegistryKey().equals(WORLD_KEY)) {
 			throw new AssertionError("Cow was not teleported correctly.");
 		}
 
@@ -96,17 +101,16 @@ public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents
 
 	private int swapTargeted(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
 		ServerPlayerEntity player = context.getSource().getPlayer();
-		ServerWorld serverWorld = player.getWorld();
+		ServerWorld serverWorld = (ServerWorld) player.getWorld();
 		ServerWorld modWorld = context.getSource().getServer().getWorld(WORLD_KEY);
 
 		if (serverWorld != modWorld) {
 			var target = new TeleportTarget(new Vec3d(0.5, 101, 0.5), Vec3d.ZERO, 0, 0);
 			QuiltDimensions.teleport(player, modWorld, target);
 
-			if (player.world != modWorld) {
+			if (player.getWorld() != modWorld) {
 				throw new CommandException(Text.literal("Teleportation failed!"));
 			}
-
 
 			modWorld.setBlockState(new BlockPos(0, 100, 0), Blocks.DIAMOND_BLOCK.getDefaultState());
 			modWorld.setBlockState(new BlockPos(0, 101, 0), Blocks.TORCH.getDefaultState());

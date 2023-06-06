@@ -21,10 +21,11 @@ import org.slf4j.LoggerFactory;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.MapColor;
-import net.minecraft.block.Material;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
@@ -39,7 +40,7 @@ public class RegistryLibEventsTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		RegistryEvents.getEntryAddEvent(Registry.BLOCK).register(context -> {
+		RegistryEvents.getEntryAddEvent(Registries.BLOCK).register(context -> {
 			LOGGER.info("Block {} id={} raw={} was registered in registry {}",
 					context.value(), context.id(), context.rawId(), context.registry());
 
@@ -48,7 +49,7 @@ public class RegistryLibEventsTest implements ModInitializer {
 			}
 		});
 
-		register(TEST_BLOCK_ID, new Block(AbstractBlock.Settings.of(Material.STONE, MapColor.BLACK)));
+		register(TEST_BLOCK_ID, new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.BLACK)));
 
 		if (!entryAddEventFoundBlock) {
 			throw new AssertionError("Registry entry add event was not invoked on the registration of block with id " + TEST_BLOCK_ID);
@@ -56,6 +57,6 @@ public class RegistryLibEventsTest implements ModInitializer {
 	}
 
 	static <T extends Block> T register(Identifier id, T block) {
-		return Registry.register(Registry.BLOCK, id, block);
+		return Registry.register(Registries.BLOCK, id, block);
 	}
 }

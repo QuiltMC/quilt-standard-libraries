@@ -16,22 +16,19 @@
 
 package org.quiltmc.qsl.block.extensions.api.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.fluid.Fluid;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.block.extensions.impl.client.BlockRenderLayerMapImpl;
 
 /**
  * Provides methods to set the {@link RenderLayer} of blocks and fluids.
  */
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class BlockRenderLayerMap {
-	private BlockRenderLayerMap() {
-	}
+	private BlockRenderLayerMap() {}
 
 	/**
 	 * Sets the render layer of the specified blocks.

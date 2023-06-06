@@ -16,29 +16,29 @@
 
 package org.quiltmc.qsl.networking.test.keybindreciever;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 
 // Sends a packet to the server when a keybinding was pressed
 // The server in response will send a chat message to the client.
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public class NetworkingKeyBindClientPacketTest implements ClientModInitializer {
-//	public static final KeyBinding TEST_BINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("fabric-networking-api-v1-testmod-keybind", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_RIGHT_BRACKET, "fabric-networking-api-v1-testmod"));
+	// public static final KeyBinding TEST_BINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("fabric-networking-api-v1-testmod-keybind", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_RIGHT_BRACKET, "fabric-networking-api-v1-testmod"));
 
 	@Override
 	public void onInitializeClient(ModContainer mod) {
 		// TODO: Pending other APIs and testmod dependencies getting setup.
-//		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-//			// Player must be in game to send packets, i.e. client.player != null
-//			if (client.getNetworkHandler() != null) {
-//				if (TEST_BINDING.wasPressed()) {
-//					// Send an empty payload, server just needs to be told when packet is sent
-//					ClientPlayNetworking.send(NetworkingKeybindPacketTest.KEYBINDING_PACKET_ID, PacketByteBufs.empty());
-//				}
-//			}
-//		});
+		/*
+		ClientTickEvents.END_CLIENT_TICK.register(client -> {
+			// Player must be in game to send packets, i.e. client.player != null
+			if (client.getNetworkHandler() != null) {
+				if (TEST_BINDING.wasPressed()) {
+					// Send an empty payload, server just needs to be told when packet is sent
+					ClientPlayNetworking.send(NetworkingKeybindPacketTest.KEYBINDING_PACKET_ID, PacketByteBufs.empty());
+				}
+			}
+		});
+		 */
 	}
 }

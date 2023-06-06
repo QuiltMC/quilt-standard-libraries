@@ -16,6 +16,12 @@ if (version.contains("beta") && !ENV.MAVEN_URL) {
 	version = version.replace(version.substring(version.indexOf("beta.")), "beta." + (beta + 1))
 }
 
+// Same thing, but with alphas
+if (version.contains("alpha") && !ENV.MAVEN_URL) {
+	int alpha = Integer.parseInt(version.substring(version.indexOf("alpha.") + 6))
+	version = version.replace(version.substring(version.indexOf("alpha.")), "alpha." + (alpha + 1))
+}
+
 version = version + "+" + Versions.MINECRAFT_VERSION.version() + (System.getenv("SNAPSHOTS_URL") ? "-SNAPSHOT" : "")
 println("QSL: " + version)
 
@@ -49,11 +55,10 @@ task fatJavadoc(type: Javadoc) {
 		charSet = "UTF-8"
 		memberLevel = JavadocMemberLevel.PACKAGE
 		links(
-				"https://guava.dev/releases/21.0/api/docs/",
+				"https://guava.dev/releases/31.1-jre/api/docs/",
 				"https://asm.ow2.io/javadoc/",
-				"https://docs.oracle.com/en/java/javase/16/docs/api/",
+				"https://docs.oracle.com/en/java/javase/17/docs/api/",
 				"https://jenkins.liteloader.com/job/Mixin/javadoc/",
-				"https://logging.apache.org/log4j/2.x/log4j-api/apidocs/",
 				"https://maven.quiltmc.org/repository/release/org/quiltmc/quilt-mappings/${Versions.MINECRAFT_VERSION.version()}+build.${Versions.MAPPINGS_BUILD}/quilt-mappings-${Versions.MINECRAFT_VERSION.version()}+build.${Versions.MAPPINGS_BUILD}-javadoc.jar/"
 		)
 
@@ -82,8 +87,7 @@ task fatJavadoc(type: Javadoc) {
 				// So what do we do? We simply removed the Vanilla JAR and hope that the correct transformed JAR shows up first.
 				// The proper fix is to get the root project to generate a new MC JAR that contains all the transitive transformations of the modules
 				// applied and pass that to the fat javadoc task instead.
-						.filter { !it.name.startsWith("minecraft-merged-named") }
-						.filter { !it.name.startsWith("minecraft-project-@block@block_content_registry") }
+						.filter { !it.name.startsWith("minecraft") || it.name.contains("@block@block_entity") }
 			}
 		}
 	}
@@ -94,7 +98,7 @@ task fatJavadoc(type: Javadoc) {
 task fatJavadocJar(type: Jar) {
 	group "build"
 
-	classifier "fat-javadoc"
+	archiveClassifier = "fat-javadoc"
 	dependsOn fatJavadoc
 	from fatJavadoc.destinationDir
 }
@@ -159,12 +163,27 @@ loom {
 			configName = "Auto test server"
 			property("quilt.auto_test")
 		}
+
+		// Game test server, a server that executes tests using Minecraft's test framework.
+		gameTestServer {
+			inherit testmodServer
+
+			configName = "Game test server"
+			property("quilt.game_test", "true")
+			property("quilt.game_test.report_file", "${project.buildDir}/game_test/report.xml")
+			runDir("build/game_test")
+		}
 	}
 }
 
 task runAutoAllTestServer {
 	group "verification"
 	description "Runs all the server-sided tests automatically.\nTypically ran by the CI server."
+}
+
+task runGameAllTestServer {
+	group "verification"
+	description "Runs all the server-sided game tests automatically.\nTypically ran by the CI server."
 }
 
 afterEvaluate {
@@ -196,6 +215,8 @@ afterEvaluate {
 	}
 
 	tasks.runAutoAllTestServer.dependsOn tasks.runAutoTestServer
+	tasks.runGameAllTestServer.dependsOn tasks.runGameTestServer
+	tasks.test.dependsOn tasks.runGameAllTestServer
 }
 
 task checkVersion {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 
 import org.quiltmc.qsl.registry.api.event.RegistryMonitor;
 
@@ -32,7 +32,7 @@ import org.quiltmc.qsl.registry.api.event.RegistryMonitor;
 public abstract class ItemsMixin {
 	@Inject(method = "<clinit>", at = @At("RETURN"))
 	private static void onInit(CallbackInfo ci) {
-		RegistryMonitor.create(Registry.ITEM)
+		RegistryMonitor.create(Registries.ITEM)
 				.filter(context -> context.value() instanceof BlockItem)
 				.forUpcoming(context -> ((BlockItem) context.value()).appendBlocks(Item.BLOCK_ITEMS, context.value()));
 	}

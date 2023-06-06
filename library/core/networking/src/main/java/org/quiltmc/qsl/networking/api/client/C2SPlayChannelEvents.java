@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,11 @@ package org.quiltmc.qsl.networking.api.client;
 
 import java.util.List;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 import org.quiltmc.qsl.networking.api.PacketSender;
@@ -32,7 +30,7 @@ import org.quiltmc.qsl.networking.api.PacketSender;
 /**
  * Offers access to events related to the indication of a connected server's ability to receive packets in certain channels.
  */
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class C2SPlayChannelEvents {
 	/**
 	 * An event for the client play network handler receiving an update indicating the connected server's ability to receive packets in certain channels.
@@ -60,7 +58,7 @@ public final class C2SPlayChannelEvents {
 	/**
 	 * @see C2SPlayChannelEvents#REGISTER
 	 */
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface Register extends ClientEventAwareListener {
 		void onChannelRegister(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client, List<Identifier> channels);
@@ -69,7 +67,7 @@ public final class C2SPlayChannelEvents {
 	/**
 	 * @see C2SPlayChannelEvents#UNREGISTER
 	 */
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@FunctionalInterface
 	public interface Unregister extends ClientEventAwareListener {
 		void onChannelUnregister(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client, List<Identifier> channels);

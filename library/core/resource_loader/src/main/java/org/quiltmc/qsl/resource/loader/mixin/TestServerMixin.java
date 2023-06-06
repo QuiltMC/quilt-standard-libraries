@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,24 @@
 
 package org.quiltmc.qsl.resource.loader.mixin;
 
-import java.util.function.Supplier;
+import java.util.Collection;
 
-import com.mojang.serialization.JsonOps;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.pack.DataPackSettings;
+import net.minecraft.resource.pack.ResourcePackManager;
+import net.minecraft.server.WorldStem;
+import net.minecraft.test.GameTestBatch;
 import net.minecraft.test.TestServer;
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.RegistryOps;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.storage.WorldSaveStorage;
 
+import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 import org.quiltmc.qsl.resource.loader.impl.ModResourcePackUtil;
 
 @Mixin(TestServer.class)
@@ -38,24 +42,43 @@ public class TestServerMixin {
 			method = "create",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/server/WorldLoader$PackConfig;<init>(Lnet/minecraft/resource/pack/ResourcePackManager;Lnet/minecraft/resource/pack/DataPackSettings;Z)V"
+					target = "Lnet/minecraft/server/world/FeatureAndDataSettings;<init>(Lnet/minecraft/resource/pack/DataPackSettings;Lnet/minecraft/feature_flags/FeatureFlagBitSet;)V"
 			),
-			index = 1
+			index = 0
 	)
 	private static DataPackSettings replaceDefaultDataPackSettings(DataPackSettings initialDataPacks) {
 		return ModResourcePackUtil.DEFAULT_SETTINGS;
 	}
 
-	@Redirect(
-			method = {"method_40377", "m_pckcekot"},
-			at = @At(value = "INVOKE", target = "Ljava/util/function/Supplier;get()Ljava/lang/Object;", remap = false),
-			require = 1,
-			remap = false
+	@Inject(
+			method = "create",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/util/Util;method_43499(Ljava/util/function/Function;)Ljava/util/concurrent/CompletableFuture;"
+			)
 	)
-	private static Object loadRegistry(Supplier<Object> unused, ResourceManager resourceManager) {
-		DynamicRegistryManager.Writable registryManager = DynamicRegistryManager.builtInCopy();
-		// Force-loads the dynamic registry from data-packs as some mods may define dynamic game objects via data-driven capabilities.
-		RegistryOps.createAndLoad(JsonOps.INSTANCE, registryManager, resourceManager);
-		return registryManager.freeze();
+	private static void onStartReloadResources(Thread thread, WorldSaveStorage.Session session, ResourcePackManager packManager,
+			Collection<GameTestBatch> testBatch, BlockPos pos, CallbackInfoReturnable<TestServer> cir) {
+		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null); // First reload
+	}
+
+	@ModifyVariable(method = "create", at = @At(value = "STORE"))
+	private static WorldStem onSuccessfulReloadResources(WorldStem resources) {
+		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resources.resourceManager(), null);
+		return resources; // noop
+	}
+
+	@ModifyArg(
+			method = "create",
+			at = @At(
+					value = "INVOKE",
+					target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Throwable;)V",
+					remap = false
+			),
+			index = 1
+	)
+	private static Throwable onFailedReloadResources(Throwable exception) {
+		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, null, exception);
+		return exception; // noop
 	}
 }

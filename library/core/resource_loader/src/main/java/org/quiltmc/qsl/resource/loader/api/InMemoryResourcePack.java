@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,12 @@
 package org.quiltmc.qsl.resource.loader.api;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,7 +31,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -46,6 +43,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 import org.slf4j.Logger;
 
+import net.minecraft.resource.ResourceIoSupplier;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.AbstractFileResourcePack;
 import net.minecraft.resource.pack.ResourcePack;
@@ -72,26 +70,18 @@ public abstract class InMemoryResourcePack implements MutableResourcePack {
 	private final Map<String, Supplier<byte[]>> root = new ConcurrentHashMap<>();
 
 	@Override
-	public @Nullable InputStream openRoot(String fileName) {
-		if (!fileName.contains("/") && !fileName.contains("\\")) {
-			return this.openResource(this.root, fileName);
-		} else {
-			throw new IllegalArgumentException("Root resources can only be filenames, not paths (no / allowed!)");
-		}
+	public @Nullable ResourceIoSupplier<InputStream> openRoot(String... path) {
+		String actualPath = String.join("/", path);
+
+		return this.openResource(this.root, actualPath);
 	}
 
 	@Override
-	public InputStream open(ResourceType type, Identifier id) throws IOException {
-		var stream = this.openResource(this.getResourceMap(type), id);
-
-		if (stream == null) {
-			throw new FileNotFoundException("Could not find resource \"" + id + "\" (" + type.getDirectory() + ") in pack " + this.getName() + ".");
-		}
-
-		return stream;
+	public @Nullable ResourceIoSupplier<InputStream> open(ResourceType type, Identifier id) {
+		return this.openResource(this.getResourceMap(type), id);
 	}
 
-	protected @Nullable <T> InputStream openResource(Map<T, Supplier<byte[]>> map, @NotNull T key) {
+	protected <T> @Nullable ResourceIoSupplier<InputStream> openResource(Map<T, Supplier<byte[]>> map, @NotNull T key) {
 		var supplier = map.get(key);
 
 		if (supplier == null) {
@@ -104,20 +94,20 @@ public abstract class InMemoryResourcePack implements MutableResourcePack {
 			return null;
 		}
 
-		return new ByteArrayInputStream(bytes);
+		return () -> new ByteArrayInputStream(bytes);
 	}
 
 	@Override
-	public Collection<Identifier> findResources(ResourceType type, String namespace, String startingPath, Predicate<Identifier> pathFilter) {
-		return this.getResourceMap(type).keySet().stream()
-				.filter(id -> id.getNamespace().equals(namespace) && id.getPath().startsWith(startingPath))
-				.filter(pathFilter)
-				.collect(Collectors.toList());
-	}
+	public void listResources(ResourceType type, String namespace, String startingPath, ResourceConsumer consumer) {
+		this.getResourceMap(type).entrySet().stream()
+				.filter(entry -> entry.getKey().getNamespace().equals(namespace) && entry.getKey().getPath().startsWith(startingPath))
+				.forEach(entry -> {
+					byte[] bytes = entry.getValue().get();
 
-	@Override
-	public boolean contains(ResourceType type, Identifier id) {
-		return this.getResourceMap(type).containsKey(id);
+					if (bytes != null) {
+						consumer.accept(entry.getKey(), () -> new ByteArrayInputStream(bytes));
+					}
+				});
 	}
 
 	@Override
@@ -148,7 +138,10 @@ public abstract class InMemoryResourcePack implements MutableResourcePack {
 			}
 		}
 
-		try (var stream = this.openRoot(ResourcePack.PACK_METADATA_NAME)) {
+		var resource = this.openRoot(ResourcePack.PACK_METADATA_NAME);
+		if (resource == null) return null;
+
+		try (var stream = resource.get()) {
 			return AbstractFileResourcePack.parseMetadata(metaReader, stream);
 		}
 	}

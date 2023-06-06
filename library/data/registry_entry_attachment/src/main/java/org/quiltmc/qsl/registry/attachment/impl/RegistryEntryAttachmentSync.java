@@ -27,7 +27,6 @@ import java.util.Set;
 
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.client.MinecraftClient;
@@ -36,13 +35,15 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.PacketSender;
@@ -96,7 +97,7 @@ public final class RegistryEntryAttachmentSync {
 		ServerPlayConnectionEvents.JOIN.register(RegistryEntryAttachmentSync::syncAttachmentsToPlayer);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	public static void registerClient() {
 		ClientPlayNetworking.registerGlobalReceiver(PACKET_ID, RegistryEntryAttachmentSync::receiveSyncPacket);
 	}
@@ -158,7 +159,7 @@ public final class RegistryEntryAttachmentSync {
 			return;
 		}
 
-		for (var registryEntry : Registry.REGISTRIES.getEntries()) {
+		for (var registryEntry : Registries.REGISTRY.getEntries()) {
 			var registry = (Registry<Object>) registryEntry.getValue();
 			var dataHolder = RegistryEntryAttachmentHolder.getData(registry);
 
@@ -222,7 +223,7 @@ public final class RegistryEntryAttachmentSync {
 		}
 	}
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	@SuppressWarnings("unchecked")
 	private static void receiveSyncPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
 		var packetVersion = buf.readByte();
@@ -243,7 +244,7 @@ public final class RegistryEntryAttachmentSync {
 		}
 
 		client.execute(() -> {
-			var registry = (Registry<Object>) Registry.REGISTRIES.get(registryId);
+			var registry = (Registry<Object>) Registries.REGISTRY.get(registryId);
 			if (registry == null) {
 				throw new IllegalStateException("Unknown registry %s".formatted(registryId));
 			}

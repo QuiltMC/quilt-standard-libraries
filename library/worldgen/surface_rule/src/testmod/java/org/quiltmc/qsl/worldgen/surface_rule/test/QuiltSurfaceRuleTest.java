@@ -19,11 +19,11 @@ package org.quiltmc.qsl.worldgen.surface_rule.test;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.block.Blocks;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
+import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.gen.noise.NoiseParametersKeys;
 import net.minecraft.world.gen.surfacebuilder.SurfaceRules;
 
@@ -99,15 +99,15 @@ public class QuiltSurfaceRuleTest implements SurfaceRuleEvents.OverworldModifier
 
 	@Override
 	public void modifyTheEndRules(@NotNull SurfaceRuleContext.TheEnd context) {
-		RegistryKey<Biome> TEST_END_HIGHLANDS = RegistryKey.of(Registry.BIOME_KEY, new Identifier("quilt_biome_testmod", "test_end_highlands"));
-		RegistryKey<Biome> TEST_END_MIDLANDS = RegistryKey.of(Registry.BIOME_KEY, new Identifier("quilt_biome_testmod", "test_end_midlands"));
-		RegistryKey<Biome> TEST_END_BARRRENS = RegistryKey.of(Registry.BIOME_KEY, new Identifier("quilt_biome_testmod", "test_end_barrens"));
+		RegistryKey<Biome> TEST_END_HIGHLANDS = RegistryKey.of(RegistryKeys.BIOME, new Identifier("quilt_biome_testmod", "test_end_highlands"));
+		RegistryKey<Biome> TEST_END_MIDLANDS = RegistryKey.of(RegistryKeys.BIOME, new Identifier("quilt_biome_testmod", "test_end_midlands"));
+		RegistryKey<Biome> TEST_END_BARRRENS = RegistryKey.of(RegistryKeys.BIOME, new Identifier("quilt_biome_testmod", "test_end_barrens"));
 
 		SurfaceRules.MaterialCondition pinkBiome = SurfaceRules.biome(TEST_END_HIGHLANDS);
 		SurfaceRules.MaterialCondition whiteBiome = SurfaceRules.biome(TEST_END_MIDLANDS);
 		SurfaceRules.MaterialCondition purpleBiome = SurfaceRules.biome(TEST_END_BARRRENS);
-		SurfaceRules.MaterialCondition blackBiome = SurfaceRules.biome(BiomeKeys.END_BARRENS);
-		SurfaceRules.MaterialCondition blueBiome = SurfaceRules.biome(BiomeKeys.THE_END);
+		SurfaceRules.MaterialCondition blackBiome = SurfaceRules.biome(Biomes.END_BARRENS);
+		SurfaceRules.MaterialCondition blueBiome = SurfaceRules.biome(Biomes.THE_END);
 
 		SurfaceRules.MaterialRule PINK_CONCRETE = SurfaceRules.block(Blocks.PINK_CONCRETE.getDefaultState());
 		SurfaceRules.MaterialRule WHITE_CONCRETE = SurfaceRules.block(Blocks.WHITE_CONCRETE.getDefaultState());

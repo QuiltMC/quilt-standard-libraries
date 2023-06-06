@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.poi.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "PointOfInterestTypeMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

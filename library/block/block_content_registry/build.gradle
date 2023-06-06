@@ -7,10 +7,11 @@ qslModule {
 	moduleName = "block_content_registry"
 	id = "quilt_block_content_registry"
 	description = "An API for adding to different content registries in Minecraft"
-	library = "block"
 	moduleDependencies {
 		core {
 			api("qsl_base")
+			impl("resource_loader")
+			testmodOnly("testing")
 		}
 		data {
 			api("registry_entry_attachment")
@@ -22,10 +23,10 @@ qslModule {
 	}
 	entrypoints {
 		init {
-			values = ["org.quiltmc.qsl.block.content.registry.impl.BlockContentRegistriesInitializer"]
+			values = ["org.quiltmc.qsl.block.content.registry.impl.BlockContentRegistriesImpl"]
 		}
 		client_init {
-			values = ["org.quiltmc.qsl.block.content.registry.impl.BlockContentRegistriesClientInitializer"]
+			values = ["org.quiltmc.qsl.block.content.registry.impl.client.BlockContentRegistriesClientInitializer"]
 		}
 	}
 	accessWidener()

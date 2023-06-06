@@ -10,10 +10,10 @@
     },
     "entrypoints": {
       "events": [
-        "org.quiltmc.qsl.entity_events.test.EntityEventsTestMod"
+        "org.quiltmc.qsl.entity.event.test.EntityEventsTestMod"
       ],
       "client_events": [
-        "org.quiltmc.qsl.entity_events.test.client.EntityEventsTestModClient"
+        "org.quiltmc.qsl.entity.event.test.client.EntityEventsTestModClient"
       ]
     },
     "intermediate_mappings": "net.fabricmc:intermediary",

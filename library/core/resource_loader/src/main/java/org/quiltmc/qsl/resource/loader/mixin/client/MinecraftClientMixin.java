@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ package org.quiltmc.qsl.resource.loader.mixin.client;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -33,9 +31,11 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
 import net.minecraft.resource.ReloadableResourceManager;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.resource.loader.api.client.ClientResourceLoaderEvents;
+import org.quiltmc.qsl.resource.loader.impl.client.ClientResourceLoaderImpl;
 
-@Environment(EnvType.CLIENT)
+@ClientOnly
 @Mixin(MinecraftClient.class)
 public class MinecraftClientMixin {
 	@Shadow
@@ -46,19 +46,17 @@ public class MinecraftClientMixin {
 			method = "<init>",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/MinecraftClient;setOverlay(Lnet/minecraft/client/gui/screen/Overlay;)V"
+					target = "Lnet/minecraft/resource/ReloadableResourceManager;reload(Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/concurrent/CompletableFuture;Ljava/util/List;)Lnet/minecraft/resource/ResourceReload;"
 			)
 	)
 	private void onFirstReloadResources(RunArgs runArgs, CallbackInfo ci) {
-		ClientResourceLoaderEvents.START_RESOURCE_PACK_RELOAD.invoker().onStartResourcePackReload(
-				(MinecraftClient) (Object) this, this.resourceManager, true
-		);
+		ClientResourceLoaderImpl.pushReloadContext(true);
 	}
 
 	// Lambda method in MinecraftClient#<init>, at MinecraftClient#setOverlay.
 	// Take an Optional<Throwable> parameter.
 	@SuppressWarnings("target")
-	@Inject(method = "m_aaltpyph(Ljava/util/Optional;)V", at = @At("HEAD"))
+	@Inject(method = "method_24040(Ljava/util/Optional;)V", at = @At("HEAD"))
 	private void onFirstEndReloadResources(Optional<Throwable> error, CallbackInfo ci) {
 		ClientResourceLoaderEvents.END_RESOURCE_PACK_RELOAD.invoker().onEndResourcePackReload(
 				(MinecraftClient) (Object) this, this.resourceManager, true, error.orElse(null)
@@ -69,20 +67,18 @@ public class MinecraftClientMixin {
 			method = "reloadResources(Z)Ljava/util/concurrent/CompletableFuture;",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/MinecraftClient;setOverlay(Lnet/minecraft/client/gui/screen/Overlay;)V"
+					target = "Lnet/minecraft/resource/ReloadableResourceManager;reload(Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/concurrent/CompletableFuture;Ljava/util/List;)Lnet/minecraft/resource/ResourceReload;"
 			)
 	)
 	private void onStartReloadResources(boolean force, CallbackInfoReturnable<CompletableFuture<Void>> cir) {
-		ClientResourceLoaderEvents.START_RESOURCE_PACK_RELOAD.invoker().onStartResourcePackReload(
-				(MinecraftClient) (Object) this, this.resourceManager, false
-		);
+		ClientResourceLoaderImpl.pushReloadContext(false);
 	}
 
 	// Lambda method in MinecraftClient#reloadResources, at MinecraftClient#setOverlay.
 	// Take an Optional<Throwable> parameter.
 	@SuppressWarnings("target")
-	@Inject(method = "m_ejxapxhy(Ljava/util/concurrent/CompletableFuture;Ljava/util/Optional;)V", at = @At(value = "HEAD"))
-	private void onEndReloadResources(CompletableFuture<Void> completableFuture, Optional<Throwable> error, CallbackInfo ci) {
+	@Inject(method = "method_24228(ZLjava/util/concurrent/CompletableFuture;Ljava/util/Optional;)V", at = @At(value = "HEAD"))
+	private void onEndReloadResources(boolean force, CompletableFuture<Void> completableFuture, Optional<Throwable> error, CallbackInfo ci) {
 		ClientResourceLoaderEvents.END_RESOURCE_PACK_RELOAD.invoker().onEndResourcePackReload(
 				(MinecraftClient) (Object) this, this.resourceManager, false, error.orElse(null)
 		);

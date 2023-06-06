@@ -1,0 +1,24 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Entity Rendering API"
+	moduleName = "entity_rendering"
+	id = "quilt_entity_rendering"
+	description = "Quilt APIs relating to the rendering of entities."
+	moduleDependencies {
+		core {
+			api("qsl_base")
+			api("resource_loader")
+		}
+		item {
+			testmodOnly("item_extensions")
+		}
+	}
+	clientOnly()
+
+	injectedInterface("net/minecraft/class_1741") {
+		values = ["org/quiltmc/qsl/rendering/entity/api/client/QuiltArmorMaterialExtensions"]
+	}
+}

@@ -1,0 +1,19 @@
+[versions]
+asm = "9.5"
+indra_git = "3.1.1"
+quilt_gradle_licenser = "2.+"
+quilt_json5 = "1.0.2"
+quilt_loom = "1.1.+"
+
+[libraries]
+asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
+asm-analysis = { module = "org.ow2.asm:asm-analysis", version.ref = "asm" }
+asm-commons = { module = "org.ow2.asm:asm-commons", version.ref = "asm" }
+asm-tree = { module = "org.ow2.asm:asm-tree", version.ref = "asm" }
+asm-util = { module = "org.ow2.asm:asm-util", version.ref = "asm" }
+
+indra-git = { module = "net.kyori:indra-git", version.ref = "indra_git" }
+
+quilt-gradle-licenser = { module = "org.quiltmc:quilt-gradle-licenser", version.ref = "quilt_gradle_licenser" }
+quilt-json5 = { module = "org.quiltmc:quilt-json5", version.ref="quilt_json5" }
+quilt-loom = { module = "org.quiltmc:loom", version.ref = "quilt_loom" }

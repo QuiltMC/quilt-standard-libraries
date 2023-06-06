@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,97 +18,73 @@
 package org.quiltmc.qsl.worldgen.biome.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 import com.mojang.datafixers.util.Pair;
-import com.mojang.logging.LogUtils;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
-import org.slf4j.Logger;
 
-import net.minecraft.util.Holder;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.source.BiomeSource;
-import net.minecraft.world.biome.source.MultiNoiseBiomeSource;
 import net.minecraft.world.biome.source.util.MultiNoiseUtil;
+import net.minecraft.world.biome.util.MultiNoiseBiomeSourceParameterList;
 
 /**
- * Internal data for modding Vanilla's {@link MultiNoiseBiomeSource.Preset#NETHER}.
+ * Internal data for modding Vanilla's {@link MultiNoiseBiomeSourceParameterList.Preset#NETHER}.
  */
 @ApiStatus.Internal
 public final class NetherBiomeData {
-	// Cached sets of the biomes that would generate from Vanilla's default biome source without consideration
-	// for data packs (as those would be distinct biome sources).
+	// The cached sets of vanilla biomes that would generate from Vanilla's nether biome preset.
+	private static final Set<RegistryKey<Biome>> VANILLA_NETHER_BIOMES = MultiNoiseBiomeSourceParameterList.Preset.NETHER
+			.method_49514()
+			.collect(Collectors.toSet());
+
+	// The cached sets of all biomes, included modded ones, that would generate from Vanilla's nether biome preset.
 	private static final Set<RegistryKey<Biome>> NETHER_BIOMES = new HashSet<>();
 
-	private static final Map<RegistryKey<Biome>, MultiNoiseUtil.NoiseHypercube> NETHER_BIOME_NOISE_POINTS = new HashMap<>();
+	public static final Map<RegistryKey<Biome>, MultiNoiseUtil.NoiseHypercube> NETHER_BIOME_NOISE_POINTS = new Reference2ObjectOpenHashMap<>();
 
-	private static final Logger LOGGER = LogUtils.getLogger();
-
-	private NetherBiomeData() {
-	}
+	private NetherBiomeData() {}
 
 	public static void addNetherBiome(RegistryKey<Biome> biome, MultiNoiseUtil.NoiseHypercube spawnNoisePoint) {
 		Preconditions.checkArgument(biome != null, "Biome is null");
-		Preconditions.checkArgument(spawnNoisePoint != null, "MultiNoiseUtil.NoiseValuePoint is null");
+		Preconditions.checkArgument(spawnNoisePoint != null, "MultiNoiseUtil.NoiseHypercube is null");
 		NETHER_BIOME_NOISE_POINTS.put(biome, spawnNoisePoint);
-		clearBiomeSourceCache();
-	}
-
-	public static Map<RegistryKey<Biome>, MultiNoiseUtil.NoiseHypercube> getNetherBiomeNoisePoints() {
-		return NETHER_BIOME_NOISE_POINTS;
+		NetherBiomeData.clearBiomeSourceCache();
 	}
 
 	public static boolean canGenerateInNether(RegistryKey<Biome> biome) {
 		if (NETHER_BIOMES.isEmpty()) {
-			MultiNoiseBiomeSource source = MultiNoiseBiomeSource.Preset.NETHER.getBiomeSource(BuiltinRegistries.BIOME);
-
-			for (Holder<Biome> entry : source.getBiomes()) {
-				BuiltinRegistries.BIOME.getKey(entry.value()).ifPresent(NETHER_BIOMES::add);
-			}
+			NETHER_BIOMES.addAll(VANILLA_NETHER_BIOMES);
+			NETHER_BIOMES.addAll(NETHER_BIOME_NOISE_POINTS.keySet());
 		}
 
-		return NETHER_BIOMES.contains(biome) || NETHER_BIOME_NOISE_POINTS.containsKey(biome);
+		return NETHER_BIOMES.contains(biome);
 	}
 
 	private static void clearBiomeSourceCache() {
-		NETHER_BIOMES.clear(); // Clear cached biome source data
+		NETHER_BIOMES.clear();
 	}
 
-	private static MultiNoiseUtil.ParameterRangeList<Holder<Biome>> withModdedBiomePoints(MultiNoiseUtil.ParameterRangeList<Holder<Biome>> defaultEntries, Registry<Biome> biomeRegistry) {
+	public static <T> MultiNoiseUtil.ParameterRangeList<T> withModdedBiomeEntries(
+			MultiNoiseUtil.ParameterRangeList<T> parameterRangeList, Function<RegistryKey<Biome>, T> function
+	) {
 		if (NETHER_BIOME_NOISE_POINTS.isEmpty()) {
-			return defaultEntries;
+			return parameterRangeList;
 		}
 
-		var entries = new ArrayList<>(defaultEntries.getEntries());
+		var entryList = new ArrayList<>(parameterRangeList.getEntries());
 
-		for (Map.Entry<RegistryKey<Biome>, MultiNoiseUtil.NoiseHypercube> entry : NETHER_BIOME_NOISE_POINTS.entrySet()) {
-			if (biomeRegistry.contains(entry.getKey())) {
-				entries.add(Pair.of(entry.getValue(), biomeRegistry.getOrCreateHolderOrThrow(entry.getKey())));
-			} else {
-				LOGGER.warn("Nether biome {} not loaded", entry.getKey().getValue());
-			}
+		for (var entry : NETHER_BIOME_NOISE_POINTS.entrySet()) {
+			entryList.add(Pair.of(entry.getValue(), function.apply(entry.getKey())));
 		}
 
-		return new MultiNoiseUtil.ParameterRangeList<>(entries);
-	}
-
-	public static void modifyBiomeSource(Registry<Biome> biomeRegistry, BiomeSource biomeSource) {
-		if (biomeSource instanceof MultiNoiseBiomeSource multiNoiseBiomeSource) {
-			if (((BiomeSourceAccess) multiNoiseBiomeSource).quilt$shouldModifyBiomePoints() && multiNoiseBiomeSource.matchesInstance(MultiNoiseBiomeSource.Preset.NETHER)) {
-				multiNoiseBiomeSource.biomePoints = NetherBiomeData.withModdedBiomePoints(
-						MultiNoiseBiomeSource.Preset.NETHER.biomeSourceFunction.apply(biomeRegistry),
-						biomeRegistry);
-				multiNoiseBiomeSource.biomes = multiNoiseBiomeSource.biomePoints.getEntries().stream().map(Pair::getSecond).collect(Collectors.toSet());
-				((BiomeSourceAccess) multiNoiseBiomeSource).quilt$setModifyBiomePoints(false);
-			}
-		}
+		return new MultiNoiseUtil.ParameterRangeList<>(Collections.unmodifiableList(entryList));
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,36 +18,40 @@ package org.quiltmc.qsl.registry.impl.sync;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolImpl;
+import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
+import org.quiltmc.qsl.registry.impl.sync.server.ServerRegistrySync;
 
 @ApiStatus.Internal
 public class RegistrySyncInitializer implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		ServerRegistrySync.readConfig();
+		ModProtocolImpl.loadVersions();
 
 		SynchronizedRegistry.markForSync(
-				Registry.BLOCK,
-				Registry.BLOCK_ENTITY_TYPE,
-				Registry.CAT_VARIANT,
-				Registry.COMMAND_ARGUMENT_TYPE,
-				Registry.ENCHANTMENT,
-				Registry.ENTITY_TYPE,
-				Registry.FLUID,
-				Registry.FROG_VARIANT,
-				Registry.GAME_EVENT,
-				Registry.ITEM,
-				Registry.PAINTING_VARIANT,
-				Registry.PARTICLE_TYPE,
-				Registry.SCREEN_HANDLER,
-				Registry.SOUND_EVENT,
-				Registry.STAT_TYPE,
-				Registry.STATUS_EFFECT,
-				Registry.VILLAGER_TYPE,
-				Registry.VILLAGER_PROFESSION
+				Registries.BLOCK,
+				Registries.BLOCK_ENTITY_TYPE,
+				Registries.CAT_VARIANT,
+				Registries.COMMAND_ARGUMENT_TYPE,
+				Registries.ENCHANTMENT,
+				Registries.ENTITY_TYPE,
+				Registries.FLUID,
+				Registries.FROG_VARIANT,
+				Registries.GAME_EVENT,
+				Registries.ITEM,
+				Registries.PAINTING_VARIANT,
+				Registries.PARTICLE_TYPE,
+				Registries.SCREEN_HANDLER_TYPE,
+				Registries.SOUND_EVENT,
+				Registries.STAT_TYPE,
+				Registries.STATUS_EFFECT,
+				Registries.VILLAGER_TYPE,
+				Registries.VILLAGER_PROFESSION
 		);
 	}
 }

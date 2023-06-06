@@ -17,8 +17,8 @@
 package org.quiltmc.qsl.registry.attachment.test.client;
 
 import net.minecraft.block.Block;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
@@ -26,7 +26,7 @@ import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 
 public class ClientAttachmentTest implements ClientModInitializer {
 	public static final RegistryEntryAttachment<Block, Boolean> BASED =
-			RegistryEntryAttachment.boolBuilder(Registry.BLOCK, new Identifier("quilt", "based"))
+			RegistryEntryAttachment.boolBuilder(Registries.BLOCK, new Identifier("quilt", "based"))
 					.side(RegistryEntryAttachment.Side.CLIENT).build();
 
 	@Override

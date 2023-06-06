@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import net.minecraft.world.gen.ChunkRandom;
 import org.quiltmc.qsl.worldgen.biome.impl.MultiNoiseSamplerExtensions;
 
 @Mixin(MultiNoiseUtil.MultiNoiseSampler.class)
-public class MultiNoiseSamplerMixin implements MultiNoiseSamplerExtensions {
+public abstract class MultiNoiseSamplerMixin implements MultiNoiseSamplerExtensions {
 	@Unique
 	private Long quilt$seed = null;
 
@@ -49,7 +49,7 @@ public class MultiNoiseSamplerMixin implements MultiNoiseSamplerExtensions {
 	@Override
 	public PerlinNoiseSampler quilt$getTheEndBiomesSampler() {
 		if (this.quilt$theEndBiomesSampler == null) {
-			Preconditions.checkState(quilt$seed != null, "MultiNoiseSampler doesn't have a seed set, created using different method?");
+			Preconditions.checkState(this.quilt$seed != null, "MultiNoiseSampler doesn't have a seed set, created using different method?");
 			this.quilt$theEndBiomesSampler = new PerlinNoiseSampler(new ChunkRandom(new LegacySimpleRandom((this.quilt$seed))));
 		}
 

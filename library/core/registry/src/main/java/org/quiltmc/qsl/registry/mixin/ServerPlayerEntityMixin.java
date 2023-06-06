@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.Unique;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-import org.quiltmc.qsl.registry.impl.sync.DelayedPacketsHolder;
+import org.quiltmc.qsl.registry.impl.sync.server.DelayedPacketsHolder;
 
 @Mixin(ServerPlayerEntity.class)
 public class ServerPlayerEntityMixin implements DelayedPacketsHolder {

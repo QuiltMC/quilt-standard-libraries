@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,14 +31,16 @@ import net.minecraft.network.packet.c2s.login.LoginQueryResponseC2SPacket;
 import net.minecraft.network.packet.s2c.login.LoginQueryRequestS2CPacket;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.PacketSendListeners;
 import org.quiltmc.qsl.networking.api.client.ClientLoginConnectionEvents;
 import org.quiltmc.qsl.networking.api.client.ClientLoginNetworking;
 import org.quiltmc.qsl.networking.impl.AbstractNetworkAddon;
+import org.quiltmc.qsl.networking.mixin.accessor.ClientLoginNetworkHandlerAccessor;
 
 @ApiStatus.Internal
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ClientLoginNetworkAddon extends AbstractNetworkAddon<ClientLoginNetworking.QueryRequestReceiver> {
 	private final ClientLoginNetworkHandler handler;
 	private final MinecraftClient client;
@@ -91,7 +91,7 @@ public final class ClientLoginNetworkAddon extends AbstractNetworkAddon<ClientLo
 					listener = PacketSendListeners.union(listener, each);
 				}
 
-				this.handler.getConnection().send(packet, listener);
+				((ClientLoginNetworkHandlerAccessor) this.handler).getConnection().send(packet, listener);
 			});
 		} catch (Throwable ex) {
 			this.logger.error("Encountered exception while handling in channel with name \"{}\"", channelName, ex);

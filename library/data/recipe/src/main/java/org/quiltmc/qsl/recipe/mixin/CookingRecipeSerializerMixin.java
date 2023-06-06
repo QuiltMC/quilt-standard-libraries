@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,8 @@ import org.quiltmc.qsl.recipe.api.serializer.QuiltRecipeSerializer;
 public abstract class CookingRecipeSerializerMixin<T extends AbstractCookingRecipe> implements QuiltRecipeSerializer<T> {
 	@Override
 	public JsonObject toJson(T recipe) {
-		return new CookingRecipeJsonFactory.CookingRecipeJsonProvider(recipe.getId(), recipe.getGroup(),
-				recipe.getIngredients().get(0), recipe.getOutput().getItem(),
+		return new CookingRecipeJsonFactory.CookingRecipeJsonProvider(recipe.getId(), recipe.getGroup(), recipe.getCategory(),
+				recipe.getIngredients().get(0), recipe.getResult(null).getItem(),
 				recipe.getExperience(), recipe.getCookTime(), null, null, this)
 				.toJson();
 	}

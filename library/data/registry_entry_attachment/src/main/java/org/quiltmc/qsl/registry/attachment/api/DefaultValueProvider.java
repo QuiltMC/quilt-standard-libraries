@@ -88,6 +88,7 @@ public interface DefaultValueProvider<R, V> {
 			if (this.hasFailed) {
 				throw new IllegalStateException("Result is a failure!");
 			}
+
 			return this.value;
 		}
 
@@ -98,6 +99,7 @@ public interface DefaultValueProvider<R, V> {
 			if (!this.hasFailed) {
 				throw new IllegalStateException("Result does not have an error!");
 			}
+
 			return this.error;
 		}
 	}

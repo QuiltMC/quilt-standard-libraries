@@ -55,6 +55,7 @@ public class QuiltDimensionsImpl {
 
 				return (E) entity;
 			}
+
 			return (E) entity.moveToWorld(destinationWorld);
 		} finally {
 			// Always clean up!

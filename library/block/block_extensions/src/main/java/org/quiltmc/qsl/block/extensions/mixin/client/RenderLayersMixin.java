@@ -27,8 +27,10 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderLayers;
 import net.minecraft.fluid.Fluid;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.block.extensions.impl.client.BlockRenderLayerMapImpl;
 
+@ClientOnly
 @Mixin(RenderLayers.class)
 public abstract class RenderLayersMixin {
 	@Shadow

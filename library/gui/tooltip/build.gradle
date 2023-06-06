@@ -7,7 +7,6 @@ qslModule {
 	moduleName = "tooltip"
 	id = "quilt_tooltip"
 	description = "Hooks and APIs for manipulating tooltips."
-	library = "gui"
 	moduleDependencies {
 		core {
 			api("qsl_base")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.RecipeType;
-import net.minecraft.tag.ItemTags;
+import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -77,7 +77,7 @@ public class RecipeTestMod implements ModInitializer {
 
 		RecipeManagerHelper.removeRecipes(handler -> {
 			handler.removeIf(RecipeType.CRAFTING, craftingRecipe -> {
-				return craftingRecipe.getOutput().getItem() instanceof BlockItem blockItem
+				return craftingRecipe.getResult(handler.getRegistryManager()).getItem() instanceof BlockItem blockItem
 						&& blockItem.getBlock() instanceof PressurePlateBlock;
 			});
 		});

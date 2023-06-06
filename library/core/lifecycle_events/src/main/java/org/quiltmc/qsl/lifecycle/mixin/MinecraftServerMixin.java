@@ -47,8 +47,9 @@ abstract class MinecraftServerMixin {
 			method = "runServer",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/server/MinecraftServer;setFavicon(Lnet/minecraft/server/ServerMetadata;)V",
-					ordinal = 0
+					target = "Lnet/minecraft/server/MinecraftServer;createServerMetadata()Lnet/minecraft/server/ServerMetadata;",
+					ordinal = 0,
+					shift = At.Shift.AFTER
 			)
 	)
 	private void serverReady(CallbackInfo info) {

@@ -16,21 +16,24 @@
 
 package org.quiltmc.qsl.registry.api.sync;
 
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.SimpleRegistry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import org.quiltmc.qsl.registry.impl.sync.RegistryFlag;
-import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
+import net.minecraft.registry.SimpleRegistry;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
+
+import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;
+import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
+import org.quiltmc.qsl.registry.impl.sync.server.ExtendedConnectionClient;
 
 /**
  * Methods for manipulation of registry synchronization.
  */
 @ApiStatus.Experimental
 public final class RegistrySynchronization {
-
 	/**
 	 * Marks registry status as dirty, requiring its synchronization data to be rebuilt.
 	 */
@@ -102,5 +105,43 @@ public final class RegistrySynchronization {
 	@Contract(pure = true)
 	public static <T> boolean isEntrySkipped(@NotNull SimpleRegistry<T> registry, T entry) {
 		return RegistryFlag.isSkipped(SynchronizedRegistry.as(registry).quilt$getEntryFlag(entry));
+	}
+
+	/**
+	 * Checks if player supports provided optional registry entry.
+	 *
+	 * @param player target player's entity
+	 * @param registry registry entry is part of
+	 * @param entry target entry
+	 * @return {@code true} if the given entry is known to player, or {@code false} otherwise
+	 */
+	@Contract(pure = true)
+	public static <T> boolean isEntryPresent(@NotNull ServerPlayerEntity player, @NotNull SimpleRegistry<T> registry, T entry) {
+		return player.networkHandler != null && isEntryPresent(player.networkHandler, registry, entry);
+	}
+
+	/**
+	 * Checks if player supports provided optional registry entry.
+	 *
+	 * @param handler target player's network handler
+	 * @param registry registry entry is part of
+	 * @param entry target entry
+	 * @return {@code true} if the given entry is known to player, or {@code false} otherwise
+	 */
+	@Contract(pure = true)
+	public static <T> boolean isEntryPresent(@NotNull ServerPlayNetworkHandler handler, @NotNull SimpleRegistry<T> registry, T entry) {
+		var connection = ExtendedConnectionClient.from(handler);
+		var regFlags = SynchronizedRegistry.as(registry).quilt$getRegistryFlag();
+		var flags = SynchronizedRegistry.as(registry).quilt$getEntryFlag(entry);
+
+		if (RegistryFlag.isSkipped(flags) || RegistryFlag.isSkipped(regFlags)) {
+			return false;
+		}
+
+		if (connection.quilt$understandsOptional()) {
+			return !connection.quilt$isUnknownEntry(registry, entry);
+		} else {
+			return !RegistryFlag.isOptional(flags) && !RegistryFlag.isOptional(regFlags);
+		}
 	}
 }

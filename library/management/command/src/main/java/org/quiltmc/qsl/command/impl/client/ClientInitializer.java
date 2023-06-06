@@ -18,18 +18,17 @@
 package org.quiltmc.qsl.command.impl.client;
 
 import com.mojang.logging.LogUtils;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.QuiltLoader;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.command.impl.KnownArgTypesSync;
 
 @ApiStatus.Internal
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class ClientInitializer implements ClientModInitializer {
 	private static final Logger LOGGER = LogUtils.getLogger();
 

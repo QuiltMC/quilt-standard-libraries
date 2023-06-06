@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.resource.ResourceManager;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.gen.surfacebuilder.SurfaceRules;
 
 /**
@@ -43,6 +44,12 @@ public interface SurfaceRuleContext {
 	 */
 	@Contract(pure = true)
 	@NotNull ResourceManager resourceManager();
+
+	/**
+	 * {@return the identifier of the chunk generator settings that have those surface rules}
+	 */
+	@Contract(pure = true)
+	@NotNull Identifier identifier();
 
 	/**
 	 * Represents the Overworld-specific context.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,10 @@ package org.quiltmc.qsl.resource.loader.api;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -34,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
-import net.minecraft.resource.ResourceNotFoundException;
+import net.minecraft.resource.ResourceIoSupplier;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.metadata.ResourceMetadataReader;
@@ -55,11 +52,12 @@ public abstract class GroupResourcePack implements ResourcePack {
 	protected final ResourceType type;
 	protected final List<? extends ResourcePack> packs;
 	protected final Map<String, List<ResourcePack>> namespacedPacks = new Object2ObjectOpenHashMap<>();
+	private boolean builtin;
 
 	public GroupResourcePack(@NotNull ResourceType type, @NotNull List<? extends ResourcePack> packs) {
 		this.type = type;
 		this.packs = packs;
-		this.recomputeNamespaces();
+		this.recompute();
 	}
 
 	/**
@@ -98,74 +96,45 @@ public abstract class GroupResourcePack implements ResourcePack {
 	}
 
 	/**
-	 * Recomputes the namespaces in case the resource pack list changes.
+	 * Recomputes some cached data in case the resource pack list changes.
 	 */
-	public void recomputeNamespaces() {
+	public void recompute() {
 		this.namespacedPacks.clear();
 		this.packs.forEach(pack -> pack.getNamespaces(this.type)
 				.forEach(namespace -> this.namespacedPacks.computeIfAbsent(namespace, value -> new ArrayList<>())
 						.add(pack)));
+
+		this.builtin = this.packs.stream().allMatch(ResourcePack::isBuiltin);
 	}
 
 	@Override
-	public InputStream open(ResourceType type, Identifier id) throws IOException {
+	public @Nullable ResourceIoSupplier<InputStream> open(ResourceType type, Identifier id) {
 		var packs = this.namespacedPacks.get(id.getNamespace());
 
 		if (packs != null) {
 			// Iterating backwards as higher-priority packs are placed at the end.
 			for (int i = packs.size() - 1; i >= 0; i--) {
 				ResourcePack pack = packs.get(i);
+				var supplier = pack.open(type, id);
 
-				if (pack.contains(type, id)) {
-					return pack.open(type, id);
+				if (supplier != null) {
+					return supplier;
 				}
 			}
 		}
 
-		throw new ResourceNotFoundException(null,
-				String.format("%s/%s/%s", type.getDirectory(), id.getNamespace(), id.getPath()));
+		return null;
 	}
 
 	@Override
-	public Collection<Identifier> findResources(ResourceType type, String namespace, String startingPath,
-			Predicate<Identifier> pathFilter) {
+	public void listResources(ResourceType type, String namespace, String startingPath,
+			ResourcePack.ResourceConsumer consumer) {
 		var packs = this.namespacedPacks.get(namespace);
 
-		if (packs == null) {
-			return Collections.emptyList();
-		}
-
-		var resources = new HashSet<Identifier>();
-
 		// Iterating backwards as higher-priority packs are placed at the end.
-		for (int i = packs.size() - 1; i >= 0; i--) {
-			ResourcePack pack = packs.get(i);
-			Collection<Identifier> modResources = pack.findResources(type, namespace, startingPath, pathFilter);
-
-			resources.addAll(modResources);
+		for (var pack : packs) {
+			pack.listResources(type, namespace, startingPath, consumer);
 		}
-
-		return resources;
-	}
-
-	@Override
-	public boolean contains(ResourceType type, Identifier id) {
-		var packs = this.namespacedPacks.get(id.getNamespace());
-
-		if (packs == null) {
-			return false;
-		}
-
-		// Iterating backwards as higher-priority packs are placed at the end.
-		for (int i = packs.size() - 1; i >= 0; i--) {
-			ResourcePack pack = packs.get(i);
-
-			if (pack.contains(type, id)) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	@Override
@@ -175,6 +144,11 @@ public abstract class GroupResourcePack implements ResourcePack {
 
 	public @NotNull String getFullName() {
 		return this.getName() + " (" + this.packs.stream().map(ResourcePack::getName).collect(Collectors.joining(", ")) + ")";
+	}
+
+	@Override
+	public boolean isBuiltin() {
+		return this.builtin;
 	}
 
 	@Override
@@ -216,8 +190,8 @@ public abstract class GroupResourcePack implements ResourcePack {
 		}
 
 		@Override
-		public @Nullable InputStream openRoot(String fileName) throws IOException {
-			return this.basePack.openRoot(fileName);
+		public @Nullable ResourceIoSupplier<InputStream> openRoot(String... path) {
+			return this.basePack.openRoot(path);
 		}
 
 		@Override

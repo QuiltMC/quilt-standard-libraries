@@ -20,16 +20,16 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.fluid.Fluid;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
+
 @ApiStatus.Internal
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public final class BlockRenderLayerMapImpl {
 	private BlockRenderLayerMapImpl() {
 	}
@@ -45,6 +45,7 @@ public final class BlockRenderLayerMapImpl {
 		if (blockMap != null) {
 			blockMap.forEach(blockHandlerIn);
 		}
+
 		if (fluidMap != null) {
 			fluidMap.forEach(fluidHandlerIn);
 		}

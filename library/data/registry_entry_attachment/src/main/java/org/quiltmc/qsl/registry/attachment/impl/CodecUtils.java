@@ -20,7 +20,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 
 public final class CodecUtils {
-	private CodecUtils() { }
+	private CodecUtils() {}
 
 	public static <T> void assertValid(Codec<T> codec, T value) {
 		var encoded = codec.encodeStart(JsonOps.INSTANCE, value);

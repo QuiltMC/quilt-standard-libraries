@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,10 @@
 
 package org.quiltmc.qsl.networking.test.channeltest;
 
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -26,46 +27,48 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 
 final class ChannelScreen extends Screen {
-	private final NetworkingChannelClientTest mod;
 	private ButtonWidget s2cButton;
 	private ButtonWidget c2sButton;
-	private ButtonWidget closeButton;
 	private ChannelList channelList;
 
 	ChannelScreen(NetworkingChannelClientTest mod) {
 		super(Text.literal("TODO"));
-		this.mod = mod;
 	}
 
 	@Override
 	protected void init() {
-		this.s2cButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 55, 5, 50, 20, Text.literal("S2C"), this::toS2C, (button, matrices, mouseX, mouseY) -> {
-			this.renderTooltip(matrices, Text.literal("Packets this client can receive"), mouseX, mouseY);
-		}));
-		this.c2sButton = this.addDrawableChild(new ButtonWidget(this.width / 2 + 5, 5, 50, 20, Text.literal("C2S"), this::toC2S, (button, matrices, mouseX, mouseY) -> {
-			this.renderTooltip(matrices, Text.literal("Packets the server can receive"), mouseX, mouseY);
-		}));
-		this.closeButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 60, this.height - 25, 120, 20, Text.literal("Close"), button -> this.closeScreen()));
+		this.s2cButton = this.addDrawableChild(ButtonWidget.builder(Text.literal("S2C"), this::toS2C)
+				.positionAndSize(this.width / 2 - 55, 5, 50, 20)
+				.tooltip(Tooltip.create(Text.literal("Packets this client can receive")))
+				.build());
+		this.c2sButton = this.addDrawableChild(ButtonWidget.builder(Text.literal("C2S"), this::toC2S)
+				.positionAndSize(this.width / 2 + 5, 5, 50, 20)
+				.tooltip(Tooltip.create(Text.literal("Packets the server can receive")))
+				.build());
+		this.addDrawableChild(ButtonWidget.builder(Text.literal("Close"), button -> this.closeScreen())
+				.positionAndSize(this.width / 2 - 60, this.height - 25, 120, 20)
+				.build());
 		this.channelList = this.addDrawable(new ChannelList(this.client, this.width, this.height - 60, 30, this.height - 30, this.textRenderer.fontHeight + 2));
 	}
 
 	@Override
-	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-		this.renderBackgroundTexture(0);
-		this.channelList.render(matrices, mouseX, mouseY, delta);
-		super.render(matrices, mouseX, mouseY, delta);
+	public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+		this.renderBackgroundTexture(graphics);
+		this.channelList.render(graphics, mouseX, mouseY, delta);
+		super.render(graphics, mouseX, mouseY, delta);
 
 		if (this.s2cButton.active && this.c2sButton.active) {
 			final var clickMe = Text.of("Click S2C or C2S to view supported channels");
 
 			final int textWidth = this.textRenderer.getWidth(clickMe);
 			//noinspection ConstantConditions
-			this.textRenderer.draw(
-					matrices,
+			graphics.drawText(
+					this.textRenderer,
 					clickMe,
-					this.width / 2.0F - (textWidth / 2.0F),
+					(int) (this.width / 2.0F - (textWidth / 2.0F)),
 					60,
-					Formatting.YELLOW.getColorValue()
+					Formatting.YELLOW.getColorValue(),
+					false
 			);
 		}
 	}

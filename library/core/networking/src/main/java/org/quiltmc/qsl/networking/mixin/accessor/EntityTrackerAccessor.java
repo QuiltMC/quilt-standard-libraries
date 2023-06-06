@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 import net.minecraft.server.world.EntityTrackingListener;
 
-@Mixin(targets = "net/minecraft/server/world/ThreadedAnvilChunkStorage$EntityTracker")
+@Mixin(targets = "net/minecraft/server/world/ThreadedChunkManager$EntityTracker")
 public interface EntityTrackerAccessor {
 	@Accessor("listeners")
 	Set<EntityTrackingListener> getPlayersTracking();

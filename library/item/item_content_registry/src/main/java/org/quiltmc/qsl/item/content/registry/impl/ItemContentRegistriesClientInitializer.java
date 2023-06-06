@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,13 +37,13 @@ public class ItemContentRegistriesClientInitializer implements ClientModInitiali
 
 	@Override
 	public void onInitializeClient(ModContainer mod) {
-		if (Boolean.getBoolean(ENABLE_TOOLTIP_DEBUG)) {
+		if (Boolean.getBoolean(ENABLE_TOOLTIP_DEBUG) || QuiltLoader.isModLoaded("quilt_item_content_registry_testmod")) {
 			if (QuiltLoader.isModLoaded("quilt_tooltip")) {
 				ItemTooltipCallback.EVENT.register((stack, player, context, lines) -> {
 					Item item = stack.getItem();
 
-					ItemContentRegistries.FUEL_TIME.get(item).ifPresent(time -> lines.add(Text.literal("Fuel Time: " + time + " ticks")));
-					ItemContentRegistries.COMPOST_CHANCE.get(item).ifPresent(chance -> lines.add(Text.literal("Compost chance: " + (chance * 100) + "%")));
+					ItemContentRegistries.FUEL_TIMES.get(item).ifPresent(time -> lines.add(Text.literal("Fuel Time: " + time + " ticks")));
+					ItemContentRegistries.COMPOST_CHANCES.get(item).ifPresent(chance -> lines.add(Text.literal("Compost chance: " + (chance * 100) + "%")));
 				});
 			} else {
 				LOGGER.warn("Tooltip debug was enabled, but the QSL module `quilt_tooltip` was missing.");

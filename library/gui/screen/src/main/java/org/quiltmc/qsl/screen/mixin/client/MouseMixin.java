@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,9 +30,11 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
 import net.minecraft.client.gui.screen.Screen;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.util.TriState;
 import org.quiltmc.qsl.screen.api.client.ScreenMouseEvents;
 
+@ClientOnly
 @Mixin(Mouse.class)
 abstract class MouseMixin {
 	@Shadow
@@ -43,17 +45,16 @@ abstract class MouseMixin {
 	@Unique
 	private Double quilt$scrollDistanceX;
 
-	// Synthetic method m_jzgvmppg([ZDDI)V -> lambda in Screen.wrapScreenError in Mouse.onMouseButton
+	// Synthetic lambda in Screen.wrapScreenError in Mouse.onMouseButton
 	@Inject(
-			method = "m_jzgvmppg([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
+			method = "method_1611([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
 			at = @At(
-				value = "INVOKE",
-				target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z"
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z"
 			),
 			cancellable = true
 	)
 	private static void beforeMouseClickedEvent(boolean[] resultHack, Screen screen, double mouseX, double mouseY, int button, CallbackInfo ci) {
-		@SuppressWarnings("resource")
 		var thisRef = (MouseMixin) (Object) MinecraftClient.getInstance().mouse;
 		// Store the screen in a variable in case someone tries to change the screen during this before event.
 		// If someone changes the screen, the after event will likely have class cast exceptions or throw a NPE.
@@ -73,17 +74,16 @@ abstract class MouseMixin {
 		ScreenMouseEvents.BEFORE_MOUSE_CLICK.invoker().beforeMouseClick(thisRef.quilt$currentScreen, mouseX, mouseY, button);
 	}
 
-	// Synthetic method m_jzgvmppg([ZDDI)V -> lambda in Screen.wrapScreenError in Mouse.onMouseButton
+	// Synthetic lambda in Screen.wrapScreenError in Mouse.onMouseButton
 	@Inject(
-			method = "m_jzgvmppg([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
+			method = "method_1611([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
 			at = @At(
-				value = "INVOKE",
-				target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z",
-				shift = At.Shift.AFTER
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z",
+					shift = At.Shift.AFTER
 			)
 	)
 	private static void afterMouseClickedEvent(boolean[] resultHack, Screen screen, double mouseX, double mouseY, int button, CallbackInfo ci) {
-		@SuppressWarnings("resource")
 		var thisRef = (MouseMixin) (Object) MinecraftClient.getInstance().mouse;
 
 		if (thisRef.quilt$currentScreen == null) {
@@ -94,17 +94,16 @@ abstract class MouseMixin {
 		thisRef.quilt$currentScreen = null;
 	}
 
-	// Synthetic method m_acizjdos([ZDDI)V -> lambda in Screen.wrapScreenError in Mouse.onMouseButton
+	// Synthetic lambda in Screen.wrapScreenError in Mouse.onMouseButton
 	@Inject(
-			method = "m_acizjdos([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
+			method = "method_1605([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
 			at = @At(
-				value = "INVOKE",
-				target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z"
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z"
 			),
 			cancellable = true
 	)
 	private static void beforeMouseReleasedEvent(boolean[] resultHack, Screen screen, double mouseX, double mouseY, int button, CallbackInfo ci) {
-		@SuppressWarnings("resource")
 		var thisRef = (MouseMixin) (Object) MinecraftClient.getInstance().mouse;
 
 		// Store the screen in a variable in case someone tries to change the screen during this before event.
@@ -125,17 +124,16 @@ abstract class MouseMixin {
 		ScreenMouseEvents.BEFORE_MOUSE_RELEASE.invoker().beforeMouseRelease(thisRef.quilt$currentScreen, mouseX, mouseY, button);
 	}
 
-	// Synthetic method m_acizjdos([ZDDI)V -> lambda in Screen.wrapScreenError in Mouse.onMouseButton
+	// Synthetic lambda in Screen.wrapScreenError in Mouse.onMouseButton
 	@Inject(
-			method = "m_acizjdos([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
+			method = "method_1605([ZLnet/minecraft/client/gui/screen/Screen;DDI)V",
 			at = @At(
-				value = "INVOKE",
-				target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z",
-				shift = At.Shift.AFTER
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z",
+					shift = At.Shift.AFTER
 			)
 	)
 	private static void afterMouseReleasedEvent(boolean[] resultHack, Screen screen, double mouseX, double mouseY, int button, CallbackInfo ci) {
-		@SuppressWarnings("resource")
 		var thisRef = (MouseMixin) (Object) MinecraftClient.getInstance().mouse;
 
 		if (thisRef.quilt$currentScreen == null) {

@@ -7,12 +7,13 @@ qslModule {
 	moduleName = "registry"
 	id = "quilt_registry"
 	description = "Tools and events for manipulating and monitoring Minecraft's content registries."
-	library = "core"
 	moduleDependencies {
 		core {
 			api("qsl_base")
 			api("networking")
 			api("lifecycle_events")
+			testmodOnly("resource_loader")
+			testmodOnly("testing")
 		}
 	}
 	entrypoints {
@@ -23,4 +24,5 @@ qslModule {
 			values = ["org.quiltmc.qsl.registry.impl.sync.RegistrySyncInitializer"]
 		}
 	}
+	accessWidener()
 }

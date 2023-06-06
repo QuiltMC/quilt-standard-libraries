@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.minecraft.resource.ResourceManager;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.world.SaveProperties;
-import net.minecraft.world.level.LevelProperties;
+import net.minecraft.world.WorldSaveProperties;
 
 import org.quiltmc.qsl.worldgen.biome.impl.modification.BiomeModificationImpl;
 
@@ -40,12 +41,15 @@ public abstract class MinecraftServerMixin {
 	@Shadow
 	public abstract DynamicRegistryManager.Frozen getRegistryManager();
 
+	@Shadow
+	public abstract ResourceManager getResourceManager();
+
 	@Inject(method = "<init>", at = @At(value = "RETURN"))
 	private void finalizeWorldGen(CallbackInfo ci) {
-		if (!(this.saveProperties instanceof LevelProperties levelProperties)) {
-			throw new RuntimeException("Incompatible SaveProperties passed to MinecraftServer: " + saveProperties);
+		if (!(this.saveProperties instanceof WorldSaveProperties levelProperties)) {
+			throw new RuntimeException("Incompatible SaveProperties passed to MinecraftServer: " + this.saveProperties);
 		}
 
-		BiomeModificationImpl.INSTANCE.finalizeWorldGen(getRegistryManager(), levelProperties);
+		BiomeModificationImpl.INSTANCE.finalizeWorldGen(this.getRegistryManager(), levelProperties, this.getResourceManager());
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@
 
 package org.quiltmc.qsl.registry.impl.sync.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
+
 @ApiStatus.Internal
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public interface RebuildableIdModelHolder {
 	void quilt$rebuildIds();
 }

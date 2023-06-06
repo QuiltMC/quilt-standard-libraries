@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.SharedConstants;
+import net.minecraft.resource.ResourceIoSupplier;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.DataPackSettings;
 import net.minecraft.resource.pack.ResourcePack;
@@ -40,10 +41,6 @@ public final class ModResourcePackUtil {
 	 */
 	public static final DataPackSettings DEFAULT_SETTINGS = createDefaultDataPackSettings(DataPackSettings.SAFE_MODE);
 
-	public static boolean containsDefault(ModMetadata info, String filename) {
-		return "pack.mcmeta".equals(filename);
-	}
-
 	public static String getPackMeta(@Nullable String description, ResourceType type) {
 		if (description == null) {
 			description = "";
@@ -55,13 +52,13 @@ public final class ModResourcePackUtil {
 		return String.format("""
 						{"pack":{"pack_format":%d,"description":"%s"}}
 						""",
-				type.getPackVersion(SharedConstants.getGameVersion()), description);
+				SharedConstants.getGameVersion().getResourceVersion(type), description);
 	}
 
-	public static InputStream openDefault(ModMetadata info, ResourceType type, String filename) {
+	public static @Nullable ResourceIoSupplier<InputStream> openDefault(ModMetadata info, ResourceType type, String filename) {
 		if ("pack.mcmeta".equals(filename)) {
 			var pack = getPackMeta(info.name(), type);
-			return IOUtils.toInputStream(pack, Charsets.UTF_8);
+			return () -> IOUtils.toInputStream(pack, Charsets.UTF_8);
 		}
 
 		return null;

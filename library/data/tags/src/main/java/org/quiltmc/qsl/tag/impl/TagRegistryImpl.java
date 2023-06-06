@@ -26,18 +26,18 @@ import java.util.stream.Stream;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.tag.TagKey;
-import net.minecraft.util.Holder;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 
 import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 import org.quiltmc.qsl.tag.api.QuiltTagKey;
 import org.quiltmc.qsl.tag.api.TagRegistry;
 import org.quiltmc.qsl.tag.api.TagType;
 import org.quiltmc.qsl.tag.impl.client.ClientTagRegistryManager;
-import org.quiltmc.qsl.tag.mixin.DynamicRegistryManagerAccessor;
 
 @ApiStatus.Internal
 public final class TagRegistryImpl implements ServerLifecycleEvents.Stopped {
@@ -49,8 +49,9 @@ public final class TagRegistryImpl implements ServerLifecycleEvents.Stopped {
 	 * @param registryKey the key of the registry
 	 * @return {@code true} if the registry is dynamic, otherwise {@code false}
 	 */
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public static boolean isRegistryDynamic(RegistryKey<? extends Registry<?>> registryKey) {
-		return DynamicRegistryManagerAccessor.getInfos().containsKey(registryKey);
+		return !Registries.REGISTRY.contains((RegistryKey) registryKey);
 	}
 
 	public static void populateTags(Map<TagKey<?>, List<Holder<?>>> tags) {

@@ -45,12 +45,12 @@ public class QslLibraryDependency implements Named, Serializable {
 	}
 
 	public ListProperty<ModuleDependencyInfo> getDependencyInfo() {
-		return dependencyInfo;
+		return this.dependencyInfo;
 	}
 
 	@Override
 	public @NotNull String getName() {
-		return name;
+		return this.name;
 	}
 
 	public record ModuleDependencyInfo(String module, ConfigurationType type) implements Serializable {

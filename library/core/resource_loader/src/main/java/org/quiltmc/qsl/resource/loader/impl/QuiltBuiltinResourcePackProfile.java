@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,16 @@
 
 package org.quiltmc.qsl.resource.loader.impl;
 
-import java.io.IOException;
-
 import com.mojang.logging.LogUtils;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
+import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.ResourcePackCompatibility;
 import net.minecraft.resource.pack.ResourcePackProfile;
 import net.minecraft.resource.pack.ResourcePackSource;
-import net.minecraft.resource.pack.metadata.PackResourceMetadata;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -34,33 +34,32 @@ import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
 @ApiStatus.Internal
 public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
 	private static final Logger LOGGER = LogUtils.getLogger();
+	private final ResourcePack pack;
 
-	static QuiltBuiltinResourcePackProfile of(ModNioResourcePack pack) {
-		try {
-			PackResourceMetadata metadata = pack.parseMetadata(PackResourceMetadata.READER);
-			if (metadata == null) {
-				LOGGER.warn("Couldn't find pack meta for pack {}", pack.getName());
-				return null;
-			}
+	static @Nullable QuiltBuiltinResourcePackProfile of(ModNioResourcePack pack) {
+		Info info = readInfoFromPack(pack.getName(), name -> pack);
 
-			return new QuiltBuiltinResourcePackProfile(pack, metadata);
-		} catch (IOException e) {
-			LOGGER.warn("Couldn't get pack info for: {}", e.toString());
+		if (info == null) {
+			LOGGER.warn("Couldn't find pack meta for pack {}.", pack.getName());
 			return null;
 		}
+
+		return new QuiltBuiltinResourcePackProfile(pack, info);
 	}
 
-	private QuiltBuiltinResourcePackProfile(ModNioResourcePack pack, PackResourceMetadata metadata) {
+	private QuiltBuiltinResourcePackProfile(ModNioResourcePack pack, Info info) {
 		super(
 				pack.getName(),
-				pack.getDisplayName(),
 				pack.getActivationType() == ResourcePackActivationType.ALWAYS_ENABLED,
-				() -> pack,
-				metadata,
-				pack.type,
+				name -> pack,
+				pack.getDisplayName(),
+				info,
+				info.getCompatibility(pack.type),
 				ResourcePackProfile.InsertionPosition.TOP,
+				false,
 				new BuiltinResourcePackSource(pack)
 		);
+		this.pack = pack;
 	}
 
 	@Override
@@ -69,12 +68,18 @@ public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
 		return ResourcePackCompatibility.COMPATIBLE;
 	}
 
+	@Override
+	public @NotNull ResourcePackActivationType getActivationType() {
+		return this.pack.getActivationType();
+	}
+
 	/**
 	 * Represents a built-in resource pack source.
 	 * Similar to {@link ResourcePackSource#PACK_SOURCE_BUILTIN} but specifies the mod name too.
 	 */
 	public static class BuiltinResourcePackSource implements ResourcePackSource {
 		private static final Text SOURCE_BUILTIN_TEXT = Text.translatable("pack.source.builtin");
+		private final ModNioResourcePack pack;
 		private final Text text;
 		private final Text tooltip;
 
@@ -85,6 +90,7 @@ public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
 				modName = pack.modInfo.id();
 			}
 
+			this.pack = pack;
 			this.text = SOURCE_BUILTIN_TEXT;
 			this.tooltip = Text.translatable("options.generic_value", SOURCE_BUILTIN_TEXT, modName);
 		}
@@ -92,6 +98,11 @@ public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
 		@Override
 		public Text decorate(Text description) {
 			return Text.translatable("pack.nameAndSource", description, this.text).formatted(Formatting.GRAY);
+		}
+
+		@Override
+		public boolean shouldAddAutomatically() {
+			return this.pack.getActivationType().isEnabledByDefault();
 		}
 
 		public Text getTooltip() {

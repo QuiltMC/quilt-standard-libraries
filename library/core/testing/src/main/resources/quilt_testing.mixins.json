@@ -1,0 +1,22 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.testing.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "MinecraftServerMixin",
+    "StructureTemplateManagerMixin",
+    "TestContextAccessor",
+    "TestFunctionsMixin",
+    "TestServerMixin",
+    "command.ArgumentTypeInfosMixin",
+    "command.CommandManagerMixin",
+    "command.TestCommandMixin",
+    "command.TestFunctionArgumentTypeMixin"
+  ],
+  "server": [
+    "server.MainMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

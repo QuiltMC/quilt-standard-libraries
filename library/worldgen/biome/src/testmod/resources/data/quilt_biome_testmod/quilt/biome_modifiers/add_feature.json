@@ -1,0 +1,13 @@
+{
+  "type": "quilt:add_features",
+  "phase": "additions",
+  "selector": {
+    "type": "quilt:or",
+    "values": [
+      "#minecraft:is_taiga",
+      "#minecraft:is_mountain"
+    ]
+  },
+  "step": "vegetal_decoration",
+  "features": "quilt_biome_testmod:iron_pile"
+}

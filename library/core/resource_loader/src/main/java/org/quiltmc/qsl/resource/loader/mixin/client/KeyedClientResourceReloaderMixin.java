@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,12 @@ package org.quiltmc.qsl.resource.loader.mixin.client;
 
 import java.util.Locale;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 import net.minecraft.client.PeriodicNotificationManager;
+import net.minecraft.client.font.FontManager;
 import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.WorldRenderer;
@@ -44,20 +43,23 @@ import net.minecraft.client.resource.language.LanguageManager;
 import net.minecraft.client.search.SearchManager;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.client.texture.PaintingManager;
+import net.minecraft.client.texture.SpriteAtlasHolder;
 import net.minecraft.client.texture.StatusEffectSpriteManager;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;
 import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 
-@Environment(EnvType.CLIENT)
+@ClientOnly
 @Mixin({
 		/* public */
 		BakedModelManager.class, BlockEntityRenderDispatcher.class, BlockRenderManager.class, BuiltinModelItemRenderer.class,
 		EntityModelLoader.class, EntityRenderDispatcher.class, GrassColormapResourceSupplier.class, FoliageColormapResourceSupplier.class,
-		LanguageManager.class, ItemRenderer.class, ParticleManager.class, PaintingManager.class,
+		FontManager.class, LanguageManager.class, ItemRenderer.class, ParticleManager.class, PaintingManager.class,
 		StatusEffectSpriteManager.class, SoundManager.class, SplashTextResourceSupplier.class, TextureManager.class,
+		SpriteAtlasHolder.class,
 		/* private */
 		GameRenderer.class, WorldRenderer.class, VideoWarningManager.class, PeriodicNotificationManager.class, SearchManager.class
 })
@@ -103,6 +105,10 @@ public abstract class KeyedClientResourceReloaderMixin implements IdentifiableRe
 				this.quilt$id = ResourceReloaderKeys.Client.PAINTINGS;
 			} else if (self instanceof ParticleManager) {
 				this.quilt$id = ResourceReloaderKeys.Client.PARTICLES;
+			} else if (self instanceof FontManager) {
+				this.quilt$id = ResourceReloaderKeys.Client.FONTS;
+			} else if (self instanceof SpriteAtlasHolder) {
+				this.quilt$id = ResourceReloaderKeys.Client.SPRITE_ATLASES;
 			} else {
 				this.quilt$id = new Identifier("private/" + self.getClass().getSimpleName().toLowerCase(Locale.ROOT));
 			}

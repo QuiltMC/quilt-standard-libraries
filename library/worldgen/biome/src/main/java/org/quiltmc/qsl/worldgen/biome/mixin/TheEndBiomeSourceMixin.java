@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +17,27 @@
 
 package org.quiltmc.qsl.worldgen.biome.mixin;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
+import com.google.common.base.Suppliers;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import com.google.common.base.Suppliers;
 
-import net.minecraft.util.Holder;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.HolderProvider;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.RegistryOps;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.biome.source.TheEndBiomeSource;
@@ -40,19 +47,33 @@ import org.quiltmc.qsl.worldgen.biome.impl.TheEndBiomeData;
 
 @Mixin(TheEndBiomeSource.class)
 public abstract class TheEndBiomeSourceMixin extends BiomeSource {
+	@Shadow
+	@Mutable
+	@Final
+	public static Codec<TheEndBiomeSource> CODEC;
+
 	@Unique
 	private Supplier<TheEndBiomeData.Overrides> overrides;
 
 	@Unique
 	private boolean quilt$hasAddedBiomes = false;
 
-	protected TheEndBiomeSourceMixin(Stream<Holder<Biome>> stream) {
-		super(stream);
+	@Unique
+	private boolean quilt$checkedAddedBiomes = false;
+
+	/**
+	 * Modifies the codec, so it calls the static factory method that gives us access to the
+	 * full biome registry instead of just the pre-defined biomes that vanilla uses.
+	 */
+	@Inject(method = "<clinit>", at = @At("TAIL"))
+	private static void modifyCodec(CallbackInfo ci) {
+		CODEC = RecordCodecBuilder.create((instance) ->
+			instance.group(RegistryOps.retrieveGetter(RegistryKeys.BIOME)).apply(instance, instance.stable(TheEndBiomeSource::method_46680)));
 	}
 
-	@Inject(method = "<init>", at = @At("RETURN"))
-	private void init(Registry<Biome> biomeRegistry, CallbackInfo ci) {
-		this.overrides = Suppliers.memoize(() -> TheEndBiomeData.createOverrides(biomeRegistry));
+	@Inject(method = "method_46680(Lnet/minecraft/registry/HolderProvider;)Lnet/minecraft/world/biome/source/TheEndBiomeSource;", at = @At("RETURN"))
+	private static void init(HolderProvider<Biome> holderProvider, CallbackInfoReturnable<TheEndBiomeSource> cir) {
+		((TheEndBiomeSourceMixin) (Object) cir.getReturnValue()).overrides = Suppliers.memoize(TheEndBiomeData::createOverrides);
 	}
 
 	@Inject(method = "getNoiseBiome", at = @At("RETURN"), cancellable = true)
@@ -62,11 +83,18 @@ public abstract class TheEndBiomeSourceMixin extends BiomeSource {
 
 	@Override
 	public Set<Holder<Biome>> getBiomes() {
-		if (!this.quilt$hasAddedBiomes) {
-			this.quilt$hasAddedBiomes = true;
-			super.getBiomes().addAll(this.overrides.get().getAddedBiomes());
+		var biomes = super.getBiomes();
+
+		if (!this.quilt$checkedAddedBiomes) {
+			this.quilt$checkedAddedBiomes = true;
+			this.quilt$hasAddedBiomes = !this.overrides.get().getAddedBiomes().isEmpty();
 		}
 
-		return super.getBiomes();
+		if (this.quilt$hasAddedBiomes) {
+			biomes = new HashSet<>(biomes);
+			biomes.addAll(this.overrides.get().getAddedBiomes());
+		}
+
+		return biomes;
 	}
 }

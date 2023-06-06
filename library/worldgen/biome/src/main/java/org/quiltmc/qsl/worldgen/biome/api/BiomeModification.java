@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,6 +58,15 @@ public class BiomeModification {
 	 */
 	public BiomeModification add(ModificationPhase phase, Predicate<BiomeSelectionContext> selector, BiConsumer<BiomeSelectionContext, BiomeModificationContext> modifier) {
 		BiomeModificationImpl.INSTANCE.addModifier(this.id, phase, selector, modifier);
+		return this;
+	}
+
+	/**
+	 * Adds a modifier that can be overridden by datapacks. Note that only a single such modifier can be added with any
+	 * given identifier, and subsequent calls to this method will override the previous one.
+	 */
+	public BiomeModification add(ModificationPhase phase, BiomeModifier modifier) {
+		BiomeModificationImpl.INSTANCE.addModifier(this.id, phase, modifier);
 		return this;
 	}
 }

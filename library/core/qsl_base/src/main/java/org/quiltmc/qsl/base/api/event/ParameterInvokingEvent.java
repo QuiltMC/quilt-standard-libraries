@@ -91,5 +91,4 @@ import java.lang.annotation.Target;
 @Documented // Documentation
 @Retention(RetentionPolicy.CLASS) // For static analysis
 @Target({ElementType.FIELD, ElementType.METHOD})
-public @interface ParameterInvokingEvent {
-}
+public @interface ParameterInvokingEvent {}

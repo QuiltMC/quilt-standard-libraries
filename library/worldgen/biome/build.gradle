@@ -6,13 +6,22 @@ qslModule {
 	name = "Quilt Biome API"
 	moduleName = "biome"
 	id = "quilt_biome"
-	library = "worldgen"
 	description = "An API for managing custom biomes."
 	moduleDependencies {
 		core {
 			api("qsl_base")
+			api("registry")
+			api("lifecycle_events")
+			api("data_callback")
 			testmodOnly("resource_loader")
-			testmodOnly("lifecycle_events")
+		}
+	}
+	entrypoints {
+		events {
+			values = ["org.quiltmc.qsl.worldgen.biome.impl.TheEndBiomeData"]
+		}
+		init {
+			values = ["org.quiltmc.qsl.worldgen.biome.impl.modification.BiomeModifierCodecs"]
 		}
 	}
 	accessWidener()

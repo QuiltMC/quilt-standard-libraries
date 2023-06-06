@@ -20,10 +20,10 @@ package org.quiltmc.qsl.tag.api;
 import java.util.Collection;
 import java.util.stream.Stream;
 
-import net.minecraft.tag.TagKey;
-import net.minecraft.util.Holder;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.Holder;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.tag.TagKey;
 
 import org.quiltmc.qsl.tag.impl.TagRegistryImpl;
 import org.quiltmc.qsl.tag.impl.client.ClientTagRegistryManager;

@@ -24,9 +24,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
 
-import org.quiltmc.loader.api.QuiltLoader;
+import org.quiltmc.loader.api.entrypoint.EntrypointUtil;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 
+@ClientOnly
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin {
 	@Inject(
@@ -34,8 +36,6 @@ public abstract class MinecraftClientMixin {
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/GameOptions;<init>(Lnet/minecraft/client/MinecraftClient;Ljava/io/File;)V")
 	)
 	private void onInit(RunArgs runArgs, CallbackInfo ci) {
-		for (var initializer : QuiltLoader.getEntrypointContainers(ClientModInitializer.ENTRYPOINT_KEY, ClientModInitializer.class)) {
-			initializer.getEntrypoint().onInitializeClient(initializer.getProvider());
-		}
+		EntrypointUtil.invoke(ClientModInitializer.ENTRYPOINT_KEY, ClientModInitializer.class, ClientModInitializer::onInitializeClient);
 	}
 }

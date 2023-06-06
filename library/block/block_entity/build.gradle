@@ -7,13 +7,15 @@ qslModule {
 	moduleName = "block_entity"
 	id = "quilt_block_entity"
 	description = "Extensions for creating and working with block entities."
-	library = "block"
 	moduleDependencies {
 		core {
 			api("qsl_base")
 			impl("registry") // For registry-sync.
 			impl("lifecycle_events")
 			testmodOnly("resource_loader")
+		}
+		block {
+			testmodOnly("block_extensions")
 		}
 	}
 	entrypoints {

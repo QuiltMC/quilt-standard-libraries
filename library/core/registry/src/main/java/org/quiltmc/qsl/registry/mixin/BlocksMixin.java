@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 
@@ -35,7 +35,7 @@ public abstract class BlocksMixin {
 
 	@Inject(method = "<clinit>", at = @At("RETURN"))
 	private static void onInit(CallbackInfo ci) {
-		RegistryEvents.getEntryAddEvent(Registry.BLOCK).register(context -> {
+		RegistryEvents.getEntryAddEvent(Registries.BLOCK).register(context -> {
 			context.value().getLootTableId();
 			context.value().getStateManager().getStates().forEach((state) -> {
 				if (Block.STATE_IDS.getRawId(state) == -1) {

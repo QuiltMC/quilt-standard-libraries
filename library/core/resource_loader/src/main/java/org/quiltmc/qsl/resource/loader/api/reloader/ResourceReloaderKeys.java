@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,8 +59,10 @@ public final class ResourceReloaderKeys {
 		public static final Identifier MODELS = id("models");
 		public static final Identifier PAINTINGS = id("paintings");
 		public static final Identifier PARTICLES = id("particles");
+		public static final Identifier SHADERS = id("shaders");
 		public static final Identifier SOUNDS = id("sounds");
 		public static final Identifier SPLASH_TEXTS = id("splash_texts");
+		public static final Identifier SPRITE_ATLASES = id("sprite_atlases");
 		public static final Identifier STATUS_EFFECTS = id("status_effects");
 		public static final Identifier TEXTURES = id("textures");
 
@@ -74,9 +76,7 @@ public final class ResourceReloaderKeys {
 	public static final class Server {
 		public static final Identifier ADVANCEMENTS = id("advancements");
 		public static final Identifier FUNCTIONS = id("functions");
-		public static final Identifier ITEM_MODIFIERS = id("item_modifiers");
 		public static final Identifier LOOT_TABLES = id("loot_tables");
-		public static final Identifier PREDICATES = id("predicates");
 		public static final Identifier RECIPES = id("recipes");
 		public static final Identifier TAGS = id("tags");
 

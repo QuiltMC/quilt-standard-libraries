@@ -17,9 +17,9 @@
 package org.quiltmc.qsl.networking.test.channeltest;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.EntryListWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -51,9 +51,9 @@ final class ChannelList extends EntryListWidget<ChannelList.Entry> {
 		}
 
 		@Override
-		public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight,
-				int mouseX, int mouseY, boolean hovered, float tickDelta) {
-			ChannelList.this.client.textRenderer.draw(matrices, Text.literal(this.channel.toString()), x, y, Formatting.WHITE.getColorValue());
+		public void render(GuiGraphics graphics, int index, int y, int x, int entryWidth, int entryHeight,
+						   int mouseX, int mouseY, boolean hovered, float tickDelta) {
+			graphics.drawText(ChannelList.this.client.textRenderer, Text.literal(this.channel.toString()), x, y, Formatting.WHITE.getColorValue(), false);
 		}
 	}
 }

@@ -16,9 +16,9 @@
 
 package org.quiltmc.qsl.registry.attachment.impl;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
+
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 
 /**
  * Simple guard class that prevents access to client-sided attachments in a dedicated server environment.
@@ -27,7 +27,7 @@ import org.jetbrains.annotations.ApiStatus;
 public final class ClientSideGuard {
 	private static boolean allowed = false;
 
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	public static void setAccessAllowed() {
 		allowed = true;
 	}
