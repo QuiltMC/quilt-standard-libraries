@@ -21,16 +21,6 @@ import java.util.UUID;
 
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
-import org.quiltmc.qsl.chat.api.ChatSecurityRollbackSupport;
-import org.quiltmc.qsl.chat.api.MessageChainLookup;
-import org.quiltmc.qsl.chat.api.QuiltChatEvents;
-import org.quiltmc.qsl.chat.api.types.ChatC2SMessage;
-import org.quiltmc.qsl.chat.api.types.ChatS2CMessage;
-import org.quiltmc.qsl.chat.api.types.CommandC2SMessage;
-import org.quiltmc.qsl.chat.api.types.ProfileIndependentS2CMessage;
-import org.quiltmc.qsl.chat.api.types.RawChatC2SMessage;
-import org.quiltmc.qsl.chat.api.types.RemovalS2CMessage;
-import org.quiltmc.qsl.chat.api.types.SystemS2CMessage;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -64,6 +54,17 @@ import net.minecraft.network.packet.s2c.play.ProfileIndependentMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.SystemMessageS2CPacket;
 import net.minecraft.registry.LayeredRegistryManager;
 import net.minecraft.text.Text;
+
+import org.quiltmc.qsl.chat.api.ChatSecurityRollbackSupport;
+import org.quiltmc.qsl.chat.api.MessageChainLookup;
+import org.quiltmc.qsl.chat.api.QuiltChatEvents;
+import org.quiltmc.qsl.chat.api.types.ChatC2SMessage;
+import org.quiltmc.qsl.chat.api.types.ChatS2CMessage;
+import org.quiltmc.qsl.chat.api.types.CommandC2SMessage;
+import org.quiltmc.qsl.chat.api.types.ProfileIndependentS2CMessage;
+import org.quiltmc.qsl.chat.api.types.RawChatC2SMessage;
+import org.quiltmc.qsl.chat.api.types.RemovalS2CMessage;
+import org.quiltmc.qsl.chat.api.types.SystemS2CMessage;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public abstract class ClientPlayNetworkHandlerMixin {

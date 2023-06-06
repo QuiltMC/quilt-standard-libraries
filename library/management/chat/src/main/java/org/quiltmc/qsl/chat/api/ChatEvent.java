@@ -20,10 +20,11 @@ import java.util.EnumSet;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.base.api.event.Event;
-import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
 
 import net.minecraft.util.Identifier;
+
+import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
 
 /**
  * An interface for chat events. This copies much of its behavior from {@link Event}, but in its own interface.

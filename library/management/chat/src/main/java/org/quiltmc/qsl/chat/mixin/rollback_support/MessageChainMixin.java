@@ -19,8 +19,6 @@ package org.quiltmc.qsl.chat.mixin.rollback_support;
 import java.util.logging.Logger;
 
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.chat.api.ChatSecurityRollbackSupport;
-import org.quiltmc.qsl.chat.api.MessageChainLookup;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,6 +29,9 @@ import net.minecraft.network.encryption.PlayerPublicKey;
 import net.minecraft.network.encryption.Signer;
 import net.minecraft.network.message.MessageChain;
 import net.minecraft.network.message.MessageLink;
+
+import org.quiltmc.qsl.chat.api.MessageChainLookup;
+import org.quiltmc.qsl.chat.api.ChatSecurityRollbackSupport;
 
 @Mixin(MessageChain.class)
 public class MessageChainMixin implements ChatSecurityRollbackSupport {

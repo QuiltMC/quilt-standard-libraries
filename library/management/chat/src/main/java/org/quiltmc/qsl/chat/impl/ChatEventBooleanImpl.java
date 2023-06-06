@@ -20,12 +20,13 @@ import java.util.EnumSet;
 import java.util.function.BiFunction;
 
 import org.jetbrains.annotations.NotNull;
+
+import net.minecraft.util.Identifier;
+
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.chat.api.ChatEvent;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
-
-import net.minecraft.util.Identifier;
 
 /**
  * An implementation of {@link ChatEvent} that always returns a {@link Boolean} and has special short circuiting logic for if a callback returns true.

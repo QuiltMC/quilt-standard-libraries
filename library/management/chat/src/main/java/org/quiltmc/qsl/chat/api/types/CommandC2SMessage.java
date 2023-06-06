@@ -21,13 +21,14 @@ import java.util.EnumSet;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.quiltmc.qsl.chat.api.QuiltMessageType;
-import org.quiltmc.qsl.chat.impl.InternalMessageTypesFactory;
 
 import net.minecraft.command.argument.ArgumentSignatures;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.message.MessageSignatureList;
 import net.minecraft.network.packet.c2s.play.ChatCommandC2SPacket;
+
+import org.quiltmc.qsl.chat.api.QuiltMessageType;
+import org.quiltmc.qsl.chat.impl.InternalMessageTypesFactory;
 
 public class CommandC2SMessage extends AbstractChatMessage<ChatCommandC2SPacket> {
 	private final String command;

@@ -18,18 +18,19 @@ package org.quiltmc.qsl.chat.api.types;
 
 import java.util.EnumSet;
 
+import org.slf4j.LoggerFactory;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.quiltmc.qsl.chat.api.QuiltMessageType;
-import org.quiltmc.qsl.chat.impl.InternalMessageTypesFactory;
-import org.quiltmc.qsl.chat.mixin.client.ClientPlayNetworkHandlerAccessor;
-import org.slf4j.LoggerFactory;
 
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.message.MessageType;
 import net.minecraft.network.packet.s2c.play.ProfileIndependentMessageS2CPacket;
 import net.minecraft.text.Text;
+
+import org.quiltmc.qsl.chat.api.QuiltMessageType;
+import org.quiltmc.qsl.chat.impl.InternalMessageTypesFactory;
+import org.quiltmc.qsl.chat.mixin.client.ClientPlayNetworkHandlerAccessor;
 
 /**
  * A wrapper around a "profile independent" message. These are usually created as a result of commands like {@link net.minecraft.server.command.MessageCommand}.

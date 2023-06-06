@@ -20,12 +20,13 @@ import java.util.EnumSet;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.quiltmc.qsl.chat.api.QuiltMessageType;
-import org.quiltmc.qsl.chat.impl.InternalMessageTypesFactory;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.message.MessageSignature;
 import net.minecraft.network.packet.s2c.play.MessageRemovalS2CPacket;
+
+import org.quiltmc.qsl.chat.api.QuiltMessageType;
+import org.quiltmc.qsl.chat.impl.InternalMessageTypesFactory;
 
 public class RemovalS2CMessage extends AbstractChatMessage<MessageRemovalS2CPacket> {
 	private final MessageSignature.Indexed signature;

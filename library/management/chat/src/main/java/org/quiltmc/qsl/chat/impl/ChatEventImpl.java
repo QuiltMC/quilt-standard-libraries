@@ -21,12 +21,13 @@ import java.util.function.BiFunction;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.util.Identifier;
+
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.chat.api.ChatEvent;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
-
-import net.minecraft.util.Identifier;
 
 /**
  * The common implementation of {@link ChatEvent}. If this event is set to preform assignable checks, then it will require that any return values are both
