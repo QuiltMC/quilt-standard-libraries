@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,8 @@ import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.registry.Registries;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
-import org.quiltmc.qsl.registry.impl.sync.SynchronizedInt2ObjectMap;
 import org.quiltmc.qsl.registry.impl.sync.client.RebuildableIdModelHolder;
+import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedInt2ObjectMap;
 
 @ClientOnly
 @Mixin(ItemModels.class)

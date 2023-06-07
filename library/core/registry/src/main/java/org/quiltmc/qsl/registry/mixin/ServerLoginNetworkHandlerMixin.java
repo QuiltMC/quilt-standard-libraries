@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,8 @@ import net.minecraft.network.listener.PacketListener;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-import org.quiltmc.qsl.registry.impl.sync.ServerRegistrySync;
-import org.quiltmc.qsl.registry.impl.sync.ServerRegistrySyncNetworkHandler;
+import org.quiltmc.qsl.registry.impl.sync.server.ServerRegistrySync;
+import org.quiltmc.qsl.registry.impl.sync.server.ServerRegistrySyncNetworkHandler;
 
 @Mixin(ServerLoginNetworkHandler.class)
 public abstract class ServerLoginNetworkHandlerMixin {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,10 @@ import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.CraftingCategory;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.ShapedRecipe;
 import net.minecraft.registry.tag.TagKey;
-import net.minecraft.unmapped.C_aodytokc;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 
@@ -37,7 +37,7 @@ public class ShapedRecipeBuilder extends RecipeBuilder<ShapedRecipeBuilder, Shap
 	private final int width;
 	private final int height;
 	private final Char2ObjectMap<Ingredient> ingredients = new Char2ObjectOpenHashMap<>();
-	private C_aodytokc category = C_aodytokc.MISC;
+	private CraftingCategory category = CraftingCategory.MISC;
 
 	/**
 	 * Creates a new shaped recipe builder.
@@ -126,12 +126,12 @@ public class ShapedRecipeBuilder extends RecipeBuilder<ShapedRecipeBuilder, Shap
 	/**
 	 * Sets the crafting book category of this recipe.
 	 * <p>
-	 * Default value is {@link C_aodytokc#MISC}.
+	 * Default value is {@link CraftingCategory#MISC}.
 	 *
 	 * @param category the category
 	 * @return this builder
 	 */
-	public ShapedRecipeBuilder category(C_aodytokc category) {
+	public ShapedRecipeBuilder category(CraftingCategory category) {
 		this.category = category;
 		return this;
 	}

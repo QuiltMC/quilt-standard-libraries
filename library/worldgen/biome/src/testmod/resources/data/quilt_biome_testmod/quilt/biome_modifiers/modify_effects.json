@@ -1,0 +1,12 @@
+{
+  "type": "quilt:modify_effects",
+  "phase": "additions",
+  "selector": "minecraft:swamp",
+  "fog_color": 4159204,
+  "sky_color": 16777215,
+  "water_color": 16755918,
+  "water_fog_color": 6370691,
+  "grass_color": 16711808,
+  "foliage_color": 16725349,
+  "grass_color_modifier": "none"
+}

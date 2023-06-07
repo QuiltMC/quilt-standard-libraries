@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package org.quiltmc.qsl.worldgen.biome;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.base.Preconditions;
 import com.mojang.datafixers.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeEffects;
-import net.minecraft.world.biome.BiomeKeys;
+import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.biome.GenerationSettings;
 import net.minecraft.world.biome.OverworldBiomeCreator;
 import net.minecraft.world.biome.SpawnSettings;
@@ -96,6 +97,9 @@ public class QuiltBiomeTest implements ModInitializer {
 	public void onInitialize(ModContainer mod) {
 		ResourceLoader.registerBuiltinResourcePack(id("registry_entry_existence_test"), mod, ResourcePackActivationType.NORMAL);
 
+		Preconditions.checkArgument(NetherBiomes.canGenerateInNether(Biomes.NETHER_WASTES));
+		Preconditions.checkArgument(!NetherBiomes.canGenerateInNether(Biomes.END_HIGHLANDS));
+
 		RegistryEvents.DYNAMIC_REGISTRY_SETUP.register(context -> {
 			context.withRegistries(registries -> {
 				HolderLookup.RegistryLookup<PlacedFeature> placedFeatureRegistryLookup = context.registryManager().getLookupOrThrow(RegistryKeys.PLACED_FEATURE);
@@ -128,12 +132,17 @@ public class QuiltBiomeTest implements ModInitializer {
 			}, Set.of(RegistryKeys.PLACED_FEATURE, RegistryKeys.CONFIGURED_FEATURE));
 		});
 
-		NetherBiomes.addNetherBiome(BiomeKeys.PLAINS, MultiNoiseUtil.createNoiseHypercube(0.0F, 0.5F, 0.0F, 0.0F, 0.0F, 0.0F, 0.1F));
+		// Important for testing NetherBiomes.canGenerateInNether itself. Biome is already covered by auto-testing
+		Preconditions.checkArgument(!NetherBiomes.canGenerateInNether(TEST_CRIMSON_FOREST));
+
+		NetherBiomes.addNetherBiome(Biomes.PLAINS, MultiNoiseUtil.createNoiseHypercube(0.0F, 0.5F, 0.0F, 0.0F, 0.0F, 0.0F, 0.1F));
 		NetherBiomes.addNetherBiome(TEST_CRIMSON_FOREST, MultiNoiseUtil.createNoiseHypercube(0.0F, -0.15F, 0.0F, 0.0F, 0.0F, 0.0F, 0.2F));
+
+		Preconditions.checkArgument(NetherBiomes.canGenerateInNether(TEST_CRIMSON_FOREST));
 
 		// TESTING HINT: to get to the end:
 		// /execute in minecraft:the_end run tp @s 0 90 0
-		TheEndBiomes.addHighlandsBiome(BiomeKeys.PLAINS, 5.0);
+		TheEndBiomes.addHighlandsBiome(Biomes.PLAINS, 5.0);
 		TheEndBiomes.addHighlandsBiome(TEST_END_HIGHLANDS, 5.0);
 		TheEndBiomes.addMidlandsBiome(TEST_END_HIGHLANDS, TEST_END_MIDLANDS, 10.0);
 		TheEndBiomes.addBarrensBiome(TEST_END_HIGHLANDS, TEST_END_BARRRENS, 10.0);
@@ -144,7 +153,7 @@ public class QuiltBiomeTest implements ModInitializer {
 						modification -> modification.getWeather().setDownfall(100))
 				// Check for an excess of desert wells.
 				.add(ModificationPhase.ADDITIONS,
-						BiomeSelectors.includeByKey(BiomeKeys.DESERT),
+						BiomeSelectors.includeByKey(Biomes.DESERT),
 						context -> context.getGenerationSettings().addFeature(GenerationStep.Feature.TOP_LAYER_MODIFICATION,
 								QUILT_DESERT_WELL_FEATURE
 						))
@@ -184,18 +193,24 @@ public class QuiltBiomeTest implements ModInitializer {
 		);
 
 		ServerLifecycleEvents.READY.register(server -> {
-			var world = server.getWorld(World.END);
-			assert world != null;
+			var netherWorld = server.getWorld(World.NETHER);
+			var endWorld = server.getWorld(World.END);
+
+			assert netherWorld != null;
+			assert endWorld != null;
 
 			var pos = new BlockPos(0, 90, 0);
-			checkBiomeExists(world, pos, TEST_END_HIGHLANDS);
-			checkBiomeExists(world, pos, TEST_END_MIDLANDS);
-			checkBiomeExists(world, pos, TEST_END_BARRRENS);
+
+			checkBiomeExists(netherWorld, pos, TEST_CRIMSON_FOREST);
+
+			checkBiomeExists(endWorld, pos, TEST_END_HIGHLANDS);
+			checkBiomeExists(endWorld, pos, TEST_END_MIDLANDS);
+			checkBiomeExists(endWorld, pos, TEST_END_BARRRENS);
 		});
 	}
 
 	private static void checkBiomeExists(ServerWorld world, BlockPos pos, RegistryKey<Biome> biomeKey) {
-		Pair<BlockPos, Holder<Biome>> posOfBiome = world.m_olxeedby((holder) -> holder.isRegistryKey(biomeKey), pos, 6400, 32, 64);
+		Pair<BlockPos, Holder<Biome>> posOfBiome = world.method_42108((holder) -> holder.isRegistryKey(biomeKey), pos, 6400, 32, 64);
 
 		if (posOfBiome != null) {
 			BIOME_TEST_LOGGER.info("Biome {} has been found at {}.", posOfBiome.getSecond().getKey().orElseThrow(), posOfBiome.getFirst());
@@ -234,7 +249,7 @@ public class QuiltBiomeTest implements ModInitializer {
 		SpawnSettings.Builder builder2 = new SpawnSettings.Builder();
 		DefaultBiomeFeatures.addPlainsMobs(builder2);
 		return (new Biome.Builder())
-				.precipitation(Biome.Precipitation.NONE).temperature(0.5F).downfall(0.5F)
+				.temperature(0.5F).downfall(0.5F)
 				.effects((new BiomeEffects.Builder())
 						.waterColor(0x129900)
 						.waterFogColor(0x121212).fogColor(0x990000).skyColor(0).moodSound(BiomeMoodSound.CAVE)

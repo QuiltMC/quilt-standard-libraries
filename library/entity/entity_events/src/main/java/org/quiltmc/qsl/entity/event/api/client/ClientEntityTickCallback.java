@@ -16,9 +16,6 @@
 
 package org.quiltmc.qsl.entity.event.api.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import net.minecraft.entity.Entity;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;

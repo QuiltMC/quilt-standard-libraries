@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.quiltmc.qsl.screen.mixin.client;
 
 import java.util.List;
 
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -34,7 +35,6 @@ import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.render.item.ItemRenderer;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.screen.api.client.QuiltScreen;
@@ -47,35 +47,54 @@ abstract class ScreenMixin implements QuiltScreen {
 	@Shadow
 	@Final
 	private List<Selectable> selectables;
+
 	@Shadow
 	@Final
 	private List<Element> children;
+
 	@Shadow
 	@Final
 	private List<Drawable> drawables;
 
 	@Shadow
+	@Nullable
 	protected MinecraftClient client;
 
 	@Shadow
-	protected ItemRenderer itemRenderer;
+	private boolean initialized;
 
 	@Shadow
 	protected TextRenderer textRenderer;
 
 	@Unique
-	private ButtonList quilt$quiltButtons;
+	private ButtonList quilt$quiltButtons = null;
 
-	@Inject(method = "init(Lnet/minecraft/client/MinecraftClient;II)V", at = @At("HEAD"))
-	private void beforeInitScreen(MinecraftClient client, int width, int height, CallbackInfo ci) {
-		this.quilt$quiltButtons = null;
-
-		ScreenEvents.BEFORE_INIT.invoker().beforeInit((Screen) (Object) this, client, width, height);
+	@Inject(
+			method = {"init(Lnet/minecraft/client/MinecraftClient;II)V", "clearAndInit()V"},
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/gui/screen/Screen;init()V"
+			)
+	)
+	private void quilt$beforeInitScreen(CallbackInfo ci) {
+		ScreenEvents.BEFORE_INIT.invoker().beforeInit((Screen) (Object) this, this.client, !this.initialized);
 	}
 
-	@Inject(method = "init(Lnet/minecraft/client/MinecraftClient;II)V", at = @At("TAIL"))
-	private void afterInitScreen(MinecraftClient client, int width, int height, CallbackInfo ci) {
-		ScreenEvents.AFTER_INIT.invoker().afterInit((Screen) (Object) this, client, width, height);
+	@Inject(
+			method = {"init(Lnet/minecraft/client/MinecraftClient;II)V", "clearAndInit()V"},
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/gui/screen/Screen;init()V",
+					shift = At.Shift.AFTER
+			)
+	)
+	private void quilt$afterInitScreen(CallbackInfo ci) {
+		ScreenEvents.AFTER_INIT.invoker().afterInit((Screen) (Object) this, this.client, !this.initialized);
+	}
+
+	@Inject(method = "clearChildren", at = @At("TAIL"))
+	private void quilt$clearQuiltButtons(CallbackInfo ci) {
+		this.quilt$quiltButtons = null;
 	}
 
 	@Override
@@ -86,11 +105,6 @@ abstract class ScreenMixin implements QuiltScreen {
 		}
 
 		return this.quilt$quiltButtons;
-	}
-
-	@Override
-	public ItemRenderer getItemRenderer() {
-		return this.itemRenderer;
 	}
 
 	@Override

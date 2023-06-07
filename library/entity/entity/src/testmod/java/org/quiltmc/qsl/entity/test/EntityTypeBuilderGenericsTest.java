@@ -28,6 +28,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Arm;
 import net.minecraft.world.World;
+
 import org.quiltmc.qsl.entity.api.QuiltEntityTypeBuilder;
 
 // This test is intentionally not an entrypoint to verify the generics of the entity type builder propagate properly

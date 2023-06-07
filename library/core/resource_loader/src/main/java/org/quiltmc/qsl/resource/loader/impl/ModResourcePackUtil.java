@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ public final class ModResourcePackUtil {
 		return String.format("""
 						{"pack":{"pack_format":%d,"description":"%s"}}
 						""",
-				type.getPackVersion(SharedConstants.getGameVersion()), description);
+				SharedConstants.getGameVersion().getResourceVersion(type), description);
 	}
 
 	public static @Nullable ResourceIoSupplier<InputStream> openDefault(ModMetadata info, ResourceType type, String filename) {

@@ -50,7 +50,7 @@ public class EntityEventsTestModClient implements ClientEntityLoadEvents.AfterLo
 	@Override
 	public void onClientEntityTick(Entity entity, boolean isPassengerTick) {
 		if (entity instanceof SlimeEntity && isPassengerTick) {
-			entity.world.addParticle(ParticleTypes.EXPLOSION_EMITTER, entity.getX(), entity.getY(), entity.getZ(), 0.0, 0.0, 0.0);
+			entity.getWorld().addParticle(ParticleTypes.EXPLOSION_EMITTER, entity.getX(), entity.getY(), entity.getZ(), 0.0, 0.0, 0.0);
 		}
 	}
 }

@@ -38,14 +38,14 @@ public class TrackedDataTestInitializer implements ModInitializer {
 	public static final TrackedDataHandler<ParticleEffect> PARTICLE_DATA_HANDLER = new TrackedDataHandler.SimpleHandler<>() {
 		@Override
 		public void write(PacketByteBuf buf, ParticleEffect value) {
-			buf.m_zuejpfxx(Registries.PARTICLE_TYPE, value.getType());
+			buf.writeFromIterable(Registries.PARTICLE_TYPE, value.getType());
 			value.write(buf);
 		}
 
 		@SuppressWarnings({"rawtypes", "unchecked"})
 		@Override
 		public ParticleEffect read(PacketByteBuf buf) {
-			ParticleType type = buf.m_iebqyozt(Registries.PARTICLE_TYPE);
+			ParticleType type = buf.readFromIterable(Registries.PARTICLE_TYPE);
 			return Objects.requireNonNull(type).getParametersFactory().read(type, buf);
 		}
 	};

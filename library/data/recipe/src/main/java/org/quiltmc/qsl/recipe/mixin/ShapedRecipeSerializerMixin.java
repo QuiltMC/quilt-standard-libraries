@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,15 +63,18 @@ public abstract class ShapedRecipeSerializerMixin implements QuiltRecipeSerializ
 
 		pattern.add(patternLine.toString());
 
+		var result = recipe.getResult(null);
+
 		return new ShapedRecipeJsonFactory.ShapedRecipeJsonProvider(
 				recipe.getId(),
-				recipe.getOutput().getItem(),
-				recipe.getOutput().getCount(),
+				result.getItem(),
+				result.getCount(),
 				recipe.getGroup(),
-				recipe.m_vqgzicyv(),
+				recipe.getCategory(),
 				pattern,
 				inputs,
-				null, null
+				null, null,
+				recipe.showNotification()
 		).toJson();
 	}
 }

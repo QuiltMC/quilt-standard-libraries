@@ -17,6 +17,7 @@
 
 package org.quiltmc.qsl.block.extensions.mixin;
 
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
@@ -26,17 +27,16 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.MapColor;
-import net.minecraft.block.Material;
+import net.minecraft.block.enums.NoteBlockInstrument;
+import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.EntityType;
+import net.minecraft.feature_flags.FeatureFlagBitSet;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 
 @Mixin(AbstractBlock.Settings.class)
 public interface AbstractBlockSettingsAccessor {
 	// region Getters
-	@Accessor
-	Material getMaterial();
-
 	@Accessor
 	float getHardness();
 
@@ -49,11 +49,11 @@ public interface AbstractBlockSettingsAccessor {
 	@Accessor
 	boolean getRandomTicks();
 
-	@Accessor("luminance")
+	@Accessor
 	ToIntFunction<BlockState> getLuminance();
 
 	@Accessor
-	Function<BlockState, MapColor> getMapColorProvider();
+	Function<BlockState, MapColor> getMapColorGetter();
 
 	@Accessor
 	BlockSoundGroup getSoundGroup();
@@ -68,6 +68,9 @@ public interface AbstractBlockSettingsAccessor {
 	float getJumpVelocityMultiplier();
 
 	@Accessor
+	boolean getDynamicBounds();
+
+	@Accessor
 	Identifier getLootTableId();
 
 	@Accessor
@@ -77,7 +80,31 @@ public interface AbstractBlockSettingsAccessor {
 	boolean getIsAir();
 
 	@Accessor
-	boolean isToolRequired();
+	boolean getLavaIgnitable();
+
+	@Accessor
+	boolean getLiquid();
+
+	@Accessor
+	boolean getNonSolid();
+
+	@Accessor
+	boolean getSolid();
+
+	@Accessor
+	PistonBehavior getPistonBehavior();
+
+	@Accessor
+	boolean getToolRequired();
+
+	@Accessor
+	Optional<AbstractBlock.OffsetFunction> getOffsetFunction();
+
+	@Accessor
+	boolean getSpawnsParticlesOnBreak();
+
+	@Accessor
+	FeatureFlagBitSet getRequiredFlags();
 
 	@Accessor
 	AbstractBlock.TypedContextPredicate<EntityType<?>> getAllowsSpawningPredicate();
@@ -98,21 +125,19 @@ public interface AbstractBlockSettingsAccessor {
 	AbstractBlock.ContextPredicate getEmissiveLightingPredicate();
 
 	@Accessor
-	boolean getDynamicBounds();
+	NoteBlockInstrument getInstrument();
+
+	@Accessor
+	boolean getReplaceable();
 	// endregion
 
 	// region Setters
-	@Accessor
-	void setMaterial(Material material);
 
 	@Accessor
 	void setCollidable(boolean collidable);
 
 	@Accessor
 	void setRandomTicks(boolean ticksRandomly);
-
-	@Accessor
-	void setMapColorProvider(Function<BlockState, MapColor> mapColorProvider);
 
 	@Accessor
 	void setLootTableId(Identifier lootTableId);
@@ -124,9 +149,33 @@ public interface AbstractBlockSettingsAccessor {
 	void setIsAir(boolean isAir);
 
 	@Accessor
+	void setLavaIgnitable(boolean lavaIgnitable);
+
+	@Accessor
+	void setLiquid(boolean liquid);
+
+	@Accessor
+	void setNonSolid(boolean nonSolid);
+
+	@Accessor
+	void setSolid(boolean solid);
+
+	@Accessor
 	void setToolRequired(boolean toolRequired);
 
 	@Accessor
+	void setOffsetFunction(Optional<AbstractBlock.OffsetFunction> offsetFunction);
+
+	@Accessor
 	void setDynamicBounds(boolean dynamicBounds);
+
+	@Accessor
+	void setSpawnsParticlesOnBreak(boolean spawnsParticlesOnBreak);
+
+	@Accessor
+	void setRequiredFlags(FeatureFlagBitSet requiredFlags);
+
+	@Accessor
+	void setReplaceable(boolean replaceable);
 	// endregion
 }

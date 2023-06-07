@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ public abstract class GameOptionsMixin {
 		// Update available resource packs.
 		for (var profile : manager.getProfiles()) {
 			if (!this.quilt$availableResourcePacks.contains(profile.getName())) {
-				if (profile.getSource().shouldAddAutomatically()) {
+				if (profile.getActivationType().isEnabledByDefault()) {
 					toEnable.add(profile.getName());
 				}
 

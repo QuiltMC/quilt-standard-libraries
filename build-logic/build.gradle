@@ -19,10 +19,16 @@ repositories {
 }
 
 dependencies {
-	implementation "org.quiltmc:loom:1.0.+"
-	implementation "net.kyori:indra-git:3.0.1"
-	implementation "org.quiltmc:quilt-json5:1.0.2"
-	implementation "org.quiltmc:quilt-gradle-licenser:1.+"
+	implementation libs.quilt.loom
+	implementation libs.indra.git
+	implementation libs.quilt.json5
+	implementation libs.quilt.gradle.licenser
+
+	implementation libs.asm
+	implementation libs.asm.analysis
+	implementation libs.asm.commons
+	implementation libs.asm.tree
+	implementation libs.asm.util
 }
 
 // Visual Studio Code needs these

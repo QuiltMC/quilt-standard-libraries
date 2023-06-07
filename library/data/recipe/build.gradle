@@ -7,12 +7,17 @@ qslModule {
 	moduleName = "recipe"
 	id = "quilt_recipe"
 	description = "Recipe manipulation APIs."
-	library = "data"
 	moduleDependencies {
 		core {
 			api("qsl_base")
+			api("registry")
+			api("resource_loader")
 			testmodOnly("lifecycle_events")
-			testmodOnly("resource_loader")
+		}
+	}
+	entrypoints {
+		events {
+			values = ["org.quiltmc.qsl.recipe.impl.RecipeManagerImpl"]
 		}
 	}
 	accessWidener()

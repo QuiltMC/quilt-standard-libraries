@@ -30,7 +30,6 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 	private static final long serialVersionUID = 1L;
 	// public properties
 	private final Property<String> name;
-	private final Property<String> library;
 	private final Property<String> moduleName;
 	private final Property<String> id;
 	private final Property<String> description;
@@ -45,8 +44,6 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 	@Inject
 	public QslModuleExtensionImpl(ObjectFactory factory, Project project) {
 		super(project);
-		this.library = factory.property(String.class);
-		this.library.finalizeValueOnRead();
 		this.moduleName = factory.property(String.class);
 		this.moduleName.finalizeValueOnRead();
 		this.id = factory.property(String.class);
@@ -73,9 +70,9 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 		return this.moduleName;
 	}
 
-	@Input
-	public Property<String> getLibrary() {
-		return this.library;
+	@Override
+	public String getLibrary() {
+		return this.project.getParent().getExtensions().getByType(QslLibraryExtension.class).getLibraryName().get();
 	}
 
 	@Input
@@ -104,13 +101,11 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 				.getByType(LoomGradleExtensionAPI.class)
 				.getAccessWidenerPath()
 				.fileValue(this.project.file("src/main/resources/" + this.id.get() + ".accesswidener"));
-
-		this.allowGenTasks();
 	}
 
 	@Input
 	public Property<Boolean> getHasMixins() {
-		return hasMixins;
+		return this.hasMixins;
 	}
 
 	public void noMixins() {

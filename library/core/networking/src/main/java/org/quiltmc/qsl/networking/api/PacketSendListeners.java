@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ package org.quiltmc.qsl.networking.api;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.network.Packet;
 import net.minecraft.network.PacketSendListener;
+import net.minecraft.network.packet.Packet;
 
 /**
  * Utilities for working with {@link PacketSendListener}s.

@@ -20,14 +20,18 @@ package org.quiltmc.qsl.block.extensions.api;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
+import org.jetbrains.annotations.Contract;
+
 import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.AbstractBlock.Settings;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.MapColor;
-import net.minecraft.block.Material;
-import net.minecraft.block.AbstractBlock.Settings;
+import net.minecraft.block.enums.NoteBlockInstrument;
+import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.EntityType;
 import net.minecraft.feature_flags.FeatureFlag;
+import net.minecraft.feature_flags.FeatureFlagBitSet;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
@@ -39,34 +43,36 @@ import org.quiltmc.qsl.block.extensions.mixin.AbstractBlockSettingsAccessor;
  * An extended variant of the {@link AbstractBlock.Settings} class, which provides extra methods for customization.
  */
 public class QuiltBlockSettings extends AbstractBlock.Settings {
-	protected QuiltBlockSettings(Material material, Function<BlockState, MapColor> mapColorProvider) {
-		super(material, mapColorProvider);
-	}
-
-	protected QuiltBlockSettings(Material material, MapColor mapColor) {
-		super(material, mapColor);
-	}
-
 	protected QuiltBlockSettings(AbstractBlock.Settings settings) {
-		super(((AbstractBlockSettingsAccessor) settings).getMaterial(), ((AbstractBlockSettingsAccessor) settings).getMapColorProvider());
+		super();
 
 		var otherAccessor = (AbstractBlockSettingsAccessor) settings;
 
 		// region [VanillaCopy] AbstractBlock.Settings#copy(AbstractBlock.Settings)
-		this.material(otherAccessor.getMaterial());
 		this.hardness(otherAccessor.getHardness());
 		this.resistance(otherAccessor.getResistance());
 		this.collidable(otherAccessor.getCollidable());
 		this.ticksRandomly(otherAccessor.getRandomTicks());
 		this.luminance(otherAccessor.getLuminance());
-		this.mapColorProvider(otherAccessor.getMapColorProvider());
+		this.mapColor(otherAccessor.getMapColorGetter());
 		this.sounds(otherAccessor.getSoundGroup());
 		this.slipperiness(otherAccessor.getSlipperiness());
 		this.velocityMultiplier(otherAccessor.getVelocityMultiplier());
 		this.dynamicBounds(otherAccessor.getDynamicBounds());
 		this.opaque(otherAccessor.getOpaque());
 		this.air(otherAccessor.getIsAir());
-		this.requiresTool(otherAccessor.isToolRequired());
+		this.lavaIgnitable(otherAccessor.getLavaIgnitable());
+		this.liquid(otherAccessor.getLiquid());
+		this.nonSolid(otherAccessor.getNonSolid());
+		this.solid(otherAccessor.getSolid());
+		this.pistonBehavior(otherAccessor.getPistonBehavior());
+		this.requiresTool(otherAccessor.getToolRequired());
+		((AbstractBlockSettingsAccessor) this).setOffsetFunction(otherAccessor.getOffsetFunction());
+		this.spawnsParticlesOnBreak(otherAccessor.getSpawnsParticlesOnBreak());
+		this.requiredFlags(otherAccessor.getRequiredFlags());
+		this.emissiveLighting(otherAccessor.getEmissiveLightingPredicate());
+		this.instrument(otherAccessor.getInstrument());
+		this.replaceable(otherAccessor.getReplaceable());
 		// endregion
 
 		// also copy other stuff Vanilla doesn't bother with
@@ -78,22 +84,6 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		this.blockVision(otherAccessor.getBlockVisionPredicate());
 		this.postProcess(otherAccessor.getPostProcessPredicate());
 		this.emissiveLighting(otherAccessor.getEmissiveLightingPredicate());
-	}
-
-	public static QuiltBlockSettings of(Material material) {
-		return of(material, material.getColor());
-	}
-
-	public static QuiltBlockSettings of(Material material, Function<BlockState, MapColor> mapColorProvider) {
-		return new QuiltBlockSettings(material, mapColorProvider);
-	}
-
-	public static QuiltBlockSettings of(Material material, MapColor color) {
-		return new QuiltBlockSettings(material, color);
-	}
-
-	public static QuiltBlockSettings of(Material material, DyeColor color) {
-		return new QuiltBlockSettings(material, color.getMapColor());
 	}
 
 	public static QuiltBlockSettings copyOf(AbstractBlock block) {
@@ -189,6 +179,36 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	}
 
 	@Override
+	public QuiltBlockSettings lavaIgnitable() {
+		super.lavaIgnitable();
+		return this;
+	}
+
+	public QuiltBlockSettings liquid() {
+		super.liquid();
+		return this;
+	}
+
+	@Override
+	@Contract("->this")
+	public QuiltBlockSettings solid() {
+		return this.solid(true);
+	}
+
+	@Override
+	@Contract("->this")
+	@Deprecated
+	public QuiltBlockSettings nonSolid() {
+		return this.nonSolid(true);
+	}
+
+	@Override
+	public QuiltBlockSettings pistonBehavior(PistonBehavior pistonBehavior) {
+		super.pistonBehavior(pistonBehavior);
+		return this;
+	}
+
+	@Override
 	public QuiltBlockSettings air() {
 		super.air();
 		return this;
@@ -237,8 +257,22 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	}
 
 	@Override
+	@Contract("_->this")
+	public QuiltBlockSettings mapColor(DyeColor dyeColor) {
+		super.mapColor(dyeColor);
+		return this;
+	}
+
+	@Override
 	public QuiltBlockSettings mapColor(MapColor color) {
 		super.mapColor(color);
+		return this;
+	}
+
+	@Override
+	@Contract("_->this")
+	public QuiltBlockSettings mapColor(Function<BlockState, MapColor> function) {
+		super.mapColor(function);
 		return this;
 	}
 
@@ -261,29 +295,32 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	}
 
 	@Override
-	public AbstractBlock.Settings offsetType(Function<BlockState, AbstractBlock.OffsetType> function) {
-		super.offsetType(function);
-		return this;
-	}
-
-	@Override
-	public AbstractBlock.Settings disableParticlesOnBreak() {
+	public QuiltBlockSettings disableParticlesOnBreak() {
 		super.disableParticlesOnBreak();
 		return this;
 	}
 
 	@Override
-	public Settings requiredFlags(FeatureFlag... flags) {
+	public QuiltBlockSettings requiredFlags(FeatureFlag... flags) {
 		super.requiredFlags(flags);
 		return this;
 	}
 
-	// region Added by Quilt
-
-	public QuiltBlockSettings material(Material material) {
-		((AbstractBlockSettingsAccessor) this).setMaterial(material);
+	@Override
+	@Contract("_->this")
+	public QuiltBlockSettings instrument(NoteBlockInstrument instrument) {
+		super.instrument(instrument);
 		return this;
 	}
+
+	@Override
+	@Contract("->this")
+	public QuiltBlockSettings replaceable() {
+		super.replaceable();
+		return this;
+	}
+
+	// region Added by Quilt
 
 	public QuiltBlockSettings collidable(boolean collidable) {
 		((AbstractBlockSettingsAccessor) this).setCollidable(collidable);
@@ -316,10 +353,37 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	}
 
 	/**
+	 * Sets whether this block can be set on fire by neighboring lava.
+	 *
+	 * @param ignitable {@code true} if this block can be set on fire by lava, or {@code false} otherwise
+	 * @return {@code this} builder
+	 * @see #lavaIgnitable()
+	 */
+	public QuiltBlockSettings lavaIgnitable(boolean ignitable) {
+		((AbstractBlockSettingsAccessor) this).setLavaIgnitable(ignitable);
+		return this;
+	}
+
+	public QuiltBlockSettings liquid(boolean liquid) {
+		((AbstractBlockSettingsAccessor) this).setLiquid(liquid);
+		return this;
+	}
+
+	public QuiltBlockSettings nonSolid(boolean nonSolid) {
+		((AbstractBlockSettingsAccessor) this).setNonSolid(nonSolid);
+		return this;
+	}
+
+	public QuiltBlockSettings solid(boolean solid) {
+		((AbstractBlockSettingsAccessor) this).setSolid(solid);
+		return this;
+	}
+
+	/**
 	 * Sets the luminance of the block. The block will have this luminance regardless of its current state.
 	 *
 	 * @param luminance new luminance
-	 * @return this builder
+	 * @return {@code this} builder
 	 * @see #luminance(ToIntFunction)
 	 */
 	public QuiltBlockSettings luminance(int luminance) {
@@ -330,25 +394,25 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	 * Sets the loot table identifier that this block will use when broken.
 	 *
 	 * @param dropTableId the new loot table identifier
-	 * @return this builder
+	 * @return {@code this} builder
 	 */
 	public QuiltBlockSettings drops(Identifier dropTableId) {
 		((AbstractBlockSettingsAccessor) this).setLootTableId(dropTableId);
 		return this;
 	}
 
-	public QuiltBlockSettings mapColor(DyeColor color) {
-		return this.mapColor(color.getMapColor());
+	public QuiltBlockSettings spawnsParticlesOnBreak(boolean spawnsParticlesOnBreak) {
+		((AbstractBlockSettingsAccessor) this).setSpawnsParticlesOnBreak(spawnsParticlesOnBreak);
+		return this;
 	}
 
-	/**
-	 * Sets the map color provider of this block.
-	 *
-	 * @param mapColorProvider new map color provider
-	 * @return this builder
-	 */
-	public QuiltBlockSettings mapColorProvider(Function<BlockState, MapColor> mapColorProvider) {
-		((AbstractBlockSettingsAccessor) this).setMapColorProvider(mapColorProvider);
+	public Settings requiredFlags(FeatureFlagBitSet flags) {
+		((AbstractBlockSettingsAccessor) this).setRequiredFlags(flags);
+		return this;
+	}
+
+	public QuiltBlockSettings replaceable(boolean replaceable) {
+		((AbstractBlockSettingsAccessor) this).setReplaceable(replaceable);
 		return this;
 	}
 

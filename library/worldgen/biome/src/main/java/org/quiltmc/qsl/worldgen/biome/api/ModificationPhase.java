@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,10 @@
 
 package org.quiltmc.qsl.worldgen.biome.api;
 
+import com.mojang.serialization.Codec;
+
+import net.minecraft.util.StringIdentifiable;
+
 /**
  * To achieve a predictable order for biome modifiers, and to aid with mod compatibility, modifiers need to declare
  * the phase in which they will be applied.
@@ -29,14 +33,14 @@ package org.quiltmc.qsl.worldgen.biome.api;
  *     <li>Generic post-processing of biomes</li>
  * </ol>
  */
-public enum ModificationPhase {
+public enum ModificationPhase implements StringIdentifiable {
 	/**
 	 * The appropriate phase for enriching biomes by adding to them without relying on
 	 * other information in the biome, or removing other features.
 	 * <p>
 	 * <b>Examples:</b> New ores, new vegetation, new structures
 	 */
-	ADDITIONS,
+	ADDITIONS("additions"),
 
 	/**
 	 * The appropriate phase for modifiers that remove features or other aspects of biomes (i.e. removal of spawns,
@@ -44,14 +48,14 @@ public enum ModificationPhase {
 	 * <p>
 	 * <b>Examples:</b> Remove iron ore from plains, remove ghasts
 	 */
-	REMOVALS,
+	REMOVALS("removals"),
 
 	/**
 	 * The appropriate phase for modifiers that replace existing features with modified features.
 	 * <p>
 	 * <b>Examples:</b> Replace mineshafts with biome-specific mineshafts
 	 */
-	REPLACEMENTS,
+	REPLACEMENTS("replacements"),
 
 	/**
 	 * The appropriate phase for modifiers that perform wide-reaching biome postprocessing.
@@ -59,5 +63,18 @@ public enum ModificationPhase {
 	 * <b>Examples:</b> Mods that allow modpack authors to customize world generation, changing biome
 	 * properties (i.e. category) that other mods rely on.
 	 */
-	POST_PROCESSING
+	POST_PROCESSING("post_processing");
+
+	public static final Codec<ModificationPhase> CODEC = StringIdentifiable.createCodec(ModificationPhase::values);
+
+	private final String name;
+
+	ModificationPhase(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public String asString() {
+		return this.name;
+	}
 }

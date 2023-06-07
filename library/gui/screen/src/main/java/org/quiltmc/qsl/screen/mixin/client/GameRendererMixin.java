@@ -30,6 +30,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import com.mojang.blaze3d.glfw.Window;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -50,15 +51,15 @@ abstract class GameRendererMixin {
 	@SuppressWarnings("InvalidInjectorMethodSignature")
 	@Inject(
 			method = "render",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;renderWithTooltip(Lnet/minecraft/client/util/math/MatrixStack;IIF)V"),
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;renderWithTooltip(Lnet/minecraft/client/gui/GuiGraphics;IIF)V"),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private void onBeforeRenderScreen(float tickDelta, long startTime, boolean tick, CallbackInfo ci,
-									  int mouseX, int mouseY, Window window, Matrix4f projectionMatrix, MatrixStack modelViewMatrices, MatrixStack matrices) {
+									  int mouseX, int mouseY, Window window, Matrix4f projectionMatrix, MatrixStack matrices, GuiGraphics graphics) {
 		// Store the screen in a variable in case someone tries to change the screen during this before render event.
 		// If someone changes the screen, the after render event will likely have class cast exceptions or an NPE.
 		this.quilt$renderingScreen = this.client.currentScreen;
-		ScreenEvents.BEFORE_RENDER.invoker().beforeRender(this.quilt$renderingScreen, matrices, mouseX, mouseY, tickDelta);
+		ScreenEvents.BEFORE_RENDER.invoker().beforeRender(this.quilt$renderingScreen, graphics, mouseX, mouseY, tickDelta);
 	}
 
 	// This injection should end up in the try block so exceptions are caught
@@ -67,14 +68,14 @@ abstract class GameRendererMixin {
 			method = "render",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/gui/screen/Screen;renderWithTooltip(Lnet/minecraft/client/util/math/MatrixStack;IIF)V",
+					target = "Lnet/minecraft/client/gui/screen/Screen;renderWithTooltip(Lnet/minecraft/client/gui/GuiGraphics;IIF)V",
 					shift = At.Shift.AFTER
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private void onAfterRenderScreen(float tickDelta, long startTime, boolean tick, CallbackInfo ci,
-									 int mouseX, int mouseY, Window window, Matrix4f projectionMatrix, MatrixStack modelViewMatrices, MatrixStack matrices) {
-		ScreenEvents.AFTER_RENDER.invoker().afterRender(this.quilt$renderingScreen, matrices, mouseX, mouseY, tickDelta);
+									 int mouseX, int mouseY, Window window, Matrix4f projectionMatrix, MatrixStack matrices, GuiGraphics graphics) {
+		ScreenEvents.AFTER_RENDER.invoker().afterRender(this.quilt$renderingScreen, graphics, mouseX, mouseY, tickDelta);
 		// Finally set the currently rendering screen to null
 		this.quilt$renderingScreen = null;
 	}

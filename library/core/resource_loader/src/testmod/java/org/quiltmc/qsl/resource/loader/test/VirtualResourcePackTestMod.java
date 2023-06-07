@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,35 +79,37 @@ public class VirtualResourcePackTestMod implements ModInitializer, ResourcePackR
 
 		pack.putText("pack.mcmeta", String.format("""
 				{"pack":{"pack_format":%d,"description":"Provided pack activation test."}}
-					""", type.getPackVersion(SharedConstants.getGameVersion())));
+					""", SharedConstants.getGameVersion().getResourceVersion(type)));
 		pack.putText(ResourceType.CLIENT_RESOURCES, new Identifier("models/block/dandelion.json"), """
 				{
-				  "parent": "minecraft:block/cube_all",
-				  "textures": {
-				    "all": "minecraft:block/dandelion"
-				  }
-				}""");
+					"parent": "minecraft:block/cube_all",
+					"textures": {
+						"all": "minecraft:block/dandelion"
+					}
+				}
+				""");
 		pack.putText(ResourceType.SERVER_DATA, new Identifier("loot_tables/blocks/dandelion.json"), """
 				{
-				  "type": "minecraft:block",
-				  "pools": [
-				    {
-				      "bonus_rolls": 0.0,
-				      "conditions": [
-				        {
-				          "condition": "minecraft:survives_explosion"
-				        }
-				      ],
-				      "entries": [
-				        {
-				          "type": "minecraft:item",
-				          "name": "minecraft:diamond"
-				        }
-				      ],
-				      "rolls": 1.0
-				    }
-				  ]
-				}""");
+					"type": "minecraft:block",
+					"pools": [
+						{
+							"bonus_rolls": 0.0,
+							"conditions": [
+								{
+									"condition": "minecraft:survives_explosion"
+								}
+							],
+								"entries": [
+								{
+									"type": "minecraft:item",
+									"name": "minecraft:diamond"
+								}
+							],
+							"rolls": 1.0
+						}
+					]
+				}
+				""");
 
 		profileAdder.accept(ResourcePackProfile.of("activation_test", Text.literal("Activation Test"), false, name -> pack,
 				type, ResourcePackProfile.InsertionPosition.BOTTOM, ResourcePackSource.PACK_SOURCE_BUILTIN));
@@ -122,28 +124,30 @@ public class VirtualResourcePackTestMod implements ModInitializer, ResourcePackR
 				  "textures": {
 				    "all": "minecraft:block/poppy"
 				  }
-				}""");
+				}
+				""");
 		pack.putText(ResourceType.SERVER_DATA, new Identifier("loot_tables/blocks/poppy.json"), """
 				{
-				  "type": "minecraft:block",
-				  "pools": [
-				    {
-				      "bonus_rolls": 0.0,
-				      "conditions": [
-				        {
-				          "condition": "minecraft:survives_explosion"
-				        }
-				      ],
-				      "entries": [
-				        {
-				          "type": "minecraft:item",
-				          "name": "minecraft:diamond"
-				        }
-				      ],
-				      "rolls": 1.0
-				    }
-				  ]
-				}""");
+					"type": "minecraft:block",
+					"pools": [
+						{
+							"bonus_rolls": 0.0,
+							"conditions": [
+								{
+									"condition": "minecraft:survives_explosion"
+								}
+						],
+						"entries": [
+							{
+								"type": "minecraft:item",
+								"name": "minecraft:diamond"
+							}
+						],
+						"rolls": 1.0
+						}
+					]
+				}
+				""");
 		context.addResourcePack(pack);
 	}
 
@@ -162,14 +166,16 @@ public class VirtualResourcePackTestMod implements ModInitializer, ResourcePackR
 						"values": [
 							"%s"
 						]
-					}""".formatted(Registries.BLOCK.getId(block)));
+					}
+					""".formatted(Registries.BLOCK.getId(block)));
 			pack.putTextAsync(ResourceType.SERVER_DATA, TAG_FILE2, file -> """
 					{
 						"replace": false,
 						"values": [
 							"%s"
 						]
-					}""".formatted(Registries.BLOCK.getId(block)));
+					}
+					""".formatted(Registries.BLOCK.getId(block)));
 			context.addResourcePack(pack);
 		};
 	}

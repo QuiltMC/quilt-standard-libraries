@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.world.World;
-
-import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 @ApiStatus.Internal
 public interface EntityPartTracker {

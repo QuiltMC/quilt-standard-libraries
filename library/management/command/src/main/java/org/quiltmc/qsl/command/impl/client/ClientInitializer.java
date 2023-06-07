@@ -18,8 +18,6 @@
 package org.quiltmc.qsl.command.impl.client;
 
 import com.mojang.logging.LogUtils;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 

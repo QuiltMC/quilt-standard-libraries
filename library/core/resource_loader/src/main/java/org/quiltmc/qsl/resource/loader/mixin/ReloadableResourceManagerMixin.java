@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,10 +55,7 @@ public class ReloadableResourceManagerMixin {
 	@Shadow
 	private AutoCloseableResourceManager resources;
 
-	@Inject(
-			method = "reload",
-			at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;isDebugEnabled()Z", remap = false)
-	)
+	@Inject(method = "reload", at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;isDebugEnabled()Z", remap = false))
 	private void reload(Executor prepareExecutor, Executor applyExecutor, CompletableFuture<Unit> initialStage,
 			List<ResourcePack> packs, CallbackInfoReturnable<ResourceReload> info) {
 		if (this.resources instanceof QuiltMultiPackResourceManagerHooks hooks) {
@@ -69,7 +66,7 @@ public class ReloadableResourceManagerMixin {
 	}
 
 	/**
-	 * private static synthetic m_qszormde(Ljava/util/List;)Ljava/lang/Object;
+	 * private static synthetic method_29491(Ljava/util/List;)Ljava/lang/Object;
 	 * Supplier lambda in beginMonitoredReload method.
 	 * <p>
 	 * This is an injector since Mixin doesn't like the Overwrite for some reason,
@@ -79,7 +76,7 @@ public class ReloadableResourceManagerMixin {
 	 * @reason To allow the printing of the full name of group resource packs.
 	 */
 	@Dynamic
-	@Inject(method = "m_qszormde(Ljava/util/List;)Ljava/lang/Object;", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "method_29491(Ljava/util/List;)Ljava/lang/Object;", at = @At("HEAD"), cancellable = true)
 	private static void getResourcePackNames(List<ResourcePack> packs, CallbackInfoReturnable<String> cir) {
 		cir.setReturnValue(packs.stream().map(pack -> {
 			if (pack instanceof GroupResourcePack groupResourcePack) {

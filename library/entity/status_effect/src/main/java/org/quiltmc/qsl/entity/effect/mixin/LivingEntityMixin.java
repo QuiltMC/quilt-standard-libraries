@@ -78,7 +78,7 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 	@SuppressWarnings("ConstantConditions")
 	@Override
 	public int clearStatusEffects(@NotNull StatusEffectRemovalReason reason) {
-		if (this.world.isClient) {
+		if (this.getWorld().isClient) {
 			return 0;
 		}
 

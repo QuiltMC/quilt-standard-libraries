@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@ import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
-import net.minecraft.registry.Registries;
 import net.minecraft.registry.Holder;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.sound.BiomeAdditionsSound;
 import net.minecraft.sound.BiomeMoodSound;
 import net.minecraft.sound.MusicSound;
@@ -65,10 +65,10 @@ public interface BiomeModificationContext {
 
 	interface WeatherContext {
 		/**
-		 * @see Biome#getPrecipitation()
-		 * @see Biome.Builder#precipitation(Biome.Precipitation)
+		 * @see Biome#hasPrecipitation()
+		 * @see Biome.Builder#hasPrecipitation(boolean)
 		 */
-		void setPrecipitation(Biome.Precipitation precipitation);
+		void setHasPrecipitation(boolean hasPrecipitation);
 
 		/**
 		 * @see Biome#getTemperature()
@@ -82,7 +82,7 @@ public interface BiomeModificationContext {
 		void setTemperatureModifier(Biome.TemperatureModifier temperatureModifier);
 
 		/**
-		 * @see Biome#getDownfall()
+		 * @see Biome.Weather#downfall()
 		 * @see Biome.Builder#downfall(float)
 		 */
 		void setDownfall(float downfall);
@@ -202,7 +202,7 @@ public interface BiomeModificationContext {
 
 		/**
 		 * @see BiomeEffects#getLoopSound()
-		 * @see BiomeEffects.Builder#loopSound(SoundEvent)
+		 * @see BiomeEffects.Builder#loopSound(Holder)
 		 */
 		default void clearAmbientSound() {
 			this.setAmbientSound(Optional.empty());
@@ -296,11 +296,10 @@ public interface BiomeModificationContext {
 			return anyFound;
 		}
 
-
 		/**
 		 * Adds a feature to one of this biomes generation steps, identified by the placed feature's registry key.
 		 *
-		 * @see Registries#PLACED_FEATURE
+		 * @see RegistryKeys#PLACED_FEATURE
 		 */
 		void addFeature(GenerationStep.Feature step, RegistryKey<PlacedFeature> placedFeatureKey);
 

@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 
 import org.quiltmc.loader.api.ModMetadata;
-import org.quiltmc.loader.impl.filesystem.QuiltJoinedFileSystem;
+import org.quiltmc.loader.api.CachedFileSystem;
 import org.quiltmc.qsl.base.api.util.TriState;
 import org.quiltmc.qsl.resource.loader.api.QuiltResourcePack;
 import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
@@ -96,8 +96,8 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 		}
 
 		/* Cache */
-		if (DISABLE_CACHING || path.getFileSystem() == DEFAULT_FILESYSTEM || path.getFileSystem() instanceof QuiltJoinedFileSystem) {
-			// The default file system means it's on-disk files that may change, and QuiltJoinedFileSystem is usually used for dev envs too.
+		if (DISABLE_CACHING || path.getFileSystem() == DEFAULT_FILESYSTEM || path.getFileSystem() instanceof CachedFileSystem cached && !cached.isPermanentlyReadOnly()) {
+			// The default file system means it's on-disk files that may change
 			this.cache = new ResourceAccess(this.io);
 		} else {
 			// Allows caching for mods that don't have mutable resources.

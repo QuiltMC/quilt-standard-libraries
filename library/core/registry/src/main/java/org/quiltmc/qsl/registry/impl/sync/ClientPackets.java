@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,37 @@ public final class ClientPackets {
 	 * </code></pre>
 	 */
 	public static final Identifier SYNC_FAILED = id("registry_sync/sync_failed");
+
+	/**
+	 * Sent after synchronization of selected registry.
+	 * Contains list of (optional) unknown entries.
+	 * It's sent after successful validation of {@link ServerPackets#REGISTRY_APPLY}
+	 * Requires protocol version 3 or higher.
+	 *
+	 * <pre><code>
+	 * {
+	 *     Registry: Identifier
+	 *     Raw Registry Ids: IntList
+	 * }
+	 * </code></pre>
+	 */
+	public static final Identifier UNKNOWN_ENTRY = id("registry_sync/unknown_entry");
+
+	/**
+	 * Sent after receiving Mod Protocol request packet from server.
+	 * Returns all latest supported by client version of requested Mod Protocols see {@link ServerPackets#MOD_PROTOCOL}
+	 *
+	 * <pre><code>
+	 * {
+	 *   Count of Entries: VarInt
+	 *   [
+	 *     Id: String
+	 *     Highest Supported Version: VarInt
+	 *   ]
+	 * }
+	 * </code></pre>
+	 */
+	public static final Identifier MOD_PROTOCOL = id("registry_sync/mod_protocol");
 
 	private static Identifier id(String path) {
 		return new Identifier("qsl", path);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021-2023 QuiltMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ final class ClientDefaultTagManagerReloader extends ClientOnlyTagManagerReloader
 	private final ResourcePackManager resourcePackManager;
 
 	ClientDefaultTagManagerReloader() {
-		DefaultResourcePack defaultPack = MinecraftClient.getInstance().m_iuvifafs();
+		DefaultResourcePack defaultPack = MinecraftClient.getInstance().getDefaultResourcePack();
 
 		var pack = ResourceLoaderImpl.buildMinecraftResourcePack(ResourceType.SERVER_DATA, defaultPack);
 		this.resourcePackManager = new ResourcePackManager((profileAdder) -> {
@@ -68,9 +68,9 @@ final class ClientDefaultTagManagerReloader extends ClientOnlyTagManagerReloader
 	 * @return the modified resource manager
 	 */
 	private AutoCloseableResourceManager getServerDataResourceManager() {
-		resourcePackManager.setEnabledProfiles(MinecraftClient.getInstance().getResourcePackManager().getEnabledNames());
-		resourcePackManager.scanPacks();
-		var manager = new MultiPackResourceManager(ResourceType.SERVER_DATA, resourcePackManager.createResourcePacks());
+		this.resourcePackManager.setEnabledProfiles(MinecraftClient.getInstance().getResourcePackManager().getEnabledNames());
+		this.resourcePackManager.scanPacks();
+		var manager = new MultiPackResourceManager(ResourceType.SERVER_DATA, this.resourcePackManager.createResourcePacks());
 		((QuiltMultiPackResourceManagerHooks) manager).quilt$appendTopPacks();
 		return manager;
 	}

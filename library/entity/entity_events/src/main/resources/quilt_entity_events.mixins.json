@@ -8,8 +8,7 @@
     "LivingEntityMixin",
     "ServerEntityHandlerMixin",
     "ServerPlayerEntityMixin",
-    "ServerWorldMixin",
-    "TeleportCommandMixin"
+    "ServerWorldMixin"
   ],
   "client": [
     "client.ClientEntityHandlerMixin",

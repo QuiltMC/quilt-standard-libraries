@@ -7,7 +7,6 @@ qslModule {
 	moduleName = "multipart"
 	id = "quilt_entity_multipart"
 	description = "An API to support custom multipart entities."
-	library = "entity"
 	moduleDependencies {
 		core {
 			api("qsl_base")

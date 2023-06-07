@@ -7,7 +7,6 @@ qslModule {
 	moduleName = "command"
 	id = "quilt_command"
 	description = "Quilt APIs relating to commands."
-	library = "management"
 	moduleDependencies {
 		core {
 			api("qsl_base")

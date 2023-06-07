@@ -1,0 +1,62 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Item Extensions API"
+	moduleName = "item_extensions"
+	id = "quilt_item_extensions"
+	description = "An API for extending various vanilla items and providing relevant events for such items."
+	moduleDependencies {
+		core {
+			api("qsl_base")
+			testmodOnly("resource_loader")
+		}
+	}
+	accessWidener()
+	injectedInterface("net/minecraft/class_1753") {
+		values = ["org/quiltmc/qsl/item/extensions/api/bow/BowExtensions"]
+	}
+	injectedInterface("net/minecraft/class_1764") {
+		values = ["org/quiltmc/qsl/item/extensions/api/crossbow/CrossbowExtensions"]
+	}
+}
+
+import org.objectweb.asm.Opcodes
+import org.objectweb.asm.Type
+import qsl.internal.analysis.ClassAnalysisUtils
+import qsl.internal.task.GenerateAccessWidenerTask
+
+import java.nio.file.FileSystem
+
+tasks.register("generateAccessWidener", GenerateAccessWidenerTask) {
+	generator = this::generateItemConstructors
+	templatePath.set(file("template.accesswidener"))
+	outputPath.set(file('src/main/resources/quilt_item_extensions.accesswidener'))
+}
+
+def generateItemConstructors(List<String> lines, FileSystem fs) {
+	lines.add("# Constructors of non-abstract item classes")
+	ClassAnalysisUtils.readPackage(fs, "net.minecraft.item")
+		.filter { (it.access & Opcodes.ACC_ABSTRACT) == 0 }
+		.forEach { node ->
+			for (def method : node.methods) {
+				// Checklist for finding item constructors as of 1.20:
+				//  - class directly in net.minecraft.item (excluding subpackages)
+				//  - method name == <init> (by definition)
+				//  - contains an Item$Settings parameter
+				//  - only taking into account non-abstract classes and non-public constructors
+
+				// Item constructor...
+				if (method.name == "<init>" && Type.getArgumentTypes(method.desc).any { it.internalName == 'net/minecraft/item/Item$Settings' }) {
+					// ...and non-public
+					if ((method.access & Opcodes.ACC_PUBLIC) == 0) {
+						lines.add("transitive-accessible method $node.name <init> $method.desc")
+					}
+				}
+			}
+		}
+}
+
+generateQmj.dependsOn generateAccessWidener
+validateAccessWidener.dependsOn generateAccessWidener

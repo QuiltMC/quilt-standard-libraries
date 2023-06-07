@@ -21,6 +21,9 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 import net.minecraft.Bootstrap;
 
+import org.quiltmc.loader.api.ModInternal;
+
+@ModInternal
 @Mixin(Bootstrap.class)
 public interface BootstrapAccessor {
 	@Invoker

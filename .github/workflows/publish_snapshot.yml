@@ -16,8 +16,16 @@ jobs:
           distribution: "temurin"
           java-version: ${{ matrix.java }}
           cache: 'gradle'
-      - run: ./gradlew checkLicenses generateQmj --parallel --stacktrace
-      - run: ./gradlew build publish --stacktrace --parallel
+      - name: Check Licenses and Generate QMJs
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: checkLicenses generateQmj --parallel --stacktrace
+          cache-read-only: ${{ !startsWith(github.ref, 'refs/heads/1.') && !startsWith(github.ref, 'refs/tags/v') }}
+      - name: Publish to Snapshot maven
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build publish --stacktrace --parallel
+          cache-read-only: ${{ !startsWith(github.ref, 'refs/heads/1.') && !startsWith(github.ref, 'refs/tags/v') }}
         env:
           SNAPSHOTS_URL: ${{ secrets.SNAPSHOTS_URL }}
           SNAPSHOTS_USERNAME: ${{ secrets.SNAPSHOTS_USERNAME }}

@@ -41,8 +41,14 @@ public class TrackedDataHandlerRegistryMixin {
 	private static final Logger quilt$LOGGER = LogUtils.getLogger();
 	@Unique
 	private static final boolean quilt$PRINT_WARNING = TriState.fromProperty("quilt.debug.unknown_tracked_data_handler").toBooleanOrElse(QuiltLoader.isDevelopmentEnvironment());
+
+	// WARNING: These fields aren't set until just before RETURN in <clinit>. Until then they are 0.
+	// I (OroArmor) am abusing that fact for the quilt$pastStaticInit field. Do what you wish to me, this is a good way of solving the problem.
+	// Why the two above fields work, my guess is that they are final.
 	@Unique
 	private static int quilt$currentUnknownId = 0;
+	@Unique
+	private static boolean quilt$pastStaticInit = true;
 
 	/**
 	 * @author Patbox
@@ -71,6 +77,8 @@ public class TrackedDataHandlerRegistryMixin {
 			id = "byte";
 		} else if (handler == TrackedDataHandlerRegistry.INTEGER) {
 			id = "integer";
+		} else if (handler == TrackedDataHandlerRegistry.LONG) {
+			id = "long";
 		} else if (handler == TrackedDataHandlerRegistry.FLOAT) {
 			id = "float";
 		} else if (handler == TrackedDataHandlerRegistry.STRING) {
@@ -89,10 +97,12 @@ public class TrackedDataHandlerRegistryMixin {
 			id = "block_pos";
 		} else if (handler == TrackedDataHandlerRegistry.OPTIONAL_BLOCK_POS) {
 			id = "optional_block_pos";
-		} else if (handler == TrackedDataHandlerRegistry.FACING) {
-			id = "facing";
+		} else if (handler == TrackedDataHandlerRegistry.DIRECTION) {
+			id = "direction";
 		} else if (handler == TrackedDataHandlerRegistry.OPTIONAL_UUID) {
 			id = "optional_uuid";
+		} else if (handler == TrackedDataHandlerRegistry.BLOCK_STATE) {
+			id = "block_state";
 		} else if (handler == TrackedDataHandlerRegistry.OPTIONAL_BLOCK_STATE) {
 			id = "optional_block_state";
 		} else if (handler == TrackedDataHandlerRegistry.TAG_COMPOUND) {
@@ -113,10 +123,20 @@ public class TrackedDataHandlerRegistryMixin {
 			id = "optional_global_position";
 		} else if (handler == TrackedDataHandlerRegistry.PAINTING_VARIANT) {
 			id = "painting_variant";
+		} else if (handler == TrackedDataHandlerRegistry.SNIFFER_STATE) {
+			id = "sniffer_state";
+		} else if (handler == TrackedDataHandlerRegistry.VECTOR3F) {
+			id = "vector3f";
+		} else if (handler == TrackedDataHandlerRegistry.QUATERNIONF) {
+			id = "quaternionf";
 		} else {
+			if (!quilt$pastStaticInit && QuiltLoader.isDevelopmentEnvironment()) {
+				throw new RuntimeException("Unnamed TrackedDataHandler added before static initialize completed. This either means that a new TrackedDataHandler was added by Minecraft, or a mod injected into a poor place.");
+			}
+
 			id = "unknown_handler/" + (quilt$currentUnknownId++);
 			if (quilt$PRINT_WARNING) {
-				quilt$LOGGER.warn("Detected registration of unknown TrackedDataHandler through vanilla method! Object: {}, Class: {}", handler.toString(), handler.getClass().getName());
+				quilt$LOGGER.warn("Detected registration of unknown TrackedDataHandler through vanilla method! If using QSL, please call QuiltTrackedDataHandlerRegistry.register. Object: {}, Class: {}", handler.toString(), handler.getClass().getName());
 				for (StackTraceElement traceElement : Thread.currentThread().getStackTrace()) {
 					quilt$LOGGER.warn("\tat " + traceElement);
 				}

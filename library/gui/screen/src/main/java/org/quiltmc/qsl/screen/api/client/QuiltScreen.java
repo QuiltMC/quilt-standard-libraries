@@ -37,22 +37,15 @@ import org.quiltmc.qsl.base.api.util.InjectedInterface;
 @InjectedInterface(Screen.class)
 public interface QuiltScreen {
 	/**
-	 * Gets all of the screen's button widgets.
+	 * Gets all the screen's button widgets.
 	 * <p>
 	 * The provided list allows for addition and removal of buttons from the screen.
 	 * This method should be preferred over adding buttons directly to a screen's {@link Screen#children() child elements}.
 	 *
-	 * @return a list of all of the screen's buttons
+	 * @return a list of all the screen's buttons
 	 */
 	default List<ClickableWidget> getButtons() {
 		throw new UnsupportedOperationException("No implementation of getButtons could be found.");
-	}
-
-	/**
-	 * {@return the screen's item renderer}
-	 */
-	default ItemRenderer getItemRenderer() {
-		throw new UnsupportedOperationException("No implementation of getItemRenderer could be found.");
 	}
 
 	/**
