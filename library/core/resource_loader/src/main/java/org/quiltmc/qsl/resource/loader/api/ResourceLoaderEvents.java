@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.resource.loader.api;
 
-import java.lang.ref.WeakReference;
 import java.util.Optional;
 
 import org.jetbrains.annotations.ApiStatus;
