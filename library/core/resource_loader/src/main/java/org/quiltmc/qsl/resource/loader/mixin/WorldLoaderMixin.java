@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.resource.loader.mixin;
 
+import java.lang.ref.WeakReference;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 

@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.resource.loader.mixin;
 
+import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -54,7 +55,7 @@ public abstract class MinecraftServerMixin {
 			DynamicRegistryManager.Frozen frozen, ImmutableList packs, CallbackInfoReturnable<CompletionStage> cir,
 			AutoCloseableResourceManager currentResourceManager
 	) {
-		ResourceLoaderEventContextsImpl.server = (MinecraftServer) (Object) this;
+		ResourceLoaderEventContextsImpl.server = new WeakReference<>((MinecraftServer) (Object) this);
 		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(new ResourceLoaderEventContextsImpl.ReloadStartContext(
 				() -> currentResourceManager, this.getResourceManager()
 		));

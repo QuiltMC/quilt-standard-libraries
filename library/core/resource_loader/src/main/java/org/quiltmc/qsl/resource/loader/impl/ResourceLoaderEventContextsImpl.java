@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.resource.loader.impl;
 
+import java.lang.ref.WeakReference;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -29,7 +30,7 @@ import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 
 @ApiStatus.Internal
 public final class ResourceLoaderEventContextsImpl {
-	public static MinecraftServer server;
+	public static WeakReference<MinecraftServer> server;
 
 	public static class ReloadStartContext implements ResourceLoaderEvents.StartDataPackReload.Context {
 		private final Supplier<ResourceManager> resourceManager;
@@ -42,7 +43,7 @@ public final class ResourceLoaderEventContextsImpl {
 
 		@Override
 		public MinecraftServer server() {
-			return server;
+			return server != null ? server.get() : null;
 		}
 
 		@Override
@@ -61,7 +62,7 @@ public final class ResourceLoaderEventContextsImpl {
 	) implements ResourceLoaderEvents.EndDataPackReload.Context {
 		@Override
 		public MinecraftServer server() {
-			return server;
+			return server != null ? server.get() : null;
 		}
 	}
 }
