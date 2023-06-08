@@ -32,10 +32,10 @@ public class AnimationTransformations {
 
 	public static final Codec<PartAnimation.Transformation> CODEC = Identifier.CODEC.flatXmap(identifier -> {
 		PartAnimation.Transformation type = TRANSFORMATIONS.get(identifier);
-		return type != null ? DataResult.success(type) : DataResult.error("Unknown transformation: " + identifier);
+		return type != null ? DataResult.success(type) : DataResult.error(() -> "Unknown transformation: " + identifier);
 	}, type -> {
 		Identifier id = TRANSFORMATIONS.inverse().get(type);
-		return id != null ? DataResult.success(id) : DataResult.error("Unknown transformation.");
+		return id != null ? DataResult.success(id) : DataResult.error(() -> "Unknown transformation.");
 	});
 
 	static {

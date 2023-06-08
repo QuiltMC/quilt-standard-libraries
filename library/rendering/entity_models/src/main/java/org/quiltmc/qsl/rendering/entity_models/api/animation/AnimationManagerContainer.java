@@ -17,14 +17,14 @@
 package org.quiltmc.qsl.rendering.entity_models.api.animation;
 
 import org.jetbrains.annotations.NotNull;
-import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 /**
- * An injected interface for classes that have an {@link AnimationManager}
+ * An injected interface for classes that have an {@link AnimationManager}.
  */
 @InjectedInterface(value = {
 		EntityRenderDispatcher.class,

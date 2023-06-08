@@ -30,9 +30,6 @@ import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
-import org.quiltmc.qsl.rendering.entity_models.api.model.ModelCodecs;
-import org.quiltmc.qsl.rendering.entity_models.api.model.ModelTypes;
-import org.quiltmc.qsl.resource.loader.api.reloader.SimpleResourceReloader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,12 +41,15 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.profiler.Profiler;
 
+import org.quiltmc.qsl.rendering.entity_models.api.model.ModelTypes;
+import org.quiltmc.qsl.resource.loader.api.reloader.SimpleResourceReloader;
+
 public class DynamicEntityModelLoader implements SimpleResourceReloader<DynamicEntityModelLoader.ModelLoader> {
 	private static final Logger LOGGER = LoggerFactory.getLogger("Quilt Entity Model Manager");
 	private Map<EntityModelLayer, TexturedModelData> modelData;
 
 	public TexturedModelData getModelData(EntityModelLayer layer) {
-		return modelData.get(layer);
+		return this.modelData.get(layer);
 	}
 
 	@Override
@@ -69,7 +69,7 @@ public class DynamicEntityModelLoader implements SimpleResourceReloader<DynamicE
 	}
 
 	public static class ModelLoader {
-		private static final Pattern PATH_AND_NAME_PATTERN = Pattern.compile("models\\/entity\\/((\\w|\\/)*)\\/(\\w*)\\.json");
+		private static final Pattern PATH_AND_NAME_PATTERN = Pattern.compile("models/entity/([\\w/]*)/(\\w*)\\.json");
 
 		private final ResourceManager manager;
 		private final Profiler profiler;
@@ -82,12 +82,13 @@ public class DynamicEntityModelLoader implements SimpleResourceReloader<DynamicE
 		}
 
 		private void loadModels() {
-			profiler.push("Load Entity Models");
-			Map<Identifier, Resource> resources = manager.findResources("models/entity", id -> id.getPath().endsWith(".json"));
+			this.profiler.push("Load Entity Models");
+			Map<Identifier, Resource> resources = this.manager.findResources("models/entity", id -> id.getPath().endsWith(".json"));
 			for (Map.Entry<Identifier, Resource> entry : resources.entrySet()) {
 				this.addModel(entry.getKey(), entry.getValue());
 			}
-			profiler.pop();
+
+			this.profiler.pop();
 		}
 
 		private void addModel(Identifier id, Resource resource) {
@@ -117,11 +118,11 @@ public class DynamicEntityModelLoader implements SimpleResourceReloader<DynamicE
 			String name = matcher.group(2);
 
 			Identifier modelID = new Identifier(id.getNamespace(), path);
-			modelData.put(new EntityModelLayer(modelID, name), result.result().get().getFirst());
+			this.modelData.put(new EntityModelLayer(modelID, name), result.result().get().getFirst());
 		}
 
 		public Map<EntityModelLayer, TexturedModelData> getModelData() {
-			return modelData;
+			return this.modelData;
 		}
 	}
 }

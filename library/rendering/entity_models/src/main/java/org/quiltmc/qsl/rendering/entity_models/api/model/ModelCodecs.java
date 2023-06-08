@@ -17,19 +17,14 @@
 package org.quiltmc.qsl.rendering.entity_models.api.model;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.joml.Vector3f;
-import org.quiltmc.qsl.rendering.entity_models.api.Codecs;
-import org.quiltmc.qsl.rendering.entity_models.impl.LazyTypeUnboundedMapCodec;
-import org.quiltmc.qsl.rendering.entity_models.mixin.DilationAccessor;
-import org.quiltmc.qsl.rendering.entity_models.mixin.ModelCuboidDataAccessor;
-import org.quiltmc.qsl.rendering.entity_models.mixin.ModelPartDataAccessor;
-import org.quiltmc.qsl.rendering.entity_models.mixin.TextureDimensionsAccessor;
-import org.quiltmc.qsl.rendering.entity_models.mixin.TexturedModelDataAccessor;
 
 import net.minecraft.client.model.Dilation;
 import net.minecraft.client.model.ModelCuboidData;
@@ -40,6 +35,15 @@ import net.minecraft.client.model.TextureDimensions;
 import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.util.math.Vector2f;
 import net.minecraft.util.Util;
+import net.minecraft.util.math.Direction;
+
+import org.quiltmc.qsl.rendering.entity_models.api.Codecs;
+import org.quiltmc.qsl.rendering.entity_models.impl.LazyTypeUnboundedMapCodec;
+import org.quiltmc.qsl.rendering.entity_models.mixin.DilationAccessor;
+import org.quiltmc.qsl.rendering.entity_models.mixin.ModelCuboidDataAccessor;
+import org.quiltmc.qsl.rendering.entity_models.mixin.ModelPartDataAccessor;
+import org.quiltmc.qsl.rendering.entity_models.mixin.TextureDimensionsAccessor;
+import org.quiltmc.qsl.rendering.entity_models.mixin.TexturedModelDataAccessor;
 
 /**
  * Codecs for model loading.
@@ -72,7 +76,7 @@ public final class ModelCodecs {
 			vec -> ImmutableList.of(vec.getX(), vec.getY())
 	);
 
-	private static ModelCuboidData createCuboidData(Optional<String> name, Vector3f offset, Vector3f dimensions, Dilation dilation, boolean mirror, Vector2f uv, Vector2f uvSize) {
+	private static ModelCuboidData createCuboidData(Optional<String> name, Vector3f offset, Vector3f dimensions, Dilation dilation, boolean mirror, Vector2f uv, Vector2f uvSize, List<Direction> directions) {
 		return ModelCuboidDataAccessor.create(
 				name.orElse(null),
 				uv.getX(), uv.getY(),
@@ -80,7 +84,8 @@ public final class ModelCodecs {
 				dimensions.x(), dimensions.y(), dimensions.z(),
 				dilation,
 				mirror,
-				uvSize.getX(), uvSize.getY());
+				uvSize.getX(), uvSize.getY(),
+				Set.copyOf(directions));
 	}
 
 	private static final Vector2f DEFAULT_UV_SCALE = new Vector2f(1.0f, 1.0f);
@@ -93,7 +98,8 @@ public final class ModelCodecs {
 					DILATION.optionalFieldOf("dilation", Dilation.NONE).forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).dilation()),
 					Codec.BOOL.optionalFieldOf("mirror", false).forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).mirror()),
 					VECTOR2F.fieldOf("uv").forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).uv()),
-					VECTOR2F.optionalFieldOf("uv_scale", DEFAULT_UV_SCALE).forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).uvScale())
+					VECTOR2F.optionalFieldOf("uv_scale", DEFAULT_UV_SCALE).forGetter(obj -> ((ModelCuboidDataAccessor) (Object) obj).uvScale()),
+					Direction.CODEC.listOf().optionalFieldOf("directions", List.of(Direction.values())).forGetter(obj -> List.copyOf(((ModelCuboidDataAccessor) (Object) obj).directions()))
 			).apply(instance, ModelCodecs::createCuboidData)
 	);
 

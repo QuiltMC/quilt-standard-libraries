@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.rendering.entity_models.api.animation;
 
-
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.mojang.serialization.Codec;
@@ -32,16 +31,17 @@ public class AnimationTypes {
 
 	public static final Codec<AnimationType> TYPE_CODEC = Identifier.CODEC.flatXmap(identifier -> {
 		AnimationType type = TYPES.get(identifier);
-		return type != null ? DataResult.success(type) : DataResult.error("Unknown animation type: " + identifier);
+		return type != null ? DataResult.success(type) : DataResult.error(() -> "Unknown animation type: " + identifier);
 	}, animationType -> {
 		Identifier id = TYPES.inverse().get(animationType);
-		return id != null ? DataResult.success(id) : DataResult.error("Unknown animation type.");
+		return id != null ? DataResult.success(id) : DataResult.error(() -> "Unknown animation type.");
 	});
 	public static Codec<Animation> CODEC = TYPE_CODEC.dispatch(animation -> ((TypedAnimation) (Object) animation).getType(), AnimationType::codec);
 
 	public static AnimationType register(String name, Codec<Animation> codec) {
 		return register(new Identifier(name), codec);
 	}
+
 	public static AnimationType register(Identifier id, Codec<Animation> codec) {
 		AnimationType type = new AnimationType(codec);
 		AnimationType old = TYPES.putIfAbsent(id, type);

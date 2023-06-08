@@ -25,17 +25,17 @@ import net.minecraft.client.render.animation.PartAnimation;
 import net.minecraft.util.Identifier;
 
 /**
- * A class for registering different {@link net.minecraft.client.render.animation.PartAnimation.Interpolator}s to
+ * A class for registering different {@link net.minecraft.client.render.animation.PartAnimation.Interpolator}s.
  */
 public class AnimationInterpolations {
 	private static final BiMap<Identifier, PartAnimation.Interpolator> INTERPOLATORS = HashBiMap.create();
 
 	public static final Codec<PartAnimation.Interpolator> CODEC = Identifier.CODEC.flatXmap(identifier -> {
 		PartAnimation.Interpolator type = INTERPOLATORS.get(identifier);
-		return type != null ? DataResult.success(type) : DataResult.error("Unknown interpolator: " + identifier);
+		return type != null ? DataResult.success(type) : DataResult.error(() -> "Unknown interpolator: " + identifier);
 	}, type -> {
 		Identifier id = INTERPOLATORS.inverse().get(type);
-		return id != null ? DataResult.success(id) : DataResult.error("Unknown interpolator.");
+		return id != null ? DataResult.success(id) : DataResult.error(() -> "Unknown interpolator.");
 	});
 
 	static {

@@ -30,7 +30,6 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.resource.loader.api.reloader.SimpleResourceReloader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,9 +41,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.profiler.Profiler;
 
+import org.quiltmc.qsl.resource.loader.api.reloader.SimpleResourceReloader;
+
 /**
  * A class that loads and holds {@link Animation}s.
- *
  * See {@link net.minecraft.client.render.entity.model.EntityModelLoader#getModelPart(EntityModelLayer)} for a similar usage.
  */
 public class AnimationManager implements SimpleResourceReloader<AnimationManager.AnimationLoader> {
@@ -57,7 +57,7 @@ public class AnimationManager implements SimpleResourceReloader<AnimationManager
 	 * @return An animation if found, or null otherwise
 	 */
 	public @Nullable Animation getAnimation(Identifier id) {
-		return animations.get(id);
+		return this.animations.get(id);
 	}
 
 	@Override
@@ -89,12 +89,13 @@ public class AnimationManager implements SimpleResourceReloader<AnimationManager
 		}
 
 		private void loadAnimations() {
-			profiler.push("Load Animations");
-			Map<Identifier, Resource> resources = manager.findResources("animations", id -> id.getPath().endsWith(".json"));
+			this.profiler.push("Load Animations");
+			Map<Identifier, Resource> resources = this.manager.findResources("animations", id -> id.getPath().endsWith(".json"));
 			for (Map.Entry<Identifier, Resource> entry : resources.entrySet()) {
 				this.addAnimation(entry.getKey(), entry.getValue());
 			}
-			profiler.pop();
+
+			this.profiler.pop();
 		}
 
 		private void addAnimation(Identifier id, Resource resource) {
@@ -115,11 +116,11 @@ public class AnimationManager implements SimpleResourceReloader<AnimationManager
 			}
 
 			Identifier animationId = new Identifier(id.getNamespace(), id.getPath().substring("animations/".length()));
-			animations.put(animationId, result.result().get().getFirst());
+			this.animations.put(animationId, result.result().get().getFirst());
 		}
 
 		public Map<Identifier, Animation> getAnimations() {
-			return animations;
+			return this.animations;
 		}
 	}
 }

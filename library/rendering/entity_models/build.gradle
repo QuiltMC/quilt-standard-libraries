@@ -7,7 +7,6 @@ qslModule {
 	moduleName = "entity_models"
 	id = "quilt_entity_models"
 	description = "Adds data driven entity models and animations."
-	library = "rendering"
 	moduleDependencies {
 		core {
 			api("qsl_base")

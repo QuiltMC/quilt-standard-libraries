@@ -32,12 +32,12 @@ import net.minecraft.client.model.Dilation;
 
 @Mixin(Dilation.class)
 public interface DilationAccessor {
-    @Accessor("radiusX")
-    float radiusX();
+	@Accessor("radiusX")
+	float radiusX();
 
-    @Accessor("radiusY")
-    float radiusY();
+	@Accessor("radiusY")
+	float radiusY();
 
-    @Accessor("radiusZ")
-    float radiusZ();
+	@Accessor("radiusZ")
+	float radiusZ();
 }

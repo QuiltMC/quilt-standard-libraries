@@ -32,7 +32,6 @@ import org.joml.Vector3f;
 
 import net.minecraft.util.Util;
 
-
 public class Codecs {
 	public static final Codec<Vector3f> VECTOR_3F_CODEC = Codec.list(Codec.FLOAT).comapFlatMap(
 			list -> Util.fixedSizeList(list, 3).map(listx -> new Vector3f(listx.get(0), listx.get(1), listx.get(2))),

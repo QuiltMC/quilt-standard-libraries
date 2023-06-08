@@ -20,14 +20,15 @@ import java.util.Arrays;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import org.quiltmc.qsl.rendering.entity_models.api.Codecs;
 
 import net.minecraft.client.render.animation.Animation;
 import net.minecraft.client.render.animation.AnimationKeyframe;
 import net.minecraft.client.render.animation.PartAnimation;
 
+import org.quiltmc.qsl.rendering.entity_models.api.Codecs;
+
 /**
- * Codecs for animation loading
+ * Codecs for animation loading.
  */
 public final class AnimationCodecs {
 	public static final Codec<AnimationKeyframe> KEYFRAME = RecordCodecBuilder.create(instance ->

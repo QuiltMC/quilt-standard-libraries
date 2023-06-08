@@ -16,9 +16,9 @@
 
 package org.quiltmc.qsl.rendering.entity_models.api.animation;
 
-import org.quiltmc.qsl.base.api.util.InjectedInterface;
-
 import net.minecraft.client.render.animation.Animation;
+
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 /**
  * An injected interface on {@link net.minecraft.client.render.animation.Animation} to specify its type.

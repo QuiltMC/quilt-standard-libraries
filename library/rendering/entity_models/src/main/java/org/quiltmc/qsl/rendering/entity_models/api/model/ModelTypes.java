@@ -31,16 +31,17 @@ public class ModelTypes {
 
 	public static final Codec<ModelType> TYPE_CODEC = Identifier.CODEC.flatXmap(identifier -> {
 		ModelType type = TYPES.get(identifier);
-		return type != null ? DataResult.success(type) : DataResult.error("Unknown model type: " + identifier);
+		return type != null ? DataResult.success(type) : DataResult.error(() -> "Unknown model type: " + identifier);
 	}, model -> {
 		Identifier id = TYPES.inverse().get(model);
-		return id != null ? DataResult.success(id) : DataResult.error("Unknown model type.");
+		return id != null ? DataResult.success(id) : DataResult.error(() -> "Unknown model type.");
 	});
 	public static Codec<TexturedModelData> CODEC = TYPE_CODEC.dispatch(model -> ((TypedModel) (Object) model).getType(), ModelType::codec);
 
 	public static ModelType register(String name, Codec<TexturedModelData> codec) {
 		return register(new Identifier(name), codec);
 	}
+
 	public static ModelType register(Identifier id, Codec<TexturedModelData> codec) {
 		ModelType type = new ModelType(codec);
 		ModelType old = TYPES.putIfAbsent(id, type);

@@ -23,17 +23,18 @@ import net.minecraft.client.util.math.Vector2f;
 
 @Mixin(Vector2f.class)
 public abstract class Vector2fMixin {
-    @Shadow
-    public abstract float getX();
+	@Shadow
+	public abstract float getX();
 
-    @Shadow
-    public abstract float getY();
+	@Shadow
+	public abstract float getY();
 
-    @Override
-    public boolean equals(Object o) {
-        if (o instanceof Vector2f vec) {
-            return this.getX() == vec.getX() && this.getY() == vec.getY();
-        }
-        return super.equals(o);
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Vector2f vec) {
+			return this.getX() == vec.getX() && this.getY() == vec.getY();
+		}
+
+		return super.equals(o);
+	}
 }

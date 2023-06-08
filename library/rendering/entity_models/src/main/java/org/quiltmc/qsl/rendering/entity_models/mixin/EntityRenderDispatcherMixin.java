@@ -17,9 +17,6 @@
 package org.quiltmc.qsl.rendering.entity_models.mixin;
 
 import org.jetbrains.annotations.NotNull;
-import org.quiltmc.qsl.rendering.entity_models.api.animation.AnimationManager;
-import org.quiltmc.qsl.rendering.entity_models.api.animation.AnimationManagerContainer;
-import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -36,6 +33,10 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.resource.ResourceType;
 
+import org.quiltmc.qsl.rendering.entity_models.api.animation.AnimationManager;
+import org.quiltmc.qsl.rendering.entity_models.api.animation.AnimationManagerContainer;
+import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
+
 @Mixin(EntityRenderDispatcher.class)
 public class EntityRenderDispatcherMixin implements AnimationManagerContainer {
 	@Unique
@@ -50,6 +51,6 @@ public class EntityRenderDispatcherMixin implements AnimationManagerContainer {
 	@Override
 	@NotNull
 	public AnimationManager getAnimationManager() {
-		return quilt$animationManager;
+		return this.quilt$animationManager;
 	}
 }

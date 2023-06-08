@@ -144,7 +144,6 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 	@Override
 	public void injectedInterface(String minecraftClass, Action<NamedWriteOnlyList> action) {
 		action.execute(this.injectedInterfaces.create(minecraftClass));
-		this.allowGenTasks();
 	}
 
 	@Nested
