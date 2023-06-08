@@ -57,10 +57,10 @@ public final class ResourceLoaderEvents {
 	 */
 	public static final Event<EndDataPackReload> END_DATA_PACK_RELOAD = Event.create(EndDataPackReload.class,
 			callbacks -> context -> {
-				ResourceLoaderEventContextsImpl.server = null;
 				for (var callback : callbacks) {
 					callback.onEndDataPackReload(context);
 				}
+				ResourceLoaderEventContextsImpl.server = null;
 			});
 
 	public sealed interface DataPackReloadContext permits ResourceLoaderEvents.StartDataPackReload.Context, ResourceLoaderEvents.EndDataPackReload.Context {

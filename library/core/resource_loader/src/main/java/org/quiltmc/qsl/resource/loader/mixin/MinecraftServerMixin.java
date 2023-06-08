@@ -54,6 +54,7 @@ public abstract class MinecraftServerMixin {
 			DynamicRegistryManager.Frozen frozen, ImmutableList packs, CallbackInfoReturnable<CompletionStage> cir,
 			AutoCloseableResourceManager currentResourceManager
 	) {
+		ResourceLoaderEventContextsImpl.server = (MinecraftServer) (Object) this;
 		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(new ResourceLoaderEventContextsImpl.ReloadStartContext(
 				() -> currentResourceManager, this.getResourceManager()
 		));
