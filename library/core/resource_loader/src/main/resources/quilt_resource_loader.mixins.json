@@ -15,6 +15,7 @@
     "TestServerMixin",
     "VanillaDataPackProviderAccessor",
     "VanillaDataPackProviderMixin",
+    "WorldLoaderMixin",
     "server.MainMixin"
   ],
   "client": [

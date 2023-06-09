@@ -16,25 +16,21 @@
 
 package org.quiltmc.qsl.resource.loader.mixin;
 
-import java.util.Collection;
+import java.util.Optional;
 
+import com.mojang.datafixers.util.Either;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.resource.pack.DataPackSettings;
-import net.minecraft.resource.pack.ResourcePackManager;
 import net.minecraft.server.WorldStem;
-import net.minecraft.test.GameTestBatch;
 import net.minecraft.test.TestServer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.storage.WorldSaveStorage;
 
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 import org.quiltmc.qsl.resource.loader.impl.ModResourcePackUtil;
+import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderEventContextsImpl;
 
 @Mixin(TestServer.class)
 public class TestServerMixin {
@@ -50,21 +46,11 @@ public class TestServerMixin {
 		return ModResourcePackUtil.DEFAULT_SETTINGS;
 	}
 
-	@Inject(
-			method = "create",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/util/Util;method_43499(Ljava/util/function/Function;)Ljava/util/concurrent/CompletableFuture;"
-			)
-	)
-	private static void onStartReloadResources(Thread thread, WorldSaveStorage.Session session, ResourcePackManager packManager,
-			Collection<GameTestBatch> testBatch, BlockPos pos, CallbackInfoReturnable<TestServer> cir) {
-		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null); // First reload
-	}
-
 	@ModifyVariable(method = "create", at = @At(value = "STORE"))
 	private static WorldStem onSuccessfulReloadResources(WorldStem resources) {
-		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resources.resourceManager(), null);
+		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(new ResourceLoaderEventContextsImpl.ReloadEndContext(
+				resources.resourceManager(), resources.registries().getCompositeManager(), Optional.empty()
+		));
 		return resources; // noop
 	}
 
@@ -78,7 +64,9 @@ public class TestServerMixin {
 			index = 1
 	)
 	private static Throwable onFailedReloadResources(Throwable exception) {
-		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, null, exception);
+		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(new ResourceLoaderEventContextsImpl.ReloadEndContext(
+				null, null, Optional.of(exception)
+		));
 		return exception; // noop
 	}
 }

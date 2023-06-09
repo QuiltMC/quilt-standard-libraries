@@ -34,6 +34,7 @@ import net.minecraft.util.Unit;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.resource.loader.api.client.ClientResourceLoaderEvents;
+import org.quiltmc.qsl.resource.loader.impl.client.ClientResourceLoaderEventContextsImpl;
 import org.quiltmc.qsl.resource.loader.impl.client.ClientResourceLoaderImpl;
 
 @ClientOnly
@@ -53,7 +54,7 @@ public abstract class ReloadableResourceManagerMixin implements ResourceManager 
 		if (firstReload != null) {
 			try {
 				ClientResourceLoaderEvents.START_RESOURCE_PACK_RELOAD.invoker().onStartResourcePackReload(
-						MinecraftClient.getInstance(), this, firstReload
+						new ClientResourceLoaderEventContextsImpl(this, firstReload)
 				);
 			} finally {
 				ClientResourceLoaderImpl.popReloadContext();
