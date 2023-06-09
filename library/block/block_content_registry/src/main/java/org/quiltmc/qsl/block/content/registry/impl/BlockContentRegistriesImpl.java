@@ -89,7 +89,10 @@ public class BlockContentRegistriesImpl implements ModInitializer {
 		BlockContentRegistries.ENCHANTING_BOOSTERS.put(BlockTags.ENCHANTMENT_POWER_PROVIDER, new ConstantBooster(1.0f));
 
 		resetMaps();
-		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, error) -> resetMaps());
+		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register(context -> {
+			if (context.error().isPresent()) return;
+			resetMaps();
+		});
 	}
 
 	private static void resetMaps() {

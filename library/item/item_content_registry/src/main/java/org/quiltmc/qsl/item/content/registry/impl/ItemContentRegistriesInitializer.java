@@ -60,7 +60,9 @@ public class ItemContentRegistriesInitializer implements ModInitializer {
 
 		INITIAL_COMPOST_CHANCE.forEach((item, f) -> ItemContentRegistries.COMPOST_CHANCES.put(item.asItem(), f));
 
-		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, error) -> {
+		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register(context -> {
+			if (context.error().isPresent()) return;
+
 			FUEL_MAP.clear();
 			// Fill the fuel map with all entries on the FUEL_TIMES registry attachment but filter using the #quilt:fuel_filters tag
 			for (var entry : ItemContentRegistries.FUEL_TIMES) {

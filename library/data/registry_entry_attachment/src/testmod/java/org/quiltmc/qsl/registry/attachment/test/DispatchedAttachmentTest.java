@@ -109,8 +109,8 @@ public class DispatchedAttachmentTest implements ModInitializer,
 	}
 
 	@Override
-	public void onEndDataPackReload(@Nullable MinecraftServer server, ResourceManager resourceManager, @Nullable Throwable error) {
-		if (error != null) return;
+	public void onEndDataPackReload(Context context) {
+		if (context.error().isPresent()) return;
 
 		LOGGER.info(" === DATA PACK RELOADED! === ");
 

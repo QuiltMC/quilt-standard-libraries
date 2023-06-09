@@ -16,36 +16,26 @@
 
 package org.quiltmc.qsl.resource.loader.mixin.server;
 
+import java.util.Optional;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.server.Main;
 import net.minecraft.server.WorldStem;
 
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
+import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderEventContextsImpl;
 
 @Mixin(Main.class)
 public class MainMixin {
-	@Inject(
-			method = "main",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/util/Util;method_43499(Ljava/util/function/Function;)Ljava/util/concurrent/CompletableFuture;",
-					remap = true
-			),
-			remap = false
-	)
-	private static void onStartReloadResources(String[] strings, CallbackInfo ci) {
-		ResourceLoaderEvents.START_DATA_PACK_RELOAD.invoker().onStartDataPackReload(null, null); // First reload
-	}
-
 	@ModifyVariable(method = "main", at = @At(value = "STORE"), remap = false)
 	private static WorldStem onSuccessfulReloadResources(WorldStem resources) {
-		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, resources.resourceManager(), null);
+		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(new ResourceLoaderEventContextsImpl.ReloadEndContext(
+				resources.resourceManager(), resources.registries().getCompositeManager(), Optional.empty()
+		));
 		return resources; // noop
 	}
 
@@ -59,7 +49,9 @@ public class MainMixin {
 			remap = false
 	)
 	private static Throwable onFailedReloadResources(Throwable exception) {
-		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(null, null, exception);
+		ResourceLoaderEvents.END_DATA_PACK_RELOAD.invoker().onEndDataPackReload(new ResourceLoaderEventContextsImpl.ReloadEndContext(
+				null, null, Optional.of(exception)
+		));
 		return exception; // noop
 	}
 }
