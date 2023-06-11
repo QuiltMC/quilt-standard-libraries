@@ -42,7 +42,7 @@ import org.quiltmc.qsl.registry.impl.sync.client.screen.SyncLogScreen;
 public class DisconnectedScreenMixin extends Screen {
 	@Shadow
 	@Final
-	private GridWidget field_44552;
+	private GridWidget grid;
 
 	private List<LogBuilder.Section> quilt$extraLogs;
 
@@ -69,7 +69,7 @@ public class DisconnectedScreenMixin extends Screen {
 				this.client.setScreen(new SyncLogScreen(this, this.quilt$extraLogs));
 			}).build();
 			// I might have committed some horrific crimes here
-			var settings = this.field_44552.copyDefaultSettings().setBottomPadding(-5);
+			var settings = this.grid.copyDefaultSettings().setBottomPadding(-5);
 			additionHelper.add(logsButton, settings);
 		}
 	}

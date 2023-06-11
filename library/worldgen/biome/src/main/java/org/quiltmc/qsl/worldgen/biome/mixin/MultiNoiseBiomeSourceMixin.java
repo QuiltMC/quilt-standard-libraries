@@ -51,7 +51,7 @@ public abstract class MultiNoiseBiomeSourceMixin {
 		if (MultiNoiseBiomeSourceParameterLists.NETHER.equals(holder.getKey().orElseThrow())) {
 			if (quilt$CACHED_PARAMETER_RANGE_LIST == null) {
 				MultiNoiseBiomeSourceMixin.quilt$CACHED_PARAMETER_RANGE_LIST = NetherBiomeData.withModdedBiomeEntries(
-						holder.value().method_49507(),
+						holder.value().getRangeList(),
 						((MultiNoiseBiomeSourceParameterListHook) holder.value()).getHolderProvider()::getHolderOrThrow
 				);
 			}

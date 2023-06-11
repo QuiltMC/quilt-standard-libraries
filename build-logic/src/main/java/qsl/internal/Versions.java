@@ -28,12 +28,12 @@ public final class Versions {
 	/**
 	 * The target Minecraft version.
 	 */
-	public static final MinecraftVersion MINECRAFT_VERSION = new MinecraftVersion("1.20");
+	public static final MinecraftVersion MINECRAFT_VERSION = new MinecraftVersion("1.20.1-rc1", "1.20.1");
 
 	/**
 	 * The Minecraft versions this version of QSL is compatible with.
 	 */
-	public static final List<MinecraftVersion> COMPATIBLE_VERSIONS = versions();
+	public static final List<MinecraftVersion> COMPATIBLE_VERSIONS = versions("1.20");
 
 	/**
 	 * The target Quilt Mappings build.
@@ -43,7 +43,7 @@ public final class Versions {
 	/**
 	 * The version of Quilt Loader to use.
 	 */
-	public static final String LOADER_VERSION = "0.18.10";
+	public static final String LOADER_VERSION = "0.19.0";
 
 	/**
 	 * The target Java version.
