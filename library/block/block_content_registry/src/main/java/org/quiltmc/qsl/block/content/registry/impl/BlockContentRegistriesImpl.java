@@ -34,7 +34,6 @@ import net.minecraft.block.Oxidizable;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.HoneycombItem;
 import net.minecraft.item.ShovelItem;
-import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -43,7 +42,6 @@ import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.block.content.registry.api.BlockContentRegistries;
 import org.quiltmc.qsl.block.content.registry.api.FlammableBlockEntry;
 import org.quiltmc.qsl.block.content.registry.api.ReversibleBlockEntry;
-import org.quiltmc.qsl.block.content.registry.api.enchanting.ConstantBooster;
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 
@@ -85,8 +83,6 @@ public class BlockContentRegistriesImpl implements ModInitializer {
 				entry -> new ReversibleBlockEntry(entry.getValue(), true)
 		)), BlockContentRegistries.WAXABLE);
 		addMapToAttachment(initialFlammableBlocks, BlockContentRegistries.FLAMMABLE);
-
-		BlockContentRegistries.ENCHANTING_BOOSTERS.put(BlockTags.ENCHANTMENT_POWER_PROVIDER, new ConstantBooster(1.0f));
 
 		resetMaps();
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register(context -> {
