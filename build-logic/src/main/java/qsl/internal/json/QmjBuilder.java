@@ -52,10 +52,10 @@ public final class QmjBuilder {
 			writer.value("=" + minecraftVersion.getSemVer());
 		} else {
 			writer.beginArray()
-					.value(minecraftVersion.getSemVer());
+					.value("=" + minecraftVersion.getSemVer());
 
 			for (var v : Versions.COMPATIBLE_VERSIONS) {
-				writer.value(v.getSemVer());
+				writer.value("=" + v.getSemVer());
 			}
 
 			writer.endArray();
