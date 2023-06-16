@@ -26,6 +26,8 @@ public final class QuiltCustomItemSettings {
 
 	/**
 	 * The {@link CustomItemSetting} in charge of handing {@link EquipmentSlotProvider}s.
+	 *
+	 * @deprecated Implement the {@link net.minecraft.item.Equippable} interface from Minecraft 1.19.4+ in the relevant block/item instead.
 	 */
 	public static final CustomItemSetting<EquipmentSlotProvider> EQUIPMENT_SLOT_PROVIDER = CustomItemSettingImpl.EQUIPMENT_SLOT_PROVIDER;
 

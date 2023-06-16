@@ -37,6 +37,7 @@ import org.quiltmc.qsl.item.setting.api.RecipeRemainderProvider;
 
 @ApiStatus.Internal
 public class CustomItemSettingImpl<T> implements CustomItemSetting<T> {
+	@Deprecated(forRemoval = true)
 	public static final CustomItemSetting<EquipmentSlotProvider> EQUIPMENT_SLOT_PROVIDER = CustomItemSetting.create(() -> null);
 	public static final CustomItemSetting<CustomDamageHandler> CUSTOM_DAMAGE_HANDLER = CustomItemSetting.create(() -> null);
 

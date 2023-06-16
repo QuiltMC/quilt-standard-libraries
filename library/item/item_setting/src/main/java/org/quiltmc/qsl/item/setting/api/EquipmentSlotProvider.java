@@ -30,7 +30,10 @@ import net.minecraft.item.ItemStack;
  * <p>
  * Note that items extending {@link net.minecraft.item.ArmorItem} should
  * use {@link ArmorItem#getArmorSlot()} instead.
+ *
+ * @deprecated Implement the {@link net.minecraft.item.Equippable} interface from Minecraft 1.19.4+ in the relevant block/item instead.
  */
+@Deprecated(forRemoval = true)
 @FunctionalInterface
 public interface EquipmentSlotProvider {
 	/**
