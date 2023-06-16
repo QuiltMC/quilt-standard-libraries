@@ -18,6 +18,7 @@
 package org.quiltmc.qsl.item.setting.api;
 
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -28,7 +29,7 @@ import net.minecraft.item.ItemStack;
  * {@link EquipmentSlotProvider} can be set with {@link QuiltItemSettings#equipmentSlot(EquipmentSlotProvider)}.
  * <p>
  * Note that items extending {@link net.minecraft.item.ArmorItem} should
- * use {@link net.minecraft.item.ArmorItem#getSlotType()} instead.
+ * use {@link ArmorItem#getArmorSlot()} instead.
  */
 @FunctionalInterface
 public interface EquipmentSlotProvider {

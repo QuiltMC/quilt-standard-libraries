@@ -28,7 +28,7 @@ import org.quiltmc.qsl.chat.api.QuiltMessageType;
 /**
  * An abstract message, extended for the various types of messages.
  *
- * @param <S> The type of the serialized form of this message, usually a {@link net.minecraft.network.Packet} but not required.
+ * @param <S> The type of the serialized form of this message, usually a {@link net.minecraft.network.packet.Packet} but not required.
  */
 public abstract class AbstractChatMessage<S> {
 	protected final @NotNull PlayerEntity player;
