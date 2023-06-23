@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021-2023 QuiltMC
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ public class ReloadableResourceManagerMixin {
 	 * This is an injector since Mixin doesn't like the Overwrite for some reason,
 	 * despite {@code remap = false} and {@link Dynamic}.
 	 *
-	 * @author QuiltMC, LambdAurora
+	 * @author The Quilt Project, LambdAurora
 	 * @reason To allow the printing of the full name of group resource packs.
 	 */
 	@Dynamic
