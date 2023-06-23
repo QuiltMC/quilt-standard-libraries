@@ -3,6 +3,7 @@ package qsl.internal.analysis;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.FileSystem;
+import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -67,8 +68,13 @@ public class ClassAnalysisUtils {
 
 	private static FileSystem loadMinecraftJar(NamedMinecraftProvider.MergedImpl provider) throws IOException {
 		Path inputJar = provider.getMergedJar().getPath();
+		URI jarUri = URI.create("jar:" + inputJar.toUri());
 
-		return FileSystems.newFileSystem(URI.create("jar:" + inputJar.toUri()), Map.of("create", false));
+		try {
+			return FileSystems.getFileSystem(jarUri);
+		} catch (FileSystemNotFoundException e) {
+			return FileSystems.newFileSystem(jarUri, Map.of("create", false));
+		}
 	}
 
 	public static Map<String, MethodNode> buildMethodLookup(ClassNode classNode) {
