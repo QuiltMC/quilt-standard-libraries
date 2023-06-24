@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022-2023 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ public class TestFunctionsMixin {
 	 * @param method the method that executes the test
 	 * @return the test function
 	 * @reason Replace the default test function creation with a more mod-friendly approach.
-	 * @author QuiltMC, FabricMC
+	 * @author The Quilt Project, FabricMC
 	 */
 	@Overwrite
 	private static TestFunction getTestFunction(Method method) {
@@ -49,7 +49,7 @@ public class TestFunctionsMixin {
 	 * @param testFunction the test function to check
 	 * @param testClass    the class that should match
 	 * @reason Replace the default implementation that only checks against structure name, which is unreliable.
-	 * @author QuiltMC, LambdAurora
+	 * @author The Quilt Project, LambdAurora
 	 */
 	@Overwrite
 	private static boolean isInClass(TestFunction testFunction, String testClass) {

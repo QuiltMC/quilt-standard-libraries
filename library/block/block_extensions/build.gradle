@@ -66,9 +66,8 @@ tasks.register('checkBlockSettings') {
 		def moduleJar = project.buildDir.toPath().resolve("devlibs/${qslModule.moduleName.get()}-${version}-dev.jar")
 
 		try (def moduleFs = FileSystems.newFileSystem(URI.create("jar:${moduleJar.toUri()}"), [create: false])) {
-			try (def mcFs = ClassAnalysisUtils.loadMinecraftJar(project)) {
-				checkBlockSettings(moduleFs, mcFs)
-			}
+			def mcFs = ClassAnalysisUtils.loadMinecraftJar(project)
+			checkBlockSettings(moduleFs, mcFs)
 		}
 	}
 }
