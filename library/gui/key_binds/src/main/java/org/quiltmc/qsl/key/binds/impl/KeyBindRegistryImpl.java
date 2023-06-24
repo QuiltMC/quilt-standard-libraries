@@ -20,12 +20,12 @@ import java.util.List;
 
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import org.jetbrains.annotations.ApiStatus;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 
 import net.minecraft.client.option.KeyBind;
 
-@Environment(EnvType.CLIENT)
+import org.quiltmc.loader.api.minecraft.ClientOnly;
+
+@ClientOnly
 @ApiStatus.Internal
 public class KeyBindRegistryImpl {
 	private static final List<KeyBind> ALL_KEY_BINDS = new ReferenceArrayList<>();

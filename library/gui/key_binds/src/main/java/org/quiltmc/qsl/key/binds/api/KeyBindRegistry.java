@@ -23,6 +23,7 @@ import net.fabricmc.api.Environment;
 
 import net.minecraft.client.option.KeyBind;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
 
 // TODO - This isn't a registry anymore; What the heck should it be named?
@@ -32,7 +33,7 @@ import org.quiltmc.qsl.key.binds.impl.KeyBindRegistryImpl;
  *
  * <p>This class also allows for getting key binds registered by other mods.
  */
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public class KeyBindRegistry {
 	// TODO - Shouldn't we use Vanilla's Map for getAllKeyBinds instead? Two birds, one stone, zero thoughts, head empty
 	/**

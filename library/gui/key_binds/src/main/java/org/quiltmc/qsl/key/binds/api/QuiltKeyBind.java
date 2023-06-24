@@ -18,9 +18,16 @@ package org.quiltmc.qsl.key.binds.api;
 
 import com.mojang.blaze3d.platform.InputUtil;
 
+import net.minecraft.client.option.KeyBind;
+
+import org.quiltmc.loader.api.minecraft.ClientOnly;
+import org.quiltmc.qsl.base.api.util.InjectedInterface;
+
 /**
  * An injected interface for KeyBind that adds few Quilt-relevant utility methods.
  */
+@ClientOnly
+@InjectedInterface(KeyBind.class)
 public interface QuiltKeyBind {
 	/**
 	 * Gets whenever the key bind is from Vanilla or not.
@@ -29,7 +36,7 @@ public interface QuiltKeyBind {
 	 * @return {@code true} if the key bind is from Vanilla, or {@code false} otherwise
 	 */
 	default boolean isVanilla() {
-		return false;
+		throw new IllegalStateException("Mixin injection failed.");
 	}
 
 	/**
@@ -41,6 +48,6 @@ public interface QuiltKeyBind {
 	 * @return the key bind's bound key
 	 */
 	default InputUtil.Key getBoundKey() {
-		throw new UnsupportedOperationException();
+		throw new IllegalStateException("Mixin injection failed.");
 	}
 }

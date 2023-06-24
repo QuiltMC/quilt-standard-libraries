@@ -10,13 +10,10 @@
     "client.config.GameOptionsMixin",
     "client.config.MinecraftClientMixin",
     "client.toggle.KeyBindMixin",
-    "client.EntryListWidgetAccessor",
     "client.GameOptionsAccessor",
     "client.GameOptionsMixin",
     "client.KeyBindAccessor",
-    "client.KeyBindEntryMixin",
-    "client.KeyBindMixin",
-    "client.KeyBindsScreenMixin"
+    "client.KeyBindMixin"
   ],
   "injectors": {
     "defaultRequire": 1

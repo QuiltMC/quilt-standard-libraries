@@ -21,13 +21,14 @@ import net.fabricmc.api.Environment;
 
 import net.minecraft.client.option.KeyBind;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 // TODO - Add Javadocs; You can nab the ones from KeyBindRegistry
 /**
  * An interface for adding toggling capabilities to key binds.
  */
-@Environment(EnvType.CLIENT)
+@ClientOnly
 @InjectedInterface(KeyBind.class)
 public interface ToggleableKeyBind {
 	/**
@@ -36,7 +37,7 @@ public interface ToggleableKeyBind {
 	 * @return {@code true} if the key bind is enabled, {@code false} otherwise
 	 */
 	default boolean isEnabled() {
-		return true;
+		throw new IllegalStateException("Mixin injection failed.");
 	}
 
 	/**
@@ -45,7 +46,7 @@ public interface ToggleableKeyBind {
 	 * @return {@code true} if the key bind is disabled, {@code false} otherwise
 	 */
 	default boolean isDisabled() {
-		return false;
+		throw new IllegalStateException("Mixin injection failed.");
 	}
 
 	/**
@@ -54,27 +55,31 @@ public interface ToggleableKeyBind {
 	 * @return {@code true} if the key bind can be disabled, {@code false} otherwise
 	 */
 	default boolean canDisable() {
-		return false;
+		throw new IllegalStateException("Mixin injection failed.");
 	}
 
 	/**
 	 * Enables the key bind.
-	 *
-	 * <p>If the key bind has been disabled more than once, this method will only
+	 * <p>
+	 * If the key bind has been disabled more than once, this method will only
 	 * decrement its internal counter instead of enabling the key bind.
 	 */
-	default void enable() { }
+	default void enable() {
+		throw new IllegalStateException("Mixin injection failed.");
+	}
 
 	/**
 	 * Disables the key bind.
-	 *
-	 * <p>When a key bind is disabled, it is effectively hidden from the game,
+	 * <p>
+	 * When a key bind is disabled, it is effectively hidden from the game,
 	 * being non-existent to it. config/quilt/key_binds.json, however, will
 	 * still remember the key bind's bound keys, similar to non-existent key binds.
-	 *
-	 * <p>If the key bind is disabled while already disabled, it will be increment
+	 * <p>
+	 * If the key bind is disabled while already disabled, it will be increment
 	 * an internal counter, making the next enable only decrement it instead of
 	 * enabling the key bind.
 	 */
-	default void disable() { }
+	default void disable() {
+		throw new IllegalStateException("Mixin injection failed.");
+	}
 }

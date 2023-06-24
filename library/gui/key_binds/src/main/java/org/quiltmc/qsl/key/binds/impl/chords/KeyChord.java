@@ -22,6 +22,9 @@ import it.unimi.dsi.fastutil.objects.Object2BooleanAVLTreeMap;
 
 import com.mojang.blaze3d.platform.InputUtil;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
+
+@ClientOnly
 public class KeyChord {
 	// TODO - Private this, add methods for getting/modifying it
 	public SortedMap<InputUtil.Key, Boolean> keys = new Object2BooleanAVLTreeMap<>();
@@ -30,13 +33,13 @@ public class KeyChord {
 		this.keys = keys;
 	}
 
-	public KeyChord() { }
+	public KeyChord() {}
 
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		} else if (o != null && o instanceof KeyChord keyChord) {
+		} else if (o instanceof KeyChord keyChord) {
 			return this.keys.keySet().equals(keyChord.keys.keySet());
 		} else {
 			return false;

@@ -17,15 +17,14 @@
 package org.quiltmc.qsl.key.binds.impl;
 
 import org.jetbrains.annotations.ApiStatus;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBind;
 
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.key.binds.mixin.client.GameOptionsAccessor;
 
-@Environment(EnvType.CLIENT)
+@ClientOnly
 @ApiStatus.Internal
 public class KeyBindManager {
 	private final GameOptions options;

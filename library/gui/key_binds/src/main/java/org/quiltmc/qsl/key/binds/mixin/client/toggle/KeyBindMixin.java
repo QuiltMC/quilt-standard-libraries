@@ -51,11 +51,11 @@ public abstract class KeyBindMixin implements ToggleableKeyBind {
 	public abstract String getTranslationKey();
 
 	@Shadow
-	abstract void reset();
+	protected abstract void reset();
 
 	@Inject(method = "<init>(Ljava/lang/String;Lcom/mojang/blaze3d/platform/InputUtil$Type;ILjava/lang/String;)V", at = @At("RETURN"))
 	private void initializeToggleFields(String string, InputUtil.Type type, int i, String string2, CallbackInfo ci) {
-		for (KeyBind otherKey : QUILT$ALL_KEY_BINDS) {
+		for (var otherKey : QUILT$ALL_KEY_BINDS) {
 			if (this.equals(otherKey)) {
 				throw new IllegalArgumentException(String.format("%s has already been registered!", this.getTranslationKey()));
 			} else if (this.getTranslationKey().equals(otherKey.getTranslationKey())) {
