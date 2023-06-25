@@ -7,13 +7,13 @@ quilt_loom = "1.2.+"
 
 [libraries]
 asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
-asm-analysis = { module = "org.ow2.asm:asm-analysis", version.ref = "asm" }
-asm-commons = { module = "org.ow2.asm:asm-commons", version.ref = "asm" }
-asm-tree = { module = "org.ow2.asm:asm-tree", version.ref = "asm" }
-asm-util = { module = "org.ow2.asm:asm-util", version.ref = "asm" }
+asm_analysis = { module = "org.ow2.asm:asm-analysis", version.ref = "asm" }
+asm_commons = { module = "org.ow2.asm:asm-commons", version.ref = "asm" }
+asm_tree = { module = "org.ow2.asm:asm-tree", version.ref = "asm" }
+asm_util = { module = "org.ow2.asm:asm-util", version.ref = "asm" }
 
-indra-git = { module = "net.kyori:indra-git", version.ref = "indra_git" }
+indra_git = { module = "net.kyori:indra-git", version.ref = "indra_git" }
 
-quilt-gradle-licenser = { module = "org.quiltmc:quilt-gradle-licenser", version.ref = "quilt_gradle_licenser" }
-quilt-json5 = { module = "org.quiltmc:quilt-json5", version.ref="quilt_json5" }
-quilt-loom = { module = "org.quiltmc:loom", version.ref = "quilt_loom" }
+quilt_gradle_licenser = { module = "org.quiltmc:quilt-gradle-licenser", version.ref = "quilt_gradle_licenser" }
+quilt_json5 = { module = "org.quiltmc:quilt-json5", version.ref="quilt_json5" }
+quilt_loom = { module = "org.quiltmc:loom", version.ref = "quilt_loom" }
