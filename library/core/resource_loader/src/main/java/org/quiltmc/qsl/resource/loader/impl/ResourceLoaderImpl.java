@@ -17,7 +17,11 @@
 
 package org.quiltmc.qsl.resource.loader.impl;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -32,6 +36,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
@@ -48,8 +53,10 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.ResourcePackProfile;
 import net.minecraft.resource.pack.ResourcePackProvider;
+import net.minecraft.resource.pack.metadata.ResourceMetadataReader;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
 import net.minecraft.util.Language;
 import net.minecraft.util.Pair;
 
@@ -115,6 +122,28 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 
 	public static ResourceLoaderImpl get(ResourceType type) {
 		return IMPL_MAP.computeIfAbsent(type, ResourceLoaderImpl::new);
+	}
+
+	public static <T> @Nullable T parseMetadata(ResourceMetadataReader<T> metaReader, ResourcePack pack, InputStream inputStream) {
+		JsonObject json;
+
+		try (var reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+			json = JsonHelper.deserialize(reader);
+		} catch (Exception e) {
+			LOGGER.error("Couldn't load {} metadata from pack \"{}\":", metaReader.getKey(), pack.getName(), e);
+			return null;
+		}
+
+		if (!json.has(metaReader.getKey())) {
+			return null;
+		} else {
+			try {
+				return metaReader.fromJson(JsonHelper.getObject(json, metaReader.getKey()));
+			} catch (Exception e) {
+				LOGGER.error("Couldn't load {} metadata from pack \"{}\":", metaReader.getKey(), pack.getName(), e);
+				return null;
+			}
+		}
 	}
 
 	/* Resource reloaders stuff */
@@ -353,7 +382,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 				path = childPath;
 			}
 
-			byMod.put(container.metadata(), ModNioResourcePack.ofMod(container.metadata(), path, type, null));
+			byMod.put(container.metadata(), ModNioResourcePack.ofMod(container.metadata(), path, type));
 		}
 
 		List<ModNioResourcePack> packList = byMod.values().stream()
