@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 QuiltMC
+ * Copyright 2023 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ public abstract class MultiNoiseBiomeSourceMixin {
 		if (MultiNoiseBiomeSourceParameterLists.NETHER.equals(holder.getKey().orElseThrow())) {
 			if (quilt$CACHED_PARAMETER_RANGE_LIST == null) {
 				MultiNoiseBiomeSourceMixin.quilt$CACHED_PARAMETER_RANGE_LIST = NetherBiomeData.withModdedBiomeEntries(
-						holder.value().method_49507(),
+						holder.value().getRangeList(),
 						((MultiNoiseBiomeSourceParameterListHook) holder.value()).getHolderProvider()::getHolderOrThrow
 				);
 			}

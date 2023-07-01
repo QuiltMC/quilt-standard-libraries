@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022-2023 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,10 +68,10 @@ public abstract class TheEndBiomeSourceMixin extends BiomeSource {
 	@Inject(method = "<clinit>", at = @At("TAIL"))
 	private static void modifyCodec(CallbackInfo ci) {
 		CODEC = RecordCodecBuilder.create((instance) ->
-			instance.group(RegistryOps.retrieveGetter(RegistryKeys.BIOME)).apply(instance, instance.stable(TheEndBiomeSource::method_46680)));
+			instance.group(RegistryOps.retrieveGetter(RegistryKeys.BIOME)).apply(instance, instance.stable(TheEndBiomeSource::create)));
 	}
 
-	@Inject(method = "method_46680(Lnet/minecraft/registry/HolderProvider;)Lnet/minecraft/world/biome/source/TheEndBiomeSource;", at = @At("RETURN"))
+	@Inject(method = "create", at = @At("RETURN"))
 	private static void init(HolderProvider<Biome> holderProvider, CallbackInfoReturnable<TheEndBiomeSource> cir) {
 		((TheEndBiomeSourceMixin) (Object) cir.getReturnValue()).overrides = Suppliers.memoize(TheEndBiomeData::createOverrides);
 	}

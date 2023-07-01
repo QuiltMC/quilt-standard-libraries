@@ -14,7 +14,7 @@
         "sources": "https://github.com/QuiltMC/quilt-standard-libraries"
       },
       "contributors": {
-        "QuiltMC: QSL Team": "Author"
+        "The Quilt Project": "Owner"
       }
     },
     "intermediate_mappings": "net.fabricmc:intermediary",

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2023 QuiltMC
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,7 +110,7 @@ public abstract class IntegratedServerLoaderMixin {
 	private void onBackupExperimentalWarning(Screen parentScreen, String worldName, boolean safeMode, boolean requireBackup, CallbackInfo ci,
 			WorldSaveStorage.Session session, ResourcePackManager resourcePackManager, WorldStem worldStem) {
 		if (EXPERIMENTAL_SCREEN_OVERRIDE.toBooleanOrElse(true)
-				&& !worldStem.saveProperties().method_28057().hasLegacyCustomOptions()) {
+				&& !worldStem.saveProperties().getGeneratorOptions().hasLegacyCustomOptions()) {
 			worldStem.close();
 			close(session, worldName);
 			this.start(parentScreen, worldName, safeMode, false);

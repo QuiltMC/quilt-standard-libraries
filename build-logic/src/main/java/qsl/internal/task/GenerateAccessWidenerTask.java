@@ -48,9 +48,8 @@ public abstract class GenerateAccessWidenerTask extends DefaultTask {
 			lines = new ArrayList<>();
 		}
 
-		try (var fs = ClassAnalysisUtils.loadMinecraftJar(this.getProject())) {
-			this.generator.accept(lines, fs);
-		}
+		var fs = ClassAnalysisUtils.loadMinecraftJar(this.getProject());
+		this.generator.accept(lines, fs);
 
 		Path path = this.getOutputPath().getAsFile().get().toPath();
 		Files.writeString(path, String.join("\n", lines) + '\n');

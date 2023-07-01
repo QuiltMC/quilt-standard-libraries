@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021-2023 QuiltMC
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,12 +35,14 @@ import org.slf4j.Logger;
 import net.minecraft.resource.ResourceIoSupplier;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.AbstractFileResourcePack;
+import net.minecraft.resource.pack.ResourcePack;
+import net.minecraft.resource.pack.metadata.ResourceMetadataReader;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 
-import org.quiltmc.loader.api.ModMetadata;
 import org.quiltmc.loader.api.CachedFileSystem;
+import org.quiltmc.loader.api.ModMetadata;
 import org.quiltmc.qsl.base.api.util.TriState;
 import org.quiltmc.qsl.resource.loader.api.QuiltResourcePack;
 import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
@@ -68,9 +70,9 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 	/* Caches */
 	private final ResourceAccess cache;
 
-	static ModNioResourcePack ofMod(ModMetadata modInfo, Path path, ResourceType type, @Nullable String name) {
+	static ModNioResourcePack ofMod(ModMetadata modInfo, Path path, ResourceType type) {
 		return new ModNioResourcePack(
-				name, modInfo, null, ResourcePackActivationType.ALWAYS_ENABLED,
+				null, modInfo, null, ResourcePackActivationType.ALWAYS_ENABLED,
 				path, type, null
 		);
 	}
@@ -173,6 +175,19 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 				this.closer.close();
 			} catch (Exception e) {
 				throw new RuntimeException(e);
+			}
+		}
+	}
+
+	@Override
+	public <T> @Nullable T parseMetadata(ResourceMetadataReader<T> metaReader) throws IOException {
+		ResourceIoSupplier<InputStream> resource = this.openRoot(ResourcePack.PACK_METADATA_NAME);
+
+		if (resource == null) {
+			return null;
+		} else {
+			try (InputStream stream = resource.get()) {
+				return ResourceLoaderImpl.parseMetadata(metaReader, this, stream);
 			}
 		}
 	}

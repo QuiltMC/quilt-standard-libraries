@@ -26,7 +26,7 @@ public final class QmjBuilder {
 				.name("name").value(ext.getName().get())
 				.name("description").value(ext.getDescription().get())
 				.name("contributors").beginObject() // metadata -> contributors
-				.name("QuiltMC: QSL Team").value("Owner")
+				.name("The Quilt Project").value("Owner")
 				.endObject() // contributors -> metadata
 				.name("contact").beginObject() // contributors -> contact
 				.name("homepage").value("https://quiltmc.org")
@@ -52,10 +52,10 @@ public final class QmjBuilder {
 			writer.value("=" + minecraftVersion.getSemVer());
 		} else {
 			writer.beginArray()
-					.value(minecraftVersion.getSemVer());
+					.value("=" + minecraftVersion.getSemVer());
 
 			for (var v : Versions.COMPATIBLE_VERSIONS) {
-				writer.value(v.getSemVer());
+				writer.value("=" + v.getSemVer());
 			}
 
 			writer.endArray();

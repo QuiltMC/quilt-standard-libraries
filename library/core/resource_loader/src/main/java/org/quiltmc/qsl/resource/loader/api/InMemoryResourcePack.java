@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,6 @@ import org.slf4j.Logger;
 
 import net.minecraft.resource.ResourceIoSupplier;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.resource.pack.AbstractFileResourcePack;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.metadata.ResourceMetadataReader;
 import net.minecraft.util.Identifier;
@@ -53,6 +52,7 @@ import net.minecraft.util.JsonHelper;
 
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.util.TriState;
+import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
 /**
  * Represents an in-memory resource pack.
@@ -142,7 +142,7 @@ public abstract class InMemoryResourcePack implements MutableResourcePack {
 		if (resource == null) return null;
 
 		try (var stream = resource.get()) {
-			return AbstractFileResourcePack.parseMetadata(metaReader, stream);
+			return ResourceLoaderImpl.parseMetadata(metaReader, this, stream);
 		}
 	}
 

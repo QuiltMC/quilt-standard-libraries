@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 QuiltMC
+ * Copyright 2023 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@
  *         Programmer Art ({@code programmer_art})
  *     </li>
  *     <li>
- *         High Contrast ({@value net.minecraft.client.resource.ClientBuiltinResourcePackProvider#field_43088})
+ *         High Contrast ({@value net.minecraft.client.resource.ClientBuiltinResourcePackProvider#HIGH_CONTRAST_NAME})
  *     </li>
  * </ul>
  * <p>
