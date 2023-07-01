@@ -38,7 +38,7 @@ public final class Versions {
 	/**
 	 * The target Quilt Mappings build.
 	 */
-	public static final int MAPPINGS_BUILD = 4;
+	public static final int MAPPINGS_BUILD = 10;
 
 	/**
 	 * The version of Quilt Loader to use.

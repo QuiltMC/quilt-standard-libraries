@@ -210,7 +210,7 @@ public class QuiltBiomeTest implements ModInitializer {
 	}
 
 	private static void checkBiomeExists(ServerWorld world, BlockPos pos, RegistryKey<Biome> biomeKey) {
-		Pair<BlockPos, Holder<Biome>> posOfBiome = world.method_42108((holder) -> holder.isRegistryKey(biomeKey), pos, 6400, 32, 64);
+		var posOfBiome = world.locateBiome((holder) -> holder.isRegistryKey(biomeKey), pos, 6400, 32, 64);
 
 		if (posOfBiome != null) {
 			BIOME_TEST_LOGGER.info("Biome {} has been found at {}.", posOfBiome.getSecond().getKey().orElseThrow(), posOfBiome.getFirst());
