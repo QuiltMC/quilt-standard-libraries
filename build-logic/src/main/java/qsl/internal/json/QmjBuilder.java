@@ -51,7 +51,9 @@ public final class QmjBuilder {
 		if (Versions.COMPATIBLE_VERSIONS.isEmpty()) {
 			writer.value("=" + minecraftVersion.getSemVer());
 		} else {
-			writer.beginArray()
+			writer.beginObject()
+					.name("any")
+					.beginArray()
 					.value("=" + minecraftVersion.getSemVer());
 
 			for (var v : Versions.COMPATIBLE_VERSIONS) {
@@ -59,6 +61,7 @@ public final class QmjBuilder {
 			}
 
 			writer.endArray();
+			writer.endObject();
 		}
 
 		writer.endObject();
