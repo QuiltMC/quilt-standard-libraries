@@ -16,8 +16,23 @@ jobs:
           MAVEN_URL: ${{ secrets.MAVEN_URL }}
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
-      - run: ./gradlew build publish --stacktrace
+      - run: ./gradlew build publish fatJavadoc --parallel --stacktrace
         env:
           MAVEN_URL: ${{ secrets.MAVEN_URL }}
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+      # Javadoc publishing
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: 'gh-pages'
+          path: "gh-pages"
+      - run: |
+          rm -rf ./gh-pages/${GITHUB_REF##*/}/
+          mv ./build/docs/fat-javadoc ./gh-pages/${GITHUB_REF##*/}/
+          cd gh-pages
+          git add .
+          git config user.name "GitHub Actions"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit --allow-empty -m "Publish javadoc from actions"
+          git push
