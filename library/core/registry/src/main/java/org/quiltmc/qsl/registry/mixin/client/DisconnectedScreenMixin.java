@@ -65,7 +65,7 @@ public class DisconnectedScreenMixin extends Screen {
 	)
 	private void quilt$addLogsButton(CallbackInfo ci, GridWidget.AdditionHelper additionHelper) {
 		if (!this.quilt$extraLogs.isEmpty()) {
-			var logsButton = ButtonWidget.builder(Text.translatable("quilt.core.registry_sync.logs_button", "More Details"), (button) -> {
+			var logsButton = ButtonWidget.builder(Text.translatableWithFallback("quilt.core.registry_sync.logs_button", "More Details"), (button) -> {
 				this.client.setScreen(new SyncLogScreen(this, this.quilt$extraLogs));
 			}).build();
 			// I might have committed some horrific crimes here

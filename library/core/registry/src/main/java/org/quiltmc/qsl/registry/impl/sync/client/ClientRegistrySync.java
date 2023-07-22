@@ -360,7 +360,7 @@ public final class ClientRegistrySync {
 							firstMismatch = false;
 						}
 
-						builder.textEntry(Text.translatable("quilt.core.registry_sync.found_expected", "Found '%s', expected '%s'",
+						builder.textEntry(Text.translatableWithFallback("quilt.core.registry_sync.found_expected", "Found '%s', expected '%s'",
 								block == null ? Text.literal("null").formatted(Formatting.RED) : registry.getId(block),
 								conv == null ? Text.literal("null").formatted(Formatting.RED) : registry.getId(conv)));
 					}
@@ -439,7 +439,7 @@ public final class ClientRegistrySync {
 			for (var entry : missingEntries) {
 				var x = Text.literal(entry.identifier().toString());
 				if (RegistryFlag.isOptional(entry.flags())) {
-					x.append(" ").append(Text.translatable("quilt.core.registry_sync.optional", "(Optional)").formatted(Formatting.DARK_GRAY));
+					x.append(" ").append(Text.translatableWithFallback("quilt.core.registry_sync.optional", "(Optional)").formatted(Formatting.DARK_GRAY));
 				}
 
 				builder.textEntry(x);

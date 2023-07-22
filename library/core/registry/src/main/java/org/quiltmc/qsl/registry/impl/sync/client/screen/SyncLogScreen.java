@@ -38,7 +38,7 @@ public class SyncLogScreen extends Screen {
 	private double currentScroll = 0;
 
 	public SyncLogScreen(Screen parent, List<LogBuilder.Section> text) {
-		super(Text.translatable("quilt.core.registry_sync.logs_title", "Server Synchronization Logs"));
+		super(Text.translatableWithFallback("quilt.core.registry_sync.logs_title", "Server Synchronization Logs"));
 		this.parent = parent;
 		this.text = text;
 	}
