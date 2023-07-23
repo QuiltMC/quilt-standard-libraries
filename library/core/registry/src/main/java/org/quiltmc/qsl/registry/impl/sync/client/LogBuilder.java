@@ -36,7 +36,7 @@ public class LogBuilder {
 	private int duplicateCount = 0;
 
 	public void pushT(String id, String lang, Object... args) {
-		this.push(Text.translatable("quilt.core.registry_sync.log." + id, lang, args));
+		this.push(Text.translatableWithFallback("quilt.core.registry_sync.log." + id, lang, args));
 	}
 
 	public void push(Text title) {

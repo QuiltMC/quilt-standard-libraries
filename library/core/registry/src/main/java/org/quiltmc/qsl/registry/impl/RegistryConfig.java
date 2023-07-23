@@ -51,12 +51,12 @@ public class RegistryConfig extends WrappedConfig {
 
 
 		@Comment("Message displayed for players joining with clients incompatible with Registry Sync. Supports strings and Minecraft's JSON text format.")
-		public final String missing_registry_sync_message = Text.Serializer.toJson(Text.translatable("qsl.registry_sync.unsupported_client", """
+		public final String missing_registry_sync_message = Text.Serializer.toJson(Text.translatableWithFallback("qsl.registry_sync.unsupported_client", """
 				Unsupported (vanilla?) client!
 				This server requires modded client to join!"""));
 
 		@Comment("Top part of the message displayed for players joining with incompatible clients. Supports strings and Minecraft's JSON text format.")
-		public final String mismatched_entries_top_message = Text.Serializer.toJson(Text.translatable("qsl.registry_sync.failed_sync", """
+		public final String mismatched_entries_top_message = Text.Serializer.toJson(Text.translatableWithFallback("qsl.registry_sync.failed_sync", """
 				Failed to synchronize client with the server!
 				This can happen when client's and server's mods don't match.
 				"""));
