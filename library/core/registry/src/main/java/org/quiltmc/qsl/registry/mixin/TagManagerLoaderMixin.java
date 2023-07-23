@@ -15,7 +15,7 @@ import org.quiltmc.qsl.registry.impl.dynamic.DynamicMetaRegistryImpl;
 @Mixin(TagManagerLoader.class)
 public class TagManagerLoaderMixin {
 	@Inject(method = "getRegistryDirectory", at = @At("HEAD"), cancellable = true)
-	private static void onGetRegistryDirectory(RegistryKey<? extends Registry<?>> registry, CallbackInfoReturnable<String> cir) {
+	private static void quilt$replaceModdedDynamicRegistryTagPath(RegistryKey<? extends Registry<?>> registry, CallbackInfoReturnable<String> cir) {
 		Identifier id = registry.getValue();
 		if (DynamicMetaRegistryImpl.isModdedRegistryId(id)) {
 			cir.setReturnValue("tags/" + id.getNamespace() + "/" + id.getPath());
