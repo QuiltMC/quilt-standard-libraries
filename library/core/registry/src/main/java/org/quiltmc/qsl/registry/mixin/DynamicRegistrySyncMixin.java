@@ -58,11 +58,11 @@ public abstract class DynamicRegistrySyncMixin {
 	}
 
 	/**
-	 * This redirect mixin's annotation was taken directly from Fabric API; the rest of this file was not.
+	 * This redirect mixin's annotation was taken directly from Fabric API (and adapted for Quilt Mappings), the rest of this file was not.
 	 */
 	@Dynamic("method_45961: Codec.xmap in buildManagerCodec")
 	@Redirect(method = "method_45961",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/registry/SerializableRegistries;stream(Lnet/minecraft/registry/DynamicRegistryManager;)Ljava/util/stream/Stream;"))
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/registry/DynamicRegistrySync;streamSyncedRegistries(Lnet/minecraft/registry/DynamicRegistryManager;)Ljava/util/stream/Stream;"))
 	private static Stream<DynamicRegistryManager.RegistryEntry<?>> filterNonSyncedEntries(DynamicRegistryManager drm) {
 		return streamSyncedRegistries(drm).filter(DynamicRegistrySyncMixin::filterRegistryEntry);
 	}

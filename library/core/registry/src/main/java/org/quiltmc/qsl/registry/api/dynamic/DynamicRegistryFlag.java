@@ -16,11 +16,17 @@
 
 package org.quiltmc.qsl.registry.api.dynamic;
 
-import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.util.Identifier;
+
+import org.quiltmc.qsl.registry.impl.dynamic.DynamicRegistryFlagManager;
 
 /**
- * Flags that can be set on Dynamic Registries to define their behavior.
+ * Flags that can be set on dynamic registries to define their behavior.
+ * <p>All flags default to being disabled/turned off, and can be enabled or disabled using static methods in this class.
+ *
+ * @see org.quiltmc.qsl.registry.api.sync.RegistrySynchronization  org.quiltmc.qsl.registry.api.sync.RegistrySynchronization,
+ * which contains similar flag setters/getters for static registries
  */
 public enum DynamicRegistryFlag {
 	/**
@@ -29,7 +35,43 @@ public enum DynamicRegistryFlag {
 	 */
 	OPTIONAL;
 
-	public static void setDynamicRegistry(RegistryKey<Registry<?>> registryKey, DynamicRegistryFlag flag) {
+	/**
+	 * Enables a specific flag on a dynamic registry.
+	 * @param registryId the value id ({@link RegistryKey#getValue()}) of the target dynamic registry
+	 * @param flag the flag value to enable on the dynamic registry
+	 */
+	public static void enableFlag(Identifier registryId, DynamicRegistryFlag flag) {
+		DynamicRegistryFlagManager.enableFlag(registryId, flag);
+	}
 
+	/**
+	 * Disables a specific flag on a dynamic registry.
+	 * @param registryId the value id ({@link RegistryKey#getValue()}) of the target dynamic registry
+	 * @param flag the flag value to disable on the dynamic registry
+	 */
+	public static void disableFlag(Identifier registryId, DynamicRegistryFlag flag) {
+		DynamicRegistryFlagManager.disableFlag(registryId, flag);
+	}
+
+	/**
+	 * Sets whether a dynamic registry has the {@link DynamicRegistryFlag#OPTIONAL} flag enabled or disabled.
+	 * @param registryId the value id ({@link RegistryKey#getValue()}) of the target dynamic registry
+	 * @param isOptional whether the targeted dynamic registry should have the {@link DynamicRegistryFlag#OPTIONAL} flag enabled or disabled
+	 */
+	public static void setOptional(Identifier registryId, boolean isOptional) {
+		if (isOptional) {
+			DynamicRegistryFlag.enableFlag(registryId, OPTIONAL);
+		} else {
+			DynamicRegistryFlag.disableFlag(registryId, OPTIONAL);
+		}
+	}
+
+	/**
+	 * Checks if a dynamic registry has the {@link DynamicRegistryFlag#OPTIONAL} flag enabled on it.
+	 * @param registryId the value id ({@link RegistryKey#getValue()}) of the dynamic registry to check
+	 * @return whether the checked dynamic registry has the {@link DynamicRegistryFlag#OPTIONAL} flag enabled
+	 */
+	public static boolean isOptional(Identifier registryId) {
+		return DynamicRegistryFlagManager.isOptional(registryId);
 	}
 }
