@@ -30,6 +30,7 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.registry.api.dynamic.DynamicMetaRegistry;
+import org.quiltmc.qsl.registry.api.dynamic.DynamicRegistryFlag;
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.quiltmc.qsl.testing.api.game.QuiltGameTest;
 import org.quiltmc.qsl.testing.api.game.QuiltTestContext;
@@ -44,6 +45,7 @@ public class RegistryLibDynamicRegistryTest implements QuiltGameTest, ModInitial
 	public void onInitialize(ModContainer mod) {
 		DynamicMetaRegistry.registerSynced(Greetings.REGISTRY_KEY, Greetings.CODEC);
 		RegistryEvents.DYNAMIC_REGISTRY_SETUP.register(context -> context.register(Greetings.REGISTRY_KEY, GREETING_B_ID, () -> GREETING_B));
+		DynamicRegistryFlag.setOptional(Greetings.REGISTRY_KEY.getValue(), true);
 	}
 
 	@GameTest(structureName = EMPTY_STRUCTURE)
@@ -51,6 +53,7 @@ public class RegistryLibDynamicRegistryTest implements QuiltGameTest, ModInitial
 		Registry<Greetings> greetingsRegistry = ctx.getWorld().getRegistryManager().get(Greetings.REGISTRY_KEY);
 
 		ctx.succeedIf(() -> {
+			ctx.assertTrue(DynamicRegistryFlag.isOptional(Greetings.REGISTRY_KEY.getValue()), "Registry should always have the OPTIONAL flag enabled");
 			ctx.assertTrue(greetingsRegistry.containsId(GREETING_A_ID), "Registry should contain modded data value from datapack");
 			ctx.assertTrue(Objects.requireNonNull(greetingsRegistry.get(GREETING_A_ID)).equals(GREETING_A), "Modded value should be properly parsed from data file");
 			ctx.assertTrue(GREETING_B.equals(greetingsRegistry.get(GREETING_B_ID)), "Registry should contain modded data value from event");
