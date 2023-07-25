@@ -16,13 +16,17 @@
 
 package org.quiltmc.qsl.registry.test.dynamic;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.mojang.serialization.Codec;
 
 import net.minecraft.registry.DynamicRegistrySync;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.GameTestException;
 import net.minecraft.util.Identifier;
@@ -31,6 +35,8 @@ import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.registry.api.dynamic.DynamicMetaRegistry;
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
+import org.quiltmc.qsl.tag.api.TagRegistry;
+import org.quiltmc.qsl.tag.api.TagRegistry.TagValues;
 import org.quiltmc.qsl.testing.api.game.QuiltGameTest;
 import org.quiltmc.qsl.testing.api.game.QuiltTestContext;
 
@@ -39,6 +45,7 @@ public class RegistryLibDynamicRegistryTest implements QuiltGameTest, ModInitial
 	private static final Greetings GREETING_A = new Greetings("Welcome to Quilt!", 5);
 	private static final Identifier GREETING_B_ID = new Identifier("quilt_registry_testmod", "greeting_b");
 	private static final Greetings GREETING_B = new Greetings("Howdy!", 2);
+	private static final Identifier GREETING_TEST_TAG_ID = new Identifier("quilt_registry_testmod", "test_tag");
 
 	@Override
 	public void onInitialize(ModContainer mod) {
@@ -63,6 +70,23 @@ public class RegistryLibDynamicRegistryTest implements QuiltGameTest, ModInitial
 				DynamicRegistrySync.streamReloadableSyncedRegistries(ctx.getWorld().getServer().getLayeredRegistryManager()).anyMatch(e -> e.key().equals(Greetings.REGISTRY_KEY)),
 				"Modded registry key should appear in the list of synced dynamic registries"
 		));
+	}
+
+	@GameTest(structureName = EMPTY_STRUCTURE)
+	public void greetingsTagGetLoaded(QuiltTestContext ctx) {
+		TagKey<Greetings> tagKey = TagKey.of(Greetings.REGISTRY_KEY, GREETING_TEST_TAG_ID);
+		Set<TagValues<Greetings>> tagValuesSet = TagRegistry.stream(Greetings.REGISTRY_KEY).collect(Collectors.toSet());
+		ctx.failIf(() -> ctx.assertTrue(tagValuesSet.isEmpty(), "tagValuesSet should always be populated with at least 1 object"));
+
+		ctx.succeedIf(() -> ctx.assertTrue(tagValuesSet.stream().anyMatch(tagValues -> {
+			Registry<Greetings> greetingsRegistry = ctx.getWorld().getRegistryManager().get(Greetings.REGISTRY_KEY);
+			Greetings testerA = greetingsRegistry.getOrEmpty(GREETING_A_ID).orElse(null);
+			if (Objects.isNull(testerA)) return false;
+
+			Set<Greetings> heldIds = new HashSet<>();
+			tagValues.values().iterator().forEachRemaining(greetingsHolder -> heldIds.add(greetingsHolder.value()));
+			return tagValues.key().equals(tagKey) && heldIds.contains(testerA);
+		}), "tagValuesSet should always contain a tag loaded from tags/quilt_registry_testmod/greetings/test_tag.json, and said tag should contain a value pointing to GREETING_A"));
 	}
 
 	@GameTest(structureName = EMPTY_STRUCTURE)
