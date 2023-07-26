@@ -19,6 +19,7 @@ package org.quiltmc.qsl.registry.api.dynamic;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.qsl.registry.impl.dynamic.DynamicMetaRegistryImpl;
 import org.quiltmc.qsl.registry.impl.dynamic.DynamicRegistryFlagManager;
 
 /**
@@ -30,13 +31,16 @@ import org.quiltmc.qsl.registry.impl.dynamic.DynamicRegistryFlagManager;
  */
 public enum DynamicRegistryFlag {
 	/**
-	 * Note: This flag is intended only for synchronized dynamic registries. On non-synced dynamic registries, this flag does nothing.
-	 * <p></p>
 	 * Indicates that this registry (and the entries within) do not necessarily need to be sent
 	 * to (logical) clients for synchronization in multiplayer contexts.
 	 * <p>
-	 * This is useful, for instance, when creating a server-sided mod that is vanilla client compatible when installed on a server,
-	 * but has extra functionality for players when the mod is installed on a connecting client.
+	 * <b>Note:</b> This flag is intended only for synchronized dynamic registries. On non-synced dynamic registries, this flag does nothing.
+	 * <p></p>
+	 * One use-case for this flag is for creating mods that are entirely compatible with vanilla, and thus do not
+	 * require the dynamic registry to exist clientside to connect to the server.
+	 * This allows for both vanilla clients/clients without the mod to connect <i>and</i> for clients with the mod
+	 * supplying the registry to connect, with the latter being able to see the contents of the registry and possibly
+	 * enable extra clientside features accordingly.
 	 */
 	OPTIONAL;
 
@@ -45,29 +49,11 @@ public enum DynamicRegistryFlag {
 	 * @param registryId the value id ({@link RegistryKey#getValue()}) of the target dynamic registry
 	 * @param flag the flag value to enable on the dynamic registry
 	 */
-	public static void enableFlag(Identifier registryId, DynamicRegistryFlag flag) {
-		DynamicRegistryFlagManager.enableFlag(registryId, flag);
-	}
-
-	/**
-	 * Disables a specific flag on a dynamic registry.
-	 * @param registryId the value id ({@link RegistryKey#getValue()}) of the target dynamic registry
-	 * @param flag the flag value to disable on the dynamic registry
-	 */
-	public static void disableFlag(Identifier registryId, DynamicRegistryFlag flag) {
-		DynamicRegistryFlagManager.disableFlag(registryId, flag);
-	}
-
-	/**
-	 * Sets whether a dynamic registry has the {@link DynamicRegistryFlag#OPTIONAL} flag enabled or disabled.
-	 * @param registryId the value id ({@link RegistryKey#getValue()}) of the target dynamic registry
-	 * @param isOptional whether the targeted dynamic registry should have the {@link DynamicRegistryFlag#OPTIONAL} flag enabled or disabled
-	 */
-	public static void setOptional(Identifier registryId, boolean isOptional) {
-		if (isOptional) {
-			DynamicRegistryFlag.enableFlag(registryId, OPTIONAL);
-		} else {
-			DynamicRegistryFlag.disableFlag(registryId, OPTIONAL);
+	public static void setFlag(Identifier registryId, DynamicRegistryFlag flag) {
+		try {
+			DynamicRegistryFlagManager.setFlag(registryId, flag);
+		} catch (Exception e) {
+			logFlagModifyException(registryId, flag, e);
 		}
 	}
 
@@ -78,5 +64,12 @@ public enum DynamicRegistryFlag {
 	 */
 	public static boolean isOptional(Identifier registryId) {
 		return DynamicRegistryFlagManager.isOptional(registryId);
+	}
+
+	/**
+	 * Helper method for logging exceptions to avoid code duplication.
+	 */
+	private static void logFlagModifyException(Identifier registryId, DynamicRegistryFlag flag, Exception e) {
+		DynamicMetaRegistryImpl.LOGGER.error("Caught exception while attempting to enable flag {} on registry id {}: {}", flag.toString(), registryId, e.toString());
 	}
 }

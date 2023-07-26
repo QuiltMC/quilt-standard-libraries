@@ -48,8 +48,8 @@ public final class DynamicMetaRegistry {
 	 * @param entryCodec the codec used to deserialize entries from datapacks
 	 * @throws IllegalStateException if this registry of registries already got frozen
 	 */
-	public static <E> void register(RegistryKey<? extends Registry<E>> key, Codec<E> entryCodec) {
-		DynamicMetaRegistryImpl.register(key, entryCodec);
+	public static <E> void register(RegistryKey<? extends Registry<E>> key, Codec<E> entryCodec, DynamicRegistryFlag... flags) {
+		DynamicMetaRegistryImpl.register(key, entryCodec, flags);
 	}
 
 	/**
@@ -63,10 +63,10 @@ public final class DynamicMetaRegistry {
 	 * @param key        a {@link RegistryKey#ofRegistry(Identifier) key for the new dynamic registry}
 	 * @param entryCodec the codec used to both deserialize entries from datapacks and (de)serialize entries to and from packets
 	 * @throws IllegalStateException if this registry of registries already got frozen
-	 * @see #registerSynced(RegistryKey, Codec, Codec)
+	 * @see #registerSynced(RegistryKey, Codec, Codec, DynamicRegistryFlag...)
 	 */
-	public static <E> void registerSynced(RegistryKey<? extends Registry<E>> key, Codec<E> entryCodec) {
-		DynamicMetaRegistryImpl.registerSynced(key, entryCodec, entryCodec);
+	public static <E> void registerSynced(RegistryKey<? extends Registry<E>> key, Codec<E> entryCodec, DynamicRegistryFlag... flags) {
+		DynamicMetaRegistryImpl.registerSynced(key, entryCodec, entryCodec, flags);
 	}
 
 	/**
@@ -81,9 +81,9 @@ public final class DynamicMetaRegistry {
 	 * @param entryCodec the codec used to deserialize entries from datapacks
 	 * @param syncCodec  the codec used to (de)serialize entries to and from packets - may be the same as {@code entryCodec}
 	 * @throws IllegalStateException if this registry of registries already got frozen
-	 * @see #registerSynced(RegistryKey, Codec)
+	 * @see #registerSynced(RegistryKey, Codec, DynamicRegistryFlag...)
 	 */
-	public static <E> void registerSynced(RegistryKey<? extends Registry<E>> key, Codec<E> entryCodec, Codec<E> syncCodec) {
-		DynamicMetaRegistryImpl.registerSynced(key, entryCodec, syncCodec);
+	public static <E> void registerSynced(RegistryKey<? extends Registry<E>> key, Codec<E> entryCodec, Codec<E> syncCodec, DynamicRegistryFlag... flags) {
+		DynamicMetaRegistryImpl.registerSynced(key, entryCodec, syncCodec, flags);
 	}
 }

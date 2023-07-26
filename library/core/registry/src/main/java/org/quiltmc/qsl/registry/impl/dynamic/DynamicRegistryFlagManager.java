@@ -29,19 +29,11 @@ public final class DynamicRegistryFlagManager {
 	private static final Multimap<Identifier, DynamicRegistryFlag> DYNAMIC_REGISTRY_FLAGS =
 			MultimapBuilder.hashKeys().enumSetValues(DynamicRegistryFlag.class).build();
 
-	public static void enableFlag(Identifier registryId, DynamicRegistryFlag flag) {
+	public static void setFlag(Identifier registryId, DynamicRegistryFlag flag) throws IllegalStateException {
+		if (DynamicMetaRegistryImpl.isFrozen()) throw new IllegalStateException("Dynamic registries are frozen, and thus flags cannot be changed!");
 		if (!DynamicMetaRegistryImpl.isModdedRegistryId(registryId)) return;
 		DYNAMIC_REGISTRY_FLAGS.put(registryId, flag);
 	}
-
-	public static void disableFlag(Identifier registryId, DynamicRegistryFlag flag) {
-		if (!DynamicMetaRegistryImpl.isModdedRegistryId(registryId)) return;
-		if (!DYNAMIC_REGISTRY_FLAGS.containsKey(registryId)) return;
-		if (DYNAMIC_REGISTRY_FLAGS.get(registryId).contains(flag)) {
-			DYNAMIC_REGISTRY_FLAGS.remove(registryId, flag);
-		}
-	}
-
 	public static boolean isOptional(Identifier registryId) {
 		if (DYNAMIC_REGISTRY_FLAGS.containsKey(registryId)) {
 			return DYNAMIC_REGISTRY_FLAGS.get(registryId).contains(DynamicRegistryFlag.OPTIONAL);
