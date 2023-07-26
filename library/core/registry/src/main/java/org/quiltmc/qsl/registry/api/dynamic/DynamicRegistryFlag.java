@@ -30,6 +30,8 @@ import org.quiltmc.qsl.registry.impl.dynamic.DynamicRegistryFlagManager;
  */
 public enum DynamicRegistryFlag {
 	/**
+	 * Note: This flag is intended only for synchronized dynamic registries. On non-synced dynamic registries, this flag does nothing.
+	 * <p></p>
 	 * Indicates that this registry (and the entries within) do not necessarily need to be sent
 	 * to (logical) clients for synchronization in multiplayer contexts.
 	 * <p>
