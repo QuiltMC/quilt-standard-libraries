@@ -32,6 +32,9 @@ public enum DynamicRegistryFlag {
 	/**
 	 * Indicates that this registry (and the entries within) do not necessarily need to be sent
 	 * to (logical) clients for synchronization in multiplayer contexts.
+	 * <p>
+	 * This is useful, for instance, when creating a server-sided mod that is vanilla client compatible when installed on a server,
+	 * but has extra functionality for players when the mod is installed on a connecting client.
 	 */
 	OPTIONAL;
 
