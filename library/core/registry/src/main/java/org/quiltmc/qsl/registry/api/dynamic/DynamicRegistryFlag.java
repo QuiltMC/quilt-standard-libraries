@@ -35,7 +35,7 @@ public enum DynamicRegistryFlag {
 	 * to (logical) clients for synchronization in multiplayer contexts.
 	 * <p>
 	 * <b>Note:</b> This flag is intended only for synchronized dynamic registries. On non-synced dynamic registries, this flag does nothing.
-	 * <p></p>
+	 * <p>
 	 * One use-case for this flag is for creating mods that are entirely compatible with vanilla, and thus do not
 	 * require the dynamic registry to exist clientside to connect to the server.
 	 * This allows for both vanilla clients/clients without the mod to connect <i>and</i> for clients with the mod
@@ -46,6 +46,7 @@ public enum DynamicRegistryFlag {
 
 	/**
 	 * Enables a specific flag on a dynamic registry.
+	 *
 	 * @param registryId the value id ({@link RegistryKey#getValue()}) of the target dynamic registry
 	 * @param flag the flag value to enable on the dynamic registry
 	 */
@@ -59,6 +60,7 @@ public enum DynamicRegistryFlag {
 
 	/**
 	 * Checks if a dynamic registry has the {@link DynamicRegistryFlag#OPTIONAL} flag enabled on it.
+	 *
 	 * @param registryId the value id ({@link RegistryKey#getValue()}) of the dynamic registry to check
 	 * @return whether the checked dynamic registry has the {@link DynamicRegistryFlag#OPTIONAL} flag enabled
 	 */

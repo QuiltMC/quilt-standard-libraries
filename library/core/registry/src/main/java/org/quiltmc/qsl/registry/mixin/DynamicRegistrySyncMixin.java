@@ -49,7 +49,8 @@ public abstract class DynamicRegistrySyncMixin {
 		if (DynamicRegistryFlagManager.isOptional(entry.key().getValue())) {
 			return entry.value().size() > 0;
 		}
-		return true; //if no flags apply, always return true
+
+		return true; // If no flags apply, always return true
 	}
 
 	@Shadow
