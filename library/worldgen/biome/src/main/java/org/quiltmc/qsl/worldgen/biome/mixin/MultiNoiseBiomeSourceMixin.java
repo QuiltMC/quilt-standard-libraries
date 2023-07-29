@@ -18,7 +18,6 @@ package org.quiltmc.qsl.worldgen.biome.mixin;
 
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -35,9 +34,6 @@ import org.quiltmc.qsl.worldgen.biome.impl.NetherBiomeData;
 
 @Mixin(MultiNoiseBiomeSource.class)
 public abstract class MultiNoiseBiomeSourceMixin {
-	@Unique
-	private static MultiNoiseUtil.ParameterRangeList<Holder<Biome>> quilt$CACHED_PARAMETER_RANGE_LIST = null;
-
 	@Dynamic
 	@Inject(
 			method = "method_49505(Lnet/minecraft/registry/Holder;)Lnet/minecraft/world/biome/source/util/MultiNoiseUtil$ParameterRangeList;",
@@ -49,14 +45,12 @@ public abstract class MultiNoiseBiomeSourceMixin {
 			CallbackInfoReturnable<MultiNoiseUtil.ParameterRangeList<Holder<Biome>>> cir
 	) {
 		if (MultiNoiseBiomeSourceParameterLists.NETHER.equals(holder.getKey().orElseThrow())) {
-			if (quilt$CACHED_PARAMETER_RANGE_LIST == null) {
-				MultiNoiseBiomeSourceMixin.quilt$CACHED_PARAMETER_RANGE_LIST = NetherBiomeData.withModdedBiomeEntries(
+			MultiNoiseUtil.ParameterRangeList<Holder<Biome>> quilt$nether_parameter_range_list = NetherBiomeData.withModdedBiomeEntries(
 						holder.value().getRangeList(),
 						((MultiNoiseBiomeSourceParameterListHook) holder.value()).getHolderProvider()::getHolderOrThrow
 				);
-			}
 
-			cir.setReturnValue(MultiNoiseBiomeSourceMixin.quilt$CACHED_PARAMETER_RANGE_LIST);
+			cir.setReturnValue(quilt$nether_parameter_range_list);
 		}
 	}
 }
