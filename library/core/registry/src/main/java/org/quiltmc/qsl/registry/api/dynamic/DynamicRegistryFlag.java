@@ -24,7 +24,7 @@ import org.quiltmc.qsl.registry.impl.dynamic.DynamicRegistryFlagManager;
 
 /**
  * Flags that can be set on dynamic registries to define their behavior.
- * <p>All flags are off by default, and can be enabled using methods in this class or on dynamic registry creation via varargs.
+ * <p>All flags are off by default, and can be enabled using static methods in this class or on dynamic registry creation via varargs.
  *
  * @see org.quiltmc.qsl.registry.api.sync.RegistrySynchronization  org.quiltmc.qsl.registry.api.sync.RegistrySynchronization,
  * which contains similar flag setters/getters for static registries
