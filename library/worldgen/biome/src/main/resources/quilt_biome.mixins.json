@@ -3,9 +3,8 @@
   "package": "org.quiltmc.qsl.worldgen.biome.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "MultiNoiseBiomeSourceParameterListMixin",
+    "C_cnkaoojoMixin",
     "ChunkNoiseSamplerMixin",
-    "MultiNoiseBiomeSourceMixin",
     "MultiNoiseSamplerMixin",
     "RandomStateMixin",
     "TheEndBiomeSourceMixin",
