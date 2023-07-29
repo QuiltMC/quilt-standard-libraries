@@ -31,7 +31,7 @@ import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 import org.quiltmc.qsl.worldgen.biome.impl.NetherBiomeData;
 
 @Mixin(targets = "net/minecraft/world/biome/util/MultiNoiseBiomeSourceParameterList$Preset$C_cnkaoojo")
-public class C_cnkaoojoMixin {
+public abstract class C_cnkaoojoMixin {
 	@Inject(method = "apply", at = @At("RETURN"), cancellable = true, remap = false)
 	public <T> void modifyNetherPreset(Function<RegistryKey<Biome>, T> function, CallbackInfoReturnable<MultiNoiseUtil.ParameterRangeList<T>> cir) {
 		cir.setReturnValue(NetherBiomeData.withModdedBiomeEntries(cir.getReturnValue(), function));
