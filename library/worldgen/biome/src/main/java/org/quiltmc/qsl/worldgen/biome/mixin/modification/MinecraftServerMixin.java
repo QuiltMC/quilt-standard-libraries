@@ -46,10 +46,10 @@ public abstract class MinecraftServerMixin {
 
 	@Inject(method = "<init>", at = @At(value = "RETURN"))
 	private void finalizeWorldGen(CallbackInfo ci) {
-		if (!(this.saveProperties instanceof WorldSaveProperties levelProperties)) {
+		if (!(this.saveProperties instanceof WorldSaveProperties worldSaveProperties)) {
 			throw new RuntimeException("Incompatible SaveProperties passed to MinecraftServer: " + this.saveProperties);
 		}
 
-		BiomeModificationImpl.INSTANCE.finalizeWorldGen(this.getRegistryManager(), levelProperties, this.getResourceManager());
+		BiomeModificationImpl.INSTANCE.finalizeWorldGen(this.getRegistryManager(), worldSaveProperties, this.getResourceManager());
 	}
 }

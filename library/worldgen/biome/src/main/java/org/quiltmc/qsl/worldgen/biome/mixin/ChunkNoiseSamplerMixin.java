@@ -45,10 +45,10 @@ public abstract class ChunkNoiseSamplerMixin {
 
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void init(
-			int i,
+			int horizontalSize,
 			RandomState randomState,
+			int i,
 			int j,
-			int k,
 			GenerationShapeConfig generationShapeConfig,
 			DensityFunctions.StructureWeightSamplerOrMarker structureWeightSamplerOrMarker,
 			ChunkGeneratorSettings chunkGeneratorSettings,

@@ -418,7 +418,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		var packs = new ArrayList<ResourcePack>();
 		appendModResourcePacks(packs, type, packName);
 
-		return new GroupResourcePack.Wrapped(type, vanillaPack, packs, true);
+		return new GroupResourcePack.Wrapped(type, vanillaPack, packs, false);
 	}
 
 	/* Built-in resource packs */

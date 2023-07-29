@@ -235,7 +235,7 @@ Note that `.` from abbreviations, such as `i.e.`, count.
 The `$` character may be used in mixins to mark a semantic separation in the name, in other words it allows to separate
 the actual name of the variable and the namespace.
 
-All mixin fields and methods (including those from duck interfaces) must be prefixed with `quilt$` in order to aid with debugging.
+All `@Unique` mixin fields and methods and all methods coming from duck interfaces must be prefixed with `quilt$` in order to aid with debugging as well as preventing issues.
 
 In the case of a pseudo-local variable (a field used briefly to pass around a local variable of a method between 2
 injections of said method), the field should be named with the namespace first, then the name of the injected method,
