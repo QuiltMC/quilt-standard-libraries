@@ -36,7 +36,9 @@ rootProject.afterEvaluate {
 	// Make sure to call get on any properties
 
 	// Module name should also be the name of artifacts.
-	archivesBaseName = extension.moduleName.get()
+	base {
+		archivesName = extension.moduleName.get()
+	}
 
 	if (extension.library == null) {
 		throw new GradleException("Module $extension.moduleName has an invalid parent project that doesn't define its `libraryName` field.")
