@@ -38,6 +38,7 @@ public final class DynamicRegistryFlagManager {
 
 		DYNAMIC_REGISTRY_FLAGS.put(registryId, flag);
 	}
+
 	public static boolean isOptional(Identifier registryId) {
 		if (DYNAMIC_REGISTRY_FLAGS.containsKey(registryId)) {
 			return DYNAMIC_REGISTRY_FLAGS.get(registryId).contains(DynamicRegistryFlag.OPTIONAL);
