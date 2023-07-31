@@ -88,9 +88,6 @@ public final class DynamicMetaRegistry {
 	}
 
 	/**
-	 * @deprecated Use {@link DynamicMetaRegistry#register(RegistryKey, Codec, DynamicRegistryFlag...)} instead
-	 * <p>
-	 * <p>
 	 * Registers a server-side dynamic registry.
 	 * <p>
 	 * Entries will be loaded from {@code "data/<namespace>/<registry_namespace>/<registry_path>"} for every datapack
@@ -102,15 +99,11 @@ public final class DynamicMetaRegistry {
 	 * @param entryCodec the codec used to deserialize entries from datapacks
 	 * @throws IllegalStateException if this registry of registries already got frozen
 	 */
-	@Deprecated
 	public static <E> void register(RegistryKey<? extends Registry<E>> key, Codec<E> entryCodec) {
 		DynamicMetaRegistryImpl.register(key, entryCodec);
 	}
 
 	/**
-	 * @deprecated Use {@link DynamicMetaRegistry#register(RegistryKey, Codec, DynamicRegistryFlag...)} instead
-	 * <p>
-	 * <p>
 	 * Registers a dynamic registry which contents get synced between the server and connected clients.
 	 * <p>
 	 * Entries will be loaded from {@code "data/<namespace>/<registry_namespace>/<registry_path>"} for every datapack
@@ -123,15 +116,11 @@ public final class DynamicMetaRegistry {
 	 * @throws IllegalStateException if this registry of registries already got frozen
 	 * @see #registerSynced(RegistryKey, Codec, Codec)
 	 */
-	@Deprecated
 	public static <E> void registerSynced(RegistryKey<? extends Registry<E>> key, Codec<E> entryCodec) {
 		DynamicMetaRegistryImpl.registerSynced(key, entryCodec, entryCodec);
 	}
 
 	/**
-	 * @deprecated Use {@link DynamicMetaRegistry#registerSynced(RegistryKey, Codec, Codec, DynamicRegistryFlag...)} instead
-	 * <p>
-	 * <p>
 	 * Registers a dynamic registry which contents get synced between the server and connected clients.
 	 * <p>
 	 * Entries will be loaded from {@code "data/<namespace>/<registry_namespace>/<registry_path>"} for every datapack
@@ -145,7 +134,6 @@ public final class DynamicMetaRegistry {
 	 * @throws IllegalStateException if this registry of registries already got frozen
 	 * @see #registerSynced(RegistryKey, Codec)
 	 */
-	@Deprecated
 	public static <E> void registerSynced(RegistryKey<? extends Registry<E>> key, Codec<E> entryCodec, Codec<E> syncCodec) {
 		DynamicMetaRegistryImpl.registerSynced(key, entryCodec, syncCodec);
 	}
