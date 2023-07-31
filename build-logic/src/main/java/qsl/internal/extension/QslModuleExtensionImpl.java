@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import qsl.internal.dependency.QslLibraryDependency;
 import qsl.internal.json.Environment;
 
-import org.quiltmc.json5.JsonWriter;
+import org.quiltmc.parsers.json.JsonWriter;
 
 public class QslModuleExtensionImpl extends QslExtension implements QslModuleExtension, Serializable {
 	@Serial
