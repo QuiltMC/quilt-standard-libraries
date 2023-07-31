@@ -16,15 +16,13 @@
 
 package org.quiltmc.qsl.registry.test.dynamic;
 
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.mojang.serialization.Codec;
 
 import net.minecraft.registry.DynamicRegistrySync;
-import net.minecraft.registry.Registry;
+import net.minecraft.registry.Holder;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.test.GameTest;
@@ -37,16 +35,21 @@ import org.quiltmc.qsl.registry.api.dynamic.DynamicMetaRegistry;
 import org.quiltmc.qsl.registry.api.dynamic.DynamicRegistryFlag;
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.quiltmc.qsl.tag.api.TagRegistry;
-import org.quiltmc.qsl.tag.api.TagRegistry.TagValues;
 import org.quiltmc.qsl.testing.api.game.QuiltGameTest;
 import org.quiltmc.qsl.testing.api.game.QuiltTestContext;
 
 public class RegistryLibDynamicRegistryTest implements QuiltGameTest, ModInitializer {
-	private static final Identifier GREETING_A_ID = new Identifier("quilt_registry_testmod", "greeting_a");
+	public static final String NAMESPACE = "quilt_registry_testmod";
+
+	private static final Identifier GREETING_A_ID = id("greeting_a");
 	private static final Greetings GREETING_A = new Greetings("Welcome to Quilt!", 5);
-	private static final Identifier GREETING_B_ID = new Identifier("quilt_registry_testmod", "greeting_b");
+	private static final Identifier GREETING_B_ID = id("greeting_b");
 	private static final Greetings GREETING_B = new Greetings("Howdy!", 2);
-	private static final Identifier GREETING_TEST_TAG_ID = new Identifier("quilt_registry_testmod", "test_tag");
+	private static final TagKey<Greetings> GREETING_TEST_TAG = TagKey.of(Greetings.REGISTRY_KEY, id("test_tag"));
+
+	public static Identifier id(String path) {
+		return new Identifier(NAMESPACE, path);
+	}
 
 	@Override
 	public void onInitialize(ModContainer mod) {
@@ -56,7 +59,7 @@ public class RegistryLibDynamicRegistryTest implements QuiltGameTest, ModInitial
 
 	@GameTest(structureName = EMPTY_STRUCTURE)
 	public void greetingsGetLoaded(QuiltTestContext ctx) {
-		Registry<Greetings> greetingsRegistry = ctx.getWorld().getRegistryManager().get(Greetings.REGISTRY_KEY);
+		var greetingsRegistry = ctx.getWorld().getRegistryManager().get(Greetings.REGISTRY_KEY);
 
 		ctx.succeedIf(() -> {
 			ctx.assertTrue(DynamicRegistryFlag.isOptional(Greetings.REGISTRY_KEY.getValue()), "Registry should always have the OPTIONAL flag enabled");
@@ -76,18 +79,17 @@ public class RegistryLibDynamicRegistryTest implements QuiltGameTest, ModInitial
 
 	@GameTest(structureName = EMPTY_STRUCTURE)
 	public void greetingsTagGetLoaded(QuiltTestContext ctx) {
-		TagKey<Greetings> tagKey = TagKey.of(Greetings.REGISTRY_KEY, GREETING_TEST_TAG_ID);
-		Set<TagValues<Greetings>> tagValuesSet = TagRegistry.stream(Greetings.REGISTRY_KEY).collect(Collectors.toSet());
+		var tagValuesSet = TagRegistry.stream(Greetings.REGISTRY_KEY).collect(Collectors.toSet());
 		ctx.failIf(() -> ctx.assertTrue(tagValuesSet.isEmpty(), "tagValuesSet should always be populated with at least 1 object"));
 
 		ctx.succeedIf(() -> ctx.assertTrue(tagValuesSet.stream().anyMatch(tagValues -> {
-			Registry<Greetings> greetingsRegistry = ctx.getWorld().getRegistryManager().get(Greetings.REGISTRY_KEY);
-			Greetings testerA = greetingsRegistry.getOrEmpty(GREETING_A_ID).orElse(null);
-			if (Objects.isNull(testerA)) return false;
+			var greetingsRegistry = ctx.getWorld().getRegistryManager().get(Greetings.REGISTRY_KEY);
+			var greetingsA = greetingsRegistry.getOrEmpty(GREETING_A_ID).orElse(null);
 
-			Set<Greetings> heldIds = new HashSet<>();
-			tagValues.values().iterator().forEachRemaining(greetingsHolder -> heldIds.add(greetingsHolder.value()));
-			return tagValues.key().equals(tagKey) && heldIds.contains(testerA);
+			ctx.assertTrue(Objects.nonNull(greetingsRegistry.get(GREETING_A_ID)), "Registry should contain modded data value from datapack");
+
+			var heldIds = tagValues.values().stream().map(Holder::value).collect(Collectors.toSet());
+			return tagValues.key().equals(GREETING_TEST_TAG) && heldIds.contains(greetingsA);
 		}), "tagValuesSet should always contain a tag loaded from tags/quilt_registry_testmod/greetings/test_tag.json, and said tag should contain a value pointing to GREETING_A"));
 	}
 
@@ -95,8 +97,8 @@ public class RegistryLibDynamicRegistryTest implements QuiltGameTest, ModInitial
 	public void dynamicMetaregistryFreezes(QuiltTestContext ctx) {
 		ctx.succeedIf(() -> {
 			try {
-				DynamicMetaRegistry.register(RegistryKey.ofRegistry(new Identifier("quilt_registry_testmod", "a")), Codec.INT);
-				throw new GameTestException("DynamicMetaregistry should not allow registration after init");
+				DynamicMetaRegistry.register(RegistryKey.ofRegistry(id("a")), Codec.INT);
+				throw new GameTestException("DynamicMetaRegistry should not allow registration after init");
 			} catch (IllegalStateException ignored) {}
 		});
 	}
