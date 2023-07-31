@@ -4,9 +4,9 @@ import org.gradle.api.Project;
 import qsl.internal.Versions;
 
 public class QslExtension {
-	private static final String RESOLVE_QUILTFLOWER_TASK = "resolveQuiltflower";
-	private static final String GEN_SOURCES_WITH_QUILTFLOWER_TASK = "genSourcesWithQuiltflower";
-	private static final String[] TASKS_TO_DISABLE = {RESOLVE_QUILTFLOWER_TASK, "genSourcesWithFernFlower"};
+	private static final String RESOLVE_VINEFLOWER_TASK = "resolveVineflower";
+	private static final String GEN_SOURCES_WITH_VINEFLOWER_TASK = "genSourcesWithVineflower";
+	private static final String[] TASKS_TO_DISABLE = {RESOLVE_VINEFLOWER_TASK, "genSourcesWithFernFlower"};
 	protected final Project project;
 
 	public QslExtension(Project project) {
@@ -17,7 +17,7 @@ public class QslExtension {
 				p.getTasks().findByName(task).setEnabled(false);
 			}
 
-			p.getTasks().findByName(GEN_SOURCES_WITH_QUILTFLOWER_TASK).dependsOn(p.getRootProject().getTasks().findByName(RESOLVE_QUILTFLOWER_TASK));
+			p.getTasks().findByName(GEN_SOURCES_WITH_VINEFLOWER_TASK).dependsOn(p.getRootProject().getTasks().findByName(RESOLVE_VINEFLOWER_TASK));
 		});
 	}
 
