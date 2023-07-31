@@ -15,6 +15,9 @@ qslModule {
 			testmodOnly("resource_loader")
 			testmodOnly("testing")
 		}
+		data {
+			testmodOnly("tags")
+		}
 	}
 	entrypoints {
 		client_init {
