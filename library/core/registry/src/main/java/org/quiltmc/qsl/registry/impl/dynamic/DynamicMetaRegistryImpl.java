@@ -45,7 +45,12 @@ public class DynamicMetaRegistryImpl {
 	}
 
 	public static <E> void register(RegistryKey<? extends Registry<E>> ref, Codec<E> entryCodec, DynamicRegistryFlag... flags) {
+		if (ref.getValue().getNamespace().equals(Identifier.DEFAULT_NAMESPACE)) {
+			throw new IllegalStateException("The '" + ref.getValue() + "' dynamic registry cannot have 'minecraft' as its identifier's namespace!");
+		}
+
 		if (frozen) throw new IllegalStateException("Registry is already frozen");
+
 		MODDED_REGISTRY_IDS.add(ref.getValue());
 		RegistryLoader.WORLDGEN_REGISTRIES.add(new RegistryLoader.DecodingData<>(ref, entryCodec));
 		for (DynamicRegistryFlag flag : flags) {
