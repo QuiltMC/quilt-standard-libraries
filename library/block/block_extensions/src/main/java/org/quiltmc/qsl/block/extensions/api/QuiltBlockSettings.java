@@ -43,6 +43,10 @@ import org.quiltmc.qsl.block.extensions.mixin.AbstractBlockSettingsAccessor;
  * An extended variant of the {@link AbstractBlock.Settings} class, which provides extra methods for customization.
  */
 public class QuiltBlockSettings extends AbstractBlock.Settings {
+	protected QuiltBlockSettings() {
+		super();
+	}
+
 	protected QuiltBlockSettings(AbstractBlock.Settings settings) {
 		super();
 
@@ -86,10 +90,22 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		this.emissiveLighting(otherAccessor.getEmissiveLightingPredicate());
 	}
 
+	/**
+	 * Creates a new instance of Quilt's block settings variant.
+	 *
+	 * @return the new instance
+	 */
+	@Contract(pure = true, value = "-> new")
+	public static QuiltBlockSettings create() {
+		return new QuiltBlockSettings();
+	}
+
+	@Contract(pure = true, value = "!null -> new")
 	public static QuiltBlockSettings copyOf(AbstractBlock block) {
 		return new QuiltBlockSettings(((AbstractBlockAccessor) block).getSettings());
 	}
 
+	@Contract(pure = true, value = "!null -> new")
 	public static QuiltBlockSettings copyOf(AbstractBlock.Settings settings) {
 		return new QuiltBlockSettings(settings);
 	}
