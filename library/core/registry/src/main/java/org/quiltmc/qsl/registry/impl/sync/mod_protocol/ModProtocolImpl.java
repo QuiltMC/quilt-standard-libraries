@@ -24,6 +24,7 @@ import java.util.Map;
 import com.mojang.logging.LogUtils;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import org.quiltmc.loader.api.Version;
 import org.slf4j.Logger;
 
 import org.quiltmc.loader.api.LoaderValue;
@@ -35,7 +36,7 @@ public class ModProtocolImpl {
 	public static boolean enabled = false;
 	public static boolean disableQuery = false;
 	public static String prioritizedId = "";
-	public static ModProtocolDef prioritizedEntry;
+	public static ModProtocolDef modpackDef;
 	private static final Logger LOGGER = LogUtils.getLogger();
 
 	private static final Map<String, ModProtocolDef> PROTOCOL_VERSIONS = new HashMap<>();
@@ -49,11 +50,11 @@ public class ModProtocolImpl {
 		disableQuery = (Boolean) RegistryConfig.getSync("disable_mod_protocol_ping");
 
 		//if (modProto.mod_protocol_version >= 0) {
-		if (((Number) RegistryConfig.getSync("mod_protocol_version")).intValue() >= 0) {
-			//prioritizedEntry = new ModProtocolDef("global:" + modProto.mod_protocol_id, modProto.mod_protocol_name, IntList.of(modProto.mod_protocol_version), false);
-			prioritizedEntry = new ModProtocolDef("global:" + (String) RegistryConfig.getSync("mod_protocol_id"), (String) RegistryConfig.getSync("mod_protocol_name"), IntList.of(((Number) RegistryConfig.getSync("mod_protocol_version")).intValue()), false);
-			prioritizedId = prioritizedEntry.id();
-			add(prioritizedEntry);
+		if (((Number) RegistryConfig.getSync("modpack_protocol_version")).intValue() >= 0) {
+			//prioritizedEntry = new ModProtocolDef("modpack:" + modProto.mod_protocol_id, modProto.mod_protocol_name, IntList.of(modProto.mod_protocol_version), false);
+			modpackDef = new ModProtocolDef("modpack:" + (String) RegistryConfig.getSync("modpack_protocol_id"), (String) RegistryConfig.getSync("modpack_protocol_name"), IntList.of(((Number) RegistryConfig.getSync("modpack_protocol_version")).intValue()), false);
+			prioritizedId = modpackDef.id();
+			add(modpackDef);
 		}
 
 		for (var container : QuiltLoader.getAllMods()) {
@@ -93,17 +94,25 @@ public class ModProtocolImpl {
 				var version = decodeVersion(".value", container, object.get("value"));
 
 				if (version != null) {
-					add(new ModProtocolDef("mod:" + data.id(), data.name(), version, optional));
+					add(new ModProtocolDef("mod:" + data.id(), data.name() + " " + getVersionString(data.version()), version, optional));
 				}
 			} else {
 				var version = decodeVersion("", container, value);
 				if (version != null) {
-					add(new ModProtocolDef("mod:" + data.id(), data.name(), version, false));
+					add(new ModProtocolDef("mod:" + data.id(), data.name() + " " + getVersionString(data.version()), version, false));
 				}
 			}
 		}
 	}
 
+	private static String getVersionString(Version version) {
+		String ret = version.toString();
+		if (Character.isDigit(ret.charAt(0))) {
+			return "v" + ret;
+		} else {
+			return ret;
+		}
+	}
 	private static IntList decodeVersion(String path, ModContainer container, LoaderValue value) {
 		if (value == null) {
 			invalidEntryType(path, container, LoaderValue.LType.NUMBER, LoaderValue.LType.NULL);

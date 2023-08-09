@@ -111,15 +111,15 @@ public class RegistrySyncText {
 
 	public static Text unsupportedModVersion(List<ModProtocolDef> unsupported, ModProtocolDef missingPrioritized) {
 		if (missingPrioritized != null && !missingPrioritized.versions().isEmpty()) {
-			var x = Text.translatableWithFallback("quilt.core.registry_sync.require_main_mod_protocol", "This server requires %s with protocol version of %s!",
+			var x = Text.translatableWithFallback("quilt.core.registry_sync.require_modpack_protocol", "This server requires %s with protocol version of %s!",
 					Text.literal(missingPrioritized.displayName()).formatted(Formatting.YELLOW),
 					missingPrioritized.versions().getInt(0)
 			);
 
-			if (ModProtocolImpl.enabled && ModProtocolImpl.prioritizedEntry != null) {
+			if (ModProtocolImpl.enabled && ModProtocolImpl.modpackDef != null) {
 				x.append("\n").append(
-						Text.translatableWithFallback("quilt.core.registry_sync.main_mod_protocol", "You are on %s with protocol version of %s.",
-								Text.literal(ModProtocolImpl.prioritizedEntry.displayName()).formatted(Formatting.GOLD), ModProtocolImpl.prioritizedEntry.versions().getInt(0)
+						Text.translatableWithFallback("quilt.core.registry_sync.modpack_protocol", "You are on %s with protocol version of %s.",
+								Text.literal(ModProtocolImpl.modpackDef.displayName()).formatted(Formatting.GOLD), ModProtocolImpl.modpackDef.versions().getInt(0)
 						)
 				);
 			}
