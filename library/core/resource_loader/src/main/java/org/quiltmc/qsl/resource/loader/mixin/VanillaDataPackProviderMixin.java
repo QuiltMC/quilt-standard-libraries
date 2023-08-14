@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.resource.loader.mixin;
 
+import org.quiltmc.qsl.resource.loader.api.QuiltResourcePackProfile;
+import org.quiltmc.qsl.resource.loader.impl.ModResourcePackUtil;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -40,15 +42,13 @@ public class VanillaDataPackProviderMixin {
 	@Final
 	private static Identifier DATA_PACKS_DIR;
 
-	// Synthetic method createBuiltinResourcePackProfile(ResourcePack)ResourcePackProfile -> lambda in ResourcePackProfile.of
-	// Using an injector to wrap the previous return value.
-	@Inject(
-			method = "method_45284(Lnet/minecraft/resource/pack/ResourcePack;Ljava/lang/String;)Lnet/minecraft/resource/pack/ResourcePack;",
-			at = @At("RETURN"),
-			cancellable = true
+	@ModifyArg(
+			method = "createBuiltinResourcePackProfile(Lnet/minecraft/resource/pack/ResourcePack;)Lnet/minecraft/resource/pack/ResourcePackProfile;",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/resource/pack/VanillaDataPackProvider;method_52435(Lnet/minecraft/resource/pack/ResourcePack;)Lnet/minecraft/resource/pack/ResourcePackProfile$ResourcePackFactory;"),
+		index = 0
 	)
-	private static void onPackGet(ResourcePack pack, String name, CallbackInfoReturnable<ResourcePack> cir) {
-		cir.setReturnValue(ResourceLoaderImpl.buildMinecraftResourcePack(ResourceType.SERVER_DATA, cir.getReturnValue()));
+	private ResourcePack onPackGet(ResourcePack pack) {
+		return ResourceLoaderImpl.buildMinecraftResourcePack(ResourceType.SERVER_DATA, pack);
 	}
 
 	@ModifyArg(
@@ -62,8 +62,8 @@ public class VanillaDataPackProviderMixin {
 	private ResourcePackProfile.ResourcePackFactory onCreateBuiltinResourcePackProfile(String name, Text displayName, boolean alwaysEnabled,
 			ResourcePackProfile.ResourcePackFactory factory, ResourceType type, ResourcePackProfile.InsertionPosition insertionPosition,
 			ResourcePackSource source) {
-		return n -> ResourceLoaderImpl.buildVanillaBuiltinResourcePack(factory.open(n), ResourceType.SERVER_DATA,
+		return QuiltResourcePackProfile.identityFactory(ResourceLoaderImpl.buildVanillaBuiltinResourcePack(factory.method_52424(name), ResourceType.SERVER_DATA,
 				"data/" + DATA_PACKS_DIR.getNamespace() + '/' + DATA_PACKS_DIR.getPath() + '/' + name
-		);
+		));
 	}
 }

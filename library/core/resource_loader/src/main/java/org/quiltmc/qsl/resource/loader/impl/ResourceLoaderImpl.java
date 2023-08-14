@@ -488,7 +488,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 			// Add the built-in pack only if namespaces for the specified resource type are present.
 			if (!pack.getNamespaces(type).isEmpty()) {
 				// Make the resource pack profile for built-in pack, should never be always enabled.
-				var profile = QuiltBuiltinResourcePackProfile.of(pack);
+				var profile = ModResourcePackUtil.makeBuiltinPackProfile(pack);
 
 				if (profile != null) {
 					profileAdder.accept(profile);

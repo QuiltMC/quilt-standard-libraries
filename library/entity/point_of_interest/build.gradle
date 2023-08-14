@@ -13,5 +13,4 @@ qslModule {
 			testmodOnly("qsl_base")
 		}
 	}
-	accessWidener()
 }

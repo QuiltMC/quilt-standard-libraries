@@ -19,6 +19,7 @@ package org.quiltmc.qsl.resource.loader.mixin.client;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import org.quiltmc.qsl.resource.loader.api.QuiltResourcePackProfile;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -59,7 +60,7 @@ public class ClientBuiltinResourcePackProviderMixin {
 			ResourcePackProfile.ResourcePackFactory factory, ResourceType type, ResourcePackProfile.InsertionPosition insertionPosition,
 			ResourcePackSource source) {
 		if (BUILTIN_PACK_DISPLAY_NAMES.containsKey(name)) {
-			return n -> ResourceLoaderImpl.buildVanillaBuiltinResourcePack(factory.open(n), ResourceType.CLIENT_RESOURCES, name);
+			return QuiltResourcePackProfile.identityFactory(ResourceLoaderImpl.buildVanillaBuiltinResourcePack(factory.method_52424(name), ResourceType.CLIENT_RESOURCES, name));
 		}
 
 		return factory;
@@ -67,13 +68,13 @@ public class ClientBuiltinResourcePackProviderMixin {
 
 	// Synthetic method createBuiltinResourcePackProfile(ResourcePack)ResourcePackProfile
 	// Using an injector to wrap the previous return value.
-	@Inject(
-			method = "method_45855(Lnet/minecraft/resource/pack/ResourcePack;Ljava/lang/String;)Lnet/minecraft/resource/pack/ResourcePack;",
-			at = @At("RETURN"),
-			cancellable = true
+	@ModifyArg(
+		method = "createBuiltinResourcePackProfile(Lnet/minecraft/resource/pack/ResourcePack;)Lnet/minecraft/resource/pack/ResourcePackProfile;",
+		at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resource/ClientBuiltinResourcePackProvider;method_52435(Lnet/minecraft/resource/pack/ResourcePack;)Lnet/minecraft/resource/pack/ResourcePackProfile$ResourcePackFactory;"),
+		index = 0
 	)
-	private static void onPackGet(ResourcePack pack, String name, CallbackInfoReturnable<ResourcePack> cir) {
-		cir.setReturnValue(ResourceLoaderImpl.buildMinecraftResourcePack(ResourceType.CLIENT_RESOURCES, cir.getReturnValue()));
+	private ResourcePack onPackGet(ResourcePack pack) {
+		return ResourceLoaderImpl.buildMinecraftResourcePack(ResourceType.CLIENT_RESOURCES, pack);
 	}
 
 	@ClientOnly
