@@ -32,6 +32,7 @@ public record TestRegistrationContext(ModContainer mod) {
 	 * Registers an additional test class.
 	 *
 	 * @param testClass the test class to register
+	 * @see #register(Class[])
 	 */
 	public void register(Class<?> testClass) {
 		if (testClass.isAssignableFrom(QuiltGameTest.class)) {
@@ -56,6 +57,18 @@ public record TestRegistrationContext(ModContainer mod) {
 			QuiltGameTestImpl.registerTestClass(this.mod, testClass, testObject);
 		} else {
 			QuiltGameTestImpl.registerTestClass(this.mod, testClass, null);
+		}
+	}
+
+	/**
+	 * Registers additional test classes.
+	 *
+	 * @param testClasses the test classes to register
+	 * @see #register(Class)
+	 */
+	public void register(Class<?>... testClasses) {
+		for (var testClass : testClasses) {
+			this.register(testClass);
 		}
 	}
 }
