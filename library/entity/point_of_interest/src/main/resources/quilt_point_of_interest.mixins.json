@@ -3,8 +3,7 @@
   "package": "org.quiltmc.qsl.poi.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "PointOfInterestTypeMixin",
-    "PointOfInterestTypesAccessor"
+    "PointOfInterestTypeMixin"
   ],
   "injectors": {
     "defaultRequire": 1

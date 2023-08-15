@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.poi.mixin;
 
+import static net.minecraft.world.poi.PointOfInterestTypes.STATE_TO_TYPE;
+
 import java.util.Collection;
 import java.util.Set;
 
@@ -83,12 +85,12 @@ public class PointOfInterestTypeMixin implements PointOfInterestTypeExtensions {
 	private void quilt$setBlockStates(RegistryKey<PointOfInterestType> key, Collection<BlockState> states, boolean added) {
 		if (!added) {
 			for (BlockState state : this.blockStates) {
-				PointOfInterestTypesAccessor.getStateToType().remove(state);
+				STATE_TO_TYPE.remove(state);
 			}
 		}
 
 		for (BlockState state : states) {
-			Holder<PointOfInterestType> replaced = PointOfInterestTypesAccessor.getStateToType().put(state, Registries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(key));
+			Holder<PointOfInterestType> replaced = STATE_TO_TYPE.put(state, Registries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(key));
 			if (replaced != null) {
 				throw Util.throwOrPause(new IllegalStateException(String.format("%s is defined in too many tags", state)));
 			}
