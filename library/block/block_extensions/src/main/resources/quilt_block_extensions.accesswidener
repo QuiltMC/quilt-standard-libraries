@@ -102,3 +102,5 @@ transitive-accessible method net/minecraft/block/WallWitherSkullBlock <init> (Ln
 transitive-accessible method net/minecraft/block/WeightedPressurePlateBlock <init> (ILnet/minecraft/block/AbstractBlock$Settings;Lnet/minecraft/block/BlockSetType;)V
 transitive-accessible method net/minecraft/block/WetSpongeBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/WitherSkullBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
+transitive-accessible method net/minecraft/block/dispenser/DispenserBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
+transitive-accessible method net/minecraft/block/sapling/SaplingBlock <init> (Lnet/minecraft/block/sapling/SaplingGenerator;Lnet/minecraft/block/AbstractBlock$Settings;)V
