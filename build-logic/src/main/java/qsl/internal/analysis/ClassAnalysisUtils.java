@@ -40,18 +40,25 @@ public class ClassAnalysisUtils {
 	}
 
 	public static Stream<ClassNode> readPackage(FileSystem jarFs, String targetPackage) throws IOException {
-		return Files.list(jarFs.getPath(targetPackage.replace('.', '/')))
-				.filter(path -> path.toString().endsWith(".class") && Files.isRegularFile(path))
-				.map(path -> {
-					try {
-						return readClass(path);
-					} catch (IOException e) {
-						throw new RuntimeException(e);
-					}
-				})
-				.sorted(Comparator.comparing(classNode -> classNode.name));
+		return readPackage(Files.list(jarFs.getPath(targetPackage.replace('.', '/'))));
 	}
 
+	public static Stream<ClassNode> readPackageRecursive(FileSystem jarFs, String targetPackage) throws IOException {
+		return readPackage(Files.walk(jarFs.getPath(targetPackage.replace('.', '/'))));
+	}
+
+	public static Stream<ClassNode> readPackage(Stream<Path> in) {
+		return in
+			.filter(path -> path.toString().endsWith(".class") && Files.isRegularFile(path))
+			.map(path -> {
+				try {
+					return readClass(path);
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			})
+			.sorted(Comparator.comparing(classNode -> classNode.name));
+	}
 	public static FileSystem loadMinecraftJar(Project project) throws IOException {
 		var namedMinecraftProvider = ((LoomGradleExtension) project.getExtensions().getByType(LoomGradleExtensionAPI.class))
 				.getNamedMinecraftProvider();
