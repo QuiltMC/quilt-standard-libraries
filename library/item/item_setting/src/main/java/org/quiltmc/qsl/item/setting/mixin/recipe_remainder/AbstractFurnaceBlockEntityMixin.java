@@ -72,6 +72,28 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 	}
 
 	@SuppressWarnings("ConstantConditions")
+	@Inject(method = "canAcceptRecipeOutput", at = @At("RETURN"), cancellable = true)
+	private static void checkMismatchedRemaindersCanDrop(DynamicRegistryManager registryManager, @Nullable Recipe<?> recipe, DefaultedList<ItemStack> inventory, int count, CallbackInfoReturnable<Boolean> cir) {
+		if (cir.getReturnValue() && quilt$THREAD_LOCAL_BLOCK_ENTITY.get() == null) {
+			ItemStack original = inventory.get(INPUT_SLOT);
+
+			if (!original.isEmpty()) {
+				ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(original, recipe);
+
+				if (!remainder.isEmpty() && ItemStack.canCombine(original, remainder)) {
+					int toTake = Math.min(original.getMaxCount() - original.getCount(), remainder.getCount());
+					ItemStack leftover = remainder.copy();
+					leftover.decrement(toTake);
+
+					if (!leftover.isEmpty()) {
+						cir.setReturnValue(false);
+					}
+				}
+			}
+		}
+	}
+
+	@SuppressWarnings("ConstantConditions")
 	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"))
 	private static void setFuelRemainder(ItemStack fuelStack, int amount, World world, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity) {
 		AbstractFurnaceBlockEntityMixin cast = ((AbstractFurnaceBlockEntityMixin) (BlockEntity) blockEntity);
@@ -109,10 +131,8 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 				INPUT_SLOT,
 				remainder -> {
 					AbstractFurnaceBlockEntity be = quilt$THREAD_LOCAL_BLOCK_ENTITY.get();
-					if (be != null) {
-						BlockPos location = be.getPos();
-						ItemScatterer.spawn(be.getWorld(), location.getX(), location.getY(), location.getZ(), remainder);
-					}
+					BlockPos location = be.getPos();
+					ItemScatterer.spawn(be.getWorld(), location.getX(), location.getY(), location.getZ(), remainder);
 				}
 		);
 	}
