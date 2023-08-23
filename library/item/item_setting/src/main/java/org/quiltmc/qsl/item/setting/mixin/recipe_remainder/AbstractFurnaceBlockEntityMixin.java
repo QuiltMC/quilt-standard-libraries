@@ -37,6 +37,7 @@ import net.minecraft.recipe.AbstractCookingRecipe;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -106,8 +107,13 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 				recipe,
 				inventory,
 				INPUT_SLOT,
-				quilt$THREAD_LOCAL_BLOCK_ENTITY.get().getWorld(),
-				quilt$THREAD_LOCAL_BLOCK_ENTITY.get().getPos()
+				remainder -> {
+					AbstractFurnaceBlockEntity be = quilt$THREAD_LOCAL_BLOCK_ENTITY.get();
+					if (be != null) {
+						BlockPos location = be.getPos();
+						ItemScatterer.spawn(be.getWorld(), location.getX(), location.getY(), location.getZ(), remainder);
+					}
+				}
 		);
 	}
 }

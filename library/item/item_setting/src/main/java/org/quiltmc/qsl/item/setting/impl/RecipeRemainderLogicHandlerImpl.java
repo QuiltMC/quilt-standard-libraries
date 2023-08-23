@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.item.setting.impl;
 
+import java.util.function.Consumer;
+
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
@@ -24,7 +26,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -92,11 +93,11 @@ public final class RecipeRemainderLogicHandlerImpl implements RecipeRemainderLog
 	}
 
 	@Contract(mutates = "param1, param4, param6")
-	public static void handleRemainderForNonPlayerCraft(ItemStack input, int amount, @Nullable Recipe<?> recipe, DefaultedList<ItemStack> inventory, int index, World world, BlockPos location) {
+	public static void handleRemainderForNonPlayerCraft(ItemStack input, int amount, @Nullable Recipe<?> recipe, DefaultedList<ItemStack> inventory, int index, Consumer<ItemStack> failure) {
 		ItemStack remainder = decrementWithRemainder(input, amount, recipe);
 
 		if (!tryReturnItemToInventory(remainder, inventory, index)) {
-			ItemScatterer.spawn(world, location.getX(), location.getY(), location.getZ(), remainder);
+			failure.accept(remainder);
 		}
 	}
 
