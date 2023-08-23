@@ -24,6 +24,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.block.BlockState;
@@ -135,5 +136,10 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 					ItemScatterer.spawn(be.getWorld(), location.getX(), location.getY(), location.getZ(), remainder);
 				}
 		);
+	}
+
+	@Inject(method = "tick", at = @At("RETURN"))
+	private static void resetThreadLocalBlockEntity(World world, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity, CallbackInfo ci) {
+		quilt$THREAD_LOCAL_BLOCK_ENTITY.remove();
 	}
 }
