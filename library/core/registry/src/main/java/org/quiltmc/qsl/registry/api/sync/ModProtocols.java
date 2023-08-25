@@ -74,7 +74,7 @@ import org.quiltmc.qsl.registry.impl.sync.server.ExtendedConnectionClient;
  * <p>
  * In addition to mods defining their own mod protocols, users can define a special modpack protocol in the Quilt Registry
  * config (located at {@code configs/quilt/qsl/registry.toml}). Other than being defined by the user, the modpack protocol
- * is otherwise idential to standard mod protocols.
+ * is otherwise identical to standard mod protocols.
  */
 @ApiStatus.Experimental
 public final class ModProtocols {
