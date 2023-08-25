@@ -77,17 +77,17 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 	@Inject(method = "canAcceptRecipeOutput", at = @At("RETURN"), cancellable = true)
 	private static void checkMismatchedRemaindersCanDrop(DynamicRegistryManager registryManager, @Nullable Recipe<?> recipe, DefaultedList<ItemStack> inventory, int count, CallbackInfoReturnable<Boolean> cir) {
 		if (cir.getReturnValue() && quilt$THREAD_LOCAL_BLOCK_ENTITY.get() == null) {
-			ItemStack original = inventory.get(INPUT_SLOT);
+			ItemStack original = inventory.get(INPUT_SLOT).copy();
 
 			if (!original.isEmpty()) {
-				ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(original, recipe);
+				ItemStack remainder = RecipeRemainderLogicHandler.getRemainder(original, recipe).copy();
+				original.decrement(1);
 
 				if (!remainder.isEmpty() && ItemStack.canCombine(original, remainder)) {
 					int toTake = Math.min(original.getMaxCount() - original.getCount(), remainder.getCount());
-					ItemStack leftover = remainder.copy();
-					leftover.decrement(toTake);
+					remainder.decrement(toTake);
 
-					if (!leftover.isEmpty()) {
+					if (!remainder.isEmpty()) {
 						cir.setReturnValue(false);
 					}
 				}
