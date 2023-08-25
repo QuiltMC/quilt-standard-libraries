@@ -84,7 +84,7 @@ public interface RecipeRemainderLogicHandler {
 	 * @param index the index of the original stack in the inventory
 	 * @param failure callback that is run if excess items could not be returned to a slot
 	 */
-	@Contract(mutates = "param1, param4")
+	@Contract(mutates = "param1, param4, param6")
 	static void handleRemainderForNonPlayerCraft(ItemStack input, int amount, @Nullable Recipe<?> recipe, DefaultedList<ItemStack> inventory, int index, Consumer<ItemStack> failure) {
 		RecipeRemainderLogicHandlerImpl.handleRemainderForNonPlayerCraft(input, amount, recipe, inventory, index, failure);
 	}

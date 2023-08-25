@@ -72,6 +72,7 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 		quilt$THREAD_LOCAL_BLOCK_ENTITY.set((AbstractFurnaceBlockEntity) (BlockEntity) this);
 	}
 
+	// prevent additional smelting if remainder item overflow would have no location to be dropped into the world
 	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "canAcceptRecipeOutput", at = @At("RETURN"), cancellable = true)
 	private static void checkMismatchedRemaindersCanDrop(DynamicRegistryManager registryManager, @Nullable Recipe<?> recipe, DefaultedList<ItemStack> inventory, int count, CallbackInfoReturnable<Boolean> cir) {
@@ -130,7 +131,8 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 				recipe,
 				inventory,
 				INPUT_SLOT,
-				remainder -> {
+				remainder -> { // consumer only called when there are excess remainder items that can be dropped into the world
+					// block entity guaranteed not to be null here thanks to checks in canAcceptRecipeOutput injection above
 					AbstractFurnaceBlockEntity be = quilt$THREAD_LOCAL_BLOCK_ENTITY.get();
 					BlockPos location = be.getPos();
 					ItemScatterer.spawn(be.getWorld(), location.getX(), location.getY(), location.getZ(), remainder);
