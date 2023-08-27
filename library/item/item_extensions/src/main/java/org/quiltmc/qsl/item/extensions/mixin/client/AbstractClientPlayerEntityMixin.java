@@ -18,7 +18,7 @@ public abstract class AbstractClientPlayerEntityMixin {
 		method = "getSpeed",
 		at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z")
 	)
-	private static boolean renderFov(ItemStack instance, Item item) {
+	private boolean renderFov(ItemStack instance, Item item) {
 		if (item == Items.BOW) {
 			return instance.getItem() instanceof BowExtensions; // Return bow for fov
 		}
