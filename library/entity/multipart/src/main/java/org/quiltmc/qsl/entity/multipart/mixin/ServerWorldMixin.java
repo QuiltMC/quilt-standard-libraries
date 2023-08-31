@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Holder;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
@@ -37,9 +38,9 @@ import org.quiltmc.qsl.entity.multipart.impl.EntityPartTracker;
 
 @Mixin(ServerWorld.class)
 public abstract class ServerWorldMixin extends World implements EntityPartTracker {
-	protected ServerWorldMixin(MutableWorldProperties mutableWorldProperties, RegistryKey<World> registryKey, Holder<DimensionType> holder,
-			Supplier<Profiler> supplier, boolean bl, boolean bl2, long l, int i) {
-		super(mutableWorldProperties, registryKey, holder, supplier, bl, bl2, l, i);
+	protected ServerWorldMixin(MutableWorldProperties properties, RegistryKey<World> registryKey, DynamicRegistryManager registryManager,
+			Holder<DimensionType> dimension, Supplier<Profiler> profiler, boolean isClient, boolean debugWorld, long l, int i) {
+		super(properties, registryKey, registryManager, dimension, profiler, isClient, debugWorld, l, i);
 	}
 
 	@Redirect(

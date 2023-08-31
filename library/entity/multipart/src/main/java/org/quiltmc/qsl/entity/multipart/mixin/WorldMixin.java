@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 	 */
 	@SuppressWarnings("InvalidInjectorMethodSignature")
 	@ModifyConstant(
-			method = "m_dpwyfaqh(Lnet/minecraft/entity/Entity;Ljava/util/function/Predicate;Ljava/util/List;Lnet/minecraft/entity/Entity;)V",
+			method = "method_31593(Lnet/minecraft/entity/Entity;Ljava/util/function/Predicate;Ljava/util/List;Lnet/minecraft/entity/Entity;)V",
 			constant = @Constant(classValue = EnderDragonEntity.class, ordinal = 0)
 	)
 	private static boolean cancelEnderDragonCheck(Object targetObject, Class<?> classValue) {
@@ -111,7 +111,7 @@ public abstract class WorldMixin implements WorldAccess, AutoCloseable, EntityPa
 	 * Allows collecting {@link EntityPart}s that are within the targeted {@link Box}
 	 * but are part of {@link Entity entities} in unchecked chunks.
 	 *
-	 * @author QuiltMC, Whangd00dle, LambdAurora (to blame for Overwrite)
+	 * @author The Quilt Project, Whangd00dle, LambdAurora (to blame for Overwrite)
 	 * @reason Fixes <a href="https://bugs.mojang.com/browse/MC-158205">MC-158205</a>, bare injections require a thread local.
 	 */
 	@Overwrite

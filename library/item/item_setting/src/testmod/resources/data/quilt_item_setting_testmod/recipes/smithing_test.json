@@ -1,5 +1,5 @@
 {
-  "type": "minecraft:smithing",
+  "type": "minecraft:smithing_transform",
   "base": {
     "item": "minecraft:diamond_block"
   },
@@ -8,6 +8,8 @@
   },
   "result": {
     "item": "minecraft:netherite_block"
+  },
+  "template": {
+    "item": "minecraft:netherite_upgrade_smithing_template"
   }
 }
-

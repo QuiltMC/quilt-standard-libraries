@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.jetbrains.annotations.ApiStatus;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.ModInternal;
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.base.api.event.Event;
@@ -34,6 +35,7 @@ import org.quiltmc.qsl.base.api.event.ListenerPhase;
 import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 import org.quiltmc.qsl.base.api.event.server.DedicatedServerEventAwareListener;
 
+@ModInternal
 @ApiStatus.Internal
 public final class EventRegistry implements ModInitializer {
 	private static List<Event<?>> pendingEventsRegistration = new ArrayList<>();

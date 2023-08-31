@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ public abstract class LivingEntityDeathEventMixin extends Entity {
 
 	@Inject(method = "onDeath", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/damage/DamageTracker;update()V"))
 	void quilt$invokeLivingEntityDeathEvent(DamageSource source, CallbackInfo ci) {
-		if (!this.world.isClient()) {
+		if (!this.getWorld().isClient()) {
 			LivingEntityDeathCallback.EVENT.invoker().onDeath((LivingEntity) (Object) this, source);
 		}
 	}

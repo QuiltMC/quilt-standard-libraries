@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 
 package org.quiltmc.qsl.worldgen.biome.mixin;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
@@ -53,14 +53,13 @@ public abstract class TheEndBiomeSourceMixin extends BiomeSource {
 	public static Codec<TheEndBiomeSource> CODEC;
 
 	@Unique
-	private Supplier<TheEndBiomeData.Overrides> overrides;
+	private Supplier<TheEndBiomeData.Overrides> quilt$overrides;
 
 	@Unique
 	private boolean quilt$hasAddedBiomes = false;
 
-	protected TheEndBiomeSourceMixin(Stream<Holder<Biome>> stream) {
-		super(stream);
-	}
+	@Unique
+	private boolean quilt$checkedAddedBiomes = false;
 
 	/**
 	 * Modifies the codec, so it calls the static factory method that gives us access to the
@@ -68,28 +67,34 @@ public abstract class TheEndBiomeSourceMixin extends BiomeSource {
 	 */
 	@Inject(method = "<clinit>", at = @At("TAIL"))
 	private static void modifyCodec(CallbackInfo ci) {
-		CODEC = RecordCodecBuilder.create((instance) -> {
-			return instance.group(RegistryOps.retrieveGetter(RegistryKeys.BIOME)).apply(instance, instance.stable(TheEndBiomeSource::m_biyltupg));
-		});
+		CODEC = RecordCodecBuilder.create((instance) ->
+			instance.group(RegistryOps.retrieveGetter(RegistryKeys.BIOME)).apply(instance, instance.stable(TheEndBiomeSource::create)));
 	}
 
-	@Inject(method = "m_biyltupg(Lnet/minecraft/registry/HolderProvider;)Lnet/minecraft/world/biome/source/TheEndBiomeSource;", at = @At("RETURN"))
+	@Inject(method = "create", at = @At("RETURN"))
 	private static void init(HolderProvider<Biome> holderProvider, CallbackInfoReturnable<TheEndBiomeSource> cir) {
-		((TheEndBiomeSourceMixin) (Object) cir.getReturnValue()).overrides = Suppliers.memoize(TheEndBiomeData::createOverrides);
+		((TheEndBiomeSourceMixin) (Object) cir.getReturnValue()).quilt$overrides = Suppliers.memoize(TheEndBiomeData::createOverrides);
 	}
 
 	@Inject(method = "getNoiseBiome", at = @At("RETURN"), cancellable = true)
 	private void getWeightedEndBiome(int biomeX, int biomeY, int biomeZ, MultiNoiseUtil.MultiNoiseSampler noise, CallbackInfoReturnable<Holder<Biome>> cir) {
-		cir.setReturnValue(this.overrides.get().pick(biomeX, biomeY, biomeZ, noise, cir.getReturnValue()));
+		cir.setReturnValue(this.quilt$overrides.get().pick(biomeX, biomeY, biomeZ, noise, cir.getReturnValue()));
 	}
 
 	@Override
 	public Set<Holder<Biome>> getBiomes() {
-		if (!this.quilt$hasAddedBiomes) {
-			this.quilt$hasAddedBiomes = true;
-			super.getBiomes().addAll(this.overrides.get().getAddedBiomes());
+		var biomes = super.getBiomes();
+
+		if (!this.quilt$checkedAddedBiomes) {
+			this.quilt$checkedAddedBiomes = true;
+			this.quilt$hasAddedBiomes = !this.quilt$overrides.get().getAddedBiomes().isEmpty();
 		}
 
-		return super.getBiomes();
+		if (this.quilt$hasAddedBiomes) {
+			biomes = new HashSet<>(biomes);
+			biomes.addAll(this.quilt$overrides.get().getAddedBiomes());
+		}
+
+		return biomes;
 	}
 }

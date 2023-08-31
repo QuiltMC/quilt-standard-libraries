@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 QuiltMC
+ * Copyright 2023 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,17 @@
 
 package org.quiltmc.qsl.chat.api.types;
 
+import java.util.EnumSet;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.s2c.play.SystemMessageS2CPacket;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import org.quiltmc.qsl.chat.impl.InternalMessageTypesFactory;
-
-import java.util.EnumSet;
 
 /**
  * A wrapper around a system message. This will not display in chat if {@link #isOverlay()} is true, instead displaying over the actionbar.

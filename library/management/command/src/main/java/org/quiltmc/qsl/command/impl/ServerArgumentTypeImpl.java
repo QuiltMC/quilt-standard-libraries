@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019, 2020 zml and Colonel contributors
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,8 +39,8 @@ public record ServerArgumentTypeImpl<A extends ArgumentType<?>, T extends Argume
 	@Override
 	public String toString() {
 		return "ServerArgumentType{" +
-				"id=" + id +
-				", type=" + type +
+				"id=" + this.id +
+				", type=" + this.type +
 				'}';
 	}
 }

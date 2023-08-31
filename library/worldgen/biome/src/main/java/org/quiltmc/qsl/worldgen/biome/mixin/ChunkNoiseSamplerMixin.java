@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,16 +39,16 @@ import net.minecraft.world.gen.noise.NoiseRouter;
 import org.quiltmc.qsl.worldgen.biome.impl.MultiNoiseSamplerExtensions;
 
 @Mixin(ChunkNoiseSampler.class)
-public class ChunkNoiseSamplerMixin {
+public abstract class ChunkNoiseSamplerMixin {
 	@Unique
 	private long quilt$seed;
 
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void init(
-			int i,
+			int horizontalSize,
 			RandomState randomState,
+			int i,
 			int j,
-			int k,
 			GenerationShapeConfig generationShapeConfig,
 			DensityFunctions.StructureWeightSamplerOrMarker structureWeightSamplerOrMarker,
 			ChunkGeneratorSettings chunkGeneratorSettings,
@@ -56,7 +56,7 @@ public class ChunkNoiseSamplerMixin {
 			Blender blender,
 			CallbackInfo ci
 	) {
-		quilt$seed = ((MultiNoiseSamplerExtensions) (Object) randomState.getSampler()).quilt$getSeed();
+		this.quilt$seed = ((MultiNoiseSamplerExtensions) (Object) randomState.getSampler()).quilt$getSeed();
 	}
 
 	@Inject(method = "createMultiNoiseSampler", at = @At("RETURN"))

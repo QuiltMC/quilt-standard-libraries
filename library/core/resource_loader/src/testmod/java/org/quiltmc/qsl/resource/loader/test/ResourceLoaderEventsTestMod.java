@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,11 @@ package org.quiltmc.qsl.resource.loader.test;
 
 import java.util.stream.Collectors;
 
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.minecraft.resource.MultiPackResourceManager;
-import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.pack.ResourcePack;
-import net.minecraft.server.MinecraftServer;
 
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 
@@ -34,24 +31,27 @@ public class ResourceLoaderEventsTestMod implements ResourceLoaderEvents.StartDa
 	private static final Logger LOGGER = LoggerFactory.getLogger(ResourceLoaderEventsTestMod.class);
 
 	@Override
-	public void onStartDataPackReload(@Nullable MinecraftServer server, @Nullable ResourceManager oldResourceManager) {
-		LOGGER.info("Preparing for data pack reload, old resource manager: {}", oldResourceManager);
+	public void onStartDataPackReload(ResourceLoaderEvents.StartDataPackReload.Context context) {
+		LOGGER.info("Preparing for data pack reload, current resource manager: {}, old resource manager: {}",
+				context.resourceManager(), context.previousResourceManager()
+		);
 
 		ResourceLoaderTestMod.loadingServerResources = true;
 	}
 
 	@Override
-	public void onEndDataPackReload(@Nullable MinecraftServer server, ResourceManager resourceManager, @Nullable Throwable error) {
-		if (error == null) {
-			LOGGER.info("Finished data pack reloading successfully on {}.", Thread.currentThread());
+	public void onEndDataPackReload(ResourceLoaderEvents.EndDataPackReload.Context context) {
+		context.error().ifPresentOrElse(
+				error -> LOGGER.error("Failed to reload on {} because {}.", Thread.currentThread(), error),
+				() -> {
+					LOGGER.info("Finished data pack reloading successfully on {} with registries {}.", Thread.currentThread(), context.dynamicRegistries());
 
-			if (resourceManager instanceof MultiPackResourceManager multiPackResourceManager) {
-				LOGGER.info("Data packs: {}", multiPackResourceManager.streamResourcePacks()
-						.map(ResourcePack::getName)
-						.collect(Collectors.joining(", ")));
-			}
-		} else {
-			LOGGER.error("Failed to reload on {} because {}.", Thread.currentThread(), error);
-		}
+					if (context.resourceManager() instanceof MultiPackResourceManager multiPackResourceManager) {
+						LOGGER.info("Data packs: {}", multiPackResourceManager.streamResourcePacks()
+								.map(ResourcePack::getName)
+								.collect(Collectors.joining(", ")));
+					}
+				}
+		);
 	}
 }

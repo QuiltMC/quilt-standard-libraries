@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2023 QuiltMC
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,10 @@
 
 package org.quiltmc.qsl.resource.loader.api.client;
 
-import org.jetbrains.annotations.Nullable;
+import java.util.Optional;
+
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.ResourceManager;
@@ -42,9 +45,9 @@ public final class ClientResourceLoaderEvents {
 	 * This event should not be used to load resources, use {@link ResourceLoader#registerReloader(IdentifiableResourceReloader)} instead.
 	 */
 	public static final Event<StartResourcePackReload> START_RESOURCE_PACK_RELOAD = Event.create(StartResourcePackReload.class,
-			callbacks -> (client, resourceManager, first) -> {
+			callbacks -> context -> {
 				for (var callback : callbacks) {
-					callback.onStartResourcePackReload(client, resourceManager, first);
+					callback.onStartResourcePackReload(context);
 				}
 			});
 
@@ -54,9 +57,9 @@ public final class ClientResourceLoaderEvents {
 	 * This event should not be used to load resources, use {@link ResourceLoader#registerReloader(IdentifiableResourceReloader)} instead.
 	 */
 	public static final Event<EndResourcePackReload> END_RESOURCE_PACK_RELOAD = Event.create(EndResourcePackReload.class,
-			callbacks -> (client, resourceManager, first, error) -> {
+			callbacks -> context -> {
 				for (var callback : callbacks) {
-					callback.onEndResourcePackReload(client, resourceManager, first, error);
+					callback.onEndResourcePackReload(context);
 				}
 			});
 
@@ -70,11 +73,34 @@ public final class ClientResourceLoaderEvents {
 		/**
 		 * Called before resource packs on the Minecraft client have been reloaded.
 		 *
-		 * @param client          the server
-		 * @param resourceManager the resource manager
-		 * @param first           {@code true} if it's the first resource reload, or {@code false} otherwise
+		 * @param context the resource reload context
 		 */
-		void onStartResourcePackReload(MinecraftClient client, ResourceManager resourceManager, boolean first);
+		void onStartResourcePackReload(Context context);
+
+		@ApiStatus.NonExtendable
+		interface Context {
+			/**
+			 * {@return the client instance}
+			 */
+			@Contract(pure = true)
+			default MinecraftClient client() {
+				return MinecraftClient.getInstance();
+			}
+
+			/**
+			 * {@return the resource manager}
+			 */
+			@Contract(pure = true)
+			ResourceManager resourceManager();
+
+			/**
+			 * Gets whether the resource reload is the first or not.
+			 *
+			 * @return {@code true} if it's the first resource reload, or {@code false} otherwise
+			 */
+			@Contract(pure = true)
+			boolean isFirst();
+		}
 	}
 
 	/**
@@ -89,12 +115,17 @@ public final class ClientResourceLoaderEvents {
 		 * <p>
 		 * If the reload was not successful, the old resource packs will be kept.
 		 *
-		 * @param client          the client
-		 * @param resourceManager the resource manager
-		 * @param first           {@code true} if it's the first resource reload, or {@code false} otherwise
-		 * @param error           present if the resource pack reload failed, or {@code null} otherwise
+		 * @param context the resource reload context
 		 */
-		void onEndResourcePackReload(MinecraftClient client, ResourceManager resourceManager, boolean first,
-				@Nullable Throwable error);
+		void onEndResourcePackReload(Context context);
+
+		@ApiStatus.NonExtendable
+		interface Context extends StartResourcePackReload.Context {
+			/**
+			 * {@return present if the resource pack reload failed, or {@linkplain Optional#empty() empty} otherwise}
+			 */
+			@Contract(pure = true)
+			Optional<Throwable> error();
+		}
 	}
 }

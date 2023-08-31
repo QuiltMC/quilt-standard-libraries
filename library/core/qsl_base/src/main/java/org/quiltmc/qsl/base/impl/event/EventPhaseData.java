@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,10 @@ import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.ModInternal;
 import org.quiltmc.qsl.base.api.phase.PhaseData;
 
+@ModInternal
 @ApiStatus.Internal
 public final class EventPhaseData<T> extends PhaseData<T[], EventPhaseData<T>> {
 	@SuppressWarnings("unchecked")

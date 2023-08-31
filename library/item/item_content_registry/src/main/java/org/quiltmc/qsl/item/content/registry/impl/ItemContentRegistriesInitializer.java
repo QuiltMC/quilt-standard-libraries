@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,7 +56,9 @@ public class ItemContentRegistriesInitializer implements ModInitializer {
 
 		INITIAL_COMPOST_CHANCE.forEach((item, f) -> ItemContentRegistries.COMPOST_CHANCES.put(item.asItem(), f));
 
-		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, error) -> {
+		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register(context -> {
+			if (context.error().isPresent()) return;
+
 			FUEL_MAP.clear();
 			setMapFromAttachment(FUEL_MAP::put, ItemContentRegistries.FUEL_TIMES);
 

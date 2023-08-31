@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ public class RecipeManagerMixin {
 	private Map<Identifier, Recipe<?>> recipeFlatMap;
 
 	@Inject(
-			method = "apply",
+			method = "apply(Ljava/util/Map;Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/util/profiler/Profiler;)V",
 			at = @At(value = "INVOKE", target = "Ljava/util/Map;entrySet()Ljava/util/Set;", remap = false, ordinal = 0),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
@@ -63,7 +63,7 @@ public class RecipeManagerMixin {
 	/**
 	 * Synthetic method in {@link RecipeManager#apply(Map, ResourceManager, Profiler)} as an argument of {@code toImmutableMap}.
 	 *
-	 * @author QuiltMC, LambdAurora
+	 * @author The Quilt Project, LambdAurora
 	 * @reason Replaces immutable maps for mutable maps instead.
 	 */
 	@Overwrite

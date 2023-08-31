@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
+import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.biome.source.TheEndBiomeSource;
 import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 
@@ -56,17 +56,17 @@ public final class TheEndBiomeData implements RegistryEvents.DynamicRegistryLoad
 	private static HolderProvider<Biome> biomeRegistry;
 
 	static {
-		END_BIOMES_MAP.computeIfAbsent(BiomeKeys.THE_END, key -> new WeightedPicker<>())
-				.add(BiomeKeys.THE_END, 1.0);
-		END_BIOMES_MAP.computeIfAbsent(BiomeKeys.END_HIGHLANDS, key -> new WeightedPicker<>())
-				.add(BiomeKeys.END_HIGHLANDS, 1.0);
-		END_BIOMES_MAP.computeIfAbsent(BiomeKeys.SMALL_END_ISLANDS, key -> new WeightedPicker<>())
-				.add(BiomeKeys.SMALL_END_ISLANDS, 1.0);
+		END_BIOMES_MAP.computeIfAbsent(Biomes.THE_END, key -> new WeightedPicker<>())
+				.add(Biomes.THE_END, 1.0);
+		END_BIOMES_MAP.computeIfAbsent(Biomes.END_HIGHLANDS, key -> new WeightedPicker<>())
+				.add(Biomes.END_HIGHLANDS, 1.0);
+		END_BIOMES_MAP.computeIfAbsent(Biomes.SMALL_END_ISLANDS, key -> new WeightedPicker<>())
+				.add(Biomes.SMALL_END_ISLANDS, 1.0);
 
-		END_MIDLANDS_MAP.computeIfAbsent(BiomeKeys.END_HIGHLANDS, key -> new WeightedPicker<>())
-				.add(BiomeKeys.END_MIDLANDS, 1.0);
-		END_BARRENS_MAP.computeIfAbsent(BiomeKeys.END_HIGHLANDS, key -> new WeightedPicker<>())
-				.add(BiomeKeys.END_BARRENS, 1.0);
+		END_MIDLANDS_MAP.computeIfAbsent(Biomes.END_HIGHLANDS, key -> new WeightedPicker<>())
+				.add(Biomes.END_MIDLANDS, 1.0);
+		END_BARRENS_MAP.computeIfAbsent(Biomes.END_HIGHLANDS, key -> new WeightedPicker<>())
+				.add(Biomes.END_BARRENS, 1.0);
 	}
 
 	public static void addEndBiomeReplacement(RegistryKey<Biome> replaced, RegistryKey<Biome> variant, double weight) {
@@ -130,13 +130,13 @@ public final class TheEndBiomeData implements RegistryEvents.DynamicRegistryLoad
 
 		public Overrides(HolderProvider<Biome> biomeRegistry) {
 			this.addedBiomes = TheEndBiomeData.getAddedBiomes(biomeRegistry);
-			this.endMidlands = biomeRegistry.getHolderOrThrow(BiomeKeys.END_MIDLANDS);
-			this.endBarrens = biomeRegistry.getHolderOrThrow(BiomeKeys.END_BARRENS);
-			this.endHighlands = biomeRegistry.getHolderOrThrow(BiomeKeys.END_HIGHLANDS);
+			this.endMidlands = biomeRegistry.getHolderOrThrow(Biomes.END_MIDLANDS);
+			this.endBarrens = biomeRegistry.getHolderOrThrow(Biomes.END_BARRENS);
+			this.endHighlands = biomeRegistry.getHolderOrThrow(Biomes.END_HIGHLANDS);
 
-			this.endBiomesMap = this.resolveOverrides(biomeRegistry, END_BIOMES_MAP, BiomeKeys.THE_END);
-			this.endMidlandsMap = this.resolveOverrides(biomeRegistry, END_MIDLANDS_MAP, BiomeKeys.END_MIDLANDS);
-			this.endBarrensMap = this.resolveOverrides(biomeRegistry, END_BARRENS_MAP, BiomeKeys.END_BARRENS);
+			this.endBiomesMap = this.resolveOverrides(biomeRegistry, END_BIOMES_MAP, Biomes.THE_END);
+			this.endMidlandsMap = this.resolveOverrides(biomeRegistry, END_MIDLANDS_MAP, Biomes.END_MIDLANDS);
+			this.endBarrensMap = this.resolveOverrides(biomeRegistry, END_BARRENS_MAP, Biomes.END_BARRENS);
 		}
 
 		// Resolves all RegistryKey instances to Holders

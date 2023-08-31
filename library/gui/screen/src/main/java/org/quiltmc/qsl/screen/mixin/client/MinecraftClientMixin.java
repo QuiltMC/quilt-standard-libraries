@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,9 +50,9 @@ abstract class MinecraftClientMixin {
 		ScreenEvents.REMOVE.invoker().onRemove(this.currentScreen);
 	}
 
-	// Synthetic method m_tmkuxvdl()V -> lambda in Screen.wrapScreenError in MinecraftClient.tick
+	// Synthetic method method_1572()V -> lambda in Screen.wrapScreenError in MinecraftClient.tick
 	// These two injections should be caught by "Screen#wrapScreenError" if anything fails in an event and then rethrown in the crash report
-	@Inject(method = "m_tmkuxvdl()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;tick()V"))
+	@Inject(method = "method_1572()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;tick()V"))
 	private void beforeScreenTick(CallbackInfo ci) {
 		// Store the screen in a variable in case someone tries to change the screen during this before tick event.
 		// If someone changes the screen, the after tick event will likely have class cast exceptions or an NPE.
@@ -60,8 +60,8 @@ abstract class MinecraftClientMixin {
 		ScreenEvents.BEFORE_TICK.invoker().beforeTick(this.quilt$tickingScreen);
 	}
 
-	// Synthetic method m_tmkuxvdl()V -> lambda in Screen.wrapScreenError in MinecraftClient.tick
-	@Inject(method = "m_tmkuxvdl()V", at = @At("TAIL"))
+	// Synthetic method method_1572()V -> lambda in Screen.wrapScreenError in MinecraftClient.tick
+	@Inject(method = "method_1572()V", at = @At("TAIL"))
 	private void afterScreenTick(CallbackInfo ci) {
 		ScreenEvents.AFTER_TICK.invoker().afterTick(this.quilt$tickingScreen);
 		// Finally set the currently ticking screen to null
@@ -69,7 +69,6 @@ abstract class MinecraftClientMixin {
 	}
 
 	// The LevelLoadingScreen is the odd screen that isn't ticked by the main tick loop, so we fire events for this screen.
-	// We Coerce the package-private inner class representing the world load action so we don't need an access widener.
 	@Inject(method = "startIntegratedServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/WorldLoadingScreen;tick()V"))
 	private void beforeLoadingScreenTick(CallbackInfo ci) {
 		// Store the screen in a variable in case someone tries to change the screen during this before tick event.

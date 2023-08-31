@@ -7,7 +7,6 @@ qslModule {
 	moduleName = "tags"
 	id = "quilt_tags"
 	description = "Tag loading and management."
-	library = "data"
 	moduleDependencies {
 		core {
 			api("resource_loader")
@@ -30,4 +29,5 @@ qslModule {
 	injectedInterface("net/minecraft/class_6862") {
 		values = ["org/quiltmc/qsl/tag/api/QuiltTagKey"]
 	}
+	accessWidener()
 }

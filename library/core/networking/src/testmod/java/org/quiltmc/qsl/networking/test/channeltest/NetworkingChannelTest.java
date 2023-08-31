@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -106,7 +106,7 @@ public final class NetworkingChannelTest implements CommandRegistrationCallback 
 			System.out.printf("Received packet on channel %s%n", channel);
 		});
 
-		context.getSource().sendFeedback(Text.of(String.format("Registered channel %s for %s", channel, executor.getEntityName())), false);
+		context.getSource().sendSystemMessage(Text.of(String.format("Registered channel %s for %s", channel, executor.getEntityName())));
 
 		return 1;
 	}
@@ -119,7 +119,7 @@ public final class NetworkingChannelTest implements CommandRegistrationCallback 
 		}
 
 		ServerPlayNetworking.unregisterReceiver(player.networkHandler, channel);
-		context.getSource().sendFeedback(Text.of(String.format("Unregistered channel %s for %s", getIdentifier(context, "channel"), player.getEntityName())), false);
+		context.getSource().sendSystemMessage(Text.of(String.format("Unregistered channel %s for %s", getIdentifier(context, "channel"), player.getEntityName())));
 
 		return 1;
 	}
@@ -128,10 +128,10 @@ public final class NetworkingChannelTest implements CommandRegistrationCallback 
 		ServerCommandSource source = context.getSource();
 		Set<Identifier> channels = ServerPlayNetworking.getSendable(player);
 
-		source.sendFeedback(Text.of(String.format("Available channels for player %s", player.getEntityName())), false);
+		source.sendSystemMessage(Text.of(String.format("Available channels for player %s", player.getEntityName())));
 
 		for (Identifier channel : channels) {
-			source.sendFeedback(Text.of(channel.toString()), false);
+			source.sendSystemMessage(Text.of(channel.toString()));
 		}
 
 		return 1;

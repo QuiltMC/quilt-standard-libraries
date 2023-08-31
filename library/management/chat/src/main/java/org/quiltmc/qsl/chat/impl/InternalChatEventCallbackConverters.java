@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 QuiltMC
+ * Copyright 2023 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,20 @@
 
 package org.quiltmc.qsl.chat.impl;
 
+import java.util.EnumSet;
+
 import org.jetbrains.annotations.NotNull;
+
 import org.quiltmc.qsl.chat.api.ChatEvent;
 import org.quiltmc.qsl.chat.api.QuiltChatEvents;
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
 
-import java.util.EnumSet;
-
 /**
  * Converts various callbacks from {@link QuiltChatEvents} into {@link ChatEvent.TypedChatApiHook}s
  */
 public class InternalChatEventCallbackConverters {
-	private InternalChatEventCallbackConverters() { }
+	private InternalChatEventCallbackConverters() {}
 
 	public static ChatEvent.TypedChatApiHook<AbstractChatMessage<?>> modifyToHook(QuiltChatEvents.Modify modify, EnumSet<QuiltMessageType> types) {
 		return new ChatEvent.TypedChatApiHook<>() {

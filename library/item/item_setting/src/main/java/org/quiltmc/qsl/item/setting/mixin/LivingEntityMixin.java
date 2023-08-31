@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,24 +21,25 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-import org.quiltmc.qsl.item.setting.api.EquipmentSlotProvider;
 import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
 
 @Mixin(LivingEntity.class)
 abstract class LivingEntityMixin {
-	@Inject(method = "getPreferredEquipmentSlot", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
-	private static void onGetPreferredEquipmentSlot(ItemStack stack, CallbackInfoReturnable<EquipmentSlot> info, Item item) {
-		EquipmentSlotProvider equipmentSlotProvider = CustomItemSettingImpl.EQUIPMENT_SLOT_PROVIDER.get(item);
+	@Inject(
+			method = "getPreferredEquipmentSlot",
+			at = @At(value = "FIELD", target = "Lnet/minecraft/entity/EquipmentSlot;MAINHAND:Lnet/minecraft/entity/EquipmentSlot;"),
+			cancellable = true
+	)
+	private static void onGetPreferredEquipmentSlot(ItemStack stack, CallbackInfoReturnable<EquipmentSlot> cir) {
+		var equipmentSlotProvider = CustomItemSettingImpl.EQUIPMENT_SLOT_PROVIDER.get(stack.getItem());
 
 		if (equipmentSlotProvider != null) {
-			info.setReturnValue(equipmentSlotProvider.getPreferredEquipmentSlot(stack));
+			cir.setReturnValue(equipmentSlotProvider.getPreferredEquipmentSlot(stack));
 		}
 	}
 }

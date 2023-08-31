@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2023 QuiltMC
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,9 @@ import org.quiltmc.qsl.rendering.entity.api.client.ArmorRenderingRegistry;
 public interface ItemArmorRenderingExtensions {
 	@Nullable Event<ArmorRenderingRegistry.TextureProvider> quilt$getTextureProviderEvent();
 	@Nullable Event<ArmorRenderingRegistry.ModelProvider> quilt$getModelProviderEvent();
+	@Nullable Event<ArmorRenderingRegistry.RenderLayerProvider> quilt$getRenderLayerProviderEvent();
 
 	@NotNull Event<ArmorRenderingRegistry.TextureProvider> quilt$getOrCreateTextureProviderEvent();
 	@NotNull Event<ArmorRenderingRegistry.ModelProvider> quilt$getOrCreateModelProviderEvent();
+	@NotNull Event<ArmorRenderingRegistry.RenderLayerProvider> quilt$getOrCreateRenderLayerProviderEvent();
 }

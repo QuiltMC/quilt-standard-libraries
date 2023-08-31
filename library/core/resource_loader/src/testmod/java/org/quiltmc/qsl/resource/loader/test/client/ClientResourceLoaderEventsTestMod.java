@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,8 @@
 
 package org.quiltmc.qsl.resource.loader.test.client;
 
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.ResourceManager;
 
 import org.quiltmc.qsl.resource.loader.api.client.ClientResourceLoaderEvents;
 import org.quiltmc.qsl.resource.loader.test.ResourceLoaderTestMod;
@@ -32,23 +28,21 @@ public class ClientResourceLoaderEventsTestMod implements ClientResourceLoaderEv
 	private long start;
 
 	@Override
-	public void onStartResourcePackReload(MinecraftClient client, ResourceManager resourceManager, boolean first) {
+	public void onStartResourcePackReload(ClientResourceLoaderEvents.StartResourcePackReload.Context context) {
 		LOGGER.info("Preparing for resource pack reload, resource manager: {}. Is it the first time?: {}",
-				resourceManager, first);
+				context.resourceManager(), context.isFirst());
 
 		ResourceLoaderTestMod.loadingClientResources = true;
 		this.start = System.currentTimeMillis();
 	}
 
 	@Override
-	public void onEndResourcePackReload(MinecraftClient client, ResourceManager resourceManager, boolean first, @Nullable Throwable error) {
+	public void onEndResourcePackReload(ClientResourceLoaderEvents.EndResourcePackReload.Context context) {
 		LOGGER.info("Took {}ms to perform resource pack reload.", (System.currentTimeMillis() - this.start));
 
-		if (error == null) {
-			LOGGER.info("Finished {}resource pack reloading successfully on {}.",
-					(first ? "first " : ""), Thread.currentThread());
-		} else {
-			LOGGER.error("Failed to reload resource packs on {} because {}.", Thread.currentThread(), error);
-		}
+		context.error().ifPresentOrElse(
+				error -> LOGGER.error("Failed to reload resource packs on {} because {}.", Thread.currentThread(), error),
+				() -> LOGGER.info("Finished {}resource pack reloading successfully on {}.", (context.isFirst() ? "first " : ""), Thread.currentThread())
+		);
 	}
 }

@@ -4,16 +4,22 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "BlocksMixin",
-    "RegistriesMixin",
+    "ClientConnectionMixin",
     "DebugChunkGeneratorAccessor",
+    "DynamicRegistrySyncAccessor",
+    "DynamicRegistrySyncMixin",
     "FluidsMixin",
     "IdListMixin",
     "ItemsMixin",
     "PlayerManagerMixin",
+    "RegistriesMixin",
     "RegistryLoaderMixin",
     "ServerLoginNetworkHandlerMixin",
+    "ServerMetadataVersionMixin",
     "ServerPlayerEntityMixin",
+    "ServerPlayNetworkHandlerAccessor",
     "SimpleRegistryMixin",
+    "TagManagerLoaderMixin",
     "patch.BeaconBlockEntityMixin",
     "patch.MooshroomEntityMixin",
     "patch.StatusEffectInstanceMixin",
@@ -22,11 +28,15 @@
   "client": [
     "client.BlockColorMapMixin",
     "client.ConnectScreenMixin",
+    "client.DisconnectedScreenMixin",
     "client.ItemColorsMixin",
     "client.ItemModelsMixin",
     "client.ItemRendererAccessor",
     "client.MinecraftClientMixin",
-    "client.ParticleManagerMixin"
+    "client.MultiplayerServerListPingerMixin",
+    "client.MultiplayerServerListWidgetServerEntryMixin",
+    "client.ParticleManagerMixin",
+    "client.ServerInfoMixin"
   ],
   "injectors": {
     "defaultRequire": 1

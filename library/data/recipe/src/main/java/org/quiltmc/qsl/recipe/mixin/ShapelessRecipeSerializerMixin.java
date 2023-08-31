@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,10 @@ import org.quiltmc.qsl.recipe.api.serializer.QuiltRecipeSerializer;
 public abstract class ShapelessRecipeSerializerMixin implements QuiltRecipeSerializer<ShapelessRecipe> {
 	@Override
 	public JsonObject toJson(ShapelessRecipe recipe) {
+		var result = recipe.getResult(null);
+
 		return new ShapelessRecipeJsonFactory.ShapelessRecipeJsonProvider(recipe.getId(),
-				recipe.getOutput().getItem(), recipe.getOutput().getCount(),
+				result.getItem(), result.getCount(),
 				recipe.getGroup(), recipe.getCategory(), recipe.getIngredients(), null, null)
 				.toJson();
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,7 +78,7 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 	@SuppressWarnings("ConstantConditions")
 	@Override
 	public int clearStatusEffects(@NotNull StatusEffectRemovalReason reason) {
-		if (this.world.isClient) {
+		if (this.getWorld().isClient) {
 			return 0;
 		}
 
@@ -130,7 +130,7 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 	}
 
 	/**
-	 * @author QuiltMC
+	 * @author The Quilt Project
 	 * @reason Adding removal reason
 	 */
 	@Overwrite
@@ -139,7 +139,7 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 	}
 
 	/**
-	 * @author QuiltMC
+	 * @author The Quilt Project
 	 * @reason Adding removal reason
 	 */
 	@Overwrite

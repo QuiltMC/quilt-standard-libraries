@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public class ShovelItemMixin {
 	public static Map<Block, BlockState> PATH_STATES;
 
 	@Inject(method = "<clinit>", at = @At("TAIL"))
-	private static void makeMapMutable(CallbackInfo ci) {
+	private static void quilt$makeMapMutable(CallbackInfo ci) {
 		PATH_STATES = new Reference2ObjectOpenHashMap<>(PATH_STATES);
 	}
 }

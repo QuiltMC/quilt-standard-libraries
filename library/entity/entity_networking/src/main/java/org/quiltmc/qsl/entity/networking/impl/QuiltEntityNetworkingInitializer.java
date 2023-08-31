@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,8 @@ import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
 
 @ApiStatus.Internal
 public class QuiltEntityNetworkingInitializer implements ModInitializer {
+	public static final Identifier EXTENDED_SPAWN_PACKET_ID = new Identifier("quilt", "extended_entity_spawn_packet");
+
 	public static final SimpleRegistry<TrackedDataHandler<?>> TRACKED_DATA_HANDLER_REGISTRY = new SimpleRegistry<>(
 			RegistryKey.ofRegistry(new Identifier("quilt", "tracked_data_handlers")), Lifecycle.stable(), false
 	);

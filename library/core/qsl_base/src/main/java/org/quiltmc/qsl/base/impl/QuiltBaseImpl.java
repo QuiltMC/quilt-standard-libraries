@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,10 @@ import org.slf4j.LoggerFactory;
 
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.loader.api.ModInternal;
 import org.quiltmc.qsl.base.api.event.Event;
 
+@ModInternal
 @ApiStatus.Internal
 public final class QuiltBaseImpl {
 	public static final Logger LOGGER = LoggerFactory.getLogger("quilt_base");

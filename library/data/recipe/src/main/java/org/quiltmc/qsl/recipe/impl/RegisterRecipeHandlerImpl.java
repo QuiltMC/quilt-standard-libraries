@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,11 @@ import java.util.function.Function;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.recipe.api.RecipeLoadingEvents;
@@ -32,14 +34,19 @@ final class RegisterRecipeHandlerImpl implements RecipeLoadingEvents.AddRecipesC
 	private final Map<Identifier, JsonElement> resourceMap;
 	private final Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap;
 	private final ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder;
+	private final DynamicRegistryManager registryManager;
 	int registered = 0;
 
-	RegisterRecipeHandlerImpl(Map<Identifier, JsonElement> resourceMap,
+	RegisterRecipeHandlerImpl(
+			Map<Identifier, JsonElement> resourceMap,
 			Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap,
-			ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder) {
+			ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder,
+			DynamicRegistryManager registryManager
+	) {
 		this.resourceMap = resourceMap;
 		this.builderMap = builderMap;
 		this.globalRecipeMapBuilder = globalRecipeMapBuilder;
+		this.registryManager = registryManager;
 	}
 
 	private void register(Recipe<?> recipe) {
@@ -72,5 +79,10 @@ final class RegisterRecipeHandlerImpl implements RecipeLoadingEvents.AddRecipesC
 
 			this.register(recipe);
 		}
+	}
+
+	@Override
+	public @NotNull DynamicRegistryManager getRegistryManager() {
+		return this.registryManager;
 	}
 }

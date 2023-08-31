@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,13 +32,13 @@ import net.minecraft.world.gen.chunk.ChunkGeneratorSettings;
 import org.quiltmc.qsl.worldgen.biome.impl.MultiNoiseSamplerExtensions;
 
 @Mixin(RandomState.class)
-public class RandomStateMixin {
+public abstract class RandomStateMixin {
 	@Shadow
 	@Final
 	private MultiNoiseUtil.MultiNoiseSampler sampler;
 
 	@Inject(method = "<init>", at = @At("RETURN"))
-	private void quilt$onInit(ChunkGeneratorSettings chunkGeneratorSettings, HolderProvider<DoublePerlinNoiseSampler.NoiseParameters> registry, long seed,
+	private void onInit(ChunkGeneratorSettings chunkGeneratorSettings, HolderProvider<DoublePerlinNoiseSampler.NoiseParameters> registry, long seed,
 			CallbackInfo ci) {
 		((MultiNoiseSamplerExtensions) (Object) this.sampler).quilt$setSeed(seed);
 	}

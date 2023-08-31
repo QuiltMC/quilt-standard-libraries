@@ -4,8 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "AbstractBlockAccessor",
-    "AbstractBlockSettingsAccessor",
-    "MaterialBuilderAccessor"
+    "AbstractBlockSettingsAccessor"
   ],
   "client": [
     "client.RenderLayersMixin"

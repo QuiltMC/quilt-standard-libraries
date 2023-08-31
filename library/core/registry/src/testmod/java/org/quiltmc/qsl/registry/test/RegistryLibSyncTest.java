@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ import net.fabricmc.api.EnvType;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.MapColor;
-import net.minecraft.block.Material;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -42,7 +42,7 @@ import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.lifecycle.api.client.event.ClientLifecycleEvents;
 import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
-import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
+import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
 
 /**
  * Items/Blocks are registered in different order on client/server to make sure sync works correctly.
@@ -119,7 +119,7 @@ public class RegistryLibSyncTest implements ModInitializer {
 	@SuppressWarnings("unchecked")
 	static Identifier register(int i) {
 		var id = new Identifier(NAMESPACE, "entry_" + i);
-		var block = new Block(AbstractBlock.Settings.of(Material.STONE, MapColor.BLACK));
+		var block = new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.BLACK));
 
 		Registry.register(Registries.BLOCK, id, block);
 		Registry.register(Registries.ITEM, id, new BlockItem(block, new Item.Settings()));

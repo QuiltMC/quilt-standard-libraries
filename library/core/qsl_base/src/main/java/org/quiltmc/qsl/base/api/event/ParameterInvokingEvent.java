@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,5 +91,4 @@ import java.lang.annotation.Target;
 @Documented // Documentation
 @Retention(RetentionPolicy.CLASS) // For static analysis
 @Target({ElementType.FIELD, ElementType.METHOD})
-public @interface ParameterInvokingEvent {
-}
+public @interface ParameterInvokingEvent {}

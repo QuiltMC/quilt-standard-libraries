@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import org.slf4j.LoggerFactory;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.MapColor;
-import net.minecraft.block.Material;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
@@ -49,7 +49,7 @@ public class RegistryLibEventsTest implements ModInitializer {
 			}
 		});
 
-		register(TEST_BLOCK_ID, new Block(AbstractBlock.Settings.of(Material.STONE, MapColor.BLACK)));
+		register(TEST_BLOCK_ID, new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.BLACK)));
 
 		if (!entryAddEventFoundBlock) {
 			throw new AssertionError("Registry entry add event was not invoked on the registration of block with id " + TEST_BLOCK_ID);

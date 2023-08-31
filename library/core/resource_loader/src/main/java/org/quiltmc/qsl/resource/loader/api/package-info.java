@@ -1,3 +1,19 @@
+/*
+ * Copyright 2023 The Quilt Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /**
  * <h2>The Resource Loader and its APIs.</h2>
  *
@@ -50,10 +66,25 @@
  * </ul>
  *
  * <p>
- * <h4>Programmer Art Resource Pack</h4>
- * The Resource Loader will inject resources into the Programmer Art resource pack for each mod that provides
- * Programmer Art resources in the {@code programmer_art} top-level directory of the mod
- * whose structure is similar to a normal resource pack.
+ * <h4>Extending Vanilla Built-In Resource Packs</h4>
+ * The Resource Loader will inject resources into vanilla built-in resource packs for each mod that provides
+ * the resources in a top-level directory inside the mod with the pack's raw name (for example,
+ * {@code programmer_art}), whose structure is similar to a normal resource pack.
+ * <p>
+ * The currently supported targets are:
+ * <ul>
+ *     <li>
+ *         Programmer Art ({@code programmer_art})
+ *     </li>
+ *     <li>
+ *         High Contrast ({@value net.minecraft.client.resource.ClientBuiltinResourcePackProvider#HIGH_CONTRAST_NAME})
+ *     </li>
+ * </ul>
+ * <p>
+ * Do note that this won't allow for overriding resources that the built-in resource packs already have.
+ * <p>
+ * In the case of data-packs, Vanilla has a {@code data/minecraft/datapacks} directory in which folders for each
+ * built-in data-pack is present, using the same paths in mods will allow to extend those data-packs as well.
  *
  * <p>
  * <h3>Resource Reloaders</h3>

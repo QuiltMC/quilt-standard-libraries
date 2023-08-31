@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 QuiltMC
+ * Copyright 2023 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,11 @@
 
 package org.quiltmc.qsl.chat.test;
 
+import java.util.EnumSet;
+import java.util.Random;
+
 import net.minecraft.text.Text;
+
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.chat.api.QuiltChatEvents;
@@ -24,9 +28,6 @@ import org.quiltmc.qsl.chat.api.QuiltMessageType;
 import org.quiltmc.qsl.chat.api.types.ChatC2SMessage;
 import org.quiltmc.qsl.chat.api.types.RawChatC2SMessage;
 import org.quiltmc.qsl.chat.api.types.SystemS2CMessage;
-
-import java.util.EnumSet;
-import java.util.Random;
 
 public class ChatApiTest implements ModInitializer {
 	@Override
@@ -40,6 +41,7 @@ public class ChatApiTest implements ModInitializer {
 			if (abstractMessage instanceof RawChatC2SMessage raw) {
 				return raw.withMessage(raw.getMessage() + ", wow!");
 			}
+
 			return abstractMessage;
 		});
 
@@ -57,10 +59,10 @@ public class ChatApiTest implements ModInitializer {
 		final boolean[] didEnableBad = {false};
 		QuiltChatEvents.CANCEL.register(EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.CLIENT, QuiltMessageType.OUTBOUND), abstractMessage -> {
 			if (abstractMessage instanceof ChatC2SMessage chatC2SMessage) {
-				if (chatC2SMessage.getMessage().equals("!register_bad")) {
+				if (chatC2SMessage.getMessage().startsWith("!register_bad")) {
 					if (!didEnableBad[0]) {
 						didEnableBad[0] = true;
-						registerBadEvents();
+						this.registerBadEvents();
 						return true;
 					}
 				}

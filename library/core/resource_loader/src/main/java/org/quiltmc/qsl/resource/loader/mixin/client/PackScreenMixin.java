@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,11 +22,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.pack.PackListWidget;
 import net.minecraft.client.gui.screen.pack.PackListWidget.ResourcePackEntry;
 import net.minecraft.client.gui.screen.pack.PackScreen;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -47,18 +47,18 @@ public abstract class PackScreenMixin extends Screen {
 
 	@SuppressWarnings("unchecked")
 	@Inject(method = "render", at = @At("TAIL"))
-	private void renderTooltips(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-		ResourcePackEntry availableEntry = ((EntryListWidgetAccessor<ResourcePackEntry>) this.availablePackList).invokeGetHoveredEntry();
+	private void renderTooltips(GuiGraphics graphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+		ResourcePackEntry availableEntry = this.availablePackList.getHoveredEntry();
 		if (availableEntry != null) {
 			if (((ResourcePackEntryAccessor) availableEntry).getPack().getSource() instanceof BuiltinResourcePackSource source) {
-				this.renderTooltip(matrices, source.getTooltip(), mouseX, mouseY);
+				graphics.drawTooltip(this.textRenderer, source.getTooltip(), mouseX, mouseY);
 			}
 		}
 
-		ResourcePackEntry selectedEntry = ((EntryListWidgetAccessor<ResourcePackEntry>) this.selectedPackList).invokeGetHoveredEntry();
+		ResourcePackEntry selectedEntry = this.selectedPackList.getHoveredEntry();
 		if (selectedEntry != null) {
 			if (((ResourcePackEntryAccessor) selectedEntry).getPack().getSource() instanceof BuiltinResourcePackSource source) {
-				this.renderTooltip(matrices, source.getTooltip(), mouseX, mouseY);
+				graphics.drawTooltip(this.textRenderer, source.getTooltip(), mouseX, mouseY);
 			}
 		}
 	}

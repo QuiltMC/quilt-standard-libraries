@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 QuiltMC
+ * Copyright 2023 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,19 @@
 
 package org.quiltmc.qsl.chat.api.types;
 
-import net.minecraft.entity.player.PlayerEntity;
+import java.util.EnumSet;
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.quiltmc.qsl.chat.api.QuiltMessageType;
 
-import java.util.EnumSet;
+import net.minecraft.entity.player.PlayerEntity;
+
+import org.quiltmc.qsl.chat.api.QuiltMessageType;
 
 /**
  * An abstract message, extended for the various types of messages.
  *
- * @param <S> The type of the serialized form of this message, usually a {@link net.minecraft.network.Packet} but not required.
+ * @param <S> The type of the serialized form of this message, usually a {@link net.minecraft.network.packet.Packet} but not required.
  */
 public abstract class AbstractChatMessage<S> {
 	protected final @NotNull PlayerEntity player;

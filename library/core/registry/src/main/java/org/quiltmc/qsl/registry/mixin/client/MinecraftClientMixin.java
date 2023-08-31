@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,6 @@ import org.quiltmc.qsl.registry.impl.sync.client.ClientRegistrySync;
 public class MinecraftClientMixin {
 	@Inject(method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V", at = @At("TAIL"))
 	private void quilt$restoreRegistries(CallbackInfo ci) {
-		ClientRegistrySync.restoreSnapshot((MinecraftClient) (Object) this);
+		ClientRegistrySync.disconnectCleanup((MinecraftClient) (Object) this);
 	}
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package org.quiltmc.qsl.item.setting.api;
 import org.jetbrains.annotations.Contract;
 
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.feature_flags.FeatureFlag;
 import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -177,6 +178,13 @@ public class QuiltItemSettings extends Item.Settings {
 	@Contract("->this")
 	public QuiltItemSettings fireproof() {
 		super.fireproof();
+		return this;
+	}
+
+	@Override
+	@Contract("_->this")
+	public QuiltItemSettings requiredFlags(FeatureFlag... flags) {
+		super.requiredFlags(flags);
 		return this;
 	}
 }

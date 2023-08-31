@@ -6,18 +6,21 @@ qslModule {
 	name = "Quilt Surface Rule API"
 	moduleName = "surface_rule"
 	id = "quilt_surface_rule"
-	library = "worldgen"
 	description = "An API for managing custom Surface Rules."
 	moduleDependencies {
 		core {
 			api("qsl_base")
 			api("registry")
 			api("resource_loader")
+			api("data_callback")
 		}
 	}
 	entrypoints {
 		events {
 			values = ["org.quiltmc.qsl.worldgen.surface_rule.impl.QuiltSurfaceRuleInitializer"]
+		}
+		init {
+			values = ["org.quiltmc.qsl.worldgen.surface_rule.impl.SurfaceRuleDataInitializer"]
 		}
 	}
 	accessWidener()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,7 +87,7 @@ public class RecipeRemainderTests implements ModInitializer {
 
 		Item smithingInputRemainder = new Item(new QuiltItemSettings().recipeRemainder((original, recipe) -> {
 			if (recipe != null && recipe.getType() == RecipeType.SMITHING) {
-				return Items.NETHERITE_INGOT.getDefaultStack();
+				return original.getItem().getDefaultStack();
 			}
 
 			return Items.NETHERITE_SCRAP.getDefaultStack();

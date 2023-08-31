@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,14 +41,14 @@ public class CommandApiTest implements CommandRegistrationCallback {
 		if (environment.isDedicated()) {
 			dispatcher.register(literal("ping")
 					.executes(ctx -> {
-						ctx.getSource().sendFeedback(Text.literal("pong!"), false);
+						ctx.getSource().sendSystemMessage(Text.literal("pong!"));
 						return 0;
 					})
 			);
 		} else if (environment.isIntegrated()) {
 			dispatcher.register(literal("singleplayer_only")
 					.executes(ctx -> {
-						ctx.getSource().sendFeedback(Text.literal("This command should only exist in singleplayer"), false);
+						ctx.getSource().sendSystemMessage(Text.literal("This command should only exist in singleplayer"));
 						return 0;
 					})
 			);
@@ -57,16 +57,17 @@ public class CommandApiTest implements CommandRegistrationCallback {
 		dispatcher.register(literal("quilt")
 				.executes(ctx -> {
 					//noinspection OptionalGetWithoutIsPresent
-					ctx.getSource().sendFeedback(Text.literal("Quilt Version: " + QuiltLoader.getModContainer("quilt_base").get().metadata().version().raw()), false);
+					ctx.getSource().sendSystemMessage(Text.literal(
+							"Quilt Version: " + QuiltLoader.getModContainer("quilt_base").get().metadata().version().raw()
+					));
 					return 0;
 				})
 				.then(literal("enum_arg")
 						.then(argument("enum", ENUM_ARGUMENT_TYPE)
 								.executes(ctx -> {
 									var arg = EnumArgumentType.getEnumConstant(ctx, "enum", TestEnum.class);
-									ctx.getSource().sendFeedback(
-											Text.literal("Got: ").append(Text.literal(arg.toString()).formatted(Formatting.GOLD)),
-											false
+									ctx.getSource().sendSystemMessage(
+											Text.literal("Got: ").append(Text.literal(arg.toString()).formatted(Formatting.GOLD))
 									);
 									return 0;
 								})
@@ -79,7 +80,7 @@ public class CommandApiTest implements CommandRegistrationCallback {
 						.then(argument("arg", ItemStackArgumentType.itemStack(context))
 								.executes(ctx -> {
 									ItemStackArgument arg = ItemStackArgumentType.getItemStackArgument(ctx, "arg");
-									ctx.getSource().sendFeedback(Text.literal("Ooohh, you have chosen: " + arg.getItem() + "!"), false);
+									ctx.getSource().sendSystemMessage(Text.literal("Ooohh, you have chosen: " + arg.getItem() + "!"));
 									return 0;
 								}))
 				)

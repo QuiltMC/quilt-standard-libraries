@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.jetbrains.annotations.ApiStatus;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.recipe.api.RecipeLoadingEvents;
@@ -33,8 +34,8 @@ final class RemoveRecipeHandlerImpl extends BasicRecipeHandlerImpl implements Re
 	int counter = 0;
 
 	RemoveRecipeHandlerImpl(RecipeManager recipeManager, Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes,
-			Map<Identifier, Recipe<?>> globalRecipes) {
-		super(recipeManager, recipes, globalRecipes);
+			Map<Identifier, Recipe<?>> globalRecipes, DynamicRegistryManager registryManager) {
+		super(recipeManager, recipes, globalRecipes, registryManager);
 	}
 
 	@Override

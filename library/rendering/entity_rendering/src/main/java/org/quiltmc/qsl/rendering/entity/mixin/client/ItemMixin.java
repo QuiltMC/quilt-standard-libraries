@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2023 QuiltMC
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,8 @@ public abstract class ItemMixin implements ItemArmorRenderingExtensions {
 	private @Nullable Event<ArmorRenderingRegistry.TextureProvider> quilt$textureProviderEvent;
 	@Unique
 	private @Nullable Event<ArmorRenderingRegistry.ModelProvider> quilt$modelProviderEvent;
+	@Unique
+	private @Nullable Event<ArmorRenderingRegistry.RenderLayerProvider> quilt$renderLayerProviderEvent;
 
 	@Override
 	public @Nullable Event<ArmorRenderingRegistry.TextureProvider> quilt$getTextureProviderEvent() {
@@ -43,6 +45,11 @@ public abstract class ItemMixin implements ItemArmorRenderingExtensions {
 	@Override
 	public @Nullable Event<ArmorRenderingRegistry.ModelProvider> quilt$getModelProviderEvent() {
 		return this.quilt$modelProviderEvent;
+	}
+
+	@Override
+	public @Nullable Event<ArmorRenderingRegistry.RenderLayerProvider> quilt$getRenderLayerProviderEvent() {
+		return this.quilt$renderLayerProviderEvent;
 	}
 
 	@Override
@@ -61,5 +68,14 @@ public abstract class ItemMixin implements ItemArmorRenderingExtensions {
 		}
 
 		return this.quilt$modelProviderEvent;
+	}
+
+	@Override
+	public synchronized @NotNull Event<ArmorRenderingRegistry.RenderLayerProvider> quilt$getOrCreateRenderLayerProviderEvent() {
+		if (this.quilt$renderLayerProviderEvent == null) {
+			this.quilt$renderLayerProviderEvent = ArmorRenderingRegistryImpl.createRenderLayerProviderEvent();
+		}
+
+		return this.quilt$renderLayerProviderEvent;
 	}
 }

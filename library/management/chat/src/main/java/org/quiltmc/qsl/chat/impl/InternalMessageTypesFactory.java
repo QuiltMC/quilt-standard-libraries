@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 QuiltMC
+ * Copyright 2023 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 
 package org.quiltmc.qsl.chat.impl;
 
-import org.quiltmc.qsl.chat.api.QuiltMessageType;
-
 import java.util.EnumSet;
+
+import org.quiltmc.qsl.chat.api.QuiltMessageType;
 
 /**
  * Provides some common shortcuts for message type generation

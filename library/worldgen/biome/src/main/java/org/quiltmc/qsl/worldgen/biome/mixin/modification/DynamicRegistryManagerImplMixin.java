@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,16 +30,16 @@ import org.quiltmc.qsl.worldgen.biome.impl.modification.BiomeModificationMarker;
  * {@link BiomeModificationImpl} on a per-DynamicRegistryManager basis.
  */
 @Mixin(DynamicRegistryManager.ImmutableRegistryManager.class)
-public class DynamicRegistryManagerImplMixin implements BiomeModificationMarker {
+public abstract class DynamicRegistryManagerImplMixin implements BiomeModificationMarker {
 	@Unique
-	private boolean modified;
+	private boolean quilt$modified;
 
 	@Override
 	public void quilt$markModified() {
-		if (this.modified) {
+		if (this.quilt$modified) {
 			throw new IllegalStateException("This dynamic registries instance has already been modified");
 		}
 
-		this.modified = true;
+		this.quilt$modified = true;
 	}
 }

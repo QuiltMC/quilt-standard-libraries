@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,16 +23,16 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
 
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.base.api.event.Event;
-import org.quiltmc.qsl.base.impl.QuiltBaseImpl;
 import org.quiltmc.qsl.base.api.phase.PhaseSorting;
 
 public final class EventTests implements Runnable {
-	private static final Logger LOGGER = QuiltBaseImpl.LOGGER;
+	private static final Logger LOGGER = LogUtils.getLogger();
 
 	@Override
 	public void run() {

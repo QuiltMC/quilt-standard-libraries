@@ -30,11 +30,11 @@ public abstract class GenerateQmjTask extends DefaultTask {
 
 	@TaskAction
 	public void generateQmj() throws IOException {
-		Path output = getOutputDir().getAsFile().get().toPath().resolve("quilt.mod.json");
+		Path output = this.getOutputDir().getAsFile().get().toPath().resolve("quilt.mod.json");
 		if (Files.exists(output)) {
 			Files.delete(output);
 		}
 
-		QmjBuilder.buildQmj(getProject(), getProject().getVersion().toString(), Versions.LOADER_VERSION, Versions.MINECRAFT_VERSION, getQslModule().get(), output);
+		QmjBuilder.buildQmj(getProject(), getProject().getVersion().toString(), Versions.LOADER_VERSION, Versions.MINECRAFT_VERSION, this.getQslModule().get(), output);
 	}
 }

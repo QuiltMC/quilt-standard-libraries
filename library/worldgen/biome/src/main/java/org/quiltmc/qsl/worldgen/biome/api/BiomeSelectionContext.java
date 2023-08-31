@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ public interface BiomeSelectionContext {
 
 		for (HolderSet<PlacedFeature> featureSuppliers : featureSteps) {
 			for (Holder<PlacedFeature> featureSupplier : featureSuppliers) {
-				if (featureSupplier.value().getDecoratedFeatures().anyMatch(cf -> getFeatureKey(cf).orElse(null) == key)) {
+				if (featureSupplier.value().getDecoratedFeatures().anyMatch(cf -> this.getFeatureKey(cf).orElse(null) == key)) {
 					return true;
 				}
 			}

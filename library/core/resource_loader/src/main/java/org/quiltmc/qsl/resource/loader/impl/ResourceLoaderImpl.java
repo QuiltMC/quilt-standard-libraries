@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021-2023 QuiltMC
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,11 @@
 
 package org.quiltmc.qsl.resource.loader.impl;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -33,6 +36,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
@@ -44,24 +48,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.minecraft.resource.MultiPackResourceManager;
-import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourceIoSupplier;
-import net.minecraft.resource.ResourceMetadata;
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.ResourcePackProfile;
 import net.minecraft.resource.pack.ResourcePackProvider;
+import net.minecraft.resource.pack.metadata.ResourceMetadataReader;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
 import net.minecraft.util.Language;
 import net.minecraft.util.Pair;
-import net.minecraft.util.Unit;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.ModMetadata;
 import org.quiltmc.loader.api.QuiltLoader;
-import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.phase.PhaseData;
@@ -73,7 +74,6 @@ import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
 import org.quiltmc.qsl.resource.loader.api.ResourcePackRegistrationContext;
 import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;
 import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
-import org.quiltmc.qsl.resource.loader.mixin.NamespaceResourceManagerAccessor;
 import org.quiltmc.qsl.resource.loader.mixin.VanillaDataPackProviderAccessor;
 
 /**
@@ -98,10 +98,6 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 			.toBooleanOrElse(QuiltLoader.isDevelopmentEnvironment());
 	private static final boolean DEBUG_RELOADERS_ORDER = TriState.fromProperty("quilt.resource_loader.debug.reloaders_order")
 			.toBooleanOrElse(false);
-
-	@ClientOnly
-	public static final ThreadLocal<Unit> EXPERIMENTAL_FEATURES_ENABLED = new ThreadLocal<>();
-
 
 	private final ResourceType type;
 	private final Set<Identifier> addedReloaderIds = new ObjectOpenHashSet<>();
@@ -128,6 +124,28 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		return IMPL_MAP.computeIfAbsent(type, ResourceLoaderImpl::new);
 	}
 
+	public static <T> @Nullable T parseMetadata(ResourceMetadataReader<T> metaReader, ResourcePack pack, InputStream inputStream) {
+		JsonObject json;
+
+		try (var reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+			json = JsonHelper.deserialize(reader);
+		} catch (Exception e) {
+			LOGGER.error("Couldn't load {} metadata from pack \"{}\":", metaReader.getKey(), pack.getName(), e);
+			return null;
+		}
+
+		if (!json.has(metaReader.getKey())) {
+			return null;
+		} else {
+			try {
+				return metaReader.fromJson(JsonHelper.getObject(json, metaReader.getKey()));
+			} catch (Exception e) {
+				LOGGER.error("Couldn't load {} metadata from pack \"{}\":", metaReader.getKey(), pack.getName(), e);
+				return null;
+			}
+		}
+	}
+
 	/* Resource reloaders stuff */
 
 	public static void sort(ResourceType type, List<ResourceReloader> reloaders) {
@@ -148,11 +166,6 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 					"Resource reloader with previously unknown ID " + resourceReloader.getQuiltId()
 							+ " already in resource reloader set!"
 			);
-		}
-
-		// Keep this for compatibility.
-		for (var dependency : resourceReloader.getQuiltDependencies()) {
-			this.addReloaderOrdering(dependency, resourceReloader.getQuiltId());
 		}
 	}
 
@@ -192,6 +205,22 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 			ResourcePackActivationType activationType, @NotNull Text displayName) {
 		String name = id.getNamespace() + '/' + id.getPath();
 		return new ModNioResourcePack(name, owner.metadata(), displayName, activationType, rootPath, this.type, null);
+	}
+
+	/**
+	 * Flattens the given resource pack if it's a group resource pack.
+	 * <p>
+	 * This is useful to flatten the resource pack list once the runtime list is figured out.
+	 *
+	 * @param pack     the given resource pack
+	 * @param consumer the resource pack consumer
+	 */
+	public static void flattenPacks(ResourcePack pack, Consumer<ResourcePack> consumer) {
+		if (pack instanceof GroupResourcePack grouped) {
+			grouped.streamPacks().forEach(p -> flattenPacks(p, consumer));
+		} else {
+			consumer.accept(pack);
+		}
 	}
 
 	public void appendTopPacks(MultiPackResourceManager resourceManager, Consumer<ResourcePack> resourcePackAdder) {
@@ -353,7 +382,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 				path = childPath;
 			}
 
-			byMod.put(container.metadata(), ModNioResourcePack.ofMod(container.metadata(), path, type, null));
+			byMod.put(container.metadata(), ModNioResourcePack.ofMod(container.metadata(), path, type));
 		}
 
 		List<ModNioResourcePack> packList = byMod.values().stream()
@@ -376,7 +405,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 
 		var context = new ResourcePackRegistrationContextImpl(type, List.of(pack), p -> {
 			packs.add(lastExtraPackIndex[0]++, p);
-			pack.recomputeNamespaces();
+			pack.recompute();
 		});
 
 		get(type).getRegisterDefaultResourcePackEvent().invoker().onRegisterPack(context);
@@ -384,36 +413,12 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		return pack;
 	}
 
-	public static GroupResourcePack.Wrapped buildProgrammerArtResourcePack(ResourcePack vanillaPack) {
+	public static GroupResourcePack.Wrapped buildVanillaBuiltinResourcePack(ResourcePack vanillaPack, ResourceType type, String packName) {
 		// Build a list of mod resource packs.
 		var packs = new ArrayList<ResourcePack>();
-		appendModResourcePacks(packs, ResourceType.CLIENT_RESOURCES, "programmer_art");
+		appendModResourcePacks(packs, type, packName);
 
-		return new GroupResourcePack.Wrapped(ResourceType.CLIENT_RESOURCES, vanillaPack, packs, true);
-	}
-
-	public static void appendResourcesFromGroup(NamespaceResourceManagerAccessor manager, Identifier id,
-			GroupResourcePack groupResourcePack, List<Resource> resources) {
-		var packs = groupResourcePack.getPacks(id.getNamespace());
-
-		if (packs == null) {
-			return;
-		}
-
-		Identifier metadataId = NamespaceResourceManagerAccessor.invokeGetMetadataPath(id);
-
-		for (int i = packs.size() - 1; i >= 0; i--) {
-			ResourcePack pack = packs.get(i);
-			var readSupplier = pack.open(manager.getType(), id);
-
-			if (readSupplier != null) {
-				resources.add(new Resource(pack, readSupplier, () -> {
-					ResourceIoSupplier<InputStream> supplier = pack.open(manager.getType(), metadataId);
-					return supplier != null ? NamespaceResourceManagerAccessor.invokeGetResourceMetadataFromInputStream(supplier)
-							: ResourceMetadata.EMPTY;
-				}));
-			}
-		}
+		return new GroupResourcePack.Wrapped(type, vanillaPack, packs, false);
 	}
 
 	/* Built-in resource packs */

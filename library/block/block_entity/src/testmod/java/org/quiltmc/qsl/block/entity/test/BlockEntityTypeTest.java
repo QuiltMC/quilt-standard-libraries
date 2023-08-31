@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,10 +40,10 @@ public class BlockEntityTypeTest implements ModInitializer {
 	public static final AngyBlock INITIAL_ANGY_BLOCK = register(id("initial_angy_block"), new AngyBlock(MapColor.PINK));
 	public static final AngyBlock BUILDER_ADDED_ANGY_BLOCK = register(id("builder_added_angy_block"), new AngyBlock(MapColor.BLUE));
 	public static final AngyBlock BUILDER_MULTI_1_ANGY_BLOCK = register(id("builder_multi_1_angy_block"), new AngyBlock(MapColor.GREEN));
-	public static final AngyBlock BUILDER_MULTI_2_ANGY_BLOCK = register(id("builder_multi_2_angy_block"), new AngyBlock(MapColor.DARK_GREEN));
+	public static final AngyBlock BUILDER_MULTI_2_ANGY_BLOCK = register(id("builder_multi_2_angy_block"), new AngyBlock(MapColor.EMERALD));
 	public static final AngyBlock POST_ADDED_ANGY_BLOCK = register(id("post_added_angy_block"), new AngyBlock(MapColor.CYAN));
 	public static final AngyBlock POST_MULTI_1_ANGY_BLOCK = register(id("post_multi_1_angy_block"), new AngyBlock(MapColor.LIME));
-	public static final AngyBlock POST_MULTI_2_ANGY_BLOCK = register(id("post_multi_2_angy_block"), new AngyBlock(MapColor.TERRACOTTA_LIME));
+	public static final AngyBlock POST_MULTI_2_ANGY_BLOCK = register(id("post_multi_2_angy_block"), new AngyBlock(MapColor.LIME_TERRACOTTA));
 
 	public static final BlockEntityType<ColorfulBlockEntity> COLORFUL_BLOCK_ENTITY_TYPE = QuiltBlockEntityTypeBuilder.create(
 					ColorfulBlockEntity::new, INITIAL_ANGY_BLOCK

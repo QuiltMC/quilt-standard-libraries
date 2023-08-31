@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ abstract class ServerPlayerEntityMixin extends PlayerEntity {
 	 */
 	@Inject(method = "worldChanged(Lnet/minecraft/server/world/ServerWorld;)V", at = @At("TAIL"))
 	private void afterWorldChanged(ServerWorld origin, CallbackInfo ci) {
-		EntityWorldChangeEvents.AFTER_PLAYER_WORLD_CHANGE.invoker().afterWorldChange((ServerPlayerEntity) (Object) this, origin, (ServerWorld) this.world);
+		EntityWorldChangeEvents.AFTER_PLAYER_WORLD_CHANGE.invoker().afterWorldChange((ServerPlayerEntity) (Object) this, origin, (ServerWorld) this.getWorld());
 	}
 
 	@Inject(method = "copyFrom", at = @At("TAIL"))

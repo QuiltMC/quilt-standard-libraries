@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,6 @@ public final class SendMessageFuncValue extends FuncValue {
 
 	@Override
 	public String toString() {
-		return "send_message{'" + message + "'}";
+		return "send_message{'" + this.message + "'}";
 	}
 }

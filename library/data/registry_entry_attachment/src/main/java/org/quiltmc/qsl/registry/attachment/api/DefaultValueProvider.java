@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,6 +88,7 @@ public interface DefaultValueProvider<R, V> {
 			if (this.hasFailed) {
 				throw new IllegalStateException("Result is a failure!");
 			}
+
 			return this.value;
 		}
 
@@ -98,6 +99,7 @@ public interface DefaultValueProvider<R, V> {
 			if (!this.hasFailed) {
 				throw new IllegalStateException("Result does not have an error!");
 			}
+
 			return this.error;
 		}
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import org.quiltmc.qsl.networking.api.PacketSendListeners;
 import org.quiltmc.qsl.networking.api.client.ClientLoginConnectionEvents;
 import org.quiltmc.qsl.networking.api.client.ClientLoginNetworking;
 import org.quiltmc.qsl.networking.impl.AbstractNetworkAddon;
+import org.quiltmc.qsl.networking.mixin.accessor.ClientLoginNetworkHandlerAccessor;
 
 @ApiStatus.Internal
 @ClientOnly
@@ -90,7 +91,7 @@ public final class ClientLoginNetworkAddon extends AbstractNetworkAddon<ClientLo
 					listener = PacketSendListeners.union(listener, each);
 				}
 
-				this.handler.getConnection().send(packet, listener);
+				((ClientLoginNetworkHandlerAccessor) this.handler).getConnection().send(packet, listener);
 			});
 		} catch (Throwable ex) {
 			this.logger.error("Encountered exception while handling in channel with name \"{}\"", channelName, ex);

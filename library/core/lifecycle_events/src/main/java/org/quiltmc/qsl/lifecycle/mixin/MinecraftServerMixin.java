@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,8 +47,9 @@ abstract class MinecraftServerMixin {
 			method = "runServer",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/server/MinecraftServer;setFavicon(Lnet/minecraft/server/ServerMetadata;)V",
-					ordinal = 0
+					target = "Lnet/minecraft/server/MinecraftServer;createServerMetadata()Lnet/minecraft/server/ServerMetadata;",
+					ordinal = 0,
+					shift = At.Shift.AFTER
 			)
 	)
 	private void serverReady(CallbackInfo info) {

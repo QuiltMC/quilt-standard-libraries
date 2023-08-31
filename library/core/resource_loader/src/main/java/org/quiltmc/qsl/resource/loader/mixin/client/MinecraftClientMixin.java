@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2023 QuiltMC
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import net.minecraft.resource.ReloadableResourceManager;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.resource.loader.api.client.ClientResourceLoaderEvents;
+import org.quiltmc.qsl.resource.loader.impl.client.ClientResourceLoaderEventContextsImpl;
 import org.quiltmc.qsl.resource.loader.impl.client.ClientResourceLoaderImpl;
 
 @ClientOnly
@@ -56,10 +57,10 @@ public class MinecraftClientMixin {
 	// Lambda method in MinecraftClient#<init>, at MinecraftClient#setOverlay.
 	// Take an Optional<Throwable> parameter.
 	@SuppressWarnings("target")
-	@Inject(method = "m_aaltpyph(Ljava/util/Optional;)V", at = @At("HEAD"))
+	@Inject(method = "method_24040(Ljava/util/Optional;)V", at = @At("HEAD"))
 	private void onFirstEndReloadResources(Optional<Throwable> error, CallbackInfo ci) {
 		ClientResourceLoaderEvents.END_RESOURCE_PACK_RELOAD.invoker().onEndResourcePackReload(
-				(MinecraftClient) (Object) this, this.resourceManager, true, error.orElse(null)
+				new ClientResourceLoaderEventContextsImpl.ReloadEndContext(this.resourceManager, true, error)
 		);
 	}
 
@@ -77,10 +78,10 @@ public class MinecraftClientMixin {
 	// Lambda method in MinecraftClient#reloadResources, at MinecraftClient#setOverlay.
 	// Take an Optional<Throwable> parameter.
 	@SuppressWarnings("target")
-	@Inject(method = "m_fweiciji(Ljava/util/concurrent/CompletableFuture;Ljava/util/Optional;)V", at = @At(value = "HEAD"))
-	private void onEndReloadResources(CompletableFuture<Void> completableFuture, Optional<Throwable> error, CallbackInfo ci) {
+	@Inject(method = "method_24228(ZLjava/util/concurrent/CompletableFuture;Ljava/util/Optional;)V", at = @At(value = "HEAD"))
+	private void onEndReloadResources(boolean force, CompletableFuture<Void> completableFuture, Optional<Throwable> error, CallbackInfo ci) {
 		ClientResourceLoaderEvents.END_RESOURCE_PACK_RELOAD.invoker().onEndResourcePackReload(
-				(MinecraftClient) (Object) this, this.resourceManager, false, error.orElse(null)
+				new ClientResourceLoaderEventContextsImpl.ReloadEndContext(this.resourceManager, false, error)
 		);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,17 +34,20 @@ import org.quiltmc.qsl.networking.api.client.ClientPlayConnectionEvents;
 public final class NetworkingChannelClientTest implements ClientTickEvents.End,
 		C2SPlayChannelEvents.Register, C2SPlayChannelEvents.Unregister,
 		ClientLoginConnectionEvents.Disconnect, ClientPlayConnectionEvents.Disconnect {
-	//	public static final KeyBinding OPEN = KeyBindingHelper.registerKeyBinding(new KeyBinding("networking-v1-test", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_MENU, "fabric-networking-api-v1-testmod\""));
+	// public static final KeyBinding OPEN = KeyBindingHelper.registerKeyBinding(new KeyBinding("networking-v1-test", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_MENU, "fabric-networking-api-v1-testmod\""));
 	static final Set<Identifier> SUPPORTED_C2S_CHANNELS = new HashSet<>();
 
 	@Override
 	public void endClientTick(MinecraftClient client) {
 		// TODO: Pending other APIs and testmod dependencies getting setup.
-//		if (client.player != null) {
-//			if (OPEN.wasPressed()) {
-//				client.setScreen(new ChannelScreen(this));
-//			}
-//		}
+		/*
+		if (client.player != null) {
+			if (OPEN.wasPressed()) {
+				client.setScreen(new ChannelScreen(this));
+			}
+		}
+
+		*/
 	}
 
 	@Override

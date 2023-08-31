@@ -7,7 +7,6 @@ qslModule {
 	moduleName = "block_extensions"
 	id = "quilt_block_extensions"
 	description = "Extensions for creating and working with blocks."
-	library = "block"
 	moduleDependencies {
 		core {
 			api("qsl_base")
@@ -17,37 +16,24 @@ qslModule {
 	accessWidener()
 }
 
-import org.objectweb.asm.ClassReader
+
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.Type
-import org.objectweb.asm.tree.ClassNode
+import qsl.internal.analysis.ClassAnalysisUtils
+import qsl.internal.task.GenerateAccessWidenerTask
 
 import java.nio.file.FileSystem
 import java.nio.file.FileSystems
-import java.nio.file.Files
-import java.nio.file.Path
-import java.util.stream.Collectors
 
-task generateAccessWidener {
-	group = "generation"
-	doLast {
-		List<String> lines = file("template.accesswidener").text.lines().collect(Collectors.toCollection { [] })
-		Path inputJar = loom.namedMinecraftProvider.parentMinecraftProvider.mergedJar
-
-		try (def fs = FileSystems.newFileSystem(URI.create("jar:${inputJar.toUri()}"), [create: false])) {
-			generateBlockConstructors(lines, fs)
-		}
-
-		file('src/main/resources/quilt_block_extensions.accesswidener').text = String.join('\n', lines) + '\n'
-	}
+tasks.register("generateAccessWidener", GenerateAccessWidenerTask) {
+	generator = this::generateBlockConstructors
+	templatePath.set(file("template.accesswidener"))
+	outputPath.set(file('src/main/resources/quilt_block_extensions.accesswidener'))
 }
 
 def generateBlockConstructors(List<String> lines, FileSystem fs) {
 	lines.add("# Constructors of non-abstract block classes")
-	Files.list(fs.getPath("net/minecraft/block"))
-			.filter { Files.isRegularFile(it) && it.toString().endsWith(".class") }
-			.map { loadClass(it) }
-			.sorted(Comparator.comparing { it.name })
+	ClassAnalysisUtils.readPackage(fs, "net.minecraft.block")
 			.filter { (it.access & Opcodes.ACC_ABSTRACT) == 0 }
 			.forEach { node ->
 				for (def method : node.methods) {
@@ -68,14 +54,60 @@ def generateBlockConstructors(List<String> lines, FileSystem fs) {
 			}
 }
 
-ClassNode loadClass(Path path) {
-	def node = new ClassNode()
+generateQmj.dependsOn generateAccessWidener
+validateAccessWidener.dependsOn generateAccessWidener
 
-	try (def is = Files.newInputStream(path)) {
-		new ClassReader(is).accept(node, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES)
+// Check that the QuiltBlockSettings class has all required methods.
+tasks.register('checkBlockSettings') {
+	group "verification"
+	dependsOn jar
+
+	doLast {
+		def moduleJar = project.buildDir.toPath().resolve("devlibs/${qslModule.moduleName.get()}-${version}-dev.jar")
+
+		try (def moduleFs = FileSystems.newFileSystem(URI.create("jar:${moduleJar.toUri()}"), [create: false])) {
+			def mcFs = ClassAnalysisUtils.loadMinecraftJar(project)
+			checkBlockSettings(moduleFs, mcFs)
+		}
 	}
-
-	return node
 }
 
-generateQmj.dependsOn generateAccessWidener
+check.dependsOn checkBlockSettings
+
+static def checkBlockSettings(FileSystem moduleFs, FileSystem mcFs) {
+	def quiltClassName = "org/quiltmc/qsl/block/extensions/api/QuiltBlockSettings"
+	def mcClassName = 'net/minecraft/block/AbstractBlock$Settings'
+	def quiltClass = ClassAnalysisUtils.readClass(
+			ClassAnalysisUtils.getClassPath(moduleFs, quiltClassName)
+	)
+	def mcClass = ClassAnalysisUtils.readClass(
+			ClassAnalysisUtils.getClassPath(mcFs, mcClassName)
+	)
+	def mcSettingsClassDesc = "L${mcClassName};"
+	def quiltClassDesc = "L${quiltClassName};"
+	def quiltClassMethods = ClassAnalysisUtils.buildMethodLookup(quiltClass)
+
+	mcClass.methods.stream().filter {
+		// Only get the methods that are part of the builder pattern.
+		((it.access & Opcodes.ACC_PUBLIC) != 0) && ((it.access & Opcodes.ACC_STATIC) == 0)
+				&& it.desc.endsWith(mcSettingsClassDesc)
+	}.forEach {
+		String desc = it.desc.substring(0, it.desc.length() - mcSettingsClassDesc.length()) + quiltClassDesc
+
+		if (!quiltClassMethods.containsKey(it.name + desc)) {
+			throw new GradleException("Missing QuiltBlockSettings builder method ${it.name}${desc}.")
+		}
+	}
+
+	mcClass.methods.stream().filter {
+		// Only get the methods that create a new block Settings instance.
+		((it.access & Opcodes.ACC_PUBLIC) != 0) && ((it.access & Opcodes.ACC_STATIC) != 0)
+				&& it.name.equals("of") && it.desc.endsWith(mcSettingsClassDesc)
+	}.forEach {
+		String desc = it.desc.substring(0, it.desc.length() - mcSettingsClassDesc.length()) + quiltClassDesc
+
+		if (!quiltClassMethods.containsKey(it.name + desc)) {
+			throw new GradleException("Missing QuiltBlockSettings instance method ${it.name}${desc}.")
+		}
+	}
+}

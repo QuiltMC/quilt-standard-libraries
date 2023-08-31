@@ -8,10 +8,9 @@
     "TagKeyMixin"
   ],
   "client": [
-    "client.C_uhbbwvgaAccessor",
+    "client.DynamicRegistrySyncAccessor",
     "client.ClientPlayNetworkHandlerMixin",
     "client.HolderReferenceMixin",
-    "client.TagGroupLoaderAccessor",
     "client.WorldLoaderMixin"
   ],
   "injectors": {

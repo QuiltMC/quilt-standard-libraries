@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2023 QuiltMC
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.rendering.entity.mixin.client;
 
+import java.util.EnumMap;
 import java.util.function.Supplier;
 
 import org.jetbrains.annotations.NotNull;
@@ -37,9 +38,9 @@ public abstract class ArmorMaterialsMixin implements ArmorMaterial {
 
 	@SuppressWarnings("rawtypes")
 	@Inject(method = "<init>", at = @At("TAIL"))
-	private void quilt$initTexture(String constantName, int ordinal,
-			String name, int j, int[] is, int k, SoundEvent soundEvent,
-			float f, float g, Supplier supplier, CallbackInfo ci) {
+	private void quilt$initTexture(String constantName, int ordinal, String name, int j,
+								   EnumMap enumMap, int k, SoundEvent soundEvent, float f,
+								   float g, Supplier supplier, CallbackInfo ci) {
 		this.quilt$texture = new Identifier("textures/models/armor/" + name);
 	}
 

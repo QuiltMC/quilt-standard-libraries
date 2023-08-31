@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,11 @@ abstract class ClientLoginNetworkHandlerMixin implements NetworkHandlerExtension
 		this.addon = new ClientLoginNetworkAddon((ClientLoginNetworkHandler) (Object) this, this.client);
 	}
 
-	@Inject(method = "onQueryRequest", at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V", remap = false, shift = At.Shift.AFTER), cancellable = true)
+	@Inject(
+			method = "onLoginQueryRequest",
+			at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V", remap = false, shift = At.Shift.AFTER),
+			cancellable = true
+	)
 	private void handleQueryRequest(LoginQueryRequestS2CPacket packet, CallbackInfo ci) {
 		if (this.addon.handlePacket(packet)) {
 			ci.cancel();
@@ -62,7 +66,7 @@ abstract class ClientLoginNetworkHandlerMixin implements NetworkHandlerExtension
 
 	@Inject(method = "onLoginSuccess", at = @At("HEAD"))
 	private void handlePlayTransition(CallbackInfo ci) {
-		addon.handlePlayTransition();
+		this.addon.handlePlayTransition();
 	}
 
 	@Override

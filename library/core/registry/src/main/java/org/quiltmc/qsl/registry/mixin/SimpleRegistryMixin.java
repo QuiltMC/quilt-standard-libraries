@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,9 +50,9 @@ import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.quiltmc.qsl.registry.impl.event.MutableRegistryEntryContextImpl;
 import org.quiltmc.qsl.registry.impl.event.RegistryEventStorage;
-import org.quiltmc.qsl.registry.impl.sync.RegistryFlag;
-import org.quiltmc.qsl.registry.impl.sync.ServerRegistrySync;
-import org.quiltmc.qsl.registry.impl.sync.SynchronizedRegistry;
+import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;
+import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
+import org.quiltmc.qsl.registry.impl.sync.server.ServerRegistrySync;
 
 /**
  * Stores and invokes registry events.
@@ -105,15 +105,25 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 
 	// HACK TODO for some reason initializing this like normal doesnt work. i dont care to figure out why - glitch
 	@Inject(method = "<init>(Lnet/minecraft/registry/RegistryKey;Lcom/mojang/serialization/Lifecycle;Z)V", at = @At("TAIL"))
-	private void hackBecauseMixinHatesMe(RegistryKey key, Lifecycle lifecycle, boolean useIntrusiveHolders, CallbackInfo ci) {
+	private void quilt$onSimpleRegistryInit(RegistryKey key, Lifecycle lifecycle, boolean useIntrusiveHolders, CallbackInfo ci) {
 		this.quilt$entryContext = new MutableRegistryEntryContextImpl<>(this);
 		this.quilt$entryToFlag = new Object2ByteOpenHashMap<>();
 		this.quilt$entryAddedEvent = Event.create(RegistryEvents.EntryAdded.class,
-			callbacks -> context -> {
-				for (var callback : callbacks) {
-					callback.onAdded(context);
-				}
-			});
+				callbacks -> context -> {
+					Identifier id = context.id();
+					V value = context.value();
+					int rawId = context.rawId();
+
+					for (var callback : callbacks) {
+						// This is done because some events may create recursion, which would corrupt the context for future queued events.
+						// Storing the values on this stack is much faster than instancing a new context every time.
+						if (context instanceof MutableRegistryEntryContextImpl<V> mutable) {
+							mutable.set(id, value, rawId);
+						}
+
+						callback.onAdded(context);
+					}
+				});
 	}
 
 	@SuppressWarnings("InvalidInjectorMethodSignature")

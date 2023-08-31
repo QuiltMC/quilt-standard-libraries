@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2023 QuiltMC
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.quiltmc.qsl.rendering.entity.test;
 
 import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.registry.tag.ItemTags;
@@ -39,13 +39,13 @@ public enum QuiltArmorMaterial implements ArmorMaterial {
 	private static final Identifier TEXTURE = EntityRenderingTestmod.id("textures/models/armor/" + NAME);
 
 	@Override
-	public int getDurability(EquipmentSlot slot) {
-		return BASE_DURABILITY[slot.getEntitySlotId()] * 50;
+	public int getDurability(ArmorItem.ArmorSlot slot) {
+		return BASE_DURABILITY[slot.ordinal()] * 50;
 	}
 
 	@Override
-	public int getProtectionAmount(EquipmentSlot slot) {
-		return PROTECTION_AMOUNTS[slot.getEntitySlotId()];
+	public int getProtection(ArmorItem.ArmorSlot slot) {
+		return PROTECTION_AMOUNTS[slot.ordinal()];
 	}
 
 	@Override

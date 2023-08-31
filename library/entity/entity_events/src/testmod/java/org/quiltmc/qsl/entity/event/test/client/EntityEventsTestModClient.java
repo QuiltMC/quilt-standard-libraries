@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ public class EntityEventsTestModClient implements ClientEntityLoadEvents.AfterLo
 	@Override
 	public void onClientEntityTick(Entity entity, boolean isPassengerTick) {
 		if (entity instanceof SlimeEntity && isPassengerTick) {
-			entity.world.addParticle(ParticleTypes.EXPLOSION_EMITTER, entity.getX(), entity.getY(), entity.getZ(), 0.0, 0.0, 0.0);
+			entity.getWorld().addParticle(ParticleTypes.EXPLOSION_EMITTER, entity.getX(), entity.getY(), entity.getZ(), 0.0, 0.0, 0.0);
 		}
 	}
 }

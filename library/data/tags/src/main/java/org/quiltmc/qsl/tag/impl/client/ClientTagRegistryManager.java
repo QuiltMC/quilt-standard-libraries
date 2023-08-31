@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package org.quiltmc.qsl.tag.impl.client;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,25 +30,24 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Multimap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Holder;
 import net.minecraft.registry.HolderLookup;
 import net.minecraft.registry.HolderLookup.RegistryLookup;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.VanillaDynamicRegistries;
 import net.minecraft.registry.tag.TagEntry;
 import net.minecraft.registry.tag.TagGroupLoader;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.registry.tag.TagManagerLoader;
 import net.minecraft.resource.ResourceManager;
+import net.minecraft.util.DependencySorter;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -57,8 +55,7 @@ import org.quiltmc.qsl.tag.api.QuiltTagKey;
 import org.quiltmc.qsl.tag.api.TagRegistry;
 import org.quiltmc.qsl.tag.api.TagType;
 import org.quiltmc.qsl.tag.impl.TagRegistryImpl;
-import org.quiltmc.qsl.tag.mixin.client.C_uhbbwvgaAccessor;
-import org.quiltmc.qsl.tag.mixin.client.TagGroupLoaderAccessor;
+import org.quiltmc.qsl.tag.mixin.client.DynamicRegistrySyncAccessor;
 
 /**
  * Represents the manager of client-only and fallback tags.
@@ -71,7 +68,7 @@ import org.quiltmc.qsl.tag.mixin.client.TagGroupLoaderAccessor;
 public final class ClientTagRegistryManager<T> {
 	private static final Map<RegistryKey<? extends Registry<?>>, ClientTagRegistryManager<?>> TAG_GROUP_MANAGERS =
 			new WeakHashMap<>();
-	private static final HolderLookup.Provider VANILLA_PROVIDERS = VanillaDynamicRegistries.createLookup();
+	private static final HolderLookup.Provider VANILLA_PROVIDERS = DynamicRegistryManager.fromRegistryOfRegistries(Registries.REGISTRY);
 
 	private final RegistryKey<? extends Registry<T>> registryKey;
 	/**
@@ -236,27 +233,10 @@ public final class ClientTagRegistryManager<T> {
 		}
 
 		var resolver = new TagResolver(type);
-		Multimap<Identifier, Identifier> tagEntries = HashMultimap.create();
-
-		this.visitDependencies(tagBuilders, (tagId, entry) -> entry.visitRequiredDependencies(
-				tagEntryId -> TagGroupLoaderAccessor.invokeAddDependencyIfNotCyclic(tagEntries, tagId, tagEntryId)
-		));
-		this.visitDependencies(tagBuilders, (tagId, entry) -> entry.visitOptionalDependencies(
-				tagEntryId -> TagGroupLoaderAccessor.invokeAddDependencyIfNotCyclic(tagEntries, tagId, tagEntryId)
-		));
-
-		var set = new HashSet<Identifier>();
-		tagBuilders.keySet().forEach(tagId ->
-				TagGroupLoaderAccessor.invokeVisitDependenciesAndEntry(tagBuilders, tagEntries, set, tagId,
-						resolver.getDependencyConsumer(tagId)
-				)
-		);
+		var sorter = new DependencySorter<Identifier, TagGroupLoader.SortingEntry>();
+		tagBuilders.forEach((key, values) -> sorter.addEntry(key, new TagGroupLoader.SortingEntry(values)));
+		sorter.buildOrdered(resolver.getCollector());
 		return resolver.getTags();
-	}
-
-	private void visitDependencies(Map<Identifier, List<TagGroupLoader.EntryWithSource>> tagBuilders,
-			BiConsumer<Identifier, TagEntry> dependencyConsumer) {
-		tagBuilders.forEach((tagId, builder) -> builder.forEach(entry -> dependencyConsumer.accept(tagId, entry.entry())));
 	}
 
 	@ClientOnly
@@ -299,7 +279,7 @@ public final class ClientTagRegistryManager<T> {
 		});
 
 		// Add up known synced dynamic registries.
-		C_uhbbwvgaAccessor.quilt$getSyncableRegistries().forEach((registry, o) -> get((RegistryKey) registry));
+		DynamicRegistrySyncAccessor.quilt$getSyncableRegistries().forEach((registry, o) -> get((RegistryKey) registry));
 	}
 
 	static void forEach(Consumer<ClientTagRegistryManager<?>> consumer) {
@@ -335,10 +315,10 @@ public final class ClientTagRegistryManager<T> {
 			return this.tags.get(QuiltTagKey.of(ClientTagRegistryManager.this.registryKey, id, this.type));
 		}
 
-		public BiConsumer<Identifier, List<TagGroupLoader.EntryWithSource>> getDependencyConsumer(Identifier tagId) {
-			return (currentTagId, builder) -> this.tags.put(
+		public BiConsumer<Identifier, TagGroupLoader.SortingEntry> getCollector() {
+			return (tagId, builder) -> this.tags.put(
 					QuiltTagKey.of(ClientTagRegistryManager.this.registryKey, tagId, this.type),
-					this.buildLenientTag(builder)
+					this.buildLenientTag(builder.entries())
 			);
 		}
 
@@ -355,8 +335,7 @@ public final class ClientTagRegistryManager<T> {
 		}
 	}
 
-	private abstract class RegistryFetcher implements Function<Identifier, Optional<? extends Holder<T>>> {
-	}
+	private abstract class RegistryFetcher implements Function<Identifier, Optional<? extends Holder<T>>> {}
 
 	private class StaticRegistryFetcher extends RegistryFetcher {
 		private final RegistryLookup<T> cached;

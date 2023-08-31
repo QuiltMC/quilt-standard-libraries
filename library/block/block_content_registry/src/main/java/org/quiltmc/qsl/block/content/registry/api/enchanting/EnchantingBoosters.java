@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,10 +37,10 @@ public class EnchantingBoosters {
 	 */
 	public static Codec<EnchantingBoosterType> TYPE_CODEC = Identifier.CODEC.flatXmap(id -> {
 		EnchantingBoosterType type = TYPES.get(id);
-		return type != null ? DataResult.success(type) : DataResult.error("Unknown enchanting booster type: " + id);
+		return type != null ? DataResult.success(type) : DataResult.error(() -> "Unknown enchanting booster type: " + id);
 	}, type -> {
 		Identifier identifier = TYPES.inverse().get(type);
-		return identifier != null ? DataResult.success(identifier) : DataResult.error("Unknown enchanting booster type");
+		return identifier != null ? DataResult.success(identifier) : DataResult.error(() -> "Unknown enchanting booster type");
 	});
 
 	private static final Codec<Either<Either<Float, Identifier>, EnchantingBooster>> EITHER_CODEC = Codec.either(
@@ -56,10 +56,12 @@ public class EnchantingBoosters {
 											floatId.map(f -> DataResult.success(new ConstantBooster(f)), id -> {
 												EnchantingBoosterType type = TYPES.get(id);
 												if (type == null) {
-													return DataResult.error("Unknown Booster Type: " + id);
+													return DataResult.error(() -> "Unknown Booster Type: " + id);
 												}
 
-												return type.simpleVariant().isPresent() ? DataResult.success(type.simpleVariant().get()) : DataResult.<EnchantingBooster>error("Booster Type: " + id + " is not simple. Please fully specify it.");
+												return type.simpleVariant().isPresent()
+														? DataResult.success(type.simpleVariant().get())
+														: DataResult.<EnchantingBooster>error(() -> "Booster Type: " + id + " is not simple. Please fully specify it.");
 											}),
 									DataResult::success),
 					enchantingBooster -> {
@@ -73,7 +75,6 @@ public class EnchantingBoosters {
 
 						return DataResult.success(Either.right(enchantingBooster));
 					});
-
 
 	/**
 	 * Registers a non-simple booster type.

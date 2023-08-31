@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.item.setting.mixin.recipe_remainder;
 
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -35,6 +36,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.AbstractCookingRecipe;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeManager;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -55,7 +57,7 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 	protected DefaultedList<ItemStack> inventory;
 	@Shadow
 	@Final
-	private RecipeManager.C_bvtkxdyi<Inventory, ? extends AbstractCookingRecipe> recipeCache;
+	private RecipeManager.CachedCheck<Inventory, ? extends AbstractCookingRecipe> recipeCache;
 
 	public AbstractFurnaceBlockEntityMixin(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
@@ -75,7 +77,7 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 
 		Recipe<?> recipe;
 		if (!cast.inventory.get(INPUT_SLOT).isEmpty()) {
-			recipe = cast.recipeCache.m_ltqsvwgf(blockEntity, world).orElse(null);
+			recipe = cast.recipeCache.getRecipeFor(blockEntity, world).orElse(null);
 		} else {
 			recipe = null;
 		}
@@ -97,7 +99,7 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BlockEntity implem
 	}
 
 	@Redirect(method = "craftRecipe", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"))
-	private static void setInputRemainder(ItemStack inputStack, int amount, Recipe<?> recipe, DefaultedList<ItemStack> inventory, int count) {
+	private static void setInputRemainder(ItemStack inputStack, int amount, DynamicRegistryManager registryManager, @Nullable Recipe<?> recipe, DefaultedList<ItemStack> inventory, int count) {
 		RecipeRemainderLogicHandler.handleRemainderForNonPlayerCraft(
 				inputStack,
 				amount,

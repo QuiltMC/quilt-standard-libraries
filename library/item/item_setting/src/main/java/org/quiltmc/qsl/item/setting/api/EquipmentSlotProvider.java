@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 package org.quiltmc.qsl.item.setting.api;
 
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -28,7 +29,7 @@ import net.minecraft.item.ItemStack;
  * {@link EquipmentSlotProvider} can be set with {@link QuiltItemSettings#equipmentSlot(EquipmentSlotProvider)}.
  * <p>
  * Note that items extending {@link net.minecraft.item.ArmorItem} should
- * use {@link net.minecraft.item.ArmorItem#getSlotType()} instead.
+ * use {@link ArmorItem#getArmorSlot()} instead.
  */
 @FunctionalInterface
 public interface EquipmentSlotProvider {

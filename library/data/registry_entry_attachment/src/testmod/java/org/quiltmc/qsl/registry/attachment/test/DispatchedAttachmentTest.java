@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,8 +109,8 @@ public class DispatchedAttachmentTest implements ModInitializer,
 	}
 
 	@Override
-	public void onEndDataPackReload(@Nullable MinecraftServer server, ResourceManager resourceManager, @Nullable Throwable error) {
-		if (error != null) return;
+	public void onEndDataPackReload(Context context) {
+		if (context.error().isPresent()) return;
 
 		LOGGER.info(" === DATA PACK RELOADED! === ");
 

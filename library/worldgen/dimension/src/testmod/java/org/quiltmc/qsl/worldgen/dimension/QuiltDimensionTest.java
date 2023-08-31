@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.test.TestServer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -65,6 +66,8 @@ public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents
 
 	@Override
 	public void readyServer(MinecraftServer server) {
+		if (server instanceof TestServer) return; // Game Test server does not support custom dimensions.
+
 		ServerWorld overworld = server.getWorld(World.OVERWORLD);
 		ServerWorld targetWorld = server.getWorld(WORLD_KEY);
 
@@ -74,14 +77,14 @@ public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents
 
 		CowEntity cow = EntityType.COW.create(overworld);
 
-		if (!cow.world.getRegistryKey().equals(World.OVERWORLD)) {
+		if (!cow.getWorld().getRegistryKey().equals(World.OVERWORLD)) {
 			throw new AssertionError("Cow was spawned but isn't in the overworld.");
 		}
 
 		var target = new TeleportTarget(Vec3d.ZERO, new Vec3d(1, 1, 1), 45f, 60f);
 		CowEntity teleportedEntity = QuiltDimensions.teleport(cow, targetWorld, target);
 
-		if (teleportedEntity == null || !teleportedEntity.world.getRegistryKey().equals(WORLD_KEY)) {
+		if (teleportedEntity == null || !teleportedEntity.getWorld().getRegistryKey().equals(WORLD_KEY)) {
 			throw new AssertionError("Cow was not teleported correctly.");
 		}
 
@@ -98,14 +101,14 @@ public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents
 
 	private int swapTargeted(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
 		ServerPlayerEntity player = context.getSource().getPlayer();
-		ServerWorld serverWorld = player.getWorld();
+		ServerWorld serverWorld = (ServerWorld) player.getWorld();
 		ServerWorld modWorld = context.getSource().getServer().getWorld(WORLD_KEY);
 
 		if (serverWorld != modWorld) {
 			var target = new TeleportTarget(new Vec3d(0.5, 101, 0.5), Vec3d.ZERO, 0, 0);
 			QuiltDimensions.teleport(player, modWorld, target);
 
-			if (player.world != modWorld) {
+			if (player.getWorld() != modWorld) {
 				throw new CommandException(Text.literal("Teleportation failed!"));
 			}
 

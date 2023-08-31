@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,37 +17,49 @@
 package org.quiltmc.qsl.block.content.registry.mixin;
 
 import com.google.common.collect.BiMap;
-import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.HoneycombItem;
 
-import org.quiltmc.qsl.block.content.registry.impl.BlockContentRegistriesInitializer;
+import org.quiltmc.qsl.block.content.registry.impl.BlockContentRegistriesImpl;
 
 @Mixin(HoneycombItem.class)
 public class HoneycombItemMixin {
-	@Dynamic("Replace old map with one updated by Registry Attachments")
+	// Lambda in assignment of UNWAXED_TO_WAXED_BLOCKS
+	// Replaces old map with one updated by our API
 	@Inject(
-			method = "m_snbljbbo()Lcom/google/common/collect/BiMap;",
+			slice = @Slice(
+					from = @At(
+							value = "INVOKE",
+							target = "Lcom/google/common/collect/ImmutableBiMap$Builder;put(Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableBiMap$Builder;",
+							remap = false
+					)
+			),
+			method = "method_34723()Lcom/google/common/collect/BiMap;",
 			at = @At("RETURN"),
 			cancellable = true
 	)
-	private static void createOxidationLevelIncreasesMap(CallbackInfoReturnable<BiMap<Block, Block>> cir) {
-		BlockContentRegistriesInitializer.INITIAL_WAXED_BLOCKS.putAll(cir.getReturnValue());
-		cir.setReturnValue(BlockContentRegistriesInitializer.UNWAXED_WAXED_BLOCKS);
+	private static void quilt$createOxidationLevelIncreasesMap(CallbackInfoReturnable<BiMap<Block, Block>> cir) {
+		BlockContentRegistriesImpl.INITIAL_WAXED_BLOCKS.putAll(cir.getReturnValue());
+		cir.setReturnValue(BlockContentRegistriesImpl.UNWAXED_WAXED_BLOCKS);
 	}
 
-	@Dynamic("Replace old map with one updated by Registry Attachments")
+	// Lambda in assignment of WAXED_TO_UNWAXED_BLOCKS
+	// Replaces old map with one updated by our API
 	@Inject(
-			method = "m_lnsonusw()Lcom/google/common/collect/BiMap;",
+			slice = @Slice(
+					from = @At(value = "FIELD", target = "Lnet/minecraft/item/HoneycombItem;UNWAXED_TO_WAXED_BLOCKS:Ljava/util/function/Supplier;")
+			),
+			method = "method_34722()Lcom/google/common/collect/BiMap;",
 			at = @At("RETURN"),
 			cancellable = true
 	)
-	private static void createOxidationLevelDecreasesMap(CallbackInfoReturnable<BiMap<Block, Block>> cir) {
-		cir.setReturnValue(BlockContentRegistriesInitializer.WAXED_UNWAXED_BLOCKS);
+	private static void quilt$createOxidationLevelDecreasesMap(CallbackInfoReturnable<BiMap<Block, Block>> cir) {
+		cir.setReturnValue(BlockContentRegistriesImpl.WAXED_UNWAXED_BLOCKS);
 	}
 }

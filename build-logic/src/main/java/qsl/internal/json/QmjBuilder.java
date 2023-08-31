@@ -10,7 +10,7 @@ import qsl.internal.dependency.QslLibraryDependency;
 import qsl.internal.extension.QslModuleExtension;
 import qsl.internal.extension.QslModuleExtensionImpl;
 
-import org.quiltmc.json5.JsonWriter;
+import org.quiltmc.parsers.json.JsonWriter;
 
 public final class QmjBuilder {
 	public static void buildQmj(Project project, String version, String loaderVersion, MinecraftVersion minecraftVersion, QslModuleExtensionImpl ext, Path path) throws IOException {
@@ -19,14 +19,14 @@ public final class QmjBuilder {
 		writer.beginObject()
 				.name("schema_version").value(1)
 				.name("quilt_loader").beginObject() // root object -> quilt_loader
-				.name("group").value("org.quiltmc.qsl." + ext.getLibrary().get())
+				.name("group").value("org.quiltmc.qsl." + ext.getLibrary())
 				.name("id").value(ext.getId().get())
 				.name("version").value(version)
 				.name("metadata").beginObject() // quilt_loader -> metadata
 				.name("name").value(ext.getName().get())
 				.name("description").value(ext.getDescription().get())
 				.name("contributors").beginObject() // metadata -> contributors
-				.name("QuiltMC: QSL Team").value("Owner")
+				.name("The Quilt Project").value("Owner")
 				.endObject() // contributors -> metadata
 				.name("contact").beginObject() // contributors -> contact
 				.name("homepage").value("https://quiltmc.org")
@@ -51,14 +51,17 @@ public final class QmjBuilder {
 		if (Versions.COMPATIBLE_VERSIONS.isEmpty()) {
 			writer.value("=" + minecraftVersion.getSemVer());
 		} else {
-			writer.beginArray()
-					.value(minecraftVersion.getSemVer());
+			writer.beginObject()
+					.name("any")
+					.beginArray()
+					.value("=" + minecraftVersion.getSemVer());
 
 			for (var v : Versions.COMPATIBLE_VERSIONS) {
-				writer.value(v.getSemVer());
+				writer.value("=" + v.getSemVer());
 			}
 
 			writer.endArray();
+			writer.endObject();
 		}
 
 		writer.endObject();

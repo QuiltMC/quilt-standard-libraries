@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2023 QuiltMC
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -67,6 +68,18 @@ public final class ArmorRenderingRegistryImpl {
 				});
 	}
 
+	@Contract("-> new")
+	public static @NotNull Event<ArmorRenderingRegistry.RenderLayerProvider> createRenderLayerProviderEvent() {
+		return Event.create(ArmorRenderingRegistry.RenderLayerProvider.class,
+				listeners -> (layer, entity, stack, slot, texture) -> {
+					for (var listener : listeners) {
+						layer = listener.getArmorRenderLayer(layer, entity, stack, slot, texture);
+					}
+
+					return layer;
+				});
+	}
+
 	public static void registerTextureProvider(@NotNull Item item, @NotNull Identifier phaseIdentifier,
 			@NotNull ArmorRenderingRegistry.TextureProvider provider) {
 		((ItemArmorRenderingExtensions) item).quilt$getOrCreateTextureProviderEvent().register(phaseIdentifier, provider);
@@ -85,6 +98,16 @@ public final class ArmorRenderingRegistryImpl {
 	public static void addModelProviderPhaseOrdering(@NotNull Item item,
 			@NotNull Identifier firstPhase, @NotNull Identifier secondPhase) {
 		((ItemArmorRenderingExtensions) item).quilt$getOrCreateModelProviderEvent().addPhaseOrdering(firstPhase, secondPhase);
+	}
+
+	public static void registerRenderLayerProvider(@NotNull Item item, @NotNull Identifier phaseIdentifier,
+			@NotNull ArmorRenderingRegistry.RenderLayerProvider provider) {
+		((ItemArmorRenderingExtensions) item).quilt$getOrCreateRenderLayerProviderEvent().register(phaseIdentifier, provider);
+	}
+
+	public static void addRenderLayerProviderPhaseOrdering(@NotNull Item item,
+			@NotNull Identifier firstPhase, @NotNull Identifier secondPhase) {
+		((ItemArmorRenderingExtensions) item).quilt$getOrCreateRenderLayerProviderEvent().addPhaseOrdering(firstPhase, secondPhase);
 	}
 
 	public static @NotNull Identifier getArmorTexture(@NotNull Identifier texture,
@@ -106,5 +129,16 @@ public final class ArmorRenderingRegistryImpl {
 		}
 
 		return e.invoker().getArmorModel(model, entity, stack, slot);
+	}
+
+	public static @NotNull RenderLayer getArmorRenderLayer(@NotNull RenderLayer layer,
+			@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot,
+			@NotNull Identifier texture) {
+		var e = ((ItemArmorRenderingExtensions) stack.getItem()).quilt$getRenderLayerProviderEvent();
+		if (e == null) {
+			return layer;
+		}
+
+		return e.invoker().getArmorRenderLayer(layer, entity, stack, slot, texture);
 	}
 }

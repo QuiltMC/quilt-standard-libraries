@@ -1,6 +1,6 @@
 /*
  * Copyright 2016, 2017, 2018, 2019 FabricMC
- * Copyright 2021-2022 QuiltMC
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,6 @@
  */
 
 package org.quiltmc.qsl.resource.loader.api.reloader;
-
-import java.util.Collection;
-import java.util.Collections;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -38,19 +35,4 @@ public interface IdentifiableResourceReloader extends ResourceReloader {
 	 * {@return the unique identifier of this resource reloader}
 	 */
 	@NotNull Identifier getQuiltId();
-
-	/**
-	 * Returns the identifiers of resource reloaders this resource reloader expects to have been
-	 * executed before itself.
-	 * <p>
-	 * Please keep in mind that this only takes effect during the application stage!
-	 *
-	 * @return the identifiers this resource reloader depends on
-	 * @see ResourceReloaderKeys
-	 * @deprecated use {@linkplain org.quiltmc.qsl.resource.loader.api.ResourceLoader#addReloaderOrdering(Identifier, Identifier)} instead
-	 */
-	@Deprecated(forRemoval = true)
-	default Collection<Identifier> getQuiltDependencies() {
-		return Collections.emptyList();
-	}
 }

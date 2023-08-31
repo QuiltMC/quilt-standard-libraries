@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 QuiltMC
+ * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,13 +94,13 @@ public class BlockContentRegistries {
 					Block.class,
 					Registries.BLOCK.getCodec().flatXmap(block -> {
 						if (!block.getDefaultState().contains(Properties.AXIS)) {
-							return DataResult.error("block does not contain AXIS property");
+							return DataResult.error(() -> "block does not contain AXIS property");
 						}
 
 						return DataResult.success(block);
 					}, block -> {
 						if (!block.getDefaultState().contains(Properties.AXIS)) {
-							return DataResult.error("block does not contain AXIS property");
+							return DataResult.error(() -> "block does not contain AXIS property");
 						}
 
 						return DataResult.success(block);
