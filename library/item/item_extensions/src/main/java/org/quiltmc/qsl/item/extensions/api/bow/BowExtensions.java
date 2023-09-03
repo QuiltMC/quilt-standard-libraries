@@ -42,7 +42,21 @@ public interface BowExtensions {
 	 * @param useTicks the number of ticks the bow has been drawn
 	 * @param bowStack the item stack for the bow
 	 */
+
 	default @Range(from = 0, to = 1) float getCustomPullProgress(int useTicks, @NotNull ItemStack bowStack) {
-		return BowItem.getPullProgress(useTicks);
+		float f = (float)useTicks / (float)this.getMaxDrawDuration();
+		f = (f * f + f * 2.0F) / 3.0F;
+		if (f > 1.0F) {
+			f = 1.0F;
+		}
+
+		return f;
+	}
+
+    /**
+	* {@return the max draw duration of the bow}
+    */
+	default int getMaxDrawDuration() {
+		return 20;
 	}
 }
