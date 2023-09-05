@@ -33,7 +33,6 @@ transitive-accessible method net/minecraft/block/DeadCoralFanBlock <init> (Lnet/
 transitive-accessible method net/minecraft/block/DeadCoralWallFanBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/DecoratedPotBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/DirtPathBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
-transitive-accessible method net/minecraft/block/DispenserBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/DoorBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;Lnet/minecraft/block/BlockSetType;)V
 transitive-accessible method net/minecraft/block/DyedCarpetBlock <init> (Lnet/minecraft/util/DyeColor;Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/EnchantingTableBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
@@ -76,7 +75,6 @@ transitive-accessible method net/minecraft/block/RedstoneTorchBlock <init> (Lnet
 transitive-accessible method net/minecraft/block/RepeaterBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/RodBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/RootsBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
-transitive-accessible method net/minecraft/block/SaplingBlock <init> (Lnet/minecraft/block/sapling/SaplingGenerator;Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/ScaffoldingBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/SeaPickleBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/SeagrassBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
@@ -104,3 +102,5 @@ transitive-accessible method net/minecraft/block/WallWitherSkullBlock <init> (Ln
 transitive-accessible method net/minecraft/block/WeightedPressurePlateBlock <init> (ILnet/minecraft/block/AbstractBlock$Settings;Lnet/minecraft/block/BlockSetType;)V
 transitive-accessible method net/minecraft/block/WetSpongeBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
 transitive-accessible method net/minecraft/block/WitherSkullBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
+transitive-accessible method net/minecraft/block/dispenser/DispenserBlock <init> (Lnet/minecraft/block/AbstractBlock$Settings;)V
+transitive-accessible method net/minecraft/block/sapling/SaplingBlock <init> (Lnet/minecraft/block/sapling/SaplingGenerator;Lnet/minecraft/block/AbstractBlock$Settings;)V
