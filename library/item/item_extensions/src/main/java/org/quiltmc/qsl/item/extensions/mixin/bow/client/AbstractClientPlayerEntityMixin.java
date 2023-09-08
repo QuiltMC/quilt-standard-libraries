@@ -47,6 +47,7 @@ public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity {
 		if (item == Items.BOW) {
 			return instance.getItem() instanceof BowExtensions; // Return bow for fov
 		}
+
 		return instance.isOf(item); // Default behavior
 	}
 
