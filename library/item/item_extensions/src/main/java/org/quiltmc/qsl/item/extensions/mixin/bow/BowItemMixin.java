@@ -19,6 +19,8 @@ package org.quiltmc.qsl.item.extensions.mixin.bow;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -77,5 +79,15 @@ public class BowItemMixin implements BowExtensions {
 	@Redirect(method = "onStoppedUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/BowItem;getPullProgress(I)F"))
 	private float redirectPullProgress(int useTicks, ItemStack bowStack, World world, LivingEntity user, int remainingUseTicks) {
 		return this.getCustomPullProgress(useTicks, bowStack);
+	}
+
+	// Modifies the maximum draw duration if a custom bow is used
+	@ModifyConstant(method = "getPullProgress", constant = @Constant(floatValue = 20.0F))
+	private float modifyDrawDuration(float constant) {
+		float maxDrawDuration = this.getMaxDrawDuration();
+		if (maxDrawDuration != constant) {
+			return maxDrawDuration; // Return custom bow's maximum draw duration
+		}
+		return constant; // Default behavior
 	}
 }
