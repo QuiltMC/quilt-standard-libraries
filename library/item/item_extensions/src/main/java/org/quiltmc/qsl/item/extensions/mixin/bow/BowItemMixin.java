@@ -84,7 +84,7 @@ public class BowItemMixin implements BowExtensions {
 	// Modifies the maximum draw duration if a custom bow is used
 	@ModifyConstant(method = "getPullProgress", constant = @Constant(floatValue = 20.0F))
 	private float modifyDrawDuration(float constant) {
-		float maxDrawDuration = this.getMaxDrawDuration();
+		float maxDrawDuration = (float)this.getMaxDrawDuration();
 		if (maxDrawDuration != constant) {
 			return maxDrawDuration; // Return custom bow's maximum draw duration
 		}
