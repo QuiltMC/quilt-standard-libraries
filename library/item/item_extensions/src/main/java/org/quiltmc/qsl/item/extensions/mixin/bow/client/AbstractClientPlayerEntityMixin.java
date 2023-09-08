@@ -54,8 +54,9 @@ public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity {
 	// Modify the draw duration value
 	@ModifyConstant(method = "getSpeed", constant = @Constant(floatValue = 20.0F))
 	private float modifyDrawDuration(float constant) {
-		if ((float) ((BowExtensions) this.getActiveItem().getItem()).getMaxDrawDuration() != constant) {
-			return (float) ((BowExtensions) this.getActiveItem().getItem()).getMaxDrawDuration(); // Return custom bow's max draw duration
+		float maxDrawDuration = (float) ((BowExtensions) this.getActiveItem().getItem()).getMaxDrawDuration();
+		if (maxDrawDuration != constant) {
+			return maxDrawDuration; // Return custom bow's max draw duration
 		}
 		return constant; // Default behavior
 	}
