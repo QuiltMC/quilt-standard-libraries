@@ -53,7 +53,7 @@ public interface BowExtensions {
 	}
 
     /**
-	* {@return the max draw duration of the bow}
+	* {@return the maximum draw duration of the bow}
     */
 	default int getMaxDrawDuration() {
 		return 20;
