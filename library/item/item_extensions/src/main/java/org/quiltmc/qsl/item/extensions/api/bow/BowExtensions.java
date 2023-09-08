@@ -43,16 +43,7 @@ public interface BowExtensions {
 	 * @param bowStack the item stack for the bow
 	 */
 	default @Range(from = 0, to = 1) float getCustomPullProgress(int useTicks, @NotNull ItemStack bowStack) {
-		if (this.getMaxDrawDuration() == 20) {
-			return BowItem.getPullProgress(useTicks);
-		}
-		float f = (float)useTicks / (float)this.getMaxDrawDuration();
-		f = (f * f + f * 2.0F) / 3.0F;
-		if (f > 1.0F) {
-			f = 1.0F;
-		}
-
-		return f;
+		return BowItem.getPullProgress(useTicks);
 	}
 
     /**
