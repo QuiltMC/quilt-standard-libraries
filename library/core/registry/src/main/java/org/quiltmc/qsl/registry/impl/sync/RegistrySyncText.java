@@ -147,7 +147,7 @@ public class RegistrySyncText {
 		} else {
 			version = (MutableText) Texts.join(x.subList(0, Math.min(x.size(), 4)), n -> Text.literal(n.toString()));
 			if (x.size() > 4) {
-				version = version.append(Texts.GRAY_DEFAULT_SEPARATOR_TEXT).append("...");
+				version = version.append(Texts.GRAY_DEFAULT_SEPARATOR).append("...");
 			}
 		}
 
