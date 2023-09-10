@@ -1,0 +1,54 @@
+{
+  "type": "quilt:model",
+  "texture": {
+    "width": 64,
+    "height": 32
+  },
+  "bones": {
+    "right_wing": {
+      "transform": {
+        "origin": [-5.0, 0.0, 0.0],
+        "rotation": [0.2617994, 0.0, 0.2617994]
+      },
+      "cuboids": [
+        {
+          "dilation": [1.0, 1.0, 1.0],
+          "mirror": true,
+          "uv": [22.0, 0.0],
+          "offset": [0.0, 0.0, 0.0],
+          "dimensions": [10.0, 20.0, 2.0]
+        }
+      ]
+    },
+    "left_wing": {
+      "transform": {
+        "origin": [5.0, 0.0, 0.0],
+        "rotation": [0.2617994, 0.0, -0.2617994]
+      },
+      "cuboids": [
+        {
+          "dilation": [1.0, 1.0, 1.0],
+          "uv": [22.0, 0.0],
+          "offset": [-10.0, 0.0, 0.0],
+          "dimensions": [10.0, 20.0, 2.0]
+        }
+      ],
+      "children" : {
+        "extra_cube" : {
+          "transform": {
+            "origin": [6.0, 1.0, 1.0],
+            "rotation": [0.2617994, 0.0, -0.2617994]
+          },
+          "cuboids" : [
+            {
+              "dilation": [1.0, 1.0, 1.0],
+              "uv": [22.0, 0.0],
+              "offset": [-10.0, 0.0, 0.0],
+              "dimensions": [10.0, 20.0, 2.0]
+            }
+          ]
+        }
+      }
+    }
+  }
+}
