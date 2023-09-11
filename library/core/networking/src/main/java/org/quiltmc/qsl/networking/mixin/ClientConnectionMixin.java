@@ -85,7 +85,7 @@ abstract class ClientConnectionMixin implements ChannelInfoHolder {
 	}
 
 	@Inject(method = "sendImmediately", at = @At(value = "FIELD", target = "Lnet/minecraft/network/ClientConnection;packetsSentCounter:I"))
-	private void checkPacket(Packet<?> packet, PacketSendListener listener, CallbackInfo ci) {
+	private void checkPacket(Packet<?> packet, PacketSendListener listener, boolean flush, CallbackInfo ci) {
 		if (this.packetListener instanceof PacketCallbackListener callbackListener) {
 			callbackListener.sent(packet);
 		}

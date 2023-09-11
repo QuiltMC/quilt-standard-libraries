@@ -34,7 +34,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 import net.minecraft.resource.ResourceIoSupplier;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePack;
-import net.minecraft.resource.pack.metadata.ResourceMetadataReader;
+import net.minecraft.resource.pack.metadata.ResourceMetadataSectionReader;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -195,7 +195,7 @@ public abstract class GroupResourcePack implements ResourcePack {
 		}
 
 		@Override
-		public <T> @Nullable T parseMetadata(ResourceMetadataReader<T> metaReader) throws IOException {
+		public <T> @Nullable T parseMetadata(ResourceMetadataSectionReader<T> metaReader) throws IOException {
 			return this.basePack.parseMetadata(metaReader);
 		}
 

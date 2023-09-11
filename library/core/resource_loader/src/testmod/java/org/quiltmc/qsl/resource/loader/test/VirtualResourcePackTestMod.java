@@ -37,6 +37,7 @@ import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 import org.quiltmc.qsl.resource.loader.api.InMemoryResourcePack;
+import org.quiltmc.qsl.resource.loader.api.QuiltResourcePackProfile;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
 import org.quiltmc.qsl.resource.loader.api.ResourcePackRegistrationContext;
@@ -111,8 +112,8 @@ public class VirtualResourcePackTestMod implements ModInitializer, ResourcePackR
 				}
 				""");
 
-		profileAdder.accept(ResourcePackProfile.of("activation_test", Text.literal("Activation Test"), false, name -> pack,
-				type, ResourcePackProfile.InsertionPosition.BOTTOM, ResourcePackSource.PACK_SOURCE_BUILTIN));
+		profileAdder.accept(ResourcePackProfile.of("activation_test", Text.literal("Activation Test"), false,
+				QuiltResourcePackProfile.wrapToFactory(pack), type, ResourcePackProfile.InsertionPosition.BOTTOM, ResourcePackSource.PACK_SOURCE_BUILTIN));
 	}
 
 	@Override

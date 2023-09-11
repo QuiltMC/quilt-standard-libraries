@@ -38,10 +38,9 @@ public class ResourcePackProfileMixin implements QuiltResourcePackProfile {
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void quilt$onInit(String name, boolean alwaysEnabled, ResourcePackProfile.ResourcePackFactory packFactory, Text displayName,
-			ResourcePackProfile.Info info, ResourcePackCompatibility compatibility, ResourcePackProfile.InsertionPosition position, boolean pinned,
-			ResourcePackSource source,
+			ResourcePackProfile.Info info, ResourcePackProfile.InsertionPosition position, boolean pinned, ResourcePackSource source,
 			CallbackInfo ci) {
-		try (var pack = packFactory.open(name)) {
+		try (var pack = packFactory.open(name, info)) {
 			this.quilt$activationType = pack.getActivationType();
 		}
 	}

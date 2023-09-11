@@ -20,10 +20,7 @@
     "ServerPlayNetworkHandlerAccessor",
     "SimpleRegistryMixin",
     "TagManagerLoaderMixin",
-    "patch.BeaconBlockEntityMixin",
-    "patch.MooshroomEntityMixin",
-    "patch.StatusEffectInstanceMixin",
-    "patch.SuspiciousStewItemMixin"
+    "compat.SchemasMixin"
   ],
   "client": [
     "client.BlockColorMapMixin",

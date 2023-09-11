@@ -101,7 +101,7 @@ public interface AbstractBlockSettingsAccessor {
 	Optional<AbstractBlock.OffsetFunction> getOffsetFunction();
 
 	@Accessor
-	boolean getSpawnsParticlesOnBreak();
+	boolean getSpawnsDustParticles();
 
 	@Accessor
 	FeatureFlagBitSet getRequiredFlags();
@@ -170,7 +170,7 @@ public interface AbstractBlockSettingsAccessor {
 	void setDynamicBounds(boolean dynamicBounds);
 
 	@Accessor
-	void setSpawnsParticlesOnBreak(boolean spawnsParticlesOnBreak);
+	void setSpawnsDustParticles(boolean spawnsDustParticles);
 
 	@Accessor
 	void setRequiredFlags(FeatureFlagBitSet requiredFlags);

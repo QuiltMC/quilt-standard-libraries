@@ -10,6 +10,9 @@
     },
     "intermediate_mappings": "net.fabricmc:intermediary",
     "load_type": "always",
+    "entrypoints": {
+      "init": "org.quiltmc.qsl.advancement.testmod.CriteriaTestmod"
+    },
     "depends": [
       "quilt_loader",
       "quilt_advancement"

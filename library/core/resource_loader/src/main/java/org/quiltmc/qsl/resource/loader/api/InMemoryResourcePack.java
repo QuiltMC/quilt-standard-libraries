@@ -46,7 +46,7 @@ import org.slf4j.Logger;
 import net.minecraft.resource.ResourceIoSupplier;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePack;
-import net.minecraft.resource.pack.metadata.ResourceMetadataReader;
+import net.minecraft.resource.pack.metadata.ResourceMetadataSectionReader;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 
@@ -118,7 +118,7 @@ public abstract class InMemoryResourcePack implements MutableResourcePack {
 	}
 
 	@Override
-	public <T> @Nullable T parseMetadata(ResourceMetadataReader<T> metaReader) throws IOException {
+	public <T> @Nullable T parseMetadata(ResourceMetadataSectionReader<T> metaReader) throws IOException {
 		if (!this.root.containsKey(ResourcePack.PACK_METADATA_NAME)) {
 			var json = new JsonObject();
 			var packJson = new JsonObject();

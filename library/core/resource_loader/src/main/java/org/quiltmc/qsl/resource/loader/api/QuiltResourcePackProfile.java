@@ -18,6 +18,8 @@ package org.quiltmc.qsl.resource.loader.api;
 
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.resource.pack.BuiltinResourcePackProvider;
+import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.ResourcePackProfile;
 
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
@@ -38,5 +40,9 @@ public interface QuiltResourcePackProfile {
 	 */
 	default @NotNull ResourcePackActivationType getActivationType() {
 		return ResourcePackActivationType.NORMAL;
+	}
+
+	static ResourcePackProfile.ResourcePackFactory wrapToFactory(ResourcePack pack) {
+		return BuiltinResourcePackProvider.wrapToFactory(pack);
 	}
 }

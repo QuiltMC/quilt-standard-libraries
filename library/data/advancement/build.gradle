@@ -12,6 +12,7 @@ qslModule {
 			api("qsl_base")
 		}
 	}
-	accessWidener()
-	noMixins()
+	injectedInterface("net/minecraft/class_174") {
+		values = ["org.quiltmc.qsl.advancement.api.QuiltCriteria"]
+	}
 }

@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
+import net.minecraft.SharedConstants;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.ResourcePackCompatibility;
 import net.minecraft.resource.pack.ResourcePackProfile;
@@ -29,6 +30,7 @@ import net.minecraft.resource.pack.ResourcePackSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
+import org.quiltmc.qsl.resource.loader.api.QuiltResourcePackProfile;
 import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
 
 @ApiStatus.Internal
@@ -37,7 +39,8 @@ public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
 	private final ResourcePack pack;
 
 	static @Nullable QuiltBuiltinResourcePackProfile of(ModNioResourcePack pack) {
-		Info info = readInfoFromPack(pack.getName(), name -> pack);
+		int version = SharedConstants.getGameVersion().getResourceVersion(pack.type);
+		Info info = readInfoFromPack(pack.getName(), QuiltResourcePackProfile.wrapToFactory(pack), version);
 
 		if (info == null) {
 			LOGGER.warn("Couldn't find pack meta for pack {}.", pack.getName());
@@ -51,10 +54,9 @@ public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
 		super(
 				pack.getName(),
 				pack.getActivationType() == ResourcePackActivationType.ALWAYS_ENABLED,
-				name -> pack,
+				QuiltResourcePackProfile.wrapToFactory(pack),
 				pack.getDisplayName(),
 				info,
-				info.getCompatibility(pack.type),
 				ResourcePackProfile.InsertionPosition.TOP,
 				false,
 				new BuiltinResourcePackSource(pack)
