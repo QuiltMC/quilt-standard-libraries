@@ -1,0 +1,25 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Key Binds API"
+	moduleName = "key_binds"
+	id = "quilt_key_binds"
+	description = "Key binds registration and utilities."
+	moduleDependencies {
+		core {
+			api("resource_loader")
+			api("qsl_base")
+			testmodOnly("lifecycle_events")
+		}
+	}
+	clientOnly()
+	injectedInterface("net/minecraft/class_304") {
+		values = [
+			"org/quiltmc/qsl/key/binds/api/ChordedKeyBind",
+			"org/quiltmc/qsl/key/binds/api/QuiltKeyBind",
+			"org/quiltmc/qsl/key/binds/api/ToggleableKeyBind"
+		]
+	}
+}

@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.key.binds.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "client.chords.InputUtilKeyMixin",
+    "client.chords.KeyBindAccessor",
+    "client.chords.KeyBindMixin",
+    "client.chords.KeyBindsScreenMixin",
+    "client.config.GameOptionsMixin",
+    "client.config.MinecraftClientMixin",
+    "client.toggle.KeyBindMixin",
+    "client.GameOptionsAccessor",
+    "client.GameOptionsMixin",
+    "client.KeyBindAccessor",
+    "client.KeyBindMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

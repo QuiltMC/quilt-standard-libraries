@@ -48,6 +48,9 @@ dependencies {
 	modImplementation "org.quiltmc:quilt-loader:${Versions.LOADER_VERSION}"
 }
 
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"
 	it.options.release.set(Versions.JAVA_VERSION)

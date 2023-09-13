@@ -1,0 +1,5 @@
+{
+    "key.qsl.key_conflict.indicator": "%s (!)",
+    "key.qsl.key_conflict.tooltip": "Há conflitos com:",
+    "key.qsl.key_conflict.tooltip.entry": "   %s"
+}

@@ -1,0 +1,27 @@
+{
+	"schema_version": 1,
+	"quilt_loader": {
+		"group": "org.quiltmc",
+		"id": "quilt_key_binds_testmod",
+		"version": "1.0.0",
+    "load_type": "always",
+		"intermediate_mappings": "net.fabricmc:intermediary",
+		"depends": [
+			"quilt_key_binds"
+		],
+		"entrypoints": {
+      "client_init": "org.quiltmc.qsl.key.binds.test.client.KeyBindsTestMod",
+			"client_events": [
+				"org.quiltmc.qsl.key.binds.test.client.KeyBindRegistryTestMod",
+				"org.quiltmc.qsl.key.binds.test.client.KeyBindsTestMod"
+			]
+		},
+		"metadata": {
+			"name": "Quilt Key Binds API Test Mod",
+			"license": "Apache-2.0"
+		}
+	},
+	"minecraft": {
+		"environment": "client"
+	}
+}
