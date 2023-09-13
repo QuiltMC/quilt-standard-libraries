@@ -20,6 +20,8 @@ import com.mojang.serialization.Codec;
 
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.registry.attachment.api.RegistryEntryAttachment;

@@ -105,6 +105,7 @@ public class BlockContentRegistries {
 
 						return DataResult.success(block);
 					}))
+			.validator(block -> block.getDefaultState().contains(Properties.AXIS))
 			.build();
 
 	/**
