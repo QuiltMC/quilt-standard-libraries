@@ -53,7 +53,7 @@ public abstract class TheEndBiomeSourceMixin extends BiomeSource {
 	public static Codec<TheEndBiomeSource> CODEC;
 
 	@Unique
-	private Supplier<TheEndBiomeData.Overrides> overrides;
+	private Supplier<TheEndBiomeData.Overrides> quilt$overrides;
 
 	@Unique
 	private boolean quilt$hasAddedBiomes = false;
@@ -73,12 +73,12 @@ public abstract class TheEndBiomeSourceMixin extends BiomeSource {
 
 	@Inject(method = "create", at = @At("RETURN"))
 	private static void init(HolderProvider<Biome> holderProvider, CallbackInfoReturnable<TheEndBiomeSource> cir) {
-		((TheEndBiomeSourceMixin) (Object) cir.getReturnValue()).overrides = Suppliers.memoize(TheEndBiomeData::createOverrides);
+		((TheEndBiomeSourceMixin) (Object) cir.getReturnValue()).quilt$overrides = Suppliers.memoize(TheEndBiomeData::createOverrides);
 	}
 
 	@Inject(method = "getNoiseBiome", at = @At("RETURN"), cancellable = true)
 	private void getWeightedEndBiome(int biomeX, int biomeY, int biomeZ, MultiNoiseUtil.MultiNoiseSampler noise, CallbackInfoReturnable<Holder<Biome>> cir) {
-		cir.setReturnValue(this.overrides.get().pick(biomeX, biomeY, biomeZ, noise, cir.getReturnValue()));
+		cir.setReturnValue(this.quilt$overrides.get().pick(biomeX, biomeY, biomeZ, noise, cir.getReturnValue()));
 	}
 
 	@Override
@@ -87,12 +87,12 @@ public abstract class TheEndBiomeSourceMixin extends BiomeSource {
 
 		if (!this.quilt$checkedAddedBiomes) {
 			this.quilt$checkedAddedBiomes = true;
-			this.quilt$hasAddedBiomes = !this.overrides.get().getAddedBiomes().isEmpty();
+			this.quilt$hasAddedBiomes = !this.quilt$overrides.get().getAddedBiomes().isEmpty();
 		}
 
 		if (this.quilt$hasAddedBiomes) {
 			biomes = new HashSet<>(biomes);
-			biomes.addAll(this.overrides.get().getAddedBiomes());
+			biomes.addAll(this.quilt$overrides.get().getAddedBiomes());
 		}
 
 		return biomes;

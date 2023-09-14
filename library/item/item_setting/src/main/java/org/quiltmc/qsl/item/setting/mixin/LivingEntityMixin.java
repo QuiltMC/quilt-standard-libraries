@@ -26,18 +26,17 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 
-import org.quiltmc.qsl.item.setting.api.EquipmentSlotProvider;
 import org.quiltmc.qsl.item.setting.impl.CustomItemSettingImpl;
 
 @Mixin(LivingEntity.class)
 abstract class LivingEntityMixin {
 	@Inject(
 			method = "getPreferredEquipmentSlot",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Equippable;getPreferredSlot()Lnet/minecraft/entity/EquipmentSlot;"),
+			at = @At(value = "FIELD", target = "Lnet/minecraft/entity/EquipmentSlot;MAINHAND:Lnet/minecraft/entity/EquipmentSlot;"),
 			cancellable = true
 	)
 	private static void onGetPreferredEquipmentSlot(ItemStack stack, CallbackInfoReturnable<EquipmentSlot> cir) {
-		EquipmentSlotProvider equipmentSlotProvider = CustomItemSettingImpl.EQUIPMENT_SLOT_PROVIDER.get(stack.getItem());
+		var equipmentSlotProvider = CustomItemSettingImpl.EQUIPMENT_SLOT_PROVIDER.get(stack.getItem());
 
 		if (equipmentSlotProvider != null) {
 			cir.setReturnValue(equipmentSlotProvider.getPreferredEquipmentSlot(stack));

@@ -159,7 +159,7 @@ public class BiomeModificationImpl {
 		return this.modifiers;
 	}
 
-	public void finalizeWorldGen(DynamicRegistryManager impl, WorldSaveProperties levelProperties, ResourceManager resourceManager) {
+	public void finalizeWorldGen(DynamicRegistryManager impl, WorldSaveProperties worldSaveProperties, ResourceManager resourceManager) {
 		this.reloader.apply(resourceManager, impl);
 		this.addMissingModifiers();
 		this.updateIdentifiedModifiers();

@@ -44,14 +44,11 @@ public class ModProtocolImpl {
 
 	@SuppressWarnings("ConstantConditions")
 	public static void loadVersions() {
-		//var modProto = RegistryConfig.INSTANCE.registry_sync;
-		//disableQuery = modProto.disable_mod_protocol_ping;
-		disableQuery = (Boolean) RegistryConfig.getSync("disable_mod_protocol_ping");
+		var config = RegistryConfig.INSTANCE.registry_sync;
+		disableQuery = config.disable_mod_protocol_ping.value();
 
-		//if (modProto.mod_protocol_version >= 0) {
-		if (((Number) RegistryConfig.getSync("mod_protocol_version")).intValue() >= 0) {
-			//prioritizedEntry = new ModProtocolDef("global:" + modProto.mod_protocol_id, modProto.mod_protocol_name, IntList.of(modProto.mod_protocol_version), false);
-			prioritizedEntry = new ModProtocolDef("global:" + (String) RegistryConfig.getSync("mod_protocol_id"), (String) RegistryConfig.getSync("mod_protocol_name"), IntList.of(((Number) RegistryConfig.getSync("mod_protocol_version")).intValue()), false);
+		if (config.mod_protocol_version.value() >= 0) {
+			prioritizedEntry = new ModProtocolDef("global:" + config.mod_protocol_id.value(), config.mod_protocol_name.value(), IntList.of(config.mod_protocol_version.value()), false);
 			prioritizedId = prioritizedEntry.id();
 			add(prioritizedEntry);
 		}

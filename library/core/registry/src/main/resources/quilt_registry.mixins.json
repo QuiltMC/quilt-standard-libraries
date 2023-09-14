@@ -19,6 +19,7 @@
     "ServerPlayerEntityMixin",
     "ServerPlayNetworkHandlerAccessor",
     "SimpleRegistryMixin",
+    "TagManagerLoaderMixin",
     "patch.BeaconBlockEntityMixin",
     "patch.MooshroomEntityMixin",
     "patch.StatusEffectInstanceMixin",

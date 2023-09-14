@@ -21,19 +21,17 @@ repositories {
 dependencies {
 	implementation libs.quilt.loom
 	implementation libs.indra.git
-	implementation libs.quilt.json5
+	implementation libs.quilt.parsers.json
 	implementation libs.quilt.gradle.licenser
 
-	implementation libs.asm
-	implementation libs.asm.analysis
-	implementation libs.asm.commons
-	implementation libs.asm.tree
-	implementation libs.asm.util
+	implementation libs.bundles.asm
 }
 
 // Visual Studio Code needs these
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+java {
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
+}
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"

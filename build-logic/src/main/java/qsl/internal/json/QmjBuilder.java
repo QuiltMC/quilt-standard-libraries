@@ -10,7 +10,7 @@ import qsl.internal.dependency.QslLibraryDependency;
 import qsl.internal.extension.QslModuleExtension;
 import qsl.internal.extension.QslModuleExtensionImpl;
 
-import org.quiltmc.json5.JsonWriter;
+import org.quiltmc.parsers.json.JsonWriter;
 
 public final class QmjBuilder {
 	public static void buildQmj(Project project, String version, String loaderVersion, MinecraftVersion minecraftVersion, QslModuleExtensionImpl ext, Path path) throws IOException {
@@ -51,7 +51,9 @@ public final class QmjBuilder {
 		if (Versions.COMPATIBLE_VERSIONS.isEmpty()) {
 			writer.value("=" + minecraftVersion.getSemVer());
 		} else {
-			writer.beginArray()
+			writer.beginObject()
+					.name("any")
+					.beginArray()
 					.value("=" + minecraftVersion.getSemVer());
 
 			for (var v : Versions.COMPATIBLE_VERSIONS) {
@@ -59,6 +61,7 @@ public final class QmjBuilder {
 			}
 
 			writer.endArray();
+			writer.endObject();
 		}
 
 		writer.endObject();

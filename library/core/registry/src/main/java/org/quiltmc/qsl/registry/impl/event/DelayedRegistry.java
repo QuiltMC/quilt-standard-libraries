@@ -20,10 +20,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 import com.mojang.datafixers.util.Pair;
@@ -31,18 +31,18 @@ import com.mojang.serialization.Lifecycle;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.util.Identifier;
-import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.registry.Holder;
+import net.minecraft.registry.Holder.Reference;
+import net.minecraft.registry.HolderLookup.RegistryLookup;
 import net.minecraft.registry.HolderOwner;
 import net.minecraft.registry.HolderProvider;
+import net.minecraft.registry.HolderSet.NamedSet;
 import net.minecraft.registry.MutableRegistry;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.Holder.Reference;
-import net.minecraft.registry.HolderLookup.RegistryLookup;
-import net.minecraft.registry.HolderSet.NamedSet;
 import net.minecraft.registry.tag.TagKey;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.random.RandomGenerator;
 
 @ApiStatus.Internal
 public final class DelayedRegistry<T> implements MutableRegistry<T> {

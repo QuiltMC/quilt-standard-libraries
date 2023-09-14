@@ -19,11 +19,8 @@ package org.quiltmc.qsl.worldgen.biome.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 import com.mojang.datafixers.util.Pair;
@@ -36,18 +33,10 @@ import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 import net.minecraft.world.biome.util.MultiNoiseBiomeSourceParameterList;
 
 /**
- * Internal data for modding Vanilla's {@link MultiNoiseBiomeSourceParameterList.Preset#NETHER}.
+ * Internal data for modding Vanilla's {@link MultiNoiseBiomeSourceParameterList.Preset#NETHER} preset.
  */
 @ApiStatus.Internal
 public final class NetherBiomeData {
-	// The cached sets of vanilla biomes that would generate from Vanilla's nether biome preset.
-	private static final Set<RegistryKey<Biome>> VANILLA_NETHER_BIOMES = MultiNoiseBiomeSourceParameterList.Preset.NETHER
-			.method_49514()
-			.collect(Collectors.toSet());
-
-	// The cached sets of all biomes, included modded ones, that would generate from Vanilla's nether biome preset.
-	private static final Set<RegistryKey<Biome>> NETHER_BIOMES = new HashSet<>();
-
 	public static final Map<RegistryKey<Biome>, MultiNoiseUtil.NoiseHypercube> NETHER_BIOME_NOISE_POINTS = new Reference2ObjectOpenHashMap<>();
 
 	private NetherBiomeData() {}
@@ -56,20 +45,10 @@ public final class NetherBiomeData {
 		Preconditions.checkArgument(biome != null, "Biome is null");
 		Preconditions.checkArgument(spawnNoisePoint != null, "MultiNoiseUtil.NoiseHypercube is null");
 		NETHER_BIOME_NOISE_POINTS.put(biome, spawnNoisePoint);
-		NetherBiomeData.clearBiomeSourceCache();
 	}
 
 	public static boolean canGenerateInNether(RegistryKey<Biome> biome) {
-		if (NETHER_BIOMES.isEmpty()) {
-			NETHER_BIOMES.addAll(VANILLA_NETHER_BIOMES);
-			NETHER_BIOMES.addAll(NETHER_BIOME_NOISE_POINTS.keySet());
-		}
-
-		return NETHER_BIOMES.contains(biome);
-	}
-
-	private static void clearBiomeSourceCache() {
-		NETHER_BIOMES.clear();
+		return MultiNoiseBiomeSourceParameterList.Preset.NETHER.method_49514().anyMatch(presetBiome -> presetBiome.equals(biome));
 	}
 
 	public static <T> MultiNoiseUtil.ParameterRangeList<T> withModdedBiomeEntries(

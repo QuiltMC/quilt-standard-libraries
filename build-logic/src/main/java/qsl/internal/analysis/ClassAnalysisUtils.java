@@ -40,7 +40,15 @@ public class ClassAnalysisUtils {
 	}
 
 	public static Stream<ClassNode> readPackage(FileSystem jarFs, String targetPackage) throws IOException {
-		return Files.list(jarFs.getPath(targetPackage.replace('.', '/')))
+		return readPackage(Files.list(jarFs.getPath(targetPackage.replace('.', '/'))));
+	}
+
+	public static Stream<ClassNode> readPackageRecursively(FileSystem jarFs, String targetPackage) throws IOException {
+		return readPackage(Files.walk(jarFs.getPath(targetPackage.replace('.', '/'))));
+	}
+
+	private static Stream<ClassNode> readPackage(Stream<Path> in) {
+		return in
 				.filter(path -> path.toString().endsWith(".class") && Files.isRegularFile(path))
 				.map(path -> {
 					try {

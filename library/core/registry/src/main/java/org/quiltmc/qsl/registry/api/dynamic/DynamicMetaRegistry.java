@@ -48,6 +48,57 @@ public final class DynamicMetaRegistry {
 	 * @param entryCodec the codec used to deserialize entries from datapacks
 	 * @throws IllegalStateException if this registry of registries already got frozen
 	 */
+	public static <E> void register(RegistryKey<? extends Registry<E>> key, Codec<E> entryCodec, DynamicRegistryFlag... flags) {
+		DynamicMetaRegistryImpl.register(key, entryCodec, flags);
+	}
+
+	/**
+	 * Registers a dynamic registry which contents get synced between the server and connected clients.
+	 * <p>
+	 * Entries will be loaded from {@code "data/<namespace>/<registry_namespace>/<registry_path>"} for every datapack
+	 * {@code namespace}, where {@code registry_namespace} and {@code registry_path}'s values are respectively
+	 * {@code key.getLocation().getNamespace()} and {@code key.getLocation().getPath()}.
+	 *
+	 * @param <E>        the type of elements in the dynamic registry
+	 * @param key        a {@link RegistryKey#ofRegistry(Identifier) key for the new dynamic registry}
+	 * @param entryCodec the codec used to both deserialize entries from datapacks and (de)serialize entries to and from packets
+	 * @throws IllegalStateException if this registry of registries already got frozen
+	 * @see #registerSynced(RegistryKey, Codec, Codec, DynamicRegistryFlag...)
+	 */
+	public static <E> void registerSynced(RegistryKey<? extends Registry<E>> key, Codec<E> entryCodec, DynamicRegistryFlag... flags) {
+		DynamicMetaRegistryImpl.registerSynced(key, entryCodec, entryCodec, flags);
+	}
+
+	/**
+	 * Registers a dynamic registry which contents get synced between the server and connected clients.
+	 * <p>
+	 * Entries will be loaded from {@code "data/<namespace>/<registry_namespace>/<registry_path>"} for every datapack
+	 * {@code namespace}, where {@code registry_namespace} and {@code registry_path}'s values are respectively
+	 * {@code key.getLocation().getNamespace()} and {@code key.getLocation().getPath()}.
+	 *
+	 * @param <E>        the type of elements in the dynamic registry
+	 * @param key        a {@link RegistryKey#ofRegistry(Identifier) key for the new dynamic registry}
+	 * @param entryCodec the codec used to deserialize entries from datapacks
+	 * @param syncCodec  the codec used to (de)serialize entries to and from packets - may be the same as {@code entryCodec}
+	 * @throws IllegalStateException if this registry of registries already got frozen
+	 * @see #registerSynced(RegistryKey, Codec, DynamicRegistryFlag...)
+	 */
+	public static <E> void registerSynced(RegistryKey<? extends Registry<E>> key, Codec<E> entryCodec, Codec<E> syncCodec, DynamicRegistryFlag... flags) {
+		DynamicMetaRegistryImpl.registerSynced(key, entryCodec, syncCodec, flags);
+	}
+
+	/**
+	 * Registers a server-side dynamic registry.
+	 * <p>
+	 * Entries will be loaded from {@code "data/<namespace>/<registry_namespace>/<registry_path>"} for every datapack
+	 * {@code namespace}, where {@code registry_namespace} and {@code registry_path}'s values are respectively
+	 * {@code key.getLocation().getNamespace()} and {@code key.getLocation().getPath()}.
+	 *
+	 * @param <E>        the type of elements in the dynamic registry
+	 * @param key        a {@link RegistryKey#ofRegistry(Identifier) key for the new dynamic registry}
+	 * @param entryCodec the codec used to deserialize entries from datapacks
+	 * @throws IllegalStateException if this registry of registries already got frozen
+	 */
 	public static <E> void register(RegistryKey<? extends Registry<E>> key, Codec<E> entryCodec) {
 		DynamicMetaRegistryImpl.register(key, entryCodec);
 	}
