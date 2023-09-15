@@ -39,7 +39,7 @@ public class RegistryConfig extends WrappedConfig {
 	}
 
 	public static class RegistrySync implements Section {
-		@Comment("Modpack protocol is a feature allowing you to prevent clients with mismatched protocol versions from joining.")
+		@Comment("The modpack protocol is a feature allowing you to prevent clients with mismatched protocol versions from joining.")
 		@Comment("Client with mismatched values won't be able to connect to servers with this enabled.")
 		@Comment("It should be used only for non-vanilla compatible modpacks!")
 		@Comment("Protocol version. Needs to be the same on client and server. If it has value of -1, it won't be required by servers.")

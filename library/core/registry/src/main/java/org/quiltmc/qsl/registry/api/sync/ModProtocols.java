@@ -46,7 +46,7 @@ import org.quiltmc.qsl.registry.impl.sync.server.ExtendedConnectionClient;
  * to connect (unless the mod protocol is marked optional).
  * <h2>Configuration</h2>
  * Mods can define a mod protocol in their {@code quilt.mod.json}.
- * <pre> {@code
+ * <pre>{@code
  * {
  *     "quilt_loader": {...},
  *     "quilt_registry": {
@@ -60,7 +60,7 @@ import org.quiltmc.qsl.registry.impl.sync.server.ExtendedConnectionClient;
  *  followed by the version, e.g. "Quilt Registry API v4.1.0"
  * Protocols can also be marked optional, which means they are not required to be supported by both sides in order
  * to connect:
- * <pre> {@code
+ * <pre>{@code
  * {
  *     "quilt_loader": {...},
  *     "quilt_registry": {
@@ -82,7 +82,7 @@ public final class ModProtocols {
 	private ModProtocols() {}
 
 	/**
-	 * {@return {@code true} if a modpack protocol has been provided through the config, otherwise {@code false}}
+	 * {@return {@code true} if a modpack protocol has been provided through the config, or {@code false} otherwise}
 	 */
 	@Contract(pure = true)
 	public static boolean isModpackProtocolEnabled() {
@@ -90,7 +90,7 @@ public final class ModProtocols {
 	}
 
 	/**
-	 * {@return a {@code String} representing the modpack protocol id, otherwise {@code null}}
+	 * {@return a string representing the modpack protocol id, or {@code null} otherwise}
 	 */
 	@Contract(pure = true)
 	@Nullable
@@ -99,7 +99,7 @@ public final class ModProtocols {
 	}
 
 	/**
-	 * {@return a {@code String} representing the modpack protocol display name, otherwise {@code null}}
+	 * {@return a string representing the modpack protocol display name, or {@code null} otherwise}
 	 */
 	@Contract(pure = true)
 	@Nullable
@@ -138,8 +138,8 @@ public final class ModProtocols {
 	 * @return latest supported by player protocol for this server's {@linkplain #getModpackProtocolId() modpack protocol id}. -1 if not supported
 	 */
 	@Contract(pure = true)
-	public static int getSupportedModpack(@NotNull ServerPlayerEntity handler) {
-		return getSupportedModpack(handler.networkHandler);
+	public static int getSupportedModpack(@NotNull ServerPlayerEntity player) {
+		return getSupportedModpack(player.networkHandler);
 	}
 
 	/**
