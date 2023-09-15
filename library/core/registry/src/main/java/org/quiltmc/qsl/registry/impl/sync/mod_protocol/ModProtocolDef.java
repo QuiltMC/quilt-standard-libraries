@@ -21,8 +21,19 @@ import it.unimi.dsi.fastutil.ints.IntList;
 
 import net.minecraft.network.PacketByteBuf;
 
+import net.minecraft.server.network.ServerPlayerEntity;
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.qsl.registry.api.sync.ModProtocols;
 import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
 
+/**
+ * A definition of a mod protocol.
+ *
+ * @param id the id of the protocol. For mods, this always matches the mod id.
+ * @param displayName the display name of the protocol. For mods, this always matches the mod's name.
+ * @param versions
+ * @param optional whether a player can connect to a server with any protocol version. The player's maximum supported protocol version can still be queried with {@link ModProtocols#getSupported(ServerPlayerEntity, ModContainer)}
+ */
 public record ModProtocolDef(String id, String displayName, IntList versions, boolean optional) {
 	public static void write(PacketByteBuf buf, ModProtocolDef def) {
 		buf.writeString(def.id);

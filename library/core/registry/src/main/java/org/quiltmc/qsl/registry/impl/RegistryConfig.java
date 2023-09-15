@@ -39,15 +39,15 @@ public class RegistryConfig extends WrappedConfig {
 	}
 
 	public static class RegistrySync implements Section {
-		@Comment("Mod protocol is a feature allowing you to prevent clients with mismatched settings to join.")
-		@Comment("Client with mismatched values won't be able to connect to servers having this enabled.")
+		@Comment("The modpack protocol is a feature allowing you to prevent clients with mismatched protocol versions from joining.")
+		@Comment("Client with mismatched values won't be able to connect to servers with this enabled.")
 		@Comment("It should be used only for non-vanilla compatible modpacks!")
 		@Comment("Protocol version. Needs to be the same on client and server. If it has value of -1, it won't be required by servers.")
-		public final int mod_protocol_version = -1;
+		public final int modpack_protocol_version = -1;
 		@Comment("Protocol id. It should be different for every modpack, to prevent joining with mismatched mods.")
-		public final String mod_protocol_id = "my_quilt_modpack";
-		@Comment("A mod protocol name. Used for easier identification. Doesn't effect functionality")
-		public final String mod_protocol_name = "My Quilt Modpack";
+		public final String modpack_protocol_id = "my_quilt_modpack";
+		@Comment("A modpack name. Used for easier identification. Doesn't affect functionality")
+		public final String modpack_protocol_name = "My Quilt Modpack v1.3";
 
 
 		@Comment("Message displayed for players joining with clients incompatible with Registry Sync. Supports strings and Minecraft's JSON text format.")
