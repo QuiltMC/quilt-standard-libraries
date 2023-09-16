@@ -18,10 +18,10 @@ package org.quiltmc.qsl.item.extensions.mixin.bow.client;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+import com.mojang.authlib.GameProfile;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -52,12 +52,12 @@ public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity {
 	}
 
 	// Modify the draw duration value
-	@ModifyConstant(method = "getSpeed", constant = @Constant(floatValue = 20.0F))
-	private float modifyDrawDuration(float constant) {
-		float maxDrawDuration = (float) ((BowExtensions) this.getActiveItem().getItem()).getMaxDrawDuration();
-		if (maxDrawDuration != constant) {
-			return maxDrawDuration; // Return custom bow's maximum draw duration
+	@ModifyVariable(method = "getSpeed", at = @At("STORE"), ordinal = 1)
+	private float test(float original) {
+		if (this.getActiveItem().getItem() instanceof BowExtensions customBow) {
+			return customBow.getCustomPullProgress(this.getItemUseTime(), this.getActiveItem()); // Return custom bow draw duration
 		}
-		return constant; // Default behavior
+		
+		return original; // Default behavior
 	}
 }
