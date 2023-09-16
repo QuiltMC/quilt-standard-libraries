@@ -45,11 +45,4 @@ public interface BowExtensions {
 	default @Range(from = 0, to = 1) float getCustomPullProgress(int useTicks, @NotNull ItemStack bowStack) {
 		return BowItem.getPullProgress(useTicks);
 	}
-
-    /**
-	* {@return the maximum draw duration of the bow}
-    */
-	default int getMaxDrawDuration() {
-		return 20;
-	}
 }
