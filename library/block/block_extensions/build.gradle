@@ -25,26 +25,26 @@ import qsl.internal.task.GenerateAccessWidenerTask
 import java.nio.file.FileSystem
 import java.nio.file.FileSystems
 
-tasks.register("generateAccessWidener", GenerateAccessWidenerTask) {
+def generateAccessWidener = tasks.register("generateAccessWidener", GenerateAccessWidenerTask) {
 	generator = this::generateBlockConstructors
 	templatePath.set(file("template.accesswidener"))
 	outputPath.set(file('src/main/resources/quilt_block_extensions.accesswidener'))
 }
 
-def generateBlockConstructors(List<String> lines, FileSystem fs) {
+static def generateBlockConstructors(List<String> lines, FileSystem fs) {
 	lines.add("# Constructors of non-abstract block classes")
-	ClassAnalysisUtils.readPackage(fs, "net.minecraft.block")
+	ClassAnalysisUtils.readPackageRecursively(fs, "net.minecraft.block")
 			.filter { (it.access & Opcodes.ACC_ABSTRACT) == 0 }
 			.forEach { node ->
 				for (def method : node.methods) {
-					// Checklist for finding block constructors as of 1.18.2:
-					//  - class directly in net.minecraft.block (excluding subpackages)
+					// Checklist for finding block constructors as of 1.20.1 (QM 1.20.1+build.23):
+					//  - class in net.minecraft.block or its subpackages
 					//  - method name == <init> (by definition)
 					//  - contains an AbstractBlock$Settings parameter
 					//  - only taking into account non-abstract classes and non-public constructors
 
 					// Block constructor...
-					if (method.name == "<init>" && Type.getArgumentTypes(method.desc).any { it.internalName == 'net/minecraft/block/AbstractBlock$Settings' }) {
+					if (method.name == '<init>' && Type.getArgumentTypes(method.desc).any { it.internalName == 'net/minecraft/block/AbstractBlock$Settings' }) {
 						// ...and non-public
 						if ((method.access & Opcodes.ACC_PUBLIC) == 0) {
 							lines.add("transitive-accessible method $node.name <init> $method.desc")
@@ -58,7 +58,7 @@ generateQmj.dependsOn generateAccessWidener
 validateAccessWidener.dependsOn generateAccessWidener
 
 // Check that the QuiltBlockSettings class has all required methods.
-tasks.register('checkBlockSettings') {
+def checkBlockSettings = tasks.register('checkBlockSettings') {
 	group "verification"
 	dependsOn jar
 
@@ -75,7 +75,7 @@ tasks.register('checkBlockSettings') {
 check.dependsOn checkBlockSettings
 
 static def checkBlockSettings(FileSystem moduleFs, FileSystem mcFs) {
-	def quiltClassName = "org/quiltmc/qsl/block/extensions/api/QuiltBlockSettings"
+	def quiltClassName = 'org/quiltmc/qsl/block/extensions/api/QuiltBlockSettings'
 	def mcClassName = 'net/minecraft/block/AbstractBlock$Settings'
 	def quiltClass = ClassAnalysisUtils.readClass(
 			ClassAnalysisUtils.getClassPath(moduleFs, quiltClassName)
@@ -102,7 +102,7 @@ static def checkBlockSettings(FileSystem moduleFs, FileSystem mcFs) {
 	mcClass.methods.stream().filter {
 		// Only get the methods that create a new block Settings instance.
 		((it.access & Opcodes.ACC_PUBLIC) != 0) && ((it.access & Opcodes.ACC_STATIC) != 0)
-				&& it.name.equals("of") && it.desc.endsWith(mcSettingsClassDesc)
+				&& it.name == 'of' && it.desc.endsWith(mcSettingsClassDesc)
 	}.forEach {
 		String desc = it.desc.substring(0, it.desc.length() - mcSettingsClassDesc.length()) + quiltClassDesc
 

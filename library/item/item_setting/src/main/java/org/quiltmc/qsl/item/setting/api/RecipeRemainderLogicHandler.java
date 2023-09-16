@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.item.setting.api;
 
+import java.util.function.Consumer;
+
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
@@ -24,6 +26,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -67,7 +70,23 @@ public interface RecipeRemainderLogicHandler {
 	 */
 	@Contract(mutates = "param1, param4, param6")
 	static void handleRemainderForNonPlayerCraft(ItemStack input, int amount, @Nullable Recipe<?> recipe, DefaultedList<ItemStack> inventory, int index, World world, BlockPos location) {
-		RecipeRemainderLogicHandlerImpl.handleRemainderForNonPlayerCraft(input, amount, recipe, inventory, index, world, location);
+		handleRemainderForNonPlayerCraft(input, amount, recipe, inventory, index, remainder -> ItemScatterer.spawn(world, location.getX(), location.getY(), location.getZ(), remainder));
+	}
+
+	/**
+	 * Handles the recipe remainder logic for crafts without a {@link PlayerEntity player} present.
+	 * Excess items that cannot be returned to a slot are handled by the provided {@link Consumer consumer}.
+	 *
+	 * @param input the original item stack
+	 * @param amount the amount by which to decrease the stack
+	 * @param recipe the recipe being used
+	 * @param inventory the inventory
+	 * @param index the index of the original stack in the inventory
+	 * @param failure callback that is run if excess items could not be returned to a slot
+	 */
+	@Contract(mutates = "param1, param4, param6")
+	static void handleRemainderForNonPlayerCraft(ItemStack input, int amount, @Nullable Recipe<?> recipe, DefaultedList<ItemStack> inventory, int index, Consumer<ItemStack> failure) {
+		RecipeRemainderLogicHandlerImpl.handleRemainderForNonPlayerCraft(input, amount, recipe, inventory, index, failure);
 	}
 
 	/**

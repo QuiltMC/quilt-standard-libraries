@@ -68,26 +68,17 @@ public final class ServerRegistrySync {
 	public static IntList SERVER_SUPPORTED_PROTOCOL = new IntArrayList(ProtocolVersions.IMPL_SUPPORTED_VERSIONS);
 
 	public static void readConfig() {
-		/*var config = RegistryConfig.INSTANCE.registry_sync;
+		var config = RegistryConfig.INSTANCE.registry_sync;
 
-		noRegistrySyncMessage = text(config.missing_registry_sync_message);
-		errorStyleHeader = text(config.mismatched_entries_top_message);
-		errorStyleFooter = text(config.mismatched_entries_bottom_message);
+		noRegistrySyncMessage = text(config.missing_registry_sync_message.value());
+		errorStyleHeader = text(config.mismatched_entries_top_message.value());
+		errorStyleFooter = text(config.mismatched_entries_bottom_message.value());
 
-		supportFabric = config.support_fabric_api_protocol;
-		forceFabricFallback = config.force_fabric_api_protocol_fallback;
-		forceDisable = config.disable_registry_sync;
-		showErrorDetails = config.mismatched_entries_show_details;
-		*/
-		noRegistrySyncMessage = text((String) RegistryConfig.getSync("missing_registry_sync_message"));
-		errorStyleHeader = text((String) RegistryConfig.getSync("mismatched_entries_top_message"));
-		errorStyleFooter = text((String) RegistryConfig.getSync("mismatched_entries_bottom_message"));
-
-		supportFabric = (Boolean) RegistryConfig.getSync("support_fabric_api_protocol");
-		forceFabricFallback = (Boolean) RegistryConfig.getSync("force_fabric_api_protocol_fallback");
-		forceDisable = (Boolean) RegistryConfig.getSync("disable_registry_sync");
-		showErrorDetails = (Boolean) RegistryConfig.getSync("mismatched_entries_show_details");
-		stateValidation = !(Boolean) RegistryConfig.getSync("disable_state_validation");
+		supportFabric = config.support_fabric_api_protocol.value();
+		forceFabricFallback = config.force_fabric_api_protocol_fallback.value();
+		forceDisable = config.disable_registry_sync.value();
+		showErrorDetails = config.mismatched_entries_show_details.value();
+		stateValidation = !config.disable_state_validation.value();
 
 		if (stateValidation) {
 			for (var container : QuiltLoader.getAllMods()) {
