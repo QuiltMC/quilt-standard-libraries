@@ -53,7 +53,7 @@ public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity {
 
 	// Modify the draw duration value
 	@ModifyVariable(method = "getSpeed", at = @At("STORE"), ordinal = 1)
-	private float test(float original) {
+	private float customDrawDuration(float original) {
 		if (this.getActiveItem().getItem() instanceof BowExtensions customBow) {
 			return customBow.getCustomPullProgress(this.getItemUseTime(), this.getActiveItem()); // Return custom bow draw duration
 		}
