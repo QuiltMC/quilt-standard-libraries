@@ -38,7 +38,7 @@ public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity {
 		super(world, pos, yaw, gameProfile);
 	}
 	
-	// Make sure that the fov is changed for custom items
+	// Make sure that the fov is changed for custom bows
 	@Redirect(
 		  method = "getSpeed",
 		  at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z")
