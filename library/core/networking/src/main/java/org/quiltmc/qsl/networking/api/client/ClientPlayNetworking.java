@@ -221,7 +221,7 @@ public final class ClientPlayNetworking {
 	public static void send(Identifier channelName, PacketByteBuf buf) throws IllegalStateException {
 		// You cant send without a client player, so this is fine
 		if (MinecraftClient.getInstance().getNetworkHandler() != null) {
-			MinecraftClient.getInstance().getNetworkHandler().sendPacket(createC2SPacket(channelName, buf));
+			MinecraftClient.getInstance().getNetworkHandler().getConnection().send(createC2SPacket(channelName, buf));
 			return;
 		}
 
@@ -246,7 +246,7 @@ public final class ClientPlayNetworking {
 		 * 	String message = buf.readString(32767);
 		 *
 		 * 	// All operations on the server or world must be executed on the server thread
-		 * 	client.execute(() -&rt; {
+		 * 	client.execute(() -> {
 		 * 		client.inGameHud.setOverlayMessage(message, true);
 		 *    });
 		 * });

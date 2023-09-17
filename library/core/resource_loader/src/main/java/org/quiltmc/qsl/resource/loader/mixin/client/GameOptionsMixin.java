@@ -40,13 +40,13 @@ public abstract class GameOptionsMixin {
 	public List<String> resourcePacks;
 
 	@Shadow
-	private static List<String> deserializeStringList(String content) {
-		throw new IllegalStateException("Injection failed.");
-	}
-
-	@Shadow
 	@Final
 	static Gson GSON;
+
+	@Shadow
+	private static List<String> deserializeStringList(String jsonContent) {
+		throw new IllegalStateException("Injection failed.");
+	}
 
 	/**
 	 * Represents the available resource packs, similar to how data packs work.

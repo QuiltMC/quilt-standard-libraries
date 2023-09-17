@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.resource.loader.api;
 
+import net.minecraft.resource.pack.ResourcePack;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.resource.pack.BuiltinResourcePackProvider;

@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.resource.loader.mixin;
 
+import org.quiltmc.qsl.resource.loader.api.QuiltResourcePackProfile;
+import org.quiltmc.qsl.resource.loader.impl.ModResourcePackUtil;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

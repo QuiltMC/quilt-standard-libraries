@@ -254,7 +254,7 @@ public final class ServerPlayNetworking {
 		Objects.requireNonNull(channelName, "Channel name cannot be null");
 		Objects.requireNonNull(buf, "Packet byte buf cannot be null");
 
-		player.networkHandler.sendPacket(createS2CPacket(channelName, buf));
+		player.networkHandler.(createS2CPacket(channelName, buf));
 	}
 
 	/**
