@@ -17,10 +17,12 @@
 package org.quiltmc.qsl.registry.mixin;
 
 import java.util.IdentityHashMap;
+import java.util.List;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
+import org.quiltmc.qsl.registry.impl.sync.server.DelayedPacketsHolder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -29,6 +31,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkSide;
+import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Util;
 
@@ -36,13 +39,16 @@ import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
 import org.quiltmc.qsl.registry.impl.sync.server.ExtendedConnectionClient;
 
 @Mixin(ClientConnection.class)
-public class ClientConnectionMixin implements ExtendedConnectionClient {
+public class ClientConnectionMixin implements ExtendedConnectionClient, DelayedPacketsHolder {
 	@Unique
 	private IdentityHashMap<Registry<?>, ObjectOpenCustomHashSet<Object>> quilt$unknownEntries = new IdentityHashMap<>();
 	@Unique
 	private Object2IntMap<String> quilt$modProtocol = new Object2IntOpenHashMap<>();
 	@Unique
 	private boolean quilt$understandsOptional;
+
+	@Unique
+	private List<CustomPayloadC2SPacket> quilt$delayedPackets;
 
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void quilt$setDefault(NetworkSide side, CallbackInfo ci) {
@@ -86,5 +92,15 @@ public class ClientConnectionMixin implements ExtendedConnectionClient {
 	@Override
 	public int quilt$getModProtocol(String id) {
 		return this.quilt$modProtocol.getInt(id);
+	}
+
+	@Override
+	public void quilt$setPacketList(List<CustomPayloadC2SPacket> packetList) {
+		this.quilt$delayedPackets = packetList;
+	}
+
+	@Override
+	public List<CustomPayloadC2SPacket> quilt$getPacketList() {
+		return this.quilt$delayedPackets;
 	}
 }

@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.networking.mixin.client;
 
+import org.quiltmc.qsl.networking.impl.payload.PacketByteBufLoginQueryRequestPayload;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -54,8 +55,12 @@ abstract class ClientLoginNetworkHandlerMixin implements NetworkHandlerExtension
 			cancellable = true
 	)
 	private void handleQueryRequest(LoginQueryRequestS2CPacket packet, CallbackInfo ci) {
-		if (this.addon.handlePacket(packet)) {
-			ci.cancel();
+		if (packet.payload() instanceof PacketByteBufLoginQueryRequestPayload payload) {
+			if (this.addon.handlePacket(packet)) {
+				ci.cancel();
+			} else {
+				payload.data().skipBytes(payload.data().readableBytes());
+			}
 		}
 	}
 

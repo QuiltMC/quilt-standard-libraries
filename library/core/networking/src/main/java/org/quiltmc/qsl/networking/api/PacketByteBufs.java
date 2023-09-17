@@ -50,7 +50,7 @@ public final class PacketByteBufs {
 	// Convenience methods for byte buffer methods that return a new byte buffer
 
 	/**
-	 * Wraps the newly created buf from {@code buf.readBytes} in a packet byte buffer.
+	 * Wraps the newly created data from {@code data.readBytes} in a packet byte buffer.
 	 *
 	 * @param buf    the original buffer
 	 * @param length the number of bytes to transfer
@@ -64,7 +64,7 @@ public final class PacketByteBufs {
 	}
 
 	/**
-	 * Wraps the newly created buffer from {@code buf.readSlice} in a packet byte buffer.
+	 * Wraps the newly created buffer from {@code data.readSlice} in a packet byte buffer.
 	 *
 	 * @param buf    the original buffer
 	 * @param length the size of the new slice
@@ -78,7 +78,7 @@ public final class PacketByteBufs {
 	}
 
 	/**
-	 * Wraps the newly created buffer from {@code buf.readRetainedSlice} in a packet byte buffer.
+	 * Wraps the newly created buffer from {@code data.readRetainedSlice} in a packet byte buffer.
 	 *
 	 * @param buf    the original buffer
 	 * @param length the size of the new slice
@@ -92,7 +92,7 @@ public final class PacketByteBufs {
 	}
 
 	/**
-	 * Wraps the newly created buffer from {@code buf.copy} in a packet byte buffer.
+	 * Wraps the newly created buffer from {@code data.copy} in a packet byte buffer.
 	 *
 	 * @param buf the original buffer
 	 * @return a copy of the buffer
@@ -105,7 +105,7 @@ public final class PacketByteBufs {
 	}
 
 	/**
-	 * Wraps the newly created buffer from {@code buf.copy} in a packet byte buffer.
+	 * Wraps the newly created buffer from {@code data.copy} in a packet byte buffer.
 	 *
 	 * @param buf    the original buffer
 	 * @param index  the starting index
@@ -120,7 +120,7 @@ public final class PacketByteBufs {
 	}
 
 	/**
-	 * Wraps the newly created buffer from {@code buf.slice} in a packet byte buffer.
+	 * Wraps the newly created buffer from {@code data.slice} in a packet byte buffer.
 	 *
 	 * @param buf the original buffer
 	 * @return a slice of the buffer
@@ -133,7 +133,7 @@ public final class PacketByteBufs {
 	}
 
 	/**
-	 * Wraps the newly created buffer from {@code buf.retainedSlice} in a packet byte buffer.
+	 * Wraps the newly created buffer from {@code data.retainedSlice} in a packet byte buffer.
 	 *
 	 * @param buf the original buffer
 	 * @return a slice of the buffer
@@ -146,7 +146,7 @@ public final class PacketByteBufs {
 	}
 
 	/**
-	 * Wraps the newly created buffer from {@code buf.slice} in a packet byte buffer.
+	 * Wraps the newly created buffer from {@code data.slice} in a packet byte buffer.
 	 *
 	 * @param buf    the original buffer
 	 * @param index  the starting index
@@ -161,7 +161,7 @@ public final class PacketByteBufs {
 	}
 
 	/**
-	 * Wraps the newly created buffer from {@code buf.retainedSlice} in a packet byte buffer.
+	 * Wraps the newly created buffer from {@code data.retainedSlice} in a packet byte buffer.
 	 *
 	 * @param buf    the original buffer
 	 * @param index  the starting index
@@ -176,7 +176,7 @@ public final class PacketByteBufs {
 	}
 
 	/**
-	 * Wraps the newly created buffer from {@code buf.duplicate} in a packet byte buffer.
+	 * Wraps the newly created buffer from {@code data.duplicate} in a packet byte buffer.
 	 *
 	 * @param buf the original buffer
 	 * @return a duplicate of the buffer
@@ -189,7 +189,7 @@ public final class PacketByteBufs {
 	}
 
 	/**
-	 * Wraps the newly created buffer from {@code buf.retainedDuplicate} in a packet byte buffer.
+	 * Wraps the newly created buffer from {@code data.retainedDuplicate} in a packet byte buffer.
 	 *
 	 * @param buf the original buffer
 	 * @return a duplicate of the buffer

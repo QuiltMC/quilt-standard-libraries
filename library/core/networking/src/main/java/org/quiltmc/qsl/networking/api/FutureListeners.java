@@ -36,7 +36,7 @@ import net.minecraft.network.PacketByteBuf;
  */
 public final class FutureListeners {
 	/**
-	 * Returns a future listener that releases a packet byte buf when the buffer has been sent to a remote connection.
+	 * Returns a future listener that releases a packet byte data when the buffer has been sent to a remote connection.
 	 *
 	 * @param buf the buffer
 	 * @return the future listener
@@ -52,7 +52,7 @@ public final class FutureListeners {
 	}
 
 	/**
-	 * Returns whether a netty channel performs local transportation, or if the message objects in the channel are directly passed than written to and read from a byte buf.
+	 * Returns whether a netty channel performs local transportation, or if the message objects in the channel are directly passed than written to and read from a byte data.
 	 *
 	 * @param channel the channel to check
 	 * @return whether the channel is local

@@ -108,7 +108,7 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 			method = "onStatusEffectApplied",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/entity/effect/StatusEffect;onApplied(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/attribute/AttributeContainer;I)V",
+					target = "Lnet/minecraft/entity/effect/StatusEffect;onApplied(Lnet/minecraft/entity/attribute/AttributeContainer;I)V",
 					shift = At.Shift.AFTER
 			)
 	)
@@ -120,13 +120,13 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 			method = "onStatusEffectRemoved",
 			at = @At(
 				value = "INVOKE",
-				target = "Lnet/minecraft/entity/effect/StatusEffect;onRemoved(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/attribute/AttributeContainer;I)V"
+				target = "Lnet/minecraft/entity/effect/StatusEffect;onRemoved(Lnet/minecraft/entity/attribute/AttributeContainer;)V"
 			)
 	)
-	private void quilt$callOnRemovedWithReason(StatusEffect instance, LivingEntity entity, AttributeContainer attributes, int amplifier,
-			StatusEffectInstance effect) {
-		instance.onRemoved(entity, attributes, effect, this.quilt$lastRemovalReason);
-		StatusEffectEvents.ON_REMOVED.invoker().onRemoved(entity, effect, this.quilt$lastRemovalReason);
+	private void quilt$callOnRemovedWithReason(StatusEffect instance, AttributeContainer attributes) {
+		StatusEffectInstance effect = this.activeStatusEffects.get(instance);
+		instance.onRemoved((LivingEntity) (Object) this, attributes, effect, this.quilt$lastRemovalReason);
+		StatusEffectEvents.ON_REMOVED.invoker().onRemoved((LivingEntity) (Object) this, effect, this.quilt$lastRemovalReason);
 	}
 
 	/**
@@ -161,7 +161,7 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 			method = "onStatusEffectUpgraded",
 			at = @At(
 				value = "INVOKE",
-				target = "Lnet/minecraft/entity/effect/StatusEffect;onApplied(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/attribute/AttributeContainer;I)V",
+				target = "Lnet/minecraft/entity/effect/StatusEffect;onApplied(Lnet/minecraft/entity/attribute/AttributeContainer;I)V",
 				shift = At.Shift.AFTER
 			)
 	)
@@ -171,11 +171,11 @@ public abstract class LivingEntityMixin extends Entity implements QuiltLivingEnt
 
 	@Redirect(method = "onStatusEffectUpgraded", at = @At(
 			value = "INVOKE",
-			target = "Lnet/minecraft/entity/effect/StatusEffect;onRemoved(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/attribute/AttributeContainer;I)V")
+			target = "Lnet/minecraft/entity/effect/StatusEffect;onRemoved(Lnet/minecraft/entity/attribute/AttributeContainer;)V")
 	)
-	private void quilt$removeWithUpgradeApplyingReason(StatusEffect instance, LivingEntity entity, AttributeContainer attributes, int amplifier,
-			StatusEffectInstance effect) {
-		instance.onRemoved(entity, attributes, effect, StatusEffectRemovalReason.UPGRADE_REAPPLYING);
-		StatusEffectEvents.ON_REMOVED.invoker().onRemoved(entity, effect, StatusEffectRemovalReason.UPGRADE_REAPPLYING);
+	private void quilt$removeWithUpgradeApplyingReason(StatusEffect instance, AttributeContainer attributes) {
+		StatusEffectInstance effect = this.activeStatusEffects.get(instance);
+		instance.onRemoved((LivingEntity) (Object) this, attributes, effect, StatusEffectRemovalReason.UPGRADE_REAPPLYING);
+		StatusEffectEvents.ON_REMOVED.invoker().onRemoved((LivingEntity) (Object) this, effect, StatusEffectRemovalReason.UPGRADE_REAPPLYING);
 	}
 }

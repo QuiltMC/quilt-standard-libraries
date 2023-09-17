@@ -22,9 +22,9 @@ import java.util.Map;
 
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.network.NetworkState;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.util.Identifier;
@@ -35,8 +35,8 @@ import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.networking.impl.AbstractChanneledNetworkAddon;
 import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
 import org.quiltmc.qsl.networking.impl.NetworkingImpl;
-import org.quiltmc.qsl.networking.mixin.accessor.CustomPayloadC2SPacketAccessor;
-import org.quiltmc.qsl.networking.mixin.accessor.ServerPlayNetworkHandlerAccessor;
+import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
+import org.quiltmc.qsl.networking.mixin.accessor.AbstractServerPacketHandlerAccessor;
 
 @ApiStatus.Internal
 public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<ServerPlayNetworking.ChannelReceiver> {
@@ -45,12 +45,12 @@ public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 	private boolean sentInitialRegisterPacket;
 
 	public ServerPlayNetworkAddon(ServerPlayNetworkHandler handler, MinecraftServer server) {
-		super(ServerNetworkingImpl.PLAY, ((ServerPlayNetworkHandlerAccessor) handler).getConnection(), "ServerPlayNetworkAddon for " + handler.player.getEntityName());
+		super(ServerNetworkingImpl.PLAY, ((AbstractServerPacketHandlerAccessor) handler).getConnection(), "ServerPlayNetworkAddon for " + handler.player.getEntityName());
 		this.handler = handler;
 		this.server = server;
 
 		// Must register pending channels via lateinit
-		this.registerPendingChannels((ChannelInfoHolder) this.connection);
+		this.registerPendingChannels((ChannelInfoHolder) this.connection, NetworkState.PLAY);
 
 		// Register global receivers and attach to session
 		this.receiver.startSession(this);
@@ -75,17 +75,16 @@ public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 	/**
 	 * Handles an incoming packet.
 	 *
-	 * @param packet the packet to handle
+	 * @param payload the packet to handle
 	 * @return true if the packet has been handled
 	 */
-	public boolean handle(CustomPayloadC2SPacket packet) {
+	public boolean handle(PacketByteBufPayload payload) {
 		// Do not handle the packet on game thread
 		if (this.server.isOnThread()) {
 			return false;
 		}
 
-		CustomPayloadC2SPacketAccessor access = (CustomPayloadC2SPacketAccessor) packet;
-		return this.handle(access.getChannel(), access.getData());
+		return this.handle(payload.id(), payload.data());
 	}
 
 	@Override
@@ -147,6 +146,6 @@ public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 
 	@Override
 	protected boolean isReservedChannel(Identifier channelName) {
-		return NetworkingImpl.isReservedPlayChannel(channelName);
+		return NetworkingImpl.isReservedCommonChannel(channelName);
 	}
 }

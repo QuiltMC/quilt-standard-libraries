@@ -28,19 +28,23 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.network.NetworkState;
 import net.minecraft.util.Identifier;
 
 @ApiStatus.Internal
 public final class GlobalReceiverRegistry<H> {
+	private final NetworkState state;
+
 	private final ReadWriteLock lock = new ReentrantReadWriteLock();
 	private final Map<Identifier, H> receivers;
 	private final Set<AbstractNetworkAddon<H>> trackedAddons = new HashSet<>();
 
-	public GlobalReceiverRegistry() {
-		this(new Object2ObjectOpenHashMap<>()); // sync map should be fine as there is little read write competitions
+	public GlobalReceiverRegistry(NetworkState state) {
+		this(state, new Object2ObjectOpenHashMap<>()); // sync map should be fine as there is little read write competitions
 	}
 
-	public GlobalReceiverRegistry(Map<Identifier, H> map) {
+	public GlobalReceiverRegistry(NetworkState state, Map<Identifier, H> map) {
+		this.state = state;
 		this.receivers = map;
 	}
 
@@ -60,7 +64,7 @@ public final class GlobalReceiverRegistry<H> {
 		Objects.requireNonNull(channelName, "Channel name cannot be null");
 		Objects.requireNonNull(handler, "Channel handler cannot be null");
 
-		if (NetworkingImpl.isReservedPlayChannel(channelName)) {
+		if (NetworkingImpl.isReservedCommonChannel(channelName)) {
 			throw new IllegalArgumentException(String.format("Cannot register handler for reserved channel with name \"%s\"", channelName));
 		}
 
@@ -83,7 +87,7 @@ public final class GlobalReceiverRegistry<H> {
 	public H unregisterGlobalReceiver(Identifier channelName) {
 		Objects.requireNonNull(channelName, "Channel name cannot be null");
 
-		if (NetworkingImpl.isReservedPlayChannel(channelName)) {
+		if (NetworkingImpl.isReservedCommonChannel(channelName)) {
 			throw new IllegalArgumentException(String.format("Cannot unregister packet handler for reserved channel with name \"%s\"", channelName));
 		}
 
@@ -173,5 +177,9 @@ public final class GlobalReceiverRegistry<H> {
 		} finally {
 			lock.unlock();
 		}
+	}
+
+	public NetworkState getState() {
+		return this.state;
 	}
 }

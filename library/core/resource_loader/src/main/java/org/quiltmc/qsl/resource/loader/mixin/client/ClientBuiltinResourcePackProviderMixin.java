@@ -78,7 +78,7 @@ public abstract class ClientBuiltinResourcePackProviderMixin {
 			),
 			index = 0
 	)
-	private static ResourcePack onPackGet(ResourcePack pack) {
+	private ResourcePack onPackGet(ResourcePack pack) {
 		return ResourceLoaderImpl.buildMinecraftResourcePack(ResourceType.CLIENT_RESOURCES, pack);
 	}
 

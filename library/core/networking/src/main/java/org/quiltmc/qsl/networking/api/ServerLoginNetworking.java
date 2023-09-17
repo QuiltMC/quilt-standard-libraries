@@ -169,13 +169,13 @@ public final class ServerLoginNetworking {
 		 * building of a followup query request can be performed properly on the logical server
 		 * thread before the player successfully logs in:
 		 * <pre>{@code
-		 * ServerLoginNetworking.registerGlobalReceiver(CHECK_CHANNEL, (server, handler, understood, buf, synchronizer, responseSender) -&gt; {
+		 * ServerLoginNetworking.registerGlobalReceiver(CHECK_CHANNEL, (server, handler, understood, data, synchronizer, responseSender) -&gt; {
 		 * 	if (!understood) {
 		 * 		handler.disconnect(new LiteralText("Only accept clients that can check!"));
 		 * 		return;
 		 *    }
 		 *
-		 * 	String checkMessage = buf.readString(32767);
+		 * 	String checkMessage = data.readString(32767);
 		 *
 		 * 	// Just send the CompletableFuture returned by the server's submit method
 		 * 	synchronizer.waitFor(server.submit(() -&gt; {

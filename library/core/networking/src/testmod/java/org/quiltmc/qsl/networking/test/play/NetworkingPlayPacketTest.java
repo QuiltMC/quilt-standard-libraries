@@ -27,6 +27,8 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.PacketBundleS2CPacket;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -66,10 +68,10 @@ public final class NetworkingPlayPacketTest implements ModInitializer {
 					bufB.writeText(Text.literal("Bundled #2"));
 
 					var packet = new PacketBundleS2CPacket(List.of(
-							ServerPlayNetworking.createS2CPacket(TEST_CHANNEL, bufA),
-							ServerPlayNetworking.createS2CPacket(TEST_CHANNEL, bufB)
+						(Packet<ClientPlayPacketListener>) (Object) ServerPlayNetworking.createS2CPacket(TEST_CHANNEL, bufA),
+						(Packet<ClientPlayPacketListener>) (Object) ServerPlayNetworking.createS2CPacket(TEST_CHANNEL, bufB)
 					));
-					ctx.getSource().getPlayer().networkHandler.sendPacket(packet);
+					ctx.getSource().getPlayer().networkHandler.send(packet);
 					return Command.SINGLE_SUCCESS;
 				})));
 	}

@@ -27,12 +27,15 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.AbstractClientNetworkHandler;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.network.ClientConnection;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.ProfileIndependentMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.SystemMessageS2CPacket;
+import net.minecraft.unmapped.C_qqflkeyp;
 
 import org.quiltmc.qsl.chat.api.QuiltChatEvents;
 import org.quiltmc.qsl.chat.api.types.ChatC2SMessage;
@@ -42,10 +45,10 @@ import org.quiltmc.qsl.chat.api.types.RawChatC2SMessage;
 import org.quiltmc.qsl.chat.api.types.SystemS2CMessage;
 
 @Mixin(ClientPlayNetworkHandler.class)
-public class ClientPlayNetworkHandlerMixin {
-	@Shadow
-	@Final
-	private MinecraftClient client;
+public abstract class ClientPlayNetworkHandlerMixin extends AbstractClientNetworkHandler {
+	protected ClientPlayNetworkHandlerMixin(MinecraftClient client, ClientConnection connection, C_qqflkeyp c_qqflkeyp) {
+		super(client, connection, c_qqflkeyp);
+	}
 
 	@ModifyVariable(
 			method = "onChatMessage",
@@ -248,7 +251,7 @@ public class ClientPlayNetworkHandlerMixin {
 			method = "sendChatMessage",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/packet/Packet;)V"
+					target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;send(Lnet/minecraft/network/packet/Packet;)V"
 			)
 	)
 	public void quilt$modifyAndCancelAndBeforeAndAfterOutboundChatMessage(ClientPlayNetworkHandler instance, Packet<?> packet) {

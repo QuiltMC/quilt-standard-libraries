@@ -2,16 +2,7 @@
   "required": true,
   "package": "org.quiltmc.qsl.command.mixin",
   "compatibilityLevel": "JAVA_17",
-  "mixins": [
-    "ArgumentTypeInfosAccessor",
-    "CommandManagerMixin",
-    "CommandManagerMixin$RegistrationEnvironmentMixin",
-    "EntitySelectorOptionsAccessor",
-    "EntitySelectorReaderMixin",
-    "RequiredArgumentBuilderAccessor",
-    "ServerLoginNetworkHandlerMixin",
-    "ServerPlayerEntityMixin"
-  ],
+  "mixins": ["AbstractServerPacketHandlerMixin", "ArgumentTypeInfosAccessor", "ClientConnectionMixin", "CommandManagerMixin", "CommandManagerMixin$RegistrationEnvironmentMixin", "EntitySelectorOptionsAccessor", "EntitySelectorReaderMixin", "RequiredArgumentBuilderAccessor", "ServerLoginNetworkHandlerMixin", "ServerPlayerEntityMixin"],
   "client": [],
   "injectors": {
     "defaultRequire": 1

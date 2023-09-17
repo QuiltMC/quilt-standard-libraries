@@ -24,6 +24,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.minecraft.network.NetworkState;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
@@ -83,7 +84,7 @@ public final class NetworkingImpl {
 		ServerLoginNetworking.registerGlobalReceiver(EARLY_REGISTRATION_CHANNEL_FABRIC, NetworkingImpl::receiveEarlyRegistration);
 	}
 
-	public static boolean isReservedPlayChannel(Identifier channelName) {
+	public static boolean isReservedCommonChannel(Identifier channelName) {
 		return channelName.equals(REGISTER_CHANNEL) || channelName.equals(UNREGISTER_CHANNEL);
 	}
 
@@ -100,7 +101,7 @@ public final class NetworkingImpl {
 			ids.add(buf.readIdentifier());
 		}
 
-		((ChannelInfoHolder) ((ServerLoginNetworkHandlerAccessor) handler).getConnection()).getPendingChannelsNames().addAll(ids);
+		((ChannelInfoHolder) ((ServerLoginNetworkHandlerAccessor) handler).getConnection()).getPendingChannelsNames(NetworkState.LOGIN).addAll(ids);
 		NetworkingImpl.LOGGER.debug("Received accepted channels from the client for \"{}\"", handler.getConnectionInfo());
 	}
 }

@@ -45,7 +45,8 @@ import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.ServerLoginConnectionEvents;
 import org.quiltmc.qsl.networking.api.ServerLoginNetworking;
 import org.quiltmc.qsl.networking.impl.AbstractNetworkAddon;
-import org.quiltmc.qsl.networking.mixin.accessor.LoginQueryResponseC2SPacketAccessor;
+import org.quiltmc.qsl.networking.impl.payload.PacketByteBufLoginQueryRequestPayload;
+import org.quiltmc.qsl.networking.impl.payload.PacketByteBufLoginQueryResponsePayload;
 import org.quiltmc.qsl.networking.mixin.accessor.ServerLoginNetworkHandlerAccessor;
 
 @ApiStatus.Internal
@@ -128,8 +129,8 @@ public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLo
 	 * @return true if the packet was handled
 	 */
 	public boolean handle(LoginQueryResponseC2SPacket packet) {
-		var access = (LoginQueryResponseC2SPacketAccessor) packet;
-		return this.handle(access.getQueryId(), access.getResponse());
+		var payload = (PacketByteBufLoginQueryResponsePayload) packet.payload();
+		return this.handle(packet.transactionId(), (payload == null) ? null : payload.data());
 	}
 
 	private boolean handle(int queryId, @Nullable PacketByteBuf originalBuf) {
@@ -164,7 +165,7 @@ public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLo
 	public Packet<?> createPacket(Identifier channelName, PacketByteBuf buf) {
 		int queryId = this.queryIdFactory.nextId();
 
-		return new LoginQueryRequestS2CPacket(queryId, channelName, buf);
+		return new LoginQueryRequestS2CPacket(queryId, new PacketByteBufLoginQueryRequestPayload(channelName, buf));
 	}
 
 	@Override
@@ -182,7 +183,7 @@ public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLo
 	}
 
 	public void registerOutgoingPacket(LoginQueryRequestS2CPacket packet) {
-		this.channels.put(packet.getQueryId(), packet.getChannel());
+		this.channels.put(packet.transactionId(), packet.payload().id());
 	}
 
 	@Override

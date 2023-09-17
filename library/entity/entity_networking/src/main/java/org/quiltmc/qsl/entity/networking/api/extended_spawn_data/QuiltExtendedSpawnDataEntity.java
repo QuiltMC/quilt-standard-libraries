@@ -65,6 +65,6 @@ public interface QuiltExtendedSpawnDataEntity {
 				QuiltEntityNetworkingInitializer.EXTENDED_SPAWN_PACKET_ID, buf
 		);
 
-		return new PacketBundleS2CPacket(List.of(basePacket, additionalPacket));
+		return new PacketBundleS2CPacket(List.of(basePacket, (Packet<ClientPlayPacketListener>) (Object) additionalPacket));
 	}
 }

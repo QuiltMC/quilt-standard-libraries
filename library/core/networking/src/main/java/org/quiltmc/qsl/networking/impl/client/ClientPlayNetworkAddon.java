@@ -24,9 +24,9 @@ import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.network.NetworkState;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -36,6 +36,7 @@ import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 import org.quiltmc.qsl.networking.impl.AbstractChanneledNetworkAddon;
 import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
 import org.quiltmc.qsl.networking.impl.NetworkingImpl;
+import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
 
 @ApiStatus.Internal
 @ClientOnly
@@ -50,7 +51,7 @@ public final class ClientPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 		this.client = client;
 
 		// Must register pending channels via lateinit
-		this.registerPendingChannels((ChannelInfoHolder) this.connection);
+		this.registerPendingChannels((ChannelInfoHolder) this.connection, NetworkState.PLAY);
 
 		// Register global receivers and attach to session
 		this.receiver.startSession(this);
@@ -76,16 +77,14 @@ public final class ClientPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 	/**
 	 * Handles an incoming packet.
 	 *
-	 * @param packet the packet to handle
+	 * @param payload the payload to handle
 	 * @return true if the packet has been handled
 	 */
-	public boolean handle(CustomPayloadS2CPacket packet) {
-		PacketByteBuf buf = packet.getData();
-
+	public boolean handle(PacketByteBufPayload payload) {
 		try {
-			return this.handle(packet.getChannel(), buf);
+			return this.handle(payload.id(), payload.data());
 		} finally {
-			buf.release();
+			payload.data().release();
 		}
 	}
 
@@ -148,6 +147,6 @@ public final class ClientPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 
 	@Override
 	protected boolean isReservedChannel(Identifier channelName) {
-		return NetworkingImpl.isReservedPlayChannel(channelName);
+		return NetworkingImpl.isReservedCommonChannel(channelName);
 	}
 }

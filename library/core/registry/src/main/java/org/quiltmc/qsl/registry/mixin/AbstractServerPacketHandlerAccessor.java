@@ -20,10 +20,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 import net.minecraft.network.ClientConnection;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.network.listener.AbstractServerPacketHandler;
 
-@Mixin(ServerPlayNetworkHandler.class)
-public interface ServerPlayNetworkHandlerAccessor {
+@Mixin(AbstractServerPacketHandler.class)
+public interface AbstractServerPacketHandlerAccessor {
 	@Accessor
 	ClientConnection getConnection();
 }

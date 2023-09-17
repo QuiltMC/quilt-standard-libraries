@@ -49,7 +49,7 @@ public class VanillaDataPackProviderMixin {
 			),
 			index = 0
 	)
-	private static ResourcePack onPackGet(ResourcePack pack) {
+	private ResourcePack onPackGet(ResourcePack pack) {
 		return ResourceLoaderImpl.buildMinecraftResourcePack(ResourceType.SERVER_DATA, pack);
 	}
 

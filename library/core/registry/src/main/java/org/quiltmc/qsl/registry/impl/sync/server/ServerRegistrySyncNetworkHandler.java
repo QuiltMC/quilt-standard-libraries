@@ -19,15 +19,25 @@ package org.quiltmc.qsl.registry.impl.sync.server;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mojang.authlib.GameProfile;
 import com.mojang.logging.LogUtils;
 import org.jetbrains.annotations.ApiStatus;
+import org.quiltmc.qsl.networking.api.PacketByteBufs;
+import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
 import org.slf4j.Logger;
 
 import net.minecraft.network.ClientConnection;
+import net.minecraft.network.NetworkState;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.PacketSendListener;
+import net.minecraft.network.listener.ServerConfigurationPacketListener;
 import net.minecraft.network.listener.ServerPlayPacketListener;
 import net.minecraft.network.packet.c2s.MessageAcknowledgmentC2SPacket;
+import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
+import net.minecraft.network.packet.c2s.common.KeepConnectionAliveC2SPacket;
+import net.minecraft.network.packet.c2s.common.PongC2SPacket;
+import net.minecraft.network.packet.c2s.common.ResourcePackStatusUpdateC2SPacket;
+import net.minecraft.network.packet.c2s.configuration.FinishConfigurationC2SPacket;
 import net.minecraft.network.packet.c2s.play.AdvancementTabOpenC2SPacket;
 import net.minecraft.network.packet.c2s.play.BeaconUpdateC2SPacket;
 import net.minecraft.network.packet.c2s.play.BlockNbtQueryC2SPacket;
@@ -37,6 +47,7 @@ import net.minecraft.network.packet.c2s.play.ButtonClickC2SPacket;
 import net.minecraft.network.packet.c2s.play.ChatCommandC2SPacket;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.network.packet.c2s.play.ChatSessionUpdateC2SPacket;
+import net.minecraft.network.packet.c2s.play.ChunkBatchAcknowledgementC2SPacket;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.network.packet.c2s.play.ClientSettingsUpdateC2SPacket;
 import net.minecraft.network.packet.c2s.play.ClientStatusUpdateC2SPacket;
@@ -45,7 +56,6 @@ import net.minecraft.network.packet.c2s.play.CommandBlockUpdateC2SPacket;
 import net.minecraft.network.packet.c2s.play.CommandCompletionRequestC2SPacket;
 import net.minecraft.network.packet.c2s.play.CraftRequestC2SPacket;
 import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
-import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.network.packet.c2s.play.DifficultyLockUpdateC2SPacket;
 import net.minecraft.network.packet.c2s.play.DifficultyUpdateC2SPacket;
 import net.minecraft.network.packet.c2s.play.EntityNbtQueryC2SPacket;
@@ -55,9 +65,7 @@ import net.minecraft.network.packet.c2s.play.InventoryItemPickC2SPacket;
 import net.minecraft.network.packet.c2s.play.ItemRenameC2SPacket;
 import net.minecraft.network.packet.c2s.play.JigsawGenerationC2SPacket;
 import net.minecraft.network.packet.c2s.play.JigsawUpdateC2SPacket;
-import net.minecraft.network.packet.c2s.play.KeepConnectionAliveC2SPacket;
 import net.minecraft.network.packet.c2s.play.MerchantTradeSelectionC2SPacket;
-import net.minecraft.network.packet.c2s.play.PlayPongC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerAbilityUpdateC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerInputC2SPacket;
@@ -67,7 +75,7 @@ import net.minecraft.network.packet.c2s.play.PlayerInteractionWithItemC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.network.packet.c2s.play.RecipeBookUpdateC2SPacket;
 import net.minecraft.network.packet.c2s.play.RecipeCategoryOptionUpdateC2SPacket;
-import net.minecraft.network.packet.c2s.play.ResourcePackStatusUpdateC2SPacket;
+import net.minecraft.network.packet.c2s.play.ReconfigurationAcknowledgementC2SPacket;
 import net.minecraft.network.packet.c2s.play.SelectedSlotUpdateC2SPacket;
 import net.minecraft.network.packet.c2s.play.SignUpdateC2SPacket;
 import net.minecraft.network.packet.c2s.play.SlotClickC2SPacket;
@@ -75,11 +83,13 @@ import net.minecraft.network.packet.c2s.play.SpectatorTeleportationC2SPacket;
 import net.minecraft.network.packet.c2s.play.StructureBlockUpdateC2SPacket;
 import net.minecraft.network.packet.c2s.play.TeleportConfirmationC2SPacket;
 import net.minecraft.network.packet.c2s.play.VehicleMoveC2SPacket;
-import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket;
-import net.minecraft.network.packet.s2c.play.PlayPingS2CPacket;
+import net.minecraft.network.packet.c2s.query.QueryPingC2SPacket;
+import net.minecraft.network.packet.s2c.common.DisconnectS2CPacket;
+import net.minecraft.network.packet.s2c.common.PingS2CPacket;
 import net.minecraft.registry.Registries;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
 import org.quiltmc.qsl.registry.impl.sync.ClientPackets;
@@ -99,46 +109,48 @@ import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
  * being valid), getting support is still simple.
  */
 @ApiStatus.Internal
-public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketListener {
+public final class ServerRegistrySyncNetworkHandler implements ServerConfigurationPacketListener {
 	private static final Logger LOGGER = LogUtils.getLogger();
 
 	private static final int HELLO_PING = 0;
 	private static final int GOODBYE_PING = 1;
 
+	private final GameProfile profile;
+	private final MinecraftServer server;
 	private final ClientConnection connection;
 	private final ExtendedConnectionClient extendedConnection;
-	private final ServerPlayerEntity player;
 	private final Runnable continueLoginRunnable;
 
 	private final List<CustomPayloadC2SPacket> delayedPackets = new ArrayList<>();
 	private int syncVersion = ProtocolVersions.NO_PROTOCOL;
 
-	public ServerRegistrySyncNetworkHandler(ServerPlayerEntity player, ClientConnection connection, Runnable continueLogin) {
+	public ServerRegistrySyncNetworkHandler(GameProfile profile, MinecraftServer server, ClientConnection connection, Runnable continueLogin) {
+		this.profile = profile;
+		this.server = server;
 		this.connection = connection;
-		this.player = player;
 		this.continueLoginRunnable = continueLogin;
 		this.extendedConnection = (ExtendedConnectionClient) connection;
 
-		((DelayedPacketsHolder) this.player).quilt$setPacketList(this.delayedPackets);
+		((DelayedPacketsHolder) this.connection).quilt$setPacketList(this.delayedPackets);
 
 		ServerRegistrySync.sendHelloPacket(connection);
-		connection.send(new PlayPingS2CPacket(HELLO_PING));
+		connection.send(new PingS2CPacket(HELLO_PING));
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void onPong(PlayPongC2SPacket packet) {
+	public void onPlayPong(PongC2SPacket packet) {
 		switch (packet.getParameter()) {
 			case HELLO_PING -> {
 				if (ServerRegistrySync.SERVER_SUPPORTED_PROTOCOL.contains(this.syncVersion)) {
 					this.extendedConnection.quilt$setUnderstandsOptional();
-					ServerRegistrySync.sendSyncPackets(this.connection, this.player, this.syncVersion);
-				} else if (ServerRegistrySync.SERVER_SUPPORTED_PROTOCOL.contains(ProtocolVersions.FAPI_PROTOCOL) && (ServerRegistrySync.forceFabricFallback || (ServerRegistrySync.supportFabric && ((ChannelInfoHolder) this.connection).getPendingChannelsNames().contains(ServerFabricRegistrySync.ID)))) {
+					ServerRegistrySync.sendSyncPackets(this.connection, this.syncVersion);
+				} else if (ServerRegistrySync.SERVER_SUPPORTED_PROTOCOL.contains(ProtocolVersions.FAPI_PROTOCOL) && (ServerRegistrySync.forceFabricFallback || (ServerRegistrySync.supportFabric && ((ChannelInfoHolder) this.connection).getPendingChannelsNames(NetworkState.PLAY).contains(ServerFabricRegistrySync.ID)))) {
 					ServerFabricRegistrySync.sendSyncPackets(this.connection);
 					this.syncVersion = ProtocolVersions.FAPI_PROTOCOL;
 				}
 
-				this.connection.send(new PlayPingS2CPacket(GOODBYE_PING));
+				this.connection.send(new PingS2CPacket(GOODBYE_PING));
 			}
 			case GOODBYE_PING -> {
 				if (this.syncVersion == ProtocolVersions.NO_PROTOCOL && ServerRegistrySync.requiresSync()) {
@@ -151,21 +163,24 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 	}
 
 	private void continueLogin() {
-		this.player.server.execute(this.continueLoginRunnable);
+		this.server.execute(this.continueLoginRunnable);
 	}
 
 	@Override
 	public void onCustomPayload(CustomPayloadC2SPacket packet) {
-		if (packet.getChannel().equals(ClientPackets.HANDSHAKE)) {
-			this.syncVersion = packet.getData().readVarInt();
-		} else if (packet.getChannel().equals(ClientPackets.SYNC_FAILED)) {
-			LOGGER.info("Disconnecting {} due to sync failure of {} registry", this.player.getGameProfile().getName(), packet.getData().readIdentifier());
-		} else if (packet.getChannel().equals(ClientPackets.UNKNOWN_ENTRY)) {
-			this.handleUnknownEntry(packet.getData());
-		} else if (packet.getChannel().equals(ClientPackets.MOD_PROTOCOL)) {
-			this.handleModProtocol(packet.getData());
+		PacketByteBufPayload payload = (PacketByteBufPayload) packet.payload();
+		Identifier id = payload.id();
+		PacketByteBuf data = payload.data();
+		if (id.equals(ClientPackets.HANDSHAKE)) {
+			this.syncVersion = data.readVarInt();
+		} else if (id.equals(ClientPackets.SYNC_FAILED)) {
+			LOGGER.info("Disconnecting {} due to sync failure of {} registry", this.profile.getName(), data.readIdentifier());
+		} else if (id.equals(ClientPackets.UNKNOWN_ENTRY)) {
+			this.handleUnknownEntry(data);
+		} else if (id.equals(ClientPackets.MOD_PROTOCOL)) {
+			this.handleModProtocol(data);
 		} else {
-			this.delayedPackets.add(new CustomPayloadC2SPacket(packet.getChannel(), new PacketByteBuf(packet.getData().copy())));
+			this.delayedPackets.add(new CustomPayloadC2SPacket(new PacketByteBufPayload(id, PacketByteBufs.copy(data))));
 		}
 	}
 
@@ -193,11 +208,12 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 
 	@Override
 	public void onDisconnected(Text reason) {
-		LOGGER.info("{} lost connection: {}", this.player.getName().getString(), reason.getString());
+		LOGGER.info("{} lost connection: {}", this.profile.getName(), reason.getString());
 
 		for (var packet : this.delayedPackets) {
-			if (packet.getData().refCnt() != 0) {
-				packet.getData().release(packet.getData().refCnt());
+			PacketByteBuf data = ((PacketByteBufPayload) packet.payload()).data();
+			if (data.refCnt() != 0) {
+				data.release(data.refCnt());
 			}
 		}
 	}
@@ -205,8 +221,9 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 	public void disconnect(Text reason) {
 		try {
 			for (var packet : this.delayedPackets) {
-				if (packet.getData().refCnt() != 0) {
-					packet.getData().release(packet.getData().refCnt());
+				PacketByteBuf data = ((PacketByteBufPayload) packet.payload()).data();
+				if (data.refCnt() != 0) {
+					data.release(data.refCnt());
 				}
 			}
 
@@ -223,141 +240,17 @@ public final class ServerRegistrySyncNetworkHandler implements ServerPlayPacketL
 		return this.connection.isOpen();
 	}
 
-	@Override
-	public void onHandSwing(HandSwingC2SPacket packet) {}
-
-	@Override
-	public void onChatMessage(ChatMessageC2SPacket packet) {}
-
-	@Override
-	public void onChatCommand(ChatCommandC2SPacket packet) {}
-
-	@Override
-	public void onMessageAcknowledgment(MessageAcknowledgmentC2SPacket packet) {}
-
-	@Override
-	public void onClientStatusUpdate(ClientStatusUpdateC2SPacket packet) {}
-
-	@Override
-	public void onClientSettingsUpdate(ClientSettingsUpdateC2SPacket packet) {}
-
-	@Override
-	public void onButtonClick(ButtonClickC2SPacket packet) {}
-
-	@Override
-	public void onSlotClick(SlotClickC2SPacket packet) {}
-
-	@Override
-	public void onCraftRequest(CraftRequestC2SPacket packet) {}
-
-	@Override
-	public void onHandledScreenClose(HandledScreenCloseC2SPacket packet) {}
-
-	@Override
-	public void onPlayerInteractionWithEntity(PlayerInteractionWithEntityC2SPacket packet) {}
 
 	@Override
 	public void onKeepConnectionAlive(KeepConnectionAliveC2SPacket packet) {}
 
-	@Override
-	public void onPlayerMove(PlayerMoveC2SPacket packet) {}
-
-	@Override
-	public void onPlayerAbilityUpdate(PlayerAbilityUpdateC2SPacket packet) {}
-
-	@Override
-	public void onPlayerAction(PlayerActionC2SPacket packet) {}
-
-	@Override
-	public void onClientCommand(ClientCommandC2SPacket packet) {}
-
-	@Override
-	public void onPlayerInput(PlayerInputC2SPacket packet) {}
-
-	@Override
-	public void onSelectedSlotUpdate(SelectedSlotUpdateC2SPacket packet) {}
-
-	@Override
-	public void onCreativeInventoryAction(CreativeInventoryActionC2SPacket packet) {}
-
-	@Override
-	public void onSignUpdate(SignUpdateC2SPacket packet) {}
-
-	@Override
-	public void onPlayerInteractionWithBlock(PlayerInteractionWithBlockC2SPacket packet) {}
-
-	@Override
-	public void onPlayerInteractionWithItem(PlayerInteractionWithItemC2SPacket packet) {}
-
-	@Override
-	public void onSpectatorTeleportation(SpectatorTeleportationC2SPacket packet) {}
 
 	@Override
 	public void onResourcePackStatusUpdate(ResourcePackStatusUpdateC2SPacket packet) {}
 
 	@Override
-	public void onBoatPaddleStateUpdate(BoatPaddleStateUpdateC2SPacket packet) {}
+	public void method_12069(ClientSettingsUpdateC2SPacket clientSettingsUpdateC2SPacket) {}
 
 	@Override
-	public void onVehicleMove(VehicleMoveC2SPacket packet) {}
-
-	@Override
-	public void onTeleportConfirmation(TeleportConfirmationC2SPacket packet) {}
-
-	@Override
-	public void onRecipeBookUpdate(RecipeBookUpdateC2SPacket packet) {}
-
-	@Override
-	public void onRecipeCategoryOptionUpdate(RecipeCategoryOptionUpdateC2SPacket packet) {}
-
-	@Override
-	public void onAdvancementTabOpen(AdvancementTabOpenC2SPacket packet) {}
-
-	@Override
-	public void onCommandCompletionRequest(CommandCompletionRequestC2SPacket packet) {}
-
-	@Override
-	public void onCommandBlockUpdate(CommandBlockUpdateC2SPacket packet) {}
-
-	@Override
-	public void onCommandBlockMinecartUpdate(CommandBlockMinecartUpdateC2SPacket packet) {}
-
-	@Override
-	public void onInventoryItemPick(InventoryItemPickC2SPacket packet) {}
-
-	@Override
-	public void onItemRename(ItemRenameC2SPacket packet) {}
-
-	@Override
-	public void onBeaconUpdate(BeaconUpdateC2SPacket packet) {}
-
-	@Override
-	public void onStructureBlockUpdate(StructureBlockUpdateC2SPacket packet) {}
-
-	@Override
-	public void onMerchantTradeSelection(MerchantTradeSelectionC2SPacket packet) {}
-
-	@Override
-	public void onBookUpdate(BookUpdateC2SPacket packet) {}
-
-	@Override
-	public void onEntityNbtQuery(EntityNbtQueryC2SPacket packet) {}
-
-	@Override
-	public void onBlockNbtQuery(BlockNbtQueryC2SPacket packet) {}
-
-	@Override
-	public void onJigsawUpdate(JigsawUpdateC2SPacket packet) {}
-
-	@Override
-	public void onJigsawGeneration(JigsawGenerationC2SPacket packet) {}
-
-	@Override
-	public void onDifficultyUpdate(DifficultyUpdateC2SPacket packet) {}
-
-	@Override
-	public void onDifficultyLockUpdate(DifficultyLockUpdateC2SPacket packet) {}
-
-	@Override
-	public void onChatSessionUpdate(ChatSessionUpdateC2SPacket packet) {}
+	public void onFinishConfiguration(FinishConfigurationC2SPacket packet) {}
 }

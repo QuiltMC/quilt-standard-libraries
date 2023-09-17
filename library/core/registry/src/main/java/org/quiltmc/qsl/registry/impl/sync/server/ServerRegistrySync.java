@@ -167,7 +167,7 @@ public final class ServerRegistrySync {
 		return false;
 	}
 
-	public static void sendSyncPackets(ClientConnection connection, ServerPlayerEntity player, int syncVersion) {
+	public static void sendSyncPackets(ClientConnection connection, int syncVersion) {
 		sendErrorStylePacket(connection);
 
 		if (ModProtocolImpl.enabled) {

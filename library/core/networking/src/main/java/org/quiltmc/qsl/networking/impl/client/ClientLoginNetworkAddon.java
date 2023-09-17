@@ -29,6 +29,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.packet.c2s.login.LoginQueryResponseC2SPacket;
 import net.minecraft.network.packet.s2c.login.LoginQueryRequestS2CPacket;
+import net.minecraft.network.packet.s2c.login.payload.CustomQueryPayload;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -37,6 +38,8 @@ import org.quiltmc.qsl.networking.api.PacketSendListeners;
 import org.quiltmc.qsl.networking.api.client.ClientLoginConnectionEvents;
 import org.quiltmc.qsl.networking.api.client.ClientLoginNetworking;
 import org.quiltmc.qsl.networking.impl.AbstractNetworkAddon;
+import org.quiltmc.qsl.networking.impl.payload.PacketByteBufLoginQueryRequestPayload;
+import org.quiltmc.qsl.networking.impl.payload.PacketByteBufLoginQueryResponsePayload;
 import org.quiltmc.qsl.networking.mixin.accessor.ClientLoginNetworkHandlerAccessor;
 
 @ApiStatus.Internal
@@ -56,7 +59,8 @@ public final class ClientLoginNetworkAddon extends AbstractNetworkAddon<ClientLo
 	}
 
 	public boolean handlePacket(LoginQueryRequestS2CPacket packet) {
-		return this.handlePacket(packet.getQueryId(), packet.getChannel(), packet.getPayload());
+		PacketByteBufLoginQueryRequestPayload payload = (PacketByteBufLoginQueryRequestPayload) packet.payload();
+		return this.handlePacket(packet.transactionId(), payload.id(), payload.data());
 	}
 
 	private boolean handlePacket(int queryId, Identifier channelName, PacketByteBuf originalBuf) {
@@ -84,14 +88,14 @@ public final class ClientLoginNetworkAddon extends AbstractNetworkAddon<ClientLo
 		try {
 			CompletableFuture<@Nullable PacketByteBuf> future = handler.receive(this.client, this.handler, buf, futureListeners::add);
 			future.thenAccept(result -> {
-				var packet = new LoginQueryResponseC2SPacket(queryId, result);
+				var response = new LoginQueryResponseC2SPacket(queryId, new PacketByteBufLoginQueryResponsePayload(result));
 				PacketSendListener listener = null;
 
 				for (var each : futureListeners) {
 					listener = PacketSendListeners.union(listener, each);
 				}
 
-				((ClientLoginNetworkHandlerAccessor) this.handler).getConnection().send(packet, listener);
+				((ClientLoginNetworkHandlerAccessor) this.handler).getConnection().send(response, listener);
 			});
 		} catch (Throwable ex) {
 			this.logger.error("Encountered exception while handling in channel with name \"{}\"", channelName, ex);

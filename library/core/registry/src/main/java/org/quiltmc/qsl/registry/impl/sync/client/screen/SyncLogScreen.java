@@ -68,7 +68,7 @@ public class SyncLogScreen extends Screen {
 
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-		this.renderBackground(graphics);
+		this.renderBackground(graphics, mouseX, mouseY, delta);
 		graphics.drawCenteredShadowedText(this.textRenderer, this.getTitle(), this.width / 2, 20, 0xFFFFFF);
 		super.render(graphics, mouseX, mouseY, delta);
 	}

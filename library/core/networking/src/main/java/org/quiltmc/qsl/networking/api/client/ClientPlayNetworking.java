@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.listener.ServerPlayPacketListener;
+import net.minecraft.network.listener.ServerCommonPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.util.Identifier;
 
@@ -45,6 +45,7 @@ import org.quiltmc.qsl.networking.impl.client.ClientPlayNetworkAddon;
  * This class should be only used on the physical client and for the logical client.
  *
  * @see ClientLoginNetworking
+ * @see ClientConfigurationNetworking
  * @see ServerPlayNetworking
  */
 @ClientOnly
@@ -185,15 +186,15 @@ public final class ClientPlayNetworking {
 	 * Creates a packet which may be sent to the connected server.
 	 *
 	 * @param channelName the channel name
-	 * @param buf         the packet byte buf which represents the payload of the packet
+	 * @param buf         the packet byte data which represents the payload of the packet
 	 * @return a new packet
 	 */
 	@Contract(value = "_, _ -> new", pure = true)
-	public static Packet<ServerPlayPacketListener> createC2SPacket(@NotNull Identifier channelName, @NotNull PacketByteBuf buf) {
+	public static Packet<ServerCommonPacketListener> createC2SPacket(@NotNull Identifier channelName, @NotNull PacketByteBuf buf) {
 		Objects.requireNonNull(channelName, "Channel name cannot be null");
 		Objects.requireNonNull(buf, "Buf cannot be null");
 
-		return ClientNetworkingImpl.createPlayC2SPacket(channelName, buf);
+		return ClientNetworkingImpl.createC2SPacket(channelName, buf);
 	}
 
 	/**
@@ -242,8 +243,8 @@ public final class ClientPlayNetworking {
 		 * <p>
 		 * An example usage of this is to display an overlay message:
 		 * <pre>{@code
-		 * ClientPlayNetworking.registerReceiver(new Identifier("mymod", "overlay"), (client, handler, buf, responseSender) -&rt; {
-		 * 	String message = buf.readString(32767);
+		 * ClientPlayNetworking.registerReceiver(new Identifier("mymod", "overlay"), (client, handler, data, responseSender) -&rt; {
+		 * 	String message = data.readString(32767);
 		 *
 		 * 	// All operations on the server or world must be executed on the server thread
 		 * 	client.execute(() -> {

@@ -44,7 +44,7 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 		ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerResourcePackProfileProvider((profileAdder) -> {
 			var pack = new TestPack();
 			profileAdder.accept(ResourcePackProfile.of(
-					PACK_NAME, pack.getDisplayName(), false, QuiltResourcePackProfile.identityFactory(pack), ResourceType.CLIENT_RESOURCES,
+					PACK_NAME, pack.getDisplayName(), false, QuiltResourcePackProfile.wrapToFactory(pack), ResourceType.CLIENT_RESOURCES,
 					ResourcePackProfile.InsertionPosition.TOP,
 					new ResourcePackSource() {
 						@Override

@@ -24,14 +24,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.unmapped.C_eyqfalbd;
 
 import org.quiltmc.qsl.registry.impl.sync.server.DelayedPacketsHolder;
 
 @Mixin(PlayerManager.class)
 public class PlayerManagerMixin {
 	@Inject(method = "onPlayerConnect", at = @At("TAIL"))
-	private void quilt$sendSync(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
-		var delayedList = ((DelayedPacketsHolder) player).quilt$getPacketList();
+	private void quilt$sendSync(ClientConnection connection, ServerPlayerEntity player, C_eyqfalbd c_eyqfalbd, CallbackInfo ci) {
+		var delayedList = ((DelayedPacketsHolder) connection).quilt$getPacketList();
 
 		if (delayedList != null) {
 			for (var packet : delayedList) {

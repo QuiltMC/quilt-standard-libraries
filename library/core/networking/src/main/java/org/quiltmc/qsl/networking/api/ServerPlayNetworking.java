@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.listener.ClientCommonPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -207,15 +207,15 @@ public final class ServerPlayNetworking {
 	 * Creates a packet which may be sent to a connected client.
 	 *
 	 * @param channelName the channel name
-	 * @param buf         the packet byte buf which represents the payload of the packet
+	 * @param buf         the packet byte data which represents the payload of the packet
 	 * @return a new packet
 	 */
 	@Contract(value = "_, _ -> new", pure = true)
-	public static Packet<ClientPlayPacketListener> createS2CPacket(@NotNull Identifier channelName, @NotNull PacketByteBuf buf) {
+	public static Packet<ClientCommonPacketListener> createS2CPacket(@NotNull Identifier channelName, @NotNull PacketByteBuf buf) {
 		Objects.requireNonNull(channelName, "Channel cannot be null");
 		Objects.requireNonNull(buf, "Buf cannot be null");
 
-		return ServerNetworkingImpl.createPlayC2SPacket(channelName, buf);
+		return ServerNetworkingImpl.createS2CPacket(channelName, buf);
 	}
 
 	/**
@@ -252,9 +252,9 @@ public final class ServerPlayNetworking {
 	public static void send(ServerPlayerEntity player, Identifier channelName, PacketByteBuf buf) {
 		Objects.requireNonNull(player, "Server player entity cannot be null");
 		Objects.requireNonNull(channelName, "Channel name cannot be null");
-		Objects.requireNonNull(buf, "Packet byte buf cannot be null");
+		Objects.requireNonNull(buf, "Packet byte data cannot be null");
 
-		player.networkHandler.(createS2CPacket(channelName, buf));
+		player.networkHandler.send(createS2CPacket(channelName, buf));
 	}
 
 	/**
@@ -298,8 +298,8 @@ public final class ServerPlayNetworking {
 		 * <p>
 		 * An example usage of this is to create an explosion where the player is looking:
 		 * <pre>{@code
-		 * ServerPlayNetworking.registerReceiver(new Identifier("mymod", "boom"), (server, player, handler, buf, responseSender) -> {
-		 * 	boolean fire = buf.readBoolean();
+		 * ServerPlayNetworking.registerReceiver(new Identifier("mymod", "boom"), (server, player, handler, data, responseSender) -> {
+		 * 	boolean fire = data.readBoolean();
 		 *
 		 * 	// All operations on the server or world must be executed on the server thread
 		 * 	server.execute(() -> {

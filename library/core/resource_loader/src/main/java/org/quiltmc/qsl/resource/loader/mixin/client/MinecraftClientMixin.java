@@ -19,6 +19,7 @@ package org.quiltmc.qsl.resource.loader.mixin.client;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -57,29 +58,29 @@ public class MinecraftClientMixin {
 	// Lambda method in MinecraftClient#<init>, at MinecraftClient#setOverlay.
 	// Take an Optional<Throwable> parameter.
 	@SuppressWarnings("target")
-	@Inject(method = "method_24040(Ljava/util/Optional;)V", at = @At("HEAD"))
-	private void onFirstEndReloadResources(Optional<Throwable> error, CallbackInfo ci) {
+	@Inject(method = "method_53522", at = @At("HEAD"))
+	private void onFirstEndReloadResources(MinecraftClient.C_vfwwgdbg c_vfwwgdbg, Optional<Throwable> error, CallbackInfo ci) {
 		ClientResourceLoaderEvents.END_RESOURCE_PACK_RELOAD.invoker().onEndResourcePackReload(
 				new ClientResourceLoaderEventContextsImpl.ReloadEndContext(this.resourceManager, true, error)
 		);
 	}
 
 	@Inject(
-			method = "reloadResources(Z)Ljava/util/concurrent/CompletableFuture;",
+			method = "method_36561",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/resource/ReloadableResourceManager;reload(Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/concurrent/CompletableFuture;Ljava/util/List;)Lnet/minecraft/resource/ResourceReload;"
 			)
 	)
-	private void onStartReloadResources(boolean force, CallbackInfoReturnable<CompletableFuture<Void>> cir) {
+	private void onStartReloadResources(boolean bl, @Nullable MinecraftClient.C_vfwwgdbg c_vfwwgdbg, CallbackInfoReturnable<CompletableFuture<Void>> cir) {
 		ClientResourceLoaderImpl.pushReloadContext(false);
 	}
 
 	// Lambda method in MinecraftClient#reloadResources, at MinecraftClient#setOverlay.
 	// Take an Optional<Throwable> parameter.
 	@SuppressWarnings("target")
-	@Inject(method = "method_24228(ZLjava/util/concurrent/CompletableFuture;Ljava/util/Optional;)V", at = @At(value = "HEAD"))
-	private void onEndReloadResources(boolean force, CompletableFuture<Void> completableFuture, Optional<Throwable> error, CallbackInfo ci) {
+	@Inject(method = "method_24228", at = @At(value = "HEAD"))
+	private void onEndReloadResources(boolean force, MinecraftClient.C_vfwwgdbg c_vfwwgdbg, CompletableFuture<Void> completableFuture, Optional<Throwable> error, CallbackInfo ci) {
 		ClientResourceLoaderEvents.END_RESOURCE_PACK_RELOAD.invoker().onEndResourcePackReload(
 				new ClientResourceLoaderEventContextsImpl.ReloadEndContext(this.resourceManager, false, error)
 		);
