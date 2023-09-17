@@ -105,7 +105,7 @@ public final class ModResourcePackUtil {
 			pack.getName(),
 			pack.getDisplayName(),
 			pack.getActivationType() == ResourcePackActivationType.ALWAYS_ENABLED,
-			QuiltResourcePackProfile.identityFactory(pack),
+			QuiltResourcePackProfile.wrapToFactory(pack),
 			info,
 			ResourcePackProfile.InsertionPosition.TOP,
 			false,
@@ -115,8 +115,8 @@ public final class ModResourcePackUtil {
 
 	static @Nullable ResourcePackProfile makeBuiltinPackProfile(ModNioResourcePack pack) {
 		// I think the resource version really shouldn't matter here, but we'll go for the latest asset version just in case
-		ResourcePackProfile.Info info = ResourcePackProfile.readInfoFromPack(pack.getName(), QuiltResourcePackProfile.identityFactory(pack),
-			SharedConstants.getGameVersion().getResourceVersion(ResourceType.CLIENT_RESOURCES));
+		ResourcePackProfile.Info info = ResourcePackProfile.readInfoFromPack(pack.getName(), QuiltResourcePackProfile.wrapToFactory(pack),
+				SharedConstants.getGameVersion().getResourceVersion(ResourceType.CLIENT_RESOURCES));
 
 		if (info == null) {
 			LOGGER.warn("Couldn't find pack meta for pack {}.", pack.getName());

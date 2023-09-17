@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.recipe.api;
 
 import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeUnlocker;
 
 import org.quiltmc.qsl.recipe.impl.RecipeManagerImpl;
 
@@ -39,13 +40,13 @@ public final class RecipeManagerHelper {
 	 * <p>
 	 * Static recipes can be added at any time, but are only applied after a data pack reload.
 	 *
-	 * @param recipe the recipe to register
+	 * @param recipeUnlocker the recipe to register
 	 * @return the registered recipe
 	 * @throws IllegalStateException if another recipe with the same identifier is already registered
 	 */
-	public static Recipe<?> registerStaticRecipe(Recipe<?> recipe) {
-		RecipeManagerImpl.registerStaticRecipe(recipe);
-		return recipe;
+	public static RecipeUnlocker<?> registerStaticRecipe(RecipeUnlocker<?> recipeUnlocker) {
+		RecipeManagerImpl.registerStaticRecipe(recipeUnlocker);
+		return recipeUnlocker;
 	}
 
 	/**

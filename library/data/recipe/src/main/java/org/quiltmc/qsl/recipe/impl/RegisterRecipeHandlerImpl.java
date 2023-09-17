@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.recipe.RecipeUnlocker;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 
@@ -49,35 +50,36 @@ final class RegisterRecipeHandlerImpl implements RecipeLoadingEvents.AddRecipesC
 		this.registryManager = registryManager;
 	}
 
-	private void register(Recipe<?> recipe) {
+	private void register(RecipeUnlocker<?> recipeUnlocker) {
+		Recipe<?> recipe = recipeUnlocker.comp_1933();
 		ImmutableMap.Builder<Identifier, Recipe<?>> recipeBuilder =
 				this.builderMap.computeIfAbsent(recipe.getType(), o -> ImmutableMap.builder());
-		recipeBuilder.put(recipe.getId(), recipe);
-		this.globalRecipeMapBuilder.put(recipe.getId(), recipe);
+		recipeBuilder.put(recipeUnlocker.comp_1932(), recipe);
+		this.globalRecipeMapBuilder.put(recipeUnlocker.comp_1932(), recipe);
 		this.registered++;
 
 		if (RecipeManagerImpl.DEBUG_MODE) {
-			RecipeManagerImpl.LOGGER.info("Added recipe {} with type {} in register phase.", recipe.getId(), recipe.getType());
+			RecipeManagerImpl.LOGGER.info("Added recipe {} with type {} in register phase.", recipeUnlocker.comp_1932(), recipe.getType());
 		}
 	}
 
-	void tryRegister(Recipe<?> recipe) {
-		if (!this.resourceMap.containsKey(recipe.getId())) {
-			this.register(recipe);
+	void tryRegister(RecipeUnlocker<?> recipeUnlocker) {
+		if (!this.resourceMap.containsKey(recipeUnlocker.comp_1932())) {
+			this.register(recipeUnlocker);
 		}
 	}
 
 	@Override
-	public void register(Identifier id, Function<Identifier, Recipe<?>> factory) {
+	public void register(Identifier id, Function<Identifier, RecipeUnlocker<?>> factory) {
 		// Add the recipe only if nothing already provides the recipe.
 		if (!this.resourceMap.containsKey(id)) {
-			var recipe = factory.apply(id);
+			var recipeUnlocker = factory.apply(id);
 
-			if (!id.equals(recipe.getId())) {
-				throw new IllegalStateException("The recipe " + recipe.getId() + " tried to be registered as " + id);
+			if (!id.equals(recipeUnlocker.comp_1932())) {
+				throw new IllegalStateException("The recipe " + recipeUnlocker.comp_1932() + " tried to be registered as " + id);
 			}
 
-			this.register(recipe);
+			this.register(recipeUnlocker);
 		}
 	}
 

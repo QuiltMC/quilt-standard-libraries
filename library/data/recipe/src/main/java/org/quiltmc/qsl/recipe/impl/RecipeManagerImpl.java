@@ -30,6 +30,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonWriter;
 import com.mojang.logging.LogUtils;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -37,15 +39,15 @@ import org.slf4j.Logger;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeManager;
+import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.recipe.RecipeUnlocker;
 import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.util.TriState;
 import org.quiltmc.qsl.recipe.api.RecipeLoadingEvents;
-import org.quiltmc.qsl.recipe.api.serializer.QuiltRecipeSerializer;
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 
 @ApiStatus.Internal
@@ -60,9 +62,9 @@ public final class RecipeManagerImpl implements RegistryEvents.DynamicRegistryLo
 	static final Logger LOGGER = LogUtils.getLogger();
 	private static DynamicRegistryManager currentRegistryManager;
 
-	public static void registerStaticRecipe(Recipe<?> recipe) {
-		if (STATIC_RECIPES.putIfAbsent(recipe.getId(), recipe) != null) {
-			throw new IllegalArgumentException("Cannot register " + recipe.getId()
+	public static void registerStaticRecipe(RecipeUnlocker<?> recipeUnlocker) {
+		if (STATIC_RECIPES.putIfAbsent(recipeUnlocker.comp_1932(), recipeUnlocker.comp_1933()) != null) {
+			throw new IllegalArgumentException("Cannot register " + recipeUnlocker.comp_1932()
 					+ " as another recipe with the same identifier already exists.");
 		}
 	}
@@ -72,7 +74,7 @@ public final class RecipeManagerImpl implements RegistryEvents.DynamicRegistryLo
 			ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder) {
 		var handler = new RegisterRecipeHandlerImpl(map, builderMap, globalRecipeMapBuilder, currentRegistryManager);
 		RecipeLoadingEvents.ADD.invoker().addRecipes(handler);
-		STATIC_RECIPES.values().forEach(handler::tryRegister);
+		STATIC_RECIPES.forEach((identifier, recipe) -> handler.tryRegister(new RecipeUnlocker<Recipe<?>>(identifier, recipe)));
 		LOGGER.info("Registered {} custom recipes.", handler.registered);
 	}
 
@@ -91,17 +93,6 @@ public final class RecipeManagerImpl implements RegistryEvents.DynamicRegistryLo
 			dump(globalRecipes);
 		}
 
-		if (DEBUG_MODE) {
-			for (var serializerEntry : Registries.RECIPE_SERIALIZER.getEntries()) {
-				if (!(serializerEntry.getValue() instanceof QuiltRecipeSerializer)) {
-					LOGGER.warn(
-							"Recipe serializer {} doesn't implement QuiltRecipeSerializer. For full compatibility, the interface should be implemented.",
-							serializerEntry.getKey().getValue()
-					);
-				}
-			}
-		}
-
 		currentRegistryManager = null;
 	}
 
@@ -118,13 +109,19 @@ public final class RecipeManagerImpl implements RegistryEvents.DynamicRegistryLo
 			}
 		}
 
-		for (Recipe<?> recipe : recipes.values()) {
-			if (!(recipe.getSerializer() instanceof QuiltRecipeSerializer)) continue;
+		for (Map.Entry<Identifier, Recipe<?>> recipeEntry : recipes.entrySet()) {
+			Identifier id = recipeEntry.getKey();
+			Recipe<?> recipe = recipeEntry.getValue();
 
-			var serializer = (QuiltRecipeSerializer<Recipe<?>>) recipe.getSerializer();
-			JsonObject serialized = serializer.toJson(recipe);
+			var serializer = ((RecipeSerializer<Recipe<?>>) recipe.getSerializer());
+			DataResult<JsonElement> encoded = serializer.method_53736().encode(recipe, JsonOps.INSTANCE, new JsonObject());
+			if (encoded.error().isPresent()) {
+				LOGGER.error("Failed to serialize recipe {} with reason {}.", id, encoded.error().get().message());
+			}
 
-			Path path = debugPath.resolve(recipe.getId().getNamespace() + "/recipes/" + recipe.getId().getPath() + ".json");
+			JsonObject serialized = (JsonObject) encoded.result().get();
+
+			Path path = debugPath.resolve(id.getNamespace() + "/recipes/" + id.getPath() + ".json");
 			Path parent = path.getParent();
 
 			if (!Files.exists(parent)) {
@@ -132,7 +129,7 @@ public final class RecipeManagerImpl implements RegistryEvents.DynamicRegistryLo
 					Files.createDirectories(parent);
 				} catch (IOException e) {
 					LOGGER.error("Failed to create parent recipe directory {}. Cannot dump recipe {}.",
-							parent, recipe.getId(), e);
+							parent, id, e);
 					continue;
 				}
 			}
@@ -147,12 +144,12 @@ public final class RecipeManagerImpl implements RegistryEvents.DynamicRegistryLo
 				Files.writeString(path, stringWriter.toString(),
 						StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
 			} catch (IOException e) {
-				LOGGER.error("Failed to write JSON for recipe {}.", recipe.getId(), e);
+				LOGGER.error("Failed to write JSON for recipe {}.", id, e);
 			} finally {
 				try {
 					jsonWriter.close();
 				} catch (IOException e) {
-					LOGGER.error("Failed to close JSON writer for recipe {}.", recipe.getId(), e);
+					LOGGER.error("Failed to close JSON writer for recipe {}.", id, e);
 				}
 			}
 		}

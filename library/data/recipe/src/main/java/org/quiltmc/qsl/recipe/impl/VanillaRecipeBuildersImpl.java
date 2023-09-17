@@ -25,6 +25,7 @@ import net.minecraft.recipe.BlastingRecipe;
 import net.minecraft.recipe.CampfireCookingRecipe;
 import net.minecraft.recipe.CookingCategory;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.RecipeUnlocker;
 import net.minecraft.recipe.SmeltingRecipe;
 import net.minecraft.recipe.SmokingRecipe;
 import net.minecraft.recipe.StonecuttingRecipe;
@@ -63,38 +64,38 @@ public final class VanillaRecipeBuildersImpl {
 		return ingredients;
 	}
 
-	public static StonecuttingRecipe stonecuttingRecipe(Identifier id, String group, Ingredient input, ItemStack output) {
+	public static RecipeUnlocker<StonecuttingRecipe> stonecuttingRecipe(Identifier id, String group, Ingredient input, ItemStack output) {
 		if (input == Ingredient.EMPTY) throw new IllegalArgumentException("Input cannot be empty.");
 
-		return new StonecuttingRecipe(id, group, input, output);
+		return new RecipeUnlocker<>(id, new StonecuttingRecipe(group, input, output));
 	}
 
-	public static SmeltingRecipe smeltingRecipe(Identifier id, String group, CookingCategory category, Ingredient input, ItemStack output, float experience, int cookTime) {
-		if (input == Ingredient.EMPTY) throw new IllegalArgumentException("Input cannot be empty.");
-		if (cookTime < 0) throw new IllegalArgumentException("Cook time must be equal or greater than 0");
-
-		return new SmeltingRecipe(id, group, category, input, output, experience, cookTime);
-	}
-
-	public static BlastingRecipe blastingRecipe(Identifier id, String group, CookingCategory category, Ingredient input, ItemStack output, float experience, int cookTime) {
+	public static RecipeUnlocker<SmeltingRecipe> smeltingRecipe(Identifier id, String group, CookingCategory category, Ingredient input, ItemStack output, float experience, int cookTime) {
 		if (input == Ingredient.EMPTY) throw new IllegalArgumentException("Input cannot be empty.");
 		if (cookTime < 0) throw new IllegalArgumentException("Cook time must be equal or greater than 0");
 
-		return new BlastingRecipe(id, group, category, input, output, experience, cookTime);
+		return new RecipeUnlocker<>(id, new SmeltingRecipe(group, category, input, output, experience, cookTime));
 	}
 
-	public static SmokingRecipe smokingRecipe(Identifier id, String group, CookingCategory category, Ingredient input, ItemStack output, float experience, int cookTime) {
+	public static RecipeUnlocker<BlastingRecipe> blastingRecipe(Identifier id, String group, CookingCategory category, Ingredient input, ItemStack output, float experience, int cookTime) {
 		if (input == Ingredient.EMPTY) throw new IllegalArgumentException("Input cannot be empty.");
 		if (cookTime < 0) throw new IllegalArgumentException("Cook time must be equal or greater than 0");
 
-		return new SmokingRecipe(id, group, category, input, output, experience, cookTime);
+		return new RecipeUnlocker<>(id, new BlastingRecipe(group, category, input, output, experience, cookTime));
 	}
 
-	public static CampfireCookingRecipe campfireCookingRecipe(Identifier id, String group, CookingCategory category, Ingredient input,
+	public static RecipeUnlocker<SmokingRecipe> smokingRecipe(Identifier id, String group, CookingCategory category, Ingredient input, ItemStack output, float experience, int cookTime) {
+		if (input == Ingredient.EMPTY) throw new IllegalArgumentException("Input cannot be empty.");
+		if (cookTime < 0) throw new IllegalArgumentException("Cook time must be equal or greater than 0");
+
+		return new RecipeUnlocker<>(id, new SmokingRecipe(group, category, input, output, experience, cookTime));
+	}
+
+	public static RecipeUnlocker<CampfireCookingRecipe> campfireCookingRecipe(Identifier id, String group, CookingCategory category, Ingredient input,
 			ItemStack output, float experience, int cookTime) {
 		if (input == Ingredient.EMPTY) throw new IllegalArgumentException("Input cannot be empty.");
 		if (cookTime < 0) throw new IllegalArgumentException("Cook time must be equal or greater than 0");
 
-		return new CampfireCookingRecipe(id, group, category, input, output, experience, cookTime);
+		return new RecipeUnlocker<>(id, new CampfireCookingRecipe(group, category, input, output, experience, cookTime));
 	}
 }

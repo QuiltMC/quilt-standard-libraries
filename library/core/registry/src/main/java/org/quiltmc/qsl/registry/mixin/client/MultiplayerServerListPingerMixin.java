@@ -34,7 +34,7 @@ import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolContainer;
 @ClientOnly
 @Mixin(MultiplayerServerListPinger.class)
 public class MultiplayerServerListPingerMixin {
-	@ModifyArgs(method = "add", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/ClientConnection;setPacketListener(Lnet/minecraft/network/listener/PacketListener;)V"))
+	@ModifyArgs(method = "add", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/ClientConnection;connect(Ljava/lang/String;ILnet/minecraft/network/listener/ClientQueryPacketListener;)V"))
 	private void quilt$attachModProtocol(Args args, ServerInfo entry, Runnable pinger) {
 		var queryPacketListener = (ClientQueryPacketListener) args.get(0);
 		args.set(0, new ClientQueryPacketListener() {
@@ -49,8 +49,8 @@ public class MultiplayerServerListPingerMixin {
 			}
 
 			@Override
-			public void onPong(QueryPongS2CPacket packet) {
-				queryPacketListener.onPong(packet);
+			public void method_12666(QueryPongS2CPacket packet) {
+				queryPacketListener.method_12666(packet);
 			}
 
 			@Override

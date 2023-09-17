@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.recipe.RecipeUnlocker;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 
@@ -109,7 +110,7 @@ public final class RecipeLoadingEvents {
 			 * @param id      identifier of the recipe
 			 * @param factory the recipe factory
 			 */
-			void register(Identifier id, Function<Identifier, Recipe<?>> factory);
+			void register(Identifier id, Function<Identifier, RecipeUnlocker<?>> factory);
 
 			/**
 			 * {@return the dynamic registry manager}
@@ -139,9 +140,9 @@ public final class RecipeLoadingEvents {
 			/**
 			 * Replaces a recipe in the {@link net.minecraft.recipe.RecipeManager}.
 			 *
-			 * @param recipe the recipe
+			 * @param recipeUnlocker the recipe
 			 */
-			void replace(Recipe<?> recipe);
+			void replace(RecipeUnlocker<?> recipeUnlocker);
 		}
 	}
 

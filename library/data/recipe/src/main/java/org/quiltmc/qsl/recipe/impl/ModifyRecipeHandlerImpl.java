@@ -23,6 +23,7 @@ import org.jetbrains.annotations.ApiStatus;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.recipe.RecipeUnlocker;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 
@@ -37,43 +38,42 @@ final class ModifyRecipeHandlerImpl extends BasicRecipeHandlerImpl implements Re
 		super(recipeManager, recipes, globalRecipes, registryManager);
 	}
 
-	private void add(Recipe<?> recipe) {
-		Map<Identifier, Recipe<?>> type = this.recipes.get(recipe.getType());
+	private void add(RecipeUnlocker<?> recipeUnlocker) {
+		Map<Identifier, Recipe<?>> type = this.recipes.get(recipeUnlocker.comp_1933().getType());
 
 		if (type == null) {
-			throw new IllegalStateException("The given recipe " + recipe.getId()
-					+ " does not have its recipe type " + recipe.getType() + " in the recipe manager.");
+			throw new IllegalStateException("The given recipe " + recipeUnlocker.comp_1932()
+					+ " does not have its recipe type " + recipeUnlocker.comp_1932() + " in the recipe manager.");
 		}
 
-		type.put(recipe.getId(), recipe);
-		this.globalRecipes.put(recipe.getId(), recipe);
+		type.put(recipeUnlocker.comp_1932(), recipeUnlocker.comp_1933());
+		this.globalRecipes.put(recipeUnlocker.comp_1932(), recipeUnlocker.comp_1933());
 	}
 
 	@Override
-	public void replace(Recipe<?> recipe) {
-		RecipeType<?> oldType = this.getTypeOf(recipe.getId());
+	public void replace(RecipeUnlocker<?> recipeUnlocker) {
+		RecipeType<?> oldType = this.getTypeOf(recipeUnlocker.comp_1932());
 
 		if (oldType == null) {
 			if (RecipeManagerImpl.DEBUG_MODE) {
-				RecipeManagerImpl.LOGGER.info("Add new recipe {} with type {} in modify phase.", recipe.getId(), recipe.getType());
+				RecipeManagerImpl.LOGGER.info("Add new recipe {} with type {} in modify phase.", recipeUnlocker.comp_1932(), recipeUnlocker.comp_1933().getType());
 			}
 
-			this.add(recipe);
-		} else if (oldType == recipe.getType()) {
+			this.add(recipeUnlocker);
+		} else if (oldType == recipeUnlocker.comp_1933().getType()) {
 			if (RecipeManagerImpl.DEBUG_MODE) {
-				RecipeManagerImpl.LOGGER.info("Replace recipe {} with same type {} in modify phase.", recipe.getId(), recipe.getType());
+				RecipeManagerImpl.LOGGER.info("Replace recipe {} with same type {} in modify phase.", recipeUnlocker.comp_1932(), recipeUnlocker.comp_1933().getType());
 			}
 
-			this.recipes.get(oldType).put(recipe.getId(), recipe);
-			this.globalRecipes.put(recipe.getId(), recipe);
+			this.recipes.get(oldType).put(recipeUnlocker.comp_1932(), recipeUnlocker.comp_1933());
+			this.globalRecipes.put(recipeUnlocker.comp_1932(), recipeUnlocker.comp_1933());
 		} else {
 			if (RecipeManagerImpl.DEBUG_MODE) {
-				RecipeManagerImpl.LOGGER.info("Replace new recipe {} with type {} (and old type {}) in modify phase.",
-						recipe.getId(), recipe.getType(), oldType);
+				RecipeManagerImpl.LOGGER.info("Replace new recipe {} with type {} (and old type {}) in modify phase.", recipeUnlocker.comp_1932(), recipeUnlocker.comp_1933().getType(), oldType);
 			}
 
-			this.recipes.get(oldType).remove(recipe.getId());
-			this.add(recipe);
+			this.recipes.get(oldType).remove(recipeUnlocker.comp_1932());
+			this.add(recipeUnlocker);
 		}
 
 		this.counter++;

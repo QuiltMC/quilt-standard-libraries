@@ -258,7 +258,7 @@ public class ClientPlayNetworkHandlerMixin {
 
 			if (QuiltChatEvents.CANCEL.invoke(message) != Boolean.TRUE) {
 				QuiltChatEvents.BEFORE_PROCESS.invoke(message);
-				instance.sendPacket(message.serialized());
+				instance.getConnection().send(message.serialized());
 				QuiltChatEvents.AFTER_PROCESS.invoke(message);
 			} else {
 				QuiltChatEvents.CANCELLED.invoke(message);

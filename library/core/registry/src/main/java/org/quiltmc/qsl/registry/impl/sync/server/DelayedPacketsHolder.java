@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
+import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
 
 @ApiStatus.Internal
 public interface DelayedPacketsHolder {
