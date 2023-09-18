@@ -177,14 +177,14 @@ public final class RecipeLoadingEvents {
 			 * @param recipeRemovalPredicate the recipe removal predicate
 			 * @param <T>                    the type of the recipe
 			 */
-			<T extends Recipe<?>> void removeIf(RecipeType<T> recipeType, Predicate<T> recipeRemovalPredicate);
+			<T extends Recipe<?>> void removeIf(RecipeType<T> recipeType, Predicate<RecipeUnlocker<T>> recipeRemovalPredicate);
 
 			/**
 			 * Removes a recipe if the predicate returns {@code true}.
 			 *
 			 * @param recipeRemovalPredicate the recipe removal predicate
 			 */
-			void removeIf(Predicate<Recipe<?>> recipeRemovalPredicate);
+			void removeIf(Predicate<RecipeUnlocker<?>> recipeRemovalPredicate);
 		}
 	}
 }

@@ -33,15 +33,15 @@ import org.quiltmc.qsl.recipe.api.RecipeLoadingEvents;
 
 final class RegisterRecipeHandlerImpl implements RecipeLoadingEvents.AddRecipesCallback.RecipeHandler {
 	private final Map<Identifier, JsonElement> resourceMap;
-	private final Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap;
-	private final ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder;
+	private final Map<RecipeType<?>, ImmutableMap.Builder<Identifier, RecipeUnlocker<?>>> builderMap;
+	private final ImmutableMap.Builder<Identifier, RecipeUnlocker<?>> globalRecipeMapBuilder;
 	private final DynamicRegistryManager registryManager;
 	int registered = 0;
 
 	RegisterRecipeHandlerImpl(
 			Map<Identifier, JsonElement> resourceMap,
-			Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap,
-			ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder,
+			Map<RecipeType<?>, ImmutableMap.Builder<Identifier, RecipeUnlocker<?>>> builderMap,
+			ImmutableMap.Builder<Identifier, RecipeUnlocker<?>> globalRecipeMapBuilder,
 			DynamicRegistryManager registryManager
 	) {
 		this.resourceMap = resourceMap;
@@ -52,10 +52,10 @@ final class RegisterRecipeHandlerImpl implements RecipeLoadingEvents.AddRecipesC
 
 	private void register(RecipeUnlocker<?> recipeUnlocker) {
 		Recipe<?> recipe = recipeUnlocker.comp_1933();
-		ImmutableMap.Builder<Identifier, Recipe<?>> recipeBuilder =
+		ImmutableMap.Builder<Identifier, RecipeUnlocker<?>> recipeBuilder =
 				this.builderMap.computeIfAbsent(recipe.getType(), o -> ImmutableMap.builder());
-		recipeBuilder.put(recipeUnlocker.comp_1932(), recipe);
-		this.globalRecipeMapBuilder.put(recipeUnlocker.comp_1932(), recipe);
+		recipeBuilder.put(recipeUnlocker.comp_1932(), recipeUnlocker);
+		this.globalRecipeMapBuilder.put(recipeUnlocker.comp_1932(), recipeUnlocker);
 		this.registered++;
 
 		if (RecipeManagerImpl.DEBUG_MODE) {

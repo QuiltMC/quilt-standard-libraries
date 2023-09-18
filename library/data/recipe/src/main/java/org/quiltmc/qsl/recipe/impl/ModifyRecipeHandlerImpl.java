@@ -33,21 +33,21 @@ import org.quiltmc.qsl.recipe.api.RecipeLoadingEvents;
 final class ModifyRecipeHandlerImpl extends BasicRecipeHandlerImpl implements RecipeLoadingEvents.ModifyRecipesCallback.RecipeHandler {
 	int counter = 0;
 
-	ModifyRecipeHandlerImpl(RecipeManager recipeManager, Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes,
-			Map<Identifier, Recipe<?>> globalRecipes, DynamicRegistryManager registryManager) {
+	ModifyRecipeHandlerImpl(RecipeManager recipeManager, Map<RecipeType<?>, Map<Identifier, RecipeUnlocker<?>>> recipes,
+			Map<Identifier, RecipeUnlocker<?>> globalRecipes, DynamicRegistryManager registryManager) {
 		super(recipeManager, recipes, globalRecipes, registryManager);
 	}
 
 	private void add(RecipeUnlocker<?> recipeUnlocker) {
-		Map<Identifier, Recipe<?>> type = this.recipes.get(recipeUnlocker.comp_1933().getType());
+		Map<Identifier, RecipeUnlocker<?>> type = this.recipes.get(recipeUnlocker.comp_1933().getType());
 
 		if (type == null) {
 			throw new IllegalStateException("The given recipe " + recipeUnlocker.comp_1932()
 					+ " does not have its recipe type " + recipeUnlocker.comp_1932() + " in the recipe manager.");
 		}
 
-		type.put(recipeUnlocker.comp_1932(), recipeUnlocker.comp_1933());
-		this.globalRecipes.put(recipeUnlocker.comp_1932(), recipeUnlocker.comp_1933());
+		type.put(recipeUnlocker.comp_1932(), recipeUnlocker);
+		this.globalRecipes.put(recipeUnlocker.comp_1932(), recipeUnlocker);
 	}
 
 	@Override
@@ -65,8 +65,8 @@ final class ModifyRecipeHandlerImpl extends BasicRecipeHandlerImpl implements Re
 				RecipeManagerImpl.LOGGER.info("Replace recipe {} with same type {} in modify phase.", recipeUnlocker.comp_1932(), recipeUnlocker.comp_1933().getType());
 			}
 
-			this.recipes.get(oldType).put(recipeUnlocker.comp_1932(), recipeUnlocker.comp_1933());
-			this.globalRecipes.put(recipeUnlocker.comp_1932(), recipeUnlocker.comp_1933());
+			this.recipes.get(oldType).put(recipeUnlocker.comp_1932(), recipeUnlocker);
+			this.globalRecipes.put(recipeUnlocker.comp_1932(), recipeUnlocker);
 		} else {
 			if (RecipeManagerImpl.DEBUG_MODE) {
 				RecipeManagerImpl.LOGGER.info("Replace new recipe {} with type {} (and old type {}) in modify phase.", recipeUnlocker.comp_1932(), recipeUnlocker.comp_1933().getType(), oldType);

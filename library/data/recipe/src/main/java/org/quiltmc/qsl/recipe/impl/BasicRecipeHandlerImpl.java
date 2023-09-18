@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.recipe.RecipeUnlocker;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 
@@ -33,12 +34,12 @@ import org.quiltmc.qsl.recipe.api.BaseRecipeHandler;
 
 class BasicRecipeHandlerImpl implements BaseRecipeHandler {
 	final RecipeManager recipeManager;
-	final Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes;
-	final Map<Identifier, Recipe<?>> globalRecipes;
+	final Map<RecipeType<?>, Map<Identifier, RecipeUnlocker<?>>> recipes;
+	final Map<Identifier, RecipeUnlocker<?>> globalRecipes;
 	private final DynamicRegistryManager registryManager;
 
-	BasicRecipeHandlerImpl(RecipeManager recipeManager, Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes,
-			Map<Identifier, Recipe<?>> globalRecipes, DynamicRegistryManager registryManager) {
+	BasicRecipeHandlerImpl(RecipeManager recipeManager, Map<RecipeType<?>, Map<Identifier, RecipeUnlocker<?>>> recipes,
+						   Map<Identifier, RecipeUnlocker<?>> globalRecipes, DynamicRegistryManager registryManager) {
 		this.recipeManager = recipeManager;
 		this.recipes = recipes;
 		this.globalRecipes = globalRecipes;
@@ -61,7 +62,7 @@ class BasicRecipeHandlerImpl implements BaseRecipeHandler {
 
 	@Override
 	public boolean contains(Identifier id, RecipeType<?> type) {
-		Map<Identifier, Recipe<?>> recipes = this.recipes.get(type);
+		Map<Identifier, RecipeUnlocker<?>> recipes = this.recipes.get(type);
 
 		if (recipes == null) return false;
 
@@ -69,35 +70,35 @@ class BasicRecipeHandlerImpl implements BaseRecipeHandler {
 	}
 
 	@Override
-	public @Nullable Recipe<?> getRecipe(Identifier id) {
+	public @Nullable RecipeUnlocker<?> getRecipe(Identifier id) {
 		return this.globalRecipes.get(id);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Recipe<?>> @Nullable T getRecipe(Identifier id, RecipeType<T> type) {
-		Map<Identifier, Recipe<?>> recipes = this.recipes.get(type);
+	public <T extends Recipe<?>> @Nullable RecipeUnlocker<T> getRecipe(Identifier id, RecipeType<T> type) {
+		Map<Identifier, RecipeUnlocker<?>> recipes = this.recipes.get(type);
 
 		if (recipes == null) return null;
 
-		return (T) recipes.get(id);
+		return (RecipeUnlocker<T>) recipes.get(id);
 	}
 
 	@Override
-	public Map<RecipeType<?>, Map<Identifier, Recipe<?>>> getRecipes() {
+	public Map<RecipeType<?>, Map<Identifier, RecipeUnlocker<?>>> getRecipes() {
 		return Collections.unmodifiableMap(this.recipes);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Recipe<?>> Collection<T> getRecipesOfType(RecipeType<T> type) {
-		Map<Identifier, Recipe<?>> recipes = this.recipes.get(type);
+	public <T extends Recipe<?>> Collection<RecipeUnlocker<T>> getRecipesOfType(RecipeType<T> type) {
+		Map<Identifier, RecipeUnlocker<?>> recipes = this.recipes.get(type);
 
 		if (recipes == null) {
 			return Collections.emptyList();
 		}
 
-		return Collections.unmodifiableCollection((Collection<T>) recipes.values());
+		return recipes.values().stream().map(recipeUnlocker -> (RecipeUnlocker<T>) recipeUnlocker).toList();
 	}
 
 	@Override

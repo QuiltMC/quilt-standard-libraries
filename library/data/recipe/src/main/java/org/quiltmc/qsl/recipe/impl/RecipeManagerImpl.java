@@ -56,31 +56,31 @@ public final class RecipeManagerImpl implements RegistryEvents.DynamicRegistryLo
 	 * Stores the static recipes which are added to the {@link net.minecraft.recipe.RecipeManager} when recipes are
 	 * loaded.
 	 */
-	private static final Map<Identifier, Recipe<?>> STATIC_RECIPES = new Object2ObjectOpenHashMap<>();
+	private static final Map<Identifier, RecipeUnlocker<?>> STATIC_RECIPES = new Object2ObjectOpenHashMap<>();
 	static final boolean DEBUG_MODE = TriState.fromProperty("quilt.recipe.debug").toBooleanOrElse(QuiltLoader.isDevelopmentEnvironment());
 	private static final boolean DUMP_MODE = Boolean.getBoolean("quilt.recipe.dump");
 	static final Logger LOGGER = LogUtils.getLogger();
 	private static DynamicRegistryManager currentRegistryManager;
 
 	public static void registerStaticRecipe(RecipeUnlocker<?> recipeUnlocker) {
-		if (STATIC_RECIPES.putIfAbsent(recipeUnlocker.comp_1932(), recipeUnlocker.comp_1933()) != null) {
+		if (STATIC_RECIPES.putIfAbsent(recipeUnlocker.comp_1932(), recipeUnlocker) != null) {
 			throw new IllegalArgumentException("Cannot register " + recipeUnlocker.comp_1932()
 					+ " as another recipe with the same identifier already exists.");
 		}
 	}
 
 	public static void apply(Map<Identifier, JsonElement> map,
-			Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap,
-			ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder) {
+			Map<RecipeType<?>, ImmutableMap.Builder<Identifier, RecipeUnlocker<?>>> builderMap,
+			ImmutableMap.Builder<Identifier, RecipeUnlocker<?>> globalRecipeMapBuilder) {
 		var handler = new RegisterRecipeHandlerImpl(map, builderMap, globalRecipeMapBuilder, currentRegistryManager);
 		RecipeLoadingEvents.ADD.invoker().addRecipes(handler);
-		STATIC_RECIPES.forEach((identifier, recipe) -> handler.tryRegister(new RecipeUnlocker<Recipe<?>>(identifier, recipe)));
+		STATIC_RECIPES.forEach((identifier, recipe) -> handler.tryRegister(recipe));
 		LOGGER.info("Registered {} custom recipes.", handler.registered);
 	}
 
 	public static void applyModifications(RecipeManager recipeManager,
-			Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes,
-			Map<Identifier, Recipe<?>> globalRecipes) {
+			Map<RecipeType<?>, Map<Identifier, RecipeUnlocker<?>>> recipes,
+			Map<Identifier, RecipeUnlocker<?>> globalRecipes) {
 		var handler = new ModifyRecipeHandlerImpl(recipeManager, recipes, globalRecipes, currentRegistryManager);
 		RecipeLoadingEvents.MODIFY.invoker().modifyRecipes(handler);
 		LOGGER.info("Modified {} recipes.", handler.counter);
@@ -97,7 +97,7 @@ public final class RecipeManagerImpl implements RegistryEvents.DynamicRegistryLo
 	}
 
 	@SuppressWarnings("unchecked")
-	private static void dump(Map<Identifier, Recipe<?>> recipes) {
+	private static void dump(Map<Identifier, RecipeUnlocker<?>> recipes) {
 		Path debugPath = Paths.get("debug", "quilt", "recipe").normalize();
 
 		if (!Files.exists(debugPath)) {
@@ -109,9 +109,9 @@ public final class RecipeManagerImpl implements RegistryEvents.DynamicRegistryLo
 			}
 		}
 
-		for (Map.Entry<Identifier, Recipe<?>> recipeEntry : recipes.entrySet()) {
+		for (Map.Entry<Identifier, RecipeUnlocker<?>> recipeEntry : recipes.entrySet()) {
 			Identifier id = recipeEntry.getKey();
-			Recipe<?> recipe = recipeEntry.getValue();
+			Recipe<?> recipe = recipeEntry.getValue().comp_1933();
 
 			var serializer = ((RecipeSerializer<Recipe<?>>) recipe.getSerializer());
 			DataResult<JsonElement> encoded = serializer.method_53736().encode(recipe, JsonOps.INSTANCE, new JsonObject());

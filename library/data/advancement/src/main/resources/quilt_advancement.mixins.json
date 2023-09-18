@@ -3,7 +3,7 @@
   "package": "org.quiltmc.qsl.advancement.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "CriteriaMixin"
+    "CriteriaAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
