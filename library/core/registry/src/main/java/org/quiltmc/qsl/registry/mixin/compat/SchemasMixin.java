@@ -1,9 +1,5 @@
 package org.quiltmc.qsl.registry.mixin.compat;
 
-import java.util.Map;
-import java.util.function.UnaryOperator;
-
-import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.DataFixerBuilder;
 import com.mojang.datafixers.schemas.Schema;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,12 +18,13 @@ public class SchemasMixin {
 	@Inject(
 			method = "build",
 			at = @At(
-				value = "TAIL"
+				value = "INVOKE",
+				target = "Lcom/mojang/datafixers/DataFixerBuilder;addFixer(Lcom/mojang/datafixers/DataFix;)V"
 			),
 			slice = @Slice(
 				from = @At(value = "CONSTANT", args = "intValue=3568")
 			),
-			locals = LocalCapture.PRINT
+			locals = LocalCapture.CAPTURE_FAILEXCEPTION
 	)
 	private static void injectQuiltStatusEffectIdFix(DataFixerBuilder builder, CallbackInfo ci, Schema schema192) {
 		builder.addFixer(new QuiltStatusEffectIdFix(schema192));
