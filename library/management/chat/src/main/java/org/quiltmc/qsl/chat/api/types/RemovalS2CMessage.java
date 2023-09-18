@@ -22,44 +22,40 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.message.MessageSignature;
+import net.minecraft.network.packet.s2c.play.MessageRemovalS2CPacket;
 
 import org.quiltmc.qsl.chat.api.QuiltMessageType;
+import org.quiltmc.qsl.chat.impl.InternalMessageTypesFactory;
 
-/**
- * A raw C2S chat message. This is a message before it has been processed by the client or separated into commands.
- *
- * @see ChatC2SMessage
- */
-public class RawChatC2SMessage extends AbstractChatMessage<String> {
-	private final String message;
+public class RemovalS2CMessage extends AbstractChatMessage<MessageRemovalS2CPacket> {
+	private final MessageSignature.Indexed signature;
 
-	public RawChatC2SMessage(@NotNull PlayerEntity player, boolean isClient, String message) {
+	public RemovalS2CMessage(PlayerEntity player, boolean isClient, MessageRemovalS2CPacket packet) {
+		this(player, isClient, packet.signature());
+	}
+
+	public RemovalS2CMessage(PlayerEntity player, boolean isClient, MessageSignature.Indexed signature) {
 		super(player, isClient);
-		this.message = message;
+		this.signature = signature;
 	}
 
 	@Override
 	public @NotNull EnumSet<QuiltMessageType> getTypes() {
-		return EnumSet.of(QuiltMessageType.CHAT, QuiltMessageType.CLIENT, QuiltMessageType.OUTBOUND);
+		return InternalMessageTypesFactory.s2cType(QuiltMessageType.REMOVAL, isClient);
 	}
 
-	@Contract(pure = true)
-	public String getMessage() {
-		return this.message;
+	public MessageSignature.Indexed getSignature() {
+		return signature;
 	}
 
 	@Contract(value = "_ -> new", pure = true)
-	public RawChatC2SMessage withMessage(String message) {
-		return new RawChatC2SMessage(this.player, this.isClient, message);
+	public RemovalS2CMessage withSignature(MessageSignature.Indexed signature) {
+		return new RemovalS2CMessage(this.player, this.isClient, signature);
 	}
 
 	@Override
-	public @NotNull String serialized() {
-		return this.message;
-	}
-
-	@Override
-	public String toString() {
-		return "RawChatC2SMessage{" + "message='" + this.message + '\'' + '}';
+	public @NotNull MessageRemovalS2CPacket serialized() {
+		return new MessageRemovalS2CPacket(signature);
 	}
 }

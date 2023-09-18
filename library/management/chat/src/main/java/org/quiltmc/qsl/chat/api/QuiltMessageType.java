@@ -37,6 +37,16 @@ public enum QuiltMessageType {
 	 */
 	PROFILE_INDEPENDENT(QuiltMetaMessageType.MESSAGE_TYPE),
 
+	/**
+	 * Identifies a command.
+	 */
+	COMMAND(QuiltMetaMessageType.MESSAGE_TYPE),
+
+	/**
+	 * Identifies a removal of some message from the chat.
+	 */
+	REMOVAL(QuiltMetaMessageType.MESSAGE_TYPE),
+
 	// Sidedness
 
 	/**
