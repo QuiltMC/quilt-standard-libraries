@@ -28,6 +28,7 @@ import org.quiltmc.qsl.networking.api.client.ClientConfigurationNetworking;
 import org.quiltmc.qsl.networking.impl.AbstractChanneledNetworkAddon;
 import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
 import org.quiltmc.qsl.networking.impl.NetworkingImpl;
+import org.quiltmc.qsl.networking.impl.payload.ChannelPayload;
 import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
 import org.quiltmc.qsl.networking.mixin.accessor.ClientConfigurationNetworkHandlerAccessor;
 
@@ -36,11 +37,14 @@ import net.minecraft.client.network.ClientConfigurationNetworkHandler;
 import net.minecraft.network.NetworkState;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
+import net.minecraft.network.packet.payload.CustomPayload;
+import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import net.minecraft.util.Identifier;
 
 @ApiStatus.Internal
 @ClientOnly
-public final class ClientConfigurationNetworkAddon extends AbstractChanneledNetworkAddon<ClientConfigurationNetworking.ChannelReceiver> {
+public final class ClientConfigurationNetworkAddon extends AbstractChanneledNetworkAddon<ClientConfigurationNetworking.CustomChannelReceiver<?>> {
 	private final ClientConfigurationNetworkHandler handler;
 	private final MinecraftClient client;
 	private boolean sentInitialRegisterPacket;
@@ -61,7 +65,7 @@ public final class ClientConfigurationNetworkAddon extends AbstractChanneledNetw
 
 	@Override
 	public void lateInit() {
-		for (Map.Entry<Identifier, ClientConfigurationNetworking.ChannelReceiver> entry : this.receiver.getReceivers().entrySet()) {
+		for (Map.Entry<Identifier, ClientConfigurationNetworking.CustomChannelReceiver<?>> entry : this.receiver.getReceivers().entrySet()) {
 			this.registerChannel(entry.getKey(), entry.getValue());
 		}
 
@@ -83,16 +87,18 @@ public final class ClientConfigurationNetworkAddon extends AbstractChanneledNetw
 	 * @return true if the packet has been handled
 	 */
 	public boolean handle(PacketByteBufPayload payload) {
-		try {
-			return this.handle(payload.id(), payload.data());
-		} finally {
-			payload.data().release();
-		}
+		return super.handle(payload);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	protected <T extends CustomPayload> void receive(ClientConfigurationNetworking.CustomChannelReceiver<?> handler, T buf) {
+		((ClientConfigurationNetworking.CustomChannelReceiver<T>) handler).receive(this.client, this.handler, buf, this);
 	}
 
 	@Override
-	protected void receive(ClientConfigurationNetworking.ChannelReceiver handler, PacketByteBuf buf) {
-		handler.receive(this.client, this.handler, buf, this);
+	protected Packet<?> createPacket(CustomPayload payload) {
+		return ClientNetworkingImpl.createC2SPacket(payload);
 	}
 
 	// impl details
@@ -121,10 +127,10 @@ public final class ClientConfigurationNetworkAddon extends AbstractChanneledNetw
 	protected void handleRegistration(Identifier channelName) {
 		// If we can already send packets, immediately send the register packet for this channel
 		if (this.sentInitialRegisterPacket) {
-			final PacketByteBuf buf = this.createRegistrationPacket(Collections.singleton(channelName));
+			final ChannelPayload payload = this.createRegistrationPacket(List.of(channelName), true);
 
-			if (buf != null) {
-				this.sendPacket(NetworkingImpl.REGISTER_CHANNEL, buf);
+			if (payload != null) {
+				this.sendPacket(new CustomPayloadC2SPacket(payload));
 			}
 		}
 	}
@@ -133,10 +139,10 @@ public final class ClientConfigurationNetworkAddon extends AbstractChanneledNetw
 	protected void handleUnregistration(Identifier channelName) {
 		// If we can already send packets, immediately send the unregister packet for this channel
 		if (this.sentInitialRegisterPacket) {
-			final PacketByteBuf buf = this.createRegistrationPacket(Collections.singleton(channelName));
+			final ChannelPayload payload = this.createRegistrationPacket(List.of(channelName), true);
 
-			if (buf != null) {
-				this.sendPacket(NetworkingImpl.UNREGISTER_CHANNEL, buf);
+			if (payload != null) {
+				this.sendPacket(new CustomPayloadC2SPacket(payload));
 			}
 		}
 	}

@@ -27,12 +27,14 @@ import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.ServerConfigurationNetworking;
 import org.quiltmc.qsl.networking.impl.client.ClientConfigurationNetworkAddon;
 import org.quiltmc.qsl.networking.impl.client.ClientNetworkingImpl;
+import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientConfigurationNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.listener.ServerCommonPacketListener;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.util.Identifier;
 
 /**
@@ -60,9 +62,9 @@ public final class ClientConfigurationNetworking {
 	 * @param channelHandler the handler
 	 * @return {@code false} if a handler is already registered to the channel, otherwise {@code true}
 	 * @see ClientConfigurationNetworking#unregisterGlobalReceiver(Identifier)
-	 * @see ClientConfigurationNetworking#registerReceiver(Identifier, ChannelReceiver)
+	 * @see ClientConfigurationNetworking#registerReceiver(Identifier, CustomChannelReceiver)
 	 */
-	public static boolean registerGlobalReceiver(Identifier channelName, ChannelReceiver channelHandler) {
+	public static boolean registerGlobalReceiver(Identifier channelName, CustomChannelReceiver<?> channelHandler) {
 		return ClientNetworkingImpl.CONFIGURATION.registerGlobalReceiver(channelName, channelHandler);
 	}
 
@@ -74,10 +76,10 @@ public final class ClientConfigurationNetworking {
 	 *
 	 * @param channelName the identifier of the channel
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel
-	 * @see ClientConfigurationNetworking#registerGlobalReceiver(Identifier, ChannelReceiver)
+	 * @see ClientConfigurationNetworking#registerGlobalReceiver(Identifier, CustomChannelReceiver)
 	 * @see ClientConfigurationNetworking#unregisterReceiver(Identifier)
 	 */
-	public static @Nullable ClientConfigurationNetworking.ChannelReceiver unregisterGlobalReceiver(Identifier channelName) {
+	public static @Nullable ClientConfigurationNetworking.CustomChannelReceiver<?> unregisterGlobalReceiver(Identifier channelName) {
 		return ClientNetworkingImpl.CONFIGURATION.unregisterGlobalReceiver(channelName);
 	}
 
@@ -105,7 +107,7 @@ public final class ClientConfigurationNetworking {
 	 * @throws IllegalStateException if the client is not connected to a server
 	 * @see ClientConfigurationConnectionEvents#INIT
 	 */
-	public static boolean registerReceiver(Identifier channelName, ChannelReceiver channelHandler) {
+	public static boolean registerReceiver(Identifier channelName, CustomChannelReceiver<?> channelHandler) {
 		final ClientConfigurationNetworkAddon addon = ClientNetworkingImpl.getClientConfigurationAddon();
 
 		if (addon != null) {
@@ -124,7 +126,7 @@ public final class ClientConfigurationNetworking {
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel
 	 * @throws IllegalStateException if the client is not connected to a server
 	 */
-	public static @Nullable ClientConfigurationNetworking.ChannelReceiver unregisterReceiver(Identifier channelName) throws IllegalStateException {
+	public static @Nullable ClientConfigurationNetworking.CustomChannelReceiver<?> unregisterReceiver(Identifier channelName) throws IllegalStateException {
 		final ClientConfigurationNetworkAddon addon = ClientNetworkingImpl.getClientConfigurationAddon();
 
 		if (addon != null) {
@@ -236,7 +238,41 @@ public final class ClientConfigurationNetworking {
 
 	@ClientOnly
 	@FunctionalInterface
-	public interface ChannelReceiver {
+	public interface CustomChannelReceiver<T extends CustomPayload> {
+		/**
+		 * Receives an incoming packet.
+		 * <p>
+		 * This method is executed on {@linkplain io.netty.channel.EventLoop netty's event loops}.
+		 * Modification to the game should be {@linkplain net.minecraft.util.thread.ThreadExecutor#submit(Runnable) scheduled} using the provided Minecraft client instance.
+		 * <p>
+		 * An example usage of this is to display an overlay message:
+		 * <pre>{@code
+		 * ClientConfigurationNetworking.registerReceiver(new Identifier("mymod", "overlay"), (client, handler, data, responseSender) -&rt; {
+		 * 	String message = data.readString(32767);
+		 *
+		 * 	// All operations on the server or world must be executed on the server thread
+		 * 	client.execute(() -> {
+		 * 		client.inGameHud.setOverlayMessage(message, true);
+		 *    });
+		 * });
+		 * }</pre>
+		 *
+		 * @param client         the client
+		 * @param handler        the network handler that received this packet
+		 * @param buf            the payload of the packet
+		 * @param responseSender the packet sender
+		 */
+		void receive(MinecraftClient client, ClientConfigurationNetworkHandler handler, T buf, PacketSender responseSender);
+	}
+
+	@ClientOnly
+	@FunctionalInterface
+	public interface ChannelReceiver extends CustomChannelReceiver<PacketByteBufPayload> {
+		@Override
+		default void receive(MinecraftClient client, ClientConfigurationNetworkHandler handler, PacketByteBufPayload buf, PacketSender responseSender) {
+			this.receive(client, handler, buf.data(), responseSender);
+		}
+
 		/**
 		 * Receives an incoming packet.
 		 * <p>

@@ -49,7 +49,7 @@ public interface SynchronizedRegistry<T> {
 
 	static void markForSync(Registry<?>... registries) {
 		for (var reg : registries) {
-			if (reg instanceof SynchronizedRegistry synchronizedRegistry) {
+			if (reg instanceof SynchronizedRegistry<?> synchronizedRegistry) {
 				synchronizedRegistry.quilt$markForSync();
 			}
 		}

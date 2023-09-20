@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.networking.impl;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,20 +24,23 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import io.netty.util.AsciiString;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.network.ClientConnection;
+import net.minecraft.network.NetworkSide;
 import net.minecraft.network.NetworkState;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
+import net.minecraft.network.packet.payload.CustomPayload;
+import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
 
-import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.PacketSender;
+import org.quiltmc.qsl.networking.impl.payload.ChannelPayload;
 
 /**
  * A network addon which is aware of the channels the other side may receive.
@@ -72,92 +74,63 @@ public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAd
 	}
 
 	// always supposed to handle async!
-	protected boolean handle(Identifier channelName, PacketByteBuf originalBuf) {
-		this.logger.debug("Handling inbound packet from channel with name \"{}\"", channelName);
+	public <T extends CustomPayload> boolean handle(T originalBuf) {
+		this.logger.debug("Handling inbound packet from channel with name \"{}\"", originalBuf.id());
 
 		// Handle reserved packets
-		if (NetworkingImpl.REGISTER_CHANNEL.equals(channelName)) {
-			this.receiveRegistration(true, PacketByteBufs.slice(originalBuf));
+		if (NetworkingImpl.REGISTER_CHANNEL.equals(originalBuf.id())) {
+			this.receiveRegistration(true, ((ChannelPayload) originalBuf));
 			return true;
 		}
 
-		if (NetworkingImpl.UNREGISTER_CHANNEL.equals(channelName)) {
-			this.receiveRegistration(false, PacketByteBufs.slice(originalBuf));
+		if (NetworkingImpl.UNREGISTER_CHANNEL.equals(originalBuf.id())) {
+			this.receiveRegistration(true, ((ChannelPayload) originalBuf));
 			return true;
 		}
 
-		@Nullable H handler = this.getHandler(channelName);
+		@Nullable H handler = this.getHandler(originalBuf.id());
 
 		if (handler == null) {
 			return false;
 		}
 
-		PacketByteBuf buf = PacketByteBufs.slice(originalBuf);
-
 		try {
-			this.receive(handler, buf);
+			this.receive(handler, originalBuf);
 		} catch (Throwable ex) {
-			this.logger.error("Encountered exception while handling in channel with name \"{}\"", channelName, ex);
+			this.logger.error("Encountered exception while handling in channel with name \"{}\"", originalBuf.id(), ex);
 			throw ex;
 		}
 
 		return true;
 	}
 
-	protected abstract void receive(H handler, PacketByteBuf buf);
+	protected abstract <T extends CustomPayload> void receive(H handler, T buf);
 
 	protected void sendInitialChannelRegistrationPacket() {
-		final PacketByteBuf buf = this.createRegistrationPacket(this.getReceivableChannels());
+		final ChannelPayload payload = this.createRegistrationPacket(List.copyOf(this.getReceivableChannels()), true);
 
-		if (buf != null) {
-			this.sendPacket(NetworkingImpl.REGISTER_CHANNEL, buf);
+		if (payload != null) {
+			this.sendPacket(this.createPacket(payload));
 		}
 	}
 
+	protected abstract Packet<?> createPacket(CustomPayload payload);
+
 	@Nullable
-	protected PacketByteBuf createRegistrationPacket(Collection<Identifier> channels) {
+	protected ChannelPayload createRegistrationPacket(List<Identifier> channels, boolean register) {
 		if (channels.isEmpty()) {
 			return null;
 		}
 
-		PacketByteBuf buf = PacketByteBufs.create();
-		boolean first = true;
-
-		for (Identifier channel : channels) {
-			if (first) {
-				first = false;
-			} else {
-				buf.writeByte(0);
-			}
-
-			buf.writeBytes(channel.toString().getBytes(StandardCharsets.US_ASCII));
-		}
-
-		return buf;
+		return register ? new ChannelPayload.RegisterChannelPayload(channels) : new ChannelPayload.UnregisterChannelPayload(channels);
 	}
 
-	// wrap in try with res (buf)
-	protected void receiveRegistration(boolean register, PacketByteBuf buf) {
-		List<Identifier> ids = new ArrayList<>();
-		StringBuilder active = new StringBuilder();
-
-		while (buf.isReadable()) {
-			byte b = buf.readByte();
-
-			if (b != 0) {
-				active.append(AsciiString.b2c(b));
-			} else {
-				this.addId(ids, active);
-				active = new StringBuilder();
-			}
-		}
-
-		this.addId(ids, active);
-
+	// wrap in try with res (payload)
+	protected void receiveRegistration(boolean register, ChannelPayload payload) {
 		if (register) {
-			this.register(ids);
+			this.register(payload.channels());
 		} else {
-			this.unregister(ids);
+			this.unregister(payload.channels());
 		}
 	}
 

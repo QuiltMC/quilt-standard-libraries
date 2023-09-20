@@ -25,6 +25,8 @@ import org.jetbrains.annotations.ApiStatus;
 import net.minecraft.network.NetworkState;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.payload.CustomPayload;
+import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.util.Identifier;
@@ -35,11 +37,12 @@ import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.networking.impl.AbstractChanneledNetworkAddon;
 import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
 import org.quiltmc.qsl.networking.impl.NetworkingImpl;
+import org.quiltmc.qsl.networking.impl.payload.ChannelPayload;
 import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
 import org.quiltmc.qsl.networking.mixin.accessor.AbstractServerPacketHandlerAccessor;
 
 @ApiStatus.Internal
-public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<ServerPlayNetworking.ChannelReceiver> {
+public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<ServerPlayNetworking.CustomChannelReceiver<?>> {
 	private final ServerPlayNetworkHandler handler;
 	private final MinecraftServer server;
 	private boolean sentInitialRegisterPacket;
@@ -58,7 +61,7 @@ public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 
 	@Override
 	public void lateInit() {
-		for (Map.Entry<Identifier, ServerPlayNetworking.ChannelReceiver> entry : this.receiver.getReceivers().entrySet()) {
+		for (Map.Entry<Identifier, ServerPlayNetworking.CustomChannelReceiver<?>> entry : this.receiver.getReceivers().entrySet()) {
 			this.registerChannel(entry.getKey(), entry.getValue());
 		}
 
@@ -75,21 +78,17 @@ public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 	/**
 	 * Handles an incoming packet.
 	 *
-	 * @param payload the packet to handle
+	 * @param payload the payload to handle
 	 * @return true if the packet has been handled
 	 */
 	public boolean handle(PacketByteBufPayload payload) {
-		// Do not handle the packet on game thread
-		if (this.server.isOnThread()) {
-			return false;
-		}
-
-		return this.handle(payload.id(), payload.data());
+		return super.handle(payload);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected void receive(ServerPlayNetworking.ChannelReceiver handler, PacketByteBuf buf) {
-		handler.receive(this.server, this.handler.player, this.handler, buf, this);
+	protected <T extends CustomPayload> void receive(ServerPlayNetworking.CustomChannelReceiver<?> handler, T buf) {
+		((ServerPlayNetworking.CustomChannelReceiver<T>) handler).receive(this.server, this.handler.player, this.handler, buf, this);
 	}
 
 	// impl details
@@ -97,6 +96,11 @@ public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 	@Override
 	protected void schedule(Runnable task) {
 		this.handler.player.server.execute(task);
+	}
+
+	@Override
+	protected Packet<?> createPacket(CustomPayload payload) {
+		return ServerNetworkingImpl.createS2CPacket(payload);
 	}
 
 	@Override
@@ -118,10 +122,10 @@ public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 	protected void handleRegistration(Identifier channelName) {
 		// If we can already send packets, immediately send the register packet for this channel
 		if (this.sentInitialRegisterPacket) {
-			final PacketByteBuf buf = this.createRegistrationPacket(Collections.singleton(channelName));
+			final ChannelPayload payload = this.createRegistrationPacket(List.of(channelName), true);
 
-			if (buf != null) {
-				this.sendPacket(NetworkingImpl.REGISTER_CHANNEL, buf);
+			if (payload != null) {
+				this.sendPacket(new CustomPayloadS2CPacket(payload));
 			}
 		}
 	}
@@ -130,10 +134,10 @@ public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 	protected void handleUnregistration(Identifier channelName) {
 		// If we can already send packets, immediately send the unregister packet for this channel
 		if (this.sentInitialRegisterPacket) {
-			final PacketByteBuf buf = this.createRegistrationPacket(Collections.singleton(channelName));
+			final ChannelPayload payload = this.createRegistrationPacket(List.of(channelName), false);
 
-			if (buf != null) {
-				this.sendPacket(NetworkingImpl.UNREGISTER_CHANNEL, buf);
+			if (payload != null) {
+				this.sendPacket(new CustomPayloadS2CPacket(payload));
 			}
 		}
 	}

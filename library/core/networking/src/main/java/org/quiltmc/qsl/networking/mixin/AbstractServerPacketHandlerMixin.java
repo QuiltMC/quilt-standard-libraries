@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.networking.mixin;
 
+import org.quiltmc.qsl.networking.impl.AbstractChanneledNetworkAddon;
 import org.quiltmc.qsl.networking.impl.AbstractNetworkAddon;
 import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
 import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
@@ -46,22 +47,11 @@ abstract class AbstractServerPacketHandlerMixin implements NetworkHandlerExtensi
 
 	@Inject(method = "onCustomPayload", at = @At("HEAD"), cancellable = true)
 	private void handleCustomPayloadReceivedAsync(CustomPayloadC2SPacket packet, CallbackInfo ci) {
-		if (packet.payload() instanceof PacketByteBufPayload payload) {
-			boolean payloadHandled;
-			AbstractNetworkAddon<?> addon = this.getAddon();
-			if (addon instanceof ServerPlayNetworkAddon play) {
-				payloadHandled = play.handle(payload);
-			} else if (addon instanceof ServerConfigurationNetworkAddon configuration) {
-				payloadHandled = configuration.handle(payload);
-			} else {
-				throw new IllegalStateException("Unknown Server Addon");
-			}
+		AbstractChanneledNetworkAddon<?> addon = (AbstractChanneledNetworkAddon<?>) this.getAddon();
+		boolean payloadHandled = addon.handle(packet.payload());
 
-			if (payloadHandled) {
-				ci.cancel();
-			} else {
-				payload.data().skipBytes(payload.data().readableBytes());
-			}
+		if (payloadHandled) {
+			ci.cancel();
 		}
 	}
 

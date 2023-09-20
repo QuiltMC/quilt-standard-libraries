@@ -197,7 +197,7 @@ public final class ServerRegistrySync {
 						}
 					}
 
-					if (packetData.size() > 0) {
+					if (!packetData.isEmpty()) {
 						sendDataPacket(connection, packetData);
 					}
 				}
@@ -244,7 +244,7 @@ public final class ServerRegistrySync {
 			}
 		}
 
-		if (packetData.size() > 0) {
+		if (!packetData.isEmpty()) {
 			sendStateValidationPacket(connection, packetId, packetData);
 		}
 	}

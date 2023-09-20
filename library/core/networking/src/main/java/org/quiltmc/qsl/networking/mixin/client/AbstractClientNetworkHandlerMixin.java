@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.networking.mixin.client;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
+import org.quiltmc.qsl.networking.impl.AbstractChanneledNetworkAddon;
 import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
 import org.quiltmc.qsl.networking.impl.client.ClientConfigurationNetworkAddon;
 import org.quiltmc.qsl.networking.impl.client.ClientPlayNetworkAddon;
@@ -36,22 +37,11 @@ import net.minecraft.text.Text;
 abstract class AbstractClientNetworkHandlerMixin implements NetworkHandlerExtensions {
 	@Inject(method = "onCustomPayload", at = @At("HEAD"), cancellable = true)
 	private void handleCustomPayload(CustomPayloadS2CPacket packet, CallbackInfo ci) {
-		if (packet.payload() instanceof PacketByteBufPayload payload) {
-			boolean handledPayload;
+		AbstractChanneledNetworkAddon<?> addon = (AbstractChanneledNetworkAddon<?>) this.getAddon();
+		boolean payloadHandled = addon.handle(packet.payload());
 
-			if (this.getAddon() instanceof ClientPlayNetworkAddon addon) {
-				handledPayload = addon.handle(payload);
-			} else if (this.getAddon() instanceof ClientConfigurationNetworkAddon addon) {
-				handledPayload = addon.handle(payload);
-			} else {
-				throw new IllegalStateException("Unknown Client Network addon");
-			}
-
-			if (handledPayload) {
-				ci.cancel();
-			} else {
-				payload.data().skipBytes(payload.data().readableBytes());
-			}
+		if (payloadHandled) {
+			ci.cancel();
 		}
 	}
 

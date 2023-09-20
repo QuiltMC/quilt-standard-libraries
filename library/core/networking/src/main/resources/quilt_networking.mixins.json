@@ -5,6 +5,8 @@
   "mixins": [
     "AbstractServerPacketHandlerMixin",
     "ClientConnectionMixin",
+    "CustomPayloadC2SPacketMixin",
+    "CustomPayloadS2CPacketMixin",
     "EntityTrackerEntryMixin",
     "PacketBundleMixin",
     "PlayerManagerMixin",
@@ -12,11 +14,14 @@
     "ServerLoginNetworkHandlerMixin",
     "ServerPlayNetworkHandlerMixin",
     "accessor.AbstractServerPacketHandlerAccessor",
+    "accessor.CustomPayloadC2SPacketAccessor",
+    "accessor.CustomPayloadS2CPacketAccessor",
     "accessor.EntityTrackerAccessor",
     "accessor.ServerLoginNetworkHandlerAccessor",
     "accessor.ThreadedChunkManagerAccessor"
   ],
   "client": [
+    "accessor.AbstractClientNetworkHandlerAccessor",
     "accessor.ClientConfigurationNetworkHandlerAccessor",
     "accessor.ClientLoginNetworkHandlerAccessor",
     "accessor.ConnectScreenAccessor",

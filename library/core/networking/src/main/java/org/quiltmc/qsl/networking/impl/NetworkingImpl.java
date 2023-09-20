@@ -21,6 +21,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.quiltmc.qsl.networking.api.CustomPayloads;
+import org.quiltmc.qsl.networking.impl.payload.ChannelPayload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,6 +84,11 @@ public final class NetworkingImpl {
 
 		ServerLoginNetworking.registerGlobalReceiver(EARLY_REGISTRATION_CHANNEL, NetworkingImpl::receiveEarlyRegistration);
 		ServerLoginNetworking.registerGlobalReceiver(EARLY_REGISTRATION_CHANNEL_FABRIC, NetworkingImpl::receiveEarlyRegistration);
+
+		CustomPayloads.registerS2CPayload(REGISTER_CHANNEL, ChannelPayload.RegisterChannelPayload::new);
+		CustomPayloads.registerS2CPayload(UNREGISTER_CHANNEL, ChannelPayload.UnregisterChannelPayload::new);
+		CustomPayloads.registerC2SPayload(REGISTER_CHANNEL, ChannelPayload.RegisterChannelPayload::new);
+		CustomPayloads.registerC2SPayload(UNREGISTER_CHANNEL, ChannelPayload.UnregisterChannelPayload::new);
 	}
 
 	public static boolean isReservedCommonChannel(Identifier channelName) {

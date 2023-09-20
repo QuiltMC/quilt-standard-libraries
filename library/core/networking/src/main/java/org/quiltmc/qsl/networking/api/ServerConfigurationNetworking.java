@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.networking.api.client.ClientConfigurationNetworking;
+import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
 import org.quiltmc.qsl.networking.impl.server.ServerNetworkingImpl;
 import org.quiltmc.qsl.networking.mixin.accessor.AbstractServerPacketHandlerAccessor;
 
@@ -30,6 +31,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.ServerConfigurationPacketHandler;
 import net.minecraft.network.listener.ClientCommonPacketListener;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 
@@ -75,7 +77,7 @@ public final class ServerConfigurationNetworking {
 	 * @see ServerConfigurationNetworking#unregisterReceiver(ServerConfigurationPacketHandler, Identifier)
 	 */
 	@Nullable
-	public static ServerConfigurationNetworking.ChannelReceiver unregisterGlobalReceiver(Identifier channelName) {
+	public static ServerConfigurationNetworking.CustomChannelReceiver<?> unregisterGlobalReceiver(Identifier channelName) {
 		return ServerNetworkingImpl.CONFIGURATION.unregisterGlobalReceiver(channelName);
 	}
 
@@ -95,7 +97,7 @@ public final class ServerConfigurationNetworking {
 	 * the channel handler will only be applied to the client represented by the {@link ServerConfigurationPacketHandler}.
 	 * <p>
 	 * For example, if you only register a receiver using this method when a {@linkplain ServerLoginNetworking#registerGlobalReceiver(Identifier, ServerLoginNetworking.QueryResponseReceiver)}
-	 * login response has been received, you should use {@link ServerConfigurationConnectionEvents#INIT} to register the channel handler.
+	 * login response has been received, you should use {@link ServerConfigurationConnectionEvents#BEFORE_CONFIGURE} to register the channel handler.
 	 * <p>
 	 * If a handler is already registered to the {@code channelName}, this method will return {@code false}, and no change will be made.
 	 * Use {@link #unregisterReceiver(ServerConfigurationPacketHandler, Identifier)} to unregister the existing handler.
@@ -104,7 +106,7 @@ public final class ServerConfigurationNetworking {
 	 * @param channelName    the identifier of the channel
 	 * @param channelHandler the handler
 	 * @return {@code false} if a handler is already registered to the channel name, otherwise {@code true}
-	 * @see ServerConfigurationConnectionEvents#INIT
+	 * @see ServerConfigurationConnectionEvents#BEFORE_CONFIGURE
 	 */
 	public static boolean registerReceiver(ServerConfigurationPacketHandler networkHandler, Identifier channelName, ChannelReceiver channelHandler) {
 		Objects.requireNonNull(networkHandler, "Network handler cannot be null");
@@ -121,7 +123,7 @@ public final class ServerConfigurationNetworking {
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel name
 	 */
 	@Nullable
-	public static ServerConfigurationNetworking.ChannelReceiver unregisterReceiver(ServerConfigurationPacketHandler networkHandler, Identifier channelName) {
+	public static ServerConfigurationNetworking.CustomChannelReceiver<?> unregisterReceiver(ServerConfigurationPacketHandler networkHandler, Identifier channelName) {
 		Objects.requireNonNull(networkHandler, "Network handler cannot be null");
 
 		return ServerNetworkingImpl.getAddon(networkHandler).unregisterChannel(channelName);
@@ -226,7 +228,37 @@ public final class ServerConfigurationNetworking {
 	}
 
 	@FunctionalInterface
-	public interface ChannelReceiver {
+	public interface CustomChannelReceiver<T extends CustomPayload> {
+		/**
+		 * Receives an incoming packet.
+		 * <p>
+		 * This method is executed on {@linkplain io.netty.channel.EventLoop netty's event loops}.
+		 * Modification to the game should be {@linkplain net.minecraft.util.thread.ThreadExecutor#submit(Runnable) scheduled} using the provided Minecraft server instance.
+		 * <pre>{@code
+		 * ServerConfigurationNetworking.registerReceiver(new Identifier("mymod", "boom"), (server, handler, data, responseSender) -> {
+		 * 	boolean fire = data.readBoolean();
+		 *
+		 * 	// All operations on the server or world must be executed on the server thread
+		 * 	server.execute(() -> {
+		 *
+		 *    });
+		 * });
+		 * }</pre>
+		 *
+		 * @param server         the server
+		 * @param handler        the network handler that received this packet, representing the client who sent the packet
+		 * @param buf            the payload of the packet
+		 * @param responseSender the packet sender
+		 */
+		void receive(MinecraftServer server, ServerConfigurationPacketHandler handler, T buf, PacketSender responseSender);
+	}
+
+	@FunctionalInterface
+	public interface ChannelReceiver extends CustomChannelReceiver<PacketByteBufPayload> {
+		default void receive(MinecraftServer server, ServerConfigurationPacketHandler handler, PacketByteBufPayload buf, PacketSender responseSender) {
+			this.receive(server, handler, buf.data(), responseSender);
+		}
+
 		/**
 		 * Receives an incoming packet.
 		 * <p>

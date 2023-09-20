@@ -152,7 +152,7 @@ public final class ServerLoginNetworking {
 	}
 
 	/**
-	 * Allows blocking client log-in until all all futures passed into {@link LoginSynchronizer#waitFor(Future)} are completed.
+	 * Allows blocking client log-in until all futures passed into {@link LoginSynchronizer#waitFor(Future)} are completed.
 	 *
 	 * @apiNote this interface is not intended to be implemented by users of api.
 	 */

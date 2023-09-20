@@ -25,14 +25,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.ServerConfigurationPacketHandler;
 import net.minecraft.network.listener.ClientCommonPacketListener;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
+import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
 import org.quiltmc.qsl.networking.impl.server.ServerNetworkingImpl;
 
 /**
@@ -60,7 +63,7 @@ public final class ServerPlayNetworking {
 	 * @see ServerPlayNetworking#unregisterGlobalReceiver(Identifier)
 	 * @see ServerPlayNetworking#registerReceiver(ServerPlayNetworkHandler, Identifier, ChannelReceiver)
 	 */
-	public static boolean registerGlobalReceiver(Identifier channelName, ChannelReceiver channelHandler) {
+	public static boolean registerGlobalReceiver(Identifier channelName, CustomChannelReceiver<?> channelHandler) {
 		return ServerNetworkingImpl.PLAY.registerGlobalReceiver(channelName, channelHandler);
 	}
 
@@ -72,11 +75,11 @@ public final class ServerPlayNetworking {
 	 *
 	 * @param channelName the identifier of the channel
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel
-	 * @see ServerPlayNetworking#registerGlobalReceiver(Identifier, ChannelReceiver)
+	 * @see ServerPlayNetworking#registerGlobalReceiver(Identifier, CustomChannelReceiver)
 	 * @see ServerPlayNetworking#unregisterReceiver(ServerPlayNetworkHandler, Identifier)
 	 */
 	@Nullable
-	public static ServerPlayNetworking.ChannelReceiver unregisterGlobalReceiver(Identifier channelName) {
+	public static ServerPlayNetworking.CustomChannelReceiver<?> unregisterGlobalReceiver(Identifier channelName) {
 		return ServerNetworkingImpl.PLAY.unregisterGlobalReceiver(channelName);
 	}
 
@@ -92,7 +95,7 @@ public final class ServerPlayNetworking {
 
 	/**
 	 * Registers a handler to a channel.
-	 * This method differs from {@link ServerPlayNetworking#registerGlobalReceiver(Identifier, ChannelReceiver)} since
+	 * This method differs from {@link ServerPlayNetworking#registerGlobalReceiver(Identifier, CustomChannelReceiver)} since
 	 * the channel handler will only be applied to the player represented by the {@link ServerPlayNetworkHandler}.
 	 * <p>
 	 * For example, if you only register a receiver using this method when a {@linkplain ServerLoginNetworking#registerGlobalReceiver(Identifier, ServerLoginNetworking.QueryResponseReceiver)}
@@ -122,7 +125,7 @@ public final class ServerPlayNetworking {
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel name
 	 */
 	@Nullable
-	public static ServerPlayNetworking.ChannelReceiver unregisterReceiver(ServerPlayNetworkHandler networkHandler, Identifier channelName) {
+	public static ServerPlayNetworking.CustomChannelReceiver<?> unregisterReceiver(ServerPlayNetworkHandler networkHandler, Identifier channelName) {
 		Objects.requireNonNull(networkHandler, "Network handler cannot be null");
 
 		return ServerNetworkingImpl.getAddon(networkHandler).unregisterChannel(channelName);
@@ -289,7 +292,40 @@ public final class ServerPlayNetworking {
 	}
 
 	@FunctionalInterface
-	public interface ChannelReceiver {
+	public interface CustomChannelReceiver<T extends CustomPayload> {
+		/**
+		 * Receives an incoming packet.
+		 * <p>
+		 * This method is executed on {@linkplain io.netty.channel.EventLoop netty's event loops}.
+		 * Modification to the game should be {@linkplain net.minecraft.util.thread.ThreadExecutor#submit(Runnable) scheduled} using the provided Minecraft server instance.
+		 * <p>
+		 * An example usage of this is to create an explosion where the player is looking:
+		 * <pre>{@code
+		 * ServerPlayNetworking.registerReceiver(new Identifier("mymod", "boom"), (server, player, handler, data, responseSender) -> {
+		 * 	boolean fire = data.readBoolean();
+		 *
+		 * 	// All operations on the server or world must be executed on the server thread
+		 * 	server.execute(() -> {
+		 * 		ModPacketHandler.createExplosion(player, fire);
+		 *    });
+		 * });
+		 * }</pre>
+		 *
+		 * @param server         the server
+		 * @param player         the player
+		 * @param handler        the network handler that received this packet, representing the player/client who sent the packet
+		 * @param buf            the payload of the packet
+		 * @param responseSender the packet sender
+		 */
+		void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, T buf, PacketSender responseSender);
+	}
+
+	@FunctionalInterface
+	public interface ChannelReceiver extends CustomChannelReceiver<PacketByteBufPayload> {
+		default void receive(MinecraftServer server,  ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBufPayload buf, PacketSender responseSender) {
+			this.receive(server, player, handler, buf.data(), responseSender);
+		}
+
 		/**
 		 * Receives an incoming packet.
 		 * <p>

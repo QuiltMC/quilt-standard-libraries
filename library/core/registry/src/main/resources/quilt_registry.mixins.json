@@ -16,6 +16,7 @@
     "RegistryLoaderMixin",
     "ServerLoginNetworkHandlerMixin",
     "ServerMetadataVersionMixin",
+    "ServerPlayerEntityMixin",
     "AbstractServerPacketHandlerAccessor",
     "SimpleRegistryMixin",
     "TagManagerLoaderMixin",

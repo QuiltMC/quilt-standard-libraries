@@ -28,6 +28,8 @@ import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.networking.impl.AbstractChanneledNetworkAddon;
 import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
 import org.quiltmc.qsl.networking.impl.NetworkingImpl;
+import org.quiltmc.qsl.networking.impl.client.ClientNetworkingImpl;
+import org.quiltmc.qsl.networking.impl.payload.ChannelPayload;
 import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
 import org.quiltmc.qsl.networking.mixin.accessor.AbstractServerPacketHandlerAccessor;
 
@@ -36,12 +38,14 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.ServerConfigurationPacketHandler;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.payload.CustomPayload;
+import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import net.minecraft.network.packet.s2c.common.PingS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 
 @ApiStatus.Internal
-public final class ServerConfigurationNetworkAddon extends AbstractChanneledNetworkAddon<ServerConfigurationNetworking.ChannelReceiver> {
+public final class ServerConfigurationNetworkAddon extends AbstractChanneledNetworkAddon<ServerConfigurationNetworking.CustomChannelReceiver<?>> {
 	private final ServerConfigurationPacketHandler handler;
 	private final MinecraftServer server;
 	private RegisterState registerState = RegisterState.NOT_SENT;
@@ -60,7 +64,7 @@ public final class ServerConfigurationNetworkAddon extends AbstractChanneledNetw
 
 	@Override
 	public void lateInit() {
-		for (Map.Entry<Identifier, ServerConfigurationNetworking.ChannelReceiver> entry : this.receiver.getReceivers().entrySet()) {
+		for (Map.Entry<Identifier, ServerConfigurationNetworking.CustomChannelReceiver<?>> entry : this.receiver.getReceivers().entrySet()) {
 			this.registerChannel(entry.getKey(), entry.getValue());
 		}
 	}
@@ -91,8 +95,8 @@ public final class ServerConfigurationNetworkAddon extends AbstractChanneledNetw
 	}
 
 	@Override
-	protected void receiveRegistration(boolean register, PacketByteBuf buf) {
-		super.receiveRegistration(register, buf);
+	protected void receiveRegistration(boolean register, ChannelPayload payload) {
+		super.receiveRegistration(register, payload);
 
 		if (register && this.registerState == RegisterState.SENT) {
 			// We received the registration packet, thus we know this is a modded client, continue with configuration.
@@ -116,12 +120,13 @@ public final class ServerConfigurationNetworkAddon extends AbstractChanneledNetw
 	 * @return true if the packet has been handled
 	 */
 	public boolean handle(PacketByteBufPayload payload) {
-		return this.handle(payload.id(), payload.data());
+		return super.handle(payload);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected void receive(ServerConfigurationNetworking.ChannelReceiver handler, PacketByteBuf buf) {
-		handler.receive(this.server, this.handler, buf, this);
+	protected <T extends CustomPayload> void receive(ServerConfigurationNetworking.CustomChannelReceiver<?> handler, T buf) {
+		((ServerConfigurationNetworking.CustomChannelReceiver<T>) handler).receive(this.server, this.handler, buf, this);
 	}
 
 	// impl details
@@ -129,6 +134,11 @@ public final class ServerConfigurationNetworkAddon extends AbstractChanneledNetw
 	@Override
 	protected void schedule(Runnable task) {
 		this.server.execute(task);
+	}
+
+	@Override
+	protected Packet<?> createPacket(CustomPayload payload) {
+		return ServerNetworkingImpl.createS2CPacket(payload);
 	}
 
 	@Override
@@ -150,10 +160,10 @@ public final class ServerConfigurationNetworkAddon extends AbstractChanneledNetw
 	protected void handleRegistration(Identifier channelName) {
 		// If we can already send packets, immediately send the register packet for this channel
 		if (this.registerState != RegisterState.NOT_SENT) {
-			final PacketByteBuf buf = this.createRegistrationPacket(Collections.singleton(channelName));
+			final ChannelPayload payload = this.createRegistrationPacket(List.of(channelName), true);
 
-			if (buf != null) {
-				this.sendPacket(NetworkingImpl.REGISTER_CHANNEL, buf);
+			if (payload != null) {
+				this.sendPacket(new CustomPayloadS2CPacket(payload));
 			}
 		}
 	}
@@ -162,10 +172,10 @@ public final class ServerConfigurationNetworkAddon extends AbstractChanneledNetw
 	protected void handleUnregistration(Identifier channelName) {
 		// If we can already send packets, immediately send the unregister packet for this channel
 		if (this.registerState != RegisterState.NOT_SENT) {
-			final PacketByteBuf buf = this.createRegistrationPacket(Collections.singleton(channelName));
+			final ChannelPayload payload = this.createRegistrationPacket(List.of(channelName), false);
 
-			if (buf != null) {
-				this.sendPacket(NetworkingImpl.UNREGISTER_CHANNEL, buf);
+			if (payload != null) {
+				this.sendPacket(new CustomPayloadS2CPacket(payload));
 			}
 		}
 	}
