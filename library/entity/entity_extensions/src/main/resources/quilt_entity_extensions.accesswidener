@@ -1,0 +1,19 @@
+accessWidener v2 named
+
+# Entity TAWs
+transitive-accessible  field   net/minecraft/entity/attribute/DefaultAttributeRegistry  DEFAULT_ATTRIBUTE_REGISTRY  Ljava/util/Map;
+transitive-accessible  method  net/minecraft/entity/SpawnRestriction                    register                    (Lnet/minecraft/entity/EntityType;Lnet/minecraft/entity/SpawnRestriction$Location;Lnet/minecraft/world/Heightmap$Type;Lnet/minecraft/entity/SpawnRestriction$SpawnPredicate;)V
+
+# Villager TAWs
+transitive-accessible  field   net/minecraft/village/VillagerType  BIOME_TO_TYPE  Ljava/util/Map;
+transitive-accessible  method  net/minecraft/village/VillagerType  <init>         (Ljava/lang/String;)V
+transitive-accessible  class   net/minecraft/village/TradeOffers$BuyForOneEmeraldFactory
+transitive-accessible  class   net/minecraft/village/TradeOffers$EnchantBookFactory
+transitive-accessible  class   net/minecraft/village/TradeOffers$ProcessItemFactory
+transitive-accessible  class   net/minecraft/village/TradeOffers$SellDyedArmorFactory
+transitive-accessible  class   net/minecraft/village/TradeOffers$SellEnchantedToolFactory
+transitive-accessible  class   net/minecraft/village/TradeOffers$SellItemFactory
+transitive-accessible  class   net/minecraft/village/TradeOffers$SellMapFactory
+transitive-accessible  class   net/minecraft/village/TradeOffers$SellPotionHoldingItemFactory
+transitive-accessible  class   net/minecraft/village/TradeOffers$SuspiciousStewForEmeraldFactory
+transitive-accessible  class   net/minecraft/village/TradeOffers$TypeAwareBuyForOneEmeraldFactory
