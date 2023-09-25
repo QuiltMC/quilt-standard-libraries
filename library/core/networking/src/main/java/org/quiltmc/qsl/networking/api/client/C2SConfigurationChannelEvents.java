@@ -18,16 +18,15 @@ package org.quiltmc.qsl.networking.api.client;
 
 import java.util.List;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientConfigurationNetworkHandler;
+import net.minecraft.network.packet.payload.CustomPayload;
+import net.minecraft.util.Identifier;
+
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.client.ClientEventAwareListener;
 import org.quiltmc.qsl.networking.api.PacketSender;
-
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientConfigurationNetworkHandler;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.network.packet.payload.CustomPayload;
-import net.minecraft.util.Identifier;
 
 /**
  * Offers access to events related to the indication of a connected server's ability to receive packets in certain channels.

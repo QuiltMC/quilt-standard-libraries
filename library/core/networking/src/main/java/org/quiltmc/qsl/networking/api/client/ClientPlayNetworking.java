@@ -62,6 +62,7 @@ public final class ClientPlayNetworking {
 	 * @param channelName    the identifier of the channel
 	 * @param channelHandler the handler
 	 * @return {@code false} if a handler is already registered to the channel, otherwise {@code true}
+	 * @see ClientPlayNetworking#registerGlobalReceiver(Identifier, ChannelReceiver)
 	 * @see ClientPlayNetworking#unregisterGlobalReceiver(Identifier)
 	 * @see ClientPlayNetworking#registerReceiver(Identifier, CustomChannelReceiver)
 	 */
@@ -69,6 +70,21 @@ public final class ClientPlayNetworking {
 		return ClientNetworkingImpl.PLAY.registerGlobalReceiver(channelName, channelHandler);
 	}
 
+	/**
+	 * Registers a handler to a channel.
+	 * A global receiver is registered to all connections, in the present and future.
+	 * <p>
+	 * If a handler is already registered to the {@code channel}, this method will return {@code false}, and no change will be made.
+	 * Use {@link #unregisterGlobalReceiver(Identifier)} to unregister the existing handler.
+	 *
+	 * @param channelName    the identifier of the channel
+	 * @param channelHandler the handler
+	 * @return {@code false} if a handler is already registered to the channel, otherwise {@code true}
+	 * @see ClientPlayNetworking#registerGlobalReceiver(Identifier, CustomChannelReceiver)
+	 * @see ClientPlayNetworking#unregisterGlobalReceiver(Identifier)
+	 * @see ClientPlayNetworking#registerReceiver(Identifier, ChannelReceiver)
+	 */
+	@Deprecated(forRemoval = true)
 	public static boolean registerGlobalReceiver(Identifier channelName, ChannelReceiver channelHandler) {
 		return ClientNetworkingImpl.PLAY.registerGlobalReceiver(channelName, channelHandler);
 	}
@@ -113,6 +129,31 @@ public final class ClientPlayNetworking {
 	 * @see ClientPlayConnectionEvents#INIT
 	 */
 	public static boolean registerReceiver(Identifier channelName, CustomChannelReceiver<?> channelHandler) {
+		final ClientPlayNetworkAddon addon = ClientNetworkingImpl.getClientPlayAddon();
+
+		if (addon != null) {
+			return addon.registerChannel(channelName, channelHandler);
+		}
+
+		throw new IllegalStateException("Cannot register receiver while not in game!");
+	}
+
+	/**
+	 * Registers a handler to a channel.
+	 * <p>
+	 * If a handler is already registered to the {@code channel}, this method will return {@code false}, and no change will be made.
+	 * Use {@link #unregisterReceiver(Identifier)} to unregister the existing handler.
+	 * <p>
+	 * For example, if you only register a receiver using this method when a {@linkplain ClientLoginNetworking#registerGlobalReceiver(Identifier, ClientLoginNetworking.QueryRequestReceiver)}
+	 * login query has been received, you should use {@link ClientPlayConnectionEvents#INIT} to register the channel handler.
+	 *
+	 * @param channelName the identifier of the channel
+	 * @return {@code false} if a handler is already registered to the channel, otherwise {@code true}
+	 * @throws IllegalStateException if the client is not connected to a server
+	 * @see ClientPlayConnectionEvents#INIT
+	 */
+	@Deprecated(forRemoval = true)
+	public static boolean registerReceiver(Identifier channelName, ChannelReceiver channelHandler) {
 		final ClientPlayNetworkAddon addon = ClientNetworkingImpl.getClientPlayAddon();
 
 		if (addon != null) {
@@ -204,6 +245,19 @@ public final class ClientPlayNetworking {
 	}
 
 	/**
+	 * Creates a packet from the payload which may be sent to the connected server.
+	 *
+	 * @param payload the payload for the packet
+	 * @return a new packet
+	 */
+	@Contract(value = "_ -> new", pure = true)
+	public static Packet<ServerCommonPacketListener> createC2SPacket(@NotNull CustomPayload payload) {
+		Objects.requireNonNull(payload, "Payload cannot be null");
+
+		return ClientNetworkingImpl.createC2SPacket(payload);
+	}
+
+	/**
 	 * Gets the packet sender which sends packets to the connected server.
 	 *
 	 * @return the client's packet sender
@@ -267,9 +321,11 @@ public final class ClientPlayNetworking {
 		void receive(MinecraftClient client, ClientPlayNetworkHandler handler, T payload, PacketSender<CustomPayload> responseSender);
 	}
 
+	@Deprecated(forRemoval = true)
 	@ClientOnly
 	@FunctionalInterface
 	public interface ChannelReceiver extends CustomChannelReceiver<PacketByteBufPayload> {
+		@Override
 		default void receive(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBufPayload payload, PacketSender<CustomPayload> responseSender) {
 			this.receive(client, handler, payload.data(), responseSender);
 		}

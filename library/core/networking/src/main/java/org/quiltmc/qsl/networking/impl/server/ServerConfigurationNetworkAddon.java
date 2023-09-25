@@ -20,15 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.jetbrains.annotations.ApiStatus;
-import org.quiltmc.qsl.networking.api.S2CConfigurationChannelEvents;
-import org.quiltmc.qsl.networking.api.ServerConfigurationConnectionEvents;
-import org.quiltmc.qsl.networking.api.ServerConfigurationNetworking;
-import org.quiltmc.qsl.networking.impl.AbstractChanneledNetworkAddon;
-import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
-import org.quiltmc.qsl.networking.impl.NetworkingImpl;
-import org.quiltmc.qsl.networking.impl.payload.ChannelPayload;
-import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
-import org.quiltmc.qsl.networking.mixin.accessor.AbstractServerPacketHandlerAccessor;
 
 import net.minecraft.network.NetworkState;
 import net.minecraft.network.PacketByteBuf;
@@ -38,6 +29,16 @@ import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
+
+import org.quiltmc.qsl.networking.api.S2CConfigurationChannelEvents;
+import org.quiltmc.qsl.networking.api.ServerConfigurationConnectionEvents;
+import org.quiltmc.qsl.networking.api.ServerConfigurationNetworking;
+import org.quiltmc.qsl.networking.impl.AbstractChanneledNetworkAddon;
+import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
+import org.quiltmc.qsl.networking.impl.NetworkingImpl;
+import org.quiltmc.qsl.networking.impl.payload.ChannelPayload;
+import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
+import org.quiltmc.qsl.networking.mixin.accessor.AbstractServerPacketHandlerAccessor;
 
 @ApiStatus.Internal
 public final class ServerConfigurationNetworkAddon extends AbstractChanneledNetworkAddon<ServerConfigurationNetworking.CustomChannelReceiver<?>> {
@@ -63,11 +64,11 @@ public final class ServerConfigurationNetworkAddon extends AbstractChanneledNetw
 			this.registerChannel(entry.getKey(), entry.getValue());
 		}
 
-		ServerConfigurationConnectionEvents.BEFORE_CONFIGURE.invoker().onConfiguration(this.handler, this.server);
+		ServerConfigurationConnectionEvents.INIT.invoker().onConfigurationInit(this.handler, this.server);
 	}
 
 	public void onConfigureReady() {
-		ServerConfigurationConnectionEvents.CONFIGURE.invoker().onConfiguration(this.handler, this.server);
+		ServerConfigurationConnectionEvents.READY.invoker().onConfigurationReady(this.handler, this, this.server);
 
 		this.sendInitialChannelRegistrationPacket();
 		this.sentInitialRegisterPacket = true;

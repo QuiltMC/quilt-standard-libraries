@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.networking.mixin.client;
 
-import org.quiltmc.qsl.networking.impl.payload.PacketByteBufLoginQueryRequestPayload;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -33,6 +32,7 @@ import net.minecraft.text.Text;
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
 import org.quiltmc.qsl.networking.impl.client.ClientLoginNetworkAddon;
+import org.quiltmc.qsl.networking.impl.payload.PacketByteBufLoginQueryRequestPayload;
 
 @ClientOnly
 @Mixin(ClientLoginNetworkHandler.class)

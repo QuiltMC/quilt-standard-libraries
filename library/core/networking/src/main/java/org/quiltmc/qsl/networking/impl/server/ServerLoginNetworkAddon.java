@@ -30,9 +30,9 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.PacketSendListener;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.login.LoginQueryResponseC2SPacket;
 import net.minecraft.network.packet.s2c.login.LoginCompressionS2CPacket;
 import net.minecraft.network.packet.s2c.login.LoginQueryRequestS2CPacket;
@@ -171,7 +171,7 @@ public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLo
 
 	@Override
 	public Packet<?> createPacket(Identifier channelName, PacketByteBuf buf) {
-		return createPacket(new PacketByteBufLoginQueryRequestPayload(channelName, buf));
+		return this.createPacket(new PacketByteBufLoginQueryRequestPayload(channelName, buf));
 	}
 
 	@Override

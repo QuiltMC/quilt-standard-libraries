@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.registry.impl.sync.server;
 
+import static org.quiltmc.qsl.networking.api.ServerConfigurationNetworking.createS2CPacket;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,17 +29,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import org.jetbrains.annotations.ApiStatus;
-import org.quiltmc.loader.api.LoaderValue;
-import org.quiltmc.loader.api.QuiltLoader;
-import org.quiltmc.qsl.networking.api.PacketSender;
-import org.quiltmc.qsl.networking.api.ServerConfigurationNetworking;
-import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
-import org.quiltmc.qsl.registry.impl.RegistryConfig;
-import org.quiltmc.qsl.registry.impl.sync.ClientPackets;
-import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
-import org.quiltmc.qsl.registry.impl.sync.ServerPackets;
-import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolImpl;
-import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
 
 import net.minecraft.block.Block;
 import net.minecraft.fluid.Fluid;
@@ -53,7 +44,17 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.IdList;
 
-import static org.quiltmc.qsl.networking.api.ServerConfigurationNetworking.createS2CPacket;
+import org.quiltmc.loader.api.LoaderValue;
+import org.quiltmc.loader.api.QuiltLoader;
+import org.quiltmc.qsl.networking.api.PacketSender;
+import org.quiltmc.qsl.networking.api.ServerConfigurationNetworking;
+import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
+import org.quiltmc.qsl.registry.impl.RegistryConfig;
+import org.quiltmc.qsl.registry.impl.sync.ClientPackets;
+import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
+import org.quiltmc.qsl.registry.impl.sync.ServerPackets;
+import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolImpl;
+import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
 
 @ApiStatus.Internal
 public final class ServerRegistrySync {
@@ -71,11 +72,11 @@ public final class ServerRegistrySync {
 	public static IntList SERVER_SUPPORTED_PROTOCOL = new IntArrayList(ProtocolVersions.IMPL_SUPPORTED_VERSIONS);
 
 	public static void registerHandlers() {
-		ServerConfigurationNetworking.registerGlobalReceiver(ClientPackets.HANDSHAKE, ServerRegistrySync::handleHandshake);
-		ServerConfigurationNetworking.registerGlobalReceiver(ClientPackets.SYNC_FAILED, ServerRegistrySync::handleSyncFailed);
-		ServerConfigurationNetworking.registerGlobalReceiver(ClientPackets.UNKNOWN_ENTRY, ServerRegistrySync::handleUnknownEntry);
-		ServerConfigurationNetworking.registerGlobalReceiver(ClientPackets.MOD_PROTOCOL, ServerRegistrySync::handleModProtocol);
-		ServerConfigurationNetworking.registerGlobalReceiver(ClientPackets.END, ServerRegistrySync::handleEnd);
+		ServerConfigurationNetworking.registerGlobalReceiver(ClientPackets.Handshake.ID, ServerRegistrySync::handleHandshake);
+		ServerConfigurationNetworking.registerGlobalReceiver(ClientPackets.SyncFailed.ID, ServerRegistrySync::handleSyncFailed);
+		ServerConfigurationNetworking.registerGlobalReceiver(ClientPackets.UnknownEntry.ID, ServerRegistrySync::handleUnknownEntry);
+		ServerConfigurationNetworking.registerGlobalReceiver(ClientPackets.ModProtocol.ID, ServerRegistrySync::handleModProtocol);
+		ServerConfigurationNetworking.registerGlobalReceiver(ClientPackets.End.ID, ServerRegistrySync::handleEnd);
 	}
 
 	public static void handleHandshake(MinecraftServer server, ServerConfigurationPacketHandler handler, ClientPackets.Handshake handshake, PacketSender<CustomPayload> responseSender) {
@@ -170,7 +171,7 @@ public final class ServerRegistrySync {
 
 		for (var registry : Registries.REGISTRY) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
-				&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
+					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
 				return true;
 			}
 		}
@@ -189,7 +190,7 @@ public final class ServerRegistrySync {
 
 		for (var registry : Registries.REGISTRY) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
-				&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() == SynchronizedRegistry.Status.REQUIRED) {
+					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() == SynchronizedRegistry.Status.REQUIRED) {
 				return true;
 			}
 		}
@@ -206,7 +207,7 @@ public final class ServerRegistrySync {
 
 		for (var registry : Registries.REGISTRY) {
 			if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry
-				&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
+					&& synchronizedRegistry.quilt$requiresSyncing() && synchronizedRegistry.quilt$getContentStatus() != SynchronizedRegistry.Status.VANILLA) {
 				var map = synchronizedRegistry.quilt$getSyncMap();
 
 				var packetData = new HashMap<String, ArrayList<SynchronizedRegistry.SyncEntry>>();

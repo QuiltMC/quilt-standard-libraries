@@ -101,7 +101,7 @@ public class LogBuilder {
 		return stringify(sections);
 	}
 
-	public record Section(Text title, List<Text> entries) {};
+	public record Section(Text title, List<Text> entries) {}
 
 	public static String stringify(List<Section> sections) {
 		var builder = new StringBuilder();

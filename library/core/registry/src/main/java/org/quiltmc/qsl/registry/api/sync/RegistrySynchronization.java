@@ -22,8 +22,6 @@ import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.network.ServerConfigurationPacketHandler;
 import net.minecraft.registry.SimpleRegistry;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.registry.impl.sync.registry.RegistryFlag;

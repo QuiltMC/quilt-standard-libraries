@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.recipe.api;
 
-import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeHolder;
 
 import org.quiltmc.qsl.recipe.impl.RecipeManagerImpl;

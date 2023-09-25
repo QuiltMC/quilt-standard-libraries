@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.util.Identifier;
 
 /**
@@ -53,7 +52,6 @@ public interface PacketSender<C> {
 	 * @param packet the packet
 	 */
 	void sendPacket(Packet<?> packet);
-
 
 	/**
 	 * Sends a packet.

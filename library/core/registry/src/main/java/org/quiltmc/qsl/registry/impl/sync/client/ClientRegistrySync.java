@@ -31,15 +31,12 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.networking.api.client.ClientConfigurationNetworking;
-import org.quiltmc.qsl.networking.mixin.accessor.AbstractClientNetworkHandlerAccessor;
 import org.slf4j.Logger;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientConfigurationNetworkHandler;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.network.packet.payload.CustomPayload;
@@ -53,9 +50,9 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.IdList;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
-import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.PacketSender;
-import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
+import org.quiltmc.qsl.networking.api.client.ClientConfigurationNetworking;
+import org.quiltmc.qsl.networking.mixin.accessor.AbstractClientNetworkHandlerAccessor;
 import org.quiltmc.qsl.registry.impl.sync.ClientPackets;
 import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
 import org.quiltmc.qsl.registry.impl.sync.RegistrySyncText;
@@ -105,16 +102,16 @@ public final class ClientRegistrySync {
 	}
 
 	public static void registerHandlers() {
-		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.HANDSHAKE, ClientRegistrySync::handleHelloPacket);
-		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_START, ClientRegistrySync::handleStartPacket);
-		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_DATA, ClientRegistrySync::handleDataPacket);
-		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_APPLY, ClientRegistrySync::handleApplyPacket);
-		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.END, ClientRegistrySync::handleGoodbyePacket);
-		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_RESTORE, ClientRegistrySync::handleRestorePacket);
-		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.VALIDATE_BLOCK_STATES, handleStateValidation(Registries.BLOCK, Block.STATE_IDS, BlockState::getBlock));
-		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.VALIDATE_FLUID_STATES, handleStateValidation(Registries.FLUID, Fluid.STATE_IDS, FluidState::getFluid));
-		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.ERROR_STYLE, ClientRegistrySync::handleErrorStylePacket);
-		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.MOD_PROTOCOL, ClientRegistrySync::handleModProtocol);
+		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.Handshake.ID, ClientRegistrySync::handleHelloPacket);
+		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.RegistryStart.ID, ClientRegistrySync::handleStartPacket);
+		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.RegistryData.ID, ClientRegistrySync::handleDataPacket);
+		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.RegistryApply.ID, ClientRegistrySync::handleApplyPacket);
+		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.End.ID, ClientRegistrySync::handleGoodbyePacket);
+		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.RegistryRestore.ID, ClientRegistrySync::handleRestorePacket);
+		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.ValidateStates.StateType.BLOCK.packetId(), handleStateValidation(Registries.BLOCK, Block.STATE_IDS, BlockState::getBlock));
+		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.ValidateStates.StateType.FLUID.packetId(), handleStateValidation(Registries.FLUID, Fluid.STATE_IDS, FluidState::getFluid));
+		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.ErrorStyle.ID, ClientRegistrySync::handleErrorStylePacket);
+		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.ModProtocol.ID, ClientRegistrySync::handleModProtocol);
 	}
 
 	private static void handleModProtocol(MinecraftClient client, ClientConfigurationNetworkHandler handler, ServerPackets.ModProtocol modProtocol, PacketSender<CustomPayload> sender) {
@@ -305,7 +302,7 @@ public final class ClientRegistrySync {
 			for (Int2ObjectMap.Entry<IntList> blockToStates : data.int2ObjectEntrySet()) {
 				var block = registry.get(blockToStates.getIntKey());
 
-				for(int stateId : blockToStates.getValue()) {
+				for (int stateId : blockToStates.getValue()) {
 					var state = stateList.get(stateId);
 					if (state == null || converter.apply(state) != block) {
 						var conv = state == null ? null : converter.apply(state);
@@ -316,8 +313,8 @@ public final class ClientRegistrySync {
 						}
 
 						builder.textEntry(Text.translatableWithFallback("quilt.core.registry_sync.found_expected", "Found '%s', expected '%s'",
-							block == null ? Text.literal("null").formatted(Formatting.RED) : registry.getId(block),
-							conv == null ? Text.literal("null").formatted(Formatting.RED) : registry.getId(conv)));
+								block == null ? Text.literal("null").formatted(Formatting.RED) : registry.getId(block),
+								conv == null ? Text.literal("null").formatted(Formatting.RED) : registry.getId(conv)));
 					}
 				}
 			}

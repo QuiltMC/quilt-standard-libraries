@@ -22,15 +22,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.network.ServerConfigurationPacketHandler;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolImpl;
 import org.quiltmc.qsl.registry.impl.sync.server.ExtendedConnectionClient;
 
 /**
- * Methods for getting supported bt client mod protocol versions
+ * Methods for getting supported bt client mod protocol versions.
  */
 @ApiStatus.Experimental
 public final class ModProtocol {

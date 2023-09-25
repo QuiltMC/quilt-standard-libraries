@@ -24,8 +24,8 @@ import com.google.gson.JsonElement;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.RecipeHolder;
+import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 

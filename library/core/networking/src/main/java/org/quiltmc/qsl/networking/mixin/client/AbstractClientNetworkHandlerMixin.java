@@ -16,12 +16,6 @@
 
 package org.quiltmc.qsl.networking.mixin.client;
 
-import org.quiltmc.loader.api.minecraft.ClientOnly;
-import org.quiltmc.qsl.networking.impl.AbstractChanneledNetworkAddon;
-import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
-import org.quiltmc.qsl.networking.impl.client.ClientConfigurationNetworkAddon;
-import org.quiltmc.qsl.networking.impl.client.ClientPlayNetworkAddon;
-import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -30,6 +24,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.client.network.AbstractClientNetworkHandler;
 import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import net.minecraft.text.Text;
+
+import org.quiltmc.loader.api.minecraft.ClientOnly;
+import org.quiltmc.qsl.networking.impl.AbstractChanneledNetworkAddon;
+import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
 
 // We want to apply a bit earlier than other mods which may not use us in order to prevent refCount issues
 @ClientOnly

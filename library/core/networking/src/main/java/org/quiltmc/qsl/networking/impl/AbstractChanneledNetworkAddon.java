@@ -28,14 +28,11 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.NetworkSide;
 import net.minecraft.network.NetworkState;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.InvalidIdentifierException;
 
 import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.impl.payload.ChannelPayload;
@@ -46,12 +43,10 @@ import org.quiltmc.qsl.networking.impl.payload.ChannelPayload;
  * @param <H> the channel handler type
  */
 @ApiStatus.Internal
-public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAddon<H> implements PacketSender<CustomPayload>, CommonPacketHandler {
+public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAddon<H> implements PacketSender<CustomPayload> {
 	protected final ClientConnection connection;
 	protected final GlobalReceiverRegistry<H> receiver;
 	protected final Set<Identifier> sendableChannels;
-
-	protected int commonVersion = -1;
 
 	protected AbstractChanneledNetworkAddon(GlobalReceiverRegistry<H> receiver, ClientConnection connection, String description) {
 		super(receiver, description);
@@ -163,73 +158,7 @@ public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAd
 
 	protected abstract void invokeUnregisterEvent(List<Identifier> ids);
 
-	private void addId(List<Identifier> ids, StringBuilder sb) {
-		String literal = sb.toString();
-
-		try {
-			ids.add(new Identifier(literal));
-		} catch (InvalidIdentifierException ex) {
-			this.logger.warn("Received invalid channel identifier \"{}\" from connection {}", literal, this.connection);
-		}
-	}
-
 	public Set<Identifier> getSendableChannels() {
 		return Collections.unmodifiableSet(this.sendableChannels);
-	}
-
-	// Common packet handlers
-
-	@Override
-	public void onVersionPacket(int negotiatedVersion) {
-		assert negotiatedVersion == 1; // We only support version 1 for now
-
-		this.commonVersion = negotiatedVersion;
-		this.logger.info("Negotiated common packet version {}", this.commonVersion);
-	}
-
-	@Override
-	public void onRegisterPacket(RegisterPayload payload) {
-		if (payload.version() != this.getNegotiatedVersion()) {
-			throw new IllegalStateException("Negotiated common packet version: %d but received packet with version: %d".formatted(this.commonVersion, payload.version()));
-		}
-
-		final String currentPhase = this.getPhase();
-
-		if (currentPhase == null) {
-			// We don't support receiving the register packet during this phase. See getPhase() for supported phases.
-			// The normal case where the play channels are sent during configuration is handled in the client/common configuration packet handlers.
-			logger.warn("Received common register packet for phase {} in network state: {}", payload.phase(), this.receiver.getState());
-			return;
-		}
-
-		if (!payload.phase().equals(currentPhase)) {
-			// We need to handle receiving the play phase during configuration!
-			throw new IllegalStateException("Register packet received for phase (%s) on handler for phase(%s)".formatted(payload.phase(), currentPhase));
-		}
-
-		this.register(new ArrayList<>(payload.channels()));
-	}
-
-	@Override
-	public RegisterPayload createRegisterPayload() {
-		return new RegisterPayload(this.getNegotiatedVersion(), this.getPhase(), this.getReceivableChannels());
-	}
-
-	@Override
-	public int getNegotiatedVersion() {
-		if (this.commonVersion == -1) {
-			throw new IllegalStateException("Not yet negotiated common packet version");
-		}
-
-		return this.commonVersion;
-	}
-
-	@Nullable
-	private String getPhase() {
-		return switch (this.receiver.getState()) {
-			case PLAY -> RegisterPayload.PLAY;
-			case CONFIGURATION -> RegisterPayload.CONFIGURATION;
-			default -> null; // We don't support receiving this packet on any other phase
-		};
 	}
 }

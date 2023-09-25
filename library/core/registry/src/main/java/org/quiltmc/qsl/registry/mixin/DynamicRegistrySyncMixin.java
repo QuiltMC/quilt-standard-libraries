@@ -43,6 +43,7 @@ public abstract class DynamicRegistrySyncMixin {
 	@Final
 	@Mutable
 	private static Map<RegistryKey<? extends Registry<?>>, ?> SYNCED_CODECS;
+
 	@Unique
 	private static boolean filterRegistryEntry(DynamicRegistryManager.RegistryEntry<?> entry) {
 		// OPTIONAL

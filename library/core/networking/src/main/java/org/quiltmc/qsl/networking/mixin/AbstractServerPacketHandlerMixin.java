@@ -16,8 +16,6 @@
 
 package org.quiltmc.qsl.networking.mixin;
 
-import org.quiltmc.qsl.networking.impl.AbstractChanneledNetworkAddon;
-import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -29,6 +27,9 @@ import net.minecraft.network.ClientConnection;
 import net.minecraft.network.listener.AbstractServerPacketHandler;
 import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
 import net.minecraft.server.MinecraftServer;
+
+import org.quiltmc.qsl.networking.impl.AbstractChanneledNetworkAddon;
+import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
 
 // We want to apply a bit earlier than other mods which may not use us in order to prevent refCount issues
 @Mixin(value = AbstractServerPacketHandler.class, priority = 999)

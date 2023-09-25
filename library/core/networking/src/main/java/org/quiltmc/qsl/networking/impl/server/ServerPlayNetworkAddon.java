@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.networking.impl.server;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +37,6 @@ import org.quiltmc.qsl.networking.impl.AbstractChanneledNetworkAddon;
 import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
 import org.quiltmc.qsl.networking.impl.NetworkingImpl;
 import org.quiltmc.qsl.networking.impl.payload.ChannelPayload;
-import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
 import org.quiltmc.qsl.networking.mixin.accessor.AbstractServerPacketHandlerAccessor;
 
 @ApiStatus.Internal
@@ -73,16 +71,6 @@ public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 
 		this.sendInitialChannelRegistrationPacket();
 		this.sentInitialRegisterPacket = true;
-	}
-
-	/**
-	 * Handles an incoming packet.
-	 *
-	 * @param payload the payload to handle
-	 * @return true if the packet has been handled
-	 */
-	public boolean handle(PacketByteBufPayload payload) {
-		return super.handle(payload);
 	}
 
 	@SuppressWarnings("unchecked")

@@ -10,6 +10,7 @@ import org.quiltmc.qsl.advancement.mixin.CriteriaAccessor;
 
 public class QuiltCriteria {
 	private static final Logger LOGGER = LogUtils.getLogger();
+
 	public static <T extends Criterion<?>> T register(Identifier id, T criterion) {
 		if ("minecraft".equals(id.getNamespace())) {
 			LOGGER.warn("An attempt to register a modded criteria with the vanilla id " + id + " was made");

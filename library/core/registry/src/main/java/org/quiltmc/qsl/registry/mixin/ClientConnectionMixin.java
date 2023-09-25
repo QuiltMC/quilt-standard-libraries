@@ -17,7 +17,6 @@
 package org.quiltmc.qsl.registry.mixin;
 
 import java.util.IdentityHashMap;
-import java.util.List;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -30,7 +29,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkSide;
-import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Util;
 
@@ -45,9 +43,6 @@ public class ClientConnectionMixin implements ExtendedConnectionClient {
 	private Object2IntMap<String> quilt$modProtocol = new Object2IntOpenHashMap<>();
 	@Unique
 	private boolean quilt$understandsOptional;
-
-	@Unique
-	private List<CustomPayloadC2SPacket> quilt$delayedPackets;
 
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void quilt$setDefault(NetworkSide side, CallbackInfo ci) {

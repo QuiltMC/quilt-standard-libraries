@@ -18,8 +18,8 @@ package org.quiltmc.qsl.chat.api;
 
 import org.quiltmc.qsl.chat.api.types.AbstractChatMessage;
 import org.quiltmc.qsl.chat.impl.ChatEventBooleanImpl;
-import org.quiltmc.qsl.chat.impl.InternalChatEventCallbackConverters;
 import org.quiltmc.qsl.chat.impl.ChatEventImpl;
+import org.quiltmc.qsl.chat.impl.InternalChatEventCallbackConverters;
 
 /**
  * Events for modifying, canceling, and listening for various chat messages.

@@ -43,9 +43,9 @@ public final class ClientConfigurationConnectionEvents {
 	});
 
 	/**
-	 * An event called just before switching to the PLAY state.
+	 * An event for notification when the client play network handler is ready to send packets to the server.
 	 * <p>
-	 * No packets should be sent when this event is invoked.
+	 * At this stage, the network handler is ready to send packets to the server since the client's local state has been set up.
 	 */
 	public static final Event<Ready> READY = Event.create(Ready.class, callbacks -> (handler, sender, client) -> {
 		for (Ready callback : callbacks) {

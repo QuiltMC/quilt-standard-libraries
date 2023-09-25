@@ -25,6 +25,7 @@ import com.mojang.logging.LogUtils;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.resource.ResourceIoSupplier;
@@ -36,7 +37,6 @@ import net.minecraft.resource.pack.ResourcePackProfile;
 import org.quiltmc.loader.api.ModMetadata;
 import org.quiltmc.qsl.resource.loader.api.QuiltResourcePackProfile;
 import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
-import org.slf4j.Logger;
 
 @ApiStatus.Internal
 public final class ModResourcePackUtil {

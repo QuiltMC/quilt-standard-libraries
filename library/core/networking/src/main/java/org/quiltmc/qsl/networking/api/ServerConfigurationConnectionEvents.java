@@ -16,12 +16,13 @@
 
 package org.quiltmc.qsl.networking.api;
 
-import org.quiltmc.qsl.base.api.event.Event;
-import org.quiltmc.qsl.base.api.event.EventAwareListener;
-
 import net.minecraft.network.ServerConfigurationPacketHandler;
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
+
+import org.quiltmc.qsl.base.api.event.Event;
+import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
 /**
  * Offers access to events related to the connection to a client on a logical server while a client is in game.
@@ -30,22 +31,22 @@ public final class ServerConfigurationConnectionEvents {
 	/**
 	 * Event indicating a connection entered the CONFIGURATION state, ready for registering channel handlers.
 	 *
-	 * @see ServerConfigurationNetworking#registerReceiver(ServerConfigurationPacketHandler, Identifier, ServerConfigurationNetworking.ChannelReceiver)
+	 * @see ServerConfigurationNetworking#registerReceiver(ServerConfigurationPacketHandler, Identifier, ServerConfigurationNetworking.CustomChannelReceiver)
 	 */
-	public static final Event<Configure> BEFORE_CONFIGURE = Event.create(Configure.class, callbacks -> (handler, server) -> {
-		for (Configure callback : callbacks) {
-			callback.onConfiguration(handler, server);
+	public static final Event<Init> INIT = Event.create(Init.class, callbacks -> (handler, server) -> {
+		for (Init callback : callbacks) {
+			callback.onConfigurationInit(handler, server);
 		}
 	});
 
 	/**
-	 * An event fired during the CONFIGURATION state.
+	 * An event for notification when the server configuration network handler is ready to send packets to the client.
 	 * <p>
 	 * At this stage, the network handler is ready to send packets to the client.
 	 */
-	public static final Event<Configure> CONFIGURE = Event.create(Configure.class, callbacks -> (handler, server) -> {
-		for (Configure callback : callbacks) {
-			callback.onConfiguration(handler, server);
+	public static final Event<Join> READY = Event.create(Join.class, callbacks -> (handler, sender, server) -> {
+		for (Join callback : callbacks) {
+			callback.onConfigurationReady(handler, sender, server);
 		}
 	});
 
@@ -64,12 +65,19 @@ public final class ServerConfigurationConnectionEvents {
 	}
 
 	/**
-	 * @see #BEFORE_CONFIGURE
-	 * @see #CONFIGURE
+	 * @see #INIT
 	 */
 	@FunctionalInterface
-	public interface Configure extends EventAwareListener {
-		void onConfiguration(ServerConfigurationPacketHandler handler, MinecraftServer server);
+	public interface Init extends EventAwareListener {
+		void onConfigurationInit(ServerConfigurationPacketHandler handler, MinecraftServer server);
+	}
+
+	/**
+	 * @see #READY
+	 */
+	@FunctionalInterface
+	public interface Join extends EventAwareListener {
+		void onConfigurationReady(ServerConfigurationPacketHandler handler, PacketSender<CustomPayload> sender, MinecraftServer server);
 	}
 
 	/**

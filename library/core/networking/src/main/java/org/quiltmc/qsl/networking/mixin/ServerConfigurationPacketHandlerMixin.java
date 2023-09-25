@@ -16,10 +16,6 @@
 
 package org.quiltmc.qsl.networking.mixin;
 
-import org.quiltmc.qsl.networking.impl.DisconnectPacketSource;
-import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
-import org.quiltmc.qsl.networking.impl.server.ServerConfigurationNetworkAddon;
-import org.quiltmc.qsl.networking.impl.server.ServerPlayNetworkAddon;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -34,6 +30,10 @@ import net.minecraft.network.packet.s2c.common.DisconnectS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.minecraft.unmapped.C_eyqfalbd;
+
+import org.quiltmc.qsl.networking.impl.DisconnectPacketSource;
+import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
+import org.quiltmc.qsl.networking.impl.server.ServerConfigurationNetworkAddon;
 
 // We want to apply a bit earlier than other mods which may not use us in order to prevent refCount issues
 @Mixin(value = ServerConfigurationPacketHandler.class, priority = 999)

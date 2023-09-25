@@ -22,10 +22,6 @@ import java.util.Set;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.networking.api.client.ClientConfigurationNetworking;
-import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
-import org.quiltmc.qsl.networking.impl.server.ServerNetworkingImpl;
-import org.quiltmc.qsl.networking.mixin.accessor.AbstractServerPacketHandlerAccessor;
 
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.ServerConfigurationPacketHandler;
@@ -34,6 +30,11 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
+
+import org.quiltmc.qsl.networking.api.client.ClientConfigurationNetworking;
+import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
+import org.quiltmc.qsl.networking.impl.server.ServerNetworkingImpl;
+import org.quiltmc.qsl.networking.mixin.accessor.AbstractServerPacketHandlerAccessor;
 
 /**
  * Offers access to configuration stage server-side networking functionalities.
@@ -59,9 +60,27 @@ public final class ServerConfigurationNetworking {
 	 * @param channelHandler the handler
 	 * @return {@code false} if a handler is already registered to the channel, otherwise {@code true}
 	 * @see ServerConfigurationNetworking#unregisterGlobalReceiver(Identifier)
-	 * @see ServerConfigurationNetworking#registerReceiver(ServerConfigurationPacketHandler, Identifier, ChannelReceiver)
+	 * @see ServerConfigurationNetworking#registerReceiver(ServerConfigurationPacketHandler, Identifier, CustomChannelReceiver)
 	 */
 	public static <T extends CustomPayload> boolean registerGlobalReceiver(Identifier channelName, CustomChannelReceiver<T> channelHandler) {
+		return ServerNetworkingImpl.CONFIGURATION.registerGlobalReceiver(channelName, channelHandler);
+	}
+
+	/**
+	 * Registers a handler to a channel.
+	 * A global receiver is registered to all connections, in the present and future.
+	 * <p>
+	 * If a handler is already registered to the {@code channel}, this method will return {@code false}, and no change will be made.
+	 * Use {@link #unregisterReceiver(ServerConfigurationPacketHandler, Identifier)} to unregister the existing handler.
+	 *
+	 * @param channelName    the identifier of the channel
+	 * @param channelHandler the handler
+	 * @return {@code false} if a handler is already registered to the channel, otherwise {@code true}
+	 * @see ServerConfigurationNetworking#unregisterGlobalReceiver(Identifier)
+	 * @see ServerConfigurationNetworking#registerReceiver(ServerConfigurationPacketHandler, Identifier, ChannelReceiver)
+	 */
+	@Deprecated(forRemoval = true)
+	public static boolean registerGlobalReceiver(Identifier channelName, ChannelReceiver channelHandler) {
 		return ServerNetworkingImpl.CONFIGURATION.registerGlobalReceiver(channelName, channelHandler);
 	}
 
@@ -97,7 +116,7 @@ public final class ServerConfigurationNetworking {
 	 * the channel handler will only be applied to the client represented by the {@link ServerConfigurationPacketHandler}.
 	 * <p>
 	 * For example, if you only register a receiver using this method when a {@linkplain ServerLoginNetworking#registerGlobalReceiver(Identifier, ServerLoginNetworking.QueryResponseReceiver)}
-	 * login response has been received, you should use {@link ServerConfigurationConnectionEvents#BEFORE_CONFIGURE} to register the channel handler.
+	 * login response has been received, you should use {@link ServerConfigurationConnectionEvents#INIT} to register the channel handler.
 	 * <p>
 	 * If a handler is already registered to the {@code channelName}, this method will return {@code false}, and no change will be made.
 	 * Use {@link #unregisterReceiver(ServerConfigurationPacketHandler, Identifier)} to unregister the existing handler.
@@ -106,8 +125,32 @@ public final class ServerConfigurationNetworking {
 	 * @param channelName    the identifier of the channel
 	 * @param channelHandler the handler
 	 * @return {@code false} if a handler is already registered to the channel name, otherwise {@code true}
-	 * @see ServerConfigurationConnectionEvents#BEFORE_CONFIGURE
+	 * @see ServerConfigurationConnectionEvents#INIT
 	 */
+	public static <T extends CustomPayload> boolean registerReceiver(ServerConfigurationPacketHandler networkHandler, Identifier channelName, CustomChannelReceiver<T> channelHandler) {
+		Objects.requireNonNull(networkHandler, "Network handler cannot be null");
+
+		return ServerNetworkingImpl.getAddon(networkHandler).registerChannel(channelName, channelHandler);
+	}
+
+	/**
+	 * Registers a handler to a channel.
+	 * This method differs from {@link ServerConfigurationNetworking#registerGlobalReceiver(Identifier, ChannelReceiver)} since
+	 * the channel handler will only be applied to the client represented by the {@link ServerConfigurationPacketHandler}.
+	 * <p>
+	 * For example, if you only register a receiver using this method when a {@linkplain ServerLoginNetworking#registerGlobalReceiver(Identifier, ServerLoginNetworking.QueryResponseReceiver)}
+	 * login response has been received, you should use {@link ServerConfigurationConnectionEvents#INIT} to register the channel handler.
+	 * <p>
+	 * If a handler is already registered to the {@code channelName}, this method will return {@code false}, and no change will be made.
+	 * Use {@link #unregisterReceiver(ServerConfigurationPacketHandler, Identifier)} to unregister the existing handler.
+	 *
+	 * @param networkHandler the handler
+	 * @param channelName    the identifier of the channel
+	 * @param channelHandler the handler
+	 * @return {@code false} if a handler is already registered to the channel name, otherwise {@code true}
+	 * @see ServerConfigurationConnectionEvents#INIT
+	 */
+	@Deprecated(forRemoval = true)
 	public static boolean registerReceiver(ServerConfigurationPacketHandler networkHandler, Identifier channelName, ChannelReceiver channelHandler) {
 		Objects.requireNonNull(networkHandler, "Network handler cannot be null");
 
@@ -142,7 +185,7 @@ public final class ServerConfigurationNetworking {
 	}
 
 	/**
-	 * Gets all channel names that a the connected client declared the ability to receive a packets on.
+	 * Gets all channel names that the connected client declared the ability to receive a packets on.
 	 *
 	 * @param handler the network handler
 	 * @return {@code true} if the connected client has declared the ability to receive a packet on the specified channel, otherwise {@code false}
@@ -266,6 +309,7 @@ public final class ServerConfigurationNetworking {
 		void receive(MinecraftServer server, ServerConfigurationPacketHandler handler, T payload, PacketSender<CustomPayload> responseSender);
 	}
 
+	@Deprecated(forRemoval = true)
 	@FunctionalInterface
 	public interface ChannelReceiver extends CustomChannelReceiver<PacketByteBufPayload> {
 		default void receive(MinecraftServer server, ServerConfigurationPacketHandler handler, PacketByteBufPayload payload, PacketSender<CustomPayload> responseSender) {

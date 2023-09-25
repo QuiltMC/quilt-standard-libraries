@@ -19,7 +19,6 @@ package org.quiltmc.qsl.command.mixin;
 
 import java.util.Set;
 
-import org.quiltmc.qsl.command.impl.KnownArgTypesStorage;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -27,6 +26,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.listener.AbstractServerPacketHandler;
 import net.minecraft.util.Identifier;
+
+import org.quiltmc.qsl.command.impl.KnownArgTypesStorage;
 
 @Mixin(AbstractServerPacketHandler.class)
 public abstract class AbstractServerPacketHandlerMixin implements KnownArgTypesStorage {

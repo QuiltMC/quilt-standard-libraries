@@ -2,16 +2,16 @@ package org.quiltmc.qsl.networking.impl.payload;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import io.netty.util.AsciiString;
-import org.quiltmc.qsl.networking.impl.NetworkingImpl;
 
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
+
+import org.quiltmc.qsl.networking.impl.NetworkingImpl;
 
 public interface ChannelPayload extends CustomPayload {
 	private static void write(List<Identifier> channels, PacketByteBuf buf) {
@@ -54,7 +54,7 @@ public interface ChannelPayload extends CustomPayload {
 		try {
 			ids.add(new Identifier(literal));
 		} catch (InvalidIdentifierException ex) {
-//			LOGGER.warn("Received invalid channel identifier \"{}\"", literal);
+			NetworkingImpl.LOGGER.warn("Received invalid channel identifier \"{}\"", literal);
 		}
 	}
 
@@ -80,6 +80,7 @@ public interface ChannelPayload extends CustomPayload {
 		public UnregisterChannelPayload(PacketByteBuf buf) {
 			this(ChannelPayload.readIds(buf));
 		}
+
 		@Override
 		public void write(PacketByteBuf buf) {
 			ChannelPayload.write(this.channels, buf);

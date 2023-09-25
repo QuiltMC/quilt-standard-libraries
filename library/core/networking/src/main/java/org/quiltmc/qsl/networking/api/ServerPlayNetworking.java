@@ -23,9 +23,6 @@ import java.util.Set;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
-import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
-import org.quiltmc.qsl.networking.impl.server.ServerNetworkingImpl;
 
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.listener.ClientCommonPacketListener;
@@ -36,6 +33,10 @@ import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
+import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
+import org.quiltmc.qsl.networking.impl.server.ServerNetworkingImpl;
+
 /**
  * Offers access to play stage server-side networking functionalities.
  * <p>
@@ -45,6 +46,7 @@ import net.minecraft.util.Identifier;
  * This class should be only used for the logical server.
  *
  * @see ServerLoginNetworking
+ * @see ServerConfigurationNetworking
  * @see ClientPlayNetworking
  */
 public final class ServerPlayNetworking {
@@ -59,9 +61,27 @@ public final class ServerPlayNetworking {
 	 * @param channelHandler the handler
 	 * @return {@code false} if a handler is already registered to the channel, otherwise {@code true}
 	 * @see ServerPlayNetworking#unregisterGlobalReceiver(Identifier)
+	 * @see ServerPlayNetworking#registerReceiver(ServerPlayNetworkHandler, Identifier, CustomChannelReceiver)
+	 */
+	public static <T extends CustomPayload> boolean registerGlobalReceiver(Identifier channelName, CustomChannelReceiver<T> channelHandler) {
+		return ServerNetworkingImpl.PLAY.registerGlobalReceiver(channelName, channelHandler);
+	}
+
+	/**
+	 * Registers a handler to a channel.
+	 * A global receiver is registered to all connections, in the present and future.
+	 * <p>
+	 * If a handler is already registered to the {@code channel}, this method will return {@code false}, and no change will be made.
+	 * Use {@link #unregisterReceiver(ServerPlayNetworkHandler, Identifier)} to unregister the existing handler.
+	 *
+	 * @param channelName    the identifier of the channel
+	 * @param channelHandler the handler
+	 * @return {@code false} if a handler is already registered to the channel, otherwise {@code true}
+	 * @see ServerPlayNetworking#unregisterGlobalReceiver(Identifier)
 	 * @see ServerPlayNetworking#registerReceiver(ServerPlayNetworkHandler, Identifier, ChannelReceiver)
 	 */
-	public static boolean registerGlobalReceiver(Identifier channelName, CustomChannelReceiver<?> channelHandler) {
+	@Deprecated(forRemoval = true)
+	public static boolean registerGlobalReceiver(Identifier channelName, ChannelReceiver channelHandler) {
 		return ServerNetworkingImpl.PLAY.registerGlobalReceiver(channelName, channelHandler);
 	}
 
@@ -108,6 +128,30 @@ public final class ServerPlayNetworking {
 	 * @return {@code false} if a handler is already registered to the channel name, otherwise {@code true}
 	 * @see ServerPlayConnectionEvents#INIT
 	 */
+	public static <T extends CustomPayload> boolean registerReceiver(ServerPlayNetworkHandler networkHandler, Identifier channelName, CustomChannelReceiver<T> channelHandler) {
+		Objects.requireNonNull(networkHandler, "Network handler cannot be null");
+
+		return ServerNetworkingImpl.getAddon(networkHandler).registerChannel(channelName, channelHandler);
+	}
+
+	/**
+	 * Registers a handler to a channel.
+	 * This method differs from {@link ServerPlayNetworking#registerGlobalReceiver(Identifier, ChannelReceiver)} since
+	 * the channel handler will only be applied to the player represented by the {@link ServerPlayNetworkHandler}.
+	 * <p>
+	 * For example, if you only register a receiver using this method when a {@linkplain ServerLoginNetworking#registerGlobalReceiver(Identifier, ServerLoginNetworking.QueryResponseReceiver)}
+	 * login response has been received, you should use {@link ServerPlayConnectionEvents#INIT} to register the channel handler.
+	 * <p>
+	 * If a handler is already registered to the {@code channelName}, this method will return {@code false}, and no change will be made.
+	 * Use {@link #unregisterReceiver(ServerPlayNetworkHandler, Identifier)} to unregister the existing handler.
+	 *
+	 * @param networkHandler the handler
+	 * @param channelName    the identifier of the channel
+	 * @param channelHandler the handler
+	 * @return {@code false} if a handler is already registered to the channel name, otherwise {@code true}
+	 * @see ServerPlayConnectionEvents#INIT
+	 */
+	@Deprecated(forRemoval = true)
 	public static boolean registerReceiver(ServerPlayNetworkHandler networkHandler, Identifier channelName, ChannelReceiver channelHandler) {
 		Objects.requireNonNull(networkHandler, "Network handler cannot be null");
 
@@ -166,7 +210,7 @@ public final class ServerPlayNetworking {
 	}
 
 	/**
-	 * Gets all channel names that a the connected client declared the ability to receive a packets on.
+	 * Gets all channel names that the connected client declared the ability to receive a packets on.
 	 *
 	 * @param handler the network handler
 	 * @return {@code true} if the connected client has declared the ability to receive a packet on the specified channel, otherwise {@code false}
@@ -325,16 +369,17 @@ public final class ServerPlayNetworking {
 		 * @param server         the server
 		 * @param player         the player
 		 * @param handler        the network handler that received this packet, representing the player/client who sent the packet
-		 * @param buf            the payload of the packet
+		 * @param payload        the payload of the packet
 		 * @param responseSender the packet sender
 		 */
-		void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, T buf, PacketSender<CustomPayload> responseSender);
+		void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, T payload, PacketSender<CustomPayload> responseSender);
 	}
 
+	@Deprecated(forRemoval = true)
 	@FunctionalInterface
 	public interface ChannelReceiver extends CustomChannelReceiver<PacketByteBufPayload> {
-		default void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBufPayload buf, PacketSender<CustomPayload> responseSender) {
-			this.receive(server, player, handler, buf.data(), responseSender);
+		default void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBufPayload payload, PacketSender<CustomPayload> responseSender) {
+			this.receive(server, player, handler, payload.data(), responseSender);
 		}
 
 		/**
