@@ -3,6 +3,7 @@
   "package": "org.quiltmc.qsl.registry.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "AbstractServerPacketHandlerAccessor",
     "BlocksMixin",
     "ClientConnectionMixin",
     "DebugChunkGeneratorAccessor",
@@ -11,13 +12,10 @@
     "FluidsMixin",
     "IdListMixin",
     "ItemsMixin",
-    "PlayerManagerMixin",
     "RegistriesMixin",
     "RegistryLoaderMixin",
-    "ServerLoginNetworkHandlerMixin",
+    "ServerConfigurationPacketHandlerMixin",
     "ServerMetadataVersionMixin",
-    "ServerPlayerEntityMixin",
-    "AbstractServerPacketHandlerAccessor",
     "SimpleRegistryMixin",
     "TagManagerLoaderMixin",
     "compat.SchemasMixin"

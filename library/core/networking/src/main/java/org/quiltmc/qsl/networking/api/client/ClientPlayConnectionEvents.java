@@ -18,6 +18,7 @@ package org.quiltmc.qsl.networking.api.client;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -33,7 +34,7 @@ public final class ClientPlayConnectionEvents {
 	/**
 	 * Event indicating a connection entered the PLAY state, ready for registering channel handlers.
 	 *
-	 * @see ClientPlayNetworking#registerReceiver(Identifier, ClientPlayNetworking.ChannelReceiver)
+	 * @see ClientPlayNetworking#registerReceiver(Identifier, ClientPlayNetworking.CustomChannelReceiver)
 	 */
 	public static final Event<Init> INIT = Event.create(Init.class, callbacks -> (handler, client) -> {
 		for (Init callback : callbacks) {
@@ -82,7 +83,7 @@ public final class ClientPlayConnectionEvents {
 	@ClientOnly
 	@FunctionalInterface
 	public interface Join extends ClientEventAwareListener {
-		void onPlayReady(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client);
+		void onPlayReady(ClientPlayNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftClient client);
 	}
 
 	/**

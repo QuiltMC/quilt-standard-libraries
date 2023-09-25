@@ -22,6 +22,7 @@ import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.event.EventAwareListener;
 
 import net.minecraft.network.ServerConfigurationPacketHandler;
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 
@@ -57,7 +58,7 @@ public final class S2CConfigurationChannelEvents {
 	 */
 	@FunctionalInterface
 	public interface Register extends EventAwareListener {
-		void onChannelRegister(ServerConfigurationPacketHandler handler, PacketSender sender, MinecraftServer server, List<Identifier> channels);
+		void onChannelRegister(ServerConfigurationPacketHandler handler, PacketSender<CustomPayload> sender, MinecraftServer server, List<Identifier> channels);
 	}
 
 	/**
@@ -65,6 +66,6 @@ public final class S2CConfigurationChannelEvents {
 	 */
 	@FunctionalInterface
 	public interface Unregister extends EventAwareListener {
-		void onChannelUnregister(ServerConfigurationPacketHandler handler, PacketSender sender, MinecraftServer server, List<Identifier> channels);
+		void onChannelUnregister(ServerConfigurationPacketHandler handler, PacketSender<CustomPayload> sender, MinecraftServer server, List<Identifier> channels);
 	}
 }

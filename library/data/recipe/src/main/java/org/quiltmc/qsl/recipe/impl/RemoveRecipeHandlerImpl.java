@@ -25,7 +25,7 @@ import org.jetbrains.annotations.ApiStatus;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
-import net.minecraft.recipe.RecipeUnlocker;
+import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 
@@ -35,8 +35,8 @@ import org.quiltmc.qsl.recipe.api.RecipeLoadingEvents;
 final class RemoveRecipeHandlerImpl extends BasicRecipeHandlerImpl implements RecipeLoadingEvents.RemoveRecipesCallback.RecipeHandler {
 	int counter = 0;
 
-	RemoveRecipeHandlerImpl(RecipeManager recipeManager, Map<RecipeType<?>, Map<Identifier, RecipeUnlocker<?>>> recipes,
-							Map<Identifier, RecipeUnlocker<?>> globalRecipes, DynamicRegistryManager registryManager) {
+	RemoveRecipeHandlerImpl(RecipeManager recipeManager, Map<RecipeType<?>, Map<Identifier, RecipeHolder<?>>> recipes,
+							Map<Identifier, RecipeHolder<?>> globalRecipes, DynamicRegistryManager registryManager) {
 		super(recipeManager, recipes, globalRecipes, registryManager);
 	}
 
@@ -61,24 +61,24 @@ final class RemoveRecipeHandlerImpl extends BasicRecipeHandlerImpl implements Re
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Recipe<?>> void removeIf(RecipeType<T> recipeType, Predicate<RecipeUnlocker<T>> recipeRemovalPredicate) {
+	public <T extends Recipe<?>> void removeIf(RecipeType<T> recipeType, Predicate<RecipeHolder<T>> recipeRemovalPredicate) {
 		this.removeIfInternal(this.recipes.get(recipeType)
 				.entrySet()
 				.stream()
 				.collect(Collectors.toMap(
 					Map.Entry::getKey,
-					e -> (RecipeUnlocker<T>) e.getValue()
+					e -> (RecipeHolder<T>) e.getValue()
 				)), recipeRemovalPredicate);
 	}
 
 	@Override
-	public void removeIf(Predicate<RecipeUnlocker<?>> recipeRemovalPredicate) {
+	public void removeIf(Predicate<RecipeHolder<?>> recipeRemovalPredicate) {
 		for (var entry : this.getRecipes().entrySet()) {
 			this.removeIfInternal(entry.getValue(), recipeRemovalPredicate);
 		}
 	}
 
-	private <T extends RecipeUnlocker<?>> void removeIfInternal(Map<Identifier, T> recipeMap, Predicate<T> recipeRemovalPredicate) {
+	private <T extends RecipeHolder<?>> void removeIfInternal(Map<Identifier, T> recipeMap, Predicate<T> recipeRemovalPredicate) {
 		if (recipeMap == null) return;
 
 		var it = recipeMap.entrySet().iterator();
@@ -88,7 +88,7 @@ final class RemoveRecipeHandlerImpl extends BasicRecipeHandlerImpl implements Re
 
 			if (recipeRemovalPredicate.test(entry.getValue())) {
 				if (RecipeManagerImpl.DEBUG_MODE) {
-					RecipeManagerImpl.LOGGER.info("Remove recipe {} with type {} in removal phase.", entry.getKey(), entry.getValue().comp_1933().getType());
+					RecipeManagerImpl.LOGGER.info("Remove recipe {} with type {} in removal phase.", entry.getKey(), entry.getValue().value().getType());
 				}
 
 				this.globalRecipes.remove(entry.getKey());

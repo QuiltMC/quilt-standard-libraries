@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeType;
-import net.minecraft.recipe.RecipeUnlocker;
+import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 
@@ -66,7 +66,7 @@ public interface BaseRecipeHandler {
 	 * @param id the identifier of the recipe
 	 * @return the recipe if present, else {@code null}
 	 */
-	@Nullable RecipeUnlocker<?> getRecipe(Identifier id);
+	@Nullable RecipeHolder<?> getRecipe(Identifier id);
 
 	/**
 	 * Returns the recipe of the specified recipe type in {@link net.minecraft.recipe.RecipeManager} from its identifier.
@@ -76,14 +76,14 @@ public interface BaseRecipeHandler {
 	 * @param <T>  the type of the recipe
 	 * @return the recipe if present and of the correct type, else {@code null}
 	 */
-	@Nullable <T extends Recipe<?>> RecipeUnlocker<T> getRecipe(Identifier id, RecipeType<T> type);
+	@Nullable <T extends Recipe<?>> RecipeHolder<T> getRecipe(Identifier id, RecipeType<T> type);
 
 	/**
 	 * Returns all registered recipes.
 	 *
 	 * @return a view of the registered recipes
 	 */
-	Map<RecipeType<?>, Map<Identifier, RecipeUnlocker<?>>> getRecipes();
+	Map<RecipeType<?>, Map<Identifier, RecipeHolder<?>>> getRecipes();
 
 	/**
 	 * Returns all registered recipes of the specified type.
@@ -92,7 +92,7 @@ public interface BaseRecipeHandler {
 	 * @param <T>  the type of the recipe
 	 * @return a view of all the registered recipes of the specified type
 	 */
-	<T extends Recipe<?>> Collection<RecipeUnlocker<T>> getRecipesOfType(RecipeType<T> type);
+	<T extends Recipe<?>> Collection<RecipeHolder<T>> getRecipesOfType(RecipeType<T> type);
 
 	/**
 	 * {@return the dynamic registry manager}

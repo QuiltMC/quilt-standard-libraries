@@ -20,6 +20,7 @@ import java.util.List;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -61,7 +62,7 @@ public final class C2SPlayChannelEvents {
 	@ClientOnly
 	@FunctionalInterface
 	public interface Register extends ClientEventAwareListener {
-		void onChannelRegister(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client, List<Identifier> channels);
+		void onChannelRegister(ClientPlayNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftClient client, List<Identifier> channels);
 	}
 
 	/**
@@ -70,6 +71,6 @@ public final class C2SPlayChannelEvents {
 	@ClientOnly
 	@FunctionalInterface
 	public interface Unregister extends ClientEventAwareListener {
-		void onChannelUnregister(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client, List<Identifier> channels);
+		void onChannelUnregister(ClientPlayNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftClient client, List<Identifier> channels);
 	}
 }

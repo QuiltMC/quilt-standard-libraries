@@ -17,11 +17,7 @@
 package org.quiltmc.qsl.networking.mixin;
 
 import org.quiltmc.qsl.networking.impl.AbstractChanneledNetworkAddon;
-import org.quiltmc.qsl.networking.impl.AbstractNetworkAddon;
 import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
-import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
-import org.quiltmc.qsl.networking.impl.server.ServerConfigurationNetworkAddon;
-import org.quiltmc.qsl.networking.impl.server.ServerPlayNetworkAddon;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -32,7 +28,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.listener.AbstractServerPacketHandler;
 import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
-import net.minecraft.network.packet.c2s.common.PongC2SPacket;
 import net.minecraft.server.MinecraftServer;
 
 // We want to apply a bit earlier than other mods which may not use us in order to prevent refCount issues
@@ -52,13 +47,6 @@ abstract class AbstractServerPacketHandlerMixin implements NetworkHandlerExtensi
 
 		if (payloadHandled) {
 			ci.cancel();
-		}
-	}
-
-	@Inject(method = "onPlayPong", at = @At("HEAD"))
-	private void onPlayPong(PongC2SPacket packet, CallbackInfo ci) {
-		if (getAddon() instanceof ServerConfigurationNetworkAddon addon) {
-			addon.onPong(packet.getParameter());
 		}
 	}
 }

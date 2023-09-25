@@ -18,6 +18,7 @@ package org.quiltmc.qsl.registry.impl.sync;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
@@ -49,10 +50,14 @@ public final class ServerPackets {
 	 * </code></pre>
 	 */
 	public static final Identifier HANDSHAKE = id("registry_sync/handshake");
-	record Handshake(int version) implements CustomPayload {
+	public record Handshake(IntList supportedVersions) implements CustomPayload {
+		public Handshake(PacketByteBuf buf) {
+			this(buf.readIntList());
+		}
+
 		@Override
 		public void write(PacketByteBuf buf) {
-			buf.writeVarInt(version);
+			buf.writeIntList(supportedVersions);
 		}
 
 		@Override
@@ -65,7 +70,11 @@ public final class ServerPackets {
 	 * Ends registry sync. No data
 	 */
 	public static final Identifier END = id("registry_sync/end");
-	record End() implements CustomPayload {
+	public record End() implements CustomPayload {
+		public End(PacketByteBuf buf) {
+			this();
+		}
+
 		@Override
 		public void write(PacketByteBuf buf) {
 		}
@@ -89,20 +98,29 @@ public final class ServerPackets {
 	 */
 	public static final Identifier REGISTRY_START = id("registry_sync/registry_start");
 	@SuppressWarnings("unchecked")
-	record RegistryStart<T extends Registry<?>>(T registry) implements CustomPayload {
+	public record RegistryStart<T extends Registry<?>>(Identifier registry, int size, byte flags) implements CustomPayload {
+		public RegistryStart(T registry) {
+			this((((Registry<T>) Registries.REGISTRY).getId(registry)), registry.size(), getFlags((SynchronizedRegistry<T>) registry));
+		}
+
+		public RegistryStart(PacketByteBuf buf) {
+			this(buf.readIdentifier(), buf.readVarInt(), buf.readByte());
+		}
+
+		private static <T extends Registry<?>> byte getFlags(SynchronizedRegistry<T> registry) {
+			var flags = registry.quilt$getRegistryFlag();
+			if (registry.quilt$getContentStatus() == SynchronizedRegistry.Status.OPTIONAL) {
+				flags |= (byte) (0x1 << RegistryFlag.OPTIONAL.ordinal());
+			}
+			return flags;
+		}
+
+
 		@Override
 		public void write(PacketByteBuf buf) {
-			// Registry id
-			buf.writeIdentifier(((Registry<T>) Registries.REGISTRY).getId(registry));
-			// Number of entries
-			buf.writeVarInt(registry.size());
-
-			// Registry flags
-			var flag = ((SynchronizedRegistry<T>) registry).quilt$getRegistryFlag();
-			if (((SynchronizedRegistry<T>) registry).quilt$getContentStatus() == SynchronizedRegistry.Status.OPTIONAL) {
-				flag |= (byte) (0x1 << RegistryFlag.OPTIONAL.ordinal());
-			}
-			buf.writeByte(flag);
+			buf.writeIdentifier(registry);
+			buf.writeVarInt(size);
+			buf.writeByte(flags);
 		}
 
 		@Override
@@ -130,7 +148,30 @@ public final class ServerPackets {
 	 * </code></pre>
 	 */
 	public static final Identifier REGISTRY_DATA = id("registry_sync/registry_data");
-	record RegistryData(Map<String, ArrayList<SynchronizedRegistry.SyncEntry>> packetData) implements CustomPayload {
+	public record RegistryData(Map<String, ArrayList<SynchronizedRegistry.SyncEntry>> packetData) implements CustomPayload {
+		public RegistryData(PacketByteBuf buf) {
+			this(read(buf));
+		}
+
+		private static Map<String, ArrayList<SynchronizedRegistry.SyncEntry>> read(PacketByteBuf buf) {
+			var data = new HashMap<String, ArrayList<SynchronizedRegistry.SyncEntry>>();
+			int countNamespace = buf.readVarInt();
+			while (countNamespace-- > 0) {
+				var namespace = buf.readString();
+				int countLocal = buf.readVarInt();
+
+				while (countLocal-- > 0) {
+					var path = buf.readString();
+					int id = buf.readVarInt();
+					byte flags = buf.readByte();
+
+					data.computeIfAbsent(namespace, n -> new ArrayList<>()).add(new SynchronizedRegistry.SyncEntry(path, id, flags));
+				}
+			}
+
+			return data;
+		}
+
 		@Override
 		public void write(PacketByteBuf buf) {
 			buf.writeVarInt(packetData.size());
@@ -164,7 +205,11 @@ public final class ServerPackets {
 	 * Applies changes to current registry, doesn't have any data.
 	 */
 	public static final Identifier REGISTRY_APPLY = id("registry_sync/registry_apply");
-	record RegistryApply() implements CustomPayload {
+	public record RegistryApply() implements CustomPayload {
+		public RegistryApply(PacketByteBuf buf) {
+			this();
+		}
+
 		@Override
 		public void write(PacketByteBuf buf) {
 		}
@@ -193,7 +238,26 @@ public final class ServerPackets {
 	 * </code></pre>
 	 */
 	public static final Identifier VALIDATE_BLOCK_STATES = id("registry_sync/validate/block_states");
-	record ValidateStates(StateType type, Int2ObjectArrayMap<IntList> packetData) implements CustomPayload {
+	public record ValidateStates(StateType type, Int2ObjectArrayMap<IntList> packetData) implements CustomPayload {
+		public ValidateStates(StateType type, PacketByteBuf buf) {
+			this(type, read(buf));
+		}
+
+		private static Int2ObjectArrayMap<IntList> read(PacketByteBuf buf) {
+			Int2ObjectArrayMap<IntList> data = new Int2ObjectArrayMap<>();
+			var count = buf.readVarInt();
+
+			while (count-- > 0) {
+				var blockId = buf.readVarInt();
+				var states = buf.readIntList();
+				data.put(blockId, states);
+			}
+
+			return data;
+		}
+
+
+
 		@Override
 		public void write(PacketByteBuf buf) {
 			buf.writeVarInt(packetData.size());
@@ -205,10 +269,18 @@ public final class ServerPackets {
 
 		@Override
 		public Identifier id() {
-			return HANDSHAKE;
+			return type.packetId;
 		}
 
-		enum StateType {
+		public static ValidateStates newBlock(PacketByteBuf buf) {
+			return new ValidateStates(StateType.BLOCK, buf);
+		}
+
+		public static ValidateStates newFluid(PacketByteBuf buf) {
+			return new ValidateStates(StateType.FLUID, buf);
+		}
+
+		public enum StateType {
 			BLOCK(VALIDATE_BLOCK_STATES), FLUID(VALIDATE_FLUID_STATES);
 
 			public final Identifier packetId;
@@ -228,14 +300,18 @@ public final class ServerPackets {
 	 * Applies changes to current registry, doesn't have any data.
 	 */
 	public static final Identifier REGISTRY_RESTORE = id("registry_sync/registry_restore");
-	record RegistryRestore() implements CustomPayload {
+	public record RegistryRestore() implements CustomPayload {
+		public RegistryRestore(PacketByteBuf buf) {
+			this();
+		}
+
 		@Override
 		public void write(PacketByteBuf buf) {
 		}
 
 		@Override
 		public Identifier id() {
-			return HANDSHAKE;
+			return REGISTRY_RESTORE;
 		}
 	}
 
@@ -253,7 +329,10 @@ public final class ServerPackets {
 	 * </code></pre>
 	 */
 	public static final Identifier ERROR_STYLE = id("registry_sync/error_style");
-	record ErrorStyle(Text errorHeader, Text errorFooter, boolean showError) implements CustomPayload {
+	public record ErrorStyle(Text errorHeader, Text errorFooter, boolean showError) implements CustomPayload {
+		public ErrorStyle(PacketByteBuf buf) {
+			this(buf.readText(), buf.readText(), buf.readBoolean());
+		}
 		@Override
 		public void write(PacketByteBuf buf) {
 			buf.writeText(errorHeader);
@@ -284,7 +363,11 @@ public final class ServerPackets {
 	 * </code></pre>
 	 */
 	public static final Identifier MOD_PROTOCOL = id("registry_sync/mod_protocol");
-	record ModProtocol(String prioritizedId, Collection<ModProtocolDef> protocols) implements CustomPayload {
+	public record ModProtocol(String prioritizedId, Collection<ModProtocolDef> protocols) implements CustomPayload {
+		public ModProtocol(PacketByteBuf buf) {
+			this(buf.readString(), buf.readList(ModProtocolDef::read));
+		}
+
 		@Override
 		public void write(PacketByteBuf buf) {
 			buf.writeString(prioritizedId);

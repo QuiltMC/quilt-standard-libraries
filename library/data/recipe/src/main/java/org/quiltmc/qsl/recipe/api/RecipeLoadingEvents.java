@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeType;
-import net.minecraft.recipe.RecipeUnlocker;
+import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 
@@ -110,7 +110,7 @@ public final class RecipeLoadingEvents {
 			 * @param id      identifier of the recipe
 			 * @param factory the recipe factory
 			 */
-			void register(Identifier id, Function<Identifier, RecipeUnlocker<?>> factory);
+			void register(Identifier id, Function<Identifier, RecipeHolder<?>> factory);
 
 			/**
 			 * {@return the dynamic registry manager}
@@ -140,9 +140,9 @@ public final class RecipeLoadingEvents {
 			/**
 			 * Replaces a recipe in the {@link net.minecraft.recipe.RecipeManager}.
 			 *
-			 * @param recipeUnlocker the recipe
+			 * @param recipeHolder the recipe
 			 */
-			void replace(RecipeUnlocker<?> recipeUnlocker);
+			void replace(RecipeHolder<?> recipeHolder);
 		}
 	}
 
@@ -177,14 +177,14 @@ public final class RecipeLoadingEvents {
 			 * @param recipeRemovalPredicate the recipe removal predicate
 			 * @param <T>                    the type of the recipe
 			 */
-			<T extends Recipe<?>> void removeIf(RecipeType<T> recipeType, Predicate<RecipeUnlocker<T>> recipeRemovalPredicate);
+			<T extends Recipe<?>> void removeIf(RecipeType<T> recipeType, Predicate<RecipeHolder<T>> recipeRemovalPredicate);
 
 			/**
 			 * Removes a recipe if the predicate returns {@code true}.
 			 *
 			 * @param recipeRemovalPredicate the recipe removal predicate
 			 */
-			void removeIf(Predicate<RecipeUnlocker<?>> recipeRemovalPredicate);
+			void removeIf(Predicate<RecipeHolder<?>> recipeRemovalPredicate);
 		}
 	}
 }

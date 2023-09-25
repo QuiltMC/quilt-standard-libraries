@@ -115,7 +115,7 @@ public final class NetworkingChannelTest implements CommandRegistrationCallback 
 		final Identifier channel = getIdentifier(context, "channel");
 
 		if (!ServerPlayNetworking.getReceived(player).contains(channel)) {
-			throw new SimpleCommandExceptionType(Text.of("Cannot unregister channel the server player entity cannot recieve packets on")).create();
+			throw new SimpleCommandExceptionType(Text.of("Cannot unregister channel the server player entity cannot receive packets on")).create();
 		}
 
 		ServerPlayNetworking.unregisterReceiver(player.networkHandler, channel);

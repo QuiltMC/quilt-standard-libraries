@@ -24,7 +24,7 @@ import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.CraftingCategory;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.RecipeUnlocker;
+import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.ShapedRecipe;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
@@ -145,9 +145,9 @@ public class ShapedRecipeBuilder extends RecipeBuilder<ShapedRecipeBuilder, Shap
 	 * @return the shaped recipe
 	 */
 	@Override
-	public RecipeUnlocker<ShapedRecipe> build(Identifier id, String group) {
+	public RecipeHolder<ShapedRecipe> build(Identifier id, String group) {
 		this.checkOutputItem();
 		DefaultedList<Ingredient> ingredients = VanillaRecipeBuilders.getIngredients(this.pattern, this.ingredients, this.width, this.height);
-		return new RecipeUnlocker<>(id, new ShapedRecipe(group, this.category, this.width, this.height, ingredients, this.output));
+		return new RecipeHolder<>(id, new ShapedRecipe(group, this.category, this.width, this.height, ingredients, this.output));
 	}
 }

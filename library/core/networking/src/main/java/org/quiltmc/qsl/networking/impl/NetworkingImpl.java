@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import net.minecraft.network.NetworkState;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.s2c.login.payload.CustomQueryPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.util.Identifier;
@@ -95,7 +96,7 @@ public final class NetworkingImpl {
 		return channelName.equals(REGISTER_CHANNEL) || channelName.equals(UNREGISTER_CHANNEL);
 	}
 
-	private static void receiveEarlyRegistration(MinecraftServer server, ServerLoginNetworkHandler handler, boolean understood, PacketByteBuf buf, ServerLoginNetworking.LoginSynchronizer synchronizer, PacketSender sender) {
+	private static void receiveEarlyRegistration(MinecraftServer server, ServerLoginNetworkHandler handler, boolean understood, PacketByteBuf buf, ServerLoginNetworking.LoginSynchronizer synchronizer, PacketSender<CustomQueryPayload> sender) {
 		if (!understood) {
 			// The client is likely a vanilla client.
 			return;

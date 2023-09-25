@@ -36,6 +36,7 @@ import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.packet.c2s.login.LoginQueryResponseC2SPacket;
 import net.minecraft.network.packet.s2c.login.LoginCompressionS2CPacket;
 import net.minecraft.network.packet.s2c.login.LoginQueryRequestS2CPacket;
+import net.minecraft.network.packet.s2c.login.payload.CustomQueryPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.util.Identifier;
@@ -50,7 +51,7 @@ import org.quiltmc.qsl.networking.impl.payload.PacketByteBufLoginQueryResponsePa
 import org.quiltmc.qsl.networking.mixin.accessor.ServerLoginNetworkHandlerAccessor;
 
 @ApiStatus.Internal
-public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLoginNetworking.QueryResponseReceiver> implements PacketSender {
+public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLoginNetworking.QueryResponseReceiver> implements PacketSender<CustomQueryPayload> {
 	private final ClientConnection connection;
 	private final ServerLoginNetworkHandler handler;
 	private final MinecraftServer server;
@@ -162,10 +163,15 @@ public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLo
 	}
 
 	@Override
-	public Packet<?> createPacket(Identifier channelName, PacketByteBuf buf) {
+	public Packet<?> createPacket(CustomQueryPayload payload) {
 		int queryId = this.queryIdFactory.nextId();
 
-		return new LoginQueryRequestS2CPacket(queryId, new PacketByteBufLoginQueryRequestPayload(channelName, buf));
+		return new LoginQueryRequestS2CPacket(queryId, payload);
+	}
+
+	@Override
+	public Packet<?> createPacket(Identifier channelName, PacketByteBuf buf) {
+		return createPacket(new PacketByteBufLoginQueryRequestPayload(channelName, buf));
 	}
 
 	@Override

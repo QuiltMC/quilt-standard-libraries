@@ -99,7 +99,7 @@ public final class ServerPlayNetworkAddon extends AbstractChanneledNetworkAddon<
 	}
 
 	@Override
-	protected Packet<?> createPacket(CustomPayload payload) {
+	public Packet<?> createPacket(CustomPayload payload) {
 		return ServerNetworkingImpl.createS2CPacket(payload);
 	}
 

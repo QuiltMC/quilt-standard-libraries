@@ -33,9 +33,7 @@ import net.minecraft.network.NetworkState;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
 import net.minecraft.network.packet.payload.CustomPayload;
-import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
 
@@ -48,7 +46,7 @@ import org.quiltmc.qsl.networking.impl.payload.ChannelPayload;
  * @param <H> the channel handler type
  */
 @ApiStatus.Internal
-public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAddon<H> implements PacketSender, CommonPacketHandler {
+public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAddon<H> implements PacketSender<CustomPayload>, CommonPacketHandler {
 	protected final ClientConnection connection;
 	protected final GlobalReceiverRegistry<H> receiver;
 	protected final Set<Identifier> sendableChannels;
@@ -84,7 +82,7 @@ public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAd
 		}
 
 		if (NetworkingImpl.UNREGISTER_CHANNEL.equals(originalBuf.id())) {
-			this.receiveRegistration(true, ((ChannelPayload) originalBuf));
+			this.receiveRegistration(false, ((ChannelPayload) originalBuf));
 			return true;
 		}
 
@@ -113,8 +111,6 @@ public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAd
 			this.sendPacket(this.createPacket(payload));
 		}
 	}
-
-	protected abstract Packet<?> createPacket(CustomPayload payload);
 
 	@Nullable
 	protected ChannelPayload createRegistrationPacket(List<Identifier> channels, boolean register) {

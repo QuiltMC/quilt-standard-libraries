@@ -65,7 +65,7 @@ public final class ClientPlayNetworking {
 	 * @see ClientPlayNetworking#unregisterGlobalReceiver(Identifier)
 	 * @see ClientPlayNetworking#registerReceiver(Identifier, CustomChannelReceiver)
 	 */
-	public static boolean registerGlobalReceiver(Identifier channelName, CustomChannelReceiver<?> channelHandler) {
+	public static <T extends CustomPayload> boolean registerGlobalReceiver(Identifier channelName, CustomChannelReceiver<T> channelHandler) {
 		return ClientNetworkingImpl.PLAY.registerGlobalReceiver(channelName, channelHandler);
 	}
 
@@ -209,7 +209,7 @@ public final class ClientPlayNetworking {
 	 * @return the client's packet sender
 	 * @throws IllegalStateException if the client is not connected to a server
 	 */
-	public static PacketSender getSender() throws IllegalStateException {
+	public static PacketSender<CustomPayload> getSender() throws IllegalStateException {
 		// You cant send without a client player, so this is fine
 		if (MinecraftClient.getInstance().getNetworkHandler() != null) {
 			return ClientNetworkingImpl.getAddon(MinecraftClient.getInstance().getNetworkHandler());
@@ -261,17 +261,17 @@ public final class ClientPlayNetworking {
 		 *
 		 * @param client         the client
 		 * @param handler        the network handler that received this packet
-		 * @param buf            the payload of the packet
+		 * @param payload            the payload of the packet
 		 * @param responseSender the packet sender
 		 */
-		void receive(MinecraftClient client, ClientPlayNetworkHandler handler, T buf, PacketSender responseSender);
+		void receive(MinecraftClient client, ClientPlayNetworkHandler handler, T payload, PacketSender<CustomPayload> responseSender);
 	}
 
 	@ClientOnly
 	@FunctionalInterface
 	public interface ChannelReceiver extends CustomChannelReceiver<PacketByteBufPayload> {
-		default void receive(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBufPayload buf, PacketSender responseSender) {
-			this.receive(client, handler, buf.data(), responseSender);
+		default void receive(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBufPayload payload, PacketSender<CustomPayload> responseSender) {
+			this.receive(client, handler, payload.data(), responseSender);
 		}
 
 		/**
@@ -297,6 +297,6 @@ public final class ClientPlayNetworking {
 		 * @param buf            the payload of the packet
 		 * @param responseSender the packet sender
 		 */
-		void receive(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender);
+		void receive(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender<CustomPayload> responseSender);
 	}
 }

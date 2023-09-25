@@ -64,7 +64,11 @@ public final class ClientConfigurationNetworking {
 	 * @see ClientConfigurationNetworking#unregisterGlobalReceiver(Identifier)
 	 * @see ClientConfigurationNetworking#registerReceiver(Identifier, CustomChannelReceiver)
 	 */
-	public static boolean registerGlobalReceiver(Identifier channelName, CustomChannelReceiver<?> channelHandler) {
+	public static <T extends CustomPayload> boolean registerGlobalReceiver(Identifier channelName, CustomChannelReceiver<T> channelHandler) {
+		return ClientNetworkingImpl.CONFIGURATION.registerGlobalReceiver(channelName, channelHandler);
+	}
+
+	public static boolean registerGlobalReceiver(Identifier channelName, ChannelReceiver channelHandler) {
 		return ClientNetworkingImpl.CONFIGURATION.registerGlobalReceiver(channelName, channelHandler);
 	}
 
@@ -200,12 +204,25 @@ public final class ClientConfigurationNetworking {
 	}
 
 	/**
+	 * Creates a packet from the payload which may be sent to the connected server.
+	 *
+	 * @param payload the payload for the packet
+	 * @return a new packet
+	 */
+	@Contract(value = "_ -> new", pure = true)
+	public static Packet<ServerCommonPacketListener> createC2SPacket(@NotNull CustomPayload payload) {
+		Objects.requireNonNull(payload, "Payload cannot be null");
+
+		return ClientNetworkingImpl.createC2SPacket(payload);
+	}
+
+	/**
 	 * Gets the packet sender which sends packets to the connected server.
 	 *
 	 * @return the client's packet sender
 	 * @throws IllegalStateException if the client is not connected to a server
 	 */
-	public static PacketSender getSender() throws IllegalStateException {
+	public static PacketSender<CustomPayload> getSender() throws IllegalStateException {
 		final ClientConfigurationNetworkAddon addon = ClientNetworkingImpl.getClientConfigurationAddon();
 
 		if (addon != null) {
@@ -262,14 +279,14 @@ public final class ClientConfigurationNetworking {
 		 * @param buf            the payload of the packet
 		 * @param responseSender the packet sender
 		 */
-		void receive(MinecraftClient client, ClientConfigurationNetworkHandler handler, T buf, PacketSender responseSender);
+		void receive(MinecraftClient client, ClientConfigurationNetworkHandler handler, T buf, PacketSender<CustomPayload> responseSender);
 	}
 
 	@ClientOnly
 	@FunctionalInterface
 	public interface ChannelReceiver extends CustomChannelReceiver<PacketByteBufPayload> {
 		@Override
-		default void receive(MinecraftClient client, ClientConfigurationNetworkHandler handler, PacketByteBufPayload buf, PacketSender responseSender) {
+		default void receive(MinecraftClient client, ClientConfigurationNetworkHandler handler, PacketByteBufPayload buf, PacketSender<CustomPayload> responseSender) {
 			this.receive(client, handler, buf.data(), responseSender);
 		}
 
@@ -296,6 +313,6 @@ public final class ClientConfigurationNetworking {
 		 * @param buf            the payload of the packet
 		 * @param responseSender the packet sender
 		 */
-		void receive(MinecraftClient client, ClientConfigurationNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender);
+		void receive(MinecraftClient client, ClientConfigurationNetworkHandler handler, PacketByteBuf buf, PacketSender<CustomPayload> responseSender);
 	}
 }

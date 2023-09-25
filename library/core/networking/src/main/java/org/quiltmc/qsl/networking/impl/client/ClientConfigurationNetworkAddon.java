@@ -97,7 +97,7 @@ public final class ClientConfigurationNetworkAddon extends AbstractChanneledNetw
 	}
 
 	@Override
-	protected Packet<?> createPacket(CustomPayload payload) {
+	public Packet<?> createPacket(CustomPayload payload) {
 		return ClientNetworkingImpl.createC2SPacket(payload);
 	}
 

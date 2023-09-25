@@ -26,6 +26,7 @@ import org.quiltmc.qsl.networking.api.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientConfigurationNetworkHandler;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.util.Identifier;
 
 /**
@@ -62,7 +63,7 @@ public final class C2SConfigurationChannelEvents {
 	@ClientOnly
 	@FunctionalInterface
 	public interface Register extends ClientEventAwareListener {
-		void onChannelRegister(ClientConfigurationNetworkHandler handler, PacketSender sender, MinecraftClient client, List<Identifier> channels);
+		void onChannelRegister(ClientConfigurationNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftClient client, List<Identifier> channels);
 	}
 
 	/**
@@ -71,6 +72,6 @@ public final class C2SConfigurationChannelEvents {
 	@ClientOnly
 	@FunctionalInterface
 	public interface Unregister extends ClientEventAwareListener {
-		void onChannelUnregister(ClientConfigurationNetworkHandler handler, PacketSender sender, MinecraftClient client, List<Identifier> channels);
+		void onChannelUnregister(ClientConfigurationNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftClient client, List<Identifier> channels);
 	}
 }

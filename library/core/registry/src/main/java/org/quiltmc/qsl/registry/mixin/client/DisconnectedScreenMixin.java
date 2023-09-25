@@ -49,7 +49,7 @@ public class DisconnectedScreenMixin extends Screen {
 		super(title);
 	}
 
-	@Inject(method = "<init>", at = @At("TAIL"))
+	@Inject(method = "<init>*", at = @At("TAIL"))
 	private void quilt$storeLogs(Screen parent, Text title, Text reason, CallbackInfo ci) {
 		this.quilt$extraLogs = ClientRegistrySync.getAndClearCurrentSyncLogs();
 	}

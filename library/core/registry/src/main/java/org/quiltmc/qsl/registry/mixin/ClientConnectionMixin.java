@@ -22,7 +22,6 @@ import java.util.List;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
-import org.quiltmc.qsl.registry.impl.sync.server.DelayedPacketsHolder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -39,7 +38,7 @@ import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
 import org.quiltmc.qsl.registry.impl.sync.server.ExtendedConnectionClient;
 
 @Mixin(ClientConnection.class)
-public class ClientConnectionMixin implements ExtendedConnectionClient, DelayedPacketsHolder {
+public class ClientConnectionMixin implements ExtendedConnectionClient {
 	@Unique
 	private IdentityHashMap<Registry<?>, ObjectOpenCustomHashSet<Object>> quilt$unknownEntries = new IdentityHashMap<>();
 	@Unique
@@ -92,15 +91,5 @@ public class ClientConnectionMixin implements ExtendedConnectionClient, DelayedP
 	@Override
 	public int quilt$getModProtocol(String id) {
 		return this.quilt$modProtocol.getInt(id);
-	}
-
-	@Override
-	public void quilt$setPacketList(List<CustomPayloadC2SPacket> packetList) {
-		this.quilt$delayedPackets = packetList;
-	}
-
-	@Override
-	public List<CustomPayloadC2SPacket> quilt$getPacketList() {
-		return this.quilt$delayedPackets;
 	}
 }

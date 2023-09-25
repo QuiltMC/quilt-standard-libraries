@@ -53,7 +53,7 @@ public class MainMixin {
 			method = "main",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/resource/pack/VanillaDataPackProvider;createDataPackManager(Ljava/nio/file/Path;)Lnet/minecraft/resource/pack/ResourcePackManager;",
+					target = "Lnet/minecraft/resource/pack/VanillaDataPackProvider;createDataPackManager(Lnet/minecraft/world/storage/WorldSaveStorage$Session;)Lnet/minecraft/resource/pack/ResourcePackManager;",
 					shift = At.Shift.BY,
 					by = 2,
 					remap = true
@@ -63,13 +63,13 @@ public class MainMixin {
 			remap = false
 	)
 	private static void onStart(String[] strings, CallbackInfo ci,
-			OptionParser optionParser,
-			OptionSpec optionSpec, OptionSpec optionSpec2, OptionSpec optionSpec3, OptionSpec optionSpec4, OptionSpec optionSpec5,
-			OptionSpec optionSpec6, OptionSpec optionSpec7, OptionSpec optionSpec8, OptionSpec optionSpec9, OptionSpec optionSpec10,
-			OptionSpec optionSpec11, OptionSpec optionSpec12, OptionSpec optionSpec13, OptionSpec optionSpec14, OptionSpec optionSpec15,
-			OptionSpec optionSpec16, OptionSet optionSet, Path path, Path path2, ServerPropertiesLoader serverPropertiesLoader,
-			Path path3, EulaReader eulaReader, File file, Services services, String string, WorldSaveStorage worldSaveStorage,
-			WorldSaveStorage.Session session, WorldSaveSummary worldSaveSummary, boolean bl, ResourcePackManager resourcePackManager) {
+								OptionParser optionParser,
+								OptionSpec<?> optionSpec, OptionSpec<?> optionSpec2, OptionSpec<?> optionSpec3, OptionSpec<?> optionSpec4, OptionSpec<?> optionSpec5,
+								OptionSpec<?> optionSpec6, OptionSpec<?> optionSpec7, OptionSpec<?> optionSpec8, OptionSpec<?> optionSpec9, OptionSpec<?> optionSpec10,
+								OptionSpec<?> optionSpec11, OptionSpec<?> optionSpec12, OptionSpec<?> optionSpec13, OptionSpec<?> optionSpec14, OptionSpec<?> optionSpec15,
+								OptionSet optionSet, Path path, Path path2, ServerPropertiesLoader serverPropertiesLoader,
+								Path path3, EulaReader eulaReader, File file, Services services, String string, WorldSaveStorage worldSaveStorage,
+								WorldSaveStorage.Session session, WorldSaveSummary worldSaveSummary, boolean bl, ResourcePackManager resourcePackManager) {
 		if (QuiltGameTestImpl.ENABLED) {
 			QuiltGameTestImpl.runHeadlessServer(session, resourcePackManager);
 			ci.cancel(); // Do not progress in starting the normal dedicated server.

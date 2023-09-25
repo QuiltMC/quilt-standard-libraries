@@ -27,7 +27,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.RecipeUnlocker;
+import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.SmithingRecipe;
 import net.minecraft.screen.ForgingScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
@@ -39,7 +39,7 @@ import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 @Mixin(SmithingScreenHandler.class)
 public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
 	@Shadow
-	private @Nullable RecipeUnlocker<SmithingRecipe> currentRecipe;
+	private @Nullable RecipeHolder<SmithingRecipe> currentRecipe;
 
 	@Shadow
 	public abstract void updateResult();
@@ -53,7 +53,7 @@ public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
 		RecipeRemainderLogicHandler.handleRemainderForScreenHandler(
 				this.getSlot(slot),
 				amount,
-				this.currentRecipe.comp_1933(),
+				this.currentRecipe.value(),
 				this.player
 		);
 	}

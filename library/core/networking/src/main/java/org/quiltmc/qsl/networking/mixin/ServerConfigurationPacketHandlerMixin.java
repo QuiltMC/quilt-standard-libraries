@@ -52,6 +52,11 @@ abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacke
 		this.addon.lateInit();
 	}
 
+	@Inject(method = "startConfiguration", at = @At("HEAD"))
+	private void start(CallbackInfo ci) {
+		this.addon.onConfigureReady();
+	}
+
 	@Inject(method = "onDisconnected", at = @At("HEAD"))
 	private void handleDisconnection(Text reason, CallbackInfo ci) {
 		this.addon.handleDisconnect();

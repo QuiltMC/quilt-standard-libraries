@@ -40,7 +40,13 @@ public final class ClientPackets {
 	 * </code></pre>
 	 */
 	public static final Identifier HANDSHAKE = id("registry_sync/handshake");
-	record Handshake(int version) implements CustomPayload {
+	public record Handshake(int version) implements CustomPayload {
+		public Handshake(PacketByteBuf buf) {
+			this(
+				buf.readVarInt()
+			);
+		}
+
 		@Override
 		public void write(PacketByteBuf buf) {
 			buf.writeVarInt(version);
@@ -62,7 +68,11 @@ public final class ClientPackets {
 	 * </code></pre>
 	 */
 	public static final Identifier SYNC_FAILED = id("registry_sync/sync_failed");
-	record SyncFailed(Identifier registry) implements CustomPayload {
+	public record SyncFailed(Identifier registry) implements CustomPayload {
+		public SyncFailed(PacketByteBuf buf) {
+			this(buf.readIdentifier());
+		}
+
 		@Override
 		public void write(PacketByteBuf buf) {
 			buf.writeIdentifier(registry);
@@ -89,7 +99,11 @@ public final class ClientPackets {
 	 */
 	public static final Identifier UNKNOWN_ENTRY = id("registry_sync/unknown_entry");
 
-	record UnknownEntry(Identifier registry, IntList rawIds) implements CustomPayload {
+	public record UnknownEntry(Identifier registry, IntList rawIds) implements CustomPayload {
+		public UnknownEntry(PacketByteBuf buf) {
+			this(buf.readIdentifier(), buf.readIntList());
+		}
+
 		@Override
 		public void write(PacketByteBuf buf) {
 			buf.writeIdentifier(registry);
@@ -118,7 +132,23 @@ public final class ClientPackets {
 	 */
 	public static final Identifier MOD_PROTOCOL = id("registry_sync/mod_protocol");
 
-	record ModProtocol(Object2IntOpenHashMap<String> protocols) implements CustomPayload {
+	public record ModProtocol(Object2IntOpenHashMap<String> protocols) implements CustomPayload {
+		public ModProtocol(PacketByteBuf buf) {
+			this(read(buf));
+		}
+
+		private static Object2IntOpenHashMap<String> read(PacketByteBuf buf) {
+			Object2IntOpenHashMap<String> protocols = new Object2IntOpenHashMap<>();
+
+			int count = buf.readVarInt();
+
+			while (count-- > 0) {
+				protocols.put(buf.readString(), buf.readVarInt());
+			}
+
+			return protocols;
+		}
+
 		@Override
 		public void write(PacketByteBuf buf) {
 			buf.writeVarInt(protocols.size());
@@ -131,6 +161,24 @@ public final class ClientPackets {
 		@Override
 		public Identifier id() {
 			return MOD_PROTOCOL;
+		}
+	}
+
+	/**
+	 * Ends registry sync. No data
+	 */
+	public static final Identifier END = id("registry_sync/end");
+	public record End() implements CustomPayload {
+		public End(PacketByteBuf buf) {
+			this();
+		}
+		@Override
+		public void write(PacketByteBuf buf) {
+		}
+
+		@Override
+		public Identifier id() {
+			return END;
 		}
 	}
 

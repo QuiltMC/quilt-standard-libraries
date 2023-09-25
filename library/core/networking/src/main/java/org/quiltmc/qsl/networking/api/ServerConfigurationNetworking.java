@@ -61,7 +61,7 @@ public final class ServerConfigurationNetworking {
 	 * @see ServerConfigurationNetworking#unregisterGlobalReceiver(Identifier)
 	 * @see ServerConfigurationNetworking#registerReceiver(ServerConfigurationPacketHandler, Identifier, ChannelReceiver)
 	 */
-	public static boolean registerGlobalReceiver(Identifier channelName, ChannelReceiver channelHandler) {
+	public static <T extends CustomPayload> boolean registerGlobalReceiver(Identifier channelName, CustomChannelReceiver<T> channelHandler) {
 		return ServerNetworkingImpl.CONFIGURATION.registerGlobalReceiver(channelName, channelHandler);
 	}
 
@@ -73,7 +73,7 @@ public final class ServerConfigurationNetworking {
 	 *
 	 * @param channelName the identifier of the channel
 	 * @return the previous handler, or {@code null} if no handler was bound to the channel
-	 * @see ServerConfigurationNetworking#registerGlobalReceiver(Identifier, ChannelReceiver)
+	 * @see ServerConfigurationNetworking#registerGlobalReceiver(Identifier, CustomChannelReceiver)
 	 * @see ServerConfigurationNetworking#unregisterReceiver(ServerConfigurationPacketHandler, Identifier)
 	 */
 	@Nullable
@@ -93,7 +93,7 @@ public final class ServerConfigurationNetworking {
 
 	/**
 	 * Registers a handler to a channel.
-	 * This method differs from {@link ServerConfigurationNetworking#registerGlobalReceiver(Identifier, ChannelReceiver)} since
+	 * This method differs from {@link ServerConfigurationNetworking#registerGlobalReceiver(Identifier, CustomChannelReceiver)} since
 	 * the channel handler will only be applied to the client represented by the {@link ServerConfigurationPacketHandler}.
 	 * <p>
 	 * For example, if you only register a receiver using this method when a {@linkplain ServerLoginNetworking#registerGlobalReceiver(Identifier, ServerLoginNetworking.QueryResponseReceiver)}
@@ -183,12 +183,25 @@ public final class ServerConfigurationNetworking {
 	}
 
 	/**
+	 * Creates a packet from a payload which may be sent to a connected client.
+	 *
+	 * @param payload the payload of the packet
+	 * @return a new packet
+	 */
+	@Contract(value = "_ -> new", pure = true)
+	public static Packet<ClientCommonPacketListener> createS2CPacket(@NotNull CustomPayload payload) {
+		Objects.requireNonNull(payload, "Payload cannot be null");
+
+		return ServerNetworkingImpl.createS2CPacket(payload);
+	}
+
+	/**
 	 * Gets the packet sender which sends packets to the connected client.
 	 *
 	 * @param handler the network handler, representing the connection to the client
 	 * @return the packet sender
 	 */
-	public static PacketSender getSender(ServerConfigurationPacketHandler handler) {
+	public static PacketSender<CustomPayload> getSender(ServerConfigurationPacketHandler handler) {
 		Objects.requireNonNull(handler, "Server configuration packet handler cannot be null");
 
 		return ServerNetworkingImpl.getAddon(handler);
@@ -197,9 +210,9 @@ public final class ServerConfigurationNetworking {
 	/**
 	 * Sends a packet to a client.
 	 *
-	 * @param networkHandler	the handler to send the packet to
-	 * @param channelName 		the channel of the packet
-	 * @param buf         		the payload of the packet
+	 * @param networkHandler the handler to send the packet to
+	 * @param channelName    the channel of the packet
+	 * @param buf            the payload of the packet
 	 */
 	public static void send(ServerConfigurationPacketHandler networkHandler, Identifier channelName, PacketByteBuf buf) {
 		Objects.requireNonNull(networkHandler, "Server configuration handler cannot be null");
@@ -247,16 +260,16 @@ public final class ServerConfigurationNetworking {
 		 *
 		 * @param server         the server
 		 * @param handler        the network handler that received this packet, representing the client who sent the packet
-		 * @param buf            the payload of the packet
+		 * @param payload        the payload of the packet
 		 * @param responseSender the packet sender
 		 */
-		void receive(MinecraftServer server, ServerConfigurationPacketHandler handler, T buf, PacketSender responseSender);
+		void receive(MinecraftServer server, ServerConfigurationPacketHandler handler, T payload, PacketSender<CustomPayload> responseSender);
 	}
 
 	@FunctionalInterface
 	public interface ChannelReceiver extends CustomChannelReceiver<PacketByteBufPayload> {
-		default void receive(MinecraftServer server, ServerConfigurationPacketHandler handler, PacketByteBufPayload buf, PacketSender responseSender) {
-			this.receive(server, handler, buf.data(), responseSender);
+		default void receive(MinecraftServer server, ServerConfigurationPacketHandler handler, PacketByteBufPayload payload, PacketSender<CustomPayload> responseSender) {
+			this.receive(server, handler, payload.data(), responseSender);
 		}
 
 		/**
@@ -280,6 +293,6 @@ public final class ServerConfigurationNetworking {
 		 * @param buf            the payload of the packet
 		 * @param responseSender the packet sender
 		 */
-		void receive(MinecraftServer server, ServerConfigurationPacketHandler handler, PacketByteBuf buf, PacketSender responseSender);
+		void receive(MinecraftServer server, ServerConfigurationPacketHandler handler, PacketByteBuf buf, PacketSender<CustomPayload> responseSender);
 	}
 }

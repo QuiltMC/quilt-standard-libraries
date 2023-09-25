@@ -35,6 +35,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.tag.TagKey;
@@ -215,7 +216,7 @@ public final class RegistryEntryAttachmentSync {
 		}
 	}
 
-	private static void syncAttachmentsToPlayer(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server) {
+	private static void syncAttachmentsToPlayer(ServerPlayNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftServer server) {
 		if (isPlayerLocal(handler.getPlayer())) return;
 
 		for (var buf : RegistryEntryAttachmentSync.createSyncPackets()) {
@@ -225,7 +226,7 @@ public final class RegistryEntryAttachmentSync {
 
 	@ClientOnly
 	@SuppressWarnings("unchecked")
-	private static void receiveSyncPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
+	private static void receiveSyncPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender<CustomPayload> responseSender) {
 		var packetVersion = buf.readByte();
 		if (packetVersion != PACKET_VERSION) {
 			throw new UnsupportedOperationException("Unable to read RegistryEntryAttachmentSync packet. Please install the same version of QSL as the server you play on");

@@ -23,9 +23,11 @@ import java.util.Set;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
+import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
+import org.quiltmc.qsl.networking.impl.server.ServerNetworkingImpl;
 
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.ServerConfigurationPacketHandler;
 import net.minecraft.network.listener.ClientCommonPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.payload.CustomPayload;
@@ -33,10 +35,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
-
-import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
-import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
-import org.quiltmc.qsl.networking.impl.server.ServerNetworkingImpl;
 
 /**
  * Offers access to play stage server-side networking functionalities.
@@ -222,12 +220,25 @@ public final class ServerPlayNetworking {
 	}
 
 	/**
+	 * Creates a packet from a payload which may be sent to a connected client.
+	 *
+	 * @param payload the payload of the packet
+	 * @return a new packet
+	 */
+	@Contract(value = "_ -> new", pure = true)
+	public static Packet<ClientCommonPacketListener> createS2CPacket(@NotNull CustomPayload payload) {
+		Objects.requireNonNull(payload, "Payload cannot be null");
+
+		return ServerNetworkingImpl.createS2CPacket(payload);
+	}
+
+	/**
 	 * Gets the packet sender which sends packets to the connected client.
 	 *
 	 * @param player the player
 	 * @return the packet sender
 	 */
-	public static PacketSender getSender(ServerPlayerEntity player) {
+	public static PacketSender<CustomPayload> getSender(ServerPlayerEntity player) {
 		Objects.requireNonNull(player, "Server player entity cannot be null");
 
 		return getSender(player.networkHandler);
@@ -239,7 +250,7 @@ public final class ServerPlayNetworking {
 	 * @param handler the network handler, representing the connection to the player/client
 	 * @return the packet sender
 	 */
-	public static PacketSender getSender(ServerPlayNetworkHandler handler) {
+	public static PacketSender<CustomPayload> getSender(ServerPlayNetworkHandler handler) {
 		Objects.requireNonNull(handler, "Server play network handler cannot be null");
 
 		return ServerNetworkingImpl.getAddon(handler);
@@ -317,12 +328,12 @@ public final class ServerPlayNetworking {
 		 * @param buf            the payload of the packet
 		 * @param responseSender the packet sender
 		 */
-		void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, T buf, PacketSender responseSender);
+		void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, T buf, PacketSender<CustomPayload> responseSender);
 	}
 
 	@FunctionalInterface
 	public interface ChannelReceiver extends CustomChannelReceiver<PacketByteBufPayload> {
-		default void receive(MinecraftServer server,  ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBufPayload buf, PacketSender responseSender) {
+		default void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBufPayload buf, PacketSender<CustomPayload> responseSender) {
 			this.receive(server, player, handler, buf.data(), responseSender);
 		}
 
@@ -350,6 +361,6 @@ public final class ServerPlayNetworking {
 		 * @param buf            the payload of the packet
 		 * @param responseSender the packet sender
 		 */
-		void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender);
+		void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender<CustomPayload> responseSender);
 	}
 }

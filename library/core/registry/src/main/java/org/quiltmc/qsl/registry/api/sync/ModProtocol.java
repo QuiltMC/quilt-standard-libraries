@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.network.ServerConfigurationPacketHandler;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 
@@ -65,24 +66,12 @@ public final class ModProtocol {
 	/**
 	 * Checks the mod protocol version supported by a given player.
 	 *
-	 * @param player Player to check against
-	 * @param modContainer ModContainer defining protocol version
-	 * @return latest supported by player protocol for mod. -1 if not supported
-	 */
-	@Contract(pure = true)
-	public static int getSupported(@NotNull ServerPlayerEntity player, @NotNull ModContainer modContainer) {
-		return player.networkHandler != null ? getSupported(player.networkHandler, modContainer) : UNSUPPORTED;
-	}
-
-	/**
-	 * Checks the mod protocol version supported by a given player.
-	 *
 	 * @param handler player's network handler to check against
 	 * @param modContainer ModContainer defining protocol version
 	 * @return latest supported by player protocol for mod. -1 if not supported
 	 */
 	@Contract(pure = true)
-	public static int getSupported(@NotNull ServerPlayNetworkHandler handler, @NotNull ModContainer modContainer) {
+	public static int getSupported(@NotNull ServerConfigurationPacketHandler handler, @NotNull ModContainer modContainer) {
 		return ExtendedConnectionClient.from(handler).quilt$getModProtocol("mod:" + modContainer.metadata().id());
 	}
 }

@@ -32,6 +32,7 @@ import net.minecraft.registry.DefaultedRegistry;
 import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOffers;
+import net.minecraft.village.VillagerDataContainer;
 
 @Mixin(TradeOffers.TypeAwareBuyForOneEmeraldFactory.class)
 public abstract class TypeAwareBuyForOneEmeraldFactoryMixin {
@@ -49,8 +50,8 @@ public abstract class TypeAwareBuyForOneEmeraldFactoryMixin {
 	/**
 	 * To prevent "item" -> "air" trades, if the result of a type aware trade is air, make sure no offer is created.
 	 */
-	@Inject(method = "create", at = @At(value = "NEW", target = "net/minecraft/village/TradeOffer"), locals = LocalCapture.CAPTURE_FAILEXCEPTION, cancellable = true)
-	private void failOnNullItem(Entity entity, RandomGenerator random, CallbackInfoReturnable<TradeOffer> cir, ItemStack buyingItem) {
+	@Inject(method = "create", at = @At(value = "NEW", target = "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;IIF)Lnet/minecraft/village/TradeOffer;"), locals = LocalCapture.CAPTURE_FAILEXCEPTION, cancellable = true)
+	private void failOnNullItem(Entity entity, RandomGenerator random, CallbackInfoReturnable<TradeOffer> cir, VillagerDataContainer villagerDataContainer, ItemStack buyingItem) {
 		if (buyingItem.isEmpty()) { // Will return true for an "empty" item stack that had null passed in the ctor
 			cir.setReturnValue(null); // Return null to prevent creation of empty trades
 		}
