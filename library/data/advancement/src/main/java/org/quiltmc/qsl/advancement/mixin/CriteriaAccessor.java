@@ -29,6 +29,6 @@ import net.minecraft.util.Identifier;
 public interface CriteriaAccessor {
 	@Accessor("VALUES")
 	static BiMap<Identifier, Criterion<?>> values() {
-		throw new IllegalStateException("Mixin Accessor");
+		throw new IllegalStateException("Mixin injection failed");
 	}
 }
