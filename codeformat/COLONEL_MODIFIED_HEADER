@@ -1,5 +1,5 @@
 Copyright 2016, 2017, 2018, 2019, 2020 zml and Colonel contributors
-Copyright ${YEAR} QuiltMC
+Copyright ${YEAR} The Quilt Project
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -15,4 +15,4 @@ limitations under the License.
 
 ;;match_from: \/\*\r?\n \* Copyright (\(c\) )?2016, 2017, 2018, 2019, 2020 zml and Colonel contributors
 ;;match_from: \/\/\/ C[Oo][Ll][Oo][Nn][Ee][Ll]
-;;year_display: lenient_range
+;;year_display: creation_only
