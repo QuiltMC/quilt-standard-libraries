@@ -91,7 +91,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	}
 
 	/**
-	 * Creates a builder for a boolean attachment.
+	 * Creates a builder for a {@code boolean} attachment.
 	 *
 	 * @param registry registry to attach to
 	 * @param id       attachment identifier
@@ -103,7 +103,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	}
 
 	/**
-	 * Creates a builder for an integer attachment.
+	 * Creates a builder for an integer number ({@code int}) attachment.
 	 *
 	 * @param registry registry to attach to
 	 * @param id       attachment identifier
@@ -115,7 +115,8 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	}
 
 	/**
-	 * Creates a builder for an integer attachment which only allows values in the specified range.
+	 * Creates a builder for an integer number ({@code int}) attachment,
+	 * which only allows values in the specified range.
 	 *
 	 * @param registry registry to attach to
 	 * @param id       attachment identifier
@@ -129,7 +130,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	}
 
 	/**
-	 * Creates a builder for a long attachment.
+	 * Creates a builder for a long integer number ({@code long}) attachment.
 	 *
 	 * @param registry registry to attach to
 	 * @param id       attachment identifier
@@ -141,7 +142,8 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	}
 
 	/**
-	 * Creates a builder for a long attachment which only allows values in the specified range.
+	 * Creates a builder for a long integer number ({@code long}) attachment,
+	 * which only allows values in the specified range.
 	 *
 	 * @param registry registry to attach to
 	 * @param id       attachment identifier
@@ -158,7 +160,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	}
 
 	/**
-	 * Creates a builder for a float attachment.
+	 * Creates a builder for a floating-point number ({@code float}) attachment.
 	 *
 	 * @param registry registry to attach to
 	 * @param id       attachment identifier
@@ -170,7 +172,8 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	}
 
 	/**
-	 * Creates a builder for a float attachment which only allows values in the specified range.
+	 * Creates a builder for a floating-point number ({@code float}) attachment,
+	 * which only allows values in the specified range.
 	 *
 	 * @param registry registry to attach to
 	 * @param id       attachment identifier
@@ -184,7 +187,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	}
 
 	/**
-	 * Creates a builder for a double attachment.
+	 * Creates a builder for a long floating-point number ({@code double}) attachment.
 	 *
 	 * @param registry registry to attach to
 	 * @param id       attachment identifier
@@ -196,7 +199,8 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	}
 
 	/**
-	 * Creates a builder for a double attachment which only allows values in the specified range.
+	 * Creates a builder for a long floating-point number ({@code double}) attachment,
+	 * which only allows values in the specified range.
 	 *
 	 * @param registry registry to attach to
 	 * @param id       attachment identifier
@@ -210,7 +214,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	}
 
 	/**
-	 * Creates a builder for a string attachment.
+	 * Creates a builder for a {@link String} attachment.
 	 *
 	 * @param registry registry to attach to
 	 * @param id       attachment identifier
