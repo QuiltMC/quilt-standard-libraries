@@ -1,10 +1,16 @@
 package qsl.internal.extension;
 
 import org.gradle.api.Project;
+import org.gradle.api.Task;
 import qsl.internal.Versions;
 
 public class QslExtension {
-	private static final String[] TASKS_TO_DISABLE = {"genSourcesWithFernFlower"};
+	private static final String[] TASKS_TO_DISABLE = {
+		"genSourcesWithFernFlower",
+		"genSourcesWithVineflower",
+		"genSourcesWithCfr",
+		"genSources"
+	};
 	protected final Project project;
 
 	public QslExtension(Project project) {
@@ -12,7 +18,10 @@ public class QslExtension {
 
 		this.project.afterEvaluate(p -> {
 			for (var task : TASKS_TO_DISABLE) {
-				p.getTasks().findByName(task).setEnabled(false);
+				Task disabled = p.getTasks().findByName(task);
+				if (disabled != null) {
+					disabled.setEnabled(false);
+				}
 			}
 		});
 	}

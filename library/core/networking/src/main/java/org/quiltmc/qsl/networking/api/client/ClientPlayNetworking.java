@@ -83,7 +83,9 @@ public final class ClientPlayNetworking {
 	 * @see ClientPlayNetworking#registerGlobalReceiver(Identifier, CustomChannelReceiver)
 	 * @see ClientPlayNetworking#unregisterGlobalReceiver(Identifier)
 	 * @see ClientPlayNetworking#registerReceiver(Identifier, ChannelReceiver)
+	 * @deprecated use {@link ClientPlayNetworking#registerGlobalReceiver(Identifier, CustomChannelReceiver)}
 	 */
+	@Deprecated
 	public static boolean registerGlobalReceiver(Identifier channelName, ChannelReceiver channelHandler) {
 		return ClientNetworkingImpl.PLAY.registerGlobalReceiver(channelName, channelHandler);
 	}
@@ -150,7 +152,9 @@ public final class ClientPlayNetworking {
 	 * @return {@code false} if a handler is already registered to the channel, otherwise {@code true}
 	 * @throws IllegalStateException if the client is not connected to a server
 	 * @see ClientPlayConnectionEvents#INIT
+	 * @deprecated use {@link ClientPlayNetworking#registerReceiver(Identifier, CustomChannelReceiver)}
 	 */
+	@Deprecated
 	public static boolean registerReceiver(Identifier channelName, ChannelReceiver channelHandler) {
 		final ClientPlayNetworkAddon addon = ClientNetworkingImpl.getClientPlayAddon();
 
@@ -321,7 +325,7 @@ public final class ClientPlayNetworking {
 
 	/**
 	 * This functional interface should only be used when sending a raw {@link PacketByteBuf} is necessary.
-	 * @see CustomChannelReceiver
+	 * @deprecated use {@link CustomChannelReceiver}
 	 */
 	@Deprecated
 	@ClientOnly

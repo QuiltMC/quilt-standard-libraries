@@ -68,12 +68,6 @@ public abstract class ServerConfigurationPacketHandlerMixin implements AbstractS
 	}
 
 	@Override
-	public @Nullable FabricSyncTask qsl$getFabricSyncTask() {
-		if (this.currentTask instanceof FabricSyncTask task) return task;
-		throw new IllegalStateException("Not currently in FabricSyncTask!");
-	}
-
-	@Override
 	public void qsl$finishFabricSyncTask() {
 		this.finishCurrentTask(FabricSyncTask.TYPE);
 	}

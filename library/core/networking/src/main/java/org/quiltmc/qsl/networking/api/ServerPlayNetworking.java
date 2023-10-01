@@ -49,6 +49,7 @@ import org.quiltmc.qsl.networking.impl.server.ServerNetworkingImpl;
  * @see ServerConfigurationNetworking
  * @see ClientPlayNetworking
  */
+@SuppressWarnings("checkstyle:JavadocParagraph")
 public final class ServerPlayNetworking {
 	/**
 	 * Registers a handler to a channel.
@@ -79,6 +80,7 @@ public final class ServerPlayNetworking {
 	 * @return {@code false} if a handler is already registered to the channel, otherwise {@code true}
 	 * @see ServerPlayNetworking#unregisterGlobalReceiver(Identifier)
 	 * @see ServerPlayNetworking#registerReceiver(ServerPlayNetworkHandler, Identifier, ChannelReceiver)
+	 * @deprecated use {@link ServerPlayNetworking#registerGlobalReceiver(Identifier, CustomChannelReceiver)}
 	 */
 	@Deprecated
 	public static boolean registerGlobalReceiver(Identifier channelName, ChannelReceiver channelHandler) {
@@ -150,6 +152,7 @@ public final class ServerPlayNetworking {
 	 * @param channelHandler the handler
 	 * @return {@code false} if a handler is already registered to the channel name, otherwise {@code true}
 	 * @see ServerPlayConnectionEvents#INIT
+	 * @deprecated use {@link ServerPlayNetworking#registerReceiver(ServerPlayNetworkHandler, Identifier, CustomChannelReceiver)}
 	 */
 	@Deprecated
 	public static boolean registerReceiver(ServerPlayNetworkHandler networkHandler, Identifier channelName, ChannelReceiver channelHandler) {
@@ -377,7 +380,7 @@ public final class ServerPlayNetworking {
 
 	/**
 	 * This functional interface should only be used when sending a raw {@link PacketByteBuf} is necessary.
-	 * @see CustomChannelReceiver
+	 * @deprecated use {@link CustomChannelReceiver}
 	 */
 	@Deprecated
 	@FunctionalInterface

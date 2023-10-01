@@ -6,6 +6,7 @@
     "AbstractServerPacketHandlerAccessor",
     "BlocksMixin",
     "ClientConnectionMixin",
+    "compat.C_dfpyqaylMixin",
     "DebugChunkGeneratorAccessor",
     "DynamicRegistrySyncAccessor",
     "DynamicRegistrySyncMixin",
@@ -18,8 +19,7 @@
     "ServerConfigurationPacketHandlerMixin",
     "ServerMetadataVersionMixin",
     "SimpleRegistryMixin",
-    "TagManagerLoaderMixin",
-    "compat.SchemasMixin"
+    "TagManagerLoaderMixin"
   ],
   "client": [
     "client.BlockColorMapMixin",

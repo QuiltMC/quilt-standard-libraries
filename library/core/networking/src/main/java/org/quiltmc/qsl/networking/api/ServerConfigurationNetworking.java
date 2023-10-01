@@ -78,6 +78,7 @@ public final class ServerConfigurationNetworking {
 	 * @return {@code false} if a handler is already registered to the channel, otherwise {@code true}
 	 * @see ServerConfigurationNetworking#unregisterGlobalReceiver(Identifier)
 	 * @see ServerConfigurationNetworking#registerReceiver(ServerConfigurationPacketHandler, Identifier, ChannelReceiver)
+	 * @deprecated use {@link ServerConfigurationNetworking#registerGlobalReceiver(Identifier, CustomChannelReceiver)}
 	 */
 	@Deprecated
 	public static boolean registerGlobalReceiver(Identifier channelName, ChannelReceiver channelHandler) {
@@ -149,6 +150,7 @@ public final class ServerConfigurationNetworking {
 	 * @param channelHandler the handler
 	 * @return {@code false} if a handler is already registered to the channel name, otherwise {@code true}
 	 * @see ServerConfigurationConnectionEvents#INIT
+	 * @deprecated use {@link ServerConfigurationNetworking#registerReceiver(ServerConfigurationPacketHandler, Identifier, CustomChannelReceiver)}
 	 */
 	@Deprecated
 	public static boolean registerReceiver(ServerConfigurationPacketHandler networkHandler, Identifier channelName, ChannelReceiver channelHandler) {
@@ -312,7 +314,7 @@ public final class ServerConfigurationNetworking {
 	/**
 	 * This functional interface should only be used when sending a raw {@link PacketByteBuf} is necessary.
 	 * <p>
-	 * @see CustomChannelReceiver
+	 * @deprecated use {@link CustomChannelReceiver}
 	 */
 	@Deprecated
 	@FunctionalInterface

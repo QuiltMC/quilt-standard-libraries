@@ -15,6 +15,14 @@ qslModule {
 			testmodOnly("qsl_base")
 		}
 	}
+	entrypoints {
+		init {
+			values = ["org.quiltmc.qsl.entity.extensions.impl.networking.QuiltEntityNetworkingInitializer"]
+		}
+		client_init {
+			values = ["org.quiltmc.qsl.entity.extensions.impl.networking.QuiltEntityNetworkingClientInitializer"]
+		}
+	}
 	accessWidener()
 	injectedInterface("net/minecraft/class_1688") {
 		values = ["org/quiltmc/qsl/entity/extensions/api/MinecartComparatorLogic"]

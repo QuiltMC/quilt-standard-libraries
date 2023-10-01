@@ -83,6 +83,7 @@ public final class ClientConfigurationNetworking {
 	 * @see ClientConfigurationNetworking#registerGlobalReceiver(Identifier, CustomChannelReceiver)
 	 * @see ClientConfigurationNetworking#unregisterGlobalReceiver(Identifier)
 	 * @see ClientConfigurationNetworking#registerReceiver(Identifier, ChannelReceiver)
+	 * @deprecated use {@link ClientConfigurationNetworking#registerGlobalReceiver(Identifier, CustomChannelReceiver)}
 	 */
 	@Deprecated
 	public static boolean registerGlobalReceiver(Identifier channelName, ChannelReceiver channelHandler) {
@@ -151,6 +152,7 @@ public final class ClientConfigurationNetworking {
 	 * @return {@code false} if a handler is already registered to the channel, otherwise {@code true}
 	 * @throws IllegalStateException if the client is not connected to a server
 	 * @see ClientConfigurationConnectionEvents#INIT
+	 * @deprecated use {@link ClientConfigurationNetworking#registerReceiver(Identifier, CustomChannelReceiver)}
 	 */
 	@Deprecated
 	public static boolean registerReceiver(Identifier channelName, ChannelReceiver channelHandler) {
@@ -326,7 +328,7 @@ public final class ClientConfigurationNetworking {
 
 	/**
 	 * This functional interface should only be used when sending a raw {@link PacketByteBuf} is necessary.
-	 * @see CustomChannelReceiver
+	 * @deprecated use {@link CustomChannelReceiver}
 	 */
 	@Deprecated
 	@ClientOnly
