@@ -79,7 +79,7 @@ public final class ServerConfigurationNetworking {
 	 * @see ServerConfigurationNetworking#unregisterGlobalReceiver(Identifier)
 	 * @see ServerConfigurationNetworking#registerReceiver(ServerConfigurationPacketHandler, Identifier, ChannelReceiver)
 	 */
-	@Deprecated(forRemoval = true)
+	@Deprecated
 	public static boolean registerGlobalReceiver(Identifier channelName, ChannelReceiver channelHandler) {
 		return ServerNetworkingImpl.CONFIGURATION.registerGlobalReceiver(channelName, channelHandler);
 	}
@@ -150,7 +150,7 @@ public final class ServerConfigurationNetworking {
 	 * @return {@code false} if a handler is already registered to the channel name, otherwise {@code true}
 	 * @see ServerConfigurationConnectionEvents#INIT
 	 */
-	@Deprecated(forRemoval = true)
+	@Deprecated
 	public static boolean registerReceiver(ServerConfigurationPacketHandler networkHandler, Identifier channelName, ChannelReceiver channelHandler) {
 		Objects.requireNonNull(networkHandler, "Network handler cannot be null");
 
@@ -309,7 +309,12 @@ public final class ServerConfigurationNetworking {
 		void receive(MinecraftServer server, ServerConfigurationPacketHandler handler, T payload, PacketSender<CustomPayload> responseSender);
 	}
 
-	@Deprecated(forRemoval = true)
+	/**
+	 * This functional interface should only be used when sending a raw {@link PacketByteBuf} is necessary.
+	 * <p>
+	 * @see CustomChannelReceiver
+	 */
+	@Deprecated
 	@FunctionalInterface
 	public interface ChannelReceiver extends CustomChannelReceiver<PacketByteBufPayload> {
 		default void receive(MinecraftServer server, ServerConfigurationPacketHandler handler, PacketByteBufPayload payload, PacketSender<CustomPayload> responseSender) {

@@ -38,7 +38,6 @@ import org.quiltmc.qsl.networking.impl.AbstractChanneledNetworkAddon;
 import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
 import org.quiltmc.qsl.networking.impl.NetworkingImpl;
 import org.quiltmc.qsl.networking.impl.payload.ChannelPayload;
-import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
 import org.quiltmc.qsl.networking.mixin.accessor.ClientConfigurationNetworkHandlerAccessor;
 
 @ApiStatus.Internal
@@ -69,24 +68,10 @@ public final class ClientConfigurationNetworkAddon extends AbstractChanneledNetw
 		}
 
 		ClientConfigurationConnectionEvents.INIT.invoker().onConfigurationInit(this.handler, this.client);
-	}
-
-	public void onServerReady() {
 		ClientConfigurationConnectionEvents.READY.invoker().onConfigurationReady(this.handler, this, this.client);
 
-		// The client cannot send any packets, including `minecraft:register` until after GameJoinS2CPacket is received.
 		this.sendInitialChannelRegistrationPacket();
 		this.sentInitialRegisterPacket = true;
-	}
-
-	/**
-	 * Handles an incoming packet.
-	 *
-	 * @param payload the payload to handle
-	 * @return true if the packet has been handled
-	 */
-	public boolean handle(PacketByteBufPayload payload) {
-		return super.handle(payload);
 	}
 
 	@SuppressWarnings("unchecked")

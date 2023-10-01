@@ -67,30 +67,30 @@ public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAd
 	}
 
 	// always supposed to handle async!
-	public <T extends CustomPayload> boolean handle(T originalBuf) {
-		this.logger.debug("Handling inbound packet from channel with name \"{}\"", originalBuf.id());
+	public <T extends CustomPayload> boolean handle(T payload) {
+		this.logger.debug("Handling inbound packet from channel with name \"{}\"", payload.id());
 
 		// Handle reserved packets
-		if (NetworkingImpl.REGISTER_CHANNEL.equals(originalBuf.id())) {
-			this.receiveRegistration(true, ((ChannelPayload) originalBuf));
+		if (NetworkingImpl.REGISTER_CHANNEL.equals(payload.id())) {
+			this.receiveRegistration(true, ((ChannelPayload) payload));
 			return true;
 		}
 
-		if (NetworkingImpl.UNREGISTER_CHANNEL.equals(originalBuf.id())) {
-			this.receiveRegistration(false, ((ChannelPayload) originalBuf));
+		if (NetworkingImpl.UNREGISTER_CHANNEL.equals(payload.id())) {
+			this.receiveRegistration(false, ((ChannelPayload) payload));
 			return true;
 		}
 
-		@Nullable H handler = this.getHandler(originalBuf.id());
+		@Nullable H handler = this.getHandler(payload.id());
 
 		if (handler == null) {
 			return false;
 		}
 
 		try {
-			this.receive(handler, originalBuf);
+			this.receive(handler, payload);
 		} catch (Throwable ex) {
-			this.logger.error("Encountered exception while handling in channel with name \"{}\"", originalBuf.id(), ex);
+			this.logger.error("Encountered exception while handling in channel with name \"{}\"", payload.id(), ex);
 			throw ex;
 		}
 
@@ -109,10 +109,6 @@ public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAd
 
 	@Nullable
 	protected ChannelPayload createRegistrationPacket(List<Identifier> channels, boolean register) {
-		if (channels.isEmpty()) {
-			return null;
-		}
-
 		return register ? new ChannelPayload.RegisterChannelPayload(channels) : new ChannelPayload.UnregisterChannelPayload(channels);
 	}
 

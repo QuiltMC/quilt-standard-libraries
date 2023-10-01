@@ -80,7 +80,7 @@ public final class ServerPlayNetworking {
 	 * @see ServerPlayNetworking#unregisterGlobalReceiver(Identifier)
 	 * @see ServerPlayNetworking#registerReceiver(ServerPlayNetworkHandler, Identifier, ChannelReceiver)
 	 */
-	@Deprecated(forRemoval = true)
+	@Deprecated
 	public static boolean registerGlobalReceiver(Identifier channelName, ChannelReceiver channelHandler) {
 		return ServerNetworkingImpl.PLAY.registerGlobalReceiver(channelName, channelHandler);
 	}
@@ -151,7 +151,7 @@ public final class ServerPlayNetworking {
 	 * @return {@code false} if a handler is already registered to the channel name, otherwise {@code true}
 	 * @see ServerPlayConnectionEvents#INIT
 	 */
-	@Deprecated(forRemoval = true)
+	@Deprecated
 	public static boolean registerReceiver(ServerPlayNetworkHandler networkHandler, Identifier channelName, ChannelReceiver channelHandler) {
 		Objects.requireNonNull(networkHandler, "Network handler cannot be null");
 
@@ -375,7 +375,11 @@ public final class ServerPlayNetworking {
 		void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, T payload, PacketSender<CustomPayload> responseSender);
 	}
 
-	@Deprecated(forRemoval = true)
+	/**
+	 * This functional interface should only be used when sending a raw {@link PacketByteBuf} is necessary.
+	 * @see CustomChannelReceiver
+	 */
+	@Deprecated
 	@FunctionalInterface
 	public interface ChannelReceiver extends CustomChannelReceiver<PacketByteBufPayload> {
 		default void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBufPayload payload, PacketSender<CustomPayload> responseSender) {

@@ -72,7 +72,5 @@ public class RegistrySyncInitializer implements ModInitializer {
 		CustomPayloads.registerC2SPayload(ClientPackets.UnknownEntry.ID, ClientPackets.UnknownEntry::new);
 		CustomPayloads.registerC2SPayload(ClientPackets.ModProtocol.ID, ClientPackets.ModProtocol::new);
 		CustomPayloads.registerC2SPayload(ClientPackets.End.ID, ClientPackets.End::new);
-
-		// ServerFabricRegistrySync.registerHandlers();
 	}
 }

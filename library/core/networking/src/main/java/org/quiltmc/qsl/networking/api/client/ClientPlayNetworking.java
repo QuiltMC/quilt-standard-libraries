@@ -84,7 +84,6 @@ public final class ClientPlayNetworking {
 	 * @see ClientPlayNetworking#unregisterGlobalReceiver(Identifier)
 	 * @see ClientPlayNetworking#registerReceiver(Identifier, ChannelReceiver)
 	 */
-	@Deprecated(forRemoval = true)
 	public static boolean registerGlobalReceiver(Identifier channelName, ChannelReceiver channelHandler) {
 		return ClientNetworkingImpl.PLAY.registerGlobalReceiver(channelName, channelHandler);
 	}
@@ -152,7 +151,6 @@ public final class ClientPlayNetworking {
 	 * @throws IllegalStateException if the client is not connected to a server
 	 * @see ClientPlayConnectionEvents#INIT
 	 */
-	@Deprecated(forRemoval = true)
 	public static boolean registerReceiver(Identifier channelName, ChannelReceiver channelHandler) {
 		final ClientPlayNetworkAddon addon = ClientNetworkingImpl.getClientPlayAddon();
 
@@ -321,7 +319,11 @@ public final class ClientPlayNetworking {
 		void receive(MinecraftClient client, ClientPlayNetworkHandler handler, T payload, PacketSender<CustomPayload> responseSender);
 	}
 
-	@Deprecated(forRemoval = true)
+	/**
+	 * This functional interface should only be used when sending a raw {@link PacketByteBuf} is necessary.
+	 * @see CustomChannelReceiver
+	 */
+	@Deprecated
 	@ClientOnly
 	@FunctionalInterface
 	public interface ChannelReceiver extends CustomChannelReceiver<PacketByteBufPayload> {

@@ -37,8 +37,8 @@ import org.quiltmc.qsl.networking.impl.AbstractChanneledNetworkAddon;
 import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
 import org.quiltmc.qsl.networking.impl.NetworkingImpl;
 import org.quiltmc.qsl.networking.impl.payload.ChannelPayload;
-import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
 import org.quiltmc.qsl.networking.mixin.accessor.AbstractServerPacketHandlerAccessor;
+import org.quiltmc.qsl.networking.mixin.accessor.ServerConfigurationPacketHandlerAccessor;
 
 @ApiStatus.Internal
 public final class ServerConfigurationNetworkAddon extends AbstractChanneledNetworkAddon<ServerConfigurationNetworking.CustomChannelReceiver<?>> {
@@ -74,14 +74,15 @@ public final class ServerConfigurationNetworkAddon extends AbstractChanneledNetw
 		this.sentInitialRegisterPacket = true;
 	}
 
-	/**
-	 * Handles an incoming packet.
-	 *
-	 * @param payload the payload to handle
-	 * @return true if the packet has been handled
-	 */
-	public boolean handle(PacketByteBufPayload payload) {
-		return super.handle(payload);
+	@Override
+	public <T extends CustomPayload> boolean handle(T payload) {
+		boolean handled = super.handle(payload);
+		if (handled && payload.id().equals(NetworkingImpl.REGISTER_CHANNEL)) {
+			this.onConfigureReady();
+			((ServerConfigurationPacketHandlerAccessor) this.handler).invokeFinishCurrentTask(SendChannelsTask.TYPE);
+		}
+
+		return handled;
 	}
 
 	@SuppressWarnings("unchecked")

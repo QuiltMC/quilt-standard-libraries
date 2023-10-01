@@ -16,7 +16,11 @@
 
 package org.quiltmc.qsl.networking.mixin;
 
+import java.util.Queue;
+
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -24,6 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.ServerConfigurationPacketHandler;
+import net.minecraft.network.configuration.ConfigurationTask;
 import net.minecraft.network.listener.AbstractServerPacketHandler;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.common.DisconnectS2CPacket;
@@ -33,11 +38,15 @@ import net.minecraft.unmapped.C_eyqfalbd;
 
 import org.quiltmc.qsl.networking.impl.DisconnectPacketSource;
 import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
+import org.quiltmc.qsl.networking.impl.server.SendChannelsTask;
 import org.quiltmc.qsl.networking.impl.server.ServerConfigurationNetworkAddon;
 
 // We want to apply a bit earlier than other mods which may not use us in order to prevent refCount issues
 @Mixin(value = ServerConfigurationPacketHandler.class, priority = 999)
 abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacketHandler implements NetworkHandlerExtensions, DisconnectPacketSource {
+	@Shadow
+	@Final
+	private Queue<ConfigurationTask> tasks;
 	@Unique
 	private ServerConfigurationNetworkAddon addon;
 
@@ -54,7 +63,7 @@ abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacke
 
 	@Inject(method = "startConfiguration", at = @At("HEAD"))
 	private void start(CallbackInfo ci) {
-		this.addon.onConfigureReady();
+		this.tasks.add(new SendChannelsTask());
 	}
 
 	@Inject(method = "onDisconnected", at = @At("HEAD"))

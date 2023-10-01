@@ -14,9 +14,16 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.registry.impl.sync.server;
+package org.quiltmc.qsl.networking.mixin.accessor;
 
-public interface QuiltSyncTaskHolder {
-	QuiltSyncTask qsl$getSyncTask();
-	void qsl$finishSyncTask();
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Invoker;
+
+import net.minecraft.network.ServerConfigurationPacketHandler;
+import net.minecraft.network.configuration.ConfigurationTask;
+
+@Mixin(ServerConfigurationPacketHandler.class)
+public interface ServerConfigurationPacketHandlerAccessor {
+	@Invoker
+	void invokeFinishCurrentTask(ConfigurationTask.Type type);
 }

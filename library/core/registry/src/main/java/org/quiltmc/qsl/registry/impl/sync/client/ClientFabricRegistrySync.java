@@ -185,5 +185,6 @@ public class ClientFabricRegistrySync {
 		}
 
 		ClientRegistrySync.rebuildEverything(MinecraftClient.getInstance());
+		ClientConfigurationNetworking.send(ServerFabricRegistrySync.SYNC_COMPLETE_ID, PacketByteBufs.empty());
 	}
 }

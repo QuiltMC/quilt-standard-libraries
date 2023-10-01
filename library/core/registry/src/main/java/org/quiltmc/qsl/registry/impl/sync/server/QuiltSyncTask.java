@@ -22,13 +22,11 @@ import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
 
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.NetworkState;
 import net.minecraft.network.ServerConfigurationPacketHandler;
 import net.minecraft.network.configuration.ConfigurationTask;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.registry.Registries;
 
-import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
 import org.quiltmc.qsl.registry.impl.sync.ClientPackets;
 import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
 
@@ -36,14 +34,12 @@ public class QuiltSyncTask implements ConfigurationTask {
 	public static final Type TYPE = new Type("qsl:registry_sync");
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private final ServerConfigurationPacketHandler packetHandler;
-	private final ClientConnection connection;
 	private final ExtendedConnectionClient extendedConnection;
 	private Consumer<Packet<?>> sender;
 	private int syncVersion = ProtocolVersions.NO_PROTOCOL;
 
 	public QuiltSyncTask(ServerConfigurationPacketHandler packetHandler, ClientConnection connection) {
 		this.packetHandler = packetHandler;
-		this.connection = connection;
 		this.extendedConnection = (ExtendedConnectionClient) connection;
 	}
 
@@ -58,23 +54,9 @@ public class QuiltSyncTask implements ConfigurationTask {
 		return TYPE;
 	}
 
-	@SuppressWarnings("deprecation")
 	private void sendSyncPackets(Consumer<Packet<?>> sender) {
-		if (ServerRegistrySync.SERVER_SUPPORTED_PROTOCOL.contains(this.syncVersion)) {
-			this.extendedConnection.quilt$setUnderstandsOptional();
-			ServerRegistrySync.sendSyncPackets(sender, this.syncVersion);
-		} else if (
-				ServerRegistrySync.SERVER_SUPPORTED_PROTOCOL.contains(ProtocolVersions.FAPI_PROTOCOL)
-				&& (ServerRegistrySync.forceFabricFallback
-					|| (ServerRegistrySync.supportFabric
-						&& ((ChannelInfoHolder) this.connection).getPendingChannelsNames(NetworkState.CONFIGURATION).contains(ServerFabricRegistrySync.ID)
-					)
-				)
-		) {
-			// ServerFabricRegistrySync.sendSyncPackets(sender);
-			this.syncVersion = ProtocolVersions.FAPI_PROTOCOL;
-			// state.set(SyncState.RECEIVED_SYNC); // TODO: Look at fabrics new sync
-		}
+		this.extendedConnection.quilt$setUnderstandsOptional();
+		ServerRegistrySync.sendSyncPackets(sender, this.syncVersion);
 	}
 
 	public void handleHandshake(ClientPackets.Handshake handshake) {
@@ -106,7 +88,7 @@ public class QuiltSyncTask implements ConfigurationTask {
 		if (this.syncVersion == ProtocolVersions.NO_PROTOCOL && ServerRegistrySync.requiresSync()) {
 			this.packetHandler.disconnect(ServerRegistrySync.noRegistrySyncMessage);
 		} else {
-			((QuiltSyncTaskHolder) this.packetHandler).qsl$finishSyncTask();
+			((SyncTaskHolder) this.packetHandler).qsl$finishQuiltSyncTask();
 		}
 	}
 }
