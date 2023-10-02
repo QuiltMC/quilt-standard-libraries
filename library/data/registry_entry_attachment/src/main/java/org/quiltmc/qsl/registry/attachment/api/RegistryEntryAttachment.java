@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -90,7 +91,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	}
 
 	/**
-	 * Creates a builder for a boolean attachment.
+	 * Creates a builder for a {@code boolean} attachment.
 	 *
 	 * @param registry registry to attach to
 	 * @param id       attachment identifier
@@ -102,7 +103,7 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	}
 
 	/**
-	 * Creates a builder for an integer attachment.
+	 * Creates a builder for an integer number ({@code int}) attachment.
 	 *
 	 * @param registry registry to attach to
 	 * @param id       attachment identifier
@@ -114,7 +115,22 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	}
 
 	/**
-	 * Creates a builder for a long attachment.
+	 * Creates a builder for an integer number ({@code int}) attachment,
+	 * which only allows values in the specified range.
+	 *
+	 * @param registry registry to attach to
+	 * @param id       attachment identifier
+	 * @param min      the minimum allowed value, inclusive
+	 * @param max      the maximum allowed value, inclusive
+	 * @param <R>      type of the entries in the registry
+	 * @return a builder
+	 */
+	static <R> Builder<R, Integer> intRangeBuilder(Registry<R> registry, Identifier id, int min, int max) {
+		return builder(registry, id, Integer.class, Codec.intRange(min, max));
+	}
+
+	/**
+	 * Creates a builder for a long integer number ({@code long}) attachment.
 	 *
 	 * @param registry registry to attach to
 	 * @param id       attachment identifier
@@ -126,7 +142,25 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	}
 
 	/**
-	 * Creates a builder for a float attachment.
+	 * Creates a builder for a long integer number ({@code long}) attachment,
+	 * which only allows values in the specified range.
+	 *
+	 * @param registry registry to attach to
+	 * @param id       attachment identifier
+	 * @param min      the minimum allowed value, inclusive
+	 * @param max      the maximum allowed value, inclusive
+	 * @param <R>      type of the entries in the registry
+	 * @return a builder
+	 */
+	static <R> Builder<R, Long> longRangeBuilder(Registry<R> registry, Identifier id, long min, long max) {
+		// Codec.longRange(long, long) doesn't exist for some reason
+		// implement it ourselves
+		final Function<Long, DataResult<Long>> checker = Codec.checkRange(min, max);
+		return builder(registry, id, Long.class, Codec.LONG.flatXmap(checker, checker));
+	}
+
+	/**
+	 * Creates a builder for a floating-point number ({@code float}) attachment.
 	 *
 	 * @param registry registry to attach to
 	 * @param id       attachment identifier
@@ -138,7 +172,22 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	}
 
 	/**
-	 * Creates a builder for a double attachment.
+	 * Creates a builder for a floating-point number ({@code float}) attachment,
+	 * which only allows values in the specified range.
+	 *
+	 * @param registry registry to attach to
+	 * @param id       attachment identifier
+	 * @param min      the minimum allowed value, inclusive
+	 * @param max      the maximum allowed value, inclusive
+	 * @param <R>      type of the entries in the registry
+	 * @return a builder
+	 */
+	static <R> Builder<R, Float> floatRangeBuilder(Registry<R> registry, Identifier id, float min, float max) {
+		return builder(registry, id, Float.class, Codec.floatRange(min, max));
+	}
+
+	/**
+	 * Creates a builder for a long floating-point number ({@code double}) attachment.
 	 *
 	 * @param registry registry to attach to
 	 * @param id       attachment identifier
@@ -150,7 +199,22 @@ public interface RegistryEntryAttachment<R, V> extends Iterable<RegistryEntryAtt
 	}
 
 	/**
-	 * Creates a builder for a string attachment.
+	 * Creates a builder for a long floating-point number ({@code double}) attachment,
+	 * which only allows values in the specified range.
+	 *
+	 * @param registry registry to attach to
+	 * @param id       attachment identifier
+	 * @param min      the minimum allowed value, inclusive
+	 * @param max      the maximum allowed value, inclusive
+	 * @param <R>      type of the entries in the registry
+	 * @return a builder
+	 */
+	static <R> Builder<R, Double> doubleRangeBuilder(Registry<R> registry, Identifier id, double min, double max) {
+		return builder(registry, id, Double.class, Codec.doubleRange(min, max));
+	}
+
+	/**
+	 * Creates a builder for a {@link String} attachment.
 	 *
 	 * @param registry registry to attach to
 	 * @param id       attachment identifier
