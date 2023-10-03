@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.enchantment.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "mixins": [
+    "AnvilScreenHandlerMixin",
+    "EnchantCommandMixin",
+    "EnchantmentHelperMixin",
+    "EnchantmentScreenHandlerMixin",
+    "EnchantRandomlyLootFunctionMixin",
+    "EnchantWithLevelsLootFunctionMixin",
+    "ItemGroupsMixin",
+    "MobEntityMixin",
+    "SellEnchantedToolFactoryMixin",
+    "SkeletonHorseTrapTriggerGoalMixin",
+    "WeightedAbsentAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

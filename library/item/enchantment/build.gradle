@@ -1,0 +1,18 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Enchantment API"
+	moduleName = "enchantment"
+	id = "quilt_enchantment"
+	description = "An API for custom enchantments."
+	library = "item"
+	moduleDependencies {
+		core {
+			api("qsl_base")
+			testmodOnly("resource_loader")
+		}
+	}
+	accessWidener()
+}
