@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:tipped_arrow",
+    "minecraft:diamond_sword",
+    "minecraft:netherite_sword"
+  ]
+}

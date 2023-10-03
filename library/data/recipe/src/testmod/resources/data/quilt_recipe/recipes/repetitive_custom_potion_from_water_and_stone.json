@@ -1,0 +1,13 @@
+{
+  "type": "quilt:custom_potion_brewing",
+  "ingredient": {
+    "item": "minecraft:stone"
+  },
+  "input": "minecraft:water",
+  "output": "minecraft:water",
+  "fuel": 1,
+  "time": 100,
+  "effects": [
+    "minecraft:speed"
+  ]
+}

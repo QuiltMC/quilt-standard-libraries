@@ -1,0 +1,8 @@
+{
+  "type": "quilt:potion_brewing",
+  "ingredient": {
+    "tag": "minecraft:trapdoors"
+  },
+  "input": "minecraft:water",
+  "output": "minecraft:luck"
+}

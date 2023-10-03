@@ -43,6 +43,7 @@ public class ItemContentRegistriesClientInitializer implements ClientModInitiali
 					Item item = stack.getItem();
 
 					ItemContentRegistries.FUEL_TIMES.get(item).ifPresent(time -> lines.add(Text.literal("Fuel Time: " + time + " ticks")));
+					ItemContentRegistries.BREWING_FUELS.get(item).ifPresent(time -> lines.add(Text.literal("Brewing Fuel: " + time + " brews")));
 					ItemContentRegistries.COMPOST_CHANCES.get(item).ifPresent(chance -> lines.add(Text.literal("Compost chance: " + (chance * 100) + "%")));
 				});
 			} else {

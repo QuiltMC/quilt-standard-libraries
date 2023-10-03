@@ -29,6 +29,7 @@ import net.minecraft.block.ComposterBlock;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.item.Items;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
@@ -47,6 +48,8 @@ public class ItemContentRegistriesInitializer implements ModInitializer {
 
 	public static final Map<ItemConvertible, Float> INITIAL_COMPOST_CHANCE = ImmutableMap.copyOf(ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE);
 
+	public static final Map<Item, Integer> BREWING_FUEL_MAP = new Reference2ObjectOpenHashMap<>();
+
 	public static final TagKey<Item> FUEL_FILTERS = TagKey.of(RegistryKeys.ITEM, new Identifier("quilt", "fuel_filters"));
 
 	private static boolean collectInitialTags = false;
@@ -60,6 +63,8 @@ public class ItemContentRegistriesInitializer implements ModInitializer {
 
 		INITIAL_COMPOST_CHANCE.forEach((item, f) -> ItemContentRegistries.COMPOST_CHANCES.put(item.asItem(), f));
 
+		ItemContentRegistries.BREWING_FUELS.put(Items.BLAZE_POWDER, 20);
+
 		ResourceLoaderEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, error) -> {
 			FUEL_MAP.clear();
 			// Fill the fuel map with all entries on the FUEL_TIMES registry attachment but filter using the #quilt:fuel_filters tag
@@ -71,6 +76,9 @@ public class ItemContentRegistriesInitializer implements ModInitializer {
 
 			ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.clear();
 			setMapFromAttachment(ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE::put, ItemContentRegistries.COMPOST_CHANCES);
+
+			BREWING_FUEL_MAP.clear();
+			setMapFromAttachment(BREWING_FUEL_MAP::put, ItemContentRegistries.BREWING_FUELS);
 		});
 	}
 

@@ -3,7 +3,9 @@
   "package": "org.quiltmc.qsl.item.content.registry.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "AbstractFurnaceBlockEntityMixin"
+    "AbstractFurnaceBlockEntityMixin",
+    "BrewingStandBlockEntityMixin",
+    "FuelSlotMixin"
   ],
   "injectors": {
     "defaultRequire": 1
