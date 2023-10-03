@@ -30,7 +30,7 @@ import net.minecraft.client.gui.screen.pack.PackScreen;
 import net.minecraft.text.Text;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
-import org.quiltmc.qsl.resource.loader.impl.QuiltBuiltinResourcePackProfile.BuiltinResourcePackSource;
+import org.quiltmc.qsl.resource.loader.impl.BuiltinResourcePackSource;
 
 @ClientOnly
 @Mixin(PackScreen.class)

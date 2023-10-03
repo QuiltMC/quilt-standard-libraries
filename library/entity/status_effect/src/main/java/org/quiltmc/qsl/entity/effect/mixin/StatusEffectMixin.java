@@ -31,10 +31,10 @@ import org.quiltmc.qsl.entity.effect.api.StatusEffectRemovalReason;
 @Mixin(StatusEffect.class)
 public abstract class StatusEffectMixin implements QuiltStatusEffectExtensions {
 	@Shadow
-	public abstract void onRemoved(LivingEntity entity, AttributeContainer attributes, int amplifier);
+	public abstract void onRemoved(AttributeContainer attributes);
 
 	@Override
 	public void onRemoved(@NotNull LivingEntity entity, @NotNull AttributeContainer attributes, @NotNull StatusEffectInstance effect, @NotNull StatusEffectRemovalReason reason) {
-		this.onRemoved(entity, attributes, effect.getAmplifier());
+		this.onRemoved(attributes);
 	}
 }

@@ -16,8 +16,12 @@
 
 package org.quiltmc.qsl.registry.impl.sync;
 
+import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.util.Identifier;
 
 /**
@@ -26,7 +30,7 @@ import net.minecraft.util.Identifier;
 @ApiStatus.Internal
 public final class ClientPackets {
 	/**
-	 * Response for {@link ServerPackets#HANDSHAKE}. Selects the registry sync version to be used from the server's supported options.
+	 * Response for {@link ServerPackets.Handshake#ID}. Selects the registry sync version to be used from the server's supported options.
 	 *
 	 * <pre><code>
 	 * {
@@ -34,7 +38,25 @@ public final class ClientPackets {
 	 * }
 	 * </code></pre>
 	 */
-	public static final Identifier HANDSHAKE = id("registry_sync/handshake");
+	public record Handshake(int version) implements CustomPayload {
+		public static final Identifier ID = ClientPackets.id("registry_sync/handshake");
+
+		public Handshake(PacketByteBuf buf) {
+			this(
+					buf.readVarInt()
+			);
+		}
+
+		@Override
+		public void write(PacketByteBuf buf) {
+			buf.writeVarInt(this.version);
+		}
+
+		@Override
+		public Identifier id() {
+			return ID;
+		}
+	}
 
 	/**
 	 * Sent after registry sync failure before client disconnect.
@@ -45,12 +67,28 @@ public final class ClientPackets {
 	 * }
 	 * </code></pre>
 	 */
-	public static final Identifier SYNC_FAILED = id("registry_sync/sync_failed");
+	public record SyncFailed(Identifier registry) implements CustomPayload {
+		public static final Identifier ID = ClientPackets.id("registry_sync/sync_failed");
+
+		public SyncFailed(PacketByteBuf buf) {
+			this(buf.readIdentifier());
+		}
+
+		@Override
+		public void write(PacketByteBuf buf) {
+			buf.writeIdentifier(this.registry);
+		}
+
+		@Override
+		public Identifier id() {
+			return ID;
+		}
+	}
 
 	/**
 	 * Sent after synchronization of selected registry.
 	 * Contains list of (optional) unknown entries.
-	 * It's sent after successful validation of {@link ServerPackets#REGISTRY_APPLY}
+	 * It's sent after successful validation of {@link ServerPackets.RegistryApply#ID}
 	 * Requires protocol version 3 or higher.
 	 *
 	 * <pre><code>
@@ -60,11 +98,28 @@ public final class ClientPackets {
 	 * }
 	 * </code></pre>
 	 */
-	public static final Identifier UNKNOWN_ENTRY = id("registry_sync/unknown_entry");
+	public record UnknownEntry(Identifier registry, IntList rawIds) implements CustomPayload {
+		public static final Identifier ID = ClientPackets.id("registry_sync/unknown_entry");
+
+		public UnknownEntry(PacketByteBuf buf) {
+			this(buf.readIdentifier(), buf.readIntList());
+		}
+
+		@Override
+		public void write(PacketByteBuf buf) {
+			buf.writeIdentifier(this.registry);
+			buf.writeIntList(this.rawIds);
+		}
+
+		@Override
+		public Identifier id() {
+			return ID;
+		}
+	}
 
 	/**
 	 * Sent after receiving Mod Protocol request packet from server.
-	 * Returns all latest supported by client version of requested Mod Protocols see {@link ServerPackets#MOD_PROTOCOL}
+	 * Returns all latest supported by client version of requested Mod Protocols see {@link ServerPackets.ModProtocol#ID}
 	 *
 	 * <pre><code>
 	 * {
@@ -76,7 +131,59 @@ public final class ClientPackets {
 	 * }
 	 * </code></pre>
 	 */
-	public static final Identifier MOD_PROTOCOL = id("registry_sync/mod_protocol");
+	public record ModProtocol(Object2IntOpenHashMap<String> protocols) implements CustomPayload {
+		public static final Identifier ID = ClientPackets.id("registry_sync/mod_protocol");
+
+		public ModProtocol(PacketByteBuf buf) {
+			this(read(buf));
+		}
+
+		private static Object2IntOpenHashMap<String> read(PacketByteBuf buf) {
+			Object2IntOpenHashMap<String> protocols = new Object2IntOpenHashMap<>();
+
+			int count = buf.readVarInt();
+
+			while (count-- > 0) {
+				protocols.put(buf.readString(), buf.readVarInt());
+			}
+
+			return protocols;
+		}
+
+		@Override
+		public void write(PacketByteBuf buf) {
+			buf.writeVarInt(this.protocols.size());
+			for (var entry : this.protocols.object2IntEntrySet()) {
+				buf.writeString(entry.getKey());
+				buf.writeVarInt(entry.getIntValue());
+			}
+		}
+
+		@Override
+		public Identifier id() {
+			return ID;
+		}
+	}
+
+	/**
+	 * Ends registry sync. No data
+	 */
+	public record End() implements CustomPayload {
+		public static final Identifier ID = ClientPackets.id("registry_sync/end");
+
+		public End(PacketByteBuf buf) {
+			this();
+		}
+
+		@Override
+		public void write(PacketByteBuf buf) {
+		}
+
+		@Override
+		public Identifier id() {
+			return ID;
+		}
+	}
 
 	private static Identifier id(String path) {
 		return new Identifier("qsl", path);

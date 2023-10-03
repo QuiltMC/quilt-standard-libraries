@@ -16,19 +16,18 @@
 
 package org.quiltmc.qsl.networking.mixin.client;
 
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.AbstractClientNetworkHandler;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+import net.minecraft.network.ClientConnection;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
-import net.minecraft.text.Text;
+import net.minecraft.unmapped.C_qqflkeyp;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
@@ -38,13 +37,13 @@ import org.quiltmc.qsl.networking.impl.client.ClientPlayNetworkAddon;
 // We want to apply a bit earlier than other mods which may not use us in order to prevent refCount issues
 @ClientOnly
 @Mixin(value = ClientPlayNetworkHandler.class, priority = 999)
-abstract class ClientPlayNetworkHandlerMixin implements NetworkHandlerExtensions {
-	@Final
-	@Shadow
-	private MinecraftClient client;
-
+abstract class ClientPlayNetworkHandlerMixin extends AbstractClientNetworkHandler implements NetworkHandlerExtensions {
 	@Unique
 	private ClientPlayNetworkAddon addon;
+
+	protected ClientPlayNetworkHandlerMixin(MinecraftClient client, ClientConnection connection, C_qqflkeyp c_qqflkeyp) {
+		super(client, connection, c_qqflkeyp);
+	}
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void initAddon(CallbackInfo ci) {
@@ -57,18 +56,6 @@ abstract class ClientPlayNetworkHandlerMixin implements NetworkHandlerExtensions
 	@Inject(method = "onGameJoin", at = @At("RETURN"))
 	private void handleServerPlayReady(GameJoinS2CPacket packet, CallbackInfo ci) {
 		this.addon.onServerReady();
-	}
-
-	@Inject(method = "onCustomPayload", at = @At("HEAD"), cancellable = true)
-	private void handleCustomPayload(CustomPayloadS2CPacket packet, CallbackInfo ci) {
-		if (this.addon.handle(packet)) {
-			ci.cancel();
-		}
-	}
-
-	@Inject(method = "onDisconnected", at = @At("HEAD"))
-	private void handleDisconnection(Text reason, CallbackInfo ci) {
-		this.addon.handleDisconnect();
 	}
 
 	@Override

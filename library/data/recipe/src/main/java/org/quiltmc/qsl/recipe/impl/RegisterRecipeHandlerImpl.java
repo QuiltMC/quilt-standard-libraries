@@ -24,6 +24,7 @@ import com.google.gson.JsonElement;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
@@ -32,15 +33,15 @@ import org.quiltmc.qsl.recipe.api.RecipeLoadingEvents;
 
 final class RegisterRecipeHandlerImpl implements RecipeLoadingEvents.AddRecipesCallback.RecipeHandler {
 	private final Map<Identifier, JsonElement> resourceMap;
-	private final Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap;
-	private final ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder;
+	private final Map<RecipeType<?>, ImmutableMap.Builder<Identifier, RecipeHolder<?>>> builderMap;
+	private final ImmutableMap.Builder<Identifier, RecipeHolder<?>> globalRecipeMapBuilder;
 	private final DynamicRegistryManager registryManager;
 	int registered = 0;
 
 	RegisterRecipeHandlerImpl(
 			Map<Identifier, JsonElement> resourceMap,
-			Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap,
-			ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder,
+			Map<RecipeType<?>, ImmutableMap.Builder<Identifier, RecipeHolder<?>>> builderMap,
+			ImmutableMap.Builder<Identifier, RecipeHolder<?>> globalRecipeMapBuilder,
 			DynamicRegistryManager registryManager
 	) {
 		this.resourceMap = resourceMap;
@@ -49,35 +50,36 @@ final class RegisterRecipeHandlerImpl implements RecipeLoadingEvents.AddRecipesC
 		this.registryManager = registryManager;
 	}
 
-	private void register(Recipe<?> recipe) {
-		ImmutableMap.Builder<Identifier, Recipe<?>> recipeBuilder =
+	private void register(RecipeHolder<?> recipeHolder) {
+		Recipe<?> recipe = recipeHolder.value();
+		ImmutableMap.Builder<Identifier, RecipeHolder<?>> recipeBuilder =
 				this.builderMap.computeIfAbsent(recipe.getType(), o -> ImmutableMap.builder());
-		recipeBuilder.put(recipe.getId(), recipe);
-		this.globalRecipeMapBuilder.put(recipe.getId(), recipe);
+		recipeBuilder.put(recipeHolder.id(), recipeHolder);
+		this.globalRecipeMapBuilder.put(recipeHolder.id(), recipeHolder);
 		this.registered++;
 
 		if (RecipeManagerImpl.DEBUG_MODE) {
-			RecipeManagerImpl.LOGGER.info("Added recipe {} with type {} in register phase.", recipe.getId(), recipe.getType());
+			RecipeManagerImpl.LOGGER.info("Added recipe {} with type {} in register phase.", recipeHolder.id(), recipe.getType());
 		}
 	}
 
-	void tryRegister(Recipe<?> recipe) {
-		if (!this.resourceMap.containsKey(recipe.getId())) {
-			this.register(recipe);
+	void tryRegister(RecipeHolder<?> recipeHolder) {
+		if (!this.resourceMap.containsKey(recipeHolder.id())) {
+			this.register(recipeHolder);
 		}
 	}
 
 	@Override
-	public void register(Identifier id, Function<Identifier, Recipe<?>> factory) {
+	public void register(Identifier id, Function<Identifier, RecipeHolder<?>> factory) {
 		// Add the recipe only if nothing already provides the recipe.
 		if (!this.resourceMap.containsKey(id)) {
-			var recipe = factory.apply(id);
+			var recipeHolder = factory.apply(id);
 
-			if (!id.equals(recipe.getId())) {
-				throw new IllegalStateException("The recipe " + recipe.getId() + " tried to be registered as " + id);
+			if (!id.equals(recipeHolder.id())) {
+				throw new IllegalStateException("The recipe " + recipeHolder.id() + " tried to be registered as " + id);
 			}
 
-			this.register(recipe);
+			this.register(recipeHolder);
 		}
 	}
 

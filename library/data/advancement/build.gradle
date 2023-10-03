@@ -12,6 +12,4 @@ qslModule {
 			api("qsl_base")
 		}
 	}
-	accessWidener()
-	noMixins()
 }

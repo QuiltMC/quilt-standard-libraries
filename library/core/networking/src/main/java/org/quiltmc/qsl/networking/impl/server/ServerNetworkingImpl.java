@@ -18,33 +18,47 @@ package org.quiltmc.qsl.networking.impl.server;
 
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.network.NetworkState;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.ServerConfigurationPacketHandler;
+import net.minecraft.network.listener.ClientCommonPacketListener;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+import net.minecraft.network.packet.payload.CustomPayload;
+import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.qsl.networking.api.ServerConfigurationNetworking;
 import org.quiltmc.qsl.networking.api.ServerLoginNetworking;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.networking.impl.GlobalReceiverRegistry;
 import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
+import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
 
 @ApiStatus.Internal
 public final class ServerNetworkingImpl {
-	public static final GlobalReceiverRegistry<ServerLoginNetworking.QueryResponseReceiver> LOGIN = new GlobalReceiverRegistry<>();
-	public static final GlobalReceiverRegistry<ServerPlayNetworking.ChannelReceiver> PLAY = new GlobalReceiverRegistry<>();
+	public static final GlobalReceiverRegistry<ServerLoginNetworking.QueryResponseReceiver> LOGIN = new GlobalReceiverRegistry<>(NetworkState.LOGIN);
+	public static final GlobalReceiverRegistry<ServerConfigurationNetworking.CustomChannelReceiver<?>> CONFIGURATION = new GlobalReceiverRegistry<>(NetworkState.CONFIGURATION);
+	public static final GlobalReceiverRegistry<ServerPlayNetworking.CustomChannelReceiver<?>> PLAY = new GlobalReceiverRegistry<>(NetworkState.PLAY);
 
 	public static ServerPlayNetworkAddon getAddon(ServerPlayNetworkHandler handler) {
 		return (ServerPlayNetworkAddon) ((NetworkHandlerExtensions) handler).getAddon();
+	}
+
+	public static ServerConfigurationNetworkAddon getAddon(ServerConfigurationPacketHandler handler) {
+		return (ServerConfigurationNetworkAddon) ((NetworkHandlerExtensions) handler).getAddon();
 	}
 
 	public static ServerLoginNetworkAddon getAddon(ServerLoginNetworkHandler handler) {
 		return (ServerLoginNetworkAddon) ((NetworkHandlerExtensions) handler).getAddon();
 	}
 
-	public static Packet<ClientPlayPacketListener> createPlayC2SPacket(Identifier channel, PacketByteBuf buf) {
-		return new CustomPayloadS2CPacket(channel, buf);
+	public static Packet<ClientCommonPacketListener> createS2CPacket(Identifier channel, PacketByteBuf buf) {
+		return createS2CPacket(new PacketByteBufPayload(channel, buf));
+	}
+
+	public static Packet<ClientCommonPacketListener> createS2CPacket(CustomPayload payload) {
+		return new CustomPayloadS2CPacket(payload);
 	}
 }

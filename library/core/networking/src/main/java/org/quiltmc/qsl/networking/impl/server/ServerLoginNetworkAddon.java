@@ -30,12 +30,13 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.PacketSendListener;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.login.LoginQueryResponseC2SPacket;
 import net.minecraft.network.packet.s2c.login.LoginCompressionS2CPacket;
 import net.minecraft.network.packet.s2c.login.LoginQueryRequestS2CPacket;
+import net.minecraft.network.packet.s2c.login.payload.CustomQueryPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.util.Identifier;
@@ -45,11 +46,12 @@ import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.ServerLoginConnectionEvents;
 import org.quiltmc.qsl.networking.api.ServerLoginNetworking;
 import org.quiltmc.qsl.networking.impl.AbstractNetworkAddon;
-import org.quiltmc.qsl.networking.mixin.accessor.LoginQueryResponseC2SPacketAccessor;
+import org.quiltmc.qsl.networking.impl.payload.PacketByteBufLoginQueryRequestPayload;
+import org.quiltmc.qsl.networking.impl.payload.PacketByteBufLoginQueryResponsePayload;
 import org.quiltmc.qsl.networking.mixin.accessor.ServerLoginNetworkHandlerAccessor;
 
 @ApiStatus.Internal
-public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLoginNetworking.QueryResponseReceiver> implements PacketSender {
+public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLoginNetworking.QueryResponseReceiver> implements PacketSender<CustomQueryPayload> {
 	private final ClientConnection connection;
 	private final ServerLoginNetworkHandler handler;
 	private final MinecraftServer server;
@@ -128,8 +130,8 @@ public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLo
 	 * @return true if the packet was handled
 	 */
 	public boolean handle(LoginQueryResponseC2SPacket packet) {
-		var access = (LoginQueryResponseC2SPacketAccessor) packet;
-		return this.handle(access.getQueryId(), access.getResponse());
+		var payload = (PacketByteBufLoginQueryResponsePayload) packet.payload();
+		return this.handle(packet.transactionId(), (payload == null) ? null : payload.data());
 	}
 
 	private boolean handle(int queryId, @Nullable PacketByteBuf originalBuf) {
@@ -161,10 +163,15 @@ public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLo
 	}
 
 	@Override
-	public Packet<?> createPacket(Identifier channelName, PacketByteBuf buf) {
+	public Packet<?> createPacket(CustomQueryPayload payload) {
 		int queryId = this.queryIdFactory.nextId();
 
-		return new LoginQueryRequestS2CPacket(queryId, channelName, buf);
+		return new LoginQueryRequestS2CPacket(queryId, payload);
+	}
+
+	@Override
+	public Packet<?> createPacket(Identifier channelName, PacketByteBuf buf) {
+		return this.createPacket(new PacketByteBufLoginQueryRequestPayload(channelName, buf));
 	}
 
 	@Override
@@ -182,7 +189,7 @@ public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLo
 	}
 
 	public void registerOutgoingPacket(LoginQueryRequestS2CPacket packet) {
-		this.channels.put(packet.getQueryId(), packet.getChannel());
+		this.channels.put(packet.transactionId(), packet.payload().id());
 	}
 
 	@Override

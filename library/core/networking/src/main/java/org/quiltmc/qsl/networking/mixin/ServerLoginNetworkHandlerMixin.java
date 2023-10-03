@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.networking.mixin;
 
+import com.mojang.authlib.GameProfile;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -30,7 +31,6 @@ import net.minecraft.network.packet.s2c.login.LoginDisconnectS2CPacket;
 import net.minecraft.network.packet.s2c.login.LoginQueryRequestS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
 import org.quiltmc.qsl.networking.impl.DisconnectPacketSource;
@@ -41,7 +41,7 @@ import org.quiltmc.qsl.networking.impl.server.ServerLoginNetworkAddon;
 @Mixin(ServerLoginNetworkHandler.class)
 abstract class ServerLoginNetworkHandlerMixin implements NetworkHandlerExtensions, DisconnectPacketSource, PacketCallbackListener {
 	@Shadow
-	public abstract void acceptPlayer();
+	protected abstract void method_52419(GameProfile gameProfile);
 
 	@Unique
 	private ServerLoginNetworkAddon addon;
@@ -51,11 +51,11 @@ abstract class ServerLoginNetworkHandlerMixin implements NetworkHandlerExtension
 		this.addon = new ServerLoginNetworkAddon((ServerLoginNetworkHandler) (Object) this);
 	}
 
-	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerLoginNetworkHandler;acceptPlayer()V"))
-	private void handlePlayerJoin(ServerLoginNetworkHandler handler) {
+	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerLoginNetworkHandler;method_52419(Lcom/mojang/authlib/GameProfile;)V"))
+	private void handlePlayerJoin(ServerLoginNetworkHandler handler, GameProfile profile) {
 		// Do not accept the player, thereby moving into play stage until all login futures being waited on are completed
 		if (this.addon.queryTick()) {
-			this.acceptPlayer();
+			this.method_52419(profile);
 		}
 	}
 
@@ -67,7 +67,7 @@ abstract class ServerLoginNetworkHandlerMixin implements NetworkHandlerExtension
 		}
 	}
 
-	@Redirect(method = "acceptPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;getNetworkCompressionThreshold()I", ordinal = 0))
+	@Redirect(method = "method_52419", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;getNetworkCompressionThreshold()I", ordinal = 0))
 	private int removeLateCompressionPacketSending(MinecraftServer server) {
 		return -1;
 	}
@@ -77,8 +77,8 @@ abstract class ServerLoginNetworkHandlerMixin implements NetworkHandlerExtension
 		this.addon.handleDisconnect();
 	}
 
-	@Inject(method = "addToServer", at = @At("HEAD"))
-	private void handlePlayTransitionNormal(ServerPlayerEntity player, CallbackInfo ci) {
+	@Inject(method = "method_52420", at = @At("HEAD"))
+	private void handlePlayTransitionNormal(GameProfile profile, CallbackInfo ci) {
 		this.addon.handlePlayTransition();
 	}
 

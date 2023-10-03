@@ -22,6 +22,7 @@ import net.minecraft.registry.Registries;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.networking.api.CustomPayloads;
 import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolImpl;
 import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
 import org.quiltmc.qsl.registry.impl.sync.server.ServerRegistrySync;
@@ -53,5 +54,23 @@ public class RegistrySyncInitializer implements ModInitializer {
 				Registries.VILLAGER_TYPE,
 				Registries.VILLAGER_PROFESSION
 		);
+
+		ServerRegistrySync.registerHandlers();
+		CustomPayloads.registerS2CPayload(ServerPackets.Handshake.ID, ServerPackets.Handshake::new);
+		CustomPayloads.registerS2CPayload(ServerPackets.End.ID, ServerPackets.End::new);
+		CustomPayloads.registerS2CPayload(ServerPackets.RegistryStart.ID, ServerPackets.RegistryStart::new);
+		CustomPayloads.registerS2CPayload(ServerPackets.RegistryData.ID, ServerPackets.RegistryData::new);
+		CustomPayloads.registerS2CPayload(ServerPackets.RegistryApply.ID, ServerPackets.RegistryApply::new);
+		CustomPayloads.registerS2CPayload(ServerPackets.ValidateStates.StateType.BLOCK.packetId(), ServerPackets.ValidateStates::newBlock);
+		CustomPayloads.registerS2CPayload(ServerPackets.ValidateStates.StateType.FLUID.packetId(), ServerPackets.ValidateStates::newFluid);
+		CustomPayloads.registerS2CPayload(ServerPackets.RegistryRestore.ID, ServerPackets.RegistryRestore::new);
+		CustomPayloads.registerS2CPayload(ServerPackets.ErrorStyle.ID, ServerPackets.ErrorStyle::new);
+		CustomPayloads.registerS2CPayload(ServerPackets.ModProtocol.ID, ServerPackets.ModProtocol::new);
+
+		CustomPayloads.registerC2SPayload(ClientPackets.Handshake.ID, ClientPackets.Handshake::new);
+		CustomPayloads.registerC2SPayload(ClientPackets.SyncFailed.ID, ClientPackets.SyncFailed::new);
+		CustomPayloads.registerC2SPayload(ClientPackets.UnknownEntry.ID, ClientPackets.UnknownEntry::new);
+		CustomPayloads.registerC2SPayload(ClientPackets.ModProtocol.ID, ClientPackets.ModProtocol::new);
+		CustomPayloads.registerC2SPayload(ClientPackets.End.ID, ClientPackets.End::new);
 	}
 }

@@ -23,6 +23,7 @@ import java.util.Set;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientLoginNetworkHandler;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
@@ -51,7 +52,7 @@ public final class NetworkingChannelClientTest implements ClientTickEvents.End,
 	}
 
 	@Override
-	public void onChannelRegister(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client, List<Identifier> channels) {
+	public void onChannelRegister(ClientPlayNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftClient client, List<Identifier> channels) {
 		SUPPORTED_C2S_CHANNELS.addAll(channels);
 
 		if (MinecraftClient.getInstance().currentScreen instanceof ChannelScreen channelScreen) {
@@ -60,7 +61,7 @@ public final class NetworkingChannelClientTest implements ClientTickEvents.End,
 	}
 
 	@Override
-	public void onChannelUnregister(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client, List<Identifier> channels) {
+	public void onChannelUnregister(ClientPlayNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftClient client, List<Identifier> channels) {
 		SUPPORTED_C2S_CHANNELS.removeAll(channels);
 
 		if (MinecraftClient.getInstance().currentScreen instanceof ChannelScreen channelScreen) {

@@ -30,22 +30,24 @@ import com.google.gson.JsonObject;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonWriter;
 import com.mojang.logging.LogUtils;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.RecipeManager;
+import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.util.TriState;
 import org.quiltmc.qsl.recipe.api.RecipeLoadingEvents;
-import org.quiltmc.qsl.recipe.api.serializer.QuiltRecipeSerializer;
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 
 @ApiStatus.Internal
@@ -54,31 +56,31 @@ public final class RecipeManagerImpl implements RegistryEvents.DynamicRegistryLo
 	 * Stores the static recipes which are added to the {@link net.minecraft.recipe.RecipeManager} when recipes are
 	 * loaded.
 	 */
-	private static final Map<Identifier, Recipe<?>> STATIC_RECIPES = new Object2ObjectOpenHashMap<>();
+	private static final Map<Identifier, RecipeHolder<?>> STATIC_RECIPES = new Object2ObjectOpenHashMap<>();
 	static final boolean DEBUG_MODE = TriState.fromProperty("quilt.recipe.debug").toBooleanOrElse(QuiltLoader.isDevelopmentEnvironment());
 	private static final boolean DUMP_MODE = Boolean.getBoolean("quilt.recipe.dump");
 	static final Logger LOGGER = LogUtils.getLogger();
 	private static DynamicRegistryManager currentRegistryManager;
 
-	public static void registerStaticRecipe(Recipe<?> recipe) {
-		if (STATIC_RECIPES.putIfAbsent(recipe.getId(), recipe) != null) {
-			throw new IllegalArgumentException("Cannot register " + recipe.getId()
+	public static void registerStaticRecipe(RecipeHolder<?> recipeHolder) {
+		if (STATIC_RECIPES.putIfAbsent(recipeHolder.id(), recipeHolder) != null) {
+			throw new IllegalArgumentException("Cannot register " + recipeHolder.id()
 					+ " as another recipe with the same identifier already exists.");
 		}
 	}
 
 	public static void apply(Map<Identifier, JsonElement> map,
-			Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap,
-			ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder) {
+			Map<RecipeType<?>, ImmutableMap.Builder<Identifier, RecipeHolder<?>>> builderMap,
+			ImmutableMap.Builder<Identifier, RecipeHolder<?>> globalRecipeMapBuilder) {
 		var handler = new RegisterRecipeHandlerImpl(map, builderMap, globalRecipeMapBuilder, currentRegistryManager);
 		RecipeLoadingEvents.ADD.invoker().addRecipes(handler);
-		STATIC_RECIPES.values().forEach(handler::tryRegister);
+		STATIC_RECIPES.forEach((identifier, recipe) -> handler.tryRegister(recipe));
 		LOGGER.info("Registered {} custom recipes.", handler.registered);
 	}
 
 	public static void applyModifications(RecipeManager recipeManager,
-			Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes,
-			Map<Identifier, Recipe<?>> globalRecipes) {
+			Map<RecipeType<?>, Map<Identifier, RecipeHolder<?>>> recipes,
+			Map<Identifier, RecipeHolder<?>> globalRecipes) {
 		var handler = new ModifyRecipeHandlerImpl(recipeManager, recipes, globalRecipes, currentRegistryManager);
 		RecipeLoadingEvents.MODIFY.invoker().modifyRecipes(handler);
 		LOGGER.info("Modified {} recipes.", handler.counter);
@@ -91,22 +93,11 @@ public final class RecipeManagerImpl implements RegistryEvents.DynamicRegistryLo
 			dump(globalRecipes);
 		}
 
-		if (DEBUG_MODE) {
-			for (var serializerEntry : Registries.RECIPE_SERIALIZER.getEntries()) {
-				if (!(serializerEntry.getValue() instanceof QuiltRecipeSerializer)) {
-					LOGGER.warn(
-							"Recipe serializer {} doesn't implement QuiltRecipeSerializer. For full compatibility, the interface should be implemented.",
-							serializerEntry.getKey().getValue()
-					);
-				}
-			}
-		}
-
 		currentRegistryManager = null;
 	}
 
 	@SuppressWarnings("unchecked")
-	private static void dump(Map<Identifier, Recipe<?>> recipes) {
+	private static void dump(Map<Identifier, RecipeHolder<?>> recipes) {
 		Path debugPath = Paths.get("debug", "quilt", "recipe").normalize();
 
 		if (!Files.exists(debugPath)) {
@@ -118,13 +109,19 @@ public final class RecipeManagerImpl implements RegistryEvents.DynamicRegistryLo
 			}
 		}
 
-		for (Recipe<?> recipe : recipes.values()) {
-			if (!(recipe.getSerializer() instanceof QuiltRecipeSerializer)) continue;
+		for (Map.Entry<Identifier, RecipeHolder<?>> recipeEntry : recipes.entrySet()) {
+			Identifier id = recipeEntry.getKey();
+			Recipe<?> recipe = recipeEntry.getValue().value();
 
-			var serializer = (QuiltRecipeSerializer<Recipe<?>>) recipe.getSerializer();
-			JsonObject serialized = serializer.toJson(recipe);
+			var serializer = ((RecipeSerializer<Recipe<?>>) recipe.getSerializer());
+			DataResult<JsonElement> encoded = serializer.method_53736().encode(recipe, JsonOps.INSTANCE, new JsonObject());
+			if (encoded.error().isPresent()) {
+				LOGGER.error("Failed to serialize recipe {} with reason {}.", id, encoded.error().get().message());
+			}
 
-			Path path = debugPath.resolve(recipe.getId().getNamespace() + "/recipes/" + recipe.getId().getPath() + ".json");
+			JsonObject serialized = (JsonObject) encoded.result().get();
+
+			Path path = debugPath.resolve(id.getNamespace() + "/recipes/" + id.getPath() + ".json");
 			Path parent = path.getParent();
 
 			if (!Files.exists(parent)) {
@@ -132,7 +129,7 @@ public final class RecipeManagerImpl implements RegistryEvents.DynamicRegistryLo
 					Files.createDirectories(parent);
 				} catch (IOException e) {
 					LOGGER.error("Failed to create parent recipe directory {}. Cannot dump recipe {}.",
-							parent, recipe.getId(), e);
+							parent, id, e);
 					continue;
 				}
 			}
@@ -147,12 +144,12 @@ public final class RecipeManagerImpl implements RegistryEvents.DynamicRegistryLo
 				Files.writeString(path, stringWriter.toString(),
 						StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
 			} catch (IOException e) {
-				LOGGER.error("Failed to write JSON for recipe {}.", recipe.getId(), e);
+				LOGGER.error("Failed to write JSON for recipe {}.", id, e);
 			} finally {
 				try {
 					jsonWriter.close();
 				} catch (IOException e) {
-					LOGGER.error("Failed to close JSON writer for recipe {}.", recipe.getId(), e);
+					LOGGER.error("Failed to close JSON writer for recipe {}.", id, e);
 				}
 			}
 		}

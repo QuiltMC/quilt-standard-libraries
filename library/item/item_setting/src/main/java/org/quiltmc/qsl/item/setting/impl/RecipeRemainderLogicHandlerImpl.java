@@ -27,8 +27,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 import org.quiltmc.qsl.item.setting.api.RecipeRemainderLogicHandler;
 

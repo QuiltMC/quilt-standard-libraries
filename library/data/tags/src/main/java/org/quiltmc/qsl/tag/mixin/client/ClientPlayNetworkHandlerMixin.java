@@ -23,12 +23,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.AbstractClientNetworkHandler;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.registry.ClientRegistryLayer;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
-import net.minecraft.registry.LayeredRegistryManager;
-import net.minecraft.text.Text;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.unmapped.C_qqflkeyp;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.tag.impl.TagRegistryImpl;
@@ -37,28 +38,29 @@ import org.quiltmc.qsl.tag.impl.client.ClientTagRegistryManager;
 
 @ClientOnly
 @Mixin(ClientPlayNetworkHandler.class)
-public abstract class ClientPlayNetworkHandlerMixin {
+public abstract class ClientPlayNetworkHandlerMixin extends AbstractClientNetworkHandler {
 	@Shadow
 	@Final
-	private ClientConnection connection;
+	private DynamicRegistryManager.Frozen clientRegistryManager;
 
-	@Shadow
-	private LayeredRegistryManager<ClientRegistryLayer> clientRegistryManager;
+	protected ClientPlayNetworkHandlerMixin(MinecraftClient client, ClientConnection connection, C_qqflkeyp c_qqflkeyp) {
+		super(client, connection, c_qqflkeyp);
+	}
 
 	@Inject(
 			method = "onGameJoin",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/network/ClientConnection;isLocal()Z",
+					target = "Lnet/minecraft/network/ClientConnection;isEncrypted()Z",
 					shift = At.Shift.BEFORE
 			)
 	)
 	private void onGameJoin(GameJoinS2CPacket packet, CallbackInfo ci) {
-		ClientTagRegistryManager.applyAll(this.clientRegistryManager.getManager(ClientRegistryLayer.REMOTE), ClientRegistryStatus.REMOTE);
+		ClientTagRegistryManager.applyAll(this.clientRegistryManager, ClientRegistryStatus.REMOTE);
 	}
 
-	@Inject(method = "onDisconnected", at = @At("TAIL"))
-	private void onDisconnected(Text reason, CallbackInfo ci) {
+	@Inject(method = "disconnect", at = @At("TAIL"))
+	private void onDisconnected(CallbackInfo ci) {
 		ClientTagRegistryManager.resetDynamicAll(true);
 
 		if (!this.connection.isLocal()) {

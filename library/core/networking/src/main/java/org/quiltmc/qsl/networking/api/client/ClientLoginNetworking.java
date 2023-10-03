@@ -159,6 +159,6 @@ public final class ClientLoginNetworking {
 		 * @return a completable future which contains the payload to respond to the server with.
 		 * If the future contains {@code null}, then the server will be notified that the client did not understand the query.
 		 */
-		CompletableFuture<@Nullable PacketByteBuf> receive(MinecraftClient client, ClientLoginNetworkHandler handler, PacketByteBuf buf, Consumer<PacketSendListener> listenerAdder);
+		CompletableFuture<PacketByteBuf> receive(MinecraftClient client, ClientLoginNetworkHandler handler, PacketByteBuf buf, Consumer<PacketSendListener> listenerAdder);
 	}
 }

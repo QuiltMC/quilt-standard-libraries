@@ -2,6 +2,8 @@ accessWidener   v2  named
 
 accessible  class   net/minecraft/client/option/GameOptions$Visitor
 accessible  class   net/minecraft/resource/NamespaceResourceManager$ResourceEntry
+accessible  class   net/minecraft/client/MinecraftClient$C_vfwwgdbg
 
-accessible  method  net/minecraft/resource/pack/ResourcePackProfile <init>  (Ljava/lang/String;ZLnet/minecraft/resource/pack/ResourcePackProfile$ResourcePackFactory;Lnet/minecraft/text/Text;Lnet/minecraft/resource/pack/ResourcePackProfile$Info;Lnet/minecraft/resource/pack/ResourcePackCompatibility;Lnet/minecraft/resource/pack/ResourcePackProfile$InsertionPosition;ZLnet/minecraft/resource/pack/ResourcePackSource;)V
+accessible  method  net/minecraft/resource/pack/ResourcePackProfile <init>  (Ljava/lang/String;ZLnet/minecraft/resource/pack/ResourcePackProfile$ResourcePackFactory;Lnet/minecraft/text/Text;Lnet/minecraft/resource/pack/ResourcePackProfile$Info;Lnet/minecraft/resource/pack/ResourcePackProfile$InsertionPosition;ZLnet/minecraft/resource/pack/ResourcePackSource;)V
+accessible  method  net/minecraft/resource/pack/BuiltinResourcePackProvider wrapToFactory (Lnet/minecraft/resource/pack/ResourcePack;)Lnet/minecraft/resource/pack/ResourcePackProfile$ResourcePackFactory;
 accessible  method  net/minecraft/client/gui/widget/EntryListWidget getHoveredEntry  ()Lnet/minecraft/client/gui/widget/EntryListWidget$Entry;

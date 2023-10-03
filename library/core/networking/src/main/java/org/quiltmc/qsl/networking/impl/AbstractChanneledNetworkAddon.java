@@ -16,7 +16,6 @@
 
 package org.quiltmc.qsl.networking.impl;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,19 +24,18 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import io.netty.util.AsciiString;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.NetworkState;
 import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.InvalidIdentifierException;
 
-import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.PacketSender;
+import org.quiltmc.qsl.networking.impl.payload.ChannelPayload;
 
 /**
  * A network addon which is aware of the channels the other side may receive.
@@ -45,28 +43,22 @@ import org.quiltmc.qsl.networking.api.PacketSender;
  * @param <H> the channel handler type
  */
 @ApiStatus.Internal
-public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAddon<H> implements PacketSender {
+public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAddon<H> implements PacketSender<CustomPayload> {
 	protected final ClientConnection connection;
 	protected final GlobalReceiverRegistry<H> receiver;
 	protected final Set<Identifier> sendableChannels;
-	protected final Set<Identifier> sendableChannelsView;
 
 	protected AbstractChanneledNetworkAddon(GlobalReceiverRegistry<H> receiver, ClientConnection connection, String description) {
-		this(receiver, connection, new HashSet<>(), description);
-	}
-
-	protected AbstractChanneledNetworkAddon(GlobalReceiverRegistry<H> receiver, ClientConnection connection, Set<Identifier> sendableChannels, String description) {
 		super(receiver, description);
 		this.connection = connection;
 		this.receiver = receiver;
-		this.sendableChannels = sendableChannels;
-		this.sendableChannelsView = Collections.unmodifiableSet(sendableChannels);
+		this.sendableChannels = Collections.synchronizedSet(new HashSet<>());
 	}
 
 	public abstract void lateInit();
 
-	protected void registerPendingChannels(ChannelInfoHolder holder) {
-		final Collection<Identifier> pending = holder.getPendingChannelsNames();
+	protected void registerPendingChannels(ChannelInfoHolder holder, NetworkState state) {
+		final Collection<Identifier> pending = holder.getPendingChannelsNames(state);
 
 		if (!pending.isEmpty()) {
 			this.register(new ArrayList<>(pending));
@@ -75,98 +67,68 @@ public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAd
 	}
 
 	// always supposed to handle async!
-	protected boolean handle(Identifier channelName, PacketByteBuf originalBuf) {
-		this.logger.debug("Handling inbound packet from channel with name \"{}\"", channelName);
+	public <T extends CustomPayload> boolean handle(T payload) {
+		this.logger.debug("Handling inbound packet from channel with name \"{}\"", payload.id());
 
 		// Handle reserved packets
-		if (NetworkingImpl.REGISTER_CHANNEL.equals(channelName)) {
-			this.receiveRegistration(true, PacketByteBufs.slice(originalBuf));
+		if (NetworkingImpl.REGISTER_CHANNEL.equals(payload.id())) {
+			this.receiveRegistration(true, ((ChannelPayload) payload));
 			return true;
 		}
 
-		if (NetworkingImpl.UNREGISTER_CHANNEL.equals(channelName)) {
-			this.receiveRegistration(false, PacketByteBufs.slice(originalBuf));
+		if (NetworkingImpl.UNREGISTER_CHANNEL.equals(payload.id())) {
+			this.receiveRegistration(false, ((ChannelPayload) payload));
 			return true;
 		}
 
-		@Nullable H handler = this.getHandler(channelName);
+		@Nullable H handler = this.getHandler(payload.id());
 
 		if (handler == null) {
 			return false;
 		}
 
-		PacketByteBuf buf = PacketByteBufs.slice(originalBuf);
-
 		try {
-			this.receive(handler, buf);
+			this.receive(handler, payload);
 		} catch (Throwable ex) {
-			this.logger.error("Encountered exception while handling in channel with name \"{}\"", channelName, ex);
+			this.logger.error("Encountered exception while handling in channel with name \"{}\"", payload.id(), ex);
 			throw ex;
 		}
 
 		return true;
 	}
 
-	protected abstract void receive(H handler, PacketByteBuf buf);
+	protected abstract <T extends CustomPayload> void receive(H handler, T buf);
 
 	protected void sendInitialChannelRegistrationPacket() {
-		final PacketByteBuf buf = this.createRegistrationPacket(this.getReceivableChannels());
+		final ChannelPayload payload = this.createRegistrationPacket(List.copyOf(this.getReceivableChannels()), true);
 
-		if (buf != null) {
-			this.sendPacket(NetworkingImpl.REGISTER_CHANNEL, buf);
+		if (payload != null) {
+			this.sendPacket(this.createPacket(payload));
 		}
 	}
 
 	@Nullable
-	protected PacketByteBuf createRegistrationPacket(Collection<Identifier> channels) {
-		if (channels.isEmpty()) {
-			return null;
-		}
-
-		PacketByteBuf buf = PacketByteBufs.create();
-		boolean first = true;
-
-		for (Identifier channel : channels) {
-			if (first) {
-				first = false;
-			} else {
-				buf.writeByte(0);
-			}
-
-			buf.writeBytes(channel.toString().getBytes(StandardCharsets.US_ASCII));
-		}
-
-		return buf;
+	protected ChannelPayload createRegistrationPacket(List<Identifier> channels, boolean register) {
+		return register ? new ChannelPayload.RegisterChannelPayload(channels) : new ChannelPayload.UnregisterChannelPayload(channels);
 	}
 
-	// wrap in try with res (buf)
-	protected void receiveRegistration(boolean register, PacketByteBuf buf) {
-		var ids = new ArrayList<Identifier>();
-		var active = new StringBuilder();
-
-		while (buf.isReadable()) {
-			byte b = buf.readByte();
-
-			if (b != 0) {
-				active.append(AsciiString.b2c(b));
-			} else {
-				this.addId(ids, active);
-				active = new StringBuilder();
-			}
+	// wrap in try with res (payload)
+	protected void receiveRegistration(boolean register, ChannelPayload payload) {
+		if (register) {
+			this.register(payload.channels());
+		} else {
+			this.unregister(payload.channels());
 		}
-
-		this.addId(ids, active);
-		this.schedule(register ? () -> this.register(ids) : () -> this.unregister(ids));
 	}
 
 	void register(List<Identifier> ids) {
 		this.sendableChannels.addAll(ids);
-		this.invokeRegisterEvent(ids);
+		this.schedule(() -> this.invokeRegisterEvent(ids));
 	}
 
 	void unregister(List<Identifier> ids) {
 		this.sendableChannels.removeAll(ids);
-		this.invokeUnregisterEvent(ids);
+		this.schedule(() -> this.invokeUnregisterEvent(ids));
 	}
 
 	@Override
@@ -177,10 +139,10 @@ public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAd
 	}
 
 	@Override
-	public void sendPacket(Packet<?> packet, PacketSendListener listener) {
+	public void sendPacket(Packet<?> packet, PacketSendListener callback) {
 		Objects.requireNonNull(packet, "Packet cannot be null");
 
-		this.connection.send(packet, listener);
+		this.connection.send(packet, callback);
 	}
 
 	/**
@@ -192,17 +154,7 @@ public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAd
 
 	protected abstract void invokeUnregisterEvent(List<Identifier> ids);
 
-	private void addId(List<Identifier> ids, StringBuilder sb) {
-		String literal = sb.toString();
-
-		try {
-			ids.add(new Identifier(literal));
-		} catch (InvalidIdentifierException ex) {
-			this.logger.warn("Received invalid channel identifier \"{}\" from connection {}", literal, this.connection);
-		}
-	}
-
 	public Set<Identifier> getSendableChannels() {
-		return this.sendableChannelsView;
+		return Collections.unmodifiableSet(this.sendableChannels);
 	}
 }

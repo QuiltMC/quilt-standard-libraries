@@ -16,9 +16,9 @@
 
 package org.quiltmc.qsl.registry.impl.dynamic;
 
-import org.jetbrains.annotations.ApiStatus;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
+import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.util.Identifier;
 

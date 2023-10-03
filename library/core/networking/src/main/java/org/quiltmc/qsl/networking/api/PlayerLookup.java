@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.EntityTrackingListener;
 import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.server.world.ThreadedChunkManager;
@@ -117,8 +117,8 @@ public final class PlayerLookup {
 
 			// return an immutable collection to guard against accidental removals.
 			if (tracker != null) {
-				return Collections.unmodifiableCollection(tracker.getPlayersTracking()
-						.stream().map(EntityTrackingListener::getPlayer).collect(Collectors.toSet()));
+				return tracker.getListeners()
+                        .stream().map(ServerPlayerConnection::getPlayer).collect(Collectors.toUnmodifiableSet());
 			}
 
 			return Collections.emptySet();

@@ -40,9 +40,7 @@ public interface ModProtocolContainer {
 
 				ops.get(input, "quilt:mod_protocol").get().ifLeft((x) -> {
 					var versionData = MAP_CODEC.decode(ops, x);
-					versionData.get().ifLeft(y -> {
-						((ModProtocolContainer) (Object) value.result().get().getFirst()).quilt$setModProtocol(y.getFirst());
-					});
+					versionData.get().ifLeft(y -> ((ModProtocolContainer) value.result().get().getFirst()).quilt$setModProtocol(y.getFirst()));
 				});
 
 				return value;

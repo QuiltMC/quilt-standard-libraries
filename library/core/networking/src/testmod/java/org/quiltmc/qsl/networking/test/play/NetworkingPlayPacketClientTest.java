@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.text.Text;
 
 import org.quiltmc.loader.api.ModContainer;
@@ -38,11 +39,11 @@ public final class NetworkingPlayPacketClientTest implements ClientModInitialize
 		//ClientPlayNetworking.registerGlobalReceiver(NetworkingPlayPacketTest.TEST_CHANNEL, this::receive);
 
 		ClientPlayConnectionEvents.INIT.register((handler, client) -> {
-			ClientPlayNetworking.registerReceiver(NetworkingPlayPacketTest.TEST_CHANNEL, (client1, handler1, buf, sender1) -> this.receive(handler1, sender1, client1, buf));
+			ClientPlayNetworking.registerReceiver(NetworkingPlayPacketTest.TEST_CHANNEL, (ClientPlayNetworking.ChannelReceiver) (client1, handler1, buf, sender1) -> this.receive(handler1, sender1, client1, buf));
 		});
 	}
 
-	private void receive(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client, PacketByteBuf buf) {
+	private void receive(ClientPlayNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftClient client, PacketByteBuf buf) {
 		Text text = buf.readText();
 		client.execute(() -> {
 			LOGGER.info("Received text from {} which says {}.", NetworkingPlayPacketTest.TEST_CHANNEL, text);

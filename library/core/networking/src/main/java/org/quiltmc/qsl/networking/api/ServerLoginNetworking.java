@@ -23,6 +23,7 @@ import java.util.concurrent.Future;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.s2c.login.payload.CustomQueryPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.util.Identifier;
@@ -148,11 +149,11 @@ public final class ServerLoginNetworking {
 		 * @param synchronizer   the synchronizer which may be used to delay log-in till a {@link Future} is completed.
 		 * @param responseSender the packet sender
 		 */
-		void receive(MinecraftServer server, ServerLoginNetworkHandler handler, boolean understood, PacketByteBuf buf, LoginSynchronizer synchronizer, PacketSender responseSender);
+		void receive(MinecraftServer server, ServerLoginNetworkHandler handler, boolean understood, PacketByteBuf buf, LoginSynchronizer synchronizer, PacketSender<CustomQueryPayload> responseSender);
 	}
 
 	/**
-	 * Allows blocking client log-in until all all futures passed into {@link LoginSynchronizer#waitFor(Future)} are completed.
+	 * Allows blocking client log-in until all futures passed into {@link LoginSynchronizer#waitFor(Future)} are completed.
 	 *
 	 * @apiNote this interface is not intended to be implemented by users of api.
 	 */

@@ -39,7 +39,6 @@ public final class StatusEffectUtils {
 	 * @param effect the status effect
 	 * @param reason the reason the status effect should be removed
 	 * @return {@code true} if the status effect should be removed, or {@code false} otherwise.
-	 *
 	 * @see StatusEffectEvents#SHOULD_REMOVE
 	 * @see StatusEffect#shouldRemove(LivingEntity, StatusEffectInstance, StatusEffectRemovalReason)
 	 */

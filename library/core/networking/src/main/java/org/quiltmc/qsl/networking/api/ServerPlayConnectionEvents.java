@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.networking.api;
 
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.util.Identifier;
@@ -30,7 +31,7 @@ public final class ServerPlayConnectionEvents {
 	/**
 	 * Event indicating a connection entered the PLAY state, ready for registering channel handlers.
 	 *
-	 * @see ServerPlayNetworking#registerReceiver(ServerPlayNetworkHandler, Identifier, ServerPlayNetworking.ChannelReceiver)
+	 * @see ServerPlayNetworking#registerReceiver(ServerPlayNetworkHandler, Identifier, ServerPlayNetworking.CustomChannelReceiver)
 	 */
 	public static final Event<Init> INIT = Event.create(Init.class, callbacks -> (handler, server) -> {
 		for (Init callback : callbacks) {
@@ -76,7 +77,7 @@ public final class ServerPlayConnectionEvents {
 	 */
 	@FunctionalInterface
 	public interface Join extends EventAwareListener {
-		void onPlayReady(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server);
+		void onPlayReady(ServerPlayNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftServer server);
 	}
 
 	/**

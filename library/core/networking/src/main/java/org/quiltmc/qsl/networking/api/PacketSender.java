@@ -30,7 +30,7 @@ import net.minecraft.util.Identifier;
  *
  * @see PacketByteBufs
  */
-public interface PacketSender {
+public interface PacketSender<C> {
 	/**
 	 * Makes a packet for a channel.
 	 *
@@ -38,6 +38,13 @@ public interface PacketSender {
 	 * @param buf         the content of the packet
 	 */
 	Packet<?> createPacket(Identifier channelName, PacketByteBuf buf);
+
+	/**
+	 * Makes a packet for a channel.
+	 *
+	 * @param payload the payload
+	 */
+	Packet<?> createPacket(C payload);
 
 	/**
 	 * Sends a packet.
@@ -79,5 +86,16 @@ public interface PacketSender {
 		Objects.requireNonNull(buf, "Payload cannot be null");
 
 		this.sendPacket(this.createPacket(channel, buf), listener);
+	}
+
+	/**
+	 * Sends a packet to a channel.
+	 *
+	 * @param payload the payload
+	 */
+	default void sendPayload(C payload) {
+		Objects.requireNonNull(payload, "Payload cannot be null");
+
+		this.sendPacket(this.createPacket(payload));
 	}
 }

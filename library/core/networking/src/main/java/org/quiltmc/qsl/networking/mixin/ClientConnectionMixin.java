@@ -31,6 +31,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkSide;
+import net.minecraft.network.NetworkState;
 import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.listener.PacketListener;
 import net.minecraft.network.packet.Packet;
@@ -85,7 +86,7 @@ abstract class ClientConnectionMixin implements ChannelInfoHolder {
 	}
 
 	@Inject(method = "sendImmediately", at = @At(value = "FIELD", target = "Lnet/minecraft/network/ClientConnection;packetsSentCounter:I"))
-	private void checkPacket(Packet<?> packet, PacketSendListener listener, CallbackInfo ci) {
+	private void checkPacket(Packet<?> packet, PacketSendListener listener, boolean flush, CallbackInfo ci) {
 		if (this.packetListener instanceof PacketCallbackListener callbackListener) {
 			callbackListener.sent(packet);
 		}
@@ -99,7 +100,7 @@ abstract class ClientConnectionMixin implements ChannelInfoHolder {
 	}
 
 	@Override
-	public Collection<Identifier> getPendingChannelsNames() {
+	public Collection<Identifier> getPendingChannelsNames(NetworkState state) {
 		return this.playChannels;
 	}
 }

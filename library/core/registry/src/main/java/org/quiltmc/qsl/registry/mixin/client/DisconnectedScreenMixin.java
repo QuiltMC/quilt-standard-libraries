@@ -24,12 +24,11 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.client.gui.screen.DisconnectedScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.GridWidget;
+import net.minecraft.client.gui.widget.LinearLayoutWidget;
 import net.minecraft.text.Text;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -42,7 +41,7 @@ import org.quiltmc.qsl.registry.impl.sync.client.screen.SyncLogScreen;
 public class DisconnectedScreenMixin extends Screen {
 	@Shadow
 	@Final
-	private GridWidget grid;
+	private LinearLayoutWidget grid;
 
 	private List<LogBuilder.Section> quilt$extraLogs;
 
@@ -50,7 +49,7 @@ public class DisconnectedScreenMixin extends Screen {
 		super(title);
 	}
 
-	@Inject(method = "<init>", at = @At("TAIL"))
+	@Inject(method = "<init>*", at = @At("TAIL"))
 	private void quilt$storeLogs(Screen parent, Text title, Text reason, CallbackInfo ci) {
 		this.quilt$extraLogs = ClientRegistrySync.getAndClearCurrentSyncLogs();
 	}
@@ -60,17 +59,16 @@ public class DisconnectedScreenMixin extends Screen {
 			at = @At(
 				value = "INVOKE",
 				target = "Lnet/minecraft/client/MinecraftClient;isMultiplayerEnabled()Z"
-			),
-			locals = LocalCapture.CAPTURE_FAILHARD
+			)
 	)
-	private void quilt$addLogsButton(CallbackInfo ci, GridWidget.AdditionHelper additionHelper) {
+	private void quilt$addLogsButton(CallbackInfo ci) {
 		if (!this.quilt$extraLogs.isEmpty()) {
 			var logsButton = ButtonWidget.builder(Text.translatableWithFallback("quilt.core.registry_sync.logs_button", "More Details"), (button) -> {
 				this.client.setScreen(new SyncLogScreen(this, this.quilt$extraLogs));
 			}).build();
 			// I might have committed some horrific crimes here
 			var settings = this.grid.copyDefaultSettings().setBottomPadding(-5);
-			additionHelper.add(logsButton, settings);
+			this.grid.add(logsButton, settings);
 		}
 	}
 }

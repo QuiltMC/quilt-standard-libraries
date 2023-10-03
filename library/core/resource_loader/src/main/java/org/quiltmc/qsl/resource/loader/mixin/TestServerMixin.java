@@ -18,7 +18,6 @@ package org.quiltmc.qsl.resource.loader.mixin;
 
 import java.util.Optional;
 
-import com.mojang.datafixers.util.Either;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;

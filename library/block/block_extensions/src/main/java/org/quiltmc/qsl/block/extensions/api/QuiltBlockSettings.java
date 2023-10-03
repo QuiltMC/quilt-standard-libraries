@@ -72,7 +72,7 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		this.pistonBehavior(otherAccessor.getPistonBehavior());
 		this.requiresTool(otherAccessor.getToolRequired());
 		((AbstractBlockSettingsAccessor) this).setOffsetFunction(otherAccessor.getOffsetFunction());
-		this.spawnsParticlesOnBreak(otherAccessor.getSpawnsParticlesOnBreak());
+		this.spawnsDustParticles(otherAccessor.getSpawnsDustParticles());
 		this.requiredFlags(otherAccessor.getRequiredFlags());
 		this.emissiveLighting(otherAccessor.getEmissiveLightingPredicate());
 		this.instrument(otherAccessor.getInstrument());
@@ -311,8 +311,8 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 	}
 
 	@Override
-	public QuiltBlockSettings disableParticlesOnBreak() {
-		super.disableParticlesOnBreak();
+	public QuiltBlockSettings withoutDustParticles() {
+		super.withoutDustParticles();
 		return this;
 	}
 
@@ -417,8 +417,8 @@ public class QuiltBlockSettings extends AbstractBlock.Settings {
 		return this;
 	}
 
-	public QuiltBlockSettings spawnsParticlesOnBreak(boolean spawnsParticlesOnBreak) {
-		((AbstractBlockSettingsAccessor) this).setSpawnsParticlesOnBreak(spawnsParticlesOnBreak);
+	public QuiltBlockSettings spawnsDustParticles(boolean spawnsDustParticles) {
+		((AbstractBlockSettingsAccessor) this).setSpawnsDustParticles(spawnsDustParticles);
 		return this;
 	}
 

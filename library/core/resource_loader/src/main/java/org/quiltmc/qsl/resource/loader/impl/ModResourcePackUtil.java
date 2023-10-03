@@ -21,9 +21,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import com.google.common.base.Charsets;
+import com.mojang.logging.LogUtils;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.resource.ResourceIoSupplier;
@@ -33,6 +35,8 @@ import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.resource.pack.ResourcePackProfile;
 
 import org.quiltmc.loader.api.ModMetadata;
+import org.quiltmc.qsl.resource.loader.api.QuiltResourcePackProfile;
+import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
 
 @ApiStatus.Internal
 public final class ModResourcePackUtil {
@@ -40,6 +44,8 @@ public final class ModResourcePackUtil {
 	 * Represents the default data-pack settings, including the default-enabled built-in data-packs.
 	 */
 	public static final DataPackSettings DEFAULT_SETTINGS = createDefaultDataPackSettings(DataPackSettings.SAFE_MODE);
+
+	private static final Logger LOGGER = LogUtils.getLogger();
 
 	public static String getPackMeta(@Nullable String description, ResourceType type) {
 		if (description == null) {
@@ -92,5 +98,31 @@ public final class ModResourcePackUtil {
 		}
 
 		return new DataPackSettings(enabled, disabled);
+	}
+
+	public static ResourcePackProfile makeBuiltinPackProfile(ModNioResourcePack pack, ResourcePackProfile.Info info) {
+		return ResourcePackProfile.of(
+			pack.getName(),
+			pack.getDisplayName(),
+			pack.getActivationType() == ResourcePackActivationType.ALWAYS_ENABLED,
+			QuiltResourcePackProfile.wrapToFactory(pack),
+			info,
+			ResourcePackProfile.InsertionPosition.TOP,
+			false,
+			new BuiltinResourcePackSource(pack)
+		);
+	}
+
+	static @Nullable ResourcePackProfile makeBuiltinPackProfile(ModNioResourcePack pack) {
+		// I think the resource version really shouldn't matter here, but we'll go for the latest asset version just in case
+		ResourcePackProfile.Info info = ResourcePackProfile.readInfoFromPack(pack.getName(), QuiltResourcePackProfile.wrapToFactory(pack),
+				SharedConstants.getGameVersion().getResourceVersion(ResourceType.CLIENT_RESOURCES));
+
+		if (info == null) {
+			LOGGER.warn("Couldn't find pack meta for pack {}.", pack.getName());
+			return null;
+		}
+
+		return makeBuiltinPackProfile(pack, info);
 	}
 }

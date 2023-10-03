@@ -60,17 +60,17 @@ public record AddMaterialRuleCallback(
 	}
 
 	@Override
-	public void modifyOverworldRules(SurfaceRuleContext.@NotNull Overworld context) {
+	public void modifyOverworldRules(@NotNull SurfaceRuleContext.Overworld context) {
 		this.modifyRules(context);
 	}
 
 	@Override
-	public void modifyNetherRules(SurfaceRuleContext.@NotNull Nether context) {
+	public void modifyNetherRules(@NotNull SurfaceRuleContext.Nether context) {
 		this.modifyRules(context);
 	}
 
 	@Override
-	public void modifyTheEndRules(SurfaceRuleContext.@NotNull TheEnd context) {
+	public void modifyTheEndRules(@NotNull SurfaceRuleContext.TheEnd context) {
 		this.modifyRules(context);
 	}
 

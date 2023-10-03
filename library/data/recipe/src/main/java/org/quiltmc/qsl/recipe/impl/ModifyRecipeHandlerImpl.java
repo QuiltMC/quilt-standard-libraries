@@ -20,7 +20,7 @@ import java.util.Map;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.DynamicRegistryManager;
@@ -32,48 +32,47 @@ import org.quiltmc.qsl.recipe.api.RecipeLoadingEvents;
 final class ModifyRecipeHandlerImpl extends BasicRecipeHandlerImpl implements RecipeLoadingEvents.ModifyRecipesCallback.RecipeHandler {
 	int counter = 0;
 
-	ModifyRecipeHandlerImpl(RecipeManager recipeManager, Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes,
-			Map<Identifier, Recipe<?>> globalRecipes, DynamicRegistryManager registryManager) {
+	ModifyRecipeHandlerImpl(RecipeManager recipeManager, Map<RecipeType<?>, Map<Identifier, RecipeHolder<?>>> recipes,
+			Map<Identifier, RecipeHolder<?>> globalRecipes, DynamicRegistryManager registryManager) {
 		super(recipeManager, recipes, globalRecipes, registryManager);
 	}
 
-	private void add(Recipe<?> recipe) {
-		Map<Identifier, Recipe<?>> type = this.recipes.get(recipe.getType());
+	private void add(RecipeHolder<?> recipeHolder) {
+		Map<Identifier, RecipeHolder<?>> type = this.recipes.get(recipeHolder.value().getType());
 
 		if (type == null) {
-			throw new IllegalStateException("The given recipe " + recipe.getId()
-					+ " does not have its recipe type " + recipe.getType() + " in the recipe manager.");
+			throw new IllegalStateException("The given recipe " + recipeHolder.id()
+					+ " does not have its recipe type " + type + " in the recipe manager.");
 		}
 
-		type.put(recipe.getId(), recipe);
-		this.globalRecipes.put(recipe.getId(), recipe);
+		type.put(recipeHolder.id(), recipeHolder);
+		this.globalRecipes.put(recipeHolder.id(), recipeHolder);
 	}
 
 	@Override
-	public void replace(Recipe<?> recipe) {
-		RecipeType<?> oldType = this.getTypeOf(recipe.getId());
+	public void replace(RecipeHolder<?> recipeHolder) {
+		RecipeType<?> oldType = this.getTypeOf(recipeHolder.id());
 
 		if (oldType == null) {
 			if (RecipeManagerImpl.DEBUG_MODE) {
-				RecipeManagerImpl.LOGGER.info("Add new recipe {} with type {} in modify phase.", recipe.getId(), recipe.getType());
+				RecipeManagerImpl.LOGGER.info("Add new recipe {} with type {} in modify phase.", recipeHolder.id(), recipeHolder.value().getType());
 			}
 
-			this.add(recipe);
-		} else if (oldType == recipe.getType()) {
+			this.add(recipeHolder);
+		} else if (oldType == recipeHolder.value().getType()) {
 			if (RecipeManagerImpl.DEBUG_MODE) {
-				RecipeManagerImpl.LOGGER.info("Replace recipe {} with same type {} in modify phase.", recipe.getId(), recipe.getType());
+				RecipeManagerImpl.LOGGER.info("Replace recipe {} with same type {} in modify phase.", recipeHolder.id(), recipeHolder.value().getType());
 			}
 
-			this.recipes.get(oldType).put(recipe.getId(), recipe);
-			this.globalRecipes.put(recipe.getId(), recipe);
+			this.recipes.get(oldType).put(recipeHolder.id(), recipeHolder);
+			this.globalRecipes.put(recipeHolder.id(), recipeHolder);
 		} else {
 			if (RecipeManagerImpl.DEBUG_MODE) {
-				RecipeManagerImpl.LOGGER.info("Replace new recipe {} with type {} (and old type {}) in modify phase.",
-						recipe.getId(), recipe.getType(), oldType);
+				RecipeManagerImpl.LOGGER.info("Replace new recipe {} with type {} (and old type {}) in modify phase.", recipeHolder.id(), recipeHolder.value().getType(), oldType);
 			}
 
-			this.recipes.get(oldType).remove(recipe.getId());
-			this.add(recipe);
+			this.recipes.get(oldType).remove(recipeHolder.id());
+			this.add(recipeHolder);
 		}
 
 		this.counter++;

@@ -4,8 +4,8 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "EntityMixin",
-    "WorldSaveStorageBugfixMixin",
-    "ServerPlayerEntityMixin"
+    "ServerPlayerEntityMixin",
+    "WorldSaveStorageBugfixMixin"
   ],
   "injectors": {
     "defaultRequire": 1

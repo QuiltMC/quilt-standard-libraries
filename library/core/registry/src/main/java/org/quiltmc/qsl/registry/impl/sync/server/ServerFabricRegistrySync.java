@@ -24,14 +24,15 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.network.ClientConnection;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
@@ -48,9 +49,10 @@ import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
 @ApiStatus.Internal
 public class ServerFabricRegistrySync {
 	private static final int MAX_PAYLOAD_SIZE = 1048576;
+	public static final Identifier SYNC_COMPLETE_ID = new Identifier("fabric", "registry/sync/complete");
 	public static final Identifier ID = new Identifier("fabric", "registry/sync/direct");
 
-	public static void sendSyncPackets(ClientConnection connection) {
+	public static void sendSyncPackets(Consumer<Packet<?>> sender) {
 		var registryMap = createRegistryMap();
 
 		PacketByteBuf buf = PacketByteBufs.create();
@@ -131,12 +133,12 @@ public class ServerFabricRegistrySync {
 		while (sliceIndex < readableBytes) {
 			int sliceSize = Math.min(readableBytes - sliceIndex, MAX_PAYLOAD_SIZE);
 			PacketByteBuf slicedBuf = PacketByteBufs.slice(buf, sliceIndex, sliceSize);
-			sendPacket(connection, slicedBuf);
+			sendPacket(sender, slicedBuf);
 			sliceIndex += sliceSize;
 		}
 
 		// Send an empty buffer to mark the end of the split.
-		sendPacket(connection, PacketByteBufs.empty());
+		sendPacket(sender, PacketByteBufs.empty());
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -164,8 +166,8 @@ public class ServerFabricRegistrySync {
 		return map;
 	}
 
-	private static void sendPacket(ClientConnection connection, PacketByteBuf buf) {
-		connection.send(ServerPlayNetworking.createS2CPacket(ID, buf));
+	private static void sendPacket(Consumer<Packet<?>> sender, PacketByteBuf buf) {
+		sender.accept(ServerPlayNetworking.createS2CPacket(ID, buf));
 	}
 
 	private static String optimizeNamespace(String namespace) {

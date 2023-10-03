@@ -31,8 +31,7 @@ import org.quiltmc.loader.api.minecraft.ClientOnly;
 @ApiStatus.Internal
 @ClientOnly
 public final class BlockRenderLayerMapImpl {
-	private BlockRenderLayerMapImpl() {
-	}
+	private BlockRenderLayerMapImpl() {}
 
 	private static Map<Block, RenderLayer> blockMap = new Reference2ReferenceOpenHashMap<>();
 	private static Map<Fluid, RenderLayer> fluidMap = new Reference2ReferenceOpenHashMap<>();

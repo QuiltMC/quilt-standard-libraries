@@ -36,6 +36,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
+import org.quiltmc.qsl.resource.loader.api.QuiltResourcePackProfile;
 import org.quiltmc.qsl.resource.loader.impl.ModResourcePackProvider;
 import org.quiltmc.qsl.resource.loader.impl.QuiltMultiPackResourceManagerHooks;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
@@ -51,7 +52,7 @@ final class ClientDefaultTagManagerReloader extends ClientOnlyTagManagerReloader
 
 		var pack = ResourceLoaderImpl.buildMinecraftResourcePack(ResourceType.SERVER_DATA, defaultPack);
 		this.resourcePackManager = new ResourcePackManager((profileAdder) -> {
-			profileAdder.accept(ResourcePackProfile.of("vanilla", pack.getDisplayName(), true, name -> pack,
+			profileAdder.accept(ResourcePackProfile.of("vanilla", pack.getDisplayName(), true, QuiltResourcePackProfile.wrapToFactory(pack),
 					ResourceType.SERVER_DATA, ResourcePackProfile.InsertionPosition.BOTTOM, ResourcePackSource.PACK_SOURCE_BUILTIN
 			));
 		}, ModResourcePackProvider.SERVER_RESOURCE_PACK_PROVIDER);

@@ -33,6 +33,7 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.resource.loader.api.InMemoryResourcePack;
+import org.quiltmc.qsl.resource.loader.api.QuiltResourcePackProfile;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 
 public class ResourcePackProfileProviderTestMod implements ClientModInitializer {
@@ -43,7 +44,7 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 		ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerResourcePackProfileProvider((profileAdder) -> {
 			var pack = new TestPack();
 			profileAdder.accept(ResourcePackProfile.of(
-					PACK_NAME, pack.getDisplayName(), false, name -> pack, ResourceType.CLIENT_RESOURCES,
+					PACK_NAME, pack.getDisplayName(), false, QuiltResourcePackProfile.wrapToFactory(pack), ResourceType.CLIENT_RESOURCES,
 					ResourcePackProfile.InsertionPosition.TOP,
 					new ResourcePackSource() {
 						@Override

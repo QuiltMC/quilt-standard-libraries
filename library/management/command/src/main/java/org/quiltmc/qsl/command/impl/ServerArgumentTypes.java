@@ -60,6 +60,6 @@ public final class ServerArgumentTypes {
 	}
 
 	public static Set<Identifier> getKnownArgumentTypes(ServerPlayerEntity player) {
-		return ((KnownArgTypesStorage) player).quilt$getKnownArgumentTypes();
+		return ((KnownArgTypesStorage) player.networkHandler).quilt$getKnownArgumentTypes();
 	}
 }

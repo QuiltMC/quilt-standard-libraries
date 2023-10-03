@@ -20,6 +20,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.server.MinecraftServer;
@@ -87,7 +88,7 @@ public class DataCallbackTests implements ModInitializer {
 
 	// This is a duplicate of ServerPlayConnectionEvents.Join that implements CodecAware
 	public interface ServerJoin extends CodecAware {
-		void onPlayReady(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server);
+		void onPlayReady(ServerPlayNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftServer server);
 	}
 
 	public record ServerJoinChat(String text, Style style) implements ServerJoin {
@@ -100,7 +101,7 @@ public class DataCallbackTests implements ModInitializer {
 		}
 
 		@Override
-		public void onPlayReady(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server) {
+		public void onPlayReady(ServerPlayNetworkHandler handler, PacketSender<CustomPayload> sender, MinecraftServer server) {
 			Text text = Text.literal(text()).setStyle(style());
 			handler.player.sendSystemMessage(text);
 		}

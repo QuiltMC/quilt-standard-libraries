@@ -26,7 +26,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.client.resource.ClientBuiltinResourcePackProvider;
 import net.minecraft.resource.ResourceType;
@@ -37,12 +36,13 @@ import net.minecraft.resource.pack.ResourcePackSource;
 import net.minecraft.text.Text;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
+import org.quiltmc.qsl.resource.loader.api.QuiltResourcePackProfile;
 import org.quiltmc.qsl.resource.loader.impl.ModResourcePackProvider;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
 @ClientOnly
 @Mixin(ClientBuiltinResourcePackProvider.class)
-public class ClientBuiltinResourcePackProviderMixin {
+public abstract class ClientBuiltinResourcePackProviderMixin {
 	@Shadow
 	@Final
 	private static Map<String, Text> BUILTIN_PACK_DISPLAY_NAMES;
@@ -59,21 +59,22 @@ public class ClientBuiltinResourcePackProviderMixin {
 			ResourcePackProfile.ResourcePackFactory factory, ResourceType type, ResourcePackProfile.InsertionPosition insertionPosition,
 			ResourcePackSource source) {
 		if (BUILTIN_PACK_DISPLAY_NAMES.containsKey(name)) {
-			return n -> ResourceLoaderImpl.buildVanillaBuiltinResourcePack(factory.open(n), ResourceType.CLIENT_RESOURCES, name);
+			return QuiltResourcePackProfile.wrapToFactory(ResourceLoaderImpl.buildVanillaBuiltinResourcePack(factory.openPrimary(name), ResourceType.CLIENT_RESOURCES, name));
 		}
 
 		return factory;
 	}
 
-	// Synthetic method createBuiltinResourcePackProfile(ResourcePack)ResourcePackProfile
-	// Using an injector to wrap the previous return value.
-	@Inject(
-			method = "method_45855(Lnet/minecraft/resource/pack/ResourcePack;Ljava/lang/String;)Lnet/minecraft/resource/pack/ResourcePack;",
-			at = @At("RETURN"),
-			cancellable = true
+	@ModifyArg(
+			method = "createBuiltinResourcePackProfile(Lnet/minecraft/resource/pack/ResourcePack;)Lnet/minecraft/resource/pack/ResourcePackProfile;",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/resource/ClientBuiltinResourcePackProvider;wrapToFactory(Lnet/minecraft/resource/pack/ResourcePack;)Lnet/minecraft/resource/pack/ResourcePackProfile$ResourcePackFactory;"
+			),
+			index = 0
 	)
-	private static void onPackGet(ResourcePack pack, String name, CallbackInfoReturnable<ResourcePack> cir) {
-		cir.setReturnValue(ResourceLoaderImpl.buildMinecraftResourcePack(ResourceType.CLIENT_RESOURCES, cir.getReturnValue()));
+	private ResourcePack onPackGet(ResourcePack pack) {
+		return ResourceLoaderImpl.buildMinecraftResourcePack(ResourceType.CLIENT_RESOURCES, pack);
 	}
 
 	@ClientOnly

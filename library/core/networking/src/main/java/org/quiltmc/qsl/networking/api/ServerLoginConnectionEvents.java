@@ -16,6 +16,7 @@
 
 package org.quiltmc.qsl.networking.api;
 
+import net.minecraft.network.packet.s2c.login.payload.CustomQueryPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.util.Identifier;
@@ -79,7 +80,7 @@ public final class ServerLoginConnectionEvents {
 	 */
 	@FunctionalInterface
 	public interface QueryStart extends EventAwareListener {
-		void onLoginStart(ServerLoginNetworkHandler handler, MinecraftServer server, PacketSender sender, ServerLoginNetworking.LoginSynchronizer synchronizer);
+		void onLoginStart(ServerLoginNetworkHandler handler, MinecraftServer server, PacketSender<CustomQueryPayload> sender, ServerLoginNetworking.LoginSynchronizer synchronizer);
 	}
 
 	/**

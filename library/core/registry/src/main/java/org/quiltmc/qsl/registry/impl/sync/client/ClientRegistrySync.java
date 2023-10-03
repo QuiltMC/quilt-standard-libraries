@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.function.Function;
 
 import com.mojang.logging.LogUtils;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -34,10 +36,10 @@ import org.slf4j.Logger;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.network.ClientConfigurationNetworkHandler;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
@@ -48,9 +50,9 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.IdList;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
-import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.PacketSender;
-import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
+import org.quiltmc.qsl.networking.api.client.ClientConfigurationNetworking;
+import org.quiltmc.qsl.networking.mixin.accessor.AbstractClientNetworkHandlerAccessor;
 import org.quiltmc.qsl.registry.impl.sync.ClientPackets;
 import org.quiltmc.qsl.registry.impl.sync.ProtocolVersions;
 import org.quiltmc.qsl.registry.impl.sync.RegistrySyncText;
@@ -100,29 +102,26 @@ public final class ClientRegistrySync {
 	}
 
 	public static void registerHandlers() {
-		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.HANDSHAKE, ClientRegistrySync::handleHelloPacket);
-		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_START, ClientRegistrySync::handleStartPacket);
-		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_DATA, ClientRegistrySync::handleDataPacket);
-		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_APPLY, ClientRegistrySync::handleApplyPacket);
-		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.END, ClientRegistrySync::handleGoodbyePacket);
-		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.REGISTRY_RESTORE, ClientRegistrySync::handleRestorePacket);
-		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.VALIDATE_BLOCK_STATES, handleStateValidation(Registries.BLOCK, Block.STATE_IDS, BlockState::getBlock));
-		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.VALIDATE_FLUID_STATES, handleStateValidation(Registries.FLUID, Fluid.STATE_IDS, FluidState::getFluid));
-		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.ERROR_STYLE, ClientRegistrySync::handleErrorStylePacket);
-		ClientPlayNetworking.registerGlobalReceiver(ServerPackets.MOD_PROTOCOL, ClientRegistrySync::handleModProtocol);
+		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.Handshake.ID, ClientRegistrySync::handleHelloPacket);
+		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.RegistryStart.ID, ClientRegistrySync::handleStartPacket);
+		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.RegistryData.ID, ClientRegistrySync::handleDataPacket);
+		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.RegistryApply.ID, ClientRegistrySync::handleApplyPacket);
+		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.End.ID, ClientRegistrySync::handleGoodbyePacket);
+		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.RegistryRestore.ID, ClientRegistrySync::handleRestorePacket);
+		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.ValidateStates.StateType.BLOCK.packetId(), handleStateValidation(Registries.BLOCK, Block.STATE_IDS, BlockState::getBlock));
+		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.ValidateStates.StateType.FLUID.packetId(), handleStateValidation(Registries.FLUID, Fluid.STATE_IDS, FluidState::getFluid));
+		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.ErrorStyle.ID, ClientRegistrySync::handleErrorStylePacket);
+		ClientConfigurationNetworking.registerGlobalReceiver(ServerPackets.ModProtocol.ID, ClientRegistrySync::handleModProtocol);
 	}
 
-	private static void handleModProtocol(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
-		var prioritizedId = buf.readString();
-		var protocols = buf.readList(ModProtocolDef::read);
-
-		var values = new Object2IntOpenHashMap<String>(protocols.size());
+	private static void handleModProtocol(MinecraftClient client, ClientConfigurationNetworkHandler handler, ServerPackets.ModProtocol modProtocol, PacketSender<CustomPayload> sender) {
+		var values = new Object2IntOpenHashMap<String>(modProtocol.protocols().size());
 		var unsupportedList = new ArrayList<ModProtocolDef>();
 		ModProtocolDef missingPrioritized = null;
 
 		boolean disconnect = false;
 
-		for (var protocol : protocols) {
+		for (var protocol : modProtocol.protocols()) {
 			var local = ModProtocolImpl.getVersion(protocol.id());
 			var latest = protocol.latestMatchingVersion(local);
 			System.out.println(latest);
@@ -131,7 +130,7 @@ public final class ClientRegistrySync {
 			} else if (!protocol.optional()) {
 				unsupportedList.add(protocol);
 				disconnect = true;
-				if (prioritizedId.equals(protocol.id())) {
+				if (modProtocol.prioritizedId().equals(protocol.id())) {
 					missingPrioritized = protocol;
 				}
 			}
@@ -170,52 +169,23 @@ public final class ClientRegistrySync {
 		return b.append(']').toString();
 	}
 
-	private static void sendSupportedModProtocol(PacketSender sender, Object2IntOpenHashMap<String> values) {
-		var buf = PacketByteBufs.create();
-		buf.writeVarInt(values.size());
-		for (var entry : values.object2IntEntrySet()) {
-			buf.writeString(entry.getKey());
-			buf.writeVarInt(entry.getIntValue());
-		}
-
-		sender.sendPacket(ClientPackets.MOD_PROTOCOL, buf);
+	private static void sendSupportedModProtocol(PacketSender<CustomPayload> sender, Object2IntOpenHashMap<String> values) {
+		sender.sendPayload(new ClientPackets.ModProtocol(values));
 	}
 
-	private static void handleErrorStylePacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
-		errorStyleHeader = buf.readText();
-		errorStyleFooter = buf.readText();
-		showErrorDetails = buf.readBoolean();
+	private static void handleErrorStylePacket(MinecraftClient client, ClientConfigurationNetworkHandler handler, ServerPackets.ErrorStyle style, PacketSender<CustomPayload> sender) {
+		errorStyleHeader = style.errorHeader();
+		errorStyleFooter = style.errorFooter();
+		showErrorDetails = style.showError();
 	}
 
-	private static void handleHelloPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
-		syncVersion = ProtocolVersions.getHighestSupportedLocal(buf.readIntList());
-		sendHelloPacket(sender, syncVersion);
+	private static void handleHelloPacket(MinecraftClient client, ClientConfigurationNetworkHandler handler, ServerPackets.Handshake handshake, PacketSender<CustomPayload> sender) {
+		syncVersion = ProtocolVersions.getHighestSupportedLocal(handshake.supportedVersions());
+		sender.sendPayload(new ClientPackets.Handshake(syncVersion));
 		builder.clear();
 	}
 
-	private static void sendHelloPacket(PacketSender sender, int version) {
-		var buf = PacketByteBufs.create();
-		buf.writeVarInt(version);
-
-		sender.sendPacket(ClientPackets.HANDSHAKE, buf);
-	}
-
-	public static void sendSyncFailedPacket(ClientPlayNetworkHandler handler, Identifier identifier) {
-		var buf = PacketByteBufs.create();
-		buf.writeIdentifier(identifier);
-
-		handler.sendPacket(ClientPlayNetworking.createC2SPacket(ClientPackets.SYNC_FAILED, buf));
-	}
-
-	private static void sendSyncUnknownEntriesPacket(ClientPlayNetworkHandler handler, Identifier identifier, IntList entries) {
-		var buf = PacketByteBufs.create();
-		buf.writeIdentifier(identifier);
-		buf.writeIntList(entries);
-
-		handler.sendPacket(ClientPlayNetworking.createC2SPacket(ClientPackets.UNKNOWN_ENTRY, buf));
-	}
-
-	private static void handleGoodbyePacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
+	private static void handleGoodbyePacket(MinecraftClient client, ClientConfigurationNetworkHandler handler, ServerPackets.End end, PacketSender<CustomPayload> sender) {
 		syncVersion = -1;
 
 		if (mustDisconnect) {
@@ -232,36 +202,33 @@ public final class ClientRegistrySync {
 				entry.append(errorStyleFooter);
 			}
 
-			handler.getConnection().disconnect(entry);
+			((AbstractClientNetworkHandlerAccessor) handler).getConnection().disconnect(entry);
 
 			LOGGER.warn(builder.asString());
+		} else {
+			sender.sendPayload(new ClientPackets.End());
 		}
 	}
 
-	private static void handleStartPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
-		var identifier = buf.readIdentifier();
-		int count = buf.readVarInt();
-		byte flags = buf.readByte();
-
-		var registry = Registries.REGISTRY.get(identifier);
-
-		if (registry instanceof SynchronizedRegistry synchronizedRegistry) {
+	private static void handleStartPacket(MinecraftClient client, ClientConfigurationNetworkHandler handler, ServerPackets.RegistryStart<?> start, PacketSender<CustomPayload> sender) {
+		var registry = Registries.REGISTRY.get(start.registry());
+		if (registry instanceof SynchronizedRegistry<?> synchronizedRegistry) {
 			currentRegistry = synchronizedRegistry;
-			currentCount = count;
-			currentFlags = flags;
-			currentRegistryId = identifier;
+			currentCount = start.size();
+			currentFlags = start.flags();
+			currentRegistryId = start.registry();
 			syncMap = new HashMap<>();
-		} else if (RegistryFlag.isOptional(flags)) {
+		} else if (RegistryFlag.isOptional(start.flags())) {
 			optionalRegistry = true;
 		} else {
-			sendSyncFailedPacket(handler, identifier);
-			var x = RegistrySyncText.missingRegistry(identifier, registry != null);
+			sender.sendPayload(new ClientPackets.SyncFailed(start.registry()));
+			var x = RegistrySyncText.missingRegistry(start.registry(), registry != null);
 			markDisconnected(handler, x);
 			builder.push(x);
 		}
 	}
 
-	private static void handleDataPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
+	private static void handleDataPacket(MinecraftClient client, ClientConfigurationNetworkHandler handler, ServerPackets.RegistryData data, PacketSender<CustomPayload> sender) {
 		if (currentRegistry == null || syncMap == null) {
 			if (optionalRegistry) {
 				if (syncMap != null && !syncMap.isEmpty()) {
@@ -273,7 +240,7 @@ public final class ClientRegistrySync {
 						}
 					}
 
-					sendSyncUnknownEntriesPacket(handler, currentRegistryId, optionalMissing);
+					sender.sendPayload(new ClientPackets.UnknownEntry(currentRegistryId, optionalMissing));
 				}
 			} else {
 				LOGGER.warn("Received sync data without specifying registry!");
@@ -282,23 +249,11 @@ public final class ClientRegistrySync {
 			return;
 		}
 
-		int countNamespace = buf.readVarInt();
-		while (countNamespace-- > 0) {
-			var namespace = buf.readString();
-			int countLocal = buf.readVarInt();
-
-			while (countLocal-- > 0) {
-				var path = buf.readString();
-				int id = buf.readVarInt();
-				byte flags = buf.readByte();
-
-				syncMap.computeIfAbsent(namespace, n -> new ArrayList<>()).add(new SynchronizedRegistry.SyncEntry(path, id, flags));
-			}
-		}
+		syncMap.putAll(data.packetData());
 	}
 
 	@SuppressWarnings("EqualsBetweenInconvertibleTypes")
-	private static void handleApplyPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
+	private static void handleApplyPacket(MinecraftClient client, ClientConfigurationNetworkHandler handler, ServerPackets.RegistryApply apply, PacketSender<CustomPayload> sender) {
 		if (currentRegistry == null || syncMap == null) {
 			if (!optionalRegistry) {
 				LOGGER.warn("Received sync data without specifying registry!");
@@ -310,7 +265,7 @@ public final class ClientRegistrySync {
 		var reg = currentRegistry;
 		var missingEntries = currentRegistry.quilt$applySyncMap(syncMap);
 
-		if (!optionalRegistry && checkMissingAndDisconnect(handler, currentRegistryId, missingEntries)) {
+		if (!optionalRegistry && checkMissingAndDisconnect(handler, currentRegistryId, missingEntries, sender)) {
 			clearState();
 			return;
 		}
@@ -333,25 +288,22 @@ public final class ClientRegistrySync {
 		}
 
 		if (!optionalMissing.isEmpty()) {
-			sendSyncUnknownEntriesPacket(handler, currentRegistryId, optionalMissing);
+			sender.sendPayload(new ClientPackets.UnknownEntry(currentRegistryId, optionalMissing));
 		}
 
 		clearState();
 	}
 
-	private static <T, S> ClientPlayNetworking.ChannelReceiver handleStateValidation(Registry<T> registry, IdList<S> stateList, Function<S, T> converter) {
-		return (MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) -> {
-			var count = buf.readVarInt();
+	private static <T, S> ClientConfigurationNetworking.CustomChannelReceiver<ServerPackets.ValidateStates> handleStateValidation(Registry<T> registry, IdList<S> stateList, Function<S, T> converter) {
+		return (MinecraftClient client, ClientConfigurationNetworkHandler handler, ServerPackets.ValidateStates states, PacketSender<CustomPayload> sender) -> {
+			Int2ObjectArrayMap<IntList> data = states.packetData();
 
 			boolean firstMismatch = true;
+			for (Int2ObjectMap.Entry<IntList> blockToStates : data.int2ObjectEntrySet()) {
+				var block = registry.get(blockToStates.getIntKey());
 
-			while (count-- > 0) {
-				var block = registry.get(buf.readVarInt());
-
-				var stateCount = buf.readVarInt();
-
-				while (stateCount-- > 0) {
-					var state = stateList.get(buf.readVarInt());
+				for (int stateId : blockToStates.getValue()) {
+					var state = stateList.get(stateId);
 					if (state == null || converter.apply(state) != block) {
 						var conv = state == null ? null : converter.apply(state);
 						markDisconnected(handler, RegistrySyncText.mismatchedStateIds(registry.getKey().getValue(), block == null ? null : registry.getId(block), conv == null ? null : registry.getId(conv)));
@@ -418,7 +370,7 @@ public final class ClientRegistrySync {
 		rebuildParticles(client);
 	}
 
-	public static boolean checkMissingAndDisconnect(ClientPlayNetworkHandler handler, Identifier registry, Collection<SynchronizedRegistry.MissingEntry> missingEntries) {
+	public static boolean checkMissingAndDisconnect(ClientConfigurationNetworkHandler handler, Identifier registry, Collection<SynchronizedRegistry.MissingEntry> missingEntries, PacketSender<CustomPayload> sender) {
 		boolean disconnect = false;
 
 		for (var entry : missingEntries) {
@@ -430,7 +382,7 @@ public final class ClientRegistrySync {
 
 		if (disconnect) {
 			if (syncVersion != -1) {
-				sendSyncFailedPacket(handler, registry);
+				sender.sendPayload(new ClientPackets.SyncFailed(registry));
 			}
 
 			markDisconnected(handler, RegistrySyncText.missingRegistryEntries(registry, missingEntries));
@@ -449,7 +401,7 @@ public final class ClientRegistrySync {
 		return disconnect;
 	}
 
-	private static void markDisconnected(ClientPlayNetworkHandler handler, Text reason) {
+	private static void markDisconnected(ClientConfigurationNetworkHandler handler, Text reason) {
 		if (disconnectMainReason == null) {
 			disconnectMainReason = reason;
 		}
@@ -461,14 +413,14 @@ public final class ClientRegistrySync {
 		return (text.asComponent() == TextComponent.EMPTY || (text.asComponent() instanceof LiteralComponent literalComponent && literalComponent.literal().isEmpty())) && text.getSiblings().isEmpty();
 	}
 
-	private static void handleRestorePacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
+	private static void handleRestorePacket(MinecraftClient client, ClientConfigurationNetworkHandler handler, ServerPackets.RegistryRestore restore, PacketSender<CustomPayload> sender) {
 		restoreSnapshot(client);
 		createSnapshot();
 	}
 
 	public static void createSnapshot() {
 		for (var reg : Registries.REGISTRY) {
-			if (reg instanceof SynchronizedRegistry registry && registry.quilt$requiresSyncing()) {
+			if (reg instanceof SynchronizedRegistry<?> registry && registry.quilt$requiresSyncing()) {
 				registry.quilt$createIdSnapshot();
 			}
 		}
@@ -476,7 +428,7 @@ public final class ClientRegistrySync {
 
 	public static void restoreSnapshot(MinecraftClient client) {
 		for (var reg : Registries.REGISTRY) {
-			if (reg instanceof SynchronizedRegistry registry && registry.quilt$requiresSyncing()) {
+			if (reg instanceof SynchronizedRegistry<?> registry && registry.quilt$requiresSyncing()) {
 				registry.quilt$restoreIdSnapshot();
 			}
 		}

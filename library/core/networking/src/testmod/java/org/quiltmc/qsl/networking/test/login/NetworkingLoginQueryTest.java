@@ -19,6 +19,7 @@ package org.quiltmc.qsl.networking.test.login;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.FutureTask;
 
+import net.minecraft.network.packet.s2c.login.payload.CustomQueryPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.util.Util;
@@ -65,7 +66,7 @@ public final class NetworkingLoginQueryTest implements ModInitializer {
 		});
 	}
 
-	private void delaySimply(ServerLoginNetworkHandler handler, MinecraftServer server, PacketSender sender, ServerLoginNetworking.LoginSynchronizer synchronizer) {
+	private void delaySimply(ServerLoginNetworkHandler handler, MinecraftServer server, PacketSender<CustomQueryPayload> sender, ServerLoginNetworking.LoginSynchronizer synchronizer) {
 		if (useLoginDelayTest) {
 			synchronizer.waitFor(CompletableFuture.runAsync(() -> {
 				NetworkingTestMods.LOGGER.info("Starting simple delay task for 3000 milliseconds");
@@ -80,7 +81,7 @@ public final class NetworkingLoginQueryTest implements ModInitializer {
 		}
 	}
 
-	private void onLoginStart(ServerLoginNetworkHandler networkHandler, MinecraftServer server, PacketSender sender, ServerLoginNetworking.LoginSynchronizer synchronizer) {
+	private void onLoginStart(ServerLoginNetworkHandler networkHandler, MinecraftServer server, PacketSender<CustomQueryPayload> sender, ServerLoginNetworking.LoginSynchronizer synchronizer) {
 		// Send a dummy query when the client starts accepting queries.
 		sender.sendPacket(NetworkingPlayPacketTest.TEST_CHANNEL, PacketByteBufs.empty()); // dummy packet
 	}

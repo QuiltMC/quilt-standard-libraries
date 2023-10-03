@@ -128,7 +128,7 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 
 	@SuppressWarnings("InvalidInjectorMethodSignature")
 	@ModifyVariable(
-			method = "set(ILnet/minecraft/registry/RegistryKey;Ljava/lang/Object;Lcom/mojang/serialization/Lifecycle;)Lnet/minecraft/registry/Holder$Reference;",
+			method = "method_46744(ILnet/minecraft/registry/RegistryKey;Ljava/lang/Object;Lcom/mojang/serialization/Lifecycle;)Lnet/minecraft/registry/Holder$Reference;",
 			slice = @Slice(
 					from = @At(
 							value = "INVOKE",
@@ -151,7 +151,7 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 	 */
 	@SuppressWarnings({"ConstantConditions", "unchecked"})
 	@Inject(
-			method = "set(ILnet/minecraft/registry/RegistryKey;Ljava/lang/Object;Lcom/mojang/serialization/Lifecycle;)Lnet/minecraft/registry/Holder$Reference;",
+			method = "method_46744(ILnet/minecraft/registry/RegistryKey;Ljava/lang/Object;Lcom/mojang/serialization/Lifecycle;)Lnet/minecraft/registry/Holder$Reference;",
 			at = @At("RETURN")
 	)
 	private void quilt$invokeEntryAddEvent(int rawId, RegistryKey<V> key, V entry, Lifecycle lifecycle, CallbackInfoReturnable<Holder<V>> cir) {

@@ -36,7 +36,7 @@ import net.minecraft.resource.MultiPackResourceManager;
 import net.minecraft.resource.NamespaceResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePack;
-import net.minecraft.resource.pack.metadata.ResourceFilterMetadata;
+import net.minecraft.resource.pack.metadata.ResourceFilterMetadataSection;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.resource.loader.impl.QuiltMultiPackResourceManagerHooks;
@@ -55,7 +55,7 @@ public abstract class MultiPackResourceManagerMixin implements QuiltMultiPackRes
 
 	@Shadow
 	@Nullable
-	protected abstract ResourceFilterMetadata getFilter(ResourcePack pack);
+	protected abstract ResourceFilterMetadataSection getFilter(ResourcePack pack);
 
 	@Unique
 	private /*final*/ ResourceType quilt$type;
@@ -88,13 +88,13 @@ public abstract class MultiPackResourceManagerMixin implements QuiltMultiPackRes
 		List<String> namespaces = this.packs.stream().flatMap(pack -> pack.getNamespaces(this.quilt$type).stream()).distinct().toList();
 
 		for (var pack : this.packs) {
-			ResourceFilterMetadata resourceFilterMetadata = this.getFilter(pack);
+			var resourceFilterMetadataSection = this.getFilter(pack);
 			Set<String> set = pack.getNamespaces(this.quilt$type);
-			Predicate<Identifier> predicate = resourceFilterMetadata != null ? id -> resourceFilterMetadata.matchPath(id.getPath()) : null;
+			Predicate<Identifier> predicate = resourceFilterMetadataSection != null ? id -> resourceFilterMetadataSection.matchPath(id.getPath()) : null;
 
 			for (var namespace : namespaces) {
 				boolean hasNamespace = set.contains(namespace);
-				boolean namespaceFilter = resourceFilterMetadata != null && resourceFilterMetadata.matchNamespace(namespace);
+				boolean namespaceFilter = resourceFilterMetadataSection != null && resourceFilterMetadataSection.matchNamespace(namespace);
 
 				if (hasNamespace || namespaceFilter) {
 					NamespaceResourceManager namespaceResourceManager = this.namespaceManagers.computeIfAbsent(namespace,

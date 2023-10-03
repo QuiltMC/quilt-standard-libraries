@@ -17,7 +17,6 @@
 package org.quiltmc.qsl.registry.attachment.test;
 
 import com.mojang.logging.LogUtils;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import net.minecraft.entity.player.PlayerEntity;
@@ -27,8 +26,6 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;

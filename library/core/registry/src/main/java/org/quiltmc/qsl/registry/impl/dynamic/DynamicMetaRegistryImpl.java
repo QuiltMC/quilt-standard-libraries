@@ -30,8 +30,8 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryLoader;
 import net.minecraft.util.Identifier;
 
-import org.quiltmc.qsl.registry.mixin.DynamicRegistrySyncAccessor;
 import org.quiltmc.qsl.registry.api.dynamic.DynamicRegistryFlag;
+import org.quiltmc.qsl.registry.mixin.DynamicRegistrySyncAccessor;
 
 @ApiStatus.Internal
 public class DynamicMetaRegistryImpl {

@@ -1,0 +1,30 @@
+plugins {
+	id("qsl.module")
+}
+
+qslModule {
+	name = "Quilt Entity Extensions"
+	moduleName = "entity_extensions"
+	id = "quilt_entity_extensions"
+	description = "Extensions for creating and working with entities."
+	moduleDependencies {
+		core {
+			api("resource_loader")
+			api("registry")
+			api("networking")
+			testmodOnly("qsl_base")
+		}
+	}
+	entrypoints {
+		init {
+			values = ["org.quiltmc.qsl.entity.extensions.impl.networking.QuiltEntityNetworkingInitializer"]
+		}
+		client_init {
+			values = ["org.quiltmc.qsl.entity.extensions.impl.networking.QuiltEntityNetworkingClientInitializer"]
+		}
+	}
+	accessWidener()
+	injectedInterface("net/minecraft/class_1688") {
+		values = ["org/quiltmc/qsl/entity/extensions/api/MinecartComparatorLogic"]
+	}
+}

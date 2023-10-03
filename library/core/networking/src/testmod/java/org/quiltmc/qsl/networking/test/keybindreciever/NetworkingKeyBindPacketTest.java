@@ -17,6 +17,7 @@
 package org.quiltmc.qsl.networking.test.keybindreciever;
 
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -36,7 +37,7 @@ import org.quiltmc.qsl.networking.test.NetworkingTestMods;
 public final class NetworkingKeyBindPacketTest implements ModInitializer {
 	public static final Identifier KEYBINDING_PACKET_ID = NetworkingTestMods.id("keybind_press_test");
 
-	private static void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
+	private static void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender<CustomPayload> responseSender) {
 		// TODO: Can we send chat off the server thread?
 		server.execute(() -> {
 			player.sendMessage(Text.literal("You pressed ").append(Text.keyBind("quilt_networking_keybind_testmod").formatted(Formatting.BLUE)), false);

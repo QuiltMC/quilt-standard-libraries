@@ -32,15 +32,16 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.network.ClientConfigurationNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.api.PacketSender;
-import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
+import org.quiltmc.qsl.networking.api.client.ClientConfigurationNetworking;
 import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
 import org.quiltmc.qsl.registry.impl.sync.server.ServerFabricRegistrySync;
 
@@ -62,10 +63,10 @@ public class ClientFabricRegistrySync {
 	private static boolean isPacketFinished = false;
 
 	public static void registerHandlers() {
-		ClientPlayNetworking.registerGlobalReceiver(ServerFabricRegistrySync.ID, ClientFabricRegistrySync::handlePacket);
+		ClientConfigurationNetworking.registerGlobalReceiver(ServerFabricRegistrySync.ID, ClientFabricRegistrySync::handlePacket);
 	}
 
-	private static void handlePacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender sender) {
+	private static void handlePacket(MinecraftClient client, ClientConfigurationNetworkHandler handler, PacketByteBuf buf, PacketSender<CustomPayload> sender) {
 		receiveSlicedPacket(buf);
 
 		if (isPacketFinished) {
@@ -158,7 +159,7 @@ public class ClientFabricRegistrySync {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static void applyRegistry(ClientPlayNetworkHandler handler) {
+	private static void applyRegistry(ClientConfigurationNetworkHandler handler) {
 		Preconditions.checkState(isPacketFinished);
 		Map<Identifier, Object2IntMap<Identifier>> map = syncedRegistryMap;
 		isPacketFinished = false;
@@ -167,7 +168,7 @@ public class ClientFabricRegistrySync {
 		for (var entry : map.entrySet()) {
 			var registry = Registries.REGISTRY.get(entry.getKey());
 
-			if (registry instanceof SynchronizedRegistry currentRegistry) {
+			if (registry instanceof SynchronizedRegistry<?> currentRegistry) {
 				var syncMap = new HashMap<String, Collection<SynchronizedRegistry.SyncEntry>>();
 
 				for (var entry2 : entry.getValue().object2IntEntrySet()) {
@@ -177,12 +178,13 @@ public class ClientFabricRegistrySync {
 
 				var missingEntries = currentRegistry.quilt$applySyncMap(syncMap);
 
-				if (ClientRegistrySync.checkMissingAndDisconnect(handler, registry.getKey().getValue(), missingEntries)) {
+				if (ClientRegistrySync.checkMissingAndDisconnect(handler, registry.getKey().getValue(), missingEntries, null)) { // TODO: no null
 					break;
 				}
 			}
 		}
 
 		ClientRegistrySync.rebuildEverything(MinecraftClient.getInstance());
+		ClientConfigurationNetworking.send(ServerFabricRegistrySync.SYNC_COMPLETE_ID, PacketByteBufs.empty());
 	}
 }

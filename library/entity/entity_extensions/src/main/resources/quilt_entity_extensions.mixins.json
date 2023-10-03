@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "package": "org.quiltmc.qsl.entity.extensions.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "AbstractMinecartEntityMixin",
+    "DefaultAttributeRegistryMixin",
+    "DetectorRailBlockMixin",
+    "PointOfInterestTypeMixin",
+    "PointOfInterestTypesAccessor",
+    "TypeAwareBuyForOneEmeraldFactoryMixin",
+    "networking.EntityMixin",
+    "networking.TrackedDataHandlerRegistryMixin",
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

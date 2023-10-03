@@ -26,19 +26,24 @@ import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ConnectScreen;
+import net.minecraft.client.network.ClientConfigurationNetworkHandler;
 import net.minecraft.client.network.ClientLoginNetworkHandler;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.ClientConnection;
+import net.minecraft.network.NetworkState;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.PacketSendListener;
-import net.minecraft.network.listener.ServerPlayPacketListener;
+import net.minecraft.network.listener.ServerCommonPacketListener;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
+import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
+import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
+import org.quiltmc.qsl.networking.api.client.ClientConfigurationConnectionEvents;
+import org.quiltmc.qsl.networking.api.client.ClientConfigurationNetworking;
 import org.quiltmc.qsl.networking.api.client.ClientLoginNetworking;
 import org.quiltmc.qsl.networking.api.client.ClientPlayConnectionEvents;
 import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
@@ -46,6 +51,7 @@ import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
 import org.quiltmc.qsl.networking.impl.GlobalReceiverRegistry;
 import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
 import org.quiltmc.qsl.networking.impl.NetworkingImpl;
+import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
 import org.quiltmc.qsl.networking.mixin.accessor.ClientLoginNetworkHandlerAccessor;
 import org.quiltmc.qsl.networking.mixin.accessor.ConnectScreenAccessor;
 import org.quiltmc.qsl.networking.mixin.accessor.MinecraftClientAccessor;
@@ -53,20 +59,30 @@ import org.quiltmc.qsl.networking.mixin.accessor.MinecraftClientAccessor;
 @ApiStatus.Internal
 @ClientOnly
 public final class ClientNetworkingImpl {
-	public static final GlobalReceiverRegistry<ClientLoginNetworking.QueryRequestReceiver> LOGIN = new GlobalReceiverRegistry<>();
-	public static final GlobalReceiverRegistry<ClientPlayNetworking.ChannelReceiver> PLAY = new GlobalReceiverRegistry<>();
+	public static final GlobalReceiverRegistry<ClientLoginNetworking.QueryRequestReceiver> LOGIN = new GlobalReceiverRegistry<>(NetworkState.LOGIN);
+	public static final GlobalReceiverRegistry<ClientConfigurationNetworking.CustomChannelReceiver<?>> CONFIGURATION = new GlobalReceiverRegistry<>(NetworkState.CONFIGURATION);
+	public static final GlobalReceiverRegistry<ClientPlayNetworking.CustomChannelReceiver<?>> PLAY = new GlobalReceiverRegistry<>(NetworkState.PLAY);
 	private static ClientPlayNetworkAddon currentPlayAddon;
+	private static ClientConfigurationNetworkAddon currentConfigurationAddon;
 
 	public static ClientPlayNetworkAddon getAddon(ClientPlayNetworkHandler handler) {
 		return (ClientPlayNetworkAddon) ((NetworkHandlerExtensions) handler).getAddon();
+	}
+
+	public static ClientConfigurationNetworkAddon getAddon(ClientConfigurationNetworkHandler handler) {
+		return (ClientConfigurationNetworkAddon) ((NetworkHandlerExtensions) handler).getAddon();
 	}
 
 	public static ClientLoginNetworkAddon getAddon(ClientLoginNetworkHandler handler) {
 		return (ClientLoginNetworkAddon) ((NetworkHandlerExtensions) handler).getAddon();
 	}
 
-	public static Packet<ServerPlayPacketListener> createPlayC2SPacket(Identifier channelName, PacketByteBuf buf) {
-		return new CustomPayloadC2SPacket(channelName, buf);
+	public static Packet<ServerCommonPacketListener> createC2SPacket(Identifier channelName, PacketByteBuf buf) {
+		return createC2SPacket(new PacketByteBufPayload(channelName, buf));
+	}
+
+	public static Packet<ServerCommonPacketListener> createC2SPacket(CustomPayload payload) {
+		return new CustomPayloadC2SPacket(payload);
 	}
 
 	/**
@@ -90,6 +106,10 @@ public final class ClientNetworkingImpl {
 		return null;
 	}
 
+	public static @Nullable ClientConfigurationNetworkAddon getClientConfigurationAddon() {
+		return currentConfigurationAddon;
+	}
+
 	public static @Nullable ClientPlayNetworkAddon getClientPlayAddon() {
 		// Since Minecraft can be a bit weird, we need to check for the play addon in a few ways:
 		// If the client's player is set this will work
@@ -111,10 +131,18 @@ public final class ClientNetworkingImpl {
 		currentPlayAddon = addon;
 	}
 
+	public static void setClientConfigurationAddon(ClientConfigurationNetworkAddon addon) {
+		currentConfigurationAddon = addon;
+	}
+
 	public static void clientInit(ModContainer mod) {
 		// Reference cleanup for the locally stored addon if we are disconnected
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
 			currentPlayAddon = null;
+		});
+
+		ClientConfigurationConnectionEvents.DISCONNECT.register((handler, client) -> {
+			currentConfigurationAddon = null;
 		});
 
 		// Register a login query handler for early channel registration.
@@ -132,7 +160,7 @@ public final class ClientNetworkingImpl {
 			ids.add(buf.readIdentifier());
 		}
 
-		((ChannelInfoHolder) ((ClientLoginNetworkHandlerAccessor) handler).getConnection()).getPendingChannelsNames().addAll(ids);
+		((ChannelInfoHolder) ((ClientLoginNetworkHandlerAccessor) handler).getConnection()).getPendingChannelsNames(NetworkState.LOGIN).addAll(ids);
 		NetworkingImpl.LOGGER.debug("Received accepted channels from the server");
 
 		PacketByteBuf response = PacketByteBufs.create();
@@ -147,3 +175,4 @@ public final class ClientNetworkingImpl {
 		return CompletableFuture.completedFuture(response);
 	}
 }
+

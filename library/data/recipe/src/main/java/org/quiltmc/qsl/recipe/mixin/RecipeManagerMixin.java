@@ -31,6 +31,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeHolder;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.resource.ResourceManager;
@@ -43,10 +44,10 @@ import org.quiltmc.qsl.recipe.impl.RecipeManagerImpl;
 @Mixin(RecipeManager.class)
 public class RecipeManagerMixin {
 	@Shadow
-	private Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes;
+	private Map<RecipeType<?>, Map<Identifier, RecipeHolder<?>>> recipes;
 
 	@Shadow
-	private Map<Identifier, Recipe<?>> recipeFlatMap;
+	private Map<Identifier, RecipeHolder<?>> recipeFlatMap;
 
 	@Inject(
 			method = "apply(Ljava/util/Map;Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/util/profiler/Profiler;)V",
@@ -55,8 +56,8 @@ public class RecipeManagerMixin {
 	)
 	private void onReload(Map<Identifier, JsonElement> map, ResourceManager resourceManager, Profiler profiler,
 			CallbackInfo ci,
-			Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap,
-			ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder) {
+			Map<RecipeType<?>, ImmutableMap.Builder<Identifier, RecipeHolder<?>>> builderMap,
+			ImmutableMap.Builder<Identifier, RecipeHolder<?>> globalRecipeMapBuilder) {
 		RecipeManagerImpl.apply(map, builderMap, globalRecipeMapBuilder);
 	}
 
@@ -91,9 +92,9 @@ public class RecipeManagerMixin {
 	)
 	private void onReloadEnd(Map<Identifier, JsonElement> map, ResourceManager resourceManager, Profiler profiler,
 			CallbackInfo ci,
-			Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> builderMap,
-			ImmutableMap.Builder<Identifier, Recipe<?>> globalRecipeMapBuilder) {
-		Map<Identifier, Recipe<?>> globalRecipes = ImmutableMapBuilderUtil.specialBuild(globalRecipeMapBuilder);
+			Map<RecipeType<?>, ImmutableMap.Builder<Identifier, RecipeHolder<?>>> builderMap,
+			ImmutableMap.Builder<Identifier, RecipeHolder<?>> globalRecipeMapBuilder) {
+		Map<Identifier, RecipeHolder<?>> globalRecipes = ImmutableMapBuilderUtil.specialBuild(globalRecipeMapBuilder);
 
 		RecipeManagerImpl.applyModifications((RecipeManager) (Object) this, this.recipes, globalRecipes);
 

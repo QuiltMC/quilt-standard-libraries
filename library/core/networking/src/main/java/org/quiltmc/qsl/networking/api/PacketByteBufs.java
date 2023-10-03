@@ -50,7 +50,7 @@ public final class PacketByteBufs {
 	// Convenience methods for byte buffer methods that return a new byte buffer
 
 	/**
-	 * Wraps the newly created buf from {@code buf.readBytes} in a packet byte buffer.
+	 * Wraps the newly created buffer from {@code buf.readBytes} in a packet byte buffer.
 	 *
 	 * @param buf    the original buffer
 	 * @param length the number of bytes to transfer
