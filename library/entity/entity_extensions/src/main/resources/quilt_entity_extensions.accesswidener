@@ -17,3 +17,8 @@ transitive-accessible  class   net/minecraft/village/TradeOffers$SellMapFactory
 transitive-accessible  class   net/minecraft/village/TradeOffers$SellPotionHoldingItemFactory
 transitive-accessible  class   net/minecraft/village/TradeOffers$SuspiciousStewForEmeraldFactory
 transitive-accessible  class   net/minecraft/village/TradeOffers$TypeAwareBuyForOneEmeraldFactory
+
+# Internal Villager AWs
+accessible class net/minecraft/village/TradeOffers$TypeAwareBuyForOneEmeraldFactory
+mutable field net/minecraft/village/TradeOffers field_45128 Ljava/util/Map; #REBALANCED_PROFESSION_TO_LEVELLED_TRADE
+mutable field net/minecraft/village/TradeOffers field_45129  Ljava/util/List; #REBALANCED_WANDERING_TRADER_TRADES
