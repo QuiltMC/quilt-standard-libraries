@@ -77,7 +77,13 @@ public abstract class GroupResourcePack implements ResourcePack {
 	 * @return the list of the matching resource packs
 	 */
 	public @UnmodifiableView List<? extends ResourcePack> getPacks(String namespace) {
-		return Collections.unmodifiableList(this.namespacedPacks.get(namespace));
+		var packs = this.namespacedPacks.get(namespace);
+
+		if (packs != null) {
+			return Collections.unmodifiableList(packs);
+		}
+
+		return Collections.emptyList();
 	}
 
 	/**
@@ -131,9 +137,11 @@ public abstract class GroupResourcePack implements ResourcePack {
 			ResourcePack.ResourceConsumer consumer) {
 		var packs = this.namespacedPacks.get(namespace);
 
-		// Iterating backwards as higher-priority packs are placed at the end.
-		for (var pack : packs) {
-			pack.listResources(type, namespace, startingPath, consumer);
+		if (packs != null) {
+			// Iterating backwards as higher-priority packs are placed at the end.
+			for (var pack : packs) {
+				pack.listResources(type, namespace, startingPath, consumer);
+			}
 		}
 	}
 
