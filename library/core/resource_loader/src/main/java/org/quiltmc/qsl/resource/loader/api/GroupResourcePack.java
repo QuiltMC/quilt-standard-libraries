@@ -77,7 +77,13 @@ public abstract class GroupResourcePack implements ResourcePack {
 	 * @return the list of the matching resource packs
 	 */
 	public @UnmodifiableView List<? extends ResourcePack> getPacks(String namespace) {
-		return Collections.unmodifiableList(this.namespacedPacks.getOrDefault(namespace, Collections.emptyList()));
+		var packs = this.namespacedPacks.get(namespace);
+
+		if (packs != null) {
+			return Collections.unmodifiableList(packs);
+		}
+
+		return Collections.emptyList();
 	}
 
 	/**
