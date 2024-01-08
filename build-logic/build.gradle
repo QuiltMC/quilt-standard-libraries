@@ -22,7 +22,7 @@ dependencies {
 	implementation libs.quilt.loom
 	implementation libs.indra.git
 	implementation libs.quilt.parsers.json
-	implementation libs.quilt.gradle.licenser
+	implementation libs.yumi.gradle.licenser
 
 	implementation libs.bundles.asm
 }

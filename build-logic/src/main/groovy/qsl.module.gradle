@@ -25,7 +25,7 @@ plugins {
 	id("java-library")
 	id("maven-publish")
 	id("net.kyori.indra.git")
-	id("org.quiltmc.gradle.licenser")
+	id("dev.yumi.gradle.licenser")
 	id("qsl.common")
 }
 
@@ -193,9 +193,5 @@ javadoc {
 }
 
 license {
-	rule rootProject.file("codeformat/COLONEL_MODIFIED_HEADER")
-	rule rootProject.file("codeformat/FABRIC_MODIFIED_HEADER")
 	rule rootProject.file("codeformat/HEADER")
-
-	include "**/*.java"
 }
