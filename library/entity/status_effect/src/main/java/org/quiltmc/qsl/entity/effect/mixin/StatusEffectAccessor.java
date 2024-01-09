@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 The Quilt Project
+ * Copyright 2024 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.registry.impl.sync.server;
+package org.quiltmc.qsl.entity.effect.mixin;
 
-public interface SyncTaskHolder {
-	QuiltSyncTask qsl$getQuiltSyncTask();
-	void qsl$finishQuiltSyncTask();
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Invoker;
 
-	void qsl$finishFabricSyncTask();
+import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.effect.StatusEffectType;
+
+@Mixin(StatusEffect.class)
+public interface StatusEffectAccessor {
+	@Invoker("<init>")
+	static StatusEffect invokeNew(StatusEffectType type, int color) {
+		throw new UnsupportedOperationException("Mixin not applied");
+	}
 }

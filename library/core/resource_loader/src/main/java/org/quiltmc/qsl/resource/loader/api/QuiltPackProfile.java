@@ -18,31 +18,31 @@ package org.quiltmc.qsl.resource.loader.api;
 
 import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.resource.pack.BuiltinResourcePackProvider;
+import net.minecraft.resource.pack.BuiltinPackProvider;
+import net.minecraft.resource.pack.PackProfile;
 import net.minecraft.resource.pack.ResourcePack;
-import net.minecraft.resource.pack.ResourcePackProfile;
 
 import org.quiltmc.qsl.base.api.util.InjectedInterface;
 
 /**
- * Represents a resource pack profile with extended metadata, injected into {@link ResourcePackProfile}.
+ * Represents a resource pack profile with extended metadata, injected into {@link PackProfile}.
  */
-@InjectedInterface(ResourcePackProfile.class)
-public interface QuiltResourcePackProfile {
+@InjectedInterface(PackProfile.class)
+public interface QuiltPackProfile {
 	/**
 	 * Gets the activation type of this resource pack.
 	 * <p>
-	 * This may be influenced by a {@link QuiltResourcePack#getActivationType() resource pack's activation type},
-	 * but this should return {@link ResourcePackActivationType#ALWAYS_ENABLED},
-	 * if {@link ResourcePackProfile#isAlwaysEnabled()} returns {@code true}.
+	 * This may be influenced by a {@link QuiltPack#getActivationType() resource pack's activation type},
+	 * but this should return {@link PackActivationType#ALWAYS_ENABLED},
+	 * if {@link PackProfile#isAlwaysEnabled()} returns {@code true}.
 	 *
 	 * @return the activation type of this resource pack
 	 */
-	default @NotNull ResourcePackActivationType getActivationType() {
-		return ResourcePackActivationType.NORMAL;
+	default @NotNull PackActivationType getActivationType() {
+		return PackActivationType.NORMAL;
 	}
 
-	static ResourcePackProfile.ResourcePackFactory wrapToFactory(ResourcePack pack) {
-		return BuiltinResourcePackProvider.wrapToFactory(pack);
+	static PackProfile.PackFactory wrapToFactory(ResourcePack pack) {
+		return BuiltinPackProvider.wrapToFactory(pack);
 	}
 }

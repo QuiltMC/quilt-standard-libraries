@@ -37,7 +37,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
 import net.minecraft.registry.LayeredRegistryManager;
 import net.minecraft.resource.AutoCloseableResourceManager;
-import net.minecraft.resource.pack.ResourcePackManager;
+import net.minecraft.resource.pack.PackManager;
 import net.minecraft.server.ServerReloadableResources;
 import net.minecraft.server.WorldLoader;
 import net.minecraft.server.WorldStem;
@@ -108,7 +108,7 @@ public abstract class IntegratedServerLoaderMixin {
 			cancellable = true
 	)
 	private void onBackupExperimentalWarning(Screen parentScreen, String worldName, boolean safeMode, boolean requireBackup, CallbackInfo ci,
-			WorldSaveStorage.Session session, ResourcePackManager resourcePackManager, WorldStem worldStem) {
+			WorldSaveStorage.Session session, PackManager resourcePackManager, WorldStem worldStem) {
 		if (EXPERIMENTAL_SCREEN_OVERRIDE.toBooleanOrElse(true)
 				&& !worldStem.saveProperties().getGeneratorOptions().hasLegacyCustomOptions()) {
 			worldStem.close();

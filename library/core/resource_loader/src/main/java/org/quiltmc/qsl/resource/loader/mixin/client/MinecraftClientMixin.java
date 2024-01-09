@@ -60,7 +60,7 @@ public class MinecraftClientMixin {
 	@SuppressWarnings("target")
 	@Inject(method = "method_53522", at = @At("HEAD"))
 	private void onFirstEndReloadResources(MinecraftClient.C_vfwwgdbg c_vfwwgdbg, Optional<Throwable> error, CallbackInfo ci) {
-		ClientResourceLoaderEvents.END_RESOURCE_PACK_RELOAD.invoker().onEndResourcePackReload(
+		ClientResourceLoaderEvents.END_PACK_RELOAD.invoker().onEndPackReload(
 				new ClientResourceLoaderEventContextsImpl.ReloadEndContext(this.resourceManager, true, error)
 		);
 	}
@@ -81,7 +81,7 @@ public class MinecraftClientMixin {
 	@SuppressWarnings("target")
 	@Inject(method = "method_24228", at = @At(value = "HEAD"))
 	private void onEndReloadResources(boolean force, MinecraftClient.C_vfwwgdbg c_vfwwgdbg, CompletableFuture<Void> completableFuture, Optional<Throwable> error, CallbackInfo ci) {
-		ClientResourceLoaderEvents.END_RESOURCE_PACK_RELOAD.invoker().onEndResourcePackReload(
+		ClientResourceLoaderEvents.END_PACK_RELOAD.invoker().onEndPackReload(
 				new ClientResourceLoaderEventContextsImpl.ReloadEndContext(this.resourceManager, false, error)
 		);
 	}

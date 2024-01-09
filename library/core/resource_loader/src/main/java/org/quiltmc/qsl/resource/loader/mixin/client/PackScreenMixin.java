@@ -24,9 +24,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.pack.PackListWidget;
-import net.minecraft.client.gui.screen.pack.PackListWidget.ResourcePackEntry;
 import net.minecraft.client.gui.screen.pack.PackScreen;
+import net.minecraft.client.gui.widget.list.pack.PackEntryListWidget;
 import net.minecraft.text.Text;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -36,10 +35,10 @@ import org.quiltmc.qsl.resource.loader.impl.BuiltinResourcePackSource;
 @Mixin(PackScreen.class)
 public abstract class PackScreenMixin extends Screen {
 	@Shadow
-	private PackListWidget availablePackList;
+	private PackEntryListWidget availablePackList;
 
 	@Shadow
-	private PackListWidget selectedPackList;
+	private PackEntryListWidget selectedPackList;
 
 	private PackScreenMixin(Text text) {
 		super(text);
@@ -48,14 +47,14 @@ public abstract class PackScreenMixin extends Screen {
 	@SuppressWarnings("unchecked")
 	@Inject(method = "render", at = @At("TAIL"))
 	private void renderTooltips(GuiGraphics graphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-		ResourcePackEntry availableEntry = this.availablePackList.getHoveredEntry();
+		PackEntryListWidget.PackEntry availableEntry = this.availablePackList.getHoveredEntry();
 		if (availableEntry != null) {
 			if (((ResourcePackEntryAccessor) availableEntry).getPack().getSource() instanceof BuiltinResourcePackSource source) {
 				graphics.drawTooltip(this.textRenderer, source.getTooltip(), mouseX, mouseY);
 			}
 		}
 
-		ResourcePackEntry selectedEntry = this.selectedPackList.getHoveredEntry();
+		PackEntryListWidget.PackEntry selectedEntry = this.selectedPackList.getHoveredEntry();
 		if (selectedEntry != null) {
 			if (((ResourcePackEntryAccessor) selectedEntry).getPack().getSource() instanceof BuiltinResourcePackSource source) {
 				graphics.drawTooltip(this.textRenderer, source.getTooltip(), mouseX, mouseY);

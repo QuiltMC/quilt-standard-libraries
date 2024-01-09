@@ -19,7 +19,7 @@ package org.quiltmc.qsl.resource.loader.api;
 /**
  * Represents the resource pack activation type.
  */
-public enum ResourcePackActivationType {
+public enum PackActivationType {
 	/**
 	 * Normal activation. The user has full control over the activation of the resource pack.
 	 */

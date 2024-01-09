@@ -28,7 +28,7 @@ import net.minecraft.server.WorldStem;
 import net.minecraft.test.TestServer;
 
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
-import org.quiltmc.qsl.resource.loader.impl.ModResourcePackUtil;
+import org.quiltmc.qsl.resource.loader.impl.ModPackUtil;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderEventContextsImpl;
 
 @Mixin(TestServer.class)
@@ -42,7 +42,7 @@ public class TestServerMixin {
 			index = 0
 	)
 	private static DataPackSettings replaceDefaultDataPackSettings(DataPackSettings initialDataPacks) {
-		return ModResourcePackUtil.DEFAULT_SETTINGS;
+		return ModPackUtil.DEFAULT_SETTINGS;
 	}
 
 	@ModifyVariable(method = "create", at = @At(value = "STORE"))

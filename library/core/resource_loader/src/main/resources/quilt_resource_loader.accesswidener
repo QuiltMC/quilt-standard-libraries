@@ -4,6 +4,6 @@ accessible  class   net/minecraft/client/option/GameOptions$Visitor
 accessible  class   net/minecraft/resource/NamespaceResourceManager$ResourceEntry
 accessible  class   net/minecraft/client/MinecraftClient$C_vfwwgdbg
 
-accessible  method  net/minecraft/resource/pack/ResourcePackProfile <init>  (Ljava/lang/String;ZLnet/minecraft/resource/pack/ResourcePackProfile$ResourcePackFactory;Lnet/minecraft/text/Text;Lnet/minecraft/resource/pack/ResourcePackProfile$Info;Lnet/minecraft/resource/pack/ResourcePackProfile$InsertionPosition;ZLnet/minecraft/resource/pack/ResourcePackSource;)V
-accessible  method  net/minecraft/resource/pack/BuiltinResourcePackProvider wrapToFactory (Lnet/minecraft/resource/pack/ResourcePack;)Lnet/minecraft/resource/pack/ResourcePackProfile$ResourcePackFactory;
-accessible  method  net/minecraft/client/gui/widget/EntryListWidget getHoveredEntry  ()Lnet/minecraft/client/gui/widget/EntryListWidget$Entry;
+accessible  method  net/minecraft/resource/pack/PackProfile <init>  (Ljava/lang/String;ZLnet/minecraft/resource/pack/PackProfile$PackFactory;Lnet/minecraft/text/Text;Lnet/minecraft/resource/pack/PackProfile$Info;Lnet/minecraft/resource/pack/PackProfile$InsertionPosition;ZLnet/minecraft/resource/pack/PackSource;)V
+accessible  method  net/minecraft/resource/pack/BuiltinPackProvider wrapToFactory (Lnet/minecraft/resource/pack/ResourcePack;)Lnet/minecraft/resource/pack/PackProfile$PackFactory;
+accessible  method  net/minecraft/client/gui/widget/list/EntryListWidget getHoveredEntry  ()Lnet/minecraft/client/gui/widget/list/EntryListWidget$Entry;

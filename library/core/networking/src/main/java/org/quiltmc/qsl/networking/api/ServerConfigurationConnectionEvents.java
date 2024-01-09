@@ -27,6 +27,7 @@ import org.quiltmc.qsl.base.api.event.EventAwareListener;
 /**
  * Offers access to events related to the connection to a client on a logical server while a client is in game.
  */
+// TODO: Double check these events with fabric. Also make sure that the add tasks event is invoked or fold it into the ready event.
 public final class ServerConfigurationConnectionEvents {
 	/**
 	 * Event indicating a connection entered the CONFIGURATION state, ready for registering channel handlers.
@@ -61,6 +62,16 @@ public final class ServerConfigurationConnectionEvents {
 		}
 	});
 
+	/**
+	 * An event for adding tasks to a server configuration network handler.
+	 * Called once per connection when the optional tasks are also added.
+	 */
+	public static final Event<AddTasks> ADD_TASKS = Event.create(AddTasks.class, callbacks -> (handler, server) -> {
+		for (AddTasks callback : callbacks) {
+			callback.onAddTasks(handler, server);
+		}
+	});
+
 	private ServerConfigurationConnectionEvents() {
 	}
 
@@ -86,5 +97,13 @@ public final class ServerConfigurationConnectionEvents {
 	@FunctionalInterface
 	public interface Disconnect extends EventAwareListener {
 		void onConfigurationDisconnect(ServerConfigurationPacketHandler handler, MinecraftServer server);
+	}
+
+	/**
+	 * @see #ADD_TASKS
+	 */
+	@FunctionalInterface
+	public interface AddTasks extends EventAwareListener {
+		void onAddTasks(ServerConfigurationPacketHandler handler, MinecraftServer server);
 	}
 }

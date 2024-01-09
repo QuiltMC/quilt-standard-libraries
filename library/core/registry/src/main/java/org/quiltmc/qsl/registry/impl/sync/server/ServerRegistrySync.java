@@ -48,6 +48,7 @@ import org.quiltmc.loader.api.LoaderValue;
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.ServerConfigurationNetworking;
+import org.quiltmc.qsl.networking.api.ServerConfigurationTaskManager;
 import org.quiltmc.qsl.registry.api.sync.RegistrySynchronization;
 import org.quiltmc.qsl.registry.impl.RegistryConfig;
 import org.quiltmc.qsl.registry.impl.sync.ClientPackets;
@@ -80,23 +81,23 @@ public final class ServerRegistrySync {
 	}
 
 	public static void handleHandshake(MinecraftServer server, ServerConfigurationPacketHandler handler, ClientPackets.Handshake handshake, PacketSender<CustomPayload> responseSender) {
-		((SyncTaskHolder) handler).qsl$getQuiltSyncTask().handleHandshake(handshake);
+		((QuiltSyncTask) ((ServerConfigurationTaskManager) handler).getCurrentTask()).handleHandshake(handshake);
 	}
 
 	public static void handleSyncFailed(MinecraftServer server, ServerConfigurationPacketHandler handler, ClientPackets.SyncFailed syncFailed, PacketSender<CustomPayload> responseSender) {
-		((SyncTaskHolder) handler).qsl$getQuiltSyncTask().handleSyncFailed(syncFailed);
+		((QuiltSyncTask) ((ServerConfigurationTaskManager) handler).getCurrentTask()).handleSyncFailed(syncFailed);
 	}
 
 	public static void handleModProtocol(MinecraftServer server, ServerConfigurationPacketHandler handler, ClientPackets.ModProtocol modProtocol, PacketSender<CustomPayload> responseSender) {
-		((SyncTaskHolder) handler).qsl$getQuiltSyncTask().handleModProtocol(modProtocol);
+		((QuiltSyncTask) ((ServerConfigurationTaskManager) handler).getCurrentTask()).handleModProtocol(modProtocol);
 	}
 
 	public static void handleUnknownEntry(MinecraftServer server, ServerConfigurationPacketHandler handler, ClientPackets.UnknownEntry unknownEntry, PacketSender<CustomPayload> responseSender) {
-		((SyncTaskHolder) handler).qsl$getQuiltSyncTask().handleUnknownEntry(unknownEntry);
+		((QuiltSyncTask) ((ServerConfigurationTaskManager) handler).getCurrentTask()).handleUnknownEntry(unknownEntry);
 	}
 
 	public static void handleEnd(MinecraftServer server, ServerConfigurationPacketHandler handler, ClientPackets.End end, PacketSender<CustomPayload> responseSender) {
-		((SyncTaskHolder) handler).qsl$getQuiltSyncTask().handleEnd(end);
+		((QuiltSyncTask) ((ServerConfigurationTaskManager) handler).getCurrentTask()).handleEnd(end);
 	}
 
 	public static void readConfig() {

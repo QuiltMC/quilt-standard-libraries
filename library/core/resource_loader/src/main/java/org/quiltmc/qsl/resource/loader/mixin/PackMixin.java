@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 The Quilt Project
+ * Copyright 2021 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,24 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.advancement.mixin;
+package org.quiltmc.qsl.resource.loader.mixin;
 
-import com.google.common.collect.BiMap;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
+import org.spongepowered.asm.mixin.Shadow;
 
-import net.minecraft.advancement.criterion.Criteria;
-import net.minecraft.advancement.criterion.Criterion;
-import net.minecraft.util.Identifier;
+import net.minecraft.resource.pack.ResourcePack;
+import net.minecraft.text.Text;
 
-@Mixin(Criteria.class)
-public interface CriteriaAccessor {
-	@Accessor("VALUES")
-	static BiMap<Identifier, Criterion<?>> values() {
-		throw new IllegalStateException("Mixin injection failed");
+import org.quiltmc.qsl.resource.loader.api.QuiltPack;
+
+@Mixin(ResourcePack.class)
+public interface PackMixin extends QuiltPack {
+	@Shadow
+	String getName();
+
+	@Override
+	default @NotNull Text getDisplayName() {
+		return Text.of(this.getName());
 	}
 }

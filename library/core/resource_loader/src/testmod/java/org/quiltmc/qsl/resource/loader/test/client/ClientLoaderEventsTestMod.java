@@ -22,13 +22,13 @@ import org.slf4j.LoggerFactory;
 import org.quiltmc.qsl.resource.loader.api.client.ClientResourceLoaderEvents;
 import org.quiltmc.qsl.resource.loader.test.ResourceLoaderTestMod;
 
-public class ClientResourceLoaderEventsTestMod implements ClientResourceLoaderEvents.StartResourcePackReload,
-		ClientResourceLoaderEvents.EndResourcePackReload {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ClientResourceLoaderEventsTestMod.class);
+public class ClientLoaderEventsTestMod implements ClientResourceLoaderEvents.StartPackReload,
+		ClientResourceLoaderEvents.EndPackReload {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ClientLoaderEventsTestMod.class);
 	private long start;
 
 	@Override
-	public void onStartResourcePackReload(ClientResourceLoaderEvents.StartResourcePackReload.Context context) {
+	public void onStartPackReload(ClientResourceLoaderEvents.StartPackReload.Context context) {
 		LOGGER.info("Preparing for resource pack reload, resource manager: {}. Is it the first time?: {}",
 				context.resourceManager(), context.isFirst());
 
@@ -37,7 +37,7 @@ public class ClientResourceLoaderEventsTestMod implements ClientResourceLoaderEv
 	}
 
 	@Override
-	public void onEndResourcePackReload(ClientResourceLoaderEvents.EndResourcePackReload.Context context) {
+	public void onEndPackReload(ClientResourceLoaderEvents.EndPackReload.Context context) {
 		LOGGER.info("Took {}ms to perform resource pack reload.", (System.currentTimeMillis() - this.start));
 
 		context.error().ifPresentOrElse(

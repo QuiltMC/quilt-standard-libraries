@@ -30,7 +30,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import net.minecraft.resource.pack.ResourcePackManager;
+import net.minecraft.resource.pack.PackManager;
 import net.minecraft.server.Main;
 import net.minecraft.server.Services;
 import net.minecraft.server.dedicated.EulaReader;
@@ -53,7 +53,7 @@ public class MainMixin {
 			method = "main",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/resource/pack/VanillaDataPackProvider;createDataPackManager(Lnet/minecraft/world/storage/WorldSaveStorage$Session;)Lnet/minecraft/resource/pack/ResourcePackManager;",
+					target = "Lnet/minecraft/resource/pack/VanillaDataPackProvider;createPackManager(Lnet/minecraft/world/storage/WorldSaveStorage$Session;)Lnet/minecraft/resource/pack/PackManager;",
 					shift = At.Shift.BY,
 					by = 2,
 					remap = true
@@ -69,7 +69,7 @@ public class MainMixin {
 								OptionSpec<?> optionSpec11, OptionSpec<?> optionSpec12, OptionSpec<?> optionSpec13, OptionSpec<?> optionSpec14, OptionSpec<?> optionSpec15,
 								OptionSet optionSet, Path path, Path path2, ServerPropertiesLoader serverPropertiesLoader,
 								Path path3, EulaReader eulaReader, File file, Services services, String string, WorldSaveStorage worldSaveStorage,
-								WorldSaveStorage.Session session, WorldSaveSummary worldSaveSummary, boolean bl, ResourcePackManager resourcePackManager) {
+								WorldSaveStorage.Session session, WorldSaveSummary worldSaveSummary, boolean bl, PackManager resourcePackManager) {
 		if (QuiltGameTestImpl.ENABLED) {
 			QuiltGameTestImpl.runHeadlessServer(session, resourcePackManager);
 			ci.cancel(); // Do not progress in starting the normal dedicated server.

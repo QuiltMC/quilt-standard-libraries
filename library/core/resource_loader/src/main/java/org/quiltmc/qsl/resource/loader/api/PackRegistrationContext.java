@@ -25,10 +25,10 @@ import net.minecraft.resource.pack.ResourcePack;
 /**
  * Represents a context to register resource packs at will invisibly from the user.
  *
- * @see ResourceLoader#getRegisterDefaultResourcePackEvent()
- * @see ResourceLoader#getRegisterTopResourcePackEvent()
+ * @see ResourceLoader#getRegisterDefaultPackEvent()
+ * @see ResourceLoader#getRegisterTopPackEvent()
  */
-public interface ResourcePackRegistrationContext {
+public interface PackRegistrationContext {
 	/**
 	 * {@return the resource manager that contains the currently existing resource packs}
 	 */
@@ -45,8 +45,8 @@ public interface ResourcePackRegistrationContext {
 	void addResourcePack(@NotNull ResourcePack pack);
 
 	/**
-	 * Functional interface to be implemented on callbacks for {@link ResourceLoader#getRegisterDefaultResourcePackEvent()}
-	 * and {@link ResourceLoader#getRegisterTopResourcePackEvent()}.
+	 * Functional interface to be implemented on callbacks for {@link ResourceLoader#getRegisterDefaultPackEvent()}
+	 * and {@link ResourceLoader#getRegisterTopPackEvent()}.
 	 */
 	@FunctionalInterface
 	interface Callback {
@@ -55,6 +55,6 @@ public interface ResourcePackRegistrationContext {
 		 *
 		 * @param context the context
 		 */
-		void onRegisterPack(@NotNull ResourcePackRegistrationContext context);
+		void onRegisterPack(@NotNull PackRegistrationContext context);
 	}
 }

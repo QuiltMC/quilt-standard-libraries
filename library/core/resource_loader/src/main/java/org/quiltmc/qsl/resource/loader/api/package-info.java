@@ -20,13 +20,13 @@
  * <p>
  * <h3>Quick note about vocabulary in Resource Loader and Minecraft:</h3>
  * <ul>
- *  <li>Resource Pack refers to both client-sided resource pack and data pack.</li>
- *  <li>Virtual Resource Pack refers to a resource pack that may be generated at runtime, or simply doesn't exist directly on disk.</li>
- *  <li>Group Resource Pack refers to a virtual resource pack that groups multiple resource packs together.</li>
+ *  <li>(Resource) Pack refers to both client-sided resource pack and data pack.</li>
+ *  <li>Virtual Pack refers to a resource pack that may be generated at runtime, or simply doesn't exist directly on disk.</li>
+ *  <li>Group Pack refers to a virtual resource pack that groups multiple resource packs together.</li>
  * </ul>
  *
  * <p>
- * <h3>Modded Resource Pack Handling</h3>
+ * <h3>Modded Pack Handling</h3>
  * The Resource Loader will create a resource pack for each mod that provides resources in {@code assets} or {@code data}
  * top-level directories of the mod.
  * Those mod resource packs are grouped into the default resource pack.
@@ -36,14 +36,14 @@
  * <p>
  * <h4>Built-in Mod Resource Pack</h4>
  * The Resource Loader adds manually registered mod resource packs. Those resource packs are registered with
- * {@link org.quiltmc.qsl.resource.loader.api.ResourceLoader#registerBuiltinResourcePack(Identifier, ResourcePackActivationType)}, or
- * {@link org.quiltmc.qsl.resource.loader.api.ResourceLoader#registerBuiltinResourcePack(Identifier, org.quiltmc.loader.api.ModContainer, ResourcePackActivationType)}
+ * {@link org.quiltmc.qsl.resource.loader.api.ResourceLoader#registerBuiltinPack(Identifier, PackActivationType)}, or
+ * {@link org.quiltmc.qsl.resource.loader.api.ResourceLoader#registerBuiltinPack(Identifier, org.quiltmc.loader.api.ModContainer, PackActivationType)}
  *
  * <p>
  * <h4>Resource Pack Injection</h4>
  * <p>
- * <h5>Resource Pack Profile Provider</h5>
- * The Resource Loader gives a method to register {@link net.minecraft.resource.pack.ResourcePackProvider ResourcePackProviders},
+ * <h5>Pack Profile Provider</h5>
+ * The Resource Loader gives a method to register {@link net.minecraft.resource.pack.PackProvider PackProviders},
  * which may be used to add new resource packs that are visible to the player in the resource pack selection screens or the {@code datapack} command.
  *
  * <p>
@@ -52,16 +52,16 @@
  * The Resource Loader provides utilities to work with such kind of resource packs:
  * <ul>
  *     <li>
- *         {@link org.quiltmc.qsl.resource.loader.api.ResourceLoader#getRegisterDefaultResourcePackEvent()}
+ *         {@link org.quiltmc.qsl.resource.loader.api.ResourceLoader#getRegisterDefaultPackEvent()}
  *         - an event to register resource packs that are injected into the default resource pack.
  *     </li>
  *     <li>
- *         {@link org.quiltmc.qsl.resource.loader.api.ResourceLoader#getRegisterTopResourcePackEvent()}
+ *         {@link org.quiltmc.qsl.resource.loader.api.ResourceLoader#getRegisterTopPackEvent()}
  *         - an event to register resource packs that are on the top of the resource pack hierarchy, those resource packs are invisible to the player.
  *     </li>
- *     <li>{@link org.quiltmc.qsl.resource.loader.api.InMemoryResourcePack} - a resource pack implementation whose resources are stored in the live memory.</li>
+ *     <li>{@link org.quiltmc.qsl.resource.loader.api.InMemoryPack} - a resource pack implementation whose resources are stored in the live memory.</li>
  *     <li>
- *         {@link org.quiltmc.qsl.resource.loader.api.GroupResourcePack} - a resource pack implementation which can be used to group multiple resource packs into one.
+ *         {@link org.quiltmc.qsl.resource.loader.api.GroupPack} - a resource pack implementation which can be used to group multiple resource packs into one.
  *     </li>
  * </ul>
  *

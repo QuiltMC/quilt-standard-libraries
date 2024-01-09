@@ -27,19 +27,19 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePack;
 
-import org.quiltmc.qsl.resource.loader.api.ResourcePackRegistrationContext;
+import org.quiltmc.qsl.resource.loader.api.PackRegistrationContext;
 
 @ApiStatus.Internal
-final class ResourcePackRegistrationContextImpl implements ResourcePackRegistrationContext {
+final class PackRegistrationContextImpl implements PackRegistrationContext {
 	private final MultiPackResourceManager resourceManager;
 	private final Consumer<ResourcePack> packConsumer;
 
-	ResourcePackRegistrationContextImpl(MultiPackResourceManager resourceManager, Consumer<ResourcePack> packConsumer) {
+	PackRegistrationContextImpl(MultiPackResourceManager resourceManager, Consumer<ResourcePack> packConsumer) {
 		this.resourceManager = resourceManager;
 		this.packConsumer = packConsumer;
 	}
 
-	ResourcePackRegistrationContextImpl(ResourceType type, List<ResourcePack> packs, Consumer<ResourcePack> packConsumer) {
+	PackRegistrationContextImpl(ResourceType type, List<ResourcePack> packs, Consumer<ResourcePack> packConsumer) {
 		this(new MultiPackResourceManager(type, packs), packConsumer);
 	}
 

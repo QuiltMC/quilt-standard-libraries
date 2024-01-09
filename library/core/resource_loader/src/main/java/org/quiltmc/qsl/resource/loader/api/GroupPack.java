@@ -48,13 +48,13 @@ import net.minecraft.util.Identifier;
  *   <li>etc.</li>
  * </ul>
  */
-public abstract class GroupResourcePack implements ResourcePack {
+public abstract class GroupPack implements ResourcePack {
 	protected final ResourceType type;
 	protected final List<? extends ResourcePack> packs;
 	protected final Map<String, List<ResourcePack>> namespacedPacks = new Object2ObjectOpenHashMap<>();
 	private boolean builtin;
 
-	public GroupResourcePack(@NotNull ResourceType type, @NotNull List<? extends ResourcePack> packs) {
+	public GroupPack(@NotNull ResourceType type, @NotNull List<? extends ResourcePack> packs) {
 		this.type = type;
 		this.packs = packs;
 		this.recompute();
@@ -87,7 +87,7 @@ public abstract class GroupResourcePack implements ResourcePack {
 	 */
 	public @NotNull Stream<? extends ResourcePack> streamPacks() {
 		return this.packs.stream().mapMulti((pack, consumer) -> {
-			if (pack instanceof GroupResourcePack grouped) {
+			if (pack instanceof GroupPack grouped) {
 				grouped.streamPacks().forEach(consumer);
 			} else {
 				consumer.accept(pack);
@@ -159,7 +159,7 @@ public abstract class GroupResourcePack implements ResourcePack {
 	/**
 	 * Represents a group resource pack which wraps a "base" resource pack.
 	 */
-	public static class Wrapped extends GroupResourcePack {
+	public static class Wrapped extends GroupPack {
 		private final ResourcePack basePack;
 
 		/**

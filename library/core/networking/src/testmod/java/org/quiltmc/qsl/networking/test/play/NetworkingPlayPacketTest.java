@@ -68,8 +68,8 @@ public final class NetworkingPlayPacketTest implements ModInitializer {
 					bufB.writeText(Text.literal("Bundled #2"));
 
 					var packet = new PacketBundleS2CPacket(List.of(
-						(Packet<ClientPlayPacketListener>) (Object) ServerPlayNetworking.createS2CPacket(TEST_CHANNEL, bufA),
-						(Packet<ClientPlayPacketListener>) (Object) ServerPlayNetworking.createS2CPacket(TEST_CHANNEL, bufB)
+							(Packet<ClientPlayPacketListener>) (Object) ServerPlayNetworking.createS2CPacket(TEST_CHANNEL, bufA),
+							(Packet<ClientPlayPacketListener>) (Object) ServerPlayNetworking.createS2CPacket(TEST_CHANNEL, bufB)
 					));
 					ctx.getSource().getPlayer().networkHandler.send(packet);
 					return Command.SINGLE_SUCCESS;

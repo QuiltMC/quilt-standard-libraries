@@ -6,6 +6,7 @@
     "EffectCommandMixin",
     "LivingEntityMixin",
     "MilkBucketItemMixin",
+    "StatusEffectAccessor",
     "StatusEffectMixin"
   ],
   "injectors": {

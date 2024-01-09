@@ -91,7 +91,7 @@ public class RegistrySyncText {
 		}
 
 		if (!namespacesList.isEmpty()) {
-			namespaceText.append(Text.translatableWithFallback("quilt.core.registry_sync.more",  "%s more...", namespacesList.size()));
+			namespaceText.append(Text.translatableWithFallback("quilt.core.registry_sync.more", "%s more...", namespacesList.size()));
 		}
 
 		return namespaceText;
@@ -106,7 +106,7 @@ public class RegistrySyncText {
 	}
 
 	public static Text missingRegistry(Identifier identifier, boolean exists) {
-		return Text.translatableWithFallback("quilt.core.registry_sync." + (exists ? "unsupported" : "missing") + "_registry", "Tried to sync '%s' registry, which is "  + (exists ? "unsupported" : "missing" + "!"), identifier.toString());
+		return Text.translatableWithFallback("quilt.core.registry_sync." + (exists ? "unsupported" : "missing") + "_registry", "Tried to sync '%s' registry, which is " + (exists ? "unsupported" : "missing" + "!"), identifier.toString());
 	}
 
 	public static Text unsupportedModVersion(List<ModProtocolDef> unsupported, ModProtocolDef missingPrioritized) {

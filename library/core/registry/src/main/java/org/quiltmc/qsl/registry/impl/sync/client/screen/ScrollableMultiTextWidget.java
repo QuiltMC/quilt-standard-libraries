@@ -25,11 +25,11 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.widget.GridWidget;
-import net.minecraft.client.gui.widget.MultilineTextWidget;
 import net.minecraft.client.gui.widget.ScrollableWidget;
 import net.minecraft.client.gui.widget.SpacerWidget;
-import net.minecraft.client.gui.widget.container.LayoutSettings;
+import net.minecraft.client.gui.widget.layout.GridWidget;
+import net.minecraft.client.gui.widget.layout.LayoutSettings;
+import net.minecraft.client.gui.widget.text.MultilineTextWidget;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 

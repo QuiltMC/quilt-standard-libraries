@@ -21,8 +21,10 @@ import org.jetbrains.annotations.NotNull;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffectType;
 
 import org.quiltmc.qsl.base.api.util.TriState;
+import org.quiltmc.qsl.entity.effect.mixin.StatusEffectAccessor;
 
 /**
  * Utilities for dealing with status effects.
@@ -49,5 +51,16 @@ public final class StatusEffectUtils {
 		} else {
 			return eventResult.toBooleanOrElse(false);
 		}
+	}
+
+	/**
+	 * Creates a new status effect by calling {@link StatusEffect#StatusEffect(StatusEffectType, int)}.
+	 *
+	 * @param type  the type for the effect
+	 * @param color the color for the effect
+	 * @return the new effect
+	 */
+	public static StatusEffect createEffect(StatusEffectType type, int color) {
+		return StatusEffectAccessor.invokeNew(type, color);
 	}
 }

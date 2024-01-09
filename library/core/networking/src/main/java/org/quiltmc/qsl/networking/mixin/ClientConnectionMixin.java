@@ -18,6 +18,8 @@ package org.quiltmc.qsl.networking.mixin;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -55,11 +57,11 @@ abstract class ClientConnectionMixin implements ChannelInfoHolder {
 	public abstract void disconnect(Text disconnectReason);
 
 	@Unique
-	private Collection<Identifier> playChannels;
+	private Map<NetworkState, Collection<Identifier>> playChannels;
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void initAddedFields(NetworkSide side, CallbackInfo ci) {
-		this.playChannels = Collections.newSetFromMap(new ConcurrentHashMap<>());
+		this.playChannels = new HashMap<>();
 	}
 
 	// Must be fully qualified due to mixin not working in production without it
@@ -101,6 +103,6 @@ abstract class ClientConnectionMixin implements ChannelInfoHolder {
 
 	@Override
 	public Collection<Identifier> getPendingChannelsNames(NetworkState state) {
-		return this.playChannels;
+		return this.playChannels.computeIfAbsent(state, (s) -> Collections.newSetFromMap(new ConcurrentHashMap<>()));
 	}
 }

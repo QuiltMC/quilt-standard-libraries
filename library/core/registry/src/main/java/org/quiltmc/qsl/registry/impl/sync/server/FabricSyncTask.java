@@ -22,6 +22,8 @@ import net.minecraft.network.ServerConfigurationPacketHandler;
 import net.minecraft.network.configuration.ConfigurationTask;
 import net.minecraft.network.packet.Packet;
 
+import org.quiltmc.qsl.networking.api.ServerConfigurationTaskManager;
+
 public class FabricSyncTask implements ConfigurationTask {
 	public static final Type TYPE = new Type("fabric:registry_sync");
 	private final ServerConfigurationPacketHandler packetHandler;
@@ -42,6 +44,6 @@ public class FabricSyncTask implements ConfigurationTask {
 	}
 
 	public void handleComplete() {
-		((SyncTaskHolder) this.packetHandler).qsl$finishFabricSyncTask();
+		((ServerConfigurationTaskManager) this.packetHandler).finishTask(TYPE);
 	}
 }

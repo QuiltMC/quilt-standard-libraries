@@ -52,7 +52,7 @@ public abstract class ReloadableResourceManagerMixin implements ResourceManager 
 
 		if (firstReload != null) {
 			try {
-				ClientResourceLoaderEvents.START_RESOURCE_PACK_RELOAD.invoker().onStartResourcePackReload(
+				ClientResourceLoaderEvents.START_PACK_RELOAD.invoker().onStartPackReload(
 						new ClientResourceLoaderEventContextsImpl(this, firstReload)
 				);
 			} finally {

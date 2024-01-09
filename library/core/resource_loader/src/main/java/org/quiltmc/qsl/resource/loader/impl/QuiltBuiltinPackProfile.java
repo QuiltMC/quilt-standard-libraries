@@ -23,69 +23,69 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import net.minecraft.SharedConstants;
+import net.minecraft.resource.pack.PackCompatibility;
+import net.minecraft.resource.pack.PackProfile;
+import net.minecraft.resource.pack.PackSource;
 import net.minecraft.resource.pack.ResourcePack;
-import net.minecraft.resource.pack.ResourcePackCompatibility;
-import net.minecraft.resource.pack.ResourcePackProfile;
-import net.minecraft.resource.pack.ResourcePackSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
-import org.quiltmc.qsl.resource.loader.api.QuiltResourcePackProfile;
-import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
+import org.quiltmc.qsl.resource.loader.api.QuiltPackProfile;
+import org.quiltmc.qsl.resource.loader.api.PackActivationType;
 
 @ApiStatus.Internal
-public final class QuiltBuiltinResourcePackProfile extends ResourcePackProfile {
+public final class QuiltBuiltinPackProfile extends PackProfile {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private final ResourcePack pack;
 
-	static @Nullable QuiltBuiltinResourcePackProfile of(ModNioResourcePack pack) {
+	static @Nullable QuiltBuiltinPackProfile of(ModNioPack pack) {
 		int version = SharedConstants.getGameVersion().getResourceVersion(pack.type);
-		Info info = readInfoFromPack(pack.getName(), QuiltResourcePackProfile.wrapToFactory(pack), version);
+		Info info = readInfoFromPack(pack.getName(), QuiltPackProfile.wrapToFactory(pack), version);
 
 		if (info == null) {
 			LOGGER.warn("Couldn't find pack meta for pack {}.", pack.getName());
 			return null;
 		}
 
-		return new QuiltBuiltinResourcePackProfile(pack, info);
+		return new QuiltBuiltinPackProfile(pack, info);
 	}
 
-	private QuiltBuiltinResourcePackProfile(ModNioResourcePack pack, Info info) {
+	private QuiltBuiltinPackProfile(ModNioPack pack, Info info) {
 		super(
 				pack.getName(),
-				pack.getActivationType() == ResourcePackActivationType.ALWAYS_ENABLED,
-				QuiltResourcePackProfile.wrapToFactory(pack),
+                pack.getActivationType() == PackActivationType.ALWAYS_ENABLED,
+				QuiltPackProfile.wrapToFactory(pack),
 				pack.getDisplayName(),
 				info,
-				ResourcePackProfile.InsertionPosition.TOP,
+				PackProfile.InsertionPosition.TOP,
 				false,
-				new BuiltinResourcePackSource(pack)
+				new BuiltinPackSource(pack)
 		);
 		this.pack = pack;
 	}
 
 	@Override
-	public ResourcePackCompatibility getCompatibility() {
+	public PackCompatibility getCompatibility() {
 		// This is to ease multi-version mods whose built-in packs actually work across versions.
-		return ResourcePackCompatibility.COMPATIBLE;
+		return PackCompatibility.COMPATIBLE;
 	}
 
 	@Override
-	public @NotNull ResourcePackActivationType getActivationType() {
+	public @NotNull PackActivationType getActivationType() {
 		return this.pack.getActivationType();
 	}
 
 	/**
-	 * Represents a built-in resource pack source.
-	 * Similar to {@link ResourcePackSource#PACK_SOURCE_BUILTIN} but specifies the mod name too.
+	 * Represents a built-in pack source.
+	 * Similar to {@link PackSource#PACK_SOURCE_BUILTIN} but specifies the mod name too.
 	 */
-	public static class BuiltinResourcePackSource implements ResourcePackSource {
+	public static class BuiltinPackSource implements PackSource {
 		private static final Text SOURCE_BUILTIN_TEXT = Text.translatable("pack.source.builtin");
-		private final ModNioResourcePack pack;
+		private final ModNioPack pack;
 		private final Text text;
 		private final Text tooltip;
 
-		BuiltinResourcePackSource(ModNioResourcePack pack) {
+		BuiltinPackSource(ModNioPack pack) {
 			String modName = pack.modInfo.name();
 
 			if (modName == null) {

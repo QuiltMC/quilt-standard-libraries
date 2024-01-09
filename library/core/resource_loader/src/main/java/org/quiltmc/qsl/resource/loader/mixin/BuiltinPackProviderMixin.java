@@ -23,20 +23,20 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.resource.pack.BuiltinResourcePackProvider;
-import net.minecraft.resource.pack.ResourcePackProfile;
+import net.minecraft.resource.pack.BuiltinPackProvider;
+import net.minecraft.resource.pack.PackProfile;
 import net.minecraft.resource.pack.VanillaDataPackProvider;
 
-import org.quiltmc.qsl.resource.loader.impl.ModResourcePackProvider;
+import org.quiltmc.qsl.resource.loader.impl.ModPackProvider;
 
-@Mixin(BuiltinResourcePackProvider.class)
-public class BuiltinResourcePackProviderMixin {
+@Mixin(BuiltinPackProvider.class)
+public class BuiltinPackProviderMixin {
 	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "registerAdditionalPacks", at = @At("RETURN"))
-	private void onRegisterAdditionalPacks(Consumer<ResourcePackProfile> profileAdder, CallbackInfo ci) {
+	private void onRegisterAdditionalPacks(Consumer<PackProfile> profileAdder, CallbackInfo ci) {
 		// Register built-in resource packs after vanilla built-in resource packs are registered.
 		if (((Object) this) instanceof VanillaDataPackProvider) {
-			ModResourcePackProvider.SERVER_RESOURCE_PACK_PROVIDER.register(profileAdder);
+			ModPackProvider.SERVER_RESOURCE_PACK_PROVIDER.register(profileAdder);
 		}
 	}
 }

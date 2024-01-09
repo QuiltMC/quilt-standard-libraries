@@ -30,7 +30,7 @@ import org.quiltmc.qsl.base.api.util.InjectedInterface;
  * Represents a resource pack with extended metadata, injected into {@link net.minecraft.resource.pack.ResourcePack}.
  */
 @InjectedInterface(ResourcePack.class)
-public interface QuiltResourcePack {
+public interface QuiltPack {
 	/**
 	 * {@return a display name for this resource pack}
 	 */
@@ -42,13 +42,13 @@ public interface QuiltResourcePack {
 	/**
 	 * Gets the activation type of this resource pack.
 	 * <p>
-	 * This only serves as a hint as ultimately the {@link net.minecraft.resource.pack.ResourcePackProfile}
+	 * This only serves as a hint as ultimately the {@link net.minecraft.resource.pack.PackProfile}
 	 * has the last word.
 	 *
 	 * @return the activation type of this resource pack
 	 */
-	default @NotNull ResourcePackActivationType getActivationType() {
-		return ResourcePackActivationType.NORMAL;
+	default @NotNull PackActivationType getActivationType() {
+		return PackActivationType.NORMAL;
 	}
 
 	/**
