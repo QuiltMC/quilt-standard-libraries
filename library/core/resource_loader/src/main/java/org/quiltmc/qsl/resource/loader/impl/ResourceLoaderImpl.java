@@ -349,7 +349,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	 * @param type    the type of resource
 	 * @param subPath the resource pack sub path directory in mods, may be {@code null}
 	 */
-	public static void appendModResourcePacks(List<ResourcePack> packs, ResourceType type, @Nullable String subPath) {
+	public static void appendModPacks(List<ResourcePack> packs, ResourceType type, @Nullable String subPath) {
 		var modResourcePacks = type == ResourceType.CLIENT_RESOURCES
 				? CLIENT_MOD_RESOURCE_PACKS : SERVER_MOD_RESOURCE_PACKS;
 		var existingList = modResourcePacks.get(subPath);
@@ -395,10 +395,10 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		packs.addAll(packList);
 	}
 
-	public static GroupPack.Wrapped buildMinecraftResourcePack(ResourceType type, ResourcePack vanillaPack) {
+	public static GroupPack.Wrapped buildMinecraftPack(ResourceType type, ResourcePack vanillaPack) {
 		// Build a list of mod resource packs.
 		var packs = new ArrayList<ResourcePack>();
-		appendModResourcePacks(packs, type, null);
+		appendModPacks(packs, type, null);
 
 		var pack = new GroupPack.Wrapped(type, vanillaPack, packs, false);
 		int[] lastExtraPackIndex = new int[] {1};
@@ -413,10 +413,10 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		return pack;
 	}
 
-	public static GroupPack.Wrapped buildVanillaBuiltinResourcePack(ResourcePack vanillaPack, ResourceType type, String packName) {
+	public static GroupPack.Wrapped buildVanillaBuiltinPack(ResourcePack vanillaPack, ResourceType type, String packName) {
 		// Build a list of mod resource packs.
 		var packs = new ArrayList<ResourcePack>();
-		appendModResourcePacks(packs, type, packName);
+		appendModPacks(packs, type, packName);
 
 		return new GroupPack.Wrapped(type, vanillaPack, packs, false);
 	}
@@ -438,8 +438,8 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	 * @return {@code true} if successfully registered the resource pack, or {@code false} otherwise
 	 * @see ResourceLoader#registerBuiltinPack(Identifier, ModContainer, PackActivationType, Text)
 	 */
-	public static boolean registerBuiltinResourcePack(Identifier id, String subPath, ModContainer container,
-													  PackActivationType activationType, Text displayName) {
+	public static boolean registerBuiltinPack(Identifier id, String subPath, ModContainer container,
+			PackActivationType activationType, Text displayName) {
 		Path resourcePackPath = container.getPath(subPath).toAbsolutePath().normalize();
 
 		if (!Files.exists(resourcePackPath)) {
@@ -450,19 +450,19 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 
 		boolean result = false;
 		if (MinecraftQuiltLoader.getEnvironmentType() == EnvType.CLIENT) {
-			result = registerBuiltinResourcePack(ResourceType.CLIENT_RESOURCES,
-					newBuiltinResourcePack(container, name, displayName, resourcePackPath, ResourceType.CLIENT_RESOURCES, activationType)
+			result = registerBuiltinPack(ResourceType.CLIENT_RESOURCES,
+					newBuiltinPack(container, name, displayName, resourcePackPath, ResourceType.CLIENT_RESOURCES, activationType)
 			);
 		}
 
-		result |= registerBuiltinResourcePack(ResourceType.SERVER_DATA,
-				newBuiltinResourcePack(container, name, displayName, resourcePackPath, ResourceType.SERVER_DATA, activationType)
+		result |= registerBuiltinPack(ResourceType.SERVER_DATA,
+				newBuiltinPack(container, name, displayName, resourcePackPath, ResourceType.SERVER_DATA, activationType)
 		);
 
 		return result;
 	}
 
-	private static boolean registerBuiltinResourcePack(ResourceType type, ModNioPack pack) {
+	private static boolean registerBuiltinPack(ResourceType type, ModNioPack pack) {
 		if (QuiltLoader.isDevelopmentEnvironment() || !pack.getNamespaces(type).isEmpty()) {
 			var builtinResourcePacks = type == ResourceType.CLIENT_RESOURCES
 					? CLIENT_BUILTIN_RESOURCE_PACKS : SERVER_BUILTIN_RESOURCE_PACKS;
@@ -472,12 +472,12 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		return false;
 	}
 
-	private static ModNioPack newBuiltinResourcePack(ModContainer container, String name, Text displayName,
-													 Path resourcePackPath, ResourceType type, PackActivationType activationType) {
+	private static ModNioPack newBuiltinPack(ModContainer container, String name, Text displayName,
+			Path resourcePackPath, ResourceType type, PackActivationType activationType) {
 		return new ModNioPack(name, container.metadata(), displayName, activationType, resourcePackPath, type, null);
 	}
 
-	public static void registerBuiltinResourcePacks(ResourceType type, Consumer<PackProfile> profileAdder) {
+	public static void registerBuiltinPacks(ResourceType type, Consumer<PackProfile> profileAdder) {
 		var builtinPacks = type == ResourceType.CLIENT_RESOURCES
 				? CLIENT_BUILTIN_RESOURCE_PACKS : SERVER_BUILTIN_RESOURCE_PACKS;
 
@@ -505,7 +505,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	 * @param map the language map
 	 */
 	public static void appendLanguageEntries(@NotNull Map<String, String> map) {
-		var pack = ResourceLoaderImpl.buildMinecraftResourcePack(ResourceType.CLIENT_RESOURCES,
+		var pack = ResourceLoaderImpl.buildMinecraftPack(ResourceType.CLIENT_RESOURCES,
 				VanillaDataPackProviderAccessor.invokeDefaultPackBuilder()
 		);
 

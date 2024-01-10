@@ -283,7 +283,7 @@ public interface ResourceLoader {
 	 */
 	static boolean registerBuiltinPack(@NotNull Identifier id, @NotNull ModContainer container,
 									   @NotNull PackActivationType activationType, Text displayName) {
-		return ResourceLoaderImpl.registerBuiltinResourcePack(id, "resourcepacks/" + id.getPath(), container,
+		return ResourceLoaderImpl.registerBuiltinPack(id, "resourcepacks/" + id.getPath(), container,
 				activationType, displayName);
 	}
 }

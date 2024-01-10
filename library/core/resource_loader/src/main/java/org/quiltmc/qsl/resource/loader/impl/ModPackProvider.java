@@ -52,7 +52,7 @@ public final class ModPackProvider implements PackProvider {
 			5. (Invisible) High-priority virtual resource packs
 		 */
 
-		ResourceLoaderImpl.registerBuiltinResourcePacks(this.type, profileAdder);
+		ResourceLoaderImpl.registerBuiltinPacks(this.type, profileAdder);
 
 		for (var provider : ResourceLoaderImpl.get(this.type).resourcePackProfileProviders) {
 			provider.register(profileAdder);

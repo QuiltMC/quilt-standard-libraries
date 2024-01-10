@@ -48,7 +48,7 @@ public class VanillaDataPackProviderMixin {
 			index = 0
 	)
 	private ResourcePack onPackGet(ResourcePack pack) {
-		return ResourceLoaderImpl.buildMinecraftResourcePack(ResourceType.SERVER_DATA, pack);
+		return ResourceLoaderImpl.buildMinecraftPack(ResourceType.SERVER_DATA, pack);
 	}
 
 	@ModifyArg(
@@ -62,7 +62,7 @@ public class VanillaDataPackProviderMixin {
 	private PackProfile.PackFactory onCreateBuiltinResourcePackProfile(String name, Text displayName, boolean alwaysEnabled,
 			PackProfile.PackFactory factory, ResourceType type, PackProfile.InsertionPosition insertionPosition,
 			PackSource source) {
-		return QuiltPackProfile.wrapToFactory(ResourceLoaderImpl.buildVanillaBuiltinResourcePack(factory.openPrimary(name), ResourceType.SERVER_DATA,
+		return QuiltPackProfile.wrapToFactory(ResourceLoaderImpl.buildVanillaBuiltinPack(factory.openPrimary(name), ResourceType.SERVER_DATA,
 				"data/" + DATA_PACKS_DIR.getNamespace() + '/' + DATA_PACKS_DIR.getPath() + '/' + name
 		));
 	}

@@ -59,7 +59,7 @@ public abstract class ClientBuiltinResourcePackProviderMixin {
 			PackProfile.PackFactory factory, ResourceType type, PackProfile.InsertionPosition insertionPosition,
 			PackSource source) {
 		if (BUILTIN_PACK_DISPLAY_NAMES.containsKey(name)) {
-			return QuiltPackProfile.wrapToFactory(ResourceLoaderImpl.buildVanillaBuiltinResourcePack(factory.openPrimary(name), ResourceType.CLIENT_RESOURCES, name));
+			return QuiltPackProfile.wrapToFactory(ResourceLoaderImpl.buildVanillaBuiltinPack(factory.openPrimary(name), ResourceType.CLIENT_RESOURCES, name));
 		}
 
 		return factory;
@@ -74,7 +74,7 @@ public abstract class ClientBuiltinResourcePackProviderMixin {
 			index = 0
 	)
 	private ResourcePack onPackGet(ResourcePack pack) {
-		return ResourceLoaderImpl.buildMinecraftResourcePack(ResourceType.CLIENT_RESOURCES, pack);
+		return ResourceLoaderImpl.buildMinecraftPack(ResourceType.CLIENT_RESOURCES, pack);
 	}
 
 	@ClientOnly
