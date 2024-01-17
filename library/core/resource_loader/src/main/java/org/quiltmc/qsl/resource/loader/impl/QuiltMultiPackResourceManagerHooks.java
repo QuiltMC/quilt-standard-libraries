@@ -26,7 +26,7 @@ import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 @ApiStatus.Internal
 public interface QuiltMultiPackResourceManagerHooks {
 	/**
-	 * Appends the top resource packs that have been registered from {@link ResourceLoader#getRegisterTopResourcePackEvent()}.
+	 * Appends the top resource packs that have been registered from {@link ResourceLoader#getRegisterTopPackEvent()}.
 	 */
 	void quilt$appendTopPacks();
 

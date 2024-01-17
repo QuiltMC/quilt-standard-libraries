@@ -1,5 +1,6 @@
 /*
- * Copyright 2021 The Quilt Project
+ * Copyright 2016, 2017, 2018, 2019 FabricMC
+ * Copyright 2024 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +15,14 @@
  * limitations under the License.
  */
 
-package org.quiltmc.qsl.resource.loader.mixin;
+package org.quiltmc.qsl.networking.impl.common;
 
-import org.jetbrains.annotations.NotNull;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+public interface CommonPacketHandler {
+	void onCommonVersionPacket(int negotiatedVersion);
 
-import net.minecraft.resource.pack.ResourcePack;
-import net.minecraft.text.Text;
+	void onCommonRegisterPacket(CommonRegisterPayload payload);
 
-import org.quiltmc.qsl.resource.loader.api.QuiltResourcePack;
+	CommonRegisterPayload createRegisterPayload();
 
-@Mixin(ResourcePack.class)
-public interface ResourcePackMixin extends QuiltResourcePack {
-	@Shadow
-	String getName();
-
-	@Override
-	default @NotNull Text getDisplayName() {
-		return Text.of(this.getName());
-	}
+	int getNegotiatedVersion();
 }

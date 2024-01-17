@@ -29,13 +29,13 @@ import net.minecraft.util.Formatting;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
-import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
-import org.quiltmc.qsl.resource.loader.impl.ModResourcePackUtil;
+import org.quiltmc.qsl.resource.loader.api.PackActivationType;
+import org.quiltmc.qsl.resource.loader.impl.ModPackUtil;
 
 public class BuiltinResourcePackTestMod implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
-		if (!ResourceLoader.registerBuiltinResourcePack(id("test"), mod, ResourcePackActivationType.DEFAULT_ENABLED,
+		if (!ResourceLoader.registerBuiltinPack(id("test"), mod, PackActivationType.DEFAULT_ENABLED,
 				Text.literal("Test built-in resource pack").formatted(Formatting.GOLD))) {
 			throw new RuntimeException("Could not register built-in resource pack.");
 		}
@@ -44,7 +44,7 @@ public class BuiltinResourcePackTestMod implements ModInitializer {
 	}
 
 	/**
-	 * Tests {@link ModResourcePackUtil#getPackMeta(String, ResourceType)} so it generates a perfectly valid JSON.
+	 * Tests {@link ModPackUtil#getPackMeta(String, ResourceType)} so it generates a perfectly valid JSON.
 	 */
 	private void testPackMetaGenerations() {
 		this.testPackMetaGeneration(null);
@@ -56,7 +56,7 @@ public class BuiltinResourcePackTestMod implements ModInitializer {
 	}
 
 	private void testPackMetaGeneration(String name) {
-		String pack = ModResourcePackUtil.getPackMeta(name, ResourceType.CLIENT_RESOURCES);
+		String pack = ModPackUtil.getPackMeta(name, ResourceType.CLIENT_RESOURCES);
 		JsonObject obj;
 
 		try {

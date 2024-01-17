@@ -23,9 +23,9 @@ import net.minecraft.network.configuration.ConfigurationTask;
 import net.minecraft.network.packet.Packet;
 
 import org.quiltmc.qsl.networking.api.ServerConfigurationNetworking;
+import org.quiltmc.qsl.networking.api.ServerConfigurationTaskManager;
 import org.quiltmc.qsl.registry.impl.sync.ServerPackets;
 import org.quiltmc.qsl.registry.mixin.AbstractServerPacketHandlerAccessor;
-import org.quiltmc.qsl.registry.mixin.ServerConfigurationPacketHandlerAccessor;
 
 public record SetupSyncTask(ServerConfigurationPacketHandler handler) implements ConfigurationTask {
 	public static final ConfigurationTask.Type TYPE = new Type("qsl:configure_sync");
@@ -34,16 +34,16 @@ public record SetupSyncTask(ServerConfigurationPacketHandler handler) implements
 	public void start(Consumer<Packet<?>> task) {
 		// First check if Quilt sync is available
 		if (ServerConfigurationNetworking.getSendable(this.handler).contains(ServerPackets.Handshake.ID)) {
-			((ServerConfigurationPacketHandlerAccessor) this.handler).getTasks().add(new QuiltSyncTask(this.handler, ((AbstractServerPacketHandlerAccessor) this.handler).getConnection()));
+			((ServerConfigurationTaskManager) this.handler).addTask(new QuiltSyncTask(this.handler, ((AbstractServerPacketHandlerAccessor) this.handler).getConnection()));
 		} else if (ServerRegistrySync.forceFabricFallback || (ServerRegistrySync.supportFabric && ServerConfigurationNetworking.getSendable(this.handler).contains(ServerFabricRegistrySync.ID))) {
 			FabricSyncTask fabricSyncTask = new FabricSyncTask(this.handler);
 			ServerConfigurationNetworking.registerReceiver(this.handler, ServerFabricRegistrySync.SYNC_COMPLETE_ID, (server, handler, buf, responseSender) -> fabricSyncTask.handleComplete());
-			((ServerConfigurationPacketHandlerAccessor) this.handler).getTasks().add(fabricSyncTask);
+			((ServerConfigurationTaskManager) this.handler).addTask(fabricSyncTask);
 		} else {
 			((AbstractServerPacketHandlerAccessor) this.handler).getConnection().disconnect(ServerRegistrySync.noRegistrySyncMessage);
 		}
 
-		((org.quiltmc.qsl.networking.mixin.accessor.ServerConfigurationPacketHandlerAccessor) this.handler).invokeFinishCurrentTask(TYPE);
+		((ServerConfigurationTaskManager) this.handler).finishTask(TYPE);
 	}
 
 	@Override

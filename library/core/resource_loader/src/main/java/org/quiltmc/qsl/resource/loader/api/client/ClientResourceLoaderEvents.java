@@ -44,10 +44,10 @@ public final class ClientResourceLoaderEvents {
 	 * <p>
 	 * This event should not be used to load resources, use {@link ResourceLoader#registerReloader(IdentifiableResourceReloader)} instead.
 	 */
-	public static final Event<StartResourcePackReload> START_RESOURCE_PACK_RELOAD = Event.create(StartResourcePackReload.class,
+	public static final Event<StartPackReload> START_PACK_RELOAD = Event.create(StartPackReload.class,
 			callbacks -> context -> {
 				for (var callback : callbacks) {
-					callback.onStartResourcePackReload(context);
+					callback.onStartPackReload(context);
 				}
 			});
 
@@ -56,26 +56,26 @@ public final class ClientResourceLoaderEvents {
 	 * <p>
 	 * This event should not be used to load resources, use {@link ResourceLoader#registerReloader(IdentifiableResourceReloader)} instead.
 	 */
-	public static final Event<EndResourcePackReload> END_RESOURCE_PACK_RELOAD = Event.create(EndResourcePackReload.class,
+	public static final Event<EndPackReload> END_PACK_RELOAD = Event.create(EndPackReload.class,
 			callbacks -> context -> {
 				for (var callback : callbacks) {
-					callback.onEndResourcePackReload(context);
+					callback.onEndPackReload(context);
 				}
 			});
 
 	/**
-	 * Functional interface to be implemented on callbacks for {@link #START_RESOURCE_PACK_RELOAD}.
+	 * Functional interface to be implemented on callbacks for {@link #START_PACK_RELOAD}.
 	 *
-	 * @see #START_RESOURCE_PACK_RELOAD
+	 * @see #START_PACK_RELOAD
 	 */
 	@FunctionalInterface
-	public interface StartResourcePackReload extends ClientEventAwareListener {
+	public interface StartPackReload extends ClientEventAwareListener {
 		/**
 		 * Called before resource packs on the Minecraft client have been reloaded.
 		 *
 		 * @param context the resource reload context
 		 */
-		void onStartResourcePackReload(Context context);
+		void onStartPackReload(Context context);
 
 		@ApiStatus.NonExtendable
 		interface Context {
@@ -104,12 +104,12 @@ public final class ClientResourceLoaderEvents {
 	}
 
 	/**
-	 * Functional interface to be implemented on callbacks for {@link #END_RESOURCE_PACK_RELOAD}.
+	 * Functional interface to be implemented on callbacks for {@link #END_PACK_RELOAD}.
 	 *
-	 * @see #END_RESOURCE_PACK_RELOAD
+	 * @see #END_PACK_RELOAD
 	 */
 	@FunctionalInterface
-	public interface EndResourcePackReload extends ClientEventAwareListener {
+	public interface EndPackReload extends ClientEventAwareListener {
 		/**
 		 * Called after resource packs on the Minecraft client have been reloaded.
 		 * <p>
@@ -117,10 +117,10 @@ public final class ClientResourceLoaderEvents {
 		 *
 		 * @param context the resource reload context
 		 */
-		void onEndResourcePackReload(Context context);
+		void onEndPackReload(Context context);
 
 		@ApiStatus.NonExtendable
-		interface Context extends StartResourcePackReload.Context {
+		interface Context extends StartPackReload.Context {
 			/**
 			 * {@return present if the resource pack reload failed, or {@linkplain Optional#empty() empty} otherwise}
 			 */

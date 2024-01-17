@@ -27,8 +27,8 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.resource.pack.ResourcePackProfile;
-import net.minecraft.resource.pack.ResourcePackSource;
+import net.minecraft.resource.pack.PackProfile;
+import net.minecraft.resource.pack.PackSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -36,13 +36,13 @@ import net.minecraft.util.Identifier;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
-import org.quiltmc.qsl.resource.loader.api.InMemoryResourcePack;
-import org.quiltmc.qsl.resource.loader.api.QuiltResourcePackProfile;
+import org.quiltmc.qsl.resource.loader.api.InMemoryPack;
+import org.quiltmc.qsl.resource.loader.api.QuiltPackProfile;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
-import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
-import org.quiltmc.qsl.resource.loader.api.ResourcePackRegistrationContext;
+import org.quiltmc.qsl.resource.loader.api.PackActivationType;
+import org.quiltmc.qsl.resource.loader.api.PackRegistrationContext;
 
-public class VirtualResourcePackTestMod implements ModInitializer, ResourcePackRegistrationContext.Callback, ServerLifecycleEvents.Ready {
+public class VirtualResourcePackTestMod implements ModInitializer, PackRegistrationContext.Callback, ServerLifecycleEvents.Ready {
 	private static final TagKey<Block> TEST_TAG = TagKey.of(RegistryKeys.BLOCK, ResourceLoaderTestMod.id("test_virtual_tag"));
 	private static final TagKey<Block> TEST_TAG2 = TagKey.of(RegistryKeys.BLOCK, ResourceLoaderTestMod.id("test_stackable_tag"));
 	private static final Identifier TAG_FILE = new Identifier(
@@ -54,27 +54,27 @@ public class VirtualResourcePackTestMod implements ModInitializer, ResourcePackR
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		ResourceLoader.get(ResourceType.CLIENT_RESOURCES).getRegisterDefaultResourcePackEvent().register(this);
-		ResourceLoader.get(ResourceType.SERVER_DATA).getRegisterDefaultResourcePackEvent().register(this);
+		ResourceLoader.get(ResourceType.CLIENT_RESOURCES).getRegisterDefaultPackEvent().register(this);
+		ResourceLoader.get(ResourceType.SERVER_DATA).getRegisterDefaultPackEvent().register(this);
 
-		ResourceLoader.get(ResourceType.SERVER_DATA).getRegisterDefaultResourcePackEvent()
+		ResourceLoader.get(ResourceType.SERVER_DATA).getRegisterDefaultPackEvent()
 				.register(this.createBasicTagBasedResourcePack("Virtual Tag Default", Blocks.DIAMOND_BLOCK));
-		ResourceLoader.get(ResourceType.SERVER_DATA).getRegisterTopResourcePackEvent()
+		ResourceLoader.get(ResourceType.SERVER_DATA).getRegisterTopPackEvent()
 				.register(this.createBasicTagBasedResourcePack("Virtual Tag Top", Blocks.MOSS_BLOCK));
 
 		ResourceLoader.get(ResourceType.CLIENT_RESOURCES)
-				.registerResourcePackProfileProvider(profileAdder -> this.providePacks(profileAdder, ResourceType.CLIENT_RESOURCES));
+				.registerPackProfileProvider(profileAdder -> this.providePacks(profileAdder, ResourceType.CLIENT_RESOURCES));
 		ResourceLoader.get(ResourceType.SERVER_DATA)
-				.registerResourcePackProfileProvider(profileAdder -> this.providePacks(profileAdder, ResourceType.SERVER_DATA));
+				.registerPackProfileProvider(profileAdder -> this.providePacks(profileAdder, ResourceType.SERVER_DATA));
 
 		ServerLifecycleEvents.READY.register(this);
 	}
 
-	private void providePacks(Consumer<ResourcePackProfile> profileAdder, ResourceType type) {
-		var pack = new InMemoryResourcePack.Named("activation_test") {
+	private void providePacks(Consumer<PackProfile> profileAdder, ResourceType type) {
+		var pack = new InMemoryPack.Named("activation_test") {
 			@Override
-			public @NotNull ResourcePackActivationType getActivationType() {
-				return ResourcePackActivationType.DEFAULT_ENABLED;
+			public @NotNull PackActivationType getActivationType() {
+				return PackActivationType.DEFAULT_ENABLED;
 			}
 		};
 
@@ -112,13 +112,13 @@ public class VirtualResourcePackTestMod implements ModInitializer, ResourcePackR
 				}
 				""");
 
-		profileAdder.accept(ResourcePackProfile.of("activation_test", Text.literal("Activation Test"), false,
-				QuiltResourcePackProfile.wrapToFactory(pack), type, ResourcePackProfile.InsertionPosition.BOTTOM, ResourcePackSource.PACK_SOURCE_BUILTIN));
+		profileAdder.accept(PackProfile.of("activation_test", Text.literal("Activation Test"), false,
+				QuiltPackProfile.wrapToFactory(pack), type, PackProfile.InsertionPosition.BOTTOM, PackSource.PACK_SOURCE_BUILTIN));
 	}
 
 	@Override
-	public void onRegisterPack(@NotNull ResourcePackRegistrationContext context) {
-		var pack = new InMemoryResourcePack.Named("Test Virtual Resource Pack");
+	public void onRegisterPack(@NotNull PackRegistrationContext context) {
+		var pack = new InMemoryPack.Named("Test Virtual Resource Pack");
 		pack.putText(ResourceType.CLIENT_RESOURCES, new Identifier("models/block/poppy.json"), """
 				{
 				  "parent": "minecraft:block/cube_all",
@@ -158,9 +158,9 @@ public class VirtualResourcePackTestMod implements ModInitializer, ResourcePackR
 		assert Blocks.MOSS_BLOCK.getDefaultState().isIn(TEST_TAG);
 	}
 
-	private ResourcePackRegistrationContext.Callback createBasicTagBasedResourcePack(String name, Block block) {
+	private PackRegistrationContext.Callback createBasicTagBasedResourcePack(String name, Block block) {
 		return context -> {
-			var pack = new InMemoryResourcePack.Named(name);
+			var pack = new InMemoryPack.Named(name);
 			pack.putTextAsync(ResourceType.SERVER_DATA, TAG_FILE, file -> """
 					{
 						"replace": true,

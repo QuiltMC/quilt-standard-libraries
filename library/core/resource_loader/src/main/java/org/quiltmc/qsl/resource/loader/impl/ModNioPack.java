@@ -44,8 +44,8 @@ import net.minecraft.util.Util;
 import org.quiltmc.loader.api.CachedFileSystem;
 import org.quiltmc.loader.api.ModMetadata;
 import org.quiltmc.qsl.base.api.util.TriState;
-import org.quiltmc.qsl.resource.loader.api.QuiltResourcePack;
-import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
+import org.quiltmc.qsl.resource.loader.api.QuiltPack;
+import org.quiltmc.qsl.resource.loader.api.PackActivationType;
 import org.quiltmc.qsl.resource.loader.impl.cache.EntryType;
 import org.quiltmc.qsl.resource.loader.impl.cache.ResourceAccess;
 import org.quiltmc.qsl.resource.loader.impl.cache.ResourceTreeCache;
@@ -54,7 +54,7 @@ import org.quiltmc.qsl.resource.loader.impl.cache.ResourceTreeCache;
  * A NIO implementation of a mod resource pack.
  */
 @ApiStatus.Internal
-public class ModNioResourcePack extends AbstractFileResourcePack implements QuiltResourcePack {
+public class ModNioPack extends AbstractFileResourcePack implements QuiltPack {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final FileSystem DEFAULT_FILESYSTEM = FileSystems.getDefault();
 	private static final boolean DISABLE_CACHING = TriState.fromProperty("quilt.resource_loader.disable_caching").toBooleanOrElse(false);
@@ -62,7 +62,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 	private final String name;
 	private final Text displayName;
 	final ModMetadata modInfo;
-	private final ResourcePackActivationType activationType;
+	private final PackActivationType activationType;
 	/* Resource Stuff */
 	private final ModIoOps io;
 	final ResourceType type;
@@ -70,19 +70,19 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 	/* Caches */
 	private final ResourceAccess cache;
 
-	static ModNioResourcePack ofMod(ModMetadata modInfo, Path path, ResourceType type) {
-		return new ModNioResourcePack(
-				null, modInfo, null, ResourcePackActivationType.ALWAYS_ENABLED,
+	static ModNioPack ofMod(ModMetadata modInfo, Path path, ResourceType type) {
+		return new ModNioPack(
+				null, modInfo, null, PackActivationType.ALWAYS_ENABLED,
 				path, type, null
 		);
 	}
 
-	public ModNioResourcePack(@Nullable String name, ModMetadata modInfo, @Nullable Text displayName, ResourcePackActivationType activationType,
-			Path path, ResourceType type, @Nullable AutoCloseable closer) {
+	public ModNioPack(@Nullable String name, ModMetadata modInfo, @Nullable Text displayName, PackActivationType activationType,
+					  Path path, ResourceType type, @Nullable AutoCloseable closer) {
 		super(null, true);
 
 		/* Metadata */
-		this.name = name == null ? ModResourcePackUtil.getName(modInfo) : name;
+		this.name = name == null ? ModPackUtil.getName(modInfo) : name;
 		this.displayName = displayName == null ? Text.of(name) : displayName;
 		this.modInfo = modInfo;
 		this.activationType = activationType;
@@ -116,7 +116,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 
 	@Override
 	public @Nullable ResourceIoSupplier<InputStream> open(ResourceType type, Identifier id) {
-		return this.open(QuiltResourcePack.getResourcePath(type, id));
+		return this.open(QuiltPack.getResourcePath(type, id));
 	}
 
 	protected ResourceIoSupplier<InputStream> open(String filePath) {
@@ -126,7 +126,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 			return ResourceIoSupplier.create(entry.path());
 		}
 
-		return ModResourcePackUtil.openDefault(this.modInfo, this.type, filePath);
+		return ModPackUtil.openDefault(this.modInfo, this.type, filePath);
 	}
 
 	@Override
@@ -209,7 +209,7 @@ public class ModNioResourcePack extends AbstractFileResourcePack implements Quil
 	}
 
 	@Override
-	public @NotNull ResourcePackActivationType getActivationType() {
+	public @NotNull PackActivationType getActivationType() {
 		return this.activationType;
 	}
 	//endregion

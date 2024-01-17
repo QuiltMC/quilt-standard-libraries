@@ -15,9 +15,9 @@ qslModule {
 	}
 	accessWidener()
 	injectedInterface("net/minecraft/class_3262") {
-		values = ["org/quiltmc/qsl/resource/loader/api/QuiltResourcePack"]
+		values = ["org/quiltmc/qsl/resource/loader/api/QuiltPack"]
 	}
 	injectedInterface("net/minecraft/class_3288") {
-		values = ["org/quiltmc/qsl/resource/loader/api/QuiltResourcePackProfile"]
+		values = ["org/quiltmc/qsl/resource/loader/api/QuiltPackProfile"]
 	}
 }

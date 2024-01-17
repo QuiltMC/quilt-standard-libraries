@@ -1,4 +1,5 @@
 /*
+ * Copyright 2016, 2017, 2018, 2019 FabricMC
  * Copyright 2022 The Quilt Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,6 +36,8 @@ import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.networking.api.PacketSender;
+import org.quiltmc.qsl.networking.impl.common.CommonPacketHandler;
+import org.quiltmc.qsl.networking.impl.common.CommonRegisterPayload;
 import org.quiltmc.qsl.networking.impl.payload.ChannelPayload;
 
 /**
@@ -43,7 +46,7 @@ import org.quiltmc.qsl.networking.impl.payload.ChannelPayload;
  * @param <H> the channel handler type
  */
 @ApiStatus.Internal
-public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAddon<H> implements PacketSender<CustomPayload> {
+public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAddon<H> implements PacketSender<CustomPayload>, CommonPacketHandler {
 	protected final ClientConnection connection;
 	protected final GlobalReceiverRegistry<H> receiver;
 	protected final Set<Identifier> sendableChannels;
@@ -156,5 +159,66 @@ public abstract class AbstractChanneledNetworkAddon<H> extends AbstractNetworkAd
 
 	public Set<Identifier> getSendableChannels() {
 		return Collections.unmodifiableSet(this.sendableChannels);
+	}
+
+	/* Common Packet Handling */
+	protected int commonVersion = -1;
+
+	@Override
+	public void onCommonVersionPacket(int negotiatedVersion) {
+		assert negotiatedVersion == 1; // We only support version 1 for now
+
+		this.commonVersion = negotiatedVersion;
+		this.logger.debug("Negotiated common packet version {}", this.commonVersion);
+	}
+
+	@Override
+	public void onCommonRegisterPacket(CommonRegisterPayload payload) {
+		if (payload.version() != this.getNegotiatedVersion()) {
+			throw new IllegalStateException("Negotiated common packet version: %d but received packet with version: %d".formatted(this.commonVersion, payload.version()));
+		}
+
+		final String currentPhase = this.getPhase();
+
+		if (currentPhase == null) {
+			// We don't support receiving the register packet during this phase. See getPhase() for supported phases.
+			// The normal case where the play channels are sent during configuration is handled in the client/common configuration packet handlers.
+			logger.warn("Received common register packet for phase {} in network state: {}", payload.phase(), this.receiver.getState());
+			return;
+		}
+
+		if (!payload.phase().equals(currentPhase)) {
+			// We need to handle receiving the play phase during configuration!
+			throw new IllegalStateException("Register packet received for phase (%s) on handler for phase(%s)".formatted(payload.phase(), currentPhase));
+		}
+
+		this.register(new ArrayList<>(payload.channels()));
+	}
+
+	@Override
+	public CommonRegisterPayload createRegisterPayload() {
+		return new CommonRegisterPayload(this.getNegotiatedVersion(), this.getPhase(), this.getReceivableChannels());
+	}
+
+	@Override
+	public int getNegotiatedVersion() {
+		if (this.commonVersion == -1) {
+			throw new IllegalStateException("Not yet negotiated common packet version");
+		}
+
+		return this.commonVersion;
+	}
+
+	@Nullable
+	private String getPhase() {
+		return switch (this.receiver.getState()) {
+			case PLAY -> CommonRegisterPayload.PLAY_PHASE;
+			case CONFIGURATION -> CommonRegisterPayload.CONFIGURATION_PHASE;
+			default -> null; // We don't support receiving this packet on any other phase
+		};
+	}
+
+	public ChannelInfoHolder getChannelInfoHolder() {
+		return ((ChannelInfoHolder) this.connection);
 	}
 }

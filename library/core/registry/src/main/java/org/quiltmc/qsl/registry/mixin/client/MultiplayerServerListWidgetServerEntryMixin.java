@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.client.gui.screen.multiplayer.MultiplayerServerListWidget;
+import net.minecraft.client.gui.widget.list.multiplayer.ServerEntryListWidget;
 import net.minecraft.client.network.ServerInfo;
 
 import org.quiltmc.loader.api.minecraft.ClientOnly;
@@ -32,7 +32,7 @@ import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolContainer;
 import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolImpl;
 
 @ClientOnly
-@Mixin(MultiplayerServerListWidget.ServerEntry.class)
+@Mixin(ServerEntryListWidget.ServerEntry.class)
 public class MultiplayerServerListWidgetServerEntryMixin {
 	@Shadow
 	@Final

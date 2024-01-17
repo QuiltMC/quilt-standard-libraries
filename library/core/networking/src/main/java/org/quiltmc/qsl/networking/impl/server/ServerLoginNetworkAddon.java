@@ -34,6 +34,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.login.LoginQueryResponseC2SPacket;
+import net.minecraft.network.packet.c2s.login.payload.DiscardedLoginQueryResponsePayload;
 import net.minecraft.network.packet.s2c.login.LoginCompressionS2CPacket;
 import net.minecraft.network.packet.s2c.login.LoginQueryRequestS2CPacket;
 import net.minecraft.network.packet.s2c.login.payload.CustomQueryPayload;
@@ -130,8 +131,20 @@ public final class ServerLoginNetworkAddon extends AbstractNetworkAddon<ServerLo
 	 * @return true if the packet was handled
 	 */
 	public boolean handle(LoginQueryResponseC2SPacket packet) {
-		var payload = (PacketByteBufLoginQueryResponsePayload) packet.payload();
-		return this.handle(packet.transactionId(), (payload == null) ? null : payload.data());
+		if (packet.payload() instanceof PacketByteBufLoginQueryResponsePayload payload) {
+			return this.handle(packet.transactionId(), payload.data());
+		} else if (packet.payload() instanceof DiscardedLoginQueryResponsePayload) {
+			Identifier channel = this.channels.remove(packet.transactionId());
+			if (channel == null) {
+				this.logger.warn("Query ID {} was received but no query has been associated in {}!", packet.transactionId(), this.connection);
+				return false;
+			}
+
+			this.logger.warn("Known channel {} response was received but not handled by {}!", channel, this.connection);
+			return true;
+		}
+
+		return false;
 	}
 
 	private boolean handle(int queryId, @Nullable PacketByteBuf originalBuf) {

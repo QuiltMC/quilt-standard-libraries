@@ -35,7 +35,7 @@ import org.quiltmc.loader.api.minecraft.ClientOnly;
 /**
  * Represents a resource pack whose resources are mutable.
  */
-public interface MutableResourcePack extends ResourcePack {
+public interface MutablePack extends ResourcePack {
 	/**
 	 * Puts a resource into the resource pack's root.
 	 *

@@ -61,7 +61,7 @@ import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
 import org.quiltmc.qsl.registry.api.event.DynamicRegistryManagerSetupContext;
 import org.quiltmc.qsl.registry.api.event.RegistryEvents;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
-import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
+import org.quiltmc.qsl.resource.loader.api.PackActivationType;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModifications;
 import org.quiltmc.qsl.worldgen.biome.api.BiomeSelectors;
 import org.quiltmc.qsl.worldgen.biome.api.ModificationPhase;
@@ -94,7 +94,7 @@ public class QuiltBiomeTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		ResourceLoader.registerBuiltinResourcePack(id("registry_entry_existence_test"), mod, ResourcePackActivationType.NORMAL);
+		ResourceLoader.registerBuiltinPack(id("registry_entry_existence_test"), mod, PackActivationType.NORMAL);
 
 		Preconditions.checkArgument(NetherBiomes.canGenerateInNether(Biomes.NETHER_WASTES));
 		Preconditions.checkArgument(!NetherBiomes.canGenerateInNether(Biomes.END_HIGHLANDS));

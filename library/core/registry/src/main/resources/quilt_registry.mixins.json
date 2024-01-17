@@ -16,7 +16,6 @@
     "RegistriesMixin",
     "RegistryLoaderMixin",
     "ServerConfigurationPacketHandlerAccessor",
-    "ServerConfigurationPacketHandlerMixin",
     "ServerMetadataVersionMixin",
     "SimpleRegistryMixin",
     "TagManagerLoaderMixin"

@@ -380,6 +380,7 @@ public final class ServerPlayNetworking {
 
 	/**
 	 * This functional interface should only be used when sending a raw {@link PacketByteBuf} is necessary.
+	 *
 	 * @deprecated use {@link CustomChannelReceiver}
 	 */
 	@Deprecated

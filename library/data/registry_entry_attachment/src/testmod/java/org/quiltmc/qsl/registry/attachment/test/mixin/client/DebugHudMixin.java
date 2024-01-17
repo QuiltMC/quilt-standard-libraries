@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.client.gui.hud.DebugHud;
+import net.minecraft.client.gui.hud.debug.DebugHud;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 

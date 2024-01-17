@@ -50,9 +50,9 @@ import org.slf4j.LoggerFactory;
 import net.minecraft.resource.MultiPackResourceManager;
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.pack.PackProfile;
+import net.minecraft.resource.pack.PackProvider;
 import net.minecraft.resource.pack.ResourcePack;
-import net.minecraft.resource.pack.ResourcePackProfile;
-import net.minecraft.resource.pack.ResourcePackProvider;
 import net.minecraft.resource.pack.metadata.ResourceMetadataSectionReader;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -68,10 +68,10 @@ import org.quiltmc.qsl.base.api.event.Event;
 import org.quiltmc.qsl.base.api.phase.PhaseData;
 import org.quiltmc.qsl.base.api.phase.PhaseSorting;
 import org.quiltmc.qsl.base.api.util.TriState;
-import org.quiltmc.qsl.resource.loader.api.GroupResourcePack;
+import org.quiltmc.qsl.resource.loader.api.GroupPack;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
-import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
-import org.quiltmc.qsl.resource.loader.api.ResourcePackRegistrationContext;
+import org.quiltmc.qsl.resource.loader.api.PackActivationType;
+import org.quiltmc.qsl.resource.loader.api.PackRegistrationContext;
 import org.quiltmc.qsl.resource.loader.api.reloader.IdentifiableResourceReloader;
 import org.quiltmc.qsl.resource.loader.api.reloader.ResourceReloaderKeys;
 import org.quiltmc.qsl.resource.loader.mixin.VanillaDataPackProviderAccessor;
@@ -85,13 +85,13 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	/**
 	 * Represents a cache of the client mod resource packs so resource packs that can cache don't lose their cache.
 	 */
-	private static final Map<String, List<ModNioResourcePack>> CLIENT_MOD_RESOURCE_PACKS = new Object2ObjectOpenHashMap<>();
+	private static final Map<String, List<ModNioPack>> CLIENT_MOD_RESOURCE_PACKS = new Object2ObjectOpenHashMap<>();
 	/**
 	 * Represents a cache of the server mod data packs so resource packs that can cache don't lose their cache.
 	 */
-	private static final Map<String, List<ModNioResourcePack>> SERVER_MOD_RESOURCE_PACKS = new Object2ObjectOpenHashMap<>();
-	private static final Map<String, ModNioResourcePack> CLIENT_BUILTIN_RESOURCE_PACKS = new Object2ObjectOpenHashMap<>();
-	private static final Map<String, ModNioResourcePack> SERVER_BUILTIN_RESOURCE_PACKS = new Object2ObjectOpenHashMap<>();
+	private static final Map<String, List<ModNioPack>> SERVER_MOD_RESOURCE_PACKS = new Object2ObjectOpenHashMap<>();
+	private static final Map<String, ModNioPack> CLIENT_BUILTIN_RESOURCE_PACKS = new Object2ObjectOpenHashMap<>();
+	private static final Map<String, ModNioPack> SERVER_BUILTIN_RESOURCE_PACKS = new Object2ObjectOpenHashMap<>();
 	private static final Logger LOGGER = LoggerFactory.getLogger("ResourceLoader");
 
 	private static final boolean DEBUG_RELOADERS_IDENTITY = TriState.fromProperty("quilt.resource_loader.debug.reloaders_identity")
@@ -103,13 +103,13 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	private final Set<Identifier> addedReloaderIds = new ObjectOpenHashSet<>();
 	private final Set<IdentifiableResourceReloader> addedReloaders = new LinkedHashSet<>();
 	private final Set<Pair<Identifier, Identifier>> reloadersOrdering = new LinkedHashSet<>();
-	final Set<ResourcePackProvider> resourcePackProfileProviders = new ObjectOpenHashSet<>();
+	final Set<PackProvider> resourcePackProfileProviders = new ObjectOpenHashSet<>();
 
-	private final Event<ResourcePackRegistrationContext.Callback> defaultResourcePackRegistrationEvent = createResourcePackRegistrationEvent();
-	private final Event<ResourcePackRegistrationContext.Callback> topResourcePackRegistrationEvent = createResourcePackRegistrationEvent();
+	private final Event<PackRegistrationContext.Callback> defaultResourcePackRegistrationEvent = createResourcePackRegistrationEvent();
+	private final Event<PackRegistrationContext.Callback> topResourcePackRegistrationEvent = createResourcePackRegistrationEvent();
 
-	private static Event<ResourcePackRegistrationContext.Callback> createResourcePackRegistrationEvent() {
-		return Event.create(ResourcePackRegistrationContext.Callback.class, callbacks -> context -> {
+	private static Event<PackRegistrationContext.Callback> createResourcePackRegistrationEvent() {
+		return Event.create(PackRegistrationContext.Callback.class, callbacks -> context -> {
 			for (var callback : callbacks) {
 				callback.onRegisterPack(context);
 			}
@@ -182,7 +182,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	}
 
 	@Override
-	public void registerResourcePackProfileProvider(@NotNull ResourcePackProvider provider) {
+	public void registerPackProfileProvider(@NotNull PackProvider provider) {
 		if (!this.resourcePackProfileProviders.add(provider)) {
 			throw new IllegalStateException(
 					"Tried to register a resource pack profile provider twice!"
@@ -191,20 +191,20 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	}
 
 	@Override
-	public @NotNull Event<ResourcePackRegistrationContext.Callback> getRegisterDefaultResourcePackEvent() {
+	public @NotNull Event<PackRegistrationContext.Callback> getRegisterDefaultPackEvent() {
 		return this.defaultResourcePackRegistrationEvent;
 	}
 
 	@Override
-	public @NotNull Event<ResourcePackRegistrationContext.Callback> getRegisterTopResourcePackEvent() {
+	public @NotNull Event<PackRegistrationContext.Callback> getRegisterTopPackEvent() {
 		return this.topResourcePackRegistrationEvent;
 	}
 
 	@Override
-	public @NotNull ResourcePack newFileSystemResourcePack(@NotNull Identifier id, @NotNull ModContainer owner, @NotNull Path rootPath,
-			ResourcePackActivationType activationType, @NotNull Text displayName) {
+	public @NotNull ResourcePack newFileSystemPack(@NotNull Identifier id, @NotNull ModContainer owner, @NotNull Path rootPath,
+												   PackActivationType activationType, @NotNull Text displayName) {
 		String name = id.getNamespace() + '/' + id.getPath();
-		return new ModNioResourcePack(name, owner.metadata(), displayName, activationType, rootPath, this.type, null);
+		return new ModNioPack(name, owner.metadata(), displayName, activationType, rootPath, this.type, null);
 	}
 
 	/**
@@ -216,7 +216,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	 * @param consumer the resource pack consumer
 	 */
 	public static void flattenPacks(ResourcePack pack, Consumer<ResourcePack> consumer) {
-		if (pack instanceof GroupResourcePack grouped) {
+		if (pack instanceof GroupPack grouped) {
 			grouped.streamPacks().forEach(p -> flattenPacks(p, consumer));
 		} else {
 			consumer.accept(pack);
@@ -224,7 +224,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	}
 
 	public void appendTopPacks(MultiPackResourceManager resourceManager, Consumer<ResourcePack> resourcePackAdder) {
-		this.topResourcePackRegistrationEvent.invoker().onRegisterPack(new ResourcePackRegistrationContextImpl(resourceManager, resourcePackAdder));
+		this.topResourcePackRegistrationEvent.invoker().onRegisterPack(new PackRegistrationContextImpl(resourceManager, resourcePackAdder));
 	}
 
 	/**
@@ -349,11 +349,11 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	 * @param type    the type of resource
 	 * @param subPath the resource pack sub path directory in mods, may be {@code null}
 	 */
-	public static void appendModResourcePacks(List<ResourcePack> packs, ResourceType type, @Nullable String subPath) {
+	public static void appendModPacks(List<ResourcePack> packs, ResourceType type, @Nullable String subPath) {
 		var modResourcePacks = type == ResourceType.CLIENT_RESOURCES
 				? CLIENT_MOD_RESOURCE_PACKS : SERVER_MOD_RESOURCE_PACKS;
 		var existingList = modResourcePacks.get(subPath);
-		var byMod = new Reference2ObjectOpenHashMap<ModMetadata, ModNioResourcePack>();
+		var byMod = new Reference2ObjectOpenHashMap<ModMetadata, ModNioPack>();
 
 		if (existingList != null) {
 			for (var pack : existingList) {
@@ -382,10 +382,10 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 				path = childPath;
 			}
 
-			byMod.put(container.metadata(), ModNioResourcePack.ofMod(container.metadata(), path, type));
+			byMod.put(container.metadata(), ModNioPack.ofMod(container.metadata(), path, type));
 		}
 
-		List<ModNioResourcePack> packList = byMod.values().stream()
+		List<ModNioPack> packList = byMod.values().stream()
 				.filter(pack -> !pack.getNamespaces(type).isEmpty())
 				.toList();
 
@@ -395,30 +395,30 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		packs.addAll(packList);
 	}
 
-	public static GroupResourcePack.Wrapped buildMinecraftResourcePack(ResourceType type, ResourcePack vanillaPack) {
+	public static GroupPack.Wrapped buildMinecraftPack(ResourceType type, ResourcePack vanillaPack) {
 		// Build a list of mod resource packs.
 		var packs = new ArrayList<ResourcePack>();
-		appendModResourcePacks(packs, type, null);
+		appendModPacks(packs, type, null);
 
-		var pack = new GroupResourcePack.Wrapped(type, vanillaPack, packs, false);
+		var pack = new GroupPack.Wrapped(type, vanillaPack, packs, false);
 		int[] lastExtraPackIndex = new int[] {1};
 
-		var context = new ResourcePackRegistrationContextImpl(type, List.of(pack), p -> {
+		var context = new PackRegistrationContextImpl(type, List.of(pack), p -> {
 			packs.add(lastExtraPackIndex[0]++, p);
 			pack.recompute();
 		});
 
-		get(type).getRegisterDefaultResourcePackEvent().invoker().onRegisterPack(context);
+		get(type).getRegisterDefaultPackEvent().invoker().onRegisterPack(context);
 
 		return pack;
 	}
 
-	public static GroupResourcePack.Wrapped buildVanillaBuiltinResourcePack(ResourcePack vanillaPack, ResourceType type, String packName) {
+	public static GroupPack.Wrapped buildVanillaBuiltinPack(ResourcePack vanillaPack, ResourceType type, String packName) {
 		// Build a list of mod resource packs.
 		var packs = new ArrayList<ResourcePack>();
-		appendModResourcePacks(packs, type, packName);
+		appendModPacks(packs, type, packName);
 
-		return new GroupResourcePack.Wrapped(type, vanillaPack, packs, false);
+		return new GroupPack.Wrapped(type, vanillaPack, packs, false);
 	}
 
 	/* Built-in resource packs */
@@ -436,10 +436,10 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	 * @param activationType the activation type of the resource pack
 	 * @param displayName    the display name of the resource pack
 	 * @return {@code true} if successfully registered the resource pack, or {@code false} otherwise
-	 * @see ResourceLoader#registerBuiltinResourcePack(Identifier, ModContainer, ResourcePackActivationType, Text)
+	 * @see ResourceLoader#registerBuiltinPack(Identifier, ModContainer, PackActivationType, Text)
 	 */
-	public static boolean registerBuiltinResourcePack(Identifier id, String subPath, ModContainer container,
-			ResourcePackActivationType activationType, Text displayName) {
+	public static boolean registerBuiltinPack(Identifier id, String subPath, ModContainer container,
+			PackActivationType activationType, Text displayName) {
 		Path resourcePackPath = container.getPath(subPath).toAbsolutePath().normalize();
 
 		if (!Files.exists(resourcePackPath)) {
@@ -450,19 +450,19 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 
 		boolean result = false;
 		if (MinecraftQuiltLoader.getEnvironmentType() == EnvType.CLIENT) {
-			result = registerBuiltinResourcePack(ResourceType.CLIENT_RESOURCES,
-					newBuiltinResourcePack(container, name, displayName, resourcePackPath, ResourceType.CLIENT_RESOURCES, activationType)
+			result = registerBuiltinPack(ResourceType.CLIENT_RESOURCES,
+					newBuiltinPack(container, name, displayName, resourcePackPath, ResourceType.CLIENT_RESOURCES, activationType)
 			);
 		}
 
-		result |= registerBuiltinResourcePack(ResourceType.SERVER_DATA,
-				newBuiltinResourcePack(container, name, displayName, resourcePackPath, ResourceType.SERVER_DATA, activationType)
+		result |= registerBuiltinPack(ResourceType.SERVER_DATA,
+				newBuiltinPack(container, name, displayName, resourcePackPath, ResourceType.SERVER_DATA, activationType)
 		);
 
 		return result;
 	}
 
-	private static boolean registerBuiltinResourcePack(ResourceType type, ModNioResourcePack pack) {
+	private static boolean registerBuiltinPack(ResourceType type, ModNioPack pack) {
 		if (QuiltLoader.isDevelopmentEnvironment() || !pack.getNamespaces(type).isEmpty()) {
 			var builtinResourcePacks = type == ResourceType.CLIENT_RESOURCES
 					? CLIENT_BUILTIN_RESOURCE_PACKS : SERVER_BUILTIN_RESOURCE_PACKS;
@@ -472,23 +472,23 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		return false;
 	}
 
-	private static ModNioResourcePack newBuiltinResourcePack(ModContainer container, String name, Text displayName,
-			Path resourcePackPath, ResourceType type, ResourcePackActivationType activationType) {
-		return new ModNioResourcePack(name, container.metadata(), displayName, activationType, resourcePackPath, type, null);
+	private static ModNioPack newBuiltinPack(ModContainer container, String name, Text displayName,
+			Path resourcePackPath, ResourceType type, PackActivationType activationType) {
+		return new ModNioPack(name, container.metadata(), displayName, activationType, resourcePackPath, type, null);
 	}
 
-	public static void registerBuiltinResourcePacks(ResourceType type, Consumer<ResourcePackProfile> profileAdder) {
+	public static void registerBuiltinPacks(ResourceType type, Consumer<PackProfile> profileAdder) {
 		var builtinPacks = type == ResourceType.CLIENT_RESOURCES
 				? CLIENT_BUILTIN_RESOURCE_PACKS : SERVER_BUILTIN_RESOURCE_PACKS;
 
 		// Loop through each registered built-in resource packs and add them if valid.
 		for (var entry : builtinPacks.entrySet()) {
-			ModNioResourcePack pack = entry.getValue();
+			ModNioPack pack = entry.getValue();
 
 			// Add the built-in pack only if namespaces for the specified resource type are present.
 			if (!pack.getNamespaces(type).isEmpty()) {
 				// Make the resource pack profile for built-in pack, should never be always enabled.
-				var profile = ModResourcePackUtil.makeBuiltinPackProfile(pack);
+				var profile = ModPackUtil.makeBuiltinPackProfile(pack);
 
 				if (profile != null) {
 					profileAdder.accept(profile);
@@ -505,8 +505,8 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	 * @param map the language map
 	 */
 	public static void appendLanguageEntries(@NotNull Map<String, String> map) {
-		var pack = ResourceLoaderImpl.buildMinecraftResourcePack(ResourceType.CLIENT_RESOURCES,
-				VanillaDataPackProviderAccessor.invokeCreateVanillaResourcePack()
+		var pack = ResourceLoaderImpl.buildMinecraftPack(ResourceType.CLIENT_RESOURCES,
+				VanillaDataPackProviderAccessor.invokeDefaultPackBuilder()
 		);
 
 		try (var manager = new MultiPackResourceManager(ResourceType.CLIENT_RESOURCES, List.of(pack))) {

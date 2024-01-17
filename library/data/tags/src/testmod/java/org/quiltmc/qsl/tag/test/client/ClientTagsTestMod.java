@@ -33,7 +33,7 @@ import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.command.api.client.ClientCommandRegistrationCallback;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
-import org.quiltmc.qsl.resource.loader.api.ResourcePackActivationType;
+import org.quiltmc.qsl.resource.loader.api.PackActivationType;
 import org.quiltmc.qsl.tag.api.QuiltTagKey;
 import org.quiltmc.qsl.tag.api.TagType;
 import org.quiltmc.qsl.tag.test.TagsTestMod;
@@ -48,7 +48,7 @@ public final class ClientTagsTestMod implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient(ModContainer mod) {
-		ResourceLoader.registerBuiltinResourcePack(TagsTestMod.id("defaulted_test_pack"), ResourcePackActivationType.NORMAL);
+		ResourceLoader.registerBuiltinPack(TagsTestMod.id("defaulted_test_pack"), PackActivationType.NORMAL);
 
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, buildContext, environment) -> {
 			dispatcher.register(literal("client_tag_test")

@@ -33,11 +33,11 @@ public class RegistryConfig extends ReflectiveConfig {
 
 	public static class RegistrySync extends Section {
 		@Comment("""
-		Mod protocol is a feature allowing you to prevent clients with mismatched settings to join.
-		Client with mismatched values won't be able to connect to servers having this enabled.
-		It should be used only for non-vanilla compatible modpacks!
-		Protocol version. Needs to be the same on client and server. If it has value of -1, it won't be required by servers.
-		""")
+				Mod protocol is a feature allowing you to prevent clients with mismatched settings to join.
+				Client with mismatched values won't be able to connect to servers having this enabled.
+				It should be used only for non-vanilla compatible modpacks!
+				Protocol version. Needs to be the same on client and server. If it has value of -1, it won't be required by servers.
+				""")
 		public final TrackedValue<Integer> mod_protocol_version = value(-1);
 		@Comment("Protocol id. It should be different for every modpack, to prevent joining with mismatched mods.")
 		public final TrackedValue<String> mod_protocol_id = value("my_quilt_modpack");

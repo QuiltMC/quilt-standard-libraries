@@ -33,6 +33,7 @@ import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import net.minecraft.util.Identifier;
 
+import org.quiltmc.qsl.networking.api.PacketByteBufs;
 import org.quiltmc.qsl.networking.impl.payload.PacketByteBufPayload;
 
 @Mixin(CustomPayloadS2CPacket.class)
@@ -49,6 +50,8 @@ public class CustomPayloadS2CPacketMixin {
 
 	@Inject(method = "readPayload", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/s2c/common/CustomPayloadS2CPacket;readUnknownPayload(Lnet/minecraft/util/Identifier;Lnet/minecraft/network/PacketByteBuf;)Lnet/minecraft/network/packet/payload/DiscardedCustomPayload;"), cancellable = true)
 	private static void inject(Identifier id, PacketByteBuf buf, CallbackInfoReturnable<PacketByteBufPayload> cir) {
-		cir.setReturnValue(new PacketByteBufPayload(id, buf));
+		PacketByteBuf copied = PacketByteBufs.copy(buf);
+		cir.setReturnValue(new PacketByteBufPayload(id, copied));
+		buf.skipBytes(buf.readableBytes());
 	}
 }

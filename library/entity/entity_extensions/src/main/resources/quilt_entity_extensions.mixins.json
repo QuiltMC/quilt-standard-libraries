@@ -10,7 +10,7 @@
     "PointOfInterestTypesAccessor",
     "TypeAwareBuyForOneEmeraldFactoryMixin",
     "networking.EntityMixin",
-    "networking.TrackedDataHandlerRegistryMixin",
+    "networking.TrackedDataHandlerRegistryMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -23,9 +23,12 @@ import net.minecraft.registry.Registries;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.networking.api.CustomPayloads;
+import org.quiltmc.qsl.networking.api.ServerConfigurationConnectionEvents;
+import org.quiltmc.qsl.networking.api.ServerConfigurationTaskManager;
 import org.quiltmc.qsl.registry.impl.sync.mod_protocol.ModProtocolImpl;
 import org.quiltmc.qsl.registry.impl.sync.registry.SynchronizedRegistry;
 import org.quiltmc.qsl.registry.impl.sync.server.ServerRegistrySync;
+import org.quiltmc.qsl.registry.impl.sync.server.SetupSyncTask;
 
 @ApiStatus.Internal
 public class RegistrySyncInitializer implements ModInitializer {
@@ -54,6 +57,10 @@ public class RegistrySyncInitializer implements ModInitializer {
 				Registries.VILLAGER_TYPE,
 				Registries.VILLAGER_PROFESSION
 		);
+
+		ServerConfigurationConnectionEvents.ADD_TASKS.register((handler, server) -> {
+			((ServerConfigurationTaskManager) handler).addTask(new SetupSyncTask(handler));
+		});
 
 		ServerRegistrySync.registerHandlers();
 		CustomPayloads.registerS2CPayload(ServerPackets.Handshake.ID, ServerPackets.Handshake::new);

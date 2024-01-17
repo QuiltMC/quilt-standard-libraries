@@ -78,7 +78,6 @@ public final class ServerConfigurationNetworkAddon extends AbstractChanneledNetw
 	public <T extends CustomPayload> boolean handle(T payload) {
 		boolean handled = super.handle(payload);
 		if (handled && payload.id().equals(NetworkingImpl.REGISTER_CHANNEL)) {
-			this.onConfigureReady();
 			((ServerConfigurationPacketHandlerAccessor) this.handler).invokeFinishCurrentTask(SendChannelsTask.TYPE);
 		}
 

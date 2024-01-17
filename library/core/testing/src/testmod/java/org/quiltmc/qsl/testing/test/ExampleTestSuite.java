@@ -33,9 +33,9 @@ public class ExampleTestSuite implements QuiltGameTest {
 
 		context.succeedWhen(() ->
 				context.checkBlock(
-						new BlockPos(0, 2, 0),
-						(block) -> block == Blocks.DIAMOND_BLOCK,
-						"Expected block to be diamond"
+					new BlockPos(0, 2, 0),
+					(block) -> block == Blocks.DIAMOND_BLOCK,
+					"Expected block to be diamond"
 				)
 		);
 	}

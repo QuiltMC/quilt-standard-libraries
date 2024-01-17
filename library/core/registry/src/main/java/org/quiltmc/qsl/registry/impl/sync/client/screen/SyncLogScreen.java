@@ -22,7 +22,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.button.ButtonWidget;
 import net.minecraft.text.CommonTexts;
 import net.minecraft.text.Text;
 
@@ -47,20 +47,20 @@ public class SyncLogScreen extends Screen {
 	protected void init() {
 		super.init();
 		this.scrollableText = new ScrollableMultiTextWidget(this.client, 40, 40, this.width - 80, this.height - 90, this.text, this.currentScroll, (s) -> this.currentScroll = s);
-		this.addDrawableChild(this.scrollableText);
+		this.addDrawableSelectableElement(this.scrollableText);
 
 		int y = this.height - 40;
 
 		{
 			int x = this.width / 2 - 5 - 120;
-			this.addDrawableChild(ButtonWidget.builder(Text.translatable("chat.copy"), (button) -> {
+			this.addDrawableSelectableElement(ButtonWidget.builder(Text.translatable("chat.copy"), (button) -> {
 				this.client.keyboard.setClipboard(LogBuilder.stringify(this.text));
 			}).positionAndSize(x, y, 120, 20).build());
 		}
 
 		{
 			int x = this.width / 2 + 5;
-			this.addDrawableChild(ButtonWidget.builder(CommonTexts.BACK, (button) -> {
+			this.addDrawableSelectableElement(ButtonWidget.builder(CommonTexts.BACK, (button) -> {
 				this.client.setScreen(this.parent);
 			}).positionAndSize(x, y, 120, 20).build());
 		}

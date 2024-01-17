@@ -18,6 +18,7 @@ package org.quiltmc.qsl.networking.mixin;
 
 import java.util.Queue;
 
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -36,6 +37,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.minecraft.unmapped.C_eyqfalbd;
 
+import org.quiltmc.qsl.networking.api.ServerConfigurationTaskManager;
 import org.quiltmc.qsl.networking.impl.DisconnectPacketSource;
 import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
 import org.quiltmc.qsl.networking.impl.server.SendChannelsTask;
@@ -43,10 +45,17 @@ import org.quiltmc.qsl.networking.impl.server.ServerConfigurationNetworkAddon;
 
 // We want to apply a bit earlier than other mods which may not use us in order to prevent refCount issues
 @Mixin(value = ServerConfigurationPacketHandler.class, priority = 999)
-abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacketHandler implements NetworkHandlerExtensions, DisconnectPacketSource {
+abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacketHandler implements NetworkHandlerExtensions, DisconnectPacketSource, ServerConfigurationTaskManager {
 	@Shadow
 	@Final
 	private Queue<ConfigurationTask> tasks;
+	@Shadow
+	@Nullable
+	private ConfigurationTask currentTask;
+
+	@Shadow
+	protected abstract void finishCurrentTask(ConfigurationTask.Type taskType);
+
 	@Unique
 	private ServerConfigurationNetworkAddon addon;
 
@@ -63,7 +72,7 @@ abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacke
 
 	@Inject(method = "startConfiguration", at = @At("HEAD"))
 	private void start(CallbackInfo ci) {
-		this.tasks.add(new SendChannelsTask());
+		this.tasks.add(new SendChannelsTask(this.addon));
 	}
 
 	@Inject(method = "onDisconnected", at = @At("HEAD"))
@@ -79,5 +88,21 @@ abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacke
 	@Override
 	public Packet<?> createDisconnectPacket(Text message) {
 		return new DisconnectS2CPacket(message);
+	}
+
+	@Override
+	public void addTask(ConfigurationTask task) {
+		this.tasks.add(task);
+	}
+
+	@Override
+	public void finishTask(ConfigurationTask.Type type) {
+		this.finishCurrentTask(type);
+	}
+
+	@Nullable
+	@Override
+	public ConfigurationTask getCurrentTask() {
+		return this.currentTask;
 	}
 }

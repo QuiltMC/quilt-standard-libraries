@@ -24,16 +24,16 @@ import com.mojang.blaze3d.texture.NativeImage;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.resource.pack.ResourcePackProfile;
-import net.minecraft.resource.pack.ResourcePackSource;
+import net.minecraft.resource.pack.PackProfile;
+import net.minecraft.resource.pack.PackSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
-import org.quiltmc.qsl.resource.loader.api.InMemoryResourcePack;
-import org.quiltmc.qsl.resource.loader.api.QuiltResourcePackProfile;
+import org.quiltmc.qsl.resource.loader.api.InMemoryPack;
+import org.quiltmc.qsl.resource.loader.api.QuiltPackProfile;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 
 public class ResourcePackProfileProviderTestMod implements ClientModInitializer {
@@ -41,12 +41,12 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 
 	@Override
 	public void onInitializeClient(ModContainer mod) {
-		ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerResourcePackProfileProvider((profileAdder) -> {
+		ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerPackProfileProvider((profileAdder) -> {
 			var pack = new TestPack();
-			profileAdder.accept(ResourcePackProfile.of(
-					PACK_NAME, pack.getDisplayName(), false, QuiltResourcePackProfile.wrapToFactory(pack), ResourceType.CLIENT_RESOURCES,
-					ResourcePackProfile.InsertionPosition.TOP,
-					new ResourcePackSource() {
+			profileAdder.accept(PackProfile.of(
+					PACK_NAME, pack.getDisplayName(), false, QuiltPackProfile.wrapToFactory(pack), ResourceType.CLIENT_RESOURCES,
+				PackProfile.InsertionPosition.TOP,
+					new PackSource() {
 						@Override
 						public Text decorate(Text name) {
 							return name.copy().append(Text.literal(" (Virtual Provider)").formatted(Formatting.DARK_GRAY));
@@ -60,7 +60,7 @@ public class ResourcePackProfileProviderTestMod implements ClientModInitializer 
 		});
 	}
 
-	static class TestPack extends InMemoryResourcePack {
+	static class TestPack extends InMemoryPack {
 		private static final Identifier DIRT_IDENTIFIER = new Identifier("textures/block/dirt.png");
 		private final Random random = new Random();
 

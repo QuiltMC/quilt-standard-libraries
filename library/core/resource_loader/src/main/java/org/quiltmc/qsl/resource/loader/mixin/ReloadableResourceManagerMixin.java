@@ -38,7 +38,7 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.pack.ResourcePack;
 import net.minecraft.util.Unit;
 
-import org.quiltmc.qsl.resource.loader.api.GroupResourcePack;
+import org.quiltmc.qsl.resource.loader.api.GroupPack;
 import org.quiltmc.qsl.resource.loader.impl.QuiltMultiPackResourceManagerHooks;
 import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
@@ -79,8 +79,8 @@ public class ReloadableResourceManagerMixin {
 	@Inject(method = "method_29491(Ljava/util/List;)Ljava/lang/Object;", at = @At("HEAD"), cancellable = true)
 	private static void getResourcePackNames(List<ResourcePack> packs, CallbackInfoReturnable<String> cir) {
 		cir.setReturnValue(packs.stream().map(pack -> {
-			if (pack instanceof GroupResourcePack groupResourcePack) {
-				return groupResourcePack.getFullName();
+			if (pack instanceof GroupPack groupPack) {
+				return groupPack.getFullName();
 			} else {
 				return pack.getName();
 			}

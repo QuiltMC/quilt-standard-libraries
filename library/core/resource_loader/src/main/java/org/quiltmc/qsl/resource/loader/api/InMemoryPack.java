@@ -59,7 +59,7 @@ import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
  * <p>
  * The resources of this pack are stored in memory instead of it being on-disk.
  */
-public abstract class InMemoryResourcePack implements MutableResourcePack {
+public abstract class InMemoryPack implements MutablePack {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final ExecutorService EXECUTOR_SERVICE;
 	private static final boolean DUMP = TriState.fromProperty("quilt.resource_loader.debug.pack.dump_from_in_memory")
@@ -224,9 +224,9 @@ public abstract class InMemoryResourcePack implements MutableResourcePack {
 
 			this.root.forEach((p, resource) -> this.dumpResource(path, p, resource.get()));
 			this.assets.forEach((p, resource) ->
-					this.dumpResource(path, QuiltResourcePack.getResourcePath(ResourceType.CLIENT_RESOURCES, p), resource.get()));
+					this.dumpResource(path, QuiltPack.getResourcePath(ResourceType.CLIENT_RESOURCES, p), resource.get()));
 			this.data.forEach((p, resource) ->
-					this.dumpResource(path, QuiltResourcePack.getResourcePath(ResourceType.SERVER_DATA, p), resource.get()));
+					this.dumpResource(path, QuiltPack.getResourcePath(ResourceType.SERVER_DATA, p), resource.get()));
 		} catch (IOException e) {
 			LOGGER.error("Failed to write resource pack dump from pack {} to {}.", this.getName(), path, e);
 		}
@@ -275,7 +275,7 @@ public abstract class InMemoryResourcePack implements MutableResourcePack {
 	/**
 	 * Represents an in-memory resource pack with a static name.
 	 */
-	public static class Named extends InMemoryResourcePack {
+	public static class Named extends InMemoryPack {
 		private final String name;
 
 		public Named(String name) {
