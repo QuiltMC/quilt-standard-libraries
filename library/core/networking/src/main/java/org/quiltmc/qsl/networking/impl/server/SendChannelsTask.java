@@ -23,10 +23,15 @@ import net.minecraft.network.packet.Packet;
 
 public class SendChannelsTask implements ConfigurationTask {
 	public static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type("qsl:send_channels");
+	private final ServerConfigurationNetworkAddon addon;
+
+	public SendChannelsTask(ServerConfigurationNetworkAddon addon) {
+		this.addon = addon;
+	}
 
 	@Override
 	public void start(Consumer<Packet<?>> task) {
-		// Do Nothing. This just has us wait for the response from the client.
+		this.addon.onConfigureReady();
 	}
 
 	@Override

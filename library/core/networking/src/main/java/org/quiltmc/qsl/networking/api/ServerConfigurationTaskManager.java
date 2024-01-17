@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.networking.api;
 
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.network.ServerConfigurationPacketHandler;
 import net.minecraft.network.configuration.ConfigurationTask;
 
@@ -45,5 +47,5 @@ public interface ServerConfigurationTaskManager {
 	 *
 	 * @return the current task
 	 */
-	ConfigurationTask getCurrentTask();
+	@Nullable ConfigurationTask getCurrentTask();
 }

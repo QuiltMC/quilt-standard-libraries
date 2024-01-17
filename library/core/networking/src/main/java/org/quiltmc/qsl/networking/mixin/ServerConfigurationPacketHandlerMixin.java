@@ -72,7 +72,7 @@ abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacke
 
 	@Inject(method = "startConfiguration", at = @At("HEAD"))
 	private void start(CallbackInfo ci) {
-		this.tasks.add(new SendChannelsTask());
+		this.tasks.add(new SendChannelsTask(this.addon));
 	}
 
 	@Inject(method = "onDisconnected", at = @At("HEAD"))
@@ -100,6 +100,7 @@ abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacke
 		this.finishCurrentTask(type);
 	}
 
+	@Nullable
 	@Override
 	public ConfigurationTask getCurrentTask() {
 		return this.currentTask;
