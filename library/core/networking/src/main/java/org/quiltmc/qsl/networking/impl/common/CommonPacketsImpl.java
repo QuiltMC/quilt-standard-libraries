@@ -121,7 +121,7 @@ public class CommonPacketsImpl {
 		int version = getHighestCommonVersion(payload.versions(), SUPPORTED_COMMON_PACKET_VERSIONS);
 
 		if (version <= 0) {
-			throw new UnsupportedOperationException("server does not support any requested versions from client");
+			throw new UnsupportedOperationException("Server does not support any requested versions from client");
 		}
 
 		return version;
