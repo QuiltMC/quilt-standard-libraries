@@ -54,8 +54,8 @@ abstract class GameRendererMixin {
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;renderWithTooltip(Lnet/minecraft/client/gui/GuiGraphics;IIF)V"),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	private void onBeforeRenderScreen(float tickDelta, long startTime, boolean tick, CallbackInfo ci,
-									  boolean bl, int mouseX, int mouseY, Window window, Matrix4f projectionMatrix, MatrixStack matrices, GuiGraphics graphics) {
+	private void onBeforeRenderScreen(float originalDelta, long startTime, boolean tick, CallbackInfo ci,
+									  float tickDelta, boolean bl, int mouseX, int mouseY, Window window, Matrix4f projectionMatrix, MatrixStack matrices, GuiGraphics graphics) {
 		// Store the screen in a variable in case someone tries to change the screen during this before render event.
 		// If someone changes the screen, the after render event will likely have class cast exceptions or an NPE.
 		this.quilt$renderingScreen = this.client.currentScreen;
@@ -73,8 +73,8 @@ abstract class GameRendererMixin {
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	private void onAfterRenderScreen(float tickDelta, long startTime, boolean tick, CallbackInfo ci,
-									 boolean bl, int mouseX, int mouseY, Window window, Matrix4f projectionMatrix, MatrixStack matrices, GuiGraphics graphics) {
+	private void onAfterRenderScreen(float originalDelta, long startTime, boolean tick, CallbackInfo ci,
+									 float tickDelta, boolean bl, int mouseX, int mouseY, Window window, Matrix4f projectionMatrix, MatrixStack matrices, GuiGraphics graphics) {
 		ScreenEvents.AFTER_RENDER.invoker().afterRender(this.quilt$renderingScreen, graphics, mouseX, mouseY, tickDelta);
 		// Finally set the currently rendering screen to null
 		this.quilt$renderingScreen = null;

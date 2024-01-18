@@ -18,6 +18,7 @@ package org.quiltmc.qsl.registry.mixin;
 
 import java.util.IdentityHashMap;
 
+import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
@@ -44,6 +45,20 @@ public class ClientConnectionMixin implements ExtendedConnectionClient {
 	@Unique
 	private boolean quilt$understandsOptional;
 
+	@Unique
+	private final Hash.Strategy<Object> quilt$identiyHashStrategy = new Hash.Strategy<>() {
+
+		@Override
+		public int hashCode(Object o) {
+			return System.identityHashCode(o);
+		}
+
+		@Override
+		public boolean equals(Object o1, Object o2) {
+			return o1 == o2;
+		}
+	};
+
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void quilt$setDefault(NetworkSide side, CallbackInfo ci) {
 		this.quilt$modProtocol.defaultReturnValue(ProtocolVersions.NO_PROTOCOL);
@@ -54,7 +69,7 @@ public class ClientConnectionMixin implements ExtendedConnectionClient {
 		var set = this.quilt$unknownEntries.get(registry);
 
 		if (set == null) {
-			set = new ObjectOpenCustomHashSet<>(Util.identityHashStrategy());
+			set = new ObjectOpenCustomHashSet<>(quilt$identiyHashStrategy);
 			this.quilt$unknownEntries.put(registry, set);
 		}
 

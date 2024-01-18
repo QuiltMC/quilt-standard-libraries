@@ -80,7 +80,7 @@ public final class ModPackUtil {
 
 	public static DataPackSettings createDefaultDataPackSettings(DataPackSettings source) {
 		var moddedResourcePacks = new ArrayList<PackProfile>();
-		ModPackProvider.SERVER_RESOURCE_PACK_PROVIDER.register(moddedResourcePacks::add);
+		ModPackProvider.SERVER_RESOURCE_PACK_PROVIDER.loadPacks(moddedResourcePacks::add);
 
 		var enabled = new ArrayList<>(source.getEnabled());
 		var disabled = new ArrayList<>(source.getDisabled());

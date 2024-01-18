@@ -97,7 +97,7 @@ public abstract class ClientPlayNetworkHandlerMixin extends AbstractClientNetwor
 			method = "onChatMessage",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/network/message/MessageSignatureStorage;addMessageSignatures(Lnet/minecraft/network/message/SignedChatMessage;)V",
+					target = "Lnet/minecraft/network/message/MessageSignatureStorage;method_46286(Lnet/minecraft/network/message/MessageBody;Lnet/minecraft/network/message/MessageSignature;)V",
 					shift = At.Shift.AFTER
 			)
 	)
@@ -249,7 +249,7 @@ public abstract class ClientPlayNetworkHandlerMixin extends AbstractClientNetwor
 			method = "sendChatMessage",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;send(Lnet/minecraft/network/packet/Packet;)V"
+					target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;method_52787(Lnet/minecraft/network/packet/Packet;)V"
 			)
 	)
 	public void quilt$modifyAndCancelAndBeforeAndAfterOutboundChatMessage(ClientPlayNetworkHandler instance, Packet<?> packet) {

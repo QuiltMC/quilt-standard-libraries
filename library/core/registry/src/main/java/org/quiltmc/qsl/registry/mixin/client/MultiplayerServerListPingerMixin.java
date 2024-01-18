@@ -49,8 +49,8 @@ public class MultiplayerServerListPingerMixin {
 			}
 
 			@Override
-			public void method_12666(QueryPongS2CPacket packet) {
-				queryPacketListener.method_12666(packet);
+			public void onQueryPong(QueryPongS2CPacket packet) {
+				queryPacketListener.onQueryPong(packet);
 			}
 
 			@Override
