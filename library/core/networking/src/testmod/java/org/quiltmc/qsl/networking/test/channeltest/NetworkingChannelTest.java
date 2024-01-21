@@ -106,7 +106,7 @@ public final class NetworkingChannelTest implements CommandRegistrationCallback 
 			System.out.printf("Received packet on channel %s%n", channel);
 		});
 
-		context.getSource().sendSystemMessage(Text.of(String.format("Registered channel %s for %s", channel, executor.getEntityName())));
+		context.getSource().sendSystemMessage(Text.of(String.format("Registered channel %s for %s", channel, executor.getDisplayName())));
 
 		return 1;
 	}
@@ -119,7 +119,7 @@ public final class NetworkingChannelTest implements CommandRegistrationCallback 
 		}
 
 		ServerPlayNetworking.unregisterReceiver(player.networkHandler, channel);
-		context.getSource().sendSystemMessage(Text.of(String.format("Unregistered channel %s for %s", getIdentifier(context, "channel"), player.getEntityName())));
+		context.getSource().sendSystemMessage(Text.of(String.format("Unregistered channel %s for %s", getIdentifier(context, "channel"), player.getDisplayName())));
 
 		return 1;
 	}
@@ -128,7 +128,7 @@ public final class NetworkingChannelTest implements CommandRegistrationCallback 
 		ServerCommandSource source = context.getSource();
 		Set<Identifier> channels = ServerPlayNetworking.getSendable(player);
 
-		source.sendSystemMessage(Text.of(String.format("Available channels for player %s", player.getEntityName())));
+		source.sendSystemMessage(Text.of(String.format("Available channels for player %s", player.getDisplayName())));
 
 		for (Identifier channel : channels) {
 			source.sendSystemMessage(Text.of(channel.toString()));

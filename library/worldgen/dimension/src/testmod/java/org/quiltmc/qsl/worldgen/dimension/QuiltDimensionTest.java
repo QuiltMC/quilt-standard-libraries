@@ -23,7 +23,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.command.CommandBuildContext;
-import net.minecraft.command.CommandException;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.registry.Registries;
@@ -107,10 +106,6 @@ public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents
 		if (serverWorld != modWorld) {
 			var target = new TeleportTarget(new Vec3d(0.5, 101, 0.5), Vec3d.ZERO, 0, 0);
 			QuiltDimensions.teleport(player, modWorld, target);
-
-			if (player.getWorld() != modWorld) {
-				throw new CommandException(Text.literal("Teleportation failed!"));
-			}
 
 			modWorld.setBlockState(new BlockPos(0, 100, 0), Blocks.DIAMOND_BLOCK.getDefaultState());
 			modWorld.setBlockState(new BlockPos(0, 101, 0), Blocks.TORCH.getDefaultState());

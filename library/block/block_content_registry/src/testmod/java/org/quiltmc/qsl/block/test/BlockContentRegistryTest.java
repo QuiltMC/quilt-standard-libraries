@@ -66,7 +66,7 @@ public class BlockContentRegistryTest implements ModInitializer, QuiltGameTest {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		RegistryExtensions.register(Registries.BLOCK, new Identifier(MOD_ID, "oxidizable_iron_block"),
-				new OxidizableBlock(Oxidizable.OxidizationLevel.UNAFFECTED, AbstractBlock.Settings.copy(Blocks.IRON_BLOCK)),
+				new OxidizableBlock(Oxidizable.OxidizationLevel.UNAFFECTED, AbstractBlock.Settings.method_9630(Blocks.IRON_BLOCK)),
 				BlockContentRegistries.OXIDIZABLE, new ReversibleBlockEntry(Blocks.IRON_BLOCK, false));
 
 		BlockContentRegistries.ENCHANTING_BOOSTERS.put(Blocks.IRON_BLOCK, new ConstantBooster(3f));

@@ -26,7 +26,7 @@ import net.minecraft.util.Identifier;
 
 final class ChannelList extends EntryListWidget<ChannelList.Entry> {
 	ChannelList(MinecraftClient client, int width, int height, int top, int bottom, int itemHeight) {
-		super(client, width, height, top, bottom, itemHeight);
+		super(client, top, width, bottom-top, itemHeight);
 	}
 
 	@Override
@@ -39,7 +39,7 @@ final class ChannelList extends EntryListWidget<ChannelList.Entry> {
 	}
 
 	@Override
-	public void appendNarrations(NarrationMessageBuilder arg) {
+	public void updateNarration(NarrationMessageBuilder arg) {
 		// TODO seems to be possibly accessibility related
 	}
 

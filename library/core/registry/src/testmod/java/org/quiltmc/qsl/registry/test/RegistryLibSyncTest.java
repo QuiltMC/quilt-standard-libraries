@@ -119,7 +119,7 @@ public class RegistryLibSyncTest implements ModInitializer {
 	@SuppressWarnings("unchecked")
 	static Identifier register(int i) {
 		var id = new Identifier(NAMESPACE, "entry_" + i);
-		var block = new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.BLACK));
+		var block = new Block(AbstractBlock.Settings.method_9630(Blocks.STONE).mapColor(MapColor.BLACK));
 
 		Registry.register(Registries.BLOCK, id, block);
 		Registry.register(Registries.ITEM, id, new BlockItem(block, new Item.Settings()));
