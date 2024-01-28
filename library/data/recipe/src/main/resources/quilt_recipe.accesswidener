@@ -1,4 +1,2 @@
 accessWidener   v2  named
 
-accessible  class   net/minecraft/data/server/recipe/ShapedRecipeJsonFactory$ShapedRecipeJsonProvider
-accessible  class   net/minecraft/data/server/recipe/CookingRecipeJsonFactory$CookingRecipeJsonProvider
