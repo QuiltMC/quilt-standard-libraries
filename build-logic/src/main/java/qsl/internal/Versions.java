@@ -23,7 +23,7 @@ public final class Versions {
 	/**
 	 * The QSL version
 	 */
-	public static final String QSL_VERSION = "7.0.0-alpha.8";
+	public static final String QSL_VERSION = "7.0.0-alpha.9";
 
 	/**
 	 * The target Minecraft version.
