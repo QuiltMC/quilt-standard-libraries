@@ -36,6 +36,15 @@ public interface ServerConfigurationTaskManager {
 	void addTask(ConfigurationTask task);
 
 	/**
+	 * Adds a task to the handler that must complete before joining.
+	 * This task will run after the next task is finished.
+	 * Tasks added here may not have a fully configured client, such not having a synced registry.
+	 *
+	 * @param task the task to add
+	 */
+	void addImmediateTask(ConfigurationTask task);
+
+	/**
 	 * Finishes the task of the specified type. Will throw an error if a different or no task is running.
 	 *
 	 * @param type the type to finish

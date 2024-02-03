@@ -16,11 +16,14 @@
 
 package org.quiltmc.qsl.networking.mixin;
 
+import java.util.Deque;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -46,6 +49,7 @@ import org.quiltmc.qsl.networking.impl.server.ServerConfigurationNetworkAddon;
 // We want to apply a bit earlier than other mods which may not use us in order to prevent refCount issues
 @Mixin(value = ServerConfigurationPacketHandler.class, priority = 999)
 abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacketHandler implements NetworkHandlerExtensions, DisconnectPacketSource, ServerConfigurationTaskManager {
+	@Mutable
 	@Shadow
 	@Final
 	private Queue<ConfigurationTask> tasks;
@@ -66,6 +70,7 @@ abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacke
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void initAddon(CallbackInfo ci) {
 		this.addon = new ServerConfigurationNetworkAddon((ServerConfigurationPacketHandler) (Object) this, this.server);
+		this.tasks = new ConcurrentLinkedDeque<>(this.tasks);
 		// A bit of a hack but it allows the field above to be set in case someone registers handlers during INIT event which refers to said field
 		this.addon.lateInit();
 	}
@@ -93,6 +98,11 @@ abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacke
 	@Override
 	public void addTask(ConfigurationTask task) {
 		this.tasks.add(task);
+	}
+
+	@Override
+	public void addImmediateTask(ConfigurationTask task) {
+		((Deque<ConfigurationTask>) this.tasks).addFirst(task);
 	}
 
 	@Override
