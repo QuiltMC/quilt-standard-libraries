@@ -24,6 +24,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.resource.loader.impl.StaticResourceManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -68,13 +69,19 @@ public abstract class MultiPackResourceManagerMixin implements QuiltMultiPackRes
 	)
 	private List<ResourcePack> quilt$createPackList(List<ResourcePack> packs, ResourceType type) {
 		this.quilt$type = type;
-
-		return packs.stream().mapMulti(ResourceLoaderImpl::flattenPacks).collect(Collectors.toCollection(ArrayList::new));
+		if (((Object) this) instanceof StaticResourceManager)
+		{
+			return packs;
+		}
+		else {
+			return packs.stream().mapMulti(ResourceLoaderImpl::flattenPacks).collect(Collectors.toCollection(ArrayList::new));
+		}
 	}
 
 	@SuppressWarnings("ConstantConditions")
 	@Override
 	public void quilt$appendTopPacks() {
+		if (((Object) this) instanceof StaticResourceManager) return;
 		if (!(this.packs instanceof ArrayList<ResourcePack>)) {
 			this.packs = new ArrayList<>(this.packs);
 		}
@@ -84,6 +91,7 @@ public abstract class MultiPackResourceManagerMixin implements QuiltMultiPackRes
 
 	@Override
 	public void quilt$recomputeNamespaces() {
+		if (((Object) this) instanceof StaticResourceManager) return;
 		this.namespaceManagers.clear();
 		List<String> namespaces = this.packs.stream().flatMap(pack -> pack.getNamespaces(this.quilt$type).stream()).distinct().toList();
 

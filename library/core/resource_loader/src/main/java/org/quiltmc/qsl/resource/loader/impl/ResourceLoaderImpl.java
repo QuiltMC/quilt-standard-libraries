@@ -18,6 +18,7 @@
 package org.quiltmc.qsl.resource.loader.impl;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -35,6 +36,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -59,6 +61,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.Language;
 import net.minecraft.util.Pair;
+import net.minecraft.resource.pack.NioResourcePack;
+import net.minecraft.resource.pack.ZipResourcePack;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.ModMetadata;
@@ -81,6 +85,12 @@ import org.quiltmc.qsl.resource.loader.mixin.VanillaDataPackProviderAccessor;
  */
 @ApiStatus.Internal
 public final class ResourceLoaderImpl implements ResourceLoader {
+	private static final String STATIC_PACK_ROOT = "static";
+	/**
+	 * Contains the names of various filesystem helper files in <i>all lower-case</i>, used to filter said files out of loose file detection.
+	 */
+	private static final Set<String> STATIC_USERSPACE_FILESYSTEM_HELPERS = Set.of(".ds_store", "thumbs.db", "desktop.ini", ".desktop");
+	private static final Map<ResourceType, StaticResourceManager> STATIC_MANAGER_MAP = new EnumMap<>(ResourceType.class);
 	private static final Map<ResourceType, ResourceLoaderImpl> IMPL_MAP = new EnumMap<>(ResourceType.class);
 	/**
 	 * Represents a cache of the client mod resource packs so resource packs that can cache don't lose their cache.
@@ -95,9 +105,9 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	private static final Logger LOGGER = LoggerFactory.getLogger("ResourceLoader");
 
 	private static final boolean DEBUG_RELOADERS_IDENTITY = TriState.fromProperty("quilt.resource_loader.debug.reloaders_identity")
-			.toBooleanOrElse(QuiltLoader.isDevelopmentEnvironment());
+		.toBooleanOrElse(QuiltLoader.isDevelopmentEnvironment());
 	private static final boolean DEBUG_RELOADERS_ORDER = TriState.fromProperty("quilt.resource_loader.debug.reloaders_order")
-			.toBooleanOrElse(false);
+		.toBooleanOrElse(false);
 
 	private final ResourceType type;
 	private final Set<Identifier> addedReloaderIds = new ObjectOpenHashSet<>();
@@ -122,6 +132,14 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 
 	public static ResourceLoaderImpl get(ResourceType type) {
 		return IMPL_MAP.computeIfAbsent(type, ResourceLoaderImpl::new);
+	}
+
+	public static StaticResourceManager getStaticResourceManager(ResourceType type) {
+		return STATIC_MANAGER_MAP.computeIfAbsent(type, passedType -> {
+			List<ResourcePack> packs = findUserStaticPacks();
+			appendModPacks(packs, passedType, STATIC_PACK_ROOT);
+			return new StaticResourceManager(passedType, packs);
+		});
 	}
 
 	public static <T> @Nullable T parseMetadata(ResourceMetadataSectionReader<T> metaSectionReader, ResourcePack pack, InputStream inputStream) {
@@ -157,14 +175,14 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	public void registerReloader(@NotNull IdentifiableResourceReloader resourceReloader) {
 		if (!this.addedReloaderIds.add(resourceReloader.getQuiltId())) {
 			throw new IllegalStateException(
-					"Tried to register resource reloader " + resourceReloader.getQuiltId() + " twice!"
+				"Tried to register resource reloader " + resourceReloader.getQuiltId() + " twice!"
 			);
 		}
 
 		if (!this.addedReloaders.add(resourceReloader)) {
 			throw new IllegalStateException(
-					"Resource reloader with previously unknown ID " + resourceReloader.getQuiltId()
-							+ " already in resource reloader set!"
+				"Resource reloader with previously unknown ID " + resourceReloader.getQuiltId()
+					+ " already in resource reloader set!"
 			);
 		}
 	}
@@ -185,7 +203,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	public void registerPackProfileProvider(@NotNull PackProvider provider) {
 		if (!this.resourcePackProfileProviders.add(provider)) {
 			throw new IllegalStateException(
-					"Tried to register a resource pack profile provider twice!"
+				"Tried to register a resource pack profile provider twice!"
 			);
 		}
 	}
@@ -259,16 +277,16 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 				id = identifiable.getQuiltId();
 			} else {
 				id = new Identifier("unknown",
-						"private/"
-								+ currentReloader.getClass().getName()
-								.replace(".", "/")
-								.replace("$", "_")
-								.toLowerCase(Locale.ROOT)
+					"private/"
+						+ currentReloader.getClass().getName()
+						.replace(".", "/")
+						.replace("$", "_")
+						.toLowerCase(Locale.ROOT)
 				);
 
 				if (DEBUG_RELOADERS_IDENTITY) {
 					LOGGER.warn("The resource reloader at {} does not implement IdentifiableResourceReloader " +
-							"making ordering support more difficult for other modders.", currentReloader.getClass().getName());
+						"making ordering support more difficult for other modders.", currentReloader.getClass().getName());
 				}
 			}
 
@@ -309,7 +327,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 			if (putAfter == afterVanilla) continue;
 
 			if (putAfter.vanillaStatus == ResourceReloaderPhaseData.VanillaStatus.NONE
-					|| putAfter.vanillaStatus == ResourceReloaderPhaseData.VanillaStatus.AFTER) {
+				|| putAfter.vanillaStatus == ResourceReloaderPhaseData.VanillaStatus.AFTER) {
 				PhaseData.link(afterVanilla, putAfter);
 			}
 		}
@@ -351,7 +369,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	 */
 	public static void appendModPacks(List<ResourcePack> packs, ResourceType type, @Nullable String subPath) {
 		var modResourcePacks = type == ResourceType.CLIENT_RESOURCES
-				? CLIENT_MOD_RESOURCE_PACKS : SERVER_MOD_RESOURCE_PACKS;
+			? CLIENT_MOD_RESOURCE_PACKS : SERVER_MOD_RESOURCE_PACKS;
 		var existingList = modResourcePacks.get(subPath);
 		var byMod = new Reference2ObjectOpenHashMap<ModMetadata, ModNioPack>();
 
@@ -386,8 +404,8 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		}
 
 		List<ModNioPack> packList = byMod.values().stream()
-				.filter(pack -> !pack.getNamespaces(type).isEmpty())
-				.toList();
+			.filter(pack -> !pack.getNamespaces(type).isEmpty())
+			.toList();
 
 		// Cache the pack list for the next reload.
 		modResourcePacks.put(subPath, packList);
@@ -439,7 +457,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	 * @see ResourceLoader#registerBuiltinPack(Identifier, ModContainer, PackActivationType, Text)
 	 */
 	public static boolean registerBuiltinPack(Identifier id, String subPath, ModContainer container,
-			PackActivationType activationType, Text displayName) {
+											  PackActivationType activationType, Text displayName) {
 		Path resourcePackPath = container.getPath(subPath).toAbsolutePath().normalize();
 
 		if (!Files.exists(resourcePackPath)) {
@@ -451,12 +469,12 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 		boolean result = false;
 		if (MinecraftQuiltLoader.getEnvironmentType() == EnvType.CLIENT) {
 			result = registerBuiltinPack(ResourceType.CLIENT_RESOURCES,
-					newBuiltinPack(container, name, displayName, resourcePackPath, ResourceType.CLIENT_RESOURCES, activationType)
+				newBuiltinPack(container, name, displayName, resourcePackPath, ResourceType.CLIENT_RESOURCES, activationType)
 			);
 		}
 
 		result |= registerBuiltinPack(ResourceType.SERVER_DATA,
-				newBuiltinPack(container, name, displayName, resourcePackPath, ResourceType.SERVER_DATA, activationType)
+			newBuiltinPack(container, name, displayName, resourcePackPath, ResourceType.SERVER_DATA, activationType)
 		);
 
 		return result;
@@ -465,7 +483,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	private static boolean registerBuiltinPack(ResourceType type, ModNioPack pack) {
 		if (QuiltLoader.isDevelopmentEnvironment() || !pack.getNamespaces(type).isEmpty()) {
 			var builtinResourcePacks = type == ResourceType.CLIENT_RESOURCES
-					? CLIENT_BUILTIN_RESOURCE_PACKS : SERVER_BUILTIN_RESOURCE_PACKS;
+				? CLIENT_BUILTIN_RESOURCE_PACKS : SERVER_BUILTIN_RESOURCE_PACKS;
 			builtinResourcePacks.put(pack.getName(), pack);
 			return true;
 		}
@@ -473,13 +491,13 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	}
 
 	private static ModNioPack newBuiltinPack(ModContainer container, String name, Text displayName,
-			Path resourcePackPath, ResourceType type, PackActivationType activationType) {
+											 Path resourcePackPath, ResourceType type, PackActivationType activationType) {
 		return new ModNioPack(name, container.metadata(), displayName, activationType, resourcePackPath, type, null);
 	}
 
 	public static void registerBuiltinPacks(ResourceType type, Consumer<PackProfile> profileAdder) {
 		var builtinPacks = type == ResourceType.CLIENT_RESOURCES
-				? CLIENT_BUILTIN_RESOURCE_PACKS : SERVER_BUILTIN_RESOURCE_PACKS;
+			? CLIENT_BUILTIN_RESOURCE_PACKS : SERVER_BUILTIN_RESOURCE_PACKS;
 
 		// Loop through each registered built-in resource packs and add them if valid.
 		for (var entry : builtinPacks.entrySet()) {
@@ -506,7 +524,7 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 	 */
 	public static void appendLanguageEntries(@NotNull Map<String, String> map) {
 		var pack = ResourceLoaderImpl.buildMinecraftPack(ResourceType.CLIENT_RESOURCES,
-				VanillaDataPackProviderAccessor.invokeDefaultPackBuilder()
+			VanillaDataPackProviderAccessor.invokeDefaultPackBuilder()
 		);
 
 		try (var manager = new MultiPackResourceManager(ResourceType.CLIENT_RESOURCES, List.of(pack))) {
@@ -522,5 +540,46 @@ public final class ResourceLoaderImpl implements ResourceLoader {
 				}
 			}
 		}
+	}
+
+	/* Static pack stuff */
+	private static List<ResourcePack> findUserStaticPacks() {
+		List<ResourcePack> returnList = new ArrayList<>();
+
+		try (Stream<Path> walkStream = Files.walk(QuiltLoader.getGameDir().resolve(STATIC_PACK_ROOT), 1)) {
+			for (Path path : walkStream.toList()) {
+				File pathAsFile = path.toFile();
+				String n = calcUserspacePackName(pathAsFile);
+
+				if (pathAsFile.isFile()) {
+					if (pathAsFile.toPath().toString().endsWith(".zip")) {
+						ZipResourcePack.Factory zipFactory = new ZipResourcePack.Factory(path, false);
+						returnList.add(zipFactory.openPrimary(n));
+					} else {
+						// Implementation detail: ._* and (some) *nix-derivative OSes (macOS, Linux distros, etc.)
+						// ._* is a rare *nix filesystem helper file created to store file information normally placed in an extended attribute
+						// on HFS+ (Apple Native, typically found under macOS) or UFS (other *nix OSes) filesystems when interfacing with a filesystem
+						// that does NOT support such extended attributes (for instance, a FAT32 drive). Since these can have names of arbitrary lengths,
+						// the only way to detect them is via the shared prefix.
+						// Source: https://apple.stackexchange.com/a/14981
+						if (!pathAsFile.getName().startsWith("._") && !STATIC_USERSPACE_FILESYSTEM_HELPERS.contains(pathAsFile.getName().toLowerCase(Locale.ROOT))) {
+							LOGGER.error("Files outside of packs are not supported by the Quilt Static Resource Manager. Loose file: {}", pathAsFile);
+							LOGGER.error("If the loose file above is a filesystem helper for the in-use Operating System, please make an issue report on the QSL github: https://github.com/QuiltMC/quilt-standard-libraries/issues");
+						}
+					}
+				} else if (pathAsFile.isDirectory()) {
+					returnList.add(new NioResourcePack(n, path, false));
+				}
+			}
+		} catch (IOException eio) {
+			LOGGER.error("IO Exception thrown while loading userspace static packs: {}", eio.toString());
+		}
+
+		return returnList;
+	}
+
+	private static String calcUserspacePackName(File packFile) {
+		int n = packFile.toPath().getNameCount();
+		return packFile.toPath().getName(n - 2) + "/" + packFile.toPath().getName(n - 1);
 	}
 }
