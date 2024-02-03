@@ -19,7 +19,9 @@ package org.quiltmc.qsl.networking.mixin;
 import java.util.Deque;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.function.Consumer;
 
+import com.llamalad7.mixinextras.injector.WrapWithCondition;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -47,7 +49,7 @@ import org.quiltmc.qsl.networking.impl.server.SendChannelsTask;
 import org.quiltmc.qsl.networking.impl.server.ServerConfigurationNetworkAddon;
 
 // We want to apply a bit earlier than other mods which may not use us in order to prevent refCount issues
-@Mixin(value = ServerConfigurationPacketHandler.class, priority = 999)
+@Mixin(value = ServerConfigurationPacketHandler.class, priority = 900)
 abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacketHandler implements NetworkHandlerExtensions, DisconnectPacketSource, ServerConfigurationTaskManager {
 	@Mutable
 	@Shadow
@@ -60,8 +62,17 @@ abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacke
 	@Shadow
 	protected abstract void finishCurrentTask(ConfigurationTask.Type taskType);
 
+	@Shadow
+	public abstract void startConfiguration();
+
+	@Shadow
+	protected abstract void startNextTask();
+
 	@Unique
 	private ServerConfigurationNetworkAddon addon;
+
+	@Unique
+	private boolean sentConfiguration = false;
 
 	ServerConfigurationPacketHandlerMixin(MinecraftServer server, ClientConnection connection, C_eyqfalbd c_eyqfalbd) {
 		super(server, connection, c_eyqfalbd);
@@ -75,9 +86,35 @@ abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacke
 		this.addon.lateInit();
 	}
 
-	@Inject(method = "startConfiguration", at = @At("HEAD"))
+	@Inject(method = "startConfiguration", at = @At("HEAD"), cancellable = true)
 	private void start(CallbackInfo ci) {
-		this.tasks.add(new SendChannelsTask(this.addon));
+		if (!this.sentConfiguration) {
+			this.addImmediateTask(new SendChannelsTask(this.addon));
+
+			this.addTask(new ConfigurationTask() {
+				static final Type TYPE = new Type("minecraft:start_configuration");
+
+				@Override
+				public void start(Consumer<Packet<?>> task) {
+					ServerConfigurationPacketHandlerMixin.this.startConfiguration();
+					ServerConfigurationPacketHandlerMixin.this.finishTask(TYPE);
+				}
+
+				@Override
+				public Type getType() {
+					return TYPE;
+				}
+			});
+
+			this.sentConfiguration = true;
+			this.startNextTask();
+			ci.cancel();
+		}
+	}
+
+	@WrapWithCondition(method = "startConfiguration", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/ServerConfigurationPacketHandler;startNextTask()V"))
+	private boolean doNotCallStart(ServerConfigurationPacketHandler handler) {
+		return false;
 	}
 
 	@Inject(method = "onDisconnected", at = @At("HEAD"))
