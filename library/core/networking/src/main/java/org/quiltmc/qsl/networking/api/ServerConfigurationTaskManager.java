@@ -37,12 +37,26 @@ public interface ServerConfigurationTaskManager {
 
 	/**
 	 * Adds a task to the handler that must complete before joining.
-	 * This task will run after the next task is finished.
-	 * Tasks added here may not have a fully configured client, such not having a synced registry.
+	 * This task will be executed next regardless of whatever other tasks exist.
+	 * This method is useful when you have one task you want to run right after another finishes, like in a state machine.
+	 * This will throw if there is already an immediate task to run.
 	 *
 	 * @param task the task to add
 	 */
 	void addImmediateTask(ConfigurationTask task);
+
+	/**
+	 * Adds a task with a higher priority to the handler that must complete before joining.
+	 * Priority tasks are executed in the order they are added to the handler.
+	 * All priority tasks will be finished before normal tasks begin executing again.
+	 * If a priority task is added during normal task execution, the handler will switch to executing the priority tasks.
+	 *
+	 * <p>
+	 * Calling this during the {@link ServerConfigurationConnectionEvents#INIT} event might add your tasks before registry sync.
+	 *
+	 * @param task the task to add
+	 */
+	void addPriorityTask(ConfigurationTask task);
 
 	/**
 	 * Finishes the task of the specified type. Will throw an error if a different or no task is running.

@@ -59,7 +59,7 @@ public class RegistrySyncInitializer implements ModInitializer {
 		);
 
 		ServerConfigurationConnectionEvents.INIT.register((handler, server) -> {
-			((ServerConfigurationTaskManager) handler).addImmediateTask(new SetupSyncTask(handler));
+			((ServerConfigurationTaskManager) handler).addPriorityTask(new SetupSyncTask(handler));
 		});
 
 		ServerRegistrySync.registerHandlers();

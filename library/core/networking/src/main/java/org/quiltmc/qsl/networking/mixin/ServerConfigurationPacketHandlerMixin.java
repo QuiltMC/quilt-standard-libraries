@@ -16,11 +16,11 @@
 
 package org.quiltmc.qsl.networking.mixin;
 
-import java.util.Deque;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 
+import com.llamalad7.mixinextras.injector.ModifyReceiver;
 import com.llamalad7.mixinextras.injector.WrapWithCondition;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -74,6 +74,12 @@ abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacke
 	@Unique
 	private boolean sentConfiguration = false;
 
+	@Unique
+	private ConfigurationTask immediateTask = null;
+
+	@Unique
+	private Queue<ConfigurationTask> priorityTasks = new ConcurrentLinkedQueue<>();
+
 	ServerConfigurationPacketHandlerMixin(MinecraftServer server, ClientConnection connection, C_eyqfalbd c_eyqfalbd) {
 		super(server, connection, c_eyqfalbd);
 	}
@@ -81,7 +87,6 @@ abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacke
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void initAddon(CallbackInfo ci) {
 		this.addon = new ServerConfigurationNetworkAddon((ServerConfigurationPacketHandler) (Object) this, this.server);
-		this.tasks = new ConcurrentLinkedDeque<>(this.tasks);
 		// A bit of a hack but it allows the field above to be set in case someone registers handlers during INIT event which refers to said field
 		this.addon.lateInit();
 	}
@@ -91,7 +96,7 @@ abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacke
 		if (!this.sentConfiguration) {
 			this.addImmediateTask(new SendChannelsTask(this.addon));
 
-			this.addTask(new ConfigurationTask() {
+			this.addPriorityTask(new ConfigurationTask() {
 				static final Type TYPE = new Type("minecraft:start_configuration");
 
 				@Override
@@ -117,6 +122,22 @@ abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacke
 		return false;
 	}
 
+	@ModifyReceiver(method = "startNextTask", at = @At(value = "INVOKE", target = "Ljava/util/Queue;poll()Ljava/lang/Object;"))
+	private Queue<ConfigurationTask> modifyTaskQueue(Queue<ConfigurationTask> originalQueue) {
+		if (this.immediateTask != null) {
+			var singleQueue = new ConcurrentLinkedQueue<ConfigurationTask>();
+			singleQueue.add(this.immediateTask);
+			this.immediateTask = null;
+			return singleQueue;
+		}
+
+		if (!this.priorityTasks.isEmpty()) {
+			return this.priorityTasks;
+		}
+
+		return originalQueue;
+	}
+
 	@Inject(method = "onDisconnected", at = @At("HEAD"))
 	private void handleDisconnection(Text reason, CallbackInfo ci) {
 		this.addon.handleDisconnect();
@@ -138,8 +159,20 @@ abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacke
 	}
 
 	@Override
+	public void addPriorityTask(ConfigurationTask task) {
+		this.priorityTasks.add(task);
+	}
+
+	@Override
 	public void addImmediateTask(ConfigurationTask task) {
-		((Deque<ConfigurationTask>) this.tasks).addFirst(task);
+		if (this.immediateTask != null) {
+			throw new RuntimeException(
+				"Cannot add an immediate task of type: \"" + task.getType()
+				+ "\" when there is already an immediate task of type: \"" + this.immediateTask.getType() + "\"."
+			);
+		}
+
+		this.immediateTask = task;
 	}
 
 	@Override
