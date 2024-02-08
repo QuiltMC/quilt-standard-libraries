@@ -18,8 +18,10 @@
 package org.quiltmc.qsl.worldgen.dimension;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.LiteralMessage;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.command.CommandBuildContext;
@@ -35,7 +37,6 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.test.TestServer;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -102,6 +103,10 @@ public class QuiltDimensionTest implements ModInitializer, ServerLifecycleEvents
 		ServerPlayerEntity player = context.getSource().getPlayer();
 		ServerWorld serverWorld = (ServerWorld) player.getWorld();
 		ServerWorld modWorld = context.getSource().getServer().getWorld(WORLD_KEY);
+
+		if (player.getWorld() != modWorld){
+			throw new SimpleCommandExceptionType(new LiteralMessage("Teleportation failed!")).create();
+		}
 
 		if (serverWorld != modWorld) {
 			var target = new TeleportTarget(new Vec3d(0.5, 101, 0.5), Vec3d.ZERO, 0, 0);

@@ -12,4 +12,5 @@ qslModule {
 			api("qsl_base")
 		}
 	}
+	noMixins()
 }
