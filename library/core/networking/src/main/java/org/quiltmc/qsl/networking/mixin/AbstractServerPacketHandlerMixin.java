@@ -24,12 +24,17 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.network.ClientConnection;
+import net.minecraft.network.ServerConfigurationPacketHandler;
 import net.minecraft.network.listener.AbstractServerPacketHandler;
 import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
+import net.minecraft.network.packet.c2s.common.PongC2SPacket;
 import net.minecraft.server.MinecraftServer;
 
+import org.quiltmc.qsl.networking.api.ServerConfigurationTaskManager;
 import org.quiltmc.qsl.networking.impl.AbstractChanneledNetworkAddon;
 import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
+import org.quiltmc.qsl.networking.impl.server.SendChannelsTask;
+import org.quiltmc.qsl.networking.impl.server.ServerConfigurationNetworkAddon;
 
 // We want to apply a bit earlier than other mods which may not use us in order to prevent refCount issues
 @Mixin(value = AbstractServerPacketHandler.class, priority = 999)
@@ -48,6 +53,15 @@ abstract class AbstractServerPacketHandlerMixin implements NetworkHandlerExtensi
 
 		if (payloadHandled) {
 			ci.cancel();
+		}
+	}
+
+	@Inject(method = "onPlayPong", at = @At("TAIL"))
+	private void handlePong(PongC2SPacket packet, CallbackInfo ci) {
+		if (((Object) this) instanceof ServerConfigurationPacketHandler configurationHandler && packet.getParameter() == ServerConfigurationNetworkAddon.PING_ID) {
+			if (((ServerConfigurationTaskManager) configurationHandler).getCurrentTask() instanceof SendChannelsTask) {
+				((ServerConfigurationTaskManager) configurationHandler).finishTask(SendChannelsTask.TYPE); // Vanilla or non-supported client connection.
+			}
 		}
 	}
 }

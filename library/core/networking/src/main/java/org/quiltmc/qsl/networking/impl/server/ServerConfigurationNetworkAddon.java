@@ -27,24 +27,26 @@ import net.minecraft.network.ServerConfigurationPacketHandler;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.payload.CustomPayload;
 import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
+import net.minecraft.network.packet.s2c.common.PingS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 
 import org.quiltmc.qsl.networking.api.S2CConfigurationChannelEvents;
 import org.quiltmc.qsl.networking.api.ServerConfigurationConnectionEvents;
 import org.quiltmc.qsl.networking.api.ServerConfigurationNetworking;
+import org.quiltmc.qsl.networking.api.ServerConfigurationTaskManager;
 import org.quiltmc.qsl.networking.impl.AbstractChanneledNetworkAddon;
 import org.quiltmc.qsl.networking.impl.ChannelInfoHolder;
 import org.quiltmc.qsl.networking.impl.NetworkingImpl;
 import org.quiltmc.qsl.networking.impl.payload.ChannelPayload;
 import org.quiltmc.qsl.networking.mixin.accessor.AbstractServerPacketHandlerAccessor;
-import org.quiltmc.qsl.networking.mixin.accessor.ServerConfigurationPacketHandlerAccessor;
 
 @ApiStatus.Internal
 public final class ServerConfigurationNetworkAddon extends AbstractChanneledNetworkAddon<ServerConfigurationNetworking.CustomChannelReceiver<?>> {
 	private final ServerConfigurationPacketHandler handler;
 	private final MinecraftServer server;
 	private boolean sentInitialRegisterPacket = false;
+	public static int PING_ID = 0x0C147; // Somewhat looks like QUILT?
 
 	public ServerConfigurationNetworkAddon(ServerConfigurationPacketHandler handler, MinecraftServer server) {
 		super(ServerNetworkingImpl.CONFIGURATION, ((AbstractServerPacketHandlerAccessor) handler).getConnection(), "ServerConfigurationNetworkAddon for " + handler.getHost().getName());
@@ -71,6 +73,7 @@ public final class ServerConfigurationNetworkAddon extends AbstractChanneledNetw
 		ServerConfigurationConnectionEvents.READY.invoker().onConfigurationReady(this.handler, this, this.server);
 
 		this.sendInitialChannelRegistrationPacket();
+		this.sendPacket(new PingS2CPacket(PING_ID)); // If we get pong before channels, its a vanilla or non-supported client.
 		this.sentInitialRegisterPacket = true;
 	}
 
@@ -78,7 +81,7 @@ public final class ServerConfigurationNetworkAddon extends AbstractChanneledNetw
 	public <T extends CustomPayload> boolean handle(T payload) {
 		boolean handled = super.handle(payload);
 		if (handled && payload.id().equals(NetworkingImpl.REGISTER_CHANNEL)) {
-			((ServerConfigurationPacketHandlerAccessor) this.handler).invokeFinishCurrentTask(SendChannelsTask.TYPE);
+			((ServerConfigurationTaskManager) this.handler).finishTask(SendChannelsTask.TYPE);
 		}
 
 		return handled;

@@ -32,15 +32,17 @@ public record SetupSyncTask(ServerConfigurationPacketHandler handler) implements
 
 	@Override
 	public void start(Consumer<Packet<?>> task) {
-		// First check if Quilt sync is available
-		if (ServerConfigurationNetworking.getSendable(this.handler).contains(ServerPackets.Handshake.ID)) {
-			((ServerConfigurationTaskManager) this.handler).addImmediateTask(new QuiltSyncTask(this.handler, ((AbstractServerPacketHandlerAccessor) this.handler).getConnection()));
-		} else if (ServerRegistrySync.forceFabricFallback || (ServerRegistrySync.supportFabric && ServerConfigurationNetworking.getSendable(this.handler).contains(ServerFabricRegistrySync.ID))) {
-			FabricSyncTask fabricSyncTask = new FabricSyncTask(this.handler);
-			ServerConfigurationNetworking.registerReceiver(this.handler, ServerFabricRegistrySync.SYNC_COMPLETE_ID, (server, handler, buf, responseSender) -> fabricSyncTask.handleComplete());
-			((ServerConfigurationTaskManager) this.handler).addImmediateTask(fabricSyncTask);
-		} else {
-			((AbstractServerPacketHandlerAccessor) this.handler).getConnection().disconnect(ServerRegistrySync.noRegistrySyncMessage);
+		if (ServerRegistrySync.shouldSync()) {
+			// First check if Quilt sync is available
+			if (ServerConfigurationNetworking.getSendable(this.handler).contains(ServerPackets.Handshake.ID)) {
+				((ServerConfigurationTaskManager) this.handler).addImmediateTask(new QuiltSyncTask(this.handler, ((AbstractServerPacketHandlerAccessor) this.handler).getConnection()));
+			} else if (ServerRegistrySync.forceFabricFallback || (ServerRegistrySync.supportFabric && ServerConfigurationNetworking.getSendable(this.handler).contains(ServerFabricRegistrySync.ID))) {
+				FabricSyncTask fabricSyncTask = new FabricSyncTask(this.handler);
+				ServerConfigurationNetworking.registerReceiver(this.handler, ServerFabricRegistrySync.SYNC_COMPLETE_ID, (server, handler, buf, responseSender) -> fabricSyncTask.handleComplete());
+				((ServerConfigurationTaskManager) this.handler).addImmediateTask(fabricSyncTask);
+			} else {
+				((AbstractServerPacketHandlerAccessor) this.handler).getConnection().disconnect(ServerRegistrySync.noRegistrySyncMessage);
+			}
 		}
 
 		((ServerConfigurationTaskManager) this.handler).finishTask(TYPE);
