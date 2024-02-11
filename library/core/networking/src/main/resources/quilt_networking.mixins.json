@@ -17,7 +17,6 @@
     "accessor.CustomPayloadC2SPacketAccessor",
     "accessor.CustomPayloadS2CPacketAccessor",
     "accessor.EntityTrackerAccessor",
-    "accessor.ServerConfigurationPacketHandlerAccessor",
     "accessor.ServerLoginNetworkHandlerAccessor",
     "accessor.ThreadedChunkManagerAccessor"
   ],

@@ -22,9 +22,9 @@ import org.slf4j.LoggerFactory;
 import org.quiltmc.qsl.resource.loader.api.client.ClientResourceLoaderEvents;
 import org.quiltmc.qsl.resource.loader.test.ResourceLoaderTestMod;
 
-public class ClientLoaderEventsTestMod implements ClientResourceLoaderEvents.StartPackReload,
+public class ClientResourceLoaderEventsTestMod implements ClientResourceLoaderEvents.StartPackReload,
 		ClientResourceLoaderEvents.EndPackReload {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ClientLoaderEventsTestMod.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ClientResourceLoaderEventsTestMod.class);
 	private long start;
 
 	@Override
