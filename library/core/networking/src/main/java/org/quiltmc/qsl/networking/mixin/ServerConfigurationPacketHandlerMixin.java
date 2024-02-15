@@ -17,10 +17,15 @@
 package org.quiltmc.qsl.networking.mixin;
 
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Consumer;
 
+import com.llamalad7.mixinextras.injector.ModifyReceiver;
+import com.llamalad7.mixinextras.injector.WrapWithCondition;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -44,8 +49,9 @@ import org.quiltmc.qsl.networking.impl.server.SendChannelsTask;
 import org.quiltmc.qsl.networking.impl.server.ServerConfigurationNetworkAddon;
 
 // We want to apply a bit earlier than other mods which may not use us in order to prevent refCount issues
-@Mixin(value = ServerConfigurationPacketHandler.class, priority = 999)
+@Mixin(value = ServerConfigurationPacketHandler.class, priority = 900)
 abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacketHandler implements NetworkHandlerExtensions, DisconnectPacketSource, ServerConfigurationTaskManager {
+	@Mutable
 	@Shadow
 	@Final
 	private Queue<ConfigurationTask> tasks;
@@ -56,8 +62,23 @@ abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacke
 	@Shadow
 	protected abstract void finishCurrentTask(ConfigurationTask.Type taskType);
 
+	@Shadow
+	public abstract void startConfiguration();
+
+	@Shadow
+	protected abstract void startNextTask();
+
 	@Unique
 	private ServerConfigurationNetworkAddon addon;
+
+	@Unique
+	private boolean sentConfiguration = false;
+
+	@Unique
+	private ConfigurationTask immediateTask = null;
+
+	@Unique
+	private Queue<ConfigurationTask> priorityTasks = new ConcurrentLinkedQueue<>();
 
 	ServerConfigurationPacketHandlerMixin(MinecraftServer server, ClientConnection connection, C_eyqfalbd c_eyqfalbd) {
 		super(server, connection, c_eyqfalbd);
@@ -70,9 +91,51 @@ abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacke
 		this.addon.lateInit();
 	}
 
-	@Inject(method = "startConfiguration", at = @At("HEAD"))
+	@Inject(method = "startConfiguration", at = @At("HEAD"), cancellable = true)
 	private void start(CallbackInfo ci) {
-		this.tasks.add(new SendChannelsTask(this.addon));
+		if (!this.sentConfiguration) {
+			this.addImmediateTask(new SendChannelsTask(this.addon));
+
+			this.addPriorityTask(new ConfigurationTask() {
+				static final Type TYPE = new Type("minecraft:start_configuration");
+
+				@Override
+				public void start(Consumer<Packet<?>> task) {
+					ServerConfigurationPacketHandlerMixin.this.startConfiguration();
+					ServerConfigurationPacketHandlerMixin.this.finishTask(TYPE);
+				}
+
+				@Override
+				public Type getType() {
+					return TYPE;
+				}
+			});
+
+			this.sentConfiguration = true;
+			this.startNextTask();
+			ci.cancel();
+		}
+	}
+
+	@WrapWithCondition(method = "startConfiguration", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/ServerConfigurationPacketHandler;startNextTask()V"))
+	private boolean doNotCallStart(ServerConfigurationPacketHandler handler) {
+		return false;
+	}
+
+	@ModifyReceiver(method = "startNextTask", at = @At(value = "INVOKE", target = "Ljava/util/Queue;poll()Ljava/lang/Object;"))
+	private Queue<ConfigurationTask> modifyTaskQueue(Queue<ConfigurationTask> originalQueue) {
+		if (this.immediateTask != null) {
+			var singleQueue = new ConcurrentLinkedQueue<ConfigurationTask>();
+			singleQueue.add(this.immediateTask);
+			this.immediateTask = null;
+			return singleQueue;
+		}
+
+		if (!this.priorityTasks.isEmpty()) {
+			return this.priorityTasks;
+		}
+
+		return originalQueue;
 	}
 
 	@Inject(method = "onDisconnected", at = @At("HEAD"))
@@ -93,6 +156,23 @@ abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacke
 	@Override
 	public void addTask(ConfigurationTask task) {
 		this.tasks.add(task);
+	}
+
+	@Override
+	public void addPriorityTask(ConfigurationTask task) {
+		this.priorityTasks.add(task);
+	}
+
+	@Override
+	public void addImmediateTask(ConfigurationTask task) {
+		if (this.immediateTask != null) {
+			throw new RuntimeException(
+				"Cannot add an immediate task of type: \"" + task.getType()
+				+ "\" when there is already an immediate task of type: \"" + this.immediateTask.getType() + "\"."
+			);
+		}
+
+		this.immediateTask = task;
 	}
 
 	@Override

@@ -58,8 +58,8 @@ public class RegistrySyncInitializer implements ModInitializer {
 				Registries.VILLAGER_PROFESSION
 		);
 
-		ServerConfigurationConnectionEvents.ADD_TASKS.register((handler, server) -> {
-			((ServerConfigurationTaskManager) handler).addTask(new SetupSyncTask(handler));
+		ServerConfigurationConnectionEvents.INIT.register((handler, server) -> {
+			((ServerConfigurationTaskManager) handler).addPriorityTask(new SetupSyncTask(handler));
 		});
 
 		ServerRegistrySync.registerHandlers();

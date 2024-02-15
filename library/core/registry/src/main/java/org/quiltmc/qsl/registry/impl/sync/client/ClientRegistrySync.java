@@ -124,7 +124,6 @@ public final class ClientRegistrySync {
 		for (var protocol : modProtocol.protocols()) {
 			var local = ModProtocolImpl.getVersion(protocol.id());
 			var latest = protocol.latestMatchingVersion(local);
-			System.out.println(latest);
 			if (latest != ProtocolVersions.NO_PROTOCOL) {
 				values.put(protocol.id(), latest);
 			} else if (!protocol.optional()) {
