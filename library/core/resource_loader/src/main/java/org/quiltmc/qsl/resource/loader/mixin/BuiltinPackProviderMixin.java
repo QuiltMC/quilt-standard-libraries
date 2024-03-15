@@ -36,7 +36,7 @@ public class BuiltinPackProviderMixin {
 	private void onRegisterAdditionalPacks(Consumer<PackProfile> profileAdder, CallbackInfo ci) {
 		// Register built-in resource packs after vanilla built-in resource packs are registered.
 		if (((Object) this) instanceof VanillaDataPackProvider) {
-			ModPackProvider.SERVER_RESOURCE_PACK_PROVIDER.register(profileAdder);
+			ModPackProvider.SERVER_RESOURCE_PACK_PROVIDER.loadPacks(profileAdder);
 		}
 	}
 }

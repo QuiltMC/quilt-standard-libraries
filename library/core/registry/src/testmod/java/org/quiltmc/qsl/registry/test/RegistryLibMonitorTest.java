@@ -42,7 +42,7 @@ public class RegistryLibMonitorTest implements ModInitializer {
 
 	@Override
 	public void onInitialize(ModContainer mod) {
-		Block blockA = register(TEST_BLOCK_A_ID, new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.BLACK)));
+		Block blockA = register(TEST_BLOCK_A_ID, new Block(AbstractBlock.Settings.method_9630(Blocks.STONE).mapColor(MapColor.BLACK)));
 
 		var monitor = RegistryMonitor.create(Registries.BLOCK)
 				.filter(context -> context.id().getNamespace().equals("quilt_registry_test_monitors"));
@@ -61,7 +61,7 @@ public class RegistryLibMonitorTest implements ModInitializer {
 			upcomingSet.add(context.value());
 		});
 
-		Block blockB = register(TEST_BLOCK_B_ID, new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.BLACK)));
+		Block blockB = register(TEST_BLOCK_B_ID, new Block(AbstractBlock.Settings.method_9630(Blocks.STONE).mapColor(MapColor.BLACK)));
 
 		if (!allSet.contains(blockA) || !allSet.contains(blockB)) {
 			throw new AssertionError("Entries " + allSet + " found by RegistryMonitor via forAll were not as expected");

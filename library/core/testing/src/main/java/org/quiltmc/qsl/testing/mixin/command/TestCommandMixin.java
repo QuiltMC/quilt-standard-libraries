@@ -29,7 +29,6 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
 
-import net.minecraft.block.entity.StructureBlockBlockEntity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.command.dev.TestCommand;
 import net.minecraft.server.world.ServerWorld;
@@ -71,7 +70,8 @@ public class TestCommandMixin {
 			),
 			at = @At(
 					value = "INVOKE",
-					target = "Lcom/mojang/brigadier/builder/RequiredArgumentBuilder;executes(Lcom/mojang/brigadier/Command;)Lcom/mojang/brigadier/builder/ArgumentBuilder;"
+					target = "Lcom/mojang/brigadier/builder/RequiredArgumentBuilder;executes(Lcom/mojang/brigadier/Command;)Lcom/mojang/brigadier/builder/ArgumentBuilder;",
+					remap = false
 			)
 	)
 	private static Command<ServerCommandSource> quiltGameTest$replaceExportCommand(Command<ServerCommandSource> original) {
@@ -86,7 +86,8 @@ public class TestCommandMixin {
 			),
 			at = @At(
 					value = "INVOKE",
-					target = "Lcom/mojang/brigadier/builder/LiteralArgumentBuilder;executes(Lcom/mojang/brigadier/Command;)Lcom/mojang/brigadier/builder/ArgumentBuilder;"
+					target = "Lcom/mojang/brigadier/builder/LiteralArgumentBuilder;executes(Lcom/mojang/brigadier/Command;)Lcom/mojang/brigadier/builder/ArgumentBuilder;",
+					remap = false
 			)
 	)
 	private static Command<ServerCommandSource> quiltGameTest$replaceExportThisCommand(Command<ServerCommandSource> original) {
@@ -107,14 +108,6 @@ public class TestCommandMixin {
 	)
 	private static ArgumentType<String> quiltGameTest$replaceCreateTestNameArgumentType(ArgumentType<String> name) {
 		return new TestNameArgumentType();
-	}
-
-	@Redirect(
-			method = "run(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/test/TestSet;)V",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/block/entity/StructureBlockBlockEntity;getStructurePath()Ljava/lang/String;")
-	)
-	private static String quiltGameTest$replaceStructurePathWithName(StructureBlockBlockEntity instance) {
-		return instance.getStructureName();
 	}
 
 	@Redirect(
@@ -159,10 +152,10 @@ public class TestCommandMixin {
 
 	@Redirect(
 			method = {"executeImport"},
-			at = @At(value = "NEW", target = "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraft/util/Identifier;"),
+			at = @At(value = "NEW", target = "(Ljava/lang/String;)Lnet/minecraft/util/Identifier;"),
 			expect = 2
 	)
-	private static Identifier quiltGameTest$fixStructureIdentifierImport(String namespace, String structure) {
+	private static Identifier quiltGameTest$fixStructureIdentifierImport(String structure) {
 		return new Identifier(structure);
 	}
 

@@ -25,7 +25,7 @@ import java.util.Map;
 import com.mojang.serialization.Lifecycle;
 import it.unimi.dsi.fastutil.objects.Object2ByteMap;
 import it.unimi.dsi.fastutil.objects.Object2ByteOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Reference2IntMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import org.jetbrains.annotations.Nullable;
@@ -65,7 +65,7 @@ public abstract class SimpleRegistryMixin<V> implements Registry<V>, Synchronize
 
 	@Shadow
 	@Final
-	private Object2IntMap<V> entryToRawId;
+	private Reference2IntMap<V> entryToRawId;
 
 	@Shadow
 	@Final

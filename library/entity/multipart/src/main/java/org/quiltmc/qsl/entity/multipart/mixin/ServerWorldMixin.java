@@ -44,7 +44,7 @@ public abstract class ServerWorldMixin extends World implements EntityPartTracke
 	}
 
 	@Redirect(
-			method = "getDragonPart(I)Lnet/minecraft/entity/Entity;",
+			method = "getEntityOrDragonPart(I)Lnet/minecraft/entity/Entity;",
 			at = @At(value = "FIELD", target = "Lnet/minecraft/server/world/ServerWorld;dragonParts:Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;", opcode = Opcodes.GETFIELD)
 	)
 	private Int2ObjectMap<Entity> quilt$getPart(ServerWorld world) {

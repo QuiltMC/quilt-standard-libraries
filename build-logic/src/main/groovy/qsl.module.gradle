@@ -162,6 +162,16 @@ loom {
 			runDir("build/game_test")
 		}
 	}
+
+	mods {
+		"${extension.id}" {
+			sourceSet sourceSets.main
+		}
+
+		"${extension.id}_testmod" {
+			sourceSet sourceSets.testmod
+		}
+	}
 }
 
 java {

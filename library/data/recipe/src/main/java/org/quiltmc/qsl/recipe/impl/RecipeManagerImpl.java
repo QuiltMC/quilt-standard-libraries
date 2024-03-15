@@ -114,7 +114,7 @@ public final class RecipeManagerImpl implements RegistryEvents.DynamicRegistryLo
 			Recipe<?> recipe = recipeEntry.getValue().value();
 
 			var serializer = ((RecipeSerializer<Recipe<?>>) recipe.getSerializer());
-			DataResult<JsonElement> encoded = serializer.method_53736().encode(recipe, JsonOps.INSTANCE, new JsonObject());
+			DataResult<JsonElement> encoded = serializer.getCodec().encode(recipe, JsonOps.INSTANCE, new JsonObject());
 			if (encoded.error().isPresent()) {
 				LOGGER.error("Failed to serialize recipe {} with reason {}.", id, encoded.error().get().message());
 			}

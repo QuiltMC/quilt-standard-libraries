@@ -28,7 +28,7 @@ public final class NetworkingEntityTrackingEventsTest implements EntityTrackingE
 	@Override
 	public void beforeStartTracking(Entity trackedEntity, ServerPlayerEntity player) {
 		if (trackedEntity instanceof ArmorStandEntity) {
-			player.sendMessage(Text.literal("About to be tracking ").append(trackedEntity.getEntityName()), false);
+			player.sendMessage(Text.literal("About to be tracking ").append(trackedEntity.getDisplayName()), false);
 		}
 	}
 
@@ -36,7 +36,7 @@ public final class NetworkingEntityTrackingEventsTest implements EntityTrackingE
 	@Override
 	public void afterStartTracking(Entity trackedEntity, ServerPlayerEntity player) {
 		if (trackedEntity instanceof ArmorStandEntity) {
-			player.sendMessage(Text.literal("Tracking ").append(trackedEntity.getEntityName()), false);
+			player.sendMessage(Text.literal("Tracking ").append(trackedEntity.getDisplayName()), false);
 		}
 	}
 
@@ -44,7 +44,7 @@ public final class NetworkingEntityTrackingEventsTest implements EntityTrackingE
 	@Override
 	public void onStopTracking(Entity trackedEntity, ServerPlayerEntity player) {
 		if (trackedEntity instanceof ArmorStandEntity) {
-			player.sendMessage(Text.literal("No longer tracking ").append(trackedEntity.getEntityName()), false);
+			player.sendMessage(Text.literal("No longer tracking ").append(trackedEntity.getDisplayName()), false);
 		}
 	}
 }

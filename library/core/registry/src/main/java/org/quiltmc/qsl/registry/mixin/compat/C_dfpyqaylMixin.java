@@ -26,9 +26,9 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.unmapped.C_dfpyqayl;
+import net.minecraft.datafixer.fix.StatusEffectFix;
 
-@Mixin(C_dfpyqayl.class)
+@Mixin(StatusEffectFix.class)
 public abstract class C_dfpyqaylMixin {
 	@Shadow
 	private static <T> Dynamic<T> method_53085(Dynamic<T> dynamic, String string, Dynamic<T> dynamic2, String string2) {
@@ -76,7 +76,7 @@ public abstract class C_dfpyqaylMixin {
 			method = "method_53083",
 			at = @At(
 				value = "INVOKE",
-				target = "Lnet/minecraft/unmapped/C_dfpyqayl;method_53085(Lcom/mojang/serialization/Dynamic;Ljava/lang/String;Lcom/mojang/serialization/Dynamic;Ljava/lang/String;)Lcom/mojang/serialization/Dynamic;"
+				target = "Lnet/minecraft/datafixer/fix/StatusEffectFix;method_53085(Lcom/mojang/serialization/Dynamic;Ljava/lang/String;Lcom/mojang/serialization/Dynamic;Ljava/lang/String;)Lcom/mojang/serialization/Dynamic;"
 			)
 	)
 	private static <T> Dynamic<T> addEntityAndSuspiciousStewFixer(Dynamic<T> dynamic, String string, Dynamic<T> dynamic2, String string2) {
@@ -90,7 +90,7 @@ public abstract class C_dfpyqaylMixin {
 			method = "method_53082",
 			at = @At(
 				value = "INVOKE_ASSIGN",
-				target = "Lnet/minecraft/unmapped/C_dfpyqayl;method_53096(Lcom/mojang/serialization/Dynamic;Ljava/lang/String;Ljava/lang/String;)Lcom/mojang/serialization/Dynamic;"
+				target = "Lnet/minecraft/datafixer/fix/StatusEffectFix;method_53096(Lcom/mojang/serialization/Dynamic;Ljava/lang/String;Ljava/lang/String;)Lcom/mojang/serialization/Dynamic;"
 			),
 			argsOnly = true
 	)

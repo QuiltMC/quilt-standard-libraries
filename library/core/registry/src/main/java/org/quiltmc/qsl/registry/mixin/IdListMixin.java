@@ -18,7 +18,7 @@ package org.quiltmc.qsl.registry.mixin;
 
 import java.util.List;
 
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Reference2IntMap;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -38,7 +38,7 @@ public class IdListMixin<T> implements SynchronizedIdList<T> {
 
 	@Shadow
 	@Final
-	private Object2IntMap<T> idMap;
+	private Reference2IntMap<T> idMap;
 
 	@Override
 	public void quilt$clear() {
