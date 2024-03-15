@@ -90,7 +90,7 @@ public class PointOfInterestTypeMixin implements PointOfInterestTypeExtensions {
 		for (BlockState state : states) {
 			Holder<PointOfInterestType> replaced = PointOfInterestTypesAccessor.getStateToTypeMap().put(state, Registries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(key));
 			if (replaced != null) {
-				throw Util.throwOrPause(new IllegalStateException(String.format("%s is defined in too many tags", state)));
+				throw Util.throwOrPause(new IllegalStateException(String.format("%s is defined in more than one PoI type: %s and %s!", state, key.getValue().toString(), replaced.getKey().toString())));
 			}
 		}
 

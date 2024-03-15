@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -39,13 +40,13 @@ import org.quiltmc.qsl.resource.loader.impl.ResourceLoaderImpl;
 
 @Mixin(ServerReloadableResources.class)
 public class ServerReloadableResourcesMixin {
-	@Inject(method = "getReloaders", at = @At("RETURN"), cancellable = true)
-	private void onGetResourceReloaders(CallbackInfoReturnable<List<ResourceReloader>> cir) {
+	@ModifyReturnValue(method = "getReloaders", at = @At("RETURN"))
+	private List<ResourceReloader> onGetResourceReloaders(List<ResourceReloader> original) {
 		// Re-inject resource reloaders server-side.
 		// It is currently unknown why ReloadableResourceManager#reload isn't called anymore.
-		var list = new ArrayList<>(cir.getReturnValue());
+		var list = new ArrayList<>(original);
 		ResourceLoaderImpl.sort(ResourceType.SERVER_DATA, list);
-		cir.setReturnValue(list);
+		return list;
 	}
 
 	@Inject(method = "loadResources", at = @At("HEAD"))
