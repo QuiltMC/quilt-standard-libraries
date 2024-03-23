@@ -70,7 +70,7 @@ public class ClientFabricRegistrySync {
 		receiveSlicedPacket(buf);
 
 		if (isPacketFinished) {
-			applyRegistry(handler);
+			applyRegistry(handler, sender);
 		}
 	}
 
@@ -158,8 +158,7 @@ public class ClientFabricRegistrySync {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private static void applyRegistry(ClientConfigurationNetworkHandler handler) {
+	private static void applyRegistry(ClientConfigurationNetworkHandler handler, PacketSender<CustomPayload> sender) {
 		Preconditions.checkState(isPacketFinished);
 		Map<Identifier, Object2IntMap<Identifier>> map = syncedRegistryMap;
 		isPacketFinished = false;
@@ -178,7 +177,7 @@ public class ClientFabricRegistrySync {
 
 				var missingEntries = currentRegistry.quilt$applySyncMap(syncMap);
 
-				if (ClientRegistrySync.checkMissingAndDisconnect(handler, registry.getKey().getValue(), missingEntries, null)) { // TODO: no null
+				if (ClientRegistrySync.checkMissingAndDisconnect(handler, registry.getKey().getValue(), missingEntries, sender)) {
 					break;
 				}
 			}

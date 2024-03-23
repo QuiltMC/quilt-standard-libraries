@@ -18,6 +18,7 @@ package org.quiltmc.qsl.registry.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
+import org.spongepowered.asm.mixin.gen.Invoker;
 
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.listener.AbstractServerPacketHandler;
@@ -26,4 +27,7 @@ import net.minecraft.network.listener.AbstractServerPacketHandler;
 public interface AbstractServerPacketHandlerAccessor {
 	@Accessor
 	ClientConnection getConnection();
+
+	@Invoker
+	boolean invokeIsHost();
 }
