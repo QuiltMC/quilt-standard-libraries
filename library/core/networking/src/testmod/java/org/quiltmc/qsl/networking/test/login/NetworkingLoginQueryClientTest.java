@@ -22,16 +22,22 @@ import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.networking.api.PacketByteBufs;
+import org.quiltmc.qsl.networking.api.client.ClientLoginConnectionEvents;
 import org.quiltmc.qsl.networking.api.client.ClientLoginNetworking;
-import org.quiltmc.qsl.networking.test.play.NetworkingPlayPacketTest;
 
 @ClientOnly
 public final class NetworkingLoginQueryClientTest implements ClientModInitializer {
 	@Override
 	public void onInitializeClient(ModContainer mod) {
 		// Send a dummy response to the server in return, by registering here we essentially say we understood the server's query
-		ClientLoginNetworking.registerGlobalReceiver(NetworkingPlayPacketTest.TEST_CHANNEL, (client, handler, buf, listenerAdder) -> {
+		ClientLoginNetworking.registerGlobalReceiver(NetworkingLoginQueryTest.TEST_CHANNEL_GLOBAL, (client, handler, buf, listenerAdder) -> {
 			return CompletableFuture.completedFuture(PacketByteBufs.empty());
+		});
+
+		ClientLoginConnectionEvents.QUERY_START.register((handler, client) -> {
+			ClientLoginNetworking.registerReceiver(NetworkingLoginQueryTest.TEST_CHANNEL, (_client, _handler, buf, listenerAdder) -> {
+				return CompletableFuture.completedFuture(PacketByteBufs.empty());
+			});
 		});
 	}
 }
