@@ -34,9 +34,9 @@ sourceSets {
 
 // The root project simply just publishes all artifacts.
 // For that reason, do not generate a remapped jar.
-prepareRemapJar {
-	enabled = false
-}
+//prepareRemapJar {
+//	enabled = false
+//}
 
 remapJar {
 	enabled = false
