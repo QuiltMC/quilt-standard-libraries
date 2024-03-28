@@ -22,6 +22,8 @@ import java.util.function.Consumer;
 
 import com.llamalad7.mixinextras.injector.ModifyReceiver;
 import com.llamalad7.mixinextras.injector.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -31,10 +33,12 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.ServerConfigurationPacketHandler;
 import net.minecraft.network.configuration.ConfigurationTask;
+import net.minecraft.network.configuration.JoinWorldConfigurationTask;
 import net.minecraft.network.listener.AbstractServerPacketHandler;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.common.DisconnectS2CPacket;
@@ -47,6 +51,7 @@ import org.quiltmc.qsl.networking.impl.DisconnectPacketSource;
 import org.quiltmc.qsl.networking.impl.NetworkHandlerExtensions;
 import org.quiltmc.qsl.networking.impl.server.SendChannelsTask;
 import org.quiltmc.qsl.networking.impl.server.ServerConfigurationNetworkAddon;
+import org.quiltmc.qsl.networking.impl.server.ServerConfigurationPacketHandlerKnowingTask;
 
 // We want to apply a bit earlier than other mods which may not use us in order to prevent refCount issues
 @Mixin(value = ServerConfigurationPacketHandler.class, priority = 900)
@@ -138,6 +143,30 @@ abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacke
 		return originalQueue;
 	}
 
+	@WrapOperation(method = "startConfiguration", at = @At(value = "NEW", target = "()Lnet/minecraft/network/configuration/JoinWorldConfigurationTask;"))
+	private JoinWorldConfigurationTask setHandlerStart(Operation<JoinWorldConfigurationTask> constructor) {
+		var task = constructor.call();
+		((ServerConfigurationPacketHandlerKnowingTask) task).setServerConfigurationPacketHandler((ServerConfigurationPacketHandler) (Object) this);
+		return task;
+	}
+
+	@WrapOperation(method = "rejoinWorld", at = @At(value = "NEW", target = "()Lnet/minecraft/network/configuration/JoinWorldConfigurationTask;"))
+	private JoinWorldConfigurationTask setHandlerRejoin(Operation<JoinWorldConfigurationTask> constructor) {
+		var task = constructor.call();
+		((ServerConfigurationPacketHandlerKnowingTask) task).setServerConfigurationPacketHandler((ServerConfigurationPacketHandler) (Object) this);
+		return task;
+	}
+
+	@Inject(method = "startNextTask", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/configuration/ConfigurationTask;start(Ljava/util/function/Consumer;)V"), locals = LocalCapture.CAPTURE_FAILHARD)
+	public void beforeTaskStart(CallbackInfo ci, ConfigurationTask task) {
+		this.addon.logger.debug("Starting task with type: {}", task.getType());
+	}
+
+	@Inject(method = "finishCurrentTask", at = @At("HEAD"))
+	public void beforeTaskStart(ConfigurationTask.Type type, CallbackInfo ci) {
+		this.addon.logger.debug("Finishing task type: {}", type);
+	}
+
 	@Inject(method = "onDisconnected", at = @At("HEAD"))
 	private void handleDisconnection(Text reason, CallbackInfo ci) {
 		this.addon.handleDisconnect();
@@ -155,16 +184,20 @@ abstract class ServerConfigurationPacketHandlerMixin extends AbstractServerPacke
 
 	@Override
 	public void addTask(ConfigurationTask task) {
+		this.addon.logger.debug("Adding task with type: {}", task.getType());
 		this.tasks.add(task);
 	}
 
 	@Override
 	public void addPriorityTask(ConfigurationTask task) {
+		this.addon.logger.debug("Adding priority task with type: {}", task.getType());
 		this.priorityTasks.add(task);
 	}
 
 	@Override
 	public void addImmediateTask(ConfigurationTask task) {
+		this.addon.logger.debug("Adding immediate task with type: {}", task.getType());
+
 		if (this.immediateTask != null) {
 			throw new RuntimeException(
 				"Cannot add an immediate task of type: \"" + task.getType()

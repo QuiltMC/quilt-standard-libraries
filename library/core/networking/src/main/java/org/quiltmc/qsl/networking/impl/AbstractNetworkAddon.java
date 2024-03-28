@@ -41,7 +41,7 @@ import net.minecraft.util.Identifier;
 @ApiStatus.Internal
 public abstract class AbstractNetworkAddon<H> {
 	protected final GlobalReceiverRegistry<H> receiver;
-	protected final Logger logger;
+	public final Logger logger;
 	// A lock is used due to possible access on netty's event loops and game thread at same times such as during dynamic registration
 	private final ReadWriteLock lock = new ReentrantReadWriteLock();
 	// Sync map should be fine as there is little read write competition

@@ -82,6 +82,7 @@ public final class ServerConfigurationNetworkAddon extends AbstractChanneledNetw
 		boolean handled = super.handle(payload);
 		if (handled && payload.id().equals(NetworkingImpl.REGISTER_CHANNEL)) {
 			if (((ServerConfigurationTaskManager) this.handler).getCurrentTask() instanceof SendChannelsTask) {
+				ServerConfigurationConnectionEvents.ADD_TASKS.invoker().onAddTasks(this.handler, this.server);
 				((ServerConfigurationTaskManager) this.handler).finishTask(SendChannelsTask.TYPE);
 			}
 		}

@@ -33,6 +33,7 @@ import org.quiltmc.qsl.networking.api.PacketSender;
 import org.quiltmc.qsl.networking.api.ServerConfigurationConnectionEvents;
 import org.quiltmc.qsl.networking.api.ServerConfigurationNetworking;
 import org.quiltmc.qsl.networking.api.ServerConfigurationTaskManager;
+import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.networking.impl.NetworkingImpl;
 import org.quiltmc.qsl.networking.impl.server.ServerConfigurationNetworkAddon;
 import org.quiltmc.qsl.networking.impl.server.ServerNetworkingImpl;
@@ -108,7 +109,7 @@ public class CommonPacketsImpl {
 
 		@Override
 		public void start(Consumer<Packet<?>> sender) {
-			this.addon.sendPayload(this.addon.createRegisterPayload());
+			addon.sendPayload(new CommonRegisterPayload(addon.getNegotiatedVersion(), CommonRegisterPayload.PLAY_PHASE, ServerPlayNetworking.getGlobalReceivers()));
 		}
 
 		@Override
