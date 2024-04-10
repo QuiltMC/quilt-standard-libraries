@@ -14,10 +14,12 @@
       "init": [
         "org.quiltmc.qsl.resource.loader.test.BuiltinResourcePackTestMod",
         "org.quiltmc.qsl.resource.loader.test.ResourceReloaderTestMod",
-        "org.quiltmc.qsl.resource.loader.test.VirtualResourcePackTestMod"
+        "org.quiltmc.qsl.resource.loader.test.VirtualResourcePackTestMod",
+        "org.quiltmc.qsl.resource.loader.test.StaticResourcesTestMod"
       ],
       "client_init": [
-        "org.quiltmc.qsl.resource.loader.test.client.ResourcePackProfileProviderTestMod"
+        "org.quiltmc.qsl.resource.loader.test.client.ResourcePackProfileProviderTestMod",
+        "org.quiltmc.qsl.resource.loader.test.client.ClientStaticResourcesTestMod"
       ],
       "server_init": [
         "org.quiltmc.qsl.resource.loader.test.server.ServerLanguageTestMod"
@@ -26,7 +28,7 @@
         "org.quiltmc.qsl.resource.loader.test.ResourceLoaderEventsTestMod"
       ],
       "client_events": [
-        "org.quiltmc.qsl.resource.loader.test.client.ClientResourceLoaderEventsTestMod"
+        "org.quiltmc.qsl.resource.loader.test.client.ClientLoaderEventsTestMod"
       ]
     },
     "depends": [
