@@ -18,6 +18,7 @@ package org.quiltmc.qsl.chat.api.types;
 
 import java.util.EnumSet;
 
+import org.slf4j.LoggerFactory;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,7 +46,10 @@ public class ProfileIndependentS2CMessage extends AbstractChatMessage<ProfileInd
 				packet.message(),
 				packet.messageType().createParameters(player.getWorld().getRegistryManager()).orElseGet(() -> {
 					if (player instanceof ClientPlayerEntity clientPlayerEntity) {
-						((ClientPlayNetworkHandlerAccessor) clientPlayerEntity.networkHandler).getConnection().disconnect(Text.translatable("multiplayer.disconnect.invalid_packet"));
+						LoggerFactory.getLogger("Quilt Chat API ProfileIndependentS2CMessage")
+							.error("Failed to create message type parameters");
+						((ClientPlayNetworkHandlerAccessor) clientPlayerEntity.networkHandler).getConnection()
+							.disconnect(Text.translatable("multiplayer.disconnect.invalid_packet"));
 					}
 
 					return null;

@@ -53,24 +53,33 @@ public class ChatEventImpl<C, R> implements ChatEvent<C, R> {
 			R result = null;
 
 			for (var hook : hooks) {
-				if (ChatEventImpl.this.shouldPassOnMessageToHook(message.getTypes(), hook.getMessageTypes())) {
-					R tmpResult = hook.handleMessage(message);
-					if (ChatEventImpl.this.shouldPreformAssignableCheck) {
-						if (tmpResult == null) {
-							throw new NullPointerException("Callback attached to a ChatEvent returned a null result!");
-						} else if (!message.getClass().isAssignableFrom(tmpResult.getClass())) {
-							throw new IllegalArgumentException(
-									"Callback attached to a ChatEvent returned a non-similar value! " +
-											"Expected a subclass or instance of " + message.getClass().getName() + " but got a " + tmpResult.getClass().getName() + "!"
-							);
+				try {
+					if (shouldPassOnMessageToHook(message.getTypes(), hook.getMessageTypes())) {
+						R tmpResult = hook.handleMessage(message);
+						if (shouldPreformAssignableCheck) {
+							if (tmpResult == null) {
+								throw new NullPointerException("Callback attached to a ChatEvent returned a null result!");
+							} else if (!message.getClass().isAssignableFrom(tmpResult.getClass())) {
+								throw new IllegalArgumentException(
+										"Callback attached to a ChatEvent returned a non-similar value! " +
+												"Expected a subclass or instance of " + message.getClass().getName() + " but got a "
+												+ tmpResult.getClass().getName() + "!"
+								);
+							}
 						}
+						result = tmpResult;
 					}
-
-					result = tmpResult;
+				} catch (Exception exception) {
+					throw new RuntimeException("Error encountered in chat-api hook (Hook Origin: " + hook.getOriginName() + ")", exception);
 				}
 			}
 
 			return result;
+		}
+
+		@Override
+		public @NotNull String getOriginName() {
+			return "Chat Event Implementation";
 		}
 	});
 

@@ -11,5 +11,15 @@ qslModule {
 		core {
 			api("qsl_base")
 		}
+		management {
+			testmodOnly("command")
+			testmodOnly("client_command")
+		}
+	}
+	injectedInterface("net/minecraft/class_7610") {
+		values = ["org/quiltmc/qsl/chat/api/ChatSecurityRollbackSupport"]
+	}
+	injectedInterface("net/minecraft/class_7637") {
+		values = ["org/quiltmc/qsl/chat/api/ChatSecurityRollbackSupport"]
 	}
 }

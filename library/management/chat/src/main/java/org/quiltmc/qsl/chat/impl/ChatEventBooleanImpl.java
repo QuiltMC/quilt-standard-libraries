@@ -43,14 +43,22 @@ public class ChatEventBooleanImpl<C> implements ChatEvent<C, Boolean> {
 		@Override
 		public Boolean handleMessage(@NotNull AbstractChatMessage<?> message) {
 			for (var hook : hooks) {
-				if (ChatEventBooleanImpl.this.shouldPassOnMessageToHook(message.getTypes(), hook.getMessageTypes())) {
-					if (hook.handleMessage(message)) {
-						return true;
+				try {
+					if (shouldPassOnMessageToHook(message.getTypes(), hook.getMessageTypes())) {
+						if (hook.handleMessage(message)) {
+							return true;
+						}
 					}
+				} catch (Exception exception) {
+					throw new RuntimeException("Error encountered in chat-api hook (Hook Origin: " + hook.getOriginName() + ")", exception);
 				}
 			}
-
 			return false;
+		}
+
+		@Override
+		public @NotNull String getOriginName() {
+			return "Chat Event Implementation";
 		}
 	});
 

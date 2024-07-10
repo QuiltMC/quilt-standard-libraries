@@ -18,8 +18,8 @@ package org.quiltmc.qsl.chat.api.types;
 
 import java.util.EnumSet;
 
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Contract;
 
 import net.minecraft.entity.player.PlayerEntity;
 
