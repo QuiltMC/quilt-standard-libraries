@@ -10,7 +10,7 @@ Essential standard libraries for [the Quilt ecosystem](https://quiltmc.org/).
 The Quilt Standard Libraries gives modders Quilt-exclusive tools to add new and exciting features to their mods.
 
 **Note: At the moment, the Quilt Standard Libraries are in beta, meaning issues may arise and should still be treated as experimental.
-Please make an issue or talk to the QSL team on [discord](https://discord.quiltmc.org/toolchain) or on [the forum](https://forum.quiltmc.org) before
+Please make an issue or talk to the QSL team on [discord](https://discord.quiltmc.org) or on [the forum](https://forum.quiltmc.org) before
 writing any PRs.**
 
 ## Repository structure
