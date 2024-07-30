@@ -16,6 +16,8 @@
 
 package org.quiltmc.qsl.registry.attachment.impl;
 
+import java.util.function.Predicate;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import org.jetbrains.annotations.NotNull;
@@ -33,8 +35,8 @@ public final class ComputedDefaultRegistryEntryAttachmentImpl<R, V> extends Regi
 
 	private final @NotNull DefaultValueProvider<R, V> defaultValueProvider;
 
-	public ComputedDefaultRegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec, Side side, @NotNull DefaultValueProvider<R, V> defaultValueProvider) {
-		super(registry, id, valueClass, codec, side);
+	public ComputedDefaultRegistryEntryAttachmentImpl(Registry<R> registry, Identifier id, Class<V> valueClass, Codec<V> codec, Side side, @NotNull DefaultValueProvider<R, V> defaultValueProvider, Predicate<R> validator) {
+		super(registry, id, valueClass, codec, side, validator);
 		this.defaultValueProvider = defaultValueProvider;
 	}
 
