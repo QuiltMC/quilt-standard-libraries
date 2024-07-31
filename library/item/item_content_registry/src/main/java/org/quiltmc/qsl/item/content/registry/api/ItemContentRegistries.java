@@ -46,11 +46,10 @@ public class ItemContentRegistries {
 	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/item/fuel_times.json}
 	 */
 	public static final RegistryEntryAttachment<Item, Integer> FUEL_TIMES = RegistryEntryAttachment
-			.builder(Registries.ITEM,
+			.intRangeBuilder(Registries.ITEM,
 					Identifier.of(NAMESPACE, "fuel_times"),
-					Integer.class,
-					Codec.intRange(0, Integer.MAX_VALUE),
-					PacketCodecs.INT.cast())
+					0,
+					Integer.MAX_VALUE)
 			.build();
 
 	/**
@@ -59,11 +58,10 @@ public class ItemContentRegistries {
 	 * Values can be set via code and through a data-pack with the file {@code data/quilt/attachments/minecraft/item/compost_chances.json}
 	 */
 	public static final RegistryEntryAttachment<Item, Float> COMPOST_CHANCES = RegistryEntryAttachment
-			.builder(Registries.ITEM,
+			.floatRangeBuilder(Registries.ITEM,
 					Identifier.of(NAMESPACE, "compost_chances"),
-					Float.class,
-					Codec.floatRange(0, 1),
-					PacketCodecs.FLOAT.cast())
+					0,
+					1)
 			.build();
 }
 
